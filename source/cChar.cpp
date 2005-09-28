@@ -31,6 +31,11 @@
 //|						Initial CBaseObject implementation put in.  CChar reworked to deal with only things it has to
 //|						Proper constructor written
 //|						Plans for CChar derived objects thought upon (notably CPC and CNPC)
+//|						
+//|						1.4		giwo		27 September, 2005
+//|						Added PlayerValues_st and NPCValues_st to allow saving wasted memory on unnecesarry variables
+//|						Organized many functions to their respective areas and added documentation for them.
+//|						Changed itemLayers to a map
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "power.h"
@@ -73,11 +78,14 @@ const SERIAL		DEFPLAYER_ROBE 				= INVALIDSERIAL;
 const UI16			DEFPLAYER_ACCOUNTNUM		= AB_INVALID_ID;
 const UI16			DEFPLAYER_ORIGSKIN			= 0;
 const UI16			DEFPLAYER_ORIGID			= 0x0190;
+const UI08			DEFPLAYER_FIXEDLIGHT 		= 255;
+const UI16			DEFPLAYER_DEATHS			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
-speechCallback( DEFPLAYER_SPEECHCALLBACK ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID )
+speechCallback( DEFPLAYER_SPEECHCALLBACK ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS )
 {
 	if( cwmWorldState != NULL )
 		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
@@ -105,7 +113,7 @@ const SI16			DEFNPC_WANDERAREA			= -1;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
-reAttackAt( DEFNPC_REATTACKAT ), splitSection( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
+reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( DEFNPC_PETGUARDING )
 {
@@ -129,9 +137,7 @@ const RACEID		DEFCHAR_MAXSTAM_OLDRACE		= 0;
 const COLOUR		DEFCHAR_SAYCOLOUR 			= 0x0058;
 const COLOUR		DEFCHAR_EMOTECOLOUR			= 0x0023;
 const SI08			DEFCHAR_CELL 				= -1;
-const UI16			DEFCHAR_DEATHS 				= 0;
 CItem *				DEFCHAR_PACKITEM 			= NULL;
-const UI08			DEFCHAR_FIXEDLIGHT 			= 255;
 const SERIAL		DEFCHAR_TARG 				= INVALIDSERIAL;
 const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
@@ -160,7 +166,7 @@ townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ),
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
-emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), deaths( DEFCHAR_DEATHS ), packitem( DEFCHAR_PACKITEM ), fixedlight( DEFCHAR_FIXEDLIGHT ), 
+emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( DEFCHAR_PACKITEM ), 
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), layerCtr( DEFCHAR_LAYERCTR ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
@@ -170,7 +176,6 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	objType = OT_CHAR;
 	name	= "Mr. noname";
 	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
-	memset( itemLayers, 0, sizeof( itemLayers[0] ) * MAXLAYERS );
 	memset( baseskill, 0, sizeof( baseskill[0] ) * (ALLSKILLS+1) );
 	memset( skill, 0, sizeof( skill[0] ) * (INTELLECT+1) );
 	memset( lockState, 0, sizeof( lockState[0] ) * (INTELLECT+1) );
@@ -184,6 +189,9 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	memset( regen, 0, sizeof( UI32 ) * 3 );
 
 	strength = dexterity = intelligence = 1;
+
+	itemLayers.clear();
+	layerCtr = itemLayers.end();
 
 	mPlayer	= NULL;
 	mNPC	= NULL;
@@ -227,81 +235,6 @@ bool CChar::IsValidPlayer( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI16 NPCAiType()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  AI type of the NPC
-//o---------------------------------------------------------------------------o
-SI16 CChar::GetNPCAiType( void ) const
-{
-	SI16 rVal = DEFNPC_AITYPE;
-	if( IsValidNPC() )
-		rVal = mNPC->aiType;
-	return rVal;
-}
-void CChar::SetNPCAiType( SI16 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_AITYPE )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->aiType = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SERIAL Guarding()
-//|   Date        -  Unknown
-//|   Programmer  -  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  SERIAL of the object the character is guarding
-//o---------------------------------------------------------------------------o
-CBaseObject *CChar::GetGuarding( void ) const
-{
-	CBaseObject *rVal = DEFNPC_PETGUARDING;
-	if( IsValidNPC() )
-		rVal = mNPC->petGuarding;
-	return rVal;
-}
-void CChar::SetGuarding( CBaseObject *newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_PETGUARDING )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->petGuarding = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI08 Taming()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Minimum skill required to tame the character
-//o---------------------------------------------------------------------------o
-SI16 CChar::GetTaming( void ) const
-{
-	SI16 rVal = DEFNPC_TAMING;
-	if( IsValidNPC() )
-		rVal = mNPC->taming;
-	return rVal;
-}
-void CChar::SetTaming( SI16 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_TAMING )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->taming = newValue;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Hunger()
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -318,23 +251,6 @@ void CChar::SetHunger( SI08 newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  UI08 FixedLight()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Fixed light level of the character
-//|                  255 is off
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetFixedLight( void ) const
-{
-	return fixedlight;
-}
-void CChar::SetFixedLight( UI08 newVal )
-{
-	fixedlight = newVal;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  UI08 Town()
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -348,130 +264,6 @@ UI08 CChar::GetTown( void ) const
 void CChar::SetTown( UI08 newValue )
 {
 	town = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 TrainingPlayerIn()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Skill the player is being trained in. 255 is no training
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetTrainingPlayerIn( void ) const
-{
-	UI08 rVal = DEFNPC_TRAININGPLAYERIN;
-	if( IsValidNPC() )
-		rVal = mNPC->trainingPlayerIn;
-	return rVal;
-}
-void CChar::SetTrainingPlayerIn( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_TRAININGPLAYERIN )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->trainingPlayerIn = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI32 HoldG( void )
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Amount of gold being held by a Player Vendor
-//o---------------------------------------------------------------------------o
-UI32 CChar::GetHoldG( void ) const
-{
-	UI32 rVal = DEFNPC_HOLDG;
-	if( IsValidNPC() )
-		rVal = mNPC->goldOnHand;
-	return rVal;
-}
-void CChar::SetHoldG( UI32 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_HOLDG )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->goldOnHand = newValue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CChar::SetAccount( UI16 newVal )
-//|	Date			-	1/14/2003 6:17:45 AM
-//|	Developers		-	Abaddon / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Set the account object for this character to the specified
-//|							account block. This functuo uses the accounts ID to link
-//|							the character to the account.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
-{
-	if( !IsValidPlayer() )
-	{
-		if( actbAccount.wAccountIndex != DEFPLAYER_ACCOUNTNUM )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->accountNum = actbAccount.wAccountIndex;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 Split()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Split level of the character
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetSplit( void ) const
-{
-	UI08 rVal = DEFNPC_SPLIT;
-	if( IsValidNPC() )
-		rVal = mNPC->splitSection;
-	return rVal;
-}
-void CChar::SetSplit( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_SPLIT )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->splitSection = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 SplitChance()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The chance of an NPC splitting
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetSplitChance( void ) const
-{
-	UI08 rVal = DEFNPC_SPLITCHANCE;
-	if( IsValidNPC() )
-		rVal = mNPC->splitChance;
-	return rVal;
-}
-void CChar::SetSplitChance( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_SPLITCHANCE )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->splitChance = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -969,31 +761,6 @@ void CChar::SetJSCasting( bool newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SERIAL Robe() 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Characters death robe
-//o---------------------------------------------------------------------------o
-SERIAL CChar::GetRobe( void ) const
-{
-	SERIAL rVal = DEFPLAYER_ROBE;
-	if( IsValidPlayer() )
-		rVal = mPlayer->robe;
-	return rVal;
-}
-void CChar::SetRobe( SERIAL newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_ROBE )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->robe = newValue;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  void RemoveSelfFromOwner( void ) 
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -1042,42 +809,6 @@ UI32 CChar::GetGuildFealty( void ) const
 void CChar::SetGuildFealty( UI32 newValue )
 {
 	guildfealty = newValue;
-}
-
-std::string CChar::GetOrgName( void ) const
-{
-	std::string rVal = "";
-	if( IsValidPlayer() )
-		rVal = mPlayer->origName;
-	return rVal;
-}
-void CChar::SetOrgName( std::string newName )
-{
-	if( !IsValidPlayer() )
-	{
-		if( !newName.empty() )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->origName = newName;
-}
-
-std::string CChar::GetLastOn( void ) const
-{
-	std::string rVal = "";
-	if( IsValidPlayer() )
-		rVal = mPlayer->lastOn;
-	return rVal;
-}
-void CChar::SetLastOn( std::string newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( !newValue.empty() )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->lastOn = newValue;
 }
 
 std::string CChar::GetGuildTitle( void ) const
@@ -1155,55 +886,6 @@ void CChar::SetPoisonStrength( UI08 value )
 	PoisonStrength = value;
 }
 
-UI16 CChar::GetOrgID( void ) const
-{
-	UI16 rVal = GetID();
-	if( IsValidPlayer() )
-		rVal = mPlayer->origID;
-	return rVal;
-}
-void CChar::SetOrgID( UI16 value )
-{
-	if( IsValidPlayer() )
-		mPlayer->origID = value;
-}
-
-UI16 CChar::GetHairStyle( void ) const
-{
-	UI16 rVal = DEFPLAYER_HAIRSTYLE;
-	if( IsValidPlayer() )
-		rVal = mPlayer->hairStyle;
-	return rVal;
-}
-void CChar::SetHairStyle( UI16 value )
-{
-	if( !IsValidPlayer() )
-	{
-		if( value != DEFPLAYER_HAIRSTYLE )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->hairStyle = value;
-}
-
-UI16 CChar::GetBeardStyle( void ) const
-{
-	UI16 rVal = DEFPLAYER_BEARDSTYLE;
-	if( IsValidPlayer() )
-		rVal = mPlayer->beardStyle;
-	return rVal;
-}
-void CChar::SetBeardStyle( UI16 value )
-{
-	if( !IsValidPlayer() )
-	{
-		if( value != DEFPLAYER_BEARDSTYLE )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->beardStyle = value;
-}
-
 COLOUR CChar::GetEmoteColour( void ) const
 {
 	return emotecolor;
@@ -1222,42 +904,6 @@ void CChar::SetSayColour( COLOUR newValue )
 	saycolor = newValue;
 }
 
-COLOUR CChar::GetHairColour( void ) const
-{
-	COLOUR rVal = DEFPLAYER_HAIRCOLOUR;
-	if( IsValidPlayer() )
-		rVal = mPlayer->hairColour;
-	return rVal;
-}
-void CChar::SetHairColour( COLOUR value )
-{
-	if( !IsValidPlayer() )
-	{
-		if( value != DEFPLAYER_HAIRCOLOUR )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->hairColour = value;
-}
-
-COLOUR CChar::GetBeardColour( void ) const
-{
-	COLOUR rVal = DEFPLAYER_BEARDCOLOUR;
-	if( IsValidPlayer() )
-		rVal = mPlayer->beardColour;
-	return rVal;
-}
-void CChar::SetBeardColour( COLOUR value )
-{
-	if( !IsValidPlayer() )
-	{
-		if( value != DEFPLAYER_BEARDCOLOUR )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->beardColour = value;
-}
-
 UI16 CChar::GetSkin( void ) const
 {
 	return GetColour();
@@ -1265,85 +911,6 @@ UI16 CChar::GetSkin( void ) const
 void CChar::SetSkin( UI16 value )
 {
 	SetColour( value );
-}
-
-UI16 CChar::GetOrgSkin( void ) const
-{
-	UI16 rVal = GetSkin();
-	if( IsValidPlayer() )
-		rVal = mPlayer->origSkin;
-	return rVal;
-}
-void CChar::SetOrgSkin( UI16 value )
-{
-	if( IsValidPlayer() )
-		mPlayer->origSkin = value;
-}
-
-SI16 CChar::GetFx( UI08 part ) const
-{
-	SI16 rVal = DEFNPC_WANDERAREA;
-	if( IsValidNPC() )
-	{
-		if( part < 2 )
-			rVal = mNPC->fx[part];
-	}
-	return rVal;
-}
-void CChar::SetFx( SI16 newVal, UI08 part )
-{
-	if( !IsValidNPC() )
-	{
-		if( newVal != DEFNPC_WANDERAREA )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-	{
-		if( part < 2 )
-			mNPC->fx[part] = newVal;
-	}
-}
-
-SI16 CChar::GetFy( UI08 part ) const
-{
-	SI16 rVal = DEFNPC_WANDERAREA;
-	if( IsValidNPC() )
-	{
-		if( part < 2 )
-			rVal = mNPC->fy[part];
-	}
-	return rVal;
-}
-void CChar::SetFy( SI16 newVal, UI08 part )
-{
-	if( !IsValidNPC() )
-	{
-		if( newVal != DEFNPC_WANDERAREA )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-	{
-		if( part < 2 )
-			mNPC->fy[part] = newVal;
-	}
-}
-
-SI08 CChar::GetFz( void ) const
-{
-	SI08 rVal = DEFNPC_FZ1;
-	if( IsValidNPC() )
-		rVal = mNPC->fz;
-	return rVal;
-}
-void CChar::SetFz( SI08 newVal )
-{
-	if( !IsValidNPC() )
-	{
-		if( newVal != DEFNPC_FZ1 )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->fz = newVal;
 }
 
 SI08 CChar::GetStealth( void ) const
@@ -1362,42 +929,6 @@ SI08 CChar::GetCell( void ) const
 void CChar::SetCell( SI08 newVal )
 {
 	cell = newVal;
-}
-
-SI08 CChar::GetNpcWander( void ) const
-{
-	SI08 rVal = DEFNPC_WANDER;
-	if( IsValidNPC() )
-		rVal = mNPC->wanderMode;
-	return rVal;
-}
-void CChar::SetNpcWander( SI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_WANDER )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->wanderMode = newValue;
-}
-
-SI08 CChar::GetOldNpcWander( void ) const
-{
-	SI08 rVal = DEFNPC_OLDWANDER;
-	if( IsValidNPC() )
-		rVal = mNPC->oldWanderMode;
-	return rVal;
-}
-void CChar::SetOldNpcWander( SI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_OLDWANDER )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->oldWanderMode = newValue;
 }
 
 UI08 CChar::GetRunning( void ) const
@@ -1476,36 +1007,12 @@ CChar *CChar::GetAttacker( void ) const
 {
 	return calcCharObjFromSer( attacker );
 }
-CChar *CChar::GetFTarg( void ) const
-{
-	CChar *rVal = NULL;
-	if( IsValidNPC() )
-		rVal = calcCharObjFromSer( mNPC->fTarg );
-	return rVal;
-}
 
 UI16 CChar::GetAdvObj( void ) const
 {
 	return advobj;
 }
 
-CChar *CChar::GetTrackingTarget( void ) const
-{
-	CChar *rVal = NULL;
-	if( IsValidPlayer() )
-		rVal = calcCharObjFromSer( mPlayer->trackingTarget );
-	return rVal;
-}
-CChar *CChar::GetTrackingTargets( UI08 targetNum ) const
-{
-	CChar *rVal = NULL;
-	if( IsValidPlayer() )
-	{
-		if( targetNum < mPlayer->trackingTargets.size() )
-			rVal = mPlayer->trackingTargets[targetNum];
-	}
-	return rVal;
-}
 RACEID CChar::GetRaceGate( void ) const
 {
 	return raceGate;
@@ -1531,196 +1038,27 @@ void CChar::SetAttacker( CChar *newValue )
 {
 	attacker = calcSerFromObj( newValue );
 }
-void CChar::SetFTarg( CChar *newTarg )
-{
-	if( !IsValidNPC() )
-	{
-		if( newTarg != NULL )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->fTarg = calcSerFromObj( newTarg );
-}
+
 void CChar::SetAdvObj( UI16 newValue )
 {
 	advobj = newValue;
 }
 
-void CChar::SetTrackingTarget( CChar *newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != NULL )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->trackingTarget = calcSerFromObj( newValue );
-}
 void CChar::SetRaceGate( RACEID newValue )
 {
 	raceGate = newValue;
-}
-void CChar::SetTrackingTargets( CChar *newValue, UI08 targetNum )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != NULL )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-	{
-		if( targetNum < mPlayer->trackingTargets.size() )
-			mPlayer->trackingTargets[targetNum] = newValue;
-	}
 }
 
 SI08 CChar::GetSpellCast( void ) const
 {
 	return spellCast;
 }
-SI16 CChar::GetSpAttack( void ) const
-{
-	SI16 rVal = DEFNPC_SPATTACK;
-	if( IsValidNPC() )
-		rVal = mNPC->spellAttack;
-	return rVal;
-}
-SI08 CChar::GetSpDelay( void ) const
-{
-	SI08 rVal = DEFNPC_SPADELAY;
-	if( IsValidNPC() )
-		rVal = mNPC->spellDelay;
-	return rVal;
-}
 
 void CChar::SetSpellCast( SI08 newValue )
 {
 	spellCast = newValue;
 }
-void CChar::SetSpAttack( SI16 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_SPATTACK )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->spellAttack = newValue;
-}
-void CChar::SetSpDelay( SI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_SPADELAY )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->spellDelay = newValue;
-}
 
-UI08 CChar::GetQuestType( void ) const
-{
-	UI08 rVal = DEFNPC_QUESTTYPE;
-	if( IsValidNPC() )
-		rVal = mNPC->questType;
-	return rVal;
-}
-UI08 CChar::GetQuestOrigRegion( void ) const
-{
-	UI08 rVal = DEFNPC_QUESTORIGREGION;
-	if( IsValidNPC() )
-		rVal = mNPC->questOrigRegion;
-	return rVal;
-}
-UI08 CChar::GetQuestDestRegion( void ) const
-{
-	UI08 rVal = DEFNPC_QUESTDESTREGION;
-	if( IsValidNPC() )
-		rVal = mNPC->questDestRegion;
-	return rVal;
-}
-
-void CChar::SetQuestDestRegion( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_QUESTDESTREGION )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->questDestRegion = newValue;
-}
-void CChar::SetQuestType( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_QUESTTYPE )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->questType = newValue;
-}
-void CChar::SetQuestOrigRegion( UI08 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_QUESTORIGREGION )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->questOrigRegion = newValue;
-}
-
-SI16 CChar::GetFleeAt( void ) const
-{
-	SI16 rVal = DEFNPC_FLEEAT;
-	if( IsValidNPC() )
-		rVal = mNPC->fleeAt;
-	return rVal;
-}
-SI16 CChar::GetReattackAt( void ) const
-{
-	SI16 rVal = DEFNPC_REATTACKAT;
-	if( IsValidNPC() )
-		rVal = mNPC->reAttackAt;
-	return rVal;
-}
-
-void CChar::SetFleeAt( SI16 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_FLEEAT )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->fleeAt = newValue;
-}
-void CChar::SetReattackAt( SI16 newValue )
-{
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_REATTACKAT )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-		mNPC->reAttackAt = newValue;
-}
-
-UI08 CChar::GetCommandLevel( void ) const
-{
-	UI08 rVal = DEFPLAYER_COMMANDLEVEL;
-	if( IsValidPlayer() )
-		rVal = mPlayer->commandLevel;
-	return rVal;
-}
-UI08 CChar::GetPostType( void ) const
-{
-	UI08 rVal = DEFPLAYER_POSTTYPE;
-	if( IsValidPlayer() )
-		rVal = mPlayer->postType;
-	return rVal;
-}
 UI16 CChar::GetPriv( void ) const
 {
 	return priv;
@@ -1733,26 +1071,7 @@ void CChar::SetPriv( UI16 newValue )
 {
 	priv = newValue;
 }
-void CChar::SetPostType( UI08 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_POSTTYPE )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->postType = newValue;
-}
-void CChar::SetCommandLevel( UI08 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_COMMANDLEVEL )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->commandLevel = newValue;
-}
+
 void CChar::SetTownpriv( SI08 newValue )
 {
 	townpriv = newValue;
@@ -1799,10 +1118,6 @@ void CChar::SetSkillLock( UI08 newSkillValue, UI08 skillToSet )
 	lockState[skillToSet] = newSkillValue;
 }
 
-UI16 CChar::GetDeaths( void ) const
-{
-	return deaths;
-}
 SI16 CChar::GetGuildNumber( void ) const
 {
 	return guildnumber;
@@ -1812,10 +1127,6 @@ UI08 CChar::GetFlag( void ) const
 	return flag;
 }
 
-void CChar::SetDeaths( UI16 newVal )
-{
-	deaths = newVal;
-}
 void CChar::SetFlag( UI08 newValue )
 {
 	flag = newValue;
@@ -1825,66 +1136,14 @@ void CChar::SetGuildNumber( SI16 newValue )
 	guildnumber = newValue;
 }
 
-SI16 CChar::GetCallNum( void ) const
-{
-	SI16 rVal = DEFPLAYER_CALLNUM;
-	if( IsValidPlayer() )
-		rVal = mPlayer->callNum;
-	return rVal;
-}
-SI16 CChar::GetPlayerCallNum( void ) const
-{
-	SI16 rVal = DEFPLAYER_PLAYERCALLNUM;
-	if( IsValidPlayer() )
-		rVal = mPlayer->playerCallNum;
-	return rVal;
-}
-
-void CChar::SetPlayerCallNum( SI16 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_PLAYERCALLNUM )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->playerCallNum = newValue;
-}
-void CChar::SetCallNum( SI16 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_CALLNUM )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->callNum = newValue;
-}
 SI08 CChar::GetFontType( void ) const
 {
 	return fonttype;
-}
-UI08 CChar::GetSquelched( void ) const
-{
-	UI08 rVal = DEFPLAYER_SQUELCHED;
-	if( IsValidPlayer() )
-		rVal = mPlayer->squelched;
-	return rVal;
 }
 
 void CChar::SetFontType( SI08 newType )
 {
 	fonttype = newType;
-}
-void CChar::SetSquelched( UI08 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_SQUELCHED )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->squelched = newValue;
 }
 
 bool CChar::IsGM( void ) const
@@ -2118,9 +1377,7 @@ void CChar::CopyData( CChar *target )
 		target->SetKarma( karma );
 		target->SetFame( fame );
 		target->SetKills( kills );
-		target->SetDeaths( deaths );
 		target->SetPackItem( packitem );
-		target->SetFixedLight( fixedlight );
 		target->SetWeight( weight );
 		target->SetDef( def );
 		target->SetTarg( GetTarg() );
@@ -2187,6 +1444,8 @@ void CChar::CopyData( CChar *target )
 		}
 		if( IsValidPlayer() )
 		{
+			target->SetDeaths( GetDeaths() );
+			target->SetFixedLight( GetFixedLight() );
 			target->SetGuarding( GetGuarding() );
 			target->SetOrgName( GetOrgName() );
 			target->SetRobe( GetRobe() );
@@ -2279,12 +1538,11 @@ void CChar::SendToSocket( CSocket *s )
  				rFlag = 3;
 		}
 		toSend.SetRepFlag( rFlag );
-		
 
-		for( UI08 counter = 0; counter < MAXLAYERS; ++counter )
+		for( LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter )
 		{
-			if( ValidateObject( itemLayers[counter] ) )
-				toSend.AddItem( itemLayers[counter] );
+			if( ValidateObject( lIter->second ) )
+				toSend.AddItem( lIter->second );
 		}
 
 		toSend.Finalize();
@@ -2353,83 +1611,6 @@ void CChar::ExposeToView( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::GetSpeechItem
-//|   Date        -  April 8th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the item related to the speech we're working on
-//|                  IE the item for name deed if we're renaming ourselves
-//o---------------------------------------------------------------------------o
-CItem *CChar::GetSpeechItem( void ) const
-{
-	CItem *rVal = NULL;
-	if( IsValidPlayer() )
-		rVal = mPlayer->speechItem;
-	return rVal;
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::GetSpeechMode
-//|   Date        -  April 8th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns speech mode information, as to what mode of speech
-//|                  we are in.  Valid values are found just below
-//|                  0 normal speech
-//|                  1 GM page
-//|                  2 Counselor page
-//|                  3 Player Vendor item pricing
-//|                  4 Player Vendor item describing
-//|                  5 Key renaming
-//|                  6 Name deed
-//|                  7 Rune renaming
-//|                  8 Sign renaming
-//|                  9 JS Speech
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetSpeechMode( void ) const
-{
-	UI08 rVal = DEFPLAYER_SPEECHMODE;
-	if( IsValidPlayer() )
-		rVal = mPlayer->speechMode;
-	return rVal;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void CChar::SetSpeechItem
-//|	Date		-	April 8th, 2000
-//|	Programmer	-	Abaddon
-//o---------------------------------------------------------------------------o
-//|	Purpose     -	Stores the the item that is  likely to be deleted on 
-//|					switching out of our current mode
-//o---------------------------------------------------------------------------o
-void CChar::SetSpeechItem( CItem *newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != NULL )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->speechItem = newValue;
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::SetSpeechMode
-//|   Date        -  April 7th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the mode of speech that will be used next time
-//o---------------------------------------------------------------------------o
-void CChar::SetSpeechMode( UI08 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_SPEECHMODE )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->speechMode = newValue;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  void Update( void ) const
 //|   Date        -  13 March 2001
 //|   Programmer  -  Abaddon
@@ -2459,12 +1640,13 @@ void CChar::Update( CSocket *mSock )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the item at layer Layer on paperdoll
 //o---------------------------------------------------------------------------o
-CItem *CChar::GetItemAtLayer( UI08 Layer ) const
+CItem *CChar::GetItemAtLayer( UI08 Layer )
 {
-	CItem *rvalue = NULL;
-	if( Layer < MAXLAYERS )
-		rvalue = itemLayers[Layer];
-	return rvalue;
+	CItem *rVal = NULL;
+	LAYERLIST_ITERATOR lIter = itemLayers.find( Layer );
+	if( lIter != itemLayers.end() )
+		rVal = lIter->second;
+	return rVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2483,7 +1665,7 @@ bool CChar::WearItem( CItem *toWear )
 	{
 		if( tLayer < MAXLAYERS )
 		{
-			if( ValidateObject( itemLayers[tLayer] ) )
+			if( ValidateObject( GetItemAtLayer( tLayer ) ) )
 			{
 #if defined( UOX_DEBUG_MODE )
 				Console.Warning( 2, "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
@@ -2524,7 +1706,7 @@ bool CChar::WearItem( CItem *toWear )
 bool CChar::TakeOffItem( UI08 Layer )
 {
 	bool rvalue = false;
-	if( Layer < MAXLAYERS && ValidateObject( itemLayers[Layer] ) )
+	if( Layer < MAXLAYERS && ValidateObject( GetItemAtLayer( Layer ) ) )
 	{
 		if( Layer == 0x15 )	// It's our pack!
 			SetPackItem( NULL );
@@ -2560,8 +1742,12 @@ bool CChar::TakeOffItem( UI08 Layer )
 //o---------------------------------------------------------------------------o
 CItem *CChar::FirstItem( void )
 {
-	layerCtr = 0;
-	return itemLayers[layerCtr];
+	CItem *rVal = NULL;
+
+	layerCtr = itemLayers.begin();
+	if( !FinishedItems() )
+		rVal = layerCtr->second;
+	return rVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2573,11 +1759,11 @@ CItem *CChar::FirstItem( void )
 //o---------------------------------------------------------------------------o
 CItem *CChar::NextItem( void )
 {
-	CItem *rvalue = NULL;
+	CItem *rVal = NULL;
 	++layerCtr;
-	if( layerCtr < MAXLAYERS )
-		rvalue = itemLayers[layerCtr];
-	return rvalue;
+	if( !FinishedItems() )
+		rVal = layerCtr->second;
+	return rVal;
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool FinishedItems( void ) const
@@ -2588,7 +1774,7 @@ CItem *CChar::NextItem( void )
 //o---------------------------------------------------------------------------o
 bool CChar::FinishedItems( void )
 {
-	return ( layerCtr >= MAXLAYERS );
+	return ( layerCtr == itemLayers.end() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2674,7 +1860,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
-	dumping << "FixedLight=" << (SI16)GetFixedLight() << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
@@ -2731,7 +1916,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 		dumping << "[END]" << std::endl;
 	}
 	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;  
-	dumping << "Deaths=" << GetDeaths() << std::endl;
 	dumping << "FontType=" << (SI16)GetFontType() << std::endl;
 	dumping << "TownTitle=" << (GetTownTitle()?1:0) << std::endl;
 	//-------------------------------------------------------------------------------------------
@@ -2763,7 +1947,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "NpcAIType=" << aiType << std::endl;
 	dumping << "Taming=" << taming << std::endl;
 	dumping << "HoldG=" << goldOnHand << std::endl;
-	dumping << "Split=" << (SI16)splitSection << "," << (SI16)splitChance << std::endl;
+	dumping << "Split=" << (SI16)splitNum << "," << (SI16)splitChance << std::endl;
 	dumping << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << std::endl;
 	dumping << "NpcWander=" << (SI16)wanderMode << "," << (SI16)oldWanderMode << std::endl;
 	dumping << "SPAttack=" << spellAttack << "," << (SI16)spellDelay << std::endl;
@@ -2789,6 +1973,8 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << std::endl;
 	dumping << "CommandLevel=" << std::dec << (SI16)commandLevel << std::endl;	// command level
 	dumping << "Squelched=" << (SI16)squelched << std::endl;
+	dumping << "Deaths=" << deaths << std::endl;
+	dumping << "FixedLight=" << (SI16)fixedLight << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2816,12 +2002,12 @@ bool CChar::Save( std::ofstream &outStream )
 				DumpBody( outStream );
 				DumpFooter( outStream );
 
-				for( UI08 tempCounter = 0; tempCounter < MAXLAYERS; ++tempCounter )
+				for( LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter )
 				{
-					if( ValidateObject( itemLayers[tempCounter] ) )
+					if( ValidateObject( lIter->second ) )
 					{
-						if( itemLayers[tempCounter]->ShouldSave() )
-							itemLayers[tempCounter]->Save( outStream );
+						if( lIter->second->ShouldSave() )
+							lIter->second->Save( outStream );
 					}
 				}
 				rvalue = true;
@@ -2829,46 +2015,6 @@ bool CChar::Save( std::ofstream &outStream )
 		}
 	}
 	return rvalue;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	ACCOUNTSBLOCK &CChar::GetAccount( void )
-//|	Date			-	3/13/2003
-//|	Developers		-	Abaddon / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Returns the account, if any, associated with the character
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK& CChar::GetAccount( void ) 
-{
-	UI16 rVal = AB_INVALID_ID;
-	if( IsValidPlayer() )
-		rVal = mPlayer->accountNum;
-
-	return Accounts->GetAccountByID( rVal );
-}
-//
-
-UI16 CChar::GetAccountNum( void ) const
-{
-	UI16 rVal = AB_INVALID_ID;
-	if( IsValidPlayer() )
-		rVal = mPlayer->accountNum;
-	return rVal;
-}
-
-void CChar::SetAccountNum( UI16 newVal )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newVal != DEFPLAYER_ACCOUNTNUM )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->accountNum = newVal;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2902,21 +2048,6 @@ CDataList< CChar * > *CChar::GetPetList( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  CHARLIST *GetFriendList( void )
-//|   Date        -  20 July 2001
-//|   Programmer  -  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the characters list of friends
-//o---------------------------------------------------------------------------o
-CHARLIST *CChar::GetFriendList( void )
-{
-	CHARLIST *rVal = NULL;
-	if( IsValidNPC() )
-		rVal = &mNPC->petFriends;
-	return rVal;
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  ITEMLIST *GetOwnedItems( void )
 //|   Date        -  13 March 2001
 //|   Programmer  -  Abaddon
@@ -2926,57 +2057,6 @@ CHARLIST *CChar::GetFriendList( void )
 ITEMLIST *CChar::GetOwnedItems( void )
 {
 	return &ownedItems;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void AddFriend( CChar *toAdd ) const
-//|   Date        -  20 July 2001
-//|   Programmer  -  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Adds the friend toAdd to the player's friends list
-//|					 ensuring it is already not on it
-//o---------------------------------------------------------------------------o
-void CChar::AddFriend( CChar *toAdd )
-{
-	if( !IsValidNPC() )
-	{
-		if( toAdd != NULL )
-			CreateNPC();
-	}
-	if( IsValidNPC() )
-	{
-		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
-		while( i != mNPC->petFriends.end() )
-		{
-			if( (*i) == toAdd )
-				break;
-			++i;
-		}
-		if( i == mNPC->petFriends.end() )
-			mNPC->petFriends.push_back( toAdd );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void RemoveFriemd( CChar *toRemove )
-//|   Date        -  20 July 2001
-//|   Programmer  -  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Removes the friend toRemove from the pets friends list
-//o---------------------------------------------------------------------------o
-void CChar::RemoveFriend( CChar *toRemove )
-{
-	if( IsValidNPC() )
-	{
-		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
-		{
-			if( (*rIter) == toRemove )
-			{
-				mNPC->petFriends.erase( rIter );
-				break;
-			}
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -3913,44 +2993,6 @@ void CChar::SkillUsed( bool value, UI08 skillNum )
 	}
 }
 
-UI08 CChar::PopDirection( void )
-{
-	UI08 rVal = 0;
-	if( IsValidNPC() )
-	{
-		if( !mNPC->pathToFollow.empty() )
-		{
-			rVal = mNPC->pathToFollow.front();
-			mNPC->pathToFollow.pop();
-		}
-	}
-	return rVal;
-}
-void CChar::PushDirection( UI08 newDir )
-{
-	if( !IsValidNPC() )
-		CreateNPC();
-
-	mNPC->pathToFollow.push( newDir );
-}
-
-bool CChar::StillGotDirs( void ) const
-{
-	bool rVal = false;
-	if( IsValidNPC() )
-		rVal = !mNPC->pathToFollow.empty();
-	return rVal;
-}
-
-void CChar::FlushPath( void )
-{
-	if( IsValidNPC() )
-	{
-		while( StillGotDirs() )
-			PopDirection();
-	}
-}
-
 void CChar::PostLoadProcessing( void )
 {
 	CBaseObject::PostLoadProcessing();
@@ -4042,73 +3084,6 @@ void CChar::SetFlagNeutral( void )
 	flag |= 0x20;
 	flag &= 0x38;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::SetSpeechID
-//|   Date        -  January 20th, 2002
-//|   Programmer  -  Dark-Storm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the ID for the JS Speech Input
-//o---------------------------------------------------------------------------o
-void CChar::SetSpeechID( UI08 newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != DEFPLAYER_SPEECHID )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->speechID = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::SetSpeechCallback
-//|   Date        -  January 20th, 2002
-//|   Programmer  -  Dark-Storm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the Callback for the onSpeechInput function
-//o---------------------------------------------------------------------------o
-void CChar::SetSpeechCallback( cScript *newValue )
-{
-	if( !IsValidPlayer() )
-	{
-		if( newValue != NULL )
-			CreatePlayer();
-	}
-	if( IsValidPlayer() )
-		mPlayer->speechCallback = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::GetSpeechID
-//|   Date        -  January 20th, 2002
-//|   Programmer  -  Dark-Storm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Gets the ID for the JS Speech Input
-//o---------------------------------------------------------------------------o
-UI08 CChar::GetSpeechID( void ) const
-{
-	UI08 rVal = DEFPLAYER_SPEECHID;
-	if( IsValidPlayer() )
-		rVal = mPlayer->speechID;
-	return rVal;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CChar::GetSpeechCallback
-//|   Date        -  January 20th, 2002
-//|   Programmer  -  Dark-Storm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Gets the Callback for the onSpeechInput function
-//o---------------------------------------------------------------------------o
-cScript *CChar::GetSpeechCallback( void ) const
-{
-	cScript *rVal = NULL;
-	if( IsValidPlayer() )
-		rVal = mPlayer->speechCallback;
-	return rVal;
-}
-
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool CChar::isHuman( void )
@@ -4624,6 +3599,1261 @@ void CChar::Delete( void )
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );
+}
+
+// Player Only Functions
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	ACCOUNTSBLOCK& Account()
+//|	Date			-	1/14/2003 6:17:45 AM
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Sets and Returns the ACCOUNTSBLOCK associated with this player
+//o--------------------------------------------------------------------------o
+void CChar::SetAccount( ACCOUNTSBLOCK& actbAccount )
+{
+	if( !IsValidPlayer() )
+	{
+		if( actbAccount.wAccountIndex != DEFPLAYER_ACCOUNTNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->accountNum = actbAccount.wAccountIndex;
+}
+ACCOUNTSBLOCK& CChar::GetAccount( void ) 
+{
+	UI16 rVal = AB_INVALID_ID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->accountNum;
+
+	return Accounts->GetAccountByID( rVal );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	UI16 AccountNum()
+//|	Date			-	1/14/2003 6:17:45 AM
+//|	Developers		-	Abaddon / EviLDeD
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Sets and Returns the account number associated with this player
+//o--------------------------------------------------------------------------o
+UI16 CChar::GetAccountNum( void ) const
+{
+	UI16 rVal = AB_INVALID_ID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->accountNum;
+	return rVal;
+}
+void CChar::SetAccountNum( UI16 newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != DEFPLAYER_ACCOUNTNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->accountNum = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL Robe() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players death robe
+//o---------------------------------------------------------------------------o
+SERIAL CChar::GetRobe( void ) const
+{
+	SERIAL rVal = DEFPLAYER_ROBE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->robe;
+	return rVal;
+}
+void CChar::SetRobe( SERIAL newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_ROBE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->robe = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  std::string LastOn() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Time player was last online
+//o---------------------------------------------------------------------------o
+std::string CChar::GetLastOn( void ) const
+{
+	std::string rVal = "";
+	if( IsValidPlayer() )
+		rVal = mPlayer->lastOn;
+	return rVal;
+}
+void CChar::SetLastOn( std::string newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( !newValue.empty() )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->lastOn = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  std::string OrgName() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players original name
+//o---------------------------------------------------------------------------o
+std::string CChar::GetOrgName( void ) const
+{
+	std::string rVal = "";
+	if( IsValidPlayer() )
+		rVal = mPlayer->origName;
+	return rVal;
+}
+void CChar::SetOrgName( std::string newName )
+{
+	if( !IsValidPlayer() )
+	{
+		if( !newName.empty() )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->origName = newName;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 OrgID() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players original ID
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetOrgID( void ) const
+{
+	UI16 rVal = GetID();
+	if( IsValidPlayer() )
+		rVal = mPlayer->origID;
+	return rVal;
+}
+void CChar::SetOrgID( UI16 value )
+{
+	if( IsValidPlayer() )
+		mPlayer->origID = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 OrgSkin() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players original skin
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetOrgSkin( void ) const
+{
+	UI16 rVal = GetSkin();
+	if( IsValidPlayer() )
+		rVal = mPlayer->origSkin;
+	return rVal;
+}
+void CChar::SetOrgSkin( UI16 value )
+{
+	if( IsValidPlayer() )
+		mPlayer->origSkin = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 HairStyle() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players default hairstyle
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetHairStyle( void ) const
+{
+	UI16 rVal = DEFPLAYER_HAIRSTYLE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->hairStyle;
+	return rVal;
+}
+void CChar::SetHairStyle( UI16 value )
+{
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_HAIRSTYLE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->hairStyle = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 BeardStyle() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players default beardstyle
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetBeardStyle( void ) const
+{
+	UI16 rVal = DEFPLAYER_BEARDSTYLE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->beardStyle;
+	return rVal;
+}
+void CChar::SetBeardStyle( UI16 value )
+{
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_BEARDSTYLE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->beardStyle = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  COLOUR HairColour() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players default haircolour
+//o---------------------------------------------------------------------------o
+COLOUR CChar::GetHairColour( void ) const
+{
+	COLOUR rVal = DEFPLAYER_HAIRCOLOUR;
+	if( IsValidPlayer() )
+		rVal = mPlayer->hairColour;
+	return rVal;
+}
+void CChar::SetHairColour( COLOUR value )
+{
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_HAIRCOLOUR )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->hairColour = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  COLOUR BeardColour() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players default beardcolour
+//o---------------------------------------------------------------------------o
+COLOUR CChar::GetBeardColour( void ) const
+{
+	COLOUR rVal = DEFPLAYER_BEARDCOLOUR;
+	if( IsValidPlayer() )
+		rVal = mPlayer->beardColour;
+	return rVal;
+}
+void CChar::SetBeardColour( COLOUR value )
+{
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_BEARDCOLOUR )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->beardColour = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CChar * TrackingTarget() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players selected tracking target
+//o---------------------------------------------------------------------------o
+CChar *CChar::GetTrackingTarget( void ) const
+{
+	CChar *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = calcCharObjFromSer( mPlayer->trackingTarget );
+	return rVal;
+}
+void CChar::SetTrackingTarget( CChar *newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->trackingTarget = calcSerFromObj( newValue );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CChar * TrackingTargets( UI08 targetNum ) 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  List of possible tracking targets
+//o---------------------------------------------------------------------------o
+CChar *CChar::GetTrackingTargets( UI08 targetNum ) const
+{
+	CChar *rVal = NULL;
+	if( IsValidPlayer() )
+	{
+		if( targetNum < mPlayer->trackingTargets.size() )
+			rVal = mPlayer->trackingTargets[targetNum];
+	}
+	return rVal;
+}
+void CChar::SetTrackingTargets( CChar *newValue, UI08 targetNum )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+	{
+		if( targetNum < mPlayer->trackingTargets.size() )
+			mPlayer->trackingTargets[targetNum] = newValue;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 CommandLevel() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players command level
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetCommandLevel( void ) const
+{
+	UI08 rVal = DEFPLAYER_COMMANDLEVEL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->commandLevel;
+	return rVal;
+}
+void CChar::SetCommandLevel( UI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_COMMANDLEVEL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->commandLevel = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 PostType() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players messageboard posting level
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetPostType( void ) const
+{
+	UI08 rVal = DEFPLAYER_POSTTYPE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->postType;
+	return rVal;
+}
+void CChar::SetPostType( UI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_POSTTYPE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->postType = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 CallNum() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  GM or Counsellors currently active call number
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetCallNum( void ) const
+{
+	SI16 rVal = DEFPLAYER_CALLNUM;
+	if( IsValidPlayer() )
+		rVal = mPlayer->callNum;
+	return rVal;
+}
+void CChar::SetCallNum( SI16 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_CALLNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->callNum = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 PlayerCallNum() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players call number in the GM/CNS Queue
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetPlayerCallNum( void ) const
+{
+	SI16 rVal = DEFPLAYER_PLAYERCALLNUM;
+	if( IsValidPlayer() )
+		rVal = mPlayer->playerCallNum;
+	return rVal;
+}
+void CChar::SetPlayerCallNum( SI16 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_PLAYERCALLNUM )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->playerCallNum = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 Squelched() 
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Players squelch status
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetSquelched( void ) const
+{
+	UI08 rVal = DEFPLAYER_SQUELCHED;
+	if( IsValidPlayer() )
+		rVal = mPlayer->squelched;
+	return rVal;
+}
+void CChar::SetSquelched( UI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SQUELCHED )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->squelched = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CItem * SpeechItem()
+//|   Date        -  April 8th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Item related to the speech we're working on
+//|                  IE the item for name deed if we're renaming ourselves
+//o---------------------------------------------------------------------------o
+CItem *CChar::GetSpeechItem( void ) const
+{
+	CItem *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechItem;
+	return rVal;
+}
+void CChar::SetSpeechItem( CItem *newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechItem = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 SpeechMode()
+//|   Date        -  April 8th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Speech mode information, as to what mode of speech
+//|                  we are in.  Valid values are found just below
+//|                  0 normal speech
+//|                  1 GM page
+//|                  2 Counselor page
+//|                  3 Player Vendor item pricing
+//|                  4 Player Vendor item describing
+//|                  5 Key renaming
+//|                  6 Name deed
+//|                  7 Rune renaming
+//|                  8 Sign renaming
+//|                  9 JS Speech
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetSpeechMode( void ) const
+{
+	UI08 rVal = DEFPLAYER_SPEECHMODE;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechMode;
+	return rVal;
+}
+void CChar::SetSpeechMode( UI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SPEECHMODE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechMode = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 SpeechID()
+//|   Date        -  January 20th, 2002
+//|   Programmer  -  Dark-Storm
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The ID for the JS Speech Input
+//o---------------------------------------------------------------------------o
+void CChar::SetSpeechID( UI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_SPEECHID )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechID = newValue;
+}
+UI08 CChar::GetSpeechID( void ) const
+{
+	UI08 rVal = DEFPLAYER_SPEECHID;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechID;
+	return rVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  cScript * SpeechCallback()
+//|   Date        -  January 20th, 2002
+//|   Programmer  -  Dark-Storm
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Callback for the onSpeechInput function
+//o---------------------------------------------------------------------------o
+cScript *CChar::GetSpeechCallback( void ) const
+{
+	cScript *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->speechCallback;
+	return rVal;
+}
+void CChar::SetSpeechCallback( cScript *newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->speechCallback = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 FixedLight()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Fixed light level of the character
+//|                  255 is off
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetFixedLight( void ) const
+{
+	UI08 rVal = DEFPLAYER_FIXEDLIGHT;
+	if( IsValidPlayer() )
+		rVal = mPlayer->fixedLight;
+	return rVal;
+}
+void CChar::SetFixedLight( UI08 newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != DEFPLAYER_FIXEDLIGHT )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->fixedLight = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 Deaths()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Total number of deaths a player has
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetDeaths( void ) const
+{
+	UI16 rVal = DEFPLAYER_DEATHS;
+	if( IsValidPlayer() )
+		rVal = mPlayer->deaths;
+	return rVal;
+}
+void CChar::SetDeaths( UI16 newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != DEFPLAYER_DEATHS )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->deaths = newVal;
+}
+
+// NPC Only Functions
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 NPCAiType()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  AI type of the NPC
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetNPCAiType( void ) const
+{
+	SI16 rVal = DEFNPC_AITYPE;
+	if( IsValidNPC() )
+		rVal = mNPC->aiType;
+	return rVal;
+}
+void CChar::SetNPCAiType( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_AITYPE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->aiType = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL Guarding()
+//|   Date        -  Unknown
+//|   Programmer  -  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  SERIAL of the object the character is guarding
+//o---------------------------------------------------------------------------o
+CBaseObject *CChar::GetGuarding( void ) const
+{
+	CBaseObject *rVal = DEFNPC_PETGUARDING;
+	if( IsValidNPC() )
+		rVal = mNPC->petGuarding;
+	return rVal;
+}
+void CChar::SetGuarding( CBaseObject *newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_PETGUARDING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->petGuarding = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 Taming()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Minimum skill required to tame the character
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetTaming( void ) const
+{
+	SI16 rVal = DEFNPC_TAMING;
+	if( IsValidNPC() )
+		rVal = mNPC->taming;
+	return rVal;
+}
+void CChar::SetTaming( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_TAMING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->taming = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 TrainingPlayerIn()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Skill the player is being trained in. 255 is no training
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetTrainingPlayerIn( void ) const
+{
+	UI08 rVal = DEFNPC_TRAININGPLAYERIN;
+	if( IsValidNPC() )
+		rVal = mNPC->trainingPlayerIn;
+	return rVal;
+}
+void CChar::SetTrainingPlayerIn( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_TRAININGPLAYERIN )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->trainingPlayerIn = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI32 HoldG()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Amount of gold being held by a Player Vendor
+//o---------------------------------------------------------------------------o
+UI32 CChar::GetHoldG( void ) const
+{
+	UI32 rVal = DEFNPC_HOLDG;
+	if( IsValidNPC() )
+		rVal = mNPC->goldOnHand;
+	return rVal;
+}
+void CChar::SetHoldG( UI32 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_HOLDG )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->goldOnHand = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 Split()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Split level of the character
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetSplit( void ) const
+{
+	UI08 rVal = DEFNPC_SPLIT;
+	if( IsValidNPC() )
+		rVal = mNPC->splitNum;
+	return rVal;
+}
+void CChar::SetSplit( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPLIT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->splitNum = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 SplitChance()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The chance of an NPC splitting
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetSplitChance( void ) const
+{
+	UI08 rVal = DEFNPC_SPLITCHANCE;
+	if( IsValidNPC() )
+		rVal = mNPC->splitChance;
+	return rVal;
+}
+void CChar::SetSplitChance( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPLITCHANCE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->splitChance = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 Fx( UI08 part )
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  x1 and x2 boundry of an npc wander area
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetFx( UI08 part ) const
+{
+	SI16 rVal = DEFNPC_WANDERAREA;
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			rVal = mNPC->fx[part];
+	}
+	return rVal;
+}
+void CChar::SetFx( SI16 newVal, UI08 part )
+{
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_WANDERAREA )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			mNPC->fx[part] = newVal;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 Fy( UI08 part )
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  y1 and y2 boundry of an npc wander area
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetFy( UI08 part ) const
+{
+	SI16 rVal = DEFNPC_WANDERAREA;
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			rVal = mNPC->fy[part];
+	}
+	return rVal;
+}
+void CChar::SetFy( SI16 newVal, UI08 part )
+{
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_WANDERAREA )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		if( part < 2 )
+			mNPC->fy[part] = newVal;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 Fz()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  z of an npc wander area
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetFz( void ) const
+{
+	SI08 rVal = DEFNPC_FZ1;
+	if( IsValidNPC() )
+		rVal = mNPC->fz;
+	return rVal;
+}
+void CChar::SetFz( SI08 newVal )
+{
+	if( !IsValidNPC() )
+	{
+		if( newVal != DEFNPC_FZ1 )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fz = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 NpcWander()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC Wander mode
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetNpcWander( void ) const
+{
+	SI08 rVal = DEFNPC_WANDER;
+	if( IsValidNPC() )
+		rVal = mNPC->wanderMode;
+	return rVal;
+}
+void CChar::SetNpcWander( SI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_WANDER )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->wanderMode = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 OldNpcWander()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Previous NPC Wander mode
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetOldNpcWander( void ) const
+{
+	SI08 rVal = DEFNPC_OLDWANDER;
+	if( IsValidNPC() )
+		rVal = mNPC->oldWanderMode;
+	return rVal;
+}
+void CChar::SetOldNpcWander( SI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_OLDWANDER )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->oldWanderMode = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CChar * FTarg()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC Follow target
+//o---------------------------------------------------------------------------o
+CChar *CChar::GetFTarg( void ) const
+{
+	CChar *rVal = NULL;
+	if( IsValidNPC() )
+		rVal = calcCharObjFromSer( mNPC->fTarg );
+	return rVal;
+}
+void CChar::SetFTarg( CChar *newTarg )
+{
+	if( !IsValidNPC() )
+	{
+		if( newTarg != NULL )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fTarg = calcSerFromObj( newTarg );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 SpAttack()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC's Spell Attack setting
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetSpAttack( void ) const
+{
+	SI16 rVal = DEFNPC_SPATTACK;
+	if( IsValidNPC() )
+		rVal = mNPC->spellAttack;
+	return rVal;
+}
+void CChar::SetSpAttack( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPATTACK )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->spellAttack = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 SpDelay()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC's Spell Delay setting
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetSpDelay( void ) const
+{
+	SI08 rVal = DEFNPC_SPADELAY;
+	if( IsValidNPC() )
+		rVal = mNPC->spellDelay;
+	return rVal;
+}
+void CChar::SetSpDelay( SI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_SPADELAY )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->spellDelay = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 QuestType()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC's Quest Type
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetQuestType( void ) const
+{
+	UI08 rVal = DEFNPC_QUESTTYPE;
+	if( IsValidNPC() )
+		rVal = mNPC->questType;
+	return rVal;
+}
+void CChar::SetQuestType( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTTYPE )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questType = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 QuestOrigRegion()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC's Quest Origin Region
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetQuestOrigRegion( void ) const
+{
+	UI08 rVal = DEFNPC_QUESTORIGREGION;
+	if( IsValidNPC() )
+		rVal = mNPC->questOrigRegion;
+	return rVal;
+}
+void CChar::SetQuestOrigRegion( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTORIGREGION )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questOrigRegion = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 QuestDestRegion()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  NPC's Quest Destination Region
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetQuestDestRegion( void ) const
+{
+	UI08 rVal = DEFNPC_QUESTDESTREGION;
+	if( IsValidNPC() )
+		rVal = mNPC->questDestRegion;
+	return rVal;
+}
+void CChar::SetQuestDestRegion( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_QUESTDESTREGION )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->questDestRegion = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 FleeAt()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Health value at which an NPC will turn tail and run.
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetFleeAt( void ) const
+{
+	SI16 rVal = DEFNPC_FLEEAT;
+	if( IsValidNPC() )
+		rVal = mNPC->fleeAt;
+	return rVal;
+}
+void CChar::SetFleeAt( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_FLEEAT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->fleeAt = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 ReattackAt()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Health value at which an NPC will being fighting again.
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetReattackAt( void ) const
+{
+	SI16 rVal = DEFNPC_REATTACKAT;
+	if( IsValidNPC() )
+		rVal = mNPC->reAttackAt;
+	return rVal;
+}
+void CChar::SetReattackAt( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_REATTACKAT )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->reAttackAt = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 Push/Pop Direction()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Queue of directions for NPC
+//o---------------------------------------------------------------------------o
+UI08 CChar::PopDirection( void )
+{
+	UI08 rVal = 0;
+	if( IsValidNPC() )
+	{
+		if( !mNPC->pathToFollow.empty() )
+		{
+			rVal = mNPC->pathToFollow.front();
+			mNPC->pathToFollow.pop();
+		}
+	}
+	return rVal;
+}
+void CChar::PushDirection( UI08 newDir )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	mNPC->pathToFollow.push( newDir );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool StillGotDirs()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Check if Direction Queue is empty
+//o---------------------------------------------------------------------------o
+bool CChar::StillGotDirs( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+		rVal = !mNPC->pathToFollow.empty();
+	return rVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  FlushPath()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Empty the Queue of Directions.
+//o---------------------------------------------------------------------------o
+void CChar::FlushPath( void )
+{
+	if( IsValidNPC() )
+	{
+		while( StillGotDirs() )
+			PopDirection();
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CHARLIST *GetFriendList( void )
+//|   Date        -  20 July 2001
+//|   Programmer  -  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the characters list of friends
+//o---------------------------------------------------------------------------o
+CHARLIST *CChar::GetFriendList( void )
+{
+	CHARLIST *rVal = NULL;
+	if( IsValidNPC() )
+		rVal = &mNPC->petFriends;
+	return rVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void AddFriend( CChar *toAdd ) const
+//|   Date        -  20 July 2001
+//|   Programmer  -  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Adds the friend toAdd to the player's friends list
+//|					 ensuring it is already not on it
+//o---------------------------------------------------------------------------o
+void CChar::AddFriend( CChar *toAdd )
+{
+	if( !IsValidNPC() )
+	{
+		if( toAdd != NULL )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+	{
+		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
+		while( i != mNPC->petFriends.end() )
+		{
+			if( (*i) == toAdd )
+				break;
+			++i;
+		}
+		if( i == mNPC->petFriends.end() )
+			mNPC->petFriends.push_back( toAdd );
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void RemoveFriemd( CChar *toRemove )
+//|   Date        -  20 July 2001
+//|   Programmer  -  Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Removes the friend toRemove from the pets friends list
+//o---------------------------------------------------------------------------o
+void CChar::RemoveFriend( CChar *toRemove )
+{
+	if( IsValidNPC() )
+	{
+		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
+		{
+			if( (*rIter) == toRemove )
+			{
+				mNPC->petFriends.erase( rIter );
+				break;
+			}
+		}
+	}
 }
 
 }

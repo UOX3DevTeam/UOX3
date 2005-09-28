@@ -29,6 +29,9 @@ enum cC_TID
 class CChar : public CBaseObject
 {
 private:
+	typedef std::map< UI08, CItem * >			LAYERLIST;
+	typedef std::map< UI08, CItem * >::iterator	LAYERLIST_ITERATOR;
+
 	struct NPCValues_st
 	{
 						NPCValues_st();
@@ -40,7 +43,7 @@ private:
 		UI08			trainingPlayerIn;
 		UI32			goldOnHand;
 
-		UI08			splitSection;
+		UI08			splitNum;
 		UI08			splitChance;
 
 		SI16			fx[2]; //NPC Wander Point x
@@ -95,6 +98,8 @@ private:
 		SI16		playerCallNum;	// Players call number in GM or Counsellor Queue
 
 		UI08		squelched; // zippy  - squelching
+		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
+		UI16		deaths;
 
 		CItem *		speechItem;
 		UI08		speechMode;
@@ -118,7 +123,6 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
-	UI08		fixedlight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 	UI08		town;       // Matches Region number in regions.scp
 	UI08		regionNum;
 
@@ -160,14 +164,10 @@ protected:
 	UI16		atrophy[INTELLECT+1];
 	UI08		lockState[INTELLECT+1];	// state of the skill locks
 
-	UI16		deaths;
 	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange 20=Neutral	// should it not be 0x10??? sounds like we're trying to do
-		
-	bool		Saved;
-	long		SavedAt;
 
-	CItem *		itemLayers[MAXLAYERS];
-	UI08		layerCtr;
+	LAYERLIST			itemLayers;
+	LAYERLIST_ITERATOR	layerCtr;
 	CDataList< CChar * >	petsControlled;
 	ITEMLIST	ownedItems;
 	UI32		skillUsed[2];	// no more than 64 skills
@@ -208,10 +208,8 @@ public:
 	void		RemoveOwnedItem( CItem *toRemove );
 
 	SI08		GetHunger( void ) const;
-	UI08		GetFixedLight( void ) const;
 	UI08		GetTown( void ) const;
 
-	void		SetFixedLight( UI08 newVal );
 	void		SetHunger( SI08 newValue );
 	void		SetTown( UI08 newValue );
 
@@ -393,7 +391,7 @@ public:
 	virtual void	Update( CSocket *mSock = NULL );
 	virtual void	SendToSocket( CSocket *s );
 
-	CItem *			GetItemAtLayer( UI08 Layer ) const;
+	CItem *			GetItemAtLayer( UI08 Layer );
 	bool			WearItem( CItem *toWear );
 	bool			TakeOffItem( UI08 Layer );
 
@@ -600,6 +598,8 @@ public:
 	void		SetHairStyle( UI16 value );
 	void		SetBeardStyle( UI16 value );
 
+	UI08		GetFixedLight( void ) const;
+	void		SetFixedLight( UI08 newVal );
 };
 
 }

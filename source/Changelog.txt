@@ -1,3 +1,8 @@
+9/27/2005 - giwo (0.98-3.0m [3.1 BETA])
+	Moved some more variables from Base Characters to Players.
+	Organized an documented many functions in CChar.
+	Changed itemLayers array to a std::map.
+
 9/27/2005 - giwo (0.98-3.0l [3.1 BETA])
 	Greatly reduced the memory taken by NPC's and Players.
 	Fixed an issue causing ORE_LISTs not to load in properly.
