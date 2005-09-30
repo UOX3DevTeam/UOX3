@@ -287,7 +287,7 @@ static JSPropertySpec CItemProps[] =
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
-	{ "murdertime",		CIP_MURDERTIME,		JSPROP_ENUMANDPERM },
+	{ "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM },
 
 	{ "isNewbie",		CIP_ISNEWBIE,		JSPROP_ENUMANDPERM },
 	{ "isDispellable",	CIP_ISDISPELLABLE,	JSPROP_ENUMANDPERM },

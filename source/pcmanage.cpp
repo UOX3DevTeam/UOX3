@@ -745,7 +745,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack )
 	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
 	iCorpse->SetTempVar( CITV_MOREY, 2, mChar.isHuman() );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
-	iCorpse->SetMurderTime( cwmWorldState->GetUICurrentTime() );
+	iCorpse->SetTempTimer( cwmWorldState->GetUICurrentTime() );
 	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ));
 	if( !mChar.IsNpc() )
 	{
@@ -780,7 +780,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 		if( !ValidateObject( j ) )
 			continue;
 
-		UI08 iLayer = j->GetLayer();
+		ItemLayers iLayer = j->GetLayer();
 
 		switch( iLayer )
 		{

@@ -4,22 +4,6 @@
 namespace UOX
 {
 
-struct GumpInfo
-{
-	std::string name;
-	long int value;
-	UI08 type;
-	std::string stringValue;
-	// acceptable type values
-	// 0 -> straight plain long int
-	// 1 -> hex long int
-	// 2 -> long int separated into 4 parts, decimal
-	// 3 -> long int separated into 4 parts, hex
-	// 4 -> string
-	// 5 -> 2 byte hex display
-	// 6 -> 2 byte decimal display
-};
-
 void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 
 class CGump
@@ -56,6 +40,22 @@ public:
 class GumpDisplay
 {
 private:
+	struct GumpInfo
+	{
+		std::string name;
+		long int value;
+		UI08 type;
+		std::string stringValue;
+		// acceptable type values
+		// 0 -> straight plain long int
+		// 1 -> hex long int
+		// 2 -> long int separated into 4 parts, decimal
+		// 3 -> long int separated into 4 parts, hex
+		// 4 -> string
+		// 5 -> 2 byte hex display
+		// 6 -> 2 byte decimal display
+	};
+
 	std::vector< GumpInfo * > gumpData;
 	UI16 width, height;	// gump width / height
 	CSocket *toSendTo;

@@ -70,10 +70,8 @@ const UI16			DEFPLAYER_HAIRSTYLE			= INVALIDID;
 const UI16			DEFPLAYER_BEARDSTYLE 		= INVALIDID;
 const COLOUR		DEFPLAYER_HAIRCOLOUR 		= INVALIDCOLOUR;
 const COLOUR		DEFPLAYER_BEARDCOLOUR 		= INVALIDCOLOUR;
-CItem *				DEFPLAYER_SPEECHITEM		= NULL;
 const UI08			DEFPLAYER_SPEECHMODE 		= 0;
 const UI08			DEFPLAYER_SPEECHID 			= 0;
-cScript *			DEFPLAYER_SPEECHCALLBACK 	= NULL;
 const SERIAL		DEFPLAYER_ROBE 				= INVALIDSERIAL;
 const UI16			DEFPLAYER_ACCOUNTNUM		= AB_INVALID_ID;
 const UI16			DEFPLAYER_ORIGSKIN			= 0;
@@ -83,8 +81,8 @@ const UI16			DEFPLAYER_DEATHS			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
-hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( DEFPLAYER_SPEECHITEM ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
-speechCallback( DEFPLAYER_SPEECHCALLBACK ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
+hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( NULL ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
+speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS )
 {
 	if( cwmWorldState != NULL )
@@ -108,14 +106,13 @@ const UI32			DEFNPC_HOLDG 				= 0;
 const UI08			DEFNPC_QUESTTYPE			= 0;
 const UI08			DEFNPC_QUESTDESTREGION 		= 0;
 const UI08			DEFNPC_QUESTORIGREGION		= 0;
-CBaseObject *		DEFNPC_PETGUARDING 			= NULL;
 const SI16			DEFNPC_WANDERAREA			= -1;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( DEFNPC_PETGUARDING )
+petGuarding( NULL )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -137,7 +134,6 @@ const RACEID		DEFCHAR_MAXSTAM_OLDRACE		= 0;
 const COLOUR		DEFCHAR_SAYCOLOUR 			= 0x0058;
 const COLOUR		DEFCHAR_EMOTECOLOUR			= 0x0023;
 const SI08			DEFCHAR_CELL 				= -1;
-CItem *				DEFCHAR_PACKITEM 			= NULL;
 const SERIAL		DEFCHAR_TARG 				= INVALIDSERIAL;
 const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
@@ -153,9 +149,8 @@ const UI08			DEFCHAR_NEXTACTION 			= 0;
 const SI08			DEFCHAR_STEALTH				= -1;
 const UI08			DEFCHAR_RUNNING				= 0;
 const RACEID		DEFCHAR_RACEGATE 			= INVALIDID;
-const UI08			DEFCHAR_STEP				= 0;
+const UI08			DEFCHAR_STEP				= 1;
 const UI16			DEFCHAR_PRIV				= 0;
-const long			DEFCHAR_SAVEDAT				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
@@ -166,7 +161,7 @@ townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ),
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
-emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( DEFCHAR_PACKITEM ), 
+emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), 
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), layerCtr( DEFCHAR_LAYERCTR ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
@@ -1634,13 +1629,13 @@ void CChar::Update( CSocket *mSock )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  CItem *GetItemAtLayer( UI08 Layer ) const
+//|   Function    -  CItem *GetItemAtLayer( ItemLayers Layer ) const
 //|   Date        -  13 March 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the item at layer Layer on paperdoll
 //o---------------------------------------------------------------------------o
-CItem *CChar::GetItemAtLayer( UI08 Layer )
+CItem *CChar::GetItemAtLayer( ItemLayers Layer )
 {
 	CItem *rVal = NULL;
 	LAYERLIST_ITERATOR lIter = itemLayers.find( Layer );
@@ -1660,42 +1655,37 @@ CItem *CChar::GetItemAtLayer( UI08 Layer )
 bool CChar::WearItem( CItem *toWear )
 {
 	bool rvalue = true;
-	UI08 tLayer = toWear->GetLayer();
-	if( tLayer != 0 )	// Layer == 0 is a special case, for things like trade windows and such
+	ItemLayers tLayer = toWear->GetLayer();
+	if( tLayer != IL_NONE )	// Layer == 0 is a special case, for things like trade windows and such
 	{
-		if( tLayer < MAXLAYERS )
+		if( ValidateObject( GetItemAtLayer( tLayer ) ) )
 		{
-			if( ValidateObject( GetItemAtLayer( tLayer ) ) )
-			{
 #if defined( UOX_DEBUG_MODE )
-				Console.Warning( 2, "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
+			Console.Warning( 2, "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
 #endif
-				rvalue = false;
-			}
-			else
-			{
-				itemLayers[tLayer] = toWear;
-
-				IncStrength2( itemLayers[tLayer]->GetStrength2() );
-				IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
-				IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
-				if( itemLayers[tLayer]->GetPoisoned() )
-					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
-
-				UI16 scpNum			= toWear->GetScriptTrigger();
-				cScript *tScript	= JSMapping->GetScript( scpNum );
-				if( tScript != NULL )
-					tScript->OnEquip( this, toWear );
-			}
+			rvalue = false;
 		}
 		else
-			rvalue = false;
+		{
+			itemLayers[tLayer] = toWear;
+
+			IncStrength2( itemLayers[tLayer]->GetStrength2() );
+			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
+			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
+			if( itemLayers[tLayer]->GetPoisoned() )
+				SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
+
+			UI16 scpNum			= toWear->GetScriptTrigger();
+			cScript *tScript	= JSMapping->GetScript( scpNum );
+			if( tScript != NULL )
+				tScript->OnEquip( this, toWear );
+		}
 	}
 	return rvalue;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  bool TakeOffItem( UI08 Layer )
+//|   Function    -  bool TakeOffItem( ItemLayers Layer )
 //|   Date        -  13 March 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -1703,12 +1693,12 @@ bool CChar::WearItem( CItem *toWear )
 //|					 ensuring that any stat adjustments are made
 //|					 Returns true if successfully unequipped
 //o---------------------------------------------------------------------------o
-bool CChar::TakeOffItem( UI08 Layer )
+bool CChar::TakeOffItem( ItemLayers Layer )
 {
 	bool rvalue = false;
-	if( Layer < MAXLAYERS && ValidateObject( GetItemAtLayer( Layer ) ) )
+	if( ValidateObject( GetItemAtLayer( Layer ) ) )
 	{
-		if( Layer == 0x15 )	// It's our pack!
+		if( Layer == IL_PACKITEM )	// It's our pack!
 			SetPackItem( NULL );
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
@@ -1868,8 +1858,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
 	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
-	dumping << "Running=" << (SI16)GetRunning() << std::endl;
-	dumping << "Step=" << (SI16)GetStep() << std::endl;
 	dumping << "Region=" << (SI16)GetRegionNum() << std::endl;
 	if( ValidateObject( packitem ) )
 		dumping << "PackItem=" << std::hex << "0x" << packitem->GetSerial() << std::endl;	// store something meaningful
@@ -2716,7 +2704,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "RUNNING" )
 				{
-					SetRunning( data.toUByte() );
 					rvalue = true;
 				}
 				else if( UTag == "REGION" )
@@ -2764,7 +2751,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "STEP" )
 				{
-					SetStep( data.toUByte() );
 					rvalue = true;
 				}
 				else if( UTag == "SPATTACK" )
@@ -4253,7 +4239,7 @@ void CChar::SetNPCAiType( SI16 newValue )
 //o---------------------------------------------------------------------------o
 CBaseObject *CChar::GetGuarding( void ) const
 {
-	CBaseObject *rVal = DEFNPC_PETGUARDING;
+	CBaseObject *rVal = NULL;
 	if( IsValidNPC() )
 		rVal = mNPC->petGuarding;
 	return rVal;
@@ -4262,7 +4248,7 @@ void CChar::SetGuarding( CBaseObject *newValue )
 {
 	if( !IsValidNPC() )
 	{
-		if( newValue != DEFNPC_PETGUARDING )
+		if( newValue != NULL )
 			CreateNPC();
 	}
 	if( IsValidNPC() )

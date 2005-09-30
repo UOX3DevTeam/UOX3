@@ -29,8 +29,8 @@ enum cC_TID
 class CChar : public CBaseObject
 {
 private:
-	typedef std::map< UI08, CItem * >			LAYERLIST;
-	typedef std::map< UI08, CItem * >::iterator	LAYERLIST_ITERATOR;
+	typedef std::map< ItemLayers, CItem * >			LAYERLIST;
+	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
 
 	struct NPCValues_st
 	{
@@ -391,9 +391,9 @@ public:
 	virtual void	Update( CSocket *mSock = NULL );
 	virtual void	SendToSocket( CSocket *s );
 
-	CItem *			GetItemAtLayer( UI08 Layer );
+	CItem *			GetItemAtLayer( ItemLayers Layer );
 	bool			WearItem( CItem *toWear );
-	bool			TakeOffItem( UI08 Layer );
+	bool			TakeOffItem( ItemLayers Layer );
 
 	CItem *			FirstItem( void );
 	CItem *			NextItem( void );

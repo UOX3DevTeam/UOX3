@@ -1,3 +1,13 @@
+9/29/2005 - giwo (0.98-3.0n [3.1 BETA])
+	Removed an unneeded variable from characters.
+	Changed JS prop murtertime to tempTime (note tempTime is currently used for spawn items and murder times).
+	Made struct GumpInfo a private member of GumpDisplay.
+	Changed CItem::layer to make use of the ItemLayers enum.
+	Removed global const MAXLAYERS.
+	Merged CTownRegion goodsell[], goodbuy[], goodrnd1[], and goodrnd2[] into a struct with a map.
+	Removed RUNNING and STEP from the worldfile, as they were unnecesarry.
+	Minor cleanups and fixes.
+
 9/27/2005 - giwo (0.98-3.0m [3.1 BETA])
 	Moved some more variables from Base Characters to Players.
 	Organized an documented many functions in CChar.

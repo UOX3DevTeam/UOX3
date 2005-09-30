@@ -59,13 +59,10 @@ numGuards( DEFTOWN_NUMGUARDS )
 	alliedTowns.resize( 0 );
 	orePreferences.resize( 0 );
 	locations.resize( 0 );
-	memset( goodsell, 0, sizeof( goodsell[0] ) * 256 );
-	memset( goodbuy,  0, sizeof(  goodbuy[0] ) * 256 );
-	memset( goodrnd1, 0, sizeof( goodrnd1[0] ) * 256 );
-	memset( goodrnd2, 0, sizeof( goodrnd2[0] ) * 256 );
 	name		= Dictionary->GetEntry( 1117 );
 	guardowner	= Dictionary->GetEntry( 1118 );
 	guardList	= "guard";
+	goodList.clear();
 }
 
 CTownRegion::~CTownRegion()
@@ -355,8 +352,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 			case 'B':
 				if( UTag == "BUYABLE" )
 				{
-					if( actgood >-1 )
-						goodbuy[actgood] = data.toLong();
+					if( actgood > -1 )
+						goodList[actgood].buyVal = data.toLong();
 					else
 						Console.Error( 2, "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 				}
@@ -449,18 +446,18 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					{
 						if( data.sectionCount( " " ) != 0 )
 						{
-							goodrnd1[actgood] = data.section( " ", 0, 0 ).toLong();
-							goodrnd2[actgood] = data.section( " ", 1, 1 ).toLong();
+							goodList[actgood].rand1 = data.section( " ", 0, 0 ).toLong();
+							goodList[actgood].rand2 = data.section( " ", 1, 1 ).toLong();
 						}
 						else
 						{
-							goodrnd1[actgood] = data.toLong();
-							goodrnd2[actgood] = goodrnd1[actgood];
+							goodList[actgood].rand1 = data.toLong();
+							goodList[actgood].rand2 = goodList[actgood].rand1;
 						}
-						if( goodrnd2[actgood] < goodrnd1[actgood] )
+						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
 						{
-							Console.Error( 2, " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodrnd2[actgood], goodrnd1[actgood] );
-							goodrnd2[actgood] = goodrnd1[actgood] = 0;
+							Console.Error( 2, " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 );
+							goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
 						}
 					}
 					else
@@ -474,7 +471,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				if( UTag == "SELLABLE" )
 				{
 					if( actgood > -1 )
-						goodsell[actgood] = data.toLong();
+						goodList[actgood].sellVal = data.toLong();
 					else
 						Console.Error( 2, " regions dfn -> You must write SELLABLE after GOOD <num>!" );
 				}
@@ -581,19 +578,35 @@ weathID CTownRegion::GetWeather( void ) const
 
 SI32 CTownRegion::GetGoodSell( UI08 index ) const
 {
-	return goodsell[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.sellVal;
+	return rVal;
 }
 SI32 CTownRegion::GetGoodBuy( UI08 index ) const
 {
-	return goodbuy[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.buyVal;
+	return rVal;
 }
 SI32 CTownRegion::GetGoodRnd1( UI08 index ) const
 {
-	return goodrnd1[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.rand1;
+	return rVal;
 }
 SI32 CTownRegion::GetGoodRnd2( UI08 index ) const
 {
-	return goodrnd2[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.rand2;
+	return rVal;
 }
 
 UI16 CTownRegion::GetMidiList( void ) const

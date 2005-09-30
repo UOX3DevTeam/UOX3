@@ -450,6 +450,7 @@ void CJSMappingSection::Reload( UI16 toLoad )
 							Console.Error( 2, "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() );
 						}
 					}
+					delete fileAssocData;
 					return;
 				}
 			}
@@ -457,6 +458,7 @@ void CJSMappingSection::Reload( UI16 toLoad )
 		}
 		else
 			Console.Warning( 2, "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() );
+		delete fileAssocData;
 	}
 }
 

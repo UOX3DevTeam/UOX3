@@ -1848,7 +1848,7 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	CSocket *mySock = (CSocket*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( mySock != NULL )
 	{
-		CItem *iLayer = myChar->GetItemAtLayer( (UI08)JSVAL_TO_INT( argv[1] ) );
+		CItem *iLayer = myChar->GetItemAtLayer( (ItemLayers)JSVAL_TO_INT( argv[1] ) );
 		if( ValidateObject( iLayer ) )
 			mySock->openPack( iLayer );
 	}
@@ -2305,7 +2305,7 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	if( argc == 1 ) 
 	{
-		myItem = myChar->GetItemAtLayer( (UI08)JSVAL_TO_INT( argv[0] ) );
+		myItem = myChar->GetItemAtLayer( (ItemLayers)JSVAL_TO_INT( argv[0] ) );
 	}
 	else
 	{

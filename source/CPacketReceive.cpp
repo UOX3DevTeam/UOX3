@@ -623,7 +623,6 @@ bool CPITips::Handle( void )
 		sprintf( tipData, "%s%s %s ", tipData, tag.c_str(), data.c_str() );
 	}
 
-	std::string toAdd;
 	toSend.AddString( tipData );
 	toSend.Finalize();
 	tSock->Send( &toSend );

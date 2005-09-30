@@ -285,7 +285,7 @@ namespace UOX
 					tString = JS_NewStringCopyZ( cx, gPriv->GetDesc().c_str() );
 					*vp = STRING_TO_JSVAL( tString );
 					break;
-				case CIP_MURDERTIME:	*vp = INT_TO_JSVAL( gPriv->GetMurderTime() );			break;
+				case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() );			break;
 				case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isNewbie() );			break;
 				case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDispellable() );		break;
 				case CIP_MADEWITH:		*vp = INT_TO_JSVAL( gPriv->GetMadeWith() );				break;
@@ -1167,7 +1167,7 @@ namespace UOX
 									gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
 									break;
 				case CIP_DEF:		gPriv->SetDef( (UI16)encaps.toInt() );							break;
-				case CIP_LAYER:		gPriv->SetLayer( (SI08)encaps.toInt() ); 						break;
+				case CIP_LAYER:		gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 						break;
 				case CIP_ITEMSINSIDE:
 					break;
 				case CIP_DECAYABLE:	gPriv->SetDecayable( encaps.toBool() );				 			break;
@@ -1190,7 +1190,7 @@ namespace UOX
 				case CIP_STRENGTH:	gPriv->SetStrength( (SI16)encaps.toInt() );						break;
 				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
 				case CIP_DESC:		gPriv->SetDesc( encaps.toString() );							break;
-				case CIP_MURDERTIME:gPriv->SetMurderTime( encaps.toInt() );							break;
+				case CIP_TEMPTIMER:		gPriv->SetTempTimer( encaps.toInt() );						break;
 				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
 				case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;

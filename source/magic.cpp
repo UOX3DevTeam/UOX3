@@ -120,7 +120,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	{
 		g1->SetType( IT_GATE );
 		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
-		g1->SetGateTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
+		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g1->SetDir( 1 );
 	}
 	else
@@ -131,7 +131,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	{
 		g2->SetType( IT_GATE );
 		g2->SetLocation( trgX, trgY, trgZ, trgWorld );
-		g2->SetGateTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
+		g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g2->SetDir( 1 );
 
 		g2->SetTempVar( CITV_MOREX, g1->GetSerial() );

@@ -111,7 +111,6 @@ const UI08 MAX_Z_STEP	= 9;
 const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
 const UI08 MAXPOSTS		= 128;
 const SI08 ILLEGAL_Z	= -128;
-const UI08 MAXLAYERS	= 30;			// Maximum number of Layers in paperdolls (max seems to be 0x1D)
 
 #define ITEMMENUOFFSET		256
 #define TRACKINGMENUOFFSET	4096

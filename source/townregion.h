@@ -33,6 +33,18 @@ private:
 		CItem *		PlayerBank;
 	};
 
+	struct GoodData_st
+	{
+		SI32 sellVal;
+		SI32 buyVal;
+		SI32 rand1;
+		SI32 rand2;
+
+		GoodData_st() : sellVal( 0 ), buyVal( 0 ), rand1( 0 ), rand2( 0 )
+		{
+		}
+	};
+
 	UI08				regionNum;
 	std::string			name;
 	UI16				midilist;
@@ -46,15 +58,12 @@ private:
 	std::vector< townPers >		townMember;
 	std::vector< UI08 >			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
 	std::vector< regLocs >		locations;
+	std::map< SI32, GoodData_st > goodList;
 	std::string			guardList;
 	UI16				numGuards;
 	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always
 	RACEID				race;					// town's race property, guards will be racially based
 	weathID				weather;				// weather system the region belongs to
-	SI32				goodsell[256];			// Magius(CHE)
-	SI32				goodbuy[256];			// Magius(CHE)
-	SI32				goodrnd1[256];			// Magius(CHE) (2)
-	SI32				goodrnd2[256];			// Magius(CHE) (2)
 	SI32				goldReserved;			// amount of gold belonging to the town's treasury
 
 	long				timeSinceGuardsPaid;	// time since the guards were last paid

@@ -26,7 +26,7 @@ protected:
 	SERIAL			creator;	// Store the serial of the player made this item
 	std::string		desc;
 
-	UI08			layer; // Layer if equipped on paperdoll
+	ItemLayers		layer; // Layer if equipped on paperdoll
 	ItemTypes		type; // For things that do special things on doubleclicking
 
 	SI08			offspell;
@@ -41,9 +41,8 @@ protected:
 
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 
-	TIMERVAL		gatetime;
+	TIMERVAL		tempTimer;
 	TIMERVAL		decaytime;
-	TIMERVAL		murdertime; //AntiChrist -- for corpse -- when the people has been killed	// used to be long, don't need THAT long
 
 	UI32			value[2];	// Price a shopkeep buys and sells items for
 	UI16			restock; // Number up to which shopkeeper should restock this item
@@ -135,8 +134,8 @@ public:
 	void			IncZ( SI16 newValue );
 	void			IncLocation( SI16 xInc, SI16 yInc );
 
-	UI08			GetLayer( void ) const;
-	void			SetLayer( UI08 newValue );
+	ItemLayers		GetLayer( void ) const;
+	void			SetLayer( ItemLayers newValue );
 
 	ItemTypes		GetType( void ) const;
 	void			SetType( ItemTypes newValue );
@@ -164,13 +163,11 @@ public:
 	SI08			GetMovable( void ) const;
 	void			SetMovable( SI08 newValue );
 	
-	TIMERVAL		GetGateTime(   void ) const;
+	TIMERVAL		GetTempTimer(   void ) const;
 	TIMERVAL		GetDecayTime(  void ) const;
-	TIMERVAL		GetMurderTime( void ) const;
 
-	void			SetGateTime(   TIMERVAL newValue );
+	void			SetTempTimer(   TIMERVAL newValue );
 	void			SetDecayTime(  TIMERVAL newValue );
-	void			SetMurderTime( TIMERVAL newValue );
 
 	virtual UI08	GetPriv( void ) const;
 	virtual void	SetPriv( UI08 newValue );

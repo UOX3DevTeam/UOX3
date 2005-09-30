@@ -274,7 +274,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	{
 		CChar *soundSrc = inrange[RandomNum( static_cast<size_t>(0), inrange.size() - 1 )];
 		UI16 xx			= soundSrc->GetID();
-		if( xx > 2048 )
+		if( cwmWorldState->creatures.find( xx ) == cwmWorldState->creatures.end() )
 			return;
 
 		basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );

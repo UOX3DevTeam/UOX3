@@ -1700,7 +1700,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			switch( itemCheck->GetType() )
 			{
 			case IT_GATE:
-				if( itemCheck->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
 					itemCheck->Delete();
 					continue;
@@ -1713,14 +1713,14 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			case IT_UNLOCKABLESPAWNCONT:
 			case IT_AREASPAWNER:
 			case IT_ESCORTNPCSPAWNER:
-				if( itemCheck->GetGateTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				if( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
 					if( itemCheck->GetObjType() == OT_SPAWNER )
 					{
 						CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
 						if( spawnItem->DoRespawn() )
 						continue;
-						spawnItem->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
+						spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
 					}
 					else
 						itemCheck->SetType( IT_NOTYPE );
@@ -2140,7 +2140,7 @@ void LoadJSEngine( void )
 	
 	if( jsRuntime == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	jsContext = JS_NewContext( jsRuntime, 0x4B000 );
+	jsContext = JS_NewContext( jsRuntime, 0x2000 );
 	if( jsContext == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	jsGlobal = JS_NewObject( jsContext, &global_class, NULL, NULL ); 

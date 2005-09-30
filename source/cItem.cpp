@@ -50,7 +50,6 @@
 namespace UOX
 {
 
-CBaseObject *		DEFITEM_CONTOBJ			= NULL;
 const SI32			DEFITEM_RANDVALUE		= 0;
 const SI16			DEFITEM_GOOD			= -1;
 const SI08			DEFITEM_RANK			= 0;
@@ -58,9 +57,8 @@ const UI16			DEFITEM_RESTOCK			= 0;
 const UI08			DEFITEM_PRIV			= 0;
 const SI08			DEFITEM_MOVEABLE		= 0;
 const TIMERVAL		DEFITEM_DECAYTIME		= 0;
-const TIMERVAL		DEFITEM_MURDERTIME		= 0;
 const UI08			DEFITEM_BOOLS			= 0;
-const UI08			DEFITEM_LAYER			= 0;
+const ItemLayers	DEFITEM_LAYER			= IL_NONE;
 const ItemTypes		DEFITEM_TYPE			= IT_NOTYPE;
 const UI16			DEFITEM_ENTRYMADEFROM	= 0;
 const UI16			DEFITEM_AMOUNT			= 1;
@@ -69,7 +67,7 @@ const SERIAL		DEFITEM_GLOW			= INVALIDSERIAL;
 const COLOUR		DEFITEM_GLOWCOLOUR		= INVALIDCOLOUR;
 const SI08			DEFITEM_MADEWITH		= 0;
 const ARMORCLASS	DEFITEM_ARMORCLASS		= 0;
-const TIMERVAL		DEFITEM_GATETIME		= 0;
+const TIMERVAL		DEFITEM_TEMPTIMER		= 0;
 const UI08			DEFITEM_SPEED			= 0;
 const UI16			DEFITEM_MAXHP			= 0;
 const UI08			DEFITEM_WEATHERBOOLS	= 0;
@@ -78,10 +76,10 @@ const SI08			DEFITEM_OFFSPELL		= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 
 CItem::CItem() : CBaseObject(),
-contObj( DEFITEM_CONTOBJ ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
+contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ), 
-restock( DEFITEM_RESTOCK ), priv( DEFITEM_PRIV ), movable( DEFITEM_MOVEABLE ), gatetime( DEFITEM_GATETIME ), decaytime( DEFITEM_DECAYTIME ), 
-murdertime( DEFITEM_MURDERTIME ), spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), weatherBools( DEFITEM_WEATHERBOOLS ), 
+restock( DEFITEM_RESTOCK ), priv( DEFITEM_PRIV ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
+spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), weatherBools( DEFITEM_WEATHERBOOLS ), 
 bools( DEFITEM_BOOLS ), layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
 creator( DEFITEM_CREATOR )
 {
@@ -491,11 +489,11 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	Dirty( UT_LOCATION );
 }
 
-UI08 CItem::GetLayer( void ) const
+ItemLayers CItem::GetLayer( void ) const
 {
 	return layer;
 }
-void CItem::SetLayer( UI08 newValue ) 
+void CItem::SetLayer( ItemLayers newValue ) 
 {
 	if( contObj != NULL && contObj->GetObjType() == OT_CHAR )	// if we're on a char
 	{
@@ -600,30 +598,22 @@ void CItem::SetMovable( SI08 newValue )
 	movable = newValue;
 }
 
-TIMERVAL CItem::GetGateTime( void ) const
+TIMERVAL CItem::GetTempTimer( void ) const
 {
-	return gatetime;
+	return tempTimer;
 }
 TIMERVAL CItem::GetDecayTime( void ) const
 {
 	return decaytime;
 }
-TIMERVAL CItem::GetMurderTime( void ) const
-{
-	return murdertime;
-}
 
-void CItem::SetGateTime( TIMERVAL newValue )
+void CItem::SetTempTimer( TIMERVAL newValue )
 {
-	gatetime = newValue;
+	tempTimer = newValue;
 }
 void CItem::SetDecayTime( TIMERVAL newValue )
 {
 	decaytime = newValue;
-}
-void CItem::SetMurderTime( TIMERVAL newValue )
-{
-	murdertime = newValue;
 }
 
 //o--------------------------------------------------------------------------o
@@ -930,7 +920,7 @@ void CItem::CopyData( CItem *target )
 	target->SetDye( isDyeable() );
 	target->SetFame( GetFame() );
 	target->SetFree( isFree() );
-	target->SetGateTime( GetGateTime() );
+	target->SetTempTimer( GetTempTimer() );
 	target->SetGlow( GetGlow() );
 	target->SetGlowColour( GetGlowColour() );
 	target->SetGlowEffect( GetGlowEffect() );
@@ -953,7 +943,6 @@ void CItem::CopyData( CItem *target )
 	target->SetTempVar( CITV_MOREY, GetTempVar( CITV_MOREY ) );
 	target->SetTempVar( CITV_MOREZ, GetTempVar( CITV_MOREZ ) );
 	target->SetMulti( GetMultiObj() );
-	target->SetMurderTime( GetMurderTime() );
 	target->SetName( GetName() );
 	target->SetName2( GetName2() );
 	target->SetOffSpell( GetOffSpell() );
@@ -1180,7 +1169,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'L':
 				if( UTag == "LAYER" )
 				{
-					layer = data.toUByte();
+					layer = static_cast<ItemLayers>(data.toUByte());
 					rvalue = true;
 				}
 				else if( UTag == "LIGHT" )
@@ -1754,7 +1743,7 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 	if( mChar != NULL )
 	{
 		bool isGM = mChar->IsGM();
-		UI08 iLayer = GetLayer();
+		ItemLayers iLayer = GetLayer();
 		if( !isGM && ( iLayer == IL_BUYCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_SELLCONTAINER ) )
 			return;
 

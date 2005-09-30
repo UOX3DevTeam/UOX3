@@ -1561,7 +1561,7 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	else
 		tweakItem.AddData( "Name2", "#" );
 	tweakItem.AddData( "Colour", itemColour, 5 );
-	tweakItem.AddData( "Layer", i->GetLayer() );
+	tweakItem.AddData( "Layer", static_cast<UI08>(i->GetLayer()) );
 	tweakItem.AddData( "Type", static_cast<UI08>(i->GetType()) );
 	tweakItem.AddData( "Moveable", i->GetMovable() );
 	tweakItem.AddData( "X coord", i->GetX() );
@@ -1630,7 +1630,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 2:		j->SetName( reply );						break;	// Name
 			case 3:		j->SetName2( reply.c_str() );				break;	// Name 2
 			case 4:		j->SetColour( reply.toUShort() );			break;	// Colour
-			case 5:		j->SetLayer( reply.toUByte() );				break;	// Layer
+			case 5:		j->SetLayer( static_cast<ItemLayers>(reply.toUByte()) );		break;	// Layer
 			case 6:		j->SetType( static_cast<ItemTypes>(reply.toUByte()) );			break;	// Type
 			case 7:		j->SetMovable( reply.toByte() );			break;	// Moveable
 			case 8:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );			break;	// X

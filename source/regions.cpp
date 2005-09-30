@@ -347,6 +347,7 @@ CMapHandler::~CMapHandler()
 		delete (*mIter);
 		(*mIter) = NULL;
 	}
+	mapWorlds.clear();
 }
 
 //o--------------------------------------------------------------------------o

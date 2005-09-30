@@ -463,12 +463,12 @@ void cEffects::checktempeffects( void )
 				if( i->GetID() == 0x1071 )
 				{
 					i->IncID( -1 );
-					i->SetGateTime( 0 );
+					i->SetTempTimer( 0 );
 				} 
 				else if( i->GetID() == 0x1075 )
 				{
 					i->IncID( -1 );
-					i->SetGateTime( 0 );
+					i->SetTempTimer( 0 );
 				} 
 				break;
 			case 15: //reactive armor

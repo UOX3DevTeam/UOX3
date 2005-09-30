@@ -1149,9 +1149,9 @@ void cSkills::ItemIDTarget( CSocket *s )
 					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 				else
 					sprintf( temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() );
-		}
-		else
-			strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );
+			}
+			else
+				strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );
 		}
 		else
 			strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );

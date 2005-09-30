@@ -549,13 +549,13 @@ void MakeShop( CChar *c )
 	CItem *tPack = NULL;
 	for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
 	{
-		tPack = c->GetItemAtLayer( i );
+		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
 		{
 			tPack = Items->CreateItem( NULL, c, 0x2AF8, 1, 0, OT_ITEM );
 			if( tPack != NULL )
 			{
-				tPack->SetLayer( i );
+				tPack->SetLayer( static_cast<ItemLayers>(i) );
 				if( !tPack->SetCont( c ) )
 					tPack->Delete();
 				else

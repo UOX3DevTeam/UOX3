@@ -528,7 +528,7 @@ bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 			{
 				CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
 				if( !spawnItem->DoRespawn() )
-					spawnItem->SetGateTime( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) )) );
+					spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) )) );
 			}
 			else
 				i->SetType( IT_NOTYPE );
