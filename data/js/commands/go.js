@@ -49,13 +49,20 @@ function command_GO( socket, cmdString )
 				socket.SysMessage( GetDictionaryEntry( 1110, socket.Language ) );
 			break;
 		default:
+			var x = 0, y = 0, z = 0;
+			var worldnum = mChar.worldnumber;
+			if( splitString[3] )
+				worldnum = StringToNum( splitString[3] );
 			if( splitString[2] )
 			{
-				var x = StringToNum( splitString[0] );
-				var y = StringToNum( splitString[1] );
-				var z = StringToNum( splitString[2] );
-				mChar.SetLocation( x, y, z );
+				x = StringToNum( splitString[0] );
+				y = StringToNum( splitString[1] );
+				z = StringToNum( splitString[2] );
 			}
+			else
+				return;
+
+			mChar.SetLocation( x, y, z, worldnum );
 			break;
 		}
 	}

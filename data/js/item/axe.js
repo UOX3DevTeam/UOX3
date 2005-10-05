@@ -22,12 +22,10 @@ function onCallback1( socket, ourObj )
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
-		if( !ourObj )
-			tileID = socket.GetWord( 17 );
-		else if( ourObj.isItem )
+		if( ourObj.isItem )
 			tileID = ourObj.id;
-		else
-			return;
+		else	// 5.x clients send our character as the object when clicking on tiles.
+			tileID = socket.GetWord( 17 );
 
 		if( tileID != 0 )
 		{
@@ -51,6 +49,8 @@ function onCallback1( socket, ourObj )
 			else
 				socket.SysMessage( "You cannot chop that" );
 		}
+		else
+			socket.SysMessage( "You cannot chop that" );
 	}
 }
 
@@ -115,7 +115,6 @@ function ChopTree( socket, mChar )
 
 function RegenerateLog( mResource, socket)
 {
-	socket.SysMessage( "Entering Function" );
 	var logCeiling	= ResourceAmount( "LOGS" );
 	var logTimer	= ResourceTime( "LOGS" );
 	var currentTime	= GetCurrentClock();

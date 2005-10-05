@@ -1720,6 +1720,21 @@
 1754=That character is not online
 1755=This command requires additional arguments
 1756=Value successfully set.
+1757=Please dismount first.
+1758=Your ability to steal cannot improve any further by simply practicing on a dummy.
+1759=You carelessly bump the dip and start it swinging.
+1760=You successfully avoid disturbing the dip while searching it.
+1761=Your skill cannot improve any further by simply practicing with a dummy.
+1762=You must wait before you can use that item again.
+1763=That item must be in your backpack before it can be used.
+1764=You fail to ignite the campfire.
+1765=You have successfully created a campfire.
+1766=You are too close to the target.
+1767=You are too far away from the archery butte to get an accurate shot.
+1768=You would do better to stand in front of the archery butte.
+1769=You aren't properly lined up with the archery butte to get an accurate shot.
+1770=You do not have any arrows with which to practice.
+1771=You do not have any crossbow bolts with which to practice.
 }
 
 EOF
