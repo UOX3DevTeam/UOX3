@@ -19,7 +19,7 @@ public:
 	{
 		bIndex = 0;
 	}
-	void		seek( long, int );
+	void		seek( size_t, UI08 );
 	int		eof( void )
 	{
 		return ( bIndex >=  fileSize );
@@ -54,19 +54,19 @@ public:
 	void		get_st_multiidx( struct st_multiidx *, UI32 = 1 );
 	void		get_staticrecord( struct staticrecord *, UI32 = 1 );
 
-	int		getPosition()
+	size_t		getPosition( void )
 	{
 		return bIndex;
 	}
-	int		getLength( void )
+	size_t		getLength( void )
 	{
 		return fileSize;
 	}
 
 private:
 	char		*memPtr;		// ptr to the beginning of the files
-	size_t	fileSize;	// file size
-	int		bIndex;		// current position
+	size_t		fileSize;	// file size
+	size_t		bIndex;		// current position
 };
 
 }

@@ -566,10 +566,10 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI16 yStart = 0, yWidth = 375;
 
 	UI32 bgImage	=	cwmWorldState->ServerData()->BackgroundPic();
-	UI32 cancelDown	=	cwmWorldState->ServerData()->ButtonCancel();
-	UI32 cancelUp	=	cwmWorldState->ServerData()->ButtonCancel() + 1;
-	UI32 titleColor	=	cwmWorldState->ServerData()->TitleColour();
-	UI32 fontWidth	=	8;
+	//UI32 cancelDown	=	cwmWorldState->ServerData()->ButtonCancel();
+	//UI32 cancelUp	=	cwmWorldState->ServerData()->ButtonCancel() + 1;
+	//UI32 titleColor	=	cwmWorldState->ServerData()->TitleColour();
+	//UI32 fontWidth	=	8;
 
 	// Set and resize the gumps background image.
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth );
@@ -626,7 +626,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 0x13EC, 190, 300);
 	UI32 tabNumber = 1;
-	UI32 serverTab = tabNumber;
+	//UI32 serverTab = tabNumber;
 	if( m == 1 )
 	{
 		// Do the shard tab
@@ -664,7 +664,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddText( "(c)1997-2004 UOXDev Team" );
 
 	// Ok here we have some conditions that we need to filter. First being the menu called.
-	UI32 pageNum = 1;
+	//UI32 pageNum = 1;
 	UI32 xOffset;
 	UI32 yOffset;
 #define SXOFFSET	210
@@ -882,7 +882,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 					toSend.AddCommand( "croppedtext %u %u %u %u %u %u",35, position-3,150,20, 40, linenum ); 
 					toSend.AddText( CI->second.itemName );
 					// check to make sure that we have an image now, seeing as we might not have one with the new changes in 0.98.01.2+
-					if(CI->second.tileID != -2)
+					if(CI->second.tileID != 0)
 					{
 						// Draw a frame for the item to make it stand out a touch more.
 						toSend.AddCommand( "resizepic %u %u %u %u %u",xOffset,yOffset,0x53,65,100);
@@ -1500,7 +1500,7 @@ bool CPIGumpMenuSelect::Handle( void )
 	Console << "Type is " << gumpID << " button is " <<  buttonID << myendl;
 #endif
 
-	CItem *j;
+	CItem *j = NULL;
 	switch( gumpID )
 	{
 		case 1:	HandleTweakItemButton( tSock, buttonID, id, gumpID );			break;	// Tweak Item

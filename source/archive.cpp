@@ -113,7 +113,7 @@ void fileArchive( void )
 		{
 			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 			{
-				sprintf( filename1, "%li.%li.wsc", counter1, counter2 );
+				sprintf( filename1, "%i.%i.wsc", counter1, counter2 );
 				backupFile( filename1, backupRoot );
 			}
 		}

@@ -20,7 +20,7 @@ namespace UOX
 
 cHTMLTemplates *HTMLTemplates;
 
-cHTMLTemplate::cHTMLTemplate() : Loaded( false ), ScheduledUpdate( 0 ), Type( ETT_INVALIDTEMPLATE ), UpdateTimer( 60 )
+cHTMLTemplate::cHTMLTemplate() : UpdateTimer( 60 ), Loaded( false ), Type( ETT_INVALIDTEMPLATE ), ScheduledUpdate( 0 )
 {
 	Name			= "";
 	Content			= "";
@@ -98,11 +98,9 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 	//***************************************/
 
-	size_t Pos;
-
 	// Account-Count
 	UString AccountCount	= UString::number( Accounts->size() );
-	Pos						= ParsedContent.find( "%accounts" ); 
+	size_t Pos				= ParsedContent.find( "%accounts" ); 
 	while( Pos != std::string::npos )
 	{
 		ParsedContent.replace( Pos, 9, AccountCount );

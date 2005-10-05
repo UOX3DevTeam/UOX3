@@ -19,7 +19,7 @@ CGuildCollection *GuildSys;
 #define DEFAULTCHARTER "UOX3 DevTeam Guildstone"
 #define DEFAULTWEBPAGE "http://www.uox3dev.net/"
 
-CGuild::CGuild() : name( "" ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL ), gType( GT_STANDARD )
+CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL )
 {
 	abbreviation[0] = 0;
 	recruits.resize( 0 );

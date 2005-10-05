@@ -455,8 +455,7 @@ npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 //|						and grabbing a section from the file passed in
 //o--------------------------------------------------------------------------
 ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) : 
-dfnCat( d ), 
-npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
+dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );

@@ -12,7 +12,7 @@ struct JailOccupant
 	SI16 y;
 	SI08 z;
 	time_t releaseTime;
-	JailOccupant() : x( 0 ), y( 0 ), z( 0 ), pSerial( INVALIDSERIAL ), releaseTime( 0 )
+	JailOccupant() : pSerial( INVALIDSERIAL ), x( 0 ), y( 0 ), z( 0 ), releaseTime( 0 )
 	{
 	}
 };

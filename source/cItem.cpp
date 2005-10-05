@@ -918,7 +918,6 @@ void CItem::CopyData( CItem *target )
 	target->SetDisabled( isDisabled() );
 	target->SetDoorOpen( isDoorOpen() );
 	target->SetDye( isDyeable() );
-	target->SetFame( GetFame() );
 	target->SetFree( isFree() );
 	target->SetTempTimer( GetTempTimer() );
 	target->SetGlow( GetGlow() );
@@ -930,8 +929,6 @@ void CItem::CopyData( CItem *target )
 	target->SetID( GetID() );
 	target->SetIntelligence( GetIntelligence() );
 	target->SetIntelligence2( GetIntelligence2() );
-	target->SetKarma( GetKarma() );
-	target->SetKills( GetKills() );
 	target->SetLocation( this );
 	target->SetLoDamage( GetLoDamage() );
 	target->SetMadeWith( GetMadeWith() );
@@ -1281,6 +1278,8 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					SetWeatherDamage( RAIN, data.toUByte() == 1 );
 					rvalue = true;
 				}
+				else if( UTag == "REPUTATION" )
+					rvalue = true;
 				break;
 			case 'S':
 				if( UTag == "SPEED" )

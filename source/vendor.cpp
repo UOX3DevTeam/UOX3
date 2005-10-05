@@ -282,8 +282,9 @@ bool CPISellItem::Handle( void )
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
 		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) )
 			return true;
-		CItem *j, *k;
-		UI16 i, amt, maxsell = 0;
+		CItem *j = NULL, *k = NULL;
+		UI16 amt = 0, maxsell = 0;
+		UI08 i = 0;
 		UI32 totgold = 0, value = 0;
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{

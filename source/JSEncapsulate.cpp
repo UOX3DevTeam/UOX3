@@ -38,7 +38,7 @@ namespace UOX
 		else if( JSVAL_IS_OBJECT( (*vp) ) )
 			nativeType	= JSOT_OBJECT;
 	}
-	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), intVal( 0 ), floatVal( 0 ), boolVal( false ), objectVal( NULL ), stringVal( "" )
+	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : intVal( 0 ), floatVal( 0 ), boolVal( false ), stringVal( "" ), objectVal( NULL ), cx( jsCX ), vp( jsVP )
 	{
 		InternalReset();
 		Init();

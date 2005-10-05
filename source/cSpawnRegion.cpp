@@ -24,10 +24,10 @@ const SI32		DEFSPAWN_CURCSPAWN		= 0;
 const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 
-CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : nexttime( DEFSPAWN_NEXTTIME ), call( DEFSPAWN_CALL ), x1( DEFSPAWN_X1 ), 
-x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), z( DEFSPAWN_Z ), maxcspawn( DEFSPAWN_MAXCSPAWN ), 
-maxispawn( DEFSPAWN_MAXISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), regionnum( spawnregion ), 
-curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), worldNumber( DEFSPAWN_WORLDNUM )
+CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ), 
+curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), 
+nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), z( DEFSPAWN_Z ), 
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );

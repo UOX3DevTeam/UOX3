@@ -65,9 +65,6 @@ class CBaseObject
 protected:
 	TAGMAP2			tags;
 	std::string 	title;
-	SI16			kills;
-	SI16			fame;
-	SI16			karma;
 	SI16			mana;
 	SI16			stamina;
 	SI32			weight;
@@ -102,7 +99,6 @@ protected:
 
 	UI32			genericDWords[4];
 	UI08			worldNumber;
-	UI08			isDirty;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -132,12 +128,6 @@ public:
 
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;
-	void					SetKills( SI16 value );
-	SI16					GetKills( void ) const;
-	SI16					GetFame( void ) const;
-	void					SetFame( SI16 value );
-	void					SetKarma( SI16 value );
-	SI16					GetKarma( void ) const;
 	virtual void			SetMana( SI16 mn );
 	SI16					GetMana( void ) const;
 	virtual void			SetStamina( SI16 stam );

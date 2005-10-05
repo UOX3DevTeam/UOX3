@@ -568,7 +568,6 @@ bool isDoorBlocked( CItem *door )
 	SI16 targX = door->GetX(), targY = door->GetY();
 	DoorNewLocation( door, targX, targY );
 
-	UI08 worldNumber = door->WorldNumber();
 	CMapRegion *Cell = MapRegion->GetMapRegion( door );
 	if( Cell != NULL )
 	{

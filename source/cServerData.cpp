@@ -448,7 +448,7 @@ SI16 CServerData::MaxStaminaMovement( void ) const
 	return maxstaminamovement;
 }
 
-R32 CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
+TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
 {
 	return BuildTimeValue( static_cast<R32>(SystemTimer( timerID )) );
 }

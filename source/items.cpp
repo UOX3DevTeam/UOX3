@@ -116,7 +116,6 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
 			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
 			case DFNTAG_DOORFLAG:		break;
-			case DFNTAG_FAME:			applyTo->SetFame( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_GOOD:			applyTo->SetGood( static_cast< SI16 >(ndata) );					break;
 			case DFNTAG_GLOW:			applyTo->SetGlow( ndata );					break;
 			case DFNTAG_GLOWBC:			applyTo->SetGlowColour( static_cast<UI16>(ndata) );		break;

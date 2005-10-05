@@ -4330,7 +4330,6 @@ void CPSendGumpMenu::Finalize( void )
 {
 	UI32 length		= 21;
 	UI16 increment	= 0;
-	size_t line		= 0;
 	UI16 lineLen	= 0;
 
 	std::string cmdString;

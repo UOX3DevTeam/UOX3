@@ -155,13 +155,16 @@ const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const UI08			DEFCHAR_LAYERCTR			= 0;
+const SI16			DEFCHAR_KARMA				= 0;
+const SI16			DEFCHAR_FAME				= 0;
+const SI16			DEFCHAR_KILLS				= 0;
 
 CChar::CChar() : CBaseObject(),
 townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
-fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
+fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), kills( DEFCHAR_KILLS ), 
 maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
-emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), 
+emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), karma( DEFCHAR_KARMA ), fame( DEFCHAR_FAME ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), layerCtr( DEFCHAR_LAYERCTR ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
@@ -881,6 +884,57 @@ void CChar::SetPoisonStrength( UI08 value )
 	PoisonStrength = value;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Karma()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The characters' karma
+//o--------------------------------------------------------------------------o
+SI16 CChar::GetKarma( void ) const
+{
+	return karma;
+}
+void CChar::SetKarma( SI16 value )
+{
+	karma = value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Fame()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The characters' fame
+//o--------------------------------------------------------------------------o
+SI16 CChar::GetFame( void ) const
+{
+	return fame;
+}
+void CChar::SetFame( SI16 value )
+{
+	fame = value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Kills()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The characters' kills
+//o--------------------------------------------------------------------------o
+SI16 CChar::GetKills( void ) const
+{
+	return kills;
+}
+void CChar::SetKills( SI16 value )
+{
+	kills = value;
+}
+
 COLOUR CChar::GetEmoteColour( void ) const
 {
 	return emotecolor;
@@ -1364,8 +1418,8 @@ void CChar::CopyData( CChar *target )
 
 		for( UI08 j = STRENGTH; j <= INTELLECT+1; ++j )
 		{
-			target->SetAtrophy( atrophy[i], i );
-			target->SetSkillLock( lockState[i], i );
+			target->SetAtrophy( atrophy[j], j );
+			target->SetSkillLock( lockState[j], j );
 		}
 
 		target->SetCell( cell );
@@ -1847,6 +1901,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
+	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
@@ -2477,7 +2532,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				break;
 			case 'F':
-				if( UTag == "FIXEDLIGHT" )
+				if( UTag == "FAME" )
+				{
+					SetFame( data.toShort() );
+					rvalue	= true;
+				}
+				else if( UTag == "FIXEDLIGHT" )
 				{
 					SetFixedLight( data.toUByte() );
 					rvalue = true;
@@ -2582,6 +2642,18 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "ISWARRING" )
 				{
 					SetWar( (data.toShort() == 1) );
+					rvalue = true;
+				}
+				break;
+			case 'K':
+				if( UTag == "KILLS" )
+				{
+					SetKills( data.toShort() );
+					rvalue = true;
+				}
+				else if( UTag == "KARMA" )
+				{
+					SetKarma( data.toShort() );
 					rvalue = true;
 				}
 				break;
@@ -2715,6 +2787,16 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				{
 					SetReattackAt( data.toShort() );
 					rvalue = true;
+				}
+				else if( UTag == "REPUTATION" )
+				{
+					if( data.sectionCount( "," ) == 2 )
+					{
+						SetFame( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
+						SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+						SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
+					}
+					rvalue	= true;
 				}
 				break;
 			case 'S':

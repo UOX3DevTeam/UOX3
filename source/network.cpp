@@ -661,7 +661,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						}
 						break;
 					case 0x66:// Read Book
-						int size;
+						UI16 size;
 						mSock->Receive( 3 );
 						size = mSock->GetWord( 1 );
 						mSock->Receive( size );
@@ -1245,11 +1245,10 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	else
 	{
 		mSock->InLength( 0 );
-		UI08 packetID;
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
-			packetID = buffer[0];
+			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
 				// April 5, 2004 - EviLDeD -  Hmmm there are two of these ?

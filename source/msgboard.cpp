@@ -56,7 +56,6 @@ void MsgBoardOpen( CSocket *mSock )
 
 	char buffer[4];
 	std::string fileName, dirPath;
-	UI16 postCount = 0;
 
 	mSock->PostClear();
 

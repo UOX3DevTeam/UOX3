@@ -1484,7 +1484,6 @@ void CPITalkRequestUnicode::Receive( void )
 	int myoffset		= 13;
 	int myj				= 12;
 	size_t numTrigWords	= 0;
-	int triggerWord		= 0xFFFF;
 	UI08 *buffer		= tSock->Buffer();
 	UI16 j				= 0;
 

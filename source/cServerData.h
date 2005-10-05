@@ -292,7 +292,7 @@ public:
 	SI16		MaxStaminaMovement( void ) const;
 	void		SystemTimer( cSD_TID timerid, UI16 value );
 	UI16		SystemTimer( cSD_TID timerid ) const;
-	R32			BuildSystemTimeValue( cSD_TID timerID ) const;
+	TIMERVAL	BuildSystemTimeValue( cSD_TID timerID ) const;
 
 	bool		ServerUOGEnabled(void) const { return uogEnabled; }
 	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }

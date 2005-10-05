@@ -870,7 +870,6 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 	if( c->GetCommandLevel() >= CNS_CMDLEVEL || c->GetID() == 0x03DB || c->IsDead() )
 		return;
 	// lets cache these vars in advance
-	UI08 worldNumber	= c->WorldNumber();
 	CMapRegion *grid		= MapRegion->GetMapRegion( c );
 	if( grid == NULL )
 		return;

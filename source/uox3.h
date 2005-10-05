@@ -79,9 +79,9 @@ extern JSClass uox_class;
 extern QUEUEMAP							refreshQueue;
 extern QUEUEMAP							deletionQueue;
 
-inline UI32 BuildTimeValue( R32 timeFromNow ) 
+inline TIMERVAL BuildTimeValue( R32 timeFromNow ) 
 { 
-	return static_cast<UI32>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	
 }
 
 }

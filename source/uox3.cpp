@@ -1083,9 +1083,9 @@ void processkey( int c )
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
 				messageLoop << "     Cache:";
-				sprintf( temp, "        Tiles: %lu bytes", Map->TileMem );
+				sprintf( temp, "        Tiles: %u bytes", Map->TileMem );
 				messageLoop << temp;
-				sprintf( temp, "        Multis: %lu bytes", Map->MultisMem );
+				sprintf( temp, "        Multis: %u bytes", Map->MultisMem );
 				messageLoop << temp;
 				size_t m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
@@ -3192,7 +3192,6 @@ using namespace UOX;
 //o---------------------------------------------------------------------------o
 int main( int argc, char *argv[] )
 {
-	UI32 uiNextCheckConn = 0;
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
 

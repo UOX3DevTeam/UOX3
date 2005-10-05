@@ -25,7 +25,7 @@ namespace UOX
 // support read-only binary mode.
 //
 UOXFile::UOXFile( const char* const fileName, const char * const)
-:memPtr(0), bIndex(0), fileSize(0)
+: memPtr( 0 ), fileSize( 0 ), bIndex( 0 )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE hFile = ::CreateFileA(
@@ -122,22 +122,18 @@ UOXFile::~UOXFile()
 }
 
 
-void UOXFile::seek( long offset, int whence )
+void UOXFile::seek( size_t offset, UI08 whence )
 {
-	if( whence == SEEK_SET )
-	{	// seek from beginnng
+	if( whence == SEEK_SET )	// seek from beginnng
 		bIndex = offset;
-	} else if ( whence == SEEK_CUR )
-	{	// seek from current
+	else if ( whence == SEEK_CUR )	// seek from current
 		bIndex += offset;
-	}	else if ( whence == SEEK_END )
-	{	// seek from end
+	else if ( whence == SEEK_END )	// seek from end
 		bIndex = fileSize + offset;
-	}
 }
 
 
-int UOXFile::getch(void)
+int UOXFile::getch( void )
 {
 	return *(memPtr + bIndex++);
 }
@@ -501,7 +497,7 @@ void LoadSkills( void )
 						else if( UTag == "NAME" )
 							cwmWorldState->skill[i].name = data.stripWhiteSpace();
 						else
-							Console.Warning( 2, "Unknown tag in skills.dfn: %s", data.stripWhiteSpace() );
+							Console.Warning( 2, "Unknown tag in skills.dfn: %s", data.stripWhiteSpace().c_str() );
 					}
 				}
 			}

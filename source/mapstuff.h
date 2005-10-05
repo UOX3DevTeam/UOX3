@@ -129,7 +129,7 @@ public:
 
 	MapData_st&		GetMapData( UI08 mapNum );
 public:
-	int				TileMem, MultisMem;
+	size_t			TileMem, MultisMem;
 
 // Functions
 private:
@@ -157,7 +157,8 @@ private:
 		SI32		size;				// # of items.
 		SI16		lx, ly, lz;
 		SI16		hx, hy, hz;
-					MultiItemsIndex() :size(-1), items(NULL), lx(SHRT_MAX), ly(SHRT_MAX), lz(SHRT_MAX), hx(SHRT_MIN), hy(SHRT_MIN), hz(SHRT_MIN)
+					MultiItemsIndex() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SHRT_MAX ), 
+						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SHRT_MIN )
 					{}
 		void		Include(SI16 x, SI16 y, SI16 z);	
 	};
@@ -169,7 +170,7 @@ private:
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
 	st_multi *			multiItems;			// the multis cache(shadow) from files
 	MultiItemsIndex *	multiIndex;	// here's our index to multiItems
-	int					multiIndexSize;			// the length of index
+	size_t				multiIndexSize;			// the length of index
 
 	MAPLIST				MapList;
 };

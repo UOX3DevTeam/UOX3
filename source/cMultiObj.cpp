@@ -33,7 +33,7 @@ namespace UOX
 
 const UI16	DEFMULTI_MAXLOCKEDDOWN	= 256;
 
-CMultiObj::CMultiObj() : CItem(), maxLockedDown( DEFMULTI_MAXLOCKEDDOWN ), deed( "" )
+CMultiObj::CMultiObj() : CItem(), deed( "" ), maxLockedDown( DEFMULTI_MAXLOCKEDDOWN )
 {
 	objType = OT_MULTI;
 }

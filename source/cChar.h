@@ -184,6 +184,10 @@ protected:
 
 	UI08		PoisonStrength;
 
+	SI16		fame;
+	SI16		karma;
+	SI16		kills;
+
 	virtual bool	DumpHeader( std::ofstream &outStream ) const;
 	virtual bool	DumpBody( std::ofstream &outStream ) const;
 	virtual bool	HandleLine( UString &UTag, UString &data );
@@ -379,6 +383,13 @@ public:
 
 	SI08		GetFontType( void ) const;
 	void		SetFontType( SI08 newType );
+
+	SI16		GetFame( void ) const;
+	void		SetFame( SI16 value );
+	void		SetKarma( SI16 value );
+	SI16		GetKarma( void ) const;
+	void		SetKills( SI16 value );
+	SI16		GetKills( void ) const;
 
 				CChar();
 	virtual		~CChar();

@@ -67,9 +67,6 @@ const VisibleTypes	DEFBASE_VISIBLE		= VT_VISIBLE;
 const UI16			DEFBASE_DEF			= 0;
 const SI16			DEFBASE_HIDAMAGE	= 0;
 const SI16			DEFBASE_LODAMAGE	= 0;
-const SI16			DEFBASE_KILLS		= 0;
-const SI16			DEFBASE_KARMA		= 0;
-const SI16			DEFBASE_FAME		= 0;
 const SI32			DEFBASE_WEIGHT		= 0;
 const SI16			DEFBASE_MANA		= 1;
 const SI16			DEFBASE_STAMINA		= 1;
@@ -77,7 +74,6 @@ const UI16			DEFBASE_SCPTRIG		= 0xFFFF;
 const SI16			DEFBASE_STR2		= 0;
 const SI16			DEFBASE_DEX2		= 0;
 const SI16			DEFBASE_INT2		= 0;
-const UI08			DEFBASE_ISDIRTY		= 1;
 const SI32			DEFBASE_FP			= -1;
 const UI08			DEFBASE_POISONED	= 0;
 const SI16			DEFBASE_CARVE		= -1;
@@ -96,9 +92,9 @@ z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), 
 multis( DEFBASE_MULTIS ), spawnserial( DEFBASE_SPAWNSER ), owner( DEFBASE_OWNER ),
 worldNumber( DEFBASE_WORLD ), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ), intelligence( DEFBASE_INT ), 
 hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), def( DEFBASE_DEF ), hidamage( DEFBASE_HIDAMAGE ),
-lodamage( DEFBASE_LODAMAGE ), kills( DEFBASE_KILLS ), karma( DEFBASE_KARMA ), fame( DEFBASE_FAME ), weight( DEFBASE_WEIGHT ), 
+lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
-in2( DEFBASE_INT2 ), isDirty( DEFBASE_ISDIRTY ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
+in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
 {
 	name.reserve( MAX_NAME );
@@ -567,7 +563,6 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Colour=" << "0x" << colour << std::endl;
 	dumping << "Direction=" << "0x" << (SI16)dir << std::endl;
 	dumping << "Title=" << std::dec << title << std::endl;
-	dumping << "Reputation=" << fame << "," << karma << "," << kills << std::endl;
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
 	temp_dx2 = dx2;
@@ -1222,84 +1217,6 @@ void CBaseObject::SetMana( SI16 mn )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	SI16 GetKarma( void )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the object's karma
-//o--------------------------------------------------------------------------
-SI16 CBaseObject::GetKarma( void ) const
-{
-	return karma;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetKarma( SI16 value )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's karma
-//o--------------------------------------------------------------------------
-void CBaseObject::SetKarma( SI16 value )
-{
-	karma = value;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SI16 GetFame( void )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the object's fame
-//o--------------------------------------------------------------------------
-SI16 CBaseObject::GetFame( void ) const
-{
-	return fame;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetFame( SI16 value )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's fame
-//o--------------------------------------------------------------------------
-void CBaseObject::SetFame( SI16 value )
-{
-	fame = value;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SI16 GetKills( void )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the object's kills
-//o--------------------------------------------------------------------------
-SI16 CBaseObject::GetKills( void ) const
-{
-	return kills;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetKills( SI16 value )
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's kills
-//o--------------------------------------------------------------------------
-void CBaseObject::SetKills( SI16 value )
-{
-	kills = value;
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	std::string GetTitle( void )
 //|	Date			-	unknown
 //|	Programmer		-	EviLDeD
@@ -1658,13 +1575,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				rvalue = true;
 			}
 			break;
-		case 'F':
-			if( UTag == "FAME" )
-			{
-				fame	= data.toShort();
-				rvalue	= true;
-			}
-			break;
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
@@ -1703,18 +1613,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'i':
 			if( UTag == "ICOUNTER" )
 				rvalue = true;	// don't process anything about it
-			break;
-		case 'K':
-			if( UTag == "KILLS" )
-			{
-				kills	= data.toShort();
-				rvalue	= true;
-			}
-			else if( UTag == "KARMA" )
-			{
-				karma	= data.toShort();
-				rvalue	= true;
-			}
 			break;
 		case 'L':
 			if( UTag == "LOCATION" )
@@ -1772,13 +1670,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			if( UTag == "RACE" )
 			{
 				race	= data.toUShort();
-				rvalue	= true;
-			}
-			else if( UTag == "REPUTATION" )
-			{
-				fame	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				karma	= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				kills	= data.section( ",", 2, 2 ).stripWhiteSpace().toShort();
 				rvalue	= true;
 			}
 			break;
@@ -2270,9 +2161,6 @@ bool CBaseObject::GetUpdate( UpdateTypes updateType )
 void CBaseObject::CopyData( CBaseObject *target )
 {
 	target->SetTitle( GetTitle() );
-	target->SetKills( GetKills() );
-	target->SetFame( GetFame() );
-	target->SetKarma( GetKarma() );
 	target->SetRace( GetRace() );
 	target->SetName( GetName() );
 	target->SetStrength( GetStrength() );

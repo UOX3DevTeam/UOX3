@@ -211,7 +211,7 @@ void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 **  and less susceptible to bugs.
 ** -lingo
 */
-cMapStuff::cMapStuff() : landTile(0), staticTile(0), multiItems(0), multiIndex(0), multiIndexSize(0), TileMem( 0 ), MultisMem( 0 )
+cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 )
 {
 	UString tag, data, UTag;
 	UI08 NumberOfWorlds = cwmWorldState->ServerData()->ServerMapCount();
@@ -484,7 +484,7 @@ void cMapStuff::LoadMultis(const UString &basePath)
 	}
 
 	//! first reads in st_multi completely
-	int multiSize = multis.getLength() / MultiRecordSize;
+	size_t multiSize = multis.getLength() / MultiRecordSize;
 	multiItems = new st_multi[multiSize];
 	multis.get_st_multi( multiItems, multiSize );
 	MultisMem = multis.getLength();
@@ -859,7 +859,9 @@ bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 **  		    ... your code here...
 **	  	}
 */
-MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : worldNumber( world ), baseX( static_cast<SI32>(x / 8) ), baseY( static_cast<SI32>(y / 8) ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), length( 0 ), index( 0 ), pos( 0 ), exactCoords( exact ), tileid( 0 )
+MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : baseX( static_cast<SI32>(x / 8) ), 
+baseY( static_cast<SI32>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), 
+index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
 	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
 	{

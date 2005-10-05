@@ -1799,7 +1799,6 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	{
 		I->second = actbID;
 		MAPUSERNAMEID_ITERATOR Q = m_mapUsernameIDMap.find(actbID.wAccountIndex);
-		ACCOUNTSBLOCK& A = Q->second;
 		Save(false);
 	}
 	catch( ... )

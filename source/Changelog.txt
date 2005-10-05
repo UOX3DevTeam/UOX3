@@ -1,3 +1,10 @@
+10/5/2005 - giwo (0.98-3.0o [3.1 BETA])
+	Moved kills, fame, and karma from CBaseObject to CChar to save wasted memory on items.
+	Fixed several warnings when compiling under gcc.
+	Fixed a possible issue when duplicating a character.
+	Removed several unrefrenced parameters.
+	Removed several unused ENUM values.
+
 9/29/2005 - giwo (0.98-3.0n [3.1 BETA])
 	Removed an unneeded variable from characters.
 	Changed JS prop murtertime to tempTime (note tempTime is currently used for spawn items and murder times).
