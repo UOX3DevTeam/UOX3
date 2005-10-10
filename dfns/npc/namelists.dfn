@@ -4029,6 +4029,110 @@ a blazing gargoyle
 a searing gargoyle
 }
 
+// Random names of the Dark Father,
+// champion of the Doom Gauntlet
+[RANDOMNAME 14]
+{
+Ankou
+Arhaios Ophis
+Armarus
+Arsat
+Azazel
+Ga'ahp
+Grigorus
+Hrallath
+Heksen
+Karnax
+Keelus
+Kra'an
+Peinsluth
+Peirazo
+Ponerus
+Taet Nu'uhn
+Therion
+Turi'el
+Vairocan
+}
+
+// Random names of the Darknight Creeper,
+// a champion in the Doom Gauntlet
+[RANDOMNAME 15]
+{
+Blassarrabb
+Centibis
+Crenabil
+Farthak
+Flaggroth
+Gragok
+Gragragron
+Grothelfiend
+Krullus
+Krygar
+Laitesach
+Legron
+Lorbna
+Noirkrach
+Pariah
+Thranger
+Vendodroth
+Vilithrar
+Ydoc Llessue
+Zhaan
+}
+
+// Random names for the Impaler,
+// a champion in the Doom Gauntlet
+[RANDOMNAME 16]
+{
+Cassiel
+Crarigor
+Empalk
+Flandrith
+Gathfe
+Ix
+Magor
+Manglar
+Perfus
+Po-Kor
+Scrill
+Selminus
+Skred
+Slix
+Stavinfeks
+Steelbane
+Verolyn
+Victux
+Vladeer
+Xtul
+}
+
+// Random names for the shadowknight,
+// a champion in the Doom Gauntlet
+[RANDOMNAME 17]
+{
+Arametheus
+Archatrix
+Doomor
+Erdok
+Helzigar
+Jonar
+Krakus
+Lord Kaos
+Malashim
+Marcus Fel
+Marth'Fador
+Montobulus
+Nelokhiel
+Oghmus
+Samael
+Terxor
+Tyrnak
+Uhn
+Usuhl
+Zul
+}
+
+
 EOF 
 
 

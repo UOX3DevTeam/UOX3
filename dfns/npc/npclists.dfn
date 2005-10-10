@@ -1,3 +1,58 @@
+[NPCLIST arcticlist]
+{
+polarbear
+snowleopard
+whitewolf
+icesnake
+iceserpent
+frosttroll
+iceele
+frostspider
+frostooze
+}
+
+[NPCLIST insects]
+{
+giantspider
+frostspider
+dreadspider
+scorpion
+}
+
+[NPCLIST poorfolk]
+{
+m_whealer
+f_whealer
+m_sailor
+f_sailor
+m_beggar
+f_beggar
+m_peasant
+f_peasant
+m_gypsy
+f_gypsy
+m_seeker
+f_seeker
+}
+
+[NPCLIST richfolk]
+{
+m_fighter
+f_fighter
+m_noble
+f_noble
+m_townthief
+f_townthief
+m_peasant
+f_peasant
+}
+
+[NPCLIST alltownfolk]
+{
+npclist=poorfolk
+npclist=richfolk
+}
+
 [NPCLIST destard1]
 {
 NPCLIST=alldragonlist
@@ -79,17 +134,11 @@ eldergazer
 scorpion
 }
 
-[NPCLIST arcticlist]
+[NPCLIST flails]
 {
-polarbear
-snowleopard
-whitewolf
-icesnake
-iceserpent
-frosttroll
-iceele
-frostspider
-frostooze
+reaper
+corpser
+swamptentacle
 }
 
 [NPCLIST cavelist]
@@ -128,26 +177,56 @@ sewerrat
 npclist=weakundeadlist
 }
 
+[NPCLIST weakforestlist]
+{
+npclist=seeker
+npclist=whealer
+npclist=allbearlist
+npclist=allhorselist
+npclist=allbirdlist
+hind
+giantspider
+snake
+silverserpent
+chicken
+dog
+rabbit
+jackrabbit
+sheep
+panther
+cow
+goat
+cat
+wisp
+rat
+forestostard
+bull
+timberwolf
+graywolf
+direwolf
+cougar
+}
+
 [NPCLIST forestlist]
 {
 npclist=allorc
-m_whealer
-f_whealer
+npclist=whealer
+npclist=seeker
 npclist=allbearlist
 npclist=allhorselist
-ogre
 npclist=allettin
-corpser
-giantspider
 npclist=allbirdlist
-harpy
 npclist=alllizardmen
 npclist=allratmen
+npclist=alltroll
+ogre
+corpser
+giantspider
+harpy
 reaper
 snake
 silverserpent
 mongbat
-npclist=alltroll
 chicken
 hind
 dog
@@ -162,9 +241,6 @@ cat
 sewerrat
 wisp
 rat
-m_noble
-m_seeker
-f_seeker
 frenziedostard
 forestostard
 bull
@@ -332,7 +408,7 @@ bronzeele
 copperele
 dullcopperele
 shadowironele
-goldenele
+goldele
 valoriteele
 veriteele
 }
@@ -363,6 +439,7 @@ sewerrat
 npclist=alllizardmen
 boneaxeman
 npclist=allorc
+npclist=animallist
 }
 
 [NPCLIST barnlist]
@@ -561,7 +638,6 @@ orccaptain
 {
 troll
 axetroll
-hammertroll
 }
 
 [NPCLIST allettin]
@@ -780,20 +856,6 @@ horse
 darkhorse
 }
 
-[NPCLIST insects] 
-{ 
-giantspider 
-frostspider 
-dreadspider 
-scorpion 
-} 
-
-[NPCLIST flails] 
-{ 
-reaper 
-corpser 
-swamptentacle 
-}
 
 //NPCLists for Uni-sex vendor-spawners =)
 [NPCLIST banker]
@@ -1073,41 +1135,6 @@ f_towncrier
 m_artist
 f_artist
 }
-
-[NPCLIST poorfolk]
-{
-m_whealer
-f_whealer
-m_sailor
-f_sailor
-m_beggar
-f_beggar
-m_peasant
-f_peasant
-m_gypsy
-f_gypsy
-m_seeker
-f_seeker
-}
-
-[NPCLIST richfolk]
-{
-m_fighter
-f_fighter
-m_noble
-f_noble
-m_thief
-f_thief
-m_peasant
-f_peasant
-}
-
-[NPCLIST alltownfolk]
-{
-npclist=poorfolk
-npclist=richfolk
-}
-
 // NPCLIST 10000 is the list used by the Summon Creature spell!!!!
 [NPCLIST 10000]
 {
