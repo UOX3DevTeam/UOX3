@@ -33,6 +33,8 @@ ITEMMENU=5000
 Monsters
 <=Arachnids
 ITEMMENU=5008
+<=Champions
+ITEMMENU=5023
 <=Daemons
 ITEMMENU=5009
 <=Dragons
