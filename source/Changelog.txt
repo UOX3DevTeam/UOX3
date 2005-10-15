@@ -1,4 +1,4 @@
-10/15/2005 - giwo (0.98-3.1)
+10/15/2005 - giwo (0.98-3.0p [3.1 RC])
 	Fixed an issue in the CChar constructor causing linux builds to not compile.
 	Removed CHANCECOLOURORE and MINCOLOURSKILL from regions.dfn
 	Modified cSkills::Mining() to REQUIRE ore entries for proper ore creation.
