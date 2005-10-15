@@ -77,9 +77,7 @@ private:
 	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
 
 	SI16				health;					// health of the town
-	SI16				minColourSkill;			// minimum skill required to check for coloured ore
 	UI08				chanceFindBigOre;		// chance of finding big ore
-	UI08				chanceColourOre;		// chance of finding coloured ore (lowest skilled ore would be the default chance)
 
 	UI16				jsScript;
 
@@ -141,11 +139,9 @@ public:
 	void				SetResourceID( UI16 resID );
 	void				SetHealth( SI16 newValue );
 	void				SetChanceBigOre( UI08 newValue );
-	void				SetChanceColourOre( UI08 newValue );
 
 	WorldType			GetAppearance( void ) const;
 	UI08				GetChanceBigOre( void ) const;
-	UI08				GetChanceColourOre( void ) const;
 	SI32				GetGoodBuy( UI08 index ) const;
 	SI32				GetGoodRnd1( UI08 index ) const;
 	SI32				GetGoodRnd2( UI08 index ) const;
@@ -154,7 +150,6 @@ public:
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
 	UI16				GetMidiList( void ) const;
-	SI16				GetMinColourSkill( void ) const;
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
 	const orePref *		GetOrePreference( size_t targValue ) const;

@@ -237,9 +237,9 @@ bool CPIDeleteCharacter::Handle( void )
 }
 
 template< class T >
-T Capped( T value, T min, T max )
+T Capped( const T value, const T minimum, const T maximum )
 {
-	return UOX_MAX( UOX_MIN( value, max ), min );
+	return UOX_MAX( UOX_MIN( value, maximum ), minimum );
 }
 
 //o--------------------------------------------------------------------------o
@@ -252,7 +252,7 @@ T Capped( T value, T min, T max )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	PACKITEM now supports item,amount - Zane
 //o--------------------------------------------------------------------------o
-void addNewbieItem( CSocket *socket, CChar *c, char* str)
+void addNewbieItem( CSocket *socket, CChar *c, const char* str )
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
 	if( newbieData != NULL )
@@ -303,7 +303,7 @@ void addNewbieItem( CSocket *socket, CChar *c, char* str)
 //o--------------------------------------------------------------------------o
 void CPICreateCharacter::newbieItems( CChar *mChar )
 {
-	enum NewbieItems
+	const enum NewbieItems
 	{
 		HAIR = 0,
 		BEARD,
@@ -562,17 +562,15 @@ void updates( CSocket *s )
 	if( Updates == NULL )
 		return;
 
-	char updateData[2048];
 	UString tag;
-	UString data;
+	UString updateData;
 	updateData[0] = 0;
 	for( tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
-		data = Updates->GrabData();
-		sprintf( updateData, "%s%s %s ", updateData, tag.c_str(), data.c_str() );
+		updateData += tag + " " + Updates->GrabData() + " ";
 	}
 	CPUpdScroll toSend( 2 );
-	toSend.AddString( updateData );
+	toSend.AddString( updateData.c_str() );
 	toSend.Finalize();
 	s->Send( &toSend );
 }
@@ -662,11 +660,8 @@ void startChar( CSocket *mSock, bool onCreate )
 
 			CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 
-			char idname[256];
-			sprintf( idname, "%s v%s.%s [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
-			mSock->sysmessage( idname );
-			sprintf( idname, "Programmed by: %s", CVersionClass::GetProgrammers().c_str() );
-			mSock->sysmessage( idname );
+			mSock->sysmessage( "%s v%s.%s [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
+			mSock->sysmessage( "Programmed by: %s", CVersionClass::GetProgrammers().c_str() );
 
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 			{

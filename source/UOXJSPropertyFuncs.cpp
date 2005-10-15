@@ -915,7 +915,6 @@ namespace UOX
 				case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
 				case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
 				case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
-				case CREGP_CHANCECOLOURORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceColourOre() );		break;
 				case CREGP_NUMOREPREFERENCES:	*vp = INT_TO_JSVAL( gPriv->GetNumOrePreferences() );	break;
 				case CREGP_OREPREFERENCES:
 					break;
@@ -951,7 +950,6 @@ namespace UOX
 				case CREGP_HEALTH:				gPriv->SetHealth( (SI16)encaps.toInt() );			break;
 				case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );				break;
 				case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( (UI08)encaps.toInt() );		break;
-				case CREGP_CHANCECOLOURORE:		gPriv->SetChanceColourOre( (UI08)encaps.toInt() );	break;
 				case CREGP_OREPREFERENCES:
 				case CREGP_MEMBERS:
 				default:

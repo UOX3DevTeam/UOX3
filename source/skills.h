@@ -128,7 +128,6 @@ public:
 	miningData *GetOre( size_t number );
 	miningData *FindOre( std::string name );
 	miningData *FindOre( UI16 colour );
-	void		MakeOre( UI08 Region, CChar *actor, CSocket *s );
 };
 
 extern cSkills *Skills;

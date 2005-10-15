@@ -1,3 +1,10 @@
+10/15/2005 - giwo (0.98-3.1)
+	Fixed an issue in the CChar constructor causing linux builds to not compile.
+	Removed CHANCECOLOURORE and MINCOLOURSKILL from regions.dfn
+	Modified cSkills::Mining() to REQUIRE ore entries for proper ore creation.
+	Modified CHANCEBIGORE in regions.dfn to give a chance to get more than 1 ore at a time.
+	Added a message to advise a player when his skill level is too low to mine coloured ore.
+
 10/5/2005 - giwo (0.98-3.0o [3.1 BETA])
 	Moved kills, fame, and karma from CBaseObject to CChar to save wasted memory on items.
 	Fixed several warnings when compiling under gcc.

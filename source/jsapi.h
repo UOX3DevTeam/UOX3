@@ -891,12 +891,12 @@ struct JSExtendedClass {
     JSClass             base;
     JSEqualityOp        equality;
     JSObjectOp          outerObject;
+    JSObjectOp          innerObject;
     jsword              reserved0;
     jsword              reserved1;
     jsword              reserved2;
     jsword              reserved3;
     jsword              reserved4;
-    jsword              reserved5;
 };
 
 #define JSCLASS_HAS_PRIVATE             (1<<0)  /* objects have private slot */
@@ -934,7 +934,7 @@ struct JSExtendedClass {
 
 /* Initializer for unused members of statically initialized JSClass structs. */
 #define JSCLASS_NO_OPTIONAL_MEMBERS     0,0,0,0,0,0,0,0
-#define JSCLASS_NO_RESERVED_MEMBERS     0,0,0,0,0,0
+#define JSCLASS_NO_RESERVED_MEMBERS     0,0,0,0,0
 
 /* For detailed comments on these function pointer types, see jspubtd.h. */
 struct JSObjectOps {
@@ -1334,6 +1334,22 @@ JS_ClearScope(JSContext *cx, JSObject *obj);
 
 extern JS_PUBLIC_API(JSIdArray *)
 JS_Enumerate(JSContext *cx, JSObject *obj);
+
+/*
+ * Create an object to iterate over enumerable properties of obj, in arbitrary
+ * property definition order.  NB: This differs from longstanding for..in loop
+ * order, which uses order of property definition in obj.
+ */
+extern JS_PUBLIC_API(JSObject *)
+JS_NewPropertyIterator(JSContext *cx, JSObject *obj);
+
+/*
+ * Return true on success with *idp containing the id of the next enumerable
+ * property to visit using iterobj, or JSVAL_VOID if there is no such property
+ * left to visit.  Return false on error.
+ */
+extern JS_PUBLIC_API(JSBool)
+JS_NextProperty(JSContext *cx, JSObject *iterobj, jsid *idp);
 
 extern JS_PUBLIC_API(JSBool)
 JS_CheckAccess(JSContext *cx, JSObject *obj, jsid id, JSAccessMode mode,

@@ -154,7 +154,6 @@ const UI16			DEFCHAR_PRIV				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
-const UI08			DEFCHAR_LAYERCTR			= 0;
 const SI16			DEFCHAR_KARMA				= 0;
 const SI16			DEFCHAR_FAME				= 0;
 const SI16			DEFCHAR_KILLS				= 0;
@@ -167,7 +166,7 @@ maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_ol
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), karma( DEFCHAR_KARMA ), fame( DEFCHAR_FAME ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
-spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), layerCtr( DEFCHAR_LAYERCTR ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
+spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
 	id		= 0x0190;

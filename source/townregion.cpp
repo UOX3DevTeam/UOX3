@@ -41,9 +41,7 @@ const long		DEFTOWN_GUARDSPAID			= 0;
 const long		DEFTOWN_TAXEDMEMBERS		= 0;
 const UI08		DEFTOWN_WORLDNUMBER			= 0;
 const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
-const SI16		DEFTOWN_MINCOLOURSKILL		= 0;
 const UI08		DEFTOWN_FINDBIGORE			= 0;
-const UI08		DEFTOWN_FINDCOLOURORE		= 0;
 const UI16		DEFTOWN_NUMGUARDS			= 10;
 
 CTownRegion::CTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), priv( DEFTOWN_PRIV ), 
@@ -52,8 +50,7 @@ taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guards
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
 timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ), 
 timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ), worldNumber( DEFTOWN_WORLDNUMBER ), jsScript( DEFTOWN_JSSCRIPT ), 
-minColourSkill( DEFTOWN_MINCOLOURSKILL ), chanceFindBigOre( DEFTOWN_FINDBIGORE ), chanceColourOre( DEFTOWN_FINDCOLOURORE ),
-numGuards( DEFTOWN_NUMGUARDS )
+chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS )
 {
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
@@ -319,9 +316,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	int actgood				= -1;
 	bool orePrefLoaded		= false;
 	numGuards			= 10;
-	minColourSkill		= 600;
 	chanceFindBigOre	= 80;
-	chanceColourOre		= 10;
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
@@ -361,11 +356,11 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 			case 'c':
 			case 'C':
 				if( UTag == "COLOURMINSKILL" )
-					minColourSkill = data.toShort();
+					break;
 				else if( UTag == "CHANCEFORBIGORE" )
 					chanceFindBigOre = data.toUByte();
 				else if( UTag == "CHANCEFORCOLOUR" )
-					chanceColourOre = data.toUByte();
+					break;
 				break;
 			case 'd':
 			case 'D':
@@ -1262,17 +1257,9 @@ void CTownRegion::SetRace( RACEID newRace )
 {
 	race = newRace;
 }
-SI16 CTownRegion::GetMinColourSkill( void ) const
-{
-	return minColourSkill;
-}
 UI08 CTownRegion::GetChanceBigOre( void ) const
 {
 	return chanceFindBigOre;
-}
-UI08 CTownRegion::GetChanceColourOre( void ) const
-{
-	return chanceColourOre;
 }
 bool CTownRegion::RemoveCharacter( size_t position )
 {
@@ -1383,10 +1370,6 @@ void CTownRegion::SetHealth( SI16 newValue )
 void CTownRegion::SetChanceBigOre( UI08 newValue )
 {
 	chanceFindBigOre = newValue;
-}
-void CTownRegion::SetChanceColourOre( UI08 newValue )
-{
-	chanceColourOre = newValue;
 }
 
 UI16 CTownRegion::GetScriptTrigger( void ) const

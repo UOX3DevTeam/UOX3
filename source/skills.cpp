@@ -134,89 +134,93 @@ void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 		orePart->oreAmt = oreCeiling;
 }
 
-//o--------------------------------------------------------------------------
-//| Function    - void cSkills::Mine( CSocket *s )
-//| Date        - Unknown
-//| Programmer  - Unknown
-//| Modified    - Cork(Unknown)/Abaddon(February 19, 2000)
-//o--------------------------------------------------------------------------
-//| Purpose     - (Fill this in)
-//| Comments    - Skill checking now implemented. You cannot mine colored ore
-//|               unless you have the proper mining skill for each ore type. -Cork
-//|               Rewrote most of it to clear up some of the mess-Abaddon
-//o--------------------------------------------------------------------------
-void cSkills::Mine( CSocket *s )
+//o---------------------------------------------------------------------------o
+//|   Function    :  void MakeOre( UI08 Region, CChar *actor, CSocket *s )
+//|   Date        :  Unknown
+//|   Programmer  :  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Spawn Ore in players pack when he successfully mines
+//o---------------------------------------------------------------------------o
+void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 {
-	VALIDATESOCKET( s );
-	bool floor = false, mountain = false;
-	
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;	// did we cancel the target?
-
-	if( cwmWorldState->ServerData()->ResOreArea() < 10 )	// make sure there are enough minimum areas
-		cwmWorldState->ServerData()->ResOreArea( 10 );
-
-	SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
-	SI16 targetY = s->GetWord( 0x0D );
-	SI08 targetZ = s->GetByte( 0x10 );
-	CChar *mChar = s->CurrcharObj();
-	SI16 distX = abs( mChar->GetX() - targetX );			// find our distance
-	SI16 distY = abs( mChar->GetY() - targetY );
-
-	if( distX > 5 || distY > 5 )							// too far away?
-	{
-		s->sysmessage( 799 );
+	if( targRegion == NULL || !ValidateObject( mChar ) )
 		return;
-	}
-	
-	s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
 
-	UI08 targetID1 = s->GetByte( 0x11 );							// store ids of what we targeted
-	UI08 targetID2 = s->GetByte( 0x12 );
-
-	if( targetZ < 28 && targetID1 == 14 )					// if not too high
+	const UI16 getSkill			= mChar->GetSkill( MINING );
+	const int oreChance			= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
+	int sumChance				= 0;
+	bool oreFound				= false;
+	const orePref *toFind		= NULL;
+	const miningData *found		= NULL;
+	for( size_t currentOre = 0; currentOre < targRegion->GetNumOrePreferences(); ++currentOre )
 	{
-		switch( targetID2 )
+		toFind = targRegion->GetOrePreference( currentOre );
+		if( toFind == NULL )
+			continue;
+
+		found = toFind->oreIndex;
+		if( found == NULL )
+			continue;
+
+		if( sumChance > oreChance || oreChance < ( sumChance + toFind->percentChance ) )
 		{
-			case 0xD3:
-			case 0xDF:
-			case 0xE0:
-			case 0xE1:
-			case 0xE8:
-				GraveDig( s );							// check to see if we targeted a grave, if so, check it
+			if( getSkill >= found->minSkill )
+			{
+				const std::string oreName	= found->name + " ore";
+				CItem *oreItem				= Items->CreateItem( &mSock, mChar, 0x19B9, 1, found->colour, OT_ITEM, true );
+				if( oreItem != NULL )
+				{
+					oreItem->SetName( oreName );
+					if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
+						oreItem->SetAmount( 5 );
+				}
+
+				mSock.sysmessage( 982, oreName.c_str() );
+				oreFound = true;
 				break;
-			default:
-				break;
+			}	
 		}
+
+		sumChance += toFind->percentChance;
 	}
-	
+	if( !oreFound )
+	{
+		if( getSkill >= 850 )
+		{
+			Items->CreateRandomItem( &mSock, "digginggems" ); 
+			mSock.sysmessage( 983 );
+		}
+		else
+			mSock.sysmessage( 1772 );
+	}
+}
+
+bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 targetZ, UI08 targetID1, UI08 targetID2 )
+{
 	switch( cwmWorldState->ServerData()->MineCheck() )
 	{
 		case 0:
-			floor = true;
-			mountain = true;
-			break;
+			return true;
 		case 1:
 			if( targetZ == 0 )			// check to see if we're targetting a dungeon floor
 			{
 				if( targetID1 == 0x05 )
 				{
 					if( ( targetID2 >= 0x3B && targetID2 <= 0x4F ) || ( targetID2 >= 0x51 && targetID2 <= 0x53 ) || ( targetID2 == 0x6A ) )
-						floor = true;
+						return true;
 				}
 			}
-			if( !floor && targetZ >= 0 )	// mountain not likely to be below 0 (but you never know, do you? =)
+			if( targetZ >= 0 )	// mountain not likely to be below 0 (but you never know, do you? =)
 			{
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 					CTile tile;
-					staticrecord *stat = NULL;
-					while( ( ( stat = msi.Next() ) != NULL ) && !mountain )
+					for( staticrecord *stat = msi.Next(); stat != NULL; stat = msi.Next() )
 					{
 						msi.GetTile( &tile );
 						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-							mountain = true;
+							return true;
 					}
 				}
 				else		// or it could be a map only
@@ -227,22 +231,79 @@ void cSkills::Mine( CSocket *s )
 					map1 = Map->SeekMap0( targetX, targetY, mChar->WorldNumber() );
 					Map->SeekLand( map1.id, &land );
 					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
-						mountain = true; 
+						return true; 
 				}
 			}
 			break;
 		case 2:	// need to modify scripts to support this!
-			floor = true;		// we'll default to work everywhere for these scripts
-			mountain = true;
-			break;
+			return true;
 		default:
-			s->sysmessage( 800 );
-			return;
+			mSock.sysmessage( 800 );
+			return true;
+	}
+	return false;
+}
+
+//o---------------------------------------------------------------------------o
+//| Function    - void cSkills::Mine( CSocket *s )
+//| Date        - Unknown
+//| Programmer  - Unknown
+//| Modified    - Cork(Unknown)/Abaddon(February 19, 2000)
+//o---------------------------------------------------------------------------o
+//| Purpose     - (Fill this in)
+//| Comments    - Skill checking now implemented. You cannot mine colored ore
+//|               unless you have the proper mining skill for each ore type. -Cork
+//|               Rewrote most of it to clear up some of the mess-Abaddon
+//o---------------------------------------------------------------------------o
+void cSkills::Mine( CSocket *s )
+{
+	VALIDATESOCKET( s );
+	CSocket& mSock = (*s);
+
+	if( mSock.GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	CChar *mChar = mSock.CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	const SI16 targetX = mSock.GetWord( 11 );
+	const SI16 targetY = mSock.GetWord( 13 );
+	const SI08 targetZ = mSock.GetWord( 16 );
+
+	const SI16 distX = abs( mChar->GetX() - targetX );
+	const SI16 distY = abs( mChar->GetY() - targetY );
+
+	if( distX > 5 || distY > 5 )
+	{
+		mSock.sysmessage( 799 );
+		return;
+	}
+	
+	mSock.SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
+
+	const UI08 targetID1 = mSock.GetByte( 17 );
+	const UI08 targetID2 = mSock.GetByte( 18 );
+
+	if( targetZ < 28 && targetID1 == 0x0E )
+	{
+		switch( targetID2 )
+		{
+			case 0xD3:
+			case 0xDF:
+			case 0xE0:
+			case 0xE1:
+			case 0xE8:
+				GraveDig( s );		// check to see if we targeted a grave, if so, check it
+				break;
+			default:
+				break;
+		}
 	}
 
-	if( (!floor && !mountain) )		// if we can't mine here or if for some reason it's invalid, clear out
+	if( !MineCheck( mSock, mChar, targetX, targetY, targetZ, targetID1, targetID2 ) )
 	{
-		s->sysmessage( 801 );
+		mSock.sysmessage( 801 );
 		return;
 	}
 
@@ -250,7 +311,7 @@ void cSkills::Mine( CSocket *s )
 	MapResource_st *orePart = MapRegion->GetResource( targetX, targetY, mChar->WorldNumber() );
 	if( orePart->oreAmt <= 0 )
 	{
-		s->sysmessage( 802 );
+		mSock.sysmessage( 802 );
 		return;
 	}
 	if( mChar->IsOnHorse() != 0 )	// do action and sound
@@ -258,37 +319,30 @@ void cSkills::Mine( CSocket *s )
 	else
 		Effects->PlayCharacterAnimation( mChar, 0x0B );
 	
-	Effects->PlaySound( s, 0x0125, true ); 
+	Effects->PlaySound( &mSock, 0x0125, true ); 
 	
-	if( !CheckSkill( mChar, MINING, 0, 1000 ) ) // check to see if our skill is good enough
+	if( CheckSkill( mChar, MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
-		s->sysmessage( 803 );
-		if( orePart->oreAmt > 0 && RandomNum( 0, 1 ) )
+		if( orePart->oreAmt > 0 )
 			--orePart->oreAmt;
-		return;
-	} 
-	else if( orePart->oreAmt > 0 )
-		--orePart->oreAmt;
-	
+		
 #if defined( UOX_DEBUG_MODE )
 		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() << "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
-		
-		CTownRegion *targRegion = mChar->GetRegion();
-		if( mChar->GetSkill( MINING ) >= targRegion->GetMinColourSkill() && RandomNum( 0, 100 ) >= targRegion->GetChanceColourOre() )
-			MakeOre( mChar->GetRegionNum(), mChar, s );
-		else  //  We didn't find any colored ore, so grab some iron ore
-		{
-			CItem *oreItem = NULL;
-			if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
-				oreItem = Items->CreateItem( s, mChar, 0x19BA, 5, 0, OT_ITEM, true );
-			else
-				oreItem = Items->CreateItem( s, mChar, 0x19B9, 1, 0, OT_ITEM, true );
-			if( oreItem != NULL )
-				oreItem->SetName( "Iron Ore" );
-			s->sysmessage( 804 );
-		}
+			
+		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber() );
+		if( targetReg == NULL )
+			return;
+
+		MakeOre( mSock, mChar, targetReg );
 	}
+	else
+	{
+		mSock.sysmessage( 803 );
+		if( orePart->oreAmt > 0 && RandomNum( 0, 1 ) )
+			--orePart->oreAmt;
+	}
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::GraveDig( CSocket *s )
@@ -2549,6 +2603,7 @@ cSkills::~cSkills( void )
 //o---------------------------------------------------------------------------o
 bool cSkills::LoadMiningData( void )
 {
+	ores.resize( 0 );
 	// Let's first get our ore list, in SECTION ORE_LIST
 	ScriptSection *oreList = FileLookup->FindEntry( "ORE_LIST", skills_def );
 	bool rvalue = false;
@@ -2633,30 +2688,11 @@ void cSkills::Load( void )
 	Console << "Loading custom ore data        ";
 
 	if( !LoadMiningData() )
-	{	// we need to setup our default ores and stuff here!
-		miningData miningstuff;
-		miningstuff.minAmount = 3;		
-		miningstuff.foreign = false;	miningstuff.minSkill = 0;	miningstuff.name = "Iron";	miningstuff.colour = 0;	miningstuff.makemenu = 1;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 850;	miningstuff.name = "Gold";	miningstuff.colour = 0x045E;	miningstuff.makemenu = 50;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 750;	miningstuff.name = "Copper";miningstuff.colour = 0x0641;	miningstuff.makemenu = 814;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 790;	miningstuff.name = "Silver";miningstuff.colour = 0x038A;	miningstuff.makemenu = 813;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 900;	miningstuff.name = "Agapite";miningstuff.colour = 0x0150;	miningstuff.makemenu = 806;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 650;	miningstuff.name = "Adamantium";miningstuff.colour = 0x0386;	miningstuff.makemenu = 800;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 950;	miningstuff.name = "Verite";miningstuff.colour = 0x022F;	miningstuff.makemenu = 802;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 800;	miningstuff.name = "Bronze";miningstuff.colour = 0x02E7;	miningstuff.makemenu = 801;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 700;	miningstuff.name = "Merkite";miningstuff.colour = 0x02C3;	miningstuff.makemenu = 804;
-		ores.push_back( miningstuff );
-		miningstuff.foreign = true;		miningstuff.minSkill = 990;	miningstuff.name = "Mythril";miningstuff.colour = 0x0191;	miningstuff.makemenu = 803;
-		ores.push_back( miningstuff );
+	{
+		Shutdown( FATAL_UOX3_ORELIST );
+		return;
 	}
+
 	Console.PrintDone();
 	
 	Console << "Loading creation menus         ";	
@@ -2733,79 +2769,6 @@ miningData *cSkills::FindOre( UI16 colour )
 			return &(*oreIter);
 	}
 	return NULL;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Spawn Ore in players pack when he successfully mines
-//o---------------------------------------------------------------------------o
-void cSkills::MakeOre( UI08 Region, CChar *actor, CSocket *s )
-{
-	CTownRegion *targRegion = regions[Region];
-	if( targRegion == NULL || !ValidateObject( actor ) )
-		return;
-	VALIDATESOCKET( s );
-	UI16 getSkill			= actor->GetSkill( MINING );
-	int oreChance			= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
-	int sumChance			= 0;
-	bool oreFound			= false;
-	const orePref *toFind	= NULL;
-	miningData *found		= NULL;
-	CItem *oreItem			= NULL;
-	for( size_t currentOre = 0; currentOre < targRegion->GetNumOrePreferences(); ++currentOre )
-	{
-		toFind = targRegion->GetOrePreference( currentOre );
-		if( toFind == NULL )
-			continue;
-		if( oreChance >= sumChance && oreChance < ( sumChance + toFind->percentChance ) )
-		{
-			found = toFind->oreIndex;
-			if( found != NULL )
-			{
-				if( getSkill >= found->minSkill )
-				{
-					std::string temp;
-					temp = found->name + " ore";
-					oreItem = Items->CreateItem( s, actor, 0x19B9, 1, found->colour, OT_ITEM, true );
-					if( oreItem != NULL )
-						oreItem->SetName( temp );
-					s->sysmessage( 982, temp.c_str() );
-					oreFound = true;
-				}
-			}
-		}
-		if( sumChance > oreChance )
-		{
-			found = toFind->oreIndex;
-			if( found != NULL )
-			{
-				if( getSkill >= found->minSkill )
-				{
-					std::string temp;
-					temp = found->name + " ore";
-					oreItem = Items->CreateItem( s, actor, 0x19B9, 1, found->colour, OT_ITEM, true );
-					if( oreItem != NULL )
-						oreItem->SetName( temp );
-					s->sysmessage( 982, temp.c_str() );
-					oreFound = true;
-				}
-			}
-		}
-		if( oreFound )
-			break;
-		sumChance += toFind->percentChance;
-	}
-	if( !oreFound || ( oreFound && found == NULL ) )
-	{
-		if( getSkill >= 850 )
-		{
-			Items->CreateRandomItem( s, "digginggems" ); 
-			s->sysmessage( 983 );
-		}
-	}
 }
 
 //o---------------------------------------------------------------------------o

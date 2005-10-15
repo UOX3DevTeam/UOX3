@@ -529,7 +529,7 @@ public:
 	void		dumpPaths( void );
 
 	void			ServerLocation( std::string toSet );
-	LPSTARTLOCATION ServerLocation( UI32 locNum );
+	LPSTARTLOCATION ServerLocation( size_t locNum );
 
 	size_t			NumServerLocations( void ) const;
 

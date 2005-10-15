@@ -514,13 +514,13 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		bool error = false;
 		if( !resettingDefaults )
 		{
-	#if UOX_PLATFORM != PLATFORM_WIN32
-			DIR *dirPtr = opendir( sText.c_str() );
-			if( !dirPtr )
-				error = true;
-			else
-				closedir( dirPtr );
-	#else
+//#if UOX_PLATFORM != PLATFORM_WIN32
+//			DIR *dirPtr = opendir( sText.c_str() );
+//			if( !dirPtr )
+//				error = true;
+//			else
+//				closedir( dirPtr );
+//#else
 			char curWorkingDir[1024];
 			GetCurrentDirectory( 1024, curWorkingDir );
 			int iResult = _chdir( sText.c_str() );
@@ -528,12 +528,12 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 				error = true;
 			else
 				_chdir( curWorkingDir );	// move back to where we were
-	#endif
+//#endif
 		}
 
 		if( error )
 		{
-				Console.Error( 1, " %s directory %s does not exist", verboseDirectory.c_str(), sText.c_str() );
+				Console.Error( 1, "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() );
 				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -2349,7 +2349,7 @@ void CServerData::ServerLocation( std::string toSet )
 		Console.Error( 2, "Malformed location entry in ini file" );
 	}
 }
-LPSTARTLOCATION CServerData::ServerLocation( UI32 locNum )
+LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 {
 	LPSTARTLOCATION rvalue = NULL;
 	if( locNum < startlocations.size() )
