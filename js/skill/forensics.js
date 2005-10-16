@@ -27,7 +27,7 @@ function onCallback0( pSock, ourObj )
 		else
 		{
 			pSock.SysMessage( "You examine the body..." );
-			var timeSinceDeath = parseInt( (GetCurrentClock() - ourObj.murdertime) / 1000 );
+			var timeSinceDeath = parseInt( (GetCurrentClock() - ourObj.tempTime) / 1000 );
 			if( timeSinceDeath > 180 )
 				pSock.SysMessage( "It stinks quite alot by now." );
 			else if( timeSinceDeath > 60 )
