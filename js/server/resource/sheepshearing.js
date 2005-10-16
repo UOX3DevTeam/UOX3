@@ -6,10 +6,10 @@ function shearSheep( pUser, sheep )
 			
 	// If sheep is already shorn, do nothing
 	if( sheep.id == 0x00df )
-		pSock.SysMessage( GetDictionaryEntry( 1773, pSock.Language ) ); // This sheep is not yet ready to be shorn.
+		pSock.SysMessage( GetDictionaryEntry( 1774, pSock.Language ) ); // This sheep is not yet ready to be shorn.
 	else
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1772, pSock.Language ) ); // You shear some wool from the sheep
+		pUser.SysMessage( GetDictionaryEntry( 1773, pSock.Language ) ); // You shear some wool from the sheep
 		sheep.SoundEffect( 0x0248, true );
 		
 		// remove sheep's wool and add to player's backpack
