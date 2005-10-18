@@ -23,8 +23,6 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 // Classes Definitions
 //o---------------------------------------------------------------------------o
-QUEUEMAP						refreshQueue;
-QUEUEMAP						deletionQueue;
 std::vector< CTownRegion * >	regions;
 std::vector< CSpawnRegion *>	spawnregions;		// Regionspawns
 

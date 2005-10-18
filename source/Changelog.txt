@@ -1,3 +1,8 @@
+10/17/2005 - giwo (0.98-3.0q [3.1 RC])
+	Improved the MapResource handling code.
+	Improved the MapRegion handling code, reducing waste.
+	Fixed a possible issue causing invalid data in the refreshQueue and deletionQueue.
+
 10/15/2005 - giwo (0.98-3.0p [3.1 RC])
 	Fixed an issue in the CChar constructor causing linux builds to not compile.
 	Removed CHANCECOLOURORE and MINCOLOURSKILL from regions.dfn

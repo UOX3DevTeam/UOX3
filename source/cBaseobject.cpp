@@ -2092,9 +2092,9 @@ void CBaseObject::Cleanup( void )
 	if( tScript != NULL )
 		tScript->OnDelete( this );
 
-	QUEUEMAP_ITERATOR toFind = refreshQueue.find( this );
-	if( toFind != refreshQueue.end() )
-		refreshQueue.erase( toFind );
+	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	if( toFind != cwmWorldState->refreshQueue.end() )
+		cwmWorldState->refreshQueue.erase( toFind );
 
 	if( ValidateObject( multis ) )
 		SetMulti( INVALIDSERIAL, false );
@@ -2130,7 +2130,7 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 	default:										break;
 	}
 	if( isPostLoaded() )
-		++(refreshQueue[this]);
+		++(cwmWorldState->refreshQueue[this]);
 }
 
 //o---------------------------------------------------------------------------o

@@ -1968,7 +1968,7 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CItem::Delete( void )
 {
-	++(deletionQueue[this]);
+	++(cwmWorldState->deletionQueue[this]);
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );

@@ -73,12 +73,6 @@ extern JSObject *jsGlobal;
 extern JSClass global_class;
 extern JSClass uox_class;
 
-//o---------------------------------------------------------------------------o
-// Global Variables
-//o---------------------------------------------------------------------------o
-extern QUEUEMAP							refreshQueue;
-extern QUEUEMAP							deletionQueue;
-
 inline TIMERVAL BuildTimeValue( R32 timeFromNow ) 
 { 
 	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	

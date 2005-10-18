@@ -234,6 +234,9 @@ public:
 	std::vector< UI08 >					escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
 
+	QUEUEMAP							refreshQueue;
+	QUEUEMAP							deletionQueue;
+
 	void		CheckTimers( void );
 	void		doWorldLight( void );
 	void		SaveNewWorld( bool x );

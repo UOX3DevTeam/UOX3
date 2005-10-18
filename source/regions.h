@@ -55,27 +55,14 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 		SI16								upperArrayY;
 		UI16								resourceX;
 		UI16								resourceY;
-		CMapRegion							mapRegions[UpperX][UpperY];
-		std::map< UI32, MapResource_st >	mapResources;
+		std::vector< CMapRegion >			mapRegions;
+		std::vector< MapResource_st >		mapResources;
 	public:
-						CMapWorld( void )
-						{
-						};
-						~CMapWorld( void )
-						{
-						};
+						CMapWorld( void );
+						CMapWorld( UI08 worldNum );
+						~CMapWorld( void );
 
 		CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
-
-		void			SetUpperX( SI16 newVal );
-		void			SetUpperY( SI16 newVal );
-		void			SetResourceX( UI16 newVal );
-		void			SetResourceY( UI16 newVal );
-
-		SI16			GetUpperX( void ) const;
-		SI16			GetUpperY( void ) const;
-		UI16			GetResourceX( void ) const;
-		UI16			GetResourceY( void ) const;
 
 		MapResource_st&	GetResource( SI16 x, SI16 y );
 

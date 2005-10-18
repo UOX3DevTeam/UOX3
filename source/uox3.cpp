@@ -345,8 +345,8 @@ void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
 	UI32 objectsDeleted				= 0;
-	QUEUEMAP_CITERATOR delqIter		= deletionQueue.begin();
-	QUEUEMAP_CITERATOR delqIterEnd	= deletionQueue.end();
+	QUEUEMAP_CITERATOR delqIter		= cwmWorldState->deletionQueue.begin();
+	QUEUEMAP_CITERATOR delqIterEnd	= cwmWorldState->deletionQueue.end();
 	while( delqIter != delqIterEnd )
 	{
 		CBaseObject *mObj = delqIter->first;
@@ -359,7 +359,7 @@ void CollectGarbage( void )
 		ObjectFactory::getSingleton().DestroyObject( mObj );
 		++objectsDeleted;
 	}
-	deletionQueue.clear();
+	cwmWorldState->deletionQueue.clear();
 
 	Console << " Removed " << objectsDeleted << " objects" << myendl;
 }
@@ -2069,8 +2069,8 @@ void CWorldMain::CheckAutoTimers( void )
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / statwindow() queue here
-	QUEUEMAP_CITERATOR rqIter			= refreshQueue.begin();
-	QUEUEMAP_CITERATOR rqIterEnd		= refreshQueue.end();
+	QUEUEMAP_CITERATOR rqIter			= cwmWorldState->refreshQueue.begin();
+	QUEUEMAP_CITERATOR rqIterEnd		= cwmWorldState->refreshQueue.end();
 	while( rqIter != rqIterEnd )
 	{
 		CBaseObject *mObj = rqIter->first;
@@ -2106,7 +2106,7 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 		++rqIter;
 	}
-	refreshQueue.clear();
+	cwmWorldState->refreshQueue.clear();
 }
 
 //o---------------------------------------------------------------------------o

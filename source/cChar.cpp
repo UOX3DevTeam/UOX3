@@ -3662,7 +3662,7 @@ bool CChar::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CChar::Delete( void )
 {
-	++(deletionQueue[this]);
+	++(cwmWorldState->deletionQueue[this]);
 	Cleanup();
 	SetDeleted( true );
 	ShouldSave( false );

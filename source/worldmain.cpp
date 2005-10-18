@@ -81,6 +81,8 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
 	escortRegions.resize( 0 );
 	logoutLocs.resize( 0 );
 	goPlaces.clear();
+	refreshQueue.clear();
+	deletionQueue.clear();
 	uoxtimeout.tv_sec	= 0;
 	uoxtimeout.tv_usec	= 0;
 	sData				= new CServerData();
@@ -96,6 +98,8 @@ CWorldMain::~CWorldMain()
 	escortRegions.clear();
 	creatures.clear();
 	goPlaces.clear();
+	refreshQueue.clear();
+	deletionQueue.clear();
 	delete sData;
 	delete sProfile;
 }

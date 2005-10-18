@@ -142,6 +142,41 @@ CDataList< CChar * > * CMapRegion::GetCharList( void )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	CMapWorld Constructor/Destructor
+//|	Date			-	17 October, 2005
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Initializes & Clears the MapWorld data
+//o--------------------------------------------------------------------------o
+CMapWorld::CMapWorld() : upperArrayX( 0 ), upperArrayY( 0 ), resourceX( 0 ), resourceY( 0 )
+{
+	mapResources.resize( 1 );	// ALWAYS initialize at least one resource region.
+	mapRegions.resize( 0 );
+}
+
+CMapWorld::CMapWorld( UI08 worldNum )
+{
+	MapData_st& mMap	= Map->GetMapData( worldNum );
+	upperArrayX			= static_cast<SI16>(mMap.xBlock / MapColSize);
+	upperArrayY			= static_cast<SI16>(mMap.yBlock / MapRowSize);
+	resourceX			= static_cast<UI16>(mMap.xBlock / cwmWorldState->ServerData()->ResOreArea());
+	resourceY			= static_cast<UI16>(mMap.yBlock / cwmWorldState->ServerData()->ResOreArea());
+
+	size_t resourceSize = static_cast<size_t>(resourceX * resourceY);
+	if( resourceSize < 1 )	// ALWAYS initialize at least one resource region.
+		resourceSize = 1;
+	mapResources.resize( resourceSize );
+
+	mapRegions.resize( static_cast<size_t>(upperArrayX * upperArrayY) );
+}
+
+CMapWorld::~CMapWorld()
+{
+	mapResources.resize( 0 );
+	mapRegions.resize( 0 );
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	CMapRegion * GetMapRegion( SI16 xOffset, SI16 yOffset )
 //|	Date			-	9/13/2005
 //|	Programmer		-	giwo
@@ -150,74 +185,16 @@ CDataList< CChar * > * CMapRegion::GetCharList( void )
 //o--------------------------------------------------------------------------o
 CMapRegion * CMapWorld::GetMapRegion( SI16 xOffset, SI16 yOffset )
 {
-	CMapRegion *mRegion = NULL;
+	CMapRegion *mRegion			= NULL;
+	const size_t regionIndex	= static_cast<size_t>((xOffset * upperArrayY) + yOffset);
+
 	if( xOffset >= 0 && xOffset < upperArrayX && yOffset >= 0 && yOffset < upperArrayY )
-		mRegion = &mapRegions[xOffset][yOffset];
+	{
+		if( regionIndex < mapRegions.size() )
+			mRegion = &mapRegions[regionIndex];
+	}
+
 	return mRegion;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SI16 UpperX()
-//|	Date			-	9/13/2005
-//|	Programmer		-	giwo
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Gets/Sets the upper X boundry of the array
-//o--------------------------------------------------------------------------o
-SI16 CMapWorld::GetUpperX( void ) const
-{
-	return upperArrayX;
-}
-void CMapWorld::SetUpperX( SI16 newVal )
-{
-	upperArrayX = newVal;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SI16 UpperY()
-//|	Date			-	9/13/2005
-//|	Programmer		-	giwo
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Gets/Sets the upper Y boundry of the array
-//o--------------------------------------------------------------------------o
-SI16 CMapWorld::GetUpperY( void ) const
-{
-	return upperArrayY;
-}
-void CMapWorld::SetUpperY( SI16 newVal )
-{
-	upperArrayY = newVal;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 ResourceX()
-//|	Date			-	9/17/2005
-//|	Programmer		-	giwo
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Gets/Sets the resource X boundry of the array
-//o--------------------------------------------------------------------------o
-UI16 CMapWorld::GetResourceX( void ) const
-{
-	return resourceX;
-}
-void CMapWorld::SetResourceX( UI16 newVal )
-{
-	resourceX = newVal;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 ResourceY()
-//|	Date			-	9/17/2005
-//|	Programmer		-	giwo
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Gets/Sets the resource Y boundry of the array
-//o--------------------------------------------------------------------------o
-UI16 CMapWorld::GetResourceY( void ) const
-{
-	return resourceY;
-}
-void CMapWorld::SetResourceY( UI16 newVal )
-{
-	resourceY = newVal;
 }
 
 //o--------------------------------------------------------------------------o
@@ -232,7 +209,9 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 	const UI16 gridX = (x / cwmWorldState->ServerData()->ResOreArea());
 	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
 
-	const UI32 resIndex = ((gridX * resourceY) + gridY);
+	size_t resIndex = ((gridX * resourceY) + gridY);
+	if( resIndex > mapResources.size() )
+		resIndex = 0;
 	return mapResources[resIndex];
 }
 
@@ -251,15 +230,14 @@ void CMapWorld::SaveResources( UI08 worldNum )
 
 	if( toWrite )
 	{
-		const UI32 resCap = (resourceX * resourceY);
-		for( UI32 resIndex = 0; resIndex < resCap; ++resIndex )
+		for( std::vector< MapResource_st >::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
 		{
-			wBuffer[0] = static_cast<char>(mapResources[resIndex].oreAmt>>8);
-			wBuffer[1] = static_cast<char>(mapResources[resIndex].oreAmt%256);
+			wBuffer[0] = static_cast<char>((*mIter).oreAmt>>8);
+			wBuffer[1] = static_cast<char>((*mIter).oreAmt%256);
 			toWrite.write( (const char *)&wBuffer, 2 );
 
-			wBuffer[0] = static_cast<char>(mapResources[resIndex].logAmt>>8);
-			wBuffer[1] = static_cast<char>(mapResources[resIndex].logAmt%256);
+			wBuffer[0] = static_cast<char>((*mIter).logAmt>>8);
+			wBuffer[1] = static_cast<char>((*mIter).logAmt%256);
 			toWrite.write( (const char *)&wBuffer, 2 );
 		}
 		toWrite.close();
@@ -291,27 +269,26 @@ void CMapWorld::LoadResources( UI08 worldNum )
 	if( fileExists )
 		toRead.seekg( 0, std::ios::beg );
 
-	const UI32 resCap = (resourceX * resourceY);
-	for( UI32 resIndex = 0; resIndex < resCap; ++resIndex )
+	for( std::vector< MapResource_st >::iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
 	{
 		if( fileExists )
 		{
 			toRead.read( rBuffer, 2 );
-			mapResources[resIndex].oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+			(*mIter).oreAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 
 			toRead.read( rBuffer, 2 );
-			mapResources[resIndex].logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
+			(*mIter).logAmt = ( (rBuffer[0]<<8) + rBuffer[1] );
 
 			fileExists = toRead.eof();
 		}
 		else
 		{
-			mapResources[resIndex].oreAmt  = resOre;
-			mapResources[resIndex].logAmt  = resLog;
+			(*mIter).oreAmt  = resOre;
+			(*mIter).logAmt  = resLog;
 		}
 		// No need to preserve time.  Do a refresh automatically
-		mapResources[resIndex].oreTime = oreTime;
-		mapResources[resIndex].logTime = logTime;
+		(*mIter).oreTime = oreTime;
+		(*mIter).logTime = logTime;
 	}
 	if( fileExists )
 		toRead.close();
@@ -322,7 +299,7 @@ void CMapWorld::LoadResources( UI08 worldNum )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
 //o--------------------------------------------------------------------------o
-//|	Purpose			-	Initializes / Clears the MapWorld data
+//|	Purpose			-	Fills and clears the mapWorlds vector.
 //o--------------------------------------------------------------------------o
 CMapHandler::CMapHandler()
 {
@@ -330,24 +307,21 @@ CMapHandler::CMapHandler()
 
 	for( UI08 i = 0; i < cwmWorldState->ServerData()->ServerMapCount(); ++i )
 	{
-		CMapWorld *mWorld = new CMapWorld;
-
-		MapData_st& mMap = Map->GetMapData( i );
-		mWorld->SetUpperX( mMap.xBlock / MapColSize );
-		mWorld->SetUpperY( mMap.yBlock / MapRowSize );
-		mWorld->SetResourceX( mMap.xBlock / cwmWorldState->ServerData()->ResOreArea() );
-		mWorld->SetResourceY( mMap.yBlock / cwmWorldState->ServerData()->ResOreArea() );
-		mapWorlds.push_back( mWorld );
+		mapWorlds.push_back( new CMapWorld( i ) );
 	}
 }
+
 CMapHandler::~CMapHandler()
 {
-	for( std::vector< CMapWorld * >::iterator mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
+	for( WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )
 	{
-		delete (*mIter);
-		(*mIter) = NULL;
+		if( (*mIter) != NULL )
+		{
+			delete (*mIter);
+			(*mIter) = NULL;
+		}
 	}
-	mapWorlds.clear();
+	mapWorlds.resize( 0 );
 }
 
 //o--------------------------------------------------------------------------o
@@ -615,10 +589,10 @@ void CMapHandler::Save( void )
 
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
-		SI32 baseX = counter1 * 8;
+		const SI32 baseX = counter1 * 8;
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
-			SI32 baseY	= counter2 * 8;								// calculate x grid offset
+			const SI32 baseY	= counter2 * 8;								// calculate x grid offset
 			filename	= basePath + UString::number( counter1 ) + "." + UString::number( counter2 ) + ".wsc";	// let's name our file
 			writeDestination.open( filename.c_str() );
 
