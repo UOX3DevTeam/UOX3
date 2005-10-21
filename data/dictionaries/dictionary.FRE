@@ -1894,6 +1894,9 @@
 1769=Vous ne pouvez pas bien tirer car vous n'etes pas en face de la cible.
 1770=Vous n'avez pas de fleche pour vous entraîner.
 1771=Vous n'avez pas de carreau d'arbalete pour vous entraîner.
+1772=You do not have enough skill to mine that ore!
+1773=You shear some wool from the sheep.
+1774=This sheep is not yet ready to be shorn.
 }
 
 EOF

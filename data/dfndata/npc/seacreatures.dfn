@@ -37,6 +37,7 @@ TOTAME=999
 RUNS
 CARVE=56
 RACE=8
+NEUTRAL
 }
 
 [dolphin]
@@ -94,6 +95,7 @@ GOLD=200 400
 LOOT=5
 TOTAME=1100
 RACE=8
+NEUTRAL
 }
 
 [seaserpent]
@@ -126,6 +128,7 @@ TOTAME=1200
 RUNS
 CARVE=88
 RACE=8
+NEUTRAL
 }
 
 [walrus]

@@ -1735,6 +1735,9 @@
 1769=You aren't properly lined up with the archery butte to get an accurate shot.
 1770=You do not have any arrows with which to practice.
 1771=You do not have any crossbow bolts with which to practice.
+1772=You do not have enough skill to mine that ore!
+1773=You shear some wool from the sheep.
+1774=This sheep is not yet ready to be shorn.
 }
 EOF
 

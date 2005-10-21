@@ -8,7 +8,7 @@
 5=There was an error creating that boat.
 6=The deed is broken, please contact a Game Master
 7=You cannot place your boat there.
-8=Arr, Sir, we've hit rough waters!
+8=Arr, Sir, we've hit rought waters!
 9=Arr, somethings in the way!
 10=Aye, sir.
 11=What be that, sir?
@@ -1735,6 +1735,9 @@
 1769=You aren't properly lined up with the archery butte to get an accurate shot.
 1770=You do not have any arrows with which to practice.
 1771=You do not have any crossbow bolts with which to practice.
+1772=You do not have enough skill to mine that ore!
+1773=You shear some wool from the sheep.
+1774=This sheep is not yet ready to be shorn.
 }
 EOF
 
