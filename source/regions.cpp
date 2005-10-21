@@ -210,8 +210,10 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 	const UI16 gridY = (y / cwmWorldState->ServerData()->ResOreArea());
 
 	size_t resIndex = ((gridX * resourceY) + gridY);
-	if( resIndex > mapResources.size() )
-		resIndex = 0;
+
+	if( gridX >= resourceX || gridY >= resourceY || resIndex > mapResources.size() )
+			resIndex = 0;
+
 	return mapResources[resIndex];
 }
 
