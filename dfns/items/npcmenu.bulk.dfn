@@ -734,7 +734,7 @@ NPC=m_healer
 ITEMMENU=5003
 }
 
-[ITEMMENU 5022]
+[ITEMMENU 5023]
 {
 Champions
 0x2d82=Chief Paroxysmus
