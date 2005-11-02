@@ -1,3 +1,10 @@
+11/1/2005 - giwo (0.98-3.1a [3.2 BETA])
+	Updated some areas of the code to conform to const correctness.
+	Fixed an issue causing vendor "Buy" windows to display improperly.
+	Added some more error-checking to the ClearTrades() function.
+	Removed JS CChar_Freeze() and CChar_Unfreeze() as the .frozen property does the same thing.
+	Removed JS CItem_SetPoison() as the .poison property does the same thing.
+
 10/17/2005 - giwo (0.98-3.0q [3.1 RC])
 	Improved the MapResource handling code.
 	Improved the MapRegion handling code, reducing waste.

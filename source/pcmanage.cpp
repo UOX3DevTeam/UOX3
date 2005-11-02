@@ -303,7 +303,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str )
 //o--------------------------------------------------------------------------o
 void CPICreateCharacter::newbieItems( CChar *mChar )
 {
-	const enum NewbieItems
+	enum NewbieItems
 	{
 		HAIR = 0,
 		BEARD,
@@ -562,7 +562,8 @@ void updates( CSocket *s )
 	if( Updates == NULL )
 		return;
 
-	UString updateData = UString::number( 0 );
+	UString updateData = "";
+	updateData[0] = 0x00;
 	for( UString tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
 		updateData += tag + " " + Updates->GrabData() + " ";

@@ -2963,7 +2963,7 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	pStream.ReserveSize( baseOffset + 5 + sLen );
 	pStream.WriteLong(   baseOffset, value );
 	pStream.WriteByte(   baseOffset += 4, sLen );
-	pStream.WriteString( baseOffset + 1, itemname, sLen );
+	pStream.WriteString( baseOffset += 1, itemname, sLen );
 	baseOffset += sLen;
 }
 
@@ -4678,7 +4678,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
-	if( cItem.GetLayer() > 0 && cItem.GetLayer() != IL_NONE )
+	if( cItem.GetLayer() != IL_NONE )
 	{
 		if( cItem.GetHiDamage() > 0 )
 		{	

@@ -64,8 +64,6 @@ JSMethodFunc CGumpData_getButton;
 // Character Methods
 JSMethodFunc CChar_DoAction;
 JSMethodFunc CChar_EmoteMessage;
-JSMethodFunc CChar_Freeze;
-JSMethodFunc CChar_Unfreeze;
 JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
@@ -116,7 +114,6 @@ JSMethodFunc CItem_AddToOwnerList;
 JSMethodFunc CItem_RemoveFromBanList;
 JSMethodFunc CItem_RemoveFromOwnerList;
 JSMethodFunc CItem_SetCont;
-JSMethodFunc CItem_SetPoison;
 JSMethodFunc CItem_Refresh;
 JSMethodFunc CItem_ApplyRank;
 JSMethodFunc CItem_Glow;
@@ -279,8 +276,6 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "StartTimer",			CBase_StartTimer,		2, 0, 0 },
 	{ "CheckSkill",			CChar_CheckSkill,		3, 0, 0 },
 	{ "SpeechInput",		CChar_SpeechInput,		1, 0, 0 },
-	{ "Freeze",				CChar_Freeze,			0, 0, 0 },
-	{ "Unfreeze",			CChar_Unfreeze,			0, 0, 0 },
 	{ "CastSpell",			CChar_CastSpell,		2, 0, 0 },	
 	{ "SysMessage",			CMisc_SysMessage,		1, 0, 0 },
 	{ "MagicEffect",		CChar_MagicEffect,		2, 0, 0 },
@@ -349,7 +344,6 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "RemoveFromOwnerList",CItem_RemoveFromOwnerList,	1, 0, 0 },
 	{ "GetSerial",			CBase_GetSerial,			1, 0, 0 },
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
-	{ "SetPoison",			CItem_SetPoison,			2, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
 	{ "Refresh",			CItem_Refresh,				0, 0, 0 },
 	{ "ApplyRank",			CItem_ApplyRank,			1, 0, 0 },

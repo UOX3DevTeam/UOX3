@@ -505,7 +505,7 @@ void DismountCreature( CChar *s )
 void endmessage( int x )
 {
 	x = 0;
-	UI32 igetclock = cwmWorldState->GetUICurrentTime();
+	const UI32 igetclock = cwmWorldState->GetUICurrentTime();
 	if( cwmWorldState->GetEndTime() < igetclock )
 		cwmWorldState->SetEndTime( igetclock );
 	char temp[1024];
@@ -653,8 +653,8 @@ void DisplaySettings( void )
 
 	Console << "   -Races: " << static_cast< UI32 >(Races->Count()) << myendl;
 	Console << "   -Guilds: " << static_cast< UI32 >(GuildSys->NumGuilds()) << myendl;
-	Console << "   -Char count: " << ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ) << myendl;
-	Console << "   -Item count: " << ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM ) << myendl;
+	Console << "   -Char count: " << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << myendl;
+	Console << "   -Item count: " << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << myendl;
 	Console << "   -Num Accounts: " << Accounts->size() << myendl;
 	Console << "   Directories: " << myendl;
 	Console << "   -Shared:          " << cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) << myendl;
@@ -1304,7 +1304,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 				}
 			}
 		}
-		R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
+		const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
 		int NextManaRegen = static_cast<int>(cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000);
 		if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
 		{
@@ -1336,7 +1336,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 					if( mChar.GetHunger() > 0 )
 					{
 						mChar.DecHunger();
-						UI16 HungerTrig = mChar.GetScriptTrigger();
+						const UI16 HungerTrig = mChar.GetScriptTrigger();
 						cScript *toExecute = JSMapping->GetScript( HungerTrig );
 						bool doHunger = true;
 						if( toExecute != NULL )
@@ -1497,7 +1497,7 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 	
 	if( doWeather )
 	{
-		UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
 		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
 			toShow = 0;
 		else
@@ -1548,7 +1548,7 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 	{
 		if( cwmWorldState->ServerData()->WorldAmbientSounds() > 10 )
 			cwmWorldState->ServerData()->WorldAmbientSounds( 10 );
-		SI16 soundTimer = static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
+		const SI16 soundTimer = static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
 		if( !mChar.IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
 			Effects->PlayBGSound( (*mSock), mChar ); // bgsound uses array positions not sockets!
 	}
@@ -1609,7 +1609,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
 	// AI can never be faster than how often we check npcs
 	// This periodically generates access violations.  No idea why either
-	UI16 AITrig			= mChar.GetScriptTrigger();
+	const UI16 AITrig	= mChar.GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( AITrig );
 	bool doAICheck		= true;
 	if( toExecute != NULL )
@@ -2254,24 +2254,11 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
-		if( a->CanBeObjType( OT_CHAR ) )
-		{
-			CChar *c			= static_cast< CChar * >(a);
-			CMultiObj *multi	= findMulti( c );
-			if( multi != NULL )
-				c->SetMulti( multi );
-			else
-				c->SetMulti( INVALIDSERIAL );
-		}
-		else if( ((CItem *)a)->GetCont() == NULL )
-		{
-			CItem *i			= static_cast< CItem * >(a);
-			CMultiObj *multi	= findMulti( i );
-			if( ValidateObject( multi ) )
-				i->SetMulti( multi );
-			else
-				i->SetMulti( INVALIDSERIAL );
-		}
+		CMultiObj *multi = findMulti( a );
+		if( multi != NULL )
+			a->SetMulti( multi );
+		else
+			a->SetMulti( INVALIDSERIAL );
 	}
 	return true;
 }
@@ -2726,8 +2713,8 @@ void doLight( CSocket *s, UI08 level )
 	// we have a valid weather system
 	if( wSys != NULL )
 	{
-		R32 lightMin = wSys->LightMin();
-		R32 lightMax = wSys->LightMax();
+		const R32 lightMin = wSys->LightMin();
+		const R32 lightMax = wSys->LightMax();
 		if( lightMin < 300 && lightMax < 300 )
 		{
 			R32 i = wSys->CurrentLight();
@@ -2762,10 +2749,10 @@ void doLight( CSocket *s, UI08 level )
 //o---------------------------------------------------------------------------o
 void telltime( CSocket *s )
 {
-	UI08 hour			= cwmWorldState->ServerData()->ServerTimeHours();
-	UI08 minute			= cwmWorldState->ServerData()->ServerTimeMinutes();
-	bool ampm			= cwmWorldState->ServerData()->ServerTimeAMPM();
-	UnicodeTypes sLang	= s->Language();
+	UI08 hour					= cwmWorldState->ServerData()->ServerTimeHours();
+	const UI08 minute			= cwmWorldState->ServerData()->ServerTimeMinutes();
+	const bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
+	const UnicodeTypes sLang	= s->Language();
 
 	std::string tstring, tstring2;
 	if( minute <= 14 )
@@ -2835,7 +2822,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		temp =  static_cast< UString >( tile.Name() );
 	}
 	
-	UI16 getAmount = mItem.GetAmount();
+	const UI16 getAmount = mItem.GetAmount();
 	if( getAmount == 1 )
 	{
 		if( tile.DisplayAsAn() )
@@ -2845,13 +2832,13 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 	}
 
 	// Find out if the name has a % in it
-	if( temp.sectionCount("%") > 0 )
+	if( temp.sectionCount( "%" ) > 0 )
 	{
 		UString single;
-		UString first	= temp.section( "%", 0, 0 );
-		UString rest	= temp.section( "%", 2 );
-		UString plural	= rest.section( "%", 1, 1 );
-		if( plural.sectionCount("/") > 0 )
+		const UString first	= temp.section( "%", 0, 0 );
+		UString plural		= temp.section( "%", 1, 1 );
+		const UString rest	= temp.section( "%", 2 );
+		if( plural.sectionCount( "/" ) > 0 )
 		{
 			single = plural.section( "/", 1 );
 			plural = plural.section( "/", 0, 0 );

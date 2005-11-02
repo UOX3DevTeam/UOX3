@@ -217,7 +217,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		return false;
 	SI32 length;
 	st_multi *multi = NULL;
-	UI16 multiID = (UI16)(( m->GetID() ) - 0x4000);
+	const UI16 multiID = (UI16)(( m->GetID() ) - 0x4000);
 	Map->SeekMulti( multiID, &length );
 
 	if( length == -1 || length >= 17000000 )

@@ -79,24 +79,27 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	{
 		// Body of the functor goes here
 		CItem *i = static_cast< CItem * >(a);
-		if( i->GetType() == IT_CONTAINER && i->GetX() == 26 && i->GetY() == 0 && i->GetZ() == 0 && i->GetID() == 0x1E5E )
+		if( ValidateObject( i ) )
 		{
-			CChar *k = static_cast<CChar *>(i->GetCont());
-			if( ValidateObject( k ) )
+			if( i->GetType() == IT_CONTAINER && i->GetX() == 26 && i->GetY() == 0 && i->GetZ() == 0 && i->GetID() == 0x1E5E )
 			{
-				CItem *p = k->GetPackItem();
-				if( ValidateObject( p ) )	// can we move this check to outside the for loop?? I should think so!
+				CChar *k = FindItemOwner( i );
+				if( ValidateObject( k ) )
 				{
-					CDataList< CItem * > *iCont = i->GetContainsList();
-					for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
+					CItem *p = k->GetPackItem();
+					if( ValidateObject( p ) )	// can we move this check to outside the for loop?? I should think so!
 					{
-						if( ValidateObject( j ) )
-							j->SetCont( p );
+						CDataList< CItem * > *iCont = i->GetContainsList();
+						for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
+						{
+							if( ValidateObject( j ) )
+								j->SetCont( p );
+						}
 					}
 				}
+				i->Delete();
+				++b;	// let's track how many we cleared
 			}
-			i->Delete();
-			++b;	// let's track how many we cleared
 		}
 	}
 	return retVal;

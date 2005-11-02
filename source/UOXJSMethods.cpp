@@ -2430,42 +2430,6 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
-JSBool CChar_Freeze( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 0 )
-	{
-		MethodError( "(Freeze) Invalid Count of Arguments: %d, needs: 0", argc );
-		return JS_FALSE;
-	}
-	CChar *myChar = (CChar *)JS_GetPrivate( cx, obj );
-
-	if( !ValidateObject( myChar ) )
-	{
-		MethodError( "Freeze: Invalid character" );
-		return JS_FALSE;
-	}
-	myChar->SetFrozen( true );
-	return JS_TRUE;
-}
-
-JSBool CChar_Unfreeze( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 0 )
-	{
-		MethodError( "(Unfreeze) Invalid Count of Arguments: %d, needs: 0", argc );
-		return JS_FALSE;
-	}
-	CChar *myChar = (CChar *)JS_GetPrivate( cx, obj );
-
-	if( !ValidateObject( myChar ) )
-	{
-		MethodError( "Unfreeze: Invalid character" );
-		return JS_FALSE;
-	}
-	myChar->SetFrozen( false );
-	return JS_TRUE;
-}
-
 JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( ( argc != 1 ) && ( argc != 2 ) )
@@ -2568,34 +2532,6 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	myChar->SetPoisonStrength( newVal );
 	myChar->SetPoisoned( newVal );
 	myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)wearOff / 1000.0f ) );
-	return JS_TRUE;
-}
-
-JSBool CItem_SetPoison( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc < 1 && argc > 2 )
-	{
-		MethodError( "(SetPoison) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		return JS_FALSE;
-	}
-
-	CItem *myItem = (CItem *)JS_GetPrivate( cx, obj );
-	
-	if( !ValidateObject( myItem ) || myItem->GetObjType() != OT_ITEM )
-	{
-		MethodError( "(SetPoisoned) Invalid object assigned" );
-		return JS_FALSE;
-	}
-	
-	UI08 newVal = (UI08)JSVAL_TO_INT( argv[0] );
-	
-	if( argc == 1 || ( argc == 2 && JSVAL_TO_BOOLEAN( argv[1] ) ) )
-	{
-		if( myItem->GetPoisoned() > newVal )
-			newVal = myItem->GetPoisoned();
-	}
-
-	myItem->SetPoisoned( newVal );
 	return JS_TRUE;
 }
 

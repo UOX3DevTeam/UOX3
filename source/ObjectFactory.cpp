@@ -46,14 +46,14 @@ namespace UOX
 				break;
 			case OT_ITEM:
 			case OT_SPAWNER:
-				toRet = items.max_size();
+				toRet = items.size() * sizeof( CItem );
 				break;
 			case OT_MULTI:
 			case OT_BOAT:
-				toRet = multis.max_size();
+				toRet = multis.size() * sizeof( CMultiObj );
 				break;
 			case OT_CHAR:
-				toRet = chars.max_size();
+				toRet = chars.size() * sizeof( CChar );
 				break;
 		}
 		return toRet;
