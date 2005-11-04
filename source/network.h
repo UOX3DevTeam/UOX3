@@ -145,7 +145,7 @@ public:
 
 	UI32					Pack( void );
 	virtual bool			ClientCanReceive( CSocket *mSock );
-	const CPacketStream&	GetPacketStream( void ) const;
+	CPacketStream&			GetPacketStream( void );
 
 	UI32					PackedLength( void ) const;
 	const UI08 *			PackedPointer( void ) const;

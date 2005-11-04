@@ -1951,7 +1951,7 @@ UI32 CPUOXBuffer::Pack( void )
 	return packedLength;
 }
 
-const CPacketStream& CPUOXBuffer::GetPacketStream( void ) const
+CPacketStream& CPUOXBuffer::GetPacketStream( void )
 {
 	return pStream;
 }

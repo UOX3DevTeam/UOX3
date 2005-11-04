@@ -201,6 +201,7 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 	CConsoleProto		=	JS_InitClass( targContext, targObject, targObject, &UOXConsole_class, NULL, 0, CConsoleProperties, CConsole_Methods, CConsoleProperties, CConsole_Methods );
 	RegionProto			=	JS_InitClass( targContext, targObject, targObject, &UOXRegion_class, NULL, 0, CRegionProperties, NULL, CRegionProperties, NULL );
 	ResourceProto		=	JS_InitClass( targContext, targObject, targObject, &UOXResource_class, NULL, 0, CResourceProperties, NULL, CResourceProperties, NULL );
+	PacketProto			=	JS_InitClass( targContext, targObject, targObject, &UOXPacket_class, Packet, 0, NULL, CPacket_Methods, NULL, CPacket_Methods );
 	// Init the global Spells[] object
 	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, SpellsProto, 0 );
 	JS_DefineObject( targContext, targObject, "Accounts", &UOXAccount_class, CAccountProto, 0 );

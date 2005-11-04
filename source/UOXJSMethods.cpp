@@ -87,6 +87,145 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 	toAdd.At( cwmWorldState->GetUICurrentTime() );
 }
 
+JSBool Packet( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	CPUOXBuffer *toAdd = new CPUOXBuffer;
+
+	JS_SetPrivate( cx, obj, toAdd );
+	return JS_TRUE;
+}
+
+JSBool CPacket_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+
+	if( toDelete == NULL )  
+		return JS_FALSE;
+
+	delete toDelete;
+
+	JS_SetPrivate( cx, obj, NULL );
+
+	return JS_TRUE;
+}
+
+JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "(CPacket_WriteByte) Invalid Number of Arguments %d, needs: 2 ", argc );
+		return JS_TRUE;
+	}
+	
+	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+	if( myPacket == NULL )
+	{
+		MethodError( "(CPacket_WriteByte) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
+	UI08	toWrite		= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+
+	myPacket->GetPacketStream().WriteByte( position, toWrite );
+
+	return JS_TRUE;
+}
+
+JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "(CPacket_WriteShort) Invalid Number of Arguments %d, needs: 2 ", argc );
+		return JS_TRUE;
+	}
+	
+	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+	if( myPacket == NULL )
+	{
+		MethodError( "(CPacket_WriteShort) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
+	UI16	toWrite		= static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+
+	myPacket->GetPacketStream().WriteShort( position, toWrite );
+
+	return JS_TRUE;
+}
+
+JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "(CPacket_WriteLong) Invalid Number of Arguments %d, needs: 2 ", argc );
+		return JS_TRUE;
+	}
+	
+	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+	if( myPacket == NULL )
+	{
+		MethodError( "(CPacket_WriteLong) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
+	UI32	toWrite		= static_cast<UI32>(JSVAL_TO_INT( argv[1] ));
+
+	myPacket->GetPacketStream().WriteLong( position, toWrite );
+
+	return JS_TRUE;
+}
+
+JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3 )
+	{
+		MethodError( "(CPacket_WriteString) Invalid Number of Arguments %d, needs: 3 ", argc );
+		return JS_TRUE;
+	}
+	
+	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+	if( myPacket == NULL )
+	{
+		MethodError( "(CPacket_WriteString) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
+ 	char *toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	size_t	len			= static_cast<size_t>(JSVAL_TO_INT( argv[2] ));
+
+
+	myPacket->GetPacketStream().WriteString( position, toWrite, len );
+
+	return JS_TRUE;
+}
+
+JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(CSocket_Send) Invalid Number of Arguments %d, needs: 1 ", argc );
+		return JS_TRUE;
+	}
+
+	CSocket *mSock			= static_cast<CSocket *>(JS_GetPrivate( cx, obj ));
+	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
+	CPUOXBuffer *myPacket	= static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, jsObj ));
+
+	if( mSock == NULL || myPacket == NULL )
+	{
+		MethodError( "(CPacket_WriteString) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	mSock->Send( myPacket );
+
+	return JS_TRUE;
+}
+
 // JSGump constructor !
 JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {

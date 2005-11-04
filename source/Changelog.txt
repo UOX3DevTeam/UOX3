@@ -1,3 +1,16 @@
+11/3/2005 - giwo (0.98-3.1b [3.2 BETA])
+	Added a JS Packet Class, usage:
+		var myPacket = new Packet;
+		myPacket.WriteByte( pos, byte );
+		myPacket.WriteShort( pos, short );
+		myPacket.WriteLong( pos, long );
+		myPacket.WriteString( pos, string, len );
+		socket.Send( myPacket );
+		myPacket.Free();
+	Fixed a logic error in handling the RefreshIP code (Grimson).
+	Fixed an issue causing players to apper gray rather than dissapear when hiding.
+	Fixed a login crash caused by the Updates scroll.
+
 11/1/2005 - giwo (0.98-3.1a [3.2 BETA])
 	Updated some areas of the code to conform to const correctness.
 	Fixed an issue causing vendor "Buy" windows to display improperly.

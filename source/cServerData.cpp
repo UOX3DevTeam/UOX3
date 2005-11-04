@@ -235,7 +235,7 @@ void CServerData::RefreshIPs( void )
 	std::vector< physicalServer >::iterator slIter;
 	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
 	{
-		if( slIter->getDomain().empty() )
+		if( !slIter->getDomain().empty() )
 		{
 			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
 			if( lpHostEntry != NULL )

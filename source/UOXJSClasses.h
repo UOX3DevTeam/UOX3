@@ -331,6 +331,20 @@ static JSClass UOXResource_class =
 	JS_FinalizeStub 
 };
 
+static JSClass UOXPacket_class =
+{
+	"Packet",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub 
+}; 
+
 }
 
 #endif

@@ -29,6 +29,14 @@ namespace UOX
 JSMethodFunc Gump;
 JSMethodFunc GumpData;
 JSMethodFunc UOXCFile;
+JSMethodFunc Packet;
+
+// Packet Methods
+JSMethodFunc CPacket_Free;
+JSMethodFunc CPacket_WriteByte;
+JSMethodFunc CPacket_WriteShort;
+JSMethodFunc CPacket_WriteLong;
+JSMethodFunc CPacket_WriteString;
 
 // Gump Methods
 JSMethodFunc CGump_Free;
@@ -158,6 +166,7 @@ JSMethodFunc CSocket_OpenGump;
 JSMethodFunc CSocket_WhoList;
 JSMethodFunc CSocket_Midi;
 JSMethodFunc CSocket_SendAddMenu;
+JSMethodFunc CSocket_Send;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
@@ -391,6 +400,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
+	{ "Send",				CSocket_Send,		1, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 
@@ -461,6 +471,16 @@ static JSFunctionSpec CConsole_Methods[] =
 	{ "MoveTo",				CConsole_MoveTo,			2, 0, 0 },
 	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
 	{ NULL,			NULL,					0, 0, 0 }
+};
+
+static JSFunctionSpec CPacket_Methods[] = 
+{
+	{ "Free",			CPacket_Free,				0, 0, 0 },
+	{ "WriteByte",		CPacket_WriteByte,			2, 0, 0 },
+	{ "WriteShort",		CPacket_WriteShort,			2, 0, 0 },
+	{ "WriteLong",		CPacket_WriteLong,			2, 0, 0 },
+	{ "WriteString",	CPacket_WriteString,		3, 0, 0 },
+	{ NULL,				NULL,						0, 0, 0 }
 };
 
 }

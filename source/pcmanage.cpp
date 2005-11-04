@@ -562,8 +562,7 @@ void updates( CSocket *s )
 	if( Updates == NULL )
 		return;
 
-	UString updateData = "";
-	updateData[0] = 0x00;
+	UString updateData;
 	for( UString tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
 		updateData += tag + " " + Updates->GrabData() + " ";
