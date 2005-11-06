@@ -97,10 +97,6 @@ private:
 	SI16			pY;
 	SI08			pZ;
 
-	char			authorbuffer[32]; 
-	char			titlebuffer[62];
-	char			pagebuffer[512]; // 256 may be enough but 512 is for safety
-
 	UI32			Pack( void *pvIn, void *pvOut, int len );
 
 	UnicodeTypes	lang;
@@ -134,17 +130,11 @@ public:
 	ClientTypes		ClientType( void ) const;
 	void			ClientType( ClientTypes newVer );
 
-	void			ClearAuthor( void );
-	void			ClearTitle( void );
 	void			ClearPage( void );
 	void			AddTrigWord( UI16 );
 	// Accessors
 
 	bool			LoginComplete( void ) const;
-
-	const char *	AuthorBuffer( void ) const;
-	const char *	TitleBuffer( void ) const;
-	const char *	PageBuffer( void ) const;
 
 	SI16			PickupX( void ) const;
 	SI16			PickupY( void ) const;
@@ -264,10 +254,6 @@ public:
 	void			PostAckCount( size_t newValue );
 	void			PostClear();
 	void			XText( std::string newValue );
-
-	void			AuthorBuffer( const char *newValue );
-	void			PageBuffer( const char *newValue );
-	void			TitleBuffer( const char *newValue );
 
 	void			Send( CPUOXBuffer *toSend );
 

@@ -46,6 +46,7 @@
 #include "CJSMapping.h"
 #include "Dictionary.h"
 #include "msgboard.h"
+#include "books.h"
 
 namespace UOX
 {
@@ -1933,6 +1934,9 @@ void CItem::Cleanup( void )
 
 		if( GetType() == IT_MESSAGEBOARD )
 			MsgBoardRemoveFile( GetSerial() );
+
+		if( GetType() == IT_READABLEBOOK && ( GetTempVar( CITV_MOREX ) == 666 || GetTempVar( CITV_MOREX ) == 999 ) )
+			Books->DeleteBook( this );
 
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();

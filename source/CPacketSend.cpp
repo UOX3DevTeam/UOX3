@@ -4187,6 +4187,22 @@ void CPBookPage::AddLine( const std::string line )
 	IncLength( static_cast< UI08 >(strLen) );
 	pStream.WriteString( baseOffset, line, line.length() );
 }
+void CPBookPage::NewPage( SI16 pNum, const STRINGLIST *lines )
+{
+	++pageCount;	// 1 based counter
+	UI16 baseOffset = bookLength;
+	IncLength( 4 );
+	if( pNum == -1 )
+		pStream.WriteShort( baseOffset, pageCount );
+	else
+		pStream.WriteShort( baseOffset, pNum );
+	pStream.WriteByte( baseOffset + 3, lines->size() );	// 8 lines per page
+
+	for( STRINGLIST_CITERATOR lIter = lines->begin(); lIter != lines->end(); ++lIter )
+	{
+		AddLine( (*lIter) );
+	}
+}
 void CPBookPage::Finalize( void )
 {
 	pStream.WriteShort( 1, bookLength );
@@ -5142,6 +5158,100 @@ void CPEnableMapDiffs::CopyData( void )
 		pStream.WriteLong( 9+(i*8), mMap.mapDiffList.size() );
 		pStream.WriteLong( 13+(i*8), mMap.staticsDiffIndex.size() );
 	}
+}
+
+//0xD4 Packet
+//Last Modified on Monday, 19'th-Aug-2002
+//"new Book Header" (Variable# Bytes)
+//    BYTE cmd
+//    BYTE[2] length
+//    BYTE[4] book ID
+//    BYTE flag1
+//    BYTE flag2
+//    BYTE[2] number of pages
+//    BYTE[2] length of author string (0 terminator included)
+//    BYTE[?] author (ASCII, 0 terminated)
+//    BYTE[2] length of title string (0 terminator included)
+//    BYTE[?] title string
+//
+//Note1
+//server and client packet.
+//
+//server side: opening book writeable: flag1+flag2 both 1
+//(opening readonly book: flag1+flag2 0, unverified though)
+//
+//client side: flag1+flag2 both 0, number of pages 0.
+//
+//Note2
+//
+//Opening books goes like this:
+//open book ->
+//server sends 0xd4(title + author)
+//server sends 0x66 with all book data "beyond" title + author
+//
+//if title + author changed: client side 0xd4 send
+//
+//if other book pages changed: 0x66 client side send. 
+
+CPNewBookHeader::CPNewBookHeader()
+{
+	InternalReset();
+}
+
+void CPNewBookHeader::InternalReset( void )
+{
+	pStream.ReserveSize( 12 );
+	pStream.WriteByte( 0, 0xD4 );
+	pStream.WriteShort( 1, 12 );
+}
+
+void CPNewBookHeader::Serial( UI32 bookSer )
+{
+	pStream.WriteLong( 3, bookSer );
+}
+
+void CPNewBookHeader::Flag1( UI08 toSet )
+{
+	pStream.WriteByte( 7, toSet );
+}
+
+void CPNewBookHeader::Flag2( UI08 toSet )
+{
+	pStream.WriteByte( 8, toSet );
+}
+
+void CPNewBookHeader::Pages( UI16 numPages )
+{
+	pStream.WriteShort( 9, numPages );
+}
+
+void CPNewBookHeader::Author( const std::string newAuthor )
+{
+	author = newAuthor;
+}
+
+void CPNewBookHeader::Title( const std::string newTitle )
+{
+	title = newTitle;
+}
+
+void CPNewBookHeader::Finalize( void )
+{
+	const UI16 authorLen	= static_cast<UI16>(author.size());
+	const UI16 titleLen		= static_cast<UI16>(title.size());
+	const UI16 totalLen		= static_cast<UI16>(15+authorLen+titleLen+2);
+	size_t offset			= 11;
+
+	pStream.ReserveSize( totalLen );
+	pStream.WriteShort( 1, totalLen );
+
+	pStream.WriteShort( offset, titleLen+1 );
+	pStream.WriteString( offset+=2, title, titleLen );
+	pStream.WriteByte( offset+=titleLen, 0x00 );
+
+	pStream.WriteShort( offset+=1, authorLen+1 );
+	pStream.WriteString( offset+=2, author, authorLen );
+	pStream.WriteByte( offset+=authorLen, 0x00 );
 }
 
 }

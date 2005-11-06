@@ -3021,7 +3021,7 @@ void cMagic::LoadScript( void )
 				continue;
 
 			spEntry = spellScp->EntryName();
-			if( spEntry.section( " ", 0, 0 ) == "SKILL" )
+			if( spEntry.section( " ", 0, 0 ) == "SPELL" )
 			{
 				i = spEntry.section( " ", 1, 1 ).toUByte();
 				if( spellCount <= SPELL_MAX )

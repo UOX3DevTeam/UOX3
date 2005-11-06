@@ -533,9 +533,6 @@ void CSocket::InternalReset( void )
 	memset( buffer, 0, MAXBUFFER );
 	memset( outbuffer, 0, MAXBUFFER );
 	xtext.reserve( MAXBUFFER );
-	ClearAuthor();
-	ClearTitle();
-	ClearPage();
 	addid[0] = addid[1] = addid[2] = addid[3] = 0;
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking
@@ -874,19 +871,6 @@ int CSocket::Receive( int x, bool doLog )
 		ReceiveLogging( NULL );
 	bytesReceived += count;
 	return count;
-}
-
-void CSocket::ClearAuthor( void )
-{
-	memset( authorbuffer, '~', 32 );
-}
-void CSocket::ClearTitle( void )
-{
-	memset( titlebuffer, '~', 62 );
-}
-void CSocket::ClearPage( void )
-{
-	memset( pagebuffer, '~', 512 );
 }
 
 void CSocket::OutLength( int newValue )
@@ -1283,31 +1267,6 @@ void CSocket::PickupY( SI16 y )
 void CSocket::PickupZ( SI08 z )
 {
 	pZ = z;
-}
-
-const char *CSocket::AuthorBuffer( void ) const
-{
-	return authorbuffer;
-}
-const char *CSocket::TitleBuffer( void ) const
-{
-	return titlebuffer;
-}
-const char *CSocket::PageBuffer( void ) const
-{
-	return pagebuffer;
-}
-void CSocket::AuthorBuffer( const char *newValue )
-{
-	strcpy( authorbuffer, newValue );
-}
-void CSocket::PageBuffer( const char *newValue )
-{
-	strcpy( pagebuffer, newValue );
-}
-void CSocket::TitleBuffer( const char *newValue )
-{
-	strcpy( titlebuffer, newValue );
 }
 
 CSocket *CPInputBuffer::GetSocket( void ) const

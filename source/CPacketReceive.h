@@ -599,6 +599,32 @@ public:
 	virtual bool	Handle( void );
 };
 
+class CPINewBookHeader : public CPInputBuffer
+{
+public:
+	virtual			~CPINewBookHeader()
+	{
+	}
+					CPINewBookHeader();
+					CPINewBookHeader( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
+class CPIBookPage : public CPInputBuffer
+{
+public:
+	virtual			~CPIBookPage()
+	{
+	}
+					CPIBookPage();
+					CPIBookPage( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+};
+
 }
 
 #endif

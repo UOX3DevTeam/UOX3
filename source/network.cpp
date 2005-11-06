@@ -486,7 +486,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 		return;
 
 	int count, ho, mi, se, total, j, book;
-	SERIAL serial;
 	CItem *i = NULL;
 	char temp[1024];
 	CSocket *mSock = connClients[s];
@@ -660,56 +659,11 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							break;
 						}
 						break;
-					case 0x66:// Read Book
-						UI16 size;
-						mSock->Receive( 3 );
-						size = mSock->GetWord( 1 );
-						mSock->Receive( size );
-
-						i = calcItemObjFromSer( mSock->GetDWord( 3 ) );
-						if( ValidateObject( i ) )
-						{		
-							if( i->GetTempVar( CITV_MOREX ) != 666 && i->GetTempVar( CITV_MOREX ) != 999 ) 
-								Books->ReadPreDefBook( mSock, i, mSock->GetWord( 9 ) );  // call old books read-method
-							if( i->GetTempVar( CITV_MOREX ) == 666 ) // writeable book -> copy page data send by client to the class-page buffer
-							{
-								char pagebuffer[512];
-								for( j = 13; j <= size && j < 524; ++j ) // copy (written) page data in class-page buffer
-									pagebuffer[j-13] = buffer[j];
-								mSock->PageBuffer( pagebuffer );
-								Books->ReadWritableBook( mSock, i, mSock->GetWord( 9 ), mSock->GetWord( 11 ) ); 
-							}
-							if( i->GetTempVar( CITV_MOREX ) == 999 ) 
-								Books->ReadNonWritableBook( mSock, i, mSock->GetWord( 9 ) ); // new books readonly
-						}
-						break;
 					// client sends them out if the title and/or author gets changed on a writeable book
 					// its NOT send (anymore?) when a book is closed as many packet docus state.
 					// LB 7-dec 1999
-					case 0x93:
+					case 0x93:	// Old Book Packet, no longer sent by the client
 						mSock->Receive( 99 );
-						serial = mSock->GetDWord( 1 );
-						i = calcItemObjFromSer( serial );
-						if( !ValidateObject( i ) ) 
-							return;
-
-						Books->changeAT = true;
-
-						char titlebuffer[62];
-						for( j = 9; (buffer[j] != 0) && (j < 70); ++j )
-						{
-							titlebuffer[j-9] = buffer[j];
-						}
-						titlebuffer[61] = '\n';
-						mSock->TitleBuffer( titlebuffer );
-
-						char authorbuffer[32];
-						for( j = 69; (buffer[j] != 0) && (j < 100); ++j )
-						{
-							authorbuffer[j-69] = buffer[j];
-						}
-						authorbuffer[31] = '\n';
-						mSock->AuthorBuffer( authorbuffer );
 						break;
 					case 0x69:// Client text change
 						mSock->Receive( 3 );// What a STUPID message...  It would be useful if

@@ -1,6 +1,6 @@
 [base_item]
 {
-name=
+name=#
 id=0x0000
 dir=
 weight=
@@ -23,7 +23,6 @@ intadd=
 restock=
 color=
 colorlist=
-defaultcolor=
 movable=
 pileable=
 amount=
@@ -34,15 +33,9 @@ morey=
 morez=
 more=
 priv=
-defaultcolor=
 script=
 spawnobj=
 spawnobjlist=
-fx1=
-fx2=
-fy1=
-fy2=
-fz1=
 }
 
 

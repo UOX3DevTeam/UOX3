@@ -1,3 +1,13 @@
+11/5/2005 - giwo (0.98-3.1c [3.2 BETA])
+	Fixed several issues with Writable book handling.
+	Modified .bok handling code (note that this will cause any old .bok files to be invalid).
+	Added support for the 0xD4 (New Book Header) packet.
+	Fixed some issues in /books/books.dfn causing pre-defined books not to be displayed.
+	Fixed some issues in items/misc/books.dfn causing pre-defined books not to open.
+	Removed CSocket authorbuffer, pagebuffer, and titlebuffer.
+	Fixed an issue causing Spells not to function.
+	Added JS Packet method .ReserveSize( len ); for optimization purposes.
+
 11/3/2005 - giwo (0.98-3.1b [3.2 BETA])
 	Added a JS Packet Class, usage:
 		var myPacket = new Packet;

@@ -37,6 +37,7 @@ JSMethodFunc CPacket_WriteByte;
 JSMethodFunc CPacket_WriteShort;
 JSMethodFunc CPacket_WriteLong;
 JSMethodFunc CPacket_WriteString;
+JSMethodFunc CPacket_ReserveSize;
 
 // Gump Methods
 JSMethodFunc CGump_Free;
@@ -480,6 +481,7 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ "WriteShort",		CPacket_WriteShort,			2, 0, 0 },
 	{ "WriteLong",		CPacket_WriteLong,			2, 0, 0 },
 	{ "WriteString",	CPacket_WriteString,		3, 0, 0 },
+	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
 	{ NULL,				NULL,						0, 0, 0 }
 };
 

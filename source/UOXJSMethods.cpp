@@ -194,11 +194,34 @@ JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
- 	char *toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+ 	char *	toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	size_t	len			= static_cast<size_t>(JSVAL_TO_INT( argv[2] ));
 
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
+
+	return JS_TRUE;
+}
+
+JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "(CPacket_ReserveSize) Invalid Number of Arguments %d, needs: 1 ", argc );
+		return JS_TRUE;
+	}
+	
+	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>(JS_GetPrivate( cx, obj ));
+	if( myPacket == NULL )
+	{
+		MethodError( "(CPacket_ReserveSize) Invalid Object Passed" );
+		return JS_TRUE;
+	}
+
+	size_t len = static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
+
+
+	myPacket->GetPacketStream().ReserveSize( len );
 
 	return JS_TRUE;
 }

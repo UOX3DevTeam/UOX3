@@ -62,7 +62,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0x3B:	return ( new CPIBuyItem( s )			);
 		case 0x56:	return NULL;								// Map Related
 		case 0x5D:	return ( new CPIPlayCharacter( s )		);
-		case 0x66:	return NULL;								// Read book
+		case 0x66:	return ( new CPIBookPage( s )			);	// Player Turns the Page (or closes) a Book
 		case 0x69:	return NULL;								// Client text change
 		case 0x6C:	return ( new CPITargetCursor( s )		);
 		case 0x6F:	return ( new CPITradeMessage( s )		);
@@ -93,6 +93,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
+		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD9:	return NULL;								// Client Hardware
 		default:	return NULL;
 	}
@@ -2093,6 +2094,41 @@ void CPIMsgBoardEvent::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// void CPIMsgBoardEvent::Handle() implimented in msgboard.cpp
+// bool CPIMsgBoardEvent::Handle() implemented in msgboard.cpp
+
+CPINewBookHeader::CPINewBookHeader()
+{
+}
+
+CPINewBookHeader::CPINewBookHeader( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPINewBookHeader::Receive( void )
+{
+	tSock->Receive( 3, false );
+	tSock->Receive( tSock->GetWord( 1 ), false );
+}
+
+// bool CPINewBookHeader::Handle() implemented in books.cpp
+
+
+CPIBookPage::CPIBookPage()
+{
+}
+
+CPIBookPage::CPIBookPage( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIBookPage::Receive( void )
+{
+	tSock->Receive( 3, false );
+	tSock->Receive( tSock->GetWord( 1 ), false );
+}
+
+// bool CPIBookPage::Handle() implemented in books.cpp
 
 }

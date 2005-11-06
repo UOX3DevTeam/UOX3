@@ -1162,6 +1162,7 @@ public:
 	void			Object( CItem& obj );
 	void			Serial( SERIAL value );
 	void			NewPage( SI16 pNum = -1 );
+	void			NewPage( SI16 pNum, const STRINGLIST *lines );
 	void			AddLine( const std::string line );
 	void			Finalize( void );
 };
@@ -1336,6 +1337,26 @@ public:
 					{
 					}
 	virtual void	CopyData( void );
+};
+
+class CPNewBookHeader : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+	std::string		title;
+	std::string		author;
+public:
+					CPNewBookHeader();
+	virtual			~CPNewBookHeader()
+					{
+					}
+	void			Serial( UI32 bookSer );
+	void			Flag1( UI08 toSet );
+	void			Flag2( UI08 toSet );
+	void			Pages( UI16 numPages );
+	void			Author( const std::string author );
+	void			Title( const std::string title );
+	void			Finalize( void );
 };
 
 }
