@@ -126,7 +126,7 @@ name=The First UOX Book
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 1
+more=1
 }
 
 [a_grammar_of_orcish]
@@ -136,7 +136,7 @@ name=A Grammer of Orchish
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 2
+more=2
 }
 
 [the_bold_stranger]
@@ -146,7 +146,7 @@ name=The Bold Stranger
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 3
+more=3
 }
 
 [birds_of_britannia]
@@ -156,7 +156,7 @@ name=Birds of Britannia
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 4
+more=4
 }
 
 [regarding_llamas]
@@ -166,7 +166,7 @@ name=Regarding Llamas
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 5
+more=5
 }
 
 [talking_to_wisps]
@@ -176,7 +176,7 @@ name=Talking to Wisps
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 6
+more=6
 }
 
 [taming_dragons]
@@ -186,7 +186,7 @@ name=Taming Dragons
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 7
+more=7
 }
 
 [politic_call_to_anarchy]
@@ -196,7 +196,7 @@ name=A Politic Call to Anarchy
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 8
+more=8
 }
 
 [ethical_hedonism]
@@ -206,7 +206,7 @@ name=Ethical Hedonism: An Introduction
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 9
+more=9
 }
 
 [diversity_of_our_land]
@@ -216,7 +216,7 @@ name=On the diversity of our land
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 10
+more=10
 }
 
 [Virtue]
@@ -226,7 +226,7 @@ name=Virtue
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 11
+more=11
 }
 
 [my_story]
@@ -236,7 +236,7 @@ name=My Story
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 12
+more=12
 }
 
 [burning_of_trinsic]
@@ -246,7 +246,7 @@ name=The Burning of Trinsic
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 13
+more=13
 }
 
 [the_fight]
@@ -256,7 +256,7 @@ name=The Fight
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 14
+more=14
 }
 
 [song_of_samlethe]
@@ -266,7 +266,7 @@ name=A Song of Samlethe
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 15
+more=15
 }
 
 [childrens_tale_vol2]
@@ -276,7 +276,7 @@ name=Classic Childrens Tales Vol.2
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 16
+more=16
 }
 
 [tales_of_vesper_vol1]
@@ -286,7 +286,7 @@ name=Classic tales of Vesper vol.1
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 17
+more=17
 }
 
 [tale_of_three_tribes]
@@ -296,7 +296,7 @@ name=A Tale of Three Tribes
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 18
+more=18
 }
 
 [deceit_dungeon_of_horrors]
@@ -306,7 +306,7 @@ name=Deceit: A Dungeon of Horrors
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 19
+more=19
 }
 
 [life_of_a_minstrel]
@@ -316,7 +316,7 @@ name=The Life of a Travelling Minstrel
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 20
+more=20
 }
 
 [wild_girl]
@@ -326,7 +326,7 @@ name=The Wild Girl in The Forest
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 21
+more=21
 }
 
 [primer_on_arms_and_weapons]
@@ -336,7 +336,7 @@ name=A Primer on Arms and Weopons
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 22
+more=22
 }
 
 [guide_to_guilds]
@@ -346,7 +346,7 @@ name=Beltrans Guide to Guilds
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 23
+more=23
 }
 
 [britannian_flora]
@@ -356,7 +356,7 @@ name=Britannian Flora
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 24
+more=24
 }
 
 [dimensional_travel]
@@ -366,7 +366,7 @@ name=Dimensional Travel, a Monograph
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 25
+more=25
 }
 
 [major_trade_associations]
@@ -376,7 +376,7 @@ name=The Major Trade Associations
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 26
+more=26
 }
 
 [rankings_of_trades]
@@ -386,7 +386,7 @@ name=The Rankings of Trades
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 27
+more=27
 }
 
 [treatise_on_alchemy]
@@ -396,7 +396,7 @@ name=Treatise on Alchemy
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 28
+more=28
 }
 
 [uox3_story_one]
@@ -406,7 +406,7 @@ name=UOX3 Story Chapter One - Death
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 29
+more=29
 }
 
 [uox3_story_two]
@@ -416,7 +416,7 @@ name=UOX3 Story Chapter Two - End of The World
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 30
+more=30
 }
 
 [uox3_story_three]
@@ -426,5 +426,5 @@ name=UOX3 Story Chapter Three - The Lost Splinter
 id=0x0fef
 weight=100
 type=11
-more=0 0 0 31
+more=31
 }
