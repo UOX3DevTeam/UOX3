@@ -1,3 +1,6 @@
+11/19/2005 - Xuri
+	Added new doors from ML-client, expanded DoorNewLocation-function to cover all doors
+
 11/5/2005 - giwo (0.98-3.1c [3.2 BETA])
 	Fixed several issues with Writable book handling.
 	Modified .bok handling code (note that this will cause any old .bok files to be invalid).
