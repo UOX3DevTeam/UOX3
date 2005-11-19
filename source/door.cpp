@@ -7,13 +7,14 @@
 namespace UOX
 {
 
-#define DOORTYPES 29
+#define DOORTYPES 37
 
 const UI16 doorbase[DOORTYPES] = {
 0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685, 
 0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839, 
 0x084C, 0x0866, 0x190E, 0x1FED, 0x241F, 0x2421, 0x2423, 0x26F4, 
-0x2990, 0x299E, 0x2A05, 0x2A0D, 0x2A15
+0x2990, 0x299E, 0x2A05, 0x2A0D, 0x2A15, 0x2D46, 0x2D63, 0x2FE2, 
+0x319C, 0x31a0, 0x31a4, 0x31A8, 0x31AC
 };
 
 //o--------------------------------------------------------------------------
@@ -281,7 +282,7 @@ void useDoor( CSocket *s, CItem *item )
 				item->SetDoorOpen( false );
 			}
 		}
-		else if( db >= doorbase[26] && db <= doorbase[DOORTYPES-1] )
+		else if( db >= doorbase[26] && db <= doorbase[28] )
 		{
 			//1 the sliding doors
 			if ( x == ( db + 0 ) )
@@ -343,6 +344,181 @@ void useDoor( CSocket *s, CItem *item )
 				Effects->doorSound( item, x, true );
 				item->SetDoorOpen( false );
 			}
+		}
+		else if( db == doorbase[29] )
+		{ // some of the new ML doors
+			if ( x == ( db + 0) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 1) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if ( x == ( db + 2) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, 0 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 3) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 0 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+
+		}
+		else if( db == doorbase[30] || db == doorbase[31] )
+		{ // some of the new ML doors
+			if ( x == ( db + 0 ) || x == ( db + 4 ) || x == ( db + 8 ) )
+			{
+				item->IncID( 1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) || x == ( db + 5 ) || x == ( db + 9 ) )
+			{
+				item->IncID( -1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if ( x == ( db + 2 ) || x == ( db + 6 ) || x == ( db + 10 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( -1, 0 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 3) || x == ( db + 7 ) || x == ( db + 11 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 1, 0 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+		}
+		else if( db == doorbase[32] )
+		{ // some of the new ML doors
+			if ( x == ( db + 0 ) ) // || x == ( db + 4 ) || x == ( db + 8 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, 0 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) ) //|| x == ( db + 5 ) || x == ( db + 9 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, 0 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if ( x == ( db + 2 ) ) //|| x == ( db + 6 ) || x == ( db + 10 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 3) ) //|| x == ( db + 7 ) || x == ( db + 11 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+		}
+		else if( db == doorbase[33] || db == doorbase[34] || db == doorbase[36] )
+		{ // some of the new ML doors
+			if ( x == ( db + 0 ) ) // || x == ( db + 4 ) || x == ( db + 8 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if( x == ( db + 1 ) ) //|| x == ( db + 5 ) || x == ( db + 9 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if ( x == ( db + 2 ) ) //|| x == ( db + 6 ) || x == ( db + 10 ) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 3) ) //|| x == ( db + 7 ) || x == ( db + 11 ) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+		}
+		else if( db == doorbase[35] )
+		{ // some of the new ML doors
+			if ( x == ( db + 0) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 0, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 1) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( 0, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+			else if ( x == ( db + 2) )
+			{
+				item->IncID( 1 );
+				item->IncLocation( 1, -1 );
+				changed = true;
+				Effects->doorSound( item, x, false );
+				Effects->tempeffect( mChar, item, 13, 0, 0, 0 );
+			}
+			else if ( x == ( db + 3) )
+			{
+				item->IncID( -1 );
+				item->IncLocation( -1, 1 );
+				changed =true;
+				Effects->doorSound( item, x, true );
+				item->SetDoorOpen( false );
+			}
+
 		}
 	}
 	if( changed == false && s != NULL ) 
@@ -464,7 +640,10 @@ void DoorNewLocation( CItem *item, SI16 &targetX, SI16 &targetY )
 		db = doorbase[i];
 		
 		x = item->GetID();
-		if( x == ( db + 0 ) )
+	if( db >= doorbase[0] && db <= doorbase[19])
+	{
+		// Ok these are the old doors so we use our general logic
+		if( x == (db + 0) )
 		{
 			if( db != 0x190E )
 			{
@@ -472,8 +651,8 @@ void DoorNewLocation( CItem *item, SI16 &targetX, SI16 &targetY )
 				++targetY;
 			}
 			return;
-		} 
-		else if( x == ( db + 1 ) )
+		}
+		else if( x == (db + 1) )
 		{
 			if( db != 0x190E )
 			{
@@ -481,24 +660,24 @@ void DoorNewLocation( CItem *item, SI16 &targetX, SI16 &targetY )
 				--targetY;
 			}
 			return;
-		} 
-		else if( x == ( db + 2 ) )
+		}
+		else if( x == (db + 2) )
 		{
 			++targetX;
 			++targetY;
 			return;
-		} 
-		else if( x == ( db + 3 ) )
+		}
+		else if( x == (db + 3) )
 		{
 			--targetX;
 			--targetY;
 			return;
-		} 
-		else if( x == ( db + 4 ) )
+		}
+		else if( x == (db + 4) )
 		{
 			--targetX;
 			return;
-		} 
+		}
 		else if( x == ( db + 5 ) )
 		{
 			++targetX;
@@ -550,6 +729,156 @@ void DoorNewLocation( CItem *item, SI16 &targetX, SI16 &targetY )
 			++targetY;
 			return;
 		}
+	}
+	else if( db == doorbase[20] )
+	{
+		// normal door
+		if ( x == ( db + 0 ) )
+		{
+			--targetY;
+			return;
+		}
+		else if( x == ( db + 1 ) )
+		{
+			++targetY;
+			return;
+		}
+	}
+	else if( db == doorbase[21] )
+	{
+		// this door isn't in the 1/2 format but is now in the 2/1 format.
+		if ( x == ( db + 1 ) )
+		{
+			--targetX;
+			return;
+		}
+		else if( x == ( db ) )
+		{
+			++targetY;
+			return;
+		}
+	}
+	else if( db == doorbase[22] )
+	{
+		// this door isn't in the 1/2 format but is now in the 2/1 format.
+		if ( x == ( db + 1 ) )
+		{
+			--targetY;
+			return;
+		}
+		else if( x == ( db ) )
+		{
+			++targetY;
+			return;
+		}
+	}
+	else if( ( db >= doorbase[23] && db <= doorbase[26] ) || db == doorbase[28])
+		return;
+	else if( db == doorbase[29] )
+	{ // some of the new ML doors
+		if ( x == ( db + 0) )
+		{
+			--targetY;
+			return;
+		}
+		else if ( x == ( db + 1) )
+		{
+			++targetY;
+			return;
+		}
+		else if ( x == ( db + 2) || x == ( db + 3 ) )
+			return;
+		}
+	else if( db == doorbase[30] || db == doorbase[31] )
+	{ // some of the new ML doors
+		if ( x == ( db + 0 ) || x == ( db + 4 ) || x == ( db + 8 ) )
+			return;
+		else if( x == ( db + 1 ) || x == ( db + 5 ) || x == ( db + 9 ) )
+			return;
+		else if ( x == ( db + 2 ) || x == ( db + 6 ) || x == ( db + 10 ) )
+		{
+			--targetX;
+			return;
+		}
+		else if ( x == ( db + 3) || x == ( db + 7 ) || x == ( db + 11 ) )
+		{
+			++targetX;
+			return;
+		}
+	}
+	else if( db == doorbase[32] )
+	{ // some of the new ML doors
+		if ( x == ( db + 0 ) ) // || x == ( db + 4 ) || x == ( db + 8 ) )
+		{
+			++targetX;
+			return;
+		}
+		else if( x == ( db + 1 ) ) //|| x == ( db + 5 ) || x == ( db + 9 ) )
+		{
+			--targetX;
+			return;
+		}
+		else if ( x == ( db + 2 ) ) //|| x == ( db + 6 ) || x == ( db + 10 ) )
+		{
+			--targetY;
+			return;
+		}
+		else if ( x == ( db + 3) ) //|| x == ( db + 7 ) || x == ( db + 11 ) )
+		{
+			++targetY;
+			return;
+		}
+	}
+	else if( db == doorbase[33] || db == doorbase[34] || db == doorbase[36] )
+	{ // some of the new ML doors
+		if ( x == ( db + 0 ) ) // || x == ( db + 4 ) || x == ( db + 8 ) )
+		{
+			++targetX;
+			--targetY;
+			return;
+		}
+		else if( x == ( db + 1 ) ) //|| x == ( db + 5 ) || x == ( db + 9 ) )
+		{
+			--targetX;
+			++targetY;
+			return;
+		}
+		else if ( x == ( db + 2 ) ) //|| x == ( db + 6 ) || x == ( db + 10 ) )
+		{
+			--targetY;
+			return;
+		}
+		else if ( x == ( db + 3) ) //|| x == ( db + 7 ) || x == ( db + 11 ) )
+		{
+			++targetY;
+			return;
+		}
+	}
+	else if( db == doorbase[35] )
+	{ // some of the new ML doors
+		if ( x == ( db + 0) )
+		{
+			--targetY;
+			return;
+		}
+		else if ( x == ( db + 1) )
+		{
+			++targetY;
+			return;
+		}
+		else if ( x == ( db + 2) )
+		{
+			++targetX;
+			--targetY;
+			return;
+		}
+		else if ( x == ( db + 3) )
+		{
+			--targetX;
+			++targetY;
+			return;
+		}
+	}
 	}
 }
 
