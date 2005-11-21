@@ -480,6 +480,26 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
  	return JS_TRUE;
 }
 
+JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RegisterPacket: Invalid number of arguments (takes 2)" );
+ 		return JS_FALSE;
+	}
+	UI08 packet			= static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	UI08 subCmd			= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
+	UI16 scriptID		= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+	if( scriptID != 0xFFFF )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd );
+#endif
+		Network->RegisterPacket( packet, subCmd, scriptID );
+	}
+ 	return JS_TRUE;
+}
+
 JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -808,7 +828,7 @@ JSBool SE_IsRegionGuarded( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argc != 1 )
 		return JS_FALSE;
 	UI08 toCheck	= (UI08)JSVAL_TO_INT( argv[0] );
-	*rval			= BOOLEAN_TO_JSVAL( regions[toCheck]->IsGuarded() );
+	*rval			= BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->IsGuarded() );
 	return JS_TRUE;
 }
 
@@ -819,7 +839,7 @@ JSBool SE_CanMarkInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanMark() );
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanMark() );
 	return JS_TRUE;
 }
 
@@ -830,7 +850,7 @@ JSBool SE_CanRecallInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanRecall() );
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanRecall() );
 	return JS_TRUE;
 }
 
@@ -841,7 +861,7 @@ JSBool SE_CanGateInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( regions[toCheck]->CanGate() );
+	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanGate() );
 	return JS_TRUE;
 }
 
@@ -994,7 +1014,7 @@ JSBool SE_GetTownMayor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	CChar *mayor		= regions[town]->GetMayor();
+	CChar *mayor		= cwmWorldState->townRegions[town]->GetMayor();
 	if( ValidateObject( mayor ) )
 	{
 		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
@@ -1014,7 +1034,7 @@ JSBool SE_GetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	*rval		= INT_TO_JSVAL( regions[town]->GetRace() );
+	*rval		= INT_TO_JSVAL( cwmWorldState->townRegions[town]->GetRace() );
 	return JS_TRUE;
 }
 
@@ -1026,7 +1046,7 @@ JSBool SE_SetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	UI08 town		= (UI08)JSVAL_TO_INT( argv[0] );
 	RACEID nRace	= (RACEID)JSVAL_TO_INT( argv[1] );
-	regions[town]->SetRace( nRace );
+	cwmWorldState->townRegions[town]->SetRace( nRace );
 	return JS_TRUE;
 }
 
@@ -1038,7 +1058,7 @@ JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
 	UI08 sTown	= (UI08)JSVAL_TO_INT( argv[1] );
-	regions[town]->Possess( regions[sTown] );
+	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
 	return JS_TRUE;
 }
 
@@ -1054,7 +1074,7 @@ JSBool SE_GetTownTaxResource( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 	UI08 town = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( regions[town]->GetResourceID() );
+	*rval = INT_TO_JSVAL( cwmWorldState->townRegions[town]->GetResourceID() );
 	return JS_TRUE;
 }
 

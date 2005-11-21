@@ -655,7 +655,7 @@ void cSkills::PeaceMaking( CSocket *s )
 					continue;
 				if( charInRange( tempChar, mChar ) && tempChar->IsAtWar() )
 				{
-					CSocket *jSock = calcSocketObjFromChar( tempChar );
+					CSocket *jSock = tempChar->GetSocket();
 					if( jSock != NULL )
 						jSock->sysmessage( 1440 );
 					if( tempChar->IsAtWar() ) 
@@ -1015,7 +1015,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 		if( s->IsDead() )
 		{
-			CSocket *sSock = calcSocketObjFromChar( s );
+			CSocket *sSock = s->GetSocket();
 			sSock->sysmessage( 1487 );
 			return false;
 		}
@@ -1032,7 +1032,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
 		skillCheck = ( chanceskillsuccess >= RandomNum( 0, 1000 ) );
 		
-		CSocket *mSock = calcSocketObjFromChar( s );
+		CSocket *mSock = s->GetSocket();
 		bool mageryUp = true;
 		if( mSock != NULL )
 		{
@@ -1075,7 +1075,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	UI16 atrop[ALLSKILLS+1];
 	SI16 toDec = -1;
 	UI08 counter = 0;
-	CSocket *mSock = calcSocketObjFromChar( c );
+	CSocket *mSock = c->GetSocket();
 	UI16 skillTrig = c->GetScriptTrigger();
 	cScript *scpSkill = JSMapping->GetScript( skillTrig );
 		
@@ -1325,7 +1325,7 @@ void cSkills::FishTarget( CSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::Fish( CChar *i )
 {
-	CSocket *s = calcSocketObjFromChar( i );
+	CSocket *s = i->GetSocket();
 	if( !CheckSkill( i, FISHING, 0, 1000 ) ) 
 	{
 		s->sysmessage( 847 );
@@ -1613,7 +1613,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 				sprintf( temp2, Dictionary->GetEntry( 885 ).c_str(), mChar->GetName().c_str(), tileName.c_str(), npc->GetName().c_str() );
 			}
 
-			CSocket *npcSock = calcSocketObjFromChar( npc );
+			CSocket *npcSock = npc->GetSocket();
 			if( npcSock != NULL )
 				npcSock->sysmessage( temp );
 
@@ -1752,7 +1752,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			if( !ValidateObject( tempChar ) )
 				continue;
 			id					= tempChar->GetID();
-			CSocket *tSock		= calcSocketObjFromChar( tempChar );
+			CSocket *tSock		= tempChar->GetSocket();
 			bool cmdLevelCheck	= isOnline( (*tempChar) ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
 			if( objInRange( tempChar, c, static_cast<UI16>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
 			{
@@ -1819,7 +1819,7 @@ void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 //o---------------------------------------------------------------------------o
 void cSkills::Track( CChar *i )
 {
-	CSocket *s = calcSocketObjFromChar( i );
+	CSocket *s = i->GetSocket();
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
 	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 ) 
@@ -2472,7 +2472,7 @@ void cSkills::Persecute( CSocket *s )
 	{
 		if( ( RandomNum( 0, 19 ) + c->GetIntelligence() ) > 45 ) // not always
 		{
-			CSocket *tSock = calcSocketObjFromChar( targChar );
+			CSocket *tSock = targChar->GetSocket();
 			targChar->SetMana( targChar->GetMana() - decrease ); // decrease mana
 			s->sysmessage( 972 );
 			if( tSock != NULL )
@@ -2703,7 +2703,7 @@ void cSkills::Load( void )
 	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
 	{
 		if( ourScript != NULL )
-			ourScript->skillRegistration();
+			ourScript->ScriptRegistration( "Skill" );
 	}
 
 	Console.PrintSectionBegin();
@@ -3526,7 +3526,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
 
-	CSocket *tSock = calcSocketObjFromChar( target );
+	CSocket *tSock = target->GetSocket();
 
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{

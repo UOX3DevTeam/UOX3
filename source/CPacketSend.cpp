@@ -5145,7 +5145,7 @@ CPEnableMapDiffs::CPEnableMapDiffs()
 
 void CPEnableMapDiffs::CopyData( void )
 {
-	UI08 mapCount	= cwmWorldState->ServerData()->ServerMapCount();
+	UI08 mapCount	= Map->MapCount();
 	size_t pSize	= ((mapCount+1)*8)+9;
 
 	pStream.ReserveSize( pSize );
@@ -5252,6 +5252,92 @@ void CPNewBookHeader::Finalize( void )
 	pStream.WriteShort( offset+=1, authorLen+1 );
 	pStream.WriteString( offset+=2, author, authorLen );
 	pStream.WriteByte( offset+=authorLen, 0x00 );
+}
+
+//0xBF Packet
+//Subcommand 0x14: Display Popup menu
+//  BYTE[2] Unknown(always 00 01)
+//  BYTE[4] Serial
+//  BYTE Number of entries in the popup
+//  For each Entry
+//    BYTE[2] Entry Tag (this will be returned by the client on selection)
+//    BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that
+//    BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color
+//    If (Flags &0x20)
+//      BYTE[2] color; // rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red)
+CPPopupMenu::CPPopupMenu( void )
+{
+	InternalReset();
+}
+
+CPPopupMenu::CPPopupMenu( CChar& toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+
+void CPPopupMenu::InternalReset( void )
+{
+	pStream.ReserveSize( 5 );
+	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteShort( 1, 5 );
+	pStream.WriteShort( 3, 0x14 );
+	pStream.WriteShort( 5, 0x0001 );
+}
+
+void CPPopupMenu::CopyData( CChar& toCopy )
+{
+	UI16 packetLen = (12 + (4 * 8));
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
+
+	pStream.WriteLong( 7, toCopy.GetSerial() );
+	pStream.WriteByte( 11, 4 );
+	size_t offset = 12;
+
+	pStream.WriteShort( offset+=2, 0x000A );	// Open Paperdoll
+	pStream.WriteShort( offset, 6123 );
+	if( toCopy.isHuman() )
+	{
+		pStream.WriteShort( offset+=2, 0x0020 );
+		pStream.WriteShort( offset+=2, 0x03E0 );
+	}
+	else
+	{
+		pStream.WriteShort( offset+=2, 0x0021 );
+		pStream.WriteShort( offset+=2, 0xFFFF );
+	}
+
+	pStream.WriteShort( offset+=2, 0x000B );	// Open Backpack
+	pStream.WriteShort( offset+=2, 6145 );
+	pStream.WriteShort( offset+=2, 0x0020 );
+	pStream.WriteShort( offset+=2, 0x03E0 );
+
+	pStream.WriteShort( offset+=2, 0x000C );	// Shopkeep
+	pStream.WriteShort( offset+=2, 6103 );
+	if( toCopy.IsShop() )
+	{
+		pStream.WriteShort( offset+=2, 0x0020 );
+		pStream.WriteShort( offset+=2, 0x03E0 );
+	}
+	else
+	{
+		pStream.WriteShort( offset+=2, 0x0021 );
+		pStream.WriteShort( offset+=2, 0xFFFF );
+	}
+
+	pStream.WriteShort( offset+=2, 0x000D );
+	pStream.WriteShort( offset+=2, 6104 );
+	if( toCopy.IsShop() )
+	{
+		pStream.WriteShort( offset+=2, 0x0020 );
+		pStream.WriteShort( offset+=2, 0x03E0 );
+	}
+	else
+	{
+		pStream.WriteShort( offset+=2, 0x0021 );
+		pStream.WriteShort( offset+=2, 0xFFFF );
+	}
 }
 
 }

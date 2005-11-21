@@ -98,8 +98,6 @@ private:
 	void		LoadItemList( std::string itemList );
 };
 
-extern std::vector< CSpawnRegion * >	spawnregions;	// Zippy
-
 }
 
 #endif

@@ -74,6 +74,8 @@ private:
 					PlayerValues_st();
 		void		DumpBody( std::ofstream& outStream );
 
+		CSocket *	socket;
+
 		SERIAL		robe;
 
 		SERIAL		trackingTarget; // Tracking target ID
@@ -390,6 +392,9 @@ public:
 	SI16		GetKarma( void ) const;
 	void		SetKills( SI16 value );
 	SI16		GetKills( void ) const;
+
+	CSocket *	GetSocket( void ) const;
+	void		SetSocket( CSocket *newVal );
 
 				CChar();
 	virtual		~CChar();

@@ -83,7 +83,7 @@ CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), player
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( NULL ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
 speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
-fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS )
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL )
 {
 	if( cwmWorldState != NULL )
 		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
@@ -999,9 +999,9 @@ void CChar::SetStep( UI08 newValue )
 
 CTownRegion *CChar::GetRegion( void ) const
 {
-	if( regionNum >= regions.size() )
-		return regions.back();
-	return regions[regionNum];
+	if( cwmWorldState->townRegions.find( regionNum ) == cwmWorldState->townRegions.end() )
+		return cwmWorldState->townRegions[0xFF];
+	return cwmWorldState->townRegions[regionNum];
 }
 void CChar::SetRegion( UI08 newValue )
 {
@@ -1604,7 +1604,7 @@ void CChar::SendToSocket( CSocket *s )
 void checkRegion( CSocket *mSock, CChar& mChar );
 void CChar::Teleport( void )
 {
-	CSocket *mSock = calcSocketObjFromChar( this );
+	CSocket *mSock = GetSocket();
 	RemoveFromSight();
 	Update();
 	if( mSock != NULL )
@@ -1971,6 +1971,13 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "GuildToggle=" << (SI16)(GetGuildToggle()?1:0) << std::endl;
 	dumping << "PoisonStrength=" << (UI16)(GetPoisonStrength()) << std::endl;
 	dumping << "WillHunger=" << (SI16)(WillHunger()?1:0) << std::endl;
+
+	TIMERVAL mTime = GetTimer( tCHAR_MURDERRATE );
+	dumping << "MurderTimer=";
+	if( mTime == 0 || mTime < cwmWorldState->GetUICurrentTime() )
+		dumping << (SI16)0 << std::endl;
+	else
+		dumping << (UI32)(mTime - cwmWorldState->GetUICurrentTime()) << std::endl;
 
 	outStream << dumping.str();
 
@@ -2671,6 +2678,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "MAKING" ) // Depreciated
 					rvalue = true;
+				else if( UTag == "MURDERTIMER" )
+				{
+					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( data.toFloat() ) );
+					rvalue = true;
+				}
 				break;
 			case 'N':
 				if( UTag == "NPCAITYPE" )
@@ -3506,10 +3518,11 @@ void CChar::Cleanup( void )
 			if( GetSpawn() < BASEITEMSERIAL )
 			{
 				UI16 spawnRegNum = static_cast<UI16>(GetSpawn());
-				if( spawnRegNum < spawnregions.size() )
+				if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 				{
-					CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
-					spawnReg->deleteSpawnedChar( this );
+					CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+					if( spawnReg != NULL )
+						spawnReg->deleteSpawnedChar( this );
 				}
 			}
 		}
@@ -4282,6 +4295,31 @@ void CChar::SetDeaths( UI16 newVal )
 	}
 	if( IsValidPlayer() )
 		mPlayer->deaths = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CSocket *Socket()
+//|   Date        -  November 7, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Socket attached to the player character
+//o---------------------------------------------------------------------------o
+CSocket * CChar::GetSocket( void ) const
+{
+	CSocket *rVal = NULL;
+	if( IsValidPlayer() )
+		rVal = mPlayer->socket;
+	return rVal;
+}
+void CChar::SetSocket( CSocket *newVal )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newVal != NULL )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->socket = newVal;
 }
 
 // NPC Only Functions

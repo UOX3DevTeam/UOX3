@@ -37,14 +37,10 @@ void CTEffectContainer::Prune( void )
 	{
 		delete backupRemove[i];
 	}
-	internalData.clear();
-	internalData.resize( backupKeep.size() );
-	for( size_t j = 0; j < backupKeep.size(); ++j )
-	{
-		internalData[j] = backupKeep[j];
-	}
-	backupKeep.clear();
 	backupRemove.clear();
+
+	internalData.assign( backupKeep.begin(), backupKeep.end() );
+	backupKeep.clear();
 	isScanning = false;
 }
 

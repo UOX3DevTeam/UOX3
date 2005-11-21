@@ -840,7 +840,7 @@ void HandleDeath( CChar *mChar )
 
 	CSocket *pSock = NULL;
 	if( !mChar->IsNpc() )
-		pSock = calcSocketObjFromChar( mChar );
+		pSock = mChar->GetSocket();
 
 	DismountCreature( mChar );
 

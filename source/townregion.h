@@ -176,8 +176,6 @@ public:
 	const regLocs *		GetLocation( size_t locNum ) const;
 };
 
-extern std::vector< CTownRegion * >		regions;
-
 }
 
 #endif

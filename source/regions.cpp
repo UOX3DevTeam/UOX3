@@ -306,8 +306,10 @@ void CMapWorld::LoadResources( UI08 worldNum )
 CMapHandler::CMapHandler()
 {
 	mapWorlds.resize( 0 );
+	UI08 numWorlds = Map->MapCount();
 
-	for( UI08 i = 0; i < cwmWorldState->ServerData()->ServerMapCount(); ++i )
+	mapWorlds.reserve( numWorlds );
+	for( UI08 i = 0; i < numWorlds; ++i )
 	{
 		mapWorlds.push_back( new CMapWorld( i ) );
 	}
@@ -575,7 +577,7 @@ void CMapHandler::Save( void )
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
 	std::ofstream writeDestination, houseDestination;
-	const int onePercent			= (int)((float)(AreaX*AreaY*8*8*cwmWorldState->ServerData()->ServerMapCount())/100.0f);
+	const int onePercent			= (int)((float)(AreaX*AreaY*8*8*Map->MapCount())/100.0f);
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
 	const UI32 s_t						= getclock();

@@ -85,6 +85,12 @@ typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
 typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
 typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
+//
+typedef std::map< UI16, CSpawnRegion * >					SPAWNMAP;
+typedef std::map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
+//
+typedef std::map< UI08, CTownRegion * >						TOWNMAP;
+typedef std::map< UI08, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
 
 typedef void (TargetFunc)( CSocket *s );
 

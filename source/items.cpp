@@ -763,7 +763,7 @@ void cItem::CheckEquipment( CChar *p )
 {
 	if( ValidateObject( p ) ) 
 	{
-		CSocket *pSock = calcSocketObjFromChar( p );
+		CSocket *pSock = p->GetSocket();
 		if( pSock == NULL ) 
 			return;
 

@@ -159,8 +159,8 @@ int cl_getch( void )
 	if( !cluox_io )
 	{
 		// uox is not wrapped simply use the kbhit routine
-		if( kbhit() )
-			return getch();
+		if( _kbhit() )
+			return _getch();
 		else 
 			return -1;
 	}
@@ -228,18 +228,38 @@ void DoMessageLoop( void )
 #if UOX_PLATFORM == PLATFORM_WIN32
 CRITICAL_SECTION sc;	//
 #endif
-bool conthreadcloseok = false;
-bool netpollthreadclose = false;
-bool xFTPdclose = false;
+
+bool conthreadcloseok	= false;
+bool netpollthreadclose	= false;
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void NetworkPollConnectionThread( void *params )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Watch for new connections
+//o---------------------------------------------------------------------------o
 #if UOX_PLATFORM != PLATFORM_WIN32
-void *NetworkPollConnectionThread( void *params );
-void *xFTPdConnectionThread( void *params );
-void *xFTPcConnectionThread( void *params );
+void *NetworkPollConnectionThread( void *params )
 #else
-void NetworkPollConnectionThread( void *params );
-void xFTPdConnectionThread( void *params );
-void xFTPcConnectionThread( void *params );
+void NetworkPollConnectionThread( void *params )
 #endif
+{
+	messageLoop << "Thread: NetworkPollConnection has started";
+	netpollthreadclose = false;
+	while( !netpollthreadclose )
+	{
+		Network->CheckConnections();
+		Network->CheckLoginMessage();
+		UOXSleep( 20 );
+	}
+#if UOX_PLATFORM != PLATFORM_WIN32
+	pthread_exit( NULL );
+#else
+	_endthread();
+#endif
+	messageLoop << "Thread: NetworkPollConnection has Closed";
+}
+
 #if UOX_PLATFORM != PLATFORM_WIN32
 void *CheckConsoleKeyThread( void *params )
 #else
@@ -262,15 +282,6 @@ void CheckConsoleKeyThread( void *params )
 #endif
 }
 //	EviLDeD	-	End
-
-#if UOX_PLATFORM == PLATFORM_WIN32
-///////////////////
-
-//HANDLE hco;
-//CONSOLE_SCREEN_BUFFER_INFO csbi;
-
-///////////////////
-#endif
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 
@@ -669,26 +680,28 @@ void DisplaySettings( void )
 
 void UnloadSpawnRegions( void )
 {
-	for( size_t mySpReg = 0; mySpReg < spawnregions.size(); ++mySpReg )
+	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+	while( spIter != spEnd )
 	{
-		if( spawnregions[mySpReg] != NULL )
-		{
-			delete spawnregions[mySpReg];
-			spawnregions[mySpReg] = NULL;
-		}
+		if( spIter->second != NULL )
+			delete spIter->second;
+		++spIter;
 	}
+	cwmWorldState->spawnRegions.clear();
 }
 
 void UnloadRegions( void )
 {
-	for( size_t myReg = 0; myReg < regions.size(); ++myReg )
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	while( tIter != tEnd )
 	{
-		if( regions[myReg] != NULL )
-		{
-			delete regions[myReg];
-			regions[myReg] = NULL;
-		}
+		if( tIter->second != NULL )
+			delete tIter->second;
+		++tIter;
 	}
+	cwmWorldState->townRegions.clear();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1449,11 +1462,10 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
 		setcharflag( &mChar );
 	}
-	if( mChar.GetTimer( tCHAR_MURDERRATE ) && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	if( mChar.GetKills() && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
-		mChar.SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mChar.GetKills() )
-			mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
+		mChar.SetKills( static_cast<SI16>( mChar.GetKills() - 1 ) );
+
 		if( mChar.GetKills() )
 			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 		else
@@ -1864,12 +1876,14 @@ void CWorldMain::CheckAutoTimers( void )
 	Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
-		std::vector< CTownRegion *>::const_iterator regionCounter;
-		for( regionCounter = regions.begin(); regionCounter != regions.end(); ++regionCounter )
+		TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+		TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+		while( tIter != tEnd )
 		{
-			CTownRegion *myReg = (*regionCounter);
+			CTownRegion *myReg = tIter->second;
 			if( myReg != NULL )
 				myReg->PeriodicCheck();
+			++tIter;
 		}
 		nextCheckTownRegions = BuildTimeValue( 10 );	// do checks every 10 seconds or so, rather than every single time
 		JailSys->PeriodicCheck();
@@ -1879,15 +1893,17 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
-		std::vector< CSpawnRegion * >::const_iterator spawnCounter;
-		for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
+		SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+		SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+		while( spIter != spEnd )
 		{
-			CSpawnRegion *spawnReg = (*spawnCounter);
+			CSpawnRegion *spawnReg = spIter->second;
 			if( spawnReg != NULL )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
                     spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 			}
+			++spIter;
 		}
 		nextCheckSpawnRegions = BuildTimeValue( (R32)ServerData()->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
 	}
@@ -1897,15 +1913,15 @@ void CWorldMain::CheckAutoTimers( void )
 	const UI32 saveinterval = ServerData()->ServerSavesTimerStatus();
 	if( saveinterval != 0 )
 	{
-		UI32 oldTime = GetOldTime();
+		time_t oldTime = GetOldTime();
 		if( !GetAutoSaved() )
 		{
 			SetAutoSaved( true );
-			time((time_t *)&oldTime);
+			time(&oldTime);
 			SetOldTime( oldTime );
 		}
-		UI32 newTime = GetNewTime();
-		time((time_t *)&newTime);
+		time_t newTime = GetNewTime();
+		time(&newTime);
 		SetNewTime( newTime );
 
 		if( difftime( GetNewTime(), GetOldTime() ) >= saveinterval )
@@ -1926,15 +1942,15 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 	}
 	
-	UI32 oldIPTime = GetOldIPTime();
+	time_t oldIPTime = GetOldIPTime();
 	if( !GetIPUpdated() )
 	{
 		SetIPUpdated( true );
-		time((time_t *)&oldIPTime);
+		time(&oldIPTime);
 		SetOldIPTime( oldIPTime );
 	}
-	UI32 newIPTime = GetNewIPTime();
-	time((time_t *)&newIPTime);
+	time_t newIPTime = GetNewIPTime();
+	time(&newIPTime);
 	SetNewIPTime( newIPTime );
 	
 	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
@@ -2089,7 +2105,7 @@ void CWorldMain::CheckAutoTimers( void )
 					uChar->Teleport();
 				else if( uChar->GetUpdate( UT_STATWINDOW ) )
 				{
-					CSocket *uSock = calcSocketObjFromChar( uChar );
+					CSocket *uSock = uChar->GetSocket();
 					if( uSock != NULL )
 						uSock->statwindow( uChar );
 				}
@@ -2429,8 +2445,6 @@ void Shutdown( SI32 retCode )
 	UnloadSpawnRegions();
 	UnloadRegions();
 
-	regions.clear();
-	spawnregions.clear();
 	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
@@ -2643,7 +2657,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 	}
 	else
 	{
-		CSocket *sock = calcSocketObjFromChar( applyTo );
+		CSocket *sock = applyTo->GetSocket();
 		if( sock != NULL )
 			sock->sysmessage( 1366 );
 	}
@@ -2902,7 +2916,7 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 					CPWorldChange wrldChange( calcReg->GetAppearance(), 1 );
 					mSock->Send( &wrldChange );
 				}
-				if( calcReg == regions[mChar.GetTown()] )	// enter our home town
+				if( calcReg == cwmWorldState->townRegions[mChar.GetTown()] )	// enter our home town
 				{
 					mSock->sysmessage( 1364 );
 					CItem *packItem = mChar.GetPackItem();
@@ -2915,7 +2929,7 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 							{
 								if( toScan->GetType() == IT_TOWNSTONE )
 								{
-									CTownRegion *targRegion = regions[static_cast<UI08>(toScan->GetTempVar( CITV_MOREX ))];
+									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI08>(toScan->GetTempVar( CITV_MOREX ))];
 									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
@@ -2969,7 +2983,7 @@ void criminal( CChar *c )
 {
 	if( !c->IsCriminal() )
 	{
-		CSocket *cSock = calcSocketObjFromChar( c );
+		CSocket *cSock = c->GetSocket();
 		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 		if( cSock != NULL )
 			cSock->sysmessage( 1379 );
@@ -3087,86 +3101,6 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 	SendMapChange( tWorldNum, sock );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void NetworkPollConnectionThread( void *params )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Watch for new connections
-//o---------------------------------------------------------------------------o
-#if UOX_PLATFORM != PLATFORM_WIN32
-void *NetworkPollConnectionThread( void *params )
-#else
-void NetworkPollConnectionThread( void *params )
-#endif
-{
-	messageLoop << "Thread: NetworkPollConnection has started";
-	netpollthreadclose = false;
-	while( !netpollthreadclose )
-	{
-		Network->CheckConnections();
-		Network->CheckLoginMessage();
-		UOXSleep( 20 );
-	}
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_exit( NULL );
-#else
-	_endthread();
-#endif
-	messageLoop << "Thread: NetworkPollConnection has Closed";
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function		-	void xFTPdConnectionThread( void *params )
-//|	Programmer	-	EviLDeD
-//o---------------------------------------------------------------------------o
-//|	Purpose			-	Watch for new connections
-//o---------------------------------------------------------------------------o
-#if UOX_PLATFORM != PLATFORM_WIN32
-void *xFTPdConnectionThread( void *params )
-#else
-void xFTPdConnectionThread( void *params )
-#endif
-{
-	messageLoop << "Thread: xFTPd has started";
-	xFTPdclose = false;
-	while( !xFTPdclose )
-	{
-		UOXSleep( 50 );
-	}
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_exit( NULL );
-#else
-	_endthread();
-#endif
-	messageLoop << "Thread: xFTPd has stopped.";
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function		-	void xFTPcConnectionThread( void *params )
-//|	Programmer		-	EviLDeD
-//o---------------------------------------------------------------------------o
-//|	Purpose			-	Watch for new connections
-//o---------------------------------------------------------------------------o
-#if UOX_PLATFORM != PLATFORM_WIN32
-void *xFTPcConnectionThread( void *params )
-#else
-void xFTPcConnectionThread( void *params )
-#endif
-{
-	messageLoop << "Thread: xFTPc has started";
-	xFTPdclose = false;
-	while( !xFTPdclose )
-	{
-		UOXSleep( 50 );
-	}
-#if UOX_PLATFORM != PLATFORM_WIN32
-	pthread_exit( NULL );
-#else
-	_endthread();
-#endif
-	messageLoop << "Thread: xFTPc has stopped.";
-}
-
 }
 
 using namespace UOX;
@@ -3255,7 +3189,14 @@ int main( int argc, char *argv[] )
 		Console.PrintDone();
 		
 		srand( current.tv_sec ); // initial randomization call
-		
+
+		CJSMappingSection *packetSection = JSMapping->GetSection( SCPT_PACKET );
+		for( cScript *ourScript = packetSection->First(); !packetSection->Finished(); ourScript = packetSection->Next() )
+		{
+			if( ourScript != NULL )
+				ourScript->ScriptRegistration( "Packet" );
+		}
+
 		// moved all the map loading into cMapStuff - fur
 		Map->Load();
 		
@@ -3349,22 +3290,7 @@ int main( int argc, char *argv[] )
 		_beginthread( NetworkPollConnectionThread, 0, NULL );
 	#endif 
 #endif
-#ifdef __XFTPD_THREAD__
-		Console << myendl << "Creating and Initializing xFTPd (Daemon) Thread      ";
-	#if UOX_PLATFORM != PLATFORM_WIN32
-		pthread_create(&netw,NULL, xFTPdConnectionThread,  NULL );
-	#else
-		_beginthread( xFTPdConnectionThread, 0, NULL );
-	#endif 
-#endif
-#ifdef __XFTPC_THREAD__
-		Console << myendl << "Creating and Initializing xFTPc (Client) Thread      ";
-	#if UOX_PLATFORM != PLATFORM_WIN32
-		pthread_create(&netw,NULL, xFTPcConnectionThread,  NULL );
-	#else
-		_beginthread( xFTPcConnectionThread, 0, NULL );
-	#endif 
-#endif
+
 		Console.PrintDone();
 
 		Console.PrintSectionBegin();

@@ -233,6 +233,8 @@ public:
 	std::vector< LogoutLocationEntry >	logoutLocs;
 	std::vector< UI08 >					escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
+	SPAWNMAP							spawnRegions;
+	TOWNMAP								townRegions;
 
 	QUEUEMAP							refreshQueue;
 	QUEUEMAP							deletionQueue;

@@ -453,8 +453,8 @@ void command_memstats( CSocket *s )
 	size_t itemsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
 	size_t teffectsSize		= sizeof( CTEffect ) * TEffects->Count();
-	size_t regionsSize		= sizeof( CTownRegion ) * regions.size();
-	size_t spawnregionsSize = sizeof( CSpawnRegion ) * spawnregions.size();
+	size_t regionsSize		= sizeof( CTownRegion ) * cwmWorldState->townRegions.size();
+	size_t spawnregionsSize = sizeof( CSpawnRegion ) * cwmWorldState->spawnRegions.size();
 	size_t total			= charsSize + itemsSize + spellsSize + cacheSize + regionsSize + spawnregionsSize + teffectsSize;
 	GumpDisplay cacheStats( s, 350, 345 );
 	cacheStats.SetTitle( "UOX Memory Information (sizes in bytes)" );
@@ -472,10 +472,10 @@ void command_memstats( CSocket *s )
 	cacheStats.AddData( " TEffects: ", TEffects->Count() );
 	cacheStats.AddData( "  Allocated Memory: ", teffectsSize );
 	cacheStats.AddData( "  TEffect: ", sizeof( CTEffect ) );
-	cacheStats.AddData( " Regions Size: ", regions.size() );
+	cacheStats.AddData( " Regions Size: ", cwmWorldState->townRegions.size() );
 	cacheStats.AddData( "  Allocated Memory: ", regionsSize );
 	cacheStats.AddData( "  CTownRegion: ", sizeof( CTownRegion ) );
-	cacheStats.AddData( " SpawnRegions ", spawnregions.size() );
+	cacheStats.AddData( " SpawnRegions ", cwmWorldState->spawnRegions.size() );
 	cacheStats.AddData( "  Allocated Memory: ", spawnregionsSize );
 	cacheStats.AddData( "  CSpawnRegion: ", sizeof( CSpawnRegion ) );
 	cacheStats.Send( 0, false, INVALIDSERIAL );
@@ -540,12 +540,14 @@ void command_respawn( void )
 {
 	UI16 spawnedItems	= 0;
 	UI16 spawnedNpcs	= 0;
-	std::vector< CSpawnRegion * >::const_iterator spawnCounter;
-	for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
+	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+	while( spIter != spEnd )
 	{
-		CSpawnRegion *spawnReg = (*spawnCounter);
+		CSpawnRegion *spawnReg = spIter->second;
 		if( spawnReg != NULL )
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
+		++spIter;
 	}
 
 	UI32 b		= 0;
@@ -564,24 +566,26 @@ void command_regspawn( CSocket *s )
 
 		if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
 		{
-			std::vector< CSpawnRegion * >::const_iterator spawnCounter;
-			for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++ spawnCounter )
+			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+			while( spIter != spEnd )
 			{
-				CSpawnRegion *spawnReg = (*spawnCounter);
+				CSpawnRegion *spawnReg = spIter->second;
 				if( spawnReg != NULL )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
+				++spIter;
 			}
 			if( itemsSpawned || npcsSpawned )
-				s->sysmessage( "Spawned %u items and %u npcs in %u SpawnRegions", itemsSpawned, npcsSpawned, spawnregions.size() );
+				s->sysmessage( "Spawned %u items and %u npcs in %u SpawnRegions", itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() );
 			else
-				s->sysmessage( "Failed to spawn any new items or npcs in %u SpawnRegions", spawnregions.size() );
+				s->sysmessage( "Failed to spawn any new items or npcs in %u SpawnRegions", cwmWorldState->spawnRegions.size() );
 		}
 		else
 		{
 			UI16 spawnRegNum = static_cast<UI16>(Commands->Argument( 1 ));
-			if( spawnRegNum < spawnregions.size() )
+			if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 			{
-				CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
+				CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
 				if( spawnReg != NULL )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
@@ -724,9 +728,9 @@ void command_spawnkill( CSocket *s )
 	if( Commands->NumArguments() == 2 )
 	{
 		UI16 regNum = static_cast<UI16>(Commands->Argument( 1 ));
-		if( regNum >= spawnregions.size() )
+		if( cwmWorldState->spawnRegions.find( regNum ) == cwmWorldState->spawnRegions.end() )
 			return;
-		CSpawnRegion *spawnReg = spawnregions[regNum];
+		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
 		if( spawnReg == NULL )
 			return;
 		int killed	= 0;

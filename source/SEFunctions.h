@@ -77,6 +77,7 @@ SEngineFunc SE_EnableSpell;			//											***
 SEngineFunc SE_DisableSpell;		//											***
 
 SEngineFunc SE_RegisterSkill;
+SEngineFunc SE_RegisterPacket;
 
 SEngineFunc SE_GetHour;					//										***
 SEngineFunc SE_GetMinute;				//										***

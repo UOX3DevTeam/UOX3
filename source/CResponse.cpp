@@ -175,7 +175,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 		
 					// Send out the rant about accepting the escort
-					Npc->talkAll( 1294, false, regions[Npc->GetQuestDestRegion()]->GetName().c_str() );
+					Npc->talkAll( 1294, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
 					// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
 					MsgBoardQuestEscortRemovePost( Npc );
@@ -191,11 +191,11 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( findDest )
 			{
 				if( Npc->GetFTarg() == mChar )
-					Npc->talkAll( 1295, false, regions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->talkAll( 1295, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
-					Npc->talkAll( 1296, false, regions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->talkAll( 1296, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->talkAll( 1297, false, regions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->talkAll( 1297, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
 			}		

@@ -481,7 +481,6 @@ void CSocket::ClearTrigWords( void )
 	twIter = trigWords.end();
 }
 
-CChar *					DEFSOCK_CURRCHAROBJ				= NULL;
 const SI32				DEFSOCK_IDLETIMEOUT				= -1;
 const SI32				DEFSOCK_TEMPINT					= 0;
 const UI08				DEFSOCK_DYEALL					= 0;
@@ -509,22 +508,23 @@ const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
 const UI32				DEFSOCK_BYTESSENT				= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
-CBaseObject *			DEFSOCK_TMPOBJ					= NULL;
 const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
-CSocket::CSocket( size_t sockNum ) : currCharObj( DEFSOCK_CURRCHAROBJ )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
+CSocket::CSocket( size_t sockNum ) : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( DEFSOCK_TMPOBJ ), loginComplete( DEFSOCK_LOGINCOMPLETE )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE )
 {
 	InternalReset();
 }
 
 CSocket::~CSocket()
 {
+	if( ValidateObject( currCharObj ) )
+		currCharObj->SetSocket( NULL );
 	closesocket( cliSocket );
 }
 
@@ -907,6 +907,13 @@ CChar *CSocket::CurrcharObj( void ) const
 
 void CSocket::CurrcharObj( CChar *newValue )
 {
+	if( ValidateObject( currCharObj ) )
+	{
+		if( currCharObj->GetSocket() == this )
+			currCharObj->SetSocket( NULL );
+	}
+	if( ValidateObject( newValue ) )
+		newValue->SetSocket( this );
 	currCharObj = newValue;
 }
 

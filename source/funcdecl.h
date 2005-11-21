@@ -37,7 +37,6 @@ CMultiObj *	findMulti( CBaseObject *i );
 //o---------------------------------------------------------------------------o
 // Calculation functions (socket, char, item and so forth)
 //o---------------------------------------------------------------------------o
-CSocket		*calcSocketObjFromChar( CChar *i );
 CItem *		calcItemObjFromSer( SERIAL targSerial );
 CChar *		calcCharObjFromSer( SERIAL targSerial );
 CMultiObj *	calcMultiFromSer( SERIAL targSerial );

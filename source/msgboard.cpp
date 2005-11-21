@@ -759,7 +759,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			position = fullLine.find( "%r" );
 			while( position != std::string::npos )
 			{
-				fullLine.replace( position, 2, regions[mNPC->GetQuestDestRegion()]->GetName() );
+				fullLine.replace( position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName() );
 				position = fullLine.find( "%r" );
 			}
 
@@ -864,7 +864,7 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	if( !ValidateObject( mChar ) )
 		return;
 
-	CTownRegion *destReg = regions[mNPC->GetQuestDestRegion()];
+	CTownRegion *destReg = cwmWorldState->townRegions[mNPC->GetQuestDestRegion()];
 
 	// Calculate payment for services rendered
 	UI16 servicePay = ( RandomNum(0, 20) * RandomNum(1, 30) );  // Equals a range of 0 to 600 possible gold with a 5% chance of getting 0 gold

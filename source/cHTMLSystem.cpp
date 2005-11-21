@@ -309,7 +309,7 @@ void cHTMLTemplate::Process( void )
 						sPos = parsedInline.find( "%playerip" ); 
 						while( sPos != std::string::npos )
 						{
-							CSocket *mySock = calcSocketObjFromChar( tChar );
+							CSocket *mySock = tChar->GetSocket();
 							char ClientIP[32];
 							sprintf( ClientIP, "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
 							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 9, ClientIP ):parsedInline.replace( sPos, 9, "" );

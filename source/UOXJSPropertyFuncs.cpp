@@ -527,7 +527,7 @@ namespace UOX
 						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
 			
-						JS_SetPrivate( cx, myTown, regions[TempTownID] );
+						JS_SetPrivate( cx, myTown, cwmWorldState->townRegions[TempTownID] );
 						*vp = OBJECT_TO_JSVAL( myTown );
 					}
 					break;
@@ -553,7 +553,7 @@ namespace UOX
 					{ // So we can declar the variables here
 					cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 					JSObject *mySock	= myScript->AcquireObject( IUE_SOCK );
-					JS_SetPrivate( cx, mySock, calcSocketObjFromChar( gPriv ) );
+					JS_SetPrivate( cx, mySock, gPriv->GetSocket() );
 					*vp = OBJECT_TO_JSVAL( mySock );
 					}
 					break;
@@ -791,11 +791,11 @@ namespace UOX
 				case CCP_DIRECTION:		gPriv->SetDir( (UI08)encaps.toInt() );				break;
 				case CCP_REGION:		gPriv->SetRegion( (UI08)encaps.toInt() );			break;
 				case CCP_TOWN:
-					regions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
-					regions[encaps.toInt()]->AddAsTownMember( *gPriv );
+					cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
+					cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember( *gPriv );
 					break;
 				case CCP_GUILD:
-					GuildSys->Resign( calcSocketObjFromChar( gPriv ) );
+					GuildSys->Resign( gPriv->GetSocket() );
 
 					if( *vp != JSVAL_NULL )
 					{
@@ -809,12 +809,12 @@ namespace UOX
 				case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );				break;
 				case CCP_LIGHTLEVEL:	
 					gPriv->SetFixedLight( (UI08)encaps.toInt() );
-					if( calcSocketObjFromChar( gPriv ) != NULL )
+					if( gPriv->GetSocket() != NULL )
 					{
 						if( (UI08)encaps.toInt() == 255 )
-							doLight( calcSocketObjFromChar( gPriv ), cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+							doLight( gPriv->GetSocket(), cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 						else
-							doLight( calcSocketObjFromChar( gPriv ), (UI08)encaps.toInt() );
+							doLight( gPriv->GetSocket(), (UI08)encaps.toInt() );
 					}
 					break;
 				case CCP_ARMOUR:		gPriv->SetDef( (UI16)encaps.toInt() );			break;
@@ -1532,7 +1532,7 @@ namespace UOX
 
 		if( !myChar->IsNpc() )
 		{
-			CSocket *toFind = calcSocketObjFromChar( myChar );
+			CSocket *toFind = myChar->GetSocket();
 			if( toFind != NULL )
 			{
 				if( SkillID == ALLSKILLS )

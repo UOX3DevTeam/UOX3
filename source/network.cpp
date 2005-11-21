@@ -210,6 +210,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	// We have to make sure to update the Account map
 	//Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
 	p->Teleport();
+	p->SetSocket( NULL );
 }
 
 void cNetworkStuff::sockInit( void )
@@ -485,8 +486,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	if( s >= connClients.size() )
 		return;
 
-	int count, ho, mi, se, total, j, book;
-	CItem *i = NULL;
+	int count, ho, mi, se, total, book;
+	size_t j = 0;
 	char temp[1024];
 	CSocket *mSock = connClients[s];
 
@@ -541,14 +542,28 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
 				mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
-			CPInputBuffer *test	= WhichPacket( packetID, mSock );
+
 			bool doSwitch		= true;
-			if( test != NULL )
+			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
 			{
-				mSock->ReceiveLogging( test );
-				if( test->Handle() )
-					doSwitch = false;
-				delete test;
+				std::map< UI16, UI16 >::const_iterator pFind = packetOverloads.find( packetID );
+				if( pFind != packetOverloads.end() )
+				{
+					cScript *pScript = JSMapping->GetScript( pFind->second );
+					if( pScript != NULL )
+						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
+				}
+			}
+			if( doSwitch )
+			{
+				CPInputBuffer *test	= WhichPacket( packetID, mSock );
+				if( test != NULL )
+				{
+					mSock->ReceiveLogging( test );
+					if( test->Handle() )
+						doSwitch = false;
+					delete test;
+				}
 			}
 			if( doSwitch )
 			{
@@ -705,7 +720,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	//	BYTE[2] (0x0000) (profile terminator)
 
 								UI08 tempBuffer[1024];
-								char ourMessage[20];
+								std::string ourMessage;
 								memset( tempBuffer, 0, sizeof( tempBuffer[0] ) * 1024 );	// zero it out
 								tempBuffer[0] = 0xB8;
 								tempBuffer[3] = buffer[4];
@@ -722,8 +737,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 									tempBuffer[mj++] = player->GetName().data()[k];
 								}
 								mj += 2;
-								strcpy( ourMessage, "Test of Char Profile" );
-								for( j = 0; j < static_cast<int>(strlen( ourMessage )); ++j )
+								ourMessage = "Test of Char Profile";
+								for( j = 0; j < ourMessage.size(); ++j )
 								{
 									tempBuffer[mj++] = 0;
 									tempBuffer[mj++] = ourMessage[j];
@@ -831,108 +846,13 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 									CChar *myChar = calcCharObjFromSer( mSer );
 									if( myChar == NULL )
 										break;
-									UI08 menupacket[1024];  //"header" packet	// was 12
-									
-									UI16 lineArray[32]; //array of entries (text IDs)
-									UI08 IDArray[32];	//array of entry ID's
-									UI08 flagArray[32];
-									UI08 Hue1Array[32]; //arrays of colors
-									UI08 Hue2Array[32];
-									
-									menupacket[0] = 0xBF;
-									menupacket[1] = 0x00; //length
-									menupacket[2] = 0x00; //length
-									menupacket[3] = 0x00; //sub
-									menupacket[4] = 0x14; //sub
-									menupacket[5] = 0x00; //unknown - always 00
-									menupacket[6] = 0x01; //unknown - always 01
-									menupacket[7] = myChar->GetSerial( 1 ); //serial
-									menupacket[8] = myChar->GetSerial( 2 ); //serial
-									menupacket[9] = myChar->GetSerial( 3 ); //serial
-									menupacket[10] = myChar->GetSerial( 4 ); //serial
-									menupacket[11] = 0x00; //number of entries
 
-									int menulines = 0; //number of entries the menu will have
-									
-									//loop through the menu entries
-									lineArray[menulines]	= 6123;
-									IDArray[menulines]		= 0x0A;
-									Hue1Array[menulines]	= 0x03;
-									Hue2Array[menulines]	= 0xE0;
-
-									if( myChar->GetID() == 0x0190 || myChar->GetID() == 0x0191 )	//Humans have paperdolls
-										flagArray[menulines] = 0x20;
-									else
-										flagArray[menulines] = 0x21;
-									++menulines;
-
-									// Backpacks, can open if not owner/GM but that is snooping
-									lineArray[menulines]	= 6145;
-									IDArray[menulines]		= 0x0B;
-									flagArray[menulines]	= 0x20;
-									Hue1Array[menulines]	= 0x03;
-									Hue2Array[menulines]	= 0xE0;
-									++menulines;
-
-									// shop keepers
-									lineArray[menulines]	= 6103;
-									IDArray[menulines]		= 0x0C;
-									if( myChar->IsShop() )
-									{
-										flagArray[menulines] = 0x20;
-										Hue1Array[menulines] = 0xFF;
-										Hue2Array[menulines] = 0xFF;
-									}
-									else
-									{
-										flagArray[menulines] = 0x21;
-										Hue1Array[menulines] = 0x03;
-										Hue2Array[menulines] = 0xE0;
-									}
-									++menulines;
-
-									lineArray[menulines]	= 6104;
-									IDArray[menulines]		= 0x0D;
-									if( myChar->IsShop() )
-									{
-										flagArray[menulines] = 0x20;
-										Hue1Array[menulines] = 0xFF;
-										Hue2Array[menulines] = 0xFF;
-									}
-									else
-									{
-										flagArray[menulines] = 0x21;
-										Hue1Array[menulines] = 0x03;
-										Hue2Array[menulines] = 0xE0;
-									}
-									++menulines;
-
-									if( menulines == 0 ) return; //return if no entries to show				
-
-									//calculate length
-									int pLen = menulines * 8 + 12;
-									menupacket[1]	= (UI08)(pLen>>8);	//length
-									menupacket[2]	= (UI08)(pLen%256);	//length
-									menupacket[11]	= menulines; //number of entries
-
-									int pOffset = 12;
-									
-									for( int i = 0; i < menulines; ++i )
-									{
-										menupacket[pOffset + 0] = (IDArray[i]>>8); //entry id, this is returned by client
-										menupacket[pOffset + 1] = (IDArray[i]%256); //entry id, this is returned by client
-										menupacket[pOffset + 2] = (lineArray[i]>>8); //text id, intloc file
-										menupacket[pOffset + 3] = (lineArray[i]%256); //text id, text index in intloc file
-										
-										menupacket[pOffset + 4] = 0x00;
-										menupacket[pOffset + 5] = flagArray[i];
-										menupacket[pOffset + 6] = Hue1Array[i];	// 0x03; //color!
-										menupacket[pOffset + 7] = Hue2Array[i];	// 0xE0; //color!
-										pOffset += 8;
-									}
-									mSock->Send( menupacket, pLen );
-									mSock->FlushBuffer();
+									CPPopupMenu toSend( (*myChar) );
+									mSock->Send( &toSend );
 								}
+								break;
+							case 0x15:	// Popup Menu Selection
+								Console.Print( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X", mSock, mSock->GetDWord( 5 ), mSock->GetWord( 9 ) );
 								break;
 							case 0x1A:	// Extended Stats
 								UI08 statToSet, value;
@@ -957,7 +877,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 
 									if( validLoc )
 									{
-										book = (buffer[7]>>8) + (buffer[8]%256); 
+										book = (buffer[7]<<8) + (buffer[8]); 
 										if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
 										{
 											if( ourChar->IsFrozen() )
@@ -981,6 +901,9 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								}
 								break;
 							}
+							default:
+								Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X", subCmd );
+								break;
 						}
 						break;
 					case 0x56:
@@ -1214,24 +1137,37 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				LoginDisconnect( s );
 				return;
 			}
-			CPInputBuffer *test = NULL;
-			try
-			{
-				test = WhichLoginPacket( packetID, mSock );
-			}
-			catch( socket_error& )
-			{
-				Console.Warning( 2, "Bad packet request thrown! [packet ID: 0x%x]", packetID );
-				mSock->FlushIncoming();
-				return;
-			}
 			bool doSwitch = true;
-			if( test != NULL )
+			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
 			{
-				mSock->ReceiveLogging( test );
-				if( test->Handle() )
-					doSwitch = false;
-				delete test;
+				std::map< UI16, UI16 >::const_iterator pFind = packetOverloads.find( packetID );
+				if( pFind != packetOverloads.end() )
+				{
+					cScript *pScript = JSMapping->GetScript( pFind->second );
+					if( pScript != NULL )
+						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
+				}
+			}
+			if( doSwitch )
+			{
+				CPInputBuffer *test = NULL;
+				try
+				{
+					test = WhichLoginPacket( packetID, mSock );
+				}
+				catch( socket_error& )
+				{
+					Console.Warning( 2, "Bad packet request thrown! [packet ID: 0x%x]", packetID );
+					mSock->FlushIncoming();
+					return;
+				}
+				if( test != NULL )
+				{
+					mSock->ReceiveLogging( test );
+					if( test->Handle() )
+						doSwitch = false;
+					delete test;
+				}
 			}
 			if( doSwitch )
 			{
@@ -1383,6 +1319,12 @@ void cNetworkStuff::LoadFirewallEntries( void )
 		}
 		delete firewallData;
 	}
+}
+
+void cNetworkStuff::RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptID )
+{
+	UI16 packetID = static_cast<UI16>((subCmd<<8) + packet);
+	packetOverloads[packetID] = scriptID;
 }
 
 void cNetworkStuff::CheckConnections( void )

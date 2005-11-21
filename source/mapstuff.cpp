@@ -214,13 +214,15 @@ void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 )
 {
 	UString tag, data, UTag;
-	UI08 NumberOfWorlds = cwmWorldState->ServerData()->ServerMapCount();
+	UI08 NumberOfWorlds = static_cast<UI08>(FileLookup->CountOfEntries( maps_def ));
+	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
 		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + UString::number( i ), maps_def );
 		if( toFind == NULL )
 			break;
-
+		
+		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
 			UTag = tag.upper();
@@ -229,34 +231,35 @@ cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile
 			{
 			case 'M':
 				if( UTag == "MAP" )
-					MapList[i].mapFile = data;
+					toAdd.mapFile = data;
 				else if( UTag == "MAPDIFF" )
-					MapList[i].mapDiffFile = data;
+					toAdd.mapDiffFile = data;
 				else if( UTag == "MAPDIFFLIST" )
-					MapList[i].mapDiffListFile = data;
+					toAdd.mapDiffListFile = data;
 				break;
 			case 'S':
 				if( UTag == "STATICS" )
-					MapList[i].staticsFile = data;
+					toAdd.staticsFile = data;
 				else if( UTag == "STAIDX" )
-					MapList[i].staidxFile = data;
+					toAdd.staidxFile = data;
 				else if( UTag == "STATICSDIFF" )
-					MapList[i].staticsDiffFile = data;
+					toAdd.staticsDiffFile = data;
 				else if( UTag == "STATICSDIFFLIST" )
-					MapList[i].staticsDiffListFile = data;
+					toAdd.staticsDiffListFile = data;
 				else if( UTag == "STATICSDIFFINDEX" )
-					MapList[i].staticsDiffIndexFile = data;
+					toAdd.staticsDiffIndexFile = data;
 				break;
 			case 'X':
 				if( UTag == "X" )
-					MapList[i].xBlock = data.toUShort();
+					toAdd.xBlock = data.toUShort();
 				break;
 			case 'Y':
 				if( UTag == "Y" )
-					MapList[i].yBlock = data.toUShort();
+					toAdd.yBlock = data.toUShort();
 				break;
 			}
 		}
+		MapList.push_back( toAdd );
 	}
 	FileLookup->Dispose( maps_def );
 }
@@ -312,12 +315,10 @@ void cMapStuff::Load( )
 
 	UString basePath = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
 
-	MAPLIST_ITERATOR mlIter		= MapList.begin();
-	MAPLIST_ITERATOR mlEnd		= MapList.end();
 	UI08 totalMaps = 0;
-	while( mlIter != mlEnd )
+	for( MAPLIST_ITERATOR mlIter = MapList.begin(); mlIter != MapList.end(); ++mlIter )
 	{
-		MapData_st& mMap	= mlIter->second;
+		MapData_st& mMap	= (*mlIter);
 
 		lName				= basePath + mMap.mapFile;
 		mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
@@ -408,8 +409,6 @@ void cMapStuff::Load( )
 			else
 				Console.PrintSpecial( CBLUE, "not found" );
 		}
-
-		++mlIter;
 	}
 
 	if( totalMaps == 0 )
@@ -830,7 +829,7 @@ void cMapStuff::SeekLand( int landnum, CLand *land)
 
 bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
-	if( worldNumber >= cwmWorldState->ServerData()->ServerMapCount() )
+	if( worldNumber >= MapList.size() )
 		return false;
 
 	return ( ( x >= 0 && x < (MapList[worldNumber].xBlock/8) ) && ( y >= 0 && y < (MapList[worldNumber].yBlock/8) ) );
@@ -976,7 +975,7 @@ map_st cMapStuff::SeekMap0( SI16 x, SI16 y, UI08 worldNumber )
 	const SI16 x1 = x / 8, y1 = y / 8;
 	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);
 	map_st map = {0, 0};
-	if( worldNumber >= cwmWorldState->ServerData()->ServerMapCount() )
+	if( worldNumber >= MapList.size() )
 		return map;
 
 	MapData_st& mMap = MapList[worldNumber];
@@ -1046,6 +1045,9 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 // use illegal_z if they are teleporting from an unknown z
 bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
+	if( worldNumber >= MapList.size() )
+		return false;
+
 	MapData_st& mMap = MapList[worldNumber];
 	if( x < 0 || y < 0 || x >= mMap.xBlock || y >= mMap.yBlock  )
 		return false;
@@ -1088,12 +1090,17 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber 
 //o--------------------------------------------------------------------------
 bool cMapStuff::MapExists( UI08 worldNumber )
 {
-	return ( (worldNumber < cwmWorldState->ServerData()->ServerMapCount()) && (MapList[worldNumber].mapObj != NULL) );
+	return ( (worldNumber < MapList.size()) && (MapList[worldNumber].mapObj != NULL) );
 }
 
 MapData_st& cMapStuff::GetMapData( UI08 worldNumber )
 {
 	return MapList[worldNumber];
+}
+
+UI08 cMapStuff::MapCount( void ) const
+{
+	return static_cast<UI08>(MapList.size());
 }
 
 void CTile::Read( UOXFile *toRead )

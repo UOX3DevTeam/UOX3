@@ -66,7 +66,7 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 	{
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
-			CSocket *mSock = calcSocketObjFromChar( (CChar *)baseObj );
+			CSocket *mSock = ((CChar *)baseObj)->GetSocket();
 			if( mSock != NULL )
 				mSock->Send( &toSend );
 		}

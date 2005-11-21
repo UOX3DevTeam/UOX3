@@ -942,7 +942,7 @@ void NpcResurrectTarget( CChar *i )
 		Console.Error( 2, Dictionary->GetEntry( 1079 ).c_str(), i );
 		return;
 	}
-	CSocket *mSock = calcSocketObjFromChar( i );
+	CSocket *mSock = i->GetSocket();
 	// the char is a PC, but not logged in.....
 	if( mSock != NULL )
 	{
@@ -1013,7 +1013,7 @@ void HouseOwnerTarget( CSocket *s )
 		return;
 
 	CChar *own		= calcCharObjFromSer( o_serial );
-	CSocket *oSock	= calcSocketObjFromChar( own );
+	CSocket *oSock	= own->GetSocket();
 	CItem *sign		= static_cast<CItem *>(s->TempObj());
 	CItem *house	= calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );
 	s->TempObj( NULL );
@@ -1087,7 +1087,7 @@ void HouseFriendTarget( CSocket *s )
 		UI08 r = AddToHouse( h, c );
 		if( r == 1 ) 
 		{
-			CSocket *cSock = calcSocketObjFromChar( c );
+			CSocket *cSock = c->GetSocket();
 			if( cSock != NULL )
 				cSock->sysmessage( 1089 );
 			s->sysmessage( 1088, c->GetName().c_str() );
@@ -1185,7 +1185,7 @@ void FriendTarget( CSocket *s )
 	pet->AddFriend( targChar );
 	s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
 
-	CSocket *targSock = calcSocketObjFromChar( targChar );
+	CSocket *targSock = targChar->GetSocket();
 	if( targSock != NULL )
 		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
 }
@@ -1342,7 +1342,7 @@ void MakeTownAlly( CSocket *s )
 //		s->sysmessage( "That person already belongs to your town" );
 //	else
 //	{
-		if( !regions[srcTown]->MakeAlliedTown( trgTown ) )	
+		if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
 			s->sysmessage( 1111 );
 //	}
 }
@@ -1410,7 +1410,7 @@ void MakeStatusTarget( CSocket *sock )
 	{
 		if( origLevel != NULL )
 		{	// Strip name off it
-			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
+			if( !_strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
 				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
 		}
 		sprintf( temp, "%s %s", targLevel->name.c_str(), playerName );
@@ -1420,7 +1420,7 @@ void MakeStatusTarget( CSocket *sock )
 	{
 		if( origLevel != NULL )
 		{	// Strip name off it
-			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
+			if( !_strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
 				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
 		}
 		strcpy( temp, (const char*)playerName );
@@ -1591,7 +1591,7 @@ void VialTarget( CSocket *mSock )
 				}
 				else
 				{
-					CSocket *nCharSocket = calcSocketObjFromChar( targChar );
+					CSocket *nCharSocket = targChar->GetSocket();
 					nCharSocket->sysmessage( 746, mChar->GetName().c_str() );
 				}
 				if( Combat->WillResultInCriminal( mChar, targChar ) )
@@ -1683,7 +1683,7 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_PLVBUY:			PlVBuy( tSock );						break;
 					// Town Stuff
 					case TARGET_TOWNALLY:		MakeTownAlly( tSock );					break;
-					case TARGET_VOTEFORMAYOR:	regions[mChar->GetTown()]->VoteForMayor( tSock ); break;
+					case TARGET_VOTEFORMAYOR:	cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor( tSock ); break;
 					// House Functions
 					case TARGET_HOUSEOWNER:		HouseOwnerTarget( tSock );				break;
 					case TARGET_HOUSEEJECT:		HouseEjectTarget( tSock );				break;

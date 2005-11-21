@@ -37,11 +37,12 @@ namespace UOX
 	class CDataList
 	{
 	private:
-		typedef std::deque< T >							DATALIST;
-		typedef typename std::deque< T >::iterator		DATALIST_ITERATOR;
+		typedef std::deque< T >								DATALIST;
+		typedef typename std::deque< T >::iterator			DATALIST_ITERATOR;
+		typedef typename std::deque< T >::const_iterator	DATALIST_CITERATOR;
 
 		DATALIST					objData;
-		DATALIST_ITERATOR			objIterator;
+		DATALIST_CITERATOR			objIterator;
 		std::vector< size_t >		objIteratorBackup;
 
 		DATALIST_ITERATOR FindEntry( T toFind )

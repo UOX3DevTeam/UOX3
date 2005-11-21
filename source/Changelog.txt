@@ -1,3 +1,28 @@
+11/20/2005 - giwo (0.98-3.1d [3.2 BETA])
+	Added CPPopupMenu allowing for easier customization of popup menu's.
+	Removed cScript::spellRegistration, commandRegistration, skillRegistration in favor of
+	cScript::ScriptRegistration( string skillType ) IE ScriptRegistration( Skill ).
+	Added the ability to overload Packets in the JS.
+	Removed xFTP Server code as UOX3 should be a game server, not an FTP server.
+	Moved spawnregions and regions into CWorldMain. (renaming them to spawnRegions and townRegions).
+	Modified spawnRegions and townRegions to load in based upon the number assigned for them in the scripts.
+	Added a socket variable to PlayerValues_st to remove the need to loop through online sockets looking for a characters socket.
+	Fixed some minor issues with CTEffectContainer.
+	Fixed an issue that could cause a characters murder decay timer to stop counting.
+	Added MURDERTIME to the worldsave to make murder decay time persistent.
+	Fixed some minor compiler warnings.
+	Added support for compiling under Visual Studio Express 2005
+	Changes to uox.ini:
+		Removed USEFACETSAVES, MAP0, MAP1, MAP2, MAP3, USERMAP, FTPDENABLED,
+		FTPDUSER, FTPDUSERLIMIT, FTPDBIND, FTPDROOT, FTPCENABLED, FTPCHOST,
+		FTPCPORT, FTPCUSER, FTPCULFLAGS, and MAPCOUNT as they were unused.
+		Added OVERLOADPACKETS option to uox.ini to toggle JS packet handling.
+	JS Changes:
+		Re-ordered jse_fileassociations.scp a bit to make more logical sense.
+		Added PACKET_SCRIPTS to jse_fileassociations.scp
+		Added event onPacketReceive( socket, packetNum, subCommand )
+		Added function RegisterPacket( packetNum, subCommand ) // Note that subcommands are not yet supported.
+
 11/19/2005 - Xuri
 	Added new doors from ML-client, expanded DoorNewLocation-function to cover all doors
 

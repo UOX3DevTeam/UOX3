@@ -42,7 +42,7 @@ CItem *startTrade( CSocket *mSock, CChar *nChar )
 		return NULL;
 
 	CChar *mChar	= mSock->CurrcharObj();
-	CSocket *nSock	= calcSocketObjFromChar( nChar );
+	CSocket *nSock	= nChar->GetSocket();
 
 	if( !ValidateObject( mChar ) || nSock == NULL )
 		return NULL;
@@ -132,8 +132,8 @@ void endTrade( SERIAL targSerial )
 	if( !ValidateObject( bp2 ) ) 
 		return;
 
-	CSocket *mSock = calcSocketObjFromChar( p1 );
-	CSocket *nSock = calcSocketObjFromChar( p2 );
+	CSocket *mSock = p1->GetSocket();
+	CSocket *nSock = p2->GetSocket();
 	
 	if( mSock != NULL ) 
 	{
@@ -259,8 +259,8 @@ void sendTradeStatus( CItem *cont1, CItem *cont2 )
 {
 	CChar *p1 = (CChar *)cont1->GetCont();
 	CChar *p2 = (CChar *)cont2->GetCont();
-	CSocket *s1 = calcSocketObjFromChar( p1 );
-	CSocket *s2 = calcSocketObjFromChar( p2 );
+	CSocket *s1 = p1->GetSocket();
+	CSocket *s2 = p2->GetSocket();
 
 	if( s1 != NULL )
 	{

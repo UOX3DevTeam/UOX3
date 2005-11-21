@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) 
+#if defined(_MSC_VER)
 	#if _MSC_VER < 1300
 		#pragma warning( disable : 4786 )
 		#pragma warning( disable : 4514 )
@@ -6,6 +6,8 @@
 		#define UOXVALIST va_list
 		#define NOSIZETYPE
 	#else
+		#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
+		#define _HAS_ITERATOR_DEBUGGING 0
 		#define UOXVALIST std::va_list
 	#endif
 #else

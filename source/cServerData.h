@@ -133,7 +133,7 @@ private:
 	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
 	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
 	UI08		playerCorpseDecayMultiplier;	//  Multiplier for player corpse decay.
-	UI08		mapCount;
+	bool		overloadPackets;				//	Toggle Packet Handling in JS
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -302,8 +302,6 @@ public:
 	void		ServerNetRcvTimeout(UI32 timeoutValue) { netRcvTimeout = timeoutValue; }
 	UI32		ServerNetSndTimeout(void) const { return netSndTimeout; }
 	void		ServerNetSndTimeout(UI32 timeoutValue) { netSndTimeout = timeoutValue; }
-	bool		ServerUseFacetSaves(void) const { return useFacetSaves; }
-	void		ServerUseFacetSaves(bool facetValue) { useFacetSaves = facetValue; }
 	UI32		ServerClientSupport(void) const { return clientSupport; }
 	void		ServerClientSupport(UI32 clientValue) { clientSupport=clientValue; }
 
@@ -516,8 +514,8 @@ public:
 	void		WeightPerStr( UI08 newVal );
 	UI08		WeightPerStr( void ) const;
 
-	void		ServerMapCount( UI08 newVal );
-	UI08		ServerMapCount( void ) const;
+	void		ServerOverloadPackets( bool newVal );
+	bool		ServerOverloadPackets( void ) const;
 
 	void		ArmorAffectManaRegen( bool newVal );
 	bool		ArmorAffectManaRegen( void ) const;

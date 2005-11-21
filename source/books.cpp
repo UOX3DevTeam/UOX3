@@ -121,7 +121,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		CPNewBookHeader bInfo;
 		bInfo.Serial( mBook->GetSerial() );
 
-		UI16 numPages;
+		UI16 numPages = 0;
 
 		std::string bookTitle, bookAuthor;
 		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + UString::number( mBook->GetSerial(), 16 ) + ".bok";

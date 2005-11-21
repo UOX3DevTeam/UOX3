@@ -34,8 +34,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|USEFACETSAVES|MAP0|MAP1|MAP2|MAP3|USERMAP|CLIENTSUPPORT|"
-	"FTPDENABLED|FTPDUSER|FTPDUSERLIMIT|FTPDBIND|FTPDROOT|FTPCENABLED|FTPCHOST|FTPCPORT|FTPCUSER|FTPCULFLAGS|MAPCOUNT"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS"
 );
 
 void CServerData::ResetDefaults( void )
@@ -100,7 +99,7 @@ void CServerData::ResetDefaults( void )
 	CharHideWhileMounted( true );
 	WeightPerStr( 5 );
 	SystemTimer( tSERVER_POLYMORPH, 90 );
-	ServerMapCount( 5 );
+	ServerOverloadPackets( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 15 );
@@ -964,20 +963,20 @@ void CServerData::WeightPerStr( UI08 newVal )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	UI08 ServerMapCount()
-//|	Date			-	9/10/2005
+//|	Function/Class	-	bool ServerOverloadPackets()
+//|	Date			-	11/20/2005
 //|	Developer(s)	-	giwo
 //|	Company/Team	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
-//|	Purpose			-	Total number of maps available to the server
+//|	Purpose			-	Enables / Disables Packet handling in JS
 //o--------------------------------------------------------------------------o
-UI08 CServerData::ServerMapCount( void ) const
+bool CServerData::ServerOverloadPackets( void ) const
 {
-	return mapCount;
+	return overloadPackets;
 }
-void CServerData::ServerMapCount( UI08 newVal )
+void CServerData::ServerOverloadPackets( bool newVal )
 {
-	mapCount = newVal;
+	overloadPackets = newVal;
 }
 
 //o--------------------------------------------------------------------------o
@@ -1346,14 +1345,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl << std::endl;
 
-		ofsOutput << "[facet]" << std::endl << "{" << std::endl;
-		ofsOutput << "USEFACETSAVES=" << (ServerUseFacetSaves()?1:0) << std::endl;
-		//ofsOutput << "MAP0=" << "MapName"/*ServerMap0Name()*/ << "," << "MapAccess"/*ServerMap0Access()*/ << std::endl;
-		//ofsOutput << "MAP1=" << "MapName"/*ServerMap1Name()*/ << "," << "MapAccess"/*ServerMap1Access()*/ << std::endl;
-		//ofsOutput << "MAP2=" << "MapName"/*ServerMap2Name()*/ << "," << "MapAccess"/*ServerMap2Access()*/ << std::endl;
-		//ofsOutput << "MAP3=" << "MapName"/*ServerMap3Name()*/ << "," << "MapAccess"/*ServerMap3Access()*/ << std::endl;
-		ofsOutput << "}" << std::endl;
-
 		ofsOutput << std::endl << "[play server list]" << std::endl << "{" << std::endl;
 
 		std::vector< physicalServer >::iterator slIter;
@@ -1366,28 +1357,6 @@ bool CServerData::save( std::string filename )
 				ofsOutput << slIter->getIP() << ",";
 			ofsOutput << slIter->getPort() << std::endl;
 		}
-		ofsOutput << "}" << std::endl;
-
-		ofsOutput << std::endl << "[network server list]" << std::endl << "{" << std::endl;
-		ofsOutput << "}" << std::endl;
-
-		// 06152004 - EviLDeD - added the tags for the soon to be added ftpd(light) and ftp(light) threads.
-		ofsOutput << std::endl << "[xftpd]" << std::endl << "{" << std::endl;
-		ofsOutput << "FTPDENABLED=" << std::endl;
-		ofsOutput << "FTPDUSERLIMIT=" << std::endl;
-		ofsOutput << "FTPDBIND=" << std::endl;
-		ofsOutput << "FTPDPORT=" << std::endl;
-		ofsOutput << "FTPDROOT=" << std::endl;
-		ofsOutput << "FTPDUSER=" << std::endl;
-		ofsOutput << "}" << std::endl;
-
-		ofsOutput << std::endl << "[xftpc]" << std::endl << "{" << std::endl;
-		ofsOutput << "FTPCENABLED=" << std::endl;
-		ofsOutput << "FTPCEVENT=" << std::endl;
-		ofsOutput << "FTPCHOST=" << std::endl;
-		ofsOutput << "FTPCPORT=" << std::endl;
-		ofsOutput << "FTPCUSER=" << std::endl;
-		ofsOutput << "FTPCFLAGS=" << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[skill & stats]" << std::endl << "{" << std::endl;
@@ -1457,7 +1426,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
-		ofsOutput << "MAPCOUNT=" << static_cast<UI16>(ServerMapCount()) << std::endl;
+		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2175,49 +2144,10 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 						case 0x0832:	 // NETRETRYCOUNT[0137]
 							ServerNetRetryCount( value.toULong() );
 							break;
-						case 0x0840:	 // USEFACETSAVES[0138]
-							ServerUseFacetSaves( value.toUShort() == 1);
-							break;
-						case 0x084E:	 // MAP0[0139]
-							// Place holder
-							break;
-						case 0x0853:	 // MAP1[0140]
-							// Place holder
-							break;
-						case 0x0858:	 // MAP2[0141]
-							// Place holder
-							break;
-						case 0x085D:	 // MAP3[0142]
-							// Place holder
-							break;
-						case 0x0862:	 // USERMAP[0143]
-							// Place holder
-							break;
-						case 0x086A:	 // CLIENTSUPPORT[0144]
+						case 0x0840:	 // CLIENTSUPPORT[0138]
 							ServerClientSupport( value.toULong() );
-							break;
-						case 0x0878:	 // FTPDENABLED[0145]
-							break;
-						case 0x0884:	 // FTPDUSER[0146]
-							break;
-						case 0x088D:	 // FTPDUSERLIMIT[0147]
-							break;
-						case 0x089B:	 // FTPDBIND[0148]
-							break;
-						case 0x08A4:	 // FTPDROOT[0149]
-							break;
-						case 0x08AD:	 // FTPCENABLED[0150]
-							break;
-						case 0x08B9:	 // FTPCHOST[0151]
-							break;
-						case 0x08C2:	 // FTPCPORT[0152]
-							break;
-						case 0x08CB:	 // FTPCUSER[0153]
-							break;
-						case 0x08D4:	 // FTPCULFLAGS[0154]
-							break;
-						case 0x08E0:	 // MAPCOUNT[0155]
-							ServerMapCount( value.toByte() );
+						case 0x084E:	 // OVERLOADPACKETS[0139]
+							ServerOverloadPackets( (value.toByte() == 1) );
 							break;
 						default:
 							//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
@@ -2226,9 +2156,7 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 					inFile.getline( szLine, 127 );
 				}
 				else
-				{
 					inFile.getline( szLine, 127 );
-				}
 			}
 			Console.PrintDone();
 			rvalue = this;

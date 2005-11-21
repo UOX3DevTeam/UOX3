@@ -217,6 +217,8 @@ public:
 	// Login Specific
 	void		LoginDisconnect(UOXSOCKET s);
 	void		LoginDisconnect(CSocket *s);
+
+	void		RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptID );
 	
 private:
 	struct FirewallEntry
@@ -228,6 +230,7 @@ private:
 		}
 	};
 
+	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
 	int						a_socket;
 	SOCKLIST				connClients, loggedInClients;

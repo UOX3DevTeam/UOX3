@@ -278,7 +278,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	if( toMake == NULL )
 		return;
 
-	CSocket *sock	= calcSocketObjFromChar( src );
+	CSocket *sock	= src->GetSocket();
 	UString addItem = toMake->addItem;
 	UI16 amount		= 1;
 	if( addItem.sectionCount( "," ) != 0 )
@@ -362,7 +362,7 @@ void cEffects::checktempeffects( void )
 				TEffects->QueueToKeep( Effect );
 				continue;
 			}
-			tSock = calcSocketObjFromChar( s );
+			tSock = s->GetSocket();
 		}
 		TEffects->QueueToRemove( Effect );
 		bool equipCheckNeeded = false;
@@ -486,7 +486,7 @@ void cEffects::checktempeffects( void )
 				break;
 			case 17: //Explosion potion
 				src = calcCharObjFromSer( Effect->Source() );
-				explodeItem( calcSocketObjFromChar( src ), (CItem *)Effect->ObjPtr() ); //explode this item
+				explodeItem( src->GetSocket(), (CItem *)Effect->ObjPtr() ); //explode this item
 				break;
 			case 18: //Polymorph spell
 				s->SetID( s->GetOrgID() );
@@ -535,8 +535,8 @@ void cEffects::checktempeffects( void )
 				{
 					if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
 					{
-						CSocket *srcSock = calcSocketObjFromChar( src );
-						CSocket *targSock = calcSocketObjFromChar( targ );
+						CSocket *srcSock = src->GetSocket();
+						CSocket *targSock = targ->GetSocket();
 						if( objInRange( srcSock, targ, 2 ) && LineOfSight( srcSock, targ, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 						{
 							if( Effect->Number() == 22 )
@@ -655,7 +655,7 @@ void cEffects::checktempeffects( void )
 				break;
 			default:
 				Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
-				return;
+				break;
 		}
 		if( ValidateObject( s ) && equipCheckNeeded )
 			Items->CheckEquipment( s ); // checks equipments for stat requirements
@@ -722,7 +722,7 @@ void reverseEffect( CTEffect *Effect )
 				}
 				// only refresh once
 				CSocket *tSock;
-				tSock = calcSocketObjFromChar( s );
+				tSock = s->GetSocket();
 				s->SendWornItems( tSock );
 				s->IsIncognito( false );
 				break;
@@ -739,7 +739,7 @@ void reverseEffect( CTEffect *Effect )
 				break;
 			default:
 				Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
-				return;
+				break;
 		}
 	}
 	Items->CheckEquipment( s );
@@ -787,7 +787,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 		}
 	}
 	TEffects->Prune();
-	CSocket *tSock = calcSocketObjFromChar( dest );
+	CSocket *tSock = dest->GetSocket();
 	toAdd->Number( num );
 	switch( num )
 	{

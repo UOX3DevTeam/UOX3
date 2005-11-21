@@ -7,9 +7,12 @@
 // SYSTEM	100-2999
 // ============================
 //   Skills     100-399
-//   Commands   400-499*
+//   FREE	400-499
 //   Lighting   500-599
-//   Spells     600-999*
+//   Spells     600-799*
+//   SkillUse	800-999*
+//   Commands   1000-1499*
+//   Packets	1500-1999*
 //   Farming    2000-2999
 //   
 //   
@@ -169,72 +172,72 @@
 }
 
 //-------------------------------------------
-// System Commands - 400-499
+// System Commands - 1000-1999
 //-------------------------------------------
 [COMMAND_SCRIPTS]
-{
-400=commands/custom/travel.js
-401=commands/custom/repeatingcmds.js
-402=commands/custom/misc-cmd.js
-403=commands/reload.js
-404=commands/resend.js
-405=commands/setrace.js
-406=commands/allmove.js
-407=commands/houseicons.js
-408=commands/yell.js
-409=commands/skin.js
-410=commands/showtime.js
-411=commands/light.js
-412=commands/poly.js
-413=commands/sound.js
-414=commands/wholist.js
-415=commands/zerokills.js
-416=commands/cleanup.js
-417=commands/delid.js
-418=commands/killall.js
-419=commands/gumpmenu.js
-420=commands/secondsperuominute.js
-421=commands/consoletest.js
-422=commands/fix.js
-423=commands/xgate.js
-424=commands/go.js
-425=commands/where.js
-426=commands/targeting/add.js
-427=commands/targeting/effects.js
-428=commands/targeting/vendor.js
-429=commands/targeting/stats.js
-430=commands/targeting/glow.js
-431=commands/targeting/remove.js
-432=commands/targeting/open.js
-433=commands/targeting/movetobag.js
-434=commands/targeting/npcwander.js
-435=commands/targeting/magic.js
-436=commands/targeting/set.js
-437=commands/targeting/inc.js
-438=commands/targeting/gumps.js
-439=commands/targeting/kill.js
-440=commands/targeting/disconnect.js
-441=commands/targeting/tele.js
-442=commands/targeting/dupe.js
-443=commands/targeting/squelch.js
-444=commands/targeting/hide.js
-445=commands/targeting/jail.js
-446=commands/targeting/x.js
-447=commands/targeting/areacommand.js
-448=commands/targeting/wipe.js
-449=commands/targeting/showdetail.js
+{ // 1000-1499
+1000=commands/custom/travel.js
+1001=commands/custom/repeatingcmds.js
+1002=commands/custom/misc-cmd.js
+1003=commands/reload.js
+1004=commands/resend.js
+1005=commands/setrace.js
+1006=commands/allmove.js
+1007=commands/houseicons.js
+1008=commands/yell.js
+1009=commands/skin.js
+1010=commands/showtime.js
+1011=commands/light.js
+1012=commands/poly.js
+1013=commands/sound.js
+1014=commands/wholist.js
+1015=commands/zerokills.js
+1016=commands/cleanup.js
+1017=commands/delid.js
+1018=commands/killall.js
+1019=commands/gumpmenu.js
+1020=commands/secondsperuominute.js
+1021=commands/consoletest.js
+1022=commands/fix.js
+1023=commands/xgate.js
+1024=commands/go.js
+1025=commands/where.js
+1026=commands/targeting/add.js
+1027=commands/targeting/effects.js
+1028=commands/targeting/vendor.js
+1029=commands/targeting/stats.js
+1030=commands/targeting/glow.js
+1031=commands/targeting/remove.js
+1032=commands/targeting/open.js
+1033=commands/targeting/movetobag.js
+1034=commands/targeting/npcwander.js
+1035=commands/targeting/magic.js
+1036=commands/targeting/set.js
+1037=commands/targeting/inc.js
+1038=commands/targeting/gumps.js
+1039=commands/targeting/kill.js
+1040=commands/targeting/disconnect.js
+1041=commands/targeting/tele.js
+1042=commands/targeting/dupe.js
+1043=commands/targeting/squelch.js
+1044=commands/targeting/hide.js
+1045=commands/targeting/jail.js
+1046=commands/targeting/x.js
+1047=commands/targeting/areacommand.js
+1048=commands/targeting/wipe.js
+1049=commands/targeting/showdetail.js
 }
 
 //-------------------------------------------
 // System Magic - 
 //-------------------------------------------
 [MAGIC_SCRIPTS]
-{
+{ // 600-799
 600=magic/clumsy.js
 }
 
 [SKILLUSE_SCRIPTS]
-{
+{ // 800-999
 800=skill/hiding.js
 801=skill/stealth.js
 802=skill/evaluateintel.js
@@ -247,6 +250,10 @@
 809=skill/begging.js
 810=skill/detecthidden.js
 811=skill/poisoning.js
+}
+
+[PACKET_SCRIPTS]
+{ // 1500-1999
 }
 
 

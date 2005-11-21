@@ -242,7 +242,7 @@ void HandleTeleporters( CChar *s )
 				{
 					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld() );
 					if( !s->IsNpc() )
-						SendMapChange( getTeleLoc->TargetWorld(), calcSocketObjFromChar( s ) );
+						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
 				}
 				else
 					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z );
@@ -894,7 +894,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				UI16 tTrig		= ourChar->GetScriptTrigger();
 				cScript *tExec	= JSMapping->GetScript( tTrig );
 				if( tExec != NULL )
-					tExec->OnCollide( calcSocketObjFromChar( ourChar ), ourChar, c );
+					tExec->OnCollide( ourChar->GetSocket(), ourChar, c );
 
 				if( !ourChar->IsDead() && !c->IsDead() )
 				{
@@ -1439,7 +1439,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						// Has the Escortee reached the destination ??
 						// no need for -1 check on k, as we wouldn't be here if that were true
 						if( !kChar->IsDead() && mChar.GetQuestDestRegion() == mChar.GetRegionNum() )	// Pay the Escortee and free the NPC
-							MsgBoardQuestEscortArrive( calcSocketObjFromChar( kChar ), &mChar );
+							MsgBoardQuestEscortArrive( kChar->GetSocket(), &mChar );
 					}
 					break;
 				case 2: // Wander freely, avoiding obstacles.

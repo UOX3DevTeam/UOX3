@@ -254,7 +254,7 @@ bool CPIGetItem::Handle( void )
 						sendTradeStatus( z, x );
 					}
 					// Default item pick up sound sent to other player involved in trade
-					CSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+					CSocket *zSock = ((CChar *)z->GetCont())->GetSocket();
 					if( zSock != NULL )
 						Effects->PlaySound( zSock, 0x0057, false );
 				}
@@ -576,7 +576,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 				Bounce( mSock, i );
 				return stackDeleted;
 			}
-			stackDeleted = ( autoStack( calcSocketObjFromChar( targPlayer ), i, p ) != i );
+			stackDeleted = ( autoStack( targPlayer->GetSocket(), i, p ) != i );
 		}
 		else
 		{
@@ -859,7 +859,7 @@ void DropOnItem( CSocket *mSock )
 				nCont->SetTempVar( CITV_MOREZ, 0 );
 				sendTradeStatus( z, nCont );
 			}
-			CSocket *zSock = calcSocketObjFromChar( (CChar *)z->GetCont() );
+			CSocket *zSock = ((CChar *)z->GetCont())->GetSocket();
 			if( zSock != NULL )
 				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 		}
@@ -1370,9 +1370,9 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
-				tempstr = UString::sprintf( Dictionary->GetEntry( 379, sLang ).c_str(), pdoll->GetName().c_str(), regions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
+				tempstr = UString::sprintf( Dictionary->GetEntry( 379, sLang ).c_str(), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
 			else	// is Resident
-				tempstr = pdoll->GetName() + " of " + regions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
+				tempstr = pdoll->GetName() + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
 		}
 		else	// No Town Title
 		{

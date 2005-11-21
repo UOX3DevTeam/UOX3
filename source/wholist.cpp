@@ -166,7 +166,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
 			{
 				targetChar->SetLocation( sourceChar );
-				trgSock = calcSocketObjFromChar( targetChar );
+				trgSock = targetChar->GetSocket();
 				SendMapChange( sourceChar->WorldNumber(), trgSock );
 			}
 			else
@@ -225,7 +225,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 					return;
 				}
 				toSendTo->sysmessage( 1396 );
-				Network->Disconnect( calcSocketObjFromChar( targetChar ) );
+				Network->Disconnect( targetChar->GetSocket() );
 				break;
 			}
 		case 205:	// not active currently, a remote where

@@ -179,7 +179,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	if( pRace == NULL )
 		return;
 
-	CSocket *mSock = calcSocketObjFromChar( s );
+	CSocket *mSock = s->GetSocket();
 	if( !pRace->IsPlayerRace() )
 	{
 		mSock->sysmessage( 369 );

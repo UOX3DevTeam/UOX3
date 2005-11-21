@@ -513,7 +513,7 @@ void LoadSkills( void )
 //o---------------------------------------------------------------------------o
 void LoadSpawnRegions( void )
 {
-	spawnregions.resize( 0 );
+	cwmWorldState->spawnRegions.clear();
 	UI16 i					= 0;
 	for( Script *spnScp = FileLookup->FirstScript( spawn_def ); !FileLookup->FinishedScripts( spawn_def ); spnScp = FileLookup->NextScript( spawn_def ) )
 	{
@@ -523,11 +523,12 @@ void LoadSpawnRegions( void )
 		{
 			if( toScan == NULL )
 				continue;
-			if( "REGIONSPAWN" == spnScp->EntryName().substr( 0, 11 ) ) // Is it a region spawn entry?
+			UString sectionName = spnScp->EntryName();
+			if( "REGIONSPAWN" == sectionName.section( " ", 0, 0 ) ) // Is it a region spawn entry?
 			{
-				spawnregions.push_back( new CSpawnRegion( i ) );
-				spawnregions[i]->Load( toScan );
-				++i;
+				i = sectionName.section( " ", 1, 1 ).toUShort();
+				cwmWorldState->spawnRegions[i] = new CSpawnRegion( i );
+				cwmWorldState->spawnRegions[i]->Load( toScan );
 			}
 		}
 	}
@@ -541,7 +542,7 @@ void LoadSpawnRegions( void )
 //o---------------------------------------------------------------------------o
 void LoadRegions( void )
 {
-	regions.resize( 0 );
+	cwmWorldState->townRegions.clear();
 	std::string regionsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
 	bool performLoad		= false;
 	Script *ourRegions		= NULL;
@@ -567,12 +568,10 @@ void LoadRegions( void )
 			if( regEntry.section( " ", 0, 0 ) == "REGION" )
 			{
 				i = regEntry.section( " ", 1, 1 ).toUByte();
-				if( i >= regions.size() )
-					regions.resize( i+1 );
-				regions[i] = new CTownRegion( i );
-				regions[i]->InitFromScript( toScan );
+				cwmWorldState->townRegions[i] = new CTownRegion( i );
+				cwmWorldState->townRegions[i]->InitFromScript( toScan );
 				if( performLoad )
-					regions[i]->Load( ourRegions );
+					cwmWorldState->townRegions[i]->Load( ourRegions );
 			}
 		}
 	}
@@ -628,6 +627,8 @@ void LoadTeleportLocations( void )
 	Script *teleportData = new Script( filename, NUM_DEFS, false );
 	if( teleportData != NULL )
 	{
+		cwmWorldState->teleLocs.reserve( teleportData->NumEntries() );
+
 		UI16 tempX, tempY;
 		SI08 tempZ;
 		ScriptSection *teleportSect = NULL;

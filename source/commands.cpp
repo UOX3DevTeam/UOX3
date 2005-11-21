@@ -316,7 +316,7 @@ void cCommands::Load( void )
 	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
 	{
 		if( ourScript != NULL )
-			ourScript->commandRegistration();
+			ourScript->ScriptRegistration( "Command" );
 	}
 }
 

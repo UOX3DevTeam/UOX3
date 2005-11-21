@@ -1359,6 +1359,19 @@ public:
 	void			Finalize( void );
 };
 
+class CPPopupMenu : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPPopupMenu();
+					CPPopupMenu( CChar& );
+	virtual			~CPPopupMenu()
+					{
+					}
+	virtual void	CopyData( CChar& );
+};
+
 }
 
 #endif

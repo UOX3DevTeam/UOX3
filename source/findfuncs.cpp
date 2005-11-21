@@ -287,7 +287,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 			{
 				dx = abs( x - itemCheck->GetX() );
 				dy = abs( y - itemCheck->GetY() );
-				ret = (SI32)( hypot( dx, dy ) );
+				ret = (SI32)( _hypot( dx, dy ) );
 				if( ret <= lastdist )
 				{
 					lastdist = ret;

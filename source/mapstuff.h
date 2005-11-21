@@ -128,6 +128,7 @@ public:
 	bool			MapExists( UI08 worldNumber );
 
 	MapData_st&		GetMapData( UI08 mapNum );
+	UI08			MapCount( void ) const;
 public:
 	size_t			TileMem, MultisMem;
 
@@ -148,8 +149,8 @@ private:
 
 //Variables
 private:
-	typedef std::map< UI08, MapData_st >					MAPLIST;
-	typedef std::map< UI08, MapData_st >::iterator			MAPLIST_ITERATOR;
+	typedef std::vector< MapData_st >					MAPLIST;
+	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
 
 	struct MultiItemsIndex
 	{

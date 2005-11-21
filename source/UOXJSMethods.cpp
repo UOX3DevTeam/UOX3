@@ -1110,7 +1110,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			return JS_FALSE;
 		}
 
-		CSocket *mySock = calcSocketObjFromChar( myChar );
+		CSocket *mySock = myChar->GetSocket();
 
 		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
@@ -1364,7 +1364,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !strcmp( myClass->name, "UOXChar" ) )
 	{
 		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
-		mySock			= calcSocketObjFromChar( myChar );
+		mySock			= myChar->GetSocket();
 	}
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
 	{
@@ -1538,7 +1538,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 		if( world != myChar->WorldNumber() && !myChar->IsNpc() )
 		{
-			CSocket *mySock = calcSocketObjFromChar( myChar );
+			CSocket *mySock = myChar->GetSocket();
 			if( mySock == NULL ) 
 				return JS_TRUE;
 
@@ -1593,7 +1593,7 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	if( !strcmp( myClass->name, "UOXChar" ) )
 	{
 		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
-		mySock			= calcSocketObjFromChar( myChar );
+		mySock			= myChar->GetSocket();
 	}
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
 	{
@@ -1692,7 +1692,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}		
 
 		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ) );
-		CSocket *mSock = calcSocketObjFromChar( myChar );
+		CSocket *mSock = myChar->GetSocket();
 		if( toSend.CanSellItems( (*myChar), (*myNPC) ) )
 		{
 				mSock->Send( &toSend );
@@ -1746,7 +1746,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 			return JS_FALSE;
 		}		
 
-		CSocket *mySock = calcSocketObjFromChar( myChar );	
+		CSocket *mySock = myChar->GetSocket();	
 
 		if( myNPC->GetNPCAiType() == aiPLAYERVENDOR )
 		{
@@ -1973,7 +1973,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	// Open the bank of myChar to myChar
 	if( argc == 0 )
 	{
-		mySock = calcSocketObjFromChar( myChar );
+		mySock = myChar->GetSocket();
 		if( mySock != NULL )
 			mySock->openBank( myChar );
 	}
@@ -2132,7 +2132,7 @@ JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
  	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
  	CChar *myChar			= (CChar*)JS_GetPrivate( cx, obj );
  	char *trgMessage		= JS_GetStringBytes( targMessage );
- 	CSocket *targSock		= calcSocketObjFromChar( myChar ) ;
+ 	CSocket *targSock		= myChar->GetSocket();
  	if( targSock == NULL || trgMessage == NULL )
  	{
  		MethodError( "ExecuteCommand: Invalid socket or speech (%s)", targMessage );
@@ -2265,7 +2265,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 			return JS_FALSE;
 		}
 
-		mySock = calcSocketObjFromChar( myChar );
+		mySock = myChar->GetSocket();
 	}
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
 	{
@@ -2317,7 +2317,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			return JS_FALSE;
 		}
 
-		mySock = calcSocketObjFromChar( myChar );
+		mySock = myChar->GetSocket();
 	}
 
 	else if( !strcmp( myClass->name, "UOXSocket" ) )
@@ -2618,7 +2618,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	else
 	{
-		CSocket *sock = calcSocketObjFromChar( myChar );
+		CSocket *sock = myChar->GetSocket();
 		
 		if(( argc == 2 ) && ( argv[1] == JSVAL_TRUE ) )
 		{
@@ -2710,13 +2710,13 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
 	CBaseObject *trgObj = (CBaseObject *)JS_GetPrivate( cx, tObj );
 	
-	if( !ValidateObject( trgObj ) || trgObj->GetObjType() != OT_ITEM || calcSocketObjFromChar( myChar ) == NULL )
+	if( !ValidateObject( trgObj ) || trgObj->GetObjType() != OT_ITEM || myChar->GetSocket() == NULL )
 	{
 		MethodError( "(ExplodeItem) Invalid object" );
 		return JS_FALSE;
 	}
 	
-	explodeItem( calcSocketObjFromChar( myChar ), (CItem *)trgObj );
+	explodeItem( myChar->GetSocket(), (CItem *)trgObj );
 	return JS_TRUE;
 }
 
@@ -3587,7 +3587,7 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	Effects->PlaySound( myChar, 0x005C );
 	if( !myChar->IsNpc() )
 	{
-		CSocket *mSock = calcSocketObjFromChar( myChar );
+		CSocket *mSock = myChar->GetSocket();
 		if( mSock != NULL )
 			myChar->emote( mSock, 771, false );
 	}
@@ -4589,7 +4589,7 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	UI16 value				= JSVAL_TO_INT( argv[1] );
 	CSocket *mSock			= NULL;
 	if( !mChar->IsNpc() )
-		mSock = calcSocketObjFromChar( mChar );
+		mSock = mChar->GetSocket();
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 	{
 		if( skillName == cwmWorldState->skill[i].name )

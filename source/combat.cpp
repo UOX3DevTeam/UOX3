@@ -63,7 +63,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		cAttack->ExposeToView();
 
 	if( !cAttack->IsNpc() )
-		cAttack->BreakConcentration( calcSocketObjFromChar( cAttack ) );
+		cAttack->BreakConcentration( cAttack->GetSocket() );
 	else
 	{
 		UI16 toPlay = cwmWorldState->creatures[cAttack->GetID()].GetSound( SND_STARTATTACK );
@@ -83,7 +83,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			cTarget->ExposeToView();
 
 		if( !cTarget->IsNpc() )
-		cTarget->BreakConcentration( calcSocketObjFromChar( cTarget ) );
+			cTarget->BreakConcentration( cTarget->GetSocket() );
 
 		// if the target is an npc, and not a guard, make sure they're in war mode and update their movement time
 		// ONLY IF THEY'VE CHANGED ATTACKER
@@ -224,7 +224,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 
 		if( !i->IsNpc() )
 		{
-			CSocket *iSock = calcSocketObjFromChar( i );
+			CSocket *iSock = i->GetSocket();
 			if( iSock != NULL )
 				i->emote( iSock, 1281, true, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
 		}
@@ -269,7 +269,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		cAttack->emoteAll( 334, true, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby - Zane
 		if( !cTarget->IsNpc() )
 		{
-			CSocket *iSock = calcSocketObjFromChar( cTarget );
+			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != NULL )
 				cTarget->emote( iSock, 1281, true, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
 		}
@@ -632,7 +632,7 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 				weapon->IncHP( -1 );
 				if( weapon->GetHP() <= 0 )
 				{
-					CSocket *mSock = calcSocketObjFromChar( p );
+					CSocket *mSock = p->GetSocket();
 					if( mSock != NULL )
 					{
 						std::string name;
@@ -818,7 +818,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 
 			if( defendItem->GetHP() <= 0 )
 			{
-				CSocket *mSock = calcSocketObjFromChar( mChar );
+				CSocket *mSock = mChar->GetSocket();
 				if( mSock != NULL )
 				{
 					std::string name;
@@ -1353,7 +1353,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 		else
 		{
-			CSocket *targSock = calcSocketObjFromChar( ourTarg );
+			CSocket *targSock = ourTarg->GetSocket();
 
 			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
 
@@ -1713,7 +1713,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		mChar->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 		if( !mChar->IsNpc() )
 		{
-			CSocket *aSock = calcSocketObjFromChar( mChar );
+			CSocket *aSock = mChar->GetSocket();
 			if( aSock != NULL )
 			{
 				aSock->sysmessage( 314, mChar->GetKills() );
@@ -1912,7 +1912,7 @@ void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 			AttackTarget( petGuard, mChar );
 		else
 		{
-			CSocket *oSock = calcSocketObjFromChar( owner );
+			CSocket *oSock = owner->GetSocket();
 			if( oSock != NULL )
 				oSock->sysmessage( 1629 );
 		}

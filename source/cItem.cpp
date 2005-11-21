@@ -1897,10 +1897,11 @@ void CItem::Cleanup( void )
 			if( GetSpawn() < BASEITEMSERIAL )
 			{
 				UI16 spawnRegNum = static_cast<UI16>(GetSpawn());
-				if( spawnRegNum < spawnregions.size() )
+				if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 				{
-					CSpawnRegion *spawnReg = spawnregions[spawnRegNum];
-					spawnReg->deleteSpawnedItem( this );
+					CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+					if( spawnReg != NULL )
+						spawnReg->deleteSpawnedItem( this );
 				}
 			}
 			SetSpawn( INVALIDSERIAL );

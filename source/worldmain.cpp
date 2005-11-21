@@ -83,6 +83,7 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
 	goPlaces.clear();
 	refreshQueue.clear();
 	deletionQueue.clear();
+	spawnRegions.clear();
 	uoxtimeout.tv_sec	= 0;
 	uoxtimeout.tv_usec	= 0;
 	sData				= new CServerData();
@@ -100,6 +101,7 @@ CWorldMain::~CWorldMain()
 	goPlaces.clear();
 	refreshQueue.clear();
 	deletionQueue.clear();
+	spawnRegions.clear();
 	delete sData;
 	delete sProfile;
 }
@@ -603,12 +605,14 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static unsigned int save_counter = 0;
 
-	std::vector< CSpawnRegion * >::const_iterator spawnCounter;
-	for( spawnCounter = spawnregions.begin(); spawnCounter != spawnregions.end(); ++spawnCounter )
+	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+	while( spIter != spEnd )
 	{
-		CSpawnRegion *spawnReg = (*spawnCounter);
+		CSpawnRegion *spawnReg = spIter->second;
 		if( spawnReg != NULL )
 			spawnReg->checkSpawned();
+		++spIter;
 	}
 
 	if( GetWorldSaveProgress() != SS_SAVING )
@@ -681,12 +685,14 @@ void CWorldMain::RegionSave( void )
 		Console.Error( 1, "Failed to open %s for writing", regionsFile.c_str() );
 		return;
 	}
-	std::vector< CTownRegion * >::const_iterator regionCounter;
-	for( regionCounter = regions.begin(); regionCounter != regions.end(); ++regionCounter )
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	while( tIter != tEnd )
 	{
-		CTownRegion *myReg = (*regionCounter);
+		CTownRegion *myReg = tIter->second;
 		if( myReg != NULL )
 			myReg->Save( regionsDestination );
+		++tIter;
 	}
 	regionsDestination.close();
 }

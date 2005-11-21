@@ -73,7 +73,8 @@ enum ScriptEvent
 	seOnDropItemOnNpc,
 	seOnStart,
 	seOnStop,
-	seOnIterate
+	seOnIterate,
+	seOnPacketReceive
 };
 
 struct SEGump
@@ -200,6 +201,7 @@ public:
 	bool		OnStart( void );
 	bool		OnStop( void );
 	//
+	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
 	bool		OnCommand( CSocket *mSock ); 
@@ -269,9 +271,7 @@ public:
 //	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s );
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 
-	bool		commandRegistration( void );
-	bool		spellRegistration( void );
-	bool		skillRegistration( void );
+	bool		ScriptRegistration( std::string scriptType );
 
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	

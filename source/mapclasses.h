@@ -322,7 +322,7 @@ public:
 	}
 	void Name( char *newVal )
 	{
-		strcpy( (char *)name, (char *)newVal );
+		strncpy( (char *)name, (char *)newVal, 22 );
 	}
 
 };

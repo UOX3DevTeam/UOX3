@@ -18,34 +18,6 @@ namespace UOX
 {
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	CSocket *calcSocketObjFromChar( CChar *i )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Calculate the socket object based on the calling character
-//|					In the future (think after a CPlayer class) perhaps we should
-//|					store the socket on the char temporarily to remove the need of
-//|					looping through all online sockets to find it.
-//o---------------------------------------------------------------------------o
-CSocket *calcSocketObjFromChar( CChar *i )
-{
-	if( !ValidateObject( i ) )
-		return NULL;
-	if( i->IsNpc() )
-		return NULL;
-	Network->PushConn();
-	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{
-		if( tSock->CurrcharObj() == i )
-		{
-			Network->PopConn();
-			return tSock;
-		}
-	}
-	Network->PopConn();
-	return NULL;
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -103,26 +75,27 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 //o--------------------------------------------------------------------------
 CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 {
-	CTownRegion *tReg		= NULL;
 	const regLocs *getLoc	= NULL;
-	std::vector< CTownRegion * >::const_iterator i;
-	for( i = regions.begin(); i != regions.end(); ++i )
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	while( tIter != tEnd )
 	{
-		tReg = (*i);
-		if( tReg == NULL || tReg->WorldNumber() != worldNumber )
+		CTownRegion *myReg = tIter->second;
+		if( myReg == NULL || myReg->WorldNumber() != worldNumber )
 			continue;
 
-		for( size_t j = 0; j < tReg->GetNumLocations(); ++j )
+		for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 		{
-			getLoc = tReg->GetLocation( j );
+			getLoc = myReg->GetLocation( j );
 			if( getLoc != NULL )
 			{
 				if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
-					return tReg;
+					return myReg;
 			}
 		}
+		++tIter;
 	}
-	return regions.back();
+	return cwmWorldState->townRegions[0xFF];
 }
 
 }

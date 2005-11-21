@@ -1157,7 +1157,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
 	if( nChange == 0 )	// NPCs CAN gain/lose karma
 		return;
 
-	CSocket *mSock = calcSocketObjFromChar( nCharID );
+	CSocket *mSock = nCharID->GetSocket();
 	if( nCharID->IsNpc() || mSock == NULL )
 		return;
 	if( nChange <= 25 )
@@ -1218,7 +1218,7 @@ void Fame( CChar *nCharID, SI16 nFame )
 		return;	// current fame is greater than target fame, and we're not dead
 	if( nChange == 0 )
 		return;
-	CSocket *mSock = calcSocketObjFromChar( nCharID );
+	CSocket *mSock = nCharID->GetSocket();
 	if( mSock == NULL || nCharID->IsNpc() )
 		return;
 	if( nChange <= 25 )

@@ -1075,7 +1075,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 			if( Combat->WillResultInCriminal( caster, target ) )
 			{
 				caster->SetKills( caster->GetKills() + 1 );
-				CSocket *casterSock = calcSocketObjFromChar( caster );
+				CSocket *casterSock = caster->GetSocket();
 				if( casterSock != NULL )
 				{
 					casterSock->sysmessage( 689, caster->GetName().c_str(), caster->GetKills() );
@@ -1560,7 +1560,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 	else
 	{	// Since caster will determine who is casting the spell... get a socket for players to see animations and hear effects - Hanse
 		if( caster->IsNpc() && !caster->GetTarg()->IsNpc() )
-			s = calcSocketObjFromChar( caster->GetTarg() );
+			s = caster->GetTarg()->GetSocket();
 	}
 
 	CChar *newChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
@@ -1815,7 +1815,7 @@ bool cMagic::CheckMana( CChar *s, int num )
 		return true;
 	else
 	{
-		CSocket *p = calcSocketObjFromChar( s );
+		CSocket *p = s->GetSocket();
 		if( p != NULL ) 
 			p->sysmessage( 696 );
 	}
@@ -1832,7 +1832,7 @@ bool cMagic::CheckStamina( CChar *s, int num )
 		return true;
 	else
 	{
-		CSocket *p = calcSocketObjFromChar( s );
+		CSocket *p = s->GetSocket();
 		if( p != NULL ) 
 			p->sysmessage( 697 );
 	}
@@ -1854,7 +1854,7 @@ bool cMagic::CheckHealth( CChar *s, int num )
 	}
 	else
 		return true;
-	CSocket *p = calcSocketObjFromChar( s );
+	CSocket *p = s->GetSocket();
 	if( p != NULL ) 
 		p->sysmessage( 698 );
 	return false;
@@ -1943,7 +1943,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 		{
 			if( ( defender->GetSkill( MAGICRESISTANCE ) - attacker->GetSkill( EVALUATINGINTEL ) ) >= 0 )
 			{
-				s = calcSocketObjFromChar( defender );
+				s = defender->GetSocket();
 				if( s != NULL )
 					s->sysmessage( 699 );
 			}
@@ -1952,7 +1952,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 		}
 		else
 		{
-			s = calcSocketObjFromChar( defender );
+			s = defender->GetSocket();
 			if( s != NULL )
 				s->sysmessage( 699 );
 		}
@@ -1976,7 +1976,7 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
 		return;
 
-	CSocket *mSock = calcSocketObjFromChar( p ), *attSock = calcSocketObjFromChar( attacker );
+	CSocket *mSock = p->GetSocket(), *attSock = attacker->GetSocket();
 	if( Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 ) ) 
 		amount = UOX_MAX( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
 	if( p->IsFrozen() && p->GetDexterity() > 0 )
@@ -2020,7 +2020,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 	if( p->IsFrozen() )
 	{
 		p->SetFrozen( false );
-		CSocket *s = calcSocketObjFromChar( p );
+		CSocket *s = p->GetSocket();
 		if( s != NULL ) 
 			s->sysmessage( 700 );
 	}           
@@ -2283,7 +2283,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	
 	if( display )
 	{
-		CSocket *i = calcSocketObjFromChar( s );
+		CSocket *i = s->GetSocket();
 		if( i != NULL )
 			i->sysmessage( message );
 		return false;
@@ -2324,7 +2324,7 @@ bool cMagic::CheckParry( CChar *player, int circle )
 {
     if( Skills->CheckSkill( player, PARRYING, 80*circle, 800+( 80 * circle ) ) )
 	{
-		CSocket *s = calcSocketObjFromChar( player );
+		CSocket *s = player->GetSocket();
 		if( s != NULL )
 			s->sysmessage( 703 );
 		return true;
@@ -3024,12 +3024,13 @@ void cMagic::LoadScript( void )
 			if( spEntry.section( " ", 0, 0 ) == "SPELL" )
 			{
 				i = spEntry.section( " ", 1, 1 ).toUByte();
-				if( spellCount <= SPELL_MAX )
+				if( i <= SPELL_MAX )
 				{
-					spells[spellCount].Enabled( false );
-					reag_st *mRegs = spells[spellCount].ReagantsPtr();
+					++spellCount;
+					spells[i].Enabled( false );
+					reag_st *mRegs = spells[i].ReagantsPtr();
 
-					Console.Log( "Spell number: %i", "spell.log", spellCount );
+					Console.Log( "Spell number: %i", "spell.log", i );
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
@@ -3041,33 +3042,33 @@ void cMagic::LoadScript( void )
 							case 'a':
 							case 'A':
 								if( UTag == "ACTION" ) 
-									spells[spellCount].Action( data.toUShort() );
+									spells[i].Action( data.toUShort() );
 								else if( UTag == "ASH" ) 
 									mRegs->ash = data.toUByte();
 								break;
 							case 'c':
 							case 'C':
 								if( UTag == "CIRCLE" )
-									spells[spellCount].Circle( data.toUByte() );
+									spells[i].Circle( data.toUByte() );
 								break;
 							case 'd':
 							case 'D':
 								if( UTag == "DELAY" )
-									spells[spellCount].Delay( data.toLong() );
+									spells[i].Delay( data.toLong() );
 								else if( UTag == "DRAKE" )
 									mRegs->drake = data.toUByte();
 								break;
 							case 'e':
 							case 'E':
 								if( UTag == "ENABLE" )   // presence of enable is enough to enable it
-									spells[spellCount].Enabled( data.toUShort() != 0 );
+									spells[i].Enabled( data.toUShort() != 0 );
 								break;
 							case 'f':
 							case 'F':
 								if( UTag == "FLAGS" )
 								{
 									if( data.sectionCount( " " ) != 0 )
-										spells[spellCount].Flags( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										spells[i].Flags( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
 								}
 								break;
 							case 'g':
@@ -3080,28 +3081,28 @@ void cMagic::LoadScript( void )
 							case 'h':
 							case 'H':
 								if( UTag == "HISKILL" )
-									spells[spellCount].HighSkill( data.toShort() );
+									spells[i].HighSkill( data.toShort() );
 								else if( UTag == "HEALTH" )
-									spells[spellCount].Health( data.toShort() );
+									spells[i].Health( data.toShort() );
 								break;
 							case 'l':
 							case 'L':
 								if( UTag == "LOSKILL" )
-									spells[spellCount].LowSkill( data.toShort() );
+									spells[i].LowSkill( data.toShort() );
 								break;
 							case 'm':
 							case 'M':
 								if( UTag == "MANA" )
-									spells[spellCount].Mana( data.toShort() );
+									spells[i].Mana( data.toShort() );
 								else if( UTag == "MANTRA" )
-									spells[spellCount].Mantra( data );
+									spells[i].Mantra( data );
 								else if( UTag == "MOSS" )
 									mRegs->moss = data.toUByte();
 								else if( UTag == "MOVEFX" )
 								{
 									if( data.sectionCount( " " ) != 0 )
 									{
-										CMagicMove *mv = spells[spellCount].MoveEffectPtr();
+										CMagicMove *mv = spells[i].MoveEffectPtr();
 										mv->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
 										mv->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
 										mv->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
@@ -3124,7 +3125,7 @@ void cMagic::LoadScript( void )
 								{
 									if( data.sectionCount( " " ) != 0 )
 									{
-										CMagicSound *snd = spells[spellCount].SoundEffectPtr();
+										CMagicSound *snd = spells[i].SoundEffectPtr();
 										snd->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
 									}
 								}
@@ -3132,23 +3133,23 @@ void cMagic::LoadScript( void )
 								{
 									if( data.sectionCount( " " ) != 0 )
 									{
-										CMagicStat *stat = spells[spellCount].StaticEffectPtr();
+										CMagicStat *stat = spells[i].StaticEffectPtr();
 										stat->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
 										stat->Speed( data.section( " ", 2, 2 ).stripWhiteSpace().toUByte( 0, 16 ) );
 										stat->Loop( data.section( " ", 3, 3 ).stripWhiteSpace().toUByte( 0, 16 ) );
 									}
 								}
 								else if( UTag == "SCLO" )
-									spells[spellCount].ScrollLow( data.toShort() );
+									spells[i].ScrollLow( data.toShort() );
 								else if( UTag == "SCHI" )
-									spells[spellCount].ScrollHigh( data.toShort() );
+									spells[i].ScrollHigh( data.toShort() );
 								else if( UTag == "STAMINA" )
-									spells[spellCount].Stamina( data.toShort() );
+									spells[i].Stamina( data.toShort() );
 								break;
 							case 't':
 							case 'T':
 								if( UTag == "TARG" )
-									spells[spellCount].StringToSay( data );
+									spells[i].StringToSay( data );
 								break;
 						}
 					}			
@@ -3165,7 +3166,7 @@ void cMagic::LoadScript( void )
 	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
 		if( ourScript != NULL )
-			ourScript->spellRegistration();
+			ourScript->ScriptRegistration( "Spell" );
 	}
 }
 

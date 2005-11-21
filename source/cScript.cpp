@@ -122,6 +122,7 @@ static JSFunctionSpec my_functions[] =
 	{ "EnableSpell",				SE_EnableSpell,				1, 0, 0 },
 
 	{ "RegisterSkill",				SE_RegisterSkill,			2, 0, 0 },
+	{ "RegisterPacket",				SE_RegisterPacket,			2, 0, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0, 0 },
 
 	{ NULL,							NULL,						0, 0, 0 }, 
@@ -2503,24 +2504,11 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 //o---------------------------------------------------------------------------o
-bool cScript::commandRegistration( void )
+bool cScript::ScriptRegistration( std::string scriptType )
 {
+	scriptType += "Registration";
 	jsval params[1], rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "CommandRegistration", 1, params, &rval );
-	return ( retVal == JS_TRUE );
-}
-
-bool cScript::spellRegistration( void )
-{
-	jsval params[1], rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "SpellRegistration", 0, params, &rval );
-	return ( retVal == JS_TRUE );
-}
-
-bool cScript::skillRegistration( void )
-{
-	jsval params[1], rval;
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "SkillRegistration", 0, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, scriptType.c_str(), 0, params, &rval );
 	return ( retVal == JS_TRUE );
 }
 
@@ -2603,6 +2591,27 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 		++b;
 
 	return ( retVal == JS_TRUE ); 
+}
+
+bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
+{
+	if( mSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnPacketReceive, "onPacketReceive" ) )
+		return false;
+
+	jsval rval, params[3];
+	JS_SetPrivate( targContext, sockObjects[0].toUse, mSock );
+	params[0]		= OBJECT_TO_JSVAL( sockObjects[0].toUse );
+	params[1]		= INT_TO_JSVAL( (UI08)(packetNum%256) );
+	params[2]		= INT_TO_JSVAL( (UI08)(packetNum>>8) );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPacketReceive", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnPacketReceive, false );
+
+	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE );
 }
 
 }

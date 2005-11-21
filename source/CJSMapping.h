@@ -10,10 +10,11 @@ namespace UOX
 		SCPT_COMMAND,
 		SCPT_MAGIC,
 		SCPT_SKILLUSE,
+		SCPT_PACKET,
 		SCPT_COUNT
 	};
 
-	const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", "MAGIC_SCRIPTS", "SKILLUSE_SCRIPTS" };
+	const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", "MAGIC_SCRIPTS", "SKILLUSE_SCRIPTS", "PACKET_SCRIPTS" };
 
 	class CJSMappingSection
 	{

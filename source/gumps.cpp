@@ -120,7 +120,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 	if( actbTemp.wAccountIndex == AB_INVALID_ID )
 		return;
 	//
-	CSocket *targSocket = calcSocketObjFromChar( j );
+	CSocket *targSocket = j->GetSocket();
 	switch( button )
 	{
 		case 2:
@@ -299,6 +299,7 @@ void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
 {
 	CChar *mChar = s->CurrcharObj();
 	CTownRegion *targetRegion;
+	CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
 	switch( button )
 	{
 		// buttons 2-20 are for generic town members
@@ -308,7 +309,7 @@ void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
 		case 2:		// leave town
 			bool result;
 			// safe to assume we want to remove ourselves from our only town!
-			result = regions[mChar->GetTown()]->RemoveTownMember( (*mChar) );
+			result = ourRegion->RemoveTownMember( (*mChar) );
 			if( !result )
 				s->sysmessage( 540 );
 			break;
@@ -321,24 +322,24 @@ void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
 			break;
 		case 4:		// toggle town title
 			mChar->SetTownTitle( !mChar->GetTownTitle() );
-			regions[mChar->GetTown()]->DisplayTownMenu( NULL, s );
+			ourRegion->DisplayTownMenu( NULL, s );
 			break;
 		case 5:		s->target( 0, TARGET_VOTEFORMAYOR, 542 );								break;		// vote for town mayor
 		case 6:		TextEntryGump(  s, ser, static_cast<char>(type), static_cast<char>(button), 6, 543 );	break;		// gold donation
-		case 7:		regions[mChar->GetTown()]->ViewBudget( s );			break;		// View Budget
-		case 8:		regions[mChar->GetTown()]->SendAlliedTowns( s );		break;		// View allied towns
-		case 9:		regions[mChar->GetTown()]->SendEnemyTowns( s );		break;
+		case 7:		ourRegion->ViewBudget( s );			break;		// View Budget
+		case 8:		ourRegion->SendAlliedTowns( s );		break;		// View allied towns
+		case 9:		ourRegion->SendEnemyTowns( s );		break;
 		case 20:	// access mayoral functions, never hit here if we don't have mayoral access anyway!
 					// also, we'll only get access, if we're in our OWN region
-			regions[mChar->GetTown()]->DisplayTownMenu( NULL, s, 0x01 );	// mayor
+			ourRegion->DisplayTownMenu( NULL, s, 0x01 );	// mayor
 			break;
 		case 21:	s->sysmessage( 544 );				break;	// set taxes
-		case 22:	regions[mChar->GetTown()]->DisplayTownMembers( s );	break;	// list town members
-		case 23:	regions[mChar->GetTown()]->ForceEarlyElection();		break;	// force early election
+		case 22:	ourRegion->DisplayTownMembers( s );	break;	// list town members
+		case 23:	ourRegion->ForceEarlyElection();		break;	// force early election
 		case 24:	s->sysmessage( 545 );	break;	// purchase more guards
 		case 25:	s->sysmessage( 546 );	break;	// fire a guard
 		case 26:	s->target( 0, TARGET_TOWNALLY, 547 );								break;	// make a town an ally
-		case 40:	regions[mChar->GetTown()]->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
+		case 40:	ourRegion->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
 		case 41:	// join town!
 			if( !(calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() )->AddAsTownMember( (*mChar) ) ) )
 				s->sysmessage( 548 );
@@ -1832,13 +1833,14 @@ void CPIGumpInput::HandleTownstoneText( UI08 index )
 	{
 		case 6:	// it's our donate resource button
 		{
+			CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
 			amountToDonate = reply.toULong();
 			if( amountToDonate == 0 )
 			{
 				tSock->sysmessage( 562 );
 				return;
 			}
-			resourceID			= regions[mChar->GetTown()]->GetResourceID();
+			resourceID			= ourRegion->GetResourceID();
 			UI32 numResources	= GetItemAmount( mChar, resourceID );
 
 			if( amountToDonate > numResources )
@@ -1846,10 +1848,10 @@ void CPIGumpInput::HandleTownstoneText( UI08 index )
 			else
 			{
 				DeleteItemAmount( mChar, amountToDonate, resourceID );
-				regions[mChar->GetTown()]->DonateResource( tSock, amountToDonate );
+				ourRegion->DonateResource( tSock, amountToDonate );
 			}
 		}
-			break;
+		break;
 	}
 }
 

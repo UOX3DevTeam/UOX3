@@ -777,7 +777,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 	for( cIter = members.begin(); cIter != members.end(); ++cIter )
 	{
 		CChar *targetChar	= calcCharObjFromSer( (*cIter) );
-		CSocket *targetSock	= calcSocketObjFromChar( targetChar );
+		CSocket *targetSock	= targetChar->GetSocket();
 		if( targetSock != NULL )
 		{
 			std::string txt = "GUILD: ";

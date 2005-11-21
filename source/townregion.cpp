@@ -224,9 +224,9 @@ void CTownRegion::CalcNewMayor( void )
 	}
 	// maxIndex is now our new mayor!
 	CChar *oldMayor = GetMayor();
-	if( mayorSerial == townMember[maxIndex].townMember )
+	if( ValidateObject( oldMayor ) && mayorSerial == townMember[maxIndex].townMember )
 	{
-		CSocket *targSock = calcSocketObjFromChar( calcCharObjFromSer( mayorSerial ) );
+		CSocket *targSock = oldMayor->GetSocket();
 		if( targSock != NULL )
 			targSock->sysmessage( 1119 );
 		// welcome the mayor back for another term
@@ -478,16 +478,22 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						Console.Warning( 2, "Undefined region spawn %s, check your regions.scp and spawn.scp files", data.c_str() );
 					else
 					{
-						UI16 regNum				= static_cast<UI16>(spawnregions.size());
-						spawnregions.push_back( new CSpawnRegion( regNum ) );
-						CSpawnRegion *spawnReg	= spawnregions[regNum];
-						if( spawnReg != NULL )
+						for( UI16 i = 0xFFFF; i > 0; --i )
 						{
-							spawnReg->SetX1( locations[locations.size() - 1].x1 );
-							spawnReg->SetY1( locations[locations.size() - 1].y1 );
-							spawnReg->SetX2( locations[locations.size() - 1].x2 );
-							spawnReg->SetY2( locations[locations.size() - 1].y2 );
-							spawnReg->Load( predefSpawn );
+							if( cwmWorldState->spawnRegions.find( i ) != cwmWorldState->spawnRegions.end() )
+							{
+								CSpawnRegion *spawnReg			= new CSpawnRegion( i );
+								cwmWorldState->spawnRegions[i]	= spawnReg;
+								if( spawnReg != NULL )
+								{
+									spawnReg->SetX1( locations[locations.size() - 1].x1 );
+									spawnReg->SetY1( locations[locations.size() - 1].y1 );
+									spawnReg->SetX2( locations[locations.size() - 1].x2 );
+									spawnReg->SetY2( locations[locations.size() - 1].y2 );
+									spawnReg->Load( predefSpawn );
+								}
+								break;
+							}
 						}
 					}
 				}
@@ -1121,12 +1127,12 @@ bool CTownRegion::MakeAlliedTown( UI08 townToMake )
 		return false;
 	}
 
-	if( Races->CompareByRace( regions[townToMake]->GetRace(), race ) == 1 )	// if we're racial enemies
+	if( Races->CompareByRace( cwmWorldState->townRegions[townToMake]->GetRace(), race ) == 1 )	// if we're racial enemies
 		return false;
 
 	// let's ally ourselves
 	alliedTowns.push_back( townToMake );
-	TellMembers( 1172, name.c_str(), regions[townToMake]->GetName().c_str() );
+	TellMembers( 1172, name.c_str(), cwmWorldState->townRegions[townToMake]->GetName().c_str() );
 	return true;
 
 }
@@ -1139,7 +1145,10 @@ void CTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower 
 	for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 	{
 		CChar *targetChar = calcCharObjFromSer( townMember[memberCounter].townMember );
-		CSocket *targetSock = calcSocketObjFromChar( targetChar );
+		if( !ValidateObject( targetChar ) )
+			continue;
+
+		CSocket *targetSock = targetChar->GetSocket();
 		if( targetSock != NULL )
 		{
 			std::string txt = Dictionary->GetEntry( dictEntry, targetSock->Language() );
@@ -1176,7 +1185,7 @@ void CTownRegion::SendAlliedTowns( CSocket *sock )
 	sprintf( temp, Dictionary->GetEntry( 1173, sock->Language() ).c_str(), alliedTowns.size() );
 	Ally.SetTitle( temp );
 	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
-		Ally.AddData( regions[alliedTowns[counter]]->GetName(), " " );
+		Ally.AddData( cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " " );
 
 	Ally.Send( 4, false, INVALIDSERIAL );
 }
@@ -1199,13 +1208,21 @@ void CTownRegion::SendEnemyTowns( CSocket *sock )
 	GumpDisplay Enemy( sock, 300, 300 );
 	char temp[100];
 	UI08 enemyCount = 0;
-	for( UI16 counter = 0; counter < 256; ++counter )
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	TOWNMAP_CITERATOR ourTown = cwmWorldState->townRegions.find( regionNum );
+	while( tIter != tEnd )
 	{
-		if( counter != regionNum && Races->CompareByRace( race, regions[counter]->GetRace() ) == 1 )	// if we're racial enemies, and not the same as ourselves
+		CTownRegion *myReg = tIter->second;
+		if( myReg != NULL )
 		{
-			++enemyCount;
-			Enemy.AddData( regions[counter]->GetName(), Races->Name( regions[counter]->GetRace() ) );
+			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) == 1 )	// if we're racial enemies, and not the same as ourselves
+			{
+				++enemyCount;
+				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
+			}
 		}
+		++tIter;
 	}
 	sprintf( temp, "Enemy Towns (%u)", enemyCount );
 	Enemy.SetTitle( temp );

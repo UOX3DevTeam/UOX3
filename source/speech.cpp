@@ -374,7 +374,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			sChar = calcCharObjFromSer( toSay.SpokenTo() );
 			if( ValidateObject( sChar ) )
 			{
-				mSock = calcSocketObjFromChar( sChar );
+				mSock = sChar->GetSocket();
 				if( mSock != NULL )
 					mSock->Send( &toSend );
 			}
