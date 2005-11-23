@@ -42,7 +42,7 @@ namespace UOX
 		typedef typename std::deque< T >::const_iterator	DATALIST_CITERATOR;
 
 		DATALIST					objData;
-		DATALIST_CITERATOR			objIterator;
+		DATALIST_ITERATOR			objIterator;
 		std::vector< size_t >		objIteratorBackup;
 
 		DATALIST_ITERATOR FindEntry( T toFind )
