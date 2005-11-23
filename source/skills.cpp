@@ -1702,33 +1702,27 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	if( TrackStuff == NULL )
 		return;
 
+	CChar *mChar			= s->CurrcharObj();
 	UI16 id					= 0;
-	UI16 id1				= 62;
-	UI16 id2				= 399;
-	UI16 icon				= 8404; 
-	CChar *c				= s->CurrcharObj();
+	UI08 creatureType		= 0;
 	SI32 type				= 887;
 	UI32 MaxTrackingTargets = 0;
-	UI32 distance			= cwmWorldState->ServerData()->TrackingBaseRange() + c->GetSkill( TRACKING ) / 50;
+	const UI16 distance		= (cwmWorldState->ServerData()->TrackingBaseRange() + (mChar->GetSkill( TRACKING ) / 50));
 	UnicodeTypes mLang		= s->Language();
 	
 	if( m == ( 2 + TRACKINGMENUOFFSET ) )
 	{
-		id1		= 1;
-		id2		= 61;
-		icon	= 0x20D1;
+		creatureType = 1;
 		type	= 888;
 	}
 	if( m == ( 3 + TRACKINGMENUOFFSET ) )
 	{
-		id1		= 400;
-		id2		= 402;
-		icon	= 8454;
+		creatureType = 2;
 		type	= 889;
 	}
 
 	std::string line;
-	CPOpenGump toSend( *c );
+	CPOpenGump toSend( *mChar );
 	if( m >= TRACKINGMENUOFFSET )
 		toSend.GumpIndex( m );
 	else
@@ -1739,7 +1733,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	line = tag + " " + data;
 	toSend.Question( line );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( c );
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
@@ -1752,32 +1746,34 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			if( !ValidateObject( tempChar ) )
 				continue;
 			id					= tempChar->GetID();
-			CSocket *tSock		= tempChar->GetSocket();
-			bool cmdLevelCheck	= isOnline( (*tempChar) ) && ( c->GetCommandLevel() > tempChar->GetCommandLevel() );
-			if( objInRange( tempChar, c, static_cast<UI16>(distance) ) && !tempChar->IsDead() && id >= id1 && id <= id2 && tSock != s && ( cmdLevelCheck || tempChar->IsNpc() ) )
+			if( ( !tempChar->isHuman() || creatureType == 2 ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == 0 ) )
 			{
-				c->SetTrackingTargets( tempChar, static_cast<UI08>(MaxTrackingTargets) );
-				++MaxTrackingTargets;
-				if( MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets() ) 
+				bool cmdLevelCheck	= isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() > tempChar->GetCommandLevel() );
+				if( tempChar != mChar && objInRange( tempChar, mChar, static_cast<UI16>(distance) ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
-					regChars->Pop();
-					return;
+					mChar->SetTrackingTargets( tempChar, static_cast<UI08>(MaxTrackingTargets) );
+					++MaxTrackingTargets;
+					if( MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets() ) 
+					{
+						regChars->Pop();
+						return;
+					}
+					SI32 dirMessage = 898;
+					switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) )
+					{
+						case NORTH:		dirMessage = 890;	break;
+						case NORTHWEST:	dirMessage = 891;	break;
+						case NORTHEAST:	dirMessage = 892;	break;
+						case SOUTH:		dirMessage = 893;	break;
+						case SOUTHWEST:	dirMessage = 894;	break;
+						case SOUTHEAST:	dirMessage = 895;	break;
+						case WEST:		dirMessage = 896;	break;
+						case EAST:		dirMessage = 897;	break;
+						default:		dirMessage = 898;	break;
+					}
+					line = tempChar->GetName() + " " + Dictionary->GetEntry( dirMessage, mLang );
+					toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 				}
-				SI32 dirMessage = 898;
-				switch( TrackingDirection( s, tempChar ) )
-				{
-					case NORTH:		dirMessage = 890;	break;
-					case NORTHWEST:	dirMessage = 891;	break;
-					case NORTHEAST:	dirMessage = 892;	break;
-					case SOUTH:		dirMessage = 893;	break;
-					case SOUTHWEST:	dirMessage = 894;	break;
-					case SOUTHEAST:	dirMessage = 895;	break;
-					case WEST:		dirMessage = 896;	break;
-					case EAST:		dirMessage = 897;	break;
-					default:		dirMessage = 898;	break;
-				}
-				line = tempChar->GetName() + " " + Dictionary->GetEntry( dirMessage, mLang );
-				toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 			}
 		}
 		regChars->Pop();
@@ -1827,46 +1823,6 @@ void cSkills::Track( CChar *i )
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
 	s->Send( &tSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Get location of the tracking target based on your loc
-//o---------------------------------------------------------------------------o
-UI08 cSkills::TrackingDirection( CSocket *s, CChar *i )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::TrackingDirection() Invalid socket for character 0x%X", i->GetSerial() );
-		return 0;
-	}
-	UI08 direction = 5;
-	CChar *j = s->CurrcharObj();
-	if( ( j->GetY() - direction ) >= i->GetY() )  // North
-	{
-		if( ( j->GetX() - direction ) > i->GetX() )
-			return NORTHWEST;
-		if( ( j->GetX() + direction ) < i->GetX() )
-			return NORTHEAST;
-		return NORTH;
-	}
-	else if( ( j->GetY() + direction ) <= i->GetY() )  // South
-	{
-		if( ( j->GetX() - direction ) > i->GetX() )
-			return SOUTHWEST;
-		if( ( j->GetX() + direction ) < i->GetX() )
-			return SOUTHEAST;
-		return SOUTH;
-	}
-	else if( ( j->GetX() - direction ) >= i->GetX() )  // West
-		return WEST;
-	else if( ( j->GetX() + direction ) <= i->GetX() )  // East
-		return EAST;
-	else 
-		return NORTH;
 }
 
 //o---------------------------------------------------------------------------o

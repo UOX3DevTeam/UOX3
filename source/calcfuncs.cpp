@@ -81,16 +81,16 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg == NULL || myReg->WorldNumber() != worldNumber )
-			continue;
-
-		for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
+		if( myReg != NULL && myReg->WorldNumber() == worldNumber )
 		{
-			getLoc = myReg->GetLocation( j );
-			if( getLoc != NULL )
+			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
 			{
-				if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
-					return myReg;
+				getLoc = myReg->GetLocation( j );
+				if( getLoc != NULL )
+				{
+					if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
+						return myReg;
+				}
 			}
 		}
 		++tIter;

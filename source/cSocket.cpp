@@ -1185,7 +1185,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 		return;
 
 	// If the client cannot receive it validly, abort, abort!
-	if( !( ((CPUOXBuffer *)toSend)->ClientCanReceive( this ) ) )
+	if( !toSend->ClientCanReceive( this ) )
 		return;
 
 	UI32 len = 0;
@@ -1940,9 +1940,6 @@ CPInputBuffer::CPInputBuffer() : tSock( NULL )
 CPInputBuffer::CPInputBuffer( CSocket *input )
 {
 	SetSocket( input );
-}
-void CPInputBuffer::Receive( void )
-{
 }
 void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
 {

@@ -1,10 +1,30 @@
-// Books class by Lord Binary 7'th December 1999
-// Implements writable books
-
-// V0.9 5'th dec, initial version
-// V1.0 7'th dec 1999, "wrapped" everything in a class, added customable number of max-pages
-// V1.1 12-dec-1999 -> nasty bug fixed (item# used as "key" instead of serial#) and a few very small bugfixes
-
+//o--------------------------------------------------------------------------o
+//|	File			-	books.cpp
+//|	Date			-	12/05/1999
+//|	Developers		-	LB / giwo
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Writable and Pre-Defined Book Handling
+//o--------------------------------------------------------------------------o
+//| Modifications	-	Version History
+//|
+//|							0.9			LB			12/05/1999
+//|							Initial implimentation
+//|
+//|							1.0			LB			12/07/1999
+//|							Wrapped everything in a class, added customizable number of max-pages
+//|
+//|							1.1			LB			12/12/1999
+//|							Nasty bug fixed (item # used as "key" instead of serial #) and a few very small bugfixes
+//|
+//|							2.0			giwo		5th November, 2005
+//|							Rewrote much of the original .bok handling to improve performance
+//|							Fixed several issues with the fstream handling to ensure validity of data from .bok files.
+//|							Slimmed down the cBook class making use of packet classes for handling data from the client.
+//|							Added support for the new book header packet removing support for the old book header packet.
+//|							
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "books.h"
 #include "cServerDefinitions.h"
@@ -14,8 +34,16 @@
 namespace UOX
 {
 
-cBooks *Books;
+cBooks *Books = NULL;
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool CPINewBookHeader( void )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Updates the .bok file with changes to the author or title
+//o--------------------------------------------------------------------------o
 bool CPINewBookHeader::Handle( void )
 {
 	if( tSock != NULL )
@@ -65,7 +93,14 @@ bool CPINewBookHeader::Handle( void )
 	return true;
 }
 
-// opens old (readonly) books == old, bugfixed readbook function
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Opens "Read Only" Books defined in /misc/books.dfn
+//o--------------------------------------------------------------------------o
 void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 {
 	if( mSock != NULL )
@@ -112,7 +147,15 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 	}
 }
 
-// opens new books
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWritable )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Opens Writable books based on their .bok file
+//o--------------------------------------------------------------------------o
 void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 {
 	if( mSock != NULL )
@@ -211,7 +254,14 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 	}
 }
 
-// old readbook function
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Sends pager number "p" of a Pre-defined Book to the socket
+//o--------------------------------------------------------------------------o
 void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 {
 	if( mSock != NULL )
@@ -223,36 +273,42 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 			UI16 curPage = p;
 			for( UString tag = book->First(); !book->AtEnd(); tag = book->Next() )
 			{
-				if( tag == "PAGE" )
-				{
-					--curPage;
-					if( curPage == 0 ) // we found our page
-					{
-						temp = "PAGE " + book->GrabData();
-						ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
-						if( page != NULL )
-						{
-							CPBookPage cpbpSend( (*i) );
-							cpbpSend.NewPage( p );
+				if( tag != "PAGE" )
+					continue;
 
-							for( tag = page->First(); !page->AtEnd(); tag = page->Next() )
-							{
-								temp = tag + " " + page->GrabData();
-								cpbpSend.AddLine( temp );
-							}
-							cpbpSend.Finalize();
-							mSock->Send( &cpbpSend );
-							break;
+				--curPage;
+				if( curPage == 0 ) // we found our page
+				{
+					temp = "PAGE " + book->GrabData();
+					ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
+					if( page != NULL )
+					{
+						CPBookPage cpbpSend( (*i) );
+						cpbpSend.NewPage( p );
+
+						for( tag = page->First(); !page->AtEnd(); tag = page->Next() )
+						{
+							temp = tag + " " + page->GrabData();
+							cpbpSend.AddLine( temp );
 						}
-						else
-							break;
+						cpbpSend.Finalize();
+						mSock->Send( &cpbpSend );
 					}
+					break;
 				}
 			}
 		}
 	}
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	void CPIBookPage::Handle( void )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Updates the .bok file with changes made on a specific page.
+//o--------------------------------------------------------------------------o
 bool CPIBookPage::Handle( void )
 {
 	if( tSock != NULL )
@@ -279,7 +335,7 @@ bool CPIBookPage::Handle( void )
 		{
 			memset( tempLines[lineNum], 0x00, 34 );
 
-			UI08 i;
+			UI08 i = 0;
 			for( i = 0; i < 34; ++i )
 			{
 				tempLines[lineNum][i] = tSock->Buffer()[13+bufferCount];
@@ -315,15 +371,28 @@ bool CPIBookPage::Handle( void )
 	return true;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cBooks::DeleteBook( CItem *id )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Deletes the .bok file associated with the book item
+//o--------------------------------------------------------------------------o
 void cBooks::DeleteBook( CItem *id )
 {
 	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + UString::number( id->GetSerial(), 16 ) + ".bok";
 	remove( fileName.c_str() );
 }
 
-// "Formats" a newly created book-file
-// This NEEDS to be done with ANY new book file.
-//
+//o--------------------------------------------------------------------------o
+//|	Function		-	void cBooks::CreateBook( const std::string fileName, CChar *mChar, CItem *mBook )
+//|	Date			-	11/5/2005
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Formats a newly created .bok file, this must be done with any new book file
+//o--------------------------------------------------------------------------o
 void cBooks::CreateBook( const std::string fileName, CChar *mChar, CItem *mBook )
 {
 	char wBuffer[2];

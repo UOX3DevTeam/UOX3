@@ -1581,9 +1581,12 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 		if( mSock->GetTimer( tPC_TRACKING ) > ( cwmWorldState->GetUICurrentTime() / 10 ) ) // dont send arrow-away packet all the time
 		{
 			mSock->SetTimer( tPC_TRACKING, 0 );
-			CPTrackingArrow tSend = (*mChar.GetTrackingTarget());
-			tSend.Active( 0 );
-			mSock->Send( &tSend );
+			if( ValidateObject( mChar.GetTrackingTarget() ) )
+			{
+				CPTrackingArrow tSend = (*mChar.GetTrackingTarget());
+				tSend.Active( 0 );
+				mSock->Send( &tSend );
+			}
 		}
 	}
 	

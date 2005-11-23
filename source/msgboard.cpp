@@ -1,3 +1,26 @@
+//o--------------------------------------------------------------------------o
+//|	File			-	msgboard.cpp
+//|	Date			-	Pre 1999
+//|	Developers		-	Original Developer Unknown, Complete Rewrite by giwo
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Currently under development
+//o--------------------------------------------------------------------------o
+//|	Description		-	Message Board Handling
+//o--------------------------------------------------------------------------o
+//| Modifications	-	Version History
+//|
+//|							1.0			Unknown		Pre 1999
+//|							Initial implimentation
+//|
+//|							2.0			giwo		10th August 2005
+//|							Complete rewrite of msgboard.cpp
+//|							Modified file i/o to use fstreams for faster file reads/writes.
+//|							Completely re-formatted the message board files to remove the need for two files, and reduce waste.
+//|							Made use of packet classes to simplify sending & receiving data from the client.
+//|							Added a maintenance function that will automatically clean up the message board files.
+//|							Added support for message board file deletion upon deleting the associated world object.
+//|
+//o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "msgboard.h"
 #include "townregion.h"

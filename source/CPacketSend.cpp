@@ -5295,8 +5295,8 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 	pStream.WriteByte( 11, 4 );
 	size_t offset = 12;
 
-	pStream.WriteShort( offset+=2, 0x000A );	// Open Paperdoll
-	pStream.WriteShort( offset, 6123 );
+	pStream.WriteShort( offset, 0x000A );	// Open Paperdoll
+	pStream.WriteShort( offset+=2, 6123 );
 	if( toCopy.isHuman() )
 	{
 		pStream.WriteShort( offset+=2, 0x0020 );

@@ -527,8 +527,13 @@ void LoadSpawnRegions( void )
 			if( "REGIONSPAWN" == sectionName.section( " ", 0, 0 ) ) // Is it a region spawn entry?
 			{
 				i = sectionName.section( " ", 1, 1 ).toUShort();
-				cwmWorldState->spawnRegions[i] = new CSpawnRegion( i );
-				cwmWorldState->spawnRegions[i]->Load( toScan );
+				if( cwmWorldState->spawnRegions.find( i ) == cwmWorldState->spawnRegions.end() )
+				{
+					cwmWorldState->spawnRegions[i] = new CSpawnRegion( i );
+					cwmWorldState->spawnRegions[i]->Load( toScan );
+				}
+				else
+					Console.Warning( 2, "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i );
 			}
 		}
 	}
@@ -568,10 +573,15 @@ void LoadRegions( void )
 			if( regEntry.section( " ", 0, 0 ) == "REGION" )
 			{
 				i = regEntry.section( " ", 1, 1 ).toUByte();
-				cwmWorldState->townRegions[i] = new CTownRegion( i );
-				cwmWorldState->townRegions[i]->InitFromScript( toScan );
-				if( performLoad )
-					cwmWorldState->townRegions[i]->Load( ourRegions );
+				if( cwmWorldState->townRegions.find( i ) == cwmWorldState->townRegions.end() )
+				{
+					cwmWorldState->townRegions[i] = new CTownRegion( i );
+					cwmWorldState->townRegions[i]->InitFromScript( toScan );
+					if( performLoad )
+						cwmWorldState->townRegions[i]->Load( ourRegions );
+				}
+				else
+					Console.Warning( 2, "regions.dfn has a duplicate REGION entry, Entry Number: %u", i );
 			}
 		}
 	}

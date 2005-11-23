@@ -1,3 +1,14 @@
+11/23/2005 - giwo (0.98-3.1e [3.2 BETA])
+	Removed cSkills::TrackingDirection() as cMovement::Direction() does the same thing.
+	Fixed a crash caused by canceling the tracking menu.
+	Fixed an issue causing not all animals to be trackable with the tracking menu.
+	Added support for clicking on the Tracking Arrow to stop it from displaying.
+	Modified packet overloading so one cannot run both the overload and the default packet handling, as it would cause a socket error.
+	Added support for selecting popup menu entries.
+	Fixed a possible issue with doubled up entries in spawn.dfn and regions.dfn.
+	Fixed an issue causing UOX3 to hang forever on character creation.
+	Added file and function documentation to books.cpp and msgboard.cpp
+
 11/20/2005 - giwo (0.98-3.1d [3.2 BETA])
 	Added CPPopupMenu allowing for easier customization of popup menu's.
 	Removed cScript::spellRegistration, commandRegistration, skillRegistration in favor of
@@ -87,7 +98,7 @@
 
 9/27/2005 - giwo (0.98-3.0m [3.1 BETA])
 	Moved some more variables from Base Characters to Players.
-	Organized an documented many functions in CChar.
+	Organized and documented many functions in CChar.
 	Changed itemLayers array to a std::map.
 
 9/27/2005 - giwo (0.98-3.0l [3.1 BETA])

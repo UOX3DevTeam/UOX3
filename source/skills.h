@@ -68,7 +68,6 @@ private:
 	void Atrophy( CChar *c, UI08 sk );
 	void PlayInstrument( CSocket *s, CItem *i, bool wellPlayed );
 	CItem *GetInstrument( CSocket *s );
-	UI08 TrackingDirection( CSocket *s, CChar *i );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );

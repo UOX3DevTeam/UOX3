@@ -153,7 +153,7 @@ void	useDoor( CSocket *s, CItem *item );
 void	HandleDeath( CChar *mChar );
 void	NpcResurrectTarget( CChar *s );
 
-inline bool ValidateObject( CBaseObject *toValidate )
+inline bool ValidateObject( const CBaseObject *toValidate )
 {
 	bool rvalue = true;
 	try

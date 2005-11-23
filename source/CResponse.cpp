@@ -549,7 +549,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( toSend.CanSellItems( (*mChar), (*Npc) ) )
 		mSock->Send( &toSend );
 	else
-		mSock->sysmessage( 1341 );
+		Npc->talk( mSock, 1341, false );
 
 	return false;
 }

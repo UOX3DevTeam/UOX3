@@ -479,6 +479,8 @@ CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 	return connClients[s];
 }
 
+void PaperDoll( CSocket *s, CChar *pdoll );
+bool BuyShop( CSocket *s, CChar *c );
 CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
 CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
@@ -551,7 +553,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 				{
 					cScript *pScript = JSMapping->GetScript( pFind->second );
 					if( pScript != NULL )
-						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
+					{
+						doSwitch = false;
+						pScript->OnPacketReceive( mSock, packetID );
+					}
 				}
 			}
 			if( doSwitch )
@@ -811,8 +816,19 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 										break;
 								}
 								break;
-							case 0x08:	// Set cursor hue.  1 byte.  Server message.  0 == felucca, unhued. 1 = Trammel, hued gold
-								Console << "cNetworkStuff.GetMsg():: Cmd: $BF Sub: $0F" << myendl;
+							case 0x07:	// Click on Tracking Arrow
+								CChar *mChar;
+								mChar = mSock->CurrcharObj();
+								if( ValidateObject( mChar ) )
+								{
+									mSock->SetTimer( tPC_TRACKING, 0 );
+									if( ValidateObject( mChar->GetTrackingTarget() ) )
+									{
+										CPTrackingArrow tSend = (*mChar->GetTrackingTarget());
+										tSend.Active( 0 );
+										mSock->Send( &tSend );
+									}
+								}
 								break;
 							case 0x0A:	// Wrestling stun
 								break;
@@ -822,11 +838,11 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								mSock->Language( newLang );
 								break;
 							}
-							case 0x0C:	// Closed status gump.  4 bytes.  1 long, player serial
-								break;
 							case 0x0E:	// UOTD actions
 								// 9 bytes long
 								Effects->PlayCharacterAnimation( ourChar, mSock->GetWord( 7 ), 1 );
+								break;
+							case 0x0F:	// Unknown, Sent once at Login
 								break;
 							case 0x10:	// Request for tooltip data
 								SERIAL getSer;
@@ -852,16 +868,66 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								}
 								break;
 							case 0x15:	// Popup Menu Selection
-								Console.Print( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X", mSock, mSock->GetDWord( 5 ), mSock->GetWord( 9 ) );
+							{
+								const UI16 popupEntry	= mSock->GetWord( 9 );
+								CChar *mChar			= mSock->CurrcharObj();
+								CChar *targChar			= calcCharObjFromSer( mSock->GetDWord( 5 ) );
+								if( !ValidateObject( targChar ) || !ValidateObject( mChar ) )
+									break;
+
+								switch( popupEntry )
+								{
+								case 0x000A:	// Open Paperdoll
+									PaperDoll( mSock, targChar );
+									break;
+								case 0x000B:	// Open Backpack
+									if( targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
+									{
+										if( mChar->IsDead() )
+											mSock->sysmessage( 392 );
+										else if( !objInRange( mChar, targChar, DIST_NEARBY ) )
+											mSock->sysmessage( 382 );
+										else
+										{
+											CItem *pack = targChar->GetPackItem();
+											if( ValidateObject( pack ) )
+											{
+												if( targChar->GetOwnerObj() == mChar || mChar->IsGM() )
+													mSock->openPack( pack );
+												else
+													Skills->Snooping( mSock, targChar, pack );
+											}
+											else
+												Console.Warning( 2, "Character 0x%X has no backpack!", targChar->GetSerial() );
+										}
+									}
+									break;
+								case 0x000C:	// Buy Window
+									if( targChar->IsShop() )
+										BuyShop( mSock, targChar );
+									break;
+								case 0x000D:	// Sell Window
+									if( targChar->IsShop() )
+									{
+										targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
+										CPSellList toSend;
+										if( toSend.CanSellItems( (*mChar), (*targChar) ) )
+											mSock->Send( &toSend );
+										else
+											targChar->talk( mSock, 1341, false );
+									}
+									break;
+								default:
+									Console.Print( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", mSock->GetDWord( 5 ), mSock->GetWord( 9 ) );
+									break;
+								}
 								break;
+							}
 							case 0x1A:	// Extended Stats
 								UI08 statToSet, value;
 								statToSet		= mSock->GetByte( 5 ) + (ALLSKILLS+1);
 								value			= mSock->GetByte( 6 );
 								ourChar->SetSkillLock( value, statToSet );
-								break;
-							case 0x1B:	// New Spellbook
-								Console << "cNetworkStuff.GetMsg():: Cmd: $BF Sub: $0F" << myendl;
 								break;
 							case 0x1C:	// New SpellBook Selection
 							{
@@ -901,8 +967,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								}
 								break;
 							}
+							case 0x24:
+								break;
 							default:
-								Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X", subCmd );
+								Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd );
 								break;
 						}
 						break;
