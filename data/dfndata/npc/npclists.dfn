@@ -328,7 +328,7 @@ daemon
 {
 gazer
 lich
-wisp
+mummy
 lichlord
 boneaxeman
 boneknight
@@ -341,8 +341,7 @@ zombie
 spectre
 headless
 skeleton
-boneaxeman
-mummy
+ghoul
 wraith
 }
 

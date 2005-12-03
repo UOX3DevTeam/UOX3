@@ -23,5 +23,6 @@ function onCallback0( socket, ourObj )
 			ourObj.Dupe( socket );
 		}
 	}
+	socket.SysMessage( numToDupe + " duped items have been placed in your backpack." );
 	socket.tempint = 0;
 }
