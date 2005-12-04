@@ -1,3 +1,7 @@
+12/04/2005 - Xuri
+	Fixed a bug where skillgain could happen by attempting to craft without having enough resources available
+	Updated AreaCharacterFunction, AreaItemFunction and AreaObjFunc to accept both character and item objects as source-object
+
 11/23/2005 - giwo (0.98-3.1e [3.2 BETA])
 	Removed cSkills::TrackingDirection() as cMovement::Direction() does the same thing.
 	Fixed a crash caused by canceling the tracking menu.
