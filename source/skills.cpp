@@ -3330,7 +3330,31 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry )
 {
 	VALIDATESOCKET( sock );
+
+	size_t resCounter;
+	UI16 toDelete;
+	UI16 targColour;
+	UI16 targID;
+	bool canDelete = true;
+
+	//Moved resource-check to top of file to disallow gaining skill by attempting to
+	//craft items without having enough resources to do so :P
+	for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
+	{
+		toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
+		targColour = toMake.resourceNeeded[resCounter].colour;
+		targID = toMake.resourceNeeded[resCounter].itemID;
+		if( GetItemAmount( player, targID, targColour ) < toDelete )
+			canDelete = false;
+	}
+	if( !canDelete )
+	{
+		sock->sysmessage( 1651 );
+		return;
+	}
+
 	bool canMake = true;
+
 	// we need to check ALL skills, even if the first one fails
 	if( player->GetCommandLevel() < CNS_CMDLEVEL )
 	{
@@ -3340,10 +3364,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 				canMake = false;
 		}
 	}
-	size_t resCounter;
-	UI16 toDelete;
-	UI16 targColour;
-	UI16 targID;
+
 	if( !canMake )
 	{
 		// delete anywhere up to half of the resources needed
@@ -3360,7 +3381,6 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	}
 	else
 	{
-		bool canDelete = true;
 		for( resCounter = 0; resCounter < toMake.skillReqs.size(); ++resCounter )
 		{
 			if( player->SkillUsed( toMake.skillReqs[resCounter].skillNumber ) )
@@ -3369,20 +3389,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 				return;
 			}
 		}
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
-		{
-			toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
-			targColour = toMake.resourceNeeded[resCounter].colour;
-			targID = toMake.resourceNeeded[resCounter].itemID;
-			if( GetItemAmount( player, targID, targColour ) < toDelete )
-				canDelete = false;
-		}
-		if( !canDelete )
-		{
-			sock->sysmessage( 1651 );
-			return;
-		}
-		// Delete our resources up front
+
 		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
 		{
 			toDelete	= toMake.resourceNeeded[resCounter].amountNeeded;
