@@ -1446,24 +1446,24 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		return JS_FALSE;
 	}
 
-	JSObject *srcCharacterObj	= JSVAL_TO_OBJECT( argv[1] );
-	CChar *srcChar				= (CChar *)JS_GetPrivate( cx, srcCharacterObj );
+	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
+	CBaseObject *srcObject		= (CBaseObject *)JS_GetPrivate( cx, srcBaseObj );
 
-	if( !ValidateObject( srcChar ) )
+	if( !ValidateObject( srcObject ) )
 	{
-		DoSEErrorMessage( "AreaCharacterFunction: Argument 1 not a valid character" );
+		DoSEErrorMessage( "AreaCharacterFunction: Argument 1 not a valid object" );
 		return JS_FALSE;
 	}
 	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
 	if( argc == 4 )
 	{
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcCharacterObj );
+		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcSocketObj );
 	}
 	
 	UI16 retCounter				= 0;
 	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcChar );
+	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcObject );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
@@ -1475,9 +1475,9 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
-			if( objInRange( srcChar, tempChar, (UI16)distance ) )
+			if( objInRange( srcObject, tempChar, (UI16)distance ) )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcChar, tempChar, srcSocket ) )
+				if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
 					++retCounter;
 			}
 		}
@@ -1506,24 +1506,25 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	JSObject *srcCharacterObj	= JSVAL_TO_OBJECT( argv[1] );
-	CChar *srcChar				= (CChar *)JS_GetPrivate( cx, srcCharacterObj );
 
-	if( !ValidateObject( srcChar ) )
+	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
+	CBaseObject *srcObject		= (CBaseObject *)JS_GetPrivate( cx, srcBaseObj );
+
+	if( !ValidateObject( srcObject ) )
 	{
-		DoSEErrorMessage( "AreaItemFunction: Argument 1 not a valid character" );
+		DoSEErrorMessage( "AreaItemFunction: Argument 1 not a valid object" );
 		return JS_FALSE;
 	}
 	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
 	if( argc == 4 )
 	{
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcCharacterObj );
+		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcSocketObj );
 	}
 	
 	UI16 retCounter					= 0;
 	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcChar );
+	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcObject );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *MapArea = (*rIter);
@@ -1535,9 +1536,9 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		{
 			if( !ValidateObject( tempItem ) )
 				continue;
-			if( objInRange( srcChar, tempItem, (UI16)distance ) )
+			if( objInRange( srcObject, tempItem, (UI16)distance ) )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcChar, tempItem, srcSocket ) )
+				if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
 					++retCounter;
 			}
 		}

@@ -2365,23 +2365,29 @@ bool cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //|	Purpose		-	Calls the function represented in funcName for the script
 //|				-	passing in two character parameters
 //o--------------------------------------------------------------------------
-bool cScript::AreaObjFunc( char *funcName, CChar *srcChar, CBaseObject *tmpObject, CSocket *s )
+bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
 {
-	if( !ValidateObject( srcChar ) || !ValidateObject( tmpObject ) || funcName == NULL )
+	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == NULL )
 		return false;
 
 	jsval params[3], rval;
-	JSObject *srcObj	= AcquireObject( IUE_CHAR );
-	JSObject *tmpObj	= NULL;
-	
-	ObjectType oType	= tmpObject->GetObjType();
-	switch( oType )
-	{
-	case OT_CHAR:	tmpObj	=	AcquireObject( IUE_CHAR );		break;
-	default:		tmpObj	=	AcquireObject( IUE_ITEM );		break;
-	}
 
-	JS_SetPrivate( targContext, srcObj, srcChar );
+	ObjectType oType	= srcObject->GetObjType();
+
+	JSObject *srcObj;
+	JSObject *tmpObj;
+	
+	if( srcObject->CanBeObjType( OT_ITEM ) )
+		srcObj = AcquireObject( IUE_ITEM );
+	else if( srcObject->CanBeObjType( OT_CHAR ) )
+		srcObj = AcquireObject( IUE_CHAR );
+
+	if( tmpObject->CanBeObjType( OT_ITEM ) )
+		tmpObj = AcquireObject( IUE_ITEM );
+	else if( tmpObject->CanBeObjType( OT_CHAR ) )
+		tmpObj = AcquireObject( IUE_CHAR );
+
+	JS_SetPrivate( targContext, srcObj, srcObject );
 	JS_SetPrivate( targContext, tmpObj, tmpObject );
 
 	params[0]			= OBJECT_TO_JSVAL( srcObj );
@@ -2400,7 +2406,11 @@ bool cScript::AreaObjFunc( char *funcName, CChar *srcChar, CBaseObject *tmpObjec
 	}
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	ReleaseObject( srcObj, IUE_CHAR );
+	if( srcObject->CanBeObjType( OT_ITEM ) )
+		ReleaseObject( srcObj, IUE_ITEM );
+	else if( srcObject->CanBeObjType( OT_CHAR ) )
+		ReleaseObject( srcObj, IUE_CHAR );
+
 	if( oType == OT_CHAR )
 		ReleaseObject( tmpObj, IUE_CHAR );
 	else

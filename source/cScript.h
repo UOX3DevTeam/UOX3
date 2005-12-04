@@ -267,7 +267,7 @@ public:
 	bool		OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill );
 	// MACTEP: 041802: Support for new event
 	UI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i);
-	bool		AreaObjFunc( char *funcName, CChar *srcChar, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 //	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s );
 	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
 
