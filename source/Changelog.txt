@@ -1,3 +1,8 @@
+12/07/2005 - Xuri
+	Fixed an error generating a warning about bad length in multi's (giwo)
+	Made all items default to the unused (0x0000) tile (giwo)
+	Changed SeekTile() to return a value indicating if it found a valid tile (giwo)
+
 12/04/2005 - Xuri
 	Fixed a bug where skillgain could happen by attempting to craft without having enough resources available
 	Updated AreaCharacterFunction, AreaItemFunction and AreaObjFunc to accept both character and item objects as source-object

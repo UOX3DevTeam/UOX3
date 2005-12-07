@@ -92,6 +92,7 @@ creator( DEFITEM_CREATOR )
 	race = 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
+	id = 0x0000;
 }
 
 CItem::~CItem()	// Destructor to clean things up when deleted

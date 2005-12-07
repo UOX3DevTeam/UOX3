@@ -800,16 +800,18 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 }
 
 
-void cMapStuff::SeekTile(int tilenum, CTile *tile)
+bool cMapStuff::SeekTile(int tilenum, CTile *tile)
 {
 	if ( (tilenum < 0) || (tilenum >= TILEDATA_SIZE) )
 	{	// report the invalid access, but keep running
 		Console << "invalid tile access the offending tile num is " << UI32(tilenum) << myendl;
 		const static CTile emptyTile;
 		*tile = emptyTile;			// arbitrary choice, default constructor
+		return false;
 	}
 	else
 		*tile = staticTile[tilenum];
+	return true;
 }
 
 

@@ -222,11 +222,16 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount,
 	}
 
 	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType );
+
 	if( iCreated == NULL )
 		return NULL;
 
 	if( iID != 0x0000 )
-		iCreated->SetID( iID );
+	{
+		CTile tile;
+		if( Map->SeekTile( iID, &tile ) )
+			iCreated->SetID( iID );
+	}
 	if( iColour != 0x0000 )
 		iCreated->SetColour( iColour );
 
@@ -377,7 +382,6 @@ CItem * cItem::CreateBaseItem( UI08 worldNum, ObjectType itemType )
 	if( iCreated == NULL )
 		return NULL;
 
-	iCreated->SetID( 0x0915 );
 	iCreated->SetWipeable( true );
 	iCreated->WorldNumber( worldNum );
 

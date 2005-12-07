@@ -119,7 +119,7 @@ public:
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
 	void			SeekMulti( UI32 multinum, SI32 *length );
 	st_multi *		SeekIntoMulti( int multinum, int number );
-	void			SeekTile( int tilenum, CTile *tile );
+	bool			SeekTile( int tilenum, CTile *tile );
 	void			SeekLand( int landnum, CLand *land );
 	map_st			SeekMap0( SI16 x, SI16 y, UI08 worldNumber );
 
