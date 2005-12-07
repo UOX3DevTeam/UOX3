@@ -71,9 +71,12 @@ function onCallback0( socket, ourObj )
 		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var npcSection 	= socket.xText;
 
-		var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber );
+			var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber );
+
 		if( newChar && newChar.isChar )
 			newChar.InitWanderArea();
+		else
+			mChar.SysMessage( "NPC-section not found in DFNs: " + npcSection );
 	}
 }
 
@@ -91,14 +94,22 @@ function onCallback1( socket, ourObj )
 				var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", true );
 			else
 				mChar.SysMessage( "That character has no backpack, no item added" );
-			return;
 		}
-		var x 		= socket.GetWord( 11 );
-		var y 		= socket.GetWord( 13 );
-		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-		var newItem 	= CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", false );
-		if( newItem )
-			newItem.SetLocation( x, y, z );
+		else
+		{
+			var x 		= socket.GetWord( 11 );
+			var y 		= socket.GetWord( 13 );
+			var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", false );
+			if( newItem )
+				newItem.SetLocation( x, y, z );
+		}
+		if( newItem.id != itemID )
+		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
+			mChar.SysMessage( "Specified item-ID does not exist." );
+			mChar.SysMessage( "Hex: 0x"+itemID.toString(16)+ " Dec: " + itemID );
+			newItem.Delete();
+		}
 	}
 }
 
@@ -116,14 +127,18 @@ function onCallback2( socket, ourObj )
 				var newItem = CreateDFNItem( socket, mChar, iSection, 1, "ITEM", true );
 			else
 				mChar.SysMessage( "That character has no backpack, no item added" );
-			return;
 		}
-		var x 		= socket.GetWord( 11 );
-		var y 		= socket.GetWord( 13 );
-		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
-		var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "ITEM", false );
-		if( newItem )
-			newItem.SetLocation( x, y, z );
+		else
+		{
+			var x 		= socket.GetWord( 11 );
+			var y 		= socket.GetWord( 13 );
+			var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "ITEM", false );
+			if( newItem )
+				newItem.SetLocation( x, y, z );
+		}
+		if( !newItem )
+			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );
 	}
 }
 
@@ -139,6 +154,12 @@ function onCallback3( socket, ourObj )
 		var newItem 	= CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "SPAWNER", false );
 		if( newItem )
 			newItem.SetLocation( x, y, z );
+		if( newItem.id != itemID )
+		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
+			mChar.SysMessage( "Specified item-ID does not exist." );
+			mChar.SysMessage( "Hex: 0x"+itemID.toString(16)+ " Dec: " + itemID );
+			newItem.Delete();
+		}			
 	}
 }
 
@@ -154,6 +175,8 @@ function onCallback4( socket, ourObj )
 		var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "SPAWNER", false );
 		if( newItem )
 			newItem.SetLocation( x, y, z );
+		else
+			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );			
 	}
 }
 
@@ -186,6 +209,12 @@ function command_ADDX( socket, cmdString )
 		var newItem = CreateBlankItem( socket, mChar, 1, "#", targID, 0, "ITEM", false );
 		if( newItem )
 			newItem.SetLocation( mChar.x, mChar.y, targZ );
+		if( newItem.id != targID )
+		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
+			mChar.SysMessage( "Specified item-ID does not exist." );
+			mChar.SysMessage( "Hex: 0x"+targID.toString(16)+ " Dec: " + targID );
+			newItem.Delete();
+		}			
 	}
 }
 
