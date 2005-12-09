@@ -706,7 +706,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
-		if( tItem->GetID() < 0x4000 )
+//		if( tItem->GetID() < 0x4000 )
+		if( !tItem->CanBeObjType( OT_MULTI ) )
 		{
 #if DEBUG_WALKING
 			Console.Print( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
@@ -728,13 +729,23 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 			}
 		}
 		else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
-		{
+		{	// implication, is, this is now a CMultiObj
 			UI16 multiID = tItem->GetID() - 0x4000;
 			SI32 length = 0;		// should be SI32, not long
 			Map->SeekMulti( multiID, &length );
 			if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 			{
 				Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
+				map_st map1;
+				CLand land;
+				map1 = Map->SeekMap0( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
+				Map->SeekLand( map1.id, &land );
+				if( land.LiquidWet() ) // is it water?
+				{
+					tItem->SetID( 0x4001 );
+				}
+				else
+					tItem->SetID( 0x4064 );
 				length = 0;
 			}
 			for( SI32 j = 0; j < length; ++j )

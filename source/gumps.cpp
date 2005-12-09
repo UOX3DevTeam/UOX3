@@ -1350,8 +1350,11 @@ void HandleAddMenuButton( CSocket *s, long button )
 
 void HandleHowTo( CSocket *sock, int cmdNumber )
 {
-	int iCounter = 0;
-	COMMANDMAP_ITERATOR toFind = CommandMap.begin();
+	int iCounter				= 0;
+	UI08 cmdLevelReq			= 0xFF;
+	UI08 cmdType				= 0xFF;
+	std::string cmdName			= "";
+	COMMANDMAP_ITERATOR toFind	= CommandMap.begin();
 	while( iCounter != cmdNumber && toFind != CommandMap.end() )
 	{
 		++iCounter;
@@ -1365,25 +1368,51 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 			++iCounter;
 			++findTarg;
 		}
+		if( iCounter != cmdNumber )
+		{
+			JSCOMMANDMAP_ITERATOR findJS = JSCommandMap.begin();
+			while( iCounter != cmdNumber && findJS != JSCommandMap.end() )
+			{
+				++iCounter;
+				++findJS;
+			}
+			if( iCounter == cmdNumber )
+			{
+				cmdName		= findJS->first;
+				cmdLevelReq = findJS->second.cmdLevelReq;
+			}
+		}
+		else
+		{
+			cmdName		= findTarg->first;
+			cmdLevelReq = findTarg->second.cmdLevelReq;
+		}
+	}
+	else
+	{
+		cmdName		= toFind->first;
+		cmdLevelReq = toFind->second.cmdLevelReq;
+		cmdType		= toFind->second.cmdType;
 	}
 	if( iCounter == cmdNumber )
 	{
 		// Build gump structure here, with basic information like Command Level, Name, Command Type, and parameters (if any, from table)
 		GumpDisplay CommandInfo( sock, 480, 320 );
-		CommandInfo.SetTitle( toFind->first );
+		CommandInfo.SetTitle( cmdName );
 
-		CommandInfo.AddData( "Minimum Command Level", toFind->second.cmdLevelReq );
-		switch( toFind->second.cmdType )
+		CommandInfo.AddData( "Minimum Command Level", cmdLevelReq );
+		switch( cmdType )
 		{
 			case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );					break;
 			case CMD_SOCKFUNC:		CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
 			case CMD_TARGETINT:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );					break;
 			case CMD_TARGETXYZ:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
-			case CMD_TARGETTXT:		CommandInfo.AddData( "Syntax", "String" );
+			case CMD_TARGETTXT:		CommandInfo.AddData( "Syntax", "String" );									break;
+			default:				break;
 		}
 
 		char filename[256];
-		sprintf( filename, "help/commands/%s.txt", toFind->first.c_str() );
+		sprintf( filename, "help/commands/%s.txt", cmdName.c_str() );
 		std::ifstream toOpen( filename );
 		if( !toOpen.is_open() )
 			CommandInfo.AddData( "", "No extra information is available about this command", 7 );

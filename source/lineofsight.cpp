@@ -457,7 +457,8 @@ Look at uox3.h to see options. Works like npc magic.
 			dyncount = (*losIter);
 			if( dyncount == NULL )
 				continue;
-			if( dyncount->GetID( 1 ) < 0x40 )
+//			if( dyncount->GetID( 1 ) < 0x40 )
+			if( !dyncount->CanBeObjType( OT_MULTI ) )
 			{ // Dynamic items
 				Map->SeekTile( dyncount->GetID(), &tile);
 				if( ( dyncount->GetX() == collisions[i].x ) && (dyncount->GetY() == collisions[i].y ) &&
@@ -468,7 +469,7 @@ Look at uox3.h to see options. Works like npc magic.
 				}
 			}
 			else
-			{// Multi's
+			{	// Multi's
 				if( ( abs( kox1 - koxn ) <= DIST_BUILDRANGE ) && ( abs( koy1 - koym ) <= DIST_BUILDRANGE ) )
 				{
 					st_multi *test;
@@ -477,6 +478,16 @@ Look at uox3.h to see options. Works like npc magic.
 					if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 					{
 						Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
+						map_st map1;
+						CLand land;
+						map1 = Map->SeekMap0( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
+						Map->SeekLand( map1.id, &land );
+						if( land.LiquidWet() ) // is it water?
+						{
+							dyncount->SetID( 0x4001 );
+						}
+						else
+							dyncount->SetID( 0x4064 );
 						length = 0;
 					}
 					for( j = 0; j < length; ++j )

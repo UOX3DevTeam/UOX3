@@ -1,3 +1,11 @@
+9th December, 2005 - Maarc
+
+	Howto should be fixed so it won't crash on target based commands
+	Howto should also support JS commands now, at least in so far as it displays the txt file, if one exists
+	Couple of sections of code updated for real multi checks.  Rather than check if the ID > 0x4000, we actually do a CanBeObjType( OT_MULTI ) instead
+	Auto correct bad multis when encountered (setting to generic house / generic boat)
+	***note this is untested*** Insufficient time to install the UO client, and needs to be verified by Xuri or Giwo
+
 12/07/2005 - Xuri
 	Fixed an error generating a warning about bad length in multi's (giwo)
 	Made all items default to the unused (0x0000) tile (giwo)

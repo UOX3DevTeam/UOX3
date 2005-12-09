@@ -900,6 +900,7 @@ void command_howto( CSocket *s )
 		UI08 currentLevel			= mChar->GetCommandLevel();
 		COMMANDMAP_ITERATOR gAdd	= CommandMap.begin();
 		TARGETMAP_ITERATOR tAdd		= TargetMap.begin();
+		JSCOMMANDMAP_ITERATOR jAdd	= JSCommandMap.begin();
 
 		toSend.AddCommand( "page 1" );
 
@@ -947,6 +948,28 @@ void command_howto( CSocket *s )
 			}
 			++iCmd;
 			++tAdd;
+		}
+		while( jAdd != JSCommandMap.end() )
+		{
+			if( numAdded > 0 && !(numAdded%10) && !justDonePageAdd )
+			{
+				position = 40;
+				++pagenum;
+				toSend.AddCommand( "page %u", pagenum );
+				justDonePageAdd = true;
+			}
+			if( jAdd->second.cmdLevelReq <= currentLevel )
+			{
+				justDonePageAdd = false;
+				toSend.AddCommand( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
+				toSend.AddCommand( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd );
+				toSend.AddText( jAdd->first );
+				++numAdded;
+				++linenum;
+				position += 20;
+			}
+			++iCmd;
+			++jAdd;
 		}
 		pagenum = 1; 
 		for( int i = 0; i < numAdded; i += 10 )

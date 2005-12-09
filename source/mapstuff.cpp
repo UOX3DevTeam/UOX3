@@ -691,6 +691,8 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 
 int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 {
+	if( !i->CanBeObjType( OT_MULTI ) )
+		return 0;
 	SI32 length = 0;
 	st_multi *multi = NULL;
 	UI16 multiID = (UI16)(i->GetID() - 0x4000);
@@ -698,6 +700,16 @@ int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 	{
 		Console << "cMapStuff::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
+		map_st map1;
+		CLand land;
+		map1 = Map->SeekMap0( i->GetX(), i->GetY(), i->WorldNumber() );
+		Map->SeekLand( map1.id, &land );
+		if( land.LiquidWet() ) // is it water?
+		{
+			i->SetID( 0x4001 );
+		}
+		else
+			i->SetID( 0x4064 );
 		length = 0;
 	}
 	for( int j = 0; j < length; ++j )
