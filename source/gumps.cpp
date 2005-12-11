@@ -1404,6 +1404,7 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		switch( cmdType )
 		{
 			case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );					break;
+			case CMD_FUNC:			CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
 			case CMD_SOCKFUNC:		CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
 			case CMD_TARGETINT:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );					break;
 			case CMD_TARGETXYZ:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
@@ -2056,7 +2057,7 @@ void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
 //o---------------------------------------------------------------------------o
 void GumpDisplay::AddData( std::string toAdd, std::string toSet, UI08 type )
 {
-	if( toAdd.empty() )
+	if( toAdd.empty() && type != 7 )
 		return;
 
 	GumpInfo *gAdd = new GumpInfo;
