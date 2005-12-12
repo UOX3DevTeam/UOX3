@@ -1008,10 +1008,22 @@ void command_howto( CSocket *s )
 				++i;
 			}
 			if( findTarg == TargetMap.end() )
-				s->sysmessage( 280 );
+			{
+				JSCOMMANDMAP_ITERATOR findJS = JSCommandMap.begin();
+				for( findJS = JSCommandMap.begin(); findJS != JSCommandMap.end(); ++findJS )
+				{
+					if( commandStart == findJS->first )
+						break;
+					++i;
+				}
+				if( findJS == JSCommandMap.end() )
+				{
+					s->sysmessage( 280 );
+					return;
+				}
+			}
 		}
-		else
-			HandleHowTo( s, i );
+		HandleHowTo( s, i );
 	}
 }
 

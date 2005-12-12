@@ -1,3 +1,7 @@
+12th December, 2005 - Maarc
+
+	Further update to HowTo, making sure it works through both paths
+
 11th December, 2005 - Maarc
 
 	GumpInfo type 7 should ignore name, only deal with stringValue.  Code updated to reflect this (fixes AddData( str, str, int ))
