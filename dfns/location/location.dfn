@@ -397,9 +397,9 @@ Z=5
 [LOCATION 81]
 (
 // Docks
-X 4406
-Y 1045
-Z 254
+X=4406
+Y=1045
+Z=254
 }
 
 [LOCATION 82]
