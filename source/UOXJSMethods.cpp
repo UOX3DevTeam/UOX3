@@ -1220,6 +1220,15 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		MethodError( "Delete: Invalid object");
 		return JS_FALSE;
 	}
+	
+	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+	if( myScript != NULL )
+	{
+		if( myObj->CanBeObjType( OT_CHAR ) )
+			myScript->ReleaseObject( obj, IUE_CHAR );
+		else if( myObj->CanBeObjType( OT_ITEM ) )
+			myScript->ReleaseObject( obj, IUE_ITEM );
+	}
 
 	myObj->Delete();
 

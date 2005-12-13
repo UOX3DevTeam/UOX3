@@ -197,7 +197,8 @@ cScript::cScript( std::string targFile ) : isFiring( false )
 	SpellProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSpell_class, NULL, 0, CSpellProperties, NULL, CSpellProperties, NULL );
 	SpellsProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSpells_class, NULL, 0, NULL, NULL, NULL, NULL );
 	SocketProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
-	UOXCFileProto		=	JS_InitClass( targContext, targObject, targObject, &UOXFile_class, UOXCFile, 0, CFileProperties, CFile_Methods, CFileProperties, CFile_Methods );
+	UOXCFileProto		=	JS_InitClass( targContext, targObject, targObject, &UOXFile_class, UOXCFile, 0, CFileProperties, NULL, CFileProperties, NULL );
+	JS_DefineFunctions( targContext, targObject, CFile_Methods );
 	CAccountProto		=	JS_InitClass( targContext, targObject, targObject, &UOXAccount_class, NULL, 0, CAccountProperties, CAccount_Methods, CAccountProperties, CAccount_Methods );
 	CConsoleProto		=	JS_InitClass( targContext, targObject, targObject, &UOXConsole_class, NULL, 0, CConsoleProperties, CConsole_Methods, CConsoleProperties, CConsole_Methods );
 	RegionProto			=	JS_InitClass( targContext, targObject, targObject, &UOXRegion_class, NULL, 0, CRegionProperties, NULL, CRegionProperties, NULL );
@@ -2050,48 +2051,37 @@ JSObject *cScript::AcquireObject( IUEEntries iType )
 	UI32 tFound = FindFreePosition( iType );
 	if( tFound == INVALIDSERIAL )
 	{
-		size_t currentPos;
 		JSObject *makeIt = MakeNewObject( iType );
 		if( makeIt == NULL )
 			return NULL;
+
 		switch( iType )
 		{
 			case IUE_RACE:		
-				currentPos = raceObjects.size();
 				raceObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			case IUE_CHAR:		
-				currentPos = charObjects.size();
 				charObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			case IUE_ITEM:		
-				currentPos = itemObjects.size();
 				itemObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			case IUE_SOCK:		
-				currentPos = sockObjects.size();
 				sockObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			case IUE_GUILD:		
-				currentPos = guildObjects.size();
 				guildObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			case IUE_REGION:	
-				currentPos = regionObjects.size();
 				regionObjects.push_back( InUseEntry( true, makeIt ) );
-				return makeIt;
 				break;
 			default:
 			case IUE_UNKNOWN:
 			case IUE_COUNT:
-				return NULL;
+				makeIt = NULL;
 				break;
 		}
+		return makeIt;
 	}
 	else
 	{
@@ -2372,8 +2362,6 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 
 	jsval params[3], rval;
 
-	ObjectType oType	= srcObject->GetObjType();
-
 	JSObject *srcObj;
 	JSObject *tmpObj;
 	
@@ -2401,9 +2389,7 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 		params[2]	= OBJECT_TO_JSVAL( sockObj );
 	}
 	else
-	{
 		params[2]	= JSVAL_NULL;
-	}
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
 	if( srcObject->CanBeObjType( OT_ITEM ) )
@@ -2411,9 +2397,9 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	else if( srcObject->CanBeObjType( OT_CHAR ) )
 		ReleaseObject( srcObj, IUE_CHAR );
 
-	if( oType == OT_CHAR )
+	if( tmpObject->CanBeObjType( OT_CHAR ) )
 		ReleaseObject( tmpObj, IUE_CHAR );
-	else
+	else if( tmpObject->CanBeObjType( OT_ITEM ) )
 		ReleaseObject( tmpObj, IUE_ITEM );
 	if( s != NULL )
 		ReleaseObject( sockObj, IUE_SOCK );
@@ -2589,7 +2575,7 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 	}
 
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval ); 
-	
+
 	if( a->GetObjType() == OT_CHAR )
 		ReleaseObject( myObj, IUE_CHAR );
 	else

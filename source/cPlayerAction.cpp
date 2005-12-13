@@ -2114,7 +2114,7 @@ void InitTagToItemType( void )
 	tagToItemType["TRAININGDUMMY"]			= IT_TRAININGDUMMY;
 }
 
-ItemTypes FindItemTypeFromTag( UString strToFind )
+ItemTypes FindItemTypeFromTag( const UString strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();

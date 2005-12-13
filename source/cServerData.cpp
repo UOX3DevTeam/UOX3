@@ -25,7 +25,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
 	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
 	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
-	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWHIDDENNPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
+	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWOFFLINEPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
 	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|SPEEDCHECKITEMS|SPEEDCHECKBOATS|SPEEDCHECKNPCAI|"
 	"SPEEDCHECKSPAWNREGIONS|MSGBOARDPOSTINGLEVEL|MSGBOARDREMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|LIGHTMOON1|LIGHTMOON2|"
 	"LIGHTDUNGEONLEVEL|LIGHTCURRENTLEVEL|LIGHTBRIGHTLEVEL|TRACKINGBASERANGE|TRACKINGBASETIMER|TRACKINGMAXTARGETS|TRACKINGMSGREDISPLAYTIME|"
@@ -62,7 +62,6 @@ void CServerData::ResetDefaults( void )
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
 
-	ServerMulCaching( false );
 	ServerCrashProtection( 1 );
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
@@ -92,7 +91,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_GATE, 30 );
 	MineCheck( 2 );
 	DeathAnimationStatus( true );
-	ShowHiddenNpcStatus( true );
+	ShowOfflinePCs( true );
 	CombatDisplayHitMessage( true );
 	CombatAttackStamina( -2 );
 	NPCTrainingStatus( true );
@@ -359,16 +358,6 @@ void CServerData::ServerJoinPartAnnouncements( bool setting )
 bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
 {
 	return joinpartmsgsenabled;
-}
-
-void CServerData::ServerMulCaching( bool setting )
-{
-	mulcachingenabled = setting;
-}
-
-bool CServerData::ServerMulCachingStatus( void ) const
-{
-	return mulcachingenabled;
 }
 
 void CServerData::ServerBackups( bool setting )
@@ -660,14 +649,14 @@ bool CServerData::InternalAccountStatus( void ) const
 	return internalaccountsenabled;
 }
 
-void CServerData::ShowHiddenNpcStatus( bool value )
+void CServerData::ShowOfflinePCs( bool value )
 {
-	showhiddennpcsenabled = value;
+	showOfflinePCs = value;
 }
 
-bool CServerData::ShowHiddenNpcStatus( void ) const
+bool CServerData::ShowOfflinePCs( void ) const
 {
-	return showhiddennpcsenabled;
+	return showOfflinePCs;
 }
 
 void CServerData::RogueStatus( bool value )
@@ -1337,7 +1326,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << std::endl;
 		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << std::endl;
 		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << std::endl;
-		ofsOutput << "MULCACHING=" << (ServerMulCachingStatus()?1:0) << std::endl;
 		ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus()?1:0) << std::endl;
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << std::endl;
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << std::endl;
@@ -1411,7 +1399,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << std::endl;
 		ofsOutput << "AMBIENTFOOTSTEPS=" << (AmbientFootsteps()?1:0) << std::endl;
 		ofsOutput << "INTERNALACCOUNTCREATION=" << (InternalAccountStatus()?1:0) << std::endl;
-		ofsOutput << "SHOWHIDDENNPCS=" << (ShowHiddenNpcStatus()?1:0) << std::endl;
+		ofsOutput << "SHOWOFFLINEPCS=" << (ShowOfflinePCs()?1:0) << std::endl;
 		ofsOutput << "ROGUESENABLED=" << (RogueStatus()?1:0) << std::endl;
 		ofsOutput << "PLAYERPERSECUTION=" << (PlayerPersecutionStatus()?1:0) << std::endl;
 		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << std::endl;
@@ -1715,7 +1703,6 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
 							break;
 						case 0x0060:	 // MULCACHING[0008]
-							ServerMulCaching( (value.toUShort()==1?true:false) );
 							break;
 						case 0x006B:	 // BACKUPSENABLED[0009]
 							ServerBackups( (value.toUShort()>0?true:false) );
@@ -1828,8 +1815,8 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 						case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
 							InternalAccountStatus( value.toUShort() != 0 );
 							break;
-						case 0x02A2:	 // SHOWHIDDENNPCS[0046]
-							ShowHiddenNpcStatus( value.toUShort() != 0 );
+						case 0x02A2:	 // SHOWOFFLINEPCS[0046]
+							ShowOfflinePCs( value.toUShort() != 0 );
 							break;
 						case 0x02B1:	 // ROGUESENABLED[0047]
 							RogueStatus( value.toUShort() != 0 );

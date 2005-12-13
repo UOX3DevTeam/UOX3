@@ -573,7 +573,7 @@ bool splDispelField( CSocket *sock, CChar *caster )
 	}
 	return true;
 }
-void setRandomName( CChar *s, std::string namelist );
+void setRandomName( CChar *s, const std::string namelist );
 
 bool splIncognito( CSocket *sock, CChar *caster )
 {

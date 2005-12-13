@@ -6,16 +6,14 @@
 		#define UOXVALIST va_list
 		#define NOSIZETYPE
 	#else
-		#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
-		#define _HAS_ITERATOR_DEBUGGING 0
 		#define UOXVALIST std::va_list
 	#endif
 #else
 	#define UOXVALIST std::va_list
 #endif
 
-#include "ustring.h" 
 #include "Prerequisites.h"
+#include "ustring.h" 
 
 namespace UOX
 {

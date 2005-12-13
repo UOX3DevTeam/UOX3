@@ -20,9 +20,9 @@ namespace UOX
 
 cItem *Items = NULL;
 
-ItemTypes FindItemTypeFromTag( UString strToFind );
+ItemTypes FindItemTypeFromTag( const UString strToFind );
 
-bool ApplySpawnItemSection( CSpawnItem *applyTo, DFNTAGS tag, UI32 ndata, UI32 odata, UString cdata )
+bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const UI32 ndata, const UI32 odata, const UString cdata )
 {
 	if( !ValidateObject( applyTo ) )
 		return false;
@@ -42,7 +42,7 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, DFNTAGS tag, UI32 ndata, UI32 o
 	return false;
 }
 
-UI16 addRandomColor( std::string colorlist );
+UI16 addRandomColor( const std::string colorlist );
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|	Programmer	-	Unknown
@@ -53,11 +53,11 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 {
 	if( toApply == NULL || !ValidateObject( applyTo ) )
 		return false;
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+
 	UString cdata;
 	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
 	bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
-	for( tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
+	for( DFNTAGS tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
 	{
 		cdata = toApply->GrabData( ndata, odata );
 
@@ -213,7 +213,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|							also will automatically look for an entry in harditems.dfn
 //|							and set its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount, UI16 iColour, ObjectType itemType, bool inPack )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -222,7 +222,6 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount,
 	}
 
 	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType );
-
 	if( iCreated == NULL )
 		return NULL;
 
@@ -261,7 +260,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI16 iAmount,
 //|	Description		-	Creates a script item, gives it an amount, and sets
 //|							 its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI16 iAmount, ObjectType itemType, bool inPack )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, const UI16 iAmount, const ObjectType itemType, const bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -288,7 +287,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item,
 //|	Description		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
 //o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( CSocket *mSock, std::string itemList )
+CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string itemList )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -317,7 +316,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, std::string itemList )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a random item from an itemlist in specified dfn file
 //o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( std::string sItemList, UI08 worldNum )
+CItem *cItem::CreateRandomItem( const std::string sItemList, const UI08 worldNum )
 {
 	CItem * iCreated	= NULL;
 	UString sect		= "ITEMLIST " + sItemList;
@@ -325,7 +324,7 @@ CItem *cItem::CreateRandomItem( std::string sItemList, UI08 worldNum )
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
 	if( ItemList != NULL )
 	{
-		size_t i = ItemList->NumEntries();
+		const size_t i = ItemList->NumEntries();
 		if( i > 0 )
 		{
 			UString k = ItemList->MoveTo( RandomNum( static_cast< size_t >(0), i - 1 ) );
@@ -349,7 +348,7 @@ CItem *cItem::CreateRandomItem( std::string sItemList, UI08 worldNum )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a multi, and looks for an entry in harditems.dfn
 //o--------------------------------------------------------------------------o
-CMultiObj * cItem::CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool isBoat )
+CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string cName, const UI16 iID, const bool isBoat )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
 	if( mCreated == NULL ) 
@@ -373,7 +372,7 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool 
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a basic item
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateBaseItem( UI08 worldNum, ObjectType itemType )
+CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType )
 {
 	if( itemType != OT_ITEM && itemType != OT_SPAWNER )
 		return NULL;
@@ -396,14 +395,13 @@ CItem * cItem::CreateBaseItem( UI08 worldNum, ObjectType itemType )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a basic item from the scripts
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( std::string item, UI08 worldNum, ObjectType itemType )
+CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const ObjectType itemType )
 {
-	UString ourItem( item );
 	ourItem						= ourItem.stripWhiteSpace();
 	ScriptSection *itemCreate	= FileLookup->FindEntry( ourItem, items_def );
 	if( itemCreate == NULL )
 	{
-		Console.Error( 2, "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", item.c_str() );
+		Console.Error( 2, "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() );
 		return NULL;
 	}
 
@@ -441,7 +439,7 @@ CItem * cItem::CreateBaseScriptItem( std::string item, UI08 worldNum, ObjectType
 //o--------------------------------------------------------------------------o
 void cItem::GetScriptItemSettings( CItem *iCreated )
 {
-	UString item = "0x" + UString::number( iCreated->GetID(), 16 );
+	const UString item = "0x" + UString::number( iCreated->GetID(), 16 );
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
 		ApplyItemSection( iCreated, toFind );
@@ -456,7 +454,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
 //o--------------------------------------------------------------------------o
 //|	Description		-	Places an item that was just created
 //o--------------------------------------------------------------------------o
-CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
+CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack )
 {
 	if( inPack )
 	{
@@ -482,14 +480,14 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool in
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o---------------------------------------------------------------------------o
-bool DecayItem( CItem& toDecay, UI32 nextDecayItems ) 
+bool DecayItem( CItem& toDecay, const UI32 nextDecayItems ) 
 {
 	if( toDecay.GetDecayTime() == 0 ) 
 	{
 		toDecay.SetDecayTime( nextDecayItems );
 		return false;
 	}
-	bool isCorpse = toDecay.isCorpse();
+	const bool isCorpse = toDecay.isCorpse();
 		
 	// Multis
 	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
@@ -643,7 +641,7 @@ PackTypes cItem::getPackType( CItem *i )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Item spawning stuff
 //o---------------------------------------------------------------------------o
-void cItem::AddRespawnItem( CItem *s, std::string x, bool inCont, bool randomItem )
+void cItem::AddRespawnItem( CItem *s, const std::string x, const bool inCont, const bool randomItem )
 {
 	if( !ValidateObject( s ) || x.empty() )
 		return;
@@ -819,8 +817,8 @@ void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 			return;
 	}
 	
-	SI32 min = tReg->GetGoodRnd1( static_cast<UI08>(i->GetGood()) );
-	SI32 max = tReg->GetGoodRnd2( static_cast<UI08>(i->GetGood()) );
+	const SI32 min = tReg->GetGoodRnd1( static_cast<UI08>(i->GetGood()) );
+	const SI32 max = tReg->GetGoodRnd2( static_cast<UI08>(i->GetGood()) );
 	
 	if( max != 0 || min != 0 )
 		i->SetRndValueRate( RandomNum( min, max ) );

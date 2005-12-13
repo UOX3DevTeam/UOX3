@@ -107,7 +107,7 @@ void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
 void		sysBroadcast( const std::string txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
-bool		DecayItem( CItem& toDecay, UI32 nextDecayItems );
+bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems );
 void		CheckAI( CChar& mChar );
 
 bool cluox_io          = false;   // is cluox-IO enabled?

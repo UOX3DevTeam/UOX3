@@ -81,8 +81,8 @@ CItem *			FindItem( CChar *toFind, UI16 itemID );
 //o---------------------------------------------------------------------------o
 // Reputation Stuff
 //o---------------------------------------------------------------------------o
-void	Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma );
-void	Fame( CChar *nCharID, SI16 nFame );
+void	Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma );
+void	Fame( CChar *nCharID, const SI16 nFame );
 void	setcharflag( CChar *c );
 
 //o---------------------------------------------------------------------------o

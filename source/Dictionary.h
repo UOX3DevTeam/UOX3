@@ -18,17 +18,17 @@ class CDictionary
 {
 public:
 					CDictionary();
-					CDictionary( std::string filepath, std::string language );
+					CDictionary( const std::string filepath, const std::string language );
 					~CDictionary();
-	std::string 	operator[]( SI32 Num );
-	std::string 	GetEntry( SI32 Num );
+	std::string 	operator[]( const SI32 Num );
+	std::string 	GetEntry( const SI32 Num );
 
 public:
 	void			ShowList( void );
 	SI32			LoadDictionary( void );
-	size_t			NumberOfEntries( void );
-	void			SetValid( bool newVal );
-	bool			GetValid( void );
+	size_t			NumberOfEntries( void ) const;
+	void			SetValid( const bool newVal );
+	bool			GetValid( void ) const;
 
 private:
 	bool IsValid;
@@ -44,12 +44,12 @@ private:
 	UnicodeTypes	defaultLang;
 public:
 					CDictionaryContainer();
-					CDictionaryContainer( std::string filepath );
+					CDictionaryContainer( const std::string filepath );
 			 		~CDictionaryContainer();
 	SI32			LoadDictionary( void );
-	std::string 	operator[]( SI32 Num );	// only default lang
-	std::string 	GetEntry( SI32 Num, UnicodeTypes toDisp = ZERO );
-	void			SetDefaultLang( UnicodeTypes newType );
+	std::string 	operator[]( const SI32 Num );	// only default lang
+	std::string 	GetEntry( const SI32 Num, const UnicodeTypes toDisp = ZERO );
+	void			SetDefaultLang( const UnicodeTypes newType );
 };
 
 extern CDictionaryContainer *Dictionary;

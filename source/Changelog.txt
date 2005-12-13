@@ -1,13 +1,19 @@
-12th December, 2005 - Maarc
+12/13/2005 - giwo (0.98-3.1f [3.2 RC])
+	Updated CDictionary.cpp to be const correct, as well as adding some error checking to prevent data corruption.
+	Removed CACHEMULS from the uox.ini as it is no longer used.
+	Changed uox.ini entry SHOWHIDDENNPCS to SHOWOFFLINEPCS to better reflect its function.
+	Fixed an issue with SHOWOFFLINEPCS causing offline pc's to display even if it was set to 0.
+	Fixed a minor bug with HTML output when the UOX3.exe was not in the base UOX directory.
+	Fixed a couple of entries in teleport.scp that would cause you to be stuck in britain sewers.
+	Updated items.cpp and npc.cpp to be const correct.
 
+12th December, 2005 - Maarc
 	Further update to HowTo, making sure it works through both paths
 
 11th December, 2005 - Maarc
-
 	GumpInfo type 7 should ignore name, only deal with stringValue.  Code updated to reflect this (fixes AddData( str, str, int ))
 
 9th December, 2005 - Maarc
-
 	Howto should be fixed so it won't crash on target based commands
 	Howto should also support JS commands now, at least in so far as it displays the txt file, if one exists
 	Couple of sections of code updated for real multi checks.  Rather than check if the ID > 0x4000, we actually do a CanBeObjType( OT_MULTI ) instead

@@ -30,7 +30,7 @@ cCharStuff *Npcs = NULL;
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Add loot to monsters packs
 //o---------------------------------------------------------------------------o
-CItem *cCharStuff::addRandomLoot( CItem *s, std::string lootlist )
+CItem *cCharStuff::addRandomLoot( CItem *s, const std::string lootlist )
 {
 	CItem *retitem			= NULL;
 	UString sect			= "LOOTLIST " + lootlist;
@@ -62,14 +62,13 @@ CItem *cCharStuff::addRandomLoot( CItem *s, std::string lootlist )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a basic npc from the scripts
 //o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateBaseNPC( std::string npc )
+CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 {
-	UString ourNPC( npc );
 	ourNPC						= ourNPC.stripWhiteSpace();
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == NULL )
 	{
-		Console.Error( 2, "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", npc.c_str() );
+		Console.Error( 2, "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str() );
 		return NULL;
 	}
 
@@ -107,7 +106,7 @@ CChar *cCharStuff::CreateBaseNPC( std::string npc )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a random npc from an npclist in specified dfn file
 //o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateRandomNPC( std::string npcList )
+CChar *cCharStuff::CreateRandomNPC( const std::string npcList )
 {
 	CChar *cCreated			= NULL;
 	UString sect			= "NPCLIST " + npcList;
@@ -115,7 +114,7 @@ CChar *cCharStuff::CreateRandomNPC( std::string npcList )
 	ScriptSection *NPCList	= FileLookup->FindEntry( sect, npc_def );
 	if( NPCList != NULL )
 	{
-		size_t i = NPCList->NumEntries();
+		const size_t i = NPCList->NumEntries();
 		if( i > 0 )
 		{
 			UString k = NPCList->MoveTo( RandomNum( static_cast< size_t >(0), i - 1 ) );
@@ -141,7 +140,7 @@ CChar *cCharStuff::CreateRandomNPC( std::string npcList )
 //o--------------------------------------------------------------------------o
 CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, std::string npc )
 {
-	ItemTypes iType = iSpawner->GetType();
+	const ItemTypes iType = iSpawner->GetType();
 	// If the spawner type is 125 and escort quests are not active then abort
 	if( iType == IT_ESCORTNPCSPAWNER && !cwmWorldState->ServerData()->EscortsEnabled() )
 		return NULL;
@@ -344,7 +343,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 //|									tries (50),the NPC will be placed directly on the spawner and the 
 //|									server op will be warned. 
 //o---------------------------------------------------------------------------o
-void cCharStuff::FindSpotForNPC( CChar *cCreated, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z, UI08 worldNumber )
+void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber )
 {
 
 #ifdef DEBUG_SPAWN
@@ -395,23 +394,22 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, SI16 originX, SI16 originY, SI
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Loads the shopping list pointed to by data in items.scp
 //o---------------------------------------------------------------------------o
-void cCharStuff::LoadShopList( std::string list, CChar *c )
+void cCharStuff::LoadShopList( const std::string list, CChar *c )
 {
 	CItem *buyLayer		= c->GetItemAtLayer( IL_BUYCONTAINER );
 	CItem *boughtLayer	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
 	CItem *sellLayer	= c->GetItemAtLayer( IL_SELLCONTAINER );
 
-	UString sect = "SHOPLIST " + list;
+	UString sect		= "SHOPLIST " + list;
+	sect				= sect.stripWhiteSpace();
 	ScriptSection *ShoppingList = FileLookup->FindEntry( sect, items_def );
 	if( ShoppingList == NULL )
 		return;
 
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
 	UString cdata;
-	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
-	CItem *retitem = NULL;
-
-	for( tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
+	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
+	CItem *retitem	= NULL;
+	for( DFNTAGS tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
 	{
 		cdata = ShoppingList->GrabData( ndata, odata );
 		switch( tag )
@@ -490,9 +488,10 @@ void cCharStuff::LoadShopList( std::string list, CChar *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Sets a character with a random name from NPC.scp namelist
 //o---------------------------------------------------------------------------o
-void setRandomName( CChar *s, std::string namelist )
+void setRandomName( CChar *s, const std::string namelist )
 {
-	UString sect = "RANDOMNAME " + namelist;
+	UString sect	= "RANDOMNAME " + namelist;
+	sect			= sect.stripWhiteSpace();
 	UString tempName;
 
 	ScriptSection *RandomName = FileLookup->FindEntry( sect, npc_def );
@@ -516,9 +515,10 @@ void setRandomName( CChar *s, std::string namelist )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Randomly colors character
 //o---------------------------------------------------------------------------o
-UI16 addRandomColor( std::string colorlist )
+UI16 addRandomColor( const std::string colorlist )
 {
 	UString sect					= "RANDOMCOLOR " + colorlist;
+	sect							= sect.stripWhiteSpace();
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
 	if( RandomColours == NULL )
 	{
@@ -581,14 +581,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 		return false;
 
 	UI16 haircolor	= INVALIDCOLOUR;
-	CItem *buyPack = NULL, *boughtPack = NULL, *sellPack = NULL;
-	CItem *retitem = NULL, *mypack = NULL;
+	CItem *buyPack	= NULL, *boughtPack = NULL, *sellPack = NULL;
+	CItem *retitem	= NULL, *mypack = NULL;
 
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
 	UString cdata;
-	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
 	UI08 skillToSet = 0;
-	for( tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
+	for( DFNTAGS tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
 	{
 		cdata = NpcCreation->GrabData( ndata, odata );
 		switch( tag )
@@ -1069,7 +1068,7 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle monster gates (polymorphs players into monster bodies)
 //o---------------------------------------------------------------------------o
-void MonsterGate( CChar *s, std::string scriptEntry )
+void MonsterGate( CChar *s, const std::string scriptEntry )
 {
 	CItem *mypack = NULL, *retitem = NULL;
 	if( s->IsNpc() ) 
@@ -1131,17 +1130,16 @@ void MonsterGate( CChar *s, std::string scriptEntry )
 //|	Purpose		-	Handle karma addition/subtraction when character kills
 //|					another Character / NPC
 //o---------------------------------------------------------------------------o
-void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
-{	// nEffect = 1 positive karma effect
-	SI16 nChange = 0;
-	bool nEffect = false;
-	//
-	SI16 nCurKarma = nCharID->GetKarma();
+void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
+{
+	SI16 nChange			= 0;
+	bool nEffect			= false;
+	const SI16 nCurKarma	= nCharID->GetKarma();
 	if( nCurKarma > 10000 )
 		nCharID->SetKarma( 10000 );
 	else if( nCurKarma < -10000 ) 
 		nCharID->SetKarma( -10000 );
-	//
+
 	if( nCurKarma < nKarma && nKarma > 0 )
 	{
 		nChange = ( ( nKarma - nCurKarma ) / 75 );
@@ -1189,11 +1187,11 @@ void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
 //|	Purpose		-	Handle fame addition when character kills another
 //|					Character / NPC
 //o---------------------------------------------------------------------------o
-void Fame( CChar *nCharID, SI16 nFame )
+void Fame( CChar *nCharID, const SI16 nFame )
 {
-	SI16 nChange = 0;
-	bool nEffect = false;
-	SI16 nCurFame = nCharID->GetFame();
+	SI16 nChange			= 0;
+	bool nEffect			= false;
+	const SI16 nCurFame		= nCharID->GetFame();
 	if( nCharID->IsDead() )
 	{
 		if( nCurFame <= 0 )

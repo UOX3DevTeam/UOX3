@@ -84,7 +84,6 @@ private:
 	char		commandprefix;					//	Character that acts as the command prefix
 	bool		announcesaves;					//	Determines if world saves are announced
 	bool		joinpartmsgsenabled;			//	Determines if player join/part messages are enabled
-	bool		mulcachingenabled;				//	Determines if the MULs are cached in memory
 	bool		backupsenabled;					//	Determines if backups are enabled
 	SI16		backupRatio;					//	Number of saves before a backup occurs
 	UI32		serversavestimer;				//	Number of seconds between world saves
@@ -118,7 +117,7 @@ private:
 	SI16		ambientsounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	bool		ambientfootsteps;				//	True if different tiles make different footstep sounds
 	bool		internalaccountsenabled;		//	True if new accounts are made when a person logs in with an unknown username
-	bool		showhiddennpcsenabled;			//	True if NPCs that are hidden are viewable by GMs
+	bool		showOfflinePCs;					//	True if Offline PC's are viewable by GMs
 	bool		roguesenabled;					//	True if stealing is a useable skill
 	bool		playerpersecution;				//	True if persecution is enabled (ghosts attacking living)
 	SI16		htmlstatusenabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
@@ -330,8 +329,8 @@ public:
 	void		InternalAccountStatus( bool value );
 	bool		InternalAccountStatus( void ) const;
 
-	void		ShowHiddenNpcStatus( bool value );
-	bool		ShowHiddenNpcStatus( void ) const;
+	void		ShowOfflinePCs( bool value );
+	bool		ShowOfflinePCs( void ) const;
 
 	void		RogueStatus( bool value );
 	bool		RogueStatus( void ) const;

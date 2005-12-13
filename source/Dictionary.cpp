@@ -33,7 +33,7 @@ CDictionary::~CDictionary()
 {
 }
 
-CDictionary::CDictionary( std::string filepath, std::string language )
+CDictionary::CDictionary( const std::string filepath, const std::string language )
 {
 	CDictionary();	//	Call default constructor for this Class
 
@@ -104,22 +104,22 @@ std::string CDictionary::operator[]( SI32 Num )
 	return GetEntry( Num );
 }
 
-void CDictionary::SetValid( bool newVal )
+void CDictionary::SetValid( const bool newVal )
 {
 	IsValid = newVal;
 }
 
-bool CDictionary::GetValid( void )
+bool CDictionary::GetValid( void ) const
 {
 	return IsValid;
 }
 
-size_t CDictionary::NumberOfEntries( void )
+size_t CDictionary::NumberOfEntries( void ) const
 {
 	return Text2.size();
 }
 
-std::string CDictionary::GetEntry( SI32 Num )
+std::string CDictionary::GetEntry( const SI32 Num )
 {
 	std::string rvalue;
 	if( IsValid )
@@ -143,7 +143,7 @@ CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
 	}
 }
 
-CDictionaryContainer::CDictionaryContainer( std::string filepath ) : defaultLang( ZERO )
+CDictionaryContainer::CDictionaryContainer( const std::string filepath ) : defaultLang( ZERO )
 {
 	std::string buildName;
 	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )
@@ -175,21 +175,25 @@ SI32 CDictionaryContainer::LoadDictionary( void )
 	return rvalue;
 }
 
-std::string CDictionaryContainer::operator[]( SI32 Num )
+std::string CDictionaryContainer::operator[]( const SI32 Num )
 {
 	return GetEntry( Num );
 }
 
-std::string CDictionaryContainer::GetEntry( SI32 Num, UnicodeTypes toDisp )
+std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes toDisp )
 {
-	std::string RetVal = dictList[LanguageCodesLang[toDisp]]->GetEntry( Num );
+	std::string RetVal;
+	const DistinctLanguage mLanguage = LanguageCodesLang[toDisp];
+
+	if( mLanguage < DL_COUNT )
+		RetVal = dictList[mLanguage]->GetEntry( Num );
 	if( RetVal.empty() && toDisp != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
 		RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
 
 	return RetVal;
 }
 
-void CDictionaryContainer::SetDefaultLang( UnicodeTypes newType )
+void CDictionaryContainer::SetDefaultLang( const UnicodeTypes newType )
 {
 	if( dictList[LanguageCodesLang[newType]]->GetValid() )
         defaultLang = newType;

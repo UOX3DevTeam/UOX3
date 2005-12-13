@@ -299,8 +299,8 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			return;
 		
 		SI08 myz = ILLEGAL_Z;
-		SI16 myx = GetXfromDir( dir, c->GetX() );
-		SI16 myy = GetYfromDir( dir, c->GetY() );
+		const SI16 myx = GetXfromDir( dir, c->GetX() );
+		const SI16 myy = GetYfromDir( dir, c->GetY() );
 		if( !calc_move( c, c->GetX(), c->GetY(), myz, dir ) )
 		{
 #if DEBUG_WALKING
@@ -993,7 +993,7 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 	return false;
 }
 
-void MonsterGate( CChar *s, std::string scriptEntry );
+void MonsterGate( CChar *s, const std::string scriptEntry );
 void advanceObj( CChar *s, UI16 x, bool multiUse );
 void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
 void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
@@ -1091,7 +1091,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				if( !ValidateObject( tempChar ) )
 					continue;
 				// Character Send Stuff
-				if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowHiddenNpcStatus() ) )
+				if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) )
 				{
 					if( checkX )	// Only update on x plane if our x changed
 					{

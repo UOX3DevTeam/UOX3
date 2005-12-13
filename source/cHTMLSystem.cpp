@@ -627,7 +627,7 @@ void cHTMLTemplate::UnloadTemplate( void )
 //o---------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
-	UString tag, data, UTag, UData;
+	UString tag, data, UTag, UData, fullPath;
 
 	for( tag = found->First(); !found->AtEnd(); tag = found->Next() )
 	{
@@ -651,9 +651,15 @@ void cHTMLTemplate::Load( ScriptSection *found )
 				Type = ETT_GMSTATUS;
 		}
 		else if( UTag == "INPUT" )
-			InputFile = data.substr( 0, MAX_PATH - 1 );
+		{
+			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) + "html/" + data;
+			InputFile = fullPath.stripWhiteSpace().substr( 0, MAX_PATH - 1 );
+		}
 		else if( UTag == "OUTPUT" )
-			OutputFile = data.substr( 0, MAX_PATH - 1 );
+		{
+			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_HTML ) + data;
+			OutputFile = fullPath.stripWhiteSpace().substr( 0, MAX_PATH - 1 );
+		}
 		else if( UTag == "NAME" )
 			Name = data;
 	}

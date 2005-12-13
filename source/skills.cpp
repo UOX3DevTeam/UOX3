@@ -2561,7 +2561,6 @@ bool cSkills::LoadMiningData( void )
 {
 	ores.resize( 0 );
 	// Let's first get our ore list, in SECTION ORE_LIST
-
 	ScriptSection *oreList = FileLookup->FindEntry( "ORE_LIST", skills_def );
 	bool rvalue = false;
 	if( oreList != NULL )

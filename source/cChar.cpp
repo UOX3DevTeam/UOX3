@@ -1625,7 +1625,9 @@ void CChar::Teleport( void )
 			{
 				if( ValidateObject( tempChar ) )
 				{
-					if( this != tempChar && objInRange( this, tempChar, visrange ) && ( isOnline( (*tempChar) ) || tempChar->IsNpc() || IsGM() ) )
+					if( this != tempChar && objInRange( this, tempChar, visrange ) && 
+						( isOnline( (*tempChar) ) || tempChar->IsNpc() || 
+						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
 						tempChar->SendToSocket( mSock );
 				}
 			}
