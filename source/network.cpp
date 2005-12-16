@@ -892,7 +892,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 											CItem *pack = targChar->GetPackItem();
 											if( ValidateObject( pack ) )
 											{
-												if( targChar->GetOwnerObj() == mChar || mChar->IsGM() )
+												if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->IsGM() )
 													mSock->openPack( pack );
 												else
 													Skills->Snooping( mSock, targChar, pack );

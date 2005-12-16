@@ -308,7 +308,7 @@ UOXFile * loadFile( const std::string fullName )
 void cMapStuff::Load( )
 {
 	Console.PrintSectionBegin();
-	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in the uox3.ini)" << myendl;
+	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in uox.ini or filenames in maps.dfn)" << myendl;
 
 	UString lName;
 	UI16 i;

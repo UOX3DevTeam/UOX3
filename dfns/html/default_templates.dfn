@@ -7,16 +7,16 @@
 TYPE=STATUS
 NAME=Server Status Template
 UPDATE=60
-INPUT=dfndata/html/online.htf
-OUTPUT=html/serverstatus.html
+INPUT=online.htf
+OUTPUT=serverstatus.html
 } 
 
 [DEFAULT_PLAYER]
 {
 TYPE=PLAYER
 NAME=Server Player Template
-INPUT=dfndata/html/player.htf
-OUTPUT=html/player.html
+INPUT=player.htf
+OUTPUT=player.html
 }
 
 [DEFAULT_GUILD]
@@ -24,8 +24,8 @@ OUTPUT=html/player.html
 TYPE=GUILD
 NAME=Server Guild Template
 UPDATE=60
-INPUT=dfndata/html/guild.htf
-OUTPUT=html/guild.html
+INPUT=guild.htf
+OUTPUT=guild.html
 }
 
 [DEFAULT_GMSTATUS]
@@ -33,16 +33,16 @@ OUTPUT=html/guild.html
 TYPE=GMSTATUS
 NAME=Server GameMaster Status Template
 UPDATE=60
-INPUT=dfndata/html/gmstatus.htf
-OUTPUT=html/gmstatus.html
+INPUT=gmstatus.htf
+OUTPUT=gmstatus.html
 }
 
 [DEFAULT_OFFLINE]
 {
 TYPE=OFFLINE
 NAME=Server Offline Template
-INPUT=dfndata/html/offline.htf
-OUTPUT=html/serverstatus.html
+INPUT=offline.htf
+OUTPUT=serverstatus.html
 }
 
 EOF

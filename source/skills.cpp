@@ -1469,12 +1469,16 @@ void cSkills::RandomSteal( CSocket *s )
 	}
 
 	CItem *item = NULL;
-	for( UI08 i = 0; i < 50; ++i )
+	size_t numItems = p->GetContainsList()->Num();
+	if( numItems > 0 )
 	{
-		item = p->GetContainsList()->GetCurrent( RandomNum( static_cast< size_t >(0), p->GetContainsList()->Num() - 1 ) );
-		if( ValidateObject( item ) ) 
-			break;
-	} 
+		for( UI08 i = 0; i < 50; ++i )
+		{
+			item = p->GetContainsList()->GetCurrent( RandomNum( static_cast< size_t >(0), numItems - 1 ) );
+			if( ValidateObject( item ) ) 
+				break;
+		}
+	}
 	if( !ValidateObject( item ) )
 	{
 		s->sysmessage( 876 );

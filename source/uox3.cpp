@@ -2771,7 +2771,7 @@ void telltime( CSocket *s )
 	const bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
 	const UnicodeTypes sLang	= s->Language();
 
-	std::string tstring, tstring2;
+	std::string tstring;
 	if( minute <= 14 )
 		tstring = Dictionary->GetEntry( 1248, sLang );
 	else if( minute >= 15 && minute <= 30 )
@@ -2785,36 +2785,37 @@ void telltime( CSocket *s )
 		if( hour == 12 )
 			hour = 0;
 	}
+
+	tstring += " ";
+
 	if( hour >= 1 && hour <= 11 )
-		tstring2 = tstring + Dictionary->GetEntry( 1251 + hour, sLang );
+		tstring += Dictionary->GetEntry( 1251 + hour, sLang );
 	else if( hour == 1 && ampm )
-		tstring2 = tstring + Dictionary->GetEntry( 1263, sLang );
+		tstring += Dictionary->GetEntry( 1263, sLang );
 	else
-		tstring2 = tstring + Dictionary->GetEntry( 1264, sLang );
+		tstring += Dictionary->GetEntry( 1264, sLang );
 	
-	if( hour == 0 )
-		tstring = tstring2;
-	else if( ampm )
+	if( hour != 0 )
 	{
-		if( hour >= 1 && hour < 6 )
-			tstring2 += Dictionary->GetEntry( 1265 );
-		else if( hour >= 6 && hour < 9 )
-			tstring2 += Dictionary->GetEntry( 1266 );
-		else 
-			tstring2 += Dictionary->GetEntry( 1267 );
-		s->sysmessage( tstring2.c_str() );
-		return;
+		tstring += " ";
+		if( ampm )
+		{
+			if( hour >= 1 && hour < 6 )
+				tstring += Dictionary->GetEntry( 1265 );
+			else if( hour >= 6 && hour < 9 )
+				tstring += Dictionary->GetEntry( 1266 );
+			else 
+				tstring += Dictionary->GetEntry( 1267 );
+		}
+		else
+		{
+			if( hour >= 1 && hour < 5 )
+				tstring += Dictionary->GetEntry( 1268 );
+			else 
+				tstring += Dictionary->GetEntry( 1269 );
+		}
 	}
-	else
-	{
-		if( hour >= 1  && hour < 5 )
-			tstring2 += Dictionary->GetEntry( 1268 );
-		else 
-			tstring2 += Dictionary->GetEntry( 1269 );
-		s->sysmessage( tstring2.c_str() );
-		return;
-	}
-	s->sysmessage( tstring .c_str());
+	s->sysmessage( tstring.c_str() );
 }
 
 //o---------------------------------------------------------------------------o

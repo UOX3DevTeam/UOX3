@@ -21,7 +21,7 @@ namespace UOX
 // product info
 //o---------------------------------------------------------------------------o
 const std::string VER				= "0.98-3";
-const std::string BUILD				= "1f";
+const std::string BUILD				= "1g";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";

@@ -75,9 +75,12 @@ namespace UOX
 
 		T GetCurrent( size_t index = objData.size() ) const
 		{
+			T rvalue = NULL;
 			if( index < objData.size() )
-				return objData[index];
-			return (*objIterator);
+				rvalue = objData[index];
+			else if( objIterator != objData.end() )
+				rvalue = (*objIterator);
+			return rvalue;
 		}
 
 		T First( void )

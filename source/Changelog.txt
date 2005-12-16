@@ -1,3 +1,8 @@
+12/16/2005 - giwo (0.98-3.1g [3.2 RC])
+	Fixed an issue with context menus causing one to attempt to "snoop" their own pack.
+	Fixed a crash when attempting a random steal on a character with no items.
+	Fixed an issue causing the 'time command to have incorrect spacing.
+
 12/13/2005 - giwo (0.98-3.1f [3.2 RC])
 	Updated CDictionary.cpp to be const correct, as well as adding some error checking to prevent data corruption.
 	Removed CACHEMULS from the uox.ini as it is no longer used.
