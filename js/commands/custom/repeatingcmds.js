@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.04
-// Last updated: December 28th 2004
+// v1.05
+// Last updated: December 14th 2005
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -18,6 +18,7 @@ function CommandRegistration()
 	RegisterCommand( "radd", 2, true ); // Use 'RADD <hex-id> - adds item <hex-id> at multiple targeted locations
 	RegisterCommand( "rremove", 2, true ); // Use 'RREMOVE - Removes multiple targeted items.
 	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
+	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
 }
 
 //Repeated Command: INCX <value>
@@ -40,7 +41,6 @@ function onCallback0( pSock, myTarget )
 	var StrangeByte = pSock.GetWord( 1 );
 	if( StrangeByte == 0 )
 	{
-			pUser.SysMessage( "Bleh?" );
 			myTarget.x+= incXValue;
 	}
 	pUser.CustomTarget( 0, "Select target to reposition by "+incXValue+" X:" );
@@ -218,4 +218,20 @@ function onCallback8( pSock, myTarget )
 	}
 	else
 		pUser.SysMessage( "That doesn't seem to be a valid item-id from the DFNs." );
+}
+
+//Repeated Command: TELE <select target location>
+function command_RTELE( pSock, execString )
+{
+	pUser = pSock.currentChar;
+	pUser.CustomTarget( 9, "Select location to teleport to:" );
+}
+function onCallback9( pSock, myTarget )
+{
+	var pUser = pSock.currentChar; 
+	var targX = pSock.GetWord( 11 );
+	var targY = pSock.GetWord( 13 );
+	var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+	pUser.Teleport( targX, targY, targZ );
+	pUser.CustomTarget( 9, "Select location to teleport to:" );
 }
