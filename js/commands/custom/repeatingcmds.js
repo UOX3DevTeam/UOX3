@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.05
-// Last updated: December 14th 2005
+// v1.07
+// Last updated: December 23rd 2005
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -19,6 +19,7 @@ function CommandRegistration()
 	RegisterCommand( "rremove", 2, true ); // Use 'RREMOVE - Removes multiple targeted items.
 	RegisterCommand( "radditem", 2, true ); // Use 'RADDITEM <item-id from dfns>
 	RegisterCommand( "rtele", 2, true ); //Use 'RTELE <target teleport location>
+	RegisterCommand( "raddnpc", 2, true ); //Use 'RADDNPC <id from DFNs> - Adds specified NPC at multiple targeted locations
 }
 
 //Repeated Command: INCX <value>
@@ -204,13 +205,12 @@ function onCallback8( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
 	var TempItemID = pSock.xText;
-	if( !TempItemID == null )
+	if( !(TempItemID == null) )
 	{
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
 		var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
-		pUser.SysMessage( TempItemID );
-		var tempItem = CreateDFNItem( pSock, pUser, TempItemID, false, 10, false );
+		var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
 		tempItem.x = targX;
 		tempItem.y = targY;
 		tempItem.z = targZ;
@@ -234,4 +234,27 @@ function onCallback9( pSock, myTarget )
 	var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 	pUser.Teleport( targX, targY, targZ );
 	pUser.CustomTarget( 9, "Select location to teleport to:" );
+}
+
+//Repeated Command: ADD NPC <npc-id from DFNs>
+function command_RADDNPC( pSock, execString )
+{
+	pUser = pSock.currentChar;
+	pSock.xText = execString;
+	pUser.CustomTarget( 10, "Select target location for the ["+execString+"]:" );
+}
+function onCallback10( pSock, myTarget )
+{
+	var pUser = pSock.currentChar; 
+	var TempNPCID = pSock.xText;
+	if( !(TempNPCID == null ) )
+	{
+		var targX = pSock.GetWord( 11 );
+		var targY = pSock.GetWord( 13 );
+		var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber );
+		pUser.CustomTarget( 10, "Select target location for the ["+TempNPCID+"]:" );
+	}
+	else
+		pUser.SysMessage( "That doesn't seem to be a valid NPC-id from the DFNs." );
 }
