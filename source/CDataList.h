@@ -73,7 +73,7 @@ namespace UOX
 			objIteratorBackup.clear();
 		}
 
-		T GetCurrent( size_t index = objData.size() ) const
+		T GetCurrent( size_t index = objData.size() )
 		{
 			T rvalue = NULL;
 			if( index < objData.size() )
