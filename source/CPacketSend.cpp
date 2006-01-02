@@ -4075,9 +4075,12 @@ void CPSecureTrading::Action( UI08 value )
 }
 void CPSecureTrading::Name( const std::string nameFollowing )
 {
-	pStream.ReserveSize( 47 );
-	pStream.WriteByte(   16, 1 );
-	pStream.WriteString( 17, nameFollowing, nameFollowing.length() );
+	if(nameFollowing.length() >= 30){
+		pStream.WriteString( 17, nameFollowing, 30 );
+	} else {
+		pStream.WriteByte(   16, 1 );
+		pStream.WriteString( 17, nameFollowing, nameFollowing.length() );
+	}
 }
 
 //	0x98 Packet

@@ -19,10 +19,10 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar, CChar *n
 		return NULL;
 	}
 
-	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, true );
-	if( !ValidateObject( tradeWindow ) )
-		return NULL;
-
+	//CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x0, 1, 0, OT_ITEM, true );
+	//if( !ValidateObject( tradeWindow ) )
+	//	return NULL;
+	CItem *tradeWindow = new CItem();
 	tradeWindow->SetX( 26 );
 	tradeWindow->SetY( 0 );
 	tradeWindow->SetZ( 0 );
