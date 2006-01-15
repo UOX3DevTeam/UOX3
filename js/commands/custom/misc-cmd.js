@@ -1,6 +1,6 @@
 // Miscellaneous Custom Commands || by Xuri (xuri at sensewave.com)
-// v1.07
-// Last Updated: 21. June 2005
+// v1.08
+// Last Updated: 15. January 2006
 //
 // This script contains some commands I scripted after the command-reorganization in the UOX3 source code,
 // as well as some I've "invented" on my own.
@@ -9,6 +9,7 @@
 // 11. July 2004 - Allowed setting tags with value "null" to delete tags.
 // 5. June 2005 - Added DECAY and NODECAY commands
 // 21. June 2005 - Added XSAY command
+// 15. January 2006 - Cleaned up the script, removed redundant return-statements, etc.
 
 function CommandRegistration()
 {
@@ -66,11 +67,8 @@ function command_BROWSE( pSock, execString )
 function command_INVUL( pSock, execString )
 {
 	if( execString == "" )
-	{
 		pSock.SysMessage( "You need to provide an argument with this command! Either true or false, 1 or 0!" );
-		return;
-	}
-	if( execString == "true" || execString == 1 )
+	else if( execString == "true" || execString == 1 )
 		pSock.CustomTarget( 3, "Whom do you wish to make invulnerable?" );
 	else if ( execString == "false" || execString == 0 )
 		pSock.CustomTarget( 4, "Whom do you wish to make vulnerable?" );
@@ -109,32 +107,27 @@ function command_ADDPACK( pSock, execString )
 function command_SETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	if( execString == "" || execString == null )
-	{
-		pUser.SysMessage( "You need to specify a tag and a value for the tag, seperated by a comma." );
-		return;
-	}
 	var Word = execString.split(",");
-	if( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null )
-	{
+	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
 		pUser.SysMessage( "You need to specify a tag and a value for the tag, seperated by a comma." );
-		return;
+	else
+	{
+		pUser.SetTag( "Word0", Word[0] );
+		pUser.SetTag( "Word1", Word[1] );
+		pUser.CustomTarget( 8, "Apply tag to which object?" );
 	}
-	pUser.SetTag( "Word0", Word[0] );
-	pUser.SetTag( "Word1", Word[1] );
-	pUser.CustomTarget( 8, "Apply tag to which object?" );
 }
 
 function command_GETTAG( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	if( execString == null || execString == "" )
-	{
 		pUser.SysMessage( "You need to specify a tagname to retrieve the value for" );
-		return;
+	else
+	{
+		pUser.SetTag( "TempTag", execString );
+		pUser.CustomTarget( 9, "Retrieve tag from which object?" );
 	}
-	pUser.SetTag( "TempTag", execString );
-	pUser.CustomTarget( 9, "Retrieve tag from which object?" );
 }
 
 function command_NODECAY( pSock, execString )
@@ -166,8 +159,7 @@ function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
 	var NewName = pSock.xText;
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
+	if( !pSock.GetWord( 1 ))
 	{
 		pUser.SysMessage( "'"+myTarget.name+"' has been renamed to '"+NewName+"'." );
 		myTarget.name = NewName;
@@ -183,28 +175,25 @@ function onCallback0( pSock, myTarget )
 function onCallback1( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		myTarget.frozen = true;
 		pUser.SysMessage( "The selected character has been frozen." );
-		return;
 	}
-	if( StrangeByte == 0 && !myTarget.isChar  )
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem  )
 	{
 		myTarget.movable = 2;
 		pUser.SysMessage( "The selected item has been frozen." );
-		return;
 	}
-	pUser.SysMessage( "You cannot freeze that." );
+	else
+		pUser.SysMessage( "You cannot freeze that." );
 }
 
 //Unfreeze
 function onCallback2( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.frozen == true )
 		{
@@ -213,9 +202,8 @@ function onCallback2( pSock, myTarget )
 		}
 		else
 			pUser.SysMessage( "That character isn't frozen! Can't unfreeze!" );
-		return;
 	}
-	if( StrangeByte == 0 && !myTarget.isChar  )
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem )
 	{
 		if( myTarget.movable <= 1 )
 			pUser.SysMessage( "That item isn't frozen! Can't unfreeze!" );
@@ -224,44 +212,44 @@ function onCallback2( pSock, myTarget )
 			myTarget.movable = 1;
 			pUser.SysMessage( "The selected item has been unfrozen." );
 		}
-		return;
 	}
-	pUser.SysMessage( "You cannot unfreeze that." );
+	else
+		pUser.SysMessage( "You cannot unfreeze that." );
 }
 
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.vulnerable == false )
 		{
 			pUser.SysMessage( "Error! That target is already invulnerable!" );
-			return;
 		}
-		pUser.SysMessage( "The selected target has been made invulnerable." );
-		myTarget.vulnerable = false;
-		return;
+		else
+		{
+			pUser.SysMessage( "The selected target has been made invulnerable." );
+			myTarget.vulnerable = false;
+		}
 	}
-	pUser.SysMessage( "That is not a character. Try again." );
+	else
+		pUser.SysMessage( "That is not a character. Try again." );
 }
 function onCallback4( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.vulnerable == true )
-		{
 			pUser.SysMessage( "Error! That target is already vulnerable!" );
-			return;
+		else
+		{
+			pUser.SysMessage( "The selected target has been made vulnerable." );
+			myTarget.vulnerable = true;
 		}
-		pUser.SysMessage( "The selected target has been made vulnerable." );
-		myTarget.vulnerable = true;
-		return;
 	}
-	pUser.SysMessage( "That is not a character. Try again." );
+	else
+		pUser.SysMessage( "That is not a character. Try again." );
 }
 
 //Addpack without parameters
@@ -271,9 +259,8 @@ function onCallback5( pSock, myTarget )
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
 	var targZ = pSock.GetByte( 16 );
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
-	{
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
+	{ //add backpack on character
 		var tempObj = myTarget.FindItemLayer(21);
 		if( tempObj == null )
 		{
@@ -284,10 +271,9 @@ function onCallback5( pSock, myTarget )
 		}
 		else
 			pUser.SysMessage( "That character already has a backpack. No new backpack added." );
-		return;
 	}
 	else
-	{
+	{ //add backpack on ground
 		var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
 		newPack.x = targX;
 		newPack.y = targY;
@@ -300,12 +286,10 @@ function onCallback6( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
 	var TempItemID = pSock.xText;
-	pUser.SysMessage( TempItemID );
 	var Word1 = pSock.xText;
 	var Word1 = Number(Word1);
 	var AddFromHex = pUser.GetTag( "AddFromHex" );
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && myTarget.isChar  )
+	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		var tempObj = myTarget.FindItemLayer(21);
 		if( tempObj != null )
@@ -327,8 +311,6 @@ function onCallback6( pSock, myTarget )
 			else
 				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", false );			
 		}
-		pUser.SetTag( "AddFromHex", null );
-		return;
 	}
 	else
 		pUser.SysMessage( "That is no character. Try again." );
@@ -340,8 +322,7 @@ function onCallback8( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var Word0 = pUser.GetTag( "Word0" );
 	var Word1 = pUser.GetTag( "Word1" );
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
+	if( !pSock.GetWord( 1 ))
 	{
 		if( Word1 == "null" )
 			myTarget.SetTag( Word0, null );
@@ -350,9 +331,7 @@ function onCallback8( pSock, myTarget )
 		pUser.SysMessage( "You have set a tag named '"+Word0+"' with a value of '"+Word1+"' on the targeted object." );
 	}
 	else
-	{
 		pUser.SysMessage( "You need to target a dynamic object (item or character)." );	
-	}
 	pUser.SetTag( "Word0", null );
 	pUser.SetTag( "Word1", null );
 }
@@ -362,16 +341,13 @@ function onCallback9( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
 	var TempTagName = pUser.GetTag( "TempTag" );
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
+	if( !pSock.GetWord( 1 ))
 	{
 		var TagData = myTarget.GetTag( TempTagName );
 		pUser.SysMessage( "The value of the targeted object's '"+TempTagName+"'-tag is: "+TagData );
 	}
 	else
-	{
 		pUser.SysMessage( "You need to target a dynamic object (item or character)." );	
-	}
 	pUser.SetTag( "TempTag", null );
 }
 
@@ -379,8 +355,7 @@ function onCallback9( pSock, myTarget )
 function onCallback10( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
+	if( !pSock.GetWord( 1 ))
 	{
 		if( myTarget.isItem )
 		{
@@ -398,8 +373,7 @@ function onCallback10( pSock, myTarget )
 function onCallback11( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
+	if( !pSock.GetWord( 1 ))
 	{
 		if( myTarget.isItem )
 		{
@@ -417,10 +391,8 @@ function onCallback11( pSock, myTarget )
 function onCallback12( pSock, myTarget ) 
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte   = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && ( myTarget.isChar || myTarget.isItem ))
+	if( !pSock.GetWord( 1 ) && ( myTarget.isChar || myTarget.isItem ))
 	{
-		myTarget.sayColour = pUser.sayColour;
 		myTarget.TextMessage( pSock.xText );
 	}
 	else

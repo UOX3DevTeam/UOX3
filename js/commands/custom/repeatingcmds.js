@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.07
-// Last updated: December 23rd 2005
+// v1.08
+// Last updated: January 15th 2005
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -39,11 +39,8 @@ function onCallback0( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var incXValue = pSock.xText;
 	var incXValue = Number(incXValue);
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
-	{
+	if( !pSock.GetWord( 1 ))
 			myTarget.x+= incXValue;
-	}
 	pUser.CustomTarget( 0, "Select target to reposition by "+incXValue+" X:" );
 }
 
@@ -64,11 +61,8 @@ function onCallback1( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var incYValue = pSock.xText;
 	var incYValue = Number(incYValue);
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
-	{
+	if( !pSock.GetWord( 1 ))
 			myTarget.y += incYValue;
-	}
 	pUser.CustomTarget( 1, "Select target to reposition by "+incYValue+" Y:" );
 }
 //Repeated Command: INCZ <value>
@@ -88,11 +82,8 @@ function onCallback2( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var incZValue = pSock.xText;
 	var incZValue = Number(incZValue);
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
-	{
+	if( !pSock.GetWord( 1 ))
 			myTarget.z += incZValue;
-	}
 	pUser.CustomTarget( 2, "Select target to reposition by "+incZValue+" Z:" );
 }
 
@@ -113,11 +104,8 @@ function onCallback4( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var TempType = pSock.xText;
 	var TempType = Number(TempType);
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
-	{
+	if( !pSock.GetWord( 1 ))
 			myTarget.type = TempType;
-	}
 	pUser.CustomTarget( 4, "Select target to make TYPE "+TempType+":" );
 }
 
@@ -138,11 +126,8 @@ function onCallback5( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var TempDye = pSock.xText;
 	var TempDye = Number(TempDye);
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 )
-	{
+	if( !pSock.GetWord( 1 ))
 			myTarget.colour = TempDye;
-	}
 	pUser.CustomTarget( 5, "Select target to DYE "+TempDye+":" );
 }
 
@@ -177,21 +162,21 @@ function onCallback6( pSock, myTarget )
 function command_RREMOVE( pSock, execString )
 {
 	pUser = pSock.currentChar;
-	pUser.CustomTarget( 7, "Which item do you wish to remove?" );
+	pUser.CustomTarget( 7, "Which object do you wish to remove?" );
 }
 function onCallback7( pSock, myTarget )
 {
 	var pUser = pSock.currentChar; 
-	var StrangeByte = pSock.GetWord( 1 );
-	if( StrangeByte == 0 && !myTarget.isChar )
+	if( !pSock.GetWord( 1 ))
 	{
+		if( myTarget.npc || myTarget.isItem )
 			myTarget.Delete();
+		else
+			pUser.SysMessage( "You can only remove items or NPCs." );
 	}
 	else
-	{
-		pUser.SysMessage( "That's not an item you can remove!" );
-	}
-	pUser.CustomTarget( 7, "Which item do you wish to remove?" );
+		pUser.SysMessage( "You can only remove items or NPCs." );
+	pUser.CustomTarget( 7, "Which object do you wish to remove?" );
 }
 
 //Repeated Command: ADD ITEM <item-id from dfns>
