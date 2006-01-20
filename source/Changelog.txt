@@ -1,3 +1,6 @@
+1/20/2006 - Xuri
+	Yumi-bows should now use arrows instead of crossbow bolts.
+
 12/16/2005 - giwo (0.98-3.1g [3.2 RC])
 	Fixed an issue with context menus causing one to attempt to "snoop" their own pack.
 	Fixed a crash when attempting a random steal on a character with no items.
