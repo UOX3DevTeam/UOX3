@@ -482,6 +482,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26C2: //composite bow - AoS
 		case 0x26CC: //composite bow - AoS
 		case 0x2571: //horseman's bow - LBR
+		case 0x27A5: //yumi - SE
+		case 0x27F0: //yumi - SE
 			return BOWS;
 		// Crossbows
 		case 0x0F4F: //crossbow
@@ -490,8 +492,6 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13FD: //heavy crossbow
 		case 0x26C3: //repeating crossbow - AoS
 		case 0x26CD: //repeating crossbow - AoS
-		case 0x27A5: //yumi - SE
-		case 0x27F0: //yumi - SE
 		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 			return XBOWS;
