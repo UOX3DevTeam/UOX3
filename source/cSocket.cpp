@@ -57,7 +57,11 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI0
 		}
 	}
 	if( j < 7 )
+	{
+		for( UI08 k = j; k < 7; ++k )
+			outStream << " ----";
 		dumpStream( outStream, qbuffer, j );
+	}
 	outStream << std::endl;
 }
 
@@ -78,7 +82,11 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, const char *myBu
 		}
 	}
 	if( j < 7 )
+	{
+		for( UI08 k = j; k < 7; ++k )
+			outStream << " ----";
 		dumpStream( outStream, qbuffer, j );
+	}
 	outStream << std::endl;
 }
 

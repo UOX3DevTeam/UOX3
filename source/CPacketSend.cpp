@@ -10,23 +10,6 @@
 namespace UOX
 {
 
-void PackShort( UI08 *toPack, int offset, UI16 value )
-{
-	toPack[offset+0] = (UI08)((value&0xFF00)>>8);
-	toPack[offset+1] = (UI08)((value&0x00FF)%256);
-}
-
-void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 ) // Split login password into UOX password and UO password
-{
-	int i = 0;
-	pass1 = "";
-	int pass0Len = pass0.length();
-	while( pass0[i] != '/' && i < pass0Len ) 
-		++i;
-	pass1 = pass0.substr( 0, i );
-	if( i < pass0Len ) 
-		pass2 = pass0.substr( i );
-}
 
 // Unknown bytes
 // 5->8
@@ -635,7 +618,8 @@ void CPRelay::InternalReset( void )
 {
 	pStream.ReserveSize( 11 );
 	pStream.WriteByte( 0, 0x8C );
-	SeedIP( loopbackIP );
+//	SeedIP( loopbackIP );
+	SeedIP( 0xFFFFFFFF );
 }
 
 
@@ -2183,6 +2167,7 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 //Bit# 3: unknown, never seen it set
 //Bit# 4: unknown, set on OSI servers that have AOS code - no matter of account status (doesn’t seem to “unlock/lock” anything on client side)
 //Bit# 5: enables AOS update (necro/paladin skills for all clients, malas map/AOS monsters if AOS installation present)
+//Bit# 6: Sixth Character Slot
 //Bit# 15: since client 4.0 this bit has to be set, otherwise bits 3..14 are ignored.
 //Thus 0: neither T2A NOR LBR, equal to not sending it at all, 
 //1 is T2A, chatbutton, 
@@ -3031,21 +3016,36 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //		BYTE[31] town (general name) 
 //		BYTE[31] exact name 
 //	BYTE[4] Flags 
+//		0x01 = unknown
 //		0x02 = send config/req logout (IGR?)
-//		0x04 = single character (siege)
+//		0x04 = single character (siege) (alternative seen, Limit Characters)
 //		0x08 = enable npcpopup menus
-//		0x10 = unknown, 
+//		0x10 = unknown, (alternative seen, single character)
 //		0x20 = enable common AOS features (tooltip thing/fight system book, but not AOS monsters/map/skills)
+//		0x40 = Sixth Character Slot?
 void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << std::endl;
-	outStream << "# Chars		 : " << (SI16)pStream.GetByte( 3 ) << std::endl;
+		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << " / " << pStream.GetShort( 1 ) << std::endl;
+	outStream << "# Chars        : " << (SI16)pStream.GetByte( 3 ) << std::endl;
 	outStream << "Characters --" << std::endl;
-	for( UI08 i = 0; i < 6; ++i )
+
+	UI32 startLocOffset, realChars;
+	if( pStream.GetByte( 3 ) > 5 )
+	{
+		startLocOffset	= 364;
+		realChars		= 6;
+	}
+	else
+	{
+		startLocOffset	= 304;
+		realChars		= 5;
+	}
+
+	for( UI08 i = 0; i < realChars; ++i )
 	{
 		UI32 baseOffset = 4 + i * 60;
-		outStream << "    Character " << (UI16)i << std::endl;
+		outStream << "    Character " << (UI16)i << ":" << std::endl;
 		outStream << "      Name: ";
 		for( UI08 j = 0; j < 30; ++j )
 		{
@@ -3064,19 +3064,20 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		}
 		outStream << std::endl;
 	}
-	outStream << "# Starts       : " << (SI16)pStream.GetByte( 364 ) << std::endl;
+
+	outStream << "# Starts       : " << (SI16)pStream.GetByte( startLocOffset ) << std::endl;
 	outStream << "Starting locations --" << std::endl;
-	for( UI08 l = 0; l < pStream.GetByte( 364 ); ++l )
+	for( UI08 l = 0; l < pStream.GetByte( startLocOffset ); ++l )
 	{
-		UI32 baseOffset = 366 + l * 63;
-		outStream << "    Start " << l << std::endl;
-		outStream << "      Index : " << (SI16)pStream.GetByte( baseOffset ) << std::endl;
+		UI32 baseOffset = startLocOffset + 1 + l * 63;
+		outStream << "    Start " << (SI16)l << std::endl;
+		outStream << "      Index       : " << (SI16)pStream.GetByte( baseOffset ) << std::endl;
 		outStream << "      General Name: ";
 		++baseOffset;
 		for( UI08 m = 0; m < 31; ++m )
 		{
 			if( pStream.GetByte( baseOffset+m ) != 0 )
-				outStream << (SI16)pStream.GetByte( baseOffset+m );
+				outStream << pStream.GetByte( baseOffset+m );
 			else
 				break;
 		}
@@ -3085,24 +3086,24 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		for( UI08 n = 0; n < 31; ++n )
 		{
 			if( pStream.GetByte( baseOffset+n ) != 0 )
-				outStream << (SI16)pStream.GetByte( baseOffset+n );
+				outStream << pStream.GetByte( baseOffset+n );
 			else
 				break;
 		}
 		outStream << std::endl;
 	}
 	UI08 lastByte = pStream.GetByte( pStream.GetSize() - 1 );
-	outStream << "Flags  		 : " << lastByte << std::endl;
+	outStream << "Flags          : " << (UI32)lastByte << std::endl;
 	if( (lastByte&0x02) == 0x02 )
-		outStream << "       		 : Send config/request logout" << std::endl;
+		outStream << "               : Send config/request logout" << std::endl;
 	if( (lastByte&0x04) == 0x04 )
-		outStream << "       		 : Single character" << std::endl;
+		outStream << "               : Single character" << std::endl;
 	if( (lastByte&0x08) == 0x08 )
-		outStream << "       		 : Enable NPC Popup menus" << std::endl;
+		outStream << "               : Enable NPC Popup menus" << std::endl;
 	if( (lastByte&0x10) == 0x10 )
-		outStream << "       		 : Unknown" << std::endl;
+		outStream << "               : Unknown" << std::endl;
 	if( (lastByte&0x20) == 0x20 )
-		outStream << "       		 : Enable Common AoS features" << std::endl;
+		outStream << "               : Enable Common AoS features" << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
 }

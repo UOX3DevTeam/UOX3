@@ -625,6 +625,21 @@ public:
 	virtual bool	Handle( void );
 };
 
+class CPIMetrics : public CPInputBuffer
+{
+public:
+	virtual			~CPIMetrics()
+	{
+	}
+					CPIMetrics();
+					CPIMetrics( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
 }
 
 #endif

@@ -1,3 +1,18 @@
+21st January, 2006 - Maarc
+
+	Fixed an Alignment issue in dumping out CPCharAndStartLoc (converting tabs to explicit spaces)
+	Turned out last byte of the packet as a real number, rather than a UI08 which is interpreting as a char
+	Updated some packet notes from what I could scrounge through the net
+	Added basic CPIMetrics class to read in the 0xD9 packet that gets sent
+	Fixed a logging issue with CPCharAndStartLoc that wasn't taking the extra characters into account
+	Fixed a logging issue with CPCharAndStartLoc that was trying to dump out location details as ASCII codes, not as strings
+	Added a feature to packet logging so that it will fill a line of less than 8 bytes to 8 bytes, to even out it's display
+	CPISecondLogin logging claimed to be packet 0x80, when in reality, it's 0x91
+	Unknown byte in CPIFirstLogin now displayed numerically, rather than as a dodgy ASCII char
+	Changed Seed IP of CPRelay to 0xFFFFFFFF
+	Moved pSplit() and PackShort() from CPacketSend.cpp to CPacketReceive.cpp, given that's the only place that it is even used
+	Removed some unnecessary dead code
+
 1/20/2006 - Xuri
 	Yumi-bows should now use arrows instead of crossbow bolts.
 

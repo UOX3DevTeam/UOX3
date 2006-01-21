@@ -13,8 +13,23 @@
 namespace UOX
 {
 
-void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 );
-void PackShort( UI08 *toPack, int offset, UI16 value );
+void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 ) // Split login password into UOX password and UO password
+{
+	int i = 0;
+	pass1 = "";
+	int pass0Len = pass0.length();
+	while( pass0[i] != '/' && i < pass0Len ) 
+		++i;
+	pass1 = pass0.substr( 0, i );
+	if( i < pass0Len ) 
+		pass2 = pass0.substr( i );
+}
+
+void PackShort( UI08 *toPack, int offset, UI16 value )
+{
+	toPack[offset+0] = (UI08)((value&0xFF00)>>8);
+	toPack[offset+1] = (UI08)((value&0x00FF)%256);
+}
 
 CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 {
@@ -33,7 +48,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0xBB:	return NULL;								// No idea
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return NULL;	
-		case 0xD9:	return NULL;								// Client Hardware
+		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
@@ -94,7 +109,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
-		case 0xD9:	return NULL;								// Client Hardware
+		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		default:	return NULL;
 	}
 	return NULL;
@@ -114,7 +129,7 @@ void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << std::endl;
 	outStream << "UserID         : " << Name() << std::endl;
 	outStream << "Password       : " << Pass() << std::endl;
-	outStream << "Unknown        : " << Unknown() << std::endl;
+	outStream << "Unknown        : " << (SI16)Unknown() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -298,7 +313,7 @@ bool CPIServerSelect::Handle( void )
 void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPISecondLogin 0x80 --> Length: 65" << std::endl;
+		outStream << "[RECV]Packet   : CPISecondLogin 0x91 --> Length: 65" << std::endl;
 	
 	outStream << "Key Used       : " << Account() << std::endl;
 	outStream << "SID            : " << Name() << std::endl;
@@ -1525,46 +1540,11 @@ void CPITalkRequestUnicode::Receive( void )
 		}
 		buffer[myj-1] = 0;
 		blockLen = ((blockLen - myoffset) * 2) + 12;
-		PackShort( tSock->Buffer(), 1, blockLen );
+		PackShort( buffer, 1, blockLen );
 		// update our unicode text
 		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
 	}
-/*	if( typeUsed == 0xC0 || typeUsed == 0xC9 || typeUsed == 0xC1 || typeUsed == 0xC2 || typeUsed == 0xC6 || typeUsed == 0xC8 )
-	{
-		// number of distinct trigger words
-		numTrigWords = ( tSock->GetByte( 12 ) << 24 ) + ( tSock->GetByte( 13 ) << 16 );
-		numTrigWords &= 0xFFF00000;
-		numTrigWords = (numTrigWords >> 20);
-
-		if( numTrigWords > 0 )	// Should Update this eventually to catch all trigger words in a string
-		{
-			triggerWord = ( tSock->GetByte( 13 ) << 24 ) + ( tSock->GetByte( 14 ) << 16 );
-			triggerWord &= 0x0FFF0000;
-			triggerWord = ( (triggerWord << 4) >> 20);
-		}
-		myoffset = 15;
-		if( (numTrigWords % 2) == 1 )	// odd number ?
-			myoffset += ( numTrigWords / 2 ) * 3;
-		else
-			myoffset += ( ( numTrigWords / 2 ) * 3 ) - 1;
-//		buffer[3] &= 0x0F;	// set to normal to send it back
-
-		myj = 12;
-		int mysize = blockLen - myoffset;
-		for( j = 0; j < mysize; ++j )
-			unicodeTxt[j] = buffer[j + myoffset];
-		for( j = 0; j < mysize; ++j )
-		{	// we would overwrite our buffer, so we need to catch it before we do that.
-			buffer[myj++] = 0;
-			buffer[myj++] = unicodeTxt[j];
-		}
-		buffer[myj-1] = 0;
-		blockLen = ((blockLen - myoffset) * 2) + 12;
-		PackShort( tSock->Buffer(), 1, blockLen );
-		// update our unicode text
-		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
-	}
-*/	else		// NOT a weird configuration, it is unicode however!
+	else		// NOT a weird configuration, it is unicode however!
 	{
 		// starts at 12
 		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
@@ -2130,5 +2110,35 @@ void CPIBookPage::Receive( void )
 }
 
 // bool CPIBookPage::Handle() implemented in books.cpp
+
+CPIMetrics::CPIMetrics()
+{
+}
+
+CPIMetrics::CPIMetrics( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIMetrics::Receive( void )
+{
+//	tSock->Receive( 3, false );
+//	tSock->Receive( tSock->GetWord( 1 ), false );
+	tSock->Receive( 0x010C, false );
+}
+
+bool CPIMetrics::Handle()
+{
+	// we're going to silently swallow this packet, really
+	return true;
+}
+
+void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPIMetrics 0xD9 --> Length: 268" << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
 
 }
