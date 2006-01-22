@@ -31,11 +31,47 @@ T Capped( const T value, const T minimum, const T maximum )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Checks if selected hair is a valid hair type
 //o---------------------------------------------------------------------------o
-bool validHairStyle( UI16 id )
+bool validHairStyle( UI16 id, UI16 bodyID )
 {
-	bool rvalue;
-	switch( id )
+	bool rvalue = false;
+	switch( bodyID )
 	{
+	case 0x025D:	// elven male
+		switch( id )
+		{
+		case 0x2FBF:	// mid long (male)
+		case 0x2FC0:	// long feather (both)
+		case 0x2FC1:	// short (both)
+		case 0x2FC2:	// mullet (both)
+		case 0x2FCD:	// long (male)
+		case 0x2FCE:	// topknot (both)
+		case 0x2FCF:	// long braid (both)
+		case 0x2FD1:	// spiked (male)
+			rvalue = true;
+			break;
+		default:
+			break;
+		}
+		break;
+	case 0x025E:	// elven female
+		switch( id )
+		{
+		case 0x2FC0:	// long feather (both)
+		case 0x2FC1:	// short (both)
+		case 0x2FC2:	// mullet (both)
+		case 0x2FCC:	// flower (female)
+		case 0x2FCE:	// topknot (both)
+		case 0x2FCF:	// long braid (both)
+		case 0x2FD0:	// buns (female)
+			rvalue = true;
+			break;
+		default:
+			break;
+		}
+		break;
+	default:		// human otherwise
+		switch( id )
+		{
 		case 0x203B:
 		case 0x203C:
 		case 0x203D:
@@ -48,14 +84,10 @@ bool validHairStyle( UI16 id )
 		case 0x204A:
 			rvalue = true;
 			break;
-			// Elvish Hair
-		case 52:
-		case 53:
-		case 54:
-		case 55:
 		default:
-			rvalue = false;
 			break;
+		}
+		break;
 	}
 	return rvalue;
 }
@@ -462,7 +494,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	UI16 ItemID, ItemColour;
-	if( validHairStyle( hairStyle ) )
+	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
 		ItemID				= hairStyle;
 		ItemColour			= validHairColour( hairColour, mChar->GetID() );

@@ -21,6 +21,7 @@
 		sourceObject.CanSee( targX, targY, targZ );
 
 		otherObject can be either a character, item or socket.  If they're not on the same world or the target item is in a container, line of sight fails.
+	Proper validation of hair style on creation of elvish characters
 
 21st January, 2006 - Maarc
 
