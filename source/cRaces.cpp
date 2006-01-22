@@ -197,12 +197,12 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		hairobject	= s->GetItemAtLayer( IL_HAIR );
 		if( pRace->GenderRestriction() != 0 )
 		{
-			if( pRace->GenderRestriction() != FEMALE && s->GetID() == 0x0191 )
+			if( pRace->GenderRestriction() != FEMALE && ( s->GetID() == 0x0191 || s->GetID() == 0x025E ) )
 			{
 				mSock->sysmessage( 370 );
 				return;
 			}
-			if( pRace->GenderRestriction() != MALE && s->GetID() == 0x0190 )
+			if( pRace->GenderRestriction() != MALE && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) )
 			{
 				mSock->sysmessage( 370 );
 				return;
@@ -254,7 +254,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				hairobject = NULL;
 			}
 		}
-		if( pRace->RequiresBeard() && s->GetID() == 0x0190 && !ValidateObject( beardobject ) )
+		if( pRace->RequiresBeard() && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) && !ValidateObject( beardobject ) )
 		{
 			if( pRace->IsBeardRestricted() )
 				hairColor = RandomBeard( x );

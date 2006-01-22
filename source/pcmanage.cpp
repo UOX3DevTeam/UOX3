@@ -18,14 +18,20 @@
 namespace UOX
 {
 
+template< class T >
+T Capped( const T value, const T minimum, const T maximum )
+{
+	return UOX_MAX( UOX_MIN( value, maximum ), minimum );
+}
+
 //o---------------------------------------------------------------------------o
-//|   Function    :  bool validHair( UI16 id )
+//|   Function    :  bool validHairStyle( UI16 id )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Checks if selected hair is a valid hair type
 //o---------------------------------------------------------------------------o
-bool validHair( UI16 id )
+bool validHairStyle( UI16 id )
 {
 	bool rvalue;
 	switch( id )
@@ -42,6 +48,11 @@ bool validHair( UI16 id )
 		case 0x204A:
 			rvalue = true;
 			break;
+			// Elvish Hair
+		case 52:
+		case 53:
+		case 54:
+		case 55:
 		default:
 			rvalue = false;
 			break;
@@ -73,6 +84,145 @@ bool validBeard( UI16 id )
 			break;
 		default:
 			rvalue = false;
+	}
+	return rvalue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  UI16 validSkinColour( UI16 id, UI16 bodyID )
+//|   Date        :  22nd January, 2006
+//|   Programmer  :  Maarc
+//|   Return      :  A validated skin colour (capped into range)
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Check if selected skin colour is a valid colour, based on
+//|					 the body types involved (elves and humans not the same)
+//o---------------------------------------------------------------------------o
+COLOUR validSkinColour( UI16 id, UI16 bodyID )
+{
+	COLOUR rvalue;
+	switch( bodyID )
+	{
+	case 0x025D:	// elven male
+	case 0x025E:	// elven female
+		switch( id )	// let's see if what is passed in is valid
+		{
+		case 191:
+		case 589:
+		case 590:
+		case 591:
+		case 851:
+		case 865:
+		case 871:
+		case 884:
+		case 885:
+		case 886:
+		case 897:
+		case 898:
+		case 899:
+		case 900:
+		case 901:
+		case 905:
+		case 990:
+		case 997:
+		case 998:
+		case 1000:
+		case 1001:
+		case 1072:
+		case 1191:
+		case 1246:
+		case 1309:
+		case 1343:
+		case 1401:
+		case 1899:
+		case 1900:
+		case 1901:
+		case 2101:
+		case 2307:	rvalue = id;	break;
+		default:	rvalue = 191;	break;	// nope, it's not, let's default
+		}
+		break;
+	default:	// human male/female
+		rvalue = Capped( id, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
+		break;
+	}
+	return rvalue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  UI16 validHairColour( UI16 id, UI16 bodyID )
+//|   Date        :  22nd January, 2006
+//|   Programmer  :  Maarc
+//|   Return      :  A validated hair colour (capped into range)
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Check if selected hair colour is a valid colour, based on
+//|					 the body types involved (elves and humans not the same)
+//o---------------------------------------------------------------------------o
+COLOUR validHairColour( UI16 id, UI16 bodyID )
+{
+	COLOUR rvalue;
+	switch( bodyID )
+	{
+	case 0x025D:	// elven male
+	case 0x025E:	// elven female
+		switch( id )	// let's see if what is passed in is valid
+		{
+		case 52:
+		case 53:
+		case 54:
+		case 55:
+		case 56:
+		case 57:
+		case 88:
+		case 142:
+		case 143:
+		case 144:
+		case 145:
+		case 146:
+		case 257:
+		case 296:
+		case 303:
+		case 345:
+		case 346:
+		case 347:
+		case 348:
+		case 349:
+		case 350:
+		case 445:
+		case 484:
+		case 499:
+		case 519:
+		case 529:
+		case 569:
+		case 593:
+		case 620:
+		case 707:
+		case 713:
+		case 797:
+		case 798:
+		case 799:
+		case 800:
+		case 801:
+		case 802:
+		case 803:
+		case 804:
+		case 805:
+		case 806:
+		case 873:
+		case 902:
+		case 903:
+		case 904:
+		case 905:
+		case 906:
+		case 1437:
+		case 1720:
+		case 1829:
+		case 2131:	rvalue = id;	break;
+		default:	rvalue = 52;	break;	// nope, it's not, let's default
+		}
+		break;
+	default:	// human male/female
+		rvalue = Capped( id, static_cast<UI16>(0x03EA), static_cast<UI16>(0x0422) );
+		break;
 	}
 	return rvalue;
 }
@@ -236,12 +386,6 @@ bool CPIDeleteCharacter::Handle( void )
 	return true;
 }
 
-template< class T >
-T Capped( const T value, const T minimum, const T maximum )
-{
-	return UOX_MAX( UOX_MIN( value, maximum ), minimum );
-}
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	void addNewbieItem( CSocket *socket, CChar *c, char* str)
 //|	Date			-	
@@ -318,18 +462,18 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	UI16 ItemID, ItemColour;
-	if( validHair( hairStyle ) )
+	if( validHairStyle( hairStyle ) )
 	{
-		ItemID = hairStyle;
-		ItemColour = Capped( hairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
-		CreatedItems[HAIR] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
+		ItemID				= hairStyle;
+		ItemColour			= validHairColour( hairColour, mChar->GetID() );
+		CreatedItems[HAIR]	= Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[HAIR] != NULL )
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
 	}
 	if( validBeard( facialHair ) && sex == 0 )
 	{
-		ItemID = facialHair;
-		ItemColour = Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
+		ItemID				= facialHair;
+		ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[BEARD] != NULL )
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
@@ -348,7 +492,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	{
 		UI16 newID = INVALIDID;
 		ItemLayers newLayer = IL_NONE;
-		if( mChar->GetID() == 0x0190 )
+		if( mChar->GetID() == 0x0190 || mChar->GetID() == 0x025D )
 		{
 			newLayer = IL_PANTS;
 			switch( RandomNum( 0, 1 ) )
@@ -448,15 +592,18 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetAccount( actbRec );
 			}
 			UI16 pGenderID = 0x190;
-			if( sex != 0 )
-				pGenderID = 0x191;
+			switch( sex )
+			{
+			default:						break;
+			case 1:		pGenderID = 0x0191;	break;	// human female
+			case 2:		pGenderID = 0x025D;	break;	// elf male
+			case 3:		pGenderID = 0x025E;	break;	// elf female
+			}
 
 			mChar->SetID( pGenderID );
 			mChar->SetOrgID( pGenderID );
 
-			mChar->SetSkin( Capped( skinColour, static_cast<UI16>(0x03ea), static_cast<UI16>(0x0422) ) );
-//			if( mChar->GetSkin() < 0x83EA || mChar->GetSkin() > 0x8422 )
-//				mChar->SetSkin( 0x83EA );
+			mChar->SetSkin( validSkinColour( skinColour, pGenderID ) );
 			mChar->SetOrgSkin( mChar->GetSkin() );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
@@ -870,10 +1017,14 @@ void HandleDeath( CChar *mChar )
 
 	if( !mChar->IsNpc() )
 	{
-		if( mChar->GetOrgID() == 0x0190 )
-			mChar->SetID( 0x0192 );  // Male or Female
-		else
-			mChar->SetID( 0x0193 );
+		switch( mChar->GetOrgID() )
+		{
+		case 0x0190:	mChar->SetID( 0x0192 );	break;	// human male
+		default:
+		case 0x0191:	mChar->SetID( 0x0193 );	break;	// human female, or others
+		case 0x025D:	mChar->SetID( 0x025F );	break;	// elf male
+		case 0x025E:	mChar->SetID( 0x0260 );	break;	// elf female
+		}
 
 		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );
 		if( c == NULL )

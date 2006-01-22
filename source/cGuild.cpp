@@ -1579,7 +1579,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 			return;
 		}
 		stone->SetName( Dictionary->GetEntry( 175 ) );
-		if( mChar->GetID() == 0x0191 || mChar->GetID() == 0x0193 )
+		if( mChar->GetID() == 0x0191 || mChar->GetID() == 0x0193 || mChar->GetID() == 0x025E || mChar->GetID() == 0x0260 )
 			mChar->SetGuildTitle( "Guildmistress" );
 		else
 			mChar->SetGuildTitle( "Guildmaster" );

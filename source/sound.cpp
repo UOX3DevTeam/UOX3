@@ -195,7 +195,7 @@ void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 //o---------------------------------------------------------------------------o
 void cEffects::playDeathSound( CChar *i )
 {
-	if( i->GetOrgID() == 0x0191 )// Female Death
+	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E )// Female Death (human/elf)
 	{
 		switch( RandomNum( 0, 3 ) )
 		{
@@ -206,7 +206,7 @@ void cEffects::playDeathSound( CChar *i )
 			default:	PlaySound( i, 0x0150 );	break;
 		}
 	}
-	else if( i->GetOrgID() == 0x0190 )	// Male Death
+	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D )	// Male Death (human/elf)
 	{
 		switch( RandomNum( 0, 3 ) )
 		{

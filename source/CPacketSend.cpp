@@ -357,7 +357,8 @@ void CPExtMove::CopyData( CChar &toCopy )
 		flag |= 0x80;
 	if( toCopy.GetPoisoned() ) 
 		flag |= 0x04;
-	if( toCopy.GetID() == 0x0191 )
+#pragma note( "we need to update this here to determine what goes on with elves too!" )
+	if( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E )
 		flag |= 0x02;
 #if defined( _MSC_VER )
 #pragma note( "Get confirmation here" )
@@ -1593,6 +1594,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		MaxHP( toCopy.GetStrength() );
 	}
 	NameChange( false );
+#pragma note( "We need to check what the values are, OSI wise, for this value.  Are elfs 2/3?" )
 	if( toCopy.GetID() == 0x0190 || toCopy.GetID() == 0x0192 )
 		Sex( 0 );
 	else
@@ -2161,30 +2163,69 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 //Enable locked client features (3 bytes) 
 //·        BYTE cmd 
 //·        BYTE[2] feature#
-//Bit# 1 T2A upgrade, enables chatbutton, 
-//Bit# 2 enables LBR update.  (of course LBR installation is required)
-//(plays MP3 instead of midis, 2D LBR client shows new LBR monsters,…)
-//Bit# 3: unknown, never seen it set
-//Bit# 4: unknown, set on OSI servers that have AOS code - no matter of account status (doesn’t seem to “unlock/lock” anything on client side)
-//Bit# 5: enables AOS update (necro/paladin skills for all clients, malas map/AOS monsters if AOS installation present)
-//Bit# 6: Sixth Character Slot
-//Bit# 15: since client 4.0 this bit has to be set, otherwise bits 3..14 are ignored.
-//Thus 0: neither T2A NOR LBR, equal to not sending it at all, 
-//1 is T2A, chatbutton, 
-//2 is LBR without chatbutton, 
-//3 is LBR with chatbutton…
-//8013, LBR + chatbutton + AOS enabled
-//Note1: this message is send immediately after login.
-//Note2: on OSI  servers this controls features OSI enables/disables via “upgrade codes.”
-//Note3: a 3 doesn’t seem to “hurt” older (NON LBR) clients.
+//	0x01	T2A upgrade, enables chatbutton
+//	0x02	Enables LBR update.  (of course LBR installation is required)
+//			(plays MP3 instead of midis, 2D LBR client shows new LBR monsters, ... )
+//	0x04	Unknown, never seen it set	(single char?)
+//	0x08	Unknown, set on OSI servers that have AOS code - no matter of account status (doesn’t seem to “unlock/lock” anything on client side)
+//	0x10	Enables AOS update (necro/paladin skills for all clients, malas map/AOS monsters if AOS installation present)
+//	0x20	Sixth Character Slot
+//	0x40	Samurai Empire?
+//	0x80	Elves?
+//	0x100
+//	0x200
+//	0x400
+//	0x800
+//	0x1000
+//	0x2000
+//	0x4000	
+//	0x8000	Since client 4.0 this bit has to be set, otherwise bits 3..14 are ignored.
+// Thus	0		neither T2A NOR LBR, equal to not sending it at all, 
+//		1		is T2A, chatbutton, 
+//		2		is LBR without chatbutton, 
+//		3		is LBR with chatbutton…
+//		8013	LBR + chatbutton + AOS enabled
+// Note1: this message is send immediately after login.
+// Note2: on OSI  servers this controls features OSI enables/disables via “upgrade codes.”
+// Note3: a 3 doesn’t seem to “hurt” older (NON LBR) clients.
 
 	pStream.ReserveSize( 3 );
 	pStream.WriteByte( 0, 0xB9 );
 #if defined( _MSC_VER )
 #pragma todo( "Currently all client support is hardcoded. Move this into the ini when possible." )
 #endif
-	pStream.WriteByte( 1, 0x80 );		// 0x00
-	pStream.WriteByte( 2, 0x3F );		// New chars enabled(shh they prolly wont work) and Enable 6th slot
+//	pStream.WriteByte( 1, 0x80 );		// 0x00
+//	pStream.WriteByte( 2, 0x3F );		// New chars enabled(shh they prolly wont work) and Enable 6th slot
+//	pStream.WriteShort( 1, 0x8000 | 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80 );
+	pStream.WriteShort( 1, 0x80FB );	// all features + sixth char
+}
+
+void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet     : CPEnableClientFeatures 0xB9 --> Length: 3" << TimeStamp() << std::endl;
+
+	UI16 lastByte = pStream.GetUShort( 1 );
+	outStream << "Flags          : " << std::hex << (UI32)lastByte << std::dec << std::endl;
+	if( (lastByte&0x01) == 0x01 )
+		outStream << "               : T2A features (including chat)" << std::endl;
+	if( (lastByte&0x02) == 0x02 )
+		outStream << "               : Enabled LBR support" << std::endl;
+	if( (lastByte&0x04) == 0x04 )
+		outStream << "               : Unknown 1 (single char?)" << std::endl;
+	if( (lastByte&0x08) == 0x08 )
+		outStream << "               : Unknown 2 (doesn't matter?)" << std::endl;
+	if( (lastByte&0x10) == 0x10 )
+		outStream << "               : Enabled AOS support" << std::endl;
+	if( (lastByte&0x20) == 0x20 )
+		outStream << "               : Enabled Sixth Character Slot?" << std::endl;
+	if( (lastByte&0x40) == 0x40 )
+		outStream << "               : Enable Samurai Empire?" << std::endl;
+	if( (lastByte&0x80) == 0x80 )
+		outStream << "               : Enable Elves and ML?" << std::endl;
+
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
 }
 
 //0x25 Packet
@@ -3016,13 +3057,15 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //		BYTE[31] town (general name) 
 //		BYTE[31] exact name 
 //	BYTE[4] Flags 
-//		0x01 = unknown
-//		0x02 = send config/req logout (IGR?)
-//		0x04 = single character (siege) (alternative seen, Limit Characters)
-//		0x08 = enable npcpopup menus
-//		0x10 = unknown, (alternative seen, single character)
-//		0x20 = enable common AOS features (tooltip thing/fight system book, but not AOS monsters/map/skills)
-//		0x40 = Sixth Character Slot?
+//		0x01	= unknown
+//		0x02	= send config/req logout (IGR?)
+//		0x04	= single character (siege) (alternative seen, Limit Characters)
+//		0x08	= enable npcpopup menus
+//		0x10	= unknown, (alternative seen, single character)
+//		0x20	= enable common AOS features (tooltip thing/fight system book, but not AOS monsters/map/skills)
+//		0x40	= Sixth Character Slot?
+//		8x80	= Samurai Empire?
+//		0x100	= Elf races?
 void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -3092,8 +3135,8 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		}
 		outStream << std::endl;
 	}
-	UI08 lastByte = pStream.GetByte( pStream.GetSize() - 1 );
-	outStream << "Flags          : " << (UI32)lastByte << std::endl;
+	UI16 lastByte = pStream.GetUShort( pStream.GetSize() - 2 );
+	outStream << "Flags          : " << std::hex << (UI32)lastByte << std::dec << std::endl;
 	if( (lastByte&0x02) == 0x02 )
 		outStream << "               : Send config/request logout" << std::endl;
 	if( (lastByte&0x04) == 0x04 )
@@ -3104,6 +3147,12 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "               : Unknown" << std::endl;
 	if( (lastByte&0x20) == 0x20 )
 		outStream << "               : Enable Common AoS features" << std::endl;
+	if( (lastByte&0x40) == 0x40 )
+		outStream << "               : Enable Sixth Character Slot?" << std::endl;
+	if( (lastByte&0x80) == 0x80 )
+		outStream << "               : Enable Samurai Empire?" << std::endl;
+	if( (lastByte&0x100) == 0x100 )
+		outStream << "               : Enable Elves and ML?" << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
 }
@@ -3150,7 +3199,8 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 	else
 		pStream.WriteByte( 304, numLocations );
 	// turn on /*send config,*/ npcpopup menus and common AOS features
-	pStream.WriteByte( packetSize - 1, ( 0x08 | 0x20 | 0x40 ) );
+//	pStream.WriteByte( packetSize - 1, ( 0x08 | 0x20 | 0x40 ) );
+	pStream.WriteShort( packetSize - 2, ( 0x08 | 0x20 | 0x40 | 0x80 | 0x100 ) );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
 {

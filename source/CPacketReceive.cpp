@@ -1703,33 +1703,33 @@ void CPIDeleteCharacter::Receive( void )
 //0x00 Packet
 //Last Modified on Sunday, 19-Oct-2003 
 //Create Character (104 bytes) 
-//	BYTE cmd 
-//	BYTE[4] pattern1 (0xedededed) 
-//	BYTE[4] pattern2 (0xffffffff) 
-//	BYTE pattern3 (0x00) 
-//	BYTE[30] char name 
-//	BYTE[30] char password 
-//	BYTE sex (0=male, 1=female)
-//	BYTE str 
-//	BYTE dex 
-//	BYTE int 
-//	BYTE skill1 
-//	BYTE skill1value 
-//	BYTE skill2 
-//	BYTE skill2value 
-//	BYTE skill3 
-//	BYTE skill3value 
-//	BYTE[2] skinColor 
-//	BYTE[2] hairStyle 
-//	BYTE[2] hairColor 
-//	BYTE[2] facial hair 
-//	BYTE[2] facial hair color 
-//	BYTE[2] location # from starting list 
-//	BYTE[2] unknown1 
-//	BYTE[2] slot
-//	BYTE[4] clientIP 
-//	BYTE[2] shirt color
-//	BYTE[2] pants color
+//	BYTE cmd								0
+//	BYTE[4] pattern1 (0xedededed)			1
+//	BYTE[4] pattern2 (0xffffffff)			5
+//	BYTE pattern3 (0x00)					9
+//	BYTE[30] char name						10
+//	BYTE[30] char password					40
+//	BYTE sex (0=male, 1=female)				70
+//	BYTE str								71
+//	BYTE dex								72
+//	BYTE int								73
+//	BYTE skill1								74
+//	BYTE skill1value						75
+//	BYTE skill2								76
+//	BYTE skill2value						77
+//	BYTE skill3								78	
+//	BYTE skill3value						79
+//	BYTE[2] skinColor						80
+//	BYTE[2] hairStyle						82
+//	BYTE[2] hairColor						84
+//	BYTE[2] facial hair						86
+//	BYTE[2] facial hair color				88
+//	BYTE[2] location # from starting list	90
+//	BYTE[2] unknown1						92
+//	BYTE[2] slot							94
+//	BYTE[4] clientIP						96
+//	BYTE[2] shirt color						100
+//	BYTE[2] pants color						102
 CPICreateCharacter::CPICreateCharacter()
 {
 }
@@ -1786,17 +1786,17 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Intelligence   : " << (int)intel << std::endl;
 	outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << std::endl;
 	outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << std::endl;
-	outStream << "Skin Colour    : " << skinColour << std::endl;
-	outStream << "Hair Style     : " << hairStyle << std::endl;
-	outStream << "Hair Colour    : " << hairColour << std::endl;
-	outStream << "Facial Hair    : " << facialHair << std::endl;
-	outStream << "Facial Hair Colour: " << facialHairColour << std::endl;
+	outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
+	outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
+	outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
+	outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
+	outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
 	outStream << "Location Number: " << locationNumber << std::endl;
 	outStream << "Unknown        : " << unknown << std::endl;
 	outStream << "Slot           : " << (int)slot << std::endl;
 	outStream << "IP Address     : " << ipAddress << std::endl;
-	outStream << "Shirt Colour   : " << shirtColour << std::endl;
-	outStream << "Pants Colour   : " << pantsColour << std::endl;
+	outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
+	outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -2032,7 +2032,7 @@ bool CPIDyeWindow::Handle( void )
 			UI16 body = c->GetID();
 			SI32 b = newValue&0x4000; 
 
-			if( ( ( newValue>>8 ) < 0x80 ) && body >= 0x0190 && body <= 0x0193 ) 
+			if( ( ( newValue>>8 ) < 0x80 ) && ( (body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ) )
 				newValue += 0x8000;
 
 			if( b == 16384 && (body >= 0x0190 && body <= 0x03e1 ) ) 

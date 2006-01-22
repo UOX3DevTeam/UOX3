@@ -1359,7 +1359,9 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 			switch( ourTarg->GetID() )
 			{
+			case 0x025E:	// elf/human female
 			case 0x0191:	Effects->PlaySound( ourTarg, 0x014B );									break;
+			case 0x025D:	// elf/human male
 			case 0x0190:	Effects->PlaySound( ourTarg, 0x0156 );									break;
 			default:
 				{

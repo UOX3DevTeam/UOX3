@@ -584,18 +584,24 @@ bool splIncognito( CSocket *sock, CChar *caster )
 	}
 	// ------ SEX ------
 	caster->SetOrgID( caster->GetID() );
-	if( RandomNum( 0, 1 ) == 0 ) 
-		caster->SetID( 0x0190 ); 
-	else 
-		caster->SetID( 0x0191 );
+	UI08 randomGender = RandomNum( 0, 3 );
+	switch( randomGender )
+	{
+	case 0:	caster->SetID( 0x0190 ); break;	// male, human
+	case 1:	caster->SetID( 0x0191 ); break;	// female, human
+	case 2:	caster->SetID( 0x025D ); break;	// male, elf
+	case 3:	caster->SetID( 0x025E ); break;	// female, elf
+	}
 	
 	// ------ NAME -----
 	caster->SetOrgName( caster->GetName() );
-	
-	if( caster->GetID() == 0x0190 )
-		setRandomName( caster, "1" );//get a name from male list
-	else 
-		setRandomName( caster, "2" );//get a name from female list
+	switch( randomGender )
+	{
+	case 0:	setRandomName( caster, "1" );	break; // get a name from human male list
+	case 1:	setRandomName( caster, "2" );	break; // get a name from human female list
+	case 2:	setRandomName( caster, "3" );	break; // get a name from elf male list
+	case 3:	setRandomName( caster, "4" );	break; // get a name from elf female list
+	}
 
 	int color	= RandomNum( 0x044E, 0x047D );
 	CItem *j	= caster->GetItemAtLayer( IL_HAIR );
@@ -623,7 +629,7 @@ bool splIncognito( CSocket *sock, CChar *caster )
 		}
 		j->SetColour( color );
 	}			
-	if( caster->GetID() == 0x0190 )
+	if( randomGender == 0 || randomGender == 2 )
 	{
 		j = caster->GetItemAtLayer( IL_FACIALHAIR );
 		if( ValidateObject( j ) ) 

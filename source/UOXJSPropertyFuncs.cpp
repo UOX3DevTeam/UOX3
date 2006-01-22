@@ -483,12 +483,18 @@ namespace UOX
 				case CCP_MURDERCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetKills() );		break;
 				case CCP_NEUTRAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNeutral() );	break;
 				case CCP_GENDER:
-					if( gPriv->GetID() == 0x0190 || gPriv->GetID() == 0x0192 )
-						*vp = INT_TO_JSVAL( 0 );
-					else if( gPriv->GetID() == 0x0191 || gPriv->GetID() == 0x0193 )
-						*vp = INT_TO_JSVAL( 1 );
-					else
-						*vp = INT_TO_JSVAL( 2 );
+					switch( gPriv->GetID() )
+					{
+					case 0x0190:	// human male, dead or alive
+					case 0x0192:	*vp = INT_TO_JSVAL( 0 );							break;
+					case 0x0191:	// human female, dead or alive
+					case 0x0193:	*vp = INT_TO_JSVAL( 1 );							break;
+					case 0x025D:	// elf male, dead or alive
+					case 0x025F:	*vp = INT_TO_JSVAL( 2 );							break;
+					case 0x025E:	// elf female, dead or alive
+					case 0x0260:	*vp = INT_TO_JSVAL( 3 );							break;
+					default:		*vp = INT_TO_JSVAL( 0xFF );							break;
+					}
 					break;
 				case CCP_DEAD:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDead() );		break;
 				case CCP_NPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNpc() );		break;
@@ -782,6 +788,18 @@ namespace UOX
 							gPriv->SetID( 0x0193 );
 						else
 							gPriv->SetID( 0x0191 );
+						break;
+					case 2:	// elf male
+						if( gPriv->IsDead() )
+							gPriv->SetID( 0x025F );
+						else
+							gPriv->SetID( 0x025D );
+						break;
+					case 3:	// elf female
+						if( gPriv->IsDead() )
+							gPriv->SetID( 0x0260 );
+						else
+							gPriv->SetID( 0x025E );
 						break;
 					default:
 						break;

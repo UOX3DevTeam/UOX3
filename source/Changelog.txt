@@ -1,3 +1,22 @@
+22nd January, 2006 - Maarc
+
+	Added a P_TIMESTAMP define to Config.h, for timestamping packet logs (through the use of RealTime)
+	Removed unnecessary defines from Config.h
+	Fixed a typo or two
+	Removed some debug code I committed by accident
+	Our packet logs were generating 7 column data, not 8!
+	Updated some packet notes + code (0xA9 and 0xB9 packets) to deal with elves stuff (based on http://www.uox3.org/forum/viewtopic.php?t=748&highlight= )
+	Updated CPCharAndStartLoc to log a few more flags
+	Added a detailed Log routine to CPEnableClientFeatures
+	Moved Capped() in pcmanage.cpp to higher upwards
+	Changed CPICreateCharacter::Log to dump out hex values for body/skin colours
+	Added some preliminary support for elvish bodies
+	Needs doing: Adding random names list 3 (elf male) and 4 (elf female) for incognito
+	Updated gender IDs 0 == human male, 1 == human female (as before).  2 == elf male, 3 == elf female, 0xFF == unknown.  Potentially has JS impacts! (Gender property)
+	Note: Need to experiment with gender values with CPStatWindow (see code notes)
+	Note: isHuman() doesn't even evaluate current dead bodies, what is the impact?
+	Renamed validHair() to validHairStyle() because we want to validate colour as well
+
 21st January, 2006 - Maarc
 
 	Fixed an Alignment issue in dumping out CPCharAndStartLoc (converting tabs to explicit spaces)

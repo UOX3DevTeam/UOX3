@@ -3175,7 +3175,8 @@ void CChar::SetFlagNeutral( void )
 bool CChar::isHuman( void )
 {
 	bool rvalue = false;
-	if( GetOrgID() == 0x0190 || GetOrgID() == 0x0191 || GetOrgID() == 0x03DB )	// GM's should be considered "Human" as well
+	UI16 mOrgID = GetOrgID();
+	if( mOrgID == 0x0190 || mOrgID == 0x0191 || mOrgID == 0x025D || mOrgID == 0x025E || GetOrgID() == 0x03DB )	// GM's should be considered "Human" as well
 		rvalue = true;
 	return rvalue;
 }

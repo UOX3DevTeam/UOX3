@@ -659,6 +659,7 @@ class CPEnableClientFeatures : public CPUOXBuffer
 {
 public:
 					CPEnableClientFeatures();
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
 class CPAddItemToCont : public CPUOXBuffer
