@@ -16,6 +16,11 @@
 	Note: Need to experiment with gender values with CPStatWindow (see code notes)
 	Note: isHuman() doesn't even evaluate current dead bodies, what is the impact?
 	Renamed validHair() to validHairStyle() because we want to validate colour as well
+	Added a CanSee() routine to JS based socket and character objects.  Syntax is as follows
+		sourceObject.CanSee( otherObject );
+		sourceObject.CanSee( targX, targY, targZ );
+
+		otherObject can be either a character, item or socket.  If they're not on the same world or the target item is in a container, line of sight fails.
 
 21st January, 2006 - Maarc
 

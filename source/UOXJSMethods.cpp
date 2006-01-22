@@ -5103,5 +5103,118 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 3 )
+	{
+		MethodError( "CanSee: Invalid number of arguments (takes 1, a char/item or 3, an x/y/z)" );
+		return JS_FALSE;
+	}
+
+	JSClass *myClass	= JS_GetClass( obj );
+	CSocket *mSock		= NULL;
+	CChar *mChar		= NULL;
+
+	// Let's validate the person seeing (socket/char)
+
+	if( !strcmp( myClass->name, "UOXSocket" ) ) 
+	{
+		mSock	= (CSocket *)JS_GetPrivate( cx, obj );
+		if( mSock == NULL ) 
+		{
+			MethodError( "CanSee: Passed an invalid Socket" );
+			return JS_FALSE;
+		}
+		mChar	= mSock->CurrcharObj();
+		if( !ValidateObject( mChar ) )  
+		{
+			MethodError( "CanSee: Socket to look from has an invalid Character attached" );
+			return JS_FALSE;
+		}
+	}
+	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	{
+		mChar	= (CChar *)JS_GetPrivate( cx, obj );
+		if( !ValidateObject( mChar ) )  
+		{
+			MethodError( "CanSee: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+		mSock	= mChar->GetSocket();
+	}
+
+	// If we've reached this far, the socket/char is valid
+	// Now let's validate the input!
+
+	SI16 x = -1, y = -1;
+	SI08 z = 0;
+	if( argc == 1 )	// we've been passed an item, character, or socket
+	{
+		JSObject *myDest = JSVAL_TO_OBJECT( argv[0] );
+		JSClass *myClass = JS_GetClass( myDest );
+
+		if( !strcmp( myClass->name, "UOXSocket" ) )
+		{
+			CSocket *tSock = (CSocket *)JS_GetPrivate( cx, myDest );
+			if( tSock == NULL )
+			{
+				MethodError( "CanSee: Passed an invalid Socket to look at" );
+				*rval = JSVAL_FALSE;
+				return JS_TRUE;
+			}
+			CChar *tChar = tSock->CurrcharObj();
+			if( !ValidateObject( tChar ) )  
+			{
+				MethodError( "CanSee: Socket to look at has invalid Character attached" );
+				*rval = JSVAL_FALSE;
+				return JS_TRUE;
+			}
+			if( tChar->WorldNumber() != mChar->WorldNumber() )
+			{
+				*rval = JSVAL_FALSE;
+				return JS_TRUE;
+			}
+			x = tChar->GetX();
+			y = tChar->GetY();
+			z = tChar->GetZ();
+		}
+		else if( !strcmp( myClass->name, "UOXChar" ) || !strcmp( myClass->name, "UOXItem" ) )
+		{
+			CBaseObject *tObj	= (CBaseObject *)JS_GetPrivate( cx, myDest );
+			if( !ValidateObject( tObj ) )  
+			{
+				MethodError( "CanSee: Object to look at is invalid" );
+				*rval = JSVAL_FALSE;
+				return JS_TRUE;
+			}
+			if( tObj->WorldNumber() != mChar->WorldNumber() )
+			{
+				*rval = JSVAL_FALSE;
+				return JS_TRUE;
+			}
+			if( tObj->GetObjType() == OT_ITEM || tObj->GetObjType() == OT_SPAWNER )
+			{
+				if( ((CItem *)tObj)->GetCont() != NULL )
+				{
+					MethodError( "CanSee: Object to look at cannot be in a container" );
+					*rval = JSVAL_FALSE;
+					return JS_TRUE;
+				}
+			}
+			x = tObj->GetX();
+			y = tObj->GetY();
+			z = tObj->GetZ();
+		}
+	}
+	else	// we've been passed an x, y and z
+	{
+		x	= static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+		y	= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+		z	= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
+	}
+	*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) ) ;
+	return JS_TRUE;
+}
+
 }
 

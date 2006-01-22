@@ -151,6 +151,8 @@ JSMethodFunc CBase_FinishedItems;
 JSMethodFunc CBase_DistanceTo;
 JSMethodFunc CBase_GetSerial;
 
+JSMethodFunc CBase_CanSee;
+
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
 JSMethodFunc CSocket_OpenURL;
@@ -324,6 +326,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
 	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
 	{ "InitWanderArea",		CChar_InitWanderArea,	0, 0, 0 },
+	{ "CanSee",				CBase_CanSee,			1, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 
@@ -402,6 +405,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
 	{ "Send",				CSocket_Send,		1, 0, 0 },
+	{ "CanSee",				CBase_CanSee,		1, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 
