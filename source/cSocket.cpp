@@ -50,15 +50,15 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI0
 	{
 		qbuffer[j++] = myBuffer[i];
 		outStream << " 0x" << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
-		if( j > 6 )
+		if( j > 7 )
 		{
 			dumpStream( outStream, qbuffer, 8 );
 			j = 0;
 		}
 	}
-	if( j < 7 )
+	if( j < 8 )
 	{
-		for( UI08 k = j; k < 7; ++k )
+		for( UI08 k = j; k < 8; ++k )
 			outStream << " ----";
 		dumpStream( outStream, qbuffer, j );
 	}
@@ -75,15 +75,15 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, const char *myBu
 	{
 		qbuffer[j++] = myBuffer[i];
 		outStream << " 0x" << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
-		if( j > 6 )
+		if( j > 7 )
 		{
 			dumpStream( outStream, qbuffer, 8 );
 			j = 0;
 		}
 	}
-	if( j < 7 )
+	if( j < 8 )
 	{
-		for( UI08 k = j; k < 7; ++k )
+		for( UI08 k = j; k < 8; ++k )
 			outStream << " ----";
 		dumpStream( outStream, qbuffer, j );
 	}
@@ -622,7 +622,7 @@ bool CSocket::FlushBuffer( bool doLog )
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
 			{
-				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 10?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << std::endl;
+				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 10?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
 				doPacketLogging( logDestination, outlength, (char *)outbuffer );
 				logDestination.close();
 			}
@@ -662,7 +662,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
 			{
-				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 10?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << std::endl;
+				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 10?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
 				doPacketLogging( logDestination, outlength, largeBuffer );
 				logDestination.close();
 			}
@@ -834,7 +834,7 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 			toLog->Log( logDestination );
 		else
 		{
-			logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << inlength << std::endl;
+			logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << inlength << TimeStamp() << std::endl;
 			doPacketLogging( logDestination, inlength, (char *)buffer );
 		}
 		logDestination.close();
@@ -1938,7 +1938,7 @@ UI32 CPUOXBuffer::PackedLength( void ) const
 void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet: 0x" << (pStream.GetByte( 0 ) < 10?"0":"") << std::hex << (UI16)pStream.GetByte( 0 ) << "--> Length:" << std::dec << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet: 0x" << (pStream.GetByte( 0 ) < 10?"0":"") << std::hex << (UI16)pStream.GetByte( 0 ) << "--> Length:" << std::dec << pStream.GetSize() << TimeStamp() << std::endl;
 	doPacketLogging( outStream, pStream.GetSize(), (char *)pStream.GetBuffer() );
 }
 
@@ -1954,7 +1954,7 @@ void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
 	UI08 *buffer	= tSock->Buffer();
 	const UI32 len	= tSock->InLength();
 	if( fullHeader )
-		outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << len << std::endl;
+		outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << len << TimeStamp() << std::endl;
 	doPacketLogging( outStream, len, (char *)buffer );
 }
 

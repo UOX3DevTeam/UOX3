@@ -39,7 +39,7 @@ namespace UOX
 void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "PlayerID         : " << std::hex << pStream.GetULong( 1 ) << std::endl;
 	outStream << "Unknown1         : " << std::dec << pStream.GetULong( 5 ) << std::endl;
 	outStream << "BodyType         : " << std::hex << pStream.GetUShort( 9 ) << std::endl;
@@ -1376,7 +1376,7 @@ void CPDrawContainer::Serial( SERIAL toSet )
 void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPOpenGump 0x7C --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet     : CPOpenGump 0x7C --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "DialogID         : " << std::hex << pStream.GetULong( 3 ) << std::endl;
 	outStream << "MenuID           : " << pStream.GetUShort( 7 ) << std::endl;
 	outStream << "Question Length  : " << std::dec << (SI16)pStream.GetByte( 9 ) << std::endl;
@@ -2703,7 +2703,7 @@ void CPLoginDeny::DenyReason( LoginDenyReason reason )
 void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPMapChange 0xBF Subcommand 8 --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet   : CPMapChange 0xBF Subcommand 8 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "Hue            : " << (SI16)pStream.GetByte( 5 ) << std::endl;
 	switch( pStream.GetByte( 5 ) )
 	{
@@ -2863,7 +2863,7 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 {
 	size_t numItems = pStream.GetUShort( 3 );
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << numItems << std::endl;
 	int baseOffset = 5;
@@ -2979,7 +2979,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
 void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Vendor ID      : " << std::hex << pStream.GetULong( 3 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << (SI16)pStream.GetByte( 7 ) << std::endl;
@@ -3026,7 +3026,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << " / " << pStream.GetShort( 1 ) << std::endl;
+		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "# Chars        : " << (SI16)pStream.GetByte( 3 ) << std::endl;
 	outStream << "Characters --" << std::endl;
 
@@ -4430,7 +4430,7 @@ void CPSendGumpMenu::Finalize( void )
 void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[SEND]Packet     : CPSendGumpMenu 0xB0 --> Length: " << pStream.GetSize() << std::endl;
+		outStream << "[SEND]Packet     : CPSendGumpMenu 0xB0 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "ID               : " << std::hex << pStream.GetULong( 3 ) << std::endl;
 	outStream << "GumpID           : " << std::hex << pStream.GetULong( 7 ) << std::endl;
 	outStream << "X                : " << std::hex << pStream.GetUShort( 11 ) << std::endl;

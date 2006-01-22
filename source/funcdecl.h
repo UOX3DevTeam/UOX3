@@ -103,6 +103,22 @@ inline char *	RealTime( char *time_str )
 	strftime( time_str, 256, "%B %d %I:%M:%S %p", curtime );
 	return time_str;
 }
+#if P_TIMESTAMP
+inline std::string TimeStamp( void )
+{
+	char timeStamp[512];
+	RealTime( timeStamp );
+	std::string retVal = " [";
+	retVal += timeStamp;
+	retVal += "]";
+	return retVal;
+}
+#else
+inline std::string TimeStamp( void )
+{
+	return "";
+}
+#endif
 #if UOX_PLATFORM != PLATFORM_WIN32
 	inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds )
 	{

@@ -126,7 +126,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << std::endl;
+		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << TimeStamp() << std::endl;
 	outStream << "UserID         : " << Name() << std::endl;
 	outStream << "Password       : " << Pass() << std::endl;
 	outStream << "Unknown        : " << (SI16)Unknown() << std::endl;
@@ -259,7 +259,7 @@ UI08 CPIFirstLogin::Unknown( void )
 void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIServerSelect 0xA0 --> Length: 03" << std::endl;
+		outStream << "[RECV]Packet   : CPIServerSelect 0xA0 --> Length: 3" << TimeStamp() << std::endl;
 	outStream << "Server         : " << ServerNum() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -313,7 +313,7 @@ bool CPIServerSelect::Handle( void )
 void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPISecondLogin 0x91 --> Length: 65" << std::endl;
+		outStream << "[RECV]Packet   : CPISecondLogin 0x91 --> Length: 65" << TimeStamp() << std::endl;
 	
 	outStream << "Key Used       : " << Account() << std::endl;
 	outStream << "SID            : " << Name() << std::endl;
@@ -433,7 +433,7 @@ bool CPISecondLogin::Handle( void )
 void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIClientVersion 0xBD --> Length: " << std::dec << tSock->GetWord( 1 ) << std::endl;
+		outStream << "[RECV]Packet   : CPIClientVersion 0xBD --> Length: " << std::dec << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	outStream << "Version        : " << Offset() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -530,7 +530,7 @@ bool CPIClientVersion::Handle( void )
 void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: " << 2 << std::endl;
+		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: 2 " << std::endl;
 	outStream << "Range			 : " << (int)tSock->GetByte( 1 ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -735,7 +735,7 @@ void CPIStatusRequest::Receive( void )
 void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << std::endl;
+		outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << TimeStamp() << std::endl;
 	outStream << "Pattern        : " << pattern << std::endl;
 	outStream << "Request Type   : " << (int)getType << std::endl;
 	outStream << "PlayerID       : " << playerID << std::endl;
@@ -841,7 +841,7 @@ void CPIDblClick::Receive( void )
 void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << std::endl;
+		outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << TimeStamp() << std::endl;
 	outStream << "ClickedID      : " << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -873,7 +873,7 @@ void CPISingleClick::Receive( void )
 void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << std::endl;
+		outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << TimeStamp() << std::endl;
 	outStream << "ClickedID      : " << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -1773,7 +1773,7 @@ void CPICreateCharacter::Receive( void )
 void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << std::endl;
+		outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << TimeStamp() << std::endl;
 
 	outStream << "Pattern1       : " << pattern1 << std::endl;
 	outStream << "Pattern2       : " << pattern2 << std::endl;
@@ -1839,7 +1839,7 @@ void CPIPlayCharacter::Receive( void )
 void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPICreateCharacter 0x5D --> Length: 73" << std::endl;
+		outStream << "[RECV]Packet   : CPICreateCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
 	outStream << "Pattern1       : " << pattern << std::endl;
 	outStream << "Char name      : " << charName << std::endl;
 	outStream << "Slot chosen    : " << (int)slotChosen << std::endl;
@@ -1908,7 +1908,7 @@ const UString CPIGumpInput::Reply( void ) const
 void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord( 1 ) << std::endl;
+		outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	outStream << "ID             : " << id << std::endl;
 	outStream << "Type           : " << (int)type << std::endl;
 	outStream << "Index          : " << (int)index << std::endl;
@@ -1997,7 +1997,7 @@ void CPIDyeWindow::Receive( void )
 void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIDyeWindow 0x95 --> Length: 9" << std::endl;
+		outStream << "[RECV]Packet   : CPIDyeWindow 0x95 --> Length: 9" << TimeStamp() << std::endl;
 	outStream << "ItemID         : " << changing << std::endl;
 	outStream << "Model          : " << modelID << std::endl;
 	outStream << "Colour         : " << newValue << std::endl;
@@ -2136,7 +2136,7 @@ bool CPIMetrics::Handle()
 void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPIMetrics 0xD9 --> Length: 268" << std::endl;
+		outStream << "[RECV]Packet   : CPIMetrics 0xD9 --> Length: 268" << TimeStamp() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
