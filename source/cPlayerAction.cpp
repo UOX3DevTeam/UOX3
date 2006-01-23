@@ -1322,9 +1322,19 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 //o---------------------------------------------------------------------------o
 void PaperDoll( CSocket *s, CChar *pdoll )
 {
+	CChar *myChar	= s->CurrcharObj();
 	UString tempstr;
 	CPPaperdoll pd		= (*pdoll);
 	UnicodeTypes sLang	= s->Language();
+
+	// Check if onCharDoubleClick event exists
+	UI16 charTrig		= pdoll->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnCharDoubleClick( myChar, pdoll ) == 1 )	// if it exists and we don't want hard code, return
+			return;
+	}
 
 	UString SkillProwessTitle;
 	UString FameTitle;
@@ -1414,6 +1424,15 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	CChar *c		= calcCharObjFromSer( serial );
 	if( !ValidateObject( c ) )
 		return;
+
+	// Check if onCharDoubleClick event exists
+	UI16 charTrig		= c->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnCharDoubleClick( mChar, c ) == 1 )	// if it exists and we don't want hard code, return
+			return;
+	}
 
 	if( c->IsNpc() )
 	{

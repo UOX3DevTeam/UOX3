@@ -48,6 +48,16 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 
 	bool returningAttack = false;
 
+	// Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
+	// Also exists in CHandleCombat::PlayerAttack to handle players attacking
+	UI16 charTrig		= cAttack->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnCombatStart( cAttack, cTarget ) == 1 )	// if it exists and we don't want hard code, return
+			return false;
+	}
+
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
 	cAttack->SetAttackFirst( ( cTarget->GetTarg() != cAttack ) );
@@ -186,6 +196,14 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 	}//if isDead
 	else if( ourChar->GetTarg() != i )
 	{
+		// Check if OnCombatStart event exists, necessary here for when players attack
+		UI16 charTrig		= ourChar->GetScriptTrigger();
+		cScript *toExecute	= JSMapping->GetScript( charTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnCombatStart( ourChar, i ) == 1 )	// if it exists and we don't want hard code, return
+				return;
+		}
 		ourChar->SetTarg( i );
 		if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
 			ourChar->ExposeToView();
@@ -1657,6 +1675,26 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 //o--------------------------------------------------------------------------
 void CHandleCombat::InvalidateAttacker( CChar *mChar )
 {
+	CChar *ourTarg = mChar->GetTarg();
+
+	// Check if OnCombatEnd event exists.
+	UI16 charTrig		= mChar->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		//Check if ourTarg validates as another character. If not, don't use
+		if( !ValidateObject( ourTarg ))
+			ourTarg = NULL;
+		if( toExecute->OnCombatEnd( mChar, ourTarg ) == 1 )	// if it exists and we don't want hard code, return
+			return;
+		/*}
+		else
+		{
+			if( toExecute->OnCombatEnd( mChar, NULL ) == 1 )	// if it exists and we don't want hard code, return
+				return;
+		}*/
+	}
+
 	if( mChar->IsNpc() && mChar->GetNPCAiType() == aiGUARD )
 	{
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
@@ -1665,7 +1703,6 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		mChar->talkAll( 281, false );
 	}
 
-	CChar *ourTarg = mChar->GetTarg();
 	if( ValidateObject( ourTarg ) && ourTarg->GetTarg() == mChar )
 	{
 		ourTarg->SetTarg( NULL );

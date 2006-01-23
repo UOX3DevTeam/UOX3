@@ -1,3 +1,10 @@
+1/23/2006 - Xuri
+	Added new JS event: onCharDoubleClick( pUser, targChar) - allows overriding doubleclicking of characters
+	Added new JS event: onSkillGump( socket ) - allows overriding the client's request to open the default skillgump
+	Added new JS event: onCombatStart( currChar, targChar ) - allows overriding combat completely
+	Added new JS event: onCombatEnd( currChar, targChar ) - allows
+	JS Event space in cScript expanded from 64 to 96 (Maarc)
+
 22nd January, 2006 - Maarc
 
 	Added a P_TIMESTAMP define to Config.h, for timestamping packet logs (through the use of RealTime)

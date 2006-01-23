@@ -6,6 +6,7 @@
 #include "cThreadQueue.h"
 #include "combat.h"
 #include "cScript.h"
+#include "CJSMapping.h"
 #include "PageVector.h"
 #include "cEffects.h"
 #include "Dictionary.h"
@@ -749,6 +750,16 @@ bool CPIStatusRequest::Handle( void )
 		tSock->statwindow( calcCharObjFromSer( playerID ) );
 	if( getType == 5 )
 	{
+	// Check if onSkillGump event exists
+	CChar *myChar	= tSock->CurrcharObj();
+	UI16 charTrig		= myChar->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnSkillGump( myChar ) == 1 )	// if it exists and we don't want hard code, return
+			return true;
+	}
+
 		CPSkillsValues toSend;
 //		if( tSock->ReceivedVersion() )
 //		{
