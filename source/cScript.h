@@ -74,7 +74,11 @@ enum ScriptEvent
 	seOnStart,
 	seOnStop,
 	seOnIterate,
-	seOnPacketReceive
+	seOnPacketReceive,
+	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
+	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
+	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
+	seOnCombatEnd			//	**	allows overriding what happens when combat ends
 };
 
 struct SEGump
@@ -155,8 +159,8 @@ private:
 	JSObject	*CConsoleProto;
 
 	bool		isFiring;
-	UI32		eventPresence[2];
-	UI32		needsChecking[2];
+	UI32		eventPresence[3];
+	UI32		needsChecking[3];
 	bool		EventExists( ScriptEvent eventNum ) const;
 	bool		NeedsChecking( ScriptEvent eventNum ) const;
 	void		SetEventExists( ScriptEvent eventNum, bool status );
@@ -276,6 +280,10 @@ public:
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );
+	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
+	SI08		OnSkillGump( CChar *mChar );
+	SI08		OnCombatStart( CChar *attacker, CChar *defender );
+	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

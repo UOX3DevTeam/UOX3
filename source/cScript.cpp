@@ -146,8 +146,8 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 
 cScript::cScript( std::string targFile ) : isFiring( false )
 {
-	eventPresence[0] = eventPresence[1] = 0xFFFFFFFF;
-	needsChecking[0] = needsChecking[1] = 0xFFFFFFFF;
+	eventPresence[0] = eventPresence[1] = eventPresence[2] = 0xFFFFFFFF;
+	needsChecking[0] = needsChecking[1] = needsChecking[2] = 0xFFFFFFFF;
 	targContext = JS_NewContext( jsRuntime, 0x2000 );
 	if( targContext == NULL )
 		return;
@@ -1409,7 +1409,7 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill )
 bool cScript::EventExists( ScriptEvent eventNum ) const
 {
 	UI32 index = eventNum / 32;
-	if( index > 1 )
+	if( index > 2 )
 		return false;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
 	return ( (eventPresence[index]&flagToSet) == flagToSet );
@@ -1417,7 +1417,7 @@ bool cScript::EventExists( ScriptEvent eventNum ) const
 void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 32;
-	if( index > 1 )
+	if( index > 2 )
 		return;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
 	if( status )
@@ -1433,7 +1433,7 @@ void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 {
 	UI32 index = eventNum / 32;
-	if( index > 1 )
+	if( index > 2 )
 		return false;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
 	return ( (needsChecking[index]&flagToSet) == flagToSet );
@@ -1441,7 +1441,7 @@ bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 32;
-	if( index > 1 )
+	if( index > 2 )
 		return;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
 	if( status )
@@ -2608,6 +2608,202 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 
 	JS_SetPrivate( targContext, sockObjects[0].toUse, NULL );
 	return ( retVal == JS_TRUE );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnCharDoubleClick( CChar *currChar, CChar *targChar )
+//|	Programmer	-	Xuri
+//|	Date		-	23rd January, 2006
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows overriding events that happen when doubleclicking,
+//|				-	characters, such as open paperdoll, mounting horses, etc
+//o---------------------------------------------------------------------------o
+
+SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( currChar ) || !ValidateObject( targChar ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal	= -1;
+	jsval params[2], rval;
+	JS_SetPrivate( targContext, charObjects[0].toUse, currChar );
+	JS_SetPrivate( targContext, charObjects[1].toUse, targChar );
+
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCharDoubleClick", 2, params, &rval );
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCharDoubleClick, false );
+		return RV_NOFUNC;
+	}
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnSkillGump( CSocket *mSock )
+//|	Programmer	-	Xuri
+//|	Date		-	23rd January, 2006
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows overriding the client's request to open the default
+//|					skillgump, and instead do something else (like opening a
+//|					custom skillgump instead).
+//o---------------------------------------------------------------------------o
+
+SI08 cScript::OnSkillGump( CChar *currChar )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( currChar ))
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnSkillGump, "onSkillGump" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal	= -1;
+	jsval params[1], rval;
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, currChar );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onSkillGump", 1, params, &rval );
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnSkillGump, false );
+		return RV_NOFUNC;
+	}
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnCombatStart, "onCombatStart" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal	= -1;
+	jsval params[2], rval;
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, attacker );
+	JS_SetPrivate( targContext, charObjects[1].toUse, defender );
+
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatStart", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatStart, false );
+		return RV_NOFUNC;
+	}
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( currChar ))
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnCombatEnd, "onCombatEnd" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal	= -1;
+	jsval params[2], rval;
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, currChar );
+	JS_SetPrivate( targContext, charObjects[1].toUse, targChar );
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatEnd", 2, params, &rval );
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatEnd, false );
+		return RV_NOFUNC;
+	}
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
 }
 
 }
