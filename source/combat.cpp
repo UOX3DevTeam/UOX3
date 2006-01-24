@@ -48,15 +48,6 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 
 	bool returningAttack = false;
 
-	// Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
-	// Also exists in CHandleCombat::PlayerAttack to handle players attacking
-	/*UI16 charTrig		= cAttack->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
-	{
-		if( toExecute->OnCombatStart( cAttack, cTarget ) == 1 )	// if it exists and we don't want hard code, return
-			return false;
-	}*/
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
 	cAttack->SetAttackFirst( ( cTarget->GetTarg() != cAttack ) );
