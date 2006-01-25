@@ -384,7 +384,14 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 				}
 			}
 		}
-		Console.Print( "  o Loaded %u scripts from section %s\n", i, ScriptNames[scriptType].c_str() );
+		Console.Print( "  o Loaded " );
+		Console.TurnYellow();
+		Console.Print( "%4u ", i );
+		Console.TurnNormal();
+		Console.Print( "scripts from section " );
+		Console.TurnYellow();
+		Console.Print( "%s\n", ScriptNames[scriptType].c_str() );
+		Console.TurnNormal();
 	}
 	else
 		Console.Warning( 2, "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() );

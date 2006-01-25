@@ -1177,7 +1177,17 @@ void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 void cCommands::Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( "         Registering \"%s\" @ command level %i\n", cmdName.c_str(), cmdLevel );
+	Console.Print( " " );
+	Console.MoveTo( 15 );
+	Console.Print( "Registering " );
+	Console.TurnYellow();
+	Console.Print( cmdName.c_str() );
+	Console.TurnNormal();
+	Console.MoveTo( 50 );
+	Console.Print( "@ command level " );
+	Console.TurnYellow();
+	Console.Print( "%i\n", cmdLevel );
+	Console.TurnNormal();
 #endif
 	UString upper		= cmdName;
 	upper				= upper.upper();

@@ -472,7 +472,12 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( scriptID != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( "Registering skill number %i\n", skillNumber );
+		Console.Print( " " );
+		Console.MoveTo( 15 );
+		Console.Print( "Registering skill number " );
+		Console.TurnYellow();
+		Console.Print( "%i\n", skillNumber );
+		Console.TurnNormal();
 #endif
 		if( skillNumber < 0 || skillNumber >= ALLSKILLS )
 			return JS_TRUE;

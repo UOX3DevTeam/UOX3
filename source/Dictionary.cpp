@@ -80,7 +80,10 @@ SI32 CDictionary::LoadDictionary( void )
 			dictData = NULL;
 		}
 		IsValid = true;
-		Console << "Dictionary." << Language << " Loaded" << myendl;
+		Console.Print( " " );
+		Console.MoveTo( 15 );
+		Console << "Dictionary." << Language;
+		Console.PrintSpecial( CGREEN, "loaded" );
 	}
 	else
 		count = dictCANTOPEN;

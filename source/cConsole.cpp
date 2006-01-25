@@ -1465,7 +1465,9 @@ void CConsole::DisplaySettings( void )
 void CConsole::RegisterKey( int key, std::string cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
-	Print( "         Registering key \"%c\"\n", key );
+	char temp[512];
+	sprintf( temp, "         Registering key \"%c\"", key );
+	messageLoop << temp;
 #endif
 	JSKeyHandler[key] = JSConsoleEntry( scriptID, cmdName );
 }
