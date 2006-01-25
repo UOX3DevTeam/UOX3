@@ -635,7 +635,7 @@ bool CPICreateCharacter::Handle( void )
 			mChar->SetID( pGenderID );
 			mChar->SetOrgID( pGenderID );
 
-			mChar->SetSkin( validSkinColour( skinColour, pGenderID ) );
+			mChar->SetSkin( validSkinColour( skinColour, pGenderID ) | 0x8000 );
 			mChar->SetOrgSkin( mChar->GetSkin() );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
