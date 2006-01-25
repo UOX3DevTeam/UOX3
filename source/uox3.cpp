@@ -67,7 +67,6 @@ namespace UOX
 {
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-	typedef void *HANDLE;
 	pthread_t cons, netw;
 #else
 	#include <process.h>
@@ -102,7 +101,6 @@ void		LoadPlaces( void );
 //o---------------------------------------------------------------------------o
 // Misc Pre-Declarations
 //o---------------------------------------------------------------------------o
-void		checkkey( void );
 void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
 void		sysBroadcast( const std::string txt );
@@ -110,80 +108,30 @@ void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems );
 void		CheckAI( CChar& mChar );
 
-bool cluox_io          = false;   // is cluox-IO enabled?
-bool cluox_nopipe_fill = false;   // the stdin-pipe is known to be none-empty, no need to fill it.
-HANDLE cluox_stdin_writeback = 0; // the write-end of the stdin-pipe
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	cl_getch
-//|	Programmer	-	knoxos
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Read a character from stdin, in a cluox compatble way.
-//|                 This routine is non-blocking!
-//|	Returns		-	>0 -> character read
-//|                 -1 -> no char available.
-//o---------------------------------------------------------------------------o
-//
-// now cluox is GUI wrapper over uox using stdin and stdout redirection to capture
-// the console, if it is active uox can't use kbhit() to determine if there is a 
-// character aviable, it can only get one directly by getch().
-// However the problem arises that uox will get blocked if none is aviable.
-// The solution to this problem is that cluox also hands over the second pipe-end
-// of stdin so uox can write itself into this stream. To determine if a character is 
-// now done that way. UOX write's itself a ZERO on the other end of the pipe, and reads
-// a charecter, if it is again the same ZERO just putted in nothing was entered. However
-// it is not a zero the user has entered a char.
-// 
-int cl_getch( void )
+void UnloadSpawnRegions( void )
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	// first the linux style, don't change it's behavoir
-	UI08 c = 0;
-	fd_set KEYBOARD;
-	FD_ZERO( &KEYBOARD );
-	FD_SET( 0, &KEYBOARD );
-	int s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
-	if( s < 0 )
+	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
+	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
+	while( spIter != spEnd )
 	{
-		Console.Error( 1, "Error scanning key press" );
-		messageLoop << MSG_SHUTDOWN;
+		if( spIter->second != NULL )
+			delete spIter->second;
+		++spIter;
 	}
-	if( s > 0 )
+	cwmWorldState->spawnRegions.clear();
+}
+
+void UnloadRegions( void )
+{
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	while( tIter != tEnd )
 	{
-		read( 0, &c, 1 );
-		if( c == 0x0A )
-			return -1;
+		if( tIter->second != NULL )
+			delete tIter->second;
+		++tIter;
 	}
-#else
-	// now the windows one
-	if( !cluox_io )
-	{
-		// uox is not wrapped simply use the kbhit routine
-		if( _kbhit() )
-			return _getch();
-		else 
-			return -1;
-	}
-	// the wiered cluox getter.
-	UI08 c = 0;
-	UI32 bytes_written = 0;
-	int asw = 0;
-	if( !cluox_nopipe_fill )
-		asw = WriteFile( cluox_stdin_writeback, &c, 1, &bytes_written, NULL );
-	if( bytes_written != 1 || asw == 0 )
-	{
-		Console.Warning( 1, "Using cluox-io" );
-		messageLoop << MSG_SHUTDOWN;
-	}
-	c = (UI08)fgetc( stdin );
-	if( c == 0 )
-	{
-		cluox_nopipe_fill = false;
-		return -1;
-	}
-#endif
-	// here an actual charater is read in
-	return c;
+	cwmWorldState->townRegions.clear();
 }
 
 //o---------------------------------------------------------------------------o
@@ -209,6 +157,33 @@ void DoMessageLoop( void )
 			case MSG_PRINTDONE:		Console.PrintDone();							break;
 			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
 			case MSG_SECTIONBEGIN:	Console.PrintSectionBegin();					break;
+			case MSG_RELOAD:		
+				if( !cwmWorldState->GetReloadingScripts() )
+				{
+					cwmWorldState->SetReloadingScripts( true );
+					switch( tVal.data[0] )
+					{
+					case '0':	cwmWorldState->ServerData()->load();		break;	// Reload INI file
+					case '1':	Accounts->Load();							break;	// Reload accounts
+					case '2':	UnloadRegions();	LoadRegions();			break;	// Reload regions
+					case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
+					case '4':	Magic->LoadScript();						break;	// Reload spells
+					case '5':	JSMapping->Reload( SCPT_COMMAND );	
+								Commands->Load();							break;	// Reload commands
+					case '6':	FileLookup->Reload();
+								LoadCreatures();
+								LoadCustomTitle();
+								LoadSkills();
+								LoadPlaces();								break;	// Reload definition files
+					case '7':	JSMapping->Reload();	
+								Console.PrintDone(); 	
+								Commands->Load();							break;	// Reload JS
+					case '8':	HTMLTemplates->Unload();
+								HTMLTemplates->Load();						break;	// Reload HTML
+					}
+					cwmWorldState->SetReloadingScripts( false );
+				}
+				break;
 			case MSG_UNKNOWN:
 			default:				Console.Error( 2, "Unknown message type" );		break;
 		}
@@ -267,10 +242,11 @@ void CheckConsoleKeyThread( void *params )
 #endif
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
+	Console.Registration();
 	conthreadcloseok = false;
 	while( !conthreadcloseok )
 	{
-		checkkey();
+		Console.Poll();
 		UOXSleep( 500 );
 	}
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -612,617 +588,6 @@ void callGuards( CChar *mChar, CChar *targChar )
 	{
 		if( charInRange( mChar, targChar ) )
 			Combat->SpawnGuard( mChar, targChar, targChar->GetX(), targChar->GetY(), targChar->GetZ() );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void DisplaySettings( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	UOX startup stuff
-//| Moved that here because we need it in processkey now
-//|									
-//|	Modification	-	10/21/2002	-	EviLDeD - Xuri found the bug in one spot, just
-//|									happened upon this quick fix. for BackUp operation.
-//o---------------------------------------------------------------------------o
-void DisplaySettings( void )
-{
-	std::map< bool, std::string > activeMap;
-	activeMap[true] = "Activated!";
-	activeMap[false] = "Disabled!";
-
-	// Server.scp status --- By Magius(CHE)
-	Console << "Server Settings:" << myendl;
-	
-	Console << "   -Archiving[";
-	if( cwmWorldState->ServerData()->ServerBackupStatus() )
-		Console << "Enabled]. (" << cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ) << ")" << myendl;
-	else 
-		Console << "Disabled]" << myendl;
-	
-	Console << "   -Weapons & Armour Rank System: ";
-	Console << activeMap[cwmWorldState->ServerData()->RankSystemStatus()] << myendl;
-	
-	Console << "   -Vendors buy by item name: ";
-	Console << activeMap[cwmWorldState->ServerData()->SellByNameStatus()] << myendl;
-	
-	Console << "   -Adv. Trade System: ";
-	Console << activeMap[cwmWorldState->ServerData()->TradeSystemStatus()] << myendl;
-	
-	Console << "   -Crash Protection: ";
-	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() < 1 )
-		Console << "Disabled!" << myendl;
-#ifndef _CRASH_PROTECT_
-	else 
-		Console << "Unavailable in this version" << myendl;
-#else
-	else if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() == 1 )
-		Console << "Save on crash" << myendl;
-	else 
-		Console << "Save & Restart Server" << myendl;
-#endif
-
-	Console << "   -Races: " << static_cast< UI32 >(Races->Count()) << myendl;
-	Console << "   -Guilds: " << static_cast< UI32 >(GuildSys->NumGuilds()) << myendl;
-	Console << "   -Char count: " << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << myendl;
-	Console << "   -Item count: " << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << myendl;
-	Console << "   -Num Accounts: " << Accounts->size() << myendl;
-	Console << "   Directories: " << myendl;
-	Console << "   -Shared:          " << cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) << myendl;
-	Console << "   -Archive:         " << cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ) << myendl;
-	Console << "   -Data:            " << cwmWorldState->ServerData()->Directory( CSDDP_DATA ) << myendl;
-	Console << "   -Defs:            " << cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) << myendl;
-	Console << "   -Scripts:         " << cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) << myendl;
-	Console << "   -HTML:            " << cwmWorldState->ServerData()->Directory( CSDDP_HTML ) << myendl;
-	Console << "   -Books:           " << cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) << myendl;
-	Console << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) << myendl;
-}
-
-void UnloadSpawnRegions( void )
-{
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		if( spIter->second != NULL )
-			delete spIter->second;
-		++spIter;
-	}
-	cwmWorldState->spawnRegions.clear();
-}
-
-void UnloadRegions( void )
-{
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		if( tIter->second != NULL )
-			delete tIter->second;
-		++tIter;
-	}
-	cwmWorldState->townRegions.clear();
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void processkey( int c )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handle keypresses in console
-//|	Modification	-	05042004 - EviLDeD added some console debugging stuff.
-//|									Ideally this will all be placed onto a DEBUG menu which
-//|									a user will be able to select using the <, and > keys
-//|									respectivly. This functionality hasn't been implemented
-//|									at the current time of writing, but will be when possible.
-//o---------------------------------------------------------------------------o
-
-void processkey( int c )
-{
-	char outputline[128], temp[1024];
-	bool kill = false;
-	int indexcount = 0;
-	int j;
-	int keyresp;
-	CSocket *tSock;
-
-	if( c == '*' )
-	{
-		if( cwmWorldState->GetSecure() )
-			messageLoop << "Secure mode disabled. Press ? for a commands list";
-		else
-			messageLoop << "Secure mode re-enabled";
-		cwmWorldState->SetSecure( !cwmWorldState->GetSecure() );
-		return;
-	} 
-	else 
-	{
-		if( cwmWorldState->GetSecure() )
-		{
-			messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
-			return;
-		}
-		
-		switch( c )
-		{
-			case '!':
-				// Force server to save accounts file
-				messageLoop << "CMD: Saving Accounts... ";
-				Accounts->Save();
-				messageLoop << MSG_PRINTDONE;
-				break;
-			case '@':
-				// Force server to save all files.(Manual save)
-				messageLoop << MSG_WORLDSAVE;
-				break;
-		case 'Y':
-//#if defined( _MSC_VER )
-//#pragma note("Console Broadcast needs to not require cout anymore.  Is there a better way?")
-//#endif
-			//messageLoop << "Console> ";
-			std::cout << "System: ";
-			while( !kill )
-			{
-				keyresp = cl_getch();
-				switch( keyresp )
-				{
-					case -1:	// no key pressed
-					case 0:
-						break;
-					case 0x1B:
-						memset( outputline, 0x00, sizeof( outputline ) );
-						indexcount = 0;
-						kill = true;
-						std::cout << std::endl;
-						messageLoop << "CMD: System broadcast canceled.";
-						break;
-					case 0x08:
-						--indexcount;
-						if( indexcount < 0 )	
-							indexcount = 0;
-						else
-							std::cout << "\b \b";
-						break;
-					case 0x0A:
-					case 0x0D:
-						outputline[indexcount] = 0;
-						messageLoop.NewMessage( MSG_CONSOLEBCAST, outputline );
-						indexcount = 0;
-						kill = true;
-						std::cout << std::endl;
-						sprintf( temp, "CMD: System broadcast sent message \"%s\"", outputline );
-						memset( outputline, 0x00, sizeof( outputline ) );
-						messageLoop << temp;
-						break;
-					default:
-						if( static_cast<size_t>(indexcount) < sizeof( outputline ) )
-						{
-							outputline[indexcount++] = (UI08)(keyresp);
-							std::cout << (char)keyresp;
-						}
-						break;
-				}
-				keyresp = 0x00;
-			}
-			break;
-			case '[':
-			{
-				// We want to group all the contents of the multimap container numerically by group. We rely on the self ordering in the multimap implementation to do this.
-				messageLoop << "  ";
-				messageLoop << "Auto-AddMenu Statistics";
-				messageLoop << "  ";
-				char szBuffer[128];
-				// We need to get an iteration into the map first of all the top level ULONGs then we can get an equal range.
-				std::map<ULONG,UI08> localMap;
-				localMap.clear();
-				for(ADDMENUMAP_CITERATOR CJ=g_mmapAddMenuMap.begin();CJ != g_mmapAddMenuMap.end();CJ++)
-				{
-					// check to see if the group id has been checked already
-					if(localMap.find(CJ->first)==localMap.end())
-					{
-						localMap.insert(std::make_pair(CJ->first,0));
-						memset(szBuffer,0x00,sizeof(szBuffer));
-						sprintf( szBuffer, "AddMenuGroup %lu:", CJ->first );
-						messageLoop << szBuffer;
-						std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
-						int count=0;
-						for(ADDMENUMAP_CITERATOR CI=pairRange.first;CI != pairRange.second; CI++)
-						{
-							count++;
-						}
-						memset(szBuffer,0x00,sizeof(szBuffer));
-						sprintf(szBuffer,"   Found %i Auto-AddMenu Item(s).",count);
-						messageLoop << szBuffer;
-					}
-				}
-				messageLoop << MSG_SECTIONBEGIN;
-				break;
-			}
-			case '<':
-				messageLoop << "Function not implemented.";
-				break;
-			case '>':
-				messageLoop << "Function not implemented.";
-				break;
-			case 0x1B:
-			case 'Q':
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << "CMD: Immediate Shutdown initialized!";
-				messageLoop << MSG_SHUTDOWN;
-				break;
-			case '1':
-				// Reload server ini file
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading Server INI... ";
-					cwmWorldState->SetReloadingScripts( true );
-					cwmWorldState->ServerData()->load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '2':
-				// Reload accounts, and update Access.adm if new accounts available.
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading Accounts... ";
-					cwmWorldState->SetReloadingScripts( true );
-					Accounts->Load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '3':
-				// Reload Region Files
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading Regions... ";
-					cwmWorldState->SetReloadingScripts( true );
-					UnloadRegions();
-					LoadRegions();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '4':
-				// Reload the serve spawn regions
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading Spawn Regions... ";
-					cwmWorldState->SetReloadingScripts( true );
-					UnloadSpawnRegions();
-					LoadSpawnRegions();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '5':
-				// Reload the current Spells
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading spells... ";
-					cwmWorldState->SetReloadingScripts( true );
-					Magic->LoadScript();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '6':
-				// Reload the server command list
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading commands... ";
-					cwmWorldState->SetReloadingScripts( true );
-					JSMapping->Reload( SCPT_COMMAND );
-					Commands->Load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '7':
-				// Reload the server defantion files
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading Server DFN... ";
-					cwmWorldState->SetReloadingScripts( true );
-					FileLookup->Reload();
-					LoadCreatures();
-					LoadCustomTitle();
-					LoadSkills();
-					LoadPlaces();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '8':
-				// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					cwmWorldState->SetReloadingScripts( true );
-					messageLoop << MSG_RELOADJS;
-					cwmWorldState->SetReloadingScripts( false );
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				
-				/*messageLoop << "Due to a bug, this function has been temporarily disabled.";
-				messageLoop << "Please shut down the server, make your changes and re-start the server.";
-				messageLoop << "Sorry for the inconvienences.";*/
-				break;
-			case '9':
-				// Reload the HTML output templates
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					messageLoop << "CMD: Loading HTML Templates... ";
-					cwmWorldState->SetReloadingScripts( true );
-					HTMLTemplates->Unload();
-					HTMLTemplates->Load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case '0':
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					cwmWorldState->SetReloadingScripts( true );
-					// Reload all the files. If there are issues with these files change the order reloaded from here first.
-					cwmWorldState->ServerData()->load();
-					messageLoop << "CMD: Loading All";
-					messageLoop << "     Server INI... ";
-					// Reload accounts, and update Access.adm if new accounts available.
-					messageLoop << "     Loading Accounts... ";
-					Accounts->Load();
-					messageLoop << MSG_PRINTDONE;
-					// Reload Region Files
-					messageLoop << "     Loading Regions... ";
-					UnloadRegions();
-					LoadRegions();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the serve spawn regions
-					messageLoop << "     Loading Spawn Regions... ";
-					UnloadSpawnRegions();
-					LoadSpawnRegions();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the server command list
-					messageLoop << "     Loading commands... ";
-					Commands->Load();
-					messageLoop << MSG_PRINTDONE;
-					// Reload DFN's
-					messageLoop << "     Loading Server DFN... ";
-					FileLookup->Reload();
-					messageLoop << MSG_PRINTDONE;
-					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-					messageLoop << "     Loading JSE Scripts... ";
-					
-					//messageLoop << MSG_RELOADJS;
-
-
-					// Reload the current Spells 
-					messageLoop << "     Loading spells... ";
-					Magic->LoadScript();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the HTML output templates
-					messageLoop << "     Loading HTML Templates... ";
-					HTMLTemplates->Unload();
-					HTMLTemplates->Load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case 'T':
-				// Timed shut down(10 minutes)
-				messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-				cwmWorldState->SetEndTime( BuildTimeValue( 600 ) );
-				endmessage(0);
-				break;
-			case  'D':    
-				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
-				{
-					if( tSock->AcctNo() == 0 )
-						Network->Disconnect( tSock );
-				}
-				messageLoop << "CMD: Socket Disconnected(Account 0).";
-				break;
-			case 'K':
-			{
-				for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-				{
-					Network->Disconnect( tSock );
-				}
-				messageLoop << "CMD: All Connections Closed.";
-			}
-				break;
-			case 'P':
-				{
-				UI32 networkTimeCount	= cwmWorldState->ServerProfile()->NetworkTimeCount();
-				UI32 timerTimeCount		= cwmWorldState->ServerProfile()->TimerTimeCount();
-				UI32 autoTimeCount		= cwmWorldState->ServerProfile()->AutoTimeCount();
-				UI32 loopTimeCount		= cwmWorldState->ServerProfile()->LoopTimeCount();
-				// 1/13/2003 - Dreoth - Log Performance Information enhancements
-				Console.LogEcho( true );
-				Console.Log( "--- Starting Performance Dump ---", "performance.log");
-				Console.Log( "\tPerformace Dump:", "performance.log");
-				Console.Log( "\tNetwork code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount);
-				Console.Log( "\tTimer code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount);
-				Console.Log( "\tAuto code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount);
-				Console.Log( "\tLoop Time: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount);
-				ObjectFactory *ourFac = ObjectFactory::getSingletonPtr();
-				Console.Log( "\tCharacters: %i/%i - Items: %i/%i (Dynamic)", "performance.log", ourFac->CountOfObjects( OT_CHAR ), ourFac->SizeOfObjects( OT_CHAR ), ourFac->CountOfObjects( OT_ITEM ), ourFac->SizeOfObjects( OT_ITEM ) );
-				Console.Log( "\tSimulation Cycles: %f per sec", "performance.log", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount))));
-				Console.Log( "\tBytes sent: %i", "performance.log", cwmWorldState->ServerProfile()->GlobalSent());
-				Console.Log( "\tBytes Received: %i", "performance.log", cwmWorldState->ServerProfile()->GlobalReceived());
-				Console.Log( "--- Performance Dump Complete ---", "performance.log");
-				Console.LogEcho( false );
-				break;
-				}
-			case 'W':                
-				// Display logged in chars
-				messageLoop << "CMD: Current Users in the World:";
-				j = 0;
-				CSocket *iSock;
-				Network->PushConn();
-				for( iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-				{
-					++j;
-					CChar *mChar = iSock->CurrcharObj();
-					sprintf( temp, "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
-					messageLoop << temp;
-				}
-				Network->PopConn();
-				sprintf( temp, "     Total users online: %i", j );
-				messageLoop << temp;
-				break;
-			case 'M':
-				size_t tmp, total;
-				total = 0;
-				tmp = 0;
-				messageLoop << "CMD: UOX Memory Information:";
-				messageLoop << "     Cache:";
-				sprintf( temp, "        Tiles: %u bytes", Map->TileMem );
-				messageLoop << temp;
-				sprintf( temp, "        Multis: %u bytes", Map->MultisMem );
-				messageLoop << temp;
-				size_t m, n;
-				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
-				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof(int)*5;
-				sprintf( temp, "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
-				messageLoop << temp;
-				n = ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
-				total += tmp = n + n * sizeof( int ) * 4;
-				sprintf( temp, "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
-				messageLoop << temp;
-				sprintf( temp, "        You save I: %i & C: %i bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
-				total += tmp = 69 * sizeof( SpellInfo );
-				sprintf( temp, "     Spells: %i bytes", tmp );
-				messageLoop << "     Sizes:";
-				sprintf( temp, "        CItem  : %i bytes", sizeof( CItem ) );
-				messageLoop << temp;
-				sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
-				messageLoop << temp;
-				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * TEffects->Count() );
-				messageLoop << temp;
-				total += tmp = Map->TileMem + Map->MultisMem;
-				sprintf( temp, "        Approximate Total: %i bytes", total );
-				messageLoop << temp;
-				break;
-			case '?':
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << "Console commands:";
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << " ShardOP:";
-				messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
-				messageLoop << "    C - Configuration       H - Unused";
-				messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
-				messageLoop << " Load Commands:";
-				messageLoop << "    1 - Ini                 2 - Accounts";
-				messageLoop << "    3 - Regions             4 - Spawn Regions";
-				messageLoop << "    5 - Spells              6 - Commands";
-				messageLoop << "    7 - Dfn's               8 - JavaScript";
-				messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
-				messageLoop << " Save Commands:";
-				messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
-				messageLoop << "    # - Unused              $ - Unused";
-				messageLoop << "    % - Unused              ^ - Unused";
-				messageLoop << "    & - Unused              ( - Unused";
-				messageLoop << "    ) - Unused";
-				messageLoop << " Server Maintenence:";
-				messageLoop << "    P - Performance         W - Characters Online";
-				messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
-				messageLoop << "    V - Dump Lookups(Devs)  F - Display Priority Maps";
-				messageLoop << " Network Maintenence:";
-				messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
-				messageLoop << "    Z - Socket Logging      ";
-				messageLoop << MSG_SECTIONBEGIN;
-				break;
-			case 'v':
-			case 'V':
-				// Dump look up data to files so developers working with extending the ini will have a table to use
-				messageLoop << "| CMD: Creating Server.scp and Uox3.ini Tag Lookup files(For Developers)....";
-				cwmWorldState->ServerData()->dumpLookup( 0 );
-				cwmWorldState->ServerData()->save( "./uox.tst.ini" );
-				messageLoop << MSG_PRINTDONE;
-				break;
-			case 'z':
-			case 'Z':
-			{
-				// Log socket activity
-				Network->PushConn();
-				bool loggingEnabled = false;
-				CSocket *snSock = Network->FirstSocket();
-				if( snSock != NULL )
-					loggingEnabled = !snSock->Logging();
-				for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
-				{
-					if( snSock != NULL )
-						snSock->Logging( !snSock->Logging() );
-				}
-				Network->PopConn();
-				if( loggingEnabled )
-					messageLoop << "CMD: Network Logging Enabled.";
-				else
-					messageLoop << "CMD: Network Logging Disabled.";
-				break;
-			}
-			case 'c':
-			case 'C':
-				// Shows a configuration header
-				DisplaySettings();
-				break;
-			case 'f':
-			case 'F':
-				FileLookup->DisplayPriorityMap();
-				break;
-			default:
-				sprintf( temp, "Key \'%c\' [%i] does not perform a function", (char)c, c );
-				messageLoop << temp;
-				break;
-		}
-	}
-}
-
-//o----------------------------------------------------------------------------o
-//|   Function -	 void checkkey( void )
-//|   Date     -	 Unknown
-//|   Programmer  -  Unknown  (Touched up by EviLDeD)
-//o----------------------------------------------------------------------------o
-//|   Purpose     -  Facilitate console control. SysOp keys, and localhost 
-//|					 controls.
-//o----------------------------------------------------------------------------o
-void checkkey( void )
-{
-	int c = cl_getch();
-	if( c > 0 )
-	{
-		if( (cluox_io) && ( c == 250 ) )
-		{  // knox force unsecure mode, need this since cluox can't know
-			//      how the toggle status is.
-			if( cwmWorldState->GetSecure() )
-			{
-				Console << "Secure mode disabled. Press ? for a commands list." << myendl;
-				cwmWorldState->SetSecure( false );
-				return;
-			}
-		}
-		c = toupper(c);
-		processkey( c );
 	}
 }
 
@@ -2152,20 +1517,28 @@ void LoadJSEngine( void )
 		}
 		engineData.close();
 	}
-	jsRuntime = JS_NewRuntime( engineSize );
+	jsRuntime			= JS_NewRuntime( engineSize );
+	jsRuntimeConsole	= JS_NewRuntime( engineSize );
 	
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
 	
-	if( jsRuntime == NULL )
+	if( jsRuntime == NULL || jsRuntimeConsole == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	jsContext = JS_NewContext( jsRuntime, 0x2000 );
 	if( jsContext == NULL )
+		Shutdown( FATAL_UOX3_JAVASCRIPT );
+	jsContextConsole = JS_NewContext( jsRuntimeConsole, 0x2000 );
+	if( jsContextConsole == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	jsGlobal = JS_NewObject( jsContext, &global_class, NULL, NULL ); 
 	if( jsGlobal == NULL )
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	JS_InitStandardClasses( jsContext, jsGlobal ); 
+	jsGlobalConsole = JS_NewObject( jsContextConsole, &global_class, NULL, NULL ); 
+	if( jsGlobalConsole == NULL )
+		Shutdown( FATAL_UOX3_JAVASCRIPT );
+	JS_InitStandardClasses( jsContextConsole, jsGlobalConsole ); 
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
 }
@@ -2253,18 +1626,13 @@ void ParseArgs( int argc, char *argv[] )
 		}
 		else if( !strcmp( argv[i], "-cluox100" ) )
 		{
-			Console << "Using CLUOX Streaming-IO" << myendl;
-			setvbuf( stdout, NULL, _IONBF, 0 );
-			setvbuf( stderr, NULL, _IONBF, 0 );
-			cluox_io = true;
 			++i;
 			if( i > argc )
 			{
 				Console.Error( 0, "Fatal error in CLUOX arguments" );
 				Shutdown( 10 );
 			}
-			char *dummy;
-			cluox_stdin_writeback = (void *)strtol( argv[i], &dummy, 16 );
+			Console.Cloak( argv[i] );
 		}
 	}
 }
@@ -2461,7 +1829,9 @@ void Shutdown( SI32 retCode )
 	// don't leave file pointers open, could lead to file corruption
 	Console << "Destroying JS instances... ";
 	JS_DestroyContext( jsContext );
+	JS_DestroyContext( jsContextConsole );
 	JS_DestroyRuntime( jsRuntime );
+	JS_DestroyRuntime( jsRuntimeConsole );
 	Console.PrintDone();
 
 	Console.PrintSectionBegin();
@@ -3309,7 +2679,7 @@ int main( int argc, char *argv[] )
 			//	EviLDeD	-	February 27, 2000
 			//	Just in case the thread doesn't start then use the main threaded copy
 			if( conthreadok == -1 )
-				checkkey();
+				Console.Poll();
 			UOXSleep( (cwmWorldState->GetPlayersOnline() ? 10 : 90 ) );
 			//	EviLDeD	-	End
 			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )

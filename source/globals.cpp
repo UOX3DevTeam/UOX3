@@ -23,9 +23,9 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 // JS Stuff
 //o---------------------------------------------------------------------------o
-JSRuntime *		jsRuntime; 
-JSContext *		jsContext; 
-JSObject *		jsGlobal; 
+JSRuntime *		jsRuntime, *jsRuntimeConsole; 
+JSContext *		jsContext, *jsContextConsole; 
+JSObject *		jsGlobal, *jsGlobalConsole; 
 JSClass global_class = { 
         "global",0, 
         JS_PropertyStub,JS_PropertyStub,JS_PropertyStub,JS_PropertyStub, 

@@ -67,9 +67,9 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 // JS Stuff
 //o---------------------------------------------------------------------------o
-extern JSRuntime *jsRuntime;
-extern JSContext *jsContext;
-extern JSObject *jsGlobal;
+extern JSRuntime *jsRuntime, *jsRuntimeConsole;
+extern JSContext *jsContext, *jsContextConsole;
+extern JSObject *jsGlobal, *jsGlobalConsole;
 extern JSClass global_class;
 extern JSClass uox_class;
 

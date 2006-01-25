@@ -256,6 +256,12 @@
 { // 1500-1999
 }
 
+[CONSOLE_SCRIPTS]
+{
+9000=console/reloads.js
+9001=console/shutdown.js
+}
+
 
 EOF
 

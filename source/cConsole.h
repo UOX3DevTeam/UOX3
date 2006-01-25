@@ -96,21 +96,54 @@ public:
 	bool	LogEcho(void);
 	void	LogEcho(bool value);	
 	void	PrintSpecial(UI08 color, const char *toPrint,...);
+	void	Poll( void );
+	void	Cloak( char *callback );
+
+	void	RegisterKey( int key, std::string cmdName, UI16 scriptID );
+	void	RegisterFunc( std::string key, std::string cmdName, UI16 scriptID );
+	void	SetKeyStatus( int key, bool isEnabled );
+	void	SetFuncStatus( std::string key, bool isEnabled );
+	void	Registration( void );
+
 private:
-	UI16	left, top, height, width;	// for differing windows
-	UI16	curLeft, curTop;
-	UI16	filterSettings;
-	UI08	currentMode, currentLevel;
-	UI08	previousColour;
-	bool	logEcho;
+
+	struct JSConsoleEntry
+	{
+		UI16		scriptID;
+		bool		isEnabled;
+		std::string cmdName;
+		JSConsoleEntry() : scriptID( 0 ), isEnabled( true ), cmdName( "" )
+		{
+		}
+		JSConsoleEntry( UI16 id, std::string cName ) : scriptID( id ), isEnabled( true ), cmdName( cName )
+		{
+		}
+	};
+
+	typedef std::map< std::string, JSConsoleEntry >				JSCONSOLEFUNCMAP;
+	typedef std::map< std::string, JSConsoleEntry >::iterator	JSCONSOLEFUNCMAP_ITERATOR;
+	typedef std::map< int, JSConsoleEntry >						JSCONSOLEKEYMAP;
+	typedef std::map< int, JSConsoleEntry >::iterator			JSCONSOLEKEYMAP_ITERATOR;
+
+	JSCONSOLEKEYMAP		JSKeyHandler;
+	JSCONSOLEFUNCMAP	JSConsoleFunctions;
+	UI16				left, top, height, width;	// for differing windows
+	UI16				curLeft, curTop;
+	UI16				filterSettings;
+	UI08				currentMode, currentLevel;
+	UI08				previousColour;
+	bool				logEcho;
 #if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
 #else
-	bool	forceNL;
+	bool			forceNL;
 #endif
 	void	PrintStartOfLine( void );
 	void	StartOfLineCheck(void);
+	int		cl_getch( void );
+	void	Process( int c );
+	void	DisplaySettings( void );
 };
 
 class CEndL

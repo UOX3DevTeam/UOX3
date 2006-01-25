@@ -28,6 +28,7 @@
 #include "network.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
+#include "JSEncapsulate.h"
 
 namespace UOX
 {
@@ -500,6 +501,62 @@ JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RegisterKey: Invalid number of arguments (takes 2)" );
+ 		return JS_FALSE;
+	}
+	JSEncapsulate encaps( cx, &(argv[0]) );
+//	int			keyToReg	= JSVAL_TO_INT( argv[0] );
+	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+
+	if( scriptID == 0xFFFF )
+	{
+		DoSEErrorMessage( "RegisterKey: JS Script has an Invalid ScriptID" );
+		return JS_FALSE;
+	}	
+	int toPass = 0;
+	if( encaps.isType( JSEncapsulate::JSObjectType::JSOT_STRING ) )
+	{
+		std::string enStr = encaps.toString();
+		if( enStr.length() != 0 )
+			toPass  = enStr[0];
+		else
+		{
+			DoSEErrorMessage( "RegisterKey: JS Script passed an invalid key to register" );
+			return JS_FALSE;
+		}
+	}
+	else
+		toPass = encaps.toInt();
+	Console.RegisterKey( toPass, toRegister, scriptID );
+ 	return JS_TRUE;
+}
+
+JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		DoSEErrorMessage( "RegisterConsoleFunc: Invalid number of arguments (takes 2)" );
+ 		return JS_FALSE;
+	}
+	std::string funcToRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	std::string toRegister		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
+	UI16 scriptID				= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+
+	if( scriptID == 0xFFFF )
+	{
+		DoSEErrorMessage( "RegisterConsoleFunc: JS Script has an Invalid ScriptID" );
+		return JS_FALSE;
+	}	
+
+	Console.RegisterFunc( funcToRegister, toRegister, scriptID );
+ 	return JS_TRUE;
+}
+
 JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -509,6 +566,30 @@ JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 	std::string toDisable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	Commands->SetCommandStatus( toDisable, false );
+ 	return JS_TRUE;
+}
+
+JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "DisableKey: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	int toDisable	= JSVAL_TO_INT( argv[0] );
+	Console.SetKeyStatus( toDisable, false );
+ 	return JS_TRUE;
+}
+
+JSBool SE_DisableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "DisableConsoleFunc: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	std::string toDisable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	Console.SetFuncStatus( toDisable, false );
  	return JS_TRUE;
 }
 
@@ -545,6 +626,30 @@ JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	int spellNumber	= JSVAL_TO_INT( argv[0] );
 	Magic->SetSpellStatus( spellNumber, true );
+ 	return JS_TRUE;
+}
+
+JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EnableKey: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	int toEnable	= JSVAL_TO_INT( argv[0] );
+	Console.SetKeyStatus( toEnable, true );
+ 	return JS_TRUE;
+}
+
+JSBool SE_EnableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EnableConsoleFunc: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	Console.SetFuncStatus( toEnable, false );
  	return JS_TRUE;
 }
 

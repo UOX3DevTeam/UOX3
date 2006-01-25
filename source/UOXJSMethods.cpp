@@ -46,6 +46,7 @@
 #include "magic.h"
 #include "CPacketSend.h"
 #include "mapstuff.h"
+#include "cThreadQueue.h"
 
 namespace UOX
 {
@@ -4851,23 +4852,41 @@ JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval
 //	{ "PrintDone",			CConsole_PrintDone,			0, 0, 0 },
 JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 0 )
+	if( argc != 0 && argc != 1 )
 	{
-		MethodError( "PrintDone: Invalid number of arguments (takes 0)" );
+		MethodError( "PrintDone: Invalid number of arguments (takes 0 or 1)" );
 		return JS_FALSE;
 	}
-	Console.PrintDone();
+	bool normalDone = true;
+	if( argc != 0 )
+	{
+		JSEncapsulate encaps( cx, &(argv[0]) );
+		normalDone	= encaps.toBool();
+	}
+	if( normalDone )
+		Console.PrintDone();
+	else
+		messageLoop << MSG_PRINTDONE;
 	return JS_TRUE;
 }
 //	{ "PrintFailed",		CConsole_PrintFailed,		0, 0, 0 },
 JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 0 )
+	if( argc != 0 && argc != 1 )
 	{
-		MethodError( "PrintFailed: Invalid number of arguments (takes 0)" );
+		MethodError( "PrintFailed: Invalid number of arguments (takes 0 or 1)" );
 		return JS_FALSE;
 	}
-	Console.PrintFailed();
+	bool normalFailed = true;
+	if( argc != 0 )
+	{
+		JSEncapsulate encaps( cx, &(argv[0]) );
+		normalFailed	= encaps.toBool();
+	}
+	if( normalFailed )
+		Console.PrintFailed();
+	else
+		messageLoop << MSG_PRINTFAILED;
 	return JS_TRUE;
 }
 //	{ "PrintPassed",		CConsole_PrintPassed,		0, 0, 0 },
@@ -4930,6 +4949,40 @@ JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
 	return JS_TRUE;
 }
+//	{ "BeginShutdown",		CConsole_BeginShutdown,		0, 0, 0 },
+JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "BeginShutdown: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	messageLoop << MSG_SHUTDOWN;
+	return JS_TRUE;
+}
+//	{ "Reload",				CConsole_Reload,			1, 0, 0 },
+JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Reload: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	JSEncapsulate arg0( cx, &(argv[0]) );
+	int mArg = arg0.toInt();
+	if( mArg < 0 || mArg > 8 )
+	{
+		MethodError( "Reload: Section to reload must be between 0 and 8" );
+		return JS_FALSE;
+	}
+	messageLoop.NewMessage( MSG_RELOAD, UString::number( mArg ).c_str() );
+	return JS_TRUE;
+}
+
+
+
+
+
 JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )

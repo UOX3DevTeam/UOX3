@@ -195,7 +195,7 @@ public:
 	void		HandleGumpPress( CPIGumpMenuSelect *packet );
 	void		HandleGumpInput( CPIGumpInput *pressing );
 
-				cScript( std::string targFile );
+				cScript( std::string targFile, UI08 runTime );
 				~cScript();
 
 	JSObject *	Object( void ) const;	// returns object pointer
@@ -273,7 +273,7 @@ public:
 	UI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i);
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 //	bool		AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s );
-	bool		CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams );
+	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams );
 
 	bool		ScriptRegistration( std::string scriptType );
 

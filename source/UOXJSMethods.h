@@ -228,6 +228,8 @@ JSMethodFunc CConsole_ClearScreen;
 JSMethodFunc CConsole_PrintBasedOnVal;
 JSMethodFunc CConsole_MoveTo;
 JSMethodFunc CConsole_PrintSpecial;
+JSMethodFunc CConsole_BeginShutdown;
+JSMethodFunc CConsole_Reload;
 
 static JSFunctionSpec CGump_Methods[] =  
 { 	
@@ -475,7 +477,9 @@ static JSFunctionSpec CConsole_Methods[] =
 	{ "PrintBasedOnVal",	CConsole_PrintBasedOnVal,	1, 0, 0 },
 	{ "MoveTo",				CConsole_MoveTo,			2, 0, 0 },
 	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
-	{ NULL,			NULL,					0, 0, 0 }
+	{ "BeginShutdown",		CConsole_BeginShutdown,		0, 0, 0 },
+	{ "Reload",				CConsole_Reload,			1, 0, 0 },
+	{ NULL,			NULL,								0, 0, 0 }
 };
 
 static JSFunctionSpec CPacket_Methods[] = 

@@ -117,6 +117,14 @@ static JSFunctionSpec my_functions[] =
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },
 	{ "EnableCommand",				SE_EnableCommand,			1, 0, 0 },
 
+	{ "RegisterKey",				SE_RegisterKey,				2, 0, 0 },
+	{ "DisableKey",					SE_DisableKey,				1, 0, 0 },
+	{ "EnableKey",					SE_EnableKey,				1, 0, 0 },
+
+	{ "RegisterConsoleFunc",		SE_RegisterConsoleFunc,		2, 0, 0 },
+	{ "DisableConsoleFunc",			SE_DisableConsoleFunc,		1, 0, 0 },
+	{ "EnableConsoleFunc",			SE_EnableConsoleFunc,		1, 0, 0 },
+
 	{ "RegisterSpell",				SE_RegisterSpell,			2, 0, 0 },
 	{ "DisableSpell",				SE_DisableSpell,			1, 0, 0 },
 	{ "EnableSpell",				SE_EnableSpell,				1, 0, 0 },
@@ -144,11 +152,14 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 	Console.Error( 2, "Erroneous Line: %s\nToken Ptr: %s", report->linebuf, report->tokenptr );
 }
 
-cScript::cScript( std::string targFile ) : isFiring( false )
+cScript::cScript( std::string targFile, UI08 runTime ) : isFiring( false )
 {
 	eventPresence[0] = eventPresence[1] = eventPresence[2] = 0xFFFFFFFF;
 	needsChecking[0] = needsChecking[1] = needsChecking[2] = 0xFFFFFFFF;
-	targContext = JS_NewContext( jsRuntime, 0x2000 );
+	if( runTime == 0 )
+		targContext = JS_NewContext( jsRuntime, 0x2000 );
+	else
+		targContext = JS_NewContext( jsRuntimeConsole, 0x2000 );
 	if( targContext == NULL )
 		return;
 	targObject = JS_NewObject( targContext, &uox_class, NULL, NULL ); 
@@ -231,37 +242,31 @@ void cScript::Cleanup( void )
 	for( i = 0; i < raceObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, raceObjects[i].toUse );
-		//JS_RemoveRoot( targContext, raceObjects[i].toUse );
 	}
 
 	for( i = 0; i < charObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, charObjects[i].toUse );
-		//JS_RemoveRoot( targContext, charObjects[i].toUse );
 	}
 
 	for( i = 0; i < itemObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, itemObjects[i].toUse );
-		//JS_RemoveRoot( targContext, itemObjects[i].toUse );
 	}
 
 	for( i = 0; i < sockObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, sockObjects[i].toUse );
-		//JS_RemoveRoot( targContext, sockObjects[i].toUse );
 	}
 
 	for( i = 0; i < guildObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, guildObjects[i].toUse );
-		//JS_RemoveRoot( targContext, guildObjects[i].toUse );
 	}
 
 	for( i = 0; i < regionObjects.size(); ++i )
 	{
 		JS_UnlockGCThing( targContext, regionObjects[i].toUse );
-		//JS_RemoveRoot( targContext, regionObjects[i].toUse );
 	}
 
 	raceObjects.resize( 0 );
@@ -275,7 +280,6 @@ cScript::~cScript()
 {
 	Cleanup();
 	JS_GC( targContext );
-
 	if( targScript != NULL )
 		JS_DestroyScript( targContext, targScript );
 	JS_GC( targContext );
@@ -2103,13 +2107,13 @@ JSObject *cScript::AcquireObject( IUEEntries iType )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams )
+//|	Function	-	bool CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams )
 //|	Programmer	-	Abaddon
 //|	Date		-	20th December, 2001
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 //o---------------------------------------------------------------------------o
-bool cScript::CallParticularEvent( char *eventToCall, jsval *params, SI32 numParams )
+bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams )
 {
 	if( eventToCall == NULL )
 		return false;
@@ -2406,47 +2410,6 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	return ( retVal == JS_TRUE );
 }
 
-/*//o--------------------------------------------------------------------------
-//|	Function	-	bool AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar )
-//|	Date		-	January 27, 2003
-//|	Programmer	-	Maarc
-//|	Modified	-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Calls the function represented in funcName for the script
-//|				-	passing in two character parameters
-//o--------------------------------------------------------------------------
-bool cScript::AreaCharFunc( char *funcName, CChar *srcChar, CChar *tmpChar, CSocket *s )
-{
-	if( !ValidateObject( srcChar ) || !ValidateObject( tmpChar ) || funcName == NULL )
-		return false;
-
-	jsval params[3], rval;
-	JSObject *srcObj = AcquireObject( IUE_CHAR );
-	JSObject *tmpObj = AcquireObject( IUE_CHAR );
-	JS_SetPrivate( targContext, srcObj, srcChar );
-	JS_SetPrivate( targContext, tmpObj, tmpChar );
-	params[0] = OBJECT_TO_JSVAL( srcObj );
-	params[1] = OBJECT_TO_JSVAL( tmpObj );
-	JSObject *sockObj = NULL;
-	if( s != NULL )
-	{
-		sockObj = AcquireObject( IUE_SOCK );
-		JS_SetPrivate( targContext, sockObj, s );
-		params[2] = OBJECT_TO_JSVAL( sockObj );
-	}
-	else
-	{
-		params[2] = JSVAL_NULL;
-	}
-
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	ReleaseObject( srcObj, IUE_CHAR );
-	ReleaseObject( tmpObj, IUE_CHAR );
-	if( s != NULL )
-		ReleaseObject( sockObj, IUE_SOCK );
-	return ( retVal == JS_TRUE );
-}
-*/
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool cScript::OnCommand( CSocket *CSocket )
 //|	Date			-	1/13/2003 11:17:48 PM

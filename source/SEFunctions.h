@@ -72,6 +72,14 @@ SEngineFunc SE_RegisterCommand;		//											***
 SEngineFunc SE_EnableCommand;		//											***
 SEngineFunc SE_DisableCommand;		//											***
 
+SEngineFunc SE_RegisterKey;			//											***
+SEngineFunc SE_EnableKey;			//											***
+SEngineFunc SE_DisableKey;			//											***
+
+SEngineFunc SE_RegisterConsoleFunc;	//											***
+SEngineFunc SE_EnableConsoleFunc;	//											***
+SEngineFunc SE_DisableConsoleFunc;	//											***
+
 SEngineFunc SE_RegisterSpell;		//											***
 SEngineFunc SE_EnableSpell;			//											***
 SEngineFunc SE_DisableSpell;		//											***

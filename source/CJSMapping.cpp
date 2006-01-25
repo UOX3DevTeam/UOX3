@@ -349,7 +349,11 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 	UI16 scriptID			= 0xFFFF;
 	UString basePath		= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
+	UI08 runTime			= 0;
 
+	if( scriptType == SCPT_CONSOLE )
+		runTime = 1;
+	
 	if( mSection != NULL )
 	{
 		size_t i = 0;
@@ -366,7 +370,7 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 			{
 				try
 				{
-					cScript *toAdd = new cScript( fullPath );
+					cScript *toAdd = new cScript( fullPath, runTime );
 					if( toAdd != NULL )
 					{
 						scriptIDMap[scriptID]			= toAdd;
@@ -412,6 +416,9 @@ void CJSMappingSection::Reload( UI16 toLoad )
 			UI16 scriptID		= 0xFFFF;
 			UString basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 			UString data, fullPath;
+			UI08 runTime = 0;
+			if( scriptType == SCPT_CONSOLE )
+				runTime = 1;
 			for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
 				scriptID		= tag.toUShort();
@@ -437,7 +444,7 @@ void CJSMappingSection::Reload( UI16 toLoad )
 								delete scriptIDMap[toLoad];
 								scriptIDMap[toLoad] = NULL;
 							}
-							cScript *toAdd = new cScript( fullPath );
+							cScript *toAdd = new cScript( fullPath, runTime );
 							if( toAdd != NULL )
 							{
 								scriptIDMap[scriptID]			= toAdd;

@@ -18,6 +18,7 @@ enum MessageType
 	MSG_PRINTDONE,
 	MSG_PRINTFAILED,
 	MSG_SECTIONBEGIN,
+	MSG_RELOAD,
 	MSG_COUNT
 };
 
@@ -33,7 +34,7 @@ private:
 	std::queue< MessagePassed >	internalQueue;
 public:
 					CThreadQueue();
-	void			NewMessage( MessageType toAdd, char *data = NULL );
+	void			NewMessage( MessageType toAdd, const char *data = NULL );
 	MessagePassed	GrabMessage( void );
 	bool			Empty( void );
 	CThreadQueue &	operator<<( MessageType newMessage );

@@ -1,3 +1,24 @@
+25th January, 2006 - Maarc
+
+	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods
+	Added a key/command handler console exposure to the JS environment (involves a secondary runtime because of threading!)
+	Note: Creating/editing world objects through this environment is not thread safe, and may cause errors
+	Modified Console.PrintDone() and Console.PrintFailed() to take an optional boolean parameter as to whether it is printed instantly, or queued up
+	Added functions Console.BeginShutdown() and Console.Reload( intVal )
+		BeginShutdown() takes no parameters
+		Reload() takes a single parameter, with the values of
+			0	Reload INI
+			1	Reload Accounts
+			2	Reload Regions
+			3	Reload Spawn Regions
+			4	Reload Spells
+			5	Reload Commands
+			6	Reload Definition Files
+			7	Reload JS
+			8	Reload HTML
+	Included an example script that takes the old 1->9 keys and implements them through the new JS routines
+	Included an example script that takes the old shutdown keys and implements them through the JS routines
+
 1/23/2006 - Xuri
 	Added new JS event: onCharDoubleClick( pUser, targChar) - allows overriding doubleclicking of characters
 	Added new JS event: onSkillGump( socket ) - allows overriding the client's request to open the default skillgump

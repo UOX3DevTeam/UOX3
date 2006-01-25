@@ -34,7 +34,7 @@ MessagePassed CThreadQueue::GrabMessage( void )
 	MutexOff();	
 	return toReturn;	
 }
-void CThreadQueue::NewMessage( MessageType toAdd, char *data )
+void CThreadQueue::NewMessage( MessageType toAdd, const char *data )
 { 
 	MutexOn();
 	MessagePassed adding;
