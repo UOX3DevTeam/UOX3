@@ -174,7 +174,7 @@ COLOUR validSkinColour( UI16 id, UI16 bodyID )
 		}
 		break;
 	default:	// human male/female
-		rvalue = Capped( id, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
+		rvalue = Capped( id, static_cast<UI16>(0x03EA), static_cast<UI16>(0x0422) );
 		break;
 	}
 	return rvalue;
@@ -253,7 +253,7 @@ COLOUR validHairColour( UI16 id, UI16 bodyID )
 		}
 		break;
 	default:	// human male/female
-		rvalue = Capped( id, static_cast<UI16>(0x03EA), static_cast<UI16>(0x0422) );
+		rvalue = Capped( id, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		break;
 	}
 	return rvalue;

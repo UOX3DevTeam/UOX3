@@ -18,6 +18,8 @@
 			8	Reload HTML
 	Included an example script that takes the old 1->9 keys and implements them through the new JS routines
 	Included an example script that takes the old shutdown keys and implements them through the JS routines
+	Couple of prettying up with the loading code and what it displays
+	Fixed an error with validation of skin and hair colours with human races (my mistake!)
 
 1/23/2006 - Xuri
 	Added new JS event: onCharDoubleClick( pUser, targChar) - allows overriding doubleclicking of characters
