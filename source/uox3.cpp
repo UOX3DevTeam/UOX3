@@ -707,7 +707,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		UI16 hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
 		if( mChar.WillHunger() && hungerRate > 0 )
 		{
-			if( mChar.GetCommandLevel() > PLAYER_CMDLEVEL && !mChar.IsDead() && !mChar.IsInvulnerable() )
+			if( mChar.GetCommandLevel() == PLAYER_CMDLEVEL && !mChar.IsDead() && !mChar.IsInvulnerable() )
 			{
 				if( mChar.GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
