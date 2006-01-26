@@ -1,11 +1,12 @@
 function SpellRegistration()
 {
-	RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
+	RegisterSpell( 3, true );	// feeblemind 
+	RegisterSpell( 4, true );	// heal
+	RegisterSpell( 5, true );	// magic arrow
 }
 
-function onSpellCast( mSock, mChar, directCast, spellNum )
+function spellTimerCheck( mChar, mSock )
 {
-	// Are we already casting?
 	if( mChar.GetTimer( 6 ) != 0 )
 	{
 		if( mChar.isCasting )
@@ -19,12 +20,11 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			return false;
 		}
 	}
+	return true;
+}
 
-	var mSpell	= Spells[spellNum];
-	var spellType 	= mSock.currentSpellType;
-
-	mChar.spellCast = spellNum;
-
+function jailTimerCheck( mChar, mSock )
+{
 	if( mChar.isJailed && mChar.commandLevel < 2 )
 	{
 		mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
@@ -33,7 +33,58 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.spellCast = -1;
 		return false;
 	}
-	
+	return true;
+}
+
+function spellEnableCheck( mChar, mSock, mSpell )
+{
+	if( !mSpell.enabled )
+	{
+		mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
+		mChar.SetTimer( 6, 0 );
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		return false;
+	}
+	return true;
+}
+
+function itemInHandCheck( mChar, mSock, spellType )
+{
+	// The following loop checks to see if any item is currently equipped (if not a GM)
+	if( mChar.commandLevel < 2 )
+	{
+		if( spellType != 2 )
+		{
+			var itemRHand = mChar.FindItemLayer( 0x01 );
+			var itemLHand = mChar.FindItemLayer( 0x02 );
+			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
+			{
+				mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
+				mChar.SetTimer( 6, 0 );
+				mChar.isCasting = false;
+				mChar.spellCast = -1;
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+function onSpellCast( mSock, mChar, directCast, spellNum )
+{
+	// Are we already casting?
+	if( !spellTimerCheck( mChar, mSock ) )
+		return false;
+
+	var mSpell	= Spells[spellNum];
+	var spellType 	= mSock.currentSpellType;
+
+	mChar.spellCast = spellNum;
+
+	if( !jailTimerCheck( mChar, mSock ) )
+		return false;
+
 	// Region checks
 	var ourRegion = mChar.region;
 	if( (spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()) )
@@ -53,15 +104,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.spellCast = -1;
 		return false;
 	}
-	
-	if( !mSpell.enabled )
-	{
-		mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
-		mChar.SetTimer( 6, 0 );
-		mChar.isCasting = false;
-		mChar.spellCast = -1;
+
+	if( !spellEnableCheck( mChar, mSock, mSpell ) )
 		return false;
-	}
 	
 	// Cut the casting requirement on scrolls
 	var lowSkill, highSkill;
@@ -76,23 +121,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		highSkill	= mSpell.highSkill;
 	}
 
-	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( mChar.commandLevel < 2 )
-	{
-		if( spellType != 2 )
-		{
-			var itemRHand = mChar.FindItemLayer( 0x01 );
-			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
-			{
-				mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
-				mChar.SetTimer( 6, 0 );
-				mChar.isCasting = false;
-				mChar.spellCast = -1;
-				return false;
-			}
-		}
-	}
+	if( !itemInHandCheck( mChar, mSock, spellType ) )
+		return false;
 	
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
@@ -267,9 +297,9 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 
 	if( mChar.npc || spellType != 2 )
 	{
-		mChar.mana 	= mChar.mana - mSpell.mana;
-		mChar.health 	= mChar.health - mSpell.health;
-		mChar.stamina	= mChar.stamina - mSpell.stamina;
+		mChar.mana 	-= mSpell.mana;
+		mChar.health 	-= mSpell.health;
+		mChar.stamina	-= mSpell.stamina;
 	}
 	else if( !mChar.npc && spellType == 0 )
 		deleteReagents( mChar, mSpell );
@@ -321,5 +351,140 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
-	DoTempEffect( 0, sourceChar, ourTarg, 3, (mChar.skills.magery / 100), 0, 0);	
+	// This is where the code actually executes ... all of this setup for a single line of code!
+
+	DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, mChar );
+}
+
+function SubtractMana( mChar, mana )
+{
+	if( mChar.noNeedMana )
+		return;
+	mChar.mana -= mana;
+}
+
+function SubtractStamina( mChar, stamina )
+{
+	if( mChar.noNeedMana )
+		return;
+	mChar.stamina -= stamina;
+}
+
+function SubtractHealth( mChar, health, mSpell )
+{
+	if( mChar.noNeedMana || mSpell.health == 0 )
+		return;
+	mChar.TextMessage( "Health to remove" );
+	if( mSpell.health < 0 )
+	{
+		mChar.TextMessage( "Removing unusual health" );
+		if( abs( mSpell.health * health ) > mChar.health )
+			mChar.health = 0;
+		else
+			mChar.health += ( mSpell.health * health );
+	}
+	else
+	{
+		mChar.TextMessage( "Removing health of " + health );
+		mChar.health -= health;
+	}
+}
+
+function MagicDamage( p, amount, attacker, mSock, attSock )
+{
+//	CSocket *mSock = p->GetSocket(), *attSock = attacker->GetSocket();
+
+	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
+		return;
+
+	p.TextMessage( "Valid caster and attacker" );
+
+	if( p.dead || p.health <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
+		return;
+
+	p.TextMessage( "p not dead or below 0 health" );
+
+	if( p.CheckSkill( 16, 0, 1000 ) )
+	{
+		p.TextMessage( "Successful eval int check" );
+		var dmgReduction = RandomNumber( 0, p.skills.evaluatingintel ) / 10000;
+		p.TextMessage( "Bleeding off " + dmgReduction + " damage" );
+		amount -= ( amount * dmgReduction );
+		if( amount < 1 )
+			amount = 1;
+	}
+	p.TextMessage( "Damage to do: " + amount );
+	if( p.frozen && p.dexterity > 0 )
+	{
+		p.TextMessage( "Unfreezing target" );
+		p.frozen = false;
+		if( mSock != null ) 
+			mSock.SysMessage( GetDictionaryEntry( 700, mSock.Language ) );
+	}
+	p.TextMessage( "Checking for vulnerability and able to cast aggressive magic" );
+	if( p.vulnerable && p.region.canCastAggressive )
+	{
+		p.TextMessage( "Vulnerable, here comes the damage" );
+		if( p.npc ) 
+			amount *= 2;      // double damage against non-players
+
+		if( mSock != null )
+			mSock.DisplayDamage( p, amount );
+		if( attSock != null && attSock != mSock )
+			attSock.DisplayDamage( p, amount );
+
+		p.health += -amount;
+
+		if( p.health <= 0 )
+		{
+//			if( p != attacker )	// can't gain fame and karma for suicide :>
+//			{
+//				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
+//				Fame( attacker, p->GetFame() );
+//			}
+			p.Kill();
+		}
+	}
+}
+
+function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
+{
+	var mMagery = caster.skills.magery;
+	if( spellNum == 3 )	// Feeblemind
+	{
+		caster.TextMessage( "Casting feeblemind" );
+		DoTempEffect( 0, sourceChar, ourTarg, 4, (mMagery / 100), 0, 0);	
+	}
+	else if( spellNum == 4 )	// Heal
+	{
+		caster.TextMessage( "Casting Heal" );
+		var bonus = (mMagery/500) + (mMagery/100);
+		caster.TextMessage( "Healing bonus " + bonus );
+		caster.TextMessage( "Old health " + ourTarg.health );
+		if( bonus != 0 )
+		{
+			var rAdd = RandomNumber( 0, 5 ) + bonus;
+			caster.TextMessage( "Adding " + rAdd + " health!" );
+			ourTarg.health += rAdd;
+		}
+		else
+		{
+			caster.TextMessage( "Adding 4 health!" );
+			ourTarg.health += 4;
+		}
+		caster.TextMessage( "New health " + ourTarg.health );
+		caster.TextMessage( "Subtracting health" );
+		SubtractHealth( caster, bonus / 2, 4 );
+		if( ourTarg.murderer )
+			caster.criminal = true;
+	}
+	else if( spellNum == 5 )	// Magic arrow
+	{
+		caster.TextMessage( "Casting Magic Arrow!" );
+		var baseDamage = 2 + RandomNumber( 0, 5 );
+		var mageryAdjust = ( mMagery / 2000 + 1 );
+		caster.TextMessage( "Base damage " + baseDamage );
+		caster.TextMessage( "Magery multiplier: " + mageryAdjust );
+		MagicDamage( ourTarg, baseDamage * mageryAdjust, caster, caster.socket, ourTarg.socket );
+	}
 }

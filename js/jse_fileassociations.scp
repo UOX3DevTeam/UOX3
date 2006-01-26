@@ -234,6 +234,7 @@
 [MAGIC_SCRIPTS]
 { // 600-799
 600=magic/clumsy.js
+601=magic/level1targ.js
 }
 
 [SKILLUSE_SCRIPTS]

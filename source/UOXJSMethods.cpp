@@ -5269,5 +5269,40 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
+
+JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "(CSocket_DisplayDamage) Invalid Number of Arguments %d, needs: 2", argc );
+		return JS_TRUE;
+	}
+
+	CSocket *mSock			= static_cast<CSocket *>(JS_GetPrivate( cx, obj ));
+	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
+	JSClass *myClass		= JS_GetClass( jsObj );
+
+	if( strcmp( myClass->name, "UOXChar" ) )	// It must be a character!
+	{
+		MethodError( "CSocket_DisplayDamage: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	CChar *mChar			= static_cast<CChar *>(JS_GetPrivate( cx, jsObj ));
+	if( !ValidateObject( mChar )  )
+	{
+		MethodError( "(CSocket_DisplayDamage): Passed an invalid Character" );
+		return JS_TRUE;
+	}
+
+	JSEncapsulate damage( cx, &(argv[1]) );
+
+	CPDisplayDamage dispDamage( (*mChar), (UI16)damage.toInt() );
+	mSock->Send( &dispDamage );
+
+	return JS_TRUE;
+}
+
+
 }
 

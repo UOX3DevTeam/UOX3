@@ -133,6 +133,8 @@ static JSFunctionSpec my_functions[] =
 	{ "RegisterPacket",				SE_RegisterPacket,			2, 0, 0 },
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0, 0 },
 
+	{ "ValidateObject",				SE_ValidateObject,			1, 0, 0 },
+
 	{ NULL,							NULL,						0, 0, 0 }, 
 };
 

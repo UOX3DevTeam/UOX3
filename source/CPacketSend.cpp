@@ -4559,9 +4559,9 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 
 //Subcommand  0x22: Damage
 //
-// BYTE[2]   unknown, always 1 
-// BYTE[4]   Serial 
-// BYTE        Damage // how much damage was done ? 
+// BYTE[2]	unknown, always 1 
+// BYTE[4]	Serial 
+// BYTE		Damage // how much damage was done ? 
 //
 //Note: displays damage above the npc/player’s head.
 

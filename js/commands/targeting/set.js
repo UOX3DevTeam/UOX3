@@ -62,6 +62,11 @@ function onCallback0( socket, ourObj )
 		ourObj.fame = nVal;
 		okMsg( socket );
 		break;
+	case "HP":
+	case "HEALTH":
+		ourObj.health = nVal;
+		okMsg( socket );
+		break;
 	case "KARMA":
 		ourObj.karma = nVal;
 		okMsg( socket );

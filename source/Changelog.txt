@@ -1,3 +1,28 @@
+26th January, 2006 - Maarc
+	Fixed a bug with clumsy JS (visibility not resetting properly)
+	Added JS implementation for heal and feeblemind
+	Added JS implementation for magic arrow, but it relies on MagicDamage(), which is not completely implementable (missing Karma, Fame and CPDisplayDamage)
+	Added a ValidateObject() function to the JS engine, that behaves the same as it does in the C++ code
+	Updated 'set command to support setting of health (via health or hp)
+	NOTE: Tweak seems to be broken (the buttons don't fire anything), and I have no idea why
+	NOTE: Heal is currently a vampiric heal (some health is subtracted from the caster to heal the target).  This is *not* a new behaviour.
+	NOTE: Tweaked up magic arrow damage (a GM mage was doing less than 4 damage every time).  
+	Old magic arrow formula			
+		baseDamage	= 2 + Random( 0, 1 )
+		mageryMult	= (Magery / 2000) + 1 (maximum multiplier, 1.5)
+		Damage Dealt	= baseDamage * mageryMult - EvalIntCheck
+
+	New magic arrow formula (JS Only!)
+		baseDamage	= 2 + Random( 0, 5 )
+		mageryMult	= (Magery / 2000) + 1
+		DamageDealt	= baseDamage * mageryMult - EvalIntCheck
+
+	The EvalInt check has changed, as well (with the JS code, not the C++ code.  All non-JS spells still adhere to this old standard).
+	Previously, a successful check would always draw off a fixed amount of damage ( 10% of your skill level )
+	Adjusted the JS socket property for characters, so that it returns an explicit NULL object if there is no socket attached
+	NOTE: Researching into JSExtendedClass instead of JSClass, so that we can implement equality testing (like, attacker != caster sorts of things)
+	
+
 25th January, 2006 - Maarc
 
 	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods

@@ -2159,4 +2159,27 @@ JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "ValidateObject: Invalid number of arguments (takes 1)" );
+ 		return JS_FALSE;
+	}
+
+	JSObject *myDest	= JSVAL_TO_OBJECT( argv[0] );
+	JSClass *myClass	= JS_GetClass( myDest );
+
+	if( !strcmp( myClass->name, "UOXChar" ) || !strcmp( myClass->name, "UOXItem" ) ) 
+	{
+		CBaseObject *myObj	= (CBaseObject *)JS_GetPrivate( cx, myDest );
+		*rval = BOOLEAN_TO_JSVAL( ValidateObject( myObj ) );
+	}
+	else
+		*rval = JSVAL_FALSE;
+
+ 	return JS_TRUE;
+}
+
+
 }

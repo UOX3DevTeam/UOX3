@@ -1967,7 +1967,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          MagicDamage( CChar *p )
+//|     Class         :          MagicDamage( CChar *p, int amount, CChar *attacker )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o

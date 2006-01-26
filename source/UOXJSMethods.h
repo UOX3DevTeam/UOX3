@@ -170,6 +170,7 @@ JSMethodFunc CSocket_WhoList;
 JSMethodFunc CSocket_Midi;
 JSMethodFunc CSocket_SendAddMenu;
 JSMethodFunc CSocket_Send;
+JSMethodFunc CSocket_DisplayDamage;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
@@ -408,6 +409,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
 	{ "Send",				CSocket_Send,		1, 0, 0 },
 	{ "CanSee",				CBase_CanSee,		1, 0, 0 },
+	{ "DisplayDamage",		CSocket_DisplayDamage, 2, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 

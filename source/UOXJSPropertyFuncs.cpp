@@ -556,11 +556,20 @@ namespace UOX
 					}
 					break;
 				case CCP_SOCKET:
-					{ // So we can declar the variables here
-					cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-					JSObject *mySock	= myScript->AcquireObject( IUE_SOCK );
-					JS_SetPrivate( cx, mySock, gPriv->GetSocket() );
-					*vp = OBJECT_TO_JSVAL( mySock );
+					{ // So we can declare the variables here
+						CSocket *tSock = gPriv->GetSocket();
+						if( tSock == NULL )
+						{	// Return a JS_NULL
+							*vp = JSVAL_NULL;
+						}
+						else
+						{	// Otherwise Acquire an object
+							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+							JSObject *mySock	= myScript->AcquireObject( IUE_SOCK );
+							JS_SetPrivate( cx, mySock, tSock );
+							*vp = OBJECT_TO_JSVAL( mySock );
+						}
+				
 					}
 					break;
 				case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;

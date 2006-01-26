@@ -165,6 +165,8 @@ SEngineFunc SE_ReloadJSFile;
 SEngineFunc SE_StaticInRange;
 SEngineFunc SE_StaticAt;
 
+SEngineFunc SE_ValidateObject;
+
 #endif
 
 }
