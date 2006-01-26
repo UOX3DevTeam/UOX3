@@ -1,3 +1,6 @@
+1/26/2006 - Xuri
+	Hungercheck for players should now be working again (Grimson)
+
 26th January, 2006 - Maarc
 	Fixed a bug with clumsy JS (visibility not resetting properly)
 	Added JS implementation for heal and feeblemind
