@@ -1,3 +1,6 @@
+1/27/2006 - Xuri
+	OnHungerChange JS event will now execute both for hunger level increase as well as decrease, and will also work as global script (Grimson)
+
 1/26/2006 - Xuri
 	Hungercheck for players should now be working again (Grimson)
 

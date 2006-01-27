@@ -656,6 +656,17 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		//Remove a food item
 		bool iDeleted = i->IncAmount( -1 );
 		targNPC->SetHunger( static_cast<SI08>(targNPC->GetHunger() + 1) );
+		const UI16 HungerTrig = targNPC->GetScriptTrigger();
+		cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
+		cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+		if( toHungerExecute != NULL )
+		{
+			toHungerExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
+		}
+		else
+		{
+			globalExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
+		}
 		if( iDeleted )
 			return true; //stackdeleted
 	}

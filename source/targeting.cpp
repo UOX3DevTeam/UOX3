@@ -962,6 +962,17 @@ void NpcResurrectTarget( CChar *i )
 			i->SetAttackFirst( false );
 			i->SetWar( false );
 			i->SetHunger( 6 );
+			const UI16 HungerTrig = i->GetScriptTrigger();
+			cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
+			cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+			if( toHungerExecute != NULL )
+			{
+				toHungerExecute->OnHungerChange( i, i->GetHunger() );
+			}
+			else
+			{
+				globalExecute->OnHungerChange( i, i->GetHunger() );
+			}
 			CItem *c = NULL;
 			for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
 			{

@@ -677,6 +677,11 @@ namespace UOX
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
 
+		//Prepare the onHungerChange Event
+		const UI16 HungerTrig = gPriv->GetScriptTrigger();
+		cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
+		cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+
 		JSEncapsulate encaps( cx, vp );
 
 		if( JSVAL_IS_INT( id ) ) 
@@ -743,7 +748,18 @@ namespace UOX
 				case CCP_CHARPACK:															break;
 				case CCP_FAME:			gPriv->SetFame( (SI16)encaps.toInt() );				break;
 				case CCP_KARMA:			gPriv->SetKarma( (SI16)encaps.toInt() );			break;
-				case CCP_HUNGER:		gPriv->SetHunger( (SI08)encaps.toInt() );			break;
+				case CCP_HUNGER:
+					gPriv->SetHunger( (SI08)encaps.toInt() );
+					//Call the onHungerChange Event
+					if( toHungerExecute != NULL )
+					{
+						toHungerExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
+					}
+					else
+					{
+						globalExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
+					}
+					break;
 				case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );				break;
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
 				case CCP_RACEID:

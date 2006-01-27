@@ -716,9 +716,16 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 						mChar.DecHunger();
 						const UI16 HungerTrig = mChar.GetScriptTrigger();
 						cScript *toExecute = JSMapping->GetScript( HungerTrig );
+						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
 						bool doHunger = true;
 						if( toExecute != NULL )
+						{
 							doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
+						}
+						else
+						{
+							doHunger = !globalExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
+						}
 						if( doHunger )
 						{
 							switch( mChar.GetHunger() )
