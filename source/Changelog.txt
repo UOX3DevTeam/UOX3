@@ -1,8 +1,9 @@
 1/28/2006 - giwo (0.98-3.1h [3.2 RC])
 	Fixed a minor bug in healing.js
-	Made us of the JS Method CanSee() for LoS checks in JS magic functions.
+	Made use of the JS Method CanSee() for LoS checks in JS magic functions.
 	Minor code change in tempeffects().
 	Updated the version number to reflect recent changes by Maarc and Xuri.
+	Fixed an issue causing JS Skills not to function if a character had a script assigned to him.
 
 1/28/2006 - Xuri
 	Some fixes for the onHungerChange code to ensure UOX3 doesn't crash when no global script is defined (Grimson)

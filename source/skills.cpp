@@ -1406,7 +1406,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		bool doSwitch = true;
 		if( skScript != NULL )
 			doSwitch = !skScript->OnSkill( mChar, x );
-		else if( cwmWorldState->skill[x].jsScript != 0xFFFF )
+		if( doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF )
 		{
 			skScript = JSMapping->GetScript( cwmWorldState->skill[x].jsScript );
 			if( skScript != NULL )
