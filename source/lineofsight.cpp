@@ -186,8 +186,8 @@ Look at uox3.h to see options. Works like npc magic.
 			<----- it WAS based on the P.T., now its based on linear algebra ;) (sereg)
 	*/
 
-	bool blocked = false;
-	bool not_blocked = true;
+	const bool blocked = false;
+	const bool not_blocked = true;
 
 	if( koxn == -1 && koym == -1 )  
 		return not_blocked;		// target canceled
@@ -560,10 +560,10 @@ Look at uox3.h to see options. Works like npc magic.
 					if( ( ( itemids[toCheck] >= 1169 ) && ( itemids[toCheck] <= 1413 ) ) || ( ( itemids[toCheck] >= 1508 ) && ( itemids[toCheck] <= 1514 ) ) ||
 					( ( itemids[toCheck] >= 1579 ) && ( itemids[toCheck] <= 1586 ) ) || ( ( itemids[toCheck] >= 1591 ) && ( itemids[toCheck] <= 1598 ) ) )
 					{
-						if( (koz1-15) == koz2 ) // in case of char and target on same roof
-							return not_blocked;
-						else
+						if( ( koz1 - 15 ) != koz2 ) // in case of char and target on same roof
 							return blocked;
+						//else
+						//	return blocked;
 					}
 					break;
 				case 32 :  // Lava, water

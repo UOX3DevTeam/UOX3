@@ -8,6 +8,7 @@
 1/28/2006 - Xuri
 	Some fixes for the onHungerChange code to ensure UOX3 doesn't crash when no global script is defined (Grimson)
 	Added isAnimal and isHuman as JS character properties. (Maarc)
+	Fix in Line of Sight-code makes line of sight-checks more reliable (giwo)
 
 1/27/2006 - Xuri
 	OnHungerChange JS event will now execute both for hunger level increase as well as decrease, and will also work as global script (Grimson)
