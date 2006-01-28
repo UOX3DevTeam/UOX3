@@ -722,7 +722,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 						{
 							doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
 						}
-						else
+						else if( globalExecute != NULL )
 						{
 							doHunger = !globalExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
 						}

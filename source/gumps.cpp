@@ -1849,7 +1849,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				{
 					toHungerExecute->OnHungerChange( j, j->GetHunger() );
 				}
-				else
+				else if( globalExecute != NULL )
 				{
 					globalExecute->OnHungerChange( j, j->GetHunger() );
 				}

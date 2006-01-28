@@ -231,6 +231,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "noNeedMana",		CCP_NONEEDMANA,		JSPROP_ENUMANDPERM },
 	{ "isDispellable",	CCP_ISDISPELLABLE,	JSPROP_ENUMANDPERM },
 	{ "noNeedReags",	CCP_NONEEDREAGS,	JSPROP_ENUMANDPERM },
+	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO },
+	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };

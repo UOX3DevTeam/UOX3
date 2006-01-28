@@ -663,7 +663,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		{
 			toHungerExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
 		}
-		else
+		else if( globalExecute != NULL )
 		{
 			globalExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
 		}

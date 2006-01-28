@@ -969,7 +969,7 @@ void NpcResurrectTarget( CChar *i )
 			{
 				toHungerExecute->OnHungerChange( i, i->GetHunger() );
 			}
-			else
+			else if( globalExecute != NULL )
 			{
 				globalExecute->OnHungerChange( i, i->GetHunger() );
 			}

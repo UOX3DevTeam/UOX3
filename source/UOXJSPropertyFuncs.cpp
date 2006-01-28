@@ -664,6 +664,8 @@ namespace UOX
 				case CCP_NONEEDMANA:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedMana() );				break;
 				case CCP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );			break;
 				case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
+				case CCP_ISANIMAL:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetID()].IsAnimal() ); break;
+				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( gPriv->isHuman() );					break;
 				default:
 					break;
 			}
@@ -755,7 +757,7 @@ namespace UOX
 					{
 						toHungerExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
 					}
-					else
+					else if( globalExecute != NULL )
 					{
 						globalExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
 					}
