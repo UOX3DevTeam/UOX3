@@ -537,7 +537,7 @@ void cEffects::checktempeffects( void )
 					{
 						CSocket *srcSock = src->GetSocket();
 						CSocket *targSock = targ->GetSocket();
-						if( objInRange( srcSock, targ, 2 ) && LineOfSight( srcSock, targ, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+						if( objInRange( src, targ, 2 ) && LineOfSight( srcSock, targ, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 						{
 							if( Effect->Number() == 22 )
 							{

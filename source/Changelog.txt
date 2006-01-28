@@ -1,3 +1,9 @@
+1/28/2006 - giwo (0.98-3.1h [3.2 RC])
+	Fixed a minor bug in healing.js
+	Made us of the JS Method CanSee() for LoS checks in JS magic functions.
+	Minor code change in tempeffects().
+	Updated the version number to reflect recent changes by Maarc and Xuri.
+
 1/28/2006 - Xuri
 	Some fixes for the onHungerChange code to ensure UOX3 doesn't crash when no global script is defined (Grimson)
 	Added isAnimal and isHuman as JS character properties. (Maarc)
@@ -34,7 +40,6 @@
 	
 
 25th January, 2006 - Maarc
-
 	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods
 	Added a key/command handler console exposure to the JS environment (involves a secondary runtime because of threading!)
 	Note: Creating/editing world objects through this environment is not thread safe, and may cause errors
@@ -65,7 +70,6 @@
 	JS Event space in cScript expanded from 64 to 96 (Maarc)
 
 22nd January, 2006 - Maarc
-
 	Added a P_TIMESTAMP define to Config.h, for timestamping packet logs (through the use of RealTime)
 	Removed unnecessary defines from Config.h
 	Fixed a typo or two
@@ -90,7 +94,6 @@
 	Proper validation of hair style on creation of elvish characters
 
 21st January, 2006 - Maarc
-
 	Fixed an Alignment issue in dumping out CPCharAndStartLoc (converting tabs to explicit spaces)
 	Turned out last byte of the packet as a real number, rather than a UI08 which is interpreting as a char
 	Updated some packet notes from what I could scrounge through the net

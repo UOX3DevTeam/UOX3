@@ -281,10 +281,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		return;
 	}
 
-//	if( !mChar.LineOfSight( mSock, ourTarg.x, ourTarg.y, ourTarg.z ) )
-//	{
-//		return;
-//	}
+	if( !mChar.CanSee( ourTarg ) )
+	{
+		return;
+	}
 	
 	var targRegion = ourTarg.region;
 	if( mSpell.agressiveSpell )

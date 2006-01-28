@@ -32,7 +32,7 @@ function onCallback1( socket, ourObj )
 			if( ourObj.isHuman || ourObj.id == 0x0192 || ourObj.id == 0x0193 || ourObj.id == 0x025f || ourObj.id == 0x0260 )
 			{
 				healSkill = mChar.baseskills.healing;
-				skillNum  = 21;
+				skillNum  = 17;
 			}
 			else if( ourObj.isAnimal && ourObj.tamed && ourObj.owner )
 			{
@@ -111,7 +111,7 @@ function onCallback1( socket, ourObj )
 				{
 					ourObj.health = ourObj.health+1;
 
-					if( skillNum == 21 ) // Healing
+					if( skillNum == 17 ) // Healing
 						socket.SysMessage( GetDictionaryEntry( 1499, socket.Language ) );
 					else
 						socket.SysMessage( GetDictionaryEntry( 1500, socket.Language ) );
