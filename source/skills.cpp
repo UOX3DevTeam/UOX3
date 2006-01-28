@@ -226,9 +226,8 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				else		// or it could be a map only
 				{  
 					// manually calculating the ID's if a maptype
-					map_st map1;
 					CLand land;
-					map1 = Map->SeekMap0( targetX, targetY, mChar->WorldNumber() );
+					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 					Map->SeekLand( map1.id, &land );
 					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
 						return true; 
@@ -1279,9 +1278,8 @@ void cSkills::FishTarget( CSocket *s )
 	else		// or it could be a map only
 	{  
 		// manually calculating the ID's if a maptype
-		map_st map1;
 		CLand land;
-		map1 = Map->SeekMap0( targetX, targetY, mChar->WorldNumber() );
+		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 		Map->SeekLand( map1.id, &land );
 		if( land.LiquidWet() )
 			validLocation = true; 

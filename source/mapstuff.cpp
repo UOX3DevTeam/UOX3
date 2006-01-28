@@ -702,7 +702,7 @@ int cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz)
 		Console << "cMapStuff::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		map_st map1;
 		CLand land;
-		map1 = Map->SeekMap0( i->GetX(), i->GetY(), i->WorldNumber() );
+		map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
 		Map->SeekLand( map1.id, &land );
 		if( land.LiquidWet() ) // is it water?
 		{
@@ -758,7 +758,7 @@ int cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 // the height is inherently 0
 SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 {
-	map_st map = SeekMap0( x, y, worldNumber );
+	const map_st map = SeekMap( x, y, worldNumber );
 	// make sure nothing can move into black areas
 	if( 430 == map.id || 475 == map.id || 580 == map.id || 610 == map.id ||
 		611 == map.id || 612 == map.id || 613 == map.id)
@@ -771,7 +771,7 @@ SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber )
 {
 	// first thing is to get the map where we are standing
-	map_st map1 = Map->SeekMap0( x, y, worldNumber );
+	const map_st map1 = Map->SeekMap( x, y, worldNumber );
 	id = map1.id;
 	// if this appears to be a valid land id, <= 2 is invalid
 	if( map1.id > 2 && ILLEGAL_Z != MapElevation( x, y, worldNumber ) )
@@ -984,7 +984,7 @@ void MapStaticIterator::GetTile( CTile *tile ) const
 }
 
 
-map_st cMapStuff::SeekMap0( SI16 x, SI16 y, UI08 worldNumber )
+map_st cMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const SI16 x1 = x / 8, y1 = y / 8;
 	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);

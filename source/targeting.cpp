@@ -521,7 +521,7 @@ void InfoTarget( CSocket *s )
 	if( s->GetWord( 0x11 ) == 0 )
 	{
 		// manually calculating the ID's if it's a maptype
-		map1 = Map->SeekMap0( x, y, worldNumber );
+		map1 = Map->SeekMap( x, y, worldNumber );
 		Map->SeekLand( map1.id, &land );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );

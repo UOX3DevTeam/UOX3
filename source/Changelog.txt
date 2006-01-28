@@ -1,3 +1,9 @@
+1/28/2006 - giwo (0.98-3.1i [3.2 RC])
+	Fixed some minor issues with LineOfSight().
+	Began to break LineOfSight() into smaller manageable functions.
+	Renamed SeekMap0() to SeekMap() to better represent it's ability to seek any map file.
+	More fixes for const correctness.
+
 1/28/2006 - giwo (0.98-3.1h [3.2 RC])
 	Fixed a minor bug in healing.js
 	Made use of the JS Method CanSee() for LoS checks in JS magic functions.

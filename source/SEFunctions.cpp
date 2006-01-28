@@ -1390,11 +1390,11 @@ JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 
-	UI16 xLoc		= (UI16)JSVAL_TO_INT( argv[0] );
-	UI16 yLoc		= (UI16)JSVAL_TO_INT( argv[1] );
-	UI08 wrldNumber = (UI08)JSVAL_TO_INT( argv[2] );
-	map_st mMap		= Map->SeekMap0( xLoc, yLoc, wrldNumber );
-	*rval			= INT_TO_JSVAL( mMap.id );
+	UI16 xLoc			= (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 yLoc			= (UI16)JSVAL_TO_INT( argv[1] );
+	UI08 wrldNumber		= (UI08)JSVAL_TO_INT( argv[2] );
+	const map_st mMap	= Map->SeekMap( xLoc, yLoc, wrldNumber );
+	*rval				= INT_TO_JSVAL( mMap.id );
 	return JS_TRUE;
 }
 
@@ -1910,9 +1910,8 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		else		// or it could be a map only
 		{
 			// manually calculating the ID's if a maptype
-			map_st map1;
 			CLand land;
-			map1 = Map->SeekMap0( targetX, targetY, worldNumber );
+			const map_st map1 = Map->SeekMap( targetX, targetY, worldNumber );
 			Map->SeekLand( map1.id, &land );
 			GumpDisplay mapStat( mySock, 300, 300 );
 			mapStat.SetTitle( "Item [Map]" );

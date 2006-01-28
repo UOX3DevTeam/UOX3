@@ -5245,7 +5245,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 				*rval = JSVAL_FALSE;
 				return JS_TRUE;
 			}
-			if( tObj->GetObjType() == OT_ITEM || tObj->GetObjType() == OT_SPAWNER )
+			if( tObj->CanBeObjType( OT_ITEM ) )
 			{
 				if( ((CItem *)tObj)->GetCont() != NULL )
 				{

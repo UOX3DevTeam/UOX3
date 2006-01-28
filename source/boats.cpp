@@ -322,7 +322,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 
 			if( sz == ILLEGAL_Z ) //map tile
 			{
-				map = Map->SeekMap0( x, y, worldNumber );
+				map = Map->SeekMap( x, y, worldNumber );
 				Map->SeekLand( map.id, &land );
 				if( map.z >= -5 && !land.LiquidWet() && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 					return true;

@@ -146,6 +146,35 @@ QUAD POLYGON CONSTRUCTION ALGORITHM
 	Also need to use height of tile from tiledata.mul
 */
 
+bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
+{
+	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
+	const map_st trgMap = Map->SeekMap( x2, y2, worldNum );
+
+	const UI16 mID1		= srcMap.id;
+	const UI16 mID2		= trgMap.id;
+	if( mID1 != 2 && mID2 != 2 ) 
+	{
+		const SI16 mz1	= srcMap.z;
+		const SI16 mz2	= trgMap.z;
+		// Mountain walls
+		if( ( mz1 < mz2 && z <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
+			( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
+			( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
+			( stat == NULL &&															// Ensure there is no static item
+			( ( mID1 >= 431 && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
+			( mID1 >= 543   && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
+			( mID1 >= 1787  && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
+			( mID1 >= 1851  && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
+		{
+			if( mSock != NULL )
+				mSock->sysmessage( 683 );
+			return true;
+		}
+	}
+	return false;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
 //|	Date			-	03 July, 2001
@@ -234,7 +263,7 @@ Look at uox3.h to see options. Works like npc magic.
 		dz = (SI32)floor( lineofsight.dzInDirectionX() );
 
 	
-	if( sgn_x == 0 && sgn_y == 0 && !sgn_z == 0 ) // should fix shooting through floor issues
+	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
 	{
 		for( i = 0; i < abs( koz2 - koz1 ); ++i )
 		{
@@ -341,6 +370,7 @@ Look at uox3.h to see options. Works like npc magic.
 		y2 = koy1;
 	}
 
+	SI16 tempX = -1, tempY = -1;
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( kox1, koy1, worldNumber );
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
@@ -353,17 +383,14 @@ Look at uox3.h to see options. Works like npc magic.
 		{
 			if( !ValidateObject( tempItem ) )
 				continue;
-			if( ( tempItem->GetX() >= x1 ) &&
-				( tempItem->GetX() <= x2 ) &&
-				( tempItem->GetY() >= y1 ) &&
-				( tempItem->GetY() <= y2 ) )
+
+			tempX = tempItem->GetX();
+			tempY = tempItem->GetY();
+			if( ( tempX >= x1 && tempX <= x2 ) && ( tempY >= y1 && tempY <= y2 ) )
 				for( i = 0; i < collisioncount; ++i )
 				{
-					if( ( tempItem->GetX() == collisions[i].x ) && 
-						( tempItem->GetY() == collisions[i].y ) )
-					{
+					if( ( tempX == collisions[i].x ) && ( tempY == collisions[i].y ) )
 						loscache.push_back( tempItem );
-					}
 				}
 		}
 		regItems->Pop();
@@ -398,46 +425,18 @@ Look at uox3.h to see options. Works like npc magic.
 
 	///////////////////////////////////////////////////////////////////////////
 	////////////////////  This next stuff is what searches each tile for things
-	map_st map1, map2;
 	SI32 length, j;
-
 	for( i = 0; i < collisioncount; ++i )
 	{
 		MapStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
-		// Texture mapping  
-		map1 = Map->SeekMap0( static_cast<SI16>(collisions[i].x), static_cast<SI16>(collisions[i].y), worldNumber );
-		map2 = Map->SeekMap0( static_cast<SI16>(collisions[i].x + sgn_x), static_cast<SI16>(collisions[i].y + sgn_y), worldNumber );
-		
-		if( (map1.id != 2) && (map2.id != 2) ) 
-		{
-			// Mountain walls
-			if( ( ( map1.z < map2.z ) &&						// 1) lineofsight collides with a map "wall"
-				( collisions[i].z <= ( map2.z ) ) &&
-				( collisions[i].z >= ( map1.z ) ) ) ||
-				( ( map1.z > map2.z ) &&
-				( collisions[i].z <= ( map1.z ) ) &&
-				( collisions[i].z >= ( map2.z ) ) ) ||
-				( ( collisions[i].z == map1.z ) &&				// 2) lineofsight cuts a map "floor"
-				( lineofsight.dir.z != 0 ) ) ||
-				( ( ( map1.id >= 431  && map1.id <= 432  ) ||	// 3) lineofsight cuts a mountain
-				( map1.id >= 467  && map1.id <= 475  ) ||
-				( map1.id >= 543  && map1.id <= 560  ) ||
-				( map1.id >= 1754 && map1.id <= 1757 ) ||
-				( map1.id >= 1787 && map1.id <= 1789 ) ||
-				( map1.id >= 1821 && map1.id <= 1824 ) ||
-				( map1.id >= 1851 && map1.id <= 1854 ) ||
-				( map1.id >= 1881 && map1.id <= 1884 ) ) &&
-				( msi.First() == NULL ) ) ) // make sure there is no static item!
-			{
-				if( mSock != NULL )
-					mSock->sysmessage( 683 );
-				return blocked;
-			}
-		}	 
+		staticrecord *stat = msi.First();
+
+		// Texture mapping
+		if( MapTileBlocks( mSock, stat, lineofsight, collisions[i].x, collisions[i].y, collisions[i].z, collisions[i].x + sgn_x, collisions[i].y + sgn_y, worldNumber ) )
+			return blocked;
 			
 		// Statics
 		CTile tile;
-		staticrecord *stat = msi.First();
 		while( stat != NULL )
 		{
 			msi.GetTile( &tile );
@@ -478,14 +477,11 @@ Look at uox3.h to see options. Works like npc magic.
 					if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 					{
 						Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-						map_st map1;
 						CLand land;
-						map1 = Map->SeekMap0( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
+						const map_st map1 = Map->SeekMap( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
 						Map->SeekLand( map1.id, &land );
 						if( land.LiquidWet() ) // is it water?
-						{
 							dyncount->SetID( 0x4001 );
-						}
 						else
 							dyncount->SetID( 0x4064 );
 						length = 0;
@@ -515,7 +511,7 @@ Look at uox3.h to see options. Works like npc magic.
 		{
 			switch( checkthis[j] )
 			{
-				case 1 : // Trees, Shrubs, bushes
+				case TREES_BUSHES: // Trees, Shrubs, bushes
 					if( ( itemids[toCheck] == 3240 ) || ( itemids[toCheck] == 3242 ) || ( ( itemids[toCheck] >= 3215 ) && ( itemids[toCheck] <= 3218 ) ) ||
 					( ( itemids[toCheck] >= 3272 ) && ( itemids[toCheck] <= 3280 ) ) || ( itemids[toCheck] == 3283 ) || ( itemids[toCheck] == 3286 ) ||
 					( itemids[toCheck] == 3288 ) || ( itemids[toCheck] == 3290 ) || ( itemids[toCheck] == 3293 ) || ( itemids[toCheck] == 3296 ) ||
@@ -530,7 +526,7 @@ Look at uox3.h to see options. Works like npc magic.
 						return blocked;
 					}
 					break;
-				case 2 : // Walls, Chimneys, ovens, not fences
+				case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
 					if( ( ( itemids[toCheck] >= 6 ) && ( itemids[toCheck] <= 748 ) ) || ( ( itemids[toCheck] >= 761 ) && ( itemids[toCheck] <= 881 ) ) ||
 					( ( itemids[toCheck] >= 895 ) && ( itemids[toCheck] <= 1006 ) ) || ( ( itemids[toCheck] >= 1057 ) && ( itemids[toCheck] <= 1061 ) ) ||
 					( itemids[toCheck] == 1072 ) || ( itemids[toCheck] == 1073 ) || ( ( itemids[toCheck] >= 1080 ) && ( itemids[toCheck] <= 1166 ) ) ||
@@ -542,31 +538,29 @@ Look at uox3.h to see options. Works like npc magic.
 						return blocked;
 					}
 					break;
-				case 4 : // Doors, not gates
+				case DOORS: // Doors, not gates
 					if( ( ( itemids[toCheck] >= 1653 ) && ( itemids[toCheck] <= 1782 ) ) || ( ( itemids[toCheck] >= 8173 ) && ( itemids[toCheck] <= 8188 ) ) )
 					{
 						return blocked;
 					}
-				break;
-				case 8 : // Roofing Slanted
+					break;
+				case ROOFING_SLANTED: // Roofing Slanted
 					if( ( ( itemids[toCheck] >= 1414 ) && ( itemids[toCheck] <= 1578 ) ) || ( ( itemids[toCheck] >= 1587 ) && ( itemids[toCheck] <= 1590 ) ) ||
 					( ( itemids[toCheck] >= 1608 ) && ( itemids[toCheck] <= 1617 ) ) || ( ( itemids[toCheck] >= 1630 ) && ( itemids[toCheck] <= 1652 ) ) ||
 					( ( itemids[toCheck] >= 1789 ) && ( itemids[toCheck] <= 1792 ) ) )
 					{
 						return blocked;
 					}
-				break;
-				case 16 : // Floors & Flat Roofing (Attacking through floors Roofs)
+					break;
+				case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
 					if( ( ( itemids[toCheck] >= 1169 ) && ( itemids[toCheck] <= 1413 ) ) || ( ( itemids[toCheck] >= 1508 ) && ( itemids[toCheck] <= 1514 ) ) ||
 					( ( itemids[toCheck] >= 1579 ) && ( itemids[toCheck] <= 1586 ) ) || ( ( itemids[toCheck] >= 1591 ) && ( itemids[toCheck] <= 1598 ) ) )
 					{
 						if( ( koz1 - 15 ) != koz2 ) // in case of char and target on same roof
 							return blocked;
-						//else
-						//	return blocked;
 					}
 					break;
-				case 32 :  // Lava, water
+				case LAVA_WATER:  // Lava, water
 					if( ( ( itemids[toCheck] >= 4846 ) && ( itemids[toCheck] <= 4941 ) ) || ( ( itemids[toCheck] >= 6038 ) && ( itemids[toCheck] <= 6066 ) ) ||
 					( ( itemids[toCheck] >= 12934 ) && ( itemids[toCheck] <= 12977 ) ) || ( ( itemids[toCheck] >= 13371 ) && ( itemids[toCheck] <= 13420 ) ) ||
 					( ( itemids[toCheck] >= 13422 ) && ( itemids[toCheck] <= 13638 ) ) || ( ( itemids[toCheck] >= 13639 ) && ( itemids[toCheck] <= 13665 ) ) )
@@ -575,7 +569,7 @@ Look at uox3.h to see options. Works like npc magic.
 					}
 					break;
 				default:
-					return not_blocked;
+					break;
 			}
 		}
 	}

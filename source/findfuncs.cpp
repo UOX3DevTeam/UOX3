@@ -229,9 +229,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
 
-		map_st map1;
 		CLand land;
-		map1 = Map->SeekMap0( m->GetX(), m->GetY(), m->WorldNumber() );
+		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
 		Map->SeekLand( map1.id, &land );
 		if( land.LiquidWet() ) // is it water?
 		{

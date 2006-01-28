@@ -121,7 +121,7 @@ public:
 	st_multi *		SeekIntoMulti( int multinum, int number );
 	bool			SeekTile( int tilenum, CTile *tile );
 	void			SeekLand( int landnum, CLand *land );
-	map_st			SeekMap0( SI16 x, SI16 y, UI08 worldNumber );
+	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
 	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
