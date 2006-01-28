@@ -311,7 +311,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		return;
 	}
 
-	if( !mChar.CanSee( ourTarg )
+	if( !mChar.CanSee( ourTarg ) )
 	{
 		return;
 	}
