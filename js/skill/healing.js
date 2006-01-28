@@ -29,12 +29,12 @@ function onCallback1( socket, ourObj )
 		{
 			var healSkill;
 			var skillNum;
-			if( ourObj.id == 0x0190 || ourObj.id == 0x0191 || ourObj.id == 0x0192 || ourObj.id == 0x0193 )
+			if( ourObj.isHuman || ourObj.id == 0x0192 || ourObj.id == 0x0193 || ourObj.id == 0x025f || ourObj.id == 0x0260 )
 			{
 				healSkill = mChar.baseskills.healing;
 				skillNum  = 21;
 			}
-			else if( ourObj.tamed && ourObj.owner )
+			else if( ourObj.isAnimal && ourObj.tamed && ourObj.owner )
 			{
 				healSkill = mChar.baseskills.veterinary;
 				skillNum  = 39;

@@ -21,7 +21,7 @@ function onCallback0( pSock, ourObj )
 		var pLanguage 	= pSock.Language;
 		if( !ourObj.InRange( pUser, 3 ) )
 			pSock.SysMessage( "That is too far away." )
-		else if( !ourObj.npc || ( ourObj.id == 0x0190 || ourObj.id == 0x0191 ) )
+		else if( !ourObj.isAnimal ) //as per defined in creatures.dfn
 			pSock.SysMessage( "That doesn't look much like an animal." );
 		else if( skillToTame == 0 || skillToTame > 1000 )
 			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage ) );
