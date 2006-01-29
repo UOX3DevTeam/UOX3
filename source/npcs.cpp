@@ -1132,13 +1132,19 @@ void MonsterGate( CChar *s, const std::string scriptEntry )
 //o---------------------------------------------------------------------------o
 void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 {
-	SI16 nChange			= 0;
-	bool nEffect			= false;
-	const SI16 nCurKarma	= nCharID->GetKarma();
+	SI16 nChange	= 0;
+	bool nEffect	= false;
+	SI16 nCurKarma	= nCharID->GetKarma();
 	if( nCurKarma > 10000 )
+	{
 		nCharID->SetKarma( 10000 );
+		nCurKarma = 10000;
+	}
 	else if( nCurKarma < -10000 ) 
+	{
 		nCharID->SetKarma( -10000 );
+		nCurKarma = 10000;
+	}
 
 	if( nCurKarma < nKarma && nKarma > 0 )
 	{
