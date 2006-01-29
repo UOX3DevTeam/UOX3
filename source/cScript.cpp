@@ -205,11 +205,11 @@ cScript::cScript( std::string targFile, UI08 runTime ) : isFiring( false )
 	// We may NOT define Constructors here
 	GumpProto			=	JS_InitClass( targContext, targObject, targObject, &UOXGump_class, Gump, 0, NULL, CGump_Methods, NULL, CGump_Methods );
 	GumpDataProto		=	JS_InitClass( targContext, targObject, targObject, &UOXGumpData_class, NULL, 0, NULL, CGumpData_Methods, NULL,CGumpData_Methods);
-	CharProto			=	JS_InitClass( targContext, targObject, targObject, &UOXChar_class, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
-	ItemProto			=	JS_InitClass( targContext, targObject, targObject, &UOXItem_class, NULL, 0, CItemProps, CItem_Methods, CItemProps, CItem_Methods );
+	CharProto			=	JS_InitClass( targContext, targObject, targObject, &UOXChar_class.base, NULL, 0, CCharacterProps, CChar_Methods, CCharacterProps, CChar_Methods );
+	ItemProto			=	JS_InitClass( targContext, targObject, targObject, &UOXItem_class.base, NULL, 0, CItemProps, CItem_Methods, CItemProps, CItem_Methods );
 	SpellProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSpell_class, NULL, 0, CSpellProperties, NULL, CSpellProperties, NULL );
 	SpellsProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSpells_class, NULL, 0, NULL, NULL, NULL, NULL );
-	SocketProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
+	SocketProto			=	JS_InitClass( targContext, targObject, targObject, &UOXSocket_class.base, NULL, 0, CSocketProps, CSocket_Methods, CSocketProps, CSocket_Methods );
 	UOXCFileProto		=	JS_InitClass( targContext, targObject, targObject, &UOXFile_class, UOXCFile, 0, CFileProperties, NULL, CFileProperties, NULL );
 	JS_DefineFunctions( targContext, targObject, CFile_Methods );
 	CAccountProto		=	JS_InitClass( targContext, targObject, targObject, &UOXAccount_class, NULL, 0, CAccountProperties, CAccount_Methods, CAccountProperties, CAccount_Methods );
@@ -1997,14 +1997,14 @@ JSObject *cScript::MakeNewObject( IUEEntries iType )
 			JS_DefineProperties( targContext, toMake, CRaceProperties );
 			break;
 		case IUE_CHAR:
-			toMake = JS_NewObject( targContext, &UOXChar_class, CharProto, targObject ); 
+			toMake = JS_NewObject( targContext, &UOXChar_class.base, CharProto, targObject ); 
 			if( toMake == NULL )
 				return NULL;
 			JS_DefineProperties( targContext, toMake, CCharacterProps );
 			JS_DefineFunctions( targContext, toMake, CChar_Methods );
 			break;
 		case IUE_ITEM:
-			toMake = JS_NewObject( targContext, &UOXItem_class, ItemProto, targObject ); 
+			toMake = JS_NewObject( targContext, &UOXItem_class.base, ItemProto, targObject ); 
 			if( toMake == NULL )
 				return NULL;
 			JS_DefineObject( targContext, toMake, "items", &UOXItems_class, NULL, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY );
@@ -2012,7 +2012,7 @@ JSObject *cScript::MakeNewObject( IUEEntries iType )
 			JS_DefineProperties( targContext, toMake, CItemProps );
 			break;
 		case IUE_SOCK:
-			toMake = JS_NewObject( targContext, &UOXSocket_class, SocketProto, targObject ); 
+			toMake = JS_NewObject( targContext, &UOXSocket_class.base, SocketProto, targObject ); 
 			if( toMake == NULL )
 				return NULL;
 			JS_DefineFunctions( targContext, toMake, CSocket_Methods );

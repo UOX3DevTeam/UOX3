@@ -234,6 +234,9 @@ static JSPropertySpec CCharacterProps[] =
 	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO },
 	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO },
 
+	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO  },
+	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO  },
+
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 

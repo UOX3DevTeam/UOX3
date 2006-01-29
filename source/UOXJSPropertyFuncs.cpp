@@ -31,6 +31,9 @@
 #include "scriptc.h"
 #include "ssection.h"
 
+#include "jsobj.h"
+#include "jsutil.h"
+
 namespace UOX
 {
 	JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
@@ -1489,21 +1492,21 @@ namespace UOX
 
 	JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		JSEncapsulate myClass( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 
 		if( !ValidateObject( myChar ) )
 			return JS_FALSE;
 		
 		UI08 SkillID		= (UI08)JSVAL_TO_INT( id );
-		JSClass *myClass	= JS_GetClass( obj );
 
-		if( !strcmp( myClass->name, "UOXSkills" ) )
+		if( myClass.ClassName() == "UOXSkills" )
 			*vp = INT_TO_JSVAL( myChar->GetSkill( SkillID ) );
-		else if( !strcmp( myClass->name, "UOXBaseSkills" ) )
+		else if( myClass.ClassName() == "UOXBaseSkills" )
 			*vp = INT_TO_JSVAL( myChar->GetBaseSkill( SkillID ) );
-		else if( !strcmp( myClass->name, "UOXSkillsUsed" ) )
+		else if( myClass.ClassName() == "UOXSkillsUsed" )
 			*vp = BOOLEAN_TO_JSVAL( myChar->SkillUsed( SkillID ) );
-		else if( !strcmp( myClass->name, "UOXSkillsLock" ) )
+		else if( myClass.ClassName() == "UOXSkillsLock" )
 			*vp = INT_TO_JSVAL( myChar->GetSkillLock( SkillID ) );
 
 		return JS_TRUE;
@@ -1511,18 +1514,18 @@ namespace UOX
 
 	JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		JSEncapsulate myClass( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 
 		if( !ValidateObject( myChar ) )
 			return JS_FALSE;
 		
 		JSEncapsulate encaps( cx, vp );
 		UI08 SkillID		= (UI08)JSVAL_TO_INT( id );
-		JSClass *myClass	= JS_GetClass( obj );	
 		SI16 NewSkillValue	= (SI16)encaps.toInt();
 		UI08 i				= 0;
 
-		if( !strcmp( myClass->name, "UOXSkills" ) )
+		if( myClass.ClassName() == "UOXSkills" )
 		{
 			if( SkillID == ALLSKILLS )
 			{
@@ -1534,7 +1537,7 @@ namespace UOX
 			else
 				myChar->SetSkill( NewSkillValue, SkillID );
 		}
-		else if( !strcmp( myClass->name, "UOXBaseSkills" ) )
+		else if( myClass.ClassName() == "UOXBaseSkills" )
 		{
 			if( SkillID == ALLSKILLS )
 			{
@@ -1550,7 +1553,7 @@ namespace UOX
 				Skills->updateSkillLevel( myChar, SkillID );
 			}
 		}
-		else if( !strcmp( myClass->name, "UOXSkillsUsed" ) )
+		else if( myClass.ClassName() == "UOXSkillsUsed" )
 		{
 			if( SkillID == ALLSKILLS )
 			{
@@ -1562,7 +1565,7 @@ namespace UOX
 			else
 				myChar->SkillUsed( encaps.toBool(), SkillID );
 		}
-		else if( !strcmp( myClass->name, "UOXSkillsLock" ) )
+		else if( myClass.ClassName() == "UOXSkillsLock" )
 		{
 			if( SkillID == ALLSKILLS )
 			{
@@ -1798,4 +1801,64 @@ namespace UOX
 		return JS_TRUE;
 	}
 
+	JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+	{
+		JSEncapsulate srcObj( cx, obj );
+		CSocket *srcSock = (CSocket *)srcObj.toObject();
+		JSEncapsulate trgObj( cx, &v );
+		if( trgObj.isType( JSEncapsulate::JSObjectType::JSOT_OBJECT ) )
+		{
+			if( srcObj.ClassName() != trgObj.ClassName() )
+			{
+				*bp = JS_FALSE;
+			}
+			else
+			{
+				CSocket *trgSock	= (CSocket *)trgObj.toObject();
+				*bp = ( srcSock == trgSock ) ? JS_TRUE : JS_FALSE;
+			}
+		}
+		else
+		{
+			*bp = ( srcSock == NULL && trgObj.isType( JSEncapsulate::JSObjectType::JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
+		}
+		return JS_TRUE;
+	}
+	JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+	{
+		JSEncapsulate srcObj( cx, obj );
+		CBaseObject *src = (CBaseObject *)srcObj.toObject();
+		if( !ValidateObject( src ) )
+		{
+			*bp = JS_FALSE;
+		}
+		else
+		{
+			JSEncapsulate trgObj( cx, &v );
+			if( trgObj.isType( JSEncapsulate::JSObjectType::JSOT_OBJECT ) )
+			{
+				if( srcObj.ClassName() != trgObj.ClassName() )
+				{
+					*bp = JS_FALSE;
+				}
+				else
+				{
+					CBaseObject *trg = (CBaseObject *)trgObj.toObject();
+					if( !ValidateObject( trg ) ) 
+					{
+						*bp = JS_FALSE;
+					}
+					else
+					{	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
+						*bp = ( src->GetSerial() == trg->GetSerial() ) ? JS_TRUE : JS_FALSE;
+					}
+				}
+			}
+			else
+			{
+				*bp = ( src == NULL && trgObj.isType( JSEncapsulate::JSObjectType::JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
+			}
+		}
+		return JS_TRUE;
+	}
 }

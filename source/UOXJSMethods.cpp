@@ -1086,13 +1086,13 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		MethodError( "You have to pass a valid Socket or Character" );
 	}
 
-	JSObject *myDest = JSVAL_TO_OBJECT( argv[0] );
-	JSClass *myClass = JS_GetClass( myDest );
+	JSEncapsulate myClass( cx, &(argv[0]) );
+
 	SEGump *myGump = (SEGump*)JS_GetPrivate( cx, obj );
 
-	if( !strcmp( myClass->name, "UOXSocket" ) ) 
+	if( myClass.ClassName() == "UOXSocket" ) 
 	{
-		CSocket *mySock = (CSocket*)JS_GetPrivate( cx, myDest );
+		CSocket *mySock = (CSocket *)myClass.toObject();
 		if( mySock == NULL ) 
 		{
 			MethodError( "Send: Passed an invalid Socket" );
@@ -1102,9 +1102,9 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	else if( myClass.ClassName() == "UOXChar" ) 
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, myDest );
+		CChar *myChar = (CChar*)myClass.toObject();
 		if( !ValidateObject( myChar ) )  
 		{
 			MethodError( "Send: Passed an invalid Character" );
@@ -1134,8 +1134,8 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	JSClass *myClass		= JS_GetClass( obj );
-	CBaseObject *myObj		= (CBaseObject*)JS_GetPrivate( cx, obj );
+	JSEncapsulate myClass( cx, obj );
+	CBaseObject *myObj		= (CBaseObject*)myClass.toObject();
 
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	char *trgMessage		= JS_GetStringBytes( targMessage );
@@ -1145,9 +1145,9 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		MethodError( "You have to supply a messagetext" );
 	}
 	
-	if( !strcmp(myClass->name, "UOXItem") ) 
+	if( myClass.ClassName() == "UOXItem" ) 
 	{
-		CItem *myItem = (CItem*)myObj;
+		CItem *myItem = (CItem *)myObj;
 		if( !ValidateObject( myItem ) )  
 		{
 			MethodError( "TextMessage: Invalid Item" );
@@ -1155,9 +1155,9 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 		MethodSpeech( *myItem, trgMessage, OBJ, 0x047F, FNT_NORMAL );
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	else if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = (CChar*)myObj;
+		CChar *myChar = (CChar *)myObj;
 		if( !ValidateObject( myChar ) )  
 		{
 			MethodError( "TextMessage: Invalid Character" );
@@ -1174,16 +1174,16 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
-//|	Date					-	04/20/2002
+//|	Function/Class	-	JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	04/20/2002
 //|	Developer(s)	-	Rukus
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Kill all related timers that have been association with
 //|									an item or character.
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o	
 JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
@@ -1370,15 +1370,16 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	CSocket *mySock		= NULL;
-	JSClass *myClass	= JS_GetClass( obj );
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	JSEncapsulate myClass( cx, obj );
+
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar	= (CChar*)myClass.toObject();
 		mySock			= myChar->GetSocket();
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		mySock			= (CSocket*)JS_GetPrivate( cx, obj );
+		mySock			= (CSocket*)myClass.toObject();
 	}
 
 	if( mySock == NULL )
@@ -1387,8 +1388,8 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	JSString *targMessage = JS_ValueToString( cx, argv[0] );
-	char *trgMessage = JS_GetStringBytes( targMessage );
+	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
+	char *trgMessage		= JS_GetStringBytes( targMessage );
 
 	if( trgMessage == NULL )
 	{
@@ -1430,20 +1431,19 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //
 JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	JSClass *myClass = JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 
-	CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
-
-	SI16 x		= -1;
-	SI16 y		= -1;
-	SI08 z		= myObj->GetZ();
-	UI08 world	= myObj->WorldNumber();
+	CBaseObject *myObj	= (CBaseObject*)myClass.toObject();
+	SI16 x				= -1;
+	SI16 y				= -1;
+	SI08 z				= myObj->GetZ();
+	UI08 world			= myObj->WorldNumber();
 
 	switch( argc )
 	{
 		// Just Teleport...
 		case 0:
-			if( !strcmp( myClass->name, "UOXChar" ) )
+			if( myClass.ClassName() == "UOXChar" )
 			{
 				((CChar*)myObj)->Teleport();
 				return JS_TRUE;
@@ -1455,29 +1455,28 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		case 1:
 			if( JSVAL_IS_OBJECT( argv[0] ) )
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSObject *jsToGoTo = JSVAL_TO_OBJECT( argv[0] );
-				CBaseObject *toGoTo = (CBaseObject *)JS_GetPrivate( cx, jsToGoTo );
-				if( !ValidateObject( toGoTo ) )
+				JSEncapsulate jsToGoTo( cx, &(argv[0]) );
+				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
-					MethodError( "No object associated with this object" );
-					break;
-				}
-				JSClass *myClass = JS_GetClass( jsToGoTo );
-				if( !strcmp( myClass->name, "UOXItem" ) || !strcmp( myClass->name, "UOXChar" ) )
-				{
+					CBaseObject *toGoTo = (CBaseObject *)jsToGoTo.toObject();
+					if( !ValidateObject( toGoTo ) )
+					{
+						MethodError( "No object associated with this object" );
+						break;
+					}
 					x		= toGoTo->GetX();
 					y		= toGoTo->GetY();
 					z		= toGoTo->GetZ();
 					world	= toGoTo->WorldNumber();
 				}
-				else if( !strcmp( myClass->name, "UOXSocket" ) )
+				else if( jsToGoTo.ClassName() == "UOXSocket" )
 				{
-					CSocket *mySock		= (CSocket *)toGoTo;
+					CSocket *mySock		= (CSocket *)jsToGoTo.toObject();
 					CChar *mySockChar	= mySock->CurrcharObj();
-					x		= mySockChar->GetX();
-					y		= mySockChar->GetY();
-					z		= mySockChar->GetZ();
-					world	= mySockChar->WorldNumber();
+					x					= mySockChar->GetX();
+					y					= mySockChar->GetY();
+					z					= mySockChar->GetZ();
+					world				= mySockChar->WorldNumber();
 				}
 				else
 				{
@@ -1526,7 +1525,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			break;
 	}
 
-	if( !strcmp( myClass->name, "UOXItem" ) ) 
+	if( myClass.ClassName() == "UOXItem" ) 
 	{
 		CItem *myItem = (CItem*)myObj;
 		if( !ValidateObject( myItem ) )  
@@ -1537,7 +1536,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 		myItem->SetLocation( x, y, z, world );
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	else if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *myChar = (CChar*)myObj;
 		if( !ValidateObject( myChar ) )  
@@ -1567,7 +1566,9 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	UI16 effectID		= (UI16)JSVAL_TO_INT( argv[0] );
 	UI08 speed			= (UI08)JSVAL_TO_INT( argv[1] );
 	UI08 loop			= (UI08)JSVAL_TO_INT( argv[2] );
-	CBaseObject *myObj	= (CBaseObject*)JS_GetPrivate( cx, obj );
+
+	JSEncapsulate		myClass( cx, obj );
+	CBaseObject *myObj	= (CBaseObject*)myClass.toObject();
 	
 	if( !ValidateObject( myObj ) )
 	{
@@ -1575,9 +1576,7 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
-
-	if( !strcmp( myClass->name, "UOXItem" ) )
+	if( myClass.ClassName() == "UOXItem" )
 	{
 		bool explode = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 		Effects->PlayStaticAnimation( myObj, effectID, speed, loop, explode );		
@@ -1599,15 +1598,15 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 
 	CSocket *mySock		= NULL;
-	JSClass *myClass	= JS_GetClass( obj );
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	JSEncapsulate myClass( cx, obj );
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar	= (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar	= (CChar*)myClass.toObject();
 		mySock			= myChar->GetSocket();
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		mySock			= (CSocket*)JS_GetPrivate( cx, obj );
+		mySock			= (CSocket*)myClass.toObject();
 	}
 
 	if( mySock == NULL )
@@ -1629,23 +1628,23 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 
 	UI16 sound = (UI16)JSVAL_TO_INT( argv[0] );
 	bool allHear = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 
-	if( !strcmp( myClass->name, "UOXChar" ) || !strcmp( myClass->name, "UOXItem" ) )
+	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
-		CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
+		CBaseObject *myObj = (CBaseObject*)myClass.toObject();
 
 		if( ValidateObject( myObj ) )
 		{
 			Effects->PlaySound( myObj, sound, allHear );
 		}
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
+		CSocket *mySock = (CSocket*)myClass.toObject();
 
 		if( mySock != NULL )
 			Effects->PlaySound( mySock, sound, allHear );
@@ -1663,7 +1662,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 
-	JSClass *myClass	= JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 	CChar *myNPC		= (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( myNPC ) )
 	{
@@ -1672,9 +1671,9 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 
 	CPSellList toSend;
-	if( !strcmp( myClass->name, "UOXSocket" ) )
+	if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
+		CSocket *mySock = (CSocket*)myClass.toObject();
 		if( mySock == NULL )
 		{
 			MethodError( "Passed an invalid socket to SellTo" );
@@ -1692,9 +1691,9 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			}
 		}
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) )
+	else if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 		if( !ValidateObject( myChar ) )
 		{
 			MethodError( "Passed an invalid char to SellTo" );
@@ -1721,7 +1720,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 
-	JSClass *myClass	= JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 	CChar *myNPC		= (CChar*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
 	if( !ValidateObject( myNPC ) )
 	{
@@ -1729,9 +1728,9 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 
-	if( !strcmp( myClass->name, "UOXSocket" ) )
+	if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mySock = (CSocket *)JS_GetPrivate( cx, obj );
+		CSocket *mySock = (CSocket *)myClass.toObject();
 		if( mySock == NULL )
 		{
 			MethodError( "Invalid source socket in BuyFrom" );
@@ -1747,9 +1746,9 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		else
 			BuyShop( mySock, myNPC );
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) )
+	else if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 		if( !ValidateObject( myChar ) )
 		{
 			MethodError( "Passed an invalid char to BuyFrom" );
@@ -1779,12 +1778,12 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 	UI08 SpellID = (UI08)JSVAL_TO_INT( argv[0] );
 
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 		if( !ValidateObject( myChar ) )
 		{
 			MethodError( "Invalid char for HasSpell" );
@@ -1804,9 +1803,9 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		else
 			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
 	}
-	else if( !strcmp( myClass->name, "UOXItem" ) )
+	else if( myClass.ClassName() == "UOXItem" )
 	{
-		CItem *myItem = (CItem*)JS_GetPrivate( cx, obj );
+		CItem *myItem = (CItem*)myClass.toObject();
 		if( !ValidateObject( myItem ) )
 		{
 			MethodError( "Invalid item for HasSpell" );
@@ -1830,12 +1829,12 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	JSClass *myClass = JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 	UI08 SpellID = (UI08)JSVAL_TO_INT( argv[0] );
 
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 		if( !ValidateObject( myChar ) )
 		{
 			MethodError( "Invalid char for HasSpell" );
@@ -1849,9 +1848,9 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			Magic->RemoveSpell( myItem, SpellID );			
 		}
 	}
-	else if( !strcmp( myClass->name, "UOXItem" ) )
+	else if( myClass.ClassName() == "UOXItem" )
 	{
-		CItem *myItem = (CItem*)JS_GetPrivate( cx, obj );
+		CItem *myItem = (CItem*)myClass.toObject();
 		if( !ValidateObject( myItem ) )
 		{
 			MethodError( "Invalid item for RemoveSpell" );
@@ -2254,7 +2253,7 @@ JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	// Either useable with sockets OR characters
-	JSClass *myClass = JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
@@ -2264,10 +2263,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	CSocket *mySock = NULL;
 
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	if( myClass.ClassName() == "UOXChar" )
 	{
 		// Character
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 
 		if( !ValidateObject( myChar ) )
 		{
@@ -2277,10 +2276,10 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 		mySock = myChar->GetSocket();
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
 		// We have a socket here
-		mySock = (CSocket*)JS_GetPrivate( cx, obj );
+		mySock = (CSocket*)myClass.toObject();
 	}
 
 	if( mySock == NULL )
@@ -2312,14 +2311,13 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	// Either useable with sockets OR characters
-	JSClass *myClass = JS_GetClass( obj );
-
+	JSEncapsulate myClass( cx, obj );
 	CSocket *mySock = NULL;
 
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	if( myClass.ClassName() == "UOXChar" )
 	{
 		// Character
-		CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+		CChar *myChar = (CChar*)myClass.toObject();
 
 		if( !ValidateObject( myChar ) )
 		{
@@ -2330,10 +2328,10 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		mySock = myChar->GetSocket();
 	}
 
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
 		// We have a socket here
-		mySock = (CSocket*)JS_GetPrivate( cx, obj );
+		mySock = (CSocket*)myClass.toObject();
 	}
 
 	if( mySock == NULL )
@@ -3299,7 +3297,6 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	//JSClass *myClass = JS_GetClass( obj );
 	CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
 
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
@@ -3344,7 +3341,6 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 
-	//JSClass *myClass = JS_GetClass( obj );
 	CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, obj );
 
 	JSString *targMessage = JS_ValueToString( cx, argv[0] );
@@ -3509,16 +3505,17 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	JSClass *myClass		= JS_GetClass( obj );
-	CBaseObject *myObj		= (CBaseObject*)JS_GetPrivate( cx, obj );
+	JSEncapsulate myClass( cx, obj );
+	CBaseObject *myObj		= (CBaseObject*)myClass.toObject();
 	std::string trgSection	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 
-	if( trgSection.empty() || trgSection.length() == 0)
+	if( trgSection.empty() || trgSection.length() == 0 )
 	{
 		MethodError( "You have to supply a section to apply" );
+		return JS_FALSE;
 	}
 	
-	if( !strcmp( myClass->name, "UOXItem" ) ) 
+	if( myClass.ClassName() == "UOXItem" )
 	{
 		CItem *myItem = (CItem*)myObj;
 		if( !ValidateObject( myItem ) )  
@@ -3529,7 +3526,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		ScriptSection *toFind = FileLookup->FindEntry( trgSection, items_def );
 		ApplyItemSection( myItem, toFind );
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	else if( myClass.ClassName() == "UOXChar" ) 
 	{
 		CChar *myChar = (CChar*)myObj;
 		if( !ValidateObject( myChar ) )  
@@ -4148,25 +4145,24 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		case 2:
 			if( JSVAL_IS_OBJECT( argv[0] ) )
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSObject *jsToGoTo	= JSVAL_TO_OBJECT( argv[0] );
-				CBaseObject *toGoTo = (CBaseObject *)JS_GetPrivate( cx, jsToGoTo );
-				if( !ValidateObject( toGoTo ) )
+				JSEncapsulate jsToGoTo( cx, &(argv[0]) );
+				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
-					MethodError( "No object associated with this object" );
-					break;
-				}
-				JSClass *myClass = JS_GetClass( jsToGoTo );
-				if( !strcmp( myClass->name, "UOXItem" ) || !strcmp( myClass->name, "UOXChar" ) )
-				{
+					CBaseObject *toGoTo = (CBaseObject *)jsToGoTo.toObject();
+					if( !ValidateObject( toGoTo ) )
+					{
+						MethodError( "No object associated with this object" );
+						break;
+					}
 					gx		= toGoTo->GetX();
 					gy		= toGoTo->GetY();
 				}
-				else if( !strcmp( myClass->name, "UOXSocket" ) )
+				else if( jsToGoTo.ClassName() == "UOXSocket" )
 				{
-					CSocket *mySock		= (CSocket *)toGoTo;
+					CSocket *mySock		= (CSocket *)jsToGoTo.toObject();
 					CChar *mySockChar	= mySock->CurrcharObj();
-					gx		= mySockChar->GetX();
-					gy		= mySockChar->GetY();
+					gx					= mySockChar->GetX();
+					gy					= mySockChar->GetY();
 				}
 				else
 				{
@@ -4221,25 +4217,24 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		case 2:
 			if( JSVAL_IS_OBJECT( argv[0] ) )
 			{	// we can work with this, it should be either a character or item, hopefully
-				JSObject *jsToGoTo	= JSVAL_TO_OBJECT( argv[0] );
-				CBaseObject *toGoTo = (CBaseObject *)JS_GetPrivate( cx, jsToGoTo );
-				if( !ValidateObject( toGoTo ) )
+				JSEncapsulate jsToGoTo( cx, &(argv[0]) );
+				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
 				{
-					MethodError( "No object associated with this object" );
-					break;
-				}
-				JSClass *myClass = JS_GetClass( jsToGoTo );
-				if( !strcmp( myClass->name, "UOXItem" ) || !strcmp( myClass->name, "UOXChar" ) )
-				{
+					CBaseObject *toGoTo = (CBaseObject *)jsToGoTo.toObject();
+					if( !ValidateObject( toGoTo ) )
+					{
+						MethodError( "No object associated with this object" );
+						break;
+					}
 					gx		= toGoTo->GetX();
 					gy		= toGoTo->GetY();
 				}
-				else if( !strcmp( myClass->name, "UOXSocket" ) )
+				else if( jsToGoTo.ClassName() == "UOXSocket" )
 				{
-					CSocket *mySock		= (CSocket *)toGoTo;
+					CSocket *mySock		= (CSocket *)jsToGoTo.toObject();
 					CChar *mySockChar	= mySock->CurrcharObj();
-					gx		= mySockChar->GetX();
-					gy		= mySockChar->GetY();
+					gx					= mySockChar->GetX();
+					gy					= mySockChar->GetY();
 				}
 				else
 				{
@@ -4281,11 +4276,10 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &(argv[0]) );
-
-	JSClass *myClass = JS_GetClass( obj );
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	JSEncapsulate myClass( cx, obj );
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+		CChar *cMove = static_cast<CChar*>(myClass.toObject());
 		if( !ValidateObject( cMove ) )
 		{
 			MethodError( "GetTimer: Invalid source character" );
@@ -4294,9 +4288,9 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 		*rval = INT_TO_JSVAL( cMove->GetTimer( (cC_TID)encaps.toInt() ) );
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ) );
+		CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
 		if( mSock == NULL )
 		{
 			MethodError( "GetTimer: Invalid source socket" );
@@ -4318,11 +4312,10 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	}
 	JSEncapsulate encaps( cx, &(argv[0]) );
 	JSEncapsulate encaps2( cx, &(argv[1]) );
-
-	JSClass *myClass = JS_GetClass( obj );
-	if( !strcmp( myClass->name, "UOXChar" ) )
+	JSEncapsulate myClass( cx, obj );
+	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ) );
+		CChar *cMove = static_cast<CChar*>(myClass.toObject());
 		if( !ValidateObject( cMove ) )
 		{
 			MethodError( "SetTimer: Invalid source character" );
@@ -4331,9 +4324,9 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 		cMove->SetTimer( (cC_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
 	}
-	else if( !strcmp( myClass->name, "UOXSocket" ) )
+	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ) );
+		CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
 		if( mSock == NULL )
 		{
 			MethodError( "SetTimer: Invalid source socket" );
@@ -5164,15 +5157,15 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 
-	JSClass *myClass	= JS_GetClass( obj );
+	JSEncapsulate myClass( cx, obj );
 	CSocket *mSock		= NULL;
 	CChar *mChar		= NULL;
 
 	// Let's validate the person seeing (socket/char)
 
-	if( !strcmp( myClass->name, "UOXSocket" ) ) 
+	if( myClass.ClassName() == "UOXSocket" )
 	{
-		mSock	= (CSocket *)JS_GetPrivate( cx, obj );
+		mSock	= (CSocket *)myClass.toObject();
 		if( mSock == NULL ) 
 		{
 			MethodError( "CanSee: Passed an invalid Socket" );
@@ -5185,9 +5178,9 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			return JS_FALSE;
 		}
 	}
-	else if( !strcmp( myClass->name, "UOXChar" ) ) 
+	else if( myClass.ClassName() == "UOXChar" )
 	{
-		mChar	= (CChar *)JS_GetPrivate( cx, obj );
+		mChar	= (CChar *)myClass.toObject();
 		if( !ValidateObject( mChar ) )  
 		{
 			MethodError( "CanSee: Passed an invalid Character" );
@@ -5203,12 +5196,11 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	SI08 z = 0;
 	if( argc == 1 )	// we've been passed an item, character, or socket
 	{
-		JSObject *myDest = JSVAL_TO_OBJECT( argv[0] );
-		JSClass *myClass = JS_GetClass( myDest );
+		JSEncapsulate myClass( cx, &(argv[0]) );
 
-		if( !strcmp( myClass->name, "UOXSocket" ) )
+		if( myClass.ClassName() == "UOXSocket" )
 		{
-			CSocket *tSock = (CSocket *)JS_GetPrivate( cx, myDest );
+			CSocket *tSock = (CSocket *)myClass.toObject();
 			if( tSock == NULL )
 			{
 				MethodError( "CanSee: Passed an invalid Socket to look at" );
@@ -5231,9 +5223,9 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			y = tChar->GetY();
 			z = tChar->GetZ();
 		}
-		else if( !strcmp( myClass->name, "UOXChar" ) || !strcmp( myClass->name, "UOXItem" ) )
+		else if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 		{
-			CBaseObject *tObj	= (CBaseObject *)JS_GetPrivate( cx, myDest );
+			CBaseObject *tObj	= (CBaseObject *)myClass.toObject();
 			if( !ValidateObject( tObj ) )  
 			{
 				MethodError( "CanSee: Object to look at is invalid" );
@@ -5279,16 +5271,15 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	}
 
 	CSocket *mSock			= static_cast<CSocket *>(JS_GetPrivate( cx, obj ));
-	JSObject *jsObj			= JSVAL_TO_OBJECT( argv[0] );
-	JSClass *myClass		= JS_GetClass( jsObj );
+	JSEncapsulate myClass( cx, &(argv[0]) );
 
-	if( strcmp( myClass->name, "UOXChar" ) )	// It must be a character!
+	if( myClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		MethodError( "CSocket_DisplayDamage: Passed an invalid Character" );
 		return JS_FALSE;
 	}
 
-	CChar *mChar			= static_cast<CChar *>(JS_GetPrivate( cx, jsObj ));
+	CChar *mChar			= static_cast<CChar *>(myClass.toObject());
 	if( !ValidateObject( mChar )  )
 	{
 		MethodError( "(CSocket_DisplayDamage): Passed an invalid Character" );

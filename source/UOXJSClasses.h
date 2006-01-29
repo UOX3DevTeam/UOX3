@@ -39,32 +39,46 @@ static  JSClass UOXSpells_class =
 	JS_FinalizeStub 
 };
 
-static JSClass UOXChar_class = 
+static JSExtendedClass UOXChar_class = 
 { 
-	"UOXChar",
-	JSCLASS_HAS_PRIVATE, 
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CCharacterProps_getProperty,
-	CCharacterProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub 
+	{	"UOXChar",
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JS_PropertyStub,
+		JS_PropertyStub,
+		CCharacterProps_getProperty,
+		CCharacterProps_setProperty,
+		JS_EnumerateStub,
+		JS_ResolveStub,
+		JS_ConvertStub,
+		JS_FinalizeStub,
+		NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL
+	},
+	CBaseObject_equality,
+	NULL,
+	NULL,
+	JSCLASS_NO_RESERVED_MEMBERS
 }; 
 
-static JSClass UOXItem_class = 
+static JSExtendedClass UOXItem_class = 
 { 
-	"UOXItem",
-	JSCLASS_HAS_PRIVATE, 
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CItemProps_getProperty,
-	CItemProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub 
+	{	"UOXItem",
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JS_PropertyStub,
+		JS_PropertyStub,
+		CItemProps_getProperty,
+		CItemProps_setProperty,
+		JS_EnumerateStub,
+		JS_ResolveStub,
+		JS_ConvertStub,
+		JS_FinalizeStub,
+		NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL
+	},
+	CBaseObject_equality,
+	NULL,
+	NULL,
+	JSCLASS_NO_RESERVED_MEMBERS
 };
 
 //
@@ -204,18 +218,25 @@ static JSClass UOXRegion_class =
 	JS_FinalizeStub 
 }; 
 
-static JSClass UOXSocket_class =
+static JSExtendedClass UOXSocket_class =
 {
-	"UOXSocket",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSocketProps_getProperty,
-	CSocketProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub 
+	{	"UOXSocket",
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JS_PropertyStub,
+		JS_PropertyStub,
+		CSocketProps_getProperty,
+		CSocketProps_setProperty,
+		JS_EnumerateStub,
+		JS_ResolveStub,
+		JS_ConvertStub,
+		JS_FinalizeStub,
+		NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL
+	},
+	CSocket_equality,
+	NULL,
+	NULL,
+	JSCLASS_NO_RESERVED_MEMBERS
 }; 
 
 static JSClass UOXFile_class =

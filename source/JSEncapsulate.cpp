@@ -1,6 +1,9 @@
 #include "JSEncapsulate.h"
 #include "ustring.h"
 
+#include "jsobj.h"
+#include "jsutil.h"
+
 namespace UOX
 {
 	void JSEncapsulate::InternalReset( void )
@@ -10,9 +13,16 @@ namespace UOX
 		beenParsed[JSOT_BOOL]	= false;
 		beenParsed[JSOT_STRING] = false;
 		beenParsed[JSOT_OBJECT] = false;
-		nativeType = JSOT_COUNT;
+		nativeType				= JSOT_COUNT;
+		className				= "Native";
+		classCached				= false;
+		intVal					= 0;
+		floatVal				= 0.0f;
+		boolVal					= false;
+		stringVal				= "";
+		objectVal				= NULL;
 	}
-	JSEncapsulate::JSEncapsulate() : cx( NULL ), vp( NULL )
+	JSEncapsulate::JSEncapsulate() : cx( NULL ), vp( NULL ), obj( NULL )
 	{
 		InternalReset();
 	}
@@ -34,14 +44,27 @@ namespace UOX
 				nativeType	= JSOT_BOOL;
 			else if( JSVAL_IS_STRING( (*vp) ) )
 				nativeType	= JSOT_STRING;
+			else if( JSVAL_IS_VOID( (*vp) ) )
+				nativeType	= JSOT_VOID;
+			else if( JSVAL_IS_NULL( (*vp) ) )
+				nativeType	= JSOT_NULL;
 		}
 		else if( JSVAL_IS_OBJECT( (*vp) ) )
 			nativeType	= JSOT_OBJECT;
 	}
-	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : intVal( 0 ), floatVal( 0 ), boolVal( false ), stringVal( "" ), objectVal( NULL ), cx( jsCX ), vp( jsVP )
+	JSEncapsulate::JSEncapsulate( JSContext *jsCX, jsval *jsVP ) : cx( jsCX ), vp( jsVP ), obj( NULL )
 	{
 		InternalReset();
 		Init();
+	}
+	JSEncapsulate::JSEncapsulate( JSContext *jsCX, JSObject *jsVP ) : intVal( 0 ), floatVal( 0 ), boolVal( false ), stringVal( "" ), objectVal( NULL ), cx( jsCX ), vp( NULL ), obj( jsVP )
+	{
+		InternalReset();
+		// We don't want to call Init() here, because we *know* it's an Object
+//		Init();
+		nativeType				= JSOT_OBJECT;
+		objectVal				= (void*)JS_GetPrivate( cx, jsVP );
+		beenParsed[JSOT_OBJECT]	= true;
 	}
 
 	bool JSEncapsulate::isType( JSObjectType toCheck )
@@ -88,6 +111,38 @@ namespace UOX
 		if( !beenParsed[JSOT_OBJECT] )	
 			Parse( JSOT_OBJECT );
 		return objectVal;
+	}
+
+	std::string JSEncapsulate::ClassName( void )
+	{
+		std::string rVal = className;
+		if( !classCached )
+		{
+			if( nativeType == JSOT_OBJECT )
+			{
+				JSObject *obj2 = NULL;
+				if( vp != NULL )
+					obj2 = JSVAL_TO_OBJECT( *vp );
+				else
+					obj2 = obj;
+				if( obj2 != NULL )
+				{
+					JSClass *mClass = OBJ_GET_CLASS( cx, obj2 );
+					if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class
+					{
+						JSExtendedClass *mClass2	= (JSExtendedClass *)mClass;
+						className					= mClass2->base.name;
+					}
+					else
+					{
+						className = mClass->name;
+					}
+					rVal = className;
+				}
+			}
+			classCached = true;
+		}
+		return rVal;
 	}
 	void JSEncapsulate::Parse( JSObjectType typeConvert )
 	{

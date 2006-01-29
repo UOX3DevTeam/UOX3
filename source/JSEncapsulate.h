@@ -12,18 +12,23 @@ namespace UOX
 			JSOT_BOOL,
 			JSOT_STRING,
 			JSOT_OBJECT,
+			JSOT_NULL,
+			JSOT_VOID,
 			JSOT_COUNT
 		};
 
 		JSEncapsulate( JSContext *jsCX, jsval *jsVP );
+		JSEncapsulate( JSContext *jsCX, JSObject *jsVP );
 		JSEncapsulate();
 		void		SetContext( JSContext *jsCX, jsval *jsVP );
-		bool isType( JSObjectType toCheck );
+		bool		isType( JSObjectType toCheck );
 		int			toInt( void );
 		bool		toBool( void );
 		float		toFloat( void );
 		std::string toString( void );
 		void *		toObject( void );
+
+		std::string	ClassName( void );
 //		operator const char *()
 	private:
 
@@ -40,6 +45,10 @@ namespace UOX
 
 		JSContext *		cx;
 		jsval *			vp;
+		JSObject *		obj;
+
+		std::string		className;
+		bool			classCached;
 
 		void Parse( JSObjectType typeConvert );
 	};

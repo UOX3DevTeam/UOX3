@@ -25,6 +25,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 JSBool CItemsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
@@ -35,6 +36,7 @@ JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );

@@ -2166,13 +2166,12 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  		return JS_FALSE;
 	}
 
-	JSObject *myDest	= JSVAL_TO_OBJECT( argv[0] );
-	JSClass *myClass	= JS_GetClass( myDest );
+	JSEncapsulate myClass( cx, &(argv[0]) );
 
-	if( !strcmp( myClass->name, "UOXChar" ) || !strcmp( myClass->name, "UOXItem" ) ) 
+	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" ) 
 	{
-		CBaseObject *myObj	= (CBaseObject *)JS_GetPrivate( cx, myDest );
-		*rval = BOOLEAN_TO_JSVAL( ValidateObject( myObj ) );
+		CBaseObject *myObj	= (CBaseObject *)myClass.toObject();
+		*rval				= BOOLEAN_TO_JSVAL( ValidateObject( myObj ) );
 	}
 	else
 		*rval = JSVAL_FALSE;
