@@ -63,6 +63,7 @@ bool validHairStyle( UI16 id, UI16 bodyID )
 		case 0x2FCE:	// topknot (both)
 		case 0x2FCF:	// long braid (both)
 		case 0x2FD0:	// buns (female)
+		case 0x2FD1:	// spiked (male)
 			rvalue = true;
 			break;
 		default:
