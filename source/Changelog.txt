@@ -1,3 +1,11 @@
+1/29/2006 - giwo (0.98-3.2a [3.3 BETA])
+	Fixed several issues with CPOpenBuyWindow fixing an issue causing items in buy windows to display improperly.
+	Fixed an alignment issue with CPItemsInContainer logging.
+	Removed CItem::Sort() as it is now superfluous.
+	Moved CItem::WalkXY() to CBaseObject.
+	Minor updates to cSkills::RandomSteal().
+	Removed JS items[]. access.
+
 29th January, 2006 - Maarc
 
 	Encapsulated JS class name retrieval into JSEncapsulate and switched over to using that everywhere

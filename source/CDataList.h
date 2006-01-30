@@ -73,12 +73,10 @@ namespace UOX
 			objIteratorBackup.clear();
 		}
 
-		T GetCurrent( size_t index = objData.size() )
+		T GetCurrent( void )
 		{
 			T rvalue = NULL;
-			if( index < objData.size() )
-				rvalue = objData[index];
-			else if( objIterator != objData.end() )
+			if( objIterator != objData.end() )
 				rvalue = (*objIterator);
 			return rvalue;
 		}

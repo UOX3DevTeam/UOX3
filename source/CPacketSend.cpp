@@ -2822,15 +2822,24 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
-		if( contType == 0x01 ) // Corpse
-			isCorpse = true;
-		else if( contType == 0x02 ) // Vendor
-		{
-			isVendor = true;
-			vendorSerial = container->GetSerial();
-		}
+		Type( contType );
+		if( isVendor )
+			VendorSerial( container->GetSerial() );
 		CopyData( mSock, (*container) );
 	}
+}
+
+void CPItemsInContainer::Type( UI08 contType )
+{
+	if( contType == 0x01 ) // Corpse
+		isCorpse = true;
+	else if( contType == 0x02 ) // Vendor
+		isVendor = true;
+}
+
+void CPItemsInContainer::VendorSerial( SERIAL toSet )
+{
+	vendorSerial = toSet;
 }
 
 UI16 CPItemsInContainer::NumberOfItems( void ) const
@@ -2847,6 +2856,7 @@ void CPItemsInContainer::NumberOfItems( UI16 numItems )
 }
 void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum )
 {
+	pStream.ReserveSize( pStream.GetSize() + 19 );
 	UI16 baseOffset = (UI16)(5 + itemNum * 19);
 	pStream.WriteLong(  baseOffset +  0, toAdd->GetSerial() );
 	pStream.WriteShort( baseOffset +  4, toAdd->GetID() );
@@ -2885,7 +2895,6 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 		{
 			if( !ctr->isFree() )
 			{
-				pStream.ReserveSize( pStream.GetSize() + 19 );
 				AddItem( ctr, itemCount );
 /*				if( !isVendor && mSock != NULL )
 				{
@@ -2896,7 +2905,6 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 			}
 		}
 	}
-
 	NumberOfItems( itemCount );
 }
 
@@ -2912,11 +2920,12 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 	{
 		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << pStream.GetULong( baseOffset ) << std::endl;
 		outStream << "      Model     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
-		outStream << "      Amount    : " << std::dec << pStream.GetUShort( baseOffset+=2 ) << std::endl;
-		outStream << "      XYZ       : " << pStream.GetUShort( baseOffset+=2 ) << "," <<
-			pStream.GetUShort( baseOffset+=2 ) << "," << (SI16)pStream.GetByte( baseOffset+=2 ) << std::endl;
-		outStream << "      Container : " << "0x" << std::hex << pStream.GetULong( ++baseOffset) << std::endl;
-		outStream << "      Color     : " << std::dec << pStream.GetUShort( baseOffset+=2) << std::endl;
+		outStream << "      Amount    : " << std::dec << pStream.GetUShort( baseOffset+=3 ) << std::endl;
+		outStream << "      XY        : " << pStream.GetUShort( baseOffset+=2 ) << "," <<
+			pStream.GetUShort( baseOffset+=2 ) << std::endl;
+		outStream << "      Container : " << "0x" << std::hex << pStream.GetULong( baseOffset+=2 ) << std::endl;
+		outStream << "      Color     : " << "0x" << pStream.GetUShort( baseOffset+=4 ) << std::endl;
+		baseOffset += 2;
 	}
 	outStream << "  Raw dump      :" << std::endl;
 
@@ -2935,6 +2944,7 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 //		BYTE length of text description 
 //		BYTE[text length] item description 
 //NOTE: This packet is always preceded by a describe contents packet (0x3c) with the container id as the (vendorID | 0x40000000) and then an open container packet (0x24?) with the vendorID only and a model number of 0x0030 (probably the model # for the buy screen)
+//NOTE: The client displays items in the buy window from top left to bottom right. This means we need to sort the items logically before sending packets.
 void CPOpenBuyWindow::InternalReset( void )
 {
 	pStream.ReserveSize( 8 );	// start big, and work back down
@@ -2944,13 +2954,13 @@ CPOpenBuyWindow::CPOpenBuyWindow()
 {
 	InternalReset();
 }
-CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID )
+CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic )
 {
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
 		pStream.WriteLong( 3, container->GetSerial() );
-		CopyData( (*container), vendorID );
+		CopyData( (*container), vendorID, iic );
 	}
 }
 
@@ -2969,7 +2979,9 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling );
 UI32 calcValue( CItem *i, UI32 value );
 void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset )
 {
-	UI32 value = calcValue( toAdd, toAdd->GetBuyValue() );
+	UI32 value = toAdd->GetBuyValue();
+	if( cwmWorldState->ServerData()->RankSystemStatus() )
+		value = calcValue( toAdd, value );
 	if( cwmWorldState->ServerData()->TradeSystemStatus() )
 		value = calcGoodValue( tReg, toAdd, value, false );
 
@@ -2993,13 +3005,26 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	baseOffset += sLen;
 }
 
-void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
+void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic )
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
 	CTownRegion *tReg = NULL;
 	if( cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject( vendorID ) )
 		tReg = calcRegionFromXY( vendorID->GetX(), vendorID->GetY(), vendorID->WorldNumber() );
+
+	SI16 baseY = 0, baseX = 0;
+	switch( toCopy.GetLayer() )
+	{
+		case IL_BUYCONTAINER:			// buy layer
+			break;
+		case IL_BOUGHTCONTAINER:		// bought layer
+			baseY = 100;
+			break;
+		default:
+			break;
+	}
+
 	CDataList< CItem * > *tcCont = toCopy.GetContainsList();
 	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
 	{
@@ -3007,11 +3032,21 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID )
 		{
 			if( !ctr->isFree() )
 			{
+				ctr->WalkXY( ++baseX, baseY );
+				if( baseX == 200 )
+				{
+					baseX = 0;
+					++baseY;
+				}
+
+				iic.AddItem( ctr, itemCount );
 				AddItem( ctr, tReg, length );
 				++itemCount;
 			}
 		}
 	}
+	iic.NumberOfItems( itemCount );
+
 	NumberOfItems( itemCount );
 	pStream.ReserveSize( length );
 	pStream.WriteShort( 1, length );
@@ -3027,7 +3062,8 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 	int baseOffset = 8;
 	for( UI32 x = 0; x < pStream.GetByte( 7 ); ++x )
 	{
-		outStream << "  ITEM " << x << "      Price: " << pStream.GetULong( baseOffset ) << std::endl;
+		outStream << "  ITEM " << x << std::endl;
+		outStream << "      Price: " << pStream.GetULong( baseOffset ) << std::endl;
 		baseOffset += 4;
 		outStream << "      Len  : " << (SI16)pStream.GetByte( baseOffset ) << std::endl;
 		outStream << "      Name : ";
@@ -3037,7 +3073,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << std::endl;
 	}
 
-	outStream << "  Raw dump       :" << std::endl;
+	outStream << "  Raw dump :" << std::endl;
 
 	CPUOXBuffer::Log( outStream, false );
 }

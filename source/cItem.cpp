@@ -1571,35 +1571,6 @@ inline bool operator>(const CItem& x, const CItem& y )
 	return ( x.GetSerial() > y.GetSerial() );
 }
 
-void CItem::Sort( void )
-{
-	if( Contains.Num() < 2 )
-		return;
-//	std::sort( Contains.begin(), Contains.end() );
-	SI16 baseY = 0, baseX = 0;
-	switch( GetLayer() )
-	{
-		case IL_BUYCONTAINER:			// buy layer
-			break;
-		case IL_BOUGHTCONTAINER:			// bought layer
-			baseY = 100;
-			break;
-		default:	return;
-	}
-	for( CItem *toSort = Contains.First(); !Contains.Finished(); toSort = Contains.Next() )
-	{
-		if( !ValidateObject( toSort ) )
-			continue;
-		toSort->SetX( ++baseX );
-		toSort->SetY( baseY );
-		if( baseX == 200 )
-		{
-			baseX = 0;
-			++baseY;
-		}
-	}
-}
-
 //o---------------------------------------------------------------------------o
 //|		Function    :	void itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 //|		Date        :	Unknown

@@ -146,6 +146,7 @@ public:
 	void					SetX( SI16 newValue );
 	void					SetY( SI16 newValue );
 	void					SetZ( SI08 newValue );
+	void					WalkXY( SI16 newX, SI16 newY );
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) = 0;
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
 	virtual void			SetLocation( const CBaseObject *toSet ) = 0;

@@ -83,26 +83,6 @@ static JSExtendedClass UOXItem_class =
 
 //
 // What this class does:
-//  uses JS_GetPrivate to get the assigned item and creates a new JS Item for
-//  each "request" made to it. (GetItem)
-//
-
-static JSClass UOXItems_class = 
-{ 
-	"UOXItems",
-	JSCLASS_HAS_PRIVATE, 
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CItemsProps_getProperty,
-	JS_PropertyStub, 
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub 
-};
-
-//
-// What this class does:
 // Returns the skill-values for a character
 // and is able to set them too
 //

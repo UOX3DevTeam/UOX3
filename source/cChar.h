@@ -305,7 +305,6 @@ public:
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
 	virtual void	SetLocation( const CBaseObject *toSet );
-	void			WalkXY( SI16 newX, SI16 newY );
 	void			WalkZ( SI08 newZ );
 	void			WalkDir( SI08 newDir );
 

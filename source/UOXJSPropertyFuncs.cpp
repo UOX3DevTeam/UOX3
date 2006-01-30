@@ -1464,32 +1464,6 @@ namespace UOX
 		return JS_TRUE;
 	}
 
-	JSBool CItemsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-	{
-		// Create a new JS Object representing the accquired object...
-		// IF SOMEONE IS ENUMERATING THOSE OBJECTS THIS COULD CAUSE OUT_OF_MEMORY !
-		CItem *myItem = (CItem*)JS_GetPrivate( cx, JS_GetParent( cx, obj ) );
-
-		if( !ValidateObject( myItem ) )
-			return JS_FALSE;
-		
-		UI32 Index			= JSVAL_TO_INT( id );
-		CItem *mySubItem	= myItem->GetContainsList()->GetCurrent( Index );
-		if( !ValidateObject( mySubItem ) )
-		{
-			*vp = JSVAL_NULL;
-			return JS_TRUE;
-		}
-		
-		// Otherwise Acquire an object
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myJSItem, mySubItem );
-		*vp = OBJECT_TO_JSVAL( myJSItem );
-		
-		return JS_TRUE;
-	}
-
 	JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		JSEncapsulate myClass( cx, obj );

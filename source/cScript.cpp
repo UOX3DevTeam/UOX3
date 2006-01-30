@@ -2007,7 +2007,6 @@ JSObject *cScript::MakeNewObject( IUEEntries iType )
 			toMake = JS_NewObject( targContext, &UOXItem_class.base, ItemProto, targObject ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineObject( targContext, toMake, "items", &UOXItems_class, NULL, JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY );
 			JS_DefineFunctions( targContext, toMake, CItem_Methods );
 			JS_DefineProperties( targContext, toMake, CItemProps );
 			break;

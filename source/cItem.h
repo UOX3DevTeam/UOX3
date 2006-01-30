@@ -239,7 +239,6 @@ public:
 	virtual bool	DumpBody( std::ofstream &outStream ) const;
 	virtual bool	HandleLine( UString &UTag, UString &data );
 	virtual void	PostLoadProcessing( void );
-	void			Sort( void );
 	virtual void	Cleanup( void );
 	virtual void	Delete( void );
 	virtual bool	CanBeObjType( ObjectType toCompare ) const;

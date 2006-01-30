@@ -1467,16 +1467,22 @@ void cSkills::RandomSteal( CSocket *s )
 	}
 
 	CItem *item = NULL;
-	size_t numItems = p->GetContainsList()->Num();
+	CDataList< CItem * > *tcCont = p->GetContainsList();
+	size_t numItems = tcCont->Num();
+
+	std::vector< CItem * > contList;
+	contList.reserve( numItems );
 	if( numItems > 0 )
 	{
-		for( UI08 i = 0; i < 50; ++i )
+		for( item = tcCont->First(); !tcCont->Finished(); item = tcCont->Next() )
 		{
-			item = p->GetContainsList()->GetCurrent( RandomNum( static_cast< size_t >(0), numItems - 1 ) );
-			if( ValidateObject( item ) ) 
-				break;
+			if( ValidateObject( item ) )
+				contList.push_back( item );
 		}
+		item = contList[RandomNum( static_cast<size_t>(0), (contList.size()-1) )];
 	}
+	contList.clear();
+
 	if( !ValidateObject( item ) )
 	{
 		s->sysmessage( 876 );

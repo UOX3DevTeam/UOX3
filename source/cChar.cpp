@@ -3434,14 +3434,6 @@ void CChar::SendWornItems( CSocket *mSock )
 	}
 }
 
-void CChar::WalkXY( SI16 newX, SI16 newY )
-{
-	oldLocX = x;
-	oldLocY = y;
-	x = newX;
-	y = newY;
-}
-
 void CChar::WalkZ( SI08 newZ )
 {
 	oldLocZ = z;

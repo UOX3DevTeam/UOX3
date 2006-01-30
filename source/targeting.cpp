@@ -904,18 +904,25 @@ bool BuyShop( CSocket *s, CChar *c )
 	
 	if( !ValidateObject( buyPack ) || !ValidateObject( boughtPack ) )
 		return false;
-	
-	//buyPack->Sort();
-	//boughtPack->Sort();
-	//c->Update( s );
 
-	CPItemsInContainer iic( s, buyPack, 0x02 );			s->Send( &iic );
-	CPOpenBuyWindow obw( buyPack, c );					s->Send( &obw );
-	CPItemsInContainer iic2( s, boughtPack, 0x02 );		s->Send( &iic2 );
-	CPOpenBuyWindow obw2( boughtPack, c );				s->Send( &obw2 );
+	CPItemsInContainer iic;
+	iic.Type( 0x02 );
+	iic.VendorSerial( buyPack->GetSerial() );
+	CPOpenBuyWindow obw( buyPack, c, iic );
+
+	CPItemsInContainer iic2;
+	iic2.Type( 0x02 );
+	iic2.VendorSerial( boughtPack->GetSerial() );
+	CPOpenBuyWindow obw2( boughtPack, c, iic2 );
+
 	CPDrawContainer toSend;
 	toSend.Model( 0x0030 );
 	toSend.Serial( c->GetSerial() );
+
+	s->Send( &iic );
+	s->Send( &iic2 );
+	s->Send( &obw );
+	s->Send( &obw2 );
 	s->Send( &toSend );
 
 	s->statwindow( s->CurrcharObj() ); // Make sure the gold total has been sent.

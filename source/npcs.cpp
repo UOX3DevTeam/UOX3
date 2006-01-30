@@ -1143,7 +1143,7 @@ void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 	else if( nCurKarma < -10000 ) 
 	{
 		nCharID->SetKarma( -10000 );
-		nCurKarma = 10000;
+		nCurKarma = -10000;
 	}
 
 	if( nCurKarma < nKarma && nKarma > 0 )

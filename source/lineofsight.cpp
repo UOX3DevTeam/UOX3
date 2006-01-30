@@ -153,7 +153,7 @@ bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI1
 
 	const UI16 mID1		= srcMap.id;
 	const UI16 mID2		= trgMap.id;
-	if( mID1 != 2 && mID2 != 2 ) 
+	if( mID1 != 2 && mID2 != 2 )
 	{
 		const SI16 mz1	= srcMap.z;
 		const SI16 mz2	= trgMap.z;
@@ -162,10 +162,10 @@ bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI1
 			( mz1 > mz2 && z <= mz1 && z >= mz2 ) ||
 			( z == mz1 && LoS.dir.z != 0 ) ||											// 2) Cuts a map "floor"
 			( stat == NULL &&															// Ensure there is no static item
-			( ( mID1 >= 431 && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
-			( mID1 >= 543   && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
-			( mID1 >= 1787  && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
-			( mID1 >= 1851  && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
+			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 475  ) ||
+			(   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
+			(   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
+			(   mID1 >= 1851 && mID1 <= 1854 ) || ( mID1 >= 1881 && mID1 <= 1884 ) ) ) )		// 3) Cuts a mountain
 		{
 			if( mSock != NULL )
 				mSock->sysmessage( 683 );
@@ -218,7 +218,7 @@ Look at uox3.h to see options. Works like npc magic.
 	const bool blocked = false;
 	const bool not_blocked = true;
 
-	if( koxn == -1 && koym == -1 )  
+	if( koxn == -1 && koym == -1 )
 		return not_blocked;		// target canceled
 
 	SI16 kox1 = mChar->GetX(), koy1 = mChar->GetY();
@@ -252,7 +252,7 @@ Look at uox3.h to see options. Works like npc magic.
 	vector3D collisions[ MAX_COLLISIONS ];
 
 	// initialize array
-	for( i = 0 ; i < (distance * 2); ++i )
+	for( i = 0; i < (distance * 2); ++i )
 		collisions[i] = vector3D( -1, -1, -1 );
 
 	SI32 collisioncount = 0;
@@ -262,7 +262,6 @@ Look at uox3.h to see options. Works like npc magic.
 	else
 		dz = (SI32)floor( lineofsight.dzInDirectionX() );
 
-	
 	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
 	{
 		for( i = 0; i < abs( koz2 - koz1 ); ++i )
@@ -275,7 +274,7 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		for( i = 0; i < (sgn_y * m); ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) );
+			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (SI08)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) );
 			++collisioncount;
 		}
 	}
@@ -283,7 +282,7 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		for( i = 0; i < (sgn_x * n); ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) );
+			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (SI08)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) );
 			++collisioncount;
 		}
 	}
@@ -298,21 +297,21 @@ Look at uox3.h to see options. Works like npc magic.
 			{
 				// the next one is somewhat tricky, if the line of sight exactly cuts a coordinate,
 				// we just have to take that coordinate...
-				if( floor( temp.y ) == temp.y ) 
+				if( floor( temp.y ) == temp.y )
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
 					collisioncount += 1;
 				}
 				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
 				else
-				{ 
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
-					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) ); 
+				{
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
+					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
 					collisioncount += 2;
 				}
 			}
 		}
-	
+
 		for( i = 0; (m > n) && (i < (sgn_y * m)); ++i )
 		{
 			line2D toCollide = line2D( vector2D( 0.0f, (R32)( koy1 + (sgn_y * i) ) ), vector2D( 1.0f, 0.0f ) );
@@ -322,13 +321,13 @@ Look at uox3.h to see options. Works like npc magic.
 			{
 				if( floor( temp.x ) == temp.x )
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
 					collisioncount += 1;
 				}
 				else
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
-					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) ); 
+					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
+					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
 					collisioncount += 2;
 				}
 			}
@@ -387,16 +386,17 @@ Look at uox3.h to see options. Works like npc magic.
 			tempX = tempItem->GetX();
 			tempY = tempItem->GetY();
 			if( ( tempX >= x1 && tempX <= x2 ) && ( tempY >= y1 && tempY <= y2 ) )
+			{
 				for( i = 0; i < collisioncount; ++i )
 				{
 					if( ( tempX == collisions[i].x ) && ( tempY == collisions[i].y ) )
 						loscache.push_back( tempItem );
 				}
+			}
 		}
 		regItems->Pop();
 	}
-		
-		
+
 	////////////End Initilzations
 	//////////////////////////////////////////////////////////////
 
@@ -420,8 +420,7 @@ Look at uox3.h to see options. Works like npc magic.
 		}
 		else if( checkfor )
 			itemtype *= 2;
-	}    
-
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	////////////////////  This next stuff is what searches each tile for things
@@ -442,16 +441,15 @@ Look at uox3.h to see options. Works like npc magic.
 			msi.GetTile( &tile );
 			if(	( collisions[i].z >= stat->zoff && collisions[i].z <= ( stat->zoff + tile.Height() ) ) ||
 				( tile.Height() <= 2 && abs( collisions[i].z - stat->zoff ) <= abs( dz ) ) )
-			{	  
+			{
 				itemids.push_back( stat->itemid );
 			}
 			stat = msi.Next();
 		}
-			
-			
+
 		// Items
 		CItem *dyncount;
-		for( ITEMLIST_CITERATOR losIter = loscache.begin(); losIter != loscache.end(); ++losIter ) 
+		for( ITEMLIST_CITERATOR losIter = loscache.begin(); losIter != loscache.end(); ++losIter )
 		{
 			dyncount = (*losIter);
 			if( dyncount == NULL )
@@ -463,7 +461,7 @@ Look at uox3.h to see options. Works like npc magic.
 				if( ( dyncount->GetX() == collisions[i].x ) && (dyncount->GetY() == collisions[i].y ) &&
 					( collisions[i].z >= dyncount->GetZ() ) && ( collisions[i].z <= ( dyncount->GetZ() + tile.Height() ) ) &&
 					( dyncount->GetVisible() == VT_VISIBLE ) )
-				{	
+				{
 					itemids.push_back( dyncount->GetID() );
 				}
 			}
@@ -490,7 +488,7 @@ Look at uox3.h to see options. Works like npc magic.
 					{
 						test = Map->SeekIntoMulti( multiID, j );
 						if( ( test->visible ) && ( dyncount->GetX() + test->x == collisions[i].x ) &&
-							( dyncount->GetY() + test->y == collisions[i].y ) )			
+							( dyncount->GetY() + test->y == collisions[i].y ) )
 						{
 							Map->SeekTile(test->tile, &tile);
 							if( ( collisions[i].z >= dyncount->GetZ() + test->z ) &&
@@ -503,8 +501,8 @@ Look at uox3.h to see options. Works like npc magic.
 				}
 			}
 		}
-	} // for loop
- 
+	}
+
 	for( size_t toCheck = 0; toCheck < itemids.size(); ++toCheck )
 	{
 		for( j = 0; j < checkthistotal; ++j )

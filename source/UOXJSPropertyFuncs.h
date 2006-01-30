@@ -22,7 +22,6 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 JSBool CSpellProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CItemsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );

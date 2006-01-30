@@ -280,6 +280,14 @@ void CBaseObject::SetZ( SI08 newValue )
 	Dirty( UT_LOCATION );
 }
 
+void CBaseObject::WalkXY( SI16 newX, SI16 newY )
+{
+	oldLocX = x;
+	oldLocY = y;
+	x = newX;
+	y = newY;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	UI16 GetID()
 //|	Date			-	26 July, 2000
