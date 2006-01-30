@@ -956,6 +956,11 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 //o--------------------------------------------------------------------------
 void CBaseObject::AddToMulti( bool fireTrigger )
 {
+	if( CanBeObjType( OT_MULTI ) )
+	{
+		multis = NULL;
+		return;
+	}
 	if( ValidateObject( multis ) )
 	{
 		if( multis->CanBeObjType( OT_MULTI ) )

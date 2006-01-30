@@ -485,8 +485,12 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	if( GetCont() == NULL )
 	{
 		MapRegion->AddItem( this );
-		CMultiObj *mMulti = findMulti( newX, newY, newZ, world );
-		SetMulti( mMulti );
+		if( !CanBeObjType( OT_MULTI ) )
+		{
+			CMultiObj *mMulti = findMulti( newX, newY, newZ, world );
+			if( GetMultiObj() != mMulti )
+				SetMulti( mMulti );
+		}
 	}
 	Dirty( UT_LOCATION );
 }

@@ -3657,7 +3657,7 @@ void CPObjectInfo::InternalReset( void )
 {
 	pStream.ReserveSize( 16 );
 	pStream.WriteByte( 0, 0x1A );
-	pStream.WriteByte( 2, 16 );
+	pStream.WriteShort( 1, 16 );
 }
 void CPObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 {
@@ -3752,9 +3752,9 @@ void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 	if( mMulti.GetDir() )
 	{
 		pStream.ReserveSize( pStream.GetSize()+1 );
+		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 		pStream.WriteByte( 9, (pStream.GetByte( 9 ) | 0x80) );	// Enable direction
 		pStream.WriteByte( ++byteNum, mMulti.GetDir() );
-		pStream.WriteByte( 2, pStream.GetByte( 2 ) + 1 );
 	}
 	pStream.WriteByte( ++byteNum, mMulti.GetZ() );
 

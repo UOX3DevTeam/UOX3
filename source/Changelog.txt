@@ -1,3 +1,9 @@
+1/30/2006 - giwo (0.98-3.2b [3.3 BETA])
+	Fixed an issue causing multi's to contain themselves
+	Added some error checking to ensure a multi cannot be placed inside another multi.
+	Fixed an issue causing items and characters on boats to move multiple spaces.
+	Fixed an issue causing boats to lock the client.
+
 1/30/2006 - Xuri
 	Added missing hairstyle (spiked) for female elves
 

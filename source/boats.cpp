@@ -520,10 +520,10 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	//Move all the special items
 	boat->IncLocation( tx, ty );
-	tiller->IncLocation( tx, ty );
-	p1->IncLocation( tx, ty );
+//	tiller->IncLocation( tx, ty );
+//	p1->IncLocation( tx, ty );
 	//p2->IncLocation( tx, ty );
-	hold->IncLocation( tx, ty );
+//	hold->IncLocation( tx, ty );
 
 	CDataList< CItem * > *itemList = boat->GetItemsInMultiList();
 	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )

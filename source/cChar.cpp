@@ -1029,7 +1029,8 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	z		= newZ;
 	WorldNumber( world );
 	CMultiObj *newMulti = findMulti( newX, newY, newZ, world );
-	SetMulti( newMulti );
+	if( GetMultiObj() != newMulti )
+		SetMulti( newMulti );
 	MapRegion->AddChar( this );
 }
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
