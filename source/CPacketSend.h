@@ -1127,7 +1127,7 @@ public:
 	void			Colour( COLOUR value );
 	void			Font( UI16 value );
 	void			Name( std::string value );
-	void			Message( char *value );
+	void			Message( const char *value );
 	void			GhostIt( UI08 method );
 	CPUnicodeSpeech &operator=( CBaseObject &toCopy );
 	CPUnicodeSpeech &operator=( CPITalkRequestAscii &talking );

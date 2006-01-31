@@ -229,7 +229,7 @@ public:
 	void			LockDown( void );
 	bool			IsContType( void ) const;
 
-	void			itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0 );
+	void			itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
 	virtual void	Update( CSocket *mSock = NULL );
 	virtual void	SendToSocket( CSocket *mSock );
 	void			SendPackItemToSocket( CSocket *mSock );

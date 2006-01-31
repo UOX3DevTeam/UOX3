@@ -3954,7 +3954,7 @@ void CPUnicodeSpeech::Name( std::string value )
 {
 	pStream.WriteString( 18, value, 30 );
 }
-void CPUnicodeSpeech::Message( char *value )
+void CPUnicodeSpeech::Message( const char *value )
 {
 	size_t length = strlen( value );
 	SetLength( static_cast< UI16 >(48 + (2 * length) + 2) );

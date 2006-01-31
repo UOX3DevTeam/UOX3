@@ -1596,9 +1596,9 @@ void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 	toAdd.Font( FNT_NORMAL );
 	toAdd.Speaker( GetSerial() );
 	toAdd.SpokenTo( INVALIDSERIAL );
-	toAdd.Type( TALK );
+	toAdd.Type( OBJ );
 	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( SPTRG_BROADCASTPC );
+	toAdd.TargType( SPTRG_PCNPC );
 	toAdd.Colour( Colour );
 }
 
