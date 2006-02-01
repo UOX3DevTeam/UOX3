@@ -93,6 +93,9 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 		bool		AddChar( CChar *toAdd );
 		bool		RemoveChar( CChar *toRemove );
 
+		bool		ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum );
+		bool		ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum );
+
 		CMapRegion *GetMapRegion( CBaseObject *mObj );
 		CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber );
 

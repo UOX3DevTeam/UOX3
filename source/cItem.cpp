@@ -474,7 +474,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
 	if( GetCont() == NULL )
-		MapRegion->RemoveItem( this );
+		MapRegion->ChangeRegion( this, newX, newY, world );
 	oldLocX = x;
 	oldLocY = y;
 	oldLocZ = z;
@@ -484,7 +484,6 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	worldNumber = world;
 	if( GetCont() == NULL )
 	{
-		MapRegion->AddItem( this );
 		if( !CanBeObjType( OT_MULTI ) )
 		{
 			CMultiObj *mMulti = findMulti( newX, newY, newZ, world );
@@ -855,40 +854,30 @@ void CItem::AddSelfToOwner( void )
 
 void CItem::RemoveSelfFromCont( void )
 {
-//	try
-//	{
-		RemoveFromSight();
-		if( contObj != NULL )
+	RemoveFromSight();
+	if( contObj != NULL )
+	{
+		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			if( contObj->GetObjType() == OT_CHAR )	// it's a char!
+			CChar *targChar = (CChar *)contObj;
+			if( targChar != NULL )
 			{
-				CChar *targChar = (CChar *)contObj;
-				if( targChar != NULL )
-				{
-					Weight->subtractItemWeight( targChar, this );
-					targChar->TakeOffItem( GetLayer() );
-					//if( !targChar->TakeOffItem( GetLayer() ) )
-					//Console << "Char " << targChar->GetName() << "(" << contserial << ") was never wearing item on layer " << (SI16)GetLayer() << myendl;
-				}
-			}
-			else
-			{
-				CItem *targItem = (CItem *)contObj;
-				if( targItem != NULL )
-				{
-					Weight->subtractItemWeight( targItem, this );
-					targItem->GetContainsList()->Remove( this );
-					//if( !targItem->ReleaseItem( this ) )
-					//Console.Error( "Error removing %s(0x%X) from %s(0x%X)\n", GetName(), GetSerial(), targItem->GetName(), contserial );
-				}
+				Weight->subtractItemWeight( targChar, this );
+				targChar->TakeOffItem( GetLayer() );
 			}
 		}
 		else
-			MapRegion->RemoveItem( this );
-//	}
-//	catch( ... )
-//	{
-//	}
+		{
+			CItem *targItem = (CItem *)contObj;
+			if( targItem != NULL )
+			{
+				Weight->subtractItemWeight( targItem, this );
+				targItem->GetContainsList()->Remove( this );
+			}
+		}
+	}
+	else
+		MapRegion->RemoveItem( this );
 }
 
 CItem * CItem::Dupe( ObjectType itemType )
@@ -1859,7 +1848,10 @@ void CItem::Cleanup( void )
 	{
 		CBaseObject::Cleanup();
 
-		RemoveFromSight();
+		RemoveSelfFromCont();
+		RemoveSelfFromOwner();
+
+		MapRegion->RemoveItem( this );
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
 		{
@@ -1914,9 +1906,6 @@ void CItem::Cleanup( void )
 
 		if( GetType() == IT_READABLEBOOK && ( GetTempVar( CITV_MOREX ) == 666 || GetTempVar( CITV_MOREX ) == 999 ) )
 			Books->DeleteBook( this );
-
-		RemoveSelfFromCont();
-		RemoveSelfFromOwner();
 	}
 }
 

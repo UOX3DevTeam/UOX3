@@ -382,6 +382,39 @@ bool CMapHandler::AddItem( CItem *nItem )
 	return cell->GetItemList()->Add( nItem );
 }
 
+bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
+{
+	if( !ValidateObject( nItem ) )
+		return false;
+
+	CMapRegion *curCell = GetMapRegion( nItem );
+	CMapRegion *newCell = GetMapRegion( GetGridX( x ), GetGridY( y ), worldNum );
+
+	if( curCell != newCell )
+	{
+		curCell->GetItemList()->Remove( nItem );
+		newCell->GetItemList()->Add( nItem );
+		return true;
+	}
+	return false;
+}
+
+bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
+{
+	if( !ValidateObject( nChar ) )
+		return false;
+
+	CMapRegion *curCell = GetMapRegion( nChar );
+	CMapRegion *newCell = GetMapRegion( GetGridX( x ), GetGridY( y ), worldNum );
+
+	if( curCell != newCell )
+	{
+		curCell->GetCharList()->Remove( nChar );
+		newCell->GetCharList()->Add( nChar );
+		return true;
+	}
+	return false;
+}
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool RemoveItem( CItem *nItem )
 //|	Date			-	23 July, 2000

@@ -83,14 +83,8 @@ namespace UOX
 
 		T First( void )
 		{
-			T rvalue	= NULL;
 			objIterator	= objData.end();
-			if( !Begin() )
-			{
-				--objIterator;
-				rvalue = (*objIterator);
-			}
-			return rvalue;
+			return Next();
 		}
 		T Next( void )
 		{

@@ -1020,7 +1020,7 @@ void CChar::SetLocation( const CBaseObject *toSet )
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
 	Dirty( UT_LOCATION );
-	MapRegion->RemoveChar( this );
+	MapRegion->ChangeRegion( this, newX, newY, world );
 	oldLocX = x;
 	oldLocY = y;
 	oldLocZ = z;
@@ -1031,7 +1031,6 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	CMultiObj *newMulti = findMulti( newX, newY, newZ, world );
 	if( GetMultiObj() != newMulti )
 		SetMulti( newMulti );
-	MapRegion->AddChar( this );
 }
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 {

@@ -1,3 +1,9 @@
+2/01/2006 - giwo (0.98-3.2d [3.3 BETA])
+	Fixed an issue causing the server to randomly crash when sailing for prolonged periods of time.
+	Removed an extra RemoveFromSight() packet sent upon item deletion.
+	Removed items from the MapRegion upon deletion.
+	Added CMapHandler::ChangeRegion() to automatically change an objects region when location changes.
+
 1/31/2006 - giwo (0.98-3.2c [3.3 BETA])
 	Fixed an issue causing boat commands to crash the 3D client.
 
@@ -19,7 +25,6 @@
 	Removed JS items[]. access.
 
 29th January, 2006 - Maarc
-
 	Encapsulated JS class name retrieval into JSEncapsulate and switched over to using that everywhere
 	Fixed a potential bug (or at least, a naughtiness) with CBase_Teleport, with premature casting
 	Fixed a bug where if ApplySection() was called with an empty string, it wouldn't abort correctly (JS Engine)
