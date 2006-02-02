@@ -1470,12 +1470,14 @@ void CWorldMain::CheckAutoTimers( void )
 			if( mObj->GetObjType() == OT_CHAR )
 			{
 				CChar *uChar = static_cast<CChar *>(mObj);
+
 				if( uChar->GetUpdate( UT_HITPOINTS ) )
 					updateStats( uChar, 0 );
 				if( uChar->GetUpdate( UT_STAMINA ) )
 					updateStats( uChar, 1 );
 				if( uChar->GetUpdate( UT_MANA ) )
 					updateStats( uChar, 2 );
+
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
 				else if( uChar->GetUpdate( UT_STATWINDOW ) )

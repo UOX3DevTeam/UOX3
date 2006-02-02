@@ -77,4 +77,4 @@ uox3_SOURCES = \
 	wholist.cpp \
 	worldmain.cpp
 
-uox3_LDADD = @UOX3_LIBS@
+uox3_LDADD = js32.a -lpthread

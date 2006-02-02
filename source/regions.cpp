@@ -329,40 +329,6 @@ CMapHandler::~CMapHandler()
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool Add( CBaseObject *toAdd )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Adds specified object to the MapRegion
-//o--------------------------------------------------------------------------o
-bool CMapHandler::Add( CBaseObject *toAdd )
-{
-	if( !ValidateObject( toAdd ) )
-		return false;
-	if( toAdd->CanBeObjType( OT_CHAR ) )
-		return AddChar( static_cast< CChar *>(toAdd) );
-	else
-		return AddItem( (CItem *)(toAdd) );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool Remove( CBaseObject *toRemove )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Removes specified object to the MapRegion
-//o--------------------------------------------------------------------------o
-bool CMapHandler::Remove( CBaseObject *toRemove )
-{
-	if( !ValidateObject( toRemove ) )
-		return false;
-	if( toRemove->CanBeObjType( OT_CHAR ) )
-		return RemoveChar( static_cast< CChar *>(toRemove) );
-	else
-		return RemoveItem( (CItem *)(toRemove) );
-}
-
-//o--------------------------------------------------------------------------o
 //|	Function		-	bool AddItem( CItem *nItem )
 //|	Date			-	23 July, 2000
 //|	Programmer		-	Abaddon
@@ -382,6 +348,13 @@ bool CMapHandler::AddItem( CItem *nItem )
 	return cell->GetItemList()->Add( nItem );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
+//|	Date			-	February 1, 2006
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Changes an items region ONLY if he has changed regions.
+//o--------------------------------------------------------------------------o
 bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 {
 	if( !ValidateObject( nItem ) )
@@ -399,6 +372,13 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 	return false;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
+//|	Date			-	February 1, 2006
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Changes a characters region ONLY if he has changed regions.
+//o--------------------------------------------------------------------------o
 bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 {
 	if( !ValidateObject( nChar ) )
@@ -415,6 +395,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 	}
 	return false;
 }
+
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool RemoveItem( CItem *nItem )
 //|	Date			-	23 July, 2000

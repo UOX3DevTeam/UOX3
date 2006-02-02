@@ -175,6 +175,73 @@ bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI1
 	return false;
 }
 
+bool CheckIDs( SI32 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
+{
+	switch( typeToCheck )
+	{
+		case TREES_BUSHES: // Trees, Shrubs, bushes
+			if( idToCheck == 3240 || idToCheck == 3242 ||( idToCheck >= 3215 && idToCheck <= 3218 ) ||
+				( idToCheck >= 3272 && idToCheck <= 3280 ) || idToCheck == 3283 || idToCheck == 3286 ||
+				idToCheck == 3288 || idToCheck == 3290 || idToCheck == 3293 || idToCheck == 3296 ||
+				idToCheck == 3299 || idToCheck == 3302 || idToCheck == 3305 || idToCheck == 3306 ||
+				idToCheck == 3320 || idToCheck == 3323 || idToCheck == 3326 || idToCheck == 3329 ||
+				idToCheck == 3381 || idToCheck == 3383 || idToCheck == 3384 || idToCheck == 3394 ||
+				idToCheck == 3395 || ( idToCheck >= 3416 && idToCheck <= 3418 ) ||
+				idToCheck == 3440 || idToCheck == 3461 || idToCheck == 3476 || idToCheck == 3480 ||
+				idToCheck == 3484 || idToCheck == 3488 || idToCheck == 3492 || idToCheck == 3496 ||
+				idToCheck == 3512 || idToCheck == 3513 || ( idToCheck >= 4792 && idToCheck <= 4795 ) )
+			{
+				return true;
+			}
+			break;
+		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
+			if( ( idToCheck >= 6 && idToCheck <= 748 ) || ( idToCheck >= 761 && idToCheck <= 881 ) ||
+				( idToCheck >= 895 && idToCheck <= 1006 ) || ( idToCheck >= 1057 && idToCheck <= 1061 ) ||
+				idToCheck == 1072 || idToCheck == 1073 || ( idToCheck >= 1080 && idToCheck <= 1166 ) ||
+				( idToCheck >= 2347 && idToCheck <= 2412 ) || ( idToCheck >= 16114 && idToCheck <= 16134 ) ||
+				( idToCheck >= 8538 && idToCheck <= 8553 ) || ( idToCheck >= 9535 && idToCheck <= 9555 ) ||
+				idToCheck == 12583 ||
+				( idToCheck >= 1801 && idToCheck <= 2000 ) ) //stairs
+			{
+				return true;
+			}
+			break;
+		case DOORS: // Doors, not gates
+			if( ( idToCheck >= 1653 && idToCheck <= 1782 ) || ( idToCheck >= 8173 && idToCheck <= 8188 ) )
+			{
+				return true;
+			}
+			break;
+		case ROOFING_SLANTED: // Roofing Slanted
+			if( ( idToCheck >= 1414 && idToCheck <= 1578 ) || ( idToCheck >= 1587 && idToCheck <= 1590 ) ||
+				( idToCheck >= 1608 && idToCheck <= 1617 ) || ( idToCheck >= 1630 && idToCheck <= 1652 ) ||
+				( idToCheck >= 1789 && idToCheck <= 1792 ) )
+			{
+				return true;
+			}
+			break;
+		case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
+			if( ( idToCheck >= 1169 && idToCheck <= 1413 ) || ( idToCheck >= 1508 && idToCheck <= 1514 ) ||
+				( idToCheck >= 1579 && idToCheck <= 1586 ) || ( idToCheck >= 1591 && idToCheck <= 1598 ) )
+			{
+				if( (z1 - 15) != z2 ) // in case of char and target on same roof
+					return true;
+			}
+			break;
+		case LAVA_WATER:  // Lava, water
+			if( ( idToCheck >= 4846 && idToCheck <= 4941 ) || ( idToCheck >= 6038 && idToCheck <= 6066 ) ||
+				( idToCheck >= 12934 && idToCheck <= 12977 ) || ( idToCheck >= 13371 && idToCheck <= 13420 ) ||
+				( idToCheck >= 13422 && idToCheck <= 13638 ) || ( idToCheck >= 13639 && idToCheck <= 13665 ) )
+			{
+				return true;
+			}
+			break;
+		default:
+			break;
+	}
+	return false;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
 //|	Date			-	03 July, 2001
@@ -183,7 +250,7 @@ bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI1
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if there is line of sight between src and trg
 //o--------------------------------------------------------------------------
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 koxn, SI16 koym, SI08 koz2, int checkfor )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 koxn, SI16 koym, SI08 koz2, UI08 checkfor )
 {
 /*
 Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
@@ -346,7 +413,6 @@ Look at uox3.h to see options. Works like npc magic.
 	// - Tauriel's region stuff 3/6/99
 
 	ITEMLIST loscache;
-	std::vector< UI16 > itemids;
 	SI16 x1, y1, x2, y2;
 	if( kox1 < koxn )
 	{
@@ -402,21 +468,20 @@ Look at uox3.h to see options. Works like npc magic.
 
 	////////////////////////////////////////////////////////
 	////////////////  This determines what to check for
-	SI32 checkthis[ITEM_TYPE_CHOICES];
-	SI32 checkthistotal = 0;
-	SI32 itemtype = 1;
-
-	i = 0;
+	UI08 checkthis[ITEM_TYPE_CHOICES];
+	size_t checkthistotal = 0;
+	UI08 itemtype = 1;
 
 	while( checkfor )
 	{
 		if( ( checkfor >= itemtype ) && ( checkfor < ( itemtype * 2 ) ) && ( checkfor ) )
 		{
-			checkthis[i] = itemtype;
-			++i;
+			checkthis[checkthistotal] = itemtype;
 			checkfor = (checkfor - itemtype);
 			++checkthistotal;
 			itemtype = 1;
+			if( checkthistotal == ITEM_TYPE_CHOICES )
+				break;
 		}
 		else if( checkfor )
 			itemtype *= 2;
@@ -424,7 +489,9 @@ Look at uox3.h to see options. Works like npc magic.
 
 	///////////////////////////////////////////////////////////////////////////
 	////////////////////  This next stuff is what searches each tile for things
-	SI32 length, j;
+	SI32 length;
+	size_t j;
+	std::vector< UI16 > itemids;
 	for( i = 0; i < collisioncount; ++i )
 	{
 		MapStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
@@ -484,7 +551,7 @@ Look at uox3.h to see options. Works like npc magic.
 							dyncount->SetID( 0x4064 );
 						length = 0;
 					}
-					for( j = 0; j < length; ++j )
+					for( j = 0; j < static_cast<size_t>(length); ++j )
 					{
 						test = Map->SeekIntoMulti( multiID, j );
 						if( ( test->visible ) && ( dyncount->GetX() + test->x == collisions[i].x ) &&
@@ -503,72 +570,12 @@ Look at uox3.h to see options. Works like npc magic.
 		}
 	}
 
-	for( size_t toCheck = 0; toCheck < itemids.size(); ++toCheck )
+	for( std::vector<UI16>::const_iterator iIter = itemids.begin(); iIter != itemids.end(); ++iIter )
 	{
 		for( j = 0; j < checkthistotal; ++j )
 		{
-			switch( checkthis[j] )
-			{
-				case TREES_BUSHES: // Trees, Shrubs, bushes
-					if( ( itemids[toCheck] == 3240 ) || ( itemids[toCheck] == 3242 ) || ( ( itemids[toCheck] >= 3215 ) && ( itemids[toCheck] <= 3218 ) ) ||
-					( ( itemids[toCheck] >= 3272 ) && ( itemids[toCheck] <= 3280 ) ) || ( itemids[toCheck] == 3283 ) || ( itemids[toCheck] == 3286 ) ||
-					( itemids[toCheck] == 3288 ) || ( itemids[toCheck] == 3290 ) || ( itemids[toCheck] == 3293 ) || ( itemids[toCheck] == 3296 ) ||
-					( itemids[toCheck] == 3299 ) || ( itemids[toCheck] == 3302 ) || ( itemids[toCheck] == 3305 ) || ( itemids[toCheck] == 3306 ) ||
-					( itemids[toCheck] == 3320 ) || ( itemids[toCheck] == 3323 ) || ( itemids[toCheck] == 3326 ) || ( itemids[toCheck] == 3329 ) ||
-					( itemids[toCheck] == 3381 ) || ( itemids[toCheck] == 3383 ) || ( itemids[toCheck] == 3384 ) || ( itemids[toCheck] == 3394 ) ||
-					( itemids[toCheck] == 3395 ) || ( ( itemids[toCheck] >= 3416 ) && ( itemids[toCheck] <= 3418 ) ) ||
-					( itemids[toCheck] == 3440 ) || ( itemids[toCheck] == 3461 ) || ( itemids[toCheck] == 3476 ) || ( itemids[toCheck] == 3480 ) ||
-					( itemids[toCheck] == 3484 ) || ( itemids[toCheck] == 3488 ) || ( itemids[toCheck] == 3492 ) || ( itemids[toCheck] == 3496 ) ||
-					( itemids[toCheck] == 3512 ) || ( itemids[toCheck] == 3513 ) || ( ( itemids[toCheck] >= 4792 ) && ( itemids[toCheck] <= 4795 ) ) )
-					{
-						return blocked;
-					}
-					break;
-				case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-					if( ( ( itemids[toCheck] >= 6 ) && ( itemids[toCheck] <= 748 ) ) || ( ( itemids[toCheck] >= 761 ) && ( itemids[toCheck] <= 881 ) ) ||
-					( ( itemids[toCheck] >= 895 ) && ( itemids[toCheck] <= 1006 ) ) || ( ( itemids[toCheck] >= 1057 ) && ( itemids[toCheck] <= 1061 ) ) ||
-					( itemids[toCheck] == 1072 ) || ( itemids[toCheck] == 1073 ) || ( ( itemids[toCheck] >= 1080 ) && ( itemids[toCheck] <= 1166 ) ) ||
-					( ( itemids[toCheck] >= 2347 ) && ( itemids[toCheck] <= 2412 ) ) || ( ( itemids[toCheck] >= 16114 ) && ( itemids[toCheck] <= 16134 ) ) ||
-					( ( itemids[toCheck] >= 8538 ) && ( itemids[toCheck] <= 8553 ) ) || ( ( itemids[toCheck] >= 9535 ) && ( itemids[toCheck] <= 9555 ) ) ||
-					( itemids[toCheck] == 12583 ) ||
-					( ( itemids[toCheck] >= 1801 ) && ( itemids[toCheck] <= 2000 ) ) ) //stairs
-					{
-						return blocked;
-					}
-					break;
-				case DOORS: // Doors, not gates
-					if( ( ( itemids[toCheck] >= 1653 ) && ( itemids[toCheck] <= 1782 ) ) || ( ( itemids[toCheck] >= 8173 ) && ( itemids[toCheck] <= 8188 ) ) )
-					{
-						return blocked;
-					}
-					break;
-				case ROOFING_SLANTED: // Roofing Slanted
-					if( ( ( itemids[toCheck] >= 1414 ) && ( itemids[toCheck] <= 1578 ) ) || ( ( itemids[toCheck] >= 1587 ) && ( itemids[toCheck] <= 1590 ) ) ||
-					( ( itemids[toCheck] >= 1608 ) && ( itemids[toCheck] <= 1617 ) ) || ( ( itemids[toCheck] >= 1630 ) && ( itemids[toCheck] <= 1652 ) ) ||
-					( ( itemids[toCheck] >= 1789 ) && ( itemids[toCheck] <= 1792 ) ) )
-					{
-						return blocked;
-					}
-					break;
-				case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
-					if( ( ( itemids[toCheck] >= 1169 ) && ( itemids[toCheck] <= 1413 ) ) || ( ( itemids[toCheck] >= 1508 ) && ( itemids[toCheck] <= 1514 ) ) ||
-					( ( itemids[toCheck] >= 1579 ) && ( itemids[toCheck] <= 1586 ) ) || ( ( itemids[toCheck] >= 1591 ) && ( itemids[toCheck] <= 1598 ) ) )
-					{
-						if( ( koz1 - 15 ) != koz2 ) // in case of char and target on same roof
-							return blocked;
-					}
-					break;
-				case LAVA_WATER:  // Lava, water
-					if( ( ( itemids[toCheck] >= 4846 ) && ( itemids[toCheck] <= 4941 ) ) || ( ( itemids[toCheck] >= 6038 ) && ( itemids[toCheck] <= 6066 ) ) ||
-					( ( itemids[toCheck] >= 12934 ) && ( itemids[toCheck] <= 12977 ) ) || ( ( itemids[toCheck] >= 13371 ) && ( itemids[toCheck] <= 13420 ) ) ||
-					( ( itemids[toCheck] >= 13422 ) && ( itemids[toCheck] <= 13638 ) ) || ( ( itemids[toCheck] >= 13639 ) && ( itemids[toCheck] <= 13665 ) ) )
-					{
-						return blocked;
-					}
-					break;
-				default:
-					break;
-			}
+			if( CheckIDs( checkthis[j], (*iIter), koz1, koz2 ) )
+				return blocked;
 		}
 	}
 	return not_blocked;

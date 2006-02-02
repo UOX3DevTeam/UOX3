@@ -102,9 +102,6 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 		SI16		GetGridX( SI16 x );
 		SI16		GetGridY( SI16 y );
 
-		bool		Add( CBaseObject *toAdd );
-		bool		Remove( CBaseObject *toRemove );
-
 		REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
 		REGIONLIST	PopulateList( CBaseObject *mObj );
 

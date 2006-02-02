@@ -133,12 +133,12 @@ const UI08 NORTHWEST	= 0x07;
 const UI08 UNKNOWNDIR	= 0xFF;
 
 // Line Of Sight
-#define ITEM_TYPE_CHOICES	6
-#define TREES_BUSHES		1 // Trees and other large vegetaion in the way
-#define WALLS_CHIMNEYS		2  // Walls, chimineys, ovens, etc... in the way
-#define DOORS				4 // Doors in the way
-#define ROOFING_SLANTED		8  // So can't tele onto slanted roofs, basically
-#define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
-#define LAVA_WATER			32  // Don't know what all to use this for yet
+#define ITEM_TYPE_CHOICES		6
+const UI08 TREES_BUSHES			= 1;	// Trees and other large vegetaion in the way
+const UI08 WALLS_CHIMNEYS		= 2;	// Walls, chimineys, ovens, etc... in the way
+const UI08 DOORS				= 4;	// Doors in the way
+const UI08 ROOFING_SLANTED		= 8;	// So can't tele onto slanted roofs, basically
+const UI08 FLOORS_FLAT_ROOFING	= 16;	// For attacking between floors
+const UI08 LAVA_WATER			= 32;	// Don't know what all to use this for yet
 
 #endif

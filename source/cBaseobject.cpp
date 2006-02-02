@@ -2164,6 +2164,7 @@ bool CBaseObject::GetUpdate( UpdateTypes updateType )
 	case UT_STAMINA:		modifier = 0x08;		break;
 	case UT_MANA:			modifier = 0x10;		break;
 	case UT_HIDE:			modifier = 0x20;		break;
+	case UT_STATWINDOW:		modifier = 0x40;		break;
 	default:										return false;
 	}
 	bool update = ( (updateTypes&modifier) == modifier );

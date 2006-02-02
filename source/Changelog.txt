@@ -1,3 +1,8 @@
+2/02/2006 - giwo (0.98-3.2e [3.3 BETA])
+	Fixed an issue causing the statwindow not to update properly (thus not showing the proper weight/gold values).
+	Continued to break LineOfSight() into smaller manageable functions.
+	Removed superfluous Add()/Remove() functions from CMapHandler.
+
 2nd February, 2006 - Maarc
 	Changed a call to _hypot, as it wasn't portable.  hypotf is the portable ANSI C, but it didn't work, so rolled our own (simple sqrt of the sum of two squares)
 	Made some changes to the enumeration JSObjectType, because gcc 3.3.5 was chucking a wobbly over some code
