@@ -1780,7 +1780,7 @@ namespace UOX
 		JSEncapsulate srcObj( cx, obj );
 		CSocket *srcSock = (CSocket *)srcObj.toObject();
 		JSEncapsulate trgObj( cx, &v );
-		if( trgObj.isType( JSEncapsulate::JSObjectType::JSOT_OBJECT ) )
+		if( trgObj.isType( JSOT_OBJECT ) )
 		{
 			if( srcObj.ClassName() != trgObj.ClassName() )
 			{
@@ -1794,7 +1794,7 @@ namespace UOX
 		}
 		else
 		{
-			*bp = ( srcSock == NULL && trgObj.isType( JSEncapsulate::JSObjectType::JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
+			*bp = ( srcSock == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
 		}
 		return JS_TRUE;
 	}
@@ -1809,7 +1809,7 @@ namespace UOX
 		else
 		{
 			JSEncapsulate trgObj( cx, &v );
-			if( trgObj.isType( JSEncapsulate::JSObjectType::JSOT_OBJECT ) )
+			if( trgObj.isType( JSOT_OBJECT ) )
 			{
 				if( srcObj.ClassName() != trgObj.ClassName() )
 				{
@@ -1830,7 +1830,7 @@ namespace UOX
 			}
 			else
 			{
-				*bp = ( src == NULL && trgObj.isType( JSEncapsulate::JSObjectType::JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
+				*bp = ( src == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
 			}
 		}
 		return JS_TRUE;

@@ -67,7 +67,7 @@ namespace UOX
 		beenParsed[JSOT_OBJECT]	= true;
 	}
 
-	bool JSEncapsulate::isType( JSObjectType toCheck )
+	bool JSEncapsulate::isType( JSEncapsObjectType toCheck )
 	{
 		return( nativeType == toCheck );
 	}
@@ -144,7 +144,7 @@ namespace UOX
 		}
 		return rVal;
 	}
-	void JSEncapsulate::Parse( JSObjectType typeConvert )
+	void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 	{
 		jsdouble	fvalue;
 		int			ivalue;

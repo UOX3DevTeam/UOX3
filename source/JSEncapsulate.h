@@ -2,26 +2,26 @@
 
 namespace UOX
 {
+	enum JSEncapsObjectType
+	{
+		JSOT_INT = 0,
+		JSOT_DOUBLE,
+		JSOT_BOOL,
+		JSOT_STRING,
+		JSOT_OBJECT,
+		JSOT_NULL,
+		JSOT_VOID,
+		JSOT_COUNT
+	};
 	class JSEncapsulate
 	{
 	public:
-		enum JSObjectType
-		{
-			JSOT_INT = 0,
-			JSOT_DOUBLE,
-			JSOT_BOOL,
-			JSOT_STRING,
-			JSOT_OBJECT,
-			JSOT_NULL,
-			JSOT_VOID,
-			JSOT_COUNT
-		};
 
 		JSEncapsulate( JSContext *jsCX, jsval *jsVP );
 		JSEncapsulate( JSContext *jsCX, JSObject *jsVP );
 		JSEncapsulate();
 		void		SetContext( JSContext *jsCX, jsval *jsVP );
-		bool		isType( JSObjectType toCheck );
+		bool		isType( JSEncapsObjectType toCheck );
 		int			toInt( void );
 		bool		toBool( void );
 		float		toFloat( void );
@@ -32,24 +32,24 @@ namespace UOX
 //		operator const char *()
 	private:
 
-		void			InternalReset( void );
-		void			Init( void );
-		bool			beenParsed[JSOT_COUNT];
-		JSObjectType	nativeType;
+		void				InternalReset( void );
+		void				Init( void );
+		bool				beenParsed[JSOT_COUNT];
+		JSEncapsObjectType	nativeType;
 
-		int				intVal;
-		float			floatVal;
-		bool			boolVal;
-		std::string		stringVal;
-		void *			objectVal;
+		int					intVal;
+		float				floatVal;
+		bool				boolVal;
+		std::string			stringVal;
+		void *				objectVal;
 
-		JSContext *		cx;
-		jsval *			vp;
-		JSObject *		obj;
+		JSContext *			cx;
+		jsval *				vp;
+		JSObject *			obj;
 
-		std::string		className;
-		bool			classCached;
+		std::string			className;
+		bool				classCached;
 
-		void Parse( JSObjectType typeConvert );
+		void Parse( JSEncapsObjectType typeConvert );
 	};
 }

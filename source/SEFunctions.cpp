@@ -514,7 +514,6 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
  		return JS_FALSE;
 	}
 	JSEncapsulate encaps( cx, &(argv[0]) );
-//	int			keyToReg	= JSVAL_TO_INT( argv[0] );
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 
@@ -524,7 +523,7 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}	
 	int toPass = 0;
-	if( encaps.isType( JSEncapsulate::JSObjectType::JSOT_STRING ) )
+	if( encaps.isType( JSOT_STRING ) )
 	{
 		std::string enStr = encaps.toString();
 		if( enStr.length() != 0 )

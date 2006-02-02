@@ -1,3 +1,8 @@
+2nd February, 2006 - Maarc
+	Changed a call to _hypot, as it wasn't portable.  hypotf is the portable ANSI C, but it didn't work, so rolled our own (simple sqrt of the sum of two squares)
+	Made some changes to the enumeration JSObjectType, because gcc 3.3.5 was chucking a wobbly over some code
+	Changed a call to _strnicmp to strnicmp to deal with a linux compile error - note, we probably don't want to use such things anyway ... convert both strings to a UString, lower() them, and compare the subsets requested?
+
 2/01/2006 - giwo (0.98-3.2d [3.3 BETA])
 	Fixed an issue causing the server to randomly crash when sailing for prolonged periods of time.
 	Removed an extra RemoveFromSight() packet sent upon item deletion.

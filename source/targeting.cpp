@@ -1428,7 +1428,7 @@ void MakeStatusTarget( CSocket *sock )
 	{
 		if( origLevel != NULL )
 		{	// Strip name off it
-			if( !_strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
+			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
 				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
 		}
 		sprintf( temp, "%s %s", targLevel->name.c_str(), playerName );
@@ -1438,7 +1438,7 @@ void MakeStatusTarget( CSocket *sock )
 	{
 		if( origLevel != NULL )
 		{	// Strip name off it
-			if( !_strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
+			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
 				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
 		}
 		strcpy( temp, (const char*)playerName );

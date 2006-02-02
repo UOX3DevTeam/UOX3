@@ -264,6 +264,15 @@ CMultiObj *findMulti( CBaseObject *i )
 		return NULL;
 	return findMulti( i->GetX(), i->GetY(), i->GetZ(), i->WorldNumber() );
 }
+
+template< class T >
+inline T hypotenuse( T sideA, T sideB )
+{
+	T sumSquares	= (sideA * sideA) + (sideB * sideB);
+	T retVal		= sqrt( (R64)sumSquares );
+	return retVal;
+}
+
 CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	SI32 lastdist = 30;
@@ -286,7 +295,7 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 			{
 				dx = abs( x - itemCheck->GetX() );
 				dy = abs( y - itemCheck->GetY() );
-				ret = (SI32)( _hypot( dx, dy ) );
+				ret = (SI32)( hypotenuse( dx, dy ) );
 				if( ret <= lastdist )
 				{
 					lastdist = ret;
