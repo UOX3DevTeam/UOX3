@@ -854,7 +854,6 @@ void CItem::AddSelfToOwner( void )
 
 void CItem::RemoveSelfFromCont( void )
 {
-	RemoveFromSight();
 	if( contObj != NULL )
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
@@ -1600,6 +1599,9 @@ void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 //o---------------------------------------------------------------------------o
 void CItem::Update( CSocket *mSock )
 {
+	if( GetType() == IT_TRADEWINDOW )
+		return;
+
 	RemoveFromSight( mSock );
 	if( GetCont() == this )
 	{
@@ -1848,6 +1850,7 @@ void CItem::Cleanup( void )
 	{
 		CBaseObject::Cleanup();
 
+		RemoveFromSight();
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
 

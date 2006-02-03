@@ -1560,7 +1560,7 @@ void CChar::SendToSocket( CSocket *s )
 
 			SendWornItems( s );
 		}
-		else if( GetVisible() != VT_VISIBLE && GetCommandLevel() > mCharObj->GetCommandLevel() )
+		else if( ( GetVisible() != VT_VISIBLE || !isOnline( (*this) ) ) && GetCommandLevel() > mCharObj->GetCommandLevel() )
 			return;
 
 		CPDrawObject toSend( (*this) );

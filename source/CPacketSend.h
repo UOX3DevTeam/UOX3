@@ -1004,17 +1004,14 @@ class CPSecureTrading : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	void			CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
 	void			CopyData( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 public:
 					CPSecureTrading();
-					CPSecureTrading( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
+					CPSecureTrading( CBaseObject& mItem );
 					CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 	virtual			~CPSecureTrading()
 					{
 					}
-	void			Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 );
-	void			Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 );
 	void			Action( UI08 value );
 	void			Name( const std::string nameFollowing );
 };

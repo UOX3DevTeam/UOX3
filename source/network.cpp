@@ -209,8 +209,8 @@ void cNetworkStuff::LogOut( CSocket *s )
 	actbAccount.wFlags &= 0xFFF7;
 	// We have to make sure to update the Account map
 	//Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
-	p->Teleport();
 	p->SetSocket( NULL );
+	p->SetLocation( p );
 }
 
 void cNetworkStuff::sockInit( void )

@@ -32,10 +32,10 @@ void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 	outStream << "  ";
 	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
 	{
-		if( strToDump[parseBuff] )
+		if( strToDump[parseBuff] && strToDump[parseBuff] != 0x0A )
 			outStream << strToDump[parseBuff];
 		else
-			outStream << " ";
+			outStream << ".";
 	}
 	outStream << std::endl;
 }
@@ -49,7 +49,7 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI0
 	for( size_t i = 0; i < buffLen; ++i )
 	{
 		qbuffer[j++] = myBuffer[i];
-		outStream << " 0x" << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
+		outStream << " " << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
 		if( j > 7 )
 		{
 			dumpStream( outStream, qbuffer, 8 );
@@ -59,10 +59,10 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI0
 	if( j < 8 )
 	{
 		for( UI08 k = j; k < 8; ++k )
-			outStream << " ----";
+			outStream << " --";
 		dumpStream( outStream, qbuffer, j );
 	}
-	outStream << std::endl;
+	outStream << std::endl << std::endl;
 }
 
 void doPacketLogging( std::ofstream &outStream, size_t buffLen, const char *myBuffer )
@@ -74,7 +74,7 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, const char *myBu
 	for( size_t i = 0; i < buffLen; ++i )
 	{
 		qbuffer[j++] = myBuffer[i];
-		outStream << " 0x" << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
+		outStream << " " << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
 		if( j > 7 )
 		{
 			dumpStream( outStream, qbuffer, 8 );
@@ -84,10 +84,10 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, const char *myBu
 	if( j < 8 )
 	{
 		for( UI08 k = j; k < 8; ++k )
-			outStream << " ----";
+			outStream << " --";
 		dumpStream( outStream, qbuffer, j );
 	}
-	outStream << std::endl;
+	outStream << std::endl << std::endl;
 }
 
 long socket_error::ErrorNumber( void ) const

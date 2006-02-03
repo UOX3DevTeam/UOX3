@@ -207,6 +207,15 @@ bool CPIGetItem::Handle( void )
 				tSock->Send( &bounce );
 				return true;
 			}
+			if( iCont->CanBeObjType( OT_ITEM ) )
+			{
+				CItem *contItem = static_cast<CItem *>(iCont);
+				if( contItem->GetType() == IT_TRADEWINDOW ) // Trade Window
+				{
+					tSock->Send( &bounce );
+					return true;
+				}
+			}
 		}
 		else if( oType == OT_ITEM )
 		{
@@ -237,26 +246,6 @@ bool CPIGetItem::Handle( void )
 						Combat->petGuardAttack( ourChar, corpseTargChar, corpseTargChar );
 					else if( x->isGuarded() )
 						Combat->petGuardAttack( ourChar, corpseTargChar, x );
-				}
-			}
-			else if( x->GetLayer() == IL_NONE && x->GetID() == 0x1E5E ) // Trade Window
-			{
-				serial = x->GetTempVar( CITV_MOREX );
-				if( serial == INVALIDSERIAL )
-					return true;
-				CItem *z = calcItemObjFromSer( serial );
-				if( ValidateObject( z ) )
-				{
-					if( z->GetTempVar( CITV_MOREZ ) || x->GetTempVar( CITV_MOREZ ) )
-					{
-						z->SetTempVar( CITV_MOREZ, 0 );
-						x->SetTempVar( CITV_MOREZ, 0 );
-						sendTradeStatus( z, x );
-					}
-					// Default item pick up sound sent to other player involved in trade
-					CSocket *zSock = ((CChar *)z->GetCont())->GetSocket();
-					if( zSock != NULL )
-						Effects->PlaySound( zSock, 0x0057, false );
 				}
 			}
 		}
@@ -359,7 +348,8 @@ bool CPIGetItem::Handle( void )
 		}
 	}
 
-	MapRegion->RemoveItem( i );
+	if( iCont == NULL )
+		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 	{
@@ -853,30 +843,6 @@ void DropOnItem( CSocket *mSock )
 		toExecute->OnDrop( nItem, mChar );
 
 	bool stackDeleted = false;
-	if( nCont->GetLayer() == IL_NONE && nCont->GetID() == 0x1E5E && nCont->GetCont() == mChar )
-	{	// Trade window
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
-			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
-		nItem->SetCont( mChar );
-		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREX ) );
-		if( ValidateObject( z ) )
-		{
-			if( z->GetTempVar( CITV_MOREZ ) || nCont->GetTempVar( CITV_MOREZ ) )
-			{
-				z->SetTempVar( CITV_MOREZ, 0 );
-				nCont->SetTempVar( CITV_MOREZ, 0 );
-				sendTradeStatus( z, nCont );
-			}
-			CSocket *zSock = ((CChar *)z->GetCont())->GetSocket();
-			if( zSock != NULL )
-				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
-		}
-		return;
-	}
-
 	CTile tile;
 	Map->SeekTile( nItem->GetID(), &tile );
 	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
@@ -891,7 +857,36 @@ void DropOnItem( CSocket *mSock )
 		return;
 	}
 
-	if( nCont->GetType() == IT_TRASHCONT )	// Trash container
+	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )
+	{	// Trade window
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( mChar, nItem );
+			mChar->Dirty( UT_STATWINDOW );
+		}
+		nItem->SetCont( nCont );
+		nItem->SetX( mSock->GetWord( 5 ) );
+		nItem->SetY( mSock->GetWord( 7 ) );
+		nItem->SetZ( 9 );
+		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREX ) );
+		if( ValidateObject( z ) )
+		{
+			if( z->GetTempVar( CITV_MOREZ ) || nCont->GetTempVar( CITV_MOREZ ) )
+			{
+				z->SetTempVar( CITV_MOREZ, 0 );
+				nCont->SetTempVar( CITV_MOREZ, 0 );
+				sendTradeStatus( z, nCont );
+			}
+			CChar *zChar = FindItemOwner( z );
+			if( ValidateObject( zChar ) )
+			{
+				CSocket *zSock = zChar->GetSocket();
+				if( zSock != NULL )
+					Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+			}
+		}
+	}
+	else if( nCont->GetType() == IT_TRASHCONT )	// Trash container
 	{
 		Effects->PlaySound( mSock, 0x0042, false );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )

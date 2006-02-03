@@ -6,7 +6,7 @@
 namespace UOX
 {
 
-#define __LOGIN_THREAD__
+//#define __LOGIN_THREAD__
 
 class socket_error : public std::runtime_error
 {

@@ -2671,7 +2671,9 @@ int main( int argc, char *argv[] )
 		pthread_create( &netw, NULL, NetworkPollConnectionThread,  NULL );
 	#else
 		_beginthread( NetworkPollConnectionThread, 0, NULL );
-	#endif 
+	#endif
+#else
+		TIMERVAL uiNextCheckConn = 0;
 #endif
 
 		Console.PrintDone();

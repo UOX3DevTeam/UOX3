@@ -9,7 +9,30 @@
 namespace UOX
 {
 
-CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar, CChar *nChar )
+void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )
+{
+	CPSecureTrading cpstOne( (*tradeWindowOne), (tradeWindowOne->GetTempVar( CITV_MOREZ ) % 256), (tradeWindowTwo->GetTempVar( CITV_MOREZ ) % 256) );
+	cpstOne.Action( 2 );
+	mSock->Send( &cpstOne );
+	
+	CPSecureTrading cpstTwo( (*tradeWindowTwo), (tradeWindowTwo->GetTempVar( CITV_MOREZ ) % 256), (tradeWindowOne->GetTempVar( CITV_MOREZ ) % 256) );
+	cpstTwo.Action( 2 );
+	nSock->Send( &cpstTwo );
+}
+void sendTradeStatus( CItem *tradeWindowOne, CItem *tradeWindowTwo )
+{
+	CChar *p1 = FindItemOwner( tradeWindowOne );
+	CChar *p2 = FindItemOwner( tradeWindowTwo );
+	if( !ValidateObject( p1 ) || !ValidateObject( p2 ) )
+		return;
+
+	CSocket *s1 = p1->GetSocket();
+	CSocket *s2 = p2->GetSocket();
+	if( s1 != NULL && s2 != NULL )
+		sendTradeStatus( s1, s2, tradeWindowOne, tradeWindowTwo );
+}
+
+CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 {
 	CItem *mPack = mChar->GetPackItem();
 	if( !ValidateObject( mPack ) )
@@ -19,17 +42,18 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar, CChar *n
 		return NULL;
 	}
 
-	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, true );
+	CItem *tradeWindow = Items->CreateItem( NULL, mChar, 0x1E5E, 1, 0, OT_ITEM, false );
 	if( !ValidateObject( tradeWindow ) )
 		return NULL;
 
-	tradeWindow->SetX( 26 );
+	tradeWindow->SetType( IT_TRADEWINDOW );
+	tradeWindow->SetCont( mChar );
+	tradeWindow->SetX( 0 );
 	tradeWindow->SetY( 0 );
 	tradeWindow->SetZ( 0 );
-	tradeWindow->SetLayer( IL_NONE );
-	tradeWindow->SetType( IT_CONTAINER );
 	tradeWindow->SetDye( false );
 	tradeWindow->SetTempVar( CITV_MOREZ, 0 );
+
 	tradeWindow->SendPackItemToSocket( mSock );
 	tradeWindow->SendPackItemToSocket( nSock );
 
@@ -47,27 +71,38 @@ CItem *startTrade( CSocket *mSock, CChar *nChar )
 	if( !ValidateObject( mChar ) || nSock == NULL )
 		return NULL;
 
-	CItem *tradeWindowOne = CreateTradeWindow( mSock, nSock, mChar, nChar );
+	CItem *tradeWindowOne = CreateTradeWindow( mSock, nSock, mChar );
 	if( !ValidateObject( tradeWindowOne ) )
 		return NULL;
 
-	CItem *tradeWindowTwo = CreateTradeWindow( nSock, mSock, nChar, mChar );
+	CItem *tradeWindowTwo = CreateTradeWindow( nSock, mSock, nChar );
 	if( !ValidateObject( tradeWindowTwo ) )
 	{
 		tradeWindowOne->Delete();
 		return NULL;
 	}
-	
-	tradeWindowOne->SetTempVar( CITV_MOREX, tradeWindowTwo->GetSerial() );
-	tradeWindowTwo->SetTempVar( CITV_MOREX, tradeWindowOne->GetSerial() );
-	
-	CPSecureTrading cpstOne( (*nChar), (*tradeWindowOne), (*tradeWindowTwo) );
+
+	const SERIAL tw1Serial = tradeWindowOne->GetSerial();
+	const SERIAL tw2Serial = tradeWindowTwo->GetSerial();
+
+	tradeWindowOne->SetTempVar( CITV_MOREX, tw2Serial );
+	tradeWindowTwo->SetTempVar( CITV_MOREX, tw1Serial );
+
+	CPSecureTrading cpstOne( (*nChar), tw1Serial, tw2Serial );
 	cpstOne.Name( nChar->GetName() );
 	mSock->Send( &cpstOne );
 	
-	CPSecureTrading cpstTwo( (*mChar), (*tradeWindowTwo), (*tradeWindowOne) );
+	CPSecureTrading cpstTwo( (*mChar), tw2Serial, tw1Serial );
 	cpstTwo.Name( mChar->GetName() );
 	nSock->Send( &cpstTwo );
+
+	CPWornItem toWear = (*tradeWindowOne);
+	mSock->Send( &toWear );
+	nSock->Send( &toWear );
+
+	CPWornItem toWear2 = (*tradeWindowTwo);
+	mSock->Send( &toWear2 );
+	nSock->Send( &toWear2 );
 
 	return tradeWindowOne;
 }
@@ -81,13 +116,13 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		CItem *i = static_cast< CItem * >(a);
 		if( ValidateObject( i ) )
 		{
-			if( i->GetType() == IT_CONTAINER && i->GetX() == 26 && i->GetY() == 0 && i->GetZ() == 0 && i->GetID() == 0x1E5E )
+			if( i->GetType() == IT_TRADEWINDOW )
 			{
 				CChar *k = FindItemOwner( i );
 				if( ValidateObject( k ) )
 				{
 					CItem *p = k->GetPackItem();
-					if( ValidateObject( p ) )	// can we move this check to outside the for loop?? I should think so!
+					if( ValidateObject( p ) )
 					{
 						CDataList< CItem * > *iCont = i->GetContainsList();
 						for( CItem *j = iCont->First(); !iCont->Finished(); j = iCont->Next() )
@@ -111,212 +146,120 @@ void clearTrades( void )
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &clearTradesFunctor );
 }
 
-void endTrade( SERIAL targSerial )
+void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSuccess )
 {
-	CItem *cont1 = calcItemObjFromSer( targSerial );
-	if( !ValidateObject( cont1 ) )
-		return;
-
-	CItem *cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREX ) );
-	if( !ValidateObject( cont2 ) )
-		return;
-
-	CChar *p1 = (CChar *)cont1->GetCont();
-	CChar *p2 = (CChar *)cont2->GetCont();
-
-	CItem *bp1 = p1->GetPackItem();
-	if( !ValidateObject( bp1 ) ) 
-		return;
-
-	CItem *bp2 = p2->GetPackItem();
-	if( !ValidateObject( bp2 ) ) 
+	CChar *p1 = FindItemOwner( tradeWindowOne );
+	CChar *p2 = FindItemOwner( tradeWindowTwo );
+	if( !ValidateObject( p1 ) || !ValidateObject( p2 ) )
 		return;
 
 	CSocket *mSock = p1->GetSocket();
-	CSocket *nSock = p2->GetSocket();
-	
 	if( mSock != NULL ) 
 	{
-		CPSecureTrading cpstOne( (*cont1), 0, 0 );
+		CPSecureTrading cpstOne( (*tradeWindowOne) );
 		cpstOne.Action( 1 );
 		mSock->Send( &cpstOne );
 	}
-	
+	CSocket *nSock = p2->GetSocket();
 	if( nSock != NULL ) 
 	{
-		CPSecureTrading cpstTwo( (*cont2), 0, 0 );
+		CPSecureTrading cpstTwo( (*tradeWindowTwo) );
 		cpstTwo.Action( 1 );
 		nSock->Send( &cpstTwo );
 	}
-	CItem *i = NULL, *j = NULL;
-	CDataList< CItem * > *c1Cont = cont1->GetContainsList();
-	for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			i->SetCont( bp1 );
-			i->PlaceInPack();
-			if( i->GetGlow() != INVALIDSERIAL )
-			{
-				j = calcItemObjFromSer( i->GetGlow() );
-				if( ValidateObject( j ) )
-				{
-					j->SetCont( bp1 );
-					j->SetX( i->GetX() );
-					j->SetY( i->GetY() );
-					j->SetZ( i->GetZ() );
-				}
-			}
-		}
-	}
-	CDataList< CItem * > *c2Cont = cont2->GetContainsList();
-	for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			i->SetCont( bp2 );  
-			i->PlaceInPack();
-			if( i->GetGlow() != INVALIDSERIAL )
-			{
-				j = calcItemObjFromSer( i->GetGlow() );
-				if( ValidateObject( j ) )
-				{
-					j->SetCont( bp2 );
-					j->SetX( i->GetX() );
-					j->SetY( i->GetY() );
-					j->SetZ( i->GetZ() );
-				}
-			}
-		}
-	}
-	cont1->Delete();
-	cont2->Delete();
-}
 
-void doTrade( CItem *cont1, CItem *cont2 )
-{
-	CChar *p1 = (CChar *)cont1->GetCont();
-	if( !ValidateObject( p1 ) ) 
-		return;
-
-	CChar *p2 = (CChar *)cont2->GetCont();
-	if( !ValidateObject( p2 ) ) 
-		return;
-
+	CItem *i = NULL;
 	CItem *bp1 = p1->GetPackItem();
-	if( !ValidateObject( bp1 ) ) 
-		return;
-
 	CItem *bp2 = p2->GetPackItem();
-	if( !ValidateObject( bp2 ) ) 
-		return;
-	
-	CItem *i = NULL, *j = NULL;
-	CDataList< CItem * > *c1Cont = cont1->GetContainsList();
-	for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
+	if( ValidateObject( bp1 ) && ValidateObject( bp2 ) )
 	{
-		if( ValidateObject( i ) )
+		CDataList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
+		for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 		{
-			i->SetCont( bp2 );
-			i->PlaceInPack();
-			if( i->GetGlow() != INVALIDSERIAL )
+			if( ValidateObject( i ) )
 			{
-				j = calcItemObjFromSer( i->GetGlow() );
-				if( ValidateObject( j ) )
-				{
-					j->SetCont( bp2 );
-					j->SetX( i->GetX() );
-					j->SetY( i->GetY() );
-					j->SetZ( i->GetZ() );
-				}
+				if( tradeSuccess )
+					i->SetCont( bp2 );
+				else
+					i->SetCont( bp1 );
+				i->PlaceInPack();
 			}
+		}
+		CDataList< CItem * > *c2Cont = tradeWindowTwo->GetContainsList();
+		for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
+		{
+			if( ValidateObject( i ) )
+			{
+				if( tradeSuccess )
+					i->SetCont( bp1 );
+				else
+					i->SetCont( bp2 );
+				i->PlaceInPack();
+			}
+		}
+	}
 
-		}
-	}
-	CDataList< CItem * > *c2Cont = cont2->GetContainsList();
-	for( i = c2Cont->First(); !c2Cont->Finished(); i = c2Cont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			i->SetCont( bp1 );
-			i->PlaceInPack();
-			if( i->GetGlow() != INVALIDSERIAL )
-			{
-				j = calcItemObjFromSer( i->GetGlow() );
-				if( ValidateObject( j ) )
-				{
-					j->SetCont( bp1 );
-					j->SetX( i->GetX() );
-					j->SetY( i->GetY() );
-					j->SetZ( i->GetZ() );
-				}
-			}
-		}
-	}
+	tradeWindowOne->Delete();
+	tradeWindowTwo->Delete();
 }
 
-void sendTradeStatus( CItem *cont1, CItem *cont2 )
+void cancelTrade( CItem *tradeWindowOne )
 {
-	CChar *p1 = (CChar *)cont1->GetCont();
-	CChar *p2 = (CChar *)cont2->GetCont();
-	CSocket *s1 = p1->GetSocket();
-	CSocket *s2 = p2->GetSocket();
+	CItem *tradeWindowTwo = calcItemObjFromSer( tradeWindowOne->GetTempVar( CITV_MOREX ) );
+	if( !ValidateObject( tradeWindowTwo ) )
+		return;
 
-	if( s1 != NULL )
-	{
-		CPSecureTrading cpstOne( (*cont1), (cont1->GetTempVar( CITV_MOREZ ) % 256), (cont2->GetTempVar( CITV_MOREZ ) % 256) );
-		cpstOne.Action( 2 );
-		s1->Send( &cpstOne );
-	}
+	tradeWindowOne->SetTempVar( CITV_MOREZ, 0 );
+	tradeWindowTwo->SetTempVar( CITV_MOREZ, 0 );
+	sendTradeStatus( tradeWindowOne, tradeWindowTwo );
 
-	if( s2 != NULL ) 
-	{
-		CPSecureTrading cpstTwo( (*cont2), (cont2->GetTempVar( CITV_MOREZ ) % 256), (cont1->GetTempVar( CITV_MOREZ ) % 256) );
-		cpstTwo.Action( 2 );
-		s2->Send( &cpstTwo );
-	}
+	completeTrade( tradeWindowOne, tradeWindowTwo, false );
 }
 
 bool CPITradeMessage::Handle( void )
 {
-	CItem *cont1 = NULL, *cont2 = NULL;
-	switch( tSock->GetByte( 3 ) )
+	CItem *tradeWindowOne = calcItemObjFromSer( tSock->GetDWord( 4 ) );
+	CItem *tradeWindowTwo = NULL;
+	if( ValidateObject( tradeWindowOne ) )
 	{
-		case 0://Start trade - Never happens, sent out by the server only.
-			break;
-		case 2://Change check marks.  Possibly conclude trade
-			cont1 = calcItemObjFromSer( tSock->GetDWord( 4 ) );
-			if( ValidateObject( cont1 ) )
-				cont2 = calcItemObjFromSer( cont1->GetTempVar( CITV_MOREX ) );
-			if( ValidateObject( cont2 ) )
-			{
-				cont1->SetTempVar( CITV_MOREZ, tSock->GetByte( 11 ) );
-				sendTradeStatus( cont1, cont2 );
-				if( cont1->GetTempVar( CITV_MOREZ ) && cont2->GetTempVar( CITV_MOREZ ) )
+		switch( tSock->GetByte( 3 ) )
+		{
+			case 0://Start trade - Never happens, sent out by the server only.
+				break;
+			case 2://Change check marks.  Possibly conclude trade
+				tradeWindowTwo = calcItemObjFromSer( tradeWindowOne->GetTempVar( CITV_MOREX ) );
+				if( ValidateObject( tradeWindowTwo ) )
 				{
-					doTrade( cont1, cont2 );
-					endTrade( tSock->GetDWord( 4 ) );
+					tradeWindowOne->SetTempVar( CITV_MOREZ, tSock->GetByte( 11 ) );
+					sendTradeStatus( tradeWindowOne, tradeWindowTwo );
+					if( tradeWindowOne->GetTempVar( CITV_MOREZ ) && tradeWindowTwo->GetTempVar( CITV_MOREZ ) )
+						completeTrade( tradeWindowOne, tradeWindowTwo, true );
 				}
-			}
-			break;
-		case 1://Cancel trade.  Send each person cancel messages, move items.
-			endTrade( tSock->GetDWord( 4 ) );
-			break;
-		default:
-			Console.Error( 2, " Fallout of switch statement without default. trade.cpp, trademsg()" );
-			break;
+				break;
+			case 1://Cancel trade.  Send each person cancel messages, move items.
+				cancelTrade( tradeWindowOne );
+				break;
+			default:
+				Console.Error( 2, " Fallout of switch statement without default. trade.cpp, trademsg()" );
+				break;
+		}
 	}
 	return true;
 }
 
 void killTrades( CChar& i )
 {
-	for( CItem *j = i.FirstItem(); !i.FinishedItems(); j = i.NextItem() )
+	CItem *packItem = i.GetPackItem();
+	if( ValidateObject( packItem ) )
 	{
-		if( ValidateObject( j ) )
+		CDataList< CItem * > *pCont = packItem->GetContainsList();
+		for( CItem *j = pCont->First(); !pCont->Finished(); j = pCont->Next() )
 		{
-			if( j->GetType() == IT_CONTAINER && j->GetX() == 26 && j->GetY() == 0 && j->GetZ() == 0 && j->GetID() == 0x1E5E )
-				endTrade( j->GetSerial() );
+			if( ValidateObject( j ) )
+			{
+				if( j->GetType() == IT_TRADEWINDOW )
+					cancelTrade( j );
+			}
 		}
 	}
 }

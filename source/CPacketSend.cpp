@@ -4117,18 +4117,14 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 //	BYTE[?] charName 
 void CPSecureTrading::InternalReset( void )
 {
-	pStream.ReserveSize( 47 );
+	pStream.ReserveSize( 8 );
 	pStream.WriteByte( 0, 0x6F );
-	pStream.WriteByte( 2, 47 );
-}
-void CPSecureTrading::CopyData( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
-{
-	pStream.WriteLong( 4,  mItem.GetSerial()  );
-	pStream.WriteLong( 8,  mItem2.GetSerial() );
-	pStream.WriteLong( 12, mItem3.GetSerial() );
+	pStream.WriteByte( 2, 8 );
 }
 void CPSecureTrading::CopyData( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
+	pStream.ReserveSize( 16 );
+	pStream.WriteByte( 2, 16 );
 	pStream.WriteLong( 4,  mItem.GetSerial() );
 	pStream.WriteLong( 8,  mItem2			);
 	pStream.WriteLong( 12, mItem3			);
@@ -4137,10 +4133,10 @@ CPSecureTrading::CPSecureTrading()
 {
 	InternalReset();
 }
-CPSecureTrading::CPSecureTrading( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
+CPSecureTrading::CPSecureTrading( CBaseObject& mItem )
 {
 	InternalReset();
-	CopyData( mItem, mItem2, mItem3 );
+	pStream.WriteLong( 4, mItem.GetSerial() );
 }
 CPSecureTrading::CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
 {
@@ -4148,26 +4144,19 @@ CPSecureTrading::CPSecureTrading( CBaseObject& mItem, SERIAL mItem2, SERIAL mIte
 	CopyData( mItem, mItem2, mItem3 );
 }
 
-void CPSecureTrading::Objects( CBaseObject& mItem, CBaseObject& mItem2, CBaseObject& mItem3 )
-{
-	CopyData( mItem, mItem2, mItem3 );
-}
-void CPSecureTrading::Objects( CBaseObject& mItem, SERIAL mItem2, SERIAL mItem3 )
-{
-	CopyData( mItem, mItem2, mItem3 );
-}
 void CPSecureTrading::Action( UI08 value )
 {
 	pStream.WriteByte( 3, value );
 }
 void CPSecureTrading::Name( const std::string nameFollowing )
 {
-	if(nameFollowing.length() >= 30){
+	pStream.ReserveSize( 47 );
+	pStream.WriteByte(	 2, 47 );
+	pStream.WriteByte(   16, 1 );
+	if( nameFollowing.length() >= 30 )
 		pStream.WriteString( 17, nameFollowing, 30 );
-	} else {
-		pStream.WriteByte(   16, 1 );
+	else
 		pStream.WriteString( 17, nameFollowing, nameFollowing.length() );
-	}
 }
 
 //	0x98 Packet

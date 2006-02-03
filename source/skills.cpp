@@ -633,8 +633,8 @@ void cSkills::PeaceMaking( CSocket *s )
 		return;
 	}
 	CChar *mChar = s->CurrcharObj();
-	bool cs1 = CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
-	bool cs2 = CheckSkill( mChar, PEACEMAKING, 0, 1000 );
+	const bool cs1 = CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
+	const bool cs2 = CheckSkill( mChar, PEACEMAKING, 0, 1000 );
 	if( cs1 && cs2 )
 	{
 		PlayInstrument( s, getInst, true );
@@ -855,8 +855,8 @@ void cSkills::EnticementTarget2( CSocket *s )
 		return;
 	}
 	CChar *mChar		= s->CurrcharObj();
-	bool checkSkill1	= CheckSkill( mChar, ENTICEMENT, 0, 1000 );
-	bool checkSkill2	= CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
+	const bool checkSkill1	= CheckSkill( mChar, ENTICEMENT, 0, 1000 );
+	const bool checkSkill2	= CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
 	if( checkSkill1 && checkSkill2 )
 	{
 		criminal( mChar );
@@ -910,10 +910,10 @@ void cSkills::ProvocationTarget2( CSocket *s )
 		return;
 	}
 	CChar *mChar = s->CurrcharObj();
-	bool checkMusic = CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
+	const bool checkMusic = CheckSkill( mChar, MUSICIANSHIP, 0, 1000 );
 	if( checkMusic )
 	{
-		bool checkProvoc = CheckSkill( mChar, PROVOCATION, 0, 1000 );
+		const bool checkProvoc = CheckSkill( mChar, PROVOCATION, 0, 1000 );
 		PlayInstrument( s, getInst, true );
 		if( checkProvoc )
 		{
@@ -979,7 +979,7 @@ void cSkills::ProvocationTarget2( CSocket *s )
 bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 {
 	bool skillCheck		= false;
-	UI16 scpNum			= s->GetScriptTrigger();
+	const UI16 scpNum	= s->GetScriptTrigger();
 	cScript *tScript	= JSMapping->GetScript( scpNum );
 	bool exists			= false;
 
@@ -1070,13 +1070,13 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 //o---------------------------------------------------------------------------o
 void cSkills::Atrophy( CChar *c, UI08 sk )
 {
-	UI32 a=0, ttl = 0, rem=0;
+	UI32 a = 0, ttl = 0, rem = 0;
 	UI16 atrop[ALLSKILLS+1];
-	SI16 toDec = -1;
-	UI08 counter = 0;
-	CSocket *mSock = c->GetSocket();
-	UI16 skillTrig = c->GetScriptTrigger();
-	cScript *scpSkill = JSMapping->GetScript( skillTrig );
+	SI16 toDec				= -1;
+	UI08 counter			= 0;
+	CSocket *mSock			= c->GetSocket();
+	const UI16 skillTrig	= c->GetScriptTrigger();
+	cScript *scpSkill		= JSMapping->GetScript( skillTrig );
 		
 	if( c->IsNpc() || c->GetCommandLevel() >= CNS_CMDLEVEL || mSock == NULL )	// GM's and NPC's dont atrophy
 	{
@@ -1250,14 +1250,14 @@ void cSkills::FishTarget( CSocket *s )
 
 	CChar *mChar = s->CurrcharObj();
 
-	SI16 targetX = s->GetWord( 0x0B );
-	SI16 targetY = s->GetWord( 0x0D );
-	SI08 targetZ = s->GetByte( 0x10 );
-	SI16 distX = abs( mChar->GetX() - targetX );
-	SI16 distY = abs( mChar->GetY() - targetY );
+	const SI16 targetX = s->GetWord( 0x0B );
+	const SI16 targetY = s->GetWord( 0x0D );
+	const SI08 targetZ = s->GetByte( 0x10 );
+	const SI16 distX = abs( mChar->GetX() - targetX );
+	const SI16 distY = abs( mChar->GetY() - targetY );
 
-	UI08 targetID1 = s->GetByte( 0x11 );
-	UI08 targetID2 = s->GetByte( 0x12 );
+	const UI08 targetID1 = s->GetByte( 0x11 );
+	const UI08 targetID2 = s->GetByte( 0x12 );
 
 	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
 	bool validLocation = false;
@@ -1329,7 +1329,7 @@ void cSkills::Fish( CChar *i )
 		s->sysmessage( 847 );
 		return;
 	}
-	UI16 getSkill = i->GetSkill( FISHING );
+	const UI16 getSkill = i->GetSkill( FISHING );
 	switch( RandomNum( 0, 25 ) )
 	{
 		case 1:
@@ -1468,7 +1468,7 @@ void cSkills::RandomSteal( CSocket *s )
 
 	CItem *item = NULL;
 	CDataList< CItem * > *tcCont = p->GetContainsList();
-	size_t numItems = tcCont->Num();
+	const size_t numItems = tcCont->Num();
 
 	std::vector< CItem * > contList;
 	contList.reserve( numItems );
@@ -1576,8 +1576,8 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			return;
 		}
 		
-		int getDefOffset	= UOX_MIN( stealCheck + ( (int)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
-		bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
+		const int getDefOffset	= UOX_MIN( stealCheck + ( (int)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
+		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
 		if( canSteal )
 		{
 			CItem *pack = mChar->GetPackItem();
@@ -1705,7 +1705,7 @@ void cSkills::Tracking( CSocket *s, int selection )
 void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
-	UString sect = "TRACKINGMENU " + UString::number( m );
+	const UString sect = "TRACKINGMENU " + UString::number( m );
 	ScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
 		return;
@@ -1756,7 +1756,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			id					= tempChar->GetID();
 			if( ( !tempChar->isHuman() || creatureType == 2 ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == 0 ) )
 			{
-				bool cmdLevelCheck	= isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() > tempChar->GetCommandLevel() );
+				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() > tempChar->GetCommandLevel() ) );
 				if( tempChar != mChar && objInRange( tempChar, mChar, static_cast<UI16>(distance) ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
 					mChar->SetTrackingTargets( tempChar, static_cast<UI08>(MaxTrackingTargets) );
@@ -1807,7 +1807,7 @@ void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex
 void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
-	UString sect				= "TRACKINGMENU " + UString::number( gmindex );
+	const UString sect			= "TRACKINGMENU " + UString::number( gmindex );
 	ScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == NULL )
 		return;
