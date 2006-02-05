@@ -379,7 +379,10 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 		{
 			default:
 			case OWNER:		house->AddAsOwner( toAdd );		break;
-			case BAN:		house->AddToBanList( toAdd );	break;
+			case BAN:
+				toAdd->SetLocation( ex, (ey+1), toAdd->GetZ() );
+				house->AddToBanList( toAdd );
+				break;
 		}
 		return 1;
 	}

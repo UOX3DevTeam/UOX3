@@ -90,7 +90,8 @@ private:
 	staticrecord staticArray;
 	SI32 baseX, baseY, pos;
 	UI08 remainX, remainY;
-	UI32 index, length, tileid;
+	UI32 index, length;
+	UI16 tileid;
 	bool exactCoords;
 	UI08 worldNumber;
 	bool useDiffs;
@@ -113,14 +114,14 @@ public:
 	SI08			AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
 	SI08			TileHeight( UI16 tilenum );
 	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			IsTileWet( int tilenum );
+	bool			IsTileWet( UI16 tilenum );
 
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	void			SeekMulti( UI32 multinum, SI32 *length );
-	st_multi *		SeekIntoMulti( int multinum, int number );
-	bool			SeekTile( int tilenum, CTile *tile );
-	void			SeekLand( int landnum, CLand *land );
+	void			SeekMulti( UI16 multinum, SI32 *length );
+	st_multi *		SeekIntoMulti( UI16 multinum, SI32 number );
+	bool			SeekTile( UI16 tilenum, CTile *tile );
+	void			SeekLand( UI16 landnum, CLand *land );
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
@@ -135,17 +136,17 @@ public:
 // Functions
 private:
 	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz );
-	int				MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
+	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
 
-	int				DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			DoesTileBlock( int tilenum );
+	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			DoesTileBlock( UI16 tilenum );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
 	// caching functions
 	void	SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
-	void	LoadMultis(const UString &basePath);
+	void	LoadMultis( const UString &basePath );
 
 //Variables
 private:

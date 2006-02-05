@@ -216,10 +216,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	if( !ValidateObject( m ) )
 		return false;
 	SI32 length;
-	st_multi *multi = NULL;
-	const UI16 multiID = (UI16)(( m->GetID() ) - 0x4000);
+	const UI16 multiID = static_cast<UI16>(m->GetID() - 0x4000);
 	Map->SeekMulti( multiID, &length );
-
 	if( length == -1 || length >= 17000000 )
 	{
 		// the length associated with the multi means one thing
@@ -242,6 +240,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		else
 			m->SetID( 0x4064 );
 	}
+
+	st_multi *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
 		multi = Map->SeekIntoMulti( multiID, j );
@@ -305,6 +305,8 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 						regItems->Pop();
 						return multi;
 					}
+					else
+						multi = NULL;
 				}
 			}
 		}

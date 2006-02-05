@@ -1056,18 +1056,18 @@ void HouseOwnerTarget( CSocket *s )
 void HouseEjectTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = static_cast<CItem *>(s->TempObj());
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );
 	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		SI16 sx, sy, ex, ey;
-		Map->MultiArea( (CMultiObj *)h, sx, sy, ex, ey );
-		if( c->GetX() >= sx && c->GetY() >= sy && c->GetX() <= ex && c->GetY() <= ey )
+		SI16 x1, y1, x2, y2;
+		Map->MultiArea( h, x1, y1, x2, y2 );
+		if( c->GetX() >= x1 && c->GetY() >= y1 && c->GetX() <= x2 && c->GetY() <= y2 )
 		{
-			c->SetLocation( ex, ey, c->GetZ() );
+			c->SetLocation( x2, (y2+1), c->GetZ() );
 			s->sysmessage( 1083 );
-		} 
+		}
 		else 
 			s->sysmessage( 1084 );
 	}
@@ -1077,8 +1077,6 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
 void HouseBanTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	// first, eject the player
-	HouseEjectTarget( s );
 	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
 	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
 	s->TempObj( NULL );

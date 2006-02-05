@@ -1004,7 +1004,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 	}
 }
 
-void killTrades( CChar& i );
+void killTrades( CChar *i );
 //o---------------------------------------------------------------------------o
 //|   Function    -  void HandleDeath( CChar *mChar )
 //|   Date        -  UnKnown
@@ -1025,7 +1025,7 @@ void HandleDeath( CChar *mChar )
 	DismountCreature( mChar );
 
 	if( pSock != NULL )
-		killTrades( (*mChar) );
+		killTrades( mChar );
 
 	if( mChar->GetID() != mChar->GetOrgID() )
 		mChar->SetID( mChar->GetOrgID() );

@@ -556,23 +556,12 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 				i->SetZ( 9 );
 			}
 		}
-		else if( mChar->GetCommandLevel() >= CNS_CMDLEVEL )
-		{
-			CItem *p = targPlayer->GetPackItem();
-			if( !ValidateObject( p ) )
-			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-					Weight->subtractItemWeight( mChar, i );
-				Bounce( mSock, i );
-				return stackDeleted;
-			}
-			stackDeleted = ( autoStack( targPlayer->GetSocket(), i, p ) != i );
-		}
 		else
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( mChar, i );
 			Bounce( mSock, i );
+			return true;
 		}
 	}
 	return stackDeleted;

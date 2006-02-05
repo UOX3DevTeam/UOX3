@@ -551,13 +551,13 @@ Look at uox3.h to see options. Works like npc magic.
 							dyncount->SetID( 0x4064 );
 						length = 0;
 					}
-					for( j = 0; j < static_cast<size_t>(length); ++j )
+					for( SI32 k = 0; k < length; ++k )
 					{
-						test = Map->SeekIntoMulti( multiID, j );
+						test = Map->SeekIntoMulti( multiID, k );
 						if( ( test->visible ) && ( dyncount->GetX() + test->x == collisions[i].x ) &&
 							( dyncount->GetY() + test->y == collisions[i].y ) )
 						{
-							Map->SeekTile(test->tile, &tile);
+							Map->SeekTile( test->tile, &tile );
 							if( ( collisions[i].z >= dyncount->GetZ() + test->z ) &&
 								( collisions[i].z <= (dyncount->GetZ() + test->z + tile.Height() ) ) )
 							{

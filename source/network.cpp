@@ -38,6 +38,7 @@ fd_set conn;
 fd_set all;
 fd_set errsock;
 
+void killTrades( CChar *i );
 void DoorMacro( CSocket *s );
 UnicodeTypes FindLanguage( const char *lang );
 void sysBroadcast( const std::string txt );
@@ -158,6 +159,8 @@ void cNetworkStuff::LogOut( CSocket *s )
 	bool valid = false;
 	SI16 x = p->GetX(), y = p->GetY();
 	CMultiObj *multi = NULL;
+
+	killTrades( p );
 
 	if( p->GetCommandLevel() >= CNS_CMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
 		valid = true;
