@@ -1030,13 +1030,23 @@ void HouseOwnerTarget( CSocket *s )
 	if( o_serial == INVALIDSERIAL ) 
 		return;
 
-	CChar *own		= calcCharObjFromSer( o_serial );
-	CSocket *oSock	= own->GetSocket();
-	CItem *sign		= static_cast<CItem *>(s->TempObj());
-	CItem *house	= calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );
-	s->TempObj( NULL );
-	if( !ValidateObject( sign ) || !ValidateObject( house ) )
+	CChar *own = calcCharObjFromSer( o_serial );
+	if( !ValidateObject( own ) )
 		return;
+
+	CSocket *oSock = own->GetSocket();
+	if( oSock == NULL )
+		return;
+
+	CItem *sign = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( !ValidateObject( sign ) )
+		return;
+
+	CItem *house = calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );;
+	if( !ValidateObject( house ) )
+		return;
+
 	sign->SetOwner( own );
 	house->SetOwner( own );
 
@@ -1115,7 +1125,7 @@ void HouseFriendTarget( CSocket *s )
 	}
 }
 
-bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode = 0 );
+bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode );
 void HouseUnlistTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1124,7 +1134,7 @@ void HouseUnlistTarget( CSocket *s )
 	s->TempObj( NULL );
 	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		bool r = DeleteFromHouseList( h, c );
+		bool r = DeleteFromHouseList( h, c, static_cast<UI08>(s->TempInt()) );
 		if( r )
 			s->sysmessage( 1092, c->GetName().c_str() );
 		else 

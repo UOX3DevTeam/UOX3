@@ -215,6 +215,39 @@ bool CPIGetItem::Handle( void )
 					tSock->Send( &bounce );
 					return true;
 				}
+				CBaseObject *recurseCont = contItem->GetCont();
+				while( ValidateObject( recurseCont ) )
+				{
+					if( recurseCont->CanBeObjType( OT_ITEM ) )
+					{
+						CItem *recurseItem = static_cast<CItem *>(recurseCont);
+						if( recurseItem->GetType() == IT_TRADEWINDOW )
+						{
+							CItem *z = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
+							if( ValidateObject( z ) )
+							{
+								if( z->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
+								{
+									z->SetTempVar( CITV_MOREZ, 0 );
+									recurseItem->SetTempVar( CITV_MOREZ, 0 );
+									sendTradeStatus( z, recurseItem );
+								}
+								CChar *zChar = FindItemOwner( z );
+								if( ValidateObject( zChar ) )
+								{
+									CSocket *zSock = zChar->GetSocket();
+									if( zSock != NULL )
+										Effects->PlaySound( zSock, 0x0057, true );
+								}
+							}
+							break;
+						}
+						else
+							recurseCont = recurseItem->GetCont();
+					}
+					else
+						break;
+				}
 			}
 		}
 		else if( oType == OT_ITEM )
@@ -871,7 +904,7 @@ void DropOnItem( CSocket *mSock )
 			{
 				CSocket *zSock = zChar->GetSocket();
 				if( zSock != NULL )
-					Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 			}
 		}
 	}
@@ -991,7 +1024,43 @@ void DropOnItem( CSocket *mSock )
 		CChar *j = FindItemOwner( nCont );
 		if( ValidateObject( j ) )
 		{
-			if( j->IsNpc() && j->GetNPCAiType() == aiPLAYERVENDOR && j->GetOwnerObj() == mChar )
+			if( j == mChar )
+			{
+				CBaseObject *recurseCont = nCont->GetCont();
+				while( ValidateObject( recurseCont ) )
+				{
+					if( recurseCont->CanBeObjType( OT_ITEM ) )
+					{
+						CItem *recurseItem = static_cast<CItem *>(recurseCont);
+						if( recurseItem->GetType() == IT_TRADEWINDOW )
+						{
+							CItem *z = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
+							if( ValidateObject( z ) )
+							{
+								if( z->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
+								{
+									z->SetTempVar( CITV_MOREZ, 0 );
+									recurseItem->SetTempVar( CITV_MOREZ, 0 );
+									sendTradeStatus( z, recurseItem );
+								}
+								CChar *zChar = FindItemOwner( z );
+								if( ValidateObject( zChar ) )
+								{
+									CSocket *zSock = zChar->GetSocket();
+									if( zSock != NULL )
+										Effects->itemSound( zSock, recurseItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+								}
+							}
+							break;
+						}
+						else
+							recurseCont = recurseItem->GetCont();
+					}
+					else
+						break;
+				}
+			}
+			else if( j->IsNpc() && j->GetNPCAiType() == aiPLAYERVENDOR && j->GetOwnerObj() == mChar )
 			{
 				mChar->SetSpeechMode( 3 );
 				mChar->SetSpeechItem( nItem );
@@ -1055,7 +1124,7 @@ void DropOnItem( CSocket *mSock )
 		MapRegion->RemoveItem( nItem );
 
 		nItem->SetX( mSock->GetWord( 5 ) );
-		nItem->SetY( mSock->GetWord( 7 )  );
+		nItem->SetY( mSock->GetWord( 7 ) );
 		nItem->SetZ( mSock->GetByte( 9 ) );
 
 		if( nCont->GetType() == IT_SPAWNCONT || nCont->GetType() == IT_UNLOCKABLESPAWNCONT ) // - Unlocked item spawner or unlockable item spawner

@@ -1325,37 +1325,50 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 	// Thyme 2000.09.21
 	// initial rewrite of pathfinding...
 
-	SI16 newx, newy;
-	SI08 newz;
 	const SI16 oldx = c->GetX();
 	const SI16 oldy = c->GetY();
+	SI16 newx		= oldx;
+	SI16 newy		= oldy;
+	SI08 newz		= c->GetZ();
+	UI08 olddir		= c->GetDir();
+	UI08 pf_dir		= Direction( newx, newy, gx, gy );
 
-#if defined( _MSC_VER )
-#pragma note( "PathFind() needs to be touched up, UI08 can possibly be set to -1" )
-#endif
 	for( UI08 pn = 0; pn < pathLen; ++pn )
 	{
-		bool bFound	= false;
-		int pf_neg	= ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
-		UI08 pf_dir	= Direction( oldx, oldy, gx, gy );
-		for( UI08 i = 0 ; i < 8 ; ++i )
+		bool bFound			= false;
+		int pf_neg			= ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
+		UI08 newDir			= Direction( newx, newy, gx, gy );
+		bool canMoveInDir	= false;
+		if( newDir < 8 && calc_move( c, newx, newy, newz, newDir ) )
 		{
-			pf_neg *= -1;
-			pf_dir += ( i * pf_neg );
-			if( pf_dir < 8 && calc_move( c, oldx, oldy, newz, pf_dir ) )
+			pf_dir = newDir;
+			canMoveInDir = true;
+		}
+		for( UI08 i = 0; i < 7; ++i )
+		{
+			if( canMoveInDir || ( pf_dir < 8 && calc_move( c, newx, newy, newz, pf_dir ) ) )
 			{
-				newx = GetXfromDir( pf_dir, oldx );	// moved inside if to reduce calculations
-				newy = GetYfromDir( pf_dir, oldy );
+				newx = GetXfromDir( pf_dir, newx );	// moved inside if to reduce calculations
+				newy = GetYfromDir( pf_dir, newy );
 				if( ( pn < P_PF_MRV ) && CheckForCharacterAtXYZ( c, newx, newy, newz ) )
 					continue;
 
+				UI08 dirToPush = pf_dir;
 				if( willRun )
-					c->PushDirection( pf_dir | 0x80 );	// or it with 0x80 to ensure they run
-				else
-					c->PushDirection( pf_dir );
+					dirToPush |= 0x80;
+
+				c->PushDirection( dirToPush );
+
+				if( olddir != UNKNOWNDIR && olddir != pf_dir )
+					c->PushDirection( dirToPush );
+
+				olddir = pf_dir;
+
 				bFound = true;
 				break;
 			}
+			pf_neg *= -1;
+			pf_dir = static_cast<UI08>((pf_dir + ( i * pf_neg ) % 8));
 		}
 		if( !bFound )
 		{
@@ -1364,6 +1377,8 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 #endif
 			break;
 		}
+		if( newx == gx && newy == gy )
+			break;
 	}
 }
 
@@ -1573,8 +1588,8 @@ UI08 cMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 {
 	UI08 dir;
 	
-	SI16 xdif = (SI16)(dx - sx);
-	SI16 ydif = (SI16)(dy - sy);
+	const SI16 xdif = static_cast<SI16>(dx - sx);
+	const SI16 ydif = static_cast<SI16>(dy - sy);
 	
 	if( xdif == 0 && ydif < 0 ) 
 		dir = NORTH;

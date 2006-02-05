@@ -487,32 +487,33 @@ void HandleHouseButton( CSocket *s, long button, CItem *j )
 
 	CMultiObj *house = calcMultiFromSer( j->GetTempVar( CITV_MORE ) );
 
-	if( button != 20 && button != 2 ) 
+	if( button == 2 )
+		s->TempObj( j );
+	else if( button != 20 )
 		s->TempObj( house );
 	switch( button )
 	{
-		case 20: // Change house sign's appearance
-			if( s->GetWord( 21 ) > 0 ) 
-			{
-				j->SetID( s->GetWord( 21 ) );
-				s->sysmessage( 556 );
-			}
-			return;
-		case 0:		return;
-		case 2:	s->target( 0, TARGET_HOUSEOWNER, 557 );			return;  // Bestow ownership upon someone else
-		case 3:	
-			deedHouse( s, house );
-			return;  // Turn house into a deed
-		case 4:	s->target( 0, TARGET_HOUSEEJECT, 558 );			return;  // Kick someone out of house
-		case 5:	s->target( 0, TARGET_HOUSEBAN, 559 );			return;  // Ban somebody
-		case 6:
-		case 8:	s->target( 0, TARGET_HOUSEUNLIST, 560 );		return; // Remove someone from house list
-		case 7:	s->target( 0, TARGET_HOUSEFRIEND, 561 );		return; // Make someone a friend
+		case 20: if( s->GetWord( 21 ) > 0 )								// Change house sign's appearance
+				 {
+					j->SetID( s->GetWord( 21 ) );
+					s->sysmessage( 556 );
+				 }												break;
+		case 0:													break;
+		case 1:													break;
+		case 2:	s->target( 0, TARGET_HOUSEOWNER, 557 );			break;  // Bestow ownership upon someone else
+		case 3:	deedHouse( s, house );							break;  // Turn house into a deed
+		case 4:	s->target( 0, TARGET_HOUSEEJECT, 558 );			break;  // Kick someone out of house
+		case 5:	s->target( 0, TARGET_HOUSEBAN, 559 );			break;  // Ban somebody
+		case 6: s->TempInt( 1 );
+				s->target( 0, TARGET_HOUSEUNLIST, 560 );		break; // Remove someone from ban list
+		case 7:	s->target( 0, TARGET_HOUSEFRIEND, 561 );		break; // Make someone a friend
+		case 8:	s->TempInt( 0 );
+				s->target( 0, TARGET_HOUSEUNLIST, 560 );		break; // Remove someone from house list
 		default:
-			char temp[1024];
-			sprintf( temp, "HouseGump Called - Button=%li", button );
-			s->sysmessage( temp );
-			return;
+				char temp[1024];
+				sprintf( temp, "HouseGump Called - Button=%li", button );
+				s->sysmessage( temp );
+																break;
 	}
 }
 

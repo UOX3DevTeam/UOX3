@@ -1,3 +1,10 @@
+2/05/2006 - giwo (0.98-3.2h [3.3 BETA])
+	Fixed a possible exploit with secure trading.
+	Fixed an issue causing it to be impossible to remove characters from a house ban list.
+	Fixed a server crash caused by transfering house ownership.
+	Updated the NPC Pathfinding code to fix some issues.
+	Added a check to ensure boat items are only moved once when boats sail.
+
 2/04/2006 - giwo (0.98-3.2g [3.3 BETA])
 	Fixed an issue causing multis to calculate their size incorrectly (causing boats to drag objects not aboard).
 	Updated mapstuff.cpp to fix some signed/unsigned mismatches.
