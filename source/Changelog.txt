@@ -1,3 +1,12 @@
+2/06/2006 - giwo (0.98-3.2i [3.3 BETA])
+	Added some error checking to the INFO command to ensure it is not used on characters.
+	Fixed an issue causing deeds (and other items) not to display their custom names.
+	Modified the stealth skill spam to conform to OSI messages.
+	Fixed an issue causing the POLY command to change ones skin color.
+	JS Changes:
+		Added character props .orgID and .orgSkin
+		Changed the behavior of character props .id and .skin not to set their org* equivalents automatically.
+
 6th February, 2006 - Maarc
 	Moved maps_def Disposal to the end of CMapStuff::Load()
 	Added the ability to override tiledata info for real tiles (not land)

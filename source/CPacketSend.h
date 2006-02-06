@@ -860,7 +860,7 @@ public:
 	virtual UI16	NumberOfItems( void ) const;
 	void			Type( UI08 contType );
 	void			VendorSerial( SERIAL toSet );
-	virtual void	AddItem( CItem *toAdd, UI16 itemNum );
+	virtual void	AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock );
 	void			Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
@@ -885,13 +885,13 @@ class CPOpenBuyWindow : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void );
-	virtual void	CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic );
+	virtual void	CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock );
 public:
 	virtual			~CPOpenBuyWindow()
 	{
 	}
 					CPOpenBuyWindow();
-					CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic );
+					CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock );
 	virtual void	NumberOfItems( UI08 numItems );
 	virtual UI08	NumberOfItems( void ) const;
 	virtual void	AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset );

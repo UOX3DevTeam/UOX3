@@ -32,7 +32,7 @@ void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 	outStream << "  ";
 	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
 	{
-		if( strToDump[parseBuff] && strToDump[parseBuff] != 0x0A )
+		if( strToDump[parseBuff] && strToDump[parseBuff] != 0x0A && strToDump[parseBuff] != 0x0D && strToDump[parseBuff] != 0x09 )
 			outStream << strToDump[parseBuff];
 		else
 			outStream << ".";

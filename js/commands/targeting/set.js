@@ -245,6 +245,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		if( nVal <= 0x7CF )
 		{
 			ourChar.id = nVal;
+			ourChar.orgID = nVal;
 			okMsg( socket );
 		}
 		break;

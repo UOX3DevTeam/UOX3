@@ -2854,7 +2854,7 @@ void CPItemsInContainer::NumberOfItems( UI16 numItems )
 	pStream.WriteShort( 1, packetSize );
 	pStream.WriteShort( 3, numItems );
 }
-void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum )
+void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 {
 	pStream.ReserveSize( pStream.GetSize() + 19 );
 	UI16 baseOffset = (UI16)(5 + itemNum * 19);
@@ -2872,6 +2872,9 @@ void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum )
 	pStream.WriteShort( baseOffset + 17, toAdd->GetColour() );
 
 	toAdd->SetDecayTime( 0 );
+
+	CPToolTip pSend( toAdd->GetSerial() );
+	mSock->Send( &pSend );
 }
 
 void CPItemsInContainer::Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount )
@@ -2895,13 +2898,8 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 		{
 			if( !ctr->isFree() )
 			{
-				AddItem( ctr, itemCount );
-/*				if( !isVendor && mSock != NULL )
-				{
-					CPQueryToolTip pSend( (*ctr) );
-					mSock->Send( &pSend );
-				}
-*/				++itemCount;
+				AddItem( ctr, itemCount, mSock );
+				++itemCount;
 			}
 		}
 	}
@@ -2954,13 +2952,13 @@ CPOpenBuyWindow::CPOpenBuyWindow()
 {
 	InternalReset();
 }
-CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic )
+CPOpenBuyWindow::CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock )
 {
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
 		pStream.WriteLong( 3, container->GetSerial() );
-		CopyData( (*container), vendorID, iic );
+		CopyData( (*container), vendorID, iic, mSock );
 	}
 }
 
@@ -3005,7 +3003,7 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	baseOffset += sLen;
 }
 
-void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic )
+void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock )
 {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
@@ -3039,7 +3037,7 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContain
 					++baseY;
 				}
 
-				iic.AddItem( ctr, itemCount );
+				iic.AddItem( ctr, itemCount, mSock );
 				AddItem( ctr, tReg, length );
 				++itemCount;
 			}

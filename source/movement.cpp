@@ -1368,7 +1368,7 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 				break;
 			}
 			pf_neg *= -1;
-			pf_dir = static_cast<UI08>((pf_dir + ( i * pf_neg ) % 8));
+			pf_dir = static_cast<UI08>((UI08)(pf_dir + ( i * pf_neg )) % 8);
 		}
 		if( !bFound )
 		{

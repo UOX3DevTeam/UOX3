@@ -25,7 +25,7 @@ function onSkill( pUser, objType, skillUsed )
 		}
 		else
 		{
-			pSock.SysMessage( "You can move 10 steps unseen" );
+			pSock.SysMessage( GetDictionaryEntry( 839, pSock.Language ) );
 			pUser.visible = 1;
 			pUser.stealth = 0;
 		}

@@ -507,21 +507,27 @@ void InfoTarget( CSocket *s )
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 
-	map_st map1;
-	CLand land;
-	
-	SI16 x = s->GetWord( 0x0B );
-	SI16 y = s->GetWord( 0x0D );
-//	SI08 z = s->GetByte( 0x10 );
-
-	UI08 worldNumber = 0;
-	CChar *mChar = s->CurrcharObj();
-	if( ValidateObject( mChar ) )
-		worldNumber = mChar->WorldNumber();
-	if( s->GetWord( 0x11 ) == 0 )
+	if( !s->GetByte( 1 ) && s->GetDWord( 7 ) < BASEITEMSERIAL )
 	{
+		s->sysmessage( "This command can not be used on characters." );
+		return;
+	}
+
+	const SI16 x		= s->GetWord( 11 );
+	const SI16 y		= s->GetWord( 13 );
+//	const SI08 z		= s->GetByte( 16 );
+	const UI16 tileID	= s->GetWord( 17 );
+
+	if( tileID == 0 )
+	{
+		UI08 worldNumber = 0;
+		CChar *mChar = s->CurrcharObj();
+		if( ValidateObject( mChar ) )
+			worldNumber = mChar->WorldNumber();
+
+		CLand land;
 		// manually calculating the ID's if it's a maptype
-		map1 = Map->SeekMap( x, y, worldNumber );
+		const map_st map1 = Map->SeekMap( x, y, worldNumber );
 		Map->SeekLand( map1.id, &land );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
@@ -539,13 +545,12 @@ void InfoTarget( CSocket *s )
 	else
 	{
 		CTile tile;
-		UI16 tilenum = s->GetWord( 0x11 );
-		Map->SeekTile( tilenum, &tile );
+		Map->SeekTile( tileID, &tile );
 
 		GumpDisplay statTile( s, 300, 300 );
 		statTile.SetTitle( "Map Tile" );
 
-		statTile.AddData( "Tilenum", tilenum );
+		statTile.AddData( "Tilenum", tileID );
 		statTile.AddData( "Flag1", tile.Flag1(), 1 );
 		statTile.AddData( "Flag2", tile.Flag2(), 1 );
 		statTile.AddData( "Flag3", tile.Flag3(), 1 );
@@ -560,7 +565,6 @@ void InfoTarget( CSocket *s )
 		statTile.AddData( "Name", tile.Name() );
 		statTile.Send( 4, false, INVALIDSERIAL );
 	}
-	s->sysmessage( 1034 );
 }
 
 void TweakTarget( CSocket *s )
@@ -908,12 +912,12 @@ bool BuyShop( CSocket *s, CChar *c )
 	CPItemsInContainer iic;
 	iic.Type( 0x02 );
 	iic.VendorSerial( buyPack->GetSerial() );
-	CPOpenBuyWindow obw( buyPack, c, iic );
+	CPOpenBuyWindow obw( buyPack, c, iic, s );
 
 	CPItemsInContainer iic2;
 	iic2.Type( 0x02 );
 	iic2.VendorSerial( boughtPack->GetSerial() );
-	CPOpenBuyWindow obw2( boughtPack, c, iic2 );
+	CPOpenBuyWindow obw2( boughtPack, c, iic2, s );
 
 	CPDrawContainer toSend;
 	toSend.Model( 0x0030 );
@@ -1656,7 +1660,7 @@ bool CPITargetCursor::Handle( void )
 				mChar->StopSpell();
 			return true; // do nothing if user cancels, avoids CRASH! - Morrolan
 		}
-		
+
 		UI08 a1 = tSock->GetByte( 2 );
 		UI08 a2 = tSock->GetByte( 3 );
 		UI08 a3 = tSock->GetByte( 4 );

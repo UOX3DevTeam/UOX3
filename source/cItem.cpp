@@ -1629,14 +1629,14 @@ void CItem::Update( CSocket *mSock )
 		if( charCont != NULL )
 		{
 			CPWornItem toWear = (*this);
-			//CPQueryToolTip pSend( (*this) );
+			CPToolTip pSend( GetSerial() );
 			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				if( !(*cIter)->LoginComplete() )
 					continue;
 				(*cIter)->Send( &toWear );
-				//(*cIter)->Send( &pSend );
+				(*cIter)->Send( &pSend );
 			}
 			return;
 		}
@@ -1686,15 +1686,15 @@ void CItem::SendToSocket( CSocket *mSock )
 		{
 			CPCorpseClothing cpcc( this );
 			mSock->Send( &cpcc );
-			CPItemsInContainer itemsIn( NULL, this, 0x01 );
+			CPItemsInContainer itemsIn( mSock, this, 0x01 );
 			mSock->Send( &itemsIn );
 		}
-/*		if( !CanBeObjType( OT_MULTI ) )
+		if( !CanBeObjType( OT_MULTI ) )
 		{
-			CPQueryToolTip pSend( (*this) );
+			CPToolTip pSend( GetSerial() );
 			mSock->Send( &pSend );
 		}
-*/	}
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -1721,8 +1721,8 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 			itemSend.Colour( 0x00C6 );
 		}
 		mSock->Send( &itemSend );
-		//CPQueryToolTip pSend( (*this) );
-		//mSock->Send( &pSend );
+		CPToolTip pSend( GetSerial() );
+		mSock->Send( &pSend );
 	}
 }
 

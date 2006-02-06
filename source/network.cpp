@@ -1235,7 +1235,9 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				}
 				if( test != NULL )
 				{
-					Console.Log( "Logging packet ID: %i", "loginthread.txt", packetID );
+#ifdef _DEBUG_PACKET
+					Console.Log( "Logging packet ID: 0x%X", "loginthread.txt", packetID );
+#endif
 					mSock->ReceiveLogging( test );
 					if( test->Handle() )
 						doSwitch = false;

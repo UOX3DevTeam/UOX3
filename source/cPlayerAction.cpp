@@ -1463,15 +1463,15 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		pd.FlagByte( 0x02 );
 	s->Send( &pd );
 
-/*	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
+	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
 	{
 		if( ValidateObject( wearItem ) )
 		{
-			CPQueryToolTip pSend( (*wearItem) );
+			CPToolTip pSend( wearItem->GetSerial() );
 			s->Send( &pSend );
 		}
 	}
-*/}
+}
 
 void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 //o---------------------------------------------------------------------------o

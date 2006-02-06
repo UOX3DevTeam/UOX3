@@ -14,10 +14,14 @@ function command_POLY( socket, cmdString )
 		if( newBody <= 0x7CF )
 		{
 			pUser.id = newBody;
-			if( ( skinVal&0x4000 == 0x4000 ) && ( newBody >= 0x0190 && newBody <= 0x03E1 ) )
+			pUser.orgID = newBody;
+			if( ( (skinVal&0x4000) == 0x4000 ) && ( newBody >= 0x0190 && newBody <= 0x03E1 ) )
 			{
 				if( skinVal != 0x8000 )
+				{
 					pUser.colour = 0xF000;
+					pUser.orgSkin = 0xF000;
+				}
 			}
 		}
 	}

@@ -669,6 +669,8 @@ namespace UOX
 				case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
 				case CCP_ISANIMAL:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetID()].IsAnimal() ); break;
 				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( gPriv->isHuman() );					break;
+				case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgID() );					break;
+				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 				default:
 					break;
 			}
@@ -698,14 +700,8 @@ namespace UOX
 				case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
 				case CCP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );	break;
 				case CCP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );										break;
-				case CCP_ID:		
-					gPriv->SetID( (UI16)encaps.toInt() );
-					gPriv->SetOrgID( (UI16)encaps.toInt() );
-					break;
-				case CCP_COLOUR:	
-					gPriv->SetSkin( (UI16)encaps.toInt() );
-					gPriv->SetOrgSkin( (UI16)encaps.toInt() );
-					break;
+				case CCP_ID:	gPriv->SetID( (UI16)encaps.toInt() );										break;
+				case CCP_COLOUR:gPriv->SetOrgSkin( (UI16)encaps.toInt() );									break;
 				case CCP_OWNER:		
 					if( *vp != JSVAL_NULL )
 					{
@@ -929,6 +925,8 @@ namespace UOX
 				case CCP_NONEEDMANA:	gPriv->SetNoNeedMana( encaps.toBool() );			break;
 				case CCP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );			break;
 				case CCP_NONEEDREAGS:	gPriv->SetNoNeedReags( encaps.toBool() );			break;
+				case CCP_ORGID:			gPriv->SetOrgID( (UI16)encaps.toInt() );			break;
+				case CCP_ORGSKIN:		gPriv->SetOrgSkin( (UI16)encaps.toInt() );			break;
 				default:
 					break;
 			}
