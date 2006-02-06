@@ -145,8 +145,9 @@ private:
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
 	// caching functions
-	void	SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
-	void	LoadMultis( const UString &basePath );
+	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
+	void			LoadMultis( const UString &basePath );
+	void			LoadDFNOverrides( void );
 
 //Variables
 private:

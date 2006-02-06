@@ -1,3 +1,8 @@
+6th February, 2006 - Maarc
+	Moved maps_def Disposal to the end of CMapStuff::Load()
+	Added the ability to override tiledata info for real tiles (not land)
+	Bit of const correctness (CTile.Name( const char *newVal ))
+
 2/05/2006 - giwo (0.98-3.2h [3.3 BETA])
 	Fixed a possible exploit with secure trading.
 	Fixed an issue causing it to be impossible to remove characters from a house ban list.

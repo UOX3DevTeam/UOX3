@@ -3,6 +3,7 @@
 #include "fileio.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
+#include "scriptc.h"
 
 #undef DBGFILE
 #define DBGFILE "mapstuff.cpp"
@@ -261,7 +262,6 @@ cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile
 		}
 		MapList.push_back( toAdd );
 	}
-	FileLookup->Dispose( maps_def );
 }
 
 cMapStuff::~cMapStuff()
@@ -305,7 +305,7 @@ UOXFile * loadFile( const std::string fullName )
 	return toLoad;
 }
 
-void cMapStuff::Load( )
+void cMapStuff::Load( void )
 {
 	Console.PrintSectionBegin();
 	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in uox.ini or filenames in maps.dfn)" << myendl;
@@ -429,9 +429,9 @@ void cMapStuff::Load( )
 		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
 	}
 	// first we have 512*32 pieces of land tile
-	TileMem = TILEDATA_SIZE * sizeof(CLand);
-	landTile = new CLand[TILEDATA_SIZE];
-	CLand *landPtr = landTile;
+	TileMem			= TILEDATA_SIZE * sizeof(CLand);
+	landTile		= new CLand[TILEDATA_SIZE];
+	CLand *landPtr	= landTile;
 	for( i = 0; i < 512; ++i )	
 	{
 		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
@@ -439,9 +439,9 @@ void cMapStuff::Load( )
 		landPtr += 32;
 	}
 	// now get the 512*32 static tile pieces,
-	TileMem += TILEDATA_SIZE * sizeof(CTile);
-	staticTile = new CTile[TILEDATA_SIZE];
-	CTile *tilePtr = staticTile;
+	TileMem			+= TILEDATA_SIZE * sizeof( CTile );
+	staticTile		= new CTile[TILEDATA_SIZE];
+	CTile *tilePtr	= staticTile;
 	for( i = 0; i < 512; ++i )
 	{
 		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
@@ -450,10 +450,11 @@ void cMapStuff::Load( )
 	}
 	Console.PrintDone();
 
-
-	LoadMultis(basePath);
+	LoadMultis( basePath );
 //	CacheVersion();
+	LoadDFNOverrides();
 
+	FileLookup->Dispose( maps_def );
 	Console.PrintSectionBegin();
 }
 
@@ -483,14 +484,14 @@ void cMapStuff::LoadMultis(const UString &basePath)
 	}
 
 	//! first reads in st_multi completely
-	size_t multiSize = multis.getLength() / MultiRecordSize;
-	multiItems = new st_multi[multiSize];
+	size_t multiSize	= multis.getLength() / MultiRecordSize;
+	multiItems			= new st_multi[multiSize];
 	multis.get_st_multi( multiItems, multiSize );
-	MultisMem = multis.getLength();
+	MultisMem			= multis.getLength();
 
-	multiIndexSize = multiIDX.getLength() / MultiIndexRecordSize;
-	multiIndex = new MultiItemsIndex[multiIndexSize];
-	MultisMem = multiIndexSize * sizeof(MultiItemsIndex);
+	multiIndexSize	= multiIDX.getLength() / MultiIndexRecordSize;
+	multiIndex		= new MultiItemsIndex[multiIndexSize];
+	MultisMem		= multiIndexSize * sizeof(MultiItemsIndex);
 
 	// now rejig the multiIDX to point to the cache directly, and calculate the size
 	for( MultiItemsIndex *ptr = multiIndex; ptr != (multiIndex+multiIndexSize); ++ptr )
@@ -1105,6 +1106,128 @@ MapData_st& cMapStuff::GetMapData( UI08 worldNumber )
 UI08 cMapStuff::MapCount( void ) const
 {
 	return static_cast<UI08>(MapList.size());
+}
+
+void cMapStuff::LoadDFNOverrides( void )
+{
+	UString data, UTag, entryName, titlePart;
+	size_t entryNum;
+
+	for( Script *mapScp = FileLookup->FirstScript( maps_def ); !FileLookup->FinishedScripts( maps_def ); mapScp = FileLookup->NextScript( maps_def ) )
+	{
+		if( mapScp == NULL )
+			continue;
+		for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != NULL; toScan = mapScp->NextEntry() )
+		{
+			if( toScan == NULL )
+				continue;
+			entryName	= mapScp->EntryName();
+			entryNum	= entryName.section( " ", 1, 1 ).toULong();
+			titlePart	= entryName.section( " ", 0, 0 ).upper();
+			// have we got an entry starting with TILE ?
+			if( titlePart == "TILE" && entryNum )
+			{
+				if( entryNum == INVALIDID || entryNum >= TILEDATA_SIZE )
+					continue;
+				CTile *tile = &staticTile[entryNum];
+				if( tile != NULL )
+				{
+					for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+					{
+						data	= toScan->GrabData();
+						UTag	= tag.upper();
+
+						// CTile properties
+						if( UTag == "WEIGHT" )
+							tile->Weight( data.toUByte() );
+						else if( UTag == "HEIGHT" )
+							tile->Height( data.toByte() );
+						else if( UTag == "LAYER" )
+							tile->Layer( data.toByte() );
+						else if( UTag == "ANIMATION" )
+							tile->Animation( data.toInt() );
+						else if( UTag == "NAME" )
+							tile->Name( data.c_str() );
+
+						// BaseTile Flag 1
+						else if( UTag == "ATFLOORLEVEL" )
+							tile->AtFloorLevel( (data.toInt() != 0) );
+						else if( UTag == "HOLDABLE" )
+							tile->Holdable( (data.toInt() != 0) );
+						else if( UTag == "SIGNGUILDBANNER" )
+							tile->SignGuildBanner( (data.toInt() != 0) );
+						else if( UTag == "WEBDIRTBLOOD" )
+							tile->WebDirtBlood( (data.toInt() != 0) );
+						else if( UTag == "WALLVERTTILE" )
+							tile->WallVertTile( (data.toInt() != 0) );
+						else if( UTag == "DAMAGING" )
+							tile->Damaging( (data.toInt() != 0) );
+						else if( UTag == "BLOCKING" )
+							tile->Blocking( (data.toInt() != 0) );
+						else if( UTag == "LIQUIDWET" )
+							tile->LiquidWet( (data.toInt() != 0) );
+
+						// BaseTile Flag 2
+						else if( UTag == "UNKNOWN1" )
+							tile->Unknown1( (data.toInt() != 0) );
+						else if( UTag == "STANDABLE" )
+							tile->Standable( (data.toInt() != 0) );
+						else if( UTag == "CLIMBABLE" )
+							tile->Climbable( (data.toInt() != 0) );
+						else if( UTag == "STACKABLE" )
+							tile->Stackable( (data.toInt() != 0) );
+						else if( UTag == "WINDOWARCHDOOR" )
+							tile->WindowArchDoor( (data.toInt() != 0) );
+						else if( UTag == "CANNOTSHOOTTHRU" )
+							tile->CannotShootThru( (data.toInt() != 0) );
+						else if( UTag == "DISPLAYASA" )
+							tile->DisplayAsA( (data.toInt() != 0) );
+						else if( UTag == "DISPLAYASAN" )
+							tile->DisplayAsAn( (data.toInt() != 0) );
+
+						// BaseTile Flag 3
+						else if( UTag == "DESCRIPTIONTILE" )
+							tile->DescriptionTile( (data.toInt() != 0) );
+						else if( UTag == "FADEWITHTRANS" )
+							tile->FadeWithTrans( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWN2" )
+							tile->Unknown2( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWN3" )
+							tile->Unknown3( (data.toInt() != 0) );
+						else if( UTag == "MAP" )
+							tile->Map( (data.toInt() != 0) );
+						else if( UTag == "CONTAINER" )
+							tile->Container( (data.toInt() != 0) );
+						else if( UTag == "EQUIPABLE" )
+							tile->Equipable( (data.toInt() != 0) );
+						else if( UTag == "LIGHTSOURCE" )
+							tile->LightSource( (data.toInt() != 0) );
+
+						// BaseTile Flag 4
+						else if( UTag == "ANIMATED" )
+							tile->Animated( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWN4" )
+							tile->Unknown4( (data.toInt() != 0) );
+						else if( UTag == "WALK" )
+							tile->Walk( (data.toInt() != 0) );
+						else if( UTag == "WHOLEBODYITEM" )
+							tile->WholeBodyItem( (data.toInt() != 0) );
+						else if( UTag == "WALLROOFWEAP" )
+							tile->WallRoofWeap( (data.toInt() != 0) );
+						else if( UTag == "DOOR" )
+							tile->Door( (data.toInt() != 0) );
+						else if( UTag == "CLIMBABLEBIT1" )
+							tile->ClimbableBit1( (data.toInt() != 0) );
+						else if( UTag == "CLIMBABLEBIT2" )
+							tile->ClimbableBit2( (data.toInt() != 0) );
+					}
+				}
+			}
+			else if( titlePart == "LAND" && entryNum )
+			{	// let's not deal with this just yet
+			}
+		}
+	}
 }
 
 void CTile::Read( UOXFile *toRead )

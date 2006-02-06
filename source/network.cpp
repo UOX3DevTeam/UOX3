@@ -1168,7 +1168,8 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			mSock->Send( (char*)szTBuf,strlen((char*)szTBuf)+1);
 			//messageLoop << (char*)szTBuf;
 			mSock->NewClient( false );
-		} else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
+		}
+		else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
 			total	= ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho		= total / 3600;
@@ -1234,6 +1235,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				}
 				if( test != NULL )
 				{
+					Console.Log( "Logging packet ID: %i", "loginthread.txt", packetID );
 					mSock->ReceiveLogging( test );
 					if( test->Handle() )
 						doSwitch = false;

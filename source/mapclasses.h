@@ -48,6 +48,8 @@ struct st_multi
 	SI08 empty;
 } PACK_NEEDED;
 
+#define MFLAGSET( flag, val, on ) { if( val ) flag |= on; else flag &= ~on ; }
+
 class BaseTile
 {
 protected:
@@ -62,170 +64,85 @@ public:
 	virtual ~BaseTile()
 	{
 	}
-	UI08 Flag1( void )
-	{
-		return flag1;
-	}
-	UI08 Flag2( void )
-	{
-		return flag2;
-	}
-	UI08 Flag3( void )
-	{
-		return flag3;
-	}
-	UI08 Flag4( void )
-	{
-		return flag4;
-	}
+	UI08 Flag1( void )				{	return flag1;	}
+	UI08 Flag2( void )				{	return flag2;	}
+	UI08 Flag3( void )				{	return flag3;	}
+	UI08 Flag4( void )				{	return flag4;	}
 
-	void Flag1( UI08 newVal )
-	{
-		flag1 = newVal;
-	}
-	void Flag2( UI08 newVal )
-	{
-		flag2 = newVal;
-	}
-	void Flag3( UI08 newVal )
-	{
-		flag3 = newVal;
-	}
-	void Flag4( UI08 newVal )
-	{
-		flag4 = newVal;
-	}
+	void Flag1( UI08 newVal )		{	flag1 = newVal;	}
+	void Flag2( UI08 newVal )		{	flag2 = newVal;	}
+	void Flag3( UI08 newVal )		{	flag3 = newVal;	}
+	void Flag4( UI08 newVal )		{	flag4 = newVal;	}
 
-	bool AtFloorLevel( void )
-	{
-		return (flag1&0x01) == 0x01;
-	}
-	bool Holdable( void )
-	{
-		return (flag1&0x02) == 0x02;
-	}
-	bool SignGuildBanner( void )
-	{
-		return (flag1&0x04) == 0x04;
-	}
-	bool WebDirtBlood( void )
-	{
-		return (flag1&0x08) == 0x08;
-	}
-	bool WallVertTile( void )
-	{
-		return (flag1&0x10) == 0x10;
-	}
-	bool Damaging( void )
-	{
-		return (flag1&0x20) == 0x20;
-	}
-	bool Blocking( void )
-	{
-		return (flag1&0x40) == 0x40;
-	}
-	bool LiquidWet( void )
-	{
-		return (flag1&0x80) == 0x80;
-	}
-	bool Unknown1( void )
-	{
-		return (flag2&0x01) == 0x01;
-	}
-	bool Standable( void )
-	{
-		return (flag2&0x02) == 0x02;
-	}
-	bool Climbable( void )
-	{
-		return (flag2&0x04) == 0x04;
-	}
-	bool Stackable( void )
-	{
-		return (flag2&0x08) == 0x08;
-	}
-	bool WindowArchDoor( void )
-	{
-		return (flag2&0x10) == 0x10;
-	}
-	bool CannotShootThru( void )
-	{
-		return (flag2&0x20) == 0x20;
-	}
-	bool DisplayAsA( void )
-	{
-		return (flag2&0x40) == 0x40;
-	}
-	bool DisplayAsAn( void )
-	{
-		return (flag2&0x80) == 0x80;
-	}
+	bool AtFloorLevel( void )		{	return (flag1&0x01) == 0x01;	}
+	bool Holdable( void )			{	return (flag1&0x02) == 0x02;	}
+	bool SignGuildBanner( void )	{	return (flag1&0x04) == 0x04;	}
+	bool WebDirtBlood( void )		{	return (flag1&0x08) == 0x08;	}
+	bool WallVertTile( void )		{	return (flag1&0x10) == 0x10;	}
+	bool Damaging( void )			{	return (flag1&0x20) == 0x20;	}
+	bool Blocking( void )			{	return (flag1&0x40) == 0x40;	}
+	bool LiquidWet( void )			{	return (flag1&0x80) == 0x80;	}
+	bool Unknown1( void )			{	return (flag2&0x01) == 0x01;	}
+	bool Standable( void )			{	return (flag2&0x02) == 0x02;	}
+	bool Climbable( void )			{	return (flag2&0x04) == 0x04;	}
+	bool Stackable( void )			{	return (flag2&0x08) == 0x08;	}
+	bool WindowArchDoor( void )		{	return (flag2&0x10) == 0x10;	}
+	bool CannotShootThru( void )	{	return (flag2&0x20) == 0x20;	}
+	bool DisplayAsA( void )			{	return (flag2&0x40) == 0x40;	}
+	bool DisplayAsAn( void )		{	return (flag2&0x80) == 0x80;	}
+	bool DescriptionTile( void )	{	return (flag3&0x01) == 0x01;	}
+	bool FadeWithTrans( void )		{	return (flag3&0x02) == 0x02;	}
+	bool Unknown2( void )			{	return (flag3&0x04) == 0x04;	}
+	bool Unknown3( void )			{	return (flag3&0x08) == 0x08;	}
+	bool Map( void )				{	return (flag3&0x10) == 0x10;	}
+	bool Container( void )			{	return (flag3&0x20) == 0x20;	}
+	bool Equipable( void )			{	return (flag3&0x40) == 0x40;	}
+	bool LightSource( void )		{	return (flag3&0x80) == 0x80;	}
+	bool Animated( void )			{	return (flag4&0x01) == 0x01;	}
+	bool Unknown4( void )			{	return (flag4&0x02) == 0x02;	}
+	bool Walk( void )				{	return (flag4&0x04) == 0x04;	}
+	bool WholeBodyItem( void )		{	return (flag4&0x08) == 0x08;	}
+	bool WallRoofWeap( void )		{	return (flag4&0x10) == 0x10;	}
+	bool Door( void )				{	return (flag4&0x20) == 0x20;	}
+	bool ClimbableBit1( void )		{	return (flag4&0x40) == 0x40;	}
+	bool ClimbableBit2( void )		{	return (flag4&0x80) == 0x80;	}
 
-	bool DescriptionTile( void )
-	{
-		return (flag3&0x01) == 0x01;
-	}
-	bool FadeWithTrans( void )
-	{
-		return (flag3&0x02) == 0x02;
-	}
-	bool Unknown2( void )
-	{
-		return (flag3&0x04) == 0x04;
-	}
-	bool Unknown3( void )
-	{
-		return (flag3&0x08) == 0x08;
-	}
-	bool Map( void )
-	{
-		return (flag3&0x10) == 0x10;
-	}
-	bool Container( void )
-	{
-		return (flag3&0x20) == 0x20;
-	}
-	bool Equipable( void )
-	{
-		return (flag3&0x40) == 0x40;
-	}
-	bool LightSource( void )
-	{
-		return (flag3&0x80) == 0x80;
-	}
+	void AtFloorLevel( bool val )		{	MFLAGSET( flag1, val, 0x01 )	}
+	void Holdable( bool val )			{	MFLAGSET( flag1, val, 0x02 )	}
+	void SignGuildBanner( bool val )	{	MFLAGSET( flag1, val, 0x04 )	}
+	void WebDirtBlood( bool val )		{	MFLAGSET( flag1, val, 0x08 )	}
+	void WallVertTile( bool val )		{	MFLAGSET( flag1, val, 0x10 )	}
+	void Damaging( bool val )			{	MFLAGSET( flag1, val, 0x20 )	}
+	void Blocking( bool val )			{	MFLAGSET( flag1, val, 0x40 )	}
+	void LiquidWet( bool val )			{	MFLAGSET( flag1, val, 0x80 )	}
 
-	bool Animated( void )
-	{
-		return (flag4&0x01) == 0x01;
-	}
-	bool Unknown4( void )
-	{
-		return (flag4&0x02) == 0x02;
-	}
-	bool Walk( void )
-	{
-		return (flag4&0x04) == 0x04;
-	}
-	bool WholeBodyItem( void )
-	{
-		return (flag4&0x08) == 0x08;
-	}
-	bool WallRoofWeap( void )
-	{
-		return (flag4&0x10) == 0x10;
-	}
-	bool Door( void )
-	{
-		return (flag4&0x20) == 0x20;
-	}
-	bool ClimbableBit1( void )
-	{
-		return (flag4&0x40) == 0x40;
-	}
-	bool ClimbableBit2( void )
-	{
-		return (flag4&0x80) == 0x80;
-	}
+	void Unknown1( bool val )			{	MFLAGSET( flag2, val, 0x01 )	}
+	void Standable( bool val )			{	MFLAGSET( flag2, val, 0x02 )	}
+	void Climbable( bool val )			{	MFLAGSET( flag2, val, 0x04 )	}
+	void Stackable( bool val )			{	MFLAGSET( flag2, val, 0x08 )	}
+	void WindowArchDoor( bool val )		{	MFLAGSET( flag2, val, 0x10 )	}
+	void CannotShootThru( bool val )	{	MFLAGSET( flag2, val, 0x20 )	}
+	void DisplayAsA( bool val )			{	MFLAGSET( flag2, val, 0x40 )	}
+	void DisplayAsAn( bool val )		{	MFLAGSET( flag2, val, 0x80 )	}
+
+	void DescriptionTile( bool val )	{	MFLAGSET( flag3, val, 0x01 )	}
+	void FadeWithTrans( bool val )		{	MFLAGSET( flag3, val, 0x02 )	}
+	void Unknown2( bool val )			{	MFLAGSET( flag3, val, 0x04 )	}
+	void Unknown3( bool val )			{	MFLAGSET( flag3, val, 0x08 )	}
+	void Map( bool val )				{	MFLAGSET( flag3, val, 0x10 )	}
+	void Container( bool val )			{	MFLAGSET( flag3, val, 0x20 )	}
+	void Equipable( bool val )			{	MFLAGSET( flag3, val, 0x40 )	}
+	void LightSource( bool val )		{	MFLAGSET( flag3, val, 0x80 )	}
+
+	void Animated( bool val )			{	MFLAGSET( flag4, val, 0x01 )	}
+	void Unknown4( bool val )			{	MFLAGSET( flag4, val, 0x02 )	}
+	void Walk( bool val )				{	MFLAGSET( flag4, val, 0x04 )	}
+	void WholeBodyItem( bool val )		{	MFLAGSET( flag4, val, 0x08 )	}
+	void WallRoofWeap( bool val )		{	MFLAGSET( flag4, val, 0x10 )	}
+	void Door( bool val )				{	MFLAGSET( flag4, val, 0x20 )	}
+	void ClimbableBit1( bool val )		{	MFLAGSET( flag4, val, 0x40 )	}
+	void ClimbableBit2( bool val )		{	MFLAGSET( flag4, val, 0x80 )	}
+
 	UI08 ClimbableBits( void )
 	{	
 		UI08 p1 = 0, p2 = 0; 
@@ -320,9 +237,9 @@ public:
 	{
 		height = newVal;
 	}
-	void Name( char *newVal )
+	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, (char *)newVal, 22 );
+		strncpy( (char *)name, newVal, 22 );
 	}
 
 };
