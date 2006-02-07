@@ -1,4 +1,4 @@
-2/06/2006 - giwo (0.98-3.2j [3.3 RC] )
+2/07/2006 - giwo (0.98-3.2j [3.3 RC] )
 	Replaced CTEffectContainer with a call to CDataList.
 	Fixed multiple issues causing temporary effects to randomly never expire.
 	Fixed an issue causing mana never to regenerate completely in certain circumstances.
