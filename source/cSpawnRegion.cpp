@@ -15,7 +15,6 @@ const SI16		DEFSPAWN_X1				= 0;
 const SI16		DEFSPAWN_X2				= 0;
 const SI16		DEFSPAWN_Y1				= 0;
 const SI16		DEFSPAWN_Y2				= 0;
-const SI08		DEFSPAWN_Z				= 0;
 const size_t	DEFSPAWN_MAXCSPAWN		= 0;
 const size_t	DEFSPAWN_MAXISPAWN		= 0;
 const UI08		DEFSPAWN_MAXTIME		= 0;
@@ -23,11 +22,12 @@ const UI08		DEFSPAWN_MINTIME		= 0;
 const SI32		DEFSPAWN_CURCSPAWN		= 0;
 const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
+const SI08		DEFSPAWN_PREFZ			= 18;
 
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ), 
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), 
-nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), z( DEFSPAWN_Z ), 
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM )
+nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), 
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -217,13 +217,13 @@ void CSpawnRegion::SetNextTime( TIMERVAL newVal )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Z Level of the Spawn Region
 //o--------------------------------------------------------------------------o
-void CSpawnRegion::SetZ( SI08 newVal )
+void CSpawnRegion::SetPrefZ( SI08 newVal )
 {
-	z = newVal;
+	prefZ = newVal;
 }
-SI08 CSpawnRegion::GetZ( void ) const
+SI08 CSpawnRegion::GetPrefZ( void ) const
 {
-	return z;
+	return prefZ;
 }
 
 //o---------------------------------------------------------------------------o
@@ -382,6 +382,8 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				call = data.toUShort();
 			else if( UTag == "WORLD" )
 				worldNumber = data.toUByte();
+			else if( UTag == "PREFZ" )
+				prefZ = data.toByte();
 		}
 	}
 }
@@ -509,6 +511,16 @@ bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		x = RandomNum( x1, x2 );
 		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
+
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z = staticz;
+		}
 
 		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
 		{

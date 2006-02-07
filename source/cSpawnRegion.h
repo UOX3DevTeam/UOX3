@@ -32,7 +32,7 @@ private:
 	SI16		y1;					// Top left y
 	SI16		y2;					// Bottom right y
 	
-	SI08		z;					// Z position of spawned items
+	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
 
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
@@ -62,7 +62,7 @@ public:
 	SI16		GetY1( void ) const;
 	SI16		GetX2( void ) const;
 	SI16		GetY2( void ) const;
-	SI08		GetZ( void ) const;
+	SI08		GetPrefZ( void ) const;
 
 	void		SetName( const std::string newName );
 	void		SetRegionNum( UI16 newVal );
@@ -77,7 +77,7 @@ public:
 	void		SetY1( SI16 newVal );
 	void		SetX2( SI16 newVal );
 	void		SetY2( SI16 newVal );
-	void		SetZ( SI08 newVal );
+	void		SetPrefZ( SI08 newVal );
 
 	UI08		WorldNumber( void ) const;
 	void		WorldNumber( UI08 newVal );

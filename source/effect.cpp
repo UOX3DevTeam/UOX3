@@ -335,7 +335,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 void cEffects::checktempeffects( void )
 {
 	CItem *i = NULL;
-	CChar *s = NULL, *src = NULL, *targ = NULL;
+	CChar *s = NULL, *src = NULL;
 	CSocket *tSock = NULL;
 	CBaseObject *myObj = NULL;
 
@@ -529,35 +529,33 @@ void cEffects::checktempeffects( void )
 			case 24:	// cure
 				R32 newHealth;
 				src = calcCharObjFromSer( Effect->Source() );
-				targ = calcCharObjFromSer( Effect->Destination() );
 				i = (CItem *)Effect->ObjPtr();
-				if( ValidateObject( src ) && ValidateObject( targ ) )
+				if( ValidateObject( src ) && ValidateObject( s ) )
 				{
 					if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
 					{
 						CSocket *srcSock = src->GetSocket();
-						CSocket *targSock = targ->GetSocket();
-						if( objInRange( src, targ, 2 ) && LineOfSight( srcSock, targ, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+						if( objInRange( src, s, 2 ) && LineOfSight( srcSock, s, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 						{
 							if( Effect->Number() == 22 )
 							{
-								newHealth = static_cast<R32>(targ->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
-								targ->SetHP( UOX_MIN( static_cast<SI16>(targ->GetMaxHP()), (SI16)newHealth ) );
+								newHealth = static_cast<R32>(s->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
+								s->SetHP( UOX_MIN( static_cast<SI16>(s->GetMaxHP()), (SI16)newHealth ) );
 								srcSock->sysmessage( 1271 );
 							}
 							else if( Effect->Number() == 23 )
 							{
-								NpcResurrectTarget( targ );
+								NpcResurrectTarget( s );
 								srcSock->sysmessage( 1272 );
 							}
 							else
 							{
-								targ->SetPoisoned( 0 );
-								if( targSock != NULL )
+								s->SetPoisoned( 0 );
+								if( tSock != NULL )
 								{
-									PlayStaticAnimation( targ, 0x373A, 0, 15 );
-									PlaySound( targSock, 0x01E0, false );
-									targSock->sysmessage( 1273 );
+									PlayStaticAnimation( s, 0x373A, 0, 15 );
+									PlaySound( tSock, 0x01E0, false );
+									tSock->sysmessage( 1273 );
 								}
 								if( srcSock != NULL )
 									srcSock->sysmessage( 1274 );

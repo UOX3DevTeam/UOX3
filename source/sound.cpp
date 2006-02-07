@@ -218,7 +218,7 @@ void cEffects::playDeathSound( CChar *i )
 	}
 	else
 	{
-		UI16 toPlay = cwmWorldState->creatures[i->GetOrgID()].GetSound( SND_DIE );
+		const UI16 toPlay = cwmWorldState->creatures[i->GetOrgID()].GetSound( SND_DIE );
 		if( toPlay != 0x00 )
 			Effects->PlaySound( i, toPlay );
 	}

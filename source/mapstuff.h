@@ -108,8 +108,8 @@ public:
 	void			Load( void );
 
 	// height functions
-	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
+	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
 	SI08			MapElevation( SI16 x, SI16 y, UI08 worldNumber );
 	SI08			AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
 	SI08			TileHeight( UI16 tilenum );
@@ -135,7 +135,7 @@ public:
 
 // Functions
 private:
-	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz );
+	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
 	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
 
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );

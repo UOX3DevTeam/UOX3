@@ -539,7 +539,7 @@ SI08 cMapStuff::TileHeight( UI16 tilenum )
 //o-------------------------------------------------------------o
 //|   Purpose     :  Top of statics at/above given coordinates
 //o-------------------------------------------------------------o
-SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
 {
 	SI08 top = ILLEGAL_Z;
 
@@ -548,7 +548,7 @@ SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	while( stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
-		if( ( tempTop <= oldz + MAX_Z_STEP ) && ( tempTop > top ) )
+		if( ( tempTop <= oldz + maxZ ) && ( tempTop > top ) )
 			top = tempTop;
 	}
 	return top;
@@ -626,7 +626,7 @@ void cMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 
 
 
 // return the height of a multi item at the given x,y. this seems to actually return a height
-SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
+SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 {                                                                                                                                  	
 	SI32 length = 0;
 	UI16 multiID = static_cast<UI16>( i->GetID() - 0x4000);
@@ -642,9 +642,9 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		if( multi->visible && ( i->GetX() + multi->x == x) && ( i->GetY() + multi->y == y ) )
 		{
 			int tmpTop = i->GetZ() + multi->z;
-			if( ( tmpTop <= oldz + MAX_Z_STEP ) && ( tmpTop >= oldz - 1 ) )
+			if( ( tmpTop <= oldz + maxZ ) && ( tmpTop >= oldz - 1 ) )
 				return multi->z;
-			else if( ( tmpTop >= oldz - MAX_Z_STEP ) && ( tmpTop < oldz - 1 ) )
+			else if( ( tmpTop >= oldz - maxZ ) && ( tmpTop < oldz - 1 ) )
 				return multi->z;
 		}                                                                                                                 
 	}
@@ -653,7 +653,7 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz )
 
 
 // This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
-SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
 {
 	SI08 z = ILLEGAL_Z;
 	
@@ -668,13 +668,13 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
 		{
-			z = MultiHeight( tempItem, x, y, oldz );
+			z = MultiHeight( tempItem, x, y, oldz, maxZ );
 			z += tempItem->GetZ() + 1;
 		}
 		if( tempItem->GetX() == x && tempItem->GetY() == y && tempItem->GetID( 1 ) < 0x40 )
 		{
 			SI08 ztemp = (SI08)(tempItem->GetZ() + TileHeight( tempItem->GetID() ));
-			if( ( ztemp <= oldz + MAX_Z_STEP ) && ztemp > z )
+			if( ( ztemp <= oldz + maxZ ) && ztemp > z )
 				z = ztemp;
 		}
 	}
@@ -1034,11 +1034,11 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	// let's check in this order.. dynamic, static, then the map
-	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber );
+	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber, MAX_Z_STEP );
 	if( ILLEGAL_Z != dynz )
 		return dynz;
 
-	const SI08 staticz = StaticTop( x, y, oldz, worldNumber );
+	const SI08 staticz = StaticTop( x, y, oldz, worldNumber, MAX_Z_STEP );
 	if( ILLEGAL_Z != staticz )
 		return staticz;
 

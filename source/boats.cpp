@@ -109,7 +109,7 @@ void LeaveBoat( CSocket *s, CItem *p )
 	{
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
-			SI08 sz = Map->StaticTop( x, y, z, worldNumber );
+			SI08 sz = Map->StaticTop( x, y, z, worldNumber, MAX_Z_STEP );
 			SI08 mz = Map->MapElevation( x, y, worldNumber );
 			if( sz == ILLEGAL_Z )
 				typ = 0;
@@ -318,7 +318,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 	{
 		for( SI16 y = y1; y < y2; ++y )
 		{
-			SI08 sz = Map->StaticTop( x, y, b->GetZ(), worldNumber );
+			SI08 sz = Map->StaticTop( x, y, b->GetZ(), worldNumber, MAX_Z_STEP );
 
 			if( sz == ILLEGAL_Z ) //map tile
 			{
