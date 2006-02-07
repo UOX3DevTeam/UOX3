@@ -645,7 +645,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI08 myz, UI08 dir )
 // Split up of FillXYBlockStuff
 
 
-void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
+void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
@@ -672,10 +672,11 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, int &xycount,
 }
 
 
-void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber )
+void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
+
 	MapStaticIterator msi( x, y, worldNumber );
 	staticrecord *stat = NULL;
  	while( stat = msi.Next() )
@@ -689,11 +690,11 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, int &xyco
 		xyblock[xycount].Weight( 255 );
 		++xycount;
 		if( xycount >= XYMAX )	// don't overflow
-			return;
+			break;
 	}
 }
 
-void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber )
+void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
@@ -747,8 +748,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xyc
 			}
 			for( SI32 j = 0; j < length; ++j )
 			{
-				st_multi *multi;
-				multi = Map->SeekIntoMulti( multiID, j );
+				const st_multi *multi = Map->SeekIntoMulti( multiID, j );
 				if( multi->visible && (tItem->GetX() + multi->x) == x && (tItem->GetY() + multi->y) == y )
 				{
 					CTile tile;
@@ -1650,7 +1650,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	SI08 newz			= ILLEGAL_Z;
 	bool blocked		= false;
 	char ontype			= 0;
-	int xycount			= 0;
+	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	CTileUni xyblock[XYMAX];
 	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
@@ -1658,12 +1658,12 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber );
 
 	// first calculate newZ value
-	for( int i = 0; i < xycount; ++i )
+	for( UI16 i = 0; i < xycount; ++i )
 	{
 		CTileUni *tb = &xyblock[i]; // this is a easy/little tricky, to save a little calculation
 		                                 // since the [i] is calclated several times below
 			                             // if it doesn't help, it doesn't hurt either.
-		SI08 nItemTop = (SI08)(tb->BaseZ() + ((xyblock[i].Type() == 0) ? xyblock[i].Height() : calcTileHeight( xyblock[i].Height() ) )); // Calculate the items total height
+		SI08 nItemTop = (SI08)(tb->BaseZ() + ((tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) )); // Calculate the items total height
 
 		// check if the creature is floating on a static (keeping Z or falling)
 		if( nItemTop >= newz && nItemTop <= oldz )
@@ -1714,7 +1714,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	// now the new Z-cordinate of creature is known, 
 	// check if it hits it's head against something (blocking in other words)
 	bool isGM = IsGMBody( c );
-	for( int ii = 0; ii < xycount; ++ii )
+	for( UI16 ii = 0; ii < xycount; ++ii )
 	{
 		CTileUni *tb = &xyblock[ii]; 
 		SI32 nItemTop = tb->BaseZ() + ( ( tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) ); // Calculate the items total height
@@ -1726,7 +1726,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 			{ // in effact radius?
 				newz = ILLEGAL_Z;
 #if DEBUG_WALKING
-				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", xyblock[ii].ID(), xyblock[ii].BaseZ() );
+				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), tb->BaseZ() );
 #endif
 				blocked = true;
 				break;

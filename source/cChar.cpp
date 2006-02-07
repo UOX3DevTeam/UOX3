@@ -122,15 +122,13 @@ const SERIAL		DEFCHAR_TOWNVOTE 			= INVALIDSERIAL;
 const UI32			DEFCHAR_BOOLS 				= 0;
 const SI08			DEFCHAR_DISPZ 				= 0;
 const SI08			DEFCHAR_FONTTYPE 			= 3;
+const RACEID		DEFCHAR_OLDRACE 			= 0;
 const UI16			DEFCHAR_MAXHP 				= 0;
 const UI16			DEFCHAR_MAXHP_OLDSTR 		= 0;
-const RACEID		DEFCHAR_MAXHP_OLDRACE 		= 0;
 const UI16			DEFCHAR_MAXMANA				= 0;
 const UI16			DEFCHAR_MAXMANA_OLDINT 		= 0;
-const RACEID		DEFCHAR_MAXMANA_OLDRACE		= 0;
 const UI16			DEFCHAR_MAXSTAM				= 0;
 const UI16			DEFCHAR_MAXSTAM_OLDDEX 		= 0;
-const RACEID		DEFCHAR_MAXSTAM_OLDRACE		= 0;
 const COLOUR		DEFCHAR_SAYCOLOUR 			= 0x0058;
 const COLOUR		DEFCHAR_EMOTECOLOUR			= 0x0023;
 const SI08			DEFCHAR_CELL 				= -1;
@@ -161,8 +159,8 @@ const SI16			DEFCHAR_KILLS				= 0;
 CChar::CChar() : CBaseObject(),
 townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), kills( DEFCHAR_KILLS ), 
-maxHP_oldrace( DEFCHAR_MAXHP_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ), maxMana_oldrace( DEFCHAR_MAXMANA_OLDRACE ),
-maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), maxStam_oldrace( DEFCHAR_MAXSTAM_OLDRACE ), saycolor( DEFCHAR_SAYCOLOUR ), 
+oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
+maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ), 
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), karma( DEFCHAR_KARMA ), fame( DEFCHAR_FAME ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
@@ -2159,7 +2157,7 @@ void CChar::RemoveOwnedItem( CItem *toRemove )
 //o--------------------------------------------------------------------------
 UI16 CChar::GetMaxHP( void )
 {
-	if( maxHP_oldstr != GetStrength() || maxHP_oldrace != GetRace() )
+	if( maxHP_oldstr != GetStrength() || oldRace != GetRace() )
 	//if str/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2171,17 +2169,17 @@ UI16 CChar::GetMaxHP( void )
 		maxHP = (UI16)(GetStrength() + (UI16)( ((float)GetStrength()) * ((float)(pRace->HPModifier())) / 100 ));
 		// set max. hitpoints to strength + hpmodifier% of strength
 
-		maxHP_oldstr = GetStrength();
-		maxHP_oldrace = GetRace();
+		maxHP_oldstr	= GetStrength();
+		oldRace			= GetRace();
 
 	}
 	return maxHP;
 }
-void CChar::SetMaxHP( UI16 newmaxhp, SI16 newoldstr, RACEID newoldrace )
+void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 {
 	maxHP			= newmaxhp;
 	maxHP_oldstr	= newoldstr;
-	maxHP_oldrace	= newoldrace;
+	oldRace			= newoldrace;
 }
 
 //o--------------------------------------------------------------------------
@@ -2194,7 +2192,7 @@ void CChar::SetMaxHP( UI16 newmaxhp, SI16 newoldstr, RACEID newoldrace )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxMana( void )
 {
-	if( maxMana_oldint != GetIntelligence() || maxMana_oldrace != GetRace() )
+	if( maxMana_oldint != GetIntelligence() || oldRace != GetRace() )
 	//if int/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2206,17 +2204,17 @@ SI16 CChar::GetMaxMana( void )
 		maxMana = (SI16)(GetIntelligence() + (SI16)( ((float)GetIntelligence()) * ((float)(pRace->ManaModifier())) / 100 ));
 		// set max. mana to int + manamodifier% of int
 
-		maxMana_oldint = GetIntelligence();
-		maxMana_oldrace = GetRace();
+		maxMana_oldint	= GetIntelligence();
+		oldRace			= GetRace();
 
 	}
 	return maxMana;
 }
-void CChar::SetMaxMana( SI16 newmaxmana, SI16 newoldint, RACEID newoldrace )
+void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 {
 	maxMana			= newmaxmana;
 	maxMana_oldint	= newoldint;
-	maxMana_oldrace = newoldrace;
+	oldRace			= newoldrace;
 }
 
 //o--------------------------------------------------------------------------
@@ -2229,7 +2227,7 @@ void CChar::SetMaxMana( SI16 newmaxmana, SI16 newoldint, RACEID newoldrace )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxStam( void )
 {
-	if( maxStam_olddex != GetDexterity() || maxStam_oldrace != GetRace() )
+	if( maxStam_olddex != GetDexterity() || oldRace != GetRace() )
 	//if dex/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2242,16 +2240,16 @@ SI16 CChar::GetMaxStam( void )
 		// set max. stamina to dex + stammodifier% of dex
 
 		maxStam_olddex	= GetDexterity();
-		maxStam_oldrace	= GetRace();
+		oldRace			= GetRace();
 
 	}
 	return maxStam;
 }
-void CChar::SetMaxStam( SI16 newmaxstam, SI16 newolddex, RACEID newoldrace )
+void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 {
 	maxStam			= newmaxstam;
 	maxStam_olddex	= newolddex;
-	maxStam_oldrace = newoldrace;
+	oldRace			= newoldrace;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3497,14 +3495,16 @@ void CChar::Cleanup( void )
 		MapRegion->RemoveChar( this );
 
 		// If we delete a NPC we should delete his tempeffects as well
-		for( CTEffect *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
+		cwmWorldState->tempEffects.Push();
+		for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 		{
 			if( Effect->Destination() == GetSerial() )
-				Effect->Destination( INVALIDSERIAL );
+				cwmWorldState->tempEffects.Remove( Effect, true );
 			
 			if( Effect->Source() == GetSerial() )
 				Effect->Source( INVALIDSERIAL );
 		}
+		cwmWorldState->tempEffects.Pop();
 
 		// if we delete a NPC we should delete him from spawnregions
 		// this will fix several crashes

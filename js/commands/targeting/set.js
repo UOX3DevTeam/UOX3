@@ -92,6 +92,21 @@ function onCallback0( socket, ourObj )
 		ourObj.y = nVal;
 		okMsg( socket );
 		break;
+	case "TEMPSTR":
+	case "TEMPSTRENGTH":
+		ourObj.tempstr = nVal;
+		okMsg( socket );
+		break;
+	case "TEMPINT":
+	case "TEMPINTELLIGENCE":
+		ourObj.tempint = nVal;
+		okMsg( socket );
+		break;
+	case "TEMPDEX":
+	case "TEMPDEXTERITY":
+		ourObj.tempdex = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, nVal );

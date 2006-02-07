@@ -49,7 +49,6 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 //o--------------------------------------------------------------------------o
 void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 {
-	assert( baseObj );
 	if( !ValidateObject( baseObj ) )
 		return;
 	CPPlaySoundEffect toSend = (*baseObj);

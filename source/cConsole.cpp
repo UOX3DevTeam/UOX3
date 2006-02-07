@@ -1308,7 +1308,7 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
 				messageLoop << temp;
-				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * TEffects->Count() );
+				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
 				total += tmp = Map->TileMem + Map->MultisMem;
 				sprintf( temp, "        Approximate Total: %i bytes", total );

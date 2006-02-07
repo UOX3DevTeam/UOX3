@@ -149,7 +149,6 @@ namespace UOX {
 	class CSpeechEntry;
 	class CSpeechQueue;
 	class CTEffect;
-	class CTEffectContainer;
 	class CThreadQueue;
 	class CTile;
 	class CTileUni;

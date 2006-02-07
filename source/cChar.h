@@ -176,13 +176,11 @@ protected:
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
-	RACEID		maxHP_oldrace;
 	SI16		maxMana;
 	UI16		maxMana_oldint;
-	RACEID		maxMana_oldrace;
 	SI16		maxStam;
 	UI16		maxStam_olddex;
-	RACEID		maxStam_oldrace;
+	RACEID		oldRace;
 
 	UI08		PoisonStrength;
 
@@ -447,9 +445,9 @@ public:
 	void	IsIncognito( bool newValue );
 	bool	IsJailed( void ) const;
 
-	void			SetMaxHP( UI16 newmaxhp, SI16 newoldstr, RACEID newoldrace );
-	void			SetMaxMana( SI16 newmaxmana, SI16 newoldint, RACEID newoldrace );
-	void			SetMaxStam( SI16 newmaxstam, SI16 newolddex, RACEID newoldrace );
+	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
+	void			SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace );
+	void			SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace );
 	virtual UI16	GetMaxHP( void );
 	SI16			GetMaxMana( void );
 	SI16			GetMaxStam( void );

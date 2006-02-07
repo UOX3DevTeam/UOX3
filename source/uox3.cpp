@@ -1138,7 +1138,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			{
 				if( mBoat->GetMoveType() == 1 )
 					MoveBoat( itemCheck->GetDir(), mBoat );
-				else 
+				else if( mBoat->GetMoveType() == 2 )
 				{
 					UI08 dir = (UI08)( itemCheck->GetDir() + 4 );
 					if( dir > 7 )
@@ -1560,20 +1560,20 @@ void LoadJSEngine( void )
 //o---------------------------------------------------------------------------o
 void InitClasses( void )
 {
-	JSMapping		= NULL;
+	JSMapping		= NULL;	Effects		= NULL;
 	Commands		= NULL;	Combat		= NULL;
 	Items			= NULL;	Map			= NULL;
 	Npcs			= NULL;	Skills		= NULL;	
 	Weight			= NULL;	JailSys		= NULL;
 	Network			= NULL;	Magic		= NULL;		
 	Races			= NULL;	Weather		= NULL;
-	Movement		= NULL;	TEffects	= NULL;	
+	Movement		= NULL;	GuildSys	= NULL;
 	WhoList			= NULL;	OffList		= NULL;
 	Books			= NULL;	GMQueue		= NULL;	
 	Dictionary		= NULL;	Accounts	= NULL;
 	MapRegion		= NULL;	SpeechSys	= NULL;
-	CounselorQueue	= NULL;	GuildSys	= NULL;
-	HTMLTemplates	= NULL;	Effects		= NULL;
+	CounselorQueue	= NULL;
+	HTMLTemplates	= NULL;
 	FileLookup		= NULL;
 	objFactory		= NULL;
 
@@ -1594,7 +1594,6 @@ void InitClasses( void )
 	if(( Races			= new cRaces )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
 	if(( Weather		= new cWeatherAb )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
 	if(( Movement		= new cMovement )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
-	if(( TEffects		= new CTEffectContainer )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_TEMPEFFECTS );	// addition of TEffect class, memory reduction (Abaddon, 17th Feb 2000)
 	if(( WhoList		= new cWhoList )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
 	if(( OffList		= new cWhoList( false ) )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
 	if(( Books			= new cBooks )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
@@ -1805,7 +1804,6 @@ void Shutdown( SI32 retCode )
 	delete Weather;
 	delete Movement;
 	delete Network;
-	delete TEffects;
 	delete WhoList;
 	delete OffList;
 	delete Books;

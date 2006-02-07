@@ -449,22 +449,21 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 //o---------------------------------------------------------------------------o
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
-	CChar *CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
-	if( CSpawn != NULL )
+	CChar *CSpawn = NULL;
+	SI16 x, y;
+	SI08 z;
+	if( FindSpotToSpawn( x, y, z ) )
 	{
-		if( FindSpotToSpawn( CSpawn ) )
+		CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
+		if( CSpawn != NULL )
 		{
-            CSpawn->SetSpawned( true );
-			CSpawn->ShouldSave( false );
-			CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
-			InitializeWanderArea( CSpawn, 10, 10 );
-			Npcs->PostSpawnUpdate( CSpawn );
-			IncCurrentCharAmt();
-		}
-		else
-		{
-			CSpawn->Delete();
-			CSpawn = NULL;
+				CSpawn->SetLocation( x, y, z );
+				CSpawn->SetSpawned( true );
+				CSpawn->ShouldSave( false );
+				CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
+				InitializeWanderArea( CSpawn, 10, 10 );
+				Npcs->PostSpawnUpdate( CSpawn );
+				IncCurrentCharAmt();
 		}
 	}
 	return CSpawn;
@@ -478,20 +477,19 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 //o---------------------------------------------------------------------------o
 CItem *CSpawnRegion::RegionSpawnItem( void )
 {
-	CItem *ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber );
-	if( ISpawn != NULL )
+	CItem *ISpawn = NULL;
+	SI16 x, y;
+	SI08 z;
+	if( FindSpotToSpawn( x, y, z ) )
 	{
-		if( FindSpotToSpawn( ISpawn ) )
+		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber );
+		if( ISpawn != NULL )
 		{
+			ISpawn->SetLocation( x, y, z );
 			ISpawn->SetSpawn( static_cast<UI32>(regionnum) );
-            ISpawn->SetSpawned( true );
+			ISpawn->SetSpawned( true );
 			ISpawn->ShouldSave( false );
 			IncCurrentItemAmt();
-		}
-		else
-		{
-			ISpawn->Delete();
-			ISpawn = NULL;
 		}
 	}
 	return ISpawn;
@@ -503,10 +501,8 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o---------------------------------------------------------------------------o
-bool CSpawnRegion::FindSpotToSpawn( CBaseObject *mObj )
+bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 {
-	SI16 x, y;
-	SI08 z;
 	bool rvalue = false;
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
@@ -516,7 +512,6 @@ bool CSpawnRegion::FindSpotToSpawn( CBaseObject *mObj )
 
 		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
 		{
-			mObj->SetLocation( x, y, z );
 			rvalue = true;
 			break;
 		}

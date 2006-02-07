@@ -92,7 +92,7 @@ private:
 	CChar *		RegionSpawnChar( void );
 	CItem *		RegionSpawnItem( void );
 
-	bool		FindSpotToSpawn( CBaseObject *mObj );
+	bool		FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
 
 	void		LoadNPCList( std::string npcList );
 	void		LoadItemList( std::string itemList );

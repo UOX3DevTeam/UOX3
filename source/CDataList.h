@@ -119,7 +119,7 @@ namespace UOX
 				objIterator = objData.end();
 			return true;
 		}
-		bool Remove( T toRemove )
+		bool Remove( T toRemove, bool handleAlloc = false )
 		{
 			DATALIST_ITERATOR rIter = FindEntry( toRemove );
 			if( rIter != objData.end() )
@@ -142,6 +142,9 @@ namespace UOX
 					objIterator = (objData.begin() + iCounterPos );
 				else
 					objIterator = objData.end();
+
+				if( handleAlloc )
+					delete toRemove;
 				return true;
 			}
 			return false;

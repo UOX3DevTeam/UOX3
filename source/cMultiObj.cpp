@@ -191,7 +191,11 @@ void CMultiObj::AddToMulti( CBaseObject *toAdd )
 void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 {
 	if( toRemove->GetObjType() == OT_CHAR )
+	{
 		charInMulti.Remove( static_cast< CChar * >(toRemove) );
+		if( CanBeObjType( OT_BOAT ) && charInMulti.Num() == 0 )
+			((CBoatObj *)this)->SetMoveType( 0 );
+	}
 	else
 		itemInMulti.Remove( static_cast< CItem * >(toRemove) );
 }
@@ -598,8 +602,7 @@ bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 	CMultiObj::DumpBody( outStream );
 	dumping << "Hold=" << "0x" << std::hex << hold << std::endl;
 	dumping << "Planks=" << "0x" << std::hex << planks[0] << "," << "0x" << planks[1] << std::endl;
-	dumping << "Tiller=" << "0x" << std::hex << tiller << std::endl;
-	dumping << "MoveType=" << std::dec << moveType << std::endl;
+	dumping << "Tiller=" << "0x" << std::hex << tiller << std::dec << std::endl;
 	
 	outStream << dumping.str();
 	return true;
@@ -625,7 +628,6 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 			case 'M':
 				if( UTag == "MOVETYPE" )
 				{
-					SetMoveType( data.toUByte() );
 					rvalue = true;
 				}
 			case 'H':

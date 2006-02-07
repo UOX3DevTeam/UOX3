@@ -1226,7 +1226,7 @@ SI16 CBaseObject::GetMana( void ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::SetMana( SI16 mn )
 {
-	mana = UOX_MIN( UOX_MAX( static_cast<SI16>(0), mn ), intelligence );
+	mana = mn;
 }
 
 //o--------------------------------------------------------------------------

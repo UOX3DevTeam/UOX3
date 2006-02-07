@@ -770,9 +770,9 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 	if( map1.id > 2 && ILLEGAL_Z != MapElevation( x, y, worldNumber ) )
 	{
 		// get three other nearby maps to decide on an average z?
-		SI08 map2z = MapElevation( x + 1, y, worldNumber );
-		SI08 map3z = MapElevation( x, y + 1, worldNumber );
-		SI08 map4z = MapElevation( x + 1, y + 1, worldNumber );
+		const SI08 map2z = MapElevation( x + 1, y, worldNumber );
+		const SI08 map3z = MapElevation( x, y + 1, worldNumber );
+		const SI08 map4z = MapElevation( x + 1, y + 1, worldNumber );
 		
 		SI08 testz = 0;
 		if( abs( map1.z - map4z ) <= abs( map2z - map3z ) )
@@ -1034,11 +1034,11 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	// let's check in this order.. dynamic, static, then the map
-	SI08 dynz = DynamicElevation( x, y, oldz, worldNumber );
+	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber );
 	if( ILLEGAL_Z != dynz )
 		return dynz;
 
-	SI08 staticz = StaticTop( x, y, oldz, worldNumber );
+	const SI08 staticz = StaticTop( x, y, oldz, worldNumber );
 	if( ILLEGAL_Z != staticz )
 		return staticz;
 

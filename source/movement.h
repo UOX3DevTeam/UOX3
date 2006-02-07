@@ -47,9 +47,9 @@ private:
 	bool	CanBirdWalk( CTileUni &xyb );
 	*/
 
-	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
-	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber );
-	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, int &xycount, UI08 worldNumber );
+	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
+	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
+	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
 
 	SI16	Distance( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
 	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );

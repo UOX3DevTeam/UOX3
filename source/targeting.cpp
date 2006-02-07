@@ -561,7 +561,7 @@ void InfoTarget( CSocket *s )
 		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
 		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
 		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
-		statTile.AddData( "Height", tile.Height(), 1 );
+		statTile.AddData( "Height", tile.Height(), 0 );
 		statTile.AddData( "Name", tile.Name() );
 		statTile.Send( 4, false, INVALIDSERIAL );
 	}

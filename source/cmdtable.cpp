@@ -452,7 +452,7 @@ void command_memstats( CSocket *s )
 	size_t charsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
 	size_t itemsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
-	size_t teffectsSize		= sizeof( CTEffect ) * TEffects->Count();
+	size_t teffectsSize		= sizeof( CTEffect ) * cwmWorldState->tempEffects.Num();
 	size_t regionsSize		= sizeof( CTownRegion ) * cwmWorldState->townRegions.size();
 	size_t spawnregionsSize = sizeof( CSpawnRegion ) * cwmWorldState->spawnRegions.size();
 	size_t total			= charsSize + itemsSize + spellsSize + cacheSize + regionsSize + spawnregionsSize + teffectsSize;
@@ -469,7 +469,7 @@ void command_memstats( CSocket *s )
 	cacheStats.AddData( "  Allocated Memory: ", itemsSize );
 	cacheStats.AddData( "  CItem: ", sizeof( CItem ) );
 	cacheStats.AddData( " Spells Size: ", spellsSize );
-	cacheStats.AddData( " TEffects: ", TEffects->Count() );
+	cacheStats.AddData( " TEffects: ",  cwmWorldState->tempEffects.Num() );
 	cacheStats.AddData( "  Allocated Memory: ", teffectsSize );
 	cacheStats.AddData( "  TEffect: ", sizeof( CTEffect ) );
 	cacheStats.AddData( " Regions Size: ", cwmWorldState->townRegions.size() );

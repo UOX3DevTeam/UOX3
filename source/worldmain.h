@@ -235,6 +235,7 @@ public:
 	std::map< UI16, GoPlaces_st >		goPlaces;
 	SPAWNMAP							spawnRegions;
 	TOWNMAP								townRegions;
+	CDataList< CTEffect * >				tempEffects;
 
 	QUEUEMAP							refreshQueue;
 	QUEUEMAP							deletionQueue;

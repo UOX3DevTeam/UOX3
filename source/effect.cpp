@@ -340,31 +340,32 @@ void cEffects::checktempeffects( void )
 	CBaseObject *myObj = NULL;
 
 	UI32 j = cwmWorldState->GetUICurrentTime();
-	TEffects->StartQueue();
-	for( CTEffect *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
+	cwmWorldState->tempEffects.Push();
+	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
 		if( Effect == NULL )
 		{
-			TEffects->QueueToKeep( Effect );
+			cwmWorldState->tempEffects.Remove( Effect );
 			continue;
 		}
-		if( Effect->ExpireTime() > j || Effect->Destination() == INVALIDSERIAL )
+		else if( Effect->Destination() == INVALIDSERIAL )
 		{
-			TEffects->QueueToKeep( Effect );
+			cwmWorldState->tempEffects.Remove( Effect, true );
 			continue;
 		}
+		if( Effect->ExpireTime() > j )
+			continue;
 
 		if( Effect->Destination() < BASEITEMSERIAL )
 		{
 			s = calcCharObjFromSer( Effect->Destination() );
 			if( !ValidateObject( s ) )
 			{
-				TEffects->QueueToKeep( Effect );
+				cwmWorldState->tempEffects.Remove( Effect, true );
 				continue;
 			}
 			tSock = s->GetSocket();
 		}
-		TEffects->QueueToRemove( Effect );
 		bool equipCheckNeeded = false;
 
 		switch( Effect->Number() )
@@ -427,8 +428,8 @@ void cEffects::checktempeffects( void )
 				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
 				equipCheckNeeded = true;
 				break;
-			case 12:
-				if( s!=NULL )
+			case 12: // Curse
+				if( s != NULL )
 				{
 					s->IncStrength2( Effect->More1() );
 					s->IncDexterity2( Effect->More2() );
@@ -514,7 +515,6 @@ void cEffects::checktempeffects( void )
 					s->SendWornItems( tSock );
 				s->IsIncognito( false );
 				break;
-				
 			case 21:
 				UI16 toDrop;
 				toDrop = Effect->More1();
@@ -580,14 +580,14 @@ void cEffects::checktempeffects( void )
 				break;
 			case 27:
 				src = calcCharObjFromSer( Effect->Source() );
-				targ = calcCharObjFromSer( Effect->Destination() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
 				Magic->playSound( src, 43 );
-				Magic->doMoveEffect( 43, targ, src );
-				Magic->doStaticEffect( targ, 43 );
-				Magic->MagicDamage( targ, Effect->More1(), src );
+				Magic->doMoveEffect( 43, s, src );
+				Magic->doStaticEffect( s, 43 );
+				Magic->MagicDamage( s, Effect->More1(), src );
 				equipCheckNeeded = true;
 				break;
-
 			case 40:
 			{
 				UI16 scpNum			= 0xFFFF;
@@ -659,8 +659,9 @@ void cEffects::checktempeffects( void )
 		}
 		if( ValidateObject( s ) && equipCheckNeeded )
 			Items->CheckEquipment( s ); // checks equipments for stat requirements
+		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
-	TEffects->Prune();
+	cwmWorldState->tempEffects.Pop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -750,14 +751,14 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	if( !ValidateObject( source ) || !ValidateObject( dest ) )
 		return;
 
-	CTEffect *toAdd	= TEffects->CreateEffect();
+	CTEffect *toAdd	= new CTEffect;
 	SERIAL sourSer	= source->GetSerial();
 	SERIAL targSer	= dest->GetSerial();
 	toAdd->Source( sourSer );
 	toAdd->Destination( targSer );
 
-	TEffects->StartQueue();
-	for( CTEffect *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
+	cwmWorldState->tempEffects.Push();
+	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
 		if( Effect->Destination() == targSer )
 		{
@@ -777,16 +778,15 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 					case 19:
 					case 21:
 						reverseEffect( Effect );
-						TEffects->QueueToRemove( Effect );
+						cwmWorldState->tempEffects.Remove( Effect, true );
 						break;
 					default:
-						TEffects->QueueToKeep( Effect );
 						break;
 				}
 			}
 		}
 	}
-	TEffects->Prune();
+	cwmWorldState->tempEffects.Pop();
 	CSocket *tSock = dest->GetSocket();
 	toAdd->Number( num );
 	switch( num )
@@ -916,7 +916,6 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( 90.0f ) ); // 90 seconds
 			toAdd->Dispellable( false );
 			break;
-			
 		case 21:		// protection
 			toAdd->ExpireTime( BuildTimeValue( 120.0f ) );
 			toAdd->Dispellable( true );
@@ -930,37 +929,29 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			CChar *oldTarg;
 			if( source->SkillUsed( static_cast<UI08>(more1) ) )
 			{
-				TEffects->StartQueue();
-				for( Test = TEffects->First(); !TEffects->AtEnd(); Test = TEffects->Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
+				cwmWorldState->tempEffects.Push();
+				for( Test = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Test = cwmWorldState->tempEffects.Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
 				{	
 					// another option would be to do a bit set, to specify already healing
 					if( Test == NULL )
 						continue;
-					switch( Test->Number() )
+					if( Test->Number() == 22 || Test->Number() == 23 || Test->Number() == 24 )
 					{
-						case 22:
-						case 23:
-						case 24:
-							if( Test->Source() == sourSer )
-							{
-								oldTarg = calcCharObjFromSer( Test->Destination() );
-								if( Test->Number() == 22 )
-									source->emoteAll( 1275, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-								else if( Test->Number() == 23 )
-									source->emoteAll( 1276, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-								else if( Test->Number() == 24 )
-									source->emoteAll( 1277, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-								TEffects->QueueToRemove( Test );		// we're already involved in some form of healing, BREAK IT
-							}
-							else
-								TEffects->QueueToKeep( Test );
+						if( Test->Source() == sourSer )
+						{
+							oldTarg = calcCharObjFromSer( Test->Destination() );
+							if( Test->Number() == 22 )
+								source->emoteAll( 1275, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
+							else if( Test->Number() == 23 )
+								source->emoteAll( 1276, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
+							else if( Test->Number() == 24 )
+								source->emoteAll( 1277, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
+							Test->Destination( INVALIDSERIAL );
 							break;
-						default:
-							TEffects->QueueToKeep( Test );
-							break;
+						}
 					}
 				}
-				TEffects->Prune();
+				cwmWorldState->tempEffects.Pop();
 			}
 			if( num == 22 )
 			{
@@ -1027,8 +1018,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			Console.Error( 2, " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num );
 			return;
 	}
-
-	TEffects->Add( toAdd );
+	cwmWorldState->tempEffects.Add( toAdd );
 }
 
 void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 )
@@ -1036,7 +1026,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 	if( !ValidateObject( dest ) )
 		return;
 
-	CTEffect *toAdd = TEffects->CreateEffect();
+	CTEffect *toAdd = new CTEffect;
 
 	if( ValidateObject( source ) )
 		toAdd->Source( source->GetSerial() );
@@ -1084,7 +1074,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
 			return;
 	}
-	TEffects->Add( toAdd );
+	cwmWorldState->tempEffects.Add( toAdd );
 }
 
 //o--------------------------------------------------------------------------
@@ -1112,12 +1102,16 @@ void cEffects::SaveEffects( void )
 		return;
 	}
 
-	for( CTEffect *currEffect = TEffects->First(); currEffect != NULL; currEffect = TEffects->Next() )
+	cwmWorldState->tempEffects.Push();
+	for( CTEffect *currEffect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); currEffect = cwmWorldState->tempEffects.Next() )
 	{
+		if( currEffect == NULL )
+			continue;
 		currEffect->Save( effectDestination );
 		effectDestination << blockDiscriminator;
 	}
 	effectDestination.close();
+	cwmWorldState->tempEffects.Pop();
 
 	Console << "\b\b\b\b";
 	Console.PrintDone();
@@ -1157,7 +1151,7 @@ void cEffects::LoadEffects( void )
 			{
 				if( sLine.upper() == "[EFFECT]" )
 				{
-					toLoad = TEffects->CreateEffect();
+					toLoad = new CTEffect;
 					while( !input.eof() && !input.fail() )
 					{
 						if( sLine != "o---o" )
@@ -1232,7 +1226,7 @@ void cEffects::LoadEffects( void )
 						else
 							break;
 					}
-					TEffects->Add( toLoad );
+					cwmWorldState->tempEffects.Add( toLoad );
 				}
 				else
 					break;
@@ -1240,6 +1234,43 @@ void cEffects::LoadEffects( void )
 		}
 		input.close();
 	}
+}
+
+//o-----------------------------------------------------------------------o
+//|	Function		-	Save(ofstream &effectDestination )
+//|	Date			-	March 16, 2002
+//|	Programmer		-	sereg
+//o-----------------------------------------------------------------------o
+//|	Returns			-	true/false indicating the success of the write operation
+//o-----------------------------------------------------------------------o
+bool CTEffect::Save( std::ofstream &effectDestination ) const
+{
+	std::string destination; 
+	std::ostringstream dumping( destination ); 
+	CBaseObject *getPtr = NULL;
+
+	effectDestination << "[EFFECT]" << std::endl;
+
+	dumping << "Source=" << "0x" << std::hex << Source() << std::endl;
+	dumping << "Dest=" << "0x" << Destination() << std::endl;
+	dumping << "Expire=" << std::dec << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << std::endl;
+	dumping << "Number=" << static_cast<UI16>(Number()) << std::endl;  
+	dumping << "More1=" << More1() << std::endl;
+	dumping << "More2=" << More2() << std::endl;
+	dumping << "More3=" << More3() << std::endl;
+	dumping << "Dispel=" << Dispellable() << std::endl;
+
+	getPtr = ObjPtr();
+	dumping << "0x" << std::hex;
+	if( ValidateObject( getPtr ) )
+		dumping << "ObjPtr=" << getPtr->GetSerial() << std::endl;
+	else
+		dumping << "ObjPtr=" << INVALIDSERIAL << std::endl;
+
+	effectDestination << dumping.str();
+
+	effectDestination << std::endl << "o---o" << std::endl << std::endl;
+	return true;
 }
 
 }

@@ -107,35 +107,6 @@ public:
 	}
 };
 
-// This class is designed as a replacement for the teffect array (which is nasty, and too big)
-// It'll grow and shrink as required, and will hopefully help reduce memory troubles
-class CTEffectContainer
-{
-private:
-	std::vector< CTEffect * >			internalData, backupKeep, backupRemove;
-	std::vector< CTEffect * >::iterator	currentEffect;
-	bool								isScanning;
-
-public:
-	CTEffectContainer();
-	~CTEffectContainer();
-	CTEffect *First( void );					// returns the first entry
-	CTEffect *Current( void );					// returns current entry
-	CTEffect *Next( void );						// returns the next entry
-	bool AtEnd( void );							// have we hit the end?
-	bool Add( CTEffect *toAdd );				// adds another entry
-	UI16 Count( void );							// returns count of number of effects
-	CTEffect *GrabSpecific( UI16 index );		// grabs a specific index
-	CTEffect *CreateEffect( void );				// have our container get us a new one
-
-	void StartQueue( void );					// We're queueing up now
-	void QueueToKeep( CTEffect *toKeep );		// Queue it to keep
-	void QueueToRemove( CTEffect *toRemove );	// Queue it to remove
-	void Prune( void );							// Finish with the queues
-};
-
-extern CTEffectContainer *TEffects;
-
 }
 
 #endif

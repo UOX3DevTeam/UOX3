@@ -1199,15 +1199,13 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 	SERIAL mySer = myObj->GetSerial();
-	TEffects->StartQueue();
-	for( CTEffect *Effect = TEffects->First(); !TEffects->AtEnd(); Effect = TEffects->Next() )
+	cwmWorldState->tempEffects.Push();
+	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
 		if( mySer == Effect->Destination() )
-			TEffects->QueueToRemove( Effect );
-		else
-			TEffects->QueueToKeep( Effect );
+			cwmWorldState->tempEffects.Remove( Effect, true );
 	}
-	TEffects->Prune();
+	cwmWorldState->tempEffects.Pop();
 	return JS_TRUE;
 }
 
@@ -2411,7 +2409,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI32 ExpireTime = BuildTimeValue( JSVAL_TO_INT( argv[0] ) / 1000.0f );
 	UI08 TriggerNum = (UI08)JSVAL_TO_INT( argv[1] );
 	
-	CTEffect *Effect = TEffects->CreateEffect();
+	CTEffect *Effect = new CTEffect;
 
 	if( argc == 3 )
 	{
@@ -2434,7 +2432,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	Effect->Number( 40 );
 	Effect->More1( TriggerNum );
 
-	TEffects->Add( Effect );
+	cwmWorldState->tempEffects.Add( Effect );
 	
 	return JS_TRUE;
 }
