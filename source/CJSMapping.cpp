@@ -443,13 +443,16 @@ void CJSMappingSection::Reload( UI16 toLoad )
 							std::map< UI16, cScript * >::const_iterator iFind = scriptIDMap.find( toLoad );
 							if( iFind != scriptIDMap.end() )
 							{
-								JSObject *jsObj = scriptIDMap[toLoad]->Object();
-								std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
-								if( jFind != scriptJSMap.end() )
-									scriptJSMap.erase( jFind );
+								if( scriptIDMap[toLoad] != NULL )
+								{
+									JSObject *jsObj = scriptIDMap[toLoad]->Object();
+									std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
+									if( jFind != scriptJSMap.end() )
+										scriptJSMap.erase( jFind );
 
-								delete scriptIDMap[toLoad];
-								scriptIDMap[toLoad] = NULL;
+									delete scriptIDMap[toLoad];
+									scriptIDMap[toLoad] = NULL;
+								}
 							}
 							cScript *toAdd = new cScript( fullPath, runTime );
 							if( toAdd != NULL )

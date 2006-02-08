@@ -136,10 +136,10 @@ size_t CBaseObject::GetNumTags( void ) const
 TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const 
 {
 	TAGMAPOBJECT localObject;
-	localObject.m_ObjectType = TAGMAP_TYPE_INT;
-	localObject.m_IntValue = 0;
-	localObject.m_Destroy=FALSE;
-	localObject.m_StringValue="";
+	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+	localObject.m_IntValue		= 0;
+	localObject.m_Destroy		= FALSE;
+	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tags.find( tagname );
 	if( CI != tags.end() )
 	{
@@ -168,7 +168,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 	{
 		// Check to see if this object needs to be destroyed
 //		bool reAdd = FALSE;
-		if( I->second.m_Destroy )
+		if( I->second.m_Destroy || tagval.m_Destroy )
 		{
 			tags.erase( I );
 			return;
@@ -176,24 +176,24 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
 		if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			I->second.m_Destroy = FALSE;
+			I->second.m_Destroy		= FALSE;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= tagval.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
-			I->second.m_IntValue		= tagval.m_StringValue.length();
+			I->second.m_IntValue	= tagval.m_StringValue.length();
 		}
 		else
 		{	
-			I->second.m_Destroy = FALSE;
-			I->second.m_ObjectType = tagval.m_ObjectType;
-			I->second.m_StringValue = "";
-			I->second.m_IntValue = tagval.m_IntValue;
+			I->second.m_Destroy		= FALSE;
+			I->second.m_ObjectType	= tagval.m_ObjectType;
+			I->second.m_StringValue	= "";
+			I->second.m_IntValue	= tagval.m_IntValue;
 		}
 	}
 	else
-	{
-		// We need to create a TAGMAPOBJECT and initialize and store into the tagmap, NOTE that an opbject will be created regardless 
-		tags[tagname]		= tagval;
+	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
+		if( !tagval.m_Destroy ) 
+			tags[tagname] = tagval;
 	}
 }
 //o--------------------------------------------------------------------------

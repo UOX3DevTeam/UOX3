@@ -1224,9 +1224,15 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( myScript != NULL )
 	{
 		if( myObj->CanBeObjType( OT_CHAR ) )
-			myScript->ReleaseObject( obj, IUE_CHAR );
+		{
+			if( myScript->FindUsedObject( IUE_CHAR, obj ) > 1 )
+				myScript->ReleaseObject( obj, IUE_CHAR );
+		}
 		else if( myObj->CanBeObjType( OT_ITEM ) )
-			myScript->ReleaseObject( obj, IUE_ITEM );
+		{
+			if( myScript->FindUsedObject( IUE_ITEM, obj ) > 1 )
+				myScript->ReleaseObject( obj, IUE_ITEM );
+		}
 	}
 
 	myObj->Delete();
@@ -1876,9 +1882,9 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 	}
 	
-	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
-	TAGMAPOBJECT localObject = myObj->GetTag( localString );
-	if(localObject.m_ObjectType==TAGMAP_TYPE_STRING)
+	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	TAGMAPOBJECT localObject	= myObj->GetTag( localString );
+	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
 		JSString *localJSString = JS_NewString( cx, (char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
 		*rval = (jsval)STRING_TO_JSVAL(localJSString);
@@ -1904,45 +1910,63 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		MethodError( "Invalid Object assigned (SetTag)" );
 		return JS_FALSE;
 	}
-	
+
 	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	TAGMAPOBJECT localObject;
 	if( argc == 2 )
 	{
-		if( JSVAL_IS_STRING( argv[1] ) )
-		{
-			// String value handling
-			if( !strcmp("", JS_GetStringBytes(JS_ValueToString(cx, argv[1]))) )
+		JSEncapsulate encaps( cx, &(argv[1]) );
+		if( encaps.isType( JSOT_STRING ) )
+		{			// String value handling
+			const std::string stringVal = encaps.toString();
+			if( stringVal == "" )
 			{
-            localObject.m_Destroy=TRUE;
-				localObject.m_IntValue=0;
-				localObject.m_ObjectType=TAGMAP_TYPE_INT;
-				localObject.m_StringValue="";
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+				localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+				localObject.m_StringValue	= "";
 			}
 			else
 			{
-            localObject.m_Destroy=FALSE;
-				localObject.m_StringValue = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-				localObject.m_IntValue=localObject.m_StringValue.length();
-				localObject.m_ObjectType=TAGMAP_TYPE_STRING;
+				localObject.m_Destroy		= FALSE;
+				localObject.m_StringValue	= stringVal;
+				localObject.m_IntValue		= localObject.m_StringValue.length();
+				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}			
 		}
-		else
+		else if( encaps.isType( JSOT_INT ) )
 		{
-			// Int value handling
-			localObject.m_Destroy=FALSE;
-			localObject.m_StringValue="";
-			localObject.m_ObjectType=TAGMAP_TYPE_INT;
-			JS_ValueToInt32(cx, argv[1],(int32*)&localObject.m_IntValue);
+			const int intVal = encaps.toInt();
+			if( !intVal )
+			{
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+			}
+			else
+			{
+				localObject.m_Destroy		= FALSE;
+				localObject.m_IntValue		= intVal;
+			}
+			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+			localObject.m_StringValue	= "";
 		}
+		else if( encaps.isType( JSOT_NULL ) )
+		{
+			localObject.m_Destroy		= TRUE;
+			localObject.m_IntValue		= 0;
+			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+			localObject.m_StringValue	= "";
+		}
+		else
+			return JS_TRUE;
 		myObj->SetTag( localString, localObject );
 	}
 	else
 	{
-		localObject.m_Destroy=TRUE;
-		localObject.m_ObjectType=TAGMAP_TYPE_INT;
-		localObject.m_IntValue=0;
-		localObject.m_StringValue="";
+		localObject.m_Destroy		= TRUE;
+		localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+		localObject.m_IntValue		= 0;
+		localObject.m_StringValue	= "";
 		myObj->SetTag( localString, localObject );
 	}
 	return JS_TRUE;

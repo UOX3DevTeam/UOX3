@@ -178,13 +178,13 @@ private:
 	std::vector< SEGump * >		gumpDisplays;
 
 	UI32		FindFreePosition( IUEEntries iType ) const;
-	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
 	JSObject *	MakeNewObject( IUEEntries iType );
 
 	void		Cleanup( void );
 
 public:
 
+	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
 	void		ReleaseObject( JSObject *toRelease, IUEEntries iType );
 	JSObject *	AcquireObject( IUEEntries iType );
 

@@ -129,22 +129,24 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	if( mSock != NULL )
 		mChar = mSock->CurrcharObj();
 	if( !ValidateObject( iToStack ) || !ValidateObject( iPack ) )
-		return false;
+		return NULL;
 
 	iToStack->SetCont( iPack );
 	if( iToStack->isPileable() )
 	{
 		if( mSock != NULL && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
 			Weight->subtractItemWeight( mChar, iToStack );
+		const UI16 itID		= iToStack->GetID();
+		const SERIAL itSer	= iToStack->GetSerial();
+		const UI16 itCol	= iToStack->GetColour();
 		CDataList< CItem * > *ipCont = iPack->GetContainsList();
 		for( CItem *stack = ipCont->First(); !ipCont->Finished(); stack = ipCont->Next() )
 		{
 			if( !ValidateObject( stack ) )
 				continue;
 
-			if( stack->isPileable() && stack->GetSerial() != iToStack->GetSerial() &&
-				stack->GetID() == iToStack->GetID() && stack->GetColour() == iToStack->GetColour() &&
-				stack->GetAmount() < MAX_STACK )
+			if( stack->isPileable() && stack->GetAmount() < MAX_STACK && 
+				stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol )
 			{ // Autostack
 				if( doStacking( mSock, mChar, iToStack, stack ) == stack )	// compare to stack, if doStacking returned the stack, then the raw object was deleted
 					return stack;	// return the stack
@@ -991,10 +993,13 @@ void DropOnItem( CSocket *mSock )
 	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
 	{	// Stacking
 		bool canHold = true;
-		if( nCont->GetContSerial() >= BASEITEMSERIAL )
-			canHold = Weight->checkPackWeight( mChar, static_cast<CItem *>(nCont->GetCont()), nItem );
-		else
-			canHold = Weight->checkCharWeight( mChar, static_cast<CChar *>(nCont->GetCont()), nItem );
+		if( nCont->GetCont() != NULL )
+		{
+			if( nCont->GetContSerial() >= BASEITEMSERIAL )
+				canHold = Weight->checkPackWeight( mChar, static_cast<CItem *>(nCont->GetCont()), nItem );
+			else
+				canHold = Weight->checkCharWeight( mChar, static_cast<CChar *>(nCont->GetCont()), nItem );
+		}
 		if( !canHold )
 		{
 			if( nCont->GetContSerial() >= BASEITEMSERIAL )
@@ -1011,12 +1016,9 @@ void DropOnItem( CSocket *mSock )
 		}
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
-		nItem->SetCont( nCont->GetCont() );
 		stackDeleted = ( doStacking( mSock, mChar, nItem, nCont ) != nItem );
 		if( !stackDeleted )	// if the item didn't stack or the stack was full
-		{
 			Bounce( mSock, nItem );
-		}
 		mChar->Dirty( UT_STATWINDOW );
 	}
 	else if( nCont->GetType() == IT_CONTAINER )
@@ -1130,7 +1132,7 @@ void DropOnItem( CSocket *mSock )
 		if( nCont->GetType() == IT_SPAWNCONT || nCont->GetType() == IT_UNLOCKABLESPAWNCONT ) // - Unlocked item spawner or unlockable item spawner
 			nItem->SetCont( nCont );
 		else
-			nItem->SetCont( NULL );
+			nItem->SetCont( nCont->GetCont() );
 
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{
@@ -2363,7 +2365,7 @@ bool CPIDblClick::Handle( void )
 		}
 		//check this on trigger in the event that the .trigger property is not set on the item
 		//trigger code.  Check to see if item is envokable by id
-		else if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
+		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
 			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
 			cScript *envExecute = JSMapping->GetScript( envTrig );

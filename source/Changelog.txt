@@ -1,3 +1,10 @@
+2/08/2006 - giwo (0.98-3.2m [3.3RC])
+	Fixed an issue causing ID and Type-based JS scripts not to run if an object had a script associated with it.
+	Fixed an issue with SetTag() causing 0 and null values not to unset the tag.
+	Fixed some wierdness when using the Delete() property in JS.
+	Minor updates to autoStack().
+	Fixed some issues with dropping items on other items in packs.
+
 8th February, 2006 - Maarc
 	Fixed wholist so that the stats link now works from it
 

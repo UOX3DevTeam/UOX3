@@ -64,7 +64,6 @@ uox3_SOURCES = \
 	speech.cpp \
 	ssection.cpp \
 	targeting.cpp \
-	teffect.cpp \
 	threadsafeobject.cpp \
 	townregion.cpp \
 	trade.cpp \
