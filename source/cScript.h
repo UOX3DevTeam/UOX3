@@ -78,7 +78,8 @@ enum ScriptEvent
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
-	seOnCombatEnd			//	**	allows overriding what happens when combat ends
+	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
+	seOnDeathBlow
 };
 
 struct SEGump
@@ -284,6 +285,8 @@ public:
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
+
+	bool		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

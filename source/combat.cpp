@@ -1725,6 +1725,11 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 //o---------------------------------------------------------------------------o
 void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 {
+	UI16 dbScript		= ourTarg->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( dbScript );
+	if( toExecute != NULL )
+		toExecute->OnDeathBlow( ourTarg, mChar );
+
 	Karma( mChar, ourTarg, ( 0 - ( ourTarg->GetKarma() ) ) );
 	Fame( mChar, ourTarg->GetFame() );
 	if( mChar->GetNPCAiType() == aiGUARD && ourTarg->IsNpc() )

@@ -2770,4 +2770,27 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	return funcRetVal;
 }
 
+bool cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
+{
+	if( !ValidateObject( mKilled ) || !ValidateObject( mKiller ) )
+		return false;
+	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ) )
+		return false;
+
+	jsval rval, params[2];
+	JS_SetPrivate( targContext, charObjects[0].toUse, mKilled );
+	JS_SetPrivate( targContext, charObjects[1].toUse, mKiller );
+
+	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	params[1] = OBJECT_TO_JSVAL( charObjects[1].toUse );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDeathBlow", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnDeathBlow, false );
+
+	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	JS_SetPrivate( targContext, charObjects[1].toUse, NULL );
+	return ( retVal == JS_TRUE );
+}
+
+
 }

@@ -64,48 +64,48 @@ public:
 	virtual ~BaseTile()
 	{
 	}
-	UI08 Flag1( void )				{	return flag1;	}
-	UI08 Flag2( void )				{	return flag2;	}
-	UI08 Flag3( void )				{	return flag3;	}
-	UI08 Flag4( void )				{	return flag4;	}
+	UI08 Flag1( void ) const			{	return flag1;	}
+	UI08 Flag2( void ) const			{	return flag2;	}
+	UI08 Flag3( void ) const			{	return flag3;	}
+	UI08 Flag4( void ) const			{	return flag4;	}
 
-	void Flag1( UI08 newVal )		{	flag1 = newVal;	}
-	void Flag2( UI08 newVal )		{	flag2 = newVal;	}
-	void Flag3( UI08 newVal )		{	flag3 = newVal;	}
-	void Flag4( UI08 newVal )		{	flag4 = newVal;	}
+	void Flag1( UI08 newVal )			{	flag1 = newVal;	}
+	void Flag2( UI08 newVal )			{	flag2 = newVal;	}
+	void Flag3( UI08 newVal )			{	flag3 = newVal;	}
+	void Flag4( UI08 newVal )			{	flag4 = newVal;	}
 
-	bool AtFloorLevel( void )		{	return (flag1&0x01) == 0x01;	}
-	bool Holdable( void )			{	return (flag1&0x02) == 0x02;	}
-	bool SignGuildBanner( void )	{	return (flag1&0x04) == 0x04;	}
-	bool WebDirtBlood( void )		{	return (flag1&0x08) == 0x08;	}
-	bool WallVertTile( void )		{	return (flag1&0x10) == 0x10;	}
-	bool Damaging( void )			{	return (flag1&0x20) == 0x20;	}
-	bool Blocking( void )			{	return (flag1&0x40) == 0x40;	}
-	bool LiquidWet( void )			{	return (flag1&0x80) == 0x80;	}
-	bool Unknown1( void )			{	return (flag2&0x01) == 0x01;	}
-	bool Standable( void )			{	return (flag2&0x02) == 0x02;	}
-	bool Climbable( void )			{	return (flag2&0x04) == 0x04;	}
-	bool Stackable( void )			{	return (flag2&0x08) == 0x08;	}
-	bool WindowArchDoor( void )		{	return (flag2&0x10) == 0x10;	}
-	bool CannotShootThru( void )	{	return (flag2&0x20) == 0x20;	}
-	bool DisplayAsA( void )			{	return (flag2&0x40) == 0x40;	}
-	bool DisplayAsAn( void )		{	return (flag2&0x80) == 0x80;	}
-	bool DescriptionTile( void )	{	return (flag3&0x01) == 0x01;	}
-	bool FadeWithTrans( void )		{	return (flag3&0x02) == 0x02;	}
-	bool Unknown2( void )			{	return (flag3&0x04) == 0x04;	}
-	bool Unknown3( void )			{	return (flag3&0x08) == 0x08;	}
-	bool Map( void )				{	return (flag3&0x10) == 0x10;	}
-	bool Container( void )			{	return (flag3&0x20) == 0x20;	}
-	bool Equipable( void )			{	return (flag3&0x40) == 0x40;	}
-	bool LightSource( void )		{	return (flag3&0x80) == 0x80;	}
-	bool Animated( void )			{	return (flag4&0x01) == 0x01;	}
-	bool Unknown4( void )			{	return (flag4&0x02) == 0x02;	}
-	bool Walk( void )				{	return (flag4&0x04) == 0x04;	}
-	bool WholeBodyItem( void )		{	return (flag4&0x08) == 0x08;	}
-	bool WallRoofWeap( void )		{	return (flag4&0x10) == 0x10;	}
-	bool Door( void )				{	return (flag4&0x20) == 0x20;	}
-	bool ClimbableBit1( void )		{	return (flag4&0x40) == 0x40;	}
-	bool ClimbableBit2( void )		{	return (flag4&0x80) == 0x80;	}
+	bool AtFloorLevel( void ) const		{	return (flag1&0x01) == 0x01;	}
+	bool Holdable( void ) const			{	return (flag1&0x02) == 0x02;	}
+	bool SignGuildBanner( void ) const	{	return (flag1&0x04) == 0x04;	}
+	bool WebDirtBlood( void ) const		{	return (flag1&0x08) == 0x08;	}
+	bool WallVertTile( void ) const		{	return (flag1&0x10) == 0x10;	}
+	bool Damaging( void ) const			{	return (flag1&0x20) == 0x20;	}
+	bool Blocking( void ) const			{	return (flag1&0x40) == 0x40;	}
+	bool LiquidWet( void ) const		{	return (flag1&0x80) == 0x80;	}
+	bool Unknown1( void ) const			{	return (flag2&0x01) == 0x01;	}
+	bool Standable( void ) const		{	return (flag2&0x02) == 0x02;	}
+	bool Climbable( void ) const		{	return (flag2&0x04) == 0x04;	}
+	bool Stackable( void ) const		{	return (flag2&0x08) == 0x08;	}
+	bool WindowArchDoor( void ) const	{	return (flag2&0x10) == 0x10;	}
+	bool CannotShootThru( void ) const	{	return (flag2&0x20) == 0x20;	}
+	bool DisplayAsA( void ) const		{	return (flag2&0x40) == 0x40;	}
+	bool DisplayAsAn( void ) const		{	return (flag2&0x80) == 0x80;	}
+	bool DescriptionTile( void ) const	{	return (flag3&0x01) == 0x01;	}
+	bool FadeWithTrans( void ) const	{	return (flag3&0x02) == 0x02;	}
+	bool Unknown2( void ) const			{	return (flag3&0x04) == 0x04;	}
+	bool Unknown3( void ) const			{	return (flag3&0x08) == 0x08;	}
+	bool Map( void ) const				{	return (flag3&0x10) == 0x10;	}
+	bool Container( void ) const		{	return (flag3&0x20) == 0x20;	}
+	bool Equipable( void ) const		{	return (flag3&0x40) == 0x40;	}
+	bool LightSource( void ) const		{	return (flag3&0x80) == 0x80;	}
+	bool Animated( void ) const			{	return (flag4&0x01) == 0x01;	}
+	bool Unknown4( void ) const			{	return (flag4&0x02) == 0x02;	}
+	bool Walk( void ) const				{	return (flag4&0x04) == 0x04;	}
+	bool WholeBodyItem( void ) const	{	return (flag4&0x08) == 0x08;	}
+	bool WallRoofWeap( void ) const		{	return (flag4&0x10) == 0x10;	}
+	bool Door( void ) const				{	return (flag4&0x20) == 0x20;	}
+	bool ClimbableBit1( void ) const	{	return (flag4&0x40) == 0x40;	}
+	bool ClimbableBit2( void ) const	{	return (flag4&0x80) == 0x80;	}
 
 	void AtFloorLevel( bool val )		{	MFLAGSET( flag1, val, 0x01 )	}
 	void Holdable( bool val )			{	MFLAGSET( flag1, val, 0x02 )	}
@@ -176,67 +176,22 @@ public:
 	}
 	CTile( std::ifstream &toRead );
 	void Read( UOXFile *toRead );
-	SI32 Unknown1( void )
-	{
-		return unknown1;
-	}
-	SI32 Animation( void )
-	{
-		return animation;
-	}
-	UI08 Weight( void )
-	{
-		return weight;
-	}
-	SI08 Layer( void )
-	{
-		return layer;
-	}
-	SI08 Unknown2( void )
-	{
-		return unknown2;
-	}
-	SI08 Unknown3( void )
-	{
-		return unknown3;
-	}
-	SI08 Height( void )
-	{
-		return height;
-	}
-	char *Name( void )
-	{
-		return (char *)name;
-	}
+	SI32 Unknown1( void ) const		{	return unknown1;		}
+	SI32 Animation( void ) const	{	return animation;		}
+	UI08 Weight( void ) const		{	return weight;			}
+	SI08 Layer( void ) const		{	return layer;			}
+	SI08 Unknown2( void ) const		{	return unknown2;		}
+	SI08 Unknown3( void ) const		{	return unknown3;		}
+	SI08 Height( void ) const		{	return height;			}
+	char *Name( void ) const		{	return (char *)name;	}
 
-	void Unknown1( SI32 newVal )
-	{
-		unknown1 = newVal;
-	}
-	void Animation( SI32 newVal )
-	{
-		animation = newVal;
-	}
-	void Weight( UI08 newVal )
-	{
-		weight = newVal;
-	}
-	void Layer( SI08 newVal )
-	{
-		layer = newVal;
-	}
-	void Unknown2( SI08 newVal )
-	{
-		unknown2 = newVal;
-	}
-	void Unknown3( SI08 newVal )
-	{
-		unknown3 = newVal;
-	}
-	void Height( SI08 newVal )
-	{
-		height = newVal;
-	}
+	void Unknown1( SI32 newVal )	{	unknown1 = newVal;		}
+	void Animation( SI32 newVal )	{	animation = newVal;		}
+	void Weight( UI08 newVal )		{	weight = newVal;		}
+	void Layer( SI08 newVal )		{	layer = newVal;			}
+	void Unknown2( SI08 newVal )	{	unknown2 = newVal;		}
+	void Unknown3( SI08 newVal )	{	unknown3 = newVal;		}
+	void Height( SI08 newVal )		{	height = newVal;		}
 	void Name( const char *newVal )
 	{
 		strncpy( (char *)name, newVal, 22 );
@@ -259,21 +214,13 @@ public:
 	{
 		Read( toRead );
 	}
+
 	void Read( UOXFile *toRead );
 
-	UI16 TextureID( void )
-	{
-		return textureID;
-	}
-	char *Name( void )
-	{
-		return (char *)name;
-	}
+	UI16 TextureID( void ) const	{	return textureID;		}
+	char *Name( void ) const		{	return (char *)name;	}
 
-	void TextureID( UI08 newVal )
-	{
-		textureID = newVal;
-	}
+	void TextureID( UI08 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
 		strcpy( (char *)name, newVal );
@@ -284,7 +231,7 @@ class CTileUni : public BaseTile
 {
 private:
 	SI08 basez;
-	char mType;		// 0 = Terrain, 1 = Item
+	UI08 mType;		// 0 = Terrain, 1 = Item
 	UI16 id;
 	SI08 height;
 	UI08 weight;
@@ -294,47 +241,18 @@ public:
 			{
 			}
 
-	SI08 BaseZ( void ) const
-	{
-		return basez;
-	}
-	char Type( void ) const
-	{
-		return mType;
-	}
-	UI16 ID( void ) const
-	{
-		return id;
-	}
-	SI08 Height( void ) const
-	{
-		return height;
-	}
-	UI08 Weight( void ) const
-	{
-		return weight;
-	}
+	SI08 BaseZ( void ) const	{	return basez;	}
+	UI08 Type( void ) const		{	return mType;	}
+	UI16 ID( void ) const		{	return id;		}
+	SI08 Height( void ) const	{	return height;	}
+	UI08 Weight( void ) const	{	return weight;	}
 
-	void BaseZ( SI08 nVal )
-	{
-		basez = nVal;
-	}
-	void Type( char nVal )
-	{
-		mType = nVal;
-	}
-	void ID( UI16 nVal )
-	{
-		id = nVal;
-	}
-	void Height( SI08 nVal )
-	{
-		height = nVal;
-	}
-	void Weight( UI08 nVal )
-	{
-		weight = nVal;
-	}
+	void BaseZ( SI08 nVal )		{	basez = nVal;	}
+	void Type( UI08 nVal )		{	mType = nVal;	}
+	void ID( UI16 nVal )		{	id = nVal;		}
+	void Height( SI08 nVal )	{	height = nVal;	}
+	void Weight( UI08 nVal )	{	weight = nVal;	}
+
 	CTileUni &operator=( CLand &toCopy )
 	{
 		Flag1( toCopy.Flag1() );

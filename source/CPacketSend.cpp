@@ -4704,14 +4704,9 @@ void CPToolTip::InternalReset( void )
 {
 	pStream.ReserveSize( 15 );
 	pStream.WriteByte( 0, 0xD6 );
-	pStream.WriteByte( 3, 0x00 );
-	pStream.WriteByte( 4, 0x01 );
-	pStream.WriteByte( 9, 0x00 );
-	pStream.WriteByte( 10, 0x00 );
-	pStream.WriteByte( 11, 0x78 );
-	pStream.WriteByte( 12, 0xA1 );
-	pStream.WriteByte( 13, 0xBA );
-	pStream.WriteByte( 14, 0x2B );
+	pStream.WriteShort( 3, 0x0001 );
+	pStream.WriteShort( 9, 0x0000 );
+	pStream.WriteLong( 11, 0x00000000 );
 }
 
 void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )

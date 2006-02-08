@@ -2003,6 +2003,11 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 		p->IncHP( -amount );
 		if( p->GetHP() <= 0 )
 		{
+			UI16 dbScript		= p->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( dbScript );
+			if( toExecute != NULL )
+				toExecute->OnDeathBlow( p, attacker );
+
 			if( ValidateObject( attacker ) && p != attacker )	// can't gain fame and karma for suicide :>
 			{
 				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );

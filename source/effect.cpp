@@ -1259,11 +1259,11 @@ bool CTEffect::Save( std::ofstream &effectDestination ) const
 	dumping << "Dispel=" << Dispellable() << std::endl;
 
 	getPtr = ObjPtr();
-	dumping << "0x" << std::hex;
+	dumping << "ObjPtr=" << "0x" << std::hex;
 	if( ValidateObject( getPtr ) )
-		dumping << "ObjPtr=" << getPtr->GetSerial() << std::endl;
+		dumping << getPtr->GetSerial() << std::endl;
 	else
-		dumping << "ObjPtr=" << INVALIDSERIAL << std::endl;
+		dumping << INVALIDSERIAL << std::endl;
 
 	effectDestination << dumping.str();
 

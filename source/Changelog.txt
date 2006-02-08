@@ -1,3 +1,9 @@
+2/08/2006 - giwo (0.98-3.2l [3.3 RC])
+	Fixed a minor issue with saving tempeffects.
+	Fixed an issue causing objects not to default to script ID 0 (global script).
+	Added onDeathBlow( pKilled, pKiller ) JS event.
+	Minor code cleanups.
+
 2/07/2006 - giwo (0.98-3.2k [3.3 RC])
 	Added spawn.dfn tag PREFZ=, this sets the maximum Z influence dynamic and static items can have on spawning.
 	Incorporated Grimsons fixes to CSpawnRegion to allow NPC's to spawn at the proper Z based on the static and dynamic items at their location.
