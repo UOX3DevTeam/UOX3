@@ -1,3 +1,6 @@
+8th February, 2006 - Maarc
+	Fixed wholist so that the stats link now works from it
+
 2/08/2006 - giwo (0.98-3.2l [3.3 RC])
 	Fixed a minor issue with saving tempeffects.
 	Fixed an issue causing objects not to default to script ID 0 (global script).

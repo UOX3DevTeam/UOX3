@@ -4,6 +4,7 @@
 #include "CPacketSend.h"
 #include "Dictionary.h"
 #include "jail.h"
+#include "commands.h"
 
 namespace UOX
 {
@@ -228,7 +229,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				Network->Disconnect( targetChar->GetSocket() );
 				break;
 			}
-		case 205:	// not active currently, a remote where
+		case 205:
 			// make it prettier later!
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
@@ -244,10 +245,7 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 				return;
 			}
 			toSendTo->SetDWord( 7, targetChar->GetSerial() );
-#if defined( _MSC_VER )
-#pragma note( "Need to link this to the JS CStats Gump" )
-#endif
-			//CstatsTarget( toSendTo );
+			Commands->Command( toSendTo, targetChar, "cstats" );
 			break;
 		case 207:	// remote tweak
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
