@@ -1758,7 +1758,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 					aSock->sysmessage( 315 );
 			}
 		}
-		setcharflag( mChar );
+		UpdateFlag( mChar );
 	}
 
 	if( !mChar->IsNpc() && !ourTarg->IsNpc() )

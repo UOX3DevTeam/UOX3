@@ -107,12 +107,13 @@ const UI08			DEFNPC_QUESTTYPE			= 0;
 const UI08			DEFNPC_QUESTDESTREGION 		= 0;
 const UI08			DEFNPC_QUESTORIGREGION		= 0;
 const SI16			DEFNPC_WANDERAREA			= -1;
+const UI08			DEFNPC_NPCFLAG				= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( NULL )
+petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -1377,138 +1378,177 @@ CChar *CChar::Dupe( void )
 
 void CChar::CopyData( CChar *target )
 {
-		target->SetMulti( GetMultiObj() );
-		target->SetOwner( GetOwnerObj() );
-		target->SetSpawn( GetSpawn() );
-		target->SetTownVote( townvote );
-		target->SetPriv( GetPriv() );
-		target->SetName( name );
-		target->SetTitle( title );
-		target->SetLocation( this );
-		target->SetDir( dir );
-		target->SetID( id );
-		target->SetSkin( GetColour() );
-		target->SetFontType( fonttype );
-		target->SetSayColour( saycolor );
-		target->SetEmoteColour( emotecolor );
-		target->SetStrength( strength );
-		target->SetDexterity( dexterity );
-		target->SetIntelligence( intelligence );
-		target->SetHP(  hitpoints );
-		target->SetStamina( stamina );
-		target->SetMana( mana );
+	target->SetMulti( GetMultiObj() );
+	target->SetOwner( GetOwnerObj() );
+	target->SetSpawn( GetSpawn() );
+	target->SetTownVote( townvote );
+	target->SetPriv( GetPriv() );
+	target->SetName( name );
+	target->SetTitle( title );
+	target->SetLocation( this );
+	target->SetDir( dir );
+	target->SetID( id );
+	target->SetSkin( GetColour() );
+	target->SetFontType( fonttype );
+	target->SetSayColour( saycolor );
+	target->SetEmoteColour( emotecolor );
+	target->SetStrength( strength );
+	target->SetDexterity( dexterity );
+	target->SetIntelligence( intelligence );
+	target->SetHP(  hitpoints );
+	target->SetStamina( stamina );
+	target->SetMana( mana );
 
-		target->SetStrength2( st2 );
-		target->SetDexterity2( dx2 );
-		target->SetIntelligence2( in2 );
+	target->SetStrength2( st2 );
+	target->SetDexterity2( dx2 );
+	target->SetIntelligence2( in2 );
+	
+	target->SetHiDamage( hidamage );
+	target->SetLoDamage( lodamage );
 
-		target->SetHiDamage( hidamage );
-		target->SetLoDamage( lodamage );
+	for( UI08 i = 0; i <= ALLSKILLS; ++i )
+	{
+		target->SetBaseSkill( baseskill[i], i );
+		target->SetSkill( skill[i], i );
+		target->SetAtrophy( atrophy[i], i );
+		target->SetSkillLock( lockState[i], i );
+	}
 
-		for( UI08 i = 0; i <= ALLSKILLS; ++i )
+	for( UI08 j = STRENGTH; j <= INTELLECT+1; ++j )
+	{
+		target->SetAtrophy( atrophy[j], j );
+		target->SetSkillLock( lockState[j], j );
+	}
+
+	target->SetCell( cell );
+	target->SetKarma( karma );
+	target->SetFame( fame );
+	target->SetKills( kills );
+	target->SetPackItem( packitem );
+	target->SetWeight( weight );
+	target->SetDef( def );
+	target->SetTarg( GetTarg() );
+	target->SetRegen( regen[0], 0 );
+	target->SetRegen( regen[1], 1 );
+	target->SetRegen( regen[2], 2 );
+	target->SetAttacker( GetAttacker() );
+	target->SetVisible( GetVisible() );
+
+	for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
+		target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
+	target->SetHunger( hunger );
+	target->SetRegion( regionNum );
+	target->SetTown( town );
+	target->SetTownpriv( townpriv );
+	target->SetAdvObj( advobj );
+	target->SetDisabled( isDisabled() );
+	target->SetCanTrain( CanTrain() );
+	target->SetLastOn( GetLastOn() );
+	target->SetGuildTitle( guildtitle );
+	target->SetGuildFealty( guildfealty );
+	target->SetGuildNumber( guildnumber );
+	target->SetFlag( flag );
+	target->SetCasting( IsCasting() );
+	target->SetJSCasting( IsJSCasting() );
+	target->SetSpellCast( spellCast );
+	target->SetNextAct( nextact );
+	target->SetSquelched( GetSquelched() );
+	target->SetMeditating( IsMeditating() );
+	target->SetStealth( stealth );
+	target->SetRunning( running );
+	target->SetRace( GetRace() );
+	target->SetRaceGate( raceGate );
+	target->SetCarve( carve );
+	for( UI08 counter2 = 0; counter2 < WEATHNUM; ++counter2 )
+	{
+		target->SetWeathDamage( weathDamage[counter2], counter2 );
+	}
+//	target->SetMaxHP( maxHP, maxHP_oldstr, maxHP_oldrace );
+//	target->SetMaxMana( maxMana, maxMana_oldint, maxMana_oldrace );
+	if( IsValidNPC() )
+	{
+		target->SetFleeAt( GetFleeAt() );
+		target->SetReattackAt( GetReattackAt() );
+		target->SetNpcWander( GetNpcWander() );
+		target->SetOldNpcWander( GetOldNpcWander() );
+		target->SetFTarg( GetFTarg() );
+		target->SetFx( GetFx( 0 ), 0 );
+		target->SetFx( GetFx( 1 ), 1 );
+		target->SetFy( GetFy( 0 ), 0 );
+		target->SetFy( GetFy( 1 ), 1 );
+		target->SetFz( GetFz() );
+		target->SetTaming( GetTaming() );
+		target->SetNPCAiType( GetNPCAiType() );
+		target->SetSpAttack( GetSpAttack() );
+		target->SetSpDelay( GetSpDelay() );
+		target->SetSplit( GetSplit() );
+		target->SetSplitChance( GetSplitChance() );
+		target->SetTrainingPlayerIn( GetTrainingPlayerIn() );
+		target->SetHoldG( GetHoldG() );
+		target->SetQuestType( GetQuestType() );
+		target->SetQuestDestRegion( GetQuestDestRegion() );
+		target->SetQuestOrigRegion( GetQuestOrigRegion() );
+	}
+	if( IsValidPlayer() )
+	{
+		target->SetDeaths( GetDeaths() );
+		target->SetFixedLight( GetFixedLight() );
+		target->SetGuarding( GetGuarding() );
+		target->SetOrgName( GetOrgName() );
+		target->SetRobe( GetRobe() );
+		target->SetAccount( GetAccount() );
+		target->SetOrgID( GetOrgID() );
+		target->SetCallNum( GetCallNum() );
+		target->SetPlayerCallNum( GetPlayerCallNum() );
+		target->SetCommandLevel( GetCommandLevel() );
+		target->SetPostType( GetPostType() );
+		target->SetTrackingTarget( GetTrackingTarget() );
+		for( UI08 counter = 0; counter < mPlayer->trackingTargets.size(); ++counter )
 		{
-			target->SetBaseSkill( baseskill[i], i );
-			target->SetSkill( skill[i], i );
-			target->SetAtrophy( atrophy[i], i );
-			target->SetSkillLock( lockState[i], i );
+			target->SetTrackingTargets( mPlayer->trackingTargets[counter], counter );
 		}
-
-		for( UI08 j = STRENGTH; j <= INTELLECT+1; ++j )
-		{
-			target->SetAtrophy( atrophy[j], j );
-			target->SetSkillLock( lockState[j], j );
-		}
-
-		target->SetCell( cell );
-		target->SetKarma( karma );
-		target->SetFame( fame );
-		target->SetKills( kills );
-		target->SetPackItem( packitem );
-		target->SetWeight( weight );
-		target->SetDef( def );
-		target->SetTarg( GetTarg() );
-		target->SetRegen( regen[0], 0 );
-		target->SetRegen( regen[1], 1 );
-		target->SetRegen( regen[2], 2 );
-		target->SetAttacker( GetAttacker() );
-		target->SetVisible( GetVisible() );
-
-		for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
-			target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
-		target->SetHunger( hunger );
-		target->SetRegion( regionNum );
-		target->SetTown( town );
-		target->SetTownpriv( townpriv );
-		target->SetAdvObj( advobj );
-		target->SetDisabled( isDisabled() );
-		target->SetCanTrain( CanTrain() );
-		target->SetLastOn( GetLastOn() );
-		target->SetGuildTitle( guildtitle );
-		target->SetGuildFealty( guildfealty );
-		target->SetGuildNumber( guildnumber );
-		target->SetFlag( flag );
-		target->SetCasting( IsCasting() );
-		target->SetJSCasting( IsJSCasting() );
-		target->SetSpellCast( spellCast );
-		target->SetNextAct( nextact );
-		target->SetSquelched( GetSquelched() );
-		target->SetMeditating( IsMeditating() );
-		target->SetStealth( stealth );
-		target->SetRunning( running );
-		target->SetRace( GetRace() );
-		target->SetRaceGate( raceGate );
-		target->SetCarve( carve );
-		for( UI08 counter2 = 0; counter2 < WEATHNUM; ++counter2 )
-		{
-			target->SetWeathDamage( weathDamage[counter2], counter2 );
-		}
-//		target->SetMaxHP( maxHP, maxHP_oldstr, maxHP_oldrace );
-//		target->SetMaxMana( maxMana, maxMana_oldint, maxMana_oldrace );
-		if( IsValidNPC() )
-		{
-			target->SetFleeAt( GetFleeAt() );
-			target->SetReattackAt( GetReattackAt() );
-			target->SetNpcWander( GetNpcWander() );
-			target->SetOldNpcWander( GetOldNpcWander() );
-			target->SetFTarg( GetFTarg() );
-			target->SetFx( GetFx( 0 ), 0 );
-			target->SetFx( GetFx( 1 ), 1 );
-			target->SetFy( GetFy( 0 ), 0 );
-			target->SetFy( GetFy( 1 ), 1 );
-			target->SetFz( GetFz() );
-			target->SetTaming( GetTaming() );
-			target->SetNPCAiType( GetNPCAiType() );
-			target->SetSpAttack( GetSpAttack() );
-			target->SetSpDelay( GetSpDelay() );
-			target->SetSplit( GetSplit() );
-			target->SetSplitChance( GetSplitChance() );
-			target->SetTrainingPlayerIn( GetTrainingPlayerIn() );
-			target->SetHoldG( GetHoldG() );
-			target->SetQuestType( GetQuestType() );
-			target->SetQuestDestRegion( GetQuestDestRegion() );
-			target->SetQuestOrigRegion( GetQuestOrigRegion() );
-		}
-		if( IsValidPlayer() )
-		{
-			target->SetDeaths( GetDeaths() );
-			target->SetFixedLight( GetFixedLight() );
-			target->SetGuarding( GetGuarding() );
-			target->SetOrgName( GetOrgName() );
-			target->SetRobe( GetRobe() );
-			target->SetAccount( GetAccount() );
-			target->SetOrgID( GetOrgID() );
-			target->SetCallNum( GetCallNum() );
-			target->SetPlayerCallNum( GetPlayerCallNum() );
-			target->SetCommandLevel( GetCommandLevel() );
-			target->SetPostType( GetPostType() );
-			target->SetTrackingTarget( GetTrackingTarget() );
-			for( UI08 counter = 0; counter < mPlayer->trackingTargets.size(); ++counter )
-			{
-				target->SetTrackingTargets( mPlayer->trackingTargets[counter], counter );
-			}
-		}
+	}
 }
 
+FlagColors CChar::FlagColour( CChar *toCompare )
+{
+	FlagColors retVal = FC_INNOCENT;
+
+	GUILDRELATION gComp	= GR_UNKNOWN;
+	SI08 rComp			= 0;
+
+	if( ValidateObject( toCompare ) )
+	{
+		if( !IsIncognito() )
+		{
+			gComp	= GuildSys->Compare( this, toCompare );
+			rComp	= Races->Compare( this, toCompare );
+		}
+	}
+
+	if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+		retVal = FC_MURDERER;
+	else if( IsCriminal() )
+		retVal = FC_CRIMINAL;
+	else if( rComp != 0 || gComp != GR_UNKNOWN )
+	{
+		if( gComp == GR_ALLY || gComp == GR_SAME || rComp > 0 )
+			retVal = FC_FRIEND;
+		else if( gComp == GR_WAR || race < 0 )
+			retVal = FC_ENEMY;
+	}
+	else if( IsNpc() )
+	{
+		switch( GetNPCFlag() )
+		{
+		case fNPC_NEUTRAL:
+		default:			retVal = FC_NEUTRAL;	break;
+		case fNPC_INNOCENT:	retVal = FC_INNOCENT;	break;
+		case fNPC_EVIL:		retVal = FC_MURDERER;	break;
+		}
+	}
+	return retVal;
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  void CChar::RemoveFromSight
 //|   Date        -  April 7th, 2000
@@ -1563,27 +1603,7 @@ void CChar::SendToSocket( CSocket *s )
 
 		CPDrawObject toSend( (*this) );
 
-		UI08 rFlag = 1;
-		GUILDRELATION guild = GuildSys->Compare( mCharObj, this );
-		SI08 raceCmp		= Races->Compare( mCharObj, this );
-		if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-			rFlag = 6;
-		else if( guild == GR_ALLY || guild == GR_SAME || raceCmp > 0 ) // Same guild (Green), racial ally, allied guild
-			rFlag = 2;
-		else if( guild == GR_WAR || raceCmp < 0 ) // Enemy guild.. set to orange
-			rFlag = 5;
-		else if( DidAttackFirst() && GetTarg() == mCharObj ) // If char did attack first
-			rFlag = 5;
-		else
-		{
-			if( IsMurderer() )		// Murderer
-				rFlag = 6;
-			else if( IsCriminal() )	// Criminal
-				rFlag = 4;
-			else if( IsNeutral() )	// Neutral
- 				rFlag = 3;
-		}
-		toSend.SetRepFlag( rFlag );
+		toSend.SetRepFlag( static_cast<UI08>(FlagColour( mCharObj )) );
 
 		for( LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter )
 		{
@@ -2407,15 +2427,42 @@ bool CChar::IsInnocent( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  bool IsNeutral( void ) const
-//|   Date        -  18 July 2005
-//|   Programmer  -  Grimson
+//|   Function    -  void SetFlagRed( void )
+//|   Date        -  2nd October, 2001
+//|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if the character is neutral
+//|   Purpose     -  Updates the character's flag to reflect murderer status
 //o---------------------------------------------------------------------------o
-bool CChar::IsNeutral( void ) const
+void CChar::SetFlagRed( void )
 {
-	return ( (GetFlag()&0x20) == 0x20 );
+	flag |= 0x01;
+	flag &= 0x09;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SetFlagGray( void )
+//|   Date        -  2nd October, 2001
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Updates the character's flag to reflect criminality
+//o---------------------------------------------------------------------------o
+void CChar::SetFlagGray( void )
+{
+	flag |= 0x02;
+	flag &= 0x0A;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SetFlagBlue( void )
+//|   Date        -  2nd October, 2001
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Updates the character's flag to reflect innocence
+//o---------------------------------------------------------------------------o
+void CChar::SetFlagBlue( void )
+{
+	flag |= 0x04;
+	flag &= 0x0C;
 }
 
 //o---------------------------------------------------------------------------o
@@ -3118,58 +3165,6 @@ bool CChar::IsJailed( void ) const
 bool CChar::IsMounted( void ) const
 {
 	return ( GetX() >= 7000 || GetY() >= 7000 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetFlagRed( void )
-//|   Date        -  2nd October, 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Updates the character's flag to reflect murderer status
-//o---------------------------------------------------------------------------o
-void CChar::SetFlagRed( void )
-{
-	flag |= 0x01;
-	flag &= 0x1B;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetFlagBlue( void )
-//|   Date        -  2nd October, 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Updates the character's flag to reflect innocence
-//o---------------------------------------------------------------------------o
-void CChar::SetFlagBlue( void )
-{
-	flag |= 0x04;
-	flag &= 0x1C;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetFlagGray( void )
-//|   Date        -  2nd October, 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Updates the character's flag to reflect criminality
-//o---------------------------------------------------------------------------o
-void CChar::SetFlagGray( void )
-{
-	flag |= 0x02;
-	flag &= 0x1B;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetFlagNeutral( void )
-//|   Date        -  18th July, 2005
-//|   Programmer  -  Grimson
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Updates the character's flag to reflect neutrality
-//o---------------------------------------------------------------------------o
-void CChar::SetFlagNeutral( void )
-{
-	flag |= 0x20;
-	flag &= 0x38;
 }
 
 //o---------------------------------------------------------------------------o
@@ -4960,6 +4955,62 @@ void CChar::RemoveFriend( CChar *toRemove )
 				mNPC->petFriends.erase( rIter );
 				break;
 			}
+		}
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  cNPC_Flag GetNPCFlag()
+//|   Date        -  February 9, 2006
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the NPC's default flag color
+//o---------------------------------------------------------------------------o
+cNPC_FLAG CChar::GetNPCFlag( void ) const
+{
+	cNPC_FLAG retVal = fNPC_NEUTRAL;
+
+	if( IsValidNPC() )
+	{
+		if( (mNPC->npcFlag&0x01) == 0x01 )
+			retVal = fNPC_NEUTRAL;
+		else if( (mNPC->npcFlag&0x02) == 0x02 )
+			retVal = fNPC_INNOCENT;
+		else if( (mNPC->npcFlag&0x04) == 0x04 )
+			retVal = fNPC_EVIL;
+	}
+
+	return retVal;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  SetNPCFlag( cNPC_Flag flagType )
+//|   Date        -  February 9, 2006
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the NPC's default flag color
+//o---------------------------------------------------------------------------o
+void CChar::SetNPCFlag( cNPC_FLAG flagType )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+	{
+		switch( flagType )
+		{
+		case fNPC_NEUTRAL:
+		default:
+			mNPC->npcFlag |= 0x01;
+			mNPC->npcFlag &= 0x09;
+			break;
+		case fNPC_INNOCENT:
+			mNPC->npcFlag |= 0x02;
+			mNPC->npcFlag &= 0x0A;
+			break;
+		case fNPC_EVIL:
+			mNPC->npcFlag |= 0x04;
+			mNPC->npcFlag &= 0x0C;
+			break;
 		}
 	}
 }

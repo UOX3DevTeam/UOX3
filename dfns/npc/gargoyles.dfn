@@ -42,7 +42,7 @@ TOPROV=675
 TOPEACE=625
 TOTAME=1200
 RUNS
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [stonegargoyle]
@@ -78,7 +78,7 @@ TOPEACE=614
 TOTAME=1100
 RACE=3
 RUNS
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [enslavedgargoyle]
@@ -108,7 +108,7 @@ toprov=658
 topeace=650
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [firegargoyle]
@@ -147,7 +147,7 @@ toprov=910
 topeace=860
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [gargoyledestroyer]
@@ -186,7 +186,7 @@ toprov=1200
 topeace=1200
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [gargoyleenforcer]
@@ -223,7 +223,7 @@ toprov=830
 topeace=780
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 // gargoyle names need to be included for shopkeepers.
@@ -259,7 +259,7 @@ toprov=600
 topeace=600
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }
 
 [gargoylemason]
@@ -293,5 +293,5 @@ toprov=600
 topeace=600
 totame=1200
 runs
-NEUTRAL
+FLAG=NEUTRAL
 }

@@ -1,4 +1,19 @@
-2/08/2006 - giwo (0.98-3.2m [3.3RC])
+2/09/2006 - giwo (0.98-3.2n [3.3 RC])
+	Overhauled the character flagging system:
+		Added FlagColors enum.
+		Renamed setcharflag() to UpdateFlag().
+		Rewrote FlagColour() to make use of an enum and made it part of CChar.
+		Made use of CChar::FlagColour() in several areas where we were doing the work manually.
+		Added CChar SetNPCFlag() and GetNPCFlag() alond with cNPC_FLAG enum.
+		Removed CChar IsNeutral() and SetNeutralFlag().
+		Fixed an issue causing CChar Flagging functions not to return proper values.
+		Replaced Dfn tag NEUTRAL with FLAG= the options for which are NEUTRAL, INNOCENT and EVIL.
+		Replaced JS character property neutral with npcFlag, for which the values are 0 = NEUTRAL, 1 = INNOCENT, 2 = EVIL.
+	Broke DropOnItem() into several smaller functions.
+	Updated all instances of NEUTRAL in the dfn's to FLAG=NEUTRAL
+	Added some FLAG=EVIL, FLAG=INNOCENT, and FLAG=NEUTRAL tags to appropriate NPC's
+
+2/08/2006 - giwo (0.98-3.2m [3.3 RC])
 	Fixed an issue causing ID and Type-based JS scripts not to run if an object had a script associated with it.
 	Fixed an issue with SetTag() causing 0 and null values not to unset the tag.
 	Fixed some wierdness when using the Delete() property in JS.
@@ -18,7 +33,7 @@
 	Added spawn.dfn tag PREFZ=, this sets the maximum Z influence dynamic and static items can have on spawning.
 	Incorporated Grimsons fixes to CSpawnRegion to allow NPC's to spawn at the proper Z based on the static and dynamic items at their location.
 
-2/07/2006 - giwo (0.98-3.2j [3.3 RC] )
+2/07/2006 - giwo (0.98-3.2j [3.3 RC])
 	Replaced CTEffectContainer with a call to CDataList.
 	Fixed multiple issues causing temporary effects to randomly never expire.
 	Fixed an issue causing mana never to regenerate completely in certain circumstances.

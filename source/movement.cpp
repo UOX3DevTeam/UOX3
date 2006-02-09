@@ -134,47 +134,6 @@ inline SI08 calcTileHeight( SI08 h )
 	//return (h & 0x7);
 	//return ((h & 0x8) ? (((h & 0xF) ^ 0xF) + 1) : h & 0xF);
 	return (SI08)((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
-} 
-
-UI08 FlagColour( CChar *a, CChar *b )
-{
-	if( !ValidateObject( a ) )
-		return 3;
-	GUILDRELATION guild;
-	SI08 race;
-	if( ValidateObject( b ) )
-	{
-	    guild = GuildSys->Compare( a, b );
-		race = Races->Compare( a, b );
-	}
-	else
-	{
-		guild = GR_UNKNOWN;
-		race = 0;
-	}
-	if( a->GetKills() > cwmWorldState->ServerData()->RepMaxKills() ) 
-		return 6;
-	else if( race != 0 || guild != GR_UNKNOWN )
-	{
-		if( guild == GR_ALLY || guild == GR_SAME || race > 0 )//Same guild (Green)
-			return 2;
-		else if( guild == GR_WAR || race < 0 ) // Enemy guild.. set to orange
-			return 5;
-	}
-
-	if( ValidateObject( b ) )
-	{
-		if( a->DidAttackFirst() && a->GetTarg() == b )
-			return 5;
-	}
-	if( a->IsMurderer() )
-		return 6;		// If a bad, show as red.
-	else if( a->IsInnocent() )
-		return 1;		// If a good, show as blue.
-	else if( a->IsCriminal() )
-		return 4;		// Criminal gray
-	else
-		return 3;		// Neutral gray
 }
 
 /*
@@ -861,7 +820,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 					continue;
 				}
 			}
-			toSend.FlagColour( FlagColour( c, mChar ) );
+			toSend.FlagColour( static_cast<UI08>(c->FlagColour( mChar )) );
 			tSend->Send( &toSend );
 		}
 	}
@@ -1196,7 +1155,7 @@ void cMovement::CombatWalk( CChar *i ) // Only for switching to combat mode
 		CChar *mChar = (*cIter)->CurrcharObj();
 		if( mChar != i )
         {
-			toSend.FlagColour( FlagColour( i, mChar ) );
+			toSend.FlagColour( static_cast<UI08>(i->FlagColour( mChar )) );
             (*cIter)->Send( &toSend );
         }
     }

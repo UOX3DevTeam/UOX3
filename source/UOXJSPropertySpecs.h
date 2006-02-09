@@ -151,7 +151,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "murderer",		CCP_MURDERER,		JSPROP_ENUMPERMRO  },
 	{ "innocent",		CCP_INNOCENT,		JSPROP_ENUMANDPERM },
 	{ "murdercount",	CCP_MURDERCOUNT,	JSPROP_ENUMANDPERM },
-	{ "neutral",		CCP_NEUTRAL,		JSPROP_ENUMANDPERM },
+	{ "npcFlag",		CCP_NPCFLAG,		JSPROP_ENUMANDPERM },
 	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM },
 	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO  },
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM },

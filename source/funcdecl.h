@@ -83,7 +83,7 @@ CItem *			FindItem( CChar *toFind, UI16 itemID );
 //o---------------------------------------------------------------------------o
 void	Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma );
 void	Fame( CChar *nCharID, const SI16 nFame );
-void	setcharflag( CChar *c );
+void	UpdateFlag( CChar *mChar );
 
 //o---------------------------------------------------------------------------o
 // Combat Stuff

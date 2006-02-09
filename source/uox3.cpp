@@ -832,7 +832,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		if( mSock != NULL )
 			mSock->sysmessage( 1238 );
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
-		setcharflag( &mChar );
+		UpdateFlag( &mChar );
 	}
 	if( mChar.GetKills() && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
@@ -844,7 +844,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
 		if( mSock != NULL && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
 			mSock->sysmessage( 1239 );
-		setcharflag( &mChar );
+		UpdateFlag( &mChar );
 	}
 
 	if( !mChar.IsNpc() && mSock != NULL )
@@ -1426,7 +1426,7 @@ void CWorldMain::CheckAutoTimers( void )
 				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, checkHunger ) )
 				{
 					if( setNPCFlags )
-						setcharflag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
+						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
 					checkNPC( (*charCheck), checkAI, doRestock );
 				}
 			}
@@ -2368,7 +2368,7 @@ void criminal( CChar *c )
 		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 		if( cSock != NULL )
 			cSock->sysmessage( 1379 );
-		setcharflag( c );
+		UpdateFlag( c );
 	}
 	else	// let's update their flag, as another criminal act will reset the timer
 		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
@@ -2381,53 +2381,73 @@ void criminal( CChar *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Set characters flag
 //o---------------------------------------------------------------------------o
-void setcharflag( CChar *c )
+void UpdateFlag( CChar *mChar )
 {
-	if( !ValidateObject( c ) )
+	if( !ValidateObject( mChar ) )
 		return;
 
-	UI08 oldFlag = c->GetFlag();
+	UI08 oldFlag = mChar->GetFlag();
 
-	if( c->IsTamed() )
+	if( mChar->IsTamed() )
 	{
-		CChar *i = c->GetOwnerObj();
+		CChar *i = mChar->GetOwnerObj();
 		if( ValidateObject( i ) )
-			c->SetFlag( i->GetFlag() );
+			mChar->SetFlag( i->GetFlag() );
 		else
 		{
-			c->SetFlagBlue();
-			Console.Warning( 2, "Tamed Creature has an invalid owner, Serial: 0x%X", c->GetSerial() );
+			mChar->SetFlagBlue();
+			Console.Warning( 2, "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() );
 		}
 	}
 	else
 	{
-		if( c->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-			c->SetFlagRed();
-		else if( c->GetTimer( tCHAR_CRIMFLAG ) != 0 )
-			c->SetFlagGray();
+		if( mChar->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+			mChar->SetFlagRed();
+		else if( mChar->GetTimer( tCHAR_CRIMFLAG ) != 0 )
+			mChar->SetFlagGray();
 		else
 		{
-			if( cwmWorldState->creatures[c->GetID()].IsAnimal() && c->GetNPCAiType() != aiEVIL )
+			if( mChar->IsNpc() )
 			{
-				if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && c->GetRegion()->IsGuarded() )
-					c->SetFlagBlue();
-				else
-					c->SetFlagNeutral();
+				bool doSwitch = true;
+				if( cwmWorldState->creatures[mChar->GetID()].IsAnimal() && mChar->GetNPCAiType() != aiEVIL )
+				{
+					if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && mChar->GetRegion()->IsGuarded() )
+					{
+						mChar->SetFlagBlue();
+						doSwitch = false;
+					}
+				}
+
+				if( doSwitch )
+				{
+					switch( mChar->GetNPCFlag() )
+					{
+					case fNPC_NEUTRAL:
+					default:
+						mChar->SetFlagGray();
+						break;
+					case fNPC_INNOCENT:
+						mChar->SetFlagBlue();
+						break;
+					case fNPC_EVIL:
+						mChar->SetFlagRed();
+						break;
+					}
+				}
 			}
-			else if( c->IsNeutral() )
-				c->SetFlagNeutral();
 			else
-				c->SetFlagBlue();	
+				mChar->SetFlagBlue();	
 		}
 	}
 
-	UI08 newFlag = c->GetFlag();
+	UI08 newFlag = mChar->GetFlag();
 	if( oldFlag != newFlag )
 	{
-		UI16 targTrig = c->GetScriptTrigger();
+		UI16 targTrig = mChar->GetScriptTrigger();
 		cScript *toExecute = JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
-			toExecute->OnFlagChange( c, newFlag, oldFlag );
+			toExecute->OnFlagChange( mChar, newFlag, oldFlag );
 	}
 } 
 

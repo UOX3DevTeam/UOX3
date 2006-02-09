@@ -206,7 +206,7 @@ void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 	for( UI08 z = 0; z < ALLSKILLS; ++z )
 		Skills->updateSkillLevel( cCreated, z );
 
-	setcharflag( cCreated );
+	UpdateFlag( cCreated );
 	cCreated->Update();
 }
 
@@ -711,6 +711,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetFleeAt( static_cast<SI16>(ndata) );
 											break;
+			case DFNTAG_FLAG:				
+											if( !isGate )
+											{
+												if( !cdata.empty() )
+												{
+													UString UDat = UString( cdata ).upper();
+													if( UDat == "NEUTRAL" )
+														applyTo->SetNPCFlag( fNPC_NEUTRAL );
+													else if( UDat == "INNOCENT" )
+														applyTo->SetNPCFlag( fNPC_INNOCENT );
+													else if( UDat == "EVIL" )
+														applyTo->SetNPCFlag( fNPC_EVIL );
+												}
+											}
+											break;
 			case DFNTAG_FORENSICS:			skillToSet = FORENSICS;					break;
 			case DFNTAG_FOCUS:				skillToSet = FOCUS;						break;
 			case DFNTAG_FX1:								
@@ -799,10 +814,6 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_NAME:				applyTo->SetName( cdata );				break;
 			case DFNTAG_NAMELIST:			setRandomName( applyTo, cdata );		break;
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
-			case DFNTAG_NEUTRAL:				
-											if( !isGate )
-												applyTo->SetFlagNeutral();
-											break;
 			case DFNTAG_NINJITSU:			skillToSet = NINJITSU;					break;
 			case DFNTAG_NPCWANDER:			
 											if( !isGate )

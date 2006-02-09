@@ -1561,24 +1561,18 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 {
-	GUILDRELATION gRel;
-	if( trg->IsIncognito() )
-		gRel = GR_UNKNOWN;
-	else
-		gRel = GuildSys->Compare( src, trg );
-	SI08 race = Races->Compare( src, trg );
-
-	COLOUR retVal = 0x0058;	// blue
-	if( !trg->IsNpc() && trg->GetCommandLevel() > 0 && ( trg->GetID() == 0x03DB ) )
-		retVal = Commands->GetColourByLevel( trg->GetCommandLevel() );//get their command level color if they look like a gm ONLY
-	else if( trg->GetKills() > cwmWorldState->ServerData()->RepMaxKills() || trg->IsMurderer() )
-		retVal = 0x0026;//Red
-	else if( gRel == GR_SAME || gRel == GR_ALLY || race > 0 )
-		retVal = 0x0043;//Same guild (Green)
-	else if( gRel == GR_WAR || race < 0 )
-		retVal = 0x0030;//enemy guild (orange)
-	else if( trg->IsCriminal() || trg->IsNeutral() )
-		retVal = 0x03B2;//grey
+	COLOUR retVal = 0x0058;
+	switch( trg->FlagColour( src ) )
+	{
+	case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
+	case FC_NEUTRAL:
+	case FC_CRIMINAL:
+	default:				retVal = 0x03B2;		break;	// Gray
+	case FC_MURDERER:		retVal = 0x0026;		break;	// Red
+	case FC_FRIEND:			retVal = 0x0043;		break;	// Green
+	case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
+	case FC_INVULNERABLE:							break;	// Yellow?
+	}
 
 	return retVal;
 }

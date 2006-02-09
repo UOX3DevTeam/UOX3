@@ -4,6 +4,13 @@
 namespace UOX
 {
 
+	enum cNPC_FLAG
+	{
+		fNPC_NEUTRAL = 0,
+		fNPC_INNOCENT,
+		fNPC_EVIL
+	};
+
 enum cC_TID
 {
 	// Global Character Timers
@@ -67,6 +74,8 @@ private:
 		CHARLIST		petFriends;
 
 		SERIAL			fTarg; // NPC Follow Target
+
+		UI08			npcFlag;
 	};
 
 	struct PlayerValues_st
@@ -166,7 +175,7 @@ protected:
 	UI16		atrophy[INTELLECT+1];
 	UI08		lockState[INTELLECT+1];	// state of the skill locks
 
-	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange 20=Neutral	// should it not be 0x10??? sounds like we're trying to do
+	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
 
 	LAYERLIST			itemLayers;
 	LAYERLIST_ITERATOR	layerCtr;
@@ -377,7 +386,6 @@ public:
 	void		SetFlagRed( void );
 	void		SetFlagBlue( void );
 	void		SetFlagGray( void );
-	void		SetFlagNeutral( void );
 	void		SetGuildNumber( SI16 newValue );
 
 	SI08		GetFontType( void ) const;
@@ -433,7 +441,6 @@ public:
 	bool	IsMurderer( void ) const;
 	bool	IsCriminal( void ) const;
 	bool	IsInnocent( void ) const;
-	bool	IsNeutral( void ) const;
 
 	void	StopSpell( void );
 	bool	SkillUsed( UI08 skillNum ) const;
@@ -482,6 +489,9 @@ public:
 	virtual void	Cleanup( void );
 	virtual void	Delete( void );
 	virtual bool	CanBeObjType( ObjectType toCompare ) const;
+
+	FlagColors		FlagColour( CChar *toCompare );
+
 // NPC Characters
 protected:
 	virtual void	RemoveSelfFromOwner( void );
@@ -552,6 +562,9 @@ public:
 	void		PushDirection( UI08 newDir );
 	bool		StillGotDirs( void ) const;
 	void		FlushPath( void );
+
+	cNPC_FLAG	GetNPCFlag( void ) const;
+	void		SetNPCFlag( cNPC_FLAG flagType );
 
 // Player Characters
 public:

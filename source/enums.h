@@ -643,5 +643,16 @@ enum monsterSound
 	SND_COUNT
 };
 
+enum FlagColors
+{
+	FC_INNOCENT = 1,
+	FC_FRIEND,
+	FC_NEUTRAL,
+	FC_CRIMINAL,
+	FC_ENEMY,
+	FC_MURDERER,
+	FC_INVULNERABLE
+};
+
 #endif
 

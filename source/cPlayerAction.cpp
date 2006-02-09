@@ -843,6 +843,240 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	nChar->Dirty( UT_STATWINDOW );
 }
 
+void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped )
+{
+	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+	{
+		Weight->subtractItemWeight( &mChar, &iDropped );
+		mChar.Dirty( UT_STATWINDOW );
+	}
+	iDropped.SetCont( &tradeWindowOne );
+	iDropped.SetX( mSock.GetWord( 5 ) );
+	iDropped.SetY( mSock.GetWord( 7 ) );
+	iDropped.SetZ( 9 );
+	CItem *tradeWindowTwo = calcItemObjFromSer( tradeWindowOne.GetTempVar( CITV_MOREX ) );
+	if( ValidateObject( tradeWindowTwo ) )
+	{
+		if( tradeWindowTwo->GetTempVar( CITV_MOREZ ) || tradeWindowOne.GetTempVar( CITV_MOREZ ) )
+		{
+			tradeWindowTwo->SetTempVar( CITV_MOREZ, 0 );
+			tradeWindowOne.SetTempVar( CITV_MOREZ, 0 );
+			sendTradeStatus( tradeWindowTwo, &tradeWindowOne );
+		}
+		CChar *tw2Owner = FindItemOwner( tradeWindowTwo );
+		if( ValidateObject( tw2Owner ) )
+		{
+			CSocket *tw2Sock = tw2Owner->GetSocket();
+			if( tw2Sock != NULL )
+				Effects->itemSound( tw2Sock, &tradeWindowOne, ( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND ) );
+		}
+	}
+}
+
+void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
+{
+	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+	{
+		Weight->subtractItemWeight( &mChar, &iDropped );
+		mChar.Dirty( UT_STATWINDOW );
+	}
+	if( iDropped.GetID( 1 ) != 0x1F || iDropped.GetID( 2 ) < 0x2D || iDropped.GetID( 2 ) > 0x72 )
+	{
+		Bounce( &mSock, &iDropped );
+		mSock.sysmessage( 1202 );
+		return;
+	}
+	CChar *sbOwner = FindItemOwner( &spellBook );
+	if( ValidateObject( sbOwner ) && sbOwner != &mChar && !mChar.CanSnoop() )
+	{
+		Bounce( &mSock, &iDropped );
+		mSock.sysmessage( 1203 );
+		return;
+	}
+	std::string name;
+	name.reserve( MAX_NAME );
+	if( iDropped.GetName()[0] == '#' )
+		getTileName( iDropped, name );
+	else
+		name = iDropped.GetName();
+
+	if( spellBook.GetTempVar( CITV_MORE, 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
+	{
+		mSock.sysmessage( 1204 );
+		Bounce( &mSock, &iDropped );
+		return;
+	}
+
+	if( name == Dictionary->GetEntry( 1605 ) )
+	{
+		if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && spellBook.GetSpell( 1 ) == INVALIDSERIAL && spellBook.GetSpell( 2 ) == INVALIDSERIAL )
+		{
+			mSock.sysmessage( 1205 );
+			Bounce( &mSock, &iDropped );
+			return;
+		}
+		spellBook.SetSpell( 0, INVALIDSERIAL );
+		spellBook.SetSpell( 1, INVALIDSERIAL );
+		spellBook.SetSpell( 2, INVALIDSERIAL );
+	}
+	else
+	{
+		int targSpellNum = iDropped.GetID() - 0x1F2D;
+		if( Magic->HasSpell( &spellBook, targSpellNum ) )
+		{
+			mSock.sysmessage( 1206 );
+			Bounce( &mSock, &iDropped );
+			return;
+		}
+		else
+			Magic->AddSpell( &spellBook, targSpellNum );
+	}
+	Effects->PlaySound( &mSock, 0x0042, false );
+	if( iDropped.GetAmount() > 1 )
+	{
+		iDropped.IncAmount( -1 );
+		Bounce( &mSock, &iDropped );
+	}
+	else
+		iDropped.Delete();
+}
+
+bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
+{
+	bool canHold = true;
+	if( droppedOn.GetCont() != NULL )
+	{
+		if( droppedOn.GetContSerial() >= BASEITEMSERIAL )
+			canHold = Weight->checkPackWeight( &mChar, static_cast<CItem *>(droppedOn.GetCont()), &iDropped );
+		else
+			canHold = Weight->checkCharWeight( &mChar, static_cast<CChar *>(droppedOn.GetCont()), &iDropped );
+	}
+	if( !canHold )
+	{
+		if( droppedOn.GetContSerial() >= BASEITEMSERIAL )
+			mSock.sysmessage( 1385 );
+		else
+			mSock.sysmessage( 1743 );
+		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+		{
+			Weight->subtractItemWeight( &mChar, &iDropped );
+			mChar.Dirty( UT_STATWINDOW );
+		}
+		Bounce( &mSock, &iDropped );
+		return false;
+	}
+	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+		Weight->subtractItemWeight( &mChar, &iDropped );
+	stackDeleted = ( doStacking( &mSock, &mChar, &iDropped, &droppedOn ) != &iDropped );
+	if( !stackDeleted )	// if the item didn't stack or the stack was full
+		Bounce( &mSock, &iDropped );
+	mChar.Dirty( UT_STATWINDOW );
+
+	return true;
+}
+
+bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
+{
+	CChar *contOwner = FindItemOwner( &droppedOn );
+	if( ValidateObject( contOwner ) )
+	{
+		if( contOwner == &mChar )
+		{
+			CBaseObject *recurseCont = droppedOn.GetCont();
+			while( ValidateObject( recurseCont ) )
+			{
+				if( recurseCont->CanBeObjType( OT_ITEM ) )
+				{
+					CItem *recurseItem = static_cast<CItem *>(recurseCont);
+					if( recurseItem->GetType() == IT_TRADEWINDOW )
+					{
+						CItem *tradeWindowTwo = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
+						if( ValidateObject( tradeWindowTwo ) )
+						{
+							if( tradeWindowTwo->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
+							{
+								tradeWindowTwo->SetTempVar( CITV_MOREZ, 0 );
+								recurseItem->SetTempVar( CITV_MOREZ, 0 );
+								sendTradeStatus( tradeWindowTwo, recurseItem );
+							}
+							CChar *tw2Char = FindItemOwner( tradeWindowTwo );
+							if( ValidateObject( tw2Char ) )
+							{
+								CSocket *tw2Sock = tw2Char->GetSocket();
+								if( tw2Sock != NULL )
+									Effects->itemSound( tw2Sock, recurseItem, ( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND ) );
+							}
+						}
+						break;
+					}
+					else
+						recurseCont = recurseItem->GetCont();
+				}
+				else
+					break;
+			}
+		}
+		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == aiPLAYERVENDOR && contOwner->GetOwnerObj() == &mChar )
+		{
+			mChar.SetSpeechMode( 3 );
+			mChar.SetSpeechItem( &iDropped );
+			mSock.sysmessage( 1207 );
+		}
+		else if( contOwner != &mChar && mChar.GetCommandLevel() < CNS_CMDLEVEL )
+		{
+			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+			{
+				Weight->subtractItemWeight( &mChar, &iDropped );
+				mChar.Dirty( UT_STATWINDOW );
+			}
+			mSock.sysmessage( 1630 );
+			Bounce( &mSock, &iDropped );
+			return false;
+		}
+	}
+	if( mSock.GetByte( 5 ) != 0xFF )	// In a specific spot in a container
+	{
+		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( &mChar, &iDropped );
+
+		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
+		{
+			mSock.sysmessage( 1385 );
+			Bounce( &mSock, &iDropped );
+			mChar.Dirty( UT_STATWINDOW );
+			return false;
+		}
+		iDropped.SetCont( &droppedOn );
+		iDropped.SetX( mSock.GetWord( 5 ) );
+		iDropped.SetY( mSock.GetWord( 7 ) );
+		iDropped.SetZ( 9 );
+		mChar.Dirty( UT_STATWINDOW );
+	}
+	else
+	{
+		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
+		{
+			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+			{
+				Weight->subtractItemWeight( &mChar, &iDropped );
+				mChar.Dirty( UT_STATWINDOW );
+			}
+			mSock.sysmessage( 1385 );
+			Bounce( &mSock, &iDropped );
+			return false;
+		}
+		iDropped.SetCont( &droppedOn );
+		stackDeleted = ( autoStack( &mSock, &iDropped, &droppedOn ) != &iDropped );
+		if( !stackDeleted )
+		{
+			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( &mChar, &iDropped );
+		}
+		mChar.Dirty( UT_STATWINDOW );
+	}
+	return true;
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    :  DropOnItem( CSocket *s )
 //|   Date        :  Unknown
@@ -881,35 +1115,8 @@ void DropOnItem( CSocket *mSock )
 		return;
 	}
 
-	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )
-	{	// Trade window
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
-			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
-		nItem->SetCont( nCont );
-		nItem->SetX( mSock->GetWord( 5 ) );
-		nItem->SetY( mSock->GetWord( 7 ) );
-		nItem->SetZ( 9 );
-		CItem *z = calcItemObjFromSer( nCont->GetTempVar( CITV_MOREX ) );
-		if( ValidateObject( z ) )
-		{
-			if( z->GetTempVar( CITV_MOREZ ) || nCont->GetTempVar( CITV_MOREZ ) )
-			{
-				z->SetTempVar( CITV_MOREZ, 0 );
-				nCont->SetTempVar( CITV_MOREZ, 0 );
-				sendTradeStatus( z, nCont );
-			}
-			CChar *zChar = FindItemOwner( z );
-			if( ValidateObject( zChar ) )
-			{
-				CSocket *zSock = zChar->GetSocket();
-				if( zSock != NULL )
-				Effects->itemSound( zSock, nCont, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
-			}
-		}
-	}
+	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window
+		DropOnTradeWindow( (*mSock), (*mChar), (*nCont), (*nItem) );
 	else if( nCont->GetType() == IT_TRASHCONT )	// Trash container
 	{
 		Effects->PlaySound( mSock, 0x0042, false );
@@ -924,202 +1131,18 @@ void DropOnItem( CSocket *mSock )
 	}
 	else if( nCont->GetType() == IT_SPELLBOOK )	// Spell Book
 	{
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
-			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
-		if( nItem->GetID( 1 ) != 0x1F || nItem->GetID( 2 ) < 0x2D || nItem->GetID( 2 ) > 0x72 )
-		{
-			Bounce( mSock, nItem );
-			mSock->sysmessage( 1202 );
-			return;
-		}
-		CChar *c = FindItemOwner( nCont );
-		if( ValidateObject( c ) && c != mChar && !mChar->CanSnoop() )
-		{
-			Bounce( mSock, nItem );
-			mSock->sysmessage( 1203 );
-			return;
-		}
-		std::string name;
-		name.reserve( MAX_NAME );
-		if( nItem->GetName()[0] == '#' )
-			getTileName( (*nItem), name );
-		else
-			name = nItem->GetName();
-
-		if( nCont->GetTempVar( CITV_MORE, 1 ) == 1 )	// using more1 to "lock" a spellbook for RP purposes
-		{
-			mSock->sysmessage( 1204 );
-			Bounce( mSock, nItem );
-			return;
-		}
-
-		if( name == Dictionary->GetEntry( 1605 ) )
-		{
-			if( nCont->GetSpell( 0 ) == INVALIDSERIAL && nCont->GetSpell( 1 ) == INVALIDSERIAL && nCont->GetSpell( 2 ) == INVALIDSERIAL )
-			{
-				mSock->sysmessage( 1205 );
-				Bounce( mSock, nItem );
-				return;
-			}
-			nCont->SetSpell( 0, INVALIDSERIAL );
-			nCont->SetSpell( 1, INVALIDSERIAL );
-			nCont->SetSpell( 2, INVALIDSERIAL );
-		}
-		else
-		{
-			int targSpellNum = nItem->GetID() - 0x1F2D;
-			if( Magic->HasSpell( nCont, targSpellNum ) )
-			{
-				mSock->sysmessage( 1206 );
-				Bounce( mSock, nItem );
-				return;
-			}
-			else
-				Magic->AddSpell( nCont, targSpellNum );
-		}
-		Effects->PlaySound( mSock, 0x0042, false );
-		if( nItem->GetAmount() > 1 )
-		{
-			nItem->IncAmount( -1 );
-			Bounce( mSock, nItem );
-		}
-		else
-			nItem->Delete();
+		DropOnSpellBook( (*mSock), (*mChar), (*nCont), (*nItem) );
 		return;
-	}
-	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
-	{	// Stacking
-		bool canHold = true;
-		if( nCont->GetCont() != NULL )
-		{
-			if( nCont->GetContSerial() >= BASEITEMSERIAL )
-				canHold = Weight->checkPackWeight( mChar, static_cast<CItem *>(nCont->GetCont()), nItem );
-			else
-				canHold = Weight->checkCharWeight( mChar, static_cast<CChar *>(nCont->GetCont()), nItem );
-		}
-		if( !canHold )
-		{
-			if( nCont->GetContSerial() >= BASEITEMSERIAL )
-				mSock->sysmessage( 1385 );
-			else
-				mSock->sysmessage( 1743 );
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			{
-				Weight->subtractItemWeight( mChar, nItem );
-				mChar->Dirty( UT_STATWINDOW );
-			}
-			Bounce( mSock, nItem );
-			return;
-		}
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, nItem );
-		stackDeleted = ( doStacking( mSock, mChar, nItem, nCont ) != nItem );
-		if( !stackDeleted )	// if the item didn't stack or the stack was full
-			Bounce( mSock, nItem );
-		mChar->Dirty( UT_STATWINDOW );
 	}
 	else if( nCont->GetType() == IT_CONTAINER )
 	{
-		CChar *j = FindItemOwner( nCont );
-		if( ValidateObject( j ) )
-		{
-			if( j == mChar )
-			{
-				CBaseObject *recurseCont = nCont->GetCont();
-				while( ValidateObject( recurseCont ) )
-				{
-					if( recurseCont->CanBeObjType( OT_ITEM ) )
-					{
-						CItem *recurseItem = static_cast<CItem *>(recurseCont);
-						if( recurseItem->GetType() == IT_TRADEWINDOW )
-						{
-							CItem *z = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
-							if( ValidateObject( z ) )
-							{
-								if( z->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
-								{
-									z->SetTempVar( CITV_MOREZ, 0 );
-									recurseItem->SetTempVar( CITV_MOREZ, 0 );
-									sendTradeStatus( z, recurseItem );
-								}
-								CChar *zChar = FindItemOwner( z );
-								if( ValidateObject( zChar ) )
-								{
-									CSocket *zSock = zChar->GetSocket();
-									if( zSock != NULL )
-										Effects->itemSound( zSock, recurseItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
-								}
-							}
-							break;
-						}
-						else
-							recurseCont = recurseItem->GetCont();
-					}
-					else
-						break;
-				}
-			}
-			else if( j->IsNpc() && j->GetNPCAiType() == aiPLAYERVENDOR && j->GetOwnerObj() == mChar )
-			{
-				mChar->SetSpeechMode( 3 );
-				mChar->SetSpeechItem( nItem );
-				mSock->sysmessage( 1207 );
-			}
-			else if( j != mChar && mChar->GetCommandLevel() < CNS_CMDLEVEL )
-			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				{
-					Weight->subtractItemWeight( mChar, nItem );
-					mChar->Dirty( UT_STATWINDOW );
-				}
-				mSock->sysmessage( 1630 );
-				Bounce( mSock, nItem );
-				return;
-			}
-		}
-		if( mSock->GetByte( 5 ) != 0xFF )	// In a specific spot in a container
-		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( mChar, nItem );
-
-			if( nCont != nItem->GetCont() && !Weight->checkPackWeight( mChar, nCont, nItem ) )
-			{
-				mSock->sysmessage( 1385 );
-				Bounce( mSock, nItem );
-				mChar->Dirty( UT_STATWINDOW );
-				return;
-			}
-			nItem->SetCont( nCont );
-			nItem->SetX( mSock->GetWord( 5 ) );
-			nItem->SetY( mSock->GetWord( 7 ) );
-			nItem->SetZ( 9 );
-			mChar->Dirty( UT_STATWINDOW );
-		}
-		else
-		{
-			if( nCont != nItem->GetCont() && !Weight->checkPackWeight( mChar, nCont, nItem ) )
-			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				{
-					Weight->subtractItemWeight( mChar, nItem );
-					mChar->Dirty( UT_STATWINDOW );
-				}
-				mSock->sysmessage( 1385 );
-				Bounce( mSock, nItem );
-				return;
-			}
-			nItem->SetCont( nCont );
-			stackDeleted = ( autoStack( mSock, nItem, nCont ) != nItem );
-			if( !stackDeleted )
-			{
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-					Weight->subtractItemWeight( mChar, nItem );
-			}
-			mChar->Dirty( UT_STATWINDOW );
-		}
+		if( !DropOnContainer( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted ) )
+			return;
+	}
+	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
+	{	// Stacking
+		if( !DropOnStack( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted ) )
+			return;
 	}
 	else
 	{

@@ -289,7 +289,7 @@ public:
 
 private:
 
-	UI16			GetFlagColour( CChar *src, CChar *trg );
+	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 	
 };
 

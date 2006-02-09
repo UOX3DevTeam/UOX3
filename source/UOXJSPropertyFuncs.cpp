@@ -484,7 +484,6 @@ namespace UOX
 				case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
 				case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
 				case CCP_MURDERCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetKills() );		break;
-				case CCP_NEUTRAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNeutral() );	break;
 				case CCP_GENDER:
 					switch( gPriv->GetID() )
 					{
@@ -671,6 +670,7 @@ namespace UOX
 				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( gPriv->isHuman() );					break;
 				case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgID() );					break;
 				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
+				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;
 				default:
 					break;
 			}
@@ -771,7 +771,7 @@ namespace UOX
 					else
 					{
 						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
-						setcharflag( gPriv );
+						UpdateFlag( gPriv );
 					}
 					break;
 				case CCP_INNOCENT:
@@ -780,25 +780,12 @@ namespace UOX
 					else
 					{
 						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
-						setcharflag( gPriv );
+						UpdateFlag( gPriv );
 					}
 					break;
 				case CCP_MURDERCOUNT:
 					gPriv->SetKills( (SI16)encaps.toInt() );
-					setcharflag( gPriv );
-					break;
-				case CCP_NEUTRAL:
-					if( encaps.toBool() )
-					{
-						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
-						gPriv->SetFlagNeutral();
-					}
-					else
-					{
-						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
-						gPriv->SetFlagBlue();
-						setcharflag( gPriv );
-					}
+					UpdateFlag( gPriv );
 					break;
 				case CCP_GENDER:
 					switch( (SI16)encaps.toInt() )
@@ -927,6 +914,7 @@ namespace UOX
 				case CCP_NONEEDREAGS:	gPriv->SetNoNeedReags( encaps.toBool() );			break;
 				case CCP_ORGID:			gPriv->SetOrgID( (UI16)encaps.toInt() );			break;
 				case CCP_ORGSKIN:		gPriv->SetOrgSkin( (UI16)encaps.toInt() );			break;
+				case CCP_NPCFLAG:		gPriv->SetNPCFlag( (cNPC_FLAG)encaps.toInt() );		break;
 				default:
 					break;
 			}
