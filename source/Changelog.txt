@@ -1,3 +1,9 @@
+2/09/2006 - giwo (0.98-3.2o [3.3 RC])
+	NPCFlag now saves to the worldfile.
+	Fixed an issue causing neutral animcals to never appear innocent when in town.
+	Fixed an issue causing tamed animals to not carry their owners flag.
+	Added support for invulnerable (yellow) flagging.
+
 2/09/2006 - giwo (0.98-3.2n [3.3 RC])
 	Overhauled the character flagging system:
 		Added FlagColors enum.

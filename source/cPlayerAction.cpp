@@ -1971,7 +1971,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			m->SetInvulnerable( true );
 			m->SetDir( mChar->GetDir() );
 			m->SetNpcWander( 0 );
-			m->SetFlag( m->GetFlag()^7 );
 			m->SetOwner( mChar );
 			x->Delete();
 			m->talk( mSock, 388, false, m->GetName().c_str() );

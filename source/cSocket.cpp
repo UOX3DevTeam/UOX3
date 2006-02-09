@@ -1571,7 +1571,7 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 	case FC_MURDERER:		retVal = 0x0026;		break;	// Red
 	case FC_FRIEND:			retVal = 0x0043;		break;	// Green
 	case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
-	case FC_INVULNERABLE:							break;	// Yellow?
+	case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
 	}
 
 	return retVal;

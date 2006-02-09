@@ -2291,6 +2291,7 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 						else
 							mSock->sysmessage( 1363, iRegion->GetOwner().c_str() );
 					}
+					UpdateFlag( &mChar );
 				}
 				if( calcReg->GetAppearance() != iRegion->GetAppearance() )	 // if the regions look different
 				{
@@ -2448,6 +2449,7 @@ void UpdateFlag( CChar *mChar )
 		cScript *toExecute = JSMapping->GetScript( targTrig );
 		if( toExecute != NULL )
 			toExecute->OnFlagChange( mChar, newFlag, oldFlag );
+		mChar->Dirty( UT_UPDATE );
 	}
 } 
 

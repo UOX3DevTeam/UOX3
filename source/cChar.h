@@ -75,7 +75,7 @@ private:
 
 		SERIAL			fTarg; // NPC Follow Target
 
-		UI08			npcFlag;
+		cNPC_FLAG		npcFlag;
 	};
 
 	struct PlayerValues_st

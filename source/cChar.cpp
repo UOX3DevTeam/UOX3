@@ -107,7 +107,7 @@ const UI08			DEFNPC_QUESTTYPE			= 0;
 const UI08			DEFNPC_QUESTDESTREGION 		= 0;
 const UI08			DEFNPC_QUESTORIGREGION		= 0;
 const SI16			DEFNPC_WANDERAREA			= -1;
-const UI08			DEFNPC_NPCFLAG				= 0;
+const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
@@ -1526,7 +1526,9 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 		}
 	}
 
-	if( GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
+	if( IsInvulnerable() )
+		retVal = FC_INVULNERABLE;
+	else if( IsMurderer() )
 		retVal = FC_MURDERER;
 	else if( IsCriminal() )
 		retVal = FC_CRIMINAL;
@@ -1536,16 +1538,6 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 			retVal = FC_FRIEND;
 		else if( gComp == GR_WAR || race < 0 )
 			retVal = FC_ENEMY;
-	}
-	else if( IsNpc() )
-	{
-		switch( GetNPCFlag() )
-		{
-		case fNPC_NEUTRAL:
-		default:			retVal = FC_NEUTRAL;	break;
-		case fNPC_INNOCENT:	retVal = FC_INNOCENT;	break;
-		case fNPC_EVIL:		retVal = FC_MURDERER;	break;
-		}
 	}
 	return retVal;
 }
@@ -2032,6 +2024,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "QuestRegions=" << (SI16)questOrigRegion << "," << (SI16)questDestRegion << std::endl;
 	dumping << "FleeAt=" << fleeAt << std::endl;
 	dumping << "ReAttackAt=" << reAttackAt << std::endl;
+	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2399,7 +2392,7 @@ void CChar::IncIntelligence2( SI16 toAdd )
 //o---------------------------------------------------------------------------o
 bool CChar::IsMurderer( void ) const
 {
-	return ( (GetFlag()&0x01) == 0x01 );
+	return ( GetFlag() == 0x01 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2411,7 +2404,7 @@ bool CChar::IsMurderer( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsCriminal( void ) const
 {
-	return ( (GetFlag()&0x02) == 0x02 );
+	return ( GetFlag() == 0x02 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2423,7 +2416,7 @@ bool CChar::IsCriminal( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsInnocent( void ) const
 {
-	return ( (GetFlag()&0x04) == 0x04 );
+	return ( GetFlag() == 0x04 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2435,8 +2428,7 @@ bool CChar::IsInnocent( void ) const
 //o---------------------------------------------------------------------------o
 void CChar::SetFlagRed( void )
 {
-	flag |= 0x01;
-	flag &= 0x09;
+	flag = 0x01;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2448,8 +2440,7 @@ void CChar::SetFlagRed( void )
 //o---------------------------------------------------------------------------o
 void CChar::SetFlagGray( void )
 {
-	flag |= 0x02;
-	flag &= 0x0A;
+	flag = 0x02;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2461,8 +2452,7 @@ void CChar::SetFlagGray( void )
 //o---------------------------------------------------------------------------o
 void CChar::SetFlagBlue( void )
 {
-	flag |= 0x04;
-	flag &= 0x0C;
+	flag = 0x04;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2754,6 +2744,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					}
 					else
 						SetNpcWander( data.toByte() );
+					rvalue = true;
+				}
+				else if( UTag == "NPCFLAG" )
+				{
+					SetNPCFlag( (cNPC_FLAG)data.toUByte() );
 					rvalue = true;
 				}
 				break;
@@ -4971,14 +4966,7 @@ cNPC_FLAG CChar::GetNPCFlag( void ) const
 	cNPC_FLAG retVal = fNPC_NEUTRAL;
 
 	if( IsValidNPC() )
-	{
-		if( (mNPC->npcFlag&0x01) == 0x01 )
-			retVal = fNPC_NEUTRAL;
-		else if( (mNPC->npcFlag&0x02) == 0x02 )
-			retVal = fNPC_INNOCENT;
-		else if( (mNPC->npcFlag&0x04) == 0x04 )
-			retVal = fNPC_EVIL;
-	}
+		retVal = mNPC->npcFlag;
 
 	return retVal;
 }
@@ -4995,24 +4983,7 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 		CreateNPC();
 
 	if( IsValidNPC() )
-	{
-		switch( flagType )
-		{
-		case fNPC_NEUTRAL:
-		default:
-			mNPC->npcFlag |= 0x01;
-			mNPC->npcFlag &= 0x09;
-			break;
-		case fNPC_INNOCENT:
-			mNPC->npcFlag |= 0x02;
-			mNPC->npcFlag &= 0x0A;
-			break;
-		case fNPC_EVIL:
-			mNPC->npcFlag |= 0x04;
-			mNPC->npcFlag &= 0x0C;
-			break;
-		}
-	}
+		mNPC->npcFlag = flagType;
 }
 
 }
