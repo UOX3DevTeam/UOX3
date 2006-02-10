@@ -1,5 +1,16 @@
 // Headwear, excluding ones from TD, LBR & AoS clients
 
+[base_hat]
+{
+get=base_item
+name=base_hat
+id=0x0000
+layer=0x06
+restock=10
+dyeable=1
+decay=1
+}
+
 [0x153f]
 {
 get=base_item

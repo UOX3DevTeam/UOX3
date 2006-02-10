@@ -257,6 +257,21 @@ restock=15
 decay=1
 }
 
+[leather_cap]
+{ left facing
+get=base_item
+name=leather cap
+id=0x1db9
+weight=100
+value=60,30
+layer=0x06
+def=1
+hp=10
+str=20
+restock=15
+decay=1
+}
+
 [leather_leggings]
 { facing left
 get=base_item

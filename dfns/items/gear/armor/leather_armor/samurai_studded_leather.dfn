@@ -1,0 +1,102 @@
+// Note February 10th 2006: The DEF values of all these need heavy tweaking. Based on guesswork only!
+
+[0x277c]
+{
+get=base_item
+name=studded do
+id=0x277c
+layer=0x0d
+hp=50
+str=55
+def=3
+weight=800
+decay=1
+}
+
+[0x27c7]
+{
+get=0x277c
+name=studded do
+id=0x27c7
+}
+
+[0x277f]
+{
+get=base_item
+name=studded hiro sode
+id=0x277f
+layer=0x13
+hp=55
+str=30
+def=3
+weight=100
+decay=1
+}
+
+[0x27ca]
+{
+get=0x277f
+name=studded hiro sode
+id=0x27ca
+}
+
+[0x2787]
+{
+get=base_item
+name=studded suneate
+id=0x2787
+layer=0x04
+hp=50
+str=500
+def=3
+weight=500
+decay=1
+}
+
+[0x27d2]
+{
+get=0x2787
+name=studded suneate
+id=0x27d2
+}
+
+[0x278b]
+{
+get=base_item
+name=studded haidate
+id=0x278b
+layer=0x4
+hp=45
+str=30
+def=3
+weight=500
+decay=1
+}
+
+[0x27d6]
+{
+get=0x278b
+name=studded haidate
+id=0x27d6
+}
+
+[0x279d]
+{
+get=base_item
+name=studded mempo
+id=0x279d
+layer=0x0a
+hp=40
+str=30
+def=2
+weight=200
+decay=1
+}
+
+[0x27e8]
+{
+get=0x279d
+name=studded mempo
+id=0x27e8
+}
+
