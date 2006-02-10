@@ -325,8 +325,87 @@ PACKITEM=0x0f43
 PACKITEM=0x0e85
 }
 
-// Leave Empty
+// Meditation
 [BESTSKILL 46]
+{
+}
+
+// Stealth
+[BESTSKILL 47]
+{
+}
+
+// Remove Traps
+[BESTSKILL 48]
+{
+}
+
+// Necromancy
+[BESTSKILL 49]
+{
+PACKITEM=0x2253
+PACKITEM=0x0e76
+PACKITEM=0x0f78,50
+PACKITEM=0x0f8a,50
+PACKITEM=0x0f8e,50
+PACKITEM=0x0f7d,50
+PACKITEM=0x0f8f,50
+EQUIPITEM=0x1451
+EQUIPITEM=necro_sleeves
+EQUIPITEM=necro_gorget
+EQUIPITEM=necro_leggings
+EQUIPITEM=necro_tunic
+EQUIPITEM=necro_gloves
+EQUIPITEM=0x26bb
+EQUIPITEM=0x170d
+}
+
+// Focus
+[BESTSKILL 50]
+{
+}
+
+// Chivalry
+[BESTSKILL 51]
+{
+PACKITEM=0x2252
+EQUIPITEM=0x0f5e
+EQUIPITEM=0x1515
+EQUIPITEM=0x1541
+EQUIPITEM=0x1711
+EQUIPITEM=0x13eb
+EQUIPITEM=0x13ec
+EQUIPITEM=0x13ee
+EQUIPITEM=0x13f0
+EQUIPITEM=0x1413
+EQUIPITEM=0x140a
+}
+
+// Bushido
+[BESTSKILL 52]
+{
+EQUIPITEM=0x279a //hakama
+EQUIPITEM=0x279c //hakama-shita
+EQUIPITEM=0x2796 //samurai tabi
+EQUIPITEM=0x279b //tattsuke-hakama
+EQUIPITEM=0x27a8 //bokuto
+EQUIPITEM=0x2776 //leather jingasa
+PACKITEM=0x238c //book of bushido
+}
+
+// Ninjitsu
+[BESTSKILL 53]
+{
+EQUIPITEM=0x2798 //kasa
+EQUIPITEM=0x279b //tattsuke-hakama
+EQUIPITEM=0x279c //hakama-shita
+EQUIPITEM=0x2797 //ninja tall tabi
+EQUIPITEM=0x27ab //tekagi
+PACKITEM=0x23a0 //book of ninjitsu
+}
+
+// Leave Empty
+[BESTSKILL X] //was 46
 {
 }
 
