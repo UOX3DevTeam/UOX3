@@ -526,13 +526,16 @@ bool CPIEquipItem::Handle( void )
 		i->SetLayer( static_cast<ItemLayers>(tSock->GetByte( 5 )) );
 
 	// 1/13/2003 - Xuri - Fix for equiping an item to more than one hand, or multiple equiping.
-	CItem *j = k->GetItemAtLayer( i->GetLayer() );
-	if( ValidateObject( j ) )
+	if( i->GetCont() != k )
 	{
-		tSock->sysmessage( 1744 );
-		ourChar->Dirty( UT_STATWINDOW );
-		Bounce( tSock, i );
-		return true;
+		CItem *j = k->GetItemAtLayer( i->GetLayer() );
+		if( ValidateObject( j ) )
+		{
+			tSock->sysmessage( 1744 );
+			ourChar->Dirty( UT_STATWINDOW );
+			Bounce( tSock, i );
+			return true;
+		}
 	}
 
 	if( !Weight->checkCharWeight( ourChar, k, i ) )

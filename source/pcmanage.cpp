@@ -493,7 +493,6 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	};
 
 	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-
 	UI16 ItemID, ItemColour;
 	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
@@ -501,7 +500,10 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		ItemColour			= validHairColour( hairColour, mChar->GetID() );
 		CreatedItems[HAIR]	= Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[HAIR] != NULL )
+		{
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
+			CreatedItems[HAIR]->SetCont( mChar );
+		}
 	}
 	if( validBeard( facialHair ) && sex == 0 )
 	{
@@ -509,7 +511,10 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[BEARD] != NULL )
+		{
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
+			CreatedItems[BEARD]->SetCont( mChar );
+		}
 	}
 	CreatedItems[PACK] = Items->CreateItem( tSock, mChar, 0x0E75, 1, 0, OT_ITEM );
 	if( CreatedItems[PACK] != NULL )
@@ -520,6 +525,25 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[PACK]->SetType( IT_CONTAINER );
 		CreatedItems[PACK]->SetDye( true );
 	}
+
+	std::vector< cSkillClass > vecSkills;
+	char whichsect[15];
+	for( UI08 sCtr = 0; sCtr < ALLSKILLS; ++sCtr )
+		vecSkills.push_back( cSkillClass( sCtr, mChar->GetBaseSkill( sCtr ) ) );
+
+	// Give scripted newbie items precedence over default clothing
+	std::sort( vecSkills.rbegin(), vecSkills.rend() );
+	for( UI08 i = 0; i < 3 ; ++i )
+	{
+		if( vecSkills[i].value > 0 )
+		{
+			sprintf( whichsect, "BESTSKILL %i", vecSkills[i].skill );
+			addNewbieItem( tSock, mChar, whichsect );
+		}
+	}
+	addNewbieItem( tSock, mChar, "DEFAULT" );
+
+
 	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM );
 	if( CreatedItems[LOWERGARMENT] != NULL )
 	{
@@ -547,6 +571,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[LOWERGARMENT]->SetID( newID );
 		CreatedItems[LOWERGARMENT]->SetColour( pantsColour );
 		CreatedItems[LOWERGARMENT]->SetDye( true );
+		CreatedItems[LOWERGARMENT]->SetCont( mChar );
 	}	
 	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM );
 	if( CreatedItems[UPPERGARMENT] != NULL )
@@ -558,40 +583,18 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[UPPERGARMENT]->SetColour( shirtColour );
 		CreatedItems[UPPERGARMENT]->SetLayer( IL_INNERSHIRT );
 		CreatedItems[UPPERGARMENT]->SetDye( true );
+		CreatedItems[UPPERGARMENT]->SetCont( mChar );
 	}	
 	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM );
 	if( CreatedItems[SHOES] != NULL )
 	{
 		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );
 		CreatedItems[SHOES]->SetDye( true );
-	}	
-
-	for( UI08 ctr = 0; ctr < GOLD; ++ctr )
-	{
-		if( CreatedItems[ctr] != NULL )
-			CreatedItems[ctr]->SetCont( mChar );
+		CreatedItems[SHOES]->SetCont( mChar );
 	}
 	
 	// Give the character some gold
 	CreatedItems[GOLD] = Items->CreateItem( tSock, mChar, 0x0EED, cwmWorldState->ServerData()->ServerStartGold(), 0, OT_ITEM, true );
-	if( CreatedItems[GOLD] != NULL )
-		CreatedItems[GOLD]->SetLayer( IL_RIGHTHAND );
-
-	std::vector< cSkillClass > vecSkills;
-	char whichsect[15];
-	for( UI08 sCtr = 0; sCtr < ALLSKILLS; ++sCtr )
-		vecSkills.push_back( cSkillClass( sCtr, mChar->GetBaseSkill( sCtr ) ) );
-
-	std::sort( vecSkills.rbegin(), vecSkills.rend() );
-	for( UI08 i = 0; i < 3 ; ++i )
-	{
-		if( vecSkills[i].value > 0 )
-		{
-			sprintf( whichsect, "BESTSKILL %i", vecSkills[i].skill );
-			addNewbieItem( tSock, mChar, whichsect );
-		}
-	}
-	addNewbieItem( tSock, mChar, "DEFAULT" );
 }
 //o---------------------------------------------------------------------------o
 //|	Function	-	void createChar( CSocket *mSock )

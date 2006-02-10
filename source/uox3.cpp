@@ -2426,7 +2426,7 @@ void UpdateFlag( CChar *mChar )
 					{
 					case fNPC_NEUTRAL:
 					default:
-						mChar->SetFlagGray();
+						mChar->SetFlagNeutral();
 						break;
 					case fNPC_INNOCENT:
 						mChar->SetFlagBlue();

@@ -483,6 +483,7 @@ namespace UOX
 				case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
 				case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
 				case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
+				case CCP_NEUTRAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNeutral() );	break;
 				case CCP_MURDERCOUNT:	*vp = INT_TO_JSVAL( gPriv->GetKills() );		break;
 				case CCP_GENDER:
 					switch( gPriv->GetID() )
@@ -780,6 +781,19 @@ namespace UOX
 					else
 					{
 						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
+						UpdateFlag( gPriv );
+					}
+					break;
+				case CCP_NEUTRAL:
+					if( encaps.toBool() )
+					{
+						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
+						gPriv->SetFlagNeutral();
+					}
+					else
+					{
+						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
+						gPriv->SetFlagBlue();
 						UpdateFlag( gPriv );
 					}
 					break;

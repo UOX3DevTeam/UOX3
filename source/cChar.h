@@ -383,9 +383,6 @@ public:
 
 	void		SetDeaths( UI16 newVal );
 	void		SetFlag( UI08 newValue );
-	void		SetFlagRed( void );
-	void		SetFlagBlue( void );
-	void		SetFlagGray( void );
 	void		SetGuildNumber( SI16 newValue );
 
 	SI08		GetFontType( void ) const;
@@ -434,23 +431,29 @@ public:
 	SI16			ActualIntelligence( void ) const;
 	virtual SI16	GetIntelligence( void ) const;
 
-	void	IncStrength2( SI16 toAdd = 1 );
-	void	IncDexterity2( SI16 toAdd = 1 );
-	void	IncIntelligence2( SI16 toAdd = 1 );
+	void			IncStrength2( SI16 toAdd = 1 );
+	void			IncDexterity2( SI16 toAdd = 1 );
+	void			IncIntelligence2( SI16 toAdd = 1 );
 
-	bool	IsMurderer( void ) const;
-	bool	IsCriminal( void ) const;
-	bool	IsInnocent( void ) const;
+	bool			IsMurderer( void ) const;
+	bool			IsCriminal( void ) const;
+	bool			IsInnocent( void ) const;
+	bool			IsNeutral( void ) const;
 
-	void	StopSpell( void );
-	bool	SkillUsed( UI08 skillNum ) const;
-	void	SkillUsed( bool value, UI08 skillNum );
+	void			SetFlagRed( void );
+	void			SetFlagBlue( void );
+	void			SetFlagGray( void );
+	void			SetFlagNeutral( void );
 
-	bool	IsPolymorphed( void ) const;
-	bool	IsIncognito( void ) const;
-	void	IsPolymorphed( bool newValue );
-	void	IsIncognito( bool newValue );
-	bool	IsJailed( void ) const;
+	void			StopSpell( void );
+	bool			SkillUsed( UI08 skillNum ) const;
+	void			SkillUsed( bool value, UI08 skillNum );
+
+	bool			IsPolymorphed( void ) const;
+	bool			IsIncognito( void ) const;
+	void			IsPolymorphed( bool newValue );
+	void			IsIncognito( bool newValue );
+	bool			IsJailed( void ) const;
 
 	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
 	void			SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace );

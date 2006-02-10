@@ -2420,6 +2420,18 @@ bool CChar::IsInnocent( void ) const
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -	 bool IsNeutral( void ) const
+//|   Date        -  18 July 2005
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the character is neutral
+//o---------------------------------------------------------------------------o
+bool CChar::IsNeutral( void ) const
+{
+	return ( GetFlag() == 0x08 );
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  void SetFlagRed( void )
 //|   Date        -  2nd October, 2001
 //|   Programmer  -  Abaddon
@@ -2451,6 +2463,18 @@ void CChar::SetFlagGray( void )
 //|   Purpose     -  Updates the character's flag to reflect innocence
 //o---------------------------------------------------------------------------o
 void CChar::SetFlagBlue( void )
+{
+	flag = 0x04;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SetFlagNeutral( void )
+//|   Date        -  18th July, 2005
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Updates the character's flag to reflect neutrality
+//o---------------------------------------------------------------------------o
+void CChar::SetFlagNeutral( void )
 {
 	flag = 0x04;
 }
@@ -3033,7 +3057,7 @@ bool CChar::LoadRemnants( void )
 	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber );
 	SetRegion( (tRegion != NULL ? tRegion->GetRegionNum() : 0xFF) );
 	SetTimer( tCHAR_ANTISPAM, 0 );
-	if( GetID() != GetOrgID() )
+	if( GetID() != GetOrgID() && !IsDead() )
 		SetID( GetOrgID() );
 
 	UI16 k = GetID();
@@ -3170,8 +3194,8 @@ bool CChar::IsMounted( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::isHuman( void )
 {
-	bool rvalue = false;
-	UI16 mOrgID = GetOrgID();
+	bool rvalue			= false;
+	const UI16 mOrgID	= GetOrgID();
 	if( mOrgID == 0x0190 || mOrgID == 0x0191 || mOrgID == 0x025D || mOrgID == 0x025E || GetOrgID() == 0x03DB )	// GM's should be considered "Human" as well
 		rvalue = true;
 	return rvalue;
