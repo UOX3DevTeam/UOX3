@@ -1,0 +1,203 @@
+// Note February 10th 2006: The DEF values of all these need heavy tweaking. Based on guesswork only!
+
+[0x2777]
+{
+get=base_item
+name=heavy plate jingasa
+id=0x2777
+layer=0x06
+hp=70
+str=55
+def=5
+weight=500
+decay=1
+}
+
+[0x27c2]
+{
+get=0x2777
+name=heavy plate jingasa
+id=0x27c2
+}
+
+[0x2778]
+{
+get=base_item
+name=decorative plate kabuto
+id=0x2778
+layer=0x06
+hp=75
+str=70
+def=5
+weight=600
+decay=1
+}
+
+[0x27c3]
+{
+get=0x2778
+name=decorative plate kabuto
+id=0x27c3
+}
+
+[0x277d]
+{
+get=base_item
+name=plate do
+id=0x277d
+layer=0x0d
+hp=70
+str=85
+def=6
+weight=1000
+decay=1
+}
+
+[0x27c8]
+{
+get=0x277d
+name=plate do
+id=0x27c8
+}
+
+[0x2780]
+{
+get=base_item
+name=plate hiro sode
+id=0x2780
+layer=0x13
+hp=75
+str=75
+def=5
+weight=300
+decay=1
+}
+
+[0x27cb]
+{
+get=0x2780
+name=plate hiro sode
+id=0x27cb
+}
+
+[0x2781]
+{
+get=base_item
+name=light plate jingasa
+id=0x2781
+layer=0x06
+hp=60
+str=55
+def=4
+weight=500
+decay=1
+}
+
+[0x27cc]
+{
+get=0x2781
+name=light plate jingasa
+id=0x27cc
+}
+
+[0x2784]
+{
+get=base_item
+name=small plate jingasa
+id=0x2784
+layer=0x06
+hp=60
+str=55
+def=3
+weight=500
+decay=1
+}
+
+[0x27cf]
+{
+get=0x2784
+name=small plate jingasa
+id=0x27cf
+}
+
+[0x2785]
+{
+get=base_item
+name=battle plate kabuto
+id=0x2785
+layer=0x06
+hp=65
+str=70
+def=7
+weight=600
+decay=1
+}
+
+[0x27d0]
+{
+get=0x2785
+name=battle plate kabuto
+id=0x27d0
+}
+
+[0x2788]
+{
+get=base_item
+name=plate suneate
+id=0x2788
+layer=0x04
+hp=65
+str=80
+def=5
+weight=700
+decay=1
+}
+
+[0x27d3]
+{
+get=0x2788
+name=plate suneate
+id=0x27d3
+}
+
+[0x2789]
+{
+get=base_item
+name=plate kabuto
+id=0x2789
+layer=0x06
+hp=65
+str=70
+def=6
+weight=600
+decay=1
+}
+
+[0x27d4]
+{
+get=0x2789
+name=plate kabuto
+id=0x27d4
+}
+
+[0x278d]
+{
+get=base_item
+name=plate haidate
+id=0x278d
+layer=0x04
+hp=65
+str=80
+def=5
+weight=700
+decay=1
+}
+
+[0x27d8]
+{
+get=0x278d
+name=plate haidate
+id=0x27d8
+}
+
+
