@@ -50,11 +50,12 @@ get=base_item
 name=death shroud
 id=0x204e
 weight=30
-layer=0x0d
+layer=0x16
 def=500
 hp=1000
 movable=1
 decay=1
+newbie
 }
 
 [0x204f-u]
