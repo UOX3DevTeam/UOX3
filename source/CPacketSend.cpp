@@ -1615,9 +1615,9 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Dexterity( toCopy.GetDexterity() );
 		Intelligence( toCopy.GetIntelligence() );
 		Stamina( toCopy.GetStamina() );
-		MaxStamina( toCopy.GetDexterity() );
+		MaxStamina( toCopy.GetMaxStam() );
 		Mana( toCopy.GetMana() );
-		MaxMana( toCopy.GetIntelligence() );
+		MaxMana( toCopy.GetMaxMana() );
 	}
 	if( extended3 )
 	{
