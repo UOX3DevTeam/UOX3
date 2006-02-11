@@ -1,8 +1,407 @@
 UOX3 Changelog
 ------------------------
+-==============================-
+-= 29/01/2006 - UOX3 0.98-3.2 =-
+-==============================-
+Source Changes/Fixes:
+	Updated some areas of the code to conform to const correctness.. (giwo)
+	Fixed an issue causing vendor "Buy" windows to display improperly. (giwo)
+	Added some more error-checking to the ClearTrades() function. (giwo)
+	Removed JS CChar_Freeze() and CChar_Unfreeze() as the .frozen property does the same thing. (giwo)
+	Removed JS CItem_SetPoison() as the .poison property does the same thing. (giwo)
+	Added a JS Packet Class, usage: (giwo)
+		var myPacket = new Packet;
+		myPacket.WriteByte( pos, byte );
+		myPacket.WriteShort( pos, short );
+		myPacket.WriteLong( pos, long );
+		myPacket.WriteString( pos, string, len );
+		socket.Send( myPacket );
+		myPacket.Free();
+	Fixed a logic error in handling the RefreshIP code (Grimson).
+	Fixed an issue causing players to apper gray rather than dissapear when hiding. (giwo)
+	Fixed a login crash caused by the Updates scroll. (giwo)
+	Fixed several issues with Writable book handling. (giwo)
+	Modified .bok handling code (note that this will cause any old .bok files to be invalid). (giwo)
+	Added support for the 0xD4 (New Book Header) packet. (giwo)
+	Fixed some issues in /books/books.dfn causing pre-defined books not to be displayed. (giwo)
+	Fixed some issues in items/misc/books.dfn causing pre-defined books not to open. (giwo)
+	Removed CSocket authorbuffer, pagebuffer, and titlebuffer. (giwo)
+	Fixed an issue causing Spells not to function. (giwo)
+	Added JS Packet method .ReserveSize( len ); for optimization purposes. (giwo)
+	Added new doors from ML-client, expanded DoorNewLocation-function to cover all doors (Xuri)
+	Added CPPopupMenu allowing for easier customization of popup menu's. (giwo)
+	Removed cScript::spellRegistration, commandRegistration, skillRegistration in favor of (giwo)
+	cScript::ScriptRegistration( string skillType ) IE ScriptRegistration( Skill ). (giwo)
+	Added the ability to overload Packets in the JS. (giwo)
+	Removed xFTP Server code as UOX3 should be a game server, not an FTP server. (giwo)
+	Moved spawnregions and regions into CWorldMain. (renaming them to spawnRegions and townRegions). (giwo)
+	Modified spawnRegions and townRegions to load in based upon the number assigned for them in the scripts. (giwo)
+	Added a socket variable to PlayerValues_st to remove the need to loop through online sockets looking for a characters socket. (giwo)
+	Fixed some minor issues with CTEffectContainer. (giwo)
+	Fixed an issue that could cause a characters murder decay timer to stop counting. (giwo)
+	Added MURDERTIME to the worldsave to make murder decay time persistent. (giwo)
+	Fixed some minor compiler warnings. (giwo)
+	Added support for compiling under Visual Studio Express 2005 (giwo)
+	Changes to uox.ini: (giwo)
+		Removed USEFACETSAVES, MAP0, MAP1, MAP2, MAP3, USERMAP, FTPDENABLED,
+		FTPDUSER, FTPDUSERLIMIT, FTPDBIND, FTPDROOT, FTPCENABLED, FTPCHOST,
+		FTPCPORT, FTPCUSER, FTPCULFLAGS, and MAPCOUNT as they were unused.
+		Added OVERLOADPACKETS option to uox.ini to toggle JS packet handling.
+	JS Changes: (giwo)
+		Re-ordered jse_fileassociations.scp a bit to make more logical sense.
+		Added PACKET_SCRIPTS to jse_fileassociations.scp
+		Added event onPacketReceive( socket, packetNum, subCommand )
+		Added function RegisterPacket( packetNum, subCommand ) // Note that subcommands are not yet supported.
+	Removed cSkills::TrackingDirection() as cMovement::Direction() does the same thing. (giwo)
+	Fixed a crash caused by canceling the tracking menu. (giwo)
+	Fixed an issue causing not all animals to be trackable with the tracking menu. (giwo)
+	Added support for clicking on the Tracking Arrow to stop it from displaying. (giwo)
+	Modified packet overloading so one cannot run both the overload and the default packet handling, as it would cause a socket error. (giwo)
+	Added support for selecting popup menu entries. (giwo)
+	Fixed a possible issue with doubled up entries in spawn.dfn and regions.dfn. (giwo)
+	Fixed an issue causing UOX3 to hang forever on character creation. (giwo)
+	Added file and function documentation to books.cpp and msgboard.cpp (giwo)
+	Fixed a bug where skillgain could happen by attempting to craft without having enough resources available (Xuri)
+	Updated AreaCharacterFunction, AreaItemFunction and AreaObjFunc to accept both character and item objects are source-object (Xuri)
+	Fixed an error generating a warning about bad length in multi's (giwo)
+	Made all items default to the unused (0x0000) tile (giwo)
+	Changed SeekTile() to return a value indicating if it found a valid tile
+	Further update to HowTo, making sure it works through both paths (Maarc)
+	GumpInfo type 7 should ignore name, only deal with stringValue.  Code updated to reflect this (fixes AddData( str, str, int )) (Maarc)
+	Howto should be fixed so it won't crash on target based commands (Maarc)
+	Howto should also support JS commands now, at least in so far as it displays the txt file, if one exists  (Maarc)
+	Couple of sections of code updated for real multi checks.  Rather than check if the ID > 0x4000, we actually do a CanBeObjType( OT_MULTI ) instead  (Maarc)
+	Auto correct bad multis when encountered (setting to generic house / generic boat)  (Maarc)
+	Updated CDictionary.cpp to be const correct, as well as adding some error checking to prevent data corruption. (giwo)
+	Removed CACHEMULS from the uox.ini as it is no longer used. (giwo)
+	Changed uox.ini entry SHOWHIDDENNPCS to SHOWOFFLINEPCS to better reflect its function. (giwo)
+	Fixed an issue with SHOWOFFLINEPCS causing offline pc's to display even if it was set to 0. (giwo)
+	Fixed a minor bug with HTML output when the UOX3.exe was not in the base UOX directory. (giwo)
+	Fixed a couple of entries in teleport.scp that would cause you to be stuck in britain sewers. (giwo)
+	Updated items.cpp and npc.cpp to be const correct. (giwo)
+	Fixed an issue with context menus causing one to attempt to "snoop" their own pack. (giwo)
+	Fixed a crash when attempting a random steal on a character with no items. (giwo)
+	Fixed an issue causing the 'time command to have incorrect spacing. (giwo)
+	Yumi-bows should now use arrows instead of crossbow bolts. (Xuri)
+	Fixed an Alignment issue in dumping out CPCharAndStartLoc (converting tabs to explicit spaces) (Maarc)
+	Turned out last byte of the packet as a real number, rather than a UI08 which is interpreting as a char (Maarc)
+	Updated some packet notes from what I could scrounge through the net (Maarc)
+	Added basic CPIMetrics class to read in the 0xD9 packet that gets sent (Maarc)
+	Fixed a logging issue with CPCharAndStartLoc that wasn't taking the extra characters into account (Maarc)
+	Fixed a logging issue with CPCharAndStartLoc that was trying to dump out location details as ASCII codes, not as strings (Maarc)
+	Added a feature to packet logging so that it will fill a line of less than 8 bytes to 8 bytes, to even out it's display (Maarc)
+	CPISecondLogin logging claimed to be packet 0x80, when in reality, it's 0x91 (Maarc)
+	Unknown byte in CPIFirstLogin now displayed numerically, rather than as a dodgy ASCII char (Maarc)
+	Changed Seed IP of CPRelay to 0xFFFFFFFF (Maarc)
+	Moved pSplit() and PackShort() from CPacketSend.cpp to CPacketReceive.cpp, given that's the only place that it is even used (Maarc)
+	Removed some unnecessary dead code (Maarc)
+	Added a P_TIMESTAMP define to Config.h, for timestamping packet logs (through the use of RealTime) (Maarc)
+	Removed unnecessary defines from Config.h (Maarc)
+	Fixed a typo or two (Maarc)
+	Removed some debug code I committed by accident (Maarc)
+	Our packet logs were generating 7 column data, not 8! (Maarc)
+	Updated some packet notes + code (0xA9 and 0xB9 packets) to deal with elves stuff (based on http://www.uox3.org/forum/viewtopic.php?t=748&highlight= ) (Maarc)
+	Updated CPCharAndStartLoc to log a few more flags (Maarc)
+	Added a detailed Log routine to CPEnableClientFeatures (Maarc)
+	Moved Capped() in pcmanage.cpp to higher upwards (Maarc)
+	Changed CPICreateCharacter::Log to dump out hex values for body/skin colours (Maarc)
+	Added some preliminary support for elvish bodies (Maarc)
+	Needs doing: Adding random names list 3 (elf male) and 4 (elf female) for incognito (Maarc)
+	Updated gender IDs 0 == human male, 1 == human female (as before).  2 == elf male, 3 == elf female, 0xFF == unknown.  Potentially has JS impacts! (Gender property) (Maarc)
+	Note: Need to experiment with gender values with CPStatWindow (see code notes)
+	Note: isHuman() doesn't even evaluate current dead bodies, what is the impact?
+	Renamed validHair() to validHairStyle() because we want to validate colour as well (Maarc)
+	Added a CanSee() routine to JS based socket and character objects.  Syntax is as follows (Maarc)
+		sourceObject.CanSee( otherObject );
+		sourceObject.CanSee( targX, targY, targZ );
+		otherObject can be either a character, item or socket.  If they're not on the same world or the target item is in a container, line of sight fails.
+	Proper validation of hair style on creation of elvish characters (Maarc)		
+	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods (Maarc)
+	Added a key/command handler console exposure to the JS environment (involves a secondary runtime because of threading!) (Maarc)
+	Note: Creating/editing world objects through this environment is not thread safe, and may cause errors
+	Modified Console.PrintDone() and Console.PrintFailed() to take an optional boolean parameter as to whether it is printed instantly, or queued up (Maarc)
+	Added functions Console.BeginShutdown() and Console.Reload( intVal ) (Maarc)
+		BeginShutdown() takes no parameters
+		Reload() takes a single parameter, with the values of
+			0	Reload INI
+			1	Reload Accounts
+			2	Reload Regions
+			3	Reload Spawn Regions
+			4	Reload Spells
+			5	Reload Commands
+			6	Reload Definition Files
+			7	Reload JS
+			8	Reload HTML
+	Couple of prettying up with the loading code and what it displays (Maarc)
+	Fixed an error with validation of skin and hair colours with human races (my mistake!) (Maarc)
+	Fixed a dyed underwear issue with newly created players (Xuri)
+	Fixed a bug with clumsy JS (visibility not resetting properly) (Maarc)
+	Added JS implementation for heal and feeblemind (Maarc)
+	Added JS implementation for magic arrow, but it relies on MagicDamage(), which is not completely implementable (missing Karma, Fame and CPDisplayDamage) (Maarc)
+	Added a ValidateObject() function to the JS engine, that behaves the same as it does in the C++ code (Maarc)
+	Updated 'set command to support setting of health (via health or hp) (Maarc)
+	NOTE: Tweak seems to be broken (the buttons don't fire anything), and I have no idea why (Maarc)
+	NOTE: Heal is currently a vampiric heal (some health is subtracted from the caster to heal the target).  This is *not* a new behaviour. (Maarc)
+	NOTE: Tweaked up magic arrow damage (a GM mage was doing less than 4 damage every time).   (Maarc)
+	Old magic arrow formula			
+		baseDamage	= 2 + Random( 0, 1 )
+		mageryMult	= (Magery / 2000) + 1 (maximum multiplier, 1.5)
+		Damage Dealt	= baseDamage * mageryMult - EvalIntCheck
+	New magic arrow formula (JS Only!)
+		baseDamage	= 2 + Random( 0, 5 )
+		mageryMult	= (Magery / 2000) + 1
+		DamageDealt	= baseDamage * mageryMult - EvalIntCheck
+	The EvalInt check has changed, as well (with the JS code, not the C++ code.  All non-JS spells still adhere to this old standard). (Maarc)
+	Previously, a successful check would always draw off a fixed amount of damage ( 10% of your skill level ) (Maarc)
+	Adjusted the JS socket property for characters, so that it returns an explicit NULL object if there is no socket attached (Maarc)
+	NOTE: Researching into JSExtendedClass instead of JSClass, so that we can implement equality testing (like, attacker != caster sorts of things) (Maarc)
+	Hungercheck for players should now be working again (Grimson)
+	OnHungerChange JS event will now execute both for hunger level increase as well as decrease, and will also work as global script (Grimson)	
+	Some fixes for the onHungerChange code to ensure UOX3 doesn't crash when no global script is defined (Grimson)
+	Added isAnimal and isHuman as JS character properties. (Maarc)
+	Minor code change in tempeffects(). (giwo)
+	Updated the version number to reflect recent changes by Maarc and Xuri. (giwo)
+	Fixed an issue causing JS Skills not to function if a character had a script assigned to him. (giwo)
+	Fixed some minor issues with LineOfSight(). (giwo)
+	Began to break LineOfSight() into smaller manageable functions. (giwo)
+	Renamed SeekMap0() to SeekMap() to better represent it's ability to seek any map file. (giwo)
+	More fixes for const correctness. (giwo)
+
+JScript Changes/Fixes:
+	Added feedback message for the dupe-command (Xuri)
+	Added feedback on whether or not an item/npc was successfully created (through add.js) (Xuri)
+	Added commands: reloadalljs, reloadregions, reloadspawnregions, reloadspells, reloadcommands, reloadhtml, reloadall (Xuri)
+	Added commands to repeatedcmds.js: rtele - for repeated teleports, and raddnpc - for repeated npc adds (Xuri)
+	Fixed out-of-date radditem command. (Xuri)
+	Cleaned up misc-cmd.js and repeatingcmds.js (Xuri)
+	Made use of isHuman and isAnimal in animallore.js, begging.js, healing.js and taming.js (Xuri)
+	Made sure elven bodies (and ghosts) can be healed with bandages (Xuri)
+	Fixed a minor bug in healing.js (giwo)
+	Made us of the JS Method CanSee() for LoS checks in JS magic functions. (giwo)
+
+DFN Changes/Fixes:
+	Duplicate itemmenu 5022 in npcmenu.bulk.dfn containing champion-NPCs changed to 5023 (longshot)
+	Changed DEF values of all NPCs to an average of 10 (some a little weaker, some a little stronger) (Xuri)
+	Boneaxeman-stats lowered to that of a skeleton, has been moved to weakundeadlist (Xuri)
+	Mummy has been moved to strongundeadlist (Xuri)
+	Removed gazer and wisp from strongundeadlist (Xuri)
+	Moved common tags in malevendors.dfn and femalevendors.dfn to new NPC; basevendor (Xuri)
+	Moved common tags in malehuman.dfn and femalehuman.dfn to new NPC; basehuman (Xuri)
+	Fixed several teleport locations (Xuri)
+	Fixed missing = in locations.dfn (Fish)
+	Included an example script that takes the old 1->9 keys and implements them through the new JS routines (Maarc)
+	Included an example script that takes the old shutdown keys and implements them through the JS routines (Maarc)
 
 -==============================-
--= 15/07/2005 - UOX3 0.98-3.0c 		=-
+-= 22/10/2005 - UOX3 0.98-3.1 =-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Modified MapRegions to allow handling of a variable number of words.
+	Added maps.dfn to allow customizing UOX3's map handling.
+	Added MAPCOUNT to the uox.ini to specify the number of maps UOX3 uses.
+	Several major internal changes to the packet handling classes.
+	Fixed several integral problems with the account system causing data corruption.
+	Fixed some issues causing client crashes in the 5.0.x clients.
+	Fixed an issue causing a crash when attempting to add an invalid script item.
+	Fixed an issue causing wierdness for players who log in as a Ghost.
+	Fixed an issue causing a character to continue firing a ranged weapon when out of ammunition.
+	Fixed a possible issue causing monsters to constantly attack animals.
+	Modified character flagging so anything that is not a Human or Animal will never show up as blue.
+	Modified the "isHuman" check to consider a GM body as human.
+	Fixed an issue causing character privledges not to save properly.
+	Modified CSocket pagebuffer, titlebuffer, and authorbuffer to be const correct.
+	Greatly reduced the size of resource.bin (please ensure you delete your old /shared/resource.bin file).
+	Made some minor modifications to reduce the worldfile size:
+	(Note UOX3 is backwards compatible with previous worldfiles and will make these changes automatically)
+		BEARDCOLOUR and BEARDSTYLE is now BEARD=STYLE,COLOUR and is stored in hex.
+		HAIRCOLOUR and HAIRSTYLE is now HAIR=STYLE,COLOUR and is stored in hex.
+		ORIGINALBODYID and ORIGINALSKINID is now ORIGINALID=BODY,SKIN and is stored in hex.
+		SPLIT and SPLITCHANCE is now SPLIT=SPLIT,SPLITCHANCE.
+		QUESTORIGINALREGION and QUESTDESTINATIONREGION is now QUESTREGIONS=ORIGINAL,DESTINATION.
+		NPCWANDER and XNPCWANDER is now NPCWANDER=NPCWANDER,XNPCWANDER.
+		SPATTACK and SpecialAttackDelay is now SPATTACK=SPATTACK,DELAY.
+		PACKITEM, ROBESERIAL, TOWNVOTE, PRIVILEGES, and GUILDFEALTY are all stored in hex.
+	Fixed an issue causing RESOURCELOGSRESPAWNTIMER to always use default setting.
+	Moved cSkills::resources into CMapWorlds() allowing it support for multiple worlds.
+	Fixed an issue with SetTempVar() when setting in parts.
+	Made skillnames scriptable via skills.dfn
+	Fixed a crash caused by increasing the total number of skills then loading a previous world.
+	Added support for BUSHIDO and NINJITSU skills (note these are not implemented yet).
+	Enabled support for NECROMANCY, FOCUS, and CHIVALRY (note these are not implemented yet).
+	Removed some superfluous code in uoxstruct.h
+	Added First/Next/Finished wrappers for iterating through lists of Script files.
+	Optimizations to the weather.dfn loading code
+	Optimizations to the skills.dfn loading code.
+	Optimizations to the spells.dfn loading code.
+	Modified loading of creatures.dfn to load entries beyond 2048.
+	Added 5 tags to creatures.dfn in place of BASESOUND and SOUNDFLAGS
+		SOUND_IDLE 		- The sound the creature makes while standing around
+		SOUND_STARTATTACK 	- The sound the creature makes when it enters combat
+		SOUND_ATTACK 		- The sound the creature makes when attacking
+		SOUND_DEFEND 		- The sound the creature makes when defending
+		SOUND_DIE 		- THe sound the creature makes upon death
+	Moved Sword use functionality out to JS (for carving kindling, corpses, etc )
+	Moved Axe use functionality out to JS (for chopping trees, carving corpses, etc )
+	Added JS item property "carveSection" and method Carve().
+	Added JS Functions ResourceArea(), ResourceTime(), ResourceAmount() and ResourceRegion()
+		The first 3 can be used to Get/Set system settings, using the options "LOGS" or "ORE"
+		ResourceRegion() returns a resource object allowing JS to modify resource data.
+	Exposed the resource data to the JS engine for modification, props are:
+		logAmount
+		logTime
+		oreAmount
+		oreTime
+	Fixed a minor issue with resource regions.
+	Removed cSkills::BowCraft() as it was unused.
+	Moved largeBuffer and largePackBuffer from local declares into CSocket.
+	Updated sword.js and axe.js to work properly with 5.0.x clients.
+	Added support for MapDiffs/StaticDiffs 
+	Added mapdiff entries to maps.dfn to allow customizing filenames. 
+	Added CPEnableMapDiffs to advise the clients of MapDiffs. 
+	Updated go.js to support passing a world number
+	Greatly reduced the memory taken by NPC's and Players.
+	Fixed an issue causing ORE_LISTs not to load in properly.
+	Fixed a possible crash bug in clearTrades().
+	Moved some more variables from Base Characters to Players.
+	Organized an documented many functions in CChar.
+	Changed itemLayers array to a std::map.
+	Removed an unneeded variable from characters.
+	Changed JS prop murtertime to tempTime (note tempTime is currently used for spawn items and murder times).
+	Made struct GumpInfo a private member of GumpDisplay.
+	Changed CItem::layer to make use of the ItemLayers enum.
+	Removed global const MAXLAYERS.
+	Merged CTownRegion goodsell[], goodbuy[], goodrnd1[], and goodrnd2[] into a struct with a map.
+	Removed RUNNING and STEP from the worldfile, as they were unnecesarry.
+	Minor cleanups and fixes.
+	Moved kills, fame, and karma from CBaseObject to CChar to save wasted memory on items.
+	Fixed several warnings when compiling under gcc.
+	Fixed a possible issue when duplicating a character.
+	Removed several unrefrenced parameters.
+	Removed several unused ENUM values.
+	Fixed an issue in the CChar constructor causing linux builds to not compile.
+	Removed CHANCECOLOURORE and MINCOLOURSKILL from regions.dfn
+	Modified cSkills::Mining() to REQUIRE ore entries for proper ore creation.
+	Modified CHANCEBIGORE in regions.dfn to give a chance to get more than 1 ore at a time.
+	Added a message to advise a player when his skill level is too low to mine coloured ore.
+	Improved the MapResource handling code.
+	Improved the MapRegion handling code, reducing waste.
+	Fixed a possible issue causing invalid data in the refreshQueue and deletionQueue.
+	Altered AreaCharFunc code in cScript to also support Items (Maarc)
+	Added "AreaItemFunction" as an equivalent to AreaCharacterFunction - perhaps break this
+	 into something a little more specific?  eg Items / Multis? (Maarc)
+	Added JS StaticAt function - takes 4 parameters - x, y, world, [tileID] (tileID is optional - if
+	 not specified, ANY static at that location will match) (Maarc)
+	Added JS StaticInRange function - takes 5 parameters - x, y, world, radius, tileID (Maarc)
+	Fixed superfluous empty spaces after reputation titles and race names in paperdolls. (Xuri)
+	Removed [murderer] appearing behind the character names hovering over the head of characters. (Xuri)
+	Check to see if animals have NPCAI 2 before guarding them in town when COMBATANIMALSGUARDED=1 in uox.ini (Xuri)
+	Fixed an error in a debug message that would stop UOX3 from compiling if DEBUG_WALKING was enabled. (Xuri)
+	Fixed; UOX3 didn't retrieve the correct FY2 value for spawned NPCs using wandermode 3 (shopkeepers, for instance). (Xuri)
+	Added JS InitWanderArea function - allows wanderareas to be dynamically reset through JS. (Xuri)
+	Added support for new mounts: giant fire beetle, hiryu, chimera, cu sidhe, mondain's steed (Xuri)
+
+JScript Changes/Fixes: (Xuri)
+	Added InitWanderArea to ADD NPC command so the FX1, FY1, FX2, FY2 and FZ1 values from DFNs are used for
+	 manually spawned NPCs.
+	New files added: item/sword.js, item/axe.js (giwo), sheepshearing.js (Xuri)
+	Sheepshearing functionality merged from scissors.js and sword.js to server/resource/sheepshearing.js
+
+DFN Changes/Fixes: (Xuri)
+	Added customizable list of ores to skills.dfn
+	Added champion NPCs in champions.dfn (VERY experimental stats, no special abilities yet) and in add-menu.
+	Added new NPCs: ophidian zealot, ophidian justicar, whipping vine, quagmire, bog thing, bogling, silver wolf,
+				shadow wisp, evil mage, evil mage lord, giant black widow, energy vortex,
+				shadow fiend
+	Added new mounts: giant fire beetle, hiryu, chimera, cu sidhe, mondain's steed
+	Added items/misc/equippable-mounts.dfn which contains items used to make mounted NPCs possible
+	Modified many body-ids for various creatures to make them appear properly in 3D client.
+	NEUTRAL flags added to all monsters and aggressive animals; they will now highlight grey after spawning.
+	Updated creatures.dfn with all valid body-ids in the UO client, added data for new sound-tags.
+	Human NPCs will now have proper skincolors - updated colorlist 16 in colors.dfn.
+	Changed a spawnobj in spawners.dfn from invalid "giantscorpion"  to valid "scorpion".
+	Changed banker-spawner (spawners.dfn) to only spawn 2 bankers instead of 100!
+	Fixed erroneous item-ids in digginglist.dfn.
+	Corrected the layer values of various dresses, robes and shrouds.
+	Bulletin Board-ids added to harditems.dfn (giwo)
+	New file added; maps/maps.dfn (giwo)
+
+-==============================-
+-= 14/08/2005 - UOX3 0.98-3.0g 	=-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Added automatic removal of messageboard files when the board item is removed.
+	Added in the MessageBoardMaintenance routine to automatically clean out deleted posts.
+	Incorporated Grimsons fixes to call guards when a player attacks an NPC.
+	Incorporated Grimsons changes to allow NPC's to become criminal and murderers.
+	Fixed some possible issues in speech.cpp, hopefully correcting the elusive Speech crash bug.
+	Fixed an issue causing creatures and a few other scripts not to be properly updated when reloading DFN's.
+	Added a very simple Dispose() feature to CServerDefinitions, allowing for automatic cleanup of unused DFN's.
+	Fixed an issue causing doors to never close if a player or ghost was standing in them.
+	Fixed some possibile issues with item visibility.
+	Added the ability to specify an amount with ADDITEM in create.dfn (example ADDITEM=0x1E43,15).
+
+JScript Changes/Fixes: (Xuri)
+	Added two more cloth-ids as valid tailoring resources in tailoring.js, though this in reality has no effect yet
+	since the actual crafting code only accepts one id as valid resource (as specified in crafting DFNs).
+
+DFN Changes/Fixes: (Xuri)
+	Added the Samurai Empire weapons to the add-menu
+	Added many AoS and SE-weapons to the blacksmithing-menu
+	Added composite bow, repeating crossbow and yumi to the bowcraft-menu
+	Selecting a shaft in the skills/resources/fletching add-menu will now produce an arrow shaft instead of a feather
+	Crafting 5, 20 and 50 arrow shafts, crossbow bolts and arrows should now work.
+
+-==============================-
+-= 07/08/2005 - UOX3 0.98-3.0f 	=-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Fixed an issue causing improper reporting on the state of a stream in UString. (punt)
+	Fixed an issue causing messageboards not to display on an empty world.
+	Fixed an issue causing UOX3 to lock up when posting a reply with the 3D client.
+	Modified the post removal function to delete any replies to the post.
+	Modified CChar::PostType to stop it from being saved (this should be on a per-session basis).
+
+-==============================-
+-= 05/08/2005 - UOX3 0.98-3.0e 	=-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Several character/item properties and one item-method added to JS (check JS Docs, 0.42) (Maarc)
+	Finished the rewrite to the messageboard system. Currently it should be fully functional with
+		the exception of a maintenance routine to clean up the files which will be added later.
+	Incorporated Grimson's Automatic-IP Updating feature.
+	Added a few fixes for NPC's staying in combat after the death of their opponent. (Grimson)
+	Incorporated lingo's rewrite to the CMapstuff code, this seems to have fixed the
+		bug causing players to fall through the floor of their house.
+	Fixed an issue causing dyed items to appear undyed when dropped on the ground.
+	Fixed a possible issue with BoatSpeech.
+	Fixed an issue causing quest regions not to function properly.
+	Fixed some issues causing items and characters to leave "ghosts" behind.
+
+JScript Changes/Fixes: (giwo)
+	teleport.scp has received a facelift, no functional changes.
+	jse_typeassociations.scp now includes 234=5008, to enable using kindling by it's type.
+	Logs are no longer an invalid carpentry resource.
+	Removed debug-code & redundant lines from combatanims.js.
+	Counselors can no longer use the areacommand, only GMs with commandlevel 2 or above.
+	Minor fixes to pitchers.js to avoid potential crashes with the spidermonkey dll.
+	Minor fixes to repeatingcmds.js to avoid potential crashes with the spidermonkey dll.
+
+DFN Changes/Fixes: 
+	Fixed some errenous item-ids in bowcraft.dfn which caused an error while fletching (Xuri)
+	Added new npclists to npclists.dfn; poorfolk, richfolk, alltownfolk, articlist (Grimson)
+	Added two new NPCs; m_townthief and f_townthief. Thief NPCs with no AI.  (Grimson)
+	Removed duplicate smith hammers from dfndata/items/skills/tools/blacksmithy.dfn (giwo)
+	Players are now protected by "the town guards" instead of "The Town guards" ;) (Sydius)
+
+-==============================-
+-= 16/07/2005 - UOX3 0.98-3.0d 	=-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Continued work on a complete rewrite of the Messageboard system
+	Removed some unnecessary debug code from Walking functions.
+
+-==============================-
+-= 15/07/2005 - UOX3 0.98-3.0c 	=-
 -==============================-
 Source Changes/Fixes:
 	Moved Poisoning skill out to JS.
