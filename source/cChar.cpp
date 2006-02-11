@@ -1927,6 +1927,9 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
+	if ( maxHP_fixed )
+		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
+	dumping << "HP=" << (SI16)GetHP() << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
@@ -2723,6 +2726,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetHairColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
 					rvalue = true;
 				}
+				else if( UTag == "HP" )
+				{
+					SetHP( data.toUShort() );
+					rvalue = true;
+				}
 				break;
 			case 'I':
 				if( UTag == "ISNPC" )
@@ -2771,6 +2779,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "MURDERTIMER" )
 				{
 					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( data.toFloat() ) );
+					rvalue = true;
+				}
+				else if( UTag == "MAXHP" )
+				{
+					SetFixedMaxHP( data.toUShort() );
 					rvalue = true;
 				}
 				break;

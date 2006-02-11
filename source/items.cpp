@@ -57,6 +57,11 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 	UString cdata;
 	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
 	bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
+
+	TAGMAPOBJECT customTag;
+	UString customTagName;
+	UString customTagStringValue;
+
 	for( DFNTAGS tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
 	{
 		cdata = toApply->GrabData( ndata, odata );
@@ -193,6 +198,40 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 			case DFNTAG_ADDMENUITEM:
 				Console.Print(cdata.c_str());
+				break;
+			case DFNTAG_CUSTOMSTRINGTAG:
+				customTagName = cdata.section(" ", 0, 0);
+				customTagStringValue = cdata.section(" ", 1);
+				if( customTagName != "" && customTagStringValue != "")
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_StringValue	= customTagStringValue;
+					customTag.m_IntValue	= customTag.m_StringValue.length();
+					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+				} else {
+					customTag.m_Destroy		= TRUE;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_IntValue	= 0;
+					customTag.m_StringValue	= "";
+				}
+				applyTo->SetTag( customTagName, customTag);
+				break;
+			case DFNTAG_CUSTOMINTTAG:
+				customTagName = cdata.section(" ", 0, 0);
+				customTagStringValue = cdata.section(" ", 1);
+				if( customTagName != "" && customTagStringValue != "")
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue	= customTagStringValue.toInt(NULL, 10);
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+				} else {
+					customTag.m_Destroy		= TRUE;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_IntValue	= 0;
+					customTag.m_StringValue	= "";
+				}
+				applyTo->SetTag( customTagName, customTag);
 				break;
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:

@@ -1,3 +1,8 @@
+2/12/2006 - grimson
+	The current HP and (if present) the fixed maxHP will now be saved on worldsaves.
+	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with
+	them you can specify custom tags inside the DFNs and use them in JS scripts.
+
 2/11/2006 - grimson
 	Updated the CPUpdateStat function to use the GetMaxHP, GetMaxStam and GetMaxMana
 	for sending the respective values instead of sending the strenght, dexterity and

@@ -587,6 +587,11 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 	UString cdata;
 	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
 	UI08 skillToSet = 0;
+
+	TAGMAPOBJECT customTag;
+	UString customTagName;
+	UString customTagStringValue;
+
 	for( DFNTAGS tag = NpcCreation->FirstTag(); !NpcCreation->AtEndTags(); tag = NpcCreation->NextTag() )
 	{
 		cdata = NpcCreation->GrabData( ndata, odata );
@@ -988,6 +993,40 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_TRACKING:			skillToSet = TRACKING;					break;
 			case DFNTAG_VETERINARY:			skillToSet = VETERINARY;				break;
 			case DFNTAG_WRESTLING:			skillToSet = WRESTLING;					break;
+			case DFNTAG_CUSTOMSTRINGTAG:
+				customTagName = cdata.section(" ", 0, 0);
+				customTagStringValue = cdata.section(" ", 1);
+				if( customTagName != "" && customTagStringValue != "")
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_StringValue	= customTagStringValue;
+					customTag.m_IntValue	= customTag.m_StringValue.length();
+					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+				} else {
+					customTag.m_Destroy		= TRUE;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_IntValue	= 0;
+					customTag.m_StringValue	= "";
+				}
+				applyTo->SetTag( customTagName, customTag);
+				break;
+			case DFNTAG_CUSTOMINTTAG:
+				customTagName = cdata.section(" ", 0, 0);
+				customTagStringValue = cdata.section(" ", 1);
+				if( customTagName != "" && customTagStringValue != "")
+				{
+					customTag.m_Destroy		= FALSE;
+					customTag.m_IntValue	= customTagStringValue.toInt(NULL, 10);
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_StringValue	= "";
+				} else {
+					customTag.m_Destroy		= TRUE;
+					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+					customTag.m_IntValue	= 0;
+					customTag.m_StringValue	= "";
+				}
+				applyTo->SetTag( customTagName, customTag);
+				break;
 			case DFNTAG_ALIGNMENT:
 			case DFNTAG_CATEGORY:
 			case DFNTAG_MOD1:
