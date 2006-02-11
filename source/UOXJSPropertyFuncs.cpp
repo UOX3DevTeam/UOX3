@@ -768,6 +768,7 @@ namespace UOX
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
 				case CCP_RACEID:
 				case CCP_RACE:			Races->gate( gPriv, (RACEID)encaps.toInt(), true );	break;
+				case CCP_MAXHP:			gPriv->SetFixedMaxHP( (SI16)encaps.toInt() );		break;
 				case CCP_CRIMINAL:		
 					if( encaps.toBool() )
 						criminal( gPriv );

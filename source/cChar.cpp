@@ -191,6 +191,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 
 	mPlayer	= NULL;
 	mNPC	= NULL;
+	maxHP_fixed = false;
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
@@ -2180,7 +2181,7 @@ void CChar::RemoveOwnedItem( CItem *toRemove )
 //o--------------------------------------------------------------------------
 UI16 CChar::GetMaxHP( void )
 {
-	if( maxHP_oldstr != GetStrength() || oldRace != GetRace() )
+	if( (maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !maxHP_fixed )
 	//if str/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2203,6 +2204,24 @@ void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 	maxHP			= newmaxhp;
 	maxHP_oldstr	= newoldstr;
 	oldRace			= newoldrace;
+}
+void CChar::SetFixedMaxHP( SI16 newmaxhp )
+{
+	if( newmaxhp > 0 ) {
+		maxHP_fixed		= true;
+		maxHP			= newmaxhp;
+	} else {
+		maxHP_fixed		= false;
+	
+		CRace *pRace = Races->Race( GetRace() );
+		if( pRace == NULL )
+			pRace = Races->Race( 0 );
+
+		maxHP = (UI16)(GetStrength() + (UI16)( ((float)GetStrength()) * ((float)(pRace->HPModifier())) / 100 ));
+
+		maxHP_oldstr	= GetStrength();
+		oldRace			= GetRace();
+	}
 }
 
 //o--------------------------------------------------------------------------

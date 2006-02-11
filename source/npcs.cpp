@@ -782,6 +782,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_HIDING:				skillToSet = HIDING;					break;
 			case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( static_cast<SI16>(ndata) );	break;
 			case DFNTAG_HP:					applyTo->SetHP( static_cast<SI16>(ndata) );			break;
+			case DFNTAG_HPMAX:				applyTo->SetFixedMaxHP( static_cast<SI16>(ndata) );			break;
 			case DFNTAG_ID:
 											applyTo->SetID( static_cast<UI16>(ndata) );
 											applyTo->SetOrgID( static_cast<UI16>(ndata) );

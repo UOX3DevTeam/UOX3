@@ -185,6 +185,7 @@ protected:
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
+	bool		maxHP_fixed;
 	SI16		maxMana;
 	UI16		maxMana_oldint;
 	SI16		maxStam;
@@ -456,6 +457,7 @@ public:
 	bool			IsJailed( void ) const;
 
 	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
+	void			SetFixedMaxHP( SI16 newmaxhp );
 	void			SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace );
 	void			SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace );
 	virtual UI16	GetMaxHP( void );

@@ -331,6 +331,10 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.visible = nVal;
 		okMsg( socket );
 		break;
+	case "MAXHP":
+		ourChar.maxhp = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );

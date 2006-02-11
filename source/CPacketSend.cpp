@@ -1591,7 +1591,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	else
 	{
 		CurrentHP( toCopy.GetHP() );
-		MaxHP( toCopy.GetStrength() );
+		MaxHP( toCopy.GetMaxHP() );
 	}
 	NameChange( false );
 #pragma note( "We need to check what the values are, OSI wise, for this value.  Are elfs 2/3?" )
