@@ -1,5 +1,6 @@
 2/11/2006 - grimson
 	Removed teffect.cpp from the VC6 workspace, as it no longer exists.
+	Modified the flags of display cases via the tiles.dfn to prevent NPCs from walking on them.
 
 2/11/2006 - giwo (0.98-3.2q [3.3 RC])
 	Added JS property .isShop to transform an NPC into (and back from) a shopkeeper. (Grimson)
