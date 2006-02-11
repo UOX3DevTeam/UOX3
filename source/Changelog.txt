@@ -1,3 +1,7 @@
+11th February, 2006 - Grimson (committed by Maarc)
+	Fixed a bug with IsNeutral/SetFlagNeutral not comparing against the same flag type
+	Fixed a bug where the wrong flag number is sent to the client for Neutrals
+
 2/10/2006 - giwo (0.98-3.2p [3.3 RC])
 	Re-added IsNeutral() Character flag as well as .neutral JS character property.
 	Fixed an issue causing items to "bounce" when being dropped on the same character they were picked up from.

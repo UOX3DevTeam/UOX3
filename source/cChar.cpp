@@ -1532,6 +1532,8 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 		retVal = FC_MURDERER;
 	else if( IsCriminal() )
 		retVal = FC_CRIMINAL;
+	else if( IsNeutral() )
+		retVal = FC_NEUTRAL;
 	else if( rComp != 0 || gComp != GR_UNKNOWN )
 	{
 		if( gComp == GR_ALLY || gComp == GR_SAME || rComp > 0 )
@@ -2476,7 +2478,7 @@ void CChar::SetFlagBlue( void )
 //o---------------------------------------------------------------------------o
 void CChar::SetFlagNeutral( void )
 {
-	flag = 0x04;
+	flag = 0x08;
 }
 
 //o---------------------------------------------------------------------------o
