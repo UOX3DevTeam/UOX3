@@ -1,3 +1,8 @@
+2/11/2006 - grimson
+	Updated the CPUpdateStat function to use the GetMaxHP, GetMaxStam and GetMaxMana
+	for sending the respective values instead of sending the strenght, dexterity and
+	intelligence values.
+
 2/11/2006 - giwo (0.98-3.3)
 	Added 'set DEF (items), ARMOR (chars), and LAYER (items) commands.
 	Modified 'setscptrig so it accepts 0 as a value even if no script 0 exists.

@@ -1222,13 +1222,13 @@ CPUpdateStat::CPUpdateStat( CChar &toUpdate, UI08 statNum )
 	Serial( toUpdate.GetSerial() );
 	switch( statNum )
 	{
-		case 0:	MaxVal( toUpdate.GetStrength() );
+		case 0:	MaxVal( toUpdate.GetMaxHP() );
 				CurVal( toUpdate.GetHP() );
 				break;
-		case 2:	MaxVal( toUpdate.GetDexterity() );
+		case 2:	MaxVal( toUpdate.GetMaxStam() );
 				CurVal( toUpdate.GetStamina() );
 				break;
-		case 1:	MaxVal( toUpdate.GetIntelligence() );
+		case 1:	MaxVal( toUpdate.GetMaxMana() );
 				CurVal( toUpdate.GetMana() );
 				break;
 	}
