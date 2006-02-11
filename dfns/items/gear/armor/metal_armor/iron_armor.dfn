@@ -3,56 +3,48 @@
 [0x13eb]
 {
 get=ring_gloves
-name=ringmail gloves
 id=0x13eb
 }
 
 [0x13ec]
 { right facing
 get=ring_tunic
-name=ringmail tunic
 id=0x13ec
 }
 
 [0x13ed]
 { left facing
 get=ring_tunic
-name=ringmail tunic
 id=0x13ed
 }
 
 [0x13ee]
 { right facing
 get=ring_sleeves
-name=ringmail sleeves
 id=0x13ee
 }
 
 [0x13ef]
 { left facing
 get=ring_sleeves
-name=ringmail sleeves
 id=0x13ef
 }
 
 [0x13f0]
 { right facing
 get=ring_leggings
-name=ringmail leggings
 id=0x13f0
 }
 
 [0x13f1]
 { left facing
 get=ring_leggings
-name=ringmail leggings
 id=0x13f1
 }
 
 [0x13f2]
 {
 get=ring_gloves
-name=ringmail gloves
 id=0x13f2
 }
 
@@ -61,42 +53,36 @@ id=0x13f2
 [0x13BB]
 { Left facing chain coif
 get=chain_coif
-name=chainmail coif
 id=0x13bb
 }
 
 [0x13be]
 { left facing
 get=chain_leggings
-name=chainmail leggings
 id=0x13be
 }
 
 [0x13bf]
 { left facing
 get=chain_tunic
-name=chainmail tunic
 id=0x13bf
 }
 
 [0x13c0]
 { right facing chain coif
 get=chain_coif
-name=chainmail coif
 id=0x13c0
 }
 
 [0x13c3]
 { right facing
 get=chain_leggings
-name=chainmail leggings
 id=0x13c3
 }
 
 [0x13c4]
 { right facing
 get=chain_tunic
-name=chainmail tunic
 id=0x13c4
 }
 
@@ -105,14 +91,12 @@ id=0x13c4
 [0x1c04]
 { left facing - Female
 get=fem_plate
-name=plate armor
 id=0x1c04
 }
 
 [0x1c05]
 { right facing - Female
 get=fem_plate
-name=plate armor
 id=0x1c05
 }
 
@@ -121,63 +105,54 @@ id=0x1c05
 [0x1410]
 { left facing
 get=plate_arms
-name=platemail arms
 id=0x1410
 }
 
 [0x1411]
 { left facing
 get=plate_leggings
-name=platemail legs
 id=0x1411
 }
 
 [0x1413]
 {
 get=plate_gorget
-name=platemail gorget
 id=0x1413
 }
 
 [0x1414]
 { left facing
 get=plate_gloves
-name=platemail gloves
 id=0x1414
 }
 
 [0x1415]
 { left facing
 get=plate_chest
-name=platemail
 id=0x1415
 }
 
 [0x1417]
 { right facing
 get=plate_arms
-name=platemail arms
 id=0x1417
 }
 
 [0x141a]
 { right facing
 get=plate_leggings
-name=platemail legs
 id=0x141a
 }
 
 [0x1418]
 { right facing
 get=plate_gloves
-name=platemail gloves
 id=0x1418
 }
 
 [0x1416]
 { right facing
 get=plate_chest
-name=platemail
 id=0x1416
 }
 
@@ -186,69 +161,60 @@ id=0x1416
 [0x1408]
 { right facing
 get=close_helmet
-name=close helmet
 id=0x1408
 }
 
 [0x1409]
 { left facing
 get=close_helm
-name=close helm
 id=0x1409
 }
 
 [0x140a]
 { right facing
 get=helmet
-name=helmet
 id=0x140a
 }
 
 [0x140b]
 { left facing
 get=helmet
-name=helmet
 id=0x140b
 }
 
 [0x140c]
 { right facing
 get=bascinet
-name=bascinet
 id=0x140c
 }
 
 [0x140d]
 { left facing
 get=bascinet
-name=bascinet
 id=0x140d
 }
 
 [0x140e]
 { right facing
 get=nose_helm
-name=nose helm
 id=0x140e
 }
 
 [0x140f]
 { left facing
 get=nose_helm
-name=nose helm
 id=0x140f
 }
 
 [0x1412]
 { left facing
 get=plate_helm
-name=plate helm
 id=0x1412
 }
 
 [0x1419]
 { right facing
-name=plate helm
+get=plate_helm
 id=0x1419
 }
 
@@ -257,42 +223,36 @@ id=0x1419
 [0x1b72]
 { Bronze Shield
 get=bronze_shield
-name=bronze shield
 id=0x1b72
 }
 
 [0x1b73]
 { Buckler
 get=buckler
-name=Buckler
 id=0x1b73
 }
 
 [0x1b74]
 { Metal Kite Shield
 get=metal_kite_shield
-name=kite shield
 id=0x1b74
 }
 
 [0x1b75]
 { Metal Kite Shield
 get=metal_kite_shield
-name=kite shield
 id=0x1b75
 }
 
 [0x1b76]
 { Heater Shield
 get=heater_shield
-name=heater shield
 id=0x1b76
 }
 
 [0x1b77]
 { Heater Shield
 get=heater_shield
-name=heater shield
 id=0x1b77
 }
 
@@ -305,9 +265,9 @@ weight=70
 value=110
 layer=2
 good=2
-def=5
-hp=50
-str=40
+def=12
+hp=58
+str=15
 restock=10
 movable=1
 decay=1
@@ -315,19 +275,8 @@ decay=1
 
 [0x1b79]
 { Wooden kite Shield
-get=base_item
-name=kite shield
+get=0x1b78
 id=0x1b79
-weight=70
-value=110
-layer=2
-good=2
-def=5
-hp=50
-str=40
-restock=10
-movable=1
-decay=1
 }
 
 [0x1b7A]
@@ -339,9 +288,9 @@ weight=50
 value=39
 layer=2
 good=2
-def=2
-hp=20
-str=20
+def=8
+hp=23
+str=5
 restock=10
 movable=1
 decay=1
@@ -350,27 +299,23 @@ decay=1
 [0x1b7b]
 { Metal Shield
 get=metal_shield
-name=metal shield
 id=0x1b7b
 }
 
 [0x1bc3]
 { Chaos Shield
 get=chaos_shield
-name=chaos shield
 id=0x1bc3
 }
 
 [0x1bc4]
 { Order Shield
 get=order_shield
-name=order shield
 id=0x1bc4
 }
 
 [0x1bc5]
 { Order Shield
 get=order_shield
-name=order shield
 id=0x1bc5
 }
