@@ -295,10 +295,6 @@ SOURCE=.\targeting.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\teffect.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\trade.cpp
 # End Source File
 # Begin Source File
