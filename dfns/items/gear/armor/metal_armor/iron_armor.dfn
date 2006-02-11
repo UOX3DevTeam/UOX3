@@ -5,7 +5,6 @@
 get=ring_gloves
 name=ringmail gloves
 id=0x13eb
-def=2
 }
 
 [0x13ec]
@@ -13,7 +12,6 @@ def=2
 get=ring_tunic
 name=ringmail tunic
 id=0x13ec
-def=9
 }
 
 [0x13ed]
@@ -21,7 +19,6 @@ def=9
 get=ring_tunic
 name=ringmail tunic
 id=0x13ed
-def=9
 }
 
 [0x13ee]
@@ -29,7 +26,6 @@ def=9
 get=ring_sleeves
 name=ringmail sleeves
 id=0x13ee
-def=4
 }
 
 [0x13ef]
@@ -37,7 +33,6 @@ def=4
 get=ring_sleeves
 name=ringmail sleeves
 id=0x13ef
-def=4
 }
 
 [0x13f0]
@@ -45,7 +40,6 @@ def=4
 get=ring_leggings
 name=ringmail leggings
 id=0x13f0
-def=5
 }
 
 [0x13f1]
@@ -53,7 +47,6 @@ def=5
 get=ring_leggings
 name=ringmail leggings
 id=0x13f1
-def=5
 }
 
 [0x13f2]
@@ -61,7 +54,6 @@ def=5
 get=ring_gloves
 name=ringmail gloves
 id=0x13f2
-def=2
 }
 
 // Chainmail
@@ -71,7 +63,6 @@ def=2
 get=chain_coif
 name=chainmail coif
 id=0x13bb
-def=4
 }
 
 [0x13be]
@@ -79,7 +70,6 @@ def=4
 get=chain_leggings
 name=chainmail leggings
 id=0x13be
-def=6
 }
 
 [0x13bf]
@@ -87,7 +77,6 @@ def=6
 get=chain_tunic
 name=chainmail tunic
 id=0x13bf
-def=10
 }
 
 [0x13c0]
@@ -95,7 +84,6 @@ def=10
 get=chain_coif
 name=chainmail coif
 id=0x13c0
-def=4
 }
 
 [0x13c3]
@@ -103,7 +91,6 @@ def=4
 get=chain_leggings
 name=chainmail leggings
 id=0x13c3
-def=6
 }
 
 [0x13c4]
@@ -111,7 +98,6 @@ def=6
 get=chain_tunic
 name=chainmail tunic
 id=0x13c4
-def=10
 }
 
 // Female
@@ -121,7 +107,6 @@ def=10
 get=fem_plate
 name=plate armor
 id=0x1c04
-def=13
 }
 
 [0x1c05]
@@ -129,7 +114,6 @@ def=13
 get=fem_plate
 name=plate armor
 id=0x1c05
-def=13
 }
 
 // Platemail
@@ -139,7 +123,6 @@ def=13
 get=plate_arms
 name=platemail arms
 id=0x1410
-def=4
 }
 
 [0x1411]
@@ -147,7 +130,6 @@ def=4
 get=plate_leggings
 name=platemail legs
 id=0x1411
-def=4
 }
 
 [0x1413]
@@ -155,7 +137,6 @@ def=4
 get=plate_gorget
 name=platemail gorget
 id=0x1413
-def=2
 }
 
 [0x1414]
@@ -163,7 +144,6 @@ def=2
 get=plate_gloves
 name=platemail gloves
 id=0x1414
-def=2
 }
 
 [0x1415]
@@ -171,7 +151,6 @@ def=2
 get=plate_chest
 name=platemail
 id=0x1415
-def=14
 }
 
 [0x1417]
@@ -179,7 +158,6 @@ def=14
 get=plate_arms
 name=platemail arms
 id=0x1417
-def=4
 }
 
 [0x141a]
@@ -187,7 +165,6 @@ def=4
 get=plate_leggings
 name=platemail legs
 id=0x141a
-def=4
 }
 
 [0x1418]
@@ -195,7 +172,6 @@ def=4
 get=plate_gloves
 name=platemail gloves
 id=0x1418
-def=2
 }
 
 [0x1416]
@@ -203,7 +179,6 @@ def=2
 get=plate_chest
 name=platemail
 id=0x1416
-def=14
 }
 
 // Helmets
@@ -213,7 +188,6 @@ def=14
 get=close_helmet
 name=close helmet
 id=0x1408
-def=4
 }
 
 [0x1409]
@@ -221,7 +195,6 @@ def=4
 get=close_helm
 name=close helm
 id=0x1409
-def=4
 }
 
 [0x140a]
@@ -229,7 +202,6 @@ def=4
 get=helmet
 name=helmet
 id=0x140a
-def=4
 }
 
 [0x140b]
@@ -237,7 +209,6 @@ def=4
 get=helmet
 name=helmet
 id=0x140b
-def=4
 }
 
 [0x140c]
@@ -245,7 +216,6 @@ def=4
 get=bascinet
 name=bascinet
 id=0x140c
-def=2
 }
 
 [0x140d]
@@ -253,7 +223,6 @@ def=2
 get=bascinet
 name=bascinet
 id=0x140d
-def=2
 }
 
 [0x140e]
@@ -261,7 +230,6 @@ def=2
 get=nose_helm
 name=nose helm
 id=0x140e
-def=4
 }
 
 [0x140f]
@@ -269,7 +237,6 @@ def=4
 get=nose_helm
 name=nose helm
 id=0x140f
-def=4
 }
 
 [0x1412]
@@ -277,14 +244,12 @@ def=4
 get=plate_helm
 name=plate helm
 id=0x1412
-def=5
 }
 
 [0x1419]
 { right facing
 name=plate helm
 id=0x1419
-def=5
 }
 
 // Shields

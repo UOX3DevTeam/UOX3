@@ -30,6 +30,7 @@
 #include "cMagic.h"
 #include "scriptc.h"
 #include "ssection.h"
+#include "classes.h"
 
 #include "jsobj.h"
 #include "jsutil.h"
@@ -672,6 +673,7 @@ namespace UOX
 				case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgID() );					break;
 				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;
+				case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
 				default:
 					break;
 			}
@@ -786,16 +788,11 @@ namespace UOX
 					break;
 				case CCP_NEUTRAL:
 					if( encaps.toBool() )
-					{
-						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
 						gPriv->SetFlagNeutral();
-					}
 					else
-					{
-						gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
 						gPriv->SetFlagBlue();
-						UpdateFlag( gPriv );
-					}
+					gPriv->SetTimer( tCHAR_CRIMFLAG, 0 );
+					UpdateFlag( gPriv );
 					break;
 				case CCP_MURDERCOUNT:
 					gPriv->SetKills( (SI16)encaps.toInt() );
@@ -928,7 +925,49 @@ namespace UOX
 				case CCP_NONEEDREAGS:	gPriv->SetNoNeedReags( encaps.toBool() );			break;
 				case CCP_ORGID:			gPriv->SetOrgID( (UI16)encaps.toInt() );			break;
 				case CCP_ORGSKIN:		gPriv->SetOrgSkin( (UI16)encaps.toInt() );			break;
-				case CCP_NPCFLAG:		gPriv->SetNPCFlag( (cNPC_FLAG)encaps.toInt() );		break;
+				case CCP_NPCFLAG:
+					gPriv->SetNPCFlag( (cNPC_FLAG)encaps.toInt() );
+					UpdateFlag( gPriv );
+					break;
+				case CCP_ISSHOP:
+					if( encaps.toBool() )
+					{
+						gPriv->SetShop( true );
+						CItem *tPack = NULL;
+						for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
+						{
+							tPack = gPriv->GetItemAtLayer( static_cast<ItemLayers>(i) );
+							if( !ValidateObject( tPack ) )
+							{
+								tPack = Items->CreateItem( NULL, gPriv, 0x2AF8, 1, 0, OT_ITEM );
+								if( tPack != NULL )
+								{
+									tPack->SetLayer( static_cast<ItemLayers>(i) );
+									if( !tPack->SetCont( gPriv ) )
+										tPack->Delete();
+									else
+									{
+										tPack->SetType( IT_CONTAINER );
+										tPack->SetNewbie( true );
+									}
+								}
+							}
+						}
+						gPriv->Update();
+					}
+					else
+					{
+						gPriv->SetShop( false );
+						CItem *tPack = NULL;
+						for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
+						{
+							tPack = gPriv->GetItemAtLayer( static_cast<ItemLayers>(i) );
+							if( ValidateObject( tPack ) )
+								tPack->Delete();
+						}
+						gPriv->Update();
+					}
+					break; 
 				default:
 					break;
 			}

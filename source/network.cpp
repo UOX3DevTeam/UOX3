@@ -841,6 +841,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 								mSock->Language( newLang );
 								break;
 							}
+							case 0x0C:	// Closed Status Gump
+								break;
 							case 0x0E:	// UOTD actions
 								// 9 bytes long
 								Effects->PlayCharacterAnimation( ourChar, mSock->GetWord( 7 ), 1 );

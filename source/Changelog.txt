@@ -1,3 +1,10 @@
+2/11/2006 - giwo (0.98-3.2q [3.3 RC])
+	Added JS property .isShop to transform an NPC into (and back from) a shopkeeper. (Grimson)
+	Fixed some issues causing flagging not to be updated after setting flags in JS.
+	Added error-checking when an invalid script entry is called with the GET tag.
+	Modified AR statwindow reporting to give larger numbers.
+	Updated some DFN armor defense ratings in items/gear/armor/
+
 11th February, 2006 - Grimson (committed by Maarc)
 	Fixed a bug with IsNeutral/SetFlagNeutral not comparing against the same flag type
 	Fixed a bug where the wrong flag number is sent to the client for Neutrals

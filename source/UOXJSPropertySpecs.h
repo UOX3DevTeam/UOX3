@@ -236,6 +236,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "orgSkin",		CCP_ORGSKIN,		JSPROP_ENUMANDPERM },
 	{ "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO  },
 	{ "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO  },
+	{ "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM },
 
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };

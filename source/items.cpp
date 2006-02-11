@@ -123,7 +123,10 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_GET:
 			{
 										ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
-										ApplyItemSection( applyTo, toFind );
+										if( toFind == NULL )
+											Console.Warning( 2, "Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial() );
+										else
+											ApplyItemSection( applyTo, toFind );
 			}
 										break;
 			case DFNTAG_HP:				applyTo->SetHP( static_cast<SI16>(ndata) );				break;

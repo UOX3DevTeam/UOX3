@@ -751,7 +751,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_GET:
 			{
 											ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
-											ApplyNpcSection( applyTo, toFind, isGate );
+											if( toFind == NULL )
+												Console.Warning( 2, "Invalid script entry called with GET tag, character serial 0x%X" , applyTo->GetSerial() );
+											else
+												ApplyNpcSection( applyTo, toFind, isGate );
 			}
 											break;
 			case DFNTAG_GOLD:

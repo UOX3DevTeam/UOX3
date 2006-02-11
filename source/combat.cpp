@@ -822,7 +822,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 				getArmorDef( mChar, total, getLoc, true );
-			total = (total / 100);
+			total = (total / 20);
 		}
 		else
 			defendItem = getArmorDef( mChar, total, hitLoc );
