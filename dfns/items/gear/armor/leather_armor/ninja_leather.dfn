@@ -2,94 +2,69 @@
 
 [0x278e]
 {
-get=base_item
+get=leather_ninja_hood
 name=leather ninja hood
 id=0x278e
-layer=0x06
-str=10
-def=2
-weight=200
-decay=1
 }
 
 [0x27d9]
 {
-get=0x278e
+get=leather_ninja_hood
 name=leather ninja hood
 id=0x27d9
 }
 
 [0x2790]
-get=base_item
+get=leather_ninja_belt
 name=leather ninja belt
 id=0x2790
-layer=0x0c
-str=10
-def=2
-weight=200
-decay=1
 }
 
 [0x27db]
 {
-get=0x2790
+get=leather_ninja_belt
 name=leather ninja belt
 id=0x27db
 }
 
 [0x2791]
 {
-get=base_item
+get=leather_ninja_pants
 name=leather ninja pants
 id=0x2791
-layer=0x04
-str=10
-def=2
-weight=500
-decay=1
 }
 
 [0x27dc]
 {
-get=0x2791
+get=leather_ninja_pants
 name=leather ninja pants
 id=0x27dc
 }
 
 [0x2792]
 {
-get=base_item
+get=leather_ninja_mitts
 name=leather ninja mitts
 id=0x2792
-layer=0x07
-str=10
-def=2
-weight=200
-decay=1
 }
 
 [0x27dd]
 {
-get=0x2792
+get=leather_ninja_mitts
 name=leather ninja mitts
 id=0x27dd
 }
 
 [0x2793]
 {
-get=base_item
+get=leather_ninja_jacket
 name=leather ninja jacket
 id=0x2793
-layer=0x0d
-str=10
-def=2
-weight=500
-decay=1
 }
 
 [0x27de]
 {
-get=0x2793
+get=leather_ninja_jacket
 name=leather ninja jacket
 id=0x27de
 }

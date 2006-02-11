@@ -218,6 +218,148 @@ get=plate_helm
 id=0x1419
 }
 
+// SE Armor
+
+[0x2777]
+{
+get=heavy_plate_jingasa
+name=heavy plate jingasa
+id=0x2777
+}
+
+[0x27c2]
+{
+get=heavy_plate_jingasa
+name=heavy plate jingasa
+id=0x27c2
+}
+
+[0x2778]
+{
+get=decorative_plate_kabuto
+name=decorative plate kabuto
+id=0x2778
+}
+
+[0x27c3]
+{
+get=decorative_plate_kabuto
+name=decorative plate kabuto
+id=0x27c3
+}
+
+[0x277d]
+{
+get=plate_do
+name=plate do
+id=0x277d
+}
+
+[0x27c8]
+{
+get=plate_do
+name=plate do
+id=0x27c8
+}
+
+[0x2780]
+{
+get=plate_hiro_sode
+name=plate hiro sode
+id=0x2780
+}
+
+[0x27cb]
+{
+get=plate_hiro_sode
+name=plate hiro sode
+id=0x27cb
+}
+
+[0x2781]
+{
+get=light_plate_jingasa
+name=light plate jingasa
+id=0x2781
+}
+
+[0x27cc]
+{
+get=light_plate_jingasa
+name=light plate jingasa
+id=0x27cc
+}
+
+[0x2784]
+{
+get=small_plate_jingasa
+name=small plate jingasa
+id=0x2784
+}
+
+[0x27cf]
+{
+get=small_plate_jingasa
+name=small plate jingasa
+id=0x27cf
+}
+
+[0x2785]
+{
+get=battle_plate_kabuto
+name=battle plate kabuto
+id=0x2785
+}
+
+[0x27d0]
+{
+get=battle_plate_kabuto
+name=battle plate kabuto
+id=0x27d0
+}
+
+[0x2788]
+{
+get=plate_suneate
+name=plate suneate
+id=0x2788
+}
+
+[0x27d3]
+{
+get=plate_suneate
+name=plate suneate
+id=0x27d3
+}
+
+[0x2789]
+{
+get=plate_kabuto
+name=plate kabuto
+id=0x2789
+}
+
+[0x27d4]
+{
+get=plate_kabuto
+name=plate kabuto
+id=0x27d4
+}
+
+[0x278d]
+{
+get=plate_haidate
+name=plate haidate
+id=0x278d
+}
+
+[0x27d8]
+{
+get=plate_haidate
+name=plate haidate
+id=0x27d8
+}
+
 // Shields
 
 [0x1b72]

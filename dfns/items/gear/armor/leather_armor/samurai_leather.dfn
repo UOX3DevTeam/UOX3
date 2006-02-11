@@ -1,121 +1,83 @@
-// Note February 10th 2006: The DEF values of all these need heavy tweaking. Based on guesswork only!
-
 [0x2776]
 {
-get=base_item
+get=leather_jingasa
 name=leather jingasa
 id=0x2776
-layer=0x06
-hp=30
-str=25
-def=4
-weight=300
-decay=1
 }
 
 [0x27c1]
 {
-get=0x2776
+get=leather_jingasa
 name=leather jingasa
 id=0x27c1
 }
 
 [0x277a]
 {
-get=base_item
+get=leather_mempo
 name=leather mempo
 id=0x277a
-layer=0x0a
-hp=40
-str=30
-def=2
-weight=200
-decay=1
 }
 
 [0x27c5]
 {
-get=0x277a
+get=leather_mempo
 name=leather mempo
 id=0x27c5
 }
 
 [0x277b]
 {
-get=base_item
+get=leather_do
 name=leather do
 id=0x277b
-layer=0x0d
-hp=45
-str=40
-def=4
-weight=600
-decay=1
 }
 
 [0x27c6]
 {
-get=0x277b
+get=leather_do
 name=leather do
 id=0x27c6
 }
 
 [0x277e]
 {
-get=base_item
+get=leather_hiro_sode
 name=leather hiro sode
 id=0x277e
-layer=0x13
-hp=50
-str=25
-def=2
-weight=100
-decay=1
 }
 
 [0x27c9]
 {
-get=0x277e
+get=leather_hiro_sode
 name=leather hiro sode
 id=0x27c9
 }
 
 [0x2786]
 {
-get=base_item
+get=leather_suneate
 name=leather suneate
 id=0x2786
-layer=0x04
-hp=25,40
-str=20
-def=2
-weight=400
-decay=1
 }
 
 [0x27d1]
 {
-get=0x2786
+get=leather_suneate
 name=leather suneate
 id=0x27d1
 }
 
 [0x278a]
 {
-get=base_item
+get=leather_haidate
 name=leather haidate
 id=0x278a
-layer=0x04
-hp=40
-str=20
-def=2
-weight=400
-decay=1
 }
 
 [0x27d5]
 {
-get=0x278a
+get=leather_haidate
 name=leather haidate
 id=0x27d5
 }
