@@ -1,3 +1,7 @@
+2/11/2006 - giwo (0.98-3.3)
+	Added 'set DEF (items), ARMOR (chars), and LAYER (items) commands.
+	Modified 'setscptrig so it accepts 0 as a value even if no script 0 exists.
+
 2/11/2006 - grimson (0.98-3.2r [3.3 RC])
 	Added fixed maximum HP for chars. You can set it by a new dfn tag "HPMAX" or by the
 	.maxhp JS property. Setting a negative value via the .maxhp JS property will reset

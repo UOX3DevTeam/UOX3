@@ -208,6 +208,14 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.desc = nVal;
 		okMsg( socket );
 		break;
+	case "DEF":
+		ourItem.def = nVal;
+		okMsg( socket );
+		break;
+	case "LAYER":
+		ourItem.layer = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 			HandleSetSpawner( socket, ourItem, uKey, nVal );
@@ -329,6 +337,10 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		break;
 	case "VISIBLE":
 		ourChar.visible = nVal;
+		okMsg( socket );
+		break;
+	case "ARMOR":
+		ourChar.armour = nVal;
 		okMsg( socket );
 		break;
 	case "MAXHP":

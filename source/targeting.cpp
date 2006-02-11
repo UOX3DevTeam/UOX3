@@ -172,7 +172,7 @@ void HandleSetScpTrig( CSocket *s )
 	VALIDATESOCKET( s );
 	UI16 targTrig		= (UI16)s->TempInt();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute == NULL )
+	if( targTrig && toExecute == NULL )
 	{
 		s->sysmessage( 1752 );
 		return;
