@@ -1744,7 +1744,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_INSCRIBE:		Skills->Inscribe( tSock );				break;
 					case TARGET_LOCKPICK:		Skills->LockPick( tSock );				break;
-					case TARGET_COOKING:		Skills->handleCooking( tSock );			break;
 					case TARGET_TINKERAXEL:		Skills->TinkerAxel( tSock );			break;
 					case TARGET_TINKERAWG:		Skills->TinkerAwg( tSock );				break;
 					case TARGET_TINKERCLOCK:	Skills->TinkerClock( tSock );			break;

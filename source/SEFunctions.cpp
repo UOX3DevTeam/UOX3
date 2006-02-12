@@ -948,7 +948,7 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
 	worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
 	
-	CItem *item = getItem( xLoc, yLoc, zLoc, worldNumber );
+	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber );
 	if( ValidateObject( item ) )
 	{
 		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
@@ -979,7 +979,7 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
 	id			= (UI16)JSVAL_TO_INT( argv[4] );
 	
-	CItem *item = findItem( xLoc, yLoc, zLoc, worldNumber, id );
+	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id );
 	if( ValidateObject( item ) )
 	{
 		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
@@ -989,37 +989,6 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 	else
 		*rval = JSVAL_NULL;
-	return JS_TRUE;
-}
-
-JSBool SE_GetItems( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 5 )
-	{
-		DoSEErrorMessage( "GetItems: Invalid number of parameters (5)" );
-		return JS_FALSE;
-	}
-	SI16 xLoc = 0, yLoc = 0;
-	SI08 zLoc = 0;
-	UI08 worldNumber = 0;
-	UI16 range = 0;
-	
-	xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
-	yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
-	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
-	worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
-	range		= (UI16)JSVAL_TO_INT( argv[4] );
-	
-	CItem *item = getItems( xLoc, yLoc, zLoc, worldNumber, range );
-	if( ValidateObject( item ) )
-	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, item );
-		*rval = OBJECT_TO_JSVAL( myObj );
-	}
-	else
-			*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
 JSBool SE_IsRegionGuarded( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )

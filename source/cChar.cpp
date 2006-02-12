@@ -1929,7 +1929,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	if ( maxHP_fixed )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
-	dumping << "HP=" << (SI16)GetHP() << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
@@ -2724,11 +2723,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				{
 					SetHairStyle( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
 					SetHairColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
-					rvalue = true;
-				}
-				else if( UTag == "HP" )
-				{
-					SetHP( data.toUShort() );
 					rvalue = true;
 				}
 				break;

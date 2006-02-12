@@ -86,7 +86,6 @@ public:
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
 	TargetFunc LockPick;
-	TargetFunc handleCooking;
 	TargetFunc Mine;
 	TargetFunc Persecute;
 	TargetFunc ProvocationTarget1;

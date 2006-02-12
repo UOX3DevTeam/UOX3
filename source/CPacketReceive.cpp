@@ -739,7 +739,7 @@ void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << TimeStamp() << std::endl;
 	outStream << "Pattern        : " << pattern << std::endl;
 	outStream << "Request Type   : " << (int)getType << std::endl;
-	outStream << "PlayerID       : " << playerID << std::endl;
+	outStream << "PlayerID       : " << std::hex << "0x" << playerID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -853,7 +853,7 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << TimeStamp() << std::endl;
-	outStream << "ClickedID      : " << objectID << std::endl;
+	outStream << "ClickedID      : " << std::hex << "0x" << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -885,7 +885,7 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << TimeStamp() << std::endl;
-	outStream << "ClickedID      : " << objectID << std::endl;
+	outStream << "ClickedID      : " << std::hex << "0x" << objectID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }

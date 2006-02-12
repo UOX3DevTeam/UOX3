@@ -28,7 +28,7 @@ function onUse( pUser, iUsed )
 	pUser.SetTag( "itemserial2", iUsed.GetSerial(2) ); 
 	pUser.SetTag( "itemserial3", iUsed.GetSerial(3) ); 
 	pUser.SetTag( "itemserial4", iUsed.GetSerial(4) ); 
-	if( iUsed.GetTag( "ContentsType" ) == null )
+	if( !iUsed.GetTag( "ContentsType" ) )
 	{
 		// Setup "ContentsType"-tag for various pitchers/bottles if they don't have one
 		switch( iUsed.id )
@@ -85,25 +85,17 @@ function onUse( pUser, iUsed )
 		case 0x0fff:case 0x1000:case 0x1001:case 0x1002: //pewter mugs
 		case 0x1f81:case 0x1f82:case 0x1f83:case 0x1f84: //empty glasses
 			iUsed.SetTag( "ContentsName", "nothing" );
-			iUsed.SetTag( "EmptyGlass", 1 );
+			iUsed.SetTag( "EmptyGlass", 2 );
 			break;
 		}	
 	}
-	if( iUsed.GetTag( "EmptyGlass" ) == 1 )
-	{
+	if( iUsed.GetTag( "EmptyGlass" ) == 2 )
 		pUser.SysMessage( "It's empty." );
-		return false;
-	}
-	if( iUsed.GetTag( "ContentsType" ) > 1 || iUsed.GetTag( "EmptyGlass" ) == 0 )
-	{
+	else if( iUsed.GetTag( "ContentsType" ) > 1 || iUsed.GetTag( "EmptyGlass" ) == 1 )
 		pUser.CustomTarget( 1, "Where would you like to pour this?" );
-		return false;
-	}
 	else if( iUsed.GetTag( "ContentsType" ) == 1 )
-	{
 		pUser.CustomTarget( 0, "Fill from what?" );
-		return false;
-	}
+
 	return false;
 }
 
@@ -176,7 +168,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				pUser.SysMessage( "Impossible. Can't be done." );
 				return;
 			}
-			if(( myTarget.serial != null ) && (( myTarget.GetTag( "ContentsType" ) == 0 || myTarget.GetTag( "ContentsType" ) == null ) && ( myTarget.id == 0x099b ||
+			if(( myTarget.serial != null ) && (( myTarget.GetTag( "ContentsType" ) == 0 || !myTarget.GetTag( "ContentsType" ) ) && ( myTarget.id == 0x099b ||
 			myTarget.id == 0x099f || myTarget.id == 0x09c7 || myTarget.id == 0x09c8 )))
 			{
 				myTarget.scripttrigger = scriptID; // REMEMBER TO CHANGE!!!!!!!!					
@@ -316,7 +308,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
 		{
 			pUser.SysMessage( "You pour out your drink." );
-			Pitcher.SetTag( "EmptyGlass", 1);
+			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			Pitcher.SetTag( "ContentsType", 1 );
 			switchID( pSock, Pitcher );
@@ -368,7 +360,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			{
 				pUser.SoundEffect( 49, 1 );
 				pUser.EmoteMessage( "*Drinks some "+Pitcher.GetTag("ContentsName")+"*");
-				Pitcher.SetTag( "EmptyGlass", 1);
+				Pitcher.SetTag( "EmptyGlass", 2 );
 				Pitcher.SetTag( "ContentsName", "nothing" );
 				Pitcher.SetTag( "ContentsType", 1 );
 				switchID( pSock, Pitcher );
@@ -385,7 +377,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			var UsesLeft = Pitcher.GetTag( "UsesLeft" );
 			Pitcher.SetTag( "UsesLeft", (UsesLeft-1) );
 			UsesLeft = UsesLeft - 1;
-			pUser.SoundEffect( 50, 1 );
+			pUser.SoundEffect( 49, 1 );
 			if( UsesLeft == 0 )
 			{
 				if( Pitcher.id == 0x09c8 )
@@ -394,7 +386,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 					Pitcher.name = "empty jug";
 					Pitcher.SetTag( "ContentsType", 1);
 				}
-				if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
+				else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 				{
 					pUser.SysMessage( "The bottle is empty." );
 					Pitcher.name = "empty bottle";
@@ -426,18 +418,18 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			pUser.SysMessage( "Impossible. Can't be done." );
 			return;
 		}
-		if(( myTarget.GetTag( "ContentsType" ) == 0 || myTarget.GetTag( "ContentsType" ) == null ) && (( myTarget.id == 0x0ff6 ||
+		if(( myTarget.GetTag( "ContentsType" ) == 0 || !myTarget.GetTag( "ContentsType" ) ) && (( myTarget.id == 0x0ff6 ||
 		myTarget.id == 0x0ff7 || myTarget.id == 0x09a7 ) || ( myTarget.id >= 0x1f81 && myTarget.id <= 0x1f84 ) || (
 		myTarget.id >= 0x0995 && myTarget.id <= 0x09ca ) || ( myTarget.id >= 0x0ffb && myTarget.id <= 0x1002 ) || (
 		myTarget.id == 0x099a || myTarget.id == 0x09b3 || myTarget.id == 0x09bf || myTarget.id == 0x09cb) ))
 			myTarget.scripttrigger = scriptID; // REMEMBER TO CHANGE!!!!!!!!					
-		if( Pitcher.GetTag( "EmptyGlass" ) == 0 && ( myTarget.GetTag( "EmptyGlass" ) == 1 || myTarget.GetTag( "EmptyGlass" ) == null ))
+		if( Pitcher.GetTag( "EmptyGlass" ) == 1 && ( myTarget.GetTag( "EmptyGlass" ) == 2 || !myTarget.GetTag( "EmptyGlass" ) ) )
 		{
 			pUser.SoundEffect( 577, 1 );
-			myTarget.SetTag( "EmptyGlass", 0 );
+			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.SetTag( "ContentsType", Pitcher.GetTag( "ContentsType" ));
 			myTarget.SetTag( "ContentsName", Pitcher.GetTag( "ContentsName" ));
-			Pitcher.SetTag( "EmptyGlass", 1 );
+			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsType", 1);
 			Pitcher.SetTag( "ContentsName", "nothing");
 			switchTargetID( pSock, myTarget, Pitcher );
@@ -459,7 +451,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			var UsesLeft = Pitcher.GetTag( "UsesLeft" );
 			Pitcher.SetTag( "UsesLeft", (UsesLeft-1) );
 			UsesLeft = UsesLeft - 1;
-			myTarget.SetTag( "EmptyGlass", 0 );
+			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.SetTag( "ContentsType", Pitcher.GetTag( "ContentsType" ));
 			myTarget.SetTag( "ContentsName", Pitcher.GetTag( "ContentsName" ));			
 			switchTargetID( pSock, myTarget, Pitcher );
@@ -539,7 +531,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
 		{
 			pUser.SysMessage( "You pour out your drink." );
-			Pitcher.SetTag( "EmptyGlass", 1);
+			Pitcher.SetTag( "EmptyGlass", 2 );
 			Pitcher.SetTag( "ContentsName", "nothing" );
 			Pitcher.SetTag( "ContentsType", 1 );
 			switchID( pSock, Pitcher );

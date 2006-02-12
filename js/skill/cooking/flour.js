@@ -13,23 +13,22 @@ function onUse ( pUser, iUsed )
 	{
 		var iPackOwner = GetPackOwner( iUsed, 0 );
 		if( iPackOwner.serial != pUser.serial )
-		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return;
-		}
 		else
 		{
 			var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
 			if( countOfResource < 4 )
 			{
 				srcSock.SysMessage( "You do not have enough resources! You need 4 sheaves of wheat!" );
-				return;
+				return false;
 			}
 			srcSock.CustomTarget( 0, "Where do you wish to grind the wheat?" );
 		}
 	}
 	else
 		pUser.SysMessage( "This has to be in your backpack!" );
+
+	return false;
 }
 
 function onCallback0( tSock, targSerial )

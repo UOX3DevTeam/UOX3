@@ -40,9 +40,9 @@ void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
-	outStream << "PlayerID         : " << std::hex << pStream.GetULong( 1 ) << std::endl;
+	outStream << "PlayerID         : " << std::hex << "0x" << pStream.GetULong( 1 ) << std::endl;
 	outStream << "Unknown1         : " << std::dec << pStream.GetULong( 5 ) << std::endl;
-	outStream << "BodyType         : " << std::hex << pStream.GetUShort( 9 ) << std::endl;
+	outStream << "BodyType         : " << std::hex << "0x" << pStream.GetUShort( 9 ) << std::endl;
 	outStream << "X Loc            : " << std::dec << pStream.GetUShort( 11 ) << std::endl;
 	outStream << "Y Loc            : " << pStream.GetUShort( 13 ) << std::endl;
 	outStream << "Z Loc            : " << pStream.GetUShort( 15 ) << std::endl;

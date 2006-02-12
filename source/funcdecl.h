@@ -37,10 +37,8 @@ CMultiObj *	findMulti( CBaseObject *i );
 //o---------------------------------------------------------------------------o
 // Item functions
 //o---------------------------------------------------------------------------o
-CItem *getItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
-CItem *findItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id );
-CItem *getItems( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 range );
-
+CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id );
 //o---------------------------------------------------------------------------o
 // Calculation functions (socket, char, item and so forth)
 //o---------------------------------------------------------------------------o

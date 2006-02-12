@@ -104,9 +104,8 @@ function onCallback0( tSock, targSerial )
 			targSerial.id = 0x0FF7;
 		if( targSerial.id == 0x0ff9 || targSerial.id == 0x1f9d )
 			targSerial.id = 0x0FF6;
-		var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "apple", 0x103D, 0x0, "ITEM", true ); // makes a dough
+		var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
 		pUser.SysMessage( "You make some dough." );
-		return;
 	}
 	else // Target is a static item
 		pUser.SysMessage( "You cannot use that for making dough." );

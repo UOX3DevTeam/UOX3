@@ -1769,65 +1769,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mChar->SetID( mChar->GetOrgID() );
 			x->SetType( IT_MORPHOBJECT );
 			return true;
-		case IT_DRINK:  // Drink
-			Effects->PlaySound( mChar, 0x30 + RandomNum( 0, 1 ) );
-			if( RandomNum( 0, 1 ) )
-				mChar->talk( mSock, 435, false );
-			else
-				mChar->emote( mSock, 436, false );
-
-			if( x->GetAmount() > 1 )
-				x->IncAmount( -1 );
-			else if( !(RandomNum( 0, 4 )) || x->GetAmount() == 1 )	// they emptied it.
-			{
-				x->SetType( IT_NOTYPE );
-				x->SetAmount( 0 );
-				mSock->sysmessage( 437 );
-				switch( itemID )
-				{
-					case 0x09F0:
-					case 0x09AD:
-					case 0x0FF8:
-					case 0x0FF9: 
-					case 0x1F95:
-					case 0x1F96:
-					case 0x1F97:
-					case 0x1F98:
-					case 0x1F99:
-					case 0x1F9A:
-					case 0x1F9B:
-					case 0x1F9C:
-					case 0x1F9D:
-					case 0x1F9E://Pitchers
-						x->SetID( 0x09A7 );
-						break;
-					case 0x09EE:
-					case 0x09EF:
-					case 0x1F7D:
-					case 0x1F7E:
-					case 0x1F7F:
-					case 0x1F80:
-					case 0x1F85:
-					case 0x1F86:
-					case 0x1F87:
-					case 0x1F88:
-					case 0x1F89:
-					case 0x1F8A:
-					case 0x1F8B:
-					case 0x1F8C:
-					case 0x1F8D:
-					case 0x1F8E:
-					case 0x1F8F:
-					case 0x1F90:
-					case 0x1F91:
-					case 0x1F92:
-					case 0x1F93:
-					case 0x1F94://glasses
-						x->SetID( 0x1F84 );
-						break;
-				}
-			}
-			return true;
 		case IT_PLANK:	// Planks
 			if( objInRange( mChar, x, DIST_INRANGE ) )
 			{
@@ -1997,25 +1938,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 					mSock->sysmessage( 448 );
 			}
 			return true;
-		case IT_UNCOOKEDFISH:	// cooking fish
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_COOKING, 450 );
-			return true;
-		case IT_UNCOOKEDMEAT:	//
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_COOKING, 451 );
-			return true;
 		case IT_CANNONBALL:	// cannon ball
 			mSock->target( 0, TARGET_LOADCANNON, 455 );
 			x->Delete();
-			return true;
-		case IT_WATERPITCHER:	// pitcher of water to flour
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_COOKING, 456 );
-			return true;
-		case IT_UNCOOKEDDOUGH:	// sausages to dough
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_COOKING, 457 );
 			return true;
 		case IT_ORE:	// smelt ore
 			mSock->TempObj( x );
@@ -2049,18 +1974,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 					x->SetID( 0x1230 );
 				else
 					x->SetID( 0x1245 );
-			}
-			else
-				mSock->sysmessage( 466 );
-			return true;
-		case IT_FLOURSACK:
-		case IT_OPENFLOURSACK:
-			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
-			{
-				if( itemID == 0x1039 )
-					x->SetID( 0x103A );
-				else
-					x->SetID( 0x1039 );
 			}
 			else
 				mSock->sysmessage( 466 );

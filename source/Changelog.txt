@@ -1,3 +1,11 @@
+2/12/2006 - giwo (0.98-3.3a [3.4 BETA])
+	Fixed an issue causing Large Dragon Ship deeds to not function.
+	Stopped CChar from saving HP as CBaseObject handles saving hitpoints.
+	Removed GetItems() as it could cause data corruption.
+	Modified getItem() and findItem() a bit and renamed them to GetItemAtXYZ() and FindItemAtXYZ()
+	Fixed some issues with pitcher.js
+	Fixed some minor cooking issues, and removed cSkills::HandleCooking() as JS now handles cooking.
+
 2/12/2006 - grimson
 	Added another JS function:
 	GetItems( x, y, z, world, range) - returns a list containing all items withing

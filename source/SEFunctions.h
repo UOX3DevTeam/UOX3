@@ -101,7 +101,6 @@ SEngineFunc SE_RaceCompareByRace;		//										***
 SEngineFunc SE_FindMulti;				//										***
 SEngineFunc SE_GetItem;					//										***
 SEngineFunc SE_FindItem;				//										***
-SEngineFunc SE_GetItems;				//										***
 
 SEngineFunc SE_IsRegionGuarded;			//										***
 SEngineFunc SE_CanMarkInRegion;			//										***

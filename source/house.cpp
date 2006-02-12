@@ -235,7 +235,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	CItem *fakeHouse = NULL;
 	if( houseID >= 0x4000 )
 	{
-		if( (houseID%256) >= 18 ) 
+		if( (houseID%256) > 18 ) 
 			sprintf( temp, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 		else 
 			strcpy( temp, "a mast" );
