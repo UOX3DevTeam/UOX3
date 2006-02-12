@@ -733,10 +733,10 @@ decay=1
 
 // SE Plate Armor
 
-[heavy_plate_jingasa]
+[heavy_platemail_jingasa]
 {
 get=base_item
-name=heavy plate jingasa
+name=heavy platemail jingasa
 id=0x2777
 layer=0x06
 hp=70
@@ -746,10 +746,10 @@ weight=500
 decay=1
 }
 
-[decorative_plate_kabuto]
+[decorative_platemail_kabuto]
 {
 get=base_item
-name=decorative plate kabuto
+name=decorative platemail kabuto
 id=0x2778
 layer=0x06
 hp=75
@@ -759,10 +759,10 @@ weight=600
 decay=1
 }
 
-[plate_do]
+[platemail_do]
 {
 get=base_item
-name=plate do
+name=platemail do
 id=0x277d
 layer=0x0d
 hp=70
@@ -772,10 +772,10 @@ weight=1000
 decay=1
 }
 
-[plate_hiro_sode]
+[platemail_hiro_sode]
 {
 get=base_item
-name=plate hiro sode
+name=platemail hiro sode
 id=0x2780
 layer=0x13
 hp=75
@@ -785,10 +785,10 @@ weight=300
 decay=1
 }
 
-[light_plate_jingasa]
+[light_platemail_jingasa]
 {
 get=base_item
-name=light plate jingasa
+name=light platemail jingasa
 id=0x2781
 layer=0x06
 hp=60
@@ -798,10 +798,10 @@ weight=500
 decay=1
 }
 
-[small_plate_jingasa]
+[small_platemail_jingasa]
 {
 get=base_item
-name=small plate jingasa
+name=small platemail jingasa
 id=0x2784
 layer=0x06
 hp=60
@@ -811,10 +811,10 @@ weight=500
 decay=1
 }
 
-[battle_plate_kabuto]
+[platemail_battle_kabuto]
 {
 get=base_item
-name=battle plate kabuto
+name=platemail battle kabuto
 id=0x2785
 layer=0x06
 hp=65
@@ -824,12 +824,12 @@ weight=600
 decay=1
 }
 
-[plate_suneate]
+[platemail_suneate]
 {
 get=base_item
-name=plate suneate
+name=platemail suneate
 id=0x2788
-layer=0x04
+layer=0x18
 hp=65
 str=80
 def=40
@@ -837,10 +837,10 @@ weight=700
 decay=1
 }
 
-[plate_kabuto]
+[platemail_kabuto]
 {
 get=base_item
-name=plate kabuto
+name=platemail kabuto
 id=0x2789
 layer=0x06
 hp=65
@@ -850,12 +850,12 @@ weight=600
 decay=1
 }
 
-[plate_haidate]
+[platemail_haidate]
 {
 get=base_item
-name=plate haidate
+name=platemail haidate
 id=0x278d
-layer=0x04
+layer=0x17
 hp=65
 str=80
 def=40
@@ -934,7 +934,7 @@ id=0x2776
 layer=0x06
 hp=30
 str=25
-def=4
+def=13
 weight=300
 decay=1
 }
@@ -983,7 +983,7 @@ decay=1
 get=base_item
 name=leather suneate
 id=0x2786
-layer=0x04
+layer=0x18
 hp=25,40
 str=20
 def=13
@@ -996,7 +996,7 @@ decay=1
 get=base_item
 name=leather haidate
 id=0x278a
-layer=0x04
+layer=0x17
 hp=40
 str=20
 def=13
@@ -1014,7 +1014,7 @@ id=0x277c
 layer=0x0d
 hp=50
 str=55
-def=3
+def=16
 weight=800
 decay=1
 }
@@ -1027,7 +1027,7 @@ id=0x277f
 layer=0x13
 hp=55
 str=30
-def=3
+def=16
 weight=100
 decay=1
 }
@@ -1037,10 +1037,10 @@ decay=1
 get=base_item
 name=studded suneate
 id=0x2787
-layer=0x04
+layer=0x18
 hp=50
-str=500
-def=3
+str=30
+def=16
 weight=500
 decay=1
 }
@@ -1050,10 +1050,10 @@ decay=1
 get=base_item
 name=studded haidate
 id=0x278b
-layer=0x4
+layer=0x17
 hp=45
 str=30
-def=3
+def=16
 weight=500
 decay=1
 }
@@ -1066,7 +1066,7 @@ id=0x279d
 layer=0x0a
 hp=40
 str=30
-def=2
+def=16
 weight=200
 decay=1
 }

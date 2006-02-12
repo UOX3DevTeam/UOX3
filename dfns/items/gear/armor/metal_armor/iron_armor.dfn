@@ -222,141 +222,141 @@ id=0x1419
 
 [0x2777]
 {
-get=heavy_plate_jingasa
-name=heavy plate jingasa
+get=heavy_platemail_jingasa
+name=heavy platemail jingasa
 id=0x2777
 }
 
 [0x27c2]
 {
-get=heavy_plate_jingasa
-name=heavy plate jingasa
+get=heavy_platemail_jingasa
+name=heavy platemail jingasa
 id=0x27c2
 }
 
 [0x2778]
 {
-get=decorative_plate_kabuto
-name=decorative plate kabuto
+get=decorative_platemail_kabuto
+name=decorative platemail kabuto
 id=0x2778
 }
 
 [0x27c3]
 {
-get=decorative_plate_kabuto
-name=decorative plate kabuto
+get=decorative_platemail_kabuto
+name=decorative platemail kabuto
 id=0x27c3
 }
 
 [0x277d]
 {
-get=plate_do
-name=plate do
+get=platemail_do
+name=platemail do
 id=0x277d
 }
 
 [0x27c8]
 {
-get=plate_do
-name=plate do
+get=platemail_do
+name=platemail do
 id=0x27c8
 }
 
 [0x2780]
 {
-get=plate_hiro_sode
-name=plate hiro sode
+get=platemail_hiro_sode
+name=platemail hiro sode
 id=0x2780
 }
 
 [0x27cb]
 {
-get=plate_hiro_sode
-name=plate hiro sode
+get=platemail_hiro_sode
+name=platemail hiro sode
 id=0x27cb
 }
 
 [0x2781]
 {
-get=light_plate_jingasa
-name=light plate jingasa
+get=light_platemail_jingasa
+name=light platemail jingasa
 id=0x2781
 }
 
 [0x27cc]
 {
-get=light_plate_jingasa
-name=light plate jingasa
+get=light_platemail_jingasa
+name=light platemail jingasa
 id=0x27cc
 }
 
 [0x2784]
 {
-get=small_plate_jingasa
-name=small plate jingasa
+get=small_platemail_jingasa
+name=small platemail jingasa
 id=0x2784
 }
 
 [0x27cf]
 {
-get=small_plate_jingasa
-name=small plate jingasa
+get=small_platemail_jingasa
+name=small platemail jingasa
 id=0x27cf
 }
 
 [0x2785]
 {
-get=battle_plate_kabuto
-name=battle plate kabuto
+get=battle_platemail_kabuto
+name=battle platemail kabuto
 id=0x2785
 }
 
 [0x27d0]
 {
-get=battle_plate_kabuto
-name=battle plate kabuto
+get=platemail_battle_kabuto
+name=platemail battle kabuto
 id=0x27d0
 }
 
 [0x2788]
 {
-get=plate_suneate
-name=plate suneate
+get=platemail_suneate
+name=platemail suneate
 id=0x2788
 }
 
 [0x27d3]
 {
-get=plate_suneate
-name=plate suneate
+get=platemail_suneate
+name=platemail suneate
 id=0x27d3
 }
 
 [0x2789]
 {
-get=plate_kabuto
-name=plate kabuto
+get=platemail_kabuto
+name=platemail kabuto
 id=0x2789
 }
 
 [0x27d4]
 {
-get=plate_kabuto
-name=plate kabuto
+get=platemail_kabuto
+name=platemail kabuto
 id=0x27d4
 }
 
 [0x278d]
 {
-get=plate_haidate
-name=plate haidate
+get=platemail_haidate
+name=platemail haidate
 id=0x278d
 }
 
 [0x27d8]
 {
-get=plate_haidate
-name=plate haidate
+get=platemail_haidate
+name=platemail haidate
 id=0x27d8
 }
 
