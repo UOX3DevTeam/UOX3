@@ -3,7 +3,7 @@
 [smallsnphousedeed]
 {
 NAME=small stone & plaster house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=2
 VALUE=43800
 RESTOCK=5
@@ -12,7 +12,7 @@ RESTOCK=5
 [smallstonehousedeed]
 {
 NAME=small stone house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=3
 VALUE=43800
 RESTOCK=5
@@ -21,7 +21,7 @@ RESTOCK=5
 [smallbrickhousedeed]
 {
 NAME=small brick house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=1
 VALUE=43800
 RESTOCK=5
@@ -30,7 +30,7 @@ RESTOCK=5
 [smallwoodhousedeed]
 {
 NAME=small wood house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=4
 VALUE=43800
 RESTOCK=5
@@ -39,7 +39,7 @@ RESTOCK=5
 [smallwnphousedeed]
 {
 NAME=small wood & plaster house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=5
 VALUE=43800
 RESTOCK=5
@@ -48,7 +48,7 @@ RESTOCK=5
 [smallwoodstrawhousedeed]
 {
 NAME=small wood house with straw roof deed
-ID=0x014F0
+ID=0x14F0
 MOREX=6
 VALUE=43800
 RESTOCK=5
@@ -57,7 +57,7 @@ RESTOCK=5
 [bluetentdeed]
 {
 NAME=blue tent deed
-ID=0x014F0
+ID=0x14F0
 MOREX=7
 VALUE=22800
 RESTOCK=5
@@ -66,7 +66,7 @@ RESTOCK=5
 [greententdeed]
 {
 NAME=green tent deed
-ID=0x014F0
+ID=0x14F0
 MOREX=8
 VALUE=22800
 RESTOCK=5
@@ -75,7 +75,7 @@ RESTOCK=5
 [3roombrickhousedeed]
 {
 NAME=3 room brick house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=9
 VALUE=144500
 RESTOCK=5
@@ -84,7 +84,7 @@ RESTOCK=5
 [2storywnphousedeed]
 {
 NAME=2 story wood & plaster house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=10
 VALUE=192400
 RESTOCK=5
@@ -93,7 +93,7 @@ RESTOCK=5
 [2storysnphousedeed]
 {
 NAME=2 story stone & plaster house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=11
 VALUE=192400
 RESTOCK=5
@@ -102,7 +102,7 @@ RESTOCK=5
 [towerdeed]
 {
 NAME=tower deed
-ID=0x014F0
+ID=0x14F0
 MOREX=12
 VALUE=433200
 RESTOCK=5
@@ -111,7 +111,7 @@ RESTOCK=5
 [keepdeed]
 {
 NAME=keep deed
-ID=0x014F0
+ID=0x14F0
 MOREX=13
 VALUE=665200
 RESTOCK=5
@@ -120,7 +120,7 @@ RESTOCK=5
 [castledeed]
 {
 NAME=castle deed
-ID=0x014F0
+ID=0x14F0
 MOREX=14
 VALUE=1022800
 RESTOCK=5
@@ -129,7 +129,7 @@ RESTOCK=5
 [largeshoppatio]
 {
 NAME=large patio deed
-ID=0x014F0
+ID=0x14F0
 MOREX=15
 VALUE=152800
 RESTOCK=5
@@ -138,7 +138,7 @@ RESTOCK=5
 [largesmithydeed]
 {
 NAME=large smithy deed
-ID=0x014F0
+ID=0x14F0
 MOREX=16
 VALUE=152800
 RESTOCK=5
@@ -147,14 +147,14 @@ RESTOCK=5
 [pentagramdeed]
 {
 NAME=pentagram deed
-ID=0x014F0
+ID=0x14F0
 MOREX=18
 }
 
 [smalltowerdeed]
 {
 NAME=small tower deed
-ID=0x014F0
+ID=0x14F0
 MOREX=26
 VALUE=88000
 RESTOCK=5
@@ -163,7 +163,7 @@ RESTOCK=5
 [smallmarbleshopdeed]
 {
 NAME=small marble shop deed
-ID=0x014F0
+ID=0x14F0
 MOREX=27
 VALUE=63000
 RESTOCK=5
@@ -172,7 +172,7 @@ RESTOCK=5
 [smallstoneshopdeed]
 {
 NAME=small stone shop deed
-ID=0x014F0
+ID=0x14F0
 MOREX=28
 VALUE=60000
 RESTOCK=5
@@ -181,7 +181,7 @@ RESTOCK=5
 [2storyvilladeed]
 {
 NAME=2 story villa deed
-ID=0x014F0
+ID=0x14F0
 MOREX=29
 VALUE=136000
 RESTOCK=5
@@ -190,7 +190,7 @@ RESTOCK=5
 [sandstonepatiohousedeed]
 {
 NAME=standstone patio house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=30
 VALUE=90000
 RESTOCK=5
@@ -199,7 +199,7 @@ RESTOCK=5
 [2storylogcabindeed]
 {
 NAME=2 story log cabin deed
-ID=0x014F0
+ID=0x14F0
 MOREX=31
 VALUE=97000
 RESTOCK=5
@@ -208,7 +208,7 @@ RESTOCK=5
 [largemarblepatiohousedeed]
 {
 NAME=large marble patio house deed
-ID=0x014F0
+ID=0x14F0
 MOREX=32
 VALUE=192000
 RESTOCK=5
