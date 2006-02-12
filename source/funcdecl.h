@@ -39,6 +39,7 @@ CMultiObj *	findMulti( CBaseObject *i );
 //o---------------------------------------------------------------------------o
 CItem *getItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
 CItem *findItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id );
+CItem *getItems( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 range );
 
 //o---------------------------------------------------------------------------o
 // Calculation functions (socket, char, item and so forth)

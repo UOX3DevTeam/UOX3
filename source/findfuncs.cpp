@@ -2,6 +2,7 @@
 #include "regions.h"
 #include "network.h"
 #include "cRaces.h"
+#include "classes.h"
 
 namespace UOX
 {
@@ -366,6 +367,35 @@ CItem *findItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id )
 					oldDist = currDist;
 					currItem = itemCheck;
 				}
+			}
+		}
+		regItems->Pop();
+	}
+	return currItem;
+}
+
+CItem *getItems( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 range )
+{
+	UI16 currDist;
+	CItem *currItem = Items->CreateBaseItem( worldNumber, OT_ITEM );
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *toCheck = (*rIter);
+		if( toCheck == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
+		{
+			if( !ValidateObject( itemCheck ) )
+				continue;
+			point3 difference = itemCheck->GetLocation() - point3( x, y, z );
+			currDist = static_cast<UI16>(difference.Mag3D());
+
+			if( currDist <= range )
+			{
+				currItem->GetContainsList()->Add( itemCheck );
 			}
 		}
 		regItems->Pop();

@@ -44,11 +44,11 @@ public:
 	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
 	CMultiObj *	CreateMulti( CChar *mChar, const std::string cName, const UI16 iID, const bool isBoat ); 
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string itemList );
+	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
 
 private:
 	void		GetScriptItemSettings( CItem *iCreated );
 	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack );
-	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
 	CItem *		CreateRandomItem( const std::string sItemList, const UI08 worldNumber );
 };
 

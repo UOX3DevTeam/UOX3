@@ -1,4 +1,10 @@
 2/12/2006 - grimson
+	Added another JS function:
+	GetItems( x, y, z, world, range) - returns a list containing all items withing
+	"range" of the given coordinates in the given world. You can go through the list
+	by using the FirstItem()/NextItem()/FinishedItems() syntax.
+
+2/12/2006 - grimson
 	Added two new JS functions:
 	FindItem( x, y, z, world, id) - returns the item with the "id" that is on the
 	"z" level and closest to the coordinates of x and y. Or NULL if no item is found.
