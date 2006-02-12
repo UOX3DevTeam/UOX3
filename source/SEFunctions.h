@@ -99,6 +99,8 @@ SEngineFunc SE_RollDice;				//										***
 SEngineFunc SE_RaceCompareByRace;		//										***
 
 SEngineFunc SE_FindMulti;				//										***
+SEngineFunc SE_GetItem;					//										***
+SEngineFunc SE_FindItem;				//										***
 
 SEngineFunc SE_IsRegionGuarded;			//										***
 SEngineFunc SE_CanMarkInRegion;			//										***

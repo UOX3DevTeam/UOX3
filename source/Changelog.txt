@@ -1,4 +1,11 @@
 2/12/2006 - grimson
+	Added two new JS functions:
+	FindItem( x, y, z, world, id) - returns the item with the "id" that is on the
+	"z" level and closest to the coordinates of x and y. Or NULL if no item is found.
+	GetItem( x, y, z, world) - returns the item that is on the given coordinates or
+	NULL if there is no item.
+	
+2/12/2006 - grimson
 	The current HP and (if present) the fixed maxHP will now be saved on worldsaves.
 	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with
 	them you can specify custom tags inside the DFNs and use them in JS scripts.

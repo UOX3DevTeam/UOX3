@@ -56,6 +56,8 @@ static JSFunctionSpec my_functions[] =
 	{ "DoTempEffect",				SE_DoTempEffect,			7, 0, 0 },
 	{ "MakeItem",					SE_MakeItem,				3, 0, 0 },
 	{ "FindMulti",					SE_FindMulti,				4, 0, 0 },
+	{ "GetItem",					SE_GetItem,					4, 0, 0 },
+	{ "FindItem",					SE_FindItem,				5, 0, 0 },
 	{ "IsRegionGuarded",			SE_IsRegionGuarded,			1, 0, 0 },
 	{ "CanMarkInRegion",			SE_CanMarkInRegion,			1, 0, 0 },
 	{ "CanGateInRegion",			SE_CanGateInRegion,			1, 0, 0 },

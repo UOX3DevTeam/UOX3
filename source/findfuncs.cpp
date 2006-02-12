@@ -315,4 +315,61 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	return multi;
 }
 
+CItem *getItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+{
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *toCheck = (*rIter);
+		if( toCheck == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
+		{
+			if( !ValidateObject( itemCheck ) )
+				continue;
+			if( itemCheck->GetX() == x && itemCheck->GetY() == y && itemCheck->GetZ() == z)
+			{
+				regItems->Pop();
+				return itemCheck;
+			}
+		}
+		regItems->Pop();
+	}
+	return NULL;
+}
+
+CItem *findItem( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id )
+{
+	UI16 oldDist = DIST_OUTOFRANGE;
+	UI16 currDist;
+	CItem *currItem = NULL;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *toCheck = (*rIter);
+		if( toCheck == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
+		{
+			if( !ValidateObject( itemCheck ) )
+				continue;
+			if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
+			{
+				point3 difference = itemCheck->GetLocation() - point3( x, y, z );
+				currDist = static_cast<UI16>(difference.Mag());
+				if( currDist < oldDist)
+				{
+					oldDist = currDist;
+					currItem = itemCheck;
+				}
+			}
+		}
+		regItems->Pop();
+	}
+	return currItem;
+}
 }
