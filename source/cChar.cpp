@@ -1609,16 +1609,8 @@ void CChar::SendToSocket( CSocket *s )
 		toSend.Finalize();
 		s->Send( &toSend );
 
-//		if( mCharObj == this )
-//		{
-			CPToolTip pSend( GetSerial() );
-			s->Send( &pSend );
-//		}
-//		else
-//		{
-//			CPQueryToolTip pSend( (*this) );
-//			s->Send( &pSend );
-//		}
+		CPToolTip pSend( GetSerial() );
+		s->Send( &pSend );
 	}
 }
 

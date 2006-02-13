@@ -797,10 +797,10 @@ void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	LoadTeleportLocations()
+//|	Function	-	LoadPlaces()
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Load teleport locations
+//|	Purpose		-	Load locations.dfn
 //o---------------------------------------------------------------------------o
 void LoadPlaces( void )
 {

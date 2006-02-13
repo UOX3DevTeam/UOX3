@@ -922,15 +922,13 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack )
 	iCorpse->SetTempVar( CITV_MOREY, 2, mChar.isHuman() );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
 	iCorpse->SetTempTimer( cwmWorldState->GetUICurrentTime() );
-	R32 decayTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ));
 	if( !mChar.IsNpc() )
 	{
-		UI08 decayMultiplier = static_cast<UI08>(cwmWorldState->ServerData()->PlayerCorpseDecayMultiplier()&0xff);
 		iCorpse->SetOwner( &mChar );
-		iCorpse->SetDecayTime( BuildTimeValue( static_cast<R32>(decayTime*decayMultiplier) ) );
+		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY ) ) );
 	}
 	else
-		iCorpse->SetDecayTime( BuildTimeValue( decayTime ) );
+		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_DECAY ) ) );
 
 	if( !ValidateObject( mChar.GetAttacker() ) )
 		iCorpse->SetTempVar( CITV_MOREX, INVALIDSERIAL );

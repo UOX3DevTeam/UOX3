@@ -446,4 +446,14 @@
 0x2564=5010 //troll axe - LBR
 0x2570=5010 //hatchet - LBR
 
+// Musical Instruments
+0x0E9C=136	// Drum
+0x0E9D=136	// Tambourine
+0x0E9E=136	// Tambourine
+0x0EB1=136	// Standing Harp
+0x0EB2=136	// Harp
+0x0EB3=136	// Lute
+0x0EB4=136	// Lute
+
+
 }

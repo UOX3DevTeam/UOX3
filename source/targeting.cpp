@@ -1738,10 +1738,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
-					case TARGET_PROVOCATION:	Skills->ProvocationTarget1( tSock );	break;
-					case TARGET_PROVOCATION2:	Skills->ProvocationTarget2( tSock );	break;
-					case TARGET_ENTICEMENT:		Skills->EnticementTarget1( tSock );		break;
-					case TARGET_ENTICEMENT2:	Skills->EnticementTarget2( tSock );		break;
 					case TARGET_INSCRIBE:		Skills->Inscribe( tSock );				break;
 					case TARGET_LOCKPICK:		Skills->LockPick( tSock );				break;
 					case TARGET_TINKERAXEL:		Skills->TinkerAxel( tSock );			break;

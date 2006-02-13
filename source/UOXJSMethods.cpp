@@ -4994,10 +4994,6 @@ JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-
-
-
-
 JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )

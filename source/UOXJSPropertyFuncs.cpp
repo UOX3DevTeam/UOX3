@@ -31,6 +31,7 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "classes.h"
+#include "movement.h"
 
 #include "jsobj.h"
 #include "jsutil.h"
@@ -674,6 +675,7 @@ namespace UOX
 				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;
 				case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
+				case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
 				default:
 					break;
 			}
@@ -865,7 +867,10 @@ namespace UOX
 				case CCP_HUNGERSTATUS:	gPriv->SetHungerStatus( encaps.toBool() );		break;
 				case CCP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );		break;
 				case CCP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );		break;
-				case CCP_ATWAR:			gPriv->SetWar( encaps.toBool() );				break;
+				case CCP_ATWAR:
+										gPriv->SetWar( encaps.toBool() );
+										Movement->CombatWalk( gPriv );
+										break;
 				case CCP_SPELLCAST:		gPriv->SetSpellCast( (SI08)encaps.toInt() );	break;
 				case CCP_ISCASTING:		
 					{
@@ -968,7 +973,8 @@ namespace UOX
 						}
 						gPriv->Update();
 					}
-					break; 
+					break;
+				case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
 				default:
 					break;
 			}

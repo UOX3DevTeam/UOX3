@@ -34,7 +34,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED"
 );
 
 void CServerData::ResetDefaults( void )
@@ -74,7 +74,6 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_DECAY, 300 );
 	ServerSkillCap( 7000 );
 	ServerStatCap( 325 );
-	PlayerCorpseDecayMultiplier( 3 );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 300 );
 	
@@ -157,7 +156,7 @@ void CServerData::ResetDefaults( void )
 	SnoopIsCrime( false );
 	
 	CheckBoatSpeed( 0.75 );
-	CheckNpcAISpeed( 0.5 );
+	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
 	PlayerPersecutionStatus( true );
 	HtmlStatsStatus( -1 );
@@ -214,7 +213,7 @@ void CServerData::ResetDefaults( void )
 
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
-	SystemTimer( tSERVER_CORPSEDECAY, 3 );
+	SystemTimer( tSERVER_CORPSEDECAY, 900 );
 	resettingDefaults = false;
 	PostLoadDefaults();	
 }
@@ -985,23 +984,6 @@ void CServerData::ArmorAffectManaRegen( bool newVal )
 	armorAffectManaRegen = newVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	UI08 PlayerCorpseDecayMultiplier()
-//|	Date			-	3/20/2005
-//|	Developer(s)	-	giwo
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Multiplier for player corpse decay
-//o--------------------------------------------------------------------------o
-UI08 CServerData::PlayerCorpseDecayMultiplier( void ) const
-{
-	return playerCorpseDecayMultiplier;
-}
-void CServerData::PlayerCorpseDecayMultiplier( UI08 newVal )
-{
-	playerCorpseDecayMultiplier = newVal;
-}
-
 void CServerData::BackupRatio( SI16 value )
 {
 	backupRatio = value;
@@ -1422,6 +1404,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SPEEDCHECKBOATS=" << CheckBoatSpeed() << std::endl;
 		ofsOutput << "SPEEDCHECKNPCAI=" << CheckNpcAISpeed() << std::endl;
 		ofsOutput << "SPEEDCHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << std::endl;
+		ofsOutput << "NPCMOVEMENTSPEED=" << NPCSpeed() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[message boards]" << std::endl << "{" << std::endl;
@@ -2135,6 +2118,9 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							ServerClientSupport( value.toULong() );
 						case 0x084E:	 // OVERLOADPACKETS[0139]
 							ServerOverloadPackets( (value.toByte() == 1) );
+							break;
+						case 0x085E:	 // NPCMOVEMENTSPEED[0140]
+							NPCSpeed( value.toDouble() );
 							break;
 						default:
 							//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;

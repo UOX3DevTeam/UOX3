@@ -131,7 +131,6 @@ private:
 	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
 	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
-	UI08		playerCorpseDecayMultiplier;	//  Multiplier for player corpse decay.
 	bool		overloadPackets;				//	Toggle Packet Handling in JS
 
 	// SpeedUp
@@ -518,9 +517,6 @@ public:
 
 	void		ArmorAffectManaRegen( bool newVal );
 	bool		ArmorAffectManaRegen( void ) const;
-
-	void		PlayerCorpseDecayMultiplier( UI08 newVal );
-	UI08		PlayerCorpseDecayMultiplier( void ) const;
 
 	void		dumpLookup( int lookupid );
 	void		dumpPaths( void );

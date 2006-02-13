@@ -1,3 +1,15 @@
+2/12/2006 - giwo (0.98-3.3b [3.4 BETA])
+	Modified DFN reloading so it reloads teleport.scp as well.
+	Modified CheckSkill() so GM's can now gain skills by using them. (Note they will still never fail).
+	Added NPCMOVEMENTSPEED to the UOX.ini to allow customization of NPC movement speeds.
+	Changed CORPSEDECAYTIMER to default to 900 seconds, and made use of it in CreateCorpseItem().
+	Removed CServerData::PlayerCorpseDecayMultiplier() as it had no matching uox.ini entry.
+	Added JS character property .attackFirst
+	Moved Peacemaking skill out to JS.
+	Moved Musicianship skill out to JS.
+	Moved Enticement skill out to JS (Note that OSI seems to have replaced this with Discordance).
+	Moved Provocation skill out to JS.
+
 2/12/2006 - giwo (0.98-3.3a [3.4 BETA])
 	Fixed an issue causing Large Dragon Ship deeds to not function.
 	Stopped CChar from saving HP as CBaseObject handles saving hitpoints.

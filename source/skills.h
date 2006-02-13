@@ -59,15 +59,12 @@ private:
 	void	doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item );
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
-	TargetFunc PeaceMaking;
 	TargetFunc RandomSteal;
 	TargetFunc Meditation;
 
 	SI08 FindSkillPoint( UI08 sk, int value );
 	void AnvilTarget( CSocket *s, CItem& item, miningData *oreType );
 	void Atrophy( CChar *c, UI08 sk );
-	void PlayInstrument( CSocket *s, CItem *i, bool wellPlayed );
-	CItem *GetInstrument( CSocket *s );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );
@@ -80,16 +77,12 @@ public:
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
 	TargetFunc BottleTarget;
-	TargetFunc EnticementTarget1;
-	TargetFunc EnticementTarget2;
 	TargetFunc FishTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
 	TargetFunc LockPick;
 	TargetFunc Mine;
 	TargetFunc Persecute;
-	TargetFunc ProvocationTarget1;
-	TargetFunc ProvocationTarget2;
 	TargetFunc RepairMetal;
 	TargetFunc SmeltOre;
 	TargetFunc Smith;

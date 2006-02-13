@@ -1878,36 +1878,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				DoHouseTarget( mSock, static_cast<UI08>(x->GetTempVar( CITV_MOREX )) );
 			}
 			return true;
-		case IT_DRUM:	// Drum
-			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
-				Effects->PlaySound( mChar, 0x0038 );
-			else
-				Effects->PlaySound( mChar, 0x0039 );
-			return true;
-		case IT_TAMBOURINE:	// Tambourine
-			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
-				Effects->PlaySound( mChar, 0x0052 );
-			else
-				Effects->PlaySound( mChar, 0x0053 );
-			return true;
-		case IT_STANDINGHARP:
-			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
-				Effects->PlaySound( mChar, 0x0043 );
-			else
-				Effects->PlaySound( mChar, 0x0044 );
-			return true;
-		case IT_HARP:	// Harps
-			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
-				Effects->PlaySound( mChar, 0x0045 );
-			else
-				Effects->PlaySound( mChar, 0x0046 );
-			return true;
-		case IT_LUTE:	// Lute
-			if( Skills->CheckSkill( mChar, MUSICIANSHIP, 0, 1000 ) )
-				Effects->PlaySound( mChar, 0x004C );
-			else
-				Effects->PlaySound( mChar, 0x004D );
-			return true;
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
 			CChar *m;
 			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );

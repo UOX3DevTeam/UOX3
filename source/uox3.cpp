@@ -2363,17 +2363,14 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 //o---------------------------------------------------------------------------o
 void criminal( CChar *c )
 {
+	c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 	if( !c->IsCriminal() )
 	{
 		CSocket *cSock = c->GetSocket();
-		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
 		if( cSock != NULL )
 			cSock->sysmessage( 1379 );
 		UpdateFlag( c );
 	}
-	else	// let's update their flag, as another criminal act will reset the timer
-		c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
-	// Lets let Npc AI and other code sections take care of calling guards
 }
 
 //o---------------------------------------------------------------------------o

@@ -71,6 +71,7 @@ void		LoadCreatures( void );
 void		LoadPlaces( void );
 void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
+void		LoadTeleportLocations( void );
 
 
 //o---------------------------------------------------------------------------o
@@ -1196,6 +1197,7 @@ void CConsole::Process( int c )
 					// Reload DFN's
 					messageLoop << "     Loading Server DFN... ";
 					FileLookup->Reload();
+					LoadTeleportLocations();
 					messageLoop << MSG_PRINTDONE;
 					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
 					messageLoop << "     Loading JSE Scripts... ";

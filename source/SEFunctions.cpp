@@ -33,6 +33,7 @@
 namespace UOX
 {
 
+void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
 void		LoadRegions( void );
 void		UnloadRegions( void );
@@ -1887,6 +1888,7 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			break;
 	case 4:	// Reload DFNs
 			FileLookup->Reload();
+			LoadTeleportLocations();
 			break;
 	case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;

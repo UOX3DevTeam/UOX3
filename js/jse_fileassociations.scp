@@ -64,6 +64,9 @@
 134=skill/tailoring/wyarnballs-3.js
 135=skill/tailoring/wclothbolt.js
 //-------------------------------------------
+// Musicianship (Play Instrument)
+136=skill/musicianship.js
+//-------------------------------------------
 // Lightsources startSYSTEM[500-699]
 501=server/light/candle01_on.js
 502=server/light/candle01_off.js
@@ -251,6 +254,9 @@
 809=skill/begging.js
 810=skill/detecthidden.js
 811=skill/poisoning.js
+812=skill/peacemaking.js
+813=skill/enticement.js
+814=skill/provocation.js
 }
 
 [PACKET_SCRIPTS]
