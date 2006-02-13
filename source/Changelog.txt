@@ -1,3 +1,12 @@
+2/13/2006 - giwo (0.98-3.3c [3.4 BETA])
+	Fixed an issue causing stats to almost never increase.
+	Modified skills.dfn SKILLPOINT to use ,'s for seperators.
+	Added an additional option to SKILLPOINT to specify for each level how much skill to gain on success.
+	Moved Meditation skill out to JS.
+	Moved Inscription skill out to JS.
+	Removed EngraveAction() as it did not function and custom skills can be added in JavaScript.
+	Moved MAKESHOP command out to JS.
+
 2/12/2006 - giwo (0.98-3.3b [3.4 BETA])
 	Modified DFN reloading so it reloads teleport.scp as well.
 	Modified CheckSkill() so GM's can now gain skills by using them. (Note they will still never fail).

@@ -1073,7 +1073,6 @@ void cCommands::CommandReset( void )
 	// L
 	// M
 	TargetMap["MAKE"]			= TargetMapEntry( ADMIN_CMDLEVEL,	CMD_TARGETTXT,	TARGET_MAKESTATUS,		279);
-	TargetMap["MAKESHOP"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_MAKESHOP,		232);
 	// N
 	// O
 	// P

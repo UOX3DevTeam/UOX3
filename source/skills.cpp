@@ -1,8 +1,6 @@
 #include "uox3.h"
 #include "magic.h"
-#include "cdice.h"
 #include "skills.h"
-#include "cGuild.h"
 #include "combat.h"
 #include "townregion.h"
 #include "cRaces.h"
@@ -993,14 +991,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 					else
 						s->sysmessage( 864 );
 					break;
-				case INSCRIPTION:		s->target( 0, TARGET_INSCRIBE, 865 );		break;
 				case TRACKING:			TrackingMenu( s, TRACKINGMENUOFFSET );		break;
-				case MEDITATION:
-					if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )
-						Meditation( s );
-					else 
-						s->sysmessage( 870 );
-					break;
 				default:				s->sysmessage( 871 );					break;
 			}
 		}
@@ -1321,7 +1312,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
-			id					= tempChar->GetID();
+			id = tempChar->GetID();
 			if( ( !tempChar->isHuman() || creatureType == 2 ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == 0 ) )
 			{
 				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() > tempChar->GetCommandLevel() ) );
@@ -1399,262 +1390,6 @@ void cSkills::Track( CChar *i )
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
 	s->Send( &tSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Inscribe( CSocket *s )
-//|   Date        :  January 31, 2003
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when a player attempts to inscribe a blank scroll
-//|					 Based upon inscribe.dfn
-//o---------------------------------------------------------------------------o
-void cSkills::Inscribe( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar	= s->CurrcharObj();
-	CItem *packnum	= mChar->GetPackItem();
-	if( !ValidateObject( packnum ) )
-	{
-		s->sysmessage( 773 );
-		return;
-	}
-	
-	CItem *spellBook = FindItemOfType( mChar, IT_SPELLBOOK );
-	if( !ValidateObject( spellBook ) && !mChar->IsGM() )
-	{
-		s->sysmessage( 921 );
-		return;
-	}
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	if( i->IsLockedDown() )
-	{
-		s->sysmessage( 774 );
-		return;
-	}
-	if( i->GetID() == 0x0E34 || i->GetID() == 0x0EF3 )
-	{
-		if( FindItemOwner( i ) != mChar )
-		{
-			s->sysmessage( 778 );
-			return;
-		}
-		UI32 getAmt = GetItemAmount( mChar, i->GetID() );
-		if( getAmt < 1 )
-		{
-			s->sysmessage( 776 );
-			return;
-		}
-		NewMakeMenu( s, 99, INSCRIPTION );
-	 }
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player starts engraving an item
-//o---------------------------------------------------------------------------o
-bool cSkills::EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell )
-{
-	if( s == NULL )
-	{
-		Console.Error( 0, "cSkills::EngraveAction() Invalid socket with circle %i and spell %i on item 0x%X", getCir, getSpell, i->GetSerial() );
-		return false;
-	}
-	CChar *mChar = s->CurrcharObj();
-	int num = ( 8 * ( getCir - 1 ) ) + getSpell;
-	
-	if( Magic->spells[num].Action() ) 
-		Effects->PlaySpellCastingAnimation( mChar, Magic->spells[num].Action() ); // Should have a default action instead
-	if( !Magic->CheckReagents( mChar, Magic->spells[num].ReagantsPtr() ) || !Magic->CheckMana( mChar, num ) )
-	{
-		Magic->SpellFail( s );
-		return false;
-	}
-		
-	mChar->talkAll( Magic->spells[num].Mantra().c_str(), false );
-	Magic->DelReagents( mChar, Magic->spells[num].Reagants() );
-	Magic->SubtractMana( mChar, Magic->spells[num].Mana() );
-	
-	switch( getCir )
-	{
-		case 1:	// Circle 1
-			switch( getSpell )
-			{
-				case 1: i->SetOffSpell( 1 );	break;      // Clumsy
-				case 3:	i->SetOffSpell( 2 );	break;      // Feeblemind
-				case 5: i->SetOffSpell( 3 );	break;		// Magic Arrow
-				case 7: s->sysmessage( 931 );	return false;	// Reactive Armor
-				case 8: i->SetOffSpell( 4 );	break;		// Weaken
-				case 2:											// Create Food
-				case 4:											// Heal
-				case 6:											// Night Sight
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		case 2:	// Circle 2
-			switch( getSpell )
-			{
-				case 1:			// Agility
-				case 2:			// Cunning
-				case 8:			// Strength
-						break;
-				case 3:			// Cure
-				case 5:			// Magic Trap
-				case 6:			// Magic Untrap
-				case 7:			// Protection
-						s->sysmessage( 931 );	
-						return false;
-				case 4:			 // Harm
-						i->SetOffSpell( 5 );	
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		case 3:	// Circle 3
-			switch( getSpell )
-			{
-				case 2:			// Fireball
-						i->SetOffSpell( 6 );	
-						break;
-				case 3: //Magic lock
-				case 5: //Telekinesis
-						s->sysmessage( 931 );	
-						return false;
-				case 1:	// Bless
-				case 4: //Poison
-				case 6:	// Teleport
-				case 7:	// Unlock
-				case 8:	// Wall of Stone
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		case 4:	// Circle 4
-			switch( getSpell )
-			{       
-				case 1:// Arch Cure
-				case 2:// Arch Protection
-				case 7://Mana Drain
-						s->sysmessage( 931 );	
-						return false;
-				case 3:		// Curse
-						i->SetOffSpell( 8 );	
-						break;
-				case 4:// Fire Field
-				case 5:// Greater Heal
-				case 8:// Recall
-						break;
-				case 6:		// Lightning
-						i->SetOffSpell( 9 );	
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		case 5:	// Circle 5
-			switch( getSpell )
-			{
-				case 1://Blade Spirit
-				case 2://Dispel Field
-				case 4://Magic Reflection
-				case 7://Poison Field
-						break;
-				case 3:	//Incognito
-				case 8:	//Summon Creature
-						s->sysmessage( 931 );	
-						return false;
-				case 5:		//Mind Blast
-						i->SetOffSpell( 11 );		
-						break;
-				case 6:		//Paralyse
-						i->SetOffSpell( 12 );		
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		case 6:	// Circle 6
-			switch( getSpell )
-			{
-				case 1://Dispel
-				case 4://Invisibility
-				case 5://Mark
-				case 7:// Paralyze Field
-				case 8://Reveal
-						break;
-				case 2:	  //Energy Bolt
-						i->SetOffSpell( 13 );		
-						break;
-				case 3:		//Explosion
-						i->SetOffSpell( 14 );		
-						break;
-				case 6:		// Mass Curse
-						s->sysmessage( 931 );	
-						return false;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break ;
-		case 7:	// Circle 7
-			switch( getSpell )
-			{
-				case 1://Chain Lightning
-				case 5:// Mana Vampire
-				case 6:// Mass Dispel
-				case 7:// Meteor Storm
-				case 8:// Polymorph
-						s->sysmessage( 931 );	
-						return false;
-				case 2://Energy Field
-				case 4://Gate Travel
-						break;
-				case 3:		// FlameStrike
-						i->SetOffSpell( 15 );	
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break ;
-		case 8:	// Circle 8
-			switch( getSpell )
-			{
-				case 1:// Earthquake
-						s->sysmessage( 931 );	
-						return false;
-				case 2://Energy Vortex
-				case 3://Resurrection
-				case 4:// Summon Air Elemental
-				case 5://Summon Daemon
-				case 6:// Summon Earth Elemental
-				case 7:// Summon Fire Elemental
-				case 8:// Summon Water Elemental
-						break;
-				default:	
-						Console.Error( 2, " cSkills::Inscribe -> Fallout of switch statement without default" );
-						return false;
-			}
-			break;
-		default:
-			Console.Error( 2, " Fallout of switch statement without default. skills.cpp, cSkills::Inscribe" );
-			return false;
-  }
-  return true;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1939,46 +1674,6 @@ void cSkills::TinkerClock( CSocket *s )
 		} 
 	}   
 	s->sysmessage( 962 );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Meditation( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses meditation skill
-//o---------------------------------------------------------------------------o
-void cSkills::Meditation( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *mChar = s->CurrcharObj();
-	if( Combat->calcDef( mChar, 0, false ) > 10 )
-	{
-		s->sysmessage( 967 );
-		mChar->SetMeditating( false );
-		return;
-	}
-	if( ValidateObject( Combat->getWeapon( mChar ) ) || ValidateObject( Combat->getShield( mChar ) ) )
-	{
-		s->sysmessage( 968 );
-		mChar->SetMeditating( false );
-		return;
-	}
-	if( mChar->GetMana() == mChar->GetMaxMana() )
-	{
-		s->sysmessage( 969 );
-		mChar->SetMeditating( false );
-		return;
-	}
-	if( !CheckSkill( mChar, MEDITATION, 0, 1000 ) ) 
-	{
-		s->sysmessage( 970 );
-		mChar->SetMeditating( false );
-		return;
-	}
-	s->sysmessage( 971 );
-	mChar->SetMeditating( true );
-	Effects->PlaySound( s, 0x00F9, true );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2466,7 +2161,7 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 		if( RandomNum( 0, 99 ) <= 10 )
 		{
 			if( s->GetSkillLock( sk ) == 0 && s->GetBaseSkill( sk ) > 0 )
-				s->SetBaseSkill( s->GetBaseSkill( sk ) + 1, sk );
+				s->SetBaseSkill( s->GetBaseSkill( sk ) + cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain, sk );
 		}
 		else if( s->GetSkillLock( sk ) == 0 )
 			Atrophy( s, sk );
@@ -2514,9 +2209,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     // If the Race is invalid just use the default race
     if( pRace == NULL )
 		pRace = Races->Race( 0 );
-	
-    bool IsPlayer = ( !s->IsNpc() && s->GetCommandLevel() < CNS_CMDLEVEL ); 
-	if( !IsPlayer ) 
+ 
+	if( s->IsNpc() ) 
 		return;
 	
     //make sure socket is no npc nor counsi/gm
@@ -2526,7 +2220,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence(); 
     SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100 
     int StatCount, nCount; 
-	int maxChance = 1000;
+	UI16 maxChance = 100;
     SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() }; 
     UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence }; 
 	
@@ -2552,10 +2246,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 		//  special dice 2: skill failed: decrease chance by 50%
 
 		//  k, first let us calculate both dices
-		chanceStatGain = (SI16)                               
-			(((float)cwmWorldState->skill[StatCount-1].advancement[ FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) ) ].success / 100) 
-			* 
-			((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000); 
+		UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) );
+		chanceStatGain = (SI16)(((float)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000);
 		// some mathematics in it ;) 
 
 		// now, lets implement the special dice 1 and additionally check for onStatGain javascript method
@@ -2566,7 +2258,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 		if( !skillsuccess )
 			maxChance = maxChance * 2;
 		
-		if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( 0, maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
+		if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
 		{ 
 			switch( StatCount ) 
 			{ 

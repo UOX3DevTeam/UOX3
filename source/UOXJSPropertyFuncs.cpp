@@ -38,6 +38,8 @@
 
 namespace UOX
 {
+	void MakeShop( CChar *c );
+
 	JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		*vp = INT_TO_JSVAL(0);
@@ -937,30 +939,7 @@ namespace UOX
 					break;
 				case CCP_ISSHOP:
 					if( encaps.toBool() )
-					{
-						gPriv->SetShop( true );
-						CItem *tPack = NULL;
-						for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
-						{
-							tPack = gPriv->GetItemAtLayer( static_cast<ItemLayers>(i) );
-							if( !ValidateObject( tPack ) )
-							{
-								tPack = Items->CreateItem( NULL, gPriv, 0x2AF8, 1, 0, OT_ITEM );
-								if( tPack != NULL )
-								{
-									tPack->SetLayer( static_cast<ItemLayers>(i) );
-									if( !tPack->SetCont( gPriv ) )
-										tPack->Delete();
-									else
-									{
-										tPack->SetType( IT_CONTAINER );
-										tPack->SetNewbie( true );
-									}
-								}
-							}
-						}
-						gPriv->Update();
-					}
+						MakeShop( gPriv );
 					else
 					{
 						gPriv->SetShop( false );

@@ -417,8 +417,12 @@ struct LogoutLocationEntry
 struct advance_st
 {
 	UI16 base;
-	UI16 success;
-	UI16 failure;
+	UI08 success;
+	UI08 failure;
+	UI08 amtToGain;
+	advance_st() : base( 0 ), success( 0 ), failure( 0 ), amtToGain( 1 )
+	{
+	}
 };
 
 struct TitlePair_st

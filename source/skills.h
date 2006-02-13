@@ -60,7 +60,6 @@ private:
 	SI16	calcStealDiff( CChar *c, CItem *i );
 
 	TargetFunc RandomSteal;
-	TargetFunc Meditation;
 
 	SI08 FindSkillPoint( UI08 sk, int value );
 	void AnvilTarget( CSocket *s, CItem& item, miningData *oreType );
@@ -76,7 +75,6 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-	TargetFunc BottleTarget;
 	TargetFunc FishTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
@@ -90,7 +88,6 @@ public:
 	TargetFunc TinkerAwg;
 	TargetFunc TinkerAxel;
 	TargetFunc TinkerClock;
-	TargetFunc Inscribe;
 
 	void Load( void );
 
@@ -107,7 +104,6 @@ public:
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
 	void Fish( CChar *i );
 
-	bool EngraveAction( CSocket *s, CItem *i, int getCir, int getSpell );
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );

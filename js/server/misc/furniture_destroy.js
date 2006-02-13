@@ -16,15 +16,18 @@ function onUse( pUser, iUsed )
 		pUser.CustomTarget( 0, "What do you want to use the axe on?" );
 }
 
-function onCallback0( tSock, targSerial )
+function onCallback0( tSock, tItem )
 {
-	var tItem = CalcTargetedItem( tSock );
+
 	var tChar = tSock.currentChar;
-	if( tItem == null )
+	if( !ValidateObject( tItem ) )
 	{
 		tSock.SysMessage( "You didn't target anything." );
 		return;
 	}
+	if( !tItem.isItem )
+		return;
+
     	// check if its in range
 	var isInRange = tChar.InRange( tItem, 4 );
 	if( !isInRange )

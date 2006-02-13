@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "cdice.h"
 #include "skills.h"
 #include "cGuild.h"
 #include "townregion.h"
@@ -29,7 +28,6 @@ namespace UOX
 void tweakItemMenu( CSocket *s, CItem *j );
 void tweakCharMenu( CSocket *s, CChar *c );
 void OpenPlank( CItem *p );
-void MakeShop( CChar *c );
 
 void PlVBuy( CSocket *s )//PlayerVendors
 {
@@ -814,19 +812,6 @@ void CorpseTarget( CSocket *s )
 	}
 	else
 		s->sysmessage( 393 );
-}
-
-void MakeShopTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( ValidateObject( i ) )
-	{
-		MakeShop( i );
-		s->sysmessage( 1068 );
-		return;
-	}
-	s->sysmessage( 1069 );
 }
 
 void AttackTarget( CSocket *s )
@@ -1709,7 +1694,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_TILING:			Tiling( tSock );						break;
 					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;
 					// Vendors
-					case TARGET_MAKESHOP:		MakeShopTarget( tSock );				break;
 					case TARGET_PLVBUY:			PlVBuy( tSock );						break;
 					// Town Stuff
 					case TARGET_TOWNALLY:		MakeTownAlly( tSock );					break;
@@ -1738,7 +1722,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
-					case TARGET_INSCRIBE:		Skills->Inscribe( tSock );				break;
 					case TARGET_LOCKPICK:		Skills->LockPick( tSock );				break;
 					case TARGET_TINKERAXEL:		Skills->TinkerAxel( tSock );			break;
 					case TARGET_TINKERAWG:		Skills->TinkerAwg( tSock );				break;

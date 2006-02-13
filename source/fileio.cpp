@@ -487,9 +487,11 @@ void LoadSkills( void )
 						{
 							advance_st tempAdvance;
 							data = data.simplifyWhiteSpace();
-							tempAdvance.base	= data.section( " ", 0, 0 ).toUShort();
-							tempAdvance.success = data.section( " ", 1, 1 ).toUShort();
-							tempAdvance.failure = data.section( " ", 2, 2 ).toUShort();
+							tempAdvance.base	= data.section( ",", 0, 0 ).toUShort();
+							tempAdvance.success = data.section( ",", 1, 1 ).toUByte();
+							tempAdvance.failure = data.section( ",", 2, 2 ).toUByte();
+							if( data.sectionCount( "," ) == 3 )
+								tempAdvance.amtToGain = data.section( ",", 3, 3 ).toUByte();
 							cwmWorldState->skill[i].advancement.push_back( tempAdvance );
 						}
 						else if( UTag == "MADEWORD" )

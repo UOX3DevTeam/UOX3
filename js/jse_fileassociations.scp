@@ -129,8 +129,6 @@
 //-------------------------------------------
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
-2101=server/resource/fill_water_pitcher.js
-2102=server/resource/fill_milk_pitcher.js
 //-------------------------------------------
 // Server Data
 2500=server/data/weapontypes.js
@@ -229,6 +227,7 @@
 1047=commands/targeting/areacommand.js
 1048=commands/targeting/wipe.js
 1049=commands/targeting/showdetail.js
+1050=commands/targeting/makeshop.js
 }
 
 //-------------------------------------------
@@ -257,6 +256,8 @@
 812=skill/peacemaking.js
 813=skill/enticement.js
 814=skill/provocation.js
+815=skill/inscription.js
+816=skill/meditation.js
 }
 
 [PACKET_SCRIPTS]
