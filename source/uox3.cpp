@@ -2666,6 +2666,13 @@ int main( int argc, char *argv[] )
 		LoadCreatures();
 		Console.PrintDone();
 
+		Console << "Starting World Timers          ";
+		cwmWorldState->SetTimer( tWORLD_LIGHTTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );
+		cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckNpcAISpeed() ) );
+		cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
+		cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
+		Console.PrintDone();
+
 		DisplayBanner();
 		//DisplaySettings(); << Moved that to the configuration
 

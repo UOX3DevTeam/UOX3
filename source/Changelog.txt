@@ -1,3 +1,9 @@
+2/13/2006 - grimson (0.98-3.3d [3.4 BETA])
+	Made shure to start world timers on server startup.
+	Changed startChar() to do a checkRegion() directly after a login. 
+	Changed CWorldMain::doWorldLight to actually take the current time into account
+	when calculating the light level.
+
 2/14/2006 - grimson
 	Added the dungeons to the regions.dfn, so LIGHTDUNGEONLEVEL from the ini is correctly
 	applied to them.

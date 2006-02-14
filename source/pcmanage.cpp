@@ -757,6 +757,7 @@ void updates( CSocket *s )
 }
 
 void sysBroadcast( const std::string txt );
+void checkRegion( CSocket *mSock, CChar& mChar );
 //o---------------------------------------------------------------------------o
 //|   Function    :  void startChar( CSocket *mSock, bool onCreate )
 //|   Date        :  Unknown
@@ -874,6 +875,7 @@ void startChar( CSocket *mSock, bool onCreate )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
 			mSock->LoginComplete( true );
+			checkRegion( mSock, *mChar );
 		}
 	}
 }

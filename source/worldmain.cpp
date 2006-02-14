@@ -579,11 +579,16 @@ void CWorldMain::doWorldLight( void )
 	UI08 worlddarklevel		= ServerData()->WorldLightDarkLevel();
 	UI08 worldbrightlevel	= ServerData()->WorldLightBrightLevel();
 	bool ampm				= ServerData()->ServerTimeAMPM();
+	UI08 currentHour		= ServerData()->ServerTimeHours();
+	UI08 currentMinute		= ServerData()->ServerTimeMinutes();
+	
+	R32 currentTime			= R32( currentHour + ( currentMinute / 60.0f) );
 	R32 hourIncrement		= R32( fabs( ( worlddarklevel - worldbrightlevel ) / 12.0f ) );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
+
 	if( ampm )
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worldbrightlevel + hourIncrement ) );
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worldbrightlevel + ( hourIncrement * currentTime) ) );
 	else
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worlddarklevel - hourIncrement ) );
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worlddarklevel - ( hourIncrement * currentTime) ) );
 }
 
 void fileArchive( void );
