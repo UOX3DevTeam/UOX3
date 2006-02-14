@@ -1,3 +1,7 @@
+2/14/2006 - grimson
+	Added the dungeons to the regions.dfn, so LIGHTDUNGEONLEVEL from the ini is correctly
+	applied to them.
+
 2/13/2006 - giwo (0.98-3.3c [3.4 BETA])
 	Fixed an issue causing stats to almost never increase.
 	Modified skills.dfn SKILLPOINT to use ,'s for seperators.
