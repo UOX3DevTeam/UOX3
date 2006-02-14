@@ -1,3 +1,8 @@
+2/14/2006 - grimson
+	Removed checkRegion() from startChar() as it isn't needed.
+	Fixed the GM Locations menu in travelmenu.dfn so you can travel to the jail cells again.
+	Fixed the release time check in JailCell::PeriodicCheck().
+
 2/13/2006 - grimson (0.98-3.3d [3.4 BETA])
 	Made shure to start world timers on server startup.
 	Changed startChar() to do a checkRegion() directly after a login. 

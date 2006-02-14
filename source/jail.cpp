@@ -89,7 +89,7 @@ void JailCell::PeriodicCheck( void )
 	time( &now );
 	for( size_t i = playersInJail.size() - 1; i >= 0 && i < playersInJail.size(); --i )
 	{
-		if( difftime( now, playersInJail[i]->releaseTime ) < 0 )
+		if( difftime( now, playersInJail[i]->releaseTime ) >= 0 )
 		{	// time to release them
 			CChar *toRelease = calcCharObjFromSer( playersInJail[i]->pSerial );
 			if( !ValidateObject( toRelease ) )
