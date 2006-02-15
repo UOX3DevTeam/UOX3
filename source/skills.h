@@ -78,7 +78,6 @@ public:
 	TargetFunc FishTarget;
 	TargetFunc GraveDig;
 	TargetFunc ItemIDTarget;
-	TargetFunc LockPick;
 	TargetFunc Mine;
 	TargetFunc Persecute;
 	TargetFunc RepairMetal;
@@ -108,7 +107,7 @@ public:
 
 	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
 	void SkillUse( CSocket *s, UI08 x );
-	void updateSkillLevel( CChar *c, UI08 s);
+	void updateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );
 
 	size_t		GetNumberOfOres( void );

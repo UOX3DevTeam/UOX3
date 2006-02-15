@@ -1400,7 +1400,7 @@ void cSkills::Track( CChar *i )
 //|   Purpose     :  Calculate the skill of this character based on the 
 //|					 characters baseskill and stats
 //o---------------------------------------------------------------------------o
-void cSkills::updateSkillLevel( CChar *c, UI08 s )
+void cSkills::updateSkillLevel( CChar *c, UI08 s ) const 
 {
 	UI16 sstr = cwmWorldState->skill[s].strength;
 	SI16 astr = c->ActualStrength();
@@ -1412,97 +1412,6 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s )
 
 	UI16 temp = ( ( (sstr * astr) / 100 + (sdex * adex) / 100 + (sint + aint) / 100) * ( 1000 - bskill ) ) / 1000 + bskill;
 	c->SetSkill( UOX_MAX( bskill, temp ), s );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::LockPick( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses lockpics on a locked item
-//o---------------------------------------------------------------------------o
-void cSkills::LockPick( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i		= calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar	= s->CurrcharObj();
-	CItem *lockPick	= static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
-	if( !ValidateObject( i ) )
-		return;
-	ItemTypes iType = i->GetType();
-	if( iType == IT_CONTAINER || iType == IT_DOOR || iType == IT_SPAWNCONT ) 
-	{
-		s->sysmessage( 932 );
-		return;
-	}
-	
-	if( i->GetID() == 0x1E2C || i->GetID() == 0x1E2D )
-	{
-		if( mChar->GetSkill( LOCKPICKING ) < 300 )
-		{
-			CheckSkill( mChar, LOCKPICKING, 0, 1000 );	// check their skill
-			Effects->PlaySound(s, 0x0241, true );						// lockpicking sound
-		}
-		else
-		{
-			if( RandomNum( 0, 1 ) == 0 )		// chance it could break the pick
-			{
-				s->sysmessage( 933 );
-				lockPick->IncAmount( -1 );
-			}
-			else
-				s->sysmessage( 934 );
-		}
-	}
-	if( iType == IT_LOCKEDCONTAINER || iType == IT_LOCKEDDOOR || iType == IT_LOCKEDSPAWNCONT )
-	{
-		if( i->GetTempVar( CITV_MORE ) == 0 ) //Make sure it isn't an item that has a key (i.e. player house, chest..etc)
-		{
-			bool canPick = false;
-			if( !ValidateObject( lockPick ) ) 
-			{
-				if( s->CurrentSpellType() != 2 )              // not a wand cast
-				{
-					Magic->SubtractMana( mChar, 5 );  // subtract mana on scroll or spell
-					if( s->CurrentSpellType() == 0 )             // del regs on normal spell
-					{
-						reag_st toDel;
-						toDel.ash = 1;
-						toDel.moss = 1;
-						Magic->DelReagents( mChar, toDel );
-					}
-				}
-				canPick = true;
-			} 
-			else if( CheckSkill( mChar, LOCKPICKING, 0, 1000 ) )
-				canPick = true;
-			else
-			{
-				if( RandomNum( 0, 1 ) == 0 ) 
-				{
-					s->sysmessage( 933 );
-					lockPick->Delete();
-				} 
-				else
-					s->sysmessage( 936 );
-			}
-			if( canPick )
-			{
-				switch( iType )
-				{
-					case IT_LOCKEDCONTAINER:	i->SetType( IT_CONTAINER );	break;
-					case IT_LOCKEDDOOR:			i->SetType( IT_DOOR );		break;
-					case IT_LOCKEDSPAWNCONT:	i->SetType( IT_SPAWNCONT );	break;
-					default:	Console.Error( 2, " cSkills::LockPick -> Fallout of switch statement without default" ); return;
-				}
-				Effects->PlaySound( i, 0x01FF );
-				s->sysmessage( 935 );
-			}
-		} 
-		else
-			s->sysmessage( 937 );
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -2063,26 +1972,30 @@ void cSkills::LoadCreateMenus( void )
 					else if( UTag == "RESOURCE" )
 					{
 						resAmountPair tmpResource;
-						if( data.sectionCount( " " ) == 0 )
-						{
-							tmpResource.amountNeeded	= 1;
-							tmpResource.colour			= 0;
-							tmpResource.itemID			= data.toUShort();
-						}
-						else
+						if( data.sectionCount( " " ) > 0 )
 						{
 							if( data.sectionCount( " " ) == 1 )
-							{
 								tmpResource.amountNeeded	= data.section( " ", 1 ).toUByte();
-								tmpResource.colour			= 0;
-							}
 							else
 							{
 								tmpResource.colour			= data.section( " ", 1, 1 ).toUShort();
 								tmpResource.amountNeeded	= data.section( " ", 2, 2 ).toUByte();
 							}
-							tmpResource.itemID = data.section( " ", 0, 0 ).toUShort();
 						}
+						UString resType = "RESOURCE " + data.section( " ", 0, 0 );
+						ScriptSection *resList = FileLookup->FindEntry( resType, create_def );
+						if( resList != NULL )
+						{
+							UString resData;
+							for( UString resTag = resList->First(); !resList->AtEnd(); resTag = resList->Next() )
+							{
+								resData = resList->GrabData();
+								tmpResource.idList.push_back( resData.toUShort() );
+							}
+						}
+						else
+							tmpResource.idList.push_back( data.section( " ", 0, 0 ).toUShort() );
+
 						tmpEntry.resourceNeeded.push_back( tmpResource );
 					}
 					else if( UTag == "SKILL" )
@@ -2419,7 +2332,7 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 		toSend.AddCommand( "text 200 20 0 0" );
 		toSend.AddText( "Create menu" );
 		++textCounter;
-		toSend.AddCommand( "button 40 300 %i %i 1 0 1", btnCancel, btnCancel + 1 );
+		toSend.AddCommand( "button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1 );
 	}
 	else
 	{
@@ -2599,7 +2512,9 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 {
 	VALIDATESOCKET( sock );
 
-	size_t resCounter;
+	std::vector< resAmountPair >::const_iterator resCounter;
+	std::vector< resSkillReq >::const_iterator sCounter;
+	resAmountPair resEntry;
 	UI16 toDelete;
 	UI16 targColour;
 	UI16 targID;
@@ -2607,12 +2522,19 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 
 	//Moved resource-check to top of file to disallow gaining skill by attempting to
 	//craft items without having enough resources to do so :P
-	for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
+	for( resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter )
 	{
-		toDelete = toMake.resourceNeeded[resCounter].amountNeeded;
-		targColour = toMake.resourceNeeded[resCounter].colour;
-		targID = toMake.resourceNeeded[resCounter].itemID;
-		if( GetItemAmount( player, targID, targColour ) < toDelete )
+		resEntry	= (*resCounter);
+		toDelete	= resEntry.amountNeeded;
+		targColour	= resEntry.colour;
+		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
+		{
+			targID = (*idCounter);
+			toDelete -= UOX_MIN( GetItemAmount( player, targID, targColour ), static_cast<UI32>(toDelete) );
+			if( toDelete == 0 )
+				break;
+		}
+		if( toDelete > 0 )
 			canDelete = false;
 	}
 	if( !canDelete )
@@ -2624,49 +2546,30 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	bool canMake = true;
 
 	// we need to check ALL skills, even if the first one fails
-	if( player->GetCommandLevel() < CNS_CMDLEVEL )
+	for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
 	{
-		for( size_t sCounter = 0; sCounter < toMake.skillReqs.size(); ++sCounter )
+		if( player->SkillUsed( (*sCounter).skillNumber ) )
 		{
-			if( !CheckSkill( player, toMake.skillReqs[sCounter].skillNumber, toMake.skillReqs[sCounter].minSkill, toMake.skillReqs[sCounter].maxSkill ) )
-				canMake = false;
+			sock->sysmessage( 1650 );
+			return;
 		}
+
+		if( !CheckSkill( player, (*sCounter).skillNumber, (*sCounter).minSkill, (*sCounter).maxSkill ) )
+			canMake = false;
 	}
 
 	if( !canMake )
 	{
 		// delete anywhere up to half of the resources needed
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
-		{
-			toDelete = RandomNum( 0, toMake.resourceNeeded[resCounter].amountNeeded / 2 );
-			targColour = toMake.resourceNeeded[resCounter].colour;
-			targID = toMake.resourceNeeded[resCounter].itemID;
-			DeleteItemAmount( player, toDelete, targID, targColour );
-		}
 		if( toMake.soundPlayed )
 			Effects->PlaySound( sock, toMake.soundPlayed, true );
 		sock->sysmessage( 984 );
 	}
 	else
 	{
-		for( resCounter = 0; resCounter < toMake.skillReqs.size(); ++resCounter )
-		{
-			if( player->SkillUsed( toMake.skillReqs[resCounter].skillNumber ) )
-			{
-				sock->sysmessage( 1650 );
-				return;
-			}
-		}
+		for( sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter )
+			player->SkillUsed( true, (*sCounter).skillNumber );
 
-		for( resCounter = 0; resCounter < toMake.resourceNeeded.size(); ++resCounter )
-		{
-			toDelete	= toMake.resourceNeeded[resCounter].amountNeeded;
-			targColour	= toMake.resourceNeeded[resCounter].colour;
-			targID		= toMake.resourceNeeded[resCounter].itemID;
-			DeleteItemAmount( player, toDelete, targID, targColour );
-		}
-		for( resCounter = 0; resCounter < toMake.skillReqs.size(); ++resCounter )
-			player->SkillUsed( true, toMake.skillReqs[resCounter].skillNumber );
 		Effects->tempeffect( player, player, 41, toMake.delay, itemEntry, 0 );
 		if( toMake.soundPlayed )
 		{
@@ -2675,6 +2578,21 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 				for( SI16 i = 0; i < ( toMake.delay / 300 ); ++i )
 					Effects->tempeffect( player, player, 42, 300 * i, toMake.soundPlayed, 0 );
 			}
+		}
+	}
+	for( resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter )
+	{
+		resEntry	= (*resCounter);
+		toDelete	= resEntry.amountNeeded;
+		if( !canMake )
+			toDelete = RandomNum( 0, toDelete / 2 );
+		targColour	= resEntry.colour;
+		for( std::vector< UI16 >::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter )
+		{
+			targID = (*idCounter);
+			toDelete -= DeleteItemAmount( player, toDelete, targID, targColour );
+			if( toDelete == 0 )
+				break;
 		}
 	}
 }

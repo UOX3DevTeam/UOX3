@@ -544,7 +544,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	addNewbieItem( tSock, mChar, "DEFAULT" );
 
 
-	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM );
+	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, true );
 	if( CreatedItems[LOWERGARMENT] != NULL )
 	{
 		UI16 newID = INVALIDID;
@@ -573,7 +573,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[LOWERGARMENT]->SetDye( true );
 		CreatedItems[LOWERGARMENT]->SetCont( mChar );
 	}	
-	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM );
+	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, true );
 	if( CreatedItems[UPPERGARMENT] != NULL )
 	{
 		if( RandomNum( 0, 1 ) )
@@ -585,7 +585,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[UPPERGARMENT]->SetDye( true );
 		CreatedItems[UPPERGARMENT]->SetCont( mChar );
 	}	
-	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM );
+	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM, true );
 	if( CreatedItems[SHOES] != NULL )
 	{
 		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );

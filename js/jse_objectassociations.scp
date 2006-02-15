@@ -455,5 +455,10 @@
 0x0EB3=136	// Lute
 0x0EB4=136	// Lute
 
+// Lockpicks
+0x14FB=4008
+0x14FC=4008
+0x14FD=4008
+0x14FE=4008
 
 }

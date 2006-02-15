@@ -2086,9 +2086,10 @@ UI32 getclock( void )
 //o---------------------------------------------------------------------------o
 R32 roundNumber( R32 toRound)
 {
-	if( floor( toRound ) < floor( toRound + 0.5 ) )
-		return ceil ( toRound );
-	return floor( toRound );
+	R32 flVal = floor( toRound );
+	if( flVal < floor( toRound + 0.5 ) )
+		return ceil( toRound );
+	return flVal;
 }
 
 //o---------------------------------------------------------------------------o

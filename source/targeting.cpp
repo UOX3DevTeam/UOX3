@@ -1529,7 +1529,7 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		UI16 itemID = ourCreateEntry->resourceNeeded[skCtr].itemID;
+		UI16 itemID = ourCreateEntry->resourceNeeded[skCtr].idList.front();
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
 		Items->CreateItem( s, mChar, itemID, amtToRestore, itemColour, OT_ITEM, true );
@@ -1722,7 +1722,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
-					case TARGET_LOCKPICK:		Skills->LockPick( tSock );				break;
 					case TARGET_TINKERAXEL:		Skills->TinkerAxel( tSock );			break;
 					case TARGET_TINKERAWG:		Skills->TinkerAwg( tSock );				break;
 					case TARGET_TINKERCLOCK:	Skills->TinkerClock( tSock );			break;

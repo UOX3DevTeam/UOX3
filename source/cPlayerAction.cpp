@@ -1964,10 +1964,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->TempObj( x );
 			BuildGumpFromScripts( mSock, 6 );
 			return true;
-		case IT_LOCKPICK:	// lockpicks
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_LOCKPICK, 475 );
-			return true;
 		case IT_TINKERAXLE:	// tinker axle
 			mSock->TempObj( x );
 			mSock->target( 0, TARGET_TINKERAXEL, 477 );

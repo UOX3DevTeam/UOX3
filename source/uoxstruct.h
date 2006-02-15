@@ -288,11 +288,12 @@ inline void point3::Normalize( void )
 // create.scp revisions
 struct resAmountPair
 {
-	UI16 itemID;
+	std::vector< UI16 > idList;
 	UI08 amountNeeded;
 	UI16 colour;
-	resAmountPair() : itemID( 0 ), amountNeeded( 0 ), colour( 0 )
+	resAmountPair() : amountNeeded( 1 ), colour( 0 )
 	{
+		idList.resize( 0 );
 	}
 };
 

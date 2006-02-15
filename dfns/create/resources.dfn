@@ -1,0 +1,32 @@
+// This file is to be used in conjunction with create.dfn files
+// Use the resource name in place of an ID
+// UOX3 will automatically search your pack for any of the ID's for that resource.
+
+// Note, commented ID's are graphical stacks (not piles), uncomment if you want to enable them as resources.
+
+[RESOURCE WOOD]
+{
+ID=0x1bd7
+//ID=0x1bd8
+//ID=0x1bd9
+ID=0x1bda
+//ID=0x1bdb
+//ID=0x1bdc
+ID=0x1bdd
+//ID=0x1bde
+//ID=0x1bdf
+ID=0x1be0
+//ID=0x1be1
+//ID=0x1be2
+}
+
+[RESOURCE METAL]
+{
+ID=0x1bef
+ID=0x1bf2
+}
+
+[RESOURCE CLOTH]
+{
+ID=0x175f
+}

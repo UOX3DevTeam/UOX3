@@ -1,3 +1,9 @@
+2/15/2006 - giwo (0.98-3.3f [3.4 BETA])
+	Moved Lockpicking skill out to JS.
+	Fixed an issue causing newbie clothing to be dropped on the ground if the character had scripted starting armor.
+	Added Multiple-ID resource handling for create.dfn.
+	Fixed some create.dfn items that had overlapping numbers.
+
 2/14/2006 - grimson (0.98-3.3e [3.4 BETA])
 	Added a rounding function for numbers and use it in the doLight(), command_getlight() and
 	doWorlLight() functions.
