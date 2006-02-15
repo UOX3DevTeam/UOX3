@@ -1078,7 +1078,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 			Effects->PlayCharacterAnimation( target, 0x16 );
 		if( target->GetHP() <= 0 ) 
 		{
-			if( Combat->WillResultInCriminal( caster, target ) )
+			if( WillResultInCriminal( caster, target ) )
 			{
 				caster->SetKills( caster->GetKills() + 1 );
 				CSocket *casterSock = caster->GetSocket();
@@ -1993,6 +1993,17 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 	}           
 	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
 	{
+		if( WillResultInCriminal( attacker, p ) ) //REPSYS
+		{
+			criminal( attacker );
+			bool regionGuarded = ( p->GetRegion()->IsGuarded() );
+			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && p->IsNpc() && p->GetNPCAiType() != aiGUARD && p->isHuman() )
+			{
+				p->talkAll( 335, true );
+				callGuards( p, attacker );
+			}
+		}
+
 		if( p->IsNpc() ) 
 			amount *= 2;      // double damage against non-players
 		CPDisplayDamage toDisplay( (*p), (UI16)amount );
@@ -2010,6 +2021,21 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 
 			if( ValidateObject( attacker ) && p != attacker )	// can't gain fame and karma for suicide :>
 			{
+				if( attacker->DidAttackFirst() && WillResultInCriminal( attacker, p ) )
+				{
+					attacker->SetKills( attacker->GetKills() + 1 );
+					attacker->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
+					if( !attacker->IsNpc() )
+					{
+						if( attSock != NULL )
+						{
+							attSock->sysmessage( 314, attacker->GetKills() );
+							if( attacker->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
+							attSock->sysmessage( 315 );
+						}
+					}
+					UpdateFlag( attacker );
+				}
 				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
 				Fame( attacker, p->GetFame() );
 			}
@@ -2095,7 +2121,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( mChar->IsInnocent() )
 			{
 				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( Combat->WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 					criminal( caster );
 			}
 			if( RandomNum( 0, 2 ) == 1 )
@@ -2112,7 +2138,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( mChar->IsInnocent() )
 			{
 				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( Combat->WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 					criminal( caster );
 			}
 			if( RandomNum( 0, 2 ) == 1 )
@@ -2134,7 +2160,7 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( mChar->IsInnocent() )
 			{
 				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( Combat->WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
 					criminal( caster );
 			}
 			if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, mChar, 6 ) )

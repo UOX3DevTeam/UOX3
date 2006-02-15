@@ -1,3 +1,10 @@
+2/14/2006 - grimson (0.98-3.3e [3.4 BETA])
+	Added a rounding function for numbers and use it in the doLight(), command_getlight() and
+	doWorlLight() functions.
+	Moved WillResultInCriminal() from combat.cpp to uox3.cpp as it is not limited to combat situations.
+	Changed cMagic::MagicDamage() so that attackers can become criminal and murderers.
+	Changed CHandleCombat::StartAttack() so that attacking NPCs can become criminal.
+
 2/14/2006 - grimson
 	Changed the number for British weather because it was the same as the Southern Montain.
 

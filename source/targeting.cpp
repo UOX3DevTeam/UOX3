@@ -832,7 +832,7 @@ void AttackTarget( CSocket *s )
 	if( target2->IsInnocent() && target2 != target->GetOwnerObj() )
 	{
 		CChar *pOwner = target->GetOwnerObj();
-		if( ValidateObject( pOwner ) && Combat->WillResultInCriminal( pOwner, target2 ) )
+		if( ValidateObject( pOwner ) && WillResultInCriminal( pOwner, target2 ) )
 			criminal( pOwner );
 	}
 }
@@ -1609,7 +1609,7 @@ void VialTarget( CSocket *mSock )
 					CSocket *nCharSocket = targChar->GetSocket();
 					nCharSocket->sysmessage( 746, mChar->GetName().c_str() );
 				}
-				if( Combat->WillResultInCriminal( mChar, targChar ) )
+				if( WillResultInCriminal( mChar, targChar ) )
 					criminal( mChar );
 				Karma( mChar, targChar, -targChar->GetKarma() );
 			}

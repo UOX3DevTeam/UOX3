@@ -27,6 +27,7 @@
 #include "teffect.h"
 #include "magic.h"
 #include "ObjectFactory.h"
+#include "cRaces.h"
 
 #include "Dictionary.h"
 
@@ -225,7 +226,13 @@ void command_getlight( CSocket *s )
 		const R32 lightMin = sys->LightMin();
 		const R32 lightMax = sys->LightMax();
 		if( lightMin < 300 && lightMax < 300 )
-			s->sysmessage( 1632, static_cast<LIGHTLEVEL>( sys->CurrentLight() ) );
+		{
+			R32 i = sys->CurrentLight();
+			if( Races->VisLevel( mChar->GetRace() ) > i )
+				s->sysmessage( 1632, 0 );
+			else
+				s->sysmessage( 1632, static_cast<LIGHTLEVEL>(roundNumber( i - Races->VisLevel( mChar->GetRace() ))));
+		}
 		else
 			s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 	}

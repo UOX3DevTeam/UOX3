@@ -586,9 +586,9 @@ void CWorldMain::doWorldLight( void )
 	R32 hourIncrement		= R32( fabs( ( worlddarklevel - worldbrightlevel ) / 12.0f ) );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 
 	if( ampm )
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worldbrightlevel + ceil( ( hourIncrement * currentTime) ) ) );
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( roundNumber( worldbrightlevel + ( hourIncrement * currentTime) ) ) );
 	else
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( worlddarklevel - ceil( ( hourIncrement * currentTime) ) ) );
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( roundNumber( worlddarklevel - ( hourIncrement * currentTime) ) ) );
 }
 
 void fileArchive( void );

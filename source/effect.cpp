@@ -230,7 +230,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 			{
 				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
-					if( Combat->WillResultInCriminal( c, tempChar ) )
+					if( WillResultInCriminal( c, tempChar ) )
 						criminal( c );
 					tempChar->IncHP( -(SI16)( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ) );
 					if( tempChar->GetHP() <= 0 )

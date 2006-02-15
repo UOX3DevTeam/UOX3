@@ -1162,7 +1162,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			if( npc->IsNpc() ) 
 				npc->talkAll( 883, false );
 			
-			if( Combat->WillResultInCriminal( mChar, npc ) )
+			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
 			char temp2[512], temp[512];
 

@@ -65,7 +65,6 @@ public:
 	CItem *	getShield( CChar *mChar );
 	CItem *	getWeapon( CChar *mChar );
 
-	bool	WillResultInCriminal( CChar *mChar, CChar *ourTarg );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
 	
 	// Combat Animations & Sound Effects

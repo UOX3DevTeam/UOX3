@@ -2303,7 +2303,7 @@ bool CPIDblClick::Handle( void )
 			// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
 			// and if the corpse is not from an enemy/allied guild									&& guildCheck
 			// and if the races are not allied/enemy												&& raceCheck )
-			willCrim = Combat->WillResultInCriminal( ourChar, iChar );
+			willCrim = WillResultInCriminal( ourChar, iChar );
 		}
 		else
 			willCrim = ( (x->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );

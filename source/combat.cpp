@@ -59,6 +59,17 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		returningAttack = true;
 	}
 
+	if( WillResultInCriminal( cAttack, cTarget ) ) //REPSYS
+	{
+		criminal( cAttack );
+		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
+		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD && cTarget->isHuman() )
+		{
+			cTarget->talkAll( 335, true );
+			callGuards( cTarget, cAttack );
+		}
+	}
+
 	if( cAttack->GetVisible() == VT_TEMPHIDDEN || cAttack->GetVisible() == VT_INVISIBLE )
 		cAttack->ExposeToView();
 
@@ -1905,26 +1916,6 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 			getGuard->talkAll( 313, true );
 		}
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool WillResultInCriminal( CChar *mChar, CChar *targ )
-//|	Programmer	-	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Check flagging, race, and guild info to find if character
-//|					should be flagged criminal (returns true if so)
-//o---------------------------------------------------------------------------o
-bool CHandleCombat::WillResultInCriminal( CChar *mChar, CChar *targ )
-{
-	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
-		return false;
-	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) != 0 ) 
-		return false;
-	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
-		return false;
-	else if( targ->IsInnocent() )
-		return true;
-	return false;
 }
 
 //o---------------------------------------------------------------------------o

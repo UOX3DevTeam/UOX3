@@ -2079,6 +2079,19 @@ UI32 getclock( void )
 }
 
 //o---------------------------------------------------------------------------o
+//|	Function	-	R32 roundNumber( R32 toRound )
+//|	Programmer	-	Grimson
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	rounds a number up or down depending on it's value
+//o---------------------------------------------------------------------------o
+R32 roundNumber( R32 toRound)
+{
+	if( floor( toRound ) < floor( toRound + 0.5 ) )
+		return ceil ( toRound );
+	return floor( toRound );
+}
+
+//o---------------------------------------------------------------------------o
 //|	Function	-	void doLight( CSocket *s, UI08 level )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -2115,7 +2128,7 @@ void doLight( CSocket *s, UI08 level )
 			if( Races->VisLevel( mChar->GetRace() ) > i )
 				toShow = 0;
 			else
-				toShow = static_cast<LIGHTLEVEL>(i - Races->VisLevel( mChar->GetRace() ));
+				toShow = static_cast<LIGHTLEVEL>(roundNumber( i - Races->VisLevel( mChar->GetRace() )));
 			toSend.Level( level );
 		}
 		else
@@ -2128,7 +2141,7 @@ void doLight( CSocket *s, UI08 level )
 			if( Races->VisLevel( mChar->GetRace() ) > dunLevel )
 				toShow = 0;
 			else
-				toShow = static_cast<LIGHTLEVEL>(dunLevel - Races->VisLevel( mChar->GetRace() ));
+				toShow = static_cast<LIGHTLEVEL>(roundNumber( dunLevel - Races->VisLevel( mChar->GetRace() )));
 			toSend.Level( toShow );
 		}
 	}
@@ -2353,6 +2366,26 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 			Weather->DoPlayerStuff( mSock, &mChar );	// force a weather update too
 		}
 	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool WillResultInCriminal( CChar *mChar, CChar *targ )
+//|	Programmer	-	UOX DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Check flagging, race, and guild info to find if character
+//|					should be flagged criminal (returns true if so)
+//o---------------------------------------------------------------------------o
+bool WillResultInCriminal( CChar *mChar, CChar *targ )
+{
+	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
+		return false;
+	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) != 0 ) 
+		return false;
+	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
+		return false;
+	else if( targ->IsInnocent() )
+		return true;
+	return false;
 }
 
 //o---------------------------------------------------------------------------o

@@ -94,6 +94,9 @@ void	UpdateFlag( CChar *mChar );
 // Combat Stuff
 //o---------------------------------------------------------------------------o
 void	criminal( CChar *c );
+bool	WillResultInCriminal( CChar *mChar, CChar *targ );
+void	callGuards( CChar *mChar, CChar *targChar );
+void	callGuards( CChar *mChar );
 
 //o---------------------------------------------------------------------------o
 // Time Functions
@@ -165,6 +168,7 @@ inline std::string TimeStamp( void )
 //o---------------------------------------------------------------------------o
 // Misc Functions
 //o---------------------------------------------------------------------------o
+R32		roundNumber( R32 toRound);
 bool	FileExists( std::string filepath );
 void	DismountCreature( CChar *s );
 size_t	getTileName( CItem& mItem, std::string& itemname );
