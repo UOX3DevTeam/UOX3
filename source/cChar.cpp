@@ -3296,6 +3296,8 @@ void CChar::talk( CSocket *s, std::string txt, bool antispam )
 				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
 				toAdd.Colour( 0x5A );
+			else if( GetSayColour() == 0x0 )
+				toAdd.Colour( 0x5A );
 			else
 				toAdd.Colour( GetSayColour() );
 		}
@@ -3336,6 +3338,8 @@ void CChar::talkAll( std::string txt, bool antispam )
 			if( GetNPCAiType() == aiEVIL )
 				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
+				toAdd.Colour( 0x5A );
+			else if( GetSayColour() == 0x0 )
 				toAdd.Colour( 0x5A );
 			else
 				toAdd.Colour( GetSayColour() );

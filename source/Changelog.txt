@@ -1,3 +1,9 @@
+2/15/2006 - grimson
+	Fixed 3D client crashes with CChar::talkAll() and  CChar::talk(), when the text color
+	is 0x0000 it will be set to the default of 0x5A.
+	Changed cMagic::MagicDamage() again, so that the murder count is increased when needed
+	and NPCs fight back when they get attacked with a spell.
+
 2/15/2006 - giwo (0.98-3.3f [3.4 BETA])
 	Moved Lockpicking skill out to JS.
 	Fixed an issue causing newbie clothing to be dropped on the ground if the character had scripted starting armor.

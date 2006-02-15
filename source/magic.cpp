@@ -1993,6 +1993,26 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 	}           
 	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
 	{
+		attacker->SetAttackFirst( ( p->GetTarg() != attacker ) );
+		if( !attacker->IsInvulnerable() && (!ValidateObject( p->GetTarg() ) || !objInRange( p, p->GetTarg(), DIST_INRANGE )) )
+		{
+			p->SetAttacker( attacker );
+			p->SetAttackFirst( false );
+			if( p->IsNpc() )
+			{
+				if( p->GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
+					p->ExposeToView();
+
+				if( !p->IsAtWar() && !attacker->IsInvulnerable() )
+				{
+					p->SetTarg( attacker );
+					p->ToggleCombat();
+					p->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
+				}
+			} else
+				p->BreakConcentration( p->GetSocket() );
+		}
+		
 		if( WillResultInCriminal( attacker, p ) ) //REPSYS
 		{
 			criminal( attacker );
