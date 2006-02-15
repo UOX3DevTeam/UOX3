@@ -1,4 +1,8 @@
 2/14/2006 - grimson
+	Changed CWorldMain::doWorldLight again, so the light level will actually reach
+	the LIGHTBRIGHTLEVEL and LIGHTDARKLEVEL values.
+
+2/14/2006 - grimson
 	Removed checkRegion() from startChar() as it isn't needed.
 	Fixed the GM Locations menu in travelmenu.dfn so you can travel to the jail cells again.
 	Fixed the release time check in JailCell::PeriodicCheck().
