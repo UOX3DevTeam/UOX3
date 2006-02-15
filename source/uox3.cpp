@@ -2275,7 +2275,7 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 					if( !calcReg->GetName().empty() )
 						mSock->sysmessage( 1359, calcReg->GetName().c_str() );
 				}
-				if( calcReg->IsGuarded() || ( !( calcReg->IsGuarded() && iRegion->IsGuarded() ) ) )
+				if( calcReg->IsGuarded() || iRegion->IsGuarded() )
 				{
 					if( calcReg->IsGuarded() )
 					{
