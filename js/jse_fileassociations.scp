@@ -164,13 +164,14 @@
 5000=item/teleportrune.js
 5001=item/food.js
 5003=item/potion.js
-5004=item/moongate.js
+5004=item/teleporter.js
 5005=item/trainingdummy.js
 5006=item/pickpocketdip.js
 5007=item/archerybutte.js
 5008=item/kindling.js
 5009=item/sword.js
 5010=item/axe.js
+5011=item/moongate.js
 }
 
 //-------------------------------------------
