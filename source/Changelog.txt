@@ -1,4 +1,7 @@
 2/14/2006 - grimson
+	Changed the number for British weather because it was the same as the Southern Montain.
+
+2/14/2006 - grimson
 	Changed the checkRegion() function to prevent useless guard messages when you
 	go from one unguarded region to another unguarded region.
 	Made a few changes to regions.dfn.
