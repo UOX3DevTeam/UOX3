@@ -221,7 +221,14 @@ void command_getlight( CSocket *s )
 	UI08 wID				= tRegion->GetWeather();
 	CWeather *sys			= Weather->Weather( wID );
 	if( sys != NULL )
-		s->sysmessage( 1632, sys->CurrentLight() );
+	{
+		const R32 lightMin = sys->LightMin();
+		const R32 lightMax = sys->LightMax();
+		if( lightMin < 300 && lightMax < 300 )
+			s->sysmessage( 1632, static_cast<LIGHTLEVEL>( sys->CurrentLight() ) );
+		else
+			s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+	}
 	else
 		s->sysmessage( 1632, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 }
