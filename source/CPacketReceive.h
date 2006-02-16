@@ -216,6 +216,7 @@ public:
 					CPIMoveRequest( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
 class CPIResyncReq : public CPInputBuffer
@@ -633,6 +634,173 @@ public:
 	}
 					CPIMetrics();
 					CPIMetrics( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPISubcommands : public CPInputBuffer
+{
+protected:
+	UI16			subCmd;
+	UI08			subSubCmd;
+	CPInputBuffer *	subPacket;
+	bool			skipOver;
+public:
+	virtual			~CPISubcommands()
+	{
+	}
+					CPISubcommands();
+					CPISubcommands( CSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+};
+
+class CPIPartyCommand : public CPInputBuffer
+{
+public:
+	virtual			~CPIPartyCommand()
+	{
+	}
+					CPIPartyCommand();
+					CPIPartyCommand( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPITrackingArrow : public CPInputBuffer
+{
+public:
+	virtual			~CPITrackingArrow()
+	{
+	}
+					CPITrackingArrow();
+					CPITrackingArrow( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIClientLanguage : public CPInputBuffer
+{
+protected:
+	UnicodeTypes	newLang;
+public:
+	virtual			~CPIClientLanguage()
+	{
+	}
+					CPIClientLanguage();
+					CPIClientLanguage( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIUOTDActions : public CPInputBuffer
+{
+protected:
+	UI16			action;
+public:
+	virtual			~CPIUOTDActions()
+	{
+	}
+					CPIUOTDActions();
+					CPIUOTDActions( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIToolTipRequest : public CPInputBuffer
+{
+protected:
+	SERIAL			getSer;
+public:
+	virtual			~CPIToolTipRequest()
+	{
+	}
+					CPIToolTipRequest();
+					CPIToolTipRequest( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIPopupMenuRequest : public CPInputBuffer
+{
+protected:
+	SERIAL			mSer;
+public:
+	virtual			~CPIPopupMenuRequest()
+	{
+	}
+					CPIPopupMenuRequest();
+					CPIPopupMenuRequest( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIPopupMenuSelect : public CPInputBuffer
+{
+protected:
+	UI16			popupEntry;
+	CChar *			targChar;
+public:
+	virtual			~CPIPopupMenuSelect()
+	{
+	}
+					CPIPopupMenuSelect();
+					CPIPopupMenuSelect( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPIExtendedStats : public CPInputBuffer
+{
+protected:
+	UI08			statToSet;
+	UI08			value;
+public:
+	virtual			~CPIExtendedStats()
+	{
+	}
+					CPIExtendedStats();
+					CPIExtendedStats( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
+class CPISpellbookSelect : public CPInputBuffer
+{
+public:
+	virtual			~CPISpellbookSelect()
+	{
+	}
+					CPISpellbookSelect();
+					CPISpellbookSelect( CSocket *s );
 
 	virtual void	Receive( void );
 	virtual bool	Handle( void );

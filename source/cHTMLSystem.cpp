@@ -94,9 +94,7 @@ void cHTMLTemplate::Process( void )
 	// Parse the Content...
 	std::string ParsedContent = Content;
 
-	//***************************************/
 	// Replacing Placeholders
-	//***************************************/
 
 	// Account-Count
 	UString AccountCount	= UString::number( Accounts->size() );
@@ -197,7 +195,6 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%online_all" );
 	}
 
-	//RealTime( time_str )
 	char time_str[80];
 	RealTime( time_str );
 	Pos = ParsedContent.find( "%time" ); 
@@ -414,8 +411,6 @@ void cHTMLTemplate::Process( void )
 			parsedInline.replace( 0, 11, "" );
 			parsedInline.replace( parsedInline.length()-11, 11, "" );
 
-			//parsedInline += "Yeah it worked";
-
 //			Tokens for the GuildList
 //			%guildid
 //			%guildname
@@ -539,9 +534,7 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%updatetime" );
 	}
 
-	//***************************************/
 	// End Replacing Placeholders
-	//***************************************/	
 
 	// Print the Content out to the new file...
 	std::ofstream Output;

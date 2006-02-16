@@ -18,7 +18,6 @@ struct versionrecord
 struct staticrecord
 {
 	UI16 itemid;
-	// short int extra; // Unknown yet --Zippy unknown thus not used thus taking up mem.
 	UI08 xoff;
 	UI08 yoff;
 	SI08 zoff;

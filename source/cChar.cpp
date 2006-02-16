@@ -153,16 +153,13 @@ const UI16			DEFCHAR_PRIV				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
-const SI16			DEFCHAR_KARMA				= 0;
-const SI16			DEFCHAR_FAME				= 0;
-const SI16			DEFCHAR_KILLS				= 0;
 
 CChar::CChar() : CBaseObject(),
 townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
-fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), kills( DEFCHAR_KILLS ), 
+fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ), 
-emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), karma( DEFCHAR_KARMA ), fame( DEFCHAR_FAME ),
+emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), 
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
@@ -883,57 +880,6 @@ void CChar::SetPoisonStrength( UI08 value )
 	PoisonStrength = value;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	SI16 Karma()
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	The characters' karma
-//o--------------------------------------------------------------------------o
-SI16 CChar::GetKarma( void ) const
-{
-	return karma;
-}
-void CChar::SetKarma( SI16 value )
-{
-	karma = value;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SI16 Fame()
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	The characters' fame
-//o--------------------------------------------------------------------------o
-SI16 CChar::GetFame( void ) const
-{
-	return fame;
-}
-void CChar::SetFame( SI16 value )
-{
-	fame = value;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SI16 Kills()
-//|	Date			-	unknown
-//|	Programmer		-	EviLDeD
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	The characters' kills
-//o--------------------------------------------------------------------------o
-SI16 CChar::GetKills( void ) const
-{
-	return kills;
-}
-void CChar::SetKills( SI16 value )
-{
-	kills = value;
-}
-
 COLOUR CChar::GetEmoteColour( void ) const
 {
 	return emotecolor;
@@ -1422,9 +1368,6 @@ void CChar::CopyData( CChar *target )
 	}
 
 	target->SetCell( cell );
-	target->SetKarma( karma );
-	target->SetFame( fame );
-	target->SetKills( kills );
 	target->SetPackItem( packitem );
 	target->SetWeight( weight );
 	target->SetDef( def );
@@ -1464,8 +1407,6 @@ void CChar::CopyData( CChar *target )
 	{
 		target->SetWeathDamage( weathDamage[counter2], counter2 );
 	}
-//	target->SetMaxHP( maxHP, maxHP_oldstr, maxHP_oldrace );
-//	target->SetMaxMana( maxMana, maxMana_oldint, maxMana_oldrace );
 	if( IsValidNPC() )
 	{
 		target->SetFleeAt( GetFleeAt() );
@@ -1915,7 +1856,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
-	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
@@ -2622,12 +2562,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				break;
 			case 'F':
-				if( UTag == "FAME" )
-				{
-					SetFame( data.toShort() );
-					rvalue	= true;
-				}
-				else if( UTag == "FIXEDLIGHT" )
+				if( UTag == "FIXEDLIGHT" )
 				{
 					SetFixedLight( data.toUByte() );
 					rvalue = true;
@@ -2732,18 +2667,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "ISWARRING" )
 				{
 					SetWar( (data.toShort() == 1) );
-					rvalue = true;
-				}
-				break;
-			case 'K':
-				if( UTag == "KILLS" )
-				{
-					SetKills( data.toShort() );
-					rvalue = true;
-				}
-				else if( UTag == "KARMA" )
-				{
-					SetKarma( data.toShort() );
 					rvalue = true;
 				}
 				break;
@@ -2892,16 +2815,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				{
 					SetReattackAt( data.toShort() );
 					rvalue = true;
-				}
-				else if( UTag == "REPUTATION" )
-				{
-					if( data.sectionCount( "," ) == 2 )
-					{
-						SetFame( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-						SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
-						SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
-					}
-					rvalue	= true;
 				}
 				break;
 			case 'S':
@@ -3070,8 +2983,6 @@ bool CChar::LoadRemnants( void )
 		SetCommandLevel( CNS_CMDLEVEL );
 	if( IsGM() && GetCommandLevel() < GM_CMDLEVEL )	// interim line to retain compatibility, MUST BE TAKEN out in the long term!
 		SetCommandLevel( GM_CMDLEVEL );
-	//if( ourAccount->lpaarHolding->->bFlags|=0x8000 )
-	//	SetCommandLevel( GM_CMDLEVEL );
 	////////////////////////////////////////////////////////////////////
 
 	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber );
@@ -5032,6 +4943,96 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 
 	if( IsValidNPC() )
 		mNPC->npcFlag = flagType;
+}
+
+bool DTEgreater( DamageTrackEntry *elem1, DamageTrackEntry *elem2 )
+{
+	if( elem1 == NULL )
+		return false;
+	if( elem2 == NULL )
+		return true;
+	return elem1->damageDone > elem2->damageDone;
+}
+
+void CChar::Heal( SI16 healValue, CChar *healer )
+{
+	SetHP( hitpoints + healValue );
+	if( healer != NULL )
+	{
+		const SERIAL healerSerial	= healer->GetSerial();
+		bool persFound				= false;
+		for( DamageTrackEntry *i = damageHealed.First(); !damageHealed.Finished(); i = damageHealed.Next() )
+		{
+			if( i->damager == healerSerial )
+			{
+				i->damageDone		+= healValue;
+				i->lastDamageDone	= cwmWorldState->GetUICurrentTime();
+				persFound			= true;
+				break;
+			}
+		}
+		if( !persFound )
+		{
+			damageHealed.Add( new DamageTrackEntry( healerSerial, healValue, cwmWorldState->GetUICurrentTime() ) );
+		}
+		damageHealed.Sort( DTEgreater );
+	}
+}
+
+void CChar::Damage( SI16 damageValue, CChar *attacker )
+{
+	SetHP( hitpoints - damageValue );
+	if( attacker != NULL )
+	{
+		const SERIAL attackerSerial	= attacker->GetSerial();
+		bool persFound				= false;
+		for( DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
+		{
+			if( i->damager == attackerSerial )
+			{
+				i->damageDone		+= damageValue;
+				i->lastDamageDone	= cwmWorldState->GetUICurrentTime();
+				persFound			= true;
+				break;
+			}
+		}
+		if( !persFound )
+		{
+			damageDealt.Add( new DamageTrackEntry( attackerSerial, damageValue, cwmWorldState->GetUICurrentTime() ) );
+		}
+		damageDealt.Sort( DTEgreater );
+	}
+}
+
+void CChar::Die( void )
+{
+}
+
+void CChar::UpdateDamageTrack( void )
+{
+	TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
+	// Update the damage stuff
+	for( DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
+	{
+		if( i == NULL )
+		{
+			damageDealt.Remove( i );
+			continue;
+		}
+		if( (i->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
+			damageDealt.Remove( i, true );
+	}
+	// Update the healing stuff
+	for( DamageTrackEntry *i = damageHealed.First(); !damageHealed.Finished(); i = damageHealed.Next() )
+	{
+		if( i == NULL )
+		{
+			damageHealed.Remove( i );
+			continue;
+		}
+		if( (i->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
+			damageHealed.Remove( i, true );
+	}
 }
 
 }

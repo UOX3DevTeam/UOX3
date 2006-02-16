@@ -266,8 +266,6 @@ cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile
 
 cMapStuff::~cMapStuff()
 {
-//	if ( verData )
-//		delete verData;
 	if ( landTile )
 		delete[] landTile;
 	if ( staticTile )   
@@ -451,7 +449,6 @@ void cMapStuff::Load( void )
 	Console.PrintDone();
 
 	LoadMultis( basePath );
-//	CacheVersion();
 	LoadDFNOverrides();
 
 	FileLookup->Dispose( maps_def );
@@ -950,7 +947,6 @@ staticrecord *MapStaticIterator::Next( void )
 		
 		mFile->get_staticrecord( &staticArray );
 		++index;
-		//assert( staticArray.itemid >= 0 ); //itemid must always be >=0, because it is a Unsigned integer. - Shadowlord
 		// if these are ever larger than 7 we've gotten out of sync
 		assert( staticArray.xoff < 0x08 );
 		assert( staticArray.yoff < 0x08 );

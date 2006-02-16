@@ -10,6 +10,9 @@
 #include "PageVector.h"
 #include "cEffects.h"
 #include "Dictionary.h"
+#include "books.h"
+#include "cMagic.h"
+#include "skills.h"
 
 namespace UOX
 {
@@ -48,7 +51,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0xA4:	return ( new CPISpy( s )				);
 		case 0xBB:	return NULL;								// No idea
 		case 0xBD:	return ( new CPIClientVersion( s )		);
-		case 0xBF:	return NULL;	
+		case 0xBF:	return ( new CPISubcommands( s )		);	// general overall packet
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		default:	break;
 	}
@@ -105,7 +108,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xB8:	return NULL;								// T2A Profile Request
 		case 0xBB:	return NULL;								// Ultima Messenger
 		case 0xBD:	return ( new CPIClientVersion( s )		);
-		case 0xBF:	return NULL;								// Assorted commands
+		case 0xBF:	return ( new CPISubcommands( s )		);	// Assorted commands
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
@@ -189,7 +192,6 @@ bool CPIFirstLogin::Handle( void )
 		messageLoop << temp;
 
 		actbTemp->wFlags |= AB_FLAGS_ONLINE;
-//		Accounts->ModAccount( actbTemp->sUsername, AB_FLAGS, (*actbTemp) );
 
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );
@@ -750,26 +752,20 @@ bool CPIStatusRequest::Handle( void )
 		tSock->statwindow( calcCharObjFromSer( playerID ) );
 	if( getType == 5 )
 	{
-	// Check if onSkillGump event exists
-	CChar *myChar	= tSock->CurrcharObj();
-	UI16 charTrig		= myChar->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
-	{
-		if( toExecute->OnSkillGump( myChar ) == 1 )	// if it exists and we don't want hard code, return
-			return true;
-	}
+		// Check if onSkillGump event exists
+		CChar *myChar	= tSock->CurrcharObj();
+		UI16 charTrig		= myChar->GetScriptTrigger();
+		cScript *toExecute	= JSMapping->GetScript( charTrig );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnSkillGump( myChar ) == 1 )	// if it exists and we don't want hard code, return
+				return true;
+		}
 
 		CPSkillsValues toSend;
-//		if( tSock->ReceivedVersion() )
-//		{
-//			if( tSock->ClientVersionMajor() >= 4 && tSock->ClientVersionSub() >= 0 && tSock->ClientVersionLetter() >= 6 )
-				toSend.NumSkills( ALLSKILLS );
-//			else
-//				toSend.NumSkills( ALLSKILLS_COMPAT );
-			toSend.SetCharacter( *(tSock->CurrcharObj()) );
-			tSock->Send( &toSend );
-//		}
+		toSend.NumSkills( ALLSKILLS );
+		toSend.SetCharacter( *(tSock->CurrcharObj()) );
+		tSock->Send( &toSend );
 	}
 	return true;
 }
@@ -926,6 +922,17 @@ bool CPIMoveRequest::Handle( void )
 	Movement->Walking( tSock, ourChar, tSock->GetByte( 1 ), tSock->GetByte( 2 ) );
 	ourChar->BreakConcentration( tSock );
 	return true;
+}
+
+void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPIMoveRequest 0x02 --> Length: 7" << TimeStamp() << std::endl;
+	outStream << "Direction      : " << tSock->GetByte( 1 ) << std::endl;
+	outStream << "Sequence Number: " << tSock->GetByte( 2 ) << std::endl;
+	outStream << "FW Prevent Key : " << tSock->GetDWord( 3 ) << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
 }
 
 //0x22 Packet
@@ -1212,10 +1219,6 @@ void CPIGumpMenuSelect::BuildTextLocations( void )
 	}
 }
 
-//	COLOUR				textColour;
-//	UI16				strLen;
-//	UI16				fontUsed;
-//	char				txtSaid[4096];
 CPITalkRequest::CPITalkRequest()
 {
 	InternalReset();
@@ -1403,7 +1406,6 @@ bool CPITalkRequest::HandleCommon( void )
 				tSock->sysmessage( 760 );
 			else 
 				return false;
-	//			Speech->talking( this );
 			break;
 	}
 	return true;
@@ -1497,7 +1499,6 @@ void CPITalkRequestUnicode::Receive( void )
 	tSock->Receive( blockLen, false );
 	tSock->ClearTrigWords();
 
-//	strLen			= blockLen - 8;
 	typeUsed		= (SpeechType)tSock->GetByte( 3 );
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
@@ -1850,7 +1851,7 @@ void CPIPlayCharacter::Receive( void )
 void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPICreateCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
+		outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
 	outStream << "Pattern1       : " << pattern << std::endl;
 	outStream << "Char name      : " << charName << std::endl;
 	outStream << "Slot chosen    : " << (int)slotChosen << std::endl;
@@ -2133,8 +2134,6 @@ CPIMetrics::CPIMetrics( CSocket *s ) : CPInputBuffer( s )
 
 void CPIMetrics::Receive( void )
 {
-//	tSock->Receive( 3, false );
-//	tSock->Receive( tSock->GetWord( 1 ), false );
 	tSock->Receive( 0x010C, false );
 }
 
@@ -2151,5 +2150,552 @@ void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
+
+
+//	UI16			subCmd;
+//	UI08			subSubCmd;
+
+UnicodeTypes FindLanguage( const char *lang );
+void PaperDoll( CSocket *s, CChar *pdoll );
+bool BuyShop( CSocket *s, CChar *c );
+
+
+CPISubcommands::CPISubcommands() : skipOver( false ), subPacket( NULL )
+{
+}
+CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
+{
+	skipOver	= false;
+	subPacket	= NULL;
+	Receive();
+}
+
+//	Subcommand 1: Initialize Fast Walk Prevention 
+//	BYTE[4] key1 
+//	BYTE[4] key2 
+//	BYTE[4] key3 
+//	BYTE[4] key4 
+//	BYTE[4] key5 
+//	BYTE[4] key6 
+
+//	Subcommand 2: Add key to Fast Walk Stack 
+//	BYTE[4] newkey 
+
+//	Subcommand 5: Screen Size
+//	BYTE[2]	unknown1, always 0?
+//	BYTE[2]	X
+//	BYTE[2]	Y
+//	BYTE[2]	unknown2
+
+//	Subcommand 8: Set cursor hue / Set MAP 
+//	BYTE[1] hue (0 = Felucca, unhued / BRITANNIA map. 1 = Trammel, hued gold / BRITANNIA map, 2 = (switch to) ILSHENAR map) 
+
+//	Subcommand 0x0a: wrestling stun 
+//	Sent by using the client's Wrestle Stun Macro key in Options. This is no longer used since AoS was introduced. The Macro selection that used it was removed. 
+
+//	Subcommand 0x0b: Client Language 
+//	BYTE[3] language (ENU, for English) 
+
+//	Subcommand 0x0c: Closed Status Gump 
+//	BYTE[4] id (character id) 
+
+//	Subcommand 0x0e: 3D Client Action 
+//	BYTE[4] Animation ID. See Notes for list. 
+
+//	Subcommand 0x0f: unknown , send once at login 
+//	BYTE[5] unknown (0a 00 00 00 07) here 
+
+//	Subcommand 0x10: unknown, related to 0xD6 Mega Cliloc somehow 
+//	BYTE[4] Item ID 
+//	BYTE[4] Unknown 
+
+//	Subcommand 0x13: Request popup menu 
+//	BYTE[4] id (character id) 
+
+//	Subcommand 0x14: Display Popup menu 
+//	BYTE[2] Unknown(always 00 01) 
+//	BYTE[4] Serial 
+//	BYTE[1] Number of entries in the popup 
+//	For each Entry 
+//	· BYTE[2] Entry Tag (this will be returned by the client on selection) 
+//	· BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that 
+//	· BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color 
+//	· If (Flags &0x20) 
+//	· BYTE[2] color; // rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red) 
+
+//	Subcommand 0x15: Popup Entry Selection 
+//	BYTE[4] Character ID 
+//	BYTE[2] Entry Tag for line selected provided in subcommand 0x14 
+
+//	Subcommand 0x17: Codex of wisdom 
+//	BYTE[1] unknown, always 1. if not 1, packet seems to have no effect 
+//	BYTE[4] msg number 
+//	BYTE[1] presentation (0: “?” flashing, 1: directly opening) 
+
+//	Subcommand 0x18: Enable map-diff (files) 
+//	BYTE[4] Number of maps 
+//	For each map 
+//	· BYTE[4] Number of map patches in this map 
+//	· BYTE[4] Number of static patches in this map 
+
+//	Subcommand: 0x19: Extended stats 
+//	BYTE[1] type // always 2 ? never seen other value 
+//	BYTE[4] serial 
+//	BYTE[1] unknown // always 0 ? 
+//	BYTE[1] lockBits // Bits: XXSS DDII (s=strength, d=dex, i=int), 0 = up, 1 = down, 2 = locked 
+
+//	Subcommand: 0x1a: Extended stats 
+//	BYTE[1] stat // 0: str, 1: dex, 2:int 
+//	BYTE[1] status // 0: up, 1:down, 2: locked 
+
+//	Subcommand 0x1b: New Spellbook 
+//	BYTE[2] unknown, always 1 
+//	BYTE[4] Spellbook serial 
+//	BYTE[2] Item Id 
+//	BYTE[2] scroll offset // 1==regular, 101=necro, 201=paladin 
+//	BYTE[8] spellbook content // first bit of first byte = spell #1, second bit of first byte = spell #2, first bit of second byte = spell #8, etc 
+
+//	Subcommand 0x1c: Spell selected, client side 
+//	BYTE[2] unknown, always 2 
+//	BYTE[2] selected spell(0-indexed)+scroll offset from sub 0x1b 
+
+//	Subcommand 0x1D: Send House Revision State 
+//	byte[4] houseserial 
+//	byte[4] revision state 
+
+//	Subcommand 0x1E: 
+//	byte[4] houseserial 
+
+//	Subcommand 0x21: (AOS) Ability icon confirm. 
+//	Note: no data, just (bf 0 5 21) 
+
+//	Subcommand 0x22: Damage 
+//	BYTE[2] unknown, always 1 
+//	BYTE[4] Serial 
+//	BYTE[1] Damage // how much damage was done ? 
+
+//	Subcommand 0x24: UnKnown 
+//	BYTE[1] unknown. UOSE Introduced
+
+void CPISubcommands::Receive( void )
+{
+	tSock->Receive( 3 );
+	tSock->Receive( tSock->GetWord( 1 ) );
+	subCmd = tSock->GetWord( 3 );
+
+	switch( subCmd )
+	{
+	case 0x01:	skipOver = true;	break;	// Server message sent to client.  6 keys, each a long, Initialize Fast Walk Prevention
+	case 0x02:	skipOver = true;	break;	// Server message.  1 long, new key.  Add key to fast walk stack
+	case 0x05:	skipOver = true;	break;	// Screen size
+	case 0x0A:	skipOver = true;	break;	// Wrestling stun
+	case 0x0C:	skipOver = true;	break;	// Closed Status Gump
+	case 0x0F:	skipOver = true;	break;	// Unknown, Sent once at Login
+	case 0x24:	skipOver = true;	break;
+	default:	Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd );	skipOver = true;	break;
+	case 0x06:	{	subPacket = new CPIPartyCommand( tSock );		}	break;
+	case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Tracking Arrow
+	case 0x0B:	{	subPacket = new CPIClientLanguage( tSock );		}	break;	// Client language.  3 bytes.  "ENU" for english
+	case 0x0E:	{	subPacket = new CPIUOTDActions( tSock );		}	break;	// UOTD actions
+	case 0x10:	{	subPacket = new CPIToolTipRequest( tSock );		}	break;	// Request for tooltip data
+	case 0x13:	{	subPacket = new CPIPopupMenuRequest( tSock );	}	break;	// 0x13 (Request popup menu, 4 byte serial ID) -> Respond with 0x14
+	case 0x15:	{	subPacket = new CPIPopupMenuSelect( tSock );	}	break;	// Popup Menu Selection
+	case 0x1A:	{	subPacket = new CPIExtendedStats( tSock );		}	break;	// Extended Stats
+	case 0x1C:	{	subPacket = new CPISpellbookSelect( tSock );	}	break;	// New SpellBook Selection
+	}
+}
+bool CPISubcommands::Handle( void )
+{
+	bool retVal = skipOver;
+	if( subPacket != NULL )
+	{
+		retVal = subPacket->Handle();
+		delete subPacket;
+	}
+	return retVal;
+}
+void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( subPacket != NULL )
+		subPacket->Log( outStream, fullHeader );
+	else
+	{
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "  Raw dump     :" << std::endl;
+		CPInputBuffer::Log( outStream, false );
+	}
+}
+
+// Party Command
+
+CPIPartyCommand::CPIPartyCommand()
+{
+}
+CPIPartyCommand::CPIPartyCommand( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIPartyCommand::Receive( void )
+{
+}
+bool CPIPartyCommand::Handle( void )
+{
+	UI08 partyCmd = tSock->GetByte( 5 );
+	switch( partyCmd )
+	{
+		case 1:		// 2 variants.  1 long, if 0 is targeting cursor, id of party member to add.  Client message
+					// second variant.  1 byte, number of members.  4 bytes per member, which is ID.  Server message
+			break;
+		case 2:		// 2 variants.  Remove party member.  single long, serial of party member to remove.  if 0, targeting appears.  Client message
+					// second variant.  1 byte, number of members now in party.  1 long, serial of player removed.  NumMembers long follows, ID of each member
+			break;
+		case 3:		// Tell party member a message. 1 SERIAL (of target, from client, of source, from server).  Null terminated Unicode message
+			// Byte[4] ID.  Byte[n][2] Message
+			break;
+		case 4:		// Tell full party message.  NULL terminated Unicode message
+			// Byte[n][2] message. client part.
+			// UI08[4] ID.  UI08[n][2] full message.  Server message
+			break;
+		case 6:		// Party can loot me?  1 byte, canloot.  0 == no, 1 == yes
+			break;
+		case 8:		// Accept join party invitation.  1 long, party leader's serial
+			break;
+		case 9:		// Decline party invitation.  1 LONG, party leader's serial
+			break;
+	}
+	return true;
+}
+void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+CPITrackingArrow::CPITrackingArrow()
+{
+}
+CPITrackingArrow::CPITrackingArrow( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPITrackingArrow::Receive( void )
+{
+}
+bool CPITrackingArrow::Handle( void )
+{
+	CChar *mChar = tSock->CurrcharObj();
+	if( ValidateObject( mChar ) )
+	{
+		tSock->SetTimer( tPC_TRACKING, 0 );
+		if( ValidateObject( mChar->GetTrackingTarget() ) )
+		{
+			CPTrackingArrow tSend = (*mChar->GetTrackingTarget());
+			tSend.Active( 0 );
+			tSock->Send( &tSend );
+		}
+	}
+	return true;
+}
+void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tracking Arrow --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+
+CPIClientLanguage::CPIClientLanguage()
+{
+}
+CPIClientLanguage::CPIClientLanguage( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIClientLanguage::Receive( void )
+{
+	newLang = FindLanguage( (char *)&(tSock->Buffer()[5]) );
+}
+bool CPIClientLanguage::Handle( void )
+{
+	tSock->Language( newLang );
+	return true;
+}
+void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Client Language --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+CPIUOTDActions::CPIUOTDActions()
+{
+}
+CPIUOTDActions::CPIUOTDActions( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIUOTDActions::Receive( void )
+{
+	action = tSock->GetWord( 7 );
+}
+bool CPIUOTDActions::Handle( void )
+{
+	CChar *ourChar = tSock->CurrcharObj();
+	Effects->PlayCharacterAnimation( ourChar, action, 1 );
+	return true;
+}
+void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket UOTD Actions --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+CPIToolTipRequest::CPIToolTipRequest() : getSer( INVALIDSERIAL )
+{
+}
+CPIToolTipRequest::CPIToolTipRequest( CSocket *s ) : CPInputBuffer( s ), getSer( INVALIDSERIAL )
+{
+	Receive();
+}
+
+void CPIToolTipRequest::Receive( void )
+{
+	getSer = tSock->GetDWord( 5 );
+}
+bool CPIToolTipRequest::Handle( void )
+{
+	if( getSer != INVALIDSERIAL )
+	{
+		CPToolTip tSend( getSer );
+		tSock->Send( &tSend );
+	}
+	return true;
+}
+void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tooltip Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+CPIPopupMenuRequest::CPIPopupMenuRequest() : mSer( INVALIDSERIAL )
+{
+}
+CPIPopupMenuRequest::CPIPopupMenuRequest( CSocket *s ) : CPInputBuffer( s ), mSer( INVALIDSERIAL )
+{
+	Receive();
+}
+
+void CPIPopupMenuRequest::Receive( void )
+{
+	mSer = tSock->GetDWord( 5 );
+}
+bool CPIPopupMenuRequest::Handle( void )
+{
+	if( mSer < BASEITEMSERIAL )
+	{
+		CChar *myChar = calcCharObjFromSer( mSer );
+		if( myChar == NULL )
+			return true;
+
+		CPPopupMenu toSend( (*myChar) );
+		tSock->Send( &toSend );
+	}
+	return true;
+}
+void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( NULL )
+{
+}
+CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popupEntry( 0 ), targChar( NULL )
+{
+	Receive();
+}
+
+void CPIPopupMenuSelect::Receive( void )
+{
+	popupEntry	= tSock->GetWord( 9 );
+	targChar	= calcCharObjFromSer( tSock->GetDWord( 5 ) );
+}
+bool CPIPopupMenuSelect::Handle( void )
+{
+	CChar *mChar			= tSock->CurrcharObj();
+	if( !ValidateObject( targChar ) || !ValidateObject( mChar ) )
+		return true;
+
+	switch( popupEntry )
+	{
+	case 0x000A:	// Open Paperdoll
+		PaperDoll( tSock, targChar );
+		break;
+	case 0x000B:	// Open Backpack
+		if( targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
+		{
+			if( mChar->IsDead() )
+				tSock->sysmessage( 392 );
+			else if( !objInRange( mChar, targChar, DIST_NEARBY ) )
+				tSock->sysmessage( 382 );
+			else
+			{
+				CItem *pack = targChar->GetPackItem();
+				if( ValidateObject( pack ) )
+				{
+					if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->IsGM() )
+						tSock->openPack( pack );
+					else
+						Skills->Snooping( tSock, targChar, pack );
+				}
+				else
+					Console.Warning( 2, "Character 0x%X has no backpack!", targChar->GetSerial() );
+			}
+		}
+		break;
+	case 0x000C:	// Buy Window
+		if( targChar->IsShop() )
+			BuyShop( tSock, targChar );
+		break;
+	case 0x000D:	// Sell Window
+		if( targChar->IsShop() )
+		{
+			targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
+			CPSellList toSend;
+			if( toSend.CanSellItems( (*mChar), (*targChar) ) )
+				tSock->Send( &toSend );
+			else
+				targChar->talk( tSock, 1341, false );
+		}
+		break;
+	default:
+		Console.Print( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 ) );
+		break;
+	}
+	return true;
+}
+void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+CPIExtendedStats::CPIExtendedStats()
+{
+}
+CPIExtendedStats::CPIExtendedStats( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIExtendedStats::Receive( void )
+{
+	statToSet	= tSock->GetByte( 5 ) + (ALLSKILLS+1);
+	value		= tSock->GetByte( 6 );
+}
+bool CPIExtendedStats::Handle( void )
+{
+	CChar *ourChar	= tSock->CurrcharObj();
+	ourChar->SetSkillLock( value, statToSet );
+	return true;
+}
+void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Extended Stats --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
+
+
+CPISpellbookSelect::CPISpellbookSelect()
+{
+}
+CPISpellbookSelect::CPISpellbookSelect( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPISpellbookSelect::Receive( void )
+{
+}
+bool CPISpellbookSelect::Handle( void )
+{
+	int book;
+	CChar *ourChar	= tSock->CurrcharObj();
+	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
+	CItem *p		= ourChar->GetPackItem();
+	bool validLoc	= false;
+	UI08 *buffer	= tSock->Buffer();
+	if( ValidateObject( sBook ) )
+	{
+		if( sBook->GetCont() == ourChar )
+			validLoc = true;
+		else if( ValidateObject( p ) && sBook->GetCont() == p )
+			validLoc = true;
+
+		if( validLoc )
+		{
+			book = (buffer[7]<<8) + (buffer[8]); 
+			if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
+			{
+				if( ourChar->IsFrozen() )
+				{
+					if( ourChar->IsCasting() )
+						tSock->sysmessage( 762 );
+					else
+						tSock->sysmessage( 763 );
+				}
+				else
+				{
+					tSock->CurrentSpellType( 0 );
+					Magic->SelectSpell( tSock, book );
+				}
+			}
+			else
+				tSock->sysmessage( 764 );
+		}
+		else
+			tSock->sysmessage( 765 );
+	}
+	return true;
+}
+void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Spellbook Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+
 
 }

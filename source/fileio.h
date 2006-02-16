@@ -26,9 +26,6 @@ public:
 	};
 	int		getch( void );
 
-//	char*		gets( char *, int );		// deprecated, never used
-//	int		puts( char * );				// deprecated, never used
-	
 	void		getUChar( UI08 *, UI32 );
 	void		getUChar( UI08 *c )
 	{

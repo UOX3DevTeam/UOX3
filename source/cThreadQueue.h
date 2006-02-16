@@ -2,7 +2,6 @@
 #define __CTHREADQUEUE_H__
 
 #include "threadsafeobject.h"
-//using namespace std;
 
 namespace UOX
 {

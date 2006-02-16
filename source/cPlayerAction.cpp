@@ -314,23 +314,6 @@ bool CPIGetItem::Handle( void )
 
 	if( i->isDecayable() )
 		i->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-/*
-	if( iCont != NULL )
-	{
-		if( iCont->GetObjType() == OT_CHAR )
-		{
-			CChar *pChar = (CChar *)iCont;
-			if( pChar )
-				pChar->TakeOffItem( i->GetLayer() );
-		} 
-		else 
-		{
-			CItem *pItem = (CItem *)iCont;
-			if( pItem )
-				pItem->GetContainsList()->Remove( i );
-		}
-	}
-*/
 	if( i->isGuarded() )
 	{
 		if( oType == OT_CHAR && tSock->PickupSpot() == PL_OTHERPACK )
@@ -547,8 +530,6 @@ bool CPIEquipItem::Handle( void )
 	}
 
 	i->SetCont( k );
-
-	//Console << "Item equipped on layer " << i->GetLayer() << myendl;
 
 	Effects->PlaySound( tSock, 0x0057, false );
 	ourChar->Dirty( UT_STATWINDOW );
@@ -1577,8 +1558,6 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				}
 				return;
 			}
-//			else
-//				mSock->sysmessage( 384 );
 			return; 
 		}
 		else if( c->GetNPCAiType() == aiPLAYERVENDOR ) // PlayerVendors
@@ -2510,9 +2489,9 @@ bool CPISingleClick::Handle( void )
 		strcpy( temp2, realname.c_str() );
 	tSock->objMessage( temp2, i );
 	if( i->IsLockedDown() )
-		tSock->objMessage( "[Locked down]", i );//, 0x0481 );
+		tSock->objMessage( "[Locked down]", i );
 	if( i->isGuarded() )
-		tSock->objMessage( "[Guarded]", i );//, 0x0481 );
+		tSock->objMessage( "[Guarded]", i );
 	return true;
 }
 

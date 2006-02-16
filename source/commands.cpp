@@ -247,8 +247,6 @@ void cCommands::Load( void )
 				toFind->second.cmdLevelReq		= data.toUByte();
 			else if( findTarg != TargetMap.end() )
 				findTarg->second.cmdLevelReq	= data.toUByte();
-//			if( commandCount % 10 == 0 )
-//				Console << ".";
 		}
 		// check for commands here
 	}

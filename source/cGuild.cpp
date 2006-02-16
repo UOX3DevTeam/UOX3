@@ -8,7 +8,6 @@
 #include "Dictionary.h"
 #ifndef va_start
 	#include <cstdarg>
-//using namespace std;
 #endif
 
 namespace UOX

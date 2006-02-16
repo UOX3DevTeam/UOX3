@@ -521,7 +521,6 @@ Look at uox3.h to see options. Works like npc magic.
 			dyncount = (*losIter);
 			if( dyncount == NULL )
 				continue;
-//			if( dyncount->GetID( 1 ) < 0x40 )
 			if( !dyncount->CanBeObjType( OT_MULTI ) )
 			{ // Dynamic items
 				Map->SeekTile( dyncount->GetID(), &tile);

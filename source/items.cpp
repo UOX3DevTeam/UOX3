@@ -762,8 +762,6 @@ void cItem::GlowItem( CItem *i )
 		if( !ValidateObject( j ) )
 			return;
 
-		//j->SetLayer( i->GetLayer() ); // copy layer information of the glowing item to the invisible light emitting object
-
 		CBaseObject *getCont = i->GetCont();
 		if( getCont == NULL ) // On the ground
 		{

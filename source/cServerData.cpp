@@ -253,11 +253,6 @@ void CServerData::ServerName( std::string setname )
 	if( setname.empty() )
 	{
 		serverList[0].setName( "Default UOX Server" );
-//		sServerName = "www.uox3dev.net";
-	}
-	else
-	{
-//		sServerName = setname;
 	}
 }
 
@@ -501,13 +496,6 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		bool error = false;
 		if( !resettingDefaults )
 		{
-//#if UOX_PLATFORM != PLATFORM_WIN32
-//			DIR *dirPtr = opendir( sText.c_str() );
-//			if( !dirPtr )
-//				error = true;
-//			else
-//				closedir( dirPtr );
-//#else
 			char curWorkingDir[1024];
 			GetCurrentDirectory( 1024, curWorkingDir );
 			int iResult = _chdir( sText.c_str() );
@@ -515,7 +503,6 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 				error = true;
 			else
 				_chdir( curWorkingDir );	// move back to where we were
-//#endif
 		}
 
 		if( error )
@@ -1301,7 +1288,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SERVERNAME=" << ServerName() << std::endl;
 		ofsOutput << "PORT=" << ServerPort() << std::endl;
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << std::endl;
-		ofsOutput << "NETSNDTIMEOUT=" << "3" /*ServerNetSndTimeout()*/ << std::endl;
+		ofsOutput << "NETSNDTIMEOUT=" << "3" << std::endl;
 		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << std::endl;
 		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << std::endl;
 		ofsOutput << "CRASHPROTECTION=" << static_cast<UI16>(ServerCrashProtectionStatus()) << std::endl;
@@ -1311,7 +1298,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus()?1:0) << std::endl;
 		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << std::endl;
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << std::endl;
-		ofsOutput << "ACCOUNTISOLATION=" << "1" /*AccountsIsolationLevel()*/ << std::endl;
+		ofsOutput << "ACCOUNTISOLATION=" << "1" << std::endl;
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl << std::endl;
 
@@ -1668,7 +1655,6 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 					{
 						case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
 						case 0x000C:	 // SERVERNAME[0002]
-							//ServerName( value );
 							break;
 						case 0x0017:	 // CONSOLELOG[0003]
 							ServerConsoleLog( value.toUByte() );
@@ -2123,7 +2109,6 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							NPCSpeed( value.toDouble() );
 							break;
 						default:
-							//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
 							break;
 					}
 					inFile.getline( szLine, 127 );

@@ -1202,9 +1202,6 @@ void CConsole::Process( int c )
 					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
 					messageLoop << "     Loading JSE Scripts... ";
 					
-					//messageLoop << MSG_RELOADJS;
-
-
 					// Reload the current Spells 
 					messageLoop << "     Loading spells... ";
 					Magic->LoadScript();

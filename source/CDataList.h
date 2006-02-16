@@ -159,6 +159,14 @@ namespace UOX
 		{
 			objIteratorBackup.push_back( (objIterator - objData.begin()) );
 		}
+		void Sort( void )
+		{
+			sort( objData.begin(), objData.end() );
+		}
+		void Sort( bool Comparer( T one, T two ) )
+		{
+			sort( objData.begin(), objData.end(), Comparer );
+		}
 	};
 
 }

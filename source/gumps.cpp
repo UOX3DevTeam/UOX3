@@ -470,7 +470,6 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		return;
 	}
 	Console.Print( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() );
-//	Accounts->AddAccount( username, password, emailAddy );
 }
 
 //o---------------------------------------------------------------------------o
@@ -558,7 +557,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		return;
 
 	// page header
-//	toSend.AddCommand( "nomove" );
 	toSend.AddCommand( "noclose" );
 	toSend.AddCommand( "nodispose" );
 	toSend.AddCommand( "page 0" );
@@ -568,18 +566,13 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI16 yStart = 0, yWidth = 375;
 
 	UI32 bgImage	=	cwmWorldState->ServerData()->BackgroundPic();
-	//UI32 cancelDown	=	cwmWorldState->ServerData()->ButtonCancel();
-	//UI32 cancelUp	=	cwmWorldState->ServerData()->ButtonCancel() + 1;
-	//UI32 titleColor	=	cwmWorldState->ServerData()->TitleColour();
-	//UI32 fontWidth	=	8;
 
 	// Set and resize the gumps background image.
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth );
 	toSend.AddCommand( "checkertrans %u %u %u %u",xStart+5,yStart+5,xWidth-10,yWidth-11);
 	
 	// Next we create and position the close window button as well set its Down, and Up states.
-	toSend.AddCommand( "button %u %u %u %u %u %u %u",xWidth-28,yStart+1,0xA51/*cancelDown*/, 0xA50/*cancelUp*/, 1, 0, 1); 
-	//toSend.AddCommand( "button %u %u %u %u %u %u %u",xWidth-34,yStart+21,0xFB7, 0xFB8, 1, 0, 1); 
+	toSend.AddCommand( "button %u %u %u %u %u %u %u",xWidth-28,yStart+1,0xA51, 0xA50, 1, 0, 1); 
 	// Grab the first tag/value pair from the gump itemmenu respectivly
 	UString tag		= ItemMenu->First();
 	UString data	= ItemMenu->GrabData();
@@ -608,7 +601,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	today = localtime(&ltime);
 	char tmpBuffer[200];
 	bool isAM = true;
-	//printf( "12-hour time:\t\t\t\t%.8s %s\n",asctime( today ) + 11, ampm );
 	strftime(tmpBuffer,128,"%b %d, %Y",today);
 	if(today->tm_hour>12)
 	{
@@ -628,7 +620,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
 	toSend.AddCommand( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 0x13EC, 190, 300);
 	UI32 tabNumber = 1;
-	//UI32 serverTab = tabNumber;
 	if( m == 1 )
 	{
 		// Do the shard tab
@@ -650,7 +641,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddText( szBuffer );
 		// Do the server tab
 		toSend.AddCommand( "button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1); 
-//		UI32 myLinenum = linenum;
 		toSend.AddCommand( "text %u %u %u %u",132,yStart+46, 47, linenum++);
 		toSend.AddText( "Server" );
 	}
@@ -666,7 +656,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.AddText( "(c)1997-2004 UOXDev Team" );
 
 	// Ok here we have some conditions that we need to filter. First being the menu called.
-	//UI32 pageNum = 1;
 	UI32 xOffset;
 	UI32 yOffset;
 #define SXOFFSET	210
@@ -680,8 +669,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		// Thanks for choosing UOX3 text
 		toSend.AddCommand( "text %u %u %u %u", 15, yStart+65, 52, linenum++);
 		toSend.AddText( "Thank you for choosing UOX3!" );
-		//toSend.AddCommand( "text %u %u %u %u", 58, yStart+83, 250, linenum++);
-		//toSend.AddText( "www.uox3dev.net" );
 		toSend.AddCommand( "htmlgump %u %u %u %u %u %u %u", 58, yStart+83, 200, 20, linenum++,0,0);
 		toSend.AddText( "<a href=\"http://www.uox3dev.net/\">www.uox3dev.net</a>" );
 		// Need a seperator
@@ -739,48 +726,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			szBuffer = UString::sprintf( "Menu %i - Page %i", m, pagenum-1 );
 			toSend.AddText( szBuffer );
 			// Spin the tagged items loaded in from the dfn files.
-/*			if( tag.upper() == "INSERTADDMENUITEMS" )
-			{
-				// Check to see if the desired menu has any items to add
-				if(g_mmapAddMenuMap.find(m)==g_mmapAddMenuMap.end())
-				{
-					continue;
-				}
-				// m contains the groupId that we need to do fetch the auto-addmenu items
-				std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( m );
-				for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;CI++)
-				{
-					//toSend.AddCommand( "text %u %u %u %u",35, position-3, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
-					toSend.AddCommand( "button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA ,1,0, buttonnum );
-					toSend.AddCommand( "croppedtext %u %u %u %u %u %u",35, position-3,150,20, 40, linenum ); 
-					toSend.AddText( CI->second.itemName );
-					// check to make sure that we have an image now, seeing as we might not have one with the new changes in 0.98.01.2+
-					if(CI->second.tileID != -2)
-					{
-						// Draw a frame for the item to make it stand out a touch more.
-						toSend.AddCommand( "resizepic %u %u %u %u %u",xOffset,yOffset,0x53,65,100);
-						toSend.AddCommand( "checkertrans %u %u %u %u",xOffset+7,yOffset+9,52,82);
-						//toSend.AddCommand( "button %u %u %u %u %u %u %u",xOffset,yOffset,0x4BA,0x4B9,1,0,buttonnum);
-						toSend.AddCommand( "tilepic %u %u %u",xOffset+5, yOffset+10, CI->second.tileID );
-						//toSend.AddCommand( "gumppic %u %u %u",xOffset,yOffset,0x9C5);
-						toSend.AddCommand( "croppedtext %u %u %u %u %u %u",xOffset,yOffset+65,65,20,55,linenum++);
-						toSend.AddText( CI->second.itemName );
-						xOffset += XOFFSET;
-						if(xOffset>480)
-						{
-							xOffset=SXOFFSET;
-							yOffset+=YOFFSET;
-						}
-					}
-					position += 20;
-					++linenum;
-					++buttonnum;
-					++numCounter;
-				}
-				continue;
-			}*/
 			toSend.AddCommand( "button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum);
-//			toSend.AddCommand( "text %u %u %u %u",35, position-3, titleColor, linenum ); 
 			toSend.AddCommand( "croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ); 
 			toSend.AddText( data );
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
@@ -789,7 +735,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				toSend.AddCommand( "resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 );
 				toSend.AddCommand( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 );
 				toSend.AddCommand( "tilepic %u %u %i",xOffset+5, yOffset+10, tag.toLong() );
-				//toSend.AddCommand( "gumppic %u %u %u",xOffset,yOffset,0x9C5);
 				toSend.AddCommand( "croppedtext %u %u %u %u %u %u", xOffset, yOffset+65, 65, 20, 55, linenum++ );
 				toSend.AddText( data );
 				xOffset += XOFFSET;
@@ -800,7 +745,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				}
 			}
 			position += 20;
-//			++linenum;
 			++buttonnum;
 			++numCounter;
 
@@ -863,11 +807,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			//toSend.AddCommand( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E);
-			// Add the page number text to the text area for display
-			//toSend.AddCommand( "text %u %u %u %u",xStart+295,yWidth-27,901,linenum++);
-			//szBuffer = UString::sprintf( "Menu %i - Page %i", m, pagenum-1 );
-			//toSend.AddText( szBuffer );
 			if( tag.upper() == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
@@ -879,7 +818,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( m );
 				for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;CI++)
 				{
-					//toSend.AddCommand( "text %u %u %u %u",35, position-3, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 					toSend.AddCommand( "button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA ,1,0, buttonnum);
 					toSend.AddCommand( "croppedtext %u %u %u %u %u %u",35, position-3,150,20, 40, linenum ); 
 					toSend.AddText( CI->second.itemName );
@@ -889,9 +827,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 						// Draw a frame for the item to make it stand out a touch more.
 						toSend.AddCommand( "resizepic %u %u %u %u %u",xOffset,yOffset,0x53,65,100);
 						toSend.AddCommand( "checkertrans %u %u %u %u",xOffset+7,yOffset+9,52,82);
-						//toSend.AddCommand( "button %u %u %u %u %u %u %u",xOffset,yOffset,0x4BA,0x4B9,1,0,buttonnum);
 						toSend.AddCommand( "tilepic %u %u %i", xOffset+5, yOffset+10, CI->second.tileID );
-						//toSend.AddCommand( "gumppic %u %u %u",xOffset,yOffset,0x9C5);
 						toSend.AddCommand( "croppedtext %u %u %u %u %u %u",xOffset,yOffset+65,65,20,55,linenum++);
 						toSend.AddText( CI->second.itemName );
 						toSend.AddText( CI->second.itemName.c_str() );
@@ -909,7 +845,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				}
 				continue;
 			}
-			//toSend.AddCommand( "text %u %u %u %u",35, position-3, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 			toSend.AddCommand( "button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum );
 			toSend.AddCommand( "croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ); 
 			toSend.AddText( data );
@@ -919,7 +854,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				toSend.AddCommand( "resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 );
 				toSend.AddCommand( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 );
 				toSend.AddCommand( "tilepic %u %u %i", xOffset + 5, yOffset + 10, tag.toLong() );
-				//toSend.AddCommand( "gumppic %u %u %u",xOffset,yOffset,0x9C5);
 				toSend.AddCommand( "croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ );
 				toSend.AddText( data );
 				xOffset += XOFFSET;
@@ -930,7 +864,6 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				}
 			}
 			position += 20;
-//			++linenum;
 			++buttonnum;
 			++numCounter;
 
@@ -1341,7 +1274,7 @@ void HandleAddMenuButton( CSocket *s, long button )
 	// let's skip over the name, and get straight to where we should be headed
 	size_t entryNum = static_cast<size_t>((button - 6) * 2);
 	autoAddMenuItemCount += ItemMenu->NumEntries();
-	if( autoAddMenuItemCount /*ItemMenu->NumEntries()*/ >= entryNum )
+	if( autoAddMenuItemCount >= entryNum )
 	{
 		UString tag		= ItemMenu->MoveTo( entryNum );
 		UString data	= ItemMenu->GrabData();

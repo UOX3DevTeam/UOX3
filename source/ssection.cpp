@@ -379,7 +379,6 @@ void InitStrToDFN( void )
 	strToDFNTag["SHOPLIST"]			=	DFNTAG_SHOPLIST;
 	strToDFNTag["SK_MADE"]			=	DFNTAG_SK_MADE;
 	strToDFNTag["SKILL"]			=	DFNTAG_SKILL;
-//		{ "SKILL%i"					=	DFNTAG_SKILLVAR;
 	strToDFNTag["SKIN"]				=	DFNTAG_SKIN;
 	strToDFNTag["SKINLIST"]			=	DFNTAG_SKINLIST;
 	strToDFNTag["SNOOPING"]			=	DFNTAG_SNOOPING;
@@ -851,9 +850,6 @@ void ScriptSection::createSection( std::fstream& input )
 											amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
 										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
-										//toAdd2->tag = FindDFNTagFromStr("<"
-										//toAdd2->tag = FindDFNTagFromStr("ADDITEM");
-										//toAdd2->ndata = amiLocalCopy.objectID;
 									}
 										toAdd2->cdata = value;
 									break;

@@ -130,9 +130,6 @@ inline UI08 turn_counter_clock_wise( UI08 dir )
 
 inline SI08 calcTileHeight( SI08 h )
 {
-  ///return ((h & 0x8) ? (((h & 0xF) ^ 0xF) + 1) : h & 0xF);
-	//return (h & 0x7);
-	//return ((h & 0x8) ? (((h & 0xF) ^ 0xF) + 1) : h & 0xF);
 	return (SI08)((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
 }
 
@@ -309,7 +306,6 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	// do all of the following regardless of whether turning or moving i guess
 	
 	// set the player direction to contain only the cardinal direction bits
-//	c->SetDir( (dir&0x07) );
 	c->WalkDir( (dir&0x07) );
 	
 	SendWalkToPlayer( c, mSock, sequence );
@@ -666,7 +662,6 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
-//		if( tItem->GetID() < 0x4000 )
 		if( !tItem->CanBeObjType( OT_MULTI ) )
 		{
 #if DEBUG_WALKING
@@ -972,7 +967,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 		case IT_DAMAGEOBJECT:														// damage objects
 			if( !mChar->IsInvulnerable() )
 			{
-				mChar->SetHP( static_cast<SI16>( mChar->GetHP() - ( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ) ) ) );
+				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), NULL );
 				if( mChar->GetHP() < 1 )
 					mChar->SetHP( 0 );
 				if( mChar->GetHP() <= 0 )
@@ -1128,8 +1123,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 // start of LB's no rain & snow in buildings stuff 
 void cMovement::HandleWeatherChanges( CChar *c, CSocket *mSock )
 {
-//	if( !c->IsNpc() && isOnline( &c ) ) // check for being in buildings (for weather) only for PC's
-//		return;
 }
 
 // return whether someone is a GM Body

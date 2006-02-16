@@ -303,14 +303,6 @@ bool CPIPlayCharacter::Handle( void )
 				{
 					// If we dont accept Krrios client we should
 					// disconnect it here now
-//					if( false )
-//					{
-//						CPKAccept Disconnected( 0x00 );
-//						tSock->Send( &Disconnected );
-//						Network->Disconnect( tSock );
-//						Console.Warning( 1, "Disconnected a Krrios client" );
-//						disconnect = true;
-//					} 
 					if( kChar->IsGM() ) 
 					{					
 						CPKAccept AckGM( 0x02 );
@@ -851,11 +843,9 @@ void startChar( CSocket *mSock, bool onCreate )
 				sysBroadcast( temp );//message upon entering a server
 			}
 			updates( mSock );
-//			if( cwmWorldState->ServerData()->HtmlStatsStatus() > 0 )
 #if defined( _MSC_VER )
 #pragma note( "HTML Status for Players" )
 #endif
-				//DumpPlayerHTML( mChar );
 			if( onCreate )
 			{
 				cScript *onCreateScp = JSMapping->GetScript( (UI16)0 );	// 0 == global script
@@ -1077,7 +1067,6 @@ void HandleDeath( CChar *mChar )
 				pSock->Send( &toSend );
 			}
 			// The fade to gray is done by the CPResurrectMenu packet
-			//mChar->Teleport();
 		}
 	}
 	

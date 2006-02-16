@@ -494,7 +494,6 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			// Pull the data into a usable form
 			ACCOUNTSBLOCK& actbTemp = CJ->second;
 			// Now we want to copy the files from the path to the new directory.
-			//std::cout << "COUNT= " << m_mapUsernameIDMap.size();
 			char cDirSep=sActPath[sActPath.length()-1];
 			std::string sNewPath(sActPath);
 			if( cDirSep=='\\'||cDirSep=='/' )
@@ -538,11 +537,6 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				std::fstream fsOut(sOutFile.c_str(),std::ios::out);
 				if( !fsOut.is_open() )
 				{
-					// we cannot open the out file.
-					//fsIn.close();
-					// free up any allocation of memory made.
-					//m_mapUsernameIDMap.clear();
-					//m_mapUsernameMap.clear();
 					return 0L;
 				}
 				// Ok we have to write the new username.uad file in the directory
@@ -588,8 +582,6 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			}
 			// Now were done so we want to update the path in our records before we write them
 			actbTemp.sPath = sNewPath;
-			//m_mapUsernameMap[actbTemp.sUsername]=actbTemp;
-			//m_mapUsernameIDMap[actbTemp.wAccountIndex]=actbTemp;
 		}
 	}
 	// Make a back up first, then Dump to new file,
@@ -692,7 +684,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	// If we get here then were going to create a new account block, and create all the needed directories and files.
 	ACCOUNTSBLOCK actbTemp;
 	Reset( &actbTemp );
-	// memset(&actbTemp,0x00,sizeof(ACCOUNTSBLOCK));
+
 	// Build as much of the account block that we can right now.
 	actbTemp.sUsername=sUsername;
 	actbTemp.sPassword=sPassword;
@@ -881,8 +873,6 @@ size_t cAccountClass::size()
 //o--------------------------------------------------------------------------o
 UI16 cAccountClass::Load(void)
 {
-//	UI16 wAccountsCount		= 0;
-//	UI16 wHighestAccount	= 0;
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
@@ -929,7 +919,6 @@ UI16 cAccountClass::Load(void)
 	bool bBraces2[3]				= { false, false, false };
 	ACCOUNTSBLOCK actb;
 	UI16 wAccountID					= 0x0000;
-//	UI16 wAccessID					= 0x0000;
 	UI16 wAccountCount				= 0x0000;
 	UI32 dwChars[CHARACTERCOUNT]	= {INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL};
 	Reset( &actb );
@@ -1035,7 +1024,7 @@ UI16 cAccountClass::Load(void)
 			m_mapUsernameIDMap[wAccountID]=actbTemp;
 			m_mapUsernameMap[actb.sUsername]=&m_mapUsernameIDMap[wAccountID];
 			Reset( &actb );
-			// memset(&actb,0x00,sizeof(ACCOUNTSBLOCK));
+
 			// Ok we have finished with this access block clean up and continue processing
 			bBraces[0] = false;
 			bBraces[1] = false;
@@ -1238,7 +1227,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 		return false;
 	}
 	// Get the account block for this username.
-//	ACCOUNTSBLOCK& actbName = J->second;
+
 	// ok we will check to see if there is a valid char in source slot, if not we will return
 	if( actbID.dwCharacters[wSSlot]==INVALIDSERIAL )
 		return false;
@@ -1259,7 +1248,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 		return false;
 	}
 	// Get the account block for this username.
-//	ACCOUNTSBLOCK& actbJName = JJ->second;
+
 	// ok at this point I/II = SourceID, and DestID and J/JJ SourceName/DestName
 	if( AddCharacter( wDAccountID, actbID.dwCharacters[wSSlot], actbID.lpCharacters[wSSlot] ) )
 	{
@@ -1327,7 +1316,6 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	{
 		// make sure to put the values back into the maps corrected.
 		m_mapUsernameIDMap[actbID.wAccountIndex] = actbID;
-		//Save();
 		return true;
 	}
 	return false;
@@ -1596,7 +1584,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-//	ACCOUNTSBLOCK& actbName=J->second;
+
 	// Before we delete this account we need to spin the characters, and list them in the orphan.adm file
 	std::string sTempPath(m_sAccountsDirectory);
 	if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
@@ -1622,7 +1610,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	for( int jj = 0; jj < CHARACTERCOUNT; ++jj )
 	{
 		// If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
-		if( actbID.dwCharacters[jj] != INVALIDSERIAL /*&& actbID.dwCharacters[jj] != (long)(-1)*/ )
+		if( actbID.dwCharacters[jj] != INVALIDSERIAL )
 		{
 			// Ok build then write what we need to the file
 			fsOrphansADM << "," << actbID.lpCharacters[jj]->GetName() << "," << actbID.lpCharacters[jj]->GetX() << "," << actbID.lpCharacters[jj]->GetY() << "," << (int)actbID.lpCharacters[jj]->GetZ() << std::endl;
@@ -1805,7 +1793,6 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	{
 		return false;
 	}
-	//Load();
 	return true;
 }
 

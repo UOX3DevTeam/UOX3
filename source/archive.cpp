@@ -89,12 +89,6 @@ void fileArchive( void )
 	int makeResult = _mkdir( backupRoot.c_str(), 0777 );
 	if( makeResult == 0 )
 	{
-		// std::string accountsDir = backupRoot + "/accounts";
-		//makeResult = _mkdir( accountsDir.c_str(), 0777 );
-		//if( makeResult != 0 )
-			// Console << "Cannot create accounts backup directory, please check available disk space" << myendl;
-		//else if( Accounts->SaveAccounts( (std::string)filename1, (std::string)filename1 ) == -1 )
-		//Console << "Cannot save accounts for backup" << myendl;
 		Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
 
 		backupFile( "house.wsc", backupRoot );

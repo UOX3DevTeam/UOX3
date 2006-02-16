@@ -33,11 +33,6 @@ typedef std::map< std::string, TAGMAPOBJECT > TAGMAP2;
 typedef std::map< std::string, TAGMAPOBJECT >::iterator TAGMAP2_ITERATOR;
 typedef std::map< std::string, TAGMAPOBJECT >::const_iterator TAGMAP2_CITERATOR;
 
-// Some helpers for iteators, and readability
-//typedef std::map< std::string, jsval> TAGMAP;
-//typedef std::map< std::string, jsval>::iterator TAGMAP_ITERATOR;
-//typedef std::map< std::string, jsval>::const_iterator TAGMAP_CITERATOR;
-
 enum UpdateTypes
 {
 	UT_UPDATE = 0,
@@ -112,6 +107,10 @@ protected:
 	SI16			oldLocY;
 	SI08			oldLocZ;
 
+	SI16			fame;
+	SI16			karma;
+	SI16			kills;
+
 	void			CopyData( CBaseObject *target );
 
 public:
@@ -120,10 +119,7 @@ public:
 
 	size_t 					GetNumTags( void ) const;
 	
-	//jsval					GetTag( std::string tagname ) const;
-	//void 					SetTag( std::string tagname, jsval tagval );
-	
-	TAGMAPOBJECT		GetTag( std::string tagname ) const;
+	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
 
 	void					SetTitle( std::string newtitle );
@@ -286,6 +282,14 @@ public:
 	void					SetSpawned( bool newVal );
 	void					ShouldSave( bool newVal );
 	void					SetDisabled( bool newVal );
+
+	SI16					GetFame( void ) const;
+	void					SetFame( SI16 value );
+	void					SetKarma( SI16 value );
+	SI16					GetKarma( void ) const;
+	void					SetKills( SI16 value );
+	SI16					GetKills( void ) const;
+
 
 };
 

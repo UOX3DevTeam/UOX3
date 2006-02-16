@@ -22,15 +22,6 @@
 #include <deque>
 #include <queue>
 
-// Note - not in the original STL, but exists in SGI STL and STLport
-//#ifdef EXT_HASH
-//#   include <ext/hash_map>
-//#   include <ext/hash_set>
-//#else
-//#   include <hash_set>
-//#   include <hash_map>
-//#endif
-
 // STL algorithms & functions
 #include <algorithm>
 #include <functional>

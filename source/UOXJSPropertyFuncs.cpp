@@ -509,7 +509,6 @@ namespace UOX
 				case CCP_DIRECTION:		*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 				
 				// 3  objects: regions + towns + guilds
-				// Goal: myChar.target.textmessage( "Your target is a member of " + myChar.guild.name );
 				case CCP_REGION:
 					{
 						CTownRegion *myReg = gPriv->GetRegion();
@@ -1659,7 +1658,6 @@ namespace UOX
 	JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		SEGumpData *gPriv = (SEGumpData *)JS_GetPrivate( cx, obj );
-		//SEGump *toDelete = (SEGump*)JS_GetPrivate( cx, obj );
 		
 		if( gPriv == NULL )
 			return JS_FALSE;

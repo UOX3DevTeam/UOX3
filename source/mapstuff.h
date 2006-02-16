@@ -60,12 +60,6 @@ struct MapData_st
 	~MapData_st();
 };
 
-/*const SI16 MapWidths[UOMT_COUNT]		= { 6144, 0, 2304, 2560 };
-const SI16 MapHeights[UOMT_COUNT]		= { 4096, 0, 1600, 2048 };
-const SI16 MapTileWidths[UOMT_COUNT]	= { 768,  0, 288,  320 };
-const SI16 MapTileHeights[UOMT_COUNT]	= { 512,  0, 200,  256 };
-const SI32 MapFileLengths[UOMT_COUNT]	= { 89915392, 0, 11289600, 16056320 };
-*/
 // full comments on this class are available in mapstuff.cpp
 class MapStaticIterator
 {
@@ -168,7 +162,6 @@ private:
 	friend class MapStaticIterator;
 	// all the world's map and static Items.
 	// multiItem, tileSet, and verdata(patches really)
-//	char     *			verData;				// patches really, which don't exist anymore
 	CLand    *			landTile;			// the 512*32 pieces of land tile
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
 	st_multi *			multiItems;			// the multis cache(shadow) from files

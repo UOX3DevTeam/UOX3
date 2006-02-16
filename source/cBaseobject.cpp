@@ -79,6 +79,10 @@ const UI08			DEFBASE_POISONED	= 0;
 const SI16			DEFBASE_CARVE		= -1;
 const UI08			DEFBASE_UPDATETYPES	= 0;
 const UI08			DEFBASE_OBJSETTINGS	= 0;
+const SI16			DEFBASE_KARMA		= 0;
+const SI16			DEFBASE_FAME		= 0;
+const SI16			DEFBASE_KILLS		= 0;
+
 //o--------------------------------------------------------------------------o
 //|	Function		-	CBaseObject constructor
 //|	Date			-	26 July, 2000
@@ -95,7 +99,8 @@ hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), def( DEFBASE_DEF ), hidamag
 lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
-poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 )
+poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
@@ -167,7 +172,6 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 	if( I != tags.end() )
 	{
 		// Check to see if this object needs to be destroyed
-//		bool reAdd = FALSE;
 		if( I->second.m_Destroy || tagval.m_Destroy )
 		{
 			tags.erase( I );
@@ -636,6 +640,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Defense=" << def << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
 	dumping << "DWords=" << genericDWords[0] << "," << genericDWords[1] << "," << genericDWords[2] << "," << genericDWords[3] << std::endl;
+	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
 	for( CI = tags.begin(); CI != tags.end(); ++CI )
@@ -773,7 +778,6 @@ SI16 CBaseObject::GetHP( void ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::SetStrength( SI16 newValue )
 {
-//	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	strength = newValue;
 }
 
@@ -787,7 +791,6 @@ void CBaseObject::SetStrength( SI16 newValue )
 //o--------------------------------------------------------------------------
 void CBaseObject::SetDexterity( SI16 newValue )
 {
-//	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	dexterity = newValue;
 }
 
@@ -801,7 +804,6 @@ void CBaseObject::SetDexterity( SI16 newValue )
 //o--------------------------------------------------------------------------
 void CBaseObject::SetIntelligence( SI16 newValue )
 {
-//	if( newValue > 0 || objType != OT_CHAR )//never set a char's stats to 0
 	intelligence = newValue;
 }
 
@@ -1588,6 +1590,14 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				rvalue = true;
 			}
 			break;
+		case 'F':
+				if( UTag == "FAME" )
+				{
+					SetFame( data.toShort() );
+					rvalue	= true;
+				}
+				break;
+
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
@@ -1627,6 +1637,19 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			if( UTag == "ICOUNTER" )
 				rvalue = true;	// don't process anything about it
 			break;
+		case 'K':
+			if( UTag == "KARMA" )
+			{
+				SetKarma( data.toShort() );
+				rvalue = true;
+			}
+			else if( UTag == "KILLS" )
+			{
+				SetKills( data.toShort() );
+				rvalue = true;
+			}
+			break;
+
 		case 'L':
 			if( UTag == "LOCATION" )
 			{
@@ -1683,6 +1706,16 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			if( UTag == "RACE" )
 			{
 				race	= data.toUShort();
+				rvalue	= true;
+			}
+			else if( UTag == "REPUTATION" )
+			{
+				if( data.sectionCount( "," ) == 2 )
+				{
+					SetFame( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
+					SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+					SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
+				}
 				rvalue	= true;
 			}
 			break;
@@ -1979,9 +2012,7 @@ UI08 CBaseObject::WorldNumber( void ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::WorldNumber( UI08 value )
 {
-//	MapRegion->Remove( this );
 	worldNumber = value;
-//	MapRegion->Add( this );
 	Dirty( UT_LOCATION );
 }
 
@@ -2196,11 +2227,67 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetIntelligence2( GetIntelligence2() );
 	target->SetPoisoned( GetPoisoned() );
 	target->SetWeight( GetWeight() );
+
+	target->SetKarma( karma );
+	target->SetFame( fame );
+	target->SetKills( kills );
 }
 
 point3 CBaseObject::GetOldLocation( void )
 {
 	return point3( oldLocX, oldLocY, oldLocZ );
 }
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Karma()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The object's karma
+//o--------------------------------------------------------------------------o
+SI16 CBaseObject::GetKarma( void ) const
+{
+	return karma;
+}
+void CBaseObject::SetKarma( SI16 value )
+{
+	karma = value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Fame()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The object's fame
+//o--------------------------------------------------------------------------o
+SI16 CBaseObject::GetFame( void ) const
+{
+	return fame;
+}
+void CBaseObject::SetFame( SI16 value )
+{
+	fame = value;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI16 Kills()
+//|	Date			-	unknown
+//|	Programmer		-	EviLDeD
+//|	Modified		-
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	The object's kills
+//o--------------------------------------------------------------------------o
+SI16 CBaseObject::GetKills( void ) const
+{
+	return kills;
+}
+void CBaseObject::SetKills( SI16 value )
+{
+	kills = value;
+}
+
 
 }

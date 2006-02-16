@@ -40,7 +40,6 @@ fd_set errsock;
 
 void killTrades( CChar *i );
 void DoorMacro( CSocket *s );
-UnicodeTypes FindLanguage( const char *lang );
 void sysBroadcast( const std::string txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
@@ -210,15 +209,12 @@ void cNetworkStuff::LogOut( CSocket *s )
 	}
 	s->LoginComplete( false );
 	actbAccount.wFlags &= 0xFFF7;
-	// We have to make sure to update the Account map
-	//Accounts->ModAccount(actbAccount.sUsername,AB_FLAGS,actbAccount);
 	p->SetSocket( NULL );
 	p->SetLocation( p );
 }
 
 void cNetworkStuff::sockInit( void )
 {
-//	char h1=0, h2=0, h3=0, h4=0;
 	int bcode;
 	
 	cwmWorldState->SetKeepRun( true );
@@ -269,10 +265,6 @@ void cNetworkStuff::sockInit( void )
 	ioctlsocket( a_socket, FIONBIO, &mode );
 
 	listen( a_socket, 42 );
-//	ph1 = h1;
-//	ph2 = h2;
-//	ph3 = h3;
-//	ph4 = h4;
 }
 
 void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
@@ -462,8 +454,6 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	}
 	else if( s == SOCKET_ERROR )
 	{
-//		Console << WSAGetLastError() << myendl;
-//		Console << WSANOTINITIALISED << myendl;
 	}
 }
 
@@ -482,8 +472,6 @@ CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 	return connClients[s];
 }
 
-void PaperDoll( CSocket *s, CChar *pdoll );
-bool BuyShop( CSocket *s, CChar *c );
 CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
 CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
@@ -776,209 +764,6 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						ourChar->SetSkillLock( buffer[5], (UI08)skillNum );
 						break;
 
-					case 0xBF:
-						mSock->Receive( 3 );
-						mSock->Receive( mSock->GetWord( 1 ) );
-						UI16 subCmd;
-						subCmd = mSock->GetWord( 3 );	// specific sub command
-	#if _DEBUG_PACKET
-						Console.Print( "Extra packet 0xBF, subCmd %i\n", subCmd );
-	#endif
-						switch( subCmd )
-						{
-							case 0x01:	break;	// Server message sent to client.  6 keys, each a long, Initialize Fast Walk Prevention
-							case 0x02:	break;	// Server message.  1 long, new key.  Add key to fast walk stack
-							case 0x05:		// Screen size
-		//						char mTemp[512];
-		//						sprintf( mTemp, "Screen size of %i (%i), %i (%i)", mSock->GetWord( 5 ), mSock->GetWord( 7 ), mSock->GetWord( 9 ), mSock->GetWord( 11 ) );
-		//						messageLoop << mTemp;
-								break;
-							case 0x06:			// 1 byte, sub command.  Yippee, sub sub commands
-								UI08 partyCmd;
-								partyCmd = mSock->GetByte( 5 );
-								switch( partyCmd )
-								{
-									case 1:		// 2 variants.  1 long, if 0 is targeting cursor, id of party member to add.  Client message
-												// second variant.  1 byte, number of members.  4 bytes per member, which is ID.  Server message
-										break;
-									case 2:		// 2 variants.  Remove party member.  single long, serial of party member to remove.  if 0, targeting appears.  Client message
-												// second variant.  1 byte, number of members now in party.  1 long, serial of player removed.  NumMembers long follows, ID of each member
-										break;
-									case 3:		// Tell party member a message. 1 SERIAL (of target, from client, of source, from server).  Null terminated Unicode message
-										// Byte[4] ID.  Byte[n][2] Message
-										break;
-									case 4:		// Tell full party message.  NULL terminated Unicode message
-										// Byte[n][2] message. client part.
-										// UI08[4] ID.  UI08[n][2] full message.  Server message
-										break;
-									case 6:		// Party can loot me?  1 byte, canloot.  0 == no, 1 == yes
-										break;
-									case 8:		// Accept join party invitation.  1 long, party leader's serial
-										break;
-									case 9:		// Decline party invitation.  1 LONG, party leader's serial
-										break;
-								}
-								break;
-							case 0x07:	// Click on Tracking Arrow
-								CChar *mChar;
-								mChar = mSock->CurrcharObj();
-								if( ValidateObject( mChar ) )
-								{
-									mSock->SetTimer( tPC_TRACKING, 0 );
-									if( ValidateObject( mChar->GetTrackingTarget() ) )
-									{
-										CPTrackingArrow tSend = (*mChar->GetTrackingTarget());
-										tSend.Active( 0 );
-										mSock->Send( &tSend );
-									}
-								}
-								break;
-							case 0x0A:	// Wrestling stun
-								break;
-							case 0x0B:	// Client language.  3 bytes.  "ENU" for english
-							{
-								UnicodeTypes newLang = FindLanguage( (char *)&(mSock->Buffer()[5]) );
-								mSock->Language( newLang );
-								break;
-							}
-							case 0x0C:	// Closed Status Gump
-								break;
-							case 0x0E:	// UOTD actions
-								// 9 bytes long
-								Effects->PlayCharacterAnimation( ourChar, mSock->GetWord( 7 ), 1 );
-								break;
-							case 0x0F:	// Unknown, Sent once at Login
-								break;
-							case 0x10:	// Request for tooltip data
-								SERIAL getSer;
-								getSer = mSock->GetDWord( 5 );
-
-								if( getSer != INVALIDSERIAL )
-								{
-									CPToolTip tSend( getSer );
-									mSock->Send( &tSend );
-								}
-								break;
-							case 0x13:	// 0x13 (Request popup menu, 4 byte serial ID) -> Respond with 0x14
-								SERIAL mSer;
-								mSer = mSock->GetDWord( 5 );
-								if( mSer < BASEITEMSERIAL )
-								{
-									CChar *myChar = calcCharObjFromSer( mSer );
-									if( myChar == NULL )
-										break;
-
-									CPPopupMenu toSend( (*myChar) );
-									mSock->Send( &toSend );
-								}
-								break;
-							case 0x15:	// Popup Menu Selection
-							{
-								const UI16 popupEntry	= mSock->GetWord( 9 );
-								CChar *mChar			= mSock->CurrcharObj();
-								CChar *targChar			= calcCharObjFromSer( mSock->GetDWord( 5 ) );
-								if( !ValidateObject( targChar ) || !ValidateObject( mChar ) )
-									break;
-
-								switch( popupEntry )
-								{
-								case 0x000A:	// Open Paperdoll
-									PaperDoll( mSock, targChar );
-									break;
-								case 0x000B:	// Open Backpack
-									if( targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
-									{
-										if( mChar->IsDead() )
-											mSock->sysmessage( 392 );
-										else if( !objInRange( mChar, targChar, DIST_NEARBY ) )
-											mSock->sysmessage( 382 );
-										else
-										{
-											CItem *pack = targChar->GetPackItem();
-											if( ValidateObject( pack ) )
-											{
-												if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->IsGM() )
-													mSock->openPack( pack );
-												else
-													Skills->Snooping( mSock, targChar, pack );
-											}
-											else
-												Console.Warning( 2, "Character 0x%X has no backpack!", targChar->GetSerial() );
-										}
-									}
-									break;
-								case 0x000C:	// Buy Window
-									if( targChar->IsShop() )
-										BuyShop( mSock, targChar );
-									break;
-								case 0x000D:	// Sell Window
-									if( targChar->IsShop() )
-									{
-										targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-										CPSellList toSend;
-										if( toSend.CanSellItems( (*mChar), (*targChar) ) )
-											mSock->Send( &toSend );
-										else
-											targChar->talk( mSock, 1341, false );
-									}
-									break;
-								default:
-									Console.Print( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", mSock->GetDWord( 5 ), mSock->GetWord( 9 ) );
-									break;
-								}
-								break;
-							}
-							case 0x1A:	// Extended Stats
-								UI08 statToSet, value;
-								statToSet		= mSock->GetByte( 5 ) + (ALLSKILLS+1);
-								value			= mSock->GetByte( 6 );
-								ourChar->SetSkillLock( value, statToSet );
-								break;
-							case 0x1C:	// New SpellBook Selection
-							{
-								CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
-								CItem *p			= ourChar->GetPackItem();
-								bool validLoc	= false;
-								if( ValidateObject( sBook ) )
-								{
-									if( sBook->GetCont() == ourChar )
-										validLoc = true;
-									else if( ValidateObject( p ) && sBook->GetCont() == p )
-										validLoc = true;
-
-									if( validLoc )
-									{
-										book = (buffer[7]<<8) + (buffer[8]); 
-										if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
-										{
-											if( ourChar->IsFrozen() )
-											{
-												if( ourChar->IsCasting() )
-													mSock->sysmessage( 762 );
-												else
-													mSock->sysmessage( 763 );
-											}
-											else
-											{
-												mSock->CurrentSpellType( 0 );
-												Magic->SelectSpell( mSock, book );
-											}
-										}
-										else
-											mSock->sysmessage( 764 );
-									}
-									else
-										mSock->sysmessage( 765 );
-								}
-								break;
-							}
-							case 0x24:
-								break;
-							default:
-								Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd );
-								break;
-						}
-						break;
 					case 0x56:
 						Console << "'Plot Course' button on a map clicked." << myendl;
 						break;
@@ -1038,7 +823,6 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
 				LoginDisconnect( i );
-				//LoginDisconnect(loggedInClients[i]->CliSocket());
 				continue;
 			}
 			if( ( FD_ISSET( loggedInClients[i]->CliSocket(), &all ) ) && ( oldnow == loggedInClients.size() ) )
@@ -1046,7 +830,6 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 				try
 				{
 					GetLoginMsg( i );
-					//GetLoginMsg(loggedInClients[i]->CliSocket());
 				}
 				catch( socket_error& blah )
 				{
@@ -1168,7 +951,6 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			// April 5, 2004 - EviLDeD - Please leave the place holders incode. They are not read in from the ini as of yet but will be as I get time and solidify the exact values needed
 			sprintf( (char*)szTBuf, "UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn:%i][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]\x0", cwmWorldState->ServerData()->ServerName().c_str(), cwmWorldState->ServerData()->ServerClientSupport(), ho, mi, se, cwmWorldState->GetPlayersOnline()+1, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), 0xDEADFEED, 0x000D, "Felucia", "Trammel", "Ilshenar", "Malas" );
 			mSock->Send( (char*)szTBuf,strlen((char*)szTBuf)+1);
-			//messageLoop << (char*)szTBuf;
 			mSock->NewClient( false );
 		}
 		else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
@@ -1186,7 +968,6 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		} 
 		else
 		{
-//			mSock->ClientIP( mSock->GetDWord( 0 ) );
 			mSock->NewClient( false );
 			if( mSock->GetDWord( 0 ) == 0x12345678 )
 				LoginDisconnect( s );

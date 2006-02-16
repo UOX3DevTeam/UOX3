@@ -306,7 +306,6 @@ bool CMultiObj::Save( std::ofstream &outStream )
 bool CMultiObj::LoadRemnants( void )
 {
 	bool rValue = CItem::LoadRemnants();
-//	Items->StoreItemRandomValue( this, NULL );
 
 	// Add item weight if item doesn't have it yet
 	if( GetWeight() <= 0 )

@@ -1430,10 +1430,10 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( ourTarg->GetReactiveArmour() )
 				{
 					int retDamage = (int)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
-					ourTarg->IncHP( -( ourDamage - retDamage ) );
+					ourTarg->Damage( ourDamage - retDamage, &mChar );
 					if( ourTarg->IsNpc() ) 
 						retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
-					mChar.IncHP( -retDamage );
+					mChar.Damage( retDamage, &mChar );
 					Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
 				}
 				else 
@@ -1443,7 +1443,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 						mSock->Send( &toDisplay );
 					if( targSock != NULL )
 						targSock->Send( &toDisplay );
-					ourTarg->IncHP( -ourDamage );
+					ourTarg->Damage( ourDamage, &mChar );
 				}
 
 				// Splitting NPC's

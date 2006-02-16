@@ -247,7 +247,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	{
 		multi = Map->SeekIntoMulti( multiID, j );
 
-		if( multi->visible && ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) /*&& ( m->GetZ() + multi->z == z )*/ )
+		if( multi->visible && ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) )
 			return true;
 	}
 	return false;

@@ -204,12 +204,8 @@ JSMethodFunc CFile_ReadUntil;
 JSMethodFunc CFile_Read;
 
 // Account methods
-//JSMethodFunc CAccount_GetAccount;
-//JSMethodFunc CAccount_SetAccount;
 JSMethodFunc CAccount_AddAccount;
 JSMethodFunc CAccount_DelAccount;
-//JSMethodFunc CAccount_ModAccount;
-//JSMethodFunc CAccount_SaveAccounts;
 
 JSMethodFunc CConsole_Print;
 JSMethodFunc CConsole_Log;
@@ -450,12 +446,8 @@ static JSFunctionSpec CFile_Methods[] =
 
 static JSFunctionSpec CAccount_Methods[] =
 {
-	//{ "GetAccount",		CAccount_GetAccount,		1, 0, 0 },
-	//{ "SetAccount",   CAccount_SetAccount,		1, 0, 0 },
 	{ "AddAccount",		CAccount_AddAccount,		4, 0, 0 },
 	{ "DelAccount",		CAccount_DelAccount,		1, 0, 0 },
-	//{ "ModAccount",		CAccount_ModAccount,		1, 0, 0 },
-	//{	"SaveAccounts",	CAccount_SaveAccounts,	1, 0, 0 },
 	{ NULL,			NULL,					0, 0, 0 }
 };
 

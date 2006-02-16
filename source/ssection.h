@@ -216,13 +216,10 @@ enum DFNTAGS
 typedef struct __ADDMENUITEM__
 {
 	UI32	itemIndex;
-	//UI32	categoryID;		// At this point unused. (Commented out lines here may or may not be used in teh future please leave them alone)
 	UString itemName;
 	UI32	groupID;
-	//UI32	subgroupID;		// At this point unused.
 	UI32	tileID;
 	UI32	weightPosition;
-	//UI32	typeID;				// At this point unused.
 	UI32	objectFlags;
 	UI32	objectID;
 	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ), 

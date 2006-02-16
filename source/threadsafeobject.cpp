@@ -8,7 +8,6 @@ ThreadSafeObject::ThreadSafeObject()
 #if UOX_PLATFORM == PLATFORM_WIN32
 	d_mutex = CreateMutex( NULL, false, NULL );
 #else
-	//d_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutexattr_t mutexAttr;
 	pthread_mutexattr_init( &mutexAttr );
 

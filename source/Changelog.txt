@@ -1,3 +1,12 @@
+16th February, 2006 - Maarc (0.98-3.3i [3.4 BETA])
+	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people from compiling)
+	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced
+	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage hasn't occurred in the past 5 minutes, they get taken off the list
+	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, because in future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a sword, the sword's kill count increases)
+	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking.  Future progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat
+	Broke out packet 0xBF into a CPI class of it's own.  Rather than making it a huge monolithic class, it internally hands it off to other packet handling classes
+
+
 2/15/2006 - giwo (0.98-3.3h [3.4 BETA])
 	Marked StringToNum(), NumToString(), NumToHexString() for later deletion, please use built-in JS method .toString() and function parseInt() in their place.
 	Updated all JS files to use toString() and parseInt().

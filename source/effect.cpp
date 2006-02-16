@@ -232,7 +232,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 				{
 					if( WillResultInCriminal( c, tempChar ) )
 						criminal( c );
-					tempChar->IncHP( -(SI16)( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ) );
+					tempChar->Damage( ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), c );
 					if( tempChar->GetHP() <= 0 )
 						HandleDeath( tempChar );
 					else
@@ -527,9 +527,8 @@ void cEffects::checktempeffects( void )
 			case 22:	// heal
 			case 23:	// resurrect
 			case 24:	// cure
-				R32 newHealth;
-				src = calcCharObjFromSer( Effect->Source() );
-				i = (CItem *)Effect->ObjPtr();
+				src	= calcCharObjFromSer( Effect->Source() );
+				i	= (CItem *)Effect->ObjPtr();
 				if( ValidateObject( src ) && ValidateObject( s ) )
 				{
 					if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
@@ -539,8 +538,7 @@ void cEffects::checktempeffects( void )
 						{
 							if( Effect->Number() == 22 )
 							{
-								newHealth = static_cast<R32>(s->GetHP() + ( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ) ));
-								s->SetHP( UOX_MIN( static_cast<SI16>(s->GetMaxHP()), (SI16)newHealth ) );
+								s->Heal( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ), NULL );
 								srcSock->sysmessage( 1271 );
 							}
 							else if( Effect->Number() == 23 )

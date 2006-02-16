@@ -528,8 +528,6 @@ bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 			break;
 		}
 	}
-	// if( !rvalue )
-	//Console << "Problem regionspawn [" << regionnum << "] found. Nothing will be spawned" << myendl;
 	return rvalue;
 }
 

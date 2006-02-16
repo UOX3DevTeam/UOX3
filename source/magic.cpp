@@ -203,9 +203,9 @@ bool splHeal( CChar *caster, CChar *target, CChar *src )
 {
 	int bonus = (caster->GetSkill( MAGERY )/500) + ( caster->GetSkill( MAGERY )/100 );
 	if( bonus != 0 )
-		target->SetHP( ( target->GetHP() + RandomNum( 0, 5 ) + bonus ) );
+		target->Heal( RandomNum( 0, 5 ) + bonus, caster );
 	else
-		target->SetHP( target->GetHP() + 4 );
+		target->Heal( 4 );
 	Magic->SubtractHealth( caster, bonus, 4 );
 	if( target->IsMurderer() )
 		criminal( caster );
@@ -437,23 +437,13 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target )
 }
 bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
-//	if( caster->GetSkill( MAGERY ) >= 800 )
-//		return FloodSpell( sock, caster, 0x0080, x, y, z, 4 );
-//	else if( caster->GetSkill( MAGERY ) >= 600 )
-//		return DiamondSpell( sock, caster, 0x0080, x, y, z, 4 );
-//	else
-		return FieldSpell( caster, 0x0080, x, y, z, fieldDir );
+	return FieldSpell( caster, 0x0080, x, y, z, fieldDir );
 }
 
 void ArchCureStub( CChar *caster, CChar *target )
 {
-//	if( target->GetPoisoned() )
-//	{
-//		Effects->PlayStaticAnimation( target, 0x376A, 0x09, 0x06 );
-//		Effects->PlaySound( target, 0x01E9 );
-		target->SetPoisoned( 0 );
-		target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
-//	}
+	target->SetPoisoned( 0 );
+	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 }
 bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
@@ -483,21 +473,14 @@ bool splCurse( CChar *caster, CChar *target, CChar *src )
 }
 bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
-//	if( caster->GetSkill( MAGERY ) >= 600 )
-//		return DiamondSpell( sock, caster, 0x3996, x, y, z, 4 );
-//	else
-//	{
-//		if( fieldDir )
-//			return FieldSpell( caster, 0x3996, x, y, z, fieldDir );
-//		else 
-			return FieldSpell( caster, 0x398C, x, y, z, fieldDir );
-//	}	
+	return FieldSpell( caster, 0x398C, x, y, z, fieldDir );
 }
 bool splGreaterHeal( CChar *caster, CChar *target, CChar *src )
 {
-	int j = target->GetHP() + (caster->GetSkill( MAGERY )/30+RandomNum(1,12));
-	target->SetHP( UOX_MIN( target->GetMaxHP(), (static_cast<UI16>(j)) ) );
-	Magic->SubtractHealth( caster, UOX_MIN( target->GetStrength(), (SI16)j ), 29 );
+	int srcHealth	= target->GetHP();
+	int j			= caster->GetSkill( MAGERY ) / 30 + RandomNum( 1, 12 );
+	target->Heal( j, caster );
+	Magic->SubtractHealth( caster, UOX_MIN( target->GetStrength(), (SI16)(srcHealth + j) ), 29 );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
@@ -692,17 +675,7 @@ bool splParalyze( CChar *caster, CChar *target, CChar *src )
 }
 bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
-//	if( caster->GetSkill( MAGERY ) >= 800 )
-//		return FloodSpell( sock, caster, 0x3920, x, y, z, 4 );
-//	else if( caster->GetSkill( MAGERY ) >= 600 )
-//		return DiamondSpell( sock, caster, 0x3920, x, y, z, 4 );
-//	else
-//	{
-//		if( fieldDir )
-//			return FieldSpell( caster, 0x3920, x, y, z, fieldDir );
-//		else 
-			return FieldSpell( caster, 0x3915, x, y, z, fieldDir );
-//	}
+	return FieldSpell( caster, 0x3915, x, y, z, fieldDir );
 }
 bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
@@ -820,15 +793,7 @@ bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 }
 bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
-//	if( caster->GetSkill( MAGERY ) >= 600 )
-//		return DiamondSpell( sock, caster, 0x3979, x, y, z, 4 );
-//	else
-//	{
-//		if( fieldDir )
-//			return FieldSpell( caster, 0x3979, x, y, z, fieldDir );
-//		else 
-			return FieldSpell( caster, 0x3967, x, y, z, fieldDir );
-//	}
+	return FieldSpell( caster, 0x3967, x, y, z, fieldDir );
 }
 bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
@@ -897,15 +862,7 @@ bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src 
 }
 bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
 {
-//	if( caster->GetSkill( MAGERY ) >= 600 )
-//		return DiamondSpell( sock, caster, 0x3956, x, y, z, 4 );
-//	else
-//	{
-//		if( fieldDir )
-//			return FieldSpell( caster, 0x3956, x, y, z, fieldDir );
-//		else 
-			return FieldSpell( caster, 0x3946, x, y, z, fieldDir );
-//	}
+	return FieldSpell( caster, 0x3946, x, y, z, fieldDir );
 }
 bool splFlameStrike( CChar *caster, CChar *target, CChar *src )
 {
@@ -1057,12 +1014,12 @@ bool splPolymorph( CSocket *sock, CChar *caster )
 }
 void EarthquakeStub( CChar *caster, CChar *target )
 {
-	int distx = abs(target->GetX() - caster->GetX() );
-	int disty = abs(target->GetY() - caster->GetY() );
-	int dmg = (caster->GetSkill( MAGERY )/40) + ( RandomNum( 0, 19 ) - 10 );
-	int dmgmod = UOX_MIN( distx, disty );
-	dmgmod = -(dmgmod - 7);
-	target->IncHP( - (dmg+dmgmod) );
+	int distx	= abs(target->GetX() - caster->GetX() );
+	int disty	= abs(target->GetY() - caster->GetY() );
+	int dmg		= (caster->GetSkill( MAGERY )/40) + ( RandomNum( 0, 19 ) - 10 );
+	int dmgmod	= UOX_MIN( distx, disty );
+	dmgmod		= -(dmgmod - 7);
+	target->Damage( (dmg + dmgmod), caster );
 	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 	
 	if( target->GetStamina() == -1 )
@@ -2031,7 +1988,7 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 			mSock->Send( &toDisplay );
 		if( attSock != NULL )
 			attSock->Send( &toDisplay );
-		p->IncHP( -amount );
+		p->Damage( amount, attacker );
 		if( p->GetHP() <= 0 )
 		{
 			UI16 dbScript		= p->GetScriptTrigger();
@@ -2987,7 +2944,6 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 		else if( spells[curSpell].RequireItemTarget() && validSocket )
 		{
-			// CItem *target
 			i = calcItemObjFromSer( s->GetDWord( 7 ) );
 			if( ValidateObject( i ) )
 			{

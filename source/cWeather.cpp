@@ -1442,7 +1442,7 @@ bool doLightEffect( CSocket& mSock, CChar& mChar )
 				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					mSock.sysmessage( 1216 );
-					mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) );
+					mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) );
 					mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
 					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 					Effects->PlaySound( (&mChar), 0x0208 );     
@@ -1460,7 +1460,7 @@ bool doLightEffect( CSocket& mSock, CChar& mChar )
 				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 				{
 					mSock.sysmessage( 1217 );
-					mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
+					mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
 					mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
 					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 					Effects->PlaySound( (&mChar), 0x0208 );     
@@ -1486,7 +1486,7 @@ bool doLightEffect( CSocket& mSock, CChar& mChar )
 					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
 						mSock.sysmessage( 1216 );
-						mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) );
+						mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) );
 						mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
 						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 						Effects->PlaySound( (&mChar), 0x0208 );     
@@ -1504,7 +1504,7 @@ bool doLightEffect( CSocket& mSock, CChar& mChar )
 					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 					{
 						mSock.sysmessage( 1217 );
-						mChar.SetHP( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
+						mChar.Damage( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
 						mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
 						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 						Effects->PlaySound( (&mChar), 0x0208 );     
@@ -1552,7 +1552,7 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 			if( mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime() )
 			{
 				const R32 damageModifier = ( tempMax - tempCurrent ) / 5;
-				mChar.SetHP((SI16)( mChar.GetHP() - ( (R32)Races->Damage( mChar.GetRace(), element ) * damageModifier )) );
+				mChar.Damage( (SI32)( (R32)Races->Damage( mChar.GetRace(), element ) * damageModifier ) );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
 				mSock.sysmessage( (1218 + (int)element) );
 				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );

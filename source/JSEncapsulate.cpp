@@ -61,7 +61,6 @@ namespace UOX
 	{
 		InternalReset();
 		// We don't want to call Init() here, because we *know* it's an Object
-//		Init();
 		nativeType				= JSOT_OBJECT;
 		objectVal				= (void*)JS_GetPrivate( cx, jsVP );
 		beenParsed[JSOT_OBJECT]	= true;

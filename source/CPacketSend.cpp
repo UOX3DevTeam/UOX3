@@ -619,7 +619,6 @@ void CPRelay::InternalReset( void )
 {
 	pStream.ReserveSize( 11 );
 	pStream.WriteByte( 0, 0x8C );
-//	SeedIP( loopbackIP );
 	SeedIP( 0xFFFFFFFF );
 }
 
@@ -2194,9 +2193,6 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 #if defined( _MSC_VER )
 #pragma todo( "Currently all client support is hardcoded. Move this into the ini when possible." )
 #endif
-//	pStream.WriteByte( 1, 0x80 );		// 0x00
-//	pStream.WriteByte( 2, 0x3F );		// New chars enabled(shh they prolly wont work) and Enable 6th slot
-//	pStream.WriteShort( 1, 0x8000 | 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40 | 0x80 );
 	pStream.WriteShort( 1, 0x80FB );	// all features + sixth char
 }
 
@@ -3127,7 +3123,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		for( UI08 j = 0; j < 30; ++j )
 		{
 			if( pStream.GetByte( baseOffset+j ) != 0 )
-				outStream << (SI16)pStream.GetByte( baseOffset+j );
+				outStream << (char)pStream.GetByte( baseOffset+j );
 			else
 				break;
 		}
@@ -3135,7 +3131,7 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 		for( UI08 k = 0; k < 30; ++k )
 		{
 			if( pStream.GetByte( baseOffset+k+30 ) != 0 )
-				outStream << (SI16)pStream.GetByte( baseOffset+k+30 );
+				outStream << (char)pStream.GetByte( baseOffset+k+30 );
 			else
 				break;
 		}
@@ -3232,8 +3228,6 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 		pStream.WriteByte( 364, numLocations );
 	else
 		pStream.WriteByte( 304, numLocations );
-	// turn on /*send config,*/ npcpopup menus and common AOS features
-//	pStream.WriteByte( packetSize - 1, ( 0x08 | 0x20 | 0x40 ) );
 	pStream.WriteShort( packetSize - 2, ( 0x08 | 0x20 | 0x40 | 0x80 | 0x100 ) );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
@@ -3869,7 +3863,6 @@ void CPSpeech::CopyData( CBaseObject &toCopy )
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
 	Name( toCopy.GetName() );
-//	pStream.WriteByte( 9, 1 );
 }
 void CPSpeech::CopyData( CPITalkRequest &talking )
 {
@@ -4001,7 +3994,6 @@ void CPUnicodeSpeech::CopyData( CBaseObject &toCopy )
 	Serial( toCopy.GetSerial() );
 	ID( toCopy.GetID() );
 	Name( toCopy.GetName() );
-//	pStream.WriteByte( 9, 1 );
 }
 void CPUnicodeSpeech::CopyData( CPITalkRequestAscii &talking )
 {
@@ -4017,7 +4009,6 @@ void CPUnicodeSpeech::CopyData( CPITalkRequestUnicode &talking )
 	Font( talking.Font() );
 	Type( talking.Type() );
 	Language( talking.Language() );
-//	Message( talking.Text() );
 
 	UI16 length = talking.Length();
 	char *uniTxt = talking.UnicodeText();
@@ -4305,7 +4296,6 @@ void CPBookPage::Serial( SERIAL value )
 //	BYTE[2] text length (in unicode (2 byte) characters.)
 //	BYTE[?] text (in unicode)
 
-//	STRINGLIST		commands, text;
 CPSendGumpMenu::CPSendGumpMenu()
 {
 	pStream.ReserveSize( 21 );
@@ -4509,8 +4499,6 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "X                : " << std::hex << pStream.GetUShort( 11 ) << std::endl;
 	outStream << "Y                : " << std::hex << pStream.GetUShort( 15 ) << std::endl;
 	outStream << "Command Sec Len  : " << std::dec << pStream.GetUShort( 19 ) << std::endl;
-//	outStream << "Num text lines   : " << pStream.GetUShort( 15 ) << std::endl;
-//	outStream << "Text Sec Len     : " << pStream.GetByte( 17 ) << std::endl;
 	outStream << "Commands         : " << std::endl;
 	for( size_t x = 0; x < commands.size(); ++x )
 		outStream << "     " << commands[x] << std::endl;

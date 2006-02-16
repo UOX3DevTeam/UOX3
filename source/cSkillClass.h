@@ -2,7 +2,6 @@
 #define __CSKILLCLASS_H__
 
 #include <algorithm>
-//using namespace std;
 
 namespace UOX
 {

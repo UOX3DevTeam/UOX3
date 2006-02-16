@@ -33,49 +33,61 @@ enum cC_TID
 	tCHAR_COUNT
 };
 
+struct DamageTrackEntry
+{
+	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageDone( INVALIDSERIAL ) { }
+	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageDone( lstDmgDn ) { }
+	SERIAL		damager;			// who did the damage?
+	SI32		damageDone;			// how much damage has been accumulated?
+	TIMERVAL	lastDamageDone;		// when was the last time that damage was done?
+};
+
+bool DTEgreater( DamageTrackEntry &elem1, DamageTrackEntry &elem2 );
+
 class CChar : public CBaseObject
 {
 private:
-	typedef std::map< ItemLayers, CItem * >			LAYERLIST;
+	typedef std::map< ItemLayers, CItem * >				LAYERLIST;
 	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
+	typedef CDataList< DamageTrackEntry * >				DAMAGETRACK;
 
 	struct NPCValues_st
 	{
-						NPCValues_st();
-		void			DumpBody( std::ofstream& outStream );
+							NPCValues_st();
+		void				DumpBody( std::ofstream& outStream );
 
-		SI16			aiType;
-		CBaseObject *	petGuarding;
-		SI16			taming;
-		UI08			trainingPlayerIn;
-		UI32			goldOnHand;
+		SI16				aiType;
+		CBaseObject *		petGuarding;
+		SI16				taming;
+		UI08				trainingPlayerIn;
+		UI32				goldOnHand;
 
-		UI08			splitNum;
-		UI08			splitChance;
+		UI08				splitNum;
+		UI08				splitChance;
 
-		SI16			fx[2]; //NPC Wander Point x
-		SI16			fy[2]; //NPC Wander Point y
-		SI08			fz; //NPC Wander Point z
+		SI16				fx[2]; //NPC Wander Point x
+		SI16				fy[2]; //NPC Wander Point y
+		SI08				fz; //NPC Wander Point z
 
-		SI08			wanderMode; // NPC Wander Mode
-		SI08			oldWanderMode; // Used for fleeing npcs
+		SI08				wanderMode; // NPC Wander Mode
+		SI08				oldWanderMode; // Used for fleeing npcs
 		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
 
-		SI16			spellAttack;
-		SI08			spellDelay;	// won't time out for more than 255 seconds!
+		SI16				spellAttack;
+		SI08				spellDelay;	// won't time out for more than 255 seconds!
 
-		UI08			questType;
-		UI08			questDestRegion;
-		UI08			questOrigRegion;
+		UI08				questType;
+		UI08				questDestRegion;
+		UI08				questOrigRegion;
 			
-		SI16			fleeAt;		// HP Level to flee at
-		SI16			reAttackAt;	// HP Level to re-Attack at
+		SI16				fleeAt;		// HP Level to flee at
+		SI16				reAttackAt;	// HP Level to re-Attack at
 
-		CHARLIST		petFriends;
+		CHARLIST			petFriends;
 
-		SERIAL			fTarg; // NPC Follow Target
+		SERIAL				fTarg; // NPC Follow Target
 
-		cNPC_FLAG		npcFlag;
+		cNPC_FLAG			npcFlag;
 	};
 
 	struct PlayerValues_st
@@ -194,9 +206,8 @@ protected:
 
 	UI08		PoisonStrength;
 
-	SI16		fame;
-	SI16		karma;
-	SI16		kills;
+	DAMAGETRACK		damageDealt;
+	DAMAGETRACK		damageHealed;
 
 	virtual bool	DumpHeader( std::ofstream &outStream ) const;
 	virtual bool	DumpBody( std::ofstream &outStream ) const;
@@ -210,7 +221,11 @@ protected:
 
 	bool		IsValidNPC( void ) const;
 	bool		IsValidPlayer( void ) const;
+
+
 public:
+
+	void		UpdateDamageTrack( void );
 
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
@@ -389,13 +404,6 @@ public:
 	SI08		GetFontType( void ) const;
 	void		SetFontType( SI08 newType );
 
-	SI16		GetFame( void ) const;
-	void		SetFame( SI16 value );
-	void		SetKarma( SI16 value );
-	SI16		GetKarma( void ) const;
-	void		SetKills( SI16 value );
-	SI16		GetKills( void ) const;
-
 	CSocket *	GetSocket( void ) const;
 	void		SetSocket( CSocket *newVal );
 
@@ -494,8 +502,11 @@ public:
 	virtual void	Cleanup( void );
 	virtual void	Delete( void );
 	virtual bool	CanBeObjType( ObjectType toCompare ) const;
-
+	
 	FlagColors		FlagColour( CChar *toCompare );
+	void			Heal( SI16 healValue, CChar *healer = NULL );
+	void			Damage( SI16 damageValue, CChar *attacker = NULL );
+	void			Die( void );
 
 // NPC Characters
 protected:

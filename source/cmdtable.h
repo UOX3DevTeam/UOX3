@@ -57,7 +57,6 @@ struct JSCommandEntry
 {
 	UI08		cmdLevelReq;
 	UI16		scriptID;
-	//cScript	*executing;
 	bool		isEnabled;
 	JSCommandEntry() : cmdLevelReq( 0 ), scriptID( 0 ), isEnabled( true )
 	{

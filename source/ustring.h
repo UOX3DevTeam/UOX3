@@ -18,7 +18,6 @@ namespace UOX
 #define MYWHITESPACE " \t\v\f\0 "
 #define COMMENTTAG "//"
 
-//#define MYNONWHITESPACE "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=`~!@#$%^&*()_+|,<.>/?;:'[{]}\"\\"
 //! String class with extensions
 /*! This string class mimics many of the capaiblities provided by QString in the 
 	Trolltech QT library.  It has methods to handle number conversion's, convert
@@ -98,7 +97,6 @@ public:
 	static UString number ( unsigned int n, int base = 10 )  ;
 	static UString number (float n) ;
 	static UString number (double n) ;
-	//static UString sprintf(std::string format,...) ;
 	static UString sprintf(const char* format,...) ;
 };
 

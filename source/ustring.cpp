@@ -71,8 +71,6 @@ UString UString::simplifyWhiteSpace() const
 {
 	UString working = (*this).stripWhiteSpace() ;
 	UString data ="" ;
-	//std::string::iterator iter ;
-	//iter = working.begin() ;
 	bool first = false ;
 	char value[2] ;
 	value[1] = 0 ;
@@ -314,8 +312,6 @@ UString  UString::setNum ( unsigned long n, int base  )
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-//UString & UString::setNum ( float n, char f = 'g', int prec = 6 ) ;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number (float n)
@@ -741,7 +737,6 @@ UString UString::operator+(const char * input )
 {
 	UString temp(input) ;
 	UString base = *this ;
-//	return base + temp ;
 	return (stdstring)base + (stdstring)temp;
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

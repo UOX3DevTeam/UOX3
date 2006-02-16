@@ -458,7 +458,6 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns chance difference to race x in skill skill
 {
-//	assert( skill <= SKILLS );
 	if( InvalidRace( x ) )
 		return 0;
 	if( skill >= ALLSKILLS )

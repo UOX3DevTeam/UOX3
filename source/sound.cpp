@@ -279,22 +279,9 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 		basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
 		if( basesound != 0x00 )
 		{
-/*			switch( cwmWorldState->creatures[xx].SoundFlag() ) // play only idle sounds, if there arnt any, dont play them !
-			{
-				case 0:	++basesound;	break;	// normal case -> play idle sound
-				case 1:	++basesound;	break;	// birds sounds will be implmented later
-				case 2:
-				case 3:	basesound = 0;	break;	// no idle sound, so dont play it !
-				case 4:					break;	// only a single sound, play it !
-			}
-			
-			if( basesound != 0 ) // bugfix lb
-			{
-*/
 			CPPlaySoundEffect toSend = (*soundSrc);
 			toSend.Model( basesound );
 			mSock.Send( &toSend );
-//			}
 		}
 	}
 	else // play random mystic-sounds also if no creature is in range

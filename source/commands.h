@@ -56,7 +56,6 @@ public:
 	~cCommands();
 
 	void			Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled );
-	//void			Register( std::string cmdName, cScript *toRegister, UI08 cmdLevel, bool isEnabled );
 	void			UnRegister( std::string cmdName, cScript *toRegister );
 	void			SetCommandStatus( std::string cmdName, bool isEnabled );
 };

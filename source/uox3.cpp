@@ -614,7 +614,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 
 	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 /*(SI16)cwmWorldState->ServerData()->HungerThreshold()*/ || cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 ) )
+		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 || cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 ) )
 		{
 			for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 			{
@@ -860,6 +860,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 
 	if( checkFieldEffects )
 		Magic->CheckFieldEffects( mChar );
+
+	mChar.UpdateDamageTrack();
+
 	if( mChar.IsDead() )
 		return true;
 	else if( mChar.GetHP() <= 0 )
@@ -1176,7 +1179,6 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
-		//for( ourAccount = Accounts->FirstAccount(); !Accounts->FinishedAccounts(); ourAccount = Accounts->NextAccount() )
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
 			ACCOUNTSBLOCK& actbTemp = I->second;
@@ -1199,7 +1201,6 @@ void CWorldMain::CheckAutoTimers( void )
 				if( !reallyOn )	// no one's really on, let's set that
 				{
 					actbTemp.wFlags &= 0xFFF7;
-					//Accounts->ModAccount( actbTemp.sUsername, AB_FLAGS, actbTemp );
 				}
 			}
 		}
@@ -2077,7 +2078,6 @@ UI32 getclock( void )
 	// We're wanting to return a millisecond value
 	// Milliseconds = seconds * 1000 + microseconds / 1000
 	return ( tv.tv_sec * 1000 ) + ( tv.tv_usec / 1000 );
-//	return tv.tv_sec + tv.tv_usec / 1000;
 }
 
 //o---------------------------------------------------------------------------o
@@ -2499,7 +2499,6 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 			case CV_KRRIOS:
 				break;
 			default:
-				//mapChange.SetMap( 0 );
 				break;
 		}
 	}
@@ -2528,10 +2527,7 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum );
 			break;
 		default:
-			//if( tWorldNum <= 1 )
-				toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum );
-	//		else
-	//			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), 0 );
+			toMove->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum );
 			break;
 	}
 	SendMapChange( tWorldNum, sock );
@@ -2710,14 +2706,11 @@ int main( int argc, char *argv[] )
 		Console.PrintDone();
 
 		DisplayBanner();
-		//DisplaySettings(); << Moved that to the configuration
 
 		Console << "Loading Accounts               ";
 		Accounts->Load();
-		//Console.PrintDone(); 
 
 		Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
-//		cwmWorldState->SetUICurrentTime( getclock() );
 
 		Console << myendl << "Creating and Initializing Console Thread      ";
 	#if UOX_PLATFORM != PLATFORM_WIN32

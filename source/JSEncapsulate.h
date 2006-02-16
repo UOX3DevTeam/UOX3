@@ -29,7 +29,6 @@ namespace UOX
 		void *		toObject( void );
 
 		std::string	ClassName( void );
-//		operator const char *()
 	private:
 
 		void				InternalReset( void );

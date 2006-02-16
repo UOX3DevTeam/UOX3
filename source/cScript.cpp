@@ -58,26 +58,11 @@ static JSFunctionSpec my_functions[] =
 	{ "FindMulti",					SE_FindMulti,				4, 0, 0 },
 	{ "GetItem",					SE_GetItem,					4, 0, 0 },
 	{ "FindItem",					SE_FindItem,				5, 0, 0 },
-	{ "IsRegionGuarded",			SE_IsRegionGuarded,			1, 0, 0 },
-	{ "CanMarkInRegion",			SE_CanMarkInRegion,			1, 0, 0 },
-	{ "CanGateInRegion",			SE_CanGateInRegion,			1, 0, 0 },
-	{ "CanRecallInRegion",			SE_CanRecallInRegion,		1, 0, 0 },
-	{ "GetTownMayor",				SE_GetTownMayor,			1, 0, 0 },
-	{ "GetTownRace",				SE_GetTownRace,				1, 0, 0 },
-	{ "SetTownRace",				SE_SetTownRace,				2, 0, 0 },
 	{ "PossessTown",				SE_PossessTown,				2, 0, 0 },
-	{ "GetTownTaxResource",			SE_GetTownTaxResource,		1, 0, 0 },
 	{ "IsRaceWeakToWeather",		SE_IsRaceWeakToWeather,		2, 0, 0 },
 	{ "GetRaceSkillAdjustment",		SE_GetRaceSkillAdjustment,	2, 0, 0 },
 	{ "UseDoor",					SE_UseDoor,					2, 0, 0 },
-	{ "GetGuildType",				SE_GetGuildType,			1, 0, 0 },
-	{ "GetGuildName",				SE_GetGuildName,			1, 0, 0 },
-	{ "SetGuildType",				SE_SetGuildType,			2, 0, 0 },
-	{ "SetGuildName",				SE_SetGuildName,			2, 0, 0 },
-	{ "SetGuildMaster",				SE_SetGuildMaster,			2, 0, 0 },
-	{ "GetNumGuildMembers",			SE_GetNumGuildMembers,		2, 0, 0 },
 	{ "CompareGuildByGuild",		SE_CompareGuildByGuild,		2, 0, 0 },
-	{ "GetGuildStone",				SE_GetGuildStone,			1, 0, 0 },
 	{ "CommandLevelReq",			SE_CommandLevelReq,			1, 0, 0 },
 	{ "CommandExists",				SE_CommandExists,			1, 0, 0 },
 	{ "FirstCommand",				SE_FirstCommand,			0, 0, 0 },
@@ -143,9 +128,6 @@ static JSFunctionSpec my_functions[] =
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
 	// If we're loading the world then do NOT print out anything!
-//	if( cwmWorldState->GetLoaded() != true ) 
-//		return;
-
 	Console.Error( 2, "JS script failure: Message (%s)", message );
 	if( report == NULL )
 	{
@@ -2041,7 +2023,6 @@ JSObject *cScript::MakeNewObject( IUEEntries iType )
 
 	// DAMN! Using the deprecated function it works!
 	JS_LockGCThing( targContext, toMake );
-	//JS_AddRoot( targContext, toMake );
 	return toMake;
 }
 
@@ -2235,7 +2216,6 @@ bool cScript::OnTalk( CChar *myChar, const char *mySpeech )
 
 	params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
 	params[1] = STRING_TO_JSVAL( strSpeech );
-	//params[1] = INT_TO_JSVAL( SpellID );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTalk", 2, params, &rval );
 	JS_SetPrivate( targContext, charObjects[0].toUse, NULL );

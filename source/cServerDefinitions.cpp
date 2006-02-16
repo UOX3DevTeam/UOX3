@@ -288,12 +288,10 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 		{
 			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
 			case 1:	
-				//Console.PrintSpecial( CRED,		"unprioritized - no section" );		
 				Console.PrintSpecial( CGREEN,		"done" );		
 				break;	// file exist, no section
 			default:
 			case 2:	
-				//Console.PrintSpecial( CBLUE,	"unprioritized - no file" );		
 				Console.PrintSpecial( CBLUE,	"done" );		
 				break;	// no file
 		};

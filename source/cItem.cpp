@@ -505,10 +505,6 @@ void CItem::SetLayer( ItemLayers newValue )
 		CChar *charAffected = (CChar *)contObj;
 		if( charAffected != NULL )
 		{
-//			if( !charAffected->TakeOffItem( GetLayer() ) )
-//			{
-//				Console.Error( "Char %s(0x%X) was never wearing item on layer %u", charAffected->GetName(), contserial, GetLayer() );
-//			}
 			if( layer != IL_NONE )
 				charAffected->TakeOffItem( layer );
 			layer = newValue;
@@ -827,7 +823,6 @@ bool CItem::Save( std::ofstream &outStream )
 		DumpBody( outStream );
 		DumpFooter( outStream );
 
-		//Console << "Contains: " << (UI32)Contains.size() << myendl;
 		for( CItem *toSave = Contains.First(); !Contains.Finished(); toSave = Contains.Next() )
 		{
 			if( ValidateObject( toSave ) && toSave->ShouldSave() )
@@ -1062,7 +1057,6 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "EntryMadeFrom=" << EntryMadeFrom() << std::endl;
 	dumping << "Spells=" << "0x" << std::hex << GetSpell( 0 ) << "," << "0x" << GetSpell( 1 ) << "," << "0x" << GetSpell( 2 ) << std::dec << std::endl;
 
-	//dumping << std::endl << std::endl;
 	outStream << dumping.str();
 
 	return true;

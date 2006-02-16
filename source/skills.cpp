@@ -2169,7 +2169,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 
 		// special dice 2
 		if( !skillsuccess )
-			maxChance = maxChance * 2;
+			maxChance *= 2;
 		
 		if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
 		{ 
@@ -2376,12 +2376,10 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 		}
 	}
 
-	//UI32 iCounter;
 	UI16 xLoc = 60, yLoc = 40;
 	std::map< UI16, createEntry >::iterator imIter;
 	std::map< UI16, createMenuEntry >::iterator smIter;
 	int actualItems = 0;
-//	for( iCounter = 0; iCounter < ourMenu.itemEntries.size(); ++iCounter )
 	for( ourMenu.iIter = ourMenu.itemEntries.begin(); ourMenu.iIter != ourMenu.itemEntries.end(); ++ourMenu.iIter )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
@@ -2390,7 +2388,6 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 			yLoc = 40;
 		}
 		imIter = itemsForMenus.find( (*ourMenu.iIter) );
-//		iIter = itemsForMenus.find( ourMenu.itemEntries[iCounter] );
 		if( imIter != itemsForMenus.end() )
 		{
 			createEntry iItem = imIter->second;
@@ -2400,8 +2397,6 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 				UI08 skillNum = iItem.skillReqs[sCounter].skillNumber;
 				UI16 ourSkill = ourChar->GetSkill( skillNum );
 				UI16 minSkill = iItem.skillReqs[sCounter].minSkill;
-				//UI16 maxSkill = iItem.skillReqs[sCounter].maxSkill;
-				//canMake = ( ourSkill >= minSkill && ourSkill <= maxSkill * 1.5 );
 				canMake = ( ourSkill >= minSkill );
 				// it was not thought that way, its not logical, maxSkill should say, that you can get maxRank with maxSkill and higher
 			}

@@ -4728,7 +4728,6 @@ JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
-//	{ "Print",				CConsole_Print,				1, 0, 0 },
 JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -4740,7 +4739,7 @@ JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	Console.Print( arg0.toString().c_str() );
 	return JS_TRUE;
 }
-//	{ "Log",				CConsole_Log,				1, 0, 0 },
+
 JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 && argc != 2 )
@@ -4761,7 +4760,7 @@ JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	return JS_TRUE;
 }
-//	{ "Error",				CConsole_Error,				2, 0, 0 },
+
 JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -4774,7 +4773,7 @@ JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	Console.Error( arg0.toInt(), arg1.toString().c_str() );
 	return JS_TRUE;
 }
-//	{ "Warning",			CConsole_Warning,			2, 0, 0 },
+
 JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -4787,7 +4786,7 @@ JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	Console.Warning( arg0.toInt(), arg1.toString().c_str() );
 	return JS_TRUE;
 }
-//	{ "PrintSectionBegin",	CConsole_PrintSectionBegin,	0, 0, 0 },
+
 JSBool CConsole_PrintSectionBegin( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4798,7 +4797,7 @@ JSBool CConsole_PrintSectionBegin( JSContext *cx, JSObject *obj, uintN argc, jsv
 	Console.PrintSectionBegin();
 	return JS_TRUE;
 }
-//	{ "TurnYellow",			CConsole_TurnYellow,		0, 0, 0 },
+
 JSBool CConsole_TurnYellow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4809,7 +4808,7 @@ JSBool CConsole_TurnYellow( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	Console.TurnYellow();
 	return JS_TRUE;
 }
-//	{ "TurnRed",			CConsole_TurnRed,			0, 0, 0 },
+
 JSBool CConsole_TurnRed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4820,7 +4819,7 @@ JSBool CConsole_TurnRed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	Console.TurnRed();
 	return JS_TRUE;
 }
-//	{ "TurnGreen",			CConsole_TurnGreen,			0, 0, 0 },
+
 JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4831,7 +4830,7 @@ JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	Console.TurnGreen();
 	return JS_TRUE;
 }
-//	{ "TurnBlue",			CConsole_TurnBlue,			0, 0, 0 },
+
 JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4842,7 +4841,7 @@ JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	Console.TurnBlue();
 	return JS_TRUE;
 }
-//	{ "TurnNormal",			CConsole_TurnNormal,		0, 0, 0 },
+
 JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4853,7 +4852,7 @@ JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	Console.TurnNormal();
 	return JS_TRUE;
 }
-//	{ "TurnBrightWhite",	CConsole_TurnBrightWhite,	0, 0, 0 },
+
 JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4864,7 +4863,7 @@ JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval
 	Console.TurnBrightWhite();
 	return JS_TRUE;
 }
-//	{ "PrintDone",			CConsole_PrintDone,			0, 0, 0 },
+
 JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 && argc != 1 )
@@ -4884,7 +4883,7 @@ JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		messageLoop << MSG_PRINTDONE;
 	return JS_TRUE;
 }
-//	{ "PrintFailed",		CConsole_PrintFailed,		0, 0, 0 },
+
 JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 && argc != 1 )
@@ -4904,7 +4903,7 @@ JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		messageLoop << MSG_PRINTFAILED;
 	return JS_TRUE;
 }
-//	{ "PrintPassed",		CConsole_PrintPassed,		0, 0, 0 },
+
 JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4915,7 +4914,7 @@ JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	Console.PrintPassed();
 	return JS_TRUE;
 }
-//	{ "ClearScreen",		CConsole_ClearScreen,		0, 0, 0 },
+
 JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4926,7 +4925,7 @@ JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	Console.ClearScreen();
 	return JS_TRUE;
 }
-//	{ "PrintBasedOnVal",	CConsole_PrintBasedOnVal,	1, 0, 0 },
+
 JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -4938,7 +4937,7 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval
 	Console.PrintBasedOnVal( arg0.toBool() );
 	return JS_TRUE;
 }
-//	{ "MoveTo",				CConsole_MoveTo,			2, 0, 0 },
+
 JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -4951,7 +4950,7 @@ JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	Console.MoveTo( arg0.toInt(), arg1.toInt() );
 	return JS_TRUE;
 }
-//	{ "PrintSpecial",		CConsole_PrintSpecial,		2, 0, 0 },
+
 JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -4964,7 +4963,7 @@ JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
 	return JS_TRUE;
 }
-//	{ "BeginShutdown",		CConsole_BeginShutdown,		0, 0, 0 },
+
 JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -4975,7 +4974,6 @@ JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	messageLoop << MSG_SHUTDOWN;
 	return JS_TRUE;
 }
-//	{ "Reload",				CConsole_Reload,			1, 0, 0 },
 JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )

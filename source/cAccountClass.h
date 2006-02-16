@@ -23,7 +23,6 @@
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
-	//#define strnicmp(a,b,c) strncasecmp(a,b,c)
 	#define _stat stat
 	#define _mkdir mkdir
 	#define _rmdir rmdir
@@ -35,7 +34,7 @@
 namespace UOX
 {
 
-/* Enums */
+// Enums
 enum __ACCOUNTBBLOCK_FLAGS__
 {
 	AB_USERNAME=1,
@@ -183,9 +182,6 @@ public:
 	// Operator overloads
 	cAccountClass& operator++();
 	cAccountClass& operator--(int);
-	//cAccountClass& operator+=(int);
-	//cAccountClass& operator>>(ACCOUNTSBLOCK& actbRef);
-	// Member Functions
 	UI16	CreateAccountSystem(void);
 	UI16	ImportAccounts(void);
 	UI16	AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000);

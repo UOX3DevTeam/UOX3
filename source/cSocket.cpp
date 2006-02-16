@@ -518,7 +518,7 @@ const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
-CSocket::CSocket( size_t sockNum ) : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( DEFSOCK_IDLETIMEOUT ), 
+CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
@@ -1543,8 +1543,6 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 		newName += " (frozen) ";
 	if( i->IsGuarded() )
 		newName += " (guarded)";
-//	if( i->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-//		newName += " [Murderer]";
 	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
 		GuildSys->DisplayTitle( this, i );
 	

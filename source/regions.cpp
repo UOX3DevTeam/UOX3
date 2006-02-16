@@ -81,11 +81,9 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 			charData.Remove( charToWrite );
 			continue;
 		}
-		//if( !charToWrite->IsNpc() && charToWrite->GetAccount() != -1 ) {
 #if defined( _MSC_VER )
 		#pragma todo( "PlayerHTML Dumping needs to be reimplemented" )
 #endif
-		//DumpPlayerHTML( charToWrite );
 		if( charToWrite->ShouldSave() ) 
 			charToWrite->Save( writeDestination );
 	}

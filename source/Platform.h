@@ -11,8 +11,8 @@ suit our own purposes
 
 #define __REENTRANT
 
-/* Initial platform/compiler-related stuff to set.
-*/
+// Initial platform/compiler-related stuff to set.
+
 #define PLATFORM_WIN32 1
 #define PLATFORM_LINUX 2
 #define PLATFORM_APPLE 3
@@ -24,8 +24,8 @@ suit our own purposes
 #define ENDIAN_LITTLE 1
 #define ENDIAN_BIG 2
 
-/* Finds the compiler type and version.
-*/
+// Finds the compiler type and version.
+
 #if defined( _MSC_VER )
 #   define UOX_COMPILER COMPILER_MSVC
 #   define UOX_COMP_VER _MSC_VER
@@ -45,7 +45,7 @@ suit our own purposes
 
 #endif
 
-/* See if we can use __forceinline or if we need to use __inline instead */
+// See if we can use __forceinline or if we need to use __inline instead
 #if UOX_COMPILER == COMPILER_MSVC 
 #   if UOX_COMP_VER >= 1200
 #       define FORCEINLINE __forceinline
@@ -54,7 +54,7 @@ suit our own purposes
 #   define FORCEINLINE __inline
 #endif
 
-/* Finds the current platform */
+// Finds the current platform
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #   define UOX_PLATFORM PLATFORM_WIN32

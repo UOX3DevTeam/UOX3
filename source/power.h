@@ -23,7 +23,6 @@ inline UI32 power( UI32 base, UI32 exponent )
 			total *= base;
 		return total;
 	}
-//	throw runtime_error( "power() doesn't support negative exponents" );
 	return 0;
 }
 

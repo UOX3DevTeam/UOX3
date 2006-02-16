@@ -646,7 +646,6 @@ void CWorldMain::SaveNewWorld( bool x )
 			}
 		}
 		Console << "Saving Misc. data... ";
-		//Accounts->SaveAccounts();
 		ServerData()->save();
 		Console.Log( "Server data save", "server.log" );
 		RegionSave();

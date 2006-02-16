@@ -513,7 +513,6 @@ void InfoTarget( CSocket *s )
 
 	const SI16 x		= s->GetWord( 11 );
 	const SI16 y		= s->GetWord( 13 );
-//	const SI08 z		= s->GetByte( 16 );
 	const UI16 tileID	= s->GetWord( 17 );
 
 	if( tileID == 0 )
@@ -1353,13 +1352,8 @@ void MakeTownAlly( CSocket *s )
 	UI08 srcTown = mChar->GetTown();
 	UI08 trgTown = targetChar->GetTown();
 
-//	if( srcTown == trgTown )
-//		s->sysmessage( "That person already belongs to your town" );
-//	else
-//	{
-		if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
-			s->sysmessage( 1111 );
-//	}
+	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
+		s->sysmessage( 1111 );
 }
 
 void MakeStatusTarget( CSocket *sock )
@@ -1618,7 +1612,7 @@ void VialTarget( CSocket *mSock )
 				mSock->sysmessage( 747 );
 				return;
 			}
-			targChar->SetHP( targChar->GetHP() - ( RandomNum( 0, 5 ) + 2 ) );
+			targChar->Damage( RandomNum( 0, 5 ) + 2 );
 			Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
 		}
 	}	
