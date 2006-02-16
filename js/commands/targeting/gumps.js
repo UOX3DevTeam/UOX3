@@ -56,9 +56,9 @@ function onCallback0( socket, ourObj )
 		else
 			addStringEntry( myGump, "Owner:", "0xffffffff" );
 		addEntry( myGump, "Strength:", ourObj.strength );
-		var hpmax = NumToString( ourObj.health ) + " " + NumToString( ourObj.maxhp );
+		var hpmax = ourObj.health.toString() + " " + ourObj.maxhp.toString();
 		addStringEntry( myGump, "HP/Max:", hpmax );
-		var damage = NumToString( ourObj.lodamage ) + " " + NumToString( ourObj.hidamage );
+		var damage = ourObj.lodamage.toString() + " " + ourObj.hidamage.toString();
 		addStringEntry( myGump, "Damage:", damage );
 		addEntry( myGump, "Defense:", ourObj.def );
 		addEntry( myGump, "Rank:", ourObj.rank );
@@ -170,14 +170,14 @@ function onGumpPress( socket, button, myGump )
 function addHexEntry( myGump, stringToAdd, dataToAdd )
 {
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 150, position, 0, "0x" + NumToHexString( dataToAdd ) );
+	myGump.AddText( 150, position, 0, "0x" + dataToAdd.toString( 16 ) );
 	position += 20;
 }
 
 function addEntry( myGump, stringToAdd, dataToAdd )
 {
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 150, position, 0, NumToString( dataToAdd ) );
+	myGump.AddText( 150, position, 0, dataToAdd.toString() );
 	position += 20;
 }
 

@@ -993,162 +993,6 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
-JSBool SE_IsRegionGuarded( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-		return JS_FALSE;
-	UI08 toCheck	= (UI08)JSVAL_TO_INT( argv[0] );
-	*rval			= BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->IsGuarded() );
-	return JS_TRUE;
-}
-
-JSBool SE_CanMarkInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanMark() );
-	return JS_TRUE;
-}
-
-JSBool SE_CanRecallInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanRecall() );
-	return JS_TRUE;
-}
-
-JSBool SE_CanGateInRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 toCheck = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->townRegions[toCheck]->CanGate() );
-	return JS_TRUE;
-}
-
-JSBool SE_GetGuildType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild = GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-		*rval = INT_TO_JSVAL( GT_STANDARD );
-	else 
-		*rval = INT_TO_JSVAL( mGuild->Type() );
-	return JS_TRUE;
-}
-
-JSBool SE_GetGuildName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild	= GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-	{
-		return JS_FALSE;
-	}
-
-	JSString *strSpeech = JS_NewStringCopyZ( cx, mGuild->Name().c_str() );
-
-	*rval = STRING_TO_JSVAL( strSpeech );
-	return JS_TRUE;
-}
-
-JSBool SE_SetGuildType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild	= GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-	{
-		return JS_FALSE;
-	}
-
-	SI08 newType = (SI08)JSVAL_TO_INT( argv[1] );
-	if( newType < GT_STANDARD || newType > GT_COUNT )
-		newType = GT_UNKNOWN;
-	mGuild->Type( (GuildType)newType );
-	return JS_TRUE;
-}
-
-JSBool SE_SetGuildName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID targGuild	= (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild		= GuildSys->Guild( targGuild );
-	if( mGuild == NULL )
-	{
-		return JS_FALSE;
-	}
-	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	if( test.empty() || test.length() == 0 )
-	{
-		return JS_FALSE;
-	}
-	mGuild->Name( test );
-	return JS_TRUE;
-}
-
-JSBool SE_SetGuildMaster( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild	= GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-	{
-		return JS_FALSE;
-	}
-
-	mGuild->Master( JSVAL_TO_INT( argv[1] ) );
-	return JS_TRUE;
-}
-
-JSBool SE_GetNumGuildMembers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	UI08 memberType = (UI08)JSVAL_TO_INT( argv[1] );
-	if( memberType != 0 && memberType != 1 )
-		memberType = 0;
-
-	CGuild *mGuild = GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-		*rval = INT_TO_JSVAL( 0 );
-	else if( memberType == 0 )
-		*rval = INT_TO_JSVAL( mGuild->NumMembers() );
-	else if( memberType == 1 )
-		*rval = INT_TO_JSVAL( mGuild->NumRecruits() );
-	else
-		*rval = INT_TO_JSVAL( mGuild->NumRecruits() + mGuild->NumMembers() );
-	return JS_TRUE;
-}
 
 JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -1162,64 +1006,6 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	return JS_TRUE;
 }
 
-JSBool SE_GetGuildStone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	GUILDID toCheck = (GUILDID)JSVAL_TO_INT( argv[0] );
-	CGuild *mGuild = GuildSys->Guild( toCheck );
-	if( mGuild == NULL )
-		*rval = INT_TO_JSVAL( INVALIDSERIAL );
-	else
-		*rval = INT_TO_JSVAL( mGuild->Stone() );
-	return JS_TRUE;
-}
-
-JSBool SE_GetTownMayor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	CChar *mayor		= cwmWorldState->townRegions[town]->GetMayor();
-	if( ValidateObject( mayor ) )
-	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myObj, mayor );
-		*rval				= OBJECT_TO_JSVAL( myObj );
-	}
-	else
-		*rval				= JSVAL_NULL;
-	return JS_TRUE;
-}
-
-JSBool SE_GetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	*rval		= INT_TO_JSVAL( cwmWorldState->townRegions[town]->GetRace() );
-	return JS_TRUE;
-}
-
-JSBool SE_SetTownRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		return JS_FALSE;
-	}
-	UI08 town		= (UI08)JSVAL_TO_INT( argv[0] );
-	RACEID nRace	= (RACEID)JSVAL_TO_INT( argv[1] );
-	cwmWorldState->townRegions[town]->SetRace( nRace );
-	return JS_TRUE;
-}
-
 JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -1229,32 +1015,6 @@ JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
 	UI08 sTown	= (UI08)JSVAL_TO_INT( argv[1] );
 	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
-	return JS_TRUE;
-}
-
-JSBool SE_GetTownTax( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_TRUE;
-}
-
-JSBool SE_GetTownTaxResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		return JS_FALSE;
-	}
-	UI08 town = (UI08)JSVAL_TO_INT( argv[0] );
-	*rval = INT_TO_JSVAL( cwmWorldState->townRegions[town]->GetResourceID() );
-	return JS_TRUE;
-}
-
-JSBool SE_SetTownTax( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_TRUE;
-}
-
-JSBool SE_SetTownTaxResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
 	return JS_TRUE;
 }
 
@@ -1295,11 +1055,6 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsva
 	int skill = JSVAL_TO_INT( argv[1] );
 	*rval = INT_TO_JSVAL( Races->DamageFromSkill( skill, race ) );
 	return JS_TRUE;
-}
-
-JSBool SE_GetClosestTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_FALSE;
 }
 
 JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )

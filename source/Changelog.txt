@@ -1,3 +1,29 @@
+2/15/2006 - giwo (0.98-3.3h [3.4 BETA])
+	Marked StringToNum(), NumToString(), NumToHexString() for later deletion, please use built-in JS method .toString() and function parseInt() in their place.
+	Updated all JS files to use toString() and parseInt().
+	Implemented JS props .stone and .master for Guilds.
+	Removed the following JS functions as they are superfluous.
+		IsRegionGuarded
+		CanMarkInRegion
+		CanRecallInRegion
+		CanGateInRegion
+		GetGuildType
+		GetGuildName
+		SetGuildType
+		SetGuildName
+		SetGuildMaster
+		GetNumGuildMembers
+		GetGuildStone
+		GetTownMayor
+		GetTownRace
+		SetTownRace
+		GetTownTax
+		GetTownTaxResource
+		SetTownTax
+		SetTownTaxResource
+
+
+
 2/15/2006 - giwo (0.98-3.3g [3.4 BETA])
 	Changed create.dfn handling so ID's of 0 (default) display nothing on the gump.
 	Updated create.dfn menu's with "Previous Menu" entries.

@@ -13,8 +13,8 @@ function command_SHOWTIME( socket, cmdString )
 		ampm = " PM";
 		hour = hour - 12;
 	}
-	var hDisp = NumToString( hour );
-	var mDisp = NumToString( minute );
+	var hDisp = hour.toString();
+	var mDisp = minute.toString();
 	if( minute < 10 )
 		mDisp = "0" + mDisp;
 

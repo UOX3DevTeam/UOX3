@@ -10,7 +10,7 @@ function command_DELID( socket, cmdString )
 		idToDelete = StringToNum( cmdString );
 		if( idToDelete )
 			var count = IterateOver( "ITEM" );
-		socket.SysMessage( "Deleted " + NumToString( count ) + " items" );
+		socket.SysMessage( "Deleted " + count.toString() + " items" );
 	}
 }
 

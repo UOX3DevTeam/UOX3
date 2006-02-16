@@ -976,6 +976,19 @@ namespace UOX
 					*vp = STRING_TO_JSVAL( tString );
 					break;
 				case CREGP_MAYOR:
+					CChar *tempMayor;
+					tempMayor = gPriv->GetMayor();
+
+					if( !ValidateObject( tempMayor ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
+						JS_SetPrivate( cx, myChar, tempMayor );
+						*vp = OBJECT_TO_JSVAL( myChar );
+					}
 					break;
 				case CREGP_RACE:				*vp = INT_TO_JSVAL( gPriv->GetRace() );					break;
 				case CREGP_TAX:					*vp = INT_TO_JSVAL( gPriv->TaxedAmount() );				break;
@@ -1047,8 +1060,35 @@ namespace UOX
 					break;
 				case CGP_TYPE:			*vp = INT_TO_JSVAL( gPriv->Type() );		break;
 				case CGP_MASTER:
+										CChar *gMaster;
+										gMaster = calcCharObjFromSer( gPriv->Master() );
+
+										if( !ValidateObject( gMaster ) )
+											*vp = JSVAL_NULL;
+										else
+										{
+											// Otherwise Acquire an object
+											cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+											JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
+											JS_SetPrivate( cx, myChar, gMaster );
+											*vp = OBJECT_TO_JSVAL( myChar );
+										}
+										break;
 				case CGP_STONE:
-					break;
+										CItem *gStone;
+										gStone = calcItemObjFromSer( gPriv->Stone() );
+
+										if( !ValidateObject( gStone ) )
+											*vp = JSVAL_NULL;
+										else
+										{
+											// Otherwise Acquire an object
+											cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+											JSObject *myItem	= myScript->AcquireObject( IUE_ITEM );
+											JS_SetPrivate( cx, myItem, gStone );
+											*vp = OBJECT_TO_JSVAL( myItem );
+										}
+										break;
 				case CGP_NUMMEMBERS:	*vp = INT_TO_JSVAL( gPriv->NumMembers() );	break;
 				case CGP_NUMRECRUITS:	*vp = INT_TO_JSVAL( gPriv->NumRecruits() );	break;
 				case CGP_MEMBERS:
@@ -1085,7 +1125,27 @@ namespace UOX
 				case CGP_NAME:				gPriv->Name( encaps.toString() );					break;
 				case CGP_TYPE:				gPriv->Type( (GuildType)encaps.toInt() );			break;
 				case CGP_MASTER:
+											if( *vp != JSVAL_NULL )
+											{
+												CChar *myChar = (CChar*)encaps.toObject();
+												if( !ValidateObject( myChar ) )
+													break;
+												gPriv->Master( (*myChar) );
+											}
+											else
+												gPriv->Master( INVALIDSERIAL );
+											break;
 				case CGP_STONE:
+											if( *vp != JSVAL_NULL )
+											{
+												CItem *myItem = (CItem *)encaps.toObject();
+												if( !ValidateObject( myItem ) )
+													break;
+												gPriv->Stone( (*myItem) );
+											}
+											else
+												gPriv->Stone( INVALIDSERIAL );
+											break;
 				case CGP_MEMBERS:
 				case CGP_RECRUITS:
 					break;

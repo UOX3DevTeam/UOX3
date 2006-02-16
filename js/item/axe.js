@@ -119,7 +119,7 @@ function RegenerateLog( mResource, socket)
 	var logTimer	= ResourceTime( "LOGS" );
 	var currentTime	= GetCurrentClock();
 
-	socket.SysMessage( NumToString( logCeiling ) + " " + NumToString( logTimer ) + " " + NumToString( currentTime ) );
+	socket.SysMessage( logCeiling.toString() + " " + logTimer.toString() + " " + currentTime.toString() );
 	if( mResource.logTime <= currentTime )
 	{
 		for( var i = 0; i < logCeiling; ++i )
@@ -130,7 +130,7 @@ function RegenerateLog( mResource, socket)
 				break;
 		}
 		mResource.logTime = (currentTime + (1000 * logTimer));
-		socket.SysMessage( "New Time: " + NumToString( mResource.logTime ) );
+		socket.SysMessage( "New Time: " + mResource.logTime.toString() );
 	}
 }
 

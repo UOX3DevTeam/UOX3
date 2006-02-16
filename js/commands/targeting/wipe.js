@@ -44,7 +44,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( mChar.name + " has initiated an item wipe.\n" );
 				isItem 		= true;
 				counter 	= IterateOver( "ITEM" );
-				counterStr 	= NumToString( counter );
+				counterStr 	= counter.toString();
 				Console.Print( "Item wipe deleted " + counterStr + " items.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " items" );
 			}
@@ -53,7 +53,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( mChar.name + " has initiated a npc wipe.\n" );
 				isItem 		= false;
 				counter 	= IterateOver( "CHARACTER" );
-				counterStr 	= NumToString( counter );
+				counterStr 	= counter.toString();
 				Console.Print( "NPC wipe deleted " + counterStr + " npcs.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " npcs" );
 			}
@@ -103,7 +103,7 @@ function DoWipe( socket, ourObj )
 	Console.Print( mChar.name + " has initiated a wipe.\n" );
 	socket.SysMessage( "Wiping.." );
 	var counter 	= IterateOver( "ITEM" );
-	var counterStr	= NumToString( counter );
+	var counterStr	= counter.toString();
 	socket.SysMessage( "Wiped " + counterStr + " items" );
 	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
 

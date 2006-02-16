@@ -138,7 +138,7 @@ function onUse( pUser, iUsed )
 					}
 			}
 			pUser.DoAction( combatAnim );
-			ammoType = StringToNum( ammoType );
+			ammoType = parseInt( ammoType );
 			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false ); 
 			if(!pUser.CheckSkill( 31, 0, 250 ))
 			{

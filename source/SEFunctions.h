@@ -102,33 +102,12 @@ SEngineFunc SE_FindMulti;				//										***
 SEngineFunc SE_GetItem;					//										***
 SEngineFunc SE_FindItem;				//										***
 
-SEngineFunc SE_IsRegionGuarded;			//										***
-SEngineFunc SE_CanMarkInRegion;			//										***
-SEngineFunc SE_CanRecallInRegion;		//										***
-SEngineFunc SE_CanGateInRegion;			//										***
-
-SEngineFunc SE_GetGuildType;			//										**
-SEngineFunc SE_GetGuildName;			//										**
-SEngineFunc SE_SetGuildType;			//										**
-SEngineFunc SE_SetGuildName;			//										**
-SEngineFunc SE_SetGuildMaster;			//										**
-SEngineFunc SE_GetNumGuildMembers;		//										**
 SEngineFunc SE_CompareGuildByGuild;		//										**
-SEngineFunc SE_GetGuildStone;			//										**
 
-SEngineFunc SE_GetTownMayor;			//										***
-SEngineFunc SE_GetTownRace;				//										***
-SEngineFunc SE_SetTownRace;				//										***
 SEngineFunc SE_PossessTown;				//										***
-SEngineFunc SE_GetTownTax;				//										*
-SEngineFunc SE_GetTownTaxResource;		//										***
-SEngineFunc SE_SetTownTax;				//										*
-SEngineFunc SE_SetTownTaxResource;		//										*
 
 SEngineFunc SE_IsRaceWeakToWeather;		//										***
 SEngineFunc SE_GetRaceSkillAdjustment;	//										***
-
-SEngineFunc SE_GetClosestTown;			//										*
 
 SEngineFunc SE_UseDoor;					//										***
 
@@ -139,9 +118,9 @@ SEngineFunc SE_CalcTargetedItem;		//										***
 SEngineFunc SE_CalcTargetedChar;		//										***
 SEngineFunc SE_GetTileIDAtMapCoord;		//										***
 
-SEngineFunc SE_StringToNum;
-SEngineFunc SE_NumToString;
-SEngineFunc SE_NumToHexString;
+SEngineFunc SE_StringToNum;				// Marked for Deletion
+SEngineFunc SE_NumToString;				// Marked for Deletion
+SEngineFunc SE_NumToHexString;			// Marked for Deletion
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;

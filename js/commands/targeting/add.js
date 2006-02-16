@@ -25,7 +25,7 @@ function command_ADD( socket, cmdString )
 				var a1 = StringToNum( splitString[1] );
 				var a2 = StringToNum( splitString[2] );
 				socket.tempint = (a1<<8) + a2;
-				socket.CustomTarget( 2, "Select location for Item: 0x" + NumToHexString( socket.tempint ) );
+				socket.CustomTarget( 2, "Select location for Item: 0x" + socket.tempint.toString( 16 ) );
 			}
 			else if( splitString[1] )
 			{
@@ -38,9 +38,10 @@ function command_ADD( socket, cmdString )
 			{
 				var a1 = StringToNum( splitString[1] );
 				var a2 = StringToNum( splitString[2] );
-				socket.tempint = (a1<<8) + a2;
-				socket.xText = NumToHexString((a1<<8) + a2);
-				socket.CustomTarget( 3, "Select location for Spawner: 0x" + NumToHexString( socket.xText ) );
+				var stringVal = ((a1<<8) + a2);
+				socket.tempint = stringVal;
+				socket.xText = stringVal.toString( 16 );
+				socket.CustomTarget( 3, "Select location for Spawner: 0x" + socket.xText );
 			}
 			else if( splitString[1] )
 			{

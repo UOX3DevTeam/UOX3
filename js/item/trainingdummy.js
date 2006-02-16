@@ -25,7 +25,7 @@ function onUse( pUser, iUsed )
 			TriggerEvent( 2501, "getHorseCombatAnim", pUser, weaponType );
 		else
 			TriggerEvent( 2501, "getFootCombatAnim", pUser, weaponType );
-		var combatAnim = StringToNum( pUser.GetTag( "combatAnim" )); //convert to decimal for use with DoAction
+		var combatAnim = parseInt( pUser.GetTag( "combatAnim" )); //convert to decimal for use with DoAction
 		pUser.DoAction( combatAnim );
 
 		//Remove the temporary tags we set on our character above

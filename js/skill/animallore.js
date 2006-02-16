@@ -79,14 +79,14 @@ function onGumpPress( socket, button, myGump )
 function addEntry( myGump, stringToAdd, dataToAdd )
 {
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 225, position, 0, NumToString( dataToAdd ) );
+	myGump.AddText( 225, position, 0, dataToAdd.toString() );
 	position += 20;
 }
 
 function addDualEntry( myGump, stringToAdd, dataToAdd, moreDataToAdd )
 {
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 225, position, 0, NumToString( dataToAdd ) + "/" + NumToString( moreDataToAdd ) );
+	myGump.AddText( 225, position, 0, dataToAdd.toString() + "/" + moreDataToAdd.toString() );
 	position += 20;
 }
 
