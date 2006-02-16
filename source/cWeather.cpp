@@ -1535,6 +1535,10 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		DoPlayerWeather( s, 5, (SI08)Temp( currval ) );
 		if( p->GetWeathDamage( STORM ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
 	}
 	else if( brewStorm )
 	{
@@ -1546,12 +1550,20 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		DoPlayerWeather( s, 2, (SI08)Temp( currval ) );
 		if( p->GetWeathDamage( SNOW ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
 	} 
 	else if( isRaining )
 	{
 		DoPlayerWeather( s, 1, (SI08)Temp( currval ) );
 		if( p->GetWeathDamage( RAIN ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
 	}
 	else
 	{

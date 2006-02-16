@@ -1,3 +1,6 @@
+2/16/2006 - grimson
+	Changed cWeatherAb::DoPlayerStuff() to reset weather effect timers if needed.
+
 2/16/2006 - grimson (0.98-3.3j [3.4 BETA])
 	Fixed VC6 build errors (thanks to giwo).
 	Wrote all available race settings into the header of races.dfn and documented a few of them.
