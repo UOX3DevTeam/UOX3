@@ -36,7 +36,12 @@ MENU=63		// jewelry
 MENU=64		// miscellaneous
 MENU=65		// more tools
 MENU=66		// traps
-MENU=67     // candles
+MENU=67     	// candles
+}
+[MENUENTRY 59]
+{
+NAME=Previous Menu
+SUBMENU=59
 }
 [MENUENTRY 60]
 {
@@ -97,6 +102,7 @@ ITEM=215
 ITEM=216
 ITEM=217
 ITEM=218
+MENU=59
 }
 [SUBMENU 61]
 { Parts
@@ -107,6 +113,7 @@ ITEM=222
 ITEM=223
 ITEM=224
 ITEM=225
+MENU=59
 }
 [SUBMENU 62]
 { Utensils
@@ -122,6 +129,7 @@ ITEM=234
 ITEM=235
 ITEM=236
 ITEM=237
+MENU=59
 }
 [SUBMENU 63]
 { Jewelry
@@ -131,6 +139,7 @@ ITEM=240
 ITEM=241
 ITEM=242
 ITEM=243
+MENU=59
 }
 [SUBMENU 64]
 { Miscellaneous
@@ -141,6 +150,7 @@ ITEM=248
 ITEM=249
 ITEM=250
 ITEM=251
+MENU=59
 }
 [SUBMENU 65]
 { More Tools
@@ -153,6 +163,7 @@ ITEM=257
 ITEM=258
 ITEM=259
 ITEM=260
+MENU=59
 }
 [SUBMENU 66]
 { Traps
@@ -160,6 +171,7 @@ ITEM=261
 ITEM=262
 ITEM=263
 ITEM=264
+MENU=59
 }
 [SUBMENU 67]
 { Candles
@@ -171,6 +183,7 @@ ITEM=313 // [0x142f] thick candle
 ITEM=314 // [0x1433] middle candle
 ITEM=315 // [0x1437] slim candle
 ITEM=316 // [0x1857] left skull with candle
+MENU=59
 }
 [ITEM 210]
 {

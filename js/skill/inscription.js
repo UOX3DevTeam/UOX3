@@ -28,12 +28,6 @@ function onCallback0( pSock, ourObj )
 					return;
 				}
 	
-				if( pUser.ResourceCount( ourObj.id ) < 1 )
-				{
-					pSock.SysMessage( GetDictionaryEntry( 776, pSock.Language ) );
-					return;
-				}
-	
 				var ownerObj = GetPackOwner( ourObj, 0 );
 				if( ownerObj && pUser.serial == ownerObj.serial )
 					pSock.MakeMenu( 99, 23 );

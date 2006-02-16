@@ -174,10 +174,12 @@ void DoMessageLoop( void )
 								LoadCreatures();
 								LoadCustomTitle();
 								LoadSkills();
-								LoadPlaces();								break;	// Reload definition files
+								LoadPlaces();
+								Skills->Load();								break;	// Reload definition files
 					case '7':	JSMapping->Reload();	
 								Console.PrintDone(); 	
-								Commands->Load();							break;	// Reload JS
+								Commands->Load();
+								Skills->Load();								break;	// Reload JS
 					case '8':	HTMLTemplates->Unload();
 								HTMLTemplates->Load();						break;	// Reload HTML
 					}

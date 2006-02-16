@@ -2421,7 +2421,8 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 			if( canMake )
 			{
 				toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter) );
-				toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID );
+				if( iItem.targID )
+					toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targID );
 				toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
 				toSend.AddText( iItem.name );
 				yLoc += 40;
@@ -2443,7 +2444,8 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 		{
 			createMenuEntry iMenu = smIter->second;
 			toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 1000 + (*ourMenu.mIter) );
-			toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID );
+			if( iMenu.targID )
+				toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID );
 			toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
 			toSend.AddText( iMenu.name );
 			yLoc += 40;
@@ -2605,7 +2607,6 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Repair armor and weapons.
 //o---------------------------------------------------------------------------o
-
 void cSkills::RepairMetal( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;

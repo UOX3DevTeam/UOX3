@@ -38,6 +38,11 @@ ITEM=206	// composite bow
 ITEM=207	// Repeating crossbow
 ITEM=208	// yumi
 }
+[MENUENTRY 49]
+{
+NAME=Previous Menu
+SUBMENU=49
+}
 [MENUENTRY 50]
 {
 NAME=Shafts
@@ -50,6 +55,7 @@ ITEM=194
 ITEM=195
 ITEM=196
 ITEM=197
+MENU=49
 }
 [ITEM 190]
 {

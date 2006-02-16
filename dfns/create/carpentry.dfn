@@ -40,6 +40,11 @@ MENU=27		// blacksmith additions
 MENU=28		// tailor additions
 MENU=29		// cooking additions
 }
+[MENUENTRY 19]
+{
+NAME=Previous Menu
+SUBMENU=19
+}
 [MENUENTRY 20]
 {
 NAME=Chairs
@@ -112,6 +117,7 @@ ITEM=55
 ITEM=56
 ITEM=57
 ITEM=58
+MENU=19
 }
 [SUBMENU 21]
 { tables
@@ -119,6 +125,7 @@ ITEM=59
 ITEM=60
 ITEM=61
 ITEM=62
+MENU=19
 }
 [SUBMENU 22]
 { containers
@@ -131,6 +138,7 @@ ITEM=68
 ITEM=69
 ITEM=70
 ITEM=71
+MENU=19
 }
 [SUBMENU 23]
 { other items
@@ -141,6 +149,7 @@ ITEM=75
 ITEM=76
 ITEM=77
 ITEM=78
+MENU=19
 }
 [SUBMENU 24]
 { staves and poles
@@ -148,6 +157,7 @@ ITEM=79
 ITEM=80
 ITEM=81
 ITEM=82
+MENU=19
 }
 [SUBMENU 25]
 { musical items
@@ -161,6 +171,7 @@ ITEM=89
 ITEM=90
 ITEM=91
 ITEM=92
+MENU=19
 }
 [SUBMENU 26]
 { house additions
@@ -173,6 +184,7 @@ ITEM=98
 ITEM=99
 ITEM=100
 ITEM=101
+MENU=19
 }
 [SUBMENU 27]
 { blacksmith addons
@@ -181,6 +193,7 @@ ITEM=103
 ITEM=104
 ITEM=105
 ITEM=106
+MENU=19
 }
 [SUBMENU 28]
 { tailor addons
@@ -194,6 +207,7 @@ ITEM=113
 ITEM=114
 ITEM=115
 ITEM=116
+MENU=19
 }
 [SUBMENU 29]
 { cooking addons
@@ -203,6 +217,7 @@ ITEM=119
 ITEM=120
 ITEM=121
 ITEM=122
+MENU=19
 }
 [ITEM 50]
 {

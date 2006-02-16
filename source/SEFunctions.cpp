@@ -38,6 +38,7 @@ void		LoadSpawnRegions( void );
 void		LoadRegions( void );
 void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
+void		LoadSkills( void );
 
 #define __EXTREMELY_VERBOSE__
 
@@ -1889,6 +1890,8 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	case 4:	// Reload DFNs
 			FileLookup->Reload();
 			LoadTeleportLocations();
+			LoadSkills();
+			Skills->Load();
 			break;
 	case 5: // Reload JScripts
 			messageLoop << MSG_RELOADJS;
@@ -1908,6 +1911,8 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			LoadSpawnRegions();
 			Magic->LoadScript();
 			Commands->Load();
+			LoadSkills();
+			Skills->Load();
 			messageLoop << MSG_RELOADJS;
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();

@@ -1,3 +1,10 @@
+2/15/2006 - giwo (0.98-3.3g [3.4 BETA])
+	Changed create.dfn handling so ID's of 0 (default) display nothing on the gump.
+	Updated create.dfn menu's with "Previous Menu" entries.
+	Removed resource counts before launching create menu's, as the create menu handles that.
+	Added LEATHER resource type for create.dfn
+	Added cloth ID's to CLOTH resource type.
+
 2/15/2006 - grimson
 	Fixed 3D client crashes with CChar::talkAll() and  CChar::talk(), when the text color
 	is 0x0000 it will be set to the default of 0x5A.

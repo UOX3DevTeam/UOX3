@@ -30,13 +30,7 @@ function onCallback1( socket, ourObj )
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
-			{
-				var countResource = mChar.ResourceCount( resID );
-				if( countResource >= 1 )
-					socket.MakeMenu( 39, 34 );
-				else
-					socket.SysMessage( GetDictionaryEntry( 776, socket.Language ) );
-			}
+				socket.MakeMenu( 39, 34 );
 			else
 				socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
 		}

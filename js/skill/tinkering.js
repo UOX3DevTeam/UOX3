@@ -31,16 +31,10 @@ function onCallback1( socket, ourObj )
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
 			{
-				var countResource = mChar.ResourceCount( resID );
-				if( countResource >= 2 )
-				{
-					if( countResource > 4 || ( resID != 0x1BDD && resID != 0x1BE0 ) )
-						socket.MakeMenu( 59, 37 );
-					else
-						socket.SysMessage( GetDictionaryEntry( 941, socket.Language ) );
-				}
+				if( resID != 0x1BDD && resID != 0x1BE0 )
+					socket.MakeMenu( 59, 37 );
 				else
-					socket.SysMessage( GetDictionaryEntry( 940, socket.Language ) );
+					socket.SysMessage( GetDictionaryEntry( 941, socket.Language ) );
 			}
 			else
 				socket.SysMessage( GetDictionaryEntry( 775, socket.Language ) );
