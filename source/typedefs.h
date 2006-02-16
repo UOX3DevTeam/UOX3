@@ -43,6 +43,8 @@ typedef UI16		RACEID;
 typedef UI08		GENDER;
 typedef UI16		COLOUR;
 typedef UI08		LIGHTLEVEL;
+typedef UI08		COLDLEVEL;
+typedef UI08		HEATLEVEL;
 typedef UI08		SECONDS;
 typedef UI08		ARMORCLASS;
 typedef UI32		ITEM;

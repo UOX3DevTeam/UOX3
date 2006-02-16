@@ -5023,15 +5023,15 @@ void CChar::UpdateDamageTrack( void )
 			damageDealt.Remove( i, true );
 	}
 	// Update the healing stuff
-	for( DamageTrackEntry *i = damageHealed.First(); !damageHealed.Finished(); i = damageHealed.Next() )
+	for( DamageTrackEntry *j = damageHealed.First(); !damageHealed.Finished(); j = damageHealed.Next() )
 	{
-		if( i == NULL )
+		if( j == NULL )
 		{
-			damageHealed.Remove( i );
+			damageHealed.Remove( j );
 			continue;
 		}
-		if( (i->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
-			damageHealed.Remove( i, true );
+		if( (j->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
+			damageHealed.Remove( j, true );
 	}
 }
 

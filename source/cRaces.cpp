@@ -556,6 +556,42 @@ LIGHTLEVEL cRaces::LightLevel( RACEID race ) const
 	return races[race]->LightLevel(); 
 }
 
+void cRaces::ColdLevel( RACEID race, COLDLEVEL value )
+// PRE:	Race is valid, value is a valid cold level
+// POST:	the cold level that race burns at is set to value
+{ 
+	if( InvalidRace( race ) )
+		return;
+	races[race]->ColdLevel( value ); 
+}
+
+COLDLEVEL cRaces::ColdLevel( RACEID race ) const
+// PRE:	Race is valid
+// POST:	Returns the cold level that race burns at
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->ColdLevel(); 
+}
+
+void cRaces::HeatLevel( RACEID race, HEATLEVEL value )
+// PRE:	Race is valid, value is a valid heat level
+// POST:	the light heat that race burns at is set to value
+{ 
+	if( InvalidRace( race ) )
+		return;
+	races[race]->HeatLevel( value ); 
+}
+
+HEATLEVEL cRaces::HeatLevel( RACEID race ) const
+// PRE:	Race is valid
+// POST:	Returns the heat level that race burns at
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->HeatLevel(); 
+}
+
 bool cRaces::Affect( RACEID race, WeatherType element ) const
 {
 	bool rValue = false;
@@ -569,6 +605,7 @@ bool cRaces::Affect( RACEID race, WeatherType element ) const
 		case HEAT:		rValue = races[race]->AffectedByHeat();			break;
 		case LIGHTNING: rValue = races[race]->AffectedByLightning();	break;
 		case SNOW:		rValue = races[race]->AffectedBySnow();			break;
+		case STORM:		rValue = races[race]->AffectedByStorm();		break;
 		default:														break;
 		}
 	}
@@ -587,6 +624,7 @@ void cRaces::Affect( RACEID race, WeatherType element, bool value )
 		case HEAT:		races[race]->AffectedByHeat( value );			break;
 		case LIGHTNING: races[race]->AffectedByLightning( value );		break;
 		case SNOW:		races[race]->AffectedBySnow( value );			break;
+		case STORM:		races[race]->AffectedByStorm( value );			break;
 		default:														break;
 		}
 	}
@@ -769,7 +807,10 @@ bool CRace::AffectedBySnow( void ) const
 {
 	return ( (bools&0x0100) == 0x0100 );
 }
-
+bool CRace::AffectedByStorm( void ) const
+{
+	return ( (bools&0x0400) == 0x0400 );
+}
 bool CRace::NoHair( void ) const
 {
 	return ( (bools&0x0200) == 0x0200 );
@@ -782,6 +823,14 @@ GENDER CRace::GenderRestriction( void ) const
 LIGHTLEVEL CRace::LightLevel( void ) const
 {
 	return lightLevel;
+}
+COLDLEVEL CRace::ColdLevel( void ) const
+{
+	return coldLevel;
+}
+HEATLEVEL CRace::HeatLevel( void ) const
+{
+	return heatLevel;
 }
 LIGHTLEVEL CRace::NightVision( void ) const
 {
@@ -880,7 +929,13 @@ void CRace::AffectedBySnow( bool newValue )
 	else
 		bools &= 0xFEFF;
 }
-
+void CRace::AffectedByStorm( bool newValue )
+{
+	if( newValue )
+		bools |= 0x0400;
+	else
+		bools &= 0xFBFF;
+}
 void CRace::NoHair( bool newValue )
 {
 	if( newValue )
@@ -896,6 +951,14 @@ void CRace::GenderRestriction( GENDER newValue )
 void CRace::LightLevel( LIGHTLEVEL newValue )
 {
 	lightLevel = newValue;
+}
+void CRace::ColdLevel( COLDLEVEL newValue )
+{
+	coldLevel = newValue;
+}
+void CRace::HeatLevel( HEATLEVEL newValue )
+{
+	heatLevel = newValue;
 }
 void CRace::NightVision( LIGHTLEVEL newValue )
 {
@@ -1111,12 +1174,14 @@ void CRace::Load( size_t sectNum, int modCount )
 
 			case 'c':
 			case 'C':
-				if( UTag == "COLDAFFECT" )	// are we affected by light?
+				if( UTag == "COLDAFFECT" )	// are we affected by cold?
 					AffectedByCold( true );
-				else if( UTag == "COLDDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), COLD );
-				else if( UTag == "COLDSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), COLD );
+				else if( UTag == "COLDLEVEL" )	// cold level at which to take damage
+					ColdLevel( data.toUShort() );
+				else if( UTag == "COLDDAMAGE" )	// how much damage to take from cold
+					WeatherDamage( data.toUShort(), COLD );
+				else if( UTag == "COLDSECS" )		// how often cold affects in secs
+					WeatherSeconds( data.toUShort(), COLD );
 				break;
 
 			case 'd':
@@ -1147,9 +1212,11 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "HEATAFFECT" )	// are we affected by light?
 					AffectedByHeat( true );
 				else if( UTag == "HEATDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), HEAT );
+					WeatherDamage( data.toUShort(), HEAT );
+				else if( UTag == "HEATLEVEL" )	// heat level at which to take damage
+					HeatLevel( data.toUShort() );
 				else if( UTag == "HEATSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), HEAT );
+					WeatherSeconds( data.toUShort(), HEAT );
 				else if( UTag == "HPMOD" ) // how much additional percent of strength are hitpoints
 					HPModifier( data.toShort() );
 				break;
@@ -1165,18 +1232,18 @@ void CRace::Load( size_t sectNum, int modCount )
 				if( UTag == "LIGHTAFFECT" )	// are we affected by light?
 					AffectedByLight( true );
 				else if( UTag == "LIGHTDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), LIGHT );
+					WeatherDamage( data.toUShort(), LIGHT );
 				else if( UTag == "LIGHTLEVEL" )	// light level at which to take damage
-					LightLevel( data.toUByte() );
+					LightLevel( data.toUShort() );
 				else if( UTag == "LIGHTSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), LIGHT );
+					WeatherSeconds( data.toUShort(), LIGHT );
 
 				else if( UTag == "LIGHTNINGAFFECT" )	// are we affected by light?
 					AffectedByLightning( true );
 				else if( UTag == "LIGHTNINGDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), LIGHTNING );
+					WeatherDamage( data.toUShort(), LIGHTNING );
 				else if( UTag == "LIGHTNINGSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), LIGHTNING );
+					WeatherSeconds( data.toUShort(), LIGHTNING );
 				else if( UTag == "LANGUAGEMIN" ) // set language min 
 					LanguageMin( data.toUShort() ); 
 				break;
@@ -1220,9 +1287,9 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "RAINAFFECT" )	// are we affected by light?
 					AffectedByRain( true );
 				else if( UTag == "RAINDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), RAIN );
+					WeatherDamage( data.toUShort(), RAIN );
 				else if( UTag == "RAINSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), RAIN );
+					WeatherSeconds( data.toUShort(), RAIN );
 				else if( UTag == "RACERELATION" )
 				{
 					if( data.sectionCount( " " ) != 0 )
@@ -1257,9 +1324,15 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "SNOWAFFECT" )	// are we affected by light?
 					AffectedBySnow( true );
 				else if( UTag == "SNOWDAMAGE" )	// how much damage to take from light
-					WeatherDamage( data.toByte(), SNOW );
+					WeatherDamage( data.toUShort(), SNOW );
 				else if( UTag == "SNOWSECS" )		// how often light affects in secs
-					WeatherSeconds( data.toUByte(), SNOW );
+					WeatherSeconds( data.toUShort(), SNOW );
+				else if( UTag == "STORMAFFECT" )	// are we affected by storm?
+					AffectedByStorm( true );
+				else if( UTag == "STORMDAMAGE" )	// how much damage to take from storm
+					WeatherDamage( data.toUShort(), STORM );
+				else if( UTag == "STORMSECS" )		// how often storm affects in secs
+					WeatherSeconds( data.toUShort(), STORM );
 				else if( UTag == "STAMMOD" ) // how much additional percent of int are mana
 					StamModifier( data.toShort() );
 				break;

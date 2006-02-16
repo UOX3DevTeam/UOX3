@@ -10,12 +10,12 @@
 //*
 //* [WEATHERAB 0] 	//The weather definition ID. Referenced from regions.dfn as ABWEATH=...
 //*  COLDCHANCE # 	//This is the chance of there being a cold snap on the day.
-//*               	//If it passes, then there will be a modification of the MINTEMP
-//*               	//to be lower, based on the fact it's colder.
-//*  COLDINTENSITY # 	//Currently unused
-//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then there
-//*			//will be a modification of MAXTEMP to be higher, based on it being a heat wave.
-//*  HEATINTENSITY # 	//Currently unused
+//*               	//If it passes the temperature will be fixed at a value between MINTEMP
+//*			//and COLDINTENSITY
+//*  COLDINTENSITY#	//See above
+//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then the
+//*			//temperature will be fixed ar a value between MAXTEMP and HEATINTENSITY
+//*  HEATINTENSITY # 	//See above
 //*  LIGHTMIN # 	//Minimum light level of the day (midnight).
 //*  LIGHTMAX # 	//Maximum light level of the day (noon).
 //*  MAXTEMP #		//Maximum temperature of the day. Can be affected by heat waves.
@@ -24,12 +24,14 @@
 //*			//Below 10 degrees, Krrios' client takes on a blue tinge.
 //*  MAXWIND #		//Currently unused.
 //*  MINWIND #		//Currently unused.
-//*  RAINCHANCE #	//Chance of there being rain on the day(only if snowchance fails to snow).
+//*  RAINCHANCE #	//Chance of there being rain on the next hour(only if snowchance fails to snow).
 //*  RAININTENSITY #	//Currently unused.
-//*  SNOWCHANCE #	//Chance of there being snow on the day.  Will override rainchance.
+//*  SNOWCHANCE #	//Chance of there being snow on the next hour.  Will override rainchance.
 //*  SNOWINTENSITY #	//Currently unused.
 //*  SNOWTHRESHOLD #    //The temperature at which snow will STOP. So if it's 15, then when
 //*			//the region hits 15 degrees or above, it won't snow (but it might rain)
+//*  STORMCHANCE #	//Chance of there being a storm on the next hour. Will override snowchance.
+//*  STORMINTENSITY #	//Currently unused.
 //*****************************************************************
 
 // no weather

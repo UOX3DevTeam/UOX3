@@ -161,11 +161,11 @@ namespace UOX
 		}
 		void Sort( void )
 		{
-			sort( objData.begin(), objData.end() );
+			std::sort( objData.begin(), objData.end() );
 		}
 		void Sort( bool Comparer( T one, T two ) )
 		{
-			sort( objData.begin(), objData.end(), Comparer );
+			std::sort( objData.begin(), objData.end(), Comparer );
 		}
 	};
 

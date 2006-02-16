@@ -856,6 +856,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		doWeatherEffect( (*mSock), mChar, SNOW );
 		doWeatherEffect( (*mSock), mChar, HEAT );
 		doWeatherEffect( (*mSock), mChar, COLD );
+		doWeatherEffect( (*mSock), mChar, STORM );
 	}
 
 	if( checkFieldEffects )
@@ -893,7 +894,6 @@ void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
 			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
 
 		doLight( mSock, toShow );
-		Weather->DoPlayerStuff( mSock, &mChar );
 	}
 	
 	if( mChar.GetSquelched() == 2 )
@@ -1340,8 +1340,12 @@ void CWorldMain::CheckAutoTimers( void )
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
 	{
+		UI08 oldHour = ServerData()->ServerTimeHours();
 		if( ServerData()->incMinute() )
 			Weather->NewDay();
+		if( oldHour != ServerData()->ServerTimeHours() )
+			Weather->NewHour();
+
 		SetUOTickCount( BuildTimeValue( ServerData()->ServerSecondsPerUOMinute() ) );
 	}
 	
@@ -2112,6 +2116,7 @@ void doLight( CSocket *s, UI08 level )
 	{
 		toSend.Level( 0 );
 		s->Send( &toSend );
+		Weather->DoPlayerStuff( s, mChar );
 		return;
 	}
 
@@ -2149,6 +2154,7 @@ void doLight( CSocket *s, UI08 level )
 		}
 	}
 	s->Send( &toSend );
+	Weather->DoPlayerStuff( s, mChar );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2366,7 +2372,6 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 		{
 			Effects->dosocketmidi( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );	// force it to update the light level straight away
-			Weather->DoPlayerStuff( mSock, &mChar );	// force a weather update too
 		}
 	}
 }
@@ -2651,6 +2656,7 @@ int main( int argc, char *argv[] )
 		Console << "Loading Weather                ";
 		Weather->Load();
 		Weather->NewDay();
+		Weather->NewHour();
 		Console.PrintDone();
 
 		Console << "Loading Commands               " << myendl;

@@ -1738,6 +1738,8 @@
 1772=You do not have enough skill to mine that ore!
 1773=You shear some wool from the sheep.
 1774=This sheep is not yet ready to be shorn.
+1775=The fierce storm hurts you!
+1776=The freezing cold hurts you!
 }
 EOF
 

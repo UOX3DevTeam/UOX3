@@ -41,6 +41,8 @@ private:
 	RACEIDLIST		racialEnemies;
 
 	LIGHTLEVEL		lightLevel;
+	COLDLEVEL		coldLevel;
+	HEATLEVEL		heatLevel;
 	LIGHTLEVEL		nightVision;
 	ARMORCLASS		armourRestrict;
 
@@ -69,10 +71,13 @@ public:
 	bool			AffectedByHeat( void ) const;
 	bool			AffectedByLightning( void ) const;
 	bool			AffectedBySnow( void ) const;
+	bool			AffectedByStorm( void ) const;
 	bool			NoHair( void ) const;
 
 	GENDER			GenderRestriction( void ) const;
 	LIGHTLEVEL		LightLevel( void ) const;
+	COLDLEVEL		ColdLevel( void ) const;
+	HEATLEVEL		HeatLevel( void ) const;
 	LIGHTLEVEL		NightVision( void ) const;
 	ARMORCLASS		ArmourClassRestriction( void ) const;
 	SECONDS			WeatherSeconds( WeatherType iNum ) const;
@@ -95,6 +100,7 @@ public:
 	void			AffectedByHeat( bool newValue );
 	void			AffectedByLightning( bool newValue );
 	void			AffectedBySnow( bool newValue );
+	void			AffectedByStorm( bool newValue );
 	void			NoHair( bool newValue );
 
 	SI16			HPModifier( void ) const;
@@ -109,6 +115,8 @@ public:
 
 	void			GenderRestriction( GENDER newValue );
 	void			LightLevel( LIGHTLEVEL newValue );
+	void			ColdLevel( COLDLEVEL newValue );
+	void			HeatLevel( HEATLEVEL newValue );
 	void			NightVision( LIGHTLEVEL newValue );
 	void			ArmourClassRestriction( ARMORCLASS newValue );
 	void			WeatherSeconds( SECONDS newValue, WeatherType iNum );
@@ -184,7 +192,9 @@ class cRaces
 		GENDER			GenderRestrict( RACEID race ) const; 
 		bool			RequireBeard( RACEID race ) const;
 		bool			IsPlayerRace( RACEID race ) const;
-		LIGHTLEVEL		LightLevel( RACEID race ) const; 
+		LIGHTLEVEL		LightLevel( RACEID race ) const;
+		COLDLEVEL		ColdLevel( RACEID race ) const;
+		HEATLEVEL		HeatLevel( RACEID race ) const;
 		ARMORCLASS		ArmorRestrict( RACEID race ) const; 
 		COLOUR			RandomSkin( RACEID x ) const; 
 		COLOUR			RandomHair( RACEID x ) const; 
@@ -205,6 +215,8 @@ class cRaces
 		void			RequireBeard( bool value, RACEID race ); 
 		void			NoBeard( bool value, RACEID race );
 		void			LightLevel( RACEID race, LIGHTLEVEL value ); 
+		void			ColdLevel( RACEID race, COLDLEVEL value ); 
+		void			HeatLevel( RACEID race, HEATLEVEL value ); 
 		void			ArmorRestrict( RACEID race, ARMORCLASS value ); 
 		void			RacialEnemy( RACEID race, RACEID enemy );
 		void			RacialAlly( RACEID race, RACEID ally );

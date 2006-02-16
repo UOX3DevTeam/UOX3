@@ -1,3 +1,20 @@
+2/15/2006 - grimson (0.98-3.3j [3.4 BETA])
+	Fixed VC6 build errors (thanks to giwo).
+	Wrote all available race settings into the header of races.dfn and documented a few of them.
+	Rewrote parts of the weather system:
+		Added weather type storm.
+		Heat wave and cold snap are calculated once per uo day and set the temperature to a fixed value
+		between MAXTEMP and HEATINTENSITY resp. COLDINTENSITY and MINTEMP.
+		Storm, Snow and Rain are calculated oncer per uo hour.
+		Rewrote doWeatherEffect() to better seperate the different weather effects and to change the way
+		they are calculated.
+		Added new settings to races.dfn:
+			HEATLEVEL - Sets the minimum heat at which the race get's damaged.
+			COLDLEVEL - Sets the minimum cold at which the race get's damaged.
+			STORMAFFECT - Defines if the race is affected by a storm
+			STORMDAMAGE - Defines the damage a race takes from storm
+			STORMSECS - Defines the interval at which the races takes damage from a storm.
+
 16th February, 2006 - Maarc (0.98-3.3i [3.4 BETA])
 	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people from compiling)
 	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced

@@ -36,6 +36,7 @@ public:
 	SI08	RainIntensity( void ) const;
 	SI08	HeatIntensity( void ) const;
 	SI08	ColdIntensity( void ) const;
+	SI08	StormIntensity( void ) const;
 
 	R32		MaxTemp( void ) const;
 	R32		MinTemp( void ) const;
@@ -46,6 +47,7 @@ public:
 
 	SI08	RainChance( void ) const;
 	SI08	SnowChance( void ) const;
+	SI08	StormChance( void ) const;
 	SI08	HeatChance( void ) const;
 	SI08	ColdChance( void ) const;
 
@@ -55,6 +57,8 @@ public:
 
 	bool	RainActive( void ) const;
 	bool	SnowActive( void ) const;
+	bool	StormBrewing( void ) const;
+	bool	StormActive( void ) const;
 	bool	HeatActive( void ) const;
 	bool	ColdActive( void ) const;
 
@@ -70,8 +74,10 @@ public:
 	void	HeatIntensity( SI08 value );
 	void	RainIntensity( SI08 value );
 	void	ColdIntensity( SI08 value );
+	void	StormIntensity( SI08 value );
 	void	RainChance( SI08 value );
 	void	SnowChance( SI08 value );
+	void	StormChance( SI08 value );
 	void	HeatChance( SI08 value );
 	void	ColdChance( SI08 value );
 	void	SnowThreshold( R32 value );
@@ -86,10 +92,13 @@ public:
 
 	void	RainActive( bool value );
 	void	SnowActive( bool value );
+	void	StormBrewing( bool value );
+	void	StormActive( bool value );
 	void	HeatActive( bool value );
 	void	ColdActive( bool value );
 
 	void	NewDay( void );
+	void	NewHour( void );
 	bool	PeriodicUpdate( void );
 };
 
@@ -109,12 +118,14 @@ class cWeatherAb
 				~cWeatherAb();
 		bool	Load( void );
 		bool	NewDay( void );
+		bool	NewHour( void );
 		size_t	Count( void ) const;
 
 		SI08	SnowIntensity( weathID toCheck );
 		SI08	RainIntensity( weathID toCheck );
 		SI08	HeatIntensity( weathID toCheck );
 		SI08	ColdIntensity( weathID toCheck );
+		SI08	StormIntensity( weathID toCheck );
 		R32		MaxTemp( weathID toCheck );
 		R32		MinTemp( weathID toCheck );
 		R32		Temp( weathID toCheck );
@@ -125,10 +136,15 @@ class cWeatherAb
 		SI08	SnowChance( weathID toCheck );
 		SI08	HeatChance( weathID toCheck );
 		SI08	ColdChance( weathID toCheck );
+		SI08	StormChance( weathID toCheck );
 		R32		LightMin( weathID toCheck );
 		R32		LightMax( weathID toCheck );
 		bool	RainActive( weathID toCheck );
 		bool	SnowActive( weathID toCheck );
+		bool	StormBrewing( weathID toCheck );
+		bool	StormActive( weathID toCheck );
+		bool	HeatActive( weathID toCheck );
+		bool	ColdActive( weathID toCheck );
 
 		R32		SnowThreshold( weathID toCheck );
 
@@ -142,10 +158,12 @@ class cWeatherAb
 		void	RainIntensity( weathID toCheck, SI08 value );
 		void	HeatIntensity( weathID toCheck, SI08 value );
 		void	ColdIntensity( weathID toCheck, SI08 value );
+		void	StormIntensity( weathID toCheck, SI08 value );
 		void	RainChance( weathID toCheck, SI08 value );
 		void	SnowChance( weathID toCheck, SI08 value );
 		void	HeatChance( weathID toCheck, SI08 value );
 		void	ColdChance( weathID toCheck, SI08 value );
+		void	StormChance( weathID toCheck, SI08 value );
 		void	SnowThreshold( weathID toCheck, R32 value );
 		void	LightMin( weathID toCheck, R32 newValue );
 		void	LightMax( weathID toCheck, R32 newValue );
@@ -156,6 +174,10 @@ class cWeatherAb
 		void	EffectiveMinTemp( weathID toCheck, R32 value );
 		void	RainActive( weathID toCheck, bool value );
 		void	SnowActive( weathID toCheck, bool value );
+		void	StormBrewing( weathID toCheck, bool value );
+		void	StormActive( weathID toCheck, bool value );
+		void	HeatActive( weathID toCheck, bool value );
+		void	ColdActive( weathID toCheck, bool value );
 		bool	DoStuff( void );
 		bool	DoPlayerStuff( CSocket *mSock, CChar *p );
 		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp );
