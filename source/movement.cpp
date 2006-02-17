@@ -59,6 +59,7 @@
 #include "CPacketSend.h"
 #include "regions.h"
 #include "cServerDefinitions.h"
+#include "cWeather.hpp"
 
 namespace UOX
 {
@@ -1118,11 +1119,6 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 		}
 		regItems->Pop();
 	}
-}
-
-// start of LB's no rain & snow in buildings stuff 
-void cMovement::HandleWeatherChanges( CChar *c, CSocket *mSock )
-{
 }
 
 // return whether someone is a GM Body

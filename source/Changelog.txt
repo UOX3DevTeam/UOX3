@@ -1,3 +1,13 @@
+2/17/2006 - grimson (0.98-3.3k [3.4 BETA])
+	Added cMapStuff::inBuilding() function to determine wheter a given set of coordinates
+	is inside a building. I does this by checking whether there is a static or multi above
+	the coordinates.
+	Added inBuilding() and SetInBuilding() functions to CChar and set it on movement and
+	teleport.
+	Use the new inBuilding() function to stop/start weather effects as soon as a player
+	enters or leaves a building.
+	Send the light level and weather status directly after a player log's in.
+
 2/16/2006 - grimson
 	Changed cWeatherAb::DoPlayerStuff() to reset weather effect timers if needed.
 

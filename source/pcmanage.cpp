@@ -863,6 +863,7 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
+			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 			mSock->LoginComplete( true );
 		}
 	}

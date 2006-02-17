@@ -755,6 +755,17 @@ void CChar::SetJSCasting( bool newValue )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  void SetInBuilding( bool newValue ) 
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Set's whether a char is inside a building or not
+//o---------------------------------------------------------------------------o
+void CChar::SetInBuilding( bool newValue )
+{
+	isInBuilding = newValue;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  void RemoveSelfFromOwner( void ) 
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -1601,7 +1612,7 @@ void CChar::Teleport( void )
 			regItems->Pop();
 		}
 	}
-
+	HandleWeatherChanges( this, mSock );
 	checkRegion( mSock, (*this) );
 }
 
@@ -3144,6 +3155,17 @@ bool CChar::inDungeon( void )
 	if( GetRegion() != NULL )
         rValue = GetRegion()->IsDungeon();
 	return rValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool CChar::inBuilding( void )
+//|	Programmer	-	grimson
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Determine if player is inside a building
+//o---------------------------------------------------------------------------o
+bool CChar::inBuilding( void )
+{
+	return isInBuilding;
 }
 
 //o---------------------------------------------------------------------------o

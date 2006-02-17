@@ -7,6 +7,7 @@
 #include "cEffects.h"
 #include "CPacketSend.h"
 #include "scriptc.h"
+#include "mapstuff.h"
 
 namespace UOX
 {
@@ -1502,7 +1503,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	if( !ValidateObject( p ) || p->IsNpc() )
 		return true;
 	weathID currval = p->GetRegion()->GetWeather();
-	if( currval > weather.size() || weather.empty() )
+	if( currval > weather.size() || weather.empty() || p->inBuilding() )
 	{
 		if( s != NULL )
 		{

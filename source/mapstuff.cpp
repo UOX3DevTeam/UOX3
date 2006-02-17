@@ -1041,6 +1041,20 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	return MapElevation( x, y, worldNumber );
 }
 
+// Return whether give coordinates are inside a building by checking if there is a multi or static above them
+bool cMapStuff::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+{
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127 );
+		if( dynz > ( z + 10))
+			return true;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, (SI08)127 );
+			if( staticz > ( z + 10))
+				return true;
+		}
+		return false;
+}
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z

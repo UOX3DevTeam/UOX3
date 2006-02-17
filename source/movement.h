@@ -69,7 +69,6 @@ private:
 	void	SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy );
 	void	OutputShoveMessage( CChar *c, CSocket *mSock );
 	void	HandleItemCollision( CChar *c, CSocket *mSock, SI16 oldx, SI16 oldy );
-	void	HandleWeatherChanges( CChar *c, CSocket *mSock );
 	bool	IsGMBody( CChar *c );
 
 	void	deny( CSocket *mSock, CChar *s, SI16 sequence );

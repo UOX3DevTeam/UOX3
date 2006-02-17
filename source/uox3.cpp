@@ -2371,8 +2371,19 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 		if( mSock != NULL )
 		{
 			Effects->dosocketmidi( mSock );
-			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );	// force it to update the light level straight away
+			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
+	}
+}
+
+void HandleWeatherChanges( CChar *c, CSocket *mSock )
+{
+	bool wasInBuilding = c->inBuilding();
+	bool isInBuilding = Map->inBuilding( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber() );
+	if( wasInBuilding != isInBuilding )
+	{
+		c->SetInBuilding( isInBuilding );
+		Weather->DoPlayerStuff( mSock, c );
 	}
 }
 

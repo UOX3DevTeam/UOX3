@@ -205,6 +205,7 @@ protected:
 	RACEID		oldRace;
 
 	UI08		PoisonStrength;
+	bool		isInBuilding;
 
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;
@@ -285,6 +286,7 @@ public:
 	void		SetMeditating( bool newValue );
 	void		SetCasting( bool newValue );
 	void		SetJSCasting( bool newValue );
+	void		SetInBuilding( bool newValue );
 
 	void		SetTownVote( UI32 newValue );
 	void		SetGuildFealty( UI32 newValue );
@@ -489,6 +491,7 @@ public:
 		
 	bool			isHuman( void );
 	bool			inDungeon( void );
+	bool			inBuilding( void );
 
 	void			talk( CSocket *s, SI32 dictEntry, bool antispam, ... );
 	void			talk( CSocket *s, std::string txt, bool antispam );
