@@ -50,6 +50,8 @@ enum ScriptEvent
 	seOnSystemSlice,
 	seOnUnknownTrigger,
 	seOnLightChange,
+	seOnWeatherChange,
+	seOnTempChange,
 	seOnXYZEvent,
 	seOnPortal,
 	seOnTimer,				//	**
@@ -247,7 +249,9 @@ public:
 	bool		OnAISliver( CChar *pSliver );
 	bool		OnSystemSlice( void );
 	bool		OnUnknownTrigger( void );
-	bool		OnLightChange( void );
+	bool		OnLightChange( CBaseObject *tObject, UI08 lightLevel );
+	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
+	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
 	bool		OnXYZEvent( void );
 	bool		OnPortal( void );
 	bool		OnTimer( CBaseObject *tObject, UI08 timerID );

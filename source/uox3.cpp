@@ -593,11 +593,12 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o---------------------------------------------------------------------------o
-bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger )
+bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger, bool doWeather )
 {
 	if( mChar.IsDead() )
 		return false;
-
+	
+	LIGHTLEVEL toShow;
 	UI16 c;
 	if( mChar.GetHP() > mChar.GetMaxHP() )
 		mChar.SetHP( mChar.GetMaxHP() );
@@ -843,15 +844,25 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		UpdateFlag( &mChar );
 	}
 
-	if( !mChar.IsNpc() && mSock != NULL )
+	if( doWeather )
 	{
-		Weather->doLightEffect( (*mSock), mChar );
-		Weather->doWeatherEffect( (*mSock), mChar, RAIN );
-		Weather->doWeatherEffect( (*mSock), mChar, SNOW );
-		Weather->doWeatherEffect( (*mSock), mChar, HEAT );
-		Weather->doWeatherEffect( (*mSock), mChar, COLD );
-		Weather->doWeatherEffect( (*mSock), mChar, STORM );
+		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
+			toShow = 0;
+		else
+			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
+		if( mChar.IsNpc() )
+			doLight( &mChar, toShow );
+		else
+			doLight( mSock, toShow );
 	}
+
+	Weather->doLightEffect( mSock, mChar );
+	Weather->doWeatherEffect( mSock, mChar, RAIN );
+	Weather->doWeatherEffect( mSock, mChar, SNOW );
+	Weather->doWeatherEffect( mSock, mChar, HEAT );
+	Weather->doWeatherEffect( mSock, mChar, COLD );
+	Weather->doWeatherEffect( mSock, mChar, STORM );
 
 	if( checkFieldEffects )
 		Magic->CheckFieldEffects( mChar );
@@ -874,21 +885,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check a PC's status
 //o---------------------------------------------------------------------------o
-void checkPC( CSocket *mSock, CChar& mChar, bool doWeather )
+void checkPC( CSocket *mSock, CChar& mChar )
 {
-	LIGHTLEVEL toShow;
 	Combat->CombatLoop( mSock, mChar );
-	
-	if( doWeather )
-	{
-		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
-			toShow = 0;
-		else
-			toShow = static_cast<UI08>( curLevel - Races->VisLevel( mChar.GetRace() ) );
-
-		doLight( mSock, toShow );
-	}
 	
 	if( mChar.GetSquelched() == 2 )
 	{
@@ -1369,8 +1368,8 @@ void CWorldMain::CheckAutoTimers( void )
 		UI08 worldNumber	= mChar->WorldNumber();
 		if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 		{
-			genericCheck( iSock, (*mChar), checkFieldEffects, checkHunger );
-			checkPC( iSock, (*mChar), doWeather );
+			genericCheck( iSock, (*mChar), checkFieldEffects, checkHunger, doWeather );
+			checkPC( iSock, (*mChar) );
 
 			SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
 			SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
@@ -1424,7 +1423,7 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
-				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, checkHunger ) )
+				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, checkHunger, doWeather ) )
 				{
 					if( setNPCFlags )
 						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
@@ -2151,7 +2150,75 @@ void doLight( CSocket *s, UI08 level )
 		}
 	}
 	s->Send( &toSend );
+
+	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onLightChangeScp != NULL )
+		onLightChangeScp->OnLightChange( mChar, toShow );
+	else 
+	{
+		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onLightChangeScp != NULL )
+			onLightChangeScp->OnLightChange( mChar, toShow );
+	}
+
 	Weather->DoPlayerStuff( s, mChar );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void doLight( CSocket *s, UI08 level )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Send light level to players client
+//o---------------------------------------------------------------------------o
+void doLight( CChar *mChar, UI08 level )
+{
+	if( (Races->Affect( mChar->GetRace(), LIGHT )) && mChar->GetWeathDamage( LIGHT ) == 0 )
+		mChar->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar->GetRace(), LIGHT )) )), LIGHT );
+	
+	CTownRegion *curRegion	= mChar->GetRegion();
+	CWeather *wSys			= Weather->Weather( curRegion->GetWeather() );
+	
+	LIGHTLEVEL toShow = level;
+
+	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+	
+	// we have a valid weather system
+	if( wSys != NULL )
+	{
+		const R32 lightMin = wSys->LightMin();
+		const R32 lightMax = wSys->LightMax();
+		if( lightMin < 300 && lightMax < 300 )
+		{
+			R32 i = wSys->CurrentLight();
+			if( Races->VisLevel( mChar->GetRace() ) > i )
+				toShow = 0;
+			else
+				toShow = static_cast<LIGHTLEVEL>(roundNumber( i - Races->VisLevel( mChar->GetRace() )));
+		}
+	}
+	else
+	{
+		if( mChar->inDungeon() )
+		{
+			if( Races->VisLevel( mChar->GetRace() ) > dunLevel )
+				toShow = 0;
+			else
+				toShow = static_cast<LIGHTLEVEL>(roundNumber( dunLevel - Races->VisLevel( mChar->GetRace() )));
+		}
+	}
+
+	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onLightChangeScp != NULL )
+		onLightChangeScp->OnLightChange( mChar, toShow );
+	else 
+	{
+		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onLightChangeScp != NULL )
+			onLightChangeScp->OnLightChange( mChar, toShow );
+	}
+	Weather->DoNPCStuff( mChar );
 }
 
 //o---------------------------------------------------------------------------o

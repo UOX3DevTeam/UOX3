@@ -61,6 +61,7 @@ bool	isOnline( CChar& mChar );
 // Light related functions
 //o---------------------------------------------------------------------------o
 void	doLight( CSocket *s, UI08 level );
+void	doLight( CChar *mChar, UI08 level );
 
 //o---------------------------------------------------------------------------o
 // Amount related

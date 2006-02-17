@@ -8,6 +8,8 @@
 #include "CPacketSend.h"
 #include "scriptc.h"
 #include "mapstuff.h"
+#include "cScript.h"
+#include "CJSMapping.h"
 
 namespace UOX
 {
@@ -126,6 +128,11 @@ bool CWeather::PeriodicUpdate( void )
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
 	bool ampm	= cwmWorldState->ServerData()->ServerTimeAMPM();
 
+	if( StormDelay() && StormBrewing() )
+		StormActive( true );
+	else if( StormBrewing() )
+		StormDelay( true );
+
 	if( LightMin() < 300 && LightMax() < 300 )
 	{
 		R32 hourIncrement = static_cast<R32>(fabs( ( LightMax() - LightMin() ) / 12.0f ));	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
@@ -230,7 +237,8 @@ void CWeather::NewHour( void )
 		isRaining = true;
 		RainIntensity( RandomNum( 1, 4 ) );
 	}
-
+	if( !isStorm )
+		StormDelay( false );
 	SnowActive( isSnowing );
 	RainActive( isRaining );
 	StormBrewing( isStorm );
@@ -577,6 +585,18 @@ bool CWeather::StormActive( void ) const
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  bool StormDelay( void ) const
+//|   Date        -  17th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the storm delay is over
+//o---------------------------------------------------------------------------o
+bool CWeather::StormDelay( void ) const
+{
+	return stormDelay;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  R32 SnowThreshold( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
@@ -901,7 +921,7 @@ void CWeather::StormBrewing( bool value )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void SnowActive( bool value )
+//|   Function    -  void StormActive( bool value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -910,6 +930,18 @@ void CWeather::StormBrewing( bool value )
 void CWeather::StormActive( bool value )
 {
 	weather[STORM].Active = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void StormDelay( bool value )
+//|   Date        -  11th April, 2001
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the storm delay
+//o---------------------------------------------------------------------------o
+void CWeather::StormDelay( bool value )
+{
+	stormDelay = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1528,6 +1560,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 				p->SetWeathDamage( 0, COLD );
 			if( p->GetWeathDamage( HEAT ) != 0 )
 				p->SetWeathDamage( 0, HEAT );
+			SendJSWeather( p, LIGHT, 0 );
 		}
 		return false;
 	}
@@ -1536,13 +1569,85 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	bool brewStorm = StormBrewing( currval );
 	bool isSnowing = SnowActive( currval );
 	bool isRaining = RainActive( currval );
-
-	if( !brewStorm )
-		StormActive( currval, false );
+	SI08 temp	   = (SI08)Temp( currval );
 
 	if( isStorm )
 	{
-		DoPlayerWeather( s, 5, (SI08)Temp( currval ) );
+		DoPlayerWeather( s, 5, temp );
+		if( p->GetWeathDamage( STORM ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
+	}
+	else if( brewStorm )
+	{
+		DoPlayerWeather( s, 4, temp );
+	} 
+	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
+	{
+		DoPlayerWeather( s, 2, temp );
+		if( p->GetWeathDamage( SNOW ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
+	} 
+	else if( isRaining )
+	{
+		DoPlayerWeather( s, 1, temp );
+		if( p->GetWeathDamage( RAIN ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		SendJSWeather( p, STORM, temp );
+	}
+	else
+	{
+		DoPlayerWeather( s, 0, temp );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
+	}
+
+	if( (Races->Affect( p->GetRace(), HEAT )) && p->GetWeathDamage( HEAT ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), HEAT )) )), HEAT );
+
+	if( (Races->Affect( p->GetRace(), COLD )) && p->GetWeathDamage( COLD ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), COLD )) )), COLD );
+
+	return true;
+}
+
+bool cWeatherAb::DoNPCStuff( CChar *p )
+{
+	if( !ValidateObject( p ) )
+		return true;
+	weathID currval = p->GetRegion()->GetWeather();
+	if( currval > weather.size() || weather.empty() || p->inBuilding() )
+	{
+		SendJSWeather( p, LIGHT, 0 );
+		return false;
+	}
+
+	bool isStorm   = StormActive( currval );
+	bool isSnowing = SnowActive( currval );
+	bool isRaining = RainActive( currval );
+	SI08 temp = (SI08)Temp( currval );
+
+	if( isStorm )
+	{
+		SendJSWeather( p, STORM, temp );
 		if( p->GetWeathDamage( STORM ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
 		if( p->GetWeathDamage( SNOW ) != 0 )
@@ -1550,14 +1655,9 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 		if( p->GetWeathDamage( RAIN ) != 0 )
 			p->SetWeathDamage( 0, RAIN );
 	}
-	else if( brewStorm )
-	{
-		DoPlayerWeather( s, 4, (SI08)Temp( currval ) );
-		StormActive( currval, true );
-	} 
 	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
 	{
-		DoPlayerWeather( s, 2, (SI08)Temp( currval ) );
+		SendJSWeather( p, SNOW, temp );
 		if( p->GetWeathDamage( SNOW ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
 		if( p->GetWeathDamage( STORM ) != 0 )
@@ -1567,7 +1667,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	} 
 	else if( isRaining )
 	{
-		DoPlayerWeather( s, 1, (SI08)Temp( currval ) );
+		SendJSWeather( p, RAIN, temp );
 		if( p->GetWeathDamage( RAIN ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
 		if( p->GetWeathDamage( SNOW ) != 0 )
@@ -1577,7 +1677,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else
 	{
-		DoPlayerWeather( s, 0, (SI08)Temp( currval ) );
+		SendJSWeather( p, LIGHT, temp );
 		if( p->GetWeathDamage( SNOW ) != 0 )
 			p->SetWeathDamage( 0, SNOW );
 		if( p->GetWeathDamage( STORM ) != 0 )
@@ -1593,6 +1693,31 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), COLD )) )), COLD );
 
 	return true;
+}
+
+void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp )
+{
+	cScript *onWeatherChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onWeatherChangeScp != NULL )
+		onWeatherChangeScp->OnWeatherChange( mChar, weathType );
+	else 
+	{
+		onWeatherChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onWeatherChangeScp != NULL )
+			onWeatherChangeScp->OnWeatherChange( mChar, weathType );
+	}
+
+	cScript *onTempChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onTempChangeScp != NULL )
+		onTempChangeScp->OnTempChange( mChar, currentTemp );
+	else 
+	{
+		onTempChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onTempChangeScp != NULL )
+			onTempChangeScp->OnTempChange( mChar, currentTemp );
+	}
 }
 
 void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp )
@@ -1679,11 +1804,11 @@ CWeather *cWeatherAb::Weather( weathID toCheck )
 		return &weather[toCheck];
 }
 
-bool cWeatherAb::doLightEffect( CSocket& mSock, CChar& mChar )
+bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 {
 	bool didDamage = false;
 
-	if( mChar.IsNpc() || mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
+	if( mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
 		return false;
 	
 	if( mChar.GetWeathDamage( LIGHT ) != 0 && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
@@ -1775,8 +1900,8 @@ bool cWeatherAb::doLightEffect( CSocket& mSock, CChar& mChar )
 			}
 		}
 		
-		if( message != 0 )
-			mSock.sysmessage( message );
+		if( message != 0 && mSock != NULL)
+			mSock->sysmessage( message );
 
 		if( damage > 0 )
 		{
@@ -1790,12 +1915,12 @@ bool cWeatherAb::doLightEffect( CSocket& mSock, CChar& mChar )
 	return didDamage;
 }
 
-bool cWeatherAb::doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
+bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element )
 {
 	if( element == LIGHT || element == WEATHNUM )
 		return false;
 	
-	if( mChar.IsNpc() || mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), element ))
+	if( mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), element ))
 		return false;
 
 	bool didDamage			= false;
@@ -1896,7 +2021,8 @@ bool cWeatherAb::doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType elem
 		{
 				mChar.Damage( damage );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
-				mSock.sysmessage( damageMessage );
+				if( mSock != NULL )
+					mSock->sysmessage( damageMessage );
 				if( damageAnim != 0x0)
 					Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );
 				Effects->PlaySound( (&mChar), 0x0208 );     

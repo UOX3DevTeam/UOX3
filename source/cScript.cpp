@@ -1275,11 +1275,92 @@ bool cScript::OnUnknownTrigger( void )
 		return false;
 	return false;
 }
-bool cScript::OnLightChange( void )
+bool cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 {
-	if( !EventExists( seOnLightChange ) )
+	if( !ValidateObject( tObject ) ) 
+		return false; 
+	if( !ExistAndVerify( seOnLightChange, "onLightChange" ) ) 
 		return false;
-	return false;
+
+	jsval rval, params[2];
+	if( tObject->GetObjType() == OT_CHAR )
+	{
+		JS_SetPrivate( targContext, charObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	}
+	else
+	{
+		JS_SetPrivate( targContext, itemObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+	}
+	
+	params[1] = INT_TO_JSVAL( lightLevel );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLightChange", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnLightChange, false );
+	if( tObject->GetObjType() == OT_CHAR )
+		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE );
+}
+bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
+{
+	if( !ValidateObject( tObject ) ) 
+		return false; 
+	if( !ExistAndVerify( seOnWeatherChange, "onWeatherChange" ) ) 
+		return false;
+
+	jsval rval, params[2];
+	if( tObject->GetObjType() == OT_CHAR )
+	{
+		JS_SetPrivate( targContext, charObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	}
+	else
+	{
+		JS_SetPrivate( targContext, itemObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+	}
+	
+	params[1] = INT_TO_JSVAL( element );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onWeatherChange", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnWeatherChange, false );
+	if( tObject->GetObjType() == OT_CHAR )
+		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE );
+}
+bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
+{
+	if( !ValidateObject( tObject ) ) 
+		return false; 
+	if( !ExistAndVerify( seOnTempChange, "onTempChange" ) ) 
+		return false;
+
+	jsval rval, params[2];
+	if( tObject->GetObjType() == OT_CHAR )
+	{
+		JS_SetPrivate( targContext, charObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( charObjects[0].toUse );
+	}
+	else
+	{
+		JS_SetPrivate( targContext, itemObjects[0].toUse, tObject );
+		params[0] = OBJECT_TO_JSVAL( itemObjects[0].toUse );
+	}
+	
+	params[1] = INT_TO_JSVAL( temp );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTempChange", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnTempChange, false );
+	if( tObject->GetObjType() == OT_CHAR )
+		JS_SetPrivate( targContext, charObjects[0].toUse, NULL );
+	else
+		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
+	return ( retVal == JS_TRUE );
 }
 bool cScript::OnXYZEvent( void )
 {

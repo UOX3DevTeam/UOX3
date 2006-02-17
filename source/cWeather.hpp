@@ -19,6 +19,8 @@ private:
 	R32			assortVals[3][3];
 	R32			snowThreshold;
 	R32			light[3];
+	bool		stormDelay;
+
 public:
 			CWeather();
 	virtual	~CWeather();
@@ -61,6 +63,7 @@ public:
 	bool	StormActive( void ) const;
 	bool	HeatActive( void ) const;
 	bool	ColdActive( void ) const;
+	bool	StormDelay( void ) const;
 
 	R32		SnowThreshold( void ) const;
 
@@ -96,6 +99,7 @@ public:
 	void	StormActive( bool value );
 	void	HeatActive( bool value );
 	void	ColdActive( bool value );
+	void	StormDelay( bool value );
 
 	void	NewDay( void );
 	void	NewHour( void );
@@ -183,8 +187,10 @@ class cWeatherAb
 		bool	DoStuff( void );
 		bool	DoPlayerStuff( CSocket *mSock, CChar *p );
 		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp );
-		bool	doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element );
-		bool	doLightEffect( CSocket& mSock, CChar& mChar );
+		bool	doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element );
+		bool	doLightEffect( CSocket *mSock, CChar& mChar );
+		bool	DoNPCStuff( CChar *p );
+		void	SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp );
 
 		CWeather *Weather( weathID toCheck );
 };
