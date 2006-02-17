@@ -1653,6 +1653,10 @@ void cWeatherAb::LightMax( weathID toCheck, R32 newValue )
 {
 	weather[toCheck].LightMax( newValue );
 }
+void cWeatherAb::CurrentLight( weathID toCheck, R32 newValue )
+{
+	weather[toCheck].CurrentLight( newValue );
+}
 
 R32 cWeatherAb::LightMin( weathID toCheck )
 {
@@ -1661,6 +1665,10 @@ R32 cWeatherAb::LightMin( weathID toCheck )
 R32 cWeatherAb::LightMax( weathID toCheck )
 {
 	return weather[toCheck].LightMax();
+}
+R32 cWeatherAb::CurrentLight( weathID toCheck )
+{
+	return weather[toCheck].CurrentLight();
 }
 
 CWeather *cWeatherAb::Weather( weathID toCheck )
@@ -1671,116 +1679,118 @@ CWeather *cWeatherAb::Weather( weathID toCheck )
 		return &weather[toCheck];
 }
 
-// FUNCTION NEEDS REWORKING
-bool doLightEffect( CSocket& mSock, CChar& mChar )
+bool cWeatherAb::doLightEffect( CSocket& mSock, CChar& mChar )
 {
 	bool didDamage = false;
 
-	if( mChar.IsNpc() || mChar.IsGM() || !Races->Affect( mChar.GetRace(), LIGHT ) )
+	if( mChar.IsNpc() || mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
 		return false;
-
-	UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
-	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
-
-	if( mChar.GetFixedLight() != 255 )
+	
+	if( mChar.GetWeathDamage( LIGHT ) != 0 && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 	{
-		if( hour < 5 && ampm || hour >= 5 && !ampm )	// time of day we can be burnt
+		R32 damageModifier		= 0;
+		SI32 damage				= 0;
+		R32 baseDamage			= (R32)Races->Damage( mChar.GetRace(), LIGHT );
+		R32 lightLevel			= (R32)Races->LightLevel( mChar.GetRace() );
+		R32 currentLight		= 255;
+		R32 dungeonLight		= 255;
+		R32 lightMin			= 255;
+		R32 lightMax			= 255;
+		int	message				= 0;
+		bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
+
+		weathID weatherSys = mChar.GetRegion()->GetWeather();
+		if( weatherSys > weather.size() || weather.empty() )
 		{
-			if( mChar.GetWeathDamage( LIGHT ) != 0 )
+			lightMin = LightMin( weatherSys );
+			lightMax = LightMax( weatherSys );
+
+			if( lightMin < 300 && lightMax < 300 )
 			{
-				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-				{
-					mSock.sysmessage( 1216 );
-					mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) );
-					mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
-					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( (&mChar), 0x0208 );     
-					didDamage = true;
-				}
+				currentLight = CurrentLight( weatherSys );
 			}
 			else
-				mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
-			
-		}
-		else if( hour < 6 && ampm || hour >= 4 && !ampm )	// slightly burnt at this time of day
-		{
-			if( mChar.GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-				{
-					mSock.sysmessage( 1217 );
-					mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
-					mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
-					Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( (&mChar), 0x0208 );     
-					didDamage = true;
-				}
+				currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+				lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
+				lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			}
 		}
 		else
 		{
-			mChar.SetWeathDamage( 0, LIGHT );
-			if( hour > 3 && hour < 4 && !ampm )
-				mSock.sysmessage( 1215 );
+			currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+			lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
+			lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
 		}
-	}
-	else
-	{
-		if( !mChar.inDungeon() )
+		
+		if ( mChar.inDungeon() )
 		{
-			if( hour < 5 && ampm || hour >= 5 && !ampm )
+			dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
+
+
+			if (lightLevel > dungeonLight )
 			{
-				if( mChar.GetWeathDamage( LIGHT ) != 0 )
-				{
-					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-					{
-						mSock.sysmessage( 1216 );
-						mChar.Damage( Races->Damage( mChar.GetRace(), LIGHT ) );
-						mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
-						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( (&mChar), 0x0208 );     
-						didDamage = true;
-					}
-				}
+				if( lightLevel > 0)
+					damageModifier = ( dungeonLight / lightLevel );
 				else
-					mChar.SetWeathDamage( BuildTimeValue( Races->Secs( mChar.GetRace(), LIGHT ) ), LIGHT );
-				
+					damageModifier = 0;
+
+				damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			
+				if( roundNumber( damageModifier ) > 0 )
+					message = 1216;
+				else
+					message = 1217;
 			}
-			else if( hour < 6 && ampm || hour >= 4 && !ampm )
-			{
-				if( mChar.GetWeathDamage( LIGHT ) != 0 )
-				{
-					if( mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-					{
-						mSock.sysmessage( 1217 );
-						mChar.Damage( mChar.GetHP() - Races->Damage( mChar.GetRace(), LIGHT ) / 2 );
-						mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
-						Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( (&mChar), 0x0208 );     
-						didDamage = true;
-					}
-				}
-			}
-			else
-			{
-				mChar.SetWeathDamage( 0, LIGHT );
-				if( hour > 3 && hour < 4 && !ampm )
-					mSock.sysmessage( 1215 );
+			else if( lightLevel == currentLight )
+			{	
+				if( ampm )
+					message = 1218;
+				else
+					message = 1215;
 			}
 		}
 		else
 		{
-			if( hour >= 5 && hour <= 6 && ampm && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
+			if (lightLevel > currentLight )
 			{
-				mSock.sysmessage( 1218 );
-				mChar.SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT ) * 2 )), LIGHT );
+				if( lightLevel > 0)
+					damageModifier = ( currentLight / lightLevel );
+				else
+					damageModifier = 0;
+
+				damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			
+				if( roundNumber( damageModifier ) > 0 )
+					message = 1216;
+				else
+					message = 1217;
+			}
+			else if( lightLevel == currentLight )
+			{	
+				if( ampm )
+					message = 1218;
+				else
+					message = 1215;
 			}
 		}
+		
+		if( message != 0 )
+			mSock.sysmessage( message );
+
+		if( damage > 0 )
+		{
+				mChar.Damage( damage );
+				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+				Effects->PlaySound( (&mChar), 0x0208 );     
+				didDamage = true;
+		}
+		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT )) )), LIGHT );
 	}
 	return didDamage;
 }
 
-bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
+bool cWeatherAb::doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 {
 	if( element == LIGHT || element == WEATHNUM )
 		return false;
@@ -1789,16 +1799,16 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 		return false;
 
 	bool didDamage			= false;
-	CTownRegion *charRegion	= mChar.GetRegion();
-	const UI08 weatherSys	= charRegion->GetWeather();
-	if( weatherSys != 0xFF && mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime())
+	weathID weatherSys = mChar.GetRegion()->GetWeather();
+	if( !(weatherSys > weather.size() || weather.empty()) && mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime())
 	{
-		const R32 tempCurrent	= Weather->Temp( weatherSys );
-		const R32 tempMax		= Weather->MaxTemp( weatherSys );
-		const R32 tempMin		= Weather->MinTemp( weatherSys );
-		const R32 tempSnowMax	= Weather->SnowThreshold( weatherSys );
-		const R32 tempEffMax	= Weather->EffectiveMaxTemp( weatherSys );
-		const R32 tempEffMin	= Weather->EffectiveMinTemp( weatherSys );
+		const R32 tempCurrent	= Temp( weatherSys );
+		const R32 tempMax		= MaxTemp( weatherSys );
+		const R32 tempMin		= MinTemp( weatherSys );
+		const R32 tempSnowMax	= SnowThreshold( weatherSys );
+		const R32 tempEffMax	= EffectiveMaxTemp( weatherSys );
+		const R32 tempEffMin	= EffectiveMinTemp( weatherSys );
+
 
 		R32 damageModifier		= 0;
 		SI32 damage				= 0;
@@ -1811,9 +1821,9 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 
 		if( element == RAIN )
 		{
-			if( Weather->HeatActive( weatherSys ) )
+			if( HeatActive( weatherSys ) )
 				damageModifier = 1;
-			else if( Weather->ColdActive( weatherSys ) )
+			else if( ColdActive( weatherSys ) )
 				damageModifier = 0;
 			else if( (tempMax - tempMin) != 0)
 				damageModifier = ( (tempCurrent - tempMin) / (tempMax - tempMin) );
@@ -1824,9 +1834,9 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 
 		if( element == SNOW )
 		{
-			if( Weather->HeatActive( weatherSys ) )
+			if( HeatActive( weatherSys ) )
 				damageModifier = 1;
-			else if( Weather->ColdActive( weatherSys ) )
+			else if( ColdActive( weatherSys ) )
 				damageModifier = 0;
 			else if( (tempSnowMax - tempMin) != 0)
 				damageModifier = ( (tempCurrent - tempMin) / (tempSnowMax - tempMin) );
@@ -1837,8 +1847,26 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 
 		if( element == STORM)
 		{
-			damage = (SI32)baseDamage;
-			damageMessage = 1775;
+			if( Races->Affect( mChar.GetRace(), LIGHTNING ) )
+			{
+				if( (UI08)RandomNum( 0, 100 ) <= Races->Secs( mChar.GetRace(), LIGHTNING ) )
+				{
+					damage = (SI32)Races->Damage( mChar.GetRace(), LIGHTNING );
+					Effects->bolteffect( &mChar );
+					damageMessage = 1777;
+					damageAnim = 0x0;
+				}
+				else
+				{
+					damage = (SI32)baseDamage;
+					damageMessage = 1775;
+				}
+			}
+			else
+			{
+				damage = (SI32)baseDamage;
+				damageMessage = 1775;
+			}
 		}
 
 		if( element == COLD && tempCurrent <= coldLevel )
@@ -1869,7 +1897,8 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 				mChar.Damage( damage );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
 				mSock.sysmessage( damageMessage );
-				Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );
+				if( damageAnim != 0x0)
+					Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );
 				Effects->PlaySound( (&mChar), 0x0208 );     
 				didDamage = true;
 		}

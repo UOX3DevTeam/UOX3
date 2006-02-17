@@ -32,7 +32,7 @@
 //*	LIGHTSECS # - How often light damages in seconds	  *
 //*	LIGHTNINGAFFECT - Race is affected by lightning		  *
 //*	LIGHTNINGDAMAGE # - Max amount of damage taken by lightning
-//*	LIGHTNINGSECS # - How often lightning damages in seconds  *
+//*	LIGHTNINGCHANCE # - Chance to get hit by a lighning during a storm
 //*	LANGUAGEMIN #						  *
 //*	MAGICRESISTANCE #					  *
 //*	MANAMOD # - Max mana modificator			  *

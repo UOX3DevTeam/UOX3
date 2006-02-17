@@ -211,8 +211,8 @@ enum WeatherType
 	HEAT,
 	LIGHTNING,
 	SNOW,
-	STORMBREW,
 	STORM,
+	STORMBREW,
 	WEATHNUM
 };
 

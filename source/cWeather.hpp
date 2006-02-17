@@ -139,6 +139,7 @@ class cWeatherAb
 		SI08	StormChance( weathID toCheck );
 		R32		LightMin( weathID toCheck );
 		R32		LightMax( weathID toCheck );
+		R32		CurrentLight( weathID toCheck );
 		bool	RainActive( weathID toCheck );
 		bool	SnowActive( weathID toCheck );
 		bool	StormBrewing( weathID toCheck );
@@ -167,6 +168,7 @@ class cWeatherAb
 		void	SnowThreshold( weathID toCheck, R32 value );
 		void	LightMin( weathID toCheck, R32 newValue );
 		void	LightMax( weathID toCheck, R32 newValue );
+		void	CurrentLight( weathID toCheck, R32 newValue );
 
 		R32		EffectiveMaxTemp( weathID toCheck );
 		R32		EffectiveMinTemp( weathID toCheck );
@@ -181,6 +183,8 @@ class cWeatherAb
 		bool	DoStuff( void );
 		bool	DoPlayerStuff( CSocket *mSock, CChar *p );
 		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp );
+		bool	doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element );
+		bool	doLightEffect( CSocket& mSock, CChar& mChar );
 
 		CWeather *Weather( weathID toCheck );
 };

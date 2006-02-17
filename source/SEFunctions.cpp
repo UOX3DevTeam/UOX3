@@ -1039,6 +1039,7 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		case HEAT:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByHeat() );		break;
 		case LIGHTNING:	*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByLightning() );	break;
 		case SNOW:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedBySnow() );		break;
+		case STORM:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByStorm() );		break;
 		default:
 			return JS_FALSE;
 	};

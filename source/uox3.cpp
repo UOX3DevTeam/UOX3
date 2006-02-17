@@ -81,12 +81,6 @@ timeval current;
 ObjectFactory *objFactory;
 
 //o---------------------------------------------------------------------------o
-// Weather Pre-Declarations
-//o---------------------------------------------------------------------------o
-bool		doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element );
-bool		doLightEffect( CSocket& mSock, CChar& mChar );
-
-//o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o---------------------------------------------------------------------------o
 void		LoadINIFile( void );
@@ -851,12 +845,12 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 
 	if( !mChar.IsNpc() && mSock != NULL )
 	{
-		doLightEffect( (*mSock), mChar );
-		doWeatherEffect( (*mSock), mChar, RAIN );
-		doWeatherEffect( (*mSock), mChar, SNOW );
-		doWeatherEffect( (*mSock), mChar, HEAT );
-		doWeatherEffect( (*mSock), mChar, COLD );
-		doWeatherEffect( (*mSock), mChar, STORM );
+		Weather->doLightEffect( (*mSock), mChar );
+		Weather->doWeatherEffect( (*mSock), mChar, RAIN );
+		Weather->doWeatherEffect( (*mSock), mChar, SNOW );
+		Weather->doWeatherEffect( (*mSock), mChar, HEAT );
+		Weather->doWeatherEffect( (*mSock), mChar, COLD );
+		Weather->doWeatherEffect( (*mSock), mChar, STORM );
 	}
 
 	if( checkFieldEffects )
@@ -2111,7 +2105,10 @@ void doLight( CSocket *s, UI08 level )
 
 	CChar *mChar = s->CurrcharObj();
 	CPLightLevel toSend( level );
-
+	
+	if( (Races->Affect( mChar->GetRace(), LIGHT )) && mChar->GetWeathDamage( LIGHT ) == 0 )
+		mChar->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar->GetRace(), LIGHT )) )), LIGHT );
+	
 	if( mChar->GetFixedLight() != 255 )
 	{
 		toSend.Level( 0 );

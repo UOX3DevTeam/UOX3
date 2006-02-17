@@ -1,3 +1,12 @@
+2/17/2006 - grimson (0.98-3.3l [3.4 BETA])
+	Rewrote the doLightEffect() function, it now uses the current light level to
+	scale the light damage, it also respects the LIGHTLEVEL setting from races.dfn
+	and it will stop doing light damage if you are inside a building.
+	Added a the possibility that a char gets hit by a lightning during a storm,
+	this is controlled by the LIGHTNINGAFFECT, LIGHTNINGDAMAGE and LIGHTNINGCHANCE
+	settings in races.dfn.
+	Added storm to the IsRaceWeakToWeather() JS function.
+
 2/17/2006 - grimson
 	Fixed some bugs in calculating the heat/cold damage in doWeatherEffect().
 	Rain now lowers the current temperature by 5, a storm by 10.

@@ -1242,7 +1242,7 @@ void CRace::Load( size_t sectNum, int modCount )
 					AffectedByLightning( true );
 				else if( UTag == "LIGHTNINGDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), LIGHTNING );
-				else if( UTag == "LIGHTNINGSECS" )		// how often light affects in secs
+				else if( UTag == "LIGHTNINGCHANCE" )		// how big is the chance to get hit by a lightning
 					WeatherSeconds( data.toUShort(), LIGHTNING );
 				else if( UTag == "LANGUAGEMIN" ) // set language min 
 					LanguageMin( data.toUShort() ); 
