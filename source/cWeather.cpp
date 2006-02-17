@@ -148,14 +148,23 @@ bool CWeather::PeriodicUpdate( void )
 		currTemp = effTempMax - tempLightChange;	// maximum temperature minus time
 	else
 		currTemp = effTempMin + tempLightChange;	// minimum temperature plus time 
-	Temp( currTemp );
 	if( SnowActive() && SnowThreshold() > currTemp )
 		SnowIntensity( (UI08)RandomNum( 1, 4 ) );
 	else if( RainActive() )
+	{
 		RainIntensity( (UI08)RandomNum( 1, 4 ) );
+		currTemp -= 5.0f;
+		if ( currTemp < 0 )
+			currTemp = 0;
+	}
 	else if( StormActive() )
+	{
 		StormIntensity( (UI08)RandomNum( 1, 4 ) );
-
+		currTemp -= 10.0f;
+		if ( currTemp < 0 )
+			currTemp = 0;
+	}
+	Temp( currTemp );
 	return true;
 }
 
@@ -1788,6 +1797,8 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 		const R32 tempMax		= Weather->MaxTemp( weatherSys );
 		const R32 tempMin		= Weather->MinTemp( weatherSys );
 		const R32 tempSnowMax	= Weather->SnowThreshold( weatherSys );
+		const R32 tempEffMax	= Weather->EffectiveMaxTemp( weatherSys );
+		const R32 tempEffMin	= Weather->EffectiveMinTemp( weatherSys );
 
 		R32 damageModifier		= 0;
 		SI32 damage				= 0;
@@ -1832,8 +1843,8 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 
 		if( element == COLD && tempCurrent <= coldLevel )
 		{
-			if( (coldLevel - tempMin) != 0)
-				damageModifier = ( (tempCurrent - tempMin) / (coldLevel - tempMin) );
+			if( (coldLevel - tempEffMin) != 0)
+				damageModifier = ( (tempCurrent - tempEffMin) / (coldLevel - tempEffMin) );
 			else 
 				damageModifier = 0;
 
@@ -1843,8 +1854,8 @@ bool doWeatherEffect( CSocket& mSock, CChar& mChar, WeatherType element )
 
 		if( element == HEAT && tempCurrent >= heatLevel)
 		{
-			if( (tempMax - heatLevel) != 0)
-				damageModifier = ( (tempCurrent - heatLevel) / (tempMax - heatLevel) );
+			if( (tempEffMax - heatLevel) != 0)
+				damageModifier = ( (tempCurrent - heatLevel) / (tempEffMax - heatLevel) );
 			else
 				damageModifier = 0;
 			

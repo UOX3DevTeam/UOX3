@@ -2275,7 +2275,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check what region a character is in
 //o---------------------------------------------------------------------------o
-void checkRegion( CSocket *mSock, CChar& mChar )
+void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
 	CTownRegion *iRegion	= mChar.GetRegion();
 	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber() );
@@ -2371,6 +2371,13 @@ void checkRegion( CSocket *mSock, CChar& mChar )
 		if( mSock != NULL )
 		{
 			Effects->dosocketmidi( mSock );
+			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+		}
+	} 
+	else if( forceUpdateLight )
+	{
+		if( mSock != NULL )
+		{
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
 	}

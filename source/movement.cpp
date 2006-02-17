@@ -211,7 +211,7 @@ void HandleTeleporters( CChar *s )
 	}
 }
 
-void checkRegion( CSocket *mSock, CChar& mChar );
+void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight );
 void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 {
 	// sometimes the NPC movement code comes up with -1, for example, if we are following someone
@@ -320,7 +320,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		HandleItemCollision( c, mSock, oldx, oldy );
 		HandleTeleporters( c );
 		HandleWeatherChanges( c, mSock );
-		checkRegion( mSock, (*c) );
+		checkRegion( mSock, (*c), false );
 	}
 }
 

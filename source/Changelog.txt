@@ -1,3 +1,9 @@
+2/17/2006 - grimson
+	Fixed some bugs in calculating the heat/cold damage in doWeatherEffect().
+	Rain now lowers the current temperature by 5, a storm by 10.
+	Moved the sending of the light level and weather status from startChar() into
+	CChar::Teleport() by adding a force forceUpdateLight option to checkRegion().
+
 2/17/2006 - grimson (0.98-3.3k [3.4 BETA])
 	Added cMapStuff::inBuilding() function to determine wheter a given set of coordinates
 	is inside a building. I does this by checking whether there is a static or multi above

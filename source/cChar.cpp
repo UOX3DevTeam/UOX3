@@ -1566,7 +1566,7 @@ void CChar::SendToSocket( CSocket *s )
 	}
 }
 
-void checkRegion( CSocket *mSock, CChar& mChar );
+void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight );
 void CChar::Teleport( void )
 {
 	CSocket *mSock = GetSocket();
@@ -1613,7 +1613,7 @@ void CChar::Teleport( void )
 		}
 	}
 	HandleWeatherChanges( this, mSock );
-	checkRegion( mSock, (*this) );
+	checkRegion( mSock, (*this), true );
 }
 
 void CChar::ExposeToView( void )
