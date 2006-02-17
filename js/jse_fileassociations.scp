@@ -159,6 +159,10 @@
 4006=skill/carpentry.js
 4007=skill/alchemy.js
 4008=skill/lockpicking.js
+4009=skill/tinkeraxle.js
+4010=skill/tinkerawg.js
+4011=skill/tinkerclock.js
+4012=skill/tinkersextant.js
 
 // Miscellaneous Item Types
 5000=item/teleportrune.js

@@ -84,9 +84,6 @@ public:
 	TargetFunc SmeltOre;
 	TargetFunc Smith;
 	TargetFunc StealingTarget;
-	TargetFunc TinkerAwg;
-	TargetFunc TinkerAxel;
-	TargetFunc TinkerClock;
 
 	void Load( void );
 

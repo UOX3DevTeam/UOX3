@@ -1,3 +1,10 @@
+2/17/2006 - giwo (0.98-3.3n [3.4 BETA])
+	Moved Skills::TinkerAxle out to JS.
+	Moved Skills::TinkerAwg out to JS.
+	Moved Skills::TinkerClock out to JS.
+	Moved TinkerSextant functionality out to JS.
+	Removed several item types from itemtypes.dfn as they are now handled by JS.
+
 2/17/2006 - grimson (0.98-3.3m [3.4 BETA])
 	Light and weather effects now also work on NPCs.
 	Added 3 new JS events:

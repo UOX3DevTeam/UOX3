@@ -34,9 +34,9 @@ static JSFunctionSpec my_functions[] =
 { 	// ScriptName, Func Ptr, num args, ?, ? 
 	{ "GetCommand",					SE_GetCommand,				1, 0, 0 }, 
 	{ "GetCommandSize",				SE_GetCommandSize,			0, 0, 0 }, 	
-	{ "StringToNum",				SE_StringToNum,				1, 0, 0 },
-	{ "NumToString",				SE_NumToString,				1, 0, 0 },
-	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },
+	{ "StringToNum",				SE_StringToNum,				1, 0, 0 },	// This function will be depreciated
+	{ "NumToString",				SE_NumToString,				1, 0, 0 },	// This function will be depreciated
+	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },	// This function will be depreciated
 	{ "DoMovingEffect", 			SE_DoMovingEffect,			6, 0, 0 },
 	{ "BroadcastMessage",			SE_BroadcastMessage,		1, 0, 0 },
 	{ "ConsoleMessage",				SE_ConsoleMessage,			1, 0, 0 }, 

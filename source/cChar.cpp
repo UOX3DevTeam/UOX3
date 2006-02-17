@@ -5034,7 +5034,8 @@ void CChar::UpdateDamageTrack( void )
 {
 	TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
 	// Update the damage stuff
-	for( DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
+	DamageTrackEntry *i;
+	for( i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
 	{
 		if( i == NULL )
 		{
@@ -5045,15 +5046,15 @@ void CChar::UpdateDamageTrack( void )
 			damageDealt.Remove( i, true );
 	}
 	// Update the healing stuff
-	for( DamageTrackEntry *j = damageHealed.First(); !damageHealed.Finished(); j = damageHealed.Next() )
+	for( i = damageHealed.First(); !damageHealed.Finished(); i = damageHealed.Next() )
 	{
-		if( j == NULL )
+		if( i == NULL )
 		{
-			damageHealed.Remove( j );
+			damageHealed.Remove( i );
 			continue;
 		}
-		if( (j->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
-			damageHealed.Remove( j, true );
+		if( (i->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
+			damageHealed.Remove( i, true );
 	}
 }
 

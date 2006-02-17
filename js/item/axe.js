@@ -22,7 +22,7 @@ function onCallback1( socket, ourObj )
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
-		if( ourObj.isItem )
+		if( ourObj && ourObj.isItem )
 			tileID = ourObj.id;
 		else	// 5.x clients send our character as the object when clicking on tiles.
 			tileID = socket.GetWord( 17 );
@@ -39,7 +39,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj )
 			{
-				if( tileID == 0x1be0 || ( tileID >= 0x1BD7 && tileID <= 0x1BE2 ) )	// Bowcraft
+				if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 					BowCraft( socket, mChar, ourObj, tileID );
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
@@ -58,13 +58,7 @@ function BowCraft( socket, mChar, ourObj, tileID )
 {
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
-	{
-		var countResource = mChar.ResourceCount( tileID );
-		if( countResource >= 2 )
-			socket.MakeMenu( 49, 8 );
-		else
-			socket.SysMessage( GetDictionaryEntry( 782, socket.Language ) );
-	}
+		socket.MakeMenu( 49, 8 );
 	else
 		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
 }

@@ -1943,37 +1943,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->TempObj( x );
 			BuildGumpFromScripts( mSock, 6 );
 			return true;
-		case IT_TINKERAXLE:	// tinker axle
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_TINKERAXEL, 477 );
-			return true;
-		case IT_TINKERAWG:
-			mSock->TempObj( x );
-			mSock->target( 0, TARGET_TINKERAWG, 478 );
-			return true;
-		case IT_TINKERCLOCK:	// tinker clock
-			mSock->target( 0, TARGET_TINKERCLOCK, 479 );
-			x->Delete();
-			return true;
-		case IT_TINKERSEXTANT:	//tinker sextant
-			if( Skills->CheckSkill( mChar, TINKERING, 0, 1000 ) )
-			{
-				mSock->sysmessage( 480 );
-				i = Items->CreateItem( mSock, mChar, 0x1057, 1, 0, OT_ITEM, true );
-				if( i == NULL )
-					return true;
-				i->SetName( Dictionary->GetEntry( 1429 ) );
-				CItem *skillItem = static_cast<CItem *>(mSock->TempObj());
-				if( ValidateObject( skillItem ) )
-				{
-					skillItem->SetDecayable( true );
-					x->Delete();
-					mSock->TempObj( NULL );
-				}
-			}
-			else
-				mSock->sysmessage( 481 );
-			return true;
 		default:
 			if( iType )
 				Console << "Unhandled item type for item: " << x->GetName() << "[" << x->GetSerial() << "] of type: " << static_cast<UI16>(iType) << myendl;
@@ -2023,63 +1992,32 @@ void InitTagToItemType( void )
 	tagToItemType["WORLDCHANGEGATE"]		= IT_WORLDCHANGEGATE;
 	tagToItemType["MORPHOBJECT"]			= IT_MORPHOBJECT;
 	tagToItemType["UNMORPHOBJECT"]			= IT_UNMORPHOBJECT;
-	tagToItemType["DRINK"]					= IT_DRINK;
-	tagToItemType["STANDINGHARP"]			= IT_STANDINGHARP;
 	tagToItemType["ZEROKILLSGATE"]			= IT_ZEROKILLSGATE;
 	tagToItemType["PLANK"]					= IT_PLANK;
 	tagToItemType["FIREWORKSWAND"]			= IT_FIREWORKSWAND;
 	tagToItemType["ESCORTNPCSPAWNER"]		= IT_ESCORTNPCSPAWNER;
 	tagToItemType["RENAMEDEED"]				= IT_RENAMEDEED;
-	tagToItemType["LEATHERREPAIRTOOL"]		= IT_LEATHERREPAIRTOOL;
-	tagToItemType["BOWREPAIRTOOL"]			= IT_BOWREPAIRTOOL;
 	tagToItemType["TILLER"]					= IT_TILLER;
 	tagToItemType["GUILDSTONE"]				= IT_GUILDSTONE;
 	tagToItemType["HOUSESIGN"]				= IT_HOUSESIGN;
-	tagToItemType["TINKERTOOL"]				= IT_TINKERTOOL;
 	tagToItemType["METALREPAIRTOOL"]		= IT_METALREPAIRTOOL;
 	tagToItemType["FORGE"]					= IT_FORGE;
 	tagToItemType["DYE"]					= IT_DYE;
 	tagToItemType["DYEVAT"]					= IT_DYEVAT;
 	tagToItemType["MODELMULTI"]				= IT_MODELMULTI;
-	tagToItemType["ARCHERYBUTTE"]			= IT_ARCHERYBUTTE;
-	tagToItemType["DRUM"]					= IT_DRUM;
-	tagToItemType["TAMBOURINE"]				= IT_TAMBOURINE;
-	tagToItemType["HARP"]					= IT_HARP;
-	tagToItemType["LUTE"]					= IT_LUTE;
 	tagToItemType["PLAYERVENDORDEED"]		= IT_PLAYERVENDORDEED;
 	tagToItemType["SMITHYTOOL"]				= IT_SMITHYTOOL;
-	tagToItemType["CARPENTRYTOOL"]			= IT_CARPENTRYTOOL;
 	tagToItemType["MININGTOOL"]				= IT_MININGTOOL;
 	tagToItemType["EMPTYVIAL"]				= IT_EMPTYVIAL;
-	tagToItemType["UNSPUNFABRIC"]			= IT_UNSPUNFABRIC;
-	tagToItemType["UNCOOKEDFISH"]			= IT_UNCOOKEDFISH;
-	tagToItemType["UNCOOKEDMEAT"]			= IT_UNCOOKEDMEAT;
-	tagToItemType["SPUNFABRIC"]				= IT_SPUNFABRIC;
-	tagToItemType["FLETCHINGTOOL"]			= IT_FLETCHINGTOOL;
 	tagToItemType["CANNONBALL"]				= IT_CANNONBALL;
-	tagToItemType["WATERPITCHER"]			= IT_WATERPITCHER;
-	tagToItemType["UNCOOKEDDOUGH"]			= IT_UNCOOKEDDOUGH;
-	tagToItemType["SEWINGKIT"]				= IT_SEWINGKIT;
 	tagToItemType["ORE"]					= IT_ORE;
 	tagToItemType["MESSAGEBOARD"]			= IT_MESSAGEBOARD;
-	tagToItemType["CAMPING"]				= IT_CAMPING;
 	tagToItemType["MAGICSTATUE"]			= IT_MAGICSTATUE;
 	tagToItemType["GUILLOTINE"]				= IT_GUILLOTINE;
-	tagToItemType["FLOURSACK"]				= IT_FLOURSACK;
 	tagToItemType["FISHINGPOLE"]			= IT_FISHINGPOLE;
 	tagToItemType["CLOCK"]					= IT_CLOCK;
-	tagToItemType["MORTAR"]					= IT_MORTAR;
-	tagToItemType["SCISSORS"]				= IT_SCISSORS;
-	tagToItemType["BANDAGE"]				= IT_BANDAGE;
 	tagToItemType["SEXTANT"]				= IT_SEXTANT;
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
-	tagToItemType["LOCKPICK"]				= IT_LOCKPICK;
-	tagToItemType["COTTONPLANT"]			= IT_COTTONPLANT;
-	tagToItemType["TINKERAXLE"]				= IT_TINKERAXLE;
-	tagToItemType["TINKERAWG"]				= IT_TINKERAWG;
-	tagToItemType["TINKERCLOCK"]			= IT_TINKERCLOCK;
-	tagToItemType["TINKERSEXTANT"]			= IT_TINKERSEXTANT;
-	tagToItemType["TRAININGDUMMY"]			= IT_TRAININGDUMMY;
 }
 
 ItemTypes FindItemTypeFromTag( const UString strToFind )
