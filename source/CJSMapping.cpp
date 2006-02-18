@@ -326,9 +326,7 @@ CJSMappingSection::~CJSMappingSection()
 	{
 		cScript *toDelete = sIter->second;
 		if( toDelete != NULL )
-		{
 			delete toDelete;
-		}
 	}
 
 	scriptIDMap.clear();

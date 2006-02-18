@@ -85,32 +85,6 @@ ObjectType FindObjTypeFromString( UString strToFind )
 	return OT_CBO;
 }
 
-JSBool SE_ConsoleMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		DoSEErrorMessage( "ConsoleMessage: Invalid number of arguments (takes 1)" );
- 		return JS_FALSE;
-	}
-	std::string test = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
- 	// print the string to the console 
-	if( !( test.empty() || test.length() == 0 ) )
- 		Console << test;
- 	return JS_TRUE;
-}
-JSBool SE_ScriptPrintNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 1 )
-	{
-		DoSEErrorMessage( "ScriptPrintNumber: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
-	}
- 	long test = JSVAL_TO_INT( argv[0] );
- 	// print the string to the console
- 	Console << (SI32)test;
- 	return JS_TRUE;
-}
-
 // Effect related functions
 JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
@@ -310,21 +284,6 @@ JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	long loNum = JSVAL_TO_INT( argv[0] );
 	long hiNum = JSVAL_TO_INT( argv[1] );
 	*rval = INT_TO_JSVAL( RandomNum( loNum, hiNum ) );
-	return JS_TRUE;
-}
-
-JSBool SE_CreateBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_TRUE;
-}
-
-JSBool SE_DestroyBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	return JS_TRUE;
-}
-
-JSBool SE_SendBuffer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
 	return JS_TRUE;
 }
 
@@ -815,24 +774,6 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
-JSBool SE_SubStringSearch( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 2 )
-	{
-		DoSEErrorMessage( "SubStringSearch: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
-	}
- 	UString ssSearching = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
- 	UString ssSearch    = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	if( ssSearching.empty() || ssSearching.length() == 0 || ssSearch.empty() || ssSearch.length() == 0 )	// no valid search string, or string to search
-	{
-		DoSEErrorMessage( "SubStringSearch: Invalid search or sub string" );
-		return JS_FALSE;
-	}
-	bool result = ( ssSearching.upper().find( ssSearch.upper() ) != std::string::npos );
-	*rval = BOOLEAN_TO_JSVAL( result );
-	return JS_TRUE;
-}
 JSBool SE_GetMurderThreshold( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() );
@@ -865,25 +806,6 @@ JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	RACEID r1 = (RACEID)JSVAL_TO_INT( argv[1] );
 	*rval = INT_TO_JSVAL( Races->CompareByRace( r0, r1 ) );
 
-	return JS_TRUE;
-}
-
-JSBool SE_RaceGate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
-	if( argc != 3 )
-	{
-		DoSEErrorMessage( "RaceGate: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
-	}
-	JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock		= (CSocket *)JS_GetPrivate( cx, mSock );
-	JSObject *mChar		= JSVAL_TO_OBJECT( argv[1] );
-	CChar *myChar		= (CChar *)JS_GetPrivate( cx, mChar );
-	RACEID race			= (RACEID)JSVAL_TO_INT( argv[2] );
-	if( race < Races->Count() || race == 65535 )
-		Races->gate( myChar, race, true );
-	else
-		mySock->sysmessage( 13 );
 	return JS_TRUE;
 }
 
@@ -1472,58 +1394,6 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date			-	1/13/2003 11:09:39 PM
-//|	Developers		-	Brakhtus
-//|	Organization	-	Forum Submission
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Extend the UOX3 JSE implementation to support scriptable 
-//|						commands that players, and daminstration for a shard may
-//|						use to performs specialized tasks.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-JSBool SE_GetCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-{
- 	if( argc != 1 )
- 	{
-		DoSEErrorMessage( "GetCommand: needs an argument" );
-		return JS_FALSE; 	
-	} 	
-	UI08 idx = static_cast<UI08>((JSVAL_TO_INT( argv[0] )));
- 	if( idx >= Commands->NumArguments() ) 
-	{ 		
-		DoSEErrorMessage( "GetCommand: Index exeeds the command-array!" ); 		
-		return JS_FALSE; 	
-	} 	
-	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, Commands->CommandString( idx ).c_str() ) ); 
-	return JS_TRUE; 
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date			-	1/13/2003 11:11:46 PM
-//|	Developers		-	Brakhtus
-//|	Organization	-	Forum Submission
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-JSBool SE_GetCommandSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ) 
-{ 	
-	if( argc != 0 ) 	
-	{ 		
-		DoSEErrorMessage( "GetCommandSize: doesnt need any argument!" ); 		
-		return JS_FALSE; 	
-	} 	
-	*rval = INT_TO_JSVAL( Commands->NumArguments() ); 	
-	return JS_TRUE; 
 }
 
 //o--------------------------------------------------------------------------o

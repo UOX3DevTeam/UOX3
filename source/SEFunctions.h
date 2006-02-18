@@ -27,11 +27,6 @@ typedef JSBool (SEngineFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 
 SEngineFunc SE_SpawnNPC;			// Create NPC								*
 
-SEngineFunc SE_GetTown;				//											**
-SEngineFunc SE_SetTown;				//											**
-SEngineFunc SE_GetRegion;			//											**
-SEngineFunc SE_SetRegion;			//											**
-
 // Effect related functions (3)
 
 SEngineFunc SE_DoMovingEffect;		// Does moving effect						***
@@ -43,22 +38,12 @@ SEngineFunc SE_CreateBlankItem;		// Create an item							***
 SEngineFunc SE_CreateDFNItem;		// Create an item							***
 
 // Speech related functions (7)
-
 SEngineFunc SE_BroadcastMessage;	//											***
-SEngineFunc SE_ConsoleMessage;		//											***
 
 // Random functions(5)
-SEngineFunc SE_ScriptPrintNumber;	//											***
 SEngineFunc SE_RandomNumber;		// Calculates a random number				***
 SEngineFunc SE_CalcCharFromSer;		//											***
 SEngineFunc SE_CalcItemFromSer;		//											***
-
-// Other functions
-SEngineFunc	SE_GetCommand; 
-SEngineFunc	SE_GetCommandSize; 
-SEngineFunc SE_CreateBuffer;		//											*
-SEngineFunc SE_DestroyBuffer;		//											*
-SEngineFunc SE_SendBuffer;			//											*
 
 SEngineFunc SE_MakeItem;			//											***
 
@@ -93,7 +78,6 @@ SEngineFunc SE_GetDay;					//										***
 SEngineFunc SE_SecondsPerUOMinute;		//										***
 
 SEngineFunc SE_GetCurrentClock;			//										***
-SEngineFunc SE_SubStringSearch;			//										***
 SEngineFunc SE_GetMurderThreshold;		//										***
 SEngineFunc SE_RollDice;				//										***
 SEngineFunc SE_RaceCompareByRace;		//										***
@@ -128,7 +112,6 @@ SEngineFunc SE_AreaItemFunction;
 SEngineFunc SE_Reload;
 
 SEngineFunc SE_GetDictionaryEntry;
-SEngineFunc SE_RaceGate;
 SEngineFunc SE_Yell;
 SEngineFunc SE_SendStaticStats;
 SEngineFunc SE_GetTileHeight;

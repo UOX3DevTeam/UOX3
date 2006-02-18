@@ -244,16 +244,11 @@ public:
 	bool		OnLogout( CSocket *sockPlayer, CChar *pPlayer );
 	bool		OnClick( CSocket *sockPlayer, CItem *iClicked );
 	bool		OnFall( CChar *pFall, SI08 fallDistance );
-	bool		OnSell( void );
-	bool		OnBuy( void );
 	bool		OnAISliver( CChar *pSliver );
 	bool		OnSystemSlice( void );
-	bool		OnUnknownTrigger( void );
 	bool		OnLightChange( CBaseObject *tObject, UI08 lightLevel );
 	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
 	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
-	bool		OnXYZEvent( void );
-	bool		OnPortal( void );
 	bool		OnTimer( CBaseObject *tObject, UI08 timerID );
 	bool		OnDeath( CChar *pDead );
 	bool		OnResurrect( CChar *pAlive );

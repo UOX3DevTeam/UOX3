@@ -256,13 +256,13 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			return;
 		
 		SI08 myz = ILLEGAL_Z;
-		const SI16 myx = GetXfromDir( dir, c->GetX() );
-		const SI16 myy = GetYfromDir( dir, c->GetY() );
-		if( !calc_move( c, c->GetX(), c->GetY(), myz, dir ) )
+		const SI16 myx = GetXfromDir( dir, oldx );
+		const SI16 myy = GetYfromDir( dir, oldy );
+		if( !calc_move( c, oldx, oldy, myz, dir ) )
 		{
 #if DEBUG_WALKING
 			Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, c->GetName() );
-			Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, c->GetX(), c->GetY(), c->GetZ() );
+			Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() );
 			Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
 #endif
 			if( mSock != NULL )
@@ -273,7 +273,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		}
 #if DEBUG_WALKING
 		Console.Print( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, c->GetName() );
-		Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, c->GetX(), c->GetY(), c->GetZ() );
+		Console.Print( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() );
 		Console.Print( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz );
 #endif
 
@@ -654,65 +654,31 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
-	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea == NULL )	// no valid region
-		return;
-	CDataList< CItem * > *regItems = MapArea->GetItemList();
-	regItems->Push();
-	for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
-		if( !ValidateObject( tItem ) )
+		CMapRegion *MapArea = (*rIter);
+		if( MapArea == NULL )	// no valid region
 			continue;
-		if( !tItem->CanBeObjType( OT_MULTI ) )
+		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		regItems->Push();
+		for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
 		{
-#if DEBUG_WALKING
-			Console.Print( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
-#endif
-			if( tItem->GetX() == x && tItem->GetY() == y )
+			if( !ValidateObject( tItem ) )
+				continue;
+			if( !tItem->CanBeObjType( OT_MULTI ) )
 			{
-				CTile tile;
-				Map->SeekTile( tItem->GetID(), &tile );
-				xyblock[xycount].Type( 1 );
-				xyblock[xycount].BaseZ( tItem->GetZ() );
-				xyblock[xycount].ID( tItem->GetID() );
-				xyblock[xycount] = tile;
-				++xycount;
-				if( xycount >= XYMAX )	// don't overflow
-				{
-					regItems->Pop();
-					return;
-				}
-			}
-		}
-		else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
-		{	// implication, is, this is now a CMultiObj
-			UI16 multiID = tItem->GetID() - 0x4000;
-			SI32 length = 0;		// should be SI32, not long
-			Map->SeekMulti( multiID, &length );
-			if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
-			{
-				Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
-				CLand land;
-				const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-				Map->SeekLand( map1.id, &land );
-				if( land.LiquidWet() ) // is it water?
-					tItem->SetID( 0x4001 );
-				else
-					tItem->SetID( 0x4064 );
-				length = 0;
-			}
-			for( SI32 j = 0; j < length; ++j )
-			{
-				const st_multi *multi = Map->SeekIntoMulti( multiID, j );
-				if( multi->visible && (tItem->GetX() + multi->x) == x && (tItem->GetY() + multi->y) == y )
+	#if DEBUG_WALKING
+				Console.Print( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() );
+	#endif
+				if( tItem->GetX() == x && tItem->GetY() == y )
 				{
 					CTile tile;
-					Map->SeekTile( multi->tile, &tile );
-					xyblock[xycount].Type( 2 );
-					xyblock[xycount].BaseZ( multi->z + tItem->GetZ() );
-					xyblock[xycount].ID( multi->tile );
+					Map->SeekTile( tItem->GetID(), &tile );
+					xyblock[xycount].Type( 1 );
+					xyblock[xycount].BaseZ( tItem->GetZ() );
+					xyblock[xycount].ID( tItem->GetID() );
 					xyblock[xycount] = tile;
-					xyblock[xycount].Weight( 255 );
 					++xycount;
 					if( xycount >= XYMAX )	// don't overflow
 					{
@@ -721,9 +687,47 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 					}
 				}
 			}
+			else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
+			{	// implication, is, this is now a CMultiObj
+				const UI16 multiID = (tItem->GetID() - 0x4000);
+				SI32 length = 0;		// should be SI32, not long
+				Map->SeekMulti( multiID, &length );
+				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
+				{
+					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
+					CLand land;
+					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
+					Map->SeekLand( map1.id, &land );
+					if( land.LiquidWet() ) // is it water?
+						tItem->SetID( 0x4001 );
+					else
+						tItem->SetID( 0x4064 );
+					length = 0;
+				}
+				for( SI32 j = 0; j < length; ++j )
+				{
+					const st_multi *multi = Map->SeekIntoMulti( multiID, j );
+					if( multi->visible && (tItem->GetX() + multi->x) == x && (tItem->GetY() + multi->y) == y )
+					{
+						CTile tile;
+						Map->SeekTile( multi->tile, &tile );
+						xyblock[xycount].Type( 2 );
+						xyblock[xycount].BaseZ( multi->z + tItem->GetZ() );
+						xyblock[xycount].ID( multi->tile );
+						xyblock[xycount] = tile;
+						xyblock[xycount].Weight( 255 );
+						++xycount;
+						if( xycount >= XYMAX )	// don't overflow
+						{
+							regItems->Pop();
+							return;
+						}
+					}
+				}
+			}
 		}
+		regItems->Pop();
 	}
-	regItems->Pop();
 }
 
 // so we are going to move, lets update the regions

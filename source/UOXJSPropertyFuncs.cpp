@@ -173,16 +173,12 @@ namespace UOX
 				case CIP_Z:			*vp = INT_TO_JSVAL( gPriv->GetZ() );			break;
 				case CIP_ID:		*vp = INT_TO_JSVAL( gPriv->GetID() );			break;
 				case CIP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
-				case CIP_OWNER:		
-					// The owner property is not the pack's owner, but the item's owner.
-					// If you want the container's owner, look that up instead
+				case CIP_OWNER:
 					CChar *pOwner;
 					pOwner = gPriv->GetOwnerObj();
 
 					if( !ValidateObject( pOwner ) )
-					{
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Otherwise Acquire an object
@@ -193,21 +189,9 @@ namespace UOX
 					}
 					break;
 				case CIP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
-				case CIP_SERIAL:		
-					if( gPriv->GetSerial() != INVALIDSERIAL )
-					{
-						*vp = INT_TO_JSVAL( gPriv->GetSerial() - BASEITEMSERIAL );
-					}
-					else
-					{
-						*vp = INT_TO_JSVAL( INVALIDSERIAL );
-					}
-					break;
+				case CIP_SERIAL:		*vp = INT_TO_JSVAL( gPriv->GetSerial() );			break;
 				case CIP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 				case CIP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
-				case CIP_PRIVATEWORD:
-					
-					break;
 				case CIP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
 				case CIP_AMOUNT:		*vp = INT_TO_JSVAL( gPriv->GetAmount() );			break;
 				
@@ -275,7 +259,6 @@ namespace UOX
 						*vp = OBJECT_TO_JSVAL( myRace );
 					}
 					break;
-				case CIP_RACEID:		*vp = INT_TO_JSVAL( gPriv->GetRace() );			break;
 				case CIP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );		break;
 				case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 				case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
@@ -343,7 +326,7 @@ namespace UOX
 		CRace *TempRace			= NULL;
 		JSObject *TempObject	= NULL;
 		UI08 TempTownID			= 0xFF;
-		GUILDID TempGuildID		= INVALIDID; // should work, shouldn't it ?
+		GUILDID TempGuildID		= -1;
 		CChar *gPriv			= (CChar *)JS_GetPrivate( cx, obj );
 
 		if( !ValidateObject( gPriv ) )
@@ -367,15 +350,11 @@ namespace UOX
 				case CCP_ID:		*vp = INT_TO_JSVAL( gPriv->GetID() );			break;
 				case CCP_COLOUR:	*vp = INT_TO_JSVAL( gPriv->GetColour() );		break;
 				case CCP_OWNER:
-					// The Item-thingy for characters as well (damn what possibiliteis we've got :)
 					CBaseObject *TempObj;
 					TempObj = gPriv->GetOwnerObj();
 
 					if( !ValidateObject( TempObj ) )
-					{
-						// Return a JS_NULL
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Otherwise Acquire an object
@@ -384,26 +363,18 @@ namespace UOX
 						JS_SetPrivate( cx, myChar, TempObj );
 						*vp = OBJECT_TO_JSVAL( myChar );
 					}
-
 					break;
 				case CCP_VISIBLE:		*vp = INT_TO_JSVAL( (UI08)gPriv->GetVisible() );	break;
 				case CCP_SERIAL:		*vp = INT_TO_JSVAL( gPriv->GetSerial() );			break;
 				case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 				case CCP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
-				case CCP_PRIVATEWORD:
-					
-					break;
 				case CCP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
 				case CCP_TARGET:
-					// Hm Quite funny, same thing as .owner
 					CChar *tempChar;
 					tempChar = gPriv->GetTarg();
 
 					if( !ValidateObject( tempChar ) )
-					{
-						// Return a JS_NULL
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Otherwise Acquire an object
@@ -412,7 +383,6 @@ namespace UOX
 						JS_SetPrivate( cx, myChar, tempChar );
 						*vp = OBJECT_TO_JSVAL( myChar );
 					}
-
 					break;
 				case CCP_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->GetDexterity() );	break;
 				case CCP_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence() );	break;
@@ -437,18 +407,11 @@ namespace UOX
 					break;
 				case CCP_MANA:			*vp = INT_TO_JSVAL( gPriv->GetMana() );			break;
 				case CCP_STAMINA:		*vp = INT_TO_JSVAL( gPriv->GetStamina() );		break;
-				
-				// Used that to return either JSVAL_NULL if there is no backpack
-				// or to return an item object (which is the backpack)
-				// sorry, didn't know what the identifier was meant for
 				case CCP_CHARPACK:
 					TempItem = gPriv->GetPackItem();
 
 					if( !ValidateObject( TempItem ) )
-					{
-						// Return a JS_NULL
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Otherwise Acquire an object
@@ -457,7 +420,6 @@ namespace UOX
 						JS_SetPrivate( cx, myItem, TempItem );
 						*vp = OBJECT_TO_JSVAL( myItem );
 					}
-			
 					break;
 				case CCP_FAME:			*vp = INT_TO_JSVAL( gPriv->GetFame() );						break;
 				case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );					break;
@@ -466,23 +428,19 @@ namespace UOX
 				case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );					break;
 				case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );				break;
 				case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );				break;
-				// Allocate a race object here and return that... (a lot nicer, isn't it?)
 				case CCP_RACE:
 					TempRace = Races->Race( gPriv->GetRace() );
 
 					if( TempRace == NULL )
-					{
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Otherwise Acquire an object
 						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myRace = myScript->AcquireObject( IUE_RACE );
+						JSObject *myRace	= myScript->AcquireObject( IUE_RACE );
 						JS_SetPrivate( cx, myRace, TempRace );
 						*vp = OBJECT_TO_JSVAL( myRace );
 					}
-					
 					break;
 				case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
 				case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
@@ -530,9 +488,7 @@ namespace UOX
 					// We need to decide here whether 0xFF is a valid town (wilderness) or not
 					// i would say no its not
 					if( TempTownID == 0xFF )
-					{
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// Should build the town here
@@ -548,9 +504,7 @@ namespace UOX
 
 					// Character has no guild
 					if( TempGuildID == -1 ) // isn't there a constant or something like?
-					{
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						// if he has one, lets build our guild !
@@ -565,9 +519,7 @@ namespace UOX
 					{ // So we can declare the variables here
 						CSocket *tSock = gPriv->GetSocket();
 						if( tSock == NULL )
-						{	// Return a JS_NULL
 							*vp = JSVAL_NULL;
-						}
 						else
 						{	// Otherwise Acquire an object
 							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
@@ -581,7 +533,6 @@ namespace UOX
 				case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;
 				case CCP_ISITEM:		*vp = JSVAL_FALSE;									break;
 				case CCP_ISSPAWNER:		*vp = JSVAL_FALSE;									break;
-				case CCP_RACEID:		*vp = INT_TO_JSVAL( gPriv->GetRace() );				break;
 				case CCP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );			break;
 				case CCP_MAXSTAMINA:	*vp = INT_TO_JSVAL( gPriv->GetMaxStam() );			break;
 				case CCP_MAXMANA:		*vp = INT_TO_JSVAL( gPriv->GetMaxMana() );			break;
@@ -719,18 +670,10 @@ namespace UOX
 					else
 						gPriv->SetOwner( NULL );
 					break;
-				case CCP_VISIBLE:	gPriv->SetVisible( (VisibleTypes)encaps.toInt() );									break;
-				case CCP_SERIAL:	
-					
-					break;
-					// We want other players to see the change don't we
-				case CCP_HEALTH:
-					gPriv->SetHP( encaps.toInt() ); 
-					break;
-				case CCP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
-				case CCP_PRIVATEWORD:
-					
-					break;
+				case CCP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );					break;
+				case CCP_SERIAL:															break;
+				case CCP_HEALTH:		gPriv->SetHP( encaps.toInt() );						break;
+				case CCP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );	break;
 				case CCP_WORLDNUMBER:	
 					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
 					break;
@@ -759,17 +702,12 @@ namespace UOX
 					gPriv->SetHunger( (SI08)encaps.toInt() );
 					//Call the onHungerChange Event
 					if( toHungerExecute != NULL )
-					{
 						toHungerExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
-					}
 					else if( globalExecute != NULL )
-					{
 						globalExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
-					}
 					break;
 				case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );				break;
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
-				case CCP_RACEID:
 				case CCP_RACE:			Races->gate( gPriv, (RACEID)encaps.toInt(), true );	break;
 				case CCP_MAXHP:			gPriv->SetFixedMaxHP( (SI16)encaps.toInt() );		break;
 				case CCP_CRIMINAL:		
@@ -1246,12 +1184,12 @@ namespace UOX
 		{
 			switch( JSVAL_TO_INT( id ) )
 			{
-				case CIP_NAME:	gPriv->SetName( encaps.toString() );			break;
-				case CIP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );				break;
-				case CIP_Y:		gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );				break;
-				case CIP_Z:		gPriv->SetZ( (SI08)encaps.toInt() );			break;
-				case CIP_ID:		gPriv->SetID( (UI16)encaps.toInt() );		break;
-				case CIP_COLOUR:	gPriv->SetColour( (UI16)encaps.toInt() );	break;
+				case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
+				case CIP_X:				gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );				break;
+				case CIP_Y:				gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );				break;
+				case CIP_Z:				gPriv->SetZ( (SI08)encaps.toInt() );						break;
+				case CIP_ID:			gPriv->SetID( (UI16)encaps.toInt() );						break;
+				case CIP_COLOUR:		gPriv->SetColour( (UI16)encaps.toInt() );					break;
 				case CIP_OWNER:		
 					if( *vp != JSVAL_NULL ) 
 					{	 
@@ -1263,15 +1201,10 @@ namespace UOX
 					else
 						gPriv->SetOwner( NULL );
 					break;
-				case CIP_VISIBLE:	gPriv->SetVisible( (VisibleTypes)encaps.toInt() );	break;
-				case CIP_SERIAL:	
-					
-					break;
-				case CIP_HEALTH:	gPriv->SetHP( (SI16)encaps.toInt() ); 								break;
-				case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );				break;
-				case CIP_PRIVATEWORD:
-					
-					break;
+				case CIP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );			break;
+				case CIP_SERIAL:																	break;
+				case CIP_HEALTH:		gPriv->SetHP( (SI16)encaps.toInt() ); 						break;
+				case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
 				case CIP_WORLDNUMBER:	
 					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
 					break;
@@ -1287,39 +1220,37 @@ namespace UOX
 					else
 						gPriv->SetCont( NULL );
 					break;
-				case CIP_TYPE:		gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 		break;
-				case CIP_MORE:		gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 				break;
-				case CIP_MOREX:		gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );				break;
-				case CIP_MOREY:		gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );				break;
-				case CIP_MOREZ:		gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );				break;
-				case CIP_MOVABLE:	gPriv->SetMovable( (SI08)encaps.toInt() );						break;
-				case CIP_ATT:		gPriv->SetLoDamage( (SI16)encaps.toInt() ); 	
-									gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
-									break;
-				case CIP_DEF:		gPriv->SetDef( (UI16)encaps.toInt() );							break;
-				case CIP_LAYER:		gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 						break;
-				case CIP_ITEMSINSIDE:
-					break;
-				case CIP_DECAYABLE:	gPriv->SetDecayable( encaps.toBool() );				 			break;
-				case CIP_DECAYTIME:	gPriv->SetDecayTime( encaps.toInt() ); 							break;
-				case CIP_LODAMAGE:	gPriv->SetLoDamage( (SI16)encaps.toInt() );						break;
-				case CIP_HIDAMAGE:	gPriv->SetHiDamage( (SI16)encaps.toInt() );						break;
-				case CIP_NAME2:		gPriv->SetName2( encaps.toString().c_str() );					break;
-				case CIP_RACEID:
-				case CIP_RACE:		gPriv->SetRace( (RACEID)encaps.toInt() );						break;
-				case CIP_MAXHP:		gPriv->SetMaxHP( (SI16)encaps.toInt() );						break;
-				case CIP_RANK:		gPriv->SetRank( (SI08)encaps.toInt() );							break;
-				case CIP_POISON:	gPriv->SetPoisoned( (UI08)encaps.toInt() );						break;
-				case CIP_DIR:		gPriv->SetDir( (SI16)encaps.toInt() );							break;
-				case CIP_WIPABLE:	gPriv->SetWipeable( encaps.toBool() );							break;
-				case CIP_BUYVALUE:	gPriv->SetBuyValue( (UI32)encaps.toInt() );						break;
-				case CIP_SELLVALUE:	gPriv->SetSellValue( (UI32)encaps.toInt() );					break;
-				case CIP_RESTOCK:	gPriv->SetRestock( (UI16)encaps.toInt() );						break;
-				case CIP_DEVINELOCK:gPriv->SetDevineLock( encaps.toBool() );						break;
-				case CIP_WEIGHT:	gPriv->SetWeight( (SI32)encaps.toInt() );						break;
-				case CIP_STRENGTH:	gPriv->SetStrength( (SI16)encaps.toInt() );						break;
-				case CIP_CORPSE:	gPriv->SetCorpse( encaps.toBool() );							break;
-				case CIP_DESC:		gPriv->SetDesc( encaps.toString() );							break;
+				case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
+				case CIP_MORE:			gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 			break;
+				case CIP_MOREX:			gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );			break;
+				case CIP_MOREY:			gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );			break;
+				case CIP_MOREZ:			gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );			break;
+				case CIP_MOVABLE:		gPriv->SetMovable( (SI08)encaps.toInt() );					break;
+				case CIP_ATT:			gPriv->SetLoDamage( (SI16)encaps.toInt() ); 	
+										gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
+										break;
+				case CIP_DEF:			gPriv->SetDef( (UI16)encaps.toInt() );						break;
+				case CIP_LAYER:			gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 				break;
+				case CIP_ITEMSINSIDE:																break;
+				case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
+				case CIP_DECAYTIME:		gPriv->SetDecayTime( encaps.toInt() ); 						break;
+				case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
+				case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
+				case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
+				case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
+				case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
+				case CIP_RANK:			gPriv->SetRank( (SI08)encaps.toInt() );						break;
+				case CIP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );					break;
+				case CIP_DIR:			gPriv->SetDir( (SI16)encaps.toInt() );						break;
+				case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
+				case CIP_BUYVALUE:		gPriv->SetBuyValue( (UI32)encaps.toInt() );					break;
+				case CIP_SELLVALUE:		gPriv->SetSellValue( (UI32)encaps.toInt() );				break;
+				case CIP_RESTOCK:		gPriv->SetRestock( (UI16)encaps.toInt() );					break;
+				case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
+				case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
+				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
+				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
+				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
 				case CIP_TEMPTIMER:		gPriv->SetTempTimer( encaps.toInt() );						break;
 				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
@@ -1438,9 +1369,7 @@ namespace UOX
 				case CSOCKP_CURRENTCHAR:
 					myChar = gPriv->CurrcharObj();
 					if( !ValidateObject( myChar ) )
-					{
 						*vp = JSVAL_NULL;
-					}
 					else
 					{
 						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
@@ -1866,9 +1795,7 @@ namespace UOX
 		if( trgObj.isType( JSOT_OBJECT ) )
 		{
 			if( srcObj.ClassName() != trgObj.ClassName() )
-			{
 				*bp = JS_FALSE;
-			}
 			else
 			{
 				CSocket *trgSock	= (CSocket *)trgObj.toObject();
@@ -1876,9 +1803,7 @@ namespace UOX
 			}
 		}
 		else
-		{
 			*bp = ( srcSock == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
-		}
 		return JS_TRUE;
 	}
 	JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
@@ -1886,35 +1811,25 @@ namespace UOX
 		JSEncapsulate srcObj( cx, obj );
 		CBaseObject *src = (CBaseObject *)srcObj.toObject();
 		if( !ValidateObject( src ) )
-		{
 			*bp = JS_FALSE;
-		}
 		else
 		{
 			JSEncapsulate trgObj( cx, &v );
 			if( trgObj.isType( JSOT_OBJECT ) )
 			{
 				if( srcObj.ClassName() != trgObj.ClassName() )
-				{
 					*bp = JS_FALSE;
-				}
 				else
 				{
 					CBaseObject *trg = (CBaseObject *)trgObj.toObject();
 					if( !ValidateObject( trg ) ) 
-					{
 						*bp = JS_FALSE;
-					}
-					else
-					{	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
+					else	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
 						*bp = ( src->GetSerial() == trg->GetSerial() ) ? JS_TRUE : JS_FALSE;
-					}
 				}
 			}
 			else
-			{
 				*bp = ( src == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
-			}
 		}
 		return JS_TRUE;
 	}

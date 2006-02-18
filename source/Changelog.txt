@@ -1,3 +1,16 @@
+2/17/2006 - giwo (0.98-3.3o [3.4 BETA])
+	Fixed an issue causing characters to randomly fall through house floors.
+	Added a check to ensure a character cannot open a container unless he is in the same house it is.
+	Removed JS Function RaceGate() as CChar property .race does the same thing.
+	Removed JS Function SubStringSearch() as .match() does the same thing.
+	Removed JS Function ConsoleMessage() as Console.Print() does the same thing.
+	Removed JS Function ScriptPrintNumber() as Console.Print( number.toString() ) does the same thing.
+	Removed JS Functions GetCommand() and GetCommandSize() as they were superfluous.
+	Removed JS Functions CreateBuffer() DestroyBuffer() and SendBuffer() as the new Packet class handles that.
+	Removed JS Item & Character property .raceID as .race does the same thing.
+	Removed JS Item & Character property .privateword.
+	Added a blank deed to items.dfn.
+
 2/17/2006 - giwo (0.98-3.3n [3.4 BETA])
 	Moved Skills::TinkerAxle out to JS.
 	Moved Skills::TinkerAwg out to JS.

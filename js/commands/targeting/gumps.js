@@ -150,7 +150,11 @@ function onCallback1( socket, ourObj )
 			addHexEntry( myGump, "Attacker:", attChar.serial );
 		if( targChar )
 			addHexEntry( myGump, "Target:", targChar.serial );
-		addEntry( myGump, "Race:", ourObj.raceID );
+		var ourRace = ourObj.race;
+		if( ourRace )
+			addEntry( myGump, "Race:", ourRace.id );
+		else
+			addEntry( myGump, "Race:", 0 );
 		addEntry( myGump, "CommandLevel:", ourObj.commandlevel );
 		myGump.AddPageButton( 10, 260, 4014, 2 );
 		myGump.Send( socket );

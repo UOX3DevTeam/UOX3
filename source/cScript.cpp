@@ -39,8 +39,6 @@ static JSFunctionSpec my_functions[] =
 	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },	// This function will be depreciated
 	{ "DoMovingEffect", 			SE_DoMovingEffect,			6, 0, 0 },
 	{ "BroadcastMessage",			SE_BroadcastMessage,		1, 0, 0 },
-	{ "ConsoleMessage",				SE_ConsoleMessage,			1, 0, 0 }, 
-	{ "ScriptPrintNumber",			SE_ScriptPrintNumber,		1, 0, 0 },
 	{ "RandomNumber",				SE_RandomNumber,			2, 0, 0 },
 	{ "CalcCharFromSer",			SE_CalcCharFromSer,			1, 0, 0 },
 	{ "CalcItemFromSer",			SE_CalcItemFromSer,			1, 0, 0 },
@@ -49,7 +47,6 @@ static JSFunctionSpec my_functions[] =
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
 	{ "GetSecondsPerUOMinute",		SE_SecondsPerUOMinute,		0, 0, 0 },
 	{ "GetCurrentClock",			SE_GetCurrentClock,			0, 0, 0 },
-	{ "SubStringSearch",			SE_SubStringSearch,			2, 0, 0 },
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
@@ -76,7 +73,6 @@ static JSFunctionSpec my_functions[] =
 	{ "CalcTargetedChar",			SE_CalcTargetedChar,		1, 0, 0 },
 	{ "GetTileIDAtMapCoord",		SE_GetTileIDAtMapCoord,		3, 0, 0 },
 	{ "GetDictionaryEntry",			SE_GetDictionaryEntry,		2, 0, 0 },
-	{ "RaceGate",					SE_RaceGate,				2, 0, 0 },
 	{ "Yell",						SE_Yell,					3, 0, 0 },
 	
 	// Added by DarkStorm
@@ -1217,19 +1213,6 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnSell( void )
-{
-	if( !EventExists( seOnSell ) )
-		return false;
-	return false;
-}
-bool cScript::OnBuy( void )
-{
-	if( !EventExists( seOnBuy ) )
-		return false;
-	return false;
-}
-
 bool cScript::OnAISliver( CChar *pSliver )
 {
 	if( !ValidateObject( pSliver ) )
@@ -1269,12 +1252,7 @@ bool cScript::OnSystemSlice( void )
 		SetEventExists( seOnSystemSlice, false );
 	return false;
 }
-bool cScript::OnUnknownTrigger( void )
-{
-	if( !EventExists( seOnUnknownTrigger ) )
-		return false;
-	return false;
-}
+
 bool cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 {
 	if( !ValidateObject( tObject ) ) 
@@ -1361,18 +1339,6 @@ bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 	else
 		JS_SetPrivate( targContext, itemObjects[0].toUse, NULL );
 	return ( retVal == JS_TRUE );
-}
-bool cScript::OnXYZEvent( void )
-{
-	if( !EventExists( seOnXYZEvent ) )
-		return false;
-	return false;
-}
-bool cScript::OnPortal( void )
-{
-	if( !EventExists( seOnPortal ) )
-		return false;
-	return false;
 }
 
 bool cScript::OnTimer( CBaseObject *tObject, UI08 timerID )

@@ -2171,7 +2171,7 @@ bool CPIDblClick::Handle( void )
 		if( toExecute != NULL )
 		{
 			// on ground and not in range
-			if( x->GetCont() == NULL && !objInRange( ourChar, x, DIST_INRANGE ) )
+			if( x->GetCont() == NULL && ( !objInRange( ourChar, x, DIST_INRANGE ) || ( x->GetMultiObj() && ( x->GetMultiObj() != ourChar->GetMultiObj() ) ) ) )
 			{
 				tSock->sysmessage( 393 );
 				return true;
