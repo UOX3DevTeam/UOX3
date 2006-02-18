@@ -1,3 +1,9 @@
+2/17/2006 - giwo (0.98-3.3p [3.4 BETA])
+	Fixed an issue causing the Snooping skill not to function.
+	Fixed an issue causing GM Polymorph Menu not to function correctly.
+	Fixed an issue causing Doors not to be added to the house they were part of.
+	Moved the Multi check to containers specifically rather than on any item use, to enable use of house signs and doors from outside.
+
 2/17/2006 - giwo (0.98-3.3o [3.4 BETA])
 	Fixed an issue causing characters to randomly fall through house floors.
 	Added a check to ensure a character cannot open a container unless he is in the same house it is.

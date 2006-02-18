@@ -1595,6 +1595,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 	CChar *iChar	= NULL;
 	CItem *i		= NULL;
 	UI16 itemID		= x->GetID();
+	bool canTrap	= false;
 
 	// Begin Check items by type
 	switch( iType )
@@ -1604,14 +1605,37 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return false;
 		case IT_CONTAINER:	// Container, Backpack
 		case IT_SPAWNCONT: // Item spawn container
-			if( x->GetTempVar( CITV_MORE, 1 ) )// Is trapped
-				Magic->MagicTrap( mChar, x );
+			canTrap = true;
 		case IT_UNLOCKABLESPAWNCONT:	// Unlockable item spawn container
 		case IT_TRASHCONT:	// Trash container
-			if( checkItemRange( mChar, x ) )
-				mSock->openPack( x );
-			else if( objInRange( mChar, iChar, DIST_NEARBY ) )	// Otherwise it's on an NPC, check if it's > 2 paces away
-				Skills->Snooping( mSock, iChar, x );
+			bool packOpened;
+			packOpened = false;
+			if( x->GetCont() == NULL )
+			{
+				if( objInRange( mChar, x, DIST_NEARBY ) && mChar->GetMultiObj() == x->GetMultiObj() )
+				{
+					mSock->openPack( x );
+					packOpened = true;
+				}
+			}
+			else
+			{
+				iChar = FindItemOwner( x );
+				if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) )
+				{
+					if( mChar == iChar || mChar == iChar->GetOwnerObj() )
+						mSock->openPack( x );
+					else
+						Skills->Snooping( mSock, iChar, x );
+					packOpened = true;	
+				}
+					
+			}
+			if( packOpened )
+			{
+				if( canTrap && x->GetTempVar( CITV_MORE, 1 ) )// Is trapped
+					Magic->MagicTrap( mChar, x );
+			}
 			else
 				mSock->sysmessage( 400 );
 			return true;
@@ -2171,7 +2195,7 @@ bool CPIDblClick::Handle( void )
 		if( toExecute != NULL )
 		{
 			// on ground and not in range
-			if( x->GetCont() == NULL && ( !objInRange( ourChar, x, DIST_INRANGE ) || ( x->GetMultiObj() && ( x->GetMultiObj() != ourChar->GetMultiObj() ) ) ) )
+			if( x->GetCont() == NULL && !objInRange( ourChar, x, DIST_INRANGE ) )
 			{
 				tSock->sysmessage( 393 );
 				return true;

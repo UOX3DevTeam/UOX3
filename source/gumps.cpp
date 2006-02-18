@@ -1210,7 +1210,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			}
 			break;
 		case 'P':
-			if( cmd == "POLY" )
+			if( cmd == "POLYMORPH" )
 			{
 				if( data.empty() )
 					return;

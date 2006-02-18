@@ -32,8 +32,6 @@ namespace UOX
 
 static JSFunctionSpec my_functions[] =  
 { 	// ScriptName, Func Ptr, num args, ?, ? 
-	{ "GetCommand",					SE_GetCommand,				1, 0, 0 }, 
-	{ "GetCommandSize",				SE_GetCommandSize,			0, 0, 0 }, 	
 	{ "StringToNum",				SE_StringToNum,				1, 0, 0 },	// This function will be depreciated
 	{ "NumToString",				SE_NumToString,				1, 0, 0 },	// This function will be depreciated
 	{ "NumToHexString",				SE_NumToHexString,			1, 0, 0 },	// This function will be depreciated
