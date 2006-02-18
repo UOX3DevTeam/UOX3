@@ -229,13 +229,8 @@ public:
 	virtual void			SetIntelligence2( SI16 nVal );
 
 	void					IncStrength( SI16 toInc = 1 );
-	void					DecStrength( void );
-
 	void					IncDexterity( SI16 toInc = 1 );
-	void					DecDexterity( void );
-
 	void					IncIntelligence( SI16 toInc = 1 );
-	void					DecIntelligence( void );
 
 	UI32					GetWord( UI08 wordNum ) const;
 	bool					GetBit( UI08 wordNum, UI08 bitNum ) const;

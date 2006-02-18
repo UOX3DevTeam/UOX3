@@ -1365,12 +1365,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ) )
 			mChar.IncStamina( staminaToLose );
 
+		const UI16 getDefSkill		= ourTarg->GetSkill( TACTICS );
 		bool skillPassed = false;
-		if( Skills->CheckSkill( &mChar, getFightSkill, 0, 1000 ) )
+		if( Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (int)((getDefSkill * 1.25) + 100) ) ) || !RandomNum( 0, 3 ) )
 		{
-			UI16 getAttackSkill = ( mChar.GetSkill( getFightSkill ) + mChar.GetSkill( TACTICS ) ) / 2;
-			UI16 getDefSkill	= ourTarg->GetSkill( TACTICS );
-			skillPassed			= ( !RandomNum( 0, 5 ) || RandomNum( static_cast< UI16 >(getAttackSkill / 1.25 ), getAttackSkill ) >= RandomNum( static_cast< UI16 >( getDefSkill / 1.25), getDefSkill ) );
+			const UI16 getAttackSkill	= ( mChar.GetSkill( getFightSkill ) + mChar.GetSkill( TACTICS ) ) / 2;
+			skillPassed					= ( !RandomNum( 0, 5 ) || RandomNum( static_cast< UI16 >(getAttackSkill / 1.25 ), getAttackSkill ) >= RandomNum( static_cast< UI16 >( getDefSkill / 1.25), getDefSkill ) );
 		}
 		if( !skillPassed )
 		{

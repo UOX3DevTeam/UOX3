@@ -1365,8 +1365,8 @@ void cMovement::NpcMovement( CChar& mChar )
             CChar *l = mChar.GetAttacker();
             if( ValidateObject( l ) && ( isOnline( (*l) ) || l->IsNpc() ) )
             {
-				UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
-				UI16 charDist	= getDist( &mChar, l );
+				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
+				const UI16 charDist	= getDist( &mChar, l );
                 if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= 3 ) ) )
 				{
 					mChar.FlushPath();
@@ -1402,8 +1402,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						return;
 					if( isOnline( (*kChar) ) || kChar->IsNpc() )
 					{
-						UI08 charDir = Direction( &mChar, kChar->GetX(), kChar->GetY() );
-						if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && charDir < 8 )
+						if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 						{
 							PathFind( &mChar, kChar->GetX(), kChar->GetY() );
 							j = mChar.PopDirection();
@@ -1436,7 +1435,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						return;
 					if( getDist( &mChar, kChar ) < P_PF_MFD )
 					{	// calculate a x,y to flee towards
-						UI16 mydist = P_PF_MFD - getDist( &mChar, kChar ) + 1;
+						const UI16 mydist = P_PF_MFD - getDist( &mChar, kChar ) + 1;
 						j = Direction( &mChar, kChar->GetX(), kChar->GetY() );
 						SI16 myx = GetXfromDir( j, mChar.GetX() );
 						SI16 myy = GetYfromDir( j, mChar.GetY() );

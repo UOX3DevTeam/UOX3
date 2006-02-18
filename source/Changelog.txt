@@ -1,3 +1,12 @@
+2/18/2006 - giwo (0.98-3.3r [3.4 RC])
+	Updated the SkillCheck in HandleCombat() to be based upon the defenders tactics skill.
+	Updated Skills::SkillCheck() to have a chance of success based upon the maximum skill + 100, rather than 1000.
+	Fixed several issues causing spellbooks not to display properly.
+	Fixed an issue causing Strength, Dexterity, and Intelligence to permanently drop when they are temporarily lowered.
+	Updated skills.dfn a bit to improve skill gain between levels 0.00 and 1.00
+	Added two new shield ID's to CItem::IsShieldType().
+	Added spacing after fame titles to fix a paperdoll display issue.
+
 2/18/2006 - grimson
 	Fixed a small bug that prevent a storm from ending.
 

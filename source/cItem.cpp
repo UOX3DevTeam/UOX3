@@ -789,7 +789,7 @@ bool CItem::IsShieldType( void ) const
 {
 	if( id >= 0x1B72 && id <= 0x1B7B )
 		return true;
-	if( id >= 0x1BC3 && id <= 0x1BC5 )
+	if( id >= 0x1BC3 && id <= 0x1BC7 )
 		return true;
 	return false;
 }

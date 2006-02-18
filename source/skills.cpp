@@ -598,7 +598,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 		if( s->GetCommandLevel() > 0 )
 			skillCheck = true;
 		else
-			skillCheck = ( chanceskillsuccess >= RandomNum( 0, 1000 ) );
+			skillCheck = ( chanceskillsuccess >= RandomNum( 0, UOX_MIN( 1000, (highSkill+100) ) ) );
 		
 		CSocket *mSock = s->GetSocket();
 		bool mageryUp = true;
@@ -2108,9 +2108,9 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 		{
 			switch( skillDrop )
 			{
-				case STRENGTH:	s->DecStrength();			break;
-				case DEXTERITY:	s->DecDexterity();			break;
-				case INTELLECT:	s->DecIntelligence();		break;
+				case STRENGTH:	s->IncStrength( -1 );			break;
+				case DEXTERITY:	s->IncDexterity( -1 );			break;
+				case INTELLECT:	s->IncIntelligence( -1 );		break;
 			}
 			
 			if( skillTrig != NULL )

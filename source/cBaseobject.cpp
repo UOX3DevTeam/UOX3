@@ -1397,21 +1397,7 @@ void CBaseObject::SetIntelligence2( SI16 nVal )
 //o--------------------------------------------------------------------------
 void CBaseObject::IncStrength( SI16 toInc )
 {
-	SetStrength( GetStrength() + toInc );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	void DecStrength( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Decrements the object's strength value by 1
-//o--------------------------------------------------------------------------
-void CBaseObject::DecStrength( void )
-{
-	if( GetStrength() > 0 )
-		SetStrength( GetStrength() - 1 );
+	SetStrength( strength + toInc );
 }
 
 //o--------------------------------------------------------------------------
@@ -1424,21 +1410,7 @@ void CBaseObject::DecStrength( void )
 //o--------------------------------------------------------------------------
 void CBaseObject::IncDexterity( SI16 toInc )
 {
-	SetDexterity( GetDexterity() + toInc );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	void DecDexterity( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Decrements the object's dexterity value
-//o--------------------------------------------------------------------------
-void CBaseObject::DecDexterity( void )
-{
-	if( GetDexterity() > 0 )
-		SetDexterity( GetDexterity() - 1 );
+	SetDexterity( dexterity + toInc );
 }
 
 //o--------------------------------------------------------------------------
@@ -1451,21 +1423,7 @@ void CBaseObject::DecDexterity( void )
 //o--------------------------------------------------------------------------
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
-	SetIntelligence( GetIntelligence() + toInc );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	void IncIntelligence( SI16 toInc = 1 )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Decrements the object's intelligence value
-//o--------------------------------------------------------------------------
-void CBaseObject::DecIntelligence( void )
-{
-	if( GetIntelligence() > 0 )
-		SetIntelligence( GetIntelligence() - 1 );
+	SetIntelligence( intelligence + toInc );
 }
 
 //o--------------------------------------------------------------------------

@@ -4536,7 +4536,7 @@ void CPNewSpellBook::CopyData( CItem& obj )
 	{
 		int y = (i % 8);
 		int x = 15 + (int)(i / 8);
-		if( Magic->HasSpell( &obj, i+1 ) )
+		if( Magic->HasSpell( &obj, i ) )
 			pStream.WriteByte( x, (pStream.GetByte( x ) | static_cast<UI08>(power( 2, y ))) );
 	}
 }

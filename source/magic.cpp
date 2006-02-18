@@ -1317,13 +1317,14 @@ cMagic::~cMagic()
 bool cMagic::HasSpell( CItem *book, int spellNum )
 {
 	if( !ValidateObject( book ) )
-		return 0;
+		return false;
 	UI32 wordNum	= spellNum / 32;
 	UI32 bitNum		= (spellNum % 32);
+	UI32 flagToCheck = power( 2, bitNum );
 	UI32 sourceAmount = 0;
 	if( wordNum < 3 )
 		sourceAmount = book->GetSpell( (UI08)wordNum );
-	return ( ((sourceAmount>>bitNum)%2) == 1 );
+	return ((sourceAmount&flagToCheck) == flagToCheck);
 }
 
 void cMagic::AddSpell( CItem *book, int spellNum )

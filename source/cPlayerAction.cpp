@@ -905,7 +905,15 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	}
 	else
 	{
-		int targSpellNum = iDropped.GetID() - 0x1F2D;
+		int targSpellNum = 0;
+		UI16 scrollID = iDropped.GetID();
+		if( scrollID == 0x1F2D )
+			targSpellNum = 6;
+		else if( scrollID > 0x1F2D && scrollID < 0x1F34 )
+			targSpellNum = (scrollID - 0x1F2E);
+		else if( scrollID >= 0x1F34 && scrollID < 0x1F6D )
+			targSpellNum = (scrollID - 0x1F2D);
+
 		if( Magic->HasSpell( &spellBook, targSpellNum ) )
 		{
 			mSock.sysmessage( 1206 );
@@ -1356,10 +1364,10 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 				titlenum = 42;
 		}
 		if( !cwmWorldState->title[titlenum].fame.empty() )
-			thetitle = cwmWorldState->title[titlenum].fame + "";
+			thetitle = cwmWorldState->title[titlenum].fame + " ";
 
 		if( p->GetRace() != 0 && p->GetRace() != 65535 )
-			thetitle = thetitle + Races->Name( p->GetRace() ) + "";
+			thetitle = thetitle + Races->Name( p->GetRace() ) + " ";
 
 		if( f >= 10000 ) // Morollans bugfix for repsys
 		{
