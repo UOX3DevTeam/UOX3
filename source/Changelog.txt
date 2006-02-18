@@ -1,3 +1,6 @@
+2/18/2006 - grimson
+	Fixed a small bug that prevent a storm from ending.
+
 2/18/2006 - grimson (0.98-3.3q [3.4 BETA])
 	Stopped saving the weather type in regions.wsc, this prevented changes from regions.dfn to apply.
 	Make use of the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY from weatherab.dfn, they are now

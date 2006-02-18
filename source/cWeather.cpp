@@ -234,8 +234,10 @@ void CWeather::NewHour( void )
 	{
 		isRaining = true;
 	}
-	if( !isStorm )
+	if( !isStorm ) {
 		StormDelay( false );
+		StormActive( false );
+	}
 
 	SnowActive( isSnowing );
 	RainActive( isRaining );
