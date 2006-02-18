@@ -1,3 +1,10 @@
+2/18/2006 - grimson (0.98-3.3q [3.4 BETA])
+	Stopped saving the weather type in regions.wsc, this prevented changes from regions.dfn to apply.
+	Make use of the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY from weatherab.dfn, they are now
+	used in calculating the damage a char takes from these elements. The damage is scaled by calculating
+	a random number between 0 and the intensity, this number is then used as a percent value against
+	the damage value in races.dfn.
+
 2/17/2006 - giwo (0.98-3.3p [3.4 BETA])
 	Fixed an issue causing the Snooping skill not to function.
 	Fixed an issue causing GM Polymorph Menu not to function correctly.

@@ -154,9 +154,7 @@ bool CTownRegion::Load( Script *ss )
 					townMember[location].targVote = data.toULong();
 				break;
 			case 'W':
-				if( UTag == "WEATHER" )
-					weather = data.toUByte();
-				else if( UTag == "WORLD" )
+				if( UTag == "WORLD" )
 					worldNumber = data.toUByte();
 				break;
 		}
@@ -167,7 +165,6 @@ bool CTownRegion::Save( std::ofstream &outStream )
 // entry is the region #, fp is the file to save in
 {
 	outStream << "[TOWNREGION " << static_cast<UI16>(regionNum) << "]" << std::endl << "{" << std::endl;
-	outStream << "WEATHER=" << static_cast<UI16>(weather) << std::endl;
 	outStream << "RACE=" << race << std::endl;
 	outStream << "GUARDOWNER=" << guardowner << std::endl;
 	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << std::endl;

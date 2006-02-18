@@ -50,6 +50,9 @@ CWeather::CWeather()
 	MinTemp( 5 );
 	ColdIntensity( 0 );
 	HeatIntensity( 35 );
+	StormIntensity( 100 );
+	SnowIntensity( 100 );
+	RainIntensity( 100 );
 	Temp( 15 );
 	MaxWindSpeed( 0 );
 	MinWindSpeed( 0 );
@@ -155,19 +158,16 @@ bool CWeather::PeriodicUpdate( void )
 		currTemp = effTempMax - tempLightChange;	// maximum temperature minus time
 	else
 		currTemp = effTempMin + tempLightChange;	// minimum temperature plus time 
-	if( SnowActive() && SnowThreshold() > currTemp )
-		SnowIntensity( (UI08)RandomNum( 1, 4 ) );
-	else if( RainActive() )
+	
+	if( StormActive() )
 	{
-		RainIntensity( (UI08)RandomNum( 1, 4 ) );
-		currTemp -= 5.0f;
+		currTemp -= 10.0f;
 		if ( currTemp < 0 )
 			currTemp = 0;
 	}
-	else if( StormActive() )
+	else if( RainActive() )
 	{
-		StormIntensity( (UI08)RandomNum( 1, 4 ) );
-		currTemp -= 10.0f;
+		currTemp -= 5.0f;
 		if ( currTemp < 0 )
 			currTemp = 0;
 	}
@@ -225,20 +225,18 @@ void CWeather::NewHour( void )
 	if( (UI08)RandomNum( 0, 100 ) <= StormChance() )
 	{
 		isStorm = true;
-		StormIntensity( (UI08)RandomNum( 1, 4 ) );
 	}
 	if( (UI08)RandomNum( 0, 100 ) <= SnowChance() )
 	{
 		isSnowing = true;
-		SnowIntensity( (UI08)RandomNum( 1, 4 ) );
 	}
 	if( (UI08)RandomNum( 0, 100 ) <= RainChance() )
 	{
 		isRaining = true;
-		RainIntensity( RandomNum( 1, 4 ) );
 	}
 	if( !isStorm )
 		StormDelay( false );
+
 	SnowActive( isSnowing );
 	RainActive( isRaining );
 	StormBrewing( isStorm );
@@ -1092,6 +1090,8 @@ bool cWeatherAb::Load( void )
 							SnowThreshold( static_cast<weathID>(i), data.toFloat() );
 						else if( UTag == "STORMCHANCE" )	// chance of a storm
 							StormChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "STORMINTENSITY" )	// chance of a storm
+							StormIntensity( static_cast<weathID>(i), data.toByte() );
 						break;
 				}
 			}
@@ -1946,32 +1946,24 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( element == RAIN )
 		{
-			if( HeatActive( weatherSys ) )
-				damageModifier = 1;
-			else if( ColdActive( weatherSys ) )
-				damageModifier = 0;
-			else if( (tempMax - tempMin) != 0)
-				damageModifier = ( (tempCurrent - tempMin) / (tempMax - tempMin) );
-
-			damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			damageModifier = (R32)RandomNum( 0, (int)RainIntensity( weatherSys ) );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1219;
 		}
 
 		if( element == SNOW )
 		{
-			if( HeatActive( weatherSys ) )
-				damageModifier = 1;
-			else if( ColdActive( weatherSys ) )
-				damageModifier = 0;
-			else if( (tempSnowMax - tempMin) != 0)
-				damageModifier = ( (tempCurrent - tempMin) / (tempSnowMax - tempMin) );
-
-			damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			damageModifier = (R32)RandomNum( 0, (int)SnowIntensity( weatherSys ) );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1220;
 		}
 
 		if( element == STORM)
 		{
+			damageModifier = (R32)RandomNum( 0, (int)StormIntensity( weatherSys ) );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
+			damageMessage = 1775;
+
 			if( Races->Affect( mChar.GetRace(), LIGHTNING ) )
 			{
 				if( (UI08)RandomNum( 0, 100 ) <= Races->Secs( mChar.GetRace(), LIGHTNING ) )
@@ -1981,16 +1973,6 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 					damageMessage = 1777;
 					damageAnim = 0x0;
 				}
-				else
-				{
-					damage = (SI32)baseDamage;
-					damageMessage = 1775;
-				}
-			}
-			else
-			{
-				damage = (SI32)baseDamage;
-				damageMessage = 1775;
 			}
 		}
 
