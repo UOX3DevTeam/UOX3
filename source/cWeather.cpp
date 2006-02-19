@@ -2006,7 +2006,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 {
 	bool didDamage = false;
 
-	if( mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
+	if( mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
 		return false;
 	
 	if( mChar.GetWeathDamage( LIGHT ) != 0 && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
@@ -2118,7 +2118,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 	if( element == LIGHT || element == WEATHNUM )
 		return false;
 	
-	if( mChar.IsInvulnerable() || !Races->Affect( mChar.GetRace(), element ))
+	if( mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect( mChar.GetRace(), element ) || mChar.inBuilding())
 		return false;
 
 	bool didDamage			= false;

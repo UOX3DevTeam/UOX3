@@ -75,7 +75,7 @@ UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000 )
 // Region related
 //o---------------------------------------------------------------------------o
 CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber );
-void HandleWeatherChanges( CChar *c, CSocket *mSock );
+void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff );
 
 //o---------------------------------------------------------------------------o
 // Find functions

@@ -308,7 +308,8 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	
 	// set the player direction to contain only the cardinal direction bits
 	c->WalkDir( (dir&0x07) );
-	
+
+
 	SendWalkToPlayer( c, mSock, sequence );
 	SendWalkToOtherPlayers( c, dir, oldx, oldy );
 	OutputShoveMessage( c, mSock );
@@ -319,7 +320,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	{
 		HandleItemCollision( c, mSock, oldx, oldy );
 		HandleTeleporters( c );
-		HandleWeatherChanges( c, mSock );
+		CheckCharInsideBuilding( c, mSock, true);
 		checkRegion( mSock, (*c), false );
 	}
 }
@@ -785,6 +786,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 
 	bool checkX			= (oldx != newx);
 	bool checkY			= (oldy != newy);
+	UI16 effRange;
 
 	CPExtMove toSend	= (*c);
 
@@ -796,17 +798,27 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 		CChar *mChar = tSend->CurrcharObj();
 		if( !ValidateObject( mChar ) )
 			continue;
-		const UI16 visibleRange = static_cast<UI16>(tSend->Range() + Races->VisRange( mChar->GetRace() ));
-		const UI16 clientRange	= tSend->Range();
-		if( c != mChar && objInRange( c, mChar, visibleRange ) )
+		const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
+		const UI16 clientRange	= static_cast<UI16>( tSend->Range() );
+		if( visibleRange >= clientRange )
+			effRange = visibleRange;
+		else
+			effRange = clientRange;
+
+		if( c != mChar )
 		{
 			if( checkX )	// Only check X Plane if their x changed
 			{
 				UI16 dxNew = static_cast<UI16>(abs( newx - mChar->GetX() ));
 				UI16 dxOld = static_cast<UI16>(abs( oldx - mChar->GetX() ));
-				if( ( dxNew == visibleRange && dxOld > visibleRange ) || ( dxNew == clientRange && dxOld > clientRange ) )
+				if( ( dxNew == effRange ) && ( dxOld > effRange ) )
 				{
 					c->SendToSocket( tSend );
+					continue;	// Incase they moved diagonally, lets not update the same character multiple times
+				}
+				else if( ( dxNew > (effRange+1) ) && ( dxOld == (effRange+1) ) )
+				{
+					c->RemoveFromSight( tSend );
 					continue;	// Incase they moved diagonally, lets not update the same character multiple times
 				}
 			}
@@ -814,9 +826,14 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 			{
 				UI16 dyNew = static_cast<UI16>(abs( newy - mChar->GetY() ));
 				UI16 dyOld = static_cast<UI16>(abs( oldy - mChar->GetY() ));
-				if( ( dyNew == visibleRange && dyOld > visibleRange ) || ( dyNew == clientRange && dyOld > clientRange ) )
+				if( ( dyNew == effRange ) && ( dyOld > effRange ) )
 				{
 					c->SendToSocket( tSend );
+					continue;
+				}
+				else if( ( dyNew > (effRange+1) ) && ( dyOld == (effRange+1) ) )
+				{
+					c->RemoveFromSight( tSend );
 					continue;
 				}
 			}

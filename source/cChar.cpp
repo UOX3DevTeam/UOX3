@@ -1612,7 +1612,7 @@ void CChar::Teleport( void )
 			regItems->Pop();
 		}
 	}
-	HandleWeatherChanges( this, mSock );
+	CheckCharInsideBuilding( this, mSock, false );
 	checkRegion( mSock, (*this), true );
 }
 

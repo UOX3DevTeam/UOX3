@@ -343,7 +343,9 @@ void CPExtMove::CopyData( CChar &toCopy )
 	pStream.WriteByte( 11, toCopy.GetZ() );
 
 	UI08 dir = toCopy.GetDir();
-	if( toCopy.IsNpc() && toCopy.CanRun() && toCopy.IsAtWar() )
+	if( toCopy.IsNpc() && toCopy.CanRun() && ( toCopy.IsAtWar() || toCopy.GetRunning() ) )
+		dir |= 0x80;
+	else if( !toCopy.IsNpc() && toCopy.GetRunning() )
 		dir |= 0x80;
 	pStream.WriteByte( 12, dir );
 	pStream.WriteShort( 13, toCopy.GetSkin() );

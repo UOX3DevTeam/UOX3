@@ -1,3 +1,10 @@
+2/19/2006 - grimson (0.98-3.3u [3.4 RC])
+	Renamed HandleWeatherChanges() to CheckCharInsideBuilding() as it is more apropriate.
+	Stopped weather effects affecting ghosts of death players.
+	Partially rewrote cMovement::SendWalkToOtherPlayers to correctly send chars and remove
+	them from sight.
+	Changed CPExtMove::CopyData() so the running state of player chars is correctly send.
+
 2/19/2006 - grimson (0.98-3.3t [3.4 RC])
 	Changed HandleWeatherChanges() so it updates the weather values of NPCs too.
 	Changed reading the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY in weatherab.dfn so that

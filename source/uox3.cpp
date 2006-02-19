@@ -2447,17 +2447,18 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 	}
 }
 
-void HandleWeatherChanges( CChar *c, CSocket *mSock )
+void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 {
 	bool wasInBuilding = c->inBuilding();
 	bool isInBuilding = Map->inBuilding( c->GetX(), c->GetY(), c->GetZ(), c->WorldNumber() );
 	if( wasInBuilding != isInBuilding )
 	{
 		c->SetInBuilding( isInBuilding );
-		if( c->IsNpc() )
-			Weather->DoNPCStuff( c );
-		else
-			Weather->DoPlayerStuff( mSock, c );
+		if( doWeatherStuff )
+			if( c->IsNpc() )
+				Weather->DoNPCStuff( c );
+			else
+				Weather->DoPlayerStuff( mSock, c );
 	}
 }
 
