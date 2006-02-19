@@ -175,6 +175,7 @@ bool	FileExists( std::string filepath );
 void	DismountCreature( CChar *s );
 size_t	getTileName( CItem& mItem, std::string& itemname );
 bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor );
+bool	checkItemLineOfSight( CChar *mChar, CItem *i );
 void	Shutdown( SI32 retCode );
 void	useDoor( CSocket *s, CItem *item );
 void	HandleDeath( CChar *mChar );

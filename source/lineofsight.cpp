@@ -298,7 +298,7 @@ Look at uox3.h to see options. Works like npc magic.
 
 	UI08 worldNumber = mChar->WorldNumber();
 
-	SI32 n = ( koxn - kox1 ), m = ( koym - koy1 ), i = 0;
+	SI32 n = fabs( koxn - kox1 ), m = fabs( koym - koy1 ), i = 0;
 	SI08 sgn_x = ( kox1 <= koxn ) ? 1 : (-1); // signum for x
 	SI08 sgn_y = ( koy1 <= koym ) ? 1 : (-1); // signum for y
 	SI08 sgn_z = ( koz1 <= koz2 ) ? 1 : (-1); // signum for z
@@ -325,9 +325,9 @@ Look at uox3.h to see options. Works like npc magic.
 	SI32 collisioncount = 0;
 	SI32 dz = 0; // dz is needed later for collisions of the ray with floor tiles
 	if( sgn_x == 0 || m > n )
-		dz = (SI32)floor( lineofsight.dzInDirectionY() );
+		dz = (SI32)floor( abs( lineofsight.dzInDirectionY() ) );
 	else
-		dz = (SI32)floor( lineofsight.dzInDirectionX() );
+		dz = (SI32)floor( abs( lineofsight.dzInDirectionX() ) );
 
 	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
 	{
@@ -339,23 +339,23 @@ Look at uox3.h to see options. Works like npc magic.
 	}
 	else if( sgn_x == 0 ) // if we are on the same x-level, just push every x/y coordinate in y-direction from src to trg into the array
 	{
-		for( i = 0; i < (sgn_y * m); ++i )
+		for( i = 0; i < m; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (SI08)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) );
+			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (SI08)(koz1 + (dz * (R32)i * sgn_z)) );
 			++collisioncount;
 		}
 	}
 	else if( sgn_y == 0 ) // if we are on the same y-level, just push every x/y coordinate in x-direction from src to trg into the array
 	{
-		for( i = 0; i < (sgn_x * n); ++i )
+		for( i = 0; i < n; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (SI08)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) );
+			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (SI08)(koz1 + (dz * (R32)i * sgn_z)) );
 			++collisioncount;
 		}
 	}
 	else
 	{
-		for( i = 0; (n >= m) && (i < (sgn_x * n)); ++i )
+		for( i = 0; ( n >= m ) && (i < n); ++i )
 		{
 			line2D toCollide = line2D( vector2D( (R32)( kox1 + (sgn_x * i) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
@@ -366,20 +366,20 @@ Look at uox3.h to see options. Works like npc magic.
 				// we just have to take that coordinate...
 				if( floor( temp.y ) == temp.y )
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
 					collisioncount += 1;
 				}
 				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
 				else
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
-					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionX() * (R32)i)) ) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
 					collisioncount += 2;
 				}
 			}
 		}
 
-		for( i = 0; (m > n) && (i < (sgn_y * m)); ++i )
+		for( i = 0; (m > n) && (i < m); ++i )
 		{
 			line2D toCollide = line2D( vector2D( 0.0f, (R32)( koy1 + (sgn_y * i) ) ), vector2D( 1.0f, 0.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
@@ -388,13 +388,13 @@ Look at uox3.h to see options. Works like npc magic.
 			{
 				if( floor( temp.x ) == temp.x )
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
 					collisioncount += 1;
 				}
 				else
 				{
-					collisions[collisioncount] = ( vector3D( (long)floor( temp.x ), (long)floor( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
-					collisions[collisioncount+1] = ( vector3D( (long)ceil( temp.x ), (long)ceil( temp.y ), (signed char)(koz1 + floor(lineofsight.dzInDirectionY() * (R32)i)) ) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
 					collisioncount += 2;
 				}
 			}
@@ -507,7 +507,7 @@ Look at uox3.h to see options. Works like npc magic.
 		{
 			msi.GetTile( &tile );
 			if(	( collisions[i].z >= stat->zoff && collisions[i].z <= ( stat->zoff + tile.Height() ) ) ||
-				( tile.Height() <= 2 && abs( collisions[i].z - stat->zoff ) <= abs( dz ) ) )
+				( tile.Height() <= 2 && abs( collisions[i].z - stat->zoff ) <= dz ) )
 			{
 				itemids.push_back( stat->itemid );
 			}
@@ -580,4 +580,33 @@ Look at uox3.h to see options. Works like npc magic.
 	return not_blocked;
 }
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool checkItemLineOfSight( CChar *mChar, CItem *i)
+//|	Programmer	-	grimson
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Checks if an item is within line of sight
+//o---------------------------------------------------------------------------o
+bool checkItemLineOfSight( CChar *mChar, CItem *i )
+{
+	if( mChar->IsGM() || mChar->IsCounselor() )
+		return true;
+
+	CBaseObject *itemOwner	= i;
+	bool inSight			= false;
+
+	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate the lof
+	{
+		ObjectType objType	= OT_CBO;
+		CBaseObject *iOwner = FindItemOwner( i, objType );
+		if( iOwner != NULL )
+			itemOwner = iOwner;
+	}
+	
+	if( itemOwner == mChar )
+		inSight = true;
+	else
+		inSight = LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+
+	return inSight;
+}
 }

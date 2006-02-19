@@ -1,3 +1,8 @@
+2/19/2006 - grimson (0.98-3.3s [3.4 RC])
+	Fixed multiple issues in LineOfSight() that caused miscalculations of the coordinates that should be checked.
+	Added line of sight checks to CPIPopupMenuRequest::Handle(), CBaseVendorResponse::CBaseVendorResponse() and
+	CPIDblClick::Handle() to prevent people from using items and vendors through walls.
+
 2/18/2006 - giwo (0.98-3.3r [3.4 RC])
 	Updated the SkillCheck in HandleCombat() to be based upon the defenders tactics skill.
 	Updated Skills::SkillCheck() to have a chance of success based upon the maximum skill + 100, rather than 1000.

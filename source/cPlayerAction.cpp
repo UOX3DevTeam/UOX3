@@ -2239,6 +2239,12 @@ bool CPIDblClick::Handle( void )
 		tSock->sysmessage( 389 );
 		return true;
 	}
+	// Check if item is in line of sight
+	if( iType != IT_DOOR && iType != IT_PLANK && iType != IT_HOUSESIGN && !checkItemLineOfSight( ourChar, x ) )
+	{
+		tSock->sysmessage( 389 );
+		return true;
+	}
 	if( x->isCorpse() && !ourChar->IsGM() && !ourChar->IsCounselor() )
 	{
 		bool willCrim	= false;

@@ -2518,6 +2518,9 @@ bool CPIPopupMenuRequest::Handle( void )
 		if( myChar == NULL )
 			return true;
 
+		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), myChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+			return true;
+
 		CPPopupMenu toSend( (*myChar) );
 		tSock->Send( &toSend );
 	}
