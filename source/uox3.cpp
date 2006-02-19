@@ -2454,7 +2454,10 @@ void HandleWeatherChanges( CChar *c, CSocket *mSock )
 	if( wasInBuilding != isInBuilding )
 	{
 		c->SetInBuilding( isInBuilding );
-		Weather->DoPlayerStuff( mSock, c );
+		if( c->IsNpc() )
+			Weather->DoNPCStuff( c );
+		else
+			Weather->DoPlayerStuff( mSock, c );
 	}
 }
 

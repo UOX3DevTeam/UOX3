@@ -1,3 +1,11 @@
+2/19/2006 - grimson (0.98-3.3t [3.4 RC])
+	Changed HandleWeatherChanges() so it updates the weather values of NPCs too.
+	Changed reading the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY in weatherab.dfn so that
+	you can set a min and max value for the damage percent. See the examples in the updated weatherab.dfn.
+	Added two new values to weatherab.dfn:
+		STORMTEMPDROP this sets the amount the temperature drops when there is a storm
+		RAINTEMPDROP this sets the amount the temperature drops when it is raining.
+
 2/19/2006 - grimson (0.98-3.3s [3.4 RC])
 	Fixed multiple issues in LineOfSight() that caused miscalculations of the coordinates that should be checked.
 	Added line of sight checks to CPIPopupMenuRequest::Handle(), CBaseVendorResponse::CBaseVendorResponse() and

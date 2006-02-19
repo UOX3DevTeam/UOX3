@@ -41,18 +41,23 @@ CWeather::CWeather()
 	RainChance( 10 );
 	SnowChance( 1 );
 	HeatChance( 10 );
-	StormChance( 5 );
+	StormChance( 1 );
 	LightMin( 300 );
 	LightMax( 300 );
 	CurrentLight( 300 );
 
 	MaxTemp( 30 );
 	MinTemp( 5 );
-	ColdIntensity( 0 );
-	HeatIntensity( 35 );
-	StormIntensity( 100 );
-	SnowIntensity( 100 );
-	RainIntensity( 100 );
+	RainTempDrop( 5 );
+	StormTempDrop( 10 );
+	ColdIntensityHigh( 0 );
+	HeatIntensityHigh( 35 );
+	StormIntensityHigh( 100 );
+	SnowIntensityHigh( 100 );
+	RainIntensityHigh( 100 );
+	StormIntensityLow( 0 );
+	SnowIntensityLow( 0 );
+	RainIntensityLow( 0 );
 	Temp( 15 );
 	MaxWindSpeed( 0 );
 	MinWindSpeed( 0 );
@@ -121,7 +126,6 @@ void CWeather::CurrentLight( R32 value )
 //|   Purpose     -  Updates the current light level of the system and the 
 //|					 current temperature of the system.
 //|					 Wind is not currently updated
-//|					 Chooses a random intensity if snow or rain is falling
 //o---------------------------------------------------------------------------o
 bool CWeather::PeriodicUpdate( void )
 {
@@ -161,13 +165,13 @@ bool CWeather::PeriodicUpdate( void )
 	
 	if( StormActive() )
 	{
-		currTemp -= 10.0f;
+		currTemp -= StormTempDrop();
 		if ( currTemp < 0 )
 			currTemp = 0;
 	}
 	else if( RainActive() )
 	{
-		currTemp -= 5.0f;
+		currTemp -= RainTempDrop();
 		if ( currTemp < 0 )
 			currTemp = 0;
 	}
@@ -194,14 +198,14 @@ void CWeather::NewDay( void )
 	if( (UI08)RandomNum( 0, 100 ) <= HeatChance() )
 	{
 		isHeatWave = true;
-		currentTemp = RandomNum( (int)effTempMax, (int)HeatIntensity() );
+		currentTemp = RandomNum( (int)effTempMax, (int)HeatIntensityHigh() );
 		effTempMax = currentTemp;
 		effTempMin = currentTemp;
 	}
 	else if( (UI08)RandomNum( 0, 100 ) <= ColdChance() )
 	{
 		isColdDay = true;
-		currentTemp = RandomNum( (int)ColdIntensity(), (int)effTempMin );
+		currentTemp = RandomNum( (int)ColdIntensityHigh(), (int)effTempMin );
 		effTempMax = currentTemp;
 		effTempMin = currentTemp;
 	}
@@ -251,11 +255,14 @@ void CWeather::NewHour( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the weather weathType
 //o---------------------------------------------------------------------------o
-SI08 CWeather::Intensity( UI08 weathType ) const
+SI08 CWeather::IntensityHigh( UI08 weathType ) const
 {
-	return weather[weathType].Intensity;
+	return weather[weathType].IntensityHigh;
 }
-
+SI08 CWeather::IntensityLow( UI08 weathType ) const
+{
+	return weather[weathType].IntensityLow;
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  void Intensity( UI08 weathType, SI08 value )
 //|   Date        -  11th April, 2001
@@ -263,11 +270,14 @@ SI08 CWeather::Intensity( UI08 weathType ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the intensity of weather weathType to value
 //o---------------------------------------------------------------------------o
-void CWeather::Intensity( UI08 weathType, SI08 value )
+void CWeather::IntensityHigh( UI08 weathType, SI08 value )
 {
-	weather[weathType].Intensity = value;
+	weather[weathType].IntensityHigh = value;
 }
-
+void CWeather::IntensityLow( UI08 weathType, SI08 value )
+{
+	weather[weathType].IntensityLow = value;
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Chance( UI08 weathType ) const
 //|   Date        -  11th April, 2001
@@ -327,9 +337,13 @@ void CWeather::Value( UI08 valType, UI08 valOff, R32 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the snow (if any)
 //o---------------------------------------------------------------------------o
-SI08 CWeather::SnowIntensity( void ) const
+SI08 CWeather::SnowIntensityHigh( void ) const
 {
-	return weather[SNOW].Intensity;
+	return weather[SNOW].IntensityHigh;
+}
+SI08 CWeather::SnowIntensityLow( void ) const
+{
+	return weather[SNOW].IntensityLow;
 }
 
 //o---------------------------------------------------------------------------o
@@ -339,9 +353,13 @@ SI08 CWeather::SnowIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the rain, if any
 //o---------------------------------------------------------------------------o
-SI08 CWeather::RainIntensity( void ) const
+SI08 CWeather::RainIntensityHigh( void ) const
 {
-	return weather[RAIN].Intensity;
+	return weather[RAIN].IntensityHigh;
+}
+SI08 CWeather::RainIntensityLow( void ) const
+{
+	return weather[RAIN].IntensityLow;
 }
 
 //o---------------------------------------------------------------------------o
@@ -351,9 +369,13 @@ SI08 CWeather::RainIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the storm, if any
 //o---------------------------------------------------------------------------o
-SI08 CWeather::StormIntensity( void ) const
+SI08 CWeather::StormIntensityHigh( void ) const
 {
-	return weather[STORM].Intensity;
+	return weather[STORM].IntensityHigh;
+}
+SI08 CWeather::StormIntensityLow( void ) const
+{
+	return weather[STORM].IntensityLow;
 }
 
 //o---------------------------------------------------------------------------o
@@ -363,9 +385,9 @@ SI08 CWeather::StormIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the heat wave, if any
 //o---------------------------------------------------------------------------o
-SI08 CWeather::HeatIntensity( void ) const
+SI08 CWeather::HeatIntensityHigh( void ) const
 {
-	return weather[HEAT].Intensity;
+	return weather[HEAT].IntensityHigh;
 }
 
 //o---------------------------------------------------------------------------o
@@ -375,9 +397,9 @@ SI08 CWeather::HeatIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the cold snap, if any
 //o---------------------------------------------------------------------------o
-SI08 CWeather::ColdIntensity( void ) const
+SI08 CWeather::ColdIntensityHigh( void ) const
 {
-	return weather[COLD].Intensity;
+	return weather[COLD].IntensityHigh;
 }
 
 //o---------------------------------------------------------------------------o
@@ -414,6 +436,30 @@ R32 CWeather::MinTemp( void ) const
 R32 CWeather::Temp( void ) const
 {
 	return Value( CURRVAL, TEMP );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the amount the temperature drops when it rains
+//o---------------------------------------------------------------------------o
+R32 CWeather::RainTempDrop( void ) const
+{
+	return rainTempDrop;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 StormTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the amount the temperature drops when it storms
+//o---------------------------------------------------------------------------o
+R32 CWeather::StormTempDrop( void ) const
+{
+	return stormTempDrop;
 }
 
 //o---------------------------------------------------------------------------o
@@ -681,15 +727,43 @@ void CWeather::Temp( R32 value )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the amount the temperature drops when it rains
+//o---------------------------------------------------------------------------o
+void CWeather::RainTempDrop( R32 value )
+{
+	rainTempDrop = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 StormTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the amount the temperature drops when it storms
+//o---------------------------------------------------------------------------o
+void CWeather::StormTempDrop( R32 value )
+{
+	stormTempDrop = value;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  void SnowIntensity( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the snow intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::SnowIntensity( SI08 value )
+void CWeather::SnowIntensityHigh( SI08 value )
 {
-	weather[SNOW].Intensity = value;
+	weather[SNOW].IntensityHigh = value;
+}
+void CWeather::SnowIntensityLow( SI08 value )
+{
+	weather[SNOW].IntensityLow = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -699,9 +773,13 @@ void CWeather::SnowIntensity( SI08 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the storm intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::StormIntensity( SI08 value )
+void CWeather::StormIntensityHigh( SI08 value )
 {
-	weather[STORM].Intensity = value;
+	weather[STORM].IntensityHigh = value;
+}
+void CWeather::StormIntensityLow( SI08 value )
+{
+	weather[STORM].IntensityLow = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -711,9 +789,9 @@ void CWeather::StormIntensity( SI08 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the heat intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::HeatIntensity( SI08 value )
+void CWeather::HeatIntensityHigh( SI08 value )
 {
-	weather[HEAT].Intensity = value;
+	weather[HEAT].IntensityHigh = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -723,9 +801,13 @@ void CWeather::HeatIntensity( SI08 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the rain intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::RainIntensity( SI08 value )
+void CWeather::RainIntensityHigh( SI08 value )
 {
-	weather[RAIN].Intensity = value;
+	weather[RAIN].IntensityHigh = value;
+}
+void CWeather::RainIntensityLow( SI08 value )
+{
+	weather[RAIN].IntensityLow = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -735,9 +817,9 @@ void CWeather::RainIntensity( SI08 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the cold intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::ColdIntensity( SI08 value )
+void CWeather::ColdIntensityHigh( SI08 value )
 {
-	weather[COLD].Intensity = value;
+	weather[COLD].IntensityHigh = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1044,7 +1126,7 @@ bool cWeatherAb::Load( void )
 						if( UTag == "COLDCHANCE" )			// chance for a cold day
 							ColdChance( static_cast<weathID>(i), data.toByte() );
 						else if( UTag == "COLDINTENSITY" )	// cold intensity
-							ColdIntensity( static_cast<weathID>(i), data.toByte() );
+							ColdIntensityHigh( static_cast<weathID>(i), data.toByte() );
 						break;
 
 					case 'h':
@@ -1052,7 +1134,7 @@ bool cWeatherAb::Load( void )
 						if( UTag == "HEATCHANCE" )			// chance for a hot day
 							HeatChance( static_cast<weathID>(i), data.toByte() );
 						else if( UTag == "HEATINTENSITY" )	// heat intensity
-							HeatIntensity( static_cast<weathID>(i), data.toByte() );
+							HeatIntensityHigh( static_cast<weathID>(i), data.toByte() );
 						break;
 
 					case 'l':
@@ -1080,20 +1162,51 @@ bool cWeatherAb::Load( void )
 						if( UTag == "RAINCHANCE" )			// chance of rain
 							RainChance( static_cast<weathID>(i), data.toByte() );
 						else if( UTag == "RAININTENSITY" )	// intensity of rain
-							RainIntensity( static_cast<weathID>(i), data.toByte() );
+							if( data.sectionCount( "," ) != 0 )
+							{
+								RainIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								RainIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								RainIntensityLow( static_cast<weathID>(i), 0 );
+								RainIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
+						else if( UTag == "RAINTEMPDROP" )			// temp drop of rain
+							RainTempDrop( static_cast<weathID>(i), data.toByte() );
 						break;
 					case 's':
 					case 'S':
 						if( UTag == "SNOWCHANCE" )			// chance of snow
 							SnowChance( static_cast<weathID>(i), data.toByte() );
 						else if( UTag == "SNOWINTENSITY" )	// intensity of snow
-							SnowIntensity( static_cast<weathID>(i), data.toByte() );
+							if( data.sectionCount( "," ) != 0 )
+							{
+								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								SnowIntensityLow( static_cast<weathID>(i), 0 );
+								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
 						else if( UTag == "SNOWTHRESHOLD" )	// temperature at which snow kicks in
 							SnowThreshold( static_cast<weathID>(i), data.toFloat() );
 						else if( UTag == "STORMCHANCE" )	// chance of a storm
 							StormChance( static_cast<weathID>(i), data.toByte() );
 						else if( UTag == "STORMINTENSITY" )	// chance of a storm
-							StormIntensity( static_cast<weathID>(i), data.toByte() );
+							if( data.sectionCount( "," ) != 0 )
+							{
+								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								SnowIntensityLow( static_cast<weathID>(i), 0 );
+								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
+						else if( UTag == "STORMTEMPDROP" )			// temp drop of storm
+							StormTempDrop( static_cast<weathID>(i), data.toByte() );
 						break;
 				}
 			}
@@ -1109,9 +1222,13 @@ bool cWeatherAb::Load( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to return intensity of a weather type
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::Intensity( weathID toCheck, UI08 weathType )
+SI08 cWeatherAb::IntensityHigh( weathID toCheck, UI08 weathType )
 {
-	return weather[toCheck].Intensity( weathType );
+	return weather[toCheck].IntensityHigh( weathType );
+}
+SI08 cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType )
+{
+	return weather[toCheck].IntensityLow( weathType );
 }
 		
 //o---------------------------------------------------------------------------o
@@ -1121,9 +1238,13 @@ SI08 cWeatherAb::Intensity( weathID toCheck, UI08 weathType )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to set the intensity of a particular weather type
 //o---------------------------------------------------------------------------o
-void cWeatherAb::Intensity( weathID toCheck, UI08 weathType, SI08 value )
+void cWeatherAb::IntensityHigh( weathID toCheck, UI08 weathType, SI08 value )
 {
-	weather[toCheck].Intensity( weathType, value );
+	weather[toCheck].IntensityHigh( weathType, value );
+}
+void cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType, SI08 value )
+{
+	weather[toCheck].IntensityLow( weathType, value );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1139,7 +1260,7 @@ SI08 cWeatherAb::Chance( weathID toCheck, UI08 weathType )
 }
 		
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( weathID toCheck, UI08 weathType, SI08 value )
+//|   Function    -  void Chance( weathID toCheck, UI08 weathType, SI08 value )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -1165,7 +1286,7 @@ R32 cWeatherAb::Value( weathID toCheck, UI08 valType, UI08 valOff )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
+//|   Function    -  void Value( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -1185,9 +1306,13 @@ void cWeatherAb::Value( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's snow
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::SnowIntensity( weathID toCheck )
+SI08 cWeatherAb::SnowIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, SNOW );
+	return IntensityHigh( toCheck, SNOW );
+}
+SI08 cWeatherAb::SnowIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, SNOW );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1197,9 +1322,13 @@ SI08 cWeatherAb::SnowIntensity( weathID toCheck )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's storm
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::StormIntensity( weathID toCheck )
+SI08 cWeatherAb::StormIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, STORM );
+	return IntensityHigh( toCheck, STORM );
+}
+SI08 cWeatherAb::StormIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, STORM );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1209,9 +1338,13 @@ SI08 cWeatherAb::StormIntensity( weathID toCheck )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's rain
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::RainIntensity( weathID toCheck )
+SI08 cWeatherAb::RainIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, RAIN );
+	return IntensityHigh( toCheck, RAIN );
+}
+SI08 cWeatherAb::RainIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, RAIN );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1221,9 +1354,9 @@ SI08 cWeatherAb::RainIntensity( weathID toCheck )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's heat
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::HeatIntensity( weathID toCheck )
+SI08 cWeatherAb::HeatIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, HEAT );
+	return IntensityHigh( toCheck, HEAT );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1233,9 +1366,9 @@ SI08 cWeatherAb::HeatIntensity( weathID toCheck )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's cold
 //o---------------------------------------------------------------------------o
-SI08 cWeatherAb::ColdIntensity( weathID toCheck )
+SI08 cWeatherAb::ColdIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, COLD );
+	return IntensityHigh( toCheck, COLD );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1272,6 +1405,30 @@ R32 cWeatherAb::MinTemp( weathID toCheck )
 R32 cWeatherAb::Temp( weathID toCheck )
 {
 	return Value( toCheck, CURRVAL, TEMP );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( weathID toCheck )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the rain temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+R32 cWeatherAb::RainTempDrop( weathID toCheck )
+{
+	return weather[toCheck].RainTempDrop();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( weathID toCheck )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the storm temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+R32 cWeatherAb::StormTempDrop( weathID toCheck )
+{
+	return weather[toCheck].StormTempDrop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1382,25 +1539,64 @@ void cWeatherAb::Temp( weathID toCheck, R32 value )
 	Value( toCheck, CURRVAL, TEMP, value );
 }
 
-void cWeatherAb::SnowIntensity( weathID toCheck, SI08 value )
+//o---------------------------------------------------------------------------o
+//|   Function    -  void RainTempDrop( weathID toCheck, R32 value )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the rain temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+void cWeatherAb::RainTempDrop( weathID toCheck, R32 value )
 {
-	Intensity( toCheck, SNOW, value );
+	weather[toCheck].RainTempDrop( value );
 }
-void cWeatherAb::StormIntensity( weathID toCheck, SI08 value )
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void StormTempDrop( weathID toCheck, R32 value )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the storm temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+void cWeatherAb::StormTempDrop( weathID toCheck, R32 value )
 {
-	Intensity( toCheck, STORM, value );
+	weather[toCheck].StormTempDrop( value );
 }
-void cWeatherAb::RainIntensity( weathID toCheck, SI08 value )
+
+void cWeatherAb::SnowIntensityHigh( weathID toCheck, SI08 value )
 {
-	Intensity( toCheck, RAIN, value );
+	IntensityHigh( toCheck, SNOW, value );
 }
-void cWeatherAb::HeatIntensity( weathID toCheck, SI08 value )
+void cWeatherAb::SnowIntensityLow( weathID toCheck, SI08 value )
 {
-	Intensity( toCheck, HEAT, value );
+	IntensityLow( toCheck, SNOW, value );
 }
-void cWeatherAb::ColdIntensity( weathID toCheck, SI08 value )
+
+void cWeatherAb::StormIntensityHigh( weathID toCheck, SI08 value )
 {
-	Intensity( toCheck, COLD, value );
+	IntensityHigh( toCheck, STORM, value );
+}
+void cWeatherAb::StormIntensityLow( weathID toCheck, SI08 value )
+{
+	IntensityLow( toCheck, STORM, value );
+}
+
+void cWeatherAb::RainIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, RAIN, value );
+}
+void cWeatherAb::RainIntensityLow( weathID toCheck, SI08 value )
+{
+	IntensityLow( toCheck, RAIN, value );
+}
+
+void cWeatherAb::HeatIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, HEAT, value );
+}
+void cWeatherAb::ColdIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, COLD, value );
 }
 void cWeatherAb::RainChance( weathID toCheck, SI08 value )
 {
@@ -1948,21 +2144,21 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( element == RAIN )
 		{
-			damageModifier = (R32)RandomNum( 0, (int)RainIntensity( weatherSys ) );
+			damageModifier = (R32)RandomNum( (int)RainIntensityLow( weatherSys ), (int)RainIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1219;
 		}
 
 		if( element == SNOW )
 		{
-			damageModifier = (R32)RandomNum( 0, (int)SnowIntensity( weatherSys ) );
+			damageModifier = (R32)RandomNum( (int)SnowIntensityLow( weatherSys ), (int)SnowIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1220;
 		}
 
 		if( element == STORM)
 		{
-			damageModifier = (R32)RandomNum( 0, (int)StormIntensity( weatherSys ) );
+			damageModifier = (R32)RandomNum( (int)StormIntensityLow( weatherSys ), (int)StormIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1775;
 
