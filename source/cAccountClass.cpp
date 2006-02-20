@@ -825,9 +825,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 //o--------------------------------------------------------------------------o
 bool cAccountClass::isUser(std::string sUsername)
 {
-	// Call into the map to see if this username exists. but first copy it into a local string and make it lowercase 
-	UString szTempUsername	= UString( sUsername ).lower();
-	MAPUSERNAME_ITERATOR I	= m_mapUsernameMap.find( szTempUsername );
+	MAPUSERNAME_ITERATOR I	= m_mapUsernameMap.find( sUsername );
 	return( I != m_mapUsernameMap.end() );
 }
 

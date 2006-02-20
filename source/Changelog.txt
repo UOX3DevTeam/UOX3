@@ -1,3 +1,6 @@
+2/20/2006 - giwo (0.98-3.4)
+	Fixed an issue causing possible account corruption.
+
 20th February, 2006 - Maarc
 	Added two functions to the JS engine for characters, Heal() and Damage()
 		void Damage( amtDamaged, [attacker] );
