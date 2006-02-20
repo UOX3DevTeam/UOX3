@@ -1,47 +1,26 @@
 // Apple-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) apple tree is double-clicked, it's setup with
 // 5 apples ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more apples can be picked. Once the timer is over,
 // new apples are added. The apperance of the tree indicates whether or
 // not there are any apples left to pick.
-/*function onCreate( objMade, objType )
-{
-	if( objType == 0 )
-	{
-		if( objMade.id == 0x0d99 || objMade.id == 0x0d95 )
-		{
-			iUsed.SetTag("initialized",true); 	// Marks tree as initialized
-			iUsed.SetTag("Apples",0); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
-			iUsed.SetTag("AppleCounter", 0); 	// No apples yet.
-	///		objMade.StartTimer( 30000, 1, true );
-		}
-		else
-		{
-			iUsed.SetTag("initialized",true); 	// Marks tree as initialized
-			iUsed.SetTag("Apples",1); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
-			iUsed.SetTag("AppleCounter", 5); 	// Add 5 apples to the tree initially
-		}
-	}
-}*/
-
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
-//	pUser.SysMessage( "You doubleclicked a tree with: "+iUsed.GetTag( "Apples" )+" apples left.");
-//	return false;
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
 		pUser.SysMessage( "You are too far away to reach that." );
 		return false;
 	}
-
 	if( !iUsed.GetTag("initialized")) // Unless apples have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1 ); 	// Marks tree as initialized
 		iUsed.SetTag("Apples",1); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
-		iUsed.SetTag("AppleCounter", 5); 	// Add 5 apples to the tree initially
+		iUsed.SetTag("AppleCounter", maxResource); 	// Add 5 apples to the tree initially
 	}
 	var Apples = iUsed.GetTag("Apples");
 	var AppleCount = iUsed.GetTag("AppleCounter");
@@ -72,7 +51,7 @@ function onUse( pUser, iUsed )
 				else if( iUsed.id == 0x0d9a )
 					iUsed.id = 0x0d99; 
 				iUsed.SetTag( "Apples", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time apples respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay until next time apples respawn
 			}
 		}
 	}
@@ -83,7 +62,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("AppleCounter", 5);
+		iUsed.SetTag("AppleCounter", maxResource);
 		iUsed.SetTag("Apples", 1);
 		if( iUsed.id == 0x0d95 )
 			iUsed.id = 0x0d96;

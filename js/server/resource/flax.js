@@ -1,7 +1,8 @@
 // Flax-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) flax plant is double-clicked, it may yield some flax.
 // Then a timer will start, and no more flax can be picked until it runs out.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 
 function onUse( pUser, iUsed )
 {
@@ -14,7 +15,7 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless flax have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized",1); 	// Marks tree as initialized
 		iUsed.SetTag("Flax",1); 		// If set to 1, there is flax to be picked
 	}
 	var Flax = iUsed.GetTag("Flax");
@@ -33,7 +34,7 @@ function onUse( pUser, iUsed )
 			pUser.SysMessage( "You harvest some flax." );
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1a9c", 1, "ITEM", true );
 			iUsed.SetTag( "Flax", 0 );
-			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
+			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time more flax respawns
 		}
 	}
 	return false;

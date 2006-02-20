@@ -1,9 +1,11 @@
 // Banana-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) banana tree is double-clicked, it's setup with
 // 5 banans ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more bananas can be picked. Once the timer is over,
-// new bananas are added. 
+// new bananas are added.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
@@ -16,9 +18,9 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless bananas have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Bananas",1); 		// If set to 1, there are bananas to be picked, if 0 there are no ripe bananas
-		iUsed.SetTag("BananaCounter", 5); 	// Add 5 bananas to the tree initially
+		iUsed.SetTag("BananaCounter", maxBananas); 	// Add 5 bananas to the tree initially
 	}
 	var Bananas = iUsed.GetTag("Bananas");
 	var BananaCount = iUsed.GetTag("BananaCounter");
@@ -45,7 +47,7 @@ function onUse( pUser, iUsed )
 		    	if( BananaCount == 0 )
 			{
 				iUsed.SetTag( "Bananas", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time bananas respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time bananas respawn
 			}
 		}
 	}
@@ -56,7 +58,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("BananaCounter", 5);
+		iUsed.SetTag("BananaCounter", maxBananas);
 		iUsed.SetTag("Bananas", 1);
 	}
 }
