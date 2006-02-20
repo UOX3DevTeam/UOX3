@@ -111,6 +111,8 @@ JSMethodFunc CChar_SpellStaticEffect;
 JSMethodFunc CChar_BreakConcentration;
 JSMethodFunc CChar_FindItemType;
 JSMethodFunc CChar_InitWanderArea;
+JSMethodFunc CChar_Damage;
+JSMethodFunc CChar_Heal;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
@@ -326,6 +328,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
 	{ "InitWanderArea",		CChar_InitWanderArea,	0, 0, 0 },
 	{ "CanSee",				CBase_CanSee,			1, 0, 0 },
+	{ "Damage",				CChar_Damage,			1, 0, 0 },
+	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 

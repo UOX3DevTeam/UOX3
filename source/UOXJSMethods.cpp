@@ -5319,6 +5319,91 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 2 )
+	{
+		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and attacker)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *attacker	= NULL;
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar )  )
+	{
+		MethodError( "(CChar_Damage): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+	JSEncapsulate damage( cx, &(argv[0]) );
+
+	if( argc == 2 )
+	{
+		JSEncapsulate attackerClass( cx, &(argv[1]) );
+		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+		{
+			MethodError( "CChar_Damage: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+
+		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ) )
+			attacker = NULL;
+		else
+		{
+			attacker	= static_cast<CChar *>(attackerClass.toObject());
+			if( !ValidateObject( attacker )  )
+			{
+				MethodError( "(CChar_Damage): Passed an invalid Character" );
+				return JS_TRUE;
+			}
+		}
+	}
+
+	mChar->Damage( damage.toInt(), attacker );
+	return JS_TRUE;
+}
+
+JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 2 )
+	{
+		MethodError( "(CChar_Heal) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and healer)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *healer	= NULL;
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar )  )
+	{
+		MethodError( "(CChar_Heal): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+	JSEncapsulate Heal( cx, &(argv[0]) );
+
+	if( argc == 2 )
+	{
+		JSEncapsulate healerClass( cx, &(argv[1]) );
+		if( healerClass.ClassName() != "UOXChar" )	// It must be a character!
+		{
+			MethodError( "CChar_Heal: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+
+		if( healerClass.isType( JSOT_VOID ) || healerClass.isType( JSOT_NULL ) )
+			healer = NULL;
+		else
+		{
+			healer	= static_cast<CChar *>(healerClass.toObject());
+			if( !ValidateObject( healer )  )
+			{
+				MethodError( "(CChar_Heal): Passed an invalid Character" );
+				return JS_TRUE;
+			}
+		}
+	}
+
+	mChar->Heal( Heal.toInt(), healer );
+	return JS_TRUE;
+}
 
 }
 
