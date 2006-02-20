@@ -1,3 +1,7 @@
+2/20/2006 - grimson
+	cMovement::SendWalkToOtherPlayers() didn't check if the chars are in the same world, added
+	this now.
+
 2/19/2006 - grimson (0.98-3.3u [3.4 RC])
 	Renamed HandleWeatherChanges() to CheckCharInsideBuilding() as it is more apropriate.
 	Stopped weather effects affecting ghosts of death players.

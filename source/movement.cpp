@@ -787,6 +787,7 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 	bool checkX			= (oldx != newx);
 	bool checkY			= (oldy != newy);
 	UI16 effRange;
+	UI08 worldnumber	= c->WorldNumber();
 
 	CPExtMove toSend	= (*c);
 
@@ -798,6 +799,9 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 		CChar *mChar = tSend->CurrcharObj();
 		if( !ValidateObject( mChar ) )
 			continue;
+		if( worldnumber != mChar->WorldNumber() )
+			continue;
+
 		const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
 		const UI16 clientRange	= static_cast<UI16>( tSend->Range() );
 		if( visibleRange >= clientRange )
