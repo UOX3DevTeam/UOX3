@@ -27,7 +27,7 @@ function onCallback0( socket, ourObj )
 		case "PACK":	layer = 0x15;			break;
 		case "LAYER":
 				if( splitString[1] )
-					layer = StringToNum( splitString[1] ); 
+					layer = parseInt( splitString[1] ); 
 				break;
 		case "CHAR":
 				if( !ourObj.dead )

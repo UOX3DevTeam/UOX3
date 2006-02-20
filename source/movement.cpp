@@ -195,14 +195,24 @@ void HandleTeleporters( CChar *s )
 			}
 			if( isOnTeleporter )
 			{
-				if( getTeleLoc->TargetWorld() != charWorld )
+				s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld() );
+				if( !s->IsNpc() )
 				{
-					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld() );
-					if( !s->IsNpc() )
+					if( getTeleLoc->TargetWorld() != charWorld )
 						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+
+					CDataList< CChar * > *myPets = s->GetPetList();
+					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+					{
+						if( !ValidateObject( myPet ) )
+							continue;
+						if( myPet->IsNpc() && myPet->GetOwnerObj() == s )
+						{
+							if( objInOldRange( s, myPet, DIST_INRANGE ) )
+								myPet->SetLocation( s );
+						}
+					}
 				}
-				else
-					s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z );
 				break;
 			}
 			else if( s->GetX() < getTeleLoc->SourceLocation().x )

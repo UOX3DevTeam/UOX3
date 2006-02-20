@@ -36,7 +36,7 @@ function onCallback0( socket, ourObj )
 
 	var splitString = socket.xText.split( " ", 2 );
 	var uKey 	= splitString[0].toUpperCase();
-	var nVal 	= StringToNum( splitString[1] );
+	var nVal 	= parseInt( splitString[1] );
 	switch( uKey )
 	{
 	case "NAME":
@@ -170,9 +170,9 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		var splitValues = socket.xText.split( " " )
 		if( splitValues[3] )
 		{
-			ourItem.morex = StringToNum( splitValues[1] );
-			ourItem.morey = StringToNum( splitValues[2] );
-			ourItem.morez = StringToNum( splitValues[3] );
+			ourItem.morex = parseInt( splitValues[1] );
+			ourItem.morey = parseInt( splitValues[2] );
+			ourItem.morez = parseInt( splitValues[3] );
 			okMsg( socket );
 		}
 		break;
@@ -372,7 +372,7 @@ function command_SETPOISONED( socket, cmdString )
 	if( cmdString )
 	{
 		var targMsg = GetDictionaryEntry( 240, socket.Language );
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, targMsg );
 	}
 }

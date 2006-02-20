@@ -288,7 +288,7 @@ Look at uox3.h to see options. Works like npc magic.
 	if( koxn == -1 && koym == -1 )
 		return not_blocked;		// target canceled
 
-	SI16 kox1 = mChar->GetX(), koy1 = mChar->GetY();
+	const SI16 kox1 = mChar->GetX(), koy1 = mChar->GetY();
 	SI08 koz1 = mChar->GetZ();
 
 	if( (kox1 == koxn) && (koy1 == koym) && (koz1 == koz2) )
@@ -296,9 +296,9 @@ Look at uox3.h to see options. Works like npc magic.
 
 	koz1 += 15; // standard eye height of most bodies
 
-	UI08 worldNumber = mChar->WorldNumber();
+	const UI08 worldNumber = mChar->WorldNumber();
 
-	SI32 n = fabs( koxn - kox1 ), m = fabs( koym - koy1 ), i = 0;
+	SI32 n = abs( static_cast<SI32>(koxn - kox1) ), m = abs( static_cast<SI32>(koym - koy1) ), i = 0;
 	SI08 sgn_x = ( kox1 <= koxn ) ? 1 : (-1); // signum for x
 	SI08 sgn_y = ( koy1 <= koym ) ? 1 : (-1); // signum for y
 	SI08 sgn_z = ( koz1 <= koz2 ) ? 1 : (-1); // signum for z

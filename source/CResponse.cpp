@@ -170,6 +170,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			{
 				if( !ValidateObject( Npc->GetFTarg() ) )
 				{
+					Npc->SetOwner( mChar );
 					Npc->SetFTarg( mChar );			// Set the NPC to follow the PC
 					Npc->SetNpcWander( 1 );			// Set the NPC to wander freely
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
@@ -355,7 +356,7 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 bool CBasePetResponse::canControlPet( CChar *mChar, CChar *Npc, bool isRestricted )
 {
 	bool retVal = false;
-	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != aiPLAYERVENDOR )
+	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != aiPLAYERVENDOR && Npc->GetQuestType() == 0 )
 	{
 		if( Npc->GetOwnerObj() == mChar )
 			retVal = true;

@@ -8,7 +8,7 @@ function command_POLY( socket, cmdString )
 	if( cmdString )
 	{
 		var pUser 	= socket.currentChar;
-		var newBody 	= StringToNum( cmdString );
+		var newBody 	= parseInt( cmdString );
 		var skinVal 	= pUser.colour;
 	
 		if( newBody <= 0x7CF )

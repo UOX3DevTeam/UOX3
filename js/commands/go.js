@@ -13,21 +13,21 @@ function command_GO( socket, cmdString )
 		{
 		case "PLACE":
 			if( splitString[1] )
-				mChar.SetLocation( StringToNum( splitString[1] ) );
+				mChar.SetLocation( parseInt( splitString[1] ) );
 			break;
 		case "CHAR":
 			var teleTo;
 			if( splitString[4] )	// 4-byte Serial
 			{
-				var a1 = StringToNum( splitString[1] );
-				var a2 = StringToNum( splitString[2] );
-				var a3 = StringToNum( splitString[3] );
-				var a4 = StringToNum( splitString[4] );
+				var a1 = parseInt( splitString[1] );
+				var a2 = parseInt( splitString[2] );
+				var a3 = parseInt( splitString[3] );
+				var a4 = parseInt( splitString[4] );
 				teleTo = CalcCharFromSer( a1, a2, a3, a4 );
 			}
 			else if( splitString[1] )
 			{
-				var ourNum = StringToNum( splitString[1] );
+				var ourNum = parseInt( splitString[1] );
 				if( splitString[1].match( /0x/i ) )	// Whole Serial
 					teleTo = CalcCharFromSer( ourNum );
 				else	// Socket index
@@ -52,12 +52,12 @@ function command_GO( socket, cmdString )
 			var x = 0, y = 0, z = 0;
 			var worldnum = mChar.worldnumber;
 			if( splitString[3] )
-				worldnum = StringToNum( splitString[3] );
+				worldnum = parseInt( splitString[3] );
 			if( splitString[2] )
 			{
-				x = StringToNum( splitString[0] );
-				y = StringToNum( splitString[1] );
-				z = StringToNum( splitString[2] );
+				x = parseInt( splitString[0] );
+				y = parseInt( splitString[1] );
+				z = parseInt( splitString[2] );
 			}
 			else
 				return;

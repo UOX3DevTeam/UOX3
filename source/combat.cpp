@@ -838,10 +838,10 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 		else
 			defendItem = getArmorDef( mChar, total, hitLoc );
 
-		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() )
+		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && RandomNum( 0, 1 ) )
 		{
 			SI08 armorDamage = 0;	// Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
-			armorDamage -= RandomNum( 0, 2 );
+			armorDamage -= RandomNum( 0, 1 );
 			defendItem->IncHP( armorDamage );
 
 			if( defendItem->GetHP() <= 0 )
@@ -1241,7 +1241,7 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock,
 	{
 		Skills->CheckSkill( ourTarg, PARRYING, 0, 1000 );
 		// Chance to block with Shield ( % = Skill / 2 ) 
-		UI16 defendParry = ourTarg->GetSkill( PARRYING );
+		const UI16 defendParry = ourTarg->GetSkill( PARRYING );
 		if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ) )
 		{
 			damage -= HalfRandomNum( shield->GetDef() );
@@ -1384,6 +1384,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			CSocket *targSock = ourTarg->GetSocket();
 
 			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
+			Skills->CheckSkill( ourTarg, TACTICS, 0, 1000 );
 
 			switch( ourTarg->GetID() )
 			{

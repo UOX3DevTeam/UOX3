@@ -8,7 +8,7 @@ function command_SKIN( socket, cmdString )
 	if( cmdString )
 	{
 		var pUser = socket.currentChar;
-		var value = StringToNum( cmdString );
+		var value = parseInt( cmdString );
 		var body = pUser.id;
 
 		if( ( (value&0x4000) == 0x4000 ) && ( body >= 0x0190 && body <= 0x03E1 ) )

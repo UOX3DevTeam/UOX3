@@ -4474,9 +4474,9 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 1 && argc != 4 )
 	{
-		MethodError( "Gate: Invalid number of arguments (takes 1, item)" );
+		MethodError( "Gate: Invalid number of arguments (takes 1; item/place, or 4; x y z world)" );
 		return JS_FALSE;
 	}
 
@@ -4491,33 +4491,42 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	SI08 destZ = -1;
 	UI08 destWorld = 0;
 
-	if( JSVAL_IS_OBJECT( argv[0] ) )
+	if( argc == 1 )
 	{
-		JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
-		CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
-		if( !ValidateObject( mItem ) )
+		if( JSVAL_IS_OBJECT( argv[0] ) )
 		{
-			MethodError( "Gate: Invalid item passed" );
-			return JS_FALSE;
-		}
+			JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
+			CItem *mItem		= (CItem *)JS_GetPrivate( cx, jsObj );
+			if( !ValidateObject( mItem ) )
+			{
+				MethodError( "Gate: Invalid item passed" );
+				return JS_FALSE;
+			}
 
-		destX		= mItem->GetTempVar( CITV_MOREX );
-		destY		= mItem->GetTempVar( CITV_MOREY );
-		destZ		= mItem->GetTempVar( CITV_MOREZ );
-		destWorld	= mItem->GetTempVar( CITV_MORE );
+			destX		= mItem->GetTempVar( CITV_MOREX );
+			destY		= mItem->GetTempVar( CITV_MOREY );
+			destZ		= mItem->GetTempVar( CITV_MOREZ );
+			destWorld	= mItem->GetTempVar( CITV_MORE );
+		}
+		else
+		{
+			size_t placeNum = JSVAL_TO_INT( argv[0] );
+			if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
+			{
+				GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+				destX		= toGoTo.x;
+				destY		= toGoTo.y;
+				destZ		= toGoTo.z;
+				destWorld	= toGoTo.worldNum;
+			}
+		}
 	}
 	else
 	{
-		size_t placeNum = JSVAL_TO_INT( argv[0] );
-		if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
-		{
-			GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
-			destX		= toGoTo.x;
-			destY		= toGoTo.y;
-			destZ		= toGoTo.z;
-			destWorld	= toGoTo.worldNum;
-		}
-
+		destX		= JSVAL_TO_INT( argv[0] );
+		destY		= JSVAL_TO_INT( argv[1] );
+		destZ		= JSVAL_TO_INT( argv[2] );
+		destWorld	= JSVAL_TO_INT( argv[3] );
 	}
 
 	if( !Map->MapExists( destWorld ) )

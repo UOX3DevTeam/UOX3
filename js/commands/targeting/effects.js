@@ -8,7 +8,7 @@ function CommandRegistration()
 function command_ACTION( socket, cmdString )
 {
 	if( cmdString )
-			socket.currentChar.DoAction( StringToNum( cmdString ));
+			socket.currentChar.DoAction( parseInt( cmdString ));
 }
 
 
@@ -32,7 +32,7 @@ function command_NPCACTION( socket, cmdString )
 	if( cmdString )
 	{
 		var targMsg = GetDictionaryEntry( 213, socket.Language );
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 0, targMsg );
 	}
 }

@@ -1489,6 +1489,7 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			dirOffset = 1;
 		else
 			dirOffset = -1;
+		mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
 		if( !mChar->IsNpc() )
 		{
 			CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -1498,12 +1499,11 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 					continue;
 				if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
 				{
-					if( charInRange( mChar, myPet ) )
+					if( objInOldRange( mChar, myPet, DIST_INRANGE ) )
 						myPet->SetLocation( mChar );
 				}
 			}
 		}
-		mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
 		Effects->PlaySound( mSock, 0x01FE, true );
 		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	}

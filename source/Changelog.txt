@@ -1,3 +1,16 @@
+2/19/2006 - giwo (0.98-3.3v [3.4 RC])
+	Fixed a minor issue with regions.dfn causing Yew not to be considered a town.
+	Added ability to xgate to a specific x, y, z. and worldnumber
+	Fixed a minor issue with teleporter.js.
+	Updated TeleportLocations to teleport any players pets that are inrange with them.
+	Fixed a minor issue with Moongates teleporting Pets.
+	Fixed a compiler error in VC 2003 caused by fabs(). Note that using fabs() should only be used with floats & doubles.
+	Updated the grizzly and polar bear entries in creatures.dfn to have the proper sounds.
+	Modified HandleCombat() so the target has a chance to gain Tactics when hit.
+	Gave armor a 50% chance not to be damaged when successfully hit.
+	Reduced armor damage to 0-1 points (rather than 0-2) when hit.
+	Updated Towns to be escort regions by default in regions.dfn
+
 2/20/2006 - grimson
 	cMovement::SendWalkToOtherPlayers() didn't check if the chars are in the same world, added
 	this now.

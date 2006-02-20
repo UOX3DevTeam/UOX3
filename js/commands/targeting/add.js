@@ -22,8 +22,8 @@ function command_ADD( socket, cmdString )
 		case "ITEM":
 			if( splitString[2] )
 			{
-				var a1 = StringToNum( splitString[1] );
-				var a2 = StringToNum( splitString[2] );
+				var a1 = parseInt( splitString[1] );
+				var a2 = parseInt( splitString[2] );
 				socket.tempint = (a1<<8) + a2;
 				socket.CustomTarget( 2, "Select location for Item: 0x" + socket.tempint.toString( 16 ) );
 			}
@@ -36,8 +36,8 @@ function command_ADD( socket, cmdString )
 		case "SPAWNER":
 			if( splitString[2] )
 			{
-				var a1 = StringToNum( splitString[1] );
-				var a2 = StringToNum( splitString[2] );
+				var a1 = parseInt( splitString[1] );
+				var a2 = parseInt( splitString[2] );
 				var stringVal = ((a1<<8) + a2);
 				socket.tempint = stringVal;
 				socket.xText = stringVal.toString( 16 );
@@ -52,7 +52,7 @@ function command_ADD( socket, cmdString )
 		default:
 			if( splitString[0] )
 			{
-				socket.tempint = StringToNum( splitString[0] );
+				socket.tempint = parseInt( splitString[0] );
 				socket.CustomTarget( 1, "Select location for Item: " + splitString[1] );
 			}
 			break;
@@ -184,7 +184,7 @@ function onCallback4( socket, ourObj )
 function command_ITEMMENU( socket, cmdString )
 {
 	if( cmdString )
-		socket.SendAddMenu( StringToNum( cmdString ) );
+		socket.SendAddMenu( parseInt( cmdString ) );
 }
 
 function command_ADDX( socket, cmdString )
@@ -196,16 +196,16 @@ function command_ADDX( socket, cmdString )
 		var targZ = mChar.z;
 		var splitString = cmdString.split( " " );
 		if( splitString[2] )
-			targZ = StringToNum( splitString[2] );
+			targZ = parseInt( splitString[2] );
 		if( splitString[1] )
 		{
-			var a1 = StringToNum( splitString[0] );
-			var a2 = StringToNum( splitString[1] );
+			var a1 = parseInt( splitString[0] );
+			var a2 = parseInt( splitString[1] );
 			targID = (a1<<8) + a2;
 		}
 		else if( splitString[0] )
 		{
-			targID = StringToNum( splitString[0] );
+			targID = parseInt( splitString[0] );
 		}
 		var newItem = CreateBlankItem( socket, mChar, 1, "#", targID, 0, "ITEM", false );
 		if( newItem )

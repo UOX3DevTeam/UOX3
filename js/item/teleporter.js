@@ -3,10 +3,11 @@ function onUse( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
-		if( pUser.inRange( iUsed, 3 ) )
+		if( pUser.InRange( iUsed, 3 ) )
 		{
 			var otherGate = CalcItemFromSer( iUsed.morex );
-			pUser.Teleport( otherGate );
+			if( ValidateObject( otherGate ) )
+				pUser.Teleport( otherGate );
 		}
 	}
 	return false;

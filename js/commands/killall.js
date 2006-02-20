@@ -7,7 +7,7 @@ function command_KILLALL( socket, cmdString )
 {
 	percentToKill = 100;
 	if( cmdString )
-		percentToKill = StringToNum( cmdString );
+		percentToKill = parseInt( cmdString );
 
 	var count = IterateOver( "CHARACTER" );
 	socket.SysMessage( "Killed " + count.toString() + " characters" );

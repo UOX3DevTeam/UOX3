@@ -2356,6 +2356,7 @@ void cAccountClass::WriteImportHeader(std::fstream &fsOut)
 	fsOut << "//        email      - Email of the accounts to be imported" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "// NOTE: Flags, and Email values are not requred, defaults will be used." << std::endl;
+	fsOut << "// NOTE: Please ensure you press ENTER after your last line for proper loading." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
 

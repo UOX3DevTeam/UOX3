@@ -39,10 +39,10 @@ function command_NPCRECT( socket, cmdString )
 		var splitSection = cmdString.split( " " );
 		if( splitSection[3] )
 		{
-			x1 = StringToNum( splitSection[0] );
-			y1 = StringToNum( splitSection[1] );
-			x2 = StringToNum( splitSection[2] );
-			y2 = StringToNum( splitSection[3] );
+			x1 = parseInt( splitSection[0] );
+			y1 = parseInt( splitSection[1] );
+			x2 = parseInt( splitSection[2] );
+			y2 = parseInt( splitSection[3] );
 			var targMsg = GetDictionaryEntry( 46 );
 			socket.CustomTarget( 2, targMsg );
 		}
@@ -64,9 +64,9 @@ function command_NPCCIRCLE( socket, cmdString )
 		var splitSection = cmdString.split( " " );
 		if( splitSection[2] )
 		{
-			x1 = StringToNum( splitSection[0] );
-			y1 = StringToNum( splitSection[1] );
-			x2 = StringToNum( splitSection[2] );
+			x1 = parseInt( splitSection[0] );
+			y1 = parseInt( splitSection[1] );
+			x2 = parseInt( splitSection[2] );
 			var targMsg = GetDictionaryEntry( 47 );
 			socket.CustomTarget( 3, targMsg );
 		}
