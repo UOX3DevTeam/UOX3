@@ -122,6 +122,7 @@ public:
 	// misc functions
 	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
 	bool			MapExists( UI08 worldNumber );
+	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
 	MapData_st&		GetMapData( UI08 mapNum );
 	UI08			MapCount( void ) const;
@@ -136,8 +137,6 @@ private:
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			DoesTileBlock( UI16 tilenum );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-
-	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
 	// caching functions
 	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );

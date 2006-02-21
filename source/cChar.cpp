@@ -383,6 +383,13 @@ void CChar::DoHunger( CSocket *mSock )
 		{
 			if( WillHunger() )
 			{
+				CChar *owner = GetOwnerObj();
+				if( !ValidateObject( owner ) )
+					return;
+
+				if( !isOnline( (*owner) ) )
+					return;
+
 				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
 					hungerRate = GetTamedHungerRate();

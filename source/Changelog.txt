@@ -1,3 +1,11 @@
+2/21/2006 - grimson (0.98-3.4f [3.5 BETA])
+	Changed JS function CBase_Teleport() to prevent player chars from being teleport into a invalid world
+	which rendered the player char useless as the client cannot login using that char afterwards.
+	Changed CheckCharInsideBuilding() to prevent a harmless error message when mounting a mount.
+	Tweaks to the new hunger system:
+		Tamed chars only hunger while the player that tamed them is online.
+		Tamed mounts don't hunger when they are mounted by a player.
+
 2/21/2006 - grimson (0.98-3.4e [3.5 BETA])
 	Third part of the rewrote hunger system:
 		Added a new AI type "aiANIMAL" with the number 6. This AI does nothing until the hunger level
