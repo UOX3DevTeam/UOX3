@@ -166,7 +166,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 			{
 				const std::string oreName	= found->name + " ore";
 				CItem *oreItem				= Items->CreateItem( &mSock, mChar, 0x19B9, 1, found->colour, OT_ITEM, true );
-				if( oreItem != NULL )
+				if( ValidateObject( oreItem ) )
 				{
 					oreItem->SetName( oreName );
 					if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )

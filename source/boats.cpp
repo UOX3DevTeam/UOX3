@@ -393,24 +393,28 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	tiller->SetType( IT_TILLER );
 	tiller->SetTempVar( CITV_MORE, serial );
 	tiller->SetTempVar( CITV_MOREX, boattype );
+	tiller->SetDecayable( false );
 
 	CItem *p2 = Items->CreateItem( NULL, mChar, 0x3EB2, 1, 0, OT_ITEM );//Plank2 is on the RIGHT side of the boat
 	if( p2 == NULL )
 		return false;
 	p2->SetType( IT_PLANK );
 	p2->SetTempVar( CITV_MORE, serial );
+	p2->SetDecayable( false );
 
 	CItem *p1 = Items->CreateItem( NULL, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
 	if( p1 == NULL )
 		return false;
 	p1->SetType( IT_PLANK );//Boat type
 	p1->SetTempVar( CITV_MORE, serial );
+	p1->SetDecayable( false );
 
 	CItem *hold = Items->CreateItem( NULL, mChar, 0x3EAE, 1, 0, OT_ITEM );
 	if( hold == NULL )
 		return false;
 	hold->SetTempVar( CITV_MORE, serial );
 	hold->SetType( IT_CONTAINER );//Conatiner
+	hold->SetDecayable( false );
 
 	b->SetTiller( tiller->GetSerial() );
 	b->SetPlank( 0, p1->GetSerial() );// Store the other stuff anywhere it will fit :-)

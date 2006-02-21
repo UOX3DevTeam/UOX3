@@ -1,3 +1,13 @@
+2/21/2006 - giwo (0.98-3.4b [3.5 BETA])
+	Added AssocScript tag to effect saving (to make JS timers persistant).
+	Updated JS .SetPoisoned() to take one value for changing a poison value without setting a new timer.
+	Updated healing.js and made it function entirely in JS.
+	Removed tempeffects case 14, 22, 23, and 24, as they are handled by JS now.
+	Made items created with JS CreateBlankItem() decayable by default.
+	Fixed some issues with axe.js, put tree-chopping on a timer with a skill delay.
+	Fixed several issues where items were not decayable that should be.
+	Defaulted JS CreateBlankItem() to set items to decayable.
+
 2/20/2006 - giwo (0.98-3.4a [3.5 BETA])
 	Added carpentry, tinker, leather repair, bow repair, bandage, sewing kit, mortar, and archery butte ID's to js_objectassociations.scp
 	Corrected an issue causing Create menu's to double up when reloading the DFN's.

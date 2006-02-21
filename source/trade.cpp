@@ -67,6 +67,7 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	tradeWindow->SetZ( 0 );
 	tradeWindow->SetDye( false );
 	tradeWindow->SetTempVar( CITV_MOREZ, 0 );
+	tradeWindow->SetDecayable( false );
 
 	tradeWindow->SendPackItemToSocket( mSock );
 	tradeWindow->SendPackItemToSocket( nSock );

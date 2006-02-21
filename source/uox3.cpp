@@ -372,6 +372,7 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		s->SetOnHorse( true );
 		CItem *c = Items->CreateItem( NULL, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
 		c->SetName( x->GetName() );
+		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
 
 		switch( x->GetID() )

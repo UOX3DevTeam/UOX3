@@ -339,7 +339,7 @@ void cEffects::checktempeffects( void )
 	CSocket *tSock = NULL;
 	CBaseObject *myObj = NULL;
 
-	UI32 j = cwmWorldState->GetUICurrentTime();
+	const UI32 j = cwmWorldState->GetUICurrentTime();
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
@@ -455,23 +455,6 @@ void cEffects::checktempeffects( void )
 					i->SetDoorOpen( false );
 				}
 				break;
-			case 14: //- training dummies Tauriel check to see if item moved or not before searching for it
-				i = (CItem *)Effect->ObjPtr();
-				SERIAL effectSerial;
-				effectSerial = Effect->Destination();
-				if( i->GetSerial() != effectSerial )
-					i = calcItemObjFromSer( effectSerial );
-				if( i->GetID() == 0x1071 )
-				{
-					i->IncID( -1 );
-					i->SetTempTimer( 0 );
-				} 
-				else if( i->GetID() == 0x1075 )
-				{
-					i->IncID( -1 );
-					i->SetTempTimer( 0 );
-				} 
-				break;
 			case 15: //reactive armor
 				s->SetReactiveArmour( false );
 				break;
@@ -524,47 +507,6 @@ void cEffects::checktempeffects( void )
 					s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
 				equipCheckNeeded = true;
 				break;
-			case 22:	// heal
-			case 23:	// resurrect
-			case 24:	// cure
-				src	= calcCharObjFromSer( Effect->Source() );
-				i	= (CItem *)Effect->ObjPtr();
-				if( ValidateObject( src ) && ValidateObject( s ) )
-				{
-					if( src->SkillUsed( static_cast<UI08>(Effect->More1()) ) )
-					{
-						CSocket *srcSock = src->GetSocket();
-						if( objInRange( src, s, 2 ) && LineOfSight( srcSock, s, src->GetX(), src->GetY(), src->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
-						{
-							if( Effect->Number() == 22 )
-							{
-								s->Heal( src->GetSkill( ANATOMY ) / 50 + RandomNum( 3, 10 ) + RandomNum( src->GetSkill( HEALING ) / 50, src->GetSkill( HEALING ) / 20 ), NULL );
-								srcSock->sysmessage( 1271 );
-							}
-							else if( Effect->Number() == 23 )
-							{
-								NpcResurrectTarget( s );
-								srcSock->sysmessage( 1272 );
-							}
-							else
-							{
-								s->SetPoisoned( 0 );
-								if( tSock != NULL )
-								{
-									PlayStaticAnimation( s, 0x373A, 0, 15 );
-									PlaySound( tSock, 0x01E0, false );
-									tSock->sysmessage( 1273 );
-								}
-								if( srcSock != NULL )
-									srcSock->sysmessage( 1274 );
-							}
-						}
-					}
-					src->SkillUsed( false, static_cast<UI08>(Effect->More1()) );
-
-				}
-				i->IncAmount( -1 );
-				break;
 			case 25:
 				if( Effect->More2() == 0 )
 					Effect->ObjPtr()->SetDisabled( false );
@@ -599,7 +541,7 @@ void cEffects::checktempeffects( void )
 					myObj = calcCharObjFromSer( Effect->Source() );
 					equipCheckNeeded = true;
 				}
-				if( myObj == NULL )	// item no longer exists!
+				if( !ValidateObject( myObj ) )	// item no longer exists!
 					break;
 				if( tScript == NULL )	// No associated script, so it must be another callback variety
 				{
@@ -918,63 +860,6 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More1( more1 );
 			dest->SetBaseSkill( dest->GetBaseSkill( PARRYING ) + more1, PARRYING );
 			break;
-		case 22:		// healing skill, normal heal
-		case 23:		// healing skill, resurrect
-		case 24:		// healing skill, cure
-			CTEffect *Test;
-			CChar *oldTarg;
-			if( source->SkillUsed( static_cast<UI08>(more1) ) )
-			{
-				cwmWorldState->tempEffects.Push();
-				for( Test = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Test = cwmWorldState->tempEffects.Next() )	// definitely not friendly and scalable, but it stops all prior healing attempts
-				{	
-					// another option would be to do a bit set, to specify already healing
-					if( Test == NULL )
-						continue;
-					if( Test->Number() == 22 || Test->Number() == 23 || Test->Number() == 24 )
-					{
-						if( Test->Source() == sourSer )
-						{
-							oldTarg = calcCharObjFromSer( Test->Destination() );
-							if( Test->Number() == 22 )
-								source->emoteAll( 1275, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-							else if( Test->Number() == 23 )
-								source->emoteAll( 1276, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-							else if( Test->Number() == 24 )
-								source->emoteAll( 1277, false, source->GetName().c_str(), oldTarg->GetName().c_str() );
-							Test->Destination( INVALIDSERIAL );
-							break;
-						}
-					}
-				}
-				cwmWorldState->tempEffects.Pop();
-			}
-			if( num == 22 )
-			{
-				if( dest == source )
-					toAdd->ExpireTime( BuildTimeValue( 18.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 200.0f) ) ) );
-				else
-					toAdd->ExpireTime( BuildTimeValue( 7.0f - (R32)RandomNum( 0, (int)(source->GetSkill( HEALING ) / 333.0f) ) ) );
-				source->emoteAll( 1278, false, source->GetName().c_str(), dest->GetName().c_str() );
-			}
-			else if( num == 23 )
-			{
-				toAdd->ExpireTime( BuildTimeValue( 15.0f ) );
-				source->emoteAll( 1279, false, source->GetName().c_str(), dest->GetName().c_str() );
-			}
-			else if( num == 24 )
-			{
-				if( dest == source )
-					toAdd->ExpireTime( BuildTimeValue( (R32)RandomNum( 15000, 18000 ) / 1000.0f ) );
-				else
-					toAdd->ExpireTime( BuildTimeValue( 6.0f ) );
-				source->emoteAll( 1280, false, source->GetName().c_str(), dest->GetName().c_str() );
-			}
-			toAdd->Dispellable( false );
-			toAdd->ObjPtr( targItemPtr );	// the bandage we are using to achieve this
-			toAdd->More1( more1 );			// the skill we end up using (HEALING for players, VETERINARY for monsters)
-			source->SkillUsed( true, static_cast<UI08>(more1) );
-			break;
 		case 25:
 			toAdd->ExpireTime( BuildTimeValue( (R32)more1 ) );
 			toAdd->ObjPtr( dest );
@@ -1046,12 +931,6 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 
 			toAdd->ExpireTime( BuildTimeValue( 10 ) );
 			toAdd->Dispellable( false );
-			break;
-		case 14: //training dummies swing for 5(?) seconds
-			toAdd->ExpireTime( BuildTimeValue( 5 ) );
-			toAdd->Dispellable( false );
-			toAdd->ObjPtr( dest ); //used to try and cut search time down
-			toAdd->More2( 0 );
 			break;
 		case 17: //Explosion potion (explosion)  Tauriel (explode in 4 seconds)
 			toAdd->ExpireTime( BuildTimeValue( 4 ) );
@@ -1158,6 +1037,10 @@ void cEffects::LoadEffects( void )
 								UTag = tag.upper();
 								switch( (tag.data()[0]) )
 								{
+									case 'A':
+										if( UTag == "ASSOCSCRIPT" )
+											toLoad->AssocScript( data.toUShort() );
+										break;
 									case 'D':
 										if( UTag == "DEST" )
 											toLoad->Destination( data.toULong() );
@@ -1255,6 +1138,7 @@ bool CTEffect::Save( std::ofstream &effectDestination ) const
 	dumping << "More2=" << More2() << std::endl;
 	dumping << "More3=" << More3() << std::endl;
 	dumping << "Dispel=" << Dispellable() << std::endl;
+	dumping << "AssocScript=" << AssocScript() << std::endl;
 
 	getPtr = ObjPtr();
 	dumping << "ObjPtr=" << "0x" << std::hex;

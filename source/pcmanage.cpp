@@ -493,6 +493,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[HAIR]	= Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[HAIR] != NULL )
 		{
+			CreatedItems[HAIR]->SetDecayable( false );
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
 			CreatedItems[HAIR]->SetCont( mChar );
 		}
@@ -504,6 +505,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[BEARD] != NULL )
 		{
+			CreatedItems[BEARD]->SetDecayable( false );
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
 			CreatedItems[BEARD]->SetCont( mChar );
 		}
@@ -512,6 +514,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	if( CreatedItems[PACK] != NULL )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
+		CreatedItems[PACK]->SetDecayable( false );
 		CreatedItems[PACK]->SetLayer( IL_PACKITEM );
 		CreatedItems[PACK]->SetCont( mChar );
 		CreatedItems[PACK]->SetType( IT_CONTAINER );
@@ -880,7 +883,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack )
 	if( !createPack )
 	{
 		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
-		if( iCorpse == NULL )
+		if( !ValidateObject( iCorpse ) )
 			return NULL;
 
 		char temp[512];

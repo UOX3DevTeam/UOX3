@@ -263,11 +263,10 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			CItem *n = Items->CreateItem( NULL, s, 0x204C, 1, hairColor, OT_ITEM );
 			if( n != NULL )
 			{
+				n->SetDecayable( false );
 				n->SetLayer( IL_FACIALHAIR );
 				if( n->SetCont( s ) )
-				{
 					beardobject = n;
-				}
 			}
 		}
 		if( ValidateObject( beardobject ) )

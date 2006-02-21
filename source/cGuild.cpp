@@ -1571,7 +1571,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		s->TempInt( gNum );
 		nGuild->NewMember( (*mChar) );
 		CItem *stone = Items->CreateItem( NULL, mChar, 0x0ED5, 1, 0, OT_ITEM );
-		if( stone == NULL )
+		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed );
 			Console.Error( 3, "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() );

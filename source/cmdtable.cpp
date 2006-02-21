@@ -331,8 +331,11 @@ void command_tile( CSocket *s )
 			for( SI16 y = y1; y <= y2; ++y )
 			{
 				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), targID, 1, 0, OT_ITEM );
-				if( a != NULL )	// Antichrist crash prevention
+				if( ValidateObject( a ) )	// Antichrist crash prevention
+				{
 					a->SetLocation( x, y, z );
+					a->SetDecayable( false );
+				}
 			}
 		}
 	}

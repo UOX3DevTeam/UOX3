@@ -1796,6 +1796,7 @@ void CSocket::openBank( CChar *i )
 	bankBox->SetName( temp );
 	bankBox->SetLayer( IL_BANKBOX );
 	bankBox->SetOwner( i );
+	bankBox->SetDecayable( false );
 	if( !bankBox->SetCont( i ) )
 		return;
 	bankBox->SetTempVar( CITV_MOREX, 1 );

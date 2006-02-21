@@ -82,7 +82,7 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 				key->SetName( "a house key" );
 		}
 
-		if( key != NULL )
+		if( ValidateObject( key ) )
 		{
 			key->SetTempVar( CITV_MORE, house->GetSerial() );
 			key->SetType( IT_KEY );
@@ -334,7 +334,7 @@ void deedHouse( CSocket *s, CMultiObj *i )
 				{
 					sprintf( temp, Dictionary->GetEntry( 580 ).c_str(), tChar->GetName().c_str() );
 					pvDeed = Items->CreateItem( NULL, mChar, 0x14F0, 1, 0, OT_ITEM, true );
-					if( pvDeed != NULL )
+					if( ValidateObject( pvDeed ) )
 					{
 						pvDeed->SetName( temp );
 						pvDeed->SetType( IT_PLAYERVENDORDEED );

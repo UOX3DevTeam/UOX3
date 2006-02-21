@@ -645,8 +645,9 @@ void Tiling( CSocket *s )  // Clicking the corners of tiling calls this function
 		for( SI16 y = y1; y <= y2; ++y ) 
 		{
 			c = Items->CreateItem( NULL, s->CurrcharObj(), addid, 1, 0, OT_ITEM );
-			if( c == NULL ) 
+			if( !ValidateObject( c ) ) 
 				return;
+			c->SetDecayable( false );
 			c->SetLocation( x, y, s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
 		}
 	}
@@ -1462,9 +1463,10 @@ void MakeStatusTarget( CSocket *sock )
 							if( !ValidateObject( mypack ) )
 							{
 								CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
-								targetChar->SetPackItem( iMade );
-								if( iMade == NULL ) 
+								if( !ValidateObject( iMade ) ) 
 									return;
+								targetChar->SetPackItem( iMade );
+								iMade->SetDecayable( false );
 								iMade->SetLayer( IL_PACKITEM );
 								if( iMade->SetCont( targetChar ) )
 								{

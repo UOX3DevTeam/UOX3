@@ -2714,7 +2714,7 @@ JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 2 && argc > 3 )
+	if( argc < 1 && argc > 3 )
 	{
 		MethodError( "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
 		return JS_FALSE;
@@ -2727,19 +2727,23 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		MethodError( "(SetPoisoned) Invalid object assigned" );
 		return JS_FALSE;
 	}
-	
+
 	SI08 newVal = (SI08)JSVAL_TO_INT( argv[0] );
-	SI32 wearOff = (SI32)JSVAL_TO_INT( argv[1] );
-	
-	if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] ) ) )
+
+	if( argc > 1 )
 	{
-		if( myChar->GetPoisoned() > newVal )
-			newVal = myChar->GetPoisoned();
+		SI32 wearOff = (SI32)JSVAL_TO_INT( argv[1] );
+		
+		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] ) ) )
+		{
+			if( myChar->GetPoisoned() > newVal )
+				newVal = myChar->GetPoisoned();
+		}
+		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)wearOff / 1000.0f ) );
 	}
 
 	myChar->SetPoisonStrength( newVal );
 	myChar->SetPoisoned( newVal );
-	myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)wearOff / 1000.0f ) );
 	return JS_TRUE;
 }
 
@@ -4434,6 +4438,8 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	CItem *glowItem = Items->CreateItem( mySock, mChar, 0x1647, 1, 0, OT_ITEM ); // spawn light emitting object
 	if( glowItem == NULL )
 		return JS_FALSE;
+	glowItem->SetDecayable( mItem->isDecayable() );
+	glowItem->SetDecayTime( mItem->GetDecayTime() );
 	glowItem->SetName( "glower" );
 	glowItem->SetMovable( 2 );
 

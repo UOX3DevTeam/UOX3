@@ -116,29 +116,29 @@ const MagicTable_s magic_table[] = {
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
 {
 	CItem *g1 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
-	if( g1 != NULL )
+	if( ValidateObject( g1 ) )
 	{
+		g1->SetDecayable( false );
 		g1->SetType( IT_GATE );
 		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
 		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g1->SetDir( 1 );
-	}
-	else
-		return;
 
-	CItem *g2 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
-	if( g2 != NULL )
-	{
-		g2->SetType( IT_GATE );
-		g2->SetLocation( trgX, trgY, trgZ, trgWorld );
-		g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
-		g2->SetDir( 1 );
+		CItem *g2 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
+		if( ValidateObject( g2 ) )
+		{
+			g2->SetDecayable( false );
+			g2->SetType( IT_GATE );
+			g2->SetLocation( trgX, trgY, trgZ, trgWorld );
+			g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
+			g2->SetDir( 1 );
 
-		g2->SetTempVar( CITV_MOREX, g1->GetSerial() );
-		g1->SetTempVar( CITV_MOREX, g2->GetSerial() );
+			g2->SetTempVar( CITV_MOREX, g1->GetSerial() );
+			g1->SetTempVar( CITV_MOREX, g2->GetSerial() );
+		}
+		else
+			g1->Delete();
 	}
-	else
-		return;
 }
 
 bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
@@ -190,7 +190,7 @@ bool splClumsy( CChar *caster, CChar *target, CChar *src )
 bool splCreateFood( CSocket *sock, CChar *caster )
 {
 	CItem *j = Items->CreateItem( sock, caster, 0x09D3, 1, 0x0000, OT_ITEM, true );
-	if( j != NULL )
+	if( ValidateObject( j ) )
 		j->SetType( IT_FOOD );
 	return true;
 }

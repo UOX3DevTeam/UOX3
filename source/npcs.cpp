@@ -550,8 +550,9 @@ void MakeShop( CChar *c )
 		if( !ValidateObject( tPack ) )
 		{
 			tPack = Items->CreateItem( NULL, c, 0x2AF8, 1, 0, OT_ITEM );
-			if( tPack != NULL )
+			if( ValidateObject( tPack ) )
 			{
+				tPack->SetDecayable( false );
 				tPack->SetLayer( static_cast<ItemLayers>(i) );
 				if( !tPack->SetCont( c ) )
 					tPack->Delete();
@@ -612,8 +613,9 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( mypack == NULL )
 												{
 													mypack = Items->CreateItem( NULL, applyTo, 0x0E75, 1, 0, OT_ITEM );
-													if( mypack != NULL )
+													if( ValidateObject( mypack ) )
 													{
+														mypack->SetDecayable( false );
 														applyTo->SetPackItem( mypack );
 														mypack->SetName( "Backpack" );
 														mypack->SetLayer( IL_PACKITEM );
@@ -765,11 +767,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( !ValidateObject( mypack ) )
 													mypack = applyTo->GetPackItem();
 												if( ValidateObject( mypack ) )
-												{
 													retitem = Items->CreateItem( NULL, applyTo, 0x0EED, static_cast<UI16>(RandomNum( ndata, odata )), 0, OT_ITEM, true );
-													if( retitem != NULL )
-														retitem->SetDecayable( true );
-												}
 												else
 													Console.Warning( 2, "Bad NPC Script with problem no backpack for gold" );
 											}
@@ -1146,9 +1144,10 @@ void MonsterGate( CChar *s, const std::string scriptEntry )
 				if( mypack == NULL )
 				{
 					n = Items->CreateItem( NULL, s, 0x0E75, 1, 0, OT_ITEM );
-					s->SetPackItem( n );
-					if( n == NULL ) 
+					if( !ValidateObject( n ) ) 
 						return;
+					s->SetPackItem( n );
+					n->SetDecayable( false );
 					n->SetLayer( IL_PACKITEM );
 					if( n->SetCont( s ) )
 					{

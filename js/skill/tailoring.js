@@ -26,7 +26,15 @@ function onCallback1( socket, ourObj )
 		}
 
 		var resID = ourObj.id;
-		if( ( resID >= 0x0F95 && resID <= 0x0F9C ) || ( resID >= 0x175D && resID <= 0x1765 ) || resID == 0x1067 || resID == 0x1078 )	// A valid tailoring resource
+		if( resID >= 0x0F95 && resID <= 0x0F9C )
+		{
+			CreateBlankItem( pSock, pUser, 50, "#", 0x1766, 0, "ITEM", true );
+			if( ourObj.amount > 1 )
+				ourObj.amount = ourObj.amount - 1;
+			else
+				ourObj.Delete();
+		}
+		else if( ( resID >= 0x175D && resID <= 0x1768 ) || resID == 0x1078 || resID == 0x1079 )	// A valid tailoring resource
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
