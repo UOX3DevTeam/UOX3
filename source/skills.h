@@ -37,6 +37,11 @@ private:
 			iIter = itemEntries.end();
 			mIter = menuEntries.end();
 		}
+		~createMenu()
+		{
+			itemEntries.resize( 0 );
+			menuEntries.resize( 0 );
+		}
 	};
 	struct createMenuEntry
 	{

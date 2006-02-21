@@ -1,3 +1,10 @@
+2/20/2006 - giwo (0.98-3.4a [3.5 BETA])
+	Added carpentry, tinker, leather repair, bow repair, bandage, sewing kit, mortar, and archery butte ID's to js_objectassociations.scp
+	Corrected an issue causing Create menu's to double up when reloading the DFN's.
+	Added a check to ensure a character has a backpack when coloring the "Pack" option in the popup menu.
+	Fixed an issue causing character paperdolls to have incorrect spacing.
+	JS Method .SetTag() now accepts boolean values (true/false).
+
 2/20/2006 - giwo (0.98-3.4)
 	Fixed an issue causing possible account corruption.
 

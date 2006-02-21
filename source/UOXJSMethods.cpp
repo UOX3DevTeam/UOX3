@@ -1889,10 +1889,10 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		JSString *localJSString = JS_NewString( cx, (char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
 		*rval = (jsval)STRING_TO_JSVAL(localJSString);
 	}
+	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )
+		*rval = (jsval)BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1));
 	else
-	{
 		*rval = (jsval)INT_TO_JSVAL(localObject.m_IntValue);
-	}
 	return JS_TRUE;
 }
 
@@ -1933,6 +1933,22 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 				localObject.m_IntValue		= localObject.m_StringValue.length();
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 			}			
+		}
+		else if( encaps.isType( JSOT_BOOL ) )
+		{
+			const bool boolVal = encaps.toBool();
+			if( !boolVal )
+			{
+				localObject.m_Destroy		= TRUE;
+				localObject.m_IntValue		= 0;
+			}
+			else
+			{
+				localObject.m_Destroy		= FALSE;
+				localObject.m_IntValue		= 1;
+			}
+			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
+			localObject.m_StringValue	= "";
 		}
 		else if( encaps.isType( JSOT_INT ) )
 		{

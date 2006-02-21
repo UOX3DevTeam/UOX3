@@ -147,9 +147,8 @@ TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tags.find( tagname );
 	if( CI != tags.end() )
-	{
 		localObject = CI->second;
-	}
+
 	return localObject;
 }
 

@@ -1374,19 +1374,19 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 			{
 				if( p->GetID( 2 ) == 0x91 )
-					FameTitle = UString::sprintf( Dictionary->GetEntry( 1177 ).c_str(), Races->Name( p->GetRace() ).c_str() );
+					FameTitle = UString::sprintf( Dictionary->GetEntry( 1177 ).c_str(), Races->Name( p->GetRace() ).c_str() ) + " ";
 				else
-					FameTitle = UString::sprintf( Dictionary->GetEntry( 1178 ).c_str(), Races->Name( p->GetRace() ).c_str() );
+					FameTitle = UString::sprintf( Dictionary->GetEntry( 1178 ).c_str(), Races->Name( p->GetRace() ).c_str() ) + " ";
 			}
 			else if( p->GetID( 2 ) == 0x91 )
-				FameTitle = UString::sprintf( Dictionary->GetEntry( 1179 ).c_str(), thetitle.c_str() );
+				FameTitle = UString::sprintf( Dictionary->GetEntry( 1179 ).c_str(), thetitle.c_str() ) + " ";
 			else
-				FameTitle = UString::sprintf( Dictionary->GetEntry( 1180 ).c_str(), thetitle.c_str() );
+				FameTitle = UString::sprintf( Dictionary->GetEntry( 1180 ).c_str(), thetitle.c_str() ) + " ";
 		}
 		else
 		{
 			if( p->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
-				FameTitle = Dictionary->GetEntry( 1181 );
+				FameTitle = Dictionary->GetEntry( 1181 ) + " ";
 			else if( !thetitle.stripWhiteSpace().empty() )
 				FameTitle = UString::sprintf( Dictionary->GetEntry( 1182 ).c_str(), thetitle.c_str() );
 		}
@@ -1426,7 +1426,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	if( pdoll->IsGM() )
 		tempstr = pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsNpc() )
-		tempstr = FameTitle + " " + pdoll->GetName() + " " + pdoll->GetTitle();
+		tempstr = FameTitle + pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();
 	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane

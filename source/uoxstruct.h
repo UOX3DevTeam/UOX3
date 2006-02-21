@@ -295,6 +295,10 @@ struct resAmountPair
 	{
 		idList.resize( 0 );
 	}
+	~resAmountPair()
+	{
+		idList.resize( 0 );
+	}
 };
 
 struct resSkillReq
@@ -321,6 +325,11 @@ struct createEntry
 	std::vector< resSkillReq > skillReqs;
 	std::string name;
 	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), spell( 0 ), name( "" )
+	{
+		resourceNeeded.resize( 0 );
+		skillReqs.resize( 0 );
+	}
+	~createEntry()
 	{
 		resourceNeeded.resize( 0 );
 		skillReqs.resize( 0 );

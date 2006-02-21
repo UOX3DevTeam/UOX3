@@ -1745,6 +1745,10 @@ miningData *cSkills::FindOre( UI16 colour )
 //o---------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
+	actualMenus.clear();
+	skillMenus.clear();
+	itemsForMenus.clear();
+
 	UString tag, data, UTag;
 	UI16 ourEntry;							// our actual entry number
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )

@@ -4972,11 +4972,8 @@ bool CPSellList::CanSellItems( CChar &mChar, CChar &vendor )
 }
 
 //0x71 Packet
-//
 //Last Modified on Wednesday, 24-May-2000
-//
 //Bulletin Board Message (Variable # of bytes)
-//
 //  BYTE cmd
 //  BYTE[2] len
 //  BYTE subcmd
@@ -5161,6 +5158,12 @@ CPSendMsgBoardPosts::CPSendMsgBoardPosts()
 	InternalReset();
 }
 
+//0xBF Packet
+//Subcommand: 0x19: Extended stats
+//	BYTE[1] type // always 2 ? never seen other value
+//	BYTE[4] serial
+//	BYTE[1] unknown // always 0 ?
+//	BYTE[1] lockBits // Bits: XXSS DDII (s=strength, d=dex, i=int), 0 = up, 1 = down, 2 = locked
 CPExtendedStats::CPExtendedStats()
 {
 	InternalReset();
@@ -5191,6 +5194,13 @@ void CPExtendedStats::CopyData( CChar& mChar )
 
 	pStream.WriteByte( 11, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
 }
+
+//0xBF Packet
+//Subcommand 0x18: Enable map-diff (files)
+//	BYTE[4] Number of maps
+//	For each map
+//		BYTE[4] Number of map patches in this map
+//		BYTE[4] Number of static patches in this map 
 
 void CPEnableMapDiffs::InternalReset( void )
 {
@@ -5318,15 +5328,15 @@ void CPNewBookHeader::Finalize( void )
 
 //0xBF Packet
 //Subcommand 0x14: Display Popup menu
-//  BYTE[2] Unknown(always 00 01)
-//  BYTE[4] Serial
-//  BYTE Number of entries in the popup
-//  For each Entry
-//    BYTE[2] Entry Tag (this will be returned by the client on selection)
-//    BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that
-//    BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color
-//    If (Flags &0x20)
-//      BYTE[2] color; // rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red)
+//	BYTE[2] Unknown(always 00 01)
+//	BYTE[4] Serial
+//	BYTE Number of entries in the popup
+//	For each Entry
+//		BYTE[2] Entry Tag (this will be returned by the client on selection)
+//		BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that
+//		BYTE[2] Flags 0x01 = locked, 0x02 = arrow, 0x20 = color
+//		If (Flags &0x20)
+//			BYTE[2] color	// rgb 1555 color (ex, 0 = transparent, 0x8000 = solid black, 0x1F = blue, 0x3E0 = green, 0x7C00 = red)
 CPPopupMenu::CPPopupMenu( void )
 {
 	InternalReset();
@@ -5372,8 +5382,16 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 
 	pStream.WriteShort( offset+=2, 0x000B );	// Open Backpack
 	pStream.WriteShort( offset+=2, 6145 );
-	pStream.WriteShort( offset+=2, 0x0020 );
-	pStream.WriteShort( offset+=2, 0x03E0 );
+	if( ValidateObject( toCopy.GetPackItem() ) )
+	{
+		pStream.WriteShort( offset+=2, 0x0020 );
+		pStream.WriteShort( offset+=2, 0x03E0 );
+	}
+	else
+	{
+		pStream.WriteShort( offset+=2, 0x0021 );
+		pStream.WriteShort( offset+=2, 0xFFFF );
+	}
 
 	pStream.WriteShort( offset+=2, 0x000C );	// Shopkeep
 	pStream.WriteShort( offset+=2, 6103 );
