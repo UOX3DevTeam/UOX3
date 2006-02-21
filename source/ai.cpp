@@ -284,6 +284,47 @@ void HandleChaoticAI( CChar& mChar )
 }
 
 //o--------------------------------------------------------------------------o
+//|	Function		-	void HandleAnimalAI( CChar& mChar )
+//|	Date			-	21. Feb, 2006
+//|	Developers		-	grimson
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Handles Animal AI Type
+//o--------------------------------------------------------------------------o
+void HandleAnimalAI( CChar& mChar )
+{
+	if( !mChar.IsAtWar() )
+	{
+		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		{
+			const SI08 hunger = mChar.GetHunger();
+			if( hunger <= 4 )
+			{
+				CMapRegion *MapArea = (*rIter);
+				if( MapArea == NULL )	// no valid region
+					continue;
+				CDataList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+				{
+					if( isValidAttackTarget( mChar, tempChar ) )
+					{
+						if( (cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != aiANIMAL) || hunger < 2  )
+						{
+							Combat->AttackTarget( &mChar, tempChar );
+							regChars->Pop();
+							return;
+						}
+					}
+				}
+				regChars->Pop();
+			}
+		}
+	}
+}
+
+//o--------------------------------------------------------------------------o
 //|	Function		-	void CheckAI( CChar& mChar )
 //|	Date			-	12/30/2003
 //|	Developers		-	Zane
@@ -301,6 +342,7 @@ void CheckAI( CChar& mChar )
 	case aiEVIL:			HandleEvilAI( mChar );		break;	// Evil NPC's
 	case aiGUARD:			HandleGuardAI( mChar );		break;	// Guard
 	case aiFIGHTER:			HandleFighterAI( mChar );	break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
+	case aiANIMAL:			HandleAnimalAI( mChar );	break;	//Hungry animals
 	case aiBANKER:										break;  // Banker
 	case aiPLAYERVENDOR:								break;  // Player Vendors.
 	case aiPET_GUARD:										// Pet Guarding AI

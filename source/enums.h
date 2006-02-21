@@ -401,6 +401,7 @@ enum aiTypes
 	aiEVIL			= 2,
 	aiGUARD			= 4,
 	aiFIGHTER		= 5,
+	aiANIMAL		= 6,
 	aiBANKER		= 8,
 	aiPLAYERVENDOR	= 17,
 	aiPET_GUARD		= 32,

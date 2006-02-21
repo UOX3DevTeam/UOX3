@@ -1,3 +1,20 @@
+2/21/2006 - grimson (0.98-3.4e [3.5 BETA])
+	Third part of the rewrote hunger system:
+		Added a new AI type "aiANIMAL" with the number 6. This AI does nothing until the hunger level
+		reaches a value of 4, then it looks for other animals, that don't have the aiANIMAL, and attacks
+		them. If the hunger level goes below 2 it will attack everything in range, even player chars.
+		If the animal kills it's target it's hunger level will be set to 6 again.
+		
+		Added 3 new JS propertys for chars:
+			.tamedHungerRate returns or sets the rate the char hungers when it is tamed.
+			.hungerWildChance returns or sets the chance of the char becoming wild if it's starving.
+			.foodList returns or sets the name of the foodlist for the char.
+
+	DFN Changes:
+		Changed animals.dfn, added NPCAI=6 to all animals belonging to the race Predator.
+		Changed races.dfn, all members of the race Predator change their hunger level every 300 seconds
+		and get damaged for 5 points when starving.
+
 2/21/2006 - grimson (0.98-3.4d [3.5 BETA])
 	Changed cCharStuff::addRandomLoot() to look for the lootlist inside the items folder because it is there.
 	Second part of the rewrote hunger system:

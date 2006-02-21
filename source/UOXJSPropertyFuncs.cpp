@@ -604,6 +604,12 @@ namespace UOX
 				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
 				case CCP_TAMED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsTamed() );					break;
+				case CCP_TAMEDHUNGERRATE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerRate() );	break;
+				case CCP_HUNGERWILDCHANCE: *vp = INT_TO_JSVAL( gPriv->GetTamedHungerWildChance() );	break;
+				case CCP_FOODLIST:
+					tString = JS_NewStringCopyZ( cx, gPriv->GetFood().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+					break;
 				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
 				case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
 				case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
@@ -851,6 +857,9 @@ namespace UOX
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
+				case CCP_TAMEDHUNGERRATE: gPriv->SetTamedHungerRate( (UI16)encaps.toInt() ); break;
+				case CCP_HUNGERWILDCHANCE: gPriv->SetTamedHungerWildChance( (UI08)encaps.toInt() ); break;
+				case CCP_FOODLIST:		gPriv->SetFood( encaps.toString() );				break;
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;

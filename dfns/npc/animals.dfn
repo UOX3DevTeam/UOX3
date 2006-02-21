@@ -86,6 +86,7 @@ FX2=30
 CARVE=3
 RUNS
 RACE=8
+NPCAI=6
 }
 
 [bull]
@@ -190,6 +191,7 @@ TOTAME=0
 RUNS
 CARVE=7
 RACE=8
+NPCAI=6
 }
 
 [chicken]
@@ -242,6 +244,7 @@ TOTAME=411
 RUNS
 CARVE=9
 RACE=8
+NPCAI=6
 }
 
 [cow]
@@ -295,6 +298,7 @@ FX2=30
 RUNS
 CARVE=13
 RACE=8
+NPCAI=6
 }
 
 [eagle]
@@ -428,6 +432,7 @@ TOTAME=531
 RUNS
 CARVE=23
 RACE=8
+NPCAI=6
 }
 
 [grizbear]
@@ -455,6 +460,7 @@ TOTAME=591
 CARVE=24
 RUNS
 RACE=8
+NPCAI=6
 }
 
 [hart]
@@ -641,6 +647,7 @@ TOTAME=531
 RUNS
 CARVE=34
 RACE=8
+NPCAI=6
 }
 
 [phoenix]
@@ -729,6 +736,7 @@ TOTAME=351
 CARVE=36
 RUNS
 RACE=8
+NPCAI=6
 }
 
 [rabbit]
@@ -857,6 +865,7 @@ TOTAME=531
 RUNS
 CARVE=46
 RACE=8
+NPCAI=6
 }
 
 [timberwolf]
@@ -885,6 +894,7 @@ TOTAME=231
 RUNS
 CARVE=23
 RACE=8
+NPCAI=6
 }
 
 [whitewolf]
@@ -913,6 +923,7 @@ TOTAME=651
 RUNS
 CARVE=50
 RACE=8
+NPCAI=6
 }
 
 [silverwolf]
@@ -940,4 +951,5 @@ TOTAME=651
 RUNS
 CARVE=50
 RACE=8
+NPCAI=6
 }

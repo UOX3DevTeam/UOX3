@@ -1755,6 +1755,22 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 		return;
 	}
 
+	if( mChar->GetNPCAiType() == aiANIMAL )
+	{
+		mChar->SetHunger( 6 );
+
+		if( ourTarg->IsNpc() )
+		{
+			Effects->PlayCharacterAnimation( ourTarg, 0x15 );
+			Effects->playDeathSound( ourTarg );
+
+			ourTarg->Delete(); // eating animals, don't give body
+			if( mChar->IsAtWar() )
+				mChar->ToggleCombat();
+				return;
+		}
+	}
+
 	// Add murder counts
 	if( mChar->DidAttackFirst() && WillResultInCriminal( mChar, ourTarg ) )
 	{
