@@ -639,34 +639,57 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		}
 	}
 
-	if( i->GetType() == IT_FOOD && targNPC->GetHunger() < 6 && targNPC->IsTamed() && 
+	if( targNPC->GetHunger() < 6 && targNPC->IsTamed() && 
 		( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
 	{
-		Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
-		Effects->PlayCharacterAnimation( targNPC, 3 );
+		bool doesEat = false;
+		
+		UString tag;
+		UString sect			= "FOODLIST " + targNPC->GetFood();
+		ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
+		if( FoodList != NULL )
+		{
+			size_t foodEntrys = FoodList->NumEntries();
+			if( foodEntrys > 0 )
+				for( int k = 0; k < foodEntrys; k++ )
+				{
+					tag = FoodList->MoveTo( k );
+					if( i->GetID() == tag.toUShort() )
+					{
+						doesEat = true;
+						break;
+					}
+				}
+		}
+		
+		if( doesEat )
+		{
+			Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
+			Effects->PlayCharacterAnimation( targNPC, 3 );
 
-		if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
-		{
-			Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
-			targNPC->SetPoisoned( i->GetPoisoned() );
-			targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+			if( i->GetPoisoned() && targNPC->GetPoisoned() < i->GetPoisoned() )
+			{
+				Effects->PlaySound( mSock, 0x0246, true ); //poison sound - SpaceDog
+				targNPC->SetPoisoned( i->GetPoisoned() );
+				targNPC->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+			}
+			//Remove a food item
+			bool iDeleted = i->IncAmount( -1 );
+			targNPC->SetHunger( static_cast<SI08>(targNPC->GetHunger() + 1) );
+			const UI16 HungerTrig = targNPC->GetScriptTrigger();
+			cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
+			cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+			if( toHungerExecute != NULL )
+			{
+				toHungerExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
+			}
+			else if( globalExecute != NULL )
+			{
+				globalExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
+			}
+			if( iDeleted )
+				return true; //stackdeleted
 		}
-		//Remove a food item
-		bool iDeleted = i->IncAmount( -1 );
-		targNPC->SetHunger( static_cast<SI08>(targNPC->GetHunger() + 1) );
-		const UI16 HungerTrig = targNPC->GetScriptTrigger();
-		cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
-		cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-		if( toHungerExecute != NULL )
-		{
-			toHungerExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
-		}
-		else if( globalExecute != NULL )
-		{
-			globalExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
-		}
-		if( iDeleted )
-			return true; //stackdeleted
 	}
 	if( !targNPC->isHuman() )
 	{

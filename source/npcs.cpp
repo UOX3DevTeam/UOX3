@@ -34,7 +34,7 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string lootlist )
 {
 	CItem *retitem			= NULL;
 	UString sect			= "LOOTLIST " + lootlist;
-	ScriptSection *LootList = FileLookup->FindEntry( sect, npc_def );
+	ScriptSection *LootList = FileLookup->FindEntry( sect, items_def );
 	if( LootList == NULL )
 		return NULL;
 	size_t i = LootList->NumEntries();
@@ -752,6 +752,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetFz( static_cast<SI08>(ndata) );
 											break;
+			case DFNTAG_FOOD:				applyTo->SetFood( cdata );				break;
 			case DFNTAG_GET:
 			{
 											ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );

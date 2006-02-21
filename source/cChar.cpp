@@ -179,6 +179,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetHungerStatus( true );
 	SetTamedHungerRate( 0 );
 	SetTamedHungerWildChance( 0 );
+	foodList.reserve( MAX_NAME );
 
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
@@ -261,6 +262,16 @@ UI08 CChar::GetTamedHungerWildChance( void ) const
 void CChar::SetTamedHungerWildChance( UI08 newValue )
 {
 	hungerWildChance = newValue;
+}
+
+std::string CChar::GetFood( void ) const
+{
+	return foodList;
+}
+
+void CChar::SetFood( std::string food )
+{
+	foodList = food.substr( 0, MAX_NAME - 1 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -394,11 +405,6 @@ void CChar::DoHunger( CSocket *mSock )
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
 					{
 						SetOwner( NULL );
-						SetTamed( false );
-						SetNpcWander( 2 );
-						SetHunger( 6 );
-						UpdateFlag( this );
-						Dirty( UT_UPDATE );
 					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 				}
@@ -952,13 +958,15 @@ void CChar::AddSelfToOwner( void )
 {
 	CChar *newOwner = GetOwnerObj();
 	if( !ValidateObject( newOwner ) )
+	{
 		SetTamed( false );
+		SetNpcWander( 2 );
+	}
 	else
 	{
 		newOwner->GetPetList()->Add( this );
 		SetTamed( true );
 	}
-	SetNpcWander( 2 );
 	SetHunger( 6 );
 	UpdateFlag( this );
 	Dirty( UT_UPDATE );
@@ -1562,6 +1570,7 @@ void CChar::CopyData( CChar *target )
 	target->SetHunger( hunger );
 	target->SetTamedHungerRate( hungerRate );
 	target->SetTamedHungerWildChance( hungerWildChance );
+	target->SetFood( foodList );
 	target->SetRegion( regionNum );
 	target->SetTown( town );
 	target->SetTownpriv( townpriv );
@@ -2042,6 +2051,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
+	dumping << "Foodlist=" << foodList << std::endl;
 	if ( maxHP_fixed )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
@@ -2783,6 +2793,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "FONTTYPE" )
 				{
 					SetFontType( data.toByte() );
+					rvalue = true;
+				}
+				else if( UTag == "FOODLIST" )
+				{
+					SetFood( data.substr( 0, MAX_NAME ) );
 					rvalue = true;
 				}
 				break;

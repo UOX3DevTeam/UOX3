@@ -1,3 +1,15 @@
+2/21/2006 - grimson (0.98-3.4d [3.5 BETA])
+	Changed cCharStuff::addRandomLoot() to look for the lootlist inside the items folder because it is there.
+	Second part of the rewrote hunger system:
+		Added a new DFN tag for tamed pets:
+			FOOD=abc   This sets the name of the foodlist for the tamed item.
+		Added a new list type for items:
+			FOODLIST   Defines a list of item IDs a tamed char will accept as food.
+	
+	DFN Changes:
+		Added a new file foodlists.dfn to the items folder containing an example list for horses.
+		Added the horse foodlist to mounts.dfn.
+
 2/21/2006 - grimson (0.98-3.4c [3.5 BETA])
 	Do an immediate update of the charflag and the char upon taming and un-taming.
 	First part of the rewrote hunger system:

@@ -36,6 +36,7 @@ TAMEDHUNGER=600 30
 RUNS
 CARVE=26
 RACE=9
+FOOD=horse
 }
 
 [brownhorse]

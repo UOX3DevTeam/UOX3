@@ -147,7 +147,8 @@ protected:
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	UI16		hungerRate;	// The rate at which hunger decreases when char is tamed
-	UI08		hungerWildChance;	// The chance that the char get's wild when hungry		
+	UI08		hungerWildChance;	// The chance that the char get's wild when hungry
+	UString		foodList;
 	UI08		town;       // Matches Region number in regions.scp
 	UI08		regionNum;
 
@@ -244,11 +245,13 @@ public:
 	UI16		GetTamedHungerRate( void ) const;
 	UI08		GetTamedHungerWildChance( void ) const;
 	UI08		GetTown( void ) const;
+	std::string GetFood( void ) const;
 
 	void		SetHunger( SI08 newValue );
 	void		SetTamedHungerRate( UI16 newValue );
 	void		SetTamedHungerWildChance( UI08 newValue );
 	void		SetTown( UI08 newValue );
+	void		SetFood( std::string food );
 
 	void		DecHunger( const SI08 amt = 1 );
 
