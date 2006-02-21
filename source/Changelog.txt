@@ -1,3 +1,31 @@
+2/21/2006 - grimson (0.98-3.4c [3.5 BETA])
+	Do an immediate update of the charflag and the char upon taming and un-taming.
+	First part of the rewrote hunger system:
+		Moved hunger calculations and immediate effects to CChar::DoHunger( )
+
+		You can now set hunger dependend on races, this uses a new tag in races.dfn:
+			HUNGER=#,# the first value is the hunger rate the second the hunger damage.
+				   Note for players char the settings from the uox.ini apply if
+				   there are no settings specified for the race.
+		
+		Re-activated the pet-hunger system. Pets will now become hungry and upon starving
+		there is a configurable chance that they may become wild again. Note: Pets won't
+		die from hunger and their hunger value is reset after becoming wild again. The
+		hunger rate and the chance to become wild again can be configured by a new tag:
+			TAMEDHUNGER=# # the first value is the hunger rate, the second the chance in %
+					of the pet becoming wild again. Note: The values are seperated
+					with a space instead of a comma on this tag.
+		To feed a pet just drag some food on it, currently all types of food work.
+		
+		There is also another new DFN tag:
+			WILLHUNGER=# if this is set to 0 the NPC will not suffer from any type of hunger.
+				     Note: You can also change that value for specific chars by using
+				     the already existing .willhunger JS property.
+	DFN Changes:
+		Added the HUNGER=#,# description to the header of races.dfn.
+		Added the TAMEDHUNGER tag to mounts.dfn with a hunger rate of 600 and a chance to become
+		wild of 30%.
+
 2/21/2006 - giwo (0.98-3.4b [3.5 BETA])
 	Added AssocScript tag to effect saving (to make JS timers persistant).
 	Updated JS .SetPoisoned() to take one value for changing a poison value without setting a new timer.

@@ -594,7 +594,7 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 //o---------------------------------------------------------------------------o
-bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool checkHunger, bool doWeather )
+bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
 {
 	if( mChar.IsDead() )
 		return false;
@@ -610,7 +610,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 
 	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 || cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 ) )
+		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 ||
+			( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) ) )
 		{
 			for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 			{
@@ -700,58 +701,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool ch
 		mChar.ExposeToView();
 
 	// Hunger Code
-	if( !mChar.IsNpc() && mSock != NULL )	// NPC's Shouldn't Hunger (Move this whole chunk to checkPC() eventually)
-	{
-		UI16 hungerRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
-		if( mChar.WillHunger() && hungerRate > 0 )
-		{
-			if( mChar.GetCommandLevel() == PLAYER_CMDLEVEL && !mChar.IsDead() && !mChar.IsInvulnerable() )
-			{
-				if( mChar.GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-				{
-					if( mChar.GetHunger() > 0 )
-					{
-						mChar.DecHunger();
-						const UI16 HungerTrig = mChar.GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( HungerTrig );
-						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-						bool doHunger = true;
-						if( toExecute != NULL )
-						{
-							doHunger = !toExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
-						}
-						else if( globalExecute != NULL )
-						{
-							doHunger = !globalExecute->OnHungerChange( (&mChar), mChar.GetHunger() );
-						}
-						if( doHunger )
-						{
-							switch( mChar.GetHunger() )
-							{
-								default:
-								case 6:								break;
-								case 5:	mSock->sysmessage( 1222 );	break;
-								case 4:	mSock->sysmessage( 1223 );	break;
-								case 3:	mSock->sysmessage( 1224 );	break;
-								case 2:	mSock->sysmessage( 1225 );	break;
-								case 1:	mSock->sysmessage( 1226 );	break;
-								case 0:	mSock->sysmessage( 1227 );	break;	
-							}
-						}
-					}
-					else if( mChar.GetHP() > 0 )
-					{
-						mSock->sysmessage( 1228 );
-						mChar.IncHP( (SI16)( -cwmWorldState->ServerData()->HungerDamage() ) );
-						if( mChar.GetHP() <= 0 )
-							mSock->sysmessage( 1229 );
-					}
-					mChar.SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
-				}
-			}
-		}
-	}
-
+	mChar.DoHunger( mSock );
+	
 	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() )
 	{
 		if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
@@ -1010,12 +961,6 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 	if( doRestock )
 		restockNPC( mChar, false );
 
-	if( ValidateObject( mChar.GetOwnerObj() ) && mChar.GetHunger() == 0 && mChar.GetNPCAiType() != aiPLAYERVENDOR ) // tamed animals but not player vendors ;)=
-	{
-		Effects->tempeffect( &mChar, &mChar, 44, 0, 0, 0 ); // (go wild in some minutes ...)-effect
-		mChar.SetHunger( -1 );
-	}
-	
 	if( mChar.GetTimer( tNPC_SUMMONTIME ) )
 	{
 		if( mChar.GetTimer( tNPC_SUMMONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
@@ -1351,7 +1296,7 @@ void CWorldMain::CheckAutoTimers( void )
 		doWeather = true;
 	}
 
-	bool checkFieldEffects = false, checkHunger = false;
+	bool checkFieldEffects = false;
 	if( GetTimer( tWORLD_NEXTFIELDEFFECT ) <= GetUICurrentTime() || GetOverflow() )
 	{
 		checkFieldEffects = true;
@@ -1369,7 +1314,7 @@ void CWorldMain::CheckAutoTimers( void )
 		UI08 worldNumber	= mChar->WorldNumber();
 		if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
 		{
-			genericCheck( iSock, (*mChar), checkFieldEffects, checkHunger, doWeather );
+			genericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
 			checkPC( iSock, (*mChar) );
 
 			SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
@@ -1424,7 +1369,7 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
-				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, checkHunger, doWeather ) )
+				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, doWeather ) )
 				{
 					if( setNPCFlags )
 						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)

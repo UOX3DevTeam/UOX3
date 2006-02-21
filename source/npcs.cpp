@@ -979,6 +979,22 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetTaming( static_cast<SI16>(ndata) );
 											break;
+			case DFNTAG_TAMEDHUNGER:
+											if( !isGate )
+											{
+												applyTo->SetTamedHungerRate( static_cast<UI16>(ndata) );
+												applyTo->SetTamedHungerWildChance( static_cast<UI08>(odata) );
+											}
+											break;
+			case DFNTAG_WILLHUNGER:
+											if( !isGate )
+											{
+												if( ndata > 0 )
+													applyTo->SetHungerStatus( true );
+												else
+													applyTo->SetHungerStatus( false );
+											}
+											break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
 			case DFNTAG_TAMING:				skillToSet = TAMING;					break;

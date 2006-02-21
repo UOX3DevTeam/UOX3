@@ -591,6 +591,45 @@ HEATLEVEL cRaces::HeatLevel( RACEID race ) const
 	return races[race]->HeatLevel(); 
 }
 
+void cRaces::DoesHunger( RACEID race, bool value )
+{ 
+	if( InvalidRace( race ) )
+		return;
+	races[race]->DoesHunger( value ); 
+}
+bool cRaces::DoesHunger( RACEID race ) const
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->DoesHunger(); 
+}
+
+void cRaces::SetHungerRate( RACEID race, UI16 value )
+{ 
+	if( InvalidRace( race ) )
+		return;
+	races[race]->SetHungerRate( value ); 
+}
+UI16 cRaces::GetHungerRate( RACEID race ) const
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->GetHungerRate(); 
+}
+
+void cRaces::SetHungerDamage( RACEID race, SI16 value )
+{ 
+	if( InvalidRace( race ) )
+		return;
+	races[race]->SetHungerDamage( value ); 
+}
+SI16 cRaces::GetHungerDamage( RACEID race ) const
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->GetHungerDamage(); 
+}
+
 bool cRaces::Affect( RACEID race, WeatherType element ) const
 {
 	bool rValue = false;
@@ -984,6 +1023,31 @@ void CRace::VisibilityRange( RANGE newValue )
 	visDistance = newValue;
 }
 
+UI16 CRace::GetHungerRate( void ) const
+{
+	return hungerRate;
+}
+void CRace::SetHungerRate( UI16 newValue )
+{
+	hungerRate = newValue;
+}
+SI16 CRace::GetHungerDamage( void ) const
+{
+	return hungerDamage;
+}
+void CRace::SetHungerDamage( SI16 newValue )
+{
+	hungerDamage = newValue;
+}
+bool CRace::DoesHunger( void ) const
+{
+	return doesHunger;
+}
+void CRace::DoesHunger( bool newValue )
+{
+	doesHunger = newValue;
+}
+
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
 {
@@ -997,7 +1061,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
-
+	DoesHunger( false );
+	SetHungerRate( 0 );
+	SetHungerDamage( 0 );
 }
 
 
@@ -1016,7 +1082,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
-
+	DoesHunger( false );
+	SetHungerRate( 0 );
+	SetHungerDamage( 0 );
 }
 void CRace::NumEnemyRaces( int iNum )
 {
@@ -1218,6 +1286,21 @@ void CRace::Load( size_t sectNum, int modCount )
 					WeatherSeconds( data.toUShort(), HEAT );
 				else if( UTag == "HPMOD" ) // how much additional percent of strength are hitpoints
 					HPModifier( data.toShort() );
+				else if( UTag == "HUNGER" )	// does race suffer from hunger
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetHungerRate( static_cast<UI16>(data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() ) );
+						SetHungerDamage( static_cast<SI16>(data.section( ",", 1, 1 ).stripWhiteSpace().toShort() ) );
+					}
+					else
+					{
+						SetHungerRate( 0 );
+						SetHungerDamage( 0 );
+					}
+					if( GetHungerRate() > 0 )
+						DoesHunger( true );
+					else
+						DoesHunger( false );
 				break;
 
 			case 'i':

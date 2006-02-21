@@ -53,6 +53,9 @@ private:
 	RANGE			visDistance;
 	R32				poisonResistance;	// % of poison to cancel
 	R32				magicResistance;	// % of magic to cancel
+	bool			doesHunger;
+	UI16			hungerRate;
+	SI16			hungerDamage;
 
 public:
 
@@ -88,6 +91,13 @@ public:
 	SKILLVAL		LanguageMin( void ) const;
 	RANGE			VisibilityRange( void ) const;
 	SI08			RaceRelation( RACEID race ) const;
+
+	UI16			GetHungerRate( void ) const;
+	void			SetHungerRate( UI16 newValue );
+	SI16			GetHungerDamage( void ) const;
+	void			SetHungerDamage( SI16 newValue );
+	bool			DoesHunger( void ) const;
+	void			DoesHunger( bool newValue );
 
 	void			Skill( SKILLVAL newValue, int iNum );
 	void			Name( const std::string newName );
@@ -195,6 +205,9 @@ class cRaces
 		LIGHTLEVEL		LightLevel( RACEID race ) const;
 		COLDLEVEL		ColdLevel( RACEID race ) const;
 		HEATLEVEL		HeatLevel( RACEID race ) const;
+		bool			DoesHunger( RACEID race ) const;
+		UI16			GetHungerRate( RACEID race ) const;
+		SI16			GetHungerDamage( RACEID race ) const;
 		ARMORCLASS		ArmorRestrict( RACEID race ) const; 
 		COLOUR			RandomSkin( RACEID x ) const; 
 		COLOUR			RandomHair( RACEID x ) const; 
@@ -217,6 +230,9 @@ class cRaces
 		void			LightLevel( RACEID race, LIGHTLEVEL value ); 
 		void			ColdLevel( RACEID race, COLDLEVEL value ); 
 		void			HeatLevel( RACEID race, HEATLEVEL value ); 
+		void			DoesHunger( RACEID race, bool value );
+		void			SetHungerRate( RACEID race, UI16 value ); 
+		void			SetHungerDamage( RACEID race, SI16 value );
 		void			ArmorRestrict( RACEID race, ARMORCLASS value ); 
 		void			RacialEnemy( RACEID race, RACEID enemy );
 		void			RacialAlly( RACEID race, RACEID ally );

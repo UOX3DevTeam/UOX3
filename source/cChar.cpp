@@ -175,7 +175,10 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	for( UI08 j = 0; j <= ALLSKILLS; ++j )
 		atrophy[j] = j;
 	SetCanTrain( true );
+
 	SetHungerStatus( true );
+	SetTamedHungerRate( 0 );
+	SetTamedHungerWildChance( 0 );
 
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
@@ -243,7 +246,166 @@ void CChar::SetHunger( SI08 newValue )
 {
 	hunger = newValue;
 }
+UI16 CChar::GetTamedHungerRate( void ) const
+{
+	return hungerRate;
+}
+void CChar::SetTamedHungerRate( UI16 newValue )
+{
+	hungerRate = newValue;
+}
+UI08 CChar::GetTamedHungerWildChance( void ) const
+{
+	return hungerWildChance;
+}
+void CChar::SetTamedHungerWildChance( UI08 newValue )
+{
+	hungerWildChance = newValue;
+}
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  void DoHunger()
+//|   Date        -  21. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Calculate Hunger level of the character and do all
+//|					 related effects.
+//o---------------------------------------------------------------------------o
+void CChar::DoHunger( CSocket *mSock )
+{
+	UI16 hungerRate;
+	SI16 hungerDamage;
+
+	if ( !IsDead() && !IsInvulnerable() )	// No need to do anything on dead or invulnerable chars
+	{
+		if( !IsNpc() && mSock != NULL )	// Do Hunger for player chars
+		{
+			if( WillHunger() && GetCommandLevel() == PLAYER_CMDLEVEL  )
+			{
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				{
+					if( Races->DoesHunger( GetRace() ) ) // prefer the hunger settings frome the race
+					{
+						hungerRate	 = Races->GetHungerRate( GetRace() );
+						hungerDamage = Races->GetHungerDamage( GetRace() );
+					}
+					else // use the global values if there is no race setting
+					{
+						hungerRate   = cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE );
+						hungerDamage = cwmWorldState->ServerData()->HungerDamage();
+					}
+
+					if( GetHunger() > 0 )
+					{
+						DecHunger();
+						const UI16 HungerTrig = GetScriptTrigger();
+						cScript *toExecute = JSMapping->GetScript( HungerTrig );
+						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+						bool doHunger = true;
+						if( toExecute != NULL )
+						{
+							doHunger = !toExecute->OnHungerChange( (this), GetHunger() );
+						}
+						else if( globalExecute != NULL )
+						{
+							doHunger = !globalExecute->OnHungerChange( (this), GetHunger() );
+						}
+						if( doHunger )
+						{
+							switch( GetHunger() )
+							{
+								default:
+								case 6:								break;
+								case 5:	mSock->sysmessage( 1222 );	break;
+								case 4:	mSock->sysmessage( 1223 );	break;
+								case 3:	mSock->sysmessage( 1224 );	break;
+								case 2:	mSock->sysmessage( 1225 );	break;
+								case 1:	mSock->sysmessage( 1226 );	break;
+								case 0:	mSock->sysmessage( 1227 );	break;	
+							}
+						}
+					}
+					else if( GetHP() > 0 && hungerDamage > 0)
+					{
+						mSock->sysmessage( 1228 );
+						Damage( hungerDamage );
+						if( GetHP() <= 0 )
+							mSock->sysmessage( 1229 );
+					}
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+				}
+			}
+		}
+		else if( IsNpc() && !IsTamed() && Races->DoesHunger( GetRace() ) )
+		{
+			if( WillHunger() )
+			{
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				{
+					hungerRate	 = Races->GetHungerRate( GetRace() );
+					hungerDamage = Races->GetHungerDamage( GetRace() );
+
+					if( GetHunger() > 0 )
+					{
+						DecHunger();
+						const UI16 HungerTrig = GetScriptTrigger();
+						cScript *toExecute = JSMapping->GetScript( HungerTrig );
+						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+						if( toExecute != NULL )
+						{
+							toExecute->OnHungerChange( (this), GetHunger() );
+						}
+						else if( globalExecute != NULL )
+						{
+							globalExecute->OnHungerChange( (this), GetHunger() );
+						}
+					}
+					else if( GetHP() > 0 && hungerDamage > 0)
+					{
+						Damage( hungerDamage );
+					}
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+				}
+			}
+		}
+		else if( IsTamed() && GetTamedHungerRate() > 0 )
+		{
+			if( WillHunger() )
+			{
+				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+				{
+					hungerRate = GetTamedHungerRate();
+
+					if( GetHunger() > 0 )
+					{
+						DecHunger();
+						const UI16 HungerTrig = GetScriptTrigger();
+						cScript *toExecute = JSMapping->GetScript( HungerTrig );
+						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
+						if( toExecute != NULL )
+						{
+							toExecute->OnHungerChange( (this), GetHunger() );
+						}
+						else if( globalExecute != NULL )
+						{
+							globalExecute->OnHungerChange( (this), GetHunger() );
+						}
+					}
+					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
+					{
+						SetOwner( NULL );
+						SetTamed( false );
+						SetNpcWander( 2 );
+						SetHunger( 6 );
+						UpdateFlag( this );
+						Dirty( UT_UPDATE );
+					}
+					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
+				}
+			}
+		}
+	}
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  UI08 Town()
 //|   Date        -  Unknown
@@ -796,6 +958,10 @@ void CChar::AddSelfToOwner( void )
 		newOwner->GetPetList()->Add( this );
 		SetTamed( true );
 	}
+	SetNpcWander( 2 );
+	SetHunger( 6 );
+	UpdateFlag( this );
+	Dirty( UT_UPDATE );
 }
 
 UI32 CChar::GetTownVote( void ) const
@@ -1354,6 +1520,8 @@ void CChar::CopyData( CChar *target )
 	target->SetDexterity( dexterity );
 	target->SetIntelligence( intelligence );
 	target->SetHP(  hitpoints );
+	if ( maxHP_fixed )
+		target->SetFixedMaxHP(  maxHP );
 	target->SetStamina( stamina );
 	target->SetMana( mana );
 
@@ -1392,6 +1560,8 @@ void CChar::CopyData( CChar *target )
 	for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
 		target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
 	target->SetHunger( hunger );
+	target->SetTamedHungerRate( hungerRate );
+	target->SetTamedHungerWildChance( hungerWildChance );
 	target->SetRegion( regionNum );
 	target->SetTown( town );
 	target->SetTownpriv( townpriv );
@@ -1870,6 +2040,8 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
+	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
+	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
 	if ( maxHP_fixed )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
@@ -2911,6 +3083,16 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				if( UTag == "TAMING" )
 				{
 					SetTaming( data.toShort() );
+					rvalue = true;
+				}
+				if( UTag == "TAMEDHUNGERRATE" )
+				{
+					SetTamedHungerRate( data.toByte() );
+					rvalue = true;
+				}
+				if( UTag == "TAMEDHUNGERWILDCHANCE" )
+				{
+					SetTamedHungerWildChance( data.toByte() );
 					rvalue = true;
 				}
 				else if( UTag == "TOWN" )

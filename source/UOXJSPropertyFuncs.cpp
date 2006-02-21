@@ -850,7 +850,11 @@ namespace UOX
 				case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
-				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;
+				case CCP_TAMED:			
+					gPriv->SetTamed( encaps.toBool() );
+					UpdateFlag( gPriv );
+					gPriv->Dirty( UT_UPDATE );
+					break;
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
