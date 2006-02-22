@@ -1554,7 +1554,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			CSocket *mySock = myChar->GetSocket();
 			if( mySock == NULL ) 
 				return JS_TRUE;
-			if( !Map->InsideValidWorld( x, y, world) )
+			if( !Map->InsideValidWorld( static_cast<SI16>(x / 8), static_cast<SI16>(y / 8), world) )
 			{
 				MethodError( "Teleport: Not a valid World" );
 				return JS_FALSE;

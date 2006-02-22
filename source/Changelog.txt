@@ -1,3 +1,7 @@
+2/22/2006 - grimson
+	Fixed a bug in CBase_Teleport() introduced by my earlier changes that caused teleports to other worlds
+	to fail with big x and/or y coordinates.
+
 2/21/2006 - grimson (0.98-3.4f [3.5 BETA])
 	Changed JS function CBase_Teleport() to prevent player chars from being teleport into a invalid world
 	which rendered the player char useless as the client cannot login using that char afterwards.
