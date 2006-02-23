@@ -89,8 +89,7 @@ private:
 
 		cNPC_FLAG			npcFlag;
 		
-		bool				isMounted;
-		bool				isStabled;
+		UI16				boolFlags;
 	};
 
 	struct PlayerValues_st

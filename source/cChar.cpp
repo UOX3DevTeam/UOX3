@@ -60,6 +60,9 @@
 namespace UOX
 {
 
+#define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
+#define MFLAGGET( flag, val )		( (flag&val) == val )
+
 const SI16			DEFPLAYER_CALLNUM 			= -1;
 const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
 const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
@@ -108,12 +111,13 @@ const UI08			DEFNPC_QUESTDESTREGION 		= 0;
 const UI08			DEFNPC_QUESTORIGREGION		= 0;
 const SI16			DEFNPC_WANDERAREA			= -1;
 const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
+const UI16			DEFNPC_BOOLFLAG				= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG )
+petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -707,10 +711,7 @@ bool CChar::IsJSCasting( void ) const
 //o---------------------------------------------------------------------------o
 void CChar::setUnicode( bool newVal )
 {
-	if( newVal )
-		bools |= 0x0002;
-	else
-		bools &= ~0x0002;
+	MFLAGSET( bools, newVal, 0x0002 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetNpc( bool newVal ) 
@@ -721,10 +722,7 @@ void CChar::setUnicode( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetNpc( bool newVal )
 {
-	if( newVal )
-		bools |= 0x0004;
-	else
-		bools &= ~0x0004;
+	MFLAGSET( bools, newVal, 0x0004 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetShop( bool newVal ) 
@@ -735,10 +733,7 @@ void CChar::SetNpc( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetShop( bool newVal )
 {
-	if( newVal )
-		bools |= 0x0008;
-	else
-		bools &= ~0x0008;
+	MFLAGSET( bools, newVal, 0x0008 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetDead( bool newVal ) 
@@ -749,10 +744,7 @@ void CChar::SetShop( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetDead( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0010;
-	else
-		bools &= ~0x0010;
+	MFLAGSET( bools, newValue, 0x0010 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetWar( bool newVal ) 
@@ -763,10 +755,7 @@ void CChar::SetDead( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetWar( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0020;
-	else
-		bools &= ~0x0020;
+	MFLAGSET( bools, newValue, 0x0020 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetAttackFirst( bool newVal ) 
@@ -777,10 +766,7 @@ void CChar::SetWar( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetAttackFirst( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0040;
-	else
-		bools &= ~0x0040;
+	MFLAGSET( bools, newValue, 0x0040 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetOnHorse( bool newVal ) 
@@ -791,10 +777,7 @@ void CChar::SetAttackFirst( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetOnHorse( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0080;
-	else
-		bools &= ~0x0080;
+	MFLAGSET( bools, newValue, 0x0080 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetTownTitle( bool newVal ) 
@@ -805,10 +788,7 @@ void CChar::SetOnHorse( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetTownTitle( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0100;
-	else
-		bools &= ~0x0100;
+	MFLAGSET( bools, newValue, 0x0100 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetReactiveArmour( bool newVal ) 
@@ -819,10 +799,7 @@ void CChar::SetTownTitle( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetReactiveArmour( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0200;
-	else
-		bools &= ~0x0200;
+	MFLAGSET( bools, newValue, 0x0200 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetCanTrain( bool newVal ) 
@@ -833,10 +810,7 @@ void CChar::SetReactiveArmour( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetCanTrain( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0400;
-	else
-		bools &= ~0x0400;
+	MFLAGSET( bools, newValue, 0x0400 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetGuildToggle( bool newVal ) 
@@ -847,10 +821,7 @@ void CChar::SetCanTrain( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetGuildToggle( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0800;
-	else
-		bools &= ~0x0800;
+	MFLAGSET( bools, newValue, 0x0800 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetTamed( bool newVal ) 
@@ -861,10 +832,7 @@ void CChar::SetGuildToggle( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetTamed( bool newValue )
 {
-	if( newValue )
-		bools |= 0x1000;
-	else
-		bools &= ~0x1000;
+	MFLAGSET( bools, newValue, 0x1000 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetGuarded( bool newVal ) 
@@ -875,10 +843,7 @@ void CChar::SetTamed( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetGuarded( bool newValue )
 {
-	if( newValue )
-		bools |= 0x2000;
-	else
-		bools &= ~0x2000;
+	MFLAGSET( bools, newValue, 0x2000 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetRun( bool newVal ) 
@@ -889,10 +854,7 @@ void CChar::SetGuarded( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetRun( bool newValue )
 {
-	if( newValue )
-		bools |= 0x4000;
-	else
-		bools &= ~0x4000;
+	MFLAGSET( bools, newValue, 0x4000 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void IsPolymorphed( bool newVal ) 
@@ -903,10 +865,7 @@ void CChar::SetRun( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::IsPolymorphed( bool newValue )
 {
-	if( newValue )
-		bools |= 0x8000;
-	else
-		bools &= ~0x8000;
+	MFLAGSET( bools, newValue, 0x8000 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void IsIncognito( bool newVal ) 
@@ -917,10 +876,7 @@ void CChar::IsPolymorphed( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::IsIncognito( bool newValue )
 {
-	if( newValue )
-		bools |= 0x10000;
-	else
-		bools &= ~0x10000;
+	MFLAGSET( bools, newValue, 0x10000 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetUsingPotion( bool newVal )
@@ -931,52 +887,34 @@ void CChar::IsIncognito( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetUsingPotion( bool newVal )
 {
-	if( newVal )
-		bools |= 0x20000;
-	else
-		bools &= ~0x20000;
+	MFLAGSET( bools, newVal, 0x20000 );
 }
 
 void CChar::SetLevitate( bool newValue )
 {
-	if( newValue )
-		bools |= 0x40000;
-	else
-		bools &= ~0x40000;
+	MFLAGSET( bools, newValue, 0x40000 );
 }
 
 void CChar::SetHungerStatus( bool newValue )
 {
-	if( newValue )
-		bools |= 0x80000;
-	else
-		bools &= ~0x80000;
+	MFLAGSET( bools, newValue, 0x80000 );
 }
 
 void CChar::SetMeditating( bool newValue )
 {
-	if( newValue )
-		bools |= 0x100000;
-	else
-		bools &= ~0x100000;
+	MFLAGSET( bools, newValue, 0x100000 );
 }
 
 void CChar::SetCasting( bool newValue )
 {
-	if( newValue )
-		bools |= 0x200000;
-	else
-		bools &= ~0x200000;
+	MFLAGSET( bools, newValue, 0x200000 );
 }
 
 // This is only a temporary measure until ALL code is switched over to JS code
 // As it stands, it'll try and auto-direct cast if you set casting and spell timeouts
 void CChar::SetJSCasting( bool newValue )
 {
-	if( newValue )
-		bools |= 0x400000;
-	else
-		bools &= ~0x400000;
+	MFLAGSET( bools, newValue, 0x400000 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1446,110 +1384,65 @@ bool CChar::NoNeedReags( void ) const
 
 void CChar::SetGM( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0001;
-	else
-		priv &= ~0x0001;
+	MFLAGSET( priv, newValue, 0x0001 );
 }
 void CChar::SetBroadcast( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0002;
-	else
-		priv &= ~0x0002;
+	MFLAGSET( priv, newValue, 0x0002 );
 }
 void CChar::SetInvulnerable( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0004;
-	else
-		priv &= ~0x0004;
+	MFLAGSET( priv, newValue, 0x0004 );
 }
 void CChar::SetSingClickSer( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0008;
-	else
-		priv &= ~0x0008;
+	MFLAGSET( priv, newValue, 0x0008 );
 }
 void CChar::SetSkillTitles( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0010;
-	else
-		priv &= ~0x0010;
+	MFLAGSET( priv, newValue, 0x0010 );
 }
 void CChar::SetGMPageable( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0020;
-	else
-		priv &= ~0x0020;
+	MFLAGSET( priv, newValue, 0x0020 );
 }
 void CChar::SetSnoop( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0040;
-	else
-		priv &= ~0x0040;
+	MFLAGSET( priv, newValue, 0x0040 );
 }
 void CChar::SetCounselor( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0080;
-	else
-		priv &= ~0x0080;
+	MFLAGSET( priv, newValue, 0x0080 );
 }
 
 void CChar::SetAllMove( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0100;
-	else
-		priv &= ~0x0100;
+	MFLAGSET( priv, newValue, 0x0100 );
 }
 void CChar::SetFrozen( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0200;
-	else
-		priv &= ~0x0200;
+	MFLAGSET( priv, newValue, 0x0200 );
 }
 void CChar::SetViewHouseAsIcon( bool newValue )
 {
-	if( newValue )
-		priv |= 0x0400;
-	else
-		priv &= ~0x0400;
+	MFLAGSET( priv, newValue, 0x0400 );
 }
 // 0x0800 is free
 void CChar::SetNoNeedMana( bool newValue )
 {
-	if( newValue )
-		priv |= 0x1000;
-	else
-		priv &= ~0x1000;
+	MFLAGSET( priv, newValue, 0x1000 );
 }
 void CChar::SetDispellable( bool newValue )
 {
-	if( newValue )
-		priv |= 0x2000;
-	else
-		priv &= ~0x2000;
+	MFLAGSET( priv, newValue, 0x2000 );
 }
 void CChar::SetPermReflected( bool newValue )
 {
-	if( newValue )
-		priv |= 0x4000;
-	else
-		priv &= ~0x4000;
+	MFLAGSET( priv, newValue, 0x4000 );
 }
 void CChar::SetNoNeedReags( bool newValue )
 {
-	if( newValue )
-		priv |= 0x8000;
-	else
-		priv &= ~0x8000;
+	MFLAGSET( priv, newValue, 0x8000 );
 }
 
 CChar *CChar::Dupe( void )
@@ -2212,8 +2105,8 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "FleeAt=" << fleeAt << std::endl;
 	dumping << "ReAttackAt=" << reAttackAt << std::endl;
 	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
-	dumping << "Mounted=" << (SI16)(isMounted?1:0) << std::endl;
-	dumping << "Stabled=" << (SI16)(isStabled?1:0) << std::endl;
+	dumping << "Mounted=" << (SI16)(MFLAGGET( boolFlags, 0x01 )?1:0) << std::endl;
+	dumping << "Stabled=" << (SI16)(MFLAGGET( boolFlags, 0x02 )?1:0) << std::endl;
 
 	outStream << dumping.str();
 }
@@ -4059,13 +3952,17 @@ bool CChar::GetMounted( void ) const
 {
 	bool rVal = false;
 	if( IsNpc() )
-		rVal = mNPC->isMounted;
+	{
+		rVal = MFLAGGET( mNPC->boolFlags, 0x01 );
+	}
 	return rVal;
 }
 void CChar::SetMounted( bool newValue )
 {
 	if( IsNpc() )
-		mNPC->isMounted = newValue;
+	{
+		MFLAGSET( mNPC->boolFlags, newValue, 0x01 )
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -4079,13 +3976,17 @@ bool CChar::GetStabled( void ) const
 {
 	bool rVal = false;
 	if( IsNpc() )
-		rVal = mNPC->isStabled;
+	{
+		rVal = MFLAGGET( mNPC->boolFlags, 0x02 );
+	}
 	return rVal;
 }
 void CChar::SetStabled( bool newValue )
 {
 	if( IsNpc() )
-		mNPC->isStabled = newValue;
+	{
+		MFLAGSET( mNPC->boolFlags, newValue, 0x02 )
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -5358,9 +5259,9 @@ void CChar::Die( void )
 
 void CChar::UpdateDamageTrack( void )
 {
-	TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
+	TIMERVAL currentTime	= cwmWorldState->GetUICurrentTime();
+	DamageTrackEntry *i		= NULL;
 	// Update the damage stuff
-	DamageTrackEntry *i;
 	for( i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
 	{
 		if( i == NULL )
