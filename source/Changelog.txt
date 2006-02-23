@@ -1,4 +1,8 @@
 2/23/2006 - grimson
+	Added a Dirty( UT_LOCATION ) to HandleDeath() in pcmanage.cpp to make shure the player gets
+	properly updated when he dies.
+
+2/23/2006 - grimson
 	Changed TurnStuff() in boats.cpp to fix players getting stuck when turning the boat.
 
 2/23/2006 - grimson (0.98-3.4h [3.5 BETA])

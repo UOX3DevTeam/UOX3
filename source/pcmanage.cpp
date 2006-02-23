@@ -1080,6 +1080,8 @@ void HandleDeath( CChar *mChar )
 
 	if( mChar->IsNpc() )
 		mChar->Delete();
+	else
+		mChar->Dirty( UT_LOCATION );
 }
 
 }
