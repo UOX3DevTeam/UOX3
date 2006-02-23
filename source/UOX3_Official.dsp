@@ -367,10 +367,6 @@ SOURCE=.\findfuncs.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\globals.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\npcs.cpp
 # End Source File
 # Begin Source File
@@ -381,6 +377,10 @@ SOURCE=.\pcmanage.cpp
 # Begin Group "JS Engine"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CJSEngine.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\CJSMapping.cpp
@@ -677,6 +677,10 @@ SOURCE=.\uox3.h
 # Begin Group "JS Engine Nr. 1"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\CJSEngine.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\CJSMapping.h
