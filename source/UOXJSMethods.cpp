@@ -23,6 +23,7 @@
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "JSEncapsulate.h"
+#include "CJSEngine.h"
 
 #include "cMagic.h"
 #include "cGuild.h"
@@ -1219,25 +1220,8 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		MethodError( "Delete: Invalid object");
 		return JS_FALSE;
 	}
-	
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	if( myScript != NULL )
-	{
-		if( myObj->CanBeObjType( OT_CHAR ) )
-		{
-			if( myScript->FindUsedObject( IUE_CHAR, obj ) > 1 )
-				myScript->ReleaseObject( obj, IUE_CHAR );
-		}
-		else if( myObj->CanBeObjType( OT_ITEM ) )
-		{
-			if( myScript->FindUsedObject( IUE_ITEM, obj ) > 1 )
-				myScript->ReleaseObject( obj, IUE_ITEM );
-		}
-	}
 
 	myObj->Delete();
-
-	JS_SetPrivate( cx, obj, NULL );
 
 	return JS_TRUE;
 }
@@ -2531,9 +2515,7 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_TRUE;
 	}
 
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
-	JS_SetPrivate( cx, myJSItem, myItem );
+	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 
 	*rval = OBJECT_TO_JSVAL( myJSItem );
 
@@ -2564,9 +2546,7 @@ JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_TRUE;
 	}
 
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	JSObject *myJSItem	= myScript->AcquireObject( IUE_ITEM );
-	JS_SetPrivate( cx, myJSItem, myItem );
+	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 
 	*rval = OBJECT_TO_JSVAL( myJSItem );
 
@@ -4077,9 +4057,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->First();
 	if( ValidateObject( firstItem ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, firstItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -4118,9 +4096,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		firstItem = ( static_cast< CItem * >(myObj) )->GetContainsList()->Next();
 	if( ValidateObject( firstItem ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, firstItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, firstItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else

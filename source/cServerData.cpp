@@ -727,12 +727,12 @@ bool CServerData::RankSystemStatus( void ) const
 	return ranksystemenabled;
 }
 
-void CServerData::CutScrollRequirementStatus( SI16 value )
+void CServerData::CutScrollRequirementStatus( bool value )
 {
 	cutscrollrequirement = value;
 }
 
-SI16 CServerData::CutScrollRequirementStatus( void ) const
+bool CServerData::CutScrollRequirementStatus( void ) const
 {
 	return cutscrollrequirement;
 }
@@ -1522,7 +1522,7 @@ bool CServerData::save( std::string filename )
 }
 
 //o------------------------------------------------------------------------
-//|	Function		-	CServerData *load( void )
+//|	Function		-	Load()
 //|	Programmer		-	EviLDeD
 //|	Date			-	January 13, 2001
 //|	Modified		-
@@ -1531,28 +1531,10 @@ bool CServerData::save( std::string filename )
 //|	Returns			-	pointer to the valid inmemory serverdata storage(this)
 //|						NULL is there is an error, or invalid file type
 //o------------------------------------------------------------------------
-CServerData * CServerData::load( void )
+void CServerData::Load( void )
 {
-	std::string s = Directory( CSDDP_ROOT );
-	s += "uox.ini";
-	return load( s );
-}
-
-//o------------------------------------------------------------------------
-//|	Function		-	CServerData *load()
-//|	Programmer		-	EviLDeD
-//|	Date			-	January 13, 2001
-//|	Modified		-
-//o------------------------------------------------------------------------
-//|	Purpose			-	Load up the specified file and parse it into the internals
-//|						providing that it is in the correct format.
-//|	Returns			-	pointer to the valid inmemory serverdata storage(this) or
-//|						NULL is there is an error, or invalid file type
-//o------------------------------------------------------------------------
-CServerData * CServerData::load( std::string filename )
-{
-	ParseUox3Ini( filename );
-	return this;
+	const UString fileName = Directory( CSDDP_ROOT ) + "uox.ini";
+	ParseINI( fileName );
 }
 
 void CServerData::TrackingBaseRange( UI16 value )
@@ -1638,34 +1620,31 @@ void CServerData::dumpLookup( int lookupid )
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status				-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Parse teh uox.ini file into its required information.
+//|	Description		-	Parse the uox.ini file into its required information.
 //|									
 //|	Modification	-	02/26/2002	-	Make sure that we parse out the logs, access
 //|									and other directories that we were not parsing/
 //o--------------------------------------------------------------------------o
 //|	Returns			-
 //o--------------------------------------------------------------------------o
-CServerData * CServerData::ParseUox3Ini( std::string filename )
+bool CServerData::ParseINI( const std::string filename )
 {
-	CServerData *rvalue = NULL;
+	bool rvalue = false;
 	if( !filename.empty() )
 	{
-		std::string sFilename = filename;
 		std::ifstream inFile;
 
 		Console << "Processing INI Settings  ";
 
 		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-		inFile.open( sFilename.c_str(), std::ios::in );	
+		inFile.open( filename.c_str(), std::ios::in );	
 		if( inFile.is_open() )
 		{
 			char szLine[129];	// Trimmed this down to 80 to save some ram realestate
 			inFile.getline( szLine, 128 );	// Snatch the first line.
 			UString tag, value;
-			UString sname, sip, sport;
 			serverList.clear();
 			startlocations.clear();
-			struct hostent *lpHostEntry=NULL;
 			while( !inFile.eof() && !inFile.fail() )
 			{
 				UString LineBuffer( szLine );
@@ -1675,487 +1654,493 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 					tag		= LineBuffer.section( "=", 0, 0 ).stripWhiteSpace().upper();
 					value	= LineBuffer.section( "=", 1 ).stripWhiteSpace();
 
-					switch( UOX3INI_LOOKUP.find( tag.c_str() ) )
-					{
-						case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
-						case 0x000C:	 // SERVERNAME[0002]
-							break;
-						case 0x0017:	 // CONSOLELOG[0003]
-							ServerConsoleLog( value.toUByte() );
-							break;
-						case 0x0022:	 // CRASHPROTECTION[0004]
-							ServerCrashProtection( value.toUByte() );
-							break;
-						case 0x0032:	 // COMMANDPREFIX[0005]
-							ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
-							break;
-						case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
-							ServerAnnounceSaves( (value.toUShort()==1?true:false) ); 
-							break;
-						case 0x0053:	 // JOINPARTMSGS[0007]
-							ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
-							break;
-						case 0x0060:	 // MULCACHING[0008]
-							break;
-						case 0x006B:	 // BACKUPSENABLED[0009]
-							ServerBackups( (value.toUShort()>0?true:false) );
-							break;
-						case 0x007A:	 // SAVESTIMER[0010]
-							ServerSavesTimer( value.toULong() );
-							break;
-						case 0x0085:	 // SKILLCAP[0011]
-							ServerSkillCap( value.toUShort() );
-							break;
-						case 0x008E:	 // SKILLDELAY[0012]
-							ServerSkillDelay( value.toUByte() );
-							break;
-						case 0x0099:	 // STATCAP[0013]
-							ServerStatCap( value.toUShort() );
-							break;
-						case 0x00A1:	 // MAXSTEALTHMOVEMENTS[0014]
-							MaxStealthMovement( value.toShort() );
-							break;
-						case 0x00B5:	 // MAXSTAMINAMOVEMENTS[0015]
-							MaxStaminaMovement( value.toShort() );
-							break;
-						case 0x00C9:	 // ARMORAFFECTMANAREGEN[0016]
-							ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
-							break;
-						case 0x00DE:	 // CORPSEDECAYTIMER[0017]
-							SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
-							break;
-						case 0x00EF:	 // WEATHERTIMER[0018]
-							SystemTimer( tSERVER_WEATHER, value.toUShort() );
-							break;
-						case 0x00FC:	 // SHOPSPAWNTIMER[0019]
-							SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
-							break;
-						case 0x00E4:	 // DECAYTIMER[0020]
-							SystemTimer( tSERVER_DECAY, value.toUShort() );
-							break;
-						case 0x0116:	 // INVISIBILITYTIMER[0021]
-							SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
-							break;
-						case 0x0128:	 // OBJECTUSETIMER[0022]
-							SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
-							break;
-						case 0x0137:	 // GATETIMER[0023]
-							SystemTimer( tSERVER_GATE, value.toUShort() );
-							break;
-						case 0x0141:	 // POISONTIMER[0024]
-							SystemTimer( tSERVER_POISON, value.toUShort() );
-							break;
-						case 0x014D:	 // LOGINTIMEOUT[0025]
-							SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
-							break;
-						case 0x015A:	 // HITPOINTREGENTIMER[0026]
-							SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
-							break;
-						case 0x016D:	 // STAMINAREGENTIMER[0027]
-							SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
-							break;
-						case 0x017F:	 // MANAREGENTIMER[0028]
-							SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
-							break;
-						case 0x018E:	 // BASEFISHINGTIMER[0029]
-							SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
-							break;
-						case 0x019F:	 // RANDOMFISHINGTIMER[0030]
-							SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
-							break;
-						case 0x01B2:	 // SPIRITSPEAKTIMER[0031]
-							SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
-							break;
-						case 0x01C3:	 // DIRECTORY[0032]
-							Directory( CSDDP_ROOT, value );
-							break;
-						case 0x01CD:	 // DATADIRECTORY[0033]
-							Directory( CSDDP_DATA, value );
-							break;
-						case 0x01DB:	 // DEFSDIRECTORY[0034]
-							Directory( CSDDP_DEFS, value );
-							break;
-						case 0x01E9:	 // ACTSDIRECTORY[0035]
-							Directory( CSDDP_ACCOUNTS, value );
-							break;
-						case 0x01F7:	 // SCRIPTSDIRECTORY[0036]
-							Directory( CSDDP_SCRIPTS, value );
-							break;
-						case 0x0208:	 // BACKUPDIRECTORY[0037]
-							Directory( CSDDP_BACKUP, value );
-							break;
-						case 0x0218:	 // MSGBOARDDIRECTORY[0038]
-							Directory( CSDDP_MSGBOARD, value );
-							break;
-						case 0x022A:	 // SHAREDDIRECTORY[0039]
-							Directory( CSDDP_SHARED, value );
-							break;
-						case 0x023A:	 // LOOTDECAYSWITHCORPSE[0040]
-							CorpseLootDecay( value.toUShort() != 0 );
-							break;
-						case 0x024F:	 // GUARDSACTIVE[0041]
-							GuardStatus( value.toUShort() != 0 );
-							break;
-						case 0x025C:	 // DEATHANIMATION[0042]
-							DeathAnimationStatus( value.toUShort() != 0 );
-							break;
-						case 0x026B:	 // AMBIENTSOUNDS[0043]
-							WorldAmbientSounds( value.toShort() );
-							break;
-						case 0x0279:	 // AMBIENTFOOTSTEPS[0044]
-							AmbientFootsteps( value.toUShort() != 0 );
-							break;
-						case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
-							InternalAccountStatus( value.toUShort() != 0 );
-							break;
-						case 0x02A2:	 // SHOWOFFLINEPCS[0046]
-							ShowOfflinePCs( value.toUShort() != 0 );
-							break;
-						case 0x02B1:	 // ROGUESENABLED[0047]
-							RogueStatus( value.toUShort() != 0 );
-							break;
-						case 0x02BF:	 // PLAYERPERSECUTION[0048]
-							PlayerPersecutionStatus( value.toUShort() != 0 );
-							break;
-						case 0x02D1:	 // ACCOUNTFLUSH[0049]
-							AccountFlushTimer( value.toDouble() );
-							break;
-						case 0x02DE:	 // HTMLSTATUSENABLED[0050]
-							HtmlStatsStatus( value.toShort() );
-							break;
-						case 0x02F0:	 // SELLBYNAME[0051]
-							SellByNameStatus( value.toUShort() == 1 );
-							break;
-						case 0x02FB:	 // SELLMAXITEMS[0052]
-							SellMaxItemsStatus( value.toShort() );
-							break;
-						case 0x0308:	 // TRADESYSTEM[0053]
-							TradeSystemStatus( value.toUShort() != 0 );
-							break;
-						case 0x0314:	 // RANKSYSTEM[0054]
-							RankSystemStatus( value.toUShort() != 0 );
-							break;
-						case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
-							CutScrollRequirementStatus( value.toShort() );
-							break;
-						case 0x0335:	 // SPEEDCHECKITEMS[0056]
-							CheckItemsSpeed( value.toDouble() );
-							break;
-						case 0x0345:	 // SPEEDCHECKBOATS[0057]
-							CheckBoatSpeed( value.toDouble() );
-							break;
-						case 0x0355:	 // SPEEDCHECKNPCAI[0058]
-							CheckNpcAISpeed( value.toDouble() );
-							break;
-						case 0x0365:	 // SPEEDCHECKSPAWNREGIONS[0059]
-							CheckSpawnRegionSpeed( value.toDouble() );
-							break;
-						case 0x037C:	 // MSGBOARDPOSTINGLEVEL[0060]
-							MsgBoardPostingLevel( value.toUByte() );
-							break;
-						case 0x0391:	 // MSGBOARDREMOVALLEVEL[0061]
-							MsgBoardPostRemovalLevel( value.toUByte() );
-							break;
-						case 0x03A6:	 // ESCORTENABLED[0062]
-							EscortsEnabled( value.toUShort() == 1 );
-							break;
-						case 0x03B4:	 // ESCORTINITEXPIRE[0063]
-							SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
-							break;
-						case 0x03C5:	 // ESCORTACTIVEEXPIRE[0064]
-							SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
-							break;
-						case 0x03D8:	 // LIGHTMOON1[0065]
-							ServerMoon( 0, value.toShort() );
-							break;
-						case 0x03E3:	 // LIGHTMOON2[0066]
-							ServerMoon( 1, value.toShort() );
-							break;
-						case 0x03EE:	 // LIGHTDUNGEONLEVEL[0067]
-							DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
-							break;
-						case 0x0400:	 // LIGHTCURRENTLEVEL[0068]
-							WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
-							break;
-						case 0x0412:	 // LIGHTBRIGHTLEVEL[0069]
-							WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
-							break;
-						case 0x0423:	 // TRACKINGBASERANGE[0070]
-							TrackingBaseRange( value.toUShort() );
-							break;
-						case 0x0435:	 // TRACKINGBASETIMER[0071]
-							TrackingBaseTimer( value.toUShort() );
-							break;
-						case 0x0447:	 // TRACKINGMAXTARGETS[0072]
-							TrackingMaxTargets( value.toUByte() );
-							break;
-						case 0x045A:	 // TRACKINGMSGREDISPLAYTIME[0073]
-							TrackingRedisplayTime( value.toUShort() );
-							break;
-						case 0x0473:	 // REPSYSMURDERDECAYTIMER[0074]
-							SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
-							break;
-						case 0x048A:	 // REPSYSMAXKILLS[0075]
-							RepMaxKills( value.toUShort() );
-							break;
-						case 0x0499:	 // REPSYSCRIMINALTIMER[0076]
-							SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
-							break;
-						case 0x04AD:	 // RESOURCEMINECHECK[0077]
-							MineCheck( value.toUByte() );
-							break;
-						case 0x04BF:	 // RESOURCEOREPERAREA[0078]
-							ResOre( value.toShort() );
-							break;
-						case 0x04D2:	 // RESOURCEORERESPAWNTIMER[0079]
-							ResOreTime( value.toUShort() );
-							break;
-						case 0x04EA:	 // RESOURCEORERESPAWNAREA[0080]
-							ResOreArea( value.toUShort() );
-							break;
-						case 0x0501:	 // RESOURCELOGSPERAREA[0081]
-							ResLogs( value.toShort() );
-							break;
-						case 0x0515:	 // RESOURCELOGSRESPAWNTIMER[0082]
-							ResLogTime( value.toUShort() );
-							break;
-						case 0x052E:	 // RESOURCELOGSRESPAWNAREA[0083]
-							ResLogArea( value.toUShort() );
-							break;
-						case 0x0546:	 // HUNGERRATE[0084]
-							SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
-							break;
-						case 0x0551:	 // HUNGERDMGVAL[0085]
-							HungerDamage( value.toShort() );
-							break;
-						case 0x055E:	 // COMBATMAXRANGE[0086]
-							CombatMaxRange( value.toShort() );
-							break;
-						case 0x056D:	 // COMBATSPELLMAXRANGE[0087]
-							CombatMaxSpellRange( value.toShort() );
-							break;
-						case 0x0581:	 // COMBATDISPLAYHITMSG[0088]
-							CombatDisplayHitMessage( value.toUShort() == 1 );
-							break;
-						case 0x0595:	 // COMBATMONSTERSVSANIMALS[0089]
-							CombatMonstersVsAnimals( value.toUShort() == 1 );
-							break;
-						case 0x05AD:	 // COMBATANIMALATTACKCHANCE[0090]
-							CombatAnimalsAttackChance( value.toUByte() );
-							break;
-						case 0x05C6:	 // COMBATANIMALSGUARDED[0091]
-							CombatAnimalsGuarded( value.toUShort() == 1 );
-							break;
-						case 0x05DB:	 // COMBATNPCDAMAGERATE[0092]
-							CombatNPCDamageRate( value.toShort() );
-							break;
-						case 0x05EF:	 // COMBATNPCBASEFLEEAT[0093]
-							CombatNPCBaseFleeAt( value.toShort() );
-							break;
-						case 0x0603:	 // COMBATNPCBASEREATTACKAT[0094]
-							CombatNPCBaseReattackAt( value.toShort() );
-							break;
-						case 0x061B:	 // COMBATATTACKSTAMINA[0095]
-							CombatAttackStamina( value.toShort() );
-							break;
-						case 0x062F:	 // LOCATION[0096]
-							ServerLocation( value );
-							break;
-						case 0x0638:	 // STARTGOLD[0097]
-							ServerStartGold( value.toShort() );
-							break;
-						case 0x0642:	 // STARTPRIVS[0098]
-							ServerStartPrivs( value.toUShort() );
-							break;
-						case 0x064D:	 // ESCORTDONEEXPIRE[0099]
-							SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
-							break;
-						case 0x065E:	 // LIGHTDARKLEVEL[0100]
-							WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
-							break;
-						case 0x066D:	 // TITLECOLOUR[0101]
-							TitleColour( value.toUShort() );
-							break;
-						case 0x0679:	 // LEFTTEXTCOLOUR[0102]
-							LeftTextColour( value.toUShort() );
-							break;
-						case 0x0688:	 // RIGHTTEXTCOLOUR[0103]
-							RightTextColour( value.toUShort() );
-							break;
-						case 0x0698:	 // BUTTONCANCEL[0104]
-							ButtonCancel( value.toUShort() );
-							break;
-						case 0x06A5:	 // BUTTONLEFT[0105]
-							ButtonLeft( value.toUShort() );
-							break;
-						case 0x06B0:	 // BUTTONRIGHT[0106]
-							ButtonRight( value.toUShort() );
-							break;
-						case 0x06BC:	 // BACKGROUNDPIC[0107]
-							BackgroundPic( value.toUShort() );
-							break;
-						case 0x06CA:	 // POLLTIME[0108]
-							TownNumSecsPollOpen( value.toULong() );
-							break;
-						case 0x06D3:	 // MAYORTIME[0109]
-							TownNumSecsAsMayor( value.toULong() );
-							break;
-						case 0x06DD:	 // TAXPERIOD[0110]
-							TownTaxPeriod( value.toULong() );
-							break;
-						case 0x06E7:	 // GUARDSPAID[0111]
-							TownGuardPayment( value.toULong() );
-							break;
-						case 0x06F2:	 // DAY[0112]
-							ServerTimeDay( value.toShort() );
-							break;
-						case 0x06F6:	 // HOURS[0113]
-							ServerTimeHours( value.toUByte() );
-							break;
-						case 0x06FC:	 // MINUTES[0114]
-							ServerTimeMinutes( value.toUByte() );
-							break;
-						case 0x0704:	 // SECONDS[0115]
-							ServerTimeSeconds( value.toUByte() );
-							break;
-						case 0x070C:	 // AMPM[0116]
-							ServerTimeAMPM( value.toUShort() != 0 );
-							break;
-						case 0x0711:	 // SKILLLEVEL[0117]
-							SkillLevel( value.toUByte() );
-							break;
-						case 0x071C:	 // SNOOPISCRIME[0118]
-							SnoopIsCrime( value.toUShort() != 0 );
-							break;
-						case 0x0729:	 // BOOKSDIRECTORY[0119]
-							Directory( CSDDP_BOOKS, value );
-							break;
-						case 0x0738:	 // SERVERLIST[0120]
-						{
-							physicalServer toAdd;
-							sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
-							sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
-							sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+					HandleLine( tag, value );
 
-							toAdd.setName( sname );
-							if( value.sectionCount( "," ) == 2 )
-							{
-								// Ok look up the data here see if its a number
-								bool bDomain = true;
-								if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
-								{
-									// this was not a domain name so check for IP address
-									if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
-									{
-										// We get here it wasn't a valid IP either.
-										Console.Warning( 1, "Failed to translate %s", sip.c_str() );
-										Console.Warning( 1, "This shard will not show up on the shard listing" );
-										break;
-									}
-									bDomain=false;
-								}
-								// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-								if( bDomain )
-								{
-									// Store the domain name for later then seeing as its a valid one
-									toAdd.setDomain( sip );
-								}
-								else
-								{
-									// this was a valid ip address so we will use an ip instead so clear the domain string.
-									toAdd.setDomain( "" );
-								}
-							}
-							// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
-							struct in_addr *pinaddr;
-							pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-							toAdd.setIP( inet_ntoa(*pinaddr) );
-							toAdd.setPort( sport.toUShort() );
-							serverList.push_back( toAdd );
-							break;
-						}
-						case 0x07A0:	 // PORT[0154] // whatever that stands for..
-							ServerPort( value.toUShort() );
-							break;
-						case 0x0748:	 // ACCESSDIRECTORY[0122]
-							Directory( CSDDP_ACCESS, value );
-							break;
-						case 0x0758:	 // LOGSDIRECTORY[0123]
-							Directory( CSDDP_LOGS, value );
-							break;
-						case 0x0766:	 // ACCOUNTISOLATION[0124]
-							break;
-						case 0x0777:	 // HTMLDIRECTORY[0125]
-							Directory( CSDDP_HTML, value );
-							break;
-						case 0x0785:	 // SHOOTONANIMALBACK[0126]
-							ShootOnAnimalBack( value.toUShort() == 1 );
-							break;
-						case 0x0797:	 // NPCTRAININGENABLED[0127]
-							NPCTrainingStatus( value.toUShort() == 1 );
-							break;
-						case 0x07AA:	 // DICTIONARYDIRECTORY[0128]
-							Directory( CSDDP_DICTIONARIES, value );
-							break;
-						case 0x07BE:	 // BACKUPSAVERATIO[0129]
-							BackupRatio( value.toShort() );
-							break;
-						case 0x07CE:	 // HIDEWILEMOUNTED[0130]
-							CharHideWhileMounted( value.toShort() == 1 );
-							break;
-						case 0x07DE:	 // SECONDSPERUOMINUTE[0131]
-							ServerSecondsPerUOMinute( value.toUShort() );
-							break;
-						case 0x07F1:	 // WEIGHTPERSTR[0132]
-							WeightPerStr( value.toUByte() );
-							break;
-						case 0x07FE:	 // POLYDURATION[0133]
-							SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
-							break;
-						case 0x080B:	 // UOGENABLED[0134]
-							ServerUOGEnabled( value.toShort()==1 );
-							break;
-						case 0x0816:	 // NETRCVTIMEOUT[0135]
-							ServerNetRcvTimeout( value.toULong() );
-							break;
-						case 0x0824:	 // NETSNDTIMEOUT[0136]
-							ServerNetSndTimeout( value.toULong() );
-							break;
-						case 0x0832:	 // NETRETRYCOUNT[0137]
-							ServerNetRetryCount( value.toULong() );
-							break;
-						case 0x0840:	 // CLIENTSUPPORT[0138]
-							ServerClientSupport( value.toULong() );
-						case 0x084E:	 // OVERLOADPACKETS[0139]
-							ServerOverloadPackets( (value.toByte() == 1) );
-							break;
-						case 0x085E:	 // NPCMOVEMENTSPEED[0140]
-							NPCSpeed( value.toDouble() );
-							break;
-						case 0x086F:	 // PETHUNGEROFFLINE[0141]
-							PetHungerOffline( (value.toByte() == 1) );
-							break;
-						case 0x0880:	 // PETOFFLINETIMEOUT[0142]
-							PetOfflineTimeout( value.toUShort() );
-							break;
-						case 0x0892:	 // PETOFFLINECHECKTIMER[0143]
-							SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
-							break;
-						default:
-							break;
-					}
 					inFile.getline( szLine, 127 );
 				}
 				else
 					inFile.getline( szLine, 127 );
 			}
 			Console.PrintDone();
-			rvalue = this;
+			rvalue = true;
 		}
 		else
-			Console << "FAILED!" << myendl << "Error: Unable to open file." << sFilename << myendl;
+		{
+			Console.Warning( 2, "%s File not found, Using default settings.", filename.c_str() );
+			cwmWorldState->ServerData()->save();
+		}
 	}
 	return rvalue;
+}
+
+void CServerData::HandleLine( const UString tag, const UString value )
+{
+	switch( UOX3INI_LOOKUP.find( tag.c_str() ) )
+	{
+	case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
+	case 0x000C:	 // SERVERNAME[0002]
+		break;
+	case 0x0017:	 // CONSOLELOG[0003]
+		ServerConsoleLog( value.toUByte() );
+		break;
+	case 0x0022:	 // CRASHPROTECTION[0004]
+		ServerCrashProtection( value.toUByte() );
+		break;
+	case 0x0032:	 // COMMANDPREFIX[0005]
+		ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
+		break;
+	case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
+		ServerAnnounceSaves( (value.toUShort()==1?true:false) ); 
+		break;
+	case 0x0053:	 // JOINPARTMSGS[0007]
+		ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
+		break;
+	case 0x0060:	 // MULCACHING[0008]
+		break;
+	case 0x006B:	 // BACKUPSENABLED[0009]
+		ServerBackups( (value.toUShort()>0?true:false) );
+		break;
+	case 0x007A:	 // SAVESTIMER[0010]
+		ServerSavesTimer( value.toULong() );
+		break;
+	case 0x0085:	 // SKILLCAP[0011]
+		ServerSkillCap( value.toUShort() );
+		break;
+	case 0x008E:	 // SKILLDELAY[0012]
+		ServerSkillDelay( value.toUByte() );
+		break;
+	case 0x0099:	 // STATCAP[0013]
+		ServerStatCap( value.toUShort() );
+		break;
+	case 0x00A1:	 // MAXSTEALTHMOVEMENTS[0014]
+		MaxStealthMovement( value.toShort() );
+		break;
+	case 0x00B5:	 // MAXSTAMINAMOVEMENTS[0015]
+		MaxStaminaMovement( value.toShort() );
+		break;
+	case 0x00C9:	 // ARMORAFFECTMANAREGEN[0016]
+		ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
+		break;
+	case 0x00DE:	 // CORPSEDECAYTIMER[0017]
+		SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
+		break;
+	case 0x00EF:	 // WEATHERTIMER[0018]
+		SystemTimer( tSERVER_WEATHER, value.toUShort() );
+		break;
+	case 0x00FC:	 // SHOPSPAWNTIMER[0019]
+		SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
+		break;
+	case 0x00E4:	 // DECAYTIMER[0020]
+		SystemTimer( tSERVER_DECAY, value.toUShort() );
+		break;
+	case 0x0116:	 // INVISIBILITYTIMER[0021]
+		SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
+		break;
+	case 0x0128:	 // OBJECTUSETIMER[0022]
+		SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
+		break;
+	case 0x0137:	 // GATETIMER[0023]
+		SystemTimer( tSERVER_GATE, value.toUShort() );
+		break;
+	case 0x0141:	 // POISONTIMER[0024]
+		SystemTimer( tSERVER_POISON, value.toUShort() );
+		break;
+	case 0x014D:	 // LOGINTIMEOUT[0025]
+		SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
+		break;
+	case 0x015A:	 // HITPOINTREGENTIMER[0026]
+		SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
+		break;
+	case 0x016D:	 // STAMINAREGENTIMER[0027]
+		SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
+		break;
+	case 0x017F:	 // MANAREGENTIMER[0028]
+		SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
+		break;
+	case 0x018E:	 // BASEFISHINGTIMER[0029]
+		SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
+		break;
+	case 0x019F:	 // RANDOMFISHINGTIMER[0030]
+		SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
+		break;
+	case 0x01B2:	 // SPIRITSPEAKTIMER[0031]
+		SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
+		break;
+	case 0x01C3:	 // DIRECTORY[0032]
+		Directory( CSDDP_ROOT, value );
+		break;
+	case 0x01CD:	 // DATADIRECTORY[0033]
+		Directory( CSDDP_DATA, value );
+		break;
+	case 0x01DB:	 // DEFSDIRECTORY[0034]
+		Directory( CSDDP_DEFS, value );
+		break;
+	case 0x01E9:	 // ACTSDIRECTORY[0035]
+		Directory( CSDDP_ACCOUNTS, value );
+		break;
+	case 0x01F7:	 // SCRIPTSDIRECTORY[0036]
+		Directory( CSDDP_SCRIPTS, value );
+		break;
+	case 0x0208:	 // BACKUPDIRECTORY[0037]
+		Directory( CSDDP_BACKUP, value );
+		break;
+	case 0x0218:	 // MSGBOARDDIRECTORY[0038]
+		Directory( CSDDP_MSGBOARD, value );
+		break;
+	case 0x022A:	 // SHAREDDIRECTORY[0039]
+		Directory( CSDDP_SHARED, value );
+		break;
+	case 0x023A:	 // LOOTDECAYSWITHCORPSE[0040]
+		CorpseLootDecay( value.toUShort() != 0 );
+		break;
+	case 0x024F:	 // GUARDSACTIVE[0041]
+		GuardStatus( value.toUShort() != 0 );
+		break;
+	case 0x025C:	 // DEATHANIMATION[0042]
+		DeathAnimationStatus( value.toUShort() != 0 );
+		break;
+	case 0x026B:	 // AMBIENTSOUNDS[0043]
+		WorldAmbientSounds( value.toShort() );
+		break;
+	case 0x0279:	 // AMBIENTFOOTSTEPS[0044]
+		AmbientFootsteps( value.toUShort() != 0 );
+		break;
+	case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
+		InternalAccountStatus( value.toUShort() != 0 );
+		break;
+	case 0x02A2:	 // SHOWOFFLINEPCS[0046]
+		ShowOfflinePCs( value.toUShort() != 0 );
+		break;
+	case 0x02B1:	 // ROGUESENABLED[0047]
+		RogueStatus( value.toUShort() != 0 );
+		break;
+	case 0x02BF:	 // PLAYERPERSECUTION[0048]
+		PlayerPersecutionStatus( value.toUShort() != 0 );
+		break;
+	case 0x02D1:	 // ACCOUNTFLUSH[0049]
+		AccountFlushTimer( value.toDouble() );
+		break;
+	case 0x02DE:	 // HTMLSTATUSENABLED[0050]
+		HtmlStatsStatus( value.toShort() );
+		break;
+	case 0x02F0:	 // SELLBYNAME[0051]
+		SellByNameStatus( value.toUShort() == 1 );
+		break;
+	case 0x02FB:	 // SELLMAXITEMS[0052]
+		SellMaxItemsStatus( value.toShort() );
+		break;
+	case 0x0308:	 // TRADESYSTEM[0053]
+		TradeSystemStatus( value.toUShort() != 0 );
+		break;
+	case 0x0314:	 // RANKSYSTEM[0054]
+		RankSystemStatus( value.toUShort() != 0 );
+		break;
+	case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
+		CutScrollRequirementStatus( (value.toUShort() != 0) );
+		break;
+	case 0x0335:	 // SPEEDCHECKITEMS[0056]
+		CheckItemsSpeed( value.toDouble() );
+		break;
+	case 0x0345:	 // SPEEDCHECKBOATS[0057]
+		CheckBoatSpeed( value.toDouble() );
+		break;
+	case 0x0355:	 // SPEEDCHECKNPCAI[0058]
+		CheckNpcAISpeed( value.toDouble() );
+		break;
+	case 0x0365:	 // SPEEDCHECKSPAWNREGIONS[0059]
+		CheckSpawnRegionSpeed( value.toDouble() );
+		break;
+	case 0x037C:	 // MSGBOARDPOSTINGLEVEL[0060]
+		MsgBoardPostingLevel( value.toUByte() );
+		break;
+	case 0x0391:	 // MSGBOARDREMOVALLEVEL[0061]
+		MsgBoardPostRemovalLevel( value.toUByte() );
+		break;
+	case 0x03A6:	 // ESCORTENABLED[0062]
+		EscortsEnabled( value.toUShort() == 1 );
+		break;
+	case 0x03B4:	 // ESCORTINITEXPIRE[0063]
+		SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
+		break;
+	case 0x03C5:	 // ESCORTACTIVEEXPIRE[0064]
+		SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
+		break;
+	case 0x03D8:	 // LIGHTMOON1[0065]
+		ServerMoon( 0, value.toShort() );
+		break;
+	case 0x03E3:	 // LIGHTMOON2[0066]
+		ServerMoon( 1, value.toShort() );
+		break;
+	case 0x03EE:	 // LIGHTDUNGEONLEVEL[0067]
+		DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x0400:	 // LIGHTCURRENTLEVEL[0068]
+		WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x0412:	 // LIGHTBRIGHTLEVEL[0069]
+		WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x0423:	 // TRACKINGBASERANGE[0070]
+		TrackingBaseRange( value.toUShort() );
+		break;
+	case 0x0435:	 // TRACKINGBASETIMER[0071]
+		TrackingBaseTimer( value.toUShort() );
+		break;
+	case 0x0447:	 // TRACKINGMAXTARGETS[0072]
+		TrackingMaxTargets( value.toUByte() );
+		break;
+	case 0x045A:	 // TRACKINGMSGREDISPLAYTIME[0073]
+		TrackingRedisplayTime( value.toUShort() );
+		break;
+	case 0x0473:	 // REPSYSMURDERDECAYTIMER[0074]
+		SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
+		break;
+	case 0x048A:	 // REPSYSMAXKILLS[0075]
+		RepMaxKills( value.toUShort() );
+		break;
+	case 0x0499:	 // REPSYSCRIMINALTIMER[0076]
+		SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
+		break;
+	case 0x04AD:	 // RESOURCEMINECHECK[0077]
+		MineCheck( value.toUByte() );
+		break;
+	case 0x04BF:	 // RESOURCEOREPERAREA[0078]
+		ResOre( value.toShort() );
+		break;
+	case 0x04D2:	 // RESOURCEORERESPAWNTIMER[0079]
+		ResOreTime( value.toUShort() );
+		break;
+	case 0x04EA:	 // RESOURCEORERESPAWNAREA[0080]
+		ResOreArea( value.toUShort() );
+		break;
+	case 0x0501:	 // RESOURCELOGSPERAREA[0081]
+		ResLogs( value.toShort() );
+		break;
+	case 0x0515:	 // RESOURCELOGSRESPAWNTIMER[0082]
+		ResLogTime( value.toUShort() );
+		break;
+	case 0x052E:	 // RESOURCELOGSRESPAWNAREA[0083]
+		ResLogArea( value.toUShort() );
+		break;
+	case 0x0546:	 // HUNGERRATE[0084]
+		SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
+		break;
+	case 0x0551:	 // HUNGERDMGVAL[0085]
+		HungerDamage( value.toShort() );
+		break;
+	case 0x055E:	 // COMBATMAXRANGE[0086]
+		CombatMaxRange( value.toShort() );
+		break;
+	case 0x056D:	 // COMBATSPELLMAXRANGE[0087]
+		CombatMaxSpellRange( value.toShort() );
+		break;
+	case 0x0581:	 // COMBATDISPLAYHITMSG[0088]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x0595:	 // COMBATMONSTERSVSANIMALS[0089]
+		CombatMonstersVsAnimals( value.toUShort() == 1 );
+		break;
+	case 0x05AD:	 // COMBATANIMALATTACKCHANCE[0090]
+		CombatAnimalsAttackChance( value.toUByte() );
+		break;
+	case 0x05C6:	 // COMBATANIMALSGUARDED[0091]
+		CombatAnimalsGuarded( value.toUShort() == 1 );
+		break;
+	case 0x05DB:	 // COMBATNPCDAMAGERATE[0092]
+		CombatNPCDamageRate( value.toShort() );
+		break;
+	case 0x05EF:	 // COMBATNPCBASEFLEEAT[0093]
+		CombatNPCBaseFleeAt( value.toShort() );
+		break;
+	case 0x0603:	 // COMBATNPCBASEREATTACKAT[0094]
+		CombatNPCBaseReattackAt( value.toShort() );
+		break;
+	case 0x061B:	 // COMBATATTACKSTAMINA[0095]
+		CombatAttackStamina( value.toShort() );
+		break;
+	case 0x062F:	 // LOCATION[0096]
+		ServerLocation( value );
+		break;
+	case 0x0638:	 // STARTGOLD[0097]
+		ServerStartGold( value.toShort() );
+		break;
+	case 0x0642:	 // STARTPRIVS[0098]
+		ServerStartPrivs( value.toUShort() );
+		break;
+	case 0x064D:	 // ESCORTDONEEXPIRE[0099]
+		SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
+		break;
+	case 0x065E:	 // LIGHTDARKLEVEL[0100]
+		WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x066D:	 // TITLECOLOUR[0101]
+		TitleColour( value.toUShort() );
+		break;
+	case 0x0679:	 // LEFTTEXTCOLOUR[0102]
+		LeftTextColour( value.toUShort() );
+		break;
+	case 0x0688:	 // RIGHTTEXTCOLOUR[0103]
+		RightTextColour( value.toUShort() );
+		break;
+	case 0x0698:	 // BUTTONCANCEL[0104]
+		ButtonCancel( value.toUShort() );
+		break;
+	case 0x06A5:	 // BUTTONLEFT[0105]
+		ButtonLeft( value.toUShort() );
+		break;
+	case 0x06B0:	 // BUTTONRIGHT[0106]
+		ButtonRight( value.toUShort() );
+		break;
+	case 0x06BC:	 // BACKGROUNDPIC[0107]
+		BackgroundPic( value.toUShort() );
+		break;
+	case 0x06CA:	 // POLLTIME[0108]
+		TownNumSecsPollOpen( value.toULong() );
+		break;
+	case 0x06D3:	 // MAYORTIME[0109]
+		TownNumSecsAsMayor( value.toULong() );
+		break;
+	case 0x06DD:	 // TAXPERIOD[0110]
+		TownTaxPeriod( value.toULong() );
+		break;
+	case 0x06E7:	 // GUARDSPAID[0111]
+		TownGuardPayment( value.toULong() );
+		break;
+	case 0x06F2:	 // DAY[0112]
+		ServerTimeDay( value.toShort() );
+		break;
+	case 0x06F6:	 // HOURS[0113]
+		ServerTimeHours( value.toUByte() );
+		break;
+	case 0x06FC:	 // MINUTES[0114]
+		ServerTimeMinutes( value.toUByte() );
+		break;
+	case 0x0704:	 // SECONDS[0115]
+		ServerTimeSeconds( value.toUByte() );
+		break;
+	case 0x070C:	 // AMPM[0116]
+		ServerTimeAMPM( value.toUShort() != 0 );
+		break;
+	case 0x0711:	 // SKILLLEVEL[0117]
+		SkillLevel( value.toUByte() );
+		break;
+	case 0x071C:	 // SNOOPISCRIME[0118]
+		SnoopIsCrime( value.toUShort() != 0 );
+		break;
+	case 0x0729:	 // BOOKSDIRECTORY[0119]
+		Directory( CSDDP_BOOKS, value );
+		break;
+	case 0x0738:	 // SERVERLIST[0120]
+	{
+		UString sname, sip, sport;
+		struct hostent *lpHostEntry = NULL;
+		physicalServer toAdd;
+		sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
+		sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
+		sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+
+		toAdd.setName( sname );
+		if( value.sectionCount( "," ) == 2 )
+		{
+			// Ok look up the data here see if its a number
+			bool bDomain = true;
+			if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
+			{
+				// this was not a domain name so check for IP address
+				if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
+				{
+					// We get here it wasn't a valid IP either.
+					Console.Warning( 1, "Failed to translate %s", sip.c_str() );
+					Console.Warning( 1, "This shard will not show up on the shard listing" );
+					break;
+				}
+				bDomain = false;
+			}
+			// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
+			if( bDomain )	// Store the domain name for later then seeing as its a valid one
+				toAdd.setDomain( sip );
+			else			// this was a valid ip address so we will use an ip instead so clear the domain string.
+				toAdd.setDomain( "" );
+		}
+		// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
+		struct in_addr *pinaddr;
+		pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+		toAdd.setIP( inet_ntoa(*pinaddr) );
+		toAdd.setPort( sport.toUShort() );
+		serverList.push_back( toAdd );
+		break;
+	}
+	case 0x07A0:	 // PORT[0154] // whatever that stands for..
+		ServerPort( value.toUShort() );
+		break;
+	case 0x0748:	 // ACCESSDIRECTORY[0122]
+		Directory( CSDDP_ACCESS, value );
+		break;
+	case 0x0758:	 // LOGSDIRECTORY[0123]
+		Directory( CSDDP_LOGS, value );
+		break;
+	case 0x0766:	 // ACCOUNTISOLATION[0124]
+		break;
+	case 0x0777:	 // HTMLDIRECTORY[0125]
+		Directory( CSDDP_HTML, value );
+		break;
+	case 0x0785:	 // SHOOTONANIMALBACK[0126]
+		ShootOnAnimalBack( value.toUShort() == 1 );
+		break;
+	case 0x0797:	 // NPCTRAININGENABLED[0127]
+		NPCTrainingStatus( value.toUShort() == 1 );
+		break;
+	case 0x07AA:	 // DICTIONARYDIRECTORY[0128]
+		Directory( CSDDP_DICTIONARIES, value );
+		break;
+	case 0x07BE:	 // BACKUPSAVERATIO[0129]
+		BackupRatio( value.toShort() );
+		break;
+	case 0x07CE:	 // HIDEWILEMOUNTED[0130]
+		CharHideWhileMounted( value.toShort() == 1 );
+		break;
+	case 0x07DE:	 // SECONDSPERUOMINUTE[0131]
+		ServerSecondsPerUOMinute( value.toUShort() );
+		break;
+	case 0x07F1:	 // WEIGHTPERSTR[0132]
+		WeightPerStr( value.toUByte() );
+		break;
+	case 0x07FE:	 // POLYDURATION[0133]
+		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
+		break;
+	case 0x080B:	 // UOGENABLED[0134]
+		ServerUOGEnabled( value.toShort()==1 );
+		break;
+	case 0x0816:	 // NETRCVTIMEOUT[0135]
+		ServerNetRcvTimeout( value.toULong() );
+		break;
+	case 0x0824:	 // NETSNDTIMEOUT[0136]
+		ServerNetSndTimeout( value.toULong() );
+		break;
+	case 0x0832:	 // NETRETRYCOUNT[0137]
+		ServerNetRetryCount( value.toULong() );
+		break;
+	case 0x0840:	 // CLIENTSUPPORT[0138]
+		ServerClientSupport( value.toULong() );
+		break;
+	case 0x084E:	 // OVERLOADPACKETS[0139]
+		ServerOverloadPackets( (value.toByte() == 1) );
+		break;
+	case 0x085E:	 // NPCMOVEMENTSPEED[0140]
+		NPCSpeed( value.toDouble() );
+		break;
+	case 0x086F:	 // PETHUNGEROFFLINE[0141]
+		PetHungerOffline( (value.toByte() == 1) );
+		break;
+	case 0x0880:	 // PETOFFLINETIMEOUT[0142]
+		PetOfflineTimeout( value.toUShort() );
+		break;
+	case 0x0892:	 // PETOFFLINECHECKTIMER[0143]
+		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
+		break;
+	default:
+		break;
+	}
 }
 
 void CServerData::ServerStartGold( SI16 value )

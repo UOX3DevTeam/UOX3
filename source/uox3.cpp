@@ -62,6 +62,7 @@
 #include "jail.h"
 #include "Dictionary.h"
 #include "ObjectFactory.h"
+#include "CJSEngine.h"
 
 namespace UOX
 {
@@ -83,7 +84,6 @@ ObjectFactory *objFactory;
 //o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o---------------------------------------------------------------------------o
-void		LoadINIFile( void );
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
 void		LoadSpawnRegions( void );
@@ -146,7 +146,10 @@ void DoMessageLoop( void )
 			case MSG_COUNT:															break; 
 			case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
 			case MSG_PRINT:			Console << tVal.data << myendl;					break;
-			case MSG_RELOADJS:		JSMapping->Reload();	Console.PrintDone(); 	Commands->Load();	break;
+			case MSG_RELOADJS:		JSEngine->Reload();
+									JSMapping->Reload();
+									Console.PrintDone();
+									Commands->Load();								break;
 			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data );						break;
 			case MSG_PRINTDONE:		Console.PrintDone();							break;
 			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
@@ -157,7 +160,7 @@ void DoMessageLoop( void )
 					cwmWorldState->SetReloadingScripts( true );
 					switch( tVal.data[0] )
 					{
-					case '0':	cwmWorldState->ServerData()->load();		break;	// Reload INI file
+					case '0':	cwmWorldState->ServerData()->Load();		break;	// Reload INI file
 					case '1':	Accounts->Load();							break;	// Reload accounts
 					case '2':	UnloadRegions();	LoadRegions();			break;	// Reload regions
 					case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
@@ -170,7 +173,8 @@ void DoMessageLoop( void )
 								LoadSkills();
 								LoadPlaces();
 								Skills->Load();								break;	// Reload definition files
-					case '7':	JSMapping->Reload();	
+					case '7':	JSEngine->Reload();
+								JSMapping->Reload();	
 								Console.PrintDone(); 	
 								Commands->Load();
 								Skills->Load();								break;	// Reload JS
@@ -345,6 +349,8 @@ void CollectGarbage( void )
 	cwmWorldState->deletionQueue.clear();
 
 	Console << " Removed " << objectsDeleted << " objects" << myendl;
+
+	JSEngine->CollectGarbage();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1466,56 +1472,6 @@ void CWorldMain::CheckAutoTimers( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void LoadJSEngine( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads JavaScript engine
-//o---------------------------------------------------------------------------o
-void LoadJSEngine( void )
-{
-	const SI32 DefEngineSize = 0x1000000;
-
-	std::ifstream engineData( "engine.dat" );
-	SI32 engineSize = DefEngineSize;
-	if( engineData.is_open() )
-	{
-		char line[1024];
-		engineData.getline( line, 1024 );
-		UString sLine( line );
-		sLine = sLine.removeComment().stripWhiteSpace();
-		if( !sLine.empty() )
-		{
-			engineSize = UOX_MAX( sLine.toLong(), DefEngineSize );
-		}
-		engineData.close();
-	}
-	jsRuntime			= JS_NewRuntime( engineSize );
-	jsRuntimeConsole	= JS_NewRuntime( engineSize );
-	
-	Console.PrintSectionBegin();
-	Console << "Starting JavaScript Engine...." << myendl;
-	
-	if( jsRuntime == NULL || jsRuntimeConsole == NULL )
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	jsContext = JS_NewContext( jsRuntime, 0x2000 );
-	if( jsContext == NULL )
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	jsContextConsole = JS_NewContext( jsRuntimeConsole, 0x2000 );
-	if( jsContextConsole == NULL )
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	jsGlobal = JS_NewObject( jsContext, &global_class, NULL, NULL ); 
-	if( jsGlobal == NULL )
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	JS_InitStandardClasses( jsContext, jsGlobal ); 
-	jsGlobalConsole = JS_NewObject( jsContextConsole, &global_class, NULL, NULL ); 
-	if( jsGlobalConsole == NULL )
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	JS_InitStandardClasses( jsContextConsole, jsGlobalConsole ); 
-	Console << "JavaScript engine startup complete." << myendl;
-	Console.PrintSectionBegin();
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	void InitClasses( void )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -1540,8 +1496,8 @@ void InitClasses( void )
 	FileLookup		= NULL;
 	objFactory		= NULL;
 
-	objFactory = new ObjectFactory;
-
+	objFactory		= new ObjectFactory;
+	JSEngine		= new CJSEngine;
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
 	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
 	if(( Dictionary		= new CDictionaryContainer )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
@@ -1786,6 +1742,8 @@ void Shutdown( SI32 retCode )
 	UnloadSpawnRegions();
 	UnloadRegions();
 
+	delete JSEngine;
+
 	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
@@ -1797,12 +1755,6 @@ void Shutdown( SI32 retCode )
 #endif
 
 	// don't leave file pointers open, could lead to file corruption
-	Console << "Destroying JS instances... ";
-	JS_DestroyContext( jsContext );
-	JS_DestroyContext( jsContextConsole );
-	JS_DestroyRuntime( jsRuntime );
-	JS_DestroyRuntime( jsRuntimeConsole );
-	Console.PrintDone();
 
 	Console.PrintSectionBegin();
 	if( retCode && cwmWorldState->GetLoaded() )//do restart unless we have crashed with some error.
@@ -2648,11 +2600,9 @@ int main( int argc, char *argv[] )
 		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << myendl;
 		Console.PrintSectionBegin();
 
-		LoadJSEngine();
-
 		if(( cwmWorldState = new CWorldMain ) == NULL ) 
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
-		LoadINIFile();
+		cwmWorldState->ServerData()->Load();
 
 		Console << "Initializing and creating class pointers... " << myendl;
 		InitClasses();

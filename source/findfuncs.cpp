@@ -241,16 +241,19 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		else
 			m->SetID( 0x4064 );
 	}
+	SI08 zAdjust = (z-1);	// Doors sit 1z above the house tiles they sit on
+	if( m->GetType() == IT_PLANK )
+		zAdjust = (z-3);	// Characters seem to be 3z above the rest of the items on the boat.
 
 	st_multi *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
 		multi = Map->SeekIntoMulti( multiID, j );
 
-		if( multi->visible && ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) )
+		if( ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) )
 		{
 			const SI08 multiZ = (m->GetZ() + multi->z);
-			if( (multiZ >= z-1 && multiZ <= z+1) || m->GetType() == IT_PLANK )
+			if( multiZ >= zAdjust && multiZ <= z )
 				return true;
 		}
 	}

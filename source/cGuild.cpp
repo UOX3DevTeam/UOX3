@@ -6,6 +6,8 @@
 #include "classes.h"
 #include "CPacketSend.h"
 #include "Dictionary.h"
+#include "CJSEngine.h"
+
 #ifndef va_start
 	#include <cstdarg>
 #endif
@@ -31,6 +33,8 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 
 CGuild::~CGuild()
 {
+	JSEngine->ReleaseObject( IUE_GUILD, this );
+
 	recruits.clear();
 	members.clear();
 	relationList.clear();

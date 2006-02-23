@@ -1011,7 +1011,7 @@ bool cMapStuff::IsTileWet( UI16 tilenum )   // lord binary
 
 
 // Blocking statics at/above given coordinates?
-bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	MapStaticIterator msi( x, y, worldNumber );
 	
@@ -1019,7 +1019,7 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	while( stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev > oldz && stat->zoff <= oldz && DoesTileBlock( stat->itemid ) )
+		if( elev > oldz && stat->zoff <= oldz && DoesTileBlock( stat->itemid ) || ( checkWater && IsTileWet( stat->itemid ) ) )
 			return true;
 	}
 	return false;
@@ -1058,7 +1058,7 @@ bool cMapStuff::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	if( worldNumber >= MapList.size() )
 		return false;
@@ -1085,13 +1085,20 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber 
 	
     // if there is a dynamic tile at this spot, check to see if its a blocker
     // if it does block, might as well short-circuit and return right away
-    if( dt != INVALIDID && DoesTileBlock( dt ) )
+    if( dt != INVALIDID && ( DoesTileBlock( dt ) || ( checkWater && IsTileWet( dt ) ) ) )
 		return false;
-	
+
     // if there's a static block here in our way, return false
-    if( DoesStaticBlock( x, y, elev, worldNumber ) )
+    if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
 		return false;
-	
+	else if( checkWater )
+	{
+		CLand land;
+		const map_st map = Map->SeekMap( x, y, worldNumber );
+		Map->SeekLand( map.id, &land );
+		if( land.LiquidWet() )
+			return false;
+	}
     return true;
 }
 

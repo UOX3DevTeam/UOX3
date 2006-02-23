@@ -7,6 +7,7 @@
 #include "combat.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "CJSEngine.h"
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 	#include <sys/ioctl.h>
@@ -531,6 +532,8 @@ bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpO
 
 CSocket::~CSocket()
 {
+	JSEngine->ReleaseObject( IUE_SOCK, this );
+
 	if( ValidateObject( currCharObj ) )
 		currCharObj->SetSocket( NULL );
 	closesocket( cliSocket );

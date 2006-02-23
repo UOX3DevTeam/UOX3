@@ -61,7 +61,6 @@ HANDLE cluox_stdin_writeback	= 0; // the write-end of the stdin-pipe
 // Forward function declarations
 
 void		endmessage( int x );
-void		LoadINIFile( void );
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
 void		LoadSpawnRegions( void );
@@ -1173,7 +1172,7 @@ void CConsole::Process( int c )
 				{
 					cwmWorldState->SetReloadingScripts( true );
 					// Reload all the files. If there are issues with these files change the order reloaded from here first.
-					cwmWorldState->ServerData()->load();
+					cwmWorldState->ServerData()->Load();
 					messageLoop << "CMD: Loading All";
 					messageLoop << "     Server INI... ";
 					// Reload accounts, and update Access.adm if new accounts available.

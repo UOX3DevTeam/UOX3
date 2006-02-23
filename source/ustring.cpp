@@ -97,13 +97,13 @@ UString UString::simplifyWhiteSpace() const
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(const char* sep,int start,int stop)
+UString UString::section(const char* sep,int start,int stop) const
 {
 	std::string temp = sep ;
 	return (section(temp,start,stop) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(std::string sep,int start,int stop)
+UString UString::section(std::string sep,int start,int stop) const
 {
 	UString data ;
 	int count = -1 ;
@@ -762,7 +762,7 @@ UString UString::sprintf(const char* format,...)
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-int UString::sectionCount(std::string sep) 
+int UString::sectionCount(std::string sep) const
 {
 	int count = -1 ;
 
@@ -781,7 +781,7 @@ int UString::sectionCount(std::string sep)
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-int UString::sectionCount(const char* sep)
+int UString::sectionCount(const char* sep) const
 {
 	return ( sectionCount(std::string(sep)) );
 }

@@ -81,7 +81,9 @@ enum ScriptEvent
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
-	seOnDeathBlow
+	seOnDeathBlow,
+	seOnGumpPress,
+	seOnGumpInput
 };
 
 struct SEGump
@@ -108,58 +110,15 @@ struct SEGumpData
 	std::vector<short>	nIDs;
 };
 
-enum IUEEntries
-{
-	IUE_RACE = 0,
-	IUE_CHAR,
-	IUE_ITEM,
-	IUE_SOCK,
-	IUE_GUILD,
-	IUE_REGION,
-	IUE_UNKNOWN,
-	IUE_COUNT
-};
-
 class cScript
 {
 private:
-	struct InUseEntry
-	{
-		bool		inUse;
-		JSObject *	toUse;
-		InUseEntry() : inUse( false ), toUse( NULL )
-		{
-		}
-		InUseEntry( bool iU, JSObject *tU ) : inUse( iU ), toUse( tU )
-		{
-		}
-	};
 
 	JSScript *	targScript;
 	JSContext *	targContext;
 	JSObject *	targObject;
 
-	JSObject	*ItemProto;
-	JSObject	*GumpProto;
-	JSObject	*GumpDataProto;
-	JSObject	*CharProto;
-	JSObject	*SpellProto;
-	JSObject	*SpellsProto;
-	JSObject	*GuildProto;
-	JSObject	*GuildsProto;
-	JSObject	*RaceProto;
-	JSObject	*RacesProto;
-	JSObject	*SocketProto;
-	JSObject	*SocketsProto;
-	JSObject	*RegionProto;
-	JSObject	*RegionsProto;
-	JSObject	*UOXCFileProto;
-	JSObject	*ResourceProto;
-	JSObject	*PacketProto;
-
-	//|	Modification	-	08162003 - EviLDeD - Expose the CAccountClass to the JSE.
-	JSObject	*CAccountProto;
-	JSObject	*CConsoleProto;
+	UI08		runTime;
 
 	bool		isFiring;
 	UI32		eventPresence[3];
@@ -170,25 +129,12 @@ private:
 	void		SetNeedsChecking( ScriptEvent eventNum, bool status );
 	bool		ExistAndVerify( ScriptEvent eventNum, std::string functionName );
 
-	std::vector< InUseEntry >	raceObjects;
-	std::vector< InUseEntry >	charObjects;
-	std::vector< InUseEntry >	itemObjects;
-	std::vector< InUseEntry >	sockObjects;
-	std::vector< InUseEntry >	guildObjects;
-	std::vector< InUseEntry >	regionObjects;
-
 	std::vector< SEGump * >		gumpDisplays;
-
-	UI32		FindFreePosition( IUEEntries iType ) const;
-	JSObject *	MakeNewObject( IUEEntries iType );
 
 	void		Cleanup( void );
 
 public:
-
-	UI32		FindUsedObject( IUEEntries iType, JSObject *toFind ) const;
-	void		ReleaseObject( JSObject *toRelease, IUEEntries iType );
-	JSObject *	AcquireObject( IUEEntries iType );
+	void		CollectGarbage( void );
 
 	size_t		NewGumpList( void );
 	SEGump *	GetGumpList( SI32 index );
@@ -233,7 +179,6 @@ public:
 	bool		OnPickup( CItem *item, CChar *pickerUpper );
 	bool		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	bool		OnDecay( CItem *decaying );
-	bool		OnTransfer( CItem *transferred, CChar *source, CChar *target );
 	bool		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	bool		OnEntrance( CMultiObj *left, CBaseObject *leaving );
 	bool		OnEquip( CChar *equipper, CItem *equipping );
@@ -258,8 +203,7 @@ public:
 	bool		OnSnooped( CChar *snooped, CChar *snooper, bool success );
 	bool		OnEnterRegion( CChar *entering, SI16 region );
 	bool		OnLeaveRegion( CChar *entering, SI16 region );
-	bool		OnSpellTarget( CChar *target, CChar *caster, UI08 spellNum );
-	bool		OnSpellTarget( CItem *target, CChar *caster, UI08 spellNum );
+	bool		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellID );
 	SI16		OnScrollCast( CChar *tChar, UI08 SpellID );

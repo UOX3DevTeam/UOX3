@@ -288,46 +288,6 @@ void UOXFile::get_staticrecord( struct staticrecord *buff, UI32 number )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  LoadINIFile()
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Loads uox3.ini
-//o---------------------------------------------------------------------------o
-void LoadINIFile( void )
-{
-	// hmm, fileExists isn't a valid func... let's call our
-	bool uox3test = FileExists( "uox3test.ini" );
-	bool uox3     = FileExists( "uox3.ini" );
-	bool uox      = FileExists( "uox.ini" );
-	if( !uox )
-	{
-		if( uox3 ) 
-		{
-			Console << "NOTICE: uox3.ini is no longer needed." << myendl;
-			Console << "Rewriting as uox.ini." << myendl;
-			cwmWorldState->ServerData()->load( "uox3.ini" );//load this anyway, in case they don't have the other one.
-			cwmWorldState->ServerData()->save();
-		}
-		else if( uox3test ) 
-		{
-			Console << "NOTICE: uox3test.ini is no longer needed." << myendl;
-			Console << "Rewriting as uox.ini." << myendl;
-			cwmWorldState->ServerData()->load( "uox3test.ini" );//load this anyway, in case they don't have the other one.
-			cwmWorldState->ServerData()->save();
-		}
-	}
-	else if( uox3 || uox3test )
-	{
-		Console << "You have both old style (uox3.ini and/or uox3test.ini) and new style (uox.ini) files." << myendl;
-		Console << "We will only be reading the uox.ini file" << myendl;
-	}
-	cwmWorldState->ServerData()->load();
-	if( !uox && !uox3 && !uox3test )
-		cwmWorldState->ServerData()->save();
-}
-
-//o---------------------------------------------------------------------------o
 //|   Function    :  LoadCustomTitle()
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam

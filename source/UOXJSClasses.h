@@ -11,6 +11,33 @@ namespace UOX
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
 
+static JSClass global_class =
+{
+	"global",
+	0,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+static JSClass uox_class =
+{
+	"uoxscript",
+	0,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub 
+}; 
+
 static JSClass UOXSpell_class =
 {
 	"UOXSpell",

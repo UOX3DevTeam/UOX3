@@ -29,6 +29,7 @@
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
 #include "JSEncapsulate.h"
+#include "CJSEngine.h"
 
 namespace UOX
 {
@@ -183,9 +184,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	CItem *newItem		= calcItemObjFromSer( targSerial );
 	if( newItem != NULL )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, newItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -209,9 +208,7 @@ JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	CChar *newChar		= calcCharObjFromSer( targSerial );
 	if( newChar != NULL )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myObj, newChar );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -402,7 +399,7 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}	
 
-	Commands->Register( toRegister, JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ), execLevel, isEnabled );
+	Commands->Register( toRegister, scriptID, execLevel, isEnabled );
  	return JS_TRUE;
 }
 
@@ -681,9 +678,7 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, wrld );
 	if( cMade != NULL )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myobj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myobj, cMade );
+		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval				= OBJECT_TO_JSVAL( myobj );
 	}
 	else
@@ -722,9 +717,7 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	CItem *newItem = Items->CreateScriptItem( mySock, myChar, bpSectNumber, iAmount, itemType, bInPack );
 	if( newItem != NULL )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, newItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -764,9 +757,7 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( newItem != NULL )
 	{
 		newItem->SetName( itemName );
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, newItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -846,9 +837,7 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	CMultiObj *multi = findMulti( xLoc, yLoc, zLoc, worldNumber );
 	if( ValidateObject( multi ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, multi );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -875,9 +864,7 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber );
 	if( ValidateObject( item ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, item );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -906,9 +893,7 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id );
 	if( ValidateObject( item ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, item );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -1048,9 +1033,7 @@ JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	if( ValidateObject( pOwner ) )
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myObj, pOwner );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	else
@@ -1076,14 +1059,10 @@ JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	
 	CItem *calcedItem = calcItemObjFromSer( sChar->GetDWord( 7 ) );
 	if( !ValidateObject( calcedItem ) )
-	{
 		*rval = JSVAL_NULL;
-	}
 	else
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_ITEM );
-		JS_SetPrivate( cx, myObj, calcedItem );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, calcedItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	return JS_TRUE;
@@ -1107,14 +1086,10 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	
 	CChar *calcedChar = calcCharObjFromSer( sChar->GetDWord( 7 ) );
 	if( !ValidateObject( calcedChar ) )
-	{
 		*rval = JSVAL_NULL;
-	}
 	else
 	{
-		cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-		JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-		JS_SetPrivate( cx, myObj, calcedChar );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, calcedChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 		*rval = OBJECT_TO_JSVAL( myObj );
 	}
 	return JS_TRUE;
@@ -1527,7 +1502,7 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			HTMLTemplates->Load();
 			break;
 	case 7:	// Reload INI
-			cwmWorldState->ServerData()->load();
+			cwmWorldState->ServerData()->Load();
 			break;
 	case 8: // Reload Everything
 			FileLookup->Reload();
@@ -1542,7 +1517,7 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			messageLoop << MSG_RELOADJS;
 			HTMLTemplates->Unload();
 			HTMLTemplates->Load();
-			cwmWorldState->ServerData()->load();
+			cwmWorldState->ServerData()->Load();
 			break;
 	case 9: // Reload Accounts
 			Accounts->Load();
@@ -1647,6 +1622,9 @@ JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	if( myScript != NULL )
 		ObjectFactory::getSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
+
+	JS_MaybeGC( cx );
+
 	*rval = INT_TO_JSVAL( b );
 	return JS_TRUE;
 }
@@ -1719,9 +1697,7 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-	JS_SetPrivate( cx, myObj, mChar );
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 	*rval = OBJECT_TO_JSVAL( myObj );
 	return JS_TRUE;
 }

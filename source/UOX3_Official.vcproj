@@ -1957,34 +1957,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="globals.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="2"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="DebugProfile|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							Optimization="0"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-							BrowseInformation="1"/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="npcs.cpp">
 					<FileConfiguration
 						Name="Release|Win32">
@@ -2044,6 +2016,9 @@
 			<Filter
 				Name="JS Engine"
 				Filter="">
+				<File
+					RelativePath=".\CJSEngine.cpp">
+				</File>
 				<File
 					RelativePath=".\CJSMapping.cpp">
 				</File>
@@ -2488,6 +2463,9 @@
 			<Filter
 				Name="JS Engine Nr. 1"
 				Filter="">
+				<File
+					RelativePath=".\CJSEngine.h">
+				</File>
 				<File
 					RelativePath=".\CJSMapping.h">
 				</File>

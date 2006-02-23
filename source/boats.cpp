@@ -100,48 +100,27 @@ void LeaveBoat( CSocket *s, CItem *p )
 	if( !ValidateObject( boat ) )
 		return;
 
-	SI16 x2 = p->GetX();
-	SI16 y2 = p->GetY();
-	SI08 z = p->GetZ(), typ = 0;
+	const SI16 x2 = p->GetX();
+	const SI16 y2 = p->GetY();
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
 	for( SI16 x = x2 - 2; x < x2 + 3; ++x )
 	{
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
-			SI08 sz = Map->StaticTop( x, y, z, worldNumber, MAX_Z_STEP );
-			SI08 mz = Map->MapElevation( x, y, worldNumber );
-			if( sz == ILLEGAL_Z )
-				typ = 0;
-			else
-				typ	= 1;
-
-			if( ( typ == 0 && mz != 5) || ( typ == 1 && sz != -5 ) )// everthing the blocks a boat is ok to leave the boat ... LB
+			SI08 z = Map->Height( x, y, ILLEGAL_Z, worldNumber );
+			if( Map->CanMonsterMoveHere( x, y, ILLEGAL_Z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
 			{
+				mChar->SetLocation( x, y, z, worldNumber );
 				CDataList< CChar * > *myPets = mChar->GetPetList();
 				for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 				{
 					if( ValidateObject( pet ) )
 					{
 						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
-						{
-							if( typ )
-								pet->SetLocation( x, y, sz );
-							else
-								pet->SetLocation( x, y, mz );
-
-							if( ValidateObject( pet->GetMultiObj() ) )
-								pet->SetMulti( INVALIDSERIAL );
-						}
+							pet->SetLocation( x, y, z, worldNumber );
 					}
 				}
-				mChar->SetMulti( INVALIDSERIAL );
-
-				if( typ )
-					mChar->SetLocation( x, y, sz );
-				else
-					mChar->SetLocation( x, y, mz );
-
 				s->sysmessage( 3 );
 				return;
 			}
@@ -163,7 +142,7 @@ void PlankStuff( CSocket *s, CItem *p )
 	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
 	{
-		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 5 );
+		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 3 );
 		SERIAL mser			= p->GetTempVar( CITV_MORE );
 		CMultiObj *boat2	= calcMultiFromSer( mser );
 		if( ValidateObject( boat2 ) )
@@ -174,19 +153,13 @@ void PlankStuff( CSocket *s, CItem *p )
 				if( ValidateObject( pet ) )
 				{
 					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
-					{
-						pet->SetLocation( boat2->GetX() + 1, boat2->GetY() + 1, boat2->GetZ() + 4 );
-						pet->SetMulti( boat2 );
-					}
+						pet->SetLocation( mChar );
 				}
 			}
 		}
 
 		if( ValidateObject( boat2 ) )
-		{
 			s->sysmessage( 1 );
-			mChar->SetMulti( boat2 );
-		}
 		else
 			s->sysmessage( 2 );
 	}

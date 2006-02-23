@@ -8,6 +8,7 @@
 #include "ssection.h"
 #include "cEffects.h"
 #include "classes.h"
+#include "CJSEngine.h"
 
 namespace UOX
 {
@@ -50,6 +51,8 @@ cRaces::~cRaces( void )
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
+	JSEngine->ReleaseObject( IUE_RACE, this );
+
 	for( size_t i = 0; i < races.size(); ++i )
 	{
 		delete races[i];

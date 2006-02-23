@@ -206,7 +206,7 @@ void HandleTeleporters( CChar *s )
 					{
 						if( !ValidateObject( myPet ) )
 							continue;
-						if( myPet->IsNpc() && myPet->GetOwnerObj() == s )
+						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s )
 						{
 							if( objInOldRange( s, myPet, DIST_INRANGE ) )
 								myPet->SetLocation( s );

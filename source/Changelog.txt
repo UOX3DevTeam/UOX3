@@ -1,3 +1,16 @@
+2/23/2006 - giwo (0.98-3.4i [3.5 BETA])
+	Fixed an issue causing players to not disembark boats properly.
+	Fixed an issue causing boat holds not to be made part of the multi.
+	Updated the INI loading code to make it more verbose.
+	Removed "Golden" health until we know when (if ever) OSI uses it.
+	Created a new class, CJSEngine along with the files CJSEngine.cpp/.h
+	Created a new class, CJSRuntime to allow multiple runtimes (for threading purposes).
+	Moved JSObject creation and handling into CJSRuntime.
+	Moved global JS Context and Runtimes into CJSRuntime.
+	Moved JS Engine loading code into CJSEngine.
+	Modified cScript so all JS Scripts on a runtime share a single context.
+	Removed global.cpp from the project.
+
 2/23/2006 - grimson
 	Added a Dirty( UT_LOCATION ) to HandleDeath() in pcmanage.cpp to make shure the player gets
 	properly updated when he dies.

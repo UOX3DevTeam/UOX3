@@ -17,6 +17,7 @@
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
 #include "JSEncapsulate.h"
+#include "CJSEngine.h"
 
 #include "cGuild.h"
 #include "combat.h"
@@ -182,9 +183,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-						JS_SetPrivate( cx, myObj, pOwner );
+						JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, pOwner, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myObj );
 					}
 					break;
@@ -206,21 +205,29 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						if( TempSerial >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
 						{
-							JSObject *myItem = myScript->AcquireObject( IUE_ITEM );
-							JS_SetPrivate( cx, myItem, calcItemObjFromSer( TempSerial ) );
-							*vp = OBJECT_TO_JSVAL( myItem );
+							CItem *myCont = calcItemObjFromSer( TempSerial );
+							if( ValidateObject( myCont ) )
+							{
+								JSObject *myItem = JSEngine->AcquireObject( IUE_ITEM, myCont, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+								*vp = OBJECT_TO_JSVAL( myItem );
+							}
+							else
+								*vp = JSVAL_NULL;
 						}
 						else
 						{
-							JSObject *myChar = myScript->AcquireObject( IUE_CHAR );
-							JS_SetPrivate( cx, myChar, calcCharObjFromSer( TempSerial ) );
-							*vp = OBJECT_TO_JSVAL( myChar );
+							CChar *chCont = calcCharObjFromSer( TempSerial );
+							if( ValidateObject( chCont ) )
+							{
+								JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, chCont, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+								*vp = OBJECT_TO_JSVAL( myChar );
+							}
+							else
+								*vp = JSVAL_NULL;
 						}
 					}
-
 					break;
 				case CIP_TYPE:			*vp = INT_TO_JSVAL( static_cast<UI08>(gPriv->GetType()) );		break;
 				case CIP_MORE:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE ) );			break;
@@ -253,9 +260,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myRace	= myScript->AcquireObject( IUE_RACE );
-						JS_SetPrivate( cx, myRace, TempRace );
+						JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myRace );
 					}
 					break;
@@ -358,9 +363,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
-						JS_SetPrivate( cx, myChar, TempObj );
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, TempObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myChar );
 					}
 					break;
@@ -378,9 +381,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
-						JS_SetPrivate( cx, myChar, tempChar );
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, tempChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myChar );
 					}
 					break;
@@ -415,9 +416,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myItem	= myScript->AcquireObject( IUE_ITEM );
-						JS_SetPrivate( cx, myItem, TempItem );
+						JSObject *myItem	= JSEngine->AcquireObject( IUE_ITEM, TempItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myItem );
 					}
 					break;
@@ -436,9 +435,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myRace	= myScript->AcquireObject( IUE_RACE );
-						JS_SetPrivate( cx, myRace, TempRace );
+						JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myRace );
 					}
 					break;
@@ -474,10 +471,7 @@ namespace UOX
 							*vp = JSVAL_NULL;
 						else
 						{
-							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-							JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
-				
-							JS_SetPrivate( cx, myTown, myReg );
+							JSObject *myTown = JSEngine->AcquireObject( IUE_REGION, myReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( myTown );
 							break;
 						}
@@ -492,10 +486,7 @@ namespace UOX
 					else
 					{
 						// Should build the town here
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myTown	= myScript->AcquireObject( IUE_REGION );
-			
-						JS_SetPrivate( cx, myTown, cwmWorldState->townRegions[TempTownID] );
+						JSObject *myTown	= JSEngine->AcquireObject( IUE_REGION, cwmWorldState->townRegions[TempTownID], JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myTown );
 					}
 					break;
@@ -507,11 +498,7 @@ namespace UOX
 						*vp = JSVAL_NULL;
 					else
 					{
-						// if he has one, lets build our guild !
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myGuild	= myScript->AcquireObject( IUE_GUILD );
-			
-						JS_SetPrivate( cx, myGuild, GuildSys->Guild( TempGuildID ) );
+						JSObject *myGuild	= JSEngine->AcquireObject( IUE_GUILD, GuildSys->Guild( TempGuildID ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myGuild );
 					}
 					break;
@@ -522,9 +509,7 @@ namespace UOX
 							*vp = JSVAL_NULL;
 						else
 						{	// Otherwise Acquire an object
-							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-							JSObject *mySock	= myScript->AcquireObject( IUE_SOCK );
-							JS_SetPrivate( cx, mySock, tSock );
+							JSObject *mySock	= JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( mySock );
 						}
 				
@@ -572,9 +557,7 @@ namespace UOX
 						else
 						{
 							// Otherwise Acquire an object
-							cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-							JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
-							JS_SetPrivate( cx, myChar, tempChar );
+							JSObject *myChar = JSEngine->AcquireObject( IUE_CHAR, tempChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( myChar );
 						}
 					}
@@ -934,9 +917,7 @@ namespace UOX
 					else
 					{
 						// Otherwise Acquire an object
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
-						JS_SetPrivate( cx, myChar, tempMayor );
+						JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, tempMayor, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myChar );
 					}
 					break;
@@ -1018,9 +999,7 @@ namespace UOX
 										else
 										{
 											// Otherwise Acquire an object
-											cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-											JSObject *myChar	= myScript->AcquireObject( IUE_CHAR );
-											JS_SetPrivate( cx, myChar, gMaster );
+											JSObject *myChar	= JSEngine->AcquireObject( IUE_CHAR, gMaster, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 											*vp = OBJECT_TO_JSVAL( myChar );
 										}
 										break;
@@ -1033,9 +1012,7 @@ namespace UOX
 										else
 										{
 											// Otherwise Acquire an object
-											cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-											JSObject *myItem	= myScript->AcquireObject( IUE_ITEM );
-											JS_SetPrivate( cx, myItem, gStone );
+											JSObject *myItem	= JSEngine->AcquireObject( IUE_ITEM, gStone, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 											*vp = OBJECT_TO_JSVAL( myItem );
 										}
 										break;
@@ -1385,9 +1362,7 @@ namespace UOX
 						*vp = JSVAL_NULL;
 					else
 					{
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-						JSObject *myObj		= myScript->AcquireObject( IUE_CHAR );
-						JS_SetPrivate( cx, myObj, gPriv->CurrcharObj() );
+						JSObject *myObj		= JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 						*vp = OBJECT_TO_JSVAL( myObj );
 					}
 
@@ -1397,7 +1372,6 @@ namespace UOX
 				case CSOCKP_TEMPINT:			*vp = INT_TO_JSVAL( gPriv->TempInt() );					break;
 				case CSOCKP_TEMPOBJ:
 					{
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						CBaseObject *mObj	= gPriv->TempObj();
 						if( !ValidateObject( mObj ) )
 							*vp = JSVAL_NULL;
@@ -1405,10 +1379,9 @@ namespace UOX
 						{
 							JSObject *myObj = NULL;
 							if( mObj->CanBeObjType( OT_ITEM ) )
-								myObj = myScript->AcquireObject( IUE_ITEM );
+								myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							else
-								myObj = myScript->AcquireObject( IUE_CHAR );
-							JS_SetPrivate( cx, myObj, mObj );
+								myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( myObj );
 						}
 					}
@@ -1448,7 +1421,6 @@ namespace UOX
 				case CSOCKP_TARGET:
 					{
 						SERIAL mySerial		= gPriv->GetDWord( 7 );
-						cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 						// Item
 						if( mySerial >= BASEITEMSERIAL )
 						{
@@ -1460,8 +1432,7 @@ namespace UOX
 								return JS_TRUE;
 							}
 
-							JSObject *myObj = myScript->AcquireObject( IUE_ITEM );
-							JS_SetPrivate( cx, myObj,  myItem);
+							JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( myObj );
 						}
 						// Char
@@ -1475,8 +1446,7 @@ namespace UOX
 								return JS_TRUE;
 							}
 
-							JSObject *myObj = myScript->AcquireObject( IUE_CHAR );
-							JS_SetPrivate( cx, myObj,  myChar);
+							JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 							*vp = OBJECT_TO_JSVAL( myObj );
 						}
 

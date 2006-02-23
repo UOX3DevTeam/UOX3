@@ -62,22 +62,4 @@
 #include "funcdecl.h"
 
 
-namespace UOX
-{
-//o---------------------------------------------------------------------------o
-// JS Stuff
-//o---------------------------------------------------------------------------o
-extern JSRuntime *jsRuntime, *jsRuntimeConsole;
-extern JSContext *jsContext, *jsContextConsole;
-extern JSObject *jsGlobal, *jsGlobalConsole;
-extern JSClass global_class;
-extern JSClass uox_class;
-
-inline TIMERVAL BuildTimeValue( R32 timeFromNow ) 
-{ 
-	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	
-}
-
-}
-
 #endif // __UOX3_H

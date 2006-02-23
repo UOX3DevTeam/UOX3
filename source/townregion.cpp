@@ -13,6 +13,7 @@
 #include "jail.h"
 #include "Dictionary.h"
 #include "classes.h"
+#include "CJSEngine.h"
 
 namespace UOX
 {
@@ -64,6 +65,8 @@ chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS )
 
 CTownRegion::~CTownRegion()
 {
+	JSEngine->ReleaseObject( IUE_REGION, this );
+
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
 	orePreferences.resize( 0 );

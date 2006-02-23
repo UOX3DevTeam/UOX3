@@ -590,29 +590,20 @@ bool IsOnFoodList( const std::string sFoodList, const UI16 sItemID )
 {
 	bool doesEat = false;
 
-	UString tag;
-	UString sect			= "FOODLIST " + sFoodList;
+	const UString sect		= "FOODLIST " + sFoodList;
 	ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
 	if( FoodList != NULL )
 	{
-		size_t foodEntrys = FoodList->NumEntries();
-		if( foodEntrys > 0 )
-			for( int k = 0; k < foodEntrys; k++ )
+		for( UString tag = FoodList->First(); !FoodList->AtEnd() && !doesEat; tag = FoodList->Next() )
+		{
+			if( !tag.empty() )
 			{
-				tag = FoodList->MoveTo( k );
-				if( !tag.empty() )
-				{
-					if( tag.upper() == "FOODLIST" )
-						doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
-					else
-						if( sItemID == tag.toUShort() )
-						{
-							doesEat = true;
-							break;
-						}
-				}
-
+				if( tag.upper() == "FOODLIST" )
+					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
+				else if( sItemID == tag.toUShort() )
+					doesEat = true;
 			}
+		}
 	}
 	return doesEat;
 }

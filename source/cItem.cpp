@@ -42,7 +42,7 @@
 #include "speech.h"
 #include "cRaces.h"
 #include "cSpawnRegion.h"
-#include "cScript.h"
+#include "CJSEngine.h"
 #include "CJSMapping.h"
 #include "Dictionary.h"
 #include "msgboard.h"
@@ -1842,6 +1842,8 @@ void CItem::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
+		JSEngine->ReleaseObject( IUE_ITEM, this );
+
 		CBaseObject::Cleanup();
 
 		RemoveFromSight();

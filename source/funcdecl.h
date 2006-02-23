@@ -103,6 +103,11 @@ void	callGuards( CChar *mChar );
 //o---------------------------------------------------------------------------o
 // Time Functions
 //o---------------------------------------------------------------------------o
+inline TIMERVAL BuildTimeValue( R32 timeFromNow ) 
+{ 
+	return static_cast<TIMERVAL>( cwmWorldState->GetUICurrentTime() + ( static_cast<R32>(1000) * timeFromNow ) );	
+}
+
 UI32	getclock( void );
 inline char *	RealTime( char *time_str )
 {

@@ -56,6 +56,7 @@
 #include "cSpawnRegion.h"
 #include "Dictionary.h"
 #include "movement.h"
+#include "CJSEngine.h"
 
 namespace UOX
 {
@@ -3607,6 +3608,8 @@ void CChar::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
+		JSEngine->ReleaseObject( IUE_CHAR, this );
+
 		CBaseObject::Cleanup();
 
 		RemoveFromSight();

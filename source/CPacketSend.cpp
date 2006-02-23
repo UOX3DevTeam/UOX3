@@ -362,12 +362,9 @@ void CPExtMove::CopyData( CChar &toCopy )
 #pragma note( "we need to update this here to determine what goes on with elves too!" )
 	if( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E )
 		flag |= 0x02;
-#if defined( _MSC_VER )
-#pragma note( "Get confirmation here" )
-#endif
 	// turn it yellow on full health?
-	if( toCopy.GetHP() == toCopy.GetMaxHP() )
-		flag |= 0x08;
+//	if( toCopy.GetHP() == toCopy.GetMaxHP() )
+//		flag |= 0x08;
 	pStream.WriteByte( 15, flag );
 }
 

@@ -1497,7 +1497,7 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			{
 				if( !ValidateObject( myPet ) )
 					continue;
-				if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+				if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
 				{
 					if( objInOldRange( mChar, myPet, DIST_INRANGE ) )
 						myPet->SetLocation( mChar );
@@ -3279,6 +3279,9 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 #endif
 	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;
+	if( toRegister == NULL )
+		return;
+
 	spells[spellNumber].JSScript( JSMapping->GetScriptID( toRegister->Object() ) );
 	spells[spellNumber].Enabled( isEnabled );
 }

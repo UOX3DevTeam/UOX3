@@ -46,14 +46,14 @@ public:
 	//! Remove all trailing and leading white space
 	UString stripWhiteSpace() const ;
 	//! Using the specified sep as a delimitor, return the specifed section of the string
-	UString section(std::string sep, int start, int stop=std::string::npos) ;
+	UString section(std::string sep, int start, int stop=std::string::npos) const;
 	//! Overloaded member of the above
-	UString section(const char* sep, int start, int stop=std::string::npos) ;
+	UString section(const char* sep, int start, int stop=std::string::npos) const;
 
 	//!  How many "sections" are in this string ?
-	int sectionCount(std::string sep) ;
+	int sectionCount(std::string sep) const;
 	//!  How many "sections" are in this string ?
-	int sectionCount(const char* sep) ;
+	int sectionCount(const char* sep) const;
 
 	unsigned char toUByte( bool *ok = 0, int base = -1 ) const;
 	char toByte( bool *ok = 0, int base = 10 ) const;

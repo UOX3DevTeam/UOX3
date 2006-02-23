@@ -126,7 +126,7 @@ private:
 	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
 	bool		tradesystemenabled;				//	True if the trade system is enabled (uses the GOOD settings... does anyone use this?)
 	bool		ranksystemenabled;				//	True if the rank system is enabled (allows for variable quality goods)
-	SI16		cutscrollrequirement;			//	Should be a BOOL - If true, then skill requirements for casting spells is cut
+	bool		cutscrollrequirement;			//	Should be a BOOL - If true, then skill requirements for casting spells is cut
 	bool		npctraining;					//	True if NPCs can train PCs
 	bool		charhidewhilemounted;			//	Should be a BOOL - If true, then a character can hide/stealth while mounted
 	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
@@ -243,10 +243,10 @@ public:
 	void		DungeonLightLevel( LIGHTLEVEL value );
 	void		ServerStartPrivs( UI16 value );
 	void		ServerStartGold( SI16 value );
-	CServerData * ParseUox3Ini( std::string filename );
+	bool		ParseINI( const std::string filename );
+	void		HandleLine( const UString tag, const UString value );
 
-	CServerData *load( void );
-	CServerData *load( std::string filename );
+	void		Load( void );
 	bool		save( void );
 	bool		save( std::string filename );
 
@@ -358,8 +358,8 @@ public:
 	void		RankSystemStatus( bool value );
 	bool		RankSystemStatus( void ) const;
 
-	void		CutScrollRequirementStatus( SI16 value );
-	SI16		CutScrollRequirementStatus( void ) const;
+	void		CutScrollRequirementStatus( bool value );
+	bool		CutScrollRequirementStatus( void ) const;
 
 	void		NPCTrainingStatus( bool setting );
 	bool		NPCTrainingStatus( void ) const;
