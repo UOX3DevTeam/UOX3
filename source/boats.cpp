@@ -567,9 +567,9 @@ void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 	SI16 dy = static_cast<SI16>(i->GetY() - b->GetY());//and distance Y
 
 	if( rightTurn )
-		i->SetLocation( static_cast<SI16>(b->GetX() - dy), static_cast<SI16>(b->GetY() + dx), b->GetZ() );
+		i->SetLocation( static_cast<SI16>(b->GetX() - dy), static_cast<SI16>(b->GetY() + dx), i->GetZ() );
 	else
-		i->SetLocation( static_cast<SI16>(b->GetX() + dy), static_cast<SI16>(b->GetY() - dx), b->GetZ() );
+		i->SetLocation( static_cast<SI16>(b->GetX() + dy), static_cast<SI16>(b->GetY() - dx), i->GetZ() );
 }
 
 //o---------------------------------------------------------------------------o
