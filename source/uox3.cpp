@@ -444,7 +444,7 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			x->GetAttacker()->SetTarg( NULL );
 		x->SetLocation( 7000, 7000, 0 );
 		x->SetFrozen( true );
-		x->SetHungerStatus( false );
+		x->SetMounted( true );
 		x->SetInvulnerable( true );
 
 		c->SetTempVar( CITV_MOREX, x->GetSerial() );
@@ -475,7 +475,7 @@ void DismountCreature( CChar *s )
 	{
 		tMount->SetLocation( s );
 		tMount->SetFrozen( false );
-		tMount->SetHungerStatus( true );
+		tMount->SetMounted( false );
 		tMount->SetInvulnerable( false );
 		if( ci->GetDecayTime() != 0 )
 			tMount->SetTimer( tNPC_SUMMONTIME, ci->GetDecayTime() );
@@ -945,7 +945,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check NPC's status
 //o---------------------------------------------------------------------------o
-void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
+void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck )
 {
 	// okay, this will only ever trigger after we check an npc...  Question is:
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
@@ -965,6 +965,11 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock )
 
 	if( doRestock )
 		restockNPC( mChar, false );
+
+	if( doPetOfflineCheck )
+	{
+		mChar.checkPetOfflineTimeout();
+	}
 
 	if( mChar.GetTimer( tNPC_SUMMONTIME ) )
 	{
@@ -1116,6 +1121,7 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 nextSetNPCFlagTime		= 0;
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
+	bool doPetOfflineCheck				= false;
 	MAPUSERNAMEID_ITERATOR I;
 
 	// modify this stuff to take into account more variables
@@ -1297,8 +1303,14 @@ void CWorldMain::CheckAutoTimers( void )
 	{
 		doWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
-		SetTimer( tWORLD_LIGHTTIME, ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );	// for testing purposes
+		SetTimer( tWORLD_LIGHTTIME, ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );
 		doWeather = true;
+	}
+
+	if( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() || GetOverflow() )
+	{
+		SetTimer( tWORLD_PETOFFLINECHECK, ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
+		doPetOfflineCheck = true;
 	}
 
 	bool checkFieldEffects = false;
@@ -1378,7 +1390,7 @@ void CWorldMain::CheckAutoTimers( void )
 				{
 					if( setNPCFlags )
 						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
-					checkNPC( (*charCheck), checkAI, doRestock );
+					checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
 				}
 			}
 			else if( charCheck->GetTimer( tPC_LOGOUT ) )
@@ -2749,6 +2761,8 @@ int main( int argc, char *argv[] )
 		cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckNpcAISpeed() ) );
 		cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
 		cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
+		cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
+		
 		Console.PrintDone();
 
 		DisplayBanner();

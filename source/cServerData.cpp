@@ -34,7 +34,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER"
 );
 
 void CServerData::ResetDefaults( void )
@@ -154,6 +154,9 @@ void CServerData::ResetDefaults( void )
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
 	SnoopIsCrime( false );
+	PetOfflineTimeout( 5 );
+	PetHungerOffline( true );
+	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
 	
 	CheckBoatSpeed( 0.75 );
 	CheckNpcAISpeed( 1 );
@@ -893,6 +896,24 @@ SI16 CServerData::HungerDamage( void ) const
 	return hungerdamage;
 }
 
+void CServerData::PetOfflineTimeout( UI16 value )
+{
+	petOfflineTimeout = value;
+}
+UI16 CServerData::PetOfflineTimeout( void ) const
+{
+	return petOfflineTimeout;
+}
+
+void CServerData::PetHungerOffline( bool value )
+{
+	petHungerOffline = value;
+}
+bool CServerData::PetHungerOffline( void ) const
+{
+	return petHungerOffline;
+}
+
 void CServerData::BuyThreshold( SI16 value )
 {
 	buyThreshold = value;
@@ -1343,6 +1364,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << std::endl;
 		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << std::endl;
 		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << std::endl;
+		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[directories]" << std::endl << "{" << std::endl;
@@ -1446,6 +1468,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << std::endl << "[hunger]" << std::endl << "{" << std::endl;
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << std::endl;
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << std::endl;
+		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << std::endl;
+		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[combat]" << std::endl << "{" << std::endl;
@@ -2107,6 +2131,15 @@ CServerData * CServerData::ParseUox3Ini( std::string filename )
 							break;
 						case 0x085E:	 // NPCMOVEMENTSPEED[0140]
 							NPCSpeed( value.toDouble() );
+							break;
+						case 0x086F:	 // PETHUNGEROFFLINE[0141]
+							PetHungerOffline( (value.toByte() == 1) );
+							break;
+						case 0x0880:	 // PETOFFLINETIMEOUT[0142]
+							PetOfflineTimeout( value.toUShort() );
+							break;
+						case 0x0892:	 // PETOFFLINECHECKTIMER[0143]
+							SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
 							break;
 						default:
 							break;

@@ -31,6 +31,7 @@ enum cSD_TID
 	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
 	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
 	tSERVER_POTION,				// Delay between using potions
+	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
 	tSERVER_COUNT
 };
 
@@ -132,6 +133,8 @@ private:
 	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
 	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
 	bool		overloadPackets;				//	Toggle Packet Handling in JS
+	bool		petHungerOffline;				//	Should pets hunger while the player is offline
+	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -405,6 +408,12 @@ public:
 
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
+
+	void		PetHungerOffline( bool value );
+	bool		PetHungerOffline( void ) const;
+
+	void		PetOfflineTimeout( UI16 value );
+	UI16		PetOfflineTimeout( void ) const;
 
 	void		BuyThreshold( SI16 value );
 	SI16		BuyThreshold( void ) const;

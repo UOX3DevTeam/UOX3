@@ -88,6 +88,9 @@ private:
 		SERIAL				fTarg; // NPC Follow Target
 
 		cNPC_FLAG			npcFlag;
+		
+		bool				isMounted;
+		bool				isStabled;
 	};
 
 	struct PlayerValues_st
@@ -114,6 +117,7 @@ private:
 		COLOUR		beardColour;
 
 		std::string	lastOn; //Last time a character was on
+		UI32		lastOnSecs; //Last time a character was on in seconds.
 
 		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
 		UI08		postType;
@@ -241,6 +245,7 @@ public:
 	void		RemoveOwnedItem( CItem *toRemove );
 
 	void		DoHunger( CSocket *mSock );
+	void		checkPetOfflineTimeout( void );
 	SI08		GetHunger( void ) const;
 	UI16		GetTamedHungerRate( void ) const;
 	UI08		GetTamedHungerWildChance( void ) const;
@@ -252,6 +257,13 @@ public:
 	void		SetTamedHungerWildChance( UI08 newValue );
 	void		SetTown( UI08 newValue );
 	void		SetFood( std::string food );
+
+	void		SetMounted( bool newValue );
+	bool		GetMounted( void ) const;
+
+	void		SetStabled( bool newValue );
+	bool		GetStabled( void ) const;
+
 
 	void		DecHunger( const SI08 amt = 1 );
 
@@ -624,6 +636,9 @@ public:
 
 	void		SetLastOn( std::string newValue );
 	std::string GetLastOn( void ) const;
+	void		SetLastOnSecs( UI32 newValue );
+	UI32		GetLastOnSecs( void ) const;
+
 
 	CChar *		GetTrackingTarget( void ) const;
 	CChar *		GetTrackingTargets( UI08 targetNum ) const;

@@ -1,3 +1,17 @@
+2/23/2006 - grimson (0.98-3.4g [3.5 BETA])
+	Added three new ini settings:
+		PETHUNGEROFFLINE=0/1 	Sets whether pets should hunger while the player is offline or not.
+		PETOFFLINETIMEOUT=#  	Sets the offline time of a player in days after that a pet becomes
+					wild again.
+		PETOFFLINECHECKTIMER=#	Sets the intervall in seconds between checks for the player offline
+					time.
+
+	Added 2 new NPC values to CChar to state whether the char has been mounted or stabled and check those
+	in the DoHunger() and the new checkPetOfflineTimeout() functions. And made them available to the JS
+	engine as the 2 new propertys:
+		.mounted	Can be used to get or set the mounted status
+		.stabled	Can be used to get or set the stabled status
+		
 2/22/2006 - grimson
 	Fixed a bug in CBase_Teleport() introduced by my earlier changes that caused teleports to other worlds
 	to fail with big x and/or y coordinates.

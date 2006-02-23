@@ -179,8 +179,12 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetHungerStatus( true );
 	SetTamedHungerRate( 0 );
 	SetTamedHungerWildChance( 0 );
+	
+	SetMounted( false );
+	SetStabled( false );
+	
 	foodList.reserve( MAX_NAME );
-
+	
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
 	skillUsed[0] = skillUsed[1] = 0;
 	memset( regen, 0, sizeof( UI32 ) * 3 );
@@ -349,7 +353,7 @@ void CChar::DoHunger( CSocket *mSock )
 		}
 		else if( IsNpc() && !IsTamed() && Races->DoesHunger( GetRace() ) )
 		{
-			if( WillHunger() )
+			if( WillHunger() && !GetMounted() && !GetStabled() )
 			{
 				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
@@ -381,14 +385,17 @@ void CChar::DoHunger( CSocket *mSock )
 		}
 		else if( IsTamed() && GetTamedHungerRate() > 0 )
 		{
-			if( WillHunger() )
+			if( WillHunger() && !GetMounted() && !GetStabled() )
 			{
-				CChar *owner = GetOwnerObj();
-				if( !ValidateObject( owner ) )
-					return;
+				if( cwmWorldState->ServerData()->PetHungerOffline() == false )
+				{
+					CChar *owner = GetOwnerObj();
+					if( !ValidateObject( owner ) )
+						return;
 
-				if( !isOnline( (*owner) ) )
-					return;
+					if( !isOnline( (*owner) ) )
+						return;
+				}
 
 				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
@@ -412,6 +419,7 @@ void CChar::DoHunger( CSocket *mSock )
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
 					{
 						SetOwner( NULL );
+						SetHunger( 6 );
 					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 				}
@@ -419,6 +427,48 @@ void CChar::DoHunger( CSocket *mSock )
 		}
 	}
 }
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void checkPetOfflineTimeout()
+//|   Date        -  21. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Calculate Hunger level of the character and do all
+//|					 related effects.
+//o---------------------------------------------------------------------------o
+void CChar::checkPetOfflineTimeout( void )
+{
+	if( IsTamed() )
+	{
+		if( GetMounted() || GetStabled() )
+			return;
+
+		CChar *owner = GetOwnerObj();
+		if( !ValidateObject( owner ) )
+		{
+			SetTamed( false ); // The owner is gone, so reset the tamed status
+		}
+		else
+		{
+			if( isOnline( (*owner) ) )
+				return; // The owner is still online, so leave it alone
+
+			time_t currTime, lastOnTime;
+			const UI32 offlineTimeout = static_cast<UI32>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
+
+			time( &currTime );
+			lastOnTime = static_cast<time_t>(GetLastOnSecs());
+			
+			if( currTime > 0 && lastOnTime > 0)
+				if( difftime( currTime, lastOnTime) >= offlineTimeout )
+				{
+					SetOwner( NULL );
+					SetHunger( 6 );
+				}
+		}
+	}
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  UI08 Town()
 //|   Date        -  Unknown
@@ -974,7 +1024,6 @@ void CChar::AddSelfToOwner( void )
 		newOwner->GetPetList()->Add( this );
 		SetTamed( true );
 	}
-	SetHunger( 6 );
 	UpdateFlag( this );
 	Dirty( UT_UPDATE );
 }
@@ -1585,6 +1634,7 @@ void CChar::CopyData( CChar *target )
 	target->SetDisabled( isDisabled() );
 	target->SetCanTrain( CanTrain() );
 	target->SetLastOn( GetLastOn() );
+	target->SetLastOnSecs( GetLastOnSecs() );
 	target->SetGuildTitle( guildtitle );
 	target->SetGuildFealty( guildfealty );
 	target->SetGuildNumber( guildnumber );
@@ -2162,6 +2212,8 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "FleeAt=" << fleeAt << std::endl;
 	dumping << "ReAttackAt=" << reAttackAt << std::endl;
 	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
+	dumping << "Mounted=" << (SI16)(isMounted?1:0) << std::endl;
+	dumping << "Stabled=" << (SI16)(isStabled?1:0) << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2173,6 +2225,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 
 	dumping << "Account=" << accountNum << std::endl;
 	dumping << "LastOn=" << lastOn << std::endl;
+	dumping << "LastOnSecs=" << lastOnSecs << std::endl;
 	dumping << "OrgName=" << origName << std::endl;
 	dumping << "RobeSerial=" << std::hex << "0x" << robe << std::endl;
 	dumping << "OriginalID=" << "0x" << origID << ",0x" << origSkin << std::endl;
@@ -2833,7 +2886,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'H':
 				if( UTag == "HUNGER" )
 				{
-					SetHunger( data.toByte() );
+					SetHunger( data.toShort() );
 					rvalue = true;
 				}
 				else if( UTag == "HOLDG" )
@@ -2881,6 +2934,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetLastOn( data );
 					rvalue = true;
 				}
+				else if( UTag == "LASTONSECS" )
+				{
+					SetLastOnSecs( data.toLong() );
+					rvalue = true;
+				}
 				break;
 			case 'M':
 				if( UTag == "MAYLEVITATE" )
@@ -2898,6 +2956,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "MAXHP" )
 				{
 					SetFixedMaxHP( data.toUShort() );
+					rvalue = true;
+				}
+				else if( UTag == "MOUNTED" )
+				{
+					SetMounted( data.toUShort() == 1 );
 					rvalue = true;
 				}
 				break;
@@ -3098,6 +3161,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				{
 					SetSayColour( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
 					SetEmoteColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					rvalue = true;
+				}
+				else if( UTag == "STABLED" )
+				{
+					SetStabled( data.toUShort() == 1 );
 					rvalue = true;
 				}
 				break;
@@ -3964,6 +4032,60 @@ void CChar::SetLastOn( std::string newValue )
 	}
 	if( IsValidPlayer() )
 		mPlayer->lastOn = newValue;
+}
+
+UI32 CChar::GetLastOnSecs( void ) const
+{
+	UI32 rVal = 0;
+	if( IsValidPlayer() )
+		rVal = mPlayer->lastOnSecs;
+	return rVal;
+}
+void CChar::SetLastOnSecs( UI32 newValue )
+{
+	if( IsValidPlayer() )
+		mPlayer->lastOnSecs = newValue;
+}
+
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetMounted() 
+//|   Date        -  23. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Is NPC currently mounted
+//o---------------------------------------------------------------------------o
+bool CChar::GetMounted( void ) const
+{
+	bool rVal = false;
+	if( IsNpc() )
+		rVal = mNPC->isMounted;
+	return rVal;
+}
+void CChar::SetMounted( bool newValue )
+{
+	if( IsNpc() )
+		mNPC->isMounted = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetStabled() 
+//|   Date        -  23. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Is NPC currently stabled
+//o---------------------------------------------------------------------------o
+bool CChar::GetStabled( void ) const
+{
+	bool rVal = false;
+	if( IsNpc() )
+		rVal = mNPC->isStabled;
+	return rVal;
+}
+void CChar::SetStabled( bool newValue )
+{
+	if( IsNpc() )
+		mNPC->isStabled = newValue;
 }
 
 //o---------------------------------------------------------------------------o

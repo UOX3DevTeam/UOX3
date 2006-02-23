@@ -70,7 +70,10 @@ void cNetworkStuff::setLastOn( CSocket *s )
 			t[end] = '\0';
 	}
 	if( s->CurrcharObj() != NULL )
+	{
 		s->CurrcharObj()->SetLastOn( t );
+		s->CurrcharObj()->SetLastOnSecs( ltime );
+	}
 }
 
 void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
