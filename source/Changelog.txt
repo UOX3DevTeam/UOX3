@@ -1,3 +1,10 @@
+2/23/2006 - grimson (0.98-3.4h [3.5 BETA])
+	Prevent spamming of weather packets when riding a boat.
+	Added a quick fix to the inMulti() function to make boats workable again.
+	Changed the HP and HPMAX tags so that you can set a minimum and maximum value.
+	Removed the IsMounted() function and replaced all it's calls with the GetMounted function.
+	Allow a food list to contain a link to another foodlist.
+
 2/23/2006 - grimson (0.98-3.4g [3.5 BETA])
 	Added three new ini settings:
 		PETHUNGEROFFLINE=0/1 	Sets whether pets should hunger while the player is offline or not.

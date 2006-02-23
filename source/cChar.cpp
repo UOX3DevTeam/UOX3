@@ -1742,7 +1742,14 @@ void CChar::Teleport( void )
 		}
 	}
 	CheckCharInsideBuilding( this, mSock, false );
-	checkRegion( mSock, (*this), true );
+	
+	bool forceWeatherupdate = true;
+	
+	if( ValidateObject( GetMultiObj() ) )
+		if( GetMultiObj()->GetType() == IT_PLANK ) //Don't force a weather update while on boat to prevent spam.
+			forceWeatherupdate = false;
+
+	checkRegion( mSock, (*this), forceWeatherupdate );
 }
 
 void CChar::ExposeToView( void )
@@ -3288,10 +3295,12 @@ bool CChar::IsJailed( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns true if the character is mounted
 //o---------------------------------------------------------------------------o
+/*
 bool CChar::IsMounted( void ) const
 {
 	return ( GetX() >= 7000 || GetY() >= 7000 );
 }
+*/
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool CChar::isHuman( void )

@@ -585,6 +585,38 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 	}
 	return stackDeleted;
 }
+
+bool IsOnFoodList( const std::string sFoodList, const UI16 sItemID )
+{
+	bool doesEat = false;
+
+	UString tag;
+	UString sect			= "FOODLIST " + sFoodList;
+	ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
+	if( FoodList != NULL )
+	{
+		size_t foodEntrys = FoodList->NumEntries();
+		if( foodEntrys > 0 )
+			for( int k = 0; k < foodEntrys; k++ )
+			{
+				tag = FoodList->MoveTo( k );
+				if( !tag.empty() )
+				{
+					if( tag.upper() == "FOODLIST" )
+						doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
+					else
+						if( sItemID == tag.toUShort() )
+						{
+							doesEat = true;
+							break;
+						}
+				}
+
+			}
+	}
+	return doesEat;
+}
+
 bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 {
 	bool stackDeleted	= false;
@@ -642,27 +674,8 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	if( targNPC->GetHunger() < 6 && targNPC->IsTamed() && 
 		( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
 	{
-		bool doesEat = false;
 		
-		UString tag;
-		UString sect			= "FOODLIST " + targNPC->GetFood();
-		ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
-		if( FoodList != NULL )
-		{
-			size_t foodEntrys = FoodList->NumEntries();
-			if( foodEntrys > 0 )
-				for( int k = 0; k < foodEntrys; k++ )
-				{
-					tag = FoodList->MoveTo( k );
-					if( i->GetID() == tag.toUShort() )
-					{
-						doesEat = true;
-						break;
-					}
-				}
-		}
-		
-		if( doesEat )
+		if( IsOnFoodList( targNPC->GetFood(), i->GetID() ) )
 		{
 			Effects->PlaySound( mSock, static_cast<UI16>(0x003A + RandomNum( 0, 2 )), true );
 			Effects->PlayCharacterAnimation( targNPC, 3 );

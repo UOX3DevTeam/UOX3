@@ -250,7 +250,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		if( multi->visible && ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) )
 		{
 			const SI08 multiZ = (m->GetZ() + multi->z);
-			if( multiZ >= z-1 && multiZ <= z+1 )
+			if( (multiZ >= z-1 && multiZ <= z+1) || m->GetType() == IT_PLANK )
 				return true;
 		}
 	}

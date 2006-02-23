@@ -442,10 +442,10 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		}
 		if( ValidateObject( x->GetAttacker() ) )
 			x->GetAttacker()->SetTarg( NULL );
-		x->SetLocation( 7000, 7000, 0 );
 		x->SetFrozen( true );
 		x->SetMounted( true );
 		x->SetInvulnerable( true );
+		x->SetLocation( 7000, 7000, 0 );
 
 		c->SetTempVar( CITV_MOREX, x->GetSerial() );
 		if( x->GetTimer( tNPC_SUMMONTIME ) != 0 )
@@ -2412,7 +2412,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 
 void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 {
-	if( c->GetX() == 7000 && c->GetY() == 7000 )
+	if( c->GetMounted() || c->GetStabled() )
 		return;
 
 	bool wasInBuilding = c->inBuilding();

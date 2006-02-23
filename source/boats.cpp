@@ -123,7 +123,7 @@ void LeaveBoat( CSocket *s, CItem *p )
 				{
 					if( ValidateObject( pet ) )
 					{
-						if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
 						{
 							if( typ )
 								pet->SetLocation( x, y, sz );
@@ -173,7 +173,7 @@ void PlankStuff( CSocket *s, CItem *p )
 			{
 				if( ValidateObject( pet ) )
 				{
-					if( !pet->IsMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
 					{
 						pet->SetLocation( boat2->GetX() + 1, boat2->GetY() + 1, boat2->GetZ() + 4 );
 						pet->SetMulti( boat2 );
@@ -731,7 +731,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 	CBoatObj *boat = GetBoat( mSock );
 	if( !ValidateObject( boat ) )
 		return;
-
+	
 	UI08 dir = boat->GetDir()&0x0F;
 
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );

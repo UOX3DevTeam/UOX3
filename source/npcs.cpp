@@ -782,8 +782,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_HERDING:			skillToSet = HERDING;					break;
 			case DFNTAG_HIDING:				skillToSet = HIDING;					break;
 			case DFNTAG_HIDAMAGE:			applyTo->SetHiDamage( static_cast<SI16>(ndata) );	break;
-			case DFNTAG_HP:					applyTo->SetHP( static_cast<SI16>(ndata) );			break;
-			case DFNTAG_HPMAX:				applyTo->SetFixedMaxHP( static_cast<SI16>(ndata) );			break;
+			case DFNTAG_HP:					applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
+			case DFNTAG_HPMAX:				applyTo->SetFixedMaxHP( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 			case DFNTAG_ID:
 											applyTo->SetID( static_cast<UI16>(ndata) );
 											applyTo->SetOrgID( static_cast<UI16>(ndata) );
@@ -1073,7 +1073,7 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 	{
 		if( ValidateObject( pet ) )
 		{
-			if( !pet->IsMounted() && pet->GetNPCAiType() == aiPET_GUARD && 
+			if( !pet->GetMounted() && pet->GetNPCAiType() == aiPET_GUARD && 
 				pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar )
 				return pet;
 		}
