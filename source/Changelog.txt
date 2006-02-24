@@ -1,5 +1,6 @@
 24th February, 2006 - Maarc
 	Updated bitmask setting/getting code for CChar, making it a bit more friendly and less error prone
+	Fixed a bug with rugs_carpets.dfn where a closing bracket was missing for object 0x1e41
 
 2/23/2006 - giwo (0.98-3.4k [3.5 BETA])
 	Fixed a crash when shutting down the server.
