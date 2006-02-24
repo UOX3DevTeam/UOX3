@@ -64,6 +64,52 @@ namespace UOX
 #define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
 #define MFLAGGET( flag, val )		( (flag&val) == val )
 
+
+
+// Bitmask bits
+
+const UI32 BIT_GM				=	0x0001;
+const UI32 BIT_BROADCAST		=	0x0002;
+const UI32 BIT_INVULNERABLE		=	0x0004;
+const UI32 BIT_SINGCLICKSER		=	0x0008;
+const UI32 BIT_SKILLTITLES		=	0x0010;
+const UI32 BIT_GMPAGEABLE		=	0x0020;
+const UI32 BIT_SNOOP			=	0x0040;
+const UI32 BIT_COUNSELOR		=	0x0080;
+const UI32 BIT_ALLMOVE			=	0x0100;
+const UI32 BIT_FROZEN			=	0x0200;
+const UI32 BIT_VIEWHOUSEASICON	=	0x0400;
+const UI32 BIT_NONEEDMANA		=	0x1000;
+const UI32 BIT_DISPELLABLE		=	0x2000;
+const UI32 BIT_PERMREFLECTED	=	0x4000;
+const UI32 BIT_NONEEDREAGS		=	0x8000;
+
+
+const UI32 BIT_UNICODE			=	0x02;
+const UI32 BIT_NPC				=	0x04;
+const UI32 BIT_SHOP				=	0x08;
+const UI32 BIT_DEAD				=	0x10;
+const UI32 BIT_ATWAR			=	0x20;
+const UI32 BIT_ATTACKFIRST		=	0x40;
+const UI32 BIT_ONHORSE			=	0x80;
+const UI32 BIT_TOWNTITLE		=	0x100;
+const UI32 BIT_REACTIVEARMOUR	=	0x200;
+const UI32 BIT_TRAIN			=	0x400;
+const UI32 BIT_GUILDTOGGLE		=	0x800;
+const UI32 BIT_TAMED			=	0x1000;
+const UI32 BIT_GUARDED			=	0x2000;
+const UI32 BIT_RUN				=	0x4000;
+const UI32 BIT_POLYMORPHED		=	0x8000;
+const UI32 BIT_INCOGNITO		=	0x10000;
+const UI32 BIT_USINGPOTION		=	0x20000;
+const UI32 BIT_MAYLEVITATE		=	0x40000;
+const UI32 BIT_WILLHUNGER		=	0x80000;
+const UI32 BIT_MEDITATING		=	0x100000;
+const UI32 BIT_CASTING			=	0x200000;
+const UI32 BIT_JSCASTING		=	0x400000;
+
+// Player defaults
+
 const SI16			DEFPLAYER_CALLNUM 			= -1;
 const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
 const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
@@ -499,7 +545,7 @@ void CChar::SetTown( UI08 newValue )
 //o---------------------------------------------------------------------------o
 bool CChar::isUnicode( void ) const
 {
-	return ( (bools&0x02) == 0x02 );
+	return MFLAGGET( bools, BIT_UNICODE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool isNpc( void ) const
@@ -510,7 +556,7 @@ bool CChar::isUnicode( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsNpc( void ) const
 {
-	return ( (bools&0x04) == 0x04 );
+	return MFLAGGET( bools, BIT_NPC );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsShop( void ) const
@@ -521,7 +567,7 @@ bool CChar::IsNpc( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsShop( void ) const
 {
-	return ( (bools&0x08) == 0x08 );
+	return MFLAGGET( bools, BIT_SHOP );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsDead( void ) const
@@ -532,7 +578,7 @@ bool CChar::IsShop( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsDead( void ) const
 {
-	return ( (bools&0x10) == 0x10 );
+	return MFLAGGET( bools, BIT_DEAD );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsAtWar( void ) const
@@ -543,7 +589,7 @@ bool CChar::IsDead( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsAtWar( void ) const
 {
-	return ( (bools&0x20) == 0x20 );
+	return MFLAGGET( bools, BIT_ATWAR );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool DidAttackFirst( void ) const
@@ -554,7 +600,7 @@ bool CChar::IsAtWar( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::DidAttackFirst( void ) const
 {
-	return ( (bools&0x40) == 0x40 );
+	return MFLAGGET( bools, BIT_ATTACKFIRST );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsOnHorse( void ) const
@@ -565,7 +611,7 @@ bool CChar::DidAttackFirst( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsOnHorse( void ) const
 {
-	return ( (bools&0x80) == 0x80 );
+	return MFLAGGET( bools, BIT_ONHORSE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetTownTitle( void ) const
@@ -576,7 +622,7 @@ bool CChar::IsOnHorse( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::GetTownTitle( void ) const
 {
-	return ( (bools&0x100) == 0x100 );
+	return MFLAGGET( bools, BIT_TOWNTITLE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetReactiveArmour( void ) const
@@ -587,7 +633,7 @@ bool CChar::GetTownTitle( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::GetReactiveArmour( void ) const
 {
-	return ( (bools&0x200) == 0x200 );
+	return MFLAGGET( bools, BIT_REACTIVEARMOUR );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool CanTrain( void ) const
@@ -598,7 +644,7 @@ bool CChar::GetReactiveArmour( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::CanTrain( void ) const
 {
-	return ( (bools&0x400) == 0x400 );
+	return MFLAGGET( bools, BIT_TRAIN );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetGuildToggle( void ) const
@@ -609,7 +655,7 @@ bool CChar::CanTrain( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::GetGuildToggle( void ) const
 {
-	return ( (bools&0x800) == 0x800 );
+	return MFLAGGET( bools, BIT_GUILDTOGGLE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsTamed( void ) const
@@ -620,7 +666,7 @@ bool CChar::GetGuildToggle( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsTamed( void ) const
 {
-	return ( (bools&0x1000) == 0x1000 );
+	return MFLAGGET( bools, BIT_TAMED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsGuarded( void ) const
@@ -631,7 +677,7 @@ bool CChar::IsTamed( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsGuarded( void ) const
 {
-	return ( (bools&0x2000) == 0x2000 );
+	return MFLAGGET( bools, BIT_GUARDED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool CanRun( void ) const
@@ -642,7 +688,7 @@ bool CChar::IsGuarded( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::CanRun( void ) const
 {
-	return ( (bools&0x4000) == 0x4000 );
+	return MFLAGGET( bools, BIT_RUN );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsPolymorphed( void ) const
@@ -653,7 +699,7 @@ bool CChar::CanRun( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsPolymorphed( void ) const
 {
-	return ( (bools&0x8000) == 0x8000 );
+	return MFLAGGET( bools, BIT_POLYMORPHED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsIncognito( void ) const
@@ -664,7 +710,7 @@ bool CChar::IsPolymorphed( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsIncognito( void ) const
 {
-	return ( (bools&0x10000) == 0x10000 );
+	return MFLAGGET( bools, BIT_INCOGNITO );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsUsingPotion( void ) const
@@ -675,32 +721,32 @@ bool CChar::IsIncognito( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::IsUsingPotion( void ) const
 {
-	return ( (bools&0x20000) == 0x20000 );
+	return MFLAGGET( bools, BIT_USINGPOTION );
 }
 
 bool CChar::MayLevitate( void ) const
 {
-	return ( (bools&0x40000) == 0x40000 );
+	return MFLAGGET( bools, BIT_MAYLEVITATE );
 }
 
 bool CChar::WillHunger( void ) const
 {
-	return ( (bools&0x80000) == 0x80000 );
+	return MFLAGGET( bools, BIT_WILLHUNGER );
 }
 
 bool CChar::IsMeditating( void ) const
 {
-	return ( (bools&0x100000) == 0x100000 );
+	return MFLAGGET( bools, BIT_MEDITATING );
 }
 
 bool CChar::IsCasting( void ) const
 {
-	return ( (bools&0x200000) == 0x200000 );
+	return MFLAGGET( bools, BIT_CASTING );
 }
 
 bool CChar::IsJSCasting( void ) const
 {
-	return ( (bools&0x400000) == 0x400000 );
+	return MFLAGGET( bools, BIT_JSCASTING );
 }
 
 //o---------------------------------------------------------------------------o
@@ -712,7 +758,7 @@ bool CChar::IsJSCasting( void ) const
 //o---------------------------------------------------------------------------o
 void CChar::setUnicode( bool newVal )
 {
-	MFLAGSET( bools, newVal, 0x0002 );
+	MFLAGSET( bools, newVal, BIT_UNICODE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetNpc( bool newVal ) 
@@ -723,7 +769,7 @@ void CChar::setUnicode( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetNpc( bool newVal )
 {
-	MFLAGSET( bools, newVal, 0x0004 );
+	MFLAGSET( bools, newVal, BIT_NPC );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetShop( bool newVal ) 
@@ -734,7 +780,7 @@ void CChar::SetNpc( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetShop( bool newVal )
 {
-	MFLAGSET( bools, newVal, 0x0008 );
+	MFLAGSET( bools, newVal, BIT_SHOP );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetDead( bool newVal ) 
@@ -745,7 +791,7 @@ void CChar::SetShop( bool newVal )
 //o---------------------------------------------------------------------------o
 void CChar::SetDead( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0010 );
+	MFLAGSET( bools, newValue, BIT_DEAD );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetWar( bool newVal ) 
@@ -756,7 +802,7 @@ void CChar::SetDead( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetWar( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0020 );
+	MFLAGSET( bools, newValue, BIT_ATWAR );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetAttackFirst( bool newVal ) 
@@ -767,7 +813,7 @@ void CChar::SetWar( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetAttackFirst( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0040 );
+	MFLAGSET( bools, newValue, BIT_ATTACKFIRST );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetOnHorse( bool newVal ) 
@@ -778,7 +824,7 @@ void CChar::SetAttackFirst( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetOnHorse( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0080 );
+	MFLAGSET( bools, newValue, BIT_ONHORSE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetTownTitle( bool newVal ) 
@@ -789,7 +835,7 @@ void CChar::SetOnHorse( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetTownTitle( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0100 );
+	MFLAGSET( bools, newValue, BIT_TOWNTITLE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetReactiveArmour( bool newVal ) 
@@ -800,7 +846,7 @@ void CChar::SetTownTitle( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetReactiveArmour( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0200 );
+	MFLAGSET( bools, newValue, BIT_REACTIVEARMOUR );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetCanTrain( bool newVal ) 
@@ -811,7 +857,7 @@ void CChar::SetReactiveArmour( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetCanTrain( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0400 );
+	MFLAGSET( bools, newValue, BIT_TRAIN );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetGuildToggle( bool newVal ) 
@@ -822,7 +868,7 @@ void CChar::SetCanTrain( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetGuildToggle( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x0800 );
+	MFLAGSET( bools, newValue, BIT_GUILDTOGGLE );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetTamed( bool newVal ) 
@@ -833,7 +879,7 @@ void CChar::SetGuildToggle( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetTamed( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x1000 );
+	MFLAGSET( bools, newValue, BIT_TAMED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetGuarded( bool newVal ) 
@@ -844,7 +890,7 @@ void CChar::SetTamed( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetGuarded( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x2000 );
+	MFLAGSET( bools, newValue, BIT_GUARDED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetRun( bool newVal ) 
@@ -855,7 +901,7 @@ void CChar::SetGuarded( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetRun( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x4000 );
+	MFLAGSET( bools, newValue, BIT_RUN );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void IsPolymorphed( bool newVal ) 
@@ -866,7 +912,7 @@ void CChar::SetRun( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::IsPolymorphed( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x8000 );
+	MFLAGSET( bools, newValue, BIT_POLYMORPHED );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void IsIncognito( bool newVal ) 
@@ -877,7 +923,7 @@ void CChar::IsPolymorphed( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::IsIncognito( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x10000 );
+	MFLAGSET( bools, newValue, BIT_INCOGNITO );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetUsingPotion( bool newVal )
@@ -888,34 +934,34 @@ void CChar::IsIncognito( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetUsingPotion( bool newVal )
 {
-	MFLAGSET( bools, newVal, 0x20000 );
+	MFLAGSET( bools, newVal, BIT_USINGPOTION );
 }
 
 void CChar::SetLevitate( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x40000 );
+	MFLAGSET( bools, newValue, BIT_MAYLEVITATE );
 }
 
 void CChar::SetHungerStatus( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x80000 );
+	MFLAGSET( bools, newValue, BIT_WILLHUNGER );
 }
 
 void CChar::SetMeditating( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x100000 );
+	MFLAGSET( bools, newValue, BIT_MEDITATING );
 }
 
 void CChar::SetCasting( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x200000 );
+	MFLAGSET( bools, newValue, BIT_CASTING );
 }
 
 // This is only a temporary measure until ALL code is switched over to JS code
 // As it stands, it'll try and auto-direct cast if you set casting and spell timeouts
 void CChar::SetJSCasting( bool newValue )
 {
-	MFLAGSET( bools, newValue, 0x400000 );
+	MFLAGSET( bools, newValue, BIT_JSCASTING );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1322,128 +1368,128 @@ void CChar::SetFontType( SI08 newType )
 
 bool CChar::IsGM( void ) const
 {
-	return ( (priv&0x0001) == 0x0001 );
+	return MFLAGGET( priv, BIT_GM );
 }
 bool CChar::CanBroadcast( void ) const
 {
-	return ( (priv&0x0002) == 0x0002 );
+	return MFLAGGET( priv, BIT_BROADCAST );
 }
 bool CChar::IsInvulnerable( void ) const
 {
-	return ( (priv&0x0004) == 0x0004 );
+	return MFLAGGET( priv, BIT_INVULNERABLE );
 }
 bool CChar::GetSingClickSer( void ) const
 {
-	return ( (priv&0x0008) == 0x0008 );
+	return MFLAGGET( priv, BIT_SINGCLICKSER );
 }
 bool CChar::NoSkillTitles( void ) const
 {
-	return ( (priv&0x0010) == 0x0010 );
+	return MFLAGGET( priv, BIT_SKILLTITLES );
 }
 bool CChar::IsGMPageable( void ) const
 {
-	return ( (priv&0x0020) == 0x0020 );
+	return MFLAGGET( priv, BIT_GMPAGEABLE );
 }
 bool CChar::CanSnoop( void ) const
 {
-	return ( (priv&0x0040) == 0x0040 );
+	return MFLAGGET( priv, BIT_SNOOP );
 }
 bool CChar::IsCounselor( void ) const
 {
-	return ( (priv&0x0080) == 0x0080 );
+	return MFLAGGET( priv, BIT_COUNSELOR );
 }
 
 bool CChar::AllMove( void ) const
 {
-	return ( (priv&0x0100) == 0x0100 );
+	return MFLAGGET( priv, BIT_ALLMOVE );
 }
 bool CChar::IsFrozen( void ) const
 {
-	return ( (priv&0x0200) == 0x0200 );
+	return MFLAGGET( priv, BIT_FROZEN );
 }
 bool CChar::ViewHouseAsIcon( void ) const
 {
-	return ( (priv&0x0400) == 0x0400 );
+	return MFLAGGET( priv, BIT_VIEWHOUSEASICON );
 }
 // 0x0800 is free
 bool CChar::NoNeedMana( void ) const
 {
-	return ( (priv&0x1000) == 0x1000 );
+	return MFLAGGET( priv, BIT_NONEEDMANA );
 }
 bool CChar::IsDispellable( void ) const
 {
-	return ( (priv&0x2000) == 0x2000 );
+	return MFLAGGET( priv, BIT_DISPELLABLE );
 }
 bool CChar::IsPermReflected( void ) const
 {
-	return ( (priv&0x4000) == 0x4000 );
+	return MFLAGGET( priv, BIT_PERMREFLECTED );
 }
 bool CChar::NoNeedReags( void ) const
 {
-	return ( (priv&0x8000) == 0x8000 );
+	return MFLAGGET( priv, BIT_NONEEDREAGS );
 }
 
 void CChar::SetGM( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0001 );
+	MFLAGSET( priv, newValue, BIT_GM );
 }
 void CChar::SetBroadcast( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0002 );
+	MFLAGSET( priv, newValue, BIT_BROADCAST );
 }
 void CChar::SetInvulnerable( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0004 );
+	MFLAGSET( priv, newValue, BIT_INVULNERABLE );
 }
 void CChar::SetSingClickSer( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0008 );
+	MFLAGSET( priv, newValue, BIT_SINGCLICKSER );
 }
 void CChar::SetSkillTitles( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0010 );
+	MFLAGSET( priv, newValue, BIT_SKILLTITLES );
 }
 void CChar::SetGMPageable( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0020 );
+	MFLAGSET( priv, newValue, BIT_GMPAGEABLE );
 }
 void CChar::SetSnoop( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0040 );
+	MFLAGSET( priv, newValue, BIT_SNOOP );
 }
 void CChar::SetCounselor( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0080 );
+	MFLAGSET( priv, newValue, BIT_COUNSELOR );
 }
 
 void CChar::SetAllMove( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0100 );
+	MFLAGSET( priv, newValue, BIT_ALLMOVE );
 }
 void CChar::SetFrozen( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0200 );
+	MFLAGSET( priv, newValue, BIT_FROZEN );
 }
 void CChar::SetViewHouseAsIcon( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x0400 );
+	MFLAGSET( priv, newValue, BIT_VIEWHOUSEASICON );
 }
 // 0x0800 is free
 void CChar::SetNoNeedMana( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x1000 );
+	MFLAGSET( priv, newValue, BIT_NONEEDMANA );
 }
 void CChar::SetDispellable( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x2000 );
+	MFLAGSET( priv, newValue, BIT_DISPELLABLE );
 }
 void CChar::SetPermReflected( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x4000 );
+	MFLAGSET( priv, newValue, BIT_PERMREFLECTED );
 }
 void CChar::SetNoNeedReags( bool newValue )
 {
-	MFLAGSET( priv, newValue, 0x8000 );
+	MFLAGSET( priv, newValue, BIT_NONEEDREAGS );
 }
 
 CChar *CChar::Dupe( void )
