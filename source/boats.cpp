@@ -108,8 +108,8 @@ void LeaveBoat( CSocket *s, CItem *p )
 	{
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
-			SI08 z = Map->Height( x, y, ILLEGAL_Z, worldNumber );
-			if( Map->CanMonsterMoveHere( x, y, ILLEGAL_Z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
+			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber );
+			if( Map->CanMonsterMoveHere( x, y, z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
 			{
 				mChar->SetLocation( x, y, z, worldNumber );
 				CDataList< CChar * > *myPets = mChar->GetPetList();

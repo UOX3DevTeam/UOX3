@@ -172,10 +172,6 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		JSString *str = JS_ValueToString( targContext, rval ); 
 		Console << "script result: " << JS_GetStringBytes( str ) << myendl;
 	}
-
-	JS_DefineObject( targContext, targObject, "Spells", &UOXSpells_class, JSEngine->GetPrototype( runTime, JSP_SPELLS ), 0 );
-	JS_DefineObject( targContext, targObject, "Accounts", &UOXAccount_class, JSEngine->GetPrototype( runTime, JSP_ACCOUNTS ), 0 );
-	JS_DefineObject( targContext, targObject, "Console", &UOXConsole_class, JSEngine->GetPrototype( runTime, JSP_CONSOLE ), 0 );
 }
 
 void cScript::Cleanup( void )
@@ -190,12 +186,12 @@ void cScript::Cleanup( void )
 }
 void cScript::CollectGarbage( void )
 {
-	if( JS_IsRunning( targContext ) == JS_FALSE )
-	{
+//	if( JS_IsRunning( targContext ) == JS_FALSE )
+//	{
 		Cleanup();
 		JS_LockGCThing( targContext, targObject );
 		//JS_AddRoot( targContext, &targObject );
-	}
+//	}
 }
 cScript::~cScript()
 {

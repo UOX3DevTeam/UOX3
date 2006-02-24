@@ -1,3 +1,8 @@
+2/23/2006 - giwo (0.98-3.4j [3.5 BETA])
+	Fixed some issues with Multi and Static height calculations.
+	Moved Definition of global JS classes into CJSRuntime.
+	Locked the JS Class prototypes for Garbage Collection purposes.
+
 2/23/2006 - giwo (0.98-3.4i [3.5 BETA])
 	Fixed an issue causing players to not disembark boats properly.
 	Fixed an issue causing boat holds not to be made part of the multi.

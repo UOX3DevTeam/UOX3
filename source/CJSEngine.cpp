@@ -165,7 +165,7 @@ namespace UOX
 		if( jsGlobal == NULL )
 			Shutdown( FATAL_UOX3_JAVASCRIPT );
 		JS_LockGCThing( jsContext, jsGlobal );
-		//JS_AddRoot( jsContext, &jsGlobal );
+		JS_AddRoot( jsContext, &jsGlobal );
 		JS_InitStandardClasses( jsContext, jsGlobal );
 
 		objectList.resize( IUE_COUNT );
@@ -176,6 +176,11 @@ namespace UOX
 	{
 		Cleanup();
 
+		for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
+		{
+			JS_UnlockGCThing( jsContext, protoList[i] );
+			//JS_RemoveRoot( jsContext, &protoList[i] );
+		}
 		JS_UnlockGCThing( jsContext, jsGlobal );
 		//JS_RemoveRoot( jsContext, &jsGlobal );
 		JS_DestroyContext( jsContext );
@@ -231,6 +236,15 @@ namespace UOX
 		protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, obj, &UOXPacket_class,		Packet, 0,	NULL,				CPacket_Methods,	NULL,				CPacket_Methods );
 		protoList[JSP_FILE]		=	JS_InitClass( cx, obj, obj, &UOXFile_class,			UOXCFile, 0, CFileProperties,	NULL,				CFileProperties,	NULL );
 		JS_DefineFunctions( cx, obj, CFile_Methods );
+		JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
+		JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
+		JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
+
+		for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
+		{
+			JS_LockGCThing( cx, protoList[i] );
+			//JS_AddRoot( cx, &protoList[i] );
+		}
 	}
 
 	JSRuntime *CJSRuntime::GetRuntime( void ) const

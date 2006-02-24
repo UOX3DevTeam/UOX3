@@ -624,28 +624,28 @@ void cMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 
 
 // return the height of a multi item at the given x,y. this seems to actually return a height
 SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
-{                                                                                                                                  	
+{
 	SI32 length = 0;
-	UI16 multiID = static_cast<UI16>( i->GetID() - 0x4000);
+	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
 	SeekMulti( multiID, &length );
 	st_multi *multi = NULL;
 
 	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)                                                                                                                          
 		length = 0;
-	
+
 	for( SI32 j = 0; j < length; ++j )
 	{
 		multi = SeekIntoMulti( multiID, j );
 		if( multi->visible && ( i->GetX() + multi->x == x) && ( i->GetY() + multi->y == y ) )
 		{
-			int tmpTop = i->GetZ() + multi->z;
+			SI08 tmpTop = static_cast<SI08>(i->GetZ() + multi->z);
 			if( ( tmpTop <= oldz + maxZ ) && ( tmpTop >= oldz - 1 ) )
-				return multi->z;
+				return tmpTop + 1;
 			else if( ( tmpTop >= oldz - maxZ ) && ( tmpTop < oldz - 1 ) )
-				return multi->z;
+				return tmpTop + 1;
 		}                                                                                                                 
 	}
-	return 0;                                                                                                                     
+	return ILLEGAL_Z;                                                                                                                     
 } 
 
 
@@ -664,11 +664,8 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, S
 		if( !ValidateObject( tempItem ) )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
-		{
 			z = MultiHeight( tempItem, x, y, oldz, maxZ );
-			z += tempItem->GetZ() + 1;
-		}
-		if( tempItem->GetX() == x && tempItem->GetY() == y && tempItem->GetID( 1 ) < 0x40 )
+		else if( tempItem->GetX() == x && tempItem->GetY() == y )
 		{
 			SI08 ztemp = (SI08)(tempItem->GetZ() + TileHeight( tempItem->GetID() ));
 			if( ( ztemp <= oldz + maxZ ) && ztemp > z )
@@ -1019,7 +1016,7 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bo
 	while( stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev > oldz && stat->zoff <= oldz && DoesTileBlock( stat->itemid ) || ( checkWater && IsTileWet( stat->itemid ) ) )
+		if( elev >= oldz && stat->zoff <= oldz && ( DoesTileBlock( stat->itemid ) || ( checkWater && IsTileWet( stat->itemid ) ) ) )
 			return true;
 	}
 	return false;
@@ -1091,13 +1088,16 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
     // if there's a static block here in our way, return false
     if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
 		return false;
-	else if( checkWater )
+	if( checkWater )
 	{
 		CLand land;
-		const map_st map = Map->SeekMap( x, y, worldNumber );
-		Map->SeekLand( map.id, &land );
-		if( land.LiquidWet() )
-			return false;
+		const map_st map = SeekMap( x, y, worldNumber );
+		if( map.z == elev )
+		{
+			SeekLand( map.id, &land );
+			if( land.LiquidWet() )
+				return false;
+		}
 	}
     return true;
 }
