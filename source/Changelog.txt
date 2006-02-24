@@ -1,3 +1,6 @@
+2/23/2006 - giwo (0.98-3.4k [3.5 BETA])
+	Fixed a crash when shutting down the server.
+
 2/23/2006 - giwo (0.98-3.4j [3.5 BETA])
 	Fixed some issues with Multi and Static height calculations.
 	Moved Definition of global JS classes into CJSRuntime.

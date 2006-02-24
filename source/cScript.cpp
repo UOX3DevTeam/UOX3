@@ -195,13 +195,13 @@ void cScript::CollectGarbage( void )
 }
 cScript::~cScript()
 {
-	Cleanup();
 	JS_GC( targContext );
 	if( targScript != NULL )
 		JS_DestroyScript( targContext, targScript );
+	Cleanup();
 	JS_GC( targContext );
-	if( targContext != NULL )
-		JS_DestroyContext( targContext );
+//	if( targContext != NULL )
+//		JS_DestroyContext( targContext );
 }
 
 bool cScript::IsFiring( void )
