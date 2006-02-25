@@ -424,6 +424,8 @@ namespace UOX
 				case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );					break;
 				case CCP_DEFENSE:		*vp = INT_TO_JSVAL( Combat->calcDef( gPriv, 0, true ) );	break;
 				case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv ) );				break;
+				case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );			break;
+				case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChanceGain() );		break;
 				case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );					break;
 				case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );				break;
 				case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );				break;
@@ -699,6 +701,8 @@ namespace UOX
 					else if( globalExecute != NULL )
 						globalExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
 					break;
+				case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );				break;
+				case CCP_BRKPEACE:		gPriv->SetBrkPeaceChanceGain( encaps.toInt() );		break;
 				case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );				break;
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
 				case CCP_RACE:			Races->gate( gPriv, (RACEID)encaps.toInt(), true );	break;

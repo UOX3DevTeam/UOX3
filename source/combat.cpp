@@ -46,6 +46,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( NULL, cAttack, cTarget->GetX(), cTarget->GetY(), cTarget->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 		return false;
 
+	if( !cAttack->GetCanAttack() ) // Is the char allowed to attack?
+		return false;
+
 	bool returningAttack = false;
 
 	cAttack->SetTarg( cTarget );
@@ -205,6 +208,10 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			if( toExecute->OnCombatStart( ourChar, i ) == 1 )	// if it exists and we don't want hard code, return
 				return;
 		}
+		
+		if( !ourChar->GetCanAttack() ) //Is our char allowed to attack
+			return;
+
 		ourChar->SetTarg( i );
 		if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
 			ourChar->ExposeToView();
@@ -274,9 +281,12 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			return;
 	}
 
-	if( !StartAttack( cAttack, cTarget ) )
+	if( !cAttack->GetCanAttack() ) // Is the char allowed to attack?
 		return;
 
+	if( !StartAttack( cAttack, cTarget ) )
+		return;
+	
 	// If the target is an innocent, not a racial or guild ally/enemy, then flag them as criminal
 	// and, of course, call the guards ;>
 	if( WillResultInCriminal( cAttack, cTarget ) )
@@ -1450,6 +1460,16 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				// Splitting NPC's
 				if( ourTarg->IsNpc() )
 					HandleSplittingNPCs( ourTarg );
+				
+				if( !ourTarg->GetCanAttack() )
+				{
+					if( (UI08)RandomNum( 0, 100 ) <= ourTarg->GetBrkPeaceChance() )
+					{
+						ourTarg->SetCanAttack( true );
+					}
+					else
+						ourTarg->SetBrkPeaceChance( ourTarg->GetBrkPeaceChance() + ourTarg->GetBrkPeaceChanceGain() );
+				}
 			}
 			if( mChar.isHuman() )
 				PlayHitSoundEffect( &mChar, mWeapon );

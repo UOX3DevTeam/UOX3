@@ -157,6 +157,9 @@ protected:
 	UI08		town;       // Matches Region number in regions.scp
 	UI08		regionNum;
 
+	UI08		brkPeaceChanceGain;
+	UI08		brkPeaceChance;
+
 	UI32		bools;	// lots of flags
 	UI16		bools2; // more space for flags
 	UI16		priv;
@@ -258,6 +261,12 @@ public:
 	void		SetTamedHungerWildChance( UI08 newValue );
 	void		SetTown( UI08 newValue );
 	void		SetFood( std::string food );
+	
+	UI08		GetBrkPeaceChanceGain( void ) const;
+	void		SetBrkPeaceChanceGain( UI08 newValue );
+
+	UI08		GetBrkPeaceChance( void ) const;
+	void		SetBrkPeaceChance( UI08 newValue );
 
 	void		SetMounted( bool newValue );
 	bool		GetMounted( void ) const;
@@ -278,6 +287,7 @@ public:
 	bool		IsNpc( void ) const;
 	bool		IsShop( void ) const;
 	bool		IsDead( void ) const;
+	bool		GetCanAttack( void ) const;
 	bool		IsAtWar( void ) const;
 	bool		DidAttackFirst( void ) const;
 	bool		IsOnHorse( void ) const;
@@ -299,6 +309,7 @@ public:
 	void		SetNpc( bool newVal );
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );
+	void		SetCanAttack( bool newValue );
 	void		SetWar( bool newValue );
 	void		SetAttackFirst( bool newValue );
 	void		SetOnHorse( bool newValue );

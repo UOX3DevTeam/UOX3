@@ -1990,6 +1990,17 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 		if( attSock != NULL )
 			attSock->Send( &toDisplay );
 		p->Damage( amount, attacker );
+
+		if( !p->GetCanAttack() )
+		{
+			if( (UI08)RandomNum( 0, 100 ) <= p->GetBrkPeaceChance() )
+			{
+				p->SetCanAttack( true );
+			}
+			else
+				p->SetBrkPeaceChance( p->GetBrkPeaceChance() + p->GetBrkPeaceChanceGain() );
+		}
+
 		if( p->GetHP() <= 0 )
 		{
 			UI16 dbScript		= p->GetScriptTrigger();

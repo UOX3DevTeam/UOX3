@@ -111,6 +111,7 @@ const UI32 BIT_JSCASTING		=	0x400000;
 const UI32 BIT_MAXHPFIXED		=	0x01;
 const UI32 BIT_MAXMANAFIXED		=	0x02;
 const UI32 BIT_MAXSTAMFIXED		=	0x04;
+const UI32 BIT_CANATTACK		=	0x08;
 
 const UI32 BIT_MOUNTED			=	0x01;
 const UI32 BIT_STABLED			=	0x02;
@@ -257,6 +258,9 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetMaxHPFixed( false );
 	SetMaxManaFixed( false );
 	SetMaxStamFixed( false );
+	SetCanAttack( true );
+	SetBrkPeaceChanceGain( 0 );
+	SetBrkPeaceChance( 0 );
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
@@ -546,6 +550,41 @@ void CChar::SetTown( UI08 newValue )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  UI08 BrkPeaceChanceGain()
+//|   Date        -  25. Feb, Grimson
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The chance gain to break peace
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetBrkPeaceChanceGain( void ) const
+{
+	if( IsNpc() )
+		return brkPeaceChanceGain;
+	else
+		return static_cast<UI08>( GetBaseSkill( 9 ) / 10);
+}
+void CChar::SetBrkPeaceChanceGain( UI08 newValue )
+{
+	brkPeaceChanceGain = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 CurrBrkPeaceChanceGain()
+//|   Date        -  25. Feb, Grimson
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The current chance to break peace
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetBrkPeaceChance( void ) const
+{
+	return brkPeaceChance;
+}
+void CChar::SetBrkPeaceChance( UI08 newValue )
+{
+	brkPeaceChance = newValue;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  bool isUnicode( void ) const
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -588,6 +627,17 @@ bool CChar::IsShop( void ) const
 bool CChar::IsDead( void ) const
 {
 	return MFLAGGET( bools, BIT_DEAD );
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetCanAttack( void ) const
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns whether the char can attack targets
+//o---------------------------------------------------------------------------o
+bool CChar::GetCanAttack( void ) const
+{
+	return MFLAGGET( bools2, BIT_CANATTACK );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsAtWar( void ) const
@@ -801,6 +851,18 @@ void CChar::SetShop( bool newVal )
 void CChar::SetDead( bool newValue )
 {
 	MFLAGSET( bools, newValue, BIT_DEAD );
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SetCanAttack( bool newVal ) 
+//|   Date        -  25.Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the character's ability to attack
+//o---------------------------------------------------------------------------o
+void CChar::SetCanAttack( bool newValue )
+{
+	MFLAGSET( bools2, newValue, BIT_CANATTACK );
+	SetBrkPeaceChance( 0 );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetWar( bool newVal ) 
@@ -1579,6 +1641,8 @@ void CChar::CopyData( CChar *target )
 	target->SetHunger( hunger );
 	target->SetTamedHungerRate( hungerRate );
 	target->SetTamedHungerWildChance( hungerWildChance );
+	target->SetBrkPeaceChance( GetBrkPeaceChance() );
+	target->SetBrkPeaceChanceGain( GetBrkPeaceChanceGain() );
 	target->SetFood( foodList );
 	target->SetRegion( regionNum );
 	target->SetTown( town );
@@ -1890,13 +1954,16 @@ bool CChar::WearItem( CItem *toWear )
 			IncStrength2( itemLayers[tLayer]->GetStrength2() );
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
-			if( itemLayers[tLayer]->GetPoisoned() )
-				SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
+			
+			if( toWear->isPostLoaded() ) {
+				if( itemLayers[tLayer]->GetPoisoned() )
+					SetPoisoned( GetPoisoned() + itemLayers[tLayer]->GetPoisoned() );	// should be +, not -
 
-			UI16 scpNum			= toWear->GetScriptTrigger();
-			cScript *tScript	= JSMapping->GetScript( scpNum );
-			if( tScript != NULL )
-				tScript->OnEquip( this, toWear );
+				UI16 scpNum			= toWear->GetScriptTrigger();
+				cScript *tScript	= JSMapping->GetScript( scpNum );
+				if( tScript != NULL )
+					tScript->OnEquip( this, toWear );
+			}
 		}
 	}
 	return rvalue;
@@ -2070,6 +2137,8 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
+	dumping << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << std::endl;
+	dumping << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << std::endl;
 	dumping << "Foodlist=" << foodList << std::endl;
 	if ( GetMaxHPFixed() )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
@@ -2135,6 +2204,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "TownTitle=" << (GetTownTitle()?1:0) << std::endl;
 	//-------------------------------------------------------------------------------------------
 	dumping << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << std::endl;
+	dumping << "CanAttack=" << (SI16)(GetCanAttack()?1:0) << std::endl;
 	dumping << "AllMove=" << (SI16)(AllMove()?1:0) << std::endl;
 	dumping << "IsNpc=" << (SI16)(IsNpc()?1:0) << std::endl;
 	dumping << "IsShop=" << (SI16)(IsShop()?1:0) << std::endl;
@@ -2777,6 +2847,16 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetBeardColour( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
 					rvalue = true;
 				}
+				else if( UTag == "BRKPEACECHANCEGAIN" )
+				{
+					SetBrkPeaceChanceGain( data.toUShort() );
+					rvalue = true;
+				}
+				else if( UTag == "BRKPEACECHANCE" )
+				{
+					SetBrkPeaceChance( data.toUShort() );
+					rvalue = true;
+				}
 				break;
 			case 'C':
 				if( UTag == "COMMANDLEVEL" )
@@ -2787,6 +2867,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "CANRUN" )
 				{
 					SetRun( data.toUByte() == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "CANATTACK" )
+				{
+					SetCanAttack( data.toUByte() == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANTRAIN" )
@@ -4793,15 +4878,12 @@ SI16 CChar::GetPeaceing( void ) const
 	SI16 rVal = DEFNPC_PEACEING;
 	if( IsValidNPC() )
 		rVal = mNPC->peaceing;
+	else if( IsValidPlayer() )
+		rVal = static_cast<SI16>( GetBaseSkill( 9 ) );
 	return rVal;
 }
 void CChar::SetPeaceing( SI16 newValue )
 {
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_PEACEING )
-			CreateNPC();
-	}
 	if( IsValidNPC() )
 		mNPC->peaceing = newValue;
 }
@@ -4818,15 +4900,12 @@ SI16 CChar::GetProvoing( void ) const
 	SI16 rVal = DEFNPC_PROVOING;
 	if( IsValidNPC() )
 		rVal = mNPC->provoing;
+	else if( IsValidPlayer() )
+		rVal = static_cast<SI16>( GetBaseSkill( 22 ) );
 	return rVal;
 }
 void CChar::SetProvoing( SI16 newValue )
 {
-	if( !IsValidNPC() )
-	{
-		if( newValue != DEFNPC_PROVOING )
-			CreateNPC();
-	}
 	if( IsValidNPC() )
 		mNPC->provoing = newValue;
 }

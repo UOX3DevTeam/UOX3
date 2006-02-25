@@ -1,3 +1,15 @@
+2/25/2006 - grimson (0.98-3.4n [3.5 BETA])
+	Changed CChar::WearItem() to not fire the onEquip event on world loads.
+	Modified the TOPEACE tag so it can take a second value that sets the chance gain to recover
+	from peacemaking upon hits.
+	Modified cMagic::MagicDamage() and CHandleCombat::HandleCombat() to recover from peacemaking
+	by calculating a chance using the chance gain set on TOPEACE and the number of hits.
+	Added two new JS propertys for chars:
+		.canAttack  Set this to 0 to prevent a char from attacking.
+		.brkPeaceChance  Gets and Sets the chance gain to recover from peacemaking.
+	Modified the .skillToProv and .skillToPeace propertys so they return the value of the corresponding
+	skill for player chars.
+
 2/25/2006 - grimson
 	Fixed a bug that allowed health regeneration while the char was starving.
 	Moved the bools for the fixed maxHP, maxMana, maxStamina into a bitmask.

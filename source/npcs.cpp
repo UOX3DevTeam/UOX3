@@ -989,6 +989,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_TOPEACE:				
 											if( !isGate )
 												applyTo->SetPeaceing( static_cast<SI16>(ndata) );
+												applyTo->SetBrkPeaceChanceGain( static_cast<SI16>(odata) );
 											break;
 			case DFNTAG_TAMEDHUNGER:
 											if( !isGate )

@@ -142,6 +142,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM },
 	{ "defense",		CCP_DEFENSE,		JSPROP_ENUMPERMRO  },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO  },
+	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM },
+	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM },
 	{ "hunger",			CCP_HUNGER,			JSPROP_ENUMANDPERM },
 	{ "frozen",			CCP_FROZEN,			JSPROP_ENUMANDPERM },
 	{ "commandlevel",	CCP_COMMANDLEVEL,	JSPROP_ENUMANDPERM },
