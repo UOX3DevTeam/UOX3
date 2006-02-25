@@ -100,17 +100,16 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 
 function PeaceMakeArea( pUser, targChar )
 {
+	if( pUser == targChar )
+		return;
+
 	var targSock = targChar.socket;
-	if( targSock )
-		targSock.SysMessage( GetDictionaryEntry( 1440, targSock.Language ) );
 	
 	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ) )
 	{
-		if( targChar.atWar )
-			targChar.atWar = false;
-		targChar.target = null;
-		targChar.attacker = null;
-		targChar.attackFirst = false;
+		if( targSock )
+			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.Language ) );
+		targChar.setPeace = 60;
 		return true;
 	}
 }

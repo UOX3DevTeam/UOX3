@@ -1997,6 +1997,8 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 			if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
 			{
 				p->SetCanAttack( true );
+				if( mSock != NULL )
+					mSock->sysmessage( 1779 );
 			}
 			else
 				p->SetBrkPeaceChance( currentBreakChance + p->GetBrkPeaceChanceGain() );

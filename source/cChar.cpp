@@ -864,6 +864,32 @@ void CChar::SetCanAttack( bool newValue )
 	MFLAGSET( bools2, newValue, BIT_CANATTACK );
 	SetBrkPeaceChance( 0 );
 }
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SetPeace( bool newVal ) 
+//|   Date        -  25.Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the character to peace
+//o---------------------------------------------------------------------------o
+void CChar::SetPeace( UI32 newValue )
+{
+	if( newValue > 0 )
+	{
+		SetCanAttack( false );
+		if( IsAtWar() )
+			SetWar( false );
+		SetTarg( NULL );
+		SetAttacker( NULL );
+		SetAttackFirst( NULL );
+		SetTimer( tCHAR_PEACETIMER, BuildTimeValue( newValue ) );
+	}
+	else
+	{
+		SetCanAttack( true );
+	}
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  void SetWar( bool newVal ) 
 //|   Date        -  Unknown
@@ -2222,6 +2248,13 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	else
 		dumping << (UI32)(mTime - cwmWorldState->GetUICurrentTime()) << std::endl;
 
+	TIMERVAL pTime = GetTimer( tCHAR_PEACETIMER );
+	dumping << "PeaceTimer=";
+	if( pTime == 0 || pTime < cwmWorldState->GetUICurrentTime() )
+		dumping << (SI16)0 << std::endl;
+	else
+		dumping << (UI32)(pTime - cwmWorldState->GetUICurrentTime()) << std::endl;
+
 	outStream << dumping.str();
 
 	if( IsValidPlayer() )
@@ -3140,6 +3173,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				if( UTag == "PROVOING" )
 				{
 					SetProvoing( data.toShort() );
+					rvalue = true;
+				}
+				else if( UTag == "PEACETIMER" )
+				{
+					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( data.toFloat() ) );
 					rvalue = true;
 				}
 				break;

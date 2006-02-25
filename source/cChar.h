@@ -24,6 +24,7 @@ enum cC_TID
 	tCHAR_ANTISPAM,
 	tCHAR_CRIMFLAG,
 	tCHAR_MURDERRATE,
+	tCHAR_PEACETIMER,
 	// NPC Timers
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
@@ -310,6 +311,7 @@ public:
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );
 	void		SetCanAttack( bool newValue );
+	void		SetPeace( UI32 newValue );
 	void		SetWar( bool newValue );
 	void		SetAttackFirst( bool newValue );
 	void		SetOnHorse( bool newValue );

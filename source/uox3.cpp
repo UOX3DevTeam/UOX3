@@ -789,6 +789,13 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		}
 	}
 
+	if( !mChar.GetCanAttack() && mChar.GetTimer( tCHAR_PEACETIMER ) <= cwmWorldState->GetUICurrentTime() )
+	{
+		mChar.SetCanAttack( true );
+		if( mSock != NULL )
+			mSock->sysmessage( 1779 );
+	}
+	
 	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
 		if( mSock != NULL )

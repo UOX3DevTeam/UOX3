@@ -1,3 +1,12 @@
+2/25/2006 - grimson (0.98-3.4o [3.5 BETA])
+	Added another new JS property for chars:
+		.setPeace=#  This handle the whole peacemaking effect, it will stop the char from attacking
+			     and prevent him from attacking again until the given time is over or he got
+			     enough damage.
+	Updated the peacemaking.js to use the new property and to prevent peacemaking from affecting the
+	char using it.
+	Output a sysmessage to PCs informing them of the end of the peace effect. (Dictionarys again)
+
 2/25/2006 - grimson
 	Changed CHandleCombat::HandleNPCSpellAttack() to prevent NPCs from using spells when they
 	are not allowed to attack.

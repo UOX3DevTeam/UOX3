@@ -703,6 +703,7 @@ namespace UOX
 					break;
 				case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );				break;
 				case CCP_BRKPEACE:		gPriv->SetBrkPeaceChanceGain( encaps.toInt() );		break;
+				case CCP_SETPEACE:		gPriv->SetPeace( encaps.toInt() );					break;
 				case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );				break;
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
 				case CCP_RACE:			Races->gate( gPriv, (RACEID)encaps.toInt(), true );	break;

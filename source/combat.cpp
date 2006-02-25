@@ -1470,6 +1470,8 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
 					{
 						ourTarg->SetCanAttack( true );
+						if( targSock != NULL )
+							targSock->sysmessage( 1779 );
 					}
 					else
 						ourTarg->SetBrkPeaceChance( currentBreakChance + ourTarg->GetBrkPeaceChanceGain() );
