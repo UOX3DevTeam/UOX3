@@ -812,7 +812,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_MACEFIGHTING:		skillToSet = MACEFIGHTING;				break;
 			case DFNTAG_MAGERY:				skillToSet = MAGERY;					break;
 			case DFNTAG_MAGICRESISTANCE:	skillToSet = MAGICRESISTANCE;			break;
-			case DFNTAG_MANA:				applyTo->SetMana( static_cast<UI16>(ndata) );		break;
+			case DFNTAG_MANA:				applyTo->SetMana( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
+			case DFNTAG_MANAMAX:			applyTo->SetFixedMaxMana( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 			case DFNTAG_MEDITATION:			skillToSet = MEDITATION;				break;
 			case DFNTAG_MINING:				skillToSet = MINING;					break;
 			case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;				break;
@@ -967,7 +968,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											applyTo->SetHP( applyTo->GetMaxHP() );
 											break;
 			case DFNTAG_SWORDSMANSHIP:		skillToSet = SWORDSMANSHIP;				break;
-			case DFNTAG_STAMINA:			applyTo->SetStamina( static_cast<UI16>(ndata) );		break;
+			case DFNTAG_STAMINA:			applyTo->SetStamina( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
+			case DFNTAG_STAMINAMAX:			applyTo->SetFixedMaxStam( static_cast<SI16>(RandomNum( ndata, odata )) );		break;
 			case DFNTAG_STEALTH:			skillToSet = STEALTH;					break;
 			case DFNTAG_SKINLIST:			applyTo->SetSkin( addRandomColor( cdata ) );			break;
 			case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) ); break;
@@ -979,6 +981,14 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_TOTAME:				
 											if( !isGate )
 												applyTo->SetTaming( static_cast<SI16>(ndata) );
+											break;
+			case DFNTAG_TOPROV:				
+											if( !isGate )
+												applyTo->SetProvoing( static_cast<SI16>(ndata) );
+											break;
+			case DFNTAG_TOPEACE:				
+											if( !isGate )
+												applyTo->SetPeaceing( static_cast<SI16>(ndata) );
 											break;
 			case DFNTAG_TAMEDHUNGER:
 											if( !isGate )

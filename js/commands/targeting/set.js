@@ -292,6 +292,27 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );
 		break;
+	case "TOTAME":
+		if( ourChar.npc )
+		{
+			ourChar.skillToTame = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "TOPROV":
+		if( ourChar.npc )
+		{
+			ourChar.skillToProv = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "TOPEACE":
+		if( ourChar.npc )
+		{
+			ourChar.skillToPeace = nVal;
+			okMsg( socket );
+		}
+		break;
 	case "NPCWANDER":
 		ourChar.wandertype = nVal;
 		okMsg( socket );
@@ -345,6 +366,14 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		break;
 	case "MAXHP":
 		ourChar.maxhp = nVal;
+		okMsg( socket );
+		break;
+	case "MAXMANA":
+		ourChar.maxmana = nVal;
+		okMsg( socket );
+		break;
+	case "MAXSTAMINA":
+		ourChar.maxstamina = nVal;
 		okMsg( socket );
 		break;
 	default:

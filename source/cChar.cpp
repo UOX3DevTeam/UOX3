@@ -108,6 +108,9 @@ const UI32 BIT_MEDITATING		=	0x100000;
 const UI32 BIT_CASTING			=	0x200000;
 const UI32 BIT_JSCASTING		=	0x400000;
 
+const UI32 BIT_MOUNTED			=	0x01;
+const UI32 BIT_STABLED			=	0x02;
+
 // Player defaults
 
 const SI16			DEFPLAYER_CALLNUM 			= -1;
@@ -146,7 +149,9 @@ const SI08			DEFNPC_FZ1 					= -1;
 const SI16			DEFNPC_AITYPE 				= 0;
 const SI16			DEFNPC_SPATTACK				= 0;
 const SI08			DEFNPC_SPADELAY				= 0;
-const SI16			DEFNPC_TAMING 				= 0;
+const SI16			DEFNPC_TAMING 				= 0x7FFF;
+const SI16			DEFNPC_PEACEING 			= 0x7FFF;
+const SI16			DEFNPC_PROVOING				= 0x7FFF;
 const SI16			DEFNPC_FLEEAT 				= 0;
 const SI16			DEFNPC_REATTACKAT 			= 0;
 const UI08			DEFNPC_SPLIT 				= 0;
@@ -164,7 +169,7 @@ CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG )
+petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -248,6 +253,8 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	mPlayer	= NULL;
 	mNPC	= NULL;
 	maxHP_fixed = false;
+	maxMana_fixed = false;
+	maxStam_fixed = false;
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
@@ -1523,9 +1530,13 @@ void CChar::CopyData( CChar *target )
 	target->SetStrength( strength );
 	target->SetDexterity( dexterity );
 	target->SetIntelligence( intelligence );
-	target->SetHP(  hitpoints );
 	if ( maxHP_fixed )
 		target->SetFixedMaxHP(  maxHP );
+	if ( maxMana_fixed )
+		target->SetFixedMaxMana(  maxMana );
+	if ( maxStam_fixed )
+		target->SetFixedMaxStam(  maxStam );
+	target->SetHP(  hitpoints );
 	target->SetStamina( stamina );
 	target->SetMana( mana );
 
@@ -1607,6 +1618,8 @@ void CChar::CopyData( CChar *target )
 		target->SetFy( GetFy( 1 ), 1 );
 		target->SetFz( GetFz() );
 		target->SetTaming( GetTaming() );
+		target->SetPeaceing( GetPeaceing() );
+		target->SetProvoing( GetProvoing() );
 		target->SetNPCAiType( GetNPCAiType() );
 		target->SetSpAttack( GetSpAttack() );
 		target->SetSpDelay( GetSpDelay() );
@@ -2058,6 +2071,10 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "Foodlist=" << foodList << std::endl;
 	if ( maxHP_fixed )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
+	if ( maxMana_fixed )
+		dumping << "MAXMANA=" << (SI16)maxMana << std::endl;
+	if ( maxStam_fixed )
+		dumping << "MAXSTAM=" << (SI16)maxStam << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
@@ -2149,6 +2166,8 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 
 	dumping << "NpcAIType=" << aiType << std::endl;
 	dumping << "Taming=" << taming << std::endl;
+	dumping << "Peaceing=" << peaceing << std::endl;
+	dumping << "Provoing=" << provoing << std::endl;
 	dumping << "HoldG=" << goldOnHand << std::endl;
 	dumping << "Split=" << (SI16)splitNum << "," << (SI16)splitChance << std::endl;
 	dumping << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << std::endl;
@@ -2159,8 +2178,8 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "FleeAt=" << fleeAt << std::endl;
 	dumping << "ReAttackAt=" << reAttackAt << std::endl;
 	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
-	dumping << "Mounted=" << (SI16)(MFLAGGET( boolFlags, 0x01 )?1:0) << std::endl;
-	dumping << "Stabled=" << (SI16)(MFLAGGET( boolFlags, 0x02 )?1:0) << std::endl;
+	dumping << "Mounted=" << (SI16)(MFLAGGET( boolFlags, BIT_MOUNTED )?1:0) << std::endl;
+	dumping << "Stabled=" << (SI16)(MFLAGGET( boolFlags, BIT_STABLED )?1:0) << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2368,7 +2387,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxMana( void )
 {
-	if( maxMana_oldint != GetIntelligence() || oldRace != GetRace() )
+	if( (maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !maxMana_fixed )
 	//if int/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2392,7 +2411,24 @@ void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 	maxMana_oldint	= newoldint;
 	oldRace			= newoldrace;
 }
+void CChar::SetFixedMaxMana( SI16 newmaxmana )
+{
+	if( newmaxmana > 0 ) {
+		maxMana_fixed	= true;
+		maxMana			= newmaxmana;
+	} else {
+		maxMana_fixed	= false;
+	
+		CRace *pRace = Races->Race( GetRace() );
+		if( pRace == NULL )
+			pRace = Races->Race( 0 );
 
+		maxMana = (SI16)(GetIntelligence() + (SI16)( ((float)GetIntelligence()) * ((float)(pRace->ManaModifier())) / 100 ));
+
+		maxMana_oldint	= GetIntelligence();
+		oldRace			= GetRace();
+	}
+}
 //o--------------------------------------------------------------------------
 //|	Function		-	SI16 MaxStam()
 //|	Date			-	15 February, 2002
@@ -2403,7 +2439,7 @@ void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxStam( void )
 {
-	if( maxStam_olddex != GetDexterity() || oldRace != GetRace() )
+	if( (maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !maxStam_fixed )
 	//if dex/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2427,7 +2463,24 @@ void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 	maxStam_olddex	= newolddex;
 	oldRace			= newoldrace;
 }
+void CChar::SetFixedMaxStam( SI16 newmaxstam )
+{
+	if( newmaxstam > 0 ) {
+		maxStam_fixed	= true;
+		maxStam			= newmaxstam;
+	} else {
+		maxStam_fixed	= false;
+	
+		CRace *pRace = Races->Race( GetRace() );
+		if( pRace == NULL )
+			pRace = Races->Race( 0 );
 
+		maxStam = (SI16)(GetDexterity() + (SI16)( ((float)GetDexterity()) * ((float)(pRace->StamModifier())) / 100 ));
+
+		maxStam_olddex	= GetDexterity();
+		oldRace			= GetRace();
+	}
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 ActualStrength( void ) const
 //|   Date        -  13 March 2001
@@ -2905,6 +2958,16 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetFixedMaxHP( data.toUShort() );
 					rvalue = true;
 				}
+				else if( UTag == "MAXMANA" )
+				{
+					SetFixedMaxMana( data.toUShort() );
+					rvalue = true;
+				}
+				else if( UTag == "MAXSTAM" )
+				{
+					SetFixedMaxStam( data.toUShort() );
+					rvalue = true;
+				}
 				else if( UTag == "MOUNTED" )
 				{
 					SetMounted( data.toUShort() == 1 );
@@ -2980,6 +3043,16 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "POISONSTRENGTH" )
 				{
 					SetPoisonStrength( data.toUByte() );
+					rvalue = true;
+				}
+				if( UTag == "PEACEING" )
+				{
+					SetPeaceing( data.toShort() );
+					rvalue = true;
+				}
+				if( UTag == "PROVOING" )
+				{
+					SetProvoing( data.toShort() );
 					rvalue = true;
 				}
 				break;
@@ -4011,7 +4084,7 @@ bool CChar::GetMounted( void ) const
 	bool rVal = false;
 	if( IsNpc() )
 	{
-		rVal = MFLAGGET( mNPC->boolFlags, 0x01 );
+		rVal = MFLAGGET( mNPC->boolFlags, BIT_MOUNTED );
 	}
 	return rVal;
 }
@@ -4019,7 +4092,7 @@ void CChar::SetMounted( bool newValue )
 {
 	if( IsNpc() )
 	{
-		MFLAGSET( mNPC->boolFlags, newValue, 0x01 )
+		MFLAGSET( mNPC->boolFlags, newValue, BIT_MOUNTED )
 	}
 }
 
@@ -4035,7 +4108,7 @@ bool CChar::GetStabled( void ) const
 	bool rVal = false;
 	if( IsNpc() )
 	{
-		rVal = MFLAGGET( mNPC->boolFlags, 0x02 );
+		rVal = MFLAGGET( mNPC->boolFlags, BIT_STABLED );
 	}
 	return rVal;
 }
@@ -4043,7 +4116,7 @@ void CChar::SetStabled( bool newValue )
 {
 	if( IsNpc() )
 	{
-		MFLAGSET( mNPC->boolFlags, newValue, 0x02 )
+		MFLAGSET( mNPC->boolFlags, newValue, BIT_STABLED )
 	}
 }
 
@@ -4656,6 +4729,56 @@ void CChar::SetTaming( SI16 newValue )
 	}
 	if( IsValidNPC() )
 		mNPC->taming = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 Peaceing()
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Minimum skill required to peace the character
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetPeaceing( void ) const
+{
+	SI16 rVal = DEFNPC_PEACEING;
+	if( IsValidNPC() )
+		rVal = mNPC->peaceing;
+	return rVal;
+}
+void CChar::SetPeaceing( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_PEACEING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->peaceing = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 Provoing()
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Minimum skill required to provocate the character
+//o---------------------------------------------------------------------------o
+SI16 CChar::GetProvoing( void ) const
+{
+	SI16 rVal = DEFNPC_PROVOING;
+	if( IsValidNPC() )
+		rVal = mNPC->provoing;
+	return rVal;
+}
+void CChar::SetProvoing( SI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( newValue != DEFNPC_PROVOING )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->provoing = newValue;
 }
 
 //o---------------------------------------------------------------------------o

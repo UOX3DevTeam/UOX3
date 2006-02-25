@@ -598,6 +598,8 @@ namespace UOX
 				case CCP_USINGPOTION:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsUsingPotion() );			break;
 				case CCP_STEALTH:		*vp = INT_TO_JSVAL( gPriv->GetStealth() );					break;
 				case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
+				case CCP_SKILLTOPROV:	*vp = INT_TO_JSVAL( gPriv->GetProvoing() );					break;
+				case CCP_SKILLTOPEACE:	*vp = INT_TO_JSVAL( gPriv->GetPeaceing() );					break;
 				case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
 				case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
 				case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
@@ -701,6 +703,8 @@ namespace UOX
 				case CCP_COMMANDLEVEL:	gPriv->SetCommandLevel( (UI08)encaps.toInt() );		break;
 				case CCP_RACE:			Races->gate( gPriv, (RACEID)encaps.toInt(), true );	break;
 				case CCP_MAXHP:			gPriv->SetFixedMaxHP( (SI16)encaps.toInt() );		break;
+				case CCP_MAXMANA:		gPriv->SetFixedMaxMana( (SI16)encaps.toInt() );		break;
+				case CCP_MAXSTAMINA:	gPriv->SetFixedMaxStam( (SI16)encaps.toInt() );		break;
 				case CCP_CRIMINAL:		
 					if( encaps.toBool() )
 						criminal( gPriv );
@@ -850,6 +854,8 @@ namespace UOX
 				case CCP_USINGPOTION:	gPriv->SetUsingPotion( encaps.toBool() );			break;
 				case CCP_STEALTH:		gPriv->SetStealth( encaps.toInt() );				break;
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
+				case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );				break;
+				case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );				break;
 				case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );			break;
 				case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );				break;
 				case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );					break;

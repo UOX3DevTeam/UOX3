@@ -59,6 +59,8 @@ private:
 		SI16				aiType;
 		CBaseObject *		petGuarding;
 		SI16				taming;
+		SI16				peaceing;
+		SI16				provoing;
 		UI08				trainingPlayerIn;
 		UI32				goldOnHand;
 
@@ -206,8 +208,10 @@ protected:
 	bool		maxHP_fixed;
 	SI16		maxMana;
 	UI16		maxMana_oldint;
+	bool		maxMana_fixed;
 	SI16		maxStam;
 	UI16		maxStam_olddex;
+	bool		maxStam_fixed;
 	RACEID		oldRace;
 
 	UI08		PoisonStrength;
@@ -490,7 +494,9 @@ public:
 	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
 	void			SetFixedMaxHP( SI16 newmaxhp );
 	void			SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace );
+	void			SetFixedMaxMana( SI16 newmaxmana );
 	void			SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace );
+	void			SetFixedMaxStam( SI16 newmaxstam );
 	virtual UI16	GetMaxHP( void );
 	SI16			GetMaxMana( void );
 	SI16			GetMaxStam( void );
@@ -544,6 +550,8 @@ public:
 
 	SI16		GetNPCAiType( void ) const;
 	SI16		GetTaming( void ) const;
+	SI16		GetPeaceing( void ) const;
+	SI16		GetProvoing( void ) const;
 	UI08		GetTrainingPlayerIn( void ) const;
 	UI32		GetHoldG( void ) const;
 	UI08		GetSplit( void ) const;
@@ -551,6 +559,8 @@ public:
 
 	void		SetNPCAiType( SI16 newValue );
 	void		SetTaming( SI16 newValue );
+	void		SetPeaceing( SI16 newValue );
+	void		SetProvoing( SI16 newValue );
 	void		SetTrainingPlayerIn( UI08 newValue );
 	void		SetHoldG( UI32 newValue );
 	void		SetSplit( UI08 newValue );

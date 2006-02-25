@@ -1,3 +1,16 @@
+2/25/2006 - grimson (0.98-3.4m [3.5 BETA])
+	Changed the default of totame to 0x7FFF and allowed taming of NPCs with a value of 0.
+	Changed DFN tags MANA and STAMINA so you can set a minimum and maximum value.
+	Added new DFN tags:
+		MANAMAX, STAMINAMAX  They work equal to the HPMAX tag.
+		TOPROV, TOPEACE	     They set the minimum skill amount to provocate or peace a NPC.
+	Added new JS propertys:
+		.skillToProv  Can be used to get/set the amount of skill needed to provocate a NPC.
+		.skillToPeace Can be used to get/set the amount of skill needed to peace a NPC.
+	changed JS propertys:
+		.maxstamina and . maxmana now work equal to the .maxhp property.
+	Added the new JS propertys to the set command.
+
 2/24/2006 - giwo (0.98-3.4l [3.5 BETA])
 	Modified OnIterate() to de-allocate any JSObject it uses to free wasted memory.
 	Merged all boolean values in cServerData to a single UI32 using bitmasking.
