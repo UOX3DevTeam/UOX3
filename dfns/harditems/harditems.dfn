@@ -21,6 +21,12 @@
 //*                                                               *
 //*****************************************************************
 
+//Blood puddle gotten from corpse carving
+[x122A]
+{
+decay=1
+}
+
 //Messageboards
 [x1E5Ex1E5F]
 {
