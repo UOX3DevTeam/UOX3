@@ -2026,7 +2026,15 @@ bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval ); 
-	
+
+	if( ValidateObject( a ) )
+	{
+		if( a->GetObjType() == OT_CHAR )
+			JSEngine->ReleaseObject( IUE_CHAR, a );
+		else
+			JSEngine->ReleaseObject( IUE_ITEM, a );
+	}
+
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnIterate, false ); 	
 	else if( JSVAL_TO_BOOLEAN( rval ) )

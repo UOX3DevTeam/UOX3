@@ -1,3 +1,7 @@
+2/24/2006 - giwo (0.98-3.4l [3.5 BETA])
+	Modified OnIterate() to de-allocate any JSObject it uses to free wasted memory.
+	Merged all boolean values in cServerData to a single UI32 using bitmasking.
+
 24th February, 2006 - Maarc
 	Updated bitmask setting/getting code for CChar, making it a bit more friendly and less error prone
 	Fixed a bug with rugs_carpets.dfn where a closing bracket was missing for object 0x1e41

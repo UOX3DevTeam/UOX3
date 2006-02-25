@@ -165,7 +165,7 @@ namespace UOX
 		if( jsGlobal == NULL )
 			Shutdown( FATAL_UOX3_JAVASCRIPT );
 		JS_LockGCThing( jsContext, jsGlobal );
-		JS_AddRoot( jsContext, &jsGlobal );
+		//JS_AddRoot( jsContext, &jsGlobal );
 		JS_InitStandardClasses( jsContext, jsGlobal );
 
 		objectList.resize( IUE_COUNT );

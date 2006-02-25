@@ -12,6 +12,36 @@ namespace UOX
 #define SKILLCAP			7000
 #define STATCAP				325
 
+#define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
+#define MFLAGGET( flag, val )		( (flag&val) == val )
+
+const UI32 BIT_ANNOUNCESAVES		= 0x0000001;
+const UI32 BIT_ANNOUNCEJOINPART		= 0x0000002;
+const UI32 BIT_SERVERBACKUP			= 0x0000004;
+const UI32 BIT_SHOOTONANIMALBACK	= 0x0000008;
+const UI32 BIT_NPCTRAINING			= 0x0000010;
+const UI32 BIT_LOOTDECAYSONCORPSE	= 0x0000020;
+const UI32 BIT_GUARDSENABLED		= 0x0000040;
+const UI32 BIT_PLAYDEATHANIMATION	= 0x0000080;
+const UI32 BIT_AMBIENTFOOTSTEPS		= 0x0000100;
+const UI32 BIT_INTERNALACCOUNTS		= 0x0000200;
+const UI32 BIT_SHOWOFFLINEPCS		= 0x0000400;
+const UI32 BIT_ROGUESTATUS			= 0x0000800;
+const UI32 BIT_SNOOPISCRIME			= 0x0001000;
+const UI32 BIT_PERSECUTIONSTATUS	= 0x0002000;
+const UI32 BIT_SELLBYNAME			= 0x0004000;
+const UI32 BIT_TRADESYSSTATUS		= 0x0008000;
+const UI32 BIT_RANKSYSSTATUS		= 0x0010000;
+const UI32 BIT_CUTSCROLLREQ			= 0x0020000;
+const UI32 BIT_SHOWHITMESSAGE		= 0x0040000;
+const UI32 BIT_ESCORTSTATUS			= 0x0080000;
+const UI32 BIT_MONSTERSVSANIMALS	= 0x0100000;
+const UI32 BIT_PETHUNGEROFFLINE		= 0x0200000;
+const UI32 BIT_HIDEWHILEMOUNTED		= 0x0400000;
+const UI32 BIT_OVERLOADPACKETS		= 0x0800000;
+const UI32 BIT_ARMORAFFECTMANAREGEN = 0x1000000;
+const UI32 BIT_ANIMALSGUARDED		= 0x2000000;
+
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
@@ -337,34 +367,34 @@ char CServerData::ServerCommandPrefix( void ) const
 	return commandprefix;
 }
 
-void CServerData::ServerAnnounceSaves( bool setting )
+void CServerData::ServerAnnounceSaves( bool newVal )
 {
-	announcesaves = setting;
+	MFLAGSET( boolVals, newVal, BIT_ANNOUNCESAVES )
 }
 
 bool CServerData::ServerAnnounceSavesStatus( void ) const
 {
-	return announcesaves;
+	return MFLAGGET( boolVals, BIT_ANNOUNCESAVES );
 }
 
-void CServerData::ServerJoinPartAnnouncements( bool setting )
+void CServerData::ServerJoinPartAnnouncements( bool newVal )
 {
-	joinpartmsgsenabled = setting;
+	MFLAGSET( boolVals, newVal, BIT_ANNOUNCEJOINPART )
 }
 
 bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
 {
-	return joinpartmsgsenabled;
+	return MFLAGGET( boolVals, BIT_ANNOUNCEJOINPART );
 }
 
-void CServerData::ServerBackups( bool setting )
+void CServerData::ServerBackups( bool newVal )
 {
-	backupsenabled = setting;
+	MFLAGSET( boolVals, newVal, BIT_SERVERBACKUP )
 }
 
 bool CServerData::ServerBackupStatus( void ) const
 {
-	return backupsenabled;
+	return MFLAGGET( boolVals, BIT_SERVERBACKUP );
 }
 
 void CServerData::ServerSavesTimer( UI32 timer )
@@ -524,22 +554,22 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 
 bool CServerData::ShootOnAnimalBack( void ) const
 {
-	return shootonanimalback;
+	return MFLAGGET( boolVals, BIT_SHOOTONANIMALBACK );
 }
 
-void CServerData::ShootOnAnimalBack( bool setting )
+void CServerData::ShootOnAnimalBack( bool newVal )
 {
-	shootonanimalback = setting;
+	MFLAGSET( boolVals, newVal, BIT_SHOOTONANIMALBACK )
 }
 
 bool CServerData::NPCTrainingStatus( void ) const
 {
-	return npctraining;
+	return MFLAGGET( boolVals, BIT_NPCTRAINING );
 }
 
-void CServerData::NPCTrainingStatus( bool setting )
+void CServerData::NPCTrainingStatus( bool newVal )
 {
-	npctraining = setting;
+	MFLAGSET( boolVals, newVal, BIT_NPCTRAINING );
 }
 
 //o--------------------------------------------------------------------------o
@@ -575,34 +605,34 @@ void CServerData::dumpPaths( void )
 	Console.PrintSectionBegin();
 }
 
-void CServerData::CorpseLootDecay( bool value )
+void CServerData::CorpseLootDecay( bool newVal )
 {
-	lootdecayswithcorpse = value;
+	MFLAGSET( boolVals, newVal, BIT_LOOTDECAYSONCORPSE );
 }
 
 bool CServerData::CorpseLootDecay( void ) const
 {
-	return lootdecayswithcorpse;
+	return MFLAGGET( boolVals, BIT_LOOTDECAYSONCORPSE );
 }
 
-void CServerData::GuardStatus( bool value )
+void CServerData::GuardStatus( bool newVal )
 {
-	guardsenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_GUARDSENABLED );
 }
 
 bool CServerData::GuardsStatus( void ) const
 {
-	return guardsenabled;
+	return MFLAGGET( boolVals, BIT_GUARDSENABLED );
 }
 
-void CServerData::DeathAnimationStatus( bool value )
+void CServerData::DeathAnimationStatus( bool newVal )
 {
-	deathanimationenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_PLAYDEATHANIMATION );
 }
 
 bool CServerData::DeathAnimationStatus( void ) const
 {
-	return deathanimationenabled;
+	return MFLAGGET( boolVals, BIT_PLAYDEATHANIMATION );
 }
 
 void CServerData::WorldAmbientSounds( SI16 value )
@@ -618,63 +648,63 @@ SI16 CServerData::WorldAmbientSounds( void ) const
 	return ambientsounds;
 }
 
-void CServerData::AmbientFootsteps( bool value )
+void CServerData::AmbientFootsteps( bool newVal )
 {
-	ambientfootsteps = value;
+	MFLAGSET( boolVals, newVal, BIT_AMBIENTFOOTSTEPS );
 }
 
 bool CServerData::AmbientFootsteps( void ) const
 {
-	return ambientfootsteps;
+	return MFLAGGET( boolVals, BIT_AMBIENTFOOTSTEPS );
 }
 
-void CServerData::InternalAccountStatus( bool value )
+void CServerData::InternalAccountStatus( bool newVal )
 {
-	internalaccountsenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_INTERNALACCOUNTS );
 }
 
 bool CServerData::InternalAccountStatus( void ) const
 {
-	return internalaccountsenabled;
+	return MFLAGGET( boolVals, BIT_INTERNALACCOUNTS );
 }
 
-void CServerData::ShowOfflinePCs( bool value )
+void CServerData::ShowOfflinePCs( bool newVal )
 {
-	showOfflinePCs = value;
+	MFLAGSET( boolVals, newVal, BIT_SHOWOFFLINEPCS );
 }
 
 bool CServerData::ShowOfflinePCs( void ) const
 {
-	return showOfflinePCs;
+	return MFLAGGET( boolVals, BIT_SHOWOFFLINEPCS );
 }
 
-void CServerData::RogueStatus( bool value )
+void CServerData::RogueStatus( bool newVal )
 {
-	roguesenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_ROGUESTATUS );
 }
 
 bool CServerData::RogueStatus( void ) const
 {
-	return roguesenabled;
+	return MFLAGGET( boolVals, BIT_ROGUESTATUS );
 }
 
-void CServerData::SnoopIsCrime( bool value )
+void CServerData::SnoopIsCrime( bool newVal )
 {
-	snoopiscrime = value;
+	MFLAGSET( boolVals, newVal, BIT_SNOOPISCRIME );
 }
 bool CServerData::SnoopIsCrime( void ) const
 {
-	return snoopiscrime;
+	return MFLAGGET( boolVals, BIT_SNOOPISCRIME );
 }
 
-void CServerData::PlayerPersecutionStatus( bool value )
+void CServerData::PlayerPersecutionStatus( bool newVal )
 {
-	playerpersecution = value;
+	MFLAGSET( boolVals, newVal, BIT_PERSECUTIONSTATUS );
 }
 
 bool CServerData::PlayerPersecutionStatus( void ) const
 {
-	return playerpersecution;
+	return MFLAGGET( boolVals, BIT_PERSECUTIONSTATUS );
 }
 
 void CServerData::HtmlStatsStatus( SI16 value )
@@ -687,14 +717,14 @@ SI16 CServerData::HtmlStatsStatus( void ) const
 	return htmlstatusenabled;
 }
 
-void CServerData::SellByNameStatus( bool value )
+void CServerData::SellByNameStatus( bool newVal )
 {
-	sellbynameenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_SELLBYNAME );
 }
 
 bool CServerData::SellByNameStatus( void ) const
 {
-	return sellbynameenabled;
+	return MFLAGGET( boolVals, BIT_SELLBYNAME );
 }
 
 void CServerData::SellMaxItemsStatus( SI16 value )
@@ -707,34 +737,34 @@ SI16 CServerData::SellMaxItemsStatus( void ) const
 	return sellmaxitems;
 }
 
-void CServerData::TradeSystemStatus( bool value )
+void CServerData::TradeSystemStatus( bool newVal )
 {
-	tradesystemenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_TRADESYSSTATUS );
 }
 
 bool CServerData::TradeSystemStatus( void ) const
 {
-	return tradesystemenabled;
+	return MFLAGGET( boolVals, BIT_TRADESYSSTATUS );
 }
 
-void CServerData::RankSystemStatus( bool value )
+void CServerData::RankSystemStatus( bool newVal )
 {
-	ranksystemenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_RANKSYSSTATUS );
 }
 
 bool CServerData::RankSystemStatus( void ) const
 {
-	return ranksystemenabled;
+	return MFLAGGET( boolVals, BIT_RANKSYSSTATUS );
 }
 
-void CServerData::CutScrollRequirementStatus( bool value )
+void CServerData::CutScrollRequirementStatus( bool newVal )
 {
-	cutscrollrequirement = value;
+	MFLAGSET( boolVals, newVal, BIT_CUTSCROLLREQ );
 }
 
 bool CServerData::CutScrollRequirementStatus( void ) const
 {
-	return cutscrollrequirement;
+	return MFLAGGET( boolVals, BIT_CUTSCROLLREQ );
 }
 
 void CServerData::CheckItemsSpeed( R64 value )
@@ -819,14 +849,14 @@ UI08 CServerData::MineCheck( void ) const
 	return minecheck;
 }
 
-void CServerData::CombatDisplayHitMessage( bool value )
+void CServerData::CombatDisplayHitMessage( bool newVal )
 {
-	combatdisplayhitmessage = value;
+	MFLAGSET( boolVals, newVal, BIT_SHOWHITMESSAGE );
 }
 
 bool CServerData::CombatDisplayHitMessage( void ) const
 {
-	return combatdisplayhitmessage;
+	return MFLAGGET( boolVals, BIT_SHOWHITMESSAGE );
 }
 
 void CServerData::CombatNPCDamageRate( SI16 value )
@@ -858,22 +888,22 @@ void CServerData::SkillLevel( UI08 value )
 	skilllevel = value;
 }
 
-void CServerData::EscortsEnabled( bool value )
+void CServerData::EscortsEnabled( bool newVal )
 {
-	escortsenabled = value;
+	MFLAGSET( boolVals, newVal, BIT_ESCORTSTATUS );
 }
 bool CServerData::EscortsEnabled( void ) const
 {
-	return escortsenabled;
+	return MFLAGGET( boolVals, BIT_ESCORTSTATUS );
 }
 
-void CServerData::CombatMonstersVsAnimals( bool value )
+void CServerData::CombatMonstersVsAnimals( bool newVal )
 {
-	combatmonstersvsanimals = value;
+	MFLAGSET( boolVals, newVal, BIT_MONSTERSVSANIMALS );
 }
 bool CServerData::CombatMonstersVsAnimals( void ) const
 {
-	return combatmonstersvsanimals;
+	return MFLAGGET( boolVals, BIT_MONSTERSVSANIMALS );
 }
 
 void CServerData::CombatAnimalsAttackChance( UI08 value )
@@ -905,13 +935,13 @@ UI16 CServerData::PetOfflineTimeout( void ) const
 	return petOfflineTimeout;
 }
 
-void CServerData::PetHungerOffline( bool value )
+void CServerData::PetHungerOffline( bool newVal )
 {
-	petHungerOffline = value;
+	MFLAGSET( boolVals, newVal, BIT_PETHUNGEROFFLINE );
 }
 bool CServerData::PetHungerOffline( void ) const
 {
-	return petHungerOffline;
+	return MFLAGGET( boolVals, BIT_PETHUNGEROFFLINE );
 }
 
 void CServerData::BuyThreshold( SI16 value )
@@ -932,13 +962,13 @@ SI16 CServerData::BuyThreshold( void ) const
 //o--------------------------------------------------------------------------o
 //|	Description		-	Toggle characters ability to hide whilst mounted
 //o--------------------------------------------------------------------------o
-void CServerData::CharHideWhileMounted( bool value )
+void CServerData::CharHideWhileMounted( bool newVal )
 {
-	charhidewhilemounted = value;
+	MFLAGSET( boolVals, newVal, BIT_HIDEWHILEMOUNTED );
 }
 bool CServerData::CharHideWhileMounted( void ) const
 {
-	return charhidewhilemounted;
+	return MFLAGGET( boolVals, BIT_HIDEWHILEMOUNTED );
 }
 
 //o--------------------------------------------------------------------------o
@@ -968,11 +998,11 @@ void CServerData::WeightPerStr( UI08 newVal )
 //o--------------------------------------------------------------------------o
 bool CServerData::ServerOverloadPackets( void ) const
 {
-	return overloadPackets;
+	return MFLAGGET( boolVals, BIT_OVERLOADPACKETS );
 }
 void CServerData::ServerOverloadPackets( bool newVal )
 {
-	overloadPackets = newVal;
+	MFLAGSET( boolVals, newVal, BIT_OVERLOADPACKETS );
 }
 
 //o--------------------------------------------------------------------------o
@@ -985,11 +1015,11 @@ void CServerData::ServerOverloadPackets( bool newVal )
 //o--------------------------------------------------------------------------o
 bool CServerData::ArmorAffectManaRegen( void ) const
 {
-	return armorAffectManaRegen;
+	return MFLAGGET( boolVals, BIT_ARMORAFFECTMANAREGEN );
 }
 void CServerData::ArmorAffectManaRegen( bool newVal )
 {
-	armorAffectManaRegen = newVal;
+	MFLAGSET( boolVals, newVal, BIT_ARMORAFFECTMANAREGEN );
 }
 
 void CServerData::BackupRatio( SI16 value )
@@ -1028,13 +1058,13 @@ UI16 CServerData::CombatExplodeDelay( void ) const
 	return combatExplodeDelay;
 }
 
-void CServerData::CombatAnimalsGuarded( bool value )
+void CServerData::CombatAnimalsGuarded( bool newVal )
 {
-	combatanimalsguarded = value;
+	MFLAGSET( boolVals, newVal, BIT_ANIMALSGUARDED );
 }
 bool CServerData::CombatAnimalsGuarded( void ) const
 {
-	return combatanimalsguarded;
+	return MFLAGGET( boolVals, BIT_ANIMALSGUARDED );
 }
 
 void CServerData::CombatNPCBaseFleeAt( SI16 value )

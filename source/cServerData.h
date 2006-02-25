@@ -76,6 +76,8 @@ class CServerData
 {
 private:
 
+	UI32		boolVals;						// Many values stored this way, rather than using bools.
+
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
 	UI16		port;							//	Port number that the server listens on, for connections
@@ -83,9 +85,6 @@ private:
 	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
 	UI08		crashprotectionenabled;			//	Level of crash protection - number of crash restart attempts before stopping - NEVER ACTIVELY USED
 	char		commandprefix;					//	Character that acts as the command prefix
-	bool		announcesaves;					//	Determines if world saves are announced
-	bool		joinpartmsgsenabled;			//	Determines if player join/part messages are enabled
-	bool		backupsenabled;					//	Determines if backups are enabled
 	SI16		backupRatio;					//	Number of saves before a backup occurs
 	UI32		serversavestimer;				//	Number of seconds between world saves
 	UI32		netRcvTimeout;					// 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly laggy nets this would drop alot of packets, and disconnect people.
@@ -104,7 +103,6 @@ private:
 	UI16		statcap;						//	A cap on the total of a PC's stats
 	SI16		maxstealthmovement;				//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxstaminamovement;				//	Max number of steps allowed while running before stamina is reduced
-	bool		snoopiscrime;					//	True if snooping is a crime, otherwise false
 
 	// ServerTimers
 	UI16		serverTimers[tSERVER_COUNT];
@@ -112,28 +110,11 @@ private:
 	std::string serverDirectories[CSDDP_COUNT];
 
 	// Settings
-	bool		lootdecayswithcorpse;			//	True if loot decays with the corpse
-	bool		guardsenabled;					//	True if guards are enabled on a global scheme
-	bool		deathanimationenabled;			//	True if the death animation is played
 	SI16		ambientsounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
-	bool		ambientfootsteps;				//	True if different tiles make different footstep sounds
-	bool		internalaccountsenabled;		//	True if new accounts are made when a person logs in with an unknown username
-	bool		showOfflinePCs;					//	True if Offline PC's are viewable by GMs
-	bool		roguesenabled;					//	True if stealing is a useable skill
-	bool		playerpersecution;				//	True if persecution is enabled (ghosts attacking living)
 	SI16		htmlstatusenabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
-	bool		sellbynameenabled;				//	True if items can be sold by their name, not just ID/Colour
 	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
-	bool		tradesystemenabled;				//	True if the trade system is enabled (uses the GOOD settings... does anyone use this?)
-	bool		ranksystemenabled;				//	True if the rank system is enabled (allows for variable quality goods)
-	bool		cutscrollrequirement;			//	Should be a BOOL - If true, then skill requirements for casting spells is cut
-	bool		npctraining;					//	True if NPCs can train PCs
-	bool		charhidewhilemounted;			//	Should be a BOOL - If true, then a character can hide/stealth while mounted
 	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
-	bool		armorAffectManaRegen;			//	Toggles whether or not armor affects mana regeneration rate.
-	bool		overloadPackets;				//	Toggle Packet Handling in JS
-	bool		petHungerOffline;				//	Should pets hunger while the player is offline
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 
 	// SpeedUp
@@ -147,9 +128,6 @@ private:
 	// MessageBoards
 	UI08		msgpostinglevel;				//	If not 0, then players can post
 	UI08		msgremovallevel;				//	If not 0, then players can remove posts
-
-	// Escorts
-	bool		escortsenabled;					//	True if escorts are enabled
 
 	// WorldLight
 	LIGHTLEVEL	dungeonlightlevel;				//	Default light level for a dungeon, if not subject to a weather system
@@ -190,16 +168,12 @@ private:
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
 	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
-	bool		combatdisplayhitmessage;		//	True if hit messages are displayed in combat
-	bool		combatmonstersvsanimals;		//	True if monsters can attack animals
 	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
-	bool		combatanimalsguarded;			//	True if animals are guarded from attack
 	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
 	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
 	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
-	bool		shootonanimalback;				//	True if you can fire a bow from horseback
 
 	// Start & Location Settings
 	std::vector< STARTLOCATION >	startlocations;
