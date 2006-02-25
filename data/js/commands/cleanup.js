@@ -8,7 +8,7 @@ function command_CLEANUP( socket, cmdString )
 	socket.SysMessage( GetDictionaryEntry( 83, socket.Language ) );
 	var count = IterateOver( "ITEM" );
 	socket.SysMessage( GetDictionaryEntry( 84, socket.Language ) );
-	socket.SysMessage( NumToString( count ) + " corpses or gates have been deleted" );
+	socket.SysMessage( count.toString() + " corpses or gates have been deleted" );
 }
 
 function onIterate( toCheck )

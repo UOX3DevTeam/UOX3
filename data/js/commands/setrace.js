@@ -8,7 +8,7 @@ function command_SETRACE( socket, cmdString )
 	if( cmdString )
 	{
 		var pUser = socket.currentChar;
-		var race = StringToNum( cmdString );
+		var race = parseInt( cmdString );
 		RaceGate( socket, pUser, race );
 	}
 }

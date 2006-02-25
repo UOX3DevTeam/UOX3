@@ -9,7 +9,7 @@ function command_FIX( socket, cmdString )
 	if( mChar )
 	{
 		if( cmdString )
-			mChar.z = StringToNum( cmdString );
+			mChar.z = parseInt( cmdString );
 		else
 			mChar.z = validTelePos( mChar );
 	}

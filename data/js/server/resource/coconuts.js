@@ -1,9 +1,11 @@
 // Coconut-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) coconut palm is double-clicked, it's setup with
 // 5 coconuts ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more coconuts can be picked. Once the timer is over,
 // new coconuts are added.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
@@ -16,9 +18,9 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless apples have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Coconuts",1); 		// If set to 1, there are apples to be picked, if 0 there are no ripe apples
-		iUsed.SetTag("CoconutCounter", 5); 	// Add 5 apples to the tree initially
+		iUsed.SetTag("CoconutCounter", maxResource); 	// Add 5 apples to the tree initially
 	}
 	var Coconuts = iUsed.GetTag("Coconuts");
 	var CoconutCount = iUsed.GetTag("CoconutCounter");
@@ -45,7 +47,7 @@ function onUse( pUser, iUsed )
 		    	if( CoconutCount == 0 )
 			{
 				iUsed.SetTag( "Coconuts", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time coconuts respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time coconuts respawn
 			}
 		}
 	}
@@ -56,7 +58,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("CoconutCounter", 5);
+		iUsed.SetTag("CoconutCounter", maxResource);
 		iUsed.SetTag("Coconuts", 1);
 	}
 }

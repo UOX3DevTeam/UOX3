@@ -7,7 +7,7 @@ function CommandRegistration()
 function command_GUMPMENU( socket, cmdString )
 {
 	if( cmdString )
-		socket.OpenGump( StringToNum( cmdString ) );
+		socket.OpenGump( parseInt( cmdString ) );
 }
 
 function command_NACCT( socket, cmdString )

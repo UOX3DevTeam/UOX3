@@ -22,7 +22,7 @@ function onCallback1( socket, ourObj )
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
-		if( ourObj.isItem )
+		if( ourObj && ourObj.isItem )
 			tileID = ourObj.id;
 		else	// 5.x clients send our character as the object when clicking on tiles.
 			tileID = socket.GetWord( 17 );
@@ -39,7 +39,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj )
 			{
-				if( tileID == 0x1be0 || ( tileID >= 0x1BD7 && tileID <= 0x1BE2 ) )	// Bowcraft
+				if( tileID >= 0x1BD7 && tileID <= 0x1BE2 )	// Bowcraft
 					BowCraft( socket, mChar, ourObj, tileID );
 				else if( tileID == 0x2006 )
 					CarveCorpse( socket, mChar, ourObj );
@@ -58,31 +58,31 @@ function BowCraft( socket, mChar, ourObj, tileID )
 {
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
-	{
-		var countResource = mChar.ResourceCount( tileID );
-		if( countResource >= 2 )
-			socket.MakeMenu( 49, 8 );
-		else
-			socket.SysMessage( GetDictionaryEntry( 782, socket.Language ) );
-	}
+		socket.MakeMenu( 49, 8 );
 	else
 		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
 }
 
 function ChopTree( socket, mChar )
 {
+	if( mChar.skillsused.lumberjacking )
+	{
+		socket.SysMessage( "You are too busy to do that" );
+		return;
+	}
+
 	var targX = socket.GetWord( 11 );
 	var targY = socket.GetWord( 13 );
 	var distX = Math.abs( mChar.x - targX );
 	var distY = Math.abs( mChar.y - targY );
 	var distZ = Math.abs( mChar.z - socket.GetByte( 16 ) );
 
-	mChar.TurnToward( targX, targY );
 	if( distX > 2 || distY > 2 || distZ > 9 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
 		return;
 	}
+	mChar.TurnToward( targX, targY );
 
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateLog( mResource, socket );
@@ -99,17 +99,49 @@ function ChopTree( socket, mChar )
 
 	mChar.SoundEffect( 0x013E, true );
 
-	if( mChar.CheckSkill( 44, 0, 1000 ) )
+	socket.clickX = targX;
+	socket.clickY = targY;
+	mChar.skillsused.lumberjacking = true;
+	mChar.StartTimer( 1500, 1, true );
+}
+
+function onTimer( mChar, timerID )
+{
+	switch( timerID )
 	{
-		mResource.logAmount = mResource.logAmount-1;
-		CreateBlankItem( socket, mChar, 10, "#", 0x1BE0, 0x0000, "ITEM", true );
-		socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) );
-	}
-	else
-	{
-		socket.SysMessage( GetDictionaryEntry( 842, socket.Language ) );
-		if( RandomNum( 0, 1 ) )	// 50% chance to destroy some resources
-			mResource.logAmount = mResource.logAmount-1;
+	case 0:
+		mChar.skillsused.lumberjacking = false;
+		var socket = mChar.socket;
+		if( socket )
+		{
+			var mResource = ResourceRegion( socket.clickX, socket.clickY, mChar.worldnumber );
+			socket.clickX = 0;
+			socket.clickY = 0;
+
+			if( mChar.CheckSkill( 44, 0, 1000 ) )
+			{
+				mResource.logAmount = mResource.logAmount-1;
+				CreateBlankItem( socket, mChar, 10, "#", 0x1BE0, 0x0000, "ITEM", true );
+				socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) );
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 842, socket.Language ) );
+				if( RandomNumber( 0, 1 ) )	// 50% chance to destroy some resources
+					mResource.logAmount = mResource.logAmount-1;
+			}
+		}
+		break;
+	case 1:
+		if( mChar.isonhorse )
+			mChar.DoAction( 0x1C );
+		else
+			mChar.DoAction( 0x0D );
+	
+		mChar.SoundEffect( 0x013E, true );
+
+		mChar.StartTimer( 1500, 0, true );
+		break;
 	}
 }
 
@@ -119,7 +151,6 @@ function RegenerateLog( mResource, socket)
 	var logTimer	= ResourceTime( "LOGS" );
 	var currentTime	= GetCurrentClock();
 
-	socket.SysMessage( NumToString( logCeiling ) + " " + NumToString( logTimer ) + " " + NumToString( currentTime ) );
 	if( mResource.logTime <= currentTime )
 	{
 		for( var i = 0; i < logCeiling; ++i )
@@ -130,7 +161,6 @@ function RegenerateLog( mResource, socket)
 				break;
 		}
 		mResource.logTime = (currentTime + (1000 * logTimer));
-		socket.SysMessage( "New Time: " + NumToString( mResource.logTime ) );
 	}
 }
 

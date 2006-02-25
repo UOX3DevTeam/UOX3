@@ -1,7 +1,8 @@
 // Cotton-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) cotton plant is double-clicked, it may yield some cotton.
 // Then a timer will start, and no more cotton can be picked until it runs out.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 
 function onUse( pUser, iUsed )
 {
@@ -14,7 +15,7 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless cotton have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Cotton",1); 		// If set to 1, there is cotton to be picked
 	}
 	var Cotton = iUsed.GetTag("Cotton");
@@ -33,7 +34,7 @@ function onUse( pUser, iUsed )
 			pUser.SysMessage( "You harvest some cotton." );
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0df9", 1, "ITEM", true );
 			iUsed.SetTag( "Cotton", 0 );
-			iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time more cotton respawns
+			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 60 seconds until next time more cotton respawns
 		}
 	}
 	return false;

@@ -354,7 +354,13 @@
 
 //Training Dummies
 0x1070=5005
+0x1071=5005
+0x1072=5005
+0x1073=5005
 0x1074=5005
+0x1075=5005
+0x1076=5005
+0x1077=5005
 
 //Pickpocket Dips
 0x1EC0=5006
@@ -365,8 +371,9 @@
 0x0DE2=5008
 
 //Fletching Tool
-0x1022=4005
-0x1023=4006
+0x1020=4005
+0x1BD1=4005
+0x1BD4=4005
 
 // Swords
 0x0EC4=5009 //skinning knife
@@ -445,5 +452,85 @@
 0x255D=5010 //ratman axe - LBR
 0x2564=5010 //troll axe - LBR
 0x2570=5010 //hatchet - LBR
+
+// Musical Instruments
+0x0E9C=136	// Drum
+0x0E9D=136	// Tambourine
+0x0E9E=136	// Tambourine
+0x0EB1=136	// Standing Harp
+0x0EB2=136	// Harp
+0x0EB3=136	// Lute
+0x0EB4=136	// Lute
+
+// Lockpicks
+0x14FB=4008
+0x14FC=4008
+0x14FD=4008
+0x14FE=4008
+
+// Tinker Axle
+0x1053=4009
+0x1054=4009
+0x105B=4009
+0x105C=4009
+
+// Tinker Awg
+0x1051=4010
+0x1052=4010
+0x1055=4010
+0x1056=4010
+0x105D=4010
+0x105E=4010
+
+// Tinker Clock
+0x104D=4011
+0x104E=4011
+0x104F=4011
+0x1050=4011
+
+// Tinker Sextant
+0x1059=4012
+0x105A=4012
+
+// Carpentry Tools
+0x1026=4006
+0x1027=4006
+0x1028=4006
+0x1029=4006
+0x102C=4006
+0x102D=4006
+0x102E=4006
+0x102F=4006
+0x1030=4006
+0x1031=4006
+0x1032=4006
+0x1033=4006
+0x1034=4006
+0x1035=4006
+0x10E4=4006
+0x10E5=4006
+0x10E6=4006
+
+// Tinker Tool
+0x1EBC=4003
+
+// Leather Repair Tool
+0x0EC1=4002
+
+// Bow Repair Tool
+0x10E7=4001
+
+// Bandage
+0x0E21=4000
+
+// Sewing Kit
+0x0F9D=4004
+
+// Mortar
+0x0E9B=4007
+
+// Archery Butte
+0x100A=5007
+0x100B=5007
 
 }

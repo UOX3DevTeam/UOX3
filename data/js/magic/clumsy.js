@@ -95,7 +95,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 	
 	if( mChar.visible == 1 || mChar.visible == 2 )
-		mChar.visile = 0;
+		mChar.visible = 0;
 
 	mChar.BreakConcentration( mSock );
 
@@ -281,10 +281,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		return;
 	}
 
-//	if( !mChar.LineOfSight( mSock, ourTarg.x, ourTarg.y, ourTarg.z ) )
-//	{
-//		return;
-//	}
+	if( !mChar.CanSee( ourTarg ) )
+	{
+		return;
+	}
 	
 	var targRegion = ourTarg.region;
 	if( mSpell.agressiveSpell )

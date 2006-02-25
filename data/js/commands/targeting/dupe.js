@@ -7,7 +7,7 @@ function command_DUPE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 38, socket.Language );
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
 	socket.CustomTarget( 0, targMsg );

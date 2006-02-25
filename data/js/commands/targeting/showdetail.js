@@ -50,7 +50,7 @@ function onCallback0( socket, ourObj )
 			message = "This opens a map based on the serial num of the item";
 			break;
 		case 11: // book
-			message = "A book:Entry in misc.scp: " + NumToString( ourObj.more );
+			message = "A book:Entry in misc.scp: " + ourObj.more.toString();
 			break;
 		case 12: // doors
 			message = "Unlocked door";
@@ -62,9 +62,9 @@ function onCallback0( socket, ourObj )
 			message = "Food item, reduces hunger by one point";
 			break;
 		case 15: // magic wand
-			message = "Magic wand\nCircle: " + NumToString( ourObj.morex );
-			message += ":Spell within circle: " + NumToString( ourObj.morey );
-			message += ":Charges left: " + NumToString( ourObj.morez );
+			message = "Magic wand\nCircle: " + ourObj.morex.toString();
+			message += ":Spell within circle: " + ourObj.morey.toString();
+			message += ":Charges left: " + ourObj.morez.toString();
 			break;
 		case 16: // resurrection object
 			message = "Resurrection object";
@@ -164,83 +164,87 @@ function onCallback0( socket, ourObj )
 		case 52:
 			var moonGate;
 			moonGate = CalcItemFromSer( ourObj.morex );
-			message = "Moongate going to X " + NumToString( moongate.x );
-			message += " Y " + NumToString( moongate.y );
-			message += " Z " + NumToString( moongate.z );
+			message = "Moongate going to X " + moongate.x.toString();
+			message += " Y " + moongate.y.toString();
+			message += " Z " + moongate.z.toString();
 			break;
 		case 60: // object teleporter
-			message = "A teleporter going to X " + NumToString( ourObj.morex );
-			message += " Y " + NumToString( ourObj.morey );
-			message += " Z " + NumToString( ourObj.morez );
+			message = "A teleporter going to X " + ourObj.morex.toString();
+			message += " Y " + ourObj.morey.toString();
+			message += " Z " + ourObj.morez.toString();
 			break;
 		case 61: // item spawner
 			message = "Item spawner:ItemEntry: " + ourObj.spawnsection;
-			message += ":Respawn max time: " + NumToString( ourObj.maxinterval );
-			message += ":Respawn min time: " + NumToString( ourObj.mininterval );
+			message += ":Respawn max time: " + ourObj.maxinterval.toString();
+			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 62:	// monster/npc spanwer
 			message = "NPC spawner:NpcEntry: " + ourObj.spawnsection;
-			message += ":Respawn max time: " + NumToString( ourObj.maxinterval );
-			message += ":Respawn min time: " + NumToString( ourObj.mininterval );
+			message += ":Respawn max time: " + ourObj.maxinterval.toString();
+			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 63:	// spawn container
 			message = "Item Spawn container:";
 			if( ourObj.moreb > 0 )
 				message += "Magically trapped:";
-			message += ":Respawn max time: " + NumToString( ourObj.maxinterval );
-			message += ":Respawn min time: " + NumToString( ourObj.mininterval );
+			message += ":Respawn max time: " + ourObj.maxinterval.toString();
+			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 64:	// locked spawn container
 			message = "Locked item spawn container:";
 			if( ourObj.moreb > 0 )
 				message += "Magically trapped:";
-			message += ":Respawn max time: " + NumToString( ourObj.maxinterval );
-			message += ":Respawn min time: " + NumToString( ourObj.mininterval );
+			message += ":Respawn max time: " + ourObj.maxinterval.toString();
+			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 65:	// unlockable item spawner container
 			message = "Unlockable item spawner container";
 			break;
 		case 69:	// area spawner
-			message = "Area spawner:X +/- value: " + NumToString( ourObj.more );
-			message += "Y +/- value: " + NumToString( ourObj.more );
-			message += "Amount: " + NumToString( ourObj.amount );
+			message = "Area spawner:X +/- value: " + ourObj.more.toString();
+			message += "Y +/- value: " + ourObj.more.toString();
+			message += "Amount: " + ourObj.amount.toString();
 			message += "NpcEntry: " + ourObj.spawnsection;
-			message += "Respawn max time: " + NumToString( ourObj.maxinterval );
-			message += "Respawn min time: " + NumToString( ourObj.mininterval );
+			message += "Respawn max time: " + ourObj.maxinterval.toString();
+			message += "Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 80:	// single use advancement gate
-			message = "Single use advancement gate: advance.scp entry " + NumToString( ourObj.morex );
+			message = "Single use advancement gate: advance.scp entry " + ourObj.morex.toString();
 			break;
 		case 81:	// multi-use advancement gate
-			message = "Multi use advancement gate: advance.scp entry " + NumToString( ourObj.morex );
+			message = "Multi use advancement gate: advance.scp entry " + ourObj.morex.toString();
 			break;
 		case 82:	// monster gate
-			message = "Monster gate: monster number " + NumToString( ourObj.morex );
+			message = "Monster gate: monster number " + ourObj.morex.toString();
 			break;
 		case 83:	// race gates
-			message = "Race Gate:Turns into race num: " + NumToString( ourObj.morex );
+			message = "Race Gate:Turns into race num: " + ourObj.morex.toString();
 			if( ourObj.morey == 1 )
 				message += "Constantly reuseable:";
 			else
 				message += "One time use only:";
 			break;
 		case 85:	// damage object
-			message = "Damage object:Minimum damage " + NumToString( ourObj.morex + ourObj.morey );
-			message += "Maximum Damage " + NumToString( ourObj.morex + ourObj.morez );
+			var minDam = ourObj.morex + ourObj.morey;
+			var maxDam = ourObj.morex + ourObj.morez;
+			message = "Damage object:Minimum damage " + minDam.toString();
+			message += "Maximum Damage " + maxDam.toString();
 			break;
 		case 87:	// trash container
 			message = "A trash container";
 			break;
 		case 88:	// sound object
-			message = "Sound object that plays whenever someone is near:Soundeffect: " + NumToString( ourObj.morex )
-			message += "\nRadius: " + NumToString( ourObj.morey );
-			message += "\nProbability: " + NumToString( ourObj.morez );
+			message = "Sound object that plays whenever someone is near:Soundeffect: " + ourObj.morex.toString();
+			message += "\nRadius: " + ourObj.morey.toString();
+			message += "\nProbability: " + ourObj.morez.toString();
 			break;
 		case 89:	// map change
-			message = "Map Change object that changes world:World: " + NumToString( ourObj.more );
+			message = "Map Change object that changes world:World: " + ourObj.more.toString();
 			break;
 		case 101:	// morph object morex = npc# in npc.scp
-			message = "Morph object:Morphs char into body " + NumToString( ourObj.morex>>8 ) + " " + NumToString( ourObj.morex%256 );
+			var id1 = (ourObj.morex>>8);
+			var id2 = (ourObj.morex%256);
+			message = "Morph object:Morphs char into body " + id1.toString() + " " + id2.toString();
 			break;
 		case 102:	// unmorph
 			message = "Unmorph object, unmorphs back to body before using it as type 101, switches to 101 again";
@@ -255,7 +259,7 @@ function onCallback0( socket, ourObj )
 			message = "Escort NPC spawner, behaves like type 62/69";
 			break;
 		case 118:	// fireworks wand
-			message = "A fireworks wand with " + NumToString( ourObj.morex ) + " charges left on it";
+			message = "A fireworks wand with " + ourObj.morex.toString() + " charges left on it";
 			break;
 		case 202:	// guildstone deed
 			message = "Guildstone deed";
@@ -267,7 +271,7 @@ function onCallback0( socket, ourObj )
 			message = "Player vendor deed";
 			break;
 		case 90:	// world change gate
-			message = "World change gate: " + NumToString( ourObj.morex );
+			message = "World change gate: " + ourObj.morex.toString();
 			break;
 		}
 		socket.SysMessage( message );

@@ -7,24 +7,24 @@ function CommandRegistration()
 function command_MUTE( socket, cmdString )
 {
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 0;
 
 	var targMsg = GetDictionaryEntry( 71, socket.Language );
-	socket.tempint = StringToNum( cmdString );
+	socket.tempint = parseInt( cmdString );
 	socket.CustomTarget( 0, targMsg );
 }
 
 function command_SQUELCH( socket, cmdString )
 {
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 0;
 
 	var targMsg = GetDictionaryEntry( 71, socket.Language );
-	socket.tempint = StringToNum( cmdString );
+	socket.tempint = parseInt( cmdString );
 	socket.CustomTarget( 0, targMsg );
 }
 

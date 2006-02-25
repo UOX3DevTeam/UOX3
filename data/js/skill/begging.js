@@ -24,7 +24,7 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 899, pLanguage ) );
 		else if( ourObj.aiType == 17 ) // Player Vendor
 			pSock.SysMessage( GetDictionaryEntry( 900, pLanguage ) );
-		else if( ourObj.id != 0x0190 && ourObj.id != 0x0191 )
+		else if( !ourObj.isHuman )
 			pSock.SysMessage( GetDictionaryEntry( 905, pLanguage ) );
 		else if( !pUser.CheckSkill( 6, 0, 1000 ) )
 			pSock.SysMessage( GetDictionaryEntry( 902, pLanguage ) );

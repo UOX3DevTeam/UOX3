@@ -8,7 +8,7 @@ function command_JAIL( socket, cmdString )
 {
 	socket.tempint = 100000;
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 
 	var targMsg = GetDictionaryEntry( 180, socket.Language );
 	socket.CustomTarget( 0, targMsg );

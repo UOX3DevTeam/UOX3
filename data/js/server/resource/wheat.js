@@ -1,9 +1,10 @@
 // Wheat-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When (dynamic)wheat is double-clicked, it's setup with
 // wheat ripe for picking. When it is harvested it turns into "harvested wheat",
 // and a "growth" process happens, where the wheat goes through various stages
 // like "sprouts", short wheat and finally becomes harvestable tall wheat again.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 
 function onUse( pUser, iUsed )
 {
@@ -16,7 +17,7 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless wheats have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks what as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks what as initialized
 		iUsed.SetTag("Wheat",1); 		// If set to 1, there is wheat to be picked, if 0 there is no wheat left
 	}
 	var Wheat = iUsed.GetTag("Wheat");
@@ -41,7 +42,7 @@ function onUse( pUser, iUsed )
 			if( loot2 == 2 )
 				iUsed.id = 0x0dae;
 			iUsed.SetTag( "Wheat", 0 );
-			iUsed.StartTimer( 60000, 1, true); // Let's do some timers! Whee!
+			iUsed.StartTimer( resourceGrowthDelay, 1, true); // Let's do some timers! Whee!
 		}
 		return false;
 	}

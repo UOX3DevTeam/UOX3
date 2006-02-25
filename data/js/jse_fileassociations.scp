@@ -64,6 +64,9 @@
 134=skill/tailoring/wyarnballs-3.js
 135=skill/tailoring/wclothbolt.js
 //-------------------------------------------
+// Musicianship (Play Instrument)
+136=skill/musicianship.js
+//-------------------------------------------
 // Lightsources startSYSTEM[500-699]
 501=server/light/candle01_on.js
 502=server/light/candle01_off.js
@@ -126,8 +129,6 @@
 //-------------------------------------------
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
-2101=server/resource/fill_water_pitcher.js
-2102=server/resource/fill_milk_pitcher.js
 //-------------------------------------------
 // Server Data
 2500=server/data/weapontypes.js
@@ -157,18 +158,24 @@
 4005=skill/fletching.js
 4006=skill/carpentry.js
 4007=skill/alchemy.js
+4008=skill/lockpicking.js
+4009=skill/tinkeraxle.js
+4010=skill/tinkerawg.js
+4011=skill/tinkerclock.js
+4012=skill/tinkersextant.js
 
 // Miscellaneous Item Types
 5000=item/teleportrune.js
 5001=item/food.js
 5003=item/potion.js
-5004=item/moongate.js
+5004=item/teleporter.js
 5005=item/trainingdummy.js
 5006=item/pickpocketdip.js
 5007=item/archerybutte.js
 5008=item/kindling.js
 5009=item/sword.js
 5010=item/axe.js
+5011=item/moongate.js
 }
 
 //-------------------------------------------
@@ -226,6 +233,7 @@
 1047=commands/targeting/areacommand.js
 1048=commands/targeting/wipe.js
 1049=commands/targeting/showdetail.js
+1050=commands/targeting/makeshop.js
 }
 
 //-------------------------------------------
@@ -234,6 +242,7 @@
 [MAGIC_SCRIPTS]
 { // 600-799
 600=magic/clumsy.js
+601=magic/level1targ.js
 }
 
 [SKILLUSE_SCRIPTS]
@@ -250,10 +259,21 @@
 809=skill/begging.js
 810=skill/detecthidden.js
 811=skill/poisoning.js
+812=skill/peacemaking.js
+813=skill/enticement.js
+814=skill/provocation.js
+815=skill/inscription.js
+816=skill/meditation.js
 }
 
 [PACKET_SCRIPTS]
 { // 1500-1999
+}
+
+[CONSOLE_SCRIPTS]
+{
+9000=console/reloads.js
+9001=console/shutdown.js
 }
 
 

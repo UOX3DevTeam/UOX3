@@ -73,5 +73,5 @@ function onCallback0( tSock, targSerial )
 		}
 	}
 	else // Target is a static item
-		pUser.SysMessage("You cannot use your knife on thfdfdat." );
+		pUser.SysMessage("You cannot use your knife on that." );
 }

@@ -48,7 +48,7 @@ function onCallback1( socket, ourObj )
 	{
 		key = splitString[0].toUpperCase();
 		if( splitString[1] )
-			value = StringToNum( splitString[1] );
+			value = parseInt( splitString[1] );
 		else
 			value = 0;
 		IterateOver( "ITEM" );

@@ -22,7 +22,7 @@ function command_OPENLAYER( socket, cmdString )
 	if( !cmdString )
 		socket.tempint = 0x15;
 	else
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	socket.CustomTarget( 1, targMsg );
 }
 

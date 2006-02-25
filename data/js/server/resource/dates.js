@@ -1,10 +1,12 @@
 // Date-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) date tree is double-clicked, it's setup with
 // 5 dates ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more dates can be picked. Once the timer is over,
 // new dates are added. The apperance of the tree indicates whether or
 // not there are any dates left to pick.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
@@ -17,9 +19,9 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless dates have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized",1); 	// Marks tree as initialized
 		iUsed.SetTag("Dates",1); 		// If set to 1, there are dates to be picked, if 0 there are no ripe dates
-		iUsed.SetTag("DateCounter", 5); 	// Add 5 dates to the tree initially
+		iUsed.SetTag("DateCounter", maxResource); 	// Add 5 dates to the tree initially
 	}
 	var Dates = iUsed.GetTag("Dates");
 	var DateCount = iUsed.GetTag("DateCounter");
@@ -50,7 +52,7 @@ function onUse( pUser, iUsed )
 				else if( iUsed.id == 0x0d9a )
 					iUsed.id = 0x0d99; 
 				iUsed.SetTag( "Dates", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time dates respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time dates respawn
 			}
 		}
 	}
@@ -61,7 +63,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("DateCounter", 5);
+		iUsed.SetTag("DateCounter", maxResource);
 		iUsed.SetTag("Dates", 1);
 		if( iUsed.id == 0x0d95 )
 			iUsed.id = 0x0d96;

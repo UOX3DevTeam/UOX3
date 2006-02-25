@@ -14,10 +14,10 @@ function command_WHERE( socket, cmdString )
 		else
 			socket.SysMessage( "You are nowhere" );
 
-		var x 		= NumToString( mChar.x );
-		var y 		= NumToString( mChar.y );
-		var z 		= NumToString( mChar.z );
-		var worldNum 	= NumToString( mChar.worldnumber );
+		var x 		= mChar.x.toString();
+		var y 		= mChar.y.toString();
+		var z 		= mChar.z.toString();
+		var worldNum 	= mChar.worldnumber.toString();
 		socket.SysMessage( x + " " + y + " " + z + " " + worldNum );
 	}
 }

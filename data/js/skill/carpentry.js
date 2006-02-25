@@ -26,17 +26,11 @@ function onCallback1( socket, ourObj )
 		}
 
 		var resID = ourObj.id;
-		if( resID == 0x1be0 || ( resID >= 0x1BD7 && resID <= 0x1BE2 ) ) 	// Is it a valid carpentry resource?
+		if( resID >= 0x1BD7 && resID <= 0x1BE2 ) 	// Is it a valid carpentry resource?
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
-			{
-				var countResource = mChar.ResourceCount( resID );
-				if( countResource >= 9 )
-					socket.MakeMenu( 19, 11 );
-				else
-					socket.SysMessage( GetDictionaryEntry( 782, socket.Language ) );
-			}
+				socket.MakeMenu( 19, 11 );
 			else
 				socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
 		}

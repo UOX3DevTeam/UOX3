@@ -1,10 +1,12 @@
 // Grape-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When (dynamic) grapevines are double-clicked, they're setup with
 // 5 grapes ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more grapes can be picked. Once the timer is over,
 // new grapes are added. The apperance of the tree indicates whether or
 // not there are any grapes left to pick.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
@@ -17,9 +19,9 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless grapes have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Grapes",1); 		// If set to 1, there are grapes to be picked, if 0 there are no ripe grapes
-		iUsed.SetTag("GrapeCounter", 5); 	// Add 5 grapes to the tree initially
+		iUsed.SetTag("GrapeCounter", maxResource); 	// Add 5 grapes to the tree initially
 	}
 	var Grapes = iUsed.GetTag("Grapes");
 	var GrapeCount = iUsed.GetTag("GrapeCounter");
@@ -46,7 +48,7 @@ function onUse( pUser, iUsed )
 		    	if( GrapeCount == 0 )
 			{
 				iUsed.SetTag( "Grapes", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time grapes respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time grapes respawn
 			}
 		}
 	}
@@ -57,7 +59,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("GrapeCounter", 5);
+		iUsed.SetTag("GrapeCounter", maxResource);
 		iUsed.SetTag("Grapes", 1);
 	}
 }

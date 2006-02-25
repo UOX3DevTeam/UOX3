@@ -36,7 +36,7 @@ function onCallback0( socket, ourObj )
 
 	var splitString = socket.xText.split( " ", 2 );
 	var uKey 	= splitString[0].toUpperCase();
-	var nVal 	= StringToNum( splitString[1] );
+	var nVal 	= parseInt( splitString[1] );
 	switch( uKey )
 	{
 	case "NAME":
@@ -62,6 +62,11 @@ function onCallback0( socket, ourObj )
 		ourObj.fame = nVal;
 		okMsg( socket );
 		break;
+	case "HP":
+	case "HEALTH":
+		ourObj.health = nVal;
+		okMsg( socket );
+		break;
 	case "KARMA":
 		ourObj.karma = nVal;
 		okMsg( socket );
@@ -85,6 +90,21 @@ function onCallback0( socket, ourObj )
 		break;
 	case "Y":
 		ourObj.y = nVal;
+		okMsg( socket );
+		break;
+	case "TEMPSTR":
+	case "TEMPSTRENGTH":
+		ourObj.tempstr = nVal;
+		okMsg( socket );
+		break;
+	case "TEMPINT":
+	case "TEMPINTELLIGENCE":
+		ourObj.tempint = nVal;
+		okMsg( socket );
+		break;
+	case "TEMPDEX":
+	case "TEMPDEXTERITY":
+		ourObj.tempdex = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -150,9 +170,9 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		var splitValues = socket.xText.split( " " )
 		if( splitValues[3] )
 		{
-			ourItem.morex = StringToNum( splitValues[1] );
-			ourItem.morey = StringToNum( splitValues[2] );
-			ourItem.morez = StringToNum( splitValues[3] );
+			ourItem.morex = parseInt( splitValues[1] );
+			ourItem.morey = parseInt( splitValues[2] );
+			ourItem.morez = parseInt( splitValues[3] );
 			okMsg( socket );
 		}
 		break;
@@ -186,6 +206,14 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		break;
 	case "DESC":
 		ourItem.desc = nVal;
+		okMsg( socket );
+		break;
+	case "DEF":
+		ourItem.def = nVal;
+		okMsg( socket );
+		break;
+	case "LAYER":
+		ourItem.layer = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -240,6 +268,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		if( nVal <= 0x7CF )
 		{
 			ourChar.id = nVal;
+			ourChar.orgID = nVal;
 			okMsg( socket );
 		}
 		break;
@@ -262,6 +291,27 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 	case "TITLE":
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );
+		break;
+	case "TOTAME":
+		if( ourChar.npc )
+		{
+			ourChar.skillToTame = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "TOPROV":
+		if( ourChar.npc )
+		{
+			ourChar.skillToProv = nVal;
+			okMsg( socket );
+		}
+		break;
+	case "TOPEACE":
+		if( ourChar.npc )
+		{
+			ourChar.skillToPeace = nVal;
+			okMsg( socket );
+		}
 		break;
 	case "NPCWANDER":
 		ourChar.wandertype = nVal;
@@ -310,6 +360,22 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.visible = nVal;
 		okMsg( socket );
 		break;
+	case "ARMOR":
+		ourChar.armour = nVal;
+		okMsg( socket );
+		break;
+	case "MAXHP":
+		ourChar.maxhp = nVal;
+		okMsg( socket );
+		break;
+	case "MAXMANA":
+		ourChar.maxmana = nVal;
+		okMsg( socket );
+		break;
+	case "MAXSTAMINA":
+		ourChar.maxstamina = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
@@ -335,7 +401,7 @@ function command_SETPOISONED( socket, cmdString )
 	if( cmdString )
 	{
 		var targMsg = GetDictionaryEntry( 240, socket.Language );
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, targMsg );
 	}
 }

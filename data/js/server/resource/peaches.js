@@ -1,10 +1,12 @@
 // Peach-Picking Script
-// 24/01/2005 Xuri; xuri@sensewave.com
+// 20/02/2006 Xuri; xuri@sensewave.com
 // When a (dynamic) peach tree is double-clicked, it's setup with
 // 5 peaches ripe for picking. After they've been picked, a timer starts,
 // and until it's up no more peaches can be picked. Once the timer is over,
 // new peaches are added. The apperance of the tree indicates whether or
 // not there are any peaches left to pick.
+var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
+var maxResource = 5; //maximum amount of resources on a given item
 
 function onUse( pUser, iUsed )
 {
@@ -17,9 +19,9 @@ function onUse( pUser, iUsed )
 
 	if( !iUsed.GetTag("initialized")) // Unless peaches have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",true); 	// Marks tree as initialized
+		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Peaches",1); 		// If set to 1, there are peaches to be picked, if 0 there are no ripe peaches
-		iUsed.SetTag("PeachCounter", 5); 	// Add 5 peaches to the tree initially
+		iUsed.SetTag("PeachCounter", maxResource); 	// Add 5 peaches to the tree initially
 	}
 	var Peaches = iUsed.GetTag("Peaches");
 	var PeachCount = iUsed.GetTag("PeachCounter");
@@ -50,7 +52,7 @@ function onUse( pUser, iUsed )
 				else if( iUsed.id == 0x0da2 )
 					iUsed.id = 0x0da1; 
 				iUsed.SetTag( "Peaches", 0 );
-				iUsed.StartTimer( 30000, 1, true ); // Puts in a delay of 30 seconds until next time peaches respawn
+				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time peaches respawn
 			}
 		}
 	}
@@ -61,7 +63,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("PeachCounter", 5);
+		iUsed.SetTag("PeachCounter", maxResource);
 		iUsed.SetTag("Peaches", 1);
 		if( iUsed.id == 0x0d9d )
 			iUsed.id = 0x0d9e;

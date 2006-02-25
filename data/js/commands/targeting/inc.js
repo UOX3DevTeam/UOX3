@@ -8,7 +8,7 @@ function CommandRegistration()
 function command_INCX( socket, cmdString )
 {
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
 	var targMsg = GetDictionaryEntry( 254, socket.Language );
@@ -25,7 +25,7 @@ function onCallback0( socket, ourObj )
 function command_INCY( socket, cmdString )
 {
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
 	var targMsg = GetDictionaryEntry( 254, socket.Language );
@@ -42,7 +42,7 @@ function onCallback1( socket, ourObj )
 function command_INCZ( socket, cmdString )
 {
 	if( cmdString )
-		socket.tempint = StringToNum( cmdString );
+		socket.tempint = parseInt( cmdString );
 	else
 		socket.tempint = 1;
 	var targMsg = GetDictionaryEntry( 268, socket.Language );

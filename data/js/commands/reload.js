@@ -36,7 +36,7 @@ function command_RELOADINI( socket, cmdString )
 
 function command_RELOADJSFILE( socket, cmdString )
 {
-	var scriptID = StringToNum( cmdString );
+	var scriptID = parseInt( cmdString );
 	socket.SysMessage( "Attempting Reload of JavaScript (ScriptID " + cmdString + ")" );
 	ReloadJSFile( scriptID );
 }

@@ -27,11 +27,13 @@ function onCallback0( pSock, ourObj )
 		{
 			var ourInt = ourObj.intelligence;
 			var intString;
+			var outMessage;
 			if( ourInt < 100 )
 				intString = GetDictionaryEntry( (parseInt( ourInt/10 )+1558), pSock.Language );
 			else
 				intString = GetDictionaryEntry( 1567, pSock.Language );
-			pSock.SysMessage( GetDictionaryEntry( 1568, pSock.Language ) + " " + intString );
+			outMessage = GetDictionaryEntry( 1568, pSock.Language );
+			pSock.SysMessage( outMessage.replace(/%s/gi, intString ));
 		}
 	}
 	else

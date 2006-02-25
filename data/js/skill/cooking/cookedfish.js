@@ -15,7 +15,7 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return;
+			return false;
 		}
 		else
 			// let the user target the heat source
@@ -23,6 +23,8 @@ function onUse ( pUser, iUsed )
 	}
 	else
 		pUser.SysMessage( "This has to be in your backpack!" );
+
+	return false;
 }
 
 function onCallback0( tSock, targSerial )
@@ -51,7 +53,7 @@ function onCallback0( tSock, targSerial )
 		{
 			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-			}	
+		}	
 		// remove one raw fish steak
 		var iMakeResource = pUser.ResourceCount( 0x097A );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
@@ -62,13 +64,12 @@ function onCallback0( tSock, targSerial )
 		pUser.UseResource( 1, 0x097A ); // uses up a resource (amount, item ID, item colour)
 		pUser.SoundEffect( 0x0021, true );
 		// check the skill
-			if( !pUser.CheckSkill( 13, 1, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
+		if( !pUser.CheckSkill( 13, 1, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
 			pUser.SysMessage( "You burnt the fish to crisp." );
 			return;
 		}
 		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x097B", 1, "ITEM", true ); // makes a fish steak
 		pUser.SysMessage( "You cook a fish steak." );
-		return;
 	}
 }

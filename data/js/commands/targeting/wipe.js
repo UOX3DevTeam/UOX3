@@ -24,10 +24,10 @@ function CallWipe( socket, cmdString )
 		var splitString = cmdString.split( " " );
 		if( splitString[3] )
 		{
-			socket.clickX = StringToNum( splitString[0] );
-			socket.clickY = StringToNum( splitString[1] );
-			socket.SetWord( 11, StringToNum( splitString[2] ) );
-			socket.SetWord( 13, StringToNum( splitString[3] ) );
+			socket.clickX = parseInt( splitString[0] );
+			socket.clickY = parseInt( splitString[1] );
+			socket.SetWord( 11, parseInt( splitString[2] ) );
+			socket.SetWord( 13, parseInt( splitString[3] ) );
 			DoWipe( socket, null );
 		}
 		else if( splitString[0] )
@@ -44,7 +44,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( mChar.name + " has initiated an item wipe.\n" );
 				isItem 		= true;
 				counter 	= IterateOver( "ITEM" );
-				counterStr 	= NumToString( counter );
+				counterStr 	= counter.toString();
 				Console.Print( "Item wipe deleted " + counterStr + " items.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " items" );
 			}
@@ -53,7 +53,7 @@ function CallWipe( socket, cmdString )
 				Console.Print( mChar.name + " has initiated a npc wipe.\n" );
 				isItem 		= false;
 				counter 	= IterateOver( "CHARACTER" );
-				counterStr 	= NumToString( counter );
+				counterStr 	= counter.toString();
 				Console.Print( "NPC wipe deleted " + counterStr + " npcs.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " npcs" );
 			}
@@ -103,7 +103,7 @@ function DoWipe( socket, ourObj )
 	Console.Print( mChar.name + " has initiated a wipe.\n" );
 	socket.SysMessage( "Wiping.." );
 	var counter 	= IterateOver( "ITEM" );
-	var counterStr	= NumToString( counter );
+	var counterStr	= counter.toString();
 	socket.SysMessage( "Wiped " + counterStr + " items" );
 	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
 
