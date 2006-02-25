@@ -621,27 +621,29 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 
 	if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
-		if( mChar.GetHP() < mChar.GetMaxHP() && ( mChar.GetHunger() > 0 ||
-			( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) ) )
+		if( mChar.GetHP() < mChar.GetMaxHP() )
 		{
-			for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
+			if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
 			{
-				if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
+				for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 				{
-					if( mChar.GetSkill( HEALING ) < 500 )
-						mChar.IncHP( 1 );
-					else if( mChar.GetSkill( HEALING ) < 800 )
-						mChar.IncHP( 2 );
-					else 
-						mChar.IncHP( 3 );
-					if( mChar.GetHP() >= mChar.GetMaxHP() )
+					if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
 					{
-						mChar.SetHP( mChar.GetMaxHP() ); 
-						break;
+						if( mChar.GetSkill( HEALING ) < 500 )
+							mChar.IncHP( 1 );
+						else if( mChar.GetSkill( HEALING ) < 800 )
+							mChar.IncHP( 2 );
+						else 
+							mChar.IncHP( 3 );
+						if( mChar.GetHP() >= mChar.GetMaxHP() )
+						{
+							mChar.SetHP( mChar.GetMaxHP() ); 
+							break;
+						}
 					}
+					else			// either we're all healed up, or all time periods have passed
+						break;
 				}
-				else			// either we're all healed up, or all time periods have passed
-					break;
 			}
 		}
 		mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_HITPOINTREGEN ), 0 );

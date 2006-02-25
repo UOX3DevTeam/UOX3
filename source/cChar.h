@@ -158,6 +158,7 @@ protected:
 	UI08		regionNum;
 
 	UI32		bools;	// lots of flags
+	UI16		bools2; // more space for flags
 	UI16		priv;
 
 	SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
@@ -205,13 +206,10 @@ protected:
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
-	bool		maxHP_fixed;
 	SI16		maxMana;
 	UI16		maxMana_oldint;
-	bool		maxMana_fixed;
 	SI16		maxStam;
 	UI16		maxStam_olddex;
-	bool		maxStam_fixed;
 	RACEID		oldRace;
 
 	UI08		PoisonStrength;
@@ -267,6 +265,12 @@ public:
 	void		SetStabled( bool newValue );
 	bool		GetStabled( void ) const;
 
+	void		SetMaxHPFixed( bool newValue );
+	bool		GetMaxHPFixed( void ) const;
+	void		SetMaxManaFixed( bool newValue );
+	bool		GetMaxManaFixed( void ) const;
+	void		SetMaxStamFixed( bool newValue );
+	bool		GetMaxStamFixed( void ) const;
 
 	void		DecHunger( const SI08 amt = 1 );
 

@@ -108,6 +108,10 @@ const UI32 BIT_MEDITATING		=	0x100000;
 const UI32 BIT_CASTING			=	0x200000;
 const UI32 BIT_JSCASTING		=	0x400000;
 
+const UI32 BIT_MAXHPFIXED		=	0x01;
+const UI32 BIT_MAXMANAFIXED		=	0x02;
+const UI32 BIT_MAXSTAMFIXED		=	0x04;
+
 const UI32 BIT_MOUNTED			=	0x01;
 const UI32 BIT_STABLED			=	0x02;
 
@@ -236,9 +240,6 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetTamedHungerRate( 0 );
 	SetTamedHungerWildChance( 0 );
 	
-	SetMounted( false );
-	SetStabled( false );
-	
 	foodList.reserve( MAX_NAME );
 	
 	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
@@ -252,9 +253,10 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 
 	mPlayer	= NULL;
 	mNPC	= NULL;
-	maxHP_fixed = false;
-	maxMana_fixed = false;
-	maxStam_fixed = false;
+
+	SetMaxHPFixed( false );
+	SetMaxManaFixed( false );
+	SetMaxStamFixed( false );
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
@@ -1530,11 +1532,11 @@ void CChar::CopyData( CChar *target )
 	target->SetStrength( strength );
 	target->SetDexterity( dexterity );
 	target->SetIntelligence( intelligence );
-	if ( maxHP_fixed )
+	if ( GetMaxHPFixed() )
 		target->SetFixedMaxHP(  maxHP );
-	if ( maxMana_fixed )
+	if ( GetMaxManaFixed() )
 		target->SetFixedMaxMana(  maxMana );
-	if ( maxStam_fixed )
+	if ( GetMaxStamFixed() )
 		target->SetFixedMaxStam(  maxStam );
 	target->SetHP(  hitpoints );
 	target->SetStamina( stamina );
@@ -2069,11 +2071,11 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
 	dumping << "Foodlist=" << foodList << std::endl;
-	if ( maxHP_fixed )
+	if ( GetMaxHPFixed() )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
-	if ( maxMana_fixed )
+	if ( GetMaxManaFixed() )
 		dumping << "MAXMANA=" << (SI16)maxMana << std::endl;
-	if ( maxStam_fixed )
+	if ( GetMaxStamFixed() )
 		dumping << "MAXSTAM=" << (SI16)maxStam << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
 	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
@@ -2334,7 +2336,7 @@ void CChar::RemoveOwnedItem( CItem *toRemove )
 //o--------------------------------------------------------------------------
 UI16 CChar::GetMaxHP( void )
 {
-	if( (maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !maxHP_fixed )
+	if( (maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed() )
 	//if str/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2361,10 +2363,10 @@ void CChar::SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace )
 void CChar::SetFixedMaxHP( SI16 newmaxhp )
 {
 	if( newmaxhp > 0 ) {
-		maxHP_fixed		= true;
+		SetMaxHPFixed( true );
 		maxHP			= newmaxhp;
 	} else {
-		maxHP_fixed		= false;
+		SetMaxHPFixed( false );
 	
 		CRace *pRace = Races->Race( GetRace() );
 		if( pRace == NULL )
@@ -2387,7 +2389,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxMana( void )
 {
-	if( (maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !maxMana_fixed )
+	if( (maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !GetMaxManaFixed() )
 	//if int/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2414,10 +2416,10 @@ void CChar::SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace )
 void CChar::SetFixedMaxMana( SI16 newmaxmana )
 {
 	if( newmaxmana > 0 ) {
-		maxMana_fixed	= true;
+		SetMaxManaFixed( true );
 		maxMana			= newmaxmana;
 	} else {
-		maxMana_fixed	= false;
+		SetMaxManaFixed( false );
 	
 		CRace *pRace = Races->Race( GetRace() );
 		if( pRace == NULL )
@@ -2439,7 +2441,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 //o--------------------------------------------------------------------------
 SI16 CChar::GetMaxStam( void )
 {
-	if( (maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !maxStam_fixed )
+	if( (maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !GetMaxStamFixed() )
 	//if dex/race changed since last calculation, recalculate maxhp
 	{
 		CRace *pRace = Races->Race( GetRace() );
@@ -2466,10 +2468,10 @@ void CChar::SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace )
 void CChar::SetFixedMaxStam( SI16 newmaxstam )
 {
 	if( newmaxstam > 0 ) {
-		maxStam_fixed	= true;
+		SetMaxStamFixed( true );
 		maxStam			= newmaxstam;
 	} else {
-		maxStam_fixed	= false;
+		SetMaxStamFixed( false );
 	
 		CRace *pRace = Races->Race( GetRace() );
 		if( pRace == NULL )
@@ -4082,7 +4084,7 @@ void CChar::SetLastOnSecs( UI32 newValue )
 bool CChar::GetMounted( void ) const
 {
 	bool rVal = false;
-	if( IsNpc() )
+	if( IsValidNPC() )
 	{
 		rVal = MFLAGGET( mNPC->boolFlags, BIT_MOUNTED );
 	}
@@ -4090,7 +4092,7 @@ bool CChar::GetMounted( void ) const
 }
 void CChar::SetMounted( bool newValue )
 {
-	if( IsNpc() )
+	if( IsValidNPC() )
 	{
 		MFLAGSET( mNPC->boolFlags, newValue, BIT_MOUNTED )
 	}
@@ -4106,7 +4108,7 @@ void CChar::SetMounted( bool newValue )
 bool CChar::GetStabled( void ) const
 {
 	bool rVal = false;
-	if( IsNpc() )
+	if( IsValidNPC() )
 	{
 		rVal = MFLAGGET( mNPC->boolFlags, BIT_STABLED );
 	}
@@ -4114,10 +4116,58 @@ bool CChar::GetStabled( void ) const
 }
 void CChar::SetStabled( bool newValue )
 {
-	if( IsNpc() )
+	if( IsValidNPC() )
 	{
 		MFLAGSET( mNPC->boolFlags, newValue, BIT_STABLED )
 	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetMaxHPFixed() 
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Is the maximum HP fixed.
+//o---------------------------------------------------------------------------o
+bool CChar::GetMaxHPFixed( void ) const
+{
+	return MFLAGGET( bools2, BIT_MAXHPFIXED );
+}
+void CChar::SetMaxHPFixed( bool newValue )
+{
+	MFLAGSET( bools2, newValue, BIT_MAXHPFIXED )
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetMaxManaFixed() 
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Is the maximum MANA fixed.
+//o---------------------------------------------------------------------------o
+bool CChar::GetMaxManaFixed( void ) const
+{
+	return MFLAGGET( bools2, BIT_MAXMANAFIXED );
+}
+void CChar::SetMaxManaFixed( bool newValue )
+{
+	MFLAGSET( bools2, newValue, BIT_MAXMANAFIXED )
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetMaxStamFixed() 
+//|   Date        -  25. Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Is the maximum STAMINA fixed.
+//o---------------------------------------------------------------------------o
+bool CChar::GetMaxStamFixed( void ) const
+{
+	return MFLAGGET( bools2, BIT_MAXSTAMFIXED );
+}
+void CChar::SetMaxStamFixed( bool newValue )
+{
+	MFLAGSET( bools2, newValue, BIT_MAXSTAMFIXED )
 }
 
 //o---------------------------------------------------------------------------o

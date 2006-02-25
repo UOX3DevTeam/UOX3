@@ -1,3 +1,7 @@
+2/25/2006 - grimson
+	Fixed a bug that allowed health regeneration while the char was starving.
+	Moved the bools for the fixed maxHP, maxMana, maxStamina into a bitmask.
+
 2/25/2006 - grimson (0.98-3.4m [3.5 BETA])
 	Changed the default of totame to 0x7FFF and allowed taming of NPCs with a value of 0.
 	Changed DFN tags MANA and STAMINA so you can set a minimum and maximum value.
