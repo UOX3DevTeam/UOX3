@@ -210,7 +210,10 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		}
 		
 		if( !ourChar->GetCanAttack() ) //Is our char allowed to attack
+		{
+			s->sysmessage( 1778 );
 			return;
+		}
 
 		ourChar->SetTarg( i );
 		if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
@@ -1462,13 +1465,14 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					HandleSplittingNPCs( ourTarg );
 				
 				if( !ourTarg->GetCanAttack() )
-				{
-					if( (UI08)RandomNum( 0, 100 ) <= ourTarg->GetBrkPeaceChance() )
+				{	
+					const UI08 currentBreakChance = ourTarg->GetBrkPeaceChance();
+					if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
 					{
 						ourTarg->SetCanAttack( true );
 					}
 					else
-						ourTarg->SetBrkPeaceChance( ourTarg->GetBrkPeaceChance() + ourTarg->GetBrkPeaceChanceGain() );
+						ourTarg->SetBrkPeaceChance( currentBreakChance + ourTarg->GetBrkPeaceChanceGain() );
 				}
 			}
 			if( mChar.isHuman() )
@@ -1571,6 +1575,9 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 
 void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16 playerDistance )
 {
+	if( !npcAttack->GetCanAttack() )
+		return;
+
 	if( npcAttack->GetTimer( tNPC_SPATIMER ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		if( playerDistance < cwmWorldState->ServerData()->CombatMaxSpellRange() )

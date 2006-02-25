@@ -1992,13 +1992,14 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker )
 		p->Damage( amount, attacker );
 
 		if( !p->GetCanAttack() )
-		{
-			if( (UI08)RandomNum( 0, 100 ) <= p->GetBrkPeaceChance() )
+		{	
+			const UI08 currentBreakChance = p->GetBrkPeaceChance();
+			if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
 			{
 				p->SetCanAttack( true );
 			}
 			else
-				p->SetBrkPeaceChance( p->GetBrkPeaceChance() + p->GetBrkPeaceChanceGain() );
+				p->SetBrkPeaceChance( currentBreakChance + p->GetBrkPeaceChanceGain() );
 		}
 
 		if( p->GetHP() <= 0 )
@@ -2415,6 +2416,11 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 			return true;
 	}
 
+	if( !mChar->GetCanAttack() )
+	{
+		mSock->sysmessage( 1778 );
+		return false;
+	}
 	int type = mSock->CurrentSpellType();
 	SpellInfo curSpellCasting = spells[num];
 

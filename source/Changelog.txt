@@ -1,3 +1,11 @@
+2/25/2006 - grimson
+	Changed CHandleCombat::HandleNPCSpellAttack() to prevent NPCs from using spells when they
+	are not allowed to attack.
+	Changed cMagic::SelectSpell() to prevent PCs from using spells when they are not allowed
+	to attack. Note: This doesn't effect JS implemented spells, use the .canAttack property
+	in them to prevent the use of these spells.
+	Output a sysmessage to PCs informing them that they can not attack. (updated Dictionaries)
+
 2/25/2006 - grimson (0.98-3.4n [3.5 BETA])
 	Changed CChar::WearItem() to not fire the onEquip event on world loads.
 	Modified the TOPEACE tag so it can take a second value that sets the chance gain to recover
