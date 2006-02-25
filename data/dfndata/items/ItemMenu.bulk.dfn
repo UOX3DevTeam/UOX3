@@ -10446,6 +10446,26 @@ ADDITEM=0x1bc3
 ADDITEM=0x1bc4
 0x1bc5=order shield
 ADDITEM=0x1bc5
+0x2777=heavy platemail jingasa
+ADDITEM=0x2777
+0x2778=decorative platemail kabuto
+ADDITEM=0x2778
+0x277d=platemail do
+ADDITEM=0x277d
+0x2780=platemail hiro sode
+ADDITEM=0x2780
+0x2781=light platemail jingasa
+ADDITEM=0x2781
+0x2784=small platemail jingasa
+ADDITEM=0x2784
+0x2785=platemail battle kabuto
+ADDITEM=0x2785
+0x2788=platemail suneate
+ADDITEM=0x2788
+0x2789=platemail kabuto
+ADDITEM=0x2789
+0x278d=platemail haidate
+ADDITEM=0x278d
 <=Previous Menu
 ITEMMENU=92
 }
@@ -13478,4 +13498,57 @@ ADDITEM=0x27f9
 ADDITEM=0x27fa
 <=Previous Menu
 ITEMMENU=74
+}
+
+[ITEMMENU 164]
+{
+ninja_leather.dfn
+0x278e=ninja leather hood
+ADDITEM=0x278e
+0x2790=ninja leather belt
+ADDITEM=0x2790
+0x2791=ninja leather pants
+ADDITEM=0x2791
+0x2792=ninja leather mitts
+ADDITEM=0x2792
+0x2793=ninja leather jacket
+ADDITEM=0x2793
+<=Previous Menu
+ITEMMENU=93
+}
+
+[ITEMMENU 165]
+{
+samurai_leather.dfn
+0x2776=leather jingasa
+ADDITEM=0x2776
+0x277a=leather mempo
+ADDITEM=0x277a
+0x277b=leather do
+ADDITEM=0x277b
+0x277e=leather hiro sode
+ADDITEM=0x277e
+0x2786=leather suneate
+ADDITEM=0x2786
+0x278a=leather haidate
+ADDITEM=0x278a
+<=Previous Menu
+ITEMMENU=93
+}
+
+[ITEMMENU 166]
+{
+samurai_studded_leather.dfn
+0x279d=studded mempo
+ADDITEM=0x279d
+0x277c=studded do
+ADDITEM=0x277c
+0x277f=studded hiro sode
+ADDITEM=0x277f
+0x2787=studded suneate
+ADDITEM=0x2787
+0x278b=studded haidate
+ADDITEM=0x278b
+<=Previous Menu
+ITEMMENU=93
 }

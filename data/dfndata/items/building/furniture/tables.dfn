@@ -327,7 +327,10 @@ get=base_item
 name=table
 id=0x0b34
 weight=1000
-movable=2
+value=15,7
+restock=10
+movable=1
+decay=1
 }
 
 [0x0b35]
@@ -336,7 +339,10 @@ get=base_item
 name=table
 id=0x0b35
 weight=1000
-movable=2
+value=15,7
+restock=10
+movable=1
+decay=1
 }
 
 [0x0b36]
@@ -345,7 +351,10 @@ get=base_item
 name=table
 id=0x0b36
 weight=1000
-movable=2
+value=15,7
+restock=10
+movable=1
+decay=1
 }
 
 [0x0b37]
@@ -381,7 +390,10 @@ get=base_item
 name=table
 id=0x0b3a
 weight=1000
-movable=2
+value=15,7
+restock=10
+movable=1
+decay=1
 }
 
 [0x0b3c]
@@ -390,7 +402,10 @@ get=base_item
 name=table
 id=0x0b3c
 weight=1000
-movable=2
+value=15,7
+restock=10
+movable=1
+decay=1
 }
 
 [0x0b3d]

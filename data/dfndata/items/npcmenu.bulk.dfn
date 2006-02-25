@@ -92,6 +92,10 @@ NPC=snowleopard
 NPC=timberwolf
 0x25d2=White Wolf
 NPC=whitewolf
+0x2d97=Squirrel
+NPC=squirrel
+0x2d98=Ferret
+NPC=ferret
 <=Previous Menu
 ITEMMENU=5001
 }

@@ -19,7 +19,6 @@ MENU=107  // Eighth Circle
 [MENUENTRY 99]
 {
 NAME=Previous Menu
-ID=0x3ffe
 SUBMENU=99
 }
 [MENUENTRY 100]

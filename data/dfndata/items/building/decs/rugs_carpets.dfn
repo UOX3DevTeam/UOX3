@@ -774,7 +774,7 @@ weight=100
 movable=2
 }
 
-[0x1e41
+[0x1e41]
 { E 2/9
 get=base_item
 name=bearskin rug

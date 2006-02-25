@@ -362,6 +362,12 @@ leather Armor=Menu
 ITEMMENU=106
 <=Studded Leather
 ITEMMENU=105
+<=Ninja Leather
+ITEMMENU=164
+<=Samurai Leather
+ITEMMENU=165
+<=Samurai Studded Leather
+ITEMMENU=166
 <=Previous Menu
 ITEMMENU=75
 }

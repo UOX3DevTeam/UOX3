@@ -824,7 +824,7 @@
 836=You must hide first.
 837=You cannot stealth while mounted.
 838=You are not hidden well enough. Become better at hiding.
-839=You can move %i steps unseen.
+839=You begin to move quietly.
 840=There is no more wood here to chop.
 841=No backpack to store logs.
 842=You chop for a while, but fail to produce any usable wood.
@@ -1547,16 +1547,16 @@
 1555=It is enchanted with the spell %s, but you cannot determine how many charges remain.
 1556=It is enchanted with the spell %s, and has %d charges remaining.
 1557=That does not appear to be a living being.
-1558=slightly less intelligent than a rock.
-1559=fairly stupid.
-1560=not the brightest.
-1561=about average.
-1562=moderately intelligent.
-1563=very intelligent.
-1564=extraordinarily intelligent.
-1565=like a formidable intellect, well beyond the ordinary.
-1566=like a definite genius.
-1567=superhumanly intelligent in a manner you cannot comprehend.
+1558=slightly less intelligent than a rock
+1559=fairly stupid
+1560=not the brightest
+1561=about average
+1562=moderately intelligent
+1563=very intelligent
+1564=extraordinarily intelligent
+1565=like a formidable intellect, well beyond the ordinary
+1566=like a definite genius
+1567=superhumanly intelligent in a manner you cannot comprehend
 1568=That person looks %s.
 1569=That is not a player!
 1570=You needs be closer to find out more about them.
@@ -1738,6 +1738,9 @@
 1772=You do not have enough skill to mine that ore!
 1773=You shear some wool from the sheep.
 1774=This sheep is not yet ready to be shorn.
+1775=The fierce storm hurts you!
+1776=The freezing cold hurts you!
+1777=You have been struck by a lightning!
 }
 EOF
 

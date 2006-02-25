@@ -1,0 +1,280 @@
+// v.01
+// Last updated February 6th, 2006 - Maarc
+// This file contains any tiledata overrides we wish to do with regards to buggy client data (eg ladders)
+
+// [TILE 0x0123]
+// {
+// WEIGHT=		// Weight property, 0	 -> 255
+// HEIGHT=		// Height property, -127 -> 128
+// LAYER=		// Layer property,  -127 -> 128 (though in reality, probably only accepted values used in client)
+// ANIMATION=		// Animation
+// NAME=		// Name property, less than 23 characters!
+
+
+// // The following flags should only be set if you know what you are doing!!!
+// // They're also not documented very well either
+// // they accept either a 0 or 1, basically, on or off flags is all they are
+
+// // BaseTile Flag 1					Alternative descriptions (InsideUO)
+// ATFLOORLEVEL=	// Flag 1, bit 1 (0x01)		Background
+// HOLDABLE=		// Flag 1, bit 2 (0x02)		Weapon
+// SIGNGUILDBANNER=	// Flag 1, bit 3 (0x04)		Transparent
+// WEBDIRTBLOOD=	// Flag 1, bit 4 (0x08)		Translucent
+// WALLVERTTILE=	// Flag 1, bit 5 (0x10)		Wall
+// DAMAGING=		// Flag 1, bit 6 (0x20)		Damaging
+// BLOCKING=		// Flag 1, bit 7 (0x40)		Impassable		
+// LIQUIDWET=		// Flag 1, bit 8 (0x80)		Wet
+
+// // BaseTile Flag 2
+// UNKNOWN1=		// Flag 2, bit 1 (0x01)		Unknown
+// STANDABLE=		// Flag 2, bit 2 (0x02)		Surface
+// CLIMBABLE=		// Flag 2, bit 3 (0x04)		Bridge
+// STACKABLE=		// Flag 2, bit 4 (0x08)		Generic/Stackable
+// WINDOWARCHDOOR=	// Flag 2, bit 5 (0x10)		Window
+// CANNOTSHOOTTHRU=	// Flag 2, bit 6 (0x20)		No Shoot
+// DISPLAYASA=		// Flag 2, bit 7 (0x40)		Prefix A
+// DISPLAYASAN=		// Flag 2, bit 8 (0x80)		Prefix An
+
+// // BaseTile Flag 3
+// DESCRIPTIONTILE=	// Flag 3, bit 1 (0x01)		Internal (things like hair, beards, etc)
+// FADEWITHTRANS=	// Flag 3, bit 2 (0x02)		Foliage
+// UNKNOWN2=		// Flag 3, bit 3 (0x04)		Partial Hue
+// UNKNOWN3=		// Flag 3, bit 4 (0x08)		Unknown
+// MAP=			// Flag 3, bit 5 (0x10)		Map
+// CONTAINER=		// Flag 3, bit 6 (0x20)		Container
+// EQUIPABLE=		// Flag 3, bit 7 (0x40)		Wearable
+// LIGHTSOURCE=		// Flag 3, bit 8 (0x80)		LightSource
+
+// // BaseTile Flag 4
+// ANIMATED=		// Flag 4, bit 1 (0x01)		Animated
+// UNKNOWN4=		// Flag 4, bit 2 (0x02)		No Diagonal
+// WALK=		// Flag 4, bit 3 (0x04)		Unknown
+// WHOLEBODYITEM=	// Flag 4, bit 4 (0x08)		Armour
+// WALLROOFWEAP=	// Flag 4, bit 5 (0x10)		Roof
+// DOOR=		// Flag 4, bit 6 (0x20)		Door
+// CLIMBABLEBIT1=	// Flag 4, bit 7 (0x40)		Stair Back
+// CLIMBABLEBIT2=	// Flag 4, bit 8 (0x80)		Stair Right
+
+[TILE 0x08A5]
+{
+HEIGHT=10
+CLIMBABLEBIT2=1
+}
+
+[TILE 0x08A6]
+{
+HEIGHT=10
+CLIMBABLEBIT2=1
+}
+
+// Begin display case tiles
+[TILE 0x0A9F]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA0]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA1]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA2]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA3]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA4]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AA5]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AFD]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AFE]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0AFF]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B00]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B01]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B02]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B03]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B04]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B05]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B06]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B07]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B08]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B09]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0A]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0B]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0C]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0D]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0E]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B0F]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B10]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B11]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B12]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B13]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B14]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B15]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B16]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B17]
+{
+BLOCKING=1
+STANDABLE=0
+}
+
+[TILE 0x0B18]
+{
+BLOCKING=1
+STANDABLE=0
+}
+// End display case tiles

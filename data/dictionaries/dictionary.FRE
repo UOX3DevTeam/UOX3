@@ -1700,16 +1700,16 @@
 1555=Cet objet est enchante avec le sort %s, mais vous ne pouvez determiner combien de charge il reste.
 1556=Cet objet est enchante avec le sort %s, et possede encore %d charges.
 1557=Ce n'est pas un etre vivant.
-1558=juste un peu moins intelligente qu'un rocher.
-1559=assez stupide.
-1560=de ne pas etre la plus brillante.
-1561=dans la moyenne.
-1562=moderement intelligente.
-1563=tres intelligente.
-1564=extraordinairement intelligente.
-1565=d'avoir un intellect fort eleve, beaucoup plus haut que la moyenne.
-1566=d'un vrai genie.
-1567=intelligente d'une facon surhumaine et d'une maniere qui vous est incomprehansible.
+1558=juste un peu moins intelligente qu'un rocher
+1559=assez stupide
+1560=de ne pas etre la plus brillante
+1561=dans la moyenne
+1562=moderement intelligente
+1563=tres intelligente
+1564=extraordinairement intelligente
+1565=d'avoir un intellect fort eleve, beaucoup plus haut que la moyenne
+1566=d'un vrai genie
+1567=intelligente d'une facon surhumaine et d'une maniere qui vous est incomprehansible
 1568=Cette personne a l'air %s.
 1569=Ce n'est pas un joueur!
 1570=Vous devez vous trouver plus pres pour en savoir plus.
@@ -1897,6 +1897,9 @@
 1772=You do not have enough skill to mine that ore!
 1773=You shear some wool from the sheep.
 1774=This sheep is not yet ready to be shorn.
+1775=The fierce storm hurts you!
+1776=The freezing cold hurts you!
+1777=You have been struck by a lightning!
 }
 
 EOF
