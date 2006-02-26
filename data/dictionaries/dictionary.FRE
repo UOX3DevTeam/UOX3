@@ -1900,6 +1900,8 @@
 1775=The fierce storm hurts you!
 1776=The freezing cold hurts you!
 1777=You have been struck by a lightning!
+1778=You are currently under the effect of peace and can not attack!
+1779=You are no longer affected by peace!
 }
 
 EOF

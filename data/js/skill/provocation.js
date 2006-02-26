@@ -64,7 +64,7 @@ function onCallback1( pSock, toAttack )
 							{
 								PlayInstrument( pSock, myInstrument, true );
 								var willAttack;
-								if( pUser.CheckSkill( 22, 0, 1000 ) )	// Provocation
+								if( pUser.CheckSkill( 22, pAttacker.skillToProv, 1200 ) )	// Provocation
 								{
 									willAttack = toAttack;
 									if( toAttack.innocent )

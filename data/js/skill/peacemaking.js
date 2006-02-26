@@ -11,7 +11,7 @@ function onSkill( pUser, objType, skillUsed )
 		var myInstrument = GetInstrument( pUser );
 		if( ValidateObject( myInstrument ) )
 		{
-			if( pUser.CheckSkill( 29, 0, 1000 ) && pUser.CheckSkill( 9, 0, 1000 ) )
+			if( pUser.CheckSkill( 29, 0, 1000 ))
 			{
 				PlayInstrument( pSock, myInstrument, true );
 				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 )
@@ -100,14 +100,16 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 
 function PeaceMakeArea( pUser, targChar )
 {
-	var targSock = targChar.socket;
-	if( targSock )
-		targSock.SysMessage( GetDictionaryEntry( 1440, targSock.Language ) );
+	if( pUser == targChar )
+		return;
 
-	if( targChar.atWar )
-		targChar.atWar = false;
-	targChar.target = null;
-	targChar.attacker = null;
-	targChar.attackFirst = false;
-	return true;
+	var targSock = targChar.socket;
+	
+	if( pUser.CheckSkill( 9, targChar.skillToPeace, 1200 ) )
+	{
+		if( targSock )
+			targSock.SysMessage( GetDictionaryEntry( 1440, targSock.Language ) );
+		targChar.setPeace = 60;
+		return true;
+	}
 }
