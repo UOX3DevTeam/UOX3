@@ -7,9 +7,62 @@
 //*****************************************************************
 //*                        How to use this script                 *
 //*                                                               *
-//* fill in comments instructions here                            *
-//*                                                               *
-//*                                                               *
+//* Available settings						  *
+//*								  *
+//*     ARMORREST= # - Sets the armor class restriction of the race*
+//*	BEARDMIN=#						  *
+//*     BEARDMAX=#						  *
+//*	COLDAFFECT - Race is affected by cold			  *
+//*	COLDLEVEL=# - Cold level from which damage occurs	  *
+//*	COLDDAMAGE=# - Max amount of damage taken by cold	  *
+//*	COLDSECS=# - How often cold damages in seconds		  *
+//*	DEXCAP=# - DEXTERITY cap of race			  *
+//*	GENDER=MALE/FEMALE - Gender restricion		  *
+//*	HAIRMIN=#						  *
+//*	HAIRMAX=#						  *
+//*	HEATAFFECT - Race is affected by heat			  *
+//*	HEATLEVEL=# - Heat level from which damage occurs	  *
+//*	HEATDAMAGE=# - Max amount of damage taken by heat	  *
+//*	HEATSECS=# - How often heat damages in seconds		  *
+//*	HPMOD=# - Max health modificator			  *
+//*	HUNGER=#,# - The first number is the time between hunger  *
+//*		     checks, the second one the damage when starving
+//*	INTCAP=# - INTELLECT cap of race			  *
+//*	LIGHTAFFECT - Race is affected by light			  *
+//*	LIGHTDAMAGE=# - Max amount of damage taken by light	  *
+//*	LIGHTLEVEL=# - Light level from which damage occurs	  *
+//*	LIGHTSECS=# - How often light damages in seconds	  *
+//*	LIGHTNINGAFFECT - Race is affected by lightning		  *
+//*	LIGHTNINGDAMAGE=# - Max amount of damage taken by lightning
+//*	LIGHTNINGCHANCE=# - Chance to get hit by a lighning during a storm
+//*	LANGUAGEMIN=#						  *
+//*	MAGICRESISTANCE=#					  *
+//*	MANAMOD=# - Max mana modificator			  *
+//*	NAME=abc - Name of the race				  *
+//*	NOBEARD							  *
+//*	NIGHTVIS=# - Default night vision level			  *
+//*	PLAYERRACE=# - Is it a player race			  *
+//*	POISONRESISTANCE=#					  *
+//*	PARENTRACE=#						  *
+//*	REQUIREBEARD						  *
+//*	RAINAFFECT - Race is affected by rain			  *
+//*	RAINDAMAGE=# - Max amount of damage taken by rain	  *
+//*	RAINSECS=# - How often rain damages in seconds		  *
+//*	RACERELATION=#						  *
+//*	RACIALENEMY=#						  *
+//*	RACIALAID=#						  *
+//*	STRCAP=# - STRENGTH cap of race				  *
+//*	SKINMIN=#						  *
+//*	SKINMAX=#						  *
+//*	SNOWAFFECT - Race is affected by snow			  *
+//*	SNOWDAMAGE=# - Max amount of damage taken by snow	  *
+//*	SNOWSECS=# - How often snow damages in seconds		  *
+//*	STORMAFFECT - Race is affected by storm			  *
+//*	STORMDAMAGE=# - Max amount of damage taken by storm	  *
+//*	STORMSECS=# - How often storm damages in seconds	  *
+//*	STAMMOD=# - Max stamina modificator			  *
+//*	VISRANGE=# - Default visibility range			  *
+//*								  *
 //*                                                               *
 //*****************************************************************
 
@@ -68,6 +121,7 @@ PLAYERRACE=1
 {
 NAME=Predator
 PLAYERRACE=1
+HUNGER=300,5
 }
 
 [RACE 9]

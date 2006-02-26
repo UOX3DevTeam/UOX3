@@ -10,12 +10,12 @@
 //*
 //* [WEATHERAB 0] 	//The weather definition ID. Referenced from regions.dfn as ABWEATH=...
 //*  COLDCHANCE # 	//This is the chance of there being a cold snap on the day.
-//*               	//If it passes, then there will be a modification of the MINTEMP
-//*               	//to be lower, based on the fact it's colder.
-//*  COLDINTENSITY # 	//Currently unused
-//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then there
-//*			//will be a modification of MAXTEMP to be higher, based on it being a heat wave.
-//*  HEATINTENSITY # 	//Currently unused
+//*               	//If it passes the temperature will be fixed at a value between MINTEMP
+//*			//and COLDINTENSITY
+//*  COLDINTENSITY #	//See above
+//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then the
+//*			//temperature will be fixed ar a value between MAXTEMP and HEATINTENSITY
+//*  HEATINTENSITY # 	//See above
 //*  LIGHTMIN # 	//Minimum light level of the day (midnight).
 //*  LIGHTMAX # 	//Maximum light level of the day (noon).
 //*  MAXTEMP #		//Maximum temperature of the day. Can be affected by heat waves.
@@ -24,28 +24,36 @@
 //*			//Below 10 degrees, Krrios' client takes on a blue tinge.
 //*  MAXWIND #		//Currently unused.
 //*  MINWIND #		//Currently unused.
-//*  RAINCHANCE #	//Chance of there being rain on the day(only if snowchance fails to snow).
-//*  RAININTENSITY #	//Currently unused.
-//*  SNOWCHANCE #	//Chance of there being snow on the day.  Will override rainchance.
-//*  SNOWINTENSITY #	//Currently unused.
+//*  RAINCHANCE #	//Chance of there being rain on the next hour(only if snowchance fails to snow).
+//*  RAININTENSITY #,#	//Sets the minimal and maximal damage in percent the rain does, based of the damage value in races.dfn.
+//*  RAINTEMPDROP #	//Sets the amount the temperature drops when it rains.
+//*  SNOWCHANCE #	//Chance of there being snow on the next hour.  Will override rainchance.
+//*  SNOWINTENSITY #,#	//Sets the minimal and maximal damage in percent the snow does, based of the damage value in races.dfn.
 //*  SNOWTHRESHOLD #    //The temperature at which snow will STOP. So if it's 15, then when
 //*			//the region hits 15 degrees or above, it won't snow (but it might rain)
+//*  STORMCHANCE #	//Chance of there being a storm on the next hour. Will override snowchance.
+//*  STORMINTENSITY #,#	//Sets the minimal and maximal damage in percent a storm does, based of the damage value in races.dfn.
+//*  STORMTEMPDROP #	//Sets the amount the temperature drops when it storms.
 //*****************************************************************
 
 // no weather
 [WEATHERAB 0]
 {
 RAINCHANCE=0
-//RAINTENSITY=0
+RAININTENSITY=0,0
+RAINTEMPDROP=5
 SNOWCHANCE=0
-//SNOWINTENSITY=0
+SNOWINTENSITY=0,0
 SNOWTHRESHOLD=0
+STORMCHANCE=0
+STORMINTENSITY=0,0
+STORMTEMPDROP=10
 MAXTEMP=25
-MINTEMP=25
+MINTEMP=15
 COLDCHANCE=0
-//COLDINTENSITY=0
+COLDINTENSITY=0
 HEATCHANCE=0
-//HEATINTENSITY=0
+HEATINTENSITY=0
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -56,16 +64,20 @@ HEATCHANCE=0
 [WEATHERAB 1]
 {
 RAINCHANCE=1
-//RAINTENSITY=0
+RAININTENSITY=5,10
+RAINTEMPDROP=5
 SNOWCHANCE=0
-//SNOWINTENSITY=0
+SNOWINTENSITY=0,0
 SNOWTHRESHOLD=0
+STORMCHANCE=0
+STORMINTENSITY=0,0
+STORMTEMPDROP=10
 MAXTEMP=30
 MINTEMP=10
 COLDCHANCE=0
-//COLDINTENSITY=0
+COLDINTENSITY=0
 HEATCHANCE=80
-//HEATINTENSITY=0
+HEATINTENSITY=35
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -76,16 +88,20 @@ HEATCHANCE=80
 [WEATHERAB 2]
 {
 RAINCHANCE=80
-//RAINTENSITY=0
+RAININTENSITY=60,100
+RAINTEMPDROP=5
 SNOWCHANCE=0
-//SNOWINTENSITY=0
+SNOWINTENSITY=0,0
 SNOWTHRESHOLD=0
+STORMCHANCE=60
+STORMINTENSITY=80,100
+STORMTEMPDROP=10
 MAXTEMP=30
 MINTEMP=10
 COLDCHANCE=0
-//COLDINTENSITY=0
+COLDINTENSITY=0
 HEATCHANCE=80
-//HEATINTENSITY=0
+HEATINTENSITY=35
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -96,16 +112,20 @@ HEATCHANCE=80
 [WEATHERAB 3]
 {
 RAINCHANCE=20
-//RAINTENSITY=0
+RAININTENSITY=30,80
+RAINTEMPDROP=5
 SNOWCHANCE=10
-//SNOWINTENSITY=0
+SNOWINTENSITY=40,90
 SNOWTHRESHOLD=10
+STORMCHANCE=20
+STORMINTENSITY=50,80
+STORMTEMPDROP=10
 MAXTEMP=30
 MINTEMP=5
 COLDCHANCE=10
-//COLDINTENSITY=0
+COLDINTENSITY=2
 HEATCHANCE=10
-//HEATINTENSITY=0
+HEATINTENSITY=35
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -116,16 +136,20 @@ HEATCHANCE=10
 [WEATHERAB 4]
 {
 RAINCHANCE=50
-//RAINTENSITY=0
+RAININTENSITY=30,60
+RAINTEMPDROP=5
 SNOWCHANCE=30
-//SNOWINTENSITY=0
+SNOWINTENSITY=80,100
 SNOWTHRESHOLD=10
+STORMCHANCE=40
+STORMINTENSITY=50,60
+STORMTEMPDROP=10
 MAXTEMP=25
-MINTEMP=0
+MINTEMP=4
 COLDCHANCE=20
-//COLDINTENSITY=0
+COLDINTENSITY=0
 HEATCHANCE=10
-//HEATINTENSITY=0
+HEATINTENSITY=30
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -136,16 +160,20 @@ HEATCHANCE=10
 [WEATHERAB 5]
 {
 RAINCHANCE=20
-//RAINTENSITY=0
+RAININTENSITY=15,30
+RAINTEMPDROP=5
 SNOWCHANCE=10
-//SNOWINTENSITY=0
+SNOWINTENSITY=67,90
 SNOWTHRESHOLD=15
+STORMCHANCE=40
+STORMINTENSITY=43,60
+STORMTEMPDROP=10
 MAXTEMP=30
 MINTEMP=10
 COLDCHANCE=20
-//COLDINTENSITY=0
+COLDINTENSITY=5
 HEATCHANCE=20
-//HEATINTENSITY=0
+HEATINTENSITY=35
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -153,19 +181,23 @@ HEATCHANCE=20
 }
 
 // British
-[WEATHERAB 5]
+[WEATHERAB 6]
 {
 RAINCHANCE=80
-//RAINTENSITY=0
+RAININTENSITY=35,70
+RAINTEMPDROP=5
 SNOWCHANCE=5
-//SNOWINTENSITY=0
+SNOWINTENSITY=20,100
 SNOWTHRESHOLD=10
+STORMCHANCE=5
+STORMINTENSITY=5,30
+STORMTEMPDROP=10
 MAXTEMP=25
 MINTEMP=5
 COLDCHANCE=10
-//COLDINTENSITY=0
+COLDINTENSITY=0
 HEATCHANCE=10
-//HEATINTENSITY=0
+HEATINTENSITY=30
 //MAXWIND=0
 //MINWIND=0
 //LIGHTMIN=60
@@ -174,4 +206,3 @@ HEATCHANCE=10
 
 
 EOF
-

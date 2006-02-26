@@ -1,0 +1,85 @@
+[0x2776]
+{
+get=leather_jingasa
+name=leather jingasa
+id=0x2776
+}
+
+[0x27c1]
+{
+get=leather_jingasa
+name=leather jingasa
+id=0x27c1
+}
+
+[0x277a]
+{
+get=leather_mempo
+name=leather mempo
+id=0x277a
+}
+
+[0x27c5]
+{
+get=leather_mempo
+name=leather mempo
+id=0x27c5
+}
+
+[0x277b]
+{
+get=leather_do
+name=leather do
+id=0x277b
+}
+
+[0x27c6]
+{
+get=leather_do
+name=leather do
+id=0x27c6
+}
+
+[0x277e]
+{
+get=leather_hiro_sode
+name=leather hiro sode
+id=0x277e
+}
+
+[0x27c9]
+{
+get=leather_hiro_sode
+name=leather hiro sode
+id=0x27c9
+}
+
+[0x2786]
+{
+get=leather_suneate
+name=leather suneate
+id=0x2786
+}
+
+[0x27d1]
+{
+get=leather_suneate
+name=leather suneate
+id=0x27d1
+}
+
+[0x278a]
+{
+get=leather_haidate
+name=leather haidate
+id=0x278a
+}
+
+[0x27d5]
+{
+get=leather_haidate
+name=leather haidate
+id=0x27d5
+}
+
+
