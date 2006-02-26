@@ -15,6 +15,84 @@
 namespace UOX
 {
 
+	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, ... )
+	{
+		bool multipleArgs = false;
+		UString argList = "";
+		va_list marker;
+		va_start( marker, messageNum );
+		char *argument;
+		do
+		{
+			argument = va_arg( marker, char * );
+			if( argument != NULL )
+			{
+				if( !multipleArgs )
+				{
+					multipleArgs = true;
+					argList = UString::sprintf( "%s", argument );
+				}
+				else
+					argList += UString::sprintf( "%s%s", "\t", argument );
+			}
+		} while( argument != NULL );
+		va_end( marker );
+
+		CPClilocMessage toSend;
+		toSend.Type( type );
+		toSend.Hue( hue );
+		toSend.Font( font );
+		toSend.Message( messageNum );
+		toSend.ArgumentString( argList );
+
+		mSock->Send( &toSend );
+	}
+
+	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, ... )
+	{
+		bool multipleArgs = false;
+		UString argList = "";
+		va_list marker;
+		va_start( marker, sendAll );
+		char *argument;
+		do
+		{
+			argument = va_arg( marker, char * );
+			if( argument != NULL )
+			{
+				if( !multipleArgs )
+				{
+					multipleArgs = true;
+					argList = UString::sprintf( "%s", argument );
+				}
+				else
+					argList += UString::sprintf( "%s%s", "\t", argument );
+			}
+		} while( argument != NULL );
+		va_end( marker );
+
+		CPClilocMessage toSend( (*srcObj) );
+		toSend.Type( type );
+		toSend.Hue( hue );
+		toSend.Font( font );
+		toSend.Message( messageNum );
+		toSend.ArgumentString( argList );
+
+		bool sendSock = (mSock != NULL);
+		if( sendAll )
+		{
+			SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
+			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			{
+				if( sendSock && (*cIter) == mSock )
+					sendSock = false;
+				(*cIter)->Send( &toSend );
+			}
+		}
+		if( sendSock )
+			mSock->Send( &toSend );
+	}
+
 CSpeechQueue *SpeechSys;
 
 std::map< std::string, UnicodeTypes > codeLookup;

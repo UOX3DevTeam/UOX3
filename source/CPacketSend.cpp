@@ -5417,4 +5417,104 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 	}
 }
 
+//0xC1 Packet
+//Last Modified on Monday, 4'th-August-20002
+//Predefined Message (localized Message) (Variable # of bytes )
+//	BYTE cmd
+//	BYTE[2] length
+//	BYTE[4] id (0xffff for system message)
+//	BYTE[2] body (0xff for system message)
+//	BYTE type (6 - lower left, 7 on player)
+//	BYTE[2] hue
+//	BYTE[2] font
+//	BYTE[4] Message number
+//	BYTE[30] - speaker's name
+//	BYTE[?*2] - arguments // _little-endian_ unicode string, tabs ('\t') seperate the arguments
+//
+//Argument example:
+//take number 1042762:
+//"Only ~1_AMOUNT~ gold could be deposited. A check for ~2_CHECK_AMOUNT~ gold was returned to you."
+//the arguments string may have "100 thousand\t25 hundred", which in turn would modify the string:
+//"Only 100 thousand gold could be deposited. A check for 25 hundred gold was returned to you."
+
+CPClilocMessage::CPClilocMessage( void )
+{
+	InternalReset();
+	Serial( INVALIDSERIAL );
+	Body( INVALIDID );
+	Name( "System" );
+}
+
+CPClilocMessage::CPClilocMessage( CBaseObject& toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+
+void CPClilocMessage::InternalReset( void )
+{
+	pStream.ReserveSize( 48 );
+	pStream.WriteByte( 0, 0xC1 );
+	pStream.WriteShort( 1, 48 );
+}
+
+void CPClilocMessage::CopyData( CBaseObject& toCopy )
+{
+	Serial( toCopy.GetSerial() );
+	Body( toCopy.GetID() );
+	Name( toCopy.GetName() );
+}
+
+void CPClilocMessage::Serial( SERIAL toSet )
+{
+	pStream.WriteLong( 3, toSet );
+}
+
+void CPClilocMessage::Body( UI16 toSet )
+{
+	pStream.WriteShort( 7, toSet );
+}
+
+void CPClilocMessage::Type( UI08 toSet )
+{
+	pStream.WriteByte( 9, toSet );
+}
+
+void CPClilocMessage::Hue( UI16 hueColor )
+{
+	pStream.WriteShort( 10, hueColor );
+}
+
+void CPClilocMessage::Font( UI16 fontType )
+{
+	pStream.WriteShort( 12, fontType );
+}
+
+void CPClilocMessage::Message( UI32 messageNum )
+{
+	pStream.WriteLong( 14, messageNum );
+}
+
+void CPClilocMessage::Name( const std::string name )
+{
+	if( name.size() > 29 )
+	{
+		pStream.WriteString( 18, name, 29 );
+		pStream.WriteByte( 47, 0x00 );
+	}
+	else
+		pStream.WriteString( 18, name, 30 );
+}
+
+void CPClilocMessage::ArgumentString( const std::string arguments )
+{
+	const size_t stringLen = arguments.size();
+	const UI16 packetLen = static_cast<UI16>(pStream.GetShort( 1 ) + (stringLen * 2) + 2);
+	pStream.ReserveSize( packetLen );
+	pStream.WriteShort( 1, packetLen );
+
+	for( size_t i = 0; i < stringLen; ++i )
+		pStream.WriteByte( 48 + i * 2, arguments[i] );
+}
+
 }

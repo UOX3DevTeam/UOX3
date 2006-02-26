@@ -1372,6 +1372,28 @@ public:
 	virtual void	CopyData( CChar& );
 };
 
+class CPClilocMessage : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPClilocMessage();
+					CPClilocMessage( CBaseObject& toCopy );
+	virtual			~CPClilocMessage()
+					{
+					}
+	virtual void	CopyData( CBaseObject& toCopy );
+
+	void			Serial( SERIAL sourceSer );
+	void			Body( UI16 toSet );
+	void			Type( UI08 toSet );
+	void			Hue( UI16 hueColor );
+	void			Font( UI16 fontType );
+	void			Message( UI32 messageNum );
+	void			Name( const std::string name );
+	void			ArgumentString( const std::string arguments );
+};
+
 }
 
 #endif

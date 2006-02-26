@@ -950,13 +950,15 @@ void cSkills::Fish( CChar *i )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses a skill from the skill list
 //o---------------------------------------------------------------------------o
+void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, ... );
 void cSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{
-		s->sysmessage( 392 );
+		ClilocMessage( s, 6, 0x0040, FNT_NORMAL, 500012 ); 
+		//s->sysmessage( 392 );
 		return;
 	}
 	if( ( x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN ) || mChar->GetVisible() == VT_INVISIBLE )
