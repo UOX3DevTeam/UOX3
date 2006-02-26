@@ -232,11 +232,11 @@ bool CItem::SetCont( CBaseObject *newCont )
 		if( newCont->GetObjType() == OT_CHAR )
 		{
 			CChar *charWearing = (CChar *)newCont;
-			if( charWearing != NULL )
+			if( ValidateObject( charWearing ) )
 			{
 				if( !charWearing->WearItem( this ) )
 				{
-					contObj = NULL;
+					SetCont( NULL );
 					return false;	// disable for now
 				}
 				if( isPostLoaded() )
@@ -245,7 +245,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 			}
 			else
 			{
-				contObj = NULL;
+				SetCont( NULL );
 				return false;
 			}
 		}
@@ -275,7 +275,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 			}
 			else
 			{
-				contObj = NULL;
+				SetCont( NULL );
 				return false;
 			}
 		}
@@ -500,10 +500,11 @@ ItemLayers CItem::GetLayer( void ) const
 }
 void CItem::SetLayer( ItemLayers newValue ) 
 {
-	if( contObj != NULL && contObj->GetObjType() == OT_CHAR )	// if we're on a char
+	CBaseObject *getCont = GetCont();
+	if( ValidateObject( getCont ) && getCont->GetObjType() == OT_CHAR )	// if we're on a char
 	{
-		CChar *charAffected = (CChar *)contObj;
-		if( charAffected != NULL )
+		CChar *charAffected = static_cast<CChar *>(getCont);
+		if( ValidateObject( charAffected ) )
 		{
 			if( layer != IL_NONE )
 				charAffected->TakeOffItem( layer );
@@ -854,7 +855,7 @@ void CItem::RemoveSelfFromCont( void )
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
 			CChar *targChar = (CChar *)contObj;
-			if( targChar != NULL )
+			if( ValidateObject( targChar ) )
 			{
 				Weight->subtractItemWeight( targChar, this );
 				targChar->TakeOffItem( GetLayer() );
@@ -863,7 +864,7 @@ void CItem::RemoveSelfFromCont( void )
 		else
 		{
 			CItem *targItem = (CItem *)contObj;
-			if( targItem != NULL )
+			if( ValidateObject( targItem ) )
 			{
 				Weight->subtractItemWeight( targItem, this );
 				targItem->GetContainsList()->Remove( this );
@@ -1351,8 +1352,6 @@ bool CItem::LoadRemnants( void )
 		MapData_st& mMap = Map->GetMapData( worldNumber );
 		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
 			return false;
-		else
-			MapRegion->AddItem( this );
 	}
 	return true;
 }
@@ -1383,15 +1382,16 @@ void CItem::PostLoadProcessing( void )
 		SetWeight( Weight->calcWeight( this ) );
 
 	SERIAL tempSerial	= (SERIAL)contObj;
+	CBaseObject *tmpObj	= NULL;
 	contObj				= NULL;
 	if( tempSerial != INVALIDSERIAL )
 	{
 		if( tempSerial >= BASEITEMSERIAL )
-			contObj = calcItemObjFromSer( tempSerial );
+			tmpObj = calcItemObjFromSer( tempSerial );
 		else
-			contObj	= calcCharObjFromSer( tempSerial );
+			tmpObj	= calcCharObjFromSer( tempSerial );
 	}
-	SetCont( contObj );
+	SetCont( tmpObj );
 
 	Items->StoreItemRandomValue( this, NULL );
 	CheckItemIntegrity();
@@ -1849,8 +1849,6 @@ void CItem::Cleanup( void )
 		RemoveFromSight();
 		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
-
-		MapRegion->RemoveItem( this );
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
 		{

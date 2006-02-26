@@ -1165,16 +1165,14 @@ void DropOnItem( CSocket *mSock )
 	}
 	else
 	{
-		MapRegion->RemoveItem( nItem );
-
-		nItem->SetX( mSock->GetWord( 5 ) );
-		nItem->SetY( mSock->GetWord( 7 ) );
-		nItem->SetZ( mSock->GetByte( 9 ) );
-
 		if( nCont->GetType() == IT_SPAWNCONT || nCont->GetType() == IT_UNLOCKABLESPAWNCONT ) // - Unlocked item spawner or unlockable item spawner
 			nItem->SetCont( nCont );
 		else
 			nItem->SetCont( nCont->GetCont() );
+
+		nItem->SetX( mSock->GetWord( 5 ) );
+		nItem->SetY( mSock->GetWord( 7 ) );
+		nItem->SetZ( mSock->GetByte( 9 ) );
 
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 		{

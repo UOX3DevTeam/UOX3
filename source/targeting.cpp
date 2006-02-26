@@ -1413,29 +1413,19 @@ void MakeStatusTarget( CSocket *sock )
 		targetChar->SetHP( 100 );
 		targetChar->SetMana( 100 );
 	}
-	char *playerName = new char[targetChar->GetName().size() + 1];
-	strcpy( playerName, targetChar->GetName().c_str() );
 
+	UString playerName = targetChar->GetName();
+	if( targetCommand != origCommand && origLevel != NULL )
+	{
+		const size_t position = playerName.find( origLevel->name );
+		if( position != std::string::npos )
+			playerName.replace( position, origLevel->name.size(), "" );
+	}
 	if( targetCommand != 0 && targetCommand != origCommand )
-	{
-		if( origLevel != NULL )
-		{	// Strip name off it
-			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
-				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
-		}
-		sprintf( temp, "%s %s", targLevel->name.c_str(), playerName );
-		targetChar->SetName( temp );
-	}
+		targetChar->SetName( UString::sprintf( "%s %s", targLevel->name.c_str(), playerName.stripWhiteSpace().c_str() ).stripWhiteSpace() );
 	else if( origCommand != 0 )
-	{
-		if( origLevel != NULL )
-		{	// Strip name off it
-			if( !strnicmp( origLevel->name.c_str(), playerName, strlen( origLevel->name.c_str() ) ) )
-				playerName += ( strlen( origLevel->name.c_str() ) + 1 );
-		}
-		strcpy( temp, (const char*)playerName );
-		targetChar->SetName( temp );
-	}
+		targetChar->SetName( playerName.stripWhiteSpace() );
+
 	CItem *retitem	= NULL;
 	CItem *mypack	= targetChar->GetPackItem();
 
@@ -1484,7 +1474,6 @@ void MakeStatusTarget( CSocket *sock )
 			}
 		}
 	}
-	delete [] playerName;
 }
 
 void SmeltTarget( CSocket *s )

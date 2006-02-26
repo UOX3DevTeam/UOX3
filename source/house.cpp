@@ -101,6 +101,9 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 		HouseItem = FileLookup->FindEntry( sect, house_def );
 		if( HouseItem != NULL )
 		{
+			SI16 hiX = x, hiY = y;
+			SI08 hiZ = z;
+			UI08 hWorld = house->WorldNumber();
 			hItem = NULL;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
@@ -119,8 +122,6 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 						hItem->SetMovable( 2 );//Non-Moveable by default
 						hItem->SetLocation( house );
 						hItem->SetOwner( mChar );
-						if( houseID >= 0x4000 )
-							hItem->SetMulti( house );
 					}
 				}
 				else if( UTag == "DECAY" )
@@ -138,14 +139,14 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 				else if( UTag == "LOCK" && houseID >= 0x4000 )//lock it with the house key
 					hItem->SetTempVar( CITV_MORE, house->GetSerial() );
 				else if( UTag == "X" )//offset + or - from the center of the house:
-					hItem->SetX( static_cast<SI16>(x + data.toShort()) );
+					hiX += data.toShort();
 				else if( UTag == "Y" )
-					hItem->SetY( static_cast<SI16>(y + data.toShort()) );
+					hiY += data.toShort();
 				else if( UTag == "Z" )
-					hItem->SetZ( static_cast<SI08>(z + data.toShort()) );
+					hiZ += data.toShort();
 			}
-			if( hItem != NULL && hItem->GetCont() == NULL )
-				MapRegion->AddItem( hItem );
+			if( ValidateObject( hItem ) && hItem->GetCont() == NULL )
+				hItem->SetLocation( hiX, hiY, hiZ, hWorld );
 		}
 	}
 }

@@ -1,10 +1,20 @@
+2/26/2006 - giwo (0.98-3.4q [3.5 BETA])
+	Fixed some areas that could possibly cause MapRegion corruption.
+	Fixed a VC 2005 Compiler warning.
+	Defaulted CreateItem() to set decayable to true.
+
+2/25/2006 - giwo (0.98-3.4p [3.5 BETA])
+	Added some example usages of ClilocMessage().
+	Added support for packet 0xC1, sending cliloc messages.
+	Added two ClilocMessage() functions, one for direct-to-socket (system) messages, and one
+		for object-speech (to a socket or to all sockets in range).
+
 2/26/2006 - grimson
 	Modified cCharStuff::addRandomLoot() so that loot lists can contain links to other loot lists.
 	
 	DFN changes:
 		Changed the the numbers in the LOOT tags of NPCs to random lootlist entrys.
 		Fixed some GET tags in the armor dfns that were pointing to non existant items.
-
 
 2/26/2006 - grimson
 	Added a line of sight check to the isValidAttackTarget() function in ai.cpp so NPCs won't attack
