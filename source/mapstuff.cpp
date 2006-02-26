@@ -560,6 +560,12 @@ bool cMapStuff::DoesTileBlock( UI16 tilenum )
 	return tile.Blocking();
 }
 
+bool cMapStuff::IsTileSurface( UI16 tilenum )
+{
+	CTile tile;
+	SeekTile( tilenum, &tile );
+	return tile.Standable();
+}
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
@@ -1022,6 +1028,20 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bo
 	return false;
 }
 
+// Is there a static at the given coordinates, and if yes is it a surface
+bool cMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+{
+	MapStaticIterator msi( x, y, worldNumber );
+	
+	staticrecord *stat = NULL;
+	while( stat = msi.Next() )
+	{
+		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
+		if( elev == z && !IsTileSurface( stat->itemid ) )
+			return false;
+	}
+	return true;
+}
 
 // Return new height of player who walked to X/Y but from OLDZ
 SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
@@ -1085,9 +1105,19 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
     if( dt != INVALIDID && ( DoesTileBlock( dt ) || ( checkWater && IsTileWet( dt ) ) ) )
 		return false;
 
+    // if there is a dynamic tile at this spot, check to see if its a surface
+    // if it is not a surface, might as well short-circuit and return right away
+    if( dt != INVALIDID && !IsTileSurface( dt ) )
+		return false;
+
     // if there's a static block here in our way, return false
     if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
 		return false;
+	
+	// if the static isn't a surface return false
+	if( !IsStaticSurface( x, y, elev, worldNumber ) )
+		return false;
+	
 	if( checkWater )
 	{
 		CLand land;

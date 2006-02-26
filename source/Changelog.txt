@@ -1,3 +1,8 @@
+2/26/2006 - grimson
+	Added functions IsStaticSurface() and IsTileSurface() to mapstuff.cpp and use them in
+	CanMonsterMoveHere() to prevent spawnregions from spawning NPCs in places where they
+	can not move or shouldn't be able to move to, like display cases.
+
 2/26/2006 - giwo (0.98-3.4q [3.5 BETA])
 	Fixed some areas that could possibly cause MapRegion corruption.
 	Fixed a VC 2005 Compiler warning.

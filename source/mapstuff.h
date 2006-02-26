@@ -136,7 +136,9 @@ private:
 
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			DoesTileBlock( UI16 tilenum );
+	bool			IsTileSurface( UI16 tilenum );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
+	bool			IsStaticSurface( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 
 	// caching functions
 	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
