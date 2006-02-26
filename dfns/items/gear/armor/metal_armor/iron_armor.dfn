@@ -166,7 +166,7 @@ id=0x1408
 
 [0x1409]
 { left facing
-get=close_helm
+get=CLOSE_HELMET
 id=0x1409
 }
 

@@ -31,10 +31,10 @@ FY1=-1
 FZ1=-1
 FX2=20
 BACKPACK
-LOOT=1
-LOOT=5
-LOOT=5
-LOOT=10
+LOOT=lowlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
 GOLD=175 250
 RACE=3
 TOPROV=725
@@ -50,9 +50,9 @@ ID=0x0043
 SKINLIST=7
 DIRECTION=N
 BACKPACK
-LOOT=5
-LOOT=5
-LOOT=10
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
 GOLD=200 325
 STR=246 275
 DEX=76 95

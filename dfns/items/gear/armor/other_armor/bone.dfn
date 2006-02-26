@@ -48,8 +48,8 @@ def=4
 
 [0x1454]
 { right facing
-get=bone_chest
-name=bone chest
+get=bone_armor
+name=bone armor
 id=0x1454
 def=13
 }

@@ -24,6 +24,7 @@ namespace UOX
 
 cCharStuff *Npcs = NULL;
 
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	CItem *addRandomLoot( CItem *s, std::string lootlist )
 //|	Programmer	-	Unknown
@@ -44,11 +45,16 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string lootlist )
 		UString tag = LootList->MoveTo( i );
 		if( tag.empty() )
 			return NULL;
-		retitem = Items->CreateBaseScriptItem( tag, s->WorldNumber() );
-		if( retitem != NULL )
+		if( tag.upper() == "LOOTLIST" )
+			retitem = addRandomLoot( s, LootList->GrabData() );
+		else
 		{
-			retitem->SetCont( s );
-			retitem->PlaceInPack();
+			retitem = Items->CreateBaseScriptItem( tag, s->WorldNumber() );
+			if( retitem != NULL )
+			{
+				retitem->SetCont( s );
+				retitem->PlaceInPack();
+			}
 		}
 	}
 	return retitem;
