@@ -105,6 +105,8 @@ function onCallback1( socket, ourObj )
 			if( newItem )
 				newItem.SetLocation( x, y, z );
 		}
+		if( newItem )
+			newItem.decayable = false;
 		if( newItem.id != itemID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
 			mChar.SysMessage( "Specified item-ID does not exist." );
