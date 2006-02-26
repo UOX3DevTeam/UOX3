@@ -11,6 +11,8 @@ function command_KILL( socket, cmdString )
 		socket.xText = cmdString;
 		socket.CustomTarget( 0, "Select target to kill: " + cmdString );
 	}
+	else
+		socket.SysMessage( "This command takes at least 1 argument." )
 }
 
 function onCallback0( socket, ourObj )
@@ -39,7 +41,9 @@ function onCallback0( socket, ourObj )
 				else
 					socket.SysMessage( "That character is already dead!" );
 				break;
-		default:					break;
+		default:
+				socket.SysMessage( "Invalid argument passed for KILL command" );
+				break;
 		}
 		if( layer > 0 )
 		{
