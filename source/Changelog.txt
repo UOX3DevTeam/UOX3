@@ -1,3 +1,7 @@
+2/26/2006 - grimson
+	Added a line of sight check to the isValidAttackTarget() function in ai.cpp so NPCs won't attack
+	targets they can not see.
+
 2/25/2006 - grimson (0.98-3.4o [3.5 BETA])
 	Added another new JS property for chars:
 		.setPeace=#  This handle the whole peacemaking effect, it will stop the char from attacking
