@@ -4,6 +4,11 @@
 namespace UOX
 {
 
+const UI08 BIT_ANIMAL		=	0x04;
+const UI08 BIT_ANTIBLINK	=	0x02;
+const UI08 BIT_CANFLY		=	0x01;
+const UI08 BIT_WATER		=	0x08;
+
 class CCreatures
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,50 +60,14 @@ public:
 		who_am_i = value;
 	}
 
-	bool	IsAnimal( void ) const
-	{
-		return ( ( who_am_i & 4 ) == 4 );
-	}
-	bool	AntiBlink( void ) const
-	{
-		return ( ( who_am_i & 2 ) == 2 );
-	}
-	bool	CanFly( void ) const
-	{
-		return ( ( who_am_i & 1 ) == 1 );
-	}
-	bool	IsWater( void ) const
-	{
-		return ( ( who_am_i & 8 ) == 8 );
-	}
-	void	IsAnimal( bool value )
-	{
-		if( value )
-			who_am_i |= 4;
-		else
-			who_am_i &= 0xFB;
-	}
-	void	AntiBlink( bool value )
-	{
-		if( value )
-			who_am_i |= 2;
-		else
-			who_am_i &= 0xFD;
-	}
-	void	CanFly( bool value )
-	{
-		if( value )
-			who_am_i |= 1;
-		else
-			who_am_i &= 0xFE;
-	}
-	void	IsWater( bool value )
-	{
-		if( value )
-			who_am_i |= 8;
-		else
-			who_am_i &= 0xF7;
-	}
+	bool	IsAnimal( void ) const	{		return MFLAGGET( who_am_i, BIT_ANIMAL );	}
+	bool	AntiBlink( void ) const	{		return MFLAGGET( who_am_i, BIT_ANTIBLINK );	}
+	bool	CanFly( void ) const	{		return MFLAGGET( who_am_i, BIT_CANFLY );	}
+	bool	IsWater( void ) const	{		return MFLAGGET( who_am_i, BIT_WATER );		}
+	void	IsAnimal( bool value )	{		MFLAGSET( who_am_i, value, BIT_ANIMAL );	}
+	void	AntiBlink( bool value )	{		MFLAGSET( who_am_i, value, BIT_ANTIBLINK );	}
+	void	CanFly( bool value )	{		MFLAGSET( who_am_i, value, BIT_CANFLY );	}
+	void	IsWater( bool value )	{		MFLAGSET( who_am_i, value, BIT_WATER );		}
 };
 
 struct vector2D

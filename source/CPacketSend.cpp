@@ -336,6 +336,12 @@ void CPExtMove::FlagColour( UI08 newValue )
 
 void CPExtMove::CopyData( CChar &toCopy )
 {
+	const UI08 BIT_ATWAR	= 0x40;
+	const UI08 BIT_DEAD		= 0x80;
+	const UI08 BIT_POISONED	= 0x04;
+	const UI08 BIT_FEMALE	= 0x02;
+	const UI08 BIT_GOLDEN	= 0x08;
+
 	pStream.WriteLong(  1, toCopy.GetSerial() );
 	pStream.WriteShort( 5, toCopy.GetID() );
 	pStream.WriteShort( 7, toCopy.GetX() );
@@ -351,20 +357,12 @@ void CPExtMove::CopyData( CChar &toCopy )
 	pStream.WriteShort( 13, toCopy.GetSkin() );
 
 	UI08 flag = 0;
-	if( toCopy.IsAtWar() ) 
-		flag |= 0x40;
-	else if( toCopy.IsDead() )
-		flag |= 0x80;
-	if( toCopy.GetVisible() != VT_VISIBLE ) 
-		flag |= 0x80;
-	if( toCopy.GetPoisoned() ) 
-		flag |= 0x04;
+	MFLAGSET( flag, toCopy.IsAtWar(), BIT_ATWAR );
+	MFLAGSET( flag, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ), BIT_DEAD );
+	MFLAGSET( flag, (toCopy.GetPoisoned() != 0), BIT_POISONED );
 #pragma note( "we need to update this here to determine what goes on with elves too!" )
-	if( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E )
-		flag |= 0x02;
-	// turn it yellow on full health?
-//	if( toCopy.GetHP() == toCopy.GetMaxHP() )
-//		flag |= 0x08;
+	MFLAGSET( flag, (toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E), BIT_FEMALE );
+//	MFLAGSET( flag, (toCopy.GetHP() == toCopy.GetMaxHP()), BIT_GOLDEN );
 	pStream.WriteByte( 15, flag );
 }
 
@@ -820,17 +818,18 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	pStream.WriteShort( 13, toCopy.GetY() );
 	pStream.WriteByte(  17, toCopy.GetDir() );
 	pStream.WriteByte(  18, toCopy.GetZ() );
-	UI08 flag = 0;
-	if( toCopy.IsInvulnerable() )
-		flag |= 0x01;
-	if( toCopy.IsDead() )
-		flag |= 0x02;
-	if( toCopy.GetPoisoned() )
-		flag |= 0x04;
-	if( toCopy.IsAtWar() )
-		flag |= 0x40;
-	if( toCopy.GetVisible() != VT_VISIBLE )
-		flag |= 0x80;
+	UI08 flag				= 0;
+	const UI08 BIT_INVUL	= 0x01;
+	const UI08 BIT_DEAD		= 0x02;
+	const UI08 BIT_POISON	= 0x04;
+	const UI08 BIT_ATWAR	= 0x40;
+	const UI08 BIT_INVIS	= 0x80;
+
+	MFLAGSET( flag, toCopy.IsInvulnerable(), BIT_INVUL );
+	MFLAGSET( flag, toCopy.IsDead(), BIT_DEAD );
+	MFLAGSET( flag, toCopy.GetPoisoned(), BIT_POISON );
+	MFLAGSET( flag, toCopy.IsAtWar(), BIT_ATWAR );
+	MFLAGSET( flag, (toCopy.GetVisible() != VT_VISIBLE), BIT_INVIS );
 	pStream.WriteByte( 10, flag );
 }
 void CPDrawGamePlayer::InternalReset( void )
@@ -3549,12 +3548,13 @@ void CPDrawObject::CopyData( CChar& mChar )
 	pStream.WriteShort( 15, mChar.GetSkin() );
 
 	UI08 cFlag = 0;
-	if( mChar.GetPoisoned() )
-		cFlag |= 0x04;
-	if( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) )
-		cFlag |= 0x80;
-	if( mChar.IsAtWar() )
-		cFlag |= 0x40;
+	const UI08 BIT_POISON	= 0x04;
+	const UI08 BIT_ATWAR	= 0x40;
+	const UI08 BIT_OTHER	= 0x80;
+
+	MFLAGSET( cFlag, mChar.GetPoisoned(), BIT_POISON );
+	MFLAGSET( cFlag, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) ), BIT_OTHER );
+	MFLAGSET( cFlag, mChar.IsAtWar(), BIT_ATWAR );
 	pStream.WriteByte( 17, cFlag );
 }
 

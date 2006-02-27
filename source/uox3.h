@@ -44,6 +44,9 @@
 	#define UOX_MAX (std::_MAX)
 #endif
 
+#define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
+#define MFLAGGET( flag, val )		( (flag&val) == val )
+
 //o---------------------------------------------------------------------------o
 // The UOX project includes
 //o---------------------------------------------------------------------------o

@@ -24,6 +24,13 @@ const SI08 MAYOR = 0x01;
 const SI08 ENEMY = 0x02;
 const SI08 JOINER = 0x03;
 
+const UI32 BIT_GUARDED		=	0x01;
+const UI32 BIT_MARK			=	0x02;
+const UI32 BIT_GATE			=	0x04;
+const UI32 BIT_RECALL		=	0x08;
+const UI32 BIT_AGGRESSIVE	=	0x40;
+const UI32 BIT_DUNGEON		=	0x80;
+
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
 const UI08		DEFTOWN_PRIV				= 0;
@@ -540,27 +547,27 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 
 bool CTownRegion::IsGuarded( void ) const
 {
-	return ( ( priv&0x01 ) == 0x01 );
+	return MFLAGGET( priv, BIT_GUARDED );
 }
 
 bool CTownRegion::CanMark( void ) const
 {
-	return ( ( priv&0x02 ) == 0x02 );
+	return MFLAGGET( priv, BIT_MARK );
 }
 
 bool CTownRegion::CanGate( void ) const
 {
-	return ( ( priv&0x04 ) == 0x04 );
+	return MFLAGGET( priv, BIT_GATE );
 }
 
 bool CTownRegion::CanRecall( void ) const
 {
-	return ( ( priv&0x08 ) == 0x08 );
+	return MFLAGGET( priv, BIT_RECALL );
 }
 
 bool CTownRegion::CanCastAggressive( void ) const
 {
-	return ( ( priv&0x40 ) == 0x40 );
+	return MFLAGGET( priv, BIT_AGGRESSIVE );
 }
 
 std::string CTownRegion::GetName( void ) const
@@ -1304,7 +1311,7 @@ SI32 CTownRegion::GetOreChance( void ) const
 }
 bool CTownRegion::IsDungeon( void ) const
 {
-	return ( (priv&0x80) == 0x80 );
+	return MFLAGGET( priv, BIT_DUNGEON );
 }
 
 UI16 CTownRegion::NumGuards( void ) const
@@ -1319,45 +1326,27 @@ UI08 CTownRegion::WorldNumber( void ) const
 
 void CTownRegion::IsGuarded( bool value )
 {
-	if( value )
-		priv |= 0x01;
-	else
-		priv &= 0xFE;
+	MFLAGSET( priv, value, BIT_GUARDED );
 }
 void CTownRegion::CanMark( bool value )
 {
-	if( value )
-		priv |= 0x02;
-	else
-		priv &= 0xFD;
+	MFLAGSET( priv, value, BIT_MARK );
 }
 void CTownRegion::CanGate( bool value )
 {
-	if( value )
-		priv |= 0x04;
-	else
-		priv &= 0xFB;
+	MFLAGSET( priv, value, BIT_GATE );
 }
 void CTownRegion::CanRecall( bool value )
 {
-	if( value )
-		priv |= 0x08;
-	else
-		priv &= 0xF7;
+	MFLAGSET( priv, value, BIT_RECALL );
 }
 void CTownRegion::CanCastAggressive( bool value )
 {
-	if( value )
-		priv |= 0x40;
-	else
-		priv &= 0xBF;
+	MFLAGSET( priv, value, BIT_AGGRESSIVE );
 }
 void CTownRegion::IsDungeon( bool value )
 {
-	if( value )
-		priv |= 0x80;
-	else
-		priv &= 0x7F;
+	MFLAGSET( priv, value, BIT_DUNGEON );
 }
 void CTownRegion::SetName( std::string toSet )
 {

@@ -1165,7 +1165,7 @@ void CWorldMain::CheckAutoTimers( void )
 				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
 				{
-					actbTemp.wFlags &= 0xFFF7;
+					MFLAGSET( actbTemp.wFlags, false, AB_FLAGS_ONLINE );
 				}
 			}
 		}

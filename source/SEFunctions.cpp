@@ -934,22 +934,11 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	RACEID race		= (RACEID)JSVAL_TO_INT( argv[0] );
 	weathID toCheck = (weathID)JSVAL_TO_INT( argv[1] );
 	CRace *tRace	= Races->Race( race );
-	if( tRace == NULL )
+	if( tRace == NULL || toCheck < 0 || toCheck >= WEATHNUM )
 	{
 		return JS_FALSE;
 	}
-	switch( toCheck )
-	{
-		case LIGHT:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByLight() );		break;
-		case RAIN:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByRain() );		break;
-		case COLD:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByCold() );		break;
-		case HEAT:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByHeat() );		break;
-		case LIGHTNING:	*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByLightning() );	break;
-		case SNOW:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedBySnow() );		break;
-		case STORM:		*rval = BOOLEAN_TO_JSVAL( tRace->AffectedByStorm() );		break;
-		default:
-			return JS_FALSE;
-	};
+	*rval = BOOLEAN_TO_JSVAL( tRace->AffectedBy( (WeatherType)toCheck ) );
 	return JS_TRUE;
 }
 

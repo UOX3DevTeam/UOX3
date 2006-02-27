@@ -30,6 +30,13 @@
 namespace UOX
 {
 
+const UI32 BIT_FREE			=	0x01;
+const UI32 BIT_DELETED		=	0x02;
+const UI32 BIT_POSTLOADED	=	0x04;
+const UI32 BIT_SPAWNED		=	0x08;
+const UI32 BIT_SAVE			=	0x10;
+const UI32 BIT_DISABLED		=	0x20;
+
 //o--------------------------------------------------------------------------
 //|	Function		-	CBaseObject destructor
 //|	Date			-	26 July, 2000
@@ -1811,8 +1818,8 @@ bool CBaseObject::GetBit( UI08 wordNum, UI08 bitNum ) const
 	bool rvalue = false;
 	if( wordNum <= 3 && bitNum <= 31 )
 	{
-		UI32 mask = power( 2, bitNum );
-		rvalue = ( ( genericDWords[wordNum] & mask ) == mask );
+		UI32 mask	= power( 2, bitNum );
+		rvalue		= ( ( genericDWords[wordNum] & mask ) == mask );
 	}
 	return rvalue;
 }
@@ -1872,14 +1879,7 @@ void CBaseObject::SetBit( UI08 wordNum, UI08 bitNum, bool value )
 	if( wordNum <= 3 && bitNum <= 31 )
 	{
 		UI32 mask = power( 2, bitNum );
-		if( value )
-			genericDWords[wordNum]	|= mask;
-		else
-		{
-			UI32 flagMask			= 0xFFFFFFFF;
-			flagMask				^= mask;
-			genericDWords[wordNum]	&= flagMask;
-		}
+		MFLAGSET( genericDWords[wordNum], value, mask );
 	}
 }
 
@@ -2009,70 +2009,52 @@ void CBaseObject::SetCarve( SI16 newValue )
 
 bool CBaseObject::isFree( void ) const
 {
-	return ( (objSettings&0x01) == 0x01 );
+	return MFLAGGET( objSettings, BIT_FREE );
 }
 bool CBaseObject::isDeleted( void ) const
 {
-	return ( (objSettings&0x02) == 0x02 );
+	return MFLAGGET( objSettings, BIT_DELETED );
 }
 bool CBaseObject::isPostLoaded( void ) const
 {
-	return ( (objSettings&0x04) == 0x04 );
+	return MFLAGGET( objSettings, BIT_POSTLOADED );
 }
 bool CBaseObject::isSpawned( void ) const
 {
-	return ( (objSettings&0x08) == 0x08 );
+	return MFLAGGET( objSettings, BIT_SPAWNED );
 }
 bool CBaseObject::ShouldSave( void ) const
 {
-	return ( (objSettings&0x10) == 0x10 );
+	return MFLAGGET( objSettings, BIT_SAVE );
 }
 bool CBaseObject::isDisabled( void ) const
 {
-	return ( (objSettings&0x20) == 0x20 );
+	return MFLAGGET( objSettings, BIT_DISABLED );
 }
 
 void CBaseObject::SetFree( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x01;
-	else
-		objSettings &= ~0x01;
+	MFLAGSET( objSettings, newVal, BIT_FREE );
 }
 void CBaseObject::SetDeleted( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x02;
-	else
-		objSettings &= ~0x02;
+	MFLAGSET( objSettings, newVal, BIT_DELETED );
 }
 void CBaseObject::SetPostLoaded( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x04;
-	else
-		objSettings &= ~0x04;
+	MFLAGSET( objSettings, newVal, BIT_POSTLOADED );
 }
 void CBaseObject::SetSpawned( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x08;
-	else
-		objSettings &= ~0x08;
+	MFLAGSET( objSettings, newVal, BIT_SPAWNED );
 }
 void CBaseObject::ShouldSave( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x10;
-	else
-		objSettings &= ~0x10;
+	MFLAGSET( objSettings, newVal, BIT_SAVE );
 }
 void CBaseObject::SetDisabled( bool newVal )
 {
-	if( newVal )
-		objSettings |= 0x20;
-	else
-		objSettings &= ~0x20;
+	MFLAGSET( objSettings, newVal, BIT_DISABLED );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2119,17 +2101,8 @@ void CBaseObject::Cleanup( void )
 //o---------------------------------------------------------------------------o
 void CBaseObject::Dirty( UpdateTypes updateType )
 {
-	switch( updateType )
-	{
-	case UT_UPDATE:			updateTypes |= 0x01;	break;
-	case UT_LOCATION:		updateTypes |= 0x02;	break;
-	case UT_HITPOINTS:		updateTypes |= 0x04;	break;
-	case UT_STAMINA:		updateTypes |= 0x08;	break;
-	case UT_MANA:			updateTypes |= 0x10;	break;
-	case UT_HIDE:			updateTypes |= 0x20;	break;
-	case UT_STATWINDOW:		updateTypes |= 0x40;	break;
-	default:										break;
-	}
+	const UI32 BITVAL = power( 2, updateType );
+	MFLAGSET( updateTypes, true, BITVAL );
 	if( isPostLoaded() )
 		++(cwmWorldState->refreshQueue[this]);
 }
@@ -2143,20 +2116,9 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 //o---------------------------------------------------------------------------o
 bool CBaseObject::GetUpdate( UpdateTypes updateType )
 {
-	UI08 modifier;
-	switch( updateType )
-	{
-	case UT_UPDATE:			modifier = 0x01;		break;
-	case UT_LOCATION:		modifier = 0x02;		break;
-	case UT_HITPOINTS:		modifier = 0x04;		break;
-	case UT_STAMINA:		modifier = 0x08;		break;
-	case UT_MANA:			modifier = 0x10;		break;
-	case UT_HIDE:			modifier = 0x20;		break;
-	case UT_STATWINDOW:		modifier = 0x40;		break;
-	default:										return false;
-	}
-	bool update = ( (updateTypes&modifier) == modifier );
-	updateTypes &= ~modifier;
+	const UI32 BITVAL	= power( 2, updateType );
+	bool update			= MFLAGGET( updateTypes, BITVAL );
+	MFLAGSET( updateTypes, false, BITVAL );
 	return update;
 }
 

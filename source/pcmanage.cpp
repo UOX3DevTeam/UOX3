@@ -784,7 +784,9 @@ void startChar( CSocket *mSock, bool onCreate )
 		{
 			ACCOUNTSBLOCK& actbTemp = mSock->GetAccount();
 			if( actbTemp.wAccountIndex != AB_INVALID_ID )
-				actbTemp.wFlags |= AB_FLAGS_ONLINE;
+			{
+				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_ONLINE );
+			}
 
 			mSock->TargetOK( false );
 

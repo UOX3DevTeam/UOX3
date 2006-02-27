@@ -61,11 +61,6 @@
 namespace UOX
 {
 
-#define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
-#define MFLAGGET( flag, val )		( (flag&val) == val )
-
-
-
 // Bitmask bits
 
 const UI32 BIT_GM				=	0x0001;
@@ -3474,7 +3469,7 @@ bool CChar::SkillUsed( UI08 skillNum ) const
 		UI08 part		= static_cast<UI08>(skillNum / 32);
 		UI08 offset		= static_cast<UI08>(skillNum % 32);
 		UI32 compMask	= power( 2, offset );
-		rvalue			= ( ( skillUsed[part] & compMask ) == compMask );
+		rvalue			= MFLAGGET( skillUsed[part], compMask );
 	}
 	return rvalue;
 }
@@ -3494,14 +3489,7 @@ void CChar::SkillUsed( bool value, UI08 skillNum )
 		UI08 part		= static_cast<UI08>(skillNum / 32);
 		UI08 offset		= static_cast<UI08>(skillNum % 32);
 		UI32 compMask	= power( 2, offset );
-		if( value )
-			skillUsed[part] |= compMask;
-		else
-		{
-			UI32 flagMask = 0xFFFFFFFF;
-			flagMask ^= compMask;
-			skillUsed[part] &= flagMask;
-		}
+		MFLAGSET( skillUsed[part], value, compMask );
 	}
 }
 

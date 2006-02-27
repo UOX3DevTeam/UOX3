@@ -12,9 +12,6 @@ namespace UOX
 #define SKILLCAP			7000
 #define STATCAP				325
 
-#define MFLAGSET( flag, val, on )	{ if( val ) flag |= on; else flag &= ~on ; }
-#define MFLAGGET( flag, val )		( (flag&val) == val )
-
 const UI32 BIT_ANNOUNCESAVES		= 0x0000001;
 const UI32 BIT_ANNOUNCEJOINPART		= 0x0000002;
 const UI32 BIT_SERVERBACKUP			= 0x0000004;

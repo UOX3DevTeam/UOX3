@@ -9,6 +9,7 @@
 #include "cEffects.h"
 #include "classes.h"
 #include "CJSEngine.h"
+#include "power.h"
 
 namespace UOX
 {
@@ -23,6 +24,11 @@ const RACEREL MIN_ALLY  = -1;
 const RACEREL NEUTRAL   = 0;
 const RACEREL MAX_ENEMY = -100;
 const RACEREL MAX_ALLY  = 100;
+
+const UI32 BIT_REQBEARD		= 0x0001;
+const UI32 BIT_NOBEARD		= 0x0002;
+const UI32 BIT_PLAYERRACE	= 0x0004;
+const UI32 BIT_NOHAIR		= 0x0008;
 
 bool cRaces::InvalidRace( RACEID x ) const
 {
@@ -637,19 +643,7 @@ bool cRaces::Affect( RACEID race, WeatherType element ) const
 {
 	bool rValue = false;
 	if( !InvalidRace( race ) )
-	{
-		switch( element )
-		{
-		case LIGHT:		rValue = races[race]->AffectedByLight();		break;
-		case RAIN:		rValue = races[race]->AffectedByRain();			break;
-		case COLD:		rValue = races[race]->AffectedByCold();			break;
-		case HEAT:		rValue = races[race]->AffectedByHeat();			break;
-		case LIGHTNING: rValue = races[race]->AffectedByLightning();	break;
-		case SNOW:		rValue = races[race]->AffectedBySnow();			break;
-		case STORM:		rValue = races[race]->AffectedByStorm();		break;
-		default:														break;
-		}
-	}
+		rValue = races[race]->AffectedBy( element );
 	return rValue;
 }
 
@@ -657,17 +651,7 @@ void cRaces::Affect( RACEID race, WeatherType element, bool value )
 {
 	if( !InvalidRace( race ) )
 	{
-		switch( element )
-		{
-		case LIGHT:		races[race]->AffectedByLight( value );			break;
-		case RAIN:		races[race]->AffectedByRain( value );			break;
-		case COLD:		races[race]->AffectedByCold( value );			break;
-		case HEAT:		races[race]->AffectedByHeat( value );			break;
-		case LIGHTNING: races[race]->AffectedByLightning( value );		break;
-		case SNOW:		races[race]->AffectedBySnow( value );			break;
-		case STORM:		races[race]->AffectedByStorm( value );			break;
-		default:														break;
-		}
+		races[race]->AffectedBy( value, element );
 	}
 }
 
@@ -824,34 +808,6 @@ bool CRace::IsPlayerRace( void ) const
 {
 	return ( (bools&0x0004) == 0x0004 );
 }
-bool CRace::AffectedByLight( void ) const
-{
-	return ( (bools&0x0008) == 0x0008 );
-}
-bool CRace::AffectedByRain( void ) const
-{
-	return ( (bools&0x0010) == 0x0010 );
-}
-bool CRace::AffectedByCold( void ) const
-{
-	return ( (bools&0x0020) == 0x0020 );
-}
-bool CRace::AffectedByHeat( void ) const
-{
-	return ( (bools&0x0040) == 0x0040 );
-}
-bool CRace::AffectedByLightning( void ) const
-{
-	return ( (bools&0x0080) == 0x0080 );
-}
-bool CRace::AffectedBySnow( void ) const
-{
-	return ( (bools&0x0100) == 0x0100 );
-}
-bool CRace::AffectedByStorm( void ) const
-{
-	return ( (bools&0x0400) == 0x0400 );
-}
 bool CRace::NoHair( void ) const
 {
 	return ( (bools&0x0200) == 0x0200 );
@@ -909,80 +865,31 @@ void CRace::Name( const std::string newName )
 }
 void CRace::RequiresBeard( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0001;
-	else
-		bools &= 0xFFFE;
+	MFLAGSET( bools, newValue, BIT_REQBEARD );
 }
 void CRace::NoBeard( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0002;
-	else
-		bools &= 0xFFFD;
+	MFLAGSET( bools, newValue, BIT_NOBEARD );
 }
 void CRace::IsPlayerRace( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0004;
-	else
-		bools &= 0xFFFB;
+	MFLAGSET( bools, newValue, BIT_PLAYERRACE );
 }
-void CRace::AffectedByLight( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0008;
-	else
-		bools &= 0xFFF7;
-}
-void CRace::AffectedByRain( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0010;
-	else
-		bools &= 0xFFEF;
-}
-void CRace::AffectedByCold( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0020;
-	else
-		bools &= 0xFFDF;
-}
-void CRace::AffectedByHeat( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0040;
-	else
-		bools &= 0xFFBF;
-}
-void CRace::AffectedByLightning( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0080;
-	else
-		bools &= 0xFF7F;
-}
-void CRace::AffectedBySnow( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0100;
-	else
-		bools &= 0xFEFF;
-}
-void CRace::AffectedByStorm( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0400;
-	else
-		bools &= 0xFBFF;
-}
+
 void CRace::NoHair( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0200;
-	else
-		bools &= 0xFDFF;
+	MFLAGSET( bools, newValue, BIT_NOHAIR );
+}
+
+bool CRace::AffectedBy( WeatherType iNum ) const
+{
+	const UI16 BITVAL = power( 2, iNum );
+	return MFLAGGET( weatherAffected, BITVAL );
+}
+void CRace::AffectedBy( bool value, WeatherType iNum )
+{
+	const UI16 BITVAL = power( 2, iNum );
+	MFLAGSET( weatherAffected, value, BITVAL );
 }
 
 void CRace::GenderRestriction( GENDER newValue )
@@ -1245,7 +1152,7 @@ void CRace::Load( size_t sectNum, int modCount )
 			case 'c':
 			case 'C':
 				if( UTag == "COLDAFFECT" )	// are we affected by cold?
-					AffectedByCold( true );
+					AffectedBy( true, COLD );
 				else if( UTag == "COLDLEVEL" )	// cold level at which to take damage
 					ColdLevel( data.toUShort() );
 				else if( UTag == "COLDDAMAGE" )	// how much damage to take from cold
@@ -1280,7 +1187,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "HAIRMAX" )
 					hairColours.push_back( ColourPair( hairMin, data.toUShort() ) );
 				else if( UTag == "HEATAFFECT" )	// are we affected by light?
-					AffectedByHeat( true );
+					AffectedBy( true, HEAT );
 				else if( UTag == "HEATDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), HEAT );
 				else if( UTag == "HEATLEVEL" )	// heat level at which to take damage
@@ -1315,7 +1222,7 @@ void CRace::Load( size_t sectNum, int modCount )
 			case 'l':
 			case 'L':
 				if( UTag == "LIGHTAFFECT" )	// are we affected by light?
-					AffectedByLight( true );
+					AffectedBy( true, LIGHT );
 				else if( UTag == "LIGHTDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), LIGHT );
 				else if( UTag == "LIGHTLEVEL" )	// light level at which to take damage
@@ -1324,7 +1231,7 @@ void CRace::Load( size_t sectNum, int modCount )
 					WeatherSeconds( data.toUShort(), LIGHT );
 
 				else if( UTag == "LIGHTNINGAFFECT" )	// are we affected by light?
-					AffectedByLightning( true );
+					AffectedBy( true, LIGHTNING );
 				else if( UTag == "LIGHTNINGDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), LIGHTNING );
 				else if( UTag == "LIGHTNINGCHANCE" )		// how big is the chance to get hit by a lightning
@@ -1370,7 +1277,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				if( UTag == "REQUIREBEARD" )
 					RequiresBeard( true );
 				else if( UTag == "RAINAFFECT" )	// are we affected by light?
-					AffectedByRain( true );
+					AffectedBy( true, RAIN );
 				else if( UTag == "RAINDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), RAIN );
 				else if( UTag == "RAINSECS" )		// how often light affects in secs
@@ -1407,13 +1314,13 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "SKINMAX" )
 					skinColours.push_back( ColourPair( skinMin, data.toUShort() ) );
 				else if( UTag == "SNOWAFFECT" )	// are we affected by light?
-					AffectedBySnow( true );
+					AffectedBy( true, SNOW );
 				else if( UTag == "SNOWDAMAGE" )	// how much damage to take from light
 					WeatherDamage( data.toUShort(), SNOW );
 				else if( UTag == "SNOWSECS" )		// how often light affects in secs
 					WeatherSeconds( data.toUShort(), SNOW );
 				else if( UTag == "STORMAFFECT" )	// are we affected by storm?
-					AffectedByStorm( true );
+					AffectedBy( true, STORM );
 				else if( UTag == "STORMDAMAGE" )	// how much damage to take from storm
 					WeatherDamage( data.toUShort(), STORM );
 				else if( UTag == "STORMSECS" )		// how often storm affects in secs

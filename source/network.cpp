@@ -96,7 +96,9 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	{
 		ACCOUNTSBLOCK &actbAccount = connClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
-			actbAccount.wFlags &= 0xFFF7;
+		{
+			MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
+		}
 	}
 	//Instalog
 	if( currChar != NULL )
@@ -211,7 +213,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
 	}
 	s->LoginComplete( false );
-	actbAccount.wFlags &= 0xFFF7;
+	MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
 	p->SetSocket( NULL );
 	p->SetLocation( p );
 }
@@ -876,7 +878,9 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	{
 		ACCOUNTSBLOCK& actbAccount = loggedInClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
-			actbAccount.wFlags &= 0xFFF7;
+		{
+			MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
+		}
 	}
 
 	for( size_t q = 0; q < loggIteratorBackup.size(); ++q )

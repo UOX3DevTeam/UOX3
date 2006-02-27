@@ -1247,7 +1247,7 @@ bool cScript::EventExists( ScriptEvent eventNum ) const
 	if( index > 2 )
 		return false;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
-	return ( (eventPresence[index]&flagToSet) == flagToSet );
+	return MFLAGGET( eventPresence[index], flagToSet );
 }
 void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 {
@@ -1255,14 +1255,7 @@ void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 	if( index > 2 )
 		return;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
-	if( status )
-		eventPresence[index] |= flagToSet;
-	else
-	{
-		UI32 flagMask = 0xFFFFFFFF;
-		flagMask ^= flagToSet;
-		eventPresence[index] &= flagMask;
-	}
+	MFLAGSET( eventPresence[index], status, flagToSet );
 }
 
 bool cScript::NeedsChecking( ScriptEvent eventNum ) const
@@ -1271,7 +1264,7 @@ bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 	if( index > 2 )
 		return false;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
-	return ( (needsChecking[index]&flagToSet) == flagToSet );
+	return MFLAGGET( needsChecking[index], flagToSet );
 }
 void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 {
@@ -1279,14 +1272,7 @@ void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 	if( index > 2 )
 		return;
 	UI32 flagToSet = power( 2, (eventNum % 32) );
-	if( status )
-		needsChecking[index] |= flagToSet;
-	else
-	{
-		UI32 flagMask = 0xFFFFFFFF;
-		flagMask ^= flagToSet;
-		needsChecking[index] &= flagMask;
-	}
+	MFLAGSET( needsChecking[index], status, flagToSet );
 }
 
 bool cScript::OnDeath( CChar *pDead )

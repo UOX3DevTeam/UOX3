@@ -46,6 +46,7 @@ private:
 	LIGHTLEVEL		nightVision;
 	ARMORCLASS		armourRestrict;
 
+	BITLIST			weatherAffected;
 	SECONDS			weathSecs[WEATHNUM];
 	SI08			weathDamage[WEATHNUM];
 	
@@ -68,13 +69,8 @@ public:
 	bool			RequiresBeard( void ) const;
 	bool			NoBeard( void ) const;
 	bool			IsPlayerRace( void ) const;
-	bool			AffectedByLight( void ) const;
-	bool			AffectedByRain( void ) const;
-	bool			AffectedByCold( void ) const;
-	bool			AffectedByHeat( void ) const;
-	bool			AffectedByLightning( void ) const;
-	bool			AffectedBySnow( void ) const;
-	bool			AffectedByStorm( void ) const;
+	bool			AffectedBy( WeatherType iNum ) const;
+	void			AffectedBy( bool value, WeatherType iNum );
 	bool			NoHair( void ) const;
 
 	GENDER			GenderRestriction( void ) const;
@@ -104,13 +100,6 @@ public:
 	void			RequiresBeard( bool newValue );
 	void			NoBeard( bool newValue );
 	void			IsPlayerRace( bool newValue );
-	void			AffectedByLight( bool newValue );
-	void			AffectedByRain( bool newValue );
-	void			AffectedByCold( bool newValue );
-	void			AffectedByHeat( bool newValue );
-	void			AffectedByLightning( bool newValue );
-	void			AffectedBySnow( bool newValue );
-	void			AffectedByStorm( bool newValue );
 	void			NoHair( bool newValue );
 
 	SI16			HPModifier( void ) const;

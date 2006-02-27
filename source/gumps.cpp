@@ -129,7 +129,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 				s->sysmessage( 487 );
 				if( targSocket != NULL ) 
 					targSocket->sysmessage( 488 );
-				actbTemp.wFlags|=AB_FLAGS_BANNED;	// Banned
+				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_BANNED );
 				if( targSocket != NULL ) 
 					Network->Disconnect( targSocket );
 			}
@@ -142,7 +142,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 				s->sysmessage( 490 );
 				if( targSocket != NULL ) 
 					targSocket->sysmessage( 491 );
-				actbTemp.wFlags|=AB_FLAGS_BANNED;
+				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_BANNED );
 				actbTemp.wTimeBan=static_cast<UI16>(BuildTimeValue( 60 * 60 * 24 ));
 
 				if( targSocket != NULL ) 

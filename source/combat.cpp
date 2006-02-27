@@ -1082,18 +1082,11 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 	CRace *rPtr = Races->Race( defend->GetRace() );
 	if( rPtr != NULL )
 	{
-		if( weapon->GetWeatherDamage( LIGHT ) && rPtr->AffectedByLight() )
-			bDamage *= 2;
-		if( weapon->GetWeatherDamage( RAIN ) && rPtr->AffectedByRain() )
-			bDamage *= 2;
-		if( weapon->GetWeatherDamage( COLD ) && rPtr->AffectedByCold() )
-			bDamage *= 2;
-		if( weapon->GetWeatherDamage( HEAT ) && rPtr->AffectedByHeat() )
-			bDamage *= 2;
-		if( weapon->GetWeatherDamage( LIGHTNING ) && rPtr->AffectedByLightning() )
-			bDamage *= 2;
-		if( weapon->GetWeatherDamage( SNOW ) && rPtr->AffectedBySnow() )
-			bDamage *= 2;
+		for( int i = LIGHT; i < WEATHNUM; ++i )
+		{
+			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
+				bDamage *= 2;
+		}
 	}
 }
 

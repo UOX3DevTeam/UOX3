@@ -47,9 +47,18 @@
 #include "Dictionary.h"
 #include "msgboard.h"
 #include "books.h"
+#include "power.h"
 
 namespace UOX
 {
+
+const UI32 BIT_DOOROPEN		=	0x02;
+const UI32 BIT_PILEABLE		=	0x04;
+const UI32 BIT_DYEABLE		=	0x08;
+const UI32 BIT_CORPSE		=	0x10;
+const UI32 BIT_WIPEABLE		=	0x20;
+const UI32 BIT_GUARDED		=	0x40;
+const UI32 BIT_SPAWNERLIST	=	0x80;
 
 const SI32			DEFITEM_RANDVALUE		= 0;
 const SI16			DEFITEM_GOOD			= -1;
@@ -295,14 +304,11 @@ bool CItem::SetCont( CBaseObject *newCont )
 //o--------------------------------------------------------------------------
 bool CItem::isDoorOpen( void ) const
 {
-	return ( (bools&0x02) == 0x02 );
+	return MFLAGGET( bools, BIT_DOOROPEN );
 }
 void CItem::SetDoorOpen( bool newValue )
 {
-	if( newValue )
-		bools |= 0x02;
-	else
-		bools &= ~0x02;
+	MFLAGSET( bools, newValue, BIT_DOOROPEN );
 }
 
 //o--------------------------------------------------------------------------
@@ -315,14 +321,11 @@ void CItem::SetDoorOpen( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isPileable( void ) const
 {
-	return ( (bools&0x04) == 0x04 );
+	return MFLAGGET( bools, BIT_PILEABLE );
 }
 void CItem::SetPileable( bool newValue )
 {
-	if( newValue )
-		bools |= 0x04;
-	else
-		bools &= ~0x04;
+	MFLAGSET( bools, newValue, BIT_PILEABLE );
 }
 
 //o--------------------------------------------------------------------------
@@ -335,14 +338,11 @@ void CItem::SetPileable( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isDyeable( void ) const
 {
-	return ( (bools&0x08) == 0x08 );
+	return MFLAGGET( bools, BIT_DYEABLE );
 }
 void CItem::SetDye( bool newValue )
 {
-	if( newValue )
-		bools |= 0x08;
-	else
-		bools &= ~0x08;
+	MFLAGSET( bools, newValue, BIT_DYEABLE );
 }
 
 //o--------------------------------------------------------------------------
@@ -355,14 +355,11 @@ void CItem::SetDye( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isCorpse( void ) const
 {
-	return ( (bools&0x10) == 0x10 );
+	return MFLAGGET( bools, BIT_CORPSE );
 }
 void CItem::SetCorpse( bool newValue )
 {
-	if( newValue )
-		bools |= 0x10;
-	else
-		bools &= ~0x10;
+	MFLAGSET( bools, newValue, BIT_CORPSE );
 }
 
 //o--------------------------------------------------------------------------
@@ -375,14 +372,11 @@ void CItem::SetCorpse( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isWipeable( void ) const
 {
-	return ( (bools&0x20) == 0x20 );
+	return MFLAGGET( bools, BIT_WIPEABLE );
 }
 void CItem::SetWipeable( bool newValue )
 {
-	if( newValue )
-		bools |= 0x20;
-	else
-		bools &= ~0x20;
+	MFLAGSET( bools, newValue, BIT_WIPEABLE );
 }
 
 //o---------------------------------------------------------------------------o
@@ -394,14 +388,11 @@ void CItem::SetWipeable( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CItem::isGuarded( void ) const
 {
-	return ( (bools&0x40) == 0x40 );
+	return MFLAGGET( bools, BIT_GUARDED );
 }
 void CItem::SetGuarded( bool newValue )
 {
-	if( newValue )
-		bools |= 0x40;
-	else
-		bools &= ~0x40;
+	MFLAGSET( bools, newValue, BIT_GUARDED );
 }
 
 //o---------------------------------------------------------------------------o
@@ -414,14 +405,11 @@ void CItem::SetGuarded( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CItem::isSpawnerList( void ) const
 {
-	return ( (bools&0x80) == 0x80 );
+	return MFLAGGET( bools, BIT_SPAWNERLIST );
 }
 void CItem::SetSpawnerList( bool newValue )
 {
-	if( newValue )
-		bools |= 0x80;
-	else
-		bools &= ~0x80;
+	MFLAGSET( bools, newValue, BIT_SPAWNERLIST );
 }
 
 const char *CItem::GetName2( void ) const
@@ -968,47 +956,14 @@ void CItem::CopyData( CItem *target )
 
 bool CItem::GetWeatherDamage( WeatherType effectNum ) const
 {
-	switch( effectNum )
-	{
-		case LIGHT:			return ( (weatherBools&0x01) == 0x01 );
-		case RAIN:			return ( (weatherBools&0x02) == 0x02 );
-		case COLD:			return ( (weatherBools&0x04) == 0x04 );
-		case HEAT:			return ( (weatherBools&0x08) == 0x08 );
-		case LIGHTNING:		return ( (weatherBools&0x10) == 0x10 );
-		case SNOW:			return ( (weatherBools&0x20) == 0x20 );
-		default:			return false;
-	}
-	return false;
+	const UI32 BITVAL = power( 2, effectNum );
+	return MFLAGGET( weatherBools, BITVAL );
 }
 
 void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 {
-	if( value )
-	{
-		switch( effectNum )
-		{
-			case LIGHT:			weatherBools |= 0x01;			break;
-			case RAIN:			weatherBools |= 0x02;			break;
-			case COLD:			weatherBools |= 0x04;			break;
-			case HEAT:			weatherBools |= 0x08;			break;
-			case LIGHTNING:		weatherBools |= 0x10;			break;
-			case SNOW:			weatherBools |= 0x20;			break;
-			default:			break;
-		}
-	}
-	else
-	{
-		switch( effectNum )
-		{
-			case LIGHT:			weatherBools &= ~0x01;			break;
-			case RAIN:			weatherBools &= ~0x02;			break;
-			case COLD:			weatherBools &= ~0x04;			break;
-			case HEAT:			weatherBools &= ~0x08;			break;
-			case LIGHTNING:		weatherBools &= ~0x10;			break;
-			case SNOW:			weatherBools &= ~0x20;			break;
-			default:			break;
-		}
-	}
+	const UI32 BITVAL = power( 2, effectNum );
+	MFLAGSET( weatherBools, value, BITVAL );
 }
 
 bool CItem::DumpHeader( std::ofstream &outStream ) const
@@ -1425,50 +1380,43 @@ void CItem::CheckItemIntegrity( void )
 	}
 }
 
+const UI32 BIT_DECAYABLE	=	0x01;
+const UI32 BIT_NEWBIE		=	0x02;
+const UI32 BIT_DISPELLABLE	=	0x04;
+const UI32 BIT_DEVINELOCK	=	0x08;
+
 bool CItem::isDecayable( void ) const
 {
-	return ( (priv&0x01) == 0x01 );
+	return MFLAGGET( priv, BIT_DECAYABLE );
 }
 bool CItem::isNewbie( void ) const
 {
-	return ( (priv&0x02) == 0x02 );
+	return MFLAGGET( priv, BIT_NEWBIE );
 }
 bool CItem::isDispellable( void ) const
 {
-	return ( (priv&0x04) == 0x04 );
+	return MFLAGGET( priv, BIT_DISPELLABLE );
 }
 bool CItem::isDevineLocked( void ) const
 {
-	return ( (priv&0x08) == 0x08 );
+	return MFLAGGET( priv, BIT_DEVINELOCK );
 }
 
 void CItem::SetDecayable( bool newValue )
 {
-	if( newValue )
-		priv |= 0x01;
-	else
-		priv &= ~0x01;
+	MFLAGSET( priv, newValue, BIT_DECAYABLE );
 }
 void CItem::SetNewbie( bool newValue )
 {
-	if( newValue )
-		priv |= 0x02;
-	else
-		priv &= ~0x02;
+	MFLAGSET( priv, newValue, BIT_NEWBIE );
 }
 void CItem::SetDispellable( bool newValue )
 {
-	if( newValue )
-		priv |= 0x04;
-	else
-		priv &= ~0x04;
+	MFLAGSET( priv, newValue, BIT_DISPELLABLE );
 }
 void CItem::SetDevineLock( bool newValue )
 {
-	if( newValue )
-		priv |= 0x08;
-	else
-		priv &= ~0x08;
+	MFLAGSET( priv, newValue, BIT_DEVINELOCK );
 }
 
 //o--------------------------------------------------------------------------

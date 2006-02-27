@@ -12,6 +12,7 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cVersionClass.h"
+#include "power.h"
 
 namespace UOX
 {
@@ -19,6 +20,8 @@ namespace UOX
 cAccountClass *Accounts;
 
 #define CHARACTERCOUNT	6
+
+const UI32 BIT_PUBLIC = 0x0004;
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	Class Construction and Desctruction
@@ -303,13 +306,17 @@ UI16 cAccountClass::CreateAccountSystem(void)
 									// Ok strip the flags and store it. We need to make it all the same case for comparisons
 									actb.wFlags = r2.toUShort();	//<-- Uses internal conversion code
 									if( actb.wAccountIndex == 0 )
-										actb.wFlags |= 0x8000;
+									{
+										MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+									}
 								}
 								else
 								{
 									actb.wFlags = 0;
 									if( actb.wAccountIndex == 0 )
-										actb.wFlags |= 0x8000;
+									{
+										MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+									}
 								}
 								continue;
 							}
@@ -352,8 +359,10 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					// Ok strip the name and store it. We need to make it all the same case for comparisons
 					actb.wFlags = 4;
 					// If account 0 then we set gm privs
-					if( wAccountID==0 )
-						actb.wFlags|=0x8000;
+					if( wAccountID == 0 )
+					{
+						MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+					}
 					bSkipUAD=true;
 				}
 			}
@@ -410,34 +419,13 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		}
 		else if( l == "LOCK" )
 		{
-			switch( nLockCount )
+			if( nLockCount >= 0 && nLockCount <= 5 )
 			{
-				case 0:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0010;
-					break;
-				case 1:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0020;
-					break;
-				case 2:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0040;
-					break;
-				case 3:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0080;
-					break;
-				case 4:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0100;
-					break;
-				case 5:
-					if( r.toLong() > 0 )
-						actb.wFlags |= 0x0200;
-					break;
-				default:
-					break;
+				if( r.toLong() > 0 )
+				{
+					const UI32 BITVAL = power( 2, 4 + nLockCount );
+					MFLAGSET( actb.wFlags, true, BITVAL );
+				}
 			}
 			++nLockCount;
 			std::getline( fs2, sLine );
@@ -449,9 +437,8 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				// Ok strip the name and store it. We need to make it all the same case for comparisons
 				if( r == "ON" )
-				{
-					// Set the Public Flag on. Public implies that a users conatact information can be published on the web.
-					actb.wFlags |= 0x0004;
+				{	// Set the Public Flag on. Public implies that a users conatact information can be published on the web.
+					MFLAGSET( actb.wFlags, true, BIT_PUBLIC );
 				}
 			}
 			std::getline( fs2, sLine );

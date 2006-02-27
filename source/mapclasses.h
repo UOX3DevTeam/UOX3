@@ -47,8 +47,6 @@ struct st_multi
 	SI08 empty;
 } PACK_NEEDED;
 
-#define MFLAGSET( flag, val, on ) { if( val ) flag |= on; else flag &= ~on ; }
-
 class BaseTile
 {
 protected:

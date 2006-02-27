@@ -191,7 +191,7 @@ bool CPIFirstLogin::Handle( void )
 		Console.Log( temp, "server.log" );
 		messageLoop << temp;
 
-		actbTemp->wFlags |= AB_FLAGS_ONLINE;
+		MFLAGSET( actbTemp->wFlags, true, AB_FLAGS_ONLINE );
 
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );
