@@ -1,3 +1,6 @@
+2/28/2006 - grimson
+	Updated cCharStuff::FindSpotForNPC() to also allow spawning of water and amphibian NPCs.
+
 2/28/2006 - grimson (0.98-3.4r [3.5 BETA])
 	Replaced the WATERCREATURE tag from creatures.npc with a new tag:
 		MOVEMENT=WATER for creatures that can only move in water.

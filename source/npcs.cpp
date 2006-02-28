@@ -377,7 +377,12 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 		yos = originY + RandomNum( static_cast< SI16 >(-yAway), yAway );
 	    
 		if( xos >= 1 && yos >= 1 )
-			foundSpot = Map->CanMonsterMoveHere( xos, yos, z, worldNumber );
+		{
+			if( !cwmWorldState->creatures[cCreated->GetID()].IsWater() )
+				foundSpot = Map->CanMonsterMoveHere( xos, yos, z, worldNumber );
+			else if( cwmWorldState->creatures[cCreated->GetID()].IsWater() || ( !foundSpot && cwmWorldState->creatures[cCreated->GetID()].IsAmphibian() ) )
+				foundSpot = Map->CanSeaMonsterMoveHere( xos, yos, z, worldNumber );
+		}
 	}
 	
 	// should we not add and remove from mapregions here????
