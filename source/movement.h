@@ -29,6 +29,7 @@ public:
 private:
 
 	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
+	SI08	calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
 	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	isValidDirection( UI08 dir );

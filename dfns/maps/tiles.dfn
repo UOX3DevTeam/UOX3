@@ -278,3 +278,9 @@ BLOCKING=1
 STANDABLE=0
 }
 // End display case tiles
+
+// Water Tiles
+[TILE 0x1559]
+{
+LIQUIDWET=1
+}

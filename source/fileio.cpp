@@ -639,6 +639,18 @@ void LoadCreatures( void )
 							if( UTag == "ICON" )
 								cwmWorldState->creatures[i].Icon( data.toUShort() );
 							break;
+						case 'M':
+							if( UTag == "MOVEMENT" )
+								if( data.upper() == "WATER" )
+									cwmWorldState->creatures[i].IsWater( true );
+								else if( data.upper() == "BOTH" )
+									cwmWorldState->creatures[i].IsAmphibian( true );
+								else
+								{
+									cwmWorldState->creatures[i].IsWater( false );
+									cwmWorldState->creatures[i].IsAmphibian( false );
+								}
+							break;
 						case 'S':
 							if( UTag == "SOUNDFLAG" )
 								break;
@@ -652,10 +664,6 @@ void LoadCreatures( void )
 								cwmWorldState->creatures[i].SetSound( SND_DEFEND, data.toUShort() );
 							else if( UTag == "SOUND_DIE" )
 								cwmWorldState->creatures[i].SetSound( SND_DIE, data.toUShort() );
-							break;
-						case 'W':
-							if( UTag == "WATERCREATURE" )
-								cwmWorldState->creatures[i].IsWater( true );
 							break;
 					}
 				}

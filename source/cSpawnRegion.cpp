@@ -454,10 +454,11 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 	CChar *CSpawn = NULL;
 	SI16 x, y;
 	SI08 z;
-	if( FindSpotToSpawn( x, y, z ) )
+	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
+	
+	if( CSpawn != NULL )
 	{
-		CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
-		if( CSpawn != NULL )
+		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
 		{
 				CSpawn->SetLocation( x, y, z );
 				CSpawn->SetSpawned( true );
@@ -466,6 +467,10 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 				InitializeWanderArea( CSpawn, 10, 10 );
 				Npcs->PostSpawnUpdate( CSpawn );
 				IncCurrentCharAmt();
+		}
+		else
+		{
+			CSpawn->Delete();
 		}
 	}
 	return CSpawn;
@@ -482,7 +487,7 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 	CItem *ISpawn = NULL;
 	SI16 x, y;
 	SI08 z;
-	if( FindSpotToSpawn( x, y, z ) )
+	if( FindItemSpotToSpawn( x, y, z ) )
 	{
 		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber );
 		if( ISpawn != NULL )
@@ -498,12 +503,12 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool FindSpotForItem( SI16 &x, SI16 &y, SI08 &z )
+//|	Function	-	bool FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o---------------------------------------------------------------------------o
-bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
+bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 {
 	bool rvalue = false;
 	for( UI08 a = 0; a < 100; ++a ) 
@@ -521,7 +526,47 @@ bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 			if( ILLEGAL_Z != staticz )
 				z = staticz;
 		}
+		
+		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !cwmWorldState->creatures[c->GetID()].IsWater() )
+		{
+			rvalue = true;
+			break;
+		}
+		else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( cwmWorldState->creatures[c->GetID()].IsWater() || cwmWorldState->creatures[c->GetID()].IsAmphibian() ) )
+		{
+			rvalue = true;
+			break;
+		}
 
+	}
+	return rvalue;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Find a random spot within a region valid for dropping an item
+//o---------------------------------------------------------------------------o
+bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
+{
+	bool rvalue = false;
+	for( UI08 a = 0; a < 100; ++a ) 
+	{
+		x = RandomNum( x1, x2 );
+		y = RandomNum( y1, y2 );
+		z = Map->MapElevation( x, y, worldNumber );
+
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z = staticz;
+		}
+		
 		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
 		{
 			rvalue = true;
@@ -530,7 +575,6 @@ bool CSpawnRegion::FindSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 	}
 	return rvalue;
 }
-
 //o---------------------------------------------------------------------------o
 //|	Function	-	void checkSpawned()
 //|	Programmer	-	sereg

@@ -1755,6 +1755,73 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	return newz;
 }
 
+SI08 cMovement::calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
+{
+	if( !ValidateObject( c ) )
+		return ILLEGAL_Z;
+	const SI08 oldz		= c->GetZ();
+	SI08 newz			= ILLEGAL_Z;
+	bool blocked		= false;
+	char ontype			= 0;
+	UI16 xycount		= 0;
+	UI08 worldNumber	= c->WorldNumber();
+	CTileUni xyblock[XYMAX];
+	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
+	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
+	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber );
+
+	// first calculate newZ value
+	for( UI16 i = 0; i < xycount; ++i )
+	{
+		CTileUni *tb = &xyblock[i]; // this is a easy/little tricky, to save a little calculation
+		                                 // since the [i] is calclated several times below
+			                             // if it doesn't help, it doesn't hurt either.
+		SI08 nItemTop = (SI08)(tb->BaseZ() + ((tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) )); // Calculate the items total height
+
+		// check if the creature is floating on a static (keeping Z or falling)
+		if( nItemTop >= newz && nItemTop <= oldz )
+		{
+			if( tb->LiquidWet() )
+			{ // swimable tile
+				newz = nItemTop;
+				ontype = tb->Type();
+				continue;
+			}
+		}
+
+	}
+
+#if DEBUG_WALKING
+		Console.Print( "DEBUG: CheckWalkable calculate Z=%d\n", newz );
+#endif
+    SI08 item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
+	bool isGM = IsGMBody( c );
+	for( UI16 ii = 0; ii < xycount; ++ii )
+	{
+		CTileUni *tb = &xyblock[ii]; 
+		SI32 nItemTop = tb->BaseZ() + ( ( tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) ); // Calculate the items total height
+		if( ( !tb->LiquidWet() || ( tb->LiquidWet() && nItemTop > newz ) ) &&	// Check for blocking tile or stairs
+			!( ( isGM || c->IsDead() ) && ( tb->WindowArchDoor() || tb->Door() ) ) )   // ghosts can walk through doors
+		{
+			// blocking
+			if( nItemTop > newz && tb->BaseZ() <= item_influence || ( nItemTop == newz && ontype == 0 ) )
+			{ // in effact radius?
+				newz = ILLEGAL_Z;
+#if DEBUG_WALKING
+				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), tb->BaseZ() );
+#endif
+				blocked = true;
+				break;
+			}
+		}
+	}
+
+#if DEBUG_WALKING
+	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, z );
+#endif
+	return newz;
+}
+
 // Function      : cMovement::CanCharMove()
 // Written by    : Thyme
 // Revision Date : 2000.09.17
@@ -1763,16 +1830,33 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 
 bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
-	if( ( dir & 0x07 ) % 2 )
-	{ // check three ways.
-		UI08 ndir = turn_counter_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
-			return false;
-		ndir = turn_clock_wise( dir );
-		if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
-			return false;
+	if( !cwmWorldState->creatures[c->GetID()].IsWater() )
+	{
+		if( ( dir & 0x07 ) % 2 )
+		{ // check three ways.
+			UI08 ndir = turn_counter_clock_wise( dir );
+			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetID()].IsAmphibian() )
+				return false;
+			ndir = turn_clock_wise( dir );
+			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetID()].IsAmphibian() )
+				return false;
+		}
+		z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
 	}
-	z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
+
+	if( cwmWorldState->creatures[c->GetID()].IsWater() || ( cwmWorldState->creatures[c->GetID()].IsAmphibian() && z == ILLEGAL_Z) )
+	{
+		if( ( dir & 0x07 ) % 2 )
+		{ // check three ways.
+			UI08 ndir = turn_counter_clock_wise( dir );
+			if( calc_WaterWalk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
+				return false;
+			ndir = turn_clock_wise( dir );
+			if( calc_WaterWalk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
+				return false;
+		}
+		z = calc_WaterWalk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
+	}
 	return (z > ILLEGAL_Z);
 }
 

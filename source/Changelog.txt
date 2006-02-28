@@ -1,3 +1,18 @@
+2/28/2006 - grimson (0.98-3.4r [3.5 BETA])
+	Replaced the WATERCREATURE tag from creatures.npc with a new tag:
+		MOVEMENT=WATER for creatures that can only move in water.
+		MOVEMENT=LAND  for creatures that can only move on land.
+		MOVEMENT=BOTH  for creatures that can move on land and in water.
+	Added calc_WaterWalk() function to movement.cpp and changed the calc_move() function so that
+	it uses it for water creatures and amphibians.
+	Added IsStaticWet() and CanSeaMonsterMoveHere() functions to mapstuff.cpp.
+	Added FindCharSpotToSpawn() to cSpawnRegion.cpp and use it when spawning NPCs, renamed
+	FindSpotToSpawn() to FindItemSpotToSpawn() and use it when spawning items.
+
+	DFN changes:
+		Updated creatures.dfn to use the new MOVEMENT tag.
+		Updated tiles.dfn to set a water tile to wet that was missing that flag.
+
 28th February, 2006 - Maarc
 	Added archery/spell breakage on PC movement.  If a player successfully moves, then the spell they are casting fails, or their archery shoot timer is reset.
 

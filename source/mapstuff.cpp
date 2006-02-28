@@ -1043,6 +1043,21 @@ bool cMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	return true;
 }
 
+// Is there a static at the given coordinates, and if yes is it wet
+bool cMapStuff::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+{
+	MapStaticIterator msi( x, y, worldNumber );
+	
+	staticrecord *stat = NULL;
+	while( stat = msi.Next() )
+	{
+		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
+		if( elev == z && !IsTileWet( stat->itemid ) )
+			return false;
+	}
+	return true;
+}
+
 // Return new height of player who walked to X/Y but from OLDZ
 SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
@@ -1128,6 +1143,56 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 			if( land.LiquidWet() )
 				return false;
 		}
+	}
+    return true;
+}
+
+// can the sea monster move here from an adjacent cell at elevation 'oldz'
+// use illegal_z if they are teleporting from an unknown z
+bool cMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+{
+	if( worldNumber >= MapList.size() )
+		return false;
+
+	MapData_st& mMap = MapList[worldNumber];
+	if( x < 0 || y < 0 || x >= mMap.xBlock || y >= mMap.yBlock  )
+		return false;
+    const SI08 elev = Height( x, y, oldz, worldNumber );
+	if( ILLEGAL_Z == elev )
+		return false;
+
+	// is it too great of a difference z-value wise?
+	if( oldz != ILLEGAL_Z )
+	{
+		// you can climb MaxZstep, but fall up to 15
+		if( elev - oldz > MAX_Z_STEP )
+			return false;
+		else if( oldz - elev > 15 )
+			return false;
+	}
+
+    // get the tile id of any dynamic tiles at this spot
+    const UI16 dt = DynTile( x, y, elev, worldNumber );
+	
+    // if there is a dynamic tile at this spot, check to see if its a blocker
+    // if it does block, might as well short-circuit and return right away
+    if( dt != INVALIDID && !IsTileWet( dt ) )
+		return false;
+
+    // if there's a static block here in our way, return false
+    if( DoesStaticBlock( x, y, elev, worldNumber, false ) )
+		return false;
+
+	if( !IsStaticWet( x, y, elev, worldNumber ) )
+		return false;
+
+	CLand land;
+	const map_st map = SeekMap( x, y, worldNumber );
+	if( map.z == elev )
+	{
+		SeekLand( map.id, &land );
+		if( !land.LiquidWet() )
+			return false;
 	}
     return true;
 }
