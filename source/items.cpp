@@ -94,21 +94,21 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				{
 										UString UTag = cdata.upper();
 										if( UTag == "NE" )
-											applyTo->SetDir( 1 );
+											applyTo->SetDir( NORTHEAST );
 										else if( UTag == "E" )
-											applyTo->SetDir( 2 );
+											applyTo->SetDir( EAST );
 										else if( UTag == "SE" )
-											applyTo->SetDir( 3 );
+											applyTo->SetDir( SOUTHEAST );
 										else if( UTag == "S" )
-											applyTo->SetDir( 4 );
+											applyTo->SetDir( SOUTH );
 										else if( UTag == "SW" )
-											applyTo->SetDir( 5 );
+											applyTo->SetDir( SOUTHWEST );
 										else if( UTag == "W" )
-											applyTo->SetDir( 6 );
+											applyTo->SetDir( WEST );
 										else if( UTag == "NW" )
-											applyTo->SetDir( 7 );
+											applyTo->SetDir( NORTHWEST );
 										else if( UTag == "N" )
-											applyTo->SetDir( 0 );
+											applyTo->SetDir( NORTH );
 				}
 										break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
@@ -200,38 +200,28 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				Console.Print(cdata.c_str());
 				break;
 			case DFNTAG_CUSTOMSTRINGTAG:
-				customTagName = cdata.section(" ", 0, 0);
-				customTagStringValue = cdata.section(" ", 1);
-				if( customTagName != "" && customTagStringValue != "")
+				customTagName			= cdata.section( " ", 0, 0 );
+				customTagStringValue	= cdata.section(" ", 1 );
+				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
 					customTag.m_StringValue	= customTagStringValue;
 					customTag.m_IntValue	= customTag.m_StringValue.length();
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
-				} else {
-					customTag.m_Destroy		= TRUE;
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_IntValue	= 0;
-					customTag.m_StringValue	= "";
+					applyTo->SetTag( customTagName, customTag );
 				}
-				applyTo->SetTag( customTagName, customTag);
 				break;
 			case DFNTAG_CUSTOMINTTAG:
-				customTagName = cdata.section(" ", 0, 0);
-				customTagStringValue = cdata.section(" ", 1);
-				if( customTagName != "" && customTagStringValue != "")
+				customTagName			= cdata.section(" ", 0, 0);
+				customTagStringValue	= cdata.section(" ", 1);
+				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue	= customTagStringValue.toInt(NULL, 10);
+					customTag.m_IntValue	= customTagStringValue.toInt();
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
-				} else {
-					customTag.m_Destroy		= TRUE;
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_IntValue	= 0;
-					customTag.m_StringValue	= "";
+					applyTo->SetTag( customTagName, customTag );
 				}
-				applyTo->SetTag( customTagName, customTag);
 				break;
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:

@@ -222,19 +222,20 @@ namespace UOX
 		JSContext *cx = jsContext;
 		JSObject *obj = jsGlobal;
 
-		protoList[JSP_GUMPDATA]	=	JS_InitClass( cx, obj, obj, &UOXGumpData_class,		NULL,	0,	NULL,				CGumpData_Methods,	NULL,				CGumpData_Methods);
-		protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, obj, &UOXChar_class.base,	NULL,	0,	CCharacterProps,	CChar_Methods,		CCharacterProps,	CChar_Methods );
-		protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, obj, &UOXItem_class.base,	NULL,	0,	CItemProps,			CItem_Methods,		CItemProps,			CItem_Methods );
-		protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, obj, &UOXSpell_class,		NULL,	0,	CSpellProperties,	NULL,				CSpellProperties,	NULL );
-		protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, obj, &UOXSpells_class,		NULL,	0,	NULL,				NULL,				NULL,				NULL );
-		protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, obj, &UOXSocket_class.base,	NULL,	0,	CSocketProps,		CSocket_Methods,	CSocketProps,		CSocket_Methods );
-		protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, obj, &UOXAccount_class,		NULL,	0,	CAccountProperties, CAccount_Methods,	CAccountProperties, CAccount_Methods );
-		protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, obj, &UOXConsole_class,		NULL,	0,	CConsoleProperties, CConsole_Methods,	CConsoleProperties, CConsole_Methods );
-		protoList[JSP_REGION]	=	JS_InitClass( cx, obj, obj, &UOXRegion_class,		NULL,	0,	CRegionProperties,	NULL,				CRegionProperties,	NULL );
-		protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, obj, &UOXResource_class,		NULL,	0,	CResourceProperties, NULL,				CResourceProperties, NULL );
-		protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, obj, &UOXGump_class,			Gump,	0,	NULL,				CGump_Methods,		NULL,				CGump_Methods );
-		protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, obj, &UOXPacket_class,		Packet, 0,	NULL,				CPacket_Methods,	NULL,				CPacket_Methods );
-		protoList[JSP_FILE]		=	JS_InitClass( cx, obj, obj, &UOXFile_class,			UOXCFile, 0, CFileProperties,	NULL,				CFileProperties,	NULL );
+		protoList[JSP_GUMPDATA]	=	JS_InitClass( cx, obj, obj, &UOXGumpData_class,		NULL,		0,		NULL,	NULL,		NULL,				CGumpData_Methods);
+		protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, obj, &UOXChar_class.base,	NULL,		0,		NULL,	NULL,		CCharacterProps,	CChar_Methods );
+		protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, obj, &UOXItem_class.base,	NULL,		0,		NULL,	NULL,		CItemProps,			CItem_Methods );
+		protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, obj, &UOXSpell_class,		NULL,		0,		NULL,	NULL,		CSpellProperties,	NULL );
+		protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, obj, &UOXSpells_class,		NULL,		0,		NULL,	NULL,		NULL,				NULL );
+		protoList[JSP_SOCK]		=	JS_InitClass( cx, obj, obj, &UOXSocket_class.base,	NULL,		0,		NULL,	NULL,		CSocketProps,		CSocket_Methods );
+		protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, obj, &UOXAccount_class,		NULL,		0,		NULL,	NULL,		CAccountProperties, CAccount_Methods );
+		protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, obj, &UOXConsole_class,		NULL,		0,		NULL,	NULL,		CConsoleProperties, CConsole_Methods );
+		protoList[JSP_REGION]	=	JS_InitClass( cx, obj, obj, &UOXRegion_class,		NULL,		0,		NULL,	NULL,		CRegionProperties,	NULL );
+		protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, obj, &UOXResource_class,		NULL,		0,		NULL,	NULL,		CResourceProperties, NULL );
+		protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, obj, &UOXGump_class,			Gump,		0,		NULL,	NULL,		NULL,				CGump_Methods );
+		protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, obj, &UOXPacket_class,		Packet,		0,		NULL,	NULL,		NULL,				CPacket_Methods );
+		protoList[JSP_FILE]		=	JS_InitClass( cx, obj, obj, &UOXFile_class,			UOXCFile,	0,		NULL,	NULL,		CFileProperties,	NULL );
+		protoList[JSP_RACE]		=	JS_InitClass( cx, obj, obj, &UOXRace_class,			NULL,		0,		NULL,	NULL,		CRaceProperties,	CRace_Methods );
 		JS_DefineFunctions( cx, obj, CFile_Methods );
 		JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
 		JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
@@ -314,46 +315,46 @@ namespace UOX
 		switch( iType )
 		{
 		case IUE_RACE:
-			toMake = JS_NewObject( jsContext, &UOXRace_class, NULL, jsGlobal ); 
+			toMake = JS_NewObject( jsContext, &UOXRace_class, protoList[JSP_RACE], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineFunctions( jsContext, toMake, CRace_Methods );
-			JS_DefineProperties( jsContext, toMake, CRaceProperties );
+			//JS_DefineFunctions( jsContext, toMake, CRace_Methods );
+			//JS_DefineProperties( jsContext, toMake, CRaceProperties );
 			break;
 		case IUE_CHAR:
 			toMake = JS_NewObject( jsContext, &UOXChar_class.base, protoList[JSP_CHAR], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineProperties( jsContext, toMake, CCharacterProps );
-			JS_DefineFunctions( jsContext, toMake, CChar_Methods );
+			//JS_DefineProperties( jsContext, toMake, CCharacterProps );
+			//JS_DefineFunctions( jsContext, toMake, CChar_Methods );
 			break;
 		case IUE_ITEM:
 			toMake = JS_NewObject( jsContext, &UOXItem_class.base, protoList[JSP_ITEM], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineFunctions( jsContext, toMake, CItem_Methods );
-			JS_DefineProperties( jsContext, toMake, CItemProps );
+			//JS_DefineFunctions( jsContext, toMake, CItem_Methods );
+			//JS_DefineProperties( jsContext, toMake, CItemProps );
 			break;
 		case IUE_SOCK:
 			toMake = JS_NewObject( jsContext, &UOXSocket_class.base, protoList[JSP_SOCK], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineFunctions( jsContext, toMake, CSocket_Methods );
-			JS_DefineProperties( jsContext, toMake, CSocketProps );
+			//JS_DefineFunctions( jsContext, toMake, CSocket_Methods );
+			//JS_DefineProperties( jsContext, toMake, CSocketProps );
 			break;
 		case IUE_GUILD:
-			toMake = JS_NewObject( jsContext, &UOXGuild_class, NULL, jsGlobal ); 
+			toMake = JS_NewObject( jsContext, &UOXGuild_class, protoList[JSP_GUILD], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineFunctions( jsContext, toMake, CGuild_Methods );
-			JS_DefineProperties( jsContext, toMake, CGuildProperties );
+			//JS_DefineFunctions( jsContext, toMake, CGuild_Methods );
+			//JS_DefineProperties( jsContext, toMake, CGuildProperties );
 			break;
 		case IUE_REGION:
 			toMake = JS_NewObject( jsContext, &UOXRegion_class, protoList[JSP_REGION], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
-			JS_DefineProperties( jsContext, toMake, CRegionProperties );
+			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
+			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
 			break;
 		default:
 		case IUE_COUNT:

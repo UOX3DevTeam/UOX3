@@ -1,3 +1,7 @@
+2/28/2006 - giwo (0.98-3.4s [3.5 BETA])
+	Modified the JS Object creation to reduce memory waste.
+	Made some minor modifications to CUSTOMSTRINGTAG and CUSTOMINTTAG handling.
+
 2/28/2006 - grimson
 	Updated cCharStuff::FindSpotForNPC() to also allow spawning of water and amphibian NPCs.
 

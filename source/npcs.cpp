@@ -1027,38 +1027,28 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_VETERINARY:			skillToSet = VETERINARY;				break;
 			case DFNTAG_WRESTLING:			skillToSet = WRESTLING;					break;
 			case DFNTAG_CUSTOMSTRINGTAG:
-				customTagName = cdata.section(" ", 0, 0);
-				customTagStringValue = cdata.section(" ", 1);
-				if( customTagName != "" && customTagStringValue != "")
+				customTagName			= cdata.section( " ", 0, 0 );
+				customTagStringValue	= cdata.section( " ", 1 );
+				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
 					customTag.m_StringValue	= customTagStringValue;
 					customTag.m_IntValue	= customTag.m_StringValue.length();
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
-				} else {
-					customTag.m_Destroy		= TRUE;
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_IntValue	= 0;
-					customTag.m_StringValue	= "";
+					applyTo->SetTag( customTagName, customTag);
 				}
-				applyTo->SetTag( customTagName, customTag);
 				break;
 			case DFNTAG_CUSTOMINTTAG:
-				customTagName = cdata.section(" ", 0, 0);
-				customTagStringValue = cdata.section(" ", 1);
-				if( customTagName != "" && customTagStringValue != "")
+				customTagName			= cdata.section(" ", 0, 0);
+				customTagStringValue	= cdata.section(" ", 1);
+				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue	= customTagStringValue.toInt(NULL, 10);
+					customTag.m_IntValue	= customTagStringValue.toInt();
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
-				} else {
-					customTag.m_Destroy		= TRUE;
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_IntValue	= 0;
-					customTag.m_StringValue	= "";
+					applyTo->SetTag( customTagName, customTag);
 				}
-				applyTo->SetTag( customTagName, customTag);
 				break;
 			case DFNTAG_ALIGNMENT:
 			case DFNTAG_CATEGORY:
