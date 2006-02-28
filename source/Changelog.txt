@@ -1,3 +1,6 @@
+28th February, 2006 - Maarc
+	Added archery/spell breakage on PC movement.  If a player successfully moves, then the spell they are casting fails, or their archery shoot timer is reset.
+
 27th February, 2006 - Maarc
 	Updated code that uses |= and &= to use MFLAGSET and MFLAGGET instead, promoting them to a higher public level.  Down to only a very few number of references like that now
 	Updated the race code because it was getting out of sync with the WeatherTypes.  The two were bound together in a number of ways, and it's now more generic and tied closer

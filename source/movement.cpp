@@ -605,6 +605,30 @@ bool cMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
 
 void cMovement::MoveCharForDirection( CChar *c, SI08 myz, UI08 dir )
 {
+	if( !c->IsNpc() ) 
+	{	// if we're a PC in combat, or casting, we want to break/adjust their timers
+		bool casting = c->IsCasting() || c->IsJSCasting();
+		if( ( c->IsAtWar() || casting ) && isOnline( *c ) )
+		{	// if it's not an NPC, in combat or casting, and it's online
+			if( casting )
+			{
+				Effects->PlayStaticAnimation( c, 0x3735, 0, 30 );
+				Effects->PlaySound( c, 0x005C );
+				c->emote( c->GetSocket(), 771, false );
+				c->StopSpell();
+				c->SetJSCasting( false );
+			}
+			else
+			{	// otherwise, we're at war!!!  Are we using a bow?
+				CItem *mWeapon				= Combat->getWeapon( c );
+				const UI08 getFightSkill	= Combat->getCombatSkill( mWeapon );
+				if( getFightSkill == ARCHERY )
+				{
+					c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( Combat->GetCombatTimeout( c ) ) );
+				}
+			}
+		}
+	}
 	c->WalkXY( GetXfromDir( dir, c->GetX() ), GetYfromDir( dir, c->GetY() ) );
 	c->WalkZ( myz );
 }

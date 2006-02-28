@@ -29,7 +29,6 @@ class CHandleCombat
 private:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
 	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
-	R32		GetCombatTimeout( CChar *mChar );
 	void	Kill( CChar *mChar, CChar *ourTarg );
 
 	void	InvalidateAttacker( CChar *mChar );
@@ -50,6 +49,7 @@ private:
 	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false );
 
 public:
+	R32		GetCombatTimeout( CChar *mChar );
 	void	PlayerAttack( CSocket *s );
 	void	AttackTarget( CChar *mChar, CChar *ourTarg );
 	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded );
