@@ -1,3 +1,8 @@
+2/28/2006 - giwo (0.98-3.4t [3.5 BETA])
+	Added some additional debug messages to Region handling.
+	Fixed a crash involving weather.
+	Fixed an issue that would cause invalid objects to be left in mapregions.
+
 2/28/2006 - giwo (0.98-3.4s [3.5 BETA])
 	Modified the JS Object creation to reduce memory waste.
 	Made some minor modifications to CUSTOMSTRINGTAG and CUSTOMINTTAG handling.

@@ -256,6 +256,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetCanAttack( true );
 	SetBrkPeaceChanceGain( 0 );
 	SetBrkPeaceChance( 0 );
+	MapRegion->AddChar( this );
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted
@@ -3840,6 +3841,8 @@ void CChar::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
+		MapRegion->RemoveChar( this );
+
 		JSEngine->ReleaseObject( IUE_CHAR, this );
 
 		CBaseObject::Cleanup();
@@ -3880,7 +3883,6 @@ void CChar::Cleanup( void )
 			}
 			SetAttacker( NULL );
 		}
-		MapRegion->RemoveChar( this );
 
 		// If we delete a NPC we should delete his tempeffects as well
 		cwmWorldState->tempEffects.Push();

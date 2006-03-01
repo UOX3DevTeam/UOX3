@@ -327,26 +327,6 @@ CMapHandler::~CMapHandler()
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool AddItem( CItem *nItem )
-//|	Date			-	23 July, 2000
-//|	Programmer		-	Abaddon
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Adds nItem to the proper SubRegion
-//o--------------------------------------------------------------------------o
-bool CMapHandler::AddItem( CItem *nItem )
-{
-	if( !ValidateObject( nItem ) )
-		return false;
-	CMapRegion *cell = GetMapRegion( nItem );
-	if( cell == &overFlow )
-	{
-		overFlow.GetItemList()->Add( nItem );
-		return false;
-	}
-	return cell->GetItemList()->Add( nItem );
-}
-
-//o--------------------------------------------------------------------------o
 //|	Function		-	bool ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 //|	Date			-	February 1, 2006
 //|	Programmer		-	giwo
@@ -363,8 +343,14 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 
 	if( curCell != newCell )
 	{
-		curCell->GetItemList()->Remove( nItem );
-		newCell->GetItemList()->Add( nItem );
+		if( !curCell->GetItemList()->Remove( nItem ) )
+#if defined( UOX_DEBUG_MODE )
+			Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+#endif
+		if( !newCell->GetItemList()->Add( nItem ) )
+#if defined( UOX_DEBUG_MODE )
+			Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
+#endif
 		return true;
 	}
 	return false;
@@ -387,11 +373,39 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 
 	if( curCell != newCell )
 	{
-		curCell->GetCharList()->Remove( nChar );
-		newCell->GetCharList()->Add( nChar );
+		if( !curCell->GetCharList()->Remove( nChar ) )
+#if defined( UOX_DEBUG_MODE )
+			Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() );
+#endif
+		if( !newCell->GetCharList()->Add( nChar ) )
+#if defined( UOX_DEBUG_MODE )
+			Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() );
+#endif
 		return true;
 	}
 	return false;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool AddItem( CItem *nItem )
+//|	Date			-	23 July, 2000
+//|	Programmer		-	Abaddon
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Adds nItem to the proper SubRegion
+//o--------------------------------------------------------------------------o
+bool CMapHandler::AddItem( CItem *nItem )
+{
+	if( !ValidateObject( nItem ) )
+		return false;
+	CMapRegion *cell = GetMapRegion( nItem );
+	if( !cell->GetItemList()->Add( nItem ) )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Console.Warning( 2, "Item 0x%X does not exist in MapRegion, add failed", nItem->GetSerial() );
+#endif
+		return false;
+	}
+	return true;
 }
 
 //o--------------------------------------------------------------------------o
@@ -407,12 +421,14 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	if( !ValidateObject( nItem ) )
 		return false;
 	CMapRegion *cell = GetMapRegion( nItem );
-	if( cell == &overFlow )
+	if( !cell->GetItemList()->Remove( nItem ) )
 	{
-		overFlow.GetItemList()->Remove( nItem );
+#if defined( UOX_DEBUG_MODE )
+		Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+#endif
 		return false;
 	}
-	return cell->GetItemList()->Remove( nItem );
+	return true;
 }
 
 //o--------------------------------------------------------------------------o
@@ -427,12 +443,14 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	if( !ValidateObject( toAdd ) )
 		return false;
 	CMapRegion *cell = GetMapRegion( toAdd );
-	if( cell == &overFlow )
+	if( !cell->GetCharList()->Add( toAdd ) )
 	{
-		overFlow.GetCharList()->Add( toAdd );
+#if defined( UOX_DEBUG_MODE )
+		Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() );
+#endif
 		return false;
 	}
-	return cell->GetCharList()->Add( toAdd );
+	return true;
 }
 
 //o--------------------------------------------------------------------------o
@@ -448,12 +466,14 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	if( !ValidateObject( toRemove ) )
 		return false;
 	CMapRegion *cell = GetMapRegion( toRemove );
-	if( cell == &overFlow )
+	if( !cell->GetCharList()->Remove( toRemove ) )
 	{
-		overFlow.GetCharList()->Remove( toRemove );
+#if defined( UOX_DEBUG_MODE )
+		Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() );
+#endif
 		return false;
 	}
-	return cell->GetCharList()->Remove( toRemove );
+	return true;
 }
 
 //o--------------------------------------------------------------------------o

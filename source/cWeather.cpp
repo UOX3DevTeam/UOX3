@@ -2023,7 +2023,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 		bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
 
 		weathID weatherSys = mChar.GetRegion()->GetWeather();
-		if( weatherSys > weather.size() || weather.empty() )
+		if( !weather.empty() && weatherSys < weather.size() )
 		{
 			lightMin = LightMin( weatherSys );
 			lightMax = LightMax( weatherSys );

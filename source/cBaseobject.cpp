@@ -1613,7 +1613,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				rvalue = true;
 			}
 			break;
-
 		case 'L':
 			if( UTag == "LOCATION" )
 			{

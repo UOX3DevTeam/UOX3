@@ -102,6 +102,8 @@ creator( DEFITEM_CREATOR )
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
 	id = 0x0000;
+
+	MapRegion->AddItem( this );
 }
 
 CItem::~CItem()	// Destructor to clean things up when deleted
@@ -1792,10 +1794,11 @@ void CItem::Cleanup( void )
 	{
 		JSEngine->ReleaseObject( IUE_ITEM, this );
 
-		CBaseObject::Cleanup();
-
 		RemoveFromSight();
 		RemoveSelfFromCont();
+
+		CBaseObject::Cleanup();
+
 		RemoveSelfFromOwner();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )
