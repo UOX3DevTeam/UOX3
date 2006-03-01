@@ -401,7 +401,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	if( !cell->GetItemList()->Add( nItem ) )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Warning( 2, "Item 0x%X does not exist in MapRegion, add failed", nItem->GetSerial() );
+		Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
 #endif
 		return false;
 	}

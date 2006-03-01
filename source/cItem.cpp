@@ -102,8 +102,6 @@ creator( DEFITEM_CREATOR )
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
 	id = 0x0000;
-
-	MapRegion->AddItem( this );
 }
 
 CItem::~CItem()	// Destructor to clean things up when deleted
@@ -233,31 +231,19 @@ bool CItem::SetCont( CBaseObject *newCont )
 		Dirty( UT_UPDATE );
 		RemoveSelfFromCont();
 	}
-	contObj = newCont;
 
-	if( GetGlow() != INVALIDSERIAL )
-		Items->GlowItem( this );
-
+	bool contIsGround = true;
 	if( ValidateObject( newCont ) )
 	{
+		contObj = newCont;
 		if( newCont->GetObjType() == OT_CHAR )
 		{
 			CChar *charWearing = (CChar *)newCont;
-			if( ValidateObject( charWearing ) )
+			if( ValidateObject( charWearing ) && charWearing->WearItem( this ) )
 			{
-				if( !charWearing->WearItem( this ) )
-				{
-					SetCont( NULL );
-					return false;	// disable for now
-				}
+				contIsGround = false;
 				if( isPostLoaded() )
 					Weight->addItemWeight( charWearing, this );
-				return true;
-			}
-			else
-			{
-				SetCont( NULL );
-				return false;
 			}
 		}
 		else
@@ -265,6 +251,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 			CItem *itemHolder = (CItem *)newCont;
 			if( itemHolder != NULL )
 			{
+				contIsGround = false;
 				// ok heres what hair/beards should be handled like (sereg)
 				if( ( GetID() >= 0x203B ) && ( GetID() <= 0x204D ) )
 				{
@@ -282,18 +269,20 @@ bool CItem::SetCont( CBaseObject *newCont )
 					itemHolder->GetContainsList()->Add( this );
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
-				return true;
-			}
-			else
-			{
-				SetCont( NULL );
-				return false;
 			}
 		}
 	}
-	else	// this is in case we're initing the default item
+
+	if( contIsGround )
+	{
+		contObj = NULL;
 		MapRegion->AddItem( this );
-	return true;
+	}
+
+	if( GetGlow() != INVALIDSERIAL )
+		Items->GlowItem( this );
+
+	return !contIsGround;
 }
 
 //o--------------------------------------------------------------------------

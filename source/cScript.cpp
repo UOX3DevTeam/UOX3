@@ -1503,10 +1503,12 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	UI16 nText		= static_cast<UI16>(packet->TextCount());
 
 	SEGumpData *segdGumpData	= new SEGumpData;
-	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, JSEngine->GetPrototype( runTime, JSP_GUMPDATA ), NULL );
+	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, NULL, NULL );
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
 	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
 	JS_SetPrivate( targContext, jsoObject, segdGumpData );
+	JS_LockGCThing( targContext, jsoObject );
+	//JS_AddRoot( targContext, &jsoObject );
 
 	int i;
 	// Loop through Buttons

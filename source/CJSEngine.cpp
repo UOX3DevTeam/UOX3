@@ -222,7 +222,6 @@ namespace UOX
 		JSContext *cx = jsContext;
 		JSObject *obj = jsGlobal;
 
-		protoList[JSP_GUMPDATA]	=	JS_InitClass( cx, obj, obj, &UOXGumpData_class,		NULL,		0,		NULL,	NULL,		NULL,				CGumpData_Methods);
 		protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, obj, &UOXChar_class.base,	NULL,		0,		NULL,	NULL,		CCharacterProps,	CChar_Methods );
 		protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, obj, &UOXItem_class.base,	NULL,		0,		NULL,	NULL,		CItemProps,			CItem_Methods );
 		protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, obj, &UOXSpell_class,		NULL,		0,		NULL,	NULL,		CSpellProperties,	NULL );
@@ -232,10 +231,10 @@ namespace UOX
 		protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, obj, &UOXConsole_class,		NULL,		0,		NULL,	NULL,		CConsoleProperties, CConsole_Methods );
 		protoList[JSP_REGION]	=	JS_InitClass( cx, obj, obj, &UOXRegion_class,		NULL,		0,		NULL,	NULL,		CRegionProperties,	NULL );
 		protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, obj, &UOXResource_class,		NULL,		0,		NULL,	NULL,		CResourceProperties, NULL );
+		protoList[JSP_RACE]		=	JS_InitClass( cx, obj, obj, &UOXRace_class,			NULL,		0,		NULL,	NULL,		CRaceProperties,	CRace_Methods );
 		protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, obj, &UOXGump_class,			Gump,		0,		NULL,	NULL,		NULL,				CGump_Methods );
 		protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, obj, &UOXPacket_class,		Packet,		0,		NULL,	NULL,		NULL,				CPacket_Methods );
 		protoList[JSP_FILE]		=	JS_InitClass( cx, obj, obj, &UOXFile_class,			UOXCFile,	0,		NULL,	NULL,		CFileProperties,	NULL );
-		protoList[JSP_RACE]		=	JS_InitClass( cx, obj, obj, &UOXRace_class,			NULL,		0,		NULL,	NULL,		CRaceProperties,	CRace_Methods );
 		JS_DefineFunctions( cx, obj, CFile_Methods );
 		JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
 		JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );

@@ -256,7 +256,6 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetCanAttack( true );
 	SetBrkPeaceChanceGain( 0 );
 	SetBrkPeaceChance( 0 );
-	MapRegion->AddChar( this );
 }
 
 CChar::~CChar()	// Destructor to clean things up when deleted

@@ -1039,6 +1039,22 @@ void CPITargetCursor::Receive( void )
 {
 	tSock->Receive( 19, false );
 }
+void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPITargetCursor 0x6C --> Length: 19" << TimeStamp() << std::endl;
+	outStream << "Type         : " << static_cast<UI16>(tSock->GetByte( 1 )) << std::endl;
+	outStream << "CursorID     : " << tSock->GetDWord( 2 ) << std::endl;
+	outStream << "Cursor Type  : " << static_cast<UI16>(tSock->GetByte( 6 )) << std::endl;
+	outStream << "Target ID    : " << "0x" << std::hex << tSock->GetDWord( 7 ) << std::endl;
+	outStream << "Target X     : " << std::dec << tSock->GetWord( 11 ) << std::endl;
+	outStream << "Target Y     : " << tSock->GetWord( 13 ) << std::endl;
+	outStream << "Unknown      : " << static_cast<UI16>(tSock->GetByte( 15 )) << std::endl;
+	outStream << "Target Z     : " << static_cast<SI16>(tSock->GetByte( 16 )) << std::endl;
+	outStream << "Model #      : " << "0x" << std::hex << tSock->GetWord( 17 ) << std::endl;
+	outStream << "  Raw dump     :" << std::dec << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
 // bool CPITargetCursor::Handle() in targeting.cpp
 
 //0x13 Packet

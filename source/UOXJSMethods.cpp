@@ -93,7 +93,10 @@ JSBool Packet( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rva
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
-	JS_SetPrivate( cx, obj, toAdd );
+	JS_DefineFunctions( cx, obj, CPacket_Methods );
+	JS_SetPrivate( cx, obj, toAdd);
+	JS_LockGCThing( cx, obj );
+	//JS_AddRoot( cx, &obj );
 	return JS_TRUE;
 }
 
@@ -105,7 +108,8 @@ JSBool CPacket_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		return JS_FALSE;
 
 	delete toDelete;
-
+	JS_UnlockGCThing( cx, obj );
+	//JS_RemoveRoot( cx, obj );
 	JS_SetPrivate( cx, obj, NULL );
 
 	return JS_TRUE;
@@ -260,7 +264,10 @@ JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval 
 	toAdd->two = new STRINGLIST;
 	toAdd->TextID = 0;
 
-	JS_SetPrivate(cx, obj, toAdd);
+	JS_DefineFunctions( cx, obj, CGump_Methods );
+	JS_SetPrivate( cx, obj, toAdd);
+	JS_LockGCThing( cx, obj );
+	//JS_AddRoot( cx, &obj );
 	return JS_TRUE;
 }
 
@@ -276,6 +283,8 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	delete toDelete->two;
 	delete toDelete;
 
+	JS_UnlockGCThing( cx, obj );
+	//JS_RemoveRoot( cx, obj );
 	JS_SetPrivate( cx, obj, NULL );
 
 	return JS_TRUE;
@@ -287,7 +296,10 @@ JSBool CGumpData_Free(JSContext *cx, JSObject *obj,uintN argc, jsval *argv, jsva
 
 	if( toDelete == NULL )  
 		return JS_FALSE;
+	JS_UnlockGCThing( cx, obj );
+	//JS_RemoveRoot( cx, &obj );
 	JS_SetPrivate( cx, obj, NULL ) ;
+
 	delete toDelete;
 	return JS_TRUE;
 }
@@ -3803,7 +3815,11 @@ JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *r
 	UOXFileWrapper *toAdd = new UOXFileWrapper;
 	toAdd->mWrap = NULL;
 
+	JSBool myVal = JS_DefineFunctions( cx, obj, CFile_Methods );
+	JSBool mVal = JS_DefineProperties( cx, obj, CFileProperties );
 	JS_SetPrivate( cx, obj, toAdd );
+	JS_LockGCThing( cx, obj );
+	//JS_AddRoot( cx, &obj );
 	return JS_TRUE;
 }
 
@@ -3827,6 +3843,8 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
 	delete mFile;
+	JS_UnlockGCThing( cx, obj );
+	//JS_RemoveRoot( cx, &obj );
 	JS_SetPrivate( cx, obj, NULL );
 	return JS_TRUE;
 }

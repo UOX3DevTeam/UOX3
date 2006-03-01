@@ -22,10 +22,15 @@ function onCallback1( socket, ourObj )
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
-		if( ourObj && ourObj.isItem )
-			tileID = ourObj.id;
-		else	// 5.x clients send our character as the object when clicking on tiles.
+		if( socket.GetByte( 1 ) )
+		{
 			tileID = socket.GetWord( 17 );
+			if( !tileID )
+				tileID = GetTileIDAtMapCoord( socket.GetWord( 11 ), socket.GetWord( 13 ), mChar.worldNumber );
+		}
+		else if( ourObj && ourObj.isItem )
+			tileID = ourObj.id;
+			
 
 		if( tileID != 0 )
 		{

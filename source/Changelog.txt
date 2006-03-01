@@ -1,3 +1,11 @@
+3/01/2006 - giwo (0.98-3.4u [3.5 BETA])
+	Fixed some issues caused by my previous changes to objects in mapregions.
+	Fixed some issues when setting containers.
+	Fixed an issue causing targeting cursors to sometimes target a character when the target should be invalid.
+	Fixed an issue causing JS Gumps not to function.
+	Added detailed packet logging to CPITargetCursor.
+	Fixed a minor issue with axe.js
+
 2/28/2006 - giwo (0.98-3.4t [3.5 BETA])
 	Added some additional debug messages to Region handling.
 	Fixed a crash involving weather.

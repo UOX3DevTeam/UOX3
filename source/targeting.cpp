@@ -1630,6 +1630,8 @@ bool CPITargetCursor::Handle( void )
 				mChar->StopSpell();
 			return true; // do nothing if user cancels, avoids CRASH! - Morrolan
 		}
+		if( tSock->GetByte( 1 ) == 1 && !tSock->GetDWord( 7 ) )
+			tSock->SetDWord( 7, INVALIDSERIAL );	// Client sends TargSer as 0 when we target an XY/Static, use INVALIDSERIAL as 0 could be a valid Serial - giwo
 
 		UI08 a1 = tSock->GetByte( 2 );
 		UI08 a2 = tSock->GetByte( 3 );

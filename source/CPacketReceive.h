@@ -265,6 +265,7 @@ public:
 					CPITargetCursor( CSocket *s );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader );
 };
 
 class CPIEquipItem : public CPInputBuffer
