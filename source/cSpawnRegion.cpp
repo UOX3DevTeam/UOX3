@@ -607,10 +607,19 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
-		if(z2 != ILLEGAL_Z && z2 == z)
-			rvalue = true;
-		else if(z2 == ILLEGAL_Z)
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
 			rvalue = true;
 	}
 	else if( !rvalue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
@@ -619,10 +628,19 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
-		if(z2 != ILLEGAL_Z && z2 == z)
-			rvalue = true;
-		else if(z2 == ILLEGAL_Z)
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
 			rvalue = true;
 	}
 	return rvalue;
@@ -689,10 +707,19 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
-		if(z2 != ILLEGAL_Z && z2 == z)
-			rvalue = true;
-		else if(z2 == ILLEGAL_Z)
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
 			rvalue = true;
 	}
 
