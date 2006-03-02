@@ -384,7 +384,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				worldNumber = data.toUByte();
 			else if( UTag == "PREFZ" )
 				prefZ = data.toByte();
-			else if( UTag == "ValidLandSpawn" )
+			else if( UTag == "VALIDLANDPOS" )
 			{
 				data = data.simplifyWhiteSpace();
 				if( data.sectionCount( "," ) == 2 )
@@ -392,7 +392,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
 				}
 			}
-			else if( UTag == "ValidWaterSpawn" )
+			else if( UTag == "VALIDWATERPOS" )
 			{
 				data = data.simplifyWhiteSpace();
 				if( data.sectionCount( "," ) == 2 )
