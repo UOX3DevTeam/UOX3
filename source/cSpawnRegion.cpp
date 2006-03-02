@@ -390,6 +390,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				if( data.sectionCount( "," ) == 2 )
 				{
 					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+					validLandPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
 				}
 			}
 			else if( UTag == "VALIDWATERPOS" )
@@ -398,6 +399,7 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				if( data.sectionCount( "," ) == 2 )
 				{
 					validWaterPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+					validWaterPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
 				}
 			}
 		}
@@ -528,11 +530,12 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 {
 	bool rvalue = false;
 	point3 currLoc;
+	std::map<UI32, SI08>::const_iterator checkValid;
+	SI08 z2 = ILLEGAL_Z;
 	const size_t landPosSize = validLandPos.size();
 	const size_t waterPosSize = validWaterPos.size();
 	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
 	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
-
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
 		x = RandomNum( x1, x2 );
@@ -552,53 +555,49 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		// First go through the lists of already stored good locations
 		if( !waterCreature )
 		{
-			if( !validLandPos.empty() && landPosSize > 0 )
+			if( !validLandPosCheck.empty() && landPosSize > 0 )
 			{
-				for(int i = 0; i < landPosSize; i++)
+				checkValid = validLandPosCheck.find( y + (x<<16));
+				if( checkValid != validLandPosCheck.end() )
+					z2 = (*checkValid).second;
+				
+				if(z2 == z && z != ILLEGAL_Z)
 				{
-					currLoc = validLandPos[i];
-					if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
-					{
-						rvalue = true;
-						break;
-					}
+					rvalue = true;
+					break;
 				}
 			}
 		}
 		else if( waterCreature || amphiCreature )
 		{
-			if( !validWaterPos.empty() && waterPosSize > 0 )
+			if( !validWaterPosCheck.empty() && waterPosSize > 0 )
 			{
-				for(int i = 0; i < waterPosSize; i++)
+				checkValid = validWaterPosCheck.find( y + (x<<16));
+				if( checkValid != validWaterPosCheck.end() )
+					z2 = (*checkValid).second;
+				
+				if(z2 == z && z != ILLEGAL_Z)
 				{
-					currLoc = validWaterPos[i];
-					if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
-					{
-						rvalue = true;
-						break;
-					}
+					rvalue = true;
+					break;
 				}
 			}
 		}
 		
-		if( !rvalue ) // If the location wasn't stored test and and store it if it's good
+		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !waterCreature )
 		{
-			if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !waterCreature )
-			{
-				rvalue = true;
-				validLandPos.push_back( point3( x, y, z ) );
-				break;
-			}
-			else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( waterCreature || amphiCreature ) )
-			{
-				rvalue = true;
-				validWaterPos.push_back( point3( x, y, z ) );
-				break;
-			}
-		}
-		else
+			rvalue = true;
+			validLandPos.push_back( point3( x, y, z ) );
+			validLandPosCheck[ y + ( x << 16) ] = z;
 			break;
-
+		}
+		else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( waterCreature || amphiCreature ) )
+		{
+			rvalue = true;
+			validWaterPos.push_back( point3( x, y, z ) );
+			validWaterPosCheck[ y + ( x << 16) ] = z;
+			break;
+		}
 	}
 
 	// If we haven't found a valid location pick a random location from the stored ones
@@ -608,7 +607,11 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		rvalue = true;
+		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if(z2 != ILLEGAL_Z && z2 == z)
+			rvalue = true;
+		else if(z2 == ILLEGAL_Z)
+			rvalue = true;
 	}
 	else if( !rvalue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
 	{
@@ -616,7 +619,11 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		rvalue = true;
+		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if(z2 != ILLEGAL_Z && z2 == z)
+			rvalue = true;
+		else if(z2 == ILLEGAL_Z)
+			rvalue = true;
 	}
 	return rvalue;
 }
@@ -631,6 +638,8 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 {
 	bool rvalue = false;
 	point3 currLoc;
+	SI08 z2 = ILLEGAL_Z;
+	std::map<UI32, SI08>::const_iterator checkValid;
 	const size_t landPosSize = validLandPos.size();
 	const size_t waterPosSize = validWaterPos.size();
 
@@ -651,30 +660,26 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		}
 
 		// First go through the lists of already stored good locations
-		if( !validLandPos.empty() && landPosSize > 0 )
+		if( !validLandPosCheck.empty() && landPosSize > 0 )
 		{
-			for(int i = 0; i < landPosSize; i++)
-			{
-				currLoc = validLandPos[i];
-				if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
-				{
-					rvalue = true;
-					break;
-				}
-			}
-		}
-
-		if( !rvalue ) // If the location wasn't stored test and and store it if it's good
-		{
-			if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
+			checkValid = validLandPosCheck.find( y + (x<<16));
+			if( checkValid != validLandPosCheck.end() )
+				z2 = (*checkValid).second;
+			
+			if(z2 == z && z != ILLEGAL_Z )
 			{
 				rvalue = true;
-				validLandPos.push_back( point3( x, y, z ) );
 				break;
 			}
 		}
-		else
+
+		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
+		{
+			rvalue = true;
+			validLandPos.push_back( point3( x, y, z ) );
+			validLandPosCheck[ y + ( x << 16) ] = z;
 			break;
+		}
 	}
 	
 	// If we haven't found a valid location pick a random location from the stored ones
@@ -684,7 +689,11 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		x = currLoc.x;
 		y = currLoc.y;
 		z = currLoc.z;
-		rvalue = true;
+		z2 = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if(z2 != ILLEGAL_Z && z2 == z)
+			rvalue = true;
+		else if(z2 == ILLEGAL_Z)
+			rvalue = true;
 	}
 
 	return rvalue;

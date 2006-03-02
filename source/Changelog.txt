@@ -1,4 +1,9 @@
 3/02/2006 - grimson
+	Added two maps to spawnregions to make checking for valid locations easier.
+	Check if the z value of stored locations still match the dynamic z value of the
+	current locations to track whether dynamics have changed.
+
+3/02/2006 - grimson
 	Added two vectors to spawnregions to store valid locations.
 	You can define valid locations using the new DFN tags:
 		VALIDLANDPOS=#,#,#
