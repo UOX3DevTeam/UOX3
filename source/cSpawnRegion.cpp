@@ -384,6 +384,22 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				worldNumber = data.toUByte();
 			else if( UTag == "PREFZ" )
 				prefZ = data.toByte();
+			else if( UTag == "ValidLandSpawn" )
+			{
+				data = data.simplifyWhiteSpace();
+				if( data.sectionCount( "," ) == 2 )
+				{
+					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+				}
+			}
+			else if( UTag == "ValidWaterSpawn" )
+			{
+				data = data.simplifyWhiteSpace();
+				if( data.sectionCount( "," ) == 2 )
+				{
+					validWaterPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+				}
+			}
 		}
 	}
 }
@@ -511,12 +527,18 @@ CItem *CSpawnRegion::RegionSpawnItem( void )
 bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 {
 	bool rvalue = false;
+	point3 currLoc;
+	const size_t landPosSize = validLandPos.size();
+	const size_t waterPosSize = validWaterPos.size();
+	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
+	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
+
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
 		x = RandomNum( x1, x2 );
 		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
-
+		
 		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
 		if( ILLEGAL_Z != dynz )
 			z = dynz;
@@ -527,17 +549,74 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 				z = staticz;
 		}
 		
-		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !cwmWorldState->creatures[c->GetID()].IsWater() )
+		// First go through the lists of already stored good locations
+		if( !waterCreature )
 		{
-			rvalue = true;
-			break;
+			if( !validLandPos.empty() && landPosSize > 0 )
+			{
+				for(int i = 0; i < landPosSize; i++)
+				{
+					currLoc = validLandPos[i];
+					if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
+					{
+						rvalue = true;
+						break;
+					}
+				}
+			}
 		}
-		else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( cwmWorldState->creatures[c->GetID()].IsWater() || cwmWorldState->creatures[c->GetID()].IsAmphibian() ) )
+		else if( waterCreature || amphiCreature )
 		{
-			rvalue = true;
-			break;
+			if( !validWaterPos.empty() && waterPosSize > 0 )
+			{
+				for(int i = 0; i < waterPosSize; i++)
+				{
+					currLoc = validWaterPos[i];
+					if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
+					{
+						rvalue = true;
+						break;
+					}
+				}
+			}
 		}
+		
+		if( !rvalue ) // If the location wasn't stored test and and store it if it's good
+		{
+			if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !waterCreature )
+			{
+				rvalue = true;
+				validLandPos.push_back( point3( x, y, z ) );
+				break;
+			}
+			else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( waterCreature || amphiCreature ) )
+			{
+				rvalue = true;
+				validWaterPos.push_back( point3( x, y, z ) );
+				break;
+			}
+		}
+		else
+			break;
 
+	}
+
+	// If we haven't found a valid location pick a random location from the stored ones
+	if( !rvalue && !waterCreature && !validLandPos.empty() && landPosSize > 0)
+	{
+		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
+		x = currLoc.x;
+		y = currLoc.y;
+		z = currLoc.z;
+		rvalue = true;
+	}
+	else if( !rvalue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
+	{
+		currLoc = validWaterPos[RandomNum( static_cast<size_t>(0), (waterPosSize-1) )];
+		x = currLoc.x;
+		y = currLoc.y;
+		z = currLoc.z;
+		rvalue = true;
 	}
 	return rvalue;
 }
@@ -551,6 +630,10 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 {
 	bool rvalue = false;
+	point3 currLoc;
+	const size_t landPosSize = validLandPos.size();
+	const size_t waterPosSize = validWaterPos.size();
+
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
 		x = RandomNum( x1, x2 );
@@ -566,13 +649,44 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 			if( ILLEGAL_Z != staticz )
 				z = staticz;
 		}
-		
-		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
+
+		// First go through the lists of already stored good locations
+		if( !validLandPos.empty() && landPosSize > 0 )
 		{
-			rvalue = true;
-			break;
+			for(int i = 0; i < landPosSize; i++)
+			{
+				currLoc = validLandPos[i];
+				if( currLoc.x == x && currLoc.y == y && currLoc.z == z)
+				{
+					rvalue = true;
+					break;
+				}
+			}
 		}
+
+		if( !rvalue ) // If the location wasn't stored test and and store it if it's good
+		{
+			if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validLandPos.push_back( point3( x, y, z ) );
+				break;
+			}
+		}
+		else
+			break;
 	}
+	
+	// If we haven't found a valid location pick a random location from the stored ones
+	if( !rvalue && !validLandPos.empty() && landPosSize > 0)
+	{
+		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
+		x = currLoc.x;
+		y = currLoc.y;
+		z = currLoc.z;
+		rvalue = true;
+	}
+
 	return rvalue;
 }
 //o---------------------------------------------------------------------------o

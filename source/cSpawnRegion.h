@@ -39,6 +39,8 @@ private:
 
 	CDataList< CChar * >	spawnedChars;
 	CDataList< CItem * >	spawnedItems;
+	std::vector< point3 >	validLandPos;
+	std::vector< point3 >	validWaterPos;
 
 public:
 				CSpawnRegion( UI16 spawnregion );
