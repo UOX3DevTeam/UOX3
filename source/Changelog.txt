@@ -1,4 +1,8 @@
 3/03/2006 - grimson
+	Removed the IsSurface check of dynamic tiles from cMapStuff::CanMonsterMoveHere(),
+	as many landscape tiles don't have the surface flag set. So it prevented valid spawns.
+
+3/03/2006 - grimson
 	It's better to recalculate and check the whole z coordinate of a stored
 	location to make shure nothing has changed since we stored it.
 

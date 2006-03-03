@@ -1122,8 +1122,8 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 
     // if there is a dynamic tile at this spot, check to see if its a surface
     // if it is not a surface, might as well short-circuit and return right away
-    if( dt != INVALIDID && !IsTileSurface( dt ) )
-		return false;
+    //if( dt != INVALIDID && !IsTileSurface( dt ) )
+	//	return false;
 
     // if there's a static block here in our way, return false
     if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
