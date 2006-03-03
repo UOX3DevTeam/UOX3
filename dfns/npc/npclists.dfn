@@ -47,6 +47,14 @@ m_peasant
 f_peasant
 }
 
+[NPCLIST britainsewer]
+{
+sewerrat
+slime
+giantrat
+}
+
+
 [NPCLIST alltownfolk]
 {
 npclist=poorfolk
