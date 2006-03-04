@@ -808,7 +808,7 @@ void cMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 		mSock->Send( &toSend );
 		mSock->WalkSequence( sequence );
 		if( mSock->WalkSequence() == 255 )
-			mSock->WalkSequence( 0 );
+			mSock->WalkSequence( 1 );
 	}
 }
 

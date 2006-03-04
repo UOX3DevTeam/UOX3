@@ -1,4 +1,10 @@
 3/04/2006 - grimson
+	Changed cMovement::SendWalkToPlayer() so that the sequenz number fits the description
+	in CPacketReceive.cpp.
+	Changed CPIResyncReq::Handle() so that it actually does resend everything around
+	the player.
+	
+3/04/2006 - grimson
 	Added a new ini setting:
 	COMBATARCHERRANGE=#  This defines the range at which archers stop charging
 			     the target in combat. (Default is 7)

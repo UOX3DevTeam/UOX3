@@ -954,6 +954,8 @@ void CPIResyncReq::Receive( void )
 }
 bool CPIResyncReq::Handle( void )
 {
+	CChar *ourChar = tSock->CurrcharObj();
+	ourChar->Dirty( UT_LOCATION );
 	return true;
 }
 
