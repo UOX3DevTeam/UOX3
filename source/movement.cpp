@@ -1422,7 +1422,7 @@ void cMovement::NpcMovement( CChar& mChar )
             {
 				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
 				const UI16 charDist	= getDist( &mChar, l );
-                if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= 3 ) ) )
+                if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= cwmWorldState->ServerData()->CombatArcherRange() ) ) )
 				{
 					mChar.FlushPath();
 
@@ -1732,7 +1732,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 			{ // in effact radius?
 				newz = ILLEGAL_Z;
 #if DEBUG_WALKING
-				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), tb->BaseZ() );
+				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), (SI16)tb->BaseZ() );
 #endif
 				blocked = true;
 				break;
@@ -1748,7 +1748,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	}
 
 #if DEBUG_WALKING
-	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, z );
+	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, (SI16)newz );
 #endif
 	if( (newz > ILLEGAL_Z) && (!justask) ) // save information if we have climbed on last move.
 		c->SetLevitate( on_ladder );
@@ -1808,7 +1808,7 @@ SI08 cMovement::calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, 
 			{ // in effact radius?
 				newz = ILLEGAL_Z;
 #if DEBUG_WALKING
-				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), tb->BaseZ() );
+				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), (SI16)tb->BaseZ() );
 #endif
 				blocked = true;
 				break;
@@ -1817,7 +1817,7 @@ SI08 cMovement::calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, 
 	}
 
 #if DEBUG_WALKING
-	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, z );
+	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, (SI16)newz );
 #endif
 	return newz;
 }

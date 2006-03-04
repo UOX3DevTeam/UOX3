@@ -1,3 +1,8 @@
+3/04/2006 - grimson
+	Added a new ini setting:
+	COMBATARCHERRANGE=#  This defines the range at which archers stop charging
+			     the target in combat. (Default is 7)
+
 3/03/2006 - grimson
 	Removed the IsSurface check of dynamic tiles from cMapStuff::CanMonsterMoveHere(),
 	as many landscape tiles don't have the surface flag set. So it prevented valid spawns.

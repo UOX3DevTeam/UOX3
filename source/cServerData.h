@@ -167,6 +167,7 @@ private:
 
 	// Combat
 	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
+	SI16		combatarcherrange;				//	RANGE?  Range at which archers stop charging the enemy
 	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
 	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
 	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
@@ -397,6 +398,9 @@ public:
 
 	void		CombatMaxRange( SI16 value );
 	SI16		CombatMaxRange( void ) const;
+
+	void		CombatArcherRange( SI16 value );
+	SI16		CombatArcherRange( void ) const;
 
 	void		CombatMaxSpellRange( SI16 value );
 	SI16		CombatMaxSpellRange( void ) const;

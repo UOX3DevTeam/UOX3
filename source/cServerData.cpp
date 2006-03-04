@@ -61,7 +61,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE"
 );
 
 void CServerData::ResetDefaults( void )
@@ -92,6 +92,7 @@ void CServerData::ResetDefaults( void )
 	ServerCrashProtection( 1 );
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
+	CombatArcherRange( 7 );
 	CombatMaxSpellRange( 10 );
 	CombatExplodeDelay( 0 );
 	
@@ -1037,6 +1038,15 @@ SI16 CServerData::CombatMaxRange( void ) const
 	return combatmaxrange;
 }
 
+void CServerData::CombatArcherRange( SI16 value )
+{
+	combatarcherrange = value;
+}
+SI16 CServerData::CombatArcherRange( void ) const
+{
+	return combatarcherrange;
+}
+
 void CServerData::CombatMaxSpellRange( SI16 value )
 {
 	combatmaxspellrange = value;
@@ -1501,6 +1511,7 @@ bool CServerData::save( std::string filename )
 		
 		ofsOutput << std::endl << "[combat]" << std::endl << "{" << std::endl;
 		ofsOutput << "COMBATMAXRANGE=" << CombatMaxRange() << std::endl;
+		ofsOutput << "COMBATARCHERRANGE=" << CombatArcherRange() << std::endl;
 		ofsOutput << "COMBATSPELLMAXRANGE=" << CombatMaxSpellRange() << std::endl;
 		ofsOutput << "COMBATDISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << std::endl;
 		ofsOutput << "COMBATMONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << std::endl;
@@ -2164,6 +2175,9 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x0892:	 // PETOFFLINECHECKTIMER[0143]
 		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
+		break;
+	case 0x8A7:		 // COMBATARCHERRANGE[0144]
+		CombatArcherRange( value.toShort() );
 		break;
 	default:
 		break;
