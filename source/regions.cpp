@@ -9,6 +9,23 @@ namespace UOX
 
 CMapHandler *MapRegion;
 
+int FileSize( std::string filename )
+{
+	int retVal = 0;
+
+	std::ifstream readDestination;
+
+	readDestination.open( filename.c_str() );					// let's open it 
+	if( !( readDestination.eof() || readDestination.fail() ) )
+	{
+		readDestination.seekg( 0, std::ios::end );
+		retVal = readDestination.tellg();
+		readDestination.close();
+	}
+
+	return retVal;
+}
+
 void LoadChar( std::ifstream& readDestination )
 {
 	CChar *x = static_cast< CChar * >(ObjectFactory::getSingleton().CreateBlankObject( OT_CHAR ));
@@ -732,7 +749,7 @@ void CMapHandler::Load( void )
 {
 	const SI16 AreaX		= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY		= UpperY / 8;
-	const int onePercent	= (int)((float)(AreaX*AreaY)/100.0f);
+//	const int onePercent	= (int)((float)(AreaX*AreaY)/100.0f);
 	UI32 count				= 0;
 	std::ifstream readDestination;
 
@@ -741,6 +758,25 @@ void CMapHandler::Load( void )
 	UI32 s_t				= getclock();
 	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 	std::string filename;
+
+	UI32 runningCount = 0;
+	int fileSizes[AreaX][AreaY];
+
+	for( SI16 cx = 0; cx < AreaX; ++cx )
+	{
+		for( SI16 cy = 0; cy < AreaY; ++cy )
+		{
+			filename			= basePath + UString::number( cx ) + "." + UString::number( cy ) + ".wsc";	// let's name our file
+			fileSizes[cx][cy]	= FileSize( filename );
+			runningCount		+= fileSizes[cx][cy];
+		}
+	}
+
+	if( runningCount == 0 )
+		runningCount = 1;
+
+	int runningDone			= 0;
+	const int onePercent	= ((float)runningCount) / 100.0f;
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
@@ -758,14 +794,21 @@ void CMapHandler::Load( void )
 			}
 
 			++count;
-			if( count%onePercent == 0 )
+/*			if( count%onePercent == 0 )
 			{
 				if( count/onePercent <= 10 )
 					Console << "\b\b" << (UI32)(count/onePercent) << "%";
 				else if( count/onePercent <= 100 )
 					Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
-			}
+			}*/
 			LoadFromDisk( readDestination );
+
+			runningDone		+= fileSizes[counter1][counter2];
+			float tempVal	= (float)runningDone / (float)runningCount * 100.0f;
+			if( tempVal <= 10 )
+				Console << "\b\b" << (UI32)(tempVal) << "%";
+			else if( tempVal <= 100 )
+				Console << "\b\b\b" << (UI32)(tempVal) << "%";
 
 			readDestination.close();
 			readDestination.clear();
