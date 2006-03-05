@@ -1,6 +1,5 @@
 5th March, 2006 - Maarc
 	Updated loading code so that it displays a more accurate percentage during loading
-	Could still be more accurate, but useful first pass improvement
 
 3/05/2006 - giwo (0.98-3.4v [3.5 BETA])
 	Added the Script # to the JS Error Reporter to make debugging easier.

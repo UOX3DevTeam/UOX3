@@ -794,14 +794,7 @@ void CMapHandler::Load( void )
 			}
 
 			++count;
-/*			if( count%onePercent == 0 )
-			{
-				if( count/onePercent <= 10 )
-					Console << "\b\b" << (UI32)(count/onePercent) << "%";
-				else if( count/onePercent <= 100 )
-					Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
-			}*/
-			LoadFromDisk( readDestination );
+			LoadFromDisk( readDestination, runningDone, fileSizes[counter1][counter2], runningCount );
 
 			runningDone		+= fileSizes[counter1][counter2];
 			float tempVal	= (float)runningDone / (float)runningCount * 100.0f;
@@ -819,14 +812,14 @@ void CMapHandler::Load( void )
 	Console << "\b\b\b";
 	Console.PrintDone();
 
-	filename = basePath + "overflow.wsc";
+	filename	= basePath + "overflow.wsc";
 	std::ifstream flowDestination( filename.c_str() );
-	LoadFromDisk( flowDestination );
+	LoadFromDisk( flowDestination, -1, -1, -1 );
 	flowDestination.close();
 
-	filename = basePath + "house.wsc";
+	filename	= basePath + "house.wsc";
 	std::ifstream houseDestination( filename.c_str() );
-	LoadFromDisk( houseDestination );
+	LoadFromDisk( houseDestination, -1, -1, -1 );
 
 	UI32 b		= 0;
 	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, NULL, &PostLoadFunctor );
@@ -834,10 +827,10 @@ void CMapHandler::Load( void )
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &PostLoadFunctor );
 	houseDestination.close();
 
-	UI32 e_t = getclock();
+	UI32 e_t	= getclock();
 	Console.Print( "ASCII world loaded in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
 
-	UI08 i = 0;
+	UI08 i		= 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
 	{
 		(*wIter)->LoadResources( i );
@@ -853,9 +846,14 @@ void CMapHandler::Load( void )
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Loads in objects from specified file
 //o--------------------------------------------------------------------------o
-void CMapHandler::LoadFromDisk( std::ifstream& readDestination )
+void CMapHandler::LoadFromDisk( std::ifstream& readDestination, int baseValue, int fileSize, int maxSize )
 {
 	char line[1024];
+	float basePercent	= (float)baseValue / (float)maxSize * 100.0f;
+	float targPercent	= (float)(baseValue + fileSize) / (float)maxSize * 100.0f;
+	float diffValue		= targPercent - basePercent;
+
+	int updateCount		= 0;
 	while( !readDestination.eof() && !readDestination.fail() )
 	{
 		readDestination.getline( line, 1024 );
@@ -875,6 +873,16 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination )
 				LoadBoat( readDestination );
 			else if( sLine == "SPAWNITEM" )
 				LoadSpawnItem( readDestination );
+
+			if( fileSize != -1 && (++updateCount)%20 == 0 )
+			{
+				float curPos	= readDestination.tellg();
+				float tempVal	= basePercent + ( curPos / fileSize * diffValue );
+				if( tempVal <= 10 )
+					Console << "\b\b" << (UI32)(tempVal) << "%";
+				else
+					Console << "\b\b\b" << (UI32)(tempVal) << "%";
+			}
 		}
 		else if( sLine == "---REGION---" )	// end of region
 			continue;
