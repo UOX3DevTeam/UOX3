@@ -1,3 +1,8 @@
+3/05/3006 - giwo (0.98-3.4v [3.5 BETA])
+	Added the Script # to the JS Error Reporter to make debugging easier.
+	Fixed an issue causing JS scripts to give useless error messages on server startup.
+	Modified the region debug code to not default to on in debug mode.
+
 3/04/2006 - grimson
 	Changed cMovement::SendWalkToPlayer() so that the sequenz number fits the description
 	in CPacketReceive.cpp.

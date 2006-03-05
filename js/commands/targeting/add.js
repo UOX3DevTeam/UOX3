@@ -102,7 +102,8 @@ function onCallback1( socket, ourObj )
 			var y 		= socket.GetWord( 13 );
 			var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 			var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", false );
-			newItem.SetLocation( x, y, z );
+			if( newItem )
+				newItem.SetLocation( x, y, z );
 		}
 		if( newItem )
 			newItem.decayable = false;

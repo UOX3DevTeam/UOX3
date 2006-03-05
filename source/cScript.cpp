@@ -122,15 +122,16 @@ static JSFunctionSpec my_functions[] =
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
+	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	// If we're loading the world then do NOT print out anything!
-	Console.Error( 2, "JS script failure: Message (%s)", message );
-	if( report == NULL )
+	Console.Error( 2, "JS script failure: Script Number (%u) Message (%s)", scriptNum, message );
+	if( report == NULL || report->filename == NULL )
 	{
 		Console.Error( 2, "No detailed data" );
 		return;
 	}
-	Console.Error( 2, "Filename: %s\nLine Number: %i", report->filename, report->lineno );
-	Console.Error( 2, "Erroneous Line: %s\nToken Ptr: %s", report->linebuf, report->tokenptr );
+	Console.Error( 2, "Filename: %s\n| Line Number: %i", report->filename, report->lineno );
+	Console.Error( 2, "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr );
 }
 
 cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
@@ -154,6 +155,8 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
+
+	JS_SetGlobalObject( targContext, targObject );
 
 	JS_InitStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
@@ -1950,6 +1953,15 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	jsval params[1], rval;
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetGlobalObject( targContext, targObject );
+
+	jsval Func = JSVAL_NULL;
+	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
+	if( Func == JSVAL_VOID )
+	{
+		Console.Warning( 2, "Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() );
+		return false;
+	}
+
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, scriptType.c_str(), 0, params, &rval );
 	return ( retVal == JS_TRUE );
 }

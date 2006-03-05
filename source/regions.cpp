@@ -344,13 +344,17 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 	if( curCell != newCell )
 	{
 		if( !curCell->GetItemList()->Remove( nItem ) )
-#if defined( UOX_DEBUG_MODE )
+		{
+#if defined( DEBUG_REGIONS )
 			Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
 #endif
+		}
 		if( !newCell->GetItemList()->Add( nItem ) )
-#if defined( UOX_DEBUG_MODE )
+		{
+#if defined( DEBUG_REGIONS )
 			Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
 #endif
+		}
 		return true;
 	}
 	return false;
@@ -374,13 +378,17 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 	if( curCell != newCell )
 	{
 		if( !curCell->GetCharList()->Remove( nChar ) )
-#if defined( UOX_DEBUG_MODE )
+		{
+#if defined( DEBUG_REGIONS )
 			Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() );
 #endif
+		}
 		if( !newCell->GetCharList()->Add( nChar ) )
-#if defined( UOX_DEBUG_MODE )
+		{
+#if defined( DEBUG_REGIONS )
 			Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() );
 #endif
+		}
 		return true;
 	}
 	return false;
@@ -400,7 +408,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	CMapRegion *cell = GetMapRegion( nItem );
 	if( !cell->GetItemList()->Add( nItem ) )
 	{
-#if defined( UOX_DEBUG_MODE )
+#if defined( DEBUG_REGIONS )
 		Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
 #endif
 		return false;
@@ -423,7 +431,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	CMapRegion *cell = GetMapRegion( nItem );
 	if( !cell->GetItemList()->Remove( nItem ) )
 	{
-#if defined( UOX_DEBUG_MODE )
+#if defined( DEBUG_REGIONS )
 		Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
 #endif
 		return false;
@@ -445,7 +453,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	CMapRegion *cell = GetMapRegion( toAdd );
 	if( !cell->GetCharList()->Add( toAdd ) )
 	{
-#if defined( UOX_DEBUG_MODE )
+#if defined( DEBUG_REGIONS )
 		Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() );
 #endif
 		return false;
@@ -468,7 +476,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	CMapRegion *cell = GetMapRegion( toRemove );
 	if( !cell->GetCharList()->Remove( toRemove ) )
 	{
-#if defined( UOX_DEBUG_MODE )
+#if defined( DEBUG_REGIONS )
 		Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() );
 #endif
 		return false;
@@ -609,7 +617,16 @@ void CMapHandler::Save( void )
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
 	std::ofstream writeDestination, houseDestination;
-	const int onePercent			= (int)((float)(AreaX*AreaY*8*8*Map->MapCount())/100.0f);
+	int onePercent = 0;
+	//const int onePercent			= (int)((float)(UpperX*UpperY*Map->MapCount())/100.0f);
+	UI08 i = 0;
+	for( i = 0; i < Map->MapCount(); ++i )
+	{
+		MapData_st& mMap = Map->GetMapData( i );
+		onePercent += (int)(mMap.xBlock / MapColSize) * (mMap.yBlock / MapRowSize);
+	}
+	onePercent /= 100.0f;
+
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
 	const UI32 s_t						= getclock();
@@ -685,7 +702,7 @@ void CMapHandler::Save( void )
 	const UI32 e_t = getclock();
 	Console.Print( "World saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
 
-	UI08 i = 0;
+	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
 	{
 		(*wIter)->SaveResources( i );
@@ -721,7 +738,7 @@ void CMapHandler::Load( void )
 
 	Console.TurnYellow();
 	Console << "0%";
-	UI32 s_t					= getclock();
+	UI32 s_t				= getclock();
 	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 	std::string filename;
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
