@@ -1602,50 +1602,6 @@ namespace UOX
 		return JS_TRUE;
 	}
 
-	JSBool CFileProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-	{
-		UOXFileWrapper *gPriv = (UOXFileWrapper *)JS_GetPrivate( cx, obj );
-		if( gPriv == NULL || gPriv->mWrap == NULL )
-			return JS_FALSE;
-		if( JSVAL_IS_INT( id ) ) 
-		{
-			switch( JSVAL_TO_INT( id ) )
-			{
-				case CFILE_POS:		*vp = INT_TO_JSVAL( ftell( gPriv->mWrap ) );				break;
-				case CFILE_LENGTH:
-					{
-						long fpos = ftell( gPriv->mWrap );
-						fseek( gPriv->mWrap, 0, SEEK_END );
-						*vp = INT_TO_JSVAL( ftell( gPriv->mWrap ) );
-						fseek( gPriv->mWrap, fpos, SEEK_SET );
-					}
-					break;
-				case CFILE_EOF:		*vp = BOOLEAN_TO_JSVAL( ( feof( gPriv->mWrap ) != 0 ) );	break;
-					break;
-				default:
-					break;
-			}
-		}
-		return JS_TRUE;
-	}
-	JSBool CFileProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-	{
-		UOXFileWrapper *gPriv = (UOXFileWrapper *)JS_GetPrivate( cx, obj );
-		if( gPriv == NULL )
-			return JS_FALSE;
-		JSEncapsulate encaps( cx, vp );
-		if( JSVAL_IS_INT( id ) ) 
-		{
-			switch( JSVAL_TO_INT( id ) )
-			{
-				case CFILE_POS:	fseek( gPriv->mWrap, encaps.toInt(), SEEK_SET );	break;
-				default:
-					break;
-			}
-		}
-		return JS_TRUE;
-	}
-
 	JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		if( JSVAL_IS_INT( id ) ) 

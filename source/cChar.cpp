@@ -3402,24 +3402,18 @@ bool CChar::LoadRemnants( void )
 	if( IsNpc() && IsAtWar() )
 		SetWar( false );
 
-	if( IsCounselor() && GetCommandLevel() < CNS_CMDLEVEL && !IsGM() ) // interim line to retain compatibility, MUST BE TAKEN out in the long term!
-		SetCommandLevel( CNS_CMDLEVEL );
-	if( IsGM() && GetCommandLevel() < GM_CMDLEVEL )	// interim line to retain compatibility, MUST BE TAKEN out in the long term!
-		SetCommandLevel( GM_CMDLEVEL );
-	////////////////////////////////////////////////////////////////////
-
 	CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber );
 	SetRegion( (tRegion != NULL ? tRegion->GetRegionNum() : 0xFF) );
 	SetTimer( tCHAR_ANTISPAM, 0 );
 	if( GetID() != GetOrgID() && !IsDead() )
 		SetID( GetOrgID() );
 
-	UI16 k = GetID();
-	if( k > 0x3E1 )
+	const UI16 acct = GetAccount().wAccountIndex;
+	if( GetID() > 0x3E1 )
 	{
-		if( GetAccount().wAccountIndex==AB_INVALID_ID )
+		if( acct == AB_INVALID_ID )
 		{
-			Console << "npc: " << GetSerial() << "[" << GetName() << "] with bugged body value detected, deleted for stability reasons" << myendl;
+			Console.Warning( 2, "NPC: %s with serial 0x%X with bugged body found, deleting", GetName().c_str(), GetSerial() );
 			rvalue = false;
 		}
 		else
@@ -3429,18 +3423,20 @@ bool CChar::LoadRemnants( void )
 	{
 		MapRegion->AddChar( this );
 
-		SI16 mx = GetX();
-		SI16 my = GetY();
-		UI16 acct = GetAccount().wAccountIndex;
+		const SI16 mx = GetX();
+		const SI16 my = GetY();
 
 		MapData_st& mMap = Map->GetMapData( worldNumber );
-		bool overRight = ( mx > mMap.xBlock );
-		bool overBottom = ( my > mMap.yBlock );
+		const bool overRight = ( mx > mMap.xBlock );
+		const bool overBottom = ( my > mMap.yBlock );
 
 		if( acct == AB_INVALID_ID && ( ( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ) )
 		{
 			if( IsNpc() )
+			{
+				Console.Warning( 2, "NPC: %s with serial 0x%X found outside valid world locations, deleting", GetName().c_str(), GetSerial() );
 				rvalue = false;
+			}
 			else
 				SetLocation( 1000, 1000, 0 );
 		}

@@ -44,6 +44,10 @@ private:
 	std::vector< JSOBJECTMAP >								objectList;
 	std::vector< JSObject * >								protoList;
 
+	JSObject * spellsObj;
+	JSObject * accountsObj;
+	JSObject * consoleObj;
+
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;

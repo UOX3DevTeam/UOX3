@@ -3816,7 +3816,6 @@ JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *r
 	toAdd->mWrap = NULL;
 
 	JSBool myVal = JS_DefineFunctions( cx, obj, CFile_Methods );
-	JSBool mVal = JS_DefineProperties( cx, obj, CFileProperties );
 	JS_SetPrivate( cx, obj, toAdd );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
@@ -4040,6 +4039,92 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	char *str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( str != NULL )
 		fprintf( mFile->mWrap, str );
+	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	3/05/2006
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns if we have read to the end of a file
+//o--------------------------------------------------------------------------o
+//|	Returns			-	True
+//o--------------------------------------------------------------------------o	
+JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "EOF: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
+
+	if( !mFile || !mFile->mWrap )
+		return JS_FALSE;
+
+	*rval = BOOLEAN_TO_JSVAL( ( feof( mFile->mWrap ) != 0 ) );
+	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	3/05/2006
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns the length of the file
+//o--------------------------------------------------------------------------o
+JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "Length: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
+
+	if( !mFile || !mFile->mWrap )
+		return JS_FALSE;
+
+	long fpos = ftell( mFile->mWrap );
+	fseek( mFile->mWrap, 0, SEEK_END );
+	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ) );
+	fseek( mFile->mWrap, fpos, SEEK_SET );
+	
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Date			-	3/05/2006
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns or sets the position we are at in the file
+//o--------------------------------------------------------------------------o
+JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 || argc != 1 )
+	{
+		MethodError( "Pos: Invalid number of arguments (takes 0 or 1)" );
+		return JS_FALSE;
+	}
+	UOXFileWrapper *mFile	= (UOXFileWrapper *)JS_GetPrivate( cx, obj );
+
+	if( !mFile || !mFile->mWrap )
+		return JS_FALSE;
+
+	if( argc == 1 )
+		fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+
+	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ) );
 	
 	return JS_TRUE;
 }

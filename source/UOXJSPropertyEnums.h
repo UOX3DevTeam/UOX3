@@ -363,14 +363,6 @@ enum CGumpData_Properties
 	CGumpData_Button
 };
 
-enum CFile_Properties
-{
-	CFILE_EOF = 0,
-	CFILE_POS,
-	CFILE_LENGTH,
-	CFILE_COUNT
-};
-
 enum CAccountProperties
 {
 	CACCOUNT_USERNAME = 0,

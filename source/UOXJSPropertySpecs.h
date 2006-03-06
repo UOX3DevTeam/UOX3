@@ -434,14 +434,6 @@ static JSPropertySpec CGumpDataProperties[] =
 
 };
 
-static JSPropertySpec CFileProperties[] = 
-{
-	{	"eof",		CFILE_EOF,			JSPROP_ENUMPERMRO	},
-	{	"pos",		CFILE_POS,			JSPROP_ENUMANDPERM	},
-	{	"length",	CFILE_LENGTH,		JSPROP_ENUMPERMRO	},
-	{	NULL,		(SI08)NULL,			(UI08)0				}
-};
-
 static JSPropertySpec CAccountProperties[] =
 {
 	{ "username",	CACCOUNT_USERNAME,		JSPROP_ENUMANDPERM },

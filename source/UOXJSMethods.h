@@ -204,6 +204,9 @@ JSMethodFunc CFile_Free;
 JSMethodFunc CFile_Write;
 JSMethodFunc CFile_ReadUntil;
 JSMethodFunc CFile_Read;
+JSMethodFunc CFile_EOF;
+JSMethodFunc CFile_Length;
+JSMethodFunc CFile_Pos;
 
 // Account methods
 JSMethodFunc CAccount_AddAccount;
@@ -445,6 +448,9 @@ static JSFunctionSpec CFile_Methods[] =
 	{ "Write",		CFile_Write,			1, 0, 0 },
 	{ "Read",		CFile_Read,				1, 0, 0 },
 	{ "ReadUntil",	CFile_ReadUntil,		1, 0, 0 },
+	{ "EOF",		CFile_EOF,				0, 0, 0 },
+	{ "Length",		CFile_Length,			0, 0, 0 },
+	{ "Pos",		CFile_Pos,				1, 0, 0 },
 	{ NULL,			NULL,					0, 0, 0 }
 };
 

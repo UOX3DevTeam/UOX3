@@ -836,18 +836,17 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 		if( worldnumber != mChar->WorldNumber() )
 			continue;
 
+		effRange = static_cast<UI16>( tSend->Range() );
 		const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
-		const UI16 clientRange	= static_cast<UI16>( tSend->Range() );
-		if( visibleRange >= clientRange )
+		if( visibleRange >= effRange )
 			effRange = visibleRange;
-		else
-			effRange = clientRange;
 
 		if( c != mChar )
-		{
-			if( checkX )	// Only check X Plane if their x changed
+		{	// We need to ensure they are within range of our X AND Y location regardless of how they moved.
+			const UI16 dxNew = static_cast<UI16>(abs( newx - mChar->GetX() ));
+			const UI16 dyNew = static_cast<UI16>(abs( newy - mChar->GetY() ));
+			if( checkX && dyNew <= (effRange+2) )	// Only check X Plane if their x changed
 			{
-				UI16 dxNew = static_cast<UI16>(abs( newx - mChar->GetX() ));
 				UI16 dxOld = static_cast<UI16>(abs( oldx - mChar->GetX() ));
 				if( ( dxNew == effRange ) && ( dxOld > effRange ) )
 				{
@@ -860,9 +859,8 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 					continue;	// Incase they moved diagonally, lets not update the same character multiple times
 				}
 			}
-			if( checkY )	// Only check Y plane if their y changed
+			if( checkY && dxNew <= (effRange+2) )	// Only check Y plane if their y changed
 			{
-				UI16 dyNew = static_cast<UI16>(abs( newy - mChar->GetY() ));
 				UI16 dyOld = static_cast<UI16>(abs( oldy - mChar->GetY() ));
 				if( ( dyNew == effRange ) && ( dyOld > effRange ) )
 				{
@@ -939,10 +937,18 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 
 void DoJSInRange( CChar *mChar, CBaseObject *objInRange )
 {
-	UI16 targTrig		= mChar->GetScriptTrigger();
+	const UI16 targTrig	= mChar->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->InRange( mChar, objInRange );
+}
+
+void DoJSOutOfRange( CChar *mChar, CBaseObject *objOutOfRange )
+{
+	const UI16 targTrig	= mChar->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
+	if( toExecute != NULL )
+		toExecute->OutOfRange( mChar, objOutOfRange );
 }
 
 bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld, UI16 visibleRange, bool isGM )
@@ -971,12 +977,9 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 		}
 		else if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 		{
-			UI16 targTrig		= mChar->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OutOfRange( mChar, tItem );
 			if( mSock != NULL )
 				tItem->RemoveFromSight( mSock );
+			DoJSOutOfRange( mChar, tItem );
 			return true;
 		}
 	}
@@ -987,18 +990,18 @@ bool UpdateCharsOnPlane( CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, 
 {
 	if( dNew == visibleRange && dOld > visibleRange )	// Just came into range
 	{
-		tChar->SendToSocket( mSock );
+		if( mSock != NULL )
+			tChar->SendToSocket( mSock );
 		DoJSInRange( mChar, tChar );
 		DoJSInRange( tChar, mChar );
 		return true;
 	}
 	if( dOld == (visibleRange+1) && dNew > (visibleRange+1) )	// Just went out of range
 	{
-		tChar->RemoveFromSight( mSock );
-		UI16 targTrig		= tChar->GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( targTrig );
-		if( toExecute != NULL )
-			toExecute->OutOfRange( tChar, mChar );
+		if( mSock != NULL )
+			tChar->RemoveFromSight( mSock );
+		DoJSOutOfRange( mChar, tChar );
+		DoJSOutOfRange( tChar, mChar );
 		return true;
 	}
 	return false;
@@ -1104,16 +1107,16 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				// Character Send Stuff
 				if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) )
 				{
-					if( checkX )	// Only update on x plane if our x changed
+					dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
+					dyNew = static_cast<UI16>(abs( tempChar->GetY() - newy ));
+					if( checkX && dyNew <= (visibleRange+2) )	// Only update on x plane if our x changed
 					{
-						dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
 						dxOld = static_cast<UI16>(abs( tempChar->GetX() - oldx ));
 						if( UpdateCharsOnPlane( mSock, mChar, tempChar, dxNew, dxOld, visibleRange ) )
 							continue;	// If we moved diagonally, don't update the same char twice.
 					}
-					if( checkY )	// Only update on y plane if our y changed
+					if( checkY && dxNew <= (visibleRange+2) )	// Only update on y plane if our y changed
 					{
-						dyNew = static_cast<UI16>(abs( tempChar->GetY() - newy ));
 						dyOld = static_cast<UI16>(abs( tempChar->GetY() - oldy ));
 
 						if( UpdateCharsOnPlane( mSock, mChar, tempChar, dyNew, dyOld, visibleRange ) )
@@ -1160,18 +1163,17 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				HandleObjectCollisions( mSock, mChar, tItem, type );
 				Magic->GateCollision( mSock, mChar, tItem, type );
 			}
-			if( checkX )	// Only update items on furthest x plane if our x changed
+			dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
+			dyNew = static_cast<UI16>(abs( tItem->GetY() - newy ));
+			if( checkX && dyNew <= (visibleRange+2) )	// Only update items on furthest x plane if our x changed
 			{
-				dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
 				dxOld = static_cast<UI16>(abs( tItem->GetX() - oldx ));
 				if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dxNew, dxOld, visibleRange, isGM ) )
 					continue;	// If we moved diagonally, lets not update an item twice (since it could match the furthest x and y)
 			}
-			if( checkY )	// Only update items on furthest y plane if our y changed
+			if( checkY && dxNew <= (visibleRange+2) )	// Only update items on furthest y plane if our y changed
 			{
-				dyNew = static_cast<UI16>(abs( tItem->GetY() - newy ));
 				dyOld = static_cast<UI16>(abs( tItem->GetY() - oldy ));
-
 				if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM ) )
 					continue;
 			}

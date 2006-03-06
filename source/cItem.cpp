@@ -1695,7 +1695,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 						continue;
 
 					tChar = (*cIter)->CurrcharObj();
-					if( ValidateObject( tChar ) && !objInRange( tChar, this, static_cast<UI16>((*cIter)->Range() + Races->VisRange( tChar->GetRace() )) ) )
+					if( ValidateObject( tChar ) )
 						(*cIter)->Send( &toRemove );
 				}
 			}
@@ -1783,11 +1783,11 @@ void CItem::Cleanup( void )
 	{
 		JSEngine->ReleaseObject( IUE_ITEM, this );
 
-		RemoveFromSight();
 		RemoveSelfFromCont();
 
 		CBaseObject::Cleanup();
 
+		RemoveFromSight();
 		RemoveSelfFromOwner();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )

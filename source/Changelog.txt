@@ -1,3 +1,12 @@
+3/05/2006 - giwo (0.98-3.4w [3.5 RC])
+	Minor changes to the JS Handling.
+	Modified UOXCFile handling to remove all props and added .EOF(), .Pos(), and Length() methods.
+	Fixed an issue causing items not to dissapear when 'removed
+	Fixed an issue causing characters to randomly dissapear around NPC's
+	Fixed an issue causing items and characters to be updated when out of range.
+	Fixed a VC2005 Compile issue.
+	Included a default VC 2005 Project/Solution file.
+
 5th March, 2006 - Maarc
 	Updated loading code so that it displays a more accurate percentage during loading
 

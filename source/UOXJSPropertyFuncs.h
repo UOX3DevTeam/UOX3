@@ -17,38 +17,52 @@
 namespace UOX
 {
 
-JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CSpellProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+typedef JSBool (JSPropertyFunc)( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+
+JSPropertyFunc CSpellsProps_getProperty;
+JSPropertyFunc CSpellProps_getProperty;
+JSPropertyFunc CSpellProps_setProperty;
+
+JSPropertyFunc CItemProps_getProperty;
+JSPropertyFunc CItemProps_setProperty;
+JSPropertyFunc CCharacterProps_getProperty;
+JSPropertyFunc CCharacterProps_setProperty;
 JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
-JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CGuildsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+
+JSPropertyFunc CRegionProps_getProperty;
+JSPropertyFunc CRegionProps_setProperty;
+
+JSPropertyFunc CGuildProps_getProperty;
+JSPropertyFunc CGuildProps_setProperty;
+JSPropertyFunc CGuildsProps_getProperty;
+JSPropertyFunc CGuildsProps_setProperty;
+
+JSPropertyFunc CRaceProps_getProperty;
+JSPropertyFunc CRaceProps_setProperty;
+
+JSPropertyFunc CSocketProps_getProperty;
+JSPropertyFunc CSocketProps_setProperty;
 JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
-JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CFileProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CFileProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CScriptSectionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
-JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+
+JSPropertyFunc CSkillsProps_getProperty;
+JSPropertyFunc CSkillsProps_setProperty;
+
+JSPropertyFunc CGumpDataProps_getProperty;
+
+JSPropertyFunc CFileProps_getProperty;
+JSPropertyFunc CFileProps_setProperty;
+
+JSPropertyFunc CAccountProps_getProperty;
+JSPropertyFunc CAccountProps_setProperty;
+
+JSPropertyFunc CConsoleProps_getProperty;
+JSPropertyFunc CConsoleProps_setProperty;
+
+JSPropertyFunc CScriptSectionProps_getProperty;
+JSPropertyFunc CScriptSectionProps_setProperty;
+
+JSPropertyFunc CResourceProps_getProperty;
+JSPropertyFunc CResourceProps_setProperty;
 
 }
 
