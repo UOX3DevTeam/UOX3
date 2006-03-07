@@ -1,3 +1,8 @@
+3/07/2006 - grimson
+	Fixed LineOfSight() not working when you stand directly next to the target.
+	Changed checkItemLineOfSight() so that it checks whether you can see the base or
+	the top of the target item.
+
 3/05/2006 - giwo (0.98-3.4w [3.5 RC])
 	Minor changes to the JS Handling.
 	Modified UOXCFile handling to remove all props and added .EOF(), .Pos(), and Length() methods.

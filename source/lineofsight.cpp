@@ -316,6 +316,10 @@ Look at uox3.h to see options. Works like npc magic.
 	if( distance > 18 )
 		return blocked;
 
+	//If target is next to us and within our field of view
+	if( distance <= 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
+		return not_blocked;
+
 	vector3D collisions[ MAX_COLLISIONS ];
 
 	// initialize array
@@ -605,7 +609,13 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	if( itemOwner == mChar )
 		inSight = true;
 	else
-		inSight = LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+	{
+		const SI08 height = Map->TileHeight( itemOwner->GetID() );
+		// Can we see the top or bottom of the item
+		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) ||
+			LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+			inSight = true;
+	}
 
 	return inSight;
 }
