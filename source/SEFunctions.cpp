@@ -278,9 +278,9 @@ JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		DoSEErrorMessage( "RandomNumber: Invalid number of arguments (takes 2)" );
 		return JS_FALSE;
 	}
-	long loNum = JSVAL_TO_INT( argv[0] );
-	long hiNum = JSVAL_TO_INT( argv[1] );
-	*rval = INT_TO_JSVAL( RandomNum( loNum, hiNum ) );
+	JSEncapsulate loVal( cx, &(argv[0]) );
+	JSEncapsulate hiVal( cx, &(argv[1]) );
+	*rval = INT_TO_JSVAL( RandomNum( loVal.toInt(), hiVal.toInt() ) );
 	return JS_TRUE;
 }
 

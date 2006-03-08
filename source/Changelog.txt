@@ -1,3 +1,6 @@
+3/08/2006 - giwo (0.98-3.5)
+	Fixed a possible issue caused by passing float values to JS func RandomNumber()
+
 3/08/2006 - grimson
 	Fixed CPIAllNames3D::Handle() so that SHIFT+CTRL actually shows the names of NPCs.
 
