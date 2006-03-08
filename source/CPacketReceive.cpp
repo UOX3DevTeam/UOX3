@@ -1618,11 +1618,11 @@ bool CPIAllNames3D::Handle( void )
 	SERIAL objSer		= tSock->GetDWord( 3 );
 	CBaseObject *toName = NULL;
 	
-	if( objSer < BASEITEMSERIAL )
+	if( objSer >= BASEITEMSERIAL )
 		toName = calcItemObjFromSer( objSer );
 	else if( objSer != INVALIDSERIAL )
 		toName = calcCharObjFromSer( objSer );
-
+	
 	if( ValidateObject( toName ) )
 	{
 		CPAllNames3D toSend( (*toName) );

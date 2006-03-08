@@ -1,3 +1,6 @@
+3/08/2006 - grimson
+	Fixed CPIAllNames3D::Handle() so that SHIFT+CTRL actually shows the names of NPCs.
+
 3/07/2006 - grimson
 	Fixed LineOfSight() not working when you stand directly next to the target.
 	Changed checkItemLineOfSight() so that it checks whether you can see the base or
