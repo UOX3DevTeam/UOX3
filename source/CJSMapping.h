@@ -54,12 +54,12 @@ namespace UOX
 		CEnvoke *						envokeByType;
 
 		void				Cleanup( void );
-		void				ResetDefaults( void );
 		void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 	public:
 							CJSMapping( void );
 							~CJSMapping();
+		void				ResetDefaults( void );
 
 		void				Reload( UI16 scriptID = 0xFFFF );
 		void				Reload( SCRIPTTYPE sectionID );

@@ -32,7 +32,6 @@
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 	#include <stdio.h>
-	#include <unistd.h>
 	#include <termios.h>
 	#include <sys/ioctl.h>
 	typedef void *HANDLE;

@@ -245,7 +245,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	if( m->GetType() == IT_PLANK )
 		zAdjust = (z-3);	// Characters seem to be 3z above the rest of the items on the boat.
 
-	st_multi *multi = NULL;
+	Multi_st *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
 		multi = Map->SeekIntoMulti( multiID, j );

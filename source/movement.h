@@ -16,10 +16,36 @@ namespace UOX
 // Minimum Flee Distance: MFD
 #define P_PF_MFD		15
 
+struct pfNode
+{
+	UI16 hCost;
+	UI08 gCost;
+	size_t parent;
+	pfNode() : hCost( 0 ), gCost( 0 ), parent( 0 )
+	{
+	}
+	pfNode( UI16 nHC, UI08 nGC, UI32 nPS ) : hCost( nHC ), gCost( nGC ), parent( nPS )
+	{
+	}
+};
+
+struct nodeFCost
+{
+	UI32 xySer;
+	UI16 fCost;
+	nodeFCost() : xySer( 0 ), fCost( 0 )
+	{
+	}
+	nodeFCost( UI16 nFC, UI32 nS ) : fCost( nFC ), xySer( nS )
+	{
+	}
+};
+
 class cMovement
 {
 	// Function declarations
 public:
+	void	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false );
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
@@ -27,7 +53,7 @@ public:
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 private:
-
+	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 &curX, UI16 &curY, UI32 parentSer, std::map< UI32, pfNode >& openList, std::map< UI32, UI32 >& closedList, std::deque< nodeFCost >& fCostList, std::map< UI32, bool >& blockList );
 	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
 	SI08	calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
 	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );

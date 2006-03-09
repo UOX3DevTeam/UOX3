@@ -1513,7 +1513,7 @@ void InitClasses( void )
 	if(( Combat			= new CHandleCombat )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
 	if(( Commands		= new cCommands )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
 	if(( Items			= new cItem )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
-	if(( Map			= new cMapStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
+	if(( Map			= new CMapStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
 	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
 	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
 	if(( Weight			= new CWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
@@ -1528,6 +1528,7 @@ void InitClasses( void )
 	if(( GMQueue		= new PageVector( "GM Queue" ) )		== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
 	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
 	if(( JSMapping		= new CJSMapping )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
 	if(( MapRegion		= new CMapHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
@@ -2645,7 +2646,7 @@ int main( int argc, char *argv[] )
 				ourScript->ScriptRegistration( "Packet" );
 		}
 
-		// moved all the map loading into cMapStuff - fur
+		// moved all the map loading into CMapStuff - fur
 		Map->Load();
 		
 		Skills->Load();

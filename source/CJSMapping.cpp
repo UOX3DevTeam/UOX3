@@ -39,7 +39,6 @@ CJSMapping *JSMapping = NULL;
 CJSMapping::CJSMapping()
 {
 	Console.Print( "Loading JS Scripts\n" );
-	ResetDefaults();
 }
 CJSMapping::~CJSMapping()
 {

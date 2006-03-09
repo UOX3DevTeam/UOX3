@@ -4313,7 +4313,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( "WalkTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps );
+	Console.Print( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps );
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
 	cMove->SetNpcWander( 6 );
@@ -5506,7 +5506,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		}
 	}
 
-	mChar->Heal( Heal.toInt(), healer );
+	mChar->Heal( static_cast<SI16>(Heal.toInt()), healer );
 	return JS_TRUE;
 }
 

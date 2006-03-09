@@ -2254,8 +2254,11 @@ bool CPIDblClick::Handle( void )
 		{
 			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
 			cScript *envExecute = JSMapping->GetScript( envTrig );
-			if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
-				return true;
+			if( envExecute != NULL )
+			{
+				if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
+					return true;
+			}
 		}
 	}
 	// Range check for double clicking on items

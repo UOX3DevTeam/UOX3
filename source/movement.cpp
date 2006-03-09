@@ -48,7 +48,6 @@
 #include "uox3.h"
 #include "movement.h"
 #include "weight.h"
-#include "cGuild.h"
 #include "combat.h"
 #include "msgboard.h"
 #include "cRaces.h"
@@ -657,7 +656,6 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount
 		xyblock[xycount].ID( mapid );
 		xyblock[xycount] = land;
 		xyblock[xycount].Height( mapz - xyblock[xycount].BaseZ() );
-		xyblock[xycount].Weight( 255 );
 		++xycount;
 	}
 }
@@ -669,7 +667,7 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		return;
 
 	MapStaticIterator msi( x, y, worldNumber );
-	staticrecord *stat = NULL;
+	Static_st *stat = NULL;
  	while( stat = msi.Next() )
 	{
 		CTile tile;
@@ -678,7 +676,6 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		xyblock[xycount].BaseZ( stat->zoff );
 		xyblock[xycount].ID( stat->itemid );
 		xyblock[xycount] = tile;
-		xyblock[xycount].Weight( 255 );
 		++xycount;
 		if( xycount >= XYMAX )	// don't overflow
 			break;
@@ -741,7 +738,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 				}
 				for( SI32 j = 0; j < length; ++j )
 				{
-					const st_multi *multi = Map->SeekIntoMulti( multiID, j );
+					const Multi_st *multi = Map->SeekIntoMulti( multiID, j );
 					if( multi->visible && (tItem->GetX() + multi->x) == x && (tItem->GetY() + multi->y) == y )
 					{
 						CTile tile;
@@ -750,7 +747,6 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 						xyblock[xycount].BaseZ( multi->z + tItem->GetZ() );
 						xyblock[xycount].ID( multi->tile );
 						xyblock[xycount] = tile;
-						xyblock[xycount].Weight( 255 );
 						++xycount;
 						if( xycount >= XYMAX )	// don't overflow
 						{
@@ -1657,7 +1653,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	bool on_ladder		= false;
 	SI08 newz			= ILLEGAL_Z;
 	bool blocked		= false;
-	char ontype			= 0;
+	UI16 ontype			= 0;
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	CTileUni xyblock[XYMAX];
@@ -1702,7 +1698,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 		if( nItemTop >= newz && tb->BaseZ() <= oldz + MAX_Z_LEVITATE )
 		{
 			if( tb->Climbable() || tb->Type() == 0 ||			// Climbable tile, map tiles are also climbable
-			( tb->Flag1() == 0 && tb->Flag2() == 0x22 ) ||		// These are a special kind of tiles where OSI forgot to set the climbable flag
+			( (tb->Flags()%256) == 0 && (tb->Flags()>>24) == 0x22 ) ||		// These are a special kind of tiles where OSI forgot to set the climbable flag
 			( (nItemTop >= oldz && nItemTop <= oldz + 3) && tb->Standable() ) )		 // Allow to climb a height of 1 even if the climbable flag is not set
 			{                 
 				ontype = tb->Type();
@@ -1928,6 +1924,169 @@ void cMovement::deny( CSocket *mSock, CChar *s, SI16 sequence )
 	{
 		mSock->Send( &denPack );
 		mSock->WalkSequence( -1 );
+	}
+}
+
+bool operator==(const nodeFCost& x, const nodeFCost& y)
+{
+    return ( x.fCost == y.fCost );
+}
+
+bool operator<(const nodeFCost& x, const nodeFCost& y)
+{
+	return ( x.fCost < y.fCost );
+}
+
+bool operator>(const nodeFCost& x, const nodeFCost& y)
+{
+	return ( x.fCost > y.fCost );
+}
+
+bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 &curX, UI16 &curY, UI32 parentSer, std::map< UI32, pfNode >& openList, std::map< UI32, UI32 >& closedList, std::deque< nodeFCost >& fCostList, std::map< UI32, bool >& blockList )
+{
+	for( SI08 xOff = -1; xOff < 2; ++xOff )
+	{
+		SI16 checkX = curX + xOff;
+		for( SI08 yOff = -1; yOff < 2; ++yOff )
+		{
+			if( !yOff && !xOff )
+				continue;
+
+			SI16 checkY = curY + yOff;
+
+			if( checkX == targX && checkY == targY )
+				return true;
+
+			UI32 locSer = (checkY + (checkX<<16));
+			if( blockList.find( locSer ) != blockList.end() )
+				continue;
+
+			// Don't Cut Corners
+			bool cornerBlocked = false;
+			if( xOff != 0 )
+			{
+				if( yOff != 0 )
+				{
+					UI32 check1Ser = (checkY + (curX<<16));
+					UI32 check2Ser = (curY + (checkX<<16));
+					if( blockList.find( check1Ser ) != blockList.end() || blockList.find( check2Ser ) != blockList.end() )
+						cornerBlocked = true;
+					else
+					{
+						if( Movement->calc_walk( mChar, curX, checkY, curX, curY, false ) == ILLEGAL_Z )
+						{
+							cornerBlocked = true;
+							blockList[check1Ser] = true;
+						}
+						if( Movement->calc_walk( mChar, checkX, curY, curX, curY, false ) == ILLEGAL_Z )
+						{
+							cornerBlocked = true;
+							blockList[check2Ser] = true;
+						}
+					}
+				}
+			}
+			if( cornerBlocked )
+				continue;
+
+			UI08 gCost = 10;
+			if( xOff || yOff )
+				gCost = 14;
+
+			std::map< UI32, pfNode >::const_iterator olIter;
+			olIter = openList.find( locSer );
+			if( olIter != openList.end() )
+			{
+				pfNode mNode = olIter->second;
+				if( mNode.gCost > gCost )
+				{
+					for( std::deque< nodeFCost >::iterator fcIter = fCostList.begin(); fcIter != fCostList.end(); ++fcIter )
+					{
+						if( (*fcIter).xySer == locSer )
+						{
+							(*fcIter).fCost = mNode.hCost + gCost;
+							break;
+						}
+					}
+					mNode.parent = parentSer;
+					mNode.gCost = gCost;
+					std::sort( fCostList.begin(), fCostList.end() );
+				}
+			}
+			else if( closedList.find( locSer ) == closedList.end() )
+			{
+				if( Movement->calc_walk( mChar, checkX, checkY, curX, curY, false ) == ILLEGAL_Z )
+					blockList[locSer] = true;
+				else
+				{
+					UI16 hCost = 10*(abs(checkX - targX) + abs(checkY - targY));
+					UI16 fCost = gCost + hCost;
+		
+					openList[locSer] = pfNode( hCost, gCost, parentSer );
+					fCostList.push_back( nodeFCost( fCost, locSer ) );
+					std::sort( fCostList.begin(), fCostList.end() );
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun )
+{
+	UI16 curX = mChar->GetX();
+	UI16 curY = mChar->GetY();
+	UI08 dirToPush = UNKNOWNDIR;
+	size_t loopCtr = 0;
+	size_t maxSteps = 1000;
+
+	std::map< UI32, pfNode > openList;
+	std::map< UI32, UI32 > closedList;
+	std::deque< nodeFCost > fCostList;
+	std::map< UI32, bool > blockList;
+
+	openList.clear();
+	closedList.clear();
+	blockList.clear();
+	fCostList.resize( 0 );
+
+	UI32 parentSer = (curY + (curX<<16));
+	openList[parentSer] = pfNode();
+	fCostList.push_back( nodeFCost( 0, parentSer ) );
+	while( ( curX != targX || curY != targY ) && loopCtr < maxSteps )
+	{
+		parentSer = fCostList[0].xySer;
+		curX = static_cast<UI16>(parentSer>>16);
+		curY = static_cast<UI16>(parentSer%65536);
+
+		closedList[parentSer] = openList[parentSer].parent;
+		openList.erase( openList.find( parentSer ) );
+		fCostList.pop_front();
+
+		if( PFGrabNodes( mChar, targX, targY, curX, curY, parentSer, openList, closedList, fCostList, blockList ) )
+		{
+			while( parentSer != 0 )
+			{
+				UI08 newDir = Movement->Direction( curX, curY, targX, targY );
+				if( willRun )
+					newDir |= 0x80;
+
+				if( dirToPush != UNKNOWNDIR && dirToPush != newDir )
+					mChar->PushDirection( newDir );	// NPC's need to "walk" twice when turning
+
+				dirToPush = newDir;
+				mChar->PushDirection( dirToPush );
+				targX = static_cast<UI16>(parentSer>>16);
+				targY = static_cast<UI16>(parentSer%65536);
+				parentSer = closedList[parentSer];
+				curX = static_cast<UI16>(parentSer>>16);
+				curY = static_cast<UI16>(parentSer%65536);
+			}
+			break;
+		}
+		else if( fCostList.empty() )
+			break;
+		++loopCtr;
 	}
 }
 

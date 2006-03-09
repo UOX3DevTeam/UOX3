@@ -64,25 +64,20 @@ struct MapData_st
 class MapStaticIterator
 {
 public:
-	MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact = true );
+	MapStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
 	~MapStaticIterator()
 	{
 	};
 
-	staticrecord *First( void );
-	staticrecord *Next( void );
-	void GetTile( CTile *tile) const;
-	UI32 GetPos() const
-	{
-		return pos;
-	}
-	UI32 GetLength() const
-	{
-		return length;
-	}
+	Static_st *First( void );
+	Static_st *Next( void );
+	void GetTile( CTile *tile ) const;
+	UI32 GetPos() const		{ return pos; }
+	UI32 GetLength() const	{ return length; }
 private:
-	staticrecord staticArray;
-	SI32 baseX, baseY, pos;
+	Static_st staticArray;
+	SI16 baseX, baseY;
+	SI32 pos;
 	UI08 remainX, remainY;
 	UI32 index, length;
 	UI16 tileid;
@@ -93,11 +88,11 @@ private:
 
 
 
-class cMapStuff
+class CMapStuff
 {
 public:
-					cMapStuff();
-					~cMapStuff();
+					CMapStuff();
+					~CMapStuff();
 
 	void			Load( void );
 
@@ -114,7 +109,7 @@ public:
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
 	void			SeekMulti( UI16 multinum, SI32 *length );
-	st_multi *		SeekIntoMulti( UI16 multinum, SI32 number );
+	Multi_st *		SeekIntoMulti( UI16 multinum, SI32 number );
 	bool			SeekTile( UI16 tilenum, CTile *tile );
 	void			SeekLand( UI16 landnum, CLand *land );
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
@@ -127,8 +122,9 @@ public:
 
 	MapData_st&		GetMapData( UI08 mapNum );
 	UI08			MapCount( void ) const;
+	void			LoadMapsDFN( void );
 public:
-	size_t			TileMem, MultisMem;
+	size_t			TileMem, MultisMem, tileDataSize;
 
 // Functions
 private:
@@ -144,8 +140,10 @@ private:
 
 	// caching functions
 	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
-	void			LoadMultis( const UString &basePath );
+	void			LoadMultis( const std::string basePath );
 	void			LoadDFNOverrides( void );
+	void			LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps );
+	void			LoadTileData( const std::string basePath );
 
 //Variables
 private:
@@ -154,7 +152,7 @@ private:
 
 	struct MultiItemsIndex
 	{
-		st_multi *	items;		// point into where the items begin.
+		Multi_st *	items;		// point into where the items begin.
 		SI32		size;				// # of items.
 		SI16		lx, ly, lz;
 		SI16		hx, hy, hz;
@@ -168,14 +166,14 @@ private:
 	// multiItem, tileSet, and verdata(patches really)
 	CLand    *			landTile;			// the 512*32 pieces of land tile
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
-	st_multi *			multiItems;			// the multis cache(shadow) from files
+	Multi_st *			multiItems;			// the multis cache(shadow) from files
 	MultiItemsIndex *	multiIndex;	// here's our index to multiItems
 	size_t				multiIndexSize;			// the length of index
 
 	MAPLIST				MapList;
 };
 
-extern cMapStuff *Map;
+extern CMapStuff *Map;
 
 }
 

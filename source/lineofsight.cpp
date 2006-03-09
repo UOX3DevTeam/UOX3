@@ -146,7 +146,7 @@ QUAD POLYGON CONSTRUCTION ALGORITHM
 	Also need to use height of tile from tiledata.mul
 */
 
-bool MapTileBlocks( CSocket *mSock, staticrecord *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
+bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
 {
 	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
 	const map_st trgMap = Map->SeekMap( x2, y2, worldNum );
@@ -499,7 +499,7 @@ Look at uox3.h to see options. Works like npc magic.
 	for( i = 0; i < collisioncount; ++i )
 	{
 		MapStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
-		staticrecord *stat = msi.First();
+		Static_st *stat = msi.First();
 
 		// Texture mapping
 		if( MapTileBlocks( mSock, stat, lineofsight, collisions[i].x, collisions[i].y, collisions[i].z, collisions[i].x + sgn_x, collisions[i].y + sgn_y, worldNumber ) )
@@ -539,7 +539,7 @@ Look at uox3.h to see options. Works like npc magic.
 			{	// Multi's
 				if( ( abs( kox1 - koxn ) <= DIST_BUILDRANGE ) && ( abs( koy1 - koym ) <= DIST_BUILDRANGE ) )
 				{
-					st_multi *test;
+					Multi_st *test;
 					int multiID = ( dyncount->GetID() ) - 0x4000;
 					Map->SeekMulti( multiID, &length );
 					if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)

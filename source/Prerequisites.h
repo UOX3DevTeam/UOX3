@@ -97,7 +97,7 @@ namespace UOX {
 // Pre-declare classes
 // Allows use of pointers in header files without including individual .h
 // so decreases dependencies between files
-	class BaseTile;
+	class CBaseTile;
 	class cAccountClass;
 	class CBaseObject;
 	class cBooks;
@@ -129,7 +129,7 @@ namespace UOX {
 	class CMagicStat;
 	class CMapHandler;
 	class CMapRegion;
-	class cMapStuff;
+	class CMapStuff;
 	class cMovement;
 	class CMultiObj;
 	class cNetworkStuff;

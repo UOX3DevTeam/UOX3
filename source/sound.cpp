@@ -392,7 +392,7 @@ void cEffects::playTileSound( CSocket *mSock )
 		SI16 y = mChar->GetY();
 		
 		MapStaticIterator msi( x, y, mChar->WorldNumber() );
-		staticrecord *stat = msi.Next();
+		Static_st *stat = msi.Next();
 		if( stat )
 			msi.GetTile(&tile);
 	}

@@ -69,7 +69,6 @@ extern "C" {
 #	include <ctype.h>
 #	include <sys/time.h>
 #	include <sys/signal.h>
-#	include <sys/stat.h>	// for mkdir
 #	include <errno.h>		// for errno
 
 }

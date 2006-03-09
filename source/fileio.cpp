@@ -1,22 +1,15 @@
 #include "uox3.h"
 #include "fileio.h"
-#include "cGuild.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "cSpawnRegion.h"
 #include "scriptc.h"
 #include "townregion.h"
-#include "regions.h"
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-#  include <sys/types.h> // open, stat, mmap, munmap
-#  include <sys/stat.h>  // stat
 #  include <fcntl.h>     // open
-#  include <unistd.h>    // stat, mmap, munmap
 #  include <sys/mman.h>  // mmap, mmunmap
 #endif
-
-
 
 namespace UOX
 {
@@ -178,113 +171,9 @@ void UOXFile::getULong( UI32 *buff, UI32 number )
 
 void UOXFile::getLong( SI32 *buff, UI32 number )
 {
-	number *= sizeof(UI32);
+	number *= sizeof(SI32);
 	memcpy( buff, memPtr+bIndex, number);
 	bIndex += number;
-}
-
-
-void UOXFile::get_versionrecord( struct versionrecord *buff, UI32 number )
-{
-	for( UI32 i = 0; i < number; ++i )
-	{
-		getLong( &buff[i].file );
-		getLong( &buff[i].block );
-		getLong( &buff[i].filepos );
-		getLong( &buff[i].length );
-		getLong( &buff[i].unknown );
-	}
-}
-
-
-
-/*
-** More info from Alazane & Circonian on this...
-**
-Index entry:
-DWORD: File ID (see index below)
-DWORD: Block (Item number, Gump number or whatever; like in the file)
-DWORD: Position (Where to find this block in verdata.mul)
-DWORD: Size (Size in Byte)
-DWORD: Unknown (Perhaps some CRC for the block, most blocks in UO files got this) 
-
-    File IDs: (* means used in current verdata)
-00 - map0.mul
-01 - staidx0.mul
-02 - statics0.mul
-03 - artidx.mul
-04 - art.mul*
-05 - anim.idx
-06 - anim.mul
-07 - soundidx.mul
-08 - sound.mul
-09 - texidx.mul
-0A - texmaps.mul
-0B - gumpidx.mul
-0C - gumpart.mul*
-0D - multi.i
-*/
-
-void UOXFile::get_st_multi( struct st_multi *buff, UI32 number )
-{
-	for( UI32 i = 0; i < number; ++i )
-	{
-		getUShort( &buff[i].tile );
-		getShort( &buff[i].x );
-		getShort( &buff[i].y );
-		getChar( (SI08 *) &buff[i].z );
-		getChar( (SI08 *) &buff[i].empty );
-		getLong( &buff[i].visible );
-	}
-}
-
-
-void UOXFile::get_land_st( CLand *buff, UI32 number)
-{
-	for( UI32 i = 0; i < number; ++i )
-		buff[i].Read( this );
-}
-
-
-void UOXFile::get_tile_st( CTile *buff, UI32 number)
-{
-	for( UI32 i = 0; i < number; ++i )
-		buff[i].Read( this );
-}
-
-
-void UOXFile::get_map_st(struct map_st *buff, UI32 number)
-{
-	for( UI32 i = 0; i < number; ++i)
-	{
-		getUShort(&buff[i].id);
-		getChar(&buff[i].z);
-	}
-}
-
-
-void UOXFile::get_st_multiidx(struct st_multiidx *buff, UI32 number )
-{
-	for( UI32 i = 0; i < number; ++i)
-	{
-		getLong(&buff[i].start);
-		getLong(&buff[i].length);
-		getLong(&buff[i].unknown);
-	}
-}
-
-
-void UOXFile::get_staticrecord( struct staticrecord *buff, UI32 number )
-{
-	for( UI32 i = 0; i < number; ++i)
-	{
-		getUShort( &buff[i].itemid );
-		getUChar( &buff[i].xoff );
-		getUChar( &buff[i].yoff );
-		getChar( &buff[i].zoff );
-		SI16 extra;
-		getShort( &extra );
-	}
 }
 
 //o---------------------------------------------------------------------------o

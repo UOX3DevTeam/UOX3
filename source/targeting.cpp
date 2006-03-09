@@ -530,12 +530,7 @@ void InfoTarget( CSocket *s )
 		mapStat.SetTitle( "Map Tile" );
 
 		mapStat.AddData( "Tilenum", map1.id );
-		mapStat.AddData( "Flag1", land.Flag1(), 1 );
-		mapStat.AddData( "Flag2", land.Flag2(), 1 );
-		mapStat.AddData( "Flag3", land.Flag3(), 1 );
-		mapStat.AddData( "Flag4", land.Flag4(), 1 );
-		mapStat.AddData( "Unknown1", land.Unknown1(), 1 );
-		mapStat.AddData( "Unknown2", land.Unknown2(), 1 );
+		mapStat.AddData( "Flags", land.Flags(), 1 );
 		mapStat.AddData( "Name", land.Name() );
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	} 
@@ -547,17 +542,18 @@ void InfoTarget( CSocket *s )
 		GumpDisplay statTile( s, 300, 300 );
 		statTile.SetTitle( "Map Tile" );
 
-		statTile.AddData( "Tilenum", tileID );
-		statTile.AddData( "Flag1", tile.Flag1(), 1 );
-		statTile.AddData( "Flag2", tile.Flag2(), 1 );
-		statTile.AddData( "Flag3", tile.Flag3(), 1 );
-		statTile.AddData( "Flag4", tile.Flag4(), 1 );
-		statTile.AddData( "Weight", tile.Weight() );
+		statTile.AddData( "Tilenum", tileID, 1 );
+		statTile.AddData( "Flags", tile.Flags(), 1 );
+		statTile.AddData( "Weight", tile.Weight(), 0 );
 		statTile.AddData( "Layer", tile.Layer(), 1 );
+		statTile.AddData( "Hue", tile.Hue(), 1 );
 		statTile.AddData( "Anim", tile.Animation(), 1 );
+		statTile.AddData( "Quantity", tile.Quantity(), 1 );
 		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
 		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
 		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+		statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+		statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
 		statTile.AddData( "Height", tile.Height(), 0 );
 		statTile.AddData( "Name", tile.Name() );
 		statTile.Send( 4, false, INVALIDSERIAL );

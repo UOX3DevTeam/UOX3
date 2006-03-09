@@ -202,7 +202,7 @@ void OpenPlank( CItem *p )
 bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	MapStaticIterator *msi;
-	staticrecord *stat = NULL;
+	Static_st *stat = NULL;
 	map_st map;
 	CLand land;
 	CTile tile;

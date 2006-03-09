@@ -11,47 +11,18 @@
 namespace UOX
 {
 
-cMapStuff *Map					= NULL;
+CMapStuff *Map					= NULL;
 
-const SI32 VERFILE_MAP			= 0x00;
-const SI32 VERFILE_STAIDX		= 0x01;
-const SI32 VERFILE_STATICS		= 0x02;
-const SI32 VERFILE_ARTIDX		= 0x03;
-const SI32 VERFILE_ART			= 0x04;
-const SI32 VERFILE_ANIMIDX		= 0x05;
-const SI32 VERFILE_ANIM			= 0x06;
-const SI32 VERFILE_SOUNDIDX		= 0x07;
-const SI32 VERFILE_SOUND		= 0x08;
-const SI32 VERFILE_TEXIDX		= 0x09;
-const SI32 VERFILE_TEXMAPS		= 0x0A;
-const SI32 VERFILE_GUMPIDX		= 0x0B;
-const SI32 VERFILE_GUMPART		= 0x0C;
-const SI32 VERFILE_MULTIIDX		= 0x0D;
-const SI32 VERFILE_MULTI		= 0x0E;
-const SI32 VERFILE_SKILLSIDX	= 0x0F;
-const SI32 VERFILE_SKILLS		= 0x10;
-const SI32 VERFILE_TILEDATA		= 0x1E;
-const SI32 VERFILE_ANIMDATA		= 0x1F;
-const UI16 TILEDATA_SIZE		= 512 * 32;
-
+const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32);
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
-const UI32 VersionRecordSize	= 20L;
 const UI32 MultiRecordSize		= 12L;
 const UI32 LandRecordSize		= 26L;
 const UI32 TileRecordSize		= 37L;
 const UI32 MapRecordSize		= 3L;
 const UI32 MultiIndexRecordSize = 12L;
 const UI32 StaticRecordSize		= 7L;
-
-/*!
-** Hey, its me fur again. I'm going to tear through this file next
-** so I can get a better understanding of the map/tile stuff and
-** especially the z values so we can nail down the walking bugs once
-** and for all.  Gosh, I feel like a high-tech version of Steve the
-** Crocodile Hunter these days..  C'mon mate, lets go squish some bugs!
-*/
 
 /*! New Notes: 11/3/1999
 ** I changed all of the places where z was handled as a signed char and
@@ -61,81 +32,6 @@ const UI32 StaticRecordSize		= 7L;
 */
 
 /*!
-** Tile Flags Bit Definitions - Please fill in if you know what something does!!
-** I updated some of these with what LB knew 11/17/1999
-**
-** (tile.flag1&0x01)		1 = At Floor Level(?)
-** (tile.flag1&0x02)		1 = Wearable/Holdable(?)
-** (tile.flag1&0x04)		1 = Signs, Guilds, banners, (?)
-** (tile.flag1&0x08)		1 = Web, dirt, blood, footsteps(?)
-** (tile.flag1&0x10)		1 = Wall/Vertical Tile(?)
-** (tile.flag1&0x20)		1 = Causes Damage(?)
-** (tile.flag1&0x40)		1 = Blocking, cannot travel over
-** (tile.flag1&0x80)		1 = IsWet, Maybe Water or Blood
-**
-** (tile.flag2&0x01)		Nothing Uses This Bit
-** (tile.flag2&0x02)		Standable, Mostly#ifdef UOX_PLATFORM != PLATFORM_WIN32
-#  include <sys/types.h> // open, stat, mmap, munmap
-#  include <sys/stat.h>  // stat
-#  include <fcntl.h>     // open
-#  include <unistd.h>    // stat, mmap, munmap
-#  include <sys/mman.h>  // mmap, mmunmap
-#endif
- Flat Surfaces(?)
-** (tile.flag2&0x04)		Climbable, eg. Stairs/Ladders(?)
-** (tile.flag2&0x08)		Pileable
-** (tile.flag2&0x10)		Windows/Doors(?)
-** (tile.flag2&0x20)		Cannot shoot thru
-** (tile.flag2&0x40)		Display as 'a xxxx'
-** (tile.flag2&0x80)		Display as 'an xxxx;
-**
-** (tile.flag3&0x01)		Internal Only Tile(?)
-** (tile.flag3&0x02)		Fades with CoT(?)
-** (tile.flag3&0x04)		(?)
-** (tile.flag3&0x08)		Never used(?)
-** (tile.flag3&0x10)		Map(?)
-** (tile.flag3&0x20)		Container(?)
-** (tile.flag3&0x40)		Wearable(?)
-** (tile.flag3&0x80)		Lightsource(?)
-**
-**
-** (tile.flag4&0x01)		Animated Tile(?)
-** (tile.flag4&0x02)		(?)
-** (tile.flag4&0x04)		Walk(?)
-** (tile.flag4&0x08)		Whole bodyitem/Items you cannot remove from paper doll(?)
-** (tile.flag4&0x10)		Wall/Roof? Weapon(?)
-** (tile.flag4&0x20)		Door(?)
-** (tile.flag4&0x40)		Climbable direction (2-bits)
-** (tile.flag4&0x80)		Climbable direction(?)
-**
-** Other things, one bit somewhere is probably whether items decay or not, whether
-** something is magical or not, one bit for editible or not, bit for dyeable, can be poisioned,
-** wearable and/or wear it can be worn, regeants bit? required str? damage for weapons?
-** readable? nameable?
-*/
-
-/*
-** 11/17/1999 Rewrite plans
-**
-** In reality most of the 'caching' code found within is really 'shadowing' code. That is,
-** its all just slurped up into memory once at startup (very slow)  I plan on rewriting all
-** of this so that its actually cached, that is if a piece is already in memory it will be
-** used, otherwise gotten from disk.  There's no need to load them all at start up, in fact
-** this is wasteful, because you wait at startup loading a lot of pieces you will never use.
-** Also the map cache is retarded because it is alway shifting the entire buffer on a miss,
-** rather than using a rolling queue. Finally, the verdata.mul stuff is not cached at all
-** and has to be a huge performance hit constantly sifting through the index for that file.
-** -fur
-*/
-
-/*!
-** 12/08/1999 New Info
-**
-** OK, Zippy had taken a shot at the circular cache for the map0. He was close, but I had to
-** fix a few bugs.  Also, I implemented the caching of the verdata.mul. Its important to note
-** that the verdata.mul has lots of patches for all sorts of .mul files, I only kept the ones
-** we were actively using.
-**
 ** New rewrite plans, its way confusing having every function in here using 'Height' to mean
 ** elevation or actual height of a tile.  Here's the new renaming plan:
 ** Elevation - the z value of the bottom edge of an item
@@ -187,7 +83,7 @@ MapData_st::~MapData_st()
 	}
 }
 
-void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
+void CMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 {
 	// compute new bounding box, by include the new point
 	if( x < lx ) 
@@ -212,23 +108,40 @@ void cMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 **  and less susceptible to bugs.
 ** -lingo
 */
-cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 )
+CMapStuff::CMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 )
+{
+	LoadMapsDFN();
+}
+
+CMapStuff::~CMapStuff()
+{
+	if ( landTile )
+		delete[] landTile;
+	if ( staticTile )   
+		delete[] staticTile;
+	if ( multiItems )  
+		delete[] multiItems;
+	if ( multiIndex )
+		delete[] multiIndex;
+}
+
+void CMapStuff::LoadMapsDFN( void )
 {
 	UString tag, data, UTag;
-	UI08 NumberOfWorlds = static_cast<UI08>(FileLookup->CountOfEntries( maps_def ));
+	const UI08 NumberOfWorlds = static_cast<UI08>(FileLookup->CountOfEntries( maps_def ));
 	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
 		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + UString::number( i ), maps_def );
 		if( toFind == NULL )
 			break;
-		
+
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
 			UTag = tag.upper();
 			data = toFind->GrabData();
-			switch( (tag.data()[0]) )
+			switch( (UTag.data()[0]) )
 			{
 			case 'M':
 				if( UTag == "MAP" )
@@ -264,21 +177,8 @@ cMapStuff::cMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile
 	}
 }
 
-cMapStuff::~cMapStuff()
-{
-	if ( landTile )
-		delete[] landTile;
-	if ( staticTile )   
-		delete[] staticTile;
-	if ( multiItems )  
-		delete[] multiItems;
-	if ( multiIndex )
-		delete[] multiIndex;
-}
-
-
 //!--------------------------------------------------------------------------o
-//|	Function/Class	-	void cMapStuff::Load( void )
+//|	Function/Class	-	void CMapStuff::Load( void )
 //|	Date			-	03/12/2002
 //|	Developer(s)	-	Unknown / EviLDeD 
 //|	Company/Team	-	UOX3 DevTeam
@@ -303,112 +203,161 @@ UOXFile * loadFile( const std::string fullName )
 	return toLoad;
 }
 
-void cMapStuff::Load( void )
+void CMapStuff::LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps )
 {
-	Console.PrintSectionBegin();
-	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in uox.ini or filenames in maps.dfn)" << myendl;
+	char buffer[4];
+	UString lName		= basePath + mMap.mapFile;
+	mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
+	Console << "\t" << lName << "\t\t";
 
-	UString lName;
-	UI16 i;
-
-	UString basePath = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
-
-	UI08 totalMaps = 0;
-	for( MAPLIST_ITERATOR mlIter = MapList.begin(); mlIter != MapList.end(); ++mlIter )
+	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 	{
-		MapData_st& mMap	= (*mlIter);
+		mMap.fileSize = mMap.mapObj->getLength();
 
-		lName				= basePath + mMap.mapFile;
-		mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
-		Console << "\t" << lName << "\t\t";
-
-		if( mMap.mapObj != NULL && mMap.mapObj->ready() )
+		SI32 checkSize = (mMap.fileSize / 196);
+		if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
 		{
-			mMap.fileSize = mMap.mapObj->getLength();
-
-			SI32 checkSize = (mMap.fileSize / 196);
-			if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
-			{
-				++totalMaps;
-				Console.PrintDone();
-			}
-			else
-				Console.PrintFailed();
+			++totalMaps;
+			Console.PrintDone();
 		}
 		else
-			Console.PrintSpecial( CRED, "not found" );
+			Console.PrintFailed();
+	}
+	else
+		Console.PrintSpecial( CRED, "not found" );
 
-		mMap.staticsObj				= loadFile( basePath + mMap.staticsFile );
-		mMap.staidxObj				= loadFile( basePath + mMap.staidxFile );
+	mMap.staticsObj				= loadFile( basePath + mMap.staticsFile );
+	mMap.staidxObj				= loadFile( basePath + mMap.staidxFile );
 
-		if( !mMap.mapDiffFile.empty() )
-			mMap.mapDiffObj			= loadFile( basePath + mMap.mapDiffFile );
+	if( !mMap.mapDiffFile.empty() )
+		mMap.mapDiffObj			= loadFile( basePath + mMap.mapDiffFile );
 
-		if( !mMap.staticsDiffFile.empty() )
-			mMap.staticsDiffObj		= loadFile( basePath + mMap.staticsDiffFile );
+	if( !mMap.staticsDiffFile.empty() )
+		mMap.staticsDiffObj		= loadFile( basePath + mMap.staticsDiffFile );
 
-		if( !mMap.mapDiffListFile.empty() )
+	if( !mMap.mapDiffListFile.empty() )
+	{
+		lName = basePath + mMap.mapDiffListFile;
+		Console << "\t" << lName << "\t\t";
+
+		std::ifstream mdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
+		if( mdlFile.is_open() )
 		{
-			lName = basePath + mMap.mapDiffListFile;
-			Console << "\t" << lName << "\t\t";
-
-			std::ifstream mdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
-			if( mdlFile.is_open() )
+			size_t offset = 4;
+			size_t blockID = 0;
+			mdlFile.seekg( 0, std::ios::beg );
+			while( !mdlFile.fail() )
 			{
-				size_t offset = 0;
-				size_t blockID = 0;
-				mdlFile.seekg( 0, std::ios::beg );
-				while( !mdlFile.fail() )
+				mdlFile.read( buffer, 4 );
+				if( !mdlFile.fail() )
 				{
-					mdlFile.read( (char *)&blockID, 4 );
-					if( !mdlFile.fail() )
-						mMap.mapDiffList[blockID] = offset+4;
-					offset += 196;
+					blockID = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+					mMap.mapDiffList[blockID] = offset;
 				}
-				mdlFile.close();
-				Console.PrintDone();
+				offset += 196;
 			}
-			else
-				Console.PrintSpecial( CBLUE, "not found" );
+			mdlFile.close();
+			Console.PrintDone();
 		}
+		else
+			Console.PrintSpecial( CBLUE, "not found" );
+	}
 
-		if( !mMap.staticsDiffIndexFile.empty() && !mMap.staticsDiffListFile.empty() )
+	if( !mMap.staticsDiffIndexFile.empty() && !mMap.staticsDiffListFile.empty() )
+	{
+		lName = basePath + mMap.staticsDiffIndexFile;
+		Console << "\t" << lName << "\t\t";
+
+		std::ifstream sdiFile ( lName.c_str(), std::ios::in | std::ios::binary );
+		if( sdiFile.is_open() )
 		{
-			lName = basePath + mMap.staticsDiffIndexFile;
+			Console.PrintDone();
+			lName = basePath + mMap.staticsDiffListFile;
 			Console << "\t" << lName << "\t\t";
 
-			std::ifstream sdiFile ( lName.c_str(), std::ios::in | std::ios::binary );
 			std::ifstream sdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
-			if( sdiFile.is_open() && sdlFile.is_open() )
+			if( sdlFile.is_open() )
 			{
 				size_t blockID = 0;
 				sdiFile.seekg( 0, std::ios::beg );
 				sdlFile.seekg( 0, std::ios::beg );
 				while( !sdiFile.fail() && !sdlFile.fail() )
 				{
-					sdlFile.read( (char *)&blockID, 4 );
-					StaticsIndex_st &sdiRecord = mMap.staticsDiffIndex[blockID];
-					sdiFile.read( (char *)&sdiRecord.offset, 4 );
-					sdiFile.read( (char *)&sdiRecord.length, 4 );
-					sdiFile.read( (char *)&sdiRecord.unknown, 4 );
+					sdlFile.read( buffer, 4 );
+					blockID = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+					sdiFile.read( buffer, 4 );
+					mMap.staticsDiffIndex[blockID].offset = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+					sdiFile.read( buffer, 4 );
+					mMap.staticsDiffIndex[blockID].length = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+					sdiFile.read( buffer, 4 );
+					mMap.staticsDiffIndex[blockID].unknown = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
 				}
-				sdiFile.close();
 				sdlFile.close();
 				Console.PrintDone();
 			}
 			else
 				Console.PrintSpecial( CBLUE, "not found" );
-
-			lName = basePath + mMap.staticsDiffListFile;
-			Console << "\t" << lName << "\t\t";
-
-			if( FileExists( lName ) )
-				Console.PrintDone();
-			else
-				Console.PrintSpecial( CBLUE, "not found" );
+			sdiFile.close();
 		}
+		else
+			Console.PrintSpecial( CBLUE, "not found" );
+	}
+}
+
+void CMapStuff::LoadTileData( const std::string basePath )
+{
+	UI08 j = 0;
+
+	// tiledata.mul is to be cached.
+	UString lName = basePath + "tiledata.mul";
+	Console << "\t" << lName << "\t";
+
+	UOXFile tileFile( lName.c_str(), "rb" );
+	if( !tileFile.ready() )
+	{
+		Console.PrintFailed();
+		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
 	}
 
+	// first we have 512*32 pieces of land tile
+	TileMem			= LANDDATA_SIZE * sizeof(CLand);
+	landTile		= new CLand[LANDDATA_SIZE];
+	CLand *landPtr	= landTile;
+	for( UI16 i = 0; i < 512; ++i )	
+	{
+		tileFile.seek(4, SEEK_CUR);			// skip the dummy header
+		for( j = 0; j < 32; ++j )
+			landPtr[j].Read( &tileFile );
+		landPtr += 32;
+	}
+
+	// now get the 512*32 static tile pieces,
+	tileDataSize	= (((tileFile.getLength() - (((32*26)+4)*512))/1188)*32);
+	TileMem			+= tileDataSize * sizeof( CTile );
+	staticTile		= new CTile[tileDataSize];
+	CTile *tilePtr	= staticTile;
+	while( !tileFile.eof() )
+	{
+		tileFile.seek(4, SEEK_CUR);			// skip the dummy header
+		for( j = 0; j < 32; ++j )
+			tilePtr[j].Read( &tileFile );
+		tilePtr += 32;
+	}
+	Console.PrintDone();
+}
+
+void CMapStuff::Load( void )
+{
+	Console.PrintSectionBegin();
+	Console << "Preparing to open *.mul files..." << myendl << "(If they don't open, fix your paths in uox.ini or filenames in maps.dfn)" << myendl;
+
+	const std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
+
+	UI08 totalMaps = 0;
+	for( MAPLIST_ITERATOR mlIter = MapList.begin(); mlIter != MapList.end(); ++mlIter )
+	{
+		LoadMapAndStatics( (*mlIter), basePath, totalMaps );
+	}
 	if( totalMaps == 0 )
 	{
 		// Hmm, no maps were valid, so not much sense in continuing
@@ -417,37 +366,7 @@ void cMapStuff::Load( void )
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
 	}
 
-	// tiledata.mul is to be cached.
-	lName = basePath + "tiledata.mul";
-	Console << "\t" << lName << "\t";
-	UOXFile tilefile( lName.c_str(), "rb" );
-	if( !tilefile.ready() )
-	{
-		Console.PrintFailed();
-		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
-	}
-	// first we have 512*32 pieces of land tile
-	TileMem			= TILEDATA_SIZE * sizeof(CLand);
-	landTile		= new CLand[TILEDATA_SIZE];
-	CLand *landPtr	= landTile;
-	for( i = 0; i < 512; ++i )	
-	{
-		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
-		tilefile.get_land_st(landPtr, 32);
-		landPtr += 32;
-	}
-	// now get the 512*32 static tile pieces,
-	TileMem			+= TILEDATA_SIZE * sizeof( CTile );
-	staticTile		= new CTile[TILEDATA_SIZE];
-	CTile *tilePtr	= staticTile;
-	for( i = 0; i < 512; ++i )
-	{
-		tilefile.seek(4, SEEK_CUR);			// skip the dummy header
-		tilefile.get_tile_st(tilePtr, 32);
-		tilePtr += 32;
-	}
-	Console.PrintDone();
-
+	LoadTileData( basePath );
 	LoadMultis( basePath );
 	LoadDFNOverrides();
 
@@ -456,7 +375,7 @@ void cMapStuff::Load( void )
 }
 
 
-void cMapStuff::LoadMultis(const UString &basePath)
+void CMapStuff::LoadMultis( const std::string basePath )
 {
 	// now main memory multiItems
 	Console << "Caching Multis....  "; 
@@ -480,11 +399,19 @@ void cMapStuff::LoadMultis(const UString &basePath)
 		return;
 	}
 
-	//! first reads in st_multi completely
+	//! first reads in Multi_st completely
 	size_t multiSize	= multis.getLength() / MultiRecordSize;
-	multiItems			= new st_multi[multiSize];
-	multis.get_st_multi( multiItems, multiSize );
-	MultisMem			= multis.getLength();
+	multiItems			= new Multi_st[multiSize];
+	for( size_t i = 0; i < multiSize; ++i )
+	{
+		multis.getUShort( &multiItems[i].tile );
+		multis.getShort( &multiItems[i].x );
+		multis.getShort( &multiItems[i].y );
+		multis.getChar( &multiItems[i].z );
+		multis.getChar( &multiItems[i].empty );
+		multis.getLong( &multiItems[i].visible );
+	}
+	MultisMem		= multis.getLength();
 
 	multiIndexSize	= multiIDX.getLength() / MultiIndexRecordSize;
 	multiIndex		= new MultiItemsIndex[multiIndexSize];
@@ -493,15 +420,18 @@ void cMapStuff::LoadMultis(const UString &basePath)
 	// now rejig the multiIDX to point to the cache directly, and calculate the size
 	for( MultiItemsIndex *ptr = multiIndex; ptr != (multiIndex+multiIndexSize); ++ptr )
 	{
-		st_multiidx multiidx;
-		multiIDX.get_st_multiidx( &multiidx );
+		MultiIndex_st multiidx;
+		multiIDX.getLong( &multiidx.start );
+		multiIDX.getLong( &multiidx.length );
+		multiIDX.getLong( &multiidx.unknown );
+
 		ptr->size = multiidx.length;
 		if( ptr->size != -1 )
 		{
 			ptr->size /= MultiRecordSize;		// convert byte size to record size
-			ptr->items = (st_multi*)((char*)multiItems + multiidx.start);
-			for( st_multi* items = ptr->items; items != (ptr->items+ptr->size); ++items )
-			{	
+			ptr->items = (Multi_st*)((char*)multiItems + multiidx.start);
+			for( Multi_st* items = ptr->items; items != (ptr->items+ptr->size); ++items )
+			{
 				ptr->Include( items->x, items->y, items->z );
 			}
 		}
@@ -517,7 +447,7 @@ void cMapStuff::LoadMultis(const UString &basePath)
 // LB 24/7/99
 // oh yah, well that's encouraging.. NOT! at least LB was kind enough to
 // move this out into a separate file. he gets kudos for that!
-SI08 cMapStuff::TileHeight( UI16 tilenum )
+SI08 CMapStuff::TileHeight( UI16 tilenum )
 {
 	CTile tile;
 	SeekTile( tilenum, &tile );
@@ -536,13 +466,12 @@ SI08 cMapStuff::TileHeight( UI16 tilenum )
 //o-------------------------------------------------------------o
 //|   Purpose     :  Top of statics at/above given coordinates
 //o-------------------------------------------------------------o
-SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
+SI08 CMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
 {
 	SI08 top = ILLEGAL_Z;
 
 	MapStaticIterator msi( x, y, worldNumber );
-	staticrecord *stat;
-	while( stat = msi.Next() )
+	while( Static_st *stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
 		if( ( tempTop <= oldz + maxZ ) && ( tempTop > top ) )
@@ -553,14 +482,14 @@ SI08 cMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 max
 
 
 // i guess this function returns where the tile is a 'blocker' meaning you can't pass through it
-bool cMapStuff::DoesTileBlock( UI16 tilenum )
+bool CMapStuff::DoesTileBlock( UI16 tilenum )
 {
 	CTile tile;
 	SeekTile( tilenum, &tile );
 	return tile.Blocking();
 }
 
-bool cMapStuff::IsTileSurface( UI16 tilenum )
+bool CMapStuff::IsTileSurface( UI16 tilenum )
 {
 	CTile tile;
 	SeekTile( tilenum, &tile );
@@ -575,7 +504,7 @@ bool cMapStuff::IsTileSurface( UI16 tilenum )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Updates the box coordinates based on cached information
 //o--------------------------------------------------------------------------
-void cMapStuff::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
+void CMapStuff::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
 {
 	x1 = multiIndex[multiNum].lx;		// originally lx 
 	x2 = multiIndex[multiNum].hx;		// originally ly presumablely bugs?
@@ -589,7 +518,7 @@ void cMapStuff::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI1
 // Currently, there is no hit on either of the multi files, so we're fairly safe
 // But we probably want to not rely on this being always true
 // especially with the extra land patch coming up!
-void cMapStuff::SeekMulti( UI16 multinum, SI32 *length )
+void CMapStuff::SeekMulti( UI16 multinum, SI32 *length )
 {
 	if( multinum >= multiIndexSize )
 		*length = -1;
@@ -598,7 +527,7 @@ void cMapStuff::SeekMulti( UI16 multinum, SI32 *length )
 }
 
 
-st_multi *cMapStuff::SeekIntoMulti( UI16 multinum, SI32 number )
+Multi_st *CMapStuff::SeekIntoMulti( UI16 multinum, SI32 number )
 {
 	return (multiIndex[multinum].items + number);
 }
@@ -612,7 +541,7 @@ st_multi *cMapStuff::SeekIntoMulti( UI16 multinum, SI32 number )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Finds the corners of a multi object
 //o--------------------------------------------------------------------------
-void cMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
+void CMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
 {
 	x1 = y1 = x2 = y2 = 0;
 	if( !ValidateObject( i ) )
@@ -629,12 +558,12 @@ void cMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 
 
 
 // return the height of a multi item at the given x,y. this seems to actually return a height
-SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
+SI08 CMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 {
 	SI32 length = 0;
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
 	SeekMulti( multiID, &length );
-	st_multi *multi = NULL;
+	Multi_st *multi = NULL;
 
 	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)                                                                                                                          
 		length = 0;
@@ -656,7 +585,7 @@ SI08 cMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 
 
 // This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
-SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
+SI08 CMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
 {
 	SI08 z = ILLEGAL_Z;
 	
@@ -683,7 +612,7 @@ SI08 cMapStuff::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, S
 }
 
 
-UI16 cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
+UI16 CMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 {
 	if( !i->CanBeObjType( OT_MULTI ) )
 		return 0;
@@ -692,7 +621,7 @@ UI16 cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 	SeekMulti( multiID, &length );
 	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 	{
-		Console << "cMapStuff::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
+		Console << "CMapStuff::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
 		CLand land;
 		Map->SeekLand( map1.id, &land );
@@ -703,7 +632,7 @@ UI16 cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		length = 0;
 	}
 
-	st_multi *multi = NULL;
+	Multi_st *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
 		multi = SeekIntoMulti( multiID, j );
@@ -719,7 +648,7 @@ UI16 cMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 
 
 // returns which dynamic tile is present at (x,y) or -1 if no tile exists
-UI16 cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+UI16 CMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
@@ -749,7 +678,7 @@ UI16 cMapStuff::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 
 // return the elevation of MAP0.MUL at given coordinates, we'll assume since its land
 // the height is inherently 0
-SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
+SI08 CMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const map_st map = SeekMap( x, y, worldNumber );
 	// make sure nothing can move into black areas
@@ -761,7 +690,7 @@ SI08 cMapStuff::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 
 
 // compute the 'average' map height by looking at three adjacent cells
-SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber )
+SI08 CMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber )
 {
 	// first thing is to get the map where we are standing
 	const map_st map1 = Map->SeekMap( x, y, worldNumber );
@@ -805,9 +734,9 @@ SI08 cMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 }
 
 
-bool cMapStuff::SeekTile( UI16 tilenum, CTile *tile)
+bool CMapStuff::SeekTile( UI16 tilenum, CTile *tile )
 {
-	if( tilenum == INVALIDID || tilenum >= TILEDATA_SIZE )
+	if( tilenum == INVALIDID || tilenum >= tileDataSize )
 	{	// report the invalid access, but keep running
 		Console << "invalid tile access the offending tile num is " << tilenum << myendl;
 		const static CTile emptyTile;
@@ -820,10 +749,10 @@ bool cMapStuff::SeekTile( UI16 tilenum, CTile *tile)
 }
 
 
-void cMapStuff::SeekLand( UI16 landnum, CLand *land)
+void CMapStuff::SeekLand( UI16 landnum, CLand *land )
 {
 
-	if( landnum == INVALIDID || landnum >= TILEDATA_SIZE )
+	if( landnum == INVALIDID || landnum >= LANDDATA_SIZE )
 	{	// report the invalid access, but keep running
 		Console << "invalid Land tile access the offending land num is " << landnum << myendl;
 		const static CLand emptyTile;
@@ -834,7 +763,7 @@ void cMapStuff::SeekLand( UI16 landnum, CLand *land)
 }
 
 
-bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
+bool CMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
 	if( worldNumber >= MapList.size() )
 		return false;
@@ -857,7 +786,7 @@ bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 ** Usage:
 **		MapStaticIterator msi( x, y, worldNumber );
 **
-**      staticrecord *stat = NULL;
+**      Static_st *stat = NULL;
 **      CTile tile;
 **      while( stat = msi.Next() )
 **      {
@@ -865,8 +794,8 @@ bool cMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 **  		    ... your code here...
 **	  	}
 */
-MapStaticIterator::MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact ) : baseX( static_cast<SI32>(x / 8) ), 
-baseY( static_cast<SI32>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), 
+MapStaticIterator::MapStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
+baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), 
 index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
 	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
@@ -892,7 +821,8 @@ index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world )
 		}
 
 		useDiffs = true;
-		length = sdiRecord.length;
+		pos		= sdiRecord.offset;
+		length	= sdiRecord.length;
 	}
 	else
 	{
@@ -917,13 +847,13 @@ index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world )
 	}
 }
 
-staticrecord *MapStaticIterator::First( void )
+Static_st *MapStaticIterator::First( void )
 {
 	index = 0;
 	return Next();
 }
 
-staticrecord *MapStaticIterator::Next( void )
+Static_st *MapStaticIterator::Next( void )
 {
 	tileid = 0;
 	if( index >= length )
@@ -947,8 +877,13 @@ staticrecord *MapStaticIterator::Next( void )
 	{
 		if( mFile->eof( ) )
 			return NULL;
-		
-		mFile->get_staticrecord( &staticArray );
+
+		mFile->getUShort( &staticArray.itemid );
+		mFile->getUChar( &staticArray.xoff );
+		mFile->getUChar( &staticArray.yoff );
+		mFile->getChar( &staticArray.zoff );
+		mFile->seek( 2, SEEK_CUR );	// Skip past the unused data
+
 		++index;
 		// if these are ever larger than 7 we've gotten out of sync
 		assert( staticArray.xoff < 0x08 );
@@ -976,7 +911,7 @@ void MapStaticIterator::GetTile( CTile *tile ) const
 }
 
 
-map_st cMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
+map_st CMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const SI16 x1 = x / 8, y1 = y / 8;
 	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);
@@ -991,13 +926,15 @@ map_st cMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	if( diffIter != mMap.mapDiffList.end() )
 	{
 		mMap.mapDiffObj->seek( diffIter->second, SEEK_SET );
-		mMap.mapDiffObj->get_map_st( &map );
+		mMap.mapDiffObj->getUShort( &map.id );
+		mMap.mapDiffObj->getChar( &map.z );
 	}
 	else
 	{
 		const SI32 pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
 		mMap.mapObj->seek( pos, SEEK_SET );
-		mMap.mapObj->get_map_st( &map );
+		mMap.mapObj->getUShort( &map.id );
+		mMap.mapObj->getChar( &map.z );
 	}
 	return map;
 }
@@ -1005,7 +942,7 @@ map_st cMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 
 // these function don't look like they are actually used by anything
 // anymore, at least we know which bit means wet
-bool cMapStuff::IsTileWet( UI16 tilenum )   // lord binary
+bool CMapStuff::IsTileWet( UI16 tilenum )   // lord binary
 {
 	CTile tile;
 	SeekTile( tilenum, &tile );
@@ -1014,11 +951,11 @@ bool cMapStuff::IsTileWet( UI16 tilenum )   // lord binary
 
 
 // Blocking statics at/above given coordinates?
-bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+bool CMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	MapStaticIterator msi( x, y, worldNumber );
 	
-	staticrecord *stat = NULL;
+	Static_st *stat = NULL;
 	while( stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
@@ -1029,11 +966,11 @@ bool cMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bo
 }
 
 // Is there a static at the given coordinates, and if yes is it a surface
-bool cMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+bool CMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	MapStaticIterator msi( x, y, worldNumber );
 	
-	staticrecord *stat = NULL;
+	Static_st *stat = NULL;
 	while( stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
@@ -1044,11 +981,11 @@ bool cMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 }
 
 // Is there a static at the given coordinates, and if yes is it wet
-bool cMapStuff::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+bool CMapStuff::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	MapStaticIterator msi( x, y, worldNumber );
 	
-	staticrecord *stat = NULL;
+	Static_st *stat = NULL;
 	while( stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
@@ -1059,7 +996,7 @@ bool cMapStuff::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 }
 
 // Return new height of player who walked to X/Y but from OLDZ
-SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+SI08 CMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	// let's check in this order.. dynamic, static, then the map
 	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber, MAX_Z_STEP );
@@ -1074,7 +1011,7 @@ SI08 cMapStuff::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 }
 
 // Return whether give coordinates are inside a building by checking if there is a multi or static above them
-bool cMapStuff::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+bool CMapStuff::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127 );
 		if( dynz > ( z + 10))
@@ -1090,7 +1027,7 @@ bool cMapStuff::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+bool CMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	if( worldNumber >= MapList.size() )
 		return false;
@@ -1149,7 +1086,7 @@ bool cMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 
 // can the sea monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool cMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+bool CMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 {
 	if( worldNumber >= MapList.size() )
 		return false;
@@ -1205,22 +1142,22 @@ bool cMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumb
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if the server has that map in memory
 //o--------------------------------------------------------------------------
-bool cMapStuff::MapExists( UI08 worldNumber )
+bool CMapStuff::MapExists( UI08 worldNumber )
 {
 	return ( (worldNumber < MapList.size()) && (MapList[worldNumber].mapObj != NULL) );
 }
 
-MapData_st& cMapStuff::GetMapData( UI08 worldNumber )
+MapData_st& CMapStuff::GetMapData( UI08 worldNumber )
 {
 	return MapList[worldNumber];
 }
 
-UI08 cMapStuff::MapCount( void ) const
+UI08 CMapStuff::MapCount( void ) const
 {
 	return static_cast<UI08>(MapList.size());
 }
 
-void cMapStuff::LoadDFNOverrides( void )
+void CMapStuff::LoadDFNOverrides( void )
 {
 	UString data, UTag, entryName, titlePart;
 	size_t entryNum;
@@ -1239,7 +1176,7 @@ void cMapStuff::LoadDFNOverrides( void )
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
-				if( entryNum == INVALIDID || entryNum >= TILEDATA_SIZE )
+				if( entryNum == INVALIDID || entryNum >= tileDataSize )
 					continue;
 				CTile *tile = &staticTile[entryNum];
 				if( tile != NULL )
@@ -1256,8 +1193,12 @@ void cMapStuff::LoadDFNOverrides( void )
 							tile->Height( data.toByte() );
 						else if( UTag == "LAYER" )
 							tile->Layer( data.toByte() );
+						else if( UTag == "HUE" )
+							tile->Hue( data.toUByte() );
+						else if( UTag == "QUANTITY" )
+							tile->Quantity( data.toUByte() );
 						else if( UTag == "ANIMATION" )
-							tile->Animation( data.toInt() );
+							tile->Animation( data.toUShort() );
 						else if( UTag == "NAME" )
 							tile->Name( data.c_str() );
 
@@ -1280,8 +1221,8 @@ void cMapStuff::LoadDFNOverrides( void )
 							tile->LiquidWet( (data.toInt() != 0) );
 
 						// BaseTile Flag 2
-						else if( UTag == "UNKNOWN1" )
-							tile->Unknown1( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWNFLAG1" )
+							tile->UnknownFlag1( (data.toInt() != 0) );
 						else if( UTag == "STANDABLE" )
 							tile->Standable( (data.toInt() != 0) );
 						else if( UTag == "CLIMBABLE" )
@@ -1302,10 +1243,10 @@ void cMapStuff::LoadDFNOverrides( void )
 							tile->DescriptionTile( (data.toInt() != 0) );
 						else if( UTag == "FADEWITHTRANS" )
 							tile->FadeWithTrans( (data.toInt() != 0) );
-						else if( UTag == "UNKNOWN2" )
-							tile->Unknown2( (data.toInt() != 0) );
-						else if( UTag == "UNKNOWN3" )
-							tile->Unknown3( (data.toInt() != 0) );
+						else if( UTag == "PARTIALHUE" )
+							tile->PartialHue( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWNFLAG2" )
+							tile->UnknownFlag2( (data.toInt() != 0) );
 						else if( UTag == "MAP" )
 							tile->Map( (data.toInt() != 0) );
 						else if( UTag == "CONTAINER" )
@@ -1318,10 +1259,10 @@ void cMapStuff::LoadDFNOverrides( void )
 						// BaseTile Flag 4
 						else if( UTag == "ANIMATED" )
 							tile->Animated( (data.toInt() != 0) );
-						else if( UTag == "UNKNOWN4" )
-							tile->Unknown4( (data.toInt() != 0) );
-						else if( UTag == "WALK" )
-							tile->Walk( (data.toInt() != 0) );
+						else if( UTag == "NODIAGONAL" )
+							tile->NoDiagonal( (data.toInt() != 0) );
+						else if( UTag == "UNKNOWNFLAG3" )
+							tile->UnknownFlag3( (data.toInt() != 0) );
 						else if( UTag == "WHOLEBODYITEM" )
 							tile->WholeBodyItem( (data.toInt() != 0) );
 						else if( UTag == "WALLROOFWEAP" )
@@ -1344,39 +1285,41 @@ void cMapStuff::LoadDFNOverrides( void )
 
 void CTile::Read( UOXFile *toRead )
 {
-//	DWORD Flags (see below)
-//	BYTE Weight (weight of the item, 255 means not movable)
-//	BYTE Quality (If Wearable, this is a Layer. If Light Source, this is Light ID)
-//	UWORD Unknown
-//	BYTE Unknown1
-//	BYTE Quantity (if Weapon, this is Weapon Class. If Armor, Armor Class)
-//	UWORD Anim ID (The Body ID the animatation. Add 50,000 and 60,000 respectivefully to get the two gump indicies assocaited with this tile)
-//	BYTE Unknown2
-//	BYTE Hue (perhaps colored light?)
-//	UWORD Unknown3
-//	BYTE Height (If Conatainer, this is how much the container can hold)
-//	CHAR[20] Tile Name
-	toRead->getUChar( &flag1 );
-	toRead->getUChar( &flag2 );
-	toRead->getUChar( &flag3 );
-	toRead->getUChar( &flag4 );
+//	BYTE[4]		Flags		(See BaseTile)
+//	BYTE		Weight		Weight of the item, 255 means not movable)
+//	BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
+//  BYTE[2]		Unknown1
+//	BYTE		Unknown2
+//	BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
+//  BYTE[2]		Animation
+//	BYTE		Unknown3
+//	BYTE		Hue
+//	BYTE		Unknown4
+//	BYTE		Unknown5
+//	BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
+//	BYTE[20]	Name
+	toRead->getULong( &flags );
 	toRead->getUChar( &weight );
 	toRead->getChar(  &layer );
-	toRead->getLong(  &unknown1 );
-	toRead->getLong(  &animation );
-	toRead->getChar(  &unknown2 );
-	toRead->getChar(  &unknown3 );
+	toRead->getUShort( &unknown1 );
+	toRead->getUChar( &unknown2 );
+	toRead->getUChar( &quantity );
+	toRead->getUShort(  &animation );
+	toRead->getUChar(  &unknown3 );
+	toRead->getUChar(  &hue );
+	toRead->getUChar( &unknown4 );
+	toRead->getUChar( &unknown5 );
 	toRead->getChar(  &height );
 	toRead->getChar(  name, 20 );
 
 }
 
+//	BYTE[4]		Flags
+//	BYTE[2]		TextureID
+//	BYTE[20]	Name
 void CLand::Read( UOXFile *toRead )
 {
-	toRead->getUChar( &flag1 );
-	toRead->getUChar( &flag2 );
-	toRead->getUChar( &flag3 );
-	toRead->getUChar( &flag4 );
+	toRead->getULong( &flags );
 	toRead->getUShort( &textureID );
 	toRead->getChar( name, 20 );
 }

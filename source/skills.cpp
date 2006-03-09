@@ -214,7 +214,7 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				{
 					MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 					CTile tile;
-					for( staticrecord *stat = msi.Next(); stat != NULL; stat = msi.Next() )
+					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
 					{
 						msi.GetTile( &tile );
 						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
@@ -836,7 +836,7 @@ void cSkills::FishTarget( CSocket *s )
 	{
 		MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 		CTile tile;
-		staticrecord *stat = NULL;
+		Static_st *stat = NULL;
 		while( ( ( stat = msi.Next() ) != NULL ) && !validLocation )
 		{
 			msi.GetTile(&tile);

@@ -1,3 +1,14 @@
+3/08/2006 - giwo (0.98-3.5a [3.6 BETA])
+	Began rewriting .mul file handling.
+	Fixed an issue causing a possible crash with malformed JS scripts.
+	Removed several superfluous functions from UOXFile class.
+	Updated CTile and CLand to properly read in tiledata.mul
+	Modified .mul file structures to meet struct naming standards.
+	Changed static tile reading code to allow a variable number of statics.
+	Fixed several issues with mapdiff and staticdiff handling.
+	Added A* Pathfinding routine (note that it is not used in current code,
+		as there are known compatability issues).
+
 3/08/2006 - giwo (0.98-3.5)
 	Fixed a possible issue caused by passing float values to JS func RandomNumber()
 

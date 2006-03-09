@@ -1120,7 +1120,7 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		for( int j = yLoc - radius; j <= (yLoc + radius); ++j )
 		{
 			MapStaticIterator msi( xLoc, yLoc, wrldNumber );
-			for( staticrecord *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
+			for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
 			{
 				if( mRec != NULL && mRec->itemid == tileID )
 				{
@@ -1157,7 +1157,7 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 
 	MapStaticIterator msi( xLoc, yLoc, wrldNumber );
 
-	for( staticrecord *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
+	for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
 	{
 		if( mRec != NULL && (!tileMatch || (tileMatch && mRec->itemid == tileID) ) )
 		{
@@ -1547,7 +1547,7 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( targetID != 0 )	// we might have a static rock or mountain
 		{
 			MapStaticIterator msi( targetX, targetY, worldNumber );
-			staticrecord *stat = NULL;
+			Static_st *stat = NULL;
 			while( ( ( stat = msi.Next() ) != NULL ) )
 			{
 				msi.GetTile(&tile);
