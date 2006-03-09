@@ -1540,15 +1540,15 @@ void CPITalkRequestUnicode::Receive( void )
 
 	if( (typeUsed&0xC0) == 0xC0 )
 	{
-		// numbwe of distinct trigger words
+		// number of distinct trigger words
 		numTrigWords = (tSock->GetByte( 12 )<<4) + (tSock->GetByte( 13 )>>4);
 
 		size_t byteNum = 13;
 		for( size_t tWord = 0; tWord < numTrigWords; )
 		{
-			tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord )%0x10<<8) + tSock->GetByte( byteNum+tWord+1 ) );
+			tSock->AddTrigWord( ((tSock->GetByte( byteNum+tWord )%0x10)<<8) + tSock->GetByte( byteNum+tWord+1 ) );
 			if( tWord+2 <= numTrigWords )
-				tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord+2 )<<8) + (tSock->GetByte( byteNum+tWord+3 )>>4));
+				tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord+2 )<<4) + (tSock->GetByte( byteNum+tWord+3 )>>4));
 			tWord += 2;
 			byteNum++;
 		}

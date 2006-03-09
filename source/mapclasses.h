@@ -49,8 +49,8 @@ public:
 	virtual ~CBaseTile()
 	{
 	}
-	UI08 Flags( void ) const			{	return flags;	}
-	void Flags( UI08 newVal )			{	flags = newVal;	}
+	UI32 Flags( void ) const			{	return flags;	}
+	void Flags( UI32 newVal )			{	flags = newVal;	}
 
 	bool AtFloorLevel( void ) const		{	return MFLAGGET( flags, 0x00000001 );	}
 	bool Holdable( void ) const			{	return MFLAGGET( flags, 0x00000002 );	}

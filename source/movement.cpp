@@ -1698,7 +1698,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 		if( nItemTop >= newz && tb->BaseZ() <= oldz + MAX_Z_LEVITATE )
 		{
 			if( tb->Climbable() || tb->Type() == 0 ||			// Climbable tile, map tiles are also climbable
-			( (tb->Flags()%256) == 0 && (tb->Flags()>>24) == 0x22 ) ||		// These are a special kind of tiles where OSI forgot to set the climbable flag
+			( static_cast<UI08>(tb->Flags()%256) == 0 && static_cast<UI08>(tb->Flags()>>8) == 0x22 ) ||		// These are a special kind of tiles where OSI forgot to set the climbable flag
 			( (nItemTop >= oldz && nItemTop <= oldz + 3) && tb->Standable() ) )		 // Allow to climb a height of 1 even if the climbable flag is not set
 			{                 
 				ontype = tb->Type();
@@ -2067,7 +2067,7 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		{
 			while( parentSer != 0 )
 			{
-				UI08 newDir = Movement->Direction( curX, curY, targX, targY );
+				UI08 newDir = ((Movement->Direction( curX, curY, targX, targY )+4)%8);	// We are pushing our list from Destination to origin, so push the OPPOSITE direction.
 				if( willRun )
 					newDir |= 0x80;
 

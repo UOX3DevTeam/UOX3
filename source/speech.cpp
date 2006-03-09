@@ -15,27 +15,34 @@
 namespace UOX
 {
 
-	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, ... )
+	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
 	{
-		bool multipleArgs = false;
-		UString argList = "";
+		bool multipleArgs		= false;
+		UString argList			= "";
+		std::string stringVal	= "";
+		const char *typesPtr	= types;
+
 		va_list marker;
-		va_start( marker, messageNum );
-		char *argument;
-		do
+		va_start( marker, types );
+		while( *typesPtr != '\0' )
 		{
-			argument = va_arg( marker, char * );
-			if( argument != NULL )
+			if( *typesPtr == 'i' )
+				stringVal = UString::number( va_arg( marker, int ) );
+			else if( *typesPtr == 's' )
+				stringVal = va_arg( marker, char * );
+
+			if( !stringVal.empty() )
 			{
 				if( !multipleArgs )
 				{
 					multipleArgs = true;
-					argList = UString::sprintf( "%s", argument );
+					argList = UString::sprintf( "%s", stringVal.c_str() );
 				}
 				else
-					argList += UString::sprintf( "%s%s", "\t", argument );
+					argList += UString::sprintf( "\t%s", stringVal.c_str() );
 			}
-		} while( argument != NULL );
+			++typesPtr;
+		}
 		va_end( marker );
 
 		CPClilocMessage toSend;
@@ -48,27 +55,34 @@ namespace UOX
 		mSock->Send( &toSend );
 	}
 
-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, ... )
+	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
 	{
-		bool multipleArgs = false;
-		UString argList = "";
+		bool multipleArgs		= false;
+		UString argList			= "";
+		std::string stringVal	= "";
+		const char *typesPtr	= types;
+
 		va_list marker;
-		va_start( marker, sendAll );
-		char *argument;
-		do
+		va_start( marker, types );
+		while( *typesPtr != '\0' )
 		{
-			argument = va_arg( marker, char * );
-			if( argument != NULL )
+			if( *typesPtr == 'i' )
+				stringVal = UString::number( va_arg( marker, int ) );
+			else if( *typesPtr == 's' )
+				stringVal = va_arg( marker, char * );
+
+			if( !stringVal.empty() )
 			{
 				if( !multipleArgs )
 				{
 					multipleArgs = true;
-					argList = UString::sprintf( "%s", argument );
+					argList = UString::sprintf( "%s", stringVal.c_str() );
 				}
 				else
-					argList += UString::sprintf( "%s%s", "\t", argument );
+					argList += UString::sprintf( "\t%s", stringVal.c_str() );
 			}
-		} while( argument != NULL );
+			++typesPtr;
+		}
 		va_end( marker );
 
 		CPClilocMessage toSend( (*srcObj) );

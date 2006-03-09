@@ -950,7 +950,7 @@ void cSkills::Fish( CChar *i )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player uses a skill from the skill list
 //o---------------------------------------------------------------------------o
-void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, ... );
+void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
 void cSkills::SkillUse( CSocket *s, UI08 x )
 {
 	VALIDATESOCKET( s );

@@ -208,7 +208,7 @@ CBankResponse::CBankResponse( bool newVal )
 {
 	checkBalance = newVal;
 }
-void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, ... );
+void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... );
 void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( !mChar->IsDead() )
@@ -224,7 +224,7 @@ void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 				else
 				{
 					UI32 goldCount = GetBankCount( mChar, 0x0EED );
-					ClilocMessage( mSock, Npc, 0, 0x0040, FNT_NORMAL, 1042759, false, UString::number( goldCount ).c_str() );
+					ClilocMessage( mSock, Npc, 0, 0x0040, FNT_NORMAL, 1042759, false, "i", goldCount );
 					//Npc->talk( mSock, 1298, true, mChar->GetName().c_str(), goldCount );
 				}
 				break;
