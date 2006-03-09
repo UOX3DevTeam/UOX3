@@ -160,104 +160,104 @@
 
 [FOODLIST HORSE]
 {
-FOOD=crops
-FOOD=hay
-FOOD=fruit
-FOOD=vegetables
+FOODLIST=crops
+FOODLIST=hay
+FOODLIST=fruit
+FOODLIST=vegetables
 }
 
 [FOODLIST BEAR]
 {
-FOOD=fish
-FOOD=fruit
-FOOD=crops
-FOOD=meat
+FOODLIST=fish
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=meat
 }
 
 [FOODLIST BOAR]
 {
-FOOD=fruit
-FOOD=crops
+FOODLIST=fruit
+FOODLIST=crops
 }
 
 [FOODLIST COW]
 {
-FOOD=fruit
-FOOD=crops
-FOOD=hay
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=hay
 }
 
 [FOODLIST GOAT]
 {
-FOOD=fruit
-FOOD=crops
-FOOD=hay
-FOOD=vegetables
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=hay
+FOODLIST=vegetables
 }
 
 [FOODLIST GORILLA]
 {
-FOOD=fruit
-FOOD=crops
-FOOD=vegetables
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=vegetables
 }
 
 [FOODLIST BEAR]
 {
-FOOD=fish
-FOOD=fruit
-FOOD=crops
-FOOD=meat
+FOODLIST=fish
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=meat
 }
 
 [FOODLIST DEER]
 {
-FOOD=fruit
-FOOD=crops
-FOOD=hay
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=hay
 }
 
 [FOODLIST BIRD]
 {
-FOOD=crops
-FOOD=fruit
-FOOD=hay
+FOODLIST=crops
+FOODLIST=fruit
+FOODLIST=hay
 }
 
 [FOODLIST RABBIT]
 {
-FOOD=fruit
-FOOD=vegetables
+FOODLIST=fruit
+FOODLIST=vegetables
 }
 
 [FOODLIST RAT]
 {
-FOOD=meat
-FOOD=fruit
-FOOD=fish
-FOOD=crops
+FOODLIST=meat
+FOODLIST=fruit
+FOODLIST=fish
+FOODLIST=crops
 0x095b
 }
 
 [FOODLIST SHEEP]
 {
-FOOD=fruit
-FOOD=crops
-FOOD=hay
+FOODLIST=fruit
+FOODLIST=crops
+FOODLIST=hay
 }
 
 [FOODLIST TOAD]
 {
-FOOD=fish
-FOOD=meat
+FOODLIST=fish
+FOODLIST=meat
 }
 
 [FOODLIST OSTARD]
 {
-FOOD=meat
-FOOD=crops
-FOOD=fruit
-FOOD=hay
+FOODLIST=meat
+FOODLIST=crops
+FOODLIST=fruit
+FOODLIST=hay
 }
 
 [FOODLIST METAL]
@@ -397,6 +397,6 @@ FOOD=hay
 
 [FOODLIST CARNIVORE]
 {
-FOOD=fish
-FOOD=meat
+FOODLIST=fish
+FOODLIST=meat
 }
