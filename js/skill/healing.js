@@ -229,7 +229,7 @@ function onTimer( mChar, timerID )
 				else if( skillNum == 39 )
 					healSkill = mChar.skills.veterinary;
 
-				ourObj.Heal( ((mChar.skills.anatomy / 50) + RandomNumber( 3, 10 ) + RandomNumber( (healSkill / 50), (healSkill / 20) )) );
+				ourObj.Heal( (RandomNumber( 3, 10 ) + parseInt(mChar.skills.anatomy / 50) + RandomNumber( parseInt(healSkill / 50), parseInt(healSkill / 20) )), mChar );
 				socket.SysMessage( GetDictionaryEntry( 1271, socket.Language ) );
 				break;
 			}

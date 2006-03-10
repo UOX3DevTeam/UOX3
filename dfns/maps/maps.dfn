@@ -1,7 +1,6 @@
 // v.03
 // Last updated 9/21/2005 - giwo
 // This file contains the filenames and X/Y Block sizes for Ultima Online maps.
-// Note that this file is directly related to UOX3.ini MAPCOUNT (IE a MAPCOUNT of 5 will load MAP 0 through MAP 4)
 // This file is current for Client versions 5.0.0a and above, please use maps.old if your client version is 4.x or below.
 
 
