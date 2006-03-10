@@ -381,10 +381,9 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 		sock->sysmessage( 670 );
 		return false;
 	}
-	CTile tile;
 	if( !caster->IsNpc() )
 	{
-		Map->SeekTile( sock->GetWord( 0x11 ), &tile );
+		CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
 		if( (!strcmp( tile.Name(), "water")) || tile.LiquidWet() )
 		{
 			sock->sysmessage( 671 );

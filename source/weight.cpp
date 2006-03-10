@@ -98,7 +98,7 @@ SI32 CWeight::calcWeight( CItem *pack )
 
 		if( i->IsContType() )	// Item is a container
 		{
-			Map->SeekTile( i->GetID(), &tile );
+			CTile& tile = Map->SeekTile( i->GetID() );
 			totalWeight += (tile.Weight() * 100);	// Add the weight of the container
 			totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
 			if( totalWeight >= MAX_WEIGHT )
@@ -127,7 +127,6 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 {
 	SI32 totalWeight = 0;
 
-	CTile tile;
 	for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
 	{
 		if( !ValidateObject( i ) )
@@ -142,9 +141,11 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 			case IL_BANKBOX:	// bank box
 				break;	// no weight for any of these
 			case IL_PACKITEM:	// backpack
-				Map->SeekTile( i->GetID(), &tile );
+			{
+				CTile& tile = Map->SeekTile( i->GetID() );
 				totalWeight += (tile.Weight() * 100);	// Add the weight of the container
 				totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
+			}
 			default:
 				totalWeight += i->GetWeight();	// Normal item, just add its weight
 				break;
@@ -169,8 +170,7 @@ bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		CTile tile;
-		Map->SeekTile( item->GetID(), &tile );
+		CTile& tile = Map->SeekTile( item->GetID() );
 		itemWeight = (tile.Weight() * 100);
 	}
 
@@ -198,8 +198,7 @@ bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		CTile tile;
-		Map->SeekTile( item->GetID(), &tile );
+		CTile& tile = Map->SeekTile( item->GetID() );
 		itemWeight = (tile.Weight() * 100);
 	}
 

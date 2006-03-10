@@ -648,8 +648,7 @@ void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount
 		mapz_old = mapz;
 	if( mapz != ILLEGAL_Z )
 	{
-		CLand land;
-		Map->SeekLand( mapid, &land );
+		CLand& land = Map->SeekLand( mapid );
 		
 		xyblock[xycount].Type( 0 );
 		xyblock[xycount].BaseZ( UOX_MIN( mapz_old, mapz ) );
@@ -667,11 +666,9 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		return;
 
 	MapStaticIterator msi( x, y, worldNumber );
-	Static_st *stat = NULL;
- 	while( stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
-		CTile tile;
-		msi.GetTile( &tile );
+		CTile& tile = Map->SeekTile( stat->itemid );
 		xyblock[xycount].Type( 2 );
 		xyblock[xycount].BaseZ( stat->zoff );
 		xyblock[xycount].ID( stat->itemid );
@@ -705,8 +702,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 	#endif
 				if( tItem->GetX() == x && tItem->GetY() == y )
 				{
-					CTile tile;
-					Map->SeekTile( tItem->GetID(), &tile );
+					CTile& tile = Map->SeekTile( tItem->GetID() );
 					xyblock[xycount].Type( 1 );
 					xyblock[xycount].BaseZ( tItem->GetZ() );
 					xyblock[xycount].ID( tItem->GetID() );
@@ -722,14 +718,12 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
 			{	// implication, is, this is now a CMultiObj
 				const UI16 multiID = (tItem->GetID() - 0x4000);
-				SI32 length = 0;		// should be SI32, not long
-				Map->SeekMulti( multiID, &length );
+				SI32 length = Map->SeekMulti( multiID );
 				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 				{
 					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
-					CLand land;
 					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-					Map->SeekLand( map1.id, &land );
+					CLand& land = Map->SeekLand( map1.id );
 					if( land.LiquidWet() ) // is it water?
 						tItem->SetID( 0x4001 );
 					else
@@ -738,14 +732,13 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 				}
 				for( SI32 j = 0; j < length; ++j )
 				{
-					const Multi_st *multi = Map->SeekIntoMulti( multiID, j );
-					if( multi->visible && (tItem->GetX() + multi->x) == x && (tItem->GetY() + multi->y) == y )
+					const Multi_st& multi = Map->SeekIntoMulti( multiID, j );
+					if( multi.visible && (tItem->GetX() + multi.x) == x && (tItem->GetY() + multi.y) == y )
 					{
-						CTile tile;
-						Map->SeekTile( multi->tile, &tile );
+						CTile& tile = Map->SeekTile( multi.tile );
 						xyblock[xycount].Type( 2 );
-						xyblock[xycount].BaseZ( multi->z + tItem->GetZ() );
-						xyblock[xycount].ID( multi->tile );
+						xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
+						xyblock[xycount].ID( multi.tile );
 						xyblock[xycount] = tile;
 						++xycount;
 						if( xycount >= XYMAX )	// don't overflow
@@ -1872,8 +1865,7 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
-		CTile tile;
-		Map->SeekTile( tItem->GetID(), &tile );
+		CTile& tile = Map->SeekTile( tItem->GetID() );
 		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MAX_Z_STEP )
 		{
 			UI16 id = tItem->GetID();

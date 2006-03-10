@@ -1,3 +1,15 @@
+3/10/2006 - giwo (0.98-3.5c [3.6 BETA])
+	Modified CMapStuff SeekLand() and SeekTile() to return a reference rather than force one to pass an object to set.
+	Modified CMapStuff SeekMulti() to return the length rather than force one to pass a value to set.
+	Removed MapStaticIterator::GetTile() as it was superfluous.
+	Removed CMapStuff IsTileWet(), DoesTileBlock(), and IsTileSurface() as they were superfluous.
+	Removed CMapStuff TileMem and MultisMem, replacing them with functions to return the same data.
+	Changed MultiItemsIndex lz and hz to SI08 values.
+	Changed MapStaticIterator GetPos() to return an SI32.
+	Removed MapStaticIterator tileid as it was superfluous.
+	Modified UOXFile::eof() to return a bool rather than an int.
+	Miscellaneous minor changes and cleanups.
+
 3/10/2006 - grimson
 	Added two sysmessage when feeding a pet.
 

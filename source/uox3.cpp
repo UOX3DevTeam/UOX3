@@ -2219,8 +2219,7 @@ void telltime( CSocket *s )
 //    loa%ves/f% of bread
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
-	CTile tile;
-	Map->SeekTile( mItem.GetID(), &tile );
+	CTile& tile = Map->SeekTile( mItem.GetID() );
 	UString temp	= mItem.GetName() ;
 	temp			= temp.simplifyWhiteSpace();
 	if( temp.substr( 0, 1 ) == "#" )

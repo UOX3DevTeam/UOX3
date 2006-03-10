@@ -522,10 +522,9 @@ void InfoTarget( CSocket *s )
 		if( ValidateObject( mChar ) )
 			worldNumber = mChar->WorldNumber();
 
-		CLand land;
 		// manually calculating the ID's if it's a maptype
 		const map_st map1 = Map->SeekMap( x, y, worldNumber );
-		Map->SeekLand( map1.id, &land );
+		CLand& land = Map->SeekLand( map1.id );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
 
@@ -536,8 +535,7 @@ void InfoTarget( CSocket *s )
 	} 
 	else
 	{
-		CTile tile;
-		Map->SeekTile( tileID, &tile );
+		CTile& tile = Map->SeekTile( tileID );
 
 		GumpDisplay statTile( s, 300, 300 );
 		statTile.SetTitle( "Map Tile" );

@@ -259,8 +259,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 
 	if( iID != 0x0000 )
 	{
-		CTile tile;
-		if( Map->SeekTile( iID, &tile ) )
+		if( Map->IsValidTile( iID ) )
 			iCreated->SetID( iID );
 	}
 	if( iColour != 0x0000 )

@@ -201,11 +201,7 @@ void OpenPlank( CItem *p )
 //o---------------------------------------------------------------------------o
 bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
-	MapStaticIterator *msi;
-	Static_st *stat = NULL;
 	map_st map;
-	CLand land;
-	CTile tile;
 	SI16 cx = b->GetX(), cy = b->GetY();
 	SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	UI08 type = 0;
@@ -286,6 +282,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 		default: return true;
 	}
 
+	MapStaticIterator *msi;
 	UI08 worldNumber = b->WorldNumber();
 	for( SI16 x = x1; x < x2; ++x )
 	{
@@ -296,16 +293,16 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				map = Map->SeekMap( x, y, worldNumber );
-				Map->SeekLand( map.id, &land );
+				CLand& land = Map->SeekLand( map.id );
 				if( map.z >= -5 && !land.LiquidWet() && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 					return true;
 			}
 			else
 			{ //static tile
 				msi = new MapStaticIterator( x, y, worldNumber );
-				while( stat = msi->Next() )
+				for( Static_st *stat = msi->First(); stat != NULL; stat = msi->Next() )
 				{
-					msi->GetTile( &tile );
+					CTile& tile = Map->SeekTile( stat->itemid );
 					SI08 zt = stat->zoff + tile.Height();
 					if( !tile.LiquidWet() && zt > -5 && zt <= 15 && strcmp( (char*)tile.Name(), "water" ) )
 					{

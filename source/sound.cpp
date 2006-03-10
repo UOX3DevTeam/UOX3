@@ -363,9 +363,10 @@ void cEffects::playTileSound( CSocket *mSock )
 	if( mSock == NULL )
 		return;
 
-	CTile tile;
-	char search1[10];
-	UI16 sndid = 0;
+	CChar *mChar = mSock->CurrcharObj();
+	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
+		return;
+
 	enum TileType
 	{
 		TT_NORMAL = 0,
@@ -376,97 +377,95 @@ void cEffects::playTileSound( CSocket *mSock )
 		TT_GRASS
 	};
 	TileType tileType = TT_NORMAL;
-	bool onHorse = false;
 
-	CChar *mChar = mSock->CurrcharObj();
-	
-	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
-		return;
-	
+	bool onHorse = false;
 	if( mChar->IsOnHorse() )
 		onHorse = true;
 	
 	if( mChar->GetStep() == 1 || mChar->GetStep() == 0 )	// if we play a sound
 	{
-		SI16 x = mChar->GetX();
-		SI16 y = mChar->GetY();
-		
-		MapStaticIterator msi( x, y, mChar->WorldNumber() );
+		MapStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 		Static_st *stat = msi.Next();
 		if( stat )
-			msi.GetTile(&tile);
+		{
+			CTile& tile = Map->SeekTile( stat->itemid );
+			if( tile.LiquidWet() )
+				tileType = TT_WATER;
+			else
+			{
+				char search1[10];
+				strcpy( search1, "wood" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_WOODEN;
+				strcpy( search1, "ston" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_STONE;
+				strcpy( search1, "gras" );
+				if( strstr( tile.Name(), search1 ) )
+					tileType = TT_GRASS;
+			}
+		}
 	}
-	
-	if( tile.LiquidWet() )
-		tileType = TT_WATER;
-	strcpy( search1, "wood" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_WOODEN;
-	strcpy( search1, "ston" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_STONE;
-	strcpy( search1, "gras" );
-	if( strstr( tile.Name(), search1 ) )
-		tileType = TT_GRASS;
-	
+
+	UI16 soundID = 0;
 	switch( mChar->GetStep() )	// change step info
 	{
-		case 0:
-			mChar->SetStep( 3 );	// step 2
-			switch( tileType )
-			{
-				case TT_NORMAL:
-					if( onHorse )
-						sndid = 0x024C;
-					else
-						sndid = 0x012B; 
-					break;
-				case TT_WATER:	// water
-					break;
-				case TT_STONE: // stone
-					sndid = 0x0130;
-					break;
-				case TT_OTHER: // other
-				case TT_WOODEN: // wooden
-					sndid = 0x0123;
-					break;
-				case TT_GRASS: // grass
-					sndid = 0x012D;
-					break;
-			}
+	case 0:
+		mChar->SetStep( 3 );	// step 2
+		switch( tileType )
+		{
+			case TT_NORMAL:
+				if( onHorse )
+					soundID = 0x024C;
+				else
+					soundID = 0x012B; 
+				break;
+			case TT_WATER:	// water
+				break;
+			case TT_STONE: // stone
+				soundID = 0x0130;
+				break;
+			case TT_OTHER: // other
+			case TT_WOODEN: // wooden
+				soundID = 0x0123;
+				break;
+			case TT_GRASS: // grass
+				soundID = 0x012D;
+				break;
+		}
+		break;
+	case 1:
+		mChar->SetStep( 0 );	// step 1
+		switch( tileType )
+		{
+		case TT_NORMAL:
+			if( onHorse )
+				soundID = 0x024B;
+			else
+				soundID = 0x012C; 
 			break;
-		case 1:
-			mChar->SetStep( 0 );	// step 1
-			switch( tileType )
-			{
-				case TT_NORMAL:
-					if( onHorse )
-						sndid = 0x024B;
-					else
-						sndid = 0x012C; 
-					break;
-				case TT_WATER:	// water
-					break;
-				case TT_STONE: // stone
-					sndid = 0x012F;
-					break;
-				case TT_OTHER: // other
-				case TT_WOODEN: // wooden
-					sndid = 0x0122;
-					break;
-				case TT_GRASS: // grass
-					sndid = 0x012E;
-					break;
-			}
+		case TT_WATER:	// water
 			break;
-		case 2:
-		case 3:
-		default:
-			mChar->SetStep( 1 );	// pause
+		case TT_STONE: // stone
+			soundID = 0x012F;
 			break;
+		case TT_OTHER: // other
+		case TT_WOODEN: // wooden
+			soundID = 0x0122;
+			break;
+		case TT_GRASS: // grass
+			soundID = 0x012E;
+			break;
+		}
+		break;
+	case 2:
+	case 3:
+	default:
+		mChar->SetStep( 1 );	// pause
+		break;
 	}
-	if( sndid )			// if we have a valid sound
-		PlaySound( mSock, sndid, true );
+	if( soundID )			// if we have a valid sound
+		PlaySound( mSock, soundID, true );
 }
 
 }

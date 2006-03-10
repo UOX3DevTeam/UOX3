@@ -465,7 +465,7 @@ void command_memstats( CSocket *s )
 // Display some information about the cache.
 {
 	VALIDATESOCKET( s );
-	size_t cacheSize		= Map->TileMem + Map->MultisMem;
+	size_t cacheSize		= Map->GetTileMem() + Map->GetMultisMem();
 	size_t charsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
 	size_t itemsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
@@ -477,8 +477,8 @@ void command_memstats( CSocket *s )
 	cacheStats.SetTitle( "UOX Memory Information (sizes in bytes)" );
 	cacheStats.AddData( "Total Memory Usage: ", total );
 	cacheStats.AddData( " Cache Size: ", cacheSize );
-	cacheStats.AddData( "  Tiles: ", Map->TileMem );
-	cacheStats.AddData( "  Multis: ", Map->MultisMem );
+	cacheStats.AddData( "  Tiles: ", Map->GetTileMem() );
+	cacheStats.AddData( "  Multis: ", Map->GetMultisMem() );
 	cacheStats.AddData( " Characters: ", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	cacheStats.AddData( "  Allocated Memory: ", charsSize );
 	cacheStats.AddData( "  CChar: ", sizeof( CChar ) );

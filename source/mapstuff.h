@@ -71,8 +71,7 @@ public:
 
 	Static_st *First( void );
 	Static_st *Next( void );
-	void GetTile( CTile *tile ) const;
-	UI32 GetPos() const		{ return pos; }
+	SI32 GetPos() const		{ return pos; }
 	UI32 GetLength() const	{ return length; }
 private:
 	Static_st staticArray;
@@ -80,7 +79,6 @@ private:
 	SI32 pos;
 	UI08 remainX, remainY;
 	UI32 index, length;
-	UI16 tileid;
 	bool exactCoords;
 	UI08 worldNumber;
 	bool useDiffs;
@@ -104,14 +102,14 @@ public:
 	SI08			TileHeight( UI16 tilenum );
 	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
-	bool			IsTileWet( UI16 tilenum );
 
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	void			SeekMulti( UI16 multinum, SI32 *length );
-	Multi_st *		SeekIntoMulti( UI16 multinum, SI32 number );
-	bool			SeekTile( UI16 tilenum, CTile *tile );
-	void			SeekLand( UI16 landnum, CLand *land );
+	SI32			SeekMulti( UI16 multinum );
+	Multi_st &		SeekIntoMulti( UI16 multinum, SI32 number );
+	bool			IsValidTile( UI16 tileNum );
+	CTile &			SeekTile( UI16 tileNum );
+	CLand &			SeekLand( UI16 landNum );
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
@@ -123,8 +121,9 @@ public:
 	MapData_st&		GetMapData( UI08 mapNum );
 	UI08			MapCount( void ) const;
 	void			LoadMapsDFN( void );
-public:
-	size_t			TileMem, MultisMem, tileDataSize;
+
+	size_t			GetTileMem( void ) const;
+	size_t			GetMultisMem( void ) const;
 
 // Functions
 private:
@@ -132,8 +131,6 @@ private:
 	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
 
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			DoesTileBlock( UI16 tilenum );
-	bool			IsTileSurface( UI16 tilenum );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
 	bool			IsStaticSurface( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			IsStaticWet( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
@@ -154,12 +151,12 @@ private:
 	{
 		Multi_st *	items;		// point into where the items begin.
 		SI32		size;				// # of items.
-		SI16		lx, ly, lz;
-		SI16		hx, hy, hz;
-					MultiItemsIndex() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SHRT_MAX ), 
-						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SHRT_MIN )
+		SI16		lx, ly, hx, hy;
+		SI08		lz, hz;
+					MultiItemsIndex() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SCHAR_MAX ), 
+						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SCHAR_MIN )
 					{}
-		void		Include(SI16 x, SI16 y, SI16 z);	
+		void		Include( SI16 x, SI16 y, SI08 z );	
 	};
 	friend class MapStaticIterator;
 	// all the world's map and static Items.
@@ -167,8 +164,10 @@ private:
 	CLand    *			landTile;			// the 512*32 pieces of land tile
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
 	Multi_st *			multiItems;			// the multis cache(shadow) from files
-	MultiItemsIndex *	multiIndex;	// here's our index to multiItems
-	size_t				multiIndexSize;			// the length of index
+	MultiItemsIndex *	multiIndex;			// here's our index to multiItems
+	size_t				multiIndexSize;		// the length of index
+	size_t				multiSize;
+	size_t				tileDataSize;
 
 	MAPLIST				MapList;
 };

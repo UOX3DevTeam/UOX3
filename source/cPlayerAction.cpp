@@ -325,8 +325,7 @@ bool CPIGetItem::Handle( void )
 		i->SetGuarded( false );
 	}
 
-	CTile tile;
-	Map->SeekTile( i->GetID(), &tile );
+	CTile& tile = Map->SeekTile( i->GetID() );
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
@@ -495,8 +494,7 @@ bool CPIEquipItem::Handle( void )
 			return true;
 		}
 	}
-	CTile tile;
-	Map->SeekTile( i->GetID(), &tile);
+	CTile& tile = Map->SeekTile( i->GetID() );
 	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
@@ -809,8 +807,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	if( toExecute != NULL )
 		toExecute->OnDrop( i, nChar );
 
-	CTile tile;
-	Map->SeekTile( i->GetID(), &tile);
+	CTile& tile = Map->SeekTile( i->GetID() );
 	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
@@ -1126,8 +1123,7 @@ void DropOnItem( CSocket *mSock )
 		toExecute->OnDrop( nItem, mChar );
 
 	bool stackDeleted = false;
-	CTile tile;
-	Map->SeekTile( nItem->GetID(), &tile );
+	CTile& tile = Map->SeekTile( nItem->GetID() );
 	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
 		( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 	{

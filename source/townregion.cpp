@@ -1085,8 +1085,7 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 
 	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
 	toSend.AddText( "Population %i", GetPopulation() );
-	CTile tile;
-	Map->SeekTile( GetResourceID(), &tile );
+	CTile& tile = Map->SeekTile( GetResourceID() );
 	toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
 	toSend.Finalize();
 	sock->Send( &toSend );

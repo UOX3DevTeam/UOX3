@@ -1284,9 +1284,9 @@ void CConsole::Process( int c )
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
 				messageLoop << "     Cache:";
-				sprintf( temp, "        Tiles: %u bytes", Map->TileMem );
+				sprintf( temp, "        Tiles: %u bytes", Map->GetTileMem() );
 				messageLoop << temp;
-				sprintf( temp, "        Multis: %u bytes", Map->MultisMem );
+				sprintf( temp, "        Multis: %u bytes", Map->GetMultisMem() );
 				messageLoop << temp;
 				size_t m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
@@ -1307,7 +1307,7 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
-				total += tmp = Map->TileMem + Map->MultisMem;
+				total += tmp = Map->GetTileMem() + Map->GetMultisMem();
 				sprintf( temp, "        Approximate Total: %i bytes", total );
 				messageLoop << temp;
 				break;

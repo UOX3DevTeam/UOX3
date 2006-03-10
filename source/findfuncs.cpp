@@ -216,9 +216,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 {
 	if( !ValidateObject( m ) )
 		return false;
-	SI32 length;
 	const UI16 multiID = static_cast<UI16>(m->GetID() - 0x4000);
-	Map->SeekMulti( multiID, &length );
+	SI32 length = Map->SeekMulti( multiID );
 	if( length == -1 || length >= 17000000 )
 	{
 		// the length associated with the multi means one thing
@@ -228,9 +227,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
 
-		CLand land;
 		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		Map->SeekLand( map1.id, &land );
+		CLand& land = Map->SeekLand( map1.id );
 		if( land.LiquidWet() ) // is it water?
 		{
 			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
@@ -245,14 +243,13 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	if( m->GetType() == IT_PLANK )
 		zAdjust = (z-3);	// Characters seem to be 3z above the rest of the items on the boat.
 
-	Multi_st *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
-		multi = Map->SeekIntoMulti( multiID, j );
+		Multi_st& multi = Map->SeekIntoMulti( multiID, j );
 
-		if( ( m->GetX() + multi->x == x ) && ( m->GetY() + multi->y == y ) )
+		if( ( m->GetX() + multi.x == x ) && ( m->GetY() + multi.y == y ) )
 		{
-			const SI08 multiZ = (m->GetZ() + multi->z);
+			const SI08 multiZ = (m->GetZ() + multi.z);
 			if( multiZ >= zAdjust && multiZ <= z )
 				return true;
 		}

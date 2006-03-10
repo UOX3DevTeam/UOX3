@@ -506,10 +506,9 @@ Look at uox3.h to see options. Works like npc magic.
 			return blocked;
 			
 		// Statics
-		CTile tile;
 		while( stat != NULL )
 		{
-			msi.GetTile( &tile );
+			CTile& tile = Map->SeekTile( stat->itemid );
 			if(	( collisions[i].z >= stat->zoff && collisions[i].z <= ( stat->zoff + tile.Height() ) ) ||
 				( tile.Height() <= 2 && abs( collisions[i].z - stat->zoff ) <= dz ) )
 			{
@@ -527,9 +526,9 @@ Look at uox3.h to see options. Works like npc magic.
 				continue;
 			if( !dyncount->CanBeObjType( OT_MULTI ) )
 			{ // Dynamic items
-				Map->SeekTile( dyncount->GetID(), &tile);
+				CTile& iTile = Map->SeekTile( dyncount->GetID() );
 				if( ( dyncount->GetX() == collisions[i].x ) && (dyncount->GetY() == collisions[i].y ) &&
-					( collisions[i].z >= dyncount->GetZ() ) && ( collisions[i].z <= ( dyncount->GetZ() + tile.Height() ) ) &&
+					( collisions[i].z >= dyncount->GetZ() ) && ( collisions[i].z <= ( dyncount->GetZ() + iTile.Height() ) ) &&
 					( dyncount->GetVisible() == VT_VISIBLE ) )
 				{
 					itemids.push_back( dyncount->GetID() );
@@ -539,15 +538,13 @@ Look at uox3.h to see options. Works like npc magic.
 			{	// Multi's
 				if( ( abs( kox1 - koxn ) <= DIST_BUILDRANGE ) && ( abs( koy1 - koym ) <= DIST_BUILDRANGE ) )
 				{
-					Multi_st *test;
-					int multiID = ( dyncount->GetID() ) - 0x4000;
-					Map->SeekMulti( multiID, &length );
+					UI16 multiID = static_cast<UI16>(dyncount->GetID() - 0x4000);
+					length = Map->SeekMulti( multiID );
 					if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 					{
 						Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-						CLand land;
 						const map_st map1 = Map->SeekMap( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
-						Map->SeekLand( map1.id, &land );
+						CLand& land = Map->SeekLand( map1.id );
 						if( land.LiquidWet() ) // is it water?
 							dyncount->SetID( 0x4001 );
 						else
@@ -556,15 +553,15 @@ Look at uox3.h to see options. Works like npc magic.
 					}
 					for( SI32 k = 0; k < length; ++k )
 					{
-						test = Map->SeekIntoMulti( multiID, k );
-						if( ( test->visible ) && ( dyncount->GetX() + test->x == collisions[i].x ) &&
-							( dyncount->GetY() + test->y == collisions[i].y ) )
+						Multi_st& test = Map->SeekIntoMulti( multiID, k );
+						if( ( test.visible ) && ( dyncount->GetX() + test.x == collisions[i].x ) &&
+							( dyncount->GetY() + test.y == collisions[i].y ) )
 						{
-							Map->SeekTile( test->tile, &tile );
-							if( ( collisions[i].z >= dyncount->GetZ() + test->z ) &&
-								( collisions[i].z <= (dyncount->GetZ() + test->z + tile.Height() ) ) )
+							CTile& multiTile = Map->SeekTile( test.tile );
+							if( ( collisions[i].z >= dyncount->GetZ() + test.z ) &&
+								( collisions[i].z <= (dyncount->GetZ() + test.z + multiTile.Height() ) ) )
 							{
-								itemids.push_back( test->tile );
+								itemids.push_back( test.tile );
 							}
 						}
 					}

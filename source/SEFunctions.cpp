@@ -1536,7 +1536,6 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( myChar ) )
 		return JS_TRUE;
 
-	CTile tile;
 	if( mySock->GetDWord( 7 ) == 0 )
 	{
 		UI08 worldNumber	= myChar->WorldNumber();
@@ -1547,10 +1546,9 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( targetID != 0 )	// we might have a static rock or mountain
 		{
 			MapStaticIterator msi( targetX, targetY, worldNumber );
-			Static_st *stat = NULL;
-			while( ( ( stat = msi.Next() ) != NULL ) )
+			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 			{
-				msi.GetTile(&tile);
+				CTile& tile = Map->SeekTile( stat->itemid );
 				if( targetZ == stat->zoff )
 				{
 					GumpDisplay staticStat( mySock, 300, 300 );
@@ -1565,9 +1563,8 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		else		// or it could be a map only
 		{
 			// manually calculating the ID's if a maptype
-			CLand land;
 			const map_st map1 = Map->SeekMap( targetX, targetY, worldNumber );
-			Map->SeekLand( map1.id, &land );
+			CLand& land = Map->SeekLand( map1.id );
 			GumpDisplay mapStat( mySock, 300, 300 );
 			mapStat.SetTitle( "Item [Map]" );
 			mapStat.AddData( "ID", targetID, 5 );

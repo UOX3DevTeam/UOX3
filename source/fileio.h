@@ -14,7 +14,7 @@ public:
 	inline int	ready( void ) const { return ( memPtr != NULL ); }
 	void		rewind( void ) { bIndex = 0; }
 	void		seek( size_t, UI08 );
-	int		eof( void ) const { return ( bIndex >= fileSize ); }
+	bool		eof( void ) const { return ( bIndex >= fileSize ); }
 	int		getch( void );
 
 	void		getUChar(	UI08 *, UI32 = 1 );

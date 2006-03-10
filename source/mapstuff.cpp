@@ -83,7 +83,7 @@ MapData_st::~MapData_st()
 	}
 }
 
-void CMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
+void CMapStuff::MultiItemsIndex::Include( SI16 x, SI16 y, SI08 z )
 {
 	// compute new bounding box, by include the new point
 	if( x < lx ) 
@@ -108,7 +108,7 @@ void CMapStuff::MultiItemsIndex::Include(SI16 x, SI16 y, SI16 z)
 **  and less susceptible to bugs.
 ** -lingo
 */
-CMapStuff::CMapStuff() : TileMem( 0 ), MultisMem( 0 ), landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 )
+CMapStuff::CMapStuff() : landTile( 0 ), staticTile( 0 ), multiItems( 0 ), multiIndex( 0 ), multiIndexSize( 0 ), multiSize( 0 ), tileDataSize( 0 )
 {
 	LoadMapsDFN();
 }
@@ -320,7 +320,6 @@ void CMapStuff::LoadTileData( const std::string basePath )
 	}
 
 	// first we have 512*32 pieces of land tile
-	TileMem			= LANDDATA_SIZE * sizeof(CLand);
 	landTile		= new CLand[LANDDATA_SIZE];
 	CLand *landPtr	= landTile;
 	for( UI16 i = 0; i < 512; ++i )	
@@ -333,7 +332,6 @@ void CMapStuff::LoadTileData( const std::string basePath )
 
 	// now get the 512*32 static tile pieces,
 	tileDataSize	= (((tileFile.getLength() - (((32*26)+4)*512))/1188)*32);
-	TileMem			+= tileDataSize * sizeof( CTile );
 	staticTile		= new CTile[tileDataSize];
 	CTile *tilePtr	= staticTile;
 	while( !tileFile.eof() )
@@ -374,15 +372,13 @@ void CMapStuff::Load( void )
 	Console.PrintSectionBegin();
 }
 
-
 void CMapStuff::LoadMultis( const std::string basePath )
 {
 	// now main memory multiItems
 	Console << "Caching Multis....  "; 
 
 	// only turn it off for now because we are trying to fill the cache.
-	UString lName		= basePath + "multi.idx";
-
+	UString lName	= basePath + "multi.idx";
 	UOXFile multiIDX( lName.c_str(), "rb" );
 	if( !multiIDX.ready() )
 	{
@@ -400,8 +396,8 @@ void CMapStuff::LoadMultis( const std::string basePath )
 	}
 
 	//! first reads in Multi_st completely
-	size_t multiSize	= multis.getLength() / MultiRecordSize;
-	multiItems			= new Multi_st[multiSize];
+	multiSize		= multis.getLength() / MultiRecordSize;
+	multiItems		= new Multi_st[multiSize];
 	for( size_t i = 0; i < multiSize; ++i )
 	{
 		multis.getUShort( &multiItems[i].tile );
@@ -411,12 +407,9 @@ void CMapStuff::LoadMultis( const std::string basePath )
 		multis.getChar( &multiItems[i].empty );
 		multis.getLong( &multiItems[i].visible );
 	}
-	MultisMem		= multis.getLength();
 
 	multiIndexSize	= multiIDX.getLength() / MultiIndexRecordSize;
 	multiIndex		= new MultiItemsIndex[multiIndexSize];
-	MultisMem		= multiIndexSize * sizeof(MultiItemsIndex);
-
 	// now rejig the multiIDX to point to the cache directly, and calculate the size
 	for( MultiItemsIndex *ptr = multiIndex; ptr != (multiIndex+multiIndexSize); ++ptr )
 	{
@@ -436,25 +429,33 @@ void CMapStuff::LoadMultis( const std::string basePath )
 			}
 		}
 	}
-	// reenable the caching now that its filled
 	Console.PrintDone();
 }
 
+size_t CMapStuff::GetTileMem( void ) const
+{
+	return (LANDDATA_SIZE * sizeof( CLand ) + tileDataSize * sizeof( CTile ));
+}
 
-// this stuff is rather buggy thats why I separted it from uox3.cpp
-// feel free to correct it, but be carefull
-// bugfixing this stuff often has a domino-effect with walking etc.
-// LB 24/7/99
-// oh yah, well that's encouraging.. NOT! at least LB was kind enough to
-// move this out into a separate file. he gets kudos for that!
+size_t CMapStuff::GetMultisMem( void ) const
+{
+	return (multiSize * sizeof( Multi_st ) + multiIndexSize * sizeof( MultiItemsIndex ) );
+}
+
+//o-------------------------------------------------------------o
+//|   Function    :  SI08 TileHeight( UI16 tilenum )
+//|   Date        :  Unknown
+//|   Programmer  :  Unknown
+//o-------------------------------------------------------------o
+//|   Purpose     :  Height of a gien tile (If climbable we return 1/2 its height).
+//o-------------------------------------------------------------o
 SI08 CMapStuff::TileHeight( UI16 tilenum )
 {
-	CTile tile;
-	SeekTile( tilenum, &tile );
+	CTile& tile = SeekTile( tilenum );
 	
 	// For Stairs+Ladders
 	if( tile.Climbable() ) 
-		return (SI08)(tile.Height()/2);	// hey, lets just RETURN half!
+		return static_cast<SI08>(tile.Height()/2);
 	return tile.Height();
 }
 
@@ -471,29 +472,13 @@ SI08 CMapStuff::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 max
 	SI08 top = ILLEGAL_Z;
 
 	MapStaticIterator msi( x, y, worldNumber );
-	while( Static_st *stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
 		if( ( tempTop <= oldz + maxZ ) && ( tempTop > top ) )
 			top = tempTop;
 	}
 	return top;
-}	
-
-
-// i guess this function returns where the tile is a 'blocker' meaning you can't pass through it
-bool CMapStuff::DoesTileBlock( UI16 tilenum )
-{
-	CTile tile;
-	SeekTile( tilenum, &tile );
-	return tile.Blocking();
-}
-
-bool CMapStuff::IsTileSurface( UI16 tilenum )
-{
-	CTile tile;
-	SeekTile( tilenum, &tile );
-	return tile.Standable();
 }
 
 //o--------------------------------------------------------------------------
@@ -512,26 +497,18 @@ void CMapStuff::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI1
 	y2 = multiIndex[multiNum].hy;		// originally hy presumablely bugs?
 }
 
-
-// multinum is also the index into the array!!!  Makes our life MUCH easier, doesn't it?
-// TODO: Make it verseek compliant!!!!!!!!!
-// Currently, there is no hit on either of the multi files, so we're fairly safe
-// But we probably want to not rely on this being always true
-// especially with the extra land patch coming up!
-void CMapStuff::SeekMulti( UI16 multinum, SI32 *length )
+SI32 CMapStuff::SeekMulti( UI16 multinum )
 {
-	if( multinum >= multiIndexSize )
-		*length = -1;
-	else
-		*length = multiIndex[multinum].size;
+	SI32 retVal = -1;
+	if( multinum < multiIndexSize )
+		retVal = multiIndex[multinum].size;
+	return retVal;
 }
 
-
-Multi_st *CMapStuff::SeekIntoMulti( UI16 multinum, SI32 number )
+Multi_st& CMapStuff::SeekIntoMulti( UI16 multinum, SI32 number )
 {
-	return (multiIndex[multinum].items + number);
+	return *(multiIndex[multinum].items + number);
 }
-
 
 //o--------------------------------------------------------------------------
 //|	Function		-	void MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
@@ -560,20 +537,18 @@ void CMapStuff::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 
 // return the height of a multi item at the given x,y. this seems to actually return a height
 SI08 CMapStuff::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 {
-	SI32 length = 0;
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
-	SeekMulti( multiID, &length );
-	Multi_st *multi = NULL;
+	SI32 length = SeekMulti( multiID );
 
 	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)                                                                                                                          
 		length = 0;
 
 	for( SI32 j = 0; j < length; ++j )
 	{
-		multi = SeekIntoMulti( multiID, j );
-		if( multi->visible && ( i->GetX() + multi->x == x) && ( i->GetY() + multi->y == y ) )
+		Multi_st& multi = SeekIntoMulti( multiID, j );
+		if( multi.visible && ( i->GetX() + multi.x == x) && ( i->GetY() + multi.y == y ) )
 		{
-			SI08 tmpTop = static_cast<SI08>(i->GetZ() + multi->z);
+			SI08 tmpTop = static_cast<SI08>(i->GetZ() + multi.z);
 			if( ( tmpTop <= oldz + maxZ ) && ( tmpTop >= oldz - 1 ) )
 				return tmpTop + 1;
 			else if( ( tmpTop >= oldz - maxZ ) && ( tmpTop < oldz - 1 ) )
@@ -616,15 +591,13 @@ UI16 CMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 {
 	if( !i->CanBeObjType( OT_MULTI ) )
 		return 0;
-	SI32 length = 0;
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
-	SeekMulti( multiID, &length );
+	SI32 length = SeekMulti( multiID );
 	if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 	{
 		Console << "CMapStuff::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
-		CLand land;
-		Map->SeekLand( map1.id, &land );
+		CLand& land = Map->SeekLand( map1.id );
 		if( land.LiquidWet() ) // is it water?
 			i->SetID( 0x4001 );
 		else
@@ -632,14 +605,13 @@ UI16 CMapStuff::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		length = 0;
 	}
 
-	Multi_st *multi = NULL;
 	for( SI32 j = 0; j < length; ++j )
 	{
-		multi = SeekIntoMulti( multiID, j );
-		if( ( multi->visible && ( i->GetX() + multi->x == x) && (i->GetY() + multi->y == y)
-			&& ( abs( i->GetZ() + multi->z - oldz ) <= 1 ) ) )
+		Multi_st& multi = SeekIntoMulti( multiID, j );
+		if( ( multi.visible && ( i->GetX() + multi.x == x) && (i->GetY() + multi.y == y)
+			&& ( abs( i->GetZ() + multi.z - oldz ) <= 1 ) ) )
 		{
-			return multi->tile;
+			return multi.tile;
 		}
 		
 	}
@@ -733,33 +705,37 @@ SI08 CMapStuff::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber 
 	return ILLEGAL_Z;
 }
 
-
-bool CMapStuff::SeekTile( UI16 tilenum, CTile *tile )
+bool CMapStuff::IsValidTile( UI16 tileNum )
 {
-	if( tilenum == INVALIDID || tilenum >= tileDataSize )
-	{	// report the invalid access, but keep running
-		Console << "invalid tile access the offending tile num is " << tilenum << myendl;
-		const static CTile emptyTile;
-		*tile = emptyTile;			// arbitrary choice, default constructor
-		return false;
-	}
-	else
-		*tile = staticTile[tilenum];
-	return true;
+	bool retVal = true;
+	if( tileNum == INVALIDID || tileNum >= tileDataSize )
+		retVal = false;
+
+	return retVal;
 }
 
-
-void CMapStuff::SeekLand( UI16 landnum, CLand *land )
+CTile& CMapStuff::SeekTile( UI16 tileNum )
 {
-
-	if( landnum == INVALIDID || landnum >= LANDDATA_SIZE )
-	{	// report the invalid access, but keep running
-		Console << "invalid Land tile access the offending land num is " << landnum << myendl;
-		const static CLand emptyTile;
-		*land = emptyTile;			// arbitray empty choice
+	if( !IsValidTile( tileNum ) )
+	{
+		Console.Warning( 2, "Invalid tile access, the offending tile number is %u", tileNum );
+		static CTile emptyTile;
+		return emptyTile;
 	}
 	else
-		*land = landTile[landnum];
+		return staticTile[tileNum];
+}
+
+CLand& CMapStuff::SeekLand( UI16 landNum )
+{
+	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
+	{
+		Console.Warning( 2, "Invalid land access, the offending land number is %u", landNum );
+		static CLand emptyTile;
+		return emptyTile;
+	}
+	else
+		return landTile[landNum];
 }
 
 
@@ -786,17 +762,15 @@ bool CMapStuff::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 ** Usage:
 **		MapStaticIterator msi( x, y, worldNumber );
 **
-**      Static_st *stat = NULL;
-**      CTile tile;
-**      while( stat = msi.Next() )
+**      for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 **      {
-**          msi.GetTile( &tile );
+**          CTile& tile = Map->SeekTile( stat->itemid );
 **  		    ... your code here...
 **	  	}
 */
 MapStaticIterator::MapStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
 baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), 
-index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
+index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
 	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
 	{
@@ -807,7 +781,7 @@ index( 0 ), length( 0 ), tileid( 0 ), exactCoords( exact ), worldNumber( world )
 	MapData_st& mMap = Map->GetMapData( world );
 
 	const SI16 TileHeight = (mMap.yBlock/8);
-	const SI32 indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
+	const size_t indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
 
 	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos/12 );
 	if( diffIter != mMap.staticsDiffIndex.end() )
@@ -855,7 +829,6 @@ Static_st *MapStaticIterator::First( void )
 
 Static_st *MapStaticIterator::Next( void )
 {
-	tileid = 0;
 	if( index >= length )
 		return NULL;
 
@@ -871,11 +844,11 @@ Static_st *MapStaticIterator::Next( void )
 		return NULL;
 	
 	// this was sizeof(OldStaRec) which SHOULD be 7, but on some systems which don't know how to pack, 
-	const SI32 pos2 = pos + (StaticRecordSize * index);	// skip over all the ones we've read so far
+	const size_t pos2 = static_cast<size_t>(pos + (StaticRecordSize * index));	// skip over all the ones we've read so far
 	mFile->seek( pos2, SEEK_SET );
 	do
 	{
-		if( mFile->eof( ) )
+		if( mFile->eof() )
 			return NULL;
 
 		mFile->getUShort( &staticArray.itemid );
@@ -894,7 +867,6 @@ Static_st *MapStaticIterator::Next( void )
 			Console << "Found static at index: " << index << ", Length: " << length << ", indepos: " << pos2 << myendl;
 			Console << "item is " << (int)staticArray.itemid << ", x" << (int)staticArray.xoff << ", y: " << (int) staticArray.yoff << myendl;
 #endif
-			tileid = staticArray.itemid;
 			return &staticArray;
 		}
 	} while( index < length );
@@ -902,26 +874,16 @@ Static_st *MapStaticIterator::Next( void )
 	return NULL;
 }
 
-// since 99% of the time we want the tile at the requested location, here's a
-// helper function.  pass in the pointer to a struct you want filled.
-void MapStaticIterator::GetTile( CTile *tile ) const
-{
-	assert( tile );
-	Map->SeekTile( tileid, tile );
-}
-
-
 map_st CMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 {
-	const SI16 x1 = x / 8, y1 = y / 8;
-	const UI08 x2 = (UI08)(x % 8), y2 = (UI08)(y % 8);
 	map_st map = {0, 0};
 	if( worldNumber >= MapList.size() )
 		return map;
 
 	MapData_st& mMap = MapList[worldNumber];
 	// index to the world
-	const size_t blockID = x / 8 * (mMap.yBlock/8) + y / 8;
+	const SI16 x1 = static_cast<SI16>(x / 8), y1 = static_cast<SI16>(y / 8);
+	const size_t blockID = x1 * (mMap.yBlock/8) + y1;
 	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( blockID );
 	if( diffIter != mMap.mapDiffList.end() )
 	{
@@ -931,7 +893,8 @@ map_st CMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	}
 	else
 	{
-		const SI32 pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
+		const UI08 x2 = static_cast<UI08>(x % 8), y2 = static_cast<UI08>(y % 8);
+		const size_t pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
 		mMap.mapObj->seek( pos, SEEK_SET );
 		mMap.mapObj->getUShort( &map.id );
 		mMap.mapObj->getChar( &map.z );
@@ -939,27 +902,15 @@ map_st CMapStuff::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	return map;
 }
 
-
-// these function don't look like they are actually used by anything
-// anymore, at least we know which bit means wet
-bool CMapStuff::IsTileWet( UI16 tilenum )   // lord binary
-{
-	CTile tile;
-	SeekTile( tilenum, &tile );
-	return tile.LiquidWet();
-}
-
-
 // Blocking statics at/above given coordinates?
 bool CMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	MapStaticIterator msi( x, y, worldNumber );
-	
-	Static_st *stat = NULL;
-	while( stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev >= oldz && stat->zoff <= oldz && ( DoesTileBlock( stat->itemid ) || ( checkWater && IsTileWet( stat->itemid ) ) ) )
+		CTile& tile = SeekTile( stat->itemid );;
+		if( elev >= oldz && stat->zoff <= oldz && ( tile.Blocking() || ( checkWater && tile.LiquidWet() ) ) )
 			return true;
 	}
 	return false;
@@ -969,12 +920,10 @@ bool CMapStuff::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bo
 bool CMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	MapStaticIterator msi( x, y, worldNumber );
-	
-	Static_st *stat = NULL;
-	while( stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev == z && !IsTileSurface( stat->itemid ) )
+		if( elev == z && !SeekTile( stat->itemid ).Standable() )
 			return false;
 	}
 	return true;
@@ -984,12 +933,10 @@ bool CMapStuff::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 bool CMapStuff::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	MapStaticIterator msi( x, y, worldNumber );
-	
-	Static_st *stat = NULL;
-	while( stat = msi.Next() )
+	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev == z && !IsTileWet( stat->itemid ) )
+		if( elev == z && !SeekTile( stat->itemid ).LiquidWet() )
 			return false;
 	}
 	return true;
@@ -1051,37 +998,32 @@ bool CMapStuff::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 
     // get the tile id of any dynamic tiles at this spot
     const UI16 dt = DynTile( x, y, elev, worldNumber );
-	
-    // if there is a dynamic tile at this spot, check to see if its a blocker
-    // if it does block, might as well short-circuit and return right away
-    if( dt != INVALIDID && ( DoesTileBlock( dt ) || ( checkWater && IsTileWet( dt ) ) ) )
-		return false;
+	if( IsValidTile( dt ) )
+	{
+		CTile &tile = SeekTile( dt );
+		if( tile.Blocking() || (checkWater && tile.LiquidWet()) /*|| !tile.Standable()*/ )
+			return false;
+	}
 
-    // if there is a dynamic tile at this spot, check to see if its a surface
-    // if it is not a surface, might as well short-circuit and return right away
-    //if( dt != INVALIDID && !IsTileSurface( dt ) )
-	//	return false;
-
-    // if there's a static block here in our way, return false
-    if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
+	// if there's a static block here in our way, return false
+	if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
 		return false;
 	
 	// if the static isn't a surface return false
 	if( !IsStaticSurface( x, y, elev, worldNumber ) )
 		return false;
-	
+
 	if( checkWater )
 	{
-		CLand land;
 		const map_st map = SeekMap( x, y, worldNumber );
 		if( map.z == elev )
 		{
-			SeekLand( map.id, &land );
+			CLand& land = SeekLand( map.id );
 			if( land.LiquidWet() )
 				return false;
 		}
 	}
-    return true;
+	return true;
 }
 
 // can the sea monster move here from an adjacent cell at elevation 'oldz'
@@ -1110,10 +1052,7 @@ bool CMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumb
 
     // get the tile id of any dynamic tiles at this spot
     const UI16 dt = DynTile( x, y, elev, worldNumber );
-	
-    // if there is a dynamic tile at this spot, check to see if its a blocker
-    // if it does block, might as well short-circuit and return right away
-    if( dt != INVALIDID && !IsTileWet( dt ) )
+	if( IsValidTile( dt ) && !SeekTile( dt ).LiquidWet() )
 		return false;
 
     // if there's a static block here in our way, return false
@@ -1123,11 +1062,10 @@ bool CMapStuff::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumb
 	if( !IsStaticWet( x, y, elev, worldNumber ) )
 		return false;
 
-	CLand land;
 	const map_st map = SeekMap( x, y, worldNumber );
 	if( map.z == elev )
 	{
-		SeekLand( map.id, &land );
+		CLand& land = SeekLand( map.id );
 		if( !land.LiquidWet() )
 			return false;
 	}

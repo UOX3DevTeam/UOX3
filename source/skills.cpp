@@ -213,10 +213,9 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					CTile tile;
 					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
 					{
-						msi.GetTile( &tile );
+						CTile& tile = Map->SeekTile( stat->itemid );
 						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
 							return true;
 					}
@@ -224,9 +223,8 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				else		// or it could be a map only
 				{  
 					// manually calculating the ID's if a maptype
-					CLand land;
 					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					Map->SeekLand( map1.id, &land );
+					CLand& land = Map->SeekLand( map1.id );
 					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
 						return true; 
 				}
@@ -831,15 +829,13 @@ void cSkills::FishTarget( CSocket *s )
 	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
 	bool validLocation = false;
 	if( ValidateObject( targetItem ) )
-		validLocation = Map->IsTileWet( targetItem->GetID() );
+		validLocation = Map->SeekTile( targetItem->GetID() ).LiquidWet();
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-		CTile tile;
-		Static_st *stat = NULL;
-		while( ( ( stat = msi.Next() ) != NULL ) && !validLocation )
+		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 		{
-			msi.GetTile(&tile);
+			CTile& tile = Map->SeekTile( stat->itemid );
 			if( targetZ == stat->zoff && tile.LiquidWet() )	// right place, and wet
 				validLocation = true;
 		}
@@ -847,9 +843,8 @@ void cSkills::FishTarget( CSocket *s )
 	else		// or it could be a map only
 	{  
 		// manually calculating the ID's if a maptype
-		CLand land;
 		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-		Map->SeekLand( map1.id, &land );
+		CLand& land = Map->SeekLand( map1.id );
 		if( land.LiquidWet() )
 			validLocation = true; 
 	}
