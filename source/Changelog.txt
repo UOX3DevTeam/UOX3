@@ -1,3 +1,6 @@
+3/10/2006 - grimson
+	Added two sysmessage when feeding a pet.
+
 3/09/2006 - giwo (0.98-3.5b [3.6 BETA])
 	Fixed a crash when using ClilocMessage().
 	Fixed an issue when climbing stairs.

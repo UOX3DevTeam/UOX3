@@ -1743,6 +1743,8 @@
 1777=You have been struck by a lightning!
 1778=You are currently under the effect of peace and can not attack!
 1779=You are no longer affected by peace!
+1780=That pet is already stuffed, it can't eat more.
+1781=That pet accepts your food and happily eats it.
 }
 
 EOF
