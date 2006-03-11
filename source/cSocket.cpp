@@ -1663,7 +1663,7 @@ void CSocket::statwindow( CChar *i )
 	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwnerObj() == mChar ) );
 	toSend.Gold( GetItemAmount( i, 0x0EED ) );
 	toSend.AC( Combat->calcDef( i, 0, false ) );
-	toSend.Weight( (UI16)(i->GetWeight() / 100) );
+	toSend.Weight( static_cast<UI16>(i->GetWeight() / 100) );
 	Send( &toSend );
 
 	CPExtendedStats exStats( (*i) );

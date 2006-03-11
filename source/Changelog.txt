@@ -1,3 +1,12 @@
+3/11/2006 - grimson
+	Don't save the weight in cChar.cpp, it's already saved in cBaseobject.cpp.
+	Fixed a bug where items without a layer didn't add to the chars weight.
+	Fixed a bug in CWeight::calcCharWeight() that added the weight of the backpack
+	twice.
+	Changed CMapHandler::Load() so that PostLoadProcessing of chars is done after
+	PostLoadProcessing of items, or else the forced recalculation of the chars
+	weight doesn't work.
+
 3/10/2006 - giwo (0.98-3.5c [3.6 BETA])
 	Modified CMapStuff SeekLand() and SeekTile() to return a reference rather than force one to pass an object to set.
 	Modified CMapStuff SeekMulti() to return the length rather than force one to pass a value to set.

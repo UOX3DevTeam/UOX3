@@ -74,7 +74,7 @@ namespace UOX
 
 CWeight *Weight = NULL;
 
-const SI32 MAX_PACKWEIGHT = 40000;	// Lets have maximum weight of packs be 400 stones for now
+const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 //o--------------------------------------------------------------------------o
 //|	Function		-	SI32 CWeight::calcWeight( CItem *pack )
 //|	Date			-	2/23/2003
@@ -88,6 +88,7 @@ const SI32 MAX_PACKWEIGHT = 40000;	// Lets have maximum weight of packs be 400 s
 SI32 CWeight::calcWeight( CItem *pack )
 {
 	SI32 totalWeight = 0;
+	SI32 contWeight = 0;
 
 	CTile tile;
 	CDataList< CItem * > *pCont = pack->GetContainsList();
@@ -99,8 +100,10 @@ SI32 CWeight::calcWeight( CItem *pack )
 		if( i->IsContType() )	// Item is a container
 		{
 			CTile& tile = Map->SeekTile( i->GetID() );
-			totalWeight += (tile.Weight() * 100);	// Add the weight of the container
-			totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
+			contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
+			i->SetWeight( contWeight );		// Also update the weight property of the container
+			totalWeight += contWeight;
 			if( totalWeight >= MAX_WEIGHT )
 				return MAX_WEIGHT;
 		}
@@ -126,12 +129,13 @@ SI32 CWeight::calcWeight( CItem *pack )
 SI32 CWeight::calcCharWeight( CChar *mChar )
 {
 	SI32 totalWeight = 0;
-
+	SI32 contWeight = 0;
+	
 	for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
 	{
 		if( !ValidateObject( i ) )
 			continue;
-
+		
 		switch( i->GetLayer() )
 		{
 			case IL_NONE:
@@ -143,9 +147,12 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 			case IL_PACKITEM:	// backpack
 			{
 				CTile& tile = Map->SeekTile( i->GetID() );
-				totalWeight += (tile.Weight() * 100);	// Add the weight of the container
-				totalWeight += calcWeight( i );	// Find and add the weight of the items in the container
+				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
+				i->SetWeight( contWeight );		// Also update the weight property of the container
+				totalWeight += contWeight;
 			}
+				break;
 			default:
 				totalWeight += i->GetWeight();	// Normal item, just add its weight
 				break;
@@ -171,14 +178,14 @@ bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
 		CTile& tile = Map->SeekTile( item->GetID() );
-		itemWeight = (tile.Weight() * 100);
+		itemWeight = static_cast<SI32>( tile.Weight() * 100);
 	}
-
+	
 	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
 		totalWeight += (item->GetAmount() * itemWeight);
 	else	// Else just the items weight
 		totalWeight += itemWeight;
-
+	
 	if( totalWeight > MAX_WEIGHT )	// Don't let them go over the weight limit
 		return false;
 	return true;
@@ -199,7 +206,7 @@ bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
 		CTile& tile = Map->SeekTile( item->GetID() );
-		itemWeight = (tile.Weight() * 100);
+		itemWeight = static_cast<SI32>( tile.Weight() * 100 );
 	}
 
 	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
@@ -242,7 +249,6 @@ void CWeight::addItemWeight( CChar *mChar, CItem *item )
 
 	switch( item->GetLayer() )
 	{
-		case IL_NONE:
 		case IL_HAIR:		// hair
 		case IL_FACIALHAIR:	// beard
 		case IL_MOUNT:		// steed

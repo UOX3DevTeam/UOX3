@@ -823,8 +823,8 @@ void CMapHandler::Load( void )
 
 	UI32 b		= 0;
 	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, NULL, &PostLoadFunctor );
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &PostLoadFunctor );
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &PostLoadFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &PostLoadFunctor );
 	houseDestination.close();
 
 	UI32 e_t	= getclock();

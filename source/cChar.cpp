@@ -2154,7 +2154,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
-	dumping << "Weight=" << GetWeight() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
@@ -3497,7 +3496,7 @@ void CChar::PostLoadProcessing( void )
 		SetPackItem( calcItemObjFromSer( tempSerial ) );
 	else
 		SetPackItem( NULL );
-	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
+	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcCharWeight( this ) );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		Skills->updateSkillLevel( this, i );
