@@ -40,7 +40,6 @@ struct MapData_st
 	std::string		staticsDiffIndexFile;
 	UI16			xBlock;
 	UI16			yBlock;
-	SI32			fileSize;
 	UOXFile	*		mapObj;
 	UOXFile *		staticsObj;
 	UOXFile *		staidxObj;
@@ -51,7 +50,7 @@ struct MapData_st
 	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
 
 	MapData_st() : mapFile( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ), 
-		staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), fileSize( -1 ), mapObj( NULL ), staticsObj( NULL ), 
+		staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ), 
 		staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
 	{
 		mapDiffList.clear();
@@ -61,36 +60,82 @@ struct MapData_st
 };
 
 // full comments on this class are available in mapstuff.cpp
-class MapStaticIterator
+class CStaticIterator
 {
-public:
-	MapStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
-	~MapStaticIterator()
-	{
-	};
-
-	Static_st *First( void );
-	Static_st *Next( void );
-	SI32 GetPos() const		{ return pos; }
-	UI32 GetLength() const	{ return length; }
 private:
-	Static_st staticArray;
-	SI16 baseX, baseY;
-	SI32 pos;
-	UI08 remainX, remainY;
-	UI32 index, length;
-	bool exactCoords;
-	UI08 worldNumber;
-	bool useDiffs;
+	Static_st	staticArray;
+	SI16		baseX, baseY;
+	SI32		pos;
+	UI08		remainX, remainY;
+	UI32		index, length;
+	bool		exactCoords;
+	UI08		worldNumber;
+	bool		useDiffs;
+public:
+				CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
+				~CStaticIterator()
+				{
+				};
+
+	Static_st *	First( void );
+	Static_st *	Next( void );
+	SI32		GetPos() const		{ return pos; }
+	UI32		GetLength() const	{ return length; }
 };
 
 
 
-class CMapStuff
+class CMulHandler
 {
+private:
+	struct MultiItemsIndex_st
+	{
+		Multi_st *	items;		// point into where the items begin.
+		SI32		size;				// # of items.
+		SI16		lx, ly, hx, hy;
+		SI08		lz, hz;
+					MultiItemsIndex_st() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SCHAR_MAX ), 
+						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SCHAR_MIN )
+					{}
+		void		Include( SI16 x, SI16 y, SI08 z );	
+	};
+
+	typedef std::vector< MapData_st >					MAPLIST;
+	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
+
+//Variables
+	// all the world's map and static Items.
+	// multiItem, tileSet, and verdata(patches really)
+	CLand    *			landTile;			// the 512*32 pieces of land tile
+	CTile    *			staticTile;			// the 512*32 pieces of static tile set
+	Multi_st *			multiItems;			// the multis cache(shadow) from files
+	MultiItemsIndex_st *multiIndex;			// here's our index to multiItems
+	size_t				multiIndexSize;		// the length of index
+	size_t				multiSize;
+	size_t				tileDataSize;
+
+	MAPLIST				MapList;
+
+// Functions
+	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
+	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
+
+	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
+	bool			IsStaticSurface( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			IsStaticWet( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+
+	// caching functions
+	void			LoadMapsDFN( void );
+	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
+	void			LoadMultis( const std::string basePath );
+	void			LoadDFNOverrides( void );
+	void			LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps );
+	void			LoadTileData( const std::string basePath );
+
 public:
-					CMapStuff();
-					~CMapStuff();
+					CMulHandler();
+					~CMulHandler();
 
 	void			Load( void );
 
@@ -120,59 +165,12 @@ public:
 
 	MapData_st&		GetMapData( UI08 mapNum );
 	UI08			MapCount( void ) const;
-	void			LoadMapsDFN( void );
 
 	size_t			GetTileMem( void ) const;
 	size_t			GetMultisMem( void ) const;
-
-// Functions
-private:
-	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
-	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
-
-	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
-	bool			IsStaticSurface( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			IsStaticWet( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-
-	// caching functions
-	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
-	void			LoadMultis( const std::string basePath );
-	void			LoadDFNOverrides( void );
-	void			LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps );
-	void			LoadTileData( const std::string basePath );
-
-//Variables
-private:
-	typedef std::vector< MapData_st >					MAPLIST;
-	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
-
-	struct MultiItemsIndex
-	{
-		Multi_st *	items;		// point into where the items begin.
-		SI32		size;				// # of items.
-		SI16		lx, ly, hx, hy;
-		SI08		lz, hz;
-					MultiItemsIndex() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SCHAR_MAX ), 
-						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SCHAR_MIN )
-					{}
-		void		Include( SI16 x, SI16 y, SI08 z );	
-	};
-	friend class MapStaticIterator;
-	// all the world's map and static Items.
-	// multiItem, tileSet, and verdata(patches really)
-	CLand    *			landTile;			// the 512*32 pieces of land tile
-	CTile    *			staticTile;			// the 512*32 pieces of static tile set
-	Multi_st *			multiItems;			// the multis cache(shadow) from files
-	MultiItemsIndex *	multiIndex;			// here's our index to multiItems
-	size_t				multiIndexSize;		// the length of index
-	size_t				multiSize;
-	size_t				tileDataSize;
-
-	MAPLIST				MapList;
 };
 
-extern CMapStuff *Map;
+extern CMulHandler *Map;
 
 }
 

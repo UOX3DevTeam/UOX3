@@ -1119,7 +1119,7 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		for( int j = yLoc - radius; j <= (yLoc + radius); ++j )
 		{
-			MapStaticIterator msi( xLoc, yLoc, wrldNumber );
+			CStaticIterator msi( xLoc, yLoc, wrldNumber );
 			for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
 			{
 				if( mRec != NULL && mRec->itemid == tileID )
@@ -1155,8 +1155,7 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 	bool tileFound	= false;
 
-	MapStaticIterator msi( xLoc, yLoc, wrldNumber );
-
+	CStaticIterator msi( xLoc, yLoc, wrldNumber );
 	for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
 	{
 		if( mRec != NULL && (!tileMatch || (tileMatch && mRec->itemid == tileID) ) )
@@ -1545,7 +1544,7 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		SI08 targetZ		= mySock->GetByte( 0x10 );
 		if( targetID != 0 )	// we might have a static rock or mountain
 		{
-			MapStaticIterator msi( targetX, targetY, worldNumber );
+			CStaticIterator msi( targetX, targetY, worldNumber );
 			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 			{
 				CTile& tile = Map->SeekTile( stat->itemid );

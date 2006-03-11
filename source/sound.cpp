@@ -384,7 +384,7 @@ void cEffects::playTileSound( CSocket *mSock )
 	
 	if( mChar->GetStep() == 1 || mChar->GetStep() == 0 )	// if we play a sound
 	{
-		MapStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+		CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
 		Static_st *stat = msi.Next();
 		if( stat )
 		{

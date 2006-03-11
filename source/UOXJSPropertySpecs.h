@@ -211,7 +211,6 @@ static JSPropertySpec CCharacterProps[] =
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM },
 	{ "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM },
 	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM },
-	{ "tempWeight",		CCP_TEMPWEIGHT,		JSPROP_ENUMANDPERM },
 	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
 	{ "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO  },
 	{ "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM },

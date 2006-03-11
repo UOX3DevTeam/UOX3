@@ -498,7 +498,7 @@ Look at uox3.h to see options. Works like npc magic.
 	std::vector< UI16 > itemids;
 	for( i = 0; i < collisioncount; ++i )
 	{
-		MapStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
+		CStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
 		Static_st *stat = msi.First();
 
 		// Texture mapping

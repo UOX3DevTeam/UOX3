@@ -80,33 +80,32 @@ const UI32 BIT_PERMREFLECTED	=	0x4000;
 const UI32 BIT_NONEEDREAGS		=	0x8000;
 
 
-const UI32 BIT_UNICODE			=	0x02;
-const UI32 BIT_NPC				=	0x04;
-const UI32 BIT_SHOP				=	0x08;
-const UI32 BIT_DEAD				=	0x10;
-const UI32 BIT_ATWAR			=	0x20;
-const UI32 BIT_ATTACKFIRST		=	0x40;
-const UI32 BIT_ONHORSE			=	0x80;
-const UI32 BIT_TOWNTITLE		=	0x100;
-const UI32 BIT_REACTIVEARMOUR	=	0x200;
-const UI32 BIT_TRAIN			=	0x400;
-const UI32 BIT_GUILDTOGGLE		=	0x800;
-const UI32 BIT_TAMED			=	0x1000;
-const UI32 BIT_GUARDED			=	0x2000;
-const UI32 BIT_RUN				=	0x4000;
-const UI32 BIT_POLYMORPHED		=	0x8000;
-const UI32 BIT_INCOGNITO		=	0x10000;
-const UI32 BIT_USINGPOTION		=	0x20000;
-const UI32 BIT_MAYLEVITATE		=	0x40000;
-const UI32 BIT_WILLHUNGER		=	0x80000;
-const UI32 BIT_MEDITATING		=	0x100000;
-const UI32 BIT_CASTING			=	0x200000;
-const UI32 BIT_JSCASTING		=	0x400000;
-
-const UI32 BIT_MAXHPFIXED		=	0x01;
-const UI32 BIT_MAXMANAFIXED		=	0x02;
-const UI32 BIT_MAXSTAMFIXED		=	0x04;
-const UI32 BIT_CANATTACK		=	0x08;
+const UI32 BIT_UNICODE			=	0x00000002;
+const UI32 BIT_NPC				=	0x00000004;
+const UI32 BIT_SHOP				=	0x00000008;
+const UI32 BIT_DEAD				=	0x00000010;
+const UI32 BIT_ATWAR			=	0x00000020;
+const UI32 BIT_ATTACKFIRST		=	0x00000040;
+const UI32 BIT_ONHORSE			=	0x00000080;
+const UI32 BIT_TOWNTITLE		=	0x00000100;
+const UI32 BIT_REACTIVEARMOUR	=	0x00000200;
+const UI32 BIT_TRAIN			=	0x00000400;
+const UI32 BIT_GUILDTOGGLE		=	0x00000800;
+const UI32 BIT_TAMED			=	0x00001000;
+const UI32 BIT_GUARDED			=	0x00002000;
+const UI32 BIT_RUN				=	0x00004000;
+const UI32 BIT_POLYMORPHED		=	0x00008000;
+const UI32 BIT_INCOGNITO		=	0x00010000;
+const UI32 BIT_USINGPOTION		=	0x00020000;
+const UI32 BIT_MAYLEVITATE		=	0x00040000;
+const UI32 BIT_WILLHUNGER		=	0x00080000;
+const UI32 BIT_MEDITATING		=	0x00100000;
+const UI32 BIT_CASTING			=	0x00200000;
+const UI32 BIT_JSCASTING		=	0x00400000;
+const UI32 BIT_MAXHPFIXED		=	0x00800000;
+const UI32 BIT_MAXMANAFIXED		=	0x01000000;
+const UI32 BIT_MAXSTAMFIXED		=	0x02000000;
+const UI32 BIT_CANATTACK		=	0x04000000;
 
 const UI32 BIT_MOUNTED			=	0x01;
 const UI32 BIT_STABLED			=	0x02;
@@ -177,7 +176,6 @@ petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), pe
 
 const SERIAL		DEFCHAR_TOWNVOTE 			= INVALIDSERIAL;
 const UI32			DEFCHAR_BOOLS 				= 0;
-const UI16			DEFCHAR_BOOLS2 				= 0;
 const SI08			DEFCHAR_DISPZ 				= 0;
 const SI08			DEFCHAR_FONTTYPE 			= 3;
 const RACEID		DEFCHAR_OLDRACE 			= 0;
@@ -210,14 +208,13 @@ const UI16			DEFCHAR_PRIV				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
-const SI32			DEFCHAR_TEMPWEIGHT 			= 0;
 const UI16			DEFCHAR_FIRERESIST 			= 0;
 const UI16			DEFCHAR_COLDRESIST 			= 0;
 const UI16			DEFCHAR_ENERGYRESIST 		= 0;
 const UI16			DEFCHAR_POISONRESIST		= 0;
 
 CChar::CChar() : CBaseObject(),
-townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), bools2( DEFCHAR_BOOLS2 ), tempWeight( DEFCHAR_TEMPWEIGHT), 
+townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ), 
@@ -300,22 +297,6 @@ bool CChar::IsValidNPC( void ) const
 bool CChar::IsValidPlayer( void ) const
 {
 	return ( mPlayer != NULL );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI32 TempWeight()
-//|   Date        -  11. Mar, 20006
-//|   Programmer  -  Grimson
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Temporary weight modificator
-//o---------------------------------------------------------------------------o
-SI32 CChar::GetTempWeight( void ) const
-{
-	return tempWeight;
-}
-void CChar::SetTempWeight( SI32 newValue )
-{
-	tempWeight = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -725,7 +706,7 @@ bool CChar::IsDead( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::GetCanAttack( void ) const
 {
-	return MFLAGGET( bools2, BIT_CANATTACK );
+	return MFLAGGET( bools, BIT_CANATTACK );
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsAtWar( void ) const
@@ -949,7 +930,7 @@ void CChar::SetDead( bool newValue )
 //o---------------------------------------------------------------------------o
 void CChar::SetCanAttack( bool newValue )
 {
-	MFLAGSET( bools2, newValue, BIT_CANATTACK );
+	MFLAGSET( bools, newValue, BIT_CANATTACK );
 	SetBrkPeaceChance( 0 );
 }
 
@@ -1721,7 +1702,6 @@ void CChar::CopyData( CChar *target )
 	target->SetStrength2( st2 );
 	target->SetDexterity2( dx2 );
 	target->SetIntelligence2( in2 );
-	target->SetTempWeight( tempWeight);
 	
 	target->SetHiDamage( hidamage );
 	target->SetLoDamage( lodamage );
@@ -2249,7 +2229,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
-	dumping << "TempWeight=" << GetTempWeight() << std::endl;
 	dumping << "FireResist=" << (SI16)GetDamageResist( DAMAGE_FIRE ) << std::endl;
 	dumping << "ColdResist=" << (SI16)GetDamageResist( DAMAGE_COLD ) << std::endl;
 	dumping << "EnergyResist=" << (SI16)GetDamageResist( DAMAGE_ENERGY ) << std::endl;
@@ -3463,11 +3442,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetTownTitle( data.toShort() == 1 );
 					rvalue = true;
 				}
-				else if( UTag == "TEMPWEIGHT" )
-				{
-					SetTempWeight( data.toLong() );
-					rvalue = true;
-				}
 				break;
 			case 'W':
 				if( UTag == "WANDERAREA" )
@@ -4316,17 +4290,14 @@ bool CChar::GetMounted( void ) const
 {
 	bool rVal = false;
 	if( IsValidNPC() )
-	{
 		rVal = MFLAGGET( mNPC->boolFlags, BIT_MOUNTED );
-	}
+
 	return rVal;
 }
 void CChar::SetMounted( bool newValue )
 {
 	if( IsValidNPC() )
-	{
 		MFLAGSET( mNPC->boolFlags, newValue, BIT_MOUNTED )
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -4340,17 +4311,13 @@ bool CChar::GetStabled( void ) const
 {
 	bool rVal = false;
 	if( IsValidNPC() )
-	{
 		rVal = MFLAGGET( mNPC->boolFlags, BIT_STABLED );
-	}
 	return rVal;
 }
 void CChar::SetStabled( bool newValue )
 {
 	if( IsValidNPC() )
-	{
 		MFLAGSET( mNPC->boolFlags, newValue, BIT_STABLED )
-	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -4362,11 +4329,11 @@ void CChar::SetStabled( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CChar::GetMaxHPFixed( void ) const
 {
-	return MFLAGGET( bools2, BIT_MAXHPFIXED );
+	return MFLAGGET( bools, BIT_MAXHPFIXED );
 }
 void CChar::SetMaxHPFixed( bool newValue )
 {
-	MFLAGSET( bools2, newValue, BIT_MAXHPFIXED )
+	MFLAGSET( bools, newValue, BIT_MAXHPFIXED )
 }
 
 //o---------------------------------------------------------------------------o
@@ -4378,11 +4345,11 @@ void CChar::SetMaxHPFixed( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CChar::GetMaxManaFixed( void ) const
 {
-	return MFLAGGET( bools2, BIT_MAXMANAFIXED );
+	return MFLAGGET( bools, BIT_MAXMANAFIXED );
 }
 void CChar::SetMaxManaFixed( bool newValue )
 {
-	MFLAGSET( bools2, newValue, BIT_MAXMANAFIXED )
+	MFLAGSET( bools, newValue, BIT_MAXMANAFIXED )
 }
 
 //o---------------------------------------------------------------------------o
@@ -4394,11 +4361,11 @@ void CChar::SetMaxManaFixed( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CChar::GetMaxStamFixed( void ) const
 {
-	return MFLAGGET( bools2, BIT_MAXSTAMFIXED );
+	return MFLAGGET( bools, BIT_MAXSTAMFIXED );
 }
 void CChar::SetMaxStamFixed( bool newValue )
 {
-	MFLAGSET( bools2, newValue, BIT_MAXSTAMFIXED )
+	MFLAGSET( bools, newValue, BIT_MAXSTAMFIXED )
 }
 
 //o---------------------------------------------------------------------------o

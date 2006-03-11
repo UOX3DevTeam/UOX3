@@ -90,7 +90,6 @@ SI32 CWeight::calcWeight( CItem *pack )
 	SI32 totalWeight = 0;
 	SI32 contWeight = 0;
 
-	CTile tile;
 	CDataList< CItem * > *pCont = pack->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
@@ -138,24 +137,24 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 		
 		switch( i->GetLayer() )
 		{
-			case IL_NONE:
-			case IL_HAIR:		// hair
-			case IL_FACIALHAIR:	// beard
-			case IL_MOUNT:		// steed
-			case IL_BANKBOX:	// bank box
-				break;	// no weight for any of these
-			case IL_PACKITEM:	// backpack
-			{
-				CTile& tile = Map->SeekTile( i->GetID() );
-				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
-				i->SetWeight( contWeight );		// Also update the weight property of the container
-				totalWeight += contWeight;
-			}
-				break;
-			default:
-				totalWeight += i->GetWeight();	// Normal item, just add its weight
-				break;
+		case IL_NONE:		// Trade Window
+		case IL_HAIR:		// hair
+		case IL_FACIALHAIR:	// beard
+		case IL_MOUNT:		// steed
+		case IL_BANKBOX:	// bank box
+			break;	// no weight for any of these
+		case IL_PACKITEM:	// backpack
+		{
+			CTile& tile = Map->SeekTile( i->GetID() );
+			contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
+			i->SetWeight( contWeight );		// Also update the weight property of the container
+			totalWeight += contWeight;
+			break;
+		}
+		default:
+			totalWeight += i->GetWeight();	// Normal item, just add its weight
+			break;
 		}
 		if( totalWeight >= MAX_WEIGHT )
 			return MAX_WEIGHT;
@@ -249,17 +248,18 @@ void CWeight::addItemWeight( CChar *mChar, CItem *item )
 
 	switch( item->GetLayer() )
 	{
-		case IL_HAIR:		// hair
-		case IL_FACIALHAIR:	// beard
-		case IL_MOUNT:		// steed
-		case IL_BANKBOX:	// bank box
-			break;	// no weight for any of these
-		default:
-			if( calcAddWeight( item, totalWeight ) )
-				mChar->SetWeight( totalWeight );
-			else
-				mChar->SetWeight( MAX_WEIGHT );
-			break;
+	case IL_NONE:		// Trade Window
+	case IL_HAIR:		// hair
+	case IL_FACIALHAIR:	// beard
+	case IL_MOUNT:		// steed
+	case IL_BANKBOX:	// bank box
+		break;	// no weight for any of these
+	default:
+		if( calcAddWeight( item, totalWeight ) )
+			mChar->SetWeight( totalWeight );
+		else
+			mChar->SetWeight( MAX_WEIGHT );
+		break;
 	}
 }
 
@@ -282,32 +282,19 @@ void CWeight::addItemWeight( CItem *pack, CItem *item )
 		pack->SetWeight( MAX_WEIGHT );
 
 	CBaseObject *pCont = pack->GetCont();
-	if( pCont != NULL )
+	if( ValidateObject( pCont ) )
 	{
-		if( pCont->GetObjType() == OT_ITEM )
+		if( pCont->CanBeObjType( OT_ITEM ) )
 		{
-			CItem *pPack = (CItem *)pCont;
-			if( pPack != NULL )
+			CItem *pPack = static_cast<CItem *>(pCont);
+			if( ValidateObject( pPack ) )
 				addItemWeight( pPack, item );
 		}
 		else
 		{
-			CChar *packOwner = (CChar *)pCont;
-			if( packOwner != NULL )
-			{
-				switch( pack->GetLayer() )
-				{
-					case IL_NONE:
-					case IL_HAIR:		// hair
-					case IL_FACIALHAIR:	// beard
-					case IL_MOUNT:		// steed
-					case IL_BANKBOX:	// bank box
-						break;	// no weight for any of these
-					default:
-						addItemWeight( packOwner, item );	// Normal item, just add its weight
-						break;
-				}
-			}
+			CChar *packOwner = static_cast<CChar *>(pCont);
+			if( ValidateObject( packOwner ) )
+				addItemWeight( packOwner, item );
 		}
 	}
 }
@@ -340,10 +327,21 @@ void CWeight::subtractItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
-	if( calcSubtractWeight( item, totalWeight ) )
-		mChar->SetWeight( totalWeight );
-	else
-		mChar->SetWeight( 0 );
+	switch( item->GetLayer() )
+	{
+	case IL_NONE:		// Trade Window
+	case IL_HAIR:		// hair
+	case IL_FACIALHAIR:	// beard
+	case IL_MOUNT:		// steed
+	case IL_BANKBOX:	// bank box
+		break;	// no weight for any of these
+	default:
+		if( calcSubtractWeight( item, totalWeight ) )
+			mChar->SetWeight( totalWeight );
+		else
+			mChar->SetWeight( 0 );
+		break;
+	}
 }
 
 //o--------------------------------------------------------------------------o
@@ -365,32 +363,19 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 		pack->SetWeight( 0 );
 
 	CBaseObject *pCont = pack->GetCont();
-	if( pCont != NULL )
+	if( ValidateObject( pCont ) )
 	{
-		if( pCont->GetObjType() == OT_ITEM )
+		if( pCont->CanBeObjType( OT_ITEM ) )
 		{
-			CItem *pPack = (CItem *)pCont;
-			if( pPack != NULL )
+			CItem *pPack = static_cast<CItem *>(pCont);
+			if( ValidateObject( pPack ) )
 				subtractItemWeight( pPack, item );
 		}
 		else
 		{
-			CChar *packOwner = (CChar *)pCont;
-			if( packOwner != NULL )
-			{
-				switch( pack->GetLayer() )
-				{
-					case IL_NONE:
-					case IL_HAIR:		// hair
-					case IL_FACIALHAIR:	// beard
-					case IL_MOUNT:		// steed
-					case IL_BANKBOX:	// bank box
-						break;	// no weight for any of these
-					default:
-						subtractItemWeight( packOwner, item );	// Normal item
-						break;
-				}
-			}
+			CChar *packOwner = static_cast<CChar *>(pCont);
+			if( ValidateObject( packOwner ) )
+				subtractItemWeight( packOwner, item );
 		}
 	}
 }
@@ -405,7 +390,7 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 //o--------------------------------------------------------------------------o
 bool CWeight::isOverloaded( CChar *mChar ) const
 {
-	if( ( (mChar->GetWeight() /  100) + (mChar->GetTempWeight() /  100) ) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30) )
+	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30) )
 		return true;
 	return false;
 }

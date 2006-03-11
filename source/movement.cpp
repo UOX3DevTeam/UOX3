@@ -665,7 +665,7 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 	if( xycount >= XYMAX )	// don't overflow
 		return;
 
-	MapStaticIterator msi( x, y, worldNumber );
+	CStaticIterator msi( x, y, worldNumber );
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		CTile& tile = Map->SeekTile( stat->itemid );

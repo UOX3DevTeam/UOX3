@@ -129,7 +129,7 @@ namespace UOX {
 	class CMagicStat;
 	class CMapHandler;
 	class CMapRegion;
-	class CMapStuff;
+	class CMulHandler;
 	class cMovement;
 	class CMultiObj;
 	class cNetworkStuff;

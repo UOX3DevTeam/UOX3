@@ -212,7 +212,7 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 			{
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
-					MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
+					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
 					{
 						CTile& tile = Map->SeekTile( stat->itemid );
@@ -832,7 +832,7 @@ void cSkills::FishTarget( CSocket *s )
 		validLocation = Map->SeekTile( targetItem->GetID() ).LiquidWet();
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
-		MapStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
+		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );

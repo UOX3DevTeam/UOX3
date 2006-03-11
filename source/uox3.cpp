@@ -1513,7 +1513,7 @@ void InitClasses( void )
 	if(( Combat			= new CHandleCombat )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
 	if(( Commands		= new cCommands )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
 	if(( Items			= new cItem )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
-	if(( Map			= new CMapStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
+	if(( Map			= new CMulHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
 	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
 	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
 	if(( Weight			= new CWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
@@ -1537,7 +1537,7 @@ void InitClasses( void )
 	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
 	if(( SpeechSys		= new CSpeechQueue()	)				== NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
 	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );
+	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2645,7 +2645,7 @@ int main( int argc, char *argv[] )
 				ourScript->ScriptRegistration( "Packet" );
 		}
 
-		// moved all the map loading into CMapStuff - fur
+		// moved all the map loading into CMulHandler - fur
 		Map->Load();
 		
 		Skills->Load();

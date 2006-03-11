@@ -150,8 +150,6 @@ private:
 protected:
 	NPCValues_st	*	mNPC;
 	PlayerValues_st	*	mPlayer;
-	
-	SI32		tempWeight;
 
 	UI16		fireResist;
 	UI16		coldResist;
@@ -169,7 +167,6 @@ protected:
 	UI08		brkPeaceChance;
 
 	UI32		bools;	// lots of flags
-	UI16		bools2; // more space for flags
 	UI16		priv;
 
 	SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
@@ -246,9 +243,6 @@ protected:
 public:
 
 	void		UpdateDamageTrack( void );
-
-	void		SetTempWeight( SI32 newValue );
-	SI32		GetTempWeight( void ) const;
 
 	void		SetDamageResist( UI16 newValue, DamageTypes damage);
 	UI16		GetDamageResist( DamageTypes damage) const;

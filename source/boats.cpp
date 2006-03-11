@@ -282,7 +282,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 		default: return true;
 	}
 
-	MapStaticIterator *msi;
+	CStaticIterator *msi;
 	UI08 worldNumber = b->WorldNumber();
 	for( SI16 x = x1; x < x2; ++x )
 	{
@@ -299,7 +299,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			}
 			else
 			{ //static tile
-				msi = new MapStaticIterator( x, y, worldNumber );
+				msi = new CStaticIterator( x, y, worldNumber );
 				for( Static_st *stat = msi->First(); stat != NULL; stat = msi->Next() )
 				{
 					CTile& tile = Map->SeekTile( stat->itemid );

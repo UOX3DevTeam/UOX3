@@ -1,3 +1,13 @@
+3/11/2006 - giwo (0.98-3.5d [3.6 BETA])
+	Removed CChar::TempWeight() as it was superfluous.
+	Fixed an issue causing Trade Windows to add weight to characters.
+	Fixed some minor issues with weight calculations.
+	Removed CChar:: bools2 and made more use of the bools value.
+	Renamed CMapStuff to CMulHandler to better describe its function.
+	Renamed MapStaticIterator to CStaticIterator to meet class naming standards.
+	Renamed MultiItemsIndex to MultiItemsIndex_st to meet structure naming standards.
+	Removed MapData_st fileSize as it was superfluous.
+
 3/11/2006 - grimson
 	Fixed a bug where buying the whole stock of an item deleted that item from the vendors container.
 
