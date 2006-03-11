@@ -190,7 +190,7 @@ bool CPIBuyItem::Handle( void )
 							}
 						}
 					}
-					biTemp->IncAmount( -amount[i] );
+					biTemp->IncAmount( -amount[i], true );
 					biTemp->SetRestock( biTemp->GetRestock() + amount[i] );
 				}
 				else
@@ -220,7 +220,7 @@ bool CPIBuyItem::Handle( void )
 								}
 								iMade = NULL;
 							}
-							biTemp->IncAmount( -amount[i] );
+							biTemp->IncAmount( -amount[i], true );
 							biTemp->SetRestock( biTemp->GetRestock() + amount[i] );
 							break;
 						case 0x1B: // Bought Container

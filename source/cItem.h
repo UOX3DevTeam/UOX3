@@ -150,7 +150,7 @@ public:
 
 	UI16			GetAmount(  void ) const;
 	void			SetAmount(  UI32 newValue );
-	bool			IncAmount(  SI16 incValue );
+	bool			IncAmount(  SI16 incValue, bool noDelete = false );
 
 	virtual UI16	GetMaxHP( void ) const;
 	virtual void	SetMaxHP( UI16 newValue );

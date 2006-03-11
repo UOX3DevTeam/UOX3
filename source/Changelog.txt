@@ -1,4 +1,7 @@
 3/11/2006 - grimson
+	Fixed a bug where buying the whole stock of an item deleted that item from the vendors container.
+
+3/11/2006 - grimson
 	Added new ini setting:
 		USECHARRESISTANCE=# If this is set to 0 the chars resistance won't increase by itself.
 	Slowed the increase of resistance quite a bit down.
