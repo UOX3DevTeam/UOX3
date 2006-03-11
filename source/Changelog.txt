@@ -1,4 +1,9 @@
 3/11/2006 - grimson
+	Added new ini setting:
+		USECHARRESISTANCE=# If this is set to 0 the chars resistance won't increase by itself.
+	Slowed the increase of resistance quite a bit down.
+
+3/11/2006 - grimson
 	Added in first versions of fire, cold, energy and poison resistance, it's currently used
 	in cMagic::MagicDamage() and cMagic::PoisonDamage(). You can set the resistance for npcs
 	using a new DFN tag:

@@ -372,14 +372,17 @@ void CChar::IncreaseDamageResist( DamageTypes damage )
 	if( damage == DAMAGE_NORM )
 		return;
 
+	if( !cwmWorldState->ServerData()->UseCharResistance() )
+		return;
+
 	// Increase damage resistance, very basic
 	UI16 damageResist = GetDamageResist( damage );
 	if( damageResist <= 1000 )
 		SetDamageResist( damageResist + 100, damage );
-	else if( damageResist <= 5000 )
-		SetDamageResist( damageResist + 50, damage );
-	else if( damageResist <= 9000 )
+	else if( damageResist <= 3000 )
 		SetDamageResist( damageResist + 10, damage );
+	else if( damageResist <= 9000 )
+		SetDamageResist( damageResist + 5, damage );
 	else
 		SetDamageResist( damageResist + 1, damage );
 	return;
