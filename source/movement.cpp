@@ -1865,6 +1865,8 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
+		if( tItem->GetID() >= 0x4000 ) // Multi
+			continue;
 		CTile& tile = Map->SeekTile( tItem->GetID() );
 		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MAX_Z_STEP )
 		{

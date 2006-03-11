@@ -520,7 +520,7 @@ UI16 CItem::GetAmount( void ) const
 void CItem::SetAmount( UI32 newValue )
 {
 	CBaseObject *getCont = GetCont();
-	if( getCont != NULL )
+	if( ValidateObject( getCont ) )
 		Weight->subtractItemWeight( getCont, this );
 
 	if( newValue > MAX_STACK )
@@ -528,7 +528,7 @@ void CItem::SetAmount( UI32 newValue )
 	else
 		amount = static_cast<UI16>(newValue);
 
-	if( getCont != NULL )
+	if( ValidateObject( getCont ) )
 		Weight->addItemWeight( getCont, this );
 	Dirty( UT_UPDATE );
 }

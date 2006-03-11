@@ -1,3 +1,9 @@
+3/11/2006 - giwo (0.98-3.5e [3.6 BETA])
+	Fixed an issue causing items with no layer to not change the weight of a character.
+	Fixed an issue causing spells that require a targeted location not to function.
+	Fixed an issue allowing one to build a house or boat far from their location.
+	Fixed an issue allowing one to build a multi directly on top of another multi.
+
 3/11/2006 - giwo (0.98-3.5d [3.6 BETA])
 	Removed CChar::TempWeight() as it was superfluous.
 	Fixed an issue causing Trade Windows to add weight to characters.

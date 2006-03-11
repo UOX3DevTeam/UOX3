@@ -246,20 +246,12 @@ void CWeight::addItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
-	switch( item->GetLayer() )
+	if( item->GetCont() != mChar || IsWeightedContainer( item ) )
 	{
-	case IL_NONE:		// Trade Window
-	case IL_HAIR:		// hair
-	case IL_FACIALHAIR:	// beard
-	case IL_MOUNT:		// steed
-	case IL_BANKBOX:	// bank box
-		break;	// no weight for any of these
-	default:
 		if( calcAddWeight( item, totalWeight ) )
 			mChar->SetWeight( totalWeight );
 		else
 			mChar->SetWeight( MAX_WEIGHT );
-		break;
 	}
 }
 
@@ -294,9 +286,36 @@ void CWeight::addItemWeight( CItem *pack, CItem *item )
 		{
 			CChar *packOwner = static_cast<CChar *>(pCont);
 			if( ValidateObject( packOwner ) )
-				addItemWeight( packOwner, item );
+			{
+				if( IsWeightedContainer( pack ) )
+					addItemWeight( packOwner, item );
+			}
 		}
 	}
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	bool IsWeightedContainer( CItem *toCheck )
+//|	Date			-	3/11/2006
+//|	Developers		-	giwo
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Helper function to handle most of our layer checks in one place
+//o--------------------------------------------------------------------------o
+bool CWeight::IsWeightedContainer( CItem *toCheck )
+{
+	switch( toCheck->GetLayer() )
+	{
+	case IL_NONE:		// Trade Window
+	case IL_HAIR:		// hair
+	case IL_FACIALHAIR:	// beard
+	case IL_MOUNT:		// steed
+	case IL_BANKBOX:	// bank box
+		return false;	// no weight for any of these
+	default:
+		break;
+	}
+	return true;
 }
 
 //o--------------------------------------------------------------------------o
@@ -327,20 +346,12 @@ void CWeight::subtractItemWeight( CChar *mChar, CItem *item )
 {
 	SI32 totalWeight = mChar->GetWeight();
 
-	switch( item->GetLayer() )
+	if( item->GetCont() != mChar || IsWeightedContainer( item ) )
 	{
-	case IL_NONE:		// Trade Window
-	case IL_HAIR:		// hair
-	case IL_FACIALHAIR:	// beard
-	case IL_MOUNT:		// steed
-	case IL_BANKBOX:	// bank box
-		break;	// no weight for any of these
-	default:
 		if( calcSubtractWeight( item, totalWeight ) )
 			mChar->SetWeight( totalWeight );
 		else
 			mChar->SetWeight( 0 );
-		break;
 	}
 }
 
@@ -375,7 +386,10 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 		{
 			CChar *packOwner = static_cast<CChar *>(pCont);
 			if( ValidateObject( packOwner ) )
-				subtractItemWeight( packOwner, item );
+			{
+				if( IsWeightedContainer( pack ) )
+					subtractItemWeight( packOwner, item );
+			}
 		}
 	}
 }

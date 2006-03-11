@@ -59,31 +59,25 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 }
 void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
 {
-	//Key...
-	CItem *key = NULL;
 	if( houseID >= 0x4000 )
 	{
-		if( (houseID%256) >= 112 && (houseID%256) <= 115 ) 
+		UI16 keyID = 0x100F;	// Gold key by default
+		std::string keyName = "a house key";
+		if( (houseID%256) >= 0x70 && (houseID%256) <= 0x73 ) // It's a tent
 		{
-			key = Items->CreateItem( mSock, mChar, 0x1010, 1, 0, OT_ITEM, true );//iron key for tents
-			if( key != NULL )
-				key->SetName( "a tent key" );
+			keyID = 0x1010;		//iron key for tents
+			keyName = "a tent key";
 		}
-		else if( (houseID%256) <= 0x18 ) 
+		else if( (houseID%256) <= 0x18 )					// It's a boat
 		{
-			key = Items->CreateItem( mSock, mChar, 0x1013, 1, 0, OT_ITEM, true );//Boats -Rusty Iron Key
-			if( key != NULL )
-				key->SetName( "a ship key" );
-		}
-		else 
-		{
-			key = Items->CreateItem( mSock, mChar, 0x100F, 1, 0, OT_ITEM, true );//gold key for everything else
-			if( key != NULL )
-				key->SetName( "a house key" );
+			keyID = 0x1013;		//Boats -Rusty Iron Key
+			keyName = "a ship key";
 		}
 
+		CItem *key = Items->CreateItem( mSock, mChar, keyID, 1, 0, OT_ITEM, true );
 		if( ValidateObject( key ) )
 		{
+			key->SetName( keyName );
 			key->SetTempVar( CITV_MORE, house->GetSerial() );
 			key->SetType( IT_KEY );
 		}
@@ -150,12 +144,61 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 		}
 	}
 }
+
+bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY )
+{
+	const UI08 worldNum = mChar->WorldNumber();
+
+	MapData_st& mMap = Map->GetMapData( worldNum );
+	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() )
+	{
+		mSock->sysmessage( 577 );
+		return false;
+	}
+
+	SI16 curX, curY;
+	const SI16 charX = mChar->GetX();
+	const SI16 charY = mChar->GetY();
+	for( SI16 k = -spaceX; k <= spaceX; ++k )
+	{
+		curX = x+k;
+		for( SI16 l = -spaceY; l <= spaceY; ++l )
+		{
+			curY = y+l;
+			if( !Movement->validNPCMove( curX, y+l, z, mChar ) && ( charX != curX && charY != y+l ) ||
+				findMulti( curX, curY, z, worldNum ) != NULL )	// Lets not place a multi on/in another multi
+//			This will take the char making the house out of the space check, be careful 
+//			you don't build a house on top of your self..... this had to be done So you 
+//			could extra space around houses, (12+) and they would still be buildable.
+			{
+				mSock->sysmessage( 577 );
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void BuildHouse( CSocket *mSock, UI08 houseEntry )
 {
 	if( mSock->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 	if( !houseEntry )
 		return;
+
+	CChar *mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	const SI16 x = mSock->GetWord( 11 );
+	const SI16 y = mSock->GetWord( 13 );
+	const SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
+
+	if( mSock->GetDWord( 7 ) != INVALIDSERIAL || getDist( mChar->GetLocation(), point3( x, y, z ) ) >= DIST_BUILDRANGE )
+	{
+		mSock->sysmessage( 577 );
+		return;
+	}
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0;
 	SI08 cz = 8;
@@ -165,9 +208,6 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	bool isBoat			= false;
 	UString houseDeed, tag, data, UTag;
 	UI16 houseID		= 0;
-	CChar *mChar = mSock->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
 
 	UString sect = "HOUSE " + UString::number( houseEntry );
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
@@ -204,33 +244,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		Console.Error( 1, "Bad house script # %u!", houseEntry );
 		return;
 	}
-	SI16 x = mSock->GetWord( 11 );
-	SI16 y = mSock->GetWord( 13 );
-	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
-	if( !mChar->IsGM() )
-	{
-		if( x > 6200 || y > 4200 )
-		{
-			mSock->sysmessage( 577 );
-			return;
-		}
 
-		for( int k = -sx; k < sx; ++k ) //check the SPACEX and SPACEY to make sure they are valid locations....
-		{
-			for( int l = -sy; l < sy; ++l )
-			{
-				if( ( !Movement->validNPCMove( x+k, y+l, z, mChar ) ) &&
-					( ( mChar->GetX() != x+k ) && ( mChar->GetY() != y+l ) ) )
-//				This will take the char making the house out of the space check, be careful 
-//				you don't build a house on top of your self..... this had to be done So you 
-//				could extra space around houses, (12+) and they would still be buildable.
-				{
-					mSock->sysmessage( 577 );
-					return;
-				}
-			}
-		}
-	}
+	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy ) )
+		return;
+
 	char temp[1024];
 	CMultiObj *house = NULL;
 	CItem *fakeHouse = NULL;

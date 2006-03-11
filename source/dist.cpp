@@ -101,7 +101,12 @@ UI16 getDist( CBaseObject *a, CBaseObject *b )
 		return DIST_SAMETILE;
 	if( a->WorldNumber() != b->WorldNumber() )
 		return DIST_OUTOFRANGE;
-	point3 difference = a->GetLocation() - b->GetLocation();
+	return getDist( a->GetLocation(), b->GetLocation() );
+}
+
+UI16 getDist( point3 a, point3 b )
+{
+	point3 difference = a - b;
 	return static_cast<UI16>(difference.Mag());
 }
 

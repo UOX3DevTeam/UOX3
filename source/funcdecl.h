@@ -22,6 +22,7 @@ bool	objInRange( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	charInRange( CChar *a, CChar *b );
 UI16	getDist( CBaseObject *a, CBaseObject *b );
+UI16	getDist( point3 a, point3 b );
 UI16	getOldDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( CBaseObject *a, CBaseObject *b );
 SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );

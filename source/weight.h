@@ -11,6 +11,7 @@ class CWeight
 private:
 	bool	calcAddWeight( CItem *item, SI32 &totalWeight );
 	bool	calcSubtractWeight( CItem *item, SI32 &totalWeight );
+	bool	IsWeightedContainer( CItem *toCheck );
 
 public:
 	SI32	calcCharWeight( CChar *mChar );

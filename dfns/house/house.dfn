@@ -311,6 +311,8 @@ HOUSE_ITEM=53
 { Small Boat
 ID=0x4000
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 
@@ -318,6 +320,8 @@ CHARX=1
 { Small Dragon Boat
 ID=0x4004
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 
@@ -325,6 +329,8 @@ CHARX=1
 { Medium Boat
 ID=0x4008
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 
@@ -332,6 +338,8 @@ CHARX=1
 { Medium Dragon Boat
 ID=0x400C
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 
@@ -339,6 +347,8 @@ CHARX=1
 { Large Boat
 ID=0x4010
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 
@@ -346,6 +356,8 @@ CHARX=1
 { Large Dragon Boat
 ID=0x4012
 BOAT
+SPACEX=0
+SPACEY=3
 CHARX=1
 }
 

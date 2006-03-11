@@ -2915,16 +2915,11 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 		else if( spells[curSpell].RequireLocTarget() )
 		{
-			if( !caster->IsNpc() )
+			if( s->GetDWord( 7 ) == INVALIDSERIAL )
 			{
 				x = s->GetWord( 11 );
 				y = s->GetWord( 13 );
 				z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
-				if( s->GetDWord( 7 ) != 0 )
-				{	// we targetted something not a location!
-					s->sysmessage( 716 );
-					return;
-				}
 			}
 			else
 			{
