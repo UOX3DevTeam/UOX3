@@ -58,6 +58,8 @@ public:
 
 	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
 	SI16	calcAtt( CChar *mChar, bool doDamage = false );
+	SI16	calcLowDamage( CChar *p );
+	SI16	calcHighDamage( CChar *p );
 	UI08	getCombatSkill( CItem *wItem );
 	UI08	getBowType( CItem *bItem );
 	UI08	getWeaponType( CItem *i );

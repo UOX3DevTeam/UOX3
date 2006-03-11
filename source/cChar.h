@@ -151,7 +151,7 @@ protected:
 	NPCValues_st	*	mNPC;
 	PlayerValues_st	*	mPlayer;
 	
-	UI32		charVersion;
+	SI32		tempWeight;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	UI16		hungerRate;	// The rate at which hunger decreases when char is tamed
@@ -240,15 +240,10 @@ protected:
 
 public:
 
-	void		SetCharVersion( UI32 version );
-	UI32		GetCharVersion( void ) const;
-
-	void		SetVersionFound( bool newValue );
-	bool		GetVersionFound( void ) const;
-
-	void		DoVersionUpdates( void );
-
 	void		UpdateDamageTrack( void );
+
+	void		SetTempWeight( SI32 newValue );
+	SI32		GetTempWeight( void ) const;
 
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;

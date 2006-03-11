@@ -1630,8 +1630,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		PoisonResist( 0 );
 		Luck( 0 );
 		Unknown( 0 );
-		DamageMin( 0 );
-		DamageMax( Combat->calcAtt( &toCopy ) );
+		DamageMin( Combat->calcLowDamage( &toCopy ) );
+		DamageMax( Combat->calcHighDamage( &toCopy ) );
 	}
 }
 void CPStatWindow::InternalReset( void )
@@ -1768,12 +1768,12 @@ void CPStatWindow::Luck( UI16 value )
 	if( extended4 )
 		pStream.WriteShort( 78, value );
 }
-void CPStatWindow::DamageMax( UI16 value )
+void CPStatWindow::DamageMin( UI16 value )
 {
 	if( extended4 )
 		pStream.WriteShort( 80, value );
 }
-void CPStatWindow::DamageMin( UI16 value )
+void CPStatWindow::DamageMax( UI16 value )
 {
 	if( extended4 )
 		pStream.WriteShort( 82, value );

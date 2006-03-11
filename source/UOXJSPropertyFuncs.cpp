@@ -585,6 +585,7 @@ namespace UOX
 				case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
 				case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
 				case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
+				case CCP_TEMPWEIGHT:	*vp = INT_TO_JSVAL( gPriv->GetTempWeight() );				break;
 				case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 				case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
 				case CCP_MAGICREFLECT:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPermReflected() );			break;
@@ -848,6 +849,7 @@ namespace UOX
 				case CCP_SPLITCHANCE:	gPriv->SetSplitChance( (UI08)encaps.toInt() );		break;
 				case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
 				case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
+				case CCP_TEMPWEIGHT:	gPriv->SetTempWeight( (SI32)encaps.toInt() );		break;
 				case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;
 				case CCP_MAGICREFLECT:	gPriv->SetPermReflected( encaps.toBool() );			break;
 				case CCP_TAMED:			gPriv->SetTamed( encaps.toBool() );					break;

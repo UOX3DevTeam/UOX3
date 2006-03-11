@@ -1656,6 +1656,10 @@ void CSocket::statwindow( CChar *i )
 	if( !LoginComplete() )
 		return;
 
+	SI32 currentWeight = ( (i->GetWeight() / 100) + (i->GetTempWeight() / 100) );
+	if( currentWeight < 0 )
+		currentWeight = 0;
+
 	CPStatWindow toSend( (*i), (*this) );
 	
 	CChar *mChar = CurrcharObj();
@@ -1663,7 +1667,8 @@ void CSocket::statwindow( CChar *i )
 	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwnerObj() == mChar ) );
 	toSend.Gold( GetItemAmount( i, 0x0EED ) );
 	toSend.AC( Combat->calcDef( i, 0, false ) );
-	toSend.Weight( static_cast<UI16>(i->GetWeight() / 100) );
+
+	toSend.Weight( static_cast<UI16>( currentWeight ) );
 	Send( &toSend );
 
 	CPExtendedStats exStats( (*i) );

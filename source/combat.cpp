@@ -705,6 +705,97 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 	return getDamage;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    :  SI16 calcLowDamage( CChar *p )
+//|   Date        :  11. Mar, 2006
+//|   Programmer  :  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Calculate low damage value of the char
+//o---------------------------------------------------------------------------o
+SI16 CHandleCombat::calcLowDamage( CChar *p )
+{
+	if( !ValidateObject( p ) )
+		return 0;
+
+	SI16 getDamage = 0;
+
+	CItem *weapon = getWeapon( p );
+	if( ValidateObject( weapon ) )
+	{
+		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
+		{
+			if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) 
+				getDamage = weapon->GetHiDamage();
+			else
+				getDamage = weapon->GetLoDamage();
+		}
+	}
+	else if( p->IsNpc() ) 
+	{
+		if( p->GetLoDamage() >= p->GetHiDamage() )
+			getDamage = p->GetHiDamage();
+		else if( p->GetHiDamage() > 2 )
+			getDamage = p->GetLoDamage();
+	}
+	else
+	{
+		UI16 getWrestSkill = ( p->GetSkill( WRESTLING ) / 65 );
+		if( getWrestSkill > 0 )
+			getDamage = ( getWrestSkill / 2);
+		else
+			getDamage = 1;
+	}
+	if( getDamage < 1 )
+		getDamage = 1;
+	return getDamage;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  SI16 calcHighDamage( CChar *p )
+//|   Date        :  11. Mar, 2006
+//|   Programmer  :  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Calculate high damage value of the char
+//o---------------------------------------------------------------------------o
+SI16 CHandleCombat::calcHighDamage( CChar *p )
+{
+	if( !ValidateObject( p ) )
+		return 0;
+
+	SI16 getDamage = 0;
+
+	CItem *weapon = getWeapon( p );
+	if( ValidateObject( weapon ) )
+	{
+		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
+		{
+			if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) 
+				getDamage = weapon->GetLoDamage();
+			else
+				getDamage = weapon->GetHiDamage();
+
+		}
+	}
+	else if( p->IsNpc() ) 
+	{
+		if( p->GetLoDamage() >= p->GetHiDamage() )
+			getDamage = p->GetLoDamage();
+		else if( p->GetHiDamage() > 2 )
+			getDamage = p->GetHiDamage();
+	}
+	else
+	{
+		UI16 getWrestSkill = ( p->GetSkill( WRESTLING ) / 65 );
+		if( getWrestSkill > 0 )
+			getDamage = getWrestSkill;
+		else
+			getDamage = 2;
+	}
+	if( getDamage < 1 )
+		getDamage = 1;
+	return getDamage;
+}
+
 /*
 	New Defense Calculations
 	Programmer: Zane (giwo)

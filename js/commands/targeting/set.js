@@ -288,6 +288,10 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.poison = nVal;
 		okMsg( socket );
 		break;
+	case "TEMPWEIGHT":
+		ourChar.tempWeight = nVal;
+		okMsg( socket );
+		break;
 	case "TITLE":
 		ourChar.title = socket.xText.substring( 6 );
 		okMsg( socket );

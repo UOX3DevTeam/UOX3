@@ -1,3 +1,9 @@
+3/11/2006 - grimson
+	Removed version number for chars.
+	Added .tempWeight JS property to chars, so you can safely modify the weight of chars in scripts.
+	Added calcLowDamage() and calcHighDamage() functions to combat.cpp and use them in
+	CPStatWindow::SetCharacter() to set the DamageMin and DamageMax values.
+
 3/11/2006 - grimson (0.98-3.5d [3.6 BETA])
 	Added a version number to chars, it is defined in DEFCHAR_CHARVERSION and use it in
 	CChar::DoVersionUpdates() to allow forced updates. Used this to force a weight recalculation
