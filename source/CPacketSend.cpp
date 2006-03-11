@@ -1624,10 +1624,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	}
 	if( extended4 )
 	{
-		FireResist( 0 );
-		ColdResist( 0 );
-		EnergyResist( 0 );
-		PoisonResist( 0 );
+		FireResist( (UI16)roundNumber( toCopy.GetDamageResist( DAMAGE_FIRE ) / 100 ));
+		ColdResist( (UI16)roundNumber( toCopy.GetDamageResist( DAMAGE_COLD ) / 100 ));
+		EnergyResist( (UI16)roundNumber( toCopy.GetDamageResist( DAMAGE_ENERGY ) / 100 ));
+		PoisonResist( (UI16)roundNumber( toCopy.GetDamageResist( DAMAGE_POISON ) / 100 ));
 		Luck( 0 );
 		Unknown( 0 );
 		DamageMin( Combat->calcLowDamage( &toCopy ) );

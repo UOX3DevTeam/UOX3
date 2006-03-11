@@ -523,7 +523,7 @@ void cEffects::checktempeffects( void )
 				Magic->playSound( src, 43 );
 				Magic->doMoveEffect( 43, s, src );
 				Magic->doStaticEffect( s, 43 );
-				Magic->MagicDamage( s, Effect->More1(), src );
+				Magic->MagicDamage( s, Effect->More1(), src, DAMAGE_FIRE );
 				equipCheckNeeded = true;
 				break;
 			case 40:

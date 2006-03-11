@@ -36,7 +36,7 @@ public:
 	bool CheckStamina( CChar *s, int num );
 	bool CheckHealth( CChar *s, int num );
 	bool CheckMagicReflect( CChar *i );
-	void MagicDamage( CChar *p, int amount, CChar *attacker = NULL );
+	void MagicDamage( CChar *p, int amount, CChar *attacker = NULL, DamageTypes damageType = DAMAGE_NORM );
 	void SpellFail( CSocket *s );
 	void SubtractMana( CChar *s, int mana );
 	void SubtractStamina( CChar *s, int stamina );

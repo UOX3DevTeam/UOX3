@@ -646,5 +646,14 @@ enum FlagColors
 	FC_INVULNERABLE
 };
 
+enum DamageTypes
+{
+	DAMAGE_NORM = 0,
+	DAMAGE_FIRE,
+	DAMAGE_COLD,
+	DAMAGE_ENERGY,
+	DAMAGE_POISON
+};
+
 #endif
 

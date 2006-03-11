@@ -1,4 +1,13 @@
 3/11/2006 - grimson
+	Added in first versions of fire, cold, energy and poison resistance, it's currently used
+	in cMagic::MagicDamage() and cMagic::PoisonDamage(). You can set the resistance for npcs
+	using a new DFN tag:
+		DAMAGERESIST=# # # # 	Where the first number is fire, the second cold, the third energy
+					and the last number poison resistance.
+	The resistance for a damage type will rise everytime you get hit by this damage type, but the
+	higher your resistance already is the slower it will rise.
+
+3/11/2006 - grimson
 	Removed version number for chars.
 	Added .tempWeight JS property to chars, so you can safely modify the weight of chars in scripts.
 	Added calcLowDamage() and calcHighDamage() functions to combat.cpp and use them in
