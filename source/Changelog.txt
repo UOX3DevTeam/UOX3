@@ -1,3 +1,8 @@
+3/11/2006 - grimson (0.98-3.5d [3.6 BETA])
+	Added a version number to chars, it is defined in DEFCHAR_CHARVERSION and use it in
+	CChar::DoVersionUpdates() to allow forced updates. Used this to force a weight recalculation
+	on possibly bugged chars.
+
 3/11/2006 - grimson
 	Don't save the weight in cChar.cpp, it's already saved in cBaseobject.cpp.
 	Fixed a bug where items without a layer didn't add to the chars weight.

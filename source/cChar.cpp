@@ -107,6 +107,7 @@ const UI32 BIT_MAXHPFIXED		=	0x01;
 const UI32 BIT_MAXMANAFIXED		=	0x02;
 const UI32 BIT_MAXSTAMFIXED		=	0x04;
 const UI32 BIT_CANATTACK		=	0x08;
+const UI32 BIT_VERSIONFOUND		=	0x10;
 
 const UI32 BIT_MOUNTED			=	0x01;
 const UI32 BIT_STABLED			=	0x02;
@@ -177,6 +178,7 @@ petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), pe
 
 const SERIAL		DEFCHAR_TOWNVOTE 			= INVALIDSERIAL;
 const UI32			DEFCHAR_BOOLS 				= 0;
+const UI16			DEFCHAR_BOOLS2 				= 0;
 const SI08			DEFCHAR_DISPZ 				= 0;
 const SI08			DEFCHAR_FONTTYPE 			= 3;
 const RACEID		DEFCHAR_OLDRACE 			= 0;
@@ -209,9 +211,10 @@ const UI16			DEFCHAR_PRIV				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
+const UI32			DEFCHAR_CHARVERSION			= 1;
 
 CChar::CChar() : CBaseObject(),
-townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
+townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), bools2( DEFCHAR_BOOLS2 ), charVersion( DEFCHAR_CHARVERSION ),
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ), 
@@ -295,6 +298,48 @@ bool CChar::IsValidPlayer( void ) const
 	return ( mPlayer != NULL );
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI32 CharVersion()
+//|   Date        -  11. Mar, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Version handling of chars
+//o---------------------------------------------------------------------------o
+UI32 CChar::GetCharVersion( void ) const
+{
+	return charVersion;
+}
+void CChar::SetCharVersion( UI32 version )
+{
+	charVersion = version;
+}
+bool CChar::GetVersionFound( void ) const
+{
+	return MFLAGGET( bools2, BIT_VERSIONFOUND );
+}
+void CChar::SetVersionFound( bool newValue )
+{
+	MFLAGSET( bools2, newValue, BIT_VERSIONFOUND );
+}
+
+void CChar::DoVersionUpdates( void )
+{
+	if( !GetVersionFound() ) // If no version string was found we have to do all updates
+	{
+		SetCharVersion( 0 );
+	}
+	
+	switch( GetCharVersion() ) // Do the updates depending on the version number
+	{
+		case 0:
+			SetWeight( Weight->calcCharWeight( this ) );
+			break;
+		default:
+			break;
+	}
+	
+	SetCharVersion( DEFCHAR_CHARVERSION ); // Update the version number to the current one
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Hunger()
 //|   Date        -  Unknown
@@ -2154,6 +2199,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
+	dumping << "CharVersion=" << GetCharVersion() << std::endl;
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
@@ -2906,6 +2952,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetCanTrain( data.toUShort() == 1 );
 					rvalue = true;
 				}
+				else if( UTag == "CHARVERSION" )
+				{
+					SetCharVersion( data.toULong() );
+					SetVersionFound( true );
+					rvalue = true;
+				}
 				break;
 			case 'D':
 				if( UTag == "DISPLAYZ" )
@@ -3501,6 +3553,7 @@ void CChar::PostLoadProcessing( void )
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		Skills->updateSkillLevel( this, i );
 	// We need to add things to petlists, so we can cleanup after ourselves properly - Zane
+	DoVersionUpdates(); // Do version updates here
 	SetPostLoaded( true );
 }
 
