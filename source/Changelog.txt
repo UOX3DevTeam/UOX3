@@ -1,4 +1,8 @@
 3/12/2006 - grimson
+	Changed the z value for various LineOfSight() calls so that we actually check whether
+	we can see the face of the targeted char instead of his feets.
+
+3/12/2006 - grimson
 	Added element resistance calculation to weather damage.
 	Fixed calcElementDef() and getElementDef() so that the chars basic element resistance
 	is always added.

@@ -1395,7 +1395,7 @@ void cMovement::NpcMovement( CChar& mChar )
 				{
 					mChar.FlushPath();
 
-					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), l->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+					bool los = LineOfSight( NULL, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
 					if( los && charDir != mChar.GetDir() )
 					{
 						mChar.SetDir( charDir );

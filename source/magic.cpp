@@ -538,7 +538,7 @@ bool splDispelField( CSocket *sock, CChar *caster )
 	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
 	if( ValidateObject( i ) )
 	{
-		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 		{
 			if( i->isDecayable() || i->isDispellable() ) 
 			{
@@ -796,7 +796,7 @@ bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16
 }
 bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
-	if( LineOfSight( sock, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 	{ 
 		UI16 j = caster->GetSkill( MAGERY ); 
 		int range=(((j-261)*(15))/739)+5;
@@ -982,7 +982,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 					continue;
 				}
 
-				if( LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING  ) || caster->IsGM() )
+				if( LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING  ) || caster->IsGM() )
 					trgFunc( caster, tempChar );
 				else if( sock != NULL )
 					sock->sysmessage( 688 );
@@ -2810,7 +2810,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						s->sysmessage( 712 );
 					return;
 				}
-				if( LineOfSight( s, caster, c->GetX(), c->GetY(), c->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+				if( LineOfSight( s, caster, c->GetX(), c->GetY(), ( c->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
 					if( spells[curSpell].AggressiveSpell() )
 					{
@@ -2934,7 +2934,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 			if( !caster->IsNpc() && validSocket && s->GetDWord( 11 ) != INVALIDSERIAL )
 			{
-				if( LineOfSight( s, caster, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+				if( LineOfSight( s, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 				{
 					if( spells[curSpell].FieldSpell() )
 					{
