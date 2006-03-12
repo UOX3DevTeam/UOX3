@@ -1990,6 +1990,9 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType ele
 			amount -= ( (SI16)( ( elementDef * attSkill ) / 750 ) );
 			p->IncreaseElementResist( element );
 		}
+		
+		if( amount <= 0 )
+			amount = 1;
 
 		if( p->IsNpc() ) 
 			amount *= 2;      // double damage against non-players

@@ -10,6 +10,7 @@
 #include "mapstuff.h"
 #include "cScript.h"
 #include "CJSMapping.h"
+#include "combat.h"
 
 namespace UOX
 {
@@ -2115,6 +2116,8 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 
 bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element )
 {
+	WeatherType resistElement = element;
+
 	if( element == NONE || element == LIGHT || element == WEATHNUM )
 		return false;
 	
@@ -2147,6 +2150,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageModifier = (R32)RandomNum( (int)RainIntensityLow( weatherSys ), (int)RainIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1219;
+			resistElement = NONE;
 		}
 
 		if( element == SNOW )
@@ -2154,6 +2158,8 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageModifier = (R32)RandomNum( (int)SnowIntensityLow( weatherSys ), (int)SnowIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1220;
+			// Snow is also cold damage when it comes to resistance values
+			resistElement = COLD;
 		}
 
 		if( element == STORM)
@@ -2161,6 +2167,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageModifier = (R32)RandomNum( (int)StormIntensityLow( weatherSys ), (int)StormIntensityHigh( weatherSys ) );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1775;
+			resistElement = NONE;
 
 			if( Races->Affect( mChar.GetRace(), LIGHTNING ) )
 			{
@@ -2170,6 +2177,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 					Effects->bolteffect( &mChar );
 					damageMessage = 1777;
 					damageAnim = 0x0;
+					resistElement = LIGHTNING;
 				}
 			}
 		}
@@ -2195,6 +2203,17 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damage = (SI32)roundNumber( baseDamage * damageModifier);
 			damageMessage = 1221;
 			damageAnim = 0x3709;
+		}
+
+		if( resistElement != NONE )
+		{
+			// The better we get at camping the less weather effects us.
+			const UI16 attSkill = (UI16)( 1100 - mChar.GetSkill( CAMPING ) );
+
+			// Weather hits everything so use the overal resistance
+			const UI16 elementDef = Combat->calcElementDef( &mChar, 0, false, resistElement );
+			damage -= ( (SI16)( ( elementDef * attSkill ) / 750 ) );
+			mChar.IncreaseElementResist( resistElement );
 		}
 
 		if( damage > 0 )

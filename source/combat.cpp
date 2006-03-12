@@ -1041,10 +1041,7 @@ CItem * CHandleCombat::getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc
 		default:
 			break;
 	}
-	if( findTotal )
-		totalDef += elementDef;
-	else
-		totalDef = elementDef;
+	totalDef += elementDef;
 
 	return currItem;
 }
@@ -1061,7 +1058,13 @@ UI16 CHandleCombat::calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, We
 	if( !ValidateObject( mChar ) )
 		return 0;
 
-	SI32 total = (SI32)( mChar->GetElementResist( element ) / 100 );
+	SI32 total = 0;
+
+	if( hitLoc == 0 )	//Don't divide by 100 when asking for the entire char.
+		total = mChar->GetElementResist( element );
+	else
+		total = (SI32)( mChar->GetElementResist( element ) / 100 );
+
 	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
 	{
 		CItem *defendItem = NULL;
