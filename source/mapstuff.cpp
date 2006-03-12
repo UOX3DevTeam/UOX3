@@ -658,51 +658,6 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 	return map.z;
 }
 
-
-// compute the 'average' map height by looking at three adjacent cells
-SI08 CMulHandler::AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber )
-{
-	// first thing is to get the map where we are standing
-	const map_st map1 = Map->SeekMap( x, y, worldNumber );
-	id = map1.id;
-	// if this appears to be a valid land id, <= 2 is invalid
-	if( map1.id > 2 && ILLEGAL_Z != MapElevation( x, y, worldNumber ) )
-	{
-		// get three other nearby maps to decide on an average z?
-		const SI08 map2z = MapElevation( x + 1, y, worldNumber );
-		const SI08 map3z = MapElevation( x, y + 1, worldNumber );
-		const SI08 map4z = MapElevation( x + 1, y + 1, worldNumber );
-		
-		SI08 testz = 0;
-		if( abs( map1.z - map4z ) <= abs( map2z - map3z ) )
-		{
-			if( ILLEGAL_Z == map4z )
-				testz = map1.z;
-			else
-			{
-				testz = (SI08)((map1.z + map4z) >> 1);
-				if( testz%2 < 0 ) 
-					--testz;
-				// ^^^ Fix to make it round DOWN, not just in the direction of zero
-			}
-		}
-		else
-		{
-			if( ILLEGAL_Z == map2z || ILLEGAL_Z == map3z )
-				testz = map1.z;
-			else
-			{
-				testz = (SI08)((map2z + map3z) >> 1);
-				if( testz%2<0 )
-					--testz;
-				// ^^^ Fix to make it round DOWN, not just in the direction of zero
-			}
-		}
-		return testz;
-	}
-	return ILLEGAL_Z;
-}
-
 bool CMulHandler::IsValidTile( UI16 tileNum )
 {
 	bool retVal = true;

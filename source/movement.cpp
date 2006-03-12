@@ -87,15 +87,6 @@ cMovement *Movement;
 #define MAX_Z_LEVITATE			10		// Maximum total height to reach a tile marked as 'LEVITATABLE'
 										// Items with a mark as climbable have no height limit
 
-
-inline SI08 higher( SI08 a, SI08 b )
-{
-	if( a < b )
-		return b;
-	else
-		return a;
-}
-
 inline UI08 turn_clock_wise( UI08 dir )
 {
 	UI08 t = ((dir & 0x07 ) + 1) % 8;
@@ -127,7 +118,6 @@ inline UI08 turn_counter_clock_wise( UI08 dir )
 //|   The absoulte value of the two's complement if the
 //|   the value was "negative"
 //o-------------------------------------------------------------o
-
 inline SI08 calcTileHeight( SI08 h )
 {
 	return (SI08)((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
@@ -622,9 +612,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI08 myz, UI08 dir )
 				CItem *mWeapon				= Combat->getWeapon( c );
 				const UI08 getFightSkill	= Combat->getCombatSkill( mWeapon );
 				if( getFightSkill == ARCHERY )
-				{
 					c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( Combat->GetCombatTimeout( c ) ) );
-				}
 			}
 		}
 	}
@@ -632,33 +620,23 @@ void cMovement::MoveCharForDirection( CChar *c, SI08 myz, UI08 dir )
 	c->WalkZ( myz );
 }
 
-// Split up of FillXYBlockStuff
-
-
 void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
-	// This oldx, oldy stuff is... problematic, to say the least
-	UI16 mapid		= 0;
-	UI16 mapid_old	= 0;
-	SI08 mapz		= Map->AverageMapElevation( x, y, mapid, worldNumber );
-	SI08 mapz_old	= Map->AverageMapElevation( oldx, oldy, mapid_old, worldNumber );
-	if( mapz_old <= ILLEGAL_Z )	
-		mapz_old = mapz;
+	const SI08 mapz = Map->MapElevation( x, y, worldNumber );
 	if( mapz != ILLEGAL_Z )
 	{
-		CLand& land = Map->SeekLand( mapid );
-		
+		const map_st map	= Map->SeekMap( x, y, worldNumber );
+		CLand& land			= Map->SeekLand( map.id );
+
+		xyblock[xycount].Flags( land.Flags() );
 		xyblock[xycount].Type( 0 );
-		xyblock[xycount].BaseZ( UOX_MIN( mapz_old, mapz ) );
-		xyblock[xycount].ID( mapid );
-		xyblock[xycount] = land;
-		xyblock[xycount].Height( mapz - xyblock[xycount].BaseZ() );
+		xyblock[xycount].BaseZ( mapz );
+		xyblock[xycount].Top( mapz );
 		++xycount;
 	}
 }
-
 
 void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
 {
@@ -671,8 +649,8 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 		CTile& tile = Map->SeekTile( stat->itemid );
 		xyblock[xycount].Type( 2 );
 		xyblock[xycount].BaseZ( stat->zoff );
-		xyblock[xycount].ID( stat->itemid );
-		xyblock[xycount] = tile;
+		xyblock[xycount].Top( stat->zoff + calcTileHeight( tile.Height() ) );
+		xyblock[xycount].Flags( tile.Flags() );
 		++xycount;
 		if( xycount >= XYMAX )	// don't overflow
 			break;
@@ -705,8 +683,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 					CTile& tile = Map->SeekTile( tItem->GetID() );
 					xyblock[xycount].Type( 1 );
 					xyblock[xycount].BaseZ( tItem->GetZ() );
-					xyblock[xycount].ID( tItem->GetID() );
-					xyblock[xycount] = tile;
+					xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
+					xyblock[xycount].Flags( tile.Flags() );
 					++xycount;
 					if( xycount >= XYMAX )	// don't overflow
 					{
@@ -717,8 +695,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			}
 			else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
 			{	// implication, is, this is now a CMultiObj
-				const UI16 multiID	= (tItem->GetID() - 0x4000);
-				SI32 length			= Map->SeekMulti( multiID );
+				const UI16 multiID = (tItem->GetID() - 0x4000);
+				SI32 length = Map->SeekMulti( multiID );
 				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 				{
 					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
@@ -738,8 +716,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 						CTile& tile = Map->SeekTile( multi.tile );
 						xyblock[xycount].Type( 2 );
 						xyblock[xycount].BaseZ( multi.z + tItem->GetZ() );
-						xyblock[xycount].ID( multi.tile );
-						xyblock[xycount] = tile;
+						xyblock[xycount].Top( multi.z + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+						xyblock[xycount].Flags( tile.Flags() );
 						++xycount;
 						if( xycount >= XYMAX )	// don't overflow
 						{
@@ -1637,18 +1615,19 @@ UI08 cMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
     illegal_z == -128, if walk is blocked
 
 ********************************************************/
-SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
+SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask, bool waterWalk )
 {
 	if( !ValidateObject( c ) )
 		return ILLEGAL_Z;
+	const bool isGM		= IsGMBody( c );
 	const SI08 oldz		= c->GetZ();
 	bool may_levitate	= c->MayLevitate();
 	bool on_ladder		= false;
 	SI08 newz			= ILLEGAL_Z;
-	bool blocked		= false;
-	UI16 ontype			= 0;
+	UI08 ontype			= 0;
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
+	CTileUni *tb;
 	CTileUni xyblock[XYMAX];
 	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
 	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
@@ -1657,159 +1636,96 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 	// first calculate newZ value
 	for( UI16 i = 0; i < xycount; ++i )
 	{
-		CTileUni *tb = &xyblock[i]; // this is a easy/little tricky, to save a little calculation
-		                                 // since the [i] is calclated several times below
-			                             // if it doesn't help, it doesn't hurt either.
-		SI08 nItemTop = (SI08)(tb->BaseZ() + ((tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) )); // Calculate the items total height
+		tb = &xyblock[i];
 
-		// check if the creature is floating on a static (keeping Z or falling)
-		if( nItemTop >= newz && nItemTop <= oldz )
+		if( tb->Top() < newz )
+			continue;
+
+		if( waterWalk )
 		{
-			if( tb->Standable() )
-			{ // walkable tile
-				newz = nItemTop;
+			if( tb->Top() >= newz && tb->Top() <= oldz && tb->LiquidWet() )
+			{ // swimable tile
+				newz	= tb->Top();
+				ontype	= tb->Type();
+			}
+			continue;
+		}
+		// check if the creature is floating on a static (keeping Z or falling)
+		if( tb->Standable() )
+		{
+			if( tb->Top() <= oldz )
+			{
+				newz = tb->Top();
 				ontype = tb->Type();
+				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
+					on_ladder = true;
+				continue;
+			}
+			// So now comes next step, levitation :o)
+			// you can gain Z to a limited amount if yo uwere climbing on last move on a ladder
+			if( may_levitate && tb->Top() <= (oldz + MAX_Z_LEVITATE) )
+			{
+				ontype = tb->Type();
+				newz = tb->Top();
 				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
 					on_ladder = true;
 				continue;
 			}
 		}
 
-		// So now comes next step, levitation :o)
-		// you can gain Z to a limited amount if yo uwere climbing on last move on a ladder
-		if( nItemTop >= newz && may_levitate && nItemTop <= oldz + MAX_Z_LEVITATE && tb->Standable() )
-		{
-			ontype = tb->Type();
-			newz = nItemTop;
-			if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
-				on_ladder = true;
-		}
 		// check if the creature is climbing on a climbable Z
 		// (gaining Z through stairs, ladders, etc)
 		// This form has no height limit, and the tile bottom must start lower or
 		// equal current height + levitateable limit
-		if( nItemTop >= newz && tb->BaseZ() <= oldz + MAX_Z_LEVITATE )
+		if( tb->BaseZ() <= (oldz + MAX_Z_LEVITATE) )
 		{
-			if( tb->Climbable() || tb->Type() == 0 ||			// Climbable tile, map tiles are also climbable
-			( static_cast<UI08>(tb->Flags()%256) == 0 && static_cast<UI08>(tb->Flags()>>8) == 0x22 ) ||		// These are a special kind of tiles where OSI forgot to set the climbable flag
-			( (nItemTop >= oldz && nItemTop <= oldz + 3) && tb->Standable() ) )		 // Allow to climb a height of 1 even if the climbable flag is not set
+			if( tb->Climbable() || tb->Type() == 0 ||								// Climbable tile, map tiles are also climbable
+				( tb->Flag( 3 ) == 0 && tb->Flag( 2 ) == 0x22 ) ||				// These are a special kind of tiles where OSI forgot to set the climbable flag
+				( (tb->Top() >= oldz && tb->Top() <= oldz+3) && tb->Standable() ) )	// Allow to climb a height of 1 even if the climbable flag is not set
 			{                 
 				ontype = tb->Type();
-				newz = nItemTop;
+				newz = tb->Top();
 				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
 					on_ladder = true;
 			}
 		}
 	}
 
-#if DEBUG_WALKING
-		Console.Print( "DEBUG: CheckWalkable calculate Z=%d\n", newz );
-#endif
-    SI08 item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
+    const SI08 item_influence = UOX_MAX( static_cast<SI08>(newz + MAX_ITEM_Z_INFLUENCE), oldz );
 	// also take care to look on all tiles the creature has fallen through
 	// (npc's walking on ocean bug)
 	// now the new Z-cordinate of creature is known, 
 	// check if it hits it's head against something (blocking in other words)
-	bool isGM = IsGMBody( c );
 	for( UI16 ii = 0; ii < xycount; ++ii )
 	{
-		CTileUni *tb = &xyblock[ii]; 
-		SI32 nItemTop = tb->BaseZ() + ( ( tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) ); // Calculate the items total height
-		if( ( tb->Blocking() || ( tb->Standable() && nItemTop > newz ) ) &&	// Check for blocking tile or stairs
-			!( ( isGM || c->IsDead() ) && ( tb->WindowArchDoor() || tb->Door() ) ) )   // ghosts can walk through doors
+		tb = &xyblock[ii]; 
+
+		if( tb->Top() < newz )
+			continue;
+
+		if( waterWalk )
 		{
-			// blocking
-			if( nItemTop > newz && tb->BaseZ() <= item_influence || ( nItemTop == newz && ontype == 0 ) )
-			{ // in effact radius?
+			if( ( ( tb->Top() > newz && tb->BaseZ() <= item_influence ) ||
+				( tb->Top() == newz && ontype == 0 ) ) || !tb->LiquidWet() )	// Check for blocking tile
+			{
 				newz = ILLEGAL_Z;
-#if DEBUG_WALKING
-				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), (SI16)tb->BaseZ() );
-#endif
-				blocked = true;
+				break;
+			}
+			continue;
+		}
+		if( ( tb->Blocking() || ( tb->Standable() && tb->Top() > newz ) ) &&	// Check for blocking tile or stairs
+			!( isGM && ( tb->WindowArchDoor() || tb->Door() ) ) )				// ghosts can walk through doors
+		{
+			if( tb->Top() > newz && tb->BaseZ() <= item_influence || ( tb->Top() == newz && ontype == 0 ) )
+			{
+				newz = ILLEGAL_Z;
 				break;
 			}
 		}
-// knoxos: MAX_ITEM_Z_INFLUENCE is nice, but not truely correct,
-//         since the creature height should be the effect radius, if you are i.e.
-//         polymorphed to a "slime", you could go through things you normally 
-//         wouldn't get under. (Just leaves the question what happens if you
-//         unpolymorph in a place where you can't fit, lucky there are no
-//         such gaps or tunnels in Britannia). 
-//         (Well UO isn't ment to really think in 3d)
 	}
 
-#if DEBUG_WALKING
-	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, (SI16)newz );
-#endif
-	if( (newz > ILLEGAL_Z) && (!justask) ) // save information if we have climbed on last move.
+	if( newz > ILLEGAL_Z && !justask ) // save information if we have climbed on last move.
 		c->SetLevitate( on_ladder );
-	return newz;
-}
-
-SI08 cMovement::calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask )
-{
-	if( !ValidateObject( c ) )
-		return ILLEGAL_Z;
-	const SI08 oldz		= c->GetZ();
-	SI08 newz			= ILLEGAL_Z;
-	bool blocked		= false;
-	char ontype			= 0;
-	UI16 xycount		= 0;
-	UI08 worldNumber	= c->WorldNumber();
-	CTileUni xyblock[XYMAX];
-	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
-	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
-	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber );
-
-	// first calculate newZ value
-	for( UI16 i = 0; i < xycount; ++i )
-	{
-		CTileUni *tb = &xyblock[i]; // this is a easy/little tricky, to save a little calculation
-		                                 // since the [i] is calclated several times below
-			                             // if it doesn't help, it doesn't hurt either.
-		SI08 nItemTop = (SI08)(tb->BaseZ() + ((tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) )); // Calculate the items total height
-
-		// check if the creature is floating on a static (keeping Z or falling)
-		if( nItemTop >= newz && nItemTop <= oldz )
-		{
-			if( tb->LiquidWet() )
-			{ // swimable tile
-				newz = nItemTop;
-				ontype = tb->Type();
-				continue;
-			}
-		}
-
-	}
-
-#if DEBUG_WALKING
-		Console.Print( "DEBUG: CheckWalkable calculate Z=%d\n", newz );
-#endif
-    SI08 item_influence = higher( newz + MAX_ITEM_Z_INFLUENCE, oldz );
-	bool isGM = IsGMBody( c );
-	for( UI16 ii = 0; ii < xycount; ++ii )
-	{
-		CTileUni *tb = &xyblock[ii]; 
-		SI32 nItemTop = tb->BaseZ() + ( ( tb->Type() == 0) ? tb->Height() : calcTileHeight( tb->Height() ) ); // Calculate the items total height
-		if( ( !tb->LiquidWet() || ( tb->LiquidWet() && nItemTop > newz ) ) &&	// Check for blocking tile or stairs
-			!( ( isGM || c->IsDead() ) && ( tb->WindowArchDoor() || tb->Door() ) ) )   // ghosts can walk through doors
-		{
-			// blocking
-			if( nItemTop > newz && tb->BaseZ() <= item_influence || ( nItemTop == newz && ontype == 0 ) )
-			{ // in effact radius?
-				newz = ILLEGAL_Z;
-#if DEBUG_WALKING
-				Console.Print( "DEBUG: CheckWalkable blocked due to tile=%d at height=%d.\n", tb->ID(), (SI16)tb->BaseZ() );
-#endif
-				blocked = true;
-				break;
-			}
-		}
-	}
-
-#if DEBUG_WALKING
-	Console.Print( "DEBUG: CanCharWalk: %dx %dy %dz\n", x, y, (SI16)newz );
-#endif
 	return newz;
 }
 
@@ -1840,68 +1756,15 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 		if( ( dir & 0x07 ) % 2 )
 		{ // check three ways.
 			UI08 ndir = turn_counter_clock_wise( dir );
-			if( calc_WaterWalk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
+			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true, true ) == ILLEGAL_Z )
 				return false;
 			ndir = turn_clock_wise( dir );
-			if( calc_WaterWalk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z )
+			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true, true ) == ILLEGAL_Z )
 				return false;
 		}
-		z = calc_WaterWalk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false );
+		z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, false, true );
 	}
 	return (z > ILLEGAL_Z);
-}
-
-// knox, reinserted it since some other files access it,
-//       100% sure this is wrong, however the smaller ill.
-bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
-{
-	UI08 worldNumber = s->WorldNumber();
-    CMapRegion *cell = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( cell == NULL )
-		return true;
-	CDataList< CItem * > *regItems = cell->GetItemList();
-	regItems->Push();
-	for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
-	{
-		if( !ValidateObject( tItem ) )
-			continue;
-		if( tItem->CanBeObjType( OT_MULTI ) ) // Multi
-			continue;
-		CTile& tile = Map->SeekTile( tItem->GetID() );
-		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MAX_Z_STEP )
-		{
-			UI16 id = tItem->GetID();
-			if( id == 0x3946 || id == 0x3956 )
-			{
-				regItems->Pop();
-				return false;
-			}
-			if( id <= 0x0200 || id >= 0x0300 && id <= 0x03E2 ) 
-			{
-				regItems->Pop();
-				return false;
-			}
-			if( id > 0x0854 && id < 0x0866 ) 
-			{
-				regItems->Pop();
-				return false;
-			}
-        
-			if( tItem->GetType() == IT_DOOR )
-			{
-				if( s->IsNpc() && ( !s->GetTitle().empty() || s->GetNPCAiType() != aiNOAI ) )
-					useDoor( NULL, tItem );
-				regItems->Pop();
-				return false;
-			}
-		}
-	}
-	regItems->Pop();
-
-    // see if the map says its ok to move here
-    if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
-		return true;
-    return false;
 }
 
 void cMovement::deny( CSocket *mSock, CChar *s, SI16 sequence )
@@ -1967,12 +1830,12 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 &curX, U
 						cornerBlocked = true;
 					else
 					{
-						if( Movement->calc_walk( mChar, curX, checkY, curX, curY, false ) == ILLEGAL_Z )
+						if( calc_walk( mChar, curX, checkY, curX, curY, false ) == ILLEGAL_Z )
 						{
 							cornerBlocked = true;
 							blockList[check1Ser] = true;
 						}
-						if( Movement->calc_walk( mChar, checkX, curY, curX, curY, false ) == ILLEGAL_Z )
+						if( calc_walk( mChar, checkX, curY, curX, curY, false ) == ILLEGAL_Z )
 						{
 							cornerBlocked = true;
 							blockList[check2Ser] = true;
@@ -2009,7 +1872,7 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 &curX, U
 			}
 			else if( closedList.find( locSer ) == closedList.end() )
 			{
-				if( Movement->calc_walk( mChar, checkX, checkY, curX, curY, false ) == ILLEGAL_Z )
+				if( calc_walk( mChar, checkX, checkY, curX, curY, false ) == ILLEGAL_Z )
 					blockList[locSer] = true;
 				else
 				{

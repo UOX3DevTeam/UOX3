@@ -4,15 +4,9 @@
 namespace UOX
 {
 
-// Maximum Search Depth: Iterations to calculate
-#define P_PF_MSD		5
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
 #define P_PF_MRV		2
-// Maximum Influence Range: Tiles to left/right of path to account for
-#define P_PF_MIR		5
-// Maximum Blocked Range: MIR to use if character is stuck
-#define P_PF_MBR		10
 // Minimum Flee Distance: MFD
 #define P_PF_MFD		15
 
@@ -48,14 +42,12 @@ public:
 	void	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false );
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
-	bool	validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s );
 	void	NpcMovement( CChar& mChar );
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
 private:
 	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 &curX, UI16 &curY, UI32 parentSer, std::map< UI32, pfNode >& openList, std::map< UI32, UI32 >& closedList, std::deque< nodeFCost >& fCostList, std::map< UI32, bool >& blockList );
-	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
-	SI08	calc_WaterWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask );
+	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool justask, bool waterWalk = false );
 	bool	calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir );
 
 	bool	isValidDirection( UI08 dir );

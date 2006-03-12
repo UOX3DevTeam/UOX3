@@ -1,7 +1,7 @@
 // House code for deed creation by Tal Strake, revised by Cironian
 
 #include "uox3.h"
-#include "movement.h"
+#include "mapstuff.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "CPacketSend.h"
@@ -145,7 +145,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 	}
 }
 
-bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY )
+bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat )
 {
 	const UI08 worldNum = mChar->WorldNumber();
 
@@ -165,7 +165,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 		for( SI16 l = -spaceY; l <= spaceY; ++l )
 		{
 			curY = y+l;
-			if( !Movement->validNPCMove( curX, y+l, z, mChar ) && ( charX != curX && charY != y+l ) ||
+			if( !Map->CanMonsterMoveHere( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != y+l ) ||
 				findMulti( curX, curY, z, worldNum ) != NULL )	// Lets not place a multi on/in another multi
 //			This will take the char making the house out of the space check, be careful 
 //			you don't build a house on top of your self..... this had to be done So you 
@@ -245,7 +245,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		return;
 	}
 
-	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy ) )
+	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat ) )
 		return;
 
 	char temp[1024];

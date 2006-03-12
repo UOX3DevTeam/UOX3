@@ -49,6 +49,18 @@ public:
 	virtual ~CBaseTile()
 	{
 	}
+	UI08 Flag( UI08 part ) const
+	{
+		UI08 retVal = 0;
+		switch( part )
+		{
+			case 0:	retVal = static_cast<UI08>(flags>>24);	break;
+			case 1:	retVal = static_cast<UI08>(flags>>16);	break;
+			case 2: retVal = static_cast<UI08>(flags>>8);	break;
+			case 3: retVal = static_cast<UI08>(flags%256);	break;
+		}
+		return retVal;
+	}
 	UI32 Flags( void ) const			{	return flags;	}
 	void Flags( UI32 newVal )			{	flags = newVal;	}
 
@@ -215,37 +227,22 @@ public:
 class CTileUni : public CBaseTile
 {
 private:
-	SI08 basez;
+	SI08 baseZ;
 	UI08 mType;		// 0 = Terrain, 1 = Item
-	UI16 id;
-	SI08 height;
+	SI08 top;
 
 public:
-	CTileUni() : basez( 0 ), mType( 0 ), id( 0 ), height( 0 )
+	CTileUni() : baseZ( 0 ), top( 0 ), mType( 0 )
 	{
 	}
 
-	SI08 BaseZ( void ) const	{	return basez;	}
+	SI08 BaseZ( void ) const	{	return baseZ;	}
+	SI08 Top( void ) const		{	return top;		}
 	UI08 Type( void ) const		{	return mType;	}
-	UI16 ID( void ) const		{	return id;		}
-	SI08 Height( void ) const	{	return height;	}
 
-	void BaseZ( SI08 nVal )		{	basez = nVal;	}
-	void Type( UI08 nVal )		{	mType = nVal;	}
-	void ID( UI16 nVal )		{	id = nVal;		}
-	void Height( SI08 nVal )	{	height = nVal;	}
-
-	CTileUni &operator=( CLand &toCopy )
-	{
-		Flags( toCopy.Flags() );
-		return (*this);
-	}
-	CTileUni &operator=( CTile &toCopy )
-	{
-		Flags( toCopy.Flags() );
-		Height( toCopy.Height() );
-		return (*this);
-	}
+	void BaseZ( SI08 nVal )		{	baseZ	= nVal;	}
+	void Type( UI08 nVal )		{	mType	= nVal;	}
+	void Top( SI08 nVal )		{	top		= nVal;	}
 };
 
 }

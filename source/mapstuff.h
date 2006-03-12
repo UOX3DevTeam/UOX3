@@ -143,7 +143,6 @@ public:
 	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
 	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
 	SI08			MapElevation( SI16 x, SI16 y, UI08 worldNumber );
-	SI08			AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
 	SI08			TileHeight( UI16 tilenum );
 	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
