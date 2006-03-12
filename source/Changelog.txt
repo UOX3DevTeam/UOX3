@@ -1,3 +1,7 @@
+12th March, 2006 - Maarc
+	Changed some id >= 0x4000 comparisons to CanBeObjType( OT_MULTI ), for clarity
+	Fixed a bug with applying NPC sections where if you specified ALCHEMY values, it would fail to apply correctly
+
 3/11/2006 - giwo (0.98-3.5e [3.6 BETA])
 	Fixed an issue causing items with no layer to not change the weight of a character.
 	Fixed an issue causing spells that require a targeted location not to function.

@@ -3725,7 +3725,7 @@ void CPObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 	bool isInvisible	= (mMulti.GetVisible() != VT_VISIBLE);
 	bool isMovable		= (mChar.AllMove());
 
-	if( mChar.ViewHouseAsIcon() && mMulti.GetID() >= 0x4000 )
+	if( mChar.ViewHouseAsIcon() )
 		pStream.WriteShort( 7, 0x14F0 );
 	else
 		pStream.WriteShort( 7, mMulti.GetID() );

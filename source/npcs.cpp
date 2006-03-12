@@ -595,7 +595,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 
 	UString cdata;
 	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
-	UI08 skillToSet = 0;
+	UI08 skillToSet = 0xFF;
 
 	TAGMAPOBJECT customTag;
 	UString customTagName;
@@ -1069,10 +1069,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											break;
 			default:						Console << "Unknown tag in ApplyNpcSection(): " << (SI32)tag << myendl; break;
 		}
-		if( skillToSet != 0 )
+		if( skillToSet != 0xFF )
 		{
 			applyTo->SetBaseSkill( static_cast<UI16>(RandomNum( ndata, odata )), skillToSet );
-			skillToSet = 0;
+			skillToSet = 0xFF;
 		}
 	}
 	return true;

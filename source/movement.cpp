@@ -717,8 +717,8 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			}
 			else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
 			{	// implication, is, this is now a CMultiObj
-				const UI16 multiID = (tItem->GetID() - 0x4000);
-				SI32 length = Map->SeekMulti( multiID );
+				const UI16 multiID	= (tItem->GetID() - 0x4000);
+				SI32 length			= Map->SeekMulti( multiID );
 				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 				{
 					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
@@ -1129,7 +1129,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 			{
 				if( !Magic->HandleFieldEffects( mChar, tItem, id ) )
 				{
-					if( id < 0x4000 )
+					if( !tItem->CanBeObjType( OT_MULTI ) )
 					{
 						UI16 targTrig		= tItem->GetScriptTrigger();
 						cScript *toExecute	= JSMapping->GetScript( targTrig );
@@ -1865,7 +1865,7 @@ bool cMovement::validNPCMove( SI16 x, SI16 y, SI08 z, CChar *s )
 	{
 		if( !ValidateObject( tItem ) )
 			continue;
-		if( tItem->GetID() >= 0x4000 ) // Multi
+		if( tItem->CanBeObjType( OT_MULTI ) ) // Multi
 			continue;
 		CTile& tile = Map->SeekTile( tItem->GetID() );
 		if( tItem->GetX() == x && tItem->GetY() == y && tItem->GetZ() + tile.Height() > z + 1 && tItem->GetZ() < z + MAX_Z_STEP )
