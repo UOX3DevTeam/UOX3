@@ -151,11 +151,6 @@ protected:
 	NPCValues_st	*	mNPC;
 	PlayerValues_st	*	mPlayer;
 
-	UI16		fireResist;
-	UI16		coldResist;
-	UI16		energyResist;
-	UI16		poisonResist;
-
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	UI16		hungerRate;	// The rate at which hunger decreases when char is tamed
 	UI08		hungerWildChance;	// The chance that the char get's wild when hungry
@@ -244,9 +239,7 @@ public:
 
 	void		UpdateDamageTrack( void );
 
-	void		SetDamageResist( UI16 newValue, DamageTypes damage);
-	UI16		GetDamageResist( DamageTypes damage) const;
-	void		IncreaseDamageResist( DamageTypes damage );
+	void		IncreaseElementResist( WeatherType element );
 
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;

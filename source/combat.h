@@ -35,18 +35,19 @@ private:
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
 	SI16	calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock, CItem *mWeapon, UI08 getFightSkill );
-	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage );
+	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
 	void	PlayMissedSoundEffect( CChar *mChar );
-	SI08	DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSock, SI16 damage );
 
 	void	HandleNPCSpellAttack( CChar *mChar, CChar *ourTarg, UI16 playerDistance );
 	void	HandleSplittingNPCs( CChar *toSplit );
 
 	CItem *	checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef );
 	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false );
+	CItem * checkElementDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType element = NONE );
+	CItem * getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false , WeatherType element = NONE );
 
 public:
 	R32		GetCombatTimeout( CChar *mChar );
@@ -55,8 +56,10 @@ public:
 	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded );
 
 	void	CombatLoop( CSocket *mSock, CChar& mChar );
-
+	
+	SI08	DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSock, SI16 damage );
 	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
+	UI16	calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = NONE );
 	SI16	calcAtt( CChar *mChar, bool doDamage = false );
 	SI16	calcLowDamage( CChar *p );
 	SI16	calcHighDamage( CChar *p );

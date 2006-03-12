@@ -968,6 +968,138 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 	return (UI16)total;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function		-	CItem *checkElementDef( CItem *checkItem, CItem& currItem, SI32 &currDef, WeatherType element )
+//|	Date			-	12. Mar, 2006
+//|	Developers		-	grimson
+//o--------------------------------------------------------------------------o
+//|	Description		-	Checks the elemental defense of checkItem vs the defense of currItem and returns
+//|							the item with the greater Def and its def value
+//o--------------------------------------------------------------------------o
+CItem *CHandleCombat::checkElementDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType element )
+{
+	if( ValidateObject( checkItem ) && checkItem->GetElementResist( element ) > currDef )
+	{
+		currDef = checkItem->GetElementResist( element );
+		return checkItem;
+	}
+	return currItem;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	CItem * getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType element )
+//|	Date			-	12. Mar, 2006
+//|	Developers		-	grimson
+//o--------------------------------------------------------------------------o
+//|	Description		-	Finds the item covering the location bodyLoc with the greatest elemental
+//|						resistance and returns it along with its def value
+//o--------------------------------------------------------------------------o
+CItem * CHandleCombat::getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType element )
+{
+	SI32 elementDef = 0;
+	CItem *currItem = NULL;
+	switch( bodyLoc )
+	{
+		case 1:		// Torso
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, elementDef, element );	// Shirt
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, elementDef, element );	// Torso (Inner - Chest Armor)
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, elementDef, element );	// Torso (Middle - Tunic, etc)
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, elementDef, element );	// Back (Cloak)
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, elementDef, element );	// Torso (Outer - Robe)
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 2.8 ));
+			break;
+		case 2:		// Arms
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, elementDef, element );	// Arms
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 6.8 ));
+			break;
+		case 3:		// Head
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_HELM ), currItem, elementDef, element );	// Head
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 7.3 ));
+			break;
+		case 4:		// Legs
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, elementDef, element );	// Shoes
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, elementDef, element );	// Pants
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, elementDef, element );	// Waist (Half Apron)
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, elementDef, element );	// Legs (Outer - Skirt, Kilt)
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, elementDef, element );	// Legs (Inner - Leg Armor)
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 4.5 ));
+			break;
+		case 5:		// Neck
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_NECK ), currItem, elementDef, element );	// Neck
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 14.5 ));
+			break;
+		case 6:		// Hands
+			currItem = checkElementDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, elementDef, element );	// Gloves
+			if( findTotal )
+				elementDef = (SI32)(100 * (R32)( elementDef / 14.5 ));
+			break;
+		default:
+			break;
+	}
+	if( findTotal )
+		totalDef += elementDef;
+	else
+		totalDef = elementDef;
+
+	return currItem;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	UI16 calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType element )
+//|	Date			-	12. Mar, 2006
+//|	Developers		-	grimson
+//o--------------------------------------------------------------------------o
+//|	Description		-	Finds the elemental resistance value of a specific location or the entire character based on hitLoc
+//o--------------------------------------------------------------------------o
+UI16 CHandleCombat::calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType element )
+{
+	if( !ValidateObject( mChar ) )
+		return 0;
+
+	SI32 total = (SI32)( mChar->GetElementResist( element ) / 100 );
+	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
+	{
+		CItem *defendItem = NULL;
+		if( hitLoc == 0 )
+		{
+			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
+				getElementDef( mChar, total, getLoc, true, element );
+			total = (total / 100);
+		}
+		else
+			defendItem = getElementDef( mChar, total, hitLoc, false, element );
+
+		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && RandomNum( 0, 1 ) )
+		{
+			SI08 armorDamage = 0;	// Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
+			armorDamage -= RandomNum( 0, 1 );
+			defendItem->IncHP( armorDamage );
+
+			if( defendItem->GetHP() <= 0 )
+			{
+				CSocket *mSock = mChar->GetSocket();
+				if( mSock != NULL )
+				{
+					std::string name;
+					getTileName( (*defendItem), name );
+					mSock->sysmessage( 311, name.c_str() );
+					mChar->Dirty( UT_STATWINDOW );
+				}
+				defendItem->Delete();
+			}
+		}
+	}
+
+	if( total < 2 && hitLoc != 0 )
+		total = 2;
+	return (UI16)total;
+}
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	CombatOnHorse( CChar *i )
 //|	Programmer	-	UOX DevTeam
@@ -1163,8 +1295,11 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 //|	Purpose			-	Adjusts the damage dealt to defend by weapon based on
 //|						race and weather weaknesses
 //o--------------------------------------------------------------------------
-void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamage )
+void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill )
 {
+	SI16 amount = 0;
+	UI16 elementDef = 0;
+
 	if( !ValidateObject( defend ) || !ValidateObject( weapon ) )
 		return;
 
@@ -1176,7 +1311,12 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 		for( int i = LIGHT; i < WEATHNUM; ++i )
 		{
 			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
-				bDamage *= 2;
+			{
+				elementDef = calcElementDef( defend, hitLoc, false, (WeatherType)i );
+				amount = bDamage - ( (SI16)( ( elementDef * attSkill ) / 750 ) );
+				defend->IncreaseElementResist( (WeatherType)i );
+				bDamage += amount;
+			}
 		}
 	}
 }
@@ -1298,10 +1438,6 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock,
 	if( RaceDamage != 0 )
 		BaseDamage += (SI16)( (R32)BaseDamage * ( (R32)RaceDamage / 1000 ) );
 
-	// Check to see if weapons affect defender's race.
-	if( getFightSkill != WRESTLING )
-		AdjustRaceDamage( ourTarg, mWeapon, BaseDamage );
-
 	R32 multiplier;
 	SI16 damage = 0;
 
@@ -1355,16 +1491,20 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock,
 
 	// Armor / Skin Absorbtion
 	UI16 getDef;
-	const SI08 hitMsg = DoHitMessage( mChar, ourTarg, targSock, damage );
+	const SI08 hitLoc = DoHitMessage( mChar, ourTarg, targSock, damage );
 	if( ourTarg->isHuman() )
 	{
-		getDef = calcDef( ourTarg, hitMsg, true );
+		getDef = calcDef( ourTarg, hitLoc, true );
 		getDef = HalfRandomNum( getDef );
 	}
 	else if( ourTarg->GetDef() > 0 )
 		getDef = ourTarg->GetDef();
 	else
 		getDef = 20;
+
+	// Check to see if weapons affect defender's race.
+	if( getFightSkill != WRESTLING )
+		AdjustRaceDamage( ourTarg, mWeapon, BaseDamage, hitLoc, attSkill );
 
 	// Damage based on Attack Skill (Armor defends less against low-skill characters)
 	damage -= (SI16)( ( getDef * attSkill ) / 750 );

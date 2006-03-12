@@ -103,6 +103,10 @@ protected:
 	UI08			updateTypes;
 	UI08			objSettings;
 
+	UI16			fireResist;
+	UI16			coldResist;
+	UI16			energyResist;
+	UI16			poisonResist;
 
 	SI16			oldLocX;
 	SI16			oldLocY;
@@ -122,6 +126,9 @@ public:
 	
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
+
+	void					SetElementResist( UI16 newValue, WeatherType damage);
+	UI16					GetElementResist( WeatherType damage) const;
 
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;

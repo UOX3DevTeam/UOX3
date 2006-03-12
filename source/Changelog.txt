@@ -1,3 +1,14 @@
+3/12/2006 - grimson
+	Removed DamageTypes enum and added POISON to WeatherTypse.
+	Renamed DamageResist functions into ElementResist and moved them to cBaseobject.cpp.
+	Renamed DFN tag DAMAGERESIST to ELEMENTRESIST and use it also for items.
+	Added DFN tag POISONDAMAGE to items so that they can also do poison damage on attacks.
+	Added functions calcElementDef(), getElementDef() and checkElementDef() to combat.cpp
+	to calculate the resistance against elements similiar to the def value of armor.
+	Changed AdjustRaceDamage() to also take into account the elemental resistance of the target.
+	Use calcElementDef() in MagicDamage() similiar to calcDef() in calcDamage() to take the
+	elemental resistance into account.
+
 3/12/2006 - giwo (0.98-3.5f [3.6 BETA])
 	Removed CMulHandler::AverageMapElevation() as it was superfluous.
 	Removed CTileUni height in favor of top, to reduce calc_walk() calculations.

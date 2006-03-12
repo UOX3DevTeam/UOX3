@@ -2115,7 +2115,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 
 bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element )
 {
-	if( element == LIGHT || element == WEATHNUM )
+	if( element == NONE || element == LIGHT || element == WEATHNUM )
 		return false;
 	
 	if( mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect( mChar.GetRace(), element ) || mChar.inBuilding())

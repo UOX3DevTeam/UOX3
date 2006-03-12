@@ -205,11 +205,13 @@ enum PickupLocations
 
 enum WeatherType
 {
-	LIGHT = 0,
+	NONE = 0,
+	LIGHT,
 	RAIN,
 	COLD,
 	HEAT,
 	LIGHTNING,
+	POISON,
 	SNOW,
 	STORM,
 	STORMBREW,
@@ -645,15 +647,6 @@ enum FlagColors
 	FC_ENEMY,
 	FC_MURDERER,
 	FC_INVULNERABLE
-};
-
-enum DamageTypes
-{
-	DAMAGE_NORM = 0,
-	DAMAGE_FIRE,
-	DAMAGE_COLD,
-	DAMAGE_ENERGY,
-	DAMAGE_POISON
 };
 
 #endif

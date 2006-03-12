@@ -208,10 +208,6 @@ const UI16			DEFCHAR_PRIV				= 0;
 const UI16			DEFCHAR_NOMOVE 				= 0;
 const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
-const UI16			DEFCHAR_FIRERESIST 			= 0;
-const UI16			DEFCHAR_COLDRESIST 			= 0;
-const UI16			DEFCHAR_ENERGYRESIST 		= 0;
-const UI16			DEFCHAR_POISONRESIST		= 0;
 
 CChar::CChar() : CBaseObject(),
 townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
@@ -222,8 +218,7 @@ emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
 townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
-raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ),
-fireResist( DEFCHAR_FIRERESIST ), coldResist( DEFCHAR_COLDRESIST ), energyResist( DEFCHAR_ENERGYRESIST ), poisonResist( DEFCHAR_POISONRESIST )
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
 	id		= 0x0190;
 	objType = OT_CHAR;
@@ -299,73 +294,24 @@ bool CChar::IsValidPlayer( void ) const
 	return ( mPlayer != NULL );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI16 DamageResist()
-//|   Date        -  11. Mar, 20006
-//|   Programmer  -  Grimson
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Set and Get the damage resist values
-//o---------------------------------------------------------------------------o
-void CChar::SetDamageResist( UI16 newValue, DamageTypes damage )
+void CChar::IncreaseElementResist( WeatherType element )
 {
-	switch( damage )
-	{
-		case DAMAGE_FIRE:
-			fireResist = newValue;
-			break;
-		case DAMAGE_COLD:
-			coldResist = newValue;
-			break;
-		case DAMAGE_ENERGY:
-			energyResist = newValue;
-			break;
-		case DAMAGE_POISON:
-			poisonResist = newValue;
-			break;
-		default:
-			break;
-	}
-}
-UI16 CChar::GetDamageResist( DamageTypes damage ) const
-{
-	switch( damage )
-	{
-		case DAMAGE_FIRE:
-			return fireResist;
-			break;
-		case DAMAGE_COLD:
-			return coldResist;
-			break;
-		case DAMAGE_ENERGY:
-			return energyResist;
-			break;
-		case DAMAGE_POISON:
-			return poisonResist;
-			break;
-		default:
-			return 0;
-			break;
-	}
-}
-
-void CChar::IncreaseDamageResist( DamageTypes damage )
-{
-	if( damage == DAMAGE_NORM )
+	if( element == NONE )
 		return;
 
 	if( !cwmWorldState->ServerData()->UseCharResistance() )
 		return;
 
-	// Increase damage resistance, very basic
-	UI16 damageResist = GetDamageResist( damage );
-	if( damageResist <= 1000 )
-		SetDamageResist( damageResist + 100, damage );
-	else if( damageResist <= 3000 )
-		SetDamageResist( damageResist + 10, damage );
-	else if( damageResist <= 9000 )
-		SetDamageResist( damageResist + 5, damage );
-	else
-		SetDamageResist( damageResist + 1, damage );
+	// Increase element resistance, very basic
+	UI16 damageResist = GetElementResist( element );
+	if( damageResist <= 100 )
+		SetElementResist( damageResist + 50, element );
+	else if( damageResist <= 200 )
+		SetElementResist( damageResist + 10, element );
+	else if( damageResist <= 400 )
+		SetElementResist( damageResist + 5, element );
+	else if( damageResist < 500 )
+		SetElementResist( damageResist + 1, element );
 	return;
 }
 
@@ -2229,10 +2175,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
-	dumping << "FireResist=" << (SI16)GetDamageResist( DAMAGE_FIRE ) << std::endl;
-	dumping << "ColdResist=" << (SI16)GetDamageResist( DAMAGE_COLD ) << std::endl;
-	dumping << "EnergyResist=" << (SI16)GetDamageResist( DAMAGE_ENERGY ) << std::endl;
-	dumping << "PoisonResist=" << (SI16)GetDamageResist( DAMAGE_POISON ) << std::endl;
 	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
 	dumping << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << std::endl;
@@ -2984,11 +2926,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetCanTrain( data.toUShort() == 1 );
 					rvalue = true;
 				}
-				else if( UTag == "COLDRESIST" )
-				{
-					SetDamageResist( data.toUShort(), DAMAGE_COLD );
-					rvalue = true;
-				}
 				break;
 			case 'D':
 				if( UTag == "DISPLAYZ" )
@@ -3008,11 +2945,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				if( UTag == "EMOTION" )
 				{
 					SetEmoteColour( data.toUShort() );
-					rvalue = true;
-				}
-				else if( UTag == "ENERGYRESIST" )
-				{
-					SetDamageResist( data.toUShort(), DAMAGE_ENERGY );
 					rvalue = true;
 				}
 				break;
@@ -3060,11 +2992,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "FOODLIST" )
 				{
 					SetFood( data.substr( 0, MAX_NAME ) );
-					rvalue = true;
-				}
-				else if( UTag == "FIRERESIST" )
-				{
-					SetDamageResist( data.toUShort(), DAMAGE_FIRE );
 					rvalue = true;
 				}
 				break;
@@ -3265,11 +3192,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "PEACETIMER" )
 				{
 					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( data.toFloat() ) );
-					rvalue = true;
-				}
-				else if( UTag == "POISONRESIST" )
-				{
-					SetDamageResist( data.toUShort(), DAMAGE_POISON );
 					rvalue = true;
 				}
 				break;

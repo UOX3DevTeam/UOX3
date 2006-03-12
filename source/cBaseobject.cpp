@@ -89,6 +89,11 @@ const UI08			DEFBASE_OBJSETTINGS	= 0;
 const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
+const UI16			DEFBASE_FIRERESIST 	= 0;
+const UI16			DEFBASE_COLDRESIST 	= 0;
+const UI16			DEFBASE_ENERGYRESIST = 0;
+const UI16			DEFBASE_POISONRESIST = 0;
+
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	CBaseObject constructor
@@ -107,7 +112,8 @@ lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ),
+fireResist( DEFBASE_FIRERESIST ), coldResist( DEFBASE_COLDRESIST ), energyResist( DEFBASE_ENERGYRESIST ), poisonResist( DEFBASE_POISONRESIST )
 {
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
@@ -296,6 +302,55 @@ void CBaseObject::WalkXY( SI16 newX, SI16 newY )
 	oldLocY = y;
 	x = newX;
 	y = newY;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 ElementResist()
+//|   Date        -  11. Mar, 20006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Set and Get the damage resist values
+//o---------------------------------------------------------------------------o
+void CBaseObject::SetElementResist( UI16 newValue, WeatherType damage )
+{
+	switch( damage )
+	{
+		case HEAT:
+			fireResist = newValue;
+			break;
+		case COLD:
+			coldResist = newValue;
+			break;
+		case LIGHTNING:
+			energyResist = newValue;
+			break;
+		case POISON:
+			poisonResist = newValue;
+			break;
+		default:
+			break;
+	}
+}
+UI16 CBaseObject::GetElementResist( WeatherType damage ) const
+{
+	switch( damage )
+	{
+		case HEAT:
+			return fireResist;
+			break;
+		case COLD:
+			return coldResist;
+			break;
+		case LIGHTNING:
+			return energyResist;
+			break;
+		case POISON:
+			return poisonResist;
+			break;
+		default:
+			return 0;
+			break;
+	}
 }
 
 //o--------------------------------------------------------------------------
@@ -642,6 +697,10 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Disabled=" << (isDisabled()?"1":"0") << std::endl;
 	dumping << "Damage=" << lodamage << "," << hidamage << std::endl;
 	dumping << "Poisoned=" << (SI16)poisoned << std::endl;
+	dumping << "FireResist=" << (SI16)GetElementResist( HEAT ) << std::endl;
+	dumping << "ColdResist=" << (SI16)GetElementResist( COLD ) << std::endl;
+	dumping << "EnergyResist=" << (SI16)GetElementResist( LIGHTNING ) << std::endl;
+	dumping << "PoisonResist=" << (SI16)GetElementResist( POISON ) << std::endl;
 	dumping << "Carve=" << GetCarve() << std::endl;
 	dumping << "Defense=" << def << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
@@ -1506,6 +1565,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				carve	= data.toShort();
 				rvalue	= true;
 			}
+			else if( UTag == "COLDRESIST" )
+			{
+				SetElementResist( data.toUShort(), COLD );
+				rvalue = true;
+			}
 			break;
 		case 'D':
 			if( UTag == "DAMAGE" )
@@ -1554,14 +1618,25 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				rvalue = true;
 			}
 			break;
+		case 'E':
+			if( UTag == "ENERGYRESIST" )
+			{
+				SetElementResist( data.toUShort(), LIGHTNING );
+				rvalue = true;
+			}
+			break;
 		case 'F':
-				if( UTag == "FAME" )
-				{
-					SetFame( data.toShort() );
-					rvalue	= true;
-				}
-				break;
-
+			if( UTag == "FAME" )
+			{
+				SetFame( data.toShort() );
+				rvalue	= true;
+			}
+			else if( UTag == "FIRERESIST" )
+			{
+				SetElementResist( data.toUShort(), HEAT );
+				rvalue = true;
+			}
+			break;
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
@@ -1663,6 +1738,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				poisoned	= data.toUByte();
 				rvalue		= true;
+			}
+			else if( UTag == "POISONRESIST" )
+			{
+				SetElementResist( data.toUShort(), POISON );
+				rvalue = true;
 			}
 			break;
 		case 'R':

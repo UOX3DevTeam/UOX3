@@ -213,7 +213,7 @@ bool splHeal( CChar *caster, CChar *target, CChar *src )
 }
 bool splMagicArrow( CChar *caster, CChar *target, CChar *src )
 {
-	Magic->MagicDamage( target, (1+(RandomNum( 0, 1 ))+1)*(caster->GetSkill( MAGERY )/2000+1), caster, DAMAGE_COLD );
+	Magic->MagicDamage( target, (1+(RandomNum( 0, 1 ))+1)*(caster->GetSkill( MAGERY )/2000+1), caster, COLD );
 	return true;
 }
 bool splNightSight( CChar *caster, CChar *target, CChar *src )
@@ -259,9 +259,9 @@ bool splCure( CChar *caster, CChar *target, CChar *src )
 bool splHarm( CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 2 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/500+1, caster, DAMAGE_COLD );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/500+1, caster, COLD );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/250+RandomNum( 1, 2 ), caster, DAMAGE_COLD );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/250+RandomNum( 1, 2 ), caster, COLD );
 	return true;
 }
 bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target )
@@ -322,9 +322,9 @@ bool splBless( CChar *caster, CChar *target, CChar *src )
 bool splFireball( CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 3 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 280 + 1, caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 280 + 1, caster, HEAT );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 140 + RandomNum( 1, 4 ), caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 140 + RandomNum( 1, 4 ), caster, HEAT );
 	return true;
 }
 bool splMagicLock( CSocket *sock, CChar *caster, CItem *target )
@@ -488,9 +488,9 @@ bool splLightning( CChar *caster, CChar *target, CChar *src )
 {
 	Effects->bolteffect( target );
 	if( Magic->CheckResist( caster, target, 4 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1, 2 ), caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1, 2 ), caster, LIGHTNING );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, LIGHTNING );
 	return true;
 }
 bool splManaDrain( CChar *caster, CChar *target, CChar *src )
@@ -653,16 +653,16 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src )
 	if( caster->GetIntelligence() > target->GetIntelligence() )
 	{
 		if( Magic->CheckResist( caster, target, 5 ) )
-			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/4, src, DAMAGE_COLD );
+			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/4, src, COLD );
 		else
-			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/2, src, DAMAGE_COLD );
+			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/2, src, COLD );
 	}
 	else
 	{
 		if( Magic->CheckResist( caster, src, 5 ) )
-			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/4, src, DAMAGE_COLD );
+			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/4, src, COLD );
 		else
-			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/2, src, DAMAGE_COLD );
+			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/2, src, COLD );
 	}
 	return true;
 }
@@ -706,9 +706,9 @@ bool splDispel( CChar *caster, CChar *target, CChar *src )
 bool splEnergyBolt( CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 6 ) ) 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/120, caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/120, caster, LIGHTNING );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/35+RandomNum(1,10), caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/35+RandomNum(1,10), caster, LIGHTNING );
 	return true;
 }
 bool splExplosion( CChar *caster, CChar *target, CChar *src )
@@ -850,9 +850,9 @@ void ChainLightningStub( CChar *caster, CChar *target )
 
 	Effects->bolteffect( def );
 	if( Magic->CheckResist( caster, target, 4 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1 ,2 ), caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1 ,2 ), caster, LIGHTNING );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, DAMAGE_ENERGY );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, LIGHTNING );
 }
 bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 {
@@ -866,9 +866,9 @@ bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 bool splFlameStrike( CChar *caster, CChar *target, CChar *src )
 {
 	if( Magic->CheckResist( caster, target, 7 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, HEAT );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40+RandomNum(1,25), caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40+RandomNum(1,25), caster, HEAT );
 	return true;
 }
 bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
@@ -946,9 +946,9 @@ void MeteorSwarmStub( CChar *caster, CChar *target )
 	Effects->PlaySound( target, 0x160 ); 
 	Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
 	if( Magic->CheckResist( caster, target, 7 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, HEAT );
 	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40, caster, DAMAGE_FIRE );
+		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40, caster, HEAT );
 }
 
 bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) )
@@ -1931,7 +1931,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 //|     Purpose       :          Calculate and inflict magic damage.
 //o---------------------------------------------------------------------------o
 
-void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, DamageTypes damageType )
+void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType element )
 {
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
 		return;
@@ -1981,14 +1981,14 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, DamageTypes dam
 			}
 		}
 
-		if( damageType > DAMAGE_NORM && damageType <= DAMAGE_POISON )
+		if( element > NONE && element <= POISON )
 		{
-			// Calculate damage resistance, very basic
-			const R32 damageModifier = ( (R32)(p->GetDamageResist( damageType )) / 10000 );
-			if( damageModifier > 0 )
-				amount = (SI16)roundNumber( ((R32)amount - ( (R32)amount * damageModifier )) );
-			
-			p->IncreaseDamageResist( damageType );
+			// Calculate damage resistance the same way armor resistance is calculated
+			const UI16 attSkill = attacker->GetSkill( MAGERY );
+			const SI08 hitLoc = Combat->DoHitMessage( attacker, p, NULL, amount );
+			const UI16 elementDef = Combat->calcElementDef( p, hitLoc, true, element );
+			amount -= ( (SI16)( ( elementDef * attSkill ) / 750 ) );
+			p->IncreaseElementResist( element );
 		}
 
 		if( p->IsNpc() ) 
@@ -2070,11 +2070,11 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 			poison = 1;
 
 		// Calculate damage resistance, very basic
-		const R32 damageModifier = ( (R32)(p->GetDamageResist( DAMAGE_POISON )) / 10000 );
+		const R32 damageModifier = ( Combat->calcElementDef( p, 0, false, POISON ) / 100 );
 		if( damageModifier > 0 )
 			poison = (SI16)roundNumber( ((R32)poison - ( (R32)poison * damageModifier )) );
 
-		p->IncreaseDamageResist( DAMAGE_POISON );
+		p->IncreaseElementResist( POISON );
 		
 		if ( poison > 0 )
 		{
@@ -2139,9 +2139,9 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 			if( RandomNum( 0, 2 ) == 1 )
 			{
 				if( !CheckResist( NULL, mChar, 4 ) )
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, NULL, DAMAGE_FIRE );
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, NULL, HEAT );
 				else
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 200, NULL, DAMAGE_FIRE );
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 200, NULL, HEAT );
 			}
 			Effects->PlaySound( mChar, 520 );
 			return true;
@@ -2237,9 +2237,9 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
     Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
     Effects->PlaySound( s, 0x0207 );
 	if( CheckResist( NULL, s, 4 ) ) 
-		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2, NULL, DAMAGE_ENERGY );
+		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2, NULL, LIGHTNING );
 	else 
-		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2, NULL, DAMAGE_ENERGY );
+		MagicDamage( s, i->GetTempVar( CITV_MORE, 2 ) / 2, NULL, LIGHTNING );
 	i->SetTempVar( CITV_MORE, 0 );
 }
 

@@ -669,13 +669,13 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( retitem != NULL )
 												retitem->SetColour( static_cast<UI16>(haircolor) );
 											break;
-			case DFNTAG_DAMAGERESIST:
-											if( cdata.sectionCount( " " ) == 4 )
+			case DFNTAG_ELEMENTRESIST:
+											if( cdata.sectionCount( " " ) == 3 )
 											{
-												applyTo->SetDamageResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), DAMAGE_FIRE );
-												applyTo->SetDamageResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), DAMAGE_COLD );
-												applyTo->SetDamageResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), DAMAGE_ENERGY );
-												applyTo->SetDamageResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), DAMAGE_POISON );
+												applyTo->SetElementResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() * 100 ), HEAT );
+												applyTo->SetElementResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() * 100 ), COLD );
+												applyTo->SetElementResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() * 100 ), LIGHTNING );
+												applyTo->SetElementResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() * 100 ), POISON );
 											}
 											break;
 			case DFNTAG_DEX:

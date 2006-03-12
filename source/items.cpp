@@ -87,6 +87,15 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_DAMAGE:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
 										applyTo->SetHiDamage( static_cast<SI16>(odata) );
 										break;
+			case DFNTAG_ELEMENTRESIST:
+										if( cdata.sectionCount( " " ) == 3 )
+										{
+											applyTo->SetElementResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
+											applyTo->SetElementResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
+											applyTo->SetElementResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
+											applyTo->SetElementResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
+										}
+										break;
 			case DFNTAG_DEF:			applyTo->SetDef( static_cast<UI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_DEX:			applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
@@ -155,6 +164,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata.c_str() );						break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>(ndata) );		break;
+			case DFNTAG_POISONDAMAGE:	applyTo->SetWeatherDamage( POISON, ndata != 0 );		break;
 			case DFNTAG_POISONED:		applyTo->SetPoisoned( static_cast<UI08>(ndata) );		break;
 			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
 			case DFNTAG_PRIV:			applyTo->SetPriv( static_cast<UI08>(ndata) );			break;
