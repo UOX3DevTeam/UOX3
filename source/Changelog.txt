@@ -1,3 +1,7 @@
+3/13/2006 - grimson
+	Changed CBaseObject::SetWeight() and CBaseObject::SetID() so they also update the weight
+	of the container the item is in, when it is an item and when it is within a container.
+
 13th March, 2006 - Maarc
 	Altered the CBO resistances code to use an array rather than a number of variables
 	Note that we're still only saving out a subset of these resistances, because only a subset ever get checked at the moment

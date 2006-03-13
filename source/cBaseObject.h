@@ -162,7 +162,7 @@ public:
 	void					SetID(     UI08 newValue, UI08 part );
 
 	SI32					GetWeight( void ) const;
-	void					SetWeight( SI32 newVal );
+	void					SetWeight( SI32 newVal, bool doWeightUpdate = true );
 
 	SERIAL					GetSerial( void ) const;
 	SERIAL					GetSpawn( void ) const;

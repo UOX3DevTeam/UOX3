@@ -101,7 +101,7 @@ SI32 CWeight::calcWeight( CItem *pack )
 			CTile& tile = Map->SeekTile( i->GetID() );
 			contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
 			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
-			i->SetWeight( contWeight );		// Also update the weight property of the container
+			i->SetWeight( contWeight, false );		// Also update the weight property of the container
 			totalWeight += contWeight;
 			if( totalWeight >= MAX_WEIGHT )
 				return MAX_WEIGHT;
@@ -148,7 +148,7 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 			CTile& tile = Map->SeekTile( i->GetID() );
 			contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
 			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
-			i->SetWeight( contWeight );		// Also update the weight property of the container
+			i->SetWeight( contWeight, false );		// Also update the weight property of the container
 			totalWeight += contWeight;
 			break;
 		}
@@ -269,9 +269,9 @@ void CWeight::addItemWeight( CItem *pack, CItem *item )
 	SI32 totalWeight = pack->GetWeight();
 	
 	if( calcAddWeight( item, totalWeight ) )
-		pack->SetWeight( totalWeight );
+		pack->SetWeight( totalWeight, false );
 	else
-		pack->SetWeight( MAX_WEIGHT );
+		pack->SetWeight( MAX_WEIGHT, false );
 
 	CBaseObject *pCont = pack->GetCont();
 	if( ValidateObject( pCont ) )
@@ -369,9 +369,9 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 	SI32 totalWeight = pack->GetWeight();
 
 	if( calcSubtractWeight( item, totalWeight ) )
-		pack->SetWeight( totalWeight );
+		pack->SetWeight( totalWeight, false );
 	else
-		pack->SetWeight( 0 );
+		pack->SetWeight( 0, false );
 
 	CBaseObject *pCont = pack->GetCont();
 	if( ValidateObject( pCont ) )

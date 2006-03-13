@@ -26,6 +26,7 @@
 #include "cScript.h"
 #include "network.h"
 #include "ObjectFactory.h"
+#include "weight.h"
 
 namespace UOX
 {
@@ -386,7 +387,23 @@ UI08 CBaseObject::GetColour( UI08 part ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::SetID( UI16 newValue )
 {
+	CItem *item = NULL;
+
+	if( GetObjType() == OT_ITEM )
+	{
+		item = static_cast<CItem *>(this);
+	}
+	
+	if( ValidateObject( item ) )
+		if( ValidateObject( item->GetCont() ) )
+			Weight->subtractItemWeight( item->GetCont(), item );
+
 	id = newValue;
+
+	if( ValidateObject( item ) )
+		if( ValidateObject( item->GetCont() ) )
+			Weight->addItemWeight( item->GetCont(), item );
+
 	Dirty( UT_HIDE );
 }
 
@@ -437,9 +454,25 @@ SI32 CBaseObject::GetWeight( void ) const
 {
 	return weight;
 }
-void CBaseObject::SetWeight( SI32 newVal )
+void CBaseObject::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
+	CItem *item = NULL;
+
+	if( GetObjType() == OT_ITEM )
+	{
+		item = static_cast<CItem *>(this);
+	}
+	
+	if( ValidateObject( item ) )
+		if( ValidateObject( item->GetCont() ) && doWeightUpdate )
+			Weight->subtractItemWeight( item->GetCont(), item );
+
 	weight = newVal;
+
+	if( ValidateObject( item ) )
+		if( ValidateObject( item->GetCont() ) && doWeightUpdate )
+			Weight->addItemWeight( item->GetCont(), item );
+	
 }
 
 //o--------------------------------------------------------------------------
