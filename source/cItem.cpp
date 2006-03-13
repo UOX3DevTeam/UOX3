@@ -80,7 +80,7 @@ const ARMORCLASS	DEFITEM_ARMORCLASS		= 0;
 const TIMERVAL		DEFITEM_TEMPTIMER		= 0;
 const UI08			DEFITEM_SPEED			= 0;
 const UI16			DEFITEM_MAXHP			= 0;
-const UI08			DEFITEM_WEATHERBOOLS	= 0;
+const UI16			DEFITEM_WEATHERBOOLS	= 0;
 const SI08			DEFITEM_OFFSPELL		= 0;
 
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
@@ -937,12 +937,10 @@ void CItem::CopyData( CItem *target )
 	target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
-	target->SetWeatherDamage( LIGHT, GetWeatherDamage( LIGHT ) );
-	target->SetWeatherDamage( RAIN, GetWeatherDamage( RAIN ) );
-	target->SetWeatherDamage( COLD, GetWeatherDamage( COLD ) );
-	target->SetWeatherDamage( HEAT, GetWeatherDamage( HEAT ) );
-	target->SetWeatherDamage( LIGHTNING, GetWeatherDamage( LIGHTNING ) );
-	target->SetWeatherDamage( SNOW, GetWeatherDamage( SNOW ) );
+	for( int i = 0; i < WEATHNUM; ++i )
+	{
+		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
+	}
 }
 
 bool CItem::GetWeatherDamage( WeatherType effectNum ) const

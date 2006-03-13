@@ -1300,7 +1300,7 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 //o--------------------------------------------------------------------------
 void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill )
 {
-	SI16 amount = 0;
+	SI16 amount		= 0;
 	UI16 elementDef = 0;
 
 	if( !ValidateObject( defend ) || !ValidateObject( weapon ) )
@@ -1315,10 +1315,10 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 		{
 			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
 			{
-				elementDef = calcElementDef( defend, hitLoc, false, (WeatherType)i );
-				amount = bDamage - ( (SI16)( ( elementDef * attSkill ) / 750 ) );
+				elementDef	= calcElementDef( defend, hitLoc, false, (WeatherType)i );
+				amount		= bDamage - ( (SI16)( ( elementDef * attSkill ) / 750 ) );
 				defend->IncreaseElementResist( (WeatherType)i );
-				bDamage += amount;
+				bDamage		+= amount;
 			}
 		}
 	}

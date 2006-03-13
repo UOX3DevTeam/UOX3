@@ -89,10 +89,7 @@ const UI08			DEFBASE_OBJSETTINGS	= 0;
 const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
-const UI16			DEFBASE_FIRERESIST 	= 0;
-const UI16			DEFBASE_COLDRESIST 	= 0;
-const UI16			DEFBASE_ENERGYRESIST = 0;
-const UI16			DEFBASE_POISONRESIST = 0;
+const UI16			DEFBASE_RESIST 		= 0;
 
 
 //o--------------------------------------------------------------------------o
@@ -112,8 +109,7 @@ lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ),
-fireResist( DEFBASE_FIRERESIST ), coldResist( DEFBASE_COLDRESIST ), energyResist( DEFBASE_ENERGYRESIST ), poisonResist( DEFBASE_POISONRESIST )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
@@ -121,6 +117,8 @@ fireResist( DEFBASE_FIRERESIST ), coldResist( DEFBASE_COLDRESIST ), energyResist
 	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
+	for( int i = 0; i < WEATHNUM; ++i )
+		resistances[i] = DEFBASE_RESIST;
 }
 
 
@@ -306,51 +304,18 @@ void CBaseObject::WalkXY( SI16 newX, SI16 newY )
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  UI16 ElementResist()
-//|   Date        -  11. Mar, 20006
+//|   Date        -  11. Mar, 2006
 //|   Programmer  -  Grimson
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Set and Get the damage resist values
 //o---------------------------------------------------------------------------o
 void CBaseObject::SetElementResist( UI16 newValue, WeatherType damage )
 {
-	switch( damage )
-	{
-		case HEAT:
-			fireResist = newValue;
-			break;
-		case COLD:
-			coldResist = newValue;
-			break;
-		case LIGHTNING:
-			energyResist = newValue;
-			break;
-		case POISON:
-			poisonResist = newValue;
-			break;
-		default:
-			break;
-	}
+	resistances[damage] = newValue;
 }
 UI16 CBaseObject::GetElementResist( WeatherType damage ) const
 {
-	switch( damage )
-	{
-		case HEAT:
-			return fireResist;
-			break;
-		case COLD:
-			return coldResist;
-			break;
-		case LIGHTNING:
-			return energyResist;
-			break;
-		case POISON:
-			return poisonResist;
-			break;
-		default:
-			return 0;
-			break;
-	}
+	return resistances[damage];
 }
 
 //o--------------------------------------------------------------------------
@@ -1814,10 +1779,10 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			else if( UTag == "TAGVAL" )
 			{
 				TAGMAPOBJECT tagvalObject;
-				tagvalObject.m_ObjectType=TAGMAP_TYPE_INT;
-				tagvalObject.m_IntValue=data.toULong();
-				tagvalObject.m_Destroy=FALSE;
-				tagvalObject.m_StringValue="";
+				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
+				tagvalObject.m_IntValue		= data.toULong();
+				tagvalObject.m_Destroy		= FALSE;
+				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
 				rvalue = true;
 			}

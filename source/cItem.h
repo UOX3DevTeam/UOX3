@@ -60,7 +60,7 @@ protected:
 	COLOUR			glowColour;
 	UI08			glow_effect;
 
-	UI08			weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
+	UI16			weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
 	void			RemoveSelfFromCont( void );
 	virtual void	RemoveSelfFromOwner( void );

@@ -1,3 +1,10 @@
+13th March, 2006 - Maarc
+	Altered the CBO resistances code to use an array rather than a number of variables
+	Note that we're still only saving out a subset of these resistances, because only a subset ever get checked at the moment
+	This could easily change in future, with people wanting to use other elemental stuff
+	Adjusted CItem::CopyData() so that it copies all the WeatherDamage values instead of only a couple
+	Upgraded the container size on weatherBools, as the number of weather entries has moved beyond a UI08 size
+
 3/13/2006 - grimson
 	Changed CPICreateCharacter::newbieItems() so that the default items aren't placed inside
 	the players backpack until they have their final ID, to prevent the adding of wrong weight
@@ -14,7 +21,7 @@
 	Changed MagicDamage() so that we always do at least a little bit of damage.
 
 3/12/2006 - grimson
-	Removed DamageTypes enum and added POISON to WeatherTypse.
+	Removed DamageTypes enum and added POISON to WeatherTypes.
 	Renamed DamageResist functions into ElementResist and moved them to cBaseobject.cpp.
 	Renamed DFN tag DAMAGERESIST to ELEMENTRESIST and use it also for items.
 	Added DFN tag POISONDAMAGE to items so that they can also do poison damage on attacks.
