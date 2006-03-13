@@ -1,3 +1,8 @@
+3/13/2006 - grimson
+	Changed CPICreateCharacter::newbieItems() so that the default items aren't placed inside
+	the players backpack until they have their final ID, to prevent the adding of wrong weight
+	values.
+
 3/12/2006 - grimson
 	Changed the z value for various LineOfSight() calls so that we actually check whether
 	we can see the face of the targeted char instead of his feets.

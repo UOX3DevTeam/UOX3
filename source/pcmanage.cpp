@@ -539,7 +539,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	addNewbieItem( tSock, mChar, "DEFAULT" );
 
 
-	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, true );
+	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, false );
 	if( CreatedItems[LOWERGARMENT] != NULL )
 	{
 		UI16 newID = INVALIDID;
@@ -567,9 +567,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[LOWERGARMENT]->SetColour( pantsColour );
 		CreatedItems[LOWERGARMENT]->SetDye( true );
 		if( !CreatedItems[LOWERGARMENT]->SetCont( mChar ) )
+		{
 			CreatedItems[LOWERGARMENT]->SetCont( mChar->GetPackItem() );
+			CreatedItems[LOWERGARMENT]->PlaceInPack();
+		}
 	}	
-	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, true );
+	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, false );
 	if( CreatedItems[UPPERGARMENT] != NULL )
 	{
 		if( RandomNum( 0, 1 ) )
@@ -580,15 +583,21 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[UPPERGARMENT]->SetLayer( IL_INNERSHIRT );
 		CreatedItems[UPPERGARMENT]->SetDye( true );
 		if( !CreatedItems[UPPERGARMENT]->SetCont( mChar ) )
+		{
 			CreatedItems[UPPERGARMENT]->SetCont( mChar->GetPackItem() );
+			CreatedItems[UPPERGARMENT]->PlaceInPack();
+		}
 	}	
-	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM, true );
+	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM, false );
 	if( CreatedItems[SHOES] != NULL )
 	{
 		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );
 		CreatedItems[SHOES]->SetDye( true );
 		if( !CreatedItems[SHOES]->SetCont( mChar ) )
+		{
 			CreatedItems[SHOES]->SetCont( mChar->GetPackItem() );
+			CreatedItems[SHOES]->PlaceInPack();
+		}
 	}
 	
 	// Give the character some gold
