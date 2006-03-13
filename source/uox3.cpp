@@ -1099,7 +1099,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 				break;
 			}
 		} 
-		if( itemCheck->GetType() == IT_PLANK )
+		if( itemCheck->CanBeObjType( OT_BOAT ) )
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
 			if( ValidateObject( mBoat ) && mBoat->GetMoveType() && 
@@ -1830,9 +1830,9 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		CItem *retitem		= NULL;
 		CItem *hairobject	= applyTo->GetItemAtLayer( IL_HAIR );
 		CItem *beardobject	= applyTo->GetItemAtLayer( IL_FACIALHAIR );
-		DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+		DFNTAGS tag			= DFNTAG_COUNTOFTAGS;
 		UString cdata;
-		UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
 		for( tag = Advancement->FirstTag(); !Advancement->AtEndTags(); tag = Advancement->NextTag() )
 		{

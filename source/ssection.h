@@ -257,9 +257,9 @@ private:
 	{
 		DFNTAGS tag;
 		UString	cdata;
-		UI32	ndata;
-		UI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( INVALIDSERIAL ), odata( INVALIDSERIAL )
+		SI32	ndata;
+		SI32	odata;
+		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
 		{
 		}
 	};
@@ -289,7 +289,7 @@ public:
 	bool					AtEnd( void );
 	bool					AtEndTags( void );
 	const UString			GrabData( void );
-	const UString			GrabData( UI32& ndata, UI32& odata );
+	const UString			GrabData( SI32& ndata, SI32& odata );
 	bool					FlushData( void );
 	size_t					NumEntries( void ) const;
 	const UString			MoveTo( size_t position );

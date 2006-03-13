@@ -315,6 +315,15 @@ bool CTownRegion::RemoveTownMember( CChar& toAdd )
 	return false;	// we're not in our town
 }
 
+bool oreSkillComparator (orePref o1, orePref o2)
+{
+	if (o1.oreIndex == NULL)
+		return false;
+	if (o2.oreIndex == NULL)
+		return true;
+	return o1.oreIndex->minSkill > o2.oreIndex->minSkill;
+}
+
 bool CTownRegion::InitFromScript( ScriptSection *toScan )
 {
 	UString tag;
@@ -542,6 +551,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 			orePreferences.push_back( toLoad );
 		}
 	}
+	// sort orePreferences in order of descending minSkill
+	std::sort( orePreferences.begin(), orePreferences.end(), oreSkillComparator );
 	return true;
 }
 

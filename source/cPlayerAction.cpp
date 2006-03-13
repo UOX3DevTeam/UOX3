@@ -1507,7 +1507,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		pd.FlagByte( 0x02 );
 	s->Send( &pd );
 
-	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); pdoll->NextItem() )
+	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); wearItem = pdoll->NextItem() )
 	{
 		if( ValidateObject( wearItem ) )
 		{
@@ -1645,26 +1645,35 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_TRASHCONT:	// Trash container
 			bool packOpened;
 			packOpened = false;
-			if( x->GetCont() == NULL )
+			CBaseObject *baseCont;
+			ObjectType objType;
+			baseCont = FindItemOwner( x, objType );
+			if( !ValidateObject( baseCont ) )
+				baseCont = x;
+
+			if( ValidateObject( baseCont ) )
 			{
-				if( objInRange( mChar, x, DIST_NEARBY ) && mChar->GetMultiObj() == x->GetMultiObj() )
+				if( baseCont->CanBeObjType( OT_ITEM ) )
 				{
-					mSock->openPack( x );
-					packOpened = true;
-				}
-			}
-			else
-			{
-				iChar = FindItemOwner( x );
-				if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) )
-				{
-					if( mChar == iChar || mChar == iChar->GetOwnerObj() )
+					if( objInRange( mChar, baseCont, DIST_NEARBY ) && mChar->GetMultiObj() == baseCont->GetMultiObj() )
+					{
 						mSock->openPack( x );
-					else
-						Skills->Snooping( mSock, iChar, x );
-					packOpened = true;	
+						packOpened = true;
+					}
 				}
-					
+				else
+				{
+					iChar = static_cast<CChar *>(baseCont);
+					if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) )
+					{
+						if( mChar == iChar || mChar == iChar->GetOwnerObj() )
+							mSock->openPack( x );
+						else
+							Skills->Snooping( mSock, iChar, x );
+						packOpened = true;	
+					}
+						
+				}
 			}
 			if( packOpened )
 			{
@@ -1854,7 +1863,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_TILLER:	// Tillerman
 			if( ValidateObject( GetBoat( mSock ) ) )
 			{
-				CBoatObj *boat = static_cast<CBoatObj *>(calcMultiFromSer( x->GetTempVar( CITV_MORE ) ));
+				CBoatObj *boat = static_cast<CBoatObj *>(x->GetMultiObj());
 				if( ValidateObject( boat ) )
 					ModelBoat( mSock, boat );
 			}

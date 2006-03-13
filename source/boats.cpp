@@ -139,12 +139,11 @@ void LeaveBoat( CSocket *s, CItem *p )
 void PlankStuff( CSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
-	CBoatObj *boat = GetBoat( s );
+	CBoatObj *boat	= GetBoat( s );
 	if( !ValidateObject( boat ) )
 	{
 		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 3 );
-		SERIAL mser			= p->GetTempVar( CITV_MORE );
-		CMultiObj *boat2	= calcMultiFromSer( mser );
+		CMultiObj *boat2	= p->GetMultiObj();
 		if( ValidateObject( boat2 ) )
 		{
 			CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -351,8 +350,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	}
 
 	CChar *mChar = s->CurrcharObj();
-	b->SetTempVar( CITV_MORE, calcserial( id2, id2+3, b->GetTempVar( CITV_MORE, 3 ), b->GetTempVar( CITV_MORE, 4 ) ) );
-	b->SetType( IT_PLANK );// Boat type
+	b->SetTempVar( CITV_MOREZ, calcserial( id2, id2+3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 ) ) );
 	b->SetZ( -5 );// Z in water
 	b->SetName( Dictionary->GetEntry( 1408 ) );//Name is something other than "%s's house"
 	SERIAL serial = b->GetSerial();
@@ -361,7 +359,6 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		return false;
 	tiller->SetName( Dictionary->GetEntry( 1409 ) );
 	tiller->SetType( IT_TILLER );
-	tiller->SetTempVar( CITV_MORE, serial );
 	tiller->SetTempVar( CITV_MOREX, boattype );
 	tiller->SetDecayable( false );
 
@@ -369,20 +366,17 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	if( p2 == NULL )
 		return false;
 	p2->SetType( IT_PLANK );
-	p2->SetTempVar( CITV_MORE, serial );
 	p2->SetDecayable( false );
 
 	CItem *p1 = Items->CreateItem( NULL, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
 	if( p1 == NULL )
 		return false;
 	p1->SetType( IT_PLANK );//Boat type
-	p1->SetTempVar( CITV_MORE, serial );
 	p1->SetDecayable( false );
 
 	CItem *hold = Items->CreateItem( NULL, mChar, 0x3EAE, 1, 0, OT_ITEM );
 	if( hold == NULL )
 		return false;
-	hold->SetTempVar( CITV_MORE, serial );
 	hold->SetType( IT_CONTAINER );//Conatiner
 	hold->SetDecayable( false );
 
@@ -587,9 +581,9 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 	if( b->GetDir() > NORTHWEST )
 		b->SetDir( b->GetDir() - 4 );//Make sure we dont have any DIR errors
 
-	if( id2 < b->GetTempVar( CITV_MORE, 1 ) )
+	if( id2 < b->GetTempVar( CITV_MOREZ, 1 ) )
 		id2 += 4;//make sure we don't have any id errors either
-	if( id2 > b->GetTempVar( CITV_MORE, 2 ) )
+	if( id2 > b->GetTempVar( CITV_MOREZ, 2 ) )
 		id2 -= 4;//Now you know what the min/max id is for :-)
 
 	prSend.Mode( 0 );
@@ -606,9 +600,9 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 
 	b->SetID( static_cast<UI08>(id2), 2 );//set the id
 
-	if( b->GetID( 2 ) == b->GetTempVar( CITV_MORE, 1 ) )
+	if( b->GetID( 2 ) == b->GetTempVar( CITV_MOREZ, 1 ) )
 		b->SetDir( NORTH );//extra DIR error checking
-	if( b->GetID( 2 ) == b->GetTempVar( CITV_MORE, 2 ) )
+	if( b->GetID( 2 ) == b->GetTempVar( CITV_MOREZ, 2 ) )
 		b->SetDir( WEST );
 
 
@@ -641,7 +635,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 	hold->SetLocation( b );
 	hold->SetID( cShipItems[dir][HOLDID], 2 );
 
-	switch( b->GetTempVar( CITV_MORE, 1 ) )//Now set what size boat it is and move the specail items
+	switch( b->GetTempVar( CITV_MOREZ, 1 ) )//Now set what size boat it is and move the specail items
 	{
 		case 0x00:
 		case 0x04:
@@ -664,7 +658,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
 			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
 			break;
-		default: Console.Error( 2, "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MORE, 1 ) );
+		default: Console.Error( 2, "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) );
 	}
 
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -788,9 +782,14 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 
 	CChar *mChar = s->CurrcharObj();
 
-	SERIAL serial = p1->GetTempVar( CITV_MORE );
+	SERIAL serial = i->GetSerial();
 	if( i->GetOwnerObj() == mChar )
 	{
+		if( mChar->GetMultiObj() == i )
+			LeaveBoat( s, p1 );
+		if( mChar->GetMultiObj() == i )
+			LeaveBoat( s, p2 );
+
 		if( i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0 )
 		{
 			s->sysmessage( "This boat must be empty before it can be converted to a model!" );

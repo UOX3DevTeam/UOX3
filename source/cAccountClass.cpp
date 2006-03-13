@@ -500,17 +500,16 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				// if directory exists then we just skip this.
 	#ifdef WIN32
-				if( GetLastError()!=183 )
+				if( GetLastError() != 183 )
+	#else
+				if( errno != EEXIST )
+	#endif
 				{
+					Console.Error( 0, "CreateAccountSystem(): Couldn't create directory %s: errorcode %d", sNewPath.c_str(), errno );
 					m_mapUsernameIDMap.clear();
 					m_mapUsernameMap.clear();
 					return 0L;
 				}
-	#else
-				m_mapUsernameIDMap.clear();
-				m_mapUsernameMap.clear();
-				return 0L;
-	#endif
 			}
 			// Now open and copy the files. to their new location.
 			if( !actbTemp.sPath.length() )
@@ -709,13 +708,14 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	{
 		// if directory exists then we just skip this.
 #ifdef WIN32
-		if( GetLastError()!=183 )
+		if( GetLastError() != 183 )
+#else
+		if( errno != EEXIST )
+#endif
 		{
+			Console.Error( 0, "AddAccount(): Couldn't create directory %s: errorcode %d", actbTemp.sPath.c_str(), errno );
 			return 0x0000;
 		}
-#else
-		return 0x0000;
-#endif
 	}
 	// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
 	std::string sUsernameUADPath(actbTemp.sPath);
@@ -1889,6 +1889,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
+			Console.Error( 0, "Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str() );
 			fsAccountsADM.close();
 			return 0xFFFF;
 		}
@@ -1940,13 +1941,15 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		{
 			// if directory exists then we just skip this.
 #ifdef WIN32
-			if( GetLastError()!=183 )
-			{
-				return 0L;
-			}
+			if( GetLastError() != 183 )
 #else
-			return 0L;
+			if( errno != EEXIST )
 #endif
+			{
+				Console.Error( 0, "Save(): Couldn't create directory %s: errorcode %d", actbID.sPath.c_str(), errno );
+				fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
+				continue;
+			}
 		}
 		// Ok now thats finished. We need to do one last thing. Create the username.uad file in the account directory
 		std::string sUsernameUADPath(actbID.sPath);
@@ -1968,7 +1971,9 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		if( !fsAccountsUAD.is_open() )
 		{
 			// Ok we were unable to open the file so this user will not be added.
-			return 0x0000;
+			Console.Error( 0, "Save(): Couldn't open file %s", sUsernameUADPath.c_str() );
+			fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
+			continue; 
 		}
 		// Ok we have to write the new username.uad file in the directory
 		WriteUADHeader(fsAccountsUAD,actbID);

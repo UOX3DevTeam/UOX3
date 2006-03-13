@@ -1497,7 +1497,7 @@ void CPITalkRequestAscii::Receive( void )
 //	The first 12 bits = the number of keywords present. The keywords are included right after this, each one is 12 bits also. 
 //	The keywords are padded to the closest byte. For example, if there are 2 keywords, it will take up 5 bytes. 12bits for the number, and 12 bits for each keyword. 12+12+12=36. Which will be padded 4 bits to 40 bits or 5 bytes.
 
-void UpdateLanguage( CSocket *s );
+UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
 
 CPITalkRequestUnicode::CPITalkRequestUnicode()
 {
@@ -1521,7 +1521,7 @@ void CPITalkRequestUnicode::Receive( void )
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
-	UpdateLanguage( tSock );
+	tSock->Language( FindLanguage( tSock, 8 ) );
 
 	CChar *mChar	= tSock->CurrcharObj();
 	mChar->setUnicode( true );
@@ -2173,7 +2173,6 @@ void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
 //	UI16			subCmd;
 //	UI08			subSubCmd;
 
-UnicodeTypes FindLanguage( const char *lang );
 void PaperDoll( CSocket *s, CChar *pdoll );
 bool BuyShop( CSocket *s, CChar *c );
 
@@ -2442,7 +2441,7 @@ CPIClientLanguage::CPIClientLanguage( CSocket *s ) : CPInputBuffer( s )
 
 void CPIClientLanguage::Receive( void )
 {
-	newLang = FindLanguage( (char *)&(tSock->Buffer()[5]) );
+	newLang = FindLanguage( tSock, 5 );
 }
 bool CPIClientLanguage::Handle( void )
 {

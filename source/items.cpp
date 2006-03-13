@@ -22,7 +22,7 @@ cItem *Items = NULL;
 
 ItemTypes FindItemTypeFromTag( const UString strToFind );
 
-bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const UI32 ndata, const UI32 odata, const UString cdata )
+bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString cdata )
 {
 	if( !ValidateObject( applyTo ) )
 		return false;
@@ -55,7 +55,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		return false;
 
 	UString cdata;
-	UI32 ndata = INVALIDSERIAL, odata = INVALIDSERIAL;
+	SI32 ndata = -1, odata = -1;
 	bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
 
 	TAGMAPOBJECT customTag;

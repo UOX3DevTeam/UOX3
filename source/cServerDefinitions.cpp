@@ -530,15 +530,15 @@ void cDirectoryListing::InternalRetrieve( void )
 	while( ( dirp = readdir( dir ) ) ) 
 	{ 
 		stat( dirp->d_name, &dirstat ); 
-		if( S_ISDIR( dirstat.st_mode ) && doRecursion ) 
+		if( S_ISDIR( dirstat.st_mode ) ) 
 		{ 
-			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) ) 
+			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) && doRecursion ) 
 			{ 
 				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) ); 
 				Console.Print( "%s/%s/n", currentDir.c_str(), dirp->d_name ); 
-				continue; 
-			} 
-		} 
+			}
+			continue; 
+		}
 		shortList.push_back( dirp->d_name ); 
 		sprintf( filePath, "%s/%s", CurrentWorkingDir().c_str(), dirp->d_name ); 
 		filenameList.push_back( filePath ); 

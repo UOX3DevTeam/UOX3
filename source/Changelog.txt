@@ -1,3 +1,12 @@
+3/13/2006 - giwo (0.98-3.5g [3.6 BETA])
+	Converted Numeric DFN's to a Signed Long rather than unsigned by default for *nix compatability.
+	Merged jr's fixes for cygwin compatability and fixing some minor gameplay issues.
+	Modified ModelBoat() to automatically move you off the boat (if near land).
+	Fixed a crash bug involving boats.
+	Changed several calls checking against type IT_PLANK to CanBeObjType( OT_BOAT ).
+	Fixed an issue causing boat holds to "explode" when opening them.
+	Fixed an issue causing containers inside containers on the ground to be "too far away".
+
 3/13/2006 - grimson
 	Changed CBaseObject::SetWeight() and CBaseObject::SetID() so they also update the weight
 	of the container the item is in, when it is an item and when it is within a container.

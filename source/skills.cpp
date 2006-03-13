@@ -160,26 +160,25 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 		if( found == NULL )
 			continue;
 
-		if( sumChance > oreChance || oreChance < ( sumChance + toFind->percentChance ) )
+		sumChance += toFind->percentChance;
+		if( sumChance > oreChance )
 		{
 			if( getSkill >= found->minSkill )
 			{
-				const std::string oreName	= found->name + " ore";
-				CItem *oreItem				= Items->CreateItem( &mSock, mChar, 0x19B9, 1, found->colour, OT_ITEM, true );
+				UI08 amtToMake = 1;
+				if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
+					amtToMake = 5;
+				CItem *oreItem = Items->CreateItem( &mSock, mChar, 0x19B9, amtToMake, found->colour, OT_ITEM, true );
 				if( ValidateObject( oreItem ) )
 				{
+					const std::string oreName = found->name + " ore";
 					oreItem->SetName( oreName );
-					if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
-						oreItem->SetAmount( 5 );
+					mSock.sysmessage( 982, oreName.c_str() );
 				}
-
-				mSock.sysmessage( 982, oreName.c_str() );
 				oreFound = true;
 				break;
 			}	
 		}
-
-		sumChance += toFind->percentChance;
 	}
 	if( !oreFound )
 	{
@@ -264,7 +263,7 @@ void cSkills::Mine( CSocket *s )
 
 	const SI16 targetX = mSock.GetWord( 11 );
 	const SI16 targetY = mSock.GetWord( 13 );
-	const SI08 targetZ = mSock.GetWord( 16 );
+	const SI08 targetZ = mSock.GetByte( 16 );
 
 	const SI16 distX = abs( mChar->GetX() - targetX );
 	const SI16 distY = abs( mChar->GetY() - targetY );

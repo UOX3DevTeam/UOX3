@@ -117,37 +117,30 @@ void InitializeLookup( void )
 		codeLookup[LanguageCodes[(UnicodeTypes)i]] = (UnicodeTypes)i;
 }
 
-UnicodeTypes FindLanguage( const char *lang )
-{
-	std::map< std::string, UnicodeTypes >::const_iterator p = codeLookup.find( lang );
-	if( p != codeLookup.end() )
-		return p->second;
-	else
-		return TOTAL_LANGUAGES;
-}
-void UpdateLanguage( CSocket *s )
+UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 {
 	if( s == NULL )
-		return;
-	char langCode[4];
+		return ZERO;
 
-	langCode[0] = s->GetByte( 8 );
-	langCode[1] = s->GetByte( 9 );
-	langCode[2] = s->GetByte( 10 );
+	char langCode[4];
+	langCode[0] = s->GetByte( offset );
+	langCode[1] = s->GetByte( ++offset );
+	langCode[2] = s->GetByte( ++offset );
 	langCode[3] = 0;
 
-	UString ulangCode = langCode ;
+	UString ulangCode = langCode;
 	ulangCode = ulangCode.upper();
 	
 	UnicodeTypes cLang = s->Language();
 	if( LanguageCodes[cLang] != ulangCode.c_str() )
 	{
-		UnicodeTypes newLang = FindLanguage( ulangCode.c_str() );
-		if( newLang == TOTAL_LANGUAGES )
-			Console.Error( 0, "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
+		std::map< std::string, UnicodeTypes >::const_iterator p = codeLookup.find( ulangCode );
+		if( p != codeLookup.end() )
+			return p->second;
 		else
-			s->Language( newLang );
-	} 
+			Console.Error( 0, "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
+	}
+	return cLang;
 }
 
 //o-------------------------------------------------------------------------

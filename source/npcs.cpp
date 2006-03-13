@@ -415,7 +415,7 @@ void cCharStuff::LoadShopList( const std::string list, CChar *c )
 		return;
 
 	UString cdata;
-	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
+	SI32 ndata		= -1, odata = -1;
 	CItem *retitem	= NULL;
 	for( DFNTAGS tag = ShoppingList->FirstTag(); !ShoppingList->AtEndTags(); tag = ShoppingList->NextTag() )
 	{
@@ -594,7 +594,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 	CItem *retitem	= NULL, *mypack = NULL;
 
 	UString cdata;
-	UI32 ndata		= INVALIDSERIAL, odata = INVALIDSERIAL;
+	SI32 ndata		= -1, odata = -1;
 	UI08 skillToSet = 0xFF;
 
 	TAGMAPOBJECT customTag;

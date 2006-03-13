@@ -387,22 +387,17 @@ UI08 CBaseObject::GetColour( UI08 part ) const
 //o--------------------------------------------------------------------------
 void CBaseObject::SetID( UI16 newValue )
 {
-	CItem *item = NULL;
-
-	if( GetObjType() == OT_ITEM )
-	{
-		item = static_cast<CItem *>(this);
-	}
+	CBaseObject *checkCont = NULL;
+	if( isPostLoaded() && CanBeObjType( OT_ITEM ) )
+		checkCont = ((CItem *)this)->GetCont();
 	
-	if( ValidateObject( item ) )
-		if( ValidateObject( item->GetCont() ) )
-			Weight->subtractItemWeight( item->GetCont(), item );
+	if( ValidateObject( checkCont ) )
+		Weight->subtractItemWeight( checkCont, static_cast<CItem *>(this) );
 
 	id = newValue;
 
-	if( ValidateObject( item ) )
-		if( ValidateObject( item->GetCont() ) )
-			Weight->addItemWeight( item->GetCont(), item );
+	if( ValidateObject( checkCont ) )
+		Weight->addItemWeight( checkCont, static_cast<CItem *>(this) );
 
 	Dirty( UT_HIDE );
 }
@@ -456,23 +451,17 @@ SI32 CBaseObject::GetWeight( void ) const
 }
 void CBaseObject::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
-	CItem *item = NULL;
-
-	if( GetObjType() == OT_ITEM )
-	{
-		item = static_cast<CItem *>(this);
-	}
+	CBaseObject *checkCont = NULL;
+	if( isPostLoaded() && doWeightUpdate && CanBeObjType( OT_ITEM ) )
+		checkCont = ((CItem *)this)->GetCont();
 	
-	if( ValidateObject( item ) )
-		if( ValidateObject( item->GetCont() ) && doWeightUpdate )
-			Weight->subtractItemWeight( item->GetCont(), item );
+	if( ValidateObject( checkCont ) )
+		Weight->subtractItemWeight( checkCont, static_cast<CItem *>(this) );
 
 	weight = newVal;
 
-	if( ValidateObject( item ) )
-		if( ValidateObject( item->GetCont() ) && doWeightUpdate )
-			Weight->addItemWeight( item->GetCont(), item );
-	
+	if( ValidateObject( checkCont ) )
+		Weight->addItemWeight( checkCont, static_cast<CItem *>(this) );
 }
 
 //o--------------------------------------------------------------------------

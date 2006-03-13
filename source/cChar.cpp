@@ -1913,8 +1913,10 @@ void CChar::Teleport( void )
 	bool forceWeatherupdate = true;
 	
 	if( ValidateObject( GetMultiObj() ) )
-		if( GetMultiObj()->GetType() == IT_PLANK ) //Don't force a weather update while on boat to prevent spam.
+	{
+		if( GetMultiObj()->CanBeObjType( OT_BOAT ) ) //Don't force a weather update while on boat to prevent spam.
 			forceWeatherupdate = false;
+	}
 
 	checkRegion( mSock, (*this), forceWeatherupdate );
 }

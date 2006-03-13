@@ -1739,7 +1739,7 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
 	if( !cwmWorldState->creatures[c->GetID()].IsWater() )
 	{
-		if( ( dir & 0x07 ) % 2 )
+		if( (dir&0x07)%2 )
 		{ // check three ways.
 			UI08 ndir = turn_counter_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true ) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetID()].IsAmphibian() )
@@ -1753,7 +1753,7 @@ bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 
 	if( cwmWorldState->creatures[c->GetID()].IsWater() || ( cwmWorldState->creatures[c->GetID()].IsAmphibian() && z == ILLEGAL_Z) )
 	{
-		if( ( dir & 0x07 ) % 2 )
+		if( (dir&0x07)%2 )
 		{ // check three ways.
 			UI08 ndir = turn_counter_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, true, true ) == ILLEGAL_Z )

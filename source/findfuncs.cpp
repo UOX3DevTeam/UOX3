@@ -240,7 +240,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 			m->SetID( 0x4064 );
 	}
 	SI08 zAdjust = (z-1);	// Doors sit 1z above the house tiles they sit on
-	if( m->GetType() == IT_PLANK )
+	if( m->CanBeObjType( OT_BOAT ) )
 		zAdjust = (z-3);	// Characters seem to be 3z above the rest of the items on the boat.
 
 	for( SI32 j = 0; j < length; ++j )

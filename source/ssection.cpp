@@ -687,7 +687,7 @@ void ScriptSection::Append( UString tagToAdd, UString dataToAdd )
 	data.push_back( toAdd );
 }
 
-const UString ScriptSection::GrabData( UI32& ndata, UI32& odata )
+const UString ScriptSection::GrabData( SI32& ndata, SI32& odata )
 {
 	UString rvalue;
 	if( AtEndTags() )
@@ -877,19 +877,19 @@ void ScriptSection::createSection( std::fstream& input )
 									toAdd2->cdata = value;
 									break;
 								case DFN_NUMERIC:
-									toAdd2->ndata = value.toULong();
+									toAdd2->ndata = value.toLong();
 									break;
 								case DFN_DOUBLENUMERIC:
 									// Best I can tell the seperator here is a space
 									value = value.simplifyWhiteSpace();
 									if( value.sectionCount( " " ) != 0 )
 									{
-										toAdd2->ndata = value.section( " ", 0, 0 ).toULong();
-										toAdd2->odata = value.section( " ", 1, 1 ).toULong();
+										toAdd2->ndata = value.section( " ", 0, 0 ).toLong();
+										toAdd2->odata = value.section( " ", 1, 1 ).toLong();
 									}
 									else
 									{
-										toAdd2->ndata = value.toULong();
+										toAdd2->ndata = value.toLong();
 										toAdd2->odata = toAdd2->ndata;
 									}
 									break;
