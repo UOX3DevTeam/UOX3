@@ -710,7 +710,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 
 		// create the Left Arm
 		sprintf( temp, Dictionary->GetEntry( 1060 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1D80, 1, 0, OT_ITEM );
+		c = Items->CreateItem( NULL, mChar, 0x1DB0, 1, 0, OT_ITEM );
 		if( c == NULL ) 
 			return;
 		c->SetName( temp );
@@ -737,7 +737,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 
 		// create the Right Leg
 		sprintf( temp, Dictionary->GetEntry( 1063 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1D81, 1, 0, OT_ITEM );
+		c = Items->CreateItem( NULL, mChar, 0x1DB1, 1, 0, OT_ITEM );
 		if( c == NULL ) 
 			return;
 		c->SetName( temp );

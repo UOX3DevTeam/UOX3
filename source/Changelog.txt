@@ -1,3 +1,6 @@
+3/14/2006 - grimson
+	Fixed item IDs for human corpses in newCarveTarget().
+
 3/13/2006 - giwo (0.98-3.5g [3.6 BETA])
 	Converted Numeric DFN's to a Signed Long rather than unsigned by default for *nix compatability.
 	Merged jr's fixes for cygwin compatability and fixing some minor gameplay issues.
