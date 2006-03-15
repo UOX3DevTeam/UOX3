@@ -2009,7 +2009,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
 						StartAttack( ourTarg, &mChar );
 				}
-				else if( mChar.IsNpc() && mChar.GetNPCAiType() == aiGUARD && mChar.GetRegion()->IsGuarded() )
+				else if( mChar.IsNpc() && mChar.GetNPCAiType() == aiGUARD && mChar.GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() )
 				{
 					validTarg = true;
 					mChar.SetLocation( ourTarg );
