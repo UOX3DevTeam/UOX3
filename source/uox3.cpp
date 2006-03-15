@@ -769,7 +769,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						mChar.SetPoisoned( 0 );
 						break;
 				}
-				if( mChar.GetHP() < 1 )
+				if( mChar.GetHP() < 1 && !mChar.IsDead() )
 				{
 					HandleDeath( (&mChar) );
 					if( mSock != NULL )

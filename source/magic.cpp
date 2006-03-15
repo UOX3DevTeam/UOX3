@@ -1018,13 +1018,11 @@ void EarthquakeStub( CChar *caster, CChar *target )
 	int dmg		= (caster->GetSkill( MAGERY )/40) + ( RandomNum( 0, 19 ) - 10 );
 	int dmgmod	= UOX_MIN( distx, disty );
 	dmgmod		= -(dmgmod - 7);
-	target->Damage( (dmg + dmgmod), caster );
+	target->Damage( (dmg + dmgmod), caster, true );
 	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 	
 	if( target->GetStamina() == -1 )
 		target->SetStamina( 0 );
-	if( target->GetHP() < 0 )
-		target->SetHP( 0 );
 	
 	if( !target->IsNpc() && isOnline( (*target) ) )
 	{
@@ -1032,37 +1030,12 @@ void EarthquakeStub( CChar *caster, CChar *target )
 			Effects->PlayCharacterAnimation( target, 0x15 );
 		else 
 			Effects->PlayCharacterAnimation( target, 0x16 );
-		if( target->GetHP() <= 0 ) 
-		{
-			if( WillResultInCriminal( caster, target ) )
-			{
-				caster->SetKills( caster->GetKills() + 1 );
-				CSocket *casterSock = caster->GetSocket();
-				if( casterSock != NULL )
-				{
-					casterSock->sysmessage( 689, caster->GetName().c_str(), caster->GetKills() );
-					if( caster->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
-						casterSock->sysmessage( 690 );
-				}
-			}
-			Console.Log( Dictionary->GetEntry( 691 ).c_str(), "PvP.log", target->GetName().c_str(), caster->GetName().c_str() );
-			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
-			Fame( caster, target->GetFame() );
-			HandleDeath( target );                              
-		}
 	} 
 	else 
 	{ 
-		if( target->GetHP() <= 0 ) 
+		if( target->GetHP() > 0 ) 
 		{
-			Karma( caster, target, ( 0 - ( target->GetKarma() ) ) );
-			Fame( caster, target->GetFame() );
-			HandleDeath( target ); 
-		}
-		else if( target->IsNpc() ) 
-		{ 
 			Effects->PlayCharacterAnimation( target, 0x2 ); 
-			Combat->AttackTarget( target, caster ); 
 		}
 	} 
 }
@@ -1950,101 +1923,7 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType ele
 	}           
 	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
 	{
-		attacker->SetAttackFirst( ( p->GetTarg() != attacker ) );
-		if( !attacker->IsInvulnerable() && (!ValidateObject( p->GetTarg() ) || !objInRange( p, p->GetTarg(), DIST_INRANGE )) )
-		{
-			p->SetAttacker( attacker );
-			p->SetAttackFirst( false );
-			if( p->IsNpc() )
-			{
-				if( p->GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
-					p->ExposeToView();
-
-				if( !p->IsAtWar() && !attacker->IsInvulnerable() )
-				{
-					p->SetTarg( attacker );
-					p->ToggleCombat();
-					p->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
-				}
-			} else
-				p->BreakConcentration( p->GetSocket() );
-		}
-		
-		if( WillResultInCriminal( attacker, p ) ) //REPSYS
-		{
-			criminal( attacker );
-			bool regionGuarded = ( p->GetRegion()->IsGuarded() );
-			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && p->IsNpc() && p->GetNPCAiType() != aiGUARD && p->isHuman() )
-			{
-				p->talkAll( 335, true );
-				callGuards( p, attacker );
-			}
-		}
-
-		if( element > NONE && element <= POISON )
-		{
-			// Calculate damage resistance the same way armor resistance is calculated
-			const UI16 attSkill = attacker->GetSkill( MAGERY );
-			const SI08 hitLoc = Combat->DoHitMessage( attacker, p, NULL, amount );
-			const UI16 elementDef = Combat->calcElementDef( p, hitLoc, true, element );
-			amount -= ( (SI16)( ( elementDef * attSkill ) / 750 ) );
-			p->IncreaseElementResist( element );
-		}
-		
-		if( amount <= 0 )
-			amount = 1;
-
-		if( p->IsNpc() ) 
-			amount *= 2;      // double damage against non-players
-		CPDisplayDamage toDisplay( (*p), (UI16)amount );
-		if( mSock != NULL )
-			mSock->Send( &toDisplay );
-		if( attSock != NULL )
-			attSock->Send( &toDisplay );
-		p->Damage( amount, attacker );
-
-		if( !p->GetCanAttack() )
-		{	
-			const UI08 currentBreakChance = p->GetBrkPeaceChance();
-			if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
-			{
-				p->SetCanAttack( true );
-				if( mSock != NULL )
-					mSock->sysmessage( 1779 );
-			}
-			else
-				p->SetBrkPeaceChance( currentBreakChance + p->GetBrkPeaceChanceGain() );
-		}
-
-		if( p->GetHP() <= 0 )
-		{
-			UI16 dbScript		= p->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( dbScript );
-			if( toExecute != NULL )
-				toExecute->OnDeathBlow( p, attacker );
-
-			if( ValidateObject( attacker ) && p != attacker )	// can't gain fame and karma for suicide :>
-			{
-				if( attacker->DidAttackFirst() && WillResultInCriminal( attacker, p ) )
-				{
-					attacker->SetKills( attacker->GetKills() + 1 );
-					attacker->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
-					if( !attacker->IsNpc() )
-					{
-						if( attSock != NULL )
-						{
-							attSock->sysmessage( 314, attacker->GetKills() );
-							if( attacker->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
-							attSock->sysmessage( 315 );
-						}
-					}
-					UpdateFlag( attacker );
-				}
-				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
-				Fame( attacker, p->GetFame() );
-			}
-			HandleDeath( p );
-		}
+		p->Damage( amount, attacker, true, element, -1, MAGERY, true );
 	}
 }
 
@@ -2067,23 +1946,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 	}           
 	if( !p->IsInvulnerable() && !p->GetRegion()->CanCastAggressive() )
 	{
-		if( poison > 5 ) 
-			poison = 5;
-		if( poison < 0 ) 
-			poison = 1;
-
-		// Calculate damage resistance, very basic
-		const R32 damageModifier = ( Combat->calcElementDef( p, 0, false, POISON ) / 100 );
-		if( damageModifier > 0 )
-			poison = (SI16)roundNumber( ((R32)poison - ( (R32)poison * damageModifier )) );
-
-		p->IncreaseElementResist( POISON );
-		
-		if ( poison > 0 )
-		{
-			p->SetPoisoned( poison );
-			p->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
-		}
+		p->Damage( poison, NULL, false, POISON, 0);
 	}
 }
 

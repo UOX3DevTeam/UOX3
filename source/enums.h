@@ -206,6 +206,7 @@ enum PickupLocations
 enum WeatherType
 {
 	NONE = 0,
+	PHYSICAL,
 	LIGHT,
 	RAIN,
 	COLD,

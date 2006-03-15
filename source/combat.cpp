@@ -1347,7 +1347,7 @@ SI08 CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSoc
 	}
 	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
 	{
-		if( !ourTarg->IsNpc() && targSock != NULL && damage > 1 )
+		if( !ourTarg->IsNpc() && targSock != NULL && ValidateObject( mChar) && damage > 1 )
 		{
 			UI08 randHit = RandomNum( 0, 2 );
 			switch( hitPos )
@@ -1491,30 +1491,6 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock,
 			}
 		}
 	}
-
-	// Armor / Skin Absorbtion
-	UI16 getDef;
-	const SI08 hitLoc = DoHitMessage( mChar, ourTarg, targSock, damage );
-	if( ourTarg->isHuman() )
-	{
-		getDef = calcDef( ourTarg, hitLoc, true );
-		getDef = HalfRandomNum( getDef );
-	}
-	else if( ourTarg->GetDef() > 0 )
-		getDef = ourTarg->GetDef();
-	else
-		getDef = 20;
-
-	// Check to see if weapons affect defender's race.
-	if( getFightSkill != WRESTLING )
-		AdjustRaceDamage( ourTarg, mWeapon, BaseDamage, hitLoc, attSkill );
-
-	// Damage based on Attack Skill (Armor defends less against low-skill characters)
-	damage -= (SI16)( ( getDef * attSkill ) / 750 );
-
-	// Give them one last chance to do Damage
-	if( damage <= 0 ) 
-		damage = RandomNum( 0, 4 );
 
 	if( !ourTarg->IsNpc() ) 
 		damage /= cwmWorldState->ServerData()->CombatNPCDamageRate(); // Rate damage against other players
@@ -1679,30 +1655,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				}
 				else 
 				{
-					CPDisplayDamage toDisplay( (*ourTarg), ourDamage );
-					if( mSock != NULL )
-						mSock->Send( &toDisplay );
-					if( targSock != NULL )
-						targSock->Send( &toDisplay );
-					ourTarg->Damage( ourDamage, &mChar );
+					ourTarg->Damage( ourDamage, &mChar, true, PHYSICAL, -1, getFightSkill, true );
 				}
 
 				// Splitting NPC's
 				if( ourTarg->IsNpc() )
 					HandleSplittingNPCs( ourTarg );
-				
-				if( !ourTarg->GetCanAttack() )
-				{	
-					const UI08 currentBreakChance = ourTarg->GetBrkPeaceChance();
-					if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
-					{
-						ourTarg->SetCanAttack( true );
-						if( targSock != NULL )
-							targSock->sysmessage( 1779 );
-					}
-					else
-						ourTarg->SetBrkPeaceChance( currentBreakChance + ourTarg->GetBrkPeaceChanceGain() );
-				}
 			}
 			if( mChar.isHuman() )
 				PlayHitSoundEffect( &mChar, mWeapon );
@@ -1993,62 +1951,37 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 //o---------------------------------------------------------------------------o
 void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 {
-	UI16 dbScript		= ourTarg->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( dbScript );
-	if( toExecute != NULL )
-		toExecute->OnDeathBlow( ourTarg, mChar );
 
-	Karma( mChar, ourTarg, ( 0 - ( ourTarg->GetKarma() ) ) );
-	Fame( mChar, ourTarg->GetFame() );
-	if( mChar->GetNPCAiType() == aiGUARD && ourTarg->IsNpc() )
+	if( ValidateObject( mChar ) )
 	{
-		Effects->PlayCharacterAnimation( ourTarg, 0x15 );
-		Effects->playDeathSound( ourTarg );
-
-		ourTarg->Delete(); // Guards, don't give body
-		if( mChar->IsAtWar() )
-			mChar->ToggleCombat();
-		return;
-	}
-
-	if( mChar->GetNPCAiType() == aiANIMAL )
-	{
-		mChar->SetHunger( 6 );
-
-		if( ourTarg->IsNpc() )
+		if( mChar->GetNPCAiType() == aiGUARD && ourTarg->IsNpc() )
 		{
 			Effects->PlayCharacterAnimation( ourTarg, 0x15 );
 			Effects->playDeathSound( ourTarg );
 
-			ourTarg->Delete(); // eating animals, don't give body
+			ourTarg->Delete(); // Guards, don't give body
 			if( mChar->IsAtWar() )
 				mChar->ToggleCombat();
-				return;
+			return;
 		}
-	}
 
-	// Add murder counts
-	if( mChar->DidAttackFirst() && WillResultInCriminal( mChar, ourTarg ) )
-	{
-		mChar->SetKills( mChar->GetKills() + 1 );
-		mChar->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
-		if( !mChar->IsNpc() )
+		if( mChar->GetNPCAiType() == aiANIMAL )
 		{
-			CSocket *aSock = mChar->GetSocket();
-			if( aSock != NULL )
+			mChar->SetHunger( 6 );
+
+			if( ourTarg->IsNpc() )
 			{
-				aSock->sysmessage( 314, mChar->GetKills() );
-				if( mChar->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
-					aSock->sysmessage( 315 );
+				Effects->PlayCharacterAnimation( ourTarg, 0x15 );
+				Effects->playDeathSound( ourTarg );
+
+				ourTarg->Delete(); // eating animals, don't give body
+				if( mChar->IsAtWar() )
+					mChar->ToggleCombat();
+					return;
 			}
 		}
-		UpdateFlag( mChar );
+		InvalidateAttacker( mChar );
 	}
-
-	if( !mChar->IsNpc() && !ourTarg->IsNpc() )
-		Console.Log( Dictionary->GetEntry( 1617 ).c_str(), "PvP.log", ourTarg->GetName().c_str(), mChar->GetName().c_str() );
-
-	InvalidateAttacker( mChar );
 	HandleDeath( ourTarg );
 }
 
@@ -2098,8 +2031,6 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		}
 		else
 		{
-			if( ourTarg->GetHP() <= 0 )
-				Kill( &mChar, ourTarg );
 			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar ) ) );
 		}
 	}

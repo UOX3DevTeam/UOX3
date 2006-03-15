@@ -998,10 +998,6 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 			if( !mChar->IsInvulnerable() )
 			{
 				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), NULL );
-				if( mChar->GetHP() < 1 )
-					mChar->SetHP( 0 );
-				if( mChar->GetHP() <= 0 )
-					HandleDeath( mChar );
 			}
 			break;
 		case IT_SOUNDOBJECT:														// sound objects

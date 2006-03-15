@@ -1,3 +1,27 @@
+3/15/2006 - grimson
+	Added PHYSICAL to WeatherType enum, so we can also use it represent physical damage.
+	Changed CChar::Damage() to handle armor and resistance effects, it also handles the repsys,
+	peace breaking, elemental weakness, displays the damage, creates a reaction if an attacker
+	is given and calls CChar::Die() if the hp drop below 1. It takes the following values:
+		SI16 damageValue	- The amount of damage to be done.
+		CChar *attacker		- The char that caused the damage.
+		bool doRepsys		- Do reputation handling (criminal, murderer, karma and fame).
+		WeatherType damageType	- The type of damage, use NONE to ignore armor/resistance, use
+					  PHYSICAL to use normal armor, anything above is elemental damage.
+		SI08 hitLoc		- The hit location, use 0 for the complete body or -1 to randomly
+					  calculate the hit location.
+		UI08 fightSkill		- The skill used to create the damage.
+		bool doArmorDamage	- Damage the armor part that has been hit.
+
+	The JS function .damage can also take all of these values.
+
+	Changed CChar::Die() to handle the death of chars, it takes two values:
+		CChar *attacker		- The char that caused the death.
+		bool doRepsys		- Do reputation handling (murderer, karma and fame).
+
+	Updated the usage of CChar::Damage() in most areas to reflect the changes and removed reputation
+	and death handling in those areas as this is now taken care of by CChar::Damage().
+
 3/14/2006 - grimson
 	Fixed item IDs for human corpses in newCarveTarget().
 

@@ -5426,6 +5426,11 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 
 JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
+	bool doRepsys, doArmorDamage = false;
+	WeatherType damageType = NONE;
+	SI08 hitLoc = 0;
+	UI08 fightSkill = WRESTLING;
+	
 	if( argc != 1 && argc != 2 )
 	{
 		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and attacker)", argc );
@@ -5441,7 +5446,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	JSEncapsulate damage( cx, &(argv[0]) );
 
-	if( argc == 2 )
+	if( argc >= 2 )
 	{
 		JSEncapsulate attackerClass( cx, &(argv[1]) );
 		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
@@ -5462,7 +5467,26 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			}
 		}
 	}
-
+	if( argc >= 3 )
+	{
+		doRepsys = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
+	}
+	if( argc >= 4 )
+	{
+		damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[3] ));
+	}
+	if( argc >= 5 )
+	{
+		hitLoc = static_cast<SI08>(JSVAL_TO_INT( argv[4] ));
+	}
+	if( argc >= 6 )
+	{
+		fightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[5] ));
+	}
+	if( argc >= 7 )
+	{
+		doArmorDamage = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	}
 	mChar->Damage( damage.toInt(), attacker );
 	return JS_TRUE;
 }

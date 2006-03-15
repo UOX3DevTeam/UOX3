@@ -230,13 +230,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 			{
 				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
-					if( WillResultInCriminal( c, tempChar ) )
-						criminal( c );
-					tempChar->Damage( ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), c );
-					if( tempChar->GetHP() <= 0 )
-						HandleDeath( tempChar );
-					else
-						Combat->AttackTarget( c, tempChar );
+					tempChar->Damage( ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), c, true, HEAT, 0, ALCHEMY, true );
 				}
 			}
 		}

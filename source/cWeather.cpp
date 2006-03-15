@@ -2104,7 +2104,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 
 		if( damage > 0 )
 		{
-				mChar.Damage( damage );
+				mChar.Damage( damage, NULL, false, LIGHT, 0 );
 				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 				Effects->PlaySound( (&mChar), 0x0208 );     
 				didDamage = true;
@@ -2205,20 +2205,9 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageAnim = 0x3709;
 		}
 
-		if( resistElement != NONE )
-		{
-			// The better we get at camping the less weather effects us.
-			const UI16 attSkill = (UI16)( 1100 - mChar.GetSkill( CAMPING ) );
-
-			// Weather hits everything so use the overal resistance
-			const UI16 elementDef = Combat->calcElementDef( &mChar, 0, false, resistElement );
-			damage -= ( (SI16)( ( elementDef * attSkill ) / 750 ) );
-			mChar.IncreaseElementResist( resistElement );
-		}
-
 		if( damage > 0 )
 		{
-				mChar.Damage( damage );
+				mChar.Damage( damage, NULL, false, resistElement, 0 );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
 				if( mSock != NULL )
 					mSock->sysmessage( damageMessage );

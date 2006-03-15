@@ -29,13 +29,11 @@ class CHandleCombat
 private:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
 	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
-	void	Kill( CChar *mChar, CChar *ourTarg );
-
+	
 	void	InvalidateAttacker( CChar *mChar );
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
 	SI16	calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock, CItem *mWeapon, UI08 getFightSkill );
-	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
@@ -56,7 +54,8 @@ public:
 	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded );
 
 	void	CombatLoop( CSocket *mSock, CChar& mChar );
-	
+	void	Kill( CChar *mChar, CChar *ourTarg );
+
 	SI08	DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSock, SI16 damage );
 	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
 	UI16	calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = NONE );
@@ -66,10 +65,11 @@ public:
 	UI08	getCombatSkill( CItem *wItem );
 	UI08	getBowType( CItem *bItem );
 	UI08	getWeaponType( CItem *i );
-
+	
 	CItem *	getShield( CChar *mChar );
 	CItem *	getWeapon( CChar *mChar );
 
+	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
 	
 	// Combat Animations & Sound Effects

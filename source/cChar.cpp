@@ -57,6 +57,7 @@
 #include "Dictionary.h"
 #include "movement.h"
 #include "CJSEngine.h"
+#include "combat.h"
 
 namespace UOX
 {
@@ -5575,11 +5576,148 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 	}
 }
 
-void CChar::Damage( SI16 damageValue, CChar *attacker )
+void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys, WeatherType damageType, SI08 hitLoc, UI08 fightSkill, bool doArmorDamage )
 {
-	SetHP( hitpoints - damageValue );
-	if( attacker != NULL )
+	// Armor protection
+	UI16 getDef;
+	UI16 attSkill = 1000;
+	R32 damageModifier = 0;
+
+	CSocket *mSock = GetSocket(), *attSock = NULL;
+	
+	if( ValidateObject( attacker) )
 	{
+		attSock = attacker->GetSocket();
+		attSkill = attacker->GetSkill( fightSkill );
+	}
+
+	if( hitLoc < 0 )
+		hitLoc = Combat->DoHitMessage( attacker, this, mSock, damageValue );
+
+	switch( damageType )
+	{
+		case NONE: break;	//	No Armor protection
+		case PHYSICAL:		//	Physical damage
+			if( isHuman() )
+			{
+				getDef = Combat->calcDef( this, hitLoc, doArmorDamage );
+				getDef = HalfRandomNum( getDef );
+			}
+			else if( GetDef() > 0 )
+				getDef = GetDef();
+			else
+				getDef = 20;
+			break;
+		case POISON:		//	POISON Damage
+			if( damageValue > 5 ) 
+				damageValue = 5;
+			if( damageValue < 0 ) 
+				damageValue = 1;
+
+			damageModifier = ( Combat->calcElementDef( this, hitLoc, doArmorDamage, damageType ) / 100 );
+			if( damageModifier > 0 )
+				damageValue = (SI16)roundNumber( ((R32)damageValue - ( (R32)damageValue * damageModifier )) );
+
+			IncreaseElementResist( damageType );
+		
+			if ( damageValue > 0 )
+			{
+				SetPoisoned( damageValue );
+				SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
+			}
+			break;
+		default:			//	Elemental damage
+			if( isHuman() )
+			{
+				getDef = Combat->calcElementDef( this, hitLoc, doArmorDamage, damageType );
+				getDef = HalfRandomNum( getDef );
+			}
+			else if( GetDef() > 0 )
+				getDef = GetElementResist( damageType );
+			else
+				getDef = 20;
+			IncreaseElementResist( damageType );
+			break;
+	}
+
+	if( fightSkill != WRESTLING && damageType == PHYSICAL && ValidateObject( attacker ) )
+	{
+		CItem *mWeapon	= Combat->getWeapon( attacker );
+		Combat->AdjustRaceDamage( this, mWeapon, damageValue, hitLoc, attSkill );
+	}
+
+	if( getDef > 0 )
+		damageValue -= (SI16)( ( getDef * attSkill ) / 750 );
+
+	if( damageValue <= 0 && damageType == PHYSICAL ) 
+		damageValue = RandomNum( 0, 4 );
+
+	if( IsNpc() && damageType > PHYSICAL) 
+		damageValue *= 2;
+
+	// Display damage
+	CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
+	if( mSock != NULL )
+		mSock->Send( &toDisplay );
+	if( attSock != NULL )
+		attSock->Send( &toDisplay );
+
+	// Apply the damage
+	SetHP( hitpoints - damageValue );
+
+	// Reputation system
+	if( doRepsys && ValidateObject( attacker) )
+	{
+		if( WillResultInCriminal( attacker, this ) ) //REPSYS
+		{
+			criminal( attacker );
+			bool regionGuarded = ( GetRegion()->IsGuarded() );
+			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != aiGUARD && isHuman() )
+			{
+				talkAll( 335, true );
+				callGuards( this, attacker );
+			}
+		}
+	}
+
+	// Handle peace state
+	if( !GetCanAttack() )
+	{	
+		const UI08 currentBreakChance = GetBrkPeaceChance();
+		if( (UI08)RandomNum( 1, 100 ) <= currentBreakChance )
+		{
+			SetCanAttack( true );
+			if( mSock != NULL )
+				mSock->sysmessage( 1779 );
+		}
+		else
+			SetBrkPeaceChance( currentBreakChance + GetBrkPeaceChanceGain() );
+	}
+
+	if( ValidateObject( attacker ) )
+	{
+		// Let the target react upon damage
+		attacker->SetAttackFirst( ( GetTarg() != attacker ) );
+		if( !attacker->IsInvulnerable() && (!ValidateObject( GetTarg() ) || !objInRange( this, GetTarg(), DIST_INRANGE )) )
+		{
+			SetAttacker( attacker );
+			SetAttackFirst( false );
+			if( IsNpc() )
+			{
+				if( GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
+					ExposeToView();
+
+				if( !IsAtWar() && !attacker->IsInvulnerable() )
+				{
+					SetTarg( attacker );
+					ToggleCombat();
+					SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
+				}
+			} else if( mSock != NULL )
+				BreakConcentration( mSock );
+		}
+
+		// Update Damage tracking
 		const SERIAL attackerSerial	= attacker->GetSerial();
 		bool persFound				= false;
 		for( DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next() )
@@ -5598,10 +5736,48 @@ void CChar::Damage( SI16 damageValue, CChar *attacker )
 		}
 		damageDealt.Sort( DTEgreater );
 	}
+
+	if( GetHP() <= 0 )
+		Die( attacker, doRepsys );
 }
 
-void CChar::Die( void )
+void CChar::Die( CChar *attacker, bool doRepsys )
 {
+	UI16 dbScript		= GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( dbScript );
+	if( toExecute != NULL )
+		toExecute->OnDeathBlow( this, attacker );
+	
+	if( ValidateObject( attacker ) )
+	{
+		if( this != attacker && doRepsys )	// can't gain fame and karma for suicide :>
+		{
+			CSocket *attSock = attacker->GetSocket();
+			if( attacker->DidAttackFirst() && WillResultInCriminal( attacker, this ) )
+			{
+				attacker->SetKills( attacker->GetKills() + 1 );
+				attacker->SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
+				if( !attacker->IsNpc() )
+				{
+					if( attSock != NULL )
+					{
+						attSock->sysmessage( 314, attacker->GetKills() );
+						if( attacker->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1 )
+							attSock->sysmessage( 315 );
+					}
+				}
+				UpdateFlag( attacker );
+			}
+			Karma( attacker, this, ( 0 - ( GetKarma() ) ) );
+			Fame( attacker, GetFame() );
+		}
+		if( !attacker->IsNpc() && !IsNpc() )
+			Console.Log( Dictionary->GetEntry( 1617 ).c_str(), "PvP.log", GetName().c_str(), attacker->GetName().c_str() );
+		
+		Combat->Kill( attacker, this );
+	}
+	else
+		HandleDeath( this );
 }
 
 void CChar::UpdateDamageTrack( void )

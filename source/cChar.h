@@ -553,8 +553,8 @@ public:
 	
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = NULL );
-	void			Damage( SI16 damageValue, CChar *attacker = NULL );
-	void			Die( void );
+	void			Damage( SI16 damageValue, CChar *attacker = NULL, bool doRepsys = false, WeatherType damageType = NONE, SI08 hitLoc = 0, UI08 fightSkill = WRESTLING, bool doArmorDamage = false );
+	void			Die( CChar *attacker, bool doRepsys );
 
 // NPC Characters
 protected:
