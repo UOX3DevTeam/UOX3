@@ -1189,29 +1189,18 @@ void GuardTarget( CSocket *s )
 	CItem *itemToGuard = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( ValidateObject( itemToGuard ) && !itemToGuard->isPileable() )
 	{
-		CItem *p = mChar->GetPackItem();
-		if( ValidateObject( p ) )
+		CMultiObj *multi = itemToGuard->GetMultiObj();
+		if( ValidateObject( multi ) )
 		{
-			if( itemToGuard->GetCont() == p || itemToGuard->GetCont() == mChar )
+			if( multi->GetOwnerObj() == mChar )
 			{
-				itemToGuard->SetGuarded( true );
+				petGuarding->SetNPCAiType( aiPET_GUARD );
 				petGuarding->SetGuarding( itemToGuard );
+				itemToGuard->SetGuarded( true );
 			}
 		}
 		else
-		{
-			CMultiObj *multi = findMulti( itemToGuard );
-			if( ValidateObject( multi ) )
-			{
-				if( multi->GetOwnerObj() == mChar )
-				{
-					itemToGuard->SetGuarded( true );
-					petGuarding->SetGuarding( itemToGuard );
-				}
-			}
-			else
-				s->sysmessage( 1628 );
-		}
+			s->sysmessage( 1628 );
 	}
 }
 

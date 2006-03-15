@@ -317,8 +317,7 @@ Look at uox3.h to see options. Works like npc magic.
 		return blocked;
 
 	//If target is next to us and within our field of view
-	//Unfortunately, doors do not take an entire tile. Thus you can have an item directly next to you with a door in-between, so we still need to check.
-	if( distance < 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
+	if( distance <= 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
 		return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];

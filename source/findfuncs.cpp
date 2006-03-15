@@ -240,6 +240,10 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 			m->SetID( 0x4064 );
 	}
 
+	UI08 zOff = 1;
+	if( m->CanBeObjType( OT_BOAT ) )
+		zOff = 3;
+
 	const SI16 baseX = m->GetX();
 	const SI16 baseY = m->GetY();
 	const SI08 baseZ = m->GetZ();
@@ -250,7 +254,7 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		if( (baseX + multi.x) == x && (baseY + multi.y) == y )
 		{
 			const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-			if( multiZ == z )
+			if( abs( multiZ - z ) <= zOff )
 				return true;
 		}
 	}

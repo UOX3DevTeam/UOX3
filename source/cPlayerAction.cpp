@@ -812,15 +812,30 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+		{
 			Weight->subtractItemWeight( nChar, i );
+			nChar->Dirty( UT_STATWINDOW );
+		}
 		Bounce( mSock, i );
 		return;
 	}
-	
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
+		const SI16 x = mSock->GetWord( 5 );
+		const SI16 y = mSock->GetWord( 7 );
+		const SI08 z = mSock->GetByte( 9 );
+		if( !Map->CanMonsterMoveHere( x, y, z, nChar->WorldNumber(), true, false ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			{
+				Weight->subtractItemWeight( nChar, i );
+				nChar->Dirty( UT_STATWINDOW );
+			}
+			Bounce( mSock, i );
+			return;
+		}
 		i->SetCont( NULL );
-		i->SetLocation( mSock->GetWord( 5 ), mSock->GetWord( 7 ), mSock->GetByte( 9 ), nChar->WorldNumber() );
+		i->SetLocation( x, y, z, nChar->WorldNumber() );
 	}
 	else
 	{
@@ -831,8 +846,10 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		{
 			//Bounces items dropped in illegal locations in 3D UO client!!!
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			{
 				Weight->subtractItemWeight( nChar, i );
-			nChar->Dirty( UT_STATWINDOW );
+				nChar->Dirty( UT_STATWINDOW );
+			}
 			Bounce( mSock, i );
 			return;
 		}
@@ -1625,11 +1642,11 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Runs a switch to match an item type to a function
 //o---------------------------------------------------------------------------o
-bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
+bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType )
 {
 	CChar *iChar	= NULL;
 	CItem *i		= NULL;
-	UI16 itemID		= x->GetID();
+	UI16 itemID		= iUsed->GetID();
 	bool canTrap	= false;
 
 	// Begin Check items by type
@@ -1647,29 +1664,29 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			packOpened = false;
 			CBaseObject *baseCont;
 			ObjectType objType;
-			baseCont = FindItemOwner( x, objType );
+			baseCont = FindItemOwner( iUsed, objType );
 			if( !ValidateObject( baseCont ) )
-				baseCont = x;
+				baseCont = iUsed;
 
 			if( ValidateObject( baseCont ) )
 			{
 				if( baseCont->CanBeObjType( OT_ITEM ) )
 				{
-					if( objInRange( mChar, baseCont, DIST_NEARBY ) && checkItemLineOfSight( mChar, x ) && mChar->GetMultiObj() == baseCont->GetMultiObj() )
+					if( mChar->GetMultiObj() == baseCont->GetMultiObj() )
 					{
-						mSock->openPack( x );
+						mSock->openPack( iUsed );
 						packOpened = true;
 					}
 				}
 				else
 				{
 					iChar = static_cast<CChar *>(baseCont);
-					if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) && checkItemLineOfSight( mChar, x ) )
+					if( ValidateObject( iChar ) )
 					{
 						if( mChar == iChar || mChar == iChar->GetOwnerObj() )
-							mSock->openPack( x );
+							mSock->openPack( iUsed );
 						else
-							Skills->Snooping( mSock, iChar, x );
+							Skills->Snooping( mSock, iChar, iUsed );
 						packOpened = true;	
 					}
 						
@@ -1677,15 +1694,15 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			if( packOpened )
 			{
-				if( canTrap && x->GetTempVar( CITV_MORE, 1 ) )// Is trapped
-					Magic->MagicTrap( mChar, x );
+				if( canTrap && iUsed->GetTempVar( CITV_MORE, 1 ) )// Is trapped
+					Magic->MagicTrap( mChar, iUsed );
 			}
 			else
 				mSock->sysmessage( 400 );
 			return true;
 		case IT_CASTLEGATEOPENER:	// Order gate opener
 		case IT_CHAOSGATEOPENER:	// Chaos gate opener
-			i = calcItemObjFromSer( x->GetTempVar( CITV_MORE ) );
+			i = calcItemObjFromSer( iUsed->GetTempVar( CITV_MORE ) );
 			if( ValidateObject( i ) )
 			{
 				if( i->GetType() == IT_CASTLEGATE )
@@ -1704,7 +1721,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			return true;
 		case IT_KEY:	// Key
-			mSock->AddID( x->GetTempVar( CITV_MORE ) );
+			mSock->AddID( iUsed->GetTempVar( CITV_MORE ) );
 			mSock->target( 0, TARGET_KEY, 402 );
 			return true;
 		case IT_LOCKEDCONTAINER:	// Locked container
@@ -1715,7 +1732,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ) )
 			{
-				if( ( x->GetCont() == i || x->GetCont() == mChar ) || x->GetLayer() == IL_RIGHTHAND )
+				if( ( iUsed->GetCont() == i || iUsed->GetCont() == mChar ) || iUsed->GetLayer() == IL_RIGHTHAND )
 					Magic->SpellBook( mSock );
 				else
 					mSock->sysmessage( 403 );
@@ -1725,14 +1742,14 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			{
 				CPMapMessage m1;
 				CPMapRelated m2;
-				m1.KeyUsed( x->GetSerial() );
+				m1.KeyUsed( iUsed->GetSerial() );
 				m1.GumpArt( 0x139D );
 				m1.UpperLeft( 0, 0 );
 				m1.LowerRight( 0x13FF, 0x0FA0 );
 				m1.Dimensions( 0x0190, 0x0190 );
 				mSock->Send( &m1 );
 
-				m2.ID( x->GetSerial() );
+				m2.ID( iUsed->GetSerial() );
 				m2.Command( 5 );
 				m2.Location( 0, 0 );
 				m2.PlotState( 0 );
@@ -1740,14 +1757,14 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				return true;
 			}
 		case IT_READABLEBOOK:	// Readable book
-			if( x->GetTempVar( CITV_MOREX ) != 666 && x->GetTempVar( CITV_MOREX ) != 999 )
-				Books->OpenPreDefBook( mSock, x );
+			if( iUsed->GetTempVar( CITV_MOREX ) != 666 && iUsed->GetTempVar( CITV_MOREX ) != 999 )
+				Books->OpenPreDefBook( mSock, iUsed );
 			else
-				Books->OpenBook( mSock, x, ( x->GetTempVar( CITV_MOREX ) == 666 ) ); 
+				Books->OpenBook( mSock, iUsed, ( iUsed->GetTempVar( CITV_MOREX ) == 666 ) ); 
 			return true;
 		case IT_DOOR: // Unlocked door
-			if( !isDoorBlocked( x ) )
-				useDoor( mSock, x );
+			if( !isDoorBlocked( iUsed ) )
+				useDoor( mSock, iUsed );
 			else
 				mSock->sysmessage( 1661 );
 			return true;
@@ -1755,25 +1772,25 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			if( mChar->IsGM() )
 			{
 				mSock->sysmessage( 404 );
-				useDoor( mSock, x );
+				useDoor( mSock, iUsed );
 				return true;
 			}
-			if( !keyInPack( mSock, mChar, mChar->GetPackItem(), x ) )
+			if( !keyInPack( mSock, mChar, mChar->GetPackItem(), iUsed ) )
 				mSock->sysmessage( 406 );
 			return true;
 		case IT_MAGICWAND: // Magic Wands
-			if( x->GetTempVar( CITV_MOREZ ) != 0 )
+			if( iUsed->GetTempVar( CITV_MOREZ ) != 0 )
 			{
 				mSock->CurrentSpellType( 2 );
-				if( Magic->SelectSpell( mSock, ( 8 * ( x->GetTempVar( CITV_MOREX ) - 1 ) ) + x->GetTempVar( CITV_MOREY ) ) )
+				if( Magic->SelectSpell( mSock, ( 8 * ( iUsed->GetTempVar( CITV_MOREX ) - 1 ) ) + iUsed->GetTempVar( CITV_MOREY ) ) )
 				{
-					x->SetTempVar( CITV_MOREZ, x->GetTempVar( CITV_MOREZ ) - 1 );
-					if( x->GetTempVar( CITV_MOREZ ) == 0 )
+					iUsed->SetTempVar( CITV_MOREZ, iUsed->GetTempVar( CITV_MOREZ ) - 1 );
+					if( iUsed->GetTempVar( CITV_MOREZ ) == 0 )
 					{
-						x->SetType( IT_NOTYPE );
-						x->SetTempVar( CITV_MOREX, 0 );
-						x->SetTempVar( CITV_MOREY, 0 );
-						x->SetOffSpell( 0 );
+						iUsed->SetType( IT_NOTYPE );
+						iUsed->SetTempVar( CITV_MOREX, 0 );
+						iUsed->SetTempVar( CITV_MOREY, 0 );
+						iUsed->SetOffSpell( 0 );
 					}
 				}
 			}
@@ -1782,45 +1799,45 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			if( itemID == 0x14F0 )		// Check for Deed
 			{
 				Items->CreateScriptItem( NULL, mChar, "townstone", 1, OT_ITEM );
-				x->Delete();
+				iUsed->Delete();
 			}
 			else	// Display Townstone gump
 			{
-				CTownRegion *useRegion = calcRegionFromXY( x->GetX(), x->GetY(), mChar->WorldNumber() );
+				CTownRegion *useRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), mChar->WorldNumber() );
 				if( useRegion != NULL )
-					useRegion->DisplayTownMenu( x, mSock );
+					useRegion->DisplayTownMenu( iUsed, mSock );
 			}
 			return true;
 		case IT_RECALLRUNE: // Recall Rune
-			if( x->GetTempVar( CITV_MOREX ) == 0 && x->GetTempVar( CITV_MOREY ) == 0 && x->GetTempVar( CITV_MOREZ ) == 0 )	// changed, to fix, Lord Vader
+			if( iUsed->GetTempVar( CITV_MOREX ) == 0 && iUsed->GetTempVar( CITV_MOREY ) == 0 && iUsed->GetTempVar( CITV_MOREZ ) == 0 )	// changed, to fix, Lord Vader
 				mSock->sysmessage( 431 );
 			else
 			{
 				mSock->sysmessage( 432 );
-				mChar->SetSpeechItem( x );
+				mChar->SetSpeechItem( iUsed );
 				mChar->SetSpeechMode( 7 );
 			}
 			return true;
 		case IT_OBJTELEPORTER:	// Object Teleporter
-			if( objInRange( mChar, x, DIST_NEARBY ) )
-				mChar->SetLocation( static_cast<SI16>(x->GetTempVar( CITV_MOREX )), static_cast<SI16>(x->GetTempVar( CITV_MOREY )), static_cast<SI08>(x->GetTempVar( CITV_MOREZ ) ));
+			if( objInRange( mChar, iUsed, DIST_NEARBY ) )
+				mChar->SetLocation( static_cast<SI16>(iUsed->GetTempVar( CITV_MOREX )), static_cast<SI16>(iUsed->GetTempVar( CITV_MOREY )), static_cast<SI08>(iUsed->GetTempVar( CITV_MOREZ ) ));
 			return true;
 		case IT_MAPCHANGEOBJECT:
-			SocketMapChange( mSock, mChar, x );
+			SocketMapChange( mSock, mChar, iUsed );
 			return true;
 		case IT_MORPHOBJECT: // Morph Object
-			mChar->SetID( static_cast<UI16>(x->GetTempVar( CITV_MOREX )) );
-			x->SetType( IT_UNMORPHOBJECT );
+			mChar->SetID( static_cast<UI16>(iUsed->GetTempVar( CITV_MOREX )) );
+			iUsed->SetType( IT_UNMORPHOBJECT );
 			return true;
 		case IT_UNMORPHOBJECT: // Unmorph Object
 			mChar->SetID( mChar->GetOrgID() );
-			x->SetType( IT_MORPHOBJECT );
+			iUsed->SetType( IT_MORPHOBJECT );
 			return true;
 		case IT_PLANK:	// Planks
-			if( objInRange( mChar, x, DIST_INRANGE ) )
+			if( objInRange( mChar, iUsed, DIST_INRANGE ) )
 			{
-				if( x->GetID( 2 ) == 0x84 || x->GetID( 2 ) == 0xD5 || x->GetID( 2 ) == 0xD4 || x->GetID( 2 ) == 0x89 )
-					PlankStuff( mSock, x );
+				if( iUsed->GetID( 2 ) == 0x84 || iUsed->GetID( 2 ) == 0xD5 || iUsed->GetID( 2 ) == 0xD4 || iUsed->GetID( 2 ) == 0x89 )
+					PlankStuff( mSock, iUsed );
 				else
 					mSock->sysmessage( 398 );//Locked
 			}
@@ -1829,13 +1846,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return true;
 		case IT_FIREWORKSWAND: //Fireworks wands
 			srand( cwmWorldState->GetUICurrentTime() );
-			if( x->GetTempVar( CITV_MOREX ) == 0 )
+			if( iUsed->GetTempVar( CITV_MOREX ) == 0 )
 			{
 				mSock->sysmessage( 396 );
 				return true;
 			}
-			x->SetTempVar( CITV_MOREX, x->GetTempVar( CITV_MOREX ) - 1 );
-			mSock->sysmessage( 397, x->GetTempVar( CITV_MOREX ) );
+			iUsed->SetTempVar( CITV_MOREX, iUsed->GetTempVar( CITV_MOREX ) - 1 );
+			mSock->sysmessage( 397, iUsed->GetTempVar( CITV_MOREX ) );
 			UI08 j;
 			for( j = 0; j < static_cast< UI08 >( RandomNum( 0, 3 ) + 2 ); ++j )
 			{
@@ -1856,14 +1873,14 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			}
 			return true;
 		case IT_RENAMEDEED: // Rename Deed
-			mChar->SetSpeechItem( x );
+			mChar->SetSpeechItem( iUsed );
 			mChar->SetSpeechMode( 6 );
 			mSock->sysmessage( 434 );
 			return true;
 		case IT_TILLER:	// Tillerman
 			if( ValidateObject( GetBoat( mSock ) ) )
 			{
-				CBoatObj *boat = static_cast<CBoatObj *>(x->GetMultiObj());
+				CBoatObj *boat = static_cast<CBoatObj *>(iUsed->GetMultiObj());
 				if( ValidateObject( boat ) )
 					ModelBoat( mSock, boat );
 			}
@@ -1871,35 +1888,35 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 		case IT_GUILDSTONE:	// Guildstone Deed
 			if( itemID == 0x14F0 || itemID == 0x1869 )	// Check for Deed/Teleporter + Guild Type
 			{
-				mChar->SetSpeechItem( x );		// we're using this as a generic item
-				GuildSys->PlaceStone( mSock, x );
+				mChar->SetSpeechItem( iUsed );		// we're using this as a generic item
+				GuildSys->PlaceStone( mSock, iUsed );
 				return true;
 			}
 			else if( itemID == 0x0ED5 )			// Check for Guildstone + Guild Type
 			{
-				mSock->TempInt( x->GetTempVar( CITV_MORE ) );	// track things properly
-				if( mChar->GetGuildNumber() == -1 || mChar->GetGuildNumber() == static_cast<SI16>(x->GetTempVar( CITV_MORE )) )
-					GuildSys->Menu( mSock, BasePage + 1, static_cast<GUILDID>(x->GetTempVar( CITV_MORE )) );	// more of the stone is the guild number
+				mSock->TempInt( iUsed->GetTempVar( CITV_MORE ) );	// track things properly
+				if( mChar->GetGuildNumber() == -1 || mChar->GetGuildNumber() == static_cast<SI16>(iUsed->GetTempVar( CITV_MORE )) )
+					GuildSys->Menu( mSock, BasePage + 1, static_cast<GUILDID>(iUsed->GetTempVar( CITV_MORE )) );	// more of the stone is the guild number
 				else
 					mSock->sysmessage( 438 );
 				return true;
 			}
 			else
-				Console << "Unhandled guild item type named: " << x->GetName() << " with ID of: " << itemID << myendl;
+				Console << "Unhandled guild item type named: " << iUsed->GetName() << " with ID of: " << itemID << myendl;
 			return true;
 		case IT_HOUSESIGN: // Open Housing Gump
 			bool canOpen;
-			canOpen = (  x->GetOwnerObj() == mChar || mChar->IsGM() );
-			if( !canOpen && x->GetTempVar( CITV_MOREZ ) == 0 )
+			canOpen = (  iUsed->GetOwnerObj() == mChar || mChar->IsGM() );
+			if( !canOpen && iUsed->GetTempVar( CITV_MOREZ ) == 0 )
 			{
 				mSock->sysmessage( 439 );
 				return true;
 			}
-			mSock->TempObj( x );
+			mSock->TempObj( iUsed );
 			if( !canOpen )
-				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREZ ) );
+				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREZ ) );
 			else
-				BuildGumpFromScripts( mSock, (UI16)x->GetTempVar( CITV_MOREX ) );
+				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREX ) );
 			return true;
 		case IT_METALREPAIRTOOL:
 			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
@@ -1912,17 +1929,17 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->target( 0, TARGET_DYEALL, 441 );
 			return true;
 		case IT_DYEVAT:	// Dye vat
-			mSock->AddID1( x->GetColour( 1 ) );
-			mSock->AddID2( x->GetColour( 2 ) );
+			mSock->AddID1( iUsed->GetColour( 1 ) );
+			mSock->AddID2( iUsed->GetColour( 2 ) );
 			mSock->target( 0, TARGET_DVAT, 442 );
 			return true;
 		case IT_MODELMULTI:	// Model boat/Houses
 			if( iType != IT_TOWNSTONE && iType != IT_GUILDSTONE )
 			{
-				if( x->GetTempVar( CITV_MOREX ) == 0 )
+				if( iUsed->GetTempVar( CITV_MOREX ) == 0 )
 					break;
-				mChar->SetSpeechItem( x );
-				DoHouseTarget( mSock, static_cast<UI08>(x->GetTempVar( CITV_MOREX )) );
+				mChar->SetSpeechItem( iUsed );
+				DoHouseTarget( mSock, static_cast<UI08>(iUsed->GetTempVar( CITV_MOREX )) );
 			}
 			return true;
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
@@ -1933,7 +1950,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			m->SetDir( mChar->GetDir() );
 			m->SetNpcWander( 0 );
 			m->SetOwner( mChar );
-			x->Delete();
+			iUsed->Delete();
 			m->talk( mSock, 388, false, m->GetName().c_str() );
 			return true;
 		case IT_SMITHYTOOL:
@@ -1946,9 +1963,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			i = mChar->GetPackItem();
 			if( ValidateObject( i ) )
 			{
-				if( x->GetCont() == i )
+				if( iUsed->GetCont() == i )
 				{
-					mSock->TempObj( x );
+					mSock->TempObj( iUsed );
 					mSock->target( 0, TARGET_VIAL, 447 );
 				}
 				else
@@ -1957,14 +1974,14 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			return true;
 		case IT_CANNONBALL:	// cannon ball
 			mSock->target( 0, TARGET_LOADCANNON, 455 );
-			x->Delete();
+			iUsed->Delete();
 			return true;
 		case IT_ORE:	// smelt ore
-			mSock->TempObj( x );
+			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_SMELTORE, 460 );
 			return true;
 		case IT_MESSAGEBOARD:	// Message board opening
-			if( objInRange( mChar, x, DIST_NEARBY ) )
+			if( objInRange( mChar, iUsed, DIST_NEARBY ) )
 			{
 				CPIMsgBoardEvent *mbEvent = new CPIMsgBoardEvent( mSock, false );
 				mbEvent->Handle();
@@ -1976,9 +1993,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
 			{
 				if( itemID == 0x1508 )
-					x->SetID( 0x1509 );
+					iUsed->SetID( 0x1509 );
 				else
-					x->SetID( 0x1508 );
+					iUsed->SetID( 0x1508 );
 			}
 			else
 				mSock->sysmessage( 465 );
@@ -1988,9 +2005,9 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			if( Skills->CheckSkill( mChar, ITEMID, 0, 10 ) )
 			{
 				if( itemID == 0x1245 )
-					x->SetID( 0x1230 );
+					iUsed->SetID( 0x1230 );
 				else
-					x->SetID( 0x1245 );
+					iUsed->SetID( 0x1245 );
 			}
 			else
 				mSock->sysmessage( 466 );
@@ -2008,12 +2025,12 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );
 			return true;
 		case IT_HAIRDYE:	// Hair Dye
-			mSock->TempObj( x );
+			mSock->TempObj( iUsed );
 			BuildGumpFromScripts( mSock, 6 );
 			return true;
 		default:
 			if( iType )
-				Console << "Unhandled item type for item: " << x->GetName() << "[" << x->GetSerial() << "] of type: " << static_cast<UI16>(iType) << myendl;
+				Console << "Unhandled item type for item: " << iUsed->GetName() << "[" << iUsed->GetSerial() << "] of type: " << static_cast<UI16>(iType) << myendl;
 			break;
 	}
 	return false;
@@ -2152,6 +2169,98 @@ ItemTypes findItemType( CItem *i )
 	return iType;
 }
 
+bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType )
+{
+	CChar *iChar = NULL;
+	if( ourChar->IsDead() )
+	{
+		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
+		{
+			NpcResurrectTarget( ourChar );
+			tSock->sysmessage( 390 );
+		}
+		else // If it's not a ressurect item, and you're dead, forget it
+			tSock->sysmessage( 392 );
+		return false;
+	}
+	// Range check for double clicking on items
+	if( iType != IT_PLANK && iType != IT_HOUSESIGN )
+	{
+		bool canUse = checkItemRange( ourChar, iUsed );
+		if( canUse )
+			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || checkItemLineOfSight( ourChar, iUsed ) );
+		if( !canUse )
+		{
+			tSock->sysmessage( 389 );
+			return false;
+		}
+	}
+	if( ourChar->GetCommandLevel() < CNS_CMDLEVEL )
+	{
+		if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+		{
+			tSock->sysmessage( 386 );
+			return false;
+		}
+		tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
+
+		if( iUsed->GetCont() != NULL )
+		{
+			iChar = FindItemOwner( iUsed );
+			if( ValidateObject( iChar ) && iChar != ourChar && 
+				!( iUsed->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
+			{
+				tSock->sysmessage( 387 );	// Can't use stuff that isn't in your pack.
+				return false;
+			}
+		}
+		// Check if item is in a house?
+		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK )
+		{
+			if( iUsed->GetMultiObj() != ourChar->GetMultiObj() )
+			{
+				tSock->sysmessage( 389 );
+				return false;
+			}
+		}
+		if( iUsed->isCorpse() )
+		{
+			bool willCrim	= false;
+			iChar			= iUsed->GetOwnerObj();
+			if( ValidateObject( iChar ) )
+			{
+				// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
+				// and if the corpse is not from an enemy/allied guild									&& guildCheck
+				// and if the races are not allied/enemy												&& raceCheck )
+				willCrim = WillResultInCriminal( ourChar, iChar );
+			}
+			else
+				willCrim = ( (iUsed->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );
+			if( willCrim )
+				criminal( ourChar );
+
+			if( ValidateObject( iChar ) )
+			{
+				if( iChar->IsGuarded() ) // Is the corpse being guarded?
+					Combat->petGuardAttack( ourChar, iChar, iChar );
+				else if( iUsed->isGuarded() )
+					Combat->petGuardAttack( ourChar, iChar, iUsed );
+			}
+		}
+		else if( iUsed->isGuarded() )
+		{
+			CMultiObj *multi = iUsed->GetMultiObj();
+			if( ValidateObject( multi ) )
+			{
+				CChar *multiOwner = multi->GetOwnerObj();
+				if( ValidateObject( multiOwner ) && multiOwner != ourChar )
+					Combat->petGuardAttack( ourChar, multiOwner, iUsed );
+			}
+		}
+	}
+	return true;
+}
+
 //o---------------------------------------------------------------------------o
 //|	Function	:  DoubleClick( CSocket *mSock )
 //|	Date		:  Unknown
@@ -2179,167 +2288,67 @@ bool CPIDblClick::Handle( void )
 	}
 
 	// Begin Items / Guildstones Section
-	CItem *x = calcItemObjFromSer( objectID );
-	if( !ValidateObject( x ) )
+	CItem *iUsed = calcItemObjFromSer( objectID );
+	if( !ValidateObject( iUsed ) )
 		return true;
 
-	CChar *iChar = NULL;
-
-	// Check for Object Delay
-	if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) && !ourChar->IsGM() )
-	{
-		tSock->sysmessage( 386 );
+	ItemTypes iType		= findItemType( iUsed );
+	if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
 		return true;
-	}
 
-	tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
-
-	ItemTypes iType	= findItemType( x );
-	UI16 itemID		= x->GetID();
-	if( x->GetCont() != NULL )
+	UI16 itemID			= iUsed->GetID();
+	UI16 envTrig		= 0;
+	UI16 itemTrig		= iUsed->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( itemTrig );
+	if( toExecute != NULL )
 	{
-		if( x->GetContSerial() >= BASEITEMSERIAL )
-			iChar = FindItemOwner( x );
-		else	// Item is in a character
-			iChar = (CChar *)x->GetCont();
-		if( !ourChar->IsGM() && ValidateObject( iChar ) && iChar != ourChar && !( x->IsContType() && cwmWorldState->ServerData()->RogueStatus() ) )
+		if( iUsed->isDisabled() )
 		{
-			tSock->sysmessage( 387 );	// Can't use stuff that isn't in your pack.
+			tSock->sysmessage( 394 );
 			return true;
 		}
-	}
-	// Check if item is in a house?
-	else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK )
-	{
-		if( !ourChar->IsGM() && x->GetMultiObj() != ourChar->GetMultiObj() )
-		{
-			tSock->sysmessage( 389 );
+		if( toExecute->OnUse( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
 			return true;
+	}
+
+	if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
+	{
+		envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
+		cScript *envExecute = JSMapping->GetScript( envTrig );
+		if( envExecute != NULL )
+		{
+			if( envExecute->OnUse( ourChar, iUsed ) == 1 )
+				return true;
+		}
+	}
+	else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
+	{
+		envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
+		cScript *envExecute = JSMapping->GetScript( envTrig );
+		if( envExecute != NULL )
+		{
+			if( envExecute->OnUse( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
+				return true;
 		}
 	}
 
-	if( ourChar->IsDead() )
-	{
-		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
-		{
-			NpcResurrectTarget( ourChar );
-			tSock->sysmessage( 390 );
-			return true;
-		}
-		// If it's not a ressurect item, and you're dead, forget it
-		tSock->sysmessage( 392 );
-		return true;
-	}
-	// Begin checking objects that we force an object delay for (std objects)
-	else if( tSock != NULL )
-	{
-		UI16 envTrig		= 0;
-		UI16 itemTrig		= x->GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( itemTrig );
-		if( toExecute != NULL )
-		{
-			// on ground and not in range
-			if( x->GetCont() == NULL && !objInRange( ourChar, x, DIST_INRANGE ) )
-			{
-				tSock->sysmessage( 393 );
-				return true;
-			}
-			if( x->isDisabled() )
-			{
-				tSock->sysmessage( 394 );
-				return true;
-			}
-			if( toExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
-				return true;
-		}
-		//check this on trigger in the event that the .trigger property is not set on the item
-		//trigger code.  Check to see if item is envokable by id
-		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
-		{
-			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
-			cScript *envExecute = JSMapping->GetScript( envTrig );
-			if( envExecute->OnUse( ourChar, x ) == 1 )
-				return true;
-		}
-		else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
-		{
-			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
-			cScript *envExecute = JSMapping->GetScript( envTrig );
-			if( envExecute != NULL )
-			{
-				if( envExecute->OnUse( ourChar, x ) == 1 )	// if it exists and we don't want hard code, return
-					return true;
-			}
-		}
-	}
-	// Range check for double clicking on items
-	if( iType != IT_CONTAINER && iType != IT_PLANK && iType != IT_HOUSESIGN && !checkItemRange( ourChar, x ) )
-	{
-		tSock->sysmessage( 389 );
-		return true;
-	}
-	// Check if item is in line of sight
-	if( iType != IT_DOOR && iType != IT_PLANK && iType != IT_HOUSESIGN && !checkItemLineOfSight( ourChar, x ) )
-	{
-		tSock->sysmessage( 389 );
-		return true;
-	}
-	if( x->isCorpse() && !ourChar->IsGM() && !ourChar->IsCounselor() )
-	{
-		bool willCrim	= false;
-		iChar			= x->GetOwnerObj();
-		if( ValidateObject( iChar ) )
-		{
-			// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
-			// and if the corpse is not from an enemy/allied guild									&& guildCheck
-			// and if the races are not allied/enemy												&& raceCheck )
-			willCrim = WillResultInCriminal( ourChar, iChar );
-		}
-		else
-			willCrim = ( (x->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );
-		if( willCrim )
-			criminal( ourChar );
-
-		if( ValidateObject( iChar ) )
-		{
-			if( iChar->IsGuarded() ) // Is the corpse being guarded?
-				Combat->petGuardAttack( ourChar, iChar, iChar );
-			else if( x->isGuarded() )
-				Combat->petGuardAttack( ourChar, iChar, x );
-		}
-	}
-	else if( x->isGuarded() )
-	{
-		CMultiObj *multi = findMulti( x );
-		if( ValidateObject( multi ) )
-		{
-			if( multi->GetOwnerObj() != ourChar )
-				Combat->petGuardAttack( ourChar, multi->GetOwnerObj(), x );
-		}
-		else
-		{
-			iChar = FindItemOwner( x );
-			if( ValidateObject( iChar ) && iChar->GetSerial() != ourChar->GetSerial() )
-				Combat->petGuardAttack( ourChar, iChar, x );
-		}
-	}
-	if( handleDoubleClickTypes( tSock, ourChar, x, iType ) )
+	if( handleDoubleClickTypes( tSock, ourChar, iUsed, iType ) )
 		return true;
 
 	//	Begin Scrolls check
-	if( x->GetID( 1 ) == 0x1F && ( x->GetID( 2 ) > 0x2C && x->GetID( 2 ) < 0x6D ) )
+	if( iUsed->GetID( 1 ) == 0x1F && ( iUsed->GetID( 2 ) > 0x2C && iUsed->GetID( 2 ) < 0x6D ) )
 	{
 		bool success = false;
 		tSock->CurrentSpellType( 1 );	// spell from scroll
-		if( x->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
+		if( iUsed->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
 			success = Magic->SelectSpell( tSock, 7 );
-		if( x->GetID( 2 ) >= 0x2E && x->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
-			success = Magic->SelectSpell( tSock, x->GetID( 2 ) - 0x2D );
-		else if( x->GetID( 2 ) >= 0x35 && x->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
-			success = Magic->SelectSpell( tSock, x->GetID( 2 ) - 0x2D + 1 );
+		if( iUsed->GetID( 2 ) >= 0x2E && iUsed->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
+			success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D );
+		else if( iUsed->GetID( 2 ) >= 0x35 && iUsed->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
+			success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D + 1 );
 
 		if( success )
-			x->IncAmount( -1 );
+			iUsed->IncAmount( -1 );
 		return true;
 	}
 	tSock->sysmessage( 486 );
