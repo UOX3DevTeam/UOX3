@@ -2781,7 +2781,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 		else if( spells[curSpell].RequireLocTarget() )
 		{
-			if( s->GetDWord( 7 ) == INVALIDSERIAL )
+			if( !caster->IsNpc() && s->GetDWord( 7 ) == INVALIDSERIAL )
 			{
 				x = s->GetWord( 11 );
 				y = s->GetWord( 13 );
