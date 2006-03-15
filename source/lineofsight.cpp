@@ -317,7 +317,8 @@ Look at uox3.h to see options. Works like npc magic.
 		return blocked;
 
 	//If target is next to us and within our field of view
-	if( distance <= 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
+	//Unfortunately, doors do not take an entire tile. Thus you can have an item directly next to you with a door in-between, so we still need to check.
+	if( distance < 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
 		return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];
@@ -345,7 +346,7 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		for( i = 0; i < m; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * i), (SI08)(koz1 + (dz * (R32)i * sgn_z)) );
+			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * (i+1)), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z)) );
 			++collisioncount;
 		}
 	}
@@ -353,7 +354,7 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		for( i = 0; i < n; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1 + (sgn_x * i), koy1, (SI08)(koz1 + (dz * (R32)i * sgn_z)) );
+			collisions[collisioncount] = vector3D( kox1 + (sgn_x * (i+1)), koy1, (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z)) );
 			++collisioncount;
 		}
 	}
@@ -361,7 +362,7 @@ Look at uox3.h to see options. Works like npc magic.
 	{
 		for( i = 0; ( n >= m ) && (i < n); ++i )
 		{
-			line2D toCollide = line2D( vector2D( (R32)( kox1 + (sgn_x * i) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
+			line2D toCollide = line2D( vector2D( (R32)( kox1 + (sgn_x * (i+1)) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
 
 			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
@@ -370,14 +371,14 @@ Look at uox3.h to see options. Works like npc magic.
 				// we just have to take that coordinate...
 				if( floor( temp.y ) == temp.y )
 				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
 					collisioncount += 1;
 				}
 				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
 				else
 				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
-					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
+					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
 					collisioncount += 2;
 				}
 			}
@@ -385,20 +386,20 @@ Look at uox3.h to see options. Works like npc magic.
 
 		for( i = 0; (m > n) && (i < m); ++i )
 		{
-			line2D toCollide = line2D( vector2D( 0.0f, (R32)( koy1 + (sgn_y * i) ) ), vector2D( 1.0f, 0.0f ) );
+			line2D toCollide = line2D( vector2D( 0.0f, (R32)( koy1 + (sgn_y * (i+1)) ) ), vector2D( 1.0f, 0.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
 
 			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
 			{
 				if( floor( temp.x ) == temp.x )
 				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
 					collisioncount += 1;
 				}
 				else
 				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
-					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)i * sgn_z))) );
+					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
+					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
 					collisioncount += 2;
 				}
 			}
@@ -459,7 +460,7 @@ Look at uox3.h to see options. Works like npc magic.
 			{
 				for( i = 0; i < collisioncount; ++i )
 				{
-					if( ( tempX == collisions[i].x ) && ( tempY == collisions[i].y ) )
+					if( tempX == collisions[i].x && tempY == collisions[i].y )
 						loscache.push_back( tempItem );
 				}
 			}
@@ -545,7 +546,7 @@ Look at uox3.h to see options. Works like npc magic.
 						Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 						const map_st map1 = Map->SeekMap( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
 						CLand& land = Map->SeekLand( map1.id );
-						if( land.LiquidWet() ) // is it water?
+						if( land.CheckFlag( TF_WET ) ) // is it water?
 							dyncount->SetID( 0x4001 );
 						else
 							dyncount->SetID( 0x4064 );

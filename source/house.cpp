@@ -201,7 +201,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0;
-	SI08 cz = 8;
+	SI08 cz = 7;
 	STRINGLIST houseItems;
 	houseItems.resize( 0 );
 	bool itemsWillDecay = false;
@@ -372,12 +372,6 @@ void deedHouse( CSocket *s, CMultiObj *i )
 	}
 }
 
-bool OnHouseList( CMultiObj *house, CChar *toCheck )
-{
-	if( !ValidateObject( house ) || !ValidateObject( toCheck ) )
-		return false;
-	return house->IsOwner( toCheck );
-}
 UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 {
 	if( !ValidateObject( house ) || !ValidateObject( toAdd ) )
@@ -389,8 +383,6 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 
 	SI16 sx, sy, ex, ey;
 	Map->MultiArea( house, sx, sy, ex, ey );
-	// Make an object with the character's serial & the list type
-	// and put it "inside" the house item.
 	if( toAdd->GetX() >= sx && toAdd->GetY() >= sy && toAdd->GetX() <= ex && toAdd->GetY() <= ey )
 	{
 		switch( mode )

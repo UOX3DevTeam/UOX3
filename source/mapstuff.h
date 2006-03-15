@@ -122,12 +122,10 @@ private:
 
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
-	bool			IsStaticSurface( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool			IsStaticWet( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck );
 
 	// caching functions
 	void			LoadMapsDFN( void );
-	void			SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
 	void			LoadMultis( const std::string basePath );
 	void			LoadDFNOverrides( void );
 	void			LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps );
@@ -157,8 +155,7 @@ public:
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
-	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = false );
-	bool			CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = false, bool waterWalk = false );
 	bool			MapExists( UI08 worldNumber );
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 

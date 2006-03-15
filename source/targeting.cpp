@@ -665,10 +665,21 @@ void Tiling( CSocket *s )  // Clicking the corners of tiling calls this function
 //|									& made all body parts that are carved from human corpse	
 //|									lie in same direction.
 //o--------------------------------------------------------------------------o
+bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
+{
+	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
+	if( !ValidateObject( toCreate ) ) 
+		return false;
+	toCreate->SetName( UString::sprintf( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetLocation( corpse );
+	toCreate->SetOwner( corpse->GetOwnerObj() );
+	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+	return true;
+}
 void newCarveTarget( CSocket *s, CItem *i )
 {
 	VALIDATESOCKET( s );
-	bool deletecorpse = false;
+
 	CChar *mChar = s->CurrcharObj();
 	CItem *c = Items->CreateItem( NULL, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
 	if( c == NULL ) 
@@ -677,100 +688,25 @@ void newCarveTarget( CSocket *s, CItem *i )
 	c->SetMovable( 2 );
 	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
-	char temp[1024];
 	// if it's a human corpse
 	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
 	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
-		// create the Head
-		sprintf( temp, Dictionary->GetEntry( 1058 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DAE, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DAE, 1058 ) )	// Head
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Body
-		sprintf( temp, Dictionary->GetEntry( 1059 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1CED, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DAD, 1057 ) )	// Body
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		sprintf( temp, Dictionary->GetEntry( 1057 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DAD, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DAF, 1061 ) )	// Right Arm
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Left Arm
-		sprintf( temp, Dictionary->GetEntry( 1060 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DB0, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DB0, 1060 ) )	// Left Arm
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Right Arm
-		sprintf( temp, Dictionary->GetEntry( 1061 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DAF, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DB1, 1063 ) )	// Right Leg
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Left Leg
-		sprintf( temp, Dictionary->GetEntry( 1062 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DB2, 1, 0, OT_ITEM );
-		if( c == NULL ) 
+		if( !CreateBodyPart( mChar, i, 0x1DB2, 1062 ) )	// Left Leg
 			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
 
-		// create the Right Leg
-		sprintf( temp, Dictionary->GetEntry( 1063 ).c_str(), i->GetName2() );
-		c = Items->CreateItem( NULL, mChar, 0x1DB1, 1, 0, OT_ITEM );
-		if( c == NULL ) 
-			return;
-		c->SetName( temp );
-		c->SetLocation( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		//human: always delete corpse!
-		deletecorpse = true;
 		criminal( mChar );
-	} 
-	else
-	{
-		UString sect			= "CARVE " + UString::number( i->GetCarve() );
-		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
-		if( toFind == NULL )
-			return;
-		UString tag;
-		UString data;
-		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
-		{
-			data = toFind->GrabData();
-			if( tag.upper() == "ADDITEM" )
-			{
-				if( data.sectionCount( "," ) != 0 )
-					Items->CreateScriptItem( s, mChar, data.section( ",", 0, 0 ).stripWhiteSpace(), data.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
-				else
-					Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
-			}
-		}
-	}
 
-	if( deletecorpse )
-	{
 		CDataList< CItem * > *iCont = i->GetContainsList();
 		for( c = iCont->First(); !iCont->Finished(); c = iCont->Next() )
 		{
@@ -782,6 +718,26 @@ void newCarveTarget( CSocket *s, CItem *i )
 			}
 		}
 		i->Delete();
+	} 
+	else
+	{
+		UString sect			= "CARVE " + UString::number( i->GetCarve() );
+		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
+		if( toFind == NULL )
+			return;
+		UString tag;
+		UString data;
+		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
+		{
+			if( tag.upper() == "ADDITEM" )
+			{
+				data = toFind->GrabData();
+				if( data.sectionCount( "," ) != 0 )
+					Items->CreateScriptItem( s, mChar, data.section( ",", 0, 0 ).stripWhiteSpace(), data.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
+				else
+					Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
+			}
+		}
 	}
 }
 

@@ -591,7 +591,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			validLandPosCheck[ y + ( x << 16) ] = z;
 			break;
 		}
-		else if( Map->CanSeaMonsterMoveHere( x, y, z, worldNumber ) && ( waterCreature || amphiCreature ) )
+		else if( Map->CanMonsterMoveHere( x, y, z, worldNumber, false, true ) && ( waterCreature || amphiCreature ) )
 		{
 			rvalue = true;
 			validWaterPos.push_back( point3( x, y, z ) );

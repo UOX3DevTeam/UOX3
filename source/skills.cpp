@@ -828,14 +828,14 @@ void cSkills::FishTarget( CSocket *s )
 	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
 	bool validLocation = false;
 	if( ValidateObject( targetItem ) )
-		validLocation = Map->SeekTile( targetItem->GetID() ).LiquidWet();
+		validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
 		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );
-			if( targetZ == stat->zoff && tile.LiquidWet() )	// right place, and wet
+			if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
 				validLocation = true;
 		}
 	}
@@ -844,7 +844,7 @@ void cSkills::FishTarget( CSocket *s )
 		// manually calculating the ID's if a maptype
 		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 		CLand& land = Map->SeekLand( map1.id );
-		if( land.LiquidWet() )
+		if( land.CheckFlag( TF_WET ) )
 			validLocation = true; 
 	}
 	if( validLocation )

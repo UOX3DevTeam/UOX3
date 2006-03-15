@@ -702,7 +702,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
 					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
 					CLand& land = Map->SeekLand( map1.id );
-					if( land.LiquidWet() ) // is it water?
+					if( land.CheckFlag( TF_WET ) ) // is it water?
 						tItem->SetID( 0x4001 );
 					else
 						tItem->SetID( 0x4064 );
@@ -1639,7 +1639,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 
 		if( waterWalk )
 		{
-			if( tb->Top() >= newz && tb->Top() <= oldz && tb->LiquidWet() )
+			if( tb->Top() >= newz && tb->Top() <= oldz && tb->CheckFlag( TF_WET ) )
 			{ // swimable tile
 				newz	= tb->Top();
 				ontype	= tb->Type();
@@ -1647,13 +1647,13 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 			continue;
 		}
 		// check if the creature is floating on a static (keeping Z or falling)
-		if( tb->Standable() )
+		if( tb->CheckFlag( TF_SURFACE ) )
 		{
 			if( tb->Top() <= oldz )
 			{
 				newz = tb->Top();
 				ontype = tb->Type();
-				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
+				if( tb->CheckFlag( TF_STAIRRIGHT ) ) // if it was ladder the char is allowed to `levitate´ next move
 					on_ladder = true;
 				continue;
 			}
@@ -1663,7 +1663,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 			{
 				ontype = tb->Type();
 				newz = tb->Top();
-				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
+				if( tb->CheckFlag( TF_STAIRRIGHT ) ) // if it was ladder the char is allowed to `levitate´ next move
 					on_ladder = true;
 				continue;
 			}
@@ -1675,13 +1675,13 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 		// equal current height + levitateable limit
 		if( tb->BaseZ() <= (oldz + MAX_Z_LEVITATE) )
 		{
-			if( tb->Climbable() || tb->Type() == 0 ||								// Climbable tile, map tiles are also climbable
-				( tb->Flag( 3 ) == 0 && tb->Flag( 2 ) == 0x22 ) ||				// These are a special kind of tiles where OSI forgot to set the climbable flag
-				( (tb->Top() >= oldz && tb->Top() <= oldz+3) && tb->Standable() ) )	// Allow to climb a height of 1 even if the climbable flag is not set
+			if( tb->CheckFlag( TF_CLIMBABLE ) || tb->Type() == 0 ||								// Climbable tile, map tiles are also climbable
+				( tb->Flag( 3 ) == 0 && tb->Flag( 2 ) == 0x22 ) ||								// These are a special kind of tiles where OSI forgot to set the climbable flag
+				( (tb->Top() >= oldz && tb->Top() <= oldz+3) && tb->CheckFlag( TF_SURFACE ) ) )	// Allow to climb a height of 1 even if the climbable flag is not set
 			{                 
 				ontype = tb->Type();
 				newz = tb->Top();
-				if( tb->ClimbableBit2() ) // if it was ladder the char is allowed to `levitate´ next move
+				if( tb->CheckFlag( TF_STAIRRIGHT ) ) // if it was ladder the char is allowed to `levitate´ next move
 					on_ladder = true;
 			}
 		}
@@ -1702,15 +1702,15 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, bool 
 		if( waterWalk )
 		{
 			if( ( ( tb->Top() > newz && tb->BaseZ() <= item_influence ) ||
-				( tb->Top() == newz && ontype == 0 ) ) || !tb->LiquidWet() )	// Check for blocking tile
+				( tb->Top() == newz && ontype == 0 ) ) || !tb->CheckFlag( TF_WET ) )	// Check for blocking tile
 			{
 				newz = ILLEGAL_Z;
 				break;
 			}
 			continue;
 		}
-		if( ( tb->Blocking() || ( tb->Standable() && tb->Top() > newz ) ) &&	// Check for blocking tile or stairs
-			!( isGM && ( tb->WindowArchDoor() || tb->Door() ) ) )				// ghosts can walk through doors
+		if( ( tb->CheckFlag( TF_BLOCKING ) || ( tb->CheckFlag( TF_SURFACE ) && tb->Top() > newz ) ) &&	// Check for blocking tile or stairs
+			!( isGM && ( tb->CheckFlag( TF_WINDOW ) || tb->CheckFlag( TF_DOOR ) ) ) )				// ghosts can walk through doors
 		{
 			if( tb->Top() > newz && tb->BaseZ() <= item_influence || ( tb->Top() == newz && ontype == 0 ) )
 			{

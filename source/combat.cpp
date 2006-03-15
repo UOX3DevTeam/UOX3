@@ -1538,7 +1538,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
 	UI08 bowType		= 0;
 
-	bool checkDist		= (ourDist <= 1);
+	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
 	cScript *toExecute	= JSMapping->GetScript( mChar.GetScriptTrigger() );
 	if( toExecute != NULL )

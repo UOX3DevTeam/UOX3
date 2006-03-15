@@ -293,7 +293,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			{
 				map = Map->SeekMap( x, y, worldNumber );
 				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= -5 && !land.LiquidWet() && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+				if( map.z >= -5 && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 					return true;
 			}
 			else
@@ -303,7 +303,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 				{
 					CTile& tile = Map->SeekTile( stat->itemid );
 					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.LiquidWet() && zt > -5 && zt <= 15 && strcmp( (char*)tile.Name(), "water" ) )
+					if( !tile.CheckFlag( TF_WET ) && zt > -5 && zt <= 15 && strcmp( (char*)tile.Name(), "water" ) )
 					{
 						delete msi;
 						return true;
@@ -411,9 +411,6 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 			hold->SetLocation( x, y - 5, -5 );
 			break;
 	}
-	//their x pos is set by BuildHouse(), so just fix their Z...
-	mChar->SetZ( z + 3 );
-	mChar->SetMulti( b );
 	return true;
 }
 

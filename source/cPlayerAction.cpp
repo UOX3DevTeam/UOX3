@@ -1655,7 +1655,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 			{
 				if( baseCont->CanBeObjType( OT_ITEM ) )
 				{
-					if( objInRange( mChar, baseCont, DIST_NEARBY ) && mChar->GetMultiObj() == baseCont->GetMultiObj() )
+					if( objInRange( mChar, baseCont, DIST_NEARBY ) && checkItemLineOfSight( mChar, x ) && mChar->GetMultiObj() == baseCont->GetMultiObj() )
 					{
 						mSock->openPack( x );
 						packOpened = true;
@@ -1664,7 +1664,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes i
 				else
 				{
 					iChar = static_cast<CChar *>(baseCont);
-					if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) )
+					if( ValidateObject( iChar ) && objInRange( mChar, iChar, DIST_NEARBY ) && checkItemLineOfSight( mChar, x ) )
 					{
 						if( mChar == iChar || mChar == iChar->GetOwnerObj() )
 							mSock->openPack( x );

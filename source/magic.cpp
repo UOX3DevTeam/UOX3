@@ -384,12 +384,12 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	if( !caster->IsNpc() )
 	{
 		CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
-		if( (!strcmp( tile.Name(), "water")) || tile.LiquidWet() )
+		if( (!strcmp( tile.Name(), "water")) || tile.CheckFlag( TF_WET ) )
 		{
 			sock->sysmessage( 671 );
 			return false;
 		}						
-		if( tile.WallRoofWeap() )	// slanted roof tile!!! naughty naughty
+		if( tile.CheckFlag( TF_ROOF ) )	// slanted roof tile!!! naughty naughty
 		{
 			sock->sysmessage( 672 );
 			return false;

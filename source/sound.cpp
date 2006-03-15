@@ -389,7 +389,7 @@ void cEffects::playTileSound( CSocket *mSock )
 		if( stat )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );
-			if( tile.LiquidWet() )
+			if( tile.CheckFlag( TF_WET ) )
 				tileType = TT_WATER;
 			else
 			{

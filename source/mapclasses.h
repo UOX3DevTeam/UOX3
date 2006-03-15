@@ -1,6 +1,8 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
+#include "power.h"
+
 namespace UOX
 {
 
@@ -38,6 +40,43 @@ struct Multi_st
 	SI08 empty;
 } PACK_NEEDED;
 
+enum TileFlags
+{
+	TF_FLOORLEVEL	= 0,
+	TF_HOLDABLE,
+	TF_TRANSPARENT,
+	TF_TRANSLUCENT,
+	TF_WALL,
+	TF_DAMAGING,
+	TF_BLOCKING,
+	TF_WET,
+	TF_UNKNOWN1,
+	TF_SURFACE,
+	TF_CLIMBABLE,
+	TF_STACKABLE,
+	TF_WINDOW,
+	TF_NOSHOOT,
+	TF_DISPLAYA,
+	TF_DISPLAYAN,
+	TF_DESCRIPTION,
+	TF_FOLIAGE,
+	TF_PARTIALHUE,
+	TF_UNKNOWN2,
+	TF_MAP,
+	TF_CONTAINER,
+	TF_WEARABLE,
+	TF_LIGHT,
+	TF_ANIMATED,
+	TF_NODIAGONAL,
+	TF_UNKNOWN3,
+	TF_ARMOR,
+	TF_ROOF,
+	TF_DOOR,
+	TF_STAIRBACK,
+	TF_STAIRRIGHT,
+	TF_COUNT
+};
+
 class CBaseTile
 {
 protected:
@@ -64,80 +103,19 @@ public:
 	UI32 Flags( void ) const			{	return flags;	}
 	void Flags( UI32 newVal )			{	flags = newVal;	}
 
-	bool AtFloorLevel( void ) const		{	return MFLAGGET( flags, 0x00000001 );	}
-	bool Holdable( void ) const			{	return MFLAGGET( flags, 0x00000002 );	}
-	bool SignGuildBanner( void ) const	{	return MFLAGGET( flags, 0x00000004 );	}
-	bool WebDirtBlood( void ) const		{	return MFLAGGET( flags, 0x00000008 );	}
-	bool WallVertTile( void ) const		{	return MFLAGGET( flags, 0x00000010 );	}
-	bool Damaging( void ) const			{	return MFLAGGET( flags, 0x00000020 );	}
-	bool Blocking( void ) const			{	return MFLAGGET( flags, 0x00000040 );	}
-	bool LiquidWet( void ) const		{	return MFLAGGET( flags, 0x00000080 );	}
-	bool UnknownFlag1( void ) const		{	return MFLAGGET( flags, 0x00000100 );	}
-	bool Standable( void ) const		{	return MFLAGGET( flags, 0x00000200 );	}
-	bool Climbable( void ) const		{	return MFLAGGET( flags, 0x00000400 );	}
-	bool Stackable( void ) const		{	return MFLAGGET( flags, 0x00000800 );	}
-	bool WindowArchDoor( void ) const	{	return MFLAGGET( flags, 0x00001000 );	}
-	bool CannotShootThru( void ) const	{	return MFLAGGET( flags, 0x00002000 );	}
-	bool DisplayAsA( void ) const		{	return MFLAGGET( flags, 0x00004000 );	}
-	bool DisplayAsAn( void ) const		{	return MFLAGGET( flags, 0x00008000 );	}
-	bool DescriptionTile( void ) const	{	return MFLAGGET( flags, 0x00010000 );	}
-	bool FadeWithTrans( void ) const	{	return MFLAGGET( flags, 0x00020000 );	}
-	bool PartialHue( void ) const		{	return MFLAGGET( flags, 0x00040000 );	}
-	bool UnknownFlag2( void ) const		{	return MFLAGGET( flags, 0x00080000 );	}
-	bool Map( void ) const				{	return MFLAGGET( flags, 0x00100000 );	}
-	bool Container( void ) const		{	return MFLAGGET( flags, 0x00200000 );	}
-	bool Equipable( void ) const		{	return MFLAGGET( flags, 0x00400000 );	}
-	bool LightSource( void ) const		{	return MFLAGGET( flags, 0x00800000 );	}
-	bool Animated( void ) const			{	return MFLAGGET( flags, 0x01000000 );	}
-	bool NoDiagonal( void ) const		{	return MFLAGGET( flags, 0x02000000 );	}
-	bool UnknownFlag3( void ) const		{	return MFLAGGET( flags, 0x04000000 );	}
-	bool WholeBodyItem( void ) const	{	return MFLAGGET( flags, 0x08000000 );	}
-	bool WallRoofWeap( void ) const		{	return MFLAGGET( flags, 0x10000000 );	}
-	bool Door( void ) const				{	return MFLAGGET( flags, 0x20000000 );	}
-	bool ClimbableBit1( void ) const	{	return MFLAGGET( flags, 0x40000000 );	}
-	bool ClimbableBit2( void ) const	{	return MFLAGGET( flags, 0x80000000 );	}
-
-	void AtFloorLevel( bool val )		{	MFLAGSET( flags, val, 0x00000001 )	}
-	void Holdable( bool val )			{	MFLAGSET( flags, val, 0x00000002 )	}
-	void SignGuildBanner( bool val )	{	MFLAGSET( flags, val, 0x00000004 )	}
-	void WebDirtBlood( bool val )		{	MFLAGSET( flags, val, 0x00000008 )	}
-	void WallVertTile( bool val )		{	MFLAGSET( flags, val, 0x00000010 )	}
-	void Damaging( bool val )			{	MFLAGSET( flags, val, 0x00000020 )	}
-	void Blocking( bool val )			{	MFLAGSET( flags, val, 0x00000040 )	}
-	void LiquidWet( bool val )			{	MFLAGSET( flags, val, 0x00000080 )	}
-	void UnknownFlag1( bool val )		{	MFLAGSET( flags, val, 0x00000100 )	}
-	void Standable( bool val )			{	MFLAGSET( flags, val, 0x00000200 )	}
-	void Climbable( bool val )			{	MFLAGSET( flags, val, 0x00000400 )	}
-	void Stackable( bool val )			{	MFLAGSET( flags, val, 0x00000800 )	}
-	void WindowArchDoor( bool val )		{	MFLAGSET( flags, val, 0x00001000 )	}
-	void CannotShootThru( bool val )	{	MFLAGSET( flags, val, 0x00002000 )	}
-	void DisplayAsA( bool val )			{	MFLAGSET( flags, val, 0x00004000 )	}
-	void DisplayAsAn( bool val )		{	MFLAGSET( flags, val, 0x00008000 )	}
-	void DescriptionTile( bool val )	{	MFLAGSET( flags, val, 0x00010000 )	}
-	void FadeWithTrans( bool val )		{	MFLAGSET( flags, val, 0x00020000 )	}
-	void PartialHue( bool val )			{	MFLAGSET( flags, val, 0x00040000 )	}
-	void UnknownFlag2( bool val )		{	MFLAGSET( flags, val, 0x00080000 )	}
-	void Map( bool val )				{	MFLAGSET( flags, val, 0x00100000 )	}
-	void Container( bool val )			{	MFLAGSET( flags, val, 0x00200000 )	}
-	void Equipable( bool val )			{	MFLAGSET( flags, val, 0x00400000 )	}
-	void LightSource( bool val )		{	MFLAGSET( flags, val, 0x00800000 )	}
-	void Animated( bool val )			{	MFLAGSET( flags, val, 0x01000000 )	}
-	void NoDiagonal( bool val )			{	MFLAGSET( flags, val, 0x02000000 )	}
-	void UnknownFlag3( bool val )		{	MFLAGSET( flags, val, 0x04000000 )	}
-	void WholeBodyItem( bool val )		{	MFLAGSET( flags, val, 0x08000000 )	}
-	void WallRoofWeap( bool val )		{	MFLAGSET( flags, val, 0x10000000 )	}
-	void Door( bool val )				{	MFLAGSET( flags, val, 0x20000000 )	}
-	void ClimbableBit1( bool val )		{	MFLAGSET( flags, val, 0x40000000 )	}
-	void ClimbableBit2( bool val )		{	MFLAGSET( flags, val, 0x80000000 )	}
-
-	UI08 ClimbableBits( void )
+	bool CheckFlag( TileFlags toCheck ) const
 	{
-		UI08 p1 = 0, p2 = 0;
-		if( ClimbableBit1() )
-			p1 = 1;
-		if( ClimbableBit2() )
-			p2 = 1;
-		return (UI08)(p1 * 2 + p2);
+		if( toCheck >= TF_COUNT )
+			return false;
+		const UI32 flagToGet = power( 2, toCheck );
+		return MFLAGGET( flags, flagToGet );
+	}
+	void SetFlag( TileFlags toSet, bool newVal )
+	{
+		if( toSet >= TF_COUNT )
+			return;
+		const UI32 flagToSet = power( 2, toSet );
+		MFLAGSET( flags, newVal, flagToSet );
 	}
 };
 class CTile : public CBaseTile

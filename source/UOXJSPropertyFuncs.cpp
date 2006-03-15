@@ -464,7 +464,6 @@ namespace UOX
 				case CCP_NPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNpc() );		break;
 				case CCP_ONLINE:		*vp = BOOLEAN_TO_JSVAL( isOnline( (*gPriv) ) );	break;
 				case CCP_DIRECTION:		*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
-				
 				// 3  objects: regions + towns + guilds
 				case CCP_REGION:
 					{

@@ -2230,9 +2230,9 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 	const UI16 getAmount = mItem.GetAmount();
 	if( getAmount == 1 )
 	{
-		if( tile.DisplayAsAn() )
+		if( tile.CheckFlag( TF_DISPLAYAN ) )
 			temp = "an " + temp;
-		else if( tile.DisplayAsA() )
+		else if( tile.CheckFlag( TF_DISPLAYA ) )
 			temp = "a " + temp;
 	}
 

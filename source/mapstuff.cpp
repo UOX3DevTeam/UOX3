@@ -452,7 +452,7 @@ SI08 CMulHandler::TileHeight( UI16 tilenum )
 	CTile& tile = SeekTile( tilenum );
 	
 	// For Stairs+Ladders
-	if( tile.Climbable() ) 
+	if( tile.CheckFlag( TF_CLIMBABLE ) ) 
 		return static_cast<SI08>(tile.Height()/2);
 	return tile.Height();
 }
@@ -479,22 +479,6 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 	return top;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	void SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
-//|	Date			-	26th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Updates the box coordinates based on cached information
-//o--------------------------------------------------------------------------
-void CMulHandler::SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 )
-{
-	x1 = multiIndex[multiNum].lx;		// originally lx 
-	x2 = multiIndex[multiNum].hx;		// originally ly presumablely bugs?
-	y1 = multiIndex[multiNum].ly;		// originally ly 
-	y2 = multiIndex[multiNum].hy;		// originally hy presumablely bugs?
-}
-
 SI32 CMulHandler::SeekMulti( UI16 multinum )
 {
 	SI32 retVal = -1;
@@ -518,17 +502,19 @@ Multi_st& CMulHandler::SeekIntoMulti( UI16 multinum, SI32 number )
 //o--------------------------------------------------------------------------
 void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
 {
-	x1 = y1 = x2 = y2 = 0;
 	if( !ValidateObject( i ) )
 		return;
 	const SI16 xAdd = i->GetX();
 	const SI16 yAdd = i->GetY();
-	SeekMultiSizes( static_cast<UI16>(i->GetID() - 0x4000), x1, x2, y1, y2 );
 
-	x1 += xAdd;
-	x2 += xAdd;
-	y1 += yAdd;
-	y2 += yAdd;
+	const UI16 multiNum = static_cast<UI16>(i->GetID() - 0x4000);
+	if( multiNum >= multiIndexSize )
+		return;
+
+	x1 = static_cast<SI16>(multiIndex[multiNum].lx + xAdd); 
+	x2 = static_cast<SI16>(multiIndex[multiNum].hx + xAdd);
+	y1 = static_cast<SI16>(multiIndex[multiNum].ly + yAdd);
+	y2 = static_cast<SI16>(multiIndex[multiNum].hy + yAdd);
 }
 
 
@@ -541,16 +527,17 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 	if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)                                                                                                                          
 		length = 0;
 
+	const SI16 baseX = i->GetX();
+	const SI16 baseY = i->GetY();
+	const SI08 baseZ = i->GetZ();
 	for( SI32 j = 0; j < length; ++j )
 	{
 		Multi_st& multi = SeekIntoMulti( multiID, j );
-		if( multi.visible && ( i->GetX() + multi.x == x) && ( i->GetY() + multi.y == y ) )
+		if( multi.visible && (baseX + multi.x) == x && (baseY + multi.y) == y )
 		{
-			SI08 tmpTop = static_cast<SI08>(i->GetZ() + multi.z);
-			if( ( tmpTop <= oldz + maxZ ) && ( tmpTop >= oldz - 1 ) )
-				return tmpTop + 1;
-			else if( ( tmpTop >= oldz - maxZ ) && ( tmpTop < oldz - 1 ) )
-				return tmpTop + 1;
+			SI08 tmpTop = static_cast<SI08>(baseZ + multi.z);
+			if( abs( tmpTop - oldz ) <= maxZ )
+				return tmpTop + TileHeight( multi.tile );
 		}                                                                                                                 
 	}
 	return ILLEGAL_Z;                                                                                                                     
@@ -596,7 +583,7 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
 		CLand& land = Map->SeekLand( map1.id );
-		if( land.LiquidWet() ) // is it water?
+		if( land.CheckFlag( TF_WET ) ) // is it water?
 			i->SetID( 0x4001 );
 		else
 			i->SetID( 0x4064 );
@@ -862,34 +849,20 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		CTile& tile = SeekTile( stat->itemid );;
-		if( elev >= oldz && stat->zoff <= oldz && ( tile.Blocking() || ( checkWater && tile.LiquidWet() ) ) )
+		CTile& tile = SeekTile( stat->itemid );
+		if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) || ( checkWater && tile.CheckFlag( TF_WET ) ) ) )
 			return true;
 	}
 	return false;
 }
 
-// Is there a static at the given coordinates, and if yes is it a surface
-bool CMulHandler::IsStaticSurface( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
 {
 	CStaticIterator msi( x, y, worldNumber );
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev == z && !SeekTile( stat->itemid ).Standable() )
-			return false;
-	}
-	return true;
-}
-
-// Is there a static at the given coordinates, and if yes is it wet
-bool CMulHandler::IsStaticWet( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
-{
-	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-	{
-		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev == z && !SeekTile( stat->itemid ).LiquidWet() )
+		if( elev == z && !SeekTile( stat->itemid ).CheckFlag( toCheck ) )
 			return false;
 	}
 	return true;
@@ -913,21 +886,21 @@ SI08 CMulHandler::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 // Return whether give coordinates are inside a building by checking if there is a multi or static above them
 bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127 );
-		if( dynz > ( z + 10))
+	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127 );
+	if( dynz > ( z + 10))
+		return true;
+	else
+	{
+		const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, (SI08)127 );
+		if( staticz > ( z + 10))
 			return true;
-		else
-		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, (SI08)127 );
-			if( staticz > ( z + 10))
-				return true;
-		}
-		return false;
+	}
+	return false;
 }
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater, bool waterWalk )
 {
 	if( worldNumber >= MapList.size() )
 		return false;
@@ -954,8 +927,16 @@ bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 	if( IsValidTile( dt ) )
 	{
 		CTile &tile = SeekTile( dt );
-		if( tile.Blocking() || (checkWater && tile.LiquidWet()) /*|| !tile.Standable()*/ )
-			return false;
+		if( waterWalk )
+		{
+			if( !tile.CheckFlag( TF_WET ) )
+				return false;
+		}
+		else
+		{
+			if( tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+				return false;
+		}
 	}
 
 	// if there's a static block here in our way, return false
@@ -963,66 +944,28 @@ bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 		return false;
 	
 	// if the static isn't a surface return false
-	if( !IsStaticSurface( x, y, elev, worldNumber ) )
+	if( !CheckStaticFlag( x, y, elev, worldNumber, ( waterWalk ) ? TF_WET : TF_SURFACE ) )
 		return false;
 
-	if( checkWater )
+	if( checkWater || waterWalk )
 	{
 		const map_st map = SeekMap( x, y, worldNumber );
 		if( map.z == elev )
 		{
 			CLand& land = SeekLand( map.id );
-			if( land.LiquidWet() )
-				return false;
+			if( waterWalk )
+			{
+				if( !land.CheckFlag( TF_WET ) )
+					return false;
+			}
+			else
+			{
+				if( land.CheckFlag( TF_WET ) )
+					return false;
+			}
 		}
 	}
 	return true;
-}
-
-// can the sea monster move here from an adjacent cell at elevation 'oldz'
-// use illegal_z if they are teleporting from an unknown z
-bool CMulHandler::CanSeaMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
-{
-	if( worldNumber >= MapList.size() )
-		return false;
-
-	MapData_st& mMap = MapList[worldNumber];
-	if( x < 0 || y < 0 || x >= mMap.xBlock || y >= mMap.yBlock  )
-		return false;
-    const SI08 elev = Height( x, y, oldz, worldNumber );
-	if( ILLEGAL_Z == elev )
-		return false;
-
-	// is it too great of a difference z-value wise?
-	if( oldz != ILLEGAL_Z )
-	{
-		// you can climb MaxZstep, but fall up to 15
-		if( elev - oldz > MAX_Z_STEP )
-			return false;
-		else if( oldz - elev > 15 )
-			return false;
-	}
-
-    // get the tile id of any dynamic tiles at this spot
-    const UI16 dt = DynTile( x, y, elev, worldNumber );
-	if( IsValidTile( dt ) && !SeekTile( dt ).LiquidWet() )
-		return false;
-
-    // if there's a static block here in our way, return false
-    if( DoesStaticBlock( x, y, elev, worldNumber, false ) )
-		return false;
-
-	if( !IsStaticWet( x, y, elev, worldNumber ) )
-		return false;
-
-	const map_st map = SeekMap( x, y, worldNumber );
-	if( map.z == elev )
-	{
-		CLand& land = SeekLand( map.id );
-		if( !land.LiquidWet() )
-			return false;
-	}
-    return true;
 }
 
 //o--------------------------------------------------------------------------
@@ -1095,75 +1038,75 @@ void CMulHandler::LoadDFNOverrides( void )
 
 						// BaseTile Flag 1
 						else if( UTag == "ATFLOORLEVEL" )
-							tile->AtFloorLevel( (data.toInt() != 0) );
+							tile->SetFlag( TF_FLOORLEVEL, (data.toInt() != 0) );
 						else if( UTag == "HOLDABLE" )
-							tile->Holdable( (data.toInt() != 0) );
+							tile->SetFlag( TF_HOLDABLE, (data.toInt() != 0) );
 						else if( UTag == "SIGNGUILDBANNER" )
-							tile->SignGuildBanner( (data.toInt() != 0) );
+							tile->SetFlag( TF_TRANSPARENT, (data.toInt() != 0) );
 						else if( UTag == "WEBDIRTBLOOD" )
-							tile->WebDirtBlood( (data.toInt() != 0) );
+							tile->SetFlag( TF_TRANSLUCENT, (data.toInt() != 0) );
 						else if( UTag == "WALLVERTTILE" )
-							tile->WallVertTile( (data.toInt() != 0) );
+							tile->SetFlag( TF_WALL, (data.toInt() != 0) );
 						else if( UTag == "DAMAGING" )
-							tile->Damaging( (data.toInt() != 0) );
+							tile->SetFlag( TF_DAMAGING, (data.toInt() != 0) );
 						else if( UTag == "BLOCKING" )
-							tile->Blocking( (data.toInt() != 0) );
+							tile->SetFlag( TF_BLOCKING, (data.toInt() != 0) );
 						else if( UTag == "LIQUIDWET" )
-							tile->LiquidWet( (data.toInt() != 0) );
+							tile->SetFlag( TF_WET, (data.toInt() != 0) );
 
 						// BaseTile Flag 2
 						else if( UTag == "UNKNOWNFLAG1" )
-							tile->UnknownFlag1( (data.toInt() != 0) );
+							tile->SetFlag( TF_UNKNOWN1, (data.toInt() != 0) );
 						else if( UTag == "STANDABLE" )
-							tile->Standable( (data.toInt() != 0) );
+							tile->SetFlag( TF_SURFACE, (data.toInt() != 0) );
 						else if( UTag == "CLIMBABLE" )
-							tile->Climbable( (data.toInt() != 0) );
+							tile->SetFlag( TF_CLIMBABLE, (data.toInt() != 0) );
 						else if( UTag == "STACKABLE" )
-							tile->Stackable( (data.toInt() != 0) );
+							tile->SetFlag( TF_STACKABLE, (data.toInt() != 0) );
 						else if( UTag == "WINDOWARCHDOOR" )
-							tile->WindowArchDoor( (data.toInt() != 0) );
+							tile->SetFlag( TF_WINDOW, (data.toInt() != 0) );
 						else if( UTag == "CANNOTSHOOTTHRU" )
-							tile->CannotShootThru( (data.toInt() != 0) );
+							tile->SetFlag( TF_NOSHOOT, (data.toInt() != 0) );
 						else if( UTag == "DISPLAYASA" )
-							tile->DisplayAsA( (data.toInt() != 0) );
+							tile->SetFlag( TF_DISPLAYA, (data.toInt() != 0) );
 						else if( UTag == "DISPLAYASAN" )
-							tile->DisplayAsAn( (data.toInt() != 0) );
+							tile->SetFlag( TF_DISPLAYAN, (data.toInt() != 0) );
 
 						// BaseTile Flag 3
 						else if( UTag == "DESCRIPTIONTILE" )
-							tile->DescriptionTile( (data.toInt() != 0) );
+							tile->SetFlag( TF_DESCRIPTION, (data.toInt() != 0) );
 						else if( UTag == "FADEWITHTRANS" )
-							tile->FadeWithTrans( (data.toInt() != 0) );
+							tile->SetFlag( TF_FOLIAGE, (data.toInt() != 0) );
 						else if( UTag == "PARTIALHUE" )
-							tile->PartialHue( (data.toInt() != 0) );
+							tile->SetFlag( TF_PARTIALHUE, (data.toInt() != 0) );
 						else if( UTag == "UNKNOWNFLAG2" )
-							tile->UnknownFlag2( (data.toInt() != 0) );
+							tile->SetFlag( TF_UNKNOWN2, (data.toInt() != 0) );
 						else if( UTag == "MAP" )
-							tile->Map( (data.toInt() != 0) );
+							tile->SetFlag( TF_MAP, (data.toInt() != 0) );
 						else if( UTag == "CONTAINER" )
-							tile->Container( (data.toInt() != 0) );
+							tile->SetFlag( TF_CONTAINER, (data.toInt() != 0) );
 						else if( UTag == "EQUIPABLE" )
-							tile->Equipable( (data.toInt() != 0) );
+							tile->SetFlag( TF_WEARABLE, (data.toInt() != 0) );
 						else if( UTag == "LIGHTSOURCE" )
-							tile->LightSource( (data.toInt() != 0) );
+							tile->SetFlag( TF_LIGHT, (data.toInt() != 0) );
 
 						// BaseTile Flag 4
 						else if( UTag == "ANIMATED" )
-							tile->Animated( (data.toInt() != 0) );
+							tile->SetFlag( TF_ANIMATED, (data.toInt() != 0) );
 						else if( UTag == "NODIAGONAL" )
-							tile->NoDiagonal( (data.toInt() != 0) );
+							tile->SetFlag( TF_NODIAGONAL, (data.toInt() != 0) );
 						else if( UTag == "UNKNOWNFLAG3" )
-							tile->UnknownFlag3( (data.toInt() != 0) );
+							tile->SetFlag( TF_UNKNOWN3, (data.toInt() != 0) );
 						else if( UTag == "WHOLEBODYITEM" )
-							tile->WholeBodyItem( (data.toInt() != 0) );
+							tile->SetFlag( TF_ARMOR, (data.toInt() != 0) );
 						else if( UTag == "WALLROOFWEAP" )
-							tile->WallRoofWeap( (data.toInt() != 0) );
+							tile->SetFlag( TF_ROOF, (data.toInt() != 0) );
 						else if( UTag == "DOOR" )
-							tile->Door( (data.toInt() != 0) );
+							tile->SetFlag( TF_DOOR, (data.toInt() != 0) );
 						else if( UTag == "CLIMBABLEBIT1" )
-							tile->ClimbableBit1( (data.toInt() != 0) );
+							tile->SetFlag( TF_STAIRBACK, (data.toInt() != 0) );
 						else if( UTag == "CLIMBABLEBIT2" )
-							tile->ClimbableBit2( (data.toInt() != 0) );
+							tile->SetFlag( TF_STAIRRIGHT, (data.toInt() != 0) );
 					}
 				}
 			}
