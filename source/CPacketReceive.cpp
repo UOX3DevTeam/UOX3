@@ -145,7 +145,7 @@ bool CPIFirstLogin::Handle( void )
 
 	std::string username = Name();
 
-	ACCOUNTSBLOCK * actbTemp = &Accounts->GetAccountByName( username );
+	CAccountBlock * actbTemp = &Accounts->GetAccountByName( username );
 	if( actbTemp->wAccountIndex != AB_INVALID_ID )
 		tSock->SetAccount( (*actbTemp) );
 
@@ -166,14 +166,14 @@ bool CPIFirstLogin::Handle( void )
 	}
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
-		if( actbTemp->wFlags&AB_FLAGS_BANNED )
+		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ) )
 			t = LDR_ACCOUNTDISABLED;
 		else if( actbTemp->sPassword != pass1 )
 			t = LDR_BADPASSWORD;
 	}
 	else
 		t = LDR_UNKNOWNUSER;
-	if( t == LDR_NODENY && ( actbTemp->wFlags&AB_FLAGS_ONLINE ) )
+	if( t == LDR_NODENY && actbTemp->wFlags.test( AB_FLAGS_ONLINE ) )
 		t = LDR_ACCOUNTINUSE;
 	if( t != LDR_NODENY )
 	{
@@ -191,7 +191,7 @@ bool CPIFirstLogin::Handle( void )
 		Console.Log( temp, "server.log" );
 		messageLoop << temp;
 
-		MFLAGSET( actbTemp->wFlags, true, AB_FLAGS_ONLINE );
+		actbTemp->wFlags.set( AB_FLAGS_ONLINE, true );
 
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );
@@ -375,7 +375,7 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
-	ACCOUNTSBLOCK& actbTemp = Accounts->GetAccountByName( Name() );
+	CAccountBlock& actbTemp = Accounts->GetAccountByName( Name() );
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 		tSock->SetAccount( actbTemp );
 
@@ -385,7 +385,7 @@ bool CPISecondLogin::Handle( void )
 
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
-		if( actbTemp.wFlags&AB_FLAGS_BANNED )
+		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) )
 			t = LDR_ACCOUNTDISABLED;
 		else if( pass1 != actbTemp.sPassword )
 			t = LDR_BADPASSWORD;

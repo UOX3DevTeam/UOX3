@@ -283,7 +283,7 @@ bool isOnline( CChar& mChar )
 {
 	if( mChar.IsNpc() )
 		return false;
-	ACCOUNTSBLOCK& actbTemp = mChar.GetAccount();
+	CAccountBlock& actbTemp = mChar.GetAccount();
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 	{
 		if( actbTemp.dwInGame == mChar.GetSerial() )
@@ -1146,11 +1146,11 @@ void CWorldMain::CheckAutoTimers( void )
 		// time to flush our account status!
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
-			ACCOUNTSBLOCK& actbTemp = I->second;
+			CAccountBlock& actbTemp = I->second;
 			if( actbTemp.wAccountIndex == AB_INVALID_ID)
 				continue;
 
-			if( actbTemp.wFlags&AB_FLAGS_ONLINE )
+			if( actbTemp.wFlags.test( AB_FLAGS_ONLINE ) )
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				Network->PushConn();
@@ -1165,7 +1165,7 @@ void CWorldMain::CheckAutoTimers( void )
 				Network->PopConn();
 				if( !reallyOn )	// no one's really on, let's set that
 				{
-					MFLAGSET( actbTemp.wFlags, false, AB_FLAGS_ONLINE );
+					actbTemp.wFlags.reset( AB_FLAGS_ONLINE );
 				}
 			}
 		}
@@ -1410,7 +1410,7 @@ void CWorldMain::CheckAutoTimers( void )
 			}
 			else if( charCheck->GetTimer( tPC_LOGOUT ) )
 			{
-				ACCOUNTSBLOCK& actbTemp = charCheck->GetAccount();
+				CAccountBlock& actbTemp = charCheck->GetAccount();
 				if( actbTemp.wAccountIndex != AB_INVALID_ID )
 				{
 					SERIAL oaiw = actbTemp.dwInGame;

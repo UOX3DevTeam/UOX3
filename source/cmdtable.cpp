@@ -179,26 +179,29 @@ void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
 	char szBuffer[128];
-	char *szCommandLine, *szCommand, *szUsername, *szPassword, *szPrivs;
-	ACCOUNTSBLOCK actbTemp;
-	UI16 nFlags=0x0000;
-	szPassword=szUsername=szCommand=szCommandLine=NULL;
+	char *szCommandLine	= NULL;
+	char *szCommand		= NULL;
+	char *szUsername	= NULL;
+	char *szPassword	= NULL;
+	char *szPrivs		= NULL;
+	CAccountBlock actbTemp;
+	UI16 nFlags = 0x0000;
 	if( Commands->NumArguments() > 1 )
 	{
-		szCommandLine = (char *)Commands->CommandString( 2 ).c_str();
-		szCommand =strtok(szCommandLine," ");
-		szUsername=strtok(NULL," ");
-		szPassword=strtok(NULL," ");
-		szPrivs=strtok(NULL,"\0");
-		if( szPassword==NULL||szUsername==NULL )
+		szCommandLine	= (char *)Commands->CommandString( 2 ).c_str();
+		szCommand		= strtok( szCommandLine, " " );
+		szUsername		= strtok( NULL, " " );
+		szPassword		= strtok( NULL, " " );
+		szPrivs			= strtok( NULL, "\0" );
+		if( szPassword == NULL || szUsername == NULL )
 			return;
-		if( szPrivs!=NULL )
-			nFlags=atoi(szPrivs);
+		if( szPrivs != NULL )
+			nFlags = atoi( szPrivs );
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		ACCOUNTSBLOCK &actbTemp = Accounts->GetAccountByName( szUsername );
+		CAccountBlock &actbTemp = Accounts->GetAccountByName( szUsername );
 		if( actbTemp.wAccountIndex != AB_INVALID_ID )
 		{
-			Accounts->AddAccount(szUsername,szPassword,"NA",nFlags);
+			Accounts->AddAccount( szUsername, szPassword, "NA", nFlags );
 			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
 			sprintf( szBuffer, "Account Added: %s:%s:%i", szUsername, szPassword, nFlags );
 			s->sysmessage( szBuffer );

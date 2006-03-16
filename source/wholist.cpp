@@ -429,7 +429,7 @@ void cWhoList::Update( void )
 		CChar *ourChar = NULL;
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
-			ACCOUNTSBLOCK& actbSearch = I->second;
+			CAccountBlock& actbSearch = I->second;
 			//
 			for( i = 0; i < 6; ++i )
 			{

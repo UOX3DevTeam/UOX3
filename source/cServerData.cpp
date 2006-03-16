@@ -12,33 +12,33 @@ namespace UOX
 #define SKILLCAP			7000
 #define STATCAP				325
 
-const UI32 BIT_ANNOUNCESAVES		= 0x0000001;
-const UI32 BIT_ANNOUNCEJOINPART		= 0x0000002;
-const UI32 BIT_SERVERBACKUP			= 0x0000004;
-const UI32 BIT_SHOOTONANIMALBACK	= 0x0000008;
-const UI32 BIT_NPCTRAINING			= 0x0000010;
-const UI32 BIT_LOOTDECAYSONCORPSE	= 0x0000020;
-const UI32 BIT_GUARDSENABLED		= 0x0000040;
-const UI32 BIT_PLAYDEATHANIMATION	= 0x0000080;
-const UI32 BIT_AMBIENTFOOTSTEPS		= 0x0000100;
-const UI32 BIT_INTERNALACCOUNTS		= 0x0000200;
-const UI32 BIT_SHOWOFFLINEPCS		= 0x0000400;
-const UI32 BIT_ROGUESTATUS			= 0x0000800;
-const UI32 BIT_SNOOPISCRIME			= 0x0001000;
-const UI32 BIT_PERSECUTIONSTATUS	= 0x0002000;
-const UI32 BIT_SELLBYNAME			= 0x0004000;
-const UI32 BIT_TRADESYSSTATUS		= 0x0008000;
-const UI32 BIT_RANKSYSSTATUS		= 0x0010000;
-const UI32 BIT_CUTSCROLLREQ			= 0x0020000;
-const UI32 BIT_SHOWHITMESSAGE		= 0x0040000;
-const UI32 BIT_ESCORTSTATUS			= 0x0080000;
-const UI32 BIT_MONSTERSVSANIMALS	= 0x0100000;
-const UI32 BIT_PETHUNGEROFFLINE		= 0x0200000;
-const UI32 BIT_HIDEWHILEMOUNTED		= 0x0400000;
-const UI32 BIT_OVERLOADPACKETS		= 0x0800000;
-const UI32 BIT_ARMORAFFECTMANAREGEN = 0x1000000;
-const UI32 BIT_ANIMALSGUARDED		= 0x2000000;
-const UI32 BIT_USECHARRESISTANCE	= 0x4000000;
+const UI32 BIT_ANNOUNCESAVES		= 0;
+const UI32 BIT_ANNOUNCEJOINPART		= 1;
+const UI32 BIT_SERVERBACKUP			= 2;
+const UI32 BIT_SHOOTONANIMALBACK	= 3;
+const UI32 BIT_NPCTRAINING			= 4;
+const UI32 BIT_LOOTDECAYSONCORPSE	= 5;
+const UI32 BIT_GUARDSENABLED		= 6;
+const UI32 BIT_PLAYDEATHANIMATION	= 7;
+const UI32 BIT_AMBIENTFOOTSTEPS		= 8;
+const UI32 BIT_INTERNALACCOUNTS		= 9;
+const UI32 BIT_SHOWOFFLINEPCS		= 10;
+const UI32 BIT_ROGUESTATUS			= 11;
+const UI32 BIT_SNOOPISCRIME			= 12;
+const UI32 BIT_PERSECUTIONSTATUS	= 13;
+const UI32 BIT_SELLBYNAME			= 14;
+const UI32 BIT_TRADESYSSTATUS		= 15;
+const UI32 BIT_RANKSYSSTATUS		= 16;
+const UI32 BIT_CUTSCROLLREQ			= 17;
+const UI32 BIT_SHOWHITMESSAGE		= 18;
+const UI32 BIT_ESCORTSTATUS			= 19;
+const UI32 BIT_MONSTERSVSANIMALS	= 20;
+const UI32 BIT_PETHUNGEROFFLINE		= 21;
+const UI32 BIT_HIDEWHILEMOUNTED		= 22;
+const UI32 BIT_OVERLOADPACKETS		= 23;
+const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
+const UI32 BIT_ANIMALSGUARDED		= 25;
+const UI32 BIT_USECHARRESISTANCE	= 26;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -369,32 +369,32 @@ char CServerData::ServerCommandPrefix( void ) const
 
 void CServerData::ServerAnnounceSaves( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ANNOUNCESAVES )
+	boolVals.set( BIT_ANNOUNCESAVES, newVal );
 }
 
 bool CServerData::ServerAnnounceSavesStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ANNOUNCESAVES );
+	return boolVals.test( BIT_ANNOUNCESAVES );
 }
 
 void CServerData::ServerJoinPartAnnouncements( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ANNOUNCEJOINPART )
+	boolVals.set( BIT_ANNOUNCEJOINPART, newVal );
 }
 
 bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ANNOUNCEJOINPART );
+	return boolVals.test( BIT_ANNOUNCEJOINPART );
 }
 
 void CServerData::ServerBackups( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SERVERBACKUP )
+	boolVals.set( BIT_SERVERBACKUP, newVal );
 }
 
 bool CServerData::ServerBackupStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SERVERBACKUP );
+	return boolVals.test( BIT_SERVERBACKUP );
 }
 
 void CServerData::ServerSavesTimer( UI32 timer )
@@ -554,32 +554,32 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 
 bool CServerData::ShootOnAnimalBack( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SHOOTONANIMALBACK );
+	return boolVals.test( BIT_SHOOTONANIMALBACK );
 }
 
 void CServerData::ShootOnAnimalBack( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SHOOTONANIMALBACK )
+	boolVals.set( BIT_SHOOTONANIMALBACK, newVal );
 }
 
 bool CServerData::NPCTrainingStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_NPCTRAINING );
+	return boolVals.test( BIT_NPCTRAINING );
 }
 
 void CServerData::NPCTrainingStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_NPCTRAINING );
+	boolVals.set( BIT_NPCTRAINING, newVal );
 }
 
 bool CServerData::UseCharResistance( void ) const
 {
-	return MFLAGGET( boolVals, BIT_USECHARRESISTANCE );
+	return boolVals.test( BIT_USECHARRESISTANCE );
 }
 
 void CServerData::UseCharResistance( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_USECHARRESISTANCE );
+	boolVals.set( BIT_USECHARRESISTANCE, newVal );
 }
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	void CServerData::dumpPaths( void )
@@ -616,32 +616,32 @@ void CServerData::dumpPaths( void )
 
 void CServerData::CorpseLootDecay( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_LOOTDECAYSONCORPSE );
+	boolVals.set( BIT_LOOTDECAYSONCORPSE, newVal );
 }
 
 bool CServerData::CorpseLootDecay( void ) const
 {
-	return MFLAGGET( boolVals, BIT_LOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
 }
 
 void CServerData::GuardStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_GUARDSENABLED );
+	boolVals.set( BIT_GUARDSENABLED, newVal );
 }
 
 bool CServerData::GuardsStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_GUARDSENABLED );
+	return boolVals.test( BIT_GUARDSENABLED );
 }
 
 void CServerData::DeathAnimationStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_PLAYDEATHANIMATION );
+	boolVals.set( BIT_PLAYDEATHANIMATION, newVal );
 }
 
 bool CServerData::DeathAnimationStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_PLAYDEATHANIMATION );
+	return boolVals.test( BIT_PLAYDEATHANIMATION );
 }
 
 void CServerData::WorldAmbientSounds( SI16 value )
@@ -659,61 +659,61 @@ SI16 CServerData::WorldAmbientSounds( void ) const
 
 void CServerData::AmbientFootsteps( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_AMBIENTFOOTSTEPS );
+	boolVals.set( BIT_AMBIENTFOOTSTEPS, newVal );
 }
 
 bool CServerData::AmbientFootsteps( void ) const
 {
-	return MFLAGGET( boolVals, BIT_AMBIENTFOOTSTEPS );
+	return boolVals.test( BIT_AMBIENTFOOTSTEPS );
 }
 
 void CServerData::InternalAccountStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_INTERNALACCOUNTS );
+	boolVals.set( BIT_INTERNALACCOUNTS, newVal );
 }
 
 bool CServerData::InternalAccountStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_INTERNALACCOUNTS );
+	return boolVals.test( BIT_INTERNALACCOUNTS );
 }
 
 void CServerData::ShowOfflinePCs( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SHOWOFFLINEPCS );
+	boolVals.set( BIT_SHOWOFFLINEPCS, newVal );
 }
 
 bool CServerData::ShowOfflinePCs( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SHOWOFFLINEPCS );
+	return boolVals.test( BIT_SHOWOFFLINEPCS );
 }
 
 void CServerData::RogueStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ROGUESTATUS );
+	boolVals.set( BIT_ROGUESTATUS, newVal );
 }
 
 bool CServerData::RogueStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ROGUESTATUS );
+	return boolVals.test( BIT_ROGUESTATUS );
 }
 
 void CServerData::SnoopIsCrime( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SNOOPISCRIME );
+	boolVals.set( BIT_SNOOPISCRIME, newVal );
 }
 bool CServerData::SnoopIsCrime( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SNOOPISCRIME );
+	return boolVals.test( BIT_SNOOPISCRIME );
 }
 
 void CServerData::PlayerPersecutionStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_PERSECUTIONSTATUS );
+	boolVals.set( BIT_PERSECUTIONSTATUS, newVal );
 }
 
 bool CServerData::PlayerPersecutionStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_PERSECUTIONSTATUS );
+	return boolVals.test( BIT_PERSECUTIONSTATUS );
 }
 
 void CServerData::HtmlStatsStatus( SI16 value )
@@ -728,12 +728,12 @@ SI16 CServerData::HtmlStatsStatus( void ) const
 
 void CServerData::SellByNameStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SELLBYNAME );
+	boolVals.set( BIT_SELLBYNAME, newVal );
 }
 
 bool CServerData::SellByNameStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SELLBYNAME );
+	return boolVals.test( BIT_SELLBYNAME );
 }
 
 void CServerData::SellMaxItemsStatus( SI16 value )
@@ -748,32 +748,32 @@ SI16 CServerData::SellMaxItemsStatus( void ) const
 
 void CServerData::TradeSystemStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_TRADESYSSTATUS );
+	boolVals.set( BIT_TRADESYSSTATUS, newVal );
 }
 
 bool CServerData::TradeSystemStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_TRADESYSSTATUS );
+	return boolVals.test( BIT_TRADESYSSTATUS );
 }
 
 void CServerData::RankSystemStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_RANKSYSSTATUS );
+	boolVals.set( BIT_RANKSYSSTATUS, newVal );
 }
 
 bool CServerData::RankSystemStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_RANKSYSSTATUS );
+	return boolVals.test( BIT_RANKSYSSTATUS );
 }
 
 void CServerData::CutScrollRequirementStatus( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_CUTSCROLLREQ );
+	boolVals.set( BIT_CUTSCROLLREQ, newVal );
 }
 
 bool CServerData::CutScrollRequirementStatus( void ) const
 {
-	return MFLAGGET( boolVals, BIT_CUTSCROLLREQ );
+	return boolVals.test( BIT_CUTSCROLLREQ );
 }
 
 void CServerData::CheckItemsSpeed( R64 value )
@@ -860,12 +860,12 @@ UI08 CServerData::MineCheck( void ) const
 
 void CServerData::CombatDisplayHitMessage( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_SHOWHITMESSAGE );
+	boolVals.set( BIT_SHOWHITMESSAGE, newVal );
 }
 
 bool CServerData::CombatDisplayHitMessage( void ) const
 {
-	return MFLAGGET( boolVals, BIT_SHOWHITMESSAGE );
+	return boolVals.test( BIT_SHOWHITMESSAGE );
 }
 
 void CServerData::CombatNPCDamageRate( SI16 value )
@@ -899,20 +899,20 @@ void CServerData::SkillLevel( UI08 value )
 
 void CServerData::EscortsEnabled( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ESCORTSTATUS );
+	boolVals.set( BIT_ESCORTSTATUS, newVal );
 }
 bool CServerData::EscortsEnabled( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ESCORTSTATUS );
+	return boolVals.test( BIT_ESCORTSTATUS );
 }
 
 void CServerData::CombatMonstersVsAnimals( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_MONSTERSVSANIMALS );
+	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
 }
 bool CServerData::CombatMonstersVsAnimals( void ) const
 {
-	return MFLAGGET( boolVals, BIT_MONSTERSVSANIMALS );
+	return boolVals.test( BIT_MONSTERSVSANIMALS );
 }
 
 void CServerData::CombatAnimalsAttackChance( UI08 value )
@@ -946,11 +946,11 @@ UI16 CServerData::PetOfflineTimeout( void ) const
 
 void CServerData::PetHungerOffline( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_PETHUNGEROFFLINE );
+	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
 }
 bool CServerData::PetHungerOffline( void ) const
 {
-	return MFLAGGET( boolVals, BIT_PETHUNGEROFFLINE );
+	return boolVals.test( BIT_PETHUNGEROFFLINE );
 }
 
 void CServerData::BuyThreshold( SI16 value )
@@ -973,11 +973,11 @@ SI16 CServerData::BuyThreshold( void ) const
 //o--------------------------------------------------------------------------o
 void CServerData::CharHideWhileMounted( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_HIDEWHILEMOUNTED );
+	boolVals.set( BIT_HIDEWHILEMOUNTED, newVal );
 }
 bool CServerData::CharHideWhileMounted( void ) const
 {
-	return MFLAGGET( boolVals, BIT_HIDEWHILEMOUNTED );
+	return boolVals.test( BIT_HIDEWHILEMOUNTED );
 }
 
 //o--------------------------------------------------------------------------o
@@ -1007,11 +1007,11 @@ void CServerData::WeightPerStr( UI08 newVal )
 //o--------------------------------------------------------------------------o
 bool CServerData::ServerOverloadPackets( void ) const
 {
-	return MFLAGGET( boolVals, BIT_OVERLOADPACKETS );
+	return boolVals.test( BIT_OVERLOADPACKETS );
 }
 void CServerData::ServerOverloadPackets( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_OVERLOADPACKETS );
+	boolVals.set( BIT_OVERLOADPACKETS, newVal );
 }
 
 //o--------------------------------------------------------------------------o
@@ -1024,11 +1024,11 @@ void CServerData::ServerOverloadPackets( bool newVal )
 //o--------------------------------------------------------------------------o
 bool CServerData::ArmorAffectManaRegen( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ARMORAFFECTMANAREGEN );
+	return boolVals.test( BIT_ARMORAFFECTMANAREGEN );
 }
 void CServerData::ArmorAffectManaRegen( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ARMORAFFECTMANAREGEN );
+	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
 }
 
 void CServerData::BackupRatio( SI16 value )
@@ -1078,11 +1078,11 @@ UI16 CServerData::CombatExplodeDelay( void ) const
 
 void CServerData::CombatAnimalsGuarded( bool newVal )
 {
-	MFLAGSET( boolVals, newVal, BIT_ANIMALSGUARDED );
+	boolVals.set( BIT_ANIMALSGUARDED, newVal );
 }
 bool CServerData::CombatAnimalsGuarded( void ) const
 {
-	return MFLAGGET( boolVals, BIT_ANIMALSGUARDED );
+	return boolVals.test( BIT_ANIMALSGUARDED );
 }
 
 void CServerData::CombatNPCBaseFleeAt( SI16 value )

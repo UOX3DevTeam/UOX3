@@ -91,10 +91,10 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 	}
 	if( connClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK &actbAccount = connClients[s]->GetAccount();
+		CAccountBlock &actbAccount = connClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{
-			MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
+			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
 		}
 	}
 	//Instalog
@@ -195,7 +195,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 		}
 	}
 	
-	ACCOUNTSBLOCK& actbAccount = s->GetAccount();
+	CAccountBlock& actbAccount = s->GetAccount();
 	if( valid )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
@@ -210,7 +210,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
 	}
 	s->LoginComplete( false );
-	MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
+	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
 	p->SetSocket( NULL );
 	p->SetLocation( p );
 }
@@ -873,10 +873,10 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	//Zippy 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
 	if( loggedInClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK& actbAccount = loggedInClients[s]->GetAccount();
+		CAccountBlock& actbAccount = loggedInClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{
-			MFLAGSET( actbAccount.wFlags, false, AB_FLAGS_ONLINE );
+			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
 		}
 	}
 

@@ -13,8 +13,8 @@ namespace UOX
 {
 
 cCommands *Commands			= NULL;
-const UI32 BIT_STRIPHAIR	= 0x02;
-const UI32 BIT_STRIPITEMS	= 0x04;
+const UI32 BIT_STRIPHAIR	= 1;
+const UI32 BIT_STRIPITEMS	= 2;
 
 cCommands::cCommands()
 {
@@ -302,13 +302,9 @@ void cCommands::Load( void )
 				else if( UTag == "BODYCOLOUR" )
 					ourClear->bodyColour = data.toUShort();
 				else if( UTag == "STRIPHAIR" )
-				{
-					MFLAGSET( ourClear->stripOff, true, BIT_STRIPHAIR );
-				}
+					ourClear->stripOff.set( BIT_STRIPHAIR, true );
 				else if( UTag == "STRIPITEMS" )
-				{
-					MFLAGSET( ourClear->stripOff, true, BIT_STRIPITEMS );
-				}
+					ourClear->stripOff.set( BIT_STRIPITEMS, true );
 				else
 					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
 			}
@@ -435,11 +431,11 @@ void cCommands::InitClearance( void )
 	clearance[2]->allSkillVals = 0;
 
 	// Strip Everything
-	MFLAGSET( clearance[0]->stripOff, true, BIT_STRIPHAIR );
-	MFLAGSET( clearance[0]->stripOff, true, BIT_STRIPITEMS );
+	clearance[0]->stripOff.set( BIT_STRIPHAIR, true );
+	clearance[0]->stripOff.set( BIT_STRIPITEMS, true );
 
-	MFLAGSET( clearance[1]->stripOff, true, BIT_STRIPHAIR );
-	MFLAGSET( clearance[1]->stripOff, true, BIT_STRIPITEMS );
+	clearance[1]->stripOff.set( BIT_STRIPHAIR, true );
+	clearance[1]->stripOff.set( BIT_STRIPITEMS, true );
 }
 
 //o---------------------------------------------------------------------------o

@@ -529,7 +529,7 @@ void InfoTarget( CSocket *s )
 		mapStat.SetTitle( "Map Tile" );
 
 		mapStat.AddData( "Tilenum", map1.id );
-		mapStat.AddData( "Flags", land.Flags(), 1 );
+		mapStat.AddData( "Flags", land.FlagsNum(), 1 );
 		mapStat.AddData( "Name", land.Name() );
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	} 
@@ -541,7 +541,7 @@ void InfoTarget( CSocket *s )
 		statTile.SetTitle( "Map Tile" );
 
 		statTile.AddData( "Tilenum", tileID, 1 );
-		statTile.AddData( "Flags", tile.Flags(), 1 );
+		statTile.AddData( "Flags", tile.FlagsNum(), 1 );
 		statTile.AddData( "Weight", tile.Weight(), 0 );
 		statTile.AddData( "Layer", tile.Layer(), 1 );
 		statTile.AddData( "Hue", tile.Hue(), 1 );

@@ -17,30 +17,23 @@ class CItem : public CBaseObject
 protected:
 	CDataList< CItem * >	Contains;
 
-	CBaseObject	*	contObj;
+	CBaseObject	*		contObj;
+	std::bitset< 8 >	bools;
+	std::bitset< 8 >	priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
 
-	UI08			bools;
-	UI08			priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
-
-	char			name2[MAX_NAME];
-	SERIAL			creator;	// Store the serial of the player made this item
-	std::string		desc;
+	char				name2[MAX_NAME];
+	SERIAL				creator;	// Store the serial of the player made this item
+	std::string			desc;
 
 	ItemLayers		layer; // Layer if equipped on paperdoll
 	ItemTypes		type; // For things that do special things on doubleclicking
 
 	SI08			offspell;
-
 	UI32			tempVars[CITV_COUNT];
-
 	UI16			amount; // Amount of items in pile
-
 	UI16			maxhp; // Max number of hit points an item can have.
-
 	UI08			spd; //The speed of the weapon
-
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
-
 	TIMERVAL		tempTimer;
 	TIMERVAL		decaytime;
 
@@ -60,7 +53,7 @@ protected:
 	COLOUR			glowColour;
 	UI08			glow_effect;
 
-	UI16			weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
+	std::bitset< WEATHNUM >	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
 	void			RemoveSelfFromCont( void );
 	virtual void	RemoveSelfFromOwner( void );

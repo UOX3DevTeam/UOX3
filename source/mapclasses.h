@@ -80,42 +80,43 @@ enum TileFlags
 class CBaseTile
 {
 protected:
-	UI32 flags;
+	std::bitset< TF_COUNT >	flags;
 public:
-	CBaseTile() : flags( 0 )
+	CBaseTile()
 	{
+		flags.reset();
 	}
 	virtual ~CBaseTile()
 	{
 	}
 	UI08 Flag( UI08 part ) const
 	{
+		UI32 mFlags = flags.to_ulong();
 		UI08 retVal = 0;
 		switch( part )
 		{
-			case 0:	retVal = static_cast<UI08>(flags>>24);	break;
-			case 1:	retVal = static_cast<UI08>(flags>>16);	break;
-			case 2: retVal = static_cast<UI08>(flags>>8);	break;
-			case 3: retVal = static_cast<UI08>(flags%256);	break;
+			case 0:	retVal = static_cast<UI08>(mFlags>>24);	break;
+			case 1:	retVal = static_cast<UI08>(mFlags>>16);	break;
+			case 2: retVal = static_cast<UI08>(mFlags>>8);	break;
+			case 3: retVal = static_cast<UI08>(mFlags%256);	break;
 		}
 		return retVal;
 	}
-	UI32 Flags( void ) const			{	return flags;	}
-	void Flags( UI32 newVal )			{	flags = newVal;	}
+	UI32 FlagsNum( void ) const					{	return flags.to_ulong();	}
+	std::bitset< TF_COUNT > Flags( void ) const	{	return flags;				}
+	void Flags( std::bitset< TF_COUNT > newVal ){	flags = newVal;				}
 
 	bool CheckFlag( TileFlags toCheck ) const
 	{
 		if( toCheck >= TF_COUNT )
 			return false;
-		const UI32 flagToGet = power( 2, toCheck );
-		return MFLAGGET( flags, flagToGet );
+		return flags.test( toCheck );
 	}
 	void SetFlag( TileFlags toSet, bool newVal )
 	{
 		if( toSet >= TF_COUNT )
 			return;
-		const UI32 flagToSet = power( 2, toSet );
-		MFLAGSET( flags, newVal, flagToSet );
+		flags.set( toSet, newVal );
 	}
 };
 class CTile : public CBaseTile

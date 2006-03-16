@@ -52,22 +52,20 @@
 namespace UOX
 {
 
-const UI32 BIT_DOOROPEN		=	0x02;
-const UI32 BIT_PILEABLE		=	0x04;
-const UI32 BIT_DYEABLE		=	0x08;
-const UI32 BIT_CORPSE		=	0x10;
-const UI32 BIT_WIPEABLE		=	0x20;
-const UI32 BIT_GUARDED		=	0x40;
-const UI32 BIT_SPAWNERLIST	=	0x80;
+const UI32 BIT_DOOROPEN		=	1;
+const UI32 BIT_PILEABLE		=	2;
+const UI32 BIT_DYEABLE		=	3;
+const UI32 BIT_CORPSE		=	4;
+const UI32 BIT_WIPEABLE		=	5;
+const UI32 BIT_GUARDED		=	6;
+const UI32 BIT_SPAWNERLIST	=	7;
 
 const SI32			DEFITEM_RANDVALUE		= 0;
 const SI16			DEFITEM_GOOD			= -1;
 const SI08			DEFITEM_RANK			= 0;
 const UI16			DEFITEM_RESTOCK			= 0;
-const UI08			DEFITEM_PRIV			= 0;
 const SI08			DEFITEM_MOVEABLE		= 0;
 const TIMERVAL		DEFITEM_DECAYTIME		= 0;
-const UI08			DEFITEM_BOOLS			= 0;
 const ItemLayers	DEFITEM_LAYER			= IL_NONE;
 const ItemTypes		DEFITEM_TYPE			= IT_NOTYPE;
 const UI16			DEFITEM_ENTRYMADEFROM	= 0;
@@ -80,7 +78,6 @@ const ARMORCLASS	DEFITEM_ARMORCLASS		= 0;
 const TIMERVAL		DEFITEM_TEMPTIMER		= 0;
 const UI08			DEFITEM_SPEED			= 0;
 const UI16			DEFITEM_MAXHP			= 0;
-const UI16			DEFITEM_WEATHERBOOLS	= 0;
 const SI08			DEFITEM_OFFSPELL		= 0;
 
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
@@ -88,20 +85,20 @@ const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 CItem::CItem() : CBaseObject(),
 contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ), 
-restock( DEFITEM_RESTOCK ), priv( DEFITEM_PRIV ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
-spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), weatherBools( DEFITEM_WEATHERBOOLS ), 
-bools( DEFITEM_BOOLS ), layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
+restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
+spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), 
+layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
 creator( DEFITEM_CREATOR )
 {
-	value[0] = value[1] = 0;
 	spells[0] = spells[1] = spells[2] = 0;
-	objType = OT_ITEM;
+	value[0] = value[1] = 0;
+	objType		= OT_ITEM;
 	strcpy( name2, "#" );
-	name = "#";
-	race = 65535;
+	name		= "#";
+	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
-	id = 0x0000;
+	id			= 0x0000;
 }
 
 CItem::~CItem()	// Destructor to clean things up when deleted
@@ -295,11 +292,11 @@ bool CItem::SetCont( CBaseObject *newCont )
 //o--------------------------------------------------------------------------
 bool CItem::isDoorOpen( void ) const
 {
-	return MFLAGGET( bools, BIT_DOOROPEN );
+	return bools.test( BIT_DOOROPEN );
 }
 void CItem::SetDoorOpen( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_DOOROPEN );
+	bools.set( BIT_DOOROPEN, newValue );
 }
 
 //o--------------------------------------------------------------------------
@@ -312,11 +309,11 @@ void CItem::SetDoorOpen( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isPileable( void ) const
 {
-	return MFLAGGET( bools, BIT_PILEABLE );
+	return bools.test( BIT_PILEABLE );
 }
 void CItem::SetPileable( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_PILEABLE );
+	bools.set( BIT_PILEABLE, newValue );
 }
 
 //o--------------------------------------------------------------------------
@@ -329,11 +326,11 @@ void CItem::SetPileable( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isDyeable( void ) const
 {
-	return MFLAGGET( bools, BIT_DYEABLE );
+	return bools.test( BIT_DYEABLE );
 }
 void CItem::SetDye( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_DYEABLE );
+	bools.set( BIT_DYEABLE, newValue );
 }
 
 //o--------------------------------------------------------------------------
@@ -346,11 +343,11 @@ void CItem::SetDye( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isCorpse( void ) const
 {
-	return MFLAGGET( bools, BIT_CORPSE );
+	return bools.test( BIT_CORPSE );
 }
 void CItem::SetCorpse( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_CORPSE );
+	bools.set( BIT_CORPSE, newValue );
 }
 
 //o--------------------------------------------------------------------------
@@ -363,11 +360,11 @@ void CItem::SetCorpse( bool newValue )
 //o--------------------------------------------------------------------------
 bool CItem::isWipeable( void ) const
 {
-	return MFLAGGET( bools, BIT_WIPEABLE );
+	return bools.test( BIT_WIPEABLE );
 }
 void CItem::SetWipeable( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_WIPEABLE );
+	bools.set( BIT_WIPEABLE, newValue );
 }
 
 //o---------------------------------------------------------------------------o
@@ -379,11 +376,11 @@ void CItem::SetWipeable( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CItem::isGuarded( void ) const
 {
-	return MFLAGGET( bools, BIT_GUARDED );
+	return bools.test( BIT_GUARDED );
 }
 void CItem::SetGuarded( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_GUARDED );
+	bools.set( BIT_GUARDED, newValue );
 }
 
 //o---------------------------------------------------------------------------o
@@ -396,11 +393,11 @@ void CItem::SetGuarded( bool newValue )
 //o---------------------------------------------------------------------------o
 bool CItem::isSpawnerList( void ) const
 {
-	return MFLAGGET( bools, BIT_SPAWNERLIST );
+	return bools.test( BIT_SPAWNERLIST );
 }
 void CItem::SetSpawnerList( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_SPAWNERLIST );
+	bools.set( BIT_SPAWNERLIST, newValue );
 }
 
 const char *CItem::GetName2( void ) const
@@ -606,7 +603,7 @@ void CItem::SetDecayTime( TIMERVAL newValue )
 //o--------------------------------------------------------------------------o
 UI08 CItem::GetPriv( void ) const
 {
-	return priv;
+	return static_cast< UI08 >(priv.to_ulong());
 }
 void CItem::SetPriv( UI08 newValue )
 {
@@ -938,21 +935,17 @@ void CItem::CopyData( CItem *target )
 	target->SetPriv( GetPriv() );
 
 	for( int i = 0; i < WEATHNUM; ++i )
-	{
 		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
-	}
 }
 
 bool CItem::GetWeatherDamage( WeatherType effectNum ) const
 {
-	const UI32 BITVAL = power( 2, effectNum );
-	return MFLAGGET( weatherBools, BITVAL );
+	return weatherBools.test( effectNum );
 }
 
 void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 {
-	const UI32 BITVAL = power( 2, effectNum );
-	MFLAGSET( weatherBools, value, BITVAL );
+	weatherBools.set( effectNum, value );
 }
 
 bool CItem::DumpHeader( std::ofstream &outStream ) const
@@ -1369,43 +1362,43 @@ void CItem::CheckItemIntegrity( void )
 	}
 }
 
-const UI32 BIT_DECAYABLE	=	0x01;
-const UI32 BIT_NEWBIE		=	0x02;
-const UI32 BIT_DISPELLABLE	=	0x04;
-const UI32 BIT_DEVINELOCK	=	0x08;
+const UI32 BIT_DECAYABLE	=	0;
+const UI32 BIT_NEWBIE		=	1;
+const UI32 BIT_DISPELLABLE	=	2;
+const UI32 BIT_DEVINELOCK	=	3;
 
 bool CItem::isDecayable( void ) const
 {
-	return MFLAGGET( priv, BIT_DECAYABLE );
+	return priv.test( BIT_DECAYABLE );
 }
 bool CItem::isNewbie( void ) const
 {
-	return MFLAGGET( priv, BIT_NEWBIE );
+	return priv.test( BIT_NEWBIE );
 }
 bool CItem::isDispellable( void ) const
 {
-	return MFLAGGET( priv, BIT_DISPELLABLE );
+	return priv.test( BIT_DISPELLABLE );
 }
 bool CItem::isDevineLocked( void ) const
 {
-	return MFLAGGET( priv, BIT_DEVINELOCK );
+	return priv.test( BIT_DEVINELOCK );
 }
 
 void CItem::SetDecayable( bool newValue )
 {
-	MFLAGSET( priv, newValue, BIT_DECAYABLE );
+	priv.set( BIT_DECAYABLE, newValue );
 }
 void CItem::SetNewbie( bool newValue )
 {
-	MFLAGSET( priv, newValue, BIT_NEWBIE );
+	priv.set( BIT_NEWBIE, newValue );
 }
 void CItem::SetDispellable( bool newValue )
 {
-	MFLAGSET( priv, newValue, BIT_DISPELLABLE );
+	priv.set( BIT_DISPELLABLE, newValue );
 }
 void CItem::SetDevineLock( bool newValue )
 {
-	MFLAGSET( priv, newValue, BIT_DEVINELOCK );
+	priv.set( BIT_DEVINELOCK, newValue );
 }
 
 //o--------------------------------------------------------------------------

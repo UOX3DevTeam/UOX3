@@ -196,25 +196,13 @@ void cEffects::playDeathSound( CChar *i )
 {
 	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E )// Female Death (human/elf)
 	{
-		switch( RandomNum( 0, 3 ) )
-		{
-			case 0:		PlaySound( i, 0x0150 );	break;
-			case 1:		PlaySound( i, 0x0151 );	break;
-			case 2:		PlaySound( i, 0x0152 );	break;
-			case 3:		PlaySound( i, 0x0153 );	break;
-			default:	PlaySound( i, 0x0150 );	break;
-		}
+		UI16 deathSound = 0x0150 + RandomNum( 0, 3 );
+		PlaySound( i, deathSound );
 	}
 	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D )	// Male Death (human/elf)
 	{
-		switch( RandomNum( 0, 3 ) )
-		{
-			case 0:		PlaySound( i, 0x015A );	break;
-			case 1:		PlaySound( i, 0x015B );	break;
-			case 2:		PlaySound( i, 0x015C );	break;
-			case 3:		PlaySound( i, 0x015D );	break;
-			default:	PlaySound( i, 0x015A );	break;
-		}
+		UI16 deathSound = 0x015A + RandomNum( 0, 3 );
+		PlaySound( i, deathSound );
 	}
 	else
 	{

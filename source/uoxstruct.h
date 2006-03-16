@@ -4,11 +4,11 @@
 namespace UOX
 {
 
-const UI08 BIT_ANIMAL		=	0x04;
-const UI08 BIT_ANTIBLINK	=	0x02;
-const UI08 BIT_CANFLY		=	0x01;
-const UI08 BIT_WATER		=	0x08;
-const UI08 BIT_AMPHI		=	0x10;
+const UI08 BIT_ANIMAL		=	2;
+const UI08 BIT_ANTIBLINK	=	1;
+const UI08 BIT_CANFLY		=	0;
+const UI08 BIT_WATER		=	3;
+const UI08 BIT_AMPHI		=	4;
 
 class CCreatures
 {
@@ -27,12 +27,13 @@ class CCreatures
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-	UI16 soundList[SND_COUNT];
-	UI08 who_am_i; 
-	UI16 icon;
+	UI16				soundList[SND_COUNT];
+	std::bitset< 5 >	who_am_i; 
+	UI16				icon;
 public:
-			CCreatures() : who_am_i( 0 ), icon( 0 )
+			CCreatures() : icon( 0 )
 			{
+				who_am_i.reset();
 				memset( soundList, 0x00, SND_COUNT );
 			}
 	UI16	GetSound( monsterSound soundType ) const
@@ -49,28 +50,24 @@ public:
 	}
 	UI08	WhoAmI( void ) const
 	{
-		return who_am_i;
+		return static_cast<UI08>(who_am_i.to_ulong());
 	}
 
 	void	Icon( UI16 value )
 	{
 		icon = value;
 	}
-	void	WhoAmI( UI08 value )
-	{
-		who_am_i = value;
-	}
 
-	bool	IsAnimal( void ) const		{		return MFLAGGET( who_am_i, BIT_ANIMAL );	}
-	bool	AntiBlink( void ) const		{		return MFLAGGET( who_am_i, BIT_ANTIBLINK );	}
-	bool	CanFly( void ) const		{		return MFLAGGET( who_am_i, BIT_CANFLY );	}
-	bool	IsWater( void ) const		{		return MFLAGGET( who_am_i, BIT_WATER );		}
-	bool	IsAmphibian( void ) const	{		return MFLAGGET( who_am_i, BIT_AMPHI );		}
-	void	IsAnimal( bool value )		{		MFLAGSET( who_am_i, value, BIT_ANIMAL );	}
-	void	AntiBlink( bool value )		{		MFLAGSET( who_am_i, value, BIT_ANTIBLINK );	}
-	void	CanFly( bool value )		{		MFLAGSET( who_am_i, value, BIT_CANFLY );	}
-	void	IsWater( bool value )		{		MFLAGSET( who_am_i, value, BIT_WATER );		}
-	void	IsAmphibian( bool value )	{		MFLAGSET( who_am_i, value, BIT_AMPHI );		}
+	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}
+	bool	AntiBlink( void ) const		{		return who_am_i.test( BIT_ANTIBLINK );	}
+	bool	CanFly( void ) const		{		return who_am_i.test( BIT_CANFLY );		}
+	bool	IsWater( void ) const		{		return who_am_i.test( BIT_WATER );		}
+	bool	IsAmphibian( void ) const	{		return who_am_i.test( BIT_AMPHI );		}
+	void	IsAnimal( bool value )		{		who_am_i.set( BIT_ANIMAL, value );		}
+	void	AntiBlink( bool value )		{		who_am_i.set( BIT_ANTIBLINK, value );	}
+	void	CanFly( bool value )		{		who_am_i.set( BIT_CANFLY, value );		}
+	void	IsWater( bool value )		{		who_am_i.set( BIT_WATER, value );		}
+	void	IsAmphibian( bool value )	{		who_am_i.set( BIT_AMPHI, value );		}
 };
 
 struct vector2D

@@ -21,6 +21,7 @@
 #include <list>
 #include <deque>
 #include <queue>
+#include <bitset>
 
 // STL algorithms & functions
 #include <algorithm>

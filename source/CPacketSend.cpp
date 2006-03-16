@@ -336,11 +336,11 @@ void CPExtMove::FlagColour( UI08 newValue )
 
 void CPExtMove::CopyData( CChar &toCopy )
 {
-	const UI08 BIT_ATWAR	= 0x40;
-	const UI08 BIT_DEAD		= 0x80;
-	const UI08 BIT_POISONED	= 0x04;
-	const UI08 BIT_FEMALE	= 0x02;
-	const UI08 BIT_GOLDEN	= 0x08;
+	const UI08 BIT_ATWAR	= 6;	// 0x40
+	const UI08 BIT_DEAD		= 7;	// 0x80
+	const UI08 BIT_POISONED	= 2;	// 0x04
+	const UI08 BIT_FEMALE	= 1;	// 0x02
+	const UI08 BIT_GOLDEN	= 3;	// 0x08
 
 	pStream.WriteLong(  1, toCopy.GetSerial() );
 	pStream.WriteShort( 5, toCopy.GetID() );
@@ -356,14 +356,14 @@ void CPExtMove::CopyData( CChar &toCopy )
 	pStream.WriteByte( 12, dir );
 	pStream.WriteShort( 13, toCopy.GetSkin() );
 
-	UI08 flag = 0;
-	MFLAGSET( flag, toCopy.IsAtWar(), BIT_ATWAR );
-	MFLAGSET( flag, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ), BIT_DEAD );
-	MFLAGSET( flag, (toCopy.GetPoisoned() != 0), BIT_POISONED );
+	std::bitset< 8 > flag( 0 );
+	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
+	flag.set( BIT_DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
+	flag.set( BIT_POISONED, (toCopy.GetPoisoned() != 0) );
 #pragma note( "we need to update this here to determine what goes on with elves too!" )
-	MFLAGSET( flag, (toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E), BIT_FEMALE );
-//	MFLAGSET( flag, (toCopy.GetHP() == toCopy.GetMaxHP()), BIT_GOLDEN );
-	pStream.WriteByte( 15, flag );
+	flag.set( BIT_FEMALE, (toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E) );
+//	flag.set( BIT_GOLDEN, (toCopy.GetHP() == toCopy.GetMaxHP()) );
+	pStream.WriteByte( 15, static_cast<UI08>(flag.to_ulong()) );
 }
 
 //0xAA Packet
@@ -818,19 +818,20 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	pStream.WriteShort( 13, toCopy.GetY() );
 	pStream.WriteByte(  17, toCopy.GetDir() );
 	pStream.WriteByte(  18, toCopy.GetZ() );
-	UI08 flag				= 0;
-	const UI08 BIT_INVUL	= 0x01;
-	const UI08 BIT_DEAD		= 0x02;
-	const UI08 BIT_POISON	= 0x04;
-	const UI08 BIT_ATWAR	= 0x40;
-	const UI08 BIT_INVIS	= 0x80;
 
-	MFLAGSET( flag, toCopy.IsInvulnerable(), BIT_INVUL );
-	MFLAGSET( flag, toCopy.IsDead(), BIT_DEAD );
-	MFLAGSET( flag, toCopy.GetPoisoned(), BIT_POISON );
-	MFLAGSET( flag, toCopy.IsAtWar(), BIT_ATWAR );
-	MFLAGSET( flag, (toCopy.GetVisible() != VT_VISIBLE), BIT_INVIS );
-	pStream.WriteByte( 10, flag );
+	std::bitset< 8 > flag( 0 );
+	const UI08 BIT_INVUL	= 0;	//	0x01
+	const UI08 BIT_DEAD		= 1;	//	0x02
+	const UI08 BIT_POISON	= 2;	//	0x04
+	const UI08 BIT_ATWAR	= 6;	//	0x40
+	const UI08 BIT_INVIS	= 7;	//	0x80
+
+	flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
+	flag.set( BIT_DEAD, toCopy.IsDead() );
+	flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
+	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
+	flag.set( BIT_INVIS, (toCopy.GetVisible() != VT_VISIBLE) );
+	pStream.WriteByte( 10, static_cast< UI08 >(flag.to_ulong()) );
 }
 void CPDrawGamePlayer::InternalReset( void )
 {
@@ -3191,7 +3192,7 @@ void CPCharAndStartLoc::InternalReset( void )
 	pStream.WriteByte( 0, 0xA9 );
 }
 
-void CPCharAndStartLoc::CopyData(ACCOUNTSBLOCK& toCopy )
+void CPCharAndStartLoc::CopyData( CAccountBlock& toCopy )
 {
 	for( UI08 i = 0; i < 6; ++i )
 	{
@@ -3204,7 +3205,7 @@ CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc(ACCOUNTSBLOCK& actbBlock, UI08 numCharacters, UI08 numLocations )
+CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock& actbBlock, UI08 numCharacters, UI08 numLocations )
 {
 	InternalReset();
 	NumberOfCharacters( numCharacters );
@@ -3258,7 +3259,7 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 	pStream.WriteString( baseOffset+32, sLoc->description, descLen );
 }
 
-CPCharAndStartLoc& CPCharAndStartLoc::operator=(ACCOUNTSBLOCK& actbBlock )
+CPCharAndStartLoc& CPCharAndStartLoc::operator=( CAccountBlock& actbBlock )
 {
 	CopyData(actbBlock);
 	return (*this);
@@ -3547,15 +3548,24 @@ void CPDrawObject::CopyData( CChar& mChar )
 	pStream.WriteByte(  14, mChar.GetDir() );
 	pStream.WriteShort( 15, mChar.GetSkin() );
 
-	UI08 cFlag = 0;
-	const UI08 BIT_POISON	= 0x04;
-	const UI08 BIT_ATWAR	= 0x40;
-	const UI08 BIT_OTHER	= 0x80;
+	//	0	0x01
+	//	1	0x02
+	//	2	0x04
+	//	3	0x08
+	//	4	0x10
+	//	5	0x20
+	//	6	0x40
+	//	7	0x80
 
-	MFLAGSET( cFlag, mChar.GetPoisoned(), BIT_POISON );
-	MFLAGSET( cFlag, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) ), BIT_OTHER );
-	MFLAGSET( cFlag, mChar.IsAtWar(), BIT_ATWAR );
-	pStream.WriteByte( 17, cFlag );
+	std::bitset< 8 > cFlag( 0 );
+	const UI08 BIT_POISON	= 2;	// 0x04
+	const UI08 BIT_ATWAR	= 6;	// 0x40
+	const UI08 BIT_OTHER	= 7;	// 0x80
+
+	cFlag.set( BIT_POISON, ( mChar.GetPoisoned() != 0 ) );
+	cFlag.set( BIT_OTHER, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) ) );
+	cFlag.set( BIT_ATWAR, mChar.IsAtWar() );
+	pStream.WriteByte( 17, static_cast<UI08>(cFlag.to_ulong()) );
 }
 
 //0x89 Packet

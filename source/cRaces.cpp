@@ -25,10 +25,10 @@ const RACEREL NEUTRAL   = 0;
 const RACEREL MAX_ENEMY = -100;
 const RACEREL MAX_ALLY  = 100;
 
-const UI32 BIT_REQBEARD		= 0x0001;
-const UI32 BIT_NOBEARD		= 0x0002;
-const UI32 BIT_PLAYERRACE	= 0x0004;
-const UI32 BIT_NOHAIR		= 0x0008;
+const UI32 BIT_REQBEARD		= 0;
+const UI32 BIT_NOBEARD		= 1;
+const UI32 BIT_PLAYERRACE	= 2;
+const UI32 BIT_NOHAIR		= 3;
 
 bool cRaces::InvalidRace( RACEID x ) const
 {
@@ -798,19 +798,19 @@ const std::string CRace::Name( void ) const
 }
 bool CRace::RequiresBeard( void ) const
 {
-	return ( (bools&0x0001) == 0x0001 );
+	return bools.test( BIT_REQBEARD );
 }
 bool CRace::NoBeard( void ) const
 {
-	return ( (bools&0x0002) == 0x0002 );
+	return bools.test( BIT_NOBEARD );
 }
 bool CRace::IsPlayerRace( void ) const
 {
-	return ( (bools&0x0004) == 0x0004 );
+	return bools.test( BIT_PLAYERRACE );
 }
 bool CRace::NoHair( void ) const
 {
-	return ( (bools&0x0200) == 0x0200 );
+	return bools.test( BIT_NOHAIR );
 }
 
 GENDER CRace::GenderRestriction( void ) const
@@ -865,31 +865,29 @@ void CRace::Name( const std::string newName )
 }
 void CRace::RequiresBeard( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_REQBEARD );
+	bools.set( BIT_REQBEARD, newValue );
 }
 void CRace::NoBeard( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_NOBEARD );
+	bools.set( BIT_NOBEARD, newValue );
 }
 void CRace::IsPlayerRace( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_PLAYERRACE );
+	bools.set( BIT_PLAYERRACE, newValue );
 }
 
 void CRace::NoHair( bool newValue )
 {
-	MFLAGSET( bools, newValue, BIT_NOHAIR );
+	bools.set( BIT_NOHAIR, newValue );
 }
 
 bool CRace::AffectedBy( WeatherType iNum ) const
 {
-	const UI16 BITVAL = power( 2, iNum );
-	return MFLAGGET( weatherAffected, BITVAL );
+	return weatherAffected.test( iNum );
 }
 void CRace::AffectedBy( bool value, WeatherType iNum )
 {
-	const UI16 BITVAL = power( 2, iNum );
-	MFLAGSET( weatherAffected, value, BITVAL );
+	weatherAffected.set( iNum, value );
 }
 
 void CRace::GenderRestriction( GENDER newValue )

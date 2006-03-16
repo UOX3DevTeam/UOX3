@@ -114,20 +114,20 @@ class cScript
 {
 private:
 
-	JSScript *	targScript;
-	JSContext *	targContext;
-	JSObject *	targObject;
+	JSScript *			targScript;
+	JSContext *			targContext;
+	JSObject *			targObject;
 
-	UI08		runTime;
+	UI08				runTime;
 
-	bool		isFiring;
-	UI32		eventPresence[3];
-	UI32		needsChecking[3];
-	bool		EventExists( ScriptEvent eventNum ) const;
-	bool		NeedsChecking( ScriptEvent eventNum ) const;
-	void		SetEventExists( ScriptEvent eventNum, bool status );
-	void		SetNeedsChecking( ScriptEvent eventNum, bool status );
-	bool		ExistAndVerify( ScriptEvent eventNum, std::string functionName );
+	bool				isFiring;
+	std::bitset< 32 >	eventPresence[3];
+	std::bitset< 32 >	needsChecking[3];
+	bool				EventExists( ScriptEvent eventNum ) const;
+	bool				NeedsChecking( ScriptEvent eventNum ) const;
+	void				SetEventExists( ScriptEvent eventNum, bool status );
+	void				SetNeedsChecking( ScriptEvent eventNum, bool status );
+	bool				ExistAndVerify( ScriptEvent eventNum, std::string functionName );
 
 	std::vector< SEGump * >		gumpDisplays;
 

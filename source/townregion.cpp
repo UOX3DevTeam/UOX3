@@ -24,16 +24,15 @@ const SI08 MAYOR = 0x01;
 const SI08 ENEMY = 0x02;
 const SI08 JOINER = 0x03;
 
-const UI32 BIT_GUARDED		=	0x01;
-const UI32 BIT_MARK			=	0x02;
-const UI32 BIT_GATE			=	0x04;
-const UI32 BIT_RECALL		=	0x08;
-const UI32 BIT_AGGRESSIVE	=	0x40;
-const UI32 BIT_DUNGEON		=	0x80;
+const UI32 BIT_GUARDED		=	0;
+const UI32 BIT_MARK			=	1;
+const UI32 BIT_GATE			=	2;
+const UI32 BIT_RECALL		=	3;
+const UI32 BIT_AGGRESSIVE	=	6;
+const UI32 BIT_DUNGEON		=	7;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
-const UI08		DEFTOWN_PRIV				= 0;
 const SI32		DEFTOWN_MIDILIST			= 0;
 const SERIAL	DEFTOWN_MAYOR				= INVALIDSERIAL;
 const UI16		DEFTOWN_TAXEDRESOURCE		= 0x0EED;
@@ -52,7 +51,7 @@ const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
 const UI08		DEFTOWN_FINDBIGORE			= 0;
 const UI16		DEFTOWN_NUMGUARDS			= 10;
 
-CTownRegion::CTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), priv( DEFTOWN_PRIV ), 
+CTownRegion::CTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), 
 regionNum( region ), midilist( DEFTOWN_MIDILIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
 taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
@@ -60,6 +59,7 @@ timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL )
 timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ), worldNumber( DEFTOWN_WORLDNUMBER ), jsScript( DEFTOWN_JSSCRIPT ), 
 chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS )
 {
+	priv.reset();
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
 	orePreferences.resize( 0 );
@@ -178,7 +178,7 @@ bool CTownRegion::Save( std::ofstream &outStream )
 	outStream << "RACE=" << race << std::endl;
 	outStream << "GUARDOWNER=" << guardowner << std::endl;
 	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << std::endl;
-	outStream << "PRIV=" << static_cast<UI16>(priv) << std::endl;
+	outStream << "PRIV=" << static_cast<UI16>(priv.to_ulong()) << std::endl;
 	outStream << "RESOURCEAMOUNT=" << goldReserved << std::endl;
 	outStream << "TAXEDID=" << std::hex << "0x" << taxedResource << std::dec << std::endl;
 	outStream << "TAXEDAMOUNT=" << taxedAmount << std::endl;
@@ -558,27 +558,27 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 
 bool CTownRegion::IsGuarded( void ) const
 {
-	return MFLAGGET( priv, BIT_GUARDED );
+	return priv.test( BIT_GUARDED );
 }
 
 bool CTownRegion::CanMark( void ) const
 {
-	return MFLAGGET( priv, BIT_MARK );
+	return priv.test( BIT_MARK );
 }
 
 bool CTownRegion::CanGate( void ) const
 {
-	return MFLAGGET( priv, BIT_GATE );
+	return priv.test( BIT_GATE );
 }
 
 bool CTownRegion::CanRecall( void ) const
 {
-	return MFLAGGET( priv, BIT_RECALL );
+	return priv.test( BIT_RECALL );
 }
 
 bool CTownRegion::CanCastAggressive( void ) const
 {
-	return MFLAGGET( priv, BIT_AGGRESSIVE );
+	return priv.test( BIT_AGGRESSIVE );
 }
 
 std::string CTownRegion::GetName( void ) const
@@ -1321,7 +1321,7 @@ SI32 CTownRegion::GetOreChance( void ) const
 }
 bool CTownRegion::IsDungeon( void ) const
 {
-	return MFLAGGET( priv, BIT_DUNGEON );
+	return priv.test( BIT_DUNGEON );
 }
 
 UI16 CTownRegion::NumGuards( void ) const
@@ -1336,27 +1336,27 @@ UI08 CTownRegion::WorldNumber( void ) const
 
 void CTownRegion::IsGuarded( bool value )
 {
-	MFLAGSET( priv, value, BIT_GUARDED );
+	priv.set( BIT_GUARDED, value );
 }
 void CTownRegion::CanMark( bool value )
 {
-	MFLAGSET( priv, value, BIT_MARK );
+	priv.set( BIT_MARK, value );
 }
 void CTownRegion::CanGate( bool value )
 {
-	MFLAGSET( priv, value, BIT_GATE );
+	priv.set( BIT_GATE, value );
 }
 void CTownRegion::CanRecall( bool value )
 {
-	MFLAGSET( priv, value, BIT_RECALL );
+	priv.set( BIT_RECALL, value );
 }
 void CTownRegion::CanCastAggressive( bool value )
 {
-	MFLAGSET( priv, value, BIT_AGGRESSIVE );
+	priv.set( BIT_AGGRESSIVE, value );
 }
 void CTownRegion::IsDungeon( bool value )
 {
-	MFLAGSET( priv, value, BIT_DUNGEON );
+	priv.set( BIT_DUNGEON, value );
 }
 void CTownRegion::SetName( std::string toSet )
 {

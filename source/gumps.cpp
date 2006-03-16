@@ -116,7 +116,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 	if( !ValidateObject( j ) )
 		return;
 	CChar *mChar = s->CurrcharObj();
-	ACCOUNTSBLOCK& actbTemp = Accounts->GetAccountByID( j->GetAccount().wAccountIndex );
+	CAccountBlock& actbTemp = Accounts->GetAccountByID( j->GetAccount().wAccountIndex );
 	if( actbTemp.wAccountIndex == AB_INVALID_ID )
 		return;
 	//
@@ -129,7 +129,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 				s->sysmessage( 487 );
 				if( targSocket != NULL ) 
 					targSocket->sysmessage( 488 );
-				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_BANNED );
+				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
 				if( targSocket != NULL ) 
 					Network->Disconnect( targSocket );
 			}
@@ -142,7 +142,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 				s->sysmessage( 490 );
 				if( targSocket != NULL ) 
 					targSocket->sysmessage( 491 );
-				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_BANNED );
+				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
 				actbTemp.wTimeBan=static_cast<UI16>(BuildTimeValue( 60 * 60 * 24 ));
 
 				if( targSocket != NULL ) 
@@ -463,7 +463,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		}
 	}
 
-	ACCOUNTSBLOCK& actbAccountFind = Accounts->GetAccountByName( username );
+	CAccountBlock& actbAccountFind = Accounts->GetAccountByName( username );
 	if( actbAccountFind.wAccountIndex != AB_INVALID_ID )
 	{
 		s->sysmessage( 555 );

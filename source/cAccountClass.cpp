@@ -127,13 +127,13 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	// Ok start the loop and process
 	bool bBraces[3]	= { false, false, false };
 	bool bBraces2[3]= { false, false, false };
-	ACCOUNTSBLOCK actb;
+	CAccountBlock	actb;
 	UI16 wAccountID		= 0x0000;
 	UI16 wAccessID		= 0x0000;
 	UI16 wAccountCount	= 0x0000;
 	UI08 nLockCount		= 0x00;
 	bool bSkipUAD		= false;
-	Reset( &actb );
+	actb.reset();
 	sLine = sLine.removeComment().stripWhiteSpace();
 	while( !fs2.eof() && !fs2.fail() )
 	{
@@ -307,15 +307,15 @@ UI16 cAccountClass::CreateAccountSystem(void)
 									actb.wFlags = r2.toUShort();	//<-- Uses internal conversion code
 									if( actb.wAccountIndex == 0 )
 									{
-										MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+										actb.wFlags.set( AB_FLAGS_GM, true );
 									}
 								}
 								else
 								{
-									actb.wFlags = 0;
+									actb.wFlags.reset();
 									if( actb.wAccountIndex == 0 )
 									{
-										MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+										actb.wFlags.set( AB_FLAGS_GM, true );
 									}
 								}
 								continue;
@@ -361,9 +361,9 @@ UI16 cAccountClass::CreateAccountSystem(void)
 					// If account 0 then we set gm privs
 					if( wAccountID == 0 )
 					{
-						MFLAGSET( actb.wFlags, true, AB_FLAGS_GM );
+						actb.wFlags.set( AB_FLAGS_GM, true );
 					}
-					bSkipUAD=true;
+					bSkipUAD = true;
 				}
 			}
 			else
@@ -423,8 +423,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 			{
 				if( r.toLong() > 0 )
 				{
-					const UI32 BITVAL = power( 2, 4 + nLockCount );
-					MFLAGSET( actb.wFlags, true, BITVAL );
+					actb.wFlags.set( 4 + nLockCount, true );
 				}
 			}
 			++nLockCount;
@@ -438,7 +437,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				// Ok strip the name and store it. We need to make it all the same case for comparisons
 				if( r == "ON" )
 				{	// Set the Public Flag on. Public implies that a users conatact information can be published on the web.
-					MFLAGSET( actb.wFlags, true, BIT_PUBLIC );
+					actb.wFlags.set( BIT_PUBLIC, true );
 				}
 			}
 			std::getline( fs2, sLine );
@@ -479,11 +478,11 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		for( MAPUSERNAMEID_ITERATOR CJ = m_mapUsernameIDMap.begin();CJ!=m_mapUsernameIDMap.end(); ++CJ )
 		{
 			// Pull the data into a usable form
-			ACCOUNTSBLOCK& actbTemp = CJ->second;
+			CAccountBlock& actbTemp = CJ->second;
 			// Now we want to copy the files from the path to the new directory.
-			char cDirSep=sActPath[sActPath.length()-1];
-			std::string sNewPath(sActPath);
-			if( cDirSep=='\\'||cDirSep=='/' )
+			char		cDirSep = sActPath[sActPath.length()-1];
+			std::string	sNewPath( sActPath );
+			if( cDirSep == '\\' || cDirSep == '/' )
 			{
 				sNewPath += actbTemp.sUsername;
 				sNewPath += "/";
@@ -600,12 +599,12 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	WriteAccountsHeader( fsOut );
 	for( MAPUSERNAMEID_ITERATOR CI = m_mapUsernameIDMap.begin(); CI != m_mapUsernameIDMap.end(); ++CI )
 	{
-		ACCOUNTSBLOCK& actbTemp = CI->second;
+		CAccountBlock& actbTemp = CI->second;
 		fsOut << "SECTION ACCOUNT " << std::dec << actbTemp.wAccountIndex << std::endl;
 		fsOut << "{" << std::endl;
 		fsOut << "NAME " << actbTemp.sUsername << std::endl;
 		fsOut << "PASS " << actbTemp.sPassword << std::endl;
-		fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags << std::dec << std::endl;
+		fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
 		fsOut << "PATH " << UString::replaceSlash(actbTemp.sPath) << std::endl;
 		fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
 		fsOut << "CONTACT " << actbTemp.sContact << std::endl;
@@ -655,7 +654,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact,UI16 wAttributes)
 {
 	// First were going to make sure that the needed fields are sent in with at least data
-	if( sUsername.length()<4||sPassword.length()<4 )
+	if( sUsername.length() < 4 || sPassword.length() < 4 )
 	{
 		// Username, and or password must both be 4 characters or more in length
 		Console.Log("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short","accounts.log",sUsername.c_str(),sPassword.c_str());
@@ -668,20 +667,20 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 		return 0x0000;
 	}
 	// If we get here then were going to create a new account block, and create all the needed directories and files.
-	ACCOUNTSBLOCK actbTemp;
-	Reset( &actbTemp );
+	CAccountBlock actbTemp;
+	actbTemp.reset();
 
 	// Build as much of the account block that we can right now.
-	actbTemp.sUsername=sUsername;
-	actbTemp.sPassword=sPassword;
-	actbTemp.sContact=sContact;
-	actbTemp.wFlags=wAttributes;
-	actbTemp.wTimeBan=0;
-	actbTemp.dwLastIP=0;
+	actbTemp.sUsername	= sUsername;
+	actbTemp.sPassword	= sPassword;
+	actbTemp.sContact	= sContact;
+	actbTemp.wFlags		= wAttributes;
+	actbTemp.wTimeBan	= 0;
+	actbTemp.dwLastIP	= 0;
 	for( int ii = 0; ii < CHARACTERCOUNT; ++ii )
 	{
-		actbTemp.lpCharacters[ii]=NULL;
-		actbTemp.dwCharacters[ii]=INVALIDSERIAL;
+		actbTemp.lpCharacters[ii] = NULL;
+		actbTemp.dwCharacters[ii] = INVALIDSERIAL;
 	}
 	// Ok we have everything except the path to the account dir, so make that now
 	std::string sTempPath( m_sAccountsDirectory );
@@ -779,7 +778,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	// Write the actual block data to the file.
 	fsAccountsADM << "NAME " << actbTemp.sUsername << std::endl;
 	fsAccountsADM << "PASS " << actbTemp.sPassword << std::endl;
-	fsAccountsADM << "FLAGS 0x" << std::hex << actbTemp.wFlags << std::dec << std::endl;
+	fsAccountsADM << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
 	fsAccountsADM << "PATH " << actbTemp.sPath << std::endl;
 	fsAccountsADM << "TIMEBAN " << actbTemp.wTimeBan << std::endl;
 	fsAccountsADM << "CONTACT " << actbTemp.sContact << std::endl;
@@ -902,11 +901,11 @@ UI16 cAccountClass::Load(void)
 	// Ok start the loop and process
 	bool bBraces[3]					= { false, false, false };
 	bool bBraces2[3]				= { false, false, false };
-	ACCOUNTSBLOCK actb;
+	CAccountBlock actb;
 	UI16 wAccountID					= 0x0000;
 	UI16 wAccountCount				= 0x0000;
 	UI32 dwChars[CHARACTERCOUNT]	= {INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL,INVALIDSERIAL};
-	Reset( &actb );
+	actb.reset();
 	m_wHighestAccount				= 0x0000;
 
 	while( !fsAccountsADM.eof() && !fsAccountsADM.fail() )
@@ -962,12 +961,11 @@ UI16 cAccountClass::Load(void)
 		if( sLine[0]=='}'&&bBraces[0]&&!bBraces[1] )
 		{
 			// Peel the dwChars Array here
-			ACCOUNTSBLOCK actbTemp;
-			ACCOUNTSBLOCK actbTempName;
-			MAPUSERNAMEID_ITERATOR I;
+			CAccountBlock actbTemp;
+			CAccountBlock actbTempName;
 			MAPUSERNAME_ITERATOR J;
-			I=m_mapUsernameIDMap.find(actb.wAccountIndex);
-			if( I!=m_mapUsernameIDMap.end() )
+			MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find( actb.wAccountIndex );
+			if( I != m_mapUsernameIDMap.end() )
 			{
 				// OK there is an id in memory so we should check to see if its the same.
 				actbTemp=I->second;
@@ -1008,7 +1006,7 @@ UI16 cAccountClass::Load(void)
 			// Ok we shoud shove this into the map(s) for use later
 			m_mapUsernameIDMap[wAccountID]=actbTemp;
 			m_mapUsernameMap[actb.sUsername]=&m_mapUsernameIDMap[wAccountID];
-			Reset( &actb );
+			actb.reset();
 
 			// Ok we have finished with this access block clean up and continue processing
 			bBraces[0] = false;
@@ -1144,40 +1142,13 @@ UI16 cAccountClass::Load(void)
 		}
 		std::getline( fsAccountsADM, sLine );
 		sLine = sLine.removeComment().stripWhiteSpace();
-		Reset( &actb );
+		actb.reset();
 	}
 	// We need to see if there are any new accounts to come.
 	UI16 wImportCount = 0x0000;
 	wImportCount = ImportAccounts();
 	// Return the number of accounts loaded
 	return m_mapUsernameMap.size();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	
-//|	Date			-	2/22/2003 9:19:50 PM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-void cAccountClass::Reset(ACCOUNTSBLOCK *actbValue)
-{
-	actbValue->sUsername="";
-	actbValue->sPassword="";
-	actbValue->sContact ="";
-	actbValue->sPath="";
-	actbValue->wAccountIndex=0xFFFF;
-	actbValue->dwLastIP=0x00000000;
-	actbValue->dwInGame=0xFFFFFFFF;
-	for( int ii = 0; ii < CHARACTERCOUNT; ++ii )
-	{
-		actbValue->dwCharacters[ii]=INVALIDSERIAL;
-		actbValue->lpCharacters[ii]=NULL;
-	}
 }
 
 //o--------------------------------------------------------------------------o
@@ -1203,9 +1174,9 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 		return false;
 	}
 	// Get the account block for this ID
-	ACCOUNTSBLOCK& actbID = I->second;
+	CAccountBlock& actbID	= I->second;
 	// Ok now we need to get the matching username map 
-	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
+	MAPUSERNAME_ITERATOR J	= m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 	{
 		// This ID was not found.
@@ -1217,16 +1188,16 @@ bool cAccountClass::TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID
 	if( actbID.dwCharacters[wSSlot]==INVALIDSERIAL )
 		return false;
 	//
-	MAPUSERNAMEID_ITERATOR II = m_mapUsernameIDMap.find(wDAccountID);
-	if( II==m_mapUsernameIDMap.end() )
+	MAPUSERNAMEID_ITERATOR II = m_mapUsernameIDMap.find( wDAccountID );
+	if( II == m_mapUsernameIDMap.end() )
 	{
 		// This ID was not found.
 		return false;
 	}
 	// Get the account block for this ID
-	ACCOUNTSBLOCK& actbIID = II->second;
+	CAccountBlock& actbIID	= II->second;
 	// Ok now we need to get the matching username map 
-	MAPUSERNAME_ITERATOR JJ = m_mapUsernameMap.find(actbIID.sUsername);
+	MAPUSERNAME_ITERATOR JJ	= m_mapUsernameMap.find(actbIID.sUsername);
 	if( JJ==m_mapUsernameMap.end() )
 	{
 		// This ID was not found.
@@ -1263,25 +1234,25 @@ bool cAccountClass::AddCharacter(UI16 wAccountID, CChar *lpObject)
 	if( lpObject==NULL )
 		return false;
 	// Ok we need to do is get see if this account id exists
-	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
-	if( I==m_mapUsernameIDMap.end() )
+	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find( wAccountID );
+	if( I == m_mapUsernameIDMap.end() )
 	{
 		// This ID was not found.
 		return false;
 	}
 	// Get the account block for this ID
-	ACCOUNTSBLOCK& actbID = I->second;
+	CAccountBlock& actbID	= I->second;
 	// Ok now we need to get the matching username map 
-	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
+	MAPUSERNAME_ITERATOR J	= m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 	{
 		// This ID was not found.
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbName = (*J->second);
+	CAccountBlock& actbName = (*J->second);
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
-	bool bExit=false;
+	bool bExit = false;
 	for( int i = 0; i < CHARACTERCOUNT; ++i )
 	{
 		if( actbID.dwCharacters[i]!=lpObject->GetSerial()&&actbName.dwCharacters[i]!=lpObject->GetSerial()&&actbID.dwCharacters[i]==INVALIDSERIAL&&actbName.dwCharacters[i]==INVALIDSERIAL )
@@ -1320,7 +1291,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 		return false;
 	}
 	// Get the account block for this ID
-	ACCOUNTSBLOCK& actbID = I->second;
+	CAccountBlock& actbID = I->second;
 	// Ok now we need to get the matching username map 
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
@@ -1329,7 +1300,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 		return false;
 	}
 	// Get the account block for this username.
-	ACCOUNTSBLOCK& actbName = (*J->second);
+	CAccountBlock& actbName = (*J->second);
 	// ok now that we have both of our account blocks we can update them. We will use teh first empty slot for this character
 	bool bExit=false;
 	for( int i = 0; i < CHARACTERCOUNT; ++i )
@@ -1356,149 +1327,6 @@ bool cAccountClass::AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpOb
 	}
 	return false;
 }
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
-//|						bool cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
-//|	Date			-	1/7/2003 7:15:58 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Make modifications to an existing account. Currently a 
-//|							flag based system is used to indicate the validity of a
-//|							field in the ACCOUNTSBLOCK. A valid field in the 
-//|							ACCOUNTSBLOCK structure will be used to update the current
-//|							Account block information found in the maps.
-//|	
-//|	Supported			-	AB_USERNAME
-//|							AB_PASSWORD		
-//|							AB_FLAGS
-//|							AB_PATH
-//|							AB_TIMEBAN
-//|							AB_CONTACT
-//|							AB_CHARACTER1
-//|							AB_CHARACTER2
-//|							AB_CHARACTER3
-//|							AB_CHARACTER4
-//|							AB_CHARACTER5
-//|							AB_CHARACTER6
-//|									
-//|							The values can be OR'd together to specify multiple valid
-//|							fields. 
-//|									
-//|							IE:. ModAccount(0,AB_USERNAME|AB_CONTACT,actbBlock);
-//|									
-//|							In the above example both the username, and contact fields
-//|							would be modified for Account 0 based on the contents for 
-//|							the AB_USERNAME, and AB_CONTACT members contained in actbBlock.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-bool cAccountClass::ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
-{
-	// Ok we need to get the name block to get the accounts id
-	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(sUsername);
-	if( J==m_mapUsernameMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbName=(*J->second);
-	// Ok we have the id, so call the actual function to do the work
-	return ModAccount( actbName.wAccountIndex, dwFlags, actbBlock );
-}
-//
-bool cAccountClass::ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock)
-{
-	// Ok we need to get the ID block again as it wasn't passed in
-	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
-	if( I==m_mapUsernameIDMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbID = I->second;
-	// Now we need to get the matching username map entry
-	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
-	if( J==m_mapUsernameMap.end() )
-		return false;
-	ACCOUNTSBLOCK& actbName=(*J->second);
-	// Ok find out which fields are valid and make the changes.
-	for( int i = 0; i < 11; ++i )
-	{
-		if( dwFlags&AB_USERNAME )
-		{
-			actbID.sUsername=actbBlock.sUsername;
-			actbName.sUsername=actbBlock.sUsername;
-		}
-		else if( dwFlags&AB_PASSWORD )
-		{
-			actbID.sPassword=actbBlock.sPassword;
-			actbName.sPassword=actbBlock.sPassword;
-		}
-		else if( dwFlags&AB_FLAGS )
-		{
-			actbID.wFlags=actbBlock.wFlags;
-			actbName.wFlags=actbBlock.wFlags;
-		}
-		else if( dwFlags&AB_PATH )
-		{
-			actbID.sPath=actbBlock.sPath;
-			actbName.sPath=actbBlock.sPath;
-		}
-		else if( dwFlags&AB_TIMEBAN )
-		{
-			actbID.wTimeBan=actbBlock.wTimeBan;
-			actbName.wTimeBan=actbBlock.wTimeBan;
-		}
-		else if( dwFlags&AB_CONTACT )
-		{
-			actbID.sContact=actbBlock.sContact;
-			actbName.sContact=actbBlock.sContact;
-		}
-		else if( dwFlags&AB_CHARACTER1 )
-		{
-			actbID.dwCharacters[0]=actbBlock.dwCharacters[0];
-			actbName.dwCharacters[0]=actbBlock.dwCharacters[0];
-			actbID.lpCharacters[0]=actbBlock.lpCharacters[0];
-			actbName.lpCharacters[0]=actbBlock.lpCharacters[0];
-		}
-		else if( dwFlags&AB_CHARACTER2 )
-		{
-			actbID.dwCharacters[1]=actbBlock.dwCharacters[1];
-			actbName.dwCharacters[1]=actbBlock.dwCharacters[1];
-			actbID.lpCharacters[1]=actbBlock.lpCharacters[1];
-			actbName.lpCharacters[1]=actbBlock.lpCharacters[1];
-		}
-		else if( dwFlags&AB_CHARACTER3 )
-		{
-			actbID.dwCharacters[2]=actbBlock.dwCharacters[2];
-			actbName.dwCharacters[2]=actbBlock.dwCharacters[2];
-			actbID.lpCharacters[2]=actbBlock.lpCharacters[2];
-			actbName.lpCharacters[2]=actbBlock.lpCharacters[2];
-		}
-		else if( dwFlags&AB_CHARACTER4 )
-		{
-			actbID.dwCharacters[3]=actbBlock.dwCharacters[3];
-			actbName.dwCharacters[3]=actbBlock.dwCharacters[3];
-			actbID.lpCharacters[3]=actbBlock.lpCharacters[3];
-			actbName.lpCharacters[3]=actbBlock.lpCharacters[3];
-		}
-		else if( dwFlags&AB_CHARACTER5 )
-		{
-			actbID.dwCharacters[4]=actbBlock.dwCharacters[4];
-			actbName.dwCharacters[4]=actbBlock.dwCharacters[4];
-			actbID.lpCharacters[4]=actbBlock.lpCharacters[4];
-			actbName.lpCharacters[4]=actbBlock.lpCharacters[4];
-		}
-		else if( dwFlags&AB_CHARACTER6 )
-		{
-			actbID.dwCharacters[5]=actbBlock.dwCharacters[5];
-			actbName.dwCharacters[5]=actbBlock.dwCharacters[5];
-			actbID.lpCharacters[5]=actbBlock.lpCharacters[5];
-			actbName.lpCharacters[5]=actbBlock.lpCharacters[5];
-		}
-	}
-	// Ok put the data back into the map(s)
-	m_mapUsernameIDMap[actbID.wAccountIndex]=actbID;
-	Save( false );
-	return true;
-}
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	bool cAccountClass::clear(void)
 //|	Date			-	12/18/2002 2:24:07 AM
@@ -1553,7 +1381,7 @@ bool cAccountClass::DelAccount(std::string sUsername)
 	MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
 	if( I==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbTemp = (*I->second);
+	CAccountBlock& actbTemp = (*I->second);
 	// Ok lets do the work now
 	return DelAccount( actbTemp.wAccountIndex );
 }
@@ -1564,7 +1392,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
 	if( I==m_mapUsernameIDMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbID=I->second;
+	CAccountBlock& actbID=I->second;
 	// Now we need to get the matching username map entry
 	MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
@@ -1695,12 +1523,12 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	MAPUSERNAMEID_ITERATOR I=m_mapUsernameIDMap.find(wAccountID);
 	if( I==m_mapUsernameIDMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbID = I->second;
+	CAccountBlock& actbID = I->second;
 	// Ok now that we have the ID Map block we can get the Username Block
 	MAPUSERNAME_ITERATOR J=m_mapUsernameMap.find(actbID.sUsername);
 	if( J==m_mapUsernameMap.end() )
 		return false;
-	ACCOUNTSBLOCK& actbName=(*J->second);
+	CAccountBlock& actbName=(*J->second);
 	// Check to see if this record has been flagged changed
 	if( actbID.bChanged )
 	{
@@ -1738,7 +1566,7 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 	actbID.dwCharacters[nSlot]=actbName.dwCharacters[nSlot]=INVALIDSERIAL;
 	actbID.lpCharacters[nSlot]=actbName.lpCharacters[nSlot]=NULL;
 	// need to reorder the accounts or have to change the addchar code to ignore invalid serials(earier here)
-	ACCOUNTSBLOCK actbScratch;
+	CAccountBlock actbScratch;
 	actbScratch.reset();
 	actbScratch = actbID;
 	int kk=0;
@@ -1782,7 +1610,7 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool GetAccountByName(std::string sUsername,ACCOUNTSBLOCK& actbBlock)
+//|	Function		-	CAccountBlock& GetAccountByName( std::string sUsername )
 //|	Date			-	12/19/2002 2:16:37 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1793,18 +1621,18 @@ bool cAccountClass::DelCharacter(UI16 wAccountID, int nSlot)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK& cAccountClass::GetAccountByName( std::string sUsername )
+CAccountBlock& cAccountClass::GetAccountByName( std::string sUsername )
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
 	if( I != m_mapUsernameMap.end() )
 	{
-		ACCOUNTSBLOCK &actbName = (*I->second);
+		CAccountBlock &actbName = (*I->second);
 		// Get the block from the ID map, so we can check that they are the same.
 		MAPUSERNAMEID_ITERATOR J = m_mapUsernameIDMap.find( actbName.wAccountIndex );
 		if( J != m_mapUsernameIDMap.end() )
 		{
-			ACCOUNTSBLOCK& actbID = J->second;
+			CAccountBlock& actbID = J->second;
 			// Check to see that these both are equal where it counts.
 			if( actbID.sUsername == actbName.sUsername || actbID.sPassword == actbName.sPassword )
 				return actbName;
@@ -1814,7 +1642,7 @@ ACCOUNTSBLOCK& cAccountClass::GetAccountByName( std::string sUsername )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	bool cAccountClass::GetAccountByName(UI16 wAccountID,ACCOUNTSBLOCK& actbBlock)
+//|	Function		-	CAccountBlock& cAccountClass::GetAccountByName( UI16 wAccountID )
 //|	Date			-	12/19/2002 2:17:31 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -1825,18 +1653,18 @@ ACCOUNTSBLOCK& cAccountClass::GetAccountByName( std::string sUsername )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK& cAccountClass::GetAccountByID( UI16 wAccountID )
+CAccountBlock& cAccountClass::GetAccountByID( UI16 wAccountID )
 {
 	// Ok now we need to get the map blocks for this account.
 	MAPUSERNAMEID_ITERATOR I = m_mapUsernameIDMap.find(wAccountID);
 	if( I != m_mapUsernameIDMap.end() )
 	{
-		ACCOUNTSBLOCK &actbID = I->second;
+		CAccountBlock &actbID = I->second;
 		// Get the block from the ID map, so we can check that they are the same.
 		MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find( actbID.sUsername );
 		if( J != m_mapUsernameMap.end() )
 		{
-			ACCOUNTSBLOCK& actbName = (*J->second);
+			CAccountBlock& actbName = (*J->second);
 			// Check to see that these both are equal where it counts.
 			if( actbID.sUsername == actbName.sUsername || actbID.sPassword == actbName.sPassword )
 				return actbID;
@@ -1881,10 +1709,10 @@ UI16 cAccountClass::Save(bool bForceLoad)
 	for( CI = m_mapUsernameIDMap.begin();CI!=m_mapUsernameIDMap.end();++CI )
 	{
 		// Get a usable structure for this iterator
-		ACCOUNTSBLOCK& actbID		= CI->second;
+		CAccountBlock& actbID		= CI->second;
 		// Ok we are going to load up each username block from that map too for checking
 		MAPUSERNAME_ITERATOR JI	= m_mapUsernameMap.find( actbID.sUsername );
-		ACCOUNTSBLOCK& actbName		= (*JI->second);
+		CAccountBlock& actbName		= (*JI->second);
 		// Check to make sure at least that the username and passwords match
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
@@ -1899,7 +1727,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		UString szTempBuff = UString( actbID.sUsername ).lower();
 		fsAccountsADM << "NAME " << szTempBuff << std::endl;
 		fsAccountsADM << "PASS " << actbID.sPassword << std::endl;
-		fsAccountsADM << "FLAGS 0x" << std::hex << (actbID.wFlags&0xFFF7) << std::endl;
+		fsAccountsADM << "FLAGS 0x" << std::hex << (actbID.wFlags.to_ulong()&0xFFF7) << std::endl;
 		fsAccountsADM << "PATH " << (actbID.sPath.length()?actbID.sPath:"ERROR") << std::endl;
 		fsAccountsADM << "TIMEBAN 0x" << actbID.wTimeBan << std::endl;
 		fsAccountsADM << "CONTACT " << (actbID.sContact.length()?actbID.sContact:"NA") << std::endl;
@@ -2309,7 +2137,7 @@ void cAccountClass::WriteOrphanHeader(std::fstream &fsOut)
 //|	Description		-	Writes the Username.uad header to the specified output
 //|									stream.
 //o--------------------------------------------------------------------------o
-void cAccountClass::WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp)
+void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp )
 {
 	fsOut << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time(NULL) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;

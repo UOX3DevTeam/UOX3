@@ -27,16 +27,17 @@
 #include "network.h"
 #include "ObjectFactory.h"
 #include "weight.h"
+#include <bitset>
 
 namespace UOX
 {
 
-const UI32 BIT_FREE			=	0x01;
-const UI32 BIT_DELETED		=	0x02;
-const UI32 BIT_POSTLOADED	=	0x04;
-const UI32 BIT_SPAWNED		=	0x08;
-const UI32 BIT_SAVE			=	0x10;
-const UI32 BIT_DISABLED		=	0x20;
+const UI32 BIT_FREE			=	0;
+const UI32 BIT_DELETED		=	1;
+const UI32 BIT_POSTLOADED	=	2;
+const UI32 BIT_SPAWNED		=	3;
+const UI32 BIT_SAVE			=	4;
+const UI32 BIT_DISABLED		=	5;
 
 //o--------------------------------------------------------------------------
 //|	Function		-	CBaseObject destructor
@@ -85,8 +86,6 @@ const SI16			DEFBASE_INT2		= 0;
 const SI32			DEFBASE_FP			= -1;
 const UI08			DEFBASE_POISONED	= 0;
 const SI16			DEFBASE_CARVE		= -1;
-const UI08			DEFBASE_UPDATETYPES	= 0;
-const UI08			DEFBASE_OBJSETTINGS	= 0;
 const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
@@ -108,13 +107,14 @@ worldNumber( DEFBASE_WORLD ), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ),
 hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), def( DEFBASE_DEF ), hidamage( DEFBASE_HIDAMAGE ),
 lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
-in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ), objSettings( DEFBASE_OBJSETTINGS ),
-poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), updateTypes( DEFBASE_UPDATETYPES ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
+in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
+poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
+	objSettings.reset();
+	updateTypes.reset();
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
-	genericDWords[0] = genericDWords[1] = genericDWords[2] = genericDWords[3] = 0;
 	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
@@ -691,7 +691,6 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Carve=" << GetCarve() << std::endl;
 	dumping << "Defense=" << def << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
-	dumping << "DWords=" << genericDWords[0] << "," << genericDWords[1] << "," << genericDWords[2] << "," << genericDWords[3] << std::endl;
 	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
@@ -1593,10 +1592,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "DWORDS" )
 			{
-				genericDWords[0]	= data.section( ",", 0, 0 ).stripWhiteSpace().toULong();
-				genericDWords[1]	= data.section( ",", 1, 1 ).stripWhiteSpace().toULong();
-				genericDWords[2]	= data.section( ",", 2, 2 ).stripWhiteSpace().toULong();
-				genericDWords[3]	= data.section( ",", 3, 3 ).stripWhiteSpace().toULong();
 				rvalue				= true;
 			}
 			else if( UTag == "DISABLED" )
@@ -1855,128 +1850,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	UI32 GetWord( UI08 wordNum )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns one of the generic words of the object
-//|						There are 4 words.  wordNum must be between 0 and 3
-//o--------------------------------------------------------------------------
-UI32 CBaseObject::GetWord( UI08 wordNum ) const
-{
-	UI32 rvalue = 0;
-	if( wordNum <= 3 )
-		rvalue = genericDWords[wordNum];
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	bool GetBit( UI08 wordNum, UI08 bitNum )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if the bit bitNum in word wordNum is on
-//o--------------------------------------------------------------------------
-bool CBaseObject::GetBit( UI08 wordNum, UI08 bitNum ) const
-{
-	bool rvalue = false;
-	if( wordNum <= 3 && bitNum <= 31 )
-	{
-		UI32 mask	= power( 2, bitNum );
-		rvalue		= ( ( genericDWords[wordNum] & mask ) == mask );
-	}
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	UI32 GetBitRange( UI08 wordNUm, UI08 lowBit, UI08 highBit )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the value of the bit range from lowBit to highBit
-//|						in word wordNum.  Note that if lowBit is NOT 0, it's
-//|						right shifted by lowBit bits.
-//o--------------------------------------------------------------------------
-UI32 CBaseObject::GetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit ) const
-{
-	UI32 rvalue = 0;
-	if( wordNum <= 3 && lowBit <= 31 && highBit <= 31 )
-	{
-		UI32 mask = 0;
-		for( UI08 i = lowBit; i <= highBit; ++i )
-			mask |= power( 2, i );
-
-		if( lowBit == 0 )
-			rvalue = genericDWords[wordNum]&mask;
-		else
-			rvalue = (genericDWords[wordNum]&mask)>>lowBit;
-	}
-	return rvalue;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetWord( UI08 wordNum, UI32 value )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets word wordNum to value.  wordNum must be 0->3
-//o--------------------------------------------------------------------------
-void CBaseObject::SetWord( UI08 wordNum, UI32 value )
-{
-	if( wordNum <= 3 )
-		genericDWords[wordNum] = value;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetBit( UI08 wordNum, UI08 bitNum, bool value )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Turns on (value==true) or off (value==false) bit bitNum
-//|						in word wordNum
-//o--------------------------------------------------------------------------
-void CBaseObject::SetBit( UI08 wordNum, UI08 bitNum, bool value )
-{
-	if( wordNum <= 3 && bitNum <= 31 )
-	{
-		UI32 mask = power( 2, bitNum );
-		MFLAGSET( genericDWords[wordNum], value, mask );
-	}
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 value )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the range of lowBit to highBit to value in word 
-//|						wordNum.  Note it does no range checking to ensure
-//|						that value will fit in that bit range
-//o--------------------------------------------------------------------------
-void CBaseObject::SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 value )
-{
-	if( wordNum <= 3 && lowBit <= 31 && highBit <= 31 )
-	{
-		UI32 mask = 0xFFFFFFFF;	// start with every bit set
-		for( UI08 i = lowBit; i <= highBit; ++i )
-			mask -= power( 2, i );	// subtract off the bit
-
-		genericDWords[wordNum] &= mask;	// reset the words
-
-		if( lowBit == 0 )
-			genericDWords[wordNum] += value;
-		else
-			genericDWords[wordNum] |= ( value<<lowBit );	// shift the information along lowBit # of bits, so it's in the right spot
-	}
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	PostLoadProcessing()
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
@@ -2075,52 +1948,52 @@ void CBaseObject::SetCarve( SI16 newValue )
 
 bool CBaseObject::isFree( void ) const
 {
-	return MFLAGGET( objSettings, BIT_FREE );
+	return objSettings.test( BIT_FREE );
 }
 bool CBaseObject::isDeleted( void ) const
 {
-	return MFLAGGET( objSettings, BIT_DELETED );
+	return objSettings.test( BIT_DELETED );
 }
 bool CBaseObject::isPostLoaded( void ) const
 {
-	return MFLAGGET( objSettings, BIT_POSTLOADED );
+	return objSettings.test( BIT_POSTLOADED );
 }
 bool CBaseObject::isSpawned( void ) const
 {
-	return MFLAGGET( objSettings, BIT_SPAWNED );
+	return objSettings.test( BIT_SPAWNED );
 }
 bool CBaseObject::ShouldSave( void ) const
 {
-	return MFLAGGET( objSettings, BIT_SAVE );
+	return objSettings.test( BIT_SAVE );
 }
 bool CBaseObject::isDisabled( void ) const
 {
-	return MFLAGGET( objSettings, BIT_DISABLED );
+	return objSettings.test( BIT_DISABLED );
 }
 
 void CBaseObject::SetFree( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_FREE );
+	objSettings.set( BIT_FREE, newVal );
 }
 void CBaseObject::SetDeleted( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_DELETED );
+	objSettings.set( BIT_DELETED, newVal );
 }
 void CBaseObject::SetPostLoaded( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_POSTLOADED );
+	objSettings.set( BIT_POSTLOADED, newVal );
 }
 void CBaseObject::SetSpawned( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_SPAWNED );
+	objSettings.set( BIT_SPAWNED, newVal );
 }
 void CBaseObject::ShouldSave( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_SAVE );
+	objSettings.set( BIT_SAVE, newVal );
 }
 void CBaseObject::SetDisabled( bool newVal )
 {
-	MFLAGSET( objSettings, newVal, BIT_DISABLED );
+	objSettings.set( BIT_DISABLED, newVal );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2167,8 +2040,7 @@ void CBaseObject::Cleanup( void )
 //o---------------------------------------------------------------------------o
 void CBaseObject::Dirty( UpdateTypes updateType )
 {
-	const UI32 BITVAL = power( 2, updateType );
-	MFLAGSET( updateTypes, true, BITVAL );
+	updateTypes.set( updateType, true );
 	if( isPostLoaded() )
 		++(cwmWorldState->refreshQueue[this]);
 }
@@ -2182,9 +2054,8 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 //o---------------------------------------------------------------------------o
 bool CBaseObject::GetUpdate( UpdateTypes updateType )
 {
-	const UI32 BITVAL	= power( 2, updateType );
-	bool update			= MFLAGGET( updateTypes, BITVAL );
-	MFLAGSET( updateTypes, false, BITVAL );
+	bool update = updateTypes.test( updateType );
+	updateTypes.reset( updateType );
 	return update;
 }
 

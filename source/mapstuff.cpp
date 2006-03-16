@@ -1132,7 +1132,9 @@ void CTile::Read( UOXFile *toRead )
 //	BYTE		Unknown5
 //	BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
 //	BYTE[20]	Name
-	toRead->getULong( &flags );
+	UI32 flagsRead;
+	toRead->getULong( &flagsRead );
+	flags = flagsRead;
 	toRead->getUChar( &weight );
 	toRead->getChar(  &layer );
 	toRead->getUShort( &unknown1 );
@@ -1153,7 +1155,9 @@ void CTile::Read( UOXFile *toRead )
 //	BYTE[20]	Name
 void CLand::Read( UOXFile *toRead )
 {
-	toRead->getULong( &flags );
+	UI32 flagsRead;
+	toRead->getULong( &flagsRead );
+	flags = flagsRead;
 	toRead->getUShort( &textureID );
 	toRead->getChar( name, 20 );
 }

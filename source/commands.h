@@ -8,17 +8,18 @@ namespace UOX
 
 struct commandLevel_st
 {
-	std::string name;	// name of level
-	UI08 commandLevel;	// upper limit of level
-	UI16 defaultPriv;	// default privs associated with it
-	UI16 nickColour;	// colour of a person's name
-	UI16 allSkillVals;	// if 0, skills left same, if not, all skills set to this value
-	UI16 targBody;		// target body value
-	UI16 bodyColour;	// target body colour
-	UI08 stripOff;		// strips off hair, beard and clothes
+	std::string			name;	// name of level
+	UI08				commandLevel;	// upper limit of level
+	UI16				defaultPriv;	// default privs associated with it
+	UI16				nickColour;	// colour of a person's name
+	UI16				allSkillVals;	// if 0, skills left same, if not, all skills set to this value
+	UI16				targBody;		// target body value
+	UI16				bodyColour;	// target body colour
+	std::bitset< 8 >	stripOff;		// strips off hair, beard and clothes
 	commandLevel_st() : name( "" ), commandLevel( 0 ), defaultPriv( 0 ), nickColour( 0 ),
-		allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 ), stripOff( 0 )
+		allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 )
 	{
+		stripOff.reset();
 	}
 };
 

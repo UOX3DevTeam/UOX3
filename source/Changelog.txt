@@ -1,3 +1,12 @@
+16th March, 2006 - Maarc
+
+	Updated playDeathSound to simplify some of the code for males/females
+	Updated code so that we don't use MFLAGGET/MFLAGSET - apparently we have a std::bitset class that we can use!  Also makes it somewhat more readable as well.  Cheers Punt for the suggestion.
+	Renamed __ACCOUNTSADM_BLOCK__ to CAccountBlock
+	Removed dead code from accounts (stuff that was just never called at all)
+	Removed Get/Set Word/Bit/BitRange from CBO, as it's not being used
+	Removed genericDWords from CBO, as they're not being used, and are largely superfluous with custom int/string tags in JS
+
 3/15/2006 - giwo (0.98-3.5i [3.6 BETA])
 	Fixed an issue causing pet guarding on items in a house not to function.
 	Fixed an issue causing boat items not to get added to the multi.

@@ -136,8 +136,11 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 
 cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
 {
-	eventPresence[0] = eventPresence[1] = eventPresence[2] = 0xFFFFFFFF;
-	needsChecking[0] = needsChecking[1] = needsChecking[2] = 0xFFFFFFFF;
+	for( int i = 0; i < 3; ++i )
+	{
+		eventPresence[i].set();
+		needsChecking[i].set();
+	}
 
 	targContext = JSEngine->GetContext( runTime ); //JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
 	if( targContext == NULL )
@@ -146,12 +149,9 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	targObject = JS_NewObject( targContext, &uox_class, NULL, NULL ); 
 	if( targObject == NULL )
 	{
-//		JS_DestroyContext( targContext );
-//		targContext = NULL;//crash fix
 		return;
 	}
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
@@ -163,8 +163,6 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
 	if( targScript == NULL )
 	{
-//		JS_DestroyContext( targContext );
-//		targContext = NULL;//crash fix
 		throw std::runtime_error( "Compilation failed" );
 		return;
 	}
@@ -1249,16 +1247,14 @@ bool cScript::EventExists( ScriptEvent eventNum ) const
 	UI32 index = eventNum / 32;
 	if( index > 2 )
 		return false;
-	UI32 flagToSet = power( 2, (eventNum % 32) );
-	return MFLAGGET( eventPresence[index], flagToSet );
+	return eventPresence[index].test( (eventNum % 32) );
 }
 void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 32;
 	if( index > 2 )
 		return;
-	UI32 flagToSet = power( 2, (eventNum % 32) );
-	MFLAGSET( eventPresence[index], status, flagToSet );
+	eventPresence[index].set( (eventNum % 32), status );
 }
 
 bool cScript::NeedsChecking( ScriptEvent eventNum ) const
@@ -1266,16 +1262,14 @@ bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 	UI32 index = eventNum / 32;
 	if( index > 2 )
 		return false;
-	UI32 flagToSet = power( 2, (eventNum % 32) );
-	return MFLAGGET( needsChecking[index], flagToSet );
+	return needsChecking[index].test( (eventNum % 32) );
 }
 void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 32;
 	if( index > 2 )
 		return;
-	UI32 flagToSet = power( 2, (eventNum % 32) );
-	MFLAGSET( needsChecking[index], status, flagToSet );
+	needsChecking[index].set( (eventNum % 32), status );
 }
 
 bool cScript::OnDeath( CChar *pDead )

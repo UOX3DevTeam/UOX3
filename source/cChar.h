@@ -92,7 +92,7 @@ private:
 
 		cNPC_FLAG			npcFlag;
 		
-		UI16				boolFlags;
+		std::bitset< 8 >	boolFlags;
 	};
 
 	struct PlayerValues_st
@@ -161,8 +161,8 @@ protected:
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
 
-	UI32		bools;	// lots of flags
-	UI16		priv;
+	std::bitset< 32 >		bools;	// lots of flags
+	std::bitset< 16 >		priv;
 
 	SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
 	SERIAL		townvote;
@@ -201,11 +201,11 @@ protected:
 
 	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
 
-	LAYERLIST			itemLayers;
-	LAYERLIST_ITERATOR	layerCtr;
+	LAYERLIST				itemLayers;
+	LAYERLIST_ITERATOR		layerCtr;
 	CDataList< CChar * >	petsControlled;
-	ITEMLIST	ownedItems;
-	UI32		skillUsed[2];	// no more than 64 skills
+	ITEMLIST				ownedItems;
+	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
@@ -636,8 +636,8 @@ public:
 
 // Player Characters
 public:
-	void					SetAccount( ACCOUNTSBLOCK& actbAccount );
-	ACCOUNTSBLOCK &			GetAccount(void);
+	void					SetAccount( CAccountBlock& actbAccount );
+	CAccountBlock &			GetAccount(void);
 	UI16					GetAccountNum( void ) const;
 	void					SetAccountNum( UI16 newVal );
 

@@ -49,10 +49,10 @@ private:
 	std::string			name;
 	UI16				midilist;
 	UI08				worldNumber;
-	UI08				priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
+	std::bitset< 8 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
 								// 0x10 raining, 0x20, snowing,		 0x40 magic damage reduced to 0
 								// 0x80 Dungeon region
-	std::string			guardowner;
+	std::string					guardowner;
 	std::vector< std::string >	guards;
 	std::vector< orePref >		orePreferences;
 	std::vector< townPers >		townMember;

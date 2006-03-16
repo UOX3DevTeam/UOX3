@@ -76,7 +76,7 @@ class CServerData
 {
 private:
 
-	UI32		boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 32 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)

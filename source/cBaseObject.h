@@ -42,7 +42,8 @@ enum UpdateTypes
 	UT_STAMINA,
 	UT_MANA,
 	UT_HIDE,
-	UT_STATWINDOW
+	UT_STATWINDOW,
+	UT_COUNT
 };
 
 //o--------------------------------------------------------------------------o
@@ -93,15 +94,14 @@ protected:
 
 	SI16			carve; // Carve.dfn entry
 
-	UI32			genericDWords[4];
-	UI08			worldNumber;
+	UI08				worldNumber;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
 
-	UI08			poisoned;
-	UI08			updateTypes;
-	UI08			objSettings;
+	UI08					poisoned;
+	std::bitset< UT_COUNT >	updateTypes;
+	std::bitset< 6 >		objSettings;
 
 	UI16			resistances[WEATHNUM];
 
@@ -236,14 +236,6 @@ public:
 	void					IncStrength( SI16 toInc = 1 );
 	void					IncDexterity( SI16 toInc = 1 );
 	void					IncIntelligence( SI16 toInc = 1 );
-
-	UI32					GetWord( UI08 wordNum ) const;
-	bool					GetBit( UI08 wordNum, UI08 bitNum ) const;
-	UI32					GetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit ) const;
-
-	void					SetWord( UI08 wordNum, UI32 value );
-	void					SetBit( UI08 wordNum, UI08 bitNum, bool value );
-	void					SetBitRange( UI08 wordNum, UI08 lowBit, UI08 highBit, UI32 value );
 
 	virtual void			PostLoadProcessing( void );
 	virtual bool			LoadRemnants( void ) = 0;

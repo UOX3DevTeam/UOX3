@@ -20,35 +20,34 @@ struct ColourPair
 };
 
 	typedef std::vector< ColourPair >	COLOURLIST;
-	typedef UI16						BITLIST;
 	typedef std::vector< SI08 >			RACEIDLIST;
 
-	SI16			HPMod;
-	SI16			ManaMod;
-	SI16			StamMod;
+	SI16				HPMod;
+	SI16				ManaMod;
+	SI16				StamMod;
 private:
 
-	SKILLVAL		iSkills[SKILLS];
+	SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
 
-	COLOURLIST		beardColours;
-	COLOURLIST		hairColours;
-	COLOURLIST		skinColours;
+	COLOURLIST			beardColours;
+	COLOURLIST			hairColours;
+	COLOURLIST			skinColours;
 
-	UI16			bools;
+	std::bitset< 8 >	bools;
 
-	GENDER			restrictGender;
-	RACEIDLIST		racialEnemies;
+	GENDER				restrictGender;
+	RACEIDLIST			racialEnemies;
 
-	LIGHTLEVEL		lightLevel;
-	COLDLEVEL		coldLevel;
-	HEATLEVEL		heatLevel;
-	LIGHTLEVEL		nightVision;
-	ARMORCLASS		armourRestrict;
+	LIGHTLEVEL			lightLevel;
+	COLDLEVEL			coldLevel;
+	HEATLEVEL			heatLevel;
+	LIGHTLEVEL			nightVision;
+	ARMORCLASS			armourRestrict;
 
-	BITLIST			weatherAffected;
-	SECONDS			weathSecs[WEATHNUM];
-	SI08			weathDamage[WEATHNUM];
+	std::bitset< WEATHNUM >	weatherAffected;
+	SECONDS					weathSecs[WEATHNUM];
+	SI08					weathDamage[WEATHNUM];
 	
 	SKILLVAL		languageMin;
 	RANGE			visDistance;

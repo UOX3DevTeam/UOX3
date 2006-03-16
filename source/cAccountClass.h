@@ -35,57 +35,42 @@ namespace UOX
 {
 
 // Enums
-enum __ACCOUNTBBLOCK_FLAGS__
-{
-	AB_USERNAME=1,
-	AB_PASSWORD=2,
-	AB_FLAGS=4,
-	AB_PATH=8,
-	AB_TIMEBAN=16,
-	AB_CONTACT=32,
-	AB_CHARACTER1=64,
-	AB_CHARACTER2=128,
-	AB_CHARACTER3=256,
-	AB_CHARACTER4=512,
-	AB_CHARACTER5=1024,
-	AB_CHARACTER6=2048,
-	AB_ALL=4063
-};
+
 //
-enum __ACCOUNTBLOCK_ERRORS__
+enum CAccountBlock_Errors
 {
 	AB_INVALID_ID = 0xFFFF
 };
 //
-enum __ACCOUNTBLOCK_FLAGS__
+enum CAccountBlock_Flags
 {
-	AB_FLAGS_NONE		=	0x0000,
-	AB_FLAGS_BANNED		=	0x0001,
-	AB_FLAGS_SUSPENDED	=	0x0002,
-	AB_FLAGS_PUBLIC		=	0x0004,
-	AB_FLAGS_ONLINE		=	0x0008,
-	AB_FLAGS_CHARACTER1	=	0x0010,
-	AB_FLAGS_CHARACTER2	=	0x0020,
-	AB_FLAGS_CHARACTER3	=	0x0040,
-	AB_FLAGS_CHARACTER4	=	0x0080,
-	AB_FLAGS_CHARACTER5	=	0x0100,
-	AB_FLAGS_CHARACTER6	=	0x0200,
-	AB_FLAGS_UNUSED8	=	0x0400,
-	AB_FLAGS_UNUSED9	=	0x0800,
-	AB_FLAGS_UNUSED10	=	0x1000,
-	AB_FLAGS_SEER		=	0x2000,
-	AB_FLAGS_COUNSELOR	=	0x4000,
-	AB_FLAGS_GM			=	0x8000,
-	AB_FLAGS_ALL		=	0xFFFF
+	AB_FLAGS_NONE		=	0,
+	AB_FLAGS_BANNED		=	1,
+	AB_FLAGS_SUSPENDED	=	2,
+	AB_FLAGS_PUBLIC		=	3,
+	AB_FLAGS_ONLINE		=	4,
+	AB_FLAGS_CHARACTER1	=	5,
+	AB_FLAGS_CHARACTER2	=	6,
+	AB_FLAGS_CHARACTER3	=	7,
+	AB_FLAGS_CHARACTER4	=	8,
+	AB_FLAGS_CHARACTER5	=	9,
+	AB_FLAGS_CHARACTER6	=	10,
+	AB_FLAGS_UNUSED8	=	11,
+	AB_FLAGS_UNUSED9	=	12,
+	AB_FLAGS_UNUSED10	=	13,
+	AB_FLAGS_SEER		=	14,
+	AB_FLAGS_COUNSELOR	=	15,
+	AB_FLAGS_GM			=	16,
+	AB_FLAGS_ALL		=	17
 };
 //
 
 //o--------------------------------------------------------------------------o
-//|	Class/Struct	-	typedef struct __ACCOUNTSADM_BLOCK__
-//|	Date					-	12/6/2002 5:46:10 AM
+//|	Class/Struct	-	typedef struct CAccountBlock
+//|	Date			-	12/6/2002 5:46:10 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	All the data has been moved to once again stored in the
 //|									accounts.adm file. So changes to this typedef were needed
@@ -104,63 +89,63 @@ enum __ACCOUNTBLOCK_FLAGS__
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-typedef struct __ACCOUNTSADM_BLOCK__
+typedef struct CAccountBlock
 {
 #if _NOACTCOPY_
 private:
-	__ACCOUNTSADM_BLOCK__::__ACCOUNTSADM_BLOCK__( const __ACCOUNTSADM_BLOCK__& );
-	__ACCOUNTSADM_BLOCK__& __ACCOUNTSADM_BLOCK__::operator=( const __ACCOUNTSADM_BLOCK__& );
+	CAccountBlock::CAccountBlock( const CAccountBlock& );
+	CAccountBlock& CAccountBlock::operator=( const CAccountBlock& );
 #endif
 public:
-	__ACCOUNTSADM_BLOCK__( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
-		wAccountIndex( 0xFFFF ), wFlags( 0x0000 ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
+	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
+		wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
 		dwLastIP( 0x00000000 ), bChanged( false )
 	{
 		for( UI08 i = 0; i < 6; ++i )
 		{
-			dwCharacters[i]=0xFFFFFFFF;
-			lpCharacters[i]=NULL;
+			dwCharacters[i] = 0xFFFFFFFF;
+			lpCharacters[i] = NULL;
 		}
 	};
-	void reset(void)
+	void reset( void )
 	{
-		sUsername="";
-		sPassword="";
-		sContact="";
-		sPath="";
-		wAccountIndex=0xFFFF;
-		wFlags=0x0000;
-		wTimeBan=0x0000;
-		dwInGame=0xFFFFFFFF;
-		dwLastIP=0x00000000;
-		bChanged = false;
+		sUsername		= "";
+		sPassword		= "";
+		sContact		= "";
+		sPath			= "";
+		wAccountIndex	= 0xFFFF;
+		wTimeBan		= 0x0000;
+		dwInGame		= 0xFFFFFFFF;
+		dwLastIP		= 0x00000000;
+		bChanged		= false;
 		for( UI08 i = 0; i < 6; ++i )
 		{
-			dwCharacters[i]=0xFFFFFFFF;
-			lpCharacters[i]=NULL;
+			dwCharacters[i] = 0xFFFFFFFF;
+			lpCharacters[i] = NULL;
 		}
+		wFlags.reset();
 	};
-	std::string sUsername;
-	std::string sPassword;
-	std::string sPath;
-	std::string sContact;
-	UI16 wAccountIndex;
-	UI16 wFlags;
-	UI16 wTimeBan;
-	UI32 dwInGame;
-	UI32 dwLastIP;
-	bool bChanged;
-	UI32 dwCharacters[6];
-	CChar	*lpCharacters[6];
-} ACCOUNTSBLOCK,*LPACCOUNTSBLOCK;
+	std::string					sUsername;
+	std::string					sPassword;
+	std::string					sPath;
+	std::string					sContact;
+	UI16						wAccountIndex;
+	std::bitset< AB_FLAGS_ALL >	wFlags;
+	UI16						wTimeBan;
+	UI32						dwInGame;
+	UI32						dwLastIP;
+	bool						bChanged;
+	UI32						dwCharacters[6];
+	CChar *						lpCharacters[6];
+} CAccountBlock;
 
 // Class typdefs to help simplify the use of map STL
-typedef std::map<std::string,ACCOUNTSBLOCK*> MAPUSERNAME;
-typedef std::map<UI16,ACCOUNTSBLOCK> MAPUSERNAMEID;
-typedef std::map<std::string,ACCOUNTSBLOCK*>::iterator MAPUSERNAME_ITERATOR;
-typedef std::map<std::string,ACCOUNTSBLOCK*>::const_iterator MAPUSERNAME_CITERATOR;
-typedef std::map<UI16,ACCOUNTSBLOCK>::iterator MAPUSERNAMEID_ITERATOR;
-typedef std::map<UI16,ACCOUNTSBLOCK>::const_iterator MAPUSERNAMEID_CITERATOR;
+typedef std::map< std::string, CAccountBlock * >					MAPUSERNAME;
+typedef std::map< UI16, CAccountBlock >								MAPUSERNAMEID;
+typedef std::map< std::string, CAccountBlock * >::iterator			MAPUSERNAME_ITERATOR;
+typedef std::map< std::string, CAccountBlock * >::const_iterator	MAPUSERNAME_CITERATOR;
+typedef std::map< UI16, CAccountBlock >::iterator					MAPUSERNAMEID_ITERATOR;
+typedef std::map< UI16, CAccountBlock >::const_iterator				MAPUSERNAMEID_CITERATOR;
 //o--------------------------------------------------------------------------o
 //|	Class/Struct	-	class cAccountClass
 //|	Date			-	12/6/2002 5:46:02 AM
@@ -182,45 +167,42 @@ public:
 	// Operator overloads
 	cAccountClass& operator++();
 	cAccountClass& operator--(int);
-	UI16	CreateAccountSystem(void);
-	UI16	ImportAccounts(void);
-	UI16	AddAccount(std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000);
-	bool	DelAccount(std::string sUsername);
-	bool	DelAccount(UI16 wAccountID);
-	bool	ModAccount(std::string sUsername,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
-	bool	ModAccount(UI16 wAccountID,UI32 dwFlags,ACCOUNTSBLOCK &actbBlock);
-	bool	SetPath(std::string sPath);
-	std::string GetPath(void);
-	UI16	Save(bool bForceLoad=false);
-	UI16	Load(void);
-	void	Reset(ACCOUNTSBLOCK *actbValue);
-	size_t	size(void);
-	bool	clear(void);
-	bool	isUser(std::string sUsername);
-	bool	AddCharacter(UI16 wAccountID, CChar *lpObject);
-	bool	AddCharacter(UI16 wAccountID,UI32 dwCharacterID, CChar *lpObject);
-	bool	DelCharacter(UI16 wAccountID, int nSlot);
-	bool	TransCharacter(UI16 wSAccountID,UI16 wSSlot,UI16 wDAccountID);
-	ACCOUNTSBLOCK &	GetAccountByName( std::string sUsername );
-	ACCOUNTSBLOCK &	GetAccountByID( UI16 wAccountID );
-	MAPUSERNAMEID_ITERATOR& begin(void);
-	MAPUSERNAMEID_ITERATOR& end(void);
-	MAPUSERNAMEID_ITERATOR& last(void);
+	UI16					CreateAccountSystem( void );
+	UI16					ImportAccounts( void );
+	UI16					AddAccount( std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000 );
+	bool					DelAccount( std::string sUsername );
+	bool					DelAccount( UI16 wAccountID );
+	bool					SetPath( std::string sPath );
+	std::string				GetPath( void );
+	UI16					Save( bool bForceLoad = false );
+	UI16					Load( void );
+	size_t					size( void );
+	bool					clear( void );
+	bool					isUser( std::string sUsername );
+	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );
+	bool					AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject );
+	bool					DelCharacter( UI16 wAccountID, int nSlot );
+	bool					TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID );
+	CAccountBlock&			GetAccountByName( std::string sUsername );
+	CAccountBlock&			GetAccountByID( UI16 wAccountID );
+	MAPUSERNAMEID_ITERATOR&	begin( void );
+	MAPUSERNAMEID_ITERATOR&	end( void );
+	MAPUSERNAMEID_ITERATOR&	last( void );
 	// Member variables
 	MAPUSERNAMEID_ITERATOR I;
 private:
 	// Member Functions
-	void WriteAccountsHeader(std::fstream &fsOut);
-	void WriteAccessHeader(std::fstream &fsOut);
-	void WriteOrphanHeader(std::fstream &fsOut);
-	void WriteUADHeader(std::fstream &fsOut,ACCOUNTSBLOCK& actbTemp);
-	void WriteImportHeader(std::fstream &fsOut);
+	void WriteAccountsHeader( std::fstream &fsOut );
+	void WriteAccessHeader( std::fstream &fsOut );
+	void WriteOrphanHeader( std::fstream &fsOut );
+	void WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp );
+	void WriteImportHeader( std::fstream &fsOut );
 
-	ACCOUNTSBLOCK actbInvalid;
-	MAPUSERNAME m_mapUsernameMap;
-	MAPUSERNAMEID m_mapUsernameIDMap;
-	UI16 m_wHighestAccount;
-	std::string m_sAccountsDirectory;
+	CAccountBlock	actbInvalid;
+	MAPUSERNAME		m_mapUsernameMap;
+	MAPUSERNAMEID	m_mapUsernameIDMap;
+	UI16			m_wHighestAccount;
+	std::string		m_sAccountsDirectory;
 };
 
 extern cAccountClass *Accounts;

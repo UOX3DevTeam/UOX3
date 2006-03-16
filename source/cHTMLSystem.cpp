@@ -317,7 +317,7 @@ void cHTMLTemplate::Process( void )
 						sPos = parsedInline.find( "%playeraccount" ); 
 						while( sPos != std::string::npos )
 						{
-							ACCOUNTSBLOCK& toScan = tChar->GetAccount();
+							CAccountBlock& toScan = tChar->GetAccount();
 							if( toScan.wAccountIndex != AB_INVALID_ID )
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
 							sPos = parsedInline.find( "%playeraccount" );

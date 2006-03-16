@@ -929,24 +929,24 @@ void CSocket::CurrcharObj( CChar *newValue )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	ACCOUNTSBLOCK &CSocket::GetAccount(void)
-//|	Date					-	1/17/2003 6:21:59 AM
+//|	Function		-	CAccountBlock &CSocket::GetAccount(void)
+//|	Date			-	1/17/2003 6:21:59 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	Return to the calling function this objects accounts 
-//|									referance.
+//|							referance.
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK & CSocket::GetAccount( void )
+CAccountBlock& CSocket::GetAccount( void )
 {
 	return Accounts->GetAccountByID( accountNum );
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void CSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
+//|	Function		-	void CSocket::SetAccount( CAccountBlock &actbBlock )
 //|	Date			-	1/17/2003 7:01:23 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -956,7 +956,7 @@ ACCOUNTSBLOCK & CSocket::GetAccount( void )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void CSocket::SetAccount( ACCOUNTSBLOCK& actbBlock )
+void CSocket::SetAccount( CAccountBlock& actbBlock )
 {
 	accountNum = actbBlock.wAccountIndex;
 }

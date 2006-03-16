@@ -31,8 +31,8 @@ class CSocket
 {
 public:
 	// Account Related Member(s)
-	ACCOUNTSBLOCK&	GetAccount( void );
-	void			SetAccount( ACCOUNTSBLOCK& actbBlock );
+	CAccountBlock&	GetAccount( void );
+	void			SetAccount( CAccountBlock& actbBlock );
 	//
 
 	void			InternalReset( void );

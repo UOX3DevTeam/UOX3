@@ -274,7 +274,7 @@ bool CPIPlayCharacter::Handle( void )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
-			ACCOUNTSBLOCK&  actbRec	= tSock->GetAccount();
+			CAccountBlock&  actbRec	= tSock->GetAccount();
 			CChar *kChar			= NULL;
 			CChar *ourChar			= NULL;
 			if( actbRec.wAccountIndex == AB_INVALID_ID )
@@ -374,7 +374,7 @@ bool CPIDeleteCharacter::Handle( void )
 {
 	if( tSock != NULL )
 	{
-		ACCOUNTSBLOCK * actbTemp = &tSock->GetAccount();
+		CAccountBlock * actbTemp = &tSock->GetAccount();
 		UI08 slot = tSock->GetByte( 0x22 );
 		if( actbTemp->wAccountIndex != AB_INVALID_ID )
 		{
@@ -625,7 +625,7 @@ bool CPICreateCharacter::Handle( void )
 			tSock->CurrcharObj( mChar );
 			mChar->SetName( charName );
 			Accounts->AddCharacter( tSock->AcctNo(), mChar );
-			ACCOUNTSBLOCK &actbRec	= tSock->GetAccount();
+			CAccountBlock &actbRec	= tSock->GetAccount();
 			if( actbRec.dwInGame != INVALIDSERIAL )
 				actbRec.dwInGame = mChar->GetSerial();
 
@@ -651,8 +651,8 @@ bool CPICreateCharacter::Handle( void )
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 			
-			ACCOUNTSBLOCK& actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex != AB_INVALID_ID && ( (actbTemp2.wFlags&AB_FLAGS_GM) == AB_FLAGS_GM ) )
+			CAccountBlock& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ) )
 			{ 
 				mChar->SetPriv( 0xFF );
 				mChar->SetCommandLevel( GM_CMDLEVEL );
@@ -794,10 +794,10 @@ void startChar( CSocket *mSock, bool onCreate )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ) )
 		{
-			ACCOUNTSBLOCK& actbTemp = mSock->GetAccount();
+			CAccountBlock& actbTemp = mSock->GetAccount();
 			if( actbTemp.wAccountIndex != AB_INVALID_ID )
 			{
-				MFLAGSET( actbTemp.wFlags, true, AB_FLAGS_ONLINE );
+				actbTemp.wFlags.set( AB_FLAGS_ONLINE, true );
 			}
 
 			mSock->TargetOK( false );
