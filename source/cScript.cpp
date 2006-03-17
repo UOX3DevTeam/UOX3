@@ -743,8 +743,8 @@ bool cScript::OnEquip( CChar *equipper, CItem *equipping )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( itemObj );
-	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( itemObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEquip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnEquip, false );
@@ -763,8 +763,8 @@ bool cScript::OnUnequip( CChar *equipper, CItem *equipping )
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, equipper, runTime );
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, equipping, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( itemObj );
-	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( itemObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUnequip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnUnequip, false );

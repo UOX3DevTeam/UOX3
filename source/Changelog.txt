@@ -1,3 +1,6 @@
+3/18/2006 - grimson
+	cScript::OnEquip() and cScript::OnUnequip() were adding the parameters in the wrong order.
+
 3/17/2006 - grimson
 	Changed AdjustRaceDamage() to also use the new ApplyDefenseModifiers() function.
 
