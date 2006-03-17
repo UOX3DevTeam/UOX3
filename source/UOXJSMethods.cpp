@@ -5424,16 +5424,55 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
-JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	bool doRepsys, doArmorDamage = false;
-	WeatherType damageType = NONE;
-	SI08 hitLoc = 0;
-	UI08 fightSkill = WRESTLING;
-	
 	if( argc != 1 && argc != 2 )
 	{
-		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and attacker)", argc );
+		MethodError( "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *attacker	= NULL;
+	CChar *mChar	= static_cast<CChar *>(JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar )  )
+	{
+		MethodError( "(CChar_ReactOnDamage): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+	JSEncapsulate damage( cx, &(argv[0]) );
+
+	if( argc >= 2 )
+	{
+		JSEncapsulate attackerClass( cx, &(argv[1]) );
+		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+		{
+			MethodError( "CChar_ReactOnDamage: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+
+		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ) )
+			attacker = NULL;
+		else
+		{
+			attacker	= static_cast<CChar *>(attackerClass.toObject());
+			if( !ValidateObject( attacker )  )
+			{
+				MethodError( "(CChar_ReactOnDamage): Passed an invalid Character" );
+				return JS_TRUE;
+			}
+		}
+	}
+	mChar->ReactOnDamage( static_cast<WeatherType>(damage.toInt()), attacker );
+	return JS_TRUE;
+}
+
+JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	bool doRepsys;
+
+	if( argc != 1 && argc != 2 && argc != 3)
+	{
+		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount and attacker) or 3 (amount, attacker and doRepsys)", argc );
 		return JS_TRUE;
 	}
 
@@ -5471,23 +5510,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	{
 		doRepsys = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	}
-	if( argc >= 4 )
-	{
-		damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[3] ));
-	}
-	if( argc >= 5 )
-	{
-		hitLoc = static_cast<SI08>(JSVAL_TO_INT( argv[4] ));
-	}
-	if( argc >= 6 )
-	{
-		fightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[5] ));
-	}
-	if( argc >= 7 )
-	{
-		doArmorDamage = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
-	}
-	mChar->Damage( damage.toInt(), attacker );
+	mChar->Damage( damage.toInt(), attacker, doRepsys );
 	return JS_TRUE;
 }
 

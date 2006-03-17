@@ -2096,10 +2096,12 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 					message = 1215;
 			}
 		}
-
+		
+		damage = Combat->ApplyDefenseModifiers( LIGHT, NULL, &mChar, 0, 0, damage, true);
+		
 		if( damage > 0 )
 		{
-			mChar.Damage( damage, NULL, false, LIGHT, 0 );
+			mChar.Damage( damage );
 			Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
 			Effects->PlaySound( (&mChar), 0x0208 );     
 			didDamage = true;
@@ -2203,9 +2205,11 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 			damageAnim = 0x3709;
 		}
 
+		damage = Combat->ApplyDefenseModifiers( resistElement, NULL, &mChar, 0, 0, damage, true);
+
 		if( damage > 0 )
 		{
-				mChar.Damage( damage, NULL, false, resistElement, 0 );
+				mChar.Damage( damage );
 				mChar.SetStamina( mChar.GetStamina() - 2 );
 				if( mSock != NULL )
 					mSock->sysmessage( damageMessage );

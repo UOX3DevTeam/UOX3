@@ -116,6 +116,9 @@ static JSFunctionSpec my_functions[] =
 	{ "ReloadJSFile",				SE_ReloadJSFile,			1, 0, 0 },
 
 	{ "ValidateObject",				SE_ValidateObject,			1, 0, 0 },
+	
+	{ "ApplyDamageBonuses",			SE_ApplyDamageBonuses,		6, 0, 0 },
+	{ "ApplyDefenseModifiers",		SE_ApplyDefenseModifiers,	7, 0, 0 },
 
 	{ NULL,							NULL,						0, 0, 0 }, 
 };

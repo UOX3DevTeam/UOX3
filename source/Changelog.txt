@@ -1,3 +1,25 @@
+3/17/2006 - grimson
+	Moved defense modifications into CHandleCombat::ApplyDefenseModifiers().
+	Moved damage bonuses into CHandleCombat::ApplyDamageBonuses().
+	Moved the calculation of the hit location from CHandleCombat::DoHitMessage()
+	into CHandleCombat::CalculateHitLoc().
+	Added ReactOnDamage() to CCHar, currently it only makes the char attack the
+	char that inflicted the damage.
+	Reduced CChar::Damage() to show, the damage, apply the damage, handle the
+	reputation effect, the peace breaking effect and the chars death.
+	
+	JS changes:
+	New JS functions:
+		damage = ApplyDamageBonuses( damageType, attacker, defender, fightSkill, hitLoc, baseDamage );
+			Note: Attacker and defender need to be valid chars.
+		damage = ApplyDefenseModifiers( damageType, attacker, defender, fightSkill, hitLoc, baseDamage, doArmorDamage );
+			Note: Attacker can be NULL, fightSkill will then be ignored.
+	New char function:
+		mChar.ReactOnDamage( damageType, attacker );
+			Note: damageType is currently unused.
+	Changed char function:
+		mChar.Damage( amount, attacker, doRepsys );
+	
 17th March, 2006 - Maarc
 	Changed the INI loading code so that it uses a Script rather than custom code
 

@@ -5575,84 +5575,43 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 	}
 }
 
-void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys, WeatherType damageType, SI08 hitLoc, UI08 fightSkill, bool doArmorDamage )
+void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 {
-	// Armor protection
-	UI16 getDef;
-	UI16 attSkill = 1000;
-	R32 damageModifier = 0;
+	CSocket *mSock = GetSocket();
 
+	if( ValidateObject( attacker ) )
+	{
+		// Let the target react upon damage
+		attacker->SetAttackFirst( ( GetTarg() != attacker ) );
+		if( !attacker->IsInvulnerable() && (!ValidateObject( GetTarg() ) || !objInRange( this, GetTarg(), DIST_INRANGE )) )
+		{
+			SetAttacker( attacker );
+			SetAttackFirst( false );
+			if( IsNpc() )
+			{
+				if( GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
+					ExposeToView();
+
+				if( !IsAtWar() && !attacker->IsInvulnerable() )
+				{
+					SetTarg( attacker );
+					ToggleCombat();
+					SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
+				}
+			} else if( mSock != NULL )
+				BreakConcentration( mSock );
+		}
+	}
+}
+
+void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
+{
 	CSocket *mSock = GetSocket(), *attSock = NULL;
 	
 	if( ValidateObject( attacker) )
 	{
 		attSock = attacker->GetSocket();
-		attSkill = attacker->GetSkill( fightSkill );
 	}
-
-	if( hitLoc < 0 )
-		hitLoc = Combat->DoHitMessage( attacker, this, mSock, damageValue );
-
-	switch( damageType )
-	{
-		case NONE: break;	//	No Armor protection
-		case PHYSICAL:		//	Physical damage
-			if( isHuman() )
-			{
-				getDef = Combat->calcDef( this, hitLoc, doArmorDamage );
-				getDef = HalfRandomNum( getDef );
-			}
-			else if( GetDef() > 0 )
-				getDef = GetDef();
-			else
-				getDef = 20;
-			break;
-		case POISON:		//	POISON Damage
-			if( damageValue > 5 ) 
-				damageValue = 5;
-			if( damageValue < 0 ) 
-				damageValue = 1;
-
-			damageModifier = ( Combat->calcElementDef( this, hitLoc, doArmorDamage, damageType ) / 100 );
-			if( damageModifier > 0 )
-				damageValue = (SI16)roundNumber( ((R32)damageValue - ( (R32)damageValue * damageModifier )) );
-
-			IncreaseElementResist( damageType );
-		
-			if ( damageValue > 0 )
-			{
-				SetPoisoned( damageValue );
-				SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
-			}
-			break;
-		default:			//	Elemental damage
-			if( isHuman() )
-			{
-				getDef = Combat->calcElementDef( this, hitLoc, doArmorDamage, damageType );
-				getDef = HalfRandomNum( getDef );
-			}
-			else if( GetDef() > 0 )
-				getDef = GetElementResist( damageType );
-			else
-				getDef = 20;
-			IncreaseElementResist( damageType );
-			break;
-	}
-
-	if( fightSkill != WRESTLING && damageType == PHYSICAL && ValidateObject( attacker ) )
-	{
-		CItem *mWeapon	= Combat->getWeapon( attacker );
-		Combat->AdjustRaceDamage( this, mWeapon, damageValue, hitLoc, attSkill );
-	}
-
-	if( getDef > 0 )
-		damageValue -= (SI16)( ( getDef * attSkill ) / 750 );
-
-	if( damageValue <= 0 && damageType == PHYSICAL ) 
-		damageValue = RandomNum( 0, 4 );
-
-	if( IsNpc() && damageType > PHYSICAL) 
-		damageValue *= 2;
 
 	// Display damage
 	CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
@@ -5695,27 +5654,6 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys, WeatherTyp
 
 	if( ValidateObject( attacker ) )
 	{
-		// Let the target react upon damage
-		attacker->SetAttackFirst( ( GetTarg() != attacker ) );
-		if( !attacker->IsInvulnerable() && (!ValidateObject( GetTarg() ) || !objInRange( this, GetTarg(), DIST_INRANGE )) )
-		{
-			SetAttacker( attacker );
-			SetAttackFirst( false );
-			if( IsNpc() )
-			{
-				if( GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
-					ExposeToView();
-
-				if( !IsAtWar() && !attacker->IsInvulnerable() )
-				{
-					SetTarg( attacker );
-					ToggleCombat();
-					SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
-				}
-			} else if( mSock != NULL )
-				BreakConcentration( mSock );
-		}
-
 		// Update Damage tracking
 		const SERIAL attackerSerial	= attacker->GetSerial();
 		bool persFound				= false;

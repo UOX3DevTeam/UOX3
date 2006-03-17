@@ -230,7 +230,9 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 			{
 				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
-					tempChar->Damage( ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), c, true, HEAT, 0, ALCHEMY, true );
+					UI08 hitLoc = Combat->CalculateHitLoc();
+					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), true);
+					tempChar->Damage( damage, c, true );
 				}
 			}
 		}

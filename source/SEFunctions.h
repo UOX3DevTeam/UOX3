@@ -130,6 +130,8 @@ SEngineFunc SE_StaticInRange;
 SEngineFunc SE_StaticAt;
 
 SEngineFunc SE_ValidateObject;
+SEngineFunc SE_ApplyDamageBonuses;
+SEngineFunc SE_ApplyDefenseModifiers;
 
 #endif
 

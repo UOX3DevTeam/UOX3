@@ -1904,7 +1904,7 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 //|     Purpose       :          Calculate and inflict magic damage.
 //o---------------------------------------------------------------------------o
 
-void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType element )
+void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType element )
 {
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
 		return;
@@ -1912,9 +1912,9 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType ele
 	if( p->IsDead() || p->GetHP() <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
 		return;
 
-	CSocket *mSock = p->GetSocket(), *attSock = attacker->GetSocket();
+	CSocket *mSock = p->GetSocket();
 	if( Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 ) ) 
-		amount = UOX_MAX( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
+		amount = (SI16)UOX_MAX( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
 	if( p->IsFrozen() && p->GetDexterity() > 0 )
 	{
 		p->SetFrozen( false );
@@ -1923,7 +1923,11 @@ void cMagic::MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType ele
 	}           
 	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
 	{
-		p->Damage( amount, attacker, true, element, -1, MAGERY, true );
+		UI08 hitLoc = Combat->CalculateHitLoc();
+		SI16 damage = Combat->ApplyDamageBonuses( element, attacker, p, MAGERY, hitLoc, amount);
+		damage = Combat->ApplyDefenseModifiers( element, attacker, p, MAGERY, hitLoc, damage, true);
+		p->Damage( damage, attacker, true );
+		p->ReactOnDamage( element, attacker );
 	}
 }
 
@@ -1946,7 +1950,13 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 	}           
 	if( !p->IsInvulnerable() && !p->GetRegion()->CanCastAggressive() )
 	{
-		p->Damage( poison, NULL, false, POISON, 0);
+		if( poison > 5 ) 
+			poison = 5;
+		if( poison < 0 ) 
+			poison = 1;
+
+		p->SetPoisoned( poison );
+		p->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POISON ) );
 	}
 }
 

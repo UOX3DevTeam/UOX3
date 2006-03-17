@@ -1831,5 +1831,140 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 6 )
+	{
+		DoSEErrorMessage( "ApplyDamageBonuses: Invalid number of arguments (takes 6)" );
+ 		return JS_FALSE;
+	}
+	
+	CChar *attacker	= NULL, *defender = NULL;
+	WeatherType damageType = NONE;
+	UI08 getFightSkill = 0, hitLoc = 0;
+	SI16 baseDamage = 0, damage = 0;
+
+	damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[0] ));
+	getFightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	hitLoc = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	baseDamage = static_cast<SI16>(JSVAL_TO_INT( argv[5] ));
+
+
+	JSEncapsulate attackerClass( cx, &(argv[1]) );
+	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
+	{
+		DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ) )
+	{
+		DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+		return JS_TRUE;
+	}
+	else
+	{
+		attacker	= static_cast<CChar *>(attackerClass.toObject());
+		if( !ValidateObject( attacker )  )
+		{
+			DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+			return JS_TRUE;
+		}
+	}
+
+	JSEncapsulate defenderClass( cx, &(argv[1]) );
+	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
+	{
+		DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ) )
+	{
+		DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+		return JS_TRUE;
+	}
+	else
+	{
+		defender	= static_cast<CChar *>(defenderClass.toObject());
+		if( !ValidateObject( defender )  )
+		{
+			DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
+			return JS_TRUE;
+		}
+	}
+
+	damage = Combat->ApplyDamageBonuses( damageType, attacker, defender, getFightSkill, hitLoc, baseDamage );
+	
+	*rval				= INT_TO_JSVAL( damage );
+
+	return JS_TRUE;
+}
+
+JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 7 )
+	{
+		DoSEErrorMessage( "ApplyDefenseModifiers: Invalid number of arguments (takes 7)" );
+ 		return JS_FALSE;
+	}
+	
+	CChar *attacker	= NULL, *defender = NULL;
+	WeatherType damageType = NONE;
+	UI08 getFightSkill = 0, hitLoc = 0;
+	SI16 baseDamage = 0, damage = 0;
+	bool doArmorDamage = false;
+
+	damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[0] ));
+	getFightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
+	hitLoc = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
+	baseDamage = static_cast<SI16>(JSVAL_TO_INT( argv[5] ));
+	doArmorDamage = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+
+	JSEncapsulate attackerClass( cx, &(argv[1]) );
+	if( attackerClass.ClassName() == "UOXChar" )
+	{
+		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ) )
+		{
+			attacker = NULL;
+		}
+		else
+		{
+			attacker	= static_cast<CChar *>(attackerClass.toObject());
+			if( !ValidateObject( attacker )  )
+			{
+				attacker = NULL;
+			}
+		}
+	}
+
+	JSEncapsulate defenderClass( cx, &(argv[1]) );
+	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
+	{
+		DoSEErrorMessage( "ApplyDefenseModifiers: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	if( defenderClass.isType( JSOT_VOID ) || defenderClass.isType( JSOT_NULL ) )
+	{
+		DoSEErrorMessage( "ApplyDefenseModifiers: Passed an invalid Character" );
+		return JS_TRUE;
+	}
+	else
+	{
+		defender	= static_cast<CChar *>(defenderClass.toObject());
+		if( !ValidateObject( defender )  )
+		{
+			DoSEErrorMessage( "ApplyDefenseModifiers: Passed an invalid Character" );
+			return JS_TRUE;
+		}
+	}
+
+	damage = Combat->ApplyDefenseModifiers( damageType, attacker, defender, getFightSkill, hitLoc, baseDamage, doArmorDamage );
+	
+	*rval				= INT_TO_JSVAL( damage );
+
+	return JS_TRUE;
+}
 
 }

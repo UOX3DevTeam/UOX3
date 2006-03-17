@@ -33,7 +33,7 @@ private:
 	void	InvalidateAttacker( CChar *mChar );
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
-	SI16	calcDamage( CChar *mChar, CChar *ourTarg, CSocket *targSock, CItem *mWeapon, UI08 getFightSkill );
+	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
@@ -56,7 +56,8 @@ public:
 	void	CombatLoop( CSocket *mSock, CChar& mChar );
 	void	Kill( CChar *mChar, CChar *ourTarg );
 
-	SI08	DoHitMessage( CChar *mChar, CChar *ourTarg, CSocket *targSock, SI16 damage );
+	void	DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage );
+	SI08	CalculateHitLoc( void );
 	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
 	UI16	calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = NONE );
 	SI16	calcAtt( CChar *mChar, bool doDamage = false );
@@ -68,6 +69,9 @@ public:
 	
 	CItem *	getShield( CChar *mChar );
 	CItem *	getWeapon( CChar *mChar );
+
+	SI16	ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage );
+	SI16	ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage );
 
 	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
