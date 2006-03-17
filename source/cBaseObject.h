@@ -197,7 +197,7 @@ public:
 	virtual SI16			GetStrength( void ) const;
 	virtual SI16			GetDexterity( void ) const;
 	virtual SI16			GetIntelligence( void ) const;
-	virtual SI16			GetHP( void ) const;
+	SI16					GetHP( void ) const;
 
 	virtual void			SetStrength( SI16 newValue );
 	virtual void			SetDexterity( SI16 newValue );

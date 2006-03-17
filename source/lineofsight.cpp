@@ -175,7 +175,7 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 	return false;
 }
 
-bool CheckIDs( SI32 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
+bool CheckIDs( UI08 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
 {
 	switch( typeToCheck )
 	{
@@ -242,6 +242,86 @@ bool CheckIDs( SI32 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
 	return false;
 }
 
+SI08 GetSGN( SI16 startLoc, SI16 destLoc, SI16 &l1, SI16 &l2 )
+{
+	if( startLoc < destLoc )
+	{
+		l1			= startLoc;
+		l2			= destLoc;
+		return 1;
+	}
+	else
+	{
+		l1			= destLoc;
+		l2			= startLoc;
+		if( startLoc > destLoc )
+			return -1;
+	}
+	return 0;
+}
+
+UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount, SI16 distX, SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2 )
+{
+	const SI16 curX		= toCheck->GetX();
+	const SI16 curY		= toCheck->GetY();
+	const SI08 curZ		= toCheck->GetZ();
+	SI32 i				= 0;
+	vector3D *checkLoc	= NULL;
+	if( !toCheck->CanBeObjType( OT_MULTI ) )
+	{
+		if( toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2 )
+		{
+			CTile& iTile = Map->SeekTile( toCheck->GetID() );
+			for( i = 0; i < collisioncount; ++i )
+			{
+				checkLoc = &collisions[i];
+				if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
+					return toCheck->GetID();
+			}
+		}
+	}
+	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
+	{
+		const UI16 multiID = static_cast<UI16>(toCheck->GetID() - 0x4000);
+		SI32 length = Map->SeekMulti( multiID );
+		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
+		{
+			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
+			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
+			CLand& land = Map->SeekLand( map1.id );
+			if( land.CheckFlag( TF_WET ) ) // is it water?
+				toCheck->SetID( 0x4001 );
+			else
+				toCheck->SetID( 0x4064 );
+			length = 0;
+		}
+
+		for( SI32 k = 0; k < length; ++k )
+		{
+			Multi_st& multi = Map->SeekIntoMulti( multiID, k );
+			if( multi.visible )
+			{
+				const SI16 checkX = (curX + multi.x);
+				const SI16 checkY = (curY + multi.y);
+				if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
+				{
+					const SI08 checkZ = (curZ + multi.z);
+					CTile& multiTile = Map->SeekTile( multi.tile );
+					for( i = 0; i < collisioncount; ++i )
+					{
+						checkLoc = &collisions[i];
+						if( checkX == checkLoc->x && checkY == checkLoc->y &&
+							checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) )
+						{
+								return multi.tile;
+						}
+					}
+				}
+			}
+		}
+	}
+	return INVALIDID;
+}
 //o--------------------------------------------------------------------------
 //|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
 //|	Date			-	03 July, 2001
@@ -250,7 +330,7 @@ bool CheckIDs( SI32 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if there is line of sight between src and trg
 //o--------------------------------------------------------------------------
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 koxn, SI16 koym, SI08 koz2, UI08 checkfor )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor )
 {
 /*
 Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
@@ -258,69 +338,56 @@ s is for pc's, in case a message needs to be sent.
 the checkfor is what is checked for along the line of sight.  
 Look at uox3.h to see options. Works like npc magic.
 
-  #define TREES_BUSHES 1 // Trees and other large vegetaion in the way
-  #define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the way
-  #define DOORS 4 // Doors in the way
-  #define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically
-  #define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
-  #define LAVA_WATER 32  // Don't know what all to use this for yet
+	#define TREES_BUSHES 1 // Trees and other large vegetaion in the way
+	#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the way
+	#define DOORS 4 // Doors in the way
+	#define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically
+	#define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
+	#define LAVA_WATER 32  // Don't know what all to use this for yet
   
 	Just or (|) the values for the diff things together to get what to search for.
 	So put in place of the paramater checkfor for example
 	
-	  if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS | DOORS | ROOFING_SLANTED ) )
-	  
-		
-		  This whole thing is based on the Pythagorean Theorem.  What I have done is
-		  taken the coordinates from both chars and created a right triange with the
-		  hypotenuse as the line of sight.  Then by sectioning off side "a" into a number
-		  of equal lengths and finding the other sides lengths according to that one,  I 
-		  have been able to find the coordinates of the tiles that lie along the line of
-		  sight(line "c").  Then these tiles are searched from an item that would block 
-		  the line of sight. 
-		  
-			<----- it WAS based on the P.T., now its based on linear algebra ;) (sereg)
-	*/
+	if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS | DOORS | ROOFING_SLANTED ) )
 
-	const bool blocked = false;
-	const bool not_blocked = true;
+	it WAS based on the P.T., now its based on linear algebra ;) (sereg)
+*/
+	const bool blocked		= false;
+	const bool not_blocked	= true;
 
-	if( koxn == -1 && koym == -1 )
+	if( destX == -1 && destY == -1 )
 		return not_blocked;		// target canceled
 
-	const SI16 kox1 = mChar->GetX(), koy1 = mChar->GetY();
-	SI08 koz1 = mChar->GetZ();
+	const SI16 startX = mChar->GetX(), startY = mChar->GetY();
+	const SI08 startZ = mChar->GetZ() + 15; // standard eye height of most bodies
 
-	if( (kox1 == koxn) && (koy1 == koym) && (koz1 == koz2) )
+	if( (startX == destX) && (startY == destY) && (startZ == destZ) )
 		return not_blocked;		// if source and target are on the same position
-
-	koz1 += 15; // standard eye height of most bodies
 
 	const UI08 worldNumber = mChar->WorldNumber();
 
-	SI32 n = abs( static_cast<SI32>(koxn - kox1) ), m = abs( static_cast<SI32>(koym - koy1) ), i = 0;
-	SI08 sgn_x = ( kox1 <= koxn ) ? 1 : (-1); // signum for x
-	SI08 sgn_y = ( koy1 <= koym ) ? 1 : (-1); // signum for y
-	SI08 sgn_z = ( koz1 <= koz2 ) ? 1 : (-1); // signum for z
-	if( kox1 == koxn )
-		sgn_x = 0;
-	if( koy1 == koym )
-		sgn_y = 0;
-	if( koz1 == koz2 )
-		sgn_z = 0;
+	const SI32 distX	= abs( static_cast<SI32>(destX - startX) ), distY = abs( static_cast<SI32>(destY - startY) );
+	const SI32 distZ	= abs( static_cast<SI32>(destZ - startZ) );
 
-	line3D lineofsight = line3D( vector3D( kox1, koy1, koz1 ), vector3D( (koxn-kox1), (koym-koy1), (koz2-koz1) ) );
-	double rBlah = abs( koxn - kox1 ) * abs( koxn - kox1 ) + abs( koym - koy1 ) * abs( koym - koy1 );
-	SI32 distance = (SI32)sqrt(rBlah);
+	line3D lineofsight	= line3D( vector3D( startX, startY, startZ ), vector3D( distX, distY, distZ ) );
+	const R64 rBlah		= (distX * distX) + (distY * distY);
+	const SI32 distance	= static_cast<SI32>(sqrt( rBlah ));
 
 	if( distance > 18 )
 		return blocked;
 
 	//If target is next to us and within our field of view
-	if( distance <= 1 && koz2 <= ( koz1 + 3 ) && koz2 >= (koz1 - 15 ) )
+	if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
 		return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];
+	SI16 x1, y1, x2, y2;
+	SI32 i				= 0;
+	const SI08 sgn_x	= GetSGN( startX, destX, x1, x2 );
+	const SI08 sgn_y	= GetSGN( startY, destY, y1, y2 );
+	SI08 sgn_z			= ( startZ < destZ ) ? 1 : (-1); // signum for z
+	if( startZ == destZ )
+		sgn_z = 0;
 
 	// initialize array
 	for( i = 0; i < (distance * 2); ++i )
@@ -328,147 +395,72 @@ Look at uox3.h to see options. Works like npc magic.
 
 	SI32 collisioncount = 0;
 	SI32 dz = 0; // dz is needed later for collisions of the ray with floor tiles
-	if( sgn_x == 0 || m > n )
+	if( sgn_x == 0 || distY > distX )
 		dz = (SI32)floor( abs( lineofsight.dzInDirectionY() ) );
 	else
 		dz = (SI32)floor( abs( lineofsight.dzInDirectionX() ) );
 
 	if( sgn_x == 0 && sgn_y == 0 && sgn_z != 0 ) // should fix shooting through floor issues
 	{
-		for( i = 0; i < abs( koz2 - koz1 ); ++i )
+		for( i = 1; i <= distZ; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1, koz1 + sgn_z );
+			collisions[collisioncount] = vector3D( startX, startY, (SI08)(startZ + (i * sgn_z)) );
 			++collisioncount;
 		}
 	}
 	else if( sgn_x == 0 ) // if we are on the same x-level, just push every x/y coordinate in y-direction from src to trg into the array
 	{
-		for( i = 0; i < m; ++i )
+		for( i = 1; i <= distY; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1, koy1 + (sgn_y * (i+1)), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z)) );
+			collisions[collisioncount] = vector3D( startX, startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) );
 			++collisioncount;
 		}
 	}
 	else if( sgn_y == 0 ) // if we are on the same y-level, just push every x/y coordinate in x-direction from src to trg into the array
 	{
-		for( i = 0; i < n; ++i )
+		for( i = 1; i <= distX; ++i )
 		{
-			collisions[collisioncount] = vector3D( kox1 + (sgn_x * (i+1)), koy1, (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z)) );
+			collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY, (SI08)(startZ + (dz * (R32)i * sgn_z)) );
 			++collisioncount;
 		}
 	}
-	else
+	else if( distX >= distY )
 	{
-		for( i = 0; ( n >= m ) && (i < n); ++i )
+		for( i = 1; i < distX; ++i )
 		{
-			line2D toCollide = line2D( vector2D( (R32)( kox1 + (sgn_x * (i+1)) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
+			line2D toCollide = line2D( vector2D( (R32)( startX + (sgn_x * i) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
 
 			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
 			{
 				// the next one is somewhat tricky, if the line of sight exactly cuts a coordinate,
 				// we just have to take that coordinate...
-				if( floor( temp.y ) == temp.y )
-				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisioncount += 1;
-				}
+				collisions[collisioncount] = ( vector3D( (R32)roundNumber( temp.x ), (R32)roundNumber( temp.y ), (SI08)(startZ + (dz * (R32)i * sgn_z))) );
 				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
-				else
-				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisioncount += 2;
-				}
+				if( roundNumber( temp.y ) != temp.y )
+					collisions[++collisioncount] = ( vector3D( (R32)roundNumber( temp.x )+sgn_x, (R32)roundNumber( temp.y )+sgn_y, (SI08)(startZ + (dz * (R32)i * sgn_z))) );
+
+				++collisioncount;
 			}
 		}
-
-		for( i = 0; (m > n) && (i < m); ++i )
+	}
+	else
+	{
+		for( i = 1; i < distY; ++i )
 		{
-			line2D toCollide = line2D( vector2D( 0.0f, (R32)( koy1 + (sgn_y * (i+1)) ) ), vector2D( 1.0f, 0.0f ) );
+			line2D toCollide = line2D( vector2D( 0.0f, (R32)( startY + (sgn_y * i) ) ), vector2D( 1.0f, 0.0f ) );
 			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
 
 			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
 			{
-				if( floor( temp.x ) == temp.x )
-				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisioncount += 1;
-				}
-				else
-				{
-					collisions[collisioncount] = ( vector3D( (R32)floor( temp.x ), (R32)floor( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisions[collisioncount+1] = ( vector3D( (R32)ceil( temp.x ), (R32)ceil( temp.y ), (SI08)(koz1 + (dz * (R32)(i+1) * sgn_z))) );
-					collisioncount += 2;
-				}
+				collisions[collisioncount] = ( vector3D( (R32)roundNumber( temp.x ), (R32)roundNumber( temp.y ), (SI08)(startZ + (dz * (R32)i * sgn_z))) );
+				if( roundNumber( temp.x ) != temp.x )
+					collisions[++collisioncount] = ( vector3D( (R32)roundNumber( temp.x )+sgn_x, (R32)roundNumber( temp.y )+sgn_y, (SI08)(startZ + (dz * (R32)i * sgn_z))) );
+
+				++collisioncount;
 			}
 		}
 	}
-	///////////////////////////////////////////////////////////
-	/////////////////  These next lines initialize arrays
-	/*
-	This function has to search the items array a number of times which
-	caused a bit of lag.  I made this item cache to be used instead.  
-	The items array is only search once for items in a 40 tile area.
-	if an item is found, it is put into the cache, which is then used
-	by the rest of the function.  This way it doesn't have to check the 
-	entire array each time.
-	*/
-	// - Tauriel's region stuff 3/6/99
-
-	ITEMLIST loscache;
-	SI16 x1, y1, x2, y2;
-	if( kox1 < koxn )
-	{
-		x1 = kox1;
-		x2 = koxn;
-	}
-	else
-	{
-		x1 = koxn;
-		x2 = kox1;
-	}
-	if( koy1 < koym )
-	{
-		y1 = koy1;
-		y2 = koym;
-	}
-	else
-	{
-		y1 = koym;
-		y2 = koy1;
-	}
-
-	SI16 tempX = -1, tempY = -1;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( kox1, koy1, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == NULL )	// no valid region
-			continue;
-		CDataList< CItem * > *regItems = MapArea->GetItemList();
-		regItems->Push();
-		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-		{
-			if( !ValidateObject( tempItem ) )
-				continue;
-
-			tempX = tempItem->GetX();
-			tempY = tempItem->GetY();
-			if( ( tempX >= x1 && tempX <= x2 ) && ( tempY >= y1 && tempY <= y2 ) )
-			{
-				for( i = 0; i < collisioncount; ++i )
-				{
-					if( tempX == collisions[i].x && tempY == collisions[i].y )
-						loscache.push_back( tempItem );
-				}
-			}
-		}
-		regItems->Pop();
-	}
-
-	////////////End Initilzations
-	//////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////
 	////////////////  This determines what to check for
@@ -478,7 +470,7 @@ Look at uox3.h to see options. Works like npc magic.
 
 	while( checkfor )
 	{
-		if( ( checkfor >= itemtype ) && ( checkfor < ( itemtype * 2 ) ) && ( checkfor ) )
+		if( checkfor >= itemtype && checkfor < ( itemtype * 2 ) && checkfor )
 		{
 			checkthis[checkthistotal] = itemtype;
 			checkfor = (checkfor - itemtype);
@@ -491,90 +483,60 @@ Look at uox3.h to see options. Works like npc magic.
 			itemtype *= 2;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	////////////////////  This next stuff is what searches each tile for things
-	SI32 length;
-	size_t j;
 	std::vector< UI16 > itemids;
+	itemids.resize( 0 );
+
+	// We already have to run through all the collisions in this function, so lets just check and push the ID rather than coming back to it later.
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( startX, startY, worldNumber );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *MapArea = (*rIter);
+		if( MapArea == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = MapArea->GetItemList();
+		regItems->Push();
+		for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
+		{
+			if( !ValidateObject( toCheck ) )
+				continue;
+
+			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2 );
+			if( idToPush != INVALIDID )
+				itemids.push_back( idToPush );
+		}
+		regItems->Pop();
+	}
+
 	for( i = 0; i < collisioncount; ++i )
 	{
-		CStaticIterator msi( collisions[i].x, collisions[i].y, worldNumber );
+		vector3D& checkLoc = collisions[i];
+
+		CStaticIterator msi( checkLoc.x, checkLoc.y, worldNumber );
 		Static_st *stat = msi.First();
 
 		// Texture mapping
-		if( MapTileBlocks( mSock, stat, lineofsight, collisions[i].x, collisions[i].y, collisions[i].z, collisions[i].x + sgn_x, collisions[i].y + sgn_y, worldNumber ) )
+		if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber ) )
 			return blocked;
 			
 		// Statics
 		while( stat != NULL )
 		{
 			CTile& tile = Map->SeekTile( stat->itemid );
-			if(	( collisions[i].z >= stat->zoff && collisions[i].z <= ( stat->zoff + tile.Height() ) ) ||
-				( tile.Height() <= 2 && abs( collisions[i].z - stat->zoff ) <= dz ) )
+			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
+				( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
 			{
 				itemids.push_back( stat->itemid );
 			}
 			stat = msi.Next();
 		}
-
-		// Items
-		CItem *dyncount;
-		for( ITEMLIST_CITERATOR losIter = loscache.begin(); losIter != loscache.end(); ++losIter )
-		{
-			dyncount = (*losIter);
-			if( dyncount == NULL )
-				continue;
-			if( !dyncount->CanBeObjType( OT_MULTI ) )
-			{ // Dynamic items
-				CTile& iTile = Map->SeekTile( dyncount->GetID() );
-				if( ( dyncount->GetX() == collisions[i].x ) && (dyncount->GetY() == collisions[i].y ) &&
-					( collisions[i].z >= dyncount->GetZ() ) && ( collisions[i].z <= ( dyncount->GetZ() + iTile.Height() ) ) &&
-					( dyncount->GetVisible() == VT_VISIBLE ) )
-				{
-					itemids.push_back( dyncount->GetID() );
-				}
-			}
-			else
-			{	// Multi's
-				if( ( abs( kox1 - koxn ) <= DIST_BUILDRANGE ) && ( abs( koy1 - koym ) <= DIST_BUILDRANGE ) )
-				{
-					UI16 multiID = static_cast<UI16>(dyncount->GetID() - 0x4000);
-					length = Map->SeekMulti( multiID );
-					if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
-					{
-						Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-						const map_st map1 = Map->SeekMap( dyncount->GetX(), dyncount->GetY(), dyncount->WorldNumber() );
-						CLand& land = Map->SeekLand( map1.id );
-						if( land.CheckFlag( TF_WET ) ) // is it water?
-							dyncount->SetID( 0x4001 );
-						else
-							dyncount->SetID( 0x4064 );
-						length = 0;
-					}
-					for( SI32 k = 0; k < length; ++k )
-					{
-						Multi_st& test = Map->SeekIntoMulti( multiID, k );
-						if( ( test.visible ) && ( dyncount->GetX() + test.x == collisions[i].x ) &&
-							( dyncount->GetY() + test.y == collisions[i].y ) )
-						{
-							CTile& multiTile = Map->SeekTile( test.tile );
-							if( ( collisions[i].z >= dyncount->GetZ() + test.z ) &&
-								( collisions[i].z <= (dyncount->GetZ() + test.z + multiTile.Height() ) ) )
-							{
-								itemids.push_back( test.tile );
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 
+	size_t j;
 	for( std::vector<UI16>::const_iterator iIter = itemids.begin(); iIter != itemids.end(); ++iIter )
 	{
 		for( j = 0; j < checkthistotal; ++j )
 		{
-			if( CheckIDs( checkthis[j], (*iIter), koz1, koz2 ) )
+			if( CheckIDs( checkthis[j], (*iIter), startZ, destZ ) )
 				return blocked;
 		}
 	}

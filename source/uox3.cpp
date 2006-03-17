@@ -1020,13 +1020,13 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	if( mChar.GetReattackAt() == 0 )
 		mChar.SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
 	
-	if( mChar.GetNpcWander() != 5 && ( mChar.GetHP() < mChar.GetStrength() * mChar.GetFleeAt() / 100 ) )
+	if( mChar.GetNpcWander() != 5 && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
 	{
 		mChar.SetOldNpcWander( mChar.GetNpcWander() );
 		mChar.SetNpcWander( 5 );
 		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)( cwmWorldState->ServerData()->NPCSpeed() / 2 ) ) );	// fleeing enemies are 2x faster
 	}
-	else if( mChar.GetNpcWander() == 5 && (mChar.GetHP() > mChar.GetStrength() * mChar.GetReattackAt() / 100))
+	else if( mChar.GetNpcWander() == 5 && (mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100))
 	{
 		mChar.SetNpcWander( mChar.GetOldNpcWander() );
 		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( (R32)cwmWorldState->ServerData()->NPCSpeed() ) );

@@ -2030,9 +2030,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				mChar.ToggleCombat();
 		}
 		else
-		{
 			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar ) ) );
-		}
 	}
 }
 

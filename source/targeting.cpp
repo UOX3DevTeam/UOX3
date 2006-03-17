@@ -1368,7 +1368,7 @@ void MakeStatusTarget( CSocket *sock )
 	CItem *retitem	= NULL;
 	CItem *mypack	= targetChar->GetPackItem();
 
-	if( targLevel->stripOff != 0 )
+	if( targLevel->stripOff.any() )
 	{
 		for( CItem *z = targetChar->FirstItem(); !targetChar->FinishedItems(); z = targetChar->NextItem() )
 		{
@@ -1378,14 +1378,16 @@ void MakeStatusTarget( CSocket *sock )
 				{
 					case IL_HAIR:
 					case IL_FACIALHAIR:
-						if( (targLevel->stripOff&0x02) == 0x02 )
+						if( targLevel->stripOff.test( BIT_STRIPHAIR ) )
 							z->Delete();
 						break;
+					case IL_NONE:
+					case IL_MOUNT:
 					case IL_PACKITEM:
 					case IL_BANKBOX:
 						break;
 					default:
-						if( (targLevel->stripOff&0x04) == 0x04 )
+						if( targLevel->stripOff.test( BIT_STRIPITEMS ) )
 						{
 							if( !ValidateObject( mypack ) )
 								mypack = targetChar->GetPackItem();
@@ -1563,7 +1565,7 @@ bool CPITargetCursor::Handle( void )
 	CChar *mChar = tSock->CurrcharObj();
 	if( tSock->TargetOK() )
 	{
-		if( tSock->GetDWord( 11 ) == INVALIDSERIAL )
+		if( !tSock->GetByte( 1 ) && !tSock->GetDWord( 7 ) && tSock->GetDWord( 11 ) == INVALIDSERIAL )
 		{
 			if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
 				mChar->StopSpell();

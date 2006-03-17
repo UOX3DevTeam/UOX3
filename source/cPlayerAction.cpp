@@ -1672,7 +1672,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			{
 				if( baseCont->CanBeObjType( OT_ITEM ) )
 				{
-					if( mChar->GetMultiObj() == baseCont->GetMultiObj() )
+					if( baseCont->GetMultiObj() == NULL || mChar->GetMultiObj() == baseCont->GetMultiObj() )
 					{
 						mSock->openPack( iUsed );
 						packOpened = true;
@@ -2217,7 +2217,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		// Check if item is in a house?
 		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK )
 		{
-			if( iUsed->GetMultiObj() != ourChar->GetMultiObj() )
+			if( iUsed->GetMultiObj() != NULL && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
 			{
 				tSock->sysmessage( 389 );
 				return false;
@@ -2385,10 +2385,11 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_RECALLRUNE:
 		case IT_GATE:
 		case IT_OBJTELEPORTER:
-			{
+		{
 			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );
 			dataToAdd = " (" + newRegion->GetName() + ")";
-			}
+			break;
+		}
 	}
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later

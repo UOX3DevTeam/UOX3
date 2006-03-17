@@ -1920,7 +1920,7 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		{
 			while( parentSer != 0 )
 			{
-				UI08 newDir = ((Movement->Direction( curX, curY, targX, targY )+4)%8);	// We are pushing our list from Destination to origin, so push the OPPOSITE direction.
+				UI08 newDir = ((Direction( curX, curY, targX, targY ))%8);	// We are pushing our list from Destination to origin, so push the OPPOSITE direction.
 				if( willRun )
 					newDir |= 0x80;
 

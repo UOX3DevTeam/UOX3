@@ -13,8 +13,6 @@ namespace UOX
 {
 
 cCommands *Commands			= NULL;
-const UI32 BIT_STRIPHAIR	= 1;
-const UI32 BIT_STRIPITEMS	= 2;
 
 cCommands::cCommands()
 {

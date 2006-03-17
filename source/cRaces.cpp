@@ -961,7 +961,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 {
 	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
 	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
-	memset( &weathSecs[0], 0, sizeof( SECONDS ) * WEATHNUM );
+	memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
 	
 	Skill( 100, STRENGTH );
 	Skill( 100, DEXTERITY );
@@ -993,6 +993,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	DoesHunger( false );
 	SetHungerRate( 0 );
 	SetHungerDamage( 0 );
+	weatherAffected.reset();
 }
 void CRace::NumEnemyRaces( int iNum )
 {

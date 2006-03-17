@@ -152,6 +152,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		return;
 	}
 	JS_LockGCThing( targContext, targObject );
+	//JS_AddRoot( targContext, &targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );

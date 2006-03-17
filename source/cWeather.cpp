@@ -2030,9 +2030,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 			lightMax = LightMax( weatherSys );
 
 			if( lightMin < 300 && lightMax < 300 )
-			{
 				currentLight = CurrentLight( weatherSys );
-			}
 			else
 			{
 				currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
@@ -2098,16 +2096,16 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 					message = 1215;
 			}
 		}
-		
-		if( message != 0 && mSock != NULL)
-			mSock->sysmessage( message );
 
 		if( damage > 0 )
 		{
-				mChar.Damage( damage, NULL, false, LIGHT, 0 );
-				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-				Effects->PlaySound( (&mChar), 0x0208 );     
-				didDamage = true;
+			mChar.Damage( damage, NULL, false, LIGHT, 0 );
+			Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+			Effects->PlaySound( (&mChar), 0x0208 );     
+			didDamage = true;
+
+			if( message != 0 && mSock != NULL)
+				mSock->sysmessage( message );
 		}
 		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT )) )), LIGHT );
 	}

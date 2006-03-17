@@ -1,5 +1,17 @@
-16th March, 2006 - Maarc
+3/16/2006 - giwo (0.98-3.5j [3.6 BETA])
+	Fixed an issue with AdvancedPathFinding() causing NPC's to flee constantly.
+	Fixed an issue with NPC fleeing that checked against Strength rather than MaxHP.
+	Defaulted weather damage to every 60 seconds (rather than every second)
+	Fixed an issue causing a message to display damage taken by weather when no damage was taken.
+	Fixed an issue with CRace causing a race with no elemental damage types to have most/all elemental damage types.
+	Fixed a server crash in magic.
+	Fixed an issue causing items in a paperdoll to not be targetable.
+	Fixed an issue with LoS causing items to not block on a diagonal plane.
+	Fixed an issue causing multi's not to block LoS.
+	Minor fixes, cleanups, and optimizations to LineOfSight.
+	Modified DoubleClick() so a character inside a multi can open an item outside a multi (as long as he can see it).
 
+16th March, 2006 - Maarc
 	Updated playDeathSound to simplify some of the code for males/females
 	Updated code so that we don't use MFLAGGET/MFLAGSET - apparently we have a std::bitset class that we can use!  Also makes it somewhat more readable as well.  Cheers Punt for the suggestion.
 	Renamed __ACCOUNTSADM_BLOCK__ to CAccountBlock

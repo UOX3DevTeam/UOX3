@@ -6,6 +6,9 @@
 namespace UOX
 {
 
+const UI32 BIT_STRIPHAIR	= 1;
+const UI32 BIT_STRIPITEMS	= 2;
+
 struct commandLevel_st
 {
 	std::string			name;	// name of level

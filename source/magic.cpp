@@ -2781,65 +2781,84 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		}
 		else if( spells[curSpell].RequireLocTarget() )
 		{
-			if( !caster->IsNpc() && s->GetDWord( 7 ) == INVALIDSERIAL )
+			CBaseObject *getTarg = NULL;
+			if( !caster->IsNpc() )
 			{
-				x = s->GetWord( 11 );
-				y = s->GetWord( 13 );
-				z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
+				if( s->GetDWord( 7 ) != INVALIDSERIAL )
+				{
+					SERIAL targSer = s->GetDWord( 7 );
+					if( targSer >= BASEITEMSERIAL )
+						getTarg = calcItemObjFromSer( targSer );
+					else
+						getTarg = calcCharObjFromSer( targSer );
+				}
+				else
+				{
+					x = s->GetWord( 11 );
+					y = s->GetWord( 13 );
+					z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
+				}
 			}
 			else
+				getTarg = caster->GetTarg();
+
+			if( ValidateObject( getTarg ) )
 			{
-				CChar *defender = caster->GetTarg();
-				x				= defender->GetX();
-				y				= defender->GetY();
-				z				= defender->GetZ();
+				if( !getTarg->CanBeObjType( OT_ITEM ) || ((CItem *)getTarg)->GetCont() == NULL )
+				{
+					x = getTarg->GetX();
+					y = getTarg->GetY();
+					z = getTarg->GetZ();
+				}
+				else if( validSocket )
+				{
+					s->sysmessage( 717 );
+					return;
+				}
 			}
 
-			if( !caster->IsNpc() && validSocket && s->GetDWord( 11 ) != INVALIDSERIAL )
+			if( LineOfSight( s, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 			{
-				if( LineOfSight( s, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
+				if( spells[curSpell].FieldSpell() )
 				{
-					if( spells[curSpell].FieldSpell() )
-					{
-						UI08 j = getFieldDir( caster, x, y );
-						playSound( src, curSpell );
-						doStaticEffect( src, curSpell );
-						(*((MAGIC_FIELDFUNC)magic_table[curSpell-1].mag_extra))( s, caster, j, x, y, z );
-					}
-					else if( spells[curSpell].RequireNoTarget() )
-					{
-						playSound( src, curSpell );
-						doStaticEffect( src, curSpell );
-						switch( curSpell )
-						{
-							case 2: //create food
-							case 22:// Teleport
-							case 25:// Arch Cure
-							case 26:// Arch Protection
-							case 33:// Blade Spirits
-							case 34:// Dispel Field
-							case 40:	// Summon Creature
-							case 46:// Mass curse
-							case 48: 
-							case 49:// Chain Lightning 
-							case 54:// Mass Dispel
-							case 55:// Meteor Swarm
-							case 60:// Summon Air Elemental
-							case 61:// Summon Daemon
-							case 62:// Summon Earth Elemental
-							case 63:// Summon Fire Elemental
-							case 64:// Summon water Elemental
-							case 65:// Summon Hero
-							case 58:// Energy Vortex
-								(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z );
-								break;
-							default:
-								Console.Error( 2, " Unknown LocationTarget spell %i", curSpell );
-								break;
-						}
-					}					
+					UI08 j = getFieldDir( caster, x, y );
+					playSound( src, curSpell );
+					doStaticEffect( src, curSpell );
+					(*((MAGIC_FIELDFUNC)magic_table[curSpell-1].mag_extra))( s, caster, j, x, y, z );
 				}
-			} 
+				else if( spells[curSpell].RequireNoTarget() )
+				{
+					playSound( src, curSpell );
+					doStaticEffect( src, curSpell );
+					switch( curSpell )
+					{
+						case 2: //create food
+						case 22:// Teleport
+						case 25:// Arch Cure
+						case 26:// Arch Protection
+						case 33:// Blade Spirits
+						case 34:// Dispel Field
+						case 40:	// Summon Creature
+						case 46:// Mass curse
+						case 48: 
+						case 49:// Chain Lightning 
+						case 54:// Mass Dispel
+						case 55:// Meteor Swarm
+						case 60:// Summon Air Elemental
+						case 61:// Summon Daemon
+						case 62:// Summon Earth Elemental
+						case 63:// Summon Fire Elemental
+						case 64:// Summon water Elemental
+						case 65:// Summon Hero
+						case 58:// Energy Vortex
+							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z );
+							break;
+						default:
+							Console.Error( 2, " Unknown LocationTarget spell %i", curSpell );
+							break;
+					}
+				}					
+			}
 			else if( validSocket )
 				s->sysmessage( 717 );
 		}
