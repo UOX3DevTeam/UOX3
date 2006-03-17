@@ -1,4 +1,7 @@
 3/17/2006 - grimson
+	Catch negative damage values in cMagic::MagicDamage() and apply 1 damage in that case.
+
+3/17/2006 - grimson
 	Moved defense modifications into CHandleCombat::ApplyDefenseModifiers().
 	Moved damage bonuses into CHandleCombat::ApplyDamageBonuses().
 	Moved the calculation of the hit location from CHandleCombat::DoHitMessage()

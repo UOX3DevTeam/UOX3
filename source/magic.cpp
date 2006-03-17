@@ -1926,6 +1926,9 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		UI08 hitLoc = Combat->CalculateHitLoc();
 		SI16 damage = Combat->ApplyDamageBonuses( element, attacker, p, MAGERY, hitLoc, amount);
 		damage = Combat->ApplyDefenseModifiers( element, attacker, p, MAGERY, hitLoc, damage, true);
+		if( damage <= 0 )
+			damage = 1;
+
 		p->Damage( damage, attacker, true );
 		p->ReactOnDamage( element, attacker );
 	}
