@@ -1,4 +1,6 @@
 #include "uox3.h"
+#include "scriptc.h"
+#include "ssection.h"
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
@@ -1664,11 +1666,11 @@ void CServerData::dumpLookup( int lookupid )
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	CServerData * CServerData::ParseUox3Ini( std::string filename )
+//|	Function/Class	-	bool CServerData::ParseINI( const std::string filename )
 //|	Date			-	02/26/2001
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Parse the uox.ini file into its required information.
 //|									
@@ -1682,34 +1684,24 @@ bool CServerData::ParseINI( const std::string filename )
 	bool rvalue = false;
 	if( !filename.empty() )
 	{
-		std::ifstream inFile;
-
 		Console << "Processing INI Settings  ";
 
+		Script toParse( filename, NUM_DEFS, false );
 		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-		inFile.open( filename.c_str(), std::ios::in );	
-		if( inFile.is_open() )
+		if( !toParse.IsErrored() )
 		{
-			char szLine[129];	// Trimmed this down to 80 to save some ram realestate
-			inFile.getline( szLine, 128 );	// Snatch the first line.
-			UString tag, value;
 			serverList.clear();
 			startlocations.clear();
-			while( !inFile.eof() && !inFile.fail() )
+			for( ScriptSection *sect = toParse.FirstEntry(); sect != NULL; sect = toParse.NextEntry() )
 			{
-				UString LineBuffer( szLine );
-				LineBuffer = LineBuffer.removeComment().stripWhiteSpace();
-				if( LineBuffer.sectionCount( "=" ) == 1 )
+				if( sect == NULL )
+					continue;
+				UString tag, data;
+				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
 				{
-					tag		= LineBuffer.section( "=", 0, 0 ).stripWhiteSpace().upper();
-					value	= LineBuffer.section( "=", 1 ).stripWhiteSpace();
-
-					HandleLine( tag, value );
-
-					inFile.getline( szLine, 127 );
+					data = sect->GrabData().simplifyWhiteSpace();
+					HandleLine( tag, data );
 				}
-				else
-					inFile.getline( szLine, 127 );
 			}
 			Console.PrintDone();
 			rvalue = true;

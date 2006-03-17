@@ -1,3 +1,6 @@
+17th March, 2006 - Maarc
+	Changed the INI loading code so that it uses a Script rather than custom code
+
 3/17/2006 - grimson
 	Changed CPICreateCharacter::newbieItems() so that it uses the newbie.dfn entrys [DEFAULT MALE] and
 	[DEFAULT FEMALE] to add the basic clothing to new chars, and added those entrys to newbie.dfn.
