@@ -1,3 +1,11 @@
+3/17/2006 - grimson
+	Changed CPICreateCharacter::newbieItems() so that it uses the newbie.dfn entrys [DEFAULT MALE] and
+	[DEFAULT FEMALE] to add the basic clothing to new chars, and added those entrys to newbie.dfn.
+	Changed newCarveTarget() so that it uses the new [CARVE HUMAN] entry from carve.dfn to create the
+	body parts, and added this entry to carve.dfn. Note: the second value used on the ADDITEM tags
+	in the [CARVE HUMAN] entry is not an amount, it's the dictionary entry used for naming the body
+	part.
+
 3/16/2006 - giwo (0.98-3.5j [3.6 BETA])
 	Fixed an issue with AdvancedPathFinding() causing NPC's to flee constantly.
 	Fixed an issue with NPC fleeing that checked against Strength rather than MaxHP.

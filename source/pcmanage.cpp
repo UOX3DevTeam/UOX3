@@ -421,7 +421,7 @@ bool CPIDeleteCharacter::Handle( void )
 //o--------------------------------------------------------------------------o
 //| Modifications	-	PACKITEM now supports item,amount - Zane
 //o--------------------------------------------------------------------------o
-void addNewbieItem( CSocket *socket, CChar *c, const char* str )
+void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
 	if( newbieData != NULL )
@@ -453,6 +453,19 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str )
 							n->SetCont( c->GetPackItem() );
 						else
 							n->SetCont( c );
+						
+						//Apply the choosen colour
+						if( ( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0)
+						{
+							n->SetColour( pantsColour );
+							n->SetDye( true );
+						}
+
+						if( n->GetLayer() == IL_INNERSHIRT && shirtColour != 0)
+						{
+							n->SetColour( shirtColour );
+							n->SetDye( true );
+						}
 					}
 				}
 				if( n != NULL )
@@ -477,14 +490,11 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		HAIR = 0,
 		BEARD,
 		PACK,
-		LOWERGARMENT,
-		UPPERGARMENT,
-		SHOES,
 		GOLD,
 		ITOTAL
 	};
 
-	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL };
 	UI16 ItemID, ItemColour;
 	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
@@ -533,73 +543,14 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		if( vecSkills[i].value > 0 )
 		{
 			sprintf( whichsect, "BESTSKILL %i", vecSkills[i].skill );
-			addNewbieItem( tSock, mChar, whichsect );
+			addNewbieItem( tSock, mChar, whichsect, 0, 0 );
 		}
 	}
-	addNewbieItem( tSock, mChar, "DEFAULT" );
+	if( mChar->GetID() == 0x0190 || mChar->GetID() == 0x025D )
+		addNewbieItem( tSock, mChar, "DEFAULT MALE", pantsColour, shirtColour );
+	else
+		addNewbieItem( tSock, mChar, "DEFAULT FEMALE", pantsColour, shirtColour );
 
-
-	CreatedItems[LOWERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, false );
-	if( CreatedItems[LOWERGARMENT] != NULL )
-	{
-		UI16 newID = INVALIDID;
-		ItemLayers newLayer = IL_NONE;
-		if( mChar->GetID() == 0x0190 || mChar->GetID() == 0x025D )
-		{
-			newLayer = IL_PANTS;
-			switch( RandomNum( 0, 1 ) )
-			{
-				case 0:	newID = 0x152E;	break;
-				case 1:	newID = 0x1539;	break;
-			}
-		}
-		else
-		{
-			newLayer = IL_OUTERLEGGINGS;
-			switch( RandomNum( 0, 1 ) )
-			{
-				case 0:	newID = 0x1537;	break;
-				case 1:	newID = 0x1516;	break;
-			}
-		}
-		CreatedItems[LOWERGARMENT]->SetLayer( newLayer );
-		CreatedItems[LOWERGARMENT]->SetID( newID );
-		CreatedItems[LOWERGARMENT]->SetColour( pantsColour );
-		CreatedItems[LOWERGARMENT]->SetDye( true );
-		if( !CreatedItems[LOWERGARMENT]->SetCont( mChar ) )
-		{
-			CreatedItems[LOWERGARMENT]->SetCont( mChar->GetPackItem() );
-			CreatedItems[LOWERGARMENT]->PlaceInPack();
-		}
-	}	
-	CreatedItems[UPPERGARMENT] = Items->CreateItem( tSock, mChar, 0x0915, 1, 0, OT_ITEM, false );
-	if( CreatedItems[UPPERGARMENT] != NULL )
-	{
-		if( RandomNum( 0, 1 ) )
-			CreatedItems[UPPERGARMENT]->SetID( 0x1EFD );
-		else
-			CreatedItems[UPPERGARMENT]->SetID( 0x1517 );
-		CreatedItems[UPPERGARMENT]->SetColour( shirtColour );
-		CreatedItems[UPPERGARMENT]->SetLayer( IL_INNERSHIRT );
-		CreatedItems[UPPERGARMENT]->SetDye( true );
-		if( !CreatedItems[UPPERGARMENT]->SetCont( mChar ) )
-		{
-			CreatedItems[UPPERGARMENT]->SetCont( mChar->GetPackItem() );
-			CreatedItems[UPPERGARMENT]->PlaceInPack();
-		}
-	}	
-	CreatedItems[SHOES] = Items->CreateItem( tSock, mChar, 0x170F, 1, 0x0287, OT_ITEM, false );
-	if( CreatedItems[SHOES] != NULL )
-	{
-		CreatedItems[SHOES]->SetLayer( IL_FOOTWEAR );
-		CreatedItems[SHOES]->SetDye( true );
-		if( !CreatedItems[SHOES]->SetCont( mChar ) )
-		{
-			CreatedItems[SHOES]->SetCont( mChar->GetPackItem() );
-			CreatedItems[SHOES]->PlaceInPack();
-		}
-	}
-	
 	// Give the character some gold
 	CreatedItems[GOLD] = Items->CreateItem( tSock, mChar, 0x0EED, cwmWorldState->ServerData()->ServerStartGold(), 0, OT_ITEM, true );
 }

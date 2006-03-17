@@ -692,18 +692,21 @@ void newCarveTarget( CSocket *s, CItem *i )
 	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
 	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
-		if( !CreateBodyPart( mChar, i, 0x1DAE, 1058 ) )	// Head
+		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
+		if( toFind == NULL )
 			return;
-		if( !CreateBodyPart( mChar, i, 0x1DAD, 1057 ) )	// Body
-			return;
-		if( !CreateBodyPart( mChar, i, 0x1DAF, 1061 ) )	// Right Arm
-			return;
-		if( !CreateBodyPart( mChar, i, 0x1DB0, 1060 ) )	// Left Arm
-			return;
-		if( !CreateBodyPart( mChar, i, 0x1DB1, 1063 ) )	// Right Leg
-			return;
-		if( !CreateBodyPart( mChar, i, 0x1DB2, 1062 ) )	// Left Leg
-			return;
+		UString tag;
+		UString data;
+		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
+		{
+			if( tag.upper() == "ADDITEM" )
+			{
+				data = toFind->GrabData();
+				if( data.sectionCount( "," ) != 0 )
+					if( !CreateBodyPart( mChar, i, data.section( ",", 0, 0 ).stripWhiteSpace().toUShort(), data.section( ",", 1, 1 ).stripWhiteSpace().toLong() ) )
+						return;
+			}
+		}
 
 		criminal( mChar );
 
