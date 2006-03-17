@@ -1,3 +1,6 @@
+3/17/2006 - grimson
+	Changed AdjustRaceDamage() to also use the new ApplyDefenseModifiers() function.
+
 3/17/2006 - giwo (0.98-3.5k [3.6 BETA])
 	Modified Gates so they are decayable by default, and will only decay if decayable.
 	Updated GM and Counsellor privs in commands.dfn, also placed a bit guide for the PRIVS value.

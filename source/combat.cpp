@@ -1298,16 +1298,15 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 //|	Purpose			-	Adjusts the damage dealt to defend by weapon based on
 //|						race and weather weaknesses
 //o--------------------------------------------------------------------------
-void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill )
+void CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI08 getFightSkill )
 {
 	SI16 amount		= 0;
-	UI16 elementDef = 0;
 
 	if( !ValidateObject( defend ) || !ValidateObject( weapon ) )
 		return;
 
 	if( weapon->GetRace() == defend->GetRace() ) 
-		bDamage *= 2;
+		amount = bDamage;
 	CRace *rPtr = Races->Race( defend->GetRace() );
 	if( rPtr != NULL )
 	{
@@ -1315,13 +1314,12 @@ void CHandleCombat::AdjustRaceDamage( CChar *defend, CItem *weapon, SI16 &bDamag
 		{
 			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
 			{
-				elementDef	= calcElementDef( defend, hitLoc, false, (WeatherType)i );
-				amount		= bDamage - ( (SI16)( ( elementDef * attSkill ) / 750 ) );
+				amount += ApplyDefenseModifiers( (WeatherType)i, attack, defend, getFightSkill, hitLoc, bDamage, false );
 				defend->IncreaseElementResist( (WeatherType)i );
-				bDamage		+= amount;
 			}
 		}
 	}
+	bDamage	+= amount;
 }
 
 //o--------------------------------------------------------------------------
@@ -1487,7 +1485,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 				damage = (SI16)(damage * multiplier);
 			
 			// Adjust race and weather weakness
-			AdjustRaceDamage( ourTarg, mWeapon, damage, hitLoc, getFightSkill );
+			AdjustRaceDamage( mChar, ourTarg, mWeapon, damage, hitLoc, getFightSkill );
 			break;
 		default:
 			if( getFightSkill == MAGERY )

@@ -73,7 +73,7 @@ public:
 	SI16	ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage );
 	SI16	ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage );
 
-	void	AdjustRaceDamage( CChar *ourTarg, CItem *mWeapon, SI16 &bDamage, UI08 hitLoc, UI16 attSkill );
+	void	AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI08 getFightSkill );
 	void	SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z );
 	
 	// Combat Animations & Sound Effects
