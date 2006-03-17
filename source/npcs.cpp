@@ -873,7 +873,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											}
 											break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>(ndata) ); break;
-			case DFNTAG_PRIV1:				
+			case DFNTAG_PRIV:				
 											if( !isGate )
 												applyTo->SetPriv( static_cast<UI16>(ndata) );
 											break;
@@ -1059,14 +1059,6 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 					applyTo->SetTag( customTagName, customTag);
 				}
 				break;
-			case DFNTAG_ALIGNMENT:
-			case DFNTAG_CATEGORY:
-			case DFNTAG_MOD1:
-			case DFNTAG_MOD2:
-			case DFNTAG_MOD3:
-			case DFNTAG_NOTES:
-			case DFNTAG_PRIV2:
-											break;
 			default:						Console << "Unknown tag in ApplyNpcSection(): " << (SI32)tag << myendl; break;
 		}
 		if( skillToSet != 0xFF )

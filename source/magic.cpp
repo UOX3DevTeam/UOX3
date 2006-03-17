@@ -118,7 +118,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	CItem *g1 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( ValidateObject( g1 ) )
 	{
-		g1->SetDecayable( false );
+		g1->SetDecayable( true );
 		g1->SetType( IT_GATE );
 		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
 		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
@@ -127,7 +127,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 		CItem *g2 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
 		if( ValidateObject( g2 ) )
 		{
-			g2->SetDecayable( false );
+			g2->SetDecayable( true );
 			g2->SetType( IT_GATE );
 			g2->SetLocation( trgX, trgY, trgZ, trgWorld );
 			g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );

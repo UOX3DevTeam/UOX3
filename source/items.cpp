@@ -235,9 +235,6 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				break;
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:
-			case DFNTAG_NOTES:
-			case DFNTAG_CATEGORY:
-			case DFNTAG_TYPE2:
 				break;
 			default:					Console.Warning( 2, "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
 		}

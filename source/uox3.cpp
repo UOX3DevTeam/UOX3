@@ -1055,13 +1055,6 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			}
 			switch( itemCheck->GetType() )
 			{
-			case IT_GATE:
-				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
-				{
-					itemCheck->Delete();
-					continue;
-				}
-				break;
 			case IT_ITEMSPAWNER:
 			case IT_NPCSPAWNER:
 			case IT_SPAWNCONT:

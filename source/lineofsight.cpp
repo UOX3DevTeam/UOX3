@@ -260,7 +260,7 @@ SI08 GetSGN( SI16 startLoc, SI16 destLoc, SI16 &l1, SI16 &l2 )
 	return 0;
 }
 
-UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount, SI16 distX, SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2 )
+UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount, SI16 distX, SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2, SI32 dz )
 {
 	const SI16 curX		= toCheck->GetX();
 	const SI16 curY		= toCheck->GetY();
@@ -311,7 +311,8 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 					{
 						checkLoc = &collisions[i];
 						if( checkX == checkLoc->x && checkY == checkLoc->y &&
-							checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) )
+							( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+							( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
 						{
 								return multi.tile;
 						}
@@ -500,7 +501,7 @@ Look at uox3.h to see options. Works like npc magic.
 			if( !ValidateObject( toCheck ) )
 				continue;
 
-			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2 );
+			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
 				itemids.push_back( idToPush );
 		}

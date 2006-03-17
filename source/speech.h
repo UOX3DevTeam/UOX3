@@ -322,7 +322,7 @@ private:
 	SpeechTarget	targType;
 	FontType		targFont;
 	UnicodeTypes	targLanguage;
-	long			timeToSayAt;	// time when it should be said
+	SI32			timeToSayAt;	// time when it should be said
 	std::string		toSay;
 	std::string		sName;
 	UI08			minCmdLevelToReceive;
@@ -337,99 +337,32 @@ public:
 	{
 	}
 
-	SpeechType Type( void ) const
-	{
-		return typeOfSpeech;
-	}
-	bool AntiSpam( void ) const
-	{
-		return antiSpam;
-	}
-	bool Unicode( void ) const
-	{
-		return unicode;
-	}
-	COLOUR Colour( void ) const
-	{
-		return speechColour;
-	}
-	SERIAL Speaker( void ) const
-	{
-		return speaker;
-	}
-	SERIAL SpokenTo( void ) const
-	{
-		return spokenTo;
-	}
-	SpeechTarget	TargType( void ) const
-	{
-		return targType;
-	}
-	FontType Font( void ) const
-	{
-		return targFont;
-	}
-	UnicodeTypes	Language( void ) const
-	{
-		return targLanguage;
-	}
-	long At( void ) const
-	{
-		return timeToSayAt;
-	}
-	const std::string Speech( void ) const
-	{
-		return toSay;
-	}
-	const std::string SpeakerName( void ) const
-	{
-		return sName;
-	}
-	UI08 CmdLevel( void ) const
-	{
-		return minCmdLevelToReceive;
-	}
+	SpeechType			Type( void ) const				{	return typeOfSpeech;			}
+	bool				AntiSpam( void ) const			{	return antiSpam;				}
+	bool				Unicode( void ) const			{	return unicode;					}
+	COLOUR				Colour( void ) const			{	return speechColour;			}
+	SERIAL				Speaker( void ) const			{	return speaker;					}
+	SERIAL				SpokenTo( void ) const			{	return spokenTo;				}
+	SpeechTarget		TargType( void ) const			{	return targType;				}
+	FontType			Font( void ) const				{	return targFont;				}
+	UnicodeTypes		Language( void ) const			{	return targLanguage;			}
+	SI32				At( void ) const				{	return timeToSayAt;				}
+	const std::string	Speech( void ) const			{	return toSay;					}
+	const std::string	SpeakerName( void ) const		{	return sName;					}
+	UI08				CmdLevel( void ) const			{	return minCmdLevelToReceive;	}
 
-	void Type( SpeechType type )
-	{
-		typeOfSpeech = type;
-	}
-	void AntiSpam( bool value )
-	{
-		antiSpam = value;
-	}
-	void Unicode( bool value )
-	{
-		unicode = value;
-	}
-	void Colour( COLOUR value )
-	{
-		speechColour = value;
-	}
-	void Speaker( SERIAL value )
-	{
-		speaker = value;
-	}
-	void SpokenTo( SERIAL value )
-	{
-		spokenTo = value;
-	}
-	void TargType( SpeechTarget type )
-	{
-		targType = type;
-	}
-	void Font( FontType type )
-	{
-		targFont = type;
-	}
-	void Language( UnicodeTypes val )
-	{
-		targLanguage = val;
-	}
-	void At( long newTime )
-	{
-		timeToSayAt = newTime;
-	}
+	void				Type( SpeechType type )			{	typeOfSpeech = type;			}
+	void				AntiSpam( bool value )			{	antiSpam = value;				}
+	void				Unicode( bool value )			{	unicode = value;				}
+	void				Colour( COLOUR value )			{	speechColour = value;			}
+	void				Speaker( SERIAL value )			{	speaker = value;				}
+	void				SpokenTo( SERIAL value )		{	spokenTo = value;				}
+	void				TargType( SpeechTarget type )	{	targType = type;				}
+	void				Font( FontType type )			{	targFont = type;				}
+	void				Language( UnicodeTypes val )	{	targLanguage = val;				}
+	void				At( SI32 newTime )				{	timeToSayAt = newTime;			}
+	void				CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
+
 	void Speech( const std::string said )
 	{
 		toSay = said.substr( 0, MAX_SPEECH - 1 );
@@ -437,10 +370,6 @@ public:
 	void SpeakerName( const std::string spkName )
 	{
 		sName = spkName.substr( 0, MAX_NAME - 1 );
-	}
-	void CmdLevel( UI08 nLevel )
-	{
-		minCmdLevelToReceive = nLevel;
 	}
 
 	SpeakerType	SpkrType( void ) const

@@ -3,7 +3,7 @@
 //*                                                               *
 //*                   http://www.uox3dev.net	                  *
 //*                                                               *
-//* Last Update : 14/4/2003                                        *
+//* Last Update : 3/17/2006                                       *
 //* Script : commands.dfn                                         *
 //*****************************************************************
 //*                        How to use this script                 *
@@ -21,6 +21,23 @@
 //*           // be used by counselors and above                  *
 //*                                                               *
 //*****************************************************************
+// Priv Flags
+//	BIT_GM			=	0x0001;
+//	BIT_BROADCAST		=	0x0002;
+//	BIT_INVULNERABLE	=	0x0004;
+//	BIT_SINGCLICKSER	=	0x0008;
+//	BIT_SKILLTITLES		=	0x0010;
+//	BIT_GMPAGEABLE		=	0x0020;
+//	BIT_SNOOP		=	0x0040;
+//	BIT_COUNSELOR		=	0x0080;
+//	BIT_ALLMOVE		=	0x0100;
+//	BIT_FROZEN		=	0x0200;
+//	BIT_VIEWHOUSEASICON	=	0x0400;
+//	BIT_NONEEDMANA		=	0x0800;
+//	BIT_DISPELLABLE		=	0x1000;
+//	BIT_PERMREFLECTED	=	0x2000;
+//	BIT_NONEEDREAGS		=	0x4000;
+//*****************************************************************
 
 [COMMANDLEVELS]
 {
@@ -33,18 +50,18 @@ PLAYER=0
 [GM]
 {
 NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
-DEFAULTPRIV=0xff	// default privs assigned (hex)
+DEFAULTPRIV=0x787F	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8021	// colour of body person turns
-STRIPITEMS	//Strip off equipped items and place them in backpack
-STRIPHAIR	//Strips off hair & beard
+STRIPITEMS		//Strip off equipped items and place them in backpack
+STRIPHAIR		//Strips off hair & beard
 }
 
 [CNS]
 {
 NICKCOLOUR=0x0000	// colour of person's nick (hex)
-DEFAULTPRIV=0x80	// default privs assigned (hex)
+DEFAULTPRIV=0x009C	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8002	// colour of body person turns

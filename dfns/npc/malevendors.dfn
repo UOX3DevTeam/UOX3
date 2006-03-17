@@ -1,6 +1,6 @@
 [basevendor]
 {
-PRIV1=4
+PRIV=4
 SKINLIST=16
 BACKPACK
 STR=50 75

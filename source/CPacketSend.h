@@ -29,10 +29,13 @@ class CPacketSpeech : public CPUOXBuffer
 protected:
 	bool			isUnicode;
 
-	virtual void	CopyData( CSpeechEntry &toCopy );
+	virtual void	InternalReset( void );
+	void			CopyData( CSpeechEntry &toCopy );
+	void			CopyData( CPITalkRequest &toCopy );
 public:
 					CPacketSpeech();
 					CPacketSpeech( CSpeechEntry &toCopy );
+					CPacketSpeech( CPITalkRequest &toCopy );
 	virtual void	SpeakerSerial( SERIAL toPut );
 	virtual void	SpeakerModel( UI16 toPut );
 	virtual void	Colour( COLOUR toPut );
@@ -42,6 +45,7 @@ public:
 	virtual void	Type( SpeechType toPut );
 	virtual void	Speech( const std::string toPut );
 	virtual void	SpeakerName( const std::string toPut );
+			void	GhostIt( UI08 method );
 	virtual			~CPacketSpeech()
 					{
 					}
@@ -1068,35 +1072,6 @@ public:
 					CPKAccept( UI08 Response );
 };
 
-class CPSpeech : public CPUOXBuffer
-{
-protected:
-	void			CopyData( CBaseObject &toCopy );
-	void			CopyData( CPITalkRequest &talking );
-	void			InternalReset( void );
-	void			SetLength( UI16 value );
-public:
-					CPSpeech();
-	virtual			~CPSpeech()
-	{
-	}
-					CPSpeech( CBaseObject &toCopy );
-					CPSpeech( CPITalkRequest &talking );
-	void			ID( UI16 toSet );
-	void			GrabSpeech( CSocket *mSock, CChar *mChar );
-	void			Serial( SERIAL toSet );
-	void			Object( CPITalkRequest &tSaid );
-	void			Object( CBaseObject &toCopy );
-	void			Type( UI08 value );
-	void			Colour( COLOUR value );
-	void			Font( UI16 value );
-	void			Name( std::string value );
-	void			Message( char *value );
-	void			GhostIt( UI08 method );
-	CPSpeech &operator=( CBaseObject &toCopy );
-	CPSpeech &operator=( CPITalkRequest &talking );
-};
-
 class CPUnicodeSpeech : public CPUOXBuffer
 {
 protected:
@@ -1114,7 +1089,6 @@ public:
 					CPUnicodeSpeech( CPITalkRequestAscii &talking );
 					CPUnicodeSpeech( CPITalkRequestUnicode &talking );
 	void			ID( UI16 toSet );
-	void			GrabSpeech( CSocket *mSock, CChar *mChar );
 	void			Serial( SERIAL toSet );
 	void			Object( CPITalkRequestAscii &tSaid );
 	void			Object( CPITalkRequestUnicode &tSaid );

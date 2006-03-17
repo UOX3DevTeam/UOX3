@@ -118,11 +118,29 @@ void CPCharLocBody::HighlightColour( UI08 color )
 //	BYTE[30] Name 
 //	BYTE[?] Null-Terminated Message (? = blockSize - 44) 
 
-CPacketSpeech::CPacketSpeech( CSpeechEntry &toCopy )
+void CPacketSpeech::InternalReset( void )
 {
 	pStream.ReserveSize( 44 );
 	pStream.WriteByte( 0, 0x1C );
+}
+CPacketSpeech::CPacketSpeech( CSpeechEntry &toCopy )
+{
+	InternalReset();
 	CopyData( toCopy );
+}
+
+CPacketSpeech::CPacketSpeech( CPITalkRequest &toCopy )
+{
+	InternalReset();
+	CopyData( toCopy );
+}
+
+void CPacketSpeech::CopyData( CPITalkRequest &toCopy )
+{
+	Colour( toCopy.TextColour() );
+	Font( (FontType)toCopy.Font() );
+	Type( toCopy.Type() );
+	Speech( toCopy.Text() );
 }
 
 void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
@@ -134,39 +152,51 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 	Language( toCopy.Language() );
 	Unicode( toCopy.Unicode() );
 	Type( toCopy.Type() );
-	if( toCopy.SpeakerName().length() != 0 )
-		SpeakerName( toCopy.SpeakerName() );
 	switch( toCopy.SpkrType() )
 	{
-		case SPK_UNKNOWN:
-		case SPK_SYSTEM:
-			SpeakerName( "System" );
+	case SPK_UNKNOWN:
+	case SPK_SYSTEM:
+		SpeakerName( "System" );
+		SpeakerModel( INVALIDID );
+		if( toCopy.Colour() == 0 )
+			Colour( 0x0040 );
+		break;
+	case SPK_CHARACTER:
+		CChar *ourChar;
+		ourChar = calcCharObjFromSer( toCopy.Speaker() );
+		if( ValidateObject( ourChar ) )
+		{
+			SpeakerName( ourChar->GetName() );
+			SpeakerModel( ourChar->GetID() );
+		}
+		else
 			SpeakerModel( INVALIDID );
-			if( toCopy.Colour() == 0 )
-				Colour( 0x0040 );
-			break;
-		case SPK_CHARACTER:
-			CChar *ourChar;
-			ourChar = calcCharObjFromSer( toCopy.Speaker() );
-			if( ValidateObject( ourChar ) )
-			{
-				SpeakerName( ourChar->GetName() );
-				SpeakerModel( ourChar->GetID() );
-			}
-			else
-				SpeakerModel( INVALIDID );
-			break;
-		case SPK_ITEM:
-			CItem *ourItem;
-			ourItem = calcItemObjFromSer( toCopy.Speaker() );
-			if( ValidateObject( ourItem ) )
-			{
-				SpeakerName( ourItem->GetName() );
-				SpeakerModel( ourItem->GetID() );
-			}
-			else
-				SpeakerModel( INVALIDID );
-			break;
+		break;
+	case SPK_ITEM:
+		CItem *ourItem;
+		ourItem = calcItemObjFromSer( toCopy.Speaker() );
+		if( ValidateObject( ourItem ) )
+		{
+			SpeakerName( ourItem->GetName() );
+			SpeakerModel( ourItem->GetID() );
+		}
+		else
+			SpeakerModel( INVALIDID );
+		break;
+	}
+	if( toCopy.SpeakerName().length() != 0 )
+		SpeakerName( toCopy.SpeakerName() );
+}
+
+void CPacketSpeech::GhostIt( UI08 method )
+{
+	// Method ignored currently
+	// Designed with the idea that you can garble text in more than one way
+	// eg 0 == ghost, 1 == racial, 2 == magical, etc etc
+	for( UI16 j = 44; j < pStream.GetSize() - 1; ++j )
+	{
+		if( pStream.GetByte( j ) != 32 )
+			pStream.WriteByte( j, ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' ) );
 	}
 }
 
@@ -3786,128 +3816,6 @@ void CPObjectInfo::Objects( CItem& mItem, CChar& mChar )
 	CopyData( mItem, mChar );
 }
 
-
-//0x1C Packet
-//Last Modified on Friday, 20-Apr-1998 
-//Send Speech (Variable # of bytes) 
-//	BYTE cmd										0
-//	BYTE[2] blockSize								1
-//	BYTE[4] itemID (FF FF FF FF = system)			3
-//	BYTE[2] model (item hex # - FF FF = system)		7
-//	BYTE Type										9
-//	BYTE[2] Text Color								10
-//	BYTE[2] Font									12
-//	BYTE[30] Name									14
-//	BYTE[?] Null-Terminated Message (? = blockSize - 44) 
-void CPSpeech::Object( CBaseObject &talking )
-{
-	CopyData( talking );
-}
-void CPSpeech::Object( CPITalkRequest &tSaid )
-{
-	CopyData( tSaid );
-}
-void CPSpeech::Type( UI08 value )
-{
-	pStream.WriteByte( 9, value );
-}
-void CPSpeech::Colour( COLOUR value )
-{
-	// Ideally one would track down where the value is getting set to 0, 
-	// a color of 0 will crash 3d client
-	if( value == 0 )
-	{
-		value = 0x3B2;
-	}
-	pStream.WriteShort( 10, value );
-}
-void CPSpeech::Font( UI16 value )
-{
-	pStream.WriteShort( 12, value );
-}
-void CPSpeech::Name( std::string value )
-{
-	pStream.WriteString( 14, value, 30 );
-}
-void CPSpeech::Message( char *value )
-{
-	size_t length = strlen( value );
-	SetLength( static_cast< UI16 >(44 + length + 1) );
-	pStream.WriteString( 44, value, length );
-}
-void CPSpeech::SetLength( UI16 value )
-{
-	pStream.ReserveSize( value );
-	pStream.WriteShort( 1, value );
-}
-
-void CPSpeech::InternalReset( void )
-{
-	SetLength( 44 );
-	pStream.WriteByte( 0, 0x1C );
-	Colour( 0x3B2 );
-}
-
-CPSpeech::CPSpeech()
-{
-	InternalReset();
-}
-CPSpeech::CPSpeech( CBaseObject &toCopy )
-{
-	InternalReset();
-	CopyData( toCopy );
-}
-CPSpeech::CPSpeech( CPITalkRequest &toCopy )
-{
-	InternalReset();
-	CopyData( toCopy );
-}
-CPSpeech &CPSpeech::operator=( CBaseObject &toCopy )
-{
-	CopyData( toCopy );
-	return (*this);
-}
-void CPSpeech::CopyData( CBaseObject &toCopy )
-{
-	Serial( toCopy.GetSerial() );
-	ID( toCopy.GetID() );
-	Name( toCopy.GetName() );
-}
-void CPSpeech::CopyData( CPITalkRequest &talking )
-{
-	Colour( talking.TextColour() );
-	Font( talking.Font() );
-	Type( talking.Type() );
-	Message( talking.Text() );
-}
-void CPSpeech::Serial( SERIAL toSet )
-{
-	pStream.WriteLong( 3, toSet );
-}
-void CPSpeech::ID( UI16 toSet )
-{
-	pStream.WriteShort( 7, toSet );
-}
-void CPSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
-{
-	pStream.WriteByte( 10, mSock->GetByte( 4 ) );
-	pStream.WriteByte( 11, mSock->GetByte( 5 ) );
-	pStream.WriteByte( 12, mSock->GetByte( 6 ) );
-	pStream.WriteByte( 13, mChar->GetFontType() );
-}
-
-void CPSpeech::GhostIt( UI08 method )
-{
-	// Method ignored currently
-	// Designed with the idea that you can garble text in more than one way
-	// eg 0 == ghost, 1 == racial, 2 == magical, etc etc
-	for( UI16 j = 44; j < pStream.GetSize() - 1; ++j )
-	{
-		if( pStream.GetByte( j ) != 32 )
-			pStream.WriteByte( j, ( RandomNum( 0, 1 ) == 0 ? 'O' : 'o' ) );
-	}
-}
-
 //	0xAE Packet
 //	Last Modified on Wednesday, 11-Nov-1998 
 //	Unicode Speech message(Variable # of bytes) 
@@ -4032,13 +3940,6 @@ void CPUnicodeSpeech::Serial( SERIAL toSet )
 void CPUnicodeSpeech::ID( UI16 toSet )
 {
 	pStream.WriteShort( 7, toSet );
-}
-void CPUnicodeSpeech::GrabSpeech( CSocket *mSock, CChar *mChar )
-{
-	pStream.WriteByte( 10, mSock->GetByte( 4 ) );
-	pStream.WriteByte( 11, mSock->GetByte( 5 ) );
-	pStream.WriteByte( 12, mSock->GetByte( 6 ) );
-	pStream.WriteByte( 13, mChar->GetFontType() );
 }
 
 void CPUnicodeSpeech::GhostIt( UI08 method )

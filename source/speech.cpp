@@ -171,31 +171,6 @@ void sysBroadcast( const std::string txt )
 	}
 }
 
-void broadcast( CSocket *mSock ) // GM Broadcast (Done if a GM yells something)
-{
-	CChar *mChar = mSock->CurrcharObj();
-	CPSpeech toSend( *mChar );
-	toSend.Type( 1 );
-	toSend.GrabSpeech( mSock, mChar );
-
-	if( !mChar->isUnicode() )
-		toSend.Message( (char *)&(mSock->Buffer()[8]) );
-	else
-	{
-		char nonuni[512]; 
-		for( UI16 i = 13; i < mSock->GetWord( 1 ); i += 2 )
-			nonuni[(i-13)/2] = mSock->GetByte( i );
-		toSend.Message( &nonuni[0] );
-	}
-
-	Network->PushConn();
-	for( CSocket *bSock = Network->FirstSocket(); !Network->FinishedSockets(); bSock = Network->NextSocket() )
-	{
-		bSock->Send( &toSend );
-	}
-	Network->PopConn();
-}
-
 void WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
 bool response( CSocket *mSock, CChar *mChar, std::string text )
 {
@@ -304,8 +279,25 @@ bool CPITalkRequest::Handle( void )
 		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 			mChar->ExposeToView();
 		
-		if( Type() == 0x09 && mChar->CanBroadcast() )
-			broadcast( tSock );
+		if( Type() == YELL && mChar->CanBroadcast() )
+		{
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( asciiText );
+			toAdd.Font( (FontType)mChar->GetFontType() );
+			toAdd.Speaker( mChar->GetSerial() );
+			toAdd.SpokenTo( INVALIDSERIAL );
+			toAdd.Type( PROMPT );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_BROADCASTPC );
+			if( mChar->GetSayColour() == 0x1700 )
+				toAdd.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				toAdd.Colour( 0x5A );
+			else
+				toAdd.Colour( mChar->GetSayColour() );
+			toAdd.Font( FNT_BOLD );
+			toAdd.SpeakerName( mChar->GetName() );
+		}
 		else
 		{
 			UString text( asciiText );
@@ -346,8 +338,8 @@ bool CPITalkRequest::Handle( void )
 			CPUOXBuffer *ghostedText		= NULL;
 			CPUnicodeSpeech *uniTxtToSend	= NULL;
 			CPUnicodeSpeech *uniGhostedText = NULL;
-			CPSpeech *asciiTxtToSend		= NULL;
-			CPSpeech *asciiGhostedText		= NULL;
+			CPacketSpeech *asciiTxtToSend		= NULL;
+			CPacketSpeech *asciiGhostedText		= NULL;
 
 			if( IsUnicode() )
 			{
@@ -364,12 +356,13 @@ bool CPITalkRequest::Handle( void )
 			}
 			else
 			{
-				asciiTxtToSend = new CPSpeech();
-				asciiTxtToSend->Object( *((CPITalkRequestAscii *)this) );
-				asciiTxtToSend->Object( *mChar );
+				asciiTxtToSend = new CPacketSpeech( *((CPITalkRequestAscii *)this) );
+				asciiTxtToSend->SpeakerSerial( mChar->GetSerial() );
+				asciiTxtToSend->SpeakerModel( mChar->GetID() );
+				asciiTxtToSend->SpeakerName( mChar->GetName() );
 				txtToSend = asciiTxtToSend;
 
-				asciiGhostedText = new CPSpeech();
+				asciiGhostedText = new CPacketSpeech();
 				(*asciiGhostedText) = (*asciiTxtToSend);
 				asciiGhostedText->GhostIt( 0 );
 
