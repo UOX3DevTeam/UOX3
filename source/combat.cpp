@@ -1450,11 +1450,12 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 	R32 damage = 0;
 	SI32 RaceDamage = 0;
 	CItem *mWeapon = getWeapon( mChar );
+	CRace *rPtr = Races->Race( ourTarg->GetRace() );
 
 	switch( damageType )
 	{
 		case NONE:
-			damage = baseDamage;
+			damage = (R32)baseDamage;
 			break;
 		case PHYSICAL:
 			// Race Dmg Modification: Bonus percentage.
@@ -1488,10 +1489,17 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			damage = (R32)AdjustRaceDamage( mChar, ourTarg, mWeapon, (SI16)roundNumber( damage ), hitLoc, getFightSkill );
 			break;
 		default:
-			if( getFightSkill == MAGERY )
-				damage = (R32)(baseDamage * 2);
-			else
-				damage = (R32)baseDamage;
+			damage = (R32)baseDamage;
+			// If the race is weak to this element double the damage
+			if( rPtr != NULL )
+			{
+				if( rPtr->AffectedBy( damageType ) )
+					damage *= 2;
+			}
+
+			// If the attack is magic and the target a NPC double the damage
+			if( getFightSkill == MAGERY && ourTarg->IsNpc() )
+				damage *= 2;
 			break;
 	}
 	return (SI16)roundNumber( damage );
@@ -2064,7 +2072,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 			return;
 		}
 
-		if( mChar->GetNPCAiType() == aiANIMAL )
+		if( mChar->GetNPCAiType() == aiANIMAL && !mChar->IsTamed() )
 		{
 			mChar->SetHunger( 6 );
 

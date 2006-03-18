@@ -1,4 +1,11 @@
 3/18/2006 - grimson
+	Another change to CChar::Damage(), if the attacker becomes criminal make the owner of it
+	criminal too.
+	Changed CHandleCombat::ApplyDamageBonuses() so that elemental damage is doubled when the
+	race is weak to that element, also double magic damage only on NPCs.
+	Changed CHandleCombat::Kill() so that only not tamed animals eat their victims.
+
+3/18/2006 - grimson
 	Changed CChar::Damage() to also display the damage to the owner of the attacker, so a
 	player can also see the damage his pet does.
 

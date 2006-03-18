@@ -5655,6 +5655,8 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 					talkAll( 335, true );
 					callGuards( this, attacker );
 				}
+				if( ValidateObject( attacker->GetOwnerObj() ) )
+					criminal( attacker->GetOwnerObj() );
 			}
 		}
 
