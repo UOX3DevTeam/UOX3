@@ -1,7 +1,66 @@
-td {  font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #DDDDDD}
-th {  color: #FFCC33}
-body {  font-family: Arial, Helvetica, sans-serif; font-size: 10px}
-a {  color: #ADD8E6; text-decoration: none; border-bottom-width: medium}
-a:hover {  color: #FBC631; text-decoration: underline}
-pre {  font-size: 12px}
-b {  color: #F08080}
+td
+{
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 10px; 
+	color: #DDDDDD;
+}
+th, table.method th
+{
+	color: #FFCC33;
+}
+body
+{
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 10px;
+}
+a
+{
+	color: #ADD8E6; 
+	text-decoration: none; 
+	border-bottom-width: medium;
+}
+a:hover
+{
+	color: #FBC631; 
+	text-decoration: underline;
+}
+pre
+{
+	font-size: 12px;
+}
+b
+{
+	color: #F08080;
+}
+
+table.method
+{
+	border: 1px solid white;
+	width: 100%;
+	cellspacing: 0px;
+	border-collapse: collapse;
+}
+
+th.method
+{
+	background-color: maroon;
+	border: 1px solid white;
+}
+
+td.property
+{
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 10px; 
+	color: #F08080;
+	width: 25%;
+	vertical-align: top;
+	border: 1px solid white;
+}
+
+td.value
+{
+	font-family: Arial, Helvetica, sans-serif; 
+	font-size: 10px; 
+	width: 75%;
+	border: 1px solid white;
+}
