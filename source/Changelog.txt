@@ -1,4 +1,8 @@
 3/18/2006 - grimson
+	I only added part of the ApplyDefenseModifiers() and ApplyDamageBonuses() changes to CVS,
+	fixed it now.
+
+3/18/2006 - grimson
 	Changed ApplyDefenseModifiers() and ApplyDamageBonuses() to make shure they return ints.
 	Changed SE_ApplyDamageBonuses() and SE_ApplyDefenseModifiers() to fix invalid damage values
 	when a script sends float values.

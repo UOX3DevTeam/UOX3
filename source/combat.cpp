@@ -1298,12 +1298,12 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 //|	Purpose			-	Adjusts the damage dealt to defend by weapon based on
 //|						race and weather weaknesses
 //o--------------------------------------------------------------------------
-void CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 &bDamage, UI08 hitLoc, UI08 getFightSkill )
+SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill )
 {
 	SI16 amount		= 0;
 
 	if( !ValidateObject( defend ) || !ValidateObject( weapon ) )
-		return;
+		return bDamage;
 
 	if( weapon->GetRace() == defend->GetRace() ) 
 		amount = bDamage;
@@ -1319,7 +1319,7 @@ void CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapo
 			}
 		}
 	}
-	bDamage	+= amount;
+	return bDamage	+= amount;
 }
 
 //o--------------------------------------------------------------------------
@@ -1447,7 +1447,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 		return baseDamage;
 
 	R32 multiplier;
-	SI16 damage = 0;
+	R32 damage = 0;
 	SI32 RaceDamage = 0;
 	CItem *mWeapon = getWeapon( mChar );
 
@@ -1464,37 +1464,37 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 
 			// Strength Damage Bonus, +20% Damage
 			multiplier = static_cast<R32>( ( ( UOX_MIN( mChar->GetStrength(), static_cast<SI16>(200) ) * 20 ) / 100 ) / 100 ) + 1;
-				damage = (SI16)(baseDamage * multiplier);
+				damage = (R32)(baseDamage * multiplier);
 
 			// Tactics Damage Bonus, % = ( Tactics + 50 )
 			multiplier = static_cast<R32>( ( mChar->GetSkill( TACTICS ) + 500 ) / 1000 );
-				damage += (SI16)(baseDamage * multiplier);
+				damage += (R32)(baseDamage * multiplier);
 
 			if( ourTarg->IsNpc() ) // Anatomy PvM damage Bonus, % = ( Anat / 5 )
 				multiplier = static_cast<R32>( ( mChar->GetSkill( ANATOMY ) / 5 ) / 1000 );
 			else // Anatomy PvP damage Bonus, % = ( Anat / 2.5 )
 				multiplier = static_cast<R32>( ( mChar->GetSkill( ANATOMY ) / 2.5 ) / 1000 );
-			damage += (SI16)(baseDamage * multiplier);
+			damage += (R32)(baseDamage * multiplier);
 
 			// Lumberjacking Bonus ( 30% Damage at GM Skill )
 			if( mChar->GetSkill( LUMBERJACKING ) >= 1000 )
-				damage += (SI16)(baseDamage * .3);
+				damage += (R32)(baseDamage * .3);
 
   			// Defender Tactics Damage Modifier, -20% Damage
 			multiplier = static_cast<R32>(1.0 - ( ( ( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) / 100 ));
-				damage = (SI16)(damage * multiplier);
+				damage = (R32)(damage * multiplier);
 			
 			// Adjust race and weather weakness
-			AdjustRaceDamage( mChar, ourTarg, mWeapon, damage, hitLoc, getFightSkill );
+			damage = (R32)AdjustRaceDamage( mChar, ourTarg, mWeapon, (SI16)roundNumber( damage ), hitLoc, getFightSkill );
 			break;
 		default:
 			if( getFightSkill == MAGERY )
-				damage = baseDamage * 2;
+				damage = (R32)(baseDamage * 2);
 			else
-				damage = baseDamage;
+				damage = (R32)baseDamage;
 			break;
 	}
-	return (SI16)roundNumber( (R32)damage );
+	return (SI16)roundNumber( damage );
 }
 
 SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage )
@@ -1504,7 +1504,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	UI16 getDef = 0, attSkill = 1000;
 	R32 damageModifier = 0;
-	SI16 damage = baseDamage;
+	R32 damage = (R32)baseDamage;
 	
 	if( ValidateObject( mChar ) )
 		attSkill = mChar->GetSkill( getFightSkill );
@@ -1565,9 +1565,9 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 	}
 
 	if( getDef > 0 )
-		damage -= (SI16)( ( getDef * attSkill ) / 750 );
+		damage -= (R32)( ( (R32)getDef * (R32)attSkill ) / 750 );
 
-	return (SI16)roundNumber( (R32)damage );
+	return (SI16)roundNumber( damage );
 }
 
 SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )
