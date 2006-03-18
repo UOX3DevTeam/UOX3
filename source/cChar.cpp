@@ -5606,11 +5606,13 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 
 void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 {
-	CSocket *mSock = GetSocket(), *attSock = NULL;
+	CSocket *mSock = GetSocket(), *attSock = NULL, *attOwnerSock = NULL;
 	
-	if( ValidateObject( attacker) )
+	if( ValidateObject( attacker ) )
 	{
 		attSock = attacker->GetSocket();
+		if( ValidateObject( attacker->GetOwnerObj() ) )
+			attOwnerSock = attacker->GetOwnerObj()->GetSocket();
 	}
 
 	// Display damage
@@ -5619,24 +5621,11 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		mSock->Send( &toDisplay );
 	if( attSock != NULL )
 		attSock->Send( &toDisplay );
+	if( attOwnerSock != NULL )
+		attOwnerSock->Send( &toDisplay );
 
 	// Apply the damage
 	SetHP( hitpoints - damageValue );
-
-	// Reputation system
-	if( doRepsys && ValidateObject( attacker) )
-	{
-		if( WillResultInCriminal( attacker, this ) ) //REPSYS
-		{
-			criminal( attacker );
-			bool regionGuarded = ( GetRegion()->IsGuarded() );
-			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != aiGUARD && isHuman() )
-			{
-				talkAll( 335, true );
-				callGuards( this, attacker );
-			}
-		}
-	}
 
 	// Handle peace state
 	if( !GetCanAttack() )
@@ -5654,6 +5643,21 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 
 	if( ValidateObject( attacker ) )
 	{
+		// Reputation system
+		if( doRepsys )
+		{
+			if( WillResultInCriminal( attacker, this ) ) //REPSYS
+			{
+				criminal( attacker );
+				bool regionGuarded = ( GetRegion()->IsGuarded() );
+				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != aiGUARD && isHuman() )
+				{
+					talkAll( 335, true );
+					callGuards( this, attacker );
+				}
+			}
+		}
+
 		// Update Damage tracking
 		const SERIAL attackerSerial	= attacker->GetSerial();
 		bool persFound				= false;

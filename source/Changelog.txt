@@ -1,3 +1,7 @@
+3/18/2006 - grimson
+	Changed CChar::Damage() to also display the damage to the owner of the attacker, so a
+	player can also see the damage his pet does.
+
 18th March, 2006 - Maarc
 	Removed some unused properties/methods of the console that have never been used
 	Begun construction of some placeholder code for party related works, not committing the factory code until some testing can occur first
