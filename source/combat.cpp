@@ -1319,7 +1319,7 @@ SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapo
 			}
 		}
 	}
-	return bDamage	+= amount;
+	return (bDamage	+ amount);
 }
 
 //o--------------------------------------------------------------------------
