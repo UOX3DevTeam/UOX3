@@ -1494,7 +1494,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 				damage = baseDamage;
 			break;
 	}
-	return damage;
+	return (SI16)roundNumber( (R32)damage );
 }
 
 SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage )
@@ -1567,7 +1567,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 	if( getDef > 0 )
 		damage -= (SI16)( ( getDef * attSkill ) / 750 );
 
-	return damage;
+	return (SI16)roundNumber( (R32)damage );
 }
 
 SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )

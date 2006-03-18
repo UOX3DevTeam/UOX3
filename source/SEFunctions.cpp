@@ -1840,15 +1840,12 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	}
 	
 	CChar *attacker	= NULL, *defender = NULL;
-	WeatherType damageType = NONE;
-	UI08 getFightSkill = 0, hitLoc = 0;
-	SI16 baseDamage = 0, damage = 0;
+	SI16 damage = 0;
 
-	damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[0] ));
-	getFightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
-	hitLoc = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
-	baseDamage = static_cast<SI16>(JSVAL_TO_INT( argv[5] ));
-
+	JSEncapsulate damageType( cx, &( argv[0] ) );
+	JSEncapsulate getFightSkill( cx, &( argv[3] ) );
+	JSEncapsulate hitLoc( cx, &( argv[4] ) );
+	JSEncapsulate baseDamage( cx, &(argv[5]) );
 
 	JSEncapsulate attackerClass( cx, &(argv[1]) );
 	if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
@@ -1894,7 +1891,7 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		}
 	}
 
-	damage = Combat->ApplyDamageBonuses( damageType, attacker, defender, getFightSkill, hitLoc, baseDamage );
+	damage = Combat->ApplyDamageBonuses( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt() );
 	
 	*rval				= INT_TO_JSVAL( damage );
 
@@ -1910,16 +1907,13 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 	}
 	
 	CChar *attacker	= NULL, *defender = NULL;
-	WeatherType damageType = NONE;
-	UI08 getFightSkill = 0, hitLoc = 0;
-	SI16 baseDamage = 0, damage = 0;
-	bool doArmorDamage = false;
+	SI16 damage = 0;
 
-	damageType = static_cast<WeatherType>(JSVAL_TO_INT( argv[0] ));
-	getFightSkill = static_cast<UI08>(JSVAL_TO_INT( argv[3] ));
-	hitLoc = static_cast<UI08>(JSVAL_TO_INT( argv[4] ));
-	baseDamage = static_cast<SI16>(JSVAL_TO_INT( argv[5] ));
-	doArmorDamage = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	JSEncapsulate damageType( cx, &( argv[0] ) );
+	JSEncapsulate getFightSkill( cx, &( argv[3] ) );
+	JSEncapsulate hitLoc( cx, &( argv[4] ) );
+	JSEncapsulate baseDamage( cx, &(argv[5]) );
+	JSEncapsulate doArmorDamage(cx, &( argv[6] ) );
 
 	JSEncapsulate attackerClass( cx, &(argv[1]) );
 	if( attackerClass.ClassName() == "UOXChar" )
@@ -1960,7 +1954,7 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 		}
 	}
 
-	damage = Combat->ApplyDefenseModifiers( damageType, attacker, defender, getFightSkill, hitLoc, baseDamage, doArmorDamage );
+	damage = Combat->ApplyDefenseModifiers( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt(), doArmorDamage.toBool() );
 	
 	*rval				= INT_TO_JSVAL( damage );
 

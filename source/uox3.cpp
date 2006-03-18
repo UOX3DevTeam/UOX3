@@ -2411,7 +2411,7 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 void criminal( CChar *c )
 {
 	c->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_CRIMINAL ) );
-	if( !c->IsCriminal() )
+	if( !c->IsCriminal() && !c->IsMurderer() )
 	{
 		CSocket *cSock = c->GetSocket();
 		if( cSock != NULL )
