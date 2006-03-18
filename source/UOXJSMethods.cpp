@@ -1267,10 +1267,10 @@ JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( argc > 3 )
 	{
 		myChar->SetFy( y2, 1 );
-		myChar->SetNpcWander( 3 );
+		myChar->SetNpcWander( WT_BOX );
 	}
 	else
-		myChar->SetNpcWander( 4 );
+		myChar->SetNpcWander( WT_CIRCLE );
 
 	return JS_TRUE;
 }
@@ -1295,7 +1295,7 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	
 	myChar->SetFTarg( (CChar*)myObj );
-	myChar->SetNpcWander( 1 );
+	myChar->SetNpcWander( WT_FOLLOW );
 
 	return JS_TRUE;
 }
@@ -4316,7 +4316,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	Console.Print( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps );
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
-	cMove->SetNpcWander( 6 );
+	cMove->SetNpcWander( WT_PATHFIND );
 	Movement->PathFind( cMove, gx, gy, false, maxSteps );
 	return JS_TRUE;
 }
@@ -4388,7 +4388,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	Console.Print( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps );
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
-	cMove->SetNpcWander( 6 );
+	cMove->SetNpcWander( WT_PATHFIND );
 	Movement->PathFind( cMove, gx, gy, true, maxSteps );
 	return JS_TRUE;
 }

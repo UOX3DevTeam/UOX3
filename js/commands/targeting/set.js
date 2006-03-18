@@ -176,6 +176,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 			okMsg( socket );
 		}
 		break;
+	case "NEWBIE":
+		ourItem.isNewbie = (nVal == 1);
+		okMsg( socket );
+		break;
 	case "DEVINELOCK":
 		ourItem.devinelock = (nVal == 1);
 		okMsg( socket );

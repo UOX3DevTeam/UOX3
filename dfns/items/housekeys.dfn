@@ -1,0 +1,29 @@
+[house_key]
+{
+get=base_item
+name=a house key
+id=0x100F
+weight=100
+decay=1
+newbie
+}
+
+[tent_key]
+{
+get=base_item
+name=a tent key
+id=0x1010
+weight=100
+decay=1
+newbie
+}
+
+[boat_key]
+{
+get=base_item
+name=a ship key
+id=0x1013
+weight=100
+decay=1
+newbie
+}

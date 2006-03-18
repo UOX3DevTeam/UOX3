@@ -281,7 +281,7 @@ bool checkBoundingCircle( const SI16 xPos, const SI16 yPos, const SI16 fx1, cons
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 {
 	// compute the rectangular bounding area
-	if( 3 == c->GetNpcWander() )
+	if( WT_BOX == c->GetNpcWander() )
 	{
 		// if they provided a legal rectangle and
 		// ensure the bounding rect contains the current location
@@ -303,7 +303,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 			c->SetFy( c->GetY() + yAway, 1 );
 		}
 	}
-	else if( 4 == c->GetNpcWander() )
+	else if( WT_CIRCLE == c->GetNpcWander() )
 	{
 		// if they provided a legal circle and
 		// ensure the bounding circle contains the current location

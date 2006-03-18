@@ -61,23 +61,17 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 {
 	if( houseID >= 0x4000 )
 	{
-		UI16 keyID = 0x100F;	// Gold key by default
-		std::string keyName = "a house key";
+		std::string scriptName;
 		if( (houseID%256) >= 0x70 && (houseID%256) <= 0x73 ) // It's a tent
-		{
-			keyID = 0x1010;		//iron key for tents
-			keyName = "a tent key";
-		}
+			scriptName = "tent_key";
 		else if( (houseID%256) <= 0x18 )					// It's a boat
-		{
-			keyID = 0x1013;		//Boats -Rusty Iron Key
-			keyName = "a ship key";
-		}
+			scriptName = "boat_key";
+		else
+			scriptName = "house_key";
 
-		CItem *key = Items->CreateItem( mSock, mChar, keyID, 1, 0, OT_ITEM, true );
+		CItem *key = Items->CreateScriptItem( mSock, mChar, scriptName, 1, OT_ITEM, true );
 		if( ValidateObject( key ) )
 		{
-			key->SetName( keyName );
 			key->SetTempVar( CITV_MORE, house->GetSerial() );
 			key->SetType( IT_KEY );
 		}

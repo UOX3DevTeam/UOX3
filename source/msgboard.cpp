@@ -859,7 +859,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 	mNPC->SetQuestType( QT_ESCORTQUEST );
 	
 	// Make sure they don't move until an player accepts the quest
-	mNPC->SetNpcWander( 0 );
+	mNPC->SetNpcWander( WT_NONE );
 	mNPC->SetNPCAiType( aiNOAI );
 	mNPC->SetQuestOrigRegion( npcRegion );
 	
@@ -909,7 +909,7 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	mSock->sysmessage( 740, servicePay, mNPC->GetName().c_str(), mNPC->GetTitle().c_str() );
 	
 	// Take the NPC out of quest mode
-	mNPC->SetNpcWander( 2 );         // Wander freely
+	mNPC->SetNpcWander( WT_FREE );         // Wander freely
 	mNPC->SetFTarg( NULL );			 // Reset follow target
 	mNPC->SetQuestType( 0 );         // Reset quest type
 	mNPC->SetQuestDestRegion( 0 );   // Reset quest destination region

@@ -1519,7 +1519,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			newChar->SetLocation( caster );
 			Effects->PlayCharacterAnimation( newChar, 0x0C );
 			newChar->SetFTarg( caster );
-			newChar->SetNpcWander( 1 );
+			newChar->SetNpcWander( WT_FOLLOW );
 			s->sysmessage( 695 );
 			return;
 		case 0x000D: // Energy Vortex & Air elemental
@@ -1540,7 +1540,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 				newChar->SetStamina( 160 );
 				newChar->SetIntelligence( 180 );
 				newChar->SetMana( 180 );
-				newChar->SetNpcWander( 2 );
+				newChar->SetNpcWander( WT_FREE );
 				newChar->SetNPCAiType( aiCHAOTIC );
 				newChar->SetPoisonStrength( 3 );	
 			}
@@ -1627,7 +1627,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			newChar->SetStamina( 95 );
 			newChar->SetIntelligence( 70 );
 			newChar->SetMana( 70 );
-			newChar->SetNpcWander( 2 );
+			newChar->SetNpcWander( WT_FREE );
 			newChar->SetNPCAiType( aiCHAOTIC );
 			newChar->SetPoisonStrength( 2 );
 			break;

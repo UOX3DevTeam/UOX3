@@ -1948,7 +1948,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			m->SetNPCAiType( aiPLAYERVENDOR );
 			m->SetInvulnerable( true );
 			m->SetDir( mChar->GetDir() );
-			m->SetNpcWander( 0 );
 			m->SetOwner( mChar );
 			iUsed->Delete();
 			m->talk( mSock, 388, false, m->GetName().c_str() );

@@ -800,7 +800,7 @@ void FollowTarget( CSocket *s )
 		return;
 	
 	char1->SetFTarg( char2 );
-	char1->SetNpcWander( 1 );
+	char1->SetNpcWander( WT_FOLLOW );
 }
 
 void TransferTarget( CSocket *s )
@@ -829,10 +829,8 @@ void TransferTarget( CSocket *s )
 	char1->talkAll( 1074, false, char1->GetName().c_str(), char2->GetName().c_str() );
 	
 	char1->SetOwner( char2 );
-	char1->SetNpcWander( 1 );
-	
 	char1->SetFTarg( NULL );
-	char1->SetNpcWander( 0 );
+	char1->SetNpcWander( WT_FREE );
 }
 
 bool BuyShop( CSocket *s, CChar *c )

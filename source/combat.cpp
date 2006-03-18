@@ -1658,7 +1658,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	{
 		if( mChar.IsNpc() )
 		{
-			if( mChar.GetNpcWander() != 5 )
+			if( mChar.GetNpcWander() != WT_FLEE )
 			{
 				UI08 charDir = Movement->Direction( &mChar, ourTarg->GetX(), ourTarg->GetY() );
 				if( mChar.GetDir() != charDir && charDir < 8 )
@@ -2024,7 +2024,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	if( mChar->IsNpc() && mChar->GetNPCAiType() == aiGUARD )
 	{
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
-		mChar->SetNpcWander( 2 );
+		mChar->SetNpcWander( WT_FREE );
 		mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue(static_cast<R32>( cwmWorldState->ServerData()->NPCSpeed() )) );
 		mChar->talkAll( 281, false );
 	}
@@ -2208,7 +2208,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 		getGuard->SetAttackFirst( true );
 		getGuard->SetAttacker( targChar );
 		getGuard->SetTarg( targChar );
-		getGuard->SetNpcWander( 2 );
+		getGuard->SetNpcWander( WT_FREE );
 		if( !getGuard->IsAtWar() )
 			getGuard->ToggleCombat();
 

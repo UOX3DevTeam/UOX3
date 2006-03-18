@@ -279,7 +279,7 @@ bool CPITalkRequest::Handle( void )
 		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 			mChar->ExposeToView();
 		
-		if( Type() == YELL && mChar->CanBroadcast() )
+		if( ( Type() == YELL || Type() == ASCIIYELL ) && mChar->CanBroadcast() )
 		{
 			CSpeechEntry& toAdd = SpeechSys->Add();
 			toAdd.Speech( asciiText );

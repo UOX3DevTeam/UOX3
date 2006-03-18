@@ -1,3 +1,14 @@
+3/18/2006 - giwo (0.98-3.5l [3.6 BETA])
+	Fixed an issue causing GM yell messages with trigger words in them not to be broadcast.
+	Added and made use of a WanderTypes enum throughout the source.
+	Added housekeys.dfn to dfndata/items/ and made house creation rely on the script entries therein.
+	Optimized NPC walking a bit, and moved NPCWander handling into its own function.
+	Further updated and modified calc_walk() and AdvancedPathFinding() to handle the Z plane.
+	Removed CMovement::HandleRegionStuffAfterMove() as it was superfluous.
+	Rewrote CMovement::OutputShoveMessage() to fix several minor issues.
+	Updated CMovement::MoveCharForDirection() to reduce extra function calls and make use of CMapHandler::ChangeRegion()
+	Added NEWBIE option to JS SET command.
+
 3/18/2006 - grimson
 	Fixed CHandleCombat::calcDamage() I was submitting the base damage to the defense calculation.
 

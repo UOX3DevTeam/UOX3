@@ -172,7 +172,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					Npc->SetOwner( mChar );
 					Npc->SetFTarg( mChar );			// Set the NPC to follow the PC
-					Npc->SetNpcWander( 1 );			// Set the NPC to wander freely
+					Npc->SetNpcWander( WT_FOLLOW );
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 		
 					// Send out the rant about accepting the escort
@@ -399,7 +399,7 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( NULL );
-			Npc->SetNpcWander( 2 );
+			Npc->SetNpcWander( WT_FREE );
 			Npc->SetOwner( NULL );
 			Npc->talkAll( 1325, false, Npc->GetName().c_str() );
 			if( Npc->GetTimer( tNPC_SUMMONTIME ) )
@@ -433,7 +433,7 @@ bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npc->SetGuarding( mChar );
 			mChar->SetGuarded( true );
 			Npc->SetFTarg( mChar );
-			Npc->SetNpcWander( 1 );
+			Npc->SetNpcWander( WT_FOLLOW );
 			if( !saidAll )
 				return false;
 		}
@@ -471,7 +471,7 @@ bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( mChar );
-			Npc->SetNpcWander( 1 );
+			Npc->SetNpcWander( WT_FOLLOW );
 			mSock->sysmessage( 1318 );
 			if( !saidAll )
 				return false;
@@ -494,7 +494,7 @@ bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npc->SetTarg( NULL );
 			if( Npc->IsAtWar() ) 
 				Npc->ToggleCombat();
-			Npc->SetNpcWander( 0 );
+			Npc->SetNpcWander( WT_NONE );
 			if( !saidAll )
 				return false;
 		}

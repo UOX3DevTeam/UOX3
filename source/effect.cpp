@@ -584,7 +584,7 @@ void cEffects::checktempeffects( void )
 				{
 					src->SetOwner( NULL );
 					src->SetTamed( false );
-					src->SetNpcWander( 2 );
+					src->SetNpcWander( WT_FREE );
 				}
 				break;
 			default:

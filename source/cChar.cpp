@@ -1116,7 +1116,7 @@ void CChar::AddSelfToOwner( void )
 	if( !ValidateObject( newOwner ) )
 	{
 		SetTamed( false );
-		SetNpcWander( 2 );
+		SetNpcWander( WT_FREE );
 	}
 	else
 	{

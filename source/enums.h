@@ -650,5 +650,17 @@ enum FlagColors
 	FC_INVULNERABLE
 };
 
+enum WanderTypes
+{
+	WT_NONE = 0,
+	WT_FOLLOW,
+	WT_FREE,
+	WT_BOX,
+	WT_CIRCLE,
+	WT_FLEE,
+	WT_PATHFIND,
+	WT_COUNT
+};
+
 #endif
 
