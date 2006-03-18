@@ -1869,7 +1869,7 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &(argv[1]) );
+	JSEncapsulate defenderClass( cx, &(argv[2]) );
 	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		DoSEErrorMessage( "ApplyDamageBonuses: Passed an invalid Character" );
@@ -1891,9 +1891,8 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		}
 	}
 
-	damage = Combat->ApplyDamageBonuses( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt() );
-	
-	*rval				= INT_TO_JSVAL( damage );
+	damage	= Combat->ApplyDamageBonuses( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt() );
+	*rval	= INT_TO_JSVAL( damage );
 
 	return JS_TRUE;
 }
@@ -1932,7 +1931,7 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 		}
 	}
 
-	JSEncapsulate defenderClass( cx, &(argv[1]) );
+	JSEncapsulate defenderClass( cx, &(argv[2]) );
 	if( defenderClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		DoSEErrorMessage( "ApplyDefenseModifiers: Passed an invalid Character" );
@@ -1954,9 +1953,8 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 		}
 	}
 
-	damage = Combat->ApplyDefenseModifiers( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt(), doArmorDamage.toBool() );
-	
-	*rval				= INT_TO_JSVAL( damage );
+	damage	= Combat->ApplyDefenseModifiers( (WeatherType)damageType.toInt(), attacker, defender, (UI08)getFightSkill.toInt(), (UI08)hitLoc.toInt(), (SI16)baseDamage.toInt(), doArmorDamage.toBool() );
+	*rval	= INT_TO_JSVAL( damage );
 
 	return JS_TRUE;
 }
