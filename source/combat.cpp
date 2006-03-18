@@ -1592,7 +1592,7 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( damage < 1 )
 		return 0;
 
-	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage, true );
+	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
 
 	if( damage <= 0 ) 
 		damage = RandomNum( 0, 4 );

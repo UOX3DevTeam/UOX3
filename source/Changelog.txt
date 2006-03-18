@@ -1,4 +1,7 @@
 3/18/2006 - grimson
+	Fixed CHandleCombat::calcDamage() I was submitting the base damage to the defense calculation.
+
+3/18/2006 - grimson
 	Another change to CChar::Damage(), if the attacker becomes criminal make the owner of it
 	criminal too.
 	Changed CHandleCombat::ApplyDamageBonuses() so that elemental damage is doubled when the
