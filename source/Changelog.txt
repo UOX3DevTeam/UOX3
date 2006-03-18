@@ -1,4 +1,9 @@
 18th March, 2006 - Maarc
+	Removed some unused properties/methods of the console that have never been used
+	Begun construction of some placeholder code for party related works, not committing the factory code until some testing can occur first
+	Essentially, this just updates the handling for it which currently does nothing, and gives an insight into how it would be done
+
+18th March, 2006 - Maarc
 	Adjusted SE_ApplyDamageBonuses and SE_ApplyDefenseModifiers as they were using the same parameter for attacker and defender
 	Updated documentation somewhat
 

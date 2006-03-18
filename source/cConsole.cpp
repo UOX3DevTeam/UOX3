@@ -79,11 +79,11 @@ void		LoadTeleportLocations( void );
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Class Constructor and deconstructor
 //o---------------------------------------------------------------------------o
-CConsole::CConsole() : left( 0 ), top( 0 ), height( 25 ), width( 80 ), filterSettings( 0xFFFF ), 
+CConsole::CConsole() : width( 80 ), height( 25 ),
 #if UOX_PLATFORM == PLATFORM_WIN32
-currentMode( NORMALMODE ),currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false )
+currentMode( NORMALMODE ), currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false )
 #else
-currentMode( NORMALMODE ),currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
+currentMode( NORMALMODE ), currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
 #endif
 {
 }
@@ -102,168 +102,114 @@ CConsole::~CConsole()
 //o---------------------------------------------------------------------------o
 CConsole& CConsole::operator<<( const SI08 *outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		(*this) << (const char *)outPut;
-	}
+	StartOfLineCheck();
+	(*this) << (const char *)outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const char *outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const UI08 *outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		(*this) << (const char *)outPut;
-	}
+	StartOfLineCheck();
+	(*this) << (const char *)outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const SI32 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const UI32 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const SI16 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const UI16 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const SI08 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const UI08 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const CBaseObject *outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		(*this) << outPut->GetSerial();
-	}
+	StartOfLineCheck();
+	(*this) << outPut->GetSerial();
 	return (*this);
 }
 CConsole& CConsole::operator<<( const std::string &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut.c_str();
-	}
+	StartOfLineCheck();
+	std::cout << outPut.c_str();
 	return (*this);
 }
 CConsole& CConsole::operator<<( const std::ostream& outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( CBaseObject *outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		(*this) << outPut->GetSerial();
-	}
+	StartOfLineCheck();
+	(*this) << outPut->GetSerial();
 	return (*this);
 }
 CConsole& CConsole::operator<<( std::ostream& outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( CEndL& myObj )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		if( curLeft == 0 )
-			PrintStartOfLine();
-		std::cout << std::endl;
-		curLeft = 0;
-		++curTop;
-	}
+	if( curLeft == 0 )
+		PrintStartOfLine();
+	std::cout << std::endl;
+	curLeft = 0;
+	++curTop;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const R32 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 CConsole& CConsole::operator<<( const R64 &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << outPut;
-	}
+	StartOfLineCheck();
+	std::cout << outPut;
 	return (*this);
 }
 
 CConsole& CConsole::operator<<( const size_t &outPut )
 {
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << static_cast< UI32 >(outPut);
-	}
+	StartOfLineCheck();
+	std::cout << static_cast< UI32 >(outPut);
 	return (*this);
 }
 
@@ -283,14 +229,11 @@ void CConsole::Print( const char *toPrint, ... )
 	vsnprintf( msg, MAX_CONSOLE_BUFF, toPrint, argptr );
 	va_end( argptr );
 
-	if( CanPrint( currentMode, currentLevel ) )
-	{
-		StartOfLineCheck();
-		std::cout << msg;
-		size_t i = strlen( msg );
-		if( i > 0 && msg[i-1] == '\n' )
-			curLeft = 0;
-	}
+	StartOfLineCheck();
+	std::cout << msg;
+	size_t i = strlen( msg );
+	if( i > 0 && msg[i-1] == '\n' )
+		curLeft = 0;
 }
 
 
@@ -366,8 +309,6 @@ void CConsole::Log( const char *toLog, ... )
 //o---------------------------------------------------------------------------o
 void CConsole::Error( UI08 level, const char *toWrite, ... )
 {
-	if( !CanPrint( ERRORMODE, level ) )
-		return;
 	UI08 oldMode = CurrentMode(), oldLevel = CurrentLevel();
 	CurrentMode( ERRORMODE );
 	CurrentLevel( level );
@@ -388,47 +329,6 @@ void CConsole::Error( UI08 level, const char *toWrite, ... )
 
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  Left, Top, Height, Width
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets and gets console size
-//o---------------------------------------------------------------------------o
-UI16 CConsole::Left( void ) const
-{
-	return left;
-}
-UI16 CConsole::Top( void ) const
-{
-	return top;
-}
-UI16 CConsole::Height( void ) const
-{
-	return height;
-}
-UI16 CConsole::Width( void ) const
-{
-	return width;
-}
-void CConsole::Left( UI16 nVal )
-{
-	left = nVal;
-}
-void CConsole::Top( UI16 nVal )
-{
-	top = nVal;
-}
-void CConsole::Height( UI16 nVal )
-{
-	height = nVal;
-}
-void CConsole::Width( UI16 nVal )
-{
-	width = nVal;
-}
-
-
-//o---------------------------------------------------------------------------o
 //|   Function    -  PrintSectionBegin
 //|   Date        -  Unknown
 //|   Programmer  -  Unknown
@@ -438,10 +338,8 @@ void CConsole::Width( UI16 nVal )
 void CConsole::PrintSectionBegin( void )
 {
 	TurnBrightWhite();
-	for( UI16 i = 0; i < left; ++i )
-		std::cout << " ";
 	std::cout << "o";
-	for( int j = left + 1; j < width - 1; ++j )
+	for( int j = 1; j < width - 1; ++j )
 		std::cout << "-";
 	std::cout << "o";
 	curLeft = 0;
@@ -682,8 +580,6 @@ void CConsole::PrintBasedOnVal( bool value )
 //o---------------------------------------------------------------------------o
 void CConsole::Warning( UI08 level, const char *toWrite, ... )
 {
-	if( !CanPrint( WARNINGMODE, level ) )
-		return;
 	UI08 oldMode = CurrentMode(), oldLevel = CurrentLevel();
 	CurrentMode( WARNINGMODE );
 	CurrentLevel( level );
@@ -702,32 +598,6 @@ void CConsole::Warning( UI08 level, const char *toWrite, ... )
 	CurrentLevel( oldLevel );
 }
 
-const UI16 ANDSettings[16]	= {	1,	2,	4,	8,	16,	32,	64,	128,	256,	512,	1024,	2048,	4096,	8192,	16384,	32768 };
-const UI16 ORTSettings[16]	= {	1,	2,	4,	8,	16,	32,	64,	128,	256,	512,	1024,	2048,	4096,	8192,	16384,	32768 };
-const UI16 ORFSettings[16]	= {	0xFFFE,	0xFFFD,	0xFFFB,	0xFFF7,	0xFFEF,	0xFFDF,	0xFFBF,	0xFF7F,	0xFEFF,	0xFDFF,	0xFBFF,	0xF7FF,	0xEFFF,	0xDFFF,	0xBFFF,	0x7FFF };
-
-void CConsole::FilterBit( UI08 type, UI08 level, bool status )
-{
-	if( level > 4 )
-		level = 4;
-	UI08 base = 0;
-	switch( type )
-	{
-		case NORMALMODE:							break;
-		case WARNINGMODE:	base = 5;				break;
-		case ERRORMODE:		base = 10;				break;
-		case COLOURMODE:	base = 15;	level = 0;	break;
-		default:									return;
-	}
-	if( status )
-		filterSettings |= ORTSettings[base + level];
-	else
-		filterSettings &= ORFSettings[base + level];
-}
-void CConsole::FilterSetting( UI16 value )
-{
-	filterSettings = value;
-}
 void CConsole::CurrentMode( UI08 value )
 {
 	currentMode = value;
@@ -737,25 +607,6 @@ void CConsole::CurrentLevel( UI08 value )
 	currentLevel = value;
 }
 
-bool CConsole::CanPrint( UI08 type, UI08 level ) const
-{
-	if( level > 4 )
-		level = 4;
-	switch( type )
-	{
-		case NORMALMODE:	return ( (filterSettings&ANDSettings[level]) == ANDSettings[level] );
-		case WARNINGMODE:	return ( (filterSettings&ANDSettings[5+level]) == ANDSettings[5+level] );
-		case ERRORMODE:		return ( (filterSettings&ANDSettings[10+level]) == ANDSettings[10+level] );
-		case COLOURMODE:	return ( (filterSettings&ANDSettings[15]) == ANDSettings[15] );
-		default:
-			return false;
-	}
-	return false;
-}
-UI16 CConsole::FilterSetting( void ) const
-{
-	return filterSettings;
-}
 UI08 CConsole::CurrentMode( void ) const
 {
 	return currentMode;
@@ -883,27 +734,24 @@ void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 	vsnprintf( msg, MAX_CONSOLE_BUFF, toPrint, argptr );
 	va_end( argptr );
 
-	if( CanPrint( currentMode, currentLevel ) )
+	StartOfLineCheck();
+	size_t stringLength = strlen( msg ) + 3;
+	MoveTo( static_cast< int >(width - stringLength) );
+	TurnNormal();
+	(*this) << "[";
+	switch( colour )
 	{
-		StartOfLineCheck();
-		size_t stringLength = strlen( msg ) + 3;
-		MoveTo( static_cast< int >(width - stringLength) );
-		TurnNormal();
-		(*this) << "[";
-		switch( colour )
-		{
-			default:
-			case CNORMAL:						break;
-			case CBLUE:		TurnBlue();			break;
-			case CRED:		TurnRed();			break;
-			case CGREEN:	TurnGreen();		break;
-			case CYELLOW:	TurnYellow();		break;
-			case CBWHITE:	TurnBrightWhite();	break;
-		}
-		(*this) << msg;
-		TurnNormal();
-		(*this) << "]" << myendl;
+		default:
+		case CNORMAL:						break;
+		case CBLUE:		TurnBlue();			break;
+		case CRED:		TurnRed();			break;
+		case CGREEN:	TurnGreen();		break;
+		case CYELLOW:	TurnYellow();		break;
+		case CBWHITE:	TurnBrightWhite();	break;
 	}
+	(*this) << msg;
+	TurnNormal();
+	(*this) << "]" << myendl;
 }
 
 //o---------------------------------------------------------------------------o

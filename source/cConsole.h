@@ -58,21 +58,9 @@ public:
 	void	Error( UI08 level, const char *toWrite, ... );
 	void	Warning( UI08 level, const char *toWrite, ... );
 
-	UI16	Left( void ) const;
-	UI16	Top( void ) const;
-	UI16	Height( void ) const;
-	UI16	Width( void ) const;
-	bool	CanPrint( UI08 type, UI08 level ) const;
-	UI16	FilterSetting( void ) const;
 	UI08	CurrentMode( void ) const;
 	UI08	CurrentLevel( void ) const;
 
-	void	Left( UI16 nVal );
-	void	Top( UI16 nVal );
-	void	Height( UI16 nVal );
-	void	Width( UI16 nVal );
-	void	FilterBit( UI08 type, UI08 level, bool status );
-	void	FilterSetting( UI16 value );
 	void	CurrentMode( UI08 value );
 	void	CurrentLevel( UI08 value );
 
@@ -93,9 +81,9 @@ public:
 	void	PrintBasedOnVal( bool value );
 	void	MoveTo( int x, int y = -1 );//y=-1 will move on the current line
 
-	bool	LogEcho(void);
-	void	LogEcho(bool value);	
-	void	PrintSpecial(UI08 color, const char *toPrint,...);
+	bool	LogEcho( void );
+	void	LogEcho( bool value );	
+	void	PrintSpecial( UI08 color, const char *toPrint, ... );
 	void	Poll( void );
 	void	Cloak( char *callback );
 
@@ -127,9 +115,9 @@ private:
 
 	JSCONSOLEKEYMAP		JSKeyHandler;
 	JSCONSOLEFUNCMAP	JSConsoleFunctions;
-	UI16				left, top, height, width;	// for differing windows
+	UI16				height, width;	// for differing windows
 	UI16				curLeft, curTop;
-	UI16				filterSettings;
+	std::bitset< 16 >	filterSettings;
 	UI08				currentMode, currentLevel;
 	UI08				previousColour;
 	bool				logEcho;

@@ -13,6 +13,7 @@
 #include "books.h"
 #include "cMagic.h"
 #include "skills.h"
+//#include "PartySystem.h"
 
 namespace UOX
 {
@@ -2360,27 +2361,103 @@ void CPIPartyCommand::Receive( void )
 bool CPIPartyCommand::Handle( void )
 {
 	UI08 partyCmd = tSock->GetByte( 5 );
+
+	const int PARTY_ADD			= 1;
+	const int PARTY_REMOVE		= 2;
+	const int PARTY_TELLINDIV	= 3;
+	const int PARTY_TELLALL		= 4;
+	const int PARTY_LOOT		= 6;
+	const int PARTY_ACCEPT		= 8;
+	const int PARTY_DECLINE		= 9;
+
+	//	Subcommand 1		Add a party member
+	//		Client
+	//			BYTE[4]	id		(if 0, a targeting cursor appears)	
+	//		Server
+	//			BYTE[1]	memberCount
+	//			For each member
+	//				BYTE[4] memberID
+	//	Subcommand 2		Remove a party member
+	//		Client
+	//			BYTE[4] id		(if 0, a targeting cursor appears)
+	//		Server
+	//			BYTE[1]	membersInNewParty
+	//			BYTE[4]	idOfRemovedPlayer
+	//			For each member
+	//				BYTE[4]	memberID
+	//	Subcommand 3		Tell a party member a message
+	//		BYTE[4]		id
+	//		BYTE[n][2]	Null terminated Unicode message
+	//	Subcommand 4		Tell full party a message
+	//		Client
+	//			BYTE[n][2]	Null terminated unicode message
+	//		Server
+	//			BYTE[4]		srcMember
+	//			BYTE[n][2]	Null terminated Unicode message
+	//	Subcommand 6		Party can loot me?
+	//		Client
+	//			BYTE[1]	canLoot	( 0 == no, 1 == yes )
+	//	Subcommand 8		Accept join party invitation
+	//		Client
+	//			BYTE[4]	leaderID
+	//	Subcommand 9		Reject join party invitation
+	//		Client
+	//			BYTE[4] leaderID
+	const int BASE_OFFSET	= 6;
 	switch( partyCmd )
 	{
-		case 1:		// 2 variants.  1 long, if 0 is targeting cursor, id of party member to add.  Client message
-					// second variant.  1 byte, number of members.  4 bytes per member, which is ID.  Server message
-			break;
-		case 2:		// 2 variants.  Remove party member.  single long, serial of party member to remove.  if 0, targeting appears.  Client message
-					// second variant.  1 byte, number of members now in party.  1 long, serial of player removed.  NumMembers long follows, ID of each member
-			break;
-		case 3:		// Tell party member a message. 1 SERIAL (of target, from client, of source, from server).  Null terminated Unicode message
-			// Byte[4] ID.  Byte[n][2] Message
-			break;
-		case 4:		// Tell full party message.  NULL terminated Unicode message
-			// Byte[n][2] message. client part.
-			// UI08[4] ID.  UI08[n][2] full message.  Server message
-			break;
-		case 6:		// Party can loot me?  1 byte, canloot.  0 == no, 1 == yes
-			break;
-		case 8:		// Accept join party invitation.  1 long, party leader's serial
-			break;
-		case 9:		// Decline party invitation.  1 LONG, party leader's serial
-			break;
+	case PARTY_ADD:
+		{
+/*			SERIAL charToAdd	= tSock->GetDWord( BASE_OFFSET );
+			if( charToAdd != 0 )
+			{	// it really is a serial
+				Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+				if( toAddTo != NULL )
+					toAddTo->AddMember( calcCharObjFromSer( charToAdd ) );
+			}
+			else
+			{	// Crap crap crap, what do we do here?
+
+			}*/
+		}
+		break;
+	case PARTY_REMOVE:
+		{
+		}
+		break;
+	case PARTY_TELLINDIV:
+		{
+		}
+		break;
+	case PARTY_TELLALL:
+		{
+		}
+		break;
+	case PARTY_LOOT:
+		{
+/*			Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			if( toAddTo != NULL )
+			{
+				PartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
+				if( mEntry != NULL )
+					mEntry->IsLootable( tSock->GetByte( BASE_OFFSET ) != 0 );
+			}*/
+		}
+		break;
+	case PARTY_ACCEPT:
+		{
+/*			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
+			Party *toAddTo		= PartyFactory::getSingleton().Get( calcCharObjFromSer( leaderSerial ) );
+			if( toAddTo != NULL )
+			{
+				toAddTo->AddMember( tSock->CurrcharObj() );
+			}*/
+		}
+		break;
+	case PARTY_DECLINE:
+		{
+		}
+		break;
 	}
 	return true;
 }

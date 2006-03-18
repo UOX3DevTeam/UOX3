@@ -452,11 +452,6 @@ static JSPropertySpec CAccountProperties[] =
 
 static JSPropertySpec CConsoleProperties[] =
 {
-	{ "left",		CCONSOLE_LEFT,		JSPROP_ENUMANDPERM },
-	{ "top",		CCONSOLE_TOP,		JSPROP_ENUMANDPERM },
-	{ "height",		CCONSOLE_HEIGHT,	JSPROP_ENUMANDPERM },
-	{ "width",		CCONSOLE_WIDTH,		JSPROP_ENUMANDPERM },
-	{ "filter",		CCONSOLE_FILTER,	JSPROP_ENUMANDPERM },
 	{ "mode",		CCONSOLE_MODE,		JSPROP_ENUMANDPERM },
 	{ "level",		CCONSOLE_LEVEL,		JSPROP_ENUMANDPERM },
 	{ "logEcho",	CCONSOLE_LOGECHO,	JSPROP_ENUMANDPERM },
