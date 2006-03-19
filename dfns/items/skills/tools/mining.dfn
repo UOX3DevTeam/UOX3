@@ -11,6 +11,13 @@ restock=100
 decay=1
 }
 
+[0x0F3A]
+{
+get=0x0F39
+name=a shovel
+id=0x0F3A
+}
+
 [0x0e85]
 { facing West
 get=base_item
