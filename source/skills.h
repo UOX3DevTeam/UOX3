@@ -4,6 +4,72 @@
 namespace UOX
 {
 
+// create.scp revisions
+struct resAmountPair
+{
+	std::vector< UI16 > idList;
+	UI08 amountNeeded;
+	UI16 colour;
+	resAmountPair() : amountNeeded( 1 ), colour( 0 )
+	{
+		idList.resize( 0 );
+	}
+	~resAmountPair()
+	{
+		idList.resize( 0 );
+	}
+};
+
+struct resSkillReq
+{
+	UI08 skillNumber;
+	UI16 minSkill;
+	UI16 maxSkill;
+	resSkillReq() : skillNumber( 0 ), minSkill( 0 ), maxSkill( 0 )
+	{
+	}
+};
+
+struct createEntry
+{
+	UI16 colour;
+	UI16 targID;
+	UI16 soundPlayed;
+	UI08 minRank;
+	UI08 maxRank;
+	std::string addItem;
+	SI16 delay;
+	UI16 spell;
+	std::vector< resAmountPair > resourceNeeded;
+	std::vector< resSkillReq > skillReqs;
+	std::string name;
+	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), spell( 0 ), name( "" )
+	{
+		resourceNeeded.resize( 0 );
+		skillReqs.resize( 0 );
+	}
+	~createEntry()
+	{
+		resourceNeeded.resize( 0 );
+		skillReqs.resize( 0 );
+	}
+	R32 AverageMinSkill( void ) 
+	{ 
+		R32 sum = 0;
+		for( size_t i = 0; i < skillReqs.size(); ++i )
+			sum += skillReqs[i].minSkill;
+		return sum / skillReqs.size();
+	}
+	R32 AverageMaxSkill( void ) 
+	{ 
+		R32 sum = 0;
+		for( size_t i = 0; i < skillReqs.size(); ++i )
+			sum += skillReqs[i].maxSkill;
+		return sum / skillReqs.size();
+	}
+
+};
+
 struct miningData
 {
 	UI16 colour;		// colour of the ore, for colour of ingot

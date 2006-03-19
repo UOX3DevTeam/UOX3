@@ -150,6 +150,7 @@ private:
 	// Misc
 	size_t		playersOnline;					// Players online
 	bool		reloadingScripts;
+	bool		classesInitialized;
 
 public:
 	// Timers
@@ -220,6 +221,8 @@ public:
 	void		DecPlayersOnline( void );
 	bool		GetReloadingScripts( void ) const;
 	void		SetReloadingScripts( bool newVal );
+	void		ClassesInitialized( bool newVal );
+	bool		ClassesInitialized( void ) const;
 
 	void		CheckAutoTimers( void );
 

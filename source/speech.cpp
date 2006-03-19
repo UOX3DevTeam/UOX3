@@ -1,7 +1,6 @@
 #include "uox3.h"
 #include "speech.h"
 #include "cVersionClass.h"
-#include "cGuild.h"
 #include "cRaces.h"
 #include "commands.h"
 #include "skills.h"
@@ -9,7 +8,6 @@
 #include "cScript.h"
 #include "cEffects.h"
 #include "CPacketSend.h"
-#include "regions.h"
 #include "CResponse.h"
 
 namespace UOX
@@ -171,63 +169,7 @@ void sysBroadcast( const std::string txt )
 	}
 }
 
-void WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
-bool response( CSocket *mSock, CChar *mChar, std::string text )
-{
-	bool retVal					= false;
-	REGIONLIST nearbyRegions	= MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
-			return false;
-
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
-		regChars->Push();
-		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
-		{
-			if( !ValidateObject( Npc ) || Npc == mChar )
-				continue;
-			UI16 ourDist	= getDist( mChar, Npc );
-			SI08 diffZ		= mChar->GetZ() - Npc->GetZ();
-			if( ourDist > 30 || abs( diffZ ) > 30 )
-				continue;
-			if( ourDist <= 5 && abs( diffZ ) <= 9 )
-			{
-				UI16 speechTrig = Npc->GetScriptTrigger();
-				cScript *toExecute = JSMapping->GetScript( speechTrig );
-				if( toExecute != NULL )
-				{
-//|					-1	=> No such function or bad call
-//|					0	=> Let other NPCs and PCs see it
-//|					1	=> Let other PCs see it
-//|					2	=> Let no one else see it
-					SI08 rVal = -1;
-					if( Npc->isDisabled() )
-						Npc->talkAll( 1291, false );
-					else if( !mChar->IsDead() )
-						rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
-					switch( rVal )
-					{
-						case 1:		// No other NPCs to see it, but PCs should
-							regChars->Pop();
-							return false;
-						case 2:		// no one else to see it
-							regChars->Pop();
-							return true;
-						case 0:		// Other NPCs and PCs to see it
-						case -1:	// no function, so do nothing... NOT handled!
-						default:
-							break;
-					}
-				}
-			}
-		}
-		regChars->Pop();
-	}
-	WhichResponse( mSock, mChar, text );
-	return retVal;
-}
+bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
 /*
 Unicode speech format
 byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
@@ -315,29 +257,19 @@ bool CPITalkRequest::Handle( void )
 				Console.Log( temp, temp2 );
 			}
 
-			for( UI16 trigWord = tSock->FirstTrigWord(); !tSock->FinishedTrigWords(); trigWord = tSock->NextTrigWord() )
-			{
-				if( trigWord == TW_RESIGN )
-				{
-					GuildSys->Resign( tSock );
-					break;
-				}
-			}
 			if( text.find( "DEVTEAM033070" ) != std::string::npos )
 			{
 				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
 				tSock->sysmessage( temp3.c_str() );
 			}
-			else if( !mChar->IsDead() )	// this makes it so npcs do not respond to dead people
-			{
-				if( response( tSock, mChar, text ) )
-					return true;
-			}
+			
+			if( !WhichResponse( tSock, mChar, text ) )
+				return true;
 
-			CPUOXBuffer *txtToSend			= NULL;
-			CPUOXBuffer *ghostedText		= NULL;
-			CPUnicodeSpeech *uniTxtToSend	= NULL;
-			CPUnicodeSpeech *uniGhostedText = NULL;
+			CPUOXBuffer *txtToSend				= NULL;
+			CPUOXBuffer *ghostedText			= NULL;
+			CPUnicodeSpeech *uniTxtToSend		= NULL;
+			CPUnicodeSpeech *uniGhostedText		= NULL;
 			CPacketSpeech *asciiTxtToSend		= NULL;
 			CPacketSpeech *asciiGhostedText		= NULL;
 
@@ -377,7 +309,7 @@ bool CPITalkRequest::Handle( void )
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
-					if( !tChar->IsGM() && !tChar->IsCounselor() && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
+					if( tChar->GetCommandLevel() < CNS_CMDLEVEL && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
 						if( mChar->IsDead() && !tChar->IsDead() )  // Ghost can talk normally to other ghosts
 							tSock->Send( ghostedText );

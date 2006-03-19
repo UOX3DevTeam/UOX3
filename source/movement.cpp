@@ -158,7 +158,6 @@ void HandleTeleporters( CChar *s )
 {
 	if( !ValidateObject( s ) )
 		return;
-	R32 teleLoc, ourLoc;
 	UI08 charWorld					= s->WorldNumber();
 	CTeleLocationEntry *getTeleLoc	= NULL;
 	bool isOnTeleporter;
@@ -171,17 +170,9 @@ void HandleTeleporters( CChar *s )
 		if( getTeleLoc->SourceWorld() == 0xFF || getTeleLoc->SourceWorld() == charWorld )
 		{
 			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
-			{
-				teleLoc = getTeleLoc->SourceLocation().Mag3D();
-				ourLoc	= s->GetLocation().Mag3D();
-				isOnTeleporter = ( teleLoc == ourLoc );
-			}
+				isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
 			else
-			{
-				teleLoc = getTeleLoc->SourceLocation().Mag();
-				ourLoc	= s->GetLocation().Mag();
-				isOnTeleporter = ( teleLoc == ourLoc );
-			}
+				isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
 			if( isOnTeleporter )
 			{
 				s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, getTeleLoc->TargetWorld() );
@@ -1587,6 +1578,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	UI08 ontype			= 0;
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
+	UI16 i				= 0;
 	CTileUni *tb;
 	CTileUni xyblock[XYMAX];
 	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
@@ -1594,7 +1586,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber );
 
 	// first calculate newZ value
-	for( UI16 i = 0; i < xycount; ++i )
+	for( i = 0; i < xycount; ++i )
 	{
 		tb = &xyblock[i];
 
@@ -1656,9 +1648,9 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	// (npc's walking on ocean bug)
 	// now the new Z-cordinate of creature is known, 
 	// check if it hits it's head against something (blocking in other words)
-	for( UI16 ii = 0; ii < xycount; ++ii )
+	for( i = 0; i < xycount; ++i )
 	{
-		tb = &xyblock[ii]; 
+		tb = &xyblock[i]; 
 
 		if( tb->Top() < newz )
 			continue;
@@ -1666,7 +1658,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 		if( waterWalk )
 		{
 			if( ( ( tb->Top() > newz && tb->BaseZ() <= item_influence ) ||
-				( tb->Top() == newz && ontype == 0 ) ) || !tb->CheckFlag( TF_WET ) )	// Check for blocking tile
+				( tb->Top() == newz && ontype == 0 ) && !tb->CheckFlag( TF_WET ) ) )	// Check for blocking tile
 			{
 				newz = ILLEGAL_Z;
 				break;

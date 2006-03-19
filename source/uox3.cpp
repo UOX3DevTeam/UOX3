@@ -1481,6 +1481,8 @@ void CWorldMain::CheckAutoTimers( void )
 //o---------------------------------------------------------------------------o
 void InitClasses( void )
 {
+	cwmWorldState->ClassesInitialized( true );
+
 	JSMapping		= NULL;	Effects		= NULL;
 	Commands		= NULL;	Combat		= NULL;
 	Items			= NULL;	Map			= NULL;
@@ -1683,15 +1685,6 @@ void Shutdown( SI32 retCode )
 	Console.PrintSectionBegin();
 	Console << "Beginning UOX final shut down sequence..." << myendl;
 
-	if( HTMLTemplates )
-	{
-		Console << "HTMLTemplates object detected. Writing Offline HTML Now..." << myendl;
-		HTMLTemplates->Poll( ETT_OFFLINE );
-	}
-	else
-		Console << "HTMLTemplates object not found." << myendl;
-
-
 	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() >= 1 && retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 		do
@@ -1699,55 +1692,66 @@ void Shutdown( SI32 retCode )
 			cwmWorldState->SaveNewWorld( true );
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 	}
-	
-	Console << "Cleaning up item and character memory... ";
-	ObjectFactory::getSingleton().GarbageCollect();
-	Console.PrintDone();
 
-	Console << "Destroying class objects and pointers... ";
-	// delete any objects that were created (delete takes care of NULL check =)
-
-	delete Combat;
-	delete Commands;
-	delete Items;
-	try
+	if( cwmWorldState->ClassesInitialized() )
 	{
-		delete Map;
+		if( HTMLTemplates )
+		{
+			Console << "HTMLTemplates object detected. Writing Offline HTML Now..." << myendl;
+			HTMLTemplates->Poll( ETT_OFFLINE );
+		}
+		else
+			Console << "HTMLTemplates object not found." << myendl;
+
+		Console << "Cleaning up item and character memory... ";
+		ObjectFactory::getSingleton().GarbageCollect();
+		Console.PrintDone();
+
+		Console << "Destroying class objects and pointers... ";
+		// delete any objects that were created (delete takes care of NULL check =)
+
+		delete Combat;
+		delete Commands;
+		delete Items;
+		try
+		{
+			delete Map;
+		}
+		catch( ... )
+		{
+			Console << "ERROR: Either Map was already deleted, or UOX3 was unable to delete object." << myendl;
+		}
+		delete Npcs;
+		delete Skills;
+		delete Weight;
+		delete Magic;
+		delete Races;
+		delete Weather;
+		delete Movement;
+		delete Network;
+		delete WhoList;
+		delete OffList;
+		delete Books;
+		delete GMQueue;
+		delete HTMLTemplates;
+		delete CounselorQueue;
+		delete Dictionary;
+		delete Accounts;
+		delete JSMapping;
+		delete MapRegion;
+		delete SpeechSys;
+		delete GuildSys;
+		delete FileLookup;
+		delete JailSys;
+		delete Effects;
+
+		UnloadSpawnRegions();
+		UnloadRegions();
+
+		delete JSEngine;
+
+		Console.PrintDone();
 	}
-	catch( ... )
-	{
-		Console << "ERROR: Either Map was already deleted, or UOX3 was unable to delete object." << myendl;
-	}
-	delete Npcs;
-	delete Skills;
-	delete Weight;
-	delete Magic;
-	delete Races;
-	delete Weather;
-	delete Movement;
-	delete Network;
-	delete WhoList;
-	delete OffList;
-	delete Books;
-	delete GMQueue;
-	delete HTMLTemplates;
-	delete CounselorQueue;
-	delete Dictionary;
-	delete Accounts;
-	delete JSMapping;
-	delete MapRegion;
-	delete SpeechSys;
-	delete GuildSys;
-	delete FileLookup;
-	delete JailSys;
-	delete Effects;
-
-	UnloadSpawnRegions();
-	UnloadRegions();
-
-	delete JSEngine;
-
-	Console.PrintDone();
 
 	//Lets wait for console thread to quit here
 #if UOX_PLATFORM != PLATFORM_WIN32

@@ -660,11 +660,10 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		}
 	}
 
-	if( targNPC->WillHunger() && targNPC->IsTamed() && 
-		( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
+	if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || ( targNPC->IsTamed() && ( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) ) // do food stuff
 	{
 		
-		if( IsOnFoodList( targNPC->GetFood(), i->GetID() ) )
+		if( targNPC->WillHunger() && IsOnFoodList( targNPC->GetFood(), i->GetID() ) )
 		{
 			if( targNPC->GetHunger() < 6 )
 			{
@@ -684,13 +683,9 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
 				cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
 				if( toHungerExecute != NULL )
-				{
 					toHungerExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
-				}
 				else if( globalExecute != NULL )
-				{
 					globalExecute->OnHungerChange( targNPC, targNPC->GetHunger() );
-				}
 				mSock->sysmessage( 1781 );
 				if( iDeleted )
 					return true; //stackdeleted
@@ -698,8 +693,14 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 			else
 				mSock->sysmessage( 1780 );
 		}
+		else if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 )	// It's a pack animal
+		{
+			CItem *pack = targNPC->GetPackItem();
+			if( ValidateObject( pack ) )
+				stackDeleted = ( autoStack( mSock, i, pack ) != i );
+		}
 	}
-	if( !targNPC->isHuman() )
+	else if( !targNPC->isHuman() )
 	{
 		// Sept 25, 2002 - Xuri - Weight fixes
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
@@ -1055,13 +1056,18 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 					break;
 			}
 		}
-		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == aiPLAYERVENDOR && contOwner->GetOwnerObj() == &mChar )
+		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == aiPLAYERVENDOR )
 		{
-			mChar.SetSpeechMode( 3 );
-			mChar.SetSpeechItem( &iDropped );
-			mSock.sysmessage( 1207 );
+			if( contOwner->GetOwnerObj() == &mChar )
+			{
+				mChar.SetSpeechMode( 3 );
+				mChar.SetSpeechItem( &iDropped );
+				mSock.sysmessage( 1207 );
+			}
 		}
-		else if( contOwner != &mChar && mChar.GetCommandLevel() < CNS_CMDLEVEL )
+		else if( mChar.GetCommandLevel() < CNS_CMDLEVEL && ( !contOwner->IsNpc() || !contOwner->IsTamed() || 
+			( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 ) ||
+			( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 			{
@@ -1595,7 +1601,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				else
 				{
 					pack = c->GetPackItem();
-					if( c->GetOwnerObj() == mChar )
+					if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) )
 					{
 						if( ValidateObject( pack ) )
 							mSock->openPack( pack );

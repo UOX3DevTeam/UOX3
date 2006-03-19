@@ -63,6 +63,7 @@ const UI32			DEFWORLD_OLDTIME			= 0;
 const bool			DEFWORLD_AUTOSAVED			= false;
 const SaveStatus	DEFWORLD_SAVEPROGRESS		= SS_NOTSAVING;
 const bool			DEFWORLD_RELOADINGSCRIPTS	= false;
+const bool			DEFWORLD_CLASSESINITIALIZED	= false;
 
 CWorldMain::CWorldMain() : nextItemSerial( DEFWORLD_NEXTITEMSERIAL ), 
 nextCharSerial( DEFWORLD_NEXTCHARSERIAL ), imem( DEFWORLD_IMEM ), cmem( DEFWORLD_CMEM ), error( DEFWORLD_ERROR ), 
@@ -70,7 +71,7 @@ keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ), ErrorCount( DEFWORLD_ERR
 uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ), 
 overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ), 
 autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ), 
-reloadingScripts( DEFWORLD_RELOADINGSCRIPTS )
+reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLASSESINITIALIZED )
 {
 	for( int mTID = (int)tWORLD_NEXTFIELDEFFECT; mTID < (int)tWORLD_COUNT; ++mTID )
 		worldTimers[mTID] = 0;
@@ -566,6 +567,21 @@ bool CWorldMain::GetIPUpdated( void ) const
 void CWorldMain::SetIPUpdated( bool newVal )
 {
 	ipupdated = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function	-	bool ClassesInitialized()
+//|	Programmer	-	giwo
+//o--------------------------------------------------------------------------o
+//|	Purpose		-	Have our base classes been initialized (incase we shut down early)
+//o--------------------------------------------------------------------------o
+bool CWorldMain::ClassesInitialized( void ) const
+{
+	return classesInitialized;
+}
+void CWorldMain::ClassesInitialized( bool newVal )
+{
+	classesInitialized = newVal;
 }
 
 //o---------------------------------------------------------------------------o

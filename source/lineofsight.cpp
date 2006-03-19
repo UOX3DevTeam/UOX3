@@ -146,6 +146,109 @@ QUAD POLYGON CONSTRUCTION ALGORITHM
 	Also need to use height of tile from tiledata.mul
 */
 
+struct vector2D
+{
+	R32 x;
+	R32 y;
+	vector2D()
+	{
+	}
+	vector2D( R32 X, R32 Y ) : x(X), y(Y)
+	{
+	}
+};
+
+struct vector3D
+{
+	SI32 x;
+	SI32 y;
+	SI08 z;
+	vector3D()
+	{
+	}
+	vector3D( SI32 X, SI32 Y, SI08 Z ) : x(X), y(Y), z(Z)
+	{
+	}
+};
+
+inline bool operator== (vector3D const &a, vector3D const &b )
+{
+	return ( ( a.x == b.x ) && ( a.y == b.y ) && ( a.z == b.z ) );
+}
+
+inline bool operator< (vector3D const &a, vector3D const &b )
+{
+	return ( ( a.x < b.x ) && ( a.y < b.y ) && ( a.z < b.z ) );
+}
+
+struct line2D
+{
+	vector2D loc;
+	vector2D dir;
+	line2D()
+	{
+	}
+	line2D( vector2D LOC, vector2D DIR ) : loc(LOC), dir(DIR)
+	{
+	}
+	vector2D CollideLines2D( line2D toCollide ) const;
+};
+
+inline vector2D line2D::CollideLines2D( line2D toCollide ) const
+{
+	if( ( ( dir.x == 0 ) && ( toCollide.dir.x == 0 ) ) ||
+		( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
+		return vector2D( -1.0f, -1.0f ); // error, parallel or invalid lines
+	if( ( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) == 0 )
+		return vector2D( -1.0f, -1.0f ); // error, parallel lines
+		
+	R32 t = 0.0f; // parameter of toCollide-line
+	// linear evaluation of extended 2x2 matrix
+	t = ( ( ( ( loc.x - toCollide.loc.x ) * (- dir.y) ) + ( dir.x * ( loc.y - toCollide.loc.y ) ) ) /
+		( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) );
+
+	return vector2D( ( toCollide.loc.x + t * toCollide.dir.x ), ( toCollide.loc.y + t * toCollide.dir.y ) );
+}
+
+struct line3D
+{
+	vector3D loc;
+	vector3D dir;
+	line3D()
+	{
+	}
+	line3D( vector3D LOC, vector3D DIR ) : loc(LOC), dir(DIR)
+	{
+	}
+	R32 dzInDirectionX( void ) const;
+	R32 dzInDirectionY( void ) const;
+	line2D Projection2D( void ) const;
+};
+
+inline R32 line3D::dzInDirectionX( void ) const
+{
+	if( dir.x == 0 )
+		return (R32)( dir.z );
+	else
+		return (R32)( (R32)( dir.z ) / (R32)( dir.x ) );
+}
+
+inline R32 line3D::dzInDirectionY( void ) const
+{
+	if( dir.y == 0 )
+		return (R32)( dir.z );
+	else
+		return (R32)( (R32)( dir.z ) / (R32)( dir.y ) );
+}
+
+inline line2D line3D::Projection2D( void ) const
+{
+	if( ( dir.x == 0 ) && ( dir.y == 0 ) )
+		return line2D( vector2D( -1.0f, -1.0f ), vector2D( -1.0f, -1.0f ) );
+	else
+		return line2D( vector2D( (R32)loc.x, (R32)loc.y ), vector2D( (R32)dir.x, (R32)dir.y ) );
+}
+
 bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
 {
 	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );

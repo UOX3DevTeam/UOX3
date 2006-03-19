@@ -70,109 +70,6 @@ public:
 	void	IsAmphibian( bool value )	{		who_am_i.set( BIT_AMPHI, value );		}
 };
 
-struct vector2D
-{
-	R32 x;
-	R32 y;
-	vector2D()
-	{
-	}
-	vector2D( R32 X, R32 Y ) : x(X), y(Y)
-	{
-	}
-};
-
-struct vector3D
-{
-	SI32 x;
-	SI32 y;
-	SI08 z;
-	vector3D()
-	{
-	}
-	vector3D( SI32 X, SI32 Y, SI08 Z ) : x(X), y(Y), z(Z)
-	{
-	}
-};
-
-inline bool operator== (vector3D const &a, vector3D const &b )
-{
-	return ( ( a.x == b.x ) && ( a.y == b.y ) && ( a.z == b.z ) );
-}
-
-inline bool operator< (vector3D const &a, vector3D const &b )
-{
-	return ( ( a.x < b.x ) && ( a.y < b.y ) && ( a.z < b.z ) );
-}
-
-struct line2D
-{
-	vector2D loc;
-	vector2D dir;
-	line2D()
-	{
-	}
-	line2D( vector2D LOC, vector2D DIR ) : loc(LOC), dir(DIR)
-	{
-	}
-	vector2D CollideLines2D( line2D toCollide ) const;
-};
-
-inline vector2D line2D::CollideLines2D( line2D toCollide ) const
-{
-	if( ( ( dir.x == 0 ) && ( toCollide.dir.x == 0 ) ) ||
-		( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
-		return vector2D( -1.0f, -1.0f ); // error, parallel or invalid lines
-	if( ( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) == 0 )
-		return vector2D( -1.0f, -1.0f ); // error, parallel lines
-		
-	R32 t = 0.0f; // parameter of toCollide-line
-	// linear evaluation of extended 2x2 matrix
-	t = ( ( ( ( loc.x - toCollide.loc.x ) * (- dir.y) ) + ( dir.x * ( loc.y - toCollide.loc.y ) ) ) /
-		( ( dir.x * toCollide.dir.y ) - ( toCollide.dir.x * dir.y ) ) );
-
-	return vector2D( ( toCollide.loc.x + t * toCollide.dir.x ), ( toCollide.loc.y + t * toCollide.dir.y ) );
-}
-
-struct line3D
-{
-	vector3D loc;
-	vector3D dir;
-	line3D()
-	{
-	}
-	line3D( vector3D LOC, vector3D DIR ) : loc(LOC), dir(DIR)
-	{
-	}
-	R32 dzInDirectionX( void ) const;
-	R32 dzInDirectionY( void ) const;
-	line2D Projection2D( void ) const;
-};
-
-inline R32 line3D::dzInDirectionX( void ) const
-{
-	if( dir.x == 0 )
-		return (R32)( dir.z );
-	else
-		return (R32)( (R32)( dir.z ) / (R32)( dir.x ) );
-}
-
-inline R32 line3D::dzInDirectionY( void ) const
-{
-	if( dir.y == 0 )
-		return (R32)( dir.z );
-	else
-		return (R32)( (R32)( dir.z ) / (R32)( dir.y ) );
-}
-
-inline line2D line3D::Projection2D( void ) const
-{
-	if( ( dir.x == 0 ) && ( dir.y == 0 ) )
-		return line2D( vector2D( -1.0f, -1.0f ), vector2D( -1.0f, -1.0f ) );
-	else
-		return line2D( vector2D( (R32)loc.x, (R32)loc.y ), vector2D( (R32)dir.x, (R32)dir.y ) );
-}
-
 struct point3
 {
 	R32		x, y, z;
@@ -187,13 +84,17 @@ struct point3
 			}
 	void	Assign( UI16 X, UI16 Y, SI08 Z );
 	void	Assign( R32 X, R32 Y, R32 Z );
-	R32		Mag( void ) const;
+	R64		Mag( void ) const;
 	R32		MagSquared( void ) const;
-	R32		Mag3D( void ) const;
+	R64		Mag3D( void ) const;
 	R32		MagSquared3D( void ) const;
 	void	Normalize( void );
 };
 
+inline bool operator==( point3 const &a, point3 const &b )
+{
+	return (a.x == b.x && a.y == b.y && a.z == b.z );
+}
 inline point3 operator+( point3 const &a, point3 const &b )
 {
 	return (point3( a.x + b.x, a.y + b.y, a.z + b.z ));
@@ -228,7 +129,7 @@ inline void point3::Assign( R32 X, R32 Y, R32 Z )
 	y = Y;
 	z = Z;
 }
-inline R32 point3::Mag3D( void ) const
+inline R64 point3::Mag3D( void ) const
 {
 	return (R32)sqrt( x*x + y*y + z*z );
 }
@@ -237,7 +138,7 @@ inline R32 point3::MagSquared3D( void ) const
 	return ( x*x + y*y + z*z );
 }
 
-inline R32 point3::Mag( void ) const
+inline R64 point3::Mag( void ) const
 {
 	return (R32)sqrt( x*x + y*y );
 }
@@ -253,72 +154,6 @@ inline void point3::Normalize( void )
 	y *= foo;
 	z *= foo;
 }
-
-// create.scp revisions
-struct resAmountPair
-{
-	std::vector< UI16 > idList;
-	UI08 amountNeeded;
-	UI16 colour;
-	resAmountPair() : amountNeeded( 1 ), colour( 0 )
-	{
-		idList.resize( 0 );
-	}
-	~resAmountPair()
-	{
-		idList.resize( 0 );
-	}
-};
-
-struct resSkillReq
-{
-	UI08 skillNumber;
-	UI16 minSkill;
-	UI16 maxSkill;
-	resSkillReq() : skillNumber( 0 ), minSkill( 0 ), maxSkill( 0 )
-	{
-	}
-};
-
-struct createEntry
-{
-	UI16 colour;
-	UI16 targID;
-	UI16 soundPlayed;
-	UI08 minRank;
-	UI08 maxRank;
-	std::string addItem;
-	SI16 delay;
-	UI16 spell;
-	std::vector< resAmountPair > resourceNeeded;
-	std::vector< resSkillReq > skillReqs;
-	std::string name;
-	createEntry() : colour( 0 ), targID( 0 ), soundPlayed( 0 ), minRank( 1 ), maxRank( 10 ), addItem( "" ), delay( 0 ), spell( 0 ), name( "" )
-	{
-		resourceNeeded.resize( 0 );
-		skillReqs.resize( 0 );
-	}
-	~createEntry()
-	{
-		resourceNeeded.resize( 0 );
-		skillReqs.resize( 0 );
-	}
-	R32 AverageMinSkill( void ) 
-	{ 
-		R32 sum = 0;
-		for( size_t i = 0; i < skillReqs.size(); ++i )
-			sum += skillReqs[i].minSkill;
-		return sum / skillReqs.size();
-	}
-	R32 AverageMaxSkill( void ) 
-	{ 
-		R32 sum = 0;
-		for( size_t i = 0; i < skillReqs.size(); ++i )
-			sum += skillReqs[i].maxSkill;
-		return sum / skillReqs.size();
-	}
-
-};
 
 struct UOXFileWrapper
 {

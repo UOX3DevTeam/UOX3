@@ -34,6 +34,10 @@
 #include "cEffects.h"
 #include "Dictionary.h"
 #include "CPacketSend.h"
+#include "CJSMapping.h"
+#include "cScript.h"
+#include "regions.h"
+#include "cGuild.h"
 
 namespace UOX
 {
@@ -46,8 +50,76 @@ inline bool findString( std::string toCheck, std::string toFind )
 	return ( toCheck.find( toFind ) != std::string::npos );
 }
 
-void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
+CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 {
+	CHARLIST ourNpcs;
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *CellResponse = (*rIter);
+		if( CellResponse == NULL )
+			continue;
+
+		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		regChars->Push();
+		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
+		{
+			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() )
+				continue;
+			if( objInRange( mChar, Npc, distance ) )
+				ourNpcs.push_back( Npc );
+		}
+		regChars->Pop();
+	}
+	return ourNpcs;
+}
+
+bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string text )
+{
+	CChar *Npc			= NULL;
+	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_INRANGE );
+	for( CHARLIST_ITERATOR nIter = nearbyNPCs.begin(); nIter != nearbyNPCs.end(); ++nIter )
+	{
+		Npc = (*nIter);
+		if( !ValidateObject( Npc ) )
+			continue;
+
+		if( abs( mChar->GetZ() - Npc->GetZ() ) <= 9 )
+		{
+			UI16 speechTrig		= Npc->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( speechTrig );
+			if( toExecute != NULL )
+			{
+//|				-1	=> No such function or bad call
+//|				0	=> Let other NPCs and PCs see it
+//|				1	=> Let other PCs see it
+//|				2	=> Let no one else see it
+				SI08 rVal = -1;
+				if( Npc->isDisabled() )
+					Npc->talkAll( 1291, false );
+				else if( !mChar->IsDead() )
+					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
+				switch( rVal )
+				{
+				case 1:		// No other NPCs to see it, but PCs should
+					return true;
+				case 2:		// no one else to see it
+					return false;
+				case 0:		// Other NPCs and PCs to see it
+				case -1:	// no function, so do nothing... NOT handled!
+				default:
+					break;
+				}
+			}
+		}
+	}
+	return true;
+}
+bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
+{
+	if( !DoJSResponse( mSock, mChar, text ) )
+		return false;
+
 	CBaseResponse *tResp	= NULL;
 
 	for( UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords(); trigWord = mSock->NextTrigWord() )
@@ -108,11 +180,12 @@ void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 		case TW_BOATTURNAROUND:
 		case TW_BOATLEFT:
 		case TW_BOATRIGHT:
-		case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );										break;
+		case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
+		case TW_RESIGN:				GuildSys->Resign( mSock );												break;
 		default:
-	#if defined( UOX_DEBUG_MODE )
+#if defined( UOX_DEBUG_MODE )
 			Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n", trigWord );
-	#endif
+#endif
 			break;
 		}
 
@@ -123,30 +196,7 @@ void WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			tResp = NULL;
 		}
 	}
-}
-
-CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
-{
-	CHARLIST ourNpcs;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
-			continue;
-
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
-		regChars->Push();
-		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
-		{
-			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() )
-				continue;
-			if( objInRange( mChar, Npc, distance ) )
-				ourNpcs.push_back( Npc );
-		}
-		regChars->Pop();
-	}
-	return ourNpcs;
+	return true;
 }
 
 CEscortResponse::CEscortResponse( bool newVal )
