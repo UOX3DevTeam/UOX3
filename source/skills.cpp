@@ -88,8 +88,8 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 			c->SetLoDamage( (SI16)( ( rank * c->GetLoDamage() ) / 10 ) );
 		if( c->GetHiDamage() > 0 ) 
 			c->SetHiDamage( (SI16)( ( rank * c->GetHiDamage() ) / 10 ) );
-		if( c->GetDef() > 0 )      
-			c->SetDef( (UI16)( ( rank * c->GetDef() ) / 10 ) );
+		if( c->GetResist( PHYSICAL ) > 0 )      
+			c->SetResist( (UI16)( ( rank * c->GetResist( PHYSICAL ) ) / 10 ), PHYSICAL );
 		if( c->GetHP() > 0 )      
 			c->SetHP( (SI16)( ( rank * c->GetHP() ) / 10 ) );
 		if( c->GetMaxHP() > 0 )   
@@ -2443,15 +2443,15 @@ void cSkills::RepairMetal( CSocket *s )
 
 	if( j->GetHP() < j->GetMaxHP() )
 	{
-		if( j->GetDef() > 0 )
+		if( j->GetResist( PHYSICAL ) > 0 )
 		{
 			// Items with > 12 def would have impossible skill req's, with this equation
-			if( j->GetDef() <= 12 )
+			if( j->GetResist( PHYSICAL ) <= 12 )
 			{
 				// Minimum Skill = 61.0 + Defense - 1 / 3 * 100 (0-3 = 61.0, 4-6 = 71.0, ect)
-				minSkill = (610 + (int)((j->GetDef() - 1) / 3) * 100);
+				minSkill = (610 + (int)((j->GetResist( PHYSICAL ) - 1) / 3) * 100);
 				// Maximum Skill = 84.9 + Defense - 1 / 3 * 50 (0-3 = 84.9, 4-6 = 89.9, ect)
-				maxSkill = (849 + (int)((j->GetDef() - 1) / 3) * 50);
+				maxSkill = (849 + (int)((j->GetResist( PHYSICAL ) - 1) / 3) * 50);
 			}
 		}
 		else if( j->GetHiDamage() > 0 )

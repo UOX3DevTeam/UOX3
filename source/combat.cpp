@@ -842,11 +842,11 @@ SI16 CHandleCombat::calcHighDamage( CChar *p )
 //|	Description		-	Checks the defense of checkItem vs the defense of currItem and returns
 //|							the item with the greater Def and its def value
 //o--------------------------------------------------------------------------o
-CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef )
+CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
 {
-	if( ValidateObject( checkItem ) && checkItem->GetDef() > currDef )
+	if( ValidateObject( checkItem ) && checkItem->GetResist( resistType ) > currDef )
 	{
-		currDef = checkItem->GetDef();
+		currDef = checkItem->GetResist( resistType );
 		return checkItem;
 	}
 	return currItem;
@@ -861,47 +861,47 @@ CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef
 //|	Description		-	Finds the item covering the location bodyLoc with the greatest AR and
 //|							returns it along with its def value
 //o--------------------------------------------------------------------------o
-CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal )
+CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
 {
 	SI32 armorDef = 0;
 	CItem *currItem = NULL;
 	switch( bodyLoc )
 	{
 		case 1:		// Torso
-			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef );	// Shirt
-			currItem = checkDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef );	// Torso (Inner - Chest Armor)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef );	// Torso (Middle - Tunic, etc)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef );	// Back (Cloak)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef );	// Torso (Outer - Robe)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType );	// Shirt
+			currItem = checkDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType );	// Torso (Inner - Chest Armor)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType );	// Torso (Middle - Tunic, etc)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );	// Back (Cloak)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );	// Torso (Outer - Robe)
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 2.8 ));
 			break;
 		case 2:		// Arms
-			currItem = checkDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef );	// Arms
+			currItem = checkDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 6.8 ));
 			break;
 		case 3:		// Head
-			currItem = checkDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef );	// Head
+			currItem = checkDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 7.3 ));
 			break;
 		case 4:		// Legs
-			currItem = checkDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef );	// Shoes
-			currItem = checkDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef );	// Pants
-			currItem = checkDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef );	// Waist (Half Apron)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef );	// Legs (Outer - Skirt, Kilt)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef );	// Legs (Inner - Leg Armor)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
+			currItem = checkDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType );	// Pants
+			currItem = checkDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType );	// Waist (Half Apron)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
+			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 4.5 ));
 			break;
 		case 5:		// Neck
-			currItem = checkDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef );	// Neck
+			currItem = checkDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
 			break;
 		case 6:		// Hands
-			currItem = checkDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef );	// Gloves
+			currItem = checkDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
 			if( findTotal )
 				armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
 			break;
@@ -924,146 +924,16 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 //o--------------------------------------------------------------------------o
 //|	Description		-	Finds the defense value of a specific location or the entire character based on hitLoc
 //o--------------------------------------------------------------------------o
-UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
+UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
 {
 	if( !ValidateObject( mChar ) )
 		return 0;
-
-	SI32 total = mChar->GetDef();
-	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
-	{
-		CItem *defendItem = NULL;
-		if( hitLoc == 0 )
-		{
-			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
-				getArmorDef( mChar, total, getLoc, true );
-			total = (total / 100);
-		}
-		else
-			defendItem = getArmorDef( mChar, total, hitLoc );
-
-		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && RandomNum( 0, 1 ) )
-		{
-			SI08 armorDamage = 0;	// Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
-			armorDamage -= RandomNum( 0, 1 );
-			defendItem->IncHP( armorDamage );
-
-			if( defendItem->GetHP() <= 0 )
-			{
-				CSocket *mSock = mChar->GetSocket();
-				if( mSock != NULL )
-				{
-					std::string name;
-					getTileName( (*defendItem), name );
-					mSock->sysmessage( 311, name.c_str() );
-					mChar->Dirty( UT_STATWINDOW );
-				}
-				defendItem->Delete();
-			}
-		}
-	}
-
-	if( total < 2 && hitLoc != 0 )
-		total = 2;
-	return (UI16)total;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *checkElementDef( CItem *checkItem, CItem& currItem, SI32 &currDef, WeatherType element )
-//|	Date			-	12. Mar, 2006
-//|	Developers		-	grimson
-//o--------------------------------------------------------------------------o
-//|	Description		-	Checks the elemental defense of checkItem vs the defense of currItem and returns
-//|							the item with the greater Def and its def value
-//o--------------------------------------------------------------------------o
-CItem *CHandleCombat::checkElementDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType element )
-{
-	if( ValidateObject( checkItem ) && checkItem->GetElementResist( element ) > currDef )
-	{
-		currDef = checkItem->GetElementResist( element );
-		return checkItem;
-	}
-	return currItem;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem * getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType element )
-//|	Date			-	12. Mar, 2006
-//|	Developers		-	grimson
-//o--------------------------------------------------------------------------o
-//|	Description		-	Finds the item covering the location bodyLoc with the greatest elemental
-//|						resistance and returns it along with its def value
-//o--------------------------------------------------------------------------o
-CItem * CHandleCombat::getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType element )
-{
-	SI32 elementDef = 0;
-	CItem *currItem = NULL;
-	switch( bodyLoc )
-	{
-		case 1:		// Torso
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, elementDef, element );	// Shirt
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, elementDef, element );	// Torso (Inner - Chest Armor)
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, elementDef, element );	// Torso (Middle - Tunic, etc)
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, elementDef, element );	// Back (Cloak)
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, elementDef, element );	// Torso (Outer - Robe)
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 2.8 ));
-			break;
-		case 2:		// Arms
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, elementDef, element );	// Arms
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 6.8 ));
-			break;
-		case 3:		// Head
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_HELM ), currItem, elementDef, element );	// Head
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 7.3 ));
-			break;
-		case 4:		// Legs
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, elementDef, element );	// Shoes
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, elementDef, element );	// Pants
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, elementDef, element );	// Waist (Half Apron)
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, elementDef, element );	// Legs (Outer - Skirt, Kilt)
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, elementDef, element );	// Legs (Inner - Leg Armor)
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 4.5 ));
-			break;
-		case 5:		// Neck
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_NECK ), currItem, elementDef, element );	// Neck
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 14.5 ));
-			break;
-		case 6:		// Hands
-			currItem = checkElementDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, elementDef, element );	// Gloves
-			if( findTotal )
-				elementDef = (SI32)(100 * (R32)( elementDef / 14.5 ));
-			break;
-		default:
-			break;
-	}
-	totalDef += elementDef;
-
-	return currItem;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType element )
-//|	Date			-	12. Mar, 2006
-//|	Developers		-	grimson
-//o--------------------------------------------------------------------------o
-//|	Description		-	Finds the elemental resistance value of a specific location or the entire character based on hitLoc
-//o--------------------------------------------------------------------------o
-UI16 CHandleCombat::calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType element )
-{
-	if( !ValidateObject( mChar ) )
-		return 0;
-
 	SI32 total = 0;
 
-	if( hitLoc == 0 )	//Don't divide by 100 when asking for the entire char.
-		total = mChar->GetElementResist( element );
+	if( resistType == PHYSICAL )
+		total = mChar->GetResist( resistType );
 	else
-		total = (SI32)( mChar->GetElementResist( element ) / 100 );
+		total = ( mChar->GetResist( resistType ) / 100 );
 
 	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
 	{
@@ -1071,11 +941,11 @@ UI16 CHandleCombat::calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage, We
 		if( hitLoc == 0 )
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
-				getElementDef( mChar, total, getLoc, true, element );
+				getArmorDef( mChar, total, getLoc, true, resistType );
 			total = (total / 100);
 		}
 		else
-			defendItem = getElementDef( mChar, total, hitLoc, false, element );
+			defendItem = getArmorDef( mChar, total, hitLoc, false, resistType );
 
 		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && RandomNum( 0, 1 ) )
 		{
@@ -1532,7 +1402,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				const UI16 defendParry = ourTarg->GetSkill( PARRYING );
 				if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ) )
 				{
-					damage -= HalfRandomNum( shield->GetDef() );
+					damage -= HalfRandomNum( shield->GetResist( PHYSICAL ) );
 					if( !RandomNum( 0, 5 ) ) 
 						shield->IncHP( -1 );
 					if( shield->GetHP() <= 0 )
@@ -1546,27 +1416,27 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 			if( ourTarg->isHuman() )
 			{
-				getDef = calcDef( ourTarg, hitLoc, doArmorDamage );
+				getDef = calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL );
 				getDef = HalfRandomNum( getDef );
 			}
-			else if( ourTarg->GetDef() > 0 )
-				getDef = ourTarg->GetDef();
+			else if( ourTarg->GetResist( PHYSICAL ) > 0 )
+				getDef = ourTarg->GetResist( PHYSICAL );
 			else
 				getDef = 20;
 			break;
 		case POISON:		//	POISON Damage
-			damageModifier = ( calcElementDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
+			damageModifier = ( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
 			damage = (SI16)roundNumber( ((R32)baseDamage - ( (R32)baseDamage * damageModifier )) );
 			ourTarg->IncreaseElementResist( damageType );
 			break;
 		default:			//	Elemental damage
 			if( ourTarg->isHuman() )
 			{
-				getDef = calcElementDef( ourTarg, hitLoc, doArmorDamage, damageType );
+				getDef = calcDef( ourTarg, hitLoc, doArmorDamage, damageType );
 				getDef = HalfRandomNum( getDef );
 			}
-			else if( ourTarg->GetElementResist( damageType ) > 0 )
-				getDef = ( ourTarg->GetElementResist( damageType ) / 100 );
+			else if( ourTarg->GetResist( damageType ) > 0 )
+				getDef = ( ourTarg->GetResist( damageType ) / 100 );
 
 			ourTarg->IncreaseElementResist( damageType );
 			break;

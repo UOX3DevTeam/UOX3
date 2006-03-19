@@ -1025,7 +1025,7 @@ void HandleDeath( CChar *mChar )
 		mChar->SetRobe( c->GetSerial() );
 		c->SetLayer( IL_ROBE );
 		if( c->SetCont( mChar ) )
-			c->SetDef( 1 );
+			c->SetResist( 1, PHYSICAL );
 
 		if( mChar->GetAccount().wAccountIndex != AB_INVALID_ID )
 		{

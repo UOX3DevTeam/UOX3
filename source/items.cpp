@@ -90,13 +90,13 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_ELEMENTRESIST:
 										if( cdata.sectionCount( " " ) == 3 )
 										{
-											applyTo->SetElementResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
-											applyTo->SetElementResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
-											applyTo->SetElementResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
-											applyTo->SetElementResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
+											applyTo->SetResist( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), HEAT );
+											applyTo->SetResist( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort(), COLD );
+											applyTo->SetResist( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort(), LIGHTNING );
+											applyTo->SetResist( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort(), POISON );
 										}
 										break;
-			case DFNTAG_DEF:			applyTo->SetDef( static_cast<UI16>(RandomNum( ndata, odata )) );	break;
+			case DFNTAG_DEF:			applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );	break;
 			case DFNTAG_DEX:			applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
 			case DFNTAG_DIR:			

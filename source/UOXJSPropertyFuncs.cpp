@@ -236,7 +236,6 @@ namespace UOX
 				case CIP_MOREZ:			*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MOREZ ) );			break;
 				case CIP_MOVABLE:		*vp = INT_TO_JSVAL( gPriv->GetMovable() );			break;
 				case CIP_ATT:			*vp = INT_TO_JSVAL( RandomNum( gPriv->GetLoDamage(), gPriv->GetHiDamage() ) );	break;
-				case CIP_DEF:			*vp = INT_TO_JSVAL( gPriv->GetDef() );				break;
 				case CIP_LAYER:			*vp = INT_TO_JSVAL( gPriv->GetLayer() );			break;
 				case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );		break;
 				case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDecayable() );		break;
@@ -529,7 +528,6 @@ namespace UOX
 				case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
 				case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );			break;
 				case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
-				case CCP_ARMOUR:		*vp = INT_TO_JSVAL( gPriv->GetDef() );				break;
 				case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
 				case CCP_HUNGERSTATUS:	*vp = BOOLEAN_TO_JSVAL( gPriv->WillHunger() );		break;
 				case CCP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
@@ -800,7 +798,6 @@ namespace UOX
 							doLight( gPriv->GetSocket(), (UI08)encaps.toInt() );
 					}
 					break;
-				case CCP_ARMOUR:		gPriv->SetDef( (UI16)encaps.toInt() );			break;
 				case CCP_VULNERABLE:	gPriv->SetInvulnerable( !encaps.toBool() );		break;
 				case CCP_HUNGERSTATUS:	gPriv->SetHungerStatus( encaps.toBool() );		break;
 				case CCP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );		break;
@@ -1229,7 +1226,6 @@ namespace UOX
 				case CIP_ATT:			gPriv->SetLoDamage( (SI16)encaps.toInt() ); 	
 										gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
 										break;
-				case CIP_DEF:			gPriv->SetDef( (UI16)encaps.toInt() );						break;
 				case CIP_LAYER:			gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 				break;
 				case CIP_ITEMSINSIDE:																break;
 				case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;

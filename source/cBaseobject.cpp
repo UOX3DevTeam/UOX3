@@ -73,7 +73,6 @@ const SI16			DEFBASE_DEX			= 0;
 const SI16			DEFBASE_INT			= 0;
 const SI16			DEFBASE_HP			= 1;
 const VisibleTypes	DEFBASE_VISIBLE		= VT_VISIBLE;
-const UI16			DEFBASE_DEF			= 0;
 const SI16			DEFBASE_HIDAMAGE	= 0;
 const SI16			DEFBASE_LODAMAGE	= 0;
 const SI32			DEFBASE_WEIGHT		= 0;
@@ -104,7 +103,7 @@ CBaseObject::CBaseObject( void ) : objType( DEFBASE_OBJTYPE ), race( DEFBASE_RAC
 z( DEFBASE_Z ), id( DEFBASE_ID ), colour( DEFBASE_COLOUR ), dir( DEFBASE_DIR ), serial( DEFBASE_SERIAL ), 
 multis( DEFBASE_MULTIS ), spawnserial( DEFBASE_SPAWNSER ), owner( DEFBASE_OWNER ),
 worldNumber( DEFBASE_WORLD ), strength( DEFBASE_STR ), dexterity( DEFBASE_DEX ), intelligence( DEFBASE_INT ), 
-hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), def( DEFBASE_DEF ), hidamage( DEFBASE_HIDAMAGE ),
+hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), hidamage( DEFBASE_HIDAMAGE ),
 lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
@@ -304,17 +303,17 @@ void CBaseObject::WalkXY( SI16 newX, SI16 newY )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  UI16 ElementResist()
-//|   Date        -  11. Mar, 2006
+//|   Function    -  UI16 Resist()
+//|   Date        -  19. Mar, 2006
 //|   Programmer  -  Grimson
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Set and Get the damage resist values
 //o---------------------------------------------------------------------------o
-void CBaseObject::SetElementResist( UI16 newValue, WeatherType damage )
+void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 {
 	resistances[damage] = newValue;
 }
-UI16 CBaseObject::GetElementResist( WeatherType damage ) const
+UI16 CBaseObject::GetResist( WeatherType damage ) const
 {
 	return resistances[damage];
 }
@@ -684,12 +683,12 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Disabled=" << (isDisabled()?"1":"0") << std::endl;
 	dumping << "Damage=" << lodamage << "," << hidamage << std::endl;
 	dumping << "Poisoned=" << (SI16)poisoned << std::endl;
-	dumping << "FireResist=" << (SI16)GetElementResist( HEAT ) << std::endl;
-	dumping << "ColdResist=" << (SI16)GetElementResist( COLD ) << std::endl;
-	dumping << "EnergyResist=" << (SI16)GetElementResist( LIGHTNING ) << std::endl;
-	dumping << "PoisonResist=" << (SI16)GetElementResist( POISON ) << std::endl;
+	dumping << "FireResist=" << (SI16)GetResist( HEAT ) << std::endl;
+	dumping << "ColdResist=" << (SI16)GetResist( COLD ) << std::endl;
+	dumping << "EnergyResist=" << (SI16)GetResist( LIGHTNING ) << std::endl;
+	dumping << "PoisonResist=" << (SI16)GetResist( POISON ) << std::endl;
 	dumping << "Carve=" << GetCarve() << std::endl;
-	dumping << "Defense=" << def << std::endl;
+	dumping << "Defense=" << GetResist( PHYSICAL ) << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
 	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	// Spin the character tags to save make sure to dump them too
@@ -1151,19 +1150,6 @@ SI16 CBaseObject::GetLoDamage( void ) const
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	UI16 GetDef( void )
-//|	Date			-	28 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's multi to newMulti
-//o--------------------------------------------------------------------------
-UI16 CBaseObject::GetDef( void ) const
-{
-	return def;
-}
-
-//o--------------------------------------------------------------------------
 //|	Function		-	SetHiDamage( SI16 newValue )
 //|	Date			-	28 July, 2000
 //|	Programmer		-	Abaddon
@@ -1188,20 +1174,6 @@ void CBaseObject::SetLoDamage( SI16 newValue )
 {
 	lodamage = newValue;
 }
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SetDef( UI16 newValue )
-//|	Date			-	28 July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's defense value
-//o--------------------------------------------------------------------------
-void CBaseObject::SetDef( UI16 newValue )
-{
-	def = newValue;
-}
-
 
 //o--------------------------------------------------------------------------
 //|	Function		-	SI32 SetFilePosition( LONG filepos )
@@ -1553,7 +1525,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "COLDRESIST" )
 			{
-				SetElementResist( data.toUShort(), COLD );
+				SetResist( data.toUShort(), COLD );
 				rvalue = true;
 			}
 			break;
@@ -1587,7 +1559,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "DEFENSE" )
 			{
-				def		= data.toUShort();
+				SetResist( data.toUShort(), PHYSICAL);
 				rvalue	= true;
 			}
 			else if( UTag == "DWORDS" )
@@ -1603,7 +1575,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'E':
 			if( UTag == "ENERGYRESIST" )
 			{
-				SetElementResist( data.toUShort(), LIGHTNING );
+				SetResist( data.toUShort(), LIGHTNING );
 				rvalue = true;
 			}
 			break;
@@ -1615,7 +1587,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "FIRERESIST" )
 			{
-				SetElementResist( data.toUShort(), HEAT );
+				SetResist( data.toUShort(), HEAT );
 				rvalue = true;
 			}
 			break;
@@ -1723,7 +1695,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "POISONRESIST" )
 			{
-				SetElementResist( data.toUShort(), POISON );
+				SetResist( data.toUShort(), POISON );
 				rvalue = true;
 			}
 			break;
@@ -2077,7 +2049,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetColour( GetColour() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetLoDamage( GetLoDamage() );
-	target->SetDef( GetDef() );
+	target->SetResist( GetResist( PHYSICAL ), PHYSICAL );
 	target->SetStrength2( GetStrength2() );
 	target->SetDexterity2( GetDexterity2() );
 	target->SetIntelligence2( GetIntelligence2() );

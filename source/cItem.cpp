@@ -879,7 +879,7 @@ void CItem::CopyData( CItem *target )
 	target->SetDesc( GetDesc() );
 	target->SetDexterity( GetDexterity() );
 	target->SetDexterity2( GetDexterity2() );
-	target->SetDef( GetDef() );
+	target->SetResist( GetResist( PHYSICAL ), PHYSICAL );
 	target->SetDir( GetDir() );
 	target->SetDisabled( isDisabled() );
 	target->SetDoorOpen( isDoorOpen() );

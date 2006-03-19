@@ -213,7 +213,7 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "DEF":
-		ourItem.def = nVal;
+		ourItem.Resist( 1, nVal );
 		okMsg( socket );
 		break;
 	case "LAYER":
@@ -365,7 +365,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "ARMOR":
-		ourChar.armour = nVal;
+		ourChar.Resist( 1, nVal );
 		okMsg( socket );
 		break;
 	case "MAXHP":

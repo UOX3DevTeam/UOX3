@@ -1526,7 +1526,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			if( colour == 0x0075 )
 			{
 				Effects->PlaySound( s, 0x0216, true ); // EV
-				newChar->SetDef( 22 );
+				newChar->SetResist( 22, PHYSICAL );
 				newChar->SetLoDamage( 10 );	// Damage may be high, but 10-30 did on average 4 to a troll...
 				newChar->SetHiDamage( 70 );
 				newChar->SetSpAttack( 7 );	// 1-7 level spells (do EV's cast for sure?)
@@ -1547,7 +1547,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			else
 			{
 				Effects->PlaySound( s, 0x0217, true ); // AE
-				newChar->SetDef( 19 );
+				newChar->SetResist( 19, PHYSICAL );
 				newChar->SetLoDamage( 5 );
 				newChar->SetHiDamage( 13 );
 				newChar->SetSpAttack( 6 ); // 1-6 level spells
@@ -1565,7 +1565,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			break;
 		case 0x000A: // Daemon
 			Effects->PlaySound( s, 0x0216, true );
-			newChar->SetDef( 20 );
+			newChar->SetResist( 20, PHYSICAL );
 			newChar->SetLoDamage( 10 );
 			newChar->SetHiDamage( 45 );
 			newChar->SetSpAttack( 7 ); // 1-7 level spells
@@ -1582,7 +1582,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			break;
 		case 0x000E: //Earth
 			Effects->PlaySound( s, 0x0217, true );
-			newChar->SetDef( 15 );
+			newChar->SetResist( 15, PHYSICAL );
 			newChar->SetLoDamage( 3 );
 			newChar->SetHiDamage( 18 );
 			newChar->SetBaseSkill( 850, TACTICS );
@@ -1598,7 +1598,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 		case 0x000F: //Fire
 		case 0x0010: //Water
 			Effects->PlaySound( s, 0x0217, true );
-			newChar->SetDef( 19 );
+			newChar->SetResist( 19, PHYSICAL );
 			newChar->SetLoDamage( 4 );
 			newChar->SetHiDamage( 12 );
 			newChar->SetSpAttack( 6 ); // 1-6 level spells
@@ -1615,7 +1615,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			break;
 		case 0x023E: //Blade Spirits
 			Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
-			newChar->SetDef( 24 );
+			newChar->SetResist( 24, PHYSICAL );
 			newChar->SetLoDamage( 5 );
 			newChar->SetHiDamage( 10 );
 			newChar->SetBaseSkill( 950, TACTICS );
@@ -1633,7 +1633,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			break;
 		case 0x03e2: // Dupre The Hero
 			Effects->PlaySound( s, 0x0246, true );
-			newChar->SetDef( 50 );
+			newChar->SetResist( 50, PHYSICAL );
 			newChar->SetLoDamage( 50 );
 			newChar->SetHiDamage( 100 );
 			newChar->SetSpAttack( 7 ); // 1-7 level spells
@@ -1653,7 +1653,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			break;
 		case 0x000B: // Black Night
 			Effects->PlaySound( s, 0x0216, true );
-			newChar->SetDef( 50 );
+			newChar->SetResist( 50, PHYSICAL );
 			newChar->SetLoDamage( 50 );
 			newChar->SetHiDamage( 100 );
 			newChar->SetSpAttack( 7 ); // 1-7 level spells

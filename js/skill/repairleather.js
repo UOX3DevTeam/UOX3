@@ -34,12 +34,12 @@ function onCallback1( socket, ourObj )
 			{
 				if( ourObj.health < ourObj.maxhp )
 				{
-					if( ourObj.def > 0 )
+					if( ourObj.Resist( 1 ) > 0 )
 					{
-						if( ourObj.def <= 12 )
+						if( ourObj.Resist( 1 ) <= 12 )
 						{
-							minSkill = (610 + ((ourObj.def - 1) / 3) * 100);
-							maxSkill = (849 + ((ourObj.def - 1) / 3) * 50);
+							minSkill = (610 + ((ourObj.Resist( 1 ) - 1) / 3) * 100);
+							maxSkill = (849 + ((ourObj.Resist( 1 ) - 1) / 3) * 50);
 						}
 					}
 					else

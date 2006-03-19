@@ -1538,7 +1538,7 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.AddData( "Max HP", i->GetMaxHP() );
 	tweakItem.AddData( "LowDamage", i->GetLoDamage() );
 	tweakItem.AddData( "HighDamage", i->GetHiDamage() );
-	tweakItem.AddData( "Defense", i->GetDef() );
+	tweakItem.AddData( "Defense", i->GetResist( PHYSICAL ) );
 	tweakItem.AddData( "Speed", i->GetSpeed() );
 	tweakItem.AddData( "Rank", i->GetRank() );
 	tweakItem.AddData( "More", i->GetTempVar( CITV_MORE ) );
@@ -1607,7 +1607,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 14:	j->SetMaxHP( reply.toShort() );				break;	// Max HP
 			case 15:	j->SetLoDamage( reply.toShort() );			break;	// Low Damage
 			case 16:	j->SetHiDamage( reply.toShort() );			break;	// High Damage
-			case 17:	j->SetDef( reply.toUShort() );				break;	// Defense
+			case 17:	j->SetResist( reply.toUShort(), PHYSICAL ); break;	// Defense
 			case 18:	j->SetSpeed( reply.toUByte() );				break;	// Speed
 			case 19:	j->SetRank( reply.toByte() );				break;	// Rank
 			case 20:	j->SetTempVar( CITV_MORE, reply.toULong() );				break;	// More
@@ -1675,7 +1675,7 @@ void tweakCharMenu( CSocket *s, CChar *c )
 	tweakChar.AddData( "Mana", c->GetMana() );
 	tweakChar.AddData( "LowDamage", c->GetLoDamage() );
 	tweakChar.AddData( "HighDamage", c->GetHiDamage() );
-	tweakChar.AddData( "Defense", c->GetDef() );
+	tweakChar.AddData( "Defense", c->GetResist( PHYSICAL ) );
 	tweakChar.AddData( "Fame", c->GetFame() );
 	tweakChar.AddData( "Karma", c->GetKarma() );
 	tweakChar.AddData( "Kills", c->GetKills() );
@@ -1765,7 +1765,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				break;
 			case 16:	j->SetHiDamage( reply.toShort() );		break;	// Low Damage
 			case 17:	j->SetLoDamage( reply.toShort() );		break;	// High Damage
-			case 18:	j->SetDef( reply.toUShort() );			break;	// Defense
+			case 18:	j->SetResist( reply.toUShort(), PHYSICAL );	break;	// Defense
 			case 19:	j->SetFame( reply.toShort() );			break;	// Fame
 			case 20:	j->SetKarma( reply.toShort() );			break;	// Karma
 			case 21:	j->SetKills( reply.toShort() );			break;	// Kills

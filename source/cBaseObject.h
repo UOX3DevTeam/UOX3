@@ -89,7 +89,6 @@ protected:
 	VisibleTypes	visible;
 	SI16			hidamage;
 	SI16			lodamage;
-	UI16			def;
 	UI16			scriptTrig;
 
 	SI16			carve; // Carve.dfn entry
@@ -124,8 +123,8 @@ public:
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );
 
-	void					SetElementResist( UI16 newValue, WeatherType damage );
-	UI16					GetElementResist( WeatherType damage ) const;
+	void					SetResist( UI16 newValue, WeatherType damage );
+	UI16					GetResist( WeatherType damage ) const;
 
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;
@@ -216,11 +215,9 @@ public:
 
 	SI16					GetHiDamage( void ) const;
 	SI16					GetLoDamage( void ) const;
-	UI16					GetDef( void ) const;
 
 	void					SetHiDamage( SI16 newValue );
 	void					SetLoDamage( SI16 newValue );
-	void					SetDef( UI16 newValue );
 
 	UI16					GetScriptTrigger( void ) const;
 	void					SetScriptTrigger( UI16 newValue );

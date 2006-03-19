@@ -1655,10 +1655,10 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	}
 	if( extended4 )
 	{
-		FireResist( Combat->calcElementDef( &toCopy, 0, false, HEAT ) );
-		ColdResist( Combat->calcElementDef( &toCopy, 0, false, COLD ) );
-		EnergyResist( Combat->calcElementDef( &toCopy, 0, false, LIGHTNING ) );
-		PoisonResist( Combat->calcElementDef( &toCopy, 0, false, POISON ) );
+		FireResist( Combat->calcDef( &toCopy, 0, false, HEAT ) );
+		ColdResist( Combat->calcDef( &toCopy, 0, false, COLD ) );
+		EnergyResist( Combat->calcDef( &toCopy, 0, false, LIGHTNING ) );
+		PoisonResist( Combat->calcDef( &toCopy, 0, false, POISON ) );
 		Luck( 0 );
 		Unknown( 0 );
 		DamageMin( Combat->calcLowDamage( &toCopy ) );
@@ -4673,10 +4673,10 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 			FinalizeData( tempEntry, totalStringLen );
 		}
 
-		if( cItem.GetDef() > 0 )
+		if( cItem.GetResist( PHYSICAL ) > 0 )
 		{	
 			tempEntry.stringNum = 1060448;
-			tempEntry.ourText = UString::number( cItem.GetDef() );
+			tempEntry.ourText = UString::number( cItem.GetResist( PHYSICAL ) );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 

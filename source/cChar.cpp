@@ -305,15 +305,15 @@ void CChar::IncreaseElementResist( WeatherType element )
 		return;
 
 	// Increase element resistance, very basic
-	UI16 damageResist = GetElementResist( element );
+	UI16 damageResist = GetResist( element );
 	if( damageResist <= 100 )
-		SetElementResist( damageResist + 50, element );
+		SetResist( damageResist + 50, element );
 	else if( damageResist <= 200 )
-		SetElementResist( damageResist + 10, element );
+		SetResist( damageResist + 10, element );
 	else if( damageResist <= 400 )
-		SetElementResist( damageResist + 5, element );
+		SetResist( damageResist + 5, element );
 	else if( damageResist < 500 )
-		SetElementResist( damageResist + 1, element );
+		SetResist( damageResist + 1, element );
 	return;
 }
 
@@ -1671,7 +1671,7 @@ void CChar::CopyData( CChar *target )
 	target->SetCell( cell );
 	target->SetPackItem( packitem );
 	target->SetWeight( weight );
-	target->SetDef( def );
+	target->SetResist( GetResist( PHYSICAL), PHYSICAL );
 	target->SetTarg( GetTarg() );
 	target->SetRegen( regen[0], 0 );
 	target->SetRegen( regen[1], 1 );

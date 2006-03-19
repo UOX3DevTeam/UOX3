@@ -60,7 +60,7 @@ function onCallback0( socket, ourObj )
 		addStringEntry( myGump, "HP/Max:", hpmax );
 		var damage = ourObj.lodamage.toString() + " " + ourObj.hidamage.toString();
 		addStringEntry( myGump, "Damage:", damage );
-		addEntry( myGump, "Defense:", ourObj.def );
+		addEntry( myGump, "Defense:", ourObj.Resist( 1 ) );
 		addEntry( myGump, "Rank:", ourObj.rank );
 		myGump.AddPageButton( 10, 260, 4014, 1 );
 		myGump.AddPageButton( 260, 260, 4005, 3 );

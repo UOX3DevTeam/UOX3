@@ -5557,5 +5557,63 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	return JS_TRUE;
 }
 
+JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 && argc != 2 )
+	{
+		MethodError( "Resist: Invalid number of arguments (takes 1, the resist type or 2, the resist type and value to set)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar		= NULL;
+	CItem *mItem		= NULL;
+
+	// Let's validate the char/item
+
+	if( myClass.ClassName() == "UOXItem" )
+	{
+		mItem	= (CItem *)myClass.toObject();
+		if( !ValidateObject( mItem ) )  
+		{
+			MethodError( "Resist: Passed an invalid Item" );
+			return JS_FALSE;
+		}
+	}
+	else if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar	= (CChar *)myClass.toObject();
+		if( !ValidateObject( mChar ) )  
+		{
+			MethodError( "Resist: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	
+	JSEncapsulate resistType( cx, &(argv[0]) );
+
+	if( argc == 1 )
+	{
+		if( ValidateObject( mChar ) )
+			*rval = INT_TO_JSVAL( mChar->GetResist( (WeatherType)resistType.toInt() ) );
+		else if( ValidateObject( mItem ) )
+			*rval = INT_TO_JSVAL( mItem->GetResist( (WeatherType)resistType.toInt() ) );
+		else
+			*rval = JS_FALSE;
+	}
+	if( argc == 2 )
+	{
+		*rval = JS_TRUE;
+		JSEncapsulate value( cx, &(argv[1]) );
+		if( ValidateObject( mChar ) )
+			mChar->SetResist( (UI16)value.toInt(), (WeatherType)resistType.toInt() );
+		else if( ValidateObject( mItem ) )
+			mItem->SetResist( (UI16)value.toInt(), (WeatherType)resistType.toInt() );
+		else
+			*rval = JS_FALSE;
+	}	
+	return JS_TRUE;
+}
+
 }
 

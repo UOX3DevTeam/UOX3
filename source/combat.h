@@ -42,10 +42,8 @@ private:
 	void	HandleNPCSpellAttack( CChar *mChar, CChar *ourTarg, UI16 playerDistance );
 	void	HandleSplittingNPCs( CChar *toSplit );
 
-	CItem *	checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef );
-	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false );
-	CItem * checkElementDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType element = NONE );
-	CItem * getElementDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false , WeatherType element = NONE );
+	CItem *	checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType );
+	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE);
 
 public:
 	R32		GetCombatTimeout( CChar *mChar );
@@ -58,8 +56,7 @@ public:
 
 	void	DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage );
 	SI08	CalculateHitLoc( void );
-	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false );
-	UI16	calcElementDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = NONE );
+	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL );
 	SI16	calcAtt( CChar *mChar, bool doDamage = false );
 	SI16	calcLowDamage( CChar *p );
 	SI16	calcHighDamage( CChar *p );

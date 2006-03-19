@@ -153,6 +153,7 @@ JSMethodFunc CBase_NextItem;
 JSMethodFunc CBase_FinishedItems;
 JSMethodFunc CBase_DistanceTo;
 JSMethodFunc CBase_GetSerial;
+JSMethodFunc CBase_Resist;
 
 JSMethodFunc CBase_CanSee;
 
@@ -335,6 +336,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
+	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 
@@ -378,6 +380,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Dupe",				CItem_Dupe,					1, 0, 0 },
 	{ "LockDown",			CItem_LockDown,				0, 0, 0 },
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
+	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 

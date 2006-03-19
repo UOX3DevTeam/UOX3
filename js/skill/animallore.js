@@ -41,7 +41,7 @@ function onCallback0( pSock, ourObj )
 				addEntry( myGump, "Dexterity:", ourObj.dexterity );
 				addEntry( myGump, "Intelligence:", ourObj.intelligence );
 				addStringEntry( myGump, "Miscellaneous" );
-				addEntry( myGump, "Armor Rating:", ourObj.armour );
+				addEntry( myGump, "Armor Rating:", ourObj.Resist( 1 ) );
 				myGump.AddPageButton( 260, 260, 4005, 2 );
 				myGump.AddPage( 2 );
 				position = 20;

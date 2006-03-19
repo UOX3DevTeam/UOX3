@@ -1,3 +1,26 @@
+3/19/2006 - grimson
+	Renamed Get/SetElementResist() to Get/SetResist as we now handle all resistance types in it.
+	Removed SetDef(), GetDef() and the def variable from CBaseobject.cpp and store armor values
+	as physical resistance together with the other resistance values.
+	Removed calcElementDef(), getElementDef and checkElementDef from combat.cpp and handle all
+	defence calculations in calcDef(), getArmorDef() and checkDef().
+	Removed JS char property .armour and item property .def, added a new method for chars and
+	items .Resist(). That method takes either one value, the resistance type and returns the
+	resistance value of that char/item, or two values, the resistance type and the amount the
+	resistance value should be set to.
+
+	JS changes:
+		Updated JS scripts to use the new .Resist() method instead of .def/.armour
+
+	Current resistance types are:
+		1 - Armor
+		2 - Light
+		3 - Water
+		4 - Cold
+		5 - Heat
+		6 - Energy
+		7 - Poison
+
 3/19/2006 - giwo (0.98-3.5m [3.6 RC])
 	Moved create menu structs to skills.h as they don't need to be in global scope.
 	Fixed several issues with pack horse handling

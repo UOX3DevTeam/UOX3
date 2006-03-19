@@ -91,7 +91,7 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 		cCreated->SetNpc( true );
 		cCreated->SetLoDamage( 1 );
 		cCreated->SetHiDamage( 1 );
-		cCreated->SetDef( 1 );
+		cCreated->SetResist( 1, PHYSICAL );
 		cCreated->SetSpawn( INVALIDSERIAL );
 
 		if( !ApplyNpcSection( cCreated, npcCreate ) )
@@ -672,10 +672,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_ELEMENTRESIST:
 											if( cdata.sectionCount( " " ) == 3 )
 											{
-												applyTo->SetElementResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() * 100 ), HEAT );
-												applyTo->SetElementResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() * 100 ), COLD );
-												applyTo->SetElementResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() * 100 ), LIGHTNING );
-												applyTo->SetElementResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() * 100 ), POISON );
+												applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() * 100 ), HEAT );
+												applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() * 100 ), COLD );
+												applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() * 100 ), LIGHTNING );
+												applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() * 100 ), POISON );
 											}
 											break;
 			case DFNTAG_DEX:
@@ -683,7 +683,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											applyTo->SetStamina( applyTo->GetMaxStam() );
 											break;
 			case DFNTAG_DETECTINGHIDDEN:	skillToSet = DETECTINGHIDDEN;			break;
-			case DFNTAG_DEF:				applyTo->SetDef( static_cast<UI16>(RandomNum( ndata, odata )) ); break;
+			case DFNTAG_DEF:				applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL ); break;
 			case DFNTAG_DIR:
 											if( !isGate )
 											{
