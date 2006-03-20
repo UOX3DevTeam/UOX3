@@ -99,7 +99,6 @@ protected:
 	void			AddToMulti( bool fireTrigger = true );
 
 	UI08					poisoned;
-	std::bitset< UT_COUNT >	updateTypes;
 	std::bitset< 6 >		objSettings;
 
 	UI16			resistances[WEATHNUM];
@@ -161,7 +160,7 @@ public:
 	void					SetID(     UI08 newValue, UI08 part );
 
 	SI32					GetWeight( void ) const;
-	void					SetWeight( SI32 newVal, bool doWeightUpdate = true );
+	virtual void			SetWeight( SI32 newVal, bool doWeightUpdate = true ) = 0;
 
 	SERIAL					GetSerial( void ) const;
 	SERIAL					GetSpawn( void ) const;
@@ -248,9 +247,7 @@ public:
 
 	virtual void			Update( CSocket *mSock = NULL ) = 0;
 	virtual void			SendToSocket( CSocket *mSock ) = 0;
-	void					Dirty( UpdateTypes updateType );
-
-	bool					GetUpdate( UpdateTypes updateType );
+	virtual void			Dirty( UpdateTypes updateType );
 
 	virtual void			Delete( void ) = 0;
 	virtual void			Cleanup( void );

@@ -221,14 +221,22 @@ townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUI
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
+	ownedItems.clear();
+	itemLayers.clear();
+	layerCtr = itemLayers.end();
+
 	id		= 0x0190;
 	objType = OT_CHAR;
 	name	= "Mr. noname";
-	memset( charTimers, 0, sizeof( charTimers[0] ) * tCHAR_COUNT );
-	memset( baseskill, 0, sizeof( baseskill[0] ) * (ALLSKILLS+1) );
-	memset( skill, 0, sizeof( skill[0] ) * (INTELLECT+1) );
-	memset( lockState, 0, sizeof( lockState[0] ) * (INTELLECT+1) );
-	for( UI08 j = 0; j <= ALLSKILLS; ++j )
+
+	memset( &regen[0],			0, sizeof( TIMERVAL )	* 3 );
+	memset( &weathDamage[0],	0, sizeof( TIMERVAL )	* WEATHNUM );
+	memset( &charTimers[0],		0, sizeof( TIMERVAL )	* tCHAR_COUNT );
+	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
+	memset( &skill[0],			0, sizeof( SKILLVAL )	* (INTELLECT+1) );
+	memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
+
+	for( UI08 j = 0; j <= INTELLECT; ++j )
 		atrophy[j] = j;
 	SetCanTrain( true );
 
@@ -237,16 +245,12 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetTamedHungerWildChance( 0 );
 	
 	foodList.reserve( MAX_NAME );
-	
-	memset( weathDamage, 0, sizeof( weathDamage[0] ) * WEATHNUM );
+
 	skillUsed[0].reset();
 	skillUsed[1].reset();
-	memset( regen, 0, sizeof( UI32 ) * 3 );
+	updateTypes.reset();
 
 	strength = dexterity = intelligence = 1;
-
-	itemLayers.clear();
-	layerCtr = itemLayers.end();
 
 	mPlayer	= NULL;
 	mNPC	= NULL;
@@ -578,7 +582,7 @@ UI08 CChar::GetBrkPeaceChanceGain( void ) const
 	if( IsNpc() )
 		return brkPeaceChanceGain;
 	else
-		return static_cast<UI08>( GetBaseSkill( 9 ) / 10);
+		return static_cast<UI08>( GetBaseSkill( PEACEMAKING ) / 10);
 }
 void CChar::SetBrkPeaceChanceGain( UI08 newValue )
 {
@@ -1413,43 +1417,60 @@ void CChar::SetTownpriv( SI08 newValue )
 
 SKILLVAL CChar::GetBaseSkill( UI08 skillToGet ) const
 {
-	return baseskill[skillToGet];
+	SKILLVAL rVal = 0;
+	if( skillToGet < ALLSKILLS )
+		rVal = baseskill[skillToGet];
+	return rVal;
 }
 UI16 CChar::GetAtrophy( UI08 skillToGet ) const
 {
-	return atrophy[skillToGet];
+	UI16 rVal = 0;
+	if( skillToGet <= INTELLECT )
+		rVal = atrophy[skillToGet];
+	return rVal;
 }
 UI08 CChar::GetSkillLock( UI08 skillToGet ) const
 {
-	return lockState[skillToGet];
+	UI08 rVal = 0;
+	if( skillToGet <= INTELLECT )
+		rVal = lockState[skillToGet];
+	return rVal;
 }
 SKILLVAL CChar::GetSkill( UI08 skillToGet ) const
 {
-	SKILLVAL rvalue		= skill[skillToGet];
-	SI32 modifier	= Races->DamageFromSkill( skillToGet, race );
-	if( modifier != 0 )
+	SKILLVAL rVal = 0;
+	if( skillToGet <= INTELLECT )
 	{
-		SKILLVAL toAdd	= (SKILLVAL)( (R32)skill[skillToGet] * ( (R32)modifier / 1000 ) );		// percentage to add
-		rvalue		+= toAdd; // return the bonus
+		rVal			= skill[skillToGet];
+		SI32 modifier	= Races->DamageFromSkill( skillToGet, race );
+		if( modifier != 0 )
+		{
+			SKILLVAL toAdd	= (SKILLVAL)( (R32)skill[skillToGet] * ( (R32)modifier / 1000 ) );		// percentage to add
+			rVal			+= toAdd; // return the bonus
+		}
 	}
-	return rvalue;
+	return rVal;
 }
 
 void CChar::SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 {
-	baseskill[skillToSet] = newSkillValue;
+	if( skillToSet < ALLSKILLS )
+		baseskill[skillToSet] = newSkillValue;
 }
 void CChar::SetSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 {
-	skill[skillToSet] = newSkillValue;
+	if( skillToSet <= INTELLECT )
+		skill[skillToSet] = newSkillValue;
 }
 void CChar::SetAtrophy( UI16 newValue, UI08 skillToSet )
 {
-	atrophy[skillToSet] = newValue;
+	if( skillToSet <= INTELLECT )
+		atrophy[skillToSet] = newValue;
 }
 void CChar::SetSkillLock( UI08 newSkillValue, UI08 skillToSet )
 {
-	lockState[skillToSet] = newSkillValue;
+	if( skillToSet <= INTELLECT )
+		lockState[skillToSet] = newSkillValue;
 }
 
 SI16 CChar::GetGuildNumber( void ) const
@@ -1654,7 +1675,7 @@ void CChar::CopyData( CChar *target )
 	target->SetHiDamage( hidamage );
 	target->SetLoDamage( lodamage );
 
-	for( UI08 i = 0; i <= ALLSKILLS; ++i )
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
 	{
 		target->SetBaseSkill( baseskill[i], i );
 		target->SetSkill( skill[i], i );
@@ -1662,7 +1683,7 @@ void CChar::CopyData( CChar *target )
 		target->SetSkillLock( lockState[i], i );
 	}
 
-	for( UI08 j = STRENGTH; j <= INTELLECT+1; ++j )
+	for( UI08 j = STRENGTH; j <= INTELLECT; ++j )
 	{
 		target->SetAtrophy( atrophy[j], j );
 		target->SetSkillLock( lockState[j], j );
@@ -2218,23 +2239,18 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	if( !IsNpc() )
 	{
 		dumping << "Atrophy=";
-		if( GetAtrophy( 0 ) >= 10 )
-			dumping << GetAtrophy( 0 );
-		else
-			dumping << "0" << GetAtrophy( 0 );
-	
-		for( UI08 atc = 1; atc < ALLSKILLS; ++atc )
+		for( UI08 atc = 0; atc <= INTELLECT; ++atc )
 		{
 			if( GetAtrophy( atc ) >= 10 )
-				dumping << "," << GetAtrophy( atc );
+				dumping << GetAtrophy( atc ) << "," ;
 			else
-				dumping << ",0" << GetAtrophy( atc );
+				dumping << "0" << GetAtrophy( atc ) << ",";
 		}
 		dumping << "[END]" << std::endl;
 
 		// Format: SkillLocks=[0,34]-[1,255]-[END]
 		dumping << "SkillLocks=";
-		for( UI08 slc = 0; slc < ALLSKILLS; ++slc )
+		for( UI08 slc = 0; slc <= INTELLECT; ++slc )
 		{
 			if( GetSkillLock( slc ) <= 2 )
 				dumping << "[" << (SI16)slc << "," << (SI16)GetSkillLock( slc ) << "]-";
@@ -2831,6 +2847,7 @@ void CChar::StopSpell( void )
 
 bool CChar::HandleLine( UString &UTag, UString& data )
 {
+	size_t numSections = 0;
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
@@ -2844,8 +2861,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "ATROPHY" )
 				{
-					for( UI08 aCtr = 0; aCtr < ALLSKILLS; ++aCtr )
+					numSections = data.sectionCount( "," );
+					for( UI08 aCtr = 0; aCtr < numSections; ++aCtr )
 					{
+						if( data.section( ",", aCtr, aCtr ).empty() )
+							break;
+
 						SetAtrophy( data.section( ",", aCtr, aCtr ).stripWhiteSpace().toUShort(), aCtr );
 					}
 					rvalue = true;
@@ -2879,8 +2900,9 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "BASESKILLS" )
 				{
+					numSections = data.sectionCount( "-" );
 					// Format: BaseSkills=[0,34]-[1,255]-[END]
-					for( UI08 skillCtr = 0; skillCtr < ALLSKILLS; ++skillCtr )
+					for( UI08 skillCtr = 0; skillCtr < numSections; ++skillCtr )
 					{
 						UString tempdata	= data.section( "-", skillCtr, skillCtr ).stripWhiteSpace();
 						if( tempdata.empty() )
@@ -3308,7 +3330,8 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "SKILLLOCKS" )
 				{
 					// Format: Baselocks=[0,34]-[1,255]-[END]
-					for( UI08 lockCtr = 0; lockCtr < ALLSKILLS; ++lockCtr )
+					numSections = data.sectionCount( "-" );
+					for( UI08 lockCtr = 0; lockCtr < numSections; ++lockCtr )
 					{
 						UString tempdata = data.section( "-", lockCtr, lockCtr ).stripWhiteSpace();
 						if( tempdata.empty() )
@@ -4916,7 +4939,7 @@ SI16 CChar::GetPeaceing( void ) const
 	if( IsValidNPC() )
 		rVal = mNPC->peaceing;
 	else if( IsValidPlayer() )
-		rVal = static_cast<SI16>( GetBaseSkill( 9 ) );
+		rVal = static_cast<SI16>( GetBaseSkill( PEACEMAKING ) );
 	return rVal;
 }
 void CChar::SetPeaceing( SI16 newValue )
@@ -4938,7 +4961,7 @@ SI16 CChar::GetProvoing( void ) const
 	if( IsValidNPC() )
 		rVal = mNPC->provoing;
 	else if( IsValidPlayer() )
-		rVal = static_cast<SI16>( GetBaseSkill( 22 ) );
+		rVal = static_cast<SI16>( GetBaseSkill( PROVOCATION ) );
 	return rVal;
 }
 void CChar::SetProvoing( SI16 newValue )
@@ -5749,6 +5772,51 @@ void CChar::UpdateDamageTrack( void )
 		if( (i->lastDamageDone + 300000) < currentTime )	// if it's been 5 minutes since they did any damage
 			damageHealed.Remove( i, true );
 	}
+}
+
+void CChar::SetWeight( SI32 newVal, bool doWeightUpdate )
+{
+	Dirty( UT_STATWINDOW );
+	weight = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|		Function    :	void Dirty( void ) const
+//|		Date        :	25 July, 2003
+//|		Programmer  :	Maarc
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Forces the object onto the global refresh queue
+//o---------------------------------------------------------------------------o
+void CChar::Dirty( UpdateTypes updateType )
+{
+	if( isPostLoaded() )
+	{
+		updateTypes.set( updateType, true );
+		CBaseObject::Dirty( updateType );
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool GetUpdate()
+//|   Date        -  10/31/2003
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if we have set a specific UpdateType
+//o---------------------------------------------------------------------------o
+bool CChar::GetUpdate( UpdateTypes updateType ) const
+{
+	return updateTypes.test( updateType );
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  ClearUpdate()
+//|   Date        -  3/20/2006
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Clears the UpdateType bitlist, used at the end of our refresh queue
+//o---------------------------------------------------------------------------o
+void CChar::ClearUpdate( void )
+{
+	updateTypes.reset();
 }
 
 }

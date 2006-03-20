@@ -255,7 +255,7 @@ void LoadSkills( void )
 			if( skEntry.section( " ", 0, 0 ) == "SKILL" )
 			{
 				i = skEntry.section( " ", 1, 1 ).toUByte();
-				if( i <= ALLSKILLS+3 )
+				if( i <= INTELLECT )
 				{
 					cwmWorldState->skill[i].ResetDefaults();
 					for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )

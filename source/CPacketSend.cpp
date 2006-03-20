@@ -5085,22 +5085,22 @@ CPExtendedStats::CPExtendedStats( CChar& mChar )
 
 void CPExtendedStats::InternalReset( void )
 {
-	pStream.ReserveSize( 12 );
+	pStream.ReserveSize( 11 );
 	pStream.WriteByte(  0, 0xBF );
-	pStream.WriteShort( 1, 12 );
+	pStream.WriteShort( 1, 11 );
 	pStream.WriteShort( 3, 0x19 );
-	pStream.WriteByte(  6, 2 );
+	pStream.WriteByte(  5, 2 );
 }
 
 void CPExtendedStats::CopyData( CChar& mChar )
 {
-	pStream.WriteLong( 7, mChar.GetSerial() );
+	pStream.WriteLong( 6, mChar.GetSerial() );
 
 	UI08 strength		= mChar.GetSkillLock( STRENGTH );
 	UI08 dexterity		= mChar.GetSkillLock( DEXTERITY );
 	UI08 intelligence	= mChar.GetSkillLock( INTELLECT );
 
-	pStream.WriteByte( 11, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
+	pStream.WriteByte( 10, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
 }
 
 //0xBF Packet
@@ -5290,7 +5290,7 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 
 	pStream.WriteShort( offset+=2, 0x000B );	// Open Backpack
 	pStream.WriteShort( offset+=2, 6145 );
-	if( ValidateObject( toCopy.GetPackItem() ) )
+	if( ( toCopy.isHuman() || toCopy.GetID() == 0x0123 || toCopy.GetID() == 0x0124 ) && ValidateObject( toCopy.GetPackItem() )  )
 	{
 		pStream.WriteShort( offset+=2, 0x0020 );
 		pStream.WriteShort( offset+=2, 0x03E0 );

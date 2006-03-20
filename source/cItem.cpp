@@ -1419,6 +1419,21 @@ void CItem::EntryMadeFrom( UI16 newValue )
 	entryMadeFrom = newValue;
 }
 
+void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
+{
+	CBaseObject *checkCont = NULL;
+	if( isPostLoaded() && doWeightUpdate )
+		checkCont = GetCont();
+	
+	if( ValidateObject( checkCont ) )
+		Weight->subtractItemWeight( checkCont, this );
+
+	weight = newVal;
+
+	if( ValidateObject( checkCont ) )
+		Weight->addItemWeight( checkCont, this );
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	bool IsMetalType( void ) const
 //|	Date			-	13 November, 2001

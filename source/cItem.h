@@ -72,6 +72,7 @@ public:
 
 	CDataList< CItem * > *	GetContainsList( void );
 
+	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true );
 	UI16			EntryMadeFrom( void ) const;
 	void			EntryMadeFrom( UI16 newValue );
 

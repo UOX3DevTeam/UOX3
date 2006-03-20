@@ -608,6 +608,8 @@ bool IsOnFoodList( const std::string sFoodList, const UI16 sItemID )
 
 bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 {
+	UI08 dropResult		= 0;
+	const bool isGM		= (mChar->GetCommandLevel() >= CNS_CMDLEVEL);
 	bool stackDeleted	= false;
 	bool executeNpc		= true;
 	UI16 targTrig		= i->GetScriptTrigger();
@@ -660,9 +662,8 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		}
 	}
 
-	if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || ( targNPC->IsTamed() && ( targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) ) // do food stuff
-	{
-		
+	if( targNPC->IsTamed() && ( isGM || targNPC->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, targNPC ) ) ) // do food stuff
+	{	
 		if( targNPC->WillHunger() && IsOnFoodList( targNPC->GetFood(), i->GetID() ) )
 		{
 			if( targNPC->GetHunger() < 6 )
@@ -693,33 +694,22 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 			else
 				mSock->sysmessage( 1780 );
 		}
-		else if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 )	// It's a pack animal
+		else if( isGM || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 )	// It's a pack animal
+			dropResult = 2;
+	}
+	else if( targNPC->isHuman() )
+	{
+		if( static_cast<CChar *>(mSock->TempObj()) != targNPC )
 		{
-			CItem *pack = targNPC->GetPackItem();
-			if( ValidateObject( pack ) )
-				stackDeleted = ( autoStack( mSock, i, pack ) != i );
+			if( isGM )
+				dropResult = 2;
+			else
+			{
+				dropResult = 1;
+				targNPC->talk( mSock, 1197, false );
+			}
 		}
-	}
-	else if( !targNPC->isHuman() )
-	{
-		// Sept 25, 2002 - Xuri - Weight fixes
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, i );
-
-		Bounce( mSock, i );
-	}
-	else if( static_cast<CChar *>(mSock->TempObj()) != targNPC )
-	{
-		// Sept 25, 2002 - Xuri - weight fix
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, i );
-
-		targNPC->talk( mSock, 1197, false );
-		Bounce( mSock, i );
-	}
-	else // This NPC is training the player
-	{
-		if( i->GetID() == 0x0EED ) // They gave the NPC gold
+		else if( i->GetID() == 0x0EED ) // They gave the NPC gold
 		{
 			UI08 trainedIn = targNPC->GetTrainingPlayerIn();
 			targNPC->talk( mSock, 1198, false );
@@ -733,9 +723,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 			if( i->GetAmount() > 250 ) // Paid too much
 			{
 				i->IncAmount( -(250 - oldskill) );
-				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-					Weight->subtractItemWeight( mChar, i );
-				Bounce( mSock, i );
+				dropResult = 1;
 			}
 			else  // Gave exact change
 			{
@@ -745,16 +733,35 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				stackDeleted = true;
 			}
 			mSock->TempObj( NULL );
-			targNPC->SetTrainingPlayerIn( 255 );
+			targNPC->SetTrainingPlayerIn( 0xFF );
 			Effects->goldSound( mSock, getAmount, false );
 		}
 		else // Did not give gold
 		{
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( mChar, i );
+			dropResult = 1;
 			targNPC->talk( mSock, 1199, false );
-			Bounce( mSock, i );
 		}
+	}
+	else
+		dropResult = ( isGM ? 2 : 1 );
+
+	switch( dropResult )
+	{
+	default:
+	case 0:		// Do nothing;
+		break;
+	case 1:		// Bounce
+		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			Weight->subtractItemWeight( mChar, i );
+
+		Bounce( mSock, i );
+		break;
+	case 2:		// Stack
+		CItem *pack;
+		pack = targNPC->GetPackItem();
+		if( ValidateObject( pack ) )
+			stackDeleted = ( autoStack( mSock, i, pack ) != i );
+		break;
 	}
 	return stackDeleted;
 }
@@ -768,10 +775,7 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 	{
 		mSock->sysmessage( 1743 );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( mChar, i );
-			mChar->Dirty( UT_STATWINDOW );
-		}
 		Bounce( mSock, i );
 		return false;
 	}
@@ -813,10 +817,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( nChar, i );
-			nChar->Dirty( UT_STATWINDOW );
-		}
 		Bounce( mSock, i );
 		return;
 	}
@@ -828,10 +829,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		if( !Map->CanMonsterMoveHere( x, y, z, nChar->WorldNumber(), true, false ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			{
 				Weight->subtractItemWeight( nChar, i );
-				nChar->Dirty( UT_STATWINDOW );
-			}
 			Bounce( mSock, i );
 			return;
 		}
@@ -847,10 +845,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		{
 			//Bounces items dropped in illegal locations in 3D UO client!!!
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			{
 				Weight->subtractItemWeight( nChar, i );
-				nChar->Dirty( UT_STATWINDOW );
-			}
 			Bounce( mSock, i );
 			return;
 		}
@@ -878,10 +873,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped )
 {
 	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-	{
 		Weight->subtractItemWeight( &mChar, &iDropped );
-		mChar.Dirty( UT_STATWINDOW );
-	}
 	iDropped.SetCont( &tradeWindowOne );
 	iDropped.SetX( mSock.GetWord( 5 ) );
 	iDropped.SetY( mSock.GetWord( 7 ) );
@@ -908,10 +900,7 @@ void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CIt
 void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
 {
 	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-	{
 		Weight->subtractItemWeight( &mChar, &iDropped );
-		mChar.Dirty( UT_STATWINDOW );
-	}
 	if( iDropped.GetID( 1 ) != 0x1F || iDropped.GetID( 2 ) < 0x2D || iDropped.GetID( 2 ) > 0x72 )
 	{
 		Bounce( &mSock, &iDropped );
@@ -998,10 +987,7 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 		else
 			mSock.sysmessage( 1743 );
 		if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( &mChar, &iDropped );
-			mChar.Dirty( UT_STATWINDOW );
-		}
 		Bounce( &mSock, &iDropped );
 		return false;
 	}
@@ -1070,10 +1056,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-			{
 				Weight->subtractItemWeight( &mChar, &iDropped );
-				mChar.Dirty( UT_STATWINDOW );
-			}
 			mSock.sysmessage( 1630 );
 			Bounce( &mSock, &iDropped );
 			return false;
@@ -1102,10 +1085,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
 		{
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-			{
 				Weight->subtractItemWeight( &mChar, &iDropped );
-				mChar.Dirty( UT_STATWINDOW );
-			}
 			mSock.sysmessage( 1385 );
 			Bounce( &mSock, &iDropped );
 			return false;
@@ -1151,10 +1131,7 @@ void DropOnItem( CSocket *mSock )
 		( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
 	{
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
 		Bounce( mSock, nItem );
 		return;
 	}
@@ -1165,10 +1142,7 @@ void DropOnItem( CSocket *mSock )
 	{
 		Effects->PlaySound( mSock, 0x0042, false );
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
 		nItem->Delete();
 		mSock->sysmessage( 1201 );
 		return;
@@ -1200,10 +1174,7 @@ void DropOnItem( CSocket *mSock )
 		nItem->SetZ( mSock->GetByte( 9 ) );
 
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-		{
 			Weight->subtractItemWeight( mChar, nItem );
-			mChar->Dirty( UT_STATWINDOW );
-		}
 	}
 	if( !stackDeleted )
 		Effects->itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );

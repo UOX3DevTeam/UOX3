@@ -2653,7 +2653,7 @@ bool CPIPopupMenuSelect::Handle( void )
 		PaperDoll( tSock, targChar );
 		break;
 	case 0x000B:	// Open Backpack
-		if( targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
+		if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
 		{
 			if( mChar->IsDead() )
 				tSock->sysmessage( 392 );
@@ -2664,7 +2664,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				CItem *pack = targChar->GetPackItem();
 				if( ValidateObject( pack ) )
 				{
-					if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->IsGM() )
+					if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
 						tSock->openPack( pack );
 					else
 						Skills->Snooping( tSock, targChar, pack );

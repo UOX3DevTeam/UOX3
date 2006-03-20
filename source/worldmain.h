@@ -229,7 +229,7 @@ public:
 	// Structs
 	std::map< UI16, CCreatures >		creatures;
 	timeval								uoxtimeout;
-	skill_st							skill[ALLSKILLS+4];				// Skill data
+	skill_st							skill[INTELLECT+1];				// Skill data
 	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
 	std::vector< TitlePair_st >			prowessTitles;
 	std::vector< TitlePair_st >			murdererTags;

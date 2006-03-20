@@ -660,7 +660,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	srand( getclock() ); // Randomize
 	
 	atrop[ALLSKILLS]=0;//set the last of out copy array
-	for( counter = 0; counter <= ALLSKILLS; ++counter )
+	for( counter = 0; counter < ALLSKILLS; ++counter )
 	{
 		atrop[counter] = c->GetAtrophy( counter );
 	}
@@ -681,14 +681,14 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	//copy it back in
 	if( rem == ALLSKILLS )//it was last
 	{
-		for( counter = 0; counter <= ALLSKILLS; ++counter )
+		for( counter = 0; counter < ALLSKILLS; ++counter )
 			c->SetAtrophy( atrop[counter], counter );
 	} 
 	else	//in the middle somewhere or first
 	{
 		for( counter = 0; counter < rem; ++counter )
 			c->SetAtrophy( atrop[counter], counter );
-		for( counter = static_cast<UI08>(rem + 1); counter <= ALLSKILLS; ++counter )
+		for( counter = static_cast<UI08>(rem + 1); counter < ALLSKILLS; ++counter )
 			c->SetAtrophy( atrop[counter], counter );
 	}
 

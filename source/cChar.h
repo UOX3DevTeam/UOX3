@@ -194,8 +194,8 @@ protected:
 
 	SI08		spellCast;
 
-	SKILLVAL	baseskill[ALLSKILLS+1]; // Base skills without stat modifiers
-	SKILLVAL	skill[ALLSKILLS+1]; // List of skills (with stat modifiers)
+	SKILLVAL	baseskill[ALLSKILLS]; // Base skills without stat modifiers
+	SKILLVAL	skill[INTELLECT+1]; // List of skills (with stat modifiers)
 	UI16		atrophy[INTELLECT+1];
 	UI08		lockState[INTELLECT+1];	// state of the skill locks
 
@@ -206,6 +206,7 @@ protected:
 	CDataList< CChar * >	petsControlled;
 	ITEMLIST				ownedItems;
 	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
+	std::bitset< UT_COUNT >	updateTypes;
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
@@ -236,6 +237,12 @@ protected:
 
 
 public:
+
+	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true );
+
+	bool		GetUpdate( UpdateTypes updateType ) const;
+	void		ClearUpdate( void );
+	virtual void	Dirty( UpdateTypes updateType );
 
 	void		UpdateDamageTrack( void );
 

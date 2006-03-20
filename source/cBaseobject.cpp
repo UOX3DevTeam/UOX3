@@ -111,14 +111,12 @@ poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 )
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
 	objSettings.reset();
-	updateTypes.reset();
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
 	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
-	for( int i = 0; i < WEATHNUM; ++i )
-		resistances[i] = DEFBASE_RESIST;
+	memset( &resistances[0], DEFBASE_RESIST, sizeof( UI16 ) * WEATHNUM );
 }
 
 
@@ -447,20 +445,6 @@ void CBaseObject::SetID( UI08 newValue, UI08 part )
 SI32 CBaseObject::GetWeight( void ) const
 {
 	return weight;
-}
-void CBaseObject::SetWeight( SI32 newVal, bool doWeightUpdate )
-{
-	CBaseObject *checkCont = NULL;
-	if( isPostLoaded() && doWeightUpdate && CanBeObjType( OT_ITEM ) )
-		checkCont = ((CItem *)this)->GetCont();
-	
-	if( ValidateObject( checkCont ) )
-		Weight->subtractItemWeight( checkCont, static_cast<CItem *>(this) );
-
-	weight = newVal;
-
-	if( ValidateObject( checkCont ) )
-		Weight->addItemWeight( checkCont, static_cast<CItem *>(this) );
 }
 
 //o--------------------------------------------------------------------------
@@ -2012,23 +1996,8 @@ void CBaseObject::Cleanup( void )
 //o---------------------------------------------------------------------------o
 void CBaseObject::Dirty( UpdateTypes updateType )
 {
-	updateTypes.set( updateType, true );
 	if( isPostLoaded() )
 		++(cwmWorldState->refreshQueue[this]);
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool Update()
-//|   Date        -  10/31/2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Toggle UpdateTypes
-//o---------------------------------------------------------------------------o
-bool CBaseObject::GetUpdate( UpdateTypes updateType )
-{
-	bool update = updateTypes.test( updateType );
-	updateTypes.reset( updateType );
-	return update;
 }
 
 void CBaseObject::CopyData( CBaseObject *target )

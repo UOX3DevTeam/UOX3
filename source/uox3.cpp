@@ -1438,7 +1438,7 @@ void CWorldMain::CheckAutoTimers( void )
 		CBaseObject *mObj = rqIter->first;
 		if( ValidateObject( mObj ) )
 		{
-			if( mObj->GetObjType() == OT_CHAR )
+			if( mObj->CanBeObjType( OT_CHAR ) )
 			{
 				CChar *uChar = static_cast<CChar *>(mObj);
 
@@ -1451,12 +1451,6 @@ void CWorldMain::CheckAutoTimers( void )
 
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
-				else if( uChar->GetUpdate( UT_STATWINDOW ) )
-				{
-					CSocket *uSock = uChar->GetSocket();
-					if( uSock != NULL )
-						uSock->statwindow( uChar );
-				}
 				else if( uChar->GetUpdate( UT_HIDE ) )
 				{
 					uChar->RemoveFromSight();
@@ -1464,6 +1458,14 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
+				else if( uChar->GetUpdate( UT_STATWINDOW ) )
+				{
+					CSocket *uSock = uChar->GetSocket();
+					if( uSock != NULL )
+						uSock->statwindow( uChar );
+				}
+
+				uChar->ClearUpdate();
 			}
 			else
 				mObj->Update();
