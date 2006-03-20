@@ -197,31 +197,30 @@ void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
 		case 21:	// More X
 		case 22:	// More Y
 		case 23:	// More Z
-		case 24:	// More B
-		case 28:	// Good
-		case 29:	// Buy Value
-		case 30:	// Sell Value
-		case 31:	// Carve
+		case 27:	// Good
+		case 28:	// Buy Value
+		case 29:	// Sell Value
+		case 30:	// Carve
 			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 6, 495 + button );	// allow 0x for hex value
 			break;
 		case 7:		// Moveable
-		case 25:	// Poisoned
-		case 27:	// Decay
-		case 32:	// Stackable
-		case 33:	// Dyable
-		case 34:	// Corpse
-		case 35:	// Visible
+		case 24:	// POISON
+		case 26:	// Decay
+		case 31:	// Stackable
+		case 32:	// Dyable
+		case 33:	// Corpse
+		case 34:	// Visible
 			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 1, 495 + button );
 			break;
 		case 11:	// Amount
 		case 12:	// Strength
-		case 26:	// Weight
+		case 25:	// Weight
 			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 7, 495 + button );	// allow 0x for hex value
 			break;
 		case 2:		// Name
 		case 3:		// Name 2
-		case 36:	// Creator
-		case 37:	// Spawnobj/Spawnobjlist
+		case 35:	// Creator
+		case 36:	// Spawnobj/Spawnobjlist
 			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 50, 495 + button );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;

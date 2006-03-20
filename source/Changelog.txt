@@ -1,3 +1,8 @@
+3/20/2006 - grimson
+	The JS item property .devinelock was sent as INT though it is a bool.
+	Some small fixes to the tweak menu for items, this still had parts for a non existant MoreB
+	value in it which shiftet some parts off, this also includes updated dictionaries.
+
 3/19/2006 - grimson
 	Renamed Get/SetElementResist() to Get/SetResist as we now handle all resistance types in it.
 	Removed SetDef(), GetDef() and the def variable from CBaseobject.cpp and store armor values

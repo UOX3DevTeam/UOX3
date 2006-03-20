@@ -271,7 +271,7 @@ namespace UOX
 				case CIP_BUYVALUE:		*vp = INT_TO_JSVAL( gPriv->GetBuyValue() );		break;
 				case CIP_SELLVALUE:		*vp = INT_TO_JSVAL( gPriv->GetSellValue() );	break;
 				case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
-				case CIP_DEVINELOCK:	*vp = INT_TO_JSVAL( gPriv->isDevineLocked() );	break;
+				case CIP_DEVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDevineLocked() ); break;
 				case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 				case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
 				case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
