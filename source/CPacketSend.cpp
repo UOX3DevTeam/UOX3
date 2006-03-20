@@ -5085,9 +5085,9 @@ CPExtendedStats::CPExtendedStats( CChar& mChar )
 
 void CPExtendedStats::InternalReset( void )
 {
-	pStream.ReserveSize( 11 );
+	pStream.ReserveSize( 12 );
 	pStream.WriteByte(  0, 0xBF );
-	pStream.WriteShort( 1, 11 );
+	pStream.WriteShort( 1, 12 );
 	pStream.WriteShort( 3, 0x19 );
 	pStream.WriteByte(  5, 2 );
 }
@@ -5096,11 +5096,11 @@ void CPExtendedStats::CopyData( CChar& mChar )
 {
 	pStream.WriteLong( 6, mChar.GetSerial() );
 
-	UI08 strength		= mChar.GetSkillLock( STRENGTH );
-	UI08 dexterity		= mChar.GetSkillLock( DEXTERITY );
-	UI08 intelligence	= mChar.GetSkillLock( INTELLECT );
+	const UI08 strength		= static_cast<UI08>((mChar.GetSkillLock( STRENGTH )&0x3) << 4);
+	const UI08 dexterity	= static_cast<UI08>((mChar.GetSkillLock( DEXTERITY )&0x3) << 2);
+	const UI08 intelligence	= static_cast<UI08>(mChar.GetSkillLock( INTELLECT )&0x3);
 
-	pStream.WriteByte( 10, ( ( strength & 0x3 ) << 4 ) | ( ( dexterity & 0x3 ) << 2 ) | ( intelligence & 0x3 ) );
+	pStream.WriteByte( 11, (strength | dexterity | intelligence) );
 }
 
 //0xBF Packet

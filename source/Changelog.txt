@@ -1,3 +1,7 @@
+3/20/2006 - giwo
+	Fixed a glitch in the CPExtendedStats packet.
+	Modified CPIPopupMenuSelect to prevent opening the paperdoll of a non-human.
+
 3/20/2006 - giwo (0.98-3.5n [3.6 RC])
 	Fixed an issue with CPExtendedStats causing statlocks not to display in the stat window.
 	Modified CChar::skilllocks and atrophy to save stat values to the worldfile.

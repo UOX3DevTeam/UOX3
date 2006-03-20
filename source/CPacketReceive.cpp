@@ -2650,7 +2650,8 @@ bool CPIPopupMenuSelect::Handle( void )
 	switch( popupEntry )
 	{
 	case 0x000A:	// Open Paperdoll
-		PaperDoll( tSock, targChar );
+		if( targChar->isHuman() )
+			PaperDoll( tSock, targChar );
 		break;
 	case 0x000B:	// Open Backpack
 		if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
