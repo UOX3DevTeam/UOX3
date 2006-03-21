@@ -114,6 +114,7 @@ JSMethodFunc CChar_InitWanderArea;
 JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
 JSMethodFunc CChar_Heal;
+JSMethodFunc CChar_Defense;
 
 // Item Methods
 JSMethodFunc CItem_OpenPlank;
@@ -337,6 +338,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
+	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ NULL,					NULL,					0, 0, 0 }
 };
 

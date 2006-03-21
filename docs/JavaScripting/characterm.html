@@ -459,6 +459,16 @@ function onUse( pUser, iUsed )
 }
 </pre></table>
 
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="Defense">Defense</a>
+<tr><td class="property">Prototype		<td class="value"><pre>int Defense( hitLoc, damageType, doArmorDamage )</pre>
+<tr><td class="property">Purpose		<td class="value">Returns the defense value against damageType of the armor item at the location hitLoc and does armor damage if needed
+<tr><td class="property">Parameters		<td class="value">hitLoc = the hit location (0 the whole char, 1 the body, 2 the arms, 3 the head, 4 the legs, 5 the neck and 6 the rest), the damageType and if the armor gets damaged.
+<tr><td class="property">Example of Usage	<td class="value"><pre>Get the defense value of the head armor against Physical damage and damage the armor:<br>value = mChar.Defense( 3, 1, true);
+</pre></table>
+
+
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font>

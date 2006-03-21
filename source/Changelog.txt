@@ -1,4 +1,11 @@
 3/21/2006 - grimson
+	Changed the return value of OnCombatDamageCalc() to a SI16, I accidentially declared it to
+	be a SI32.
+	Replaced the JS Char property .defense with the new JS Char Method:
+		mChar.Defense( hitLoc, damageType, doArmorDamage );
+	so you can get all the different defense values for a char.
+
+3/21/2006 - grimson
 	Call the OnHungerChange JS event in the SetHunger() function of chars instead of calling
 	it in every part of the code the where the hunger gets changed.
 

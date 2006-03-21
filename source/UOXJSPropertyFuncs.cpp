@@ -421,7 +421,6 @@ namespace UOX
 					break;
 				case CCP_FAME:			*vp = INT_TO_JSVAL( gPriv->GetFame() );						break;
 				case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );					break;
-				case CCP_DEFENSE:		*vp = INT_TO_JSVAL( Combat->calcDef( gPriv, 0, true ) );	break;
 				case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv, true ) );				break;
 				case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );			break;
 				case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChanceGain() );		break;

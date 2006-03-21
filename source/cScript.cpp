@@ -2268,15 +2268,15 @@ bool cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	return ( retVal == JS_TRUE );
 }
 
-SI32 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )
+SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )
 {
-	const SI08 RV_NOFUNC = -1;
+	const SI16 RV_NOFUNC = -1;
 	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnCombatDamageCalc, "onCombatDamageCalc" ) )
 		return RV_NOFUNC;
 	
-	SI32 funcRetVal	= -1;
+	SI16 funcRetVal	= -1;
 
 	jsval rval, params[3];
 	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
@@ -2296,7 +2296,7 @@ SI32 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 
 	if( damage.isType( JSOT_INT ) || damage.isType( JSOT_DOUBLE ) )	// They returned some sort of value
 	{
-		return (SI32)damage.toInt();
+		return (SI16)damage.toInt();
 	}
 	else
 		funcRetVal = -1;	// default to hard code

@@ -231,7 +231,7 @@ public:
 
 	bool		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 	
-	SI32		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
+	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

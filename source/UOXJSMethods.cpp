@@ -48,6 +48,7 @@
 #include "CPacketSend.h"
 #include "mapstuff.h"
 #include "cThreadQueue.h"
+#include "combat.h"
 
 namespace UOX
 {
@@ -5612,6 +5613,42 @@ JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		else
 			*rval = JS_FALSE;
 	}	
+	return JS_TRUE;
+}
+
+JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 3)
+	{
+		MethodError( "Defense: Invalid number of arguments (takes 3, the hit location, the resist type and if the armor should get damaged)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar		= NULL;
+	
+	// Let's validate the char
+
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar	= (CChar *)myClass.toObject();
+		if( !ValidateObject( mChar ) )  
+		{
+			MethodError( "Defense: Passed an invalid Character" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		MethodError( "Defense: Passed an invalid Character" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate hitLoc( cx, &(argv[0]) );
+	JSEncapsulate resistType( cx, &(argv[1]) );
+	JSEncapsulate doArmorDamage( cx, &(argv[2]) );
+
+	*rval = INT_TO_JSVAL( Combat->calcDef( mChar, (UI08)hitLoc.toInt(), doArmorDamage.toBool(), (WeatherType)resistType.toInt() ) );
 	return JS_TRUE;
 }
 
