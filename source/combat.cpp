@@ -1333,6 +1333,9 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			if( RaceDamage != 0 )
 				baseDamage += (SI16)( (R32)baseDamage * ( (R32)RaceDamage / 1000 ) );
 
+			// Adjust race and weather weakness
+			baseDamage = AdjustRaceDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc, getFightSkill );
+
 			// Strength Damage Bonus, +20% Damage
 			multiplier = static_cast<R32>( ( ( UOX_MIN( mChar->GetStrength(), static_cast<SI16>(200) ) * 20 ) / 100 ) / 100 ) + 1;
 				damage = (R32)(baseDamage * multiplier);
@@ -1355,8 +1358,6 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			multiplier = static_cast<R32>(1.0 - ( ( ( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) / 100 ));
 				damage = (R32)(damage * multiplier);
 			
-			// Adjust race and weather weakness
-			damage = (R32)AdjustRaceDamage( mChar, ourTarg, mWeapon, (SI16)roundNumber( damage ), hitLoc, getFightSkill );
 			break;
 		default:
 			damage = (R32)baseDamage;

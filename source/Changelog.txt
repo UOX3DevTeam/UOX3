@@ -1,3 +1,7 @@
+3/21/2006 - grimson
+	A small fix to ApplyDamageBonuses(), the race damage of a weapon was applied to the final
+	damage instead of the weapons base damage.
+
 3/20/2006 - giwo
 	Fixed a glitch in the CPExtendedStats packet.
 	Modified CPIPopupMenuSelect to prevent opening the paperdoll of a non-human.
