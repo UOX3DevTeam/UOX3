@@ -1,4 +1,15 @@
 3/21/2006 - grimson
+	Call the OnHungerChange JS event in the SetHunger() function of chars instead of calling
+	it in every part of the code the where the hunger gets changed.
+
+	Added a new JS event:
+	onCombatDamageCalc( attacker, defender, getFightSkill )
+		This event is called everytime combat damage is calculated. You can do your own damage
+		calculation and return the damage to override the engine damage calculation, or return
+		a negative damage value to use the engine damage calculation.
+		
+
+3/21/2006 - grimson
 	A small fix to ApplyDamageBonuses(), the race damage of a weapon was applied to the final
 	damage instead of the weapons base damage.
 

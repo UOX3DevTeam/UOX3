@@ -133,6 +133,36 @@ tChar.DoAction( 111 );
 }</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnCombatDamageCalc">onCombatDamageCalc</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCombatDamageCalc( attacker, defender, getFightSkill )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Everytime combat damage calculation occurs this event is fired
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return a damage value to override the combat calculation of the engine, or a negative value to use the engine
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Allow to override the combat damage calculation
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onCombatDamageCalc( pAttacker, pDefender, fightSkill )
+{
+	var baseDamage = pAttacker.attack;
+	var hitLoc = CalculateHitLoc();
+
+	if( baseDamage == -1 )  // No damage if weapon breaks
+		return 0;
+
+	var damage = ApplyDamageBonuses( 1, pAttacker, pDefender, fightSkill, hitLoc, baseDamage );
+
+	if( damage < 1 )
+		return 0;
+
+	damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true);
+
+	if( damage <= 0 ) 
+		damage = RandomNumber( 0, 4 );
+
+	if( !pDefender.npc ) 
+		damage /= 2;
+
+	return damage;
+}</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnCreateDFNEvent">onCreateDFN</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCreateDFN( objMade, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When an item or char is created.  Note that for PCs, this is triggered when they first enter the world.
@@ -404,8 +434,7 @@ function onLeaving( iLeft, objLeaving, objType )
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
+</pre></table> 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnLogin">onLogin</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLogin( sockPlayer, pChar )

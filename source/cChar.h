@@ -265,7 +265,7 @@ public:
 	UI08		GetTown( void ) const;
 	std::string GetFood( void ) const;
 
-	void		SetHunger( SI08 newValue );
+	bool		SetHunger( SI08 newValue );
 	void		SetTamedHungerRate( UI16 newValue );
 	void		SetTamedHungerWildChance( UI08 newValue );
 	void		SetTown( UI08 newValue );
@@ -290,7 +290,7 @@ public:
 	void		SetMaxStamFixed( bool newValue );
 	bool		GetMaxStamFixed( void ) const;
 
-	void		DecHunger( const SI08 amt = 1 );
+	bool		DecHunger( const SI08 amt = 1 );
 
 	bool		isUnicode( void ) const;
 	bool		IsNpc( void ) const;

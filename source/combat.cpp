@@ -1451,13 +1451,23 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )
 {
+	SI16 damage = 0;
+
+	cScript *toExecute	= JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( toExecute != NULL )
+		damage = toExecute->OnCombatDamageCalc( mChar, ourTarg, getFightSkill );
+
+	if( damage >= 0 )
+		return damage;
+	else
+		damage = 0;
+
 	const SI16 baseDamage = calcAtt( mChar, true );
 	const UI08 hitLoc = CalculateHitLoc();
 
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
 	
-	SI16 damage = 0;
 	damage = ApplyDamageBonuses( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage );
 
 	if( damage < 1 )

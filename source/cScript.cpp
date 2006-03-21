@@ -8,6 +8,7 @@
 #include "CJSMapping.h"
 #include "CPacketReceive.h"
 #include "CJSEngine.h"
+#include "JSEncapsulate.h"
 
 namespace UOX
 {
@@ -2267,5 +2268,40 @@ bool cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	return ( retVal == JS_TRUE );
 }
 
+SI32 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnCombatDamageCalc, "onCombatDamageCalc" ) )
+		return RV_NOFUNC;
+	
+	SI32 funcRetVal	= -1;
+
+	jsval rval, params[3];
+	JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *defenderObj = JSEngine->AcquireObject( IUE_CHAR, defender, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( attackerObj );
+	params[1] = OBJECT_TO_JSVAL( defenderObj );
+	params[2] = INT_TO_JSVAL( getFightSkill );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCombatDamageCalc", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCombatDamageCalc, false );
+		return RV_NOFUNC;
+	}
+	JSEncapsulate damage( targContext, &rval );
+
+	if( damage.isType( JSOT_INT ) || damage.isType( JSOT_DOUBLE ) )	// They returned some sort of value
+	{
+		return (SI32)damage.toInt();
+	}
+	else
+		funcRetVal = -1;	// default to hard code
+
+	return funcRetVal;
+}
 
 }

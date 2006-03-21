@@ -332,9 +332,18 @@ SI08 CChar::GetHunger( void ) const
 {
 	return hunger;
 }
-void CChar::SetHunger( SI08 newValue )
+bool CChar::SetHunger( SI08 newValue )
 {
+	bool JSEventUsed = false;
+
 	hunger = newValue;
+	
+	const UI16 HungerTrig = GetScriptTrigger();
+	cScript *toExecute = JSMapping->GetScript( HungerTrig );
+	if( toExecute != NULL )
+		JSEventUsed = toExecute->OnHungerChange( (this), hunger );
+	
+	return JSEventUsed;
 }
 UI16 CChar::GetTamedHungerRate( void ) const
 {
@@ -397,20 +406,8 @@ void CChar::DoHunger( CSocket *mSock )
 
 					if( GetHunger() > 0 )
 					{
-						DecHunger();
-						const UI16 HungerTrig = GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( HungerTrig );
-						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-						bool doHunger = true;
-						if( toExecute != NULL )
-						{
-							doHunger = !toExecute->OnHungerChange( (this), GetHunger() );
-						}
-						else if( globalExecute != NULL )
-						{
-							doHunger = !globalExecute->OnHungerChange( (this), GetHunger() );
-						}
-						if( doHunger )
+						bool doHungerMessage = !DecHunger();
+						if( doHungerMessage )
 						{
 							switch( GetHunger() )
 							{
@@ -448,17 +445,6 @@ void CChar::DoHunger( CSocket *mSock )
 					if( GetHunger() > 0 )
 					{
 						DecHunger();
-						const UI16 HungerTrig = GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( HungerTrig );
-						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-						if( toExecute != NULL )
-						{
-							toExecute->OnHungerChange( (this), GetHunger() );
-						}
-						else if( globalExecute != NULL )
-						{
-							globalExecute->OnHungerChange( (this), GetHunger() );
-						}
 					}
 					else if( GetHP() > 0 && hungerDamage > 0)
 					{
@@ -489,17 +475,6 @@ void CChar::DoHunger( CSocket *mSock )
 					if( GetHunger() > 0 )
 					{
 						DecHunger();
-						const UI16 HungerTrig = GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( HungerTrig );
-						cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-						if( toExecute != NULL )
-						{
-							toExecute->OnHungerChange( (this), GetHunger() );
-						}
-						else if( globalExecute != NULL )
-						{
-							globalExecute->OnHungerChange( (this), GetHunger() );
-						}
 					}
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
 					{
@@ -2833,9 +2808,9 @@ void CChar::SetFlagNeutral( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Decrements the character's hunger
 //o---------------------------------------------------------------------------o
-void CChar::DecHunger( const SI08 amt )
+bool CChar::DecHunger( const SI08 amt )
 {
-	SetHunger( (SI08)(GetHunger() - amt) );
+	return SetHunger( (SI08)(GetHunger() - amt) );
 }
 
 void CChar::StopSpell( void )

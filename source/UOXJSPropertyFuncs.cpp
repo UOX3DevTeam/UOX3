@@ -422,7 +422,7 @@ namespace UOX
 				case CCP_FAME:			*vp = INT_TO_JSVAL( gPriv->GetFame() );						break;
 				case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );					break;
 				case CCP_DEFENSE:		*vp = INT_TO_JSVAL( Combat->calcDef( gPriv, 0, true ) );	break;
-				case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv ) );				break;
+				case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv, true ) );				break;
 				case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );			break;
 				case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChanceGain() );		break;
 				case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );					break;
@@ -633,11 +633,6 @@ namespace UOX
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
 
-		//Prepare the onHungerChange Event
-		const UI16 HungerTrig = gPriv->GetScriptTrigger();
-		cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
-		cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-
 		JSEncapsulate encaps( cx, vp );
 
 		if( JSVAL_IS_INT( id ) ) 
@@ -690,14 +685,7 @@ namespace UOX
 				case CCP_CHARPACK:															break;
 				case CCP_FAME:			gPriv->SetFame( (SI16)encaps.toInt() );				break;
 				case CCP_KARMA:			gPriv->SetKarma( (SI16)encaps.toInt() );			break;
-				case CCP_HUNGER:
-					gPriv->SetHunger( (SI08)encaps.toInt() );
-					//Call the onHungerChange Event
-					if( toHungerExecute != NULL )
-						toHungerExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
-					else if( globalExecute != NULL )
-						globalExecute->OnHungerChange( gPriv, gPriv->GetHunger() );
-					break;
+				case CCP_HUNGER:		gPriv->SetHunger( (SI08)encaps.toInt() );			break;
 				case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );				break;
 				case CCP_BRKPEACE:		gPriv->SetBrkPeaceChanceGain( encaps.toInt() );		break;
 				case CCP_SETPEACE:		gPriv->SetPeace( encaps.toInt() );					break;

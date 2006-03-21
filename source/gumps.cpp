@@ -1711,11 +1711,6 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 		}
 		UI16 k;
 		
-		//Prepare the onHungerChange Event
-		const UI16 HungerTrig = j->GetScriptTrigger();
-		cScript *toHungerExecute = JSMapping->GetScript( HungerTrig );
-		cScript *globalExecute = JSMapping->GetScript( (UI16)0 );
-
 		switch( index )
 		{
 			case 1:		j->SetName( reply );						break;	// Name
@@ -1776,17 +1771,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 				if( j->IsNpc() )
 					j->SetNpcWander( reply.toByte() );
 				break;
-			case 24:
-				j->SetHunger( reply.toByte() );
-				if( toHungerExecute != NULL )
-				{
-					toHungerExecute->OnHungerChange( j, j->GetHunger() );
-				}
-				else if( globalExecute != NULL )
-				{
-					globalExecute->OnHungerChange( j, j->GetHunger() );
-				}
-				break;	// Hunger
+			case 24:	j->SetHunger( reply.toByte() );					break;	// Hunger
 			case 25:	j->SetPoisonStrength( reply.toUByte() );		break;	// Poison
 			case 26:	j->SetWeight( reply.toShort() );				break;	// Weight
 			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
