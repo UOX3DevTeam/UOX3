@@ -1431,7 +1431,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				getDef = HalfRandomNum( getDef );
 			}
 			else if( ourTarg->GetResist( damageType ) > 0 )
-				getDef = ( ourTarg->GetResist( damageType ) / 100 );
+				getDef = ourTarg->GetResist( damageType );
 			break;
 	}
 

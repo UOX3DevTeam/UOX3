@@ -1,4 +1,7 @@
 3/22/2006 - grimson
+	Small fix to ApplyDamageBonuses() caused by my previous commit.
+
+3/22/2006 - grimson
 	Removed the code to raise your resistance value upon elemental damage, this can be done better in JS.
 	Modified  CBaseObject::DumpBody() and CBaseObject::HandleLine() so that all resistance values get saved
 	and loaded in/from the worldfiles.
