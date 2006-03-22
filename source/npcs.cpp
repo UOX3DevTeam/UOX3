@@ -672,10 +672,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_ELEMENTRESIST:
 											if( cdata.sectionCount( " " ) == 3 )
 											{
-												applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() * 100 ), HEAT );
-												applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() * 100 ), COLD );
-												applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() * 100 ), LIGHTNING );
-												applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() * 100 ), POISON );
+												applyTo->SetResist( ( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() ), HEAT );
+												applyTo->SetResist( ( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ), COLD );
+												applyTo->SetResist( ( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() ), LIGHTNING );
+												applyTo->SetResist( ( cdata.section( " ", 3, 3 ).stripWhiteSpace().toUShort() ), POISON );
 											}
 											break;
 			case DFNTAG_DEX:

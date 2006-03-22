@@ -300,27 +300,6 @@ bool CChar::IsValidPlayer( void ) const
 	return ( mPlayer != NULL );
 }
 
-void CChar::IncreaseElementResist( WeatherType element )
-{
-	if( element == NONE )
-		return;
-
-	if( !cwmWorldState->ServerData()->UseCharResistance() )
-		return;
-
-	// Increase element resistance, very basic
-	UI16 damageResist = GetResist( element );
-	if( damageResist <= 100 )
-		SetResist( damageResist + 50, element );
-	else if( damageResist <= 200 )
-		SetResist( damageResist + 10, element );
-	else if( damageResist <= 400 )
-		SetResist( damageResist + 5, element );
-	else if( damageResist < 500 )
-		SetResist( damageResist + 1, element );
-	return;
-}
-
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Hunger()
 //|   Date        -  Unknown
@@ -5604,6 +5583,11 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 
 void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 {
+	UI16 dbScript		= GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( dbScript );
+	if( toExecute != NULL )
+		toExecute->OnDamage( this, attacker, damageValue );
+
 	CSocket *mSock = GetSocket(), *attSock = NULL, *attOwnerSock = NULL;
 	
 	if( ValidateObject( attacker ) )

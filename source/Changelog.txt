@@ -1,3 +1,11 @@
+3/22/2006 - grimson
+	Removed the code to raise your resistance value upon elemental damage, this can be done better in JS.
+	Modified  CBaseObject::DumpBody() and CBaseObject::HandleLine() so that all resistance values get saved
+	and loaded in/from the worldfiles.
+	Added a new JS event:
+		onDamage( damaged, attacker, damageValue )
+		This will be fired everytime the char "damaged" gets damaged, the attacker can be a char or NULL.
+
 3/21/2006 - grimson
 	Changed the return value of OnCombatDamageCalc() to a SI16, I accidentially declared it to
 	be a SI32.

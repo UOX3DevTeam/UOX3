@@ -246,8 +246,6 @@ public:
 
 	void		UpdateDamageTrack( void );
 
-	void		IncreaseElementResist( WeatherType element );
-
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 

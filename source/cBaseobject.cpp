@@ -667,12 +667,16 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Disabled=" << (isDisabled()?"1":"0") << std::endl;
 	dumping << "Damage=" << lodamage << "," << hidamage << std::endl;
 	dumping << "Poisoned=" << (SI16)poisoned << std::endl;
-	dumping << "FireResist=" << (SI16)GetResist( HEAT ) << std::endl;
-	dumping << "ColdResist=" << (SI16)GetResist( COLD ) << std::endl;
-	dumping << "EnergyResist=" << (SI16)GetResist( LIGHTNING ) << std::endl;
-	dumping << "PoisonResist=" << (SI16)GetResist( POISON ) << std::endl;
 	dumping << "Carve=" << GetCarve() << std::endl;
-	dumping << "Defense=" << GetResist( PHYSICAL ) << std::endl;
+	dumping << "Defense=";
+	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
+	{
+		if( GetResist( (WeatherType)resist ) >= 10 )
+			dumping <<  GetResist( (WeatherType)resist ) << "," ;
+		else
+			dumping << "0" <<  GetResist( (WeatherType)resist ) << ",";
+	}
+	dumping << "[END]" << std::endl;
 	dumping << "ScpTrig=" << scriptTrig << std::endl;
 	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
 	// Spin the character tags to save make sure to dump them too
@@ -1493,6 +1497,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 {
 	static std::string staticTagName = "";
 	bool rvalue = false;
+	size_t numSections = 0;
 
 	switch( (UTag.data()[0]) )
 	{
@@ -1506,11 +1511,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				carve	= data.toShort();
 				rvalue	= true;
-			}
-			else if( UTag == "COLDRESIST" )
-			{
-				SetResist( data.toUShort(), COLD );
-				rvalue = true;
 			}
 			break;
 		case 'D':
@@ -1543,8 +1543,20 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "DEFENSE" )
 			{
-				SetResist( data.toUShort(), PHYSICAL);
-				rvalue	= true;
+				numSections = data.sectionCount( "," );
+				if( numSections != 0 )
+				{
+					for( UI08 resist = 0; resist < numSections; ++resist )
+					{
+						if( data.section( ",", resist, resist ).empty() )
+							break;
+
+						SetResist( data.section( ",", resist, resist ).stripWhiteSpace().toUShort(), (WeatherType)(resist + 1) );
+					}
+				}
+				else
+					SetResist( data.toUShort(), PHYSICAL );
+				rvalue = true;
 			}
 			else if( UTag == "DWORDS" )
 			{
@@ -1556,23 +1568,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				rvalue = true;
 			}
 			break;
-		case 'E':
-			if( UTag == "ENERGYRESIST" )
-			{
-				SetResist( data.toUShort(), LIGHTNING );
-				rvalue = true;
-			}
-			break;
 		case 'F':
 			if( UTag == "FAME" )
 			{
 				SetFame( data.toShort() );
 				rvalue	= true;
-			}
-			else if( UTag == "FIRERESIST" )
-			{
-				SetResist( data.toUShort(), HEAT );
-				rvalue = true;
 			}
 			break;
 		case 'H':
@@ -1676,11 +1676,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				poisoned	= data.toUByte();
 				rvalue		= true;
-			}
-			else if( UTag == "POISONRESIST" )
-			{
-				SetResist( data.toUShort(), POISON );
-				rvalue = true;
 			}
 			break;
 		case 'R':
@@ -2018,7 +2013,10 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetColour( GetColour() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetLoDamage( GetLoDamage() );
-	target->SetResist( GetResist( PHYSICAL ), PHYSICAL );
+	for( UI08 resist = 0; resist < WEATHNUM; ++resist )
+	{
+		target->SetResist( GetResist( (WeatherType)resist ), (WeatherType)resist );
+	}
 	target->SetStrength2( GetStrength2() );
 	target->SetDexterity2( GetDexterity2() );
 	target->SetIntelligence2( GetIntelligence2() );

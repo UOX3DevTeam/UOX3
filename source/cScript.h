@@ -83,6 +83,7 @@ enum ScriptEvent
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
+	seOnDamage,
 	seOnGumpPress,
 	seOnGumpInput
 };
@@ -232,6 +233,7 @@ public:
 	bool		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 	
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
+	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

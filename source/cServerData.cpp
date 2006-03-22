@@ -40,7 +40,6 @@ const UI32 BIT_HIDEWHILEMOUNTED		= 22;
 const UI32 BIT_OVERLOADPACKETS		= 23;
 const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
 const UI32 BIT_ANIMALSGUARDED		= 25;
-const UI32 BIT_USECHARRESISTANCE	= 26;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -64,7 +63,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE|USECHARRESISTANCE"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE"
 );
 
 void CServerData::ResetDefaults( void )
@@ -129,7 +128,6 @@ void CServerData::ResetDefaults( void )
 	WeightPerStr( 5 );
 	SystemTimer( tSERVER_POLYMORPH, 90 );
 	ServerOverloadPackets( true );
-	UseCharResistance( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 15 );
@@ -574,15 +572,6 @@ void CServerData::NPCTrainingStatus( bool newVal )
 	boolVals.set( BIT_NPCTRAINING, newVal );
 }
 
-bool CServerData::UseCharResistance( void ) const
-{
-	return boolVals.test( BIT_USECHARRESISTANCE );
-}
-
-void CServerData::UseCharResistance( bool newVal )
-{
-	boolVals.set( BIT_USECHARRESISTANCE, newVal );
-}
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	void CServerData::dumpPaths( void )
 //|	Date			-	02/26/2002
@@ -1456,7 +1445,6 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
-		ofsOutput << "USECHARRESISTANCE=" << (UseCharResistance()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2182,9 +2170,6 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x08A7:	 // COMBATARCHERRANGE[0144]
 		CombatArcherRange( value.toShort() );
-		break;
-	case 0x08B9:	 // USECHARRESISTANCE[0145]
-		UseCharResistance( (value.toByte() == 1) );
 		break;
 	default:
 		break;

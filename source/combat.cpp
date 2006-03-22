@@ -928,12 +928,8 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 {
 	if( !ValidateObject( mChar ) )
 		return 0;
-	SI32 total = 0;
-
-	if( resistType == PHYSICAL )
-		total = mChar->GetResist( resistType );
-	else
-		total = ( mChar->GetResist( resistType ) / 100 );
+	
+	SI32 total = mChar->GetResist( resistType );
 
 	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
 	{
@@ -1185,7 +1181,6 @@ SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapo
 			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
 			{
 				amount += ApplyDefenseModifiers( (WeatherType)i, attack, defend, getFightSkill, hitLoc, bDamage, false );
-				defend->IncreaseElementResist( (WeatherType)i );
 			}
 		}
 	}
@@ -1428,7 +1423,6 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		case POISON:		//	POISON Damage
 			damageModifier = ( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
 			damage = (SI16)roundNumber( ((R32)baseDamage - ( (R32)baseDamage * damageModifier )) );
-			ourTarg->IncreaseElementResist( damageType );
 			break;
 		default:			//	Elemental damage
 			if( ourTarg->isHuman() )
@@ -1438,8 +1432,6 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			}
 			else if( ourTarg->GetResist( damageType ) > 0 )
 				getDef = ( ourTarg->GetResist( damageType ) / 100 );
-
-			ourTarg->IncreaseElementResist( damageType );
 			break;
 	}
 

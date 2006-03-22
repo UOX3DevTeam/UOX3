@@ -2304,4 +2304,33 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 	return funcRetVal;
 }
 
+bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
+{
+	if( !ValidateObject( damaged ) )
+		return false;
+	if( !ExistAndVerify( seOnDamage, "onDamage" ) )
+		return false;
+	
+
+	jsval rval, params[3];
+	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
+	params[0] = OBJECT_TO_JSVAL( damagedObj );
+
+	if( ValidateObject( attacker ) )
+	{
+		JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+		params[1] = OBJECT_TO_JSVAL( attackerObj );
+	}
+	else
+		params[1] = JSVAL_NULL;
+	
+	params[2] = INT_TO_JSVAL( damageValue );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamage", 3, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnDamage, false );
+	
+	return ( retVal == JS_TRUE );
+}
+
 }

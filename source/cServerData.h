@@ -339,9 +339,6 @@ public:
 	void		NPCTrainingStatus( bool setting );
 	bool		NPCTrainingStatus( void ) const;
 
-	void		UseCharResistance( bool setting );
-	bool		UseCharResistance( void ) const;
-
 	void		CheckItemsSpeed( R64 value );
 	R64			CheckItemsSpeed( void ) const;
 

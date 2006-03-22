@@ -191,6 +191,19 @@ tChar.DoAction( 111 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDamage">onDamage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDamage( damaged, attacker, damageValue );
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the char "damaged" gets damaged
+<tr><td valign="top" width="25%"><b>Notes</b><td>The attacker can be a char or NULL
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Custom reactions to damage.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDamage( damaged, attacker, damageValue )
+{
+	damaged.TextMessage( "Ouch, those "+damageValue+" points of damage hurt." );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeathEvent">onDeath</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the player or NPC pDead dies
