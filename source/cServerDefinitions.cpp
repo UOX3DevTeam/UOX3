@@ -83,7 +83,7 @@ const std::string dirnames[NUM_DEFS] =
 	"maps"
 };
 
-std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
+std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
 
 CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {

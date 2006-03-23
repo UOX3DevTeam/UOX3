@@ -107,6 +107,7 @@ const UI32 BIT_MAXHPFIXED		=	23;
 const UI32 BIT_MAXMANAFIXED		=	24;
 const UI32 BIT_MAXSTAMFIXED		=	25;
 const UI32 BIT_CANATTACK		=	26;
+const UI32 BIT_INBUILDING		=	27;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -131,12 +132,14 @@ const UI16			DEFPLAYER_ORIGSKIN			= 0;
 const UI16			DEFPLAYER_ORIGID			= 0x0190;
 const UI08			DEFPLAYER_FIXEDLIGHT 		= 255;
 const UI16			DEFPLAYER_DEATHS			= 0;
+const SERIAL		DEFPLAYER_TOWNVOTE 			= INVALIDSERIAL;
+const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( NULL ), speechMode( DEFPLAYER_SPEECHMODE ), speechID( DEFPLAYER_SPEECHID ),
 speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
-fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL )
+fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
 {
 	if( cwmWorldState != NULL )
 		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
@@ -164,18 +167,21 @@ const UI08			DEFNPC_QUESTORIGREGION		= 0;
 const SI16			DEFNPC_WANDERAREA			= -1;
 const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
 const UI16			DEFNPC_BOOLFLAG				= 0;
+const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
+const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
-petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING )
+petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ), 
+tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
+	foodList.reserve( MAX_NAME );
 }
 
-const SERIAL		DEFCHAR_TOWNVOTE 			= INVALIDSERIAL;
 const UI32			DEFCHAR_BOOLS 				= 0;
 const SI08			DEFCHAR_DISPZ 				= 0;
 const SI08			DEFCHAR_FONTTYPE 			= 3;
@@ -194,7 +200,6 @@ const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
 const UI08			DEFCHAR_REGIONNUM 			= 255;
 const UI08			DEFCHAR_TOWN 				= 0;
-const SI08			DEFCHAR_TOWNPRIV 			= 0;
 const UI16			DEFCHAR_ADVOBJ 				= 0;
 const SERIAL		DEFCHAR_GUILDFEALTY			= INVALIDSERIAL;
 const SI16			DEFCHAR_GUILDNUMBER			= -1;
@@ -211,13 +216,13 @@ const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 
 CChar::CChar() : CBaseObject(),
-townvote( DEFCHAR_TOWNVOTE ), bools( DEFCHAR_BOOLS ), 
+bools( DEFCHAR_BOOLS ), 
 fonttype( DEFCHAR_FONTTYPE ), maxHP( DEFCHAR_MAXHP ), maxHP_oldstr( DEFCHAR_MAXHP_OLDSTR ), 
 oldRace( DEFCHAR_OLDRACE ), maxMana( DEFCHAR_MAXMANA ), maxMana_oldint( DEFCHAR_MAXMANA_OLDINT ),
 maxStam( DEFCHAR_MAXSTAM ), maxStam_olddex( DEFCHAR_MAXSTAM_OLDDEX ), saycolor( DEFCHAR_SAYCOLOUR ), 
 emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( NULL ), 
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ), 
-townpriv( DEFCHAR_TOWNPRIV ), advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
+advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ), 
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ), 
 raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH )
 {
@@ -241,10 +246,6 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	SetCanTrain( true );
 
 	SetHungerStatus( true );
-	SetTamedHungerRate( 0 );
-	SetTamedHungerWildChance( 0 );
-	
-	foodList.reserve( MAX_NAME );
 
 	skillUsed[0].reset();
 	skillUsed[1].reset();
@@ -324,32 +325,6 @@ bool CChar::SetHunger( SI08 newValue )
 	
 	return JSEventUsed;
 }
-UI16 CChar::GetTamedHungerRate( void ) const
-{
-	return hungerRate;
-}
-void CChar::SetTamedHungerRate( UI16 newValue )
-{
-	hungerRate = newValue;
-}
-UI08 CChar::GetTamedHungerWildChance( void ) const
-{
-	return hungerWildChance;
-}
-void CChar::SetTamedHungerWildChance( UI08 newValue )
-{
-	hungerWildChance = newValue;
-}
-
-std::string CChar::GetFood( void ) const
-{
-	return foodList;
-}
-
-void CChar::SetFood( std::string food )
-{
-	foodList = food.substr( 0, MAX_NAME - 1 );
-}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  void DoHunger()
@@ -422,13 +397,9 @@ void CChar::DoHunger( CSocket *mSock )
 					hungerDamage = Races->GetHungerDamage( GetRace() );
 
 					if( GetHunger() > 0 )
-					{
 						DecHunger();
-					}
 					else if( GetHP() > 0 && hungerDamage > 0)
-					{
 						Damage( hungerDamage );
-					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 				}
 			}
@@ -452,9 +423,7 @@ void CChar::DoHunger( CSocket *mSock )
 					hungerRate = GetTamedHungerRate();
 
 					if( GetHunger() > 0 )
-					{
 						DecHunger();
-					}
 					else if( (UI08)RandomNum( 0, 100 ) <= GetTamedHungerWildChance() )
 					{
 						SetOwner( NULL );
@@ -484,9 +453,7 @@ void CChar::checkPetOfflineTimeout( void )
 
 		CChar *owner = GetOwnerObj();
 		if( !ValidateObject( owner ) )
-		{
 			SetTamed( false ); // The owner is gone, so reset the tamed status
-		}
 		else
 		{
 			if( isOnline( (*owner) ) )
@@ -499,11 +466,13 @@ void CChar::checkPetOfflineTimeout( void )
 			lastOnTime = static_cast<time_t>(GetLastOnSecs());
 			
 			if( currTime > 0 && lastOnTime > 0)
+			{
 				if( difftime( currTime, lastOnTime) >= offlineTimeout )
 				{
 					SetOwner( NULL );
 					SetHunger( 6 );
 				}
+			}
 		}
 	}
 }
@@ -570,6 +539,11 @@ bool CChar::isUnicode( void ) const
 {
 	return bools.test( BIT_UNICODE );
 }
+void CChar::setUnicode( bool newVal )
+{
+	bools.set( BIT_UNICODE, newVal );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool isNpc( void ) const
 //|   Date        -  Unknown
@@ -581,6 +555,11 @@ bool CChar::IsNpc( void ) const
 {
 	return bools.test( BIT_NPC );
 }
+void CChar::SetNpc( bool newVal )
+{
+	bools.set( BIT_NPC, newVal );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsShop( void ) const
 //|   Date        -  Unknown
@@ -592,6 +571,11 @@ bool CChar::IsShop( void ) const
 {
 	return bools.test( BIT_SHOP );
 }
+void CChar::SetShop( bool newVal )
+{
+	bools.set( BIT_SHOP, newVal );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsDead( void ) const
 //|   Date        -  Unknown
@@ -603,6 +587,11 @@ bool CChar::IsDead( void ) const
 {
 	return bools.test( BIT_DEAD );
 }
+void CChar::SetDead( bool newValue )
+{
+	bools.set( BIT_DEAD, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetCanAttack( void ) const
 //|   Date        -  25. Feb, 2006
@@ -614,6 +603,12 @@ bool CChar::GetCanAttack( void ) const
 {
 	return bools.test( BIT_CANATTACK );
 }
+void CChar::SetCanAttack( bool newValue )
+{
+	bools.set( BIT_CANATTACK, newValue );
+	SetBrkPeaceChance( 0 );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsAtWar( void ) const
 //|   Date        -  Unknown
@@ -625,6 +620,11 @@ bool CChar::IsAtWar( void ) const
 {
 	return bools.test( BIT_ATWAR );
 }
+void CChar::SetWar( bool newValue )
+{
+	bools.set( BIT_ATWAR, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool DidAttackFirst( void ) const
 //|   Date        -  Unknown
@@ -636,6 +636,11 @@ bool CChar::DidAttackFirst( void ) const
 {
 	return bools.test( BIT_ATTACKFIRST );
 }
+void CChar::SetAttackFirst( bool newValue )
+{
+	bools.set( BIT_ATTACKFIRST, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsOnHorse( void ) const
 //|   Date        -  Unknown
@@ -647,6 +652,11 @@ bool CChar::IsOnHorse( void ) const
 {
 	return bools.test( BIT_ONHORSE );
 }
+void CChar::SetOnHorse( bool newValue )
+{
+	bools.set( BIT_ONHORSE, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetTownTitle( void ) const
 //|   Date        -  Unknown
@@ -658,6 +668,11 @@ bool CChar::GetTownTitle( void ) const
 {
 	return bools.test( BIT_TOWNTITLE );
 }
+void CChar::SetTownTitle( bool newValue )
+{
+	bools.set( BIT_TOWNTITLE, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetReactiveArmour( void ) const
 //|   Date        -  Unknown
@@ -669,6 +684,11 @@ bool CChar::GetReactiveArmour( void ) const
 {
 	return bools.test( BIT_REACTIVEARMOUR );
 }
+void CChar::SetReactiveArmour( bool newValue )
+{
+	bools.set( BIT_REACTIVEARMOUR, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool CanTrain( void ) const
 //|   Date        -  Unknown
@@ -680,6 +700,11 @@ bool CChar::CanTrain( void ) const
 {
 	return bools.test( BIT_TRAIN );
 }
+void CChar::SetCanTrain( bool newValue )
+{
+	bools.set( BIT_TRAIN, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool GetGuildToggle( void ) const
 //|   Date        -  Unknown
@@ -691,6 +716,11 @@ bool CChar::GetGuildToggle( void ) const
 {
 	return bools.test( BIT_GUILDTOGGLE );
 }
+void CChar::SetGuildToggle( bool newValue )
+{
+	bools.set( BIT_GUILDTOGGLE, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsTamed( void ) const
 //|   Date        -  Unknown
@@ -702,6 +732,11 @@ bool CChar::IsTamed( void ) const
 {
 	return bools.test( BIT_TAMED );
 }
+void CChar::SetTamed( bool newValue )
+{
+	bools.set( BIT_TAMED, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsGuarded( void ) const
 //|   Date        -  Unknown
@@ -713,6 +748,11 @@ bool CChar::IsGuarded( void ) const
 {
 	return bools.test( BIT_GUARDED );
 }
+void CChar::SetGuarded( bool newValue )
+{
+	bools.set( BIT_GUARDED, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool CanRun( void ) const
 //|   Date        -  Unknown
@@ -724,6 +764,11 @@ bool CChar::CanRun( void ) const
 {
 	return bools.test( BIT_RUN );
 }
+void CChar::SetRun( bool newValue )
+{
+	bools.set( BIT_RUN, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsPolymorphed( void ) const
 //|   Date        -  Unknown
@@ -735,6 +780,11 @@ bool CChar::IsPolymorphed( void ) const
 {
 	return bools.test( BIT_POLYMORPHED );
 }
+void CChar::IsPolymorphed( bool newValue )
+{
+	bools.set( BIT_POLYMORPHED, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsIncognito( void ) const
 //|   Date        -  Unknown
@@ -746,6 +796,11 @@ bool CChar::IsIncognito( void ) const
 {
 	return bools.test( BIT_INCOGNITO );
 }
+void CChar::IsIncognito( bool newValue )
+{
+	bools.set( BIT_INCOGNITO, newValue );
+}
+
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool IsUsingPotion( void ) const
 //|   Date        -  13 March 2001
@@ -757,87 +812,71 @@ bool CChar::IsUsingPotion( void ) const
 {
 	return bools.test( BIT_USINGPOTION );
 }
+void CChar::SetUsingPotion( bool newVal )
+{
+	bools.set( BIT_USINGPOTION, newVal );
+}
 
 bool CChar::MayLevitate( void ) const
 {
 	return bools.test( BIT_MAYLEVITATE );
+}
+void CChar::SetLevitate( bool newValue )
+{
+	bools.set( BIT_MAYLEVITATE, newValue );
 }
 
 bool CChar::WillHunger( void ) const
 {
 	return bools.test( BIT_WILLHUNGER );
 }
+void CChar::SetHungerStatus( bool newValue )
+{
+	bools.set( BIT_WILLHUNGER, newValue );
+}
 
 bool CChar::IsMeditating( void ) const
 {
 	return bools.test( BIT_MEDITATING );
+}
+void CChar::SetMeditating( bool newValue )
+{
+	bools.set( BIT_MEDITATING, newValue );
 }
 
 bool CChar::IsCasting( void ) const
 {
 	return bools.test( BIT_CASTING );
 }
+void CChar::SetCasting( bool newValue )
+{
+	bools.set( BIT_CASTING, newValue );
+}
 
 bool CChar::IsJSCasting( void ) const
 {
 	return bools.test( BIT_JSCASTING );
 }
+// This is only a temporary measure until ALL code is switched over to JS code
+// As it stands, it'll try and auto-direct cast if you set casting and spell timeouts
+void CChar::SetJSCasting( bool newValue )
+{
+	bools.set( BIT_JSCASTING, newValue );
+}
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void setUnicode( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
+//|	Function	-	bool CChar::inBuilding( void )
+//|	Programmer	-	grimson
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's unicode speech status
+//|	Purpose		-	Determine if player is inside a building
 //o---------------------------------------------------------------------------o
-void CChar::setUnicode( bool newVal )
+bool CChar::inBuilding( void )
 {
-	bools.set( BIT_UNICODE, newVal );
+	return bools.test( BIT_INBUILDING );
 }
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetNpc( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's npc status
-//o---------------------------------------------------------------------------o
-void CChar::SetNpc( bool newVal )
+void CChar::SetInBuilding( bool newValue )
 {
-	bools.set( BIT_NPC, newVal );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetShop( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's shopkeeper status
-//o---------------------------------------------------------------------------o
-void CChar::SetShop( bool newVal )
-{
-	bools.set( BIT_SHOP, newVal );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetDead( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's dead status
-//o---------------------------------------------------------------------------o
-void CChar::SetDead( bool newValue )
-{
-	bools.set( BIT_DEAD, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetCanAttack( bool newVal ) 
-//|   Date        -  25.Feb, 2006
-//|   Programmer  -  grimson
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's ability to attack
-//o---------------------------------------------------------------------------o
-void CChar::SetCanAttack( bool newValue )
-{
-	bools.set( BIT_CANATTACK, newValue );
-	SetBrkPeaceChance( 0 );
+	bools.set( BIT_INBUILDING, newValue );
 }
 
 //o---------------------------------------------------------------------------o
@@ -860,191 +899,7 @@ void CChar::SetPeace( UI32 newValue )
 		SetTimer( tCHAR_PEACETIMER, BuildTimeValue( newValue ) );
 	}
 	else
-	{
 		SetCanAttack( true );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetWar( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's at war status
-//o---------------------------------------------------------------------------o
-void CChar::SetWar( bool newValue )
-{
-	bools.set( BIT_ATWAR, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetAttackFirst( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character attacked first
-//o---------------------------------------------------------------------------o
-void CChar::SetAttackFirst( bool newValue )
-{
-	bools.set( BIT_ATTACKFIRST, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetOnHorse( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character is on a horse or not
-//o---------------------------------------------------------------------------o
-void CChar::SetOnHorse( bool newValue )
-{
-	bools.set( BIT_ONHORSE, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetTownTitle( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's town title display status
-//o---------------------------------------------------------------------------o
-void CChar::SetTownTitle( bool newValue )
-{
-	bools.set( BIT_TOWNTITLE, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetReactiveArmour( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character has reactive armour
-//o---------------------------------------------------------------------------o
-void CChar::SetReactiveArmour( bool newValue )
-{
-	bools.set( BIT_REACTIVEARMOUR, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetCanTrain( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's trainer status
-//o---------------------------------------------------------------------------o
-void CChar::SetCanTrain( bool newValue )
-{
-	bools.set( BIT_TRAIN, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetGuildToggle( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's guild display status
-//o---------------------------------------------------------------------------o
-void CChar::SetGuildToggle( bool newValue )
-{
-	bools.set( BIT_GUILDTOGGLE, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetTamed( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's tamed status
-//o---------------------------------------------------------------------------o
-void CChar::SetTamed( bool newValue )
-{
-	bools.set( BIT_TAMED, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetGuarded( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the character's guarded status
-//o---------------------------------------------------------------------------o
-void CChar::SetGuarded( bool newValue )
-{
-	bools.set( BIT_GUARDED, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetRun( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character can run
-//o---------------------------------------------------------------------------o
-void CChar::SetRun( bool newValue )
-{
-	bools.set( BIT_RUN, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void IsPolymorphed( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character is polymorphed
-//o---------------------------------------------------------------------------o
-void CChar::IsPolymorphed( bool newValue )
-{
-	bools.set( BIT_POLYMORPHED, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void IsIncognito( bool newVal ) 
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character is incognito
-//o---------------------------------------------------------------------------o
-void CChar::IsIncognito( bool newValue )
-{
-	bools.set( BIT_INCOGNITO, newValue );
-}
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetUsingPotion( bool newVal )
-//|   Date        -  13 March 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the character is using a potion or not
-//o---------------------------------------------------------------------------o
-void CChar::SetUsingPotion( bool newVal )
-{
-	bools.set( BIT_USINGPOTION, newVal );
-}
-
-void CChar::SetLevitate( bool newValue )
-{
-	bools.set( BIT_MAYLEVITATE, newValue );
-}
-
-void CChar::SetHungerStatus( bool newValue )
-{
-	bools.set( BIT_WILLHUNGER, newValue );
-}
-
-void CChar::SetMeditating( bool newValue )
-{
-	bools.set( BIT_MEDITATING, newValue );
-}
-
-void CChar::SetCasting( bool newValue )
-{
-	bools.set( BIT_CASTING, newValue );
-}
-
-// This is only a temporary measure until ALL code is switched over to JS code
-// As it stands, it'll try and auto-direct cast if you set casting and spell timeouts
-void CChar::SetJSCasting( bool newValue )
-{
-	bools.set( BIT_JSCASTING, newValue );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void SetInBuilding( bool newValue ) 
-//|   Programmer  -  grimson
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Set's whether a char is inside a building or not
-//o---------------------------------------------------------------------------o
-void CChar::SetInBuilding( bool newValue )
-{
-	isInBuilding = newValue;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1083,15 +938,6 @@ void CChar::AddSelfToOwner( void )
 	}
 	UpdateFlag( this );
 	Dirty( UT_UPDATE );
-}
-
-UI32 CChar::GetTownVote( void ) const
-{
-	return townvote;
-}
-void CChar::SetTownVote( UI32 newValue )
-{
-	townvote = newValue;
 }
 
 UI32 CChar::GetGuildFealty( void ) const
@@ -1355,18 +1201,10 @@ UI16 CChar::GetPriv( void ) const
 {
 	return static_cast<UI16>(priv.to_ulong());
 }
-SI08 CChar::GetTownPriv( void ) const
-{
-	return townpriv;
-}
+
 void CChar::SetPriv( UI16 newValue )
 {
 	priv = newValue;
-}
-
-void CChar::SetTownpriv( SI08 newValue )
-{
-	townpriv = newValue;
 }
 
 SKILLVAL CChar::GetBaseSkill( UI08 skillToGet ) const
@@ -1598,7 +1436,6 @@ void CChar::CopyData( CChar *target )
 	target->SetMulti( GetMultiObj() );
 	target->SetOwner( GetOwnerObj() );
 	target->SetSpawn( GetSpawn() );
-	target->SetTownVote( townvote );
 	target->SetPriv( GetPriv() );
 	target->SetName( name );
 	target->SetTitle( title );
@@ -1657,14 +1494,10 @@ void CChar::CopyData( CChar *target )
 	for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
 		target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
 	target->SetHunger( hunger );
-	target->SetTamedHungerRate( hungerRate );
-	target->SetTamedHungerWildChance( hungerWildChance );
 	target->SetBrkPeaceChance( GetBrkPeaceChance() );
 	target->SetBrkPeaceChanceGain( GetBrkPeaceChanceGain() );
-	target->SetFood( foodList );
 	target->SetRegion( regionNum );
 	target->SetTown( town );
-	target->SetTownpriv( townpriv );
 	target->SetAdvObj( advobj );
 	target->SetDisabled( isDisabled() );
 	target->SetCanTrain( CanTrain() );
@@ -1691,6 +1524,9 @@ void CChar::CopyData( CChar *target )
 	}
 	if( IsValidNPC() )
 	{
+		target->SetTamedHungerRate( GetTamedHungerRate() );
+		target->SetTamedHungerWildChance( GetTamedHungerWildChance() );
+		target->SetFood( GetFood() );
 		target->SetFleeAt( GetFleeAt() );
 		target->SetReattackAt( GetReattackAt() );
 		target->SetNpcWander( GetNpcWander() );
@@ -1717,6 +1553,8 @@ void CChar::CopyData( CChar *target )
 	}
 	if( IsValidPlayer() )
 	{
+		target->SetTownpriv( GetTownPriv() );
+		target->SetTownVote( GetTownVote() );
 		target->SetDeaths( GetDeaths() );
 		target->SetFixedLight( GetFixedLight() );
 		target->SetGuarding( GetGuarding() );
@@ -2154,11 +1992,8 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
-	dumping << "TamedHungerRate=" << (SI16)GetTamedHungerRate() << std::endl;
-	dumping << "TamedHungerWildChance=" << (SI16)GetTamedHungerWildChance() << std::endl;
 	dumping << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << std::endl;
 	dumping << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << std::endl;
-	dumping << "Foodlist=" << foodList << std::endl;
 	if ( GetMaxHPFixed() )
 		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
 	if ( GetMaxManaFixed() )
@@ -2166,7 +2001,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	if ( GetMaxStamFixed() )
 		dumping << "MAXSTAM=" << (SI16)maxStam << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
-	dumping << "TownVote=" << std::hex << "0x" << GetTownVote() << std::endl;
 	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
 	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
 	dumping << "SummonTimer=" << std::dec << GetTimer( tNPC_SUMMONTIME ) << std::endl;
@@ -2181,7 +2015,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	dumping << "AdvanceObject=" << std::dec << GetAdvObj() << std::endl;
 	dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
 	dumping << "Privileges=" << std::hex << "0x" << GetPriv() << std::endl;
-	dumping << "TownPrivileges=" << std::dec << (SI16)GetTownPriv() << std::endl;
 
 	// Write out the BaseSkills and the SkillLocks here
 	// Format: BaseSkills=[0,34]-[1,255]-[END]
@@ -2273,6 +2106,10 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
 	dumping << "Mounted=" << (SI16)(boolFlags.test( BIT_MOUNTED )?1:0) << std::endl;
 	dumping << "Stabled=" << (SI16)(boolFlags.test( BIT_STABLED )?1:0) << std::endl;
+	dumping << "TamedHungerRate=" << tamedHungerRate << std::endl;
+	dumping << "TamedHungerWildChance=" << (SI16)hungerWildChance << std::endl;
+	dumping << "Foodlist=" << foodList << std::endl;
+
 
 	outStream << dumping.str();
 }
@@ -2294,6 +2131,8 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "Squelched=" << (SI16)squelched << std::endl;
 	dumping << "Deaths=" << deaths << std::endl;
 	dumping << "FixedLight=" << (SI16)fixedLight << std::endl;
+	dumping << "TownVote=" << std::hex << "0x" << townvote << std::endl;
+	dumping << "TownPrivileges=" << std::dec << (SI16)townpriv << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2908,9 +2747,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				break;
 			case 'D':
-				if( UTag == "DISPLAYZ" )
-					rvalue = true;
-				else if( UTag == "DEATHS" )
+				if( UTag == "DEATHS" )
 				{
 					SetDeaths( data.toUShort() );
 					rvalue = true;
@@ -3060,8 +2897,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetLevitate( (data.toShort() == 1) );
 					rvalue = true;
 				}
-				else if( UTag == "MAKING" ) // Depreciated
-					rvalue = true;
 				else if( UTag == "MURDERTIMER" )
 				{
 					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( data.toFloat() ) );
@@ -3140,8 +2975,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetPriv( data.toUShort() );
 					rvalue = true;
 				}
-				else if( UTag == "POSTTYPE" )
-					rvalue = true;
 				else if( UTag == "PACKITEM" )
 				{
 					packitem = (CItem *)data.toULong();
@@ -3152,19 +2985,17 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetPoisoned( data.toUByte() );
 					rvalue = true;
 				}
-				else if( UTag == "POISONSERIAL" ) // Depreciated
-					rvalue = true;
 				else if( UTag == "POISONSTRENGTH" )
 				{
 					SetPoisonStrength( data.toUByte() );
 					rvalue = true;
 				}
-				if( UTag == "PEACEING" )
+				else if( UTag == "PEACEING" )
 				{
 					SetPeaceing( data.toShort() );
 					rvalue = true;
 				}
-				if( UTag == "PROVOING" )
+				else if( UTag == "PROVOING" )
 				{
 					SetProvoing( data.toShort() );
 					rvalue = true;
@@ -3254,10 +3085,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "STEALTH" )
 				{
 					SetStealth( data.toByte() );
-					rvalue = true;
-				}
-				else if( UTag == "STEP" )
-				{
 					rvalue = true;
 				}
 				else if( UTag == "SPATTACK" )
@@ -3368,18 +3195,6 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetOldNpcWander( data.toByte() );
 					rvalue = true;
 				}
-				else if( UTag == "XBODYID" ) // Depreciated
-					rvalue = true;
-				else if( UTag == "XSKINID" ) // Depreciated
-					rvalue = true;
-				else if( UTag == "XMANA" )	// Depreciated
-					rvalue = true;
-				else if( UTag == "XSTAMINA" )	// Depreciated
-					rvalue = true;
-				else if( UTag == "XKARMA" )	// Depreciated
-					rvalue = true;
-				else if( UTag == "XFAME" )	// Depreciated
-					rvalue = true;
 				break;
 		}
 	}
@@ -3516,20 +3331,6 @@ bool CChar::IsJailed( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  bool IsMounted( void ) const
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if the character is mounted
-//o---------------------------------------------------------------------------o
-/*
-bool CChar::IsMounted( void ) const
-{
-	return ( GetX() >= 7000 || GetY() >= 7000 );
-}
-*/
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	bool CChar::isHuman( void )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -3537,10 +3338,19 @@ bool CChar::IsMounted( void ) const
 //o---------------------------------------------------------------------------o
 bool CChar::isHuman( void )
 {
-	bool rvalue			= false;
-	const UI16 mOrgID	= GetOrgID();
-	if( mOrgID == 0x0190 || mOrgID == 0x0191 || mOrgID == 0x025D || mOrgID == 0x025E || GetOrgID() == 0x03DB )	// GM's should be considered "Human" as well
+	bool rvalue	= false;
+	switch( GetOrgID() )
+	{
+	case 0x0190:	// Male Human
+	case 0x0191:	// Female Human
+	case 0x025D:	// Male Elf
+	case 0x025E:	// Female Elf
+	case 0x03DB:	// GM Body
 		rvalue = true;
+		break;
+	default:
+		break;
+	}
 	return rvalue;
 }
 
@@ -3556,17 +3366,6 @@ bool CChar::inDungeon( void )
 	if( GetRegion() != NULL )
         rValue = GetRegion()->IsDungeon();
 	return rValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool CChar::inBuilding( void )
-//|	Programmer	-	grimson
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Determine if player is inside a building
-//o---------------------------------------------------------------------------o
-bool CChar::inBuilding( void )
-{
-	return isInBuilding;
 }
 
 //o---------------------------------------------------------------------------o
@@ -4803,7 +4602,132 @@ void CChar::SetSocket( CSocket *newVal )
 		mPlayer->socket = newVal;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI32 TownVote()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Serial of the player a character has voted to be mayor.
+//o---------------------------------------------------------------------------o
+UI32 CChar::GetTownVote( void ) const
+{
+	UI32 retVal = DEFPLAYER_TOWNVOTE;
+	if( IsValidPlayer() )
+		retVal = mPlayer->townvote;
+	return retVal;
+}
+void CChar::SetTownVote( UI32 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_TOWNVOTE )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->townvote = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 TownPriv()
+//|   Date        -  Unknown
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Town member privledges (1 = Resident, 2 = Mayor)
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetTownPriv( void ) const
+{
+	SI08 retVal = DEFPLAYER_TOWNPRIV;
+	if( IsValidPlayer() )
+		retVal = mPlayer->townpriv;
+	return retVal;
+}
+void CChar::SetTownpriv( SI08 newValue )
+{
+	if( !IsValidPlayer() )
+	{
+		if( newValue != DEFPLAYER_TOWNPRIV )
+			CreatePlayer();
+	}
+	if( IsValidPlayer() )
+		mPlayer->townpriv = newValue;
+}
+
 // NPC Only Functions
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI16 TamedHungerRate
+//|   Date        -  Unknown
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Rate at which a pet hungers
+//o---------------------------------------------------------------------------o
+UI16 CChar::GetTamedHungerRate( void ) const
+{
+	UI16 retVal = DEFNPC_TAMEDHUNGERRATE;
+	if( IsValidNPC() )
+		retVal = mNPC->tamedHungerRate;
+	return retVal;
+}
+void CChar::SetTamedHungerRate( UI16 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_TAMEDHUNGERRATE != newValue )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->tamedHungerRate = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 TamedHungerWildChance
+//|   Date        -  Unknown
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Chance for a hungry pet to go wild
+//o---------------------------------------------------------------------------o
+UI08 CChar::GetTamedHungerWildChance( void ) const
+{
+	UI08 retVal = DEFNPC_HUNGERWILDCHANCE;
+	if( IsValidNPC() )
+		retVal = mNPC->hungerWildChance;
+	return retVal;
+}
+void CChar::SetTamedHungerWildChance( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_HUNGERWILDCHANCE != newValue )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->hungerWildChance = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  std::string Food()
+//|   Date        -  Unknown
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  FOODLIST entry for feeding tamed pets
+//o---------------------------------------------------------------------------o
+std::string CChar::GetFood( void ) const
+{
+	std::string retVal = "";
+	if( IsValidNPC() )
+		retVal = mNPC->foodList;
+	return retVal;
+}
+void CChar::SetFood( std::string food )
+{
+	if( !IsValidNPC() )
+	{
+		if( !food.empty() )
+			CreateNPC();
+	}
+	if( IsValidNPC() )
+		mNPC->foodList = food.substr( 0, MAX_NAME - 1 );
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI16 NPCAiType()

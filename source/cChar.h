@@ -87,6 +87,9 @@ private:
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
 		CHARLIST			petFriends;
+		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
+		UI08				hungerWildChance;	// The chance that the char get's wild when hungry
+		UString				foodList;
 
 		SERIAL				fTarg; // NPC Follow Target
 
@@ -130,6 +133,9 @@ private:
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
 		UI16		deaths;
 
+		SERIAL		townvote;
+		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
+
 		CItem *		speechItem;
 		UI08		speechMode;
 		UI08		speechID;
@@ -152,9 +158,6 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
-	UI16		hungerRate;	// The rate at which hunger decreases when char is tamed
-	UI08		hungerWildChance;	// The chance that the char get's wild when hungry
-	UString		foodList;
 	UI08		town;       // Matches Region number in regions.scp
 	UI08		regionNum;
 
@@ -163,9 +166,6 @@ protected:
 
 	std::bitset< 32 >		bools;	// lots of flags
 	std::bitset< 16 >		priv;
-
-	SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
-	SERIAL		townvote;
 
 	SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
 	SERIAL		guildfealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
@@ -217,7 +217,6 @@ protected:
 	RACEID		oldRace;
 
 	UI08		PoisonStrength;
-	bool		isInBuilding;
 
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;

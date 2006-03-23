@@ -169,7 +169,7 @@ public:
 	void Track( CChar *i );
 	void Tracking( CSocket *s, int selection );
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
-	void Fish( CChar *i );
+	void Fish( CSocket *mSock, CChar *mChar );
 
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 

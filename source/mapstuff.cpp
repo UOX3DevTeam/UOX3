@@ -177,14 +177,14 @@ void CMulHandler::LoadMapsDFN( void )
 	}
 }
 
-//!--------------------------------------------------------------------------o
+//o--------------------------------------------------------------------------o
 //|	Function/Class	-	void CMulHandler::Load( void )
 //|	Date			-	03/12/2002
 //|	Developer(s)	-	Unknown / EviLDeD 
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status			-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Prepare access streamultidxms to the server required mul files. 
+//|	Description		-	Prepare access streams to the server required mul files. 
 //|									This function basicaly just opens the streams and validates
 //|									that the file is open and available
 //o--------------------------------------------------------------------------o

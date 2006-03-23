@@ -1533,17 +1533,14 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	{
 		if( c->IsValidMount() )	// Is a mount
 		{
-			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->IsGM() )
+			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->GetCommandLevel() >= GM_CMDLEVEL )
 			{
 				if( objInRange( mChar, c, DIST_NEXTTILE ) )
 				{
-					if( mChar->GetID() != mChar->GetOrgID() )
-					{
-						mSock->sysmessage( 380 );
-						return;
-					}
 					if( mChar->IsDead() )
 						mSock->sysmessage( 381 );
+					else if( mChar->GetID() != mChar->GetOrgID() )
+						mSock->sysmessage( 380 );
 					else
 						MountCreature( mSock, mChar, c );
 				}
@@ -1554,7 +1551,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				mSock->sysmessage( 1214 );
 			return; 
 		}
-		else if( c->GetID( 1 ) != 0x01 || c->GetID( 2 ) < 0x90 || c->GetID( 2 ) > 0x93 ) // Is a monster
+		else if( !c->isHuman() && c->GetID() != 0x0192 && c->GetID() != 0x0193 ) // Is a monster
 		{
 			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
 			{

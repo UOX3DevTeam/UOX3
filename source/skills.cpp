@@ -884,55 +884,54 @@ void cSkills::FishTarget( CSocket *s )
 //|   Purpose     :  Fish up items based on skill and random values (this should
 //|					 be rewritten using a resource system akin to Ore and Logs)
 //o---------------------------------------------------------------------------o
-void cSkills::Fish( CChar *i )
+void cSkills::Fish( CSocket *mSock, CChar *mChar )
 {
-	CSocket *s = i->GetSocket();
-	if( !CheckSkill( i, FISHING, 0, 1000 ) ) 
+	if( !CheckSkill( mChar, FISHING, 0, 1000 ) ) 
 	{
-		s->sysmessage( 847 );
+		mSock->sysmessage( 847 );
 		return;
 	}
-	const UI16 getSkill = i->GetSkill( FISHING );
+	const UI16 getSkill = mChar->GetSkill( FISHING );
 	switch( RandomNum( 0, 25 ) )
 	{
 		case 1:
 			if( getSkill > 920 )
 			{
-				Items->CreateRandomItem( s, "fishtreasure" );	// random paintings
-				s->sysmessage( 848 );
+				Items->CreateRandomItem( mSock, "fishtreasure" );	// random paintings
+				mSock->sysmessage( 848 );
 			}
 			break;
 		case 2:
 			if( getSkill > 970 )
 			{
-				Items->CreateRandomItem( s, "fishweapons" );	// Some new weapons
-				s->sysmessage( 849 );
+				Items->CreateRandomItem( mSock, "fishweapons" );	// Some new weapons
+				mSock->sysmessage( 849 );
 			}
 			break;
 		case 3:	// Random gold and gems
 			if( RandomNum( 0, 12 ) )
 			{
-				Items->CreateRandomItem( s, "fishgems" ); 
-				s->sysmessage( 850 );
+				Items->CreateRandomItem( mSock, "fishgems" );
+				mSock->sysmessage( 850 );
 			}
 			else
 			{	// Create between 200 and 1300 gold
 				UI16 nAmount = RandomNum( 200, 1300 );
-				Items->CreateItem( s, i, 0x0EED, nAmount, 0, OT_ITEM, true );
-				Effects->goldSound( s, nAmount );
-				s->sysmessage( 851, nAmount );
+				Items->CreateItem( mSock, mChar, 0x0EED, nAmount, 0, OT_ITEM, true );
+				Effects->goldSound( mSock, nAmount );
+				mSock->sysmessage( 851, nAmount );
 			}
 			break;
 		case 4:
 			if( getSkill > 850 )
 			{
-				Items->CreateRandomItem( s, "fishbones" );	// Random bones and crap
-				s->sysmessage( 852 );
+				Items->CreateRandomItem( mSock, "fishbones" );	// Random bones and crap
+				mSock->sysmessage( 852 );
 			}
 			break;
 		default:
-			Items->CreateRandomItem( s, "randomfish" );	// User defined fish
-			s->sysmessage( 853 );
+			Items->CreateRandomItem( mSock, "randomfish" );	// User defined fish
+			mSock->sysmessage( 853 );
 			break;
 	}
 }

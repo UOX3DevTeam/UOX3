@@ -35,10 +35,8 @@ typedef signed short int	SI16;
 typedef unsigned char		UI08;
 typedef signed char			SI08;
 
-typedef UI32		ULONG;
 typedef UI32		TIMERVAL;
 typedef UI32		UOXSOCKET;
-typedef UI32		CHARACTER;
 typedef UI16		RACEID;
 typedef UI08		GENDER;
 typedef UI16		COLOUR;
@@ -47,7 +45,6 @@ typedef UI08		COLDLEVEL;
 typedef UI08		HEATLEVEL;
 typedef UI08		SECONDS;
 typedef UI08		ARMORCLASS;
-typedef UI32		ITEM;
 typedef UI32		SERIAL;
 typedef SI08		RACEREL;
 typedef UI16		SKILLVAL;

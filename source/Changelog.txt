@@ -1,3 +1,12 @@
+3/23/2006 - giwo (0.98-3.5o [3.6 RC])
+	Minor changes to cSkills::Fish().
+	Fixed an issue making it impossible to open Elven NPC paperdolls.
+	Removed some typedefs that were no longer used.
+	Moved CChar values townpriv and townvote to PlayerValues_st
+	Moved CChar values foodList, hungerWildChance and hungerRate to NPCValues_st
+	Removed CChar::inBuilding in favor of using a bools flag.
+	Removed handling code for several unused Character values.
+
 3/23/2006 - grimson
 	Fixed a bug with the JS override for the combat damage calculation that caused 0
 	damage to be applied when the attacker has no script attached and the global script

@@ -228,9 +228,9 @@ typedef struct __ADDMENUITEM__
 	}
 } ADDMENUITEM, *LPADDMENUITEM;
 
-extern std::multimap<ULONG,ADDMENUITEM> g_mmapAddMenuMap;
-typedef std::multimap<ULONG,ADDMENUITEM>::iterator			ADDMENUMAP_ITERATOR;
-typedef std::multimap<ULONG,ADDMENUITEM>::const_iterator	ADDMENUMAP_CITERATOR;
+extern std::multimap< UI32, ADDMENUITEM >						g_mmapAddMenuMap;
+typedef std::multimap< UI32, ADDMENUITEM >::iterator			ADDMENUMAP_ITERATOR;
+typedef std::multimap< UI32, ADDMENUITEM >::const_iterator		ADDMENUMAP_CITERATOR;
 
 class ScriptSection
 {

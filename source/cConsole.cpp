@@ -977,7 +977,7 @@ void CConsole::Process( int c )
 				messageLoop << "  ";
 				char szBuffer[128];
 				// We need to get an iteration into the map first of all the top level ULONGs then we can get an equal range.
-				std::map< ULONG, UI08 > localMap;
+				std::map< UI32, UI08 > localMap;
 				localMap.clear();
 				for( ADDMENUMAP_CITERATOR CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end(); CJ++ )
 				{

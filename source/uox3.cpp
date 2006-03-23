@@ -936,7 +936,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 	{
 		if( mSock->GetTimer( tPC_FISHING ) <= cwmWorldState->GetUICurrentTime() )
 		{
-			Skills->Fish( &mChar );
+			Skills->Fish( mSock, &mChar );
 			mSock->SetTimer( tPC_FISHING, 0 );
 		}
 	}
