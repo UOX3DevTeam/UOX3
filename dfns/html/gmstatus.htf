@@ -30,7 +30,7 @@
           <br>
           <b>Clients:</b> <br>
           %playerlist%<br>
-          %playername (%playertitle%) %playeraccount, %playerip [%playerx/%playery/playerz]<br>
+          %playername (%playertitle) %playeraccount, %playerip [%playerx/%playery/%playerz]<br>
           %playerlist%<br>
           <br>
           Guilds (%guildcount):<br>
