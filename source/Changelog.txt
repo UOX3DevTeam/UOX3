@@ -1,3 +1,8 @@
+3/23/2006 - grimson
+	Fixed a bug with the JS override for the combat damage calculation that caused 0
+	damage to be applied when the attacker has no script attached and the global script
+	doesn't exist eigther.
+
 3/22/2006 - grimson
 	Small fix to ApplyDamageBonuses() caused by my previous commit.
 

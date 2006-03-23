@@ -1443,7 +1443,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill )
 {
-	SI16 damage = 0;
+	SI16 damage = -1;
 
 	cScript *toExecute	= JSMapping->GetScript( mChar->GetScriptTrigger() );
 	if( toExecute != NULL )
@@ -1473,7 +1473,8 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	if( !ourTarg->IsNpc() ) 
 		damage /= cwmWorldState->ServerData()->CombatNPCDamageRate(); // Rate damage against other players
 
-	DoHitMessage( mChar, ourTarg, hitLoc, damage );
+	if( damage > 0 )
+		DoHitMessage( mChar, ourTarg, hitLoc, damage );
 
 	return damage;
 }
