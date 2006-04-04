@@ -366,7 +366,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					if( actgood > -1 )
 						goodList[actgood].buyVal = data.toLong();
 					else
-						Console.Error( 2, "regions dfn -> You must write BUYABLE after GOOD <num>!" );
+						Console.Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 				}
 				break;
 			case 'c':
@@ -444,7 +444,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						orePrefLoaded = true;
 					}
 					else
-						Console.Error( 2, "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() );
+						Console.Error( "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() );
 				}
 				break;
 			case 'r':
@@ -467,12 +467,12 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						}
 						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
 						{
-							Console.Error( 2, " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 );
+							Console.Error( " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 );
 							goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
 						}
 					}
 					else
-						Console.Error( 2, " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
+						Console.Error( " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
 				}
 				else if( UTag == "RACE" )
 					race = data.toUShort();
@@ -484,14 +484,14 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					if( actgood > -1 )
 						goodList[actgood].sellVal = data.toLong();
 					else
-						Console.Error( 2, " regions dfn -> You must write SELLABLE after GOOD <num>!" );
+						Console.Error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
 				}
 				else if( UTag == "SPAWN" )
 				{
 					UString sect = "PREDEFINED_SPAWN " + data;
 					ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
 					if( predefSpawn == NULL )
-						Console.Warning( 2, "Undefined region spawn %s, check your regions.scp and spawn.scp files", data.c_str() );
+						Console.Warning( "Undefined region spawn %s, check your regions.scp and spawn.scp files", data.c_str() );
 					else
 					{
 						for( UI16 i = 0xFFFF; i > 0; --i )

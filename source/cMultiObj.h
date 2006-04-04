@@ -9,8 +9,8 @@ class CMultiObj : public CItem
 protected:
 	std::string			deed;
 
-	CHARLIST			owners;
-	CHARLIST			banList;
+	std::map< CChar *, UI08 >	housePrivList;
+
 	ITEMLIST			lockedList;
 	UI16				maxLockedDown;
 
@@ -28,7 +28,6 @@ public:
 
 	void				AddAsOwner( CChar *newOwner );
 	void				RemoveAsOwner( CChar *toRemove );
-	void				ClearOwners( void );
 
 	bool				IsOnBanList( CChar *toBan ) const;
 	bool				IsOwner( CChar *toFind ) const;

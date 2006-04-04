@@ -101,10 +101,7 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 		stack->SetAmount( newAmt );
 		i->Delete();
 		if( mSock != NULL )
-		{
-			mChar->Dirty( UT_STATWINDOW );
 			Effects->itemSound( mSock, stack, false );
-		}
 		return stack;
 	}
 	return i;
@@ -157,10 +154,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	}
 	iToStack->PlaceInPack();
 	if( mSock != NULL )
-	{
-		mChar->Dirty( UT_STATWINDOW );
 		Effects->itemSound( mSock, iToStack, false );
-	}
 	return iToStack;
 }
 
@@ -369,10 +363,7 @@ bool CPIGetItem::Handle( void )
 		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
-	{
 		Weight->addItemWeight( ourChar, i );
-		ourChar->Dirty( UT_STATWINDOW );
-	}
 	return true;
 }
 
@@ -447,7 +438,6 @@ bool CPIEquipItem::Handle( void )
 	{
 		Bounce( tSock, i );
 		tSock->sysmessage( 1186 );
-		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 
@@ -466,7 +456,6 @@ bool CPIEquipItem::Handle( void )
 	{
 		tSock->sysmessage( 1187 );
 		Bounce( tSock, i );
-		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 	if( k == ourChar )
@@ -485,10 +474,7 @@ bool CPIEquipItem::Handle( void )
 			Bounce( tSock, i );
 
 			if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
-			{
-				ourChar->Dirty( UT_STATWINDOW );
 				Effects->itemSound( tSock, i, true );
-			}
 			else
 				Effects->itemSound( tSock, i, false );
 			return true;
@@ -499,7 +485,6 @@ bool CPIEquipItem::Handle( void )
 		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 	{
 		Bounce( tSock, i );
-		ourChar->Dirty( UT_STATWINDOW );
 		return true;
 	}
 
@@ -513,7 +498,6 @@ bool CPIEquipItem::Handle( void )
 		if( ValidateObject( j ) )
 		{
 			tSock->sysmessage( 1744 );
-			ourChar->Dirty( UT_STATWINDOW );
 			Bounce( tSock, i );
 			return true;
 		}
@@ -522,7 +506,6 @@ bool CPIEquipItem::Handle( void )
 	if( !Weight->checkCharWeight( ourChar, k, i ) )
 	{
 		tSock->sysmessage( 1743 );
-		ourChar->Dirty( UT_STATWINDOW );
 		Bounce( tSock, i );
 		return true;
 	}
@@ -530,7 +513,6 @@ bool CPIEquipItem::Handle( void )
 	i->SetCont( k );
 
 	Effects->PlaySound( tSock, 0x0057, false );
-	ourChar->Dirty( UT_STATWINDOW );
 	return true;
 }
 
@@ -860,7 +842,6 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		}
 		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
-	nChar->Dirty( UT_STATWINDOW );
 }
 
 void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped )
@@ -989,7 +970,6 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	stackDeleted = ( doStacking( &mSock, &mChar, &iDropped, &droppedOn ) != &iDropped );
 	if( !stackDeleted )	// if the item didn't stack or the stack was full
 		Bounce( &mSock, &iDropped );
-	mChar.Dirty( UT_STATWINDOW );
 
 	return true;
 }
@@ -1064,14 +1044,12 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		{
 			mSock.sysmessage( 1385 );
 			Bounce( &mSock, &iDropped );
-			mChar.Dirty( UT_STATWINDOW );
 			return false;
 		}
 		iDropped.SetCont( &droppedOn );
 		iDropped.SetX( mSock.GetWord( 5 ) );
 		iDropped.SetY( mSock.GetWord( 7 ) );
 		iDropped.SetZ( 9 );
-		mChar.Dirty( UT_STATWINDOW );
 	}
 	else
 	{
@@ -1090,7 +1068,6 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( &mChar, &iDropped );
 		}
-		mChar.Dirty( UT_STATWINDOW );
 	}
 	return true;
 }
@@ -2181,7 +2158,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			}
 		}
 		// Check if item is in a house?
-		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK )
+		else if( iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK && iType != IT_HOUSESIGN )
 		{
 			if( iUsed->GetMultiObj() != NULL && iUsed->GetMultiObj() != ourChar->GetMultiObj() )
 			{

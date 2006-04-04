@@ -982,7 +982,7 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			}
 		}
 		else
-			Console.Error( 2, "Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial() );
+			Console.Error( "Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial() );
 	}
 }
 
@@ -1014,7 +1014,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			}
 		}
 		else
-			Console.Error( 2, "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() );
+			Console.Error( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() );
 	}
 }
 
@@ -1474,7 +1474,7 @@ bool CBaseObject::Load( std::ifstream &inStream )
 		{
 			UTag = tag.upper();
 			if( !HandleLine( UTag, data ) )
-				Console.Warning( 1, "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() );
+				Console.Warning( "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() );
 		}
 	}
 	return LoadRemnants();

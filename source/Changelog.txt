@@ -1,3 +1,13 @@
+4/04/2006 - giwo (0.98-3.6)
+	Removed unused level value passed with Console.Warning() and Console.Error().
+	Removed JS Console prop .level
+	Modified JS Console Methods Warning() and Error() to remove the unused level value.
+	Fixed several issues with mapdiff and staticdiff handling.
+	Fixed a bug causing a crash when calling JS Event onGumpInput.
+	Merged CMultiObject vectors ownerList and banList into a single map housePrivList, to allow multiple owner/banned levels
+		and ensure there are no duplicate characters on the lists.
+	Removed many superfluous uses of CChar::Dirty( UT_STATWINDOW ).
+
 3/23/2006 - giwo (0.98-3.5o [3.6 RC])
 	Minor changes to cSkills::Fish().
 	Fixed an issue making it impossible to open Elven NPC paperdolls.

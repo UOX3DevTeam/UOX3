@@ -55,14 +55,11 @@ public:
 	void	Print( const char *toPrint, ... );
 	void	Log( const char *toLog, const char *filename, ... );
 	void	Log( const char *toLog, ... );
-	void	Error( UI08 level, const char *toWrite, ... );
-	void	Warning( UI08 level, const char *toWrite, ... );
+	void	Error( const char *toWrite, ... );
+	void	Warning( const char *toWrite, ... );
 
 	UI08	CurrentMode( void ) const;
-	UI08	CurrentLevel( void ) const;
-
 	void	CurrentMode( UI08 value );
-	void	CurrentLevel( UI08 value );
 
 	void	PrintSectionBegin( void );
 
@@ -118,7 +115,7 @@ private:
 	UI16				height, width;	// for differing windows
 	UI16				curLeft, curTop;
 	std::bitset< 16 >	filterSettings;
-	UI08				currentMode, currentLevel;
+	UI08				currentMode;
 	UI08				previousColour;
 	bool				logEcho;
 #if UOX_PLATFORM == PLATFORM_WIN32

@@ -745,7 +745,7 @@ void CSpawnRegion::checkSpawned( void )
 		}
 		else
 		{
-			Console.Warning( 2, "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
+			Console.Warning( "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
 			spawnedChars.Remove( cCheck );
 		}
 	}
@@ -762,7 +762,7 @@ void CSpawnRegion::checkSpawned( void )
 		}
 		else
 		{
-			Console.Warning( 2, "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
+			Console.Warning( "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
 			spawnedItems.Remove( iCheck );
 		}
 	}

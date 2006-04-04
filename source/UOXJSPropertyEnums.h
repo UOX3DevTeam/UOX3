@@ -378,7 +378,6 @@ enum CAccountProperties
 enum CConsoleProperties
 {
 	CCONSOLE_MODE = 0,
-	CCONSOLE_LEVEL,
 	CCONSOLE_LOGECHO,
 	CCONSOLE_COUNT
 };

@@ -630,7 +630,7 @@ bool CSocket::FlushBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.Error( 1, "Failed to open socket log %s", logFile.c_str() );
+				Console.Error( "Failed to open socket log %s", logFile.c_str() );
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -670,7 +670,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 				logDestination.close();
 			}
 			else
-				Console.Error( 1, "Failed to open socket log %s", logFile.c_str() );
+				Console.Error( "Failed to open socket log %s", logFile.c_str() );
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -830,7 +830,7 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( 1, "Failed to open socket log %s", logFile.c_str() );
+			Console.Error( "Failed to open socket log %s", logFile.c_str() );
 			return;
 		}
 		if( toLog != NULL )
@@ -1225,7 +1225,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( 1, "Failed to open socket log %s", logFile.c_str() );
+			Console.Error( "Failed to open socket log %s", logFile.c_str() );
 			return;
 		}
 		toSend->Log( logDestination );
@@ -1693,7 +1693,7 @@ void CSocket::openPack( CItem *i )
 {
 	if( !ValidateObject( i ) )
 	{
-		Console.Warning( 2, "openPack() was passed an invalid item" );
+		Console.Warning( "openPack() was passed an invalid item" );
 		return;
 	}
 	CPDrawContainer contSend = (*i);
@@ -1762,7 +1762,7 @@ void CSocket::openPack( CItem *i )
 				contSend.Model( 0x51 );
 				break;
 			case PT_UNKNOWN:
-				Console.Warning( 2, "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
+				Console.Warning( "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
 				return;
 		}
 	}   

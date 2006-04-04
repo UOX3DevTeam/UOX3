@@ -545,7 +545,7 @@ void cHTMLTemplate::Process( void )
 		Output.close();
 	}
 	else
-		Console.Error( 1, " Couldn't open the template file %s for writing", OutputFile.c_str() );
+		Console.Error( " Couldn't open the template file %s for writing", OutputFile.c_str() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -580,7 +580,7 @@ void cHTMLTemplate::LoadTemplate( void )
 
 	if( !InputFile1.is_open() )
 	{
-		Console.Error( 1, "Couldn't open HTML Template File %s", InputFile.c_str() );
+		Console.Error( "Couldn't open HTML Template File %s", InputFile.c_str() );
 		return;
 	}
 

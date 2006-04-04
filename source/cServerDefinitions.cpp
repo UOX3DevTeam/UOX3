@@ -24,7 +24,7 @@ std::string CurrentWorkingDir( void )
 
 	if( !getcwd( cwd, MAX_PATH + 1 ) )
 	{
-		Console.Error( 1, "Failed to allocate enough room for cwd" );
+		Console.Error( "Failed to allocate enough room for cwd" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return cwd;
@@ -396,7 +396,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-//	Console.Warning( 1, "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
 #endif
 	wasPrioritized = 2;
 }
@@ -443,7 +443,7 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	}
 	else
 	{
-		Console.Error( 1, "DFN directory %s does not exist", toMove.c_str() );
+		Console.Error( "DFN directory %s does not exist", toMove.c_str() );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return false;
@@ -452,7 +452,7 @@ void cDirectoryListing::PopDir( void )
 {
 	if( dirs.empty() )
 	{
-		Console.Error( 1, "cServerDefinition::PopDir called, but dirs is empty" );
+		Console.Error( "cServerDefinition::PopDir called, but dirs is empty" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	else

@@ -138,7 +138,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			{
 										ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
 										if( toFind == NULL )
-											Console.Warning( 2, "Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial() );
+											Console.Warning( "Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial() );
 										else
 											ApplyItemSection( applyTo, toFind );
 			}
@@ -236,7 +236,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:
 				break;
-			default:					Console.Warning( 2, "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
+			default:					Console.Warning( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
 		}
 	}
 	return true;
@@ -256,7 +256,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
-		Console.Warning( 2, "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
+		Console.Warning( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
 		return NULL;
 	}
 
@@ -302,7 +302,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item,
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
-		Console.Warning( 2, "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
+		Console.Warning( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", mChar->GetName().c_str(), mChar->GetSerial() );
 		return NULL;
 	}
 
@@ -439,7 +439,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 	ScriptSection *itemCreate	= FileLookup->FindEntry( ourItem, items_def );
 	if( itemCreate == NULL )
 	{
-		Console.Error( 2, "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() );
+		Console.Error( "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() );
 		return NULL;
 	}
 
@@ -455,7 +455,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 		iCreated->SetDecayable( true );
 
 		if( !ApplyItemSection( iCreated, itemCreate ) )
-			Console.Error( 2, "Trying to apply an item section failed" );
+			Console.Error( "Trying to apply an item section failed" );
 		
 		if( !iCreated->GetMaxHP() && iCreated->GetHP() ) 
 			iCreated->SetMaxHP( iCreated->GetHP() );
@@ -503,8 +503,6 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			iCreated->SetCont( mChar->GetPackItem() );
 			iCreated->PlaceInPack();
 		}
-		if( mSock != NULL )
-			mChar->Dirty( UT_STATWINDOW );
 	}
 	else
 		iCreated->SetLocation( mChar );
@@ -737,7 +735,7 @@ void cItem::AddRespawnItem( CItem *s, const std::string x, const bool inCont, co
 				case PT_BANK:
 				case PT_UNKNOWN:
 				default:	
-					Console.Warning( 2, " A non-container item was set as container spawner" );
+					Console.Warning( " A non-container item was set as container spawner" );
 					break;
 			}
 		}

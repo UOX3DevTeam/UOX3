@@ -957,7 +957,6 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 					std::string name;
 					getTileName( (*defendItem), name );
 					mSock->sysmessage( 311, name.c_str() );
-					mChar->Dirty( UT_STATWINDOW );
 				}
 				defendItem->Delete();
 			}

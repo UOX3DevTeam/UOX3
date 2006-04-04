@@ -450,7 +450,6 @@ static JSPropertySpec CAccountProperties[] =
 static JSPropertySpec CConsoleProperties[] =
 {
 	{ "mode",		CCONSOLE_MODE,		JSPROP_ENUMANDPERM },
-	{ "level",		CCONSOLE_LEVEL,		JSPROP_ENUMANDPERM },
 	{ "logEcho",	CCONSOLE_LOGECHO,	JSPROP_ENUMANDPERM },
 	{	NULL,		(SI08)NULL,			(UI08)0				}
 };

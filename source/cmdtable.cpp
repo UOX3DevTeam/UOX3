@@ -823,7 +823,7 @@ void command_reportbug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( 1, "Unable to open bugs log file %s!", logName.c_str() );
+		Console.Error( "Unable to open bugs log file %s!", logName.c_str() );
 		return;
 	}
 	char dateTime[1024];

@@ -1439,7 +1439,7 @@ void CPOpenGump::Question( std::string toAdd )
 	pStream.WriteString( 10, toAdd, toAdd.length() );
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
-		Console.Error( 1, "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() );
+		Console.Error( "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() );
 #endif
 	pStream.WriteByte( 9, static_cast< UI08 >(toAdd.length() + 1) );
 	responseBaseOffset	= (pStream.GetSize() - 1);
@@ -1450,7 +1450,7 @@ void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseTe
 	pStream.WriteByte( responseBaseOffset, pStream.GetByte( responseBaseOffset ) + 1 ); // increment number of responses
 #if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
-		Console.Error( 1, "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() );
+		Console.Error( "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() );
 #endif
 	UI16 toAdd = static_cast< UI16 >(5 + responseText.length());
 	pStream.ReserveSize( pStream.GetSize() + toAdd );
@@ -4335,7 +4335,7 @@ void CPSendGumpMenu::Finalize( void )
 		increment = static_cast<UI16>(lineLen + 4);
 		if( (length + increment) >= 0xFFFF )
 		{
-			Console.Warning( 2, "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 			break;
 		}
 
@@ -4366,7 +4366,7 @@ void CPSendGumpMenu::Finalize( void )
 		increment	= lineLen * 2 + 2;
 		if( (length + increment) >= 0xFFFF )
 		{
-			Console.Warning( 2, "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+			Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 			break;
 		}
 

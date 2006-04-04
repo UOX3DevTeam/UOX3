@@ -187,7 +187,7 @@ void OpenPlank( CItem *p )
 		case 0xD5: p->SetID( 0xB1, 2 ); break;
 		case 0xD4: p->SetID( 0xB2, 2 ); break;
 		case 0x89: p->SetID( 0x8A, 2 ); break;
-		default: 	Console.Warning( 2, "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() );
+		default: 	Console.Warning( "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetID() );
 			break;
 	}
 }
@@ -261,7 +261,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 				case 1: y1 = cy - 6; y2 = cy + 6; break;
 				case 2: y1 = cy - 6; y2 = cy + 7; break;
 				case 3: y1 = cy - 8; y2 = cy + 8; break;
-				default:	Console.Error( 2, " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		case EAST: // E
@@ -275,7 +275,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 				case 1: x1 = cx - 6; x2 = cx + 6; break;
 				case 2: x1 = cx - 7; x2 = cx + 7; break;
 				case 3: x1 = cx - 8; x2 = cx + 8; break;
-				default:	Console.Error( 2, " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		default: return true;
@@ -655,7 +655,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
 			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
 			break;
-		default: Console.Error( 2, "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) );
+		default: Console.Error( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) );
 	}
 
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -796,7 +796,7 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 		CItem *model = Items->CreateItem( s, mChar, 0x14f3, 1, 0, OT_ITEM, true );
 		if( model == NULL )
 		{
-			Console.Error( 3, " Turning boat into model failed on model creation, attempted by character serial %X", mChar->GetSerial() );
+			Console.Error( " Turning boat into model failed on model creation, attempted by character serial %X", mChar->GetSerial() );
 			return;
 		}
 

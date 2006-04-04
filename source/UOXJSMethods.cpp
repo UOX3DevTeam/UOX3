@@ -65,7 +65,7 @@ void MethodError( const char *txt, ... )
 	va_start( argptr, txt );
 	vsprintf( msg, txt, argptr );
 	va_end( argptr );
-	Console.Error( 2, msg );
+	Console.Error( msg );
 }
 
 //
@@ -4878,27 +4878,25 @@ JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
 JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 2 )
+	if( argc != 1 )
 	{
-		MethodError( "Error: Invalid number of arguments (takes 2)" );
+		MethodError( "Error: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &(argv[0]) );
-	JSEncapsulate arg1( cx, &(argv[1]) );
-	Console.Error( arg0.toInt(), arg1.toString().c_str() );
+	Console.Error( arg0.toString().c_str() );
 	return JS_TRUE;
 }
 
 JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 2 )
+	if( argc != 1 )
 	{
-		MethodError( "Warning: Invalid number of arguments (takes 2)" );
+		MethodError( "Warning: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &(argv[0]) );
-	JSEncapsulate arg1( cx, &(argv[1]) );
-	Console.Warning( arg0.toInt(), arg1.toString().c_str() );
+	Console.Warning( arg0.toString().c_str() );
 	return JS_TRUE;
 }
 

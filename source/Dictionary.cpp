@@ -131,7 +131,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else
-			Console.Warning( 2, "Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() );
+			Console.Warning( "Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() );
 	}
 	return rvalue;
 }
@@ -171,7 +171,7 @@ SI32 CDictionaryContainer::LoadDictionary( void )
 	}
 	if( !dictList[LanguageCodesLang[ZERO]]->GetValid() )
 	{
-		Console.Error( 1, "Dictionary.ZRO is bad or nonexistant" );
+		Console.Error( "Dictionary.ZRO is bad or nonexistant" );
 		Shutdown( FATAL_UOX3_BAD_DEF_DICT );
 		rvalue = -1;
 	}

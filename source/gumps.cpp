@@ -43,7 +43,7 @@ void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlengt
 	std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
 	if( txt.empty() )
 	{
-		Console.Error( 2, "Invalid text in TextEntryGump()" );
+		Console.Error( "Invalid text in TextEntryGump()" );
 		return;
 	}
 	char temp[32];
@@ -458,7 +458,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 			case 1001:	password	= packet->GetTextUString( i );	break;
 			case 1002:	emailAddy	= packet->GetTextUString( i );	break;
 			default:
-				Console.Warning( 1, "Unknown textID %i with string %s", textID, packet->GetTextUString( i ).c_str() );
+				Console.Warning( "Unknown textID %i with string %s", textID, packet->GetTextUString( i ).c_str() );
 		}
 	}
 

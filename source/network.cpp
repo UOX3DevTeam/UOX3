@@ -229,9 +229,9 @@ void cNetworkStuff::sockInit( void )
 	a_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if( a_socket < 0 )
 	{
-		Console.Error( 0, " Unable to create socket");
+		Console.Error( " Unable to create socket");
 #if UOX_PLATFORM == PLATFORM_WIN32
-		Console.Error( 0, " Code %i", WSAGetLastError() );
+		Console.Error( " Code %i", WSAGetLastError() );
 #else
 		Console << myendl;
 #endif
@@ -254,7 +254,7 @@ void cNetworkStuff::sockInit( void )
 	
 	if( bcode < 0 )
 	{
-		Console.Error( 0, " Unable to bind socket 1 - Error code: %i", bcode );
+		Console.Error( " Unable to bind socket 1 - Error code: %i", bcode );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
@@ -305,7 +305,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
 		if( newClient >= FD_SETSIZE )
 		{
-			Console.Error( 0, "accept() returning unselectable fd!" );
+			Console.Error( "accept() returning unselectable fd!" );
 			return;
 		}
 #endif
@@ -323,7 +323,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 				delete toMake;
 				return;
 			}
-			Console.Error( 0, "Error at client connection!" );
+			Console.Error( "Error at client connection!" );
 			cwmWorldState->SetKeepRun( true );
 			cwmWorldState->SetError( true );
 			delete toMake;
@@ -360,7 +360,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	}
 	if( s < 0 )
 	{
-		Console.Error( 0, " Select (Conn) failed!" );
+		Console.Error( " Select (Conn) failed!" );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -1016,7 +1016,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				}
 				catch( socket_error& )
 				{
-					Console.Warning( 2, "Bad packet request thrown! [packet ID: 0x%x]", packetID );
+					Console.Warning( "Bad packet request thrown! [packet ID: 0x%x]", packetID );
 					mSock->FlushIncoming();
 					return;
 				}
@@ -1172,7 +1172,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 									slEntries.push_back( FirewallEntry( p[0], p[1], p[2], p[3] ) );
 								}
 								else if( data != "\n" && data != "\r" )
-									Console.Error( 1, "Malformed IP address in banlist.ini (line: %s)", data.c_str() );
+									Console.Error( "Malformed IP address in banlist.ini (line: %s)", data.c_str() );
 							}
 						}
 					}

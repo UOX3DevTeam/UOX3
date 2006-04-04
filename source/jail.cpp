@@ -236,7 +236,7 @@ void JailSystem::WriteData( void )
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.Error( 1, "Failed to open %s for writing", jailsFile.c_str() );
+		Console.Error( "Failed to open %s for writing", jailsFile.c_str() );
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )

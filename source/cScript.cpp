@@ -128,14 +128,14 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 {
 	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	// If we're loading the world then do NOT print out anything!
-	Console.Error( 2, "JS script failure: Script Number (%u) Message (%s)", scriptNum, message );
+	Console.Error( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message );
 	if( report == NULL || report->filename == NULL )
 	{
-		Console.Error( 2, "No detailed data" );
+		Console.Error( "No detailed data" );
 		return;
 	}
-	Console.Error( 2, "Filename: %s\n| Line Number: %i", report->filename, report->lineno );
-	Console.Error( 2, "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr );
+	Console.Error( "Filename: %s\n| Line Number: %i", report->filename, report->lineno );
+	Console.Error( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr );
 }
 
 cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
@@ -1512,7 +1512,7 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	JS_LockGCThing( targContext, jsoObject );
 	//JS_AddRoot( targContext, &jsoObject );
 
-	int i;
+	UI16 i;
 	// Loop through Buttons
 	for( i = 0; i < nButtons; ++i )
 		segdGumpData->nButtons.push_back( packet->SwitchValue( i ) );
@@ -1526,10 +1526,10 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	jsval jsvParams[3], jsvRVal;
 
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing, runTime );
-	jsvParams[0] = OBJECT_TO_JSVAL( pressing );
+	jsvParams[0] = OBJECT_TO_JSVAL( myObj );
 	jsvParams[1] = INT_TO_JSVAL( button );
 	jsvParams[2] = OBJECT_TO_JSVAL( jsoObject );
-	JS_CallFunctionName( targContext, targObject, "onGumpPress", 7, jsvParams, &jsvRVal );
+	JS_CallFunctionName( targContext, targObject, "onGumpPress", 3, jsvParams, &jsvRVal );
 }
 
 void cScript::HandleGumpInput( CPIGumpInput *pressing )
@@ -1539,11 +1539,11 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ) )
 		return;
 
-	jsval params[1], rval;
+	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, pressing->GetSocket(), runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
-	params[0] = INT_TO_JSVAL( pressing );
-	JS_CallFunctionName( targContext, targObject, "onGumpInput", 1, params, &rval );
+	params[1] = INT_TO_JSVAL( pressing->Index() );
+	JS_CallFunctionName( targContext, targObject, "onGumpInput", 2, params, &rval );
 }
 
 bool cScript::OnEnterRegion( CChar *entering, SI16 region )
@@ -1957,7 +1957,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JSVAL_VOID )
 	{
-		Console.Warning( 2, "Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() );
+		Console.Warning( "Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() );
 		return false;
 	}
 

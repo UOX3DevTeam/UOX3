@@ -1568,7 +1568,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == NULL )
 		{
 			s->objMessage( 174, deed );
-			Console.Error( 3, "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() );
+			Console.Error( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() );
 			return;
 		}
 		mChar->SetGuildNumber( gNum );
@@ -1578,7 +1578,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( !ValidateObject( stone ) )
 		{
 			s->objMessage( 176, deed );
-			Console.Error( 3, "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() );
+			Console.Error( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() );
 			return;
 		}
 		stone->SetName( Dictionary->GetEntry( 175 ) );

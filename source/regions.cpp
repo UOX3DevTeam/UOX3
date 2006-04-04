@@ -260,7 +260,7 @@ void CMapWorld::SaveResources( UI08 worldNum )
 		toWrite.close();
 	}
 	else // Can't save resources
-		Console.Error( 1, "Failed to open resource.bin for writing" );
+		Console.Error( "Failed to open resource.bin for writing" );
 }
 
 //o--------------------------------------------------------------------------o
@@ -363,13 +363,13 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetItemList()->Remove( nItem ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+			Console.Warning( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
 #endif
 		}
 		if( !newCell->GetItemList()->Add( nItem ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
+			Console.Warning( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
 #endif
 		}
 		return true;
@@ -397,13 +397,13 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetCharList()->Remove( nChar ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() );
+			Console.Warning( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() );
 #endif
 		}
 		if( !newCell->GetCharList()->Add( nChar ) )
 		{
 #if defined( DEBUG_REGIONS )
-			Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() );
+			Console.Warning( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() );
 #endif
 		}
 		return true;
@@ -426,7 +426,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	if( !cell->GetItemList()->Add( nItem ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( 2, "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
+		Console.Warning( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() );
 #endif
 		return false;
 	}
@@ -449,7 +449,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	if( !cell->GetItemList()->Remove( nItem ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( 2, "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
+		Console.Warning( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() );
 #endif
 		return false;
 	}
@@ -471,7 +471,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	if( !cell->GetCharList()->Add( toAdd ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( 2, "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() );
+		Console.Warning( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() );
 #endif
 		return false;
 	}
@@ -494,7 +494,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	if( !cell->GetCharList()->Remove( toRemove ) )
 	{
 #if defined( DEBUG_REGIONS )
-		Console.Warning( 2, "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() );
+		Console.Warning( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() );
 #endif
 		return false;
 	}
@@ -668,7 +668,7 @@ void CMapHandler::Save( void )
 
 			if( !writeDestination ) 
 			{
-				Console.Error( 1, "Failed to open %s for writing", filename.c_str() );
+				Console.Error( "Failed to open %s for writing", filename.c_str() );
 				continue;
 			}
 
@@ -709,7 +709,7 @@ void CMapHandler::Save( void )
 	}
 	else
 	{
-		Console.Error( 1, "Failed to open %s for writing", filename.c_str() );
+		Console.Error( "Failed to open %s for writing", filename.c_str() );
 		return;
 	}
 	

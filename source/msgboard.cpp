@@ -55,7 +55,7 @@ std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 								fileName = "region" + UString::number( mbRegion->GetRegionNum() ) + ".bbf";
 																										break;
 		case PT_LOCAL:			fileName = UString::number( msgBoardSer, 16 ) + ".bbf";					break;
-		default:				Console.Error( 1, "GetMsgBoardFile() Invalid post type, aborting" );
+		default:				Console.Error( "GetMsgBoardFile() Invalid post type, aborting" );
 																										break;
 	}
 	return fileName;
@@ -213,7 +213,7 @@ void MsgBoardList( CSocket *mSock )
 
 						if( file.fail() )
 						{
-							Console.Warning( 2, "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial );
+							Console.Warning( "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial );
 							file.close();
 						}
 						else
@@ -237,7 +237,7 @@ void MsgBoardList( CSocket *mSock )
 	if( !mSock->FinishedPostAck() )
 	{
 		mSock->PostClear();
-		Console.Error( 2, "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 ) );
+		Console.Error( "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 ) );
 	}
 }
 
@@ -567,7 +567,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 		file.close();
 	}
 	else
-		Console.Error( 2, "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial );
+		Console.Error( "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial );
 
 	if( foundEntry )
 	{
@@ -575,7 +575,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 		mSock->Send( &mbPost );
 	}
 	else
-		Console.Warning( 2, "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial );
+		Console.Warning( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial );
 }
 
 //o--------------------------------------------------------------------------o
@@ -669,7 +669,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 		file.close();
 	}
 	else
-		Console.Error( 1, "Could not open file %s for reading", fileName.c_str() );
+		Console.Error( "Could not open file %s for reading", fileName.c_str() );
 
 	if( foundPost )
 	{
@@ -742,7 +742,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 		totalEntries = Escort->NumEntries();
 		if( totalEntries == 0 )
 		{
-			Console.Error( 1, "MsgBoardPostQuest() No msgboard dfn entries found" );
+			Console.Error( "MsgBoardPostQuest() No msgboard dfn entries found" );
 			return false;
 		}
 
@@ -751,7 +751,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 		EscortData	= FileLookup->FindEntry( sect, msgboard_def );
 		if( EscortData == NULL )
 		{
-			Console.Error( 1, "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() );
+			Console.Error( "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() );
 			return false;
 		}
 		for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
@@ -806,7 +806,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 		msgBoardPost.Toggle		= QT_ITEMQUEST;
 		break;
 	default:
-		Console.Error( 1, "MsgBoardPostQuest() Invalid questType %d", questType );
+		Console.Error( "MsgBoardPostQuest() Invalid questType %d", questType );
 		return false;
 	}
 
@@ -848,7 +848,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( destRegion == 0 || destRegion == npcRegion )
 	{
-		Console.Error( 2, "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" );
+		Console.Error( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" );
 		mNPC->Delete();
 		return;
 	}
@@ -868,7 +868,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ) )
 	{
-		Console.Error( 3, "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() );
+		Console.Error( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() );
 		mNPC->Delete();
 	}
 }
@@ -969,7 +969,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		file.close();
 	}
 	else
-		Console.Error( 1, "Could not open file %s for reading", fileName.c_str() );
+		Console.Error( "Could not open file %s for reading", fileName.c_str() );
 }
 
 //o--------------------------------------------------------------------------o
@@ -1048,7 +1048,7 @@ void MsgBoardMaintenance( void )
 			mbMessages.clear();
 		}
 		else
-			Console.Error( 2, "Failed to open MessageBoard file for reading: %s", (*fIter).c_str() );
+			Console.Error( "Failed to open MessageBoard file for reading: %s", (*fIter).c_str() );
 	}
 }
 

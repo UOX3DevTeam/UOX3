@@ -47,7 +47,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 		}
 	}
 	if( !houseID )
-		Console.Error( 1, "Bad house script: #%u\n", houseEntry );
+		Console.Error( "Bad house script: #%u\n", houseEntry );
 	else
 	{
 		mSock->AddID1( houseEntry );
@@ -235,7 +235,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	if( !houseID )
 	{
-		Console.Error( 1, "Bad house script # %u!", houseEntry );
+		Console.Error( "Bad house script # %u!", houseEntry );
 		return;
 	}
 
@@ -370,11 +370,12 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 {
 	if( !ValidateObject( house ) || !ValidateObject( toAdd ) )
 		return 0;
-	const UI08 OWNER = 0;
-	const UI08 BAN = 1;
+
 	if( house->IsOwner( toAdd ) || house->IsOnBanList( toAdd ) )
 		return 2;
 
+	const UI08 OWNER	= 0;
+	const UI08 BAN		= 1;
 	SI16 sx, sy, ex, ey;
 	Map->MultiArea( house, sx, sy, ex, ey );
 	if( toAdd->GetX() >= sx && toAdd->GetY() >= sy && toAdd->GetX() <= ex && toAdd->GetY() <= ey )
@@ -397,13 +398,19 @@ bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode )
 {
 	if( !ValidateObject( house ) || !ValidateObject( toDelete ) )
 		return false;
+
+	if( !house->IsOwner( toDelete ) && !house->IsOnBanList( toDelete ) )
+		return false;
+
+	const UI08 OWNER	= 0;
+	const UI08 BAN		= 1;
 	switch( mode )
 	{
 		default:
-		case 0:	// owner
+		case OWNER:	// owner
 			house->RemoveAsOwner( toDelete );
 			break;
-		case 1:	// ban
+		case BAN:	// ban
 			house->RemoveFromBanList( toDelete );
 			break;
 	}

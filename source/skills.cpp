@@ -526,7 +526,6 @@ void cSkills::SmeltOre( CSocket *s )
 	} 
 
 	s->TempObj( NULL );
-	chr->Dirty( UT_STATWINDOW );
 }
 
 //o---------------------------------------------------------------------------o

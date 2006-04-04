@@ -11,18 +11,19 @@
 namespace UOX
 {
 
-CMulHandler *Map					= NULL;
+CMulHandler *Map				= NULL;
 
 const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32);
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
-const UI32 MultiRecordSize		= 12L;
-const UI32 LandRecordSize		= 26L;
-const UI32 TileRecordSize		= 37L;
-const UI32 MapRecordSize		= 3L;
-const UI32 MultiIndexRecordSize = 12L;
-const UI32 StaticRecordSize		= 7L;
+const UI32 MultiRecordSize			= 12L;
+const UI32 TileRecordSize			= 26L;
+const UI32 MapRecordSize			= 3L;
+const UI32 MultiIndexRecordSize		= 12L;
+const UI32 StaticRecordSize			= 7L;
+const UI32 StaticIndexRecordSize	= 12L;
+const UI32 MapBlockSize				= 196L;
 
 /*! New Notes: 11/3/1999
 ** I changed all of the places where z was handled as a signed char and
@@ -205,14 +206,13 @@ UOXFile * loadFile( const std::string fullName )
 
 void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string basePath, UI08 &totalMaps )
 {
-	char buffer[4];
 	UString lName		= basePath + mMap.mapFile;
 	mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
 	Console << "\t" << lName << "\t\t";
 
 	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 	{
-		SI32 checkSize = (mMap.mapObj->getLength() / 196);
+		SI32 checkSize = (mMap.mapObj->getLength() / MapBlockSize);
 		if( checkSize / (mMap.xBlock/8) == (mMap.yBlock/8) )
 		{
 			++totalMaps;
@@ -241,18 +241,15 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string basePat
 		std::ifstream mdlFile ( lName.c_str(), std::ios::in | std::ios::binary );
 		if( mdlFile.is_open() )
 		{
-			size_t offset = 4;
+			size_t offset = 0;
 			size_t blockID = 0;
 			mdlFile.seekg( 0, std::ios::beg );
 			while( !mdlFile.fail() )
 			{
-				mdlFile.read( buffer, 4 );
+				mdlFile.read( (char *)&blockID, 4 );
 				if( !mdlFile.fail() )
-				{
-					blockID = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
 					mMap.mapDiffList[blockID] = offset;
-				}
-				offset += 196;
+				offset += MapBlockSize;
 			}
 			mdlFile.close();
 			Console.PrintDone();
@@ -281,14 +278,10 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string basePat
 				sdlFile.seekg( 0, std::ios::beg );
 				while( !sdiFile.fail() && !sdlFile.fail() )
 				{
-					sdlFile.read( buffer, 4 );
-					blockID = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
-					sdiFile.read( buffer, 4 );
-					mMap.staticsDiffIndex[blockID].offset = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
-					sdiFile.read( buffer, 4 );
-					mMap.staticsDiffIndex[blockID].length = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
-					sdiFile.read( buffer, 4 );
-					mMap.staticsDiffIndex[blockID].unknown = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+					sdlFile.read( (char *)&blockID, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].offset, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].length, 4 );
+					sdiFile.read( (char *)&mMap.staticsDiffIndex[blockID].unknown, 4 );
 				}
 				sdlFile.close();
 				Console.PrintDone();
@@ -329,7 +322,7 @@ void CMulHandler::LoadTileData( const std::string basePath )
 	}
 
 	// now get the 512*32 static tile pieces,
-	tileDataSize	= (((tileFile.getLength() - (((32*26)+4)*512))/1188)*32);
+	tileDataSize	= (((tileFile.getLength() - (((32 * TileRecordSize) + 4) * 512)) / 1188) * 32);
 	staticTile		= new CTile[tileDataSize];
 	CTile *tilePtr	= staticTile;
 	while( !tileFile.eof() )
@@ -357,8 +350,8 @@ void CMulHandler::Load( void )
 	if( totalMaps == 0 )
 	{
 		// Hmm, no maps were valid, so not much sense in continuing
-		Console.Error( 1, " Fatal Error: No maps found" );
-		Console.Error( 1, " Check the settings for DATADIRECTORY in uox.ini" );
+		Console.Error( " Fatal Error: No maps found" );
+		Console.Error( " Check the settings for DATADIRECTORY in uox.ini" );
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
 	}
 
@@ -381,7 +374,7 @@ void CMulHandler::LoadMultis( const std::string basePath )
 	if( !multiIDX.ready() )
 	{
 		Console.PrintFailed();
-		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
+		Console.Error( "Can't cache %s!  File cannot be opened", lName.c_str() );
 		return;
 	}
 	lName			= basePath + "multi.mul";
@@ -389,7 +382,7 @@ void CMulHandler::LoadMultis( const std::string basePath )
 	if( !multis.ready() )
 	{
 		Console.PrintFailed();
-		Console.Error( 1, "Can't cache %s!  File cannot be opened", lName.c_str() );
+		Console.Error( "Can't cache %s!  File cannot be opened", lName.c_str() );
 		return;
 	}
 
@@ -658,7 +651,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 {
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.Warning( 2, "Invalid tile access, the offending tile number is %u", tileNum );
+		Console.Warning( "Invalid tile access, the offending tile number is %u", tileNum );
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -670,7 +663,7 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.Warning( 2, "Invalid land access, the offending land number is %u", landNum );
+		Console.Warning( "Invalid land access, the offending land number is %u", landNum );
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -709,26 +702,25 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 **	  	}
 */
 CStaticIterator::CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
-baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8 )), remainY( static_cast<UI08>(y % 8 )), 
+baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
 index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
-	if( !Map->InsideValidWorld( static_cast<SI16>(baseX), static_cast<SI16>(baseY), world ) )
+	if( !Map->InsideValidWorld( baseX, baseY, world ) )
 	{
-		Console.Error( 3, "ASSERT: CStaticIterator(); Not inside a valid world" );
+		Console.Error( "ASSERT: CStaticIterator(); Not inside a valid world" );
 		return;
 	}
 
 	MapData_st& mMap = Map->GetMapData( world );
 
-	const SI16 TileHeight = (mMap.yBlock/8);
-	const size_t indexPos = (( baseX * TileHeight * 12L ) + ( baseY * 12L ));
+	const size_t indexPos = (baseX * (mMap.yBlock/8) + baseY);
 
-	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos/12 );
+	std::map< UI32, StaticsIndex_st >::const_iterator diffIter = mMap.staticsDiffIndex.find( indexPos );
 	if( diffIter != mMap.staticsDiffIndex.end() )
 	{
 		const StaticsIndex_st &sdiRecord = diffIter->second;
 		
-		if( sdiRecord.offset == 0xFFFFFFFF )
+		if( sdiRecord.offset == INVALIDSERIAL )
 		{
 			length = 0;
 			return;
@@ -736,7 +728,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 
 		useDiffs = true;
 		pos		= sdiRecord.offset;
-		length	= sdiRecord.length;
+		length	= (sdiRecord.length / StaticRecordSize);
 	}
 	else
 	{
@@ -747,11 +739,11 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 			return;
 		}
 
-		toRead->seek( indexPos, SEEK_SET );
+		toRead->seek( (indexPos * StaticIndexRecordSize), SEEK_SET );
 		if( !toRead->eof() )
 		{
-			toRead->getLong( &pos );
-			if( pos != -1 )
+			toRead->getULong( &pos );
+			if( pos != INVALIDSERIAL )
 			{
 				toRead->getULong( &length );
 				length /= StaticRecordSize;
@@ -782,9 +774,8 @@ Static_st *CStaticIterator::Next( void )
 
 	if( mFile == NULL )
 		return NULL;
-	
-	// this was sizeof(OldStaRec) which SHOULD be 7, but on some systems which don't know how to pack, 
-	const size_t pos2 = static_cast<size_t>(pos + (StaticRecordSize * index));	// skip over all the ones we've read so far
+
+	const size_t pos2 = static_cast<size_t>(pos + StaticRecordSize * index);	// skip over all the ones we've read so far
 	mFile->seek( pos2, SEEK_SET );
 	do
 	{
@@ -821,24 +812,39 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 		return map;
 
 	MapData_st& mMap = MapList[worldNumber];
-	// index to the world
+
+	size_t pos				= 0;
+	UOXFile *mFile			= NULL;
+
 	const SI16 x1 = static_cast<SI16>(x / 8), y1 = static_cast<SI16>(y / 8);
-	const size_t blockID = x1 * (mMap.yBlock/8) + y1;
+	const UI08 x2 = static_cast<UI08>(x % 8), y2 = static_cast<UI08>(y % 8);
+	const size_t blockID	= x1 * (mMap.yBlock/8) + y1;
+	const size_t cellOffset = (4 + (y2 * 8 + x2) * MapRecordSize);
 	std::map< UI32, UI32 >::const_iterator diffIter = mMap.mapDiffList.find( blockID );
 	if( diffIter != mMap.mapDiffList.end() )
 	{
-		mMap.mapDiffObj->seek( diffIter->second, SEEK_SET );
-		mMap.mapDiffObj->getUShort( &map.id );
-		mMap.mapDiffObj->getChar( &map.z );
+		mFile	= mMap.mapDiffObj;
+		pos		= (diffIter->second + cellOffset);
 	}
 	else
 	{
-		const UI08 x2 = static_cast<UI08>(x % 8), y2 = static_cast<UI08>(y % 8);
-		const size_t pos = ( x1 * (mMap.yBlock/8) * 196 ) + ( y1 * 196 ) + ( y2 * 24 ) + ( x2 * 3 ) + 4;
-		mMap.mapObj->seek( pos, SEEK_SET );
-		mMap.mapObj->getUShort( &map.id );
-		mMap.mapObj->getChar( &map.z );
+		mFile	= mMap.mapObj;
+		pos		= (blockID * MapBlockSize + cellOffset);
 	}
+
+	mFile->seek( pos, SEEK_SET );
+	if( mFile->eof() )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Console.Warning( "SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y );
+#endif
+	}
+	else
+	{
+		mFile->getUShort( &map.id );
+		mFile->getChar( &map.z );
+	}
+
 	return map;
 }
 
@@ -918,7 +924,7 @@ bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 		// you can climb MaxZstep, but fall up to 15
 		if( elev - oldz > MAX_Z_STEP )
 			return false;
-		else if( oldz - elev > 15 )
+		else if( oldz - elev > MAX_Z_FALL )
 			return false;
 	}
 

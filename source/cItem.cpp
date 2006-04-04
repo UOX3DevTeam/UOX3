@@ -1340,24 +1340,24 @@ void CItem::CheckItemIntegrity( void )
 	SERIAL getSerial = GetSerial();
 	if( getSerial == INVALIDSERIAL )
 	{
-		Console.Warning( 2, "Item (%s) has an invalid serial number, Deleting", GetName().c_str() );
+		Console.Warning( "Item (%s) has an invalid serial number, Deleting", GetName().c_str() );
 		Delete();
 		return;
 	}
 
 	if( getSerial == GetContSerial() )
 	{
-		Console.Warning( 2, "Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.Warning( "Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str() );
 		SetCont( NULL );
 	}
 	if( getSerial == GetOwner() )
 	{
-		Console.Warning( 2, "Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.Warning( "Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str() );
 		SetOwner( NULL );
 	}
 	if( getSerial == GetSpawn() )
 	{
-		Console.Warning( 2, "Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() );
+		Console.Warning( "Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() );
 		SetSpawn( INVALIDSERIAL );
 	}
 }
@@ -1544,7 +1544,7 @@ void CItem::Update( CSocket *mSock )
 	RemoveFromSight( mSock );
 	if( GetCont() == this )
 	{
-		Console.Warning( 2, "Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() );
+		Console.Warning( "Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() );
 		SetCont( NULL );
 	}
 
@@ -1596,7 +1596,7 @@ void CItem::Update( CSocket *mSock )
 			return;
 		}
 	}
-	Console.Error( 2, " CItem::Update(0x%X): cannot determine container type!", GetSerial() );
+	Console.Error( " CItem::Update(0x%X): cannot determine container type!", GetSerial() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2091,7 +2091,7 @@ bool CSpawnItem::HandleItemSpawner( void )
 			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), false );
 		else
 		{
-			Console.Warning( 2, "Bad Item Spawner Found, Deleting" );
+			Console.Warning( "Bad Item Spawner Found, Deleting" );
 			Delete();
 			return true;
 		}
@@ -2110,7 +2110,7 @@ bool CSpawnItem::HandleNPCSpawner( void )
 			Npcs->CreateNPC( this, UString::number( GetTempVar( CITV_MOREX ) ) );
 		else
 		{
-			Console.Warning( 2, "Bad Npc/Area Spawner Found, Deleting" );
+			Console.Warning( "Bad Npc/Area Spawner Found, Deleting" );
 			Delete();
 			return true;
 		}
@@ -2130,7 +2130,7 @@ bool CSpawnItem::HandleSpawnContainer( void )
 			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), true );
 		else
 		{
-			Console.Warning( 2, "Bad Spawn Container Found, Deleting" );
+			Console.Warning( "Bad Spawn Container Found, Deleting" );
 			Delete();
 			return true;
 		}

@@ -185,7 +185,7 @@ void DoMessageLoop( void )
 				}
 				break;
 			case MSG_UNKNOWN:
-			default:				Console.Error( 2, "Unknown message type" );		break;
+			default:				Console.Error( "Unknown message type" );		break;
 		}
 	}
 }
@@ -340,7 +340,7 @@ void CollectGarbage( void )
 		++delqIter;
 		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
 		{
-			Console.Warning( 2, "Invalid object found in Deletion Queue" );
+			Console.Warning( "Invalid object found in Deletion Queue" );
 			continue;
 		}
 		ObjectFactory::getSingleton().DestroyObject( mObj );
@@ -512,13 +512,13 @@ void endmessage( int x )
 void illinst( int x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
-	Console.Error( 0, "Illegal Instruction Signal caught - attempting shutdown" );
+	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
 	endmessage( x );
 }
 
 void aus( int signal )
 {
-	Console.Error( 2, "Server crash averted! Floating point exception caught." );
+	Console.Error( "Server crash averted! Floating point exception caught." );
 } 
 
 #endif
@@ -765,7 +765,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						mChar.IncHP( (SI16)( -pcalc ) );
 						break;
 					default:
-						Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, genericCheck()" );
+						Console.Error( " Fallout of switch statement without default. uox3.cpp, genericCheck()" );
 						mChar.SetPoisoned( 0 );
 						break;
 				}
@@ -1563,7 +1563,7 @@ void ParseArgs( int argc, char *argv[] )
 			++i;
 			if( i > argc )
 			{
-				Console.Error( 0, "Fatal error in CLUOX arguments" );
+				Console.Error( "Fatal error in CLUOX arguments" );
 				Shutdown( 10 );
 			}
 			Console.Cloak( argv[i] );
@@ -2447,7 +2447,7 @@ void UpdateFlag( CChar *mChar )
 		else
 		{
 			mChar->SetFlagBlue();
-			Console.Warning( 2, "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() );
+			Console.Warning( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() );
 		}
 	}
 	else
@@ -2572,7 +2572,7 @@ int main( int argc, char *argv[] )
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
 	{
-		Console.Error( 0, "Winsock 2.0 not found on your system..." );
+		Console.Error( "Winsock 2.0 not found on your system..." );
 		return 1;
 	}
 #endif

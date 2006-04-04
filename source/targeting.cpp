@@ -78,7 +78,6 @@ void PlVBuy( CSocket *s )//PlayerVendors
 	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
 
 	i->SetCont( p );	// move containers
-	mChar->Dirty( UT_STATWINDOW );
 }
 
 void HandleGuildTarget( CSocket *s )
@@ -886,7 +885,7 @@ void NpcResurrectTarget( CChar *i )
 
 	if( i->IsNpc() )
 	{
-		Console.Error( 2, Dictionary->GetEntry( 1079 ).c_str(), i );
+		Console.Error( Dictionary->GetEntry( 1079 ).c_str(), i );
 		return;
 	}
 	CSocket *mSock = i->GetSocket();
@@ -943,7 +942,7 @@ void NpcResurrectTarget( CChar *i )
 			mSock->sysmessage( 1080 );
 	}
 	else
-		Console.Warning( 2, "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() );
+		Console.Warning( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() );
 }
 
 

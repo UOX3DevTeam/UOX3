@@ -288,7 +288,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == NULL )
 	{
-		Console.Error( 2, "cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() );
+		Console.Error( "cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() );
 		return;
 	}
 	else
@@ -325,7 +325,6 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		PlaySound( sock, toMake->soundPlayed, true );
 
 	sock->sysmessage( 985 );
-	src->Dirty( UT_STATWINDOW );
 }
 
 void cEffects::checktempeffects( void )
@@ -588,7 +587,7 @@ void cEffects::checktempeffects( void )
 				}
 				break;
 			default:
-				Console.Error( 2, " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
+				Console.Error( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
 				break;
 		}
 		if( ValidateObject( s ) && equipCheckNeeded )
@@ -673,7 +672,7 @@ void reverseEffect( CTEffect *Effect )
 				s->SetUsingPotion( false );
 				break;
 			default:
-				Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
+				Console.Error( " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
 				break;
 		}
 	}
@@ -892,7 +891,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)RandomNum( 0, 1800 ) ) ); // set time between 0 and 30 minutes
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num );
+			Console.Error( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num );
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -942,7 +941,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( 0 );
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
+			Console.Error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -969,7 +968,7 @@ void cEffects::SaveEffects( void )
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.Error( 1, "Failed to open %s for writing", filename.c_str() );
+		Console.Error( "Failed to open %s for writing", filename.c_str() );
 		return;
 	}
 
@@ -1093,7 +1092,7 @@ void cEffects::LoadEffects( void )
 											toLoad->Source( data.toULong() );
 										break;
 									default:
-										Console.Error( 1, "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );
+										Console.Error( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );
 										break;
 								}
 							}

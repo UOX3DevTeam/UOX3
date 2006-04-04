@@ -6,6 +6,9 @@
 namespace UOX
 {
 
+const UI08 MAX_Z_STEP	= 9;
+const UI08 MAX_Z_FALL	= 20;
+
 /*
 enum UOMapType
 {
@@ -65,7 +68,7 @@ class CStaticIterator
 private:
 	Static_st	staticArray;
 	SI16		baseX, baseY;
-	SI32		pos;
+	UI32		pos;
 	UI08		remainX, remainY;
 	UI32		index, length;
 	bool		exactCoords;

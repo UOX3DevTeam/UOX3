@@ -447,7 +447,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		{
 			int charNum = UString( l.substr( 10 ) ).toInt();
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
-				Console.Error( 0, "Invalid character found in accounts" );
+				Console.Error( "Invalid character found in accounts" );
 			else
 			{
 				if( !r.empty() && r.length() != 0 )
@@ -504,7 +504,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 				if( errno != EEXIST )
 	#endif
 				{
-					Console.Error( 0, "CreateAccountSystem(): Couldn't create directory %s: errorcode %d", sNewPath.c_str(), errno );
+					Console.Error( "CreateAccountSystem(): Couldn't create directory %s: errorcode %d", sNewPath.c_str(), errno );
 					m_mapUsernameIDMap.clear();
 					m_mapUsernameMap.clear();
 					return 0L;
@@ -712,7 +712,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 		if( errno != EEXIST )
 #endif
 		{
-			Console.Error( 0, "AddAccount(): Couldn't create directory %s: errorcode %d", actbTemp.sPath.c_str(), errno );
+			Console.Error( "AddAccount(): Couldn't create directory %s: errorcode %d", actbTemp.sPath.c_str(), errno );
 			return 0x0000;
 		}
 	}
@@ -1121,7 +1121,7 @@ UI16 cAccountClass::Load(void)
 		{
 			int charNum = UString( l.substr( 10 ) ).toInt();
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
-				Console.Error( 0, "Invalid character found in accounts" );
+				Console.Error( "Invalid character found in accounts" );
 			else
 			{
 				if( !r.empty() && r.length() != 0 )
@@ -1717,7 +1717,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		if( actbID.sUsername != actbName.sUsername || actbID.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
-			Console.Error( 0, "Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str() );
+			Console.Error( "Save(): Mismatch %s - %s", actbID.sUsername.c_str(), actbName.sUsername.c_str() );
 			fsAccountsADM.close();
 			return 0xFFFF;
 		}
@@ -1774,7 +1774,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 			if( errno != EEXIST )
 #endif
 			{
-				Console.Error( 0, "Save(): Couldn't create directory %s: errorcode %d", actbID.sPath.c_str(), errno );
+				Console.Error( "Save(): Couldn't create directory %s: errorcode %d", actbID.sPath.c_str(), errno );
 				fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
 				continue;
 			}
@@ -1799,7 +1799,7 @@ UI16 cAccountClass::Save(bool bForceLoad)
 		if( !fsAccountsUAD.is_open() )
 		{
 			// Ok we were unable to open the file so this user will not be added.
-			Console.Error( 0, "Save(): Couldn't open file %s", sUsernameUADPath.c_str() );
+			Console.Error( "Save(): Couldn't open file %s", sUsernameUADPath.c_str() );
 			fsAccountsADM << "// !!! Couldn't save .uad file !!!" << std::endl;
 			continue; 
 		}

@@ -81,9 +81,9 @@ void		LoadTeleportLocations( void );
 //o---------------------------------------------------------------------------o
 CConsole::CConsole() : width( 80 ), height( 25 ),
 #if UOX_PLATFORM == PLATFORM_WIN32
-currentMode( NORMALMODE ), currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false )
+currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
 #else
-currentMode( NORMALMODE ), currentLevel( 0 ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
+currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
 #endif
 {
 }
@@ -307,11 +307,10 @@ void CConsole::Log( const char *toLog, ... )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Writes to the error log and the console.
 //o---------------------------------------------------------------------------o
-void CConsole::Error( UI08 level, const char *toWrite, ... )
+void CConsole::Error( const char *toWrite, ... )
 {
-	UI08 oldMode = CurrentMode(), oldLevel = CurrentLevel();
+	UI08 oldMode = CurrentMode();
 	CurrentMode( ERRORMODE );
-	CurrentLevel( level );
 	va_list argptr;
 	char msg[MAX_CONSOLE_BUFF];
 	va_start( argptr, toWrite );
@@ -324,7 +323,6 @@ void CConsole::Error( UI08 level, const char *toWrite, ... )
 	(*this) << "ERROR: " << (const char*)&msg[0] << myendl;
 	TurnNormal();
 	CurrentMode( oldMode );
-	CurrentLevel( oldLevel );
 }
 
 
@@ -578,11 +576,10 @@ void CConsole::PrintBasedOnVal( bool value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Writes to the warning log and the console.
 //o---------------------------------------------------------------------------o
-void CConsole::Warning( UI08 level, const char *toWrite, ... )
+void CConsole::Warning( const char *toWrite, ... )
 {
-	UI08 oldMode = CurrentMode(), oldLevel = CurrentLevel();
+	UI08 oldMode = CurrentMode();
 	CurrentMode( WARNINGMODE );
-	CurrentLevel( level );
 	va_list argptr;
 	char msg[MAX_CONSOLE_BUFF];
 	va_start( argptr, toWrite );
@@ -595,25 +592,16 @@ void CConsole::Warning( UI08 level, const char *toWrite, ... )
 	(*this) << "WARNING: " << (const char*)&msg[0] << myendl;
 	TurnNormal();
 	CurrentMode( oldMode );
-	CurrentLevel( oldLevel );
 }
 
 void CConsole::CurrentMode( UI08 value )
 {
 	currentMode = value;
 }
-void CConsole::CurrentLevel( UI08 value )
-{
-	currentLevel = value;
-}
 
 UI08 CConsole::CurrentMode( void ) const
 {
 	return currentMode;
-}
-UI08 CConsole::CurrentLevel( void ) const
-{
-	return currentLevel;
 }
 
 void CConsole::PrintStartOfLine( void )
@@ -812,7 +800,7 @@ int CConsole::cl_getch( void )
 		asw = WriteFile( cluox_stdin_writeback, &c, 1, &bytes_written, NULL );
 	if( bytes_written != 1 || asw == 0 )
 	{
-		Warning( 1, "Using cluox-io" );
+		Warning( "Using cluox-io" );
 		messageLoop << MSG_SHUTDOWN;
 	}
 	c = (UI08)fgetc( stdin );

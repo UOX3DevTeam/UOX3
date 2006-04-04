@@ -136,7 +136,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 		if( p != codeLookup.end() )
 			return p->second;
 		else
-			Console.Error( 0, "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
+			Console.Error( "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
 	}
 	return cLang;
 }
@@ -510,7 +510,7 @@ void CSpeechQueue::DumpInFile( void )
 	std::ofstream speechDestination( speechFile.c_str() );
 	if( !speechDestination ) 
 	{
-		Console.Error( 1, "Failed to open %s for writing", speechFile.c_str() );
+		Console.Error( "Failed to open %s for writing", speechFile.c_str() );
 		return;
 	}
 	SPEECHLIST_ITERATOR toWrite;

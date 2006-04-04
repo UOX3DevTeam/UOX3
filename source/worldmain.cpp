@@ -702,7 +702,7 @@ void CWorldMain::RegionSave( void )
 	std::ofstream regionsDestination( regionsFile.c_str() );
 	if( !regionsDestination ) 
 	{
-		Console.Error( 1, "Failed to open %s for writing", regionsFile.c_str() );
+		Console.Error( "Failed to open %s for writing", regionsFile.c_str() );
 		return;
 	}
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -742,7 +742,7 @@ void CWorldMain::SaveStatistics( void )
 	std::ofstream	statsDestination( statsFile.c_str() );
 	if( !statsDestination ) 
 	{
-		Console.Error( 1, "Failed to open %s for writing", statsFile.c_str() );
+		Console.Error( "Failed to open %s for writing", statsFile.c_str() );
 		return;
 	}
 

@@ -577,7 +577,7 @@ const UString ScriptSection::GrabData( void )
 ScriptSection::~ScriptSection()
 {
 	if( !FlushData() )
-		Console.Error( 3, "Section unable to flush data!" );
+		Console.Error( "Section unable to flush data!" );
 }
 
 //o--------------------------------------------------------------------------

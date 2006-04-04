@@ -515,7 +515,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		sText = sText.stripWhiteSpace();
 		if( sText.empty() )
 		{
-			Console.Error( 1, " %s directory is blank, set in uox.ini", verboseDirectory.c_str() );
+			Console.Error( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() );
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			return;
 		}
@@ -540,7 +540,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 
 		if( error )
 		{
-				Console.Error( 1, "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() );
+				Console.Error( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() );
 				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -1557,7 +1557,7 @@ bool CServerData::save( std::string filename )
 		rvalue = true;
 	}
 	else
-		Console.Error( 1, "Unable to open file %s for writing", filename.c_str() );
+		Console.Error( "Unable to open file %s for writing", filename.c_str() );
 	return rvalue;
 }
 
@@ -1696,7 +1696,7 @@ bool CServerData::ParseINI( const std::string filename )
 		}
 		else
 		{
-			Console.Warning( 2, "%s File not found, Using default settings.", filename.c_str() );
+			Console.Warning( "%s File not found, Using default settings.", filename.c_str() );
 			cwmWorldState->ServerData()->save();
 		}
 	}
@@ -2080,8 +2080,8 @@ void CServerData::HandleLine( const UString tag, const UString value )
 				if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
 				{
 					// We get here it wasn't a valid IP either.
-					Console.Warning( 1, "Failed to translate %s", sip.c_str() );
-					Console.Warning( 1, "This shard will not show up on the shard listing" );
+					Console.Warning( "Failed to translate %s", sip.c_str() );
+					Console.Warning( "This shard will not show up on the shard listing" );
 					break;
 				}
 				bDomain = false;
@@ -2283,7 +2283,7 @@ void CServerData::ServerLocation( std::string toSet )
 	}
 	else
 	{
-		Console.Error( 2, "Malformed location entry in ini file" );
+		Console.Error( "Malformed location entry in ini file" );
 	}
 }
 LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )

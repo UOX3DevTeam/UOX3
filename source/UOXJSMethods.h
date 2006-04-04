@@ -472,8 +472,8 @@ static JSFunctionSpec CConsole_Methods[] =
 {
 	{ "Print",				CConsole_Print,				1, 0, 0 },
 	{ "Log",				CConsole_Log,				1, 0, 0 },
-	{ "Error",				CConsole_Error,				2, 0, 0 },
-	{ "Warning",			CConsole_Warning,			2, 0, 0 },
+	{ "Error",				CConsole_Error,				1, 0, 0 },
+	{ "Warning",			CConsole_Warning,			1, 0, 0 },
 	{ "PrintSectionBegin",	CConsole_PrintSectionBegin,	0, 0, 0 },
 	{ "TurnYellow",			CConsole_TurnYellow,		0, 0, 0 },
 	{ "TurnRed",			CConsole_TurnRed,			0, 0, 0 },

@@ -200,7 +200,7 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 	catch( ... )
 	{
 		rvalue = false;
-		Console.Error( 1, "Invalid Object found: 0x%X", (UI32)toValidate ); 
+		Console.Error( "Invalid Object found: 0x%X", (UI32)toValidate ); 
 	}
 	return rvalue;
 }

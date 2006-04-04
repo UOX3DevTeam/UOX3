@@ -242,7 +242,7 @@ bool CPIBuyItem::Handle( void )
 							}
 							break;
 						default:
-							Console.Error( 2, " Fallout of switch statement without default. vendor.cpp, buyItem()" );
+							Console.Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
 							break;
 					}
 				}
@@ -258,7 +258,6 @@ bool CPIBuyItem::Handle( void )
 		clrSend.Serial( tSock->GetDWord( 3 ) );
 		tSock->Send( &clrSend );
 	}
-	mChar->Dirty( UT_STATWINDOW );
 	return true;
 }
 

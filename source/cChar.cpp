@@ -1801,7 +1801,7 @@ bool CChar::WearItem( CItem *toWear )
 		if( ValidateObject( GetItemAtLayer( tLayer ) ) )
 		{
 #if defined( UOX_DEBUG_MODE )
-			Console.Warning( 2, "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
+			Console.Warning( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X)", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, GetName().c_str(), serial );
 #endif
 			rvalue = false;
 		}
@@ -3142,12 +3142,12 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetTaming( data.toShort() );
 					rvalue = true;
 				}
-				if( UTag == "TAMEDHUNGERRATE" )
+				else if( UTag == "TAMEDHUNGERRATE" )
 				{
 					SetTamedHungerRate( data.toByte() );
 					rvalue = true;
 				}
-				if( UTag == "TAMEDHUNGERWILDCHANCE" )
+				else if( UTag == "TAMEDHUNGERWILDCHANCE" )
 				{
 					SetTamedHungerWildChance( data.toByte() );
 					rvalue = true;
@@ -3228,7 +3228,7 @@ bool CChar::LoadRemnants( void )
 	{
 		if( acct == AB_INVALID_ID )
 		{
-			Console.Warning( 2, "NPC: %s with serial 0x%X with bugged body found, deleting", GetName().c_str(), GetSerial() );
+			Console.Warning( "NPC: %s with serial 0x%X with bugged body found, deleting", GetName().c_str(), GetSerial() );
 			rvalue = false;
 		}
 		else
@@ -3249,7 +3249,7 @@ bool CChar::LoadRemnants( void )
 		{
 			if( IsNpc() )
 			{
-				Console.Warning( 2, "NPC: %s with serial 0x%X found outside valid world locations, deleting", GetName().c_str(), GetSerial() );
+				Console.Warning( "NPC: %s with serial 0x%X found outside valid world locations, deleting", GetName().c_str(), GetSerial() );
 				rvalue = false;
 			}
 			else

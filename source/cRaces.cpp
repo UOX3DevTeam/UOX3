@@ -243,8 +243,6 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			s->SetDexterity( stats[1] );
 		if( stats[2] != 0 )
 			s->SetIntelligence( stats[2] );
-		if( mSock != NULL )
-			s->Dirty( UT_STATWINDOW );
 
 		if( ValidateObject( hairobject ) )
 		{

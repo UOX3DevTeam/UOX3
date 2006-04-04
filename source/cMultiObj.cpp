@@ -25,23 +25,25 @@
 //|						Added CBoatObj as a derived class of CMultiObj to simplify some processes in the cBoat class
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
-#include "classes.h"
-#include "regions.h"
+#include "mapstuff.h"
 
 namespace UOX
 {
 
 const UI16	DEFMULTI_MAXLOCKEDDOWN	= 256;
 
+const UI08 HOUSEPRIV_OWNER	= 0;
+const UI08 HOUSEPRIV_BANNED = 1;
+
 CMultiObj::CMultiObj() : CItem(), deed( "" ), maxLockedDown( DEFMULTI_MAXLOCKEDDOWN )
 {
 	objType = OT_MULTI;
+	housePrivList.clear();
 }
 
 CMultiObj::~CMultiObj()
 {
-	owners.resize( 0 );
-	banList.resize( 0 );
+	housePrivList.clear();
 }
 
 //o--------------------------------------------------------------------------o
@@ -54,8 +56,8 @@ CMultiObj::~CMultiObj()
 //o--------------------------------------------------------------------------o
 void CMultiObj::AddToBanList( CChar *toBan )
 {
-	if( !IsOnBanList( toBan ) )
-		banList.push_back( toBan );
+	if( !IsOnBanList( toBan ) && !IsOwner( toBan ) )
+		housePrivList[toBan] = HOUSEPRIV_BANNED;
 }
 
 //o--------------------------------------------------------------------------o
@@ -68,13 +70,11 @@ void CMultiObj::AddToBanList( CChar *toBan )
 //o--------------------------------------------------------------------------o
 void CMultiObj::RemoveFromBanList( CChar *toRemove )
 {
-	for( CHARLIST_ITERATOR rIter = banList.begin(); rIter != banList.end(); ++rIter )
+	std::map< CChar *, UI08 >::iterator rIter = housePrivList.begin();
+	if( rIter != housePrivList.end() )
 	{
-		if( toRemove == (*rIter) )
-		{
-			banList.erase( rIter );
-			break;
-		}
+		if( rIter->second == HOUSEPRIV_BANNED )
+			housePrivList.erase( rIter );
 	}
 }
 
@@ -90,7 +90,7 @@ void CMultiObj::RemoveFromBanList( CChar *toRemove )
 void CMultiObj::AddAsOwner( CChar *newOwner )
 {
 	if( !IsOwner( newOwner ) && !IsOnBanList( newOwner ) )
-		owners.push_back( newOwner );
+		housePrivList[newOwner] = HOUSEPRIV_OWNER;
 }
 
 //o--------------------------------------------------------------------------o
@@ -103,27 +103,12 @@ void CMultiObj::AddAsOwner( CChar *newOwner )
 //o--------------------------------------------------------------------------o
 void CMultiObj::RemoveAsOwner( CChar *toRemove )
 {
-	for( CHARLIST_ITERATOR rIter = owners.begin(); rIter != owners.end(); ++rIter )
+	std::map< CChar *, UI08 >::iterator rIter = housePrivList.find( toRemove );
+	if( rIter != housePrivList.end() )
 	{
-		if( toRemove == (*rIter) )
-		{
-			owners.erase( rIter );
-			break;
-		}
+		if( rIter->second == HOUSEPRIV_OWNER )
+			housePrivList.erase( rIter );
 	}
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	ClearOwners( void )
-//|	Date			-	28th July, 2000
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Empties the owner list
-//o--------------------------------------------------------------------------o
-void CMultiObj::ClearOwners( void )
-{
-	owners.resize( 0 );
 }
 
 //o--------------------------------------------------------------------------o
@@ -136,10 +121,10 @@ void CMultiObj::ClearOwners( void )
 //o--------------------------------------------------------------------------o
 bool CMultiObj::IsOnBanList( CChar *toBan ) const
 {
-	CHARLIST_CITERATOR bIter;
-	for( bIter = banList.begin(); bIter != banList.end(); ++bIter )
+	std::map< CChar *, UI08 >::const_iterator bIter = housePrivList.find( toBan );
+	if( bIter != housePrivList.end() )
 	{
-		if( toBan == (*bIter) )
+		if( bIter->second == HOUSEPRIV_BANNED )
 			return true;
 	}
 	return false;
@@ -155,10 +140,10 @@ bool CMultiObj::IsOnBanList( CChar *toBan ) const
 //o--------------------------------------------------------------------------o
 bool CMultiObj::IsOwner( CChar *toFind ) const
 {
-	CHARLIST_CITERATOR oIter;
-	for( oIter = owners.begin(); oIter != owners.end(); ++oIter )
+	std::map< CChar *, UI08 >::const_iterator oIter = housePrivList.find( toFind );
+	if( oIter != housePrivList.end() )
 	{
-		if( toFind == (*oIter) )
+		if( oIter->second == HOUSEPRIV_OWNER )
 			return true;
 	}
 	return false;
@@ -354,19 +339,21 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	std::string destination; 
 	std::ostringstream dumping( destination ); 
 	
-	CHARLIST_CITERATOR ban, owner;
 	CItem::DumpBody( outStream );
 
-	for( ban = banList.begin(); ban != banList.end(); ++ban )
+	std::map< CChar *, UI08 >::const_iterator oIter;
+	for( oIter = housePrivList.begin(); oIter != housePrivList.end(); ++oIter )
 	{
-		if( ValidateObject( (*ban) ) )
-			dumping << "Banned=" << (*ban)->GetSerial() << std::endl;
-	}
-
-	for( owner = owners.begin(); owner != owners.end(); ++owner )
-	{
-		if( ValidateObject( (*owner) ) )
-			dumping << "CoOwner=" << (*owner)->GetSerial() << std::endl;
+		if( ValidateObject( oIter->first ) )
+		{
+			if( oIter->second == HOUSEPRIV_OWNER )
+				dumping << "CoOwner=";
+			else if( oIter->second == HOUSEPRIV_BANNED )
+				dumping << "Banned=";
+			else
+				continue;
+			dumping << oIter->first->GetSerial() << std::endl;
+		}
 	}
 
 	ITEMLIST_CITERATOR lIter;
@@ -419,13 +406,10 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 				}
 				break;
 			case 'D':
+				if( UTag == "DEEDNAME" )
 				{
-					if( UTag == "DEEDNAME" )
-					{
-						SetDeed( data );
-						rvalue = true;
-					}
-					break;
+					SetDeed( data );
+					rvalue = true;
 				}
 				break;
 			case 'L':

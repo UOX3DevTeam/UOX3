@@ -55,7 +55,7 @@ void DoSEErrorMessage( const char *txt, ... )
 #endif
 	vsprintf( msg, txt, argptr );
 	va_end( argptr );
-	Console.Error( 2, msg );
+	Console.Error( msg );
 }
 #else
 void DoSEErrorMessage( char *txt, ... )

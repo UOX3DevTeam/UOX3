@@ -338,7 +338,7 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target )
 			case IT_DOOR:		target->SetType( IT_LOCKEDDOOR );		break;
 			case IT_SPAWNCONT:	target->SetType( IT_LOCKEDSPAWNCONT );	break;
 			default:
-				Console.Error( 2, "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
+				Console.Error( "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
 				break;
 		}
 		Effects->PlaySound( target, 0x0200 );
@@ -514,7 +514,6 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 	{
 		sock->sysmessage( 680 );
 		sock->sysmessage( 681 );
-		caster->Dirty( UT_STATWINDOW );
 		return false;
 	}
 	else
@@ -2554,12 +2553,12 @@ UI08 cMagic::getFieldDir( CChar *s, SI16 x, SI16 y )
 					fieldDir = 1;
 					break;
 				default:
-					Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
+					Console.Error( " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
 					break;
 			}
 			break;
 		default:
-			Console.Error( 2, " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
+			Console.Error( " Fallout of switch statement without default. uox3.cpp, getFieldDir()" );
 			break;
 	}
 	return fieldDir;
@@ -2656,7 +2655,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
 								break;
 							default:
-								Console.Error( 2, " Unknown Travel spell %i, magic.cpp", curSpell );
+								Console.Error( " Unknown Travel spell %i, magic.cpp", curSpell );
 								break;
 						}
 					}
@@ -2782,7 +2781,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src );
 							break;
 						default:
-							Console.Error( 2, " Unknown CharacterTarget spell %i, magic.cpp", curSpell );
+							Console.Error( " Unknown CharacterTarget spell %i, magic.cpp", curSpell );
 							break;
 					}
 				}
@@ -2867,7 +2866,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z );
 							break;
 						default:
-							Console.Error( 2, " Unknown LocationTarget spell %i", curSpell );
+							Console.Error( " Unknown LocationTarget spell %i", curSpell );
 							break;
 					}
 				}					
@@ -2897,7 +2896,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
 							break;
 						default:
-							Console.Error( 2, " Unknown ItemTarget spell %i, magic.cpp", curSpell );
+							Console.Error( " Unknown ItemTarget spell %i, magic.cpp", curSpell );
 							break;
 					}
 				}
@@ -2934,7 +2933,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				(*((MAGIC_NOFUNC)magic_table[curSpell-1].mag_extra))( s, caster );
 				break;
 			default:	
-				Console.Error( 2, " Unknown NonTarget spell %i, magic.cpp", curSpell );
+				Console.Error( " Unknown NonTarget spell %i, magic.cpp", curSpell );
 				break;
 		}
 		return;
@@ -3189,7 +3188,7 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, std::string
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( 1, "Unable to open spell log file %s!", logName.c_str() );
+		Console.Error( "Unable to open spell log file %s!", logName.c_str() );
 		return;
 	}
 	char dateTime[1024];

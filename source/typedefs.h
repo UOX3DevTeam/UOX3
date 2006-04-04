@@ -112,7 +112,6 @@ const UI08 MAX_NAME		= 60;		// We have the space. Character packet comes with un
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 15;
-const UI08 MAX_Z_STEP	= 9;
 const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
 const UI08 MAXPOSTS		= 128;
 const SI08 ILLEGAL_Z	= -128;

@@ -81,14 +81,14 @@ bool CPINewBookHeader::Handle( void )
 				file.write( authBuff, 32 );
 
 				if( file.fail() )
-					Console.Error( 1, "Couldn't write to book file %s", fileName.c_str() );
+					Console.Error( "Couldn't write to book file %s", fileName.c_str() );
 			}
 			else
-				Console.Error( 1, "Failed to seek to book file %s", fileName.c_str() );
+				Console.Error( "Failed to seek to book file %s", fileName.c_str() );
 			file.close();
 		}
 		else
-			Console.Error( 1, "Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer );
+			Console.Error( "Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer );
 	}
 	return true;
 }
@@ -210,7 +210,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				cpbpToSend.Finalize();
 			}
 			else
-				Console.Error( 1, "Failed to seek to book file %s", fileName.c_str() );
+				Console.Error( "Failed to seek to book file %s", fileName.c_str() );
 
 			file.close();
 		}
@@ -362,11 +362,11 @@ bool CPIBookPage::Handle( void )
 				}
 			}
 			else
-				Console.Error( 1, "Failed to seek to book file %s", fileName.c_str() );
+				Console.Error( "Failed to seek to book file %s", fileName.c_str() );
 			file.close();
 		}
 		else
-			Console.Error( 1, "Couldn't write to book file %s", fileName.c_str() );
+			Console.Error( "Couldn't write to book file %s", fileName.c_str() );
 	}
 	return true;
 }

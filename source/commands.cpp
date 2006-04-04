@@ -331,7 +331,7 @@ void cCommands::Log( std::string command, CChar *player1, CChar *player2, std::s
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( 1, "Unable to open command log file %s!", logName.c_str() );
+		Console.Error( "Unable to open command log file %s!", logName.c_str() );
 		return;
 	}
 	char dateTime[1024];

@@ -58,7 +58,7 @@ namespace UOX
 
 		if( SpellID >= Magic->spells.size() || SpellID < 0 )
 		{
-			Console.Error( 2, "Invalid Spell ID" ); // Revise please...
+			Console.Error( "Invalid Spell ID" ); // Revise please...
 			*vp = JSVAL_NULL;
 			return JS_FALSE;
 		}
@@ -66,7 +66,7 @@ namespace UOX
 		SpellInfo *mySpell = &Magic->spells[SpellID];
 		if( mySpell == NULL )
 		{
-			Console.Error( 2, "Invalid Spell" );
+			Console.Error( "Invalid Spell" );
 			*vp = JSVAL_NULL;
 			return JS_FALSE;
 		}
@@ -1609,7 +1609,6 @@ namespace UOX
 			switch( JSVAL_TO_INT( id ) )
 			{
 			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
-			case CCONSOLE_LEVEL:	*vp = INT_TO_JSVAL( Console.CurrentLevel() );	break;
 			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
 			default:
 				break;
@@ -1626,7 +1625,6 @@ namespace UOX
 			switch( JSVAL_TO_INT( id ) )
 			{
 			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
-			case CCONSOLE_LEVEL:	Console.CurrentLevel( encaps.toInt() );		break;
 			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
 			default:
 				break;

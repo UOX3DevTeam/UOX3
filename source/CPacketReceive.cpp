@@ -2671,7 +2671,7 @@ bool CPIPopupMenuSelect::Handle( void )
 						Skills->Snooping( tSock, targChar, pack );
 				}
 				else
-					Console.Warning( 2, "Character 0x%X has no backpack!", targChar->GetSerial() );
+					Console.Warning( "Character 0x%X has no backpack!", targChar->GetSerial() );
 			}
 		}
 		break;

@@ -74,7 +74,7 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 	ScriptSection *npcCreate	= FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == NULL )
 	{
-		Console.Error( 2, "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str() );
+		Console.Error( "CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str() );
 		return NULL;
 	}
 
@@ -95,7 +95,7 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 		cCreated->SetSpawn( INVALIDSERIAL );
 
 		if( !ApplyNpcSection( cCreated, npcCreate ) )
-			Console.Error( 2, "Trying to apply an npc section failed" );
+			Console.Error( "Trying to apply an npc section failed" );
 
 		cScript *toGrab = JSMapping->GetScript( cCreated->GetScriptTrigger() );
 		if( toGrab != NULL )
@@ -530,7 +530,7 @@ UI16 addRandomColor( const std::string colorlist )
 	ScriptSection *RandomColours	= FileLookup->FindEntry( sect, colors_def );
 	if( RandomColours == NULL )
 	{
-		Console.Warning( 2, "Error Colorlist %s Not Found", colorlist.c_str() );
+		Console.Warning( "Error Colorlist %s Not Found", colorlist.c_str() );
 		return 0;
 	}
 	size_t i = RandomColours->NumEntries();
@@ -777,7 +777,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			{
 											ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
 											if( toFind == NULL )
-												Console.Warning( 2, "Invalid script entry called with GET tag, character serial 0x%X" , applyTo->GetSerial() );
+												Console.Warning( "Invalid script entry called with GET tag, character serial 0x%X" , applyTo->GetSerial() );
 											else
 												ApplyNpcSection( applyTo, toFind, isGate );
 			}
@@ -790,7 +790,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( ValidateObject( mypack ) )
 													retitem = Items->CreateItem( NULL, applyTo, 0x0EED, static_cast<UI16>(RandomNum( ndata, odata )), 0, OT_ITEM, true );
 												else
-													Console.Warning( 2, "Bad NPC Script with problem no backpack for gold" );
+													Console.Warning( "Bad NPC Script with problem no backpack for gold" );
 											}
 											break;
 			case DFNTAG_HAIRCOLOUR:
@@ -823,7 +823,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( ValidateObject( mypack ) )
 													retitem = addRandomLoot( mypack, cdata );
 												else
-													Console.Warning( 2, "Bad NPC Script with problem no backpack for loot" );
+													Console.Warning( "Bad NPC Script with problem no backpack for loot" );
 											}
 											break;
 			case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;				break;
@@ -898,7 +898,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													}
 												}
 												else
-													Console.Warning( 2, "Bad NPC Script with no Vendor Buy Pack for item" );
+													Console.Warning( "Bad NPC Script with no Vendor Buy Pack for item" );
 											}
 											break;
 			case DFNTAG_REATTACKAT:			
@@ -937,7 +937,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													}
 												}
 												else
-													Console.Warning( 2, "Bad NPC Script with no Vendor SellPack for item" );
+													Console.Warning( "Bad NPC Script with no Vendor SellPack for item" );
 											}
 											break;
 			case DFNTAG_SHOPITEM:
@@ -957,7 +957,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													}
 												}
 												else
-													Console.Warning( 2, "Bad NPC Script with no Vendor Bought Pack for item" );
+													Console.Warning( "Bad NPC Script with no Vendor Bought Pack for item" );
 											}
 											break;
 			case DFNTAG_SAYCOLOUR:			

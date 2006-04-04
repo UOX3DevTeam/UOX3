@@ -211,7 +211,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 
 	if( !isValidDirection( dir ) )
 	{
-		Console.Error( 2, "%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, c->GetName().c_str(), dir, dir );
+		Console.Error( "%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, c->GetName().c_str(), dir, dir );
 		// If I don't do this, the NPC will keep trying to walk on the same step, which is
 		// where he's already at. Can cause an infinite loop. (Trust me, was one of the things
 		// that locked up NW Alpha 2)
@@ -687,7 +687,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 				SI32 length = Map->SeekMulti( multiID );
 				if( length == -1 || length >= 17000000 ) //Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 				{
-					Console.Error( 2, "Walking() - Bad length in multi file. Avoiding stall" );
+					Console.Error( "Walking() - Bad length in multi file. Avoiding stall" );
 					const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
 					CLand& land = Map->SeekLand( map1.id );
 					if( land.CheckFlag( TF_WET ) ) // is it water?
@@ -1172,7 +1172,7 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )   //type is npcwalk 
 				Walking( NULL, i, jMod, 256 );
 			break;
 		default:
-			Console.Error( 2, "Bad NPC Wander type passed to NpcWalk: %i", getWander );
+			Console.Error( "Bad NPC Wander type passed to NpcWalk: %i", getWander );
 			break;
 	}
 }
@@ -1579,6 +1579,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	UI16 i				= 0;
+	SI08 topTile		= ILLEGAL_Z;
 	CTileUni *tb;
 	CTileUni xyblock[XYMAX];
 	GetBlockingMap( x, y, xyblock, xycount, oldx, oldy, worldNumber );
@@ -1592,6 +1593,9 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 
 		if( tb->Top() < newz )
 			continue;
+
+		if( tb->Top() >= topTile )
+			topTile = tb->Top();
 
 		if( waterWalk )
 		{
@@ -1643,41 +1647,48 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 		}
 	}
 
-    const SI08 item_influence = UOX_MAX( static_cast<SI08>(newz + MAX_ITEM_Z_INFLUENCE), oldz );
-	// also take care to look on all tiles the creature has fallen through
-	// (npc's walking on ocean bug)
-	// now the new Z-cordinate of creature is known, 
-	// check if it hits it's head against something (blocking in other words)
-	for( i = 0; i < xycount; ++i )
+	if( newz <= (oldz - MAX_Z_FALL) && newz < topTile )	// If we are falling from the air, don't block, if we fall through hills, block.
+		newz = ILLEGAL_Z;
+
+	if( newz != ILLEGAL_Z )
 	{
-		tb = &xyblock[i]; 
+		const SI08 item_influence = UOX_MAX( static_cast<SI08>(newz + MAX_ITEM_Z_INFLUENCE), oldz );
+		// also take care to look on all tiles the creature has fallen through
+		// (npc's walking on ocean bug)
+		// now the new Z-cordinate of creature is known, 
+		// check if it hits it's head against something (blocking in other words)
 
-		if( tb->Top() < newz )
-			continue;
+		for( i = 0; i < xycount; ++i )
+		{
+			tb = &xyblock[i]; 
 
-		if( waterWalk )
-		{
-			if( ( ( tb->Top() > newz && tb->BaseZ() <= item_influence ) ||
-				( tb->Top() == newz && ontype == 0 ) && !tb->CheckFlag( TF_WET ) ) )	// Check for blocking tile
+			if( tb->Top() < newz )
+				continue;
+
+			if( waterWalk )
 			{
-				newz = ILLEGAL_Z;
-				break;
+				if( ( ( tb->Top() > newz && tb->BaseZ() <= item_influence ) ||
+					( tb->Top() == newz && ontype == 0 ) && !tb->CheckFlag( TF_WET ) ) )	// Check for blocking tile
+				{
+					newz = ILLEGAL_Z;
+					break;
+				}
+				continue;
 			}
-			continue;
-		}
-		if( ( tb->CheckFlag( TF_BLOCKING ) || ( tb->CheckFlag( TF_SURFACE ) && tb->Top() > newz ) ) &&	// Check for blocking tile or stairs
-			!( isGM && ( tb->CheckFlag( TF_WINDOW ) || tb->CheckFlag( TF_DOOR ) ) ) )				// ghosts can walk through doors
-		{
-			if( tb->Top() > newz && tb->BaseZ() <= item_influence || ( tb->Top() == newz && ontype == 0 ) )
+			if( ( tb->CheckFlag( TF_BLOCKING ) || ( tb->CheckFlag( TF_SURFACE ) && tb->Top() > newz ) ) &&	// Check for blocking tile or stairs
+				!( isGM && ( tb->CheckFlag( TF_WINDOW ) || tb->CheckFlag( TF_DOOR ) ) ) )				// ghosts can walk through doors
 			{
-				newz = ILLEGAL_Z;
-				break;
+				if( tb->Top() > newz && tb->BaseZ() <= item_influence || ( tb->Top() == newz && ontype == 0 ) )
+				{
+					newz = ILLEGAL_Z;
+					break;
+				}
 			}
 		}
+		if( newz != ILLEGAL_Z && !justask ) // save information if we have climbed on last move.
+			c->SetLevitate( on_ladder );
 	}
 
-	if( newz != ILLEGAL_Z && !justask ) // save information if we have climbed on last move.
-		c->SetLevitate( on_ladder );
 	return newz;
 }
 

@@ -284,7 +284,7 @@ void LoadSkills( void )
 						else if( UTag == "NAME" )
 							cwmWorldState->skill[i].name = data.stripWhiteSpace();
 						else
-							Console.Warning( 2, "Unknown tag in skills.dfn: %s", data.stripWhiteSpace().c_str() );
+							Console.Warning( "Unknown tag in skills.dfn: %s", data.stripWhiteSpace().c_str() );
 					}
 				}
 			}
@@ -320,7 +320,7 @@ void LoadSpawnRegions( void )
 					cwmWorldState->spawnRegions[i]->Load( toScan );
 				}
 				else
-					Console.Warning( 2, "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i );
+					Console.Warning( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i );
 			}
 		}
 	}
@@ -368,7 +368,7 @@ void LoadRegions( void )
 						cwmWorldState->townRegions[i]->Load( ourRegions );
 				}
 				else
-					Console.Warning( 2, "regions.dfn has a duplicate REGION entry, Entry Number: %u", i );
+					Console.Warning( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i );
 			}
 		}
 	}
@@ -414,8 +414,8 @@ void LoadTeleportLocations( void )
 	if( !FileExists( filename ) )
 	{
 		Console << myendl;
-		Console.Error( 1, " Failed to open teleport data script %s", filename.c_str() );
-		Console.Error( 1, " Teleport Data not found" );
+		Console.Error( " Failed to open teleport data script %s", filename.c_str() );
+		Console.Error( " Teleport Data not found" );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -467,7 +467,7 @@ void LoadTeleportLocations( void )
 							cwmWorldState->teleLocs.push_back( toAdd );
 						}
 						else
-							Console.Error( 2, "Insufficient parameters for teleport entry" );
+							Console.Error( "Insufficient parameters for teleport entry" );
 					}
 				}
 			}
@@ -616,7 +616,7 @@ void LoadPlaces( void )
 			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
 			{
 				if( cwmWorldState->goPlaces.find( entryNum ) != cwmWorldState->goPlaces.end() )
-					Console.Warning( 2, "Doubled up entry in Location.dfn (%u)", entryNum );
+					Console.Warning( "Doubled up entry in Location.dfn (%u)", entryNum );
 				toAdd = &cwmWorldState->goPlaces[entryNum];
 				if( toAdd != NULL )
 				{
