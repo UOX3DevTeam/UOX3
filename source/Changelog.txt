@@ -1,3 +1,10 @@
+4/05/2006 - grimson
+	Changed the use of the HP DFN tag for items so you can specify a range for a random value.
+	
+	DFN Changes:
+	Updated the stats for all weapons to fit the pre-AOS values. Pushed up the damage values
+	of AOS and SE weapons so that they are in the same area as the other weapons.
+
 4/04/2006 - giwo (0.98-3.6)
 	Removed unused level value passed with Console.Warning() and Console.Error().
 	Removed JS Console prop .level

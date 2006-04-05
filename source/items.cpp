@@ -143,7 +143,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 											ApplyItemSection( applyTo, toFind );
 			}
 										break;
-			case DFNTAG_HP:				applyTo->SetHP( static_cast<SI16>(ndata) );				break;
+			case DFNTAG_HP:				applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
 			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
 			case DFNTAG_ID:				applyTo->SetID( static_cast<UI16>(ndata) );				break;
