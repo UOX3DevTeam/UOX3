@@ -1,4 +1,7 @@
 4/06/2006 - grimson
+	Updated potion.js, so heal potions work again.
+
+4/06/2006 - grimson
 	Catch some more client crashes with speak, that's in the wrong colour.
 	Update the reputation flags of a NPC when the NPCFlag get's loaded.
 
