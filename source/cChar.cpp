@@ -1401,7 +1401,6 @@ void CChar::SetViewHouseAsIcon( bool newValue )
 {
 	priv.set( BIT_VIEWHOUSEASICON, newValue );
 }
-// 0x0800 is free
 void CChar::SetNoNeedMana( bool newValue )
 {
 	priv.set( BIT_NONEEDMANA, newValue );
@@ -1714,7 +1713,7 @@ void CChar::Teleport( void )
 			{
 				if( ValidateObject( tempItem ) )
 				{
-					if( tempItem->GetID( 1 ) >= 0x40 && objInRange( this, tempItem, DIST_BUILDRANGE ) )
+					if( tempItem->CanBeObjType( OT_MULTI ) && objInRange( this, tempItem, DIST_BUILDRANGE ) )
 						tempItem->SendToSocket( mSock );
 					else if( objInRange( this, tempItem, visrange ) )
 						tempItem->SendToSocket( mSock );
@@ -1990,6 +1989,19 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
+
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
+	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
+	dumping << "Privileges=" << "0x" << GetPriv() << std::endl;
+	if( ValidateObject( packitem ) )
+		dumping << "PackItem=" << "0x" << packitem->GetSerial() << std::endl;	// store something meaningful
+	else
+		dumping << "PackItem=" << "0x" << INVALIDSERIAL << std::endl;
+
+	// Decimal / String Values
+	dumping << std::dec;
 	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
 	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
 	dumping << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << std::endl;
@@ -2001,20 +2013,13 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	if ( GetMaxStamFixed() )
 		dumping << "MAXSTAM=" << (SI16)maxStam << std::endl;
 	dumping << "Town=" << (SI16)GetTown() << std::endl;
-	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
-	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
-	dumping << "SummonTimer=" << std::dec << GetTimer( tNPC_SUMMONTIME ) << std::endl;
+	dumping << "SummonTimer=" << GetTimer( tNPC_SUMMONTIME ) << std::endl;
 	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
 	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
 	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
 	dumping << "Region=" << (SI16)GetRegionNum() << std::endl;
-	if( ValidateObject( packitem ) )
-		dumping << "PackItem=" << std::hex << "0x" << packitem->GetSerial() << std::endl;	// store something meaningful
-	else
-		dumping << "PackItem=" << std::hex << "0x" << INVALIDSERIAL << std::endl;
-	dumping << "AdvanceObject=" << std::dec << GetAdvObj() << std::endl;
+	dumping << "AdvanceObject=" << GetAdvObj() << std::endl;
 	dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
-	dumping << "Privileges=" << std::hex << "0x" << GetPriv() << std::endl;
 
 	// Write out the BaseSkills and the SkillLocks here
 	// Format: BaseSkills=[0,34]-[1,255]-[END]
@@ -2090,6 +2095,11 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	std::string destination; 
 	std::ostringstream dumping( destination ); 
 
+	// Hexadecimal Values
+	dumping << std::hex;
+
+	// Decimal / String Values
+	dumping << std::dec;
 	dumping << "NpcAIType=" << aiType << std::endl;
 	dumping << "Taming=" << taming << std::endl;
 	dumping << "Peaceing=" << peaceing << std::endl;
@@ -2119,20 +2129,25 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	std::string destination;
 	std::ostringstream dumping( destination );
 
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "RobeSerial=" << "0x" << robe << std::endl;
+	dumping << "OriginalID=" << "0x" << origID << ",0x" << origSkin << std::endl;
+	dumping << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << std::endl;
+	dumping << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << std::endl;
+	dumping << "TownVote=" << "0x" << townvote << std::endl;
+
+	// Decimal / String Values
+	dumping << std::dec;
 	dumping << "Account=" << accountNum << std::endl;
 	dumping << "LastOn=" << lastOn << std::endl;
 	dumping << "LastOnSecs=" << lastOnSecs << std::endl;
 	dumping << "OrgName=" << origName << std::endl;
-	dumping << "RobeSerial=" << std::hex << "0x" << robe << std::endl;
-	dumping << "OriginalID=" << "0x" << origID << ",0x" << origSkin << std::endl;
-	dumping << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << std::endl;
-	dumping << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << std::endl;
-	dumping << "CommandLevel=" << std::dec << (SI16)commandLevel << std::endl;	// command level
+	dumping << "CommandLevel=" << (SI16)commandLevel << std::endl;	// command level
 	dumping << "Squelched=" << (SI16)squelched << std::endl;
 	dumping << "Deaths=" << deaths << std::endl;
 	dumping << "FixedLight=" << (SI16)fixedLight << std::endl;
-	dumping << "TownVote=" << std::hex << "0x" << townvote << std::endl;
-	dumping << "TownPrivileges=" << std::dec << (SI16)townpriv << std::endl;
+	dumping << "TownPrivileges=" << (SI16)townpriv << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2815,7 +2830,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
 				{
-					SetGuildFealty( data.toLong() );
+					SetGuildFealty( data.toULong() );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTITLE" )

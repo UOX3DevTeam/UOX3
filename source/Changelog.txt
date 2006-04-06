@@ -1,3 +1,7 @@
+4/06/2006 - giwo (0.98-3.6a)
+	Fixed a rather substantial issue causing some character values to save incorrectly.
+	Fixed a sign mismatch with GuildFealty.
+
 4/05/2006 - grimson
 	Changed the use of the HP DFN tag for items so you can specify a range for a random value.
 	

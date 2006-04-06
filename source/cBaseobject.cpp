@@ -598,14 +598,45 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	SI16 temp_st2, temp_dx2, temp_in2;
 
 
-	//no need to check default for these, this should be in for every thing.
-	dumping << "Name=" << name << std::endl;
-	dumping << "Serial=" << "0x" << std::hex << serial << std::endl;
-	dumping << "Location=" << std::dec << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << std::endl;
-	dumping << "ID=" << "0x" << std::hex << id << std::endl;
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "Serial=" << "0x" << serial << std::endl;
+	dumping << "ID=" << "0x" << id << std::endl;
 	dumping << "Colour=" << "0x" << colour << std::endl;
 	dumping << "Direction=" << "0x" << (SI16)dir << std::endl;
-	dumping << "Title=" << std::dec << title << std::endl;
+	if( ValidateObject( multis ) )
+	{
+		dumping << "MultiID=" << "0x";
+		try
+		{
+			dumping << multis->GetSerial() << std::endl;
+		}
+		catch( ... )
+		{
+			dumping << "FFFFFFFF" << std::endl;
+			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
+		}
+	}
+	dumping << "SpawnerID=" << "0x" << spawnserial << std::endl;
+	if( ValidateObject( owner ) )
+	{
+		dumping << "OwnerID=" << "0x";
+		try
+		{
+			dumping << owner->GetSerial() << std::endl;
+		}
+		catch( ... )
+		{
+			dumping << "FFFFFFFF" << std::endl;
+			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'Owner' points to invalid memory." << myendl;
+		}
+	}
+
+	// Decimal / String Values
+	dumping << std::dec;
+	dumping << "Name=" << name << std::endl;
+	dumping << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << std::endl;
+	dumping << "Title=" << title << std::endl;
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
 	temp_dx2 = dx2;
@@ -634,35 +665,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	dumping << "Intelligence=" << intelligence << "," << temp_in2 << std::endl;
 	dumping << "Strength=" << strength << "," << temp_st2 << std::endl;
 	dumping << "HitPoints=" << hitpoints << std::endl;
-
-	if( ValidateObject( multis ) )
-	{
-		dumping << "MultiID=" << "0x" << std::hex;
-		try
-		{
-			dumping << multis->GetSerial() << std::endl;
-		}
-		catch( ... )
-		{
-			dumping << "FFFFFFFF" << std::endl;
-			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
-		}
-	}
-	dumping << "SpawnerID=" << "0x" << std::hex << spawnserial << std::endl;
-	if( ValidateObject( owner ) )
-	{
-		dumping << "OwnerID=" << "0x" << std::hex;
-		try
-		{
-			dumping << owner->GetSerial() << std::endl;
-		}
-		catch( ... )
-		{
-			dumping << "FFFFFFFF" << std::endl;
-			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'Owner' points to invalid memory." << myendl;
-		}
-	}
-	dumping << "Race=" << std::dec << race << std::endl;
+	dumping << "Race=" << race << std::endl;
 	dumping << "Visible=" << (SI16)visible << std::endl;
 	dumping << "Disabled=" << (isDisabled()?"1":"0") << std::endl;
 	dumping << "Damage=" << lodamage << "," << hidamage << std::endl;

@@ -341,6 +341,11 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	
 	CItem::DumpBody( outStream );
 
+	// Hexadecimal Values
+	dumping << std::hex;
+
+	// Decimal / String Values
+	dumping << std::dec;
 	std::map< CChar *, UI08 >::const_iterator oIter;
 	for( oIter = housePrivList.begin(); oIter != housePrivList.end(); ++oIter )
 	{
@@ -583,9 +588,15 @@ bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CMultiObj::DumpBody( outStream );
-	dumping << "Hold=" << "0x" << std::hex << hold << std::endl;
-	dumping << "Planks=" << "0x" << std::hex << planks[0] << "," << "0x" << planks[1] << std::endl;
-	dumping << "Tiller=" << "0x" << std::hex << tiller << std::dec << std::endl;
+
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "Hold=" << "0x" << hold << std::endl;
+	dumping << "Planks=" << "0x" << planks[0] << ",0x" << planks[1] << std::endl;
+	dumping << "Tiller=" << "0x" << tiller << std::dec << std::endl;
+
+	// Decimal / String Values
+	dumping << std::dec;
 	
 	outStream << dumping.str();
 	return true;

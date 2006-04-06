@@ -961,17 +961,25 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	std::ostringstream dumping( destination ); 
 
 	CBaseObject::DumpBody( outStream );
-	dumping << "Layer=" << "0x" << std::hex << (SI16)GetLayer() << std::endl;
+
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "Layer=" << "0x" << (SI16)GetLayer() << std::endl;
 	dumping << "Cont=" << "0x" << GetContSerial() << std::endl;
 	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << std::endl;
-	dumping << "Name2=" << std::dec << GetName2() << std::endl;
-	dumping << "Creator=" << "0x" << std::hex << GetCreator() << std::endl;
-	dumping << "Desc=" << std::dec << GetDesc() << std::endl;
+	dumping << "Creator=" << "0x" << GetCreator() << std::endl;
+	dumping << "MoreXYZ=" << "0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << std::endl;
+	dumping << "Glow=" << "0x" << GetGlow() << std::endl;
+	dumping << "GlowBC=" << "0x" << GetGlowColour() << std::endl;
+	dumping << "Spells=" << "0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << std::endl;
+
+	// Decimal / String Values
+	dumping << std::dec;
+	dumping << "Name2=" << GetName2() << std::endl;
+	dumping << "Desc=" << GetDesc() << std::endl;
 	dumping << "Type=" << static_cast<SI16>(GetType()) << std::endl;
 	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
-	dumping << "MoreXYZ=" << "0x" << std::hex << GetTempVar( CITV_MOREX ) << "," << "0x" << GetTempVar( CITV_MOREY ) << "," << "0x" << GetTempVar( CITV_MOREZ ) << std::endl;
-	dumping << "Amount=" << std::dec;
-	dumping << GetAmount() << std::endl;
+	dumping << "Amount=" << GetAmount() << std::endl;
 	dumping << "MaxHP=" << GetMaxHP() << std::endl;
 	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
 	dumping << "Movable=" << (SI16)GetMovable() << std::endl;
@@ -986,14 +994,11 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "Corpse=" << (SI16)(isCorpse()?1:0) << std::endl;
 	dumping << "Wipe=" << (SI16)(isWipeable()?1:0) << std::endl;
 	dumping << "Good=" << GetGood() << std::endl;
-	dumping << "Glow=" << "0x" << std::hex << GetGlow() << std::endl;
-	dumping << "GlowBC=" << "0x" << GetGlowColour() << std::endl;
-	dumping << "GlowType=" << std::dec << (SI16)GetGlowEffect() << std::endl;
+	dumping << "GlowType=" << (SI16)GetGlowEffect() << std::endl;
 	dumping << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << std::endl;
 	dumping << "EntryMadeFrom=" << EntryMadeFrom() << std::endl;
-	dumping << "Spells=" << "0x" << std::hex << GetSpell( 0 ) << "," << "0x" << GetSpell( 1 ) << "," << "0x" << GetSpell( 2 ) << std::dec << std::endl;
 
 	outStream << dumping.str();
 
