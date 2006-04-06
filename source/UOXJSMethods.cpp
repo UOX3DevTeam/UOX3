@@ -82,7 +82,7 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 	toAdd.TargType( spTrg );
 
 	// Added that because transparent text could cause trouble
-	if( sColour != 0x1700 )
+	if( sColour != 0x1700 && sColour != 0x0)
 		toAdd.Colour( sColour );
 	else
 		toAdd.Colour( 0x0058 );

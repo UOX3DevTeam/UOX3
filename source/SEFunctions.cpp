@@ -1431,7 +1431,12 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 	toAdd.Speech( tmpString );
 	toAdd.Font( (FontType)myChar->GetFontType() );
 	toAdd.Speaker( INVALIDSERIAL );
-	toAdd.Colour( mySock->GetWord( 4 ) );
+	if( mySock->GetWord( 4 ) == 0x1700 )
+		toAdd.Colour( 0x5A );
+	else if( mySock->GetWord( 4 ) == 0x0 )
+		toAdd.Colour( 0x5A );
+	else
+		toAdd.Colour( mySock->GetWord( 4 ) );
 	toAdd.Type( SYSTEM );
 	toAdd.At( cwmWorldState->GetUICurrentTime() );
 	toAdd.TargType( SPTRG_BROADCASTALL );

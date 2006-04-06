@@ -1531,7 +1531,10 @@ void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 	toAdd.Type( OBJ );
 	toAdd.At( BuildTimeValue( secsFromNow ) );
 	toAdd.TargType( SPTRG_PCNPC );
-	toAdd.Colour( Colour );
+	if( Colour == 0x0 || Colour == 0x1700)
+		toAdd.Colour( 0x03B2 );
+	else
+		toAdd.Colour( Colour );
 }
 
 

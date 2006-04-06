@@ -2051,9 +2051,9 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 		}
 		dumping << "[END]" << std::endl;
 	}
-	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;  
+	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;
 	dumping << "FontType=" << (SI16)GetFontType() << std::endl;
-	dumping << "TownTitle=" << (GetTownTitle()?1:0) << std::endl;
+	dumping << "TownTitle=" << (SI16)(GetTownTitle()?1:0) << std::endl;
 	//-------------------------------------------------------------------------------------------
 	dumping << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << std::endl;
 	dumping << "CanAttack=" << (SI16)(GetCanAttack()?1:0) << std::endl;
@@ -2958,6 +2958,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "NPCFLAG" )
 				{
 					SetNPCFlag( (cNPC_FLAG)data.toUByte() );
+					UpdateFlag( this );
 					rvalue = true;
 				}
 				break;
@@ -3530,6 +3531,8 @@ void CChar::talkAll( SI32 dictEntry, bool antispam, ... )
 //o---------------------------------------------------------------------------o
 void CChar::emote( CSocket *s, std::string txt, bool antispam )
 {
+	UI16 emoteColour = GetEmoteColour();
+
 	bool cont = !antispam;
 	if( s != NULL && !txt.empty() )
 	{
@@ -3554,7 +3557,10 @@ void CChar::emote( CSocket *s, std::string txt, bool antispam )
 			toAdd.Type( EMOTE );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
 			toAdd.TargType( SPTRG_INDIVIDUAL );
-			toAdd.Colour( GetEmoteColour() );
+			if( emoteColour == 0x0 || emoteColour == 0x1700)
+				toAdd.Colour( 0x5A );
+			else
+				toAdd.Colour( emoteColour );
 		}
 	}
 }

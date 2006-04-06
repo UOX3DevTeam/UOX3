@@ -1461,6 +1461,8 @@ void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 //o---------------------------------------------------------------------------o
 void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
 {
+	UI16 targColour = Colour;
+
 	if( txt == NULL )
 		return;
 	CChar *mChar		= CurrcharObj();
@@ -1478,7 +1480,6 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 		CItem *getItem = static_cast< CItem *>(getObj);
 		if( getItem->isCorpse() )
 		{
-			UI16 targColour;
 			CChar *targChar = getItem->GetOwnerObj();
 			if( ValidateObject( targChar ) )
 				targColour = GetFlagColour( mChar, targChar );
@@ -1494,13 +1495,13 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 					case 0x04:	targColour = 0x005A;	break;	// blue
 				}
 			}
-			toAdd.Colour( targColour );
 		}
 	}
-	else
-		toAdd.Colour( Colour );
-	if( toAdd.Colour() == 0 )
+
+	if( targColour == 0x0 || targColour == 0x1700)
 		toAdd.Colour( 0x03B2 );
+	else
+		toAdd.Colour( targColour );
 }
 
 void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a character

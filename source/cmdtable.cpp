@@ -441,7 +441,13 @@ void command_tell( CSocket *s )
 		toAdd.Type( TALK );
 		toAdd.At( cwmWorldState->GetUICurrentTime() );
 		toAdd.TargType( SPTRG_INDIVIDUAL );
-		toAdd.Colour( mChar->GetSayColour() );
+		if( mChar->GetSayColour() == 0x1700 )
+			toAdd.Colour( 0x5A );
+		else if( mChar->GetSayColour() == 0x0 )
+			toAdd.Colour( 0x5A );
+		else
+			toAdd.Colour( mChar->GetSayColour() );
+
 	}
 }
 

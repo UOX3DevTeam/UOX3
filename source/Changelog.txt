@@ -1,3 +1,10 @@
+4/06/2006 - grimson
+	Catch some more client crashes with speak, that's in the wrong colour.
+	Update the reputation flags of a NPC when the NPCFlag get's loaded.
+
+	DFN Changes:
+	Pushed up the damage values of most NPCs.
+
 4/06/2006 - giwo (0.98-3.6a)
 	Fixed a rather substantial issue causing some character values to save incorrectly.
 	Fixed a sign mismatch with GuildFealty.
