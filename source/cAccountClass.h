@@ -44,24 +44,23 @@ enum CAccountBlock_Errors
 //
 enum CAccountBlock_Flags
 {
-	AB_FLAGS_NONE		=	0,
-	AB_FLAGS_BANNED		=	1,
-	AB_FLAGS_SUSPENDED	=	2,
-	AB_FLAGS_PUBLIC		=	3,
-	AB_FLAGS_ONLINE		=	4,
-	AB_FLAGS_CHARACTER1	=	5,
-	AB_FLAGS_CHARACTER2	=	6,
-	AB_FLAGS_CHARACTER3	=	7,
-	AB_FLAGS_CHARACTER4	=	8,
-	AB_FLAGS_CHARACTER5	=	9,
-	AB_FLAGS_CHARACTER6	=	10,
-	AB_FLAGS_UNUSED8	=	11,
-	AB_FLAGS_UNUSED9	=	12,
-	AB_FLAGS_UNUSED10	=	13,
-	AB_FLAGS_SEER		=	14,
-	AB_FLAGS_COUNSELOR	=	15,
-	AB_FLAGS_GM			=	16,
-	AB_FLAGS_ALL		=	17
+	AB_FLAGS_BANNED		=	0,
+	AB_FLAGS_SUSPENDED	=	1,
+	AB_FLAGS_PUBLIC		=	2,
+	AB_FLAGS_ONLINE		=	3,
+	AB_FLAGS_CHARACTER1	=	4,
+	AB_FLAGS_CHARACTER2	=	5,
+	AB_FLAGS_CHARACTER3	=	6,
+	AB_FLAGS_CHARACTER4	=	7,
+	AB_FLAGS_CHARACTER5	=	8,
+	AB_FLAGS_CHARACTER6	=	9,
+	AB_FLAGS_UNUSED8	=	10,
+	AB_FLAGS_UNUSED9	=	11,
+	AB_FLAGS_UNUSED10	=	12,
+	AB_FLAGS_SEER		=	13,
+	AB_FLAGS_COUNSELOR	=	14,
+	AB_FLAGS_GM			=	15,
+	AB_FLAGS_ALL		=	16
 };
 //
 
@@ -169,6 +168,7 @@ public:
 	cAccountClass& operator--(int);
 	UI16					CreateAccountSystem( void );
 	UI16					ImportAccounts( void );
+	void					WriteAccountSection( CAccountBlock& actbTemp, std::fstream& fsOut );
 	UI16					AddAccount( std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000 );
 	bool					DelAccount( std::string sUsername );
 	bool					DelAccount( UI16 wAccountID );
@@ -181,7 +181,7 @@ public:
 	bool					isUser( std::string sUsername );
 	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );
 	bool					AddCharacter( UI16 wAccountID, UI32 dwCharacterID, CChar *lpObject );
-	bool					DelCharacter( UI16 wAccountID, int nSlot );
+	bool					DelCharacter( UI16 wAccountID, UI08 nSlot );
 	bool					TransCharacter( UI16 wSAccountID, UI16 wSSlot, UI16 wDAccountID );
 	CAccountBlock&			GetAccountByName( std::string sUsername );
 	CAccountBlock&			GetAccountByID( UI16 wAccountID );

@@ -1409,28 +1409,14 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				}
 			}
 
-			if( ourTarg->isHuman() )
-			{
-				getDef = calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL );
-				getDef = HalfRandomNum( getDef );
-			}
-			else if( ourTarg->GetResist( PHYSICAL ) > 0 )
-				getDef = ourTarg->GetResist( PHYSICAL );
-			else
-				getDef = 20;
+			getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ) );
 			break;
 		case POISON:		//	POISON Damage
 			damageModifier = ( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
 			damage = (SI16)roundNumber( ((R32)baseDamage - ( (R32)baseDamage * damageModifier )) );
 			break;
 		default:			//	Elemental damage
-			if( ourTarg->isHuman() )
-			{
-				getDef = calcDef( ourTarg, hitLoc, doArmorDamage, damageType );
-				getDef = HalfRandomNum( getDef );
-			}
-			else if( ourTarg->GetResist( damageType ) > 0 )
-				getDef = ourTarg->GetResist( damageType );
+			getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) );
 			break;
 	}
 

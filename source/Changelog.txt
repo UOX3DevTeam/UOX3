@@ -1,3 +1,9 @@
+4/06/2006 - giwo (0.98-3.6b)
+	Fixed an issue with accounts causing the FLAGS value not to function properly.
+	Consolidated some code in CAccountsClass.
+	Fixed some signed/unsigned mismatches in CAccountsClass.
+	Modified Combat DEF calculations to remove superfluous code.
+
 4/06/2006 - grimson
 	Updated potion.js, so heal potions work again.
 
