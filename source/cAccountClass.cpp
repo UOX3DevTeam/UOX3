@@ -590,6 +590,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 	fsOut << "FLAGS 0x" << std::hex << actbTemp.wFlags.to_ulong() << std::dec << std::endl;
 	fsOut << "PATH " << UString::replaceSlash(actbTemp.sPath) << std::endl;
 	fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
+	fsOut << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
 	fsOut << "CONTACT " << (actbTemp.sContact.length()?actbTemp.sContact:"NA") << std::endl;
 	for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 	{
@@ -739,8 +740,8 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
 	fsAccountsUAD << "ID " << actbTemp.wAccountIndex << "\n";
 	fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
-	fsAccountsUAD << "LASTIP " << (int)(actbTemp.dwLastIP>>24) << "." << (int)(actbTemp.dwLastIP>>16) << "." << (int)(actbTemp.dwLastIP>>8) << "." << (int)(actbTemp.dwLastIP%256) << "\n";
-	fsAccountsUAD << "COMMENT " << actbTemp.sContact << "\n";
+	fsAccountsUAD << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << "\n";
+	fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------\n";
 	// Ok write out the characters and the charcter names if we know them
 	for( UI08 i = 0; i < CHARACTERCOUNT; ++i )
@@ -1073,6 +1074,17 @@ UI16 cAccountClass::Load(void)
 				actb.sContact = r.lower();
 			else
 				actb.sContact = "UNKNOWN";
+
+			std::getline( fsAccountsADM, sLine );
+			sLine = sLine.removeComment().stripWhiteSpace();
+			continue;
+		}
+		else if( l == "LASTIP" )
+		{
+			if( !r.empty() && r.length() != 0 && r.sectionCount(".") == 3 )
+				actb.dwLastIP = calcserial( r.section( ".", 0, 0 ).toByte(), r.section( ".", 1, 1 ).toByte(), r.section( ".", 2, 2 ).toByte(), r.section( ".", 3, 3 ).toByte() );
+			else
+				actb.dwLastIP = 0x00000000;
 
 			std::getline( fsAccountsADM, sLine );
 			sLine = sLine.removeComment().stripWhiteSpace();
@@ -2003,6 +2015,7 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 	fsOut << "//         FLAGS 0x0000" << std::endl;
 	fsOut << "//         PATH c:/uox3/Accounts/path2userdata/" << std::endl;
 	fsOut << "//         TIMEBAN 0" << std::endl;
+	fsOut << "//         LASTIP 127.0.0.1" << std::endl;
 	fsOut << "//         CONTACT NONE" << std::endl;
 	fsOut << "//         CHARACTER-1 0xffffffff" << std::endl;
 	fsOut << "//         CHARACTER-2 0xffffffff" << std::endl;
@@ -2023,6 +2036,9 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut)
 	fsOut << "//" << std::endl;
 	fsOut << "//   CONTACT: " << std::endl;
 	fsOut << "//      Usually this is the email address, but can be used as a comment or ICQ" << std::endl;
+	fsOut << "//" << std::endl;
+	fsOut << "//   LASTIP: " << std::endl;
+	fsOut << "//      The last IP this account was used from." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
 //o--------------------------------------------------------------------------o
@@ -2042,7 +2058,7 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut)
 	fsOut << "//         PASS password" << std::endl;
 	fsOut << "//         PATH c:/uox3/Accounts/path2userdata/" << std::endl;
 	fsOut << "//         FLAGS 0x0000" << std::endl;
-	fsOut << "//         EMAIL NONE" << std::endl;
+	fsOut << "//         CONTACT NONE" << std::endl;
 	fsOut << "//      }" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   FLAGS: " << std::endl;
@@ -2091,8 +2107,8 @@ void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock& actbTemp
 	fsOut << "NAME " << actbTemp.sUsername << std::endl;
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << std::endl;
-	fsOut << "LASTIP " << (int)(actbTemp.dwLastIP>>24) << "." << (int)(actbTemp.dwLastIP>>16) << "." << (int)(actbTemp.dwLastIP>>8) << "." << (int)(actbTemp.dwLastIP%256) << std::endl;
-	fsOut << "COMMENT " << actbTemp.sContact << std::endl;
+	fsOut << "LASTIP " << (int)((actbTemp.dwLastIP&0xFF000000)>>24) << "." << (int)((actbTemp.dwLastIP&0x00FF0000)>>16) << "." << (int)((actbTemp.dwLastIP&0x0000FF00)>>8) << "." << (int)((actbTemp.dwLastIP&0x000000FF)%256) << std::endl;
+	fsOut << "CONTACT " << actbTemp.sContact << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
 //o--------------------------------------------------------------------------o
@@ -2108,14 +2124,14 @@ void cAccountClass::WriteImportHeader(std::fstream &fsOut)
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// FORMAT: " << std::endl;
 	fsOut << "//" << std::endl;
-	fsOut << "//    USER=username,password,flags,email" << std::endl;
+	fsOut << "//    USER=username,password,flags,contact" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "// WHERE: username   - Username of the accounts to create." << std::endl;
 	fsOut << "//        password   - Password of the account to create." << std::endl;
 	fsOut << "//        flags      - See accounts.adm for correct flag values." << std::endl;
-	fsOut << "//        email      - Email of the accounts to be imported" << std::endl;
+	fsOut << "//        contact    - Usually this is the email address, but can be used as a comment or ICQ" << std::endl;
 	fsOut << "//" << std::endl;
-	fsOut << "// NOTE: Flags, and Email values are not requred, defaults will be used." << std::endl;
+	fsOut << "// NOTE: Flags, and contact values are not required, defaults will be used." << std::endl;
 	fsOut << "// NOTE: Please ensure you press ENTER after your last line for proper loading." << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }

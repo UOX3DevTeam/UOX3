@@ -1,3 +1,7 @@
+4/06/2006 - grimson
+	Fixed saving of the last used IP in the account files, and corrected the naming
+	for the	contact field when saving the account files.
+
 4/06/2006 - giwo (0.98-3.6b)
 	Fixed an issue with accounts causing the FLAGS value not to function properly.
 	Consolidated some code in CAccountsClass.
