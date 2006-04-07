@@ -2898,7 +2898,7 @@ void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 
 	toAdd->SetDecayTime( 0 );
 
-	CPToolTip pSend( toAdd->GetSerial() );
+	CPToolTip pSend( toAdd->GetSerial(), !isVendor );
 	mSock->Send( &pSend );
 }
 
@@ -4614,7 +4614,7 @@ void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )
 	ourEntries.push_back( tempEntry );
 }
 
-void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
+void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount )
 {
 	toolTipEntry tempEntry;
 	if( cItem.GetType() == IT_HOUSESIGN )
@@ -4623,14 +4623,14 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen )
 	{
 		std::string temp;
 		getTileName( cItem, temp );
-		if( cItem.GetAmount() > 1 )
+		if( cItem.GetAmount() > 1 && addAmount )
 			tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", temp.c_str(), cItem.GetAmount() );
 		else
 			tempEntry.ourText = UString::sprintf( " \t%s\t ",temp.c_str() );
 	}
 	else
 	{
-		if( cItem.GetAmount() > 1 && !cItem.isCorpse() )
+		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount )
 	    	tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
 		else
 			tempEntry.ourText = UString::sprintf( " \t%s\t ",cItem.GetName().c_str() );
@@ -4723,7 +4723,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	FinalizeData( tempEntry, totalStringLen );
 }
 
-void CPToolTip::CopyData( SERIAL objSer )
+void CPToolTip::CopyData( SERIAL objSer, bool addAmount )
 {
 	size_t totalStringLen = 0; //total string length
 
@@ -4737,7 +4737,7 @@ void CPToolTip::CopyData( SERIAL objSer )
 	{
 		CItem *cItem = calcItemObjFromSer( objSer );
 		if( cItem != NULL )
-			CopyItemData( (*cItem), totalStringLen );
+			CopyItemData( (*cItem), totalStringLen, addAmount );
 	}
 
 	size_t packetLen = 14 + totalStringLen + 5;
@@ -4771,10 +4771,10 @@ CPToolTip::CPToolTip()
 {
 	InternalReset();
 }
-CPToolTip::CPToolTip( SERIAL objSer )
+CPToolTip::CPToolTip( SERIAL objSer, bool addAmount )
 {
 	InternalReset();
-	CopyData( objSer );
+	CopyData( objSer, addAmount );
 }
 
 //0x9E Packet

@@ -7,6 +7,7 @@ ID=0x14F0
 MOREX=2
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [smallstonehousedeed]
@@ -16,6 +17,7 @@ ID=0x14F0
 MOREX=3
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [smallbrickhousedeed]
@@ -25,6 +27,7 @@ ID=0x14F0
 MOREX=1
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [smallwoodhousedeed]
@@ -34,6 +37,7 @@ ID=0x14F0
 MOREX=4
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [smallwnphousedeed]
@@ -43,6 +47,7 @@ ID=0x14F0
 MOREX=5
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [smallwoodstrawhousedeed]
@@ -52,6 +57,7 @@ ID=0x14F0
 MOREX=6
 VALUE=43800
 RESTOCK=5
+GOOD=9
 }
 
 [bluetentdeed]
@@ -61,6 +67,7 @@ ID=0x14F0
 MOREX=7
 VALUE=22800
 RESTOCK=5
+GOOD=9
 }
 
 [greententdeed]
@@ -70,6 +77,7 @@ ID=0x14F0
 MOREX=8
 VALUE=22800
 RESTOCK=5
+GOOD=9
 }
 
 [3roombrickhousedeed]
@@ -79,6 +87,7 @@ ID=0x14F0
 MOREX=9
 VALUE=144500
 RESTOCK=5
+GOOD=9
 }
 
 [2storywnphousedeed]
@@ -88,6 +97,7 @@ ID=0x14F0
 MOREX=10
 VALUE=192400
 RESTOCK=5
+GOOD=9
 }
 
 [2storysnphousedeed]
@@ -97,6 +107,7 @@ ID=0x14F0
 MOREX=11
 VALUE=192400
 RESTOCK=5
+GOOD=9
 }
 
 [towerdeed]
@@ -106,6 +117,7 @@ ID=0x14F0
 MOREX=12
 VALUE=433200
 RESTOCK=5
+GOOD=9
 }
 
 [keepdeed]
@@ -115,6 +127,7 @@ ID=0x14F0
 MOREX=13
 VALUE=665200
 RESTOCK=5
+GOOD=9
 }
 
 [castledeed]
@@ -124,6 +137,7 @@ ID=0x14F0
 MOREX=14
 VALUE=1022800
 RESTOCK=5
+GOOD=9
 }
 
 [largeshoppatio]
@@ -133,6 +147,7 @@ ID=0x14F0
 MOREX=15
 VALUE=152800
 RESTOCK=5
+GOOD=9
 }
 
 [largesmithydeed]
@@ -142,6 +157,7 @@ ID=0x14F0
 MOREX=16
 VALUE=152800
 RESTOCK=5
+GOOD=9
 }
 
 [pentagramdeed]
@@ -158,6 +174,7 @@ ID=0x14F0
 MOREX=26
 VALUE=88000
 RESTOCK=5
+GOOD=9
 }
 
 [smallmarbleshopdeed]
@@ -167,6 +184,7 @@ ID=0x14F0
 MOREX=27
 VALUE=63000
 RESTOCK=5
+GOOD=9
 }
 
 [smallstoneshopdeed]
@@ -176,6 +194,7 @@ ID=0x14F0
 MOREX=28
 VALUE=60000
 RESTOCK=5
+GOOD=9
 }
 
 [2storyvilladeed]
@@ -185,6 +204,7 @@ ID=0x14F0
 MOREX=29
 VALUE=136000
 RESTOCK=5
+GOOD=9
 }
 
 [sandstonepatiohousedeed]
@@ -194,6 +214,7 @@ ID=0x14F0
 MOREX=30
 VALUE=90000
 RESTOCK=5
+GOOD=9
 }
 
 [2storylogcabindeed]
@@ -203,6 +224,7 @@ ID=0x14F0
 MOREX=31
 VALUE=97000
 RESTOCK=5
+GOOD=9
 }
 
 [largemarblepatiohousedeed]
@@ -212,6 +234,7 @@ ID=0x14F0
 MOREX=32
 VALUE=192000
 RESTOCK=5
+GOOD=9
 }
 
 EOF

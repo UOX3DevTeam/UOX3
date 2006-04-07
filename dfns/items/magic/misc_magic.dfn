@@ -8,6 +8,7 @@ value=22,11
 type=9
 restock=15
 decay=1
+good=28
 }
 
 [0x1f14]
@@ -20,6 +21,7 @@ value=18,9
 type=50
 restock=15
 decay=1
+good=28
 }
 
 [0x0e2d]
@@ -30,6 +32,7 @@ id=0x0e2d
 weight=100
 value=2,1
 movable=2
+good=28
 }
 
 [0x0e2e]
@@ -40,6 +43,7 @@ id=0x0e2e
 weight=100
 value=2,1
 movable=2
+good=28
 }
 
 [0x2252]
@@ -50,6 +54,7 @@ id=0x2252
 weight=100
 value=22,11
 decay=1
+good=28
 }
 
 [0x2253]
@@ -60,4 +65,5 @@ id=0x2253
 weight=100
 value=22,11
 decay=1
+good=28
 }

@@ -13,6 +13,7 @@ hp=20
 str=20
 dyeable=1
 decay=1
+good=19
 }
 
 [0x2656]
@@ -28,6 +29,7 @@ hp=20
 str=20
 dyeable=1
 decay=1
+good=19
 }
 
 [0x26af]
@@ -44,6 +46,7 @@ str=20
 int=10
 dyeable=1
 decay=1
+good=19
 }
 
 [0x2653]
@@ -58,6 +61,7 @@ hp=30
 str=20
 dyeable=1
 decay=1
+good=19
 }
 
 [0x2654]
@@ -72,4 +76,5 @@ hp=30
 str=20
 dyeable=1
 decay=1
+good=19
 }

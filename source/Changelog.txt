@@ -1,3 +1,13 @@
+4/07/2006 - grimson
+	Don't add the amount of items to the item name in buy/sell gumps, as it is already
+	shown in the gump.
+	Don't let items decay when they are inside a multi, so if a player places decorations
+	or furniture in his house it stays there.
+
+	DFN Changes:
+		Added GOOD tags to buyable items, so it's easier for an admin to use the
+		advanced trade system.
+
 4/06/2006 - grimson
 	Fixed saving of the last used IP in the account files, and corrected the naming
 	for the	contact field when saving the account files.

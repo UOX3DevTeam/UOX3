@@ -16,6 +16,7 @@ str=30
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x0f50]
@@ -34,6 +35,7 @@ str=30
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x13b1]
@@ -52,6 +54,7 @@ str=20
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x13b2]
@@ -70,6 +73,7 @@ str=20
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x13fc]
@@ -88,6 +92,7 @@ str=40
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x13fd]
@@ -106,6 +111,7 @@ str=40
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x0f3f]
@@ -120,6 +126,7 @@ movable=1
 pileable=1
 amount=1
 decay=1
+good=23
 }
 
 [0x0f3f-5]
@@ -158,6 +165,7 @@ movable=1
 pileable=1
 amount=1
 decay=1
+good=23
 }
 
 [0x1bfb-5]

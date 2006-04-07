@@ -1215,8 +1215,8 @@ protected:
 	};
 	std::vector< toolTipEntry > ourEntries;
 	virtual void	InternalReset( void );
-	virtual void	CopyData( SERIAL objSer );
-	void				CopyItemData( CItem& cItem, size_t &totalStringLen );
+	virtual void	CopyData( SERIAL objSer, bool addAmount = true );
+	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true );
 	void				CopyCharData( CChar& mChar, size_t &totalStringLen );
 	void				FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen );
 public:
@@ -1224,7 +1224,7 @@ public:
 	{
 	}
 					CPToolTip();
-					CPToolTip( SERIAL objSer );
+					CPToolTip( SERIAL objSer, bool addAmount = true );
 };
 
 class CPSellList : public CPUOXBuffer

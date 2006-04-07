@@ -8,6 +8,7 @@ value=25,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0eb1]
@@ -20,6 +21,7 @@ value=50,25
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0EB2]
@@ -32,6 +34,7 @@ value=25,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0EB3]
@@ -44,6 +47,7 @@ value=24,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0EB4]
@@ -56,6 +60,7 @@ value=24,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0E9D]
@@ -68,6 +73,7 @@ value=24,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 
 [0x0E9e]
@@ -80,5 +86,6 @@ value=24,12
 restock=20
 movable=1
 decay=1
+good=41
 }
 

@@ -9,6 +9,7 @@ restock=50
 pileable=1
 amount=1
 decay=1
+good=30
 }
 
 [0x0f7a]

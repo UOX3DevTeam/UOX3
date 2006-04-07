@@ -11,6 +11,7 @@ decay=1
 type=11
 morex=666
 morey=32
+good=32
 }
 
 [0x0fef]
@@ -437,6 +438,7 @@ id=0x2254
 weight=100
 value=22,11
 decay=1
+good=32
 }
 
 [0x238c]
@@ -447,6 +449,7 @@ id=0x23a0
 weight=100
 value=22,11
 decay=1
+good=32
 }
 
 [0x23a0]
@@ -457,4 +460,5 @@ id=0x23a0
 weight=100
 value=22,11
 decay=1
+good=32
 }

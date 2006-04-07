@@ -8,6 +8,7 @@ id=0x2305
 weight=300
 value=14,6
 hp=100
+good=20
 }
 
 [0x2306]
@@ -18,6 +19,7 @@ id=0x2305
 weight=300
 value=14,6
 hp=100
+good=20
 }
 
 [0x278f]
@@ -28,6 +30,7 @@ id=0x278f
 weight=300
 value=14,6
 hp=100
+good=20
 }
 
 [0x27da]
@@ -35,6 +38,7 @@ hp=100
 get=0x278f
 name=cloth ninja hood
 id=0x27da
+good=20
 }
 
 [0x2798]
@@ -45,6 +49,7 @@ id=0x2798
 weight=300
 value=14,6
 hp=100
+good=20
 }
 
 [0x27e3]
@@ -52,5 +57,6 @@ hp=100
 get=0x27e3
 name=kasa
 id=0x27e3
+good=20
 }
 

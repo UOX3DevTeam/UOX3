@@ -19,6 +19,7 @@ str=45
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26c4]
@@ -37,6 +38,7 @@ str=45
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26bb]
@@ -55,6 +57,7 @@ str=25
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26c5]
@@ -73,6 +76,7 @@ str=25
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26bc]
@@ -128,6 +132,7 @@ str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26c7]
@@ -146,6 +151,7 @@ str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26be]
@@ -164,6 +170,7 @@ str=50
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26c8]
@@ -182,6 +189,7 @@ str=50
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26bf]
@@ -200,6 +208,7 @@ str=50
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26c9]
@@ -218,6 +227,7 @@ str=50
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26c0]
@@ -236,6 +246,7 @@ str=95
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26ca]
@@ -254,6 +265,7 @@ str=95
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x26c1]
@@ -272,6 +284,7 @@ str=55
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26cb]
@@ -290,6 +303,7 @@ str=55
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26c2]
@@ -308,6 +322,7 @@ str=45
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x26cc]
@@ -326,6 +341,7 @@ str=45
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x26c3]
@@ -344,6 +360,7 @@ str=30
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x26cd]
@@ -362,6 +379,7 @@ str=30
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x26ce]
@@ -380,6 +398,7 @@ str=50
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x26cf]
@@ -398,4 +417,5 @@ str=50
 restock=10
 movable=1
 decay=1
+good=21
 }

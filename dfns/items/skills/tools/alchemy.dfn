@@ -10,6 +10,7 @@ value=9,4
 restock=20
 decay=1
 script=4007
+good=51
 }
 
 [0x0f0e]
@@ -23,6 +24,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=51
 }
 
 [0x1829]
@@ -34,6 +36,7 @@ weight=100
 value=8,4
 restock=20
 decay=1
+good=51
 }
 
 [0x1849]
@@ -45,6 +48,7 @@ weight=100
 value=2,1
 restock=20
 decay=1
+good=51
 }
 
 [0x184a]
@@ -56,6 +60,7 @@ weight=100
 value=2,1
 restock=20
 decay=1
+good=51
 }
 
 [0x184d]
@@ -67,6 +72,7 @@ weight=100
 value=2,1
 restock=20
 decay=1
+good=51
 }
 
 [0x184e]
@@ -78,6 +84,7 @@ weight=100
 value=2,1
 restock=20
 decay=1
+good=51
 }
 
 
@@ -88,6 +95,7 @@ name=empty vial
 id=0x0e24
 weight=100
 pileable=1
+good=51
 }
 
 [0x0e25]
@@ -97,6 +105,7 @@ name=bottle
 id=0x0e25
 weight=100
 restock=20
+good=51
 }
 
 [0x0e26]
@@ -106,6 +115,7 @@ name=bottle
 id=0x0e26
 weight=100
 restock=20
+good=51
 }
 
 [0x0e27]
@@ -115,6 +125,7 @@ name=bottle
 id=0x0e27
 weight=100
 restock=20
+good=51
 }
 
 [0x0e28]
@@ -124,6 +135,7 @@ name=bottle
 id=0x0e28
 weight=100
 restock=20
+good=51
 }
 
 [0x0e29]
@@ -133,6 +145,7 @@ name=bottle
 id=0x0e29
 weight=100
 restock=20
+good=51
 }
 
 [0x0e2a]
@@ -142,6 +155,7 @@ name=bottle
 id=0x0e2a
 weight=100
 restock=20
+good=51
 }
 
 [0x0e2b]
@@ -151,6 +165,7 @@ name=bottle
 id=0x0e2b
 weight=100
 restock=20
+good=51
 }
 
 [0x0e2c]
@@ -160,6 +175,7 @@ name=bottle
 id=0x0e2c
 weight=100
 restock=20
+good=51
 }
 
 [0x0efb]
@@ -169,6 +185,7 @@ name=bottle
 id=0x0efb
 weight=100
 restock=20
+good=51
 }
 
 [0x0efc]
@@ -178,6 +195,7 @@ name=bottle
 id=0x0efc
 weight=100
 restock=20
+good=51
 }
 
 [0x0efd]
@@ -187,6 +205,7 @@ name=bottle
 id=0x0efd
 weight=100
 restock=20
+good=51
 }
 
 [0x0efe]
@@ -196,6 +215,7 @@ name=bottle
 id=0x0efe
 weight=100
 restock=20
+good=51
 }
 
 [0x0eff]
@@ -205,6 +225,7 @@ name=bottle
 id=0x0eff
 weight=100
 restock=20
+good=51
 }
 
 [0x0f00]
@@ -214,6 +235,7 @@ name=bottle
 id=0x0f00
 weight=100
 restock=20
+good=51
 }
 
 [0x0f01]
@@ -223,6 +245,7 @@ name=bottle
 id=0x0f01
 weight=100
 restock=20
+good=51
 }
 
 [0x0f02]
@@ -232,6 +255,7 @@ name=bottle
 id=0x0f02
 weight=100
 restock=20
+good=51
 }
 
 [0x0f03]
@@ -241,6 +265,7 @@ name=bottle
 id=0x0f03
 weight=100
 restock=20
+good=51
 }
 
 [0x0f04]
@@ -250,6 +275,7 @@ name=bottle
 id=0x0f04
 weight=100
 restock=20
+good=51
 }
 
 // flasks
@@ -261,6 +287,7 @@ name=flask
 id=0x182a
 weight=100
 restock=20
+good=51
 }
 
 [0x182b]
@@ -270,6 +297,7 @@ name=flask
 id=0x182b
 weight=100
 restock=20
+good=51
 }
 
 [0x182c]
@@ -279,6 +307,7 @@ name=flask
 id=0x182c
 weight=100
 restock=20
+good=51
 }
 
 [0x182d]
@@ -288,6 +317,7 @@ name=flask
 id=0x182d
 weight=100
 restock=20
+good=51
 }
 
 [0x182e]
@@ -297,6 +327,7 @@ name=flask
 id=0x182e
 weight=100
 restock=20
+good=51
 }
 
 [0x182f]
@@ -306,6 +337,7 @@ name=flask
 id=0x182f
 weight=100
 restock=20
+good=51
 }
 
 [0x1830]
@@ -315,6 +347,7 @@ name=flask
 id=0x1830
 weight=100
 restock=20
+good=51
 }
 
 [0x1831]
@@ -324,6 +357,7 @@ name=flask
 id=0x1831
 weight=100
 restock=20
+good=51
 }
 
 [0x1832]
@@ -333,6 +367,7 @@ name=flask
 id=0x1832
 weight=100
 restock=20
+good=51
 }
 
 [0x1833]
@@ -342,6 +377,7 @@ name=flask
 id=0x1833
 weight=100
 restock=20
+good=51
 }
 
 [0x1834]
@@ -351,6 +387,7 @@ name=flask
 id=0x1834
 weight=100
 restock=20
+good=51
 }
 
 [0x1835]
@@ -360,6 +397,7 @@ name=flask
 id=0x1835
 weight=100
 restock=20
+good=51
 }
 
 [0x1836]
@@ -369,6 +407,7 @@ name=flask
 id=0x1836
 weight=100
 restock=20
+good=51
 }
 
 [0x1837]
@@ -378,6 +417,7 @@ name=flask
 id=0x1837
 weight=100
 restock=20
+good=51
 }
 
 [0x1838]
@@ -387,6 +427,7 @@ name=flask
 id=0x1838
 weight=100
 restock=20
+good=51
 }
 
 [0x1839]
@@ -396,6 +437,7 @@ name=flask
 id=0x1839
 weight=100
 restock=20
+good=51
 }
 
 [0x183a]
@@ -405,6 +447,7 @@ name=flask
 id=0x183a
 weight=100
 restock=20
+good=51
 }
 
 [0x183b]
@@ -414,6 +457,7 @@ name=flask
 id=0x183b
 weight=100
 restock=20
+good=51
 }
 
 [0x183c]
@@ -423,6 +467,7 @@ name=flask
 id=0x183c
 weight=100
 restock=20
+good=51
 }
 
 [0x183d]
@@ -432,6 +477,7 @@ name=flask
 id=0x183d
 weight=100
 restock=20
+good=51
 }
 
 [0x183e]
@@ -441,6 +487,7 @@ name=flask
 id=0x183e
 weight=100
 restock=20
+good=51
 }
 
 [0x183f]
@@ -450,6 +497,7 @@ name=flask
 id=0x183f
 weight=100
 restock=20
+good=51
 }
 
 [0x1840]
@@ -459,6 +507,7 @@ name=flask
 id=0x1840
 weight=100
 restock=20
+good=51
 }
 
 [0x1841]
@@ -468,6 +517,7 @@ name=flask
 id=0x1841
 weight=100
 restock=20
+good=51
 }
 
 [0x1842]
@@ -477,6 +527,7 @@ name=flask
 id=0x1842
 weight=100
 restock=20
+good=51
 }
 
 [0x1843]
@@ -486,6 +537,7 @@ name=flask
 id=0x1843
 weight=100
 restock=20
+good=51
 }
 
 [0x1844]
@@ -495,6 +547,7 @@ name=flask
 id=0x1844
 weight=100
 restock=20
+good=51
 }
 
 [0x1845]
@@ -504,6 +557,7 @@ name=flask
 id=0x1845
 weight=100
 restock=20
+good=51
 }
 
 [0x1846]
@@ -513,6 +567,7 @@ name=flask
 id=0x1846
 weight=100
 restock=20
+good=51
 }
 
 [0x1847]
@@ -522,6 +577,7 @@ name=flask
 id=0x1847
 weight=100
 restock=20
+good=51
 }
 
 [0x1848]
@@ -531,6 +587,7 @@ name=flask
 id=0x1848
 weight=100
 restock=20
+good=51
 }
 
 [0x1c19]
@@ -541,6 +598,7 @@ id=0x1c19
 weight=100
 value=4
 decay=1
+good=51
 }
 
 // vials
@@ -553,6 +611,7 @@ id=0x185b
 weight=100
 restock=20
 decay=1
+good=51
 }
 
 [0x185c]
@@ -563,6 +622,7 @@ id=0x185c
 weight=100
 restock=20
 decay=1
+good=51
 }
 
 [0x185d]
@@ -573,6 +633,7 @@ id=0x185d
 weight=100
 restock=20
 decay=1
+good=51
 }
 
 [0x185e]
@@ -583,4 +644,5 @@ id=0x185e
 weight=100
 restock=20
 decay=1
+good=51
 }

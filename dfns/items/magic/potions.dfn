@@ -1,11 +1,11 @@
 [base_potion]
 {
 get=base_item
-name=
 id=0x0
 weight=100
 restock=50
 decay=1
+good=29
 }
 
 [0x0F0D]
@@ -20,7 +20,7 @@ morey=3
  
 [0x0F0B]
 {
-get=base_item
+get=base_potion
 name=refreshment potion
 id=0x0F0B
 value=60,30
@@ -31,7 +31,7 @@ morez=1
 
 [0x0F0B-b]
 {
-get=base_item
+get=base_potion
 name=total refreshment potion
 id=0x0F0B
 value=80,40
@@ -42,7 +42,7 @@ morez=2
 
 [0x0F06]
 {
-get=base_item
+get=base_potion
 name=nightsight potion
 id=0x0F06
 value=30,15
@@ -52,7 +52,7 @@ morey=5
 
 [0x0F07]
 {
-get=base_item
+get=base_potion
 name=lesser cure potion
 id=0x0F07
 value=30,15
@@ -63,7 +63,7 @@ morez=1
 
 [0x0F07-b]
 {
-get=base_item
+get=base_potion
 name=cure potion
 id=0x0F07
 value=40,20
@@ -74,7 +74,7 @@ morez=2
 
 [0x0F07-c]
 {
-get=base_item
+get=base_potion
 name=greater cure potion
 id=0x0F07
 value=70,35
@@ -85,7 +85,7 @@ morez=3
 
 [0x0F08]
 {
-get=base_item
+get=base_potion
 name=agility potion
 id=0x0F08
 value=30,15
@@ -96,7 +96,7 @@ morez=1
 
 [0x0F08-b]
 {
-get=base_item
+get=base_potion
 name=greater agility potion
 id=0x0F08
 value=60,30
@@ -107,7 +107,7 @@ morez=2
 
 [0x0F09]
 {
-get=base_item
+get=base_potion
 name=strength potion
 id=0x0F09
 value=30,15
@@ -118,7 +118,7 @@ morez=1
 
 [0x0F09-b]
 {
-get=base_item
+get=base_potion
 name=greater strength potion
 id=0x0F09
 value=50,25
@@ -129,7 +129,7 @@ morez=2
 
 [0x0F0A]
 {
-get=base_item
+get=base_potion
 name=lesser poison potion
 id=0x0F0A
 value=30,15
@@ -140,7 +140,7 @@ morez=1
 
 [0x0F0A-b]
 {
-get=base_item
+get=base_potion
 name=poison potion
 id=0x0F0A
 value=40,20
@@ -151,7 +151,7 @@ morez=2
 
 [0x0F0A-c]
 {
-get=base_item
+get=base_potion
 name=greater poison potion
 id=0x0F0A
 value=50,25
@@ -162,7 +162,7 @@ morez=3
 
 [0x0F0A-d]
 {
-get=base_item
+get=base_potion
 name=deadly poison potion
 id=0x0F0A
 value=260,130
@@ -173,7 +173,7 @@ morez=4
 
 [0x0F0C]
 {
-get=base_item
+get=base_potion
 name=lesser heal potion
 id=0x0F0C
 value=30,15
@@ -184,7 +184,7 @@ morez=1
 
 [0x0F0C-b]
 {
-get=base_item
+get=base_potion
 name=heal potion
 id=0x0F0C
 value=40,20
@@ -195,7 +195,7 @@ morez=2
 
 [0x0F0C-c]
 {
-get=base_item
+get=base_potion
 name=greater heal potion
 id=0x0F0C
 value=70,35

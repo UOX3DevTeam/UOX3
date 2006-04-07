@@ -7,6 +7,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x1086]
@@ -18,6 +19,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x1087]
@@ -29,6 +31,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x1088]
@@ -40,6 +43,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x1089]
@@ -51,6 +55,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x108a]
@@ -62,6 +67,7 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }
 
 [0x108b]
@@ -73,4 +79,5 @@ weight=100
 value=26,13
 restock=10
 decay=1
+good=37
 }

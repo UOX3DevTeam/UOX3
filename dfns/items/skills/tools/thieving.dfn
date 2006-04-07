@@ -9,6 +9,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=59
 }
 
 [0x14fc]
@@ -22,6 +23,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=59
 }
 
 [0x14fd]
@@ -35,6 +37,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=59
 }
 
 [0x14fe]
@@ -48,6 +51,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=59
 }
 
 [disguise-kit]
@@ -59,6 +63,7 @@ weight=100
 value=500,0
 restock=20
 decay=1
+good=59
 }
 
 [0x1e2c]

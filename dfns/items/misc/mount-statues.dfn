@@ -10,6 +10,7 @@ ID=0x2120
 NAME=Horse Statue
 VALUE=700,350
 SCRIPT=3100
+good=39
 }
 
 [ostard_statue]
@@ -18,6 +19,7 @@ ID=0x2135
 NAME=Desert Ostard Statue
 VALUE=700,350
 SCRIPT=3101
+good=39
 }
 
 [llama_statue]
@@ -27,6 +29,7 @@ NAME=Llama Statue
 MOREX=0xDC
 VALUE=700,350
 SCRIPT=3102
+good=39
 }
 
 [pack_horse_statue]
@@ -35,6 +38,7 @@ ID=0x2126
 NAME=Pack Horse Statue
 VALUE=700,350
 SCRIPT=3103
+good=39
 }
 
 [pack_llama_statue]
@@ -43,6 +47,7 @@ ID=0x2127
 NAME=Pack Llama Statue
 VALUE=700,350
 SCRIPT=3104
+good=39
 }
 
 EOF

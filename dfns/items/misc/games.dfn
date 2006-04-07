@@ -53,6 +53,7 @@ value=2,1
 restock=100
 movable=1
 decay=1
+good=35
 }
 
 [0x0FA6]
@@ -65,6 +66,7 @@ value=2,1
 restock=100
 movable=1
 decay=1
+good=35
 }
 
 [0x0FA7]
@@ -77,6 +79,7 @@ value=2,1
 restock=100
 movable=1
 decay=1
+good=35
 }
 
 [0x0e12]
@@ -177,6 +180,7 @@ id=0x0e1c
 weight=100
 value=2,1
 movable=2
+good=35
 }
 
 [0x12a6]

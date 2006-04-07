@@ -7,7 +7,9 @@ weight=100
 value=2,1
 restock=100
 decay=1
+good=38
 }
+
 [0x100F]
 {
 get=base_item
@@ -17,6 +19,7 @@ weight=100
 value=9,4
 restock=100
 decay=1
+good=38
 }
 
 [0x1010]
@@ -28,6 +31,7 @@ weight=100
 value=9,4
 restock=100
 decay=1
+good=38
 }
 
 [0x1011]
@@ -39,6 +43,7 @@ weight=100
 value=9,4
 restock=100
 decay=1
+good=38
 }
 
 [0x1012]
@@ -50,6 +55,7 @@ weight=100
 value=9,4
 restock=100
 decay=1
+good=38
 }
 
 [0x1013]
@@ -61,4 +67,5 @@ weight=100
 value=9,4
 restock=100
 decay=1
+good=38
 }

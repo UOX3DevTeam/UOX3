@@ -9,6 +9,7 @@ weight=500
 value=14,7
 restock=100
 decay=1
+good=57
 }
 
 [0x0F3A]
@@ -33,6 +34,7 @@ spd=35
 str=25
 restock=10
 decay=1
+good=57
 }
 
 [0x0e86]
@@ -50,6 +52,7 @@ spd=35
 str=25
 restock=10
 decay=1
+good=57
 }
 
 [0x0fb1]

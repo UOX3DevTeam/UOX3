@@ -14,6 +14,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1f2f]
@@ -27,6 +28,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1f30]
@@ -40,6 +42,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1f31]
@@ -53,6 +56,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F32]
@@ -66,6 +70,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F33]
@@ -79,6 +84,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F2D]
@@ -92,6 +98,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F34]
@@ -105,6 +112,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
  
 //Scroll (Second Circle) 
@@ -120,6 +128,7 @@ movable=1
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F36]
@@ -133,6 +142,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F37]
@@ -146,6 +156,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F38]
@@ -159,6 +170,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F39]
@@ -172,6 +184,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F3A]
@@ -185,6 +198,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F3B]
@@ -198,6 +212,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F3C]
@@ -211,6 +226,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 //Scroll (Third Circle)
@@ -226,6 +242,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F3E]
@@ -239,6 +256,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F3F]
@@ -252,6 +270,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F40]
@@ -265,6 +284,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F41]
@@ -278,6 +298,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F42]
@@ -291,6 +312,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F43]
@@ -304,6 +326,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F44]
@@ -317,6 +340,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 } 
 
 //Scroll (Fourth Circle)
@@ -332,6 +356,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F46]
@@ -345,6 +370,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F47]
@@ -358,6 +384,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F48]
@@ -371,6 +398,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F49]
@@ -384,6 +412,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F4A]
@@ -397,6 +426,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F4B]
@@ -410,6 +440,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F4C]
@@ -423,6 +454,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
  
 //Scroll (Fifth Circle) 52
@@ -438,6 +470,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F4E]
@@ -451,6 +484,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F4F]
@@ -464,6 +498,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F50]
@@ -477,6 +512,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F51]
@@ -490,6 +526,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F52]
@@ -503,6 +540,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F53]
@@ -516,6 +554,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F54]
@@ -529,6 +568,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 //Scroll (Sixth Circle)
@@ -544,6 +584,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F56]
@@ -557,6 +598,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F57]
@@ -570,6 +612,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F58]
@@ -583,6 +626,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F59]
@@ -596,6 +640,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F5A]
@@ -609,6 +654,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F5B]
@@ -622,6 +668,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F5C]
@@ -635,6 +682,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 //Scroll (Seventh Circle)
@@ -650,6 +698,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F5E]
@@ -663,6 +712,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F5F]
@@ -676,6 +726,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F60]
@@ -689,6 +740,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F61]
@@ -702,6 +754,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F62]
@@ -715,6 +768,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F64]
@@ -728,6 +782,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 //Scroll (Eighth Circle) 
@@ -743,6 +798,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F66]
@@ -756,6 +812,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F67]
@@ -769,6 +826,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F68]
@@ -782,6 +840,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F69]
@@ -795,6 +854,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F6A]
@@ -808,6 +868,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F6B]
@@ -821,6 +882,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 [0x1F6C]
@@ -834,6 +896,7 @@ restock=100
 pileable=1
 amount=1
 decay=1
+good=31
 }
 
 // GM Related

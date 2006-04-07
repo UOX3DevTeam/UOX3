@@ -10,6 +10,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=7
 }
 
 [0x0e77]
@@ -23,6 +24,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=7
 }
 
 [0x0e7f]
@@ -36,6 +38,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=7
 }
 
 [0x0e83]
@@ -49,6 +52,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=7
 }
 
 [0x09ac]
@@ -62,5 +66,6 @@ type=1
 restock=10
 movable=1
 decay=1
+good=7
 }
 

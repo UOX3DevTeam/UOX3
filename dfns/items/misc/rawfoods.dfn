@@ -9,6 +9,7 @@ id=0x09f1
 weight=100
 value=8,4
 pileable=1
+good=40
 }
 
 [0x1e15]
@@ -19,6 +20,7 @@ id=0x1e15
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e16]
@@ -29,6 +31,7 @@ id=0x1e16
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e17]
@@ -39,6 +42,7 @@ id=0x1e17
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e18]
@@ -49,6 +53,7 @@ id=0x1e18
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e19]
@@ -59,6 +64,7 @@ id=0x1e19
 weight=50
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e1b]
@@ -69,6 +75,7 @@ id=0x1e1b
 weight=150
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1e1a]
@@ -79,6 +86,7 @@ id=0x1e1a
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1609]
@@ -89,6 +97,7 @@ id=0x1609
 weight=200
 value=8,4
 pileable=1
+good=40
 }
 
 [0x1607]
@@ -99,6 +108,7 @@ id=0x1607
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x1042]
@@ -109,6 +119,7 @@ id=0x1042
 weight=100
 value=4,2
 pileable=1
+good=40
 }
 
 [0x097a]
@@ -119,6 +130,7 @@ id=0x097a
 weight=10
 value=2,1
 pileable=1
+good=40
 }
 
 [0x09b9]
@@ -129,6 +141,7 @@ id=0x09b9
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x09ba]
@@ -139,6 +152,7 @@ id=0x09ba
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x09cc]
@@ -149,6 +163,7 @@ id=0x09cc
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 
@@ -160,6 +175,7 @@ id=0x09cd
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x09ce]
@@ -170,6 +186,7 @@ id=0x09ce
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x09cf]
@@ -180,6 +197,7 @@ id=0x09cf
 weight=100
 value=2,1
 pileable=1
+good=40
 }
 
 [0x0dd6]
@@ -190,6 +208,7 @@ id=0x0dd6
 weight=500
 value=6,3
 pileable=1
+good=40
 }
 
 [0x0dd7]
@@ -200,6 +219,7 @@ id=0x0dd7
 weight=500
 value=6,3
 pileable=1
+good=40
 }
 
 [0x0dd8]
@@ -210,6 +230,7 @@ id=0x0dd8
 weight=500
 value=6,3
 pileable=1
+good=40
 }
 
 [0x0dd9]
@@ -220,6 +241,7 @@ id=0x0dd9
 weight=500
 value=6,3
 pileable=1
+good=40
 }
 
 [0x1083]
@@ -231,6 +253,7 @@ weight=100
 value=4,2
 restock=10
 pileable=1
+good=40
 }
 
 [0x09b5]
@@ -242,4 +265,5 @@ weight=100
 value=2,1
 restock=10
 pileable=1
+good=40
 }

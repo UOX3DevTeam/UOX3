@@ -11,6 +11,7 @@ type=14
 restock=10
 movable=1
 pileable=1
+good=34
 }
 
 [0x1e1d]
@@ -24,6 +25,7 @@ type=14
 restock=10
 movable=1
 pileable=1
+good=34
 }
 
 [0x1e1e]
@@ -37,6 +39,7 @@ type=14
 restock=10
 movable=1
 pileable=1
+good=34
 }
 
 [0x1e1f]
@@ -50,6 +53,7 @@ type=14
 restock=10
 movable=1
 pileable=1
+good=34
 }
 
 // fruits and vegitables
@@ -64,6 +68,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0994]
@@ -76,6 +81,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x172d]
@@ -88,6 +94,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x172c]
@@ -100,6 +107,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x172b]
@@ -112,6 +120,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x172a]
@@ -124,6 +133,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1729]
@@ -136,6 +146,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1728]
@@ -148,6 +159,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1727]
@@ -160,6 +172,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1726]
@@ -172,6 +185,7 @@ value=12,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1725]
@@ -184,6 +198,7 @@ value=12,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1724]
@@ -196,6 +211,7 @@ value=12,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1723]
@@ -208,6 +224,7 @@ value=12,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1722]
@@ -220,6 +237,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1721]
@@ -232,6 +250,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1720]
@@ -244,6 +263,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x171f]
@@ -256,6 +276,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x171e]
@@ -268,6 +289,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x171d]
@@ -280,6 +302,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c5c]
@@ -292,6 +315,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c5d]
@@ -304,6 +328,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c61]
@@ -316,6 +341,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c62]
@@ -328,6 +354,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c63]
@@ -340,6 +367,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c64]
@@ -352,6 +380,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c65]
@@ -364,6 +393,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c66]
@@ -376,6 +406,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c67]
@@ -388,6 +419,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c6a]
@@ -400,6 +432,7 @@ value=13,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c6b]
@@ -412,6 +445,7 @@ value=13,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c6c]
@@ -424,6 +458,7 @@ value=13,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c6d]
@@ -436,6 +471,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c6e]
@@ -448,6 +484,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c70]
@@ -460,6 +497,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c71]
@@ -472,6 +510,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c72]
@@ -484,6 +523,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c73]
@@ -496,6 +536,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c74]
@@ -508,6 +549,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c75]
@@ -520,6 +562,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c77]
@@ -532,6 +575,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c78]
@@ -544,6 +588,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c79]
@@ -556,6 +601,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c7a]
@@ -568,6 +614,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c7b]
@@ -580,6 +627,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c7c]
@@ -592,6 +640,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c7f]
@@ -604,6 +653,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c81]
@@ -616,6 +666,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0c82]
@@ -628,6 +679,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1ad3]
@@ -640,4 +692,5 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }

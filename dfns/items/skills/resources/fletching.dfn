@@ -9,6 +9,7 @@ weight=10
 value=2,1
 pileable=1
 decay=1
+good=43
 }
 
 [0x1BD4]
@@ -20,6 +21,7 @@ weight=10
 value=3,1
 pileable=1
 decay=1
+good=43
 }
 
 [0x1BD4-5]
@@ -32,6 +34,7 @@ value=3,1
 pileable=1
 amount=5
 decay=1
+good=43
 }
 
 [0x1BD4-20]
@@ -44,6 +47,7 @@ value=3,1
 pileable=1
 amount=20
 decay=1
+good=43
 }
 
 [0x1BD4-50]
@@ -56,4 +60,5 @@ value=3,1
 pileable=1
 amount=50
 decay=1
+good=43
 }

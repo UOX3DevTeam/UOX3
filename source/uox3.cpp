@@ -1045,7 +1045,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 			continue;
 		if( checkItems )
 		{
-			if( itemCheck->isDecayable() && itemCheck->GetCont() == NULL )
+			if( itemCheck->isDecayable() && itemCheck->GetCont() == NULL && !ValidateObject( itemCheck->GetMultiObj() ) )
 			{
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
