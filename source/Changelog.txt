@@ -1,3 +1,14 @@
+5/02/2006 - Xuri
+	Fixed the ever-swinging training dummies
+	Fixed wrong item being added when crafting fishing poles
+
+4/22/2006 - Xuri
+	Fixed the guardzone for Delucia, was previously set to the graveyard north of the town
+
+4/18/2006 - Xuri
+	Items added using the RADD command in repeatingcmds.js will no longer decay by default 
+	Fixed the guardzone for Ocllo, X2 and Y2 were mixed up
+
 4/07/2006 - grimson
 	Removed the last change that should prevent items from decaying inside multis, as
 	this is already done in a different part of the code.
