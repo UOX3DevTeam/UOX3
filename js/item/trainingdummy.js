@@ -10,6 +10,7 @@ function onUse( pUser, iUsed )
 	}
 	else if( iUsed.id == 0x1070 || iUsed.id == 0x1074 ) //if training dummy is motionless
 	{
+		
 		//Determine weapon-type by calling external script and loading a value set there afterwards
 		TriggerEvent( 2500, "getWeaponType", pUser );
 		var weaponType = pUser.GetTag( "weaponType" );
@@ -38,7 +39,9 @@ function onUse( pUser, iUsed )
 			case 0: pUser.SoundEffect( 0x013B, true );	break;
 			case 1: pUser.SoundEffect( 0x013C, true );	break; 
 			case 2: pUser.SoundEffect( 0x013D, true );	break;
-			default:  ConsoleMessage( " cSkills::TDummy -> Fallout of switch statement without default" );	return false;
+			default:  
+				ConsoleMessage( " cSkills::TDummy -> Fallout of switch statement without default" );
+				return false;
 		}
 		
 		//Change the motionless dummy to a swinging dummy!
@@ -47,14 +50,14 @@ function onUse( pUser, iUsed )
 		else if( iUsed.id == 0x1074 )
 			iUsed.id++;
 			
-		//Star a timer so the dummy doesn't swing forever
-		iUsed.StartTimer( 3000, 1, true );
-		
 		//Check the player's tactics skill to see if he gets chance to gain more skill
 		if( pUser.skills.tactics > 250 )
 			pUser.SysMessage( GetDictionaryEntry( 939, pSock.Language )); //You feel you would gain no more from using that.
 		else
 			pUser.CheckSkill( 27, 0, 250 );
+
+		//Star a timer so the dummy doesn't swing forever
+		iUsed.StartTimer( 3000, 1, false );
 	}
 	else
 		pUser.SysMessage( GetDictionaryEntry( 483, pSock.Language )); //You must wait for it to stop swinging!
