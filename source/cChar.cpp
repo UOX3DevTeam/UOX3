@@ -4130,6 +4130,11 @@ UI16 CChar::GetOrgID( void ) const
 }
 void CChar::SetOrgID( UI16 value )
 {
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_ORIGID )
+			CreatePlayer();
+	}
 	if( IsValidPlayer() )
 		mPlayer->origID = value;
 }
@@ -4150,6 +4155,11 @@ UI16 CChar::GetOrgSkin( void ) const
 }
 void CChar::SetOrgSkin( UI16 value )
 {
+	if( !IsValidPlayer() )
+	{
+		if( value != DEFPLAYER_ORIGSKIN )
+			CreatePlayer();
+	}
 	if( IsValidPlayer() )
 		mPlayer->origSkin = value;
 }

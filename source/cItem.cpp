@@ -1391,6 +1391,9 @@ bool CItem::isDevineLocked( void ) const
 
 void CItem::SetDecayable( bool newValue )
 {
+	if( newValue )
+		SetDecayTime( 0 );
+
 	priv.set( BIT_DECAYABLE, newValue );
 }
 void CItem::SetNewbie( bool newValue )

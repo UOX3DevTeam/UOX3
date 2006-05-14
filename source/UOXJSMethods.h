@@ -164,6 +164,9 @@ JSMethodFunc CSocket_OpenURL;
 JSMethodFunc CSocket_GetByte;
 JSMethodFunc CSocket_GetWord;
 JSMethodFunc CSocket_GetDWord;
+JSMethodFunc CSocket_GetSByte;
+JSMethodFunc CSocket_GetSWord;
+JSMethodFunc CSocket_GetSDWord;
 JSMethodFunc CSocket_GetString;
 JSMethodFunc CSocket_SetByte;
 JSMethodFunc CSocket_SetWord;
@@ -401,6 +404,9 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "GetByte",			CSocket_GetByte,	1, 0, 0 },
 	{ "GetWord",			CSocket_GetWord,	1, 0, 0 },
 	{ "GetDWord",			CSocket_GetDWord,	1, 0, 0 },
+	{ "GetSByte",			CSocket_GetSByte,	1, 0, 0 },
+	{ "GetSWord",			CSocket_GetSWord,	1, 0, 0 },
+	{ "GetSDWord",			CSocket_GetSDWord,	1, 0, 0 },
 	{ "GetString",			CSocket_GetString,	1, 0, 0 },
 	{ "SetByte",			CSocket_SetByte,	2, 0, 0 },
 	{ "SetWord",			CSocket_SetWord,	2, 0, 0 },

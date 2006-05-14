@@ -689,21 +689,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											{
 												UString cupper = cdata.upper();
 												if( cupper == "NE" )
-													applyTo->SetDir( 1 );
+													applyTo->SetDir( NORTHEAST );
 												else if( cupper == "E" )
-													applyTo->SetDir( 2 );
+													applyTo->SetDir( EAST );
 												else if( cupper == "SE" )
-													applyTo->SetDir( 3 );
+													applyTo->SetDir( SOUTHEAST );
 												else if( cupper == "S" )
-													applyTo->SetDir( 4 );
+													applyTo->SetDir( SOUTH );
 												else if( cupper == "SW" )
-													applyTo->SetDir( 5 );
+													applyTo->SetDir( SOUTHWEST );
 												else if( cupper == "W" )
-													applyTo->SetDir( 6 );
+													applyTo->SetDir( WEST );
 												else if( cupper == "NW" )
-													applyTo->SetDir( 7 );
+													applyTo->SetDir( NORTHWEST );
 												else if( cupper == "N" )
-													applyTo->SetDir( 0 );
+													applyTo->SetDir( NORTH );
 											}
 											break;
 			case DFNTAG_EMOTECOLOUR:		

@@ -613,7 +613,7 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetLocation( 1495, 1629, 10 ); //Send character to the sweet dreams inn in Britain!
 			else
 				mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
-			mChar->SetDir( 4 );
+			mChar->SetDir( SOUTH );
 
 			//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
 			mChar->SetStrength( Capped( str, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );

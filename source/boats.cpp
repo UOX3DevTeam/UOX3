@@ -380,6 +380,9 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	hold->SetType( IT_CONTAINER );//Conatiner
 	hold->SetDecayable( false );
 
+	p2->SetTempVar( CITV_MORE, serial );
+	p1->SetTempVar( CITV_MORE, serial );
+
 	b->SetTiller( tiller->GetSerial() );
 	b->SetPlank( 0, p1->GetSerial() );// Store the other stuff anywhere it will fit :-)
 	b->SetPlank( 1, p2->GetSerial() );

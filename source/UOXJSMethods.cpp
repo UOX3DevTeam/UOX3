@@ -3098,6 +3098,24 @@ JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	*rval		= INT_TO_JSVAL( mySock->GetByte( offset ) );
     return JS_TRUE;
 }
+JSBool CSocket_GetSByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "GetSByte: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset	= JSVAL_TO_INT( argv[0] );
+	*rval		= INT_TO_JSVAL( static_cast<SI08>(mySock->GetByte( offset )) );
+    return JS_TRUE;
+}
 JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
     if( argc != 1 ) // 1 parameters
@@ -3116,6 +3134,24 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
     return JS_TRUE;
 }
+JSBool CSocket_GetSWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "GetSWord: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )) );
+    return JS_TRUE;
+}
 JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
     if( argc != 1 ) // 1 parameters
@@ -3132,6 +3168,24 @@ JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     }
 	int offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( mySock->GetDWord( offset ) );
+    return JS_TRUE;
+}
+JSBool CSocket_GetSDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+    if( argc != 1 ) // 1 parameters
+    {
+        MethodError( "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
+        return JS_FALSE;
+    }
+    CSocket *mySock = (CSocket*)JS_GetPrivate( cx, obj );
+
+    if( mySock == NULL )
+    {
+        MethodError( "GetSDWord: Invalid socket!");
+        return JS_FALSE;
+    }
+	int offset = JSVAL_TO_INT( argv[0] );
+	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )) );
     return JS_TRUE;
 }
 JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
