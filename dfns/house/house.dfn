@@ -349,7 +349,7 @@ CHARZ=3
 
 [HOUSE 25]
 { Large Dragon Boat
-ID=0x4012
+ID=0x4014
 BOAT
 CHARX=1
 CHARZ=3

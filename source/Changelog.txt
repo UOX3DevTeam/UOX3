@@ -1,3 +1,6 @@
+5/14/2006 - grimson
+	Fixed the "Large Dragon Boat" deed.
+
 5/07/2006 - giwo (0.98-3.6c)
 	Forced CItem::DecayTime to reset when decayable was set to true.
 	Fixed an issue causing keys not to function on planks.
