@@ -402,6 +402,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13BA: //viking sword
 		case 0x255E: //ratman sword - LBR
 		case 0x2560: //skeleton scimitar - LBR
+		case 0x2D29: //elven machete - ML
+		case 0x2D35: //elven machete - ML
 			return SLASH_SWORDS;
 		// One-Handed Lg. Swords
 		case 0x0F5E: //broadsword
@@ -410,6 +412,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26CE: //paladin sword - AoS
 		case 0x26CF: //paladin sword - AoS
 		case 0x2554: //daemon sword - LBR
+		case 0x2D27: //radiant scimitar - ML
+		case 0x2D33: //radiant scimitar - ML
 			return ONEHND_LG_SWORDS;
 		// Two-Handed Lg. Swords
 		case 0x143E: //halberd
@@ -423,6 +427,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x27ED: //no-dachi - SE
 		case 0x27A8: //bokuto - SE
 		case 0x27F3: //bokuto - SE
+		case 0x2D26: //rune blade - ML
+		case 0x2D32: //rune blade - ML
 			return TWOHND_LG_SWORDS;
 		// Bardiche
 		case 0x0F4D: //bardiche
@@ -459,6 +465,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x255D: //ratman axe - LBR
 		case 0x2564: //troll axe - LBR
 		case 0x2570: //hatchet - LBR
+		case 0x2D28: //ornate axe - ML
+		case 0x2D34: //ornate axe - ML
 			return TWOHND_AXES;
 		// Default Maces
 		case 0x13E3: //smith's hammer
@@ -483,6 +491,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x255C: //orc club - LBR
 		case 0x256F: //smyth's hammer - LBR
 		case 0x257F: //war mace - LBR
+		case 0x2D24: //diamond mace - ML
+		case 0x2D30: //diamond mace - ML
+		case 0x2D25: //wild staff - ML
+		case 0x2D31: //wild staff - ML
 			return DEF_MACES;
 		// Large Maces
 		case 0x13F4: //crook
@@ -535,6 +547,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26CD: //repeating crossbow - AoS
 		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
+		case 0x2D1E: //elven composite longbow - ML
+		case 0x2D2A: //elven composite longbow - ML
+		case 0x2D1F: //magical shortbow - ML
+		case 0x2D2B: //magical shortbow - ML
 			return XBOWS;
 		// Normal Fencing Weapons
 		case 0x0F51: //dagger
@@ -546,6 +562,14 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x1404: //war fork
 		case 0x1405: //war fork
 		case 0x257C: //sword(rapier) - LBR
+		case 0x2D20: //elven spellblade - ML
+		case 0x2D2C: //elven spellblade - ML
+		case 0x2D21: //assassin spike - ML
+		case 0x2D2D: //assassin spike - ML
+		case 0x2D22: //leafblade - ML
+		case 0x2D2E: //leafblade - ML
+		case 0x2D23: //war cleaver - ML
+		case 0x2D2F: //war cleaver - ML
 			return DEF_FENCING;
 		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork

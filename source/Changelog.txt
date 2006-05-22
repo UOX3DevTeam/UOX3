@@ -1,3 +1,6 @@
+5/22/2006 - Xuri
+	Added weapon type classifications for all weapons from the mondain's legacy expansion
+
 5/14/2006 - grimson
 	Fixed the "Large Dragon Boat" deed.
 
