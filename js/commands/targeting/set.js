@@ -220,6 +220,18 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.layer = nVal;
 		okMsg( socket );
 		break;
+	case "LODAMAGE":
+		ourItem.lodamage = nVal;
+		okMsg( socket );
+		break;
+	case "HIDAMAGE":
+		ourItem.hidamage = nVal;
+		okMsg( socket );
+		break;
+	case "WEIGHT":
+		ourItem.weight = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 			HandleSetSpawner( socket, ourItem, uKey, nVal );
