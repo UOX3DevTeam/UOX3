@@ -86,24 +86,6 @@ public:
 	}
 };
 
-class CMagicSound
-{
-private:
-	UI16	effect;
-public:
-	CMagicSound() : effect( INVALIDID )
-	{
-	}
-	UI16	Effect( void ) const
-	{
-		return effect;
-	}
-	void	Effect( UI08 p1, UI08 p2 )
-	{
-		effect = (UI16)((p1<<8) + p2);
-	}
-};
-
 struct reag_st
 {
 	UI08 ginseng;
@@ -134,15 +116,15 @@ private:
 	UI08		circle;
 	UI16		flags;
 	CMagicMove	moveEffect;
-	CMagicSound soundEffect;
+	UI16		effect;
 	CMagicStat	staticEffect;
 	SI16		hiskill;
 	SI16		loskill;
 	SI16		sclo;
 	SI16		schi;
-	UI16	jsScript;
+	UI16		jsScript;
 public:
-	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 )
+	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ), circle( 1 ), flags( 0 ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), effect( INVALIDID )
 	{
 	}
 
@@ -300,9 +282,9 @@ public:
 	{
 		enabled	= newVal;
 	}
-	void Flags( UI08 val1, UI08 val2 )
+	void Flags( UI16 newVal )
 	{
-		flags = (UI16)((val1<<8) + val2);
+		flags = newVal;
 	}
 	UI16 JSScript( void )
 	{
@@ -312,13 +294,11 @@ public:
 	{
 		jsScript = scpAssign;
 	}
+	UI16	Effect( void )const		{	return effect;	}
+	void	Effect( UI16 newVal )	{	effect = newVal;}
 	CMagicMove MoveEffect( void ) const
 	{
 		return moveEffect;
-	}
-	CMagicSound SoundEffect( void ) const
-	{
-		return soundEffect;
 	}
 	CMagicStat StaticEffect( void ) const
 	{
@@ -327,10 +307,6 @@ public:
 	CMagicMove * MoveEffectPtr( void )
 	{
 		return &moveEffect;
-	}
-	CMagicSound * SoundEffectPtr( void )
-	{
-		return &soundEffect;
 	}
 	CMagicStat * StaticEffectPtr( void )
 	{

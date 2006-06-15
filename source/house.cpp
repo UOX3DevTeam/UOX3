@@ -342,7 +342,7 @@ void deedHouse( CSocket *s, CMultiObj *i )
 			if( tChar->GetMultiObj() == i )
 			{
 				// Delete Player Vendors
-				if( tChar->GetNPCAiType() == aiPLAYERVENDOR ) // player vendor in right place
+				if( tChar->GetNPCAiType() == AI_PLAYERVENDOR ) // player vendor in right place
 				{
 					sprintf( temp, Dictionary->GetEntry( 580 ).c_str(), tChar->GetName().c_str() );
 					pvDeed = Items->CreateItem( NULL, mChar, 0x14F0, 1, 0, OT_ITEM, true );

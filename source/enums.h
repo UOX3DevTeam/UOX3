@@ -392,25 +392,25 @@ enum DEFINITIONCATEGORIES
 
 enum CommandLevels
 {
-	PLAYER_CMDLEVEL = 0,
-	CNS_CMDLEVEL,
-	GM_CMDLEVEL,
-	ADMIN_CMDLEVEL
+	CL_PLAYER = 0,
+	CL_CNS,
+	CL_GM,
+	CL_ADMIN
 };
 
-enum aiTypes
+enum AITypes
 {
-	aiNOAI			= 0,
-	aiHEALER_G		= 1,
-	aiEVIL			= 2,
-	aiGUARD			= 4,
-	aiFIGHTER		= 5,
-	aiANIMAL		= 6,
-	aiBANKER		= 8,
-	aiPLAYERVENDOR	= 17,
-	aiPET_GUARD		= 32,
-	aiCHAOTIC		= 88,
-	aiHEALER_E		= 666,
+	AI_NONE			= 0,
+	AI_HEALER_G		= 1,
+	AI_EVIL			= 2,
+	AI_GUARD		= 4,
+	AI_FIGHTER		= 5,
+	AI_ANIMAL		= 6,
+	AI_BANKER		= 8,
+	AI_PLAYERVENDOR	= 17,
+	AI_PET_GUARD	= 32,
+	AI_CHAOTIC		= 88,
+	AI_HEALER_E		= 666,
 };
 
 

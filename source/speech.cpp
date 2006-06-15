@@ -309,7 +309,7 @@ bool CPITalkRequest::Handle( void )
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
-					if( tChar->GetCommandLevel() < CNS_CMDLEVEL && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
+					if( tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
 						if( mChar->IsDead() && !tChar->IsDead() )  // Ghost can talk normally to other ghosts
 							tSock->Send( ghostedText );

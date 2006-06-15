@@ -163,7 +163,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 
 	killTrades( p );
 
-	if( p->GetCommandLevel() >= CNS_CMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
+	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().wAccountIndex == 0 ) 
 		valid = true;
 	else 
 	{

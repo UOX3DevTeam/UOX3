@@ -591,7 +591,7 @@ bool IsOnFoodList( const std::string sFoodList, const UI16 sItemID )
 bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 {
 	UI08 dropResult		= 0;
-	const bool isGM		= (mChar->GetCommandLevel() >= CNS_CMDLEVEL);
+	const bool isGM		= (mChar->GetCommandLevel() >= CL_CNS);
 	bool stackDeleted	= false;
 	bool executeNpc		= true;
 	UI16 targTrig		= i->GetScriptTrigger();
@@ -1015,7 +1015,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 					break;
 			}
 		}
-		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == aiPLAYERVENDOR )
+		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			if( contOwner->GetOwnerObj() == &mChar )
 			{
@@ -1024,7 +1024,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 				mSock.sysmessage( 1207 );
 			}
 		}
-		else if( mChar.GetCommandLevel() < CNS_CMDLEVEL && ( !contOwner->IsNpc() || !contOwner->IsTamed() || 
+		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() || 
 			( contOwner->GetID() != 0x0123 && contOwner->GetID() != 0x0124 ) ||
 			( contOwner->GetOwnerObj() != &mChar && !Npcs->checkPetFriend( &mChar, contOwner ) ) ) )
 		{
@@ -1510,7 +1510,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	{
 		if( c->IsValidMount() )	// Is a mount
 		{
-			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->GetCommandLevel() >= GM_CMDLEVEL )
+			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->GetCommandLevel() >= CL_GM )
 			{
 				if( objInRange( mChar, c, DIST_NEXTTILE ) )
 				{
@@ -1539,7 +1539,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				else
 				{
 					pack = c->GetPackItem();
-					if( mChar->GetCommandLevel() >= CNS_CMDLEVEL || c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) )
+					if( mChar->GetCommandLevel() >= CL_CNS || c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) )
 					{
 						if( ValidateObject( pack ) )
 							mSock->openPack( pack );
@@ -1556,7 +1556,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 			}
 			return; 
 		}
-		else if( c->GetNPCAiType() == aiPLAYERVENDOR ) // PlayerVendors
+		else if( c->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 		{
 			c->talk( mSock, 385, false );
 			pack = c->GetPackItem();
@@ -1889,7 +1889,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
 			CChar *m;
 			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
-			m->SetNPCAiType( aiPLAYERVENDOR );
+			m->SetNPCAiType( AI_PLAYERVENDOR );
 			m->SetInvulnerable( true );
 			m->SetDir( mChar->GetDir() );
 			m->SetOwner( mChar );
@@ -2138,7 +2138,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			return false;
 		}
 	}
-	if( ourChar->GetCommandLevel() < CNS_CMDLEVEL )
+	if( ourChar->GetCommandLevel() < CL_CNS )
 	{
 		if( ( tSock->GetTimer( tPC_OBJDELAY ) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		{
@@ -2389,7 +2389,7 @@ bool CPISingleClick::Handle( void )
 		CChar *w = FindItemOwner( (CItem *)i->GetCont() );
 		if( ValidateObject( w ) )
 		{
-			if( w->GetNPCAiType() == aiPLAYERVENDOR )
+			if( w->GetNPCAiType() == AI_PLAYERVENDOR )
 			{
 				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 				{

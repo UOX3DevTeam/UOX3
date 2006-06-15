@@ -768,7 +768,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i )
 
 void MassCurseStub( CChar *caster, CChar *target )
 {
-	if( target->IsNpc() && target->GetNPCAiType() == aiPLAYERVENDOR )
+	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
@@ -834,7 +834,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 
 void ChainLightningStub( CChar *caster, CChar *target )
 {
-	if( target->IsNpc() && target->GetNPCAiType() == aiPLAYERVENDOR )
+	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
@@ -936,7 +936,7 @@ bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src )
 
 void MeteorSwarmStub( CChar *caster, CChar *target )
 {
-	if( target->IsNpc() && target->GetNPCAiType() == aiPLAYERVENDOR )
+	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
@@ -1540,7 +1540,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 				newChar->SetIntelligence( 180 );
 				newChar->SetMana( 180 );
 				newChar->SetNpcWander( WT_FREE );
-				newChar->SetNPCAiType( aiCHAOTIC );
+				newChar->SetNPCAiType( AI_CHAOTIC );
 				newChar->SetPoisonStrength( 3 );	
 			}
 			else
@@ -1627,7 +1627,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			newChar->SetIntelligence( 70 );
 			newChar->SetMana( 70 );
 			newChar->SetNpcWander( WT_FREE );
-			newChar->SetNPCAiType( aiCHAOTIC );
+			newChar->SetNPCAiType( AI_CHAOTIC );
 			newChar->SetPoisonStrength( 2 );
 			break;
 		case 0x03e2: // Dupre The Hero
@@ -2695,7 +2695,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								s->sysmessage( 709 );
 							return;
 						}
-						if( c->GetNPCAiType() == aiPLAYERVENDOR )
+						if( c->GetNPCAiType() == AI_PLAYERVENDOR )
 						{
 							if( validSocket )
 								s->sysmessage( 713 );
@@ -3013,7 +3013,9 @@ void cMagic::LoadScript( void )
 								if( UTag == "FLAGS" )
 								{
 									if( data.sectionCount( " " ) != 0 )
-										spells[i].Flags( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
+										spells[i].Flags( (UI16)((data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 )<<8) + data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 )) );
+									else
+										spells[i].Flags( data.stripWhiteSpace().toUShort() );
 								}
 								break;
 							case 'g':
@@ -3069,10 +3071,9 @@ void cMagic::LoadScript( void )
 								else if( UTag == "SOUNDFX" )
 								{
 									if( data.sectionCount( " " ) != 0 )
-									{
-										CMagicSound *snd = spells[i].SoundEffectPtr();
-										snd->Effect( data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 ), data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 ) );
-									}
+										spells[i].Effect( (UI16)((data.section( " ", 0, 0 ).stripWhiteSpace().toUByte( 0, 16 )<<8) + data.section( " ", 1, 1 ).stripWhiteSpace().toUByte( 0, 16 )) );
+									else
+										spells[i].Effect( data.stripWhiteSpace().toUShort() );
 								}
 								else if( UTag == "STATFX" )
 								{
@@ -3132,10 +3133,8 @@ void cMagic::DelReagents( CChar *s, reag_st reags )
 
 void cMagic::playSound( CChar *source, int num )
 {
-	CMagicSound temp = spells[num].SoundEffect();
-	
-	if( temp.Effect() != INVALIDID )
-		Effects->PlaySound( source, temp.Effect() );
+	if( spells[num].Effect() != INVALIDID )
+		Effects->PlaySound( source, spells[num].Effect() );
 }
 
 void cMagic::doStaticEffect( CChar *source, int num )

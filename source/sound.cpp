@@ -352,7 +352,7 @@ void cEffects::playTileSound( CSocket *mSock )
 		return;
 
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CNS_CMDLEVEL )
+	if( mChar->GetVisible() != VT_VISIBLE || mChar->GetCommandLevel() >= CL_CNS )
 		return;
 
 	enum TileType

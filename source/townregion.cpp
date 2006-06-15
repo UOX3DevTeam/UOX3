@@ -636,7 +636,7 @@ UI16 CTownRegion::GetMidiList( void ) const
 CChar * CTownRegion::GetRandomGuard( void )
 {
 	CChar *ourGuard = Npcs->CreateRandomNPC( guardList );
-	ourGuard->SetNPCAiType( aiGUARD );
+	ourGuard->SetNPCAiType( AI_GUARD );
 	return ourGuard;
 }
 

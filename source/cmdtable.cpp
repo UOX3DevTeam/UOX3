@@ -812,7 +812,7 @@ void command_who( CSocket *s )
 void command_gms( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	BuildWhoGump( s, CNS_CMDLEVEL, Dictionary->GetEntry( 77, s->Language() ) );
+	BuildWhoGump( s, CL_CNS, Dictionary->GetEntry( 77, s->Language() ) );
 }
 
 void command_reportbug( CSocket *s )
@@ -1093,91 +1093,91 @@ void cCommands::CommandReset( void )
 	// G
 	// H
 	// I
-	TargetMap["INFO"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_INFO,			261);
+	TargetMap["INFO"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_INFO,			261);
 	// J
 	// K
 	// L
 	// M
-	TargetMap["MAKE"]			= TargetMapEntry( ADMIN_CMDLEVEL,	CMD_TARGETTXT,	TARGET_MAKESTATUS,		279);
+	TargetMap["MAKE"]			= TargetMapEntry( CL_ADMIN,			CMD_TARGETTXT,	TARGET_MAKESTATUS,		279);
 	// N
 	// O
 	// P
 	// Q
 	// R
 	// S
-	TargetMap["SETSCPTRIG"]		= TargetMapEntry( ADMIN_CMDLEVEL,	CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
-	TargetMap["SHOWSKILLS"]		= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
+	TargetMap["SETSCPTRIG"]		= TargetMapEntry( CL_ADMIN,			CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
+	TargetMap["SHOWSKILLS"]		= TargetMapEntry( CL_GM,			CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	// T
-	TargetMap["TWEAK"]			= TargetMapEntry( GM_CMDLEVEL,		CMD_TARGET,		TARGET_TWEAK,			229);
+	TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
 	// U
 	// V
 	// W
-	TargetMap["WSTATS"]			= TargetMapEntry( CNS_CMDLEVEL,		CMD_TARGET,		TARGET_WSTATS,			183);
+	TargetMap["WSTATS"]			= TargetMapEntry( CL_CNS,			CMD_TARGET,		TARGET_WSTATS,			183);
 	// X
 	// Y
 	// Z
 
 	// CommandMap[Command Name] = CommandMapEntry(Required Command Level, Command Type, Command Function);
 	//A
-	CommandMap["ADDACCOUNT"]		= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
-	CommandMap["ANNOUNCE"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
+	CommandMap["ADDACCOUNT"]		= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
+	CommandMap["ANNOUNCE"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
 	//B
 	//C
-	CommandMap["CQ"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_cq);
-	CommandMap["COMMAND"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_command);
+	CommandMap["CQ"]				= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_cq);
+	CommandMap["COMMAND"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_command);
 	//D
-	CommandMap["DYE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dye);
+	CommandMap["DYE"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dye);
 	//E
 	//F
-	CommandMap["FORCEWHO"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_forcewho);
-	CommandMap["FIXSPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_fixspawn);
+	CommandMap["FORCEWHO"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_forcewho);
+	CommandMap["FIXSPAWN"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_fixspawn);
 	//G,
-	CommandMap["GETLIGHT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getlight);
-	CommandMap["GUARDS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_guards);
-	CommandMap["GMS"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_gms);
-	CommandMap["GMMENU"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmmenu);
-	CommandMap["GCOLLECT"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&CollectGarbage);
-	CommandMap["GQ"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gq);
+	CommandMap["GETLIGHT"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getlight);
+	CommandMap["GUARDS"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_guards);
+	CommandMap["GMS"]				= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gms);
+	CommandMap["GMMENU"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmmenu);
+	CommandMap["GCOLLECT"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&CollectGarbage);
+	CommandMap["GQ"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gq);
 	//H
-	CommandMap["HOWTO"]				= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
+	CommandMap["HOWTO"]				= CommandMapEntry( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
 	//I
 	//J
 	//K
 	//L
-	CommandMap["LOADDEFAULTS"]		= CommandMapEntry( ADMIN_CMDLEVEL,	CMD_FUNC,		(CMD_DEFINE)&command_loaddefaults);
+	CommandMap["LOADDEFAULTS"]		= CommandMapEntry( CL_ADMIN,	CMD_FUNC,		(CMD_DEFINE)&command_loaddefaults);
 	//M
-	CommandMap["MEMSTATS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_memstats);
-	CommandMap["MINECHECK"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_minecheck);
+	CommandMap["MEMSTATS"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_memstats);
+	CommandMap["MINECHECK"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_minecheck);
 	//N
 	//O
 	//P
-	CommandMap["PDUMP"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_pdump);
-	CommandMap["POST"]    			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_getpost);
+	CommandMap["PDUMP"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_pdump);
+	CommandMap["POST"]    			= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getpost);
 	//Q
 	//R
-	CommandMap["RESTOCK"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_restock);
-	CommandMap["RESPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_respawn);
-	CommandMap["REGSPAWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_regspawn);
-	CommandMap["REPORTBUG"]			= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_reportbug);
+	CommandMap["RESTOCK"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_restock);
+	CommandMap["RESPAWN"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_respawn);
+	CommandMap["REGSPAWN"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_regspawn);
+	CommandMap["REPORTBUG"]			= CommandMapEntry( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_reportbug);
 	//S
-	CommandMap["SETPOST"]			= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_setpost);
-	CommandMap["SPAWNKILL"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_spawnkill);
-	CommandMap["SETSHOPRESTOCKRATE"]= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_setshoprestockrate);
-	CommandMap["SETTIME"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_settime);
-	CommandMap["SHUTDOWN"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_shutdown);
-	CommandMap["SAVE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_FUNC,		(CMD_DEFINE)&command_save);
-	CommandMap["STATUS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_status);
-	CommandMap["SHOWIDS"]			= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_showids);
+	CommandMap["SETPOST"]			= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_setpost);
+	CommandMap["SPAWNKILL"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_spawnkill);
+	CommandMap["SETSHOPRESTOCKRATE"]= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_setshoprestockrate);
+	CommandMap["SETTIME"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_settime);
+	CommandMap["SHUTDOWN"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_shutdown);
+	CommandMap["SAVE"]				= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_save);
+	CommandMap["STATUS"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_status);
+	CommandMap["SHOWIDS"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_showids);
 	//T
-	CommandMap["TEMP"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_temp );
-	CommandMap["TIME"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&telltime);
-	CommandMap["TELL"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tell);
-	CommandMap["TILE"]				= CommandMapEntry( GM_CMDLEVEL,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tile);
+	CommandMap["TEMP"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_temp );
+	CommandMap["TIME"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&telltime);
+	CommandMap["TELL"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tell);
+	CommandMap["TILE"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tile);
 	//U
 	//V
-	CommandMap["VALIDCMD"]			= CommandMapEntry( PLAYER_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_validcmd );
+	CommandMap["VALIDCMD"]			= CommandMapEntry( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_validcmd );
 	//W
-	CommandMap["WHO"]				= CommandMapEntry( CNS_CMDLEVEL,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_who);
+	CommandMap["WHO"]				= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_who);
 	//X
 	//Y
 	//Z

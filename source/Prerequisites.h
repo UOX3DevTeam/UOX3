@@ -125,7 +125,6 @@ namespace UOX {
 	class CLand;
 	class cMagic;
 	class CMagicMove;
-	class CMagicSound;
 	class CMagicStat;
 	class CMapHandler;
 	class CMapRegion;

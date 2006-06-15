@@ -267,7 +267,7 @@ void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
-			if( Npc->GetNPCAiType() == aiBANKER )// if he's a banker and we're close!
+			if( Npc->GetNPCAiType() == AI_BANKER )// if he's a banker and we're close!
 			{
 				if( !checkBalance )
 					mSock->openBank( mChar );
@@ -408,7 +408,7 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 bool CBasePetResponse::canControlPet( CChar *mChar, CChar *Npc, bool isRestricted )
 {
 	bool retVal = false;
-	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != aiPLAYERVENDOR && Npc->GetQuestType() == 0 )
+	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != AI_PLAYERVENDOR && Npc->GetQuestType() == 0 )
 	{
 		if( Npc->GetOwnerObj() == mChar )
 			retVal = true;
@@ -479,7 +479,7 @@ bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->sysmessage( 1321 );
-			Npc->SetNPCAiType( aiPET_GUARD );
+			Npc->SetNPCAiType( AI_PET_GUARD );
 			Npc->SetGuarding( mChar );
 			mChar->SetGuarded( true );
 			Npc->SetFTarg( mChar );
@@ -563,7 +563,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
-		if( Npc->IsShop() || Npc->GetNPCAiType() == aiPLAYERVENDOR )
+		if( Npc->IsShop() || Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 				continue;
@@ -583,7 +583,7 @@ CVendorBuyResponse::CVendorBuyResponse( bool vendVal, std::string text ) : CBase
 bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-	if( Npc->GetNPCAiType() == aiPLAYERVENDOR )
+	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		mSock->TempObj( Npc );
 		Npc->talk( mSock, 1333, false );
@@ -615,7 +615,7 @@ CVendorGoldResponse::CVendorGoldResponse( bool vendVal, std::string text ) : CBa
 }
 bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( Npc->GetNPCAiType() == aiPLAYERVENDOR )
+	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
 		UI32 pay = 0, give = Npc->GetHoldG(), t = 0;

@@ -54,7 +54,7 @@ void PlVBuy( CSocket *s )//PlayerVendors
 	
 	if( FindItemOwner( i ) != vChar )
 		return;
-	if( vChar->GetNPCAiType() != aiPLAYERVENDOR )
+	if( vChar->GetNPCAiType() != AI_PLAYERVENDOR )
 		return;
 	if( mChar == vChar->GetOwnerObj() )
 	{
@@ -1170,7 +1170,7 @@ void GuardTarget( CSocket *s )
 			s->sysmessage( 1628 );
 			return;
 		}
-		petGuarding->SetNPCAiType( aiPET_GUARD ); // 32 is guard mode
+		petGuarding->SetNPCAiType( AI_PET_GUARD ); // 32 is guard mode
 		petGuarding->SetGuarding( charToGuard );
 		mChar->SetGuarded( true );
 		return;
@@ -1183,7 +1183,7 @@ void GuardTarget( CSocket *s )
 		{
 			if( multi->GetOwnerObj() == mChar )
 			{
-				petGuarding->SetNPCAiType( aiPET_GUARD );
+				petGuarding->SetNPCAiType( AI_PET_GUARD );
 				petGuarding->SetGuarding( itemToGuard );
 				itemToGuard->SetGuarded( true );
 			}

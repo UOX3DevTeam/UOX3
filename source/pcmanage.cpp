@@ -606,7 +606,7 @@ bool CPICreateCharacter::Handle( void )
 			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ) )
 			{ 
 				mChar->SetPriv( 0xFF );
-				mChar->SetCommandLevel( GM_CMDLEVEL );
+				mChar->SetCommandLevel( CL_GM );
 			}
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
 			if( toGo == NULL )

@@ -66,7 +66,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	{
 		criminal( cAttack );
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
-		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD && cTarget->isHuman() )
+		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
 		{
 			cTarget->talkAll( 335, true );
 			callGuards( cTarget, cAttack );
@@ -101,7 +101,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 
 		// if the target is an npc, and not a guard, make sure they're in war mode and update their movement time
 		// ONLY IF THEY'VE CHANGED ATTACKER
-		if( cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD )
+		if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD )
 		{
 			if( !cTarget->IsAtWar() )
 				cTarget->ToggleCombat();
@@ -145,7 +145,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			switch( i->GetNPCAiType() )
 			{
-				case aiHEALER_G:	// Good Healer
+				case AI_HEALER_G:	// Good Healer
 					if( !ourChar->IsCriminal() && !ourChar->IsMurderer() )
 					{ // Character is innocent
 						if( objInRange( i, ourChar, DIST_NEARBY ) )
@@ -161,7 +161,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					else // Character is criminal or murderer
 						i->talkAll( 322, true );
 					break;
-				case aiHEALER_E: // Evil Healer
+				case AI_HEALER_E: // Evil Healer
 					if( ourChar->IsMurderer() )
 					{
 						if( objInRange( i, ourChar, DIST_NEARBY ) )	// let's resurrect him
@@ -223,7 +223,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			s->sysmessage( 331 );
 			return;
 		}
-		if( i->GetNPCAiType() == aiPLAYERVENDOR ) // PlayerVendors
+		if( i->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 		{
 			s->sysmessage( 332, i->GetName().c_str() );
 			return;
@@ -239,7 +239,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			criminal( ourChar );
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
-			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != aiGUARD && i->isHuman() )
+			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && i->isHuman() )
 			{
 				i->talkAll( 335, true );
 				callGuards( i, ourChar );
@@ -262,7 +262,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		CPAttackOK toSend = (*i);
 		s->Send( &toSend );
 		
-		if( i->GetNPCAiType() != aiGUARD && !ValidateObject( i->GetTarg() ) )
+		if( i->GetNPCAiType() != AI_GUARD && !ValidateObject( i->GetTarg() ) )
 		{
 			i->SetAttacker( ourChar );
 			i->SetAttackFirst( false );
@@ -298,7 +298,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded )
 		{
-			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != aiGUARD && cTarget->isHuman() )
+			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
 			{
 				cTarget->talkAll( 1282, true );
 				callGuards( cTarget, cAttack );
@@ -1811,7 +1811,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				case 6:	// If NPC is fighting summoned NPC, cast dispel...else cast other spells - Hanse
 					if( cDefend->IsNpc() )
 					{
-						if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->GetNPCAiType() != aiGUARD ) 
+						if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->GetNPCAiType() != AI_GUARD ) 
 						{
 							CastSpell( npcAttack, cDefend, 41 );
 							break;
@@ -1904,7 +1904,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 			return;
 	}
 
-	if( mChar->IsNpc() && mChar->GetNPCAiType() == aiGUARD )
+	if( mChar->IsNpc() && mChar->GetNPCAiType() == AI_GUARD )
 	{
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
 		mChar->SetNpcWander( WT_FREE );
@@ -1944,7 +1944,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 
 	if( ValidateObject( mChar ) )
 	{
-		if( mChar->GetNPCAiType() == aiGUARD && ourTarg->IsNpc() )
+		if( mChar->GetNPCAiType() == AI_GUARD && ourTarg->IsNpc() )
 		{
 			Effects->PlayCharacterAnimation( ourTarg, 0x15 );
 			Effects->playDeathSound( ourTarg );
@@ -1955,7 +1955,7 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 			return;
 		}
 
-		if( mChar->GetNPCAiType() == aiANIMAL && !mChar->IsTamed() )
+		if( mChar->GetNPCAiType() == AI_ANIMAL && !mChar->IsTamed() )
 		{
 			mChar->SetHunger( 6 );
 
@@ -1986,7 +1986,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 		bool validTarg = false;
 		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->isFree() && ( ourTarg->IsNpc() || isOnline( (*ourTarg) ) ) )
 		{
-			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != aiPLAYERVENDOR )
+			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != AI_PLAYERVENDOR )
 			{
 				if( charInRange( &mChar, ourTarg ) )
 				{
@@ -1999,7 +1999,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
 						StartAttack( ourTarg, &mChar );
 				}
-				else if( mChar.IsNpc() && mChar.GetNPCAiType() == aiGUARD && mChar.GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() )
+				else if( mChar.IsNpc() && mChar.GetNPCAiType() == AI_GUARD && mChar.GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() )
 				{
 					validTarg = true;
 					mChar.SetLocation( ourTarg );
@@ -2057,7 +2057,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 			if( !ValidateObject( getGuard ) )
 				continue;
 
-			if( !getGuard->IsNpc() || getGuard->GetNPCAiType() != aiGUARD )
+			if( !getGuard->IsNpc() || getGuard->GetNPCAiType() != AI_GUARD )
 				continue;
 
 			if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  )

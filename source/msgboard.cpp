@@ -400,7 +400,7 @@ void MsgBoardPost( CSocket *tSock )
 
 	const PostTypes msgType = static_cast<PostTypes>(tChar->GetPostType());
 
-	if( msgType != PT_LOCAL && tChar->GetCommandLevel() < GM_CMDLEVEL )
+	if( msgType != PT_LOCAL && tChar->GetCommandLevel() < CL_GM )
 	{
 		tSock->sysmessage( "Only GM's may post Global or Regional messages" );
 		return;
@@ -860,7 +860,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 	
 	// Make sure they don't move until an player accepts the quest
 	mNPC->SetNpcWander( WT_NONE );
-	mNPC->SetNPCAiType( aiNOAI );
+	mNPC->SetNPCAiType( AI_NONE );
 	mNPC->SetQuestOrigRegion( npcRegion );
 	
 	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ) )

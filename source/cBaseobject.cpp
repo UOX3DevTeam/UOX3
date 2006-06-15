@@ -1483,8 +1483,6 @@ bool CBaseObject::Load( std::ifstream &inStream )
 	return LoadRemnants();
 }
 
-
-
 //o--------------------------------------------------------------------------
 //|	Function		-	bool HandleLine( UString &tag, UString &data )
 //|	Date			-	Unknown
@@ -1612,10 +1610,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				in2		= data.toShort();
 				rvalue	= true;
 			}
-			break;
-		case 'i':
-			if( UTag == "ICOUNTER" )
-				rvalue = true;	// don't process anything about it
 			break;
 		case 'K':
 			if( UTag == "KARMA" )

@@ -1086,7 +1086,7 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 	{
 		if( ValidateObject( pet ) )
 		{
-			if( !pet->GetMounted() && pet->GetNPCAiType() == aiPET_GUARD && 
+			if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD && 
 				pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar )
 				return pet;
 		}

@@ -140,7 +140,7 @@ namespace UOX
 				case CSP_REFLECTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->SpellReflectable() );	break;
 				case CSP_AGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
 				case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
-				case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->SoundEffect().Effect() );	break;
+				case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 				case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
 				default:																			break;
 			}

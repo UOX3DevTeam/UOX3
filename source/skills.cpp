@@ -643,7 +643,7 @@ void cSkills::Atrophy( CChar *c, UI08 sk )
 	const UI16 skillTrig	= c->GetScriptTrigger();
 	cScript *scpSkill		= JSMapping->GetScript( skillTrig );
 		
-	if( c->IsNpc() || c->GetCommandLevel() >= CNS_CMDLEVEL || mSock == NULL )	// GM's and NPC's dont atrophy
+	if( c->IsNpc() || c->GetCommandLevel() >= CL_CNS || mSock == NULL )	// GM's and NPC's dont atrophy
 	{
 		c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
 		if( scpSkill != NULL )
@@ -1092,7 +1092,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		s->sysmessage( 873 );
 		return;
 	}
-	if( npc->GetNPCAiType() == aiPLAYERVENDOR )
+	if( npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		s->sysmessage( 874 );
 		return;

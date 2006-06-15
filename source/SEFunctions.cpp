@@ -1419,10 +1419,10 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 	std::string yellTo = "";
 	switch( (CommandLevels)commandLevel )
 	{
-	case PLAYER_CMDLEVEL:	yellTo = " (GLOBAL YELL): ";	break;
-	case CNS_CMDLEVEL:		yellTo = " (CNS YELL): ";		break;
-	case GM_CMDLEVEL:		yellTo = " (GM YELL): ";		break;
-	case ADMIN_CMDLEVEL:	yellTo = " (ADMIN YELL): ";		break;
+	case CL_PLAYER:			yellTo = " (GLOBAL YELL): ";	break;
+	case CL_CNS:			yellTo = " (CNS YELL): ";		break;
+	case CL_GM:				yellTo = " (GM YELL): ";		break;
+	case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
 	}
 
 	UString tmpString = myChar->GetName() + yellTo + textToYell;

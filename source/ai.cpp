@@ -158,19 +158,22 @@ void HandleHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar = mSock->CurrcharObj();
-		if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+		if( realChar->IsDead() )
 		{
-			if( realChar->IsDead() && realChar->IsInnocent() && !realChar->IsCriminal() && !realChar->IsMurderer() )
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 			{
-				Effects->PlayCharacterAnimation( &mChar, 0x10 );
-				NpcResurrectTarget( realChar );
-				Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
-				mChar.talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
+				if( realChar->IsMurderer() )
+					mChar.talkAll( 322, true );
+				else if( realChar->IsCriminal() )
+					mChar.talkAll( 770, true );
+				else if( realChar->IsInnocent() )
+				{
+					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					NpcResurrectTarget( realChar );
+					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
+					mChar.talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
+				}
 			}
-			else if( realChar->IsDead() && realChar->IsMurderer() )
-				mChar.talkAll( 322, true );
-			else if( realChar->IsDead() && realChar->IsCriminal() )
-				mChar.talkAll( 770, true );
 		}
 	}
 }
@@ -190,15 +193,21 @@ void HandleEvilHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar	= mSock->CurrcharObj();
-		if( realChar->IsDead() && realChar->IsMurderer() )
+		if( realChar->IsDead() )
 		{
-			Effects->PlayCharacterAnimation( &mChar, 0x10 );
-			NpcResurrectTarget( realChar );
-			Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-			mChar.talkAll( ( 323 + RandomNum( 0, 4 ) ), false ); 
+			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+			{
+				if( realChar->IsMurderer() )
+				{
+					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					NpcResurrectTarget( realChar );
+					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
+					mChar.talkAll( ( 323 + RandomNum( 0, 4 ) ), false ); 
+				}
+				else
+					mChar.talkAll( 329, true );
+			}
 		}
-		else if( !realChar->IsMurderer() && realChar->IsDead() )
-			mChar.talkAll( 329, true );
 	}
 }
 
@@ -226,7 +235,7 @@ void HandleEvilAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
-					if( tempChar->GetNPCAiType() == aiEVIL || tempChar->GetNPCAiType() == aiHEALER_G )
+					if( tempChar->GetNPCAiType() == AI_EVIL || tempChar->GetNPCAiType() == AI_HEALER_G )
 						continue;
 					if( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() )
 					{
@@ -311,7 +320,7 @@ void HandleAnimalAI( CChar& mChar )
 				{
 					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						if( (cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != aiANIMAL) || hunger < 2  )
+						if( ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != AI_ANIMAL ) || hunger < 2  )
 						{
 							Combat->AttackTarget( &mChar, tempChar );
 							regChars->Pop();
@@ -338,26 +347,27 @@ void CheckAI( CChar& mChar )
 	CChar *realChar			= NULL;
 	switch( mChar.GetNPCAiType() )
 	{
-	case aiNOAI:										break;
-	case aiHEALER_G:		HandleHealerAI( mChar );	break;	// Good Healers
-	case aiEVIL:			HandleEvilAI( mChar );		break;	// Evil NPC's
-	case aiGUARD:			HandleGuardAI( mChar );		break;	// Guard
-	case aiFIGHTER:			HandleFighterAI( mChar );	break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
-	case aiANIMAL:			HandleAnimalAI( mChar );	break;	//Hungry animals
-	case aiBANKER:										break;  // Banker
-	case aiPLAYERVENDOR:								break;  // Player Vendors.
-	case aiPET_GUARD:										// Pet Guarding AI
+	case AI_BANKER:													// Banker
+	case AI_PLAYERVENDOR:											// Player Vendors.
+	case AI_NONE:											break;	// No AI for these special NPC's.
+
+	case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
+	case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
+	case AI_GUARD:			HandleGuardAI( mChar );			break;	// Guard
+	case AI_FIGHTER:		HandleFighterAI( mChar );		break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
+	case AI_ANIMAL:			HandleAnimalAI( mChar );		break;	// Hungry animals
+	case AI_CHAOTIC:		HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
+	case AI_HEALER_E:		HandleEvilHealerAI( mChar );	break;	// Evil Healers
+	case AI_PET_GUARD:												// Pet Guarding AI
 		realChar = mChar.GetOwnerObj();
 		if( !ValidateObject( realChar ) )
 		{
-			mChar.SetNPCAiType( aiNOAI );
+			mChar.SetNPCAiType( AI_NONE );
 			return;
 		}
 		if( ValidateObject( realChar->GetTarg() ) )
 			Combat->AttackTarget( &mChar, realChar->GetTarg() );
 		break;
-	case aiCHAOTIC:			HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
-	case aiHEALER_E:		HandleEvilHealerAI( mChar );	break;	//Evil Healers
 	default:
 		Console.Error( " CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() );	//Morrolan
 		return;

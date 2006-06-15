@@ -904,7 +904,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			cwmWorldState->ServerData()->WorldAmbientSounds( 10 );
 		const SI16 soundTimer = static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
 		if( !mChar.IsDead() && ( RandomNum( 0, soundTimer - 1 ) ) == ( soundTimer / 2 ) )
-			Effects->PlayBGSound( (*mSock), mChar ); // bgsound uses array positions not sockets!
+			Effects->PlayBGSound( (*mSock), mChar );
 	}
 	
 	if( mSock->GetTimer( tPC_SPIRITSPEAK ) > 0 && mSock->GetTimer( tPC_SPIRITSPEAK) < cwmWorldState->GetUICurrentTime() )
@@ -965,7 +965,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	// okay, this will only ever trigger after we check an npc...  Question is:
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
 	// AI can never be faster than how often we check npcs
-	// This periodically generates access violations.  No idea why either
+
 	const UI16 AITrig	= mChar.GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( AITrig );
 	bool doAICheck		= true;
@@ -1003,7 +1003,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 				return;
 			}
 			// Dupois - End
-			if( mChar.GetNPCAiType() == aiGUARD && mChar.IsAtWar() )
+			if( mChar.GetNPCAiType() == AI_GUARD && mChar.IsAtWar() )
 			{
 				mChar.SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
 				return;
@@ -1327,7 +1327,7 @@ void CWorldMain::CheckAutoTimers( void )
 		checkFieldEffects = true;
 		SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
 	}
-	std::set< CMapRegion * > regionList;	// we'll get around our npc problem this way, hopefully
+	std::set< CMapRegion * > regionList;
 	Network->PushConn();
 	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
@@ -2210,12 +2210,11 @@ void telltime( CSocket *s )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of an items name from tiledata.mul and
-//|					sets itemname to the name
+//|					sets itemname to the name.
+//|					The format it accepts is same as UO style - %plural/single% or %plural%
+//|						arrow%s%
+//|						loa%ves/f% of bread
 //o---------------------------------------------------------------------------o
-// Can't return std::size_t as VC6 says it's not in that namespace
-// The format it accepts is same as UO style - %plural/single% or %plural%
-// eg arrow%s%
-//    loa%ves/f% of bread
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	CTile& tile = Map->SeekTile( mItem.GetID() );
@@ -2260,7 +2259,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 //|	Function	-	void checkRegion( CChar& mChar )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Check what region a character is in
+//|	Purpose		-	Check what region a character is in, updating it if necesarry.
 //o---------------------------------------------------------------------------o
 void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
@@ -2461,7 +2460,7 @@ void UpdateFlag( CChar *mChar )
 			if( mChar->IsNpc() )
 			{
 				bool doSwitch = true;
-				if( cwmWorldState->creatures[mChar->GetID()].IsAnimal() && mChar->GetNPCAiType() != aiEVIL )
+				if( cwmWorldState->creatures[mChar->GetID()].IsAnimal() && mChar->GetNPCAiType() != AI_EVIL )
 				{
 					if( cwmWorldState->ServerData()->CombatAnimalsGuarded() && mChar->GetRegion()->IsGuarded() )
 					{

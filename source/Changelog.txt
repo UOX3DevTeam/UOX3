@@ -1,3 +1,13 @@
+6/15/2006 - giwo (0.98-3.6d)
+	Modified names in the AITypes enum to fit naming conventions.
+	Minor optimizations in ai.cpp.
+	Removed an unused worldsave tag handler from CBaseObject.
+	Modified names in the CommandLevels enum to fit naming conventions.
+	Modified FLAGS and SOUNDFX DFN tags in spells.dfn to allow for a full integer as well as the current split format.
+	Simplified some functions in CPacketStream.
+	Changed MAX_NAME back down to 30 characters as all character name packets sent to the client max out at 30 bytes.
+	Made more use of IsWeightedContainer() in weight.cpp to streamline layer handling.
+
 5/22/2006 - Xuri
 	Added weapon type classifications for all weapons from the mondain's legacy expansion
 

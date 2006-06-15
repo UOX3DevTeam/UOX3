@@ -1518,7 +1518,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 	{
 		if( i->GetSquelched() )
 			objMessage( 1736, i );
-		if( i->GetCommandLevel() < CNS_CMDLEVEL && i->GetFame() >= 10000 )	// Morollan, only normal players have titles now
+		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	// Morollan, only normal players have titles now
 		{
 			if( i->GetID( 2 ) == 0x91 )
 				newName = UString::sprintf( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead

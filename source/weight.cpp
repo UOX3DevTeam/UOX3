@@ -135,26 +135,18 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 		if( !ValidateObject( i ) )
 			continue;
 		
-		switch( i->GetLayer() )
+		if( IsWeightedContainer( i ) )
 		{
-		case IL_NONE:		// Trade Window
-		case IL_HAIR:		// hair
-		case IL_FACIALHAIR:	// beard
-		case IL_MOUNT:		// steed
-		case IL_BANKBOX:	// bank box
-			break;	// no weight for any of these
-		case IL_PACKITEM:	// backpack
-		{
-			CTile& tile = Map->SeekTile( i->GetID() );
-			contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
-			i->SetWeight( contWeight, false );		// Also update the weight property of the container
-			totalWeight += contWeight;
-			break;
-		}
-		default:
-			totalWeight += i->GetWeight();	// Normal item, just add its weight
-			break;
+			if( i->GetLayer() == IL_PACKITEM )
+			{
+				CTile& tile = Map->SeekTile( i->GetID() );
+				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
+				i->SetWeight( contWeight, false );		// Also update the weight property of the container
+				totalWeight += contWeight;
+			}
+			else
+				totalWeight += i->GetWeight();	// Normal item, just add its weight
 		}
 		if( totalWeight >= MAX_WEIGHT )
 			return MAX_WEIGHT;

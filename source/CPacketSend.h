@@ -1,7 +1,6 @@
 #ifndef __CPACKETSEND_H__
 #define __CPACKETSEND_H__
 
-#include "network.h"
 #include "CPacketReceive.h"
 
 namespace UOX

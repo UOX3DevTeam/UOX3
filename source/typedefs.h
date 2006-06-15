@@ -52,10 +52,10 @@ typedef SI08		RANGE;
 typedef UI08		weathID;
 typedef SI16		GUILDID;
 
-const SERIAL INVALIDSERIAL		= 0xFFFFFFFF;
-const UI16 INVALIDID			= 0xFFFF;
-const UI16 INVALIDCOLOUR		= 0xFFFF;
-const SERIAL BASEITEMSERIAL		= 0x40000000;
+const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
+const UI16			INVALIDID			= 0xFFFF;
+const UI16			INVALIDCOLOUR		= 0xFFFF;
+const SERIAL		BASEITEMSERIAL		= 0x40000000;
 
 typedef std::vector< CMapRegion * >						REGIONLIST;
 typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
@@ -108,14 +108,17 @@ typedef struct __STARTLOCATIONDATA__
 } STARTLOCATION, *LPSTARTLOCATION;
 //	EviLDeD	-	End
 
-const UI08 MAX_NAME		= 60;		// We have the space. Character packet comes with unuess password space that is never used. So why dont we use it?
+// Max values
+const UI08 MAX_NAME		= 30;	// All character name packets are 30 bytes in size
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 15;
 const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
-const UI08 MAXPOSTS		= 128;
+const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
+
 const SI08 ILLEGAL_Z	= -128;
 
+// Offsets for Gump menu's (Relates to menus.dfn)
 #define ITEMMENUOFFSET		256
 #define TRACKINGMENUOFFSET	4096
 #define POLYMORPHMENUOFFSET 8192

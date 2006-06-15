@@ -392,7 +392,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 {
 	// Who are we going to check for weight restrictions?
-	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CNS_CMDLEVEL )
+	if( !c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CL_CNS )
 	{
 		if( mSock != NULL )
 		{
@@ -484,7 +484,7 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 		c->SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 		c->SetRunning( c->GetRunning() + 1 );
 
-		if( !c->IsDead() && c->GetCommandLevel() < CNS_CMDLEVEL )
+		if( !c->IsDead() && c->GetCommandLevel() < CL_CNS )
 		{
 			bool reduceStamina = ( c->IsOnHorse() && c->GetRunning() > ( cwmWorldState->ServerData()->MaxStaminaMovement() * 2 ) );
 			if( !reduceStamina )
@@ -815,7 +815,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 		return;
 
 	// GMs, counselors, and ghosts don't shove things
-	if( c->GetCommandLevel() >= CNS_CMDLEVEL || IsGMBody( c ) )
+	if( c->GetCommandLevel() >= CL_CNS || IsGMBody( c ) )
 		return;
 	// lets cache these vars in advance
 	CMapRegion *grid = MapRegion->GetMapRegion( c );
@@ -837,7 +837,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 		if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
 		{
 			if( !IsGMBody( ourChar ) && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) &&
-				ourChar->GetCommandLevel() < CNS_CMDLEVEL )
+				ourChar->GetCommandLevel() < CL_CNS )
 			{
 				didShove = true;
 

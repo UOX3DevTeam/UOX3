@@ -1178,7 +1178,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			return JS_FALSE;
 		}
 
-		if( myChar->GetNPCAiType() == aiEVIL )
+		if( myChar->GetNPCAiType() == AI_EVIL )
 			MethodSpeech( *myChar, trgMessage, TALK, 0x0026, (FontType)myChar->GetFontType() );
 		else
 			MethodSpeech( *myChar, trgMessage, TALK, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
@@ -1742,7 +1742,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 			return JS_FALSE;
 		}
 
-		if( myNPC->GetNPCAiType() == aiPLAYERVENDOR )
+		if( myNPC->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			mySock->TempObj( myNPC );
 			myNPC->talk( mySock, 772, false );
@@ -1762,7 +1762,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 
 		CSocket *mySock = myChar->GetSocket();	
 
-		if( myNPC->GetNPCAiType() == aiPLAYERVENDOR )
+		if( myNPC->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			mySock->TempObj( myNPC );
 			myNPC->talk( mySock, 772, false );
@@ -3407,7 +3407,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	if( myChar->GetNPCAiType() == aiEVIL )
+	if( myChar->GetNPCAiType() == AI_EVIL )
 		MethodSpeech( *myChar, trgMessage, YELL, 0x0026, (FontType)myChar->GetFontType() );
 	else
 		MethodSpeech( *myChar, trgMessage, YELL, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
@@ -3451,7 +3451,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		return JS_FALSE;
 	}
 
-	if( myChar->GetNPCAiType() == aiEVIL )
+	if( myChar->GetNPCAiType() == AI_EVIL )
 		MethodSpeech( *myChar, trgMessage, WHISPER, 0x0026, (FontType)myChar->GetFontType() );
 	else
 		MethodSpeech( *myChar, trgMessage, WHISPER, myChar->GetSayColour(), (FontType)myChar->GetFontType() );

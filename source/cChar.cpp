@@ -118,7 +118,7 @@ const SI16			DEFPLAYER_CALLNUM 			= -1;
 const SI16			DEFPLAYER_PLAYERCALLNUM		= -1;
 const SERIAL		DEFPLAYER_TRACKINGTARGET 	= INVALIDSERIAL;
 const UI08			DEFPLAYER_SQUELCHED			= 0;
-const UI08			DEFPLAYER_COMMANDLEVEL 		= PLAYER_CMDLEVEL;
+const UI08			DEFPLAYER_COMMANDLEVEL 		= CL_PLAYER;
 const UI08			DEFPLAYER_POSTTYPE 			= PT_LOCAL;
 const UI16			DEFPLAYER_HAIRSTYLE			= INVALIDID;
 const UI16			DEFPLAYER_BEARDSTYLE 		= INVALIDID;
@@ -343,7 +343,7 @@ void CChar::DoHunger( CSocket *mSock )
 	{
 		if( !IsNpc() && mSock != NULL )	// Do Hunger for player chars
 		{
-			if( WillHunger() && GetCommandLevel() == PLAYER_CMDLEVEL  )
+			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
 			{
 				if( GetTimer( tCHAR_HUNGER ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
@@ -3441,7 +3441,7 @@ void CChar::talk( CSocket *s, std::string txt, bool antispam )
 			toAdd.Type( TALK );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
 			toAdd.TargType( SPTRG_INDIVIDUAL );
-			if( GetNPCAiType() == aiEVIL )
+			if( GetNPCAiType() == AI_EVIL )
 				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
 				toAdd.Colour( 0x5A );
@@ -3484,7 +3484,7 @@ void CChar::talkAll( std::string txt, bool antispam )
 			toAdd.Type( TALK );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
 			toAdd.TargType( SPTRG_PCNPC );
-			if( GetNPCAiType() == aiEVIL )
+			if( GetNPCAiType() == AI_EVIL )
 				toAdd.Colour( 0x0026 );
 			else if( GetSayColour() == 0x1700 )
 				toAdd.Colour( 0x5A );
@@ -5587,7 +5587,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 			{
 				criminal( attacker );
 				bool regionGuarded = ( GetRegion()->IsGuarded() );
-				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != aiGUARD && isHuman() )
+				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != AI_GUARD && isHuman() )
 				{
 					talkAll( 335, true );
 					callGuards( this, attacker );

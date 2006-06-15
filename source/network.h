@@ -94,10 +94,7 @@ public:
 	}
 	UI16	GetUShort( size_t pos ) const
 	{
-		UI16 retVal = 0;
-		if( pos < internalBuffer.size()+1 )
-			retVal = static_cast<UI16>((internalBuffer[pos+0]<<8) + internalBuffer[pos+1]);
-		return retVal;
+		return static_cast<UI16>(GetShort( pos ));
 	}
 	SI32	GetLong( size_t pos ) const
 	{
@@ -108,10 +105,7 @@ public:
 	}
 	UI32	GetULong( size_t pos ) const
 	{
-		UI32 retVal = 0;
-		if( pos < internalBuffer.size()+3 )
-			retVal = static_cast<UI32>(internalBuffer[pos+0]<<24) + (internalBuffer[pos+1]<<16) + (internalBuffer[pos+2]<<8) + internalBuffer[pos+3];
-		return retVal;
+		return static_cast<UI32>(GetLong( pos ));
 	}
 
 	const UI08 *GetBuffer( void ) const
