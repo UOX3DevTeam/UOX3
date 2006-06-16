@@ -7,6 +7,7 @@ weight=500
 value=3,1
 pileable=1
 decay=1
+good=44
 }
 
 [0x1079]
@@ -18,6 +19,7 @@ weight=500
 value=3,1
 pileable=1
 decay=1
+good=44
 }
 
 [0x1067]
@@ -28,6 +30,7 @@ id=0x1067
 weight=100
 value=7,3
 decay=1
+good=44
 }
 
 [0x1068]
@@ -38,6 +41,7 @@ id=0x1068
 weight=100
 value=7,3
 decay=1
+good=44
 }
 
 [0x1069]
@@ -174,6 +178,7 @@ id=0x1081
 weight=100
 value=7,3
 decay=1
+good=44
 }
 
 [0x1082]
@@ -185,6 +190,7 @@ weight=100
 value=7,3
 movable=1
 decay=1
+good=44
 }
 
 [0x11F4]
@@ -196,6 +202,7 @@ weight=1000
 value=4,2
 restock=20
 decay=1
+good=44
 }
 
 [0x11F8]
@@ -207,4 +214,5 @@ weight=1000
 value=4,2
 restock=20
 decay=1
+good=44
 }

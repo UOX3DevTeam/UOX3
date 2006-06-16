@@ -226,7 +226,7 @@ color=0x973
 
 [0x1408-d]
 { right facing
-get=close_helm
+get=CLOSE_HELMET
 name=close helmet
 id=0x1408
 color=0x973
@@ -234,7 +234,7 @@ color=0x973
 
 [0x1409-d]
 { left facing
-get=close_helm
+get=CLOSE_HELMET
 name=close helm
 id=0x1409
 color=0x973

@@ -21,7 +21,7 @@
 
 // This Section is for Grave Digging
 // ITEMLIST for gravedigging
-[itemlist digginggems]
+[ITEMLIST digginggems]
 {
 0x0f0f
 0x0f10
@@ -59,7 +59,7 @@
 0x0f30
 }
 
-[itemlist diggingweapons]
+[ITEMLIST diggingweapons]
 {
 0x13b5
 0x13b8
@@ -83,7 +83,7 @@
 0x1407
 }
 
-[itemlist diggingarmor]
+[ITEMLIST diggingarmor]
 {
 0x1b72
 0x1b73

@@ -1,6 +1,6 @@
 // Repeating Commands || by Xuri (xuri at sensewave.com)
-// v1.08
-// Last updated: January 15th 2005
+// v1.09
+// Last updated: April 16th 2006
 //
 // This script contains commands which will make worldbuilding and constructing buildings ingame easier for the GMs.
 // Any of the commands will, when used, be repeated over and over again after a target has been selected, so there will
@@ -154,7 +154,11 @@ function onCallback6( pSock, myTarget )
 
 	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );	
 	if( tempItem )
+	{
 		tempItem.SetLocation( targX, targY, targZ );
+		tempItem.decayable = false;
+	}
+		
 	pUser.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
 }
 

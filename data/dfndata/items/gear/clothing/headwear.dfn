@@ -1,5 +1,17 @@
 // Headwear, excluding ones from TD, LBR & AoS clients
 
+[base_hat]
+{
+get=base_item
+name=base_hat
+id=0x0000
+layer=0x06
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
 [0x153f]
 {
 get=base_item
@@ -12,6 +24,7 @@ hp=100
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1540]
@@ -26,6 +39,7 @@ hp=100
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x171A]
@@ -40,6 +54,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1713]
@@ -54,6 +69,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1719]
@@ -68,6 +84,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1715]
@@ -82,6 +99,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x171C]
@@ -96,6 +114,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1543]
@@ -110,6 +129,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1544]
@@ -124,6 +144,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1717]
@@ -138,6 +159,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1716]
@@ -152,6 +174,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1714]
@@ -166,6 +189,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1718]
@@ -178,11 +202,11 @@ value=30,15
 layer=0x6
 hp=50
 stradd=-5
-dexadd=-5
-intadd=10
+intadd=5
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x172e]
@@ -196,6 +220,7 @@ layer=0x06
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x171B]
@@ -210,6 +235,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1549]
@@ -224,6 +250,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x154A]
@@ -238,6 +265,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x154B]
@@ -252,6 +280,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x154C]
@@ -266,6 +295,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1545]
@@ -279,6 +309,7 @@ layer=0x06
 hp=50
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1546]
@@ -292,6 +323,7 @@ layer=0x06
 hp=50
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1547]
@@ -305,6 +337,7 @@ layer=0x06
 hp=50
 dyeable=1
 decay=1
+good=20
 }
 
 [0x1548]
@@ -318,6 +351,7 @@ layer=0x06
 hp=50
 dyeable=1
 decay=1
+good=20
 }
 
 [0x141B]
@@ -331,6 +365,7 @@ layer=0x6
 hp=50
 dyeable=1
 decay=1
+good=20
 }
 
 [0x141C]
@@ -344,4 +379,5 @@ layer=0x6
 hp=50
 dyeable=1
 decay=1
+good=20
 }

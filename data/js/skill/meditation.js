@@ -8,7 +8,7 @@ function onSkill( pUser, objType, skillUsed )
 	var pSock = pUser.socket;
 	if( pSock )
 	{
-		if( pUser.defense > 10 )
+		if( pUser.Defense( 0, 1, false ) > 10 )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 967, pSock.Language ) );
 			pUser.isMeditating = false;

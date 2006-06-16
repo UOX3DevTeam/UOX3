@@ -87,15 +87,15 @@ function onUse( pUser, iUsed )
 				switch( iUsed.morez )
 				{
 					case 1:
-						pUser.hitpoints = (pUser.hitpoints + 5 + RandomNumber( 1, 5 ));
+						pUser.health = (pUser.health + 5 + RandomNumber( 1, 5 ));
 						pUser.SysMessage( GetDictionaryEntry( 1349, socket.Language ) ); //You feel a little better!
 						break;
 					case 2:
-						pUser.hitpoints = (pUser.hitpoints + 15 + RandomNumber( 1, 10 ));
+						pUser.health = (pUser.health + 15 + RandomNumber( 1, 10 ));
 						pUser.SysMessage( GetDictionaryEntry( 1350, socket.Language ) ); //You feel better!
 						break;
 					case 3:
-						pUser.hitpoints = (pUser.hitpoints + 20 + RandomNumber( 1, 20 ));
+						pUser.health = (pUser.health + 20 + RandomNumber( 1, 20 ));
 						pUser.SysMessage( GetDictionaryEntry( 1351, socket.Language ) ); //You feel much better!
 						break;
 					default:

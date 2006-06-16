@@ -156,7 +156,10 @@ function onCallback3( socket, ourObj )
 		var itemID 	= socket.tempint;
 		var newItem 	= CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "SPAWNER", false );
 		if( newItem )
+		{
 			newItem.SetLocation( x, y, z );
+			newItem.decayable = false;
+		}
 		if( newItem.id != itemID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
 			mChar.SysMessage( "Specified item-ID does not exist." );
@@ -177,7 +180,10 @@ function onCallback4( socket, ourObj )
 		var iSection 	= socket.xText;
 		var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "SPAWNER", false );
 		if( newItem )
+		{
 			newItem.SetLocation( x, y, z );
+			newItem.decayable = false;
+		}
 		else
 			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );			
 	}

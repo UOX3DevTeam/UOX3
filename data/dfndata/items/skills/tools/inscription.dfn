@@ -11,6 +11,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=56
 }
 
 [0x0fc0]
@@ -22,6 +23,7 @@ weight=100
 value=6,3
 restock=20
 decay=1
+good=56
 }
 
 [0x0fbf]
@@ -33,5 +35,19 @@ weight=100
 value=6,3
 restock=20
 decay=1
+good=56
 }
 
+[0x14F0]
+{
+get=base_item
+name=a blank deed
+id=0x14F0
+weight=100
+value=12,6
+restock=20
+pileable=1
+amount=1
+decay=1
+good=56
+}

@@ -18,7 +18,7 @@ function onCallback0( pSock, ourObj )
 	if( ourObj && ourObj.isItem && pUser )
 	{
 		var pLanguage = pSock.Language;
-		var ourDef = ourObj.def;
+		var ourDef = ourObj.Resist( 1 );
 		var ourLoDmg = ourObj.lodamage;
 		var ourHiDmg = ourObj.hidamage;
 

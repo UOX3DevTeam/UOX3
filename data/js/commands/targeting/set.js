@@ -176,6 +176,10 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 			okMsg( socket );
 		}
 		break;
+	case "NEWBIE":
+		ourItem.isNewbie = (nVal == 1);
+		okMsg( socket );
+		break;
 	case "DEVINELOCK":
 		ourItem.devinelock = (nVal == 1);
 		okMsg( socket );
@@ -209,11 +213,23 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "DEF":
-		ourItem.def = nVal;
+		ourItem.Resist( 1, nVal );
 		okMsg( socket );
 		break;
 	case "LAYER":
 		ourItem.layer = nVal;
+		okMsg( socket );
+		break;
+	case "LODAMAGE":
+		ourItem.lodamage = nVal;
+		okMsg( socket );
+		break;
+	case "HIDAMAGE":
+		ourItem.hidamage = nVal;
+		okMsg( socket );
+		break;
+	case "WEIGHT":
+		ourItem.weight = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -361,7 +377,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "ARMOR":
-		ourChar.armour = nVal;
+		ourChar.Resist( 1, nVal );
 		okMsg( socket );
 		break;
 	case "MAXHP":

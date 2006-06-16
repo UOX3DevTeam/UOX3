@@ -7,6 +7,7 @@ weight=200
 value=3,1
 restock=20
 decay=1
+good=58
 }
 
 [0x0f9e]
@@ -18,6 +19,7 @@ weight=100
 value=13,6
 restock=10
 decay=1
+good=58
 }
 
 [0x0f9f]
@@ -29,6 +31,7 @@ weight=100
 value=13,6
 restock=10
 decay=1
+good=58
 }
 
 [0x0fa9]
@@ -41,6 +44,7 @@ value=8,4
 restock=20
 decay=1
 type=208
+good=58
 }
 
 [0x0fab]
@@ -52,6 +56,7 @@ weight=1000
 value=9,4
 restock=20
 decay=1
+good=58
 }
 
 [0x1015]
@@ -61,6 +66,7 @@ name=spinning wheel
 id=0x1015
 weight=2000
 movable=1
+good=58
 }
 
 [0x1016]
@@ -79,6 +85,7 @@ name=spinning wheel
 id=0x1019
 weight=2000
 movable=1
+good=58
 }
 
 [0x101a]

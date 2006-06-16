@@ -409,10 +409,24 @@ PACKITEM=0x23a0 //book of ninjitsu
 {
 }
 
-// Is granted to all players, despite skill.
-[DEFAULT]
+// Is granted to all male players, despite skill.
+[DEFAULT MALE]
 {
 PACKITEM=0x0fef
 PACKITEM=0x0a0f
 EQUIPITEM=0x0f51
+EQUIPITEM=0x1539
+EQUIPITEM=0x1517
+EQUIPITEM=0x170F
+}
+
+// Is granted to all female players, despite skill.
+[DEFAULT FEMALE]
+{
+PACKITEM=0x0fef
+PACKITEM=0x0a0f
+EQUIPITEM=0x0f51
+EQUIPITEM=0x1516
+EQUIPITEM=0x1EFD
+EQUIPITEM=0x170F
 }

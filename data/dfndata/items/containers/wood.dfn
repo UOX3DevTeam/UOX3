@@ -10,6 +10,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e7e]
@@ -23,6 +24,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x09aa]
@@ -36,6 +38,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e7d]
@@ -49,6 +52,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a2c]
@@ -61,6 +65,7 @@ value=20,10
 type=1
 restock=10
 decay=1
+good=8
 }
 
 [0x0a3c]
@@ -112,6 +117,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a30]
@@ -125,6 +131,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a38]
@@ -138,6 +145,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a4f]
@@ -151,6 +159,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a53]
@@ -164,6 +173,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a4d]
@@ -177,6 +187,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a51]
@@ -190,6 +201,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a97]
@@ -203,6 +215,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a98]
@@ -216,6 +229,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a9b]
@@ -229,6 +243,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a99]
@@ -242,6 +257,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a9a]
@@ -255,6 +271,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a9c]
@@ -268,6 +285,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a9d]
@@ -281,6 +299,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0a9e]
@@ -294,6 +313,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e3c]
@@ -307,6 +327,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e3d]
@@ -320,6 +341,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e3e]
@@ -333,6 +355,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e3f]
@@ -346,6 +369,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e42]
@@ -359,6 +383,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 [0x0e43]
@@ -372,6 +397,7 @@ type=1
 restock=10
 movable=1
 decay=1
+good=8
 }
 
 

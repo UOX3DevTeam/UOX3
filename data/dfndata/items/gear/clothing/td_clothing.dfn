@@ -13,6 +13,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x264a]
@@ -28,6 +29,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x264d]
@@ -43,6 +45,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x264e]
@@ -58,6 +61,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x264f]
@@ -73,6 +77,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2650]
@@ -88,6 +93,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2651]
@@ -103,6 +109,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2652]
@@ -118,6 +125,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x265f]
@@ -133,6 +141,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2660]
@@ -148,6 +157,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2661]
@@ -163,6 +173,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2662]
@@ -178,6 +189,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x26631]
@@ -193,6 +205,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2664]
@@ -208,6 +221,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2665]
@@ -223,6 +237,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2666]
@@ -238,6 +253,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2667]
@@ -253,6 +269,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2668]
@@ -268,6 +285,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x267b]
@@ -277,12 +295,13 @@ name=fancy dress
 id=0x267b
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x267c]
@@ -292,12 +311,13 @@ name=fancy dress
 id=0x267c
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x267d]
@@ -307,12 +327,13 @@ name=fancy dress
 id=0x267d
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x267e]
@@ -322,12 +343,13 @@ name=fancy dress
 id=0x267e
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x267f]
@@ -337,12 +359,13 @@ name=long dress
 id=0x267f
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2680]
@@ -352,12 +375,13 @@ name=long dress
 id=0x2680
 weight=300
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2681]
@@ -367,12 +391,13 @@ name=kimono
 id=0x2681
 weight=100
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2682]
@@ -382,12 +407,13 @@ name=kimono
 id=0x2682
 weight=100
 value=50,25
-layer=0x22
+layer=0x11
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2683]
@@ -397,12 +423,13 @@ name=hooded shroud
 id=0x2683
 weight=100
 value=50,25
-layer=0x22
+layer=0x16
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2684]
@@ -412,12 +439,13 @@ name=hooded shroud
 id=0x2684
 weight=100
 value=50,25
-layer=0x22
+layer=0x16
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2685]
@@ -427,12 +455,13 @@ name=death shroud
 id=0x2685
 weight=300
 value=50,25
-layer=0x22
+layer=0x16
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x2686]
@@ -442,12 +471,13 @@ name=death shroud
 id=0x2686
 weight=300
 value=50,25
-layer=0x22
+layer=0x16
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x26ad]
@@ -457,12 +487,13 @@ name=Arcane Cloak
 id=0x26ad
 weight=500
 value=50,25
-layer=0x20
+layer=0x14
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x26ae]
@@ -472,12 +503,13 @@ name=Arcane Robe
 id=0x26ae
 weight=300
 value=50,25
-layer=0x22
+layer=0x16
 hp=50
 restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x26af]
@@ -493,6 +525,7 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }
 
 [0x26b0]
@@ -508,4 +541,5 @@ restock=10
 movable=1
 dyeable=1
 decay=1
+good=18
 }

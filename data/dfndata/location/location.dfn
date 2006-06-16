@@ -238,7 +238,7 @@ Z=2
 // Hidden Caves
 X=2667
 Y=2069
-Z=236
+Z=-20
 }
 
 [LOCATION 40]
@@ -633,7 +633,7 @@ Z=20
 // East Docks
 X=2071
 Y=2855
-Z=253
+Z=-4
 }
 
 [LOCATION 136]
@@ -657,7 +657,7 @@ Z=0
 // Docks
 X=3013
 Y=828
-Z=253
+Z=-3
 }
 
 [LOCATION 142]
@@ -761,7 +761,7 @@ Z=20
 // Hidden Cave
 X=313
 Y=787
-Z=230
+Z=-26
 }
 
 [LOCATION 164]
@@ -798,7 +798,7 @@ Z=0
 // Compassion
 X=1856
 Y=872
-Z=255
+Z=-1
 }
 
 [LOCATION 172]
@@ -1052,7 +1052,7 @@ Z=0
 // Level 3
 X=6083
 Y=145
-Z=236
+Z=-22
 }
 
 [LOCATION 244]
@@ -1100,7 +1100,7 @@ Z=25
 // Level 4
 X=5875
 Y=20
-Z=251
+Z=-5
 }
 
 [LOCATION 260]

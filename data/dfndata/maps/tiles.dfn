@@ -1,5 +1,5 @@
-// v.01
-// Last updated February 6th, 2006 - Maarc
+// v.02
+// Last updated March 3rd, 2006 - giwo
 // This file contains any tiledata overrides we wish to do with regards to buggy client data (eg ladders)
 
 // [TILE 0x0123]
@@ -8,7 +8,9 @@
 // HEIGHT=		// Height property, -127 -> 128
 // LAYER=		// Layer property,  -127 -> 128 (though in reality, probably only accepted values used in client)
 // ANIMATION=		// Animation
-// NAME=		// Name property, less than 23 characters!
+// HUE=			// Unknown use, perhaps colored lighting?
+// QUANTITY=		// If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
+// NAME=		// Name property, less than 21 characters!
 
 
 // // The following flags should only be set if you know what you are doing!!!
@@ -26,7 +28,7 @@
 // LIQUIDWET=		// Flag 1, bit 8 (0x80)		Wet
 
 // // BaseTile Flag 2
-// UNKNOWN1=		// Flag 2, bit 1 (0x01)		Unknown
+// UNKNOWNFLAG1=	// Flag 2, bit 1 (0x01)		Unknown
 // STANDABLE=		// Flag 2, bit 2 (0x02)		Surface
 // CLIMBABLE=		// Flag 2, bit 3 (0x04)		Bridge
 // STACKABLE=		// Flag 2, bit 4 (0x08)		Generic/Stackable
@@ -38,8 +40,8 @@
 // // BaseTile Flag 3
 // DESCRIPTIONTILE=	// Flag 3, bit 1 (0x01)		Internal (things like hair, beards, etc)
 // FADEWITHTRANS=	// Flag 3, bit 2 (0x02)		Foliage
-// UNKNOWN2=		// Flag 3, bit 3 (0x04)		Partial Hue
-// UNKNOWN3=		// Flag 3, bit 4 (0x08)		Unknown
+// PARTIALHUE=		// Flag 3, bit 3 (0x04)		Partial Hue
+// UNKNOWNFLAG2=	// Flag 3, bit 4 (0x08)		Unknown
 // MAP=			// Flag 3, bit 5 (0x10)		Map
 // CONTAINER=		// Flag 3, bit 6 (0x20)		Container
 // EQUIPABLE=		// Flag 3, bit 7 (0x40)		Wearable
@@ -47,8 +49,8 @@
 
 // // BaseTile Flag 4
 // ANIMATED=		// Flag 4, bit 1 (0x01)		Animated
-// UNKNOWN4=		// Flag 4, bit 2 (0x02)		No Diagonal
-// WALK=		// Flag 4, bit 3 (0x04)		Unknown
+// NODIAGONAL=		// Flag 4, bit 2 (0x02)		No Diagonal
+// UNKNOWNFLAG3=	// Flag 4, bit 3 (0x04)		Unknown
 // WHOLEBODYITEM=	// Flag 4, bit 4 (0x08)		Armour
 // WALLROOFWEAP=	// Flag 4, bit 5 (0x10)		Roof
 // DOOR=		// Flag 4, bit 6 (0x20)		Door
@@ -278,3 +280,9 @@ BLOCKING=1
 STANDABLE=0
 }
 // End display case tiles
+
+// Water Tiles
+[TILE 0x1559]
+{
+LIQUIDWET=1
+}

@@ -7,6 +7,7 @@ weight=200
 value=0,1
 pileable=1
 decay=1
+good=45
 }
 
 [0x1bde]
@@ -34,6 +35,7 @@ weight=200
 value=1
 pileable=1
 decay=1
+good=45
 }
 
 [0x1be1]
@@ -62,5 +64,6 @@ weight=100
 value=0,1
 pileable=1
 decay=1
+good=45
 }
 

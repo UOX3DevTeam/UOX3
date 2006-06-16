@@ -14,6 +14,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1542]
@@ -28,6 +29,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1515]
@@ -42,6 +44,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1530]
@@ -56,6 +59,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1f7b]
@@ -70,6 +74,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1f7c]
@@ -84,6 +89,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1eff]
@@ -98,6 +104,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1f00]
@@ -112,6 +119,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1efd]
@@ -126,6 +134,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1efe]
@@ -140,6 +149,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x153d]
@@ -154,6 +164,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x153e]
@@ -168,6 +179,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x153b]
@@ -182,6 +194,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x153C]
@@ -196,6 +209,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1F9F]
@@ -210,6 +224,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1FA0]
@@ -224,6 +239,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1537]
@@ -238,6 +254,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1538]
@@ -252,6 +269,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1539]
@@ -266,6 +284,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x153A]
@@ -280,6 +299,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1F01]
@@ -294,6 +314,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1F02]
@@ -308,6 +329,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1F03]
@@ -322,6 +344,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1F04]
@@ -336,6 +359,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1517]
@@ -350,6 +374,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1518]
@@ -364,6 +389,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x152E]
@@ -378,6 +404,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x152F]
@@ -392,6 +419,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1531]
@@ -406,6 +434,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1516]
@@ -420,6 +449,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1FA1]
@@ -434,6 +464,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1FA2]
@@ -448,6 +479,7 @@ hp=50
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1535]
@@ -461,6 +493,7 @@ layer=0x11
 hp=100
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1536]
@@ -474,6 +507,7 @@ layer=0x11
 hp=100
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1ffd]
@@ -487,6 +521,7 @@ layer=0x11
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 
 [0x1ffe]
@@ -500,5 +535,6 @@ layer=0x11
 restock=10
 dyeable=1
 decay=1
+good=18
 }
 

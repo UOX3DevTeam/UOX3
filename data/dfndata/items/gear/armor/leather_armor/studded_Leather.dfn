@@ -10,7 +10,7 @@ def=2
 { Left Facing
 get=studded_gloves
 name=studded gloves
-id=0x13dc
+id=0x13d5
 def=1
 }
 

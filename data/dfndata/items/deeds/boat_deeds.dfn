@@ -7,6 +7,7 @@ ID=0x14F0
 MOREX=20
 VALUE=12000
 RESTOCK=5
+GOOD=9
 }
 
 [mediumshipdeed]
@@ -16,6 +17,7 @@ ID=0x014F0
 MOREX=22
 VALUE=14000
 RESTOCK=5
+GOOD=9
 }
 
 [largeshipdeed]
@@ -25,6 +27,7 @@ ID=0x14F0
 MOREX=24
 VALUE=16000
 RESTOCK=5
+GOOD=9
 }
 
 // Dragon ship deeds
@@ -35,6 +38,7 @@ ID=0x14F0
 MOREX=21
 VALUE=12000
 RESTOCK=5
+GOOD=9
 }
 
 [mediumdragonshipdeed]
@@ -44,6 +48,7 @@ ID=0x14F0
 MOREX=23
 VALUE=14000
 RESTOCK=5
+GOOD=9
 }
 
 [largedragonshipdeed]
@@ -53,5 +58,6 @@ ID=0x14F0
 MOREX=25
 VALUE=16000
 RESTOCK=5
+GOOD=9
 }
 

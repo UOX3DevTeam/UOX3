@@ -9,6 +9,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=50
 } 
 
 [0x1051]
@@ -22,6 +23,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=50
 }
 
 [0x1DB7]
@@ -32,6 +34,7 @@ id=0x1DB7
 weight=500
 amount=1
 decay=1
+good=50
 }
 
 [0x1DB8]
@@ -42,6 +45,7 @@ id=0x1DB8
 weight=200
 amount=1
 decay=1
+good=50
 }
 
 [0x1EB2]
@@ -52,6 +56,7 @@ id=0x1EB2
 weight=100
 amount=1
 decay=1
+good=50
 }
 
 [0x1004]
@@ -62,6 +67,7 @@ id=0x1004
 weight=100
 amount=1
 decay=1
+good=50
 }
 
 [0x104B]
@@ -74,6 +80,7 @@ value=24,12
 restock=20
 amount=1
 decay=1
+good=50
 }
 
 [0x104C]
@@ -86,6 +93,7 @@ value=24,12
 restock=20
 amount=1
 decay=1
+good=50
 }
 
 [0x104D]
@@ -97,6 +105,7 @@ weight=200
 pileable=1
 amount=1
 decay=1
+good=50
 }
  
 [0x104E]
@@ -108,6 +117,7 @@ weight=200
 pileable=1
 amount=1
 decay=1
+good=50
 }
 
 [0x104f]
@@ -120,6 +130,7 @@ value=3,1
 restock=20
 amount=1
 decay=1
+good=50
 }
 
 [0x1053]
@@ -132,6 +143,7 @@ value=2,1
 restock=20
 amount=1
 decay=1
+good=50
 }
 
 [0x1047]
@@ -141,6 +153,7 @@ name=globe
 id=0x1047
 weight=400
 decay=1
+good=50
 }
 
 [0x1048]
@@ -150,6 +163,7 @@ name=globe
 id=0x1048
 weight=400
 decay=1
+good=50
 }
 
 [0x1055]
@@ -163,6 +177,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=50
 }
 
 [0x0E7F]
@@ -172,6 +187,8 @@ name=an open keg
 id=0x0E7F
 weight=1500
 decay=1
+good=50
+}
 
 [0x1940]
 {
@@ -181,6 +198,7 @@ id=0x1940
 weight=2000
 restock=20
 decay=1
+good=50
 }
 
 [0x1851]
@@ -191,6 +209,7 @@ id=0x1851
 weight=400
 restock=20
 decay=1
+good=50
 }
  
 [0x1852]
@@ -201,6 +220,7 @@ id=0x1852
 weight=400
 restock=20
 decay=1
+good=50
 }
 
 [0x1057]
@@ -212,6 +232,7 @@ weight=200
 value=15,7
 restock=20
 decay=1
+good=50
 }
 
 [0x1059]
@@ -225,6 +246,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=50
 }
 
 [0x105D]
@@ -238,6 +260,7 @@ restock=20
 pileable=1
 amount=1
 decay=1
+good=50
 }
 
 [0x14F5]
@@ -249,4 +272,5 @@ weight=300
 value=2,1
 restock=20
 decay=1
+good=50
 }

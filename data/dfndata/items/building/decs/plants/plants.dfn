@@ -756,6 +756,7 @@ movable=1
 pileable=1
 amount=1
 dyeable=0
+good=3
 }
 
 [0x0d17]
@@ -772,6 +773,7 @@ movable=1
 pileable=1
 amount=1
 dyeable=0
+good=3
 }
 
 [0x0d18]
@@ -788,6 +790,7 @@ movable=1
 pileable=1
 amount=1
 dyeable=0
+good=3
 }
 
 [0x0d19]
@@ -804,6 +807,7 @@ movable=1
 pileable=1
 amount=1
 dyeable=0
+good=3
 }
 
 [0xd1b]

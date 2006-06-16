@@ -390,9 +390,33 @@ function SubtractHealth( mChar, health, mSpell )
 	}
 }
 
-function MagicDamage( p, amount, attacker, mSock, attSock )
+function CalculateHitLoc( )
 {
-//	CSocket *mSock = p->GetSocket(), *attSock = attacker->GetSocket();
+	var BODYPERCENT = 0;
+	var ARMSPERCENT = 1;
+	var HEADPERCENT = 2;
+	var LEGSPERCENT = 3;
+	var NECKPERCENT = 4;
+	var OTHERPERCENT = 5;
+	var TOTALTARGETSPOTS = 6;
+	
+	var LOCPERCENTAGES = new Array( 44, 14, 14, 14, 7, 7 );
+
+	var hitLoc = RandomNumber( 0, 99 ); // Determine area of Body Hit
+	for( var t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t )
+	{
+		hitLoc -= LOCPERCENTAGES[t];
+		if( hitLoc < 0 ) 
+		{
+			hitLoc = t + 1;
+			break;
+		}
+	}
+	return hitLoc;
+}
+
+function MagicDamage( p, amount, attacker, mSock, element )
+{
 
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
 		return;
@@ -425,25 +449,17 @@ function MagicDamage( p, amount, attacker, mSock, attSock )
 	if( p.vulnerable && p.region.canCastAggressive )
 	{
 		p.TextMessage( "Vulnerable, here comes the damage" );
-		if( p.npc ) 
-			amount *= 2;      // double damage against non-players
+		var hitLoc = CalculateHitLoc();
+		var damage = ApplyDamageBonuses( element, attacker, p, 25, hitLoc, amount);
+		p.TextMessage( "Damage after the bonus: " + damage);
+		damage = ApplyDefenseModifiers( element, attacker, p, 25, hitLoc, damage, true);
+		p.TextMessage( "Damage after the defense: " + damage);
 
-		if( mSock != null )
-			mSock.DisplayDamage( p, amount );
-		if( attSock != null && attSock != mSock )
-			attSock.DisplayDamage( p, amount );
+		if( damage <= 0 )
+			damage = 1;
 
-		p.health += -amount;
-
-		if( p.health <= 0 )
-		{
-//			if( p != attacker )	// can't gain fame and karma for suicide :>
-//			{
-//				Karma( attacker, p, ( 0 - ( p->GetKarma() ) ) );
-//				Fame( attacker, p->GetFame() );
-//			}
-			p.Kill();
-		}
+		p.Damage( damage, attacker, true );
+		p.ReactOnDamage( element, attacker );
 	}
 }
 
@@ -485,6 +501,6 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 		var mageryAdjust = ( mMagery / 2000 + 1 );
 		caster.TextMessage( "Base damage " + baseDamage );
 		caster.TextMessage( "Magery multiplier: " + mageryAdjust );
-		MagicDamage( ourTarg, baseDamage * mageryAdjust, caster, caster.socket, ourTarg.socket );
+		MagicDamage( ourTarg, baseDamage * mageryAdjust, caster, caster.socket, 5 );
 	}
 }

@@ -10734,7 +10734,7 @@ ITEMMENU=92
 [ITEMMENU 105]
 {
 studded_Leather.dfn
-0x13d5=studded sleeves
+0x13d4=studded sleeves
 ADDITEM=0x13d4
 0x13d5=studded gloves
 ADDITEM=0x13d5

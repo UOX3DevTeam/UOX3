@@ -9,6 +9,7 @@ weight=200
 value=16,8
 restock=20
 decay=1
+good=52
 }
 
 [0x0fbc]
@@ -20,6 +21,7 @@ weight=200
 value=16,8
 restock=20
 decay=1
+good=52
 }
 
 [0x0faf]

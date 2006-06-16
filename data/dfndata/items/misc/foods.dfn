@@ -18,6 +18,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0977]
@@ -30,6 +31,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0978]
@@ -42,6 +44,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x0979]
@@ -54,6 +57,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x097b]
@@ -66,6 +70,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x097e]
@@ -78,6 +83,7 @@ value=24,12
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x097c]
@@ -90,6 +96,7 @@ value=4,2
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x097d]
@@ -102,6 +109,7 @@ value=20,10
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x098c]
@@ -114,6 +122,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09b7]
@@ -126,6 +135,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09b8]
@@ -138,6 +148,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09bb]
@@ -150,6 +161,7 @@ value=128,64
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09bc]
@@ -162,6 +174,7 @@ value=128,64
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09c0]
@@ -174,6 +187,7 @@ value=20,10
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09c1]
@@ -186,6 +200,7 @@ value=20,10
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09c9]
@@ -198,6 +213,7 @@ value=24,12
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09d3]
@@ -210,6 +226,7 @@ value=24,12
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x09d0]
@@ -222,6 +239,7 @@ value=3,1
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09d1]
@@ -234,6 +252,7 @@ value=3,1
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09d2]
@@ -246,6 +265,7 @@ value=3,1
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09ea]
@@ -258,6 +278,7 @@ value=3,1
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09eb]
@@ -270,6 +291,7 @@ value=6,3
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09fa]
@@ -282,6 +304,7 @@ value=4,2
 type=14
 restock=20
 pileable=1
+good=34
 }
 
 [0x09e9]
@@ -295,6 +318,7 @@ type=14
 dexadd=0
 restock=10
 pileable=1
+good=34
 }
 
 [0x09f2]
@@ -307,6 +331,7 @@ value=12,6
 type=14
 restock=14
 pileable=1
+good=34
 }
 
 [0x0993]
@@ -318,6 +343,7 @@ weight=500
 value=100,50
 type=14
 restock=10
+good=34
 }
 
 [0x09af]
@@ -329,6 +355,7 @@ weight=100
 value=12,6
 type=14
 restock=10
+good=34
 }
 
 [0x160b]
@@ -340,6 +367,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x160c]
@@ -351,6 +379,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x09d8]
@@ -362,6 +391,7 @@ weight=100
 value=12,6
 type=14
 restock=10
+good=34
 }
 
 [0x09d9]
@@ -373,6 +403,7 @@ weight=100
 value=12,6
 type=14
 restock=10
+good=34
 }
 
 [0x09db]
@@ -384,6 +415,7 @@ weight=100
 value=12,6
 type=14
 restock=10
+good=34
 }
 
 [0x09b6]
@@ -396,6 +428,7 @@ value=3,1
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x103b]
@@ -408,6 +441,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x103c]
@@ -420,6 +454,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1040]
@@ -432,6 +467,7 @@ value=8,4
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x1041]
@@ -443,6 +479,7 @@ weight=100
 value=8,4
 type=14
 restock=10
+good=34
 }
 
 [0x1608]
@@ -455,6 +492,7 @@ value=6,3
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 [0x160a]
@@ -467,6 +505,7 @@ value=12,6
 type=14
 restock=10
 pileable=1
+good=34
 }
 
 // soup
@@ -480,6 +519,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x15fa]
@@ -491,6 +531,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x15fb]
@@ -502,6 +543,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x15fc]
@@ -513,6 +555,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x15fe]
@@ -524,6 +567,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x15ff]
@@ -535,6 +579,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x1600]
@@ -546,6 +591,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x1601]
@@ -557,6 +603,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x1602]
@@ -568,6 +615,7 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }
 
 [0x1604]
@@ -579,6 +627,7 @@ weight=2
 value=12
 type=14
 restock=10
+good=34
 }
 
 [0x0a1e]
@@ -589,6 +638,7 @@ id=0x0a1e
 weight=400
 value=8,4
 restock=10
+good=34
 }
 
 [0x1606]
@@ -600,4 +650,5 @@ weight=100
 value=3,1
 type=14
 restock=10
+good=34
 }

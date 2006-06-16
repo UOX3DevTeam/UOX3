@@ -8,6 +8,7 @@ value=9,4
 pileable=1
 amount=1
 decay=1
+good=48
 }
 
 [0x1bf2]
@@ -20,6 +21,7 @@ value=9,4
 pileable=1
 amount=1
 decay=1
+good=48
 }
 
 [0x0fb7]
@@ -30,6 +32,7 @@ id=0x0fb7
 weight=100
 movable=1
 decay=1
+good=48
 }
 
 [0x0fb8]
@@ -40,5 +43,6 @@ id=0x0fb8
 weight=100
 movable=1
 decay=1
+good=48
 }
 

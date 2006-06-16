@@ -10,14 +10,15 @@ id=0x27a2
 weight=1000
 value=40,20
 layer=2
-lodamage=16
-hidamage=18
-hp=50
+lodamage=6
+hidamage=38
+hp=31 50
 spd=32
 str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27ed]
@@ -28,14 +29,15 @@ id=0x27ed
 weight=1000
 value=40,20
 layer=2
-lodamage=16
-hidamage=18
-hp=50
+lodamage=6
+hidamage=38
+hp=31 50
 spd=32
 str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27a3]
@@ -46,14 +48,15 @@ id=0x27a3
 weight=600
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=5
+hidamage=32
+hp=31 50
 spd=50
 str=10
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27ee]
@@ -64,14 +67,15 @@ id=0x27ee
 weight=600
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=5
+hidamage=32
+hp=31 50
 spd=50
 str=10
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27a4]
@@ -82,14 +86,15 @@ id=0x27a4
 weight=500
 value=40,20
 layer=1
-lodamage=10
-hidamage=12
-hp=50
+lodamage=7
+hidamage=34
+hp=31 50
 spd=44
 str=20
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27ef]
@@ -100,14 +105,15 @@ id=0x27ef
 weight=500
 value=40,20
 layer=1
-lodamage=10
-hidamage=12
-hp=50
+lodamage=7
+hidamage=34
+hp=31 50
 spd=44
 str=20
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27a5]
@@ -118,14 +124,15 @@ id=0x27a5
 weight=800
 value=40,20
 layer=2
-lodamage=18
-hidamage=20
-hp=50
+lodamage=8
+hidamage=40
+hp=31 50
 spd=25
 str=35
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x27f0]
@@ -136,14 +143,15 @@ id=0x27f0
 weight=800
 value=40,20
 layer=2
-lodamage=18
-hidamage=20
-hp=50
+lodamage=8
+hidamage=40
+hp=31 50
 spd=25
 str=35
 restock=10
 movable=1
 decay=1
+good=23
 }
 
 [0x27a6]
@@ -154,14 +162,15 @@ id=0x27a6
 weight=800
 value=40,20
 layer=2
-lodamage=12
-hidamage=14
-hp=50
+lodamage=4
+hidamage=28
+hp=31 50
 spd=45
 str=35
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27f1]
@@ -172,14 +181,15 @@ id=0x27f1
 weight=800
 value=40,20
 layer=2
-lodamage=12
-hidamage=14
-hp=50
+lodamage=4
+hidamage=28
+hp=31 50
 spd=45
 str=35
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27a7]
@@ -190,14 +200,15 @@ id=0x27a7
 weight=1200
 value=40,20
 layer=2
-lodamage=16
-hidamage=18
-hp=50
+lodamage=10
+hidamage=38
+hp=31 50
 spd=32
 str=65
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27f2]
@@ -208,14 +219,15 @@ id=0x27f2
 weight=1200
 value=40,20
 layer=2
-lodamage=16
-hidamage=18
-hp=50
+lodamage=10
+hidamage=38
+hp=31 50
 spd=32
 str=65
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27a8]
@@ -227,13 +239,14 @@ weight=700
 value=40,20
 layer=1
 lodamage=9
-hidamage=11
-hp=50
+hidamage=21
+hp=31 50
 spd=53
 str=20
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27f3]
@@ -245,13 +258,14 @@ weight=700
 value=40,20
 layer=1
 lodamage=9
-hidamage=11
-hp=50
+hidamage=21
+hp=31 50
 spd=53
 str=20
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27a9]
@@ -262,14 +276,15 @@ id=0x27a9
 weight=800
 value=40,20
 layer=2
-lodamage=13
-hidamage=15
-hp=50
+lodamage=7
+hidamage=35
+hp=31 50
 spd=40
 str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27f4]
@@ -280,14 +295,15 @@ id=0x27f4
 weight=800
 value=40,20
 layer=2
-lodamage=13
-hidamage=15
-hp=50
+lodamage=7
+hidamage=35
+hp=31 50
 spd=40
 str=40
 restock=10
 movable=1
 decay=1
+good=21
 }
 
 [0x27aa]
@@ -298,14 +314,15 @@ id=0x27aa
 weight=400
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=5
+hidamage=24
+hp=31 50
 spd=20
 str=20
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27f5]
@@ -316,14 +333,15 @@ id=0x27f5
 weight=400
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=5
+hidamage=24
+hp=31 50
 spd=20
 str=20
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27ab]
@@ -334,14 +352,15 @@ id=0x27ab
 weight=500
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=7
+hidamage=31
+hp=31 50
 spd=53
 str=10
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27f6]
@@ -352,14 +371,15 @@ id=0x27f6
 weight=500
 value=40,20
 layer=2
-lodamage=10
-hidamage=12
-hp=50
+lodamage=7
+hidamage=31
+hp=31 50
 spd=53
 str=10
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27ad]
@@ -370,14 +390,15 @@ id=0x27ad
 weight=700
 value=40,20
 layer=2
-lodamage=9
-hidamage=11
-hp=50
+lodamage=3
+hidamage=19
+hp=31 50
 spd=53
 str=15
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27f8]
@@ -388,14 +409,15 @@ id=0x27f8
 weight=700
 value=40,20
 layer=2
-lodamage=9
-hidamage=11
-hp=50
+lodamage=3
+hidamage=19
+hp=31 50
 spd=55
 str=15
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27ae]
@@ -406,14 +428,15 @@ id=0x27ae
 weight=500
 value=40,20
 layer=2
-lodamage=11
-hidamage=13
-hp=50
+lodamage=16
+hidamage=35
+hp=31 50
 spd=47
 str=15
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27f9]
@@ -424,14 +447,15 @@ id=0x27f9
 weight=500
 value=40,20
 layer=2
-lodamage=11
-hidamage=13
-hp=50
+lodamage=16
+hidamage=35
+hp=31 50
 spd=47
 str=15
 restock=10
 movable=1
 decay=1
+good=26
 }
 
 [0x27af]
@@ -442,14 +466,15 @@ id=0x27af
 weight=700
 value=40,20
 layer=2
-lodamage=9
-hidamage=11
-hp=50
+lodamage=3
+hidamage=18
+hp=31 50
 spd=55
 str=15
 restock=10
 movable=1
 decay=1
+good=22
 }
 
 [0x27fa]
@@ -460,12 +485,13 @@ id=0x27fa
 weight=700
 value=40,20
 layer=2
-lodamage=9
-hidamage=11
-hp=50
+lodamage=3
+hidamage=18
+hp=31 50
 spd=55
 str=15
 restock=10
 movable=1
 decay=1
+good=22
 }

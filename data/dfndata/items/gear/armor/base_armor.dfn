@@ -14,6 +14,7 @@ str=20
 dexadd=-1
 restock=15
 decay=1
+good=10
 }
 
 [ring_tunic]
@@ -30,6 +31,7 @@ str=20
 dexadd=-2
 restock=15
 decay=1
+good=10
 }
 
 [ring_sleeves]
@@ -46,6 +48,7 @@ str=20
 dexadd=-1
 restock=15
 decay=1
+good=10
 }
 
 [ring_leggings]
@@ -62,6 +65,7 @@ str=20
 dexadd=-1
 restock=15
 decay=1
+good=10
 }
 
 // Chainmail
@@ -79,6 +83,7 @@ hp=44
 str=20
 restock=10
 decay=1
+good=11
 }
 
 [chain_leggings]
@@ -95,6 +100,7 @@ str=20
 dexadd=-3
 restock=10
 decay=1
+good=11
 }
 
 [chain_tunic]
@@ -111,6 +117,7 @@ str=20
 dexadd=-5
 restock=10
 decay=1
+good=11
 }
 
 // Female
@@ -129,6 +136,7 @@ str=45
 dexadd=-5
 restock=15
 decay=1
+good=12
 }
 
 // Platemail
@@ -147,6 +155,7 @@ str=45
 dexadd=-2
 restock=15
 decay=1
+good=12
 }
 
 [plate_leggings]
@@ -163,6 +172,7 @@ str=40
 dexadd=-2
 restock=15
 decay=1
+good=12
 }
 
 [plate_gorget]
@@ -179,6 +189,7 @@ str=30
 dexadd=-1
 restock=15
 decay=1
+good=12
 }
 
 [plate_gloves]
@@ -195,6 +206,7 @@ str=30
 dexadd=-2
 restock=15
 decay=1
+good=12
 }
 
 [plate_chest]
@@ -211,6 +223,7 @@ str=60
 dexadd=-8
 restock=15
 decay=1
+good=12
 }
 
 [leather_sleeves]
@@ -226,6 +239,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 [leather_gloves]
@@ -240,6 +254,7 @@ def=13
 hp=37
 str=10
 decay=1
+good=13
 }
 
 [leather_gorget]
@@ -255,6 +270,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 [leather_cap]
@@ -270,6 +286,7 @@ hp=37
 str=15
 restock=15
 decay=1
+good=13
 }
 
 [leather_leggings]
@@ -285,6 +302,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 [leather_tunic]
@@ -299,6 +317,7 @@ def=13
 hp=37
 str=15
 decay=1
+good=13
 }
 
 // Female
@@ -316,6 +335,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 [leather_armor]
@@ -331,6 +351,7 @@ hp=37
 str=15
 restock=15
 decay=1
+good=13
 }
 
 [leather_skirt]
@@ -346,6 +367,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 [leather_bustier]
@@ -361,6 +383,7 @@ hp=37
 str=10
 restock=15
 decay=1
+good=13
 }
 
 //Studded Leather Armor
@@ -373,12 +396,12 @@ id=0x13d5
 weight=20
 value=87,43
 layer=0x13
-good=3
 def=16
 hp=44
 str=25
 restock=15
 decay=1
+good=13
 }
 
 [studded_gloves]
@@ -389,12 +412,12 @@ id=0x13d5
 weight=15
 value=73,36
 layer=0x07
-good=3
 def=16
 hp=44
 str=25
 restock=15
 decay=1
+good=13
 }
 
 [studded_gorget]
@@ -405,12 +428,12 @@ id=0x13d6
 weight=10
 value=73,36
 layer=0x0a
-good=3
 def=16
 hp=44
 str=25
 restock=15
 decay=1
+good=13
 }
 
 [studded_leggings]
@@ -421,12 +444,12 @@ id=0x13da
 weight=30
 value=103,51
 layer=0x04
-good=3
 def=16
 hp=44
 str=35
 restock=15
 decay=1
+good=13
 }
 
 [studded_tunic]
@@ -437,12 +460,12 @@ id=0x13db
 weight=50
 value=128,74
 layer=0x0d
-good=3
 def=16
 hp=44
 str=35
 restock=15
 decay=1
+good=13
 }
 
 [studded_armor]
@@ -453,12 +476,12 @@ id=0x1c02
 weight=20
 value=142,71
 layer=0x05
-good=3
 def=16
 hp=115
 str=35
 restock=15
 decay=1
+good=13
 }
 
 [studded_bustier]
@@ -469,12 +492,12 @@ id=0x1c0c
 weight=25
 value=120,60
 layer=0x05
-good=3
 def=16
 hp=115
 str=25
 restock=15
 decay=1
+good=13
 }
 
 // Bone Armor
@@ -491,6 +514,7 @@ def=30
 hp=30
 str=40
 decay=1
+good=14
 }
 
 [bone_armor]
@@ -505,6 +529,7 @@ def=30
 hp=30
 str=40
 decay=1
+good=14
 }
 
 [bone_gloves]
@@ -519,6 +544,7 @@ def=30
 hp=30
 str=40
 decay=1
+good=14
 }
 
 [bone_helmet]
@@ -533,6 +559,7 @@ def=40
 hp=30
 str=30
 decay=1
+good=14
 }
 
 [bone_leggings]
@@ -547,6 +574,7 @@ def=30
 hp=30
 str=40
 decay=1
+good=14
 }
 
 // Helmets
@@ -564,6 +592,7 @@ hp=58
 str=40
 restock=15
 decay=1
+good=15
 }
 
 [helmet]
@@ -579,6 +608,7 @@ hp=58
 str=40
 restock=15
 decay=1
+good=15
 }
 
 [bascinet]
@@ -594,6 +624,7 @@ hp=115
 str=10
 restock=15
 decay=1
+good=15
 }
 
 [nose_helm]
@@ -609,6 +640,7 @@ hp=58
 str=40
 restock=15
 decay=1
+good=15
 }
 
 [plate_helm]
@@ -625,6 +657,7 @@ str=40
 dexadd=-1
 restock=15
 decay=1
+good=15
 }
 
 // Shields
@@ -642,6 +675,7 @@ hp=30
 str=20
 restock=10
 decay=1
+good=16
 }
 
 [buckler]
@@ -657,6 +691,7 @@ hp=51
 str=15
 restock=10
 decay=1
+good=16
 }
 
 [metal_kite_shield]
@@ -673,6 +708,7 @@ str=30
 restock=10
 dyeable=1
 decay=1
+good=16
 }
 
 [heater_shield]
@@ -688,6 +724,7 @@ hp=37
 str=30
 restock=10
 decay=1
+good=16
 }
 
 [metal_shield]
@@ -703,6 +740,7 @@ hp=44
 str=10
 restock=10
 decay=1
+good=16
 }
 
 [order_shield]
@@ -716,6 +754,7 @@ layer=0x02
 def=30
 hp=115
 decay=1
+good=16
 }
 
 [chaos_shield]
@@ -729,6 +768,7 @@ layer=0x02
 def=32
 hp=115
 decay=1
+good=16
 }
 
 // SE Plate Armor
@@ -745,6 +785,7 @@ dexadd=-1
 def=42
 weight=500
 decay=1
+good=12
 }
 
 [decorative_platemail_kabuto]
@@ -759,6 +800,7 @@ dexadd=-1
 def=40
 weight=600
 decay=1
+good=12
 }
 
 [platemail_do]
@@ -773,6 +815,7 @@ dexadd=-8
 def=40
 weight=1000
 decay=1
+good=12
 }
 
 [platemail_hiro_sode]
@@ -787,6 +830,7 @@ dexadd=-2
 def=40
 weight=300
 decay=1
+good=12
 }
 
 [light_platemail_jingasa]
@@ -801,6 +845,7 @@ dexadd=-1
 def=35
 weight=500
 decay=1
+good=12
 }
 
 [small_platemail_jingasa]
@@ -815,6 +860,7 @@ dexadd=-1
 def=35
 weight=500
 decay=1
+good=12
 }
 
 [platemail_battle_kabuto]
@@ -829,6 +875,7 @@ dexadd=-1
 def=40
 weight=600
 decay=1
+good=12
 }
 
 [platemail_suneate]
@@ -843,6 +890,7 @@ dexadd=-6
 def=40
 weight=700
 decay=1
+good=12
 }
 
 [platemail_kabuto]
@@ -857,6 +905,7 @@ dexadd=-1
 def=40
 weight=600
 decay=1
+good=12
 }
 
 [platemail_haidate]
@@ -871,6 +920,7 @@ dexadd=-2
 def=40
 weight=700
 decay=1
+good=12
 }
 
 // SE Ninja Leather
@@ -885,6 +935,7 @@ str=10
 def=13
 weight=200
 decay=1
+good=13
 }
 
 [leather_ninja_belt]
@@ -896,6 +947,7 @@ str=10
 def=13
 weight=200
 decay=1
+good=13
 }
 
 [leather_ninja_pants]
@@ -908,6 +960,7 @@ str=10
 def=13
 weight=500
 decay=1
+good=13
 }
 
 [leather_ninja_mitts]
@@ -920,6 +973,7 @@ str=10
 def=13
 weight=200
 decay=1
+good=13
 }
 
 [leather_ninja_jacket]
@@ -932,6 +986,7 @@ str=10
 def=13
 weight=500
 decay=1
+good=13
 }
 
 // SE Samurai Leather
@@ -947,6 +1002,7 @@ str=25
 def=13
 weight=300
 decay=1
+good=13
 }
 
 [leather_mempo]
@@ -960,6 +1016,7 @@ str=30
 def=13
 weight=200
 decay=1
+good=13
 }
 
 [leather_do]
@@ -973,6 +1030,7 @@ str=40
 def=13
 weight=600
 decay=1
+good=13
 }
 
 [leather_hiro_sode]
@@ -986,6 +1044,7 @@ str=25
 def=13
 weight=100
 decay=1
+good=13
 }
 
 [leather_suneate]
@@ -999,6 +1058,7 @@ str=20
 def=13
 weight=400
 decay=1
+good=13
 }
 
 [leather_haidate]
@@ -1012,6 +1072,7 @@ str=20
 def=13
 weight=400
 decay=1
+good=13
 }
 
 // SE Samurai Studded Leather
@@ -1027,6 +1088,7 @@ str=55
 def=16
 weight=800
 decay=1
+good=13
 }
 
 [studded_hiro_sode]
@@ -1040,6 +1102,7 @@ str=30
 def=16
 weight=100
 decay=1
+good=13
 }
 
 [studded_suneate]
@@ -1053,6 +1116,7 @@ str=30
 def=16
 weight=500
 decay=1
+good=13
 }
 
 [studded_haidate]
@@ -1066,6 +1130,7 @@ str=30
 def=16
 weight=500
 decay=1
+good=13
 }
 
 [studded_mempo]
@@ -1079,6 +1144,7 @@ str=30
 def=16
 weight=200
 decay=1
+good=13
 }
 
 EOF

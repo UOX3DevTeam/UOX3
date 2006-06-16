@@ -32,7 +32,7 @@
 }
 
 //Random weapons
-[itemlist fishweapons]
+[ITEMLIST fishweapons]
 {
 0x09cc
 0x09cd
@@ -41,7 +41,7 @@
 }
 
 //Random gems
-[itemlist fishgems]
+[ITEMLIST fishgems]
 {
 0x09cc
 0x09cd
@@ -50,7 +50,7 @@
 }
 
 //Random bones and discards
-[itemlist fishbones]
+[ITEMLIST fishbones]
 {
 0x09cc
 0x09cd
@@ -59,7 +59,7 @@
 }
 
 //Random Fish
-[itemlist randomfish]
+[ITEMLIST randomfish]
 {
 0x09cc
 0x09cd

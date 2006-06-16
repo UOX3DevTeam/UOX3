@@ -331,6 +331,7 @@ value=15,7
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b35]
@@ -343,6 +344,7 @@ value=15,7
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b36]
@@ -355,6 +357,7 @@ value=15,7
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b37]
@@ -394,6 +397,7 @@ value=15,7
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b3c]
@@ -406,6 +410,7 @@ value=15,7
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b3d]
@@ -454,6 +459,7 @@ value=18,9
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b4a]
@@ -466,6 +472,7 @@ value=18,9
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b4b]
@@ -478,6 +485,7 @@ value=18,9
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b4c]
@@ -490,6 +498,7 @@ value=18,9
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b6b]
@@ -655,6 +664,7 @@ value=10,5
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b7d]
@@ -667,6 +677,7 @@ value=20,10
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b7e]
@@ -832,6 +843,7 @@ value=20,10
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x0b90]
@@ -844,6 +856,7 @@ value=20,10
 restock=10
 movable=1
 decay=1
+good=2
 }
 
 [0x118b]
