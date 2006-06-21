@@ -1,91 +1,82 @@
 // silver and gold... silver and gold ...
 
-[0x0eed]
+[base_coin]
 {
-name=gold coin
-id=0x0eed
+get=base_item
 weight=2
 pileable=1
 amount=1
 decay=1
+}
+
+[0x0eed]
+{
+get=base_coin
+name=gold coin
+id=0x0eed
+amount=1
 }
 
 [0x0eed-4]
 {
+get=base_coin
 name=gold coin
 id=0x0eed
-weight=2
-pileable=1
 amount=4
-decay=1
 }
 
 [0xeed-20]
 {
+get=base_coin
 name=gold coin
 id=0x0eed
-weight=2
-pileable=1
 amount=20
-decay=1
 }
 
 [0x0ef2]
 {
+get=base_coin
 name=silver coin
 id=0x0ef2
-weight=2
-pileable=1
 amount=1
-decay=1
 }
 
 [0x0ef2-4]
 {
+get=base_coin
 name=silver coin
 id=0x0ef2
-weight=2
-pileable=1
 amount=4
-decay=1
 }
 
 [0x0ef2-20]
 {
+get=base_coin
 name=silver coin
 id=0x0ef2
-weight=2
-pileable=1
 amount=20
-decay=1
 }
 
 [0x0eea]
 {
+get=base_coin
 name=copper coin
 id=0x0eea
-weight=2
-pileable=1
 amount=1
-decay=1
 }
 
 [0x0eea-4]
 {
+get=base_coin
 name=copper coin
 id=0x0eeb
-weight=2
-pileable=1
 amount=4
-decay=1
 }
 
 [0x0eea-20]
 {
+get=base_coin
 name=copper coin
 id=0x0eec
-weight=2
-pileable=1
 amount=20
-decay=1
 }

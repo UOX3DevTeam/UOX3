@@ -1,902 +1,514 @@
 //These are spell scrolls.  Blanks are in tools.dfn - kirre
 //Spell book is in books.dfn - kirre
 
-
-// Scroll (First Circle)
-[0x1F2E]
+[base_scroll]
 {
 get=base_item
-name=clumsy scroll
-id=0x1F2E
 weight=1
-value=12,6
 restock=100
 pileable=1
 amount=1
 decay=1
 good=31
+}
+
+// Scroll (First Circle)
+[base_first_scroll]
+{
+get=base_scroll
+value=12 6
+}
+
+[0x1F2E]
+{
+get=base_first_scroll
+name=clumsy scroll
+id=0x1F2E
 }
 
 [0x1f2f]
 {
-get=base_item
+get=base_first_scroll
 name=create food scroll
 id=0x1F2F
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1f30]
 {
-get=base_item
+get=base_first_scroll
 name=feeblemind scroll
 id=0x1F30
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1f31]
 {
-get=base_item
+get=base_first_scroll
 name=heal scroll
 id=0x1F31
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F32]
 {
-get=base_item
+get=base_first_scroll
 name=magic arrow scroll
 id=0x1F32
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F33]
 {
-get=base_item
+get=base_first_scroll
 name=night sight scroll
 id=0x1F33
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F2D]
 {
-get=base_item
+get=base_first_scroll
 name=reactive armor scroll
 id=0x1F2D
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F34]
 {
-get=base_item
+get=base_first_scroll
 name=weaken scroll
 id=0x1F34
-weight=1
-value=12,6
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
  
-//Scroll (Second Circle) 
+//Scroll (Second Circle)
+[base_second_scroll]
+{
+get=base_scroll
+value=22 11
+}
+
 [0x1F35]
 {
-get=base_item
+get=base_second_scroll
 name=agility scroll
 id=0x1F35
-weight=1
-value=22,11
-restock=100
-movable=1
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F36]
 {
-get=base_item
+get=base_second_scroll
 name=cunning scroll
 id=0x1F36
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F37]
 {
-get=base_item
+get=base_second_scroll
 name=cure scroll
 id=0x1F37
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F38]
 {
-get=base_item
+get=base_second_scroll
 name=harm scroll
 id=0x1F38
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F39]
 {
-get=base_item
+get=base_second_scroll
 name=magic trap scroll
 id=0x1F39
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F3A]
 {
-get=base_item
+get=base_second_scroll
 name=magic untrap scroll
 id=0x1F3A
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F3B]
 {
-get=base_item
+get=base_second_scroll
 name=protection scroll
 id=0x1F3B
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F3C]
 {
-get=base_item
-name=strenght scroll
+get=base_second_scroll
+name=strength scroll
 id=0x1F3C
-weight=1
-value=22,11
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 //Scroll (Third Circle)
+[base_third_scroll]
+{
+get=base_scroll
+value=32 16
+}
 
 [0x1F3D]
 {
-get=base_item
+get=base_third_scroll
 name=bless scroll
 id=0x1F3D
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F3E]
 {
-get=base_item
+get=base_third_scroll
 name=fireball scroll
 id=0x1F3E
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F3F]
 {
-get=base_item
+get=base_third_scroll
 name=magic lock scroll
 id=0x1F3F
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F40]
 {
-get=base_item
+get=base_third_scroll
 name=poison scroll
 id=0x1F40
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F41]
 {
-get=base_item
+get=base_third_scroll
 name=telekinisis scroll
 id=0x1F41
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F42]
 {
-get=base_item
+get=base_third_scroll
 name=teleport scroll
 id=0x1F42
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F43]
 {
-get=base_item
+get=base_third_scroll
 name=unlock scroll
 id=0x1F43
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F44]
 {
-get=base_item
+get=base_third_scroll
 name=wall of stone scroll
 id=0x1F44
-weight=1
-value=32,16
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 } 
 
 //Scroll (Fourth Circle)
+[base_fourth_scroll]
+{
+get=base_scroll
+value=42 21
+}
 
 [0x1F45]
 {
-get=base_item
+get=base_fourth_scroll
 name=archcure scroll
 id=0x1F45
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F46]
 {
-get=base_item
+get=base_fourth_scroll
 name=archprotection scroll
 id=0x1F46
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F47]
 {
-get=base_item
+get=base_fourth_scroll
 name=curse scroll
 id=0x1F47
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F48]
 {
-get=base_item
+get=base_fourth_scroll
 name=fire field scroll
 id=0x1F48
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F49]
 {
-get=base_item
+get=base_fourth_scroll
 name=greater heal scroll
 id=0x1F49
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F4A]
 {
-get=base_item
+get=base_fourth_scroll
 name=lightning scroll
 id=0x1F4A
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F4B]
 {
-get=base_item
+get=base_fourth_scroll
 name=mana drain scroll
 id=0x1F4B
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F4C]
 {
-get=base_item
+get=base_fourth_scroll
 name=recall scroll
 id=0x1F4C
-weight=1
-value=42,21
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
  
 //Scroll (Fifth Circle) 52
+[base_fifth_scroll]
+{
+get=base_scroll
+value=52 26
+}
 
 [0x1F4D]
 {
-get=base_item
+get=base_fifth_scroll
 name=blade spirits scroll
 id=0x1F4D
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F4E]
 {
-get=base_item
+get=base_fifth_scroll
 name=dispel field scroll
 id=0x1F4E
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F4F]
 {
-get=base_item
+get=base_fifth_scroll
 name=incognito scroll
 id=0x1F4F
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F50]
 {
-get=base_item
+get=base_fifth_scroll
 name=magic reflection scroll
 id=0x1F50
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F51]
 {
-get=base_item
+get=base_fifth_scroll
 name=mind blast scroll
 id=0x1F51
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F52]
 {
-get=base_item
+get=base_fifth_scroll
 name=paralyze scroll
 id=0x1F52
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F53]
 {
-get=base_item
+get=base_fifth_scroll
 name=poison field scroll
 id=0x1F53
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F54]
 {
-get=base_item
+get=base_fifth_scroll
 name=summon creature scroll
 id=0x1F54
-weight=1
-value=52,26
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 //Scroll (Sixth Circle)
+[base_sixth_scroll]
+{
+get=base_scroll
+value=62 31
+}
 
 [0x1F55]
 {
-get=base_item
+get=base_sixth_scroll
 name=dispel scroll
 id=0x1F55
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F56]
 {
-get=base_item
+get=base_sixth_scroll
 name=energy bolt scroll
 id=0x1F56
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F57]
 {
-get=base_item
+get=base_sixth_scroll
 name=explosion scroll
 id=0x1F57
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F58]
 {
-get=base_item
+get=base_sixth_scroll
 name=invisibility scroll
 id=0x1F58
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F59]
 {
-get=base_item
+get=base_sixth_scroll
 name=mark scroll
 id=0x1F59
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F5A]
 {
-get=base_item
+get=base_sixth_scroll
 name=mass curse scroll
 id=0x1F5A
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F5B]
 {
-get=base_item
+get=base_sixth_scroll
 name=paralyze field scroll
 id=0x1F5B
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F5C]
 {
-get=base_item
+get=base_sixth_scroll
 name=reveal scroll
 id=0x1F5C
-weight=1
-value=62,31
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 //Scroll (Seventh Circle)
+[base_seventh_scroll]
+{
+get=base_scroll
+value=72 36
+}
 
 [0x1F5D]
 {
-get=base_item
+get=base_seventh_scroll
 name=chain lightning scroll
 id=0x1F5D
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F5E]
 {
-get=base_item
+get=base_seventh_scroll
 name=energy field scroll
 id=0x1F5E
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F5F]
 {
-get=base_item
+get=base_seventh_scroll
 name=flamestrike scroll
 id=0x1F5F
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F60]
 {
-get=base_item
+get=base_seventh_scroll
 name=gate travel scroll
 id=0x1F60
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F61]
 {
-get=base_item
+get=base_seventh_scroll
 name=mana vampire scroll
 id=0x1F61
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F62]
 {
-get=base_item
+get=base_seventh_scroll
 name=mass dispel scroll
 id=0x1F62
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F64]
 {
-get=base_item
+get=base_seventh_scroll
 name=polymorph scroll
 id=0x1F64
-weight=1
-value=72,36
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 //Scroll (Eighth Circle) 
+[base_eighth_scroll]
+{
+get=base_scroll
+value=82 41
+}
 
 [0x1F65]
 {
-get=base_item
+get=base_eighth_scroll
 name=earthquake scroll
 id=0x1F65
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F66]
 {
-get=base_item
+get=base_eighth_scroll
 name=energy vortex scroll
 id=0x1F66
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F67]
 {
-get=base_item
+get=base_eighth_scroll
 name=resurrection scroll
 id=0x1F67
 weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F68]
 {
-get=base_item
+get=base_eighth_scroll
 name=summon air elemental scroll
 id=0x1F68
 weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F69]
 {
-get=base_item
+get=base_eighth_scroll
 name=summon daemon scroll
 id=0x1F69
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F6A]
 {
-get=base_item
+get=base_eighth_scroll
 name=summon earth elemental scroll
 id=0x1F6A
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F6B]
 {
-get=base_item
+get=base_eighth_scroll
 name=summon fire elemental scroll
 id=0x1F6B
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 [0x1F6C]
 {
-get=base_item
+get=base_eighth_scroll
 name=summon water elemental scroll
 id=0x1F6C
-weight=1
-value=82,41
-restock=100
-pileable=1
-amount=1
-decay=1
-good=31
 }
 
 // GM Related

@@ -4493,6 +4493,10 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	JSEncapsulate encaps( cx, &(argv[0]) );
 	JSEncapsulate encaps2( cx, &(argv[1]) );
 	JSEncapsulate myClass( cx, obj );
+
+	R32 timerVal = encaps2.toFloat();
+	if( timerVal != 0 )
+		timerVal = BuildTimeValue( timerVal / 1000.0f );
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *cMove = static_cast<CChar*>(myClass.toObject());
@@ -4502,7 +4506,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
-		cMove->SetTimer( (cC_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
+		cMove->SetTimer( (cC_TID)encaps.toInt(), timerVal );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -4513,7 +4517,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
-		mSock->SetTimer( (cS_TID)encaps.toInt(), BuildTimeValue( encaps2.toFloat() / 1000.0f ) );
+		mSock->SetTimer( (cS_TID)encaps.toInt(), timerVal );
 	}
 
 	return JS_TRUE;

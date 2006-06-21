@@ -156,7 +156,7 @@ MOREX=0x1E
 ID=0x20DD
 NAME=Horse Statue
 MOREX=0xC8
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x20DE]
@@ -332,7 +332,7 @@ MOREX=0x1D
 ID=0x20F6
 NAME=Llama Statue
 MOREX=0xDC
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x20F7]
@@ -510,21 +510,21 @@ NAME=Grizzly Bear Statue
 {
 ID=0x211F
 NAME=Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2120]
 {
 ID=0x2120
 NAME=Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2121]
 {
 ID=0x2121
 NAME=Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2122]
@@ -543,7 +543,7 @@ NAME=Rat Statue
 {
 ID=0x2124
 NAME=Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2125]
@@ -556,14 +556,14 @@ NAME=Rabbit Statue
 {
 ID=0x2126
 NAME=Pack Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2127]
 {
 ID=0x2127
 NAME=Pack Llama Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x212A]
@@ -636,21 +636,21 @@ NAME=Ophidian Queen Statue
 {
 ID=0x2135
 NAME=Desert Ostard Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2136]
 {
 ID=0x2136
 NAME=Frenzied Ostard Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2137]
 {
 ID=0x2137
 NAME=Forest Ostard Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2580]
@@ -801,21 +801,21 @@ NAME=Hellcat Statue
 {
 ID=0x2598
 NAME=Dappled Brown Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x2599]
 {
 ID=0x2599
 NAME=Dappled Gray Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x259A]
 {
 ID=0x259A
 NAME=Dark Brown Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x259B]
@@ -840,7 +840,7 @@ NAME=Silver Steed Statue
 {
 ID=0x259E
 NAME=Tan Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x259F]
@@ -1009,7 +1009,7 @@ NAME=Giant Scorpion Statue
 {
 ID=0x25BA
 NAME=Sea Horse Statue
-VALUE=700,350
+VALUE=700 350
 }
 
 [0x25BB]

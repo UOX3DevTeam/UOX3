@@ -8,7 +8,7 @@ get=base_item
 name=male kimono
 id=0x2782
 layer=0x11
-value=20,10
+value=20 10
 decay=1
 good=18
 }
@@ -27,7 +27,7 @@ get=base_item
 name=female kimono
 id=0x2783
 layer=0x11
-value=20,10
+value=20 10
 decay=1
 good=18
 }

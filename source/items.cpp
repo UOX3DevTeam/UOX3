@@ -192,17 +192,8 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										break;
 			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
 			case DFNTAG_VALUE:
-										if( !cdata.empty() )
-										{
-											if( cdata.sectionCount( " " ) != 0 )
-											{
-												applyTo->SetBuyValue(  cdata.section( " ", 0, 0 ).stripWhiteSpace().toULong() );
-												applyTo->SetSellValue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toULong() );
-												break;
-											}
-										}
 										applyTo->SetBuyValue( ndata );
-										applyTo->SetSellValue( (ndata / 2) );
+										applyTo->SetSellValue( odata );
 										break;
 			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;

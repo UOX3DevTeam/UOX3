@@ -10,6 +10,7 @@ pileable=1
 amount=1
 decay=1
 good=30
+value=3 1
 }
 
 [0x0f7a]
@@ -17,7 +18,7 @@ good=30
 get=base_reagent
 name=black pearl
 id=0x0f7a
-value=6,2
+value=6 2
 }
 
 [0x0f7b]
@@ -25,7 +26,7 @@ value=6,2
 get=base_reagent
 name=blood moss
 id=0x0f7b
-value=6,3
+value=6 3
 }
 
 [0x0f84]
@@ -33,7 +34,6 @@ value=6,3
 get=base_reagent
 name=garlic
 id=0x0f84
-value=3,1
 }
 
 [0x0f85]
@@ -41,7 +41,6 @@ value=3,1
 get=base_reagent
 name=ginseng
 id=0x0f85
-value=3,1
 }
 
 [0x0f86]
@@ -49,7 +48,6 @@ value=3,1
 get=base_reagent
 name=mandrake root
 id=0x0f86
-value=3,1
 }
 
 [0x0f88]
@@ -57,7 +55,6 @@ value=3,1
 get=base_reagent
 name=nightshade
 id=0x0f88
-value=3,1
 }
 
 [0x0f8c]
@@ -65,7 +62,6 @@ value=3,1
 get=base_reagent
 name=sulfurous ash
 id=0x0f8c
-value=3,1
 }
 
 [0x0f8d]
@@ -73,7 +69,6 @@ value=3,1
 get=base_reagent
 name=spider silk
 id=0x0f8d
-value=3,1
 }
 
 // pagan reagents:
@@ -83,7 +78,6 @@ value=3,1
 get=base_reagent
 name=bat wing
 id=0x0f78
-value=3,1
 }
 
 [0x0f79]
@@ -91,7 +85,6 @@ value=3,1
 get=base_reagent
 name=blackmoore
 id=0x0f79
-value=3,1
 }
 
 [0x0f7c]
@@ -99,7 +92,6 @@ value=3,1
 get=base_reagent
 name=blood spawn
 id=0x0f7c
-value=3,1
 }
 
 [0x0f7e]
@@ -107,7 +99,6 @@ value=3,1
 get=base_reagent
 name=bone
 id=0x0f7e
-value=3,1
 }
 
 [0x0f7f]
@@ -115,7 +106,6 @@ value=3,1
 get=base_reagent
 name=brimstone
 id=0x0f7f
-value=3,1
 }
 
 [0x0f80]
@@ -123,7 +113,6 @@ value=3,1
 get=base_reagent
 name=daemon bone
 id=0x0f80
-value=3,1
 }
 
 [0x0f90]
@@ -131,7 +120,6 @@ value=3,1
 get=base_reagent
 name=dead wood
 id=0x0f90
-value=3,1
 }
 
 [0x0f82]
@@ -139,7 +127,6 @@ value=3,1
 get=base_reagent
 name=dragon's blood
 id=0x0f82
-value=3,1
 }
 
 [0x0f83]
@@ -147,7 +134,6 @@ value=3,1
 get=base_reagent
 name=executioner's cap
 id=0x0f83
-value=3,1
 }
 
 [0x0f87]
@@ -155,7 +141,6 @@ value=3,1
 get=base_reagent
 name=eye of newt
 id=0x0f87
-value=3,1
 }
 
 [0x0f81]
@@ -163,7 +148,6 @@ value=3,1
 get=base_reagent
 name=fertile dirt
 id=0x0f81
-value=3,1
 }
 
 [0x0f89]
@@ -171,7 +155,6 @@ value=3,1
 get=base_reagent
 name=obsidian
 id=0x0f89
-value=3,1
 }
 
 [0x0f8a]
@@ -179,7 +162,6 @@ value=3,1
 get=base_reagent
 name=pig iron
 id=0x0f8a
-value=3,1
 }
 
 [0x0f8b]
@@ -187,7 +169,6 @@ value=3,1
 get=base_reagent
 name=pumice
 id=0x0f8b
-value=3,1
 }
 
 [0x0f8e]
@@ -195,7 +176,6 @@ value=3,1
 get=base_reagent
 name=nox crystal
 id=0x0f8e
-value=3,1
 }
 
 [0x0f7d]
@@ -203,7 +183,6 @@ value=3,1
 get=base_reagent
 name=daemon blood
 id=0x0f7d
-value=3,1
 }
 
 [0x0f8f]
@@ -211,7 +190,6 @@ value=3,1
 get=base_reagent
 name=grave dust
 id=0x0f8f
-value=3,1
 }
 
 [0x0f91]
@@ -219,5 +197,4 @@ value=3,1
 get=base_reagent
 name=wyrm's heart
 id=0x0f91
-value=3,1
 }

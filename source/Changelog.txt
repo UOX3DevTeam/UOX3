@@ -1,3 +1,10 @@
+6/20/2006 - giwo (0.98-3.6e)
+	Updated the Makefile.am.
+	Fixed an issue causing items to duplicate when moving around stacks larger than 32,767.
+	Fixed an issue causing timers not to be properly reset by the JS engine.
+	Fixed a DFN issue causing one to be able to create a board from a board.
+	Fixed a DFN issue causing item values to be loaded improperly.
+
 6/15/2006 - giwo (0.98-3.6d)
 	Modified names in the AITypes enum to fit naming conventions.
 	Minor optimizations in ai.cpp.

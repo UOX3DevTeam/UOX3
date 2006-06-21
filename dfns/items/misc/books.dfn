@@ -3,7 +3,7 @@
 get=base_item
 name=book
 id=0x0fef
-value=18,9
+value=18 9
 weight=100
 restock=20
 movable=1
@@ -436,7 +436,7 @@ get=base_item
 name=book of arms
 id=0x2254
 weight=100
-value=22,11
+value=22 11
 decay=1
 good=32
 }
@@ -447,7 +447,7 @@ get=base_item
 name=book of bushido
 id=0x23a0
 weight=100
-value=22,11
+value=22 11
 decay=1
 good=32
 }
@@ -458,7 +458,7 @@ get=base_item
 name=book of ninjitsu
 id=0x23a0
 weight=100
-value=22,11
+value=22 11
 decay=1
 good=32
 }

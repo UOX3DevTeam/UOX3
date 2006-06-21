@@ -1,3 +1,5 @@
+EXTRA_DIST = autogen.sh
+
 bin_PROGRAMS = uox3
 
 uox3_SOURCES = \
@@ -15,6 +17,7 @@ uox3_SOURCES = \
 	CGump.cpp \
 	cHTMLSystem.cpp \
 	cItem.cpp \
+	CJSEngine.cpp \
 	CJSMapping.cpp \
 	cmdtable.cpp \
 	cMultiObj.cpp \
@@ -39,7 +42,6 @@ uox3_SOURCES = \
 	effect.cpp \
 	fileio.cpp \
 	findfuncs.cpp \
-	globals.cpp \
 	gumps.cpp \
 	house.cpp \
 	items.cpp \

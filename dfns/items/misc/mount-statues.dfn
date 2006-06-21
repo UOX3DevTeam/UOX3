@@ -8,7 +8,7 @@
 {
 ID=0x2120
 NAME=Horse Statue
-VALUE=700,350
+VALUE=700 350
 SCRIPT=3100
 good=39
 }
@@ -17,7 +17,7 @@ good=39
 {
 ID=0x2135
 NAME=Desert Ostard Statue
-VALUE=700,350
+VALUE=700 350
 SCRIPT=3101
 good=39
 }
@@ -27,7 +27,7 @@ good=39
 ID=0x20F6
 NAME=Llama Statue
 MOREX=0xDC
-VALUE=700,350
+VALUE=700 350
 SCRIPT=3102
 good=39
 }
@@ -36,7 +36,7 @@ good=39
 {
 ID=0x2126
 NAME=Pack Horse Statue
-VALUE=700,350
+VALUE=700 350
 SCRIPT=3103
 good=39
 }
@@ -45,7 +45,7 @@ good=39
 {
 ID=0x2127
 NAME=Pack Llama Statue
-VALUE=700,350
+VALUE=700 350
 SCRIPT=3104
 good=39
 }

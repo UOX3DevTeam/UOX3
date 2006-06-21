@@ -20,6 +20,16 @@ ID=0x1be0
 //ID=0x1be2
 }
 
+[RESOURCE LOGS]
+{ // Used when making boards in Carpentry
+ID=0x1bdd
+//ID=0x1bde
+//ID=0x1bdf
+ID=0x1be0
+//ID=0x1be1
+//ID=0x1be2
+}
+
 [RESOURCE METAL]
 {
 ID=0x1bef

@@ -530,10 +530,10 @@ void CItem::SetAmount( UI32 newValue )
 	Dirty( UT_UPDATE );
 }
 
-bool CItem::IncAmount( SI16 incValue, bool noDelete )
+bool CItem::IncAmount( SI32 incValue, bool noDelete )
 {
 	bool iDeleted = false;
-	int newAmt = (amount + incValue);
+	SI32 newAmt = (amount + incValue);
 	if( newAmt >= 0 )
 	{
 		if( newAmt > MAX_STACK )

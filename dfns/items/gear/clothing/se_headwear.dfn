@@ -6,7 +6,7 @@ get=base_hat
 name=flower garland
 id=0x2305
 weight=300
-value=14,6
+value=14 6
 hp=100
 good=20
 }
@@ -17,7 +17,7 @@ get=0x2306
 name=flower garland
 id=0x2305
 weight=300
-value=14,6
+value=14 6
 hp=100
 good=20
 }
@@ -28,7 +28,7 @@ get=base_hat
 name=cloth ninja hood
 id=0x278f
 weight=300
-value=14,6
+value=14 6
 hp=100
 good=20
 }
@@ -47,7 +47,7 @@ get=base_hat
 name=kasa
 id=0x2798
 weight=300
-value=14,6
+value=14 6
 hp=100
 good=20
 }
