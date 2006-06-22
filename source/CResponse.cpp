@@ -162,7 +162,14 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 		case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
 		case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
 		case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
+		case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
+		case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
 		case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+		case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
+		case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
+		case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;
+		case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, text );						break;
+		case TW_DISMISS:			tResp = new CVendorDismissResponse( false, text );						break;
 		case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
 		case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
 		case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
@@ -610,6 +617,24 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return false;
 }
 
+CVendorViewResponse::CVendorViewResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+{
+}
+bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+{
+	CItem *pack		= NULL;
+	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
+	{
+		Npc->talk( mSock, 385, false );
+		pack = Npc->GetPackItem();
+		if( ValidateObject( pack ) )
+			mSock->openPack( pack, true );
+	}
+	if( !saidVendor )
+		return false;
+	return true;
+}
+
 CVendorGoldResponse::CVendorGoldResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
 {
 }
@@ -653,6 +678,62 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				Items->CreateItem( mSock, mChar, 0x0EED, give, 0, OT_ITEM, true );
 			
 			Npc->talk( mSock, 1328, false, earned, pay, give );
+		} 
+		else 
+			Npc->talk( mSock, 1329, false );
+	}
+	if( !saidVendor )
+		return false;
+	return true;
+}
+
+CVendorStatusResponse::CVendorStatusResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+{
+}
+bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+{
+	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
+	{
+		CChar *mChar = mSock->CurrcharObj();
+		UI32 pay = 0;
+		if( mChar == Npc->GetOwnerObj() )
+		{
+			if( Npc->GetHoldG() <= 0 )
+			{
+				Npc->talk( mSock, 1326, false );
+			} 
+			else
+			{
+				if( Npc->GetHoldG() > 9 )
+				{
+					pay = (int)( Npc->GetHoldG() / 10 );
+				} 
+				else 
+				{
+					pay = Npc->GetHoldG();
+				}
+				Npc->talk( mSock, 1782, false, Npc->GetHoldG(), pay );
+			}
+		} 
+		else 
+			Npc->talk( mSock, 1329, false );
+	}
+	if( !saidVendor )
+		return false;
+	return true;
+}
+
+CVendorDismissResponse::CVendorDismissResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+{
+}
+bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+{
+	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
+	{
+		CChar *mChar = mSock->CurrcharObj();
+		if( mChar == Npc->GetOwnerObj() )
+		{
+			Npc->Delete();
 		} 
 		else 
 			Npc->talk( mSock, 1329, false );

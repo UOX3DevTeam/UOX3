@@ -370,7 +370,7 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 
 	if( !objInRange( s, x, DIST_NEXTTILE ) )
 		return;
-	if( x->GetOwnerObj() == s || s->IsGM() )
+	if( x->GetOwnerObj() == s || Npcs->checkPetFriend( s, x ) || s->IsGM() )
 	{
 		if( !cwmWorldState->ServerData()->CharHideWhileMounted() )
 			s->ExposeToView();

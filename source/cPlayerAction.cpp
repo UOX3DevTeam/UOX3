@@ -1510,7 +1510,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	{
 		if( c->IsValidMount() )	// Is a mount
 		{
-			if( ( c->IsTamed() && c->GetOwnerObj() == mChar ) || mChar->GetCommandLevel() >= CL_GM )
+			if( ( c->IsTamed() && ( c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) ) ) || mChar->GetCommandLevel() >= CL_GM )
 			{
 				if( objInRange( mChar, c, DIST_NEXTTILE ) )
 				{

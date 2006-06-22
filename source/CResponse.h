@@ -21,7 +21,10 @@ enum TriggerWords
 	TW_HOUSEBAN			= 0x0034,		// I Ban Thee
 	TW_STOP2			= 0x0036,
 	TW_VENDORBUY		= 0x003C,		// Vendor Buy
+	TW_VENDORVIEW		= 0x003D,		// Vendor View
 	TW_VENDORGOLD		= 0x003E,		// Vendor Gold
+	TW_VENDORSTATUS		= 0x003F,		// Vendor Status
+	TW_VENDORDISMISS	= 0x0040,		// Vendor Dismiss
 	TW_SETNAME			= 0x0042,		// Set Name
 	TW_BOATFORWARD		= 0x0045,		// Forward
 	TW_BOATBACKWARD		= 0x0046,		// Backward
@@ -37,6 +40,7 @@ enum TriggerWords
 	TW_BOATFURL			= 0x0069,		// Furl Sail
 	TW_TRAIN			= 0x006C,		// Train, Teach
 	TW_FOLLOW2			= 0x00E8,		// Follow
+	TW_GOLD				= 0x0134,		// Gold
 	TW_VENDORSELL		= 0x014D,		// Vendor Sell
 	TW_COME				= 0x0155,		// Come
 	TW_FETCH			= 0x0157,		// Fetch
@@ -62,6 +66,9 @@ enum TriggerWords
 	TW_STAY				= 0x016F,		// Stay
 	TW_ALLSTAY			= 0x0170,		// All Stay
 	TW_BUY				= 0x0171,		// Buy
+	TW_VIEW				= 0x0172,		// View
+	TW_STATUS			= 0x0174,		// Status
+	TW_DISMISS			= 0x0175,		// Dismiss
 	TW_SELL				= 0x0177,		// Sell
 	TW_COUNT			= 0xFFFF
 };
@@ -247,11 +254,41 @@ public:
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
 };
 
+class CVendorViewResponse : public CBaseVendorResponse
+{
+public:
+					CVendorViewResponse( bool vendVal, std::string text );
+	virtual			~CVendorViewResponse()
+					{
+					}
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+};
+
 class CVendorGoldResponse : public CBaseVendorResponse
 {
 public:
 					CVendorGoldResponse( bool vendVal, std::string text );
 	virtual			~CVendorGoldResponse()
+					{
+					}
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+};
+
+class CVendorStatusResponse : public CBaseVendorResponse
+{
+public:
+					CVendorStatusResponse( bool vendVal, std::string text );
+	virtual			~CVendorStatusResponse()
+					{
+					}
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+};
+
+class CVendorDismissResponse : public CBaseVendorResponse
+{
+public:
+					CVendorDismissResponse( bool vendVal, std::string text );
+	virtual			~CVendorDismissResponse()
 					{
 					}
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
