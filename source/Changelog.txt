@@ -1,3 +1,13 @@
+6/22/2006 - grimson
+	Fixed a few places where looking into a pack from a player vendor would have been snooping.
+	Added price and description information to the item tooltips of player vendors.
+
+	DFN changes:
+		Added a player vendor deed to misc_deeds.dfn.
+		Put the player vendor deed into the add menu.
+		Changed the player vendor entry in the malevendors.dfn so that they are no longer
+		flagged as normal shoopkeepers.
+
 6/20/2006 - giwo (0.98-3.6e)
 	Updated the Makefile.am.
 	Fixed an issue causing items to duplicate when moving around stacks larger than 32,767.

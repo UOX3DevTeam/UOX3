@@ -851,6 +851,7 @@ protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CSocket *mSock, CItem& toCopy );
 	bool			isVendor;
+	bool			isPlayerVendor;
 	bool			isCorpse;
 	SERIAL			vendorSerial;
 public:
@@ -858,10 +859,11 @@ public:
 	{
 	}
 					CPItemsInContainer();
-					CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType = 0x00 );
+					CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType = 0x00, bool isPVendor = false );
 	virtual void	NumberOfItems( UI16 numItems );
 	virtual UI16	NumberOfItems( void ) const;
 	void			Type( UI08 contType );
+	void			PlayerVendor( bool value );
 	void			VendorSerial( SERIAL toSet );
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock );
 	void			Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount );
@@ -1214,8 +1216,8 @@ protected:
 	};
 	std::vector< toolTipEntry > ourEntries;
 	virtual void	InternalReset( void );
-	virtual void	CopyData( SERIAL objSer, bool addAmount = true );
-	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true );
+	virtual void	CopyData( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
+	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true, bool playerVendor = false );
 	void				CopyCharData( CChar& mChar, size_t &totalStringLen );
 	void				FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen );
 public:
@@ -1223,7 +1225,7 @@ public:
 	{
 	}
 					CPToolTip();
-					CPToolTip( SERIAL objSer, bool addAmount = true );
+					CPToolTip( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
 };
 
 class CPSellList : public CPUOXBuffer

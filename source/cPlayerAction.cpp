@@ -1561,7 +1561,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 			c->talk( mSock, 385, false );
 			pack = c->GetPackItem();
 			if( ValidateObject( pack ) )
-				mSock->openPack( pack );
+				mSock->openPack( pack, true );
 			return;
 		}
 	}
@@ -1611,7 +1611,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			baseCont = FindItemOwner( iUsed, objType );
 			if( !ValidateObject( baseCont ) )
 				baseCont = iUsed;
-
 			if( ValidateObject( baseCont ) )
 			{
 				if( baseCont->CanBeObjType( OT_ITEM ) )
@@ -1628,7 +1627,14 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 					if( ValidateObject( iChar ) )
 					{
 						if( mChar == iChar || mChar == iChar->GetOwnerObj() )
-							mSock->openPack( iUsed );
+						{
+							if( iChar->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
+								mSock->openPack( iUsed, true );
+							else
+								mSock->openPack( iUsed );
+						}
+						else if( iChar->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
+							mSock->openPack( iUsed, true );
 						else
 							Skills->Snooping( mSock, iChar, iUsed );
 						packOpened = true;	

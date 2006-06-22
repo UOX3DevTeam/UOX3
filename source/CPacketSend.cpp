@@ -2834,6 +2834,7 @@ void CPItemsInContainer::InternalReset( void )
 	pStream.ReserveSize( 5 );
 	pStream.WriteByte( 0, 0x3C );
 	isVendor			= false;
+	isPlayerVendor		= false;
 	vendorSerial		= INVALIDSERIAL;
 	isCorpse			= false;
 }
@@ -2842,14 +2843,16 @@ CPItemsInContainer::CPItemsInContainer()
 	InternalReset();
 }
 
-CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType )
+CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 contType, bool isPVendor )
 {
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
 		Type( contType );
+		PlayerVendor( isPVendor );
 		if( isVendor )
 			VendorSerial( container->GetSerial() );
+
 		CopyData( mSock, (*container) );
 	}
 }
@@ -2860,6 +2863,11 @@ void CPItemsInContainer::Type( UI08 contType )
 		isCorpse = true;
 	else if( contType == 0x02 ) // Vendor
 		isVendor = true;
+}
+
+void CPItemsInContainer::PlayerVendor( bool value )
+{
+	isPlayerVendor = value;
 }
 
 void CPItemsInContainer::VendorSerial( SERIAL toSet )
@@ -2898,7 +2906,7 @@ void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 
 	toAdd->SetDecayTime( 0 );
 
-	CPToolTip pSend( toAdd->GetSerial(), !isVendor );
+	CPToolTip pSend( toAdd->GetSerial(), !isVendor, isPlayerVendor );
 	mSock->Send( &pSend );
 }
 
@@ -4614,7 +4622,7 @@ void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )
 	ourEntries.push_back( tempEntry );
 }
 
-void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount )
+void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount, bool playerVendor )
 {
 	toolTipEntry tempEntry;
 	if( cItem.GetType() == IT_HOUSESIGN )
@@ -4661,6 +4669,15 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	{
 		tempEntry.stringNum = 1060584;
 		tempEntry.ourText = UString::number( cItem.GetHP() );
+		FinalizeData( tempEntry, totalStringLen );
+	}
+	else
+	{
+		if( ( cItem.GetWeight() / 100 ) == 1 )
+			tempEntry.stringNum = 1072788;
+		else
+			tempEntry.stringNum = 1072789;
+		tempEntry.ourText = UString::number( ( cItem.GetWeight() / 100 ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
@@ -4713,6 +4730,32 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
+
+	if( playerVendor )
+	{
+		if( cItem.GetBuyValue() > 0 )
+		{
+			// First the price
+			tempEntry.stringNum = 1043304;
+			tempEntry.ourText = UString::number( cItem.GetBuyValue() );
+			FinalizeData( tempEntry, totalStringLen );
+			// Then the description
+			tempEntry.stringNum = 1043305;
+			tempEntry.ourText = cItem.GetDesc();
+			FinalizeData( tempEntry, totalStringLen );
+		}
+		else
+		{
+			// Item is not for sale
+			tempEntry.stringNum = 1043307;
+			FinalizeData( tempEntry, totalStringLen );
+			// The description
+			tempEntry.stringNum = 1043305;
+			tempEntry.ourText = cItem.GetDesc();
+			FinalizeData( tempEntry, totalStringLen );
+
+		}
+	}
 }
 
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
@@ -4723,7 +4766,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	FinalizeData( tempEntry, totalStringLen );
 }
 
-void CPToolTip::CopyData( SERIAL objSer, bool addAmount )
+void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
 {
 	size_t totalStringLen = 0; //total string length
 
@@ -4737,7 +4780,7 @@ void CPToolTip::CopyData( SERIAL objSer, bool addAmount )
 	{
 		CItem *cItem = calcItemObjFromSer( objSer );
 		if( cItem != NULL )
-			CopyItemData( (*cItem), totalStringLen, addAmount );
+			CopyItemData( (*cItem), totalStringLen, addAmount, playerVendor );
 	}
 
 	size_t packetLen = 14 + totalStringLen + 5;
@@ -4771,10 +4814,10 @@ CPToolTip::CPToolTip()
 {
 	InternalReset();
 }
-CPToolTip::CPToolTip( SERIAL objSer, bool addAmount )
+CPToolTip::CPToolTip( SERIAL objSer, bool addAmount, bool playerVendor )
 {
 	InternalReset();
-	CopyData( objSer, addAmount );
+	CopyData( objSer, addAmount, playerVendor );
 }
 
 //0x9E Packet

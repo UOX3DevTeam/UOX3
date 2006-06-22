@@ -11,3 +11,10 @@ NAME=Guildstone deed
 ID=0x14F0
 TYPE=202
 }
+
+[playervendordeed]
+{
+NAME=Player vendor deed
+ID=0x14F0
+TYPE=217
+}

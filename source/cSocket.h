@@ -273,7 +273,7 @@ public:
 
 	void			statwindow( CChar *i );
 	void			updateskill( UI08 skillnum );
-	void			openPack( CItem *i );
+	void			openPack( CItem *i, bool isPlayerVendor = false );
 	void			openBank( CChar *i );
 	void			OpenURL( const std::string txt );
 

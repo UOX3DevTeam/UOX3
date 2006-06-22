@@ -618,7 +618,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
-		UI32 pay = 0, give = Npc->GetHoldG(), t = 0;
+		UI32 pay = 0, give = Npc->GetHoldG(), t = 0, earned = Npc->GetHoldG();
 		if( mChar == Npc->GetOwnerObj() )
 		{
 			if( Npc->GetHoldG() <= 0 )
@@ -652,7 +652,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			if( give ) 
 				Items->CreateItem( mSock, mChar, 0x0EED, give, 0, OT_ITEM, true );
 			
-			Npc->talk( mSock, 1328, false, Npc->GetHoldG(), pay, give );
+			Npc->talk( mSock, 1328, false, earned, pay, give );
 		} 
 		else 
 			Npc->talk( mSock, 1329, false );

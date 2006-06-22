@@ -9181,6 +9181,8 @@ misc_deeds.dfn
 ADDITEM=townstonedeed
 0x14F0=Guildstone deed
 ADDITEM=guildstonedeed
+0x14F0=Player vendor deed
+ADDITEM=playervendordeed
 <=Previous Menu
 ITEMMENU=4
 }

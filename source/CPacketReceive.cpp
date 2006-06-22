@@ -1304,7 +1304,7 @@ bool CPITalkRequest::HandleCommon( void )
 	{
 		case 3: // Player vendor item pricing
 			j = UString( Text() ).toULong();
-			if( j > 0 )
+			if( j >= 0 )
 			{
 				speechItem->SetBuyValue( j );
 				tSock->sysmessage( 753, j );
@@ -2666,7 +2666,20 @@ bool CPIPopupMenuSelect::Handle( void )
 				if( ValidateObject( pack ) )
 				{
 					if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->GetCommandLevel() >= CL_CNS )
-						tSock->openPack( pack );
+					{
+						if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
+						{
+							targChar->talk( tSock, 385, false );
+							tSock->openPack( pack, true );
+						}
+						else
+							tSock->openPack( pack );
+					}
+					else if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
+					{
+						targChar->talk( tSock, 385, false );
+						tSock->openPack( pack, true );
+					}
 					else
 						Skills->Snooping( tSock, targChar, pack );
 				}

@@ -61,6 +61,8 @@ void PlVBuy( CSocket *s )//PlayerVendors
 		vChar->talk( s, 999, false );
 		return;
 	}
+	if ( i->GetBuyValue() <= 0 )
+		return;
 
 	if( gleft < i->GetBuyValue() ) 
 	{

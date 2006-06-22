@@ -1690,7 +1690,7 @@ void CSocket::updateskill( UI08 skillnum )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Open backpack and display contents
 //o---------------------------------------------------------------------------o
-void CSocket::openPack( CItem *i )
+void CSocket::openPack( CItem *i, bool isPlayerVendor )
 {
 	if( !ValidateObject( i ) )
 	{
@@ -1768,7 +1768,7 @@ void CSocket::openPack( CItem *i )
 		}
 	}   
 	Send( &contSend );
-	CPItemsInContainer itemsIn( this, i );
+	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
 	Send( &itemsIn );
 }
 
