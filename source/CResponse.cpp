@@ -165,6 +165,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 		case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
 		case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
 		case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+		case TW_COLLECT:
 		case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
 		case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
 		case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;

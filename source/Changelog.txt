@@ -1,4 +1,8 @@
 6/22/2006 - grimson
+	Don't add the weight entry to the tooltip of items that weight nothing.
+	The "collect" command now also works when using the name of the vendor.
+
+6/22/2006 - grimson
 	Added the "view", "status" and "dismiss" commands for player vendors (updated dictionaries).
 	Allow pet friends to mount the pet.
 

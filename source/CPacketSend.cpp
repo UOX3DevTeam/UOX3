@@ -4671,7 +4671,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = UString::number( cItem.GetHP() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else
+	else if( ( cItem.GetWeight() / 100 ) >= 1 )
 	{
 		if( ( cItem.GetWeight() / 100 ) == 1 )
 			tempEntry.stringNum = 1072788;

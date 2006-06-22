@@ -67,6 +67,7 @@ enum TriggerWords
 	TW_ALLSTAY			= 0x0170,		// All Stay
 	TW_BUY				= 0x0171,		// Buy
 	TW_VIEW				= 0x0172,		// View
+	TW_COLLECT			= 0x0173,		// Collect
 	TW_STATUS			= 0x0174,		// Status
 	TW_DISMISS			= 0x0175,		// Dismiss
 	TW_SELL				= 0x0177,		// Sell
