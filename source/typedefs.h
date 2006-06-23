@@ -109,7 +109,7 @@ typedef struct __STARTLOCATIONDATA__
 //	EviLDeD	-	End
 
 // Max values
-const UI08 MAX_NAME		= 30;	// All character name packets are 30 bytes in size
+const UI08 MAX_NAME		= 60;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 15;
