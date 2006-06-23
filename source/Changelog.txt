@@ -1,4 +1,7 @@
 6/23/2006 - grimson
+	Changed checkPetOfflineTimeout() to ignore player vendors.
+
+6/23/2006 - grimson
 	Don't let normal players put items into the backpack of a player vendor they don't own.
 
 6/22/2006 - giwo (0.98-3.6f)

@@ -441,19 +441,19 @@ void CChar::DoHunger( CSocket *mSock )
 //|   Date        -  21. Feb, 2006
 //|   Programmer  -  Grimson
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Calculate Hunger level of the character and do all
-//|					 related effects.
+//|   Purpose     -  Check if the owner of the was offline for to long and
+//|					 remove him if so.
 //o---------------------------------------------------------------------------o
 void CChar::checkPetOfflineTimeout( void )
 {
-	if( IsTamed() )
+	if( IsTamed() && IsNpc() && GetNPCAiType() != AI_PLAYERVENDOR )
 	{
 		if( GetMounted() || GetStabled() )
 			return;
 
 		CChar *owner = GetOwnerObj();
 		if( !ValidateObject( owner ) )
-			SetTamed( false ); // The owner is gone, so reset the tamed status
+			SetOwner( NULL ); // The owner is gone, so remove him
 		else
 		{
 			if( isOnline( (*owner) ) )
