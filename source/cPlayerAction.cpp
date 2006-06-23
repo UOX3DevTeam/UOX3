@@ -1017,11 +1017,19 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		}
 		else if( contOwner->IsNpc() && contOwner->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
-			if( contOwner->GetOwnerObj() == &mChar )
+			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() > CL_PLAYER )
 			{
 				mChar.SetSpeechMode( 3 );
 				mChar.SetSpeechItem( &iDropped );
 				mSock.sysmessage( 1207 );
+			}
+			else
+			{
+				if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( &mChar, &iDropped );
+				mSock.sysmessage( 1630 );
+				Bounce( &mSock, &iDropped );
+				return false;
 			}
 		}
 		else if( mChar.GetCommandLevel() < CL_CNS && ( !contOwner->IsNpc() || !contOwner->IsTamed() || 
