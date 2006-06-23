@@ -357,12 +357,14 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 		return;
 	SI32 k = xAway * yAway / 2;
 	SI16 xos = 0, yos = 0;
+	SI08 targZ = 0;
 	bool foundSpot = false;
 	if( k > 50 )
 		k = 50;
 	
 	while( !foundSpot )
 	{
+		targZ = 0;
 		if( --k < 0 ) //this CAN be a bit laggy. adjust as nessicary
 		{
 			if( xAway > 0 && yAway > 0 )
@@ -378,19 +380,13 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 	    
 		if( xos >= 1 && yos >= 1 )
 		{
+			targZ = Map->Height( xos, yos, z, worldNumber );
 			if( !cwmWorldState->creatures[cCreated->GetID()].IsWater() )
-				foundSpot = Map->CanMonsterMoveHere( xos, yos, z, worldNumber );
+				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber );
 			else if( cwmWorldState->creatures[cCreated->GetID()].IsWater() || ( !foundSpot && cwmWorldState->creatures[cCreated->GetID()].IsAmphibian() ) )
-				foundSpot = Map->CanMonsterMoveHere( xos, yos, z, worldNumber, false, true );
+				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, false, true );
 		}
 	}
-	
-	// should we not add and remove from mapregions here????
-	SI08 targZ = 0;
-	if( ILLEGAL_Z == z )
-		targZ = Map->Height( xos, yos, 0, worldNumber );
-	else
-		targZ = z;
 
 	cCreated->SetLocation( xos, yos, targZ, worldNumber );
 	InitializeWanderArea( cCreated, xAway, yAway );

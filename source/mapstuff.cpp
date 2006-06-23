@@ -677,7 +677,7 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 	if( worldNumber >= MapList.size() )
 		return false;
 
-	return ( ( x >= 0 && x < (MapList[worldNumber].xBlock/8) ) && ( y >= 0 && y < (MapList[worldNumber].yBlock/8) ) );
+	return ( ( x >= 0 && x < MapList[worldNumber].xBlock ) && ( y >= 0 && y < MapList[worldNumber].yBlock ) );
 }
 
 
@@ -705,7 +705,7 @@ CStaticIterator::CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : bas
 baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
 index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
 {
-	if( !Map->InsideValidWorld( baseX, baseY, world ) )
+	if( !Map->InsideValidWorld( x, y, world ) )
 	{
 		Console.Error( "ASSERT: CStaticIterator(); Not inside a valid world" );
 		return;
@@ -904,24 +904,87 @@ bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	return false;
 }
 
+bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+{
+    // get the tile id of any dynamic tiles at this spot
+    const UI16 dt = DynTile( x, y, z, worldNumber );
+	if( IsValidTile( dt ) )
+	{
+		CTile &tile = SeekTile( dt );
+		if( waterWalk )
+		{
+			if( !tile.CheckFlag( TF_WET ) )
+				return true;
+		}
+		else
+		{
+			if( tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
+				return true;
+		}
+	}
+	return false;
+}
+
+bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+{
+	if( checkWater || waterWalk )
+	{
+		const map_st map = SeekMap( x, y, worldNumber );
+		if( map.z == z )
+		{
+			CLand& land = SeekLand( map.id );
+			if( waterWalk )
+			{
+				if( !land.CheckFlag( TF_WET ) )
+					return true;
+			}
+			else
+			{
+				if( land.CheckFlag( TF_WET ) )
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater, bool waterWalk )
+bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
 {
-	if( worldNumber >= MapList.size() )
+	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
-	MapData_st& mMap = MapList[worldNumber];
-	if( x < 0 || y < 0 || x >= mMap.xBlock || y >= mMap.yBlock  )
+    // get the tile id of any dynamic tiles at this spot
+	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, waterWalk ) )
 		return false;
+
+	// if there's a static block here in our way, return false
+	if( DoesStaticBlock( x, y, z, worldNumber, checkWater ) )
+		return false;
+
+	// if the static isn't a surface return false
+	if( !CheckStaticFlag( x, y, z, worldNumber, ( waterWalk ) ? TF_WET : TF_SURFACE ) )
+		return false;
+
+	if( DoesMapBlock( x, y, z, worldNumber, checkWater, waterWalk ) )
+		return false;
+
+	return true;
+}
+
+bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+{
+	if( !InsideValidWorld( x, y, worldNumber ) )
+		return false;
+
     const SI08 elev = Height( x, y, oldz, worldNumber );
 	if( ILLEGAL_Z == elev )
 		return false;
 
-	// is it too great of a difference z-value wise?
+	// We don't want the house to be halfway embedded in a hill... or hanging off one for that matter.
 	if( oldz != ILLEGAL_Z )
 	{
-		// you can climb MaxZstep, but fall up to 15
 		if( elev - oldz > MAX_Z_STEP )
 			return false;
 		else if( oldz - elev > MAX_Z_FALL )
@@ -929,48 +992,16 @@ bool CMulHandler::CanMonsterMoveHere( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 	}
 
     // get the tile id of any dynamic tiles at this spot
-    const UI16 dt = DynTile( x, y, elev, worldNumber );
-	if( IsValidTile( dt ) )
-	{
-		CTile &tile = SeekTile( dt );
-		if( waterWalk )
-		{
-			if( !tile.CheckFlag( TF_WET ) )
-				return false;
-		}
-		else
-		{
-			if( tile.CheckFlag( TF_BLOCKING ) || (checkWater && tile.CheckFlag( TF_WET ) ) /*|| !tile.CheckFlag( TF_SURFACE ) */ )
-				return false;
-		}
-	}
+	if( DoesDynamicBlock( x, y, elev, worldNumber, checkWater, false ) )
+		return false;
 
 	// if there's a static block here in our way, return false
 	if( DoesStaticBlock( x, y, elev, worldNumber, checkWater ) )
 		return false;
-	
-	// if the static isn't a surface return false
-	if( !CheckStaticFlag( x, y, elev, worldNumber, ( waterWalk ) ? TF_WET : TF_SURFACE ) )
+
+	if( DoesMapBlock( x, y, elev, worldNumber, checkWater, false ) )
 		return false;
 
-	if( checkWater || waterWalk )
-	{
-		const map_st map = SeekMap( x, y, worldNumber );
-		if( map.z == elev )
-		{
-			CLand& land = SeekLand( map.id );
-			if( waterWalk )
-			{
-				if( !land.CheckFlag( TF_WET ) )
-					return false;
-			}
-			else
-			{
-				if( land.CheckFlag( TF_WET ) )
-					return false;
-			}
-		}
-	}
 	return true;
 }
 

@@ -694,9 +694,14 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	JSObject *mSock				= JSVAL_TO_OBJECT( argv[0] );
+	CSocket *mySock = NULL;
+	if( argv[0] != JSVAL_NULL )
+	{
+		JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
+		mySock					= (CSocket *)JS_GetPrivate( cx, mSock );
+	}
+
 	JSObject *mChar				= JSVAL_TO_OBJECT( argv[1] );
-	CSocket *mySock				= (CSocket *)JS_GetPrivate( cx, mSock );
 	CChar *myChar				= (CChar *)JS_GetPrivate( cx, mChar );
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
@@ -732,9 +737,14 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	CItem *newItem			= NULL;
-	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
+	CSocket *mySock			= NULL;
+	if( argv[0] != JSVAL_NULL )
+	{
+		JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
+		mySock				= (CSocket *)JS_GetPrivate( cx, mSock );
+	}
+
 	JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-	CSocket *mySock			= (CSocket *)JS_GetPrivate( cx, mSock );
 	CChar *myChar			= (CChar *)JS_GetPrivate( cx, mChar );
 	int amount				= (int)JSVAL_TO_INT( argv[2] );
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );

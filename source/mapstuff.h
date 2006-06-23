@@ -125,6 +125,8 @@ private:
 
 	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
 	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
+	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk );
+	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk );
 	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck );
 
 	// caching functions
@@ -158,7 +160,8 @@ public:
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
-	bool			CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = false, bool waterWalk = false );
+	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = true, bool waterWalk = false );
+	bool			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater );
 	bool			MapExists( UI08 worldNumber );
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 

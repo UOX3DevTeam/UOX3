@@ -159,7 +159,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 		for( SI16 l = -spaceY; l <= spaceY; ++l )
 		{
 			curY = y+l;
-			if( ( !Map->CanMonsterMoveHere( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != curY ) ) ||
+			if( ( !Map->ValidMultiLocation( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != curY ) ) ||
 				findMulti( curX, curY, z, worldNum ) != NULL )	// Lets not place a multi on/in another multi
 //			This will take the char making the house out of the space check, be careful 
 //			you don't build a house on top of your self..... this had to be done So you 
@@ -359,6 +359,7 @@ void deedHouse( CSocket *s, CMultiObj *i )
 					tChar->SetMulti( INVALIDSERIAL );
 			}
 		}
+
 		SERIAL serialToMatch = i->GetSerial();
 		s->sysmessage( 582 );
 		killKeys( serialToMatch );

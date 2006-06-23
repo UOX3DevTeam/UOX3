@@ -109,7 +109,7 @@ void LeaveBoat( CSocket *s, CItem *p )
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
 			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber );
-			if( Map->CanMonsterMoveHere( x, y, z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
+			if( Map->ValidMultiLocation( x, y, z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
 			{
 				mChar->SetLocation( x, y, z, worldNumber );
 				CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -202,6 +202,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 {
 	map_st map;
 	SI16 cx = b->GetX(), cy = b->GetY();
+	const SI08 cz = b->GetZ();
 	SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	UI08 type = 0;
 
@@ -293,7 +294,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			{
 				map = Map->SeekMap( x, y, worldNumber );
 				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= -5 && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+				if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
 					return true;
 			}
 			else
@@ -303,7 +304,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 				{
 					CTile& tile = Map->SeekTile( stat->itemid );
 					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.CheckFlag( TF_WET ) && zt > -5 && zt <= 15 && strcmp( (char*)tile.Name(), "water" ) )
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
 					{
 						delete msi;
 						return true;
@@ -349,11 +350,26 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 		return false;
 	}
 
-	CChar *mChar = s->CurrcharObj();
-	b->SetTempVar( CITV_MOREZ, calcserial( id2, id2+3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 ) ) );
-	b->SetZ( -5 );// Z in water
+	const SERIAL serial = b->GetSerial();
+	const UI08 worldNumber = b->WorldNumber();
+	const SI16 x = b->GetX(), y = b->GetY();
+	SI08 z = Map->MapElevation( x, y, worldNumber );
+		
+	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, 20 );
+	if( ILLEGAL_Z != dynz )
+		z = dynz;
+	else
+	{
+		const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, 20 );
+		if( ILLEGAL_Z != staticz )
+			z = staticz;
+	}
+	b->SetZ( z );// Z in water
 	b->SetName( Dictionary->GetEntry( 1408 ) );//Name is something other than "%s's house"
-	SERIAL serial = b->GetSerial();
+	b->SetTempVar( CITV_MOREZ, calcserial( id2, id2+3, b->GetTempVar( CITV_MOREZ, 3 ), b->GetTempVar( CITV_MOREZ, 4 ) ) );
+
+	CChar *mChar = s->CurrcharObj();
+
 	CItem *tiller = Items->CreateItem( NULL, mChar, 0x3E4E, 1, 0, OT_ITEM );
 	if( tiller == NULL )
 		return false;
@@ -388,30 +404,28 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	b->SetPlank( 1, p2->GetSerial() );
 	b->SetHold( hold->GetSerial() );
 
-	SI16 x = b->GetX(), y = b->GetY();
-	SI08 z = b->GetZ();
 	switch( id2 ) //Give everything the right Z for it size boat
 	{
 		case 0x00:
 		case 0x04:
-			tiller->SetLocation( x + 1, y + 4, -5 );
-			p1->SetLocation( x - 2, y, -5 );
-			p2->SetLocation( x + 2, y, -5 );
-			hold->SetLocation( x, y - 4, -5 );
+			tiller->SetLocation( x + 1, y + 4, z );
+			p1->SetLocation( x - 2, y, z );
+			p2->SetLocation( x + 2, y, z );
+			hold->SetLocation( x, y - 4, z );
 			break;
 		case 0x08:
 		case 0x0C:
-			tiller->SetLocation( x + 1, y + 5, -5 );
-			p1->SetLocation( x - 2, y, -5 );
-			p2->SetLocation( x + 2, y, -5 );
-			hold->SetLocation( x, y - 4, -5 );
+			tiller->SetLocation( x + 1, y + 5, z );
+			p1->SetLocation( x - 2, y, z );
+			p2->SetLocation( x + 2, y, z );
+			hold->SetLocation( x, y - 4, z );
 			break;
 		case 0x10:
 		case 0x14:
-			tiller->SetLocation( x + 1, y + 5, -5 );
-			p1->SetLocation( x - 2, y - 1, -5 );
-			p2->SetLocation( x + 2, y - 1, -5 );
-			hold->SetLocation( x, y - 5, -5 );
+			tiller->SetLocation( x + 1, y + 5, z );
+			p1->SetLocation( x - 2, y - 1, z );
+			p2->SetLocation( x + 2, y - 1, z );
+			hold->SetLocation( x, y - 5, z );
 			break;
 	}
 	return true;

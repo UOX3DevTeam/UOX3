@@ -801,7 +801,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		const SI16 x = mSock->GetWord( 5 );
 		const SI16 y = mSock->GetWord( 7 );
 		const SI08 z = mSock->GetByte( 9 );
-		if( !Map->CanMonsterMoveHere( x, y, z, nChar->WorldNumber(), true, false ) )
+		if( !Map->ValidSpawnLocation( x, y, z, nChar->WorldNumber() ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );

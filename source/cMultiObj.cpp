@@ -472,13 +472,21 @@ void CMultiObj::Cleanup( void )
 			if( iType == IT_DOOR || iType == IT_LOCKEDDOOR || iType == IT_HOUSESIGN )
 				iRemove->Delete();
 			else
+			{
+				if( iRemove->IsLockedDown() )
+					iRemove->SetMovable( 1 );
 				iRemove->SetMulti( INVALIDSERIAL );
+				iRemove->SetZ( GetZ() );
+			}
 		}
 	}
 	for( CChar *cRemove = charInMulti.First(); !charInMulti.Finished(); cRemove = charInMulti.Next() )
 	{
 		if( ValidateObject( cRemove ) )
+		{
 			cRemove->SetMulti( INVALIDSERIAL );
+			cRemove->SetZ( GetZ() );
+		}
 	}
 	CItem::Cleanup();
 }

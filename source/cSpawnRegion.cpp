@@ -584,14 +584,14 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 		
-		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) && !waterCreature )
+		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) && !waterCreature )
 		{
 			rvalue = true;
 			validLandPos.push_back( point3( x, y, z ) );
 			validLandPosCheck[ y + ( x << 16) ] = z;
 			break;
 		}
-		else if( Map->CanMonsterMoveHere( x, y, z, worldNumber, false, true ) && ( waterCreature || amphiCreature ) )
+		else if( Map->ValidSpawnLocation( x, y, z, worldNumber, false, true ) && ( waterCreature || amphiCreature ) )
 		{
 			rvalue = true;
 			validWaterPos.push_back( point3( x, y, z ) );
@@ -691,7 +691,7 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 			}
 		}
 
-		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
+		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) )
 		{
 			rvalue = true;
 			validLandPos.push_back( point3( x, y, z ) );
