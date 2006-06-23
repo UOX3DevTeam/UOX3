@@ -1,4 +1,7 @@
 6/23/2006 - grimson
+	Changed the way the owner of an object is stored to use the serial of the owner.
+
+6/23/2006 - grimson
 	Changed checkPetOfflineTimeout() to ignore player vendors.
 	Remove tempeffect number 44 as it is no longer used.
 

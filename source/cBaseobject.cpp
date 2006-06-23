@@ -66,7 +66,7 @@ const UI08			DEFBASE_DIR			= 0;
 const SERIAL		DEFBASE_SERIAL		= INVALIDSERIAL;
 CMultiObj *			DEFBASE_MULTIS		= NULL;
 const SERIAL		DEFBASE_SPAWNSER	= INVALIDSERIAL;
-CChar *				DEFBASE_OWNER		= NULL;
+const SERIAL		DEFBASE_OWNER		= INVALIDSERIAL;
 const UI08			DEFBASE_WORLD		= 0;
 const SI16			DEFBASE_STR			= 0;
 const SI16			DEFBASE_DEX			= 0;
@@ -521,10 +521,7 @@ CSpawnItem *CBaseObject::GetSpawnObj( void ) const
 //o--------------------------------------------------------------------------
 SERIAL CBaseObject::GetOwner( void ) const
 {
-	SERIAL rvalue = INVALIDSERIAL;
-	if( ValidateObject( owner ) )
-		rvalue = owner->GetSerial();
-	return rvalue;
+	return owner;
 }
 
 //o--------------------------------------------------------------------------
@@ -537,7 +534,7 @@ SERIAL CBaseObject::GetOwner( void ) const
 //o--------------------------------------------------------------------------
 CChar *CBaseObject::GetOwnerObj( void ) const
 {
-	return owner;
+	return calcCharObjFromSer( owner );
 }
 
 //o--------------------------------------------------------------------------
@@ -618,19 +615,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 		}
 	}
 	dumping << "SpawnerID=" << "0x" << spawnserial << std::endl;
-	if( ValidateObject( owner ) )
-	{
-		dumping << "OwnerID=" << "0x";
-		try
-		{
-			dumping << owner->GetSerial() << std::endl;
-		}
-		catch( ... )
-		{
-			dumping << "FFFFFFFF" << std::endl;
-			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'Owner' points to invalid memory." << myendl;
-		}
-	}
+	dumping << "OwnerID=" << "0x" << owner << std::endl;
 
 	// Decimal / String Values
 	dumping << std::dec;
@@ -1069,7 +1054,10 @@ void CBaseObject::SetSpawn( SERIAL newSpawn )
 void CBaseObject::SetOwner( CChar *newOwner )
 {
 	RemoveSelfFromOwner();
-	owner = newOwner;
+	if( ValidateObject( newOwner ) )
+		owner = newOwner->GetSerial();
+	else
+		owner = INVALIDSERIAL;
 	AddSelfToOwner();
 }
 
@@ -1664,7 +1652,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "OWNERID" )
 			{
-				owner	= (CChar *)data.toULong();
+				owner	= (SERIAL)data.toULong();
 				rvalue	= true;
 			}
 			break;
@@ -1821,11 +1809,11 @@ void CBaseObject::PostLoadProcessing( void )
 		spawnserial	= INVALIDSERIAL;
 		SetSpawn( tmpSerial );
 	}
-	if( owner != NULL )
+	if( owner != INVALIDSERIAL ) //To repopulate the petlist of the owner
 	{
-		tmpSerial		= (SERIAL)owner;
-		owner			= NULL;
-		SetOwner( calcCharObjFromSer( tmpSerial ) );
+		tmpSerial	= owner;
+		owner		= INVALIDSERIAL;
+		SetOwner( calcCharObjFromSer(tmpSerial) );
 	}
 
 	oldLocX = x;

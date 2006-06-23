@@ -76,7 +76,7 @@ protected:
 	SERIAL			serial;
 	CMultiObj *	multis;
 	SERIAL			spawnserial;
-	CChar *			owner;
+	SERIAL			owner;
 	RACEID			race;
 	UString		 	name;
 	SI16			strength;
