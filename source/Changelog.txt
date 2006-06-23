@@ -1,5 +1,6 @@
 6/23/2006 - grimson
 	Changed checkPetOfflineTimeout() to ignore player vendors.
+	Remove tempeffect number 44 as it is no longer used.
 
 6/23/2006 - grimson
 	Don't let normal players put items into the backpack of a player vendor they don't own.

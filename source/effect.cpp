@@ -577,15 +577,6 @@ void cEffects::checktempeffects( void )
 
 				src->SetID( 0xCF ); // Thats all we need to do
 				break;
-			case 44:	// untame pets if they are hungry
-				src = calcCharObjFromSer( Effect->Source() );
-				if( ValidateObject( src ) && src->GetHunger() <= 0 )
-				{
-					src->SetOwner( NULL );
-					src->SetTamed( false );
-					src->SetNpcWander( WT_FREE );
-				}
-				break;
 			default:
 				Console.Error( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() );			
 				break;
@@ -883,12 +874,6 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			break;
 		case 43:	// regain wool for sheeps
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
-			break;
-		case 44:	// untame hungry pets
-			toAdd->Source( source->GetSerial() );
-			toAdd->Destination( source->GetSerial() );
-			toAdd->Dispellable( false );
-			toAdd->ExpireTime( BuildTimeValue( (R32)RandomNum( 0, 1800 ) ) ); // set time between 0 and 30 minutes
 			break;
 		default:
 			Console.Error( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num );
