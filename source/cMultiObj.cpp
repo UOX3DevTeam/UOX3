@@ -450,10 +450,12 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 void CMultiObj::SetOwner( CChar *newOwner )
 {
 	if( ValidateObject( newOwner ) )
+	{
 		owner = newOwner->GetSerial();
+		AddAsOwner( newOwner );
+	}
 	else
 		owner = INVALIDSERIAL;
-	AddAsOwner( newOwner );
 }
 
 //o--------------------------------------------------------------------------o
