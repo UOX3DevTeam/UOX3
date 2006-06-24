@@ -2034,7 +2034,7 @@ void doLight( CSocket *s, UI08 level )
 	
 	if( mChar->GetFixedLight() != 255 )
 	{
-		toSend.Level( 0 );
+		toSend.Level( mChar->GetFixedLight() );
 		s->Send( &toSend );
 		Weather->DoPlayerStuff( s, mChar );
 		return;
@@ -2057,7 +2057,7 @@ void doLight( CSocket *s, UI08 level )
 				toShow = 0;
 			else
 				toShow = static_cast<LIGHTLEVEL>(roundNumber( i - Races->VisLevel( mChar->GetRace() )));
-			toSend.Level( level );
+			toSend.Level( toShow );
 		}
 		else
 			toSend.Level( level );
