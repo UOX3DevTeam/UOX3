@@ -3,6 +3,14 @@
 
 6/25/2006 - Xuri
 	Characters no longer turn criminal from attacking their own pets/summoned creatures
+	DFN: Updated spells.dfn with correct reagent requirements
+	Fixed several bugs with the JS-scripted clumsy, heal, feeblemind and magic-arrow spells:
+		Could cast while having weapons equipped
+		Could cast while jailed
+		Could cast without consuming any reagents
+		SoundEffects weren't working properly
+		Healing would (by design) subtract health from the caster
+		Debugmessages weren't commented out
 
 6/24/2006 - grimson
 	Fixed two bugs in doLight() where we were sending the wrong light level to players.
