@@ -2402,6 +2402,8 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 		return false;
 	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
 		return false;
+	else if( targ->GetOwnerObj() == mChar )
+		return false;
 	else if( targ->IsInnocent() )
 		return true;
 	return false;
