@@ -21,3 +21,18 @@ type=10
 restock=20
 decay=1
 }
+
+[oilcloth]
+{
+get=base_item
+name=oil cloth
+id=0x175d
+color=0x07d1
+weight=100
+value=20 10
+pileable=1
+dyeable=0
+decay=1
+good=49
+script=5012
+}

@@ -1,3 +1,10 @@
+6/25/2006 - Xuri
+	Updated fishinglist.dfn with generic loot (paintins, weapons, gems, various flotsam)
+	Updated create/tailoring.dfn, items/gear/provisions.dfn and items/itemmenu.bulk.dfn with new oil cloth
+	Fixed the 'STAMINA command in stats.js. Had ".isChar" misspelled as ".isCHar"
+	Added new JS-script: oilcloth.js - Functional oil cloths, used for cleaning poison off of weapons
+	Character can no longer use locked down potions or food
+
 6/25/2006 - grimson
 	Fixed loading of tempeffects when there is more than one effect saved.
 	Increased the damage values of summoned creatures a bit.

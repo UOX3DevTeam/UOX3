@@ -3,6 +3,12 @@ function onUse( pUser, iUsed )
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
 	{
+		//Check to see if it's locked down
+		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		{
+			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
+			return false;
+		}		
 		var pHunger = pUser.hunger;
 		if( pHunger < 6 )
 		{

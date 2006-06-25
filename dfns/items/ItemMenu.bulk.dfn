@@ -9203,6 +9203,8 @@ provisions.dfn
 ADDITEM=0x0a58
 0x14EB=world map
 ADDITEM=0x14EB
+0x175d=oil cloth
+ADDITEM=oilcloth
 <=Previous Menu
 ITEMMENU=5
 }
