@@ -2177,7 +2177,7 @@ void telltime( CSocket *s )
 
 	if( hour >= 1 && hour <= 11 )
 		tstring += Dictionary->GetEntry( 1251 + hour, sLang );
-	else if( hour == 1 && ampm )
+	else if( (hour >= 11 && ampm) || (hour <= 1 && !ampm) )
 		tstring += Dictionary->GetEntry( 1263, sLang );
 	else
 		tstring += Dictionary->GetEntry( 1264, sLang );
