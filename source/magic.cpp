@@ -1526,7 +1526,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			{
 				Effects->PlaySound( s, 0x0216, true ); // EV
 				newChar->SetResist( 22, PHYSICAL );
-				newChar->SetLoDamage( 10 );	// Damage may be high, but 10-30 did on average 4 to a troll...
+				newChar->SetLoDamage( 20 );	// Damage may be high, but 10-30 did on average 4 to a troll...
 				newChar->SetHiDamage( 70 );
 				newChar->SetSpAttack( 7 );	// 1-7 level spells (do EV's cast for sure?)
 				newChar->SetBaseSkill( 950, MAGERY );
@@ -1547,8 +1547,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			{
 				Effects->PlaySound( s, 0x0217, true ); // AE
 				newChar->SetResist( 19, PHYSICAL );
-				newChar->SetLoDamage( 5 );
-				newChar->SetHiDamage( 13 );
+				newChar->SetLoDamage( 30 );
+				newChar->SetHiDamage( 43 );
 				newChar->SetSpAttack( 6 ); // 1-6 level spells
 				newChar->SetBaseSkill( 750, MAGERY );
 				newChar->SetBaseSkill( 950, WRESTLING );
@@ -1565,8 +1565,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 		case 0x000A: // Daemon
 			Effects->PlaySound( s, 0x0216, true );
 			newChar->SetResist( 20, PHYSICAL );
-			newChar->SetLoDamage( 10 );
-			newChar->SetHiDamage( 45 );
+			newChar->SetLoDamage( 20 );
+			newChar->SetHiDamage( 55 );
 			newChar->SetSpAttack( 7 ); // 1-7 level spells
 			newChar->SetBaseSkill( 900, MAGERY );
 			newChar->SetBaseSkill( 1500, TACTICS );
@@ -1582,8 +1582,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 		case 0x000E: //Earth
 			Effects->PlaySound( s, 0x0217, true );
 			newChar->SetResist( 15, PHYSICAL );
-			newChar->SetLoDamage( 3 );
-			newChar->SetHiDamage( 18 );
+			newChar->SetLoDamage( 10 );
+			newChar->SetHiDamage( 38 );
 			newChar->SetBaseSkill( 850, TACTICS );
 			newChar->SetBaseSkill( 850, WRESTLING );
 			newChar->SetSkill( 350, MAGICRESISTANCE );
@@ -1598,8 +1598,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 		case 0x0010: //Water
 			Effects->PlaySound( s, 0x0217, true );
 			newChar->SetResist( 19, PHYSICAL );
-			newChar->SetLoDamage( 4 );
-			newChar->SetHiDamage( 12 );
+			newChar->SetLoDamage( 10 );
+			newChar->SetHiDamage( 36 );
 			newChar->SetSpAttack( 6 ); // 1-6 level spells
 			newChar->SetBaseSkill( 800, MAGERY );
 			newChar->SetBaseSkill( 800, TACTICS );
@@ -1615,8 +1615,8 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 		case 0x023E: //Blade Spirits
 			Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
 			newChar->SetResist( 24, PHYSICAL );
-			newChar->SetLoDamage( 5 );
-			newChar->SetHiDamage( 10 );
+			newChar->SetLoDamage( 15 );
+			newChar->SetHiDamage( 30 );
 			newChar->SetBaseSkill( 950, TACTICS );
 			newChar->SetBaseSkill( 950, WRESTLING );
 			newChar->SetSkill( 650, MAGICRESISTANCE );
@@ -1950,7 +1950,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 		if( s != NULL ) 
 			s->sysmessage( 700 );
 	}           
-	if( !p->IsInvulnerable() && !p->GetRegion()->CanCastAggressive() )
+	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
 	{
 		if( poison > 5 ) 
 			poison = 5;
@@ -2004,59 +2004,75 @@ void cMagic::CheckFieldEffects( CChar& mChar )
 bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 {
 	CChar *caster;
-	switch( id )
+	if( id >= 0x398C && id <= 0x399F ) //fire field
 	{
-		case 0x3996:
-		case 0x398C:	// firefield
-			if( mChar->IsInnocent() )
-			{
-				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
-					criminal( caster );
-			}
+		caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
+		if( ValidateObject( caster) )
+		{
 			if( RandomNum( 0, 2 ) == 1 )
 			{
 				if( !CheckResist( NULL, mChar, 4 ) )
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, NULL, HEAT );
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 50, caster, HEAT );
 				else
-					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 200, NULL, HEAT );
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, caster, HEAT );
+				Effects->PlaySound( mChar, 520 );
 			}
-			Effects->PlaySound( mChar, 520 );
-			return true;
-		case 0x3915:
-		case 0x3920:	// poison
-			if( mChar->IsInnocent() )
+		}
+		return true;
+	}
+	else if( id >= 0x3914 && id <= 0x3929 ) //poison field
+	{
+		if( mChar->IsInnocent() )
+		{
+			caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
+			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+				criminal( caster );
+		}
+		if( RandomNum( 0, 2 ) == 1 )
+		{
+			if( !CheckResist( NULL, mChar, 5 ) )
 			{
-				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
-					criminal( caster );
-			}
+				if( fieldItem->GetTempVar( CITV_MOREX ) < 997 )
+					PoisonDamage( mChar, 2 );
+				else 
+					PoisonDamage( mChar, 3 );
+			} 
+			else 
+				PoisonDamage( mChar, 1 );
+			Effects->PlaySound( mChar, 520 );
+		}
+		return true;
+	}
+	else if( id >= 0x3967 && id <= 0x398A ) //paralysis field
+	{
+		if( mChar->IsInnocent() )
+		{
+			caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
+			if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
+				criminal( caster );
+		}
+		if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, mChar, 6 ) )
+		{
+			Effects->tempeffect( caster, mChar, 1, 0, 0, 0 );
+			Effects->PlaySound( mChar, 520 );
+		}
+		return true;
+	}
+	else if( id >= 0x3946 && id <= 0x3964 ) //energy field
+	{
+		caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
+		if( ValidateObject( caster) )
+		{
 			if( RandomNum( 0, 2 ) == 1 )
 			{
-				if( !CheckResist( NULL, mChar, 5 ) )
-				{
-					if( fieldItem->GetTempVar( CITV_MOREX ) < 997 )
-						PoisonDamage( mChar, 2 );
-					else 
-						PoisonDamage( mChar, 3 );
-				} 
-				else 
-					PoisonDamage( mChar, 1 );
+				if( !CheckResist( NULL, mChar, 4 ) )
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 50, caster, LIGHTNING );
+				else
+					MagicDamage( mChar, fieldItem->GetTempVar( CITV_MOREX ) / 100, caster, LIGHTNING );
+				Effects->PlaySound( mChar, 520 );
 			}
-			Effects->PlaySound( mChar, 520 );
-			return true;
-		case 0x3979:
-		case 0x3967:	// para
-			if( mChar->IsInnocent() )
-			{
-				caster = calcCharObjFromSer( fieldItem->GetTempVar( CITV_MOREY ) );	// store caster in morey
-				if( WillResultInCriminal( caster, mChar ) && ValidateObject( caster ) && !caster->IsGM() && !caster->IsCounselor() )
-					criminal( caster );
-			}
-			if( RandomNum( 0, 2 ) == 1 && !CheckResist( NULL, mChar, 6 ) )
-				Effects->tempeffect( mChar, mChar, 1, 0, 0, 0 );
-			Effects->PlaySound( mChar, 520 );     
-			return true;
+		}
+		return true;
 	}
 	return false;
 }

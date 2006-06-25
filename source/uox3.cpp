@@ -716,7 +716,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	// Hunger Code
 	mChar.DoHunger( mSock );
 	
-	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() )
+	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 	{
 		if( mChar.GetTimer( tCHAR_POISONTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
@@ -732,7 +732,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
 							mChar.emoteAll( 1240, true, mChar.GetName().c_str() );
 						}
-						mChar.IncHP( (SI16)( -RandomNum( 1, 2 ) ) );
+						mChar.Damage( (SI16)RandomNum( 1, 2 ) );
 						break;
 					case 2:
 						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
@@ -742,7 +742,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							mChar.emoteAll( 1241, true, mChar.GetName().c_str() );
 						}
 						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
-						mChar.IncHP( (SI16)( -pcalc ) );
+						mChar.Damage( (SI16)pcalc );
 						break;
 					case 3:
 						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
@@ -752,7 +752,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							mChar.emoteAll( 1242, true, mChar.GetName().c_str() );
 						}
 						pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
-						mChar.IncHP( (SI16)( -pcalc ) );
+						mChar.Damage( (SI16)pcalc );
 						break;
 					case 4:
 						mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
@@ -762,7 +762,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							mChar.emoteAll( 1243, true, mChar.GetName().c_str() );
 						}
 						pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-						mChar.IncHP( (SI16)( -pcalc ) );
+						mChar.Damage( (SI16)pcalc );
 						break;
 					default:
 						Console.Error( " Fallout of switch statement without default. uox3.cpp, genericCheck()" );
@@ -781,7 +781,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 
 	if( mChar.GetTimer( tCHAR_POISONWEAROFF ) <= cwmWorldState->GetUICurrentTime() )
 	{
-		if( mChar.GetPoisoned() )
+		if( mChar.GetPoisoned() > 0 )
 		{
             mChar.SetPoisoned( 0 );
 			if( mSock != NULL )

@@ -1,4 +1,9 @@
 6/25/2006 - grimson
+	Fixed loading of tempeffects when there is more than one effect saved.
+	Increased the damage values of summoned creatures a bit.
+	Fixed magic field effects.
+
+6/25/2006 - grimson
 	Fixed the output of the time command, it was confusing midnight and noon.
 
 6/25/2006 - Xuri

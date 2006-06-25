@@ -991,9 +991,11 @@ void cEffects::LoadEffects( void )
 	CTEffect *toLoad;
 
 	input.open( filename.c_str(), std::ios_base::in );
+	input.seekg( 0, std::ios::beg );
+
 	char line[1024];
 
-	UString tag = "o---o", data, UTag;
+	UString tag, data, UTag;
 
 	if( input.is_open() )
 	{
@@ -1007,88 +1009,82 @@ void cEffects::LoadEffects( void )
 				if( sLine.upper() == "[EFFECT]" )
 				{
 					toLoad = new CTEffect;
-					while( !input.eof() && !input.fail() )
+					while( tag != "o---o" )
 					{
-						if( sLine != "o---o" )
+						ReadWorldTagData( input, tag, data );
+						if( tag != "o---o" )
 						{
-							ReadWorldTagData( input, tag, data );
-							if( tag != "o---o" )
+							UTag = tag.upper();
+							switch( (tag.data()[0]) )
 							{
-								UTag = tag.upper();
-								switch( (tag.data()[0]) )
-								{
-									case 'A':
-										if( UTag == "ASSOCSCRIPT" )
-											toLoad->AssocScript( data.toUShort() );
-										break;
-									case 'D':
-										if( UTag == "DEST" )
-											toLoad->Destination( data.toULong() );
-										if( UTag == "DISPEL" )
-											toLoad->Dispellable( ( (data.toULong() == 0) ? false : true ) );
-										break;
-									case 'E':
-										if( UTag == "EXPIRE" )
-											toLoad->ExpireTime( static_cast<UI32>(data.toULong() + cwmWorldState->GetUICurrentTime()) );
-										break;
-									case 'I':
-										if( UTag == "ITEMPTR" )
+								case 'A':
+									if( UTag == "ASSOCSCRIPT" )
+										toLoad->AssocScript( data.toUShort() );
+									break;
+								case 'D':
+									if( UTag == "DEST" )
+										toLoad->Destination( data.toULong() );
+									if( UTag == "DISPEL" )
+										toLoad->Dispellable( ( (data.toULong() == 0) ? false : true ) );
+									break;
+								case 'E':
+									if( UTag == "EXPIRE" )
+										toLoad->ExpireTime( static_cast<UI32>(data.toULong() + cwmWorldState->GetUICurrentTime()) );
+									break;
+								case 'I':
+									if( UTag == "ITEMPTR" )
+									{
+										SERIAL objSer = data.toULong();
+										if( objSer != INVALIDSERIAL )
 										{
-											SERIAL objSer = data.toULong();
-											if( objSer != INVALIDSERIAL )
-											{
-												if( objSer < BASEITEMSERIAL )
-													toLoad->ObjPtr( calcCharObjFromSer( objSer ) );
-												else
-													toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
-											}
+											if( objSer < BASEITEMSERIAL )
+												toLoad->ObjPtr( calcCharObjFromSer( objSer ) );
 											else
-												toLoad->ObjPtr( NULL );
+												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
-										break;
-									case 'M':
-										if( UTag == "MORE1" )
-											toLoad->More1( data.toUShort() );
-										if( UTag == "MORE2" )
-											toLoad->More2( data.toUShort() );
-										if( UTag == "MORE3" )
-											toLoad->More3( data.toUShort() );
-										break;
-									case 'N':
-										if( UTag == "NUMBER" )
-											toLoad->Number( data.toUByte() );
-										break;
-									case 'O':
-										if( UTag == "OBJPTR" )
+										else
+											toLoad->ObjPtr( NULL );
+									}
+									break;
+								case 'M':
+									if( UTag == "MORE1" )
+										toLoad->More1( data.toUShort() );
+									if( UTag == "MORE2" )
+										toLoad->More2( data.toUShort() );
+									if( UTag == "MORE3" )
+										toLoad->More3( data.toUShort() );
+									break;
+								case 'N':
+									if( UTag == "NUMBER" )
+										toLoad->Number( data.toUByte() );
+									break;
+								case 'O':
+									if( UTag == "OBJPTR" )
+									{
+										SERIAL objSer = data.toULong();
+										if( objSer != INVALIDSERIAL )
 										{
-											SERIAL objSer = data.toULong();
-											if( objSer != INVALIDSERIAL )
-											{
-												if( objSer < BASEITEMSERIAL )
-													toLoad->ObjPtr( calcCharObjFromSer( objSer ) );
-												else
-													toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
-											}
+											if( objSer < BASEITEMSERIAL )
+												toLoad->ObjPtr( calcCharObjFromSer( objSer ) );
 											else
-												toLoad->ObjPtr( NULL );
+												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
-									case 'S':
-										if( UTag == "SOURCE" )
-											toLoad->Source( data.toULong() );
-										break;
-									default:
-										Console.Error( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );
-										break;
-								}
+										else
+											toLoad->ObjPtr( NULL );
+									}
+								case 'S':
+									if( UTag == "SOURCE" )
+										toLoad->Source( data.toULong() );
+									break;
+								default:
+									Console.Error( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );
+									break;
 							}
 						}
-						else
-							break;
 					}
 					cwmWorldState->tempEffects.Add( toLoad );
+					tag = "";
 				}
-				else
-					break;
 			}
 		}
 		input.close();
@@ -1110,22 +1106,27 @@ bool CTEffect::Save( std::ofstream &effectDestination ) const
 
 	effectDestination << "[EFFECT]" << std::endl;
 
-	dumping << "Source=" << "0x" << std::hex << Source() << std::endl;
+	// Hexadecimal Values
+	dumping << std::hex;
+	dumping << "Source=" << "0x" << Source() << std::endl;
 	dumping << "Dest=" << "0x" << Destination() << std::endl;
-	dumping << "Expire=" << std::dec << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << std::endl;
+
+	getPtr = ObjPtr();
+	dumping << "ObjPtr=" << "0x";
+	if( ValidateObject( getPtr ) )
+		dumping << getPtr->GetSerial() << std::endl;
+	else
+		dumping << INVALIDSERIAL << std::endl;
+
+	// Decimal / String Values
+	dumping << std::dec;
+	dumping << "Expire=" << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << std::endl;
 	dumping << "Number=" << static_cast<UI16>(Number()) << std::endl;  
 	dumping << "More1=" << More1() << std::endl;
 	dumping << "More2=" << More2() << std::endl;
 	dumping << "More3=" << More3() << std::endl;
 	dumping << "Dispel=" << Dispellable() << std::endl;
 	dumping << "AssocScript=" << AssocScript() << std::endl;
-
-	getPtr = ObjPtr();
-	dumping << "ObjPtr=" << "0x" << std::hex;
-	if( ValidateObject( getPtr ) )
-		dumping << getPtr->GetSerial() << std::endl;
-	else
-		dumping << INVALIDSERIAL << std::endl;
 
 	effectDestination << dumping.str();
 
