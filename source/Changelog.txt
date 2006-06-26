@@ -1,3 +1,6 @@
+6/26/2006 - grimson
+	Added an entry to jse_fileassociations.scp for the new oilcloth.js script.
+
 6/26/2006 - giwo (0.98-3.6g) [3.7 RC]
 	Fixed an issue causing not every instance of skill gain to use the amountToGain specified in skills.dfn.
 	Changed MAX_NAME back to a 60 byte limit (note some Character packets only support 30 bytes).
