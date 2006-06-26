@@ -136,6 +136,9 @@ private:
 		SERIAL		townvote;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
 
+		UI08		atrophy[INTELLECT+1];
+		UI08		lockState[INTELLECT+1];	// state of the skill locks
+
 		CItem *		speechItem;
 		UI08		speechMode;
 		UI08		speechID;
@@ -196,8 +199,6 @@ protected:
 
 	SKILLVAL	baseskill[ALLSKILLS]; // Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; // List of skills (with stat modifiers)
-	UI16		atrophy[INTELLECT+1];
-	UI08		lockState[INTELLECT+1];	// state of the skill locks
 
 	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
 
@@ -433,14 +434,10 @@ public:
 	void		SetTownpriv( SI08 newValue );
 
 	UI16		GetBaseSkill( UI08 skillToGet ) const;
-	UI16		GetAtrophy( UI08 skillToGet ) const;
-	UI08		GetSkillLock( UI08 skillToGet ) const;
 	UI16		GetSkill( UI08 skillToGet ) const;
 
-	void		SetBaseSkill( UI16 newSkillValue, UI08 skillToSet );
-	void		SetSkill( UI16 newSkillValue, UI08 skillToSet );
-	void		SetAtrophy( UI16 newValue, UI08 skillToSet );
-	void		SetSkillLock( UI08 newSkillValue, UI08 skillToSet );
+	void		SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet );
+	void		SetSkill( SKILLVAL newSkillValue, UI08 skillToSet );
 
 	UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
 	SI16		GetGuildNumber( void ) const;
@@ -702,6 +699,11 @@ public:
 
 	UI08		GetFixedLight( void ) const;
 	void		SetFixedLight( UI08 newVal );
+
+	UI08		GetAtrophy( UI08 skillToGet ) const;
+	UI08		GetSkillLock( UI08 skillToGet ) const;
+	void		SetAtrophy( UI08 newValue, UI08 skillToSet );
+	void		SetSkillLock( UI08 newValue, UI08 skillToSet );
 };
 
 }

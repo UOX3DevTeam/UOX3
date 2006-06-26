@@ -1,3 +1,9 @@
+6/26/2006 - giwo (0.98-3.6g) [3.7 RC]
+	Fixed an issue causing not every instance of skill gain to use the amountToGain specified in skills.dfn.
+	Changed MAX_NAME back to a 60 byte limit (note some Character packets only support 30 bytes).
+	Moved CChar::lockstate and atrophy into PlayerValues_st
+	Cleaned up CSkills::Atrophy and renamed it to HandleSkillChange() to better reflect it's functionality.
+
 6/25/2006 - Xuri
 	Updated fishinglist.dfn with generic loot (paintins, weapons, gems, various flotsam)
 	Updated create/tailoring.dfn, items/gear/provisions.dfn and items/itemmenu.bulk.dfn with new oil cloth

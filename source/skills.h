@@ -134,7 +134,7 @@ private:
 
 	SI08 FindSkillPoint( UI08 sk, int value );
 	void AnvilTarget( CSocket *s, CItem& item, miningData *oreType );
-	void Atrophy( CChar *c, UI08 sk );
+	void HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success );
 
 	bool LoadMiningData( void );
 	void LoadCreateMenus( void );

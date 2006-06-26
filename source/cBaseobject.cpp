@@ -1652,7 +1652,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "OWNERID" )
 			{
-				owner	= (SERIAL)data.toULong();
+				owner	= data.toULong();
 				rvalue	= true;
 			}
 			break;

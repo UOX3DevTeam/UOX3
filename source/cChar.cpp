@@ -141,6 +141,11 @@ hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speech
 speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
 {
+	memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
+
+	for( UI08 j = 0; j <= INTELLECT; ++j )
+		atrophy[j] = j;
+
 	if( cwmWorldState != NULL )
 		trackingTargets.resize( cwmWorldState->ServerData()->TrackingMaxTargets() );
 }
@@ -239,10 +244,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	memset( &charTimers[0],		0, sizeof( TIMERVAL )	* tCHAR_COUNT );
 	memset( &baseskill[0],		0, sizeof( SKILLVAL )	* ALLSKILLS );
 	memset( &skill[0],			0, sizeof( SKILLVAL )	* (INTELLECT+1) );
-	memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 
-	for( UI08 j = 0; j <= INTELLECT; ++j )
-		atrophy[j] = j;
 	SetCanTrain( true );
 
 	SetHungerStatus( true );
@@ -1214,20 +1216,7 @@ SKILLVAL CChar::GetBaseSkill( UI08 skillToGet ) const
 		rVal = baseskill[skillToGet];
 	return rVal;
 }
-UI16 CChar::GetAtrophy( UI08 skillToGet ) const
-{
-	UI16 rVal = 0;
-	if( skillToGet <= INTELLECT )
-		rVal = atrophy[skillToGet];
-	return rVal;
-}
-UI08 CChar::GetSkillLock( UI08 skillToGet ) const
-{
-	UI08 rVal = 0;
-	if( skillToGet <= INTELLECT )
-		rVal = lockState[skillToGet];
-	return rVal;
-}
+
 SKILLVAL CChar::GetSkill( UI08 skillToGet ) const
 {
 	SKILLVAL rVal = 0;
@@ -1253,16 +1242,6 @@ void CChar::SetSkill( SKILLVAL newSkillValue, UI08 skillToSet )
 {
 	if( skillToSet <= INTELLECT )
 		skill[skillToSet] = newSkillValue;
-}
-void CChar::SetAtrophy( UI16 newValue, UI08 skillToSet )
-{
-	if( skillToSet <= INTELLECT )
-		atrophy[skillToSet] = newValue;
-}
-void CChar::SetSkillLock( UI08 newSkillValue, UI08 skillToSet )
-{
-	if( skillToSet <= INTELLECT )
-		lockState[skillToSet] = newSkillValue;
 }
 
 SI16 CChar::GetGuildNumber( void ) const
@@ -1469,14 +1448,6 @@ void CChar::CopyData( CChar *target )
 	{
 		target->SetBaseSkill( baseskill[i], i );
 		target->SetSkill( skill[i], i );
-		target->SetAtrophy( atrophy[i], i );
-		target->SetSkillLock( lockState[i], i );
-	}
-
-	for( UI08 j = STRENGTH; j <= INTELLECT; ++j )
-	{
-		target->SetAtrophy( atrophy[j], j );
-		target->SetSkillLock( lockState[j], j );
 	}
 
 	target->SetCell( cell );
@@ -1569,6 +1540,11 @@ void CChar::CopyData( CChar *target )
 		for( UI08 counter = 0; counter < mPlayer->trackingTargets.size(); ++counter )
 		{
 			target->SetTrackingTargets( mPlayer->trackingTargets[counter], counter );
+		}
+		for( UI08 j = STRENGTH; j <= INTELLECT; ++j )
+		{
+			target->SetAtrophy( mPlayer->atrophy[j], j );
+			target->SetSkillLock( mPlayer->lockState[j], j );
 		}
 	}
 }
@@ -2028,29 +2004,6 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 		dumping << "[" << (SI32)bsc << "," << GetBaseSkill( bsc ) << "]-";
 	dumping << "[END]" << std::endl;
 
-	if( !IsNpc() )
-	{
-		dumping << "Atrophy=";
-		for( UI08 atc = 0; atc <= INTELLECT; ++atc )
-		{
-			if( GetAtrophy( atc ) >= 10 )
-				dumping << GetAtrophy( atc ) << "," ;
-			else
-				dumping << "0" << GetAtrophy( atc ) << ",";
-		}
-		dumping << "[END]" << std::endl;
-
-		// Format: SkillLocks=[0,34]-[1,255]-[END]
-		dumping << "SkillLocks=";
-		for( UI08 slc = 0; slc <= INTELLECT; ++slc )
-		{
-			if( GetSkillLock( slc ) <= 2 )
-				dumping << "[" << (SI16)slc << "," << (SI16)GetSkillLock( slc ) << "]-";
-			else
-				dumping << "[" << (SI16)slc << ",0]-";
-		}
-		dumping << "[END]" << std::endl;
-	}
 	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;
 	dumping << "FontType=" << (SI16)GetFontType() << std::endl;
 	dumping << "TownTitle=" << (SI16)(GetTownTitle()?1:0) << std::endl;
@@ -2148,6 +2101,23 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "Deaths=" << deaths << std::endl;
 	dumping << "FixedLight=" << (SI16)fixedLight << std::endl;
 	dumping << "TownPrivileges=" << (SI16)townpriv << std::endl;
+	dumping << "Atrophy=";
+	for( UI08 atc = 0; atc <= INTELLECT; ++atc )
+	{
+		dumping << (SI16)atrophy[atc] << "," ;
+	}
+	dumping << "[END]" << std::endl;
+
+	// Format: SkillLocks=[0,34]-[1,255]-[END]
+	dumping << "SkillLocks=";
+	for( UI08 slc = 0; slc <= INTELLECT; ++slc )
+	{
+		if( lockState[slc] <= 2 )
+			dumping << "[" << (SI16)slc << "," << (SI16)lockState[slc] << "]-";
+		else
+			dumping << "[" << (SI16)slc << ",0]-";
+	}
+	dumping << "[END]" << std::endl;
 
 	outStream << dumping.str();
 }
@@ -3997,6 +3967,31 @@ void CChar::SetLastOnSecs( UI32 newValue )
 {
 	if( IsValidPlayer() )
 		mPlayer->lastOnSecs = newValue;
+}
+
+UI08 CChar::GetAtrophy( UI08 skillToGet ) const
+{
+	UI08 rVal = 0;
+	if( IsValidPlayer() && skillToGet <= INTELLECT )
+		rVal = mPlayer->atrophy[skillToGet];
+	return rVal;
+}
+void CChar::SetAtrophy( UI08 newValue, UI08 skillToSet )
+{
+	if( IsValidPlayer() && skillToSet <= INTELLECT )
+		mPlayer->atrophy[skillToSet] = newValue;
+}
+UI08 CChar::GetSkillLock( UI08 skillToGet ) const
+{
+	UI08 rVal = 0;
+	if( IsValidPlayer() && skillToGet <= INTELLECT )
+		rVal = mPlayer->lockState[skillToGet];
+	return rVal;
+}
+void CChar::SetSkillLock( UI08 newValue, UI08 skillToSet )
+{
+	if( IsValidPlayer() && skillToSet <= INTELLECT )
+		mPlayer->lockState[skillToSet] = newValue;
 }
 
 

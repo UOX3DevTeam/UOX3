@@ -621,7 +621,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 }          
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Atrophy( CChar *c, UI16 sk )
+//|   Function    :  void cSkills::HandleSkillChange( CChar *c, UI16 sk )
 //|   Date        :  Jan 29, 2000
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
@@ -633,90 +633,91 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 //|						lower it and increase sk, if we can't find one, do 
 //|						nothing if atrophy is not need, increase sk.
 //o---------------------------------------------------------------------------o
-void cSkills::Atrophy( CChar *c, UI08 sk )
+void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success )
 {
-	UI32 a = 0, ttl = 0, rem = 0;
-	UI16 atrop[ALLSKILLS+1];
-	SI16 toDec				= -1;
+	UI32 totalSkill			= 0;
+	UI08 rem				= 0;
+	UI08 atrop[ALLSKILLS+1];
+	UI08 toDec				= 0xFF;
 	UI08 counter			= 0;
 	CSocket *mSock			= c->GetSocket();
 	const UI16 skillTrig	= c->GetScriptTrigger();
 	cScript *scpSkill		= JSMapping->GetScript( skillTrig );
-		
-	if( c->IsNpc() || c->GetCommandLevel() >= CL_CNS || mSock == NULL )	// GM's and NPC's dont atrophy
+	UI08 amtToGain			= 1;
+	if( success )
+		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
+	UI16 skillCap			= cwmWorldState->ServerData()->ServerSkillCapStatus();
+
+	if( c->IsNpc() )
 	{
-		c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
 		if( scpSkill != NULL )
 		{
 			if( !scpSkill->OnSkillGain( c, sk ) )
 				scpSkill->OnSkillChange( c, sk );
 		}
-		if( mSock != NULL )
-			mSock->updateskill( sk );
 		return;
 	}
+	
+	if( mSock == NULL )
+		return;
 
 	srand( getclock() ); // Randomize
 	
-	atrop[ALLSKILLS]=0;//set the last of out copy array
+	atrop[ALLSKILLS] = 0;//set the last of out copy array
 	for( counter = 0; counter < ALLSKILLS; ++counter )
 	{
 		atrop[counter] = c->GetAtrophy( counter );
 	}
 	
-	for( a = ALLSKILLS; a > 0; --a )
+	for( counter = ALLSKILLS; counter > 0; --counter )
 	{//add up skills and find the one being increased
-		if( c->GetBaseSkill( static_cast<UI08>(c->GetAtrophy( static_cast<UI08>(a-1) ) ))>0 && c->GetSkillLock( static_cast<UI08>(c->GetAtrophy( static_cast<UI08>(a-1)) )) == 1 && c->GetAtrophy( static_cast<UI08>(a-1) ) != sk)
-			toDec = c->GetAtrophy(static_cast<UI08>(a-1));//we found a skill that can be decreased, save it for later.
+		UI08 atrSkill = c->GetAtrophy( static_cast<UI08>(counter-1) );
+		if( c->GetBaseSkill( atrSkill ) >= amtToGain && c->GetSkillLock( atrSkill ) == 1 && atrSkill != sk )
+			toDec = atrSkill;//we found a skill that can be decreased, save it for later.
 
-		ttl += c->GetBaseSkill( static_cast<UI08>(a-1) );
-		atrop[a]=atrop[a-1];
-		if( atrop[a] == sk )
-			rem = a;//remember this number
+		totalSkill += c->GetBaseSkill( static_cast<UI08>(counter-1) );
+		atrop[counter] = atrop[counter-1];
+		if( atrop[counter] == sk )
+			rem = counter;//remember this number
 	}
 
 	atrop[0] = sk;//set the first one to our current skill
 	
 	//copy it back in
-	if( rem == ALLSKILLS )//it was last
+	for( counter = 0; counter < rem; ++counter )
+		c->SetAtrophy( atrop[counter], counter );
+	if( rem != ALLSKILLS )//in the middle somewhere or first
 	{
-		for( counter = 0; counter < ALLSKILLS; ++counter )
-			c->SetAtrophy( atrop[counter], counter );
-	} 
-	else	//in the middle somewhere or first
-	{
-		for( counter = 0; counter < rem; ++counter )
-			c->SetAtrophy( atrop[counter], counter );
 		for( counter = static_cast<UI08>(rem + 1); counter < ALLSKILLS; ++counter )
 			c->SetAtrophy( atrop[counter], counter );
 	}
 
-	if( RandomNum( static_cast< UI16 >(0), cwmWorldState->ServerData()->ServerSkillCapStatus() ) <= static_cast< UI16 >(ttl ))
-	{//if the rand is less than their total skills, they loose one.
-		if( toDec != -1 )
+	if( RandomNum( static_cast<UI16>(0), skillCap ) <= static_cast<UI16>(totalSkill) )
+	{
+		if( toDec != 0xFF )
 		{
-			c->SetBaseSkill( c->GetBaseSkill( static_cast<UI08>(toDec) ) - 1, static_cast<UI08>(toDec ));
-			c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
+			totalSkill -= amtToGain;
+			c->SetBaseSkill( c->GetBaseSkill( toDec ) - amtToGain, toDec );
 			if( scpSkill != NULL )
 			{
-				if( !scpSkill->OnSkillGain( c, sk ) )
-					scpSkill->OnSkillChange( c, sk );
-				if( !scpSkill->OnSkillLoss( c, static_cast<UI08>(toDec) ) )
-					scpSkill->OnSkillChange( c, static_cast<UI08>(toDec) );
+				if( !scpSkill->OnSkillLoss( c, toDec ) )
+					scpSkill->OnSkillChange( c, toDec );
 			}
-			mSock->updateskill( sk );
-			mSock->updateskill( static_cast<UI08>(toDec ));
+			mSock->updateskill( toDec );
 		}
-		return;
-	} 
-
-	c->SetBaseSkill( c->GetBaseSkill( sk ) + 1, sk );
-	if( scpSkill != NULL )
-	{
-		if( !scpSkill->OnSkillGain( c, sk ) )
-			scpSkill->OnSkillChange( c, sk );
 	}
-	mSock->updateskill( sk );
+
+	if( skillCap > static_cast<UI16>(totalSkill) )
+	{
+		c->SetBaseSkill( c->GetBaseSkill( sk ) + amtToGain, sk );
+		if( scpSkill != NULL )
+		{
+			if( !scpSkill->OnSkillGain( c, sk ) )
+				scpSkill->OnSkillChange( c, sk );
+		}
+		mSock->updateskill( sk );
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -1891,20 +1892,15 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 	SI08 skillAdvance = FindSkillPoint( sk, s->GetBaseSkill( sk ) );
 	
 	if( skillUsed )
-		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success ) * 10;
+		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success );
 	else
-		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].failure ) * 10;
+		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].failure );
 
-	if( skillGain > RandomNum( 0, 1000 ) )
+	if( skillGain > RandomNum( 0, 100 ) )
 	{
 		advSkill = true;
-		if( RandomNum( 0, 99 ) <= 10 )
-		{
-			if( s->GetSkillLock( sk ) == 0 && s->GetBaseSkill( sk ) > 0 )
-				s->SetBaseSkill( s->GetBaseSkill( sk ) + cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain, sk );
-		}
-		else if( s->GetSkillLock( sk ) == 0 )
-			Atrophy( s, sk );
+		if( s->GetSkillLock( sk ) == 0 )
+			HandleSkillChange( s, sk, skillAdvance, skillUsed );
 	}
 	
 	if( s->GetSkillLock( sk ) != 2 ) // if it's locked, stats can't advance
