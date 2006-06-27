@@ -833,7 +833,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 				DismountCreature( dest );
 			k = ( more1<<8 ) + more2;
 			
-			if( k <= 0x03e1 ) // lord binary, body-values >0x3e1 crash the client
+			if( k <= 0x03e2 ) // lord binary, body-values >0x3e1 crash the client
 				dest->SetID( k );
 			break;
 		case 19: // incognito spell - AntiChrist (10/99)

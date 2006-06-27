@@ -1717,7 +1717,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 2:		j->SetTitle( reply );					break;	// Title
 			case 3:													// Body
 				k = reply.toUShort();
-				if( k <= 0x3e1 ) // body-values >0x3e crash the client
+				if( k <= 0x3e2 ) // body-values >0x3e crash the client
 				{ 
 					j->SetID( k );
 					j->SetOrgID( k );

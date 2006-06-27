@@ -1,4 +1,7 @@
 6/27/2006 - grimson
+	Allow the body id to reach 0x3E2, so that the "dupre" body can be used without a problem.
+
+6/27/2006 - grimson
 	Changed cMagic::SummonMonster() so that it creates summoned from DFN entrys to make it easier to
 	customize them.
 	Added magicsummon.dfn to the npc section, it contains the dfn entrys for the creatures that can

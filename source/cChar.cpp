@@ -3210,7 +3210,7 @@ bool CChar::LoadRemnants( void )
 		SetID( GetOrgID() );
 
 	const UI16 acct = GetAccount().wAccountIndex;
-	if( GetID() > 0x3E1 )
+	if( GetID() > 0x3E2 )
 	{
 		if( acct == AB_INVALID_ID )
 		{
