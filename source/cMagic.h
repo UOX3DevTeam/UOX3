@@ -44,7 +44,7 @@ public:
 	void MagicTrap( CChar *s, CItem *i );
 	void Polymorph( CSocket *s, UI16 polyID );
 	void BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2 );
-	void SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 color, SI16 x, SI16 y, SI08 z );
+	void SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z );
 	void PolymorphMenu( CSocket *s, UI16 gmindex );
 
 	std::vector< SpellInfo >	spells;		//:Terrin: adding variable for spell system "cache"

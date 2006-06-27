@@ -529,7 +529,7 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 }
 bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
-	Magic->SummonMonster( sock, caster, 0x023E, "a blade spirit", 0x00, x, y, z );
+	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
 }
 bool splDispelField( CSocket *sock, CChar *caster )
@@ -680,7 +680,7 @@ bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	if( caster->GetSkill( MAGERY ) <= 380 )
 		return false;
 	else
-		Magic->SummonMonster( sock, caster, 0, "#", 0, x, y, z );
+		Magic->SummonMonster( sock, caster, 0, x, y, z );
 	return true;
 }
 bool splDispel( CChar *caster, CChar *target, CChar *src )
@@ -1054,7 +1054,7 @@ bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x000D, "an energy vortex", 0x0075, x, y, z );
+	Magic->SummonMonster( sock, caster, 1, x, y, z );
 	return true;
 }
 bool splResurrection( CChar *caster, CChar *target, CChar *src )
@@ -1070,42 +1070,42 @@ bool splSummonAir( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x000D, "an Air Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 2, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splSummonDaemon( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x000A, "a Daemon", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 7, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splSummonEarth( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x000E, "an Earth Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 3, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splSummonFire( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x000F, "a Fire Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 4, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splSummonWater( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x0010, "a Water Elemental", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 5, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splRandom( CSocket *sock, CChar *caster )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
-	Magic->SummonMonster( sock, caster, 0x03E2, "Dupre the Hero", 0, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 8, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
 bool splNecro1( CChar *caster, CChar *target, CChar *src )
@@ -1114,7 +1114,7 @@ bool splNecro1( CChar *caster, CChar *target, CChar *src )
 }
 bool splNecro2( CSocket *sock, CChar *caster )
 {
-	Magic->SummonMonster( sock, caster, 0x000A, "Black Night", 5000, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
+	Magic->SummonMonster( sock, caster, 9, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
 	return true;
 }
 bool splNecro3( CChar *caster, CChar *target, CChar *src )
@@ -1488,7 +1488,7 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Summon a monster (dispellable with DISPEL).
 //o---------------------------------------------------------------------------o
-void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 colour, SI16 x, SI16 y, SI08 z )
+void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z )
 {
 	if( s != NULL )
 		caster = s->CurrcharObj();
@@ -1498,17 +1498,14 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			s = caster->GetTarg()->GetSocket();
 	}
 
-	CChar *newChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
-	if( newChar == NULL )
-		return;
+	CChar *newChar;
 
 	switch( id )
 	{
-		case 0x0000:	// summon monster
-			newChar->Delete();
+		case 0:	// summon monster
 			Effects->PlaySound( s, 0x0217, true );
 			newChar = Npcs->CreateRandomNPC( "10000" );
-			if( newChar == NULL )
+			if( !ValidateObject( newChar ) )
 			{
 				s->sysmessage( 694 );
 				return;
@@ -1521,165 +1518,53 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string mons
 			newChar->SetNpcWander( WT_FOLLOW );
 			s->sysmessage( 695 );
 			return;
-		case 0x000D: // Energy Vortex & Air elemental
-			if( colour == 0x0075 )
-			{
-				Effects->PlaySound( s, 0x0216, true ); // EV
-				newChar->SetResist( 22, PHYSICAL );
-				newChar->SetLoDamage( 20 );	// Damage may be high, but 10-30 did on average 4 to a troll...
-				newChar->SetHiDamage( 70 );
-				newChar->SetSpAttack( 7 );	// 1-7 level spells (do EV's cast for sure?)
-				newChar->SetBaseSkill( 950, MAGERY );
-				newChar->SetBaseSkill( 2000, WRESTLING );
-				newChar->SetBaseSkill( 2000, TACTICS );
-				newChar->SetSkill( 850, MAGICRESISTANCE );
-				newChar->SetStrength( 800 );
-				newChar->SetHP( 800 );
-				newChar->SetDexterity( 160 );
-				newChar->SetStamina( 160 );
-				newChar->SetIntelligence( 180 );
-				newChar->SetMana( 180 );
-				newChar->SetNpcWander( WT_FREE );
-				newChar->SetNPCAiType( AI_CHAOTIC );
-				newChar->SetPoisonStrength( 3 );	
-			}
-			else
-			{
-				Effects->PlaySound( s, 0x0217, true ); // AE
-				newChar->SetResist( 19, PHYSICAL );
-				newChar->SetLoDamage( 30 );
-				newChar->SetHiDamage( 43 );
-				newChar->SetSpAttack( 6 ); // 1-6 level spells
-				newChar->SetBaseSkill( 750, MAGERY );
-				newChar->SetBaseSkill( 950, WRESTLING );
-				newChar->SetBaseSkill( 700, TACTICS );
-				newChar->SetSkill( 450, MAGICRESISTANCE );
-				newChar->SetStrength( 125 );
-				newChar->SetHP( 125 );
-				newChar->SetDexterity( 100 );
-				newChar->SetStamina( 100 );
-				newChar->SetIntelligence( 80 );
-				newChar->SetMana( 80 );
-			}
+		case 1: // Energy Vortex
+			Effects->PlaySound( s, 0x0216, true ); // EV
+			newChar = Npcs->CreateNPCxyz( "energyvortex-summon",0, 0, 0, caster->WorldNumber() );
 			break;
-		case 0x000A: // Daemon
-			Effects->PlaySound( s, 0x0216, true );
-			newChar->SetResist( 20, PHYSICAL );
-			newChar->SetLoDamage( 20 );
-			newChar->SetHiDamage( 55 );
-			newChar->SetSpAttack( 7 ); // 1-7 level spells
-			newChar->SetBaseSkill( 900, MAGERY );
-			newChar->SetBaseSkill( 1500, TACTICS );
-			newChar->SetBaseSkill( 1500, WRESTLING );
-			newChar->SetSkill( 650, MAGICRESISTANCE );
-			newChar->SetStrength( 400 );
-			newChar->SetHP( 400 );
-			newChar->SetDexterity( 70 );
-			newChar->SetStamina( 70 );
-			newChar->SetIntelligence( 400 );
-			newChar->SetMana( 400 );
+		case 2: // Air Elemental
+			Effects->PlaySound( s, 0x0217, true ); // AE
+			newChar = Npcs->CreateNPCxyz( "airele-summon",0, 0, 0, caster->WorldNumber() );
 			break;
-		case 0x000E: //Earth
+		case 3: //Earth Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar->SetResist( 15, PHYSICAL );
-			newChar->SetLoDamage( 10 );
-			newChar->SetHiDamage( 38 );
-			newChar->SetBaseSkill( 850, TACTICS );
-			newChar->SetBaseSkill( 850, WRESTLING );
-			newChar->SetSkill( 350, MAGICRESISTANCE );
-			newChar->SetStrength( 125 );
-			newChar->SetHP( 125 );
-			newChar->SetDexterity( 90 );
-			newChar->SetStamina( 90 );
-			newChar->SetIntelligence( 70 );
-			newChar->SetMana( 70 );
+			newChar = Npcs->CreateNPCxyz( "earthele-summon",0, 0, 0, caster->WorldNumber() );
 			break;
-		case 0x000F: //Fire
-		case 0x0010: //Water
+		case 4: //Fire Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar->SetResist( 19, PHYSICAL );
-			newChar->SetLoDamage( 10 );
-			newChar->SetHiDamage( 36 );
-			newChar->SetSpAttack( 6 ); // 1-6 level spells
-			newChar->SetBaseSkill( 800, MAGERY );
-			newChar->SetBaseSkill( 800, TACTICS );
-			newChar->SetSkill( 450, MAGICRESISTANCE );
-			newChar->SetBaseSkill( 800, WRESTLING );
-			newChar->SetStrength( 120 );
-			newChar->SetHP( 120 );
-			newChar->SetDexterity( 95 );
-			newChar->SetStamina( 95 );
-			newChar->SetIntelligence( 70 );
-			newChar->SetMana( 70 );
+			newChar = Npcs->CreateNPCxyz( "firele-summon",0, 0, 0, caster->WorldNumber() );
 			break;
-		case 0x023E: //Blade Spirits
+		case 5: //Water Elemental
+			Effects->PlaySound( s, 0x0217, true );
+			newChar = Npcs->CreateNPCxyz( "waterele-summon",0, 0, 0, caster->WorldNumber() );
+			break;
+		case 6: //Blade Spirits
 			Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
-			newChar->SetResist( 24, PHYSICAL );
-			newChar->SetLoDamage( 15 );
-			newChar->SetHiDamage( 30 );
-			newChar->SetBaseSkill( 950, TACTICS );
-			newChar->SetBaseSkill( 950, WRESTLING );
-			newChar->SetSkill( 650, MAGICRESISTANCE );
-			newChar->SetStrength( 400 );
-			newChar->SetHP( 400 );
-			newChar->SetDexterity( 95 );
-			newChar->SetStamina( 95 );
-			newChar->SetIntelligence( 70 );
-			newChar->SetMana( 70 );
-			newChar->SetNpcWander( WT_FREE );
-			newChar->SetNPCAiType( AI_CHAOTIC );
-			newChar->SetPoisonStrength( 2 );
+			newChar = Npcs->CreateNPCxyz( "bladespirit-summon",0, 0, 0, caster->WorldNumber() );
 			break;
-		case 0x03e2: // Dupre The Hero
-			Effects->PlaySound( s, 0x0246, true );
-			newChar->SetResist( 50, PHYSICAL );
-			newChar->SetLoDamage( 50 );
-			newChar->SetHiDamage( 100 );
-			newChar->SetSpAttack( 7 ); // 1-7 level spells
-			newChar->SetBaseSkill( 900, MAGERY );
-			newChar->SetBaseSkill( 1000, TACTICS );
-			newChar->SetBaseSkill( 1000, SWORDSMANSHIP );
-			newChar->SetBaseSkill( 1000, PARRYING );
-			newChar->SetSkill( 650, MAGICRESISTANCE );
-			newChar->SetStrength( 600 );
-			newChar->SetHP( 600 );
-			newChar->SetDexterity( 70 );
-			newChar->SetStamina( 70 );
-			newChar->SetIntelligence( 100 );
-			newChar->SetMana( 100 );
-			newChar->SetFame( 10000 );
-			newChar->SetKarma( 10000 );
-			break;
-		case 0x000B: // Black Night
+		case 7: // Daemon
 			Effects->PlaySound( s, 0x0216, true );
-			newChar->SetResist( 50, PHYSICAL );
-			newChar->SetLoDamage( 50 );
-			newChar->SetHiDamage( 100 );
-			newChar->SetSpAttack( 7 ); // 1-7 level spells
-			newChar->SetBaseSkill( 1000, MAGERY );
-			newChar->SetBaseSkill( 1000, TACTICS );
-			newChar->SetBaseSkill( 1000, SWORDSMANSHIP );
-			newChar->SetBaseSkill( 1000, PARRYING );
-			newChar->SetSkill( 1000, MAGICRESISTANCE );
-			newChar->SetStrength( 600 );
-			newChar->SetHP( 600 );
-			newChar->SetDexterity( 70 );
-			newChar->SetStamina( 70 );
-			newChar->SetIntelligence( 100 );
-			newChar->SetMana( 100 );
+			newChar = Npcs->CreateNPCxyz( "daemon-summon",0, 0, 0, caster->WorldNumber() );
+			break;
+		case 8: // Dupre The Hero
+			Effects->PlaySound( s, 0x0246, true );
+			newChar = Npcs->CreateNPCxyz( "dupre-summon",0, 0, 0, caster->WorldNumber() );
+			break;
+		case 9: // Black Night
+			Effects->PlaySound( s, 0x0216, true );
+			newChar = Npcs->CreateNPCxyz( "blacknight-summon",0, 0, 0, caster->WorldNumber() );
 			break;
 		default:
 			Effects->PlaySound( s, 0x0215, true );
 	}
-	newChar->SetName( monstername );
-	newChar->SetID( id );
-	newChar->SetOrgID( id );
-	newChar->SetSkin( colour );
+
+	if( !ValidateObject( newChar ) )
+		return;
+
 	newChar->SetDispellable( true );
-	newChar->SetNpc( true );
 
 	// pc's don't own BS/EV, NPCs do
-	if( caster->IsNpc() || ( id != 0x023E && !( id == 0x000D && colour == 0x0075 ) ) )
+	if( caster->IsNpc() || ( id != 1 && id != 6 ) )
 		newChar->SetOwner( caster );
 	
 	if( x == 0 )

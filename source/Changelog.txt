@@ -1,3 +1,9 @@
+6/27/2006 - grimson
+	Changed cMagic::SummonMonster() so that it creates summoned from DFN entrys to make it easier to
+	customize them.
+	Added magicsummon.dfn to the npc section, it contains the dfn entrys for the creatures that can
+	be summoned.
+
 6/26/2006 - grimson
 	Added an entry to jse_fileassociations.scp for the new oilcloth.js script.
 
