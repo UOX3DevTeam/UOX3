@@ -1,3 +1,6 @@
+6/29/2006 - grimson
+	Let chars run if they follow a running char.
+
 6/27/2006 - grimson
 	Allow the body id to reach 0x3E2, so that the "dupre" body can be used without a problem.
 

@@ -1335,8 +1335,8 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 		{
 			if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 			{
-				//AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY() );
-				PathFind( &mChar, kChar->GetX(), kChar->GetY() );
+				//AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), ( kChar->GetRunning() > 0 ) );
+				PathFind( &mChar, kChar->GetX(), kChar->GetY(), ( kChar->GetRunning() > 0 ) );
 				j = mChar.PopDirection();
 				Walking( NULL, &mChar, j, 256 );
 				shouldRun = (( j&0x80 ) != 0);
