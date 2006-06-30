@@ -87,6 +87,7 @@ void cHTMLTemplate::Process( void )
 	// Need to check to see if the server is actually running, of so we do not want to process the offline template.
 	if(cwmWorldState->GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE )
 		return;
+
 	// Only read the Status Page if it's not already loaded
 	if( !Loaded )
 		LoadTemplate();
@@ -556,7 +557,7 @@ void cHTMLTemplate::Process( void )
 //o---------------------------------------------------------------------------o
 void cHTMLTemplate::Poll( void )
 {
-	if( ScheduledUpdate < cwmWorldState->GetUICurrentTime() )
+	if( ScheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun() )
 	{
 		Process();
 		ScheduledUpdate = BuildTimeValue( (R32)UpdateTimer );

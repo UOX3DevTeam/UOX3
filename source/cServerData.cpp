@@ -2065,13 +2065,13 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		UString sname, sip, sport;
 		struct hostent *lpHostEntry = NULL;
 		physicalServer toAdd;
-		sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
-		sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
-		sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
-
-		toAdd.setName( sname );
 		if( value.sectionCount( "," ) == 2 )
 		{
+			sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
+			sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
+			sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
+	
+			toAdd.setName( sname );
 			// Ok look up the data here see if its a number
 			bool bDomain = true;
 			if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
@@ -2091,13 +2091,19 @@ void CServerData::HandleLine( const UString tag, const UString value )
 				toAdd.setDomain( sip );
 			else			// this was a valid ip address so we will use an ip instead so clear the domain string.
 				toAdd.setDomain( "" );
+
+			// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
+			struct in_addr *pinaddr;
+			pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+			toAdd.setIP( inet_ntoa(*pinaddr) );
+			toAdd.setPort( sport.toUShort() );
+			serverList.push_back( toAdd );
 		}
-		// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
-		struct in_addr *pinaddr;
-		pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-		toAdd.setIP( inet_ntoa(*pinaddr) );
-		toAdd.setPort( sport.toUShort() );
-		serverList.push_back( toAdd );
+		else
+		{
+			Console.Warning( "Malformend Serverlist entry: %s", value.c_str() );
+			Console.Warning( "This shard will not show up on the shard listing" );
+		}
 		break;
 	}
 	case 0x07A0:	 // PORT[0154] // whatever that stands for..

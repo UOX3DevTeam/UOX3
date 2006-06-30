@@ -1,3 +1,7 @@
+6/30/2006 - grimson
+	Fixed a bug that caused the offline HTML files not to be written in some cases.
+	Catch Serverlist entrys with less than 3 sections, these caused a crash when parsing the ini.
+
 6/29/2006 - grimson
 	Let chars run if they follow a running char.
 
