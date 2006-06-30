@@ -195,7 +195,8 @@ void cHTMLTemplate::Process( void )
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 11, AllCount ):ParsedContent.replace( Pos, 11, "0" );
 		Pos = ParsedContent.find( "%online_all" );
 	}
-
+	
+	// Time
 	char time_str[80];
 	RealTime( time_str );
 	Pos = ParsedContent.find( "%time" ); 
@@ -203,6 +204,26 @@ void cHTMLTemplate::Process( void )
 	{
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 5, time_str ):ParsedContent.replace( Pos, 5, "Down" );
 		Pos = ParsedContent.find( "%time" );
+	}
+
+	// 24Time
+	RealTime24( time_str );
+	Pos = ParsedContent.find( "%24time" ); 
+	while( Pos != std::string::npos )
+	{
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 7, time_str ):ParsedContent.replace( Pos, 7, "Down" );
+		Pos = ParsedContent.find( "%24time" );
+	}
+
+	// Timestamp
+	time_t currTime;
+	time( &currTime );
+	UString timestamp = UString::number( currTime );
+	Pos = ParsedContent.find( "%tstamp" ); 
+	while( Pos != std::string::npos )
+	{
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 10, timestamp ):ParsedContent.replace( Pos, 10, "Down" );
+		Pos = ParsedContent.find( "%tstamp" );
 	}
 
 	// IP(s) + PORT(s)

@@ -119,6 +119,15 @@ inline char *	RealTime( char *time_str )
 	strftime( time_str, 256, "%B %d %I:%M:%S %p", curtime );
 	return time_str;
 }
+inline char *	RealTime24( char *time_str )
+{
+	struct tm *curtime;
+	time_t bintime;
+	time( &bintime );
+	curtime = localtime( &bintime );
+	strftime( time_str, 256, "%B %d %H:%M:%S", curtime );
+	return time_str;
+}
 #if P_TIMESTAMP
 inline std::string TimeStamp( void )
 {
