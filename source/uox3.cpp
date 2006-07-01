@@ -381,51 +381,10 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
 
-		switch( x->GetID() )
-		{
-			case 0x72:	c->SetID( 0x3EA9 );	break;	// Dark Steed
-			case 0x73:	c->SetID( 0x3EAA );	break;	// Etheral Horse
-			case 0x74:	c->SetID( 0x3EB5 );	break;	// Nightmare
-			case 0x75:	c->SetID( 0x3EA8 );	break;	// Silver Steed
-			case 0x76:	c->SetID( 0x3EB2 );	break;	// Faction Horse
-			case 0x77:	c->SetID( 0x3EB1 );	break;	// Faction Horse
-			case 0x78:	c->SetID( 0x3EAF );	break;	// Faction Horse
-			case 0x79:	c->SetID( 0x3EB0 );	break;	// Faction Horse
-			case 0x7A:	c->SetID( 0x3EB4 );	break;	// Unicorn
-			case 0x84:	c->SetID( 0x3EAD );	break;	// Kirin
-			case 0x90:	c->SetID( 0x3EB3 );	break;	// Sea Horse
-			case 0xA9:	c->SetID( 0x3E95 );	break;  // Giant Fire Beetle  
-			case 0xAA:	c->SetID( 0x3EAB );	break;	// Etheral Llama
-			case 0xAB:	c->SetID( 0x3EAC );	break;	// Etheral Ostard
-			case 0xB1:	c->SetID( 0x3EA7 );	break;	// Nightmare
-			case 0xB2:	c->SetID( 0x3EA9 );	break;	// Nightmare
-			case 0xB3:	c->SetID( 0x3EB7 );	break;	// TD Nightmare
-			case 0xBB:	c->SetID( 0x3EB8 );	break;	// Ridgeback
-			case 0xBE:	c->SetID( 0x3E9E );	break;	// Fire Steed
-			case 0xBF:	c->SetID( 0x3E9C );	break;	// Etheral Kirin
-			case 0xCC:	c->SetID( 0x3EA2 );	break;	// horse
-			case 0xC0:	c->SetID( 0x3EB4 );	break;	// Etheral Unicorn
-			case 0xC1:	c->SetID( 0x3E9A );	break;	// Etheral Ridgeback
-			case 0xC2:	c->SetID( 0x3E98 );	break;	// Etheral Swampdragon
-			case 0xC3:	c->SetID( 0x3E97 );	break;	// Etheral Beetle
-			case 0xC8:	c->SetID( 0x3E9F );	break;	// horse
-			case 0xD2:	c->SetID( 0x3EA3 );	break;	// Desert Ostard
-			case 0xDA:	c->SetID( 0x3EA4 );	break;	// Frenzied Ostard
-			case 0xDB:	c->SetID( 0x3EA5 );	break;	// Forest Ostard
-			case 0xDC:	c->SetID( 0x3EA6 );	break;	// llama
-			case 0xE2:	c->SetID( 0x3EA0 );	break;	// horse
-			case 0xE4:	c->SetID( 0x3EA1 );	break;	// horse
-			case 0xF3:	c->SetID( 0x3E94 );	break;	// Hai Riyo
-			case 0x114:	c->SetID( 0x3E90 );	break;	// Chimera
-			case 0x115:	c->SetID( 0x3E91 );	break;	// Cu Sidhe
-			case 0x11c:	c->SetID( 0x3E92 );	break;	// Mondain's Steed
-			case 0x319:	c->SetID( 0x3EBB );	break;  // Skeletal Mount 
-			case 0x317:	c->SetID( 0x3EBC );	break;  // Giant Beetle  
-			case 0x31A:	c->SetID( 0x3EBD );	break;  // Swamp Dragon  
-			case 0x31F:	c->SetID( 0x3EBE );	break;  // Armored Swamp Dragon  
-			case 0x3E6:	c->SetID( 0x3EAD );	break;	// Kirin
-			default:	c->SetID( 0x3E00 );	break;	// Bad
-		}
+		if( cwmWorldState->creatures[x->GetID()].MountID() != 0 )
+			c->SetID( cwmWorldState->creatures[x->GetID()].MountID() );
+		else
+			c->SetID( 0x3E00 );
 
 		if( !c->SetCont( s ) )
 		{

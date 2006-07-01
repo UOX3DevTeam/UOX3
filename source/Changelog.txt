@@ -1,3 +1,9 @@
+7/01/2006 - grimson
+	Added new tag "MOUNTID" to creatures DFN, if this is set to the ID of a mount item the creature will
+	be mountable.
+	Updated creatures.dfn to make use of the MOUNTID tag.
+	Removed CChar::IsValidMount( void ) as it is no longer of any use.
+
 6/30/2006 - grimson
 	Fixed a bug that caused the offline HTML files not to be written in some cases.
 	Catch Serverlist entrys with less than 3 sections, these caused a crash when parsing the ini.

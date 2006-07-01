@@ -1516,7 +1516,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 
 	if( c->IsNpc() )
 	{
-		if( c->IsValidMount() )	// Is a mount
+		if( cwmWorldState->creatures[c->GetID()].MountID() != 0 )	// Is a mount
 		{
 			if( ( c->IsTamed() && ( c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) ) ) || mChar->GetCommandLevel() >= CL_GM )
 			{

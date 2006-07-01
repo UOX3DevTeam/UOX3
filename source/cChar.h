@@ -625,9 +625,6 @@ public:
 	void		SetFleeAt( SI16 newValue );
 	void		SetReattackAt( SI16 newValue );
 
-	bool		IsValidMount( void ) const;
-	bool		IsMounted( void ) const;
-
 	UI08		PopDirection( void );
 	void		PushDirection( UI08 newDir );
 	bool		StillGotDirs( void ) const;

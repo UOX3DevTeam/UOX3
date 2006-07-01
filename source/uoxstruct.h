@@ -30,8 +30,9 @@ private:
 	UI16				soundList[SND_COUNT];
 	std::bitset< 5 >	who_am_i; 
 	UI16				icon;
+	UI16				mountID;
 public:
-			CCreatures() : icon( 0 )
+			CCreatures() : icon( 0 ), mountID( 0 )
 			{
 				who_am_i.reset();
 				memset( soundList, 0x00, SND_COUNT );
@@ -56,6 +57,15 @@ public:
 	void	Icon( UI16 value )
 	{
 		icon = value;
+	}
+
+	UI16	MountID( void ) const
+	{
+		return mountID;
+	}
+	void	MountID( UI16 value )
+	{
+		mountID = value;
 	}
 
 	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}

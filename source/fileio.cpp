@@ -530,6 +530,7 @@ void LoadCreatures( void )
 							break;
 						case 'M':
 							if( UTag == "MOVEMENT" )
+							{
 								if( data.upper() == "WATER" )
 									cwmWorldState->creatures[i].IsWater( true );
 								else if( data.upper() == "BOTH" )
@@ -539,6 +540,9 @@ void LoadCreatures( void )
 									cwmWorldState->creatures[i].IsWater( false );
 									cwmWorldState->creatures[i].IsAmphibian( false );
 								}
+							}
+							else if( UTag == "MOUNTID" )
+								cwmWorldState->creatures[i].MountID( data.toUShort() );
 							break;
 						case 'S':
 							if( UTag == "SOUNDFLAG" )
