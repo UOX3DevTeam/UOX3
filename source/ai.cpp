@@ -44,8 +44,10 @@ bool isValidAttackTarget( CChar& mChar, CChar *cTarget )
 		if( objInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ) )
 		{
 			if( LineOfSight( NULL, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+			{
 				if( isOnline( (*cTarget) ) || cTarget->IsNpc() )
 					return true;
+			}
 		}
 	}
 	return false;

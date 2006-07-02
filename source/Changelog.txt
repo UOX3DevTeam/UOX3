@@ -1,3 +1,11 @@
+7/02/2006 - giwo (0.98-3.6h) [3.7 RC]
+	Removed door.cpp from the project.
+	Modified the JS UseDoor() function to call the JS Event onUse() based upon the type of the item passed in.
+	Fixed an issue causing AreaCharacterFunction and AreaItemFunction to return the number of objects they encountered
+		rather than the number of times the function returns a "true" value.
+	Modified TriggerEvent() to return true or false based upon the return value of the function.
+	Moved doors out to JS.
+
 7/01/2006 - Xuri
 	New "AI"-Script: Cows may now (randomly) defend themselves from doubleclicks by falling over.
 	Corrected various errors with liquid-containers (pitchers, bottles, goblets, etc.)

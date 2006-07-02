@@ -351,10 +351,6 @@ SOURCE=.\dist.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\door.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\effect.cpp
 # End Source File
 # Begin Source File

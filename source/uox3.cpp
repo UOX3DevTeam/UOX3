@@ -2510,6 +2510,64 @@ void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 	SendMapChange( tWorldNum, sock );
 }
 
+//o--------------------------------------------------------------------------
+//|	Function		-	DoorMacro( CSocket *s )
+//|	Date			-	11th October, 1999
+//|	Programmer		-	Zippy
+//|	Modified		-	Abaddon (support CSocket *s and door blocking)
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Door use macro support.
+//o--------------------------------------------------------------------------
+void DoorMacro( CSocket *s )
+{
+	CChar *mChar = s->CurrcharObj();
+	SI16 xc = mChar->GetX(), yc = mChar->GetY();
+	switch( mChar->GetDir() )
+	{
+		case 0 : --yc;				break;
+		case 1 : { ++xc; --yc; }	break;
+		case 2 : ++xc;				break;
+		case 3 : { ++xc; ++yc; }	break;
+		case 4 : ++yc;				break;
+		case 5 : { --xc; ++yc; }	break;
+		case 6 : --xc;				break;
+		case 7 : { --xc; --yc; }	break;
+	}
+
+	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
+	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	{
+		CMapRegion *toCheck = (*rIter);
+		if( toCheck == NULL )	// no valid region
+			continue;
+		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		regItems->Push();
+		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
+		{
+			if( !ValidateObject( itemCheck ) )
+				continue;
+			SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
+			if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
+			{
+				if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
+				{
+					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+					{
+						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
+						cScript *envExecute = JSMapping->GetScript( envTrig );
+						if( envExecute != NULL )
+							envExecute->OnUse( mChar, itemCheck );
+
+						regItems->Pop();
+						return;
+					}
+				}
+			}
+		}
+		regItems->Pop();
+	}
+}
+
 }
 
 using namespace UOX;

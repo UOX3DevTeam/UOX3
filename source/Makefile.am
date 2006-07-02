@@ -38,7 +38,6 @@ uox3_SOURCES = \
 	cWeather.cpp \
 	Dictionary.cpp \
 	dist.cpp \
-	door.cpp \
 	effect.cpp \
 	fileio.cpp \
 	findfuncs.cpp \

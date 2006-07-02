@@ -218,7 +218,7 @@ void cHTMLTemplate::Process( void )
 	// Timestamp
 	time_t currTime;
 	time( &currTime );
-	UString timestamp = UString::number( currTime );
+	UString timestamp = UString::number( static_cast<size_t>(currTime) );
 	Pos = ParsedContent.find( "%tstamp" ); 
 	while( Pos != std::string::npos )
 	{

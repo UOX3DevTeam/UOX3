@@ -15,8 +15,6 @@
 namespace UOX
 {
 
-bool isDoorBlocked( CItem *door );
-
 //o---------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x )
 //|	Programmer	-	Unknown
@@ -433,22 +431,6 @@ void cEffects::checktempeffects( void )
 				}
 				else
 					equipCheckNeeded = false;
-				break;
-			case 13: // door
-				i = calcItemObjFromSer( Effect->Destination() );
-				if( !ValidateObject( i ) )
-					continue;
-
-				if( !i->isDoorOpen() ) 
-					break;
-
-				if( isDoorBlocked( i ) )
-					tempeffect( NULL, i, 13, 0, 0, 0 );
-				else
-				{
-					useDoor( NULL, i );
-					i->SetDoorOpen( false );
-				}
 				break;
 			case 15: //reactive armor
 				s->SetReactiveArmour( false );

@@ -30,7 +30,6 @@ CItem *		startTrade( CSocket *mSock, CChar *i );
 bool		checkItemRange( CChar *mChar, CItem *i );
 bool		isDoorBlocked( CItem *door );
 void		DoHouseTarget( CSocket *mSock, UI08 houseEntry );
-bool		keyInPack( CSocket *mSock, CChar *mChar, CItem *pack, CItem *x );
 void		SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
 void		BuildGumpFromScripts( CSocket *s, UI16 m );
 void		PlankStuff( CSocket *s, CItem *p );
@@ -1719,22 +1718,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				Books->OpenPreDefBook( mSock, iUsed );
 			else
 				Books->OpenBook( mSock, iUsed, ( iUsed->GetTempVar( CITV_MOREX ) == 666 ) ); 
-			return true;
-		case IT_DOOR: // Unlocked door
-			if( !isDoorBlocked( iUsed ) )
-				useDoor( mSock, iUsed );
-			else
-				mSock->sysmessage( 1661 );
-			return true;
-		case IT_LOCKEDDOOR: // Locked door
-			if( mChar->IsGM() )
-			{
-				mSock->sysmessage( 404 );
-				useDoor( mSock, iUsed );
-				return true;
-			}
-			if( !keyInPack( mSock, mChar, mChar->GetPackItem(), iUsed ) )
-				mSock->sysmessage( 406 );
 			return true;
 		case IT_MAGICWAND: // Magic Wands
 			if( iUsed->GetTempVar( CITV_MOREZ ) != 0 )

@@ -167,6 +167,9 @@
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
 
+// Doors
+4500=item/doors.js
+
 // Miscellaneous Item Types
 5000=item/teleportrune.js
 5001=item/food.js

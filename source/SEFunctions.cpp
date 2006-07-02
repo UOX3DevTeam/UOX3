@@ -982,7 +982,22 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		DoSEErrorMessage( "UseDoor: Invalid door" );
 		return JS_FALSE;
 	}
-	useDoor( mySock, myDoor );
+
+	CChar *mChar = mySock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+	{
+		DoSEErrorMessage( "UseDoor: Invalid character" );
+		return JS_FALSE;
+	}
+
+	if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(myDoor->GetType()) ) )
+	{
+		UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(myDoor->GetType()) );
+		cScript *envExecute = JSMapping->GetScript( envTrig );
+		if( envExecute != NULL )
+			envExecute->OnUse( mChar, myDoor );
+	}
+
 	return JS_TRUE;
 }
 
@@ -1003,9 +1018,15 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 
 	if( toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2 ) )
+	{
+		*rval = JS_TRUE;
 		return JS_TRUE;
+	}
 	else
+	{
+		*rval = JS_FALSE;
 		return JS_FALSE;
+	}
 }
 
 JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
