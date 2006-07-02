@@ -1,5 +1,5 @@
 7/01/2006 - Xuri
-	Cows may now (randomly) defend themselves from doubleclicks by falling over.
+	New "AI"-Script: Cows may now (randomly) defend themselves from doubleclicks by falling over.
 	Corrected various errors with liquid-containers (pitchers, bottles, goblets, etc.)
 
 7/01/2006 - grimson
