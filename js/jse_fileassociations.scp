@@ -149,6 +149,9 @@
 // pets from pet static end
 // ------------------------
 
+// AI-Stuff
+3200=npc/ai/cow_tipping.js
+
 // General Skills
 4000=skill/healing.js
 4001=skill/repairbow.js
