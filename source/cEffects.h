@@ -30,7 +30,6 @@ public:
 	void	PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear = true );
 	void	PlayBGSound( CSocket& mSock, CChar& mChar );
 	void	itemSound( CSocket *s, CItem *item, bool bAllHear = false );
-	void	doorSound( CItem *item, UI16 id, bool isOpen );
 	void	goldSound( CSocket *s, UI32 goldtotal, bool bAllHear = false);
 	void	playTileSound( CSocket *mSock );
 	void	playDeathSound( CChar *i );

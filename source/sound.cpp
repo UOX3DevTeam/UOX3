@@ -72,62 +72,6 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cEffects::doorSound( CItem *item, UI16 id, bool isOpen )
-//|	Date			-	Oct 8, 1998
-//|	Developers		-	Dupois
-//o--------------------------------------------------------------------------o
-//|	Description		-	Plays the proper door sfx for doors/gates/secretdoors
-//o--------------------------------------------------------------------------o
-void cEffects::doorSound( CItem *item, UI16 id, bool isOpen )
-{
-	const UI16 OPENWOOD		= 0x00EA;
-	const UI16 OPENGATE		= 0x00EB;
-	const UI16 OPENSTEEL	= 0x00EC;
-	const UI16 OPENSECRET	= 0x00ED;
-	const UI16 CLOSEWOOD	= 0x00F1;
-	const UI16 CLOSEGATE	= 0x00F2;
-	const UI16 CLOSESTEEL	= 0x00F3;
-	const UI16 CLOSESECRET	= 0x00F4;
-	
-	if( !isOpen ) // Request open door sfx
-	{
-		if( ( id >= 0x0695 && id < 0x06C5 ) || // Open wooden / ratan door
-			( id >= 0x06D5 && id <= 0x06F4 ) )
-			PlaySound( item, OPENWOOD );
-		
-		if( ( id >= 0x0839 && id <= 0x0848 ) || // Open gate
-			( id >= 0x084C && id <= 0x085B ) ||
-			( id >= 0x0866 && id <= 0x0875 ) )
-			PlaySound( item, OPENGATE );
-		
-		if( ( id >= 0x0675 && id < 0x0695 ) || // Open metal
-			( id >= 0x06C5 && id < 0x06D5 ) )
-			PlaySound(item, OPENSTEEL );
-		
-		if( id >= 0x0314 && id <= 0x0365 ) // Open secret
-			PlaySound( item, OPENSECRET );
-	}
-	else // Request close door sfx
-	{
-		if( ( id >= 0x0695 && id < 0x06C5 ) || // close wooden / ratan door
-			( id >= 0x06D5 && id <= 0x06F4 ) )
-			PlaySound( item, CLOSEWOOD );
-		
-		if( ( id >= 0x0839 && id <= 0x0848 ) || // close gate
-			( id >= 0x084C && id <= 0x085B ) ||
-			( id >= 0x0866 && id <= 0x0875 ) )
-			PlaySound( item, CLOSEGATE );
-		
-		if( ( id >= 0x0675 && id < 0x0695 ) || // close metal
-			( id >= 0x06C5 && id < 0x06D5 ) )
-			PlaySound( item, CLOSESTEEL );
-		
-		if( id >= 0x0314 && id <= 0x0365 ) // close secret
-			PlaySound( item, CLOSESECRET );
-	}
-}
-
 //o---------------------------------------------------------------------------o
 //|	Function	-	void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 //|	Programmer	-	Dupois
