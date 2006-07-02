@@ -1,3 +1,7 @@
+7/02/2006 - giwo
+	Fixed an issue causing several item values not to be saved.
+	Updated doors.js to not display the "blocked" message if the door ID isn't recognized.
+
 7/02/2006 - giwo (0.98-3.6h) [3.7 RC]
 	Removed door.cpp from the project.
 	Modified the JS UseDoor() function to call the JS Event onUse() based upon the type of the item passed in.

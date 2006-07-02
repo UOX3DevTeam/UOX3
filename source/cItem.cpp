@@ -989,10 +989,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "AC=" << (SI16)GetArmourClass() << std::endl;
 	dumping << "Rank=" << (SI16)GetRank() << std::endl;
 	dumping << "Sk_Made=" << (SI16)GetMadeWith() << std::endl;
-	dumping << "Pileable=" << (SI16)(isPileable()?1:0) << std::endl;
-	dumping << "Dyeable=" << (SI16)(isDyeable()?1:0) << std::endl;
-	dumping << "Corpse=" << (SI16)(isCorpse()?1:0) << std::endl;
-	dumping << "Wipe=" << (SI16)(isWipeable()?1:0) << std::endl;
+	dumping << "Bools=" << (SI16)(bools.to_ulong()) << std::endl;
 	dumping << "Good=" << GetGood() << std::endl;
 	dumping << "GlowType=" << (SI16)GetGlowEffect() << std::endl;
 	dumping << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
@@ -1021,6 +1018,13 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				else if( UTag == "AC" )
 				{
 					SetArmourClass( data.toUByte() );
+					rvalue = true;
+				}
+				break;
+			case 'B':
+				if( UTag == "BOOLS" )
+				{
+					bools = data.toUByte();
 					rvalue = true;
 				}
 				break;

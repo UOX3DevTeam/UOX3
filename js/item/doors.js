@@ -36,6 +36,7 @@ function onUse( pUser, iUsed )
 		}
 	}
 
+	var isDoor = false;
 	var canOpen = false;
 	var doorID = iUsed.id;
 
@@ -50,31 +51,37 @@ function onUse( pUser, iUsed )
 					canOpen = OpenDoor( iUsed, 1, -1, 1 );
 				else
 					canOpen = OpenDoor( iUsed, 1, 0, 0 );
+				isDoor = true;
 				break;
 			}
 			else if( doorID == doorType+2 || doorID == doorType+8 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 1, 1 );
+				isDoor = true;
 				break;
 			}
 			else if( doorID == doorType+4 )
 			{
 				canOpen = OpenDoor( iUsed, 1, -1, 0 );
+				isDoor = true;
 				break;
 			}
 			else if( doorID == doorType+6 || doorID == doorType+10 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 1, -1 );
+				isDoor = true;
 				break;
 			}
 			else if( doorID == doorType+12 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 0, 0 );
+				isDoor = true;
 				break;
 			}
 			else if( doorID == doorType+14 )
 			{
 				canOpen = OpenDoor( iUsed, 1, 0, -1 );
+				isDoor = true;
 				break;
 			}
 		}
@@ -83,14 +90,17 @@ function onUse( pUser, iUsed )
 		 doorID == 0x31A6 || doorID == 0x31AA || doorID == 0x31AC )
 	{
 		canOpen = OpenDoor( iUsed, 1, 0, -1 );
+		isDoor = true;
 	}
 	else if( doorID == 0x2422 || doorID == 0x2424 )
 	{
 		canOpen = OpenDoor( iUsed, -1, 0, -1 );
+		isDoor = true;
 	}
 	else if( doorID == 0x26F4 )
 	{
 		canOpen = OpenDoor( iUsed, 2, 0, 0 );
+		isDoor = true;
 	}
 	else if( doorID == 0x2990 || doorID == 0x299E || doorID == 0x2A05 || doorID == 0x2A07 || 
 		 doorID == 0x2A09 || doorID == 0x2A0B || doorID == 0x2A0D || doorID == 0x2A0F || 
@@ -99,29 +109,36 @@ function onUse( pUser, iUsed )
 		 doorID == 0x2D67 || doorID == 0x2D6B || doorID == 0x2FE2 )
 	{
 		canOpen = OpenDoor( iUsed, 1, 0, 0 );
+		isDoor = true;
 	}
 	else if( doorID == 0x2D65 || doorID == 0x2D69 || doorID == 0x2D6D || doorID == 0x2FE4 )
 	{
 		canOpen = OpenDoor( iUsed, 1, -1, 0 );
+		isDoor = true;
 	}
 	else if( doorID == 0x319C )
 	{
 		canOpen = OpenDoor( iUsed, 1, 1, 0 );
+		isDoor = true;
 	}
 	else if( doorID == 0x31A0 || doorID == 0x31A4 || doorID == 0x31A8 || doorID == 0x31AE )
 	{
 		canOpen = OpenDoor( iUsed, 1, 1, -1 );
+		isDoor = true;
 	}
 
-	if( !canOpen )
+	if( isDoor )
 	{
-		if( socket )
-			socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
-	}
-	else if( iUsed.type == 13 )
-	{
-		if( socket )
-			pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ) );
+		if( !canOpen )
+		{
+			if( socket )
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+		}
+		else if( iUsed.type == 13 )
+		{
+			if( socket )
+				pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ) );
+		}
 	}
 
 	return false;
@@ -214,19 +231,17 @@ function IsDoorBlocked( iUsed, isOpen )
 
 function FindOpenBlockers( iUsed, tmpChar )
 {
-	if( tmpChar.x == iUsed.x+iUsed.GetTag( "DOOR_X" ) && tmpChar.y == iUsed.y+iUsed.GetTag( "DOOR_Y" ) )
-	{
-		if( !tmpChar.dead && ( tmpChar.npc || tmpChar.online ) )
-		{
-			return true;
-		}
-	}
-	return false;
+	return FindBlockers( tmpChar, iUsed.x+iUsed.GetTag( "DOOR_X" ) ,iUsed.x+iUsed.GetTag( "DOOR_Y" ) );
 }
 
 function FindCloseBlockers( iUsed, tmpChar )
 {
-	if( tmpChar.x == iUsed.x-iUsed.GetTag( "DOOR_X" ) && tmpChar.y == iUsed.y-iUsed.GetTag( "DOOR_Y" ) )
+	return FindBlockers( tmpChar, iUsed.x-iUsed.GetTag( "DOOR_X" ) ,iUsed.y-iUsed.GetTag( "DOOR_Y" ) );
+}
+
+function FindBlockers( tmpChar, newX, newY )
+{
+	if( tmpChar.x == newX && tmpChar.y == newY )
 	{
 		if( !tmpChar.dead && ( tmpChar.npc || tmpChar.online ) )
 		{
