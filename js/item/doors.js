@@ -1,7 +1,7 @@
 doorTypes = new Array (
-0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685, 
-0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839, 
-0x084C, 0x0866, 0x190E, 0x1FED
+	0x00E8, 0x0314, 0x0324, 0x0334, 0x0344, 0x0354, 0x0675, 0x0685, 
+	0x0695, 0x06A5, 0x06B5, 0x06C5, 0x06D5, 0x06E5, 0x0824, 0x0839, 
+	0x084C, 0x0866, 0x190E, 0x1FED
 );
 
 function onUse( pUser, iUsed )
@@ -19,7 +19,10 @@ function onUse( pUser, iUsed )
 	if( iUsed.isDoorOpen )
 	{
 		if( !CloseDoor( iUsed ) )
-			socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+		{
+			if( socket )
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+		}
 		return false;
 	}
 
@@ -27,7 +30,8 @@ function onUse( pUser, iUsed )
 	{
 		if( !FindKey( pUser, iUsed ) )
 		{
-			socket.SysMessage( GetDictionaryEntry( 406, socket.Language ) );
+			if( socket )
+				socket.SysMessage( GetDictionaryEntry( 406, socket.Language ) );
 			return false;
 		}
 	}
@@ -110,9 +114,15 @@ function onUse( pUser, iUsed )
 	}
 
 	if( !canOpen )
-		socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+	{
+		if( socket )
+			socket.SysMessage( GetDictionaryEntry( 1661, socket.Language ) );
+	}
 	else if( iUsed.type == 13 )
-		pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ) );
+	{
+		if( socket )
+			pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ) );
+	}
 
 	return false;
 }
