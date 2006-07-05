@@ -1647,7 +1647,9 @@ void CChar::SendToSocket( CSocket *s )
 
 			SendWornItems( s );
 		}
-		else if( mCharObj->IsDead() != IsDead() && ( GetVisible() != VT_VISIBLE || ( !IsNpc() && !isOnline( (*this) ) ) ) && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+		else if( GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+			return;
+		else if( ( ( GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN ) || ( !IsNpc() && !isOnline( (*this) ) ) ) && GetCommandLevel() >= mCharObj->GetCommandLevel() )
 			return;
 
 		CPDrawObject toSend( (*this) );

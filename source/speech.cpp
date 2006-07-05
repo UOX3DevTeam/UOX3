@@ -207,14 +207,6 @@ bool CPITalkRequest::Handle( void )
 	if( !ValidateObject( mChar ) )
 		return true;
 
-	if( mChar->IsDead() )
-	{
-		mChar->SetWar( true );
-		Movement->CombatWalk( mChar );
-		CPWarMode wMode( 1 );
-		tSock->Send( &wMode );
-	}
-
 	char *asciiText		= Text();
 	cScript *myScript	= JSMapping->GetScript( mChar->GetScriptTrigger() );
 	if( myScript != NULL )
@@ -227,6 +219,14 @@ bool CPITalkRequest::Handle( void )
 		Commands->Command( tSock, mChar, &asciiText[1] );
 	else
 	{
+		if( mChar->IsDead() )
+		{
+			mChar->SetWar( true );
+			Movement->CombatWalk( mChar );
+			CPWarMode wMode( 1 );
+			tSock->Send( &wMode );
+		}
+
 		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
 			mChar->ExposeToView();
 		
