@@ -9,6 +9,7 @@
 #include "cEffects.h"
 #include "CPacketSend.h"
 #include "CResponse.h"
+#include "movement.h"
 
 namespace UOX
 {
@@ -205,6 +206,14 @@ bool CPITalkRequest::Handle( void )
 	CChar *mChar	= tSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return true;
+
+	if( mChar->IsDead() )
+	{
+		mChar->SetWar( true );
+		Movement->CombatWalk( mChar );
+		CPWarMode wMode( 1 );
+		tSock->Send( &wMode );
+	}
 
 	char *asciiText		= Text();
 	cScript *myScript	= JSMapping->GetScript( mChar->GetScriptTrigger() );

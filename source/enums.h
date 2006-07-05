@@ -626,7 +626,8 @@ enum VisibleTypes
 	VT_VISIBLE			= 0,	// Visible to All
 	VT_TEMPHIDDEN,				// Hidden (With Skill) / Visible To Item Owner
 	VT_INVISIBLE,				// Magically Hidden
-	VT_PERMHIDDEN				// Permanent Hidden (GM Hidden)
+	VT_PERMHIDDEN,				// Permanent Hidden (GM Hidden)
+	VT_GHOSTHIDDEN				// Hidden because the player is a ghost
 };
 
 enum monsterSound

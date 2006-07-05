@@ -592,6 +592,14 @@ bool CChar::IsDead( void ) const
 void CChar::SetDead( bool newValue )
 {
 	bools.set( BIT_DEAD, newValue );
+
+	if( !IsNpc() )
+	{
+		if( GetVisible() != VT_VISIBLE && newValue == false )
+			SetVisible( VT_VISIBLE );
+		else if( newValue == true )
+			SetVisible( VT_GHOSTHIDDEN );
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -625,6 +633,14 @@ bool CChar::IsAtWar( void ) const
 void CChar::SetWar( bool newValue )
 {
 	bools.set( BIT_ATWAR, newValue );
+
+	if( !IsNpc() )
+	{
+		if( IsDead() && newValue == true )
+			SetVisible( VT_VISIBLE );
+		else if( IsDead() && newValue == false )
+			SetVisible( VT_GHOSTHIDDEN );
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -1631,7 +1647,7 @@ void CChar::SendToSocket( CSocket *s )
 
 			SendWornItems( s );
 		}
-		else if( ( GetVisible() != VT_VISIBLE || ( !IsNpc() && !isOnline( (*this) ) ) ) && GetCommandLevel() >= mCharObj->GetCommandLevel() )
+		else if( mCharObj->IsDead() != IsDead() && ( GetVisible() != VT_VISIBLE || ( !IsNpc() && !isOnline( (*this) ) ) ) && GetCommandLevel() >= mCharObj->GetCommandLevel() )
 			return;
 
 		CPDrawObject toSend( (*this) );

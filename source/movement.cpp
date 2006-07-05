@@ -439,7 +439,7 @@ bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
 	{
 		if( !ValidateObject( tempChar ) )
 			continue;
-		if( tempChar != c && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
+		if( tempChar != c && ( ( isOnline( (*tempChar) ) && !tempChar->IsDead() ) || tempChar->IsNpc() ) )
 		{	// x=x,y=y, and distance btw z's <= MAX STEP
 			if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) )	// 2 people will still bump into each other, if slightly offset
 			{

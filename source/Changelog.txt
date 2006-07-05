@@ -1,3 +1,8 @@
+7/05/2006 - grimson
+	NPCs can now walk through player ghosts.
+	Player ghosts are only visible when they are in war mode and they will enter war mode
+	when they speak.
+
 7/02/2006 - giwo
 	Fixed an issue causing several item values not to be saved.
 	Updated doors.js to not display the "blocked" message if the door ID isn't recognized.
