@@ -375,6 +375,7 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 	CChar *thisChar			= NULL;
 	CItem *thisItem			= NULL;
 	CBaseObject *thisObj	= NULL;
+	CSocket *thisSock		= NULL;
 	if( toSay.Speaker() > BASEITEMSERIAL )
 	{
 		thisItem	= calcItemObjFromSer( toSay.Speaker() );
@@ -390,8 +391,14 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 	switch( toSay.TargType() )
 	{
 		case SPTRG_INDIVIDUAL:		// aimed at individual person
+			if( ValidateObject( thisChar ) )
+			{
+				thisSock = thisChar->GetSocket();
+				if( thisSock != NULL )
+					thisSock->Send( &toSend );
+			}
 			sChar = calcCharObjFromSer( toSay.SpokenTo() );
-			if( ValidateObject( sChar ) )
+			if( ValidateObject( sChar ) && sChar != thisChar )
 			{
 				mSock = sChar->GetSocket();
 				if( mSock != NULL )

@@ -2669,7 +2669,7 @@ bool CPIPopupMenuSelect::Handle( void )
 					{
 						if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
 						{
-							targChar->talk( tSock, 385, false );
+							targChar->TextMessage( tSock, 385, TALK, false );
 							tSock->openPack( pack, true );
 						}
 						else
@@ -2677,7 +2677,7 @@ bool CPIPopupMenuSelect::Handle( void )
 					}
 					else if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
 					{
-						targChar->talk( tSock, 385, false );
+						targChar->TextMessage( tSock, 385, TALK, false );
 						tSock->openPack( pack, true );
 					}
 					else
@@ -2700,7 +2700,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			if( toSend.CanSellItems( (*mChar), (*targChar) ) )
 				tSock->Send( &toSend );
 			else
-				targChar->talk( tSock, 1341, false );
+				targChar->TextMessage( tSock, 1341, TALK, false );
 		}
 		break;
 	default:

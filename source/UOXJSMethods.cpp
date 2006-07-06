@@ -1142,9 +1142,9 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 // Character related methods!
 JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc < 1 || argc > 3 )
 	{
-		MethodError( "TextMessage: Invalid number of arguments (takes 1)" );
+		MethodError( "TextMessage: Invalid number of arguments (takes 1 - 3)" );
 		return JS_FALSE;
 	}
 
@@ -1153,11 +1153,15 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	char *trgMessage		= JS_GetStringBytes( targMessage );
-
 	if( trgMessage == NULL )
 	{
 		MethodError( "You have to supply a messagetext" );
+		return JS_FALSE;
 	}
+
+	UI16 txtHue = 0x0000;
+	if( argc == 3 )
+		txtHue = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
 	
 	if( myClass.ClassName() == "UOXItem" ) 
 	{
@@ -1167,7 +1171,9 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			MethodError( "TextMessage: Invalid Item" );
 			return JS_FALSE;
 		}
-		MethodSpeech( *myItem, trgMessage, OBJ, 0x047F, FNT_NORMAL );
+		if( !txtHue )
+			txtHue = 0x047F;
+		MethodSpeech( *myItem, trgMessage, OBJ, txtHue, FNT_NORMAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
 	{
@@ -1178,10 +1184,22 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 			return JS_FALSE;
 		}
 
+		SpeechTarget spTrg = SPTRG_PCNPC;
+		if( argc >= 2 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
+			spTrg = SPTRG_INDIVIDUAL;
+
 		if( myChar->GetNPCAiType() == AI_EVIL )
-			MethodSpeech( *myChar, trgMessage, TALK, 0x0026, (FontType)myChar->GetFontType() );
+		{
+			if( !txtHue )
+				txtHue = 0x0026;
+			MethodSpeech( *myChar, trgMessage, TALK, txtHue, (FontType)myChar->GetFontType(), spTrg );
+		}
 		else
-			MethodSpeech( *myChar, trgMessage, TALK, myChar->GetSayColour(), (FontType)myChar->GetFontType() );
+		{
+			if( !txtHue )
+				txtHue = myChar->GetSayColour();
+			MethodSpeech( *myChar, trgMessage, TALK, txtHue, (FontType)myChar->GetFontType(), spTrg );
+		}
 	}	
 
 	return JS_TRUE;
@@ -1745,7 +1763,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( myNPC->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			mySock->TempObj( myNPC );
-			myNPC->talk( mySock, 772, false );
+			myNPC->TextMessage( mySock, 772, TALK, false );
 			mySock->target( 0, TARGET_PLVBUY, " ");
 		} 
 		else
@@ -1765,7 +1783,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( myNPC->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			mySock->TempObj( myNPC );
-			myNPC->talk( mySock, 772, false );
+			myNPC->TextMessage( mySock, 772, TALK, false );
 			mySock->target( 0, TARGET_PLVBUY, " ");
 		} 
 		else
@@ -3689,7 +3707,7 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	{
 		CSocket *mSock = myChar->GetSocket();
 		if( mSock != NULL )
-			myChar->emote( mSock, 771, false );
+			myChar->TextMessage( mSock, 771, EMOTE, false );
 	}
 	return JS_TRUE;
 }

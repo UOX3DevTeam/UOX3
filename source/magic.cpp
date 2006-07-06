@@ -2137,7 +2137,7 @@ void cMagic::SpellFail( CSocket *s )
 		DelReagents( mChar, spells[mChar->GetSpellCast()].Reagants() );
 	Effects->PlayStaticAnimation( mChar, 0x3735, 0, 30 );
 	Effects->PlaySound( mChar, 0x005C );
-	mChar->emote( s, 771, false );
+	mChar->TextMessage( s, 771, EMOTE, false );
 }
 
 //o---------------------------------------------------------------------------o
@@ -2340,7 +2340,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	
 	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
 	{
-		mChar->talkAll( curSpellCasting.Mantra().c_str(), false );
+		mChar->TextMessage( NULL, curSpellCasting.Mantra().c_str(), TALK, false );
 		SpellFail( mSock );
 		mChar->StopSpell();
 		return false;
@@ -2411,7 +2411,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	else
 		temp = curSpellCasting.Mantra();
 
-	mChar->talkAll( temp, false );
+	mChar->TextMessage( NULL, temp, TALK, false );
 	mChar->SetCasting( true );
 	return true;
 	

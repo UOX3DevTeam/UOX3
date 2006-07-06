@@ -894,7 +894,7 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 
 	// If they have no money, well, oops!
 	if( servicePay == 0 )
-		mNPC->talk( mSock, 738, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
+		mNPC->TextMessage( mSock, 738, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	else // Otherwise pay the poor sod for his time
 	{
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
@@ -902,7 +902,7 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 			servicePay += RandomNum( 75, 100 );
 		Items->CreateItem( mSock, mChar, 0x0EED, servicePay, 0, OT_ITEM, true );
 		Effects->goldSound( mSock, servicePay );
-		mNPC->talk( mSock, 739, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
+		mNPC->TextMessage( mSock, 739, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
 	
 	// Inform the PC of what he has just been given as payment

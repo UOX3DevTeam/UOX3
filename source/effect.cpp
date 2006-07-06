@@ -407,7 +407,7 @@ void cEffects::checktempeffects( void )
 				{
 					case 0:
 						if( Effect->More2() != 0 )
-							s->emoteAll( 1270, true, s->GetName().c_str() );
+							s->TextMessage( NULL, 1270, EMOTE, true, s->GetName().c_str() );
 						PlaySound( s, 0x0242 );
 						break;
 				}

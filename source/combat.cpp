@@ -68,7 +68,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
 		{
-			cTarget->talkAll( 335, true );
+			cTarget->TextMessage( NULL, 335, TALK, true );
 			callGuards( cTarget, cAttack );
 		}
 	}
@@ -153,13 +153,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 							Effects->PlayCharacterAnimation( i, 0x10 );
 							NpcResurrectTarget( ourChar );
 							Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
-							i->talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
+							i->TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
 						} 
 						else
-							i->talkAll( 321, true );
+							i->TextMessage( NULL, 321, TALK, true );
 					} 
 					else // Character is criminal or murderer
-						i->talkAll( 322, true );
+						i->TextMessage( NULL, 322, TALK, true );
 					break;
 				case AI_HEALER_E: // Evil Healer
 					if( ourChar->IsMurderer() )
@@ -169,13 +169,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 							Effects->PlayCharacterAnimation( i, 0x10 );
 							NpcResurrectTarget( ourChar );
 							Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-							i->talkAll( ( 323 + RandomNum( 0, 4 ) ), false );
+							i->TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
 						} 
 						else
-							i->talkAll( 328, true );
+							i->TextMessage( NULL, 328, TALK, true );
 					} 
 					else
-						i->talkAll( 329, true );
+						i->TextMessage( NULL, 329, TALK, true );
 					break;
 				default:
 					s->sysmessage( 330 );
@@ -241,7 +241,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
 			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && i->isHuman() )
 			{
-				i->talkAll( 335, true );
+				i->TextMessage( NULL, 335, TALK, true );
 				callGuards( i, ourChar );
 			}
 		}
@@ -249,13 +249,13 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( i->IsGuarded() )
 			petGuardAttack( ourChar, i, i );
 
-		ourChar->emoteAll( 334, true, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
+		ourChar->TextMessage( NULL, 334, EMOTE, true, ourChar->GetName().c_str(), i->GetName().c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
 
 		if( !i->IsNpc() )
 		{
 			CSocket *iSock = i->GetSocket();
 			if( iSock != NULL )
-				i->emote( iSock, 1281, true, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
+				i->TextMessage( iSock, 1281, EMOTE, true, ourChar->GetName().c_str() ); // "Attacker is attacking you!" sent to target socket only
 		}
 
 		// keep the target highlighted
@@ -300,19 +300,19 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		{
 			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
 			{
-				cTarget->talkAll( 1282, true );
+				cTarget->TextMessage( NULL, 1282, TALK, true );
 				callGuards( cTarget, cAttack );
 			}
 		}
 	}
 	if( cAttack->DidAttackFirst() )
 	{
-		cAttack->emoteAll( 334, true, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby - Zane
+		cAttack->TextMessage( NULL, 334, EMOTE, true, cAttack->GetName().c_str(), cTarget->GetName().c_str() );  // NPC should emote "Source is attacking Target" to all nearby - Zane
 		if( !cTarget->IsNpc() )
 		{
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != NULL )
-				cTarget->emote( iSock, 1281, true, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
+				cTarget->TextMessage( iSock, 1281, EMOTE, true, cAttack->GetName().c_str() );	// Target should get an emote only to his socket "Target is attacking you!" - Zane
 		}
 	}
 }
@@ -1909,7 +1909,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
 		mChar->SetNpcWander( WT_FREE );
 		mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue(static_cast<R32>( cwmWorldState->ServerData()->NPCSpeed() )) );
-		mChar->talkAll( 281, false );
+		mChar->TextMessage( NULL, 281, TALK, false );
 	}
 
 	if( ValidateObject( ourTarg ) && ourTarg->GetTarg() == mChar )
@@ -2005,7 +2005,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					mChar.SetLocation( ourTarg );
 					Effects->PlaySound( &mChar, 0x01FE );
 					Effects->PlayStaticAnimation( &mChar, 0x372A, 0x09, 0x06 );
-					mChar.talkAll( 1616, true );
+					mChar.TextMessage( NULL, 1616, TALK, true );
 				}
 				else
 					InvalidateAttacker( &mChar );
@@ -2105,7 +2105,7 @@ void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, S
 			Effects->PlaySound( getGuard, 0x01FE );
 			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
 			
-			getGuard->talkAll( 313, true );
+			getGuard->TextMessage( NULL, 313, TALK, true );
 		}
 	}
 }

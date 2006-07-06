@@ -1,3 +1,8 @@
+7/06/2006 - giwo (0.98-3.6i) [3.7 RC]
+	Combined CChar:: emote(), emoteAll(), talk(), and talkAll() into a single function TextMessage().
+	Renamed CItem itemTalk() to TextMessage() and modified it so passing a NULL socket sends the message to nearby players.
+	Added two new optional parameters to JS method TextMessage(). allHear (defaulting to true) and txtHue.
+
 7/05/2006 - grimson
 	NPCs can now walk through player ghosts.
 	Player ghosts are only visible when they are in war mode and they will enter war mode

@@ -3305,234 +3305,85 @@ bool CChar::inDungeon( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void talk( CSocket *s, SI32 dictEntry, bool antispam, ... )
+//|		Function    :	void TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Npc speech
 //o---------------------------------------------------------------------------o
-void CChar::talk( CSocket *s, SI32 dictEntry, bool antispam, ... )
+void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer )
 {
-    if( s != NULL )
+	bool canSpeak = !spamTimer;
+	if( !toSay.empty() )
 	{
-		std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
-		if( !txt.empty() )
-		{
-			va_list argptr;
-			char msg[512];
-			va_start( argptr, antispam );
-			vsprintf( msg, txt.c_str(), argptr );
-			va_end( argptr );
-
-			talk( s, msg, antispam );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    :	void talk( CSocket *s, std::string txt, bool antispam )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	Npc speech
-//o---------------------------------------------------------------------------o
-void CChar::talk( CSocket *s, std::string txt, bool antispam )
-{
-	bool cont = !antispam;
-	if( s != NULL && !txt.empty() )
-	{
-		if( antispam )
+		if( spamTimer )
 		{
 			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 			{
 				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ) );
-				cont = true;
+				canSpeak = true;
 			}
 		}
-		if( cont )
+		if( canSpeak )
 		{
-			CChar *mChar		= s->CurrcharObj();
-			CSpeechEntry& toAdd = SpeechSys->Add();
+			UI16 txtColor = 0x5A;
+			if( msgType == EMOTE )
+				txtColor = GetEmoteColour();
+			else if( msgType == TALK )
+			{
+				if( GetNPCAiType() == AI_EVIL )
+					txtColor = 0x0026;
+				else
+					txtColor = GetSayColour();
+			}
+			if( !txtColor || txtColor == 0x1700 )
+				txtColor = 0x5A;
 
+			SERIAL speakTo		= INVALIDSERIAL;
+			SpeechTarget target	= SPTRG_PCNPC;
+			if( s != NULL )
+			{
+				CChar *mChar	= s->CurrcharObj();
+				speakTo			= mChar->GetSerial();
+				target			= SPTRG_INDIVIDUAL;
+			}
+
+			CSpeechEntry& toAdd = SpeechSys->Add();
 			toAdd.Font( (FontType)GetFontType() );
-			toAdd.Speech( txt );
+			toAdd.Speech( toSay );
 			toAdd.Speaker( GetSerial() );
-			toAdd.SpokenTo( mChar->GetSerial() );
-			toAdd.Type( TALK );
+			toAdd.SpokenTo( speakTo );
+			toAdd.Type( msgType );
 			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( SPTRG_INDIVIDUAL );
-			if( GetNPCAiType() == AI_EVIL )
-				toAdd.Colour( 0x0026 );
-			else if( GetSayColour() == 0x1700 )
-				toAdd.Colour( 0x5A );
-			else if( GetSayColour() == 0x0 )
-				toAdd.Colour( 0x5A );
-			else
-				toAdd.Colour( GetSayColour() );
+			toAdd.TargType( target );
+			toAdd.Colour( txtColor );
 		}
 	}
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void talkAll( std::string txt, bool antispam )
+//|		Function    :	void TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
-//|		Purpose     :	NPC speech to all in range.
+//|		Purpose     :	Npc speech
 //o---------------------------------------------------------------------------o
-void CChar::talkAll( std::string txt, bool antispam )
+void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... )
 {
-	bool cont = !antispam;
+	UnicodeTypes dictLang = ZERO;
+	if( s != NULL )
+		dictLang = s->Language();
+
+	std::string txt = Dictionary->GetEntry( dictEntry, dictLang );
 	if( !txt.empty() )
 	{
-		if( antispam )
-		{
-			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
-			{
-				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ) );
-				cont = true;
-			}
-		}
-		if( cont )
-		{
-			CSpeechEntry& toAdd = SpeechSys->Add();
+		va_list argptr;
 
-			toAdd.Font( (FontType)GetFontType() );
-			toAdd.Speech( txt );
-			toAdd.Speaker( GetSerial() );
-			toAdd.SpokenTo( INVALIDSERIAL );
-			toAdd.Type( TALK );
-			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( SPTRG_PCNPC );
-			if( GetNPCAiType() == AI_EVIL )
-				toAdd.Colour( 0x0026 );
-			else if( GetSayColour() == 0x1700 )
-				toAdd.Colour( 0x5A );
-			else if( GetSayColour() == 0x0 )
-				toAdd.Colour( 0x5A );
-			else
-				toAdd.Colour( GetSayColour() );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    :	void talkAll( SI32 dictEntry, bool antispam, ... )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	NPC speech to all in range.
-//o---------------------------------------------------------------------------o
-void CChar::talkAll( SI32 dictEntry, bool antispam, ... )
-{
-	SOCKLIST nearbyChars = FindNearbyPlayers( this );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *tSock = (*cIter);
-		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
-		if( !txt.empty() )
-		{
-			char msg[512];
-			va_list argptr;
-			va_start( argptr, antispam );
-			vsprintf( msg, txt.c_str(), argptr );
-			va_end( argptr );
-			talk( tSock, msg, antispam );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    :	void emote( CSocket *s, std::string txt, bool antispam )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	NPC emotes
-//o---------------------------------------------------------------------------o
-void CChar::emote( CSocket *s, std::string txt, bool antispam )
-{
-	UI16 emoteColour = GetEmoteColour();
-
-	bool cont = !antispam;
-	if( s != NULL && !txt.empty() )
-	{
-		if( antispam )
-		{
-			if( GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
-			{
-				SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 10 ) );
-				cont = true;
-			}
-		}
-		if( cont )
-		{
-			CChar *mChar		= s->CurrcharObj();
-			CSpeechEntry& toAdd = SpeechSys->Add();
-
-			toAdd.Font( (FontType)GetFontType() );
-
-			toAdd.Speech( txt );
-			toAdd.Speaker( GetSerial() );
-			toAdd.SpokenTo( mChar->GetSerial() );
-			toAdd.Type( EMOTE );
-			toAdd.At( cwmWorldState->GetUICurrentTime() );
-			toAdd.TargType( SPTRG_INDIVIDUAL );
-			if( emoteColour == 0x0 || emoteColour == 0x1700)
-				toAdd.Colour( 0x5A );
-			else
-				toAdd.Colour( emoteColour );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    :	void emote( CSocket *s, SI32 dictEntry, bool antispam, ... )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	NPC emotes
-//o---------------------------------------------------------------------------o
-void CChar::emote( CSocket *s, SI32 dictEntry, bool antispam, ... )
-{
-	if( s != NULL )
-	{
-		std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
-		if( !txt.empty() )
-		{
-			va_list argptr;
-
-			char msg[512];
-			va_start( argptr, antispam );
-			vsprintf( msg, txt.c_str(), argptr );
-			va_end( argptr );
-			emote( s, msg, antispam );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    :	void emoteAll( SI32 dictEntry, bool antispam, ... )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	NPC emotes to all in range.
-//o---------------------------------------------------------------------------o
-void CChar::emoteAll( SI32 dictEntry, bool antispam, ... )
-{
-	SOCKLIST nearbyChars = FindNearbyPlayers( this );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *tSock = (*cIter);
-		std::string txt = Dictionary->GetEntry( dictEntry, tSock->Language() );
-		if( !txt.empty() )
-		{
-			char msg[512];
-			va_list argptr;
-			va_start( argptr, antispam );
-			vsprintf( msg, txt.c_str(), argptr );
-			va_end( argptr );
-			emote( tSock, msg, antispam );
-		}
+		char msg[512];
+		va_start( argptr, spamTimer );
+		vsprintf( msg, txt.c_str(), argptr );
+		va_end( argptr );
+		TextMessage( s, msg, msgType, spamTimer );
 	}
 }
 
@@ -5534,7 +5385,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 				bool regionGuarded = ( GetRegion()->IsGuarded() );
 				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != AI_GUARD && isHuman() )
 				{
-					talkAll( 335, true );
+					TextMessage( NULL, 335, TALK, true );
 					callGuards( this, attacker );
 				}
 				if( ValidateObject( attacker->GetOwnerObj() ) )

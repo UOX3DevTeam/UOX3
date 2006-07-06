@@ -96,7 +96,7 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string text )
 //|				2	=> Let no one else see it
 				SI08 rVal = -1;
 				if( Npc->isDisabled() )
-					Npc->talkAll( 1291, false );
+					Npc->TextMessage( NULL, 1291, TALK, false );
 				else if( !mChar->IsDead() )
 					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
 				switch( rVal )
@@ -234,7 +234,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 		
 					// Send out the rant about accepting the escort
-					Npc->talkAll( 1294, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
+					Npc->TextMessage( NULL, 1294, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
 					// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
 					MsgBoardQuestEscortRemovePost( Npc );
@@ -250,11 +250,11 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( findDest )
 			{
 				if( Npc->GetFTarg() == mChar )
-					Npc->talkAll( 1295, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( NULL, 1295, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
-					Npc->talkAll( 1296, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( NULL, 1296, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->talkAll( 1297, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->TextMessage( NULL, 1297, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
 			}		
@@ -283,7 +283,7 @@ void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					UI32 goldCount = GetBankCount( mChar, 0x0EED );
 					ClilocMessage( mSock, Npc, 0, 0x0040, FNT_NORMAL, 1042759, false, "i", goldCount );
-					//Npc->talk( mSock, 1298, true, mChar->GetName().c_str(), goldCount );
+					//Npc->TextMessage( mSock, 1298, TALK, true, mChar->GetName().c_str(), goldCount );
 				}
 				break;
 			}
@@ -341,7 +341,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				{
 					if( !Npc->CanTrain() )
 					{
-						Npc->talk( mSock, 1302, false );
+						Npc->TextMessage( mSock, 1302, TALK, false );
 						continue;
 					}
 					Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
@@ -361,16 +361,16 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					if( skillsToTrainIn )
 					{
 						temp[strlen( temp ) - 2] = '.'; // Make last character a . not a ,  just to look nicer
-						Npc->talk( mSock, temp, false );
+						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
-						Npc->talk( mSock, 1302, false );
+						Npc->TextMessage( mSock, 1302, TALK, false );
 				}
 				else // They do want to learn a specific skill
 				{
 					if( !Npc->CanTrain() )
 					{
-						Npc->talk( mSock, 1302, false );
+						Npc->TextMessage( mSock, 1302, TALK, false );
 						continue;
 					}
 					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
@@ -388,10 +388,10 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 							mSock->TempObj( Npc );
 							Npc->SetTrainingPlayerIn( (UI08)skill );
 						}
-						Npc->talk( mSock, temp, false );
+						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
-						Npc->talk( mSock, 1307, false ); 
+						Npc->TextMessage( mSock, 1307, TALK, false ); 
 				}
 				break;
 			}
@@ -459,7 +459,7 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npc->SetFTarg( NULL );
 			Npc->SetNpcWander( WT_FREE );
 			Npc->SetOwner( NULL );
-			Npc->talkAll( 1325, false, Npc->GetName().c_str() );
+			Npc->TextMessage( NULL, 1325, TALK, false, Npc->GetName().c_str() );
 			if( Npc->GetTimer( tNPC_SUMMONTIME ) )
 			{
 				Effects->PlaySound( Npc, 0x01FE );
@@ -594,7 +594,7 @@ bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		mSock->TempObj( Npc );
-		Npc->talk( mSock, 1333, false );
+		Npc->TextMessage( mSock, 1333, TALK, false );
 		mSock->target( 0, TARGET_PLVBUY, " " );
 		return false;
 	} 
@@ -613,7 +613,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( toSend.CanSellItems( (*mChar), (*Npc) ) )
 		mSock->Send( &toSend );
 	else
-		Npc->talk( mSock, 1341, false );
+		Npc->TextMessage( mSock, 1341, TALK, false );
 
 	return false;
 }
@@ -626,7 +626,7 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	CItem *pack		= NULL;
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
-		Npc->talk( mSock, 385, false );
+		Npc->TextMessage( mSock, 385, TALK, false );
 		pack = Npc->GetPackItem();
 		if( ValidateObject( pack ) )
 			mSock->openPack( pack, true );
@@ -649,7 +649,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		{
 			if( Npc->GetHoldG() <= 0 )
 			{
-				Npc->talk( mSock, 1326, false );
+				Npc->TextMessage( mSock, 1326, TALK, false );
 				Npc->SetHoldG( 0 );
 			} 
 			else if( Npc->GetHoldG() > 0 && Npc->GetHoldG() <= MAX_STACK )
@@ -673,15 +673,15 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				pay = 6554;
 				give = 58981;
 				if( t > 0 )
-					Npc->talk( mSock, 1327, false );
+					Npc->TextMessage( mSock, 1327, TALK, false );
 			}
 			if( give ) 
 				Items->CreateItem( mSock, mChar, 0x0EED, give, 0, OT_ITEM, true );
 			
-			Npc->talk( mSock, 1328, false, earned, pay, give );
+			Npc->TextMessage( mSock, 1328, TALK, false, earned, pay, give );
 		} 
 		else 
-			Npc->talk( mSock, 1329, false );
+			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
 		return false;
@@ -701,7 +701,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		{
 			if( Npc->GetHoldG() <= 0 )
 			{
-				Npc->talk( mSock, 1326, false );
+				Npc->TextMessage( mSock, 1326, TALK, false );
 			} 
 			else
 			{
@@ -713,11 +713,11 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				{
 					pay = Npc->GetHoldG();
 				}
-				Npc->talk( mSock, 1782, false, Npc->GetHoldG(), pay );
+				Npc->TextMessage( mSock, 1782, TALK, false, Npc->GetHoldG(), pay );
 			}
 		} 
 		else 
-			Npc->talk( mSock, 1329, false );
+			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
 		return false;
@@ -737,7 +737,7 @@ bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			Npc->Delete();
 		} 
 		else 
-			Npc->talk( mSock, 1329, false );
+			Npc->TextMessage( mSock, 1329, TALK, false );
 	}
 	if( !saidVendor )
 		return false;
@@ -784,7 +784,7 @@ void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 	if( ValidateObject( tiller ) )
-		tiller->itemTalk( mSock, 10 );
+		tiller->TextMessage( mSock, 10 );
 }
 
 }

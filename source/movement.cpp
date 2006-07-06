@@ -590,7 +590,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 			{
 				Effects->PlayStaticAnimation( c, 0x3735, 0, 30 );
 				Effects->PlaySound( c, 0x005C );
-				c->emote( c->GetSocket(), 771, false );
+				c->TextMessage( c->GetSocket(), 771, EMOTE, false );
 				c->StopSpell();
 				c->SetJSCasting( false );
 			}

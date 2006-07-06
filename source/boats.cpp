@@ -485,7 +485,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 		{
 			(*cIter)->Send( &prSend );
-			tiller->itemTalk( (*cIter), 8 );
+			tiller->TextMessage( (*cIter), 8 );
 		}
 		return;
 	}
@@ -495,7 +495,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
 		{
 			(*cIter)->Send( &prSend );
-			tiller->itemTalk( (*cIter), 9 );
+			tiller->TextMessage( (*cIter), 9 );
 		}
 		return;
 	}
@@ -607,7 +607,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
 		{
 			(*cIter)->Send( &prSend );
-			tiller->itemTalk( (*cIter), 1410, 0, 0x0481 );
+			tiller->TextMessage( (*cIter), 1410, 0, 0x0481 );
 		}
 		return;
 	}
@@ -686,13 +686,13 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 
 	if( !BlockBoat( myBoat, tx, ty, dir ) )
 	{
-		tiller->itemTalk( mSock, 10 );
+		tiller->TextMessage( mSock, 10 );
 		TurnBoat( myBoat, rightTurn );
 	}
 	else
 	{
 		myBoat->SetMoveType( 0 );
-		tiller->itemTalk( mSock, 9 ); 
+		tiller->TextMessage( mSock, 9 ); 
 	}
 }
 //o---------------------------------------------------------------------------o
@@ -733,7 +733,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 		TurnBoat( mSock, boat, tiller, dir, false );
 		break;
 	case TW_BOATTURNAROUND:
-		tiller->itemTalk( mSock, 10 );
+		tiller->TextMessage( mSock, 10 );
 		TurnBoat( boat, true );
 		TurnBoat( boat, true );
 		break;
@@ -742,14 +742,14 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			dir -= 2;
 		else
 			dir	+= 6;
-		tiller->itemTalk( mSock, 10 );
+		tiller->TextMessage( mSock, 10 );
 		MoveBoat( dir, boat );
 		break;
 	case TW_BOATRIGHT:
 		dir += 2;
 		if( dir > 7 )
 			dir -= 8;
-		tiller->itemTalk( mSock, 10 );
+		tiller->TextMessage( mSock, 10 );
 		MoveBoat( dir, boat );
 		break;
 	case TW_SETNAME:
@@ -759,7 +759,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 		cmd = strstr( msg, Dictionary->GetEntry( 1425, mLang ).c_str() ); // note: also checking for space
 		if( !cmd )
 		{
-			tiller->itemTalk( mSock, 11 );
+			tiller->TextMessage( mSock, 11 );
 			return;
 		}
 		cmd += 9;
@@ -767,7 +767,7 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 			++cmd; // remove any extra spaces
 		if( !(*cmd) )
 		{
-			tiller->itemTalk( mSock, 12 );
+			tiller->TextMessage( mSock, 12 );
 			return;
 		}
 

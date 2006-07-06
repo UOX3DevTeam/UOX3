@@ -1515,18 +1515,26 @@ inline bool operator>(const CItem& x, const CItem& y )
 }
 
 //o---------------------------------------------------------------------------o
-//|		Function    :	void itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+//|		Function    :	void TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 //|		Date        :	Unknown
 //|		Programmer  :	UOX DevTeam
 //o---------------------------------------------------------------------------o
 //|		Purpose     :	Item "speech"
 //o---------------------------------------------------------------------------o
-void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 {
-	if( s == NULL )
-		return;
-	
-	std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
+	UnicodeTypes dictLang	= ZERO;
+	SERIAL speakTo			= INVALIDSERIAL;
+	SpeechTarget target		= SPTRG_PCNPC;
+	if( s != NULL )
+	{
+		dictLang = s->Language();
+		CChar *mChar	= s->CurrcharObj();
+		speakTo			= mChar->GetSerial();
+		target			= SPTRG_INDIVIDUAL;
+	}
+
+	std::string txt = Dictionary->GetEntry( dictEntry, dictLang );
 	if( txt.empty() )
 		return;
 
@@ -1534,10 +1542,10 @@ void CItem::itemTalk( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 	toAdd.Speech( txt );
 	toAdd.Font( FNT_NORMAL );
 	toAdd.Speaker( GetSerial() );
-	toAdd.SpokenTo( INVALIDSERIAL );
+	toAdd.SpokenTo( speakTo );
 	toAdd.Type( OBJ );
 	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( SPTRG_PCNPC );
+	toAdd.TargType( target );
 	if( Colour == 0x0 || Colour == 0x1700)
 		toAdd.Colour( 0x03B2 );
 	else

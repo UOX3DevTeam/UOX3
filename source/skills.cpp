@@ -1155,7 +1155,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
 			s->sysmessage( 882 );
 			if( npc->IsNpc() ) 
-				npc->talkAll( 883, false );
+				npc->TextMessage( NULL, 883, TALK, false );
 			
 			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
@@ -1438,7 +1438,7 @@ void cSkills::Persecute( CSocket *s )
 			if( tSock != NULL )
 				tSock->sysmessage( 973 );
 			s->SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
-			targChar->emoteAll( 974, true, targChar->GetName().c_str() );
+			targChar->TextMessage( NULL, 974, EMOTE, true, targChar->GetName().c_str() );
 		}
 		else
 			s->sysmessage( 975 );
@@ -2526,7 +2526,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 			{
 				if( target->isHuman() )
 				{
-					target->talk( s, 994 + RandomNum( 0, 2 ), false );
+					target->TextMessage( s, 994 + RandomNum( 0, 2 ), TALK, false );
 					if( cwmWorldState->ServerData()->SnoopIsCrime() )
 					{
 						if( RandomNum( 0, 1 ) == 1 && mChar->IsCriminal() )	//	50% chance of calling guards, on second time
@@ -2559,7 +2559,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 	CChar *iCharID = nSocket->CurrcharObj();
 	if( itemID >= 0x1B11 && itemID <= 0x1B1C ) // Make bone powder.
 	{
-		iCharID->emoteAll( 741, true, iCharID->GetName().c_str() );
+		iCharID->TextMessage( NULL, 741, EMOTE, true, iCharID->GetName().c_str() );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 0, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 3, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );

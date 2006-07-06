@@ -680,13 +680,13 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 			else
 			{
 				dropResult = 1;
-				targNPC->talk( mSock, 1197, false );
+				targNPC->TextMessage( mSock, 1197, TALK, false );
 			}
 		}
 		else if( i->GetID() == 0x0EED ) // They gave the NPC gold
 		{
 			UI08 trainedIn = targNPC->GetTrainingPlayerIn();
-			targNPC->talk( mSock, 1198, false );
+			targNPC->TextMessage( mSock, 1198, TALK, false );
 			UI16 oldskill = mChar->GetBaseSkill( trainedIn ); 
 			mChar->SetBaseSkill( (UI16)( mChar->GetBaseSkill( trainedIn ) + i->GetAmount() ), trainedIn );
 			if( mChar->GetBaseSkill( trainedIn ) > 250 )
@@ -713,7 +713,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		else // Did not give gold
 		{
 			dropResult = 1;
-			targNPC->talk( mSock, 1199, false );
+			targNPC->TextMessage( mSock, 1199, TALK, false );
 		}
 	}
 	else
@@ -1565,7 +1565,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 		}
 		else if( c->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 		{
-			c->talk( mSock, 385, false );
+			c->TextMessage( mSock, 385, TALK, false );
 			pack = c->GetPackItem();
 			if( ValidateObject( pack ) )
 				mSock->openPack( pack, true );
@@ -1891,7 +1891,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			m->SetDir( mChar->GetDir() );
 			m->SetOwner( mChar );
 			iUsed->Delete();
-			m->talk( mSock, 388, false, m->GetName().c_str() );
+			m->TextMessage( mSock, 388, TALK, false, m->GetName().c_str() );
 			return true;
 		case IT_SMITHYTOOL:
 			mSock->target( 0, TARGET_SMITH, 444 );

@@ -539,14 +539,8 @@ public:
 	bool			inDungeon( void );
 	bool			inBuilding( void );
 
-	void			talk( CSocket *s, SI32 dictEntry, bool antispam, ... );
-	void			talk( CSocket *s, std::string txt, bool antispam );
-	void			talkAll( std::string txt, bool antispam );
-	void			talkAll( SI32 dictEntry, bool antispam, ... );
-
-	void			emote( CSocket *s, std::string txt, bool antispam );
-	void			emote( CSocket *s, SI32 dictEntry, bool antispam, ... );
-	void			emoteAll( SI32 dictEntry, bool antispam, ... );
+	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
+	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... );
 
 	virtual void	Cleanup( void );
 	virtual void	Delete( void );

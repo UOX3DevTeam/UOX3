@@ -136,19 +136,19 @@ bool CPIBuyItem::Handle( void )
 		}
 		if( soldout )
 		{
-			npc->talk( tSock, 1336, false );
+			npc->TextMessage( tSock, 1336, TALK, false );
 			clear = true;
 		}
 		else
 		{
 			if( mChar->IsGM() )
-				npc->talkAll( 1337, false, mChar->GetName().c_str() );
+				npc->TextMessage( NULL, 1337, TALK, false, mChar->GetName().c_str() );
 			else
 			{
 				if( goldtotal == 1 )
-					npc->talkAll( 1338, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( NULL, 1338, TALK, false, mChar->GetName().c_str(), goldtotal );
 				else
-					npc->talkAll( 1339, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( NULL, 1339, TALK, false, mChar->GetName().c_str(), goldtotal );
 
 				Effects->goldSound( tSock, goldtotal );
 			}
@@ -250,7 +250,7 @@ bool CPIBuyItem::Handle( void )
 		}
 	}
 	else
-		npc->talkAll( 1340, false );
+		npc->TextMessage( NULL, 1340, TALK, false );
 	
 	if( clear )
 	{
@@ -294,7 +294,7 @@ bool CPISellItem::Handle( void )
 
 		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			n->talkAll( 1342, false, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			n->TextMessage( NULL, 1342, TALK, false, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
 			return true;
 		}
 
@@ -306,7 +306,7 @@ bool CPISellItem::Handle( void )
 			{
 				if( j->GetAmount() < amt )
 				{
-					n->talkAll( 1343, false );
+					n->TextMessage( NULL, 1343, TALK, false );
 					return true;
 				}
 				CItem *join = NULL;

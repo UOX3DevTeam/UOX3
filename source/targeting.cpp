@@ -58,7 +58,7 @@ void PlVBuy( CSocket *s )//PlayerVendors
 		return;
 	if( mChar == vChar->GetOwnerObj() )
 	{
-		vChar->talk( s, 999, false );
+		vChar->TextMessage( s, 999, TALK, false );
 		return;
 	}
 	if ( i->GetBuyValue() <= 0 )
@@ -66,7 +66,7 @@ void PlVBuy( CSocket *s )//PlayerVendors
 
 	if( gleft < i->GetBuyValue() ) 
 	{
-		vChar->talk( s, 1000, false );
+		vChar->TextMessage( s, 1000, TALK, false );
 		return;
 	} 
 	else 
@@ -76,7 +76,7 @@ void PlVBuy( CSocket *s )//PlayerVendors
 		// could be expanded to take money from bank too...
 	}
 	
-	vChar->talk( s, 1001, false );
+	vChar->TextMessage( s, 1001, TALK, false );
 	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
 
 	i->SetCont( p );	// move containers
@@ -827,7 +827,7 @@ void TransferTarget( CSocket *s )
 
 	Npcs->stopPetGuarding( char1 );
 
-	char1->talkAll( 1074, false, char1->GetName().c_str(), char2->GetName().c_str() );
+	char1->TextMessage( NULL, 1074, TALK, false, char1->GetName().c_str(), char2->GetName().c_str() );
 	
 	char1->SetOwner( char2 );
 	char1->SetFTarg( NULL );

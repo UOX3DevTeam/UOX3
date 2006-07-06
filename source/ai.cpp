@@ -97,7 +97,7 @@ void HandleGuardAI( CChar& mChar )
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
-						mChar.talkAll( 313, true );
+						mChar.TextMessage( NULL, 313, TALK, true );
 						regChars->Pop();
 						return;
 					}
@@ -165,15 +165,15 @@ void HandleHealerAI( CChar& mChar )
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 			{
 				if( realChar->IsMurderer() )
-					mChar.talkAll( 322, true );
+					mChar.TextMessage( NULL, 322, TALK, true );
 				else if( realChar->IsCriminal() )
-					mChar.talkAll( 770, true );
+					mChar.TextMessage( NULL, 770, TALK, true );
 				else if( realChar->IsInnocent() )
 				{
 					Effects->PlayCharacterAnimation( &mChar, 0x10 );
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
-					mChar.talkAll( ( 316 + RandomNum( 0, 4 ) ), false );
+					mChar.TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 			}
 		}
@@ -204,10 +204,10 @@ void HandleEvilHealerAI( CChar& mChar )
 					Effects->PlayCharacterAnimation( &mChar, 0x10 );
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-					mChar.talkAll( ( 323 + RandomNum( 0, 4 ) ), false ); 
+					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false ); 
 				}
 				else
-					mChar.talkAll( 329, true );
+					mChar.TextMessage( NULL, 329, TALK, true );
 			}
 		}
 	}
