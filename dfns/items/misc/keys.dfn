@@ -6,6 +6,7 @@ value=9 4
 restock=100
 decay=1
 good=38
+script=5013
 }
 
 [0x100E]

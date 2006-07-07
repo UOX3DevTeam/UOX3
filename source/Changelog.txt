@@ -1,3 +1,12 @@
+7/07/2006 - Xuri (0.98-3.6j) [3.7 RC2]
+	Added scripted version of keys (now used instead of hardcoded ones), plus working keyrings
+	Updated doors-script to make use of new scripted keys/keyrings as well as the new TextMessage arguments
+	Added script=5013 (key.js) to [base_key] in dfndata\items\misc\keys.dfn
+	Ghosts will no longer re-enter combat-mode if they speak while already in combat-mode
+	Removed CombatWalk flag sent to ghosts when they talk, as player ghosts have no combat animations
+	PLAYERPERSECUTION in uox.ini (allows ghosts to drain mana from other players) set to 0 by default
+	 (Must be updated manually if using old uox.ini)
+
 7/06/2006 - giwo (0.98-3.6i) [3.7 RC]
 	Combined CChar:: emote(), emoteAll(), talk(), and talkAll() into a single function TextMessage().
 	Renamed CItem itemTalk() to TextMessage() and modified it so passing a NULL socket sends the message to nearby players.

@@ -137,7 +137,7 @@ function onUse( pUser, iUsed )
 		else if( iUsed.type == 13 )
 		{
 			if( socket )
-				pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ) );
+				pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ), false, 0x047e );
 		}
 	}
 
@@ -309,12 +309,12 @@ function FindKey( pUser, iUsed )
 	var foundKey = false;
 	var pPack = pUser.pack;
 	if( pPack != null )
-		foundKey = FindKeyInPack( pPack, iUsed );
+		foundKey = FindKeyInPack( pUser, pPack, iUsed );
 	
 	return foundKey;
 }
 
-function FindKeyInPack( pPack, iUsed )
+function FindKeyInPack( pUser, pPack, iUsed )
 {
 	for( var toCheck = pPack.FirstItem(); !pPack.FinishedItems(); toCheck = pPack.NextItem() )
 	{
@@ -325,6 +325,17 @@ function FindKeyInPack( pPack, iUsed )
 		}
 		else if( toCheck.more == iUsed.more )
 			return true;
+		else if( toCheck.id >= 0x1769 && toCheck.id <= 0x176b )
+		{ //If it's a keyring, check to see if any of the keys there match the lock on the door
+			var keyAmount = toCheck.GetTag( "keys" );
+			var i = 1;	
+			for( i = 1; i < keyAmount + 1; i++ ) 
+			{
+				var KeyItemMore = toCheck.GetTag( "key"+i+"more" );
+				if( KeyItemMore == iUsed.more || KeyItemMore == 255 )
+					return true;
+			}
+		}
 	}
 	return false;
 }

@@ -221,10 +221,12 @@ bool CPITalkRequest::Handle( void )
 	{
 		if( mChar->IsDead() )
 		{
-			mChar->SetWar( true );
-			Movement->CombatWalk( mChar );
-			CPWarMode wMode( 1 );
-			tSock->Send( &wMode );
+			if( !mChar->IsAtWar() )
+			{
+				mChar->SetWar( true );
+				CPWarMode wMode( 1 );
+				tSock->Send( &wMode );
+			}
 		}
 
 		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )

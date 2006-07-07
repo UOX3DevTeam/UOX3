@@ -191,7 +191,7 @@ void CServerData::ResetDefaults( void )
 	CheckBoatSpeed( 0.75 );
 	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
-	PlayerPersecutionStatus( true );
+	PlayerPersecutionStatus( false );
 	HtmlStatsStatus( -1 );
 	
 	MsgBoardPostingLevel( 0 );

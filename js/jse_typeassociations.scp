@@ -11,7 +11,7 @@
 //	IT_CHAOSGATEOPENER		= 4,	// Candidate for deletion
 //	IT_CHAOSGATE			= 5,	// Candidate for deletion
 6=5000		// TELEPORTITEM
-//	IT_KEY 				= 7,
+7=5013		// IT_KEY
 //	IT_LOCKEDCONTAINER 		= 8,
 //	IT_SPELLBOOK 			= 9,
 //	IT_MAP 				= 10,
