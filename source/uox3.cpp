@@ -2355,6 +2355,7 @@ void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 //o---------------------------------------------------------------------------o
 bool WillResultInCriminal( CChar *mChar, CChar *targ )
 {
+	CChar *tOwner = targ->GetOwnerObj();
 	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
 		return false;
 	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) != 0 ) 
@@ -2363,6 +2364,11 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 		return false;
 	else if( targ->GetOwnerObj() == mChar )
 		return false;
+	else if( ValidateObject( tOwner ) )
+	{
+		if( tOwner == mChar || tOwner == mChar->GetOwnerObj() )
+			return false;
+	}
 	else if( targ->IsInnocent() )
 		return true;
 	return false;

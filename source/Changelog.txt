@@ -1,3 +1,8 @@
+7/07/2006 - Xuri
+	Modified damage output of summoned creatures in magicsummon.dfn, as they were too powerful
+	The owner of two pets/summoned creatures will no longer become a criminal if the two pets/creatures fight
+	Summoned creatures (and normal ones) will no longer cast Blade Spirit/Energy Vortex, as they caused flagging errors
+
 7/07/2006 - Xuri (0.98-3.6j) [3.7 RC2]
 	Added scripted version of keys (now used instead of hardcoded ones), plus working keyrings
 	Updated doors-script to make use of new scripted keys/keyrings as well as the new TextMessage arguments

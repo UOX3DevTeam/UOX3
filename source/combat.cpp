@@ -1800,12 +1800,12 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					}
 					break;
 				case 5:
-					switch( RandomNum( 1, 4 ) ) 
+					switch( RandomNum( 1, 3 ) ) 
 					{
-						case 1:		CastSpell( npcAttack, cDefend, 33 );		break;	// Blade Spirits
-						case 2:		CastSpell( npcAttack, cDefend, 36 );		break;	// Magic Reflection (personal...no target switching required)
-						case 3:		CastSpell( npcAttack, cDefend, 37 );		break;	// Mind Blast
-						case 4:		CastSpell( npcAttack, cDefend, 38 );		break;	// Paralyze
+						case 1:		CastSpell( npcAttack, cDefend, 36 );		break;	// Magic Reflection (personal...no target switching required)
+						case 2:		CastSpell( npcAttack, cDefend, 37 );		break;	// Mind Blast
+						case 3:		CastSpell( npcAttack, cDefend, 38 );		break;	// Paralyze
+						//case 4:		CastSpell( npcAttack, cDefend, 33 );		break;	// Blade Spirits
 					}
 					break;
 				case 6:	// If NPC is fighting summoned NPC, cast dispel...else cast other spells - Hanse
@@ -1837,7 +1837,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					switch( RandomNum( 1, 2 ) ) 
 					{
 						case 1:		CastSpell( npcAttack, cDefend, 57 );		break;	// Earthquake
-						case 2:		CastSpell( npcAttack, cDefend, 58 );		break;	// Energy Vortex
+						case 2:		break; //CastSpell( npcAttack, cDefend, 58 );		break;	// Energy Vortex
 					}
 					break;
 				// This is where dragon attacks go eventually when the npc.scp is fixed... - Hanse
