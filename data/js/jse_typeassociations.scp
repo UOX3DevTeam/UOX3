@@ -11,13 +11,13 @@
 //	IT_CHAOSGATEOPENER		= 4,	// Candidate for deletion
 //	IT_CHAOSGATE			= 5,	// Candidate for deletion
 6=5000		// TELEPORTITEM
-//	IT_KEY 				= 7,
+7=5013		// IT_KEY
 //	IT_LOCKEDCONTAINER 		= 8,
 //	IT_SPELLBOOK 			= 9,
 //	IT_MAP 				= 10,
 //	IT_READABLEBOOK			= 11,
-//	IT_DOOR				= 12,
-//	IT_LOCKEDDOOR			= 13,
+12=4500		// DOOR
+13=4500		// LOCKEDDOOR
 14=5001		// FOOD
 //	IT_MAGICWAND			= 15,
 //	IT_RESURRECTOBJECT		= 16,

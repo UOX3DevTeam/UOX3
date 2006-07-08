@@ -149,6 +149,9 @@
 // pets from pet static end
 // ------------------------
 
+// AI-Stuff
+3200=npc/ai/cow_tipping.js
+
 // General Skills
 4000=skill/healing.js
 4001=skill/repairbow.js
@@ -164,6 +167,9 @@
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
 
+// Doors
+4500=item/doors.js
+
 // Miscellaneous Item Types
 5000=item/teleportrune.js
 5001=item/food.js
@@ -176,6 +182,8 @@
 5009=item/sword.js
 5010=item/axe.js
 5011=item/moongate.js
+5012=item/oilcloth.js
+5013=item/key.js
 }
 
 //-------------------------------------------

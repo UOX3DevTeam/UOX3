@@ -49,7 +49,7 @@ function command_STAMINA( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) && ourObj.isCHar )
+	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
 		ourObj.SoundEffect( 0x01F2, true );
 		ourObj.StaticEffect( 0x376A, 0x09, 0x06 );

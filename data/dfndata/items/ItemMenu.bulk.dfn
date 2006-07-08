@@ -9181,6 +9181,8 @@ misc_deeds.dfn
 ADDITEM=townstonedeed
 0x14F0=Guildstone deed
 ADDITEM=guildstonedeed
+0x14F0=Player vendor deed
+ADDITEM=playervendordeed
 <=Previous Menu
 ITEMMENU=4
 }
@@ -9201,6 +9203,8 @@ provisions.dfn
 ADDITEM=0x0a58
 0x14EB=world map
 ADDITEM=0x14EB
+0x175d=oil cloth
+ADDITEM=oilcloth
 <=Previous Menu
 ITEMMENU=5
 }

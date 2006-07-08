@@ -1,17 +1,29 @@
-//*****************************************************************
-//*                         UOX3 DFNs v0.98	                  *
-//*                   http://www.uox3dev.net	 	          *
-//*                                                               *
-//* Last Update : 1/4/2003                                        *
-//* Script : skills.dfn                                           *
-//*****************************************************************
-//*                        How to use this script                 *
-//*                                                               *
-//* fill in comments instructions here                            *
-//*                                                               *
-//*                                                               *
-//*                                                               *
-//*****************************************************************
+//****************************************************************************
+//*                         UOX3 DFNs v0.98	                             *
+//*                       http://www.uox3.org	                             *
+//*                                                                          *
+//* Last Update : 6/26/2006                                                  *
+//* Script : skills.dfn                                                      *
+//****************************************************************************
+//*                        How to use this script                            *
+//*                                                                          *
+//*                                                                          *
+//* SKILLPOINT Entries work in this way:                                     *
+//*   The first value is the skill level at which this entry takes effect.   *
+//*   The second value is the chance to gain skill on success.               *
+//*   The third value is the chance to gain skill on failure.                *
+//*   The fourth (optional) value is the amount to gain on success.          *
+//*                                                                          *
+//*   Each additional SKILLPOINT entry sets a ceiling for the previous one.  *
+//*   Thus entries should be created for every step you wish there to be     *
+//*   to gradually slow down skill gain. By default these steps are:         *
+//*      0-100, 100-200, 200-300, 300-400, 400-500, 500-600,                 *
+//*      600-700, 700-800, 800-900, 900-990, 990-1000                        *
+//*                                                                          *
+//*   Note that all skill values are *10, thus 100 instead of 10.0           *
+//*                                                                          *
+//*                                                                          *
+//****************************************************************************
 
 // Alchemy
 [SKILL 0]

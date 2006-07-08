@@ -11,12 +11,12 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( mChar.isCasting )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
-			return false;
+			return true;
 		}
 		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
-			return false;
+			return true;
 		}
 	}
 
@@ -25,13 +25,13 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	mChar.spellCast = spellNum;
 
-	if( mChar.isJailed && mChar.commandLevel < 2 )
+	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
 		mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
 	
 	// Region checks
@@ -42,7 +42,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
 
 	if( !ourRegion.canCastAggressive && mSpell.agressiveSpell )
@@ -51,7 +51,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
 	
 	if( !mSpell.enabled )
@@ -60,7 +60,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
 	
 	// Cut the casting requirement on scrolls
@@ -77,7 +77,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( mChar.commandLevel < 2 )
+	if( mChar.commandlevel < 2 )
 	{
 		if( spellType != 2 )
 		{
@@ -89,7 +89,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 		}
 	}
@@ -99,7 +99,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	mChar.BreakConcentration( mSock );
 
-	if( mChar.commandLevel < 2  )
+	if( mChar.commandlevel < 2  )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
@@ -108,11 +108,11 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return false;
+			return true;
 		}
 
 		// type == 2 - Wands
-		if( type != 2 )
+		if( spellType != 2 )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
@@ -120,7 +120,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
@@ -128,7 +128,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 			if( mSpell.health >= mChar.health )
 			{
@@ -136,14 +136,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 		}
 	}
 
-	if( ( mChar.commandLevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
+	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		mChar.TextMessage( mSpell.Mantra() );
+		mChar.TextMessage( mSpell.mantra );
 		if( spellType == 0 )
 		{
 			deleteReagents( mChar, mSpell );
@@ -151,14 +151,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return false;
+			return true;
 		}
 	}	
 	   
 	mChar.nextAct = 75;		// why 75?
 	
 	var delay = mSpell.delay * 100;
-	if( spellType == 0 && mChar.commandLevel < 2 ) // if they are a gm they don't have a delay :-)
+	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( 6, delay );
 		mChar.frozen = true;
@@ -189,35 +189,42 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 function checkReagents( mChar, mSpell )
 {
+	var failedCheck = 0;	
 	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
-		return false;
+		failedCheck = 1;
 	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
-		return false;
+		failedCheck = 1;
 	if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
-		return false;
+		failedCheck = 1;
 	if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-		return false;
+		failedCheck = 1;
 	if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
-		return false;
+		failedCheck = 1;
 	if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
-		return false;
+		failedCheck = 1;
 	if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
-		return false;
+		failedCheck = 1;
 	if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
+		failedCheck = 1;
+	if( failedCheck == 1 )
+	{
+		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
 		return false;
-	return true;
+	}
+	else
+		return true;
 }
 
 function deleteReagents( mChar, mSpell )
 {
-	mChar.UseResource( 0x0F7A, mSpell.pearl );
-	mChar.UseResource( 0x0F7B, mSpell.moss );
-	mChar.UseResource( 0x0F84, mSpell.garlic );
-	mChar.UseResource( 0x0F85, mSpell.ginseng );
-	mChar.UseResource( 0x0F86, mSpell.drake );
-	mChar.UseResource( 0x0F88, mSpell.shade );
-	mChar.UseResource( 0x0F8C, mSpell.ash );
-	mChar.UseResource( 0x0F8D, mSpell.silk );
+	mChar.UseResource( mSpell.pearl, 0x0F7A );
+	mChar.UseResource( mSpell.moss, 0x0F7B );
+	mChar.UseResource( mSpell.garlic, 0x0F84 );
+	mChar.UseResource( mSpell.ginseng, 0x0F85 );
+	mChar.UseResource( mSpell.drake, 0x0F86 );
+	mChar.UseResource( mSpell.shade, 0x0F88 );
+	mChar.UseResource( mSpell.ash, 0x0F8C );
+	mChar.UseResource( mSpell.silk, 0x0F8D );
 }
 
 function onTimer( mChar, timerID )
@@ -315,7 +322,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( sourceChar.npc )
-		ourTarg.SoundEffect( spellNum, true ); 
+		ourTarg.SoundEffect( mSpell.soundEffect, true ); 
 	else
 		sourceChar.SoundEffect( spellNum, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );

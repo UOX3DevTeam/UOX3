@@ -4,478 +4,286 @@
 // name=ruby would turn out as... 20 rubys
 // ..while it should have been... 20 rubies
 
-[0x0F0F]
+[base_gem]
 {
 get=base_item
-name=star sapphire
-id=0x0F0F
 weight=100
-value=150,75
 restock=100
 pileable=1
 amount=1
 decay=1
 good=36
+}
+
+[0x0F0F]
+{
+get=base_gem
+name=star sapphire
+id=0x0F0F
+value=150 75
+
 }
 
 [0x0F10]
 {
-get=base_item
+get=base_gem
 name=emerald
 id=0x0F10
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F11]
 {
-get=base_item
+get=base_gem
 name=sapphire
 id=0x0F11
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F12]
 {
-get=base_item
+get=base_gem
 name=sapphire
 id=0x0F12
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F13]
 { //ruby
-get=base_item
+get=base_gem
 name=
 id=0x0F13
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F14]
 { //ruby
-get=base_item
+get=base_gem
 name=
 id=0x0F14
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F15]
 {
-get=base_item
+get=base_gem
 name=citrine
 id=0x0F15
-weight=100
-value=60,30
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=60 30
 }
 
 [0x0F16]
 {
-get=base_item
+get=base_gem
 name=amethyst
 id=0x0F16
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F17]
 {
-get=base_item
+get=base_gem
 name=amethyst
 id=0x0F17
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F18]
 {
-get=base_item
+get=base_gem
 name=tourmaline
 id=0x0F18
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F19]
 {
-get=base_item
+get=base_gem
 name=sapphire
 id=0x0F19
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0f1a]
 { // ruby
-get=base_item
+get=base_gem
 name=
 id=0x0f1a
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0f1b]
 {
-get=base_item
+get=base_gem
 name=star sapphire
 id=0x0f1b
-weight=100
-value=150,75
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=150 75
 }
 
 [0x0f1c]
 { // ruby
-get=base_item
+get=base_gem
 name=
 id=0x0f1c
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0f1d]
 { // ruby
-get=base_item
+get=base_gem
 name=
 id=0x0f1d
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0f1e]
 {
-get=base_item
+get=base_gem
 name=tourmaline
 id=0x0f1e
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0f1f]
 {
-get=base_item
+get=base_gem
 name=sapphire
 id=0x0f1f
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0f20]
 {
-get=base_item
+get=base_gem
 name=tourmaline
 id=0x0f20
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0f21]
 {
-get=base_item
+get=base_gem
 name=star sapphire
 id=0x0f21
-weight=100
-value=150,75
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=150 75
 }
 
 [0x0f22]
 {
-get=base_item
+get=base_gem
 name=amethyst
 id=0x0f22
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0f23]
 {
-get=base_item
+get=base_gem
 name=citrine
 id=0x0f23
-weight=100
-value=60,30
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=60 30
 }
 
 [0x0f24]
 {
-get=base_item
+get=base_gem
 name=citrine
 id=0x0f24
-weight=100
-value=60,30
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=60 30
 }
 
 [0x0F25]
 { //piece of amber
-get=base_item
+get=base_gem
 name=
 id=0x0F25
-weight=100
-value=60,30
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=60 30
 }
 
 [0x0F26]
 {
-get=base_item
+get=base_gem
 name=diamond
 id=0x0F26
-weight=100
-value=240,120
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=240 120
 }
 
 [0x0F27]
 {
-get=base_item
+get=base_gem
 name=diamond
 id=0x0F27
-weight=100
-value=240,120
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=240 120
 }
 
 [0x0F28]
 {
-get=base_item
+get=base_gem
 name=diamond
 id=0x0F28
-weight=100
-value=240,120
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=240 120
 }
 
 [0x0F29]
 {
-get=base_item
+get=base_gem
 name=diamond
 id=0x0F29
-weight=100
-value=240,120
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=240 120
 }
 
 [0x0F2a]
 { // ruby
-get=base_item
+get=base_gem
 name=
 id=0x0F2a
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F2b]
 { // ruby
-get=base_item
+get=base_gem
 name=
 id=0x0F2b
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F2c]
 {
-get=base_item
+get=base_gem
 name=citrine
 id=0x0F2c
-weight=100
-value=60,30
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=60 30
 }
 
 [0x0F2d]
 {
-get=base_item
+get=base_gem
 name=tourmaline
 id=0x0F2d
-weight=100
-value=90,45
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=90 45
 }
 
 [0x0F2e]
 {
-get=base_item
+get=base_gem
 name=amethyst
 id=0x0F2e
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F2f]
 {
-get=base_item
+get=base_gem
 name=emerald
 id=0x0F2f
-weight=100
-value=120,60
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=120 60
 }
 
 [0x0F30]
 {
-get=base_item
+get=base_gem
 name=diamond
 id=0x0F30
-weight=100
-value=240,120
-restock=100
-pileable=1
-amount=1
-decay=1
-good=36
+value=240 120
 }

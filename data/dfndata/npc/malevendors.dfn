@@ -812,9 +812,18 @@ SHOPLIST=HealerShopping
 //implement new # in code.
 [playervendor]
 {
-GET=basevendor
+PRIV=4
+SKINLIST=16
+BACKPACK
+STR=50 75
+DEX=65 70
+INT=50 75
+DAMAGE=3 15
+DEF=10
+TOTAME=2000
+FLAG=INNOCENT
 NAMELIST=1
-TITLE=The Vendor
+TITLE=The Player Vendor
 ID=0x0190
 EQUIPITEM=0x203b
 HAIRCOLOR=15

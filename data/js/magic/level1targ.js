@@ -9,6 +9,7 @@ function spellTimerCheck( mChar, mSock )
 {
 	if( mChar.GetTimer( 6 ) != 0 )
 	{
+		mChar.TextMessage( mChar.isCasting );
 		if( mChar.isCasting )
 		{
 			mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
@@ -25,7 +26,7 @@ function spellTimerCheck( mChar, mSock )
 
 function jailTimerCheck( mChar, mSock )
 {
-	if( mChar.isJailed && mChar.commandLevel < 2 )
+	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
 		mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
@@ -52,7 +53,7 @@ function spellEnableCheck( mChar, mSock, mSpell )
 function itemInHandCheck( mChar, mSock, spellType )
 {
 	// The following loop checks to see if any item is currently equipped (if not a GM)
-	if( mChar.commandLevel < 2 )
+	if( mChar.commandlevel < 2 )
 	{
 		if( spellType != 2 )
 		{
@@ -75,15 +76,15 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 {
 	// Are we already casting?
 	if( !spellTimerCheck( mChar, mSock ) )
-		return false;
+		return true;
 
 	var mSpell	= Spells[spellNum];
-	var spellType 	= mSock.currentSpellType;
+	var spellType = mSock.currentSpellType;
 
 	mChar.spellCast = spellNum;
 
 	if( !jailTimerCheck( mChar, mSock ) )
-		return false;
+		return true;
 
 	// Region checks
 	var ourRegion = mChar.region;
@@ -93,20 +94,19 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
-
 	if( !ourRegion.canCastAggressive && mSpell.agressiveSpell )
 	{
 		mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
-		return false;
+		return true;
 	}
 
 	if( !spellEnableCheck( mChar, mSock, mSpell ) )
-		return false;
+		return true;
 	
 	// Cut the casting requirement on scrolls
 	var lowSkill, highSkill;
@@ -122,14 +122,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	if( !itemInHandCheck( mChar, mSock, spellType ) )
-		return false;
+		return true;
 	
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
 
 	mChar.BreakConcentration( mSock );
-
-	if( mChar.commandLevel < 2  )
+	
+	if( mChar.commandlevel < 2  )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
@@ -138,11 +138,11 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return false;
+			return true;
 		}
 
 		// type == 2 - Wands
-		if( type != 2 )
+		if( spellType != 2 )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
@@ -150,7 +150,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
@@ -158,7 +158,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 			if( mSpell.health >= mChar.health )
 			{
@@ -166,14 +166,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
-				return false;
+				return true;
 			}
 		}
 	}
 
-	if( ( mChar.commandLevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
+	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		mChar.TextMessage( mSpell.Mantra() );
+		mChar.TextMessage( mSpell.mantra );
 		if( spellType == 0 )
 		{
 			deleteReagents( mChar, mSpell );
@@ -181,14 +181,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.SetTimer( 6, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-			return false;
+			return true;
 		}
-	}	
+	}
 	   
 	mChar.nextAct = 75;		// why 75?
 	
 	var delay = mSpell.delay * 100;
-	if( spellType == 0 && mChar.commandLevel < 2 ) // if they are a gm they don't have a delay :-)
+	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( 6, delay );
 		mChar.frozen = true;
@@ -219,35 +219,43 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 function checkReagents( mChar, mSpell )
 {
+	var failedCheck = 0;
 	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
-		return false;
+		failedCheck = 1;
 	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
-		return false;
+		failedCheck = 1;
 	if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
-		return false;
+		failedCheck = 1;
 	if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-		return false;
+		failedCheck = 1;
 	if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
-		return false;
+		failedCheck = 1;
 	if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
-		return false;
+		failedCheck = 1;
 	if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
-		return false;
+		failedCheck = 1;
 	if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
+		failedCheck = 1;
+	if( failedCheck == 1 )
+	{
+		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
 		return false;
-	return true;
+	}
+	else
+		return true;
 }
 
 function deleteReagents( mChar, mSpell )
 {
-	mChar.UseResource( 0x0F7A, mSpell.pearl );
-	mChar.UseResource( 0x0F7B, mSpell.moss );
-	mChar.UseResource( 0x0F84, mSpell.garlic );
-	mChar.UseResource( 0x0F85, mSpell.ginseng );
-	mChar.UseResource( 0x0F86, mSpell.drake );
-	mChar.UseResource( 0x0F88, mSpell.shade );
-	mChar.UseResource( 0x0F8C, mSpell.ash );
-	mChar.UseResource( 0x0F8D, mSpell.silk );
+	mChar.TextMessage( mSpell.pearl + ", " + mSpell.moss + ", " + mSpell.garlic + ", " + mSpell.ginseng + ", " + mSpell.drake + ", " + mSpell.shade + ", " + mSpell.ash + ", " + mSpell.silk  );
+	mChar.UseResource( mSpell.pearl, 0x0F7A );
+	mChar.UseResource( mSpell.moss, 0x0F7B );
+	mChar.UseResource( mSpell.garlic, 0x0F84 );
+	mChar.UseResource( mSpell.ginseng, 0x0F85 );
+	mChar.UseResource( mSpell.drake, 0x0F86 );
+	mChar.UseResource( mSpell.shade, 0x0F88 );
+	mChar.UseResource( mSpell.ash, 0x0F8C );
+	mChar.UseResource( mSpell.silk, 0x0F8D );
 }
 
 function onTimer( mChar, timerID )
@@ -303,7 +311,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 	else if( !mChar.npc && spellType == 0 )
 		deleteReagents( mChar, mSpell );
-
+	
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
 		if( mSock )
@@ -345,9 +353,9 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( sourceChar.npc )
-		ourTarg.SoundEffect( spellNum, true ); 
+		ourTarg.SoundEffect( mSpell.soundEffect, true ); 
 	else
-		sourceChar.SoundEffect( spellNum, true );
+		sourceChar.SoundEffect( mSpell.soundEffect, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
@@ -421,39 +429,39 @@ function MagicDamage( p, amount, attacker, mSock, element )
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
 		return;
 
-	p.TextMessage( "Valid caster and attacker" );
+	//p.TextMessage( "Valid caster and attacker" );
 
 	if( p.dead || p.health <= 0 )	// extra condition check, to see if deathstuff hasn't been hit yet
 		return;
 
-	p.TextMessage( "p not dead or below 0 health" );
+	//p.TextMessage( "p not dead or below 0 health" );
 
 	if( p.CheckSkill( 16, 0, 1000 ) )
 	{
-		p.TextMessage( "Successful eval int check" );
+		//p.TextMessage( "Successful eval int check" );
 		var dmgReduction = RandomNumber( 0, p.skills.evaluatingintel ) / 10000;
-		p.TextMessage( "Bleeding off " + dmgReduction + " damage" );
+		//p.TextMessage( "Bleeding off " + dmgReduction + " damage" );
 		amount -= ( amount * dmgReduction );
 		if( amount < 1 )
 			amount = 1;
 	}
-	p.TextMessage( "Damage to do: " + amount );
+	//p.TextMessage( "Damage to do: " + amount );
 	if( p.frozen && p.dexterity > 0 )
 	{
-		p.TextMessage( "Unfreezing target" );
+		//p.TextMessage( "Unfreezing target" );
 		p.frozen = false;
 		if( mSock != null ) 
 			mSock.SysMessage( GetDictionaryEntry( 700, mSock.Language ) );
 	}
-	p.TextMessage( "Checking for vulnerability and able to cast aggressive magic" );
+	//p.TextMessage( "Checking for vulnerability and able to cast aggressive magic" );
 	if( p.vulnerable && p.region.canCastAggressive )
 	{
-		p.TextMessage( "Vulnerable, here comes the damage" );
+		//p.TextMessage( "Vulnerable, here comes the damage" );
 		var hitLoc = CalculateHitLoc();
 		var damage = ApplyDamageBonuses( element, attacker, p, 25, hitLoc, amount);
-		p.TextMessage( "Damage after the bonus: " + damage);
+		//p.TextMessage( "Damage after the bonus: " + damage);
 		damage = ApplyDefenseModifiers( element, attacker, p, 25, hitLoc, damage, true);
-		p.TextMessage( "Damage after the defense: " + damage);
+		//p.TextMessage( "Damage after the defense: " + damage);
 
 		if( damage <= 0 )
 			damage = 1;
@@ -468,39 +476,39 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	var mMagery = caster.skills.magery;
 	if( spellNum == 3 )	// Feeblemind
 	{
-		caster.TextMessage( "Casting feeblemind" );
+		//caster.TextMessage( "Casting feeblemind" );
 		DoTempEffect( 0, sourceChar, ourTarg, 4, (mMagery / 100), 0, 0);	
 	}
 	else if( spellNum == 4 )	// Heal
 	{
-		caster.TextMessage( "Casting Heal" );
+		//caster.TextMessage( "Casting Heal" );
 		var bonus = (mMagery/500) + (mMagery/100);
-		caster.TextMessage( "Healing bonus " + bonus );
-		caster.TextMessage( "Old health " + ourTarg.health );
+		//caster.TextMessage( "Healing bonus " + bonus );
+		//caster.TextMessage( "Old health " + ourTarg.health );
 		if( bonus != 0 )
 		{
 			var rAdd = RandomNumber( 0, 5 ) + bonus;
-			caster.TextMessage( "Adding " + rAdd + " health!" );
+			//caster.TextMessage( "Adding " + rAdd + " health!" );
 			ourTarg.health += rAdd;
 		}
 		else
 		{
-			caster.TextMessage( "Adding 4 health!" );
+			//caster.TextMessage( "Adding 4 health!" );
 			ourTarg.health += 4;
 		}
-		caster.TextMessage( "New health " + ourTarg.health );
-		caster.TextMessage( "Subtracting health" );
-		SubtractHealth( caster, bonus / 2, 4 );
+		//caster.TextMessage( "New health " + ourTarg.health );
+		//caster.TextMessage( "Subtracting health" );
+		//SubtractHealth( caster, bonus / 2, 4 );
 		if( ourTarg.murderer )
 			caster.criminal = true;
 	}
 	else if( spellNum == 5 )	// Magic arrow
 	{
-		caster.TextMessage( "Casting Magic Arrow!" );
+		//caster.TextMessage( "Casting Magic Arrow!" );
 		var baseDamage = 2 + RandomNumber( 0, 5 );
 		var mageryAdjust = ( mMagery / 2000 + 1 );
-		caster.TextMessage( "Base damage " + baseDamage );
-		caster.TextMessage( "Magery multiplier: " + mageryAdjust );
+		//caster.TextMessage( "Base damage " + baseDamage );
+		//caster.TextMessage( "Magery multiplier: " + mageryAdjust );
 		MagicDamage( ourTarg, baseDamage * mageryAdjust, caster, caster.socket, 5 );
 	}
 }

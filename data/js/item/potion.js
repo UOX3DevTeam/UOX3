@@ -9,6 +9,12 @@ function onUse( pUser, iUsed )
 			return false;
 		}
 
+		//Check to see if it's locked down
+		if( iUsed.movable == 2 || iUsed.movable == 3 )
+		{
+			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
+			return false;
+		}
 		switch( iUsed.morey )
 		{
 			case 1:		// Agility Potion
