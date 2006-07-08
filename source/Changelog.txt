@@ -1,3 +1,6 @@
+7/08/2006 - giwo (0.98-3.7)
+	Updated version to 0.98-3.7
+
 7/07/2006 - Xuri
 	Modified damage output of summoned creatures in magicsummon.dfn, as they were too powerful
 	The owner of two pets/summoned creatures will no longer become a criminal if the two pets/creatures fight
