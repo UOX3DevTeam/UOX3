@@ -1471,8 +1471,8 @@ void cScript::SendGumpList( SI32 index, CSocket *toSendTo )
 	if( index < 0 || (size_t)index >= gumpDisplays.size() )
 		return;
 
-	toSendTo->TempInt( (SI32)JSMapping->GetScript( targObject ) );
-	SendVecsAsGump( toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), 20, INVALIDSERIAL );
+	UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( targObject ));
+	SendVecsAsGump( toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), gumpID, INVALIDSERIAL );
 }
 
 //o--------------------------------------------------------------------------o

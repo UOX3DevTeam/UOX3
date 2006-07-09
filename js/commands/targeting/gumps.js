@@ -174,7 +174,7 @@ function onGumpPress( socket, button, myGump )
 function addHexEntry( myGump, stringToAdd, dataToAdd )
 {
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 150, position, 0, "0x" + dataToAdd.toString( 16 ) );
+	myGump.AddText( 150, position, 0, "0x" + NumToHexString( dataToAdd ) );
 	position += 20;
 }
 

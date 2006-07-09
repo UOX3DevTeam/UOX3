@@ -1112,9 +1112,8 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			MethodError( "Send: Passed an invalid Socket" );
 			return JS_FALSE;
 		}
-
-		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
-		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
+		UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ));
+		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two),  gumpID, INVALIDSERIAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" ) 
 	{
@@ -1126,9 +1125,8 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		}
 
 		CSocket *mySock = myChar->GetSocket();
-
-		mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
-		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), 20, INVALIDSERIAL );
+		UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ));
+		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), gumpID, INVALIDSERIAL );
 	}
 	else
 	{

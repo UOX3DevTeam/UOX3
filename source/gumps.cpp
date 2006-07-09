@@ -1413,9 +1413,9 @@ bool CPIGumpMenuSelect::Handle( void )
 		// guild collection call goes here
 		return true;
 	}
-	else if( gumpID == 20 )	// script gump
+	else if( gumpID >= 0xFFFF )	// script gump
 	{
-		cScript *toExecute = (cScript *)(tSock->TempInt());
+		cScript *toExecute = JSMapping->GetScript( (gumpID - 0xFFFF) );
 		if( toExecute != NULL )
 			toExecute->HandleGumpPress( this );
 	}
@@ -1833,14 +1833,15 @@ bool CPIGumpInput::Handle( void )
 		case 1:		HandleTweakItemText( index );	break;
 		case 2:		HandleTweakCharText( index );	break;
 		case 3:		HandleTownstoneText( index );	break;
-		case 20:
+		case 100:	GuildSys->GumpInput( this );			break;
+		default:
+			if( type >= 0xFFFF )
 			{
-				cScript *toExecute = (cScript *)(tSock->TempInt());
+				cScript *toExecute = JSMapping->GetScript( (type - 0xFFFF) );
 				if( toExecute != NULL )
 					toExecute->HandleGumpInput( this );
-				break;
 			}
-		case 100:	GuildSys->GumpInput( this );			break;
+			break;
 	}
 	return true;
 }
@@ -2170,7 +2171,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 				sprintf( temp, "%li", value );
 				break;
 			case 1:
-				sprintf( temp, "%lx", value );
+				sprintf( temp, "%x", static_cast<UI32>(value) );
 				break;
 			case 2:
 				ser1 = (UI08)(value>>24);

@@ -1520,39 +1520,39 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			return;
 		case 1: // Energy Vortex
 			Effects->PlaySound( s, 0x0216, true ); // EV
-			newChar = Npcs->CreateNPCxyz( "energyvortex-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "energyvortex-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 2: // Air Elemental
 			Effects->PlaySound( s, 0x0217, true ); // AE
-			newChar = Npcs->CreateNPCxyz( "airele-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "airele-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 3: //Earth Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "earthele-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "earthele-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 4: //Fire Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "firele-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "firele-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 5: //Water Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "waterele-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "waterele-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 6: //Blade Spirits
 			Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
-			newChar = Npcs->CreateNPCxyz( "bladespirit-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "bladespirit-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 7: // Daemon
 			Effects->PlaySound( s, 0x0216, true );
-			newChar = Npcs->CreateNPCxyz( "daemon-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "daemon-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 8: // Dupre The Hero
 			Effects->PlaySound( s, 0x0246, true );
-			newChar = Npcs->CreateNPCxyz( "dupre-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "dupre-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		case 9: // Black Night
 			Effects->PlaySound( s, 0x0216, true );
-			newChar = Npcs->CreateNPCxyz( "blacknight-summon",0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "blacknight-summon", 0, 0, 0, caster->WorldNumber() );
 			break;
 		default:
 			Effects->PlaySound( s, 0x0215, true );
@@ -1570,7 +1570,12 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	if( x == 0 )
 		newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
 	else
-		newChar->SetLocation( x, y, z );
+	{
+		if( Map->ValidSpawnLocation( x, y, z, caster->WorldNumber() ) )
+			newChar->SetLocation( x, y, z );
+		else
+			newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
+	}
 	
 	
 	newChar->SetSpDelay( 10 );
@@ -1594,7 +1599,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckBook( int circle, int spell, int i )
+//|     Class         :          CheckBook( int circle, int spell, CItem *i )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -1848,24 +1853,13 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          CheckFieldEffects2( CChar *c, char timecheck )
+//|     Class         :          CheckFieldEffects( CChar &mChar )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
 //|     Purpose       :          Check if character stands on a magic-field,
 //|                              and apply effects.
 //o------------------------------------------------------------------------
-
-//o------------------------------------------------------------------------
-// timecheck: 0: always executed no matter of the nextfieldspelltime value
-// timecheck: 1: only executed if the time is right for next fieldeffect check
-// we need this cause its called from npccheck and pc-check
-// npc-check already has its own timer, pc check not.
-// thus in npccheck its called with 0, in pc check with 1
-// we could add the fieldeffect check time the server.scp but I think this solution is better.
-// LB October 99
-//o---------------------------------------------------------------------------o
-
 void cMagic::CheckFieldEffects( CChar& mChar )
 {
 	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
