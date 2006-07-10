@@ -1,3 +1,8 @@
+7/10/2006 - giwo (0.98-3.7b [3.8 BETA])
+	Fixed an issue with CPFightOccurring packet which would cause the client to lockup.
+	Made use of the CPFightOccurring packet during combat.
+	Fixed an issue when a monster attacked a player who was not in combat UOX3 would not inform the client of a new target.
+
 7/09/2006 - giwo (0.98-3.7a [3.8 BETA])
 	Fixed an issue causing JS gumps to interfere with eachother.
 	Fixed an issue causing serial numbers in the istats gump to display improperly.

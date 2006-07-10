@@ -2401,9 +2401,11 @@ void CPFightOccurring::InternalReset( void )
 // Sent when fight occuring somewhere on the screen
 CPFightOccurring::CPFightOccurring()
 {
+	InternalReset();
 }
 CPFightOccurring::CPFightOccurring( CChar &attacker, CChar &defender )
 {
+	InternalReset();
 	Attacker( attacker );
 	Defender( defender );
 }

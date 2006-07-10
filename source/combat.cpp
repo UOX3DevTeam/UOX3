@@ -60,6 +60,12 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		cTarget->SetAttacker( cAttack );
 		cTarget->SetAttackFirst( false );
 		returningAttack = true;
+
+		if( cTarget->GetSocket() != NULL )
+		{
+			CPAttackOK tSend = (*cAttack);
+			cTarget->GetSocket()->Send( &tSend );
+		}
 	}
 
 	if( WillResultInCriminal( cAttack, cTarget ) ) //REPSYS
@@ -261,7 +267,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		// keep the target highlighted
 		CPAttackOK toSend = (*i);
 		s->Send( &toSend );
-		
+
 		if( i->GetNPCAiType() != AI_GUARD && !ValidateObject( i->GetTarg() ) )
 		{
 			i->SetAttacker( ourChar );
@@ -289,7 +295,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 
 	if( !StartAttack( cAttack, cTarget ) )
 		return;
-	
+
 	// If the target is an innocent, not a racial or guild ally/enemy, then flag them as criminal
 	// and, of course, call the guards ;>
 	if( WillResultInCriminal( cAttack, cTarget ) )
@@ -1539,6 +1545,14 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 	if( checkDist )
 	{
+		CPFightOccurring tSend( mChar, (*ourTarg) );
+		SOCKLIST nearbyChars = FindNearbyPlayers( &mChar );
+		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		{
+			if( (*cIter) != NULL )
+				(*cIter)->Send( &tSend );
+		}
+
 		if( mChar.IsNpc() )
 		{
 			if( mChar.GetNpcWander() != WT_FLEE )

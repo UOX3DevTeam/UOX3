@@ -1113,7 +1113,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			return JS_FALSE;
 		}
 		UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( JS_GetGlobalObject( cx ) ));
-		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two),  gumpID, INVALIDSERIAL );
+		SendVecsAsGump( mySock, *(myGump->one), *(myGump->two), gumpID, INVALIDSERIAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" ) 
 	{
