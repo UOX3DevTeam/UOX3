@@ -256,7 +256,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib js32d.lib"
+				AdditionalDependencies="ws2_32.lib js32.lib"
 				OutputFile="Debug/UOX3.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

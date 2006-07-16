@@ -1,3 +1,9 @@
+7/15/2006 - giwo (0.98-3.7c [3.8 BETA])
+	Added a flag to CChar::PushDirection() allowing us to push to the front or back of the pathToFollow list.
+	Changed CChar::mNPC::pathToFollow to a deque for more robust functionality.
+	Fixed an issue with the A* Pathfinding routine causing creatures to path in reverse.
+	Added some debugging information to A* Pathfinding (when running in Debug mode).
+
 7/10/2006 - giwo (0.98-3.7b [3.8 BETA])
 	Fixed an issue with CPFightOccurring packet which would cause the client to lockup.
 	Made use of the CPFightOccurring packet during combat.

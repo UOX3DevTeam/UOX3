@@ -1776,12 +1776,15 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 				continue;
 
 			SI16 checkY = curY + yOff;
+			UI32 locSer = (checkY + (checkX<<16));
 
 			newZ = calc_walk( mChar, checkX, checkY, curX, curY, curZ, false );
 			if( ILLEGAL_Z == newZ )
+			{
+				blockList[locSer] = true;
 				continue;
+			}
 
-			UI32 locSer = (checkY + (checkX<<16));
 			//if( blockList.find( locSer ) != blockList.end() )
 				//continue;
 
@@ -1800,7 +1803,7 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 						cornerBlocked = true;
 						blockList[check1Ser] = true;
 					}
-					if( calc_walk( mChar, checkX, curY, curX, curY, curZ, true ) == ILLEGAL_Z )
+					else if( calc_walk( mChar, checkX, curY, curX, curY, curZ, true ) == ILLEGAL_Z )
 					{
 						cornerBlocked = true;
 						blockList[check2Ser] = true;
@@ -1859,7 +1862,7 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	SI08 curZ			= mChar->GetZ();
 	UI08 dirToPush		= UNKNOWNDIR;
 	size_t loopCtr		= 0;
-	size_t maxSteps		= 10000;
+	size_t maxSteps		= 5000;
 
 	std::map< UI32, pfNode >	openList;
 	std::map< UI32, UI32 >		closedList;
@@ -1893,8 +1896,8 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					newDir |= 0x80;
 
 				if( dirToPush != UNKNOWNDIR && dirToPush != newDir )
-					mChar->PushDirection( newDir );	// NPC's need to "walk" twice when turning
-				mChar->PushDirection( newDir );
+					mChar->PushDirection( newDir, true );	// NPC's need to "walk" twice when turning
+				mChar->PushDirection( newDir, true );
 
 				dirToPush	= newDir;
 				targX		= curX;
@@ -1909,6 +1912,12 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			break;
 		++loopCtr;
 	}
+#if defined( UOX_DEBUG_MODE )
+	if( loopCtr == maxSteps )
+		Console.Warning( "AdvancedPathfinding: Unable to find a path, max steps limit reached.\n" );
+	else
+		Console.Print( "AdvancedPathfinding: %u loops to find path.\n", loopCtr );
+#endif
 }
 
 }

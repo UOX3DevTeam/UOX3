@@ -5127,17 +5127,20 @@ UI08 CChar::PopDirection( void )
 		if( !mNPC->pathToFollow.empty() )
 		{
 			rVal = mNPC->pathToFollow.front();
-			mNPC->pathToFollow.pop();
+			mNPC->pathToFollow.pop_front();
 		}
 	}
 	return rVal;
 }
-void CChar::PushDirection( UI08 newDir )
+void CChar::PushDirection( UI08 newDir, bool pushFront )
 {
 	if( !IsValidNPC() )
 		CreateNPC();
 
-	mNPC->pathToFollow.push( newDir );
+	if( pushFront )
+		mNPC->pathToFollow.push_front( newDir );
+	else
+		mNPC->pathToFollow.push_back( newDir );
 }
 
 //o---------------------------------------------------------------------------o

@@ -74,7 +74,7 @@ private:
 
 		SI08				wanderMode; // NPC Wander Mode
 		SI08				oldWanderMode; // Used for fleeing npcs
-		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
+		std::deque< UI08 >	pathToFollow;	// let's use a queue of directions to follow
 
 		SI16				spellAttack;
 		SI08				spellDelay;	// won't time out for more than 255 seconds!
@@ -620,7 +620,7 @@ public:
 	void		SetReattackAt( SI16 newValue );
 
 	UI08		PopDirection( void );
-	void		PushDirection( UI08 newDir );
+	void		PushDirection( UI08 newDir, bool pushFront = false );
 	bool		StillGotDirs( void ) const;
 	void		FlushPath( void );
 
