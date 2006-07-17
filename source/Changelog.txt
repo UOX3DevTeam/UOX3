@@ -1,3 +1,7 @@
+7/17/2006 - Xuri
+	Added new command (rndtile.js) that allows tiling random items of a specific hue at a specific height
+		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
+	
 7/15/2006 - giwo (0.98-3.7c [3.8 BETA])
 	Added a flag to CChar::PushDirection() allowing us to push to the front or back of the pathToFollow list.
 	Changed CChar::mNPC::pathToFollow to a deque for more robust functionality.

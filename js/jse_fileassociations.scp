@@ -242,6 +242,7 @@
 1048=commands/targeting/wipe.js
 1049=commands/targeting/showdetail.js
 1050=commands/targeting/makeshop.js
+1051=commands/targeting/rndtile.js
 }
 
 //-------------------------------------------
