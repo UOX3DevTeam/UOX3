@@ -97,8 +97,9 @@ private:
 		SI32		size;				// # of items.
 		SI16		lx, ly, hx, hy;
 		SI08		lz, hz;
-					MultiItemsIndex_st() : items( NULL ), size( -1 ), lx( SHRT_MAX ), ly( SHRT_MAX ), lz( SCHAR_MAX ), 
-						hx( SHRT_MIN ), hy( SHRT_MIN ), hz( SCHAR_MIN )
+					MultiItemsIndex_st() : items( NULL ), size( -1 ), 
+						lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ), 
+						lz( SCHAR_MAX ), hz( SCHAR_MIN )
 					{}
 		void		Include( SI16 x, SI16 y, SI08 z );	
 	};

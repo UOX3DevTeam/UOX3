@@ -40,6 +40,7 @@ const UI32 BIT_HIDEWHILEMOUNTED		= 22;
 const UI32 BIT_OVERLOADPACKETS		= 23;
 const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
 const UI32 BIT_ANIMALSGUARDED		= 25;
+const UI32 BIT_ADVANCEDPATHFIND		= 26;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -63,7 +64,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE|ADVANCEDPATHFINDING"
 );
 
 void CServerData::ResetDefaults( void )
@@ -128,6 +129,7 @@ void CServerData::ResetDefaults( void )
 	WeightPerStr( 5 );
 	SystemTimer( tSERVER_POLYMORPH, 90 );
 	ServerOverloadPackets( true );
+	AdvancedPathfinding( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 15 );
@@ -1022,6 +1024,23 @@ void CServerData::ArmorAffectManaRegen( bool newVal )
 	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool AdvancedPathfinding()
+//|	Date			-	7/16/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not we use the A* Pathfinding routine
+//o--------------------------------------------------------------------------o
+void CServerData::AdvancedPathfinding( bool newVal )
+{
+	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
+}
+bool CServerData::AdvancedPathfinding( void ) const
+{
+	return boolVals.test( BIT_ADVANCEDPATHFIND );
+}
+
 void CServerData::BackupRatio( SI16 value )
 {
 	backupRatio = value;
@@ -1445,6 +1464,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
+		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2176,6 +2196,9 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x08A7:	 // COMBATARCHERRANGE[0144]
 		CombatArcherRange( value.toShort() );
+		break;
+	case 0x08B9:	 // ADVANCEDPATHFINDING[0145]
+		AdvancedPathfinding( (value.toByte() == 1) );
 		break;
 	default:
 		break;

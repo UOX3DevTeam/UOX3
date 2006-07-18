@@ -1257,7 +1257,7 @@ void CGuildCollection::ToggleAbbreviation( CSocket *s )
 	}
 }
 
-void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry );
+void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry );
 
 void CGuildCollection::GumpChoice( CSocket *s )
 {

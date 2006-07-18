@@ -119,6 +119,7 @@ public:
 		flags.set( toSet, newVal );
 	}
 };
+
 class CTile : public CBaseTile
 {
 private:
@@ -136,7 +137,7 @@ private:
 	SI08 name[20];
 
 public:
-	CTile() : unknown1( 0 ), unknown2( 0 ), unknown3( 0 ), unknown4( 0 ), unknown5( 0 ), weight( 0 ), height( 0 ), layer( 0 ), hue( 0 ), animation( 0 )
+	CTile() : weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
 	{
 		name[0] = 0;
 	}
@@ -211,7 +212,7 @@ private:
 	SI08 top;
 
 public:
-	CTileUni() : baseZ( 0 ), top( 0 ), mType( 0 )
+	CTileUni() : baseZ( 0 ), mType( 0 ), top( 0 )
 	{
 	}
 

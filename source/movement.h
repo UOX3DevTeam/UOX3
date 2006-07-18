@@ -31,7 +31,7 @@ struct nodeFCost
 	nodeFCost() : xySer( 0 ), fCost( 0 )
 	{
 	}
-	nodeFCost( UI16 nFC, UI32 nS ) : fCost( nFC ), xySer( nS )
+	nodeFCost( UI16 nFC, UI32 nS ) : xySer( nS ), fCost( nFC )
 	{
 	}
 };
@@ -40,7 +40,7 @@ class cMovement
 {
 	// Function declarations
 public:
-	void	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false );
+	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false );
 	void	Walking( CSocket *mSock, CChar *s, UI08 dir, SI16 sequence );
 	void	CombatWalk( CChar *i );
 	void	NpcMovement( CChar& mChar );

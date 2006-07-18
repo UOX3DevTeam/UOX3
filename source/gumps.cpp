@@ -36,7 +36,7 @@ UString GetUptime( void );
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Open entry gump with specified dictionary message and max value length
 //o---------------------------------------------------------------------------o
-void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
+void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry )
 {
 	if( s == NULL )
 		return;
@@ -167,7 +167,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in tweak item gump
 //o---------------------------------------------------------------------------o
-void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
+void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
 	if( button <= 0 )
@@ -182,7 +182,7 @@ void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
 		case 17:	// Defense
 		case 18:	// Speed
 		case 19:	// Rank
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 4, 495 + button );	// allow 0x for hex value
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 4, 495 + button );	// allow 0x for hex value
 			break;
 		case 1:		// ID
 		case 4:		// Colour
@@ -201,7 +201,7 @@ void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
 		case 28:	// Buy Value
 		case 29:	// Sell Value
 		case 30:	// Carve
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 6, 495 + button );	// allow 0x for hex value
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 495 + button );	// allow 0x for hex value
 			break;
 		case 7:		// Moveable
 		case 24:	// POISON
@@ -210,18 +210,18 @@ void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
 		case 32:	// Dyable
 		case 33:	// Corpse
 		case 34:	// Visible
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 1, 495 + button );
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 1, 495 + button );
 			break;
 		case 11:	// Amount
 		case 12:	// Strength
 		case 25:	// Weight
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 7, 495 + button );	// allow 0x for hex value
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 495 + button );	// allow 0x for hex value
 			break;
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
 		case 36:	// Spawnobj/Spawnobjlist
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 50, 495 + button );
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;
 	}
@@ -234,7 +234,7 @@ void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in tweak char gump
 //o---------------------------------------------------------------------------o
-void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
+void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
 	if( button <= 0 )
@@ -247,7 +247,7 @@ void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
 	{
 		case 1:		// Name
 		case 2:		// Title
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 50, 1700 + button );
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 1700 + button );
 			break;
 		case 3:		// Body
 		case 4:		// Skin
@@ -261,7 +261,7 @@ void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
 		case 15:	// Mana
 		case 21:	// Kills
 		case 27:	// Carve
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 6, 1700 + button );	// allow 0x for hex
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 1700 + button );	// allow 0x for hex
 			break;
 		case 10:	// Strength
 		case 11:	// Dexterity
@@ -269,7 +269,7 @@ void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
 		case 19:	// Fame
 		case 20:	// Karma
 		case 26:	// Weight
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 7, 1700 + button );	// allow 0x for hex
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 1700 + button );	// allow 0x for hex
 			break;
 
 		case 16:	// Low Damage
@@ -277,12 +277,12 @@ void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
 		case 18:	// Defense
 		case 22:	// AI Type
 		case 24:	// Hunger
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 4, 1700 + button );	// allow 0x for hex
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 4, 1700 + button );	// allow 0x for hex
 			break;
 		case 23:	// NPC Wander
 		case 25:	// Poison
 		case 28:	// Visible
-			TextEntryGump( s, ser, static_cast<char>(type), static_cast<char>(button), 1, 1700 + button );
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 1, 1700 + button );
 			break;
 	}
 }
@@ -294,7 +294,7 @@ void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Handles button pressed in townstone gump
 //o---------------------------------------------------------------------------o
-void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
+void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	CChar *mChar = s->CurrcharObj();
 	CTownRegion *targetRegion;
@@ -324,7 +324,7 @@ void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
 			ourRegion->DisplayTownMenu( NULL, s );
 			break;
 		case 5:		s->target( 0, TARGET_VOTEFORMAYOR, 542 );								break;		// vote for town mayor
-		case 6:		TextEntryGump(  s, ser, static_cast<char>(type), static_cast<char>(button), 6, 543 );	break;		// gold donation
+		case 6:		TextEntryGump(  s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 543 );	break;		// gold donation
 		case 7:		ourRegion->ViewBudget( s );			break;		// View Budget
 		case 8:		ourRegion->SendAlliedTowns( s );		break;		// View allied towns
 		case 9:		ourRegion->SendEnemyTowns( s );		break;
@@ -1833,14 +1833,27 @@ bool CPIGumpInput::Handle( void )
 		case 1:		HandleTweakItemText( index );	break;
 		case 2:		HandleTweakCharText( index );	break;
 		case 3:		HandleTownstoneText( index );	break;
+		case 20:
+		{
+			CChar *mChar = calcCharObjFromSer( id );
+			if( ValidateObject( mChar ) )
+			{
+				CSocket *mSock = mChar->GetSocket();
+				if( mSock != NULL )
+				{
+					UI32 scriptNo = mSock->AddID();
+					if( scriptNo >= 0xFFFF )
+					{
+						cScript *toExecute = JSMapping->GetScript( (scriptNo - 0xFFFF) );
+						if( toExecute != NULL )
+							toExecute->HandleGumpInput( this );
+						mSock->AddID( 0 );
+					}
+				}
+			}
+		}
 		case 100:	GuildSys->GumpInput( this );			break;
 		default:
-			if( type >= 0xFFFF )
-			{
-				cScript *toExecute = JSMapping->GetScript( (type - 0xFFFF) );
-				if( toExecute != NULL )
-					toExecute->HandleGumpInput( this );
-			}
 			break;
 	}
 	return true;

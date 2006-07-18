@@ -1,7 +1,7 @@
 #ifndef __UOXLINUX_H__
 #define __UOXLINUX_H__
 
-#include <malloc.h>
+#include <cstdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>

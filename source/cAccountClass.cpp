@@ -397,7 +397,7 @@ UI16 cAccountClass::CreateAccountSystem(void)
 		}
 		else if( l == "LOCK" )
 		{
-			if( nLockCount >= 0 && nLockCount <= 5 )
+			if( nLockCount <= 5 )
 			{
 				if( r.toLong() > 0 )
 					actb.wFlags.set( (AB_FLAGS_CHARACTER1 + nLockCount), true );
@@ -1487,7 +1487,7 @@ std::string cAccountClass::GetPath(void)
 bool cAccountClass::DelCharacter(UI16 wAccountID, UI08 nSlot)
 {
 	// Do the simple here, save us some work
-	if( nSlot < 0 || nSlot > CHARACTERCOUNT )
+	if( nSlot > CHARACTERCOUNT )
 		return false;
 	// ok were going to need to get the respective blocked from the maps
 	MAPUSERNAMEID_ITERATOR I=m_mapUsernameIDMap.find(wAccountID);

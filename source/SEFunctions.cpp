@@ -944,7 +944,7 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	RACEID race		= (RACEID)JSVAL_TO_INT( argv[0] );
 	weathID toCheck = (weathID)JSVAL_TO_INT( argv[1] );
 	CRace *tRace	= Races->Race( race );
-	if( tRace == NULL || toCheck < 0 || toCheck >= WEATHNUM )
+	if( tRace == NULL || toCheck >= WEATHNUM )
 	{
 		return JS_FALSE;
 	}

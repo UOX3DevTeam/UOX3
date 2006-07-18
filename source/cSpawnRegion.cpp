@@ -604,9 +604,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 	if( !rvalue && !waterCreature && !validLandPos.empty() && landPosSize > 0)
 	{
 		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
-		x = currLoc.x;
-		y = currLoc.y;
-		z = currLoc.z;
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
 		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
@@ -625,9 +625,9 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 	else if( !rvalue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
 	{
 		currLoc = validWaterPos[RandomNum( static_cast<size_t>(0), (waterPosSize-1) )];
-		x = currLoc.x;
-		y = currLoc.y;
-		z = currLoc.z;
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
 		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
@@ -659,7 +659,6 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 	SI08 z2 = ILLEGAL_Z;
 	std::map<UI32, SI08>::const_iterator checkValid;
 	const size_t landPosSize = validLandPos.size();
-	const size_t waterPosSize = validWaterPos.size();
 
 	for( UI08 a = 0; a < 100; ++a ) 
 	{
@@ -704,9 +703,9 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 	if( !rvalue && !validLandPos.empty() && landPosSize > 0)
 	{
 		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
-		x = currLoc.x;
-		y = currLoc.y;
-		z = currLoc.z;
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
 		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );

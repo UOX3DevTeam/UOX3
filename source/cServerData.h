@@ -505,6 +505,9 @@ public:
 	void		ArmorAffectManaRegen( bool newVal );
 	bool		ArmorAffectManaRegen( void ) const;
 
+	void		AdvancedPathfinding( bool value );
+	bool		AdvancedPathfinding( void ) const;
+
 	void		dumpLookup( int lookupid );
 	void		dumpPaths( void );
 

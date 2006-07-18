@@ -1335,8 +1335,10 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 		{
 			if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 			{
-				//AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), ( kChar->GetRunning() > 0 ) );
-				PathFind( &mChar, kChar->GetX(), kChar->GetY(), ( kChar->GetRunning() > 0 ) );
+				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY() );
+				else
+					PathFind( &mChar, kChar->GetX(), kChar->GetY() );
 				j = mChar.PopDirection();
 				Walking( NULL, &mChar, j, 256 );
 				shouldRun = (( j&0x80 ) != 0);
@@ -1393,8 +1395,10 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			myy += (SI16)( yfactor * mydist );
 
 			// now, got myx, myy... lets go.
-			//AdvancedPathfinding( &mChar, myx, myy );
-			PathFind( &mChar, myx, myy );
+			if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+				AdvancedPathfinding( &mChar, myx, myy );
+			else
+				PathFind( &mChar, myx, myy );
 			j			= mChar.PopDirection();
 			shouldRun	= (( j&0x80 ) != 0);
 			Walking( NULL, &mChar, j, 256 );
@@ -1475,13 +1479,20 @@ void cMovement::NpcMovement( CChar& mChar )
 				}
 				else
                 {
-					//if( !mChar.StillGotDirs() )
-						//AdvancedPathfinding( &mChar, l->GetX(), l->GetY() );
-					PathFind( &mChar, l->GetX(), l->GetY() );
+					if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+					{
+						if( !mChar.StillGotDirs() )
+						{
+							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY() ) )
+								Combat->InvalidateAttacker( &mChar );
+						}
+					}
+					else
+						PathFind( &mChar, l->GetX(), l->GetY() );
 					const UI08 j	= mChar.PopDirection();
 					shouldRun		= (( j&0x80 ) != 0);
 					Walking( NULL, &mChar, j, 256 );
-                }	
+				}
 	        }
 			else
 				mChar.FlushPath();
@@ -1855,14 +1866,14 @@ bool cMovement::PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI
 	return false;
 }
 
-void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun )
+bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun )
 {
 	UI16 curX			= mChar->GetX();
 	UI16 curY			= mChar->GetY();
 	SI08 curZ			= mChar->GetZ();
 	UI08 dirToPush		= UNKNOWNDIR;
 	size_t loopCtr		= 0;
-	size_t maxSteps		= 5000;
+	size_t maxSteps		= 1000;
 
 	std::map< UI32, pfNode >	openList;
 	std::map< UI32, UI32 >		closedList;
@@ -1918,6 +1929,9 @@ void cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	else
 		Console.Print( "AdvancedPathfinding: %u loops to find path.\n", loopCtr );
 #endif
+	if( loopCtr == maxSteps )
+		return false;
+	return true;
 }
 
 }

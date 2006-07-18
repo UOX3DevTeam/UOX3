@@ -776,7 +776,6 @@ void CMapHandler::Load( void )
 		runningCount = 1;
 
 	int runningDone			= 0;
-	const int onePercent	= ((float)runningCount) / 100.0f;
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down

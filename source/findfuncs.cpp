@@ -278,7 +278,7 @@ template< class T >
 inline T hypotenuse( T sideA, T sideB )
 {
 	T sumSquares	= (sideA * sideA) + (sideB * sideB);
-	T retVal		= sqrt( (R64)sumSquares );
+	T retVal		= static_cast<T>(sqrt( (R64)sumSquares ));
 	return retVal;
 }
 

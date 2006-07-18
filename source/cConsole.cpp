@@ -773,7 +773,7 @@ int CConsole::cl_getch( void )
 	int s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s < 0 )
 	{
-		Error( 1, "Error scanning key press" );
+		Error( "%c", "Error scanning key press" );
 		messageLoop << MSG_SHUTDOWN;
 	}
 	if( s > 0 )

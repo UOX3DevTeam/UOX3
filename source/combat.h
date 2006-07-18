@@ -29,8 +29,7 @@ class CHandleCombat
 private:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
 	void	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
-	
-	void	InvalidateAttacker( CChar *mChar );
+
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
 	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill );
@@ -46,6 +45,8 @@ private:
 	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE);
 
 public:
+	void	InvalidateAttacker( CChar *mChar );
+
 	R32		GetCombatTimeout( CChar *mChar );
 	void	PlayerAttack( CSocket *s );
 	void	AttackTarget( CChar *mChar, CChar *ourTarg );

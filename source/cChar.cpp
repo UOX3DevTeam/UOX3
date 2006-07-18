@@ -913,7 +913,7 @@ void CChar::SetPeace( UI32 newValue )
 			SetWar( false );
 		SetTarg( NULL );
 		SetAttacker( NULL );
-		SetAttackFirst( NULL );
+		SetAttackFirst( false );
 		SetTimer( tCHAR_PEACETIMER, BuildTimeValue( newValue ) );
 	}
 	else
@@ -1593,7 +1593,7 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 	{
 		if( gComp == GR_ALLY || gComp == GR_SAME || rComp > 0 )
 			retVal = FC_FRIEND;
-		else if( gComp == GR_WAR || race < 0 )
+		else if( gComp == GR_WAR || rComp < 0 )
 			retVal = FC_ENEMY;
 	}
 	return retVal;

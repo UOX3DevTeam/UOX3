@@ -1,3 +1,17 @@
+7/18/2006 - giwo (0.98-3.7d [3.8 BETA])
+	Fixed a possible issue with TextEntry in JS gumps.
+	Fixed an issue with the following JS events:
+		OnSnooped
+		OnSpellGain
+		OnSpellLoss
+		OnCommand
+		OnPacketReceive
+	Fixed several MingW32 compiler warnings.
+	Fixed a Flagging issue with Racial enemies.
+	Added uox.ini flag to disable/enable the A* Pathfinding routine: ADVANCEDPATHFINDING=0/1
+	Fixed an issue causing errors when compiling under *nix.
+	Fixed an issue causing monsters to constantly attempt to pathfind to a target they can't reach.
+
 7/17/2006 - Xuri
 	Added new command (rndtile.js) that allows tiling random items of a specific hue at a specific height
 		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)

@@ -4388,7 +4388,10 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
 	cMove->SetNpcWander( WT_PATHFIND );
-	Movement->PathFind( cMove, gx, gy, false, maxSteps );
+	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+		Movement->AdvancedPathfinding( cMove, gx, gy, false );
+	else
+		Movement->PathFind( cMove, gx, gy, false, maxSteps );
 	return JS_TRUE;
 }
 
@@ -4460,7 +4463,11 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 #endif
 	cMove->SetOldNpcWander( cMove->GetNpcWander() );
 	cMove->SetNpcWander( WT_PATHFIND );
-	Movement->PathFind( cMove, gx, gy, true, maxSteps );
+
+	if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+		Movement->AdvancedPathfinding( cMove, gx, gy, true );
+	else
+		Movement->PathFind( cMove, gx, gy, true, maxSteps );
 	return JS_TRUE;
 }
 
@@ -4522,7 +4529,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
-		cMove->SetTimer( (cC_TID)encaps.toInt(), timerVal );
+		cMove->SetTimer( (cC_TID)encaps.toInt(), static_cast<TIMERVAL>(timerVal) );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -4533,7 +4540,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
-		mSock->SetTimer( (cS_TID)encaps.toInt(), timerVal );
+		mSock->SetTimer( (cS_TID)encaps.toInt(), static_cast<TIMERVAL>(timerVal) );
 	}
 
 	return JS_TRUE;

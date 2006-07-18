@@ -1429,8 +1429,8 @@ bool cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, snooped, runTime );
 	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, snooper, runTime );
 
-	params[0] = OBJECT_TO_JSVAL( snooped );
-	params[1] = OBJECT_TO_JSVAL( snooper );
+	params[0] = OBJECT_TO_JSVAL( thiefObj );
+	params[1] = OBJECT_TO_JSVAL( victimObj );
 	params[2] = BOOLEAN_TO_JSVAL( success );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnooped", 3, params, &rval );
 	if( retVal == JS_FALSE )
@@ -1796,7 +1796,7 @@ bool cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 
 	jsval params[2], rval;
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
-	params[0] = OBJECT_TO_JSVAL( book );
+	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = INT_TO_JSVAL( spellNum );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellGain", 2, params, &rval );
 	if( retVal == JS_FALSE )
@@ -1813,7 +1813,7 @@ bool cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 
 	jsval params[2], rval;
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, book, runTime );
-	params[0] = OBJECT_TO_JSVAL( book );
+	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = INT_TO_JSVAL( spellNum );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellLoss", 2, params, &rval );
 	if( retVal == JS_FALSE )
@@ -1911,7 +1911,7 @@ bool cScript::OnCommand( CSocket *mSock )
 
 	jsval params[1], rval; 	
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );	
-	params[0]		= OBJECT_TO_JSVAL( mSock ); 	
+	params[0]		= OBJECT_TO_JSVAL( myObj ); 	
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 1, params, &rval ); 	
 	if( retVal == JS_FALSE ) 		
 		SetEventExists( seOnCommand, false );
@@ -2051,7 +2051,7 @@ bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 
 	jsval rval, params[3];
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
-	params[0]		= OBJECT_TO_JSVAL( mSock );
+	params[0]		= OBJECT_TO_JSVAL( myObj );
 	params[1]		= INT_TO_JSVAL( (UI08)(packetNum%256) );
 	params[2]		= INT_TO_JSVAL( (UI08)(packetNum>>8) );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPacketReceive", 3, params, &rval );
