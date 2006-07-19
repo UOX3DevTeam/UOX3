@@ -1301,6 +1301,7 @@ bool cScript::OnResurrect( CChar *pAlive )
 	if( !ExistAndVerify( seOnResurrect, "onResurrect" ) )
 		return false;
 
+	bool funcRetVal;
 	jsval params[1], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pAlive, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
@@ -1308,7 +1309,22 @@ bool cScript::OnResurrect( CChar *pAlive )
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnResurrect, false );
 
-	return ( retVal == JS_TRUE );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = false;		// we do want hard code to execute
+			else
+				funcRetVal = true;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = false;	// default to hard code
+	}
+	else
+		funcRetVal = false;	// default to hard code
+
+	return funcRetVal;
 }
 
 bool cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )

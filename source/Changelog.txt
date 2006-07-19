@@ -1,3 +1,8 @@
+7/19/2006 - Xuri
+	Made onResurrect trigger before a resurrection instead of after, added option to override hard code by returning false
+	Updated JavaScript Documentation to 0.44, and added missing commands to command list
+	Added "ARMOUR" as an alternate spelling used along with the 'SET command
+
 7/18/2006 - giwo (0.98-3.7d [3.8 BETA])
 	Fixed a possible issue with TextEntry in JS gumps.
 	Fixed an issue with the following JS events:
@@ -1151,10 +1156,16 @@
 16th February, 2006 - Maarc (0.98-3.3i [3.4 BETA])
 	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people from compiling)
 	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced
-	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage hasn't occurred in the past 5 minutes, they get taken off the list
-	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, because in future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a sword, the sword's kill count increases)
-	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking.  Future progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat
-	Broke out packet 0xBF into a CPI class of it's own.  Rather than making it a huge monolithic class, it internally hands it off to other packet handling classes
+	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing 
+	 and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage
+	 hasn't occurred in the past 5 minutes, they get taken off the list
+	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, because in 
+	 future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a sword, the 
+	 sword's kill count increases)
+	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking.  Future 
+	 progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat
+	Broke out packet 0xBF into a CPI class of it's own.  Rather than making it a huge monolithic class, it internally hands it 
+	 off to other packet handling classes
 
 
 2/15/2006 - giwo (0.98-3.3h [3.4 BETA])
@@ -2123,7 +2134,8 @@ January 15 2005 - Maarc
 	Fixed some logistics with the new doors, they all should work now, as long as they are set to type 12.
 
 12/30/2004 - Xuri
-	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
+	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and 
+	 DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
 		
 12/29/2004 - giwo
 	Removed CChar::dispz as it served no purpose.
@@ -2136,7 +2148,9 @@ January 15 2005 - Maarc
 
 12/27/2004 - evilded
 	Added code for until now unsupported doors, including new SE doors (experimental!).
-	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if they are not, and there are multiple servers listed that do not share the same listening port 2593.
+	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port 
+	 listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if 
+	 they are not, and there are multiple servers listed that do not share the same listening port 2593.
 
 11/24/2004 - giwo
 	Removed unnecesarry Constructors/Destructors and did some minor updates.

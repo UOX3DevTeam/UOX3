@@ -376,6 +376,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		ourChar.visible = nVal;
 		okMsg( socket );
 		break;
+	case "ARMOUR":
 	case "ARMOR":
 		ourChar.Resist( 1, nVal );
 		okMsg( socket );

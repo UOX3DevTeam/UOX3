@@ -896,6 +896,14 @@ void NpcResurrectTarget( CChar *i )
 	{
 		if( i->IsDead() )
 		{
+			UI16 charTrig		= i->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( charTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnResurrect( i ) == 1 )	// if it exists and we don't want hard code, return
+					return;
+			}
+
 			Fame( i, 0 );
 			Effects->PlaySound( i, 0x0214 );
 			i->SetID( i->GetOrgID() );
@@ -935,10 +943,10 @@ void NpcResurrectTarget( CChar *i )
 					}
 				}
 			}
-			UI16 targTrig		= i->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
-				toExecute->OnResurrect( i );
+			//UI16 targTrig		= i->GetScriptTrigger();
+			//cScript *toExecute	= JSMapping->GetScript( targTrig );
+			//if( toExecute != NULL )
+			//	toExecute->OnResurrect( i );
 		}
 		else
 			mSock->sysmessage( 1080 );

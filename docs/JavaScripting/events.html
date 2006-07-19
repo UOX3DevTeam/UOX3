@@ -16,22 +16,22 @@
 <tr><th colspan=2 bgcolor="maroon"><a name="InRangeEvent">inRange</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function inRange( pCharacter, objInRange, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>objInRange comes into visible range of pCharacter.  pCharacter's script is activated
-<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objInRange is a character<br>objType == 1 indicates objInRange is an item<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objInRange is a character<br>objType == 1 indicates objInRange is an item
+
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Useful for when you want to do something when a certain thing comes into range.  You could yell out guards when a murderer comes into range, for instance, if you're in a guarded region.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function inRange( pCharacter, objInRange, objType )
 {
 	if( objType == 1 )	// An item came into range
 	{
-		DoStaticEffect( pCharacter, 0x376A, 9, 0, 0 );	// Make some sparkles!
-		var iID;
-		iID = GetID( objInRange, objType );	// What's the ID of the item?
-		if( iID == 0x1416 )			// Ooh, it's a purty piece of armour
+		pCharacter.DoStaticEffect( 0x376A, 9, 0, );	// Make some sparkles!
+		if( objInRange.id == 0x1416 )	// Ooh, it's a purty piece of armour
 		{
-			EmoteMessage( pCharacter, "*ooooooooooooo*" );
+			pCharacter.EmoteMessage( &quot;*ooooooooooooo*" );
 		}
 	}	
 }
-</pre></table>
+</pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnAISliverEvent">onAISliver</a>
@@ -52,11 +52,13 @@ tChar.DoAction( 111 );
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnAttackEvent">onAttack</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onAttack( pAttacker, pDefender )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender
-<tr><td valign="top" width="25%"><b>Notes</b><td>pAttacker's script is activated, and pDefender's onDefense event is fired<br><b><big>CURRENTLY BROKEN!!!</big></b>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b>
+<td>When pAttacker attacks pDefender (in each "round" of combat)
+<tr><td valign="top" width="25%"><b>Notes</b><td>pAttacker's script is activated, and pDefender's onDefense event is fired<b><big>!</big></b>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onAttack( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( &quot;Who lives in that castle?&quot; );<br>	pDefender.TextMessage( &quot;Help! Help! I'm being repressed!&quot; );<br>}
+</pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnBuyEvent">onBuy</a>
@@ -207,7 +209,8 @@ function onDamage( damaged, attacker, damageValue )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeathEvent">onDeath</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the player or NPC pDead dies
-<tr><td valign="top" width="25%"><b>Notes</b><td><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Notes</b>
+  <td>  
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Custom death sequence.  Can do things like an explosion anim and what not here, for impact's sake.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onDeath( pDead )
@@ -215,6 +218,23 @@ function onDeath( pDead )
 	pDead.Teleport( 1000, 1000, 0 );
 }
 </pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDeathBlowEvent">onDeathBlow</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeathBlow( pKilled, pKiller );
+</pre>
+<tr><td valign="top" width="25%"><b>When triggered</b>
+<td>When a killing blow has been made 
+<tr><td valign="top" width="25%"><b>Notes</b>  
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Custom reactions after a killing blow has been made 
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDeathBlow( pKilled, pKiller )
+{
+	pKiller.SysMessage( &quot;You just killed &quot; + pKilled.name + &quot;!&quot; );
+	if( pKilled.socket )
+		pKilled.SysMessage( pKiller.name + " just killed you!" );
+}</pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDecayEvent">onDecay</a>
@@ -225,18 +245,20 @@ function onDeath( pDead )
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onDecay( iDecaying )
 {
-	onDecay.StaticEffect( 0x376A, 9, 6 );
+	iDecaying.StaticEffect( 0x376A, 9, 6 );
 }
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDefenseEvent">onDefense</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDefense( pAttacker, pDefender )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender
-<tr><td valign="top" width="25%"><b>Notes</b><td>pDefender's script fires, pAttacker's onAttack event is also fired<br><b><big>CURRENTLY BROKEN!!!</big></b>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pAttacker attacks pDefender (in each "round" of combat)
+<tr><td valign="top" width="25%"><b>Notes</b><td>pDefender's script fires, pAttacker's onAttack event is also fired
+
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Flesh out the attacking code.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDefense( pAttacker, pDefender )<br>{<br>	pAttacker.TextMessage( &quot;Who lives in that castle?&quot; );<br>	pDefender.TextMessage( &quot;Help! Help! I'm being repressed!&quot; );<br>}
+</pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDeleteEvent">onDelete</a>
@@ -493,15 +515,26 @@ function onLeaving( iLeft, objLeaving, objType )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnResurrectEvent">onResurrect</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onRessurect( pAlive );
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player pAlive is resurrected.
+</pre><tr><td valign="top" width="25%"><b>When triggered</b>
+<td>When a player pAlive is being resurrected
 <tr><td valign="top" width="25%"><b>Notes</b><td>Only applies to PCs<br>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>Control over what happens when a person comes alive once more
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Control over what happens when a person comes to life once more
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onResurrect( pAlive )
 {
-	pAlive.Teleport( 1000, 1000, 0 );
-}
-<b><big>CURRENTLY BROKEN!!!</big></b
-</pre></table>
+	var ResAmount = pAlive.GetTag( "ResAmount" );
+	if( ResAmount && ResAmount < 5 )
+	{
+		pAlive.SysMessage( "You still have some spirit left... have a good one!" );
+		return true;
+	}
+	else
+	{
+		pAlive.SysMessage( "You've resurrected too many times already! Have fun in the gray world!" );
+		return false;
+	}
+}<b></b></pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="onScrollCast">onScrollCast</a>
@@ -619,10 +652,11 @@ function onSkill( objUsing, skillUsed, objType )
 <tr><td valign="top" width="25%"><b>Notes</b><td>If overridden, internal behaviour not executed.  IE no calling for guards, no messages sent to snooper or snooped. bSuccess is true if successfully snooped, or false if not
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow for behavioural change on snooping behaviour.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onSnooped( pSnooped, pSnooping, bSuccess )
-<br>{
-<br>	TextMessage( pSnooped, "Oi! You! Stop snooping!" );
-<br>}
-</pre></table>
+{
+	pSnooped.TextMessage( &quot;Oi! You! Stop snooping!" );
+}
+</pre>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSpeechEvent">onSpeech</a>
@@ -788,14 +822,19 @@ function onSteal( thief, objStolen )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSwingEvent">onSwing</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSwing( iSwung, pSwinging, pSwingAt )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSwinging swings iSwung at pSwingAt.
-<tr><td valign="top" width="25%"><b>Notes</b><td>iSwung's script is activated<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Notes</b><td>iSwung's script is activated
+
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onSwing( iSwung, pSwinging, pSwingAt )
 {
 	pSwinging.TextMessage("Have at thee, knave!");
 }
-</pre></table>
+</pre>
+<tr>
+  <td valign="top">
+  <td>
+</table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSystemSliceEvent">onSystemSlice</a>

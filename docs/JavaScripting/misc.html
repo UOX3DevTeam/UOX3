@@ -183,6 +183,37 @@ function onIterate( toCheck )
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>WorldDungeonLevel( 1 );
 </pre></table>
 
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ValidateObject">ValidateObject</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool ValidateObject( object );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns true if argument is validated as an object
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+if( !ValidateObject( pUser ) )
+	return;
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ReloadJSFile">ReloadJSFile</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void ReloadJSFile( scriptID );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Reloads a specified JavaScript file depending on scriptID from jse_fileassociations.scp
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function CommandRegistration()
+{
+	RegisterCommand( "reloadjsfile", 3, true ); //Reload JavaScript file
+}
+
+function command_RELOADJSFILE( socket, cmdString )
+{
+	var scriptID = parseInt( cmdString );
+	socket.SysMessage( "Attempting Reload of JavaScript (ScriptID " + cmdString + ")" );
+	ReloadJSFile( scriptID );
+}</pre>
+</table>
+
 <center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
 </center>

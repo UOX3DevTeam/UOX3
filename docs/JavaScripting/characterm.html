@@ -16,9 +16,9 @@
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan="3" class="method"><a name="TextMessage">TextMessage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void TextMessage( message );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the Char to say a message.
-<tr><td class="property">Example of Usage	<td class="value"><pre>myChar.TextMessage( "Hello world!" );</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>void TextMessage( message );<br>void TextMessage( message, allHear, txtHue );</pre>
+<tr><td class="property">Purpose		<td class="value">Causes the Char to say a message.<br>The extended version of TextMessage has two optional arguments:<br> allHear (broadcast true/false)<br>txtHue (color of the text sent to the client).
+<tr><td class="property">Example of Usage	<td class="value"><pre>myChar.TextMessage( "Hello world!" );<br>myChar.TextMessage( "Public, ice-colored message sent to everyone as if I said it.", true, 0x0480 );<br>myChar.TextMessage( "Private, ice-colored message just for me!", false, 0x0480 );</pre>
 </table>
 
 <p>&nbsp;</p>
@@ -468,6 +468,28 @@ function onUse( pUser, iUsed )
 <tr><td class="property">Example of Usage	<td class="value"><pre>Get the defense value of the head armor against Physical damage and damage the armor:<br>value = mChar.Defense( 3, 1, true);
 </pre></table>
 
+<p>&nbsp;</p>
+<table class="method">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="Resist" id="Resist">Resist</a>
+<tr><td class="property">Prototype		<td class="value"><pre>int Resist( resistanceType );
+void Resist( resistanceType, amount );</pre>
+<tr><td class="property">Purpose		
+<td class="value">Used to get/set the resistance type and amount of the object 
+<tr><td class="property">Parameters		
+<td class="value"><p>Current resistanceTypes are:<br>
+  1 - Armor<br>
+  2 - Light<br>
+  3 - Water<br>
+  4 - Cold<br>
+  5 - Heat<br>
+  6 - Energy<br>
+  7 - Poison
+  </p>
+<tr><td class="property">Example of Usage	<td class="value"><pre>pUser.Resist( 1, 20 );
+//or...
+var coldResist = pUser.Resist( 4 );</pre>
+</table>
 
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||

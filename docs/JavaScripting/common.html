@@ -90,7 +90,7 @@ function onUse( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mObj.DistanceTo( ourObj );
 </pre></table>
 
-{p}&nbsp;</p><table border="1" width="100%" cellspacing="0">
+{p}&nbsp;<p></p><table border="1" width="100%" cellspacing="0">
   <tr>
     <th colspan=3 bgcolor="maroon"><a name="SE_GetTag">GetTag</a> 
   <tr>
@@ -173,8 +173,8 @@ function onUse( pUser, iUsed )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Resist">Resist</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Resist( type, value );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Gets and sets the resistance values of a char or item.<br>Types are:<ol><li>Armor</li><li>Light</li><li>Water</li><li>Cold</li><li>Heat</li><li>Energy</li><li>Poison</li></ol>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Resist( type );<br>void Resist( type, value );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Gets and sets the resistance values of a char or item.<br>Types are:<ol><li>Armor</li><li>Light</li><li>Water</li><li>Cold</li><li>Heat</li><li>Energy</li><li>Poison</li></ol>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Set the Armor value of an item to 25:<br>mItem.Resist( 1, 25 );<br>&nbsp;<br>Get the armor value of an item:<br>value = mItem.Resist( 1 );
 </pre></table>
 
