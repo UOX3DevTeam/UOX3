@@ -384,7 +384,7 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 			if( !cwmWorldState->creatures[cCreated->GetID()].IsWater() )
 				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber );
 			else if( cwmWorldState->creatures[cCreated->GetID()].IsWater() || ( !foundSpot && cwmWorldState->creatures[cCreated->GetID()].IsAmphibian() ) )
-				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, false, true );
+				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, false );
 		}
 	}
 

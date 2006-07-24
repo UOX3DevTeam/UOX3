@@ -161,7 +161,7 @@ public:
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
-	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = true, bool waterWalk = false );
+	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = true );
 	bool			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater );
 	bool			MapExists( UI08 worldNumber );
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );

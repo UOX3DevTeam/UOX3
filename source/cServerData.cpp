@@ -56,15 +56,15 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
 	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
 	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWOFFLINEPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
-	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|SPEEDCHECKITEMS|SPEEDCHECKBOATS|SPEEDCHECKNPCAI|"
-	"SPEEDCHECKSPAWNREGIONS|MSGBOARDPOSTINGLEVEL|MSGBOARDREMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|LIGHTMOON1|LIGHTMOON2|"
-	"LIGHTDUNGEONLEVEL|LIGHTCURRENTLEVEL|LIGHTBRIGHTLEVEL|TRACKINGBASERANGE|TRACKINGBASETIMER|TRACKINGMAXTARGETS|TRACKINGMSGREDISPLAYTIME|"
-	"REPSYSMURDERDECAYTIMER|REPSYSMAXKILLS|REPSYSCRIMINALTIMER|RESOURCEMINECHECK|RESOURCEOREPERAREA|RESOURCEORERESPAWNTIMER|RESOURCEORERESPAWNAREA|RESOURCELOGSPERAREA|RESOURCELOGSRESPAWNTIMER|RESOURCELOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
-	"COMBATMAXRANGE|COMBATSPELLMAXRANGE|COMBATDISPLAYHITMSG|COMBATMONSTERSVSANIMALS|"
-	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
+	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|CHECKITEMS|CHECKBOATS|CHECKNPCAI|"
+	"CHECKSPAWNREGIONS|POSTINGLEVEL|REMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|MOON1|MOON2|"
+	"DUNGEONLEVEL|CURRENTLEVEL|BRIGHTLEVEL|BASERANGE|BASETIMER|MAXTARGETS|MSGREDISPLAYTIME|"
+	"MURDERDECAYTIMER|MAXKILLS|CRIMINALTIMER|MINECHECK|OREPERAREA|ORERESPAWNTIMER|ORERESPAWNAREA|LOGSPERAREA|LOGSRESPAWNTIMER|LOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
+	"MAXRANGE|SPELLMAXRANGE|DISPLAYHITMSG|MONSTERSVSANIMALS|"
+	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|COMBATARCHERRANGE|ADVANCEDPATHFINDING"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING"
 );
 
 void CServerData::ResetDefaults( void )
@@ -1468,16 +1468,16 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
-		ofsOutput << "SPEEDCHECKITEMS=" << CheckItemsSpeed() << std::endl;
-		ofsOutput << "SPEEDCHECKBOATS=" << CheckBoatSpeed() << std::endl;
-		ofsOutput << "SPEEDCHECKNPCAI=" << CheckNpcAISpeed() << std::endl;
-		ofsOutput << "SPEEDCHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << std::endl;
+		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << std::endl;
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << std::endl;
+		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << std::endl;
+		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << std::endl;
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCSpeed() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[message boards]" << std::endl << "{" << std::endl;
-		ofsOutput << "MSGBOARDPOSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << std::endl;
-		ofsOutput << "MSGBOARDREMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << std::endl;
+		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << std::endl;
+		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[escorts]" << std::endl << "{" << std::endl;
@@ -1488,12 +1488,12 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[worldlight]" << std::endl << "{" << std::endl;
-		ofsOutput << "LIGHTMOON1=" << ServerMoon( 0 ) << std::endl;
-		ofsOutput << "LIGHTMOON2=" << ServerMoon( 1 ) << std::endl;
-		ofsOutput << "LIGHTDUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << std::endl;
-		ofsOutput << "LIGHTCURRENTLEVEL=" << static_cast<UI16>(WorldLightCurrentLevel()) << std::endl;
-		ofsOutput << "LIGHTBRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << std::endl;
-		ofsOutput << "LIGHTDARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << std::endl;
+		ofsOutput << "MOON1=" << ServerMoon( 0 ) << std::endl;
+		ofsOutput << "MOON2=" << ServerMoon( 1 ) << std::endl;
+		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << std::endl;
+		ofsOutput << "CURRENTLEVEL=" << static_cast<UI16>(WorldLightCurrentLevel()) << std::endl;
+		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << std::endl;
+		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << std::endl;
 		ofsOutput << "DAY=" << ServerTimeDay() << std::endl;
 		ofsOutput << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << std::endl;
 		ofsOutput << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << std::endl;
@@ -1502,26 +1502,26 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[tracking]" << std::endl << "{" << std::endl;
-		ofsOutput << "TRACKINGBASERANGE=" << TrackingBaseRange() << std::endl;
-		ofsOutput << "TRACKINGBASETIMER=" << TrackingBaseTimer() << std::endl;
-		ofsOutput << "TRACKINGMAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << std::endl;
-		ofsOutput << "TRACKINGMSGREDISPLAYTIME=" << TrackingRedisplayTime() << std::endl;
+		ofsOutput << "BASERANGE=" << TrackingBaseRange() << std::endl;
+		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << std::endl;
+		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << std::endl;
+		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[reputation]" << std::endl << "{" << std::endl;
-		ofsOutput << "REPSYSMURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << std::endl;
-		ofsOutput << "REPSYSMAXKILLS=" << RepMaxKills() << std::endl;
-		ofsOutput << "REPSYSCRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << std::endl;
+		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << std::endl;
+		ofsOutput << "MAXKILLS=" << RepMaxKills() << std::endl;
+		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[resources]" << std::endl << "{" << std::endl;
-		ofsOutput << "RESOURCEMINECHECK=" << static_cast<UI16>(MineCheck()) << std::endl;
-		ofsOutput << "RESOURCEOREPERAREA=" << ResOre() << std::endl;
-		ofsOutput << "RESOURCEORERESPAWNTIMER=" << ResOreTime() << std::endl;
-		ofsOutput << "RESOURCEORERESPAWNAREA=" << ResOreArea() << std::endl;
-		ofsOutput << "RESOURCELOGSPERAREA=" << ResLogs() << std::endl;
-		ofsOutput << "RESOURCELOGSRESPAWNTIMER=" << ResLogTime() << std::endl;
-		ofsOutput << "RESPAWNLOGSRESPAWNAREA=" << ResLogArea() << std::endl;
+		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << std::endl;
+		ofsOutput << "OREPERAREA=" << ResOre() << std::endl;
+		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << std::endl;
+		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << std::endl;
+		ofsOutput << "LOGSPERAREA=" << ResLogs() << std::endl;
+		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << std::endl;
+		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[hunger]" << std::endl << "{" << std::endl;
@@ -1532,17 +1532,17 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[combat]" << std::endl << "{" << std::endl;
-		ofsOutput << "COMBATMAXRANGE=" << CombatMaxRange() << std::endl;
-		ofsOutput << "COMBATARCHERRANGE=" << CombatArcherRange() << std::endl;
-		ofsOutput << "COMBATSPELLMAXRANGE=" << CombatMaxSpellRange() << std::endl;
-		ofsOutput << "COMBATDISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << std::endl;
-		ofsOutput << "COMBATMONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << std::endl;
-		ofsOutput << "COMBATANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << std::endl;
-		ofsOutput << "COMBATANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << std::endl;
-		ofsOutput << "COMBATNPCDAMAGERATE=" << CombatNPCDamageRate() << std::endl;
-		ofsOutput << "COMBATNPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << std::endl;
-		ofsOutput << "COMBATNPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << std::endl;
-		ofsOutput << "COMBATATTACKSTAMINA=" << CombatAttackStamina() << std::endl;
+		ofsOutput << "MAXRANGE=" << CombatMaxRange() << std::endl;
+		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << std::endl;
+		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << std::endl;
+		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << std::endl;
+		ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << std::endl;
+		ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << std::endl;
+		ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << std::endl;
+		ofsOutput << "NPCDAMAGERATE=" << CombatNPCDamageRate() << std::endl;
+		ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << std::endl;
+		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << std::endl;
+		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << std::endl;
 		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 		
@@ -1888,199 +1888,199 @@ void CServerData::HandleLine( const UString tag, const UString value )
 	case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
 		CutScrollRequirementStatus( (value.toUShort() != 0) );
 		break;
-	case 0x0335:	 // SPEEDCHECKITEMS[0056]
+	case 0x0335:	 // CHECKITEMS[0056]
 		CheckItemsSpeed( value.toDouble() );
 		break;
-	case 0x0345:	 // SPEEDCHECKBOATS[0057]
+	case 0x0340:	 // CHECKBOATS[0057]
 		CheckBoatSpeed( value.toDouble() );
 		break;
-	case 0x0355:	 // SPEEDCHECKNPCAI[0058]
+	case 0x034B:	 // CHECKNPCAI[0058]
 		CheckNpcAISpeed( value.toDouble() );
 		break;
-	case 0x0365:	 // SPEEDCHECKSPAWNREGIONS[0059]
+	case 0x0356:	 // CHECKSPAWNREGIONS[0059]
 		CheckSpawnRegionSpeed( value.toDouble() );
 		break;
-	case 0x037C:	 // MSGBOARDPOSTINGLEVEL[0060]
+	case 0x0368:	 // POSTINGLEVEL[0060]
 		MsgBoardPostingLevel( value.toUByte() );
 		break;
-	case 0x0391:	 // MSGBOARDREMOVALLEVEL[0061]
+	case 0x0375:	 // REMOVALLEVEL[0061]
 		MsgBoardPostRemovalLevel( value.toUByte() );
 		break;
-	case 0x03A6:	 // ESCORTENABLED[0062]
+	case 0x0382:	 // ESCORTENABLED[0062]
 		EscortsEnabled( value.toUShort() == 1 );
 		break;
-	case 0x03B4:	 // ESCORTINITEXPIRE[0063]
+	case 0x0390:	 // ESCORTINITEXPIRE[0063]
 		SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
 		break;
-	case 0x03C5:	 // ESCORTACTIVEEXPIRE[0064]
+	case 0x03A1:	 // ESCORTACTIVEEXPIRE[0064]
 		SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
 		break;
-	case 0x03D8:	 // LIGHTMOON1[0065]
+	case 0x03B4:	 // MOON1[0065]
 		ServerMoon( 0, value.toShort() );
 		break;
-	case 0x03E3:	 // LIGHTMOON2[0066]
+	case 0x03BA:	 // MOON2[0066]
 		ServerMoon( 1, value.toShort() );
 		break;
-	case 0x03EE:	 // LIGHTDUNGEONLEVEL[0067]
+	case 0x03C0:	 // DUNGEONLEVEL[0067]
 		DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
 		break;
-	case 0x0400:	 // LIGHTCURRENTLEVEL[0068]
+	case 0x03CD:	 // CURRENTLEVEL[0068]
 		WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
 		break;
-	case 0x0412:	 // LIGHTBRIGHTLEVEL[0069]
+	case 0x03DA:	 // BRIGHTLEVEL[0069]
 		WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
 		break;
-	case 0x0423:	 // TRACKINGBASERANGE[0070]
+	case 0x03E6:	 // BASERANGE[0070]
 		TrackingBaseRange( value.toUShort() );
 		break;
-	case 0x0435:	 // TRACKINGBASETIMER[0071]
+	case 0x03F0:	 // BASETIMER[0071]
 		TrackingBaseTimer( value.toUShort() );
 		break;
-	case 0x0447:	 // TRACKINGMAXTARGETS[0072]
+	case 0x03FA:	 // MAXTARGETS[0072]
 		TrackingMaxTargets( value.toUByte() );
 		break;
-	case 0x045A:	 // TRACKINGMSGREDISPLAYTIME[0073]
+	case 0x0405:	 // MSGREDISPLAYTIME[0073]
 		TrackingRedisplayTime( value.toUShort() );
 		break;
-	case 0x0473:	 // REPSYSMURDERDECAYTIMER[0074]
+	case 0x0416:	 // MURDERDECAYTIMER[0074]
 		SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
 		break;
-	case 0x048A:	 // REPSYSMAXKILLS[0075]
+	case 0x0427:	 // MAXKILLS[0075]
 		RepMaxKills( value.toUShort() );
 		break;
-	case 0x0499:	 // REPSYSCRIMINALTIMER[0076]
+	case 0x0430:	 // CRIMINALTIMER[0076]
 		SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
 		break;
-	case 0x04AD:	 // RESOURCEMINECHECK[0077]
+	case 0x043E:	 // MINECHECK[0077]
 		MineCheck( value.toUByte() );
 		break;
-	case 0x04BF:	 // RESOURCEOREPERAREA[0078]
+	case 0x0448:	 // OREPERAREA[0078]
 		ResOre( value.toShort() );
 		break;
-	case 0x04D2:	 // RESOURCEORERESPAWNTIMER[0079]
+	case 0x0453:	 // ORERESPAWNTIMER[0079]
 		ResOreTime( value.toUShort() );
 		break;
-	case 0x04EA:	 // RESOURCEORERESPAWNAREA[0080]
+	case 0x0463:	 // ORERESPAWNAREA[0080]
 		ResOreArea( value.toUShort() );
 		break;
-	case 0x0501:	 // RESOURCELOGSPERAREA[0081]
+	case 0x0472:	 // LOGSPERAREA[0081]
 		ResLogs( value.toShort() );
 		break;
-	case 0x0515:	 // RESOURCELOGSRESPAWNTIMER[0082]
+	case 0x047E:	 // LOGSRESPAWNTIMER[0082]
 		ResLogTime( value.toUShort() );
 		break;
-	case 0x052E:	 // RESOURCELOGSRESPAWNAREA[0083]
+	case 0x048F:	 // LOGSRESPAWNAREA[0083]
 		ResLogArea( value.toUShort() );
 		break;
-	case 0x0546:	 // HUNGERRATE[0084]
+	case 0x049F:	 // HUNGERRATE[0084]
 		SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
 		break;
-	case 0x0551:	 // HUNGERDMGVAL[0085]
+	case 0x04AA:	 // HUNGERDMGVAL[0085]
 		HungerDamage( value.toShort() );
 		break;
-	case 0x055E:	 // COMBATMAXRANGE[0086]
+	case 0x04B7:	 // MAXRANGE[0086]
 		CombatMaxRange( value.toShort() );
 		break;
-	case 0x056D:	 // COMBATSPELLMAXRANGE[0087]
+	case 0x04C0:	 // SPELLMAXRANGE[0087]
 		CombatMaxSpellRange( value.toShort() );
 		break;
-	case 0x0581:	 // COMBATDISPLAYHITMSG[0088]
+	case 0x04CE:	 // DISPLAYHITMSG[0088]
 		CombatDisplayHitMessage( value.toUShort() == 1 );
 		break;
-	case 0x0595:	 // COMBATMONSTERSVSANIMALS[0089]
+	case 0x04DC:	 // MONSTERSVSANIMALS[0089]
 		CombatMonstersVsAnimals( value.toUShort() == 1 );
 		break;
-	case 0x05AD:	 // COMBATANIMALATTACKCHANCE[0090]
+	case 0x04EE:	 // ANIMALATTACKCHANCE[0090]
 		CombatAnimalsAttackChance( value.toUByte() );
 		break;
-	case 0x05C6:	 // COMBATANIMALSGUARDED[0091]
+	case 0x0501:	 // ANIMALSGUARDED[0091]
 		CombatAnimalsGuarded( value.toUShort() == 1 );
 		break;
-	case 0x05DB:	 // COMBATNPCDAMAGERATE[0092]
+	case 0x0510:	 // NPCDAMAGERATE[0092]
 		CombatNPCDamageRate( value.toShort() );
 		break;
-	case 0x05EF:	 // COMBATNPCBASEFLEEAT[0093]
+	case 0x051E:	 // NPCBASEFLEEAT[0093]
 		CombatNPCBaseFleeAt( value.toShort() );
 		break;
-	case 0x0603:	 // COMBATNPCBASEREATTACKAT[0094]
+	case 0x052C:	 // NPCBASEREATTACKAT[0094]
 		CombatNPCBaseReattackAt( value.toShort() );
 		break;
-	case 0x061B:	 // COMBATATTACKSTAMINA[0095]
+	case 0x053E:	 // ATTACKSTAMINA[0095]
 		CombatAttackStamina( value.toShort() );
 		break;
-	case 0x062F:	 // LOCATION[0096]
+	case 0x054C:	 // LOCATION[0096]
 		ServerLocation( value );
 		break;
-	case 0x0638:	 // STARTGOLD[0097]
+	case 0x0555:	 // STARTGOLD[0097]
 		ServerStartGold( value.toShort() );
 		break;
-	case 0x0642:	 // STARTPRIVS[0098]
+	case 0x055F:	 // STARTPRIVS[0098]
 		ServerStartPrivs( value.toUShort() );
 		break;
-	case 0x064D:	 // ESCORTDONEEXPIRE[0099]
+	case 0x056A:	 // ESCORTDONEEXPIRE[0099]
 		SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
 		break;
-	case 0x065E:	 // LIGHTDARKLEVEL[0100]
+	case 0x057B:	 // LIGHTDARKLEVEL[0100]
 		WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
 		break;
-	case 0x066D:	 // TITLECOLOUR[0101]
+	case 0x058A:	 // TITLECOLOUR[0101]
 		TitleColour( value.toUShort() );
 		break;
-	case 0x0679:	 // LEFTTEXTCOLOUR[0102]
+	case 0x0596:	 // LEFTTEXTCOLOUR[0102]
 		LeftTextColour( value.toUShort() );
 		break;
-	case 0x0688:	 // RIGHTTEXTCOLOUR[0103]
+	case 0x05A5:	 // RIGHTTEXTCOLOUR[0103]
 		RightTextColour( value.toUShort() );
 		break;
-	case 0x0698:	 // BUTTONCANCEL[0104]
+	case 0x05B5:	 // BUTTONCANCEL[0104]
 		ButtonCancel( value.toUShort() );
 		break;
-	case 0x06A5:	 // BUTTONLEFT[0105]
+	case 0x05C2:	 // BUTTONLEFT[0105]
 		ButtonLeft( value.toUShort() );
 		break;
-	case 0x06B0:	 // BUTTONRIGHT[0106]
+	case 0x05CD:	 // BUTTONRIGHT[0106]
 		ButtonRight( value.toUShort() );
 		break;
-	case 0x06BC:	 // BACKGROUNDPIC[0107]
+	case 0x05D9:	 // BACKGROUNDPIC[0107]
 		BackgroundPic( value.toUShort() );
 		break;
-	case 0x06CA:	 // POLLTIME[0108]
+	case 0x05E7:	 // POLLTIME[0108]
 		TownNumSecsPollOpen( value.toULong() );
 		break;
-	case 0x06D3:	 // MAYORTIME[0109]
+	case 0x05F0:	 // MAYORTIME[0109]
 		TownNumSecsAsMayor( value.toULong() );
 		break;
-	case 0x06DD:	 // TAXPERIOD[0110]
+	case 0x05FA:	 // TAXPERIOD[0110]
 		TownTaxPeriod( value.toULong() );
 		break;
-	case 0x06E7:	 // GUARDSPAID[0111]
+	case 0x0604:	 // GUARDSPAID[0111]
 		TownGuardPayment( value.toULong() );
 		break;
-	case 0x06F2:	 // DAY[0112]
+	case 0x060F:	 // DAY[0112]
 		ServerTimeDay( value.toShort() );
 		break;
-	case 0x06F6:	 // HOURS[0113]
+	case 0x0613:	 // HOURS[0113]
 		ServerTimeHours( value.toUByte() );
 		break;
-	case 0x06FC:	 // MINUTES[0114]
+	case 0x0619:	 // MINUTES[0114]
 		ServerTimeMinutes( value.toUByte() );
 		break;
-	case 0x0704:	 // SECONDS[0115]
+	case 0x0621:	 // SECONDS[0115]
 		ServerTimeSeconds( value.toUByte() );
 		break;
-	case 0x070C:	 // AMPM[0116]
+	case 0x0629:	 // AMPM[0116]
 		ServerTimeAMPM( value.toUShort() != 0 );
 		break;
-	case 0x0711:	 // SKILLLEVEL[0117]
+	case 0x062E:	 // SKILLLEVEL[0117]
 		SkillLevel( value.toUByte() );
 		break;
-	case 0x071C:	 // SNOOPISCRIME[0118]
+	case 0x0639:	 // SNOOPISCRIME[0118]
 		SnoopIsCrime( value.toUShort() != 0 );
 		break;
-	case 0x0729:	 // BOOKSDIRECTORY[0119]
+	case 0x0646:	 // BOOKSDIRECTORY[0119]
 		Directory( CSDDP_BOOKS, value );
 		break;
-	case 0x0738:	 // SERVERLIST[0120]
+	case 0x0655:	 // SERVERLIST[0120]
 	{
 		UString sname, sip, sport;
 		struct hostent *lpHostEntry = NULL;
@@ -2126,78 +2126,78 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		}
 		break;
 	}
-	case 0x07A0:	 // PORT[0154] // whatever that stands for..
+	case 0x0660:	 // PORT[0121]
 		ServerPort( value.toUShort() );
 		break;
-	case 0x0748:	 // ACCESSDIRECTORY[0122]
+	case 0x0665:	 // ACCESSDIRECTORY[0122]
 		Directory( CSDDP_ACCESS, value );
 		break;
-	case 0x0758:	 // LOGSDIRECTORY[0123]
+	case 0x0675:	 // LOGSDIRECTORY[0123]
 		Directory( CSDDP_LOGS, value );
 		break;
-	case 0x0766:	 // ACCOUNTISOLATION[0124]
+	case 0x0683:	 // ACCOUNTISOLATION[0124]
 		break;
-	case 0x0777:	 // HTMLDIRECTORY[0125]
+	case 0x0694:	 // HTMLDIRECTORY[0125]
 		Directory( CSDDP_HTML, value );
 		break;
-	case 0x0785:	 // SHOOTONANIMALBACK[0126]
+	case 0x06A2:	 // SHOOTONANIMALBACK[0126]
 		ShootOnAnimalBack( value.toUShort() == 1 );
 		break;
-	case 0x0797:	 // NPCTRAININGENABLED[0127]
+	case 0x06B4:	 // NPCTRAININGENABLED[0127]
 		NPCTrainingStatus( value.toUShort() == 1 );
 		break;
-	case 0x07AA:	 // DICTIONARYDIRECTORY[0128]
+	case 0x06C7:	 // DICTIONARYDIRECTORY[0128]
 		Directory( CSDDP_DICTIONARIES, value );
 		break;
-	case 0x07BE:	 // BACKUPSAVERATIO[0129]
+	case 0x06DB:	 // BACKUPSAVERATIO[0129]
 		BackupRatio( value.toShort() );
 		break;
-	case 0x07CE:	 // HIDEWILEMOUNTED[0130]
+	case 0x06EB:	 // HIDEWILEMOUNTED[0130]
 		CharHideWhileMounted( value.toShort() == 1 );
 		break;
-	case 0x07DE:	 // SECONDSPERUOMINUTE[0131]
+	case 0x06FB:	 // SECONDSPERUOMINUTE[0131]
 		ServerSecondsPerUOMinute( value.toUShort() );
 		break;
-	case 0x07F1:	 // WEIGHTPERSTR[0132]
+	case 0x070E:	 // WEIGHTPERSTR[0132]
 		WeightPerStr( value.toUByte() );
 		break;
-	case 0x07FE:	 // POLYDURATION[0133]
+	case 0x071B:	 // POLYDURATION[0133]
 		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
 		break;
-	case 0x080B:	 // UOGENABLED[0134]
+	case 0x0728:	 // UOGENABLED[0134]
 		ServerUOGEnabled( value.toShort()==1 );
 		break;
-	case 0x0816:	 // NETRCVTIMEOUT[0135]
+	case 0x0733:	 // NETRCVTIMEOUT[0135]
 		ServerNetRcvTimeout( value.toULong() );
 		break;
-	case 0x0824:	 // NETSNDTIMEOUT[0136]
+	case 0x0741:	 // NETSNDTIMEOUT[0136]
 		ServerNetSndTimeout( value.toULong() );
 		break;
-	case 0x0832:	 // NETRETRYCOUNT[0137]
+	case 0x074F:	 // NETRETRYCOUNT[0137]
 		ServerNetRetryCount( value.toULong() );
 		break;
-	case 0x0840:	 // CLIENTSUPPORT[0138]
+	case 0x075D:	 // CLIENTSUPPORT[0138]
 		ServerClientSupport( value.toULong() );
 		break;
-	case 0x084E:	 // OVERLOADPACKETS[0139]
+	case 0x076B:	 // PACKETOVERLOADS[0139]
 		ServerOverloadPackets( (value.toByte() == 1) );
 		break;
-	case 0x085E:	 // NPCMOVEMENTSPEED[0140]
+	case 0x077B:	 // NPCMOVEMENTSPEED[0140]
 		NPCSpeed( value.toDouble() );
 		break;
-	case 0x086F:	 // PETHUNGEROFFLINE[0141]
+	case 0x078C:	 // PETHUNGEROFFLINE[0141]
 		PetHungerOffline( (value.toByte() == 1) );
 		break;
-	case 0x0880:	 // PETOFFLINETIMEOUT[0142]
+	case 0x079D:	 // PETOFFLINETIMEOUT[0142]
 		PetOfflineTimeout( value.toUShort() );
 		break;
-	case 0x0892:	 // PETOFFLINECHECKTIMER[0143]
+	case 0x07AF:	 // PETOFFLINECHECKTIMER[0143]
 		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
 		break;
-	case 0x08A7:	 // COMBATARCHERRANGE[0144]
+	case 0x07C4:	 // ARCHERRANGE[0144]
 		CombatArcherRange( value.toShort() );
 		break;
-	case 0x08B9:	 // ADVANCEDPATHFINDING[0145]
+	case 0x07D0:	 // ADVANCEDPATHFINDING[0145]
 		AdvancedPathfinding( (value.toByte() == 1) );
 		break;
 	default:

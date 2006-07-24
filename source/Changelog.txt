@@ -1,3 +1,8 @@
+7/24/2006 - giwo (0.98-3.7e [3.8 BETA])
+	Fixed an issue making it impossible to place items on tables.
+	Fixed an issue with the uox.ini entry for log resource respawn area.
+	Simplified many entries in uox.ini, making them easier to read.
+
 7/19/2006 - Xuri
 	Made onResurrect trigger before a resurrection instead of after, added option to override hard code by returning false
 	Updated JavaScript Documentation to 0.44, and added missing commands to command list

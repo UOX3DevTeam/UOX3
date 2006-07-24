@@ -950,13 +950,13 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 
 // can the monster move here from an adjacent cell at elevation 'oldz'
 // use illegal_z if they are teleporting from an unknown z
-bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater )
 {
 	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
     // get the tile id of any dynamic tiles at this spot
-	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, waterWalk ) )
+	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, !checkWater ) )
 		return false;
 
 	// if there's a static block here in our way, return false
@@ -964,10 +964,10 @@ bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, 
 		return false;
 
 	// if the static isn't a surface return false
-	if( !CheckStaticFlag( x, y, z, worldNumber, ( waterWalk ) ? TF_WET : TF_SURFACE ) )
+	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ) ) )
 		return false;
 
-	if( DoesMapBlock( x, y, z, worldNumber, checkWater, waterWalk ) )
+	if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater ) )
 		return false;
 
 	return true;
