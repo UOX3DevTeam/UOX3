@@ -25,6 +25,8 @@ namespace UOX
 
 cSkills *Skills = NULL;
 
+const UI16 CREATE_MENU_OFFSET = 0x7FFF;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
+
 //o---------------------------------------------------------------------------o
 //|   Function    :  SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 //|   Date        :  Unknown
@@ -166,7 +168,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 			if( getSkill >= found->minSkill )
 			{
 				UI08 amtToMake = 1;
-				if( RandomNum( 0, 100 ) > targRegion->GetChanceBigOre() )
+				if( targRegion->GetChanceBigOre() >= RandomNum( 0, 100 ) )
 					amtToMake = 5;
 				CItem *oreItem = Items->CreateItem( &mSock, mChar, 0x19B9, amtToMake, found->colour, OT_ITEM, true );
 				if( ValidateObject( oreItem ) )
@@ -484,13 +486,10 @@ void cSkills::SmeltOre( CSocket *s )
 						return;
 					}
 					char ingotString[100];
-					if( oreType->foreign )	// if not iron, generally
+					if( chr->GetSkill( MINING ) < oreType->minSkill )
 					{
-						if( chr->GetSkill( MINING ) < oreType->minSkill )
-						{
-							s->sysmessage( 815 );
-							return;
-						}
+						s->sysmessage( 815 );
+						return;
 					}
 					if( !CheckSkill( chr, MINING, oreType->minSkill, 1000 ) )	// if we do not have minimum skill to use it
 					{
@@ -1518,7 +1517,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 				if( objInRange( mChar, tempItem, DIST_NEARBY ) )
 				{
 					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );     
-					if( getAmt < oreType->minAmount )
+					if( getAmt == 0 )
 					{ 
 						s->sysmessage( 980, oreType->name.c_str() );
 						regItems->Pop();
@@ -1588,37 +1587,27 @@ bool cSkills::LoadMiningData( void )
 				{
 					miningData toAdd;
 					toAdd.colour	= 0;
-					toAdd.foreign	= true;
 					toAdd.makemenu	= 0;
-					toAdd.minAmount = 3;
 					toAdd.minSkill	= 0;
 					toAdd.name		= oreName;
 					for( tag = individualOre->First(); !individualOre->AtEnd(); tag = individualOre->Next() )
 					{
 						UTag = tag.upper();
 						data = individualOre->GrabData();
-						switch( (tag.data()[0]) )	// break on tag
+						switch( (UTag.data()[0]) )	// break on tag
 						{
-							case 'c':
 							case 'C':	
 								if( UTag == "COLOUR" )
 									toAdd.colour = data.toUShort();
 								break;
-							case 'f':
 							case 'F':
-								if( UTag == "FOREIGN" )
-									toAdd.foreign = ( data.toUShort() != 0 );
 								break;
-							case 'm':
 							case 'M':
 								if( UTag == "MAKEMENU" )
 									toAdd.makemenu = data.toLong();
-								else if( UTag == "MINAMOUNT" )
-									toAdd.minAmount = data.toUByte();
 								else if( UTag == "MINSKILL" )
 									toAdd.minSkill = data.toUShort();
 								break;
-							case 'n':
 							case 'N':
 								if( UTag == "NAME" )
 									toAdd.name = data;
@@ -2261,7 +2250,7 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 		if( smIter != skillMenus.end() )
 		{
 			createMenuEntry iMenu = smIter->second;
-			toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, 1000 + (*ourMenu.mIter) );
+			toSend.AddCommand( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter) );
 			if( iMenu.targID )
 				toSend.AddCommand( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targID );
 			toSend.AddCommand( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ );
@@ -2290,9 +2279,9 @@ void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 	if( p == actualMenus.end() )
 		return;
 	createMenu ourMenu = p->second;
-	if( button >= 1000 )	// menu pressed
+	if( button >= CREATE_MENU_OFFSET )	// menu pressed
 	{
-		std::map< UI16, createMenuEntry >::const_iterator q = skillMenus.find( button-1000 );
+		std::map< UI16, createMenuEntry >::const_iterator q = skillMenus.find( button-CREATE_MENU_OFFSET );
 		if( q == skillMenus.end() )
 			return;
 		NewMakeMenu( s, q->second.subMenu, 0 );

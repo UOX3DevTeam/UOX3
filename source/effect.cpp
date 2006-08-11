@@ -997,7 +997,7 @@ void cEffects::LoadEffects( void )
 						if( tag != "o---o" )
 						{
 							UTag = tag.upper();
-							switch( (tag.data()[0]) )
+							switch( (UTag.data()[0]) )
 							{
 								case 'A':
 									if( UTag == "ASSOCSCRIPT" )

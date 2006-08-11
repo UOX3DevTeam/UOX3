@@ -508,7 +508,7 @@ void LoadCreatures( void )
 						continue;
 					data = creatureData->GrabData();
 					UTag = tag.upper();
-					switch( (tag.data()[0]) )
+					switch( (UTag.data()[0]) )
 					{
 						case 'A':
 							if( UTag == "ANTIBLINK" )

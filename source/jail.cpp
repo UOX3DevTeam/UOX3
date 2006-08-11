@@ -197,7 +197,7 @@ void JailSystem::ReadData( void )
 						continue;
 					UTag = tag.upper();
 					data = prisonerData->GrabData();
-					switch( (tag.data()[0]) )
+					switch( (UTag.data()[0]) )
 					{
 						case 'C':
 							if( UTag == "CELL" )

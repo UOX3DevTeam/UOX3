@@ -96,7 +96,7 @@ bool CTownRegion::Load( Script *ss )
 	{
 		UTag = tag.upper();
 		data = target->GrabData();
-		switch( (tag.data()[0]) )
+		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "ALLYTOWN" )
@@ -338,9 +338,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	{
 		UTag = tag.upper();
 		data = toScan->GrabData();
-		switch( (tag.data()[0]) )
+		switch( (UTag.data()[0]) )
 		{
-			case 'a':
 			case 'A':
 				if( UTag == "ABWEATH" )
 					weather = data.toUByte();
@@ -359,7 +358,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						visualAppearance = WRLD_UNKNOWN;
 				}
 				break;
-			case 'b':
 			case 'B':
 				if( UTag == "BUYABLE" )
 				{
@@ -369,21 +367,14 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						Console.Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 				}
 				break;
-			case 'c':
 			case 'C':
-				if( UTag == "COLOURMINSKILL" )
-					break;
-				else if( UTag == "CHANCEFORBIGORE" )
+				if( UTag == "CHANCEFORBIGORE" )
 					chanceFindBigOre = data.toUByte();
-				else if( UTag == "CHANCEFORCOLOUR" )
-					break;
 				break;
-			case 'd':
 			case 'D':
 				if( UTag == "DUNGEON" )
 					IsDungeon( (data.toUByte() == 1) );
 				break;
-			case 'e':
 			case 'E':
 				if( UTag == "ESCORTS" ) 
 				{
@@ -392,7 +383,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						cwmWorldState->escortRegions.push_back( regionNum );
 				} // End - Dupois
 				break;
-			case 'g':
 			case 'G':
 				if( UTag == "GUARDNUM" )
 					break;
@@ -407,7 +397,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "GOOD" )
 					actgood = data.toLong();
 				break;
-			case 'm':
 			case 'M':
 				if( UTag == "MIDILIST" )
 					midilist = data.toUShort();
@@ -416,7 +405,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "MARK" )
 					CanMark( (data.toUByte() == 1) );
 				break;
-			case 'n':
 			case 'N':
 				if( UTag == "NAME" )
 				{
@@ -424,7 +412,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					actgood = -1; // Magius(CHE)
 				}
 				break;
-			case 'o':
 			case 'O':
 				if( UTag == "OREPREF" )
 				{
@@ -447,7 +434,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 						Console.Error( "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() );
 				}
 				break;
-			case 'r':
 			case 'R':
 				if( UTag == "RECALL" )
 					CanRecall( (data.toUByte() == 1) );
@@ -477,7 +463,6 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "RACE" )
 					race = data.toUShort();
 				break;
-			case 's':
 			case 'S':
 				if( UTag == "SELLABLE" )
 				{
@@ -516,19 +501,16 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "SCRIPT" )
 					jsScript = data.toUShort();
 				break;
-			case 'w':
 			case 'W':
 				if( UTag == "WORLD" )
 					worldNumber = data.toUByte();
 				break;
-			case 'x':
 			case 'X':
 				if( UTag == "X1" )
 					ourLoc.x1 = data.toShort();
 				else if( UTag == "X2" )
 					ourLoc.x2 = data.toShort();
 				break;
-			case 'y':
 			case 'Y':
 				if( UTag == "Y1" )
 					ourLoc.y1 = data.toShort();

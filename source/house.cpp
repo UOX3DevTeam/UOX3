@@ -77,7 +77,7 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 		}
 	}
 }
-void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 {
 	UString tag, data, UTag;
 	ScriptSection *HouseItem = NULL;
@@ -139,7 +139,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CMultiObj *house, UI
 	}
 }
 
-bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat )
+bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti )
 {
 	const UI08 worldNum = mChar->WorldNumber();
 
@@ -160,13 +160,25 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 		{
 			curY = y+l;
 			if( ( !Map->ValidMultiLocation( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != curY ) ) ||
-				findMulti( curX, curY, z, worldNum ) != NULL )	// Lets not place a multi on/in another multi
+				( isMulti && findMulti( curX, curY, z, worldNum ) != NULL ) )// Lets not place a multi on/in another multi
 //			This will take the char making the house out of the space check, be careful 
 //			you don't build a house on top of your self..... this had to be done So you 
 //			could extra space around houses, (12+) and they would still be buildable.
 			{
 				mSock->sysmessage( 577 );
 				return false;
+			}
+			else if( !isMulti )
+			{
+				if( mChar->GetCommandLevel() < CL_GM )
+				{
+					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum );
+					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) )
+					{
+						mSock->sysmessage( "This object must be placed in your house" );
+						return false;
+					}
+				}
 			}
 		}
 	}
@@ -239,13 +251,14 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		return;
 	}
 
-	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat ) )
+	const bool isMulti = (houseID >= 0x4000);
+	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) )
 		return;
 
 	char temp[1024];
 	CMultiObj *house = NULL;
 	CItem *fakeHouse = NULL;
-	if( houseID >= 0x4000 )
+	if( isMulti )
 	{
 		if( (houseID%256) > 18 ) 
 			sprintf( temp, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
@@ -285,7 +298,11 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	CreateHouseKey( mSock, mChar, house, houseID );
 	if( !houseItems.empty() )
-		CreateHouseItems( mChar, houseItems, house, houseID, x, y, z );
+	{
+		if( isMulti )
+			fakeHouse = house;
+		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
+	}
 	mChar->SetLocation( x + cx, y + cy, z + cz );
 }
 

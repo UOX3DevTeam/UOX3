@@ -676,7 +676,7 @@ void CGuild::Load( ScriptSection *toRead )
 		if( tag.empty() )
 			continue;
 		UTag = tag.upper();
-		switch( (tag.data()[0]) )
+		switch( (UTag.data()[0]) )
 		{
 			case '{':
 			case '/':	break;	// open section, comment, we don't really care ;)

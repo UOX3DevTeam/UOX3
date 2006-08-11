@@ -1,3 +1,11 @@
+8/11/2006 - giwo (0.98-3.7f [3.8 BETA])
+	Fixed a crash when attempting to place a house item outside a house.
+	Fixed the location check when placing house items to allow them to be placed inside houses.
+	Added a check on house items to only allow them to be placed in your house (Or anywhere by GM's).
+	Bumped up the limit on items in create.dfn from 999 to 32,766.
+	Removed FOREIGN and MINAMOUNT tags from ore entries in skills.dfn as they were superfluous
+	Fixed CHANCEFORBIGORE tag handling from regions.dfn to give a % chance out of 100 to get a pile of 5 rather than 1 ore.
+
 7/24/2006 - giwo (0.98-3.7e [3.8 BETA])
 	Fixed an issue making it impossible to place items on tables.
 	Fixed an issue with the uox.ini entry for log resource respawn area.

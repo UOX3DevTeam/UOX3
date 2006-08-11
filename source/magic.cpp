@@ -2877,33 +2877,28 @@ void cMagic::LoadScript( void )
 						UTag = tag.upper();
 						data = SpellLoad->GrabData();
 						Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() );
-						switch( (tag.data()[0]) )
+						switch( (UTag.data()[0]) )
 						{
-							case 'a':
 							case 'A':
 								if( UTag == "ACTION" ) 
 									spells[i].Action( data.toUShort() );
 								else if( UTag == "ASH" ) 
 									mRegs->ash = data.toUByte();
 								break;
-							case 'c':
 							case 'C':
 								if( UTag == "CIRCLE" )
 									spells[i].Circle( data.toUByte() );
 								break;
-							case 'd':
 							case 'D':
 								if( UTag == "DELAY" )
 									spells[i].Delay( data.toLong() );
 								else if( UTag == "DRAKE" )
 									mRegs->drake = data.toUByte();
 								break;
-							case 'e':
 							case 'E':
 								if( UTag == "ENABLE" )   // presence of enable is enough to enable it
 									spells[i].Enabled( data.toUShort() != 0 );
 								break;
-							case 'f':
 							case 'F':
 								if( UTag == "FLAGS" )
 								{
@@ -2913,26 +2908,22 @@ void cMagic::LoadScript( void )
 										spells[i].Flags( data.stripWhiteSpace().toUShort() );
 								}
 								break;
-							case 'g':
 							case 'G':
 								if( UTag == "GARLIC" )
 									mRegs->garlic  = data.toUByte();
 								else if( UTag == "GINSENG" )
 									mRegs->ginseng = data.toUByte();
 								break;
-							case 'h':
 							case 'H':
 								if( UTag == "HISKILL" )
 									spells[i].HighSkill( data.toShort() );
 								else if( UTag == "HEALTH" )
 									spells[i].Health( data.toShort() );
 								break;
-							case 'l':
 							case 'L':
 								if( UTag == "LOSKILL" )
 									spells[i].LowSkill( data.toShort() );
 								break;
-							case 'm':
 							case 'M':
 								if( UTag == "MANA" )
 									spells[i].Mana( data.toShort() );
@@ -2952,12 +2943,10 @@ void cMagic::LoadScript( void )
 									}
 								}
 								break;
-							case 'p':
 							case 'P':
 								if( UTag == "PEARL" ) 
 									mRegs->pearl = data.toUByte();
 								break;
-							case 's':
 							case 'S':
 								if( UTag == "SHADE" )
 									mRegs->shade = data.toUByte();
@@ -2987,7 +2976,6 @@ void cMagic::LoadScript( void )
 								else if( UTag == "STAMINA" )
 									spells[i].Stamina( data.toShort() );
 								break;
-							case 't':
 							case 'T':
 								if( UTag == "TARG" )
 									spells[i].StringToSay( data );

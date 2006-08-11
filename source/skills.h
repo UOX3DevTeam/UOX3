@@ -75,11 +75,9 @@ struct miningData
 	UI16 colour;		// colour of the ore, for colour of ingot
 	UI16 minSkill;		// minimum skill needed to make the ingot
 	std::string name;		// name of the ingot: no need to be fixed, as we're loading it dynamically
-	bool foreign;		// if not iron, then it can print out that it's a stranger ore when failing
 	int makemenu;		// the makemenu required for making with
-	UI08 minAmount;		// min number of ingots to load anything
 
-	miningData() : colour( 0 ), minSkill( 0 ), name( "" ), foreign( false ), makemenu( 0 ), minAmount( 0 )
+	miningData() : colour( 0 ), minSkill( 0 ), name( "" ), makemenu( 0 )
 	{
 	}
 };
