@@ -1,3 +1,11 @@
+8/12/2006 - Xuri
+	Modified the order of the arguments in the RESOURCE tag in create-DFNs to fit the following:
+		RESOURCE=ID AMOUNT COLOUR (AMOUNT and COLOUR are optional)
+	Added smithing DFNs for coloured ingots (Armor and shields only, no weapons).
+	Added a commented out MOUNTID for the polar bear in creatures.dfn. Uncomment for ridable polar bears.
+	Corrected SPACEX/SPACEY (clear space necessary to place the house) values for all houses.
+	Updated skills.dfn with changes mentioned by giwo about FOREIGN and MINAMOUNT tags.
+
 8/11/2006 - giwo (0.98-3.7f [3.8 BETA])
 	Fixed a crash when attempting to place a house item outside a house.
 	Fixed the location check when placing house items to allow them to be placed inside houses.

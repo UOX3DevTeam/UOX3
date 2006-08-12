@@ -1795,8 +1795,8 @@ void cSkills::LoadCreateMenus( void )
 								tmpResource.amountNeeded	= data.section( " ", 1 ).toUByte();
 							else
 							{
-								tmpResource.colour			= data.section( " ", 1, 1 ).toUShort();
-								tmpResource.amountNeeded	= data.section( " ", 2, 2 ).toUByte();
+								tmpResource.amountNeeded	= data.section( " ", 1, 1 ).toUByte();
+								tmpResource.colour			= data.section( " ", 2, 2 ).toUShort();
 							}
 						}
 						UString resType = "RESOURCE " + data.section( " ", 0, 0 );
