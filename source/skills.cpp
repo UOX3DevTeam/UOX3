@@ -25,7 +25,7 @@ namespace UOX
 
 cSkills *Skills = NULL;
 
-const UI16 CREATE_MENU_OFFSET = 0x7FFF;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
+const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )

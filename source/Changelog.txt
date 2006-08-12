@@ -1,3 +1,6 @@
+8/12/2006 - giwo (0.98-3.7g [3.8 BETA])
+	Changed item limit in create dfn down to 4,999 to fix a bug in gump handling.
+
 8/12/2006 - Xuri
 	Modified the order of the arguments in the RESOURCE tag in create-DFNs to fit the following:
 		RESOURCE=ID AMOUNT COLOUR (AMOUNT and COLOUR are optional)
