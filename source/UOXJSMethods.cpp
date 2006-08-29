@@ -2266,19 +2266,20 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
-JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	CChar *myChar = (CChar*)JS_GetPrivate( cx, obj );
+	JSEncapsulate myClass( cx, obj );
+	CBaseObject *myObj		= (CBaseObject*)myClass.toObject();
 
-	if( !ValidateObject( myChar ) )
+	if( !ValidateObject( myObj ) )
 	{
 		MethodError( "(UseResource) Invalid Object assigned" );
 		return JS_FALSE;
 	}
 
-	UI16 realID = (UI16)JSVAL_TO_INT( argv[1] );
+	UI16 realID		= (UI16)JSVAL_TO_INT( argv[1] );
 	UI16 itemColour = 0;
-	UI16 amount = (UI16)JSVAL_TO_INT( argv[0] );	
+	UI32 amount		= (UI32)JSVAL_TO_INT( argv[0] );	
 
 	// Min. 2 Arguments (amount + id) or 3
 	if(( argc < 2 ) || ( argc > 3 ))
@@ -2291,8 +2292,21 @@ JSBool CChar_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		itemColour = (UI16)JSVAL_TO_INT( argv[2] );
 	}
-	Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myChar->GetName().c_str(), realID, itemColour, amount );
-	DeleteItemAmount( myChar, amount, realID, itemColour );
+
+	UI32 retVal = 0;
+
+	Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myObj->GetName().c_str(), realID, itemColour, amount );
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		CChar *myChar	= (CChar *)myObj;
+		retVal			= DeleteItemAmount( myChar, amount, realID, itemColour );
+	}
+	else
+	{
+		CItem *myItem	= (CItem *)myObj;
+		retVal			= DeleteSubItemAmount( myItem, amount, realID, itemColour );
+	}
+	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;
 }
 

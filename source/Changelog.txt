@@ -1,3 +1,7 @@
+8/29/2006 - Xuri
+	Fixed several issues with the UseResource JS Method (maarc)
+	UseResource JS Method can now be used with both items (containers) and characters (maarc)
+
 8/12/2006 - giwo (0.98-3.7g [3.8 BETA])
 	Changed item limit in create dfn down to 4,999 to fix a bug in gump handling.
 

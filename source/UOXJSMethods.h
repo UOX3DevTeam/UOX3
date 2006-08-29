@@ -76,7 +76,6 @@ JSMethodFunc CChar_EmoteMessage;
 JSMethodFunc CChar_OpenBank;
 JSMethodFunc CChar_DirectionTo;
 JSMethodFunc CChar_TurnToward;
-JSMethodFunc CChar_UseResource;
 JSMethodFunc CChar_ResourceCount;
 JSMethodFunc CChar_CheckSkill;
 JSMethodFunc CChar_FindItemLayer;
@@ -157,6 +156,7 @@ JSMethodFunc CBase_GetSerial;
 JSMethodFunc CBase_Resist;
 
 JSMethodFunc CBase_CanSee;
+JSMethodFunc CBase_UseResource;
 
 // Socket Methods
 JSMethodFunc CSocket_Disconnect;
@@ -290,7 +290,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
 	{ "TurnToward",			CChar_TurnToward,		1, 0, 0 },
 	{ "ResourceCount",		CChar_ResourceCount,	2, 0, 0 },
-	{ "UseResource",		CChar_UseResource,		3, 0, 0 },
+	{ "UseResource",		CBase_UseResource,		3, 0, 0 },
 	{ "CustomTarget",		CMisc_CustomTarget,		1, 0, 0 },
 	{ "PopUpTarget",		CMisc_PopUpTarget,		1, 0, 0 },
 	{ "InRange",			CBase_InRange,			2, 0, 0 },
@@ -386,6 +386,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "LockDown",			CItem_LockDown,				0, 0, 0 },
 	{ "Carve",				CItem_Carve,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
+	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ NULL,					NULL,						0, 0, 0 }
 };
 

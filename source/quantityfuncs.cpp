@@ -70,7 +70,7 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 				}
 				else
 				{
-					i->IncAmount( -(SI16)total );
+					i->IncAmount( -(SI32)total );
 					amtDeleted += total;
 				}
 			}
