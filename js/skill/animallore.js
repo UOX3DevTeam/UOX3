@@ -18,7 +18,7 @@ function onCallback0( pSock, ourObj )
 	if( ourObj && ourObj.isChar && pUser )
 	{
 		if( !ourObj.InRange( pUser, 3 ) )
-			pSock.SysMessage( "That is too far away." )
+			pSock.SysMessage( "That is too far away." );
 		else if( !ourObj.npc || !ourObj.isAnimal )
 			pSock.SysMessage( "That doesn't look much like an animal." );
 		else if( ourObj.tamed || pUser.skills.animallore >= 700 )

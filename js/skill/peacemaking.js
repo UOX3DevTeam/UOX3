@@ -14,7 +14,7 @@ function onSkill( pUser, objType, skillUsed )
 			if( pUser.CheckSkill( 29, 0, 1000 ))
 			{
 				PlayInstrument( pSock, myInstrument, true );
-				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 )
+				AreaCharacterFunction( "PeaceMakeArea", pUser, 15 );
 			}
 			else
 			{

@@ -87,7 +87,7 @@ function onCallback0( socket, ourObj )
 		myGump.Free;
 	}
 	else
-		SendStaticStats( socket )
+		SendStaticStats( socket );
 }
 
 function command_CSTATS( socket, cmdString )

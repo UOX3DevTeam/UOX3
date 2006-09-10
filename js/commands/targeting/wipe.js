@@ -76,7 +76,7 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
-	DoWipe( socket, ourObj )
+	DoWipe( socket, ourObj );
 }
 
 function DoWipe( socket, ourObj )

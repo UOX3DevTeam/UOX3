@@ -167,7 +167,7 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "MOREXYZ":
-		var splitValues = socket.xText.split( " " )
+		var splitValues = socket.xText.split( " " );
 		if( splitValues[3] )
 		{
 			ourItem.morex = parseInt( splitValues[1] );
@@ -334,7 +334,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "DIR":
-		ourChar.dir = nVal;
+		ourChar.direction = nVal;
 		okMsg( socket );
 		break;
 	case "NPCAI":

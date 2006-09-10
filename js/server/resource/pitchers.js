@@ -815,7 +815,7 @@ function setupLiquidObject( myTarget )
 {
 	switch( myTarget.id )
 	{
-		case 0x09a7:case 0x09d6:case 0x0ff6: case 0x0ff7: case 0x09a7:
+		case 0x09a7:case 0x09d6:case 0x0ff6: case 0x0ff7:
 			//Empty pitchers
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "ContentsName", "nothing" );
@@ -839,7 +839,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.scripttrigger = scriptID;
 			break;
-		case 0x1f95:case 0x1f96:case 0x099f:
+		case 0x1f95:case 0x1f96:
 			//Pitchers of ale
 			myTarget.SetTag( "ContentsType", 4 );
 			myTarget.SetTag( "ContentsType", "ale" );
@@ -847,7 +847,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.scripttrigger = scriptID;
 			break;
-		case 0x1f97:case 0x1f98:case 0x09c8:
+		case 0x1f97:case 0x1f98:
 		//Pitchers/Jugs of ale
 			myTarget.SetTag( "ContentsType", 5 );
 			if( myTarget.id == 0x09c8 )
@@ -862,7 +862,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.scripttrigger = scriptID;
 			break;
-		case 0x1f99:case 0x1f9a:case 0x099b:
+		case 0x1f99:case 0x1f9a:
 			//Pitchers of liquor
 			myTarget.SetTag( "ContentsType", 6 );
 			myTarget.SetTag( "UsesLeft", 5 );
@@ -870,7 +870,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.scripttrigger = scriptID;
 			break;
-		case 0x1f9b:case 0x1f9c:case 0x09c7:
+		case 0x1f9b:case 0x1f9c:
 			//Pitchers of wine
 			myTarget.SetTag( "ContentsType", 7 );
 			myTarget.SetTag( "UsesLeft", 5 );

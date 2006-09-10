@@ -1,7 +1,7 @@
 function CommandRegistration()
 {
 	RegisterCommand( "reloadaccounts", 3, true );	// reload accounts
-	RegisterCommand( "reloaddefs", 3, true )	// reload all dfns
+	RegisterCommand( "reloaddefs", 3, true );	// reload all dfns
 	RegisterCommand( "reloadini", 3, true );	// reload uox.ini
 	RegisterCommand( "reloadjsfile", 3, true );	// reload JavaScript file
 	RegisterCommand( "reloadalljs", 3, true ); // reload all JavaScript files

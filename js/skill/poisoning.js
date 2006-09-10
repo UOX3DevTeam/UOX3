@@ -22,7 +22,7 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 918, pSock.Language ) );
 			return;
 		}
-		pSock.tempObj = ourObj
+		pSock.tempObj = ourObj;
 		pSock.CustomTarget( 1, GetDictionaryEntry( 1613, pSock.Language ) );
 	}
 }

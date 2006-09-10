@@ -75,10 +75,10 @@ function onGumpPress(srcSock,myButton)
   var iCheck = new String(srcChar.GetTag("ItemUsed")); 
   var oldSerial = iCheck.split(','); 
   //Convert serial into actual numbers not strings 
-  oldSerial[0] = parseInt(oldSerial[0]) 
-  oldSerial[1] = parseInt(oldSerial[1]) 
-  oldSerial[2] = parseInt(oldSerial[2]) 
-  oldSerial[3] = parseInt(oldSerial[3]) 
+  oldSerial[0] = parseInt(oldSerial[0]);
+  oldSerial[1] = parseInt(oldSerial[1]);
+  oldSerial[2] = parseInt(oldSerial[2]);
+  oldSerial[3] = parseInt(oldSerial[3]);
   //Find out what the item is from the serial 
   var iUsed=CalcItemFromSer(oldSerial[0], oldSerial[1], oldSerial[2], oldSerial[3]); 
   ret=iUsed.InRange( srcChar, 5); 
@@ -90,7 +90,7 @@ function onGumpPress(srcSock,myButton)
   if( ret == false && myButton >= 0) 
   { 
     srcSock.SysMessage("You have moved too far away to use this."); 
-    return 
+    return;
   } 
 
   //Where we going... Fel or tram 
@@ -197,7 +197,7 @@ function onGumpPress(srcSock,myButton)
     { 
       srcChar.Teleport( 1721,218,96 ,2 );  //Chaos 
       break; 
-    } 
+    }
   } 
 
   //Default Stuff, if you have clicked on a button >=5 then you have gone somwhere 

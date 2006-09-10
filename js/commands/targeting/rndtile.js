@@ -61,7 +61,7 @@ function onCallback0( pSock, myTarget )
 	var toFreeze = splitString[3];
 	if( toFreeze != "true" ) // if movable status hasn't been set to true, set it to false
 		toFreeze = "false";
-	pSock.xText = targX + " " + targY + " " + startID + " " + endID + " " + itemHue + " " + toFreeze
+	pSock.xText = targX + " " + targY + " " + startID + " " + endID + " " + itemHue + " " + toFreeze;
 	pSock.CustomTarget( 1, "Select second corner of bounding box:" );
 }
 

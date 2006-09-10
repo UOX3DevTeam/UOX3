@@ -1,3 +1,8 @@
+9/10/2006 - Xuri
+	Found and fixed a total of 19 missing semicolons in 15 different JavaScripts
+	Modified sword.js and axe.js so bladed weapons can be used as magic weapons (of TYPE 15)
+	Minor modifications to several JavaScript files
+
 8/29/2006 - Xuri
 	Fixed several issues with the UseResource JS Method (maarc)
 	UseResource JS Method can now be used with both items (containers) and characters (maarc)

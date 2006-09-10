@@ -203,7 +203,7 @@ function onCallback0( socket, ourObj )
 		// We need a LineOfSight check
 		var StrangeByte = socket.GetWord( 1 );
 		if( StrangeByte == 0 && ourObj )
-			iUsed.Teleport( ourObj )
+			iUsed.Teleport( ourObj );
 		else
 		{
 			var x = socket.GetWord( 11 );
