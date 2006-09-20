@@ -6,6 +6,9 @@
 	Added basic party implementation.  Adding, removal and kicking works, speech does not
 	Added sent packets CPPartyMemberList, CPPartyMemberRemove and CPPartyInvitation
 	Updated dragging contents out of packs so that pet friends should be able to do so
+	Added CPPartyTell packet
+	Promoted Party::SendPacket to public method
+	Added speech (individual and group) to party methods
 
 9/10/2006 - Xuri
 	Found and fixed a total of 19 missing semicolons in 15 different JavaScripts

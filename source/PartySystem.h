@@ -31,8 +31,8 @@ namespace UOX
 //		CDataList< PartyEntry * >	members;
 		std::vector< PartyEntry * >	members;
 		CChar *						leader;
-		void						SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo = NULL );
 	public:
+		void						SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo = NULL );
 		void						AddMember( CChar *i );
 		void						RemoveMember( CChar *i );
 		void						Leader( CChar *member );

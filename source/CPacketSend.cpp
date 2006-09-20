@@ -5596,4 +5596,50 @@ void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )
 	CPUOXBuffer::Log( outStream, false );
 }
 
+CPPartyTell::CPPartyTell( CPIPartyCommand *removed, CSocket *talker )
+{
+	InternalReset();
+	CSocket *talkSocket	= removed->GetSocket();
+	// let's mirror tell all/indiv
+	UI08 tellMode		= talkSocket->GetByte( 5 );
+	pStream.WriteByte( 5, tellMode );
+	pStream.WriteLong( 6, talker->CurrcharObj()->GetSerial() );
+
+	UI16 sizeModifier = 6;
+	if( tellMode == 3 )
+		sizeModifier = 10;
+
+	UI16 messageLength = talkSocket->GetWord( 1 ) - sizeModifier;
+
+	pStream.ReserveSize( 12 + messageLength );
+	pStream.WriteShort( 1, 12 + messageLength );
+	for( size_t i = 0; i < messageLength; ++i )
+		pStream.WriteByte( i + 10, talkSocket->GetByte( sizeModifier + i ) );
+	pStream.WriteShort( 10 + messageLength, 0 );
+}
+
+void CPPartyTell::InternalReset( void )
+{
+	pStream.ReserveSize( 12 );
+	pStream.WriteByte( 0, 0xBF );	// packet ID
+	pStream.WriteShort( 1, 12 );		// packet length
+	pStream.WriteShort( 3, 6 );		// party command
+	pStream.WriteByte( 5, 3 );		// subcommand
+}
+
+void CPPartyTell::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet     : CPPartyTell 0xBF Subcommand Party Command --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "Packet ID        : " << std::hex << (UI16)pStream.GetByte( 0 ) << std::dec << std::endl;
+	outStream << "Subcommand       : " << pStream.GetShort( 3 ) << std::endl;
+	outStream << "Party Sub        : " << (UI16)pStream.GetByte( 5 ) << std::endl;
+	outStream << "Talker           : 0x" << std::hex << pStream.GetLong( 6 ) << std::dec << std::endl;
+	outStream << "Message          : ";
+	for( size_t j = 10; j < pStream.GetSize(); ++j )
+		outStream << (UI08)pStream.GetByte( j );
+	outStream << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
 }

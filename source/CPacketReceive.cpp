@@ -2452,10 +2452,30 @@ bool CPIPartyCommand::Handle( void )
 		break;
 	case PARTY_TELLINDIV:
 		{
+			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			if( toTellTo != NULL )
+			{
+				CPPartyTell toTell( this, tSock );
+				SERIAL personToTell	= tSock->GetDWord( BASE_OFFSET );
+				CChar *charToTell	= calcCharObjFromSer( personToTell );
+				CSocket *charTell	= charToTell->GetSocket();
+				if( charTell != NULL )
+					toTellTo->SendPacket( &toTell, charTell );
+			}
+			else
+				tSock->sysmessage( "You are not in a party" );
 		}
 		break;
 	case PARTY_TELLALL:
 		{
+			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			if( toTellTo != NULL )
+			{
+				CPPartyTell toTell( this, tSock );
+				toTellTo->SendPacket( &toTell );
+			}
+			else
+				tSock->sysmessage( "You are not in a party" );
 		}
 		break;
 	case PARTY_LOOT:

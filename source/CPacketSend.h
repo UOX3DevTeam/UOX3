@@ -1408,6 +1408,18 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
+class CPPartyTell : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPPartyTell( CPIPartyCommand *told, CSocket *talker );
+	virtual			~CPPartyTell()
+					{
+					}
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+};
+
 }
 
 #endif
