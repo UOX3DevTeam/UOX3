@@ -197,7 +197,20 @@ bool CPIGetItem::Handle( void )
 				else
 					tSock->PickupSpot( PL_OWNPACK );
 			}
-			if( iOwner != ourChar && ( ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
+			bool otherPackCheck = (iOwner != ourChar);
+			if( otherPackCheck )	// okay, not our owner!
+			{
+				otherPackCheck = !ourChar->IsGM();
+				if( otherPackCheck )	// not a GM either
+				{
+					if( iOwner->GetOwnerObj() == ourChar )
+						otherPackCheck = false;
+					else if( Npcs->checkPetFriend( ourChar, static_cast< CChar * >(iOwner) ) )
+						otherPackCheck = false;
+				}
+			}
+//			if( iOwner != ourChar && ( ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
+			if( otherPackCheck || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			{
 				tSock->Send( &bounce );
 				return true;

@@ -5473,4 +5473,127 @@ void CPClilocMessage::ArgumentString( const std::string arguments )
 		pStream.WriteByte( 48 + i * 2, arguments[i] );
 }
 
+
+
+
+
+
+
+
+CPPartyMemberList::CPPartyMemberList( void )
+{
+	InternalReset();
+}
+
+void CPPartyMemberList::InternalReset( void )
+{
+	pStream.ReserveSize( 7 );
+	pStream.WriteByte( 0, 0xBF );	// packet ID
+	pStream.WriteShort( 1, 7 );		// packet length
+	pStream.WriteShort( 3, 6 );		// party command
+	pStream.WriteByte( 5, 1 );		// subcommand
+	pStream.WriteByte( 6, 0 );		// member Count
+}
+
+void CPPartyMemberList::AddMember( CChar *member )
+{
+	size_t curPos = pStream.GetSize();
+	pStream.ReserveSize( curPos + 4 );
+	pStream.WriteLong( curPos, member->GetSerial() );
+	pStream.WriteByte( 6, pStream.GetByte( 6 ) + 1 );
+	pStream.WriteShort( 1, curPos + 4 );
+}
+
+void CPPartyMemberList::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet     : CPPartyMemberList 0xBF Subcommand Party Command --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "Packet ID        : " << std::hex << (UI16)pStream.GetByte( 0 ) << std::dec << std::endl;
+	outStream << "Subcommand       : " << pStream.GetShort( 3 ) << std::endl;
+	outStream << "Party Sub        : " << (UI16)pStream.GetByte( 5 ) << std::endl;
+	outStream << "Member Count     : " << (UI16)pStream.GetByte( 6 ) << std::endl;
+	for( int i = 0; i < pStream.GetByte( 6 ); ++i )
+		outStream << "    Member #" << i << "    : " << std::hex << "0x" << pStream.GetLong( 7 + 4 * i ) << std::dec << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+CPPartyInvitation::CPPartyInvitation( void )
+{
+	InternalReset();
+}
+
+void CPPartyInvitation::InternalReset( void )
+{
+	pStream.ReserveSize( 7 );
+	pStream.WriteByte( 0, 0xBF );	// packet ID
+	pStream.WriteShort( 1, 10 );	// packet length
+	pStream.WriteShort( 3, 6 );		// party command
+	pStream.WriteByte( 5, 7 );		// subcommand
+}
+
+void CPPartyInvitation::Leader( CChar *leader )
+{
+	pStream.WriteLong( 6, leader->GetSerial() );
+}
+
+void CPPartyInvitation::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet     : CPPartyInvitation 0xBF Subcommand Party Command --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "Packet ID        : " << std::hex << (UI16)pStream.GetByte( 0 ) << std::dec << std::endl;
+	outStream << "Subcommand       : " << pStream.GetShort( 3 ) << std::endl;
+	outStream << "Party Sub        : " << (UI16)pStream.GetByte( 5 ) << std::endl;
+	outStream << "Leader Serial    : 0x" << std::hex << pStream.GetLong( 6 ) << std::dec << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+	//		Server
+	//			BYTE[1]	membersInNewParty
+	//			BYTE[4]	idOfRemovedPlayer
+	//			For each member
+	//				BYTE[4]	memberID
+
+CPPartyMemberRemove::CPPartyMemberRemove( CChar *removed )
+{
+	InternalReset();
+	pStream.WriteLong( 7, removed->GetSerial() );
+}
+
+void CPPartyMemberRemove::InternalReset( void )
+{
+	pStream.ReserveSize( 11 );
+	pStream.WriteByte( 0, 0xBF );	// packet ID
+	pStream.WriteShort( 1, 11 );		// packet length
+	pStream.WriteShort( 3, 6 );		// party command
+	pStream.WriteByte( 5, 2 );		// subcommand
+	pStream.WriteByte( 6, 0 );		// member Count
+}
+
+void CPPartyMemberRemove::AddMember( CChar *member )
+{
+	size_t curPos = pStream.GetSize();
+	pStream.ReserveSize( curPos + 4 );
+	pStream.WriteLong( curPos, member->GetSerial() );
+	pStream.WriteByte( 6, pStream.GetByte( 6 ) + 1 );
+	pStream.WriteShort( 1, curPos + 4 );
+}
+
+void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet     : CPPartyMemberRemove 0xBF Subcommand Party Command --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "Packet ID        : " << std::hex << (UI16)pStream.GetByte( 0 ) << std::dec << std::endl;
+	outStream << "Subcommand       : " << pStream.GetShort( 3 ) << std::endl;
+	outStream << "Party Sub        : " << (UI16)pStream.GetByte( 5 ) << std::endl;
+	outStream << "Member Count     : " << (UI16)pStream.GetByte( 6 ) << std::endl;
+	outStream << "Member Removed   : 0x" << std::hex << (UI16)pStream.GetLong( 7 ) << std::dec << std::endl;
+	outStream << "Members          : " << std::endl;
+	for( int i = 0; i < pStream.GetByte( 6 ); ++i )
+		outStream << "    Member #" << i << "    : " << std::hex << "0x" << pStream.GetLong( 11 + 4 * i ) << std::dec << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
 }

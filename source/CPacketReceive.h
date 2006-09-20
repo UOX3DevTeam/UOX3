@@ -809,6 +809,21 @@ public:
 
 };
 
+class CPIAOSCommand : public CPInputBuffer
+{
+public:
+	virtual			~CPIAOSCommand()
+	{
+	}
+					CPIAOSCommand();
+					CPIAOSCommand( CSocket *s );
+
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+
+};
+
 }
 
 #endif

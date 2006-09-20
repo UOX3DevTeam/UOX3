@@ -18,6 +18,7 @@
 #include "Dictionary.h"
 
 #include "ObjectFactory.h"
+#include "PartySystem.h"
 
 #undef DBGFILE
 #define DBGFILE "targeting.cpp"
@@ -1650,6 +1651,8 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
 					case TARGET_STEALING:		Skills->StealingTarget( tSock );		break;
+					case TARGET_PARTYADD:		PartyFactory::getSingleton().CreateInvite( tSock );	break;
+					case TARGET_PARTYREMOVE:	PartyFactory::getSingleton().Kick( tSock );			break;
 					default:															break;
 				}
 			}

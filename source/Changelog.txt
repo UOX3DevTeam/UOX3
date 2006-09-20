@@ -1,3 +1,12 @@
+20th September, 2006 - Maarc
+
+	Added CPIAOSCommand packet including logging
+	Changed CPISubcommands::Receive so that it doesn't log multiple times
+	Updated party packet details
+	Added basic party implementation.  Adding, removal and kicking works, speech does not
+	Added sent packets CPPartyMemberList, CPPartyMemberRemove and CPPartyInvitation
+	Updated dragging contents out of packs so that pet friends should be able to do so
+
 9/10/2006 - Xuri
 	Found and fixed a total of 19 missing semicolons in 15 different JavaScripts
 	Modified sword.js and axe.js so bladed weapons can be used as magic weapons (of TYPE 15)

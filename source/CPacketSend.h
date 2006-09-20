@@ -1369,6 +1369,45 @@ public:
 	void			ArgumentString( const std::string arguments );
 };
 
+class CPPartyMemberList : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPPartyMemberList();
+	virtual			~CPPartyMemberList()
+					{
+					}
+	void			AddMember( CChar *member );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+};
+
+class CPPartyInvitation : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPPartyInvitation();
+	virtual			~CPPartyInvitation()
+					{
+					}
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+	void			Leader( CChar *leader );
+};
+
+class CPPartyMemberRemove : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPPartyMemberRemove( CChar *removed );
+	virtual			~CPPartyMemberRemove()
+					{
+					}
+	void			AddMember( CChar *member );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+};
+
 }
 
 #endif

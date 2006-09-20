@@ -13,7 +13,7 @@
 #include "books.h"
 #include "cMagic.h"
 #include "skills.h"
-//#include "PartySystem.h"
+#include "PartySystem.h"
 
 namespace UOX
 {
@@ -114,6 +114,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
+		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
 		default:	return NULL;
 	}
@@ -2297,8 +2298,8 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 
 void CPISubcommands::Receive( void )
 {
-	tSock->Receive( 3 );
-	tSock->Receive( tSock->GetWord( 1 ) );
+	tSock->Receive( 3, false );
+	tSock->Receive( tSock->GetWord( 1 ), false );
 	subCmd = tSock->GetWord( 3 );
 
 	switch( subCmd )
@@ -2367,6 +2368,7 @@ bool CPIPartyCommand::Handle( void )
 	const int PARTY_TELLINDIV	= 3;
 	const int PARTY_TELLALL		= 4;
 	const int PARTY_LOOT		= 6;
+	const int PARTY_INVITE		= 7;
 	const int PARTY_ACCEPT		= 8;
 	const int PARTY_DECLINE		= 9;
 
@@ -2397,6 +2399,9 @@ bool CPIPartyCommand::Handle( void )
 	//	Subcommand 6		Party can loot me?
 	//		Client
 	//			BYTE[1]	canLoot	( 0 == no, 1 == yes )
+	//	Subcommand 7		Send invitation to party
+	//		Server
+	//			BYTE[4]	serial of invited player
 	//	Subcommand 8		Accept join party invitation
 	//		Client
 	//			BYTE[4]	leaderID
@@ -2408,21 +2413,41 @@ bool CPIPartyCommand::Handle( void )
 	{
 	case PARTY_ADD:
 		{
-/*			SERIAL charToAdd	= tSock->GetDWord( BASE_OFFSET );
+			SERIAL charToAdd	= tSock->GetDWord( BASE_OFFSET );
 			if( charToAdd != 0 )
 			{	// it really is a serial
-				Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
-				if( toAddTo != NULL )
-					toAddTo->AddMember( calcCharObjFromSer( charToAdd ) );
+				tSock->SetDWord( 7, charToAdd );
+				PartyFactory::getSingleton().CreateInvite( tSock );
 			}
 			else
 			{	// Crap crap crap, what do we do here?
-
-			}*/
+				tSock->target( 0, TARGET_PARTYADD, "Select the character to add to the party" );
+			}
 		}
 		break;
 	case PARTY_REMOVE:
 		{
+			Party *ourParty = PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			if( ourParty != NULL )
+			{
+				if( ourParty->Leader() == tSock->CurrcharObj() )
+				{
+					SERIAL charToRemove	= tSock->GetDWord( BASE_OFFSET );
+					if( charToRemove != 0 )
+					{	// it really is a serial
+						tSock->SetDWord( 7, charToRemove );
+						PartyFactory::getSingleton().Kick( tSock );
+					}
+					else
+					{	// Crap crap crap, what do we do here?
+						tSock->target( 0, TARGET_PARTYREMOVE, "Select the character to remove from the party" );
+					}
+				}
+				else
+					tSock->sysmessage( "You have to be the leader to do that" );
+			}
+			else
+				tSock->sysmessage( "You are not in a party" );
 		}
 		break;
 	case PARTY_TELLINDIV:
@@ -2435,27 +2460,43 @@ bool CPIPartyCommand::Handle( void )
 		break;
 	case PARTY_LOOT:
 		{
-/*			Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
 			if( toAddTo != NULL )
 			{
 				PartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
 				if( mEntry != NULL )
 					mEntry->IsLootable( tSock->GetByte( BASE_OFFSET ) != 0 );
-			}*/
+			}
+		}
+		break;
+	case PARTY_INVITE:
+		{	// THIS SHOULD NEVER HAPPEN -> Server message!
 		}
 		break;
 	case PARTY_ACCEPT:
 		{
-/*			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
+			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
 			Party *toAddTo		= PartyFactory::getSingleton().Get( calcCharObjFromSer( leaderSerial ) );
 			if( toAddTo != NULL )
 			{
 				toAddTo->AddMember( tSock->CurrcharObj() );
-			}*/
+			}
+			else
+				tSock->sysmessage( "That party does not exist any more" );
 		}
 		break;
 	case PARTY_DECLINE:
 		{
+			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
+			CChar *leader		= calcCharObjFromSer( leaderSerial );
+			if( leader != NULL )
+			{
+				CSocket *leaderSock = leader->GetSocket();
+				if( leaderSock != NULL )
+				{	// is it a PC leader?
+					leaderSock->sysmessage( "The player has declined your invitation to party" );
+				}
+			}
 		}
 		break;
 	}
@@ -2463,8 +2504,89 @@ bool CPIPartyCommand::Handle( void )
 }
 void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 {
-	if( fullHeader )
-		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	UI08 partyCmd = tSock->GetByte( 5 );
+
+	const int PARTY_ADD			= 1;
+	const int PARTY_REMOVE		= 2;
+	const int PARTY_TELLINDIV	= 3;
+	const int PARTY_TELLALL		= 4;
+	const int PARTY_LOOT		= 6;
+	const int PARTY_ACCEPT		= 8;
+	const int PARTY_DECLINE		= 9;
+
+	const int BASE_OFFSET	= 6;
+	switch( partyCmd )
+	{
+	case PARTY_ADD:
+		{
+	//	Subcommand 1		Add a party member
+	//		Client
+	//			BYTE[4]	id		(if 0, a targeting cursor appears)	
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ADD --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "To add         : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
+		}
+		break;
+	case PARTY_REMOVE:
+		{
+	//	Subcommand 2		Remove a party member
+	//		Client
+	//			BYTE[4] id		(if 0, a targeting cursor appears)
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_REMOVE --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "To remove      : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
+		}
+		break;
+	case PARTY_TELLINDIV:
+		{
+	//	Subcommand 3		Tell a party member a message
+	//		BYTE[4]		id
+	//		BYTE[n][2]	Null terminated Unicode message
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLINDIV --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		}
+		break;
+	case PARTY_TELLALL:
+		{
+	//	Subcommand 4		Tell full party a message
+	//		Client
+	//			BYTE[n][2]	Null terminated unicode message
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLALL --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		}
+		break;
+	case PARTY_LOOT:
+		{
+	//	Subcommand 6		Party can loot me?
+	//		Client
+	//			BYTE[1]	canLoot	( 0 == no, 1 == yes )
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_LOOT --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "Can loot       : " << ( (tSock->GetByte( BASE_OFFSET )==1)?"yes":"no") << std::endl;
+		}
+		break;
+	case PARTY_ACCEPT:
+		{
+	//	Subcommand 8		Accept join party invitation
+	//		Client
+	//			BYTE[4]	leaderID
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ACCEPT --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		outStream << "Leader         : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
+		}
+		break;
+	case PARTY_DECLINE:
+		{
+	//	Subcommand 9		Reject join party invitation
+	//		Client
+	//			BYTE[4] leaderID
+		if( fullHeader )
+			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_DECLINE --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+
+		outStream << "Character      : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
+		}
+		break;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -2808,5 +2930,94 @@ void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
+
+
+// 0xD7 Packet
+//	byte	0xD7 The packet number. 
+//	ushort	Size The size of the packet. 
+//	ushort	Command The command being sent.
+//				0x0002 - House Customization :: Backup 
+//				0x0003 - House Customization :: Restore 
+//				0x0004 - House Customization :: Commit 
+//				0x0005 - House Customization :: Destroy Item 
+//				0x0006 - House Customization :: Place Item 
+//				0x000C - House Customization :: Exit 
+//				0x000D - House Customization :: Place Multi (Stairs) 
+//				0x000E - House Customization :: Synch 
+//				0x0010 - House Customization :: Clear 
+//				0x0012 - House Customization :: Switch Floors 
+//				0x0019 - Special Moves :: Activate/Deactivate 
+//				0x001A - House Customization :: Revert 
+//				0x0028 - Quests :: Unknown
+//				0x0032 - Guild  :: Unknown
+
+//	Packet Description:
+//		This packet is used to perform various actions, mostly related to AOS features.
+ 
+CPIAOSCommand::CPIAOSCommand()
+{
+}
+CPIAOSCommand::CPIAOSCommand( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+
+void CPIAOSCommand::Receive( void )
+{
+	tSock->Receive( 3, false );
+	UI16 len = tSock->GetWord( 1 );
+	tSock->Receive( len, false );
+}
+bool CPIAOSCommand::Handle( void )
+{
+/*	switch( tSock->GetWord( 7 ) )	// Which subcommand?
+	{
+	case 0x0002:	outStream << "House Customisation :: Backup";					break;
+	case 0x0003:	outStream << "House Customisation :: Restore";					break;
+	case 0x0004:	outStream << "House Customisation :: Commit";					break;
+	case 0x0005:	outStream << "House Customisation :: Destroy Item";				break;
+	case 0x0006:	outStream << "House Customisation :: Place Item";				break;
+	case 0x000C:	outStream << "House Customisation :: Exit";						break;
+	case 0x000D:	outStream << "House Customisation :: Place Multi (Stairs)";		break;
+	case 0x000E:	outStream << "House Customisation :: Synch";					break;
+	case 0x0010:	outStream << "House Customisation :: Clear";					break;
+	case 0x0012:	outStream << "House Customisation :: Switch Floors";			break;
+	case 0x0019:	outStream << "Special Moves :: Activate / Deactivate";			break;
+	case 0x001A:	outStream << "House Customisation :: Revert";					break;
+	case 0x0028:	outStream << "Guild :: Unknown";								break;
+	case 0x0032:	outStream << "Quests :: Unknown";								break; 
+	default:		outStream << "Unknown " << tSock->GetWord( 7 );					break;
+	}
+	*/
+	return false;
+}
+void CPIAOSCommand::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPIAOSCommand 0xD7 --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "Character      : 0x" << std::hex << tSock->GetDWord( 3 ) << std::dec << std::endl;
+	outStream << "Command        : ";
+	switch( tSock->GetWord( 7 ) ) 
+	{
+	case 0x0002:	outStream << "House Customisation :: Backup";					break;
+	case 0x0003:	outStream << "House Customisation :: Restore";					break;
+	case 0x0004:	outStream << "House Customisation :: Commit";					break;
+	case 0x0005:	outStream << "House Customisation :: Destroy Item";				break;
+	case 0x0006:	outStream << "House Customisation :: Place Item";				break;
+	case 0x000C:	outStream << "House Customisation :: Exit";						break;
+	case 0x000D:	outStream << "House Customisation :: Place Multi (Stairs)";		break;
+	case 0x000E:	outStream << "House Customisation :: Synch";					break;
+	case 0x0010:	outStream << "House Customisation :: Clear";					break;
+	case 0x0012:	outStream << "House Customisation :: Switch Floors";			break;
+	case 0x0019:	outStream << "Special Moves :: Activate / Deactivate";			break;
+	case 0x001A:	outStream << "House Customisation :: Revert";					break;
+	case 0x0028:	outStream << "Guild :: Unknown";								break;
+	case 0x0032:	outStream << "Quests :: Unknown";								break; 
+	default:		outStream << "Unknown (0x" << std::hex << tSock->GetWord( 7 ) << std::dec << ")";			break;
+	}
+	outStream << std::endl;
+	outStream << "  Raw dump     : " << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
 
 }

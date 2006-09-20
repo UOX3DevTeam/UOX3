@@ -62,6 +62,7 @@
 #include "jail.h"
 #include "Dictionary.h"
 #include "ObjectFactory.h"
+#include "PartySystem.h"
 #include "CJSEngine.h"
 
 namespace UOX
@@ -79,7 +80,8 @@ timeval current;
 #undef DBGFILE
 #define DBGFILE "uox3.cpp"
 
-ObjectFactory *objFactory;
+ObjectFactory *	objFactory;
+PartyFactory *	partySys;
 
 //o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -1459,9 +1461,10 @@ void InitClasses( void )
 	CounselorQueue	= NULL;
 	HTMLTemplates	= NULL;
 	FileLookup		= NULL;
-	objFactory		= NULL;
+	objFactory		= NULL; partySys	= NULL;
 
 	objFactory		= new ObjectFactory;
+	partySys		= new PartyFactory;
 	JSEngine		= new CJSEngine;
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
 	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
@@ -1732,6 +1735,7 @@ void Shutdown( SI32 retCode )
 
 	Console.TurnGreen();
 
+	delete partySys;
 	delete objFactory;
 
 	Console << "Server shutdown complete!" << myendl;
