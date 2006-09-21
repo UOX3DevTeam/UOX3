@@ -23,19 +23,21 @@ namespace UOX
 	}
 
 	// Party class!
-	void Party::AddMember( CChar *i )
+	bool Party::AddMember( CChar *i )
 	{
+		bool retVal = false;
 		if( ValidateObject( i ) )
 		{
-			bool isFound = (Find( i ) != NULL);
-			if( !isFound )
+			if( !HasMember( i ) )
 			{
 				PartyEntry *toAdd	= new PartyEntry( i );
 				PartyFactory::getSingleton().AddLookup( this, i );
 				members.push_back( toAdd );
 				SendList( NULL );
+				retVal = true;
 			}
 		}
+		return retVal;
 	}
 	PartyEntry *Party::Find( CChar *i, int *location )
 	{
@@ -58,8 +60,9 @@ namespace UOX
 	{
 		return ( Find( find ) != NULL );
 	}
-	void Party::RemoveMember( CChar *i )
+	bool Party::RemoveMember( CChar *i )
 	{
+		bool retVal = false;
 		if( ValidateObject( i ) )
 		{
 			int removeSpot;
@@ -80,27 +83,38 @@ namespace UOX
 				SendPacket( &toSend, NULL );
 				if( i->GetSocket() != NULL )
 					SendPacket( &toSend, i->GetSocket() );
+				retVal = true;
 			}
 		}
+		return retVal;
 	}
 	void Party::Leader( CChar *member )
 	{
-		PartyEntry *newLeader = Find( member );
+		int newLeaderPos;
+		PartyEntry *newLeader = Find( member, &newLeaderPos );
 		if( newLeader != NULL )
 		{
 			if( leader != NULL )
 			{
-				PartyEntry *mFind = Find( leader );
+				int oldLeaderPos;
+				PartyEntry *mFind = Find( leader, &oldLeaderPos );
 				if( mFind != NULL )
+				{
 					mFind->IsLeader( false );
+					// We need to swap their position in the array, because the first cab
+					// off the rank is the leader, and the client makes assumptions about
+					// this
+					members[oldLeaderPos] = newLeader;
+					members[newLeaderPos] = mFind;
+				}
 			}
 			leader = newLeader->Member();
 			newLeader->IsLeader( true );
 		}
 	}
 	CChar *Party::Leader( void )	{	return leader;	}
-	Party::Party() : leader( NULL )	{					}
-	Party::Party( CChar *ldr ) : leader( NULL )
+	Party::Party( bool npc ) : leader( NULL ), isNPC( npc )	{					}
+	Party::Party( CChar *ldr, bool npc ) : leader( NULL ), isNPC( npc )
 	{
 		if( ValidateObject( ldr ) )
 		{
@@ -132,6 +146,14 @@ namespace UOX
 			toSend.AddMember( toFind->Member() );
 		}
 		SendPacket( &toSend, toSendTo );
+	}
+	bool Party::IsNPC( void ) const
+	{
+		return isNPC;
+	}
+	void Party::IsNPC( bool value )
+	{
+		isNPC = value;
 	}
 
 /** This class is responsible for the creation and destruction of parties

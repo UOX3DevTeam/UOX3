@@ -2486,6 +2486,7 @@ bool CPIPartyCommand::Handle( void )
 				PartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
 				if( mEntry != NULL )
 					mEntry->IsLootable( tSock->GetByte( BASE_OFFSET ) != 0 );
+				tSock->sysmessage( "You have changed your loot setting" );
 			}
 		}
 		break;
@@ -2498,9 +2499,7 @@ bool CPIPartyCommand::Handle( void )
 			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
 			Party *toAddTo		= PartyFactory::getSingleton().Get( calcCharObjFromSer( leaderSerial ) );
 			if( toAddTo != NULL )
-			{
 				toAddTo->AddMember( tSock->CurrcharObj() );
-			}
 			else
 				tSock->sysmessage( "That party does not exist any more" );
 		}

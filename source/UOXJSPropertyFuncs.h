@@ -64,6 +64,10 @@ JSPropertyFunc CScriptSectionProps_setProperty;
 JSPropertyFunc CResourceProps_getProperty;
 JSPropertyFunc CResourceProps_setProperty;
 
+JSPropertyFunc CPartyProps_getProperty;
+JSPropertyFunc CPartyProps_setProperty;
+JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
+
 }
 
 #endif

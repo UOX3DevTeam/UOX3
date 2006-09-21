@@ -245,6 +245,9 @@ static JSPropertySpec CCharacterProps[] =
 	{ "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM },
 	{ "attackFirst",	CCP_ATTACKFIRST,	JSPROP_ENUMANDPERM },
 
+	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM },
+	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO  },
+
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
@@ -468,6 +471,14 @@ static JSPropertySpec CResourceProperties[] =
 	{ "logTime",	CRESP_LOGTIME,		JSPROP_ENUMANDPERM },
 	{ "oreAmount",	CRESP_OREAMT,		JSPROP_ENUMANDPERM },
 	{ "oreTime",	CRESP_ORETIME,		JSPROP_ENUMANDPERM },
+	{	NULL,		(SI08)NULL,			(UI08)0				}
+};
+
+static JSPropertySpec CPartyProperties[] =
+{
+	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM },
+	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO  },
+	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM },
 	{	NULL,		(SI08)NULL,			(UI08)0				}
 };
 

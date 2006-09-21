@@ -49,6 +49,7 @@
 #include "mapstuff.h"
 #include "cThreadQueue.h"
 #include "combat.h"
+#include "PartySystem.h"
 
 namespace UOX
 {
@@ -5742,6 +5743,162 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	JSEncapsulate doArmorDamage( cx, &(argv[2]) );
 
 	*rval = INT_TO_JSVAL( Combat->calcDef( mChar, (UI08)hitLoc.toInt(), doArmorDamage.toBool(), (WeatherType)resistType.toInt() ) );
+	return JS_TRUE;
+}
+
+
+// Party Methods
+
+JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Remove: Invalid number of arguments (1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	if( myClass.ClassName() == "UOXParty" )
+	{
+		Party *ourParty = static_cast<Party *>(myClass.toObject());
+		if( ourParty == NULL )
+		{
+			MethodError( "Remove: Invalid party" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toRemove( cx, &(argv[0]) );
+		CChar *charToRemove = static_cast<CChar *>(toRemove.toObject());
+		if( !ValidateObject( charToRemove ) )  
+		{
+			MethodError( "Remove: Invalid character to remove" );
+			return JS_FALSE;
+		}
+		*rval = BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove ) );
+	}
+	return JS_TRUE;
+}
+
+JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "Add: Invalid number of arguments (1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+
+	// let's setup our default return value here
+	*rval = BOOLEAN_TO_JSVAL( false );
+
+	if( myClass.ClassName() == "UOXParty" )
+	{
+		Party *ourParty = static_cast<Party *>(myClass.toObject());
+		if( ourParty == NULL )
+		{
+			MethodError( "Add: Invalid party" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toAdd( cx, &(argv[0]) );
+		CChar *charToAdd = static_cast<CChar *>(toAdd.toObject());
+		if( !ValidateObject( charToAdd ) )  
+		{
+			MethodError( "Add: Invalid character to add" );
+			return JS_FALSE;
+		}
+		if( charToAdd->IsNpc() )
+		{
+			if( ourParty->IsNPC() )
+				*rval = BOOLEAN_TO_JSVAL( ourParty->AddMember( charToAdd ) );
+			else
+			{
+				*rval = BOOLEAN_TO_JSVAL( false );
+				MethodError( "Add: Adding NPC to a PC party attempted" );
+			}
+		}
+		else
+		{
+			if( ourParty->IsNPC() )
+			{
+				*rval = BOOLEAN_TO_JSVAL( false );
+				MethodError( "Add: Adding PC to a NPC party attempted" );
+			}
+			else
+			{	// Send PC the invite
+				// OK, what this means is that it's a PC party, and because it exists
+				// we know that the leader needs to be active!  And if he's active,
+				// he should ALSO be online
+
+				CSocket *targSock	= charToAdd->GetSocket();
+				if( targSock != NULL )
+				{
+					CChar *leader		= ourParty->Leader();
+					CSocket *leaderSock = leader->GetSocket();
+
+					if( leaderSock != NULL )
+					{
+						CPPartyInvitation toSend;
+						toSend.Leader( leader );
+						targSock->Send( &toSend );
+						targSock->sysmessage( "You have been invited to join a party, type /accept or /decline to deal with the invitation" );
+						*rval = BOOLEAN_TO_JSVAL( true );
+					}
+					else
+					{
+						*rval = BOOLEAN_TO_JSVAL( false );
+						MethodError( "Add: PC selected is not online" );
+					}
+				}
+				else
+				{
+					*rval = BOOLEAN_TO_JSVAL( false );
+					MethodError( "Add: PC selected is not online" );
+				}
+			}
+		}
+	}
+	return JS_TRUE;
+}
+
+JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "GetMember: Invalid number of arguments (1)" );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	if( myClass.ClassName() == "UOXParty" )
+	{
+		Party *ourParty = static_cast<Party *>(myClass.toObject());
+		if( ourParty == NULL )
+		{
+			MethodError( "GetMember: Invalid party" );
+			return JS_FALSE;
+		}
+
+		JSEncapsulate toGetMember( cx, &(argv[0]) );
+		size_t memberOffset = toGetMember.toInt();
+		if( memberOffset < 0 || memberOffset >= ourParty->MemberList()->size() )  
+		{
+			MethodError( "GetMember: Invalid character to get, index out of bounds" );
+			*rval = JSVAL_NULL;
+			return JS_TRUE;
+		}
+		CChar *mChar = (*(ourParty->MemberList()))[memberOffset]->Member();
+		if( mChar == NULL )
+			*rval = JSVAL_NULL;
+		else
+		{
+			JSObject *myJSChar	= JSEngine->AcquireObject( IUE_CHAR, mChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+			*rval				= OBJECT_TO_JSVAL( myJSChar );
+		}
+	}
+	else
+		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
 

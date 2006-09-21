@@ -226,8 +226,8 @@ namespace UOX
 	{
 		protoList.resize( JSP_COUNT );
 
-		JSContext *cx = jsContext;
-		JSObject *obj = jsGlobal;
+		JSContext *cx			= jsContext;
+		JSObject *obj			= jsGlobal;
 
 		protoList[JSP_CHAR]		=	JS_InitClass( cx, obj, NULL, &UOXChar_class.base,	NULL,		0,		CCharacterProps,		CChar_Methods,		NULL,	NULL );
 		protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, NULL, &UOXItem_class.base,	NULL,		0,		CItemProps,				CItem_Methods,		NULL,	NULL );
@@ -240,12 +240,13 @@ namespace UOX
 		protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, NULL, &UOXResource_class,	NULL,		0,		CResourceProperties,	NULL,				NULL,	NULL );
 		protoList[JSP_RACE]		=	JS_InitClass( cx, obj, NULL, &UOXRace_class,		NULL,		0,		CRaceProperties,		CRace_Methods,		NULL,	NULL );
 		protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, NULL, &UOXGuild_class,		NULL,		0,		CGuildProperties,		CGuild_Methods,		NULL,	NULL );
+		protoList[JSP_PARTY]	=	JS_InitClass( cx, obj, NULL, &UOXParty_class.base,	NULL,		0,		CPartyProperties,		CParty_Methods,		NULL,	NULL );
 		protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, NULL, &UOXPacket_class,		Packet,		0,		NULL,					NULL,				NULL,	NULL );
 		protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, NULL, &UOXGump_class,		Gump,		0,		NULL,					NULL,				NULL,	NULL );
 		protoList[JSP_FILE]		=	JS_InitClass( cx, obj, NULL, &UOXFile_class,		UOXCFile,	0,		NULL,					NULL,				NULL,	NULL );
-		spellsObj	= JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
-		accountsObj	= JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
-		consoleObj	= JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
+		spellsObj				=	JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
+		accountsObj				=	JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
+		consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
 
 		JS_LockGCThing( cx, spellsObj );
 		//JS_AddRoot( cx, &spellsObj );
@@ -363,6 +364,13 @@ namespace UOX
 			break;
 		case IUE_REGION:
 			toMake = JS_NewObject( jsContext, &UOXRegion_class, protoList[JSP_REGION], jsGlobal ); 
+			if( toMake == NULL )
+				return NULL;
+			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
+			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
+			break;
+		case IUE_PARTY:
+			toMake = JS_NewObject( jsContext, &UOXParty_class.base, protoList[JSP_PARTY], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
 			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );

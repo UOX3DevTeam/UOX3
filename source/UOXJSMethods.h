@@ -239,6 +239,10 @@ JSMethodFunc CConsole_PrintSpecial;
 JSMethodFunc CConsole_BeginShutdown;
 JSMethodFunc CConsole_Reload;
 
+JSMethodFunc CParty_GetMember;
+JSMethodFunc CParty_Add;
+JSMethodFunc CParty_Remove;
+
 static JSFunctionSpec CGump_Methods[] =  
 { 	
 	{ "Free",					CGump_Free,					0, 0, 0 },
@@ -509,6 +513,14 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ "WriteString",	CPacket_WriteString,		3, 0, 0 },
 	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
 	{ NULL,				NULL,						0, 0, 0 }
+};
+
+static JSFunctionSpec CParty_Methods[] =  
+{ 	
+	{ "GetMember",		CParty_GetMember,			1, 0, 0 },
+	{ "Add",			CParty_Add,					1, 0, 0 },
+	{ "Remove",			CParty_Remove,				1, 0, 0 },
+	{ NULL,					NULL,					0, 0, 0 }
 };
 
 }

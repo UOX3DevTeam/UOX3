@@ -37,6 +37,8 @@
 #include "jsobj.h"
 #include "jsutil.h"
 
+#include "PartySystem.h"
+
 namespace UOX
 {
 	void MakeShop( CChar *c );
@@ -619,6 +621,37 @@ namespace UOX
 				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;
 				case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
 				case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
+				case CCP_PARTYLOOTABLE:
+					{
+						Party *toGet = PartyFactory::getSingleton().Get( gPriv );
+						if( toGet == NULL )
+							*vp = BOOLEAN_TO_JSVAL( false );
+						else
+						{
+							PartyEntry *toScan = toGet->Find( gPriv );
+							if( toScan == NULL )
+								*vp = BOOLEAN_TO_JSVAL( false );
+							else
+								*vp = BOOLEAN_TO_JSVAL( toScan->IsLootable() );
+						}
+					}
+																									break;
+				case CCP_PARTY:
+					{
+						// Hm Quite funny, same thing as .owner
+						Party *tempParty = PartyFactory::getSingleton().Get( gPriv );
+						if( tempParty == NULL )
+						{	// Return a JS_NULL
+							*vp = JSVAL_NULL;
+						}
+						else
+						{
+							// Otherwise Acquire an object
+							JSObject *myParty = JSEngine->AcquireObject( IUE_PARTY, tempParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+							*vp = OBJECT_TO_JSVAL( myParty );
+						}
+					}
+					break;
 				default:
 					break;
 			}
@@ -881,6 +914,17 @@ namespace UOX
 					}
 					break;
 				case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
+				case CCP_PARTYLOOTABLE:
+					{
+						Party *toGet = PartyFactory::getSingleton().Get( gPriv );
+						if( toGet != NULL )
+						{
+							PartyEntry *toScan = toGet->Find( gPriv );
+							if( toScan != NULL )
+								toScan->IsLootable( encaps.toBool() );
+						}
+					}
+																						break;
 				default:
 					break;
 			}
@@ -1707,6 +1751,72 @@ namespace UOX
 		return JS_TRUE;
 	}
 
+	JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		Party *gPriv = (Party *)JS_GetPrivate( cx, obj );
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CPARTYP_LEADER:
+				{
+					if( encaps.ClassName() == "UOXChar" || encaps.ClassName() == "UOXSocket" )
+					{
+						CChar *newLeader = NULL;
+						if( encaps.ClassName() == "UOXChar" )
+							newLeader = static_cast<CChar *>(encaps.toObject());
+						else
+						{
+							CSocket *tempSock = static_cast<CSocket *>(encaps.toObject());
+							if( tempSock != NULL )
+								newLeader = tempSock->CurrcharObj();
+						}
+						if( ValidateObject( newLeader ) )
+							gPriv->Leader( newLeader );
+					}
+				}
+																									break;
+			case CPARTYP_ISNPC:			gPriv->IsNPC( encaps.toBool() );							break;
+			default:																				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		Party *gPriv = (Party *)JS_GetPrivate( cx, obj );
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CPARTYP_LEADER:
+				{
+					CChar *myChar = gPriv->Leader();
+					if( !ValidateObject( myChar ) )
+					{
+						*vp = JSVAL_NULL;
+						return JS_TRUE;
+					}
+					JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					*vp = OBJECT_TO_JSVAL( myObj );
+				}
+																									break;
+			case CPARTYP_MEMBERCOUNT:	*vp = INT_TO_JSVAL( gPriv->MemberList()->size() );			break;
+			case CPARTYP_ISNPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNPC() );					break;
+			default:																				break;
+			}
+		}
+		return JS_TRUE;
+	}
+
 	JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		JSEncapsulate srcObj( cx, obj );
@@ -1751,6 +1861,25 @@ namespace UOX
 			else
 				*bp = ( src == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
 		}
+		return JS_TRUE;
+	}
+	JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+	{
+		JSEncapsulate srcObj( cx, obj );
+		Party *srcParty = (Party *)srcObj.toObject();
+		JSEncapsulate trgObj( cx, &v );
+		if( trgObj.isType( JSOT_OBJECT ) )
+		{
+			if( srcObj.ClassName() != trgObj.ClassName() )
+				*bp = JS_FALSE;
+			else
+			{
+				Party *trgParty	= (Party *)trgObj.toObject();
+				*bp = ( srcParty == trgParty ) ? JS_TRUE : JS_FALSE;
+			}
+		}
+		else
+			*bp = ( srcParty == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
 		return JS_TRUE;
 	}
 }

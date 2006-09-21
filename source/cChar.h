@@ -552,6 +552,12 @@ public:
 	void			ReactOnDamage( WeatherType damageType, CChar *attacker = NULL );
 	void			Die( CChar *attacker, bool doRepsys );
 
+	// Values determining if the character is in a party or not, save us shortcutting in a few places
+	// These values don't get saved or loaded, as only NPC parties get rebuilt, and that will be done
+	// via the PartyFactory Load/Save routines, and not through here
+	void			InParty( bool value );
+	bool			InParty( void ) const;
+
 // NPC Characters
 protected:
 	virtual void	RemoveSelfFromOwner( void );

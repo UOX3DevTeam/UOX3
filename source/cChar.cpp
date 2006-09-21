@@ -108,6 +108,7 @@ const UI32 BIT_MAXMANAFIXED		=	24;
 const UI32 BIT_MAXSTAMFIXED		=	25;
 const UI32 BIT_CANATTACK		=	26;
 const UI32 BIT_INBUILDING		=	27;
+const UI32 BIT_INPARTY			=	28;	// This property is not saved
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -5530,6 +5531,29 @@ bool CChar::GetUpdate( UpdateTypes updateType ) const
 void CChar::ClearUpdate( void )
 {
 	updateTypes.reset();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  InParty( bool value )
+//|   Date        -  21st September, 2006
+//|   Programmer  -  Maarc
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets/clears whether the character is in a party or not
+//o---------------------------------------------------------------------------o
+void CChar::InParty( bool value )
+{
+	bools.set( BIT_INPARTY, value );
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool InParty()
+//|   Date        -  21st September, 2006
+//|   Programmer  -  Maarc
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the character is in a party or not
+//o---------------------------------------------------------------------------o
+bool CChar::InParty( void ) const
+{
+	return bools.test( BIT_INPARTY );
 }
 
 }

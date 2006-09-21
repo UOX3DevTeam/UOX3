@@ -121,6 +121,8 @@ static JSFunctionSpec my_functions[] =
 	{ "ApplyDamageBonuses",			SE_ApplyDamageBonuses,		6, 0, 0 },
 	{ "ApplyDefenseModifiers",		SE_ApplyDefenseModifiers,	7, 0, 0 },
 
+	{ "CreateParty",				SE_CreateParty,				1, 0, 0 },
+
 	{ NULL,							NULL,						0, 0, 0 }, 
 };
 

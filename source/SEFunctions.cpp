@@ -30,6 +30,7 @@
 #include "UOXJSPropertySpecs.h"
 #include "JSEncapsulate.h"
 #include "CJSEngine.h"
+#include "PartySystem.h"
 
 namespace UOX
 {
@@ -1993,6 +1994,48 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 	*rval	= INT_TO_JSVAL( damage );
 
 	return JS_TRUE;
+}
+
+JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "CreateParty: Invalid number of arguments (takes 1, the leader)" );
+ 		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, &(argv[0]) );
+
+	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXSocket" ) 
+	{	// it's a character or socket, fantastic
+		CChar *leader		= NULL;
+		CSocket *leaderSock	= NULL;
+		if( myClass.ClassName() == "UOXChar" )
+		{
+			leader		= static_cast<CChar *>(myClass.toObject());
+			leaderSock	= leader->GetSocket();
+		}
+		else
+		{
+			leaderSock	= static_cast<CSocket *>(myClass.toObject());
+			leader		= leaderSock->CurrcharObj();
+		}
+
+		if( PartyFactory::getSingleton().Get( leader ) != NULL )
+		{
+			*rval = JSVAL_NULL;
+		}
+		else
+		{
+			Party *tParty	= PartyFactory::getSingleton().Create( leader );
+			JSObject *myObj	= JSEngine->AcquireObject( IUE_PARTY, tParty, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+			*rval			= OBJECT_TO_JSVAL( myObj );
+		}
+	}
+	else	// anything else isn't a valid leader people
+		*rval = JSVAL_NULL;
+
+ 	return JS_TRUE;
 }
 
 }

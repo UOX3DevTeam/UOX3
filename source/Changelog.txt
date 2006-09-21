@@ -1,3 +1,28 @@
+21st September, 2006 - Maarc
+
+	Added commentary to some of the party classes headers
+	Updated AddMember() and RemoveMember() to return a bool as to it's success
+	Updated Leader() change code so that the leader is always first on the list
+	Added isNPC property to the Party class to help us with how our code will go
+	CChar now has an InParty() method, which is currently unused - will be used for fast lookups of party presence later.  This is NOT to be saved, as it disappears on server shutdown.
+	Exposed the new party classes to the JS Engine
+		var partyObject = CreateParty( leader );	// Returns NULL if the party failed to be made
+
+		Party Class
+			Methods
+				bool Remove( memberToRemove );
+				bool Add( memberToAdd );		// If it's a PC, then it will send an INVITE ONLY  It is up to the PC to accept/decline
+				obj  GetMember( index );		// Returns a character object for the member at that index
+			Properties
+				leader					// Character object that is the leader, can return null - EDITABLE
+				memberCount				// Returns the number of characters in the group - READONLY
+				isNPC					// Returns true if it's an NPC party, false if not - EDITABLE
+
+		Character Class
+			Properties
+				party					// Returns a party object that is the party associated, or null - READONLY (use party management for this!)
+				partyLootable				// Boolean that dictates whether the character is lootable by the party - EDITABLE - Note that if you are not in a party, this does nothing!
+
 20th September, 2006 - Maarc
 
 	Added CPIAOSCommand packet including logging

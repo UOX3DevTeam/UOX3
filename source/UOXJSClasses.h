@@ -371,6 +371,27 @@ static JSClass UOXPacket_class =
 	JS_FinalizeStub 
 }; 
 
+static JSExtendedClass UOXParty_class = 
+{ 
+	{	"UOXParty",
+		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED, 
+		JS_PropertyStub,
+		JS_PropertyStub,
+		CPartyProps_getProperty,
+		CPartyProps_setProperty,
+		JS_EnumerateStub,
+		JS_ResolveStub,
+		JS_ConvertStub,
+		JS_FinalizeStub,
+		NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL
+	},
+	CParty_equality,
+	NULL,
+	NULL,
+	JSCLASS_NO_RESERVED_MEMBERS
+}; 
+
 }
 
 #endif

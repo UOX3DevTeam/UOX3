@@ -12,6 +12,7 @@ enum IUEEntries
 	IUE_SOCK,
 	IUE_GUILD,
 	IUE_REGION,
+	IUE_PARTY,
 	IUE_COUNT
 };
 
@@ -31,6 +32,7 @@ enum JSPrototypes
 	JSP_ACCOUNTS,
 	JSP_CONSOLE,
 	JSP_FILE,
+	JSP_PARTY,
 	JSP_COUNT
 };
 
