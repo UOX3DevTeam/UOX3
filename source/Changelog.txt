@@ -1,3 +1,8 @@
+9/27/2006 - grimson
+	Fixed the spawning of NPCs in CSpawnRegion::RegionSpawnChar() so that they are put
+	into the correct world.
+	Updated UOX3_Official.dsp to contain the files from the party system.
+
 21st September, 2006 - Maarc
 
 	Added commentary to some of the party classes headers

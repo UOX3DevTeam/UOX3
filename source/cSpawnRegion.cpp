@@ -478,7 +478,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 	{
 		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
 		{
-				CSpawn->SetLocation( x, y, z );
+				CSpawn->SetLocation( x, y, z, worldNumber );
 				CSpawn->SetSpawned( true );
 				CSpawn->ShouldSave( false );
 				CSpawn->SetSpawn( static_cast<UI32>(regionnum) );

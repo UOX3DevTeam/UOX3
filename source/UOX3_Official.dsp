@@ -271,6 +271,10 @@ SOURCE=.\msgboard.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PartySystem.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\quantityfuncs.cpp
 # End Source File
 # Begin Source File
@@ -576,6 +580,10 @@ SOURCE=.\movement.h
 # Begin Source File
 
 SOURCE=.\msgboard.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PartySystem.h
 # End Source File
 # Begin Source File
 
