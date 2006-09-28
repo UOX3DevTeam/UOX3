@@ -2332,14 +2332,6 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 		return false;
 	}
 	
-	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
-	{
-		mChar->TextMessage( NULL, curSpellCasting.Mantra().c_str(), TALK, false );
-		SpellFail( mSock );
-		mChar->StopSpell();
-		return false;
-	}
-
 	if( ( Delay == -2 ) && !mChar->IsGM() )
 	{
 		//Check for enough reagents
@@ -2373,6 +2365,14 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 			}
 		}
 	}	
+
+	if( ( !mChar->IsGM() ) && ( !Skills->CheckSkill( mChar, MAGERY, lowSkill, highSkill ) ) )
+	{
+		mChar->TextMessage( NULL, curSpellCasting.Mantra().c_str(), TALK, false );
+		SpellFail( mSock );
+		mChar->StopSpell();
+		return false;
+	}
 	   
 	mChar->SetNextAct( 75 );		// why 75?
 

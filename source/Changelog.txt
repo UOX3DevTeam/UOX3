@@ -1,3 +1,6 @@
+9/28/2006 - grimson
+	Change cMagic::SelectSpell() to first check for reagents and then for skill.
+
 9/27/2006 - grimson
 	Fixed the spawning of NPCs in CSpawnRegion::RegionSpawnChar() so that they are put
 	into the correct world.
