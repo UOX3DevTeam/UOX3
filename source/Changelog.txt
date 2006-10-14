@@ -1,3 +1,6 @@
+10/14/2006 - grimson
+	Added more details to the weapon tooltips.
+
 9/28/2006 - grimson
 	Change cMagic::SelectSpell() to first check for reagents and then for skill.
 

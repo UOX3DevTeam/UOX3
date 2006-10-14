@@ -4688,7 +4688,50 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetHiDamage() > 0 )
 		{	
 			tempEntry.stringNum = 1060403;
-			tempEntry.ourText = UString::number( cItem.GetHiDamage() );
+			tempEntry.ourText = UString::number( 100 );
+			FinalizeData( tempEntry, totalStringLen );
+		}
+
+		if( cItem.GetHiDamage() > 0 )
+		{	
+			tempEntry.stringNum = 1061168;
+			tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
+			FinalizeData( tempEntry, totalStringLen );
+		}
+
+		if( cItem.GetSpeed() > 0 )
+		{	
+			tempEntry.stringNum = 1061167;
+			tempEntry.ourText = UString::number( cItem.GetSpeed() );
+			FinalizeData( tempEntry, totalStringLen );
+		}
+
+		if( cItem.GetHiDamage() > 0 )
+		{	
+			if( cItem.GetLayer() == IL_RIGHTHAND )
+				tempEntry.stringNum = 1061824;
+			else
+				tempEntry.stringNum = 1061171;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+
+		if( Combat->getCombatSkill( &cItem ) != WRESTLING )
+		{
+			switch( Combat->getCombatSkill( &cItem ) )
+			{
+				case SWORDSMANSHIP:
+					tempEntry.stringNum = 1061172;
+					break;
+				case MACEFIGHTING:
+					tempEntry.stringNum = 1061173;
+					break;
+				case FENCING:
+					tempEntry.stringNum = 1061174;
+					break;
+				case ARCHERY:
+					tempEntry.stringNum = 1061175;
+					break;
+			}
 			FinalizeData( tempEntry, totalStringLen );
 		}
 
