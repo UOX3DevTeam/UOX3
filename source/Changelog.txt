@@ -1,3 +1,6 @@
+10/29/2006 - grimson
+	Fixed %tstamp output in the HTML templates.
+
 10/14/2006 - grimson
 	Added more details to the weapon tooltips.
 

@@ -218,11 +218,12 @@ void cHTMLTemplate::Process( void )
 	// Timestamp
 	time_t currTime;
 	time( &currTime );
+	currTime = mktime( gmtime( &currTime ) );
 	UString timestamp = UString::number( static_cast<size_t>(currTime) );
 	Pos = ParsedContent.find( "%tstamp" ); 
 	while( Pos != std::string::npos )
 	{
-		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 10, timestamp ):ParsedContent.replace( Pos, 10, "Down" );
+		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, 7, timestamp ):ParsedContent.replace( Pos, 7, "Down" );
 		Pos = ParsedContent.find( "%tstamp" );
 	}
 
