@@ -490,11 +490,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		HAIR = 0,
 		BEARD,
 		PACK,
+		BANK,
 		GOLD,
 		ITOTAL
 	};
 
-	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL };
+	CItem *CreatedItems[ITOTAL] = { NULL, NULL, NULL, NULL, NULL };
 	UI16 ItemID, ItemColour;
 	if( validHairStyle( hairStyle, mChar->GetID() ) )
 	{
@@ -529,6 +530,19 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[PACK]->SetCont( mChar );
 		CreatedItems[PACK]->SetType( IT_CONTAINER );
 		CreatedItems[PACK]->SetDye( true );
+	}
+	CreatedItems[BANK] = Items->CreateItem( tSock, mChar, 0x09AB, 1, 0, OT_ITEM );
+	if( CreatedItems[BANK] != NULL )
+	{
+		char temp[1024];
+		sprintf( temp, Dictionary->GetEntry( 1283 ).c_str(), mChar->GetName().c_str() );
+		CreatedItems[BANK]->SetName( temp );
+		CreatedItems[BANK]->SetDecayable( false );
+		CreatedItems[BANK]->SetLayer( IL_BANKBOX );
+		CreatedItems[BANK]->SetType( IT_CONTAINER );
+		CreatedItems[BANK]->SetTempVar( CITV_MOREX, 1 );
+		CreatedItems[BANK]->SetOwner( mChar );
+		CreatedItems[BANK]->SetCont( mChar );
 	}
 
 	std::vector< cSkillClass > vecSkills;

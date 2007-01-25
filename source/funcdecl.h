@@ -84,6 +84,7 @@ void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff );
 //o---------------------------------------------------------------------------o
 CChar *			FindItemOwner( CItem *p );
 CBaseObject *	FindItemOwner( CItem *i, ObjectType &objType );
+CItem *			FindRootContainer( CItem *i );
 CItem *			FindItemOfType( CChar *toFind, ItemTypes type );
 CItem *			FindItem( CChar *toFind, UI16 itemID );
 

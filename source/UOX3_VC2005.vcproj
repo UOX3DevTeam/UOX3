@@ -3151,6 +3151,14 @@
 			</Filter>
 		</Filter>
 		<File
+			RelativePath=".\PartySystem.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PartySystem.h"
+			>
+		</File>
+		<File
 			RelativePath="uox3.ico"
 			>
 		</File>

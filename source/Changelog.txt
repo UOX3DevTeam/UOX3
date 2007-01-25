@@ -1,3 +1,10 @@
+1/25/2007 - giwo (0.98-3.7i)
+	Fixed a compiler warning with the Party System
+	Fixed an issue causing weight not to be added when grabbing items from a bank box.
+	Moved BankBox creation to Player creation, addressing a situation where the first
+		time a player opened his bank it would close immediately or crash the client.
+	Added FindRootContainer() to simplify finding the top-most item containing other items.
+
 10/29/2006 - grimson
 	Fixed %tstamp output in the HTML templates.
 

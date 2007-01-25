@@ -223,39 +223,29 @@ bool CPIGetItem::Handle( void )
 					tSock->Send( &bounce );
 					return true;
 				}
-				CBaseObject *recurseCont = contItem->GetCont();
-				while( ValidateObject( recurseCont ) )
+				CItem *recurseItem = FindRootContainer( contItem );
+				if( recurseItem->GetType() == IT_TRADEWINDOW )
 				{
-					if( recurseCont->CanBeObjType( OT_ITEM ) )
+					CItem *z = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
+					if( ValidateObject( z ) )
 					{
-						CItem *recurseItem = static_cast<CItem *>(recurseCont);
-						if( recurseItem->GetType() == IT_TRADEWINDOW )
+						if( z->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
 						{
-							CItem *z = calcItemObjFromSer( recurseItem->GetTempVar( CITV_MOREX ) );
-							if( ValidateObject( z ) )
-							{
-								if( z->GetTempVar( CITV_MOREZ ) || recurseItem->GetTempVar( CITV_MOREZ ) )
-								{
-									z->SetTempVar( CITV_MOREZ, 0 );
-									recurseItem->SetTempVar( CITV_MOREZ, 0 );
-									sendTradeStatus( z, recurseItem );
-								}
-								CChar *zChar = FindItemOwner( z );
-								if( ValidateObject( zChar ) )
-								{
-									CSocket *zSock = zChar->GetSocket();
-									if( zSock != NULL )
-										Effects->PlaySound( zSock, 0x0057, true );
-								}
-							}
-							break;
+							z->SetTempVar( CITV_MOREZ, 0 );
+							recurseItem->SetTempVar( CITV_MOREZ, 0 );
+							sendTradeStatus( z, recurseItem );
 						}
-						else
-							recurseCont = recurseItem->GetCont();
+						CChar *zChar = FindItemOwner( z );
+						if( ValidateObject( zChar ) )
+						{
+							CSocket *zSock = zChar->GetSocket();
+							if( zSock != NULL )
+								Effects->PlaySound( zSock, 0x0057, true );
+						}
 					}
-					else
-						break;
 				}
+				else if( recurseItem->GetLayer() == IL_BANKBOX )
+					tSock->PickupSpot( PL_OTHERPACK );
 			}
 		}
 		else if( oType == OT_ITEM )

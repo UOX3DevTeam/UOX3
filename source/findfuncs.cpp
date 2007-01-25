@@ -86,6 +86,27 @@ CBaseObject *FindItemOwner( CItem *i, ObjectType &objType )
 }
 
 //o---------------------------------------------------------------------------o
+//|	Function	-	CItem *FindRootContainer( CItem *i )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Finds the root container item and returns it
+//o---------------------------------------------------------------------------o
+CItem *FindRootContainer( CItem *i )
+{
+	if( !ValidateObject( i ) || i->GetCont() == NULL )
+		return NULL;
+
+	while( i->GetCont() != NULL )
+	{
+		if( i->GetContSerial() < BASEITEMSERIAL )
+			break;
+		else
+			i = static_cast<CItem *>(i->GetCont());
+	}
+	return i;
+}
+
+//o---------------------------------------------------------------------------o
 //|	Function	-	CChar *FindItemOwner( CItem *p )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o

@@ -6,8 +6,8 @@
 namespace UOX
 {
 	// PartyEntry code goes here
-	const BIT_LEADER		= 0;
-	const BIT_LOOTABLE		= 1;
+	const size_t BIT_LEADER		= 0;
+	const size_t BIT_LOOTABLE		= 1;
 
 	CChar * PartyEntry::Member( void ) const	{	return member;							}
 	bool PartyEntry::IsLeader( void ) const		{	return settings.test( BIT_LEADER   );	}
