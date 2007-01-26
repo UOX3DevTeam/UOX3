@@ -1100,11 +1100,14 @@ bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
 	CChar *getFriend		= NULL;
 	CHARLIST *petFriends	= pet->GetFriendList();
-	for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
+	if( petFriends != NULL )
 	{
-		getFriend = (*I);
-		if( ValidateObject( getFriend ) && getFriend == mChar )
-			return true;
+		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
+		{
+			getFriend = (*I);
+			if( ValidateObject( getFriend ) && getFriend == mChar )
+				return true;
+		}
 	}
 	return false;
 }

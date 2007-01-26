@@ -364,6 +364,15 @@ bool CPIGetItem::Handle( void )
 	if( iCont == NULL )
 		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
+
+	UI16 targTrig		= i->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
+	if( toExecute != NULL )
+	{
+		if( !toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
+			Bounce( tSock, i );
+	}
+
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
 	return true;
@@ -385,7 +394,6 @@ bool CPIEquipItem::Handle( void )
 		return true;
 
 	ourChar->BreakConcentration( tSock );
-	CPBounce bounce( 5 );
 	CItem *i = calcItemObjFromSer( iserial );
 	CChar *k = calcCharObjFromSer( cserial );
 	if( !ValidateObject( i ) )
@@ -776,8 +784,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	SERIAL serial	= mSock->GetDWord( 1 );
 	CItem *i		= calcItemObjFromSer( serial );
 	bool stackDeleted = false;
-	
-	CPBounce bounce( 5 );
+
 	if( !ValidateObject( i ) )
 	{
 		nChar->Teleport();
@@ -1646,7 +1653,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						else if( iChar->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 							mSock->openPack( iUsed, true );
 						else
-							Skills->Snooping( mSock, iChar, iUsed );
+						{
+							CItem *rootItem = FindRootContainer( iUsed );
+							if( ValidateObject( rootItem ) && rootItem->GetType() == IT_TRADEWINDOW )
+								mSock->openPack( iUsed, true );
+							else
+								Skills->Snooping( mSock, iChar, iUsed );
+						}
 						packOpened = true;	
 					}
 						

@@ -1385,7 +1385,7 @@ bool CPIGumpMenuSelect::Handle( void )
 	gumpID		= tSock->GetDWord( 7 );
 	buttonID	= tSock->GetDWord( 11 );
 	switchCount	= tSock->GetDWord( 15 );
-	textOffset	= 19 + 4 * switchCount;
+	textOffset	= 19 + (4 * switchCount);
 	textCount	= tSock->GetDWord( textOffset );
 
 #if defined( UOX_DEBUG_MODE )
