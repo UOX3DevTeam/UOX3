@@ -17,7 +17,7 @@ function shearSheep( pUser, sheep )
 		CreateDFNItem( pUser.socket, pUser, "0x0df8", 2, "ITEM", true ); //give the player some wool
 		
 		// Determine the respawn time (in seconds) for the sheep's wool
-		var delay = RandomNumber( 60, 180 )
+		var delay = RandomNumber( 60, 180 );
 		
 		// Trigger a hardcoded timer in UOX3 which changes ID of the sheep back to normal
 		DoTempEffect( 0, sheep, pUser, 43, delay, 0, 0 );

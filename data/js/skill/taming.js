@@ -20,7 +20,7 @@ function onCallback0( pSock, ourObj )
 		var skillToTame = ourObj.skillToTame;
 		var pLanguage 	= pSock.Language;
 		if( !ourObj.InRange( pUser, 3 ) )
-			pSock.SysMessage( "That is too far away." )
+			pSock.SysMessage( "That is too far away." );
 		else if( !ourObj.isAnimal ) //as per defined in creatures.dfn
 			pSock.SysMessage( "That doesn't look much like an animal." );
 		else if( skillToTame > 1000 )

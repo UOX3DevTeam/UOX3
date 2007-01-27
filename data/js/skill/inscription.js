@@ -1,6 +1,6 @@
 function SkillRegistration()
 {
-	RegisterSkill( 23, true )	// Inscription
+	RegisterSkill( 23, true );	// Inscription
 }
 
 function onSkill( pUser, objType, skillUsed )

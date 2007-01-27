@@ -12,7 +12,7 @@ function command_KILL( socket, cmdString )
 		socket.CustomTarget( 0, "Select target to kill: " + cmdString );
 	}
 	else
-		socket.SysMessage( "This command takes at least 1 argument." )
+		socket.SysMessage( "This command takes at least 1 argument." );
 }
 
 function onCallback0( socket, ourObj )

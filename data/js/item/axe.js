@@ -9,8 +9,13 @@ function onUse( pUser, iUsed )
 			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
 			return false;
 		}
-		var targMsg = GetDictionaryEntry( 443, socket.Language );
-		socket.CustomTarget( 1, targMsg );
+		else if( iUsed.type != 15 )
+		{
+			var targMsg = GetDictionaryEntry( 443, socket.Language );
+			socket.CustomTarget( 1, targMsg );
+		}
+		else
+			return true;		
 	}
 	return false;
 }
