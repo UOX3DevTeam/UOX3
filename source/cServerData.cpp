@@ -1488,16 +1488,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[worldlight]" << std::endl << "{" << std::endl;
-		ofsOutput << "MOON1=" << ServerMoon( 0 ) << std::endl;
-		ofsOutput << "MOON2=" << ServerMoon( 1 ) << std::endl;
 		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << std::endl;
-		ofsOutput << "CURRENTLEVEL=" << static_cast<UI16>(WorldLightCurrentLevel()) << std::endl;
 		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << std::endl;
 		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << std::endl;
-		ofsOutput << "DAY=" << ServerTimeDay() << std::endl;
-		ofsOutput << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << std::endl;
-		ofsOutput << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << std::endl;
-		ofsOutput << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << std::endl;
 		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
@@ -2335,6 +2328,96 @@ UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 {
 	secondsperuominute = newVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	void CServerData::SaveTime( void )
+//|	Date			-	January 28th, 2007
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Outputs server time information to time.wsc in the /shared/ directory
+//o--------------------------------------------------------------------------o	
+void CServerData::SaveTime( void )
+{
+	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
+	std::ofstream	timeDestination( timeFile.c_str() );
+	if( !timeDestination ) 
+	{
+		Console.Error( "Failed to open %s for writing", timeFile.c_str() );
+		return;
+	}
+
+	timeDestination << "[TIME]" << std::endl << "{" << std::endl;
+	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << std::endl;
+	timeDestination << "DAY=" << ServerTimeDay() << std::endl;
+	timeDestination << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << std::endl;
+	timeDestination << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << std::endl;
+	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << std::endl;
+	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << std::endl;
+	timeDestination << "}" << std::endl << std::endl;
+
+	timeDestination.close();
+}
+
+void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void CServerData::LoadTime( void )
+{
+	std::ifstream input;
+	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
+
+	input.open( filename.c_str(), std::ios_base::in );
+	input.seekg( 0, std::ios::beg );
+
+	char line[1024];
+
+	if( input.is_open() )
+	{
+		while( !input.eof() && !input.fail() )
+		{
+			input.getline( line, 1024 );
+			UString sLine( line );
+			sLine = sLine.removeComment().stripWhiteSpace();
+			if( !sLine.empty() )
+			{
+				if( sLine.upper() == "[TIME]" )
+					LoadTimeTags( input );
+			}
+		}
+		input.close();
+	}
+}
+
+void CServerData::LoadTimeTags( std::ifstream &input )
+{
+	UString UTag, tag, data;
+	while( tag != "o---o" )
+	{
+		ReadWorldTagData( input, tag, data );
+		if( tag != "o---o" )
+		{
+			UTag = tag.upper();
+			if( UTag == "AMPM" )
+				ServerTimeAMPM( (data.toByte() == 1) );
+			else if( UTag == "CURRENTLIGHT" )
+				WorldLightCurrentLevel( data.toUShort() );
+			else if( UTag == "DAY" )
+				ServerTimeDay( data.toShort() );
+			else if( UTag == "HOUR" )
+				ServerTimeHours( data.toUShort() );
+			else if( UTag == "MINUTE" )
+				ServerTimeMinutes( data.toUShort() );
+			else if( UTag == "MOON" )
+			{
+				if( data.sectionCount( "," ) != 0 )
+				{
+					ServerMoon( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
+					ServerMoon( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+				}
+			}
+		}
+	}
+	tag = "";
 }
 
 SI16 CServerData::ServerTimeDay( void ) const

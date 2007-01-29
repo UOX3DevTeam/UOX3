@@ -517,18 +517,23 @@ public:
 	size_t			NumServerLocations( void ) const;
 
 	UI16			ServerSecondsPerUOMinute( void ) const;
+	void			ServerSecondsPerUOMinute( UI16 newVal );
+
 	SI16			ServerTimeDay( void ) const;
 	UI08			ServerTimeHours( void ) const;
 	UI08			ServerTimeMinutes( void ) const;
 	UI08			ServerTimeSeconds( void ) const;
 	bool			ServerTimeAMPM( void ) const;
 
-	void			ServerSecondsPerUOMinute( UI16 newVal );
 	void			ServerTimeDay( SI16 nValue );
 	void			ServerTimeHours( UI08 nValue );
 	void			ServerTimeMinutes( UI08 nValue );
 	void			ServerTimeSeconds( UI08 nValue );
 	void			ServerTimeAMPM( bool nValue );
+
+	void			SaveTime( void );
+	void			LoadTime( void );
+	void			LoadTimeTags( std::ifstream &input );
 
 	// These functions return TRUE if it's a new day
 	bool			incSecond( void );

@@ -670,6 +670,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		GuildSys->Save();
 		JailSys->WriteData();
 		Effects->SaveEffects();
+		ServerData()->SaveTime();
 		SaveStatistics();
 
 		if( ServerData()->ServerAnnounceSavesStatus() )

@@ -24,7 +24,6 @@
 namespace UOX
 {
 
-void		telltime( CSocket *s );
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
 CItem *		startTrade( CSocket *mSock, CChar *i );
 bool		checkItemRange( CChar *mChar, CItem *i );
@@ -1973,9 +1972,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->sysmessage( 467 );
 			else
 				mSock->target( 0, TARGET_FISH, 468 );
-			return true;
-		case IT_CLOCK:	// clocks
-			telltime( mSock );
 			return true;
 		case IT_SEXTANT:	// sextants
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );

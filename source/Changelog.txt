@@ -1,3 +1,8 @@
+1/28/2007 - giwo (0.98-3.7k)
+	Fixed an issue with TriggerEvent() that can cause a script to stop functioning if the triggered event did not return true
+	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
+	Exported telltime function along with the clock item and 'time command handling to JS.
+
 1/25/2007 - giwo (0.98-3.7j)
 	Fixed an issue causing it to be "snooping" to open a pack in a trade window.
 	Added support for the OnPickup() JS Hook, note a return value of false will bounce the item.

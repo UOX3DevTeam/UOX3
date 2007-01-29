@@ -40,7 +40,6 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string txt );
 void HandleHowTo( CSocket *sock, int cmdNumber );
-void telltime( CSocket *s );
 void Wiping( CSocket *s );
 
 //o---------------------------------------------------------------------------o
@@ -1170,7 +1169,6 @@ void cCommands::CommandReset( void )
 	CommandMap["SHOWIDS"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_showids);
 	//T
 	CommandMap["TEMP"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_temp );
-	CommandMap["TIME"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&telltime);
 	CommandMap["TELL"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tell);
 	CommandMap["TILE"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_tile);
 	//U

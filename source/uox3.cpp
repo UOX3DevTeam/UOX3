@@ -2109,66 +2109,6 @@ void doLight( CChar *mChar, UI08 level )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void telltime( CSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Get in-game time
-//o---------------------------------------------------------------------------o
-void telltime( CSocket *s )
-{
-	UI08 hour					= cwmWorldState->ServerData()->ServerTimeHours();
-	const UI08 minute			= cwmWorldState->ServerData()->ServerTimeMinutes();
-	const bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
-	const UnicodeTypes sLang	= s->Language();
-
-	std::string tstring;
-	if( minute <= 14 )
-		tstring = Dictionary->GetEntry( 1248, sLang );
-	else if( minute >= 15 && minute <= 30 )
-		tstring = Dictionary->GetEntry( 1249, sLang );
-	else if( minute >= 30 && minute <= 45 )
-		tstring = Dictionary->GetEntry( 1250, sLang );
-	else
-	{
-		tstring = Dictionary->GetEntry( 1251, sLang );
-		++hour;
-		if( hour == 12 )
-			hour = 0;
-	}
-
-	tstring += " ";
-
-	if( hour >= 1 && hour <= 11 )
-		tstring += Dictionary->GetEntry( 1251 + hour, sLang );
-	else if( (hour >= 11 && ampm) || (hour <= 1 && !ampm) )
-		tstring += Dictionary->GetEntry( 1263, sLang );
-	else
-		tstring += Dictionary->GetEntry( 1264, sLang );
-	
-	if( hour != 0 )
-	{
-		tstring += " ";
-		if( ampm )
-		{
-			if( hour >= 1 && hour < 6 )
-				tstring += Dictionary->GetEntry( 1265 );
-			else if( hour >= 6 && hour < 9 )
-				tstring += Dictionary->GetEntry( 1266 );
-			else 
-				tstring += Dictionary->GetEntry( 1267 );
-		}
-		else
-		{
-			if( hour >= 1 && hour < 5 )
-				tstring += Dictionary->GetEntry( 1268 );
-			else 
-				tstring += Dictionary->GetEntry( 1269 );
-		}
-	}
-	s->sysmessage( tstring.c_str() );
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	size_t getTileName( CItem& mItem, std::string& itemname )
 //|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
@@ -2644,7 +2584,9 @@ int main( int argc, char *argv[] )
 
 		ParseArgs( argc, argv );
 		Console.PrintSectionBegin();
-		
+
+		cwmWorldState->ServerData()->LoadTime();
+
 		Console << "Loading skill advancement      ";
 		LoadSkills();
 		Console.PrintDone();

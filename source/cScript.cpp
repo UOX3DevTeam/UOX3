@@ -1646,7 +1646,7 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetGlobalObject( targContext, targObject );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, eventToCall, numParams, params, &rval );
-	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
+	return ( JSVAL_TO_BOOLEAN( rval ) != JS_FALSE );
 }
 
 //	
