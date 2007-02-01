@@ -1,3 +1,6 @@
+2/01/2007 - grimson
+	Remove remains of the time command from command.dfn.
+
 1/28/2007 - giwo (0.98-3.7k)
 	Fixed an issue with TriggerEvent() that can cause a script to stop functioning if the triggered event did not return true
 	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
