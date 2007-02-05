@@ -93,13 +93,19 @@ versions of it on a public system you <strong>HAVE TO</strong> make the complete
 	  </b>etc.</p>
 		<p class="Section">UOX3 reads <strong>NEWACCOUNTS.ADM</strong> during/after worldsaves, and will then automatically add the new accounts  to the <strong>ACCOUNTS.ADM</strong>-file.</p>
 	</div>
-		<p class="SectionHeader2">Configuration Step 4 - UOX3 Startup</p>
+	<div class="SectionHeader">Starting UOX3</div>
 		<p class="Section">You can now start up your UOX3 shard either by double-clicking on UOX3.EXE in your UOX3 folder, or by starting it from a command prompt - which is recommended since then the UOX3 window won't close if there's an error. If everything goes according to plan, you should see no errors during startup (ignore any instances of [Skipped]), and UOX3 will come to a halt at the following lines.</p>
 		<p class="blockSection"><em>| UOX: Startup Complete<br>
 	    o------------------------------------------------------------------------------o<br>
 	    | Thread: CheckConsoleThread has started</em></p>
 		<p class="Section">If you do see any errors, and UOX3 never reaches the above mentioned lines, then you should revisit the earlier sections of this guide to see where you might have done something wrong.</p>
-		<p class="Section">If no errors occur, and your shard is up and running (keep the UOX3 window open, do not close it!), it's time to <a href="client-config.html">configure the UO client</a>.</p>
+		<p class="Section">One thing you should take note of right now, is that by default your shard will be empty of any Non-Player Characters (NPCs) and decorative/usable items such as roadsigns, doors and containers. You can fix this by either populating your world manually after logging in, or by downloading premade spawn and/or worldfiles from the <a href="http://www.uox3.org" title="UOX3 Downloads-page">UOX3 Downloads</a>-page.</p>
+	<div class="SectionHeader">(Shutting down  UOX3)</div>
+		<p class="Section">Should you need to shut down UOX3 for any reason, it's important that you do it correctly to avoid the loss of characters/items/changes to your world. If you simply close UOX3  by clicking the 'X' in the top right corner of the console window, any changes since the last worldsave will be lost!</p>
+		<p class="Section">To properly shut down UOX3, either use the in-game command <strong>'SHUTDOWN #</strong> where # is the number of seconds until the shutdown occurs (will be globally announced), or press '<strong>*</strong>' in the console window to disable safe-mode, followed by either '<strong>Q</strong>' or the '<strong>Esc</strong>'-key.</p>
+		<p class="Section">This will prompt UOX3 to perform a worldsave before shutting down properly.</p>
+	<div class="SectionHeader">Configuring the UO Client </div>
+		<p class="Section">If no errors occur during startup, and your shard is up and running (keep the UOX3 window running!), it's time to <a href="client-config.html">configure the UO client</a>.</p>
 	    <div class="extraInfo">
 		<p class="Section"><em><strong>Note: </strong></em></p>
 		<p class="Section">For further customization of your shard, check out the <a href="server-settings.html">server-settings</a>-page, which contains all the details about the various settings available in UOX.INI. </p>
