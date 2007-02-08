@@ -1,3 +1,7 @@
+2/08/2007 - grimson
+	Fix a bug where items, that have a script but no onPickup event, get always bounced.
+	Allow party members to remove themselfes from the party, even if they aren't the leader.
+
 2/01/2007 - grimson
 	Remove remains of the time command from command.dfn.
 

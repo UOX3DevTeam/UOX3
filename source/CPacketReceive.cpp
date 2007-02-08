@@ -2430,9 +2430,9 @@ bool CPIPartyCommand::Handle( void )
 			Party *ourParty = PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
 			if( ourParty != NULL )
 			{
-				if( ourParty->Leader() == tSock->CurrcharObj() )
+				SERIAL charToRemove	= tSock->GetDWord( BASE_OFFSET );
+				if( ( ourParty->Leader() == tSock->CurrcharObj() ) || ( tSock->CurrcharObj()->GetSerial() == charToRemove ) )
 				{
-					SERIAL charToRemove	= tSock->GetDWord( BASE_OFFSET );
 					if( charToRemove != 0 )
 					{	// it really is a serial
 						tSock->SetDWord( 7, charToRemove );

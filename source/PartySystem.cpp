@@ -281,7 +281,7 @@ namespace UOX
 			inviter->sysmessage( "You are not in a party and cannot kick them out" );
 			return;
 		}
-		if( ourParty->Leader() != inviter->CurrcharObj() )
+		if( ( ourParty->Leader() != inviter->CurrcharObj() ) && ( inviter->CurrcharObj() != toRemove ) )
 		{
 			inviter->sysmessage( "Only the leader can kick someone out" );
 			return;

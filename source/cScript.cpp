@@ -650,7 +650,7 @@ bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
 	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ) )
 		return false;
 	if( !ExistAndVerify( seOnPickup, "onPickup" ) )
-		return false;
+		return true;		//Don't bounce items that have a script attached but no onPickup method in it.
 
 	jsval params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pickerUpper, runTime );
