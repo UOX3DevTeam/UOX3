@@ -1,3 +1,7 @@
+2/10/2007 - grimson
+	Update the CPWalkOK Packet (0x22), the second byte contains the notoriety value (flag
+	color) and make use of it.
+
 2/08/2007 - grimson
 	Fix a bug where items, that have a script but no onPickup event, get always bounced.
 	Allow party members to remove themselfes from the party, even if they aren't the leader.

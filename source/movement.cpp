@@ -729,9 +729,9 @@ void cMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 
 		toSend.SequenceNumber( mSock->GetByte( 2 ) );
 		if( c->GetVisible() != VT_VISIBLE )
-			toSend.OtherByte( 0 );
+			toSend.FlagColour( 0 );
 		else
-			toSend.OtherByte( 0x41 );
+			toSend.FlagColour( static_cast<UI08>(c->FlagColour( c )) );
 
 		mSock->Send( &toSend );
 		mSock->WalkSequence( sequence );

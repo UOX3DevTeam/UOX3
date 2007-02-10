@@ -73,7 +73,7 @@ public:
 					{
 					}
 	virtual void	SequenceNumber( char newValue );
-	virtual void	OtherByte( char newValue );
+	virtual void	FlagColour( UI08 newValue );
 };
 
 class CPExtMove : public CPUOXBuffer

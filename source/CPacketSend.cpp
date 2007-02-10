@@ -310,7 +310,7 @@ void CPWalkDeny::Direction( char newValue )
 //Character Move ACK/ Resync Request(3 bytes) 
 //	BYTE cmd 
 //	BYTE sequence (matches sent sequence) 
-//	BYTE (0x00) 
+//	BYTE notoriety (updates the notoriety of the char) 
 
 CPWalkOK::CPWalkOK()
 {
@@ -321,7 +321,7 @@ void CPWalkOK::SequenceNumber( char newValue )
 {
 	pStream.WriteByte( 1, newValue );
 }
-void CPWalkOK::OtherByte( char newValue )
+void CPWalkOK::FlagColour( UI08 newValue )
 {
 	pStream.WriteByte( 2, newValue );
 }
