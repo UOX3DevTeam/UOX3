@@ -1,4 +1,10 @@
 2/10/2007 - grimson
+	Added a new target type to the speech system, SPTRG_ONLYRECEIVER which sends the message
+	only to the receiver and doesn't display it on the sender.
+	Use the new target type in CSocket::objMessage() and CSocket::ShowCharName() to display
+	the player name and serial only to the char requesting the information.
+
+2/10/2007 - grimson
 	Update the CPWalkOK Packet (0x22), the second byte contains the notoriety value (flag
 	color) and make use of it.
 

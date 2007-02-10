@@ -444,6 +444,15 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 			}
 			Network->PopConn();
 			break;
+		case SPTRG_ONLYRECEIVER:		// only the receiver gets the message
+			sChar = calcCharObjFromSer( toSay.SpokenTo() );
+			if( ValidateObject( sChar ) && sChar != thisChar )
+			{
+				mSock = sChar->GetSocket();
+				if( mSock != NULL )
+					mSock->Send( &toSend );
+			}
+			break;
 	};
 }
 

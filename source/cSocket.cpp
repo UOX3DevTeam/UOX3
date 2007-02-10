@@ -1473,7 +1473,7 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 	toAdd.SpokenTo( mChar->GetSerial() );
 	toAdd.Type( SYSTEM );
 	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+	toAdd.TargType( SPTRG_ONLYRECEIVER );
 
 	if( getObj->GetObjType() == OT_ITEM )
 	{
@@ -1558,7 +1558,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 	toAdd.Colour( GetFlagColour( mChar, i ) );
 	toAdd.Type( SYSTEM );
 	toAdd.At( cwmWorldState->GetUICurrentTime() );
-	toAdd.TargType( SPTRG_INDIVIDUAL );
+	toAdd.TargType( SPTRG_ONLYRECEIVER );
 }
 
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )

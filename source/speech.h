@@ -10,7 +10,8 @@ enum SpeechTarget
 	SPTRG_PCS,					// all PCs in range
 	SPTRG_PCNPC,				// all NPCs and PCs in range
 	SPTRG_BROADCASTPC,				// ALL PCs everywhere + NPCs in range
-	SPTRG_BROADCASTALL
+	SPTRG_BROADCASTALL,
+	SPTRG_ONLYRECEIVER			// only the receiver
 };
 
 enum SpeakerType
