@@ -1075,6 +1075,11 @@ void CPWeather::Type( UI08 nType )
 }
 void CPWeather::Particles( UI08 nParts )
 {
+	if( nParts > 70 )
+		nParts = 70;
+	if( nParts < 0 )
+		nParts = 0;
+
 	pStream.WriteByte( 2, nParts );
 }
 void CPWeather::Temperature( UI08 nTemp )

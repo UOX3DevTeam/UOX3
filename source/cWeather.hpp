@@ -10,6 +10,7 @@ private:
 	struct WeathPart
 	{
 		SI08 Chance;
+		SI08 Intensity;
 		SI08 IntensityLow;
 		SI08 IntensityHigh;
 		bool Active;
@@ -32,6 +33,8 @@ public:
 	void	IntensityHigh( UI08 weathType, SI08 value );
 	SI08	IntensityLow( UI08 weathType ) const;
 	void	IntensityLow( UI08 weathType, SI08 value );
+	SI08	Intensity( UI08 weathType ) const;
+	void	Intensity( UI08 weathType, SI08 value );
 
 	SI08	Chance( UI08 weathType ) const;
 	void	Chance( UI08 weathType, SI08 value );
@@ -41,12 +44,15 @@ public:
 
 	SI08	SnowIntensityHigh( void ) const;
 	SI08	SnowIntensityLow( void ) const;
+	SI08	SnowIntensity( void ) const;
 	SI08	RainIntensityHigh( void ) const;
 	SI08	RainIntensityLow( void ) const;
+	SI08	RainIntensity( void ) const;
 	SI08	HeatIntensityHigh( void ) const;
 	SI08	ColdIntensityHigh( void ) const;
 	SI08	StormIntensityHigh( void ) const;
 	SI08	StormIntensityLow( void ) const;
+	SI08	StormIntensity( void ) const;
 
 	R32		MaxTemp( void ) const;
 	R32		MinTemp( void ) const;
@@ -87,12 +93,15 @@ public:
 	void	StormTempDrop( R32 value );
 	void	SnowIntensityHigh( SI08 value );
 	void	SnowIntensityLow( SI08 value );
+	void	SnowIntensity( SI08 value );
 	void	HeatIntensityHigh( SI08 value );
 	void	RainIntensityHigh( SI08 value );
 	void	RainIntensityLow( SI08 value );
+	void	RainIntensity( SI08 value );
 	void	ColdIntensityHigh( SI08 value );
 	void	StormIntensityHigh( SI08 value );
 	void	StormIntensityLow( SI08 value );
+	void	StormIntensity( SI08 value );
 	void	RainChance( SI08 value );
 	void	SnowChance( SI08 value );
 	void	StormChance( SI08 value );
@@ -129,6 +138,8 @@ class cWeatherAb
 		void	IntensityHigh( weathID toCheck, UI08 weathType, SI08 value );
 		SI08	IntensityLow( weathID toCheck, UI08 weathType );
 		void	IntensityLow( weathID toCheck, UI08 weathType, SI08 value );
+		SI08	Intensity( weathID toCheck, UI08 weathType );
+		void	Intensity( weathID toCheck, UI08 weathType, SI08 value );
 		SI08	Chance( weathID toCheck, UI08 weathType );
 		void	Chance( weathID toCheck, UI08 weathType, SI08 value );
 		R32		Value( weathID toCheck, UI08 valType, UI08 valOff );
@@ -144,12 +155,15 @@ class cWeatherAb
 
 		SI08	SnowIntensityHigh( weathID toCheck );
 		SI08	SnowIntensityLow( weathID toCheck );
+		SI08	SnowIntensity( weathID toCheck );
 		SI08	RainIntensityHigh( weathID toCheck );
 		SI08	RainIntensityLow( weathID toCheck );
+		SI08	RainIntensity( weathID toCheck );
 		SI08	HeatIntensityHigh( weathID toCheck );
 		SI08	ColdIntensityHigh( weathID toCheck );
 		SI08	StormIntensityHigh( weathID toCheck );
 		SI08	StormIntensityLow( weathID toCheck );
+		SI08	StormIntensity( weathID toCheck );
 		R32		MaxTemp( weathID toCheck );
 		R32		MinTemp( weathID toCheck );
 		R32		Temp( weathID toCheck );
@@ -185,12 +199,15 @@ class cWeatherAb
 		void	StormTempDrop( weathID toCheck, R32 value );
 		void	SnowIntensityHigh( weathID toCheck, SI08 value );
 		void	SnowIntensityLow( weathID toCheck, SI08 value );
+		void	SnowIntensity( weathID toCheck, SI08 value );
 		void	RainIntensityHigh( weathID toCheck, SI08 value );
 		void	RainIntensityLow( weathID toCheck, SI08 value );
+		void	RainIntensity( weathID toCheck, SI08 value );
 		void	HeatIntensityHigh( weathID toCheck, SI08 value );
 		void	ColdIntensityHigh( weathID toCheck, SI08 value );
 		void	StormIntensityHigh( weathID toCheck, SI08 value );
 		void	StormIntensityLow( weathID toCheck, SI08 value );
+		void	StormIntensity( weathID toCheck, SI08 value );
 		void	RainChance( weathID toCheck, SI08 value );
 		void	SnowChance( weathID toCheck, SI08 value );
 		void	HeatChance( weathID toCheck, SI08 value );
@@ -213,7 +230,7 @@ class cWeatherAb
 		void	ColdActive( weathID toCheck, bool value );
 		bool	DoStuff( void );
 		bool	DoPlayerStuff( CSocket *mSock, CChar *p );
-		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp );
+		void	DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, weathID currval );
 		bool	doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element );
 		bool	doLightEffect( CSocket *mSock, CChar& mChar );
 		bool	DoNPCStuff( CChar *p );

@@ -59,6 +59,9 @@ CWeather::CWeather()
 	StormIntensityLow( 0 );
 	SnowIntensityLow( 0 );
 	RainIntensityLow( 0 );
+	StormIntensity( 0 );
+	SnowIntensity( 0 );
+	RainIntensity( 0 );
 	Temp( 15 );
 	MaxWindSpeed( 0 );
 	MinWindSpeed( 0 );
@@ -244,6 +247,11 @@ void CWeather::NewHour( void )
 		StormActive( false );
 	}
 
+	//Calculate intensity values for the weather types
+	RainIntensity( (SI08)RandomNum( RainIntensityLow(), RainIntensityHigh() ) );
+	SnowIntensity( (SI08)RandomNum( SnowIntensityLow(), SnowIntensityHigh() ) );
+	StormIntensity( (SI08)RandomNum( StormIntensityLow(), StormIntensityHigh() ) );
+
 	SnowActive( isSnowing );
 	RainActive( isRaining );
 	StormBrewing( isStorm );
@@ -264,6 +272,10 @@ SI08 CWeather::IntensityLow( UI08 weathType ) const
 {
 	return weather[weathType].IntensityLow;
 }
+SI08 CWeather::Intensity( UI08 weathType ) const
+{
+	return weather[weathType].Intensity;
+}
 //o---------------------------------------------------------------------------o
 //|   Function    -  void Intensity( UI08 weathType, SI08 value )
 //|   Date        -  11th April, 2001
@@ -278,6 +290,10 @@ void CWeather::IntensityHigh( UI08 weathType, SI08 value )
 void CWeather::IntensityLow( UI08 weathType, SI08 value )
 {
 	weather[weathType].IntensityLow = value;
+}
+void CWeather::Intensity( UI08 weathType, SI08 value )
+{
+	weather[weathType].Intensity = value;
 }
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Chance( UI08 weathType ) const
@@ -346,6 +362,10 @@ SI08 CWeather::SnowIntensityLow( void ) const
 {
 	return weather[SNOW].IntensityLow;
 }
+SI08 CWeather::SnowIntensity( void ) const
+{
+	return weather[SNOW].Intensity;
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  bool RainIntensity( void ) const
@@ -362,6 +382,10 @@ SI08 CWeather::RainIntensityLow( void ) const
 {
 	return weather[RAIN].IntensityLow;
 }
+SI08 CWeather::RainIntensity( void ) const
+{
+	return weather[RAIN].Intensity;
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 StormIntensity( void ) const
@@ -377,6 +401,10 @@ SI08 CWeather::StormIntensityHigh( void ) const
 SI08 CWeather::StormIntensityLow( void ) const
 {
 	return weather[STORM].IntensityLow;
+}
+SI08 CWeather::StormIntensity( void ) const
+{
+	return weather[STORM].Intensity;
 }
 
 //o---------------------------------------------------------------------------o
@@ -766,6 +794,10 @@ void CWeather::SnowIntensityLow( SI08 value )
 {
 	weather[SNOW].IntensityLow = value;
 }
+void CWeather::SnowIntensity( SI08 value )
+{
+	weather[SNOW].Intensity = value;
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  void StormIntensity( SI08 value )
@@ -781,6 +813,10 @@ void CWeather::StormIntensityHigh( SI08 value )
 void CWeather::StormIntensityLow( SI08 value )
 {
 	weather[STORM].IntensityLow = value;
+}
+void CWeather::StormIntensity( SI08 value )
+{
+	weather[STORM].Intensity = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -809,6 +845,10 @@ void CWeather::RainIntensityHigh( SI08 value )
 void CWeather::RainIntensityLow( SI08 value )
 {
 	weather[RAIN].IntensityLow = value;
+}
+void CWeather::RainIntensity( SI08 value )
+{
+	weather[RAIN].Intensity = value;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1231,6 +1271,10 @@ SI08 cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType )
 {
 	return weather[toCheck].IntensityLow( weathType );
 }
+SI08 cWeatherAb::Intensity( weathID toCheck, UI08 weathType )
+{
+	return weather[toCheck].Intensity( weathType );
+}
 		
 //o---------------------------------------------------------------------------o
 //|   Function    -  void Intensity( weathID toCheck, UI08 weathType, SI08 value )
@@ -1246,6 +1290,10 @@ void cWeatherAb::IntensityHigh( weathID toCheck, UI08 weathType, SI08 value )
 void cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType, SI08 value )
 {
 	weather[toCheck].IntensityLow( weathType, value );
+}
+void cWeatherAb::Intensity( weathID toCheck, UI08 weathType, SI08 value )
+{
+	weather[toCheck].Intensity( weathType, value );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1315,6 +1363,10 @@ SI08 cWeatherAb::SnowIntensityLow( weathID toCheck )
 {
 	return IntensityLow( toCheck, SNOW );
 }
+SI08 cWeatherAb::SnowIntensity( weathID toCheck )
+{
+	return Intensity( toCheck, SNOW );
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 StormIntensity( weathID toCheck )
@@ -1331,6 +1383,10 @@ SI08 cWeatherAb::StormIntensityLow( weathID toCheck )
 {
 	return IntensityLow( toCheck, STORM );
 }
+SI08 cWeatherAb::StormIntensity( weathID toCheck )
+{
+	return Intensity( toCheck, STORM );
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    -  SI08 RainIntensity( weathID toCheck )
@@ -1346,6 +1402,10 @@ SI08 cWeatherAb::RainIntensityHigh( weathID toCheck )
 SI08 cWeatherAb::RainIntensityLow( weathID toCheck )
 {
 	return IntensityLow( toCheck, RAIN );
+}
+SI08 cWeatherAb::RainIntensity( weathID toCheck )
+{
+	return Intensity( toCheck, RAIN );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1572,6 +1632,10 @@ void cWeatherAb::SnowIntensityLow( weathID toCheck, SI08 value )
 {
 	IntensityLow( toCheck, SNOW, value );
 }
+void cWeatherAb::SnowIntensity( weathID toCheck, SI08 value )
+{
+	Intensity( toCheck, SNOW, value );
+}
 
 void cWeatherAb::StormIntensityHigh( weathID toCheck, SI08 value )
 {
@@ -1581,6 +1645,10 @@ void cWeatherAb::StormIntensityLow( weathID toCheck, SI08 value )
 {
 	IntensityLow( toCheck, STORM, value );
 }
+void cWeatherAb::StormIntensity( weathID toCheck, SI08 value )
+{
+	Intensity( toCheck, STORM, value );
+}
 
 void cWeatherAb::RainIntensityHigh( weathID toCheck, SI08 value )
 {
@@ -1589,6 +1657,10 @@ void cWeatherAb::RainIntensityHigh( weathID toCheck, SI08 value )
 void cWeatherAb::RainIntensityLow( weathID toCheck, SI08 value )
 {
 	IntensityLow( toCheck, RAIN, value );
+}
+void cWeatherAb::RainIntensity( weathID toCheck, SI08 value )
+{
+	Intensity( toCheck, RAIN, value );
 }
 
 void cWeatherAb::HeatIntensityHigh( weathID toCheck, SI08 value )
@@ -1772,7 +1844,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 
 	if( isStorm )
 	{
-		DoPlayerWeather( s, 5, temp );
+		DoPlayerWeather( s, 5, temp, currval );
 		if( p->GetWeathDamage( STORM ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
 		if( p->GetWeathDamage( SNOW ) != 0 )
@@ -1783,11 +1855,11 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else if( brewStorm )
 	{
-		DoPlayerWeather( s, 4, temp );
+		DoPlayerWeather( s, 4, temp, currval );
 	} 
 	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
 	{
-		DoPlayerWeather( s, 2, temp );
+		DoPlayerWeather( s, 2, temp, currval );
 		if( p->GetWeathDamage( SNOW ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
 		if( p->GetWeathDamage( STORM ) != 0 )
@@ -1798,7 +1870,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	} 
 	else if( isRaining )
 	{
-		DoPlayerWeather( s, 1, temp );
+		DoPlayerWeather( s, 1, temp, currval );
 		if( p->GetWeathDamage( RAIN ) == 0 )
 			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
 		if( p->GetWeathDamage( SNOW ) != 0 )
@@ -1809,7 +1881,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 	}
 	else
 	{
-		DoPlayerWeather( s, 0, temp );
+		DoPlayerWeather( s, 0, temp, currval );
 		if( p->GetWeathDamage( SNOW ) != 0 )
 			p->SetWeathDamage( 0, SNOW );
 		if( p->GetWeathDamage( STORM ) != 0 )
@@ -1919,7 +1991,7 @@ void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 curren
 	}
 }
 
-void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp )
+void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, weathID currval )
 // Weather Types 
 // 0 - dry
 // 1 - rain
@@ -1935,11 +2007,12 @@ void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp )
 
 	if( s == NULL )
 		return;
+
 	CPWeather dry( 0xFF, 0x00, currentTemp );
-	CPWeather rain( 0x00, 0x40, currentTemp );
-	CPWeather storm( 0x01, 0x40, currentTemp );
-	CPWeather snow( 0x02, 0x40, currentTemp );
-	CPWeather strmbrw( 0x03, 0x40, currentTemp );
+	CPWeather rain( 0x00, (UI08)RainIntensity( currval ), currentTemp );
+	CPWeather storm( 0x01, (UI08)StormIntensity( currval ), currentTemp );
+	CPWeather snow( 0x02, (UI08)SnowIntensity( currval ), currentTemp );
+	CPWeather strmbrw( 0x03, (UI08)(StormIntensity( currval ) / 2), currentTemp );
 	
 	CChar *mChar = s->CurrcharObj();
 	s->Send( &dry );
@@ -2147,7 +2220,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( element == RAIN )
 		{
-			damageModifier = (R32)RandomNum( (int)RainIntensityLow( weatherSys ), (int)RainIntensityHigh( weatherSys ) );
+			damageModifier = (R32)RainIntensity( weatherSys );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1219;
 			resistElement = NONE;
@@ -2155,7 +2228,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( element == SNOW )
 		{
-			damageModifier = (R32)RandomNum( (int)SnowIntensityLow( weatherSys ), (int)SnowIntensityHigh( weatherSys ) );
+			damageModifier = (R32)SnowIntensity( weatherSys );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1220;
 			// Snow is also cold damage when it comes to resistance values
@@ -2164,7 +2237,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( element == STORM)
 		{
-			damageModifier = (R32)RandomNum( (int)StormIntensityLow( weatherSys ), (int)StormIntensityHigh( weatherSys ) );
+			damageModifier = (R32)StormIntensity( weatherSys );
 			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
 			damageMessage = 1775;
 			resistElement = NONE;

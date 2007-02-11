@@ -1,4 +1,8 @@
 2/11/2007 - grimson
+	Small rewrite of the weather system. Calculate snow, rain and storm intensitys only every
+	server hour and use their values for the amount of weather effects on the screen.
+
+2/11/2007 - grimson
 	Fix the format of the pingIP field in the CPGameServerList::AddServer() function. Now the
 	client shows, after a moment, latency and packet loss information for the servers. It still
 	doesn't work all the time.
