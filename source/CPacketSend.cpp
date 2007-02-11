@@ -4008,7 +4008,7 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 	UI32 baseOffset = 6 + servNum * 40;
 	pStream.WriteShort(  baseOffset, servNum + 1 );
 	pStream.WriteString( baseOffset + 2, data->getName(), data->getName().length() );
-	UI32 ip = htonl( inet_addr( data->getIP().c_str() ) );
+	UI32 ip = inet_addr( data->getIP().c_str() );
 	pStream.WriteLong(  baseOffset + 36, ip );
 }
 
