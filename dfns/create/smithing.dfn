@@ -62,7 +62,7 @@ SUBMENU=4
 MENU=4		// ringmail
 MENU=5		// chainmail
 MENU=6		// platemail
-MENU=11		// helmets
+MENU=12		// helmets
 MENU=0
 }
 [SUBMENU 3]
