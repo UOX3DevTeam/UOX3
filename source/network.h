@@ -26,11 +26,11 @@ private:
 	std::vector< UI08 >		internalBuffer;
 
 public:
-	CPacketStream::CPacketStream()
+	CPacketStream()
 	{
 		internalBuffer.resize( 0 );
 	}
-	CPacketStream::~CPacketStream()
+	~CPacketStream()
 	{
 		internalBuffer.clear();
 	}

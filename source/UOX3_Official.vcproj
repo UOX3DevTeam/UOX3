@@ -234,6 +234,12 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\PartySystem.cpp">
+			</File>
+			<File
+				RelativePath=".\PartySystem.h">
+			</File>
+			<File
 				RelativePath="uox3.cpp">
 				<FileConfiguration
 					Name="Release|Win32">

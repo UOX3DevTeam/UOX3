@@ -54,6 +54,7 @@ uox3_SOURCES = \
 	network.cpp \
 	npcs.cpp \
 	ObjectFactory.cpp \
+	PartySystem.cpp \
 	pcmanage.cpp \
 	quantityfuncs.cpp \
 	queue.cpp \

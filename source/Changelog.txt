@@ -1,3 +1,6 @@
+2/21/2007 - giwo
+	Committed some linux build error fixes on behalf of Cavalier
+
 2/11/2007 - grimson
 	Small rewrite of the weather system. Calculate snow, rain and storm intensitys only every
 	server hour and use their values for the amount of weather effects on the screen.

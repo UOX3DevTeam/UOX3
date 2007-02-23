@@ -35,7 +35,7 @@
 	#define SOCKET_ERROR          -1
 	#define SOCKADDR_IN           struct sockaddr_in
 	#if UOX_PLATFORM == PLATFORM_LINUX
-		#define INADDR_NONE           -1
+//		#define INADDR_NONE           -1
 		#define HTHREAD               thread_t
 	#else
 		#define HTHREAD               pthread_t
