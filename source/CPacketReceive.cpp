@@ -1857,7 +1857,6 @@ void CPIPlayCharacter::Receive( void )
 {
 	tSock->Receive( 0x49, false );
 	Network->Transfer( tSock );
-	messageLoop << "Activating Chat, LBR, AOS, 6Char support on connected client.";
 
 	// Let's store our data more meaningfully
 

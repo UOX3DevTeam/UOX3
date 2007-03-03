@@ -1,0 +1,21 @@
+AC_INIT(uox3.cpp)
+
+AM_INIT_AUTOMAKE(uox3,cvs)
+
+AC_PROG_CXX
+
+AC_C_CONST
+
+CXXFLAGS="-I./mozilla/js/src"
+
+AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+
+if test "$enable_debug" = yes ; then
+	CXXFLAGS="$CXXFLAGS -g"
+	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+else
+	CXXFLAGS="$CXXFLAGS -O"
+	AC_DEFINE(DEBUG, 0, [Define if debugging is enabled.])
+fi
+
+AC_OUTPUT(Makefile)

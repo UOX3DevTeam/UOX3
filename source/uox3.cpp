@@ -1123,7 +1123,7 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 			}
 		}
-		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() * 60 );
+		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() );
 	}
 	Network->On();
 

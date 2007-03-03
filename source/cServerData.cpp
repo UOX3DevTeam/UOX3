@@ -64,7 +64,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTSUPPORT|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES"
 );
 
 void CServerData::ResetDefaults( void )
@@ -245,6 +245,21 @@ void CServerData::ResetDefaults( void )
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
 	TownGuardPayment( 3600 );		// guards paid every hour
+
+	SetClientFeature( CF_BIT_CHAT, true );
+	SetClientFeature( CF_BIT_LBR, true );
+	SetClientFeature( CF_BIT_UNKNOWN2, true );
+	SetClientFeature( CF_BIT_AOS, true );
+	SetClientFeature( CF_BIT_SIXCHARS, true );
+	SetClientFeature( CF_BIT_SE, true );
+	SetClientFeature( CF_BIT_ML, true );
+	SetClientFeature( CF_BIT_EXPANSION, true );
+
+	SetServerFeature( SF_BIT_CONTEXTMENUS, true );
+	SetServerFeature( SF_BIT_AOS, true );
+	SetServerFeature( SF_BIT_SIXCHARS, true );
+	SetServerFeature( SF_BIT_SE, true );
+	SetServerFeature( SF_BIT_ML, true );
 
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
@@ -1297,6 +1312,46 @@ R64 CServerData::AccountFlushTimer( void ) const
 	return flushTime;
 }
 
+void CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal )
+{
+	clientFeatures.set( bitNum, nVal );
+}
+
+bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
+{
+	return clientFeatures.test( bitNum );
+}
+
+UI16 CServerData::GetClientFeatures( void ) const
+{
+	return static_cast<UI16>(clientFeatures.to_ulong());
+}
+
+void CServerData::SetClientFeatures( UI16 nVal )
+{
+	clientFeatures = nVal;
+}
+
+
+void CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal )
+{
+	serverFeatures.set( bitNum, nVal );
+}
+
+bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
+{
+	return serverFeatures.test( bitNum );
+}
+
+size_t CServerData::GetServerFeatures( void ) const
+{
+	return serverFeatures.to_ulong();
+}
+
+void CServerData::SetServerFeatures( size_t nVal )
+{
+	serverFeatures = nVal;
+}
 
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	bool CServerData::save( void )
@@ -1462,7 +1517,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << std::endl;
 		ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
-		ofsOutput << "CLIENTSUPPORT=" << ServerClientSupport() << std::endl;
+		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << std::endl;
+		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << std::endl;
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
@@ -2169,29 +2225,32 @@ void CServerData::HandleLine( const UString tag, const UString value )
 	case 0x074F:	 // NETRETRYCOUNT[0137]
 		ServerNetRetryCount( value.toULong() );
 		break;
-	case 0x075D:	 // CLIENTSUPPORT[0138]
-		ServerClientSupport( value.toULong() );
+	case 0x075D:	 // CLIENTFEATURES[0138]
+		SetClientFeatures( value.toUShort() );
 		break;
-	case 0x076B:	 // PACKETOVERLOADS[0139]
+	case 0x076C:	 // PACKETOVERLOADS[0139]
 		ServerOverloadPackets( (value.toByte() == 1) );
 		break;
-	case 0x077B:	 // NPCMOVEMENTSPEED[0140]
+	case 0x077C:	 // NPCMOVEMENTSPEED[0140]
 		NPCSpeed( value.toDouble() );
 		break;
-	case 0x078C:	 // PETHUNGEROFFLINE[0141]
+	case 0x078D:	 // PETHUNGEROFFLINE[0141]
 		PetHungerOffline( (value.toByte() == 1) );
 		break;
-	case 0x079D:	 // PETOFFLINETIMEOUT[0142]
+	case 0x079E:	 // PETOFFLINETIMEOUT[0142]
 		PetOfflineTimeout( value.toUShort() );
 		break;
-	case 0x07AF:	 // PETOFFLINECHECKTIMER[0143]
+	case 0x07B0:	 // PETOFFLINECHECKTIMER[0143]
 		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
 		break;
-	case 0x07C4:	 // ARCHERRANGE[0144]
+	case 0x07C5:	 // ARCHERRANGE[0144]
 		CombatArcherRange( value.toShort() );
 		break;
-	case 0x07D0:	 // ADVANCEDPATHFINDING[0145]
+	case 0x07D1:	 // ADVANCEDPATHFINDING[0145]
 		AdvancedPathfinding( (value.toByte() == 1) );
+		break;
+	case 0x07E5:	 // SERVERFEATURES[0146]
+		SetServerFeatures( value.toULong() );
 		break;
 	default:
 		break;

@@ -5,6 +5,34 @@
 namespace UOX
 {
 
+	enum ClientFeatures
+	{
+		CF_BIT_CHAT = 0,
+		CF_BIT_LBR,
+		CF_BIT_UNKNOWN,
+		CF_BIT_UNKNOWN2,
+		CF_BIT_AOS,
+		CF_BIT_SIXCHARS,
+		CF_BIT_SE,
+		CF_BIT_ML,
+		CF_BIT_EXPANSION = 15,
+		CF_BIT_COUNT
+	};
+
+	enum ServerFeatures
+	{
+		SF_BIT_UNKNOWN1 = 0,
+		SF_BIT_IGR,
+		SF_BIT_CHARLIMIT,
+		SF_BIT_CONTEXTMENUS,
+		SF_BIT_ONECHAR,
+		SF_BIT_AOS,
+		SF_BIT_SIXCHARS,
+		SF_BIT_SE,
+		SF_BIT_ML,
+		SF_BIT_COUNT
+	};
+
 enum cSD_TID
 {
 	tSERVER_ERROR = -1,
@@ -76,6 +104,8 @@ class CServerData
 {
 private:
 
+	std::bitset< CF_BIT_COUNT > clientFeatures;
+	std::bitset< SF_BIT_COUNT > serverFeatures;
 	std::bitset< 32 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
@@ -114,7 +144,6 @@ private:
 	SI16		htmlstatusenabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
 	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
-	UI32		clientSupport;					//	April 4, 2004 - EviLDeD - contains flags that represent the supported clients
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 
 	// SpeedUp
@@ -203,6 +232,16 @@ private:
 	void	PostLoadDefaults( void );
 
 public:
+	void		SetServerFeature( ServerFeatures, bool );
+	void		SetServerFeatures( size_t );
+	bool		GetServerFeature( ServerFeatures ) const;
+	size_t		GetServerFeatures( void ) const;
+
+	void		SetClientFeature( ClientFeatures, bool );
+	void		SetClientFeatures( UI16 );
+	bool		GetClientFeature( ClientFeatures ) const;
+	UI16		GetClientFeatures( void ) const;
+
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
 	LIGHTLEVEL	WorldLightBrightLevel( void ) const;
@@ -278,8 +317,6 @@ public:
 	void		ServerNetRcvTimeout(UI32 timeoutValue) { netRcvTimeout = timeoutValue; }
 	UI32		ServerNetSndTimeout(void) const { return netSndTimeout; }
 	void		ServerNetSndTimeout(UI32 timeoutValue) { netSndTimeout = timeoutValue; }
-	UI32		ServerClientSupport(void) const { return clientSupport; }
-	void		ServerClientSupport(UI32 clientValue) { clientSupport=clientValue; }
 
 	// Define all Path Get/Set's here please
 	void		Directory( CSDDirectoryPaths dp, std::string value );

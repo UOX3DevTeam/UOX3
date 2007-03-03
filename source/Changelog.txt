@@ -1,3 +1,12 @@
+3/3/2007 - giwo (0.98-3.7l)
+	Allowed customization of supported client features via uox.ini
+		CLIENTFEATURES
+		SERVERFEATURES
+		Note that these are bit-settings similar to the way STARTPRIV works.
+		One will need knowledge of how to set individual bits in a value,
+		or an editor to customize these features.
+	Removed CLIENTSUPPORT from the uox.ini
+
 2/21/2007 - giwo
 	Committed some linux build error fixes on behalf of Cavalier
 

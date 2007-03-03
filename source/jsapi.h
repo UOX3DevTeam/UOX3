@@ -390,39 +390,6 @@ JS_SuspendRequest(JSContext *cx);
 extern JS_PUBLIC_API(void)
 JS_ResumeRequest(JSContext *cx, jsrefcount saveDepth);
 
-#ifdef __cplusplus
-JS_END_EXTERN_C
-
-class JSAutoRequest {
-  public:
-    JSAutoRequest(JSContext *cx) : mContext(cx), mSaveDepth(0) {
-        JS_BeginRequest(mContext);
-    }
-    ~JSAutoRequest() {
-        JS_EndRequest(mContext);
-    }
-
-    void suspend() {
-        mSaveDepth = JS_SuspendRequest(mContext);
-    }
-    void resume() {
-        JS_ResumeRequest(mContext, mSaveDepth);
-    }
-
-  protected:
-    JSContext *mContext;
-    jsrefcount mSaveDepth;
-
-#if 0
-  private:
-    static void *operator new(size_t) CPP_THROW_NEW { return 0; };
-    static void operator delete(void *, size_t) { };
-#endif
-};
-
-JS_BEGIN_EXTERN_C
-#endif
-
 #endif /* JS_THREADSAFE */
 
 extern JS_PUBLIC_API(void)
@@ -694,35 +661,6 @@ JS_LeaveLocalRootScope(JSContext *cx);
 extern JS_PUBLIC_API(void)
 JS_ForgetLocalRoot(JSContext *cx, void *thing);
 
-#ifdef __cplusplus
-JS_END_EXTERN_C
-
-class JSAutoLocalRootScope {
-  public:
-    JSAutoLocalRootScope(JSContext *cx) : mContext(cx) {
-        JS_EnterLocalRootScope(mContext);
-    }
-    ~JSAutoLocalRootScope() {
-        JS_LeaveLocalRootScope(mContext);
-    }
-
-    void forget(void *thing) {
-        JS_ForgetLocalRoot(mContext, thing);
-    }
-
-  protected:
-    JSContext *mContext;
-
-#if 0
-  private:
-    static void *operator new(size_t) CPP_THROW_NEW { return 0; };
-    static void operator delete(void *, size_t) { };
-#endif
-};
-
-JS_BEGIN_EXTERN_C
-#endif
-
 #ifdef DEBUG
 extern JS_PUBLIC_API(void)
 JS_DumpNamedRoots(JSRuntime *rt,
@@ -800,6 +738,14 @@ JS_SetGCCallbackRT(JSRuntime *rt, JSGCCallback cb);
 
 extern JS_PUBLIC_API(JSBool)
 JS_IsAboutToBeFinalized(JSContext *cx, void *thing);
+
+typedef enum JSGCParamKey {
+    JSGC_MAX_BYTES        = 0,  /* maximum nominal heap before last ditch GC */
+    JSGC_MAX_MALLOC_BYTES = 1   /* # of JS_malloc bytes before last ditch GC */
+} JSGCParamKey;
+
+extern JS_PUBLIC_API(void)
+JS_SetGCParameter(JSRuntime *rt, JSGCParamKey key, uint32 value);
 
 /*
  * Add a finalizer for external strings created by JS_NewExternalString (see
@@ -1447,6 +1393,12 @@ extern JS_PUBLIC_API(uintN)
 JS_GetFunctionFlags(JSFunction *fun);
 
 /*
+ * Return the arity (length) of fun.
+ */
+extern JS_PUBLIC_API(uint16)
+JS_GetFunctionArity(JSFunction *fun);
+
+/*
  * Infallible predicate to test whether obj is a function object (faster than
  * comparing obj's class name to "Function", but equivalent unless someone has
  * overwritten the "Function" identifier with a different constructor and then
@@ -1814,11 +1766,11 @@ JS_MakeStringImmutable(JSContext *cx, JSString *str);
 
 /*
  * Return JS_TRUE if C (char []) strings passed via the API and internally
- * are UTF-8. The source must be compiled with JS_STRINGS_ARE_UTF8 defined
+ * are UTF-8. The source must be compiled with JS_C_STRINGS_ARE_UTF8 defined
  * to get UTF-8 support.
  */
 JS_PUBLIC_API(JSBool)
-JS_CStringsAreUTF8();
+JS_StringsAreUTF8();
 
 /*
  * Character encoding support.
@@ -1836,7 +1788,7 @@ JS_CStringsAreUTF8();
  * NB: Neither function stores an additional zero byte or jschar after the
  * transcoded string.
  *
- * If the source has been compiled with the #define JS_STRINGS_ARE_UTF8 to
+ * If the source has been compiled with the #define JS_C_STRINGS_ARE_UTF8 to
  * enable UTF-8 interpretation of C char[] strings, then JS_EncodeCharacters
  * encodes to UTF-8, and JS_DecodeBytes decodes from UTF-8, which may create
  * addititional errors if the character sequence is malformed.  If UTF-8
@@ -1853,14 +1805,13 @@ JS_DecodeBytes(JSContext *cx, const char *src, size_t srclen, jschar *dst,
 /************************************************************************/
 
 /*
- * Locale specific string conversion and error message callbacks.
+ * Locale specific string conversion callback.
  */
 struct JSLocaleCallbacks {
     JSLocaleToUpperCase     localeToUpperCase;
     JSLocaleToLowerCase     localeToLowerCase;
     JSLocaleCompare         localeCompare;
     JSLocaleToUnicode       localeToUnicode;
-    JSErrorCallback         localeGetErrorMessage;
 };
 
 /*

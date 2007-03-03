@@ -2224,10 +2224,7 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 
 	pStream.ReserveSize( 3 );
 	pStream.WriteByte( 0, 0xB9 );
-#if defined( _MSC_VER )
-#pragma todo( "Currently all client support is hardcoded. Move this into the ini when possible." )
-#endif
-	pStream.WriteShort( 1, 0x80FB );	// all features + sixth char
+	pStream.WriteShort( 1, cwmWorldState->ServerData()->GetClientFeatures() );
 }
 
 void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
@@ -3272,7 +3269,7 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
 		pStream.WriteByte( 364, numLocations );
 	else
 		pStream.WriteByte( 304, numLocations );
-	pStream.WriteShort( packetSize - 2, ( 0x08 | 0x20 | 0x40 | 0x80 | 0x100 ) );
+	pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
 }
 void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
 {
