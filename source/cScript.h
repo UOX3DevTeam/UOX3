@@ -10,7 +10,8 @@ class CPIGumpInput;
 
 enum ScriptEvent
 {
-	seOnCreate = 0,			//	*	Done for PCs on global script
+	seOnCreateDFN = 0,			//	*	Done for PCs on global script
+	seOnCreateTile,
 	seOnCommand,
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment

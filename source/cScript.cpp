@@ -272,11 +272,15 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 
 	std::string functionName = "onCreateDFN";
 	if( !dfnCreated )
+	{
 		functionName = "onCreateTile";
+		if( !ExistAndVerify( seOnCreateTile, functionName ) )
+			return false;
+	}
+	else
+		if( !ExistAndVerify( seOnCreateDFN, functionName ) )
+			return false;
 
-	if( !ExistAndVerify( seOnCreate, functionName ) )
-		return false;
-	
 	jsval rval, params[2];
 	UI08 paramType = 0;
 	JSObject *myObj;
@@ -292,7 +296,14 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 	params[1] = INT_TO_JSVAL( paramType );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
 	if( retVal == JS_FALSE )
-		SetEventExists( seOnCreate, false );
+		if( !dfnCreated )
+		{
+			SetEventExists( seOnCreateTile, false );
+		}
+		else
+		{
+			SetEventExists( seOnCreateDFN, false );
+		}
 
 	return ( retVal == JS_TRUE );
 }
@@ -1941,6 +1952,7 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 {
 	if( !EventExists( eventNum ) )
 		return false;
+
 	if( NeedsChecking( eventNum ) )
 	{
 		SetNeedsChecking( eventNum, false );

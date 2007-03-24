@@ -623,10 +623,11 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetCommandLevel( CL_GM );
 			}
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+			
 			if( toGo == NULL )
-				mChar->SetLocation( 1495, 1629, 10 ); //Send character to the sweet dreams inn in Britain!
-			else
-				mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
+				toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+
+			mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
 			mChar->SetDir( SOUTH );
 
 			//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
