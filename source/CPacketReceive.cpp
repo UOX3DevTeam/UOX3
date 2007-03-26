@@ -2875,7 +2875,7 @@ void CPIExtendedStats::Receive( void )
 bool CPIExtendedStats::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
-	ourChar->SetSkillLock( value, statToSet );
+	ourChar->SetSkillLock( (SkillLock)value, statToSet );
 	return true;
 }
 void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )

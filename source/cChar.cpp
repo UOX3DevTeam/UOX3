@@ -3057,7 +3057,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 
 						UString tempval = tempdata.section( ",", 1, 1 ).substr( 0, tempdata.section( ",", 1, 1 ).size() - 1 );
 						UString tempnum = tempdata.section( ",", 0, 0 ).substr( 1 );
-						SetSkillLock( tempval.toUByte(), tempnum.toUByte() );
+						SetSkillLock( (SkillLock)tempval.toUByte(), tempnum.toUByte() );
 					}
 					rvalue = true;
 				}
@@ -3783,14 +3783,14 @@ void CChar::SetAtrophy( UI08 newValue, UI08 skillToSet )
 	if( IsValidPlayer() && skillToSet <= INTELLECT )
 		mPlayer->atrophy[skillToSet] = newValue;
 }
-UI08 CChar::GetSkillLock( UI08 skillToGet ) const
+SkillLock CChar::GetSkillLock( UI08 skillToGet ) const
 {
-	UI08 rVal = 0;
+	SkillLock rVal = SKILL_INCREASE;
 	if( IsValidPlayer() && skillToGet <= INTELLECT )
 		rVal = mPlayer->lockState[skillToGet];
 	return rVal;
 }
-void CChar::SetSkillLock( UI08 newValue, UI08 skillToSet )
+void CChar::SetSkillLock( SkillLock newValue, UI08 skillToSet )
 {
 	if( IsValidPlayer() && skillToSet <= INTELLECT )
 		mPlayer->lockState[skillToSet] = newValue;

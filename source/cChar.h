@@ -137,7 +137,7 @@ private:
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
 
 		UI08		atrophy[INTELLECT+1];
-		UI08		lockState[INTELLECT+1];	// state of the skill locks
+		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
 
 		CItem *		speechItem;
 		UI08		speechMode;
@@ -698,9 +698,9 @@ public:
 	void		SetFixedLight( UI08 newVal );
 
 	UI08		GetAtrophy( UI08 skillToGet ) const;
-	UI08		GetSkillLock( UI08 skillToGet ) const;
+	SkillLock	GetSkillLock( UI08 skillToGet ) const;
 	void		SetAtrophy( UI08 newValue, UI08 skillToSet );
-	void		SetSkillLock( UI08 newValue, UI08 skillToSet );
+	void		SetSkillLock( SkillLock newValue, UI08 skillToSet );
 };
 
 }

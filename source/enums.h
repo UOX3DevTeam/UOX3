@@ -351,6 +351,14 @@ enum Skills
 	SKILLS     // #skills+7
 };
 
+// Values for the skill locks
+enum SkillLock
+{
+	SKILL_INCREASE = 0,
+	SKILL_DECREASE,
+	SKILL_LOCKED
+};
+
 enum ObjectType
 {
 	OT_CBO = 0,

@@ -763,7 +763,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 						mSock->Receive( 6 );	// it's always 6 so Westy tells me... let's not be intelligent =)
 						UI16 skillNum;
 						skillNum = mSock->GetWord( 3 );
-						ourChar->SetSkillLock( buffer[5], (UI08)skillNum );
+						ourChar->SetSkillLock( (SkillLock)buffer[5], (UI08)skillNum );
 						break;
 
 					case 0x56:
