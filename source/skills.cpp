@@ -668,15 +668,18 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	{
 		atrop[counter] = c->GetAtrophy( counter );
 	}
-	
+
 	for( counter = ALLSKILLS; counter > 0; --counter )
 	{//add up skills and find the one being increased
 		UI08 atrSkill = c->GetAtrophy( static_cast<UI08>(counter-1) );
-		if( c->GetBaseSkill( atrSkill ) >= amtToGain && c->GetSkillLock( atrSkill ) == 1 && atrSkill != sk )
+		
+		if( c->GetBaseSkill( atrSkill ) >= amtToGain && c->GetSkillLock( atrSkill ) == SKILL_DECREASE && atrSkill != sk )
 			toDec = atrSkill;//we found a skill that can be decreased, save it for later.
 
 		totalSkill += c->GetBaseSkill( static_cast<UI08>(counter-1) );
+		
 		atrop[counter] = atrop[counter-1];
+
 		if( atrop[counter] == sk )
 			rem = counter;//remember this number
 	}
@@ -688,8 +691,8 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		c->SetAtrophy( atrop[counter], counter );
 	if( rem != ALLSKILLS )//in the middle somewhere or first
 	{
-		for( counter = static_cast<UI08>(rem + 1); counter < ALLSKILLS; ++counter )
-			c->SetAtrophy( atrop[counter], counter );
+		for( counter = static_cast<UI08>(rem + 1); counter <= ALLSKILLS; ++counter )
+			c->SetAtrophy( atrop[counter], ( counter -1 ));
 	}
 
 	if( RandomNum( static_cast<UI16>(0), skillCap ) <= static_cast<UI16>(totalSkill) )
@@ -1888,11 +1891,11 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 	if( skillGain > RandomNum( 0, 100 ) )
 	{
 		advSkill = true;
-		if( s->GetSkillLock( sk ) == 0 )
+		if( s->GetSkillLock( sk ) == SKILL_INCREASE )
 			HandleSkillChange( s, sk, skillAdvance, skillUsed );
 	}
 	
-	if( s->GetSkillLock( sk ) != 2 ) // if it's locked, stats can't advance
+	if( s->GetSkillLock( sk ) != SKILL_LOCKED ) // if it's locked, stats can't advance
 		AdvanceStats( s, sk, skillUsed );
 	return advSkill;
 }
@@ -1935,175 +1938,142 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     if( pRace == NULL )
 		pRace = Races->Race( 0 );
  
+    //make sure socket is no npc
 	if( s->IsNpc() ) 
 		return;
 	
-    //make sure socket is no npc nor counsi/gm
-    bool update = false;
-
     UI32 ServStatCap = cwmWorldState->ServerData()->ServerStatCapStatus(); 
     UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence(); 
     SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100 
-    int StatCount, nCount; 
+    int StatCount, nCount;
+	int toDec = 255;
 	UI16 maxChance = 100;
     SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() }; 
     UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence }; 
-	
+	SkillLock StatLocks[3] = { s->GetSkillLock( STRENGTH ), s->GetSkillLock( DEXTERITY ), s->GetSkillLock( INTELLECT ) }; 
+
 	UI16 skillUpdTrig = s->GetScriptTrigger();
 	cScript *skillTrig = JSMapping->GetScript( skillUpdTrig );
+
 	
     for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount ) 
 	{ 
 		nCount = StatCount - ALLSKILLS - 1;  
 
-		//  the following will calculate the chances for str/dex/int to increase 
-		//
-		//  it is divided into 2 "dices":
-		//  first dice: get the success-skillpoint of the stat out of skills.dfn in dependence
-		//				of the racial statcap for this stat... x means stat is x% of statcap
-		//				=> get skillpoint for x
-		//  sec. dice:	get the chance for this stat to increase when the used skill has been used
-		//				(out of skills.dfn) => get x = statmodifier of skill
+		// if current stat isn't allowed to increase skip it.
+		if( StatLocks[nCount] == SKILL_INCREASE )
+		{
 
-		//  last make it a integer between 0 and 1000 normally (negative or 0==no chance) 
+			//  the following will calculate the chances for str/dex/int to increase 
+			//
+			//  it is divided into 2 "dices":
+			//  first dice: get the success-skillpoint of the stat out of skills.dfn in dependence
+			//				of the racial statcap for this stat... x means stat is x% of statcap
+			//				=> get skillpoint for x
+			//  sec. dice:	get the chance for this stat to increase when the used skill has been used
+			//				(out of skills.dfn) => get x = statmodifier of skill
 
-		//	special dice 1: the stat wont increase above x% of the racial statcap. x% is equivalent to dice 2.
-		//  special dice 2: skill failed: decrease chance by 50%
+			//  last make it a integer between 0 and 1000 normally (negative or 0==no chance) 
+	
+			//	special dice 1: the stat wont increase above x% of the racial statcap. x% is equivalent to dice 2.
+			//  special dice 2: skill failed: decrease chance by 50%
 
-		//  k, first let us calculate both dices
-		UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) );
-		chanceStatGain = (SI16)(((float)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000);
-		// some mathematics in it ;) 
+			//  k, first let us calculate both dices
+			UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) );
+			chanceStatGain = (SI16)(((float)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000);
+			// some mathematics in it ;) 
 
-		// now, lets implement the special dice 1 and additionally check for onStatGain javascript method
-		if( StatModifier[nCount] <= (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) )
-			chanceStatGain = 0;
+			// now, lets implement the special dice 1 and additionally check for onStatGain javascript method
+			if( StatModifier[nCount] <= (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) )
+				chanceStatGain = 0;
 
-		// special dice 2
-		if( !skillsuccess )
-			maxChance *= 2;
+			// special dice 2
+			if( !skillsuccess )
+				maxChance *= 2;
 		
-		if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
-		{ 
-			switch( StatCount ) 
+			if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
 			{ 
-				case STRENGTH: 
-					s->IncStrength(); 
-					break; 
-				case DEXTERITY: 
-					s->IncDexterity(); 
-					break; 
-				case INTELLECT: 
-					s->IncIntelligence(); 
-					break; 
-				default: 
-					break; 
-			} 
-			update = true;
-			
-			if( skillTrig != NULL )
-			{
-				if( !skillTrig->OnStatGained( s, StatCount, sk ) )
-					skillTrig->OnStatChange( s, StatCount );
-			}
-			
-			break;//only one stat at a time fellas
-		}
-	}
+				// Check if we have to decrease a stat
+				if( ( ttlStats + 1) >= RandomNum( ServStatCap-10, ServStatCap ) )
+				{
+					for( int i = 0; i < 3; i++)
+					{
+						if( StatLocks[i] == SKILL_DECREASE )
+						{
+							// Decrease the highest stat, that is allowed to decrease
+							if( toDec == 255 ) 
+								toDec = i;
+							else
+								if( ActualStat[i] > ActualStat[toDec] )
+									toDec = i;
+						}
+					}
 	
+					switch( toDec ) 
+					{ 
+						case 0: 
+							s->IncStrength( -1 );
+							ttlStats--;
+							if( skillTrig != NULL )
+							{
+								if( !skillTrig->OnStatLoss( s, STRENGTH ) )
+								skillTrig->OnStatChange( s, STRENGTH );
+							}
+							break; 
+						case 1: 
+							s->IncDexterity( -1 );
+							ttlStats--;
+							if( skillTrig != NULL )
+							{
+								if( !skillTrig->OnStatLoss( s, DEXTERITY ) )
+								skillTrig->OnStatChange( s, DEXTERITY );
+							}
+							break; 
+						case 2: 
+							s->IncIntelligence( -1 );
+							ttlStats--;
+							if( skillTrig != NULL )
+							{
+								if( !skillTrig->OnStatLoss( s, INTELLECT ) )
+								skillTrig->OnStatChange( s, INTELLECT );
+							}
+							break; 
+						default: 
+							break; 
+					} 
+					
+				}
 	
-	/*if total stats (before gain) is above a random number from 0 to the stat cap 
-	(hence the closer we get to the cap, the more likely, and at or above the cap, 
-	always) then this statement will execute.  This statement removes a stat from one
-	of the other stats... just like OSI... so it makes it real hard to get to the cap.
-	ALSO this prevents char's stats from FREEZEING when they reach the cap*/
-	
-	//k will only take away from other stats if within 10 of the server stat cap
-	if( ttlStats >= RandomNum( ServStatCap-10, ServStatCap ) )
-	{
-		UI08 skillDrop = 0;
-		
-		switch( StatCount )
-		{
-			case INTELLECT:
-				if( RandomNum( 0, 1 ) ) 
+				// Do we still hit the stat limit?
+				if( ( ttlStats + 1) <= ServStatCap )
 				{
-					if( ActualStat[0] > 10 )
-						skillDrop = STRENGTH;
-					else if( ActualStat[1] > 10 )
-						skillDrop = DEXTERITY;
-					else
-						skillDrop = INTELLECT;
-				}
-				else
-				{
-					if( ActualStat[1] > 10 )
-						skillDrop = DEXTERITY;
-					else if( ActualStat[0] > 10 )
-						skillDrop = STRENGTH;
-					else
-						skillDrop = INTELLECT;
-				}
-				break;
-			case DEXTERITY:
-				if( RandomNum( 0, 1 ) ) 
-				{
-					if( ActualStat[0] > 10 )
-						skillDrop = STRENGTH;
-					else if( ActualStat[2] > 10 )
-						skillDrop = INTELLECT;
-					else
-						skillDrop = DEXTERITY;
-				}
-				else
-				{
-					if( ActualStat[2] > 10 )
-						skillDrop = INTELLECT;
-					else if( ActualStat[0] > 10 )
-						skillDrop = STRENGTH;
-					else
-						skillDrop = DEXTERITY;
-				}
-				break;
-			case STRENGTH:
-				if( RandomNum( 0, 1 ) ) 
-				{
-					if( ActualStat[1] > 10 )
-						skillDrop = DEXTERITY;
-					else if( ActualStat[2] > 10 )
-						skillDrop = INTELLECT;
-					else
-						skillDrop = STRENGTH;
-				} 
-				else 
-				{
-					if( ActualStat[2] > 10 )
-						skillDrop = INTELLECT;
-					else if( ActualStat[1] >10 )
-						skillDrop = DEXTERITY;
-					else
-						skillDrop = STRENGTH;
-				}
-				break;
-		}
-		
-		if( update )
-		{
-			switch( skillDrop )
-			{
-				case STRENGTH:	s->IncStrength( -1 );			break;
-				case DEXTERITY:	s->IncDexterity( -1 );			break;
-				case INTELLECT:	s->IncIntelligence( -1 );		break;
-			}
+					switch( StatCount ) 
+					{ 
+						case STRENGTH: 
+							s->IncStrength(); 
+							break; 
+						case DEXTERITY: 
+							s->IncDexterity(); 
+							break; 
+						case INTELLECT: 
+							s->IncIntelligence(); 
+							break; 
+						default: 
+							break; 
+					} 
 			
-			if( skillTrig != NULL )
-			{
-				if( !skillTrig->OnStatLoss( s, skillDrop ) )
-					skillTrig->OnStatChange( s, skillDrop );
+					if( skillTrig != NULL )
+					{
+						if( !skillTrig->OnStatGained( s, StatCount, sk ) )
+							skillTrig->OnStatChange( s, StatCount );
+					}
+				
+					break;//only one stat at a time fellas
+				}
 			}
 		}
 	}
-
+	
 	s->Dirty( UT_STATWINDOW );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		updateSkillLevel( s, i );

@@ -1,3 +1,9 @@
+3/26/2007 - grimson
+	Use an enum for the states of the skill locks, makes reading the code a bit easier.
+	Fixed cSkills::HandleSkillChange(), the re-ordering of the atrophy created doubles
+	and dropped entrys.
+	Rewrote cSkills::AdvanceStats() so that the statlocks are actually used.
+
 3/24/2007 - grimson
 	Fix the onCreate JS script functions, they used the same event id. So if one didn't
 	exist the other was also marked as not existing.

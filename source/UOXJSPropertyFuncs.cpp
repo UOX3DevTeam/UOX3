@@ -1514,7 +1514,7 @@ namespace UOX
 		else if( myClass.ClassName() == "UOXSkillsUsed" )
 			*vp = BOOLEAN_TO_JSVAL( myChar->SkillUsed( SkillID ) );
 		else if( myClass.ClassName() == "UOXSkillsLock" )
-			*vp = INT_TO_JSVAL( myChar->GetSkillLock( SkillID ) );
+			*vp = INT_TO_JSVAL( (UI08)myChar->GetSkillLock( SkillID ) );
 
 		return JS_TRUE;
 	}
@@ -1578,11 +1578,11 @@ namespace UOX
 			{
 				for( i = 0; i < ALLSKILLS; ++i )
 				{
-					myChar->SetSkillLock( (UI08)NewSkillValue, i );
+					myChar->SetSkillLock( (SkillLock)NewSkillValue, i );
 				}
 			}
 			else
-				myChar->SetSkillLock( (UI08)NewSkillValue, SkillID );
+				myChar->SetSkillLock( (SkillLock)NewSkillValue, SkillID );
 		}
 
 		if( !myChar->IsNpc() )

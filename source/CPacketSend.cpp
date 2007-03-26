@@ -528,7 +528,7 @@ void CPUpdIndSkill::CopyData( CChar& i, UI08 sNum )
 	SkillNum( sNum );
 	Skill( i.GetSkill( sNum ) );
 	BaseSkill( i.GetBaseSkill( sNum ) );
-	Lock( i.GetSkillLock( sNum ) );
+	Lock( (UI08)i.GetSkillLock( sNum ) );
 }
 CPUpdIndSkill::CPUpdIndSkill()
 {
@@ -2442,7 +2442,7 @@ void CPSkillsValues::CopyData( CChar &toCopy )
 void CPSkillsValues::SetCharacter( CChar &toCopy )
 {
 	for( SI08 i = 0; i < NumSkills(); ++i )
-		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ) );
+		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), (UI08)toCopy.GetSkillLock( i ) );
 }
 
 void CPSkillsValues::BlockSize( SI16 newValue )
