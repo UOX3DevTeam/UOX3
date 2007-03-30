@@ -1,4 +1,7 @@
 3/30/2007 - grimson
+	Fixed the position of the coprse item when the char died falling forward.
+
+3/30/2007 - grimson
 	Fixed cMagic::CheckBook(), it was calculating wrong numbers for the spells.
 	Let chars randomly fall forward or backward when they die.
 	The DISPLAYHITMSG setting from the uox.ini now also controls the damage display.
