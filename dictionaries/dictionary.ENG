@@ -361,13 +361,13 @@
 371=You feel yourself losing %s.
 372=You have already used a race gate with this character.
 // dbl_single_click.cpp
-373=The Criminal %s, %s%s %s
-374=The Murderer %s, %s%s %s
-375=The Murderer %s, %s%s %s
-376=The Mass Murderer %s, %s%s %s
-377=The Evil Dread Murderer %s, %s%s %s
-378=The Evil Emperor %s, %s%s %s
-379=The Mayor %s of %s, %s %s
+373=The Criminal %s, %s%s
+374=The Murderer %s, %s%s
+375=The Murderer %s, %s%s
+376=The Mass Murderer %s, %s%s
+377=The Evil Dread Murderer %s, %s%s
+378=The Evil Emperor %s, %s%s
+379=The Mayor %s of %s, %s
 380=You cannot ride anything under polymorph effect.
 381=You are dead and cannot do that.
 382=You need to get closer.

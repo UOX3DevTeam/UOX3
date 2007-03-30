@@ -407,13 +407,13 @@
 371=Vous vous sentez perdre %s.
 372=Vous avez deja traverse un portail de races avec ce personnage.
 // dbl_single_click.cpp
-373=Le Criminel %s, %s%s %s
-374=Le Meurtrier %s, %s%s %s
-375=Le Meurtrier %s, %s%s %s
-376=Le Tueur en Serie %s, %s%s %s
-377=Le Vil et Craint Meutrier %s, %s%s %s
-378=L' Empereur du Mal %s, %s%s %s
-379=Le Maire %s de %s, %s %s
+373=Le Criminel %s, %s%s
+374=Le Meurtrier %s, %s%s
+375=Le Meurtrier %s, %s%s
+376=Le Tueur en Serie %s, %s%s
+377=Le Vil et Craint Meutrier %s, %s%s
+378=L' Empereur du Mal %s, %s%s
+379=Le Maire %s de %s, %s
 380=Vous ne pouvez pas monter de creature en etant polymorphe.
 381=Vous etes mort et vous ne pouvez faire cela.
 382=Vous devez etre plus pres.
