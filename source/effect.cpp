@@ -16,15 +16,15 @@ namespace UOX
 {
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void deathAction( CChar *s, CItem *x )
+//|	Function	-	void deathAction( CChar *s, CItem *x, UI08 fallDirection )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Plays a characters death animation
 //o---------------------------------------------------------------------------o
-void cEffects::deathAction( CChar *s, CItem *x )
+void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 {
 	CPDeathAction toSend( (*s), (*x) );
-	toSend.FallDirection( 0 );
+	toSend.FallDirection( fallDirection );
 	SOCKLIST nearbyChars = FindNearbyPlayers( s );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{

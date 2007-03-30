@@ -1608,15 +1608,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 
 bool cMagic::CheckBook( int circle, int spell, CItem *i )
 {
-	bool raflag = false;
 	int spellnum = spell + ( circle - 1 ) * 8;
-	// Fix for OSI stupidity. :) 
-	if( spellnum == 6 ) 
-		raflag = true;
-	if( spellnum >= 0 && spellnum < 6 ) 
-		++spellnum;
-	if( raflag ) 
-		spellnum = 0;
 	return HasSpell( i, spellnum );
 }
 

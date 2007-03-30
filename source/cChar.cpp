@@ -5353,13 +5353,16 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 	}
 
 	// Display damage
-	CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
-	if( mSock != NULL )
-		mSock->Send( &toDisplay );
-	if( attSock != NULL )
-		attSock->Send( &toDisplay );
-	if( attOwnerSock != NULL )
-		attOwnerSock->Send( &toDisplay );
+	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
+	{
+		CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
+		if( mSock != NULL )
+			mSock->Send( &toDisplay );
+		if( attSock != NULL )
+			attSock->Send( &toDisplay );
+		if( attOwnerSock != NULL )
+			attOwnerSock->Send( &toDisplay );
+	}
 
 	// Apply the damage
 	SetHP( hitpoints - damageValue );

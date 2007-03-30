@@ -16,7 +16,7 @@ public:
 	void	LoadEffects( void );
 
 	// Visual Effects
-	void	deathAction( CChar *s, CItem *x );
+	void	deathAction( CChar *s, CItem *x, UI08 fallDirection );
 	void	PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode = false );
 	void	PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode );
 	void	PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );

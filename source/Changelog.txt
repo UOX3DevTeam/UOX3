@@ -1,3 +1,8 @@
+3/30/2007 - grimson
+	Fixed cMagic::CheckBook(), it was calculating wrong numbers for the spells.
+	Let chars randomly fall forward or backward when they die.
+	The DISPLAYHITMSG setting from the uox.ini now also controls the damage display.
+
 3/26/2007 - grimson
 	Use an enum for the states of the skill locks, makes reading the code a bit easier.
 	Fixed cSkills::HandleSkillChange(), the re-ordering of the atrophy created doubles

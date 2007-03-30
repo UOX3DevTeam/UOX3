@@ -857,12 +857,12 @@ void startChar( CSocket *mSock, bool onCreate )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 //o---------------------------------------------------------------------------o
-CItem *CreateCorpseItem( CChar& mChar, bool createPack )
+CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 {
 	CItem *iCorpse = NULL;
 	if( !createPack )
 	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
+		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, fallDirection, mChar.GetSkin(), OT_ITEM );
 		if( !ValidateObject( iCorpse ) )
 			return NULL;
 
@@ -1006,12 +1006,13 @@ void HandleDeath( CChar *mChar )
 
 	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
 
-	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack );
+	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
+	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack, fallDirection );
 	if( iCorpse != NULL )
 	{
 		MoveItemsToCorpse( (*mChar), iCorpse, createPack );
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
-			Effects->deathAction( mChar, iCorpse );
+			Effects->deathAction( mChar, iCorpse, fallDirection );
 	}
 	Effects->playDeathSound( mChar );
 
