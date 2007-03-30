@@ -862,7 +862,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 	CItem *iCorpse = NULL;
 	if( !createPack )
 	{
-		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, fallDirection, mChar.GetSkin(), OT_ITEM );
+		iCorpse = Items->CreateItem( NULL, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM );
 		if( !ValidateObject( iCorpse ) )
 			return NULL;
 
@@ -871,7 +871,11 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 		iCorpse->SetName( temp );
 		iCorpse->SetCarve( mChar.GetCarve() );
 		iCorpse->SetMovable( 2 );//non-movable
-		iCorpse->SetDir( mChar.GetDir() );
+		if( fallDirection )
+			iCorpse->SetDir( mChar.GetDir() | 0x80 );
+		else
+			iCorpse->SetDir( mChar.GetDir() );
+
 		iCorpse->SetAmount( mChar.GetID() );
 		iCorpse->SetCorpse( true );
 	}
