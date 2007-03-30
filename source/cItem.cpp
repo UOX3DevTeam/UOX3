@@ -250,7 +250,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 			{
 				contIsGround = false;
 				// ok heres what hair/beards should be handled like (sereg)
-				if( ( GetID() >= 0x203B ) && ( GetID() <= 0x204D ) )
+				if( ( ( GetLayer() == IL_HAIR ) || ( GetLayer() == IL_FACIALHAIR ) ) && !itemHolder->isCorpse() )
 				{
 					CChar *itemPackOwner = FindItemOwner( itemHolder );
 					if( ValidateObject( itemPackOwner ) )
