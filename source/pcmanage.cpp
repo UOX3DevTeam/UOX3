@@ -925,6 +925,7 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 {
 	CItem *k			= NULL;
 	CItem *packItem		= mChar.GetPackItem();
+	CItem *dupeItem		= NULL;
 	bool packIsValid	= ValidateObject( packItem );
 	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() )
 	{
@@ -943,10 +944,12 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 			continue;
 		case IL_HAIR:
 		case IL_FACIALHAIR:
-			j->SetName( "Hair/Beard" );
-			j->SetX( 0x47 );
-			j->SetY( 0x93 );
-			j->SetZ( 0 );
+			dupeItem = j->Dupe();
+			dupeItem->SetCont( iCorpse );
+			dupeItem->SetName( "Hair/Beard" );
+			dupeItem->SetX( 0x47 );
+			dupeItem->SetY( 0x93 );
+			dupeItem->SetZ( 0 );
 			break;
 		case IL_PACKITEM:
 			CDataList< CItem * > *jCont;

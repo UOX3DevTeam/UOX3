@@ -1,4 +1,9 @@
 3/30/2007 - grimson
+	Corpses should now display the hair and beard of the char they where created from.
+	Modified CItem::SetCont() so that it checks against the item layer instead of fixed
+	IDs to see if an item is hair or a beard.
+
+3/30/2007 - grimson
 	Fixed the position of the coprse item when the char died falling forward.
 
 3/30/2007 - grimson
