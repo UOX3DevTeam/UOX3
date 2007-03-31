@@ -1,3 +1,6 @@
+3/31/2007 - grimson
+	Added elven hair styles to the dfns.
+
 3/30/2007 - grimson
 	Corpses should now display the hair and beard of the char they where created from.
 	Modified CItem::SetCont() so that it checks against the item layer instead of fixed
