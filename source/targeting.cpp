@@ -717,9 +717,12 @@ void newCarveTarget( CSocket *s, CItem *i )
 		{
 			if( ValidateObject( c ) )
 			{
-				c->SetCont( NULL );
-				c->SetLocation( i );
-				c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+				if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR )
+				{
+					c->SetCont( NULL );
+					c->SetLocation( i );
+					c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+				}
 			}
 		}
 		i->Delete();
