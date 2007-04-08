@@ -535,9 +535,12 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 			{
 				if( ValidateObject( io ) )
 				{
-					io->SetCont( NULL );
-					io->SetLocation( (&toDecay) );
-					io->SetDecayTime( nextDecayItems );
+					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR )
+					{
+						io->SetCont( NULL );
+						io->SetLocation( (&toDecay) );
+						io->SetDecayTime( nextDecayItems );
+					}
 				}
 			}
 		}

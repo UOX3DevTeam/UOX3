@@ -1,3 +1,6 @@
+4/08/2007 - grimson
+	Fixed a bug where we dropped the hair and beard items, from corpses, on the ground.
+
 3/31/2007 - grimson
 	Added elven hair styles to the dfns.
 
