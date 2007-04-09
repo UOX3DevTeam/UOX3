@@ -474,9 +474,6 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	// if we are running
 	if( dir&0x80 )
 	{
-		if( c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >( cwmWorldState->ServerData()->NPCSpeed() / 4 ) ) );
-
 		// if we are using stealth
 		if( c->GetStealth() != -1 )	// Stealth - stop hiding if player runs
 			c->ExposeToView();
@@ -502,8 +499,6 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	else
 	{
 		c->SetRunning( 0 );
-		if( c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >( cwmWorldState->ServerData()->NPCSpeed() ) ) );
 	}
 	return true;
 }
@@ -1500,10 +1495,14 @@ void cMovement::NpcMovement( CChar& mChar )
 		else
 			shouldRun = HandleNPCWander( mChar );
 
-		if( mChar.GetNpcWander() == WT_FOLLOW )	// Followers need to keep up with Players
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
-		else if( shouldRun )
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
+		if( shouldRun )
+		{
+			//Give chars the opportunity to catch up with fleeing NPCs.
+			if ( mChar.GetNpcWander() != WT_FLEE )
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
+			else
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 2) ) );
+		}
 		else
 			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( npcSpeed ) );
     }
