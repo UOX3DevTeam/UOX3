@@ -1,3 +1,7 @@
+4/09/2007 - grimson
+	Remove some not needed code and slow fleeing NPCs a bit down, so that other chars
+	can still catch up with them.
+
 4/09/2007 - grimson (0.98-3.7m)
 	Added a new setting to the uox.ini, LOOTINGISCRIME. If you set it to 0 looting
 	corpses	of innocent chars is not taken as a crime.
