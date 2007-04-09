@@ -41,6 +41,7 @@ const UI32 BIT_OVERLOADPACKETS		= 23;
 const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
 const UI32 BIT_ANIMALSGUARDED		= 25;
 const UI32 BIT_ADVANCEDPATHFIND		= 26;
+const UI32 BIT_LOOTINGISCRIME		= 27;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -64,7 +65,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME"
 );
 
 void CServerData::ResetDefaults( void )
@@ -130,6 +131,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_POLYMORPH, 90 );
 	ServerOverloadPackets( true );
 	AdvancedPathfinding( true );
+	LootingIsCrime( true );
 
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 15 );
@@ -1056,6 +1058,23 @@ bool CServerData::AdvancedPathfinding( void ) const
 	return boolVals.test( BIT_ADVANCEDPATHFIND );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool AdvancedPathfinding()
+//|	Date			-	4/09/2007
+//|	Developer(s)	-	grimson
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not looting of corpses can be a crime
+//o--------------------------------------------------------------------------o
+void CServerData::LootingIsCrime( bool newVal )
+{
+	boolVals.set( BIT_LOOTINGISCRIME, newVal );
+}
+bool CServerData::LootingIsCrime( void ) const
+{
+	return boolVals.test( BIT_LOOTINGISCRIME );
+}
+
 void CServerData::BackupRatio( SI16 value )
 {
 	backupRatio = value;
@@ -1521,6 +1540,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << std::endl;
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
+		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2251,6 +2271,9 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x07E5:	 // SERVERFEATURES[0146]
 		SetServerFeatures( value.toULong() );
+		break;
+	case 0x07F4:	 // LOOTINGISCRIME[0147]
+		LootingIsCrime( (value.toByte() == 1) );
 		break;
 	default:
 		break;

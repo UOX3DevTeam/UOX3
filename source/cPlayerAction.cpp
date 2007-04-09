@@ -2177,19 +2177,22 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		}
 		if( iUsed->isCorpse() )
 		{
-			bool willCrim	= false;
-			iChar			= iUsed->GetOwnerObj();
-			if( ValidateObject( iChar ) )
+			if( cwmWorldState->ServerData()->LootingIsCrime() )
 			{
-				// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
-				// and if the corpse is not from an enemy/allied guild									&& guildCheck
-				// and if the races are not allied/enemy												&& raceCheck )
-				willCrim = WillResultInCriminal( ourChar, iChar );
+				bool willCrim	= false;
+				iChar			= iUsed->GetOwnerObj();
+				if( ValidateObject( iChar ) )
+				{
+					// if the corpse is from an innocent player, and is not our own corpse				if( otherCheck
+					// and if the corpse is not from an enemy/allied guild									&& guildCheck
+					// and if the races are not allied/enemy												&& raceCheck )
+					willCrim = WillResultInCriminal( ourChar, iChar );
+				}
+				else
+					willCrim = ( (iUsed->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );
+				if( willCrim )
+					criminal( ourChar );
 			}
-			else
-				willCrim = ( (iUsed->GetTempVar( CITV_MOREZ )&0x04) == 0x04 );
-			if( willCrim )
-				criminal( ourChar );
 
 			if( ValidateObject( iChar ) )
 			{

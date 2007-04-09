@@ -474,8 +474,8 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	// if we are running
 	if( dir&0x80 )
 	{
-		if( !c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) / 2 ) );
+		if( c->IsNpc() )
+			c->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >( cwmWorldState->ServerData()->NPCSpeed() / 4 ) ) );
 
 		// if we are using stealth
 		if( c->GetStealth() != -1 )	// Stealth - stop hiding if player runs
@@ -502,8 +502,8 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 	else
 	{
 		c->SetRunning( 0 );
-		if( !c->IsNpc() )
-			c->SetTimer( tNPC_MOVETIME, cwmWorldState->GetUICurrentTime() + ( ( cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) / 4 ) );
+		if( c->IsNpc() )
+			c->SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >( cwmWorldState->ServerData()->NPCSpeed() ) ) );
 	}
 	return true;
 }
@@ -1336,9 +1336,9 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 			{
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY() );
+					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), kChar->GetRunning() > 0 );
 				else
-					PathFind( &mChar, kChar->GetX(), kChar->GetY() );
+					PathFind( &mChar, kChar->GetX(), kChar->GetY(), kChar->GetRunning() > 0 );
 				j = mChar.PopDirection();
 				Walking( NULL, &mChar, j, 256 );
 				shouldRun = (( j&0x80 ) != 0);
@@ -1396,9 +1396,9 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 
 			// now, got myx, myy... lets go.
 			if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-				AdvancedPathfinding( &mChar, myx, myy );
+				AdvancedPathfinding( &mChar, myx, myy, true );
 			else
-				PathFind( &mChar, myx, myy );
+				PathFind( &mChar, myx, myy, true );
 			j			= mChar.PopDirection();
 			shouldRun	= (( j&0x80 ) != 0);
 			Walking( NULL, &mChar, j, 256 );
@@ -1483,12 +1483,12 @@ void cMovement::NpcMovement( CChar& mChar )
 					{
 						if( !mChar.StillGotDirs() )
 						{
-							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY() ) )
+							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), mChar.CanRun() ) )
 								Combat->InvalidateAttacker( &mChar );
 						}
 					}
 					else
-						PathFind( &mChar, l->GetX(), l->GetY() );
+						PathFind( &mChar, l->GetX(), l->GetY(), mChar.CanRun() );
 					const UI08 j	= mChar.PopDirection();
 					shouldRun		= (( j&0x80 ) != 0);
 					Walking( NULL, &mChar, j, 256 );

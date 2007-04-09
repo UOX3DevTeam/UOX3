@@ -545,6 +545,9 @@ public:
 	void		AdvancedPathfinding( bool value );
 	bool		AdvancedPathfinding( void ) const;
 
+	void		LootingIsCrime( bool value );
+	bool		LootingIsCrime( void ) const;
+
 	void		dumpLookup( int lookupid );
 	void		dumpPaths( void );
 
