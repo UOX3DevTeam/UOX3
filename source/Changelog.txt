@@ -1,3 +1,6 @@
+5/18/2007 - grimson
+	Make sure we check for scripts envoked by type or id before we use the global script.
+
 4/09/2007 - grimson
 	Remove some not needed code and slow fleeing NPCs a bit down, so that other chars
 	can still catch up with them.
