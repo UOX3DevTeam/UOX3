@@ -50,6 +50,6 @@ function onCollide( pSock, pUser, iUsed )
 	if( iUsed.id == 0x0de3 )
 	{
 		pUser.SysMessage( "Ouch!" );
-		pUser.health = pUser.health - 2;
+		pUser.Damage( 2 );
 	}
 }
