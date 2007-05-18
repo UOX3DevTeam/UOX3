@@ -371,6 +371,7 @@
 //Kindling -> Campfires
 0x0DE1=5008
 0x0DE2=5008
+0x0DE3=5008
 
 //Fletching Tool
 0x1020=4005
