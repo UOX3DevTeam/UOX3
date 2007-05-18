@@ -2255,6 +2255,20 @@ bool CPIDblClick::Handle( void )
 	UI16 envTrig		= 0;
 	UI16 itemTrig		= iUsed->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( itemTrig );
+	if( itemTrig == 0 || toExecute == NULL )
+	{
+		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
+		{
+			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+		else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
+		{
+			envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
+			toExecute = JSMapping->GetScript( envTrig );
+		}
+	}
+	
 	if( toExecute != NULL )
 	{
 		if( iUsed->isDisabled() )
@@ -2266,26 +2280,6 @@ bool CPIDblClick::Handle( void )
 			return true;
 	}
 
-	if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
-	{
-		envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );
-		cScript *envExecute = JSMapping->GetScript( envTrig );
-		if( envExecute != NULL )
-		{
-			if( envExecute->OnUse( ourChar, iUsed ) == 1 )
-				return true;
-		}
-	}
-	else if( JSMapping->GetEnvokeByID()->Check( itemID ) )
-	{
-		envTrig = JSMapping->GetEnvokeByID()->GetScript( itemID );
-		cScript *envExecute = JSMapping->GetScript( envTrig );
-		if( envExecute != NULL )
-		{
-			if( envExecute->OnUse( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
-				return true;
-		}
-	}
 
 	if( handleDoubleClickTypes( tSock, ourChar, iUsed, iType ) )
 		return true;

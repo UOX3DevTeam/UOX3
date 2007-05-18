@@ -1062,20 +1062,21 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 					{
 						UI16 targTrig		= tItem->GetScriptTrigger();
 						cScript *toExecute	= JSMapping->GetScript( targTrig );
+						if( targTrig == 0 || toExecute == NULL )
+						{
+							if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) )
+							{
+								envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
+								toExecute = JSMapping->GetScript( envTrig );
+							}
+							else if( JSMapping->GetEnvokeByID()->Check( id ) )
+							{
+								envTrig = JSMapping->GetEnvokeByID()->GetScript( id );
+								toExecute = JSMapping->GetScript( envTrig );
+							}
+						}
 						if( toExecute != NULL )
 							toExecute->OnCollide( mSock, mChar, tItem );
-						else if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) )
-						{
-							envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
-							cScript *envExecute = JSMapping->GetScript( envTrig );
-							envExecute->OnCollide( mSock, mChar, tItem );
-						}
-						else if( JSMapping->GetEnvokeByID()->Check( id ) )
-						{
-							envTrig = JSMapping->GetEnvokeByID()->GetScript( id );
-							cScript *envExecute = JSMapping->GetScript( envTrig );
-							envExecute->OnCollide( mSock, mChar, tItem );
-						}
 					}
 				}
 				HandleObjectCollisions( mSock, mChar, tItem, type );

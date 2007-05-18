@@ -528,7 +528,8 @@ void cEffects::checktempeffects( void )
 						scpNum = myObj->GetScriptTrigger();
 					tScript = JSMapping->GetScript( scpNum );
 				}
-				if( tScript == NULL && Effect->Source() >= BASEITEMSERIAL )
+				//Make sure to check for a specific script when the previous checks ended in the global script.
+				if( ( tScript == NULL || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
 				{
 					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(((CItem *)myObj)->GetType()) ) )
 					{
