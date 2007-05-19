@@ -1,3 +1,12 @@
+5/19/2007 - Xuri
+	Items with wipable status set to 0 should no longer be removed when using the 'WIPE command
+	Added support in doors.js for linked double-doors that will both open at the same time
+	Added new command - 'LINKDOORS - used to link doubledoors together, and 'UNLINKDOORS to unlink them
+	Added new script (bankers.js) that replaces hardcoded banker-AI and adds CHECK and DEPOSIT # / <target> commands
+	Added new script (bankcheck.js) that handles the functionality of bank-checks
+	Assigned script 3201 to bankers, and removed NPCAI=8
+	Changed mapdefinitions (maps.dfn) for Trammel to map1.mul, statics1.mul and staidx1.mul
+	
 5/18/2007 - grimson
 	Make sure we check for scripts envoked by type or id before we use the global script.
 
