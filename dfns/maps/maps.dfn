@@ -20,9 +20,9 @@ Y=4096
 
 [MAP 1]	// Trammel
 {
-MAP=map0.mul
-STATICS=statics0.mul
-STAIDX=staidx0.mul
+MAP=map1.mul
+STATICS=statics1.mul
+STAIDX=staidx1.mul
 MAPDIFF=mapdif1.mul
 MAPDIFFLIST=mapdifl1.mul
 STATICSDIFF=stadif1.mul
