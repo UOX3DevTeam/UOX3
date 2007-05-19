@@ -141,6 +141,26 @@ function onUse( pUser, iUsed )
 		}
 	}
 
+	// The below block of code allows "linked" double-doors
+	// to be opened at the same time, if they've been setup
+	// using the 'LINKDOORS command
+	if( iUsed.GetTag( "linked" ) == true )
+	{
+		if( pUser.socket.clickY == -1 )
+		{
+			var LinkedDoor = CalcItemFromSer( iUsed.GetTag( "linkSer1"), iUsed.GetTag( "linkSer2"), iUsed.GetTag( "linkSer3"),  iUsed.GetTag( "linkSer4"));
+			if( LinkedDoor )
+			{
+				pUser.socket.clickY = 1;
+				onUse( pUser, LinkedDoor );
+			}
+		}
+		else if( pUser.socket.clickY == 1 )
+		{
+			pUser.socket.clickY = -1;
+		}
+	}
+
 	return false;
 }
 
