@@ -1,3 +1,6 @@
+5/20/2007 - Xuri
+	Added teleport locations for Malas and Tokuno to moongate.js, and added configuration values at top of script
+
 5/19/2007 - Xuri
 	Items with wipable status set to 0 should no longer be removed when using the 'WIPE command
 	Added support in doors.js for linked double-doors that will both open at the same time
