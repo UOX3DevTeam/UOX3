@@ -1059,7 +1059,7 @@ bool CServerData::AdvancedPathfinding( void ) const
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool AdvancedPathfinding()
+//|	Function/Class	-	bool LootingIsCrime()
 //|	Date			-	4/09/2007
 //|	Developer(s)	-	grimson
 //|	Company/Team	-	UOX3 DevTeam

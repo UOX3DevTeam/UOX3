@@ -124,6 +124,7 @@ SEngineFunc SE_ResourceArea;
 SEngineFunc SE_ResourceAmount;
 SEngineFunc SE_ResourceTime;
 SEngineFunc SE_ResourceRegion;
+SEngineFunc SE_Moon;
 
 SEngineFunc SE_ReloadJSFile;
 SEngineFunc SE_StaticInRange;

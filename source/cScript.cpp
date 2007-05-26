@@ -95,6 +95,7 @@ static JSFunctionSpec my_functions[] =
 	{ "ResourceAmount",				SE_ResourceAmount,			2, 0, 0 },
 	{ "ResourceTime",				SE_ResourceTime,			2, 0, 0 },
 	{ "ResourceRegion",				SE_ResourceRegion,			3, 0, 0 },
+	{ "Moon",						SE_Moon,					2, 0, 0 },
  	
 	{ "RegisterCommand",			SE_RegisterCommand,			3, 0, 0 },
 	{ "DisableCommand",				SE_DisableCommand,			1, 0, 0 },

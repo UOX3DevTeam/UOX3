@@ -2038,4 +2038,24 @@ JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
  	return JS_TRUE;
 }
 
+JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 2 || argc == 0 )
+	{
+		DoSEErrorMessage( "Moon: Invalid Count of Arguments: %d", argc );
+		return JS_FALSE;
+	}
+
+	SI16 slot = static_cast<SI16>(JSVAL_TO_INT( argv[0] ));
+	if( argc == 2 )
+	{
+		SI16 newVal = static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
+		cwmWorldState->ServerData()->ServerMoon( slot, newVal );
+	}
+
+	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerMoon( slot ) );
+
+	return JS_TRUE;
+}
+
 }
