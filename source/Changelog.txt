@@ -1,4 +1,7 @@
-5/25/2007 giwo (0.98-3.7n)
+5/26/2007 - giwo (0.98-3.7o)
+	Fixed a couple crashes caused by targeting non-PC's in the PartySystem.
+
+5/25/2007 - giwo (0.98-3.7n)
 	Added JavaScript function "Moon( moonNum, newVal )" which will get and set the server moon values.
 	Modified JavaScript Item.decaytime and Item.tempTimer to calculate the new value as a future time in seconds (unless a 0 is passed).
 	Fixed door.js allowing a locked door without an associated key to always be openable.
