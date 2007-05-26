@@ -248,6 +248,7 @@ namespace UOX
 		if( !ValidateObject( toInvite ) || toInvite->IsNpc() )
 		{
 			inviter->sysmessage( "You cannot invite an npc or unknown player" );
+			return;
 		}
 		Party *ourParty = Get( inviter->CurrcharObj() );
 		if( ourParty == NULL )
@@ -274,6 +275,7 @@ namespace UOX
 		if( !ValidateObject( toRemove ) || toRemove->IsNpc() )
 		{
 			inviter->sysmessage( "You cannot kick an npc or unknown player" );
+			return;
 		}
 		Party *ourParty = Get( inviter->CurrcharObj() );
 		if( ourParty == NULL )
