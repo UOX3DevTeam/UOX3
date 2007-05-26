@@ -1210,6 +1210,7 @@ namespace UOX
 		JSEncapsulate encaps( cx, vp );
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			TIMERVAL newTime;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
@@ -1260,7 +1261,12 @@ namespace UOX
 				case CIP_LAYER:			gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 				break;
 				case CIP_ITEMSINSIDE:																break;
 				case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
-				case CIP_DECAYTIME:		gPriv->SetDecayTime( encaps.toInt() ); 						break;
+				case CIP_DECAYTIME:		
+										newTime = encaps.toInt();
+										if( newTime != 0 )
+											newTime = BuildTimeValue( newTime );
+										gPriv->SetDecayTime( newTime );	
+										break;
 				case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
 				case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
 				case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
@@ -1278,7 +1284,12 @@ namespace UOX
 				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
 				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
-				case CIP_TEMPTIMER:		gPriv->SetTempTimer( encaps.toInt() );						break;
+				case CIP_TEMPTIMER:
+										newTime = encaps.toInt();
+										if( newTime != 0 )
+											newTime = BuildTimeValue( newTime );
+										gPriv->SetTempTimer( newTime );	
+										break;
 				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
 				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
 				case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;

@@ -327,9 +327,12 @@ function GetDoorType( iUsed )
 function FindKey( pUser, iUsed )
 {
 	var foundKey = false;
-	var pPack = pUser.pack;
-	if( pPack != null )
-		foundKey = FindKeyInPack( pUser, pPack, iUsed );
+	if( iUsed.more > 0 )
+	{
+		var pPack = pUser.pack;
+		if( pPack != null )
+			foundKey = FindKeyInPack( pUser, pPack, iUsed );
+	}
 	
 	return foundKey;
 }
