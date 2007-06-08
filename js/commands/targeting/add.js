@@ -69,7 +69,7 @@ function onCallback0( socket, ourObj )
 	{
 		var x 		= socket.GetWord( 11 );
 		var y 		= socket.GetWord( 13 );
-		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var npcSection 	= socket.xText;
 
 			var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber );
@@ -100,7 +100,7 @@ function onCallback1( socket, ourObj )
 		{
 			var x 		= socket.GetWord( 11 );
 			var y 		= socket.GetWord( 13 );
-			var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 			var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", false );
 			if( newItem )
 				newItem.SetLocation( x, y, z );
@@ -135,7 +135,7 @@ function onCallback2( socket, ourObj )
 		{
 			var x 		= socket.GetWord( 11 );
 			var y 		= socket.GetWord( 13 );
-			var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 			var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "ITEM", false );
 			if( newItem )
 				newItem.SetLocation( x, y, z );
@@ -152,7 +152,7 @@ function onCallback3( socket, ourObj )
 	{
 		var x 		= socket.GetWord( 11 );
 		var y 		= socket.GetWord( 13 );
-		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var itemID 	= socket.tempint;
 		var newItem 	= CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "SPAWNER", false );
 		if( newItem )
@@ -176,7 +176,7 @@ function onCallback4( socket, ourObj )
 	{
 		var x 		= socket.GetWord( 11 );
 		var y 		= socket.GetWord( 13 );
-		var z 		= socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var iSection 	= socket.xText;
 		var newItem 	= CreateDFNItem( socket, mChar, iSection, 1, "SPAWNER", false );
 		if( newItem )

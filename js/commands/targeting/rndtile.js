@@ -76,7 +76,7 @@ function onCallback1( pSock, myTarget )
 	var targY = splitString[1];
 	var targZ = pSock.tempint;
 	if( !targZ && targZ != 0 ) //if no target Z has been specified, use the Z level of the target location
-		targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 	var startID = parseInt( splitString[2] );
 	var endID = parseInt( splitString[3] );
 	var itemHue = splitString[4];

@@ -208,7 +208,7 @@ function onCallback0( socket, ourObj )
 		{
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
-			var z = socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 			iUsed.Teleport( x, y, z );
 		}
 
