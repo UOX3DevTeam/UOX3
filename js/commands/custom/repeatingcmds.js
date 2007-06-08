@@ -150,7 +150,7 @@ function onCallback6( pSock, myTarget )
 	var TempItemID = Number(TempItemID);
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 
 	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );	
 	if( tempItem )
@@ -198,7 +198,7 @@ function onCallback8( pSock, myTarget )
 	{
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 		var tempItem = CreateDFNItem( pSock, pUser, TempItemID, 1, "ITEM", false );
 		tempItem.x = targX;
 		tempItem.y = targY;
@@ -220,7 +220,7 @@ function onCallback9( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 	pUser.Teleport( targX, targY, targZ );
 	pUser.CustomTarget( 9, "Select location to teleport to:" );
 }
@@ -240,7 +240,7 @@ function onCallback10( pSock, myTarget )
 	{
 		var targX = pSock.GetWord( 11 );
 		var targY = pSock.GetWord( 13 );
-		var targZ = pSock.GetByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
+		var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 		var newNPC = SpawnNPC( TempNPCID, targX, targY, targZ, pUser.worldnumber );
 		pUser.CustomTarget( 10, "Select target location for the ["+TempNPCID+"]:" );
 	}

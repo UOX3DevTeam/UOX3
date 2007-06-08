@@ -261,7 +261,7 @@ function onCallback5( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetByte( 16 );
+	var targZ = pSock.GetSByte( 16 );
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{ //add backpack on character
 		var tempObj = myTarget.FindItemLayer(21);

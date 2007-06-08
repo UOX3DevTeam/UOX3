@@ -85,7 +85,7 @@ function ChopTree( socket, mChar )
 	var targY = socket.GetWord( 13 );
 	var distX = Math.abs( mChar.x - targX );
 	var distY = Math.abs( mChar.y - targY );
-	var distZ = Math.abs( mChar.z - socket.GetByte( 16 ) );
+	var distZ = Math.abs( mChar.z - socket.GetSByte( 16 ) );
 
 	if( distX > 2 || distY > 2 || distZ > 9 )
 	{
