@@ -1,3 +1,12 @@
+6/10/2007 - grimson
+	Modified cMovement::NpcMovement() and cMovement::HandleNPCWander() so that NPCs
+	only run while they still have stamina left.
+	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they
+	work the same way as NPCMOVEMENTSPEED.
+	Added three new DFN tags for NPCs. WALKINGSPEED, RUNNINGSPEED and FLEEINGSPEED
+	they also work the same way as the uox.ini settings, and will override those if
+	present.
+
 6/08/2007 - Xuri
 	Fixed multiple JS-scripts that would not work correctly with negative Z values (Used GetSByte instead of GetByte)
 	Fixed a few "You can't think of a way to use that item"-messages appearing when using certain JS-based items

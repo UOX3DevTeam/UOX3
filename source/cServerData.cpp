@@ -65,7 +65,8 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
+	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|"
 );
 
 void CServerData::ResetDefaults( void )
@@ -210,7 +211,9 @@ void CServerData::ResetDefaults( void )
 	
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCSpeed( 0.7 );
+	NPCWalkingSpeed( 0.7 );
+	NPCRunningSpeed( 0.2 );
+	NPCFleeingSpeed( 0.4 );
 	AccountFlushTimer( 0.0 );
 	
 	ResLogs( 3 );
@@ -1147,13 +1150,31 @@ SI16 CServerData::CombatNPCBaseReattackAt( void ) const
 	return combatnpcbasereattackat;
 }
 
-void CServerData::NPCSpeed( R64 value )
+void CServerData::NPCWalkingSpeed( R32 value )
 {
-	npcSpeed = value;
+	npcWalkingSpeed = value;
 }
-R64 CServerData::NPCSpeed( void ) const
+R32 CServerData::NPCWalkingSpeed( void ) const
 {
-	return npcSpeed;
+	return npcWalkingSpeed;
+}
+
+void CServerData::NPCRunningSpeed( R32 value )
+{
+	npcRunningSpeed = value;
+}
+R32 CServerData::NPCRunningSpeed( void ) const
+{
+	return npcRunningSpeed;
+}
+
+void CServerData::NPCFleeingSpeed( R32 value )
+{
+	npcFleeingSpeed = value;
+}
+R32 CServerData::NPCFleeingSpeed( void ) const
+{
+	return npcFleeingSpeed;
 }
 
 void CServerData::TitleColour( UI16 value )
@@ -1548,7 +1569,9 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << std::endl;
 		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << std::endl;
 		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << std::endl;
-		ofsOutput << "NPCMOVEMENTSPEED=" << NPCSpeed() << std::endl;
+		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << std::endl;
+		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << std::endl;
+		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
 		ofsOutput << std::endl << "[message boards]" << std::endl << "{" << std::endl;
@@ -2252,7 +2275,7 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		ServerOverloadPackets( (value.toByte() == 1) );
 		break;
 	case 0x077C:	 // NPCMOVEMENTSPEED[0140]
-		NPCSpeed( value.toDouble() );
+		NPCWalkingSpeed( value.toFloat() );
 		break;
 	case 0x078D:	 // PETHUNGEROFFLINE[0141]
 		PetHungerOffline( (value.toByte() == 1) );
@@ -2274,6 +2297,12 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x07F4:	 // LOOTINGISCRIME[0147]
 		LootingIsCrime( (value.toByte() == 1) );
+		break;
+	case 0x0803:	 // NPCRUNNINGSPEED[0148]
+		NPCRunningSpeed( value.toFloat() );
+		break;
+	case 0x0813:	 // NPCFLEEINGSPEED[0149]
+		NPCFleeingSpeed( value.toFloat() );
 		break;
 	default:
 		break;
