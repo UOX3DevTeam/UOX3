@@ -1317,6 +1317,7 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 bool cMovement::HandleNPCWander( CChar& mChar )
 {
 	bool shouldRun	= false;
+	bool canRun		= false;
 	CChar *kChar	= NULL;
 	UI08 j;
 	switch( mChar.GetNpcWander() )
@@ -1331,10 +1332,11 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 		{
 			if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 			{
+				canRun = ( (mChar.GetStamina() > 0) && (kChar->GetRunning() > 0) );
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), kChar->GetRunning() > 0 );
+					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun );
 				else
-					PathFind( &mChar, kChar->GetX(), kChar->GetY(), kChar->GetRunning() > 0 );
+					PathFind( &mChar, kChar->GetX(), kChar->GetY(), canRun );
 				j = mChar.PopDirection();
 				Walking( NULL, &mChar, j, 256 );
 				shouldRun = (( j&0x80 ) != 0);
@@ -1389,6 +1391,8 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 
 			myx += (SI16)( xfactor * mydist );
 			myy += (SI16)( yfactor * mydist );
+
+			canRun = (mChar.GetStamina() > 0);
 
 			// now, got myx, myy... lets go.
 			if( cwmWorldState->ServerData()->AdvancedPathfinding() )
@@ -1447,8 +1451,9 @@ void cMovement::NpcMovement( CChar& mChar )
 	if( mChar.IsFrozen() || !mChar.IsNpc() )
 		return;
 
-	const R32 npcSpeed	= static_cast< R32 >(cwmWorldState->ServerData()->NPCSpeed());
 	bool shouldRun		= false;
+	bool canRun			= ( (mChar.GetStamina() > 0) && mChar.CanRun() );
+
     if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
     {
 #if DEBUG_NPCWALK
@@ -1479,12 +1484,12 @@ void cMovement::NpcMovement( CChar& mChar )
 					{
 						if( !mChar.StillGotDirs() )
 						{
-							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), mChar.CanRun() ) )
+							if( !AdvancedPathfinding( &mChar, l->GetX(), l->GetY(), canRun ) )
 								Combat->InvalidateAttacker( &mChar );
 						}
 					}
 					else
-						PathFind( &mChar, l->GetX(), l->GetY(), mChar.CanRun() );
+						PathFind( &mChar, l->GetX(), l->GetY(), canRun );
 					const UI08 j	= mChar.PopDirection();
 					shouldRun		= (( j&0x80 ) != 0);
 					Walking( NULL, &mChar, j, 256 );
@@ -1498,14 +1503,13 @@ void cMovement::NpcMovement( CChar& mChar )
 
 		if( shouldRun )
 		{
-			//Give chars the opportunity to catch up with fleeing NPCs.
 			if ( mChar.GetNpcWander() != WT_FLEE )
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 4) ) );
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
 			else
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast< R32 >(npcSpeed / 2) ) );
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
 		}
 		else
-			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( npcSpeed ) );
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
     }
 }
 

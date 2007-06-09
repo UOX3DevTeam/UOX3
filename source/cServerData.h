@@ -151,7 +151,9 @@ private:
 	R64			checkboats;						//	How often (in seconds) boats are checked for motion and so forth
 	R64			checknpcai;						//	How often (in seconds) NPCs can execute an AI routine
 	R64			checkspawnregions;				//	How often (in seconds) spawn regions are checked for new spawns
-	R64			npcSpeed;						//	Speed at which NPCs move
+	R32			npcWalkingSpeed;				//	Speed at which walking NPCs move
+	R32			npcRunningSpeed;				//	Speed at which running NPCs move
+	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
 
 	// MessageBoards
@@ -457,8 +459,14 @@ public:
 	void		ShootOnAnimalBack( bool setting );
 	bool		ShootOnAnimalBack( void ) const;
 
-	void		NPCSpeed( R64 value );
-	R64			NPCSpeed( void ) const;
+	void		NPCWalkingSpeed( R32 value );
+	R32			NPCWalkingSpeed( void ) const;
+
+	void		NPCRunningSpeed( R32 value );
+	R32			NPCRunningSpeed( void ) const;
+
+	void		NPCFleeingSpeed( R32 value );
+	R32			NPCFleeingSpeed( void ) const;
 
 	void		TitleColour( UI16 value );
 	UI16		TitleColour( void ) const;

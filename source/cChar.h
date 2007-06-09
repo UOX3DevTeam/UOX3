@@ -96,6 +96,10 @@ private:
 		cNPC_FLAG			npcFlag;
 		
 		std::bitset< 8 >	boolFlags;
+
+		R32					walkingSpeed;
+		R32					runningSpeed;
+		R32					fleeingSpeed;
 	};
 
 	struct PlayerValues_st
@@ -632,6 +636,15 @@ public:
 
 	cNPC_FLAG	GetNPCFlag( void ) const;
 	void		SetNPCFlag( cNPC_FLAG flagType );
+
+	R32			GetWalkingSpeed( void ) const;
+	void		SetWalkingSpeed( R32 newValue );
+
+	R32			GetRunningSpeed( void ) const;
+	void		SetRunningSpeed( R32 newValue );
+
+	R32			GetFleeingSpeed( void ) const;
+	void		SetFleeingSpeed( R32 newValue );
 
 // Player Characters
 public:

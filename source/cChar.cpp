@@ -175,13 +175,15 @@ const cNPC_FLAG		DEFNPC_NPCFLAG				= fNPC_NEUTRAL;
 const UI16			DEFNPC_BOOLFLAG				= 0;
 const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
+const R32			DEFNPC_MOVEMENTSPEED		= -1;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
 reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ), 
-tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE )
+tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
+runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -1537,6 +1539,10 @@ void CChar::CopyData( CChar *target )
 		target->SetQuestType( GetQuestType() );
 		target->SetQuestDestRegion( GetQuestDestRegion() );
 		target->SetQuestOrigRegion( GetQuestOrigRegion() );
+		target->SetNPCFlag( GetNPCFlag() );
+		target->SetWalkingSpeed( GetWalkingSpeed() );
+		target->SetRunningSpeed( GetRunningSpeed() );
+		target->SetFleeingSpeed( GetFleeingSpeed() );
 	}
 	if( IsValidPlayer() )
 	{
@@ -2023,7 +2029,9 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	dumping << "TamedHungerRate=" << tamedHungerRate << std::endl;
 	dumping << "TamedHungerWildChance=" << (SI16)hungerWildChance << std::endl;
 	dumping << "Foodlist=" << foodList << std::endl;
-
+	dumping << "WalkingSpeed=" << walkingSpeed << std::endl;
+	dumping << "RunningSpeed=" << runningSpeed << std::endl;
+	dumping << "FleeingSpeed=" << fleeingSpeed << std::endl;
 
 	outStream << dumping.str();
 }
@@ -2747,6 +2755,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetFood( data.substr( 0, MAX_NAME ) );
 					rvalue = true;
 				}
+				else if( UTag == "FLEEINGSPEED" )
+				{
+					SetFleeingSpeed( data.toFloat() );
+					rvalue = true;
+				}
 				break;
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
@@ -2991,6 +3004,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 					SetReattackAt( data.toShort() );
 					rvalue = true;
 				}
+				else if( UTag == "RUNNINGSPEED" )
+				{
+					SetRunningSpeed( data.toFloat() );
+					rvalue = true;
+				}
 				break;
 			case 'S':
 				if( UTag == "SPLIT" )
@@ -3123,6 +3141,11 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				else if( UTag == "WILLHUNGER" )
 				{
 					SetHungerStatus( data.toShort() == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "WALKINGSPEED" )
+				{
+					SetWalkingSpeed( data.toFloat() );
 					rvalue = true;
 				}
 				break;
@@ -5273,6 +5296,105 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 		mNPC->npcFlag = flagType;
 }
 
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 GetWalkingSpeed
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the NPC's walking speed
+//o---------------------------------------------------------------------------o
+R32 CChar::GetWalkingSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->walkingSpeed > 0 )
+			retVal = mNPC->walkingSpeed;
+
+	return retVal;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  SetWalkingSpeed( R32 newValue )
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the NPC's walking speed
+//o---------------------------------------------------------------------------o
+void CChar::SetWalkingSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->walkingSpeed = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 GetRunningSpeed
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the NPC's running speed
+//o---------------------------------------------------------------------------o
+R32 CChar::GetRunningSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->runningSpeed > 0 )
+			retVal = mNPC->runningSpeed;
+
+	return retVal;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  SetRunningSpeed( R32 newValue )
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the NPC's running speed
+//o---------------------------------------------------------------------------o
+void CChar::SetRunningSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->runningSpeed = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 GetFleeingSpeed
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the NPC's fleeing speed
+//o---------------------------------------------------------------------------o
+R32 CChar::GetFleeingSpeed( void ) const
+{
+	R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
+
+	if( IsValidNPC() )
+		if( mNPC->fleeingSpeed > 0 )
+			retVal = mNPC->fleeingSpeed;
+
+	return retVal;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  SetFleeingSpeed( R32 newValue )
+//|   Date        -  Juni 9, 2007
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the NPC's fleeing speed
+//o---------------------------------------------------------------------------o
+void CChar::SetFleeingSpeed( R32 newValue )
+{
+	if( !IsValidNPC() )
+		CreateNPC();
+
+	if( IsValidNPC() )
+		mNPC->fleeingSpeed = newValue;
+}
+
 bool DTEgreater( DamageTrackEntry *elem1, DamageTrackEntry *elem2 )
 {
 	if( elem1 == NULL )
@@ -5328,7 +5450,7 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 				{
 					SetTarg( attacker );
 					ToggleCombat();
-					SetTimer( tNPC_MOVETIME, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->NPCSpeed() )) );
+					SetTimer( tNPC_MOVETIME, BuildTimeValue( GetWalkingSpeed() ) );
 				}
 			} else if( mSock != NULL )
 				BreakConcentration( mSock );
