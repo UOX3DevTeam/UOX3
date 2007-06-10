@@ -732,7 +732,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												applyTo->SetFleeAt( static_cast<SI16>(ndata) );
 											break;
 			case DFNTAG_FLEEINGSPEED:
-												applyTo->SetFleeingSpeed( cdata.stripWhiteSpace().toLong() );
+												applyTo->SetFleeingSpeed( cdata.stripWhiteSpace().toFloat() );
 											break;
 			case DFNTAG_FLAG:				
 											if( !isGate )
@@ -911,7 +911,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												applyTo->SetRun( true );
 											break;
 			case DFNTAG_RUNNINGSPEED:
-												applyTo->SetRunningSpeed( cdata.stripWhiteSpace().toLong() );
+												applyTo->SetRunningSpeed( cdata.stripWhiteSpace().toFloat() );
 											break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(ndata) );		break;
 			case DFNTAG_SHOPKEEPER:			
@@ -1030,7 +1030,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											}
 											break;
 			case DFNTAG_WALKINGSPEED:
-												applyTo->SetWalkingSpeed( cdata.stripWhiteSpace().toLong() );
+												applyTo->SetWalkingSpeed( cdata.stripWhiteSpace().toFloat() );
 											break;
 			case DFNTAG_TACTICS:			skillToSet = TACTICS;					break;
 			case DFNTAG_TAILORING:			skillToSet = TAILORING;					break;
