@@ -1874,6 +1874,9 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
 	R32 getDelay	= (R32)( (R32)UOX_MIN( mChar->GetDexterity(), static_cast<SI16>(100) ) + 100 );
 	int getOffset	= 0;
+	int baseValue	= 15000;
+
+	CChar *ourTarg = mChar->GetTarg();
 
 	CItem *mWeapon = getWeapon( mChar );
 	if( ValidateObject( mWeapon ) )
@@ -1889,7 +1892,13 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 		else
 			getOffset = 50;
 	}
-	getDelay = (15000 / (getDelay * getOffset));
+	
+	//Allow faster strikes on fleeing targets
+	if( ValidateObject(ourTarg) )
+		if( ourTarg->GetNpcWander() == WT_FLEE)
+			baseValue = 10000;
+
+	getDelay = (baseValue / (getDelay * getOffset));
 	return getDelay;
 }
 

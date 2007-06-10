@@ -488,12 +488,13 @@ bool cMovement::CheckForRunning( CChar *c, UI08 dir )
 				reduceStamina = ( c->GetRunning() > ( cwmWorldState->ServerData()->MaxStaminaMovement() * 4 ) );
 			if( reduceStamina )
 			{
-				c->SetRunning( 0 );
+				c->SetRunning( 1 );
 				c->SetStamina( c->GetStamina() - 1 );
 			}
 		}
 		if( c->IsAtWar() && ValidateObject( c->GetTarg() ) )
-			c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 2 ) );
+			if( c->GetTarg()->GetNpcWander() != WT_FLEE )
+				c->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 2 ) );
 
 	}
 	else
@@ -1330,9 +1331,19 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 			break;
 		if( isOnline( (*kChar) ) || kChar->IsNpc() )
 		{
+			const UI16 charDist	= getDist( &mChar, kChar );
 			if( !objInRange( &mChar, kChar, DIST_NEXTTILE ) && Direction( &mChar, kChar->GetX(), kChar->GetY() ) < 8 )
 			{
-				canRun = ( (mChar.GetStamina() > 0) && (kChar->GetRunning() > 0) );
+				if( mChar.GetStamina() > 0 )
+				{
+					if(kChar->GetRunning() > 0)
+						canRun = true;
+					else if( charDist >= DIST_INRANGE )
+						canRun = true;
+					else if( (mChar.GetRunning() > 0) && (charDist > DIST_NEARBY) )
+						canRun = true;
+				}
+
 				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
 					AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun );
 				else
