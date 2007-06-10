@@ -1,4 +1,9 @@
 6/10/2007 - grimson
+	Allow faster attacks on fleeing NPCs, so they won't be chased without an end.
+	Allow following NPCs to run if their target went to far away, so they can catch
+	up on it.
+
+6/10/2007 - grimson
 	Modified cMovement::NpcMovement() and cMovement::HandleNPCWander() so that NPCs
 	only run while they still have stamina left.
 	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they
