@@ -5902,5 +5902,92 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	return JS_TRUE;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	June 12, 2007
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns first trigger word in the socket's list
+//o--------------------------------------------------------------------------o
+//|	Returns			-	True if script can execute, false otherwise
+//o--------------------------------------------------------------------------o	
+JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ) );
+	if( mySock == NULL )
+	{
+		MethodError( "FirstTriggerWord: Invalid socket assigned." );
+		return JS_FALSE;
+	}
+	UI16 trigWord = mySock->FirstTrigWord();
+	*rval = INT_TO_JSVAL( trigWord );
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	June 12, 2007
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns next trigger word in the socket's list
+//o--------------------------------------------------------------------------o
+//|	Returns			-	True if script can execute, false otherwise
+//o--------------------------------------------------------------------------o	
+JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ) );
+	if( mySock == NULL )
+	{
+		MethodError( "NextTriggerWord: Invalid socket assigned." );
+		return JS_FALSE;
+	}
+	UI16 trigWord = mySock->NextTrigWord();
+	*rval = INT_TO_JSVAL( trigWord );
+	return JS_TRUE;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	June 12, 2007
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	Complete
+//o--------------------------------------------------------------------------o
+//|	Description		-	Returns true if finished all trigger words in the socket's list
+//o--------------------------------------------------------------------------o
+//|	Returns			-	True if script can execute, false otherwise
+//o--------------------------------------------------------------------------o	
+JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ) );
+	if( mySock == NULL )
+	{
+		MethodError( "FinishedTriggerWords: Invalid socket assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() );
+	return JS_TRUE;
+}
+
 }
 

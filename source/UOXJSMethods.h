@@ -243,6 +243,10 @@ JSMethodFunc CParty_GetMember;
 JSMethodFunc CParty_Add;
 JSMethodFunc CParty_Remove;
 
+JSMethodFunc CSocket_FirstTriggerWord;
+JSMethodFunc CSocket_NextTriggerWord;
+JSMethodFunc CSocket_FinishedTriggerWords;
+
 static JSFunctionSpec CGump_Methods[] =  
 { 	
 	{ "Free",					CGump_Free,					0, 0, 0 },
@@ -431,6 +435,9 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "Send",				CSocket_Send,		1, 0, 0 },
 	{ "CanSee",				CBase_CanSee,		1, 0, 0 },
 	{ "DisplayDamage",		CSocket_DisplayDamage, 2, 0, 0 },
+	{ "FirstTriggerWord",	CSocket_FirstTriggerWord, 0, 0, 0 },
+	{ "NextTriggerWord",	CSocket_NextTriggerWord, 0, 0, 0 },
+	{ "FinishedTriggerWords",	CSocket_FinishedTriggerWords, 0, 0, 0 },
 	{ NULL,					NULL,				0, 0, 0 }
 };
 
