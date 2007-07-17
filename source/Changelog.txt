@@ -1,3 +1,13 @@
+7/17/2007 - Xuri
+	Added new JS script for moonstones, used to create gates between felucca & trammel
+	Added new JS script for spyglasses, used to see the phases of the moons
+	Added new DFN item: [moonstone], uses new moonstone JS script
+	Removed duplicate spyglass entries in item-DFNs, and added script tag for new spyglass JS script
+	Drinking healing potions will no longer also give the user night-sight
+	Cure-potions should be working again (stranf)
+	Drinking a poison-potion will now poison one's character
+	A timer now stops players from using multiple potions rapidly
+
 6/12/2007 - giwo (0.98-3.7p)
 	Added the JavaScript CSocket methods FirstTriggerWord(), NextTriggerWord(), FinishedTriggerWords() to allow handling trigger words sent from the client during speech.
 
