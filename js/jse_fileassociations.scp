@@ -49,6 +49,7 @@
 101=skill/cooking/flour.js
 102=skill/cooking/dough.js
 103=skill/cooking/bread.js
+104=skill/cooking/rawfish.js
 105=skill/cooking/cookedfish.js
 106=skill/cooking/cookedribs.js
 107=skill/cooking/cookedbird.js
@@ -186,6 +187,8 @@
 5013=item/key.js
 5014=item/clock.js
 5015=item/bankcheck.js
+5016=item/moonstone.js
+5017=item/spyglass.js
 }
 
 //-------------------------------------------
