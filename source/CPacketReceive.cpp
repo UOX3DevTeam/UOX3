@@ -496,12 +496,19 @@ bool CPIClientVersion::Handle( void )
 	UI08 major, minor, sub, letter;
 
 	std::string s( verString );
+	UString us = UString( s );
+	UI08 secCount = us.sectionCount( "." );
 	std::istringstream ss( s );
 	char period;
 	ss >> major >> period;
 	ss >> minor >> period;
-	ss >> sub >> period;
-	ss >> letter;
+	if( secCount == 3 )
+	{
+		ss >> sub >> period;
+		ss >> letter;
+	}
+	else
+		ss >> sub >> letter;
 
 	major	= ShiftValue( major,  '0', '9', true );
 	minor	= ShiftValue( minor,  '0', '9', true );
