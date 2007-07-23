@@ -1425,6 +1425,7 @@ void cMagic::SpellBook( CSocket *mSock )
 		if( scount > 0 ) 
 		{
 			CPItemsInContainer mItems;
+			mItems.UOKRFlag( (mSock->ClientType() == CV_UOKR ) );
 			mItems.NumberOfItems( scount );
 			UI16 runningCounter		= 0;
 			const SERIAL CONTSER	= spellBook->GetSerial();

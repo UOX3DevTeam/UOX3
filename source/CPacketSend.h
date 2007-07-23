@@ -668,6 +668,7 @@ public:
 class CPAddItemToCont : public CPUOXBuffer
 {
 protected:
+	bool			uokrFlag;
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CItem &toCopy );
 public:
@@ -681,9 +682,11 @@ public:
 	virtual void	NumItems( SI16 toSet );
 	virtual void	X( SI16 x );
 	virtual void	Y( SI16 y );
+	virtual void	GridLocation( SI08 gridLoc );
 	virtual void	Container( SERIAL toAdd );
 	virtual void	Colour( SI16 toSet );
-	CPAddItemToCont &operator=( CItem &toAdd );
+	void			UOKRFlag( bool newVal );
+	void			Object( CItem &toAdd );
 };
 
 class CPKickPlayer : public CPUOXBuffer
@@ -854,6 +857,7 @@ protected:
 	bool			isPlayerVendor;
 	bool			isCorpse;
 	SERIAL			vendorSerial;
+	bool			uokrFlag;
 public:
 	virtual			~CPItemsInContainer()
 	{
@@ -863,6 +867,7 @@ public:
 	virtual void	NumberOfItems( UI16 numItems );
 	virtual UI16	NumberOfItems( void ) const;
 	void			Type( UI08 contType );
+	void			UOKRFlag( bool value );
 	void			PlayerVendor( bool value );
 	void			VendorSerial( SERIAL toSet );
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock );

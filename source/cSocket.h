@@ -9,6 +9,7 @@ enum ClientTypes
 	CV_NORMAL = 0,
 	CV_T2A,
 	CV_UO3D,
+	CV_UOKR,
 	CV_KRRIOS,
 	CV_UNKNOWN,
 	CV_COUNT
