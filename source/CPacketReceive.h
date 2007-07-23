@@ -294,6 +294,11 @@ public:
 
 class CPIDropItem : public CPInputBuffer
 {
+protected:
+	bool			uokrFlag;
+	SI16			x, y;
+	SI08			z, gridLoc;
+	SERIAL			item, dest;
 public:
 	virtual			~CPIDropItem()
 	{

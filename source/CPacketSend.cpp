@@ -2278,6 +2278,8 @@ void CPAddItemToCont::CopyData( CItem &toCopy )
 	NumItems( toCopy.GetAmount() );
 	X( toCopy.GetX() );
 	Y( toCopy.GetY() );
+	if( uokrFlag )
+		GridLocation( toCopy.GetGridLocation() );
 	Container( toCopy.GetContSerial() );
 	Colour( toCopy.GetColour() );
 }
@@ -2289,6 +2291,11 @@ CPAddItemToCont::CPAddItemToCont( CItem &toAdd )
 {
 	InternalReset();
 	CopyData( toAdd );
+}
+void CPAddItemToCont::UOKRFlag( bool newVal )
+{
+	uokrFlag = newVal;
+	pStream.ReserveSize( (uokrFlag ? 21 : 20) );
 }
 void CPAddItemToCont::Serial( SERIAL toSet )
 {
@@ -2310,18 +2317,21 @@ void CPAddItemToCont::Y( SI16 y )
 {
 	pStream.WriteShort( 12, y );
 }
+void CPAddItemToCont::GridLocation( SI08 gridLoc )
+{
+	pStream.WriteByte( 14, gridLoc );
+}
 void CPAddItemToCont::Container( SERIAL toAdd )
 {
-	pStream.WriteLong( 14, toAdd );
+	pStream.WriteLong( (uokrFlag ? 15 : 14), toAdd );
 }
 void CPAddItemToCont::Colour( SI16 toSet )
 {
-	pStream.WriteShort( 18, toSet );
+	pStream.WriteShort( (uokrFlag ? 19 : 18 ), toSet );
 }
-CPAddItemToCont &CPAddItemToCont::operator=( CItem &toAdd )
+void CPAddItemToCont::Object( CItem &toAdd )
 {
 	CopyData( toAdd );
-	return (*this);
 }
 
 //0x26 Packet
@@ -2839,6 +2849,7 @@ void CPItemsInContainer::InternalReset( void )
 	isPlayerVendor		= false;
 	vendorSerial		= INVALIDSERIAL;
 	isCorpse			= false;
+	uokrFlag			= false;
 }
 CPItemsInContainer::CPItemsInContainer()
 {
@@ -2850,6 +2861,8 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
+		if( mSock->ClientType() == CV_UOKR )
+			UOKRFlag( true );
 		Type( contType );
 		PlayerVendor( isPVendor );
 		if( isVendor )
@@ -2867,6 +2880,10 @@ void CPItemsInContainer::Type( UI08 contType )
 		isVendor = true;
 }
 
+void CPItemsInContainer::UOKRFlag( bool value )
+{
+	uokrFlag = value;
+}
 void CPItemsInContainer::PlayerVendor( bool value )
 {
 	isPlayerVendor = value;
@@ -2884,20 +2901,25 @@ UI16 CPItemsInContainer::NumberOfItems( void ) const
 
 void CPItemsInContainer::NumberOfItems( UI16 numItems )
 {
-	UI16 packetSize		= (UI16)((numItems * 19) + 5);
+	UI16 packetSize = (UI16)((numItems * (uokrFlag ? 20 : 19)) + 5);
 	pStream.ReserveSize( packetSize );
 	pStream.WriteShort( 1, packetSize );
 	pStream.WriteShort( 3, numItems );
 }
 void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 {
-	pStream.ReserveSize( pStream.GetSize() + 19 );
-	UI16 baseOffset = (UI16)(5 + itemNum * 19);
+	pStream.ReserveSize( pStream.GetSize() + (uokrFlag ? 20 : 19) );
+	UI16 baseOffset = (UI16)(5 + itemNum * (uokrFlag ? 20 : 19));
 	pStream.WriteLong(  baseOffset +  0, toAdd->GetSerial() );
 	pStream.WriteShort( baseOffset +  4, toAdd->GetID() );
 	pStream.WriteShort( baseOffset +  7, toAdd->GetAmount() );
 	pStream.WriteShort( baseOffset +  9, toAdd->GetX() );
 	pStream.WriteShort( baseOffset + 11, toAdd->GetY() );
+	if( uokrFlag )
+	{
+		pStream.WriteByte( baseOffset + 13, toAdd->GetGridLocation() );
+		baseOffset+=1;
+	}
 
 	if( isVendor )
 		pStream.WriteLong( baseOffset + 13, vendorSerial );
@@ -2914,11 +2936,11 @@ void CPItemsInContainer::AddItem( CItem *toAdd, UI16 itemNum, CSocket *mSock )
 
 void CPItemsInContainer::Add( UI16 itemNum, SERIAL toAdd, SERIAL cont, UI08 amount )
 {
-	UI16 baseOffset = (UI16)(5 + (itemNum * 19));
+	UI16 baseOffset = (UI16)((itemNum * (uokrFlag ? 20 : 19)) + 5);
 
 	pStream.WriteLong(  baseOffset + 0, toAdd );
 	pStream.WriteShort( baseOffset + 7,	amount );
-	pStream.WriteLong(  baseOffset + 13, cont );
+	pStream.WriteLong(  baseOffset + (uokrFlag ? 14 : 13), cont );
 }
 
 void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )

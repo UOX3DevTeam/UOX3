@@ -17,6 +17,8 @@ class CItem : public CBaseObject
 protected:
 	CDataList< CItem * >	Contains;
 
+	SI08				gridLoc;
+
 	CBaseObject	*		contObj;
 	std::bitset< 8 >	bools;
 	std::bitset< 8 >	priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
@@ -87,6 +89,9 @@ public:
 	bool			SetCont(   CBaseObject *newCont );
 	bool			SetContSerial( SERIAL newSerial );
 
+	SI08			GetGridLocation( void ) const;
+	void			SetGridLocation( SI08 newLoc );
+
 	bool			isDoorOpen( void ) const;
 	bool			isPileable( void ) const;
 	bool			isDyeable( void ) const;
@@ -125,6 +130,7 @@ public:
 	virtual void	SetLocation( const CBaseObject *toSet );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world );
 	void			IncZ( SI16 newValue );
 	void			IncLocation( SI16 xInc, SI16 yInc );
 

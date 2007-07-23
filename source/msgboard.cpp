@@ -460,6 +460,7 @@ void MsgBoardPost( CSocket *tSock )
 	if( msgID != INVALIDSERIAL )
 	{
 		CPAddItemToCont toAdd;
+		toAdd.UOKRFlag( (tSock->ClientType() == CV_UOKR) );
 		toAdd.Serial( (msgID | BASEITEMSERIAL) );
 		toAdd.Container( tSock->GetDWord( 4 ) );
 		tSock->Send( &toAdd );

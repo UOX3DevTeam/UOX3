@@ -79,7 +79,7 @@ const TIMERVAL		DEFITEM_TEMPTIMER		= 0;
 const UI08			DEFITEM_SPEED			= 0;
 const UI16			DEFITEM_MAXHP			= 0;
 const SI08			DEFITEM_OFFSPELL		= 0;
-
+const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 
 CItem::CItem() : CBaseObject(),
@@ -88,7 +88,7 @@ madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_G
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), 
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
-creator( DEFITEM_CREATOR )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -123,6 +123,23 @@ SERIAL CItem::GetContSerial( void ) const
 	if( contObj != NULL )
 		return contObj->GetSerial();
 	return INVALIDSERIAL;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	SI08 GetGridLocation()
+//|	Date			-	7-23-2007
+//|	Programmer		-	giwo
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Support for "Grid Location" in UOKR
+//o--------------------------------------------------------------------------
+SI08 CItem::GetGridLocation( void ) const
+{
+	return gridLoc;
+}
+
+void CItem::SetGridLocation( SI08 newLoc )
+{
+	gridLoc = newLoc;
 }
 
 //o--------------------------------------------------------------------------
@@ -433,7 +450,7 @@ void CItem::IncZ( SI16 newValue )
 }
 void CItem::IncLocation( SI16 xInc, SI16 yInc )
 {
-	SetLocation( (GetX() + xInc), (GetY() + yInc), GetZ(), WorldNumber() );
+	SetLocation( (GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber() );
 }
 
 void CItem::SetLocation( const CBaseObject *toSet )
@@ -444,10 +461,10 @@ void CItem::SetLocation( const CBaseObject *toSet )
 }
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 {
-	SetLocation( newX, newY, newZ, WorldNumber() );
+	SetLocation( newX, newY, newZ, GetGridLocation(), WorldNumber() );
 }
 
-void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
+void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world )
 {
 	if( GetCont() == NULL )
 		MapRegion->ChangeRegion( this, newX, newY, world );
@@ -457,6 +474,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	x = newX;
 	y = newY;
 	z = newZ;
+	gridLoc = newLoc;
 	worldNumber = world;
 	if( GetCont() == NULL )
 	{
@@ -468,6 +486,10 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 		}
 	}
 	Dirty( UT_LOCATION );
+}
+void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
+{
+	SetLocation( newX, newY, newZ, GetGridLocation(), world );
 }
 
 ItemLayers CItem::GetLayer( void ) const
@@ -866,6 +888,7 @@ void CItem::CopyData( CItem *target )
 {
 	CBaseObject::CopyData( target );
 
+	target->SetGridLocation( GetGridLocation() );
 	target->SetPostLoaded( isPostLoaded() );
 	target->SetAmount( GetAmount() );
 	target->SetArmourClass( GetArmourClass() );
@@ -964,6 +987,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 
 	// Hexadecimal Values
 	dumping << std::hex;
+	dumping << "GridLoc=" << "0x" << (SI16)GetGridLocation() << std::endl;
 	dumping << "Layer=" << "0x" << (SI16)GetLayer() << std::endl;
 	dumping << "Cont=" << "0x" << GetContSerial() << std::endl;
 	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << std::endl;
@@ -1070,7 +1094,12 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				break;
 			case 'G':
-				if( UTag == "GLOWTYPE" )
+				if( UTag == "GRIDLOC" )
+				{
+					SetGridLocation( data.toByte() );
+					rvalue = true;
+				}
+				else if( UTag == "GLOWTYPE" )
 				{
 					SetGlowEffect( data.toUByte() );
 					rvalue = true;
@@ -1676,7 +1705,9 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 		if( !isGM && ( iLayer == IL_BUYCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_SELLCONTAINER ) )
 			return;
 
-		CPAddItemToCont itemSend = (*this);
+		CPAddItemToCont itemSend;
+		itemSend.UOKRFlag( (mSock->ClientType() == CV_UOKR) );
+		itemSend.Object( (*this) );
 		if( isGM && GetID() == 0x1647 )
 		{
 			itemSend.Model( 0x0A0F );

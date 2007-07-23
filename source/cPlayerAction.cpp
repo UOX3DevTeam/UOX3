@@ -777,11 +777,10 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Item is dropped on the ground or on a character
 //o---------------------------------------------------------------------------o
-void Drop( CSocket *mSock ) // Item is dropped on ground
+void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
 {
 	CChar *nChar	= mSock->CurrcharObj();
-	SERIAL serial	= mSock->GetDWord( 1 );
-	CItem *i		= calcItemObjFromSer( serial );
+	CItem *i		= calcItemObjFromSer( item );
 	bool stackDeleted = false;
 
 	if( !ValidateObject( i ) )
@@ -790,7 +789,7 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 		return;
 	}
 
-	UI16 targTrig			= i->GetScriptTrigger();
+	UI16 targTrig		= i->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 		toExecute->OnDrop( i, nChar );
@@ -806,9 +805,6 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	}
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
-		const SI16 x = mSock->GetWord( 5 );
-		const SI16 y = mSock->GetWord( 7 );
-		const SI08 z = mSock->GetByte( 9 );
 		/*if( !Map->ValidSpawnLocation( x, y, z, nChar->WorldNumber() ) )
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
@@ -817,11 +813,11 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 			return;
 		}*/
 		i->SetCont( NULL );
-		i->SetLocation( x, y, z, nChar->WorldNumber() );
+		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber() );
 	}
 	else
 	{
-		CChar *t = calcCharObjFromSer( mSock->GetDWord( 10 ) );
+		CChar *t = calcCharObjFromSer( dest );
 		if( ValidateObject( t ) )
 			stackDeleted = DropOnChar( mSock, t, i );
 		else
@@ -852,14 +848,15 @@ void Drop( CSocket *mSock ) // Item is dropped on ground
 	}
 }
 
-void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped )
+void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped, SI16 x, SI16 y, SI08 gridLoc )
 {
 	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 		Weight->subtractItemWeight( &mChar, &iDropped );
 	iDropped.SetCont( &tradeWindowOne );
-	iDropped.SetX( mSock.GetWord( 5 ) );
-	iDropped.SetY( mSock.GetWord( 7 ) );
+	iDropped.SetX( x );
+	iDropped.SetY( y );
 	iDropped.SetZ( 9 );
+	iDropped.SetGridLocation( gridLoc );
 	CItem *tradeWindowTwo = calcItemObjFromSer( tradeWindowOne.GetTempVar( CITV_MOREX ) );
 	if( ValidateObject( tradeWindowTwo ) )
 	{
@@ -982,7 +979,7 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	return true;
 }
 
-bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
+bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
 {
 	CChar *contOwner = FindItemOwner( &droppedOn );
 	if( ValidateObject( contOwner ) )
@@ -1063,9 +1060,10 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			return false;
 		}
 		iDropped.SetCont( &droppedOn );
-		iDropped.SetX( mSock.GetWord( 5 ) );
-		iDropped.SetY( mSock.GetWord( 7 ) );
+		iDropped.SetX( x );
+		iDropped.SetY( y );
 		iDropped.SetZ( 9 );
+		iDropped.SetGridLocation( gridLoc );
 	}
 	else
 	{
@@ -1095,14 +1093,14 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when an item is dropped in a container or on another item
 //o---------------------------------------------------------------------------o
-void DropOnItem( CSocket *mSock )
+void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	CItem *nCont = calcItemObjFromSer( mSock->GetDWord( 10 ) );
+	CItem *nCont = calcItemObjFromSer( dest );
 	if( !ValidateObject( nCont ) || !ValidateObject( mChar ) )
 		return;
 
-	CItem *nItem = calcItemObjFromSer( mSock->GetDWord( 1 ) );
+	CItem *nItem = calcItemObjFromSer( item );
 	if( !ValidateObject( nItem ) )
 		return;
 
@@ -1123,7 +1121,7 @@ void DropOnItem( CSocket *mSock )
 	}
 
 	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window
-		DropOnTradeWindow( (*mSock), (*mChar), (*nCont), (*nItem) );
+		DropOnTradeWindow( (*mSock), (*mChar), (*nCont), (*nItem), x, y, gridLoc );
 	else if( nCont->GetType() == IT_TRASHCONT )	// Trash container
 	{
 		Effects->PlaySound( mSock, 0x0042, false );
@@ -1140,7 +1138,7 @@ void DropOnItem( CSocket *mSock )
 	}
 	else if( nCont->GetType() == IT_CONTAINER )
 	{
-		if( !DropOnContainer( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted ) )
+		if( !DropOnContainer( (*mSock), (*mChar), (*nCont), (*nItem), stackDeleted, x, y, gridLoc ) )
 			return;
 	}
 	else if( nCont->isPileable() && nItem->isPileable() && nCont->GetID() == nItem->GetID() && nCont->GetColour() == nItem->GetColour() )
@@ -1155,9 +1153,10 @@ void DropOnItem( CSocket *mSock )
 		else
 			nItem->SetCont( nCont->GetCont() );
 
-		nItem->SetX( mSock->GetWord( 5 ) );
-		nItem->SetY( mSock->GetWord( 7 ) );
-		nItem->SetZ( mSock->GetByte( 9 ) );
+		nItem->SetX( x );
+		nItem->SetY( y );
+		nItem->SetZ( z );
+		nItem->SetGridLocation( gridLoc );
 
 		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 			Weight->subtractItemWeight( mChar, nItem );
@@ -1168,13 +1167,14 @@ void DropOnItem( CSocket *mSock )
 
 bool CPIDropItem::Handle( void )
 {
-	CChar *ourChar	= tSock->CurrcharObj();
-	UI08 opt		= tSock->GetByte( 10 );
-	if( opt >= 0x40 && opt != 0xFF )
-		DropOnItem( tSock );
-	else 
-		Drop( tSock );
+	CChar *ourChar = tSock->CurrcharObj();
 	ourChar->BreakConcentration( tSock );
+
+	if( dest >= BASEITEMSERIAL && dest != INVALIDSERIAL )
+		DropOnItem( tSock, item, dest, x, y, z, gridLoc );
+	else 
+		Drop( tSock, item, dest, x, y, z, gridLoc );
+
 	return true;
 }
 

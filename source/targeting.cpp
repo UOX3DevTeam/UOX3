@@ -851,11 +851,13 @@ bool BuyShop( CSocket *s, CChar *c )
 		return false;
 
 	CPItemsInContainer iic;
+	iic.UOKRFlag( (s->ClientType() == CV_UOKR ) );
 	iic.Type( 0x02 );
 	iic.VendorSerial( buyPack->GetSerial() );
 	CPOpenBuyWindow obw( buyPack, c, iic, s );
 
 	CPItemsInContainer iic2;
+	iic2.UOKRFlag( (s->ClientType() == CV_UOKR ) );
 	iic2.Type( 0x02 );
 	iic2.VendorSerial( boughtPack->GetSerial() );
 	CPOpenBuyWindow obw2( boughtPack, c, iic2, s );

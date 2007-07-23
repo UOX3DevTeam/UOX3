@@ -512,7 +512,9 @@ bool CPIClientVersion::Handle( void )
 
 	Console << verString << myendl;
 
-	if( strstr( verString, "Dawn" ) )
+	if( tSock->ClientVersion() >= 100663598 )
+		tSock->ClientType( CV_UOKR );
+	else if( strstr( verString, "Dawn" ) )
 		tSock->ClientType( CV_UO3D );
 	else if( strstr( verString, "Krrios" ) )
 		tSock->ClientType( CV_KRRIOS );
@@ -1126,7 +1128,22 @@ CPIDropItem::CPIDropItem( CSocket *s ) : CPInputBuffer( s )
 }
 void CPIDropItem::Receive( void )
 {
-	tSock->Receive( 14, false );
+	if( tSock->ClientType() == CV_UOKR )
+		uokrFlag = true;
+
+	tSock->Receive( (uokrFlag ? 15 : 14), false );
+
+	item	= tSock->GetDWord( 1 );
+	x		= tSock->GetWord( 5 );
+	y		= tSock->GetWord( 7 );
+	z		= tSock->GetByte( 9 );
+	if( uokrFlag )
+	{
+		gridLoc = tSock->GetByte( 10 );
+		dest = tSock->GetDWord( 11 );
+	}
+	else
+		dest = tSock->GetDWord( 10 );
 }
 
 // bool CPIDropItem::Handle() implemented in cplayeraction.cpp
