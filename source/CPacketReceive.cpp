@@ -513,9 +513,13 @@ bool CPIClientVersion::Handle( void )
 	major	= ShiftValue( major,  '0', '9', true );
 	minor	= ShiftValue( minor,  '0', '9', true );
 	sub		= ShiftValue( sub,    '0', '9', true );
-	letter	= ShiftValue( letter, '0', '9', true );
-	letter	= ShiftValue( letter, 'a', 'z', false );
-	letter	= ShiftValue( letter, 'A', 'Z', false );
+	if( secCount == 3 )
+		letter	= ShiftValue( letter, '0', '9', true );
+	else
+	{
+		letter	= ShiftValue( letter, 'a', 'z', false );
+		letter	= ShiftValue( letter, 'A', 'Z', false );
+	}
 
 	tSock->ClientVersion( major, minor, sub, letter );
 
