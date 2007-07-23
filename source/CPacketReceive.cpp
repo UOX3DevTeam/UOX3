@@ -500,11 +500,13 @@ bool CPIClientVersion::Handle( void )
 	char period;
 	ss >> major >> period;
 	ss >> minor >> period;
-	ss >> sub >> letter;
+	ss >> sub >> period;
+	ss >> letter;
 
 	major	= ShiftValue( major,  '0', '9', true );
 	minor	= ShiftValue( minor,  '0', '9', true );
 	sub		= ShiftValue( sub,    '0', '9', true );
+	letter	= ShiftValue( letter, '0', '9', true );
 	letter	= ShiftValue( letter, 'a', 'z', false );
 	letter	= ShiftValue( letter, 'A', 'Z', false );
 
@@ -512,7 +514,7 @@ bool CPIClientVersion::Handle( void )
 
 	Console << verString << myendl;
 
-	if( tSock->ClientVersion() >= 100663598 )
+	if( tSock->ClientVersion() >= 100663559 )
 		tSock->ClientType( CV_UOKR );
 	else if( strstr( verString, "Dawn" ) )
 		tSock->ClientType( CV_UO3D );
