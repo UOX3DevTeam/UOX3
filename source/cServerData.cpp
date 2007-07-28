@@ -42,6 +42,7 @@ const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
 const UI32 BIT_ANIMALSGUARDED		= 25;
 const UI32 BIT_ADVANCEDPATHFIND		= 26;
 const UI32 BIT_LOOTINGISCRIME		= 27;
+const UI32 BIT_BASICTOOLTIPSONLY	= 28;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -66,7 +67,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
-	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|"
+	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|"
 );
 
 void CServerData::ResetDefaults( void )
@@ -203,6 +204,7 @@ void CServerData::ResetDefaults( void )
 	MsgBoardPostRemovalLevel( 0 );
 	// No replacement I can see
 	EscortsEnabled( true );
+	BasicTooltipsOnly( false );
 	SystemTimer( tSERVER_ESCORTWAIT, 900 );
 	SystemTimer( tSERVER_ESCORTACTIVE, 600 );
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
@@ -919,6 +921,15 @@ bool CServerData::EscortsEnabled( void ) const
 	return boolVals.test( BIT_ESCORTSTATUS );
 }
 
+void CServerData::BasicTooltipsOnly( bool newVal )
+{
+	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
+}
+bool CServerData::BasicTooltipsOnly( void ) const
+{
+	return boolVals.test( BIT_BASICTOOLTIPSONLY );
+}
+
 void CServerData::CombatMonstersVsAnimals( bool newVal )
 {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
@@ -1562,6 +1573,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
 		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << std::endl;
+		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2303,6 +2315,9 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		break;
 	case 0x0813:	 // NPCFLEEINGSPEED[0149]
 		NPCFleeingSpeed( value.toFloat() );
+		break;
+	case 0x0823:	 // BASICTOOLTIPSONLY[0150]
+		BasicTooltipsOnly( (value.toByte() == 1) );
 		break;
 	default:
 		break;

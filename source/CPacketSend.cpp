@@ -4704,97 +4704,99 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		tempEntry.ourText = UString::number( ( cItem.GetWeight() / 100 ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
-
-	if( cItem.GetLayer() != IL_NONE )
+	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )
 	{
-		if( cItem.GetHiDamage() > 0 )
-		{	
-			tempEntry.stringNum = 1060403;
-			tempEntry.ourText = UString::number( 100 );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-
-		if( cItem.GetHiDamage() > 0 )
-		{	
-			tempEntry.stringNum = 1061168;
-			tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-
-		if( cItem.GetSpeed() > 0 )
-		{	
-			tempEntry.stringNum = 1061167;
-			tempEntry.ourText = UString::number( cItem.GetSpeed() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-
-		if( cItem.GetHiDamage() > 0 )
-		{	
-			if( cItem.GetLayer() == IL_RIGHTHAND )
-				tempEntry.stringNum = 1061824;
-			else
-				tempEntry.stringNum = 1061171;
-			FinalizeData( tempEntry, totalStringLen );
-		}
-
-		if( Combat->getCombatSkill( &cItem ) != WRESTLING )
+		if( cItem.GetLayer() != IL_NONE )
 		{
-			switch( Combat->getCombatSkill( &cItem ) )
-			{
-				case SWORDSMANSHIP:
-					tempEntry.stringNum = 1061172;
-					break;
-				case MACEFIGHTING:
-					tempEntry.stringNum = 1061173;
-					break;
-				case FENCING:
-					tempEntry.stringNum = 1061174;
-					break;
-				case ARCHERY:
-					tempEntry.stringNum = 1061175;
-					break;
+			if( cItem.GetHiDamage() > 0 )
+			{	
+				tempEntry.stringNum = 1060403;
+				tempEntry.ourText = UString::number( 100 );
+				FinalizeData( tempEntry, totalStringLen );
 			}
-			FinalizeData( tempEntry, totalStringLen );
-		}
 
-		if( cItem.GetResist( PHYSICAL ) > 0 )
-		{	
-			tempEntry.stringNum = 1060448;
-			tempEntry.ourText = UString::number( cItem.GetResist( PHYSICAL ) );
-			FinalizeData( tempEntry, totalStringLen );
-		}
+			if( cItem.GetHiDamage() > 0 )
+			{	
+				tempEntry.stringNum = 1061168;
+				tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
 
-		if( cItem.GetMaxHP() > 1 )
-		{	
-			tempEntry.stringNum = 1060639;
-			tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
+			if( cItem.GetSpeed() > 0 )
+			{	
+				tempEntry.stringNum = 1061167;
+				tempEntry.ourText = UString::number( cItem.GetSpeed() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
 
-		if( cItem.GetStrength2() > 0 )
-		{
-			tempEntry.stringNum = 1060485;
-			tempEntry.ourText = UString::number( cItem.GetStrength2() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-		if( cItem.GetDexterity2() > 0 )
-		{
-			tempEntry.stringNum = 1060409;
-			tempEntry.ourText = UString::number( cItem.GetDexterity2() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-		if( cItem.GetIntelligence2() > 0 )
-		{
-			tempEntry.stringNum = 1060432;
-			tempEntry.ourText = UString::number( cItem.GetIntelligence2() );
-			FinalizeData( tempEntry, totalStringLen );
-		}
+			if( cItem.GetHiDamage() > 0 )
+			{	
+				if( cItem.GetLayer() == IL_RIGHTHAND )
+					tempEntry.stringNum = 1061824;
+				else
+					tempEntry.stringNum = 1061171;
+				FinalizeData( tempEntry, totalStringLen );
+			}
 
-		if( cItem.GetStrength() > 1 )
-		{	
-			tempEntry.stringNum = 1061170;
-			tempEntry.ourText = UString::number( cItem.GetStrength() );
-			FinalizeData( tempEntry, totalStringLen );
+			if( Combat->getCombatSkill( &cItem ) != WRESTLING )
+			{
+				switch( Combat->getCombatSkill( &cItem ) )
+				{
+					case SWORDSMANSHIP:
+						tempEntry.stringNum = 1061172;
+						break;
+					case MACEFIGHTING:
+						tempEntry.stringNum = 1061173;
+						break;
+					case FENCING:
+						tempEntry.stringNum = 1061174;
+						break;
+					case ARCHERY:
+						tempEntry.stringNum = 1061175;
+						break;
+				}
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetResist( PHYSICAL ) > 0 )
+			{	
+				tempEntry.stringNum = 1060448;
+				tempEntry.ourText = UString::number( cItem.GetResist( PHYSICAL ) );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetMaxHP() > 1 )
+			{	
+				tempEntry.stringNum = 1060639;
+				tempEntry.ourText = UString::sprintf( "%i\t%i", cItem.GetHP(), cItem.GetMaxHP() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetStrength2() > 0 )
+			{
+				tempEntry.stringNum = 1060485;
+				tempEntry.ourText = UString::number( cItem.GetStrength2() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+			if( cItem.GetDexterity2() > 0 )
+			{
+				tempEntry.stringNum = 1060409;
+				tempEntry.ourText = UString::number( cItem.GetDexterity2() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+			if( cItem.GetIntelligence2() > 0 )
+			{
+				tempEntry.stringNum = 1060432;
+				tempEntry.ourText = UString::number( cItem.GetIntelligence2() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
+
+			if( cItem.GetStrength() > 1 )
+			{	
+				tempEntry.stringNum = 1061170;
+				tempEntry.ourText = UString::number( cItem.GetStrength() );
+				FinalizeData( tempEntry, totalStringLen );
+			}
 		}
 	}
 

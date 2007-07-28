@@ -414,6 +414,9 @@ public:
 	void		EscortsEnabled( bool value );
 	bool		EscortsEnabled( void ) const;
 
+	void		BasicTooltipsOnly( bool value );
+	bool		BasicTooltipsOnly( void ) const;
+
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;
 

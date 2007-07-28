@@ -1,3 +1,8 @@
+7/28/2007 - grimson
+	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the
+	tooltips will only contain basic information, like the name and the weight of
+	an item.
+
 7/23/2007 - giwo (0.98-3.7q)
 	Added support for updated UOKR packets.
 
