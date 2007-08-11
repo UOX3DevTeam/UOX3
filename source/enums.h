@@ -673,5 +673,11 @@ enum WanderTypes
 	WT_COUNT
 };
 
+enum RaceRelate
+{
+	RACE_NEUTRAL = 0,
+	RACE_ENEMY,
+	RACE_ALLY
+};	
 #endif
 

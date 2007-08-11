@@ -19,9 +19,6 @@ cRaces *Races = NULL;
 const UI08 MALE = 1;
 const UI08 FEMALE = 2;
 
-const RACEREL MIN_ENEMY = -1;
-const RACEREL MIN_ALLY  = -1;
-const RACEREL NEUTRAL   = 0;
 const RACEREL MAX_ENEMY = -100;
 const RACEREL MAX_ALLY  = 100;
 
@@ -148,28 +145,28 @@ void cRaces::load( void )
 		races[er]->Load( er, combat.size() );
 }
 
-SI08 cRaces::Compare( CChar *player1, CChar *player2 ) const
+RaceRelate cRaces::Compare( CChar *player1, CChar *player2 ) const
 {
 	if( !ValidateObject( player1 ) || !ValidateObject( player2 ) )
-		return 0;
+		return RACE_NEUTRAL;
 	RACEID r1 = player1->GetRace();
 	RACEID r2 = player2->GetRace();
 	if( r1 >= races.size() || r2 >= races.size() )
-		return 0;
+		return RACE_NEUTRAL;
 	return races[r1]->RaceRelation( r2 );
 }
 
-SI08 cRaces::CompareByRace( RACEID race1, RACEID race2 ) const
+RaceRelate cRaces::CompareByRace( RACEID race1, RACEID race2 ) const
 // PRE: race1 and race2 are below the maximum number of races
 // POST: Returns 0 if no enemy or ally, 1 if enemy, or 2 if ally
 {
 	if( race1 >= races.size() ) // invalid race?
 	{
-		return 0;
+		return RACE_NEUTRAL;
 	}
 	else if( race2 >= races.size() ) // invalid race?
 	{
-		return 0;
+		return RACE_NEUTRAL;
 	}
 	else
 		return races[race1]->RaceRelation( race2 ); // enemy race
@@ -494,7 +491,7 @@ SI32 cRaces::FightPercent( int skill, RACEID x ) const
 	return 100;
 }
 
-void cRaces::RacialInfo( RACEID race, RACEID toSet, RACEREL value )
+void cRaces::RacialInfo( RACEID race, RACEID toSet, RaceRelate value )
 // PRE:		race and toSet are valid races, value is a valid relation
 // POST:	the relation between race and toset is set to value
 {
@@ -508,7 +505,7 @@ void cRaces::RacialEnemy( RACEID race, RACEID enemy )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, enemy, MIN_ENEMY );
+	RacialInfo( race, enemy, RACE_ENEMY );
 }
 void cRaces::RacialAlly( RACEID race, RACEID ally )
 // PRE:		race and ally are valid
@@ -516,7 +513,7 @@ void cRaces::RacialAlly( RACEID race, RACEID ally )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, ally, MIN_ALLY );
+	RacialInfo( race, ally, RACE_ALLY );
 }
 void cRaces::RacialNeutral( RACEID race, RACEID neutral )
 // PRE:		race and neutral are valid
@@ -524,7 +521,7 @@ void cRaces::RacialNeutral( RACEID race, RACEID neutral )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, neutral, NEUTRAL );
+	RacialInfo( race, neutral, RACE_NEUTRAL );
 }
 
 
@@ -997,7 +994,7 @@ void CRace::NumEnemyRaces( int iNum )
 {
 	racialEnemies.resize( iNum );
 }
-SI08 CRace::RaceRelation( RACEID race ) const
+RaceRelate CRace::RaceRelation( RACEID race ) const
 {
 	return racialEnemies[race];
 }
@@ -1071,7 +1068,7 @@ bool CRace::IsValidBeard( COLOUR val ) const
 	return false;
 }
 
-void CRace::RaceRelation( SI08 value, RACEID race )
+void CRace::RaceRelation( RaceRelate value, RACEID race )
 {
 	racialEnemies[race] = value;
 }
@@ -1282,7 +1279,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				else if( UTag == "RACERELATION" )
 				{
 					if( data.sectionCount( " " ) != 0 )
-						RaceRelation( data.section( " ", 1, 1 ).stripWhiteSpace().toByte(), data.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+						RaceRelation( static_cast<RaceRelate>(data.section( " ", 1, 1 ).stripWhiteSpace().toByte()), data.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
 				}
 				else if( UTag == "RACIALENEMY" )
 				{
@@ -1290,7 +1287,7 @@ void CRace::Load( size_t sectNum, int modCount )
 					if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid enemy race " << raceDiff << myendl;
 					else
-						RaceRelation( MIN_ENEMY, static_cast<RACEID>(raceDiff) );
+						RaceRelation( RACE_ENEMY, static_cast<RACEID>(raceDiff) );
 				}
 				else if( UTag == "RACIALAID" )
 				{
@@ -1298,7 +1295,7 @@ void CRace::Load( size_t sectNum, int modCount )
 					if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
 					else
-						RaceRelation( MIN_ALLY, static_cast<RACEID>(raceDiff ));
+						RaceRelation( RACE_ALLY, static_cast<RACEID>(raceDiff ));
 				}
 				break;
 

@@ -20,7 +20,7 @@ struct ColourPair
 };
 
 	typedef std::vector< ColourPair >	COLOURLIST;
-	typedef std::vector< SI08 >			RACEIDLIST;
+	typedef std::vector< RaceRelate >	RACEIDLIST;
 
 	SI16				HPMod;
 	SI16				ManaMod;
@@ -85,7 +85,7 @@ public:
 
 	SKILLVAL		LanguageMin( void ) const;
 	RANGE			VisibilityRange( void ) const;
-	SI08			RaceRelation( RACEID race ) const;
+	RaceRelate		RaceRelation( RACEID race ) const;
 
 	UI16			GetHungerRate( void ) const;
 	void			SetHungerRate( UI16 newValue );
@@ -123,7 +123,7 @@ public:
 	void			VisibilityRange( RANGE newValue );
 
 	void			NumEnemyRaces( int iNum );
-	void			RaceRelation( SI08 value, RACEID race );
+	void			RaceRelation( RaceRelate value, RACEID race );
 
 	COLOUR			RandomSkin( void ) const;
 	COLOUR			RandomHair( void ) const;
@@ -160,7 +160,7 @@ class cRaces
 
 
 		// Mutators
-		void			RacialInfo( RACEID race, RACEID toSet, RACEREL value );
+		void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
 
 		bool			InvalidRace( RACEID x ) const;
 
@@ -169,8 +169,8 @@ class cRaces
 						~cRaces();
 						cRaces( void );
 		void			load( void );					// loads races
-		SI08			Compare( CChar *player1, CChar *player2 ) const;
-		SI08			CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
+		RaceRelate		Compare( CChar *player1, CChar *player2 ) const;
+		RaceRelate		CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
 		void			gate( CChar *s, RACEID x, bool always = false ); // Race Gate
 		bool			beardInRange( COLOUR color, RACEID x ) const;
 		bool			skinInRange( COLOUR color, RACEID x ) const;

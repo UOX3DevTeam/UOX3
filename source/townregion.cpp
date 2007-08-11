@@ -281,7 +281,7 @@ SERIAL CTownRegion::GetMayorSerial( void ) const
 bool CTownRegion::AddAsTownMember( CChar& toAdd )
 // toAdd is the character to add
 {
-	if( Races->CompareByRace( toAdd.GetRace(), race ) == 1 )	// if we're racial enemies
+	if( Races->CompareByRace( toAdd.GetRace(), race ) == RACE_ENEMY )	// if we're racial enemies
 		return false;	// we can't have a racial enemy in the town!
 
 	for( UI32 counter = 0; counter < townMember.size(); ++counter )		// exhaustive error checking
@@ -632,7 +632,7 @@ bool CTownRegion::DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag )
 	CChar *tChar = sock->CurrcharObj();
 	if( !IsMemberOfTown( tChar ) )
 	{
-		if( Races->CompareByRace( tChar->GetRace(), race ) > 0 )	// if we're racial enemies
+		if( Races->CompareByRace( tChar->GetRace(), race ) == RACE_ENEMY )	// if we're racial enemies
 		{
 			if( tChar->GetTown() != 255 )
 				SendEnemyGump( sock );
@@ -1126,7 +1126,7 @@ bool CTownRegion::MakeAlliedTown( UI08 townToMake )
 		return false;
 	}
 
-	if( Races->CompareByRace( cwmWorldState->townRegions[townToMake]->GetRace(), race ) == 1 )	// if we're racial enemies
+	if( Races->CompareByRace( cwmWorldState->townRegions[townToMake]->GetRace(), race ) == RACE_ENEMY )	// if we're racial enemies
 		return false;
 
 	// let's ally ourselves
@@ -1215,7 +1215,7 @@ void CTownRegion::SendEnemyTowns( CSocket *sock )
 		CTownRegion *myReg = tIter->second;
 		if( myReg != NULL )
 		{
-			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) == 1 )	// if we're racial enemies, and not the same as ourselves
+			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) == RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
 			{
 				++enemyCount;
 				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
