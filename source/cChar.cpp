@@ -1598,9 +1598,9 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 		retVal = FC_NEUTRAL;
 	else if( rComp != RACE_NEUTRAL || gComp != GR_UNKNOWN )
 	{
-		if( gComp == GR_ALLY || gComp == GR_SAME || rComp == RACE_ALLY )
+		if( gComp == GR_ALLY || gComp == GR_SAME || rComp >= RACE_ALLY )
 			retVal = FC_FRIEND;
-		else if( gComp == GR_WAR || rComp == RACE_ENEMY )
+		else if( gComp == GR_WAR || rComp <= RACE_ENEMY )
 			retVal = FC_ENEMY;
 	}
 	return retVal;
