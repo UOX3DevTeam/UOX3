@@ -675,9 +675,9 @@ enum WanderTypes
 
 enum RaceRelate
 {
+	RACE_ENEMY = -1,
 	RACE_NEUTRAL = 0,
-	RACE_ENEMY,
-	RACE_ALLY
+	RACE_ALLY = 1
 };	
 #endif
 
