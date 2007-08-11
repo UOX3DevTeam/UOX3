@@ -158,7 +158,7 @@ RaceRelate cRaces::Compare( CChar *player1, CChar *player2 ) const
 
 RaceRelate cRaces::CompareByRace( RACEID race1, RACEID race2 ) const
 // PRE: race1 and race2 are below the maximum number of races
-// POST: Returns 0 if no enemy or ally, 1 if enemy, or 2 if ally
+// POST: Returns 0 if no enemy or ally, -1 if enemy, or 1 if ally
 {
 	if( race1 >= races.size() ) // invalid race?
 	{
