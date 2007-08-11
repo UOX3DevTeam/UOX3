@@ -248,8 +248,8 @@ void HandleEvilAI( CChar& mChar )
 					}
 					if( mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 0, 100 ) >= 10 )	// 10% chance of turning on own race
 						continue;
-					SI08 raceComp = Races->Compare( tempChar, &mChar );
-					if( raceComp == 2 )	// Allies
+					RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+					if( raceComp == RACE_ALLY )	// Allies
 						continue;
 					Combat->AttackTarget( &mChar, tempChar );
 					regChars->Pop();	// restore before returning

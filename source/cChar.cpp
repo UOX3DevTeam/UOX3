@@ -1577,7 +1577,7 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 	FlagColors retVal = FC_INNOCENT;
 
 	GUILDRELATION gComp	= GR_UNKNOWN;
-	SI08 rComp			= 0;
+	RaceRelate rComp	= RACE_NEUTRAL;
 
 	if( ValidateObject( toCompare ) )
 	{
@@ -1596,11 +1596,11 @@ FlagColors CChar::FlagColour( CChar *toCompare )
 		retVal = FC_CRIMINAL;
 	else if( IsNeutral() )
 		retVal = FC_NEUTRAL;
-	else if( rComp != 0 || gComp != GR_UNKNOWN )
+	else if( rComp != RACE_NEUTRAL || gComp != GR_UNKNOWN )
 	{
-		if( gComp == GR_ALLY || gComp == GR_SAME || rComp > 0 )
+		if( gComp == GR_ALLY || gComp == GR_SAME || rComp == RACE_ALLY )
 			retVal = FC_FRIEND;
-		else if( gComp == GR_WAR || rComp < 0 )
+		else if( gComp == GR_WAR || rComp == RACE_ENEMY )
 			retVal = FC_ENEMY;
 	}
 	return retVal;

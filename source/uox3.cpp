@@ -2302,7 +2302,7 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 	CChar *tOwner = targ->GetOwnerObj();
 	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
 		return false;
-	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) != 0 ) 
+	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) == RACE_ENEMY ) 
 		return false;
 	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
 		return false;

@@ -1,3 +1,7 @@
+8/12/2007 - grimson
+	Use an enum for racial relations, should help with reading the code.
+	Fix a bug where racial allys would attack each other.
+
 7/28/2007 - grimson
 	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the
 	tooltips will only contain basic information, like the name and the weight of
