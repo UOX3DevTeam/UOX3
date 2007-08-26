@@ -31,6 +31,7 @@
 // MINTIME=0			// This is the minimum time for the item or npc to spawn
 // MAXTIME=0			// This is the maximum time for the item or npc to spawn
 // CALL=#			// Amount to spawn in one call
+// ONLYOUTSIDE=#		// Set this to 1 if items and chars should only spawn outside of buildings.
 // }				// Of course this is the closing }
 
 EOF
