@@ -23,11 +23,12 @@ const SI32		DEFSPAWN_CURCSPAWN		= 0;
 const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 const SI08		DEFSPAWN_PREFZ			= 18;
+const bool		DEFSPAWN_ONLYOUTSIDE	= false;
 
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ), 
 curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), 
 nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), 
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ )
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -384,6 +385,8 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 				worldNumber = data.toUByte();
 			else if( UTag == "PREFZ" )
 				prefZ = data.toByte();
+			else if( UTag == "ONLYOUTSIDE" )
+				onlyOutside = (data.toByte() == 1);
 			else if( UTag == "VALIDLANDPOS" )
 			{
 				data = data.simplifyWhiteSpace();
@@ -470,7 +473,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	CChar *CSpawn = NULL;
-	SI16 x, y;
+	SI16 x, y, xAway, yAway;
 	SI08 z;
 	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
 	
@@ -478,11 +481,32 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 	{
 		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
 		{
+				xAway = calcxAway( x );
+				yAway = calcyAway( y );
 				CSpawn->SetLocation( x, y, z, worldNumber );
 				CSpawn->SetSpawned( true );
 				CSpawn->ShouldSave( false );
 				CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
-				InitializeWanderArea( CSpawn, 10, 10 );
+				// If the NPC should wander within a rectangular area set the area to the spawnregion
+				if( CSpawn->GetNpcWander() == WT_BOX )
+				{
+					CSpawn->SetFx( x1, 0 );
+					CSpawn->SetFx( x2, 1 );
+					CSpawn->SetFy( y1, 0 );
+					CSpawn->SetFy( y2, 1 );
+				} 
+				// If the NPC should wander within a circle set the radius to keep it withing the spawnregion
+				else if( CSpawn->GetNpcWander() == WT_CIRCLE )
+				{
+					CSpawn->SetFx( x, 0 );
+					CSpawn->SetFy( y, 0 );
+					CSpawn->SetFy( -1, 1 );
+					if( xAway <= yAway )
+						CSpawn->SetFx( xAway, 1 );
+					else
+						CSpawn->SetFx( yAway, 1 );
+				}
+				InitializeWanderArea( CSpawn, xAway, yAway );
 				Npcs->PostSpawnUpdate( CSpawn );
 				IncCurrentCharAmt();
 		}
@@ -586,17 +610,23 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		
 		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) && !waterCreature )
 		{
-			rvalue = true;
-			validLandPos.push_back( point3( x, y, z ) );
-			validLandPosCheck[ y + ( x << 16) ] = z;
-			break;
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validLandPos.push_back( point3( x, y, z ) );
+				validLandPosCheck[ y + ( x << 16) ] = z;
+				break;
+			}
 		}
 		else if( Map->ValidSpawnLocation( x, y, z, worldNumber, false ) && ( waterCreature || amphiCreature ) )
 		{
-			rvalue = true;
-			validWaterPos.push_back( point3( x, y, z ) );
-			validWaterPosCheck[ y + ( x << 16) ] = z;
-			break;
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validWaterPos.push_back( point3( x, y, z ) );
+				validWaterPosCheck[ y + ( x << 16) ] = z;
+				break;
+			}
 		}
 	}
 
@@ -692,10 +722,13 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 
 		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) )
 		{
-			rvalue = true;
-			validLandPos.push_back( point3( x, y, z ) );
-			validLandPosCheck[ y + ( x << 16) ] = z;
-			break;
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validLandPos.push_back( point3( x, y, z ) );
+				validLandPosCheck[ y + ( x << 16) ] = z;
+				break;
+			}
 		}
 	}
 	
@@ -799,6 +832,34 @@ CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
 CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
 {
 	return &spawnedChars;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI16 calcxAway( SI16 x )
+//|	Programmer	-	grimson
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	calculate the xAway value
+//o---------------------------------------------------------------------------o
+SI16 CSpawnRegion::calcxAway( SI16 x)
+{
+	if( (x - x1) <= (x2 - x) )
+		return (x - x1);
+	else
+		return (x2 - x);
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI16 calcyAway( SI16 y )
+//|	Programmer	-	grimson
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	calculate the yAway value
+//o---------------------------------------------------------------------------o
+SI16 CSpawnRegion::calcyAway( SI16 y)
+{
+	if( (y - y1) <= (y2 - y) )
+		return (y - y1);
+	else
+		return (y2 - y);
 }
 
 }

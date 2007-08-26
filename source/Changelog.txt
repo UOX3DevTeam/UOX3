@@ -1,3 +1,12 @@
+8/26/2007 - grimson
+	Added new JS property for items: "speed" this can be used to get and set the speed
+	of weapons.
+	Added new setting to spawn.dfn: "ONLYOUTSIDE" set this to one so that items and chars
+	will only spawn outside of buildings in that area.
+	Modified the spawn code for spawnregions so that NPCs with wandermode 3 (box) and 4 (circle)
+	keep within the spawnarea boundaries.
+	Send NPCs that left their wander area for some reasons back there.
+
 8/12/2007 - grimson
 	Use an enum for racial relations, should help with reading the code.
 	Fix a bug where racial allys would attack each other.

@@ -1163,10 +1163,34 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )   //type is npcwalk 
 		case WT_BOX:	// Wander inside a box
 			if( checkBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber ) )
 				Walking( NULL, i, jMod, 256 );
+			// The NPC is outside it's area, send it back
+			else if( !checkBoundingBox( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber ) )
+			{
+				i->SetOldNpcWander( WT_BOX );
+				i->SetNpcWander( WT_PATHFIND );
+				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+					AdvancedPathfinding( i, fx1, fy1, true );
+				else
+					PathFind( i, fx1, fy2, true );
+				j = i->PopDirection();
+				Walking( NULL, i, j, 256 );
+			}
 			break;
 		case WT_CIRCLE:	// Wander inside a circle
 			if( checkBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber ) )
 				Walking( NULL, i, jMod, 256 );
+			// The NPC is outside it's area, send it back
+			else if( !checkBoundingCircle( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, worldNumber ) )
+			{
+				i->SetOldNpcWander( WT_CIRCLE );
+				i->SetNpcWander( WT_PATHFIND );
+				if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+					AdvancedPathfinding( i, fx1, fy1, true );
+				else
+					PathFind( i, fx1, fy2, true );
+				j = i->PopDirection();
+				Walking( NULL, i, j, 256 );
+			}
 			break;
 		default:
 			Console.Error( "Bad NPC Wander type passed to NpcWalk: %i", getWander );

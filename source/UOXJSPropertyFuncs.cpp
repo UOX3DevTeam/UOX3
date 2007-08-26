@@ -244,6 +244,7 @@ namespace UOX
 				case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
 				case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
 				case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
+				case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
 				case CIP_NAME2:
 					tString = JS_NewStringCopyZ( cx, gPriv->GetName2() );
 					*vp = STRING_TO_JSVAL( tString );
@@ -318,6 +319,129 @@ namespace UOX
 				case CIP_MAXINTERVAL:
 					if( gPriv->GetObjType() == OT_SPAWNER )
 						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 1 ) );
+					break;
+				default:
+					break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		CItem *gPriv = (CItem *)JS_GetPrivate( cx, obj );
+		if( !ValidateObject( gPriv ) )
+			return JS_FALSE;
+		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			TIMERVAL newTime;
+			switch( JSVAL_TO_INT( id ) )
+			{
+				case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
+				case CIP_X:				gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );				break;
+				case CIP_Y:				gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );				break;
+				case CIP_Z:				gPriv->SetZ( (SI08)encaps.toInt() );						break;
+				case CIP_ID:			gPriv->SetID( (UI16)encaps.toInt() );						break;
+				case CIP_COLOUR:		gPriv->SetColour( (UI16)encaps.toInt() );					break;
+				case CIP_OWNER:		
+					if( *vp != JSVAL_NULL ) 
+					{	 
+						CChar *myChar = (CChar*)encaps.toObject(); 
+						if( !ValidateObject( myChar ) ) 
+							break; 
+						gPriv->SetOwner( myChar ); 
+					}
+					else
+						gPriv->SetOwner( NULL );
+					break;
+				case CIP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );			break;
+				case CIP_SERIAL:																	break;
+				case CIP_HEALTH:		gPriv->SetHP( (SI16)encaps.toInt() ); 						break;
+				case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
+				case CIP_WORLDNUMBER:	
+					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
+					break;
+				case CIP_AMOUNT:	gPriv->SetAmount( (UI32)encaps.toInt() ); 	break;
+				case CIP_CONTAINER:
+					if( *vp != JSVAL_NULL )
+					{
+						CBaseObject *myObj = (CBaseObject*)encaps.toObject();
+						if( !ValidateObject( myObj ) )
+							break;
+						gPriv->SetCont( myObj );
+					}
+					else
+						gPriv->SetCont( NULL );
+					break;
+				case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
+				case CIP_MORE:			gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 			break;
+				case CIP_MOREX:			gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );			break;
+				case CIP_MOREY:			gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );			break;
+				case CIP_MOREZ:			gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );			break;
+				case CIP_MOVABLE:		gPriv->SetMovable( (SI08)encaps.toInt() );					break;
+				case CIP_ATT:			gPriv->SetLoDamage( (SI16)encaps.toInt() ); 	
+										gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
+										break;
+				case CIP_LAYER:			gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 				break;
+				case CIP_ITEMSINSIDE:																break;
+				case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
+				case CIP_DECAYTIME:		
+										newTime = encaps.toInt();
+										if( newTime != 0 )
+											newTime = BuildTimeValue( newTime );
+										gPriv->SetDecayTime( newTime );	
+										break;
+				case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
+				case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
+				case CIP_SPEED:			gPriv->SetSpeed( (UI08)encaps.toInt() );						break;
+				case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
+				case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
+				case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
+				case CIP_RANK:			gPriv->SetRank( (SI08)encaps.toInt() );						break;
+				case CIP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );					break;
+				case CIP_DIR:			gPriv->SetDir( (SI16)encaps.toInt() );						break;
+				case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
+				case CIP_BUYVALUE:		gPriv->SetBuyValue( (UI32)encaps.toInt() );					break;
+				case CIP_SELLVALUE:		gPriv->SetSellValue( (UI32)encaps.toInt() );				break;
+				case CIP_RESTOCK:		gPriv->SetRestock( (UI16)encaps.toInt() );					break;
+				case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
+				case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
+				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
+				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
+				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
+				case CIP_TEMPTIMER:
+										newTime = encaps.toInt();
+										if( newTime != 0 )
+											newTime = BuildTimeValue( newTime );
+										gPriv->SetTempTimer( newTime );	
+										break;
+				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
+				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
+				case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;
+				case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( (UI16)encaps.toInt() );				break;
+				case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
+				case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
+				case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
+				case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
+				case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
+				case CIP_CARVESECTION:	gPriv->SetCarve( encaps.toInt() );							break;
+				// The following entries are specifically for CSpawnItem objects
+				case CIP_SPAWNSECTION:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetSpawnSection( encaps.toString() );
+					break;
+				case CIP_SECTIONALIST:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->IsSectionAList( encaps.toBool() );
+					break;
+				case CIP_MININTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetInterval( 0, (UI08)encaps.toInt() );
+					break;
+				case CIP_MAXINTERVAL:
+					if( gPriv->GetObjType() == OT_SPAWNER )
+						((CSpawnItem *)gPriv)->SetInterval( 1, (UI08)encaps.toInt() );
 					break;
 				default:
 					break;
@@ -1195,128 +1319,6 @@ namespace UOX
 				case CRP_MAGICRESISTANCE:	gPriv->MagicResistance( encaps.toFloat() );				break;
 				case CRP_VISIBLEDISTANCE:	gPriv->VisibilityRange( (SI08)encaps.toInt() );			break;
 				case CRP_NIGHTVISION:		gPriv->NightVision( (UI08)encaps.toInt() );				break;
-				default:
-					break;
-			}
-		}
-		return JS_TRUE;
-	}
-
-	JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-	{
-		CItem *gPriv = (CItem *)JS_GetPrivate( cx, obj );
-		if( !ValidateObject( gPriv ) )
-			return JS_FALSE;
-		JSEncapsulate encaps( cx, vp );
-		if( JSVAL_IS_INT( id ) ) 
-		{
-			TIMERVAL newTime;
-			switch( JSVAL_TO_INT( id ) )
-			{
-				case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
-				case CIP_X:				gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );				break;
-				case CIP_Y:				gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );				break;
-				case CIP_Z:				gPriv->SetZ( (SI08)encaps.toInt() );						break;
-				case CIP_ID:			gPriv->SetID( (UI16)encaps.toInt() );						break;
-				case CIP_COLOUR:		gPriv->SetColour( (UI16)encaps.toInt() );					break;
-				case CIP_OWNER:		
-					if( *vp != JSVAL_NULL ) 
-					{	 
-						CChar *myChar = (CChar*)encaps.toObject(); 
-						if( !ValidateObject( myChar ) ) 
-							break; 
-						gPriv->SetOwner( myChar ); 
-					}
-					else
-						gPriv->SetOwner( NULL );
-					break;
-				case CIP_VISIBLE:		gPriv->SetVisible( (VisibleTypes)encaps.toInt() );			break;
-				case CIP_SERIAL:																	break;
-				case CIP_HEALTH:		gPriv->SetHP( (SI16)encaps.toInt() ); 						break;
-				case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
-				case CIP_WORLDNUMBER:	
-					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
-					break;
-				case CIP_AMOUNT:	gPriv->SetAmount( (UI32)encaps.toInt() ); 	break;
-				case CIP_CONTAINER:
-					if( *vp != JSVAL_NULL )
-					{
-						CBaseObject *myObj = (CBaseObject*)encaps.toObject();
-						if( !ValidateObject( myObj ) )
-							break;
-						gPriv->SetCont( myObj );
-					}
-					else
-						gPriv->SetCont( NULL );
-					break;
-				case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
-				case CIP_MORE:			gPriv->SetTempVar( CITV_MORE, encaps.toInt() ); 			break;
-				case CIP_MOREX:			gPriv->SetTempVar( CITV_MOREX, encaps.toInt() );			break;
-				case CIP_MOREY:			gPriv->SetTempVar( CITV_MOREY, encaps.toInt() );			break;
-				case CIP_MOREZ:			gPriv->SetTempVar( CITV_MOREZ, encaps.toInt() );			break;
-				case CIP_MOVABLE:		gPriv->SetMovable( (SI08)encaps.toInt() );					break;
-				case CIP_ATT:			gPriv->SetLoDamage( (SI16)encaps.toInt() ); 	
-										gPriv->SetHiDamage( (SI16)encaps.toInt() ); 	
-										break;
-				case CIP_LAYER:			gPriv->SetLayer( (ItemLayers)encaps.toInt() ); 				break;
-				case CIP_ITEMSINSIDE:																break;
-				case CIP_DECAYABLE:		gPriv->SetDecayable( encaps.toBool() );				 		break;
-				case CIP_DECAYTIME:		
-										newTime = encaps.toInt();
-										if( newTime != 0 )
-											newTime = BuildTimeValue( newTime );
-										gPriv->SetDecayTime( newTime );	
-										break;
-				case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
-				case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
-				case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
-				case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
-				case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
-				case CIP_RANK:			gPriv->SetRank( (SI08)encaps.toInt() );						break;
-				case CIP_POISON:		gPriv->SetPoisoned( (UI08)encaps.toInt() );					break;
-				case CIP_DIR:			gPriv->SetDir( (SI16)encaps.toInt() );						break;
-				case CIP_WIPABLE:		gPriv->SetWipeable( encaps.toBool() );						break;
-				case CIP_BUYVALUE:		gPriv->SetBuyValue( (UI32)encaps.toInt() );					break;
-				case CIP_SELLVALUE:		gPriv->SetSellValue( (UI32)encaps.toInt() );				break;
-				case CIP_RESTOCK:		gPriv->SetRestock( (UI16)encaps.toInt() );					break;
-				case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
-				case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
-				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
-				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
-				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
-				case CIP_TEMPTIMER:
-										newTime = encaps.toInt();
-										if( newTime != 0 )
-											newTime = BuildTimeValue( newTime );
-										gPriv->SetTempTimer( newTime );	
-										break;
-				case CIP_ISNEWBIE:		gPriv->SetNewbie( encaps.toBool() );						break;
-				case CIP_ISDISPELLABLE:	gPriv->SetDispellable( encaps.toBool() );					break;
-				case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;
-				case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( (UI16)encaps.toInt() );				break;
-				case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
-				case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
-				case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
-				case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
-				case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
-				case CIP_CARVESECTION:	gPriv->SetCarve( encaps.toInt() );							break;
-				// The following entries are specifically for CSpawnItem objects
-				case CIP_SPAWNSECTION:
-					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetSpawnSection( encaps.toString() );
-					break;
-				case CIP_SECTIONALIST:
-					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->IsSectionAList( encaps.toBool() );
-					break;
-				case CIP_MININTERVAL:
-					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetInterval( 0, (UI08)encaps.toInt() );
-					break;
-				case CIP_MAXINTERVAL:
-					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetInterval( 1, (UI08)encaps.toInt() );
-					break;
 				default:
 					break;
 			}
