@@ -34,6 +34,7 @@ private:
 	
 	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
 
+	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
 
@@ -99,6 +100,8 @@ private:
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
 	bool		FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z );
+	SI16		calcxAway( SI16 x );
+	SI16		calcyAway( SI16 y );
 
 	void		LoadNPCList( std::string npcList );
 	void		LoadItemList( std::string itemList );

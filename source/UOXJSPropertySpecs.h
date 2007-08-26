@@ -324,6 +324,7 @@ static JSPropertySpec CItemProps[] =
 	{ "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM },
 	{ "mininterval",	CIP_MININTERVAL,	JSPROP_ENUMANDPERM },
 	{ "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM },
+	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM },
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 
