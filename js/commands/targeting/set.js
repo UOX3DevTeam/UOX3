@@ -209,7 +209,7 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "DESC":
-		ourItem.desc = nVal;
+		ourItem.desc = socket.xText.substring( 5 );
 		okMsg( socket );
 		break;
 	case "DEF":
