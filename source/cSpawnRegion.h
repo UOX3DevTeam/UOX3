@@ -100,8 +100,6 @@ private:
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
 	bool		FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z );
-	SI16		calcxAway( SI16 x );
-	SI16		calcyAway( SI16 y );
 
 	void		LoadNPCList( std::string npcList );
 	void		LoadItemList( std::string itemList );

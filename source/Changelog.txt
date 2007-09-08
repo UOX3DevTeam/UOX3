@@ -1,3 +1,9 @@
+9/07/2007 - grimson
+	Force the wandermode of NPCs spawned by spawnregions to 3 (box), so they can travel
+	the whole spawnregion.
+	Properly initialize the wander area when the location of an NPC changes.
+	Use the old OSI way of calculating hit chances.
+
 8/26/2007 - grimson
 	Added new JS property for items: "speed" this can be used to get and set the speed
 	of weapons.

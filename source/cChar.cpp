@@ -1128,6 +1128,8 @@ void CChar::SetLocation( const CBaseObject *toSet )
 	if( toSet != NULL )
 		SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber() );
 }
+
+void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 {
 	Dirty( UT_LOCATION );
@@ -1142,6 +1144,8 @@ void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
 	CMultiObj *newMulti = findMulti( newX, newY, newZ, world );
 	if( GetMultiObj() != newMulti )
 		SetMulti( newMulti );
+	if( IsNpc() )
+		InitializeWanderArea( this, 10, 10 );
 }
 void CChar::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 {

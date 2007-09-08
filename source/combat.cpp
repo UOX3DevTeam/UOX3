@@ -1530,8 +1530,15 @@ void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 {
 	const UI16 ourDist			= getDist( &mChar, ourTarg );
+	//Attacker Skill values
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
+	const UI16 attackSkill		= UOX_MIN( 1000, (int)mChar.GetSkill( getFightSkill ) );
+	//Defender Skill values
+	CItem *defWeapon			= getWeapon( ourTarg );
+	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
+	const UI16 defendSkill		= UOX_MIN( 1000, (int)ourTarg->GetSkill( getTargetSkill ) );
+
 	UI08 bowType		= 0;
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
@@ -1587,11 +1594,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 		const UI16 getDefSkill		= ourTarg->GetSkill( TACTICS );
 		bool skillPassed = false;
-		if( Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (int)((getDefSkill * 1.25) + 100) ) ) || !RandomNum( 0, 3 ) )
-		{
-			const UI16 getAttackSkill	= ( mChar.GetSkill( getFightSkill ) + mChar.GetSkill( TACTICS ) ) / 2;
-			skillPassed					= ( !RandomNum( 0, 5 ) || RandomNum( static_cast< UI16 >(getAttackSkill / 1.25 ), getAttackSkill ) >= RandomNum( static_cast< UI16 >( getDefSkill / 1.25), getDefSkill ) );
-		}
+
+		// Do a skill check so the fight skill is increased
+		Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (int)((getDefSkill * 1.25) + 100) ) );
+		const R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
+		skillPassed = ( RandomNum(0, 100) <= hitChance );
+		
 		if( !skillPassed )
 		{
 			if( getFightSkill == ARCHERY && !RandomNum( 0, 2 ) )
