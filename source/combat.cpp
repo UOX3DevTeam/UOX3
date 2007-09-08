@@ -1880,7 +1880,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 
 R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
-	R32 getDelay	= (R32)( (R32)UOX_MIN( mChar->GetDexterity(), static_cast<SI16>(100) ) + 100 );
+	R32 getDelay	= (R32)( (R32)UOX_MIN( mChar->GetStamina(), static_cast<SI16>(100) ) + 100 );
 	int getOffset	= 0;
 	int baseValue	= 15000;
 

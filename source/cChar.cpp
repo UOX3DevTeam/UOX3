@@ -1522,14 +1522,14 @@ void CChar::CopyData( CChar *target )
 		target->SetFood( GetFood() );
 		target->SetFleeAt( GetFleeAt() );
 		target->SetReattackAt( GetReattackAt() );
-		target->SetNpcWander( GetNpcWander() );
-		target->SetOldNpcWander( GetOldNpcWander() );
 		target->SetFTarg( GetFTarg() );
 		target->SetFx( GetFx( 0 ), 0 );
 		target->SetFx( GetFx( 1 ), 1 );
 		target->SetFy( GetFy( 0 ), 0 );
 		target->SetFy( GetFy( 1 ), 1 );
 		target->SetFz( GetFz() );
+		target->SetNpcWander( GetNpcWander() );
+		target->SetOldNpcWander( GetOldNpcWander() );
 		target->SetTaming( GetTaming() );
 		target->SetPeaceing( GetPeaceing() );
 		target->SetProvoing( GetProvoing() );
@@ -4913,6 +4913,11 @@ void CChar::SetNpcWander( SI08 newValue )
 	}
 	if( IsValidNPC() )
 		mNPC->wanderMode = newValue;
+
+	// Make shure the wanderarea is properly initialized
+	if( ( newValue == WT_BOX ) || ( newValue == WT_CIRCLE ) )
+		if( ( mNPC->fx[0] == -1 ) || ( mNPC->fy[0] == -1 ) )
+			InitializeWanderArea( this, 10, 10 );
 }
 
 //o---------------------------------------------------------------------------o
