@@ -1,3 +1,8 @@
+9/08/2007 - grimson
+	Properly initialize the wander area when the wandermode of an NPC changes.
+	Use stamina instead of dexterity when calculating the attack delay to match
+	up with the old OSI combat calculations.
+
 9/07/2007 - grimson
 	Force the wandermode of NPCs spawned by spawnregions to 3 (box), so they can travel
 	the whole spawnregion.
