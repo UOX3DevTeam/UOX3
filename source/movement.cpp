@@ -1162,7 +1162,9 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )   //type is npcwalk 
 			break;
 		case WT_BOX:	// Wander inside a box
 			if( checkBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber ) )
+			{
 				Walking( NULL, i, jMod, 256 );
+			}
 			// The NPC is outside it's area, send it back
 			else if( !checkBoundingBox( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber ) )
 			{
@@ -1178,7 +1180,9 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )   //type is npcwalk 
 			break;
 		case WT_CIRCLE:	// Wander inside a circle
 			if( checkBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber ) )
+			{
 				Walking( NULL, i, jMod, 256 );
+			}
 			// The NPC is outside it's area, send it back
 			else if( !checkBoundingCircle( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, worldNumber ) )
 			{

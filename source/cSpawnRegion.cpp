@@ -463,7 +463,6 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 	SetNextTime( BuildTimeValue( (R32)( 60 * RandomNum( GetMinTime(), GetMaxTime() ) ) ) );
 }
 
-void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 //o---------------------------------------------------------------------------o
 //|	Function	-	cChar *RegionSpawnChar( void )
 //|	Programmer	-	Thyme
@@ -473,7 +472,7 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	CChar *CSpawn = NULL;
-	SI16 x, y, xAway, yAway;
+	SI16 x, y;
 	SI08 z;
 	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
 	
@@ -481,32 +480,16 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 	{
 		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
 		{
-				xAway = calcxAway( x );
-				yAway = calcyAway( y );
+				// NPCs should always wander the whole spawnregion
+				CSpawn->SetNpcWander( WT_BOX );
+				CSpawn->SetFx( x1, 0 );
+				CSpawn->SetFx( x2, 1 );
+				CSpawn->SetFy( y1, 0 );
+				CSpawn->SetFy( y2, 1 );
 				CSpawn->SetLocation( x, y, z, worldNumber );
 				CSpawn->SetSpawned( true );
 				CSpawn->ShouldSave( false );
 				CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
-				// If the NPC should wander within a rectangular area set the area to the spawnregion
-				if( CSpawn->GetNpcWander() == WT_BOX )
-				{
-					CSpawn->SetFx( x1, 0 );
-					CSpawn->SetFx( x2, 1 );
-					CSpawn->SetFy( y1, 0 );
-					CSpawn->SetFy( y2, 1 );
-				} 
-				// If the NPC should wander within a circle set the radius to keep it withing the spawnregion
-				else if( CSpawn->GetNpcWander() == WT_CIRCLE )
-				{
-					CSpawn->SetFx( x, 0 );
-					CSpawn->SetFy( y, 0 );
-					CSpawn->SetFy( -1, 1 );
-					if( xAway <= yAway )
-						CSpawn->SetFx( xAway, 1 );
-					else
-						CSpawn->SetFx( yAway, 1 );
-				}
-				InitializeWanderArea( CSpawn, xAway, yAway );
 				Npcs->PostSpawnUpdate( CSpawn );
 				IncCurrentCharAmt();
 		}
@@ -832,34 +815,6 @@ CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
 CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
 {
 	return &spawnedChars;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI16 calcxAway( SI16 x )
-//|	Programmer	-	grimson
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	calculate the xAway value
-//o---------------------------------------------------------------------------o
-SI16 CSpawnRegion::calcxAway( SI16 x)
-{
-	if( (x - x1) <= (x2 - x) )
-		return (x - x1);
-	else
-		return (x2 - x);
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI16 calcyAway( SI16 y )
-//|	Programmer	-	grimson
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	calculate the yAway value
-//o---------------------------------------------------------------------------o
-SI16 CSpawnRegion::calcyAway( SI16 y)
-{
-	if( (y - y1) <= (y2 - y) )
-		return (y - y1);
-	else
-		return (y2 - y);
 }
 
 }
