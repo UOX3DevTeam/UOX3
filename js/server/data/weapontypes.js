@@ -1,14 +1,56 @@
-// This is a generic script for determining weapon types based on item-ID
-// You can call this script from an external script by using the following three lines code...
+// This is a generic script for determining weapon types based on item-ID,
+// or combat skill based on equipped weapon type.
+//
+// To get weapon-type of the equipped weapon, use the following in an external script:
 //		TriggerEvent( 2500, "getWeaponType", pUser );
 //		var weaponType = pUser.GetTag( "weaponType" );
 //		pUser.SetTag( "weaponType", null );
+//
+// To get combat skill based on equipped weapon type, use the following in an external script:
+//		TriggerEvent( 2500, "getCombatSkill", pUser );
+//		var combatSkill = pUser.GetTag( "combatSkill" );
+//		pUser.SetTag( "combatSkill", null );
+//
+//	List of potential weaponTypes returned:
+//		Unarmed:
+//			WRESTLING
+//		Swordsmanship-weapons:
+//			DEF_SWORDS
+//			SLASH_SWORDS
+//			ONEHND_LG_SWORDS
+//			TWOHND_LG_SWORDS
+//			BARDICHE
+//			ONEHND_AXES
+//			TWOHND_AXES
+//		Macefighting-weapons:
+//			DEF_MACES:
+//			LG_MACES:
+//		Fencing-weapons:
+//			DEF_FENCING:
+//			TWOHND_FENCING:
+//			DUAL_FENCING_SLASH:
+//			DUAL_FENCING_STAB:
+//		Archery-weapons:
+//			BOWS:
+//			XBOWS:
+//
+//	List of combat skills returned by script:
+//		SWORDSMANSHIP
+//		MACEFIGHTING
+//		FENCING
+//		ARCHERY
+//		WRESTLING
 
 function getWeaponType( pUser )
 {
+	var weaponType;
+	
+	// Check first layer1 then layer2 for equipped weapons on character
 	var tempItem = pUser.FindItemLayer( 1 );
 	if( tempItem == null )
 		tempItem = pUser.FindItemLayer( 2 );
+	
+	// If no equipped item, weapontype is WRESTLING
 	if( tempItem == null )
 		pUser.SetTag( "weaponType", "WRESTLING" );
 	else
@@ -33,7 +75,7 @@ function getWeaponType( pUser )
 			case 0x257E: //short sword - LBR
 			case 0x27A4: //wakizashi - SE
 			case 0x27EF: //wakizashi - SE
-				pUser.SetTag( "weaponType", "DEF_SWORDS" ); break;
+				weaponType = "DEF_SWORDS"; break;
 		// Default Swords
 			case 0x13F6: //butcher knife
 			case 0x13F7: //butcher knife
@@ -45,7 +87,7 @@ function getWeaponType( pUser )
 			case 0x13BA: //viking sword
 			case 0x255E: //ratman sword - LBR
 			case 0x2560: //skeleton scimitar - LBR
-				pUser.SetTag( "weaponType", "SLASH_SWORDS" ); break;
+				weaponType = "SLASH_SWORDS"; break;
 		// One-Handed Lg. Swords
 			case 0x0F5E: //broadsword
 			case 0x0F5F: //broadsword
@@ -53,7 +95,7 @@ function getWeaponType( pUser )
 			case 0x26CE: //paladin sword - AoS
 			case 0x26CF: //paladin sword - AoS
 			case 0x2554: //daemon sword - LBR
-				pUser.SetTag( "weaponType", "ONEHND_LG_SWORDS" ); break;
+				weaponType = "ONEHND_LG_SWORDS"; break;
 		// Two-Handed Lg. Swords
 			case 0x143E: //halberd
 			case 0x143F: //halberd
@@ -66,7 +108,7 @@ function getWeaponType( pUser )
 			case 0x27ED: //no-dachi - SE
 			case 0x27A8: //bokuto - SE
 			case 0x27F3: //bokuto - SE
-				pUser.SetTag( "weaponType", "TWOHND_LG_SWORDS" ); break;
+				weaponType = "TWOHND_LG_SWORDS"; break;
 		// Bardiche
 			case 0x0F4D: //bardiche
 			case 0x0F4E: //bardiche
@@ -74,7 +116,7 @@ function getWeaponType( pUser )
 			case 0x26C4: //scythe - AoS
 			case 0x255B: //ophidian bardiche - LBR
 			case 0x2577: //naginata - LBR
-				pUser.SetTag( "weaponType", "BARDICHE" ); break;
+				weaponType = "BARDICHE"; break;
 		// One-Handed Axes
 			case 0x0EC2: //cleaver
 			case 0x0EC3: //cleaver
@@ -82,7 +124,7 @@ function getWeaponType( pUser )
 			case 0x0E86: //pickaxe
 			case 0x2567: //orc lord battleaxe - LBR
 			case 0x2579: //pick - LBR
-				pUser.SetTag( "weaponType", "ONEHND_AXES" ); break;
+				weaponType = "ONEHND_AXES"; break;
 		// Two-Handed Axes
 			case 0x13FA: //large battle axe
 			case 0x13FB: //large battle axe
@@ -102,7 +144,7 @@ function getWeaponType( pUser )
 			case 0x255D: //ratman axe - LBR
 			case 0x2564: //troll axe - LBR
 			case 0x2570: //hatchet - LBR
-				pUser.SetTag( "weaponType", "TWOHND_AXES" ); break;
+				weaponType = "TWOHND_AXES"; break;
 		// Default Maces
 			case 0x13E3: //smith's hammer
 			case 0x13E4: //smith's hammer
@@ -126,7 +168,7 @@ function getWeaponType( pUser )
 			case 0x255C: //orc club - LBR
 			case 0x256F: //smyth's hammer - LBR
 			case 0x257F: //war mace - LBR
-				pUser.SetTag( "weaponType", "DEF_MACES" ); break;
+				weaponType = "DEF_MACES"; break;
 		// Large Maces
 			case 0x13F4: //crook
 			case 0x13F5: //crook
@@ -159,14 +201,14 @@ function getWeaponType( pUser )
 			case 0x27F1: //tetsubo - SE
 			case 0x27AE: //nunchako - SE
 			case 0x27F9: //nunchako - SE
-				pUser.SetTag( "weaponType", "LG_MACES" ); break;
+				weaponType = "LG_MACES"; break;
 		// Bows
 			case 0x13B1: //bow
 			case 0x13B2: //bow
 			case 0x26C2: //composite bow - AoS
 			case 0x26CC: //composite bow - AoS
 			case 0x2571: //horseman's bow - LBR
-				pUser.SetTag( "weaponType", "BOWS" ); break;
+				weaponType = "BOWS"; break;
 		// Crossbows
 			case 0x0F4F: //crossbow
 			case 0x0F50: //crossbow
@@ -178,7 +220,7 @@ function getWeaponType( pUser )
 			case 0x27F0: //yumi - SE
 		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
-				pUser.SetTag( "weaponType", "XBOWS" ); break;
+				weaponType = "XBOWS"; break;
 		// Normal Fencing Weapons
 			case 0x0F51: //dagger
 			case 0x0F52: //dagger
@@ -189,7 +231,7 @@ function getWeaponType( pUser )
 			case 0x1404: //war fork
 			case 0x1405: //war fork
 			case 0x257C: //sword(rapier) - LBR
-				pUser.SetTag( "weaponType", "DEF_FENCING" ); break;
+				weaponType = "DEF_FENCING"; break;
 		// Stabbing Fencing Weapons
 			case 0x0E87: //pitchfork
 			case 0x0E88: //pitchfork
@@ -208,20 +250,71 @@ function getWeaponType( pUser )
 			case 0x257B: //spear - LBR
 			case 0x27A7: //lajatang - SE
 			case 0x27F2: //lajatang - SE
-				pUser.SetTag( "weaponType", "TWOHND_FENCING" ); break;
+				weaponType = "TWOHND_FENCING"; break;
 			case 0x27AF: //sai - SE
 			case 0x27FA: //sai - SE
-				pUser.SetTag( "weaponType", "DUAL_FENCING_STAB" ); break;
+				weaponType = "DUAL_FENCING_STAB"; break;
 			case 0x27AB: //tekagi - SE
 			case 0x27F6: //tekagi - SE
 			case 0x27AD: //kama - SE
 			case 0x27F8: //kama - SE
-				pUser.SetTag( "weaponType", "DUAL_FENCING_SLASH" ); break;
+				weaponType = "DUAL_FENCING_SLASH"; break;
 			case 0x27A9: //daisho - SE
 			case 0x27F4: //daisho - SE
-				pUser.SetTag( "weaponType", "DUAL_SWORD" ); break;
+				weaponType = "DUAL_SWORD"; break;
 			default: // Wrestling
-				pUser.SetTag( "weaponType", "WRESTLING" ); break;
+				weaponType = "WRESTLING"; break;
 		}
+		if( weaponType )
+		{
+			// Save weaponType-tag on character, to be read from external script
+			pUser.SetTag( "weaponType", weaponType );	
+		}
+	}
+}
+
+function getCombatSkill()
+{
+	var combatSkill;
+	
+	// Call the getWeaponType() function and load the value of the tag it
+	// saves on character into weaponType variable.
+	getWeaponType( pUser );
+	var weaponType = pUser.GetTag( "weaponType" );
+	
+	// Determine combatskill based on weaponType:
+	switch( weaponType )
+	{
+		case "DEF_SWORDS":
+		case "SLASH_SWORDS":
+		case "ONEHND_LG_SWORDS":
+		case "TWOHND_LG_SWORDS":
+		case "ONEHND_AXES":
+		case "TWOHND_AXES":
+		case "BARDICHE":
+		case "DUAL_SWORD":
+			combatSkill = "SWORDSMANSHIP"; break;
+		case "DEF_MACES":
+		case "LG_MACES":
+			combatSkill = "MACEFIGHTING"; break;
+		case "DEF_FENCING":
+		case "TWOHND_FENCING":
+		case "DUAL_FENCING_SLASH":
+		case "DUAL_FENCING_STAB":
+			combatSkill = "FENCING"; break;
+		case "BOWS":
+		case "XBOWS":
+			combatSkill = "ARCHERY"; break;
+		case "WRESTLING":
+		default:
+			combatSkill = "WRESTLING"; break;
+	}
+	if( combatSkill )
+	{
+		// Save combatSkill-tag on character, to be read from external script
+		pUser.SetTag( "combatSkill", combatSkill );
+		
+		// Nullify the temporary tag that was set by calling getWeaponType function earlier
+		pUser.SetTag( "weaponType", null );
 	}
 }
