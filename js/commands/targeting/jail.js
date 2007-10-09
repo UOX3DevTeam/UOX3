@@ -21,7 +21,10 @@ function onCallback0( socket, ourObj )
 		if( ourObj.isJailed )
 			socket.SysMessage( GetDictionaryEntry( 1070, socket.Language ) );
 		else
+		{
 			ourObj.Jail( socket.tempint );
+			socket.SysMessage( ourObj.name + " has been jailed." );
+		}
 	}
 	socket.tempint = 0;
 }
@@ -36,12 +39,12 @@ function onCallback1( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
-		if( ourObj.isJailed )
+		if( ourObj.isJailed == false )
 			socket.SysMessage( GetDictionaryEntry( 1064, socket.Language ) );
 		else
 		{
 			ourObj.Release();
-			SysMessage( "Released " + ourObj.name + " from jail" );
+			socket.SysMessage( "Released " + ourObj.name + " from jail." );
 		}
 	}
 }
