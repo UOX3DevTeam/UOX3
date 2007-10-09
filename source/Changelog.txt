@@ -1,3 +1,7 @@
+10/09/2007 - Xuri
+	Fixed some errors in jail.js that could mess up jailing/releasing characters 
+	Added new function (getCombatSkill) to weapontypes.js for returning skill used by equipped weapon as a string
+
 9/08/2007 - grimson
 	Properly initialize the wander area when the wandermode of an NPC changes.
 	Use stamina instead of dexterity when calculating the attack delay to match
