@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )

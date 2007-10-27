@@ -2295,8 +2295,9 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	UI32 retVal = 0;
-
-	Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myObj->GetName().c_str(), realID, itemColour, amount );
+	
+	//Seems to be debug output
+	//Console.Print("\n*****\nCharname: %s\nRealID: %i\nitemColor: %i\nAmount: %i\n*****\n", myObj->GetName().c_str(), realID, itemColour, amount );
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *myChar	= (CChar *)myObj;

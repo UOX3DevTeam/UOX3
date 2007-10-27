@@ -4,7 +4,7 @@
 // untill stablekeepers are changed to sell living animals these scripts create NPCs from sold statics
 // horse
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 { 
 	// randomize the horse given
 	var look = RollDice( 1, 4, 0 ); 

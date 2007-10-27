@@ -8,7 +8,7 @@
 var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 var maxResource = 5; //maximum amount of resources on a given item
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )

@@ -2248,8 +2248,6 @@ bool CPIDblClick::Handle( void )
 		return true;
 
 	ItemTypes iType		= findItemType( iUsed );
-	if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
-		return true;
 
 	UI16 itemID			= iUsed->GetID();
 	UI16 envTrig		= 0;
@@ -2268,7 +2266,16 @@ bool CPIDblClick::Handle( void )
 			toExecute = JSMapping->GetScript( envTrig );
 		}
 	}
-	
+
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnUseUnChecked( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
+			return true;
+	}
+
+	if( !ItemIsUsable( tSock, ourChar, iUsed, iType ) )
+		return true;
+
 	if( toExecute != NULL )
 	{
 		if( iUsed->isDisabled() )
@@ -2276,7 +2283,7 @@ bool CPIDblClick::Handle( void )
 			tSock->sysmessage( 394 );
 			return true;
 		}
-		if( toExecute->OnUse( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
+		if( toExecute->OnUseChecked( ourChar, iUsed ) == 1 )	// if it exists and we don't want hard code, return
 			return true;
 	}
 

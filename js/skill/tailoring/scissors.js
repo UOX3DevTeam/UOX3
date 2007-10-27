@@ -3,7 +3,7 @@
 // This script contains all the default functions of the scissors,
 // from sheep-shearing to cloth cutting.
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )

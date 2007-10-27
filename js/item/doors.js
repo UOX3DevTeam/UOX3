@@ -4,7 +4,7 @@ doorTypes = new Array (
 	0x084C, 0x0866, 0x190E, 0x1FED
 );
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket )
@@ -152,7 +152,7 @@ function onUse( pUser, iUsed )
 			if( LinkedDoor )
 			{
 				pUser.socket.clickY = 1;
-				onUse( pUser, LinkedDoor );
+				onUseChecked( pUser, LinkedDoor );
 			}
 		}
 		else if( pUser.socket.clickY == 1 )

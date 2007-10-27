@@ -915,13 +915,29 @@ function onUnequip( pUnequipper, iUnequipped )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnUseEvent">onUse</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUse( pUser, iUsed )
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUseCheckedEvent">onUseChecked</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUseChecked( pUser, iUsed )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  
 <tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on executing with hard coded implementation<br>if return value is false, then no hard code is executed
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
+{
+	var trgSock = pUser.socket;
+	if(pUser.InRange( iUsed, 8 ))
+		pUser.OpenBank(trgSock);
+	return false;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUseUnCheckedEvent">onUseUnChecked</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUseUnChecked( pUser, iUsed )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  
+<tr><td valign="top" width="25%"><b>Notes</b><td>Unlike the onUseChecked event this one runs without any hardcoded checks.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUseUnChecked( pUser, iUsed )
 {
 	var trgSock = pUser.socket;
 	if(pUser.InRange( iUsed, 8 ))

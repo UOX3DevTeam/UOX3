@@ -4,7 +4,7 @@
 // 24/01/2005 LAST UPDATE
 // unspun wool : spinning wheel : three balls of yarn
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;

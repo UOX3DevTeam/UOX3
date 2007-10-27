@@ -15,7 +15,7 @@
 // Todo: Descriptions for how full a liquid container is
 scriptID = 2100;
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var isInRange = pUser.InRange( iUsed, 3 ); //if character is within range of 2 tiles of target

@@ -6,7 +6,7 @@
 // use axe : target furniture : destroy it when its not locked down
 // 09/02/2003 Updated by Xuri; xuri@sensewave.com
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 {
 	// is it in users pack?
 	var iPackOwner = GetPackOwner( iUsed, 0 );

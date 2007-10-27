@@ -23,7 +23,7 @@ var KeyringID3 = 0x176b; //full keyring
 var KeyScriptID = 5013; //Script-ID from JSE_FILEASSOCIATIONS.SCP! Change to match your own setting.
 
 // Adding keys to keyrings
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	pUser.socket.tempObj = iUsed;
 	if(( iUsed.id >= keyID1 && iUsed.id <= keyID3 ) || iUsed.id == keyID4 || iUsed.id == keyID5 )
