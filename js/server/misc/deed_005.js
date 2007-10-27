@@ -3,7 +3,7 @@
 
 // TESTSCRIPT for positioning an item
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 { 
 	// get users socket
 	var srcSock = CalcSockFromChar( pUser );

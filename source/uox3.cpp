@@ -2504,7 +2504,7 @@ void DoorMacro( CSocket *s )
 						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
 						cScript *envExecute = JSMapping->GetScript( envTrig );
 						if( envExecute != NULL )
-							envExecute->OnUse( mChar, itemCheck );
+							envExecute->OnUseChecked( mChar, itemCheck );
 
 						regItems->Pop();
 						return;

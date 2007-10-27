@@ -4,7 +4,7 @@
 // 14/06/2005 Xuri; Fixed the script :P
 // use flour : target water pitcher : get dough
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	var srcSock = pUser.socket;	// get users socket
 	if( iUsed.container != null )	// is it in users pack?

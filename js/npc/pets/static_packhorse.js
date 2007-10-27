@@ -4,7 +4,7 @@
 // untill stablekeepers are changed to sell living animals these scripts create NPCs from sold statics
 // pack horse
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 { 
 	var nSpawned = SpawnNPC( "packhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	if( nSpawned == null )

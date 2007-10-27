@@ -996,7 +996,7 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(myDoor->GetType()) );
 		cScript *envExecute = JSMapping->GetScript( envTrig );
 		if( envExecute != NULL )
-			envExecute->OnUse( mChar, myDoor );
+			envExecute->OnUseChecked( mChar, myDoor );
 	}
 
 	return JS_TRUE;

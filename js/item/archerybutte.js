@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var lastUsedBy = iUsed.GetTag( "lastUsedBy" );

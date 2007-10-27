@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var wellPlayed = pUser.CheckSkill( 29, 0, 1000 );
 	var soundID;

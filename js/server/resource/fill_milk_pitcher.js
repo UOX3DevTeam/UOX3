@@ -3,7 +3,7 @@
 // For use only with the UOX3 emulator or any other with the authors permission
 // Target resource, fill milk pitcher
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	//var iPackOwner = GetPackOwner( iUsed, 0 );
 	//if( iPackOwner != pUser )

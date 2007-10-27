@@ -802,11 +802,11 @@ bool cScript::OnUnequip( CChar *equipper, CItem *equipping )
 //| Modifications	-	31 July, 2003 15:39 (Maarc, making it version 3)
 //|						Changed return values from bool to SI08
 //o--------------------------------------------------------------------------o
-SI08 cScript::OnUse( CChar *user, CItem *iUsing )
+SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 {
 	if( !ValidateObject( user ) || !ValidateObject( iUsing ) )
 		return -1;
-	if( !ExistAndVerify( seOnUse, "onUse" ) )
+	if( !ExistAndVerify( seOnUseChecked, "onUseChecked" ) )
 		return -1;
 
 	SI08 funcRetVal	= -1;
@@ -818,9 +818,62 @@ SI08 cScript::OnUse( CChar *user, CItem *iUsing )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( itemObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUse", 2, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseChecked", 2, params, &rval );
 	if( retVal == JS_FALSE )
-		SetEventExists( seOnUse, false );
+		SetEventExists( seOnUseChecked, false );
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	SI08 cScript::OnUse( CChar *user, CItem *iUsing )
+//|	Date			-	??????
+//|	Developers		-	??????
+//|	Organization	-	UOX3 DevTeam
+//|	Status			-	Version 3
+//o--------------------------------------------------------------------------o
+//|	Description		-	The function returns 3 possible values
+//|						-1	=> No such function or bad call
+//|						0	=> Execute hard coded implementations as well
+//|						1	=> Don't execute hard coded implementation
+//o--------------------------------------------------------------------------o
+//| Modifications	-	31 July, 2003 15:39 (Maarc, making it version 3)
+//|						Changed return values from bool to SI08
+//o--------------------------------------------------------------------------o
+SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
+{
+	if( !ValidateObject( user ) || !ValidateObject( iUsing ) )
+		return -1;
+	if( !ExistAndVerify( seOnUseUnChecked, "onUseUnChecked" ) )
+		return -1;
+
+	SI08 funcRetVal	= -1;
+
+	jsval rval, params[2];
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, user, runTime );
+	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, iUsing, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( itemObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseUnChecked", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnUseUnChecked, false );
 
 	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
 	{

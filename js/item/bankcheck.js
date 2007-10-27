@@ -2,7 +2,7 @@
 // v1.00
 // Last Updated: 16. August 2006
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var bankBox = pUser.FindItemLayer( 29 );
 	if( bankBox && iUsed.container && iUsed.container.serial == bankBox.serial )			

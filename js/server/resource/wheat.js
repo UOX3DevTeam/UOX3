@@ -6,7 +6,7 @@
 // like "sprouts", short wheat and finally becomes harvestable tall wheat again.
 var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )

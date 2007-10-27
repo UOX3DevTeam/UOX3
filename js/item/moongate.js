@@ -27,7 +27,7 @@ var enableIlshenar = 1;
 var enableMalas = 1;
 var enableTokuno = 1;
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 { 
   // get users socket 
   var srcSock = pUser.socket; 

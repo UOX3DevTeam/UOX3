@@ -39,7 +39,8 @@ enum ScriptEvent
 	seOnEntrance,			//	**
 	seOnEquip,				//	**
 	seOnUnequip,			//	**
-	seOnUse,				//	**  the event that replaces hardcoded use-stuff
+	seOnUseChecked,			//	**  the event that replaces hardcoded use-stuff
+	seOnUseUnChecked,
 	seOutOfRange,			//	*	Missing character out of range
 	seOnLogin,				//	**
 	seOnLogout,
@@ -186,7 +187,8 @@ public:
 	bool		OnEntrance( CMultiObj *left, CBaseObject *leaving );
 	bool		OnEquip( CChar *equipper, CItem *equipping );
 	bool		OnUnequip( CChar *equipper, CItem *equipping );
-	SI08		OnUse( CChar *user, CItem *iUsing );
+	SI08		OnUseChecked( CChar *user, CItem *iUsing );
+	SI08		OnUseUnChecked( CChar *user, CItem *iUsing );
 	bool		OutOfRange( CChar *person, CBaseObject *objVanish );
 	bool		OnLogin( CSocket *sockPlayer, CChar *pPlayer );
 	bool		OnLogout( CSocket *sockPlayer, CChar *pPlayer );
