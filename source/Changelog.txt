@@ -1,3 +1,6 @@
+02/16/2008 - Xuri
+	Made magical shortbows and elven composite bows fire arrows instead of crossbolts
+
 10/27/2007 - grimson
 	Split onUse into onUseChecked and onUseUnChecked.
 
