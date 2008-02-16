@@ -543,6 +543,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2571: //horseman's bow - LBR
 		case 0x27A5: //yumi - SE
 		case 0x27F0: //yumi - SE
+		case 0x2D1E: //elven composite longbow - ML
+		case 0x2D2A: //elven composite longbow - ML
+		case 0x2D1F: //magical shortbow - ML
+		case 0x2D2B: //magical shortbow - ML
 			return BOWS;
 		// Crossbows
 		case 0x0F4F: //crossbow
@@ -553,10 +557,6 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26CD: //repeating crossbow - AoS
 		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
-		case 0x2D1E: //elven composite longbow - ML
-		case 0x2D2A: //elven composite longbow - ML
-		case 0x2D1F: //magical shortbow - ML
-		case 0x2D2B: //magical shortbow - ML
 			return XBOWS;
 		// Normal Fencing Weapons
 		case 0x0F51: //dagger
