@@ -1,3 +1,8 @@
+6/20/2008 - giwo (0.98-3.7r)
+	Added support for Visual Studio 2008
+	Fixed an issue causing a player to be poisoned when a JS call to SetPoisoned(0,0) was made.
+
+
 02/16/2008 - Xuri
 	Made magical shortbows and elven composite bows fire arrows instead of crossbolts
 
