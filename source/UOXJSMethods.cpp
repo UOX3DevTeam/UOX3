@@ -2109,6 +2109,11 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 
 		CBaseObject *myObj = (CBaseObject*)JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] ) );
+		if( !ValidateObject(myObj) )
+		{
+			MethodError( "(TurnToward) Invalid Object passed" );
+			return JS_FALSE;
+		}
 
 		x = myObj->GetX();
 		y = myObj->GetY();
