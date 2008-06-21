@@ -1320,7 +1320,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			if( ( !tempChar->isHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
 			{
 				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
-				if( tempChar != mChar && objInRange( tempChar, mChar, static_cast<UI16>(distance) ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
+				if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
 					mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
 					++MaxTrackingTargets;

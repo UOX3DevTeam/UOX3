@@ -416,15 +416,14 @@ UString UString::number ( unsigned int n, int base  )
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::lower() const
 {
-	UString sReturn = *this; 
+	UString sReturn(this->c_str()); 
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::tolower);
 	return ( sReturn );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::upper() const
 {
-	UString sReturn = *this;
-
+	UString sReturn(this->c_str());
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::toupper);
 	return ( sReturn );
 }

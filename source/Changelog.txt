@@ -1,3 +1,8 @@
+6/21/2008 - giwo (0.98-3.7s)
+	Modified UString to function without crashing under VS2008
+	Fixed a bug in CItem::RemoveFromSight() causing items inside containers on the ground not to properly notify nearby players when removed.
+	Fixed a bug in CPIDropItem() when the compiler does not automatically instantiate booleans to false
+
 6/21/2008 - giwo
 	Fixed several issues with tracking.
 	Fixed a crash caused by passing an invalid object to the JS Method TurnToward
