@@ -139,6 +139,8 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										ScriptSection *toFind = FileLookup->FindEntry( cdata, items_def );
 										if( toFind == NULL )
 											Console.Warning( "Invalid script entry called with GET tag, item serial 0x%X" , applyTo->GetSerial() );
+										else if( toFind == toApply )
+											Console.Warning( "Infinite loop avoided with GET tag inside item script %s", cdata.c_str() );
 										else
 											ApplyItemSection( applyTo, toFind );
 			}

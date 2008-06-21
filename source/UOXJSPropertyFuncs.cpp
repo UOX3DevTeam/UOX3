@@ -724,6 +724,7 @@ namespace UOX
 				case CCP_SKILLTOTAME:	*vp = INT_TO_JSVAL( gPriv->GetTaming() );					break;
 				case CCP_SKILLTOPROV:	*vp = INT_TO_JSVAL( gPriv->GetProvoing() );					break;
 				case CCP_SKILLTOPEACE:	*vp = INT_TO_JSVAL( gPriv->GetPeaceing() );					break;
+				case CCP_POISONSTRENGTH:	*vp = INT_TO_JSVAL( gPriv->GetPoisonStrength() );		break;
 				case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
 				case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
 				case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
@@ -1001,6 +1002,7 @@ namespace UOX
 				case CCP_SKILLTOTAME:	gPriv->SetTaming( encaps.toInt() );					break;
 				case CCP_SKILLTOPROV:	gPriv->SetProvoing( encaps.toInt() );				break;
 				case CCP_SKILLTOPEACE:	gPriv->SetPeaceing( encaps.toInt() );				break;
+				case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( (UI08)encaps.toInt() );	break;
 				case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );			break;
 				case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );				break;
 				case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );					break;
