@@ -1312,7 +1312,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished() || MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
+		for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
