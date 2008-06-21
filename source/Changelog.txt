@@ -1,5 +1,6 @@
 6/21/2008 - giwo
 	Fixed several issues with tracking.
+	Fixed a crash caused by passing an invalid object to the JS Method TurnToward
 
 6/20/2008 - giwo (0.98-3.7r)
 	Added support for Visual Studio 2008
