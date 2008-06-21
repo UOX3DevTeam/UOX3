@@ -2759,7 +2759,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	SI08 newVal = (SI08)JSVAL_TO_INT( argv[0] );
 
-	if( argc > 1 )
+	if( newVal > 0 && argc > 1 )
 	{
 		SI32 wearOff = (SI32)JSVAL_TO_INT( argv[1] );
 		
@@ -2771,7 +2771,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		myChar->SetTimer( tCHAR_POISONWEAROFF, BuildTimeValue( (R32)wearOff / 1000.0f ) );
 	}
 
-	myChar->SetPoisonStrength( newVal );
+	//myChar->SetPoisonStrength( newVal );
 	myChar->SetPoisoned( newVal );
 	return JS_TRUE;
 }
