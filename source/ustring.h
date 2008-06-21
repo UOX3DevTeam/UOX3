@@ -1,11 +1,11 @@
-#ifndef __STRING_H
-#define __STRING_H
+#ifndef __USTRING_H
+#define __USTRING_H
 // Ssytem Includes
-#include <string>
-#include <cstdarg>
-#include <cstdio> 
-#include "stream.h"
-#include <algorithm>
+//#include <string>
+//#include <cstdarg>
+//#include <cstdio> 
+//#include "stream.h"
+//#include <algorithm>
 
 
 typedef std::string stdstring ;

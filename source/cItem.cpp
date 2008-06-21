@@ -1748,7 +1748,11 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				mSock->Send( &toRemove );
 			else
 			{
-				SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
+				SOCKLIST nearbyChars;
+				if( rItem == this )
+					nearbyChars = FindPlayersInOldVisrange( rItem );
+				else
+					nearbyChars = FindPlayersInVisrange( rItem );
 				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 				{
 					if( !(*cIter)->LoginComplete() )
@@ -1843,11 +1847,10 @@ void CItem::Cleanup( void )
 	{
 		JSEngine->ReleaseObject( IUE_ITEM, this );
 
-		RemoveSelfFromCont();
-
 		CBaseObject::Cleanup();
 
 		RemoveFromSight();
+		RemoveSelfFromCont();
 		RemoveSelfFromOwner();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )

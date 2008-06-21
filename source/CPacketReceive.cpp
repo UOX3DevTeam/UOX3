@@ -1141,6 +1141,7 @@ CPIDropItem::CPIDropItem( CSocket *s ) : CPInputBuffer( s )
 }
 void CPIDropItem::Receive( void )
 {
+	uokrFlag = false;
 	if( tSock->ClientType() == CV_UOKR )
 		uokrFlag = true;
 
