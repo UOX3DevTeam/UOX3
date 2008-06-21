@@ -1,3 +1,8 @@
+6/21/2008 - giwo
+	Fixed an infinite loop crash caused by a DFN entry calling itself with GET
+	Added JS Character Propery "poisonStrength" to set the strength of the poison a character will inflict on his foe during combat.
+	Implemented supermoleet's fix for the black screen after logging in to a different world
+
 6/21/2008 - giwo (0.98-3.7s)
 	Modified UString to function without crashing under VS2008
 	Fixed a bug in CItem::RemoveFromSight() causing items inside containers on the ground not to properly notify nearby players when removed.

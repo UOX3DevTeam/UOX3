@@ -777,6 +777,8 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											ScriptSection *toFind = FileLookup->FindEntry( cdata, npc_def );
 											if( toFind == NULL )
 												Console.Warning( "Invalid script entry called with GET tag, character serial 0x%X" , applyTo->GetSerial() );
+											else if( toFind == NpcCreation )
+												Console.Warning( "Infinite loop avoided with GET tag inside character script %s", cdata.c_str() );
 											else
 												ApplyNpcSection( applyTo, toFind, isGate );
 			}

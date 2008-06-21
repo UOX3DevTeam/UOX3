@@ -847,6 +847,12 @@ void startChar( CSocket *mSock, bool onCreate )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
 			mSock->LoginComplete( true );
+    
+			if( mChar->WorldNumber() > 0 )
+			{
+				mSock->sysmessage( "Adjusting character position..." );
+				mChar->Teleport();
+			}
 		}
 	}
 }
