@@ -29,6 +29,15 @@ suit our own purposes
 #if defined( _MSC_VER )
 #   define UOX_COMPILER COMPILER_MSVC
 #   define UOX_COMP_VER _MSC_VER
+//#if _MSC_VER >= 1500
+//   // this is Visual C++ 2008
+//#elif _MSC_VER >= 1400
+//   // this is Visual C++ 2005
+//#elif _MSC_VER >= 1310
+//   // this is Visual c++ .NET 2003
+//#elif _MSC_VER > 1300
+//   // this is Visual C++ .NET 2002
+//#endif 
 
 #elif defined( __GNUC__ )
 #   define UOX_COMPILER COMPILER_GNUC
@@ -95,7 +104,7 @@ suit our own purposes
 #       define UOX_DEBUG_MODE 1
 #   endif
 
-#	if UOX_COMPILER == COMPILER_MSVC						// VS 2005 Defines for Security and Debugging
+#	if UOX_COMPILER == COMPILER_MSVC && UOX_COMP_VER >= 1400	// VS 2005 Defines for Security and Debugging 
 #		define _CRT_SECURE_NO_DEPRECATE						// Disable "depreciated function" warning
 #		define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1	// Automatically convert normal (sprintf) functions to secure (sprintf_s) functions
 #		define _HAS_ITERATOR_DEBUGGING 0					// Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
@@ -109,7 +118,11 @@ suit our own purposes
 // A quick define to overcome different names for the same function
 #	if UOX_COMPILER != COMPILER_GNUC
 #		define snprintf _snprintf
-#		define vsnprintf _vsnprintf
+#		if UOX_COMPILER == COMPILER_MSVC 
+#			if UOX_COMP_VER < 1500 // VS 2008 No longer needs this define (will throw a compile error)
+#				define vsnprintf _vsnprintf
+#			endif
+#		endif
 #	endif
 
 #endif
