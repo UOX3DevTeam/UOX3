@@ -1266,23 +1266,30 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	if( TrackStuff == NULL )
 		return;
 
+	enum CreatureTypes
+	{
+	CT_ANIMAL = 0,
+	CT_CREATURE,
+	CT_PERSON
+	};
+
 	CChar *mChar			= s->CurrcharObj();
 	UI16 id					= 0;
-	UI08 creatureType		= 0;
+	CreatureTypes creatureType		= CT_ANIMAL;
 	SI32 type				= 887;
-	UI32 MaxTrackingTargets = 0;
+	UI08 MaxTrackingTargets = 0;
 	const UI16 distance		= (cwmWorldState->ServerData()->TrackingBaseRange() + (mChar->GetSkill( TRACKING ) / 50));
 	UnicodeTypes mLang		= s->Language();
 	
 	if( m == ( 2 + TRACKINGMENUOFFSET ) )
 	{
-		creatureType = 1;
-		type	= 888;
+		creatureType	= CT_CREATURE;
+		type			= 888;
 	}
-	if( m == ( 3 + TRACKINGMENUOFFSET ) )
+	else if( m == ( 3 + TRACKINGMENUOFFSET ) )
 	{
-		creatureType = 2;
-		type	= 889;
+		creatureType	= CT_PERSON;
+		type			= 889;
 	}
 
 	std::string line;
@@ -1305,23 +1312,19 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			continue;
 		CDataList< CChar * > *regChars = MapArea->GetCharList();
 		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+		for( CChar *tempChar = regChars->First(); !regChars->Finished() || MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
 			id = tempChar->GetID();
-			if( ( !tempChar->isHuman() || creatureType == 2 ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == 0 ) )
+			if( ( !tempChar->isHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
 			{
-				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() > tempChar->GetCommandLevel() ) );
+				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
 				if( tempChar != mChar && objInRange( tempChar, mChar, static_cast<UI16>(distance) ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
 				{
-					mChar->SetTrackingTargets( tempChar, static_cast<UI08>(MaxTrackingTargets) );
+					mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
 					++MaxTrackingTargets;
-					if( MaxTrackingTargets >= cwmWorldState->ServerData()->TrackingMaxTargets() ) 
-					{
-						regChars->Pop();
-						return;
-					}
+
 					SI32 dirMessage = 898;
 					switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) )
 					{
