@@ -1,3 +1,13 @@
+6/22/2008 - Xuri
+	Fixed hex-id of turnips in foods2.dfn, these turnips should now be stackable
+	Fixed hex-id of studded sleeves in studded_leather.dfn, previously used hex-id for gloves
+	Tweaked the region surrounding Buccaneer's Den so it extends around all buildings in the town
+	Removed entry 104 (rawfish.js) from jse_fileassociations.scp as it was no longer in use
+	Archerybuttes work again, and should have a "machine-gun"-issue fixed
+	Scripts that used onUse() now use onUseChecked()
+	Updated UOX3_changelog.txt in the Docs-folder to include updates up to 0.98.3-7
+
+
 6/21/2008 - giwo
 	Fixed an infinite loop crash caused by a DFN entry calling itself with GET
 	Added JS Character Propery "poisonStrength" to set the strength of the poison a character will inflict on his foe during combat.
