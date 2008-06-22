@@ -178,12 +178,12 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 
 ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
-	UString tUFind( toFind );
-	tUFind = tUFind.upper();
-
 	ScriptSection *rvalue = NULL;
+
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
+		UString tUFind = UString( toFind ).upper();
+
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{

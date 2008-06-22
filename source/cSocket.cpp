@@ -1035,17 +1035,32 @@ void CSocket::NewClient( bool newValue )
 
 UI32 CSocket::GetDWord( size_t offset )
 {
-	return calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
+	UI32 retVal = 0;
+	if( offset+3 >= MAXBUFFER )
+		Console.Error( "GetDWord was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
+	return retVal;
 }
 
 UI16 CSocket::GetWord( size_t offset )
 {
-	return (UI16)((buffer[offset]<<8) + buffer[offset+1]);
+	UI16 retVal = 0;
+	if( offset+1 >= MAXBUFFER )
+		Console.Error( "GetWord was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = (UI16)((buffer[offset]<<8) + buffer[offset+1]);
+	return retVal;
 }
 
 UI08 CSocket::GetByte( size_t offset )
 {
-	return buffer[offset];
+	UI08 retVal = 0;
+	if( offset >= MAXBUFFER )
+		Console.Error( "GetByte was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = buffer[offset];
+	return retVal;
 }
 
 void CSocket::SetDWord( size_t offset, UI32 newValue )
