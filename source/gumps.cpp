@@ -1578,7 +1578,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
 
-	if( mChar->IsGM() )
+	if( mChar->GetCommandLevel() >= CL_GM )
 	{
 		CItem *j = calcItemObjFromSer( id );
 		if( !ValidateObject( j ) ) 
@@ -1698,7 +1698,7 @@ void tweakCharMenu( CSocket *s, CChar *c )
 void CPIGumpInput::HandleTweakCharText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
-	if( mChar->IsGM() )
+	if( mChar->GetCommandLevel() >= CL_GM )
 	{
 		CChar *j = calcCharObjFromSer( id );
 		if( !ValidateObject( j ) ) 

@@ -27,7 +27,8 @@ namespace UOX
     }
     //---------------------------------------------------------------------------------------------
 
-	ObjectFactory::ObjectFactory() : nextPC( 0 ), nextNPC( 0 ), nextItem( BASEITEMSERIAL ), nextMulti( BASEITEMSERIAL )
+	// Starting Characters with a serial of 1, rather than 0. The UO Client doesn't always respond well to a serial of 0 - giwo 6/21/08
+	ObjectFactory::ObjectFactory() : nextPC( 1 ), nextNPC( 1 ), nextItem( BASEITEMSERIAL ), nextMulti( BASEITEMSERIAL )
 	{
 	}
 	ObjectFactory::~ObjectFactory()

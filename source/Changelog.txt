@@ -1,3 +1,8 @@
+6/22/2008 - giwo (0.98-3.7t)
+	Added error handling to prevent a crash if GetByte/GetWord/GetDWord were passed an invalid offset
+	Changed the tweakItem and tweakChar handlers to use command level rather than the "IsGM" flag.
+	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.	
+
 6/22/2008 - Xuri
 	Fixed hex-id of turnips in foods2.dfn, these turnips should now be stackable
 	Fixed hex-id of studded sleeves in studded_leather.dfn, previously used hex-id for gloves
