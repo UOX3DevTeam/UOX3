@@ -458,7 +458,7 @@ function MagicDamage( p, amount, attacker, mSock, element )
 	{
 		//p.TextMessage( "Vulnerable, here comes the damage" );
 		var hitLoc = CalculateHitLoc();
-		var damage = ApplyDamageBonUseCheckeds( element, attacker, p, 25, hitLoc, amount);
+		var damage = ApplyDamageBonuses( element, attacker, p, 25, hitLoc, amount);
 		//p.TextMessage( "Damage after the bonus: " + damage);
 		damage = ApplyDefenseModifiers( element, attacker, p, 25, hitLoc, damage, true);
 		//p.TextMessage( "Damage after the defense: " + damage);

@@ -87,7 +87,7 @@ function onUseChecked( pUser, iUsed )
 function onDrop( iDropped, pDropper ) 
 {
 	// onDrop not working atm
-	// I coded the stuff into onUseChecked, once onDrop is working it can just be switched over
+	// I coded the stuff into onUse, once onDrop is working it can just be switched over
 	pDropper.SysMessage( "You droppsored the chair." );
    
 }
