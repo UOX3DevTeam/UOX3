@@ -49,7 +49,6 @@
 101=skill/cooking/flour.js
 102=skill/cooking/dough.js
 103=skill/cooking/bread.js
-104=skill/cooking/rawfish.js
 105=skill/cooking/cookedfish.js
 106=skill/cooking/cookedribs.js
 107=skill/cooking/cookedbird.js

@@ -366,7 +366,6 @@
 //Kindling -> Campfires
 0x0DE1=5008
 0x0DE2=5008
-0x0DE3=5008
 
 //Fletching Tool
 0x1020=4005
@@ -534,5 +533,4 @@
 // Clock
 0x104B=5014
 0x104C=5014
-0x1086=5014
 }
