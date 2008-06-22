@@ -1,6 +1,1056 @@
 UOX3 Changelog
 ------------------------
 -==============================-
+-= 08/04/2006 - UOX3 0.98-3.7 =-
+-==============================-
+Contributors: giwo, Grimson, Xuri
+
+Source Changes/Fixes:
+	Fixed saving of the last used IP in the account files, and corrected the naming
+	 	for the	contact field when saving the account files. (grimson)
+	Don't add the amount of items to the item name in buy/sell gumps, as it is already
+	 	shown in the gump. (grimson)
+	Don't let items decay when they are inside a multi, so if a player places decorations
+	 	or furniture in his house it stays there. (grimson)
+	Removed the last change that should prevent items from decaying inside multis, as
+	 	this is already done in a different part of the code. (grimson)
+	Forced CItem::DecayTime to reset when decayable was set to true. (giwo)
+	Fixed an issue causing keys not to function on planks. (giwo)
+	Added JS socket methods GetSByte(), GetSWord(), GetSDWord(), to allow pulling negative numbers
+		from the socket buffer. (giwo)
+	Added weapon type classifications for all weapons from mondain's legacy expansion (Xuri)
+	Modified names in the AITypes enum to fit naming conventions. (giwo)
+	Minor optimizations in ai.cpp. (giwo)
+	Removed an unused worldsave tag handler from CBaseObject. (giwo)
+	Modified names in the CommandLevels enum to fit naming conventions. (giwo)
+	Modified FLAGS and SOUNDFX DFN tags in spells.dfn to allow for a full integer as well as the current split format. (giwo)
+	Simplified some functions in CPacketStream. (giwo)
+	Changed MAX_NAME back down to 30 characters as all character name packets sent to the client max out at 30 bytes. (giwo)
+	Made more use of IsWeightedContainer() in weight.cpp to streamline layer handling. (giwo)
+	Updated the Makefile.am. (giwo)
+	Fixed an issue causing items to duplicate when moving around stacks larger than 32,767. (giwo)
+	Fixed an issue causing timers not to be properly reset by the JS engine. (giwo)
+	Fixed a DFN issue causing item values to be loaded improperly. (giwo)
+	Fixed a few places where looking into a pack from a player vendor would have been snooping. (grimson)
+	Added price and description information to the item tooltips of player vendors.	(grimson)
+	Added the "view", "status" and "dismiss" commands for player vendors (updated dictionaries). (grimson)
+	Allow pet friends to mount the pet.	(grimson)
+	Don't add the weight entry to the tooltip of items that weight nothing. (grimson)
+	The "collect" command now also works when using the name of the vendor. (grimson)
+	Fixed an issue causing a crash if a null socket was passed to JS CreateBlankItem() or CreateDFNItem(). (giwo)
+	Fixed an issue causing houses not to be able to be placed in many valid locations. (giwo)
+	Reduced the checking area when placing a house around small houses in house.dfn (giwo)
+	Fixed an issue causing boats to always be placed at z -5 regardless of the water level.	 (giwo)
+	Don't let normal players put items into the backpack of a player vendor they don't own. (grimson)
+	Changed checkPetOfflineTimeout() to ignore player vendors. (grimson)
+	Remove tempeffect number 44 as it is no longer used. (grimson)
+	Changed the way the owner of an object is stored to use the serial of the owner. (grimson)
+	Fixed two bugs in doLight() where we were sending the wrong light level to players. (grimson)
+	Characters no longer turn criminal from attacking their own pets/summoned creatures (Xuri)
+	Fixed the output of the time command, it was confusing midnight and noon. (grimson)
+	Fixed loading of tempeffects when there is more than one effect saved. (grimson)
+	Increased the damage values of summoned creatures a bit. (grimson)
+	Fixed magic field effects. (grimson)
+	Fixed an issue causing not every instance of skill gain to use the amountToGain specified in skills.dfn. (giwo)
+	Changed MAX_NAME back to a 60 byte limit (note some Character packets only support 30 bytes). (giwo)
+	Moved CChar::lockstate and atrophy into PlayerValues_st (giwo)
+	Cleaned up CSkills::Atrophy and renamed it to HandleSkillChange() to better reflect it's functionality. (giwo)
+	Changed cMagic::SummonMonster() so that it creates summoned from DFN entrys to make it easier to customize them. (grimson)
+	Allow the body id to reach 0x3E2, so that the "dupre" body can be used without a problem. (grimson)
+	Let chars run if they follow a running char. (grimson)
+	Fixed a bug that caused the offline HTML files not to be written in some cases. (grimson)
+	Catch Serverlist entrys with less than 3 sections, these caused a crash when parsing the ini. (grimson)
+	Added %24time and %tstamp to HTML templates, %24time return the current time in the 24 hour 
+	 	format, %tstamp returns a unix timestamp. (grimson)
+	Added new tag "MOUNTID" to creatures DFN, if this is set to the ID of a mount item the creature will be mountable. (grimson)
+	Removed CChar::IsValidMount( void ) as it is no longer of any use. (grimson)
+	Removed door.cpp from the project. (giwo)
+	Modified the JS UseDoor() function to call the JS Event onUse() based upon the type of the item passed in. (giwo)
+	Fixed an issue causing AreaCharacterFunction and AreaItemFunction to return the number of objects they encountered
+		rather than the number of times the function returns a "true" value. (giwo)
+	Modified TriggeNPCrEvent() to return true or false based upon the return value of the function. (giwo)
+	Fixed an issue causing several item values not to be saved. (giwo)
+	NPCs can now walk through player ghosts. (grimson)
+	Player ghosts are only visible when they are in war mode and they will enter war mode when they speak. (grimson)
+	Combined CChar:: emote(), emoteAll(), talk(), and talkAll() into a single function TextMessage(). (giwo)
+	Renamed CItem itemTalk() to TextMessage() and modified it so passing a NULL socket sends the message to nearby players. (giwo)
+	Added two new optional parameters to JS method TextMessage(). allHear (defaulting to true) and txtHue. (giwo)
+	Ghosts will no longer re-enter combat-mode if they speak while already in combat-mode (Xuri)
+	Removed CombatWalk flag sent to ghosts when they talk, as player ghosts have no combat animations (Xuri)
+	PLAYERPERSECUTION in uox.ini (allows ghosts to drain mana from other players) set to 0 by default
+		(Must be updated manually if using old uox.ini) (Xuri)
+	Modified damage output of summoned creatures in magicsummon.dfn, as they were too powerful (Xuri)
+	The owner of two pets/summoned creatures will no longer become a criminal if the two pets/creatures fight (Xuri)
+	Summoned creatures (and normal ones) will no longer cast Blade Spirit/Energy Vortex, as they caused flagging errors (Xuri)
+				
+JScript Changes/Fixes:
+	Items added using the RADD command in repeatingcmds.js will no longer decay by default (Xuri)
+	Fixed the ever-swinging training dummies (Xuri)
+	Added LODAMAGE, HIDAMAGE and WEIGHT item properties to 'SET command (Xuri)
+	Fixed several bugs with the JS-scripted clumsy, heal, feeblemind and magic-arrow spells: (Xuri)
+		Could cast while having weapons equipped
+		Could cast while jailed
+		Could cast without consuming any reagents
+		SoundEffects weren't working properly
+		Healing would (by design) subtract health from the caster
+		Debugmessages weren't commented out	
+	Fixed the 'STAMINA command in stats.js. Had ".isChar" misspelled as ".isCHar" (Xuri)
+	Added new JS-script: oilcloth.js - Functional oil cloths, used for cleaning poison off of weapons (Xuri)
+	Character can no longer use locked down potions or food	 (Xuri)
+	Added an entry to jse_fileassociations.scp for the new oilcloth.js script. (grimson)
+	New "AI"-Script: Cows may now (randomly) defend themselves from doubleclicks by falling over. (Xuri)
+	Corrected various errors with liquid-containers (pitchers, bottles, goblets, etc.) (Xuri)
+	Moved doors out to JS. (giwo)
+	Updated doors.js to not display the "blocked" message if the door ID isn't recognized. (giwo)
+	Added scripted version of keys (now used instead of hardcoded ones), plus working keyrings (Xuri)
+	Updated doors-script to make use of new scripted keys/keyrings as well as the new TextMessage arguments (Xuri)
+	
+DFN Changes/Fixes:
+	Added GOOD tags to buyable items, so it's easier for an admin to use the advanced trade system. (grimson)
+	Fixed the guardzone for Ocllo, X2 and Y2 were mixed up (Xuri)
+	Fixed the guardzone for Delucia, was previously set to the graveyard north of the town (Xuri)
+	Fixed wrong item being added when crafting fishing poles (Xuri)
+	Fixed the "Large Dragon Boat" deed. (grimson)
+	Fixed a DFN issue causing one to be able to create a board from a board. (giwo)
+	Added a player vendor deed to misc_deeds.dfn. (grimson)
+	Put the player vendor deed into the add menu. (grimson)
+	Changed the player vendor entry in the malevendors.dfn so that they are no longer flagged as normal shoopkeepers. (grimson)
+	Updated spells.dfn with correct reagent requirements (Xuri)
+	Updated fishinglist.dfn with generic loot (paintins, weapons, gems, various flotsam) (Xuri)
+	Updated create/tailoring.dfn, items/gear/provisions.dfn and items/itemmenu.bulk.dfn with new oil cloth (Xuri)
+	Added magicsummon.dfn to the npc section, it contains the dfn entrys for the creatures that can be summoned. (grimson)
+	Updated creatures.dfn to make use of the MOUNTID tag. (grimson)
+	Added script=5013 (key.js) to [base_key] in dfndata\items\misc\keys.dfn (Xuri)
+	Modified damage output of summoned creatures in magicsummon.dfn, as they were too powerful (Xuri)
+
+-==============================-
+-= 07/04/2006 - UOX3 0.98-3.6b =-
+-==============================-
+Source Changes/Fixes:
+	Changed the use of the HP DFN tag for items so you can specify a range for a random value. (grimson)
+	Fixed a rather substantial issue causing some character values to save incorrectly. (giwo)
+	Fixed a sign mismatch with GuildFealty. (giwo)
+	Catch some more client crashes with speak, that's in the wrong colour. (grimson)
+	Update the reputation flags of a NPC when the NPCFlag get's loaded. (grimson)
+	Fixed an issue with accounts causing the FLAGS value not to function properly. (giwo)
+	Consolidated some code in CAccountsClass. (giwo)
+	Fixed some signed/unsigned mismatches in CAccountsClass. (giwo)
+	Modified Combat DEF calculations to remove superfluous code. (giwo)
+
+JScript Changes/Fixes:
+	Updated potion.js, so heal potions work again. (grimson)
+
+DFN Changes/Fixes:
+	Updated the stats for all weapons to fit the pre-AOS values. Pushed up the damage values
+	of AOS and SE weapons so that they are in the same area as the other weapons. (grimson)
+	Pushed up the damage values of most NPCs. (grimson)
+
+-==============================-
+-= 05/04/2006 - UOX3 0.98-3.6 =-
+-==============================-
+Source Changes/Fixes:
+	Began rewriting .mul file handling. (giwo)
+	Fixed an issue causing a possible crash with malformed JS scripts. (giwo)
+	Removed several superfluous functions from UOXFile class. (giwo)
+	Updated CTile and CLand to properly read in tiledata.mul (giwo)
+	Modified .mul file structures to meet struct naming standards. (giwo)
+	Changed static tile reading code to allow a variable number of statics. (giwo)
+	Fixed several issues with mapdiff and staticdiff handling. (giwo)
+	Added A* Pathfinding routine (note that it is not used in current code, (giwo)
+		as there are known compatability issues).
+	Fixed a crash when using ClilocMessage(). (giwo)
+	Fixed an issue when climbing stairs. (giwo)
+	Fixed some issues with TriggerWord handling (more work needs to be done on this). (giwo)
+	Modified A* Pathfinding to work properly with our NPC's PathToFollow queue. (giwo)
+	Added two sysmessage when feeding a pet. (Grimson)
+	Modified CMapStuff SeekLand() and SeekTile() to return a reference rather than force one to pass an object to set. (giwo)
+	Modified CMapStuff SeekMulti() to return the length rather than force one to pass a value to set. (giwo)
+	Removed MapStaticIterator::GetTile() as it was superfluous. (giwo)
+	Removed CMapStuff IsTileWet(), DoesTileBlock(), and IsTileSurface() as they were superfluous. (giwo)
+	Removed CMapStuff TileMem and MultisMem, replacing them with functions to return the same data. (giwo)
+	Changed MultiItemsIndex lz and hz to SI08 values. (giwo)
+	Changed MapStaticIterator GetPos() to return an SI32. (giwo)
+	Removed MapStaticIterator tileid as it was superfluous. (giwo)
+	Modified UOXFile::eof() to return a bool rather than an int. (giwo)
+	Miscellaneous minor changes and cleanups. (giwo)
+	Don't save the weight in cChar.cpp, it's already saved in cBaseobject.cpp. (grimson)
+	Fixed a bug where items without a layer didn't add to the chars weight. (grimson)
+	Fixed a bug in CWeight::calcCharWeight() that added the weight of the backpack
+	twice. (grimson)
+	Changed CMapHandler::Load() so that PostLoadProcessing of chars is done after (grimson)
+	PostLoadProcessing of items, or else the forced recalculation of the chars
+	weight doesn't work. (grimson
+	Added a version number to chars, it is defined in DEFCHAR_CHARVERSION and use it in
+	CChar::DoVersionUpdates() to allow forced updates. Used this to force a weight recalculation
+	on possibly bugged chars. (grimson)
+	Removed version number for chars. (grimson)
+	Added .tempWeight JS property to chars, so you can safely modify the weight of chars in scripts. (grimson)
+	Added calcLowDamage() and calcHighDamage() functions to combat.cpp and use them in
+	CPStatWindow::SetCharacter() to set the DamageMin and DamageMax values. (grimson)
+	Added in first versions of fire, cold, energy and poison resistance, it's currently used
+	in cMagic::MagicDamage() and cMagic::PoisonDamage(). You can set the resistance for npcs
+	using a new DFN tag:
+		DAMAGERESIST=# # # # 	Where the first number is fire, the second cold, the third energy
+					and the last number poison resistance.
+	The resistance for a damage type will rise everytime you get hit by this damage type, but the
+	higher your resistance already is the slower it will rise. (grimson)
+	Added new ini setting: (grimson)
+		USECHARRESISTANCE=# If this is set to 0 the chars resistance won't increase by itself.
+	Slowed the increase of resistance quite a bit down. (grimson)
+	Fixed a bug where buying the whole stock of an item deleted that item from the vendors container. (grimson)
+	Removed CChar::TempWeight() as it was superfluous. (giwo)
+	Fixed an issue causing Trade Windows to add weight to characters. (giwo)
+	Fixed some minor issues with weight calculations. (giwo)
+	Removed CChar:: bools2 and made more use of the bools value. (giwo)
+	Renamed CMapStuff to CMulHandler to better describe its function. (giwo)
+	Renamed MapStaticIterator to CStaticIterator to meet class naming standards. (giwo)
+	Renamed MultiItemsIndex to MultiItemsIndex_st to meet structure naming standards. (giwo)
+	Removed MapData_st fileSize as it was superfluous. (giwo)
+	Fixed an issue causing items with no layer to not change the weight of a character. (giwo)
+	Fixed an issue causing spells that require a targeted location not to function. (giwo)
+	Fixed an issue allowing one to build a house or boat far from their location. (giwo)
+	Fixed an issue allowing one to build a multi directly on top of another multi. (giwo)
+	Changed some id >= 0x4000 comparisons to CanBeObjType( OT_MULTI ), for clarity (Maarc)
+	Fixed a bug with applying NPC sections where if you specified ALCHEMY values, it would fail to apply correctly (Maarc)
+	Removed CMulHandler::AverageMapElevation() as it was superfluous. (giwo)
+	Removed CTileUni height in favor of top, to reduce calc_walk() calculations. (giwo) 
+	Removed CTileUni id as its use was unnecesarry. (giwo)
+	Rewrote CMovement::calc_walk() to improve overall readability and speed. (giwo)
+	Merged CMovement::calc_WaterWalk() with calc_walk(). (giwo)
+	Removed higher() as UOX_MAX() does the same thing. (giwo)
+	Removed CMovement::validNPCMove() as it was superfluous. (giwo)
+	Modified house placement to make it impossible to place a house on the ocean. (giwo)
+	Removed DamageTypes enum and added POISON to WeatherTypes. (grimson)
+	Renamed DamageResist functions into ElementResist and moved them to cBaseobject.cpp. (grimson)
+	Renamed DFN tag DAMAGERESIST to ELEMENTRESIST and use it also for items. (grimson)
+	Added DFN tag POISONDAMAGE to items so that they can also do poison damage on attacks. (grimson)
+	Added functions calcElementDef(), getElementDef() and checkElementDef() to combat.cpp
+	to calculate the resistance against elements similiar to the def value of armor. (grimson)
+	Changed AdjustRaceDamage() to also take into account the elemental resistance of the target. (grimson)
+	Use calcElementDef() in MagicDamage() similiar to calcDef() in calcDamage() to take the
+	elemental resistance into account. (grimson)
+	Added element resistance calculation to weather damage. (grimson)
+	Fixed calcElementDef() and getElementDef() so that the chars basic element resistance
+	is always added. (grimson)
+	Changed MagicDamage() so that we always do at least a little bit of damage. (grimson)
+	Changed the z value for various LineOfSight() calls so that we actually check whether
+	we can see the face of the targeted char instead of his feets. (grimson)
+	Changed CPICreateCharacter::newbieItems() so that the default items aren't placed inside
+	the players backpack until they have their final ID, to prevent the adding of wrong weight
+	values. (grimson)
+	Altered the CBO resistances code to use an array rather than a number of variables (Maarc)
+	Note that we're still only saving out a subset of these resistances, because only a subset ever get checked at the moment
+	This could easily change in future, with people wanting to use other elemental stuff
+	Adjusted CItem::CopyData() so that it copies all the WeatherDamage values instead of only a couple (Maarc)
+	Upgraded the container size on weatherBools, as the number of weather entries has moved beyond a UI08 size (Maarc)
+	Changed CBaseObject::SetWeight() and CBaseObject::SetID() so they also update the weight
+	of the container the item is in, when it is an item and when it is within a container. (grimson)
+	Converted Numeric DFN's to a Signed Long rather than unsigned by default for *nix compatability. (giwo)
+	Merged jr's fixes for cygwin compatability and fixing some minor gameplay issues. (giwo)
+	Modified ModelBoat() to automatically move you off the boat (if near land). (giwo)
+	Fixed a crash bug involving boats. (giwo)
+	Changed several calls checking against type IT_PLANK to CanBeObjType( OT_BOAT ). (giwo)
+	Fixed an issue causing boat holds to "explode" when opening them. (giwo)
+	Fixed an issue causing containers inside containers on the ground to be "too far away". (giwo)
+	Fixed item IDs for human corpses in newCarveTarget(). (grimson)
+	Added PHYSICAL to WeatherType enum, so we can also use it represent physical damage. (grimson)
+	Changed CChar::Damage() to handle armor and resistance effects, it also handles the repsys,
+	peace breaking, elemental weakness, displays the damage, creates a reaction if an attacker
+	is given and calls CChar::Die() if the hp drop below 1. It takes the following values: (grimson)
+		SI16 damageValue	- The amount of damage to be done.
+		CChar *attacker		- The char that caused the damage.
+		bool doRepsys		- Do reputation handling (criminal, murderer, karma and fame).
+		WeatherType damageType	- The type of damage, use NONE to ignore armor/resistance, use
+					  PHYSICAL to use normal armor, anything above is elemental damage.
+		SI08 hitLoc		- The hit location, use 0 for the complete body or -1 to randomly
+					  calculate the hit location.
+		UI08 fightSkill		- The skill used to create the damage.
+		bool doArmorDamage	- Damage the armor part that has been hit.
+	The JS function .damage can also take all of these values.
+	Changed CChar::Die() to handle the death of chars, it takes two values: (grimson)
+		CChar *attacker		- The char that caused the death.
+		bool doRepsys		- Do reputation handling (murderer, karma and fame).
+	Updated the usage of CChar::Damage() in most areas to reflect the changes and removed reputation
+	and death handling in those areas as this is now taken care of by CChar::Damage(). (grimson)
+	Fixed a combat issue allowing enemies to fight if on the exact same location but a different Z. (giwo)
+	Modified guard handling so when guards are globally deactivated any existing guards will not teleport. (giwo)
+	Fixed an issue causing NPC's to be invisible. (giwo)
+	Fixed some issues causing items behind a door to be within a characters LoS. (giwo)
+	Added a LineOfSight() check to prevent opening containers on the other side of walls. (giwo)
+	Modified the inMulti() routine to take into account tile height. (giwo)
+	Simplified newCarveTarget() a bit. (giwo)
+	Fixed a possible issue when calculating multi tile heights. (giwo)
+	Fixed an issue causing Characters to "fall" immediately after being placed on their new boat. (giwo)
+	Further cleanups and rewrites to CMulHandler and its related structures. (giwo)
+	Fixed a server crash caused by my recent changes to Location-Targeting spells. (giwo)
+	Fixed an issue causing pet guarding on items in a house not to function. (giwo)
+	Fixed an issue causing boat items not to get added to the multi. (giwo)
+	Cleaned up CPIDoubleClick::Handle() routine. (giwo)
+	Fixed an issue allowing players to place their items in invalid locations. (giwo)
+	Fixed a possible issue causing doors to block LoS to themselves. (giwo)
+	Updated playDeathSound to simplify some of the code for males/females (Maarc)
+	Updated code so that we don't use MFLAGGET/MFLAGSET - apparently we have a std::bitset class that we
+	 can use!  Also makes it somewhat more readable as well.  Cheers Punt for the suggestion. (Maarc)
+	Renamed __ACCOUNTSADM_BLOCK__ to CAccountBlock (Maarc)
+ 	Removed dead code from accounts (stuff that was just never called at all) (Maarc)
+	Removed Get/Set Word/Bit/BitRange from CBO, as it's not being used (Maarc)
+	Removed genericDWords from CBO, as they're not being used, and are largely superfluous with custom int/string tags in JS (Maarc)
+	Fixed an issue with AdvancedPathFinding() causing NPC's to flee constantly. (giwo)
+	Fixed an issue with NPC fleeing that checked against Strength rather than MaxHP. (giwo)
+	Defaulted weather damage to every 60 seconds (rather than every second) (giwo)
+	Fixed an issue causing a message to display damage taken by weather when no damage was taken. (giwo)
+	Fixed an issue with CRace causing a race with no elemental damage types to have most/all elemental damage types. (giwo)
+	Fixed a server crash in magic. (giwo)
+	Fixed an issue causing items in a paperdoll to not be targetable. (giwo)
+	Fixed an issue with LoS causing items to not block on a diagonal plane. (giwo)
+	Fixed an issue causing multi's not to block LoS. (giwo)
+	Minor fixes, cleanups, and optimizations to LineOfSight. (giwo)
+	Modified DoubleClick() so a character inside a multi can open an item outside a multi (as long as he can see it). (giwo)
+	Changed CPICreateCharacter::newbieItems() so that it uses the newbie.dfn entrys [DEFAULT MALE] and
+	[DEFAULT FEMALE] to add the basic clothing to new chars, and added those entrys to newbie.dfn. (grimson)
+	Changed newCarveTarget() so that it uses the new [CARVE HUMAN] entry from carve.dfn to create the
+	body parts, and added this entry to carve.dfn. Note: the second value used on the ADDITEM tags
+	in the [CARVE HUMAN] entry is not an amount, it's the dictionary entry used for naming the body
+	part. (grimson)
+	Changed the INI loading code so that it uses a Script rather than custom code (Maarc)
+	Moved defense modifications into CHandleCombat::ApplyDefenseModifiers(). (grimson)
+	Moved damage bonuses into CHandleCombat::ApplyDamageBonuses(). (grimson)
+	Moved the calculation of the hit location from CHandleCombat::DoHitMessage()
+	into CHandleCombat::CalculateHitLoc(). (grimson)
+	Added ReactOnDamage() to CCHar, currently it only makes the char attack the
+	char that inflicted the damage. (grimson)
+	Reduced CChar::Damage() to show, the damage, apply the damage, handle the
+	reputation effect, the peace breaking effect and the chars death. (grimson)
+	New JS functions:  (grimson)
+		damage = ApplyDamageBonuses( damageType, attacker, defender, fightSkill, hitLoc, baseDamage );
+			Note: Attacker and defender need to be valid chars.
+		damage = ApplyDefenseModifiers( damageType, attacker, defender, fightSkill, hitLoc, baseDamage, doArmorDamage );
+			Note: Attacker can be NULL, fightSkill will then be ignored.
+	New char function: (grimson)
+		mChar.ReactOnDamage( damageType, attacker );
+			Note: damageType is currently unused.
+	Changed char function: (grimson)
+		mChar.Damage( amount, attacker, doRepsys );
+	Catch negative damage values in cMagic::MagicDamage() and apply 1 damage in that case. (grimson)
+	Modified Gates so they are decayable by default, and will only decay if decayable. (giwo)
+	Fixed LoS checks on the Z plane in multis. (giwo)
+	Fixed an issue causing GM broadcasting (! then space) not to function. (giwo)
+	Removed some superfluous speech code. (giwo)
+	Changed the command YELLALL to YELL (giwo)
+	Removed several old DFN tags that were no longer used. (giwo)
+	Changed AdjustRaceDamage() to also use the new ApplyDefenseModifiers() function. (grimson)
+	cScript::OnEquip() and cScript::OnUnequip() were adding the parameters in the wrong order. (grimson)
+	Changed ApplyDefenseModifiers() and ApplyDamageBonuses() to make shure they return ints. (grimson)
+	Changed SE_ApplyDamageBonuses() and SE_ApplyDefenseModifiers() to fix invalid damage values
+	when a script sends float values. (grimson)
+	Changed criminal() so it also takes the murderer state into account, as this overrides the
+	criminal flag. (grimson)
+	I only added part of the ApplyDefenseModifiers() and ApplyDamageBonuses() changes to CVS,
+	fixed it now. (grimson)
+	Adjusted SE_ApplyDamageBonuses and SE_ApplyDefenseModifiers as they were using the same parameter
+	 for attacker and defender (Maarc)
+	Removed some unused properties/methods of the console that have never been used (Maarc)
+	Begun construction of some placeholder code for party related works, not committing the factory code
+	 until some testing can occur first (Maarc)
+	Essentially, this just updates the handling for it which currently does nothing, and gives an insight into how it would
+	 be done (Maarc)
+	Changed CChar::Damage() to also display the damage to the owner of the attacker, so a
+	player can also see the damage his pet does. (grimson)
+	Another change to CChar::Damage(), if the attacker becomes criminal make the owner of it
+	criminal too. (grimson)
+	Changed CHandleCombat::ApplyDamageBonuses() so that elemental damage is doubled when the
+	race is weak to that element, also double magic damage only on NPCs. (grimson)
+	Changed CHandleCombat::Kill() so that only not tamed animals eat their victims. (grimson)
+	Fixed CHandleCombat::calcDamage() I was submitting the base damage to the defense calculation. (grimson)
+	Fixed an issue causing GM yell messages with trigger words in them not to be broadcast. (giwo)
+	Added and made use of a WanderTypes enum throughout the source. (giwo)
+	Optimized NPC walking a bit, and moved NPCWander handling into its own function. (giwo)
+	Further updated and modified calc_walk() and AdvancedPathFinding() to handle the Z plane. (giwo)
+	Removed CMovement::HandleRegionStuffAfterMove() as it was superfluous. (giwo)
+	Rewrote CMovement::OutputShoveMessage() to fix several minor issues. (giwo)
+	Updated CMovement::MoveCharForDirection() to reduce extra function calls and make use of CMapHandler::ChangeRegion() (giwo)
+	Moved create menu structs to skills.h as they don't need to be in global scope. (giwo)
+	Fixed several issues with pack horse handling (giwo)
+	Modified DropOnNPC so GM's can drop items directly on an NPC to be placed in their pack. (giwo)
+	Modified response handling and removed some superfluous code. (giwo)
+	Fixed a crash when UOX3 shut down due to an invalid directory entry. (giwo)
+	Locally declared vector3D line2D and line3D as they are only used in lineofsight.cpp (giwo)
+	Fixed water NPC's swimming under statics (bridges). (giwo)
+	Fixed some false positives that were being generated by point3::Mag3D() by using a larger storage container. (giwo)
+	Renamed Get/SetElementResist() to Get/SetResist as we now handle all resistance types in it. (grimson)
+	Removed SetDef(), GetDef() and the def variable from CBaseobject.cpp and store armor values
+	as physical resistance together with the other resistance values. (grimson)
+	Removed calcElementDef(), getElementDef and checkElementDef from combat.cpp and handle all
+	defence calculations in calcDef(), getArmorDef() and checkDef(). (grimson)
+	Removed JS char property .armour and item property .def, added a new method for chars and
+	items .Resist(). That method takes either one value, the resistance type and returns the
+	resistance value of that char/item, or two values, the resistance type and the amount the
+	resistance value should be set to. (grimson)
+	Current resistance types are:
+		1 - Armor
+		2 - Light
+		3 - Water
+		4 - Cold
+		5 - Heat
+		6 - Energy
+		7 - Poison
+	The JS item property .devinelock was sent as INT though it is a bool. (grimson)
+	Some small fixes to the tweak menu for items, this still had parts for a non existant MoreB
+	value in it which shiftet some parts off, this also includes updated dictionaries. (grimson)
+	Fixed an issue with CPExtendedStats causing statlocks not to display in the stat window. (giwo)
+	Modified CChar::skilllocks and atrophy to save stat values to the worldfile. (giwo)
+	Fixed an issue with CChar::skill value causing possible data corruption. (giwo)
+	Fixed an issue causing the Backpack entry on a popup menu to display as selectable when the character
+		should not have a pack (IE a non-pack animal). (giwo)
+	Made CBaseObject::SetWeight() a virtual function and overloaded it in CChar and CItem. (giwo)
+	Modified CChar::SetWeight() to automatically Dirty our object for a statwindow update. (giwo)
+	Simplified some DropItem() handling. (giwo)
+	Moved CBaseObject updateTypes to CChar as there is only one type of item update, and added
+		a ClearUpdate() function to reduce superfluous packet sends. (giwo)
+	Fixed a glitch in the CPExtendedStats packet. (giwo)
+	Modified CPIPopupMenuSelect to prevent opening the paperdoll of a non-human. (giwo)
+	A small fix to ApplyDamageBonuses(), the race damage of a weapon was applied to the final
+	damage instead of the weapons base damage. (grimson)
+	Call the OnHungerChange JS event in the SetHunger() function of chars instead of calling
+	it in every part of the code the where the hunger gets changed. (grimson)
+	Added a new JS event: (grimson)
+	onCombatDamageCalc( attacker, defender, getFightSkill )
+		This event is called everytime combat damage is calculated. You can do your own damage
+		calculation and return the damage to override the engine damage calculation, or return
+		a negative damage value to use the engine damage calculation.
+	Changed the return value of OnCombatDamageCalc() to a SI16, I accidentially declared it to be a SI32. (grimson)
+	Replaced the JS Char property .defense with the new JS Char Method: (grimson)
+		mChar.Defense( hitLoc, damageType, doArmorDamage );
+	so you can get all the different defense values for a char. 
+	Removed the code to raise your resistance value upon elemental damage, this can be done better in JS. (grimson)
+	Modified  CBaseObject::DumpBody() and CBaseObject::HandleLine() so that all resistance values get saved
+	and loaded in/from the worldfiles. (grimson)
+	Added a new JS event: (grimson)
+		onDamage( damaged, attacker, damageValue )
+		This will be fired everytime the char "damaged" gets damaged, the attacker can be a char or NULL.
+	Small fix to ApplyDamageBonuses() caused by my previous commit. (grimson)
+	Fixed a bug with the JS override for the combat damage calculation that caused 0
+	damage to be applied when the attacker has no script attached and the global script
+	doesn't exist eigther. (grimson)
+	Minor changes to cSkills::Fish(). (giwo)
+	Fixed an issue making it impossible to open Elven NPC paperdolls. (giwo)
+	Removed some typedefs that were no longer used. (giwo)
+	Moved CChar values townpriv and townvote to PlayerValues_st (giwo)
+	Moved CChar values foodList, hungerWildChance and hungerRate to NPCValues_st (giwo)
+	Removed CChar::inBuilding in favor of using a bools flag. (giwo)
+	Removed handling code for several unused Character values. (giwo)
+	Removed unused level value passed with Console.Warning() and Console.Error(). (giwo)
+	Removed JS Console prop .level (giwo)
+	Modified JS Console Methods Warning() and Error() to remove the unused level value. (giwo)
+	Fixed several issues with mapdiff and staticdiff handling. (giwo)
+	Fixed a bug causing a crash when calling JS Event onGumpInput. (giwo)
+	Merged CMultiObject vectors ownerList and banList into a single map housePrivList, to allow multiple owner/banned levels
+		and ensure there are no duplicate characters on the lists. (giwo)
+	Removed many superfluous uses of CChar::Dirty( UT_STATWINDOW ). (giwo)
+
+JScript Changes/Fixes:
+	Added NEWBIE option to JS SET command. (giwo)
+	Updated JS scripts to use the new .Resist() method instead of .def/.armour (grimson)
+	Updated MagicDamage() in level1targ.js, it now uses the new functions and should be
+	 equal to the source version of MagicDamage(). (grimson)
+
+DFN Changes/Fixes:
+	Fixed two nearly 8 year old UOX3 bugs (one slightly more serious than the other): (Xuri, thanks to Maarc)
+		GINSENG was incorrectly spelled as GINSING in spells.dfn
+		Some Z coords in locations.dfn used values higher than 127 instead of negative values
+	Moved foodlists.dfn into the itemlists folder, and replaced the FOOD= tags in the same file with FOODLIST= tags (Xuri)
+	Correct items now added when studded sleeves/gloves are selected in the 'ADD menu (Xuri)
+	Adjusted erroneous Z values in house.dfn (Causing outer doors to not be part of the multi). (giwo)
+	Updated GM and Counsellor privs in commands.dfn, also placed a bit guide for the PRIVS value. (giwo)
+	Removed default PRIV=0 tag from baseitem.dfn, as it would unset decayable value. (giwo)
+	Changed PRIV1= tag to PRIV= in npc.dfn. (giwo)
+	Added housekeys.dfn to dfndata/items/ and made house creation rely on the script entries therein. (giwo)
+
+JS Documentation Changes:
+   	Updated documentation somewhat (Maarc)
+	Updated style sheet (Maarc)
+	Reordered character methods so that it matches their declaration in code (Maarc)
+	Added placeholder entries for a number of character methods (Maarc)
+	Added a couple of methods to characters (Maarc)
+	Removed character methods that did not exist any more (Maarc)
+	Updated the character methods page under the hood so that it's more readable, and takes better advantage of style sheets (Maarc)
+
+-==============================-
+-= 08/03/2006 - UOX3 0.98-3.5 =-
+-==============================-
+Source Changes/Fixes:
+	Corrected an issue causing Create menu's to double up when reloading the DFN's. (giwo)
+	Added a check to ensure a character has a backpack when coloring the "Pack" option in the popup menu. (giwo)
+	Fixed an issue causing character paperdolls to have incorrect spacing. (giwo)
+	JS Method .SetTag() now accepts boolean values (true/false). (giwo)
+	Added AssocScript tag to effect saving (to make JS timers persistant). (giwo)
+	Updated JS .SetPoisoned() to take one value for changing a poison value without setting a new timer. (giwo)
+	Updated healing.js and made it function entirely in JS. (giwo)
+	Removed tempeffects case 14, 22, 23, and 24, as they are handled by JS now. (giwo)
+	Made items created with JS CreateBlankItem() decayable by default. (giwo)
+	Fixed some issues with axe.js, put tree-chopping on a timer with a skill delay. (giwo)
+	Fixed several issues where items were not decayable that should be. (giwo)
+	Defaulted JS CreateBlankItem() to set items to decayable. (giwo)
+	Do an immediate update of the charflag and the char upon taming and un-taming. (grimson)
+	First part of the rewrote hunger system: (grimson)
+		Moved hunger calculations and immediate effects to CChar::DoHunger( )
+
+		You can now set hunger dependend on races, this uses a new tag in races.dfn:
+			HUNGER=#,# the first value is the hunger rate the second the hunger damage.
+				   Note for players char the settings from the uox.ini apply if
+				   there are no settings specified for the race.
+		
+		Re-activated the pet-hunger system. Pets will now become hungry and upon starving
+		there is a configurable chance that they may become wild again. Note: Pets won't
+		die from hunger and their hunger value is reset after becoming wild again. The
+		hunger rate and the chance to become wild again can be configured by a new tag:
+			TAMEDHUNGER=# # the first value is the hunger rate, the second the chance in %
+					of the pet becoming wild again. Note: The values are seperated
+					with a space instead of a comma on this tag.
+		To feed a pet just drag some food on it, currently all types of food work.
+		
+		There is also another new DFN tag:
+			WILLHUNGER=# if this is set to 0 the NPC will not suffer from any type of hunger.
+				     Note: You can also change that value for specific chars by using
+				     the already existing .willhunger JS property.
+	Changed cCharStuff::addRandomLoot() to look for the lootlist inside the items folder because it is there. (grimson)
+	Second part of the rewrote hunger system: (grimson)
+		Added a new DFN tag for tamed pets:
+			FOOD=abc   This sets the name of the foodlist for the tamed item.
+		Added a new list type for items:
+			FOODLIST   Defines a list of item IDs a tamed char will accept as food.
+	
+	Third part of the rewrote hunger system: (grimson)
+		Added a new AI type "aiANIMAL" with the number 6. This AI does nothing until the hunger level
+		reaches a value of 4, then it looks for other animals, that don't have the aiANIMAL, and attacks
+		them. If the hunger level goes below 2 it will attack everything in range, even player chars.
+		If the animal kills it's target it's hunger level will be set to 6 again.
+		
+		Added 3 new JS propertys for chars:
+			.tamedHungerRate returns or sets the rate the char hungers when it is tamed.
+			.hungerWildChance returns or sets the chance of the char becoming wild if it's starving.
+			.foodList returns or sets the name of the foodlist for the char.
+
+	Changed JS function CBase_Teleport() to prevent player chars from being teleport into a invalid world
+	which rendered the player char useless as the client cannot login using that char afterwards. (grimson)
+	Changed CheckCharInsideBuilding() to prevent a harmless error message when mounting a mount. (grimson)
+	Tweaks to the new hunger system: (grimson)
+		Tamed chars only hunger while the player that tamed them is online.
+		Tamed mounts don't hunger when they are mounted by a player.
+	Fixed a bug in CBase_Teleport() introduced by my earlier changes that caused teleports to other worlds
+	to fail with big x and/or y coordinates. (grimson)
+	Added three new ini settings: (grimson)
+		PETHUNGEROFFLINE=0/1 	Sets whether pets should hunger while the player is offline or not.
+		PETOFFLINETIMEOUT=#  	Sets the offline time of a player in days after that a pet becomes
+					wild again.
+		PETOFFLINECHECKTIMER=#	Sets the intervall in seconds between checks for the player offline
+					time.
+
+	Added 2 new NPC values to CChar to state whether the char has been mounted or stabled and check those
+	in the DoHunger() and the new checkPetOfflineTimeout() functions. And made them available to the JS
+	engine as the 2 new propertys: (grimson)
+		.mounted	Can be used to get or set the mounted status
+		.stabled	Can be used to get or set the stabled status
+	Prevent spamming of weather packets when riding a boat. (grimson)
+	Added a quick fix to the inMulti() function to make boats workable again. (grimson)
+	Changed the HP and HPMAX tags so that you can set a minimum and maximum value. (grimson)
+	Removed the IsMounted() function and replaced all it's calls with the GetMounted function. (grimson)
+	Allow a food list to contain a link to another foodlist. (grimson)
+	Changed TurnStuff() in boats.cpp to fix players getting stuck when turning the boat. (grimson)
+	Added a Dirty( UT_LOCATION ) to HandleDeath() in pcmanage.cpp to make shure the player gets
+	properly updated when he dies. (grimson)
+	Fixed an issue causing players to not disembark boats properly. (giwo)
+	Fixed an issue causing boat holds not to be made part of the multi. (giwo)
+	Updated the INI loading code to make it more verbose. (giwo)
+	Removed "Golden" health until we know when (if ever) OSI uses it. (giwo)
+	Created a new class, CJSEngine along with the files CJSEngine.cpp/.h (giwo)
+	Created a new class, CJSRuntime to allow multiple runtimes (for threading purposes). (giwo)
+	Moved JSObject creation and handling into CJSRuntime. (giwo)
+	Moved global JS Context and Runtimes into CJSRuntime. (giwo)
+	Moved JS Engine loading code into CJSEngine. (giwo)
+	Modified cScript so all JS Scripts on a runtime share a single context. (giwo)
+	Removed global.cpp from the project. (giwo)
+	Fixed some issues with Multi and Static height calculations. (giwo)
+	Moved Definition of global JS classes into CJSRuntime. (giwo)
+	Locked the JS Class prototypes for Garbage Collection purposes. (giwo)
+	Fixed a crash when shutting down the server. (giwo)
+	Updated bitmask setting/getting code for CChar, making it a bit more friendly and less error prone (Maarc)
+	Modified OnIterate() to de-allocate any JSObject it uses to free wasted memory. (giwo)
+	Merged all boolean values in cServerData to a single UI32 using bitmasking. (giwo)
+	Changed the default of totame to 0x7FFF and allowed taming of NPCs with a value of 0. (grimson)
+	Changed DFN tags MANA and STAMINA so you can set a minimum and maximum value. (grimson)
+	Added new DFN tags: (grimson)
+		MANAMAX, STAMINAMAX  They work equal to the HPMAX tag.
+		TOPROV, TOPEACE	     They set the minimum skill amount to provocate or peace a NPC.
+	Added new JS propertys: (grimson)
+		.skillToProv  Can be used to get/set the amount of skill needed to provocate a NPC.
+		.skillToPeace Can be used to get/set the amount of skill needed to peace a NPC.
+	changed JS propertys: (grimson)
+		.maxstamina and . maxmana now work equal to the .maxhp property.
+	Added the new JS propertys to the set command. (grimson)
+	Fixed a bug that allowed health regeneration while the char was starving. (grimson)
+	Moved the bools for the fixed maxHP, maxMana, maxStamina into a bitmask. (grimson)
+	Changed CChar::WearItem() to not fire the onEquip event on world loads. (grimson)
+	Modified the TOPEACE tag so it can take a second value that sets the chance gain to recover
+	from peacemaking upon hits. (grimson)
+	Modified cMagic::MagicDamage() and CHandleCombat::HandleCombat() to recover from peacemaking
+	by calculating a chance using the chance gain set on TOPEACE and the number of hits. (grimson)
+	Added two new JS propertys for chars: (grimson)
+		.canAttack  Set this to 0 to prevent a char from attacking.
+		.brkPeaceChance  Gets and Sets the chance gain to recover from peacemaking.
+	Modified the .skillToProv and .skillToPeace propertys so they return the value of the corresponding
+	skill for player chars. (grimson)
+	Changed CHandleCombat::HandleNPCSpellAttack() to prevent NPCs from using spells when they
+	are not allowed to attack. (grimson)
+	Changed cMagic::SelectSpell() to prevent PCs from using spells when they are not allowed
+	to attack. Note: This doesn't effect JS implemented spells, use the .canAttack property
+	in them to prevent the use of these spells. (grimson)
+	Output a sysmessage to PCs informing them that they can not attack. (updated Dictionaries) (grimson)
+	Added another new JS property for chars: (grimson)
+		.setPeace=#  This handle the whole peacemaking effect, it will stop the char from attacking
+			     and prevent him from attacking again until the given time is over or he got
+			     enough damage.
+	Output a sysmessage to PCs informing them of the end of the peace effect. (Dictionarys again) (grimson)
+	Added a line of sight check to the isValidAttackTarget() function in ai.cpp so NPCs won't attack
+	targets they can not see. (grimson)
+	Modified cCharStuff::addRandomLoot() so that loot lists can contain links to other loot lists. (grimson)
+	Added some example usages of ClilocMessage(). (giwo)
+	Added support for packet 0xC1, sending cliloc messages. (giwo)
+	Added two ClilocMessage() functions, one for direct-to-socket (system) messages, and one
+		for object-speech (to a socket or to all sockets in range). (giwo)
+	Fixed some areas that could possibly cause MapRegion corruption. (giwo)
+	Fixed a VC 2005 Compiler warning. (giwo)
+	Defaulted CreateItem() to set decayable to true. (giwo)
+	Added functions IsStaticSurface() and IsTileSurface() to mapstuff.cpp and use them in
+	CanMonsterMoveHere() to prevent spawnregions from spawning NPCs in places where they
+	can not move or shouldn't be able to move to, like display cases. (grimson)
+	Updated code that uses |= and &= to use MFLAGSET and MFLAGGET instead, promoting them to a higher public level.  Down to
+	 only a very few number of references like that now (Maarc)
+	Updated the race code because it was getting out of sync with the WeatherTypes.  The two were bound together in a number
+	 of ways, and it's now more generic and tied closer (Maarc)
+	Added archery/spell breakage on PC movement.  If a player successfully moves, then the spell they are casting fails,
+	 or their archery shoot timer is reset. (Maarc)
+	Replaced the WATERCREATURE tag from creatures.npc with a new tag: (grimson)
+		MOVEMENT=WATER for creatures that can only move in water.
+		MOVEMENT=LAND  for creatures that can only move on land.
+		MOVEMENT=BOTH  for creatures that can move on land and in water.
+	Added calc_WaterWalk() function to movement.cpp and changed the calc_move() function so that
+	it uses it for water creatures and amphibians. (grimson)
+	Added IsStaticWet() and CanSeaMonsterMoveHere() functions to mapstuff.cpp. (grimson)
+	Added FindCharSpotToSpawn() to cSpawnRegion.cpp and use it when spawning NPCs, renamed
+	FindSpotToSpawn() to FindItemSpotToSpawn() and use it when spawning items.(grimson)
+	Updated cCharStuff::FindSpotForNPC() to also allow spawning of water and amphibian NPCs. (giwo)
+	Modified the JS Object creation to reduce memory waste. (giwo)
+	Made some minor modifications to CUSTOMSTRINGTAG and CUSTOMINTTAG handling. (giwo)
+	Added some additional debug messages to Region handling. (giwo)
+	Fixed a crash involving weather. (giwo)
+	Fixed an issue that would cause invalid objects to be left in mapregions. (giwo)
+	Fixed some issues caused by my previous changes to objects in mapregions. (giwo)
+	Fixed some issues when setting containers. (giwo)
+	Fixed an issue causing targeting cursors to sometimes target a character when the target should be invalid. (giwo)
+	Fixed an issue causing JS Gumps not to function. (giwo)
+	Added detailed packet logging to CPITargetCursor. (giwo)
+	Added two vectors to spawnregions to store valid locations. (grimson)
+	You can define valid locations using the new DFN tags:
+		VALIDLANDPOS=#,#,#
+		VALIDWATERPOS=#,#,#
+	Changed FindCharSpotToSpawn() and FindItemSpotToSpawn() so that they first check
+	agains the list to see whether a location is valid. If the location is not in the
+	list but valid it will be added to the list. If no valid location has been found
+	it tries to get a random one from the list of already stored locations. (grimson)
+	Added two maps to spawnregions to make checking for valid locations easier. (grimson)
+	Check if the z value of stored locations still match the dynamic z value of the
+	current locations to track whether dynamics have changed. (grimson)
+	It's better to recalculate and check the whole z coordinate of a stored
+	location to make shure nothing has changed since we stored it. (grimson)
+	Removed the IsSurface check of dynamic tiles from cMapStuff::CanMonsterMoveHere(),
+	as many landscape tiles don't have the surface flag set. So it prevented valid spawns. (grimson)
+	Added a new ini setting: (grimson)
+	COMBATARCHERRANGE=#  This defines the range at which archers stop charging
+			     the target in combat. (Default is 7)
+	Changed cMovement::SendWalkToPlayer() so that the sequenz number fits the description
+	in CPacketReceive.cpp. (grimson)
+	Changed CPIResyncReq::Handle() so that it actually does resend everything around
+	the player. (grimson)
+	Added the Script # to the JS Error Reporter to make debugging easier. (giwo)
+	Fixed an issue causing JS scripts to give useless error messages on server startup. (giwo)
+	Modified the region debug code to not default to on in debug mode. (giwo)
+	Updated loading code so that it displays a more accurate percentage during loading (Maarc)
+	Minor changes to the JS Handling. (giwo)
+	Modified UOXCFile handling to remove all props and added .EOF(), .Pos(), and Length() methods. (giwo)
+	Fixed an issue causing items not to dissapear when 'removed (giwo)
+	Fixed an issue causing characters to randomly dissapear around NPC's (giwo)
+	Fixed an issue causing items and characters to be updated when out of range. (giwo)
+	Fixed a VC2005 Compile issue. (giwo)
+	Included a default VC 2005 Project/Solution file. (giwo)
+	Fixed LineOfSight() not working when you stand directly next to the target. (grimson)
+	Changed checkItemLineOfSight() so that it checks whether you can see the base or
+	the top of the target item. (grimson)
+	Fixed CPIAllNames3D::Handle() so that SHIFT+CTRL actually shows the names of NPCs. (grimson)
+	Fixed a possible issue caused by passing float values to JS func RandomNumber() (giwo)
+
+JScript Changes/Fixes:
+	Added carpentry, tinker, leather repair, bow repair, bandage, sewing kit, mortar, and archery butte ID's to 
+	 js_objectassociations.scp (giwo)
+	Fixed a bug causing sources for resource-harvesting not to get properly initialized (Xuri)
+	Defined respawn delay and maximum resources as easily editable global variables	(Xuri)
+	Made items added using 'ADD <hex-id> and 'ADD SPAWNER <hex-id> not decay by default (Xuri)
+	Updated creatures.dfn to use the new MOVEMENT tag. (grimson)
+	Updated tiles.dfn to set a water tile to wet that was missing that flag. (grimson)
+	Fixed a minor issue with axe.js (giwo)
+	Updated the peacemaking.js to use the new property and to prevent peacemaking from affecting the
+	char using it. (grimson)
+
+DFN Changes/Fixes:
+	Fixed a bug with rugs_carpets.dfn where a closing bracket was missing for object 0x1e41	(Maarc)
+	Replaced HP tag with HPMAX for all appropriate NPCs (Xuri)
+	Updated TOPROV, TOPEACE and TOTAME tags for all NPCs (Xuri)
+	Added the HUNGER=#,# description to the header of races.dfn. (grimson)
+	Added the TAMEDHUNGER tag to mounts.dfn with a hunger rate of 600 and a chance to become
+	 wild of 30%. (grimson)
+	Added a new file foodlists.dfn to the items folder containing an example list for horses. (grimson)
+	Added the horse foodlist to mounts.dfn. (grimson)
+	Added TAMEDHUNGER and FOOD tags to all appropriate NPCs (Xuri)
+	Added Squirrel and Ferret NPCs to animals.dfn, and added them to the NPC addmenu (Xuri)
+	Fixed a misspelled skillname for a gargoyle NPC (Xuri)
+	Added id 0x122a to harditems.dfn with DECAY=1, so blood puddles added when carving corpses actually decay (Xuri)
+	Changed animals.dfn, added NPCAI=6 to all animals belonging to the race Predator. (grimson)
+	Changed races.dfn, all members of the race Predator change their hunger level every 300 seconds
+	 and get damaged for 5 points when starving. (grimson)
+	Fixed a bug with rugs_carpets.dfn where a closing bracket was missing for object 0x1e41 (Maarc)
+	Changed the the numbers in the LOOT tags of NPCs to random lootlist entrys. (grimson)
+	Fixed some GET tags in the armor dfns that were pointing to non existant items. (grimson)
+
+-==============================-
+-= 20/02/2006 - UOX3 0.98-3.4 =-
+-==============================-
+Source Changes/Fixes:
+	Updated the CPUpdateStat function to use the GetMaxHP, GetMaxStam and GetMaxMana 
+	 for sending the respective values instead of sending the strenght, dexterity and 
+	 intelligence values. (Grimson)
+	The current HP and (if present) the fixed maxHP will now be saved on worldsaves. (Grimson)
+	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with 
+	 them you can specify custom tags inside the DFNs and use them in JS scripts. (Grimson)
+	Added two new JS functions: 
+	FindItem( x, y, z, world, id) - returns the item with the "id" that is on the "z"
+	 level and closest to the coordinates of x and y. Or NULL if no item is found. (Grimson)
+	GetItem( x, y, z, world) - returns the item that is on the given coordinates or NULL if there is no item. (Grimson)
+	Fixed an issue causing Large Dragon Ship deeds to not function. (giwo)
+	Stopped CChar from saving HP as CBaseObject handles saving hitpoints. (giwo)
+	Modified getItem() and findItem() a bit and renamed them to GetItemAtXYZ() and FindItemAtXYZ() (giwo)
+	Fixed some minor cooking issues, and removed cSkills::HandleCooking() as JS now handles cooking. (giwo)
+	Fixed an issue causing stats to almost never increase. (giwo)
+	Added an additional option to SKILLPOINT to specify for each level how much skill to gain on success. (giwo)
+	Removed EngraveAction() as it did not function and custom skills can be added in JavaScript. (giwo)
+	Moved Meditation skill out to JS. (giwo)
+	Moved Inscription skill out to JS. (giwo)
+	Moved MAKESHOP command out to JS. (giwo)
+	Moved Lockpicking skill out to JS. (giwo)
+	Moved Skills::TinkerAxle out to JS. (giwo)
+	Moved Skills::TinkerAwg out to JS. (giwo)
+	Moved Skills::TinkerClock out to JS. (giwo)
+	Moved TinkerSextant functionality out to JS. (giwo)
+	Made shure to start world timers on server startup. (Grimson)
+	Changed startChar() to do a checkRegion() directly after a login. (Grimson)
+	Changed CWorldMain::doWorldLight to actually take the current time into account when calculating the light level. (Grimson)
+	Added the dungeons to the regions.dfn, so LIGHTDUNGEONLEVEL from the ini is correctly applied to them. (Grimson)
+	Removed checkRegion() from startChar() as it isn't needed. (Grimson)
+	Fixed the release time check in JailCell::PeriodicCheck(). (Grimson)
+	Changed CWorldMain::doWorldLight again, so the light level will actually reach
+	 the LIGHTBRIGHTLEVEL and LIGHTDARKLEVEL values. (Grimson)
+	Changed the checkRegion() function to prevent useless guard messages when you go from one unguarded region to
+	 another unguarded region. (Grimson)
+	Changed the getlight command, so it returns the correct value when the region has a weather system. (Grimson)
+	Added a rounding function for numbers and use it in the doLight(), command_getlight() and
+	 doWorlLight() functions. (Grimson)
+	Moved WillResultInCriminal() from combat.cpp to uox3.cpp as it is not limited to combat situations. (Grimson)
+	Changed cMagic::MagicDamage() so that attackers can become criminal and murderers. (Grimson)
+	Changed CHandleCombat::StartAttack() so that attacking NPCs can become criminal. (Grimson)
+	Fixed an issue causing newbie clothing to be dropped on the ground if the character had scripted starting armor. (giwo)
+	Added Multiple-ID resource handling for create.dfn. (giwo)
+	Fixed 3D client crashes with CChar::talkAll() and  CChar::talk(), when the text color is 0x0000 it will
+	 be set to the default of 0x5A. (Grimson)
+	Changed cMagic::MagicDamage() again, so that the murder count is increased when needed and NPCs fight back
+	 when they get attacked with a spell. (Grimson)
+	Fixed the text message of the evaluating intelligence skill. (Grimson)
+	Removed resource counts before launching create menu's, as the create menu handles that. (giwo)
+	Marked StringToNum(), NumToString(), NumToHexString() for later deletion, please use built-in JS 
+	 method .toString() and function parseInt() in their place. (giwo)
+	Implemented JS props .stone and .master for Guilds. (giwo)
+	Removed the following JS functions as they are superfluous. (giwo)
+		IsRegionGuarded 
+		CanMarkInRegion 
+		CanRecallInRegion 
+		CanGateInRegion 
+		GetGuildType 
+		GetGuildName 
+		SetGuildType 
+		SetGuildName 
+		SetGuildMaster 
+		GetNumGuildMembers 
+		GetGuildStone 
+		GetTownMayor 
+		GetTownRace 
+		SetTownRace 
+		GetTownTax 
+		GetTownTaxResource 
+		SetTownTax 
+		SetTownTaxResource 
+	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people
+	 from compiling) (Maarc)
+	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced (Maarc)
+	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine). Healing 
+	 and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage
+	 hasn't occurred in the past 5 minutes, they get taken off the list (Maarc)
+	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, 
+	 because in future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a
+	 sword, the sword's kill count increases) (Maarc)
+	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking. Future 
+	progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat 
+	Broke out packet 0xBF into a CPI class of it's own. Rather than making it a huge monolithic class, it internally hands
+	 it off to other packet handling classes (Maarc)
+	Fixed VC6 build errors (thanks to giwo). (Grimson)
+	Rewrote parts of the weather system: (Grimson)
+		Added weather type storm. 
+		Heat wave and cold snap are calculated once per uo day and set the temperature to a fixed value 
+	    	between MAXTEMP and HEATINTENSITY resp. COLDINTENSITY and MINTEMP. 
+	    	Storm, Snow and Rain are calculated oncer per uo hour. 
+	    	Rewrote doWeatherEffect() to better seperate the different weather effects and to change the way they are calculated. 
+	Added new settings to races.dfn: (Grimson)
+		HEATLEVEL - Sets the minimum heat at which the race get's damaged. 
+		COLDLEVEL - Sets the minimum cold at which the race get's damaged. 
+		STORMAFFECT - Defines if the race is affected by a storm 
+		STORMDAMAGE - Defines the damage a race takes from storm 
+		STORMSECS - Defines the interval at which the races takes damage from a storm. 
+	Added cMapStuff::inBuilding() function to determine wheter a given set of coordinates is inside a building.
+	 It does this by checking whether there is a static or multi above the coordinates. (Grimson)
+	Added inBuilding() and SetInBuilding() functions to CChar and set it on movement and teleport. (Grimson)
+	Use the new inBuilding() function to stop/start weather effects as soon as a player enters or
+	 leaves a building. (Grimson)
+	Send the light level and weather status directly after a player log's in. (Grimson)
+	Fixed some bugs in calculating the heat/cold damage in doWeatherEffect(). (Grimson)
+	Rain now lowers the current temperature by 5, a storm by 10. (Grimson)
+	Moved the sending of the light level and weather status from startChar() into 
+	 cChar::Teleport() by adding a force forceUpdateLight option to checkRegion(). (Grimson)
+	Rewrote the doLightEffect() function, it now uses the current light level to scale the light damage,
+	 it also respects the LIGHTLEVEL setting from races.dfn and it will stop doing light damage if you
+	 are inside a building. (Grimson)
+	Added a the possibility that a char gets hit by a lightning during a storm, this is controlled by the
+	 LIGHTNINGAFFECT, LIGHTNINGDAMAGE and LIGHTNINGCHANCE settings in races.dfn. (Grimson)
+	Added storm to the IsRaceWeakToWeather() JS function. (Grimson)
+	Light and weather effects now also work on NPCs. (Grimson)
+	Added 3 new JS events: (Grimson)
+		onLightChange( mChar, lightLevel ) 
+		onWeatherChange( mChar, weatherId ) 
+		onTempChange( mChar, temperature ) 
+		These events also work on the global script id and get called for players and NPCs. 
+	Removed several item types from itemtypes.dfn as they are now handled by JS. (giwo)
+	Fixed an issue causing the Snooping skill not to function. (giwo)
+	Fixed an issue causing GM Polymorph Menu not to function correctly. (giwo)
+	Fixed an issue causing Doors not to be added to the house they were part of. (giwo)
+	Moved the Multi check to containers specifically rather than on any item use, to enable use of house signs
+	 and doors from outside. (giwo)
+	Stopped saving the weather type in regions.wsc, this prevented changes from regions.dfn to apply. (Grimson)
+	Make use of the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY from weatherab.dfn, they are now 
+	 used in calculating the damage a char takes from these elements. The damage is scaled by calculating 
+	 a random number between 0 and the intensity, this number is then used as a percent value against 
+	 the damage value in races.dfn. (Grimson)
+	Fixed a small bug that prevent a storm from ending. (Grimson)
+	Updated the SkillCheck in HandleCombat() to be based upon the defenders tactics skill. (giwo)
+	Updated Skills::SkillCheck() to have a chance of success based upon the maximum skill + 100, rather than 1000. (giwo)
+	Fixed several issues causing spellbooks not to display properly. (giwo)
+	Fixed an issue causing Strength, Dexterity, and Intelligence to permanently drop when they are temporarily lowered. (giwo)
+	Added two new shield ID's to CItem::IsShieldType(). (giwo)
+	Added spacing after fame titles to fix a paperdoll display issue. (giwo)
+	Fixed multiple issues in LineOfSight() that caused miscalculations of the coordinates that should be checked. (Grimson)
+	Added line of sight checks to CPIPopupMenuRequest::Handle(), CBaseVendorResponse::CBaseVendorResponse() and 
+	 CPIDblClick::Handle() to prevent people from using items and vendors through walls. (Grimson)
+	Changed HandleWeatherChanges() so it updates the weather values of NPCs too. (Grimson)
+	Changed reading the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY in weatherab.dfn so that 
+	 you can set a min and max value for the damage percent. See the examples in the updated weatherab.dfn. (Grimson)
+	Added two new values to weatherab.dfn: (Grimson)
+		STORMTEMPDROP this sets the amount the temperature drops when there is a storm 
+		RAINTEMPDROP this sets the amount the temperature drops when it is raining. 
+	Renamed HandleWeatherChanges() to CheckCharInsideBuilding() as it is more apropriate. (Grimson)
+	Stopped weather effects affecting ghosts of death players. (Grimson)
+	Partially rewrote cMovement::SendWalkToOtherPlayers to correctly send chars and remove them from sight. (Grimson)
+	Changed CPExtMove::CopyData() so the running state of player chars is correctly send. (Grimson)
+	cMovement::SendWalkToOtherPlayers() didn't check if the chars are in the same world, added this now. (Grimson)
+	Added ability to xgate to a specific x, y, z. and worldnumber (giwo)
+	Updated TeleportLocations to teleport any players pets that are inrange with them. (giwo)
+	Fixed a minor issue with Moongates teleporting Pets. (giwo)
+	Fixed a compiler error in VC 2003 caused by fabs(). Note that using fabs() should only be used with floats & doubles. (giwo)
+	Modified HandleCombat() so the target has a chance to gain Tactics when hit. (giwo)
+	Gave armor a 50% chance not to be damaged when successfully hit. (giwo)
+	Reduced armor damage to 0-1 points (rather than 0-2) when hit. (giwo)
+	Updated Towns to be escort regions by default in regions.dfn (giwo)
+	Added two functions to the JS engine for characters, Heal() and Damage() (Maarc)
+		void Damage( amtDamaged, [attacker] );
+		void Heal( amtHealed, [healer] );
+	The second parameters are optional, but basically it ensures that any change through here is tracked
+	Fixed an issue causing possible account corruption. (giwo)
+
+JScript Changes/Fixes:
+	Renamed moongate.js to teleporter.js (Xuri)
+	Added gump-driven moongate system to new moongate.js file (optional, not currently in use) (Xuri)
+	Added new moongate.js to jse_fileassociations.scp and changed old moongate.js to teleporter.js (Xuri)
+	Fixed some issues with pitcher.js (giwo)
+	Updated all JS files to use toString() and parseInt(). (giwo)
+	Fixed a minor issue with teleporter.js. (giwo)
+
+DFN Changes/Fixes:
+	Added dex penalty to Samurai Plate armor (same as for normal plate armor) (Xuri)
+	Fixed the GM Locations menu in travelmenu.dfn so you can travel to the jail cells again. (Grimson)
+	Made a few changes to regions.dfn. (Grimson)
+	Fixed some create.dfn items that had overlapping numbers. (giwo)
+	Changed create.dfn handling so ID's of 0 (default) display nothing on the gump. (giwo)
+	Updated create.dfn menu's with "Previous Menu" entries. (giwo)
+	Modified skills.dfn SKILLPOINT to use ,'s for seperators. (giwo)
+	Added LEATHER resource type for create.dfn (giwo)
+	Added cloth ID's to CLOTH resource type. (giwo)
+	Wrote all available race settings into the header of races.dfn and documented a few of them. (Grimson)
+	Updated skills.dfn a bit to improve skill gain between levels 0.00 and 1.00 (giwo)
+	Fixed a minor issue with regions.dfn causing Yew not to be considered a town. (giwo)
+	Updated the grizzly and polar bear entries in creatures.dfn to have the proper sounds. (giwo)
+
+-==============================-
+-= 12/02/2006 - UOX3 0.98-3.3 =-
+-==============================-
+Source Changes/Fixes:
+	Encapsulated JS class name retrieval into JSEncapsulate and switched over to using that everywhere (Maarc)
+	Fixed a potential bug (or at least, a naughtiness) with CBase_Teleport, with premature casting (Maarc)
+	Fixed a bug where if ApplySection() was called with an empty string, it wouldn't abort correctly (JS Engine) (Maarc)
+	Fixed a possible issue with Karma(), where we reset on caps, but don't update our calculations (Maarc)
+	Added necromancy, focus, chivalry, bushido and ninjitsu to skills in JS engine (Maarc)
+	Fixed several issues with CPOpenBuyWindow fixing an issue causing items in buy windows to display improperly. (giwo)
+	Fixed an alignment issue with CPItemsInContainer logging. (giwo)
+	Removed CItem::Sort() as it is now superfluous. (giwo)
+	Moved CItem::WalkXY() to CBaseObject. (giwo)
+	Minor updates to cSkills::RandomSteal(). (giwo)
+	Removed JS items[]. access. (giwo)
+	Added missing hairstyle (spiked) for female elves (Xuri)
+	Fixed an issue causing multi's to contain themselves (giwo)
+	Added some error checking to ensure a multi cannot be placed inside another multi. (giwo)
+	Fixed an issue causing items and characters on boats to move multiple spaces. (giwo)
+	Fixed an issue causing boats to lock the client. (giwo)
+	Fixed an issue causing boat commands to crash the 3D client. (giwo)
+	Fixed an issue causing the server to randomly crash when sailing for prolonged periods of time. (giwo)
+	Removed an extra RemoveFromSight() packet sent upon item deletion. (giwo)
+	Removed items from the MapRegion upon deletion. (giwo)
+	Added CMapHandler::ChangeRegion() to automatically change an objects region when location changes. (giwo)
+	Changed a call to _hypot, as it wasn't portable.  hypotf is the portable ANSI C, but it didn't work, so rolled our own (simple sqrt of the sum of two squares) (Maarc)
+	Made some changes to the enumeration JSObjectType, because gcc 3.3.5 was chucking a wobbly over some code  (Maarc)
+	Changed a call to _strnicmp to strnicmp to deal with a linux compile error - note, we probably don't want to use such things anyway ... convert both strings to a UString, lower() them, and compare the subsets requested? (Maarc)
+	Fixed an issue causing the statwindow not to update properly (thus not showing the proper weight/gold values). (giwo)
+	Continued to break LineOfSight() into smaller manageable functions. (giwo)
+	Removed superfluous Add()/Remove() functions from CMapHandler. (giwo)
+	Rewrote trade windows so they now function properly (Note that if you log out with a trade window open, the client will crash). (giwo)
+	Disabled the LoginThread as it was causing crashes and other issues. (giwo)
+	Minor changes to const correctness in skills.cpp (giwo)
+	Modified packet logging to slim down file size and make it more readable. (giwo)
+	Fixed an issue causing logged out characters be visible to those around them. (giwo)
+	Fixed an issue causing multis to calculate their size incorrectly (causing boats to drag objects not aboard). (giwo)
+	Updated mapstuff.cpp to fix some signed/unsigned mismatches. (giwo)
+	Rewrote killTrades() so it would function properly and called it when a player Logs out. (giwo)
+	Disallowed GM's to drop items directly on logged out players (note they can still place items in packs), as it was causing other bugs in the client. (giwo)
+	Documented trade.cpp (giwo)
+	Fixed a possible exploit with secure trading. (giwo)
+	Fixed an issue causing it to be impossible to remove characters from a house ban list. (giwo)
+	Fixed a server crash caused by transfering house ownership. (giwo) 
+	Updated the NPC Pathfinding code to fix some issues. (giwo)
+	Added a check to ensure boat items are only moved once when boats sail. (giwo)
+	Moved maps_def Disposal to the end of CMapStuff::Load() (Maarc)
+	Added the ability to override tiledata info for real tiles (not land) (Maarc)
+	Bit of const correctness (CTile.Name( const char *newVal )) (Maarc)
+	Added some error checking to the INFO command to ensure it is not used on characters. (giwo)
+	Fixed an issue causing deeds (and other items) not to display their custom names. (giwo)
+	JS Changes:
+		Added character props .orgID and .orgSkin (giwo)
+		Changed the behavior of character props .id and .skin not to set their org* equivalents automatically. (giwo)
+	Replaced CTEffectContainer with a call to CDataList. (giwo)
+	Fixed multiple issues causing temporary effects to randomly never expire. (giwo)
+	Fixed an issue causing mana never to regenerate completely in certain circumstances. (giwo)
+	Minor const correctness and signed/unsigned mismatch changes. (giwo)
+	Removed MOVETYPE= world tag from boats, as they should always start sitting still. (giwo)
+	Added a check to ensure a boat stops moving if all characters onboard leave a moving boat. (giwo)
+	Added spawn.dfn tag PREFZ=, this sets the maximum Z influence dynamic and static items can have on spawning. (giwo)
+	Incorporated Grimsons fixes to CSpawnRegion to allow NPC's to spawn at the proper Z based on the static and dynamic items at their location. (Grimson)
+	Fixed a minor issue with saving tempeffects. (giwo)
+	Fixed an issue causing objects not to default to script ID 0 (global script). (giwo)
+	Added onDeathBlow( pKilled, pKiller ) JS event. (giwo)
+	Minor code cleanups. (giwo)
+	Fixed wholist so that the stats link now works from it (Maarc)
+	Fixed an issue causing ID and Type-based JS scripts not to run if an object had a script associated with it. (giwo)
+	Fixed an issue with SetTag() causing 0 and null values not to unset the tag. (giwo)
+	Fixed some wierdness when using the Delete() property in JS. (giwo)
+	Minor updates to autoStack(). (giwo)
+	Fixed some issues with dropping items on other items in packs. (giwo)
+	Overhauled the character flagging system: (giwo)
+		Added FlagColors enum.
+		Renamed setcharflag() to UpdateFlag().
+		Rewrote FlagColour() to make use of an enum and made it part of CChar.
+		Made use of CChar::FlagColour() in several areas where we were doing the work manually.
+		Added CChar SetNPCFlag() and GetNPCFlag() alond with cNPC_FLAG enum.
+		Removed CChar IsNeutral() and SetNeutralFlag().
+		Fixed an issue causing CChar Flagging functions not to return proper values.
+		Replaced Dfn tag NEUTRAL with FLAG= the options for which are NEUTRAL, INNOCENT and EVIL.
+		Replaced JS character property neutral with npcFlag, for which the values are 0 = NEUTRAL, 1 = INNOCENT, 2 = EVIL.
+	Broke DropOnItem() into several smaller functions. (giwo)
+	NPCFlag now saves to the worldfile. (giwo)
+	Fixed an issue causing neutral animcals to never appear innocent when in town. (giwo)
+	Fixed an issue causing tamed animals to not carry their owners flag. (giwo)
+	Added support for invulnerable (yellow) flagging. (giwo)
+   	Re-added IsNeutral() Character flag as well as .neutral JS character property. (giwo)
+   	Fixed an issue causing items to "bounce" when being dropped on the same character they were picked up from. (giwo)
+   	Fixed an issue causing Ghosts to be bugged after a server restart. (giwo)
+	Modified newbie item creation so scripted items take precedence over default clothing. (giwo)
+	Added JS property .isShop to transform an NPC into (and back from) a shopkeeper. (Grimson) 
+	Fixed some issues causing flagging not to be updated after setting flags in JS. (giwo)
+	Added error-checking when an invalid script entry is called with the GET tag. (giwo)
+	Modified AR statwindow reporting to give larger numbers. (giwo)
+	Removed teffect.cpp from the VC6 workspace, as it no longer exists. (Grimson)
+	Modified the flags of display cases via the tiles.dfn to prevent NPCs from walking on them. (Grimson)
+	Added fixed maximum HP for chars. You can set it by a new dfn tag "HPMAX" or by the 
+	.maxhp JS property. Setting a negative value via the .maxhp JS property will reset the fixed value. (Grimson)
+	Updated the set command to make use of the .maxhp JS property. (Grimson)
+	Modified 'setscptrig so it accepts 0 as a value even if no script 0 exists. (giwo)
+
+JScript Changes/Fixes:
+	Illogical operator sequence in skin.js fixed, all skincolors should now work, as opposed to only every second one (Xuri)
+	Modified the stealth skill spam to conform to OSI messages. (giwo)
+	Fixed an issue causing the POLY command to change ones skin color. (giwo)
+	Added TEMPSTR/TEMPSTRENGTH TEMPDEX/TEMPDEXTERITY and TEMPINT/TEMPINTELLIGENCE options to the SET command. (giwo)
+	Added 'set DEF (items), ARMOR (chars), and LAYER (items) commands. (giwo)
+
+DFN Changes/Fixes:
+	Added leather cap to base_armor.dfn, and added right facing leather cap to leather_armor.dfn (Xuri)
+	Added missing values and proper movable tag to a few tables sold by the carpenter vendor. (Xuri)
+	Added tiles.dfn in uox3\dfndata\maps\ to support overriding tiledata info (Maarc)
+	Changed the stat-modifier of the wizard's hat to conform with official UO (-5 STR, +5 INT) (Xuri)
+	Renamed some magical reagents to their proper names (Xuri)
+	Added paladin spellbook and necromancer spellbook to misc_magic.dfn (Xuri)
+	Added book of ninjitsu and book of bushido to dfndata\items\misc\books.dfn (Xuri)
+	Added [base_hat] to headwear.dfn for common headwear properties (Xuri)
+	Added necromancer-specific leather armor to leather_armor.dfn (only thing different is color) (Xuri)
+	Added clothing from SE to uox3\dfndata\items\gear\clothing\se_clothing.dfn (Xuri)
+	Added headwear from SE to uox3\dfndata\items\gear\clothing\se_headwear.dfn (Xuri)
+	Added footwear from SE to uox3\dfndata\items\gear\clothing\se_footwear.dfn (Xuri)
+	Updated all instances of NEUTRAL in the dfn's to FLAG=NEUTRAL (giwo)
+	Added some FLAG=EVIL, FLAG=INNOCENT, and FLAG=NEUTRAL tags to appropriate NPC's (giwo)
+	Updated some DFN armor defense ratings in items/gear/armor/ (giwo)
+	Added Ninja armor uox3\dfndata\items\gear\armor\leather_armor\ninja_leather.dfn (Xuri)
+	Added Samurai armors to samurai_leather.dfn, samurai_studded_leather.dfn and samurai_plate.dfn (Xuri)
+	(NOTE: DEF values need heavy tweaking!)
+	Added starting equipment for Necromancy, Chivalry, Ninjitsu and Bushido (Xuri)
+	Added TEMPSTR/TEMPSTRENGTH TEMPDEX/TEMPDEXTERITY and TEMPINT/TEMPINTELLIGENCE options to the SET command. (giwo)
+	Updated all instances of NEUTRAL in the dfn's to FLAG=NEUTRAL (giwo)
+	Added some FLAG=EVIL, FLAG=INNOCENT, and FLAG=NEUTRAL tags to appropriate NPC's (giwo)
+	Updated DEF values to reflect the UO:R style combat system. (giwo)
+	Moved main entries for samurai plate armor, leather armor, studded leather and ninja leather to base_armor.dfn (Xuri)
+	Moved samurai plate armor definitions to iron_armor.dfn, and removed samurai_plate.dfn (Xuri)
+	Added samurai empire armors to the add-menu, and tweaked some layer values (Xuri)
+
+-==============================-
 -= 29/01/2006 - UOX3 0.98-3.2 =-
 -==============================-
 Source Changes/Fixes:
@@ -115,7 +1165,12 @@ Source Changes/Fixes:
 		sourceObject.CanSee( otherObject );
 		sourceObject.CanSee( targX, targY, targZ );
 		otherObject can be either a character, item or socket.  If they're not on the same world or the target item is in a container, line of sight fails.
-	Proper validation of hair style on creation of elvish characters (Maarc)		
+	Proper validation of hair style on creation of elvish characters (Maarc)
+	Added new JS event: onCharDoubleClick( pUser, targChar) - allows overriding doubleclicking of characters
+	Added new JS event: onSkillGump( socket ) - allows overriding the client's request to open the default skillgump
+	Added new JS event: onCombatStart( currChar, targChar ) - allows overriding combat completely
+	Added new JS event: onCombatEnd( currChar, targChar ) - allows overriding what happens when combat ends
+	JS Event space in cScript expanded from 64 to 96 (Maarc)
 	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods (Maarc)
 	Added a key/command handler console exposure to the JS environment (involves a secondary runtime because of threading!) (Maarc)
 	Note: Creating/editing world objects through this environment is not thread safe, and may cause errors
