@@ -250,20 +250,20 @@ value=8 4
 pileable=1
 }
 
-[0x0c61]
+[0x0d39]
 {
 get=base_food
 name=turnip
-id=0x0c61
+id=0x0d39
 value=6 3
 pileable=1
 }
 
-[0x0c62]
+[0x0d3a]
 {
 get=base_food
 name=turnip
-id=0x0c62
+id=0x0d3a
 weight=100
 value=6 3
 pileable=1
