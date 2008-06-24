@@ -624,44 +624,41 @@ void CPITips::Receive( void )
 bool CPITips::Handle( void )
 {
 	ScriptSection *Tips = FileLookup->FindEntry( "TIPS", misc_def );
-	if( Tips == NULL )
-		return true;
-
-	UI16 i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
-	if( i == 0 ) 
-		i = 1;
-
-	int x = i;
-	UString tag;
-	UString data;
-	UString sect;
-	for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
+	if( Tips != NULL )
 	{
-		if( !tag.empty() && tag.upper() == "TIP" )
-			--x;
-		if( x <= 0 )
-			break;
-	}
-	if( x > 0 )
-		tag = Tips->Prev();
-	data = Tips->GrabData();
-	sect = "TIP " + data.stripWhiteSpace();
-	Tips = FileLookup->FindEntry( sect, misc_def );
-	if( Tips == NULL )
-		return true;
-	x = -1;
-	char tipData[2048];
-	tipData[0] = 0;
-	CPUpdScroll toSend( 0, (UI08)i );
-	for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
-	{
+		UI16 i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
+		if( i == 0 ) 
+			i = 1;
+
+		int x = i;
+		UString tag, data, sect;
+		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
+		{
+			if( !tag.empty() && tag.upper() == "TIP" )
+				--x;
+			if( x <= 0 )
+				break;
+		}
+		if( x > 0 )
+			tag = Tips->Prev();
 		data = Tips->GrabData();
-		sprintf( tipData, "%s%s %s ", tipData, tag.c_str(), data.c_str() );
-	}
 
-	toSend.AddString( tipData );
-	toSend.Finalize();
-	tSock->Send( &toSend );
+		sect = "TIP " + data.stripWhiteSpace();
+		Tips = FileLookup->FindEntry( sect, misc_def );
+		if( Tips != NULL )
+		{
+			UString tipData = "";
+			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
+			{
+				tipData += Tips->GrabData() + " ";
+			}
+
+			CPUpdScroll toSend( 0, (UI08)i );
+			toSend.AddString( tipData.c_str() );
+			toSend.Finalize();
+			tSock->Send( &toSend );
+		}
+	}
 
 	return true;
 }
