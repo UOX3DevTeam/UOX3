@@ -41,16 +41,11 @@ CWorldMain						*cwmWorldState = NULL;
 //o--------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
 //o--------------------------------------------------------------------------o
-const SERIAL		DEFWORLD_NEXTITEMSERIAL		= BASEITEMSERIAL;
-const SERIAL		DEFWORLD_NEXTCHARSERIAL		= 1;
-const UI32			DEFWORLD_IMEM				= 0;
-const UI32			DEFWORLD_CMEM				= 0;
 const bool			DEFWORLD_KEEPRUN			= true;
 const bool			DEFWORLD_ERROR				= false;
 const bool			DEFWORLD_SECURE				= true;
 const UI32			DEFWORLD_ERRORCOUNT			= 0;
 const bool			DEFWORLD_LOADED				= false;
-const UI16			DEFWORLD_SPAWNREGIONS		= 0;
 const UI32			DEFWORLD_UICURRENTTIME		= 0;
 const UI32			DEFWORLD_UOTICKCOUNT		= 1;
 const bool			DEFWORLD_OVERFLOW			= false;
@@ -65,8 +60,7 @@ const SaveStatus	DEFWORLD_SAVEPROGRESS		= SS_NOTSAVING;
 const bool			DEFWORLD_RELOADINGSCRIPTS	= false;
 const bool			DEFWORLD_CLASSESINITIALIZED	= false;
 
-CWorldMain::CWorldMain() : nextItemSerial( DEFWORLD_NEXTITEMSERIAL ), 
-nextCharSerial( DEFWORLD_NEXTCHARSERIAL ), imem( DEFWORLD_IMEM ), cmem( DEFWORLD_CMEM ), error( DEFWORLD_ERROR ), 
+CWorldMain::CWorldMain() : error( DEFWORLD_ERROR ), 
 keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ), ErrorCount( DEFWORLD_ERRORCOUNT ), Loaded( DEFWORLD_LOADED ), 
 uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ), 
 overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ), 
@@ -126,86 +120,6 @@ void CWorldMain::SetTimer( CWM_TID timerID, TIMERVAL newVal )
 {
 	if( timerID != tWORLD_COUNT )
 		worldTimers[timerID] = newVal;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SERIAL NextItemSerial()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-	Changed to NextItemSerial() from ItemCount2() (giwo 10/16/03)
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Item Serials
-//o--------------------------------------------------------------------------o
-SERIAL CWorldMain::GetNextItemSerial( void ) const
-{
-	return nextItemSerial;
-}
-void CWorldMain::SetNextItemSerial( SERIAL newVal )
-{
-	nextItemSerial = newVal;
-}
-void CWorldMain::IncNextItemSerial( void )
-{
-	++nextItemSerial;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	SERIAL NextCharSerial()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-	Changed to NextCharSerial() from CharCount2() (giwo 10/16/03)
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Character Serials
-//o--------------------------------------------------------------------------o
-SERIAL CWorldMain::GetNextCharSerial( void ) const
-{
-	return nextCharSerial;
-}
-void CWorldMain::SetNextCharSerial( SERIAL newVal )
-{
-	nextCharSerial = newVal;
-}
-void CWorldMain::IncNextCharSerial( void )
-{
-	++nextCharSerial;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 IMem()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Item Memory
-//o--------------------------------------------------------------------------o
-UI32 CWorldMain::GetIMem( void ) const
-{
-	return imem;
-}
-void CWorldMain::SetIMem( UI32 newVal )
-{
-	imem = newVal;
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 CMem()
-//|	Date			-	3/12/2003
-//|	Programmer		-	Zane
-//|	Modified		-
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Character Memory
-//o--------------------------------------------------------------------------o
-UI32 CWorldMain::GetCMem( void ) const
-{
-	return cmem;
-}
-void CWorldMain::SetCMem( UI32 newVal )
-{
-	cmem = newVal;
-}
-void CWorldMain::IncCMem( void )
-{
-	++cmem;
 }
 
 //o--------------------------------------------------------------------------o

@@ -11,42 +11,42 @@ PAGE=4
 
 [PAGE 1]
 {
-Greetings, Traveller!
-I welcome thee to the
-world of UOX and
-hope your will enjoy
-your stay here.
-This is the first
-page of this
-experimental book.
+LINE=Greetings, Traveller!
+LINE=I welcome thee to the
+LINE=world of UOX and
+LINE=hope your will enjoy
+LINE=your stay here.
+LINE=This is the first
+LINE=page of this
+LINE=experimental book.
 }
 
 [PAGE 2]
 {
-Feel free to change
-the contents of this
-book or to add others
-
-To do so, simply edit
-the contents of the
-file misc.scp  .
+LINE=Feel free to change
+LINE=the contents of this
+LINE=book or to add others
+LINE=
+LINE=To do so, simply edit
+LINE=the contents of the
+LINE=file misc\books.dfn  .
 }
 
 [PAGE 3]
 {
-The item TYPE for
-books is 11 decimal
-and you will have to
-set the MORE of the
-book item to the
-[number of
-the book.
+LINE=The item TYPE for
+LINE=books is 11 decimal
+LINE=and you will have to
+LINE=set the MORE of the
+LINE=book item to the
+LINE=number of
+LINE=the book.
 }
 
 [PAGE 4]
 {
-This is page four.
-(End of this book)
+LINE=This is page four.
+LINE=(End of this book)
 }
 
 // ============================ A Grammer of Orcish
@@ -82,277 +82,277 @@ PAGE=27
 
 [PAGE 5]
 {
-  This volume, and
-others in the series,
-are sponsored by
-donations from Lord
-Blackthorn, ever a
-supporter of
-understanding the
-other sentient races
+LINE=  This volume, and
+LINE=others in the series,
+LINE=are sponsored by
+LINE=donations from Lord
+LINE=Blackthorn, ever a
+LINE=supporter of
+LINE=understanding the
+LINE=other sentient races
 }
 
 [PAGE 6]
 {
-of Britannia.
--
-
- The Orcish tongue
-may fall unpleasingly
-'pon the ear, yet it
-has within it a
-complex grammar oft
+LINE=of Britannia.
+LINE=-
+LINE=
+LINE= The Orcish tongue
+LINE=may fall unpleasingly
+LINE='pon the ear, yet it
+LINE=has within it a
+LINE=complex grammar oft
 }
 
 [PAGE 7]
 {
-misunderstood by
-those who merely
-hear the few broken
-words of English our
-orcish brothers
-manage without
-education.
- These are the basic
+LINE=misunderstood by
+LINE=those who merely
+LINE=hear the few broken
+LINE=words of English our
+LINE=orcish brothers
+LINE=manage without
+LINE=education.
+LINE= These are the basic
 }
 
 [PAGE 8]
 {
-rules of orcish:
- Orcish has five
-tenses: present, past
-,future inperfect,
-present interject-
-ional,and prehensile.
- Examples: gugroflue,
-gugrofloog, gugrobo,
+LINE=rules of orcish:
+LINE= Orcish has five
+LINE=tenses: present, past
+LINE=,future inperfect,
+LINE=present interject-
+LINE=ional,and prehensile.
+LINE= Examples: gugroflue,
+LINE=gugrofloog, gugrobo,
 }
 
 [PAGE 9]
 {
-gugroglu!, gugrogug.
- All transitive verbs
-in the prehensile
-tense end in "ug."
- Examples:
-urgleighug,
-biggugdaghgug,
-curdakalmug.
+LINE=gugroglu!, gugrogug.
+LINE= All transitive verbs
+LINE=in the prehensile
+LINE=tense end in "ug."
+LINE= Examples:
+LINE=urgleighug,
+LINE=biggugdaghgug,
+LINE=curdakalmug.
 }
 
 [PAGE 10]
 {
- All present
-interjectional
-conjugations start
-with the letter G
-unless the contain
-the third declensive
-accent of the letter
-U. Examples:
+LINE= All present
+LINE=interjectional
+LINE=conjugations start
+LINE=with the letter G
+LINE=unless the contain
+LINE=the third declensive
+LINE=accent of the letter
+LINE=U. Examples:
 }
 
 [PAGE 11]
 {
-ghuthudunglug, but
-not azhbuugb.
- The past tense can
-only refer to events
-since the last meal,
-but the prehensile
-tense can refer to
-any event within
+LINE=ghuthudunglug, but
+LINE=not azhbuugb.
+LINE= The past tense can
+LINE=only refer to events
+LINE=since the last meal,
+LINE=but the prehensile
+LINE=tense can refer to
+LINE=any event within
 }
 
 [PAGE 12]
 {
-reach.
- The present tense
-is conjugated like
-the future imperfect
-tense,  when the
-interrogative mode is
-used by pitching the
-sound a quarter-tone
+LINE=reach.
+LINE= The present tense
+LINE=is conjugated like
+LINE=the future imperfect
+LINE=tense,  when the
+LINE=interrogative mode is
+LINE=used by pitching the
+LINE=sound a quarter-tone
 }
 
 [PAGE 13]
 {
-higher.
-Orcish hath no
-concept of person, as
-in first person,
-third person, I, we,
-etc. Orcish grammer
-relies upon the three
-cardinal rules of
+LINE=higher.
+LINE=Orcish hath no
+LINE=concept of person, as
+LINE=in first person,
+LINE=third person, I, we,
+LINE=etc. Orcish grammer
+LINE=relies upon the three
+LINE=cardinal rules of
 }
 
 [PAGE 14]
 {
-accretion, prefixing,
-and agglutination, in
-addition to pitch. In
-the former, phonemes
-combine into larger
-words wich may
-contain full phrasal
-significance.  In the
+LINE=accretion, prefixing,
+LINE=and agglutination, in
+LINE=addition to pitch. In
+LINE=the former, phonemes
+LINE=combine into larger
+LINE=words wich may
+LINE=contain full phrasal
+LINE=significance.  In the
 }
 
 [PAGE 15]
 {
-second, prefixing
-specific phonetic
-sounds changes the
-subject of the
-sentence into object,
-interrogative,
-addressed individual
-or dinner.
+LINE=second, prefixing
+LINE=specific phonetic
+LINE=sounds changes the
+LINE=subject of the
+LINE=sentence into object,
+LINE=interrogative,
+LINE=addressed individual
+LINE=or dinner.
 }
 
 [PAGE 16]
 {
- Agglutination occurs
-whenever four of
-the same letter are
-present in a word, in
-wich case, any two
-of them may be
-removed or slurred.
- Pitch changes the
+LINE= Agglutination occurs
+LINE=whenever four of
+LINE=the same letter are
+LINE=present in a word, in
+LINE=wich case, any two
+LINE=of them may be
+LINE=removed or slurred.
+LINE= Pitch changes the
 }
 
 [PAGE 17]
 {
-phoneme value of
-individual syllables,
-thus completely
-altering what a word
-may mean. The
-classic example is
-"Aktgluthugrot
-bigglogubuu
+LINE=phoneme value of
+LINE=individual syllables,
+LINE=thus completely
+LINE=altering what a word
+LINE=may mean. The
+LINE=classic example is
+LINE="Aktgluthugrot
+LINE=bigglogubuu
 }
 
 [PAGE 18]
 {
-dargilgaglug
-lublublub which can
-mean "You are such a
-pretty girl," "My
-mother ate your
-primroses," or
-"Jellyfish nose
-paints alms potato,"
+LINE=dargilgaglug
+LINE=lublublub which can
+LINE=mean "You are such a
+LINE=pretty girl," "My
+LINE=mother ate your
+LINE=primroses," or
+LINE="Jellyfish nose
+LINE=paints alms potato,"
 }
 
 [PAGE 19]
 {
-depending on pitch.
- Orchish poetry often
-relies upon repeating
-the same phrase in
-multiple pitches,
-even changing pitch
-midword.  None of
-this great art is
+LINE=depending on pitch.
+LINE= Orchish poetry often
+LINE=relies upon repeating
+LINE=the same phrase in
+LINE=multiple pitches,
+LINE=even changing pitch
+LINE=midword.  None of
+LINE=this great art is
 }
 
 [PAGE 20]
 {
-translatable.
- The orcish language
-uses the following
-vowels: ab, ad, ag,
-akt, at, augh, auh,
-azh, e, i, o, oo, u,
-uu. The vowel sound a
-is not recognized as
+LINE=translatable.
+LINE= The orcish language
+LINE=uses the following
+LINE=vowels: ab, ad, ag,
+LINE=akt, at, augh, auh,
+LINE=azh, e, i, o, oo, u,
+LINE=uu. The vowel sound a
+LINE=is not recognized as
 }
 
 [PAGE 21]
 {
-a vowel and does not
-exist in their
-alphabet. The orchish
-alphabet is best
-learned using the
-classic rhyme
-repeated at 23
-different pitches:
+LINE=a vowel and does not
+LINE=exist in their
+LINE=alphabet. The orchish
+LINE=alphabet is best
+LINE=learned using the
+LINE=classic rhyme
+LINE=repeated at 23
+LINE=different pitches:
 }
 
 [PAGE 22]
 {
-Lugnog ghu blatsug
-garoglug, Gaghbuu
-dakdar ab highugbo,
- Gothnogbuim ad
-gilgubbugbuilug
-Bilgeaugh thurggulg
-stuiggro!
-A translation of the
+LINE=Lugnog ghu blatsug
+LINE=garoglug, Gaghbuu
+LINE=dakdar ab highugbo,
+LINE= Gothnogbuim ad
+LINE=gilgubbugbuilug
+LINE=Bilgeaugh thurggulg
+LINE=stuiggro!
+LINE=A translation of the
 }
 
 [PAGE 23]
 {
-first pitch:
-Eat food, the first
-letter is ab,
-Kill people, next
-Letter is ad,
- I forgot the rest
-But augh is in there
-somewhere!
+LINE=first pitch:
+LINE=Eat food, the first
+LINE=letter is ab,
+LINE=Kill people, next
+LINE=Letter is ad,
+LINE= I forgot the rest
+LINE=But augh is in there
+LINE=somewhere!
 }
 
 [PAGE 24]
 {
- What follows is a
-complete phonetic
-library of the orcish
-language:
-ab, ad, ag, akt, alm,
-at, augh, auh, azh,
-ba, ba, bag, bar, baz,
+LINE= What follows is a
+LINE=complete phonetic
+LINE=library of the orcish
+LINE=language:
+LINE=ab, ad, ag, akt, alm,
+LINE=at, augh, auh, azh,
+LINE=ba, ba, bag, bar, baz,
 }
 
 [PAGE 25]
 {
-bid, bilge, bo, bog,
-bog, brui, bu, buad,
-bug, buil, buim, bum,
-buo, buor, buu, ca,
-car, clog, cro, cuk,
-cur, da, dagh, dagh,
-dak, dar, deak, der,
-dil, dit, dor, dre,
+LINE=bid, bilge, bo, bog,
+LINE=bog, brui, bu, buad,
+LINE=bug, buil, buim, bum,
+LINE=buo, buor, buu, ca,
+LINE=car, clog, cro, cuk,
+LINE=cur, da, dagh, dagh,
+LINE=dak, dar, deak, der,
+LINE=dil, dit, dor, dre,
 }
 
 [PAGE 26]
 {
-dri, dru, du, dud,
-duf, dug, dug, duh,
-dun, eag, eg, egg,
-eichel, ek, ep, ewk,
-faugh, fid, flu, fog,
-foo, foz, fruk, fu,
-fub, fud, fun, fup,
-fur, gaa, gag, gagh,
+LINE=dri, dru, du, dud,
+LINE=duf, dug, dug, duh,
+LINE=dun, eag, eg, egg,
+LINE=eichel, ek, ep, ewk,
+LINE=faugh, fid, flu, fog,
+LINE=foo, foz, fruk, fu,
+LINE=fub, fud, fun, fup,
+LINE=fur, gaa, gag, gagh,
 }
 
 [PAGE 27]
 {
-gan, gar, gh, gha,
-ghat, ghed, ghig, gho,
-ghu, gig, gil, gka,
-glu, glug, gna, gno,
-gnu, gol, gom, goth,
-grunt, grut, gu, gub,
-gub, gug, gug, gugh,
-guk.
+LINE=gan, gar, gh, gha,
+LINE=ghat, ghed, ghig, gho,
+LINE=ghu, gig, gil, gka,
+LINE=glu, glug, gna, gno,
+LINE=gnu, gol, gom, goth,
+LINE=grunt, grut, gu, gub,
+LINE=gub, gug, gug, gugh,
+LINE=guk.
 }
 
 // ============================ The Bold Stranger
@@ -379,168 +379,168 @@ PAGE=41
 
 [PAGE 28]
 {
- In a time before
-time, the Gods that
-be assembled a group
-of artisans, crafts
-men and lore masters
-(for, yes, even in
-those days, art
-existed)to create the
+LINE= In a time before
+LINE=time, the Gods that
+LINE=be assembled a group
+LINE=of artisans, crafts
+LINE=men and lore masters
+LINE=(for, yes, even in
+LINE=those days, art
+LINE=existed)to create the
 }
 
 [PAGE 29]
 {
-world of Sosaria. To
-this group, the gods
-gave a tiny world,
-Rytabul, in which to
-test their works, to
-see if they were of
-the quality desired
-for the true world in
+LINE=world of Sosaria. To
+LINE=this group, the gods
+LINE=gave a tiny world,
+LINE=Rytabul, in which to
+LINE=test their works, to
+LINE=see if they were of
+LINE=the quality desired
+LINE=for the true world in
 }
 
 [PAGE 30]
 {
-which they would be
-placed.  And though
-the gods were tight
-fisted with their
-gold, this small crew
-worked hard and long,
-and were happy in
-their tasks.
+LINE=which they would be
+LINE=placed.  And though
+LINE=the gods were tight
+LINE=fisted with their
+LINE=gold, this small crew
+LINE=worked hard and long,
+LINE=and were happy in
+LINE=their tasks.
 }
 
 [PAGE 31]
 {
- A small corner of
-Rytabul had been
-claimed by the
-artisan Selrahc the
-Slow. Though he was
-Not the fastest of
-The assembled
-workers, the gods
+LINE= A small corner of
+LINE=Rytabul had been
+LINE=claimed by the
+LINE=artisan Selrahc the
+LINE=Slow. Though he was
+LINE=Not the fastest of
+LINE=The assembled
+LINE=workers, the gods
 }
 
 [PAGE 32]
 {
-smiled upon his work,
-even presenting him
-with a mystic
-talisman proclaiming
-his work the best
-among the newer
-artisans.And so
-Selrahc went about
+LINE=smiled upon his work,
+LINE=even presenting him
+LINE=with a mystic
+LINE=talisman proclaiming
+LINE=his work the best
+LINE=among the newer
+LINE=artisans.And so
+LINE=Selrahc went about
 }
 
 [PAGE 33]
 {
-his business,
-creating hundreds
-of designs which
-would one day add
-color and variety
-to Sosaria. One day a
-stranger appeared to
-Selrahc.  His chest
+LINE=his business,
+LINE=creating hundreds
+LINE=of designs which
+LINE=would one day add
+LINE=color and variety
+LINE=to Sosaria. One day a
+LINE=stranger appeared to
+LINE=Selrahc.  His chest
 }
 
 [PAGE 34]
 {
-was bare and he wore
-trousers of the
-brightest green, and
-whereever he went,
-plants grew in his
-footsteps. This
-caused Selrahc no end
-of trouble, the
+LINE=was bare and he wore
+LINE=trousers of the
+LINE=brightest green, and
+LINE=whereever he went,
+LINE=plants grew in his
+LINE=footsteps. This
+LINE=caused Selrahc no end
+LINE=of trouble, the
 }
 
 [PAGE 35]
 {
-stranger always
-looking over his
-shoulder, and the
-plants sprouting in
-places Selrahc
-required to ply his
-art. And so Selrahc
-approached the
+LINE=stranger always
+LINE=looking over his
+LINE=shoulder, and the
+LINE=plants sprouting in
+LINE=places Selrahc
+LINE=required to ply his
+LINE=art. And so Selrahc
+LINE=approached the
 }
 
 [PAGE 36]
 {
-stranger and bade
-him speak.  But this
-man in green
-remained silent.
-Selrahc pleaded with
-the stranger to give
-his name, and would
-he please leave
+LINE=stranger and bade
+LINE=him speak.  But this
+LINE=man in green
+LINE=remained silent.
+LINE=Selrahc pleaded with
+LINE=the stranger to give
+LINE=his name, and would
+LINE=he please leave
 }
 
 [PAGE 37]
 {
-Selrahc to his work.
-But this mysterious
-stranger remained
-mute.
- This angered
-Selrahc mightily. Who
-was this silent man,
-interfering with
+LINE=Selrahc to his work.
+LINE=But this mysterious
+LINE=stranger remained
+LINE=mute.
+LINE= This angered
+LINE=Selrahc mightily. Who
+LINE=was this silent man,
+LINE=interfering with
 }
 
 [PAGE 38]
 {
-tasks the gods
-themselves had
-entrusted to Selrahc?
-In an attempt to
-embarrass this
-interloper, Selrahc
-stole his green
-trousers, leaving him
+LINE=tasks the gods
+LINE=themselves had
+LINE=entrusted to Selrahc?
+LINE=In an attempt to
+LINE=embarrass this
+LINE=interloper, Selrahc
+LINE=stole his green
+LINE=trousers, leaving him
 }
 
 [PAGE 39]
 {
-naked and open to
-comments about his
-very manhood, and
-still the stranger
-would not speak,
-would not leave this
-tiny corner of
-Rytabul.
+LINE=naked and open to
+LINE=comments about his
+LINE=very manhood, and
+LINE=still the stranger
+LINE=would not speak,
+LINE=would not leave this
+LINE=tiny corner of
+LINE=Rytabul.
 }
 
 [PAGE 40]
 {
-Vexed to his very
-limits, Selrahc took
-his war axe and
-smote the silent one
-mightily, again and
-again, until the
-silent stranger ran
-away, having never
+LINE=Vexed to his very
+LINE=limits, Selrahc took
+LINE=his war axe and
+LINE=smote the silent one
+LINE=mightily, again and
+LINE=again, until the
+LINE=silent stranger ran
+LINE=away, having never
 }
 
 [PAGE 41]
 {
-said a word, and
-never showed himself
-in Rytabul again.
- Thus endeth the
-tale of the bold
-stranger.
+LINE=said a word, and
+LINE=never showed himself
+LINE=in Rytabul again.
+LINE= Thus endeth the
+LINE=tale of the bold
+LINE=stranger.
 }
 
 // ============================ Birds of Britannia
@@ -579,285 +579,310 @@ PAGE=67
 
 [PAGE 42]
 {
- The wren is a tiny
-insect-eating bird
-with a loud voice.
-The cheerful trills
-of Wrens are
-extraordinaily varied
-and melodious.
- The swallow is
+LINE= The wren is a tiny
+LINE=insect-eating bird
+LINE=with a loud voice.
+LINE=The cheerful trills
+LINE=of Wrens are
+LINE=extraordinaily varied
+LINE=and melodious.
+LINE= The swallow is
 }
+
 [PAGE 43]
 {
-easily recognized by
-its forked tail.
-Swallows catch
-insects in flight,
-and have squeaky,
-twittering songs.
- The warbler is an
-exceptional singer,
+LINE=easily recognized by
+LINE=its forked tail.
+LINE=Swallows catch
+LINE=insects in flight,
+LINE=and have squeaky,
+LINE=twittering songs.
+LINE= The warbler is an
+LINE=exceptional singer,
 }
+
 [PAGE 44]
 {
-whose extensive songs
-combine the best
-qualities of Wrens
-and Swallows.
- The thatch climbs
-down trees head
-first, searching for
-insects in the bark.
+LINE=whose extensive songs
+LINE=combine the best
+LINE=qualities of Wrens
+LINE=and Swallows.
+LINE= The thatch climbs
+LINE=down trees head
+LINE=first, searching for
+LINE=insects in the bark.
 }
+
 [PAGE 45]
 {
-It sings a
-repetitive series of
-notes with a nasal
-tone quality.
- The agile chickadee
-has a buzzy "chick-a-
-dee-dee" call, from
-which its name is
+LINE=It sings a
+LINE=repetitive series of
+LINE=notes with a nasal
+LINE=tone quality.
+LINE= The agile chickadee
+LINE=has a buzzy "chick-a-
+LINE=dee-dee" call, from
+LINE=which its name is
 }
+
 [PAGE 46]
 {
-derived. Its song is
-a series of whistled
-notes.
- The thrush is a
-brown bird with a
-spotted breast, which
-eats worms and
-snails, and has a
+LINE=derived. Its song is
+LINE=a series of whistled
+LINE=notes.
+LINE= The thrush is a
+LINE=brown bird with a
+LINE=spotted breast, which
+LINE=eats worms and
+LINE=snails, and has a
 }
+
 [PAGE 47]
 {
-beautiful singing
-voice. Thrushes use
-a stone as an anvil
-to smash the shells
-of snails.
- The little
-nightingale is also
-known for its
+LINE=beautiful singing
+LINE=voice. Thrushes use
+LINE=a stone as an anvil
+LINE=to smash the shells
+LINE=of snails.
+LINE= The little
+LINE=nightingale is also
+LINE=known for its
 }
+
 [PAGE 48]
 {
-beautiful song, which
-it sings even at
-night.
- The starling is a
-small dark bird with
-a yellow bill and a
-squeaky,high-pitched
-song. Starlings can
+LINE=beautiful song, which
+LINE=it sings even at
+LINE=night.
+LINE= The starling is a
+LINE=small dark bird with
+LINE=a yellow bill and a
+LINE=squeaky,high-pitched
+LINE=song. Starlings can
 }
+
 [PAGE 49]
 {
-mimic the sounds of
-other birds.
- The skylark sings a
-series of high-
-pitched melodious
-trills in flight.
-  The finch is a
-small seed-eating
+LINE=mimic the sounds of
+LINE=other birds.
+LINE= The skylark sings a
+LINE=series of high-
+LINE=pitched melodious
+LINE=trills in flight.
+LINE=  The finch is a
+LINE=small seed-eating
 }
+
 [PAGE 50]
 {
-bird with a conical
-beak and a musical,
-warbling song.
- The crossbill is a
-kind of Finch with a
-strange crossed bill,
-which ituses to
-extract seeds from
+LINE=bird with a conical
+LINE=beak and a musical,
+LINE=warbling song.
+LINE= The crossbill is a
+LINE=kind of Finch with a
+LINE=strange crossed bill,
+LINE=which ituses to
+LINE=extract seeds from
 }
+
 [PAGE 51]
 {
-pine cones.
- The canary is a kind
-of Finch that is
-often kept as a pet.
-Miners would often
-take canaries
-underground with
-them, to warn them of
+LINE=pine cones.
+LINE= The canary is a kind
+LINE=of Finch that is
+LINE=often kept as a pet.
+LINE=Miners would often
+LINE=take canaries
+LINE=underground with
+LINE=them, to warn them of
 }
+
 [PAGE 52]
 {
-the presence of
-hazardous vapors in
-the air.
- The sparrow weaves
-a nest of grass, and
-has an unmusical
-chirp for a voice.
- The towhee is a kind
+LINE=the presence of
+LINE=hazardous vapors in
+LINE=the air.
+LINE= The sparrow weaves
+LINE=a nest of grass, and
+LINE=has an unmusical
+LINE=chirp for a voice.
+LINE= The towhee is a kind
 }
+
 [PAGE 53]
 {
-of Sparrow that
-continually reminds
-listeners to drink
-their tea.
- The shrike is a gray
-bird with a hooked
-bill. Shrikes have
-the habit of impaling
+LINE=of Sparrow that
+LINE=continually reminds
+LINE=listeners to drink
+LINE=their tea.
+LINE= The shrike is a gray
+LINE=bird with a hooked
+LINE=bill. Shrikes have
+LINE=the habit of impaling
 }
+
 [PAGE 54]
 {
-their prey on thorns.
- The woodpecker has
-a pointed beak that
-is suitable for
-pecking at wood to
-get at the insects
-inside.
- The kingfisher dives
+LINE=their prey on thorns.
+LINE= The woodpecker has
+LINE=a pointed beak that
+LINE=is suitable for
+LINE=pecking at wood to
+LINE=get at the insects
+LINE=inside.
+LINE= The kingfisher dives
 }
+
 [PAGE 55]
 {
-for fish, which it
-catches with its
-long, pointed beak.
- The tern migrates
-over great distances,
-from one end of
-Britannia to the
-other each year.
+LINE=for fish, which it
+LINE=catches with its
+LINE=long, pointed beak.
+LINE= The tern migrates
+LINE=over great distances,
+LINE=from one end of
+LINE=Britannia to the
+LINE=other each year.
 }
+
 [PAGE 56]
 {
-Terns dive from the
-air to catch fish.
- The plover is a bird
-that distracts
-predators by
-pretending to have a
-broken wing.
- The lapwing is a
+LINE=Terns dive from the
+LINE=air to catch fish.
+LINE= The plover is a bird
+LINE=that distracts
+LINE=predators by
+LINE=pretending to have a
+LINE=broken wing.
+LINE= The lapwing is a
 }
+
 [PAGE 57]
 {
-kind of Plover that
-has a long black
-crest.
- The hawk is a
-predator that feeds
-on small birds, mice,
-squirrels, and other
-small animals. Small
+LINE=kind of Plover that
+LINE=has a long black
+LINE=crest.
+LINE= The hawk is a
+LINE=predator that feeds
+LINE=on small birds, mice,
+LINE=squirrels, and other
+LINE=small animals. Small
 }
+
 [PAGE 58]
 {
-hawks are known as
-Kites.
- The dove is a seed-
-eating bird with a
-peaceful reputation.
-Doves have a low-
-pitched cooing song.
- The cuckoo is a
+LINE=hawks are known as
+LINE=Kites.
+LINE= The dove is a seed-
+LINE=eating bird with a
+LINE=peaceful reputation.
+LINE=Doves have a low-
+LINE=pitched cooing song.
+LINE= The cuckoo is a
 }
+
 [PAGE 59]
 {
-devious bird that
-lays eggs in the
-nests of Warblers and
-other small birds.
-Cuckoos have the
-uncanny ability to
-keep track of time,
-singing once at the
+LINE=devious bird that
+LINE=lays eggs in the
+LINE=nests of Warblers and
+LINE=other small birds.
+LINE=Cuckoos have the
+LINE=uncanny ability to
+LINE=keep track of time,
+LINE=singing once at the
 }
+
 [PAGE 60]
 {
-beginning of each
-hour.
- The roadrunner is an
-unusual bird with a
-long tail, wich runs
-swiftly along the
-ground hunting for
-lizards and snakes.
+LINE=beginning of each
+LINE=hour.
+LINE= The roadrunner is an
+LINE=unusual bird with a
+LINE=long tail, wich runs
+LINE=swiftly along the
+LINE=ground hunting for
+LINE=lizards and snakes.
 }
+
 [PAGE 61]
 {
- The swift is a very
-agile bird that
-spends nearly its
-entire life in the
-air. With their
-mouths wide open,
-Swifts capture
-insects in mid-
+LINE= The swift is a very
+LINE=agile bird that
+LINE=spends nearly its
+LINE=entire life in the
+LINE=air. With their
+LINE=mouths wide open,
+LINE=Swifts capture
+LINE=insects in mid-
 }
+
 [PAGE 62]
 {
-flight.
- The hummingbird is a
-cross between a Swift
-and a Fairy. These
-tiny, brightly
-colored birds hover
-magically near
-flowers, and live on
+LINE=flight.
+LINE= The hummingbird is a
+LINE=cross between a Swift
+LINE=and a Fairy. These
+LINE=tiny, brightly
+LINE=colored birds hover
+LINE=magically near
+LINE=flowers, and live on
 }
+
 [PAGE 63]
 {
-the nectar they
-provide.
- The owl is a
-reputedly wise bird
-that is active at
-night, unlike most
-birds. Owls have
-excellent night
+LINE=the nectar they
+LINE=provide.
+LINE= The owl is a
+LINE=reputedly wise bird
+LINE=that is active at
+LINE=night, unlike most
+LINE=birds. Owls have
+LINE=excellent night
 }
+
 [PAGE 64]
 {
-vision and low-
-pitched hooting
-calls. Their wings
-are silent in flight.
- The goatsucker is a
-strange owl-like bird
-that is though to
-live on the milk of
+LINE=vision and low-
+LINE=pitched hooting
+LINE=calls. Their wings
+LINE=are silent in flight.
+LINE= The goatsucker is a
+LINE=strange owl-like bird
+LINE=that is though to
+LINE=live on the milk of
 }
+
 [PAGE 65]
 {
-goats. These
-mysterious birds
-make jarring sounds
-at night, for which
-reason they are also
-called Nightjars.
- The duck is a bird
-that swims more often
+LINE=goats. These
+LINE=mysterious birds
+LINE=make jarring sounds
+LINE=at night, for which
+LINE=reason they are also
+LINE=called Nightjars.
+LINE= The duck is a bird
+LINE=that swims more often
 }
+
 [PAGE 66]
 {
-than it flies, and
-has a nasal voice
-that is described as
-a "quack".
- The swan is a kind
-of long-necked Duck
-that is all white.
-Swans are usually
+LINE=than it flies, and
+LINE=has a nasal voice
+LINE=that is described as
+LINE=a "quack".
+LINE= The swan is a kind
+LINE=of long-necked Duck
+LINE=that is all white.
+LINE=Swans are usually
 }
+
 [PAGE 67]
 {
-voiceless, but they
-are said to have an
-extraordinarily
-beautiful song.
+LINE=voiceless, but they
+LINE=are said to have an
+LINE=extraordinarily
+LINE=beautiful song.
 }
 
 // ============================ Regarding Llamas
@@ -874,45 +899,48 @@ PAGE=71
 
 [PAGE 68]
 {
- Llamas are curious
-bests, shaggy and
-sought after for
-their wool, yet of a
-curiously arrogant
-disposition reflected
-in their eyes, they
-live in mountainous
+LINE= Llamas are curious
+LINE=bests, shaggy and
+LINE=sought after for
+LINE=their wool, yet of a
+LINE=curiously arrogant
+LINE=disposition reflected
+LINE=in their eyes, they
+LINE=live in mountainous
 }
+
 [PAGE 69]
 {
-areas,though who may
-have first tamed them
-is lost in the mists
-of history.
- 'Tis a well-known
-fact that llamas can
-indeed be tamed, and
-used as grazing
+LINE=areas,though who may
+LINE=have first tamed them
+LINE=is lost in the mists
+LINE=of history.
+LINE= 'Tis a well-known
+LINE=fact that llamas can
+LINE=indeed be tamed, and
+LINE=used as grazing
 }
+
 [PAGE 70]
 {
-animals, for their
-meat, and of course
-for their wool. Yet
-'tis lesser known
-that their ornery
-disposition and
-tendency to spit at
-those they dislike
+LINE=animals, for their
+LINE=meat, and of course
+LINE=for their wool. Yet
+LINE='tis lesser known
+LINE=that their ornery
+LINE=disposition and
+LINE=tendency to spit at
+LINE=those they dislike
 }
+
 [PAGE 71]
 {
-makes them appealing
-guard creatures as
-well, though they
-have little sound
-with which to sound
-an alarm.
+LINE=makes them appealing
+LINE=guard creatures as
+LINE=well, though they
+LINE=have little sound
+LINE=with which to sound
+LINE=an alarm.
 }
 
 // ============================ Talking to Wisps
@@ -934,96 +962,104 @@ PAGE=80
 
 [PAGE 72]
 {
- This volume was
-sponsored by
-donations from Lord
-Blackthorn, ever a
-supporter of
-understanding the
-other sentient races
-of Britannia.
+LINE= This volume was
+LINE=sponsored by
+LINE=donations from Lord
+LINE=Blackthorn, ever a
+LINE=supporter of
+LINE=understanding the
+LINE=other sentient races
+LINE=of Britannia.
 }
+
 [PAGE 73]
 {
--
-
-Wisps are the most
-intelligent of the
-nonhuman races
-inhabiting Britannia.
-'Tis claimed by the
-great sages that
+LINE=-
+LINE=
+LINE=Wisps are the most
+LINE=intelligent of the
+LINE=nonhuman races
+LINE=inhabiting Britannia.
+LINE='Tis claimed by the
+LINE=great sages that
 }
+
 [PAGE 74]
 {
-someday we shall be
-able to converse with
-them openly in our
-native tongue--
-indeed, we must hope
-that wisps learn our
-language, for it is
-not possible for
+LINE=someday we shall be
+LINE=able to converse with
+LINE=them openly in our
+LINE=native tongue--
+LINE=indeed, we must hope
+LINE=that wisps learn our
+LINE=language, for it is
+LINE=not possible for
 }
+
 [PAGE 75]
 {
-humans to pronounce
-wispish!
- The wispish language
-seems to only contain
-one vowel, the letter
-Y. However, the
-letters W, C, M, and
-L seem to be treated
+LINE=humans to pronounce
+LINE=wispish!
+LINE= The wispish language
+LINE=seems to only contain
+LINE=one vowel, the letter
+LINE=Y. However, the
+LINE=letters W, C, M, and
+LINE=L seem to be treated
 }
+
 [PAGE 76]
 {
-grammatically as
-vowels, and in
-addition every letter
-is followed by what
-sound to the human
-ear like a glotal
-stop.  It is possible
-that the glottal stop
+LINE=grammatically as
+LINE=vowels, and in
+LINE=addition every letter
+LINE=is followed by what
+LINE=sound to the human
+LINE=ear like a glotal
+LINE=stop.  It is possible
+LINE=that the glottal stop
 }
+
 [PAGE 77]
 {
-is considered a vowel
-as well.
- Wisps do make use of
-what sound to us like
-pitch and emphasis
-shifts similar to
-exclamations and
-questions.
+LINE=is considered a vowel
+LINE=as well.
+LINE= Wisps do make use of
+LINE=what sound to us like
+LINE=pitch and emphasis
+LINE=shifts similar to
+LINE=exclamations and
+LINE=questions.
 }
+
 [PAGE 78]
 {
- The average word is
-wispish seems to
-consist of three
-phonemes and three
-glottal stops, plus
-possibly a pitch
-shift. It often
-sounds like a fire
+LINE= The average word is
+LINE=wispish seems to
+LINE=consist of three
+LINE=phonemes and three
+LINE=glottal stops, plus
+LINE=possibly a pitch
+LINE=shift. It often
+LINE=sounds like a fire
 }
+
 [PAGE 79]
 {
-burning or crackling.
-Some have speculated
-that what we are
-analyzing is in fact
-nothing more than the
-very air crackling
-near the wisp's glow,
-and not language, but
+LINE=burning or crackling.
+LINE=Some have speculated
+LINE=that what we are
+LINE=analyzing is in fact
+LINE=nothing more than the
+LINE=very air crackling
+LINE=near the wisp's glow,
+LINE=and not language, but
 }
+
 [PAGE 80]
 {
-this is of course
-unlikely.
+LINE=this is of course
+LINE=unlikely.
 }
 
 // ============================ Taming Dragons
@@ -1044,87 +1080,94 @@ PAGE=88
 
 [PAGE 81]
 {
- I have not much to
-tell about dragons.
-The sole time I
-approached one with
-an eye towards taming
-it, my initial
-attempts at calming
-it met with failure.
+LINE= I have not much to
+LINE=tell about dragons.
+LINE=The sole time I
+LINE=approached one with
+LINE=an eye towards taming
+LINE=it, my initial
+LINE=attempts at calming
+LINE=it met with failure.
 }
+
 [PAGE 82]
 {
-It fixed a massive
-beady eye upon me,
-and began its
-slithering approach,
-intending no doubt to
-insert me into its
-maw and bear down
-with its teeth.
+LINE=It fixed a massive
+LINE=beady eye upon me,
+LINE=and began its
+LINE=slithering approach,
+LINE=intending no doubt to
+LINE=insert me into its
+LINE=maw and bear down
+LINE=with its teeth.
 }
+
 [PAGE 83]
 {
- However, as I was
-engaged in what
-remains to this day
-the most terrifying
-combat of my life,
-the dragon suddenly
-whirled as if in a
-panic, ran a short
+LINE= However, as I was
+LINE=engaged in what
+LINE=remains to this day
+LINE=the most terrifying
+LINE=combat of my life,
+LINE=the dragon suddenly
+LINE=whirled as if in a
+LINE=panic, ran a short
 }
+
 [PAGE 84]
 {
-distance, took off
-into the air, then
-transformed into a
-whirlwind. Lastly, it
-exploded, showering
-guts of black blood
-and heaving, stinking
-flesh upon miles of
+LINE=distance, took off
+LINE=into the air, then
+LINE=transformed into a
+LINE=whirlwind. Lastly, it
+LINE=exploded, showering
+LINE=guts of black blood
+LINE=and heaving, stinking
+LINE=flesh upon miles of
 }
+
 [PAGE 85]
 {
-countryside. The
-fireball was massive
-enough to light a
-city, I should
-surmise.
- I never did discover
-the exact cause of
-this strange behavior
+LINE=countryside. The
+LINE=fireball was massive
+LINE=enough to light a
+LINE=city, I should
+LINE=surmise.
+LINE= I never did discover
+LINE=the exact cause of
+LINE=this strange behavior
 }
+
 [PAGE 86]
 {
-except to assume that
-it was not typical
-for this reptilian
-species. My best
-guesses revolve
-around a magical
-fracture in the
-nature of reality,
+LINE=except to assume that
+LINE=it was not typical
+LINE=for this reptilian
+LINE=species. My best
+LINE=guesses revolve
+LINE=around a magical
+LINE=fracture in the
+LINE=nature of reality,
 }
+
 [PAGE 87]
 {
-which is far too
-esoteric a territory
-for one of my limited
-scholarship.
- Hence my basic
-advice to those who
-seek to tame a dragon
--be sure that thou
+LINE=which is far too
+LINE=esoteric a territory
+LINE=for one of my limited
+LINE=scholarship.
+LINE= Hence my basic
+LINE=advice to those who
+LINE=seek to tame a dragon
+LINE=-be sure that thou
 }
+
 [PAGE 88]
 {
-hast mastered the
-twin skills of taming
-animals, and running
-away very very fast.
+LINE=hast mastered the
+LINE=twin skills of taming
+LINE=animals, and running
+LINE=away very very fast.
 }
 
 // ============================ A Politic Call to Anarchy
@@ -1152,163 +1195,177 @@ PAGE=103
 
 [PAGE 89]
 {
- Let it never be said
-that I have aught as
-quarrel with my liege
-Lord British, for
-indeed we be of the
-best of friends,
-sharing amicable
-games of chess 'pon a
+LINE= Let it never be said
+LINE=that I have aught as
+LINE=quarrel with my liege
+LINE=Lord British, for
+LINE=indeed we be of the
+LINE=best of friends,
+LINE=sharing amicable
+LINE=games of chess 'pon a
 }
+
 [PAGE 90]
 {
-winter's night, and
-talking at length
-into the wee hours of
-the issues that
-affect the realm of
-Britannia.
- Yet true friendship
-doth not prevent true
+LINE=winter's night, and
+LINE=talking at length
+LINE=into the wee hours of
+LINE=the issues that
+LINE=affect the realm of
+LINE=Britannia.
+LINE= Yet true friendship
+LINE=doth not prevent true
 }
+
 [PAGE 91]
 {
-philosophical
-disagreement either.
-While I view with
-approval my lord's
-affection for his
-carefully crafted
-philosophy of the
-Eight Virtues,
+LINE=philosophical
+LINE=disagreement either.
+LINE=While I view with
+LINE=approval my lord's
+LINE=affection for his
+LINE=carefully crafted
+LINE=philosophy of the
+LINE=Eight Virtues,
 }
+
 [PAGE 92]
 {
-wherein moral
-behavior is
-encouraged in the
-populace, I view with
-less approval the
-expenditure of public
-funds upon the
-construction of
+LINE=wherein moral
+LINE=behavior is
+LINE=encouraged in the
+LINE=populace, I view with
+LINE=less approval the
+LINE=expenditure of public
+LINE=funds upon the
+LINE=construction of
 }
+
 [PAGE 93]
 {
-"shrines" to said
-ideals.
- The issue is not one
-of funds, however,
-but a disagreement
-most intellectual
-over the proper way
-of humankind in an
+LINE="shrines" to said
+LINE=ideals.
+LINE= The issue is not one
+LINE=of funds, however,
+LINE=but a disagreement
+LINE=most intellectual
+LINE=over the proper way
+LINE=of humankind in an
 }
+
 [PAGE 94]
 {
-ethical sense. Surely
-freedom of decision
-must be regarded as
-paramount in any
-such moral decision?
-Though none fail to
-censure the murderer,
-a subtler question
+LINE=ethical sense. Surely
+LINE=freedom of decision
+LINE=must be regarded as
+LINE=paramount in any
+LINE=such moral decision?
+LINE=Though none fail to
+LINE=censure the murderer,
+LINE=a subtler question
 }
+
 [PAGE 95]
 {
-arises when we ask if
-his behavior would be
-ethical if he were
-forced to do it.
- I say to thee, the
-reader, quite flatly,
-that no ethical
-system shall have
+LINE=arises when we ask if
+LINE=his behavior would be
+LINE=ethical if he were
+LINE=forced to do it.
+LINE= I say to thee, the
+LINE=reader, quite flatly,
+LINE=that no ethical
+LINE=system shall have
 }
+
 [PAGE 96]
 {
-sway over me unless
-it convinceth me, for
-that freely made
-choice is to me the
-sign that the system
-hath validity.
- Whereas the system
-of "Virtues" that my
+LINE=sway over me unless
+LINE=it convinceth me, for
+LINE=that freely made
+LINE=choice is to me the
+LINE=sign that the system
+LINE=hath validity.
+LINE= Whereas the system
+LINE=of "Virtues" that my
 }
+
 [PAGE 97]
 {
-liege espouses is
-indeed a compilation
-of commonly approve
-virtues, I approve of
-it. Where it seeks to
-control the populace
-and restrict their
-diversity and their
+LINE=liege espouses is
+LINE=indeed a compilation
+LINE=of commonly approve
+LINE=virtues, I approve of
+LINE=it. Where it seeks to
+LINE=control the populace
+LINE=and restrict their
+LINE=diversity and their
 }
+
 [PAGE 98]
 {
-range of behaviors, I
-quarrel with it. And
-thus do I issue this
-politic call to
-anarchy, whilst
-humbly begging for
-forgiveness of Lord
-British for my
+LINE=range of behaviors, I
+LINE=quarrel with it. And
+LINE=thus do I issue this
+LINE=politic call to
+LINE=anarchy, whilst
+LINE=humbly begging for
+LINE=forgiveness of Lord
+LINE=British for my
 }
+
 [PAGE 99]
 {
-impertinence:
- Celebrate thy
-differences. Take thy
-actions according to
-thy own lights.
-Question from what
-source a law, a rule,
-a judge, and a virtue
+LINE=impertinence:
+LINE= Celebrate thy
+LINE=differences. Take thy
+LINE=actions according to
+LINE=thy own lights.
+LINE=Question from what
+LINE=source a law, a rule,
+LINE=a judge, and a virtue
 }
+
 [PAGE 100]
 {
-may arise. 'Twere
-possible (though I
-suggest it not
-seriously) that a
-demon planted the
-seed of these
-"Virtues" in my Lord
-British's mind;
+LINE=may arise. 'Twere
+LINE=possible (though I
+LINE=suggest it not
+LINE=seriously) that a
+LINE=demon planted the
+LINE=seed of these
+LINE="Virtues" in my Lord
+LINE=British's mind;
 }
+
 [PAGE 101]
 {
-'twere possible that
-the Shrines were but
-a plan to destroy
-this world. Thou
-canst not know unless
-thou questioneth,
-doubteth, and in the
-end, unless thou
+LINE='twere possible that
+LINE=the Shrines were but
+LINE=a plan to destroy
+LINE=this world. Thou
+LINE=canst not know unless
+LINE=thou questioneth,
+LINE=doubteth, and in the
+LINE=end, unless thou
 }
+
 [PAGE 102]
 {
-relyest upon THYSELF
-and thy judgment.
- I offer these words
-as mere philosophical
-musing for those who
-seek enlightenment,
-for 'tis the issue
-that hath occupied
+LINE=relyest upon THYSELF
+LINE=and thy judgment.
+LINE= I offer these words
+LINE=as mere philosophical
+LINE=musing for those who
+LINE=seek enlightenment,
+LINE=for 'tis the issue
+LINE=that hath occupied
 }
+
 [PAGE 103]
 {
-mine interest and
-that of Lord British
-for some time now.
+LINE=mine interest and
+LINE=that of Lord British
+LINE=for some time now.
 }
 
 // ============================ Ethical Hedonism: An Introduction
@@ -1345,276 +1402,300 @@ PAGE=127
 
 [PAGE 104]
 {
- Societies oft have
-common codes of
-conduct which it
-expects all it's
-people to abide by.
-Now, while 'tis true
-that this can offer
-some advantages, most
+LINE= Societies oft have
+LINE=common codes of
+LINE=conduct which it
+LINE=expects all it's
+LINE=people to abide by.
+LINE=Now, while 'tis true
+LINE=that this can offer
+LINE=some advantages, most
 }
+
 [PAGE 105]
 {
-of the codes I see
-today around
-Britannia have fatal
-flaws. Let us examine
-them.
- First, there is
-Blackthorn's code of
-Chaos or basically
+LINE=of the codes I see
+LINE=today around
+LINE=Britannia have fatal
+LINE=flaws. Let us examine
+LINE=them.
+LINE= First, there is
+LINE=Blackthorn's code of
+LINE=Chaos or basically
 }
+
 [PAGE 106]
 {
-Anarchy. Whereas
-this affords the
-individual maximum
-opportunity for
-individuality and eve
-pursuit of personal
-happiness, it does
-not offer even basic
+LINE=Anarchy. Whereas
+LINE=this affords the
+LINE=individual maximum
+LINE=opportunity for
+LINE=individuality and eve
+LINE=pursuit of personal
+LINE=happiness, it does
+LINE=not offer even basic
 }
+
 [PAGE 106]
 {
-interpersonal conduct
-codes to prevent
-people from killing
-each other.
- Without such basic
-tenets, all the
-people will need to
-spend a significant
+LINE=interpersonal conduct
+LINE=codes to prevent
+LINE=people from killing
+LINE=each other.
+LINE= Without such basic
+LINE=tenets, all the
+LINE=people will need to
+LINE=spend a significant
 }
+
 [PAGE 107]
 {
-portion of their time
-and effort towards
-personal protection
-and thus less time
-towards other more
-beneficial pursuits.
- Then there are the
-moral codes that are
+LINE=portion of their time
+LINE=and effort towards
+LINE=personal protection
+LINE=and thus less time
+LINE=towards other more
+LINE=beneficial pursuits.
+LINE= Then there are the
+LINE=moral codes that are
 }
+
 [PAGE 108]
 {
-so popular today.
-These codes are built
-largely on historical
-tradition rather than
-current logic and
-thus are also
-antiquated. For
-example many moral
+LINE=so popular today.
+LINE=These codes are built
+LINE=largely on historical
+LINE=tradition rather than
+LINE=current logic and
+LINE=thus are also
+LINE=antiquated. For
+LINE=example many moral
 }
+
 [PAGE 109]
 {
-codes we see today
-include statements
-about not eating
-certain foods that
-once were often
-poisonous, but today
-can be prepared
-safely.
+LINE=codes we see today
+LINE=include statements
+LINE=about not eating
+LINE=certain foods that
+LINE=once were often
+LINE=poisonous, but today
+LINE=can be prepared
+LINE=safely.
 }
+
 [PAGE 110]
 {
- Many forbid contact
-between young people
-of the opposite
-gender, which can in
-fact be hazardous;
-but the codes often
-have lost the context
-as to why this is
+LINE= Many forbid contact
+LINE=between young people
+LINE=of the opposite
+LINE=gender, which can in
+LINE=fact be hazardous;
+LINE=but the codes often
+LINE=have lost the context
+LINE=as to why this is
 }
+
 [PAGE 111]
 {
-done, instead merely
-calling it amoral. In
-this day and age to
-call that a necessary
-moral would need a
-new reasoning. I put
-forth that tradition
-is not enough.
+LINE=done, instead merely
+LINE=calling it amoral. In
+LINE=this day and age to
+LINE=call that a necessary
+LINE=moral would need a
+LINE=new reasoning. I put
+LINE=forth that tradition
+LINE=is not enough.
 }
+
 [PAGE 112]
 {
- Then there are Lord
-British's Virtues. It
-strikes me that while
-a system of virtues
-is wonderful as a
-touchstone to guide a
-society to good
-behavior, these are
+LINE= Then there are Lord
+LINE=British's Virtues. It
+LINE=strikes me that while
+LINE=a system of virtues
+LINE=is wonderful as a
+LINE=touchstone to guide a
+LINE=society to good
+LINE=behavior, these are
 }
+
 [PAGE 113]
 {
-but shades of the
-underlying truth as
-to why one may wish
-to live a life
-according to certain
-rules of conduct.
- On the other hand,
-clearly the Virtues
+LINE=but shades of the
+LINE=underlying truth as
+LINE=to why one may wish
+LINE=to live a life
+LINE=according to certain
+LINE=rules of conduct.
+LINE= On the other hand,
+LINE=clearly the Virtues
 }
+
 [PAGE 114]
 {
-that I have heard
-Lord British speak of
-are clearly positive
-codes of conduct, far
-better than the world
-of anarchy that Lord
-Blackthorn suggests.
-Yet, are not these
+LINE=that I have heard
+LINE=Lord British speak of
+LINE=are clearly positive
+LINE=codes of conduct, far
+LINE=better than the world
+LINE=of anarchy that Lord
+LINE=Blackthorn suggests.
+LINE=Yet, are not these
 }
+
 [PAGE 115]
 {
-Virtues still derived
-from a set of
-principles which
-though they sound
-good, are difficult
-to pin down as
-actual, undeniable,
-rational truths?
+LINE=Virtues still derived
+LINE=from a set of
+LINE=principles which
+LINE=though they sound
+LINE=good, are difficult
+LINE=to pin down as
+LINE=actual, undeniable,
+LINE=rational truths?
 }
+
 [PAGE 116]
 {
- Worse yet though
-imagine a society
-who's code of conduct
-was based on pure
-survival of the
-strongest. While this
-society may function
-and even accomplish
+LINE= Worse yet though
+LINE=imagine a society
+LINE=who's code of conduct
+LINE=was based on pure
+LINE=survival of the
+LINE=strongest. While this
+LINE=society may function
+LINE=and even accomplish
 }
+
 [PAGE 117]
 {
-much, it can be
-fairly argued that
-personal happiness
-would suffer greatly
-except for those at
-the top. To rule that
-out, however, we must
-first believe that
+LINE=much, it can be
+LINE=fairly argued that
+LINE=personal happiness
+LINE=would suffer greatly
+LINE=except for those at
+LINE=the top. To rule that
+LINE=out, however, we must
+LINE=first believe that
 }
+
 [PAGE 118]
 {
-people have a right
-to pursue happiness.
- I hope is a safe
-assumption that all
-beings wish to be
-happy, I will broadly
-describe this as
-Hedonism. Yet, if all
+LINE=people have a right
+LINE=to pursue happiness.
+LINE= I hope is a safe
+LINE=assumption that all
+LINE=beings wish to be
+LINE=happy, I will broadly
+LINE=describe this as
+LINE=Hedonism. Yet, if all
 }
+
 [PAGE 119]
 {
-people did is live a
-life of hedonism,
-their hedonism might
-be in conflict with
-those near them, so I
-will use the term
-Ethics to describe
-limits one might put
+LINE=people did is live a
+LINE=life of hedonism,
+LINE=their hedonism might
+LINE=be in conflict with
+LINE=those near them, so I
+LINE=will use the term
+LINE=Ethics to describe
+LINE=limits one might put
 }
+
 [PAGE 120]
 {
-on one's hedonistic
-tendencies to allow
-others to pursue
-their happiness as
-well.
- Allow me to give
-this example: If one
-were to live alone on
+LINE=on one's hedonistic
+LINE=tendencies to allow
+LINE=others to pursue
+LINE=their happiness as
+LINE=well.
+LINE= Allow me to give
+LINE=this example: If one
+LINE=were to live alone on
 }
+
 [PAGE 121]
 {
-a desert isle, one
-could live a life of
-pure hedonism, for no
-action one might take
-could interfere with
-another's right to
-pursue their
-happiness. Poison the
+LINE=a desert isle, one
+LINE=could live a life of
+LINE=pure hedonism, for no
+LINE=action one might take
+LINE=could interfere with
+LINE=another's right to
+LINE=pursue their
+LINE=happiness. Poison the
 }
+
 [PAGE 122]
 {
-lake if you like,
-there is no one to
-blame but yourself!
- Now suppose two of
-you live on that
-island. Thou dost not
-want thy neighbor to
-feel free to poison
+LINE=lake if you like,
+LINE=there is no one to
+LINE=blame but yourself!
+LINE= Now suppose two of
+LINE=you live on that
+LINE=island. Thou dost not
+LINE=want thy neighbor to
+LINE=feel free to poison
 }
+
 [PAGE 123]
 {
-the lake. Would it
-not be better to
-consider it unethical
-to poison the lake
-without first
-thinking of those
-whose pursuit of
-happiness might be
+LINE=the lake. Would it
+LINE=not be better to
+LINE=consider it unethical
+LINE=to poison the lake
+LINE=without first
+LINE=thinking of those
+LINE=whose pursuit of
+LINE=happiness might be
 }
+
 [PAGE 124]
 {
-affected by this
-action?
- I put forth that it
-is the fact that we
-as a people choose to
-live in groups known
-as a society that
-causes us to
+LINE=affected by this
+LINE=action?
+LINE= I put forth that it
+LINE=is the fact that we
+LINE=as a people choose to
+LINE=live in groups known
+LINE=as a society that
+LINE=causes us to
 }
+
 [PAGE 125]
 {
-compromise our pure
-hedonism with logical
-ethics. Likewise we
-accept not being able
-to kill others
-without reason,
-because our own
-pursuit of happiness
+LINE=compromise our pure
+LINE=hedonism with logical
+LINE=ethics. Likewise we
+LINE=accept not being able
+LINE=to kill others
+LINE=without reason,
+LINE=because our own
+LINE=pursuit of happiness
 }
+
 [PAGE 126]
 {
-would be greatly
-interfered with if we
-feared others would
-do the same to us.
-From this basis of
-logic can be formed
-the Tenets of Ethical
-Hedonism.
+LINE=would be greatly
+LINE=interfered with if we
+LINE=feared others would
+LINE=do the same to us.
+LINE=From this basis of
+LINE=logic can be formed
+LINE=the Tenets of Ethical
+LINE=Hedonism.
 }
+
 [PAGE 127]
 {
- For more on this
-subject, see The
-Tenants of Ethical
-Hedonism, by Richard
-Garriott and Herman
-Miller.
+LINE= For more on this
+LINE=subject, see The
+LINE=Tenants of Ethical
+LINE=Hedonism, by Richard
+LINE=Garriott and Herman
+LINE=Miller.
 }
 
 // ============================ On the Diversity of Our Land
@@ -1642,167 +1723,181 @@ PAGE=142
 
 [PAGE 128]
 {
- While I deplore the
-depredations of the
-misguided and
-belligerent races
-with which we share
-our fair Britannia,
-and alongside the
-populace do morn the
+LINE= While I deplore the
+LINE=depredations of the
+LINE=misguided and
+LINE=belligerent races
+LINE=with which we share
+LINE=our fair Britannia,
+LINE=and alongside the
+LINE=populace do morn the
 }
+
 [PAGE 129]
 {
-needles deaths that
-their raids cause, I
-can not countenance
-the policy of
-wholesale slaughter
-of these races that
-seems to be the habit
-of our soldierly
+LINE=needles deaths that
+LINE=their raids cause, I
+LINE=can not countenance
+LINE=the policy of
+LINE=wholesale slaughter
+LINE=of these races that
+LINE=seems to be the habit
+LINE=of our soldierly
 }
+
 [PAGE 130]
 {
-element.
- Can we not regard
-the ratmen, lizard
-men, and orcs are
-fellow intelligent
-beings with whom we
-share a planet? Why
-must we slay them on
+LINE=element.
+LINE= Can we not regard
+LINE=the ratmen, lizard
+LINE=men, and orcs are
+LINE=fellow intelligent
+LINE=beings with whom we
+LINE=share a planet? Why
+LINE=must we slay them on
 }
+
 [PAGE 131]
 {
-sight, rather than
-attempt to engage
-them in dialogue?
-There is no policy of
-shooting at wisps
-when they grace us
-with their presence
-(not that an arrow
+LINE=sight, rather than
+LINE=attempt to engage
+LINE=them in dialogue?
+LINE=There is no policy of
+LINE=shooting at wisps
+LINE=when they grace us
+LINE=with their presence
+LINE=(not that an arrow
 }
+
 [PAGE 132]
 {
-could do much to
-pierce them!).
- To view these
-creatures as vermin
-denies their obvious
-intelligence, and we
-cannot underestimate
-the repercussions
+LINE=could do much to
+LINE=pierce them!).
+LINE= To view these
+LINE=creatures as vermin
+LINE=denies their obvious
+LINE=intelligence, and we
+LINE=cannot underestimate
+LINE=the repercussions
 }
+
 [PAGE 133]
 {
-that their slaughter
-may have. If we
-regard the slaying of
-fellow humans as a
-crime, so must we
-regard the killing of
-an orc.
- At the same time,
+LINE=that their slaughter
+LINE=may have. If we
+LINE=regard the slaying of
+LINE=fellow humans as a
+LINE=crime, so must we
+LINE=regard the killing of
+LINE=an orc.
+LINE= At the same time,
 }
+
 [PAGE 134]
 {
-should a lizardman
-slay a human, should
-we not forgive their
-ignorance and
-foolishness? Let us
-not surrender the
-high moral ground by
-descending to
+LINE=should a lizardman
+LINE=slay a human, should
+LINE=we not forgive their
+LINE=ignorance and
+LINE=foolishness? Let us
+LINE=not surrender the
+LINE=high moral ground by
+LINE=descending to
 }
+
 [PAGE 135]
 {
-bestiality.
- Now, I say not that
-we should fail to
-defend ourselves in
-case of attack, for
-even amongst humans
-we see war, we see
-famine, and we see
+LINE=bestiality.
+LINE= Now, I say not that
+LINE=we should fail to
+LINE=defend ourselves in
+LINE=case of attack, for
+LINE=even amongst humans
+LINE=we see war, we see
+LINE=famine, and we see
 }
+
 [PAGE 136]
 {
-assault (though we
-owe a debt of
-gratitude to our Lord
-British for
-preserving us from
-the worst of these!).
-However, incursions
-such as the recent
+LINE=assault (though we
+LINE=owe a debt of
+LINE=gratitude to our Lord
+LINE=British for
+LINE=preserving us from
+LINE=the worst of these!).
+LINE=However, incursions
+LINE=such as the recent
 }
+
 [PAGE 137]
 {
-tragedy which cast us
-the life of Japheth,
-Guildmaster of
-Trinsic's Paladins,
-are folly.
- I had met Japheth,
-and like all
-paladins, he burned
+LINE=tragedy which cast us
+LINE=the life of Japheth,
+LINE=Guildmaster of
+LINE=Trinsic's Paladins,
+LINE=are folly.
+LINE= I had met Japheth,
+LINE=and like all
+LINE=paladins, he burned
 }
+
 [PAGE 138]
 {
-with an inner fire.
-Yet though I had the
-utmost respect for
-him, none could deny
-the hatred that
-flashed in his eyes
-at the mere mention
-of orcs. And thus he
+LINE=with an inner fire.
+LINE=Yet though I had the
+LINE=utmost respect for
+LINE=him, none could deny
+LINE=the hatred that
+LINE=flashed in his eyes
+LINE=at the mere mention
+LINE=of orcs. And thus he
 }
+
 [PAGE 139]
 {
-carried his battle to
-the orc camps, and
-died there, unable to
-rise above his own
-childhood experiences
-depicted in his book,
-"The Burning of
-Trinsic". 'Tis a
+LINE=carried his battle to
+LINE=the orc camps, and
+LINE=died there, unable to
+LINE=rise above his own
+LINE=childhood experiences
+LINE=depicted in his book,
+LINE="The Burning of
+LINE=Trinsic". 'Tis a
 }
+
 [PAGE 140]
 {
-shame that even our
-mightiest men fall
-prey to this
-ignorance!
- Are there not
-legends of orcs
-adopting human
-children to raise as
+LINE=shame that even our
+LINE=mightiest men fall
+LINE=prey to this
+LINE=ignorance!
+LINE= Are there not
+LINE=legends of orcs
+LINE=adopting human
+LINE=children to raise as
 }
+
 [PAGE 141]
 {
-their own? Tales of
-complex societies
-build underground by
-races we regard as
-bestial?
- Let us not repeat
-the mistake of
-Japheth of the
+LINE=their own? Tales of
+LINE=complex societies
+LINE=build underground by
+LINE=races we regard as
+LINE=bestial?
+LINE= Let us not repeat
+LINE=the mistake of
+LINE=Japheth of the
 }
+
 [PAGE 142]
 {
-Paladins, and let us
-cease to persecute
-the nonhuman races,
-before we discover
-that we are harming
-ourselves in the
-process.
+LINE=Paladins, and let us
+LINE=cease to persecute
+LINE=the nonhuman races,
+LINE=before we discover
+LINE=that we are harming
+LINE=ourselves in the
+LINE=process.
 }
 
 // ============================ Virtue
@@ -1836,233 +1931,254 @@ PAGE=163
 
 [PAGE 143]
 {
- Within this world
-live people with many
-different ideals, and
-this is good. Yet
-what is it within the
-people of our land
-that sorts out the
-good from the evil,
+LINE= Within this world
+LINE=live people with many
+LINE=different ideals, and
+LINE=this is good. Yet
+LINE=what is it within the
+LINE=people of our land
+LINE=that sorts out the
+LINE=good from the evil,
 }
+
 [PAGE 144]
 {
-the cherished form
-the disdained?
-Virtue, I say it is,
-and virtue is the
-logical outcome of a
-people who wish to
-live together in a
-bonded society.
+LINE=the cherished form
+LINE=the disdained?
+LINE=Virtue, I say it is,
+LINE=and virtue is the
+LINE=logical outcome of a
+LINE=people who wish to
+LINE=live together in a
+LINE=bonded society.
 }
+
 [PAGE 145]
 {
- For without Virtues
-as a code of conduct
-which people maintain
-in their relations
-with each other, the
-fabric of that
-society will become
-weakened. For a
+LINE= For without Virtues
+LINE=as a code of conduct
+LINE=which people maintain
+LINE=in their relations
+LINE=with each other, the
+LINE=fabric of that
+LINE=society will become
+LINE=weakened. For a
 }
+
 [PAGE 146]
 {
-society to grow and
-prosper for all, each
-must grant the others
-a common base of
-consideration.
- I call this the base
-the Virtues. For
-though one person
+LINE=society to grow and
+LINE=prosper for all, each
+LINE=must grant the others
+LINE=a common base of
+LINE=consideration.
+LINE= I call this the base
+LINE=the Virtues. For
+LINE=though one person
 }
+
 [PAGE 147]
 {
-might gain personal
-advantage by
-breaching such a
-code, the society as
-a whole would suffer.
- There are three
-Principle Virtues
-that should guide
+LINE=might gain personal
+LINE=advantage by
+LINE=breaching such a
+LINE=code, the society as
+LINE=a whole would suffer.
+LINE= There are three
+LINE=Principle Virtues
+LINE=that should guide
 }
+
 [PAGE 148]
 {
-people to
-enlightenment. These
-are: Truth, Love and
-Courage. From all the
-infinite reasons one
-may have to found an
-action, such as greed
-or charity, envy or
+LINE=people to
+LINE=enlightenment. These
+LINE=are: Truth, Love and
+LINE=Courage. From all the
+LINE=infinite reasons one
+LINE=may have to found an
+LINE=action, such as greed
+LINE=or charity, envy or
 }
+
 [PAGE 149]
 {
-pity, the three
-Principle Virtues
-stand out.
- In fact all other
-virtues and vices can
-be shown to be built
-from these principle
-and their opposite
+LINE=pity, the three
+LINE=Principle Virtues
+LINE=stand out.
+LINE= In fact all other
+LINE=virtues and vices can
+LINE=be shown to be built
+LINE=from these principle
+LINE=and their opposite
 }
+
 [PAGE 150]
 {
-corruption's of
-Falsehood, Hatred and
-Cowardice. These
-three Principles can
-be combined in eight
-ways, which I will
-call the eight
-virtues. The eight
+LINE=corruption's of
+LINE=Falsehood, Hatred and
+LINE=Cowardice. These
+LINE=three Principles can
+LINE=be combined in eight
+LINE=ways, which I will
+LINE=call the eight
+LINE=virtues. The eight
 }
+
 [PAGE 151]
 {
-virtues which we
-should build our
-society upon follow.
- Truth alone becomes
-Honesty, for without
-honesty between our
-people, how can we
-build the trust which
+LINE=virtues which we
+LINE=should build our
+LINE=society upon follow.
+LINE= Truth alone becomes
+LINE=Honesty, for without
+LINE=honesty between our
+LINE=people, how can we
+LINE=build the trust which
 }
+
 [PAGE 152]
 {
-is needed to maximize
-our successes.
- Love alone becomes
-compassion, for at
-some time or another
-all of us will need
-the compassion of
-others, and most
+LINE=is needed to maximize
+LINE=our successes.
+LINE= Love alone becomes
+LINE=compassion, for at
+LINE=some time or another
+LINE=all of us will need
+LINE=the compassion of
+LINE=others, and most
 }
+
 [PAGE 153]
 {
-likely compassion
-will be shown to
-those who have shown
-it.
- Courage alone
-becomes Valor,
-without valor our
-people will never
+LINE=likely compassion
+LINE=will be shown to
+LINE=those who have shown
+LINE=it.
+LINE= Courage alone
+LINE=becomes Valor,
+LINE=without valor our
+LINE=people will never
 }
+
 [PAGE 154]
 {
-reach into the
-unknown or to the
-risky and will never
-achieve.
- Truth tempered by
-Love give us Justice,
-for only in a loving
-search for the truth
+LINE=reach into the
+LINE=unknown or to the
+LINE=risky and will never
+LINE=achieve.
+LINE= Truth tempered by
+LINE=Love give us Justice,
+LINE=for only in a loving
+LINE=search for the truth
 }
+
 [PAGE 155]
 {
-can one dispense fair
-Justice, rather than
-create a cold and
-callous people.
- Love and Courage
-give us Sacrifice,
-for a people who love
-each other will be
+LINE=can one dispense fair
+LINE=Justice, rather than
+LINE=create a cold and
+LINE=callous people.
+LINE= Love and Courage
+LINE=give us Sacrifice,
+LINE=for a people who love
+LINE=each other will be
 }
+
 [PAGE 156]
 {
-willing to make
-personal sacrifices
-to help other in
-need, which one day,
-may be needed in
-return.
- Courage and Truth
-give us Honor, great
+LINE=willing to make
+LINE=personal sacrifices
+LINE=to help other in
+LINE=need, which one day,
+LINE=may be needed in
+LINE=return.
+LINE= Courage and Truth
+LINE=give us Honor, great
 }
+
 [PAGE 157]
 {
-knights know this
-well, that chivalric
-honor can be found by
-adhering to this code
-of conduct.
- Combining Truth,
-Love and Courage
-suggest the virtue of
+LINE=knights know this
+LINE=well, that chivalric
+LINE=honor can be found by
+LINE=adhering to this code
+LINE=of conduct.
+LINE= Combining Truth,
+LINE=Love and Courage
+LINE=suggest the virtue of
 }
+
 [PAGE 158]
 {
-Spirituality the
-virtue that causes
-one to be
-introspective, to
-wonder about ones
-place in this world
-and whether one's
-deeds will be
+LINE=Spirituality the
+LINE=virtue that causes
+LINE=one to be
+LINE=introspective, to
+LINE=wonder about ones
+LINE=place in this world
+LINE=and whether one's
+LINE=deeds will be
 }
+
 [PAGE 159]
 {
-recorded as a gift to
-the world or a
-plague.
- The final Virtue is
-more complicated. For
-the eighth
-combination is that
-devoid of Truth, Love
+LINE=recorded as a gift to
+LINE=the world or a
+LINE=plague.
+LINE= The final Virtue is
+LINE=more complicated. For
+LINE=the eighth
+LINE=combination is that
+LINE=devoid of Truth, Love
 }
+
 [PAGE 160]
 {
-or Courage witch can
-only exist in a state
-of great Pride, which
-of course is not a
-virtue at all.
-Perhaps this trick of
-fate is a test to see
-if one can realize
+LINE=or Courage witch can
+LINE=only exist in a state
+LINE=of great Pride, which
+LINE=of course is not a
+LINE=virtue at all.
+LINE=Perhaps this trick of
+LINE=fate is a test to see
+LINE=if one can realize
 }
+
 [PAGE 161]
 {
-that the true virtue
-is that of Humility.
-I feel that the
-people of Magincia
-fail to see this to
-such a degree that I
-would not be
-surprised if some ill
+LINE=that the true virtue
+LINE=is that of Humility.
+LINE=I feel that the
+LINE=people of Magincia
+LINE=fail to see this to
+LINE=such a degree that I
+LINE=would not be
+LINE=surprised if some ill
 }
+
 [PAGE 162]
 {
-fate awaited their
-future.
- Thus from the
-infinite
-possibilities which
-spawned the Three
-Principles of Truth,
-Love and Courage,
+LINE=fate awaited their
+LINE=future.
+LINE= Thus from the
+LINE=infinite
+LINE=possibilities which
+LINE=spawned the Three
+LINE=Principles of Truth,
+LINE=Love and Courage,
 }
+
 [PAGE 163]
 {
-come the Eight
-Virtues of Honesty,
-Compassion, Valor,
-Justice, Sacrifice,
-Honor, Spirituality,
-and Humility.
+LINE=come the Eight
+LINE=Virtues of Honesty,
+LINE=Compassion, Valor,
+LINE=Justice, Sacrifice,
+LINE=Honor, Spirituality,
+LINE=and Humility.
 }
+
 // ============================ My Story
 [BOOK 12]
 {
@@ -2123,550 +2239,599 @@ PAGE=213
 
 [PAGE 164]
 {
- 'Twas on a chilly
-night, when the moon
-shone pasty-faced
-above the horizon,
-balanced on the
-towers of Lord
-British's castle that
-the events I am about
+LINE= 'Twas on a chilly
+LINE=night, when the moon
+LINE=shone pasty-faced
+LINE=above the horizon,
+LINE=balanced on the
+LINE=towers of Lord
+LINE=British's castle that
+LINE=the events I am about
 }
+
 [PAGE 165]
 {
-to relate took place,
-some years ago now. I
-witnessed them all
-from my tiny mouse
-hole.
- My lords British and
-Blackthorn are
-accustomed to a game
+LINE=to relate took place,
+LINE=some years ago now. I
+LINE=witnessed them all
+LINE=from my tiny mouse
+LINE=hole.
+LINE= My lords British and
+LINE=Blackthorn are
+LINE=accustomed to a game
 }
+
 [PAGE 166]
 {
-of chess 'pon an
-evening, over witch
-they argue the issues
-that affect the
-course of the realm.
-Lord Blackthorn was
-on his way to Lord
-British's chambers,
+LINE=of chess 'pon an
+LINE=evening, over witch
+LINE=they argue the issues
+LINE=that affect the
+LINE=course of the realm.
+LINE=Lord Blackthorn was
+LINE=on his way to Lord
+LINE=British's chambers,
 }
+
 [PAGE 167]
 {
-and Lord British
-stood by a window
-casement, just having
-finished setting the
-pieces upon the
-board.
- Suddenly the
-shutters blew open,
+LINE=and Lord British
+LINE=stood by a window
+LINE=casement, just having
+LINE=finished setting the
+LINE=pieces upon the
+LINE=board.
+LINE= Suddenly the
+LINE=shutters blew open,
 }
+
 [PAGE 168]
 {
-and Lord British fell
-to the ground, one
-hand shielding his
-eyes. A chill wind
-entered the room, and
-it seemed a gash was
-torn in the very air.
-Through the gash I
+LINE=and Lord British fell
+LINE=to the ground, one
+LINE=hand shielding his
+LINE=eyes. A chill wind
+LINE=entered the room, and
+LINE=it seemed a gash was
+LINE=torn in the very air.
+LINE=Through the gash I
 }
+
 [PAGE 169]
 {
-could see stars and
-swirling clouds of
-stellar dust, and a
-coldness sucked all
-the warmth from the
-air. A terrible wind
-tossed books and
-blankets across the
+LINE=could see stars and
+LINE=swirling clouds of
+LINE=stellar dust, and a
+LINE=coldness sucked all
+LINE=the warmth from the
+LINE=air. A terrible wind
+LINE=tossed books and
+LINE=blankets across the
 }
+
 [PAGE 170]
 {
-room, and furniture
-toppled.
- From within this
-gash issued a great
-voice, unlike any I
-have ever heard. And
-these are the words
-it spoke (for I
+LINE=room, and furniture
+LINE=toppled.
+LINE= From within this
+LINE=gash issued a great
+LINE=voice, unlike any I
+LINE=have ever heard. And
+LINE=these are the words
+LINE=it spoke (for I
 }
+
 [PAGE 171]
 {
-memorized them most
-carefully):
- "Greetings, Lord
-British. I am the
-Time Lord, a being
-from beyond your
-dimension, as thou
-art from a world
+LINE=memorized them most
+LINE=carefully):
+LINE= "Greetings, Lord
+LINE=British. I am the
+LINE=Time Lord, a being
+LINE=from beyond your
+LINE=dimension, as thou
+LINE=art from a world
 }
+
 [PAGE 172]
 {
-other than Sosaria. I
-am here to bring thee
-warning. Dost thou
-recall how long ago a
-mysterious Stranger
-came to Sosaria and
-saved the world from
-the evil wizard
+LINE=other than Sosaria. I
+LINE=am here to bring thee
+LINE=warning. Dost thou
+LINE=recall how long ago a
+LINE=mysterious Stranger
+LINE=came to Sosaria and
+LINE=saved the world from
+LINE=the evil wizard
 }
+
 [PAGE 173]
 {
-Mondain? He
-shattered the Gem of
-Immortality, within
-which dwelled a
-perfect likeness of
-this world."
- Lord British slowly
-stood and faced the
+LINE=Mondain? He
+LINE=shattered the Gem of
+LINE=Immortality, within
+LINE=which dwelled a
+LINE=perfect likeness of
+LINE=this world."
+LINE= Lord British slowly
+LINE=stood and faced the
 }
+
 [PAGE 174]
 {
-hole in the air. "I
-remember," he said.
-"Oft have I wished
-that stranger would
-return."
- "He hath returned,"
-spoke the voice. "But
-not to here. When the
+LINE=hole in the air. "I
+LINE=remember," he said.
+LINE="Oft have I wished
+LINE=that stranger would
+LINE=return."
+LINE= "He hath returned,"
+LINE=spoke the voice. "But
+LINE=not to here. When the
 }
+
 [PAGE 175]
 {
-Gem was shattered, a
-thousand shards were
-scattered across the
-dimensions, and in
-each shard there is a
-perfect likeness of
-this world. And thou
-dost live upon one
+LINE=Gem was shattered, a
+LINE=thousand shards were
+LINE=scattered across the
+LINE=dimensions, and in
+LINE=each shard there is a
+LINE=perfect likeness of
+LINE=this world. And thou
+LINE=dost live upon one
 }
+
 [PAGE 176]
 {
-such shard, for thou
-art not of the true
-world-thou art merely
-a reflection."
- Lord British looked
-shaken by this, and I
-did not know what to
-think! Was I merely a
+LINE=such shard, for thou
+LINE=art not of the true
+LINE=world-thou art merely
+LINE=a reflection."
+LINE= Lord British looked
+LINE=shaken by this, and I
+LINE=did not know what to
+LINE=think! Was I merely a
 }
+
 [PAGE 177]
 {
-shadow of the real
-me, which lives still
-somewhere else across
-uncounted universes?
- "My task is to heal
-this shattered world,
-Lord British," said
-the voice. "And I
+LINE=shadow of the real
+LINE=me, which lives still
+LINE=somewhere else across
+LINE=uncounted universes?
+LINE= "My task is to heal
+LINE=this shattered world,
+LINE=Lord British," said
+LINE=the voice. "And I
 }
+
 [PAGE 178]
 {
-seek to enlist thee
-in my cause. Be
-warned that in this
-case, healing carries
-with it a terrible
-price."
- Concern warred with
-curiosity on my
+LINE=seek to enlist thee
+LINE=in my cause. Be
+LINE=warned that in this
+LINE=case, healing carries
+LINE=with it a terrible
+LINE=price."
+LINE= Concern warred with
+LINE=curiosity on my
 }
+
 [PAGE 179]
 {
-liege's face, but
-ever one to shoulder
-a burden, he
-straitened and faced
-the gash in the air
-bravely. "Name thy
-price."
- "A shard of a
+LINE=liege's face, but
+LINE=ever one to shoulder
+LINE=a burden, he
+LINE=straitened and faced
+LINE=the gash in the air
+LINE=bravely. "Name thy
+LINE=price."
+LINE= "A shard of a
 }
+
 [PAGE 180]
 {
-universe is a
-powerful thing, and a
-universe shattered is
-always in danger
-from the powers of
-darkness. Already
-three shards were
-turned to evil, and
+LINE=universe is a
+LINE=powerful thing, and a
+LINE=universe shattered is
+LINE=always in danger
+LINE=from the powers of
+LINE=darkness. Already
+LINE=three shards were
+LINE=turned to evil, and
 }
+
 [PAGE 181]
 {
-sent to plague the
-original universe in
-the form of Shadow
-lords. Many times
-have I brought the
-Stranger back to
-Britannia, to
-preserve it from its
+LINE=sent to plague the
+LINE=original universe in
+LINE=the form of Shadow
+LINE=lords. Many times
+LINE=have I brought the
+LINE=Stranger back to
+LINE=Britannia, to
+LINE=preserve it from its
 }
+
 [PAGE 182]
 {
-own folly or from
-outside dangers. Yet
-as long as the world
-remaineth in pieces,
-it remaineth
-vulnerable. We must
-bring the shards into
-harmony, so that the
+LINE=own folly or from
+LINE=outside dangers. Yet
+LINE=as long as the world
+LINE=remaineth in pieces,
+LINE=it remaineth
+LINE=vulnerable. We must
+LINE=bring the shards into
+LINE=harmony, so that the
 }
+
 [PAGE 183]
 {
-resonate in such a
-manner that matches
-the original
-universe. Then the
-two universes shall
-merge, and be again
-as one."
- "But if we are only
+LINE=resonate in such a
+LINE=manner that matches
+LINE=the original
+LINE=universe. Then the
+LINE=two universes shall
+LINE=merge, and be again
+LINE=as one."
+LINE= "But if we are only
 }
+
 [PAGE 184]
 {
-shadows..." Lord
-British said
-wonderingly.
- The light from the
-stars within the hole
-seemed to dim.
-"Indeed, the
-reflections shall
+LINE=shadows..." Lord
+LINE=British said
+LINE=wonderingly.
+LINE= The light from the
+LINE=stars within the hole
+LINE=seemed to dim.
+LINE="Indeed, the
+LINE=reflections shall
 }
+
 [PAGE 185]
 {
-become one with the
-original. Thou
-wouldst cease to be
-as thou art, and
-become part of the
-larger you. Thou
-shalt not die;
-however, uncounted
+LINE=become one with the
+LINE=original. Thou
+LINE=wouldst cease to be
+LINE=as thou art, and
+LINE=become part of the
+LINE=larger you. Thou
+LINE=shalt not die;
+LINE=however, uncounted
 }
+
 [PAGE 186]
 {
-generations have
-passed and borne
-children since that
-day, and they have
-no counterparts. They
-would perish
-utterly."
- Lord British sagged
+LINE=generations have
+LINE=passed and borne
+LINE=children since that
+LINE=day, and they have
+LINE=no counterparts. They
+LINE=would perish
+LINE=utterly."
+LINE= Lord British sagged
 }
+
 [PAGE 187]
 {
-in shock, realizing
-the terrible price
-that would be paid to
-heal the universe.
-"All of my people,"
-he breathed.
- "Tis for the greater
-good."
+LINE=in shock, realizing
+LINE=the terrible price
+LINE=that would be paid to
+LINE=heal the universe.
+LINE="All of my people,"
+LINE=he breathed.
+LINE= "Tis for the greater
+LINE=good."
 }
+
 [PAGE 188]
 {
- Lord British bowed
-his head.
- 'Twas then I saw the
-movement by the door,
-half-hid by the
-heavy red curtains.
-Lord Blackthorn stood
-there, concealed from
+LINE= Lord British bowed
+LINE=his head.
+LINE= 'Twas then I saw the
+LINE=movement by the door,
+LINE=half-hid by the
+LINE=heavy red curtains.
+LINE=Lord Blackthorn stood
+LINE=there, concealed from
 }
+
 [PAGE 189]
 {
-the rest of the room,
-his face white. How
-long had he been
-listening? I cannot
-say, yet I suspect
-that he had heard all
-that the mysterious
-voice had to say.
+LINE=the rest of the room,
+LINE=his face white. How
+LINE=long had he been
+LINE=listening? I cannot
+LINE=say, yet I suspect
+LINE=that he had heard all
+LINE=that the mysterious
+LINE=voice had to say.
 }
+
 [PAGE 190]
 {
- "How then, shall I
-aid thee?" Lord
-British said,
-weariness in his
-voice.
- "Aid the nobility
-that resideth in the
-human heart. Protect
+LINE= "How then, shall I
+LINE=aid thee?" Lord
+LINE=British said,
+LINE=weariness in his
+LINE=voice.
+LINE= "Aid the nobility
+LINE=that resideth in the
+LINE=human heart. Protect
 }
+
 [PAGE 191]
 {
-the Virtues that so
-recently came to thee
-in thought late at
-night. They are the
-Virtues of life, as
-your counterpart
-understands them to
-be. For when thy
+LINE=the Virtues that so
+LINE=recently came to thee
+LINE=in thought late at
+LINE=night. They are the
+LINE=Virtues of life, as
+LINE=your counterpart
+LINE=understands them to
+LINE=be. For when thy
 }
+
 [PAGE 192]
 {
-populace doth live
-and breathe these
-Virtues, shall it
-match the true
-Britannia, and thy
-shard shall rejoin
-with it."
- The gash in the air
+LINE=populace doth live
+LINE=and breathe these
+LINE=Virtues, shall it
+LINE=match the true
+LINE=Britannia, and thy
+LINE=shard shall rejoin
+LINE=with it."
+LINE= The gash in the air
 }
+
 [PAGE 193]
 {
-began to close, and
-with it warmth stole
-back into the room.
- "I was going to
-discuss my idea with
-Blackthorn tonight,"
-Lord British
-breathed. "Have I not
+LINE=began to close, and
+LINE=with it warmth stole
+LINE=back into the room.
+LINE= "I was going to
+LINE=discuss my idea with
+LINE=Blackthorn tonight,"
+LINE=Lord British
+LINE=breathed. "Have I not
 }
+
 [PAGE 194]
 {
-thoughts that are my
-own? Is my life but a
-reflection of another
-me?"
- "Nay," said the
-voice, smaller
-through the
-diminished opening.
+LINE=thoughts that are my
+LINE=own? Is my life but a
+LINE=reflection of another
+LINE=me?"
+LINE= "Nay," said the
+LINE=voice, smaller
+LINE=through the
+LINE=diminished opening.
 }
+
 [PAGE 195]
 {
-"Say, rather, that
-you are parallel, for
-there is no guarantee
-that thou shalt
-accomplish what I
-have set thee to. I
-speak tonight to a
-thousand of thee, and
+LINE="Say, rather, that
+LINE=you are parallel, for
+LINE=there is no guarantee
+LINE=that thou shalt
+LINE=accomplish what I
+LINE=have set thee to. I
+LINE=speak tonight to a
+LINE=thousand of thee, and
 }
+
 [PAGE 196]
 {
-ask the same of all.
-Perhaps not all shall
-seek to aid me." And
-with that, the gash
-closed. and the voice
-was gone, leaving a
-room that appeared
-tossed by a mighty
+LINE=ask the same of all.
+LINE=Perhaps not all shall
+LINE=seek to aid me." And
+LINE=with that, the gash
+LINE=closed. and the voice
+LINE=was gone, leaving a
+LINE=room that appeared
+LINE=tossed by a mighty
 }
+
 [PAGE 197]
 {
-storm.
- "Destroy the world
-to save the
-universe," Lord
-British said
-bitterly. "I do not
-wonder that some may
-balk."
+LINE=storm.
+LINE= "Destroy the world
+LINE=to save the
+LINE=universe," Lord
+LINE=British said
+LINE=bitterly. "I do not
+LINE=wonder that some may
+LINE=balk."
 }
+
 [PAGE 198]
 {
- Lord Blackthorn
-collected himself,
-and strode into the
-room, a decent
-mimicry of surprise
-on his face. "My
-liege! What has
-happened here?" he
+LINE= Lord Blackthorn
+LINE=collected himself,
+LINE=and strode into the
+LINE=room, a decent
+LINE=mimicry of surprise
+LINE=on his face. "My
+LINE=liege! What has
+LINE=happened here?" he
 }
+
 [PAGE 199]
 {
-exclaimed, feigning
-dismay well. But not
-well enough to fool
-his old friend, whose
-eyes narrowed at
-seeing him there.
- "How much didst thou
-hear?" demanded Lord
+LINE=exclaimed, feigning
+LINE=dismay well. But not
+LINE=well enough to fool
+LINE=his old friend, whose
+LINE=eyes narrowed at
+LINE=seeing him there.
+LINE= "How much didst thou
+LINE=hear?" demanded Lord
 }
+
 [PAGE 200]
 {
-British.
- "Why, nothing,"
-managed Blacktorn,
-his head ducked away
-from his friend, as
-he bent to retrieve
-the fallen chess
-pieces. "I merely
+LINE=British.
+LINE= "Why, nothing,"
+LINE=managed Blacktorn,
+LINE=his head ducked away
+LINE=from his friend, as
+LINE=he bent to retrieve
+LINE=the fallen chess
+LINE=pieces. "I merely
 }
+
 [PAGE 201]
 {
-came for our game of
-chess."
- Together they
-righted the pedestal
-table, and set the
-pieces upon the black
-and white squares.
-"Such simplicity to
+LINE=came for our game of
+LINE=chess."
+LINE= Together they
+LINE=righted the pedestal
+LINE=table, and set the
+LINE=pieces upon the black
+LINE=and white squares.
+LINE="Such simplicity to
 }
+
 [PAGE 202]
 {
-the game,
-Blackthorn," mused
-Lord British, idly
-brushing one finger
-against the board.
-"Black and white,
-each to its own
-color, as if life
+LINE=the game,
+LINE=Blackthorn," mused
+LINE=Lord British, idly
+LINE=brushing one finger
+LINE=against the board.
+LINE="Black and white,
+LINE=each to its own
+LINE=color, as if life
 }
+
 [PAGE 203]
 {
-were so simple. What
-think you?"
- Blackthorn sat
-heavily on a hassock
-beside the chess
-table "I think that
-matters are never so
-simple, my liege. And
+LINE=were so simple. What
+LINE=think you?"
+LINE= Blackthorn sat
+LINE=heavily on a hassock
+LINE=beside the chess
+LINE=table "I think that
+LINE=matters are never so
+LINE=simple, my liege. And
 }
+
 [PAGE 204]
 {
-I would regret it
-deeply if someone,
-such as a friend, saw
-it thus."
- Lord British's eyes
-met his. "Yet
-sometimes one must
-sacrifice a pawn to
+LINE=I would regret it
+LINE=deeply if someone,
+LINE=such as a friend, saw
+LINE=it thus."
+LINE= Lord British's eyes
+LINE=met his. "Yet
+LINE=sometimes one must
+LINE=sacrifice a pawn to
 }
+
 [PAGE 205]
 {
-save a king."
- Lord Blackthorn met
-his gaze squarely.
-"Even pawns have
-lives and loves at
-home, my lord." Then
-he reached out for a
-pawn, and firmly
+LINE=save a king."
+LINE= Lord Blackthorn met
+LINE=his gaze squarely.
+LINE="Even pawns have
+LINE=lives and loves at
+LINE=home, my lord." Then
+LINE=he reached out for a
+LINE=pawn, and firmly
 }
+
 [PAGE 206]
 {
-moved it forward two
-squares. "Shall we
-play a game?" he
-asked.
- The chess game that
-night was a draw, and
-they played grimly.
- And the next day,
+LINE=moved it forward two
+LINE=squares. "Shall we
+LINE=play a game?" he
+LINE=asked.
+LINE= The chess game that
+LINE=night was a draw, and
+LINE=they played grimly.
+LINE= And the next day,
 }
+
 [PAGE 207]
 {
-Lord British gathered
-the nobles to
-proclaim the idea of
-a new system of
-Virtues, and declared
-that shrines should
-be built across the
-land.
+LINE=Lord British gathered
+LINE=the nobles to
+LINE=proclaim the idea of
+LINE=a new system of
+LINE=Virtues, and declared
+LINE=that shrines should
+LINE=be built across the
+LINE=land.
 }
+
 [PAGE 208]
 {
- Lord Blackthorn
-opposed it bitterly,
-and many thought him
-strange for doing so,
-for ever had he been
-a noble and upright
-man, and ever had he
-and Lord British been
+LINE= Lord Blackthorn
+LINE=opposed it bitterly,
+LINE=and many thought him
+LINE=strange for doing so,
+LINE=for ever had he been
+LINE=a noble and upright
+LINE=man, and ever had he
+LINE=and Lord British been
 }
+
 [PAGE 209]
 {
-in accord. Declaring
-that he should start
-his own shrine, he
-departed the castle
-that day to live in a
-tower in a lake on
-the north side of the
-city.
+LINE=in accord. Declaring
+LINE=that he should start
+LINE=his own shrine, he
+LINE=departed the castle
+LINE=that day to live in a
+LINE=tower in a lake on
+LINE=the north side of the
+LINE=city.
 }
+
 [PAGE 210]
 {
- They are still the
-best of friends, yet
-a sadness hangs
-between them, as if
-they were forced into
-making choices that
-appealed not to them.
-And at night, when I
+LINE= They are still the
+LINE=best of friends, yet
+LINE=a sadness hangs
+LINE=between them, as if
+LINE=they were forced into
+LINE=making choices that
+LINE=appealed not to them.
+LINE=And at night, when I
 }
+
 [PAGE 211]
 {
-creep softly from one
-corner of my liege's
-bed chamber to
-another, I sometimes
-see him take a pawn
-from his night table,
-and hold it in his
-hand, and quietly
+LINE=creep softly from one
+LINE=corner of my liege's
+LINE=bed chamber to
+LINE=another, I sometimes
+LINE=see him take a pawn
+LINE=from his night table,
+LINE=and hold it in his
+LINE=hand, and quietly
 }
+
 [PAGE 212]
 {
-weep.
- But I am but a
-mouse, and none hear
-me. This tale goes
-unknown, save for my
-writing these
-enormous letters with
-mine ink-stained tiny
+LINE=weep.
+LINE= But I am but a
+LINE=mouse, and none hear
+LINE=me. This tale goes
+LINE=unknown, save for my
+LINE=writing these
+LINE=enormous letters with
+LINE=mine ink-stained tiny
 }
+
 [PAGE 213]
 {
-paws for thee to
-read, for I fear
-indeed for our world
-and for our people in
-these perilous times.
+LINE=paws for thee to
+LINE=read, for I fear
+LINE=indeed for our world
+LINE=and for our people in
+LINE=these perilous times.
 }
 
 // ============================ The Burning of Trinsic
@@ -2700,255 +2865,279 @@ PAGE=235
 PAGE=236
 PAGE=237
 }
+
 [PAGE 214]
 {
- 'Twas a sight to
-see, the sunlight
-falling lightly on
-the sandstone walls
-of Trinsic 'pon a
-morning in spring.
- Children ran along
-the parapets and walk
+LINE= 'Twas a sight to
+LINE=see, the sunlight
+LINE=falling lightly on
+LINE=the sandstone walls
+LINE=of Trinsic 'pon a
+LINE=morning in spring.
+LINE= Children ran along
+LINE=the parapets and walk
 }
+
 [PAGE 215]
 {
-ways, their laughter
-and running providing
-music to the
-daybreak, despite
-their oft-ragged
-clothing.
- And I was one of
-those young ones,
+LINE=ways, their laughter
+LINE=and running providing
+LINE=music to the
+LINE=daybreak, despite
+LINE=their oft-ragged
+LINE=clothing.
+LINE= And I was one of
+LINE=those young ones,
 }
+
 [PAGE 216]
 {
-letting my joy rise
-up to the skies.
- Little did we all
-know of the darker
-days that would lie
-ahead, for we were
-too young.
- Had we but gained
+LINE=letting my joy rise
+LINE=up to the skies.
+LINE= Little did we all
+LINE=know of the darker
+LINE=days that would lie
+LINE=ahead, for we were
+LINE=too young.
+LINE= Had we but gained
 }
+
 [PAGE 217]
 {
-access to the quiet
-councils held in the
-Paladin tower as it
-faced the sea,
-councils lit by
-candlelight and
-worry, we would have
-learned more of the
+LINE=access to the quiet
+LINE=councils held in the
+LINE=Paladin tower as it
+LINE=faced the sea,
+LINE=councils lit by
+LINE=candlelight and
+LINE=worry, we would have
+LINE=learned more of the
 }
+
 [PAGE 218]
 {
-fears of imminent
-attack from the
-forest, where foul
-creatures born of
-dank caves and
-darkness were
-marauding ever more
-often into the lands
+LINE=fears of imminent
+LINE=attack from the
+LINE=forest, where foul
+LINE=creatures born of
+LINE=dank caves and
+LINE=darkness were
+LINE=marauding ever more
+LINE=often into the lands
 }
+
 [PAGE 219]
 {
-around Trinsic's
-moat.
- But we were
-children! The
-parapets and the moat
-were places to play,
-not stout defenses,
-and we gave no
+LINE=around Trinsic's
+LINE=moat.
+LINE= But we were
+LINE=children! The
+LINE=parapets and the moat
+LINE=were places to play,
+LINE=not stout defenses,
+LINE=and we gave no
 }
+
 [PAGE 220]
 {
-thought to the
-necessities that must
-have required their
-construction.
- We used to reach the
-sheltered orchards on
-the lee side of the
-parapet walls, where
+LINE=thought to the
+LINE=necessities that must
+LINE=have required their
+LINE=construction.
+LINE= We used to reach the
+LINE=sheltered orchards on
+LINE=the lee side of the
+LINE=parapet walls, where
 }
+
 [PAGE 221]
 {
-the southern river
-cut through the city,
-by swimming across
-the water.
- The rich folk who
-lived in the great
-manses there would
-shout from their
+LINE=the southern river
+LINE=cut through the city,
+LINE=by swimming across
+LINE=the water.
+LINE= The rich folk who
+LINE=lived in the great
+LINE=manses there would
+LINE=shout from their
 }
+
 [PAGE 222]
 {
-windows and shake
-their fists, for we
-would run through
-their gardens and
-tear up the delicate
-foxgloves and orfeurs
-with our unshod dirty
-feet. Then we would
+LINE=windows and shake
+LINE=their fists, for we
+LINE=would run through
+LINE=their gardens and
+LINE=tear up the delicate
+LINE=foxgloves and orfeurs
+LINE=with our unshod dirty
+LINE=feet. Then we would
 }
+
 [PAGE 223]
 {
-dive into the water
-and splash merrily to
-the fruit trees.
- The southern river
-lazily slid under the
-an ungated arch in
-the mighty wall, and
-we would lay on the
+LINE=dive into the water
+LINE=and splash merrily to
+LINE=the fruit trees.
+LINE= The southern river
+LINE=lazily slid under the
+LINE=an ungated arch in
+LINE=the mighty wall, and
+LINE=we would lay on the
 }
+
 [PAGE 224]
 {
-grassy bank and
-watch it gurgle by
-the lily pads.
- That spring that
-pleasant spot became
-the doorway through
-which our city of
-Trinsic let in the
+LINE=grassy bank and
+LINE=watch it gurgle by
+LINE=the lily pads.
+LINE= That spring that
+LINE=pleasant spot became
+LINE=the doorway through
+LINE=which our city of
+LINE=Trinsic let in the
 }
+
 [PAGE 225]
 {
-monstrous deformed
-humanoids that
-savaged us. I lay
-upon that grassy bank
-and watched them wade
-in, their coarse hair
-wet and matted, algae
-and muck fastening
+LINE=monstrous deformed
+LINE=humanoids that
+LINE=savaged us. I lay
+LINE=upon that grassy bank
+LINE=and watched them wade
+LINE=in, their coarse hair
+LINE=wet and matted, algae
+LINE=and muck fastening
 }
+
 [PAGE 226]
 {
-their wild brows.
- They caught sight of
-a quicksilver girl
-with bright blond
-hair and lively eyes.
-Her name was Leyla,
-and that spring I had
-held fond dreams of
+LINE=their wild brows.
+LINE= They caught sight of
+LINE=a quicksilver girl
+LINE=with bright blond
+LINE=hair and lively eyes.
+LINE=Her name was Leyla,
+LINE=and that spring I had
+LINE=held fond dreams of
 }
+
 [PAGE 227]
 {
-holding her hand and
-sharing flavored ice
-while dangling our
-feet off the small
-bridge by Smugglers
-Gate.
- And I said nothing
-when they caught her,
+LINE=holding her hand and
+LINE=sharing flavored ice
+LINE=while dangling our
+LINE=feet off the small
+LINE=bridge by Smugglers
+LINE=Gate.
+LINE= And I said nothing
+LINE=when they caught her,
 }
+
 [PAGE 228]
 {
-and did not cry out
-when they dragged her
-off through that
-breach in our wall,
-and did not warn the
-city when I saw the
-helmeted orc captains
-call the charge upon
+LINE=and did not cry out
+LINE=when they dragged her
+LINE=off through that
+LINE=breach in our wall,
+LINE=and did not warn the
+LINE=city when I saw the
+LINE=helmeted orc captains
+LINE=call the charge upon
 }
+
 [PAGE 229]
 {
-the mansions.
- Blame me not, for I
-was but a child, and
-one who hid in the
-branches of the peach
-trees, all a-tremble
-whilst I watched the
-smoke rise from Sean
+LINE=the mansions.
+LINE= Blame me not, for I
+LINE=was but a child, and
+LINE=one who hid in the
+LINE=branches of the peach
+LINE=trees, all a-tremble
+LINE=whilst I watched the
+LINE=smoke rise from Sean
 }
+
 [PAGE 230]
 {
-the tailor's, and
-fire lash out at the
-roof of witchy
-Eleanor's tavern.
- To this day I have
-had no word of Leyla,
-and to this day the
-smell of burning wood
+LINE=the tailor's, and
+LINE=fire lash out at the
+LINE=roof of witchy
+LINE=Eleanor's tavern.
+LINE= To this day I have
+LINE=had no word of Leyla,
+LINE=and to this day the
+LINE=smell of burning wood
 }
+
 [PAGE 231]
 {
-can conjure terrible
-dreams. Yet with the
-eyes of adulthood,
-'tis possible to
-examine the flaws in
-the defense of
-Trinsic on that
-fateful day, and the
+LINE=can conjure terrible
+LINE=dreams. Yet with the
+LINE=eyes of adulthood,
+LINE='tis possible to
+LINE=examine the flaws in
+LINE=the defense of
+LINE=Trinsic on that
+LINE=fateful day, and the
 }
+
 [PAGE 232]
 {
-reasons why our walls
-are now double-thick,
-and why our buildings
-are now built as
-fortresses within a
-somber fortified
-city.
- While I can look our
+LINE=reasons why our walls
+LINE=are now double-thick,
+LINE=and why our buildings
+LINE=are now built as
+LINE=fortresses within a
+LINE=somber fortified
+LINE=city.
+LINE= While I can look our
 }
+
 [PAGE 233]
 {
-from the top of the
-new Paladin tower,
-and spy the mighty
-white sails across
-the barrier island,
-and can descry the
-small hollow south of
-the city where
+LINE=from the top of the
+LINE=new Paladin tower,
+LINE=and spy the mighty
+LINE=white sails across
+LINE=the barrier island,
+LINE=and can descry the
+LINE=small hollow south of
+LINE=the city where
 }
+
 [PAGE 234]
 {
-gypsies are wont to
-camp, I can also
-envision the city as
-it might be burning,
-and I bless the
-bargain we made:
+LINE=gypsies are wont to
+LINE=camp, I can also
+LINE=envision the city as
+LINE=it might be burning,
+LINE=and I bless the
+LINE=bargain we made:
 }
+
 [PAGE 235]
 {
-space for safety,
-grace for sturdiness,
-and wood for stone.
-Whilst I live, I
-shall not see Trinsic
-burn, and no more
-cries of little girls
+LINE=space for safety,
+LINE=grace for sturdiness,
+LINE=and wood for stone.
+LINE=Whilst I live, I
+LINE=shall not see Trinsic
+LINE=burn, and no more
+LINE=cries of little girls
 }
+
 [PAGE 236]
 {
-will haunt the sleep
-of our fair citizens.
+LINE=will haunt the sleep
+LINE=of our fair citizens.
 }
+
 [PAGE 237]
 {
- -Japheth, Paladin
-Guild master of the
-City of Trinsic
+LINE= -Japheth, Paladin
+LINE=Guild master of the
+LINE=City of Trinsic
 }
 
 // ============================ The Fight
@@ -2971,146 +3160,159 @@ PAGE=248
 PAGE=249
 PAGE=250
 }
+
 [PAGE 238]
 {
- A cold autumn's
-morning with misty
-fog secures a dozen
-brave knights,
-supplying hidden
-shelter from prying
-eyes deep in the
-foothills of the
+LINE= A cold autumn's
+LINE=morning with misty
+LINE=fog secures a dozen
+LINE=brave knights,
+LINE=supplying hidden
+LINE=shelter from prying
+LINE=eyes deep in the
+LINE=foothills of the
 }
+
 [PAGE 239]
 {
-vibrant valley.
-Dragons soar like
-fierce warriors, and
-circling around and
-around, then roaring
-like thunder,
-rallying all that
-listen. The dragons
+LINE=vibrant valley.
+LINE=Dragons soar like
+LINE=fierce warriors, and
+LINE=circling around and
+LINE=around, then roaring
+LINE=like thunder,
+LINE=rallying all that
+LINE=listen. The dragons
 }
+
 [PAGE 240]
 {
-land swiftly beside
-the proud warriors,
-bending necks and
-extending wings,
-lifting black claws
-and allowing valiant
-fighters to ride
-forth and win an
+LINE=land swiftly beside
+LINE=the proud warriors,
+LINE=bending necks and
+LINE=extending wings,
+LINE=lifting black claws
+LINE=and allowing valiant
+LINE=fighters to ride
+LINE=forth and win an
 }
+
 [PAGE 241]
 {
-arisen battle. The
-increasing winds
-silence the sounds of
-combat, and they
-fight, standing their
-ground like mothers
-protecting their
-children, bright
+LINE=arisen battle. The
+LINE=increasing winds
+LINE=silence the sounds of
+LINE=combat, and they
+LINE=fight, standing their
+LINE=ground like mothers
+LINE=protecting their
+LINE=children, bright
 }
+
 [PAGE 242]
 {
-armor flashing each
-one falls.
- A cold autumn's
-evening with misty
-fog cradles a dozen
-battered corpses of
-knights, creasing
-them in currents of
+LINE=armor flashing each
+LINE=one falls.
+LINE= A cold autumn's
+LINE=evening with misty
+LINE=fog cradles a dozen
+LINE=battered corpses of
+LINE=knights, creasing
+LINE=them in currents of
 }
+
 [PAGE 243]
 {
-winds that run deep
-in the foothills of
-the desolate valley.
-Dragons glide like
-silent angels,
-circling around and
-around, then calling
-like banshees;
+LINE=winds that run deep
+LINE=in the foothills of
+LINE=the desolate valley.
+LINE=Dragons glide like
+LINE=silent angels,
+LINE=circling around and
+LINE=around, then calling
+LINE=like banshees;
 }
+
 [PAGE 244]
 {
-keening cries of
-mourning. The dragons
-land heavily beside
-the peaceful bodies,
-bending necks and
-extending wings,
-lifting black claws
-and allowing valiant
+LINE=keening cries of
+LINE=mourning. The dragons
+LINE=land heavily beside
+LINE=the peaceful bodies,
+LINE=bending necks and
+LINE=extending wings,
+LINE=lifting black claws
+LINE=and allowing valiant
 }
+
 [PAGE 245]
 {
-fighters to ride
-forth and win an
-arisen battle. The
-increasing winds
-silence the sounds
-of combat, and they
-fight, standing their
-ground like mothers
+LINE=fighters to ride
+LINE=forth and win an
+LINE=arisen battle. The
+LINE=increasing winds
+LINE=silence the sounds
+LINE=of combat, and they
+LINE=fight, standing their
+LINE=ground like mothers
 }
+
 [PAGE 246]
 {
-protecting their
-children, bright
-armor flashing as
-each one falls.
- A cold autumn's
-evening with misty
-fog cradles a dozen
-battered corpses of
+LINE=protecting their
+LINE=children, bright
+LINE=armor flashing as
+LINE=each one falls.
+LINE= A cold autumn's
+LINE=evening with misty
+LINE=fog cradles a dozen
+LINE=battered corpses of
 }
+
 [PAGE 247]
 {
-knights, creasing
-them in currents of
-winds that run deep
-in the foothills of
-the desolate valley.
-Dragons glide like
-silent angels,
-circling around and
+LINE=knights, creasing
+LINE=them in currents of
+LINE=winds that run deep
+LINE=in the foothills of
+LINE=the desolate valley.
+LINE=Dragons glide like
+LINE=silent angels,
+LINE=circling around and
 }
+
 [PAGE 248]
 {
-around, then calling
-like banshees;
-keening cries of
-mourning. The dragons
-land heavily beside
-the peaceful bodies,
-bending necks and
-extending wings,
+LINE=around, then calling
+LINE=like banshees;
+LINE=keening cries of
+LINE=mourning. The dragons
+LINE=land heavily beside
+LINE=the peaceful bodies,
+LINE=bending necks and
+LINE=extending wings,
 }
+
 [PAGE 249]
 {
-lifting black claws
-and pinching the
-sacred ground and
-new eternal home.The
-dying winds whistle
-among the dead in
-somber procession,
-and they lie,
+LINE=lifting black claws
+LINE=and pinching the
+LINE=sacred ground and
+LINE=new eternal home.The
+LINE=dying winds whistle
+LINE=among the dead in
+LINE=somber procession,
+LINE=and they lie,
 }
+
 [PAGE 250]
 {
-grasping weapons to
-protect themselves
-like knights still in
-battle, shattered
-armor shining like
-newly born stars.
+LINE=grasping weapons to
+LINE=protect themselves
+LINE=like knights still in
+LINE=battle, shattered
+LINE=armor shining like
+LINE=newly born stars.
 }
 
 // ============================ A Song of Samlethe
@@ -3125,59 +3327,64 @@ PAGE=253
 PAGE=254
 PAGE=255
 }
+
 [PAGE 251]
 {
-  The firstbear did
-     swim by day,
- And it did sleep by
-        night.
-It kept itself within
-       its cave
-  and ate by starry
-        light.
+LINE=  The firstbear did
+LINE=     swim by day,
+LINE= And it did sleep by
+LINE=        night.
+LINE=It kept itself within
+LINE=       its cave
+LINE=  and ate by starry
+LINE=        light.
 }
+
 [PAGE 252]
 {
- The second bear it
-     did cavort
- 'Neath cananoppies
-      of trees,
-   And danced its
- strange bearish sort
-   Of joy for all
-       to see.
+LINE= The second bear it
+LINE=     did cavort
+LINE= 'Neath cananoppies
+LINE=      of trees,
+LINE=   And danced its
+LINE= strange bearish sort
+LINE=   Of joy for all
+LINE=       to see.
 }
+
 [PAGE 253]
 {
-The first bear, well,
-    'twas hunted,
-   And today adorns
-       a floor.
- Its ruggish face has
-     been tented
-   By footfalls and
-       the door.
+LINE=The first bear, well,
+LINE=    'twas hunted,
+LINE=   And today adorns
+LINE=       a floor.
+LINE= Its ruggish face has
+LINE=     been tented
+LINE=   By footfalls and
+LINE=       the door.
 }
+
 [PAGE 254]
 {
-  The second bear
-   did step once
-Into a mushroom ring,
-    And now does
-  dance the dunce
-     For wisps
-  and unseen things.
+LINE=  The second bear
+LINE=   did step once
+LINE=Into a mushroom ring,
+LINE=    And now does
+LINE=  dance the dunce
+LINE=     For wisps
+LINE=  and unseen things.
 }
+
 [PAGE 255]
 {
-  So do not dance,
-  and do not sleep,
-     Or else be
-     led astray!
-For bears all end up
-    six feet deep
-    At the end of
-   Samlethe's day.
+LINE=  So do not dance,
+LINE=  and do not sleep,
+LINE=     Or else be
+LINE=     led astray!
+LINE=For bears all end up
+LINE=    six feet deep
+LINE=    At the end of
+LINE=   Samlethe's day.
 }
 
 // ============================ Classic Children's Tales, Volume 2
@@ -3197,109 +3404,119 @@ PAGE=263
 PAGE=264
 PAGE=265
 }
+
 [PAGE 256]
 {
- Clarke's Printery is
-Honored to Present
-Tales from Ages Past!
-Guilhem the Scholar
-Shall End Each Volume
-with Staid
-Commentary.
--
+LINE= Clarke's Printery is
+LINE=Honored to Present
+LINE=Tales from Ages Past!
+LINE=Guilhem the Scholar
+LINE=Shall End Each Volume
+LINE=with Staid
+LINE=Commentary.
+LINE=-
 }
+
 [PAGE 257]
 {
-The Rhym
-  Dance in the Star
-       Chamber
-And Dance in the Pit
-   And Eat of your
-       Entrees
- In the Glass House
-       you sit
+LINE=The Rhym
+LINE=  Dance in the Star
+LINE=       Chamber
+LINE=And Dance in the Pit
+LINE=   And Eat of your
+LINE=       Entrees
+LINE= In the Glass House
+LINE=       you sit
 }
+
 [PAGE 258]
 {
-Commentary
- A common feeding
-rhyme for little
-babies, 'tis thought
-that this little
-ditty is part of the
-corpus of legendary
-tales regarding the
+LINE=Commentary
+LINE= A common feeding
+LINE=rhyme for little
+LINE=babies, 'tis thought
+LINE=that this little
+LINE=ditty is part of the
+LINE=corpus of legendary
+LINE=tales regarding the
 }
+
 [PAGE 259]
 {
-world before Sosaria
-(see the wonderful
-fables of Fabio the
-Poor for
-fictionalized
-versions of these
-stories, also
-available from this
+LINE=world before Sosaria
+LINE=(see the wonderful
+LINE=fables of Fabio the
+LINE=Poor for
+LINE=fictionalized
+LINE=versions of these
+LINE=stories, also
+LINE=available from this
 }
+
 [PAGE 260]
 {
-same publisher).
- According to these
-old tales, which
-survive mostly in the
-hills and remote
-villages where Lord
-British is as yet a
-distant and mythical
+LINE=same publisher).
+LINE= According to these
+LINE=old tales, which
+LINE=survive mostly in the
+LINE=hills and remote
+LINE=villages where Lord
+LINE=British is as yet a
+LINE=distant and mythical
 }
+
 [PAGE 261]
 {
-ruler, the gods of
-old (a fanciful
-notion!) met to
-discuss the progress
-of creating the world
-in mystical rooms. A
-simple analysis
-reveals these rooms
+LINE=ruler, the gods of
+LINE=old (a fanciful
+LINE=notion!) met to
+LINE=discuss the progress
+LINE=of creating the world
+LINE=in mystical rooms. A
+LINE=simple analysis
+LINE=reveals these rooms
 }
+
 [PAGE 262]
 {
-to be mere
-mythological
-generalizations.
- "The Star Chamber"
-is clearly a
-reference to the sky.
-"The Pit" is
-certainly an
+LINE=to be mere
+LINE=mythological
+LINE=generalizations.
+LINE= "The Star Chamber"
+LINE=is clearly a
+LINE=reference to the sky.
+LINE="The Pit" is
+LINE=certainly an
 }
+
 [PAGE 263]
 {
-Underworld analogous
-to the Snakehills of
-other tales, and "the
-Glass House" is no
-doubt the vantage
-point from which the
-gods observed their
-creation. All is
+LINE=Underworld analogous
+LINE=to the Snakehills of
+LINE=other tales, and "the
+LINE=Glass House" is no
+LINE=doubt the vantage
+LINE=point from which the
+LINE=gods observed their
+LINE=creation. All is
 }
+
 [PAGE 264]
 {
-simple when seen
-from this perspective,
-leaving only the
-mysterious reference
-to dinners. Oddly
-enough, the rhyme is
-universally used only
-for midnight
+LINE=simple when seen
+LINE=from this perspective,
+LINE=leaving only the
+LINE=mysterious reference
+LINE=to dinners. Oddly
+LINE=enough, the rhyme is
+LINE=universally used only
+LINE=for midnight
 }
+
 [PAGE 265]
 {
-feedings, never
-during the day.
+LINE=feedings, never
+LINE=during the day.
 }
 
 // ============================ Classic Tales of Vesper, Volume 1
@@ -3329,222 +3546,242 @@ PAGE=283
 PAGE=284
 PAGE=285
 }
+
 [PAGE 266]
 {
- 'Tis an Honor to
-present to Thee these
-Tales collected from
-Ages Past. In this
-Inaugural Volume, we
-present this Verse
-oft Recited as a
-Lullaby for sleepy
+LINE= 'Tis an Honor to
+LINE=present to Thee these
+LINE=Tales collected from
+LINE=Ages Past. In this
+LINE=Inaugural Volume, we
+LINE=present this Verse
+LINE=oft Recited as a
+LINE=Lullaby for sleepy
 }
+
 [PAGE 267]
 {
-Children.
--
-
-   Preface
-
-by Guilhem the
-   Scholar
+LINE=Children.
+LINE=-
+LINE=
+LINE=   Preface
+LINE=
+LINE=by Guilhem the
+LINE=   Scholar
 }
+
 [PAGE 268]
 {
- The meaning of this
-verse has oft been
-discussed in halls of
-scholarly sorts, for
-its mysterious
-singsong melody is
-oddly disturbing to
-adult ears, though
+LINE= The meaning of this
+LINE=verse has oft been
+LINE=discussed in halls of
+LINE=scholarly sorts, for
+LINE=its mysterious
+LINE=singsong melody is
+LINE=oddly disturbing to
+LINE=adult ears, though
 }
+
 [PAGE 269]
 {
-children seem to find
-it restful as they
-sleep. Perhaps it is
-but the remnant of a
-longer ballad once
-extant, for there are
-internal indications
-that it once told a
+LINE=children seem to find
+LINE=it restful as they
+LINE=sleep. Perhaps it is
+LINE=but the remnant of a
+LINE=longer ballad once
+LINE=extant, for there are
+LINE=internal indications
+LINE=that it once told a
 }
+
 [PAGE 270]
 {
-longer story about
-ill-fated lovers, and
-a magical experiment
-gone awry. However,
-poetic license and
-the folk process has
-distorted the words
-until now the locale
+LINE=longer story about
+LINE=ill-fated lovers, and
+LINE=a magical experiment
+LINE=gone awry. However,
+LINE=poetic license and
+LINE=the folk process has
+LINE=distorted the words
+LINE=until now the locale
 }
+
 [PAGE 271]
 {
-of the tale is no
-more than "in the
-wind," which wile it
-serves a pleasingly
-metaphorical purpose,
-fails to inform the
-listener as to any
-real locale!
+LINE=of the tale is no
+LINE=more than "in the
+LINE=wind," which wile it
+LINE=serves a pleasingly
+LINE=metaphorical purpose,
+LINE=fails to inform the
+LINE=listener as to any
+LINE=real locale!
 }
+
 [PAGE 272]
 {
- Another possibility
-is that this is some
-form of creation myth
-explaining the
-genesis of the
-various humanoid
-creatures that roam
-the lands of
+LINE= Another possibility
+LINE=is that this is some
+LINE=form of creation myth
+LINE=explaining the
+LINE=genesis of the
+LINE=various humanoid
+LINE=creatures that roam
+LINE=the lands of
 }
+
 [PAGE 273]
 {
-Britannia. It does
-not take a stretch of
-the imagination to
-name the middle
-verse's "girl becomes
-tree" as a possible
-explanation for the
-reaper, for in the
+LINE=Britannia. It does
+LINE=not take a stretch of
+LINE=the imagination to
+LINE=name the middle
+LINE=verse's "girl becomes
+LINE=tree" as a possible
+LINE=explanation for the
+LINE=reaper, for in the
 }
+
 [PAGE 274]
 {
-area surrounding
-Minoc, reapers are
-oft referred to among
-the lumber jacking
-community as "widow
-makers." That these
-creatures are of
-arcane origin is
+LINE=area surrounding
+LINE=Minoc, reapers are
+LINE=oft referred to among
+LINE=the lumber jacking
+LINE=community as "widow
+LINE=makers." That these
+LINE=creatures are of
+LINE=arcane origin is
 }
+
 [PAGE 275]
 {
-assumed, but the
-verse seems to imply
-a long ago creator,
-and uses the antique
-magickal terminology
-of "plaiting strands
-of ether" that is so
-often found in
+LINE=assumed, but the
+LINE=verse seems to imply
+LINE=a long ago creator,
+LINE=and uses the antique
+LINE=magickal terminology
+LINE=of "plaiting strands
+LINE=of ether" that is so
+LINE=often found in
 }
+
 [PAGE 276]
 {
-ancient texts. In
-addition, the
-reference to
-"snakehills" my
-profitably be
-regarded as a
-reference to an
-actual location, such
+LINE=ancient texts. In
+LINE=addition, the
+LINE=reference to
+LINE="snakehills" my
+LINE=profitably be
+LINE=regarded as a
+LINE=reference to an
+LINE=actual location, such
 }
+
 [PAGE 277]
 {
-as perhaps the local
-term for the
-Serpent's Spine.
- A commoner
-interpretation is
-that like many
-nursery rhymes, it is
-a simple explanation
+LINE=as perhaps the local
+LINE=term for the
+LINE=Serpent's Spine.
+LINE= A commoner
+LINE=interpretation is
+LINE=that like many
+LINE=nursery rhymes, it is
+LINE=a simple explanation
 }
+
 [PAGE 278]
 {
-for death, wherein
-the wind snatches up
-boys and girls and
-when they sleep in
-order to keep the
-balance of the world.
-Notable tales have
-been written for
+LINE=for death, wherein
+LINE=the wind snatches up
+LINE=boys and girls and
+LINE=when they sleep in
+LINE=order to keep the
+LINE=balance of the world.
+LINE=Notable tales have
+LINE=been written for
 }
+
 [PAGE 279]
 {
-children of
-adventures in "the
-Snakehills," which
-are presumed to be an
-After world whence
-the spirit lives on.
-A grim lullaby, to be
-sure, but no worse
+LINE=children of
+LINE=adventures in "the
+LINE=Snakehills," which
+LINE=are presumed to be an
+LINE=After world whence
+LINE=the spirit lives on.
+LINE=A grim lullaby, to be
+LINE=sure, but no worse
 }
+
 [PAGE 280]
 {
-than "lest I die
-before I wake"
-surely.
- In either case, 'tis
-an old favorite,
-herein printed for
-the first time for
-thy enjoyment and
+LINE=than "lest I die
+LINE=before I wake"
+LINE=surely.
+LINE= In either case, 'tis
+LINE=an old favorite,
+LINE=herein printed for
+LINE=the first time for
+LINE=thy enjoyment and
 }
+
 [PAGE 281]
 {
-perusal!
-
- In the Wind where
-the balance is
-Whispered in Hallways
- In the Wind where
-the Magic Flows All
-through the Night
+LINE=perusal!
+LINE=
+LINE= In the Wind where
+LINE=the balance is
+LINE=Whispered in Hallways
+LINE= In the Wind where
+LINE=the Magic Flows All
+LINE=through the Night
 }
+
 [PAGE 282]
 {
- There live Mages and
-Mages With Robes made
-of Whole Days
- Reading Books full
-of Doings Printed on
-Light
- In the Wind where
-the Lovers Are
+LINE= There live Mages and
+LINE=Mages With Robes made
+LINE=of Whole Days
+LINE= Reading Books full
+LINE=of Doings Printed on
+LINE=Light
+LINE= In the Wind where
+LINE=the Lovers Are
 }
+
 [PAGE 283]
 {
-Crossed under Shadows
- Where the Meet and
-are Parted By the
-Orders of Fate
- The Girl becomes
-Tree, And thus
-becomes Widow
- The Boy becomes
+LINE=Crossed under Shadows
+LINE= Where the Meet and
+LINE=are Parted By the
+LINE=Orders of Fate
+LINE= The Girl becomes
+LINE=Tree, And thus
+LINE=becomes Widow
+LINE= The Boy becomes
 }
+
 [PAGE 284]
 {
-Earth And Wanders
-Till Late
- In the Wind are the
-Monsters First Born
-First Created
- When Chanting and
-Ether Mix Meddling
-and Nigh
+LINE=Earth And Wanders
+LINE=Till Late
+LINE= In the Wind are the
+LINE=Monsters First Born
+LINE=First Created
+LINE= When Chanting and
+LINE=Ether Mix Meddling
+LINE=and Nigh
 }
+
 [PAGE 285]
 {
- Fear going to Wind,
-Fear Finding its
-Plaitings,
- Go Not to the
-Snakehills Lest You
-Care to Die
+LINE= Fear going to Wind,
+LINE=Fear Finding its
+LINE=Plaitings,
+LINE= Go Not to the
+LINE=Snakehills Lest You
+LINE=Care to Die
 }
 
 // ============================ A Tale of Three Tribes
@@ -3564,113 +3801,123 @@ PAGE=293
 PAGE=294
 PAGE=295
 }
+
 [PAGE 286]
 {
- The dungeon known as
-Despise is in fact
-not a dungeon as
-such, but rather a
-large natural cave.
-Inhospitable and
-unfriendly to
-visitors, it is
+LINE= The dungeon known as
+LINE=Despise is in fact
+LINE=not a dungeon as
+LINE=such, but rather a
+LINE=large natural cave.
+LINE=Inhospitable and
+LINE=unfriendly to
+LINE=visitors, it is
 }
+
 [PAGE 287]
 {
-filled with damp
-spots where the
-deadly Exploding Red
-Spotted Toadstool
-grows in abundance.
- According to the
-oldest of historical
-texts, in days gone
+LINE=filled with damp
+LINE=spots where the
+LINE=deadly Exploding Red
+LINE=Spotted Toadstool
+LINE=grows in abundance.
+LINE= According to the
+LINE=oldest of historical
+LINE=texts, in days gone
 }
+
 [PAGE 288]
 {
-by the cave was once
-home of three
-separate tribes who
-had come to an
-accommodation with
-each other. Oddly
-enough, the three
-tribes were of
+LINE=by the cave was once
+LINE=home of three
+LINE=separate tribes who
+LINE=had come to an
+LINE=accommodation with
+LINE=each other. Oddly
+LINE=enough, the three
+LINE=tribes were of
 }
+
 [PAGE 289]
 {
-dragons, lizard men,
-and rat men. While
-today few except
-extremists associated
-with Lord Blackthorn
-regard these latter
-two as being
-intelligent beings,
+LINE=dragons, lizard men,
+LINE=and rat men. While
+LINE=today few except
+LINE=extremists associated
+LINE=with Lord Blackthorn
+LINE=regard these latter
+LINE=two as being
+LINE=intelligent beings,
 }
+
 [PAGE 290]
 {
-apparently they have
-indeed fallen from a
-more evolved state
-over the years.
- 'Tis said that these
-three races did dwell
-in relative harmony
-within the vast cave,
+LINE=apparently they have
+LINE=indeed fallen from a
+LINE=more evolved state
+LINE=over the years.
+LINE= 'Tis said that these
+LINE=three races did dwell
+LINE=in relative harmony
+LINE=within the vast cave,
 }
+
 [PAGE 291]
 {
-building when they
-required it, and
-trading amongst
-themselves if needed.
- But over time,
-something happened,
-and they were forced
-to withdraw their
+LINE=building when they
+LINE=required it, and
+LINE=trading amongst
+LINE=themselves if needed.
+LINE= But over time,
+LINE=something happened,
+LINE=and they were forced
+LINE=to withdraw their
 }
+
 [PAGE 292]
 {
-society, until today
-thou mayst find
-individuals of each
-species within the
-dungeon, but never
-again as a
-civilization.
- 'Tis also said that
+LINE=society, until today
+LINE=thou mayst find
+LINE=individuals of each
+LINE=species within the
+LINE=dungeon, but never
+LINE=again as a
+LINE=civilization.
+LINE= 'Tis also said that
 }
+
 [PAGE 293]
 {
-someday the three
-tribes may return to
-Despise, to once
-again inhabit it
-together.
- Until then, nothing
-remains as token of
-this save an oddly
+LINE=someday the three
+LINE=tribes may return to
+LINE=Despise, to once
+LINE=again inhabit it
+LINE=together.
+LINE= Until then, nothing
+LINE=remains as token of
+LINE=this save an oddly
 }
+
 [PAGE 294]
 {
-intelligent skeleton,
-magically enchanted,
-that doth speak when
-questions are asked,
-and from whom I
-obtained these tales
-one day, when I was
-pursued by evil
+LINE=intelligent skeleton,
+LINE=magically enchanted,
+LINE=that doth speak when
+LINE=questions are asked,
+LINE=and from whom I
+LINE=obtained these tales
+LINE=one day, when I was
+LINE=pursued by evil
 }
+
 [PAGE 295]
 {
-monsters and fled
-into his skeletal
-arms.
- Fortunately, I
-escaped and lived to
-write it all down!
+LINE=monsters and fled
+LINE=into his skeletal
+LINE=arms.
+LINE= Fortunately, I
+LINE=escaped and lived to
+LINE=write it all down!
 }
 
 // ============================ Deceit: A Dungeon of Horrors
@@ -3692,136 +3939,148 @@ PAGE=305
 PAGE=306
 PAGE=307
 }
+
 [PAGE 296]
 {
- My employers have
-oft taken me into
-this den of hideous
-creatures, and I
-thought that it
-behooved me to write
-down what I know of
-it, now that I am
+LINE= My employers have
+LINE=oft taken me into
+LINE=this den of hideous
+LINE=creatures, and I
+LINE=thought that it
+LINE=behooved me to write
+LINE=down what I know of
+LINE=it, now that I am
 }
+
 [PAGE 297]
 {
-retired from the life
-of an adventurer for
-hire.
- Deceit was once a
-temple to forgotten
-powers of old. It was
-taken over by mages
-who eventually were
+LINE=retired from the life
+LINE=of an adventurer for
+LINE=hire.
+LINE= Deceit was once a
+LINE=temple to forgotten
+LINE=powers of old. It was
+LINE=taken over by mages
+LINE=who eventually were
 }
+
 [PAGE 298]
 {
-driven out by the
-depredations of their
-own evil lackeys.
-However, many of the
-magical traps and
-devices that they
-placed for their
-defenses remain,
+LINE=driven out by the
+LINE=depredations of their
+LINE=own evil lackeys.
+LINE=However, many of the
+LINE=magical traps and
+LINE=devices that they
+LINE=placed for their
+LINE=defenses remain,
 }
+
 [PAGE 299]
 {
-particularly those
-the wizards used to
-protect their
-treasures.
- The dungeon is
-mystically linked by
-crystal balls placed
-in different
+LINE=particularly those
+LINE=the wizards used to
+LINE=protect their
+LINE=treasures.
+LINE= The dungeon is
+LINE=mystically linked by
+LINE=crystal balls placed
+LINE=in different
 }
+
 [PAGE 300]
 {
-locations. These
-magical orbs do
-transmit speech, and
-even have memory of
-things that have been
-said near them. No
-doubt they once
-served as a warning
+LINE=locations. These
+LINE=magical orbs do
+LINE=transmit speech, and
+LINE=even have memory of
+LINE=things that have been
+LINE=said near them. No
+LINE=doubt they once
+LINE=served as a warning
 }
+
 [PAGE 301]
 {
-system.
- Be wary of a brazier
-that giveth warning
-when approached;thou
-canst use it to
-summon deadly
-creatures.
- There be a
+LINE=system.
+LINE= Be wary of a brazier
+LINE=that giveth warning
+LINE=when approached;thou
+LINE=canst use it to
+LINE=summon deadly
+LINE=creatures.
+LINE= There be a
 }
+
 [PAGE 302]
 {
-tantalizing chest,
-undoubtedly full of
-treasure, that cannot
-be reached save past
-a complete set of
-pressure plates that
-trigger deadly
-spikes. As I have
+LINE=tantalizing chest,
+LINE=undoubtedly full of
+LINE=treasure, that cannot
+LINE=be reached save past
+LINE=a complete set of
+LINE=pressure plates that
+LINE=trigger deadly
+LINE=spikes. As I have
 }
+
 [PAGE 303]
 {
-never had sufficient
-folk with me to
-unlock the puzzle, I
-never obtained the
-riches that awaited
-there.
- Do not investigate
-iron maidens too
+LINE=never had sufficient
+LINE=folk with me to
+LINE=unlock the puzzle, I
+LINE=never obtained the
+LINE=riches that awaited
+LINE=there.
+LINE= Do not investigate
+LINE=iron maidens too
 }
+
 [PAGE 304]
 {
-closely, for they may
-suck you within them!
- There is one place
-there a deadly trap
-can only be disarmed
-by making use of a
-statue that cleverly
-conceals a lever.
+LINE=closely, for they may
+LINE=suck you within them!
+LINE= There is one place
+LINE=there a deadly trap
+LINE=can only be disarmed
+LINE=by making use of a
+LINE=statue that cleverly
+LINE=conceals a lever.
 }
+
 [PAGE 305]
 {
- Oft one encounters
-the deadly exploding
-toadstool; the ones
-in Deceit are
-deadlier than most,
-as they explode
-continually.
-Likewise, the very
+LINE= Oft one encounters
+LINE=the deadly exploding
+LINE=toadstool; the ones
+LINE=in Deceit are
+LINE=deadlier than most,
+LINE=as they explode
+LINE=continually.
+LINE=Likewise, the very
 }
+
 [PAGE 306]
 {
-pools of water and
-slime on the floor
-may poison thee.
- The most magical
-device in the dungeon
-is a mystical bridge
-that can only be
-triggered by a level
+LINE=pools of water and
+LINE=slime on the floor
+LINE=may poison thee.
+LINE= The most magical
+LINE=device in the dungeon
+LINE=is a mystical bridge
+LINE=that can only be
+LINE=triggered by a level
 }
+
 [PAGE 307]
 {
-embedded in the
-floor. Be wary
-however, for the
-bridge thus created
-doth burst into flame
-when one passeth
-across it!
+LINE=embedded in the
+LINE=floor. Be wary
+LINE=however, for the
+LINE=bridge thus created
+LINE=doth burst into flame
+LINE=when one passeth
+LINE=across it!
 }
 
 // ============================ The Life of a Travelling Minstrel
@@ -3849,199 +4108,217 @@ PAGE=323
 PAGE=324
 PAGE=325
 }
+
 [PAGE 308]
 {
- While 'tis true that
-the musician who
-seeketh only to make
-sweet music for
-herself and for
-others needs little
-more than some
-talent, and stern
+LINE= While 'tis true that
+LINE=the musician who
+LINE=seeketh only to make
+LINE=sweet music for
+LINE=herself and for
+LINE=others needs little
+LINE=more than some
+LINE=talent, and stern
 }
+
 [PAGE 309]
 {
-practice at the
-chosen instrument,
-those of us who seek
-the open road shall
-find indeed that a
-greater skill is
-required. Herein
-discover those
+LINE=practice at the
+LINE=chosen instrument,
+LINE=those of us who seek
+LINE=the open road shall
+LINE=find indeed that a
+LINE=greater skill is
+LINE=required. Herein
+LINE=discover those
 }
+
 [PAGE 310]
 {
-secrets which I have
-learned over the
-years as an itinerant
-performer...
- Once I was in
-Jhelom, and
-accidentally angered
-a bravo of some local
+LINE=secrets which I have
+LINE=learned over the
+LINE=years as an itinerant
+LINE=performer...
+LINE= Once I was in
+LINE=Jhelom, and
+LINE=accidentally angered
+LINE=a bravo of some local
 }
+
 [PAGE 311]
 {
-repute, whose blade
-flickered all too
-eagerly near my
-slender neck (for I
-was young then).
-After various threats
-to "ruin my pretty
-face" this bravo
+LINE=repute, whose blade
+LINE=flickered all too
+LINE=eagerly near my
+LINE=slender neck (for I
+LINE=was young then).
+LINE=After various threats
+LINE=to "ruin my pretty
+LINE=face" this bravo
 }
+
 [PAGE 312]
 {
-grabbed my arm in a
-most unseemly
-fashion and tossed
-me into a barbaric
-enclosure locally
-entitled a dueling
-pit. My plaintive
-cries for help went
+LINE=grabbed my arm in a
+LINE=most unseemly
+LINE=fashion and tossed
+LINE=me into a barbaric
+LINE=enclosure locally
+LINE=entitled a dueling
+LINE=pit. My plaintive
+LINE=cries for help went
 }
+
 [PAGE 313]
 {
-unheeded by the guards,
-for the inhabitants of
-Jhelom are eager
-indeed to measure
-fighting prowess at any
-time! What saved me was
-the ability to
-improvise a melody
+LINE=unheeded by the guards,
+LINE=for the inhabitants of
+LINE=Jhelom are eager
+LINE=indeed to measure
+LINE=fighting prowess at any
+LINE=time! What saved me was
+LINE=the ability to
+LINE=improvise a melody
 }
+
 [PAGE 314]
 {
-and tune that
-satirized the
-proceedings, and
-sufficiently angered
-an onlooker to prod
-him to coming to my
-defense. Once that
-fight was underway,
+LINE=and tune that
+LINE=satirized the
+LINE=proceedings, and
+LINE=sufficiently angered
+LINE=an onlooker to prod
+LINE=him to coming to my
+LINE=defense. Once that
+LINE=fight was underway,
 }
+
 [PAGE 315]
 {
-I was able to make
-good my escape.
-Hence, I regard the
-ability to incite
-fights as
-indispensable to the
-prudent bard.
- Upon another
+LINE=I was able to make
+LINE=good my escape.
+LINE=Hence, I regard the
+LINE=ability to incite
+LINE=fights as
+LINE=indispensable to the
+LINE=prudent bard.
+LINE= Upon another
 }
+
 [PAGE 316]
 {
-occasion, 'twas the
-obverse side of that
-coin which saved me,
-for I was being held
-prisoner by
-particularly nasty
-band of ruffians who
-had seized me
+LINE=occasion, 'twas the
+LINE=obverse side of that
+LINE=coin which saved me,
+LINE=for I was being held
+LINE=prisoner by
+LINE=particularly nasty
+LINE=band of ruffians who
+LINE=had seized me
 }
+
 [PAGE 317]
 {
-unawares from the
-road to Vesper.
- They had worked
-themselves into a
-frenzy and were ready
-to attack and I fear,
-tear me limb from
-limb, when I began to
+LINE=unawares from the
+LINE=road to Vesper.
+LINE= They had worked
+LINE=themselves into a
+LINE=frenzy and were ready
+LINE=to attack and I fear,
+LINE=tear me limb from
+LINE=limb, when I began to
 }
+
 [PAGE 318]
 {
-sing frantically,
-tapping my falled
-drum with my tied up
-feet. The melody
-developed into a
-soothing one, and the
-brigands slowly
-calmed down to the
+LINE=sing frantically,
+LINE=tapping my falled
+LINE=drum with my tied up
+LINE=feet. The melody
+LINE=developed into a
+LINE=soothing one, and the
+LINE=brigands slowly
+LINE=calmed down to the
 }
+
 [PAGE 319]
 {
-extent of
-apologizing, and they
-let me go!
- A final example I
-would pray you grant
-your attention: once
-I was lost upon a
-large isle far to the
+LINE=extent of
+LINE=apologizing, and they
+LINE=let me go!
+LINE= A final example I
+LINE=would pray you grant
+LINE=your attention: once
+LINE=I was lost upon a
+LINE=large isle far to the
 }
+
 [PAGE 320]
 {
-east of the mainland,
-well beyond serpent's
-Hold, where lava made
-its sluggish way
-across the surface
-landscape. And this
-accursed land was
-filled with vile
+LINE=east of the mainland,
+LINE=well beyond serpent's
+LINE=Hold, where lava made
+LINE=its sluggish way
+LINE=across the surface
+LINE=landscape. And this
+LINE=accursed land was
+LINE=filled with vile
 }
+
 [PAGE 321]
 {
-beasts and cunning
-dragons.
- I was being pursued
-by one of the said
-fell dragons when I
-found myself trapped.
-I quickly skirted a
-bubbling pool of
+LINE=beasts and cunning
+LINE=dragons.
+LINE= I was being pursued
+LINE=by one of the said
+LINE=fell dragons when I
+LINE=found myself trapped.
+LINE=I quickly skirted a
+LINE=bubbling pool of
 }
+
 [PAGE 322]
 {
-molten rock and
-attempted to hide.
- The dragon scented
-me and was preparing
-to skirt the pool,
-when I began to play
-a lusty tune upon my
-lute that attracted
+LINE=molten rock and
+LINE=attempted to hide.
+LINE= The dragon scented
+LINE=me and was preparing
+LINE=to skirt the pool,
+LINE=when I began to play
+LINE=a lusty tune upon my
+LINE=lute that attracted
 }
+
 [PAGE 323]
 {
-its attention.
-Mesmerized and
-enticed by the
-melody, it stepped
-directly towards me,
-and into the lava-
-where its foot was so
-burned that it
+LINE=its attention.
+LINE=Mesmerized and
+LINE=enticed by the
+LINE=melody, it stepped
+LINE=directly towards me,
+LINE=and into the lava-
+LINE=where its foot was so
+LINE=burned that it
 }
+
 [PAGE 324]
 {
-quickly hopped away,
-undignified and
-annoyed.
- 'Tis my fond hope
-that other travelling
-minstrels shall learn
-from my experience
-and apply themselves
+LINE=quickly hopped away,
+LINE=undignified and
+LINE=annoyed.
+LINE= 'Tis my fond hope
+LINE=that other travelling
+LINE=minstrels shall learn
+LINE=from my experience
+LINE=and apply themselves
 }
+
 [PAGE 325]
 {
-to practicing these
-skills in order to
-preserve life and
-limb.
+LINE=to practicing these
+LINE=skills in order to
+LINE=preserve life and
+LINE=limb.
 }
 
 // ============================ The Wild Girl of the Forest
@@ -4067,178 +4344,194 @@ PAGE=339
 PAGE=340
 PAGE=341
 }
+
 [PAGE 326]
 {
- Her name was Leyla,
-she said, and her
-hair was braided wild
-with creepers and
-thorns. I marveled
-that they did not
-hurt her, but when I
-asked, she but
+LINE= Her name was Leyla,
+LINE=she said, and her
+LINE=hair was braided wild
+LINE=with creepers and
+LINE=thorns. I marveled
+LINE=that they did not
+LINE=hurt her, but when I
+LINE=asked, she but
 }
+
 [PAGE 327]
 {
-shrugged and let her
-eyes roam once more
-across the woods.
-Though I had my hands
-securely fastened by
-her ropes, I itched
-to reach out and comb
-that unruly golden
+LINE=shrugged and let her
+LINE=eyes roam once more
+LINE=across the woods.
+LINE=Though I had my hands
+LINE=securely fastened by
+LINE=her ropes, I itched
+LINE=to reach out and comb
+LINE=that unruly golden
 }
+
 [PAGE 328]
 {
-mane, dirtied and
-leaf-ridden.
- Her provenance, she
-told me over nights
-illumined by
-campfires, was once
-the city of Trinsic.
-She claimed to have
+LINE=mane, dirtied and
+LINE=leaf-ridden.
+LINE= Her provenance, she
+LINE=told me over nights
+LINE=illumined by
+LINE=campfires, was once
+LINE=the city of Trinsic.
+LINE=She claimed to have
 }
+
 [PAGE 329]
 {
-been kidnapped and
-raised by orcs, which
-I judged an unlikely
-tale, for all know
-orcs delight in
-eating the meat of
-honest folk. When I
-told her this, she
+LINE=been kidnapped and
+LINE=raised by orcs, which
+LINE=I judged an unlikely
+LINE=tale, for all know
+LINE=orcs delight in
+LINE=eating the meat of
+LINE=honest folk. When I
+LINE=told her this, she
 }
+
 [PAGE 330]
 {
-laughed a fey laugh,
-and gaily admitted
-that honest she was
-not, for oft had she
-stolen folk away from
-caravans to loot
-their possessions
-from an unconscious
+LINE=laughed a fey laugh,
+LINE=and gaily admitted
+LINE=that honest she was
+LINE=not, for oft had she
+LINE=stolen folk away from
+LINE=caravans to loot
+LINE=their possessions
+LINE=from an unconscious
 }
+
 [PAGE 331]
 {
-body!
- At this, I began to
-fear for my life, and
-her smile seemed full
-of teeth sharper than
-a human ought to
-have, for the tale of
-orcish raising had
+LINE=body!
+LINE= At this, I began to
+LINE=fear for my life, and
+LINE=her smile seemed full
+LINE=of teeth sharper than
+LINE=a human ought to
+LINE=have, for the tale of
+LINE=orcish raising had
 }
+
 [PAGE 332]
 {
-struck fear into the
-marrow of my bones.
-"Wilt thou eat me?" I
-asked, a-tremble,
-fearing the answer.
- And she cocked her
-head at me, like a
-wild animal facing a
+LINE=struck fear into the
+LINE=marrow of my bones.
+LINE="Wilt thou eat me?" I
+LINE=asked, a-tremble,
+LINE=fearing the answer.
+LINE= And she cocked her
+LINE=head at me, like a
+LINE=wild animal facing a
 }
+
 [PAGE 333]
 {
-word that it dost not
-understand, and the
-fixity in her eyes
-was a glimpse into
-the deeper reaches of
-the Abyss. But she
-finally grunted, and
-said, "Nay," in a
+LINE=word that it dost not
+LINE=understand, and the
+LINE=fixity in her eyes
+LINE=was a glimpse into
+LINE=the deeper reaches of
+LINE=the Abyss. But she
+LINE=finally grunted, and
+LINE=said, "Nay," in a
 }
+
 [PAGE 334]
 {
-voice that recalled
-to me a child. "Nay,"
-she said, "for thou
-dost remind me of a
-boy I knew once, when
-I was a girl who
-played in a city of
-great sandstone
+LINE=voice that recalled
+LINE=to me a child. "Nay,"
+LINE=she said, "for thou
+LINE=dost remind me of a
+LINE=boy I knew once, when
+LINE=I was a girl who
+LINE=played in a city of
+LINE=great sandstone
 }
+
 [PAGE 335]
 {
-walls, before I was
-taken. He had sandy
-hair like thee, and I
-dreamt as a child of
-holding his hand and
-sharing flavored ice.
-His name was
-Japheth."
+LINE=walls, before I was
+LINE=taken. He had sandy
+LINE=hair like thee, and I
+LINE=dreamt as a child of
+LINE=holding his hand and
+LINE=sharing flavored ice.
+LINE=His name was
+LINE=Japheth."
 }
+
 [PAGE 336]
 {
-The next morning she
-let me go, stripped
-of my pouch and
-clothes, and bade me
-run through the
-woods, and to fear
-recapture, for surely
-her heart would not
+LINE=The next morning she
+LINE=let me go, stripped
+LINE=of my pouch and
+LINE=clothes, and bade me
+LINE=run through the
+LINE=woods, and to fear
+LINE=recapture, for surely
+LINE=her heart would not
 }
+
 [PAGE 337]
 {
-soften again. 'Twas a
-fearful run, and I
-came to the road to
-Yew with welts and
-scratches run
-rampant across my
-skin but I did not
-see her again.
+LINE=soften again. 'Twas a
+LINE=fearful run, and I
+LINE=came to the road to
+LINE=Yew with welts and
+LINE=scratches run
+LINE=rampant across my
+LINE=skin but I did not
+LINE=see her again.
 }
+
 [PAGE 338]
 {
- Oft have I wondered
-of the boy named
-Japheth, and whether
-he remembers a girl
-who lived in
-sandstone walls. The
-only Japheth I know
-is the Guild master
+LINE= Oft have I wondered
+LINE=of the boy named
+LINE=Japheth, and whether
+LINE=he remembers a girl
+LINE=who lived in
+LINE=sandstone walls. The
+LINE=only Japheth I know
+LINE=is the Guild master
 }
+
 [PAGE 339]
 {
-of Paladins who died
-last year warring
-amidst the orcs, and
-though he had indeed
-sandy hair, I cannot
-picture him side by
-side with a feral
-girl whose tongue has
+LINE=of Paladins who died
+LINE=last year warring
+LINE=amidst the orcs, and
+LINE=though he had indeed
+LINE=sandy hair, I cannot
+LINE=picture him side by
+LINE=side with a feral
+LINE=girl whose tongue has
 }
+
 [PAGE 340]
 {
-tasted of human
-flesh.
- Yet the paths of
-fate are strange
-indeed, and I suppose
-'tis possible that
-this paladin died
-defending his
+LINE=tasted of human
+LINE=flesh.
+LINE= Yet the paths of
+LINE=fate are strange
+LINE=indeed, and I suppose
+LINE='tis possible that
+LINE=this paladin died
+LINE=defending his
 }
+
 [PAGE 341]
 {
-remembered lady's
-honor, unknowingly
-struck down by the
-orc that she called
-father.
+LINE=remembered lady's
+LINE=honor, unknowingly
+LINE=struck down by the
+LINE=orc that she called
+LINE=father.
 }
 
 // ============================ A Primer on Arms and Weapons
@@ -4264,176 +4557,192 @@ PAGE=355
 PAGE=356
 PAGE=357
 }
+
 [PAGE 342]
 {
- These are the basic
-elements to consider
-in assessing a
-weapon, of which all
-warriors who regard
-themselves as more
-than mere mercenaries
-should be aware.
+LINE= These are the basic
+LINE=elements to consider
+LINE=in assessing a
+LINE=weapon, of which all
+LINE=warriors who regard
+LINE=themselves as more
+LINE=than mere mercenaries
+LINE=should be aware.
 }
+
 [PAGE 343]
 {
- First and most
-obvious is the amount
-of damage that the
-weapon may do against
-unprotected flesh.
-While 'tis this which
-first attracts the
-attention of the
+LINE= First and most
+LINE=obvious is the amount
+LINE=of damage that the
+LINE=weapon may do against
+LINE=unprotected flesh.
+LINE=While 'tis this which
+LINE=first attracts the
+LINE=attention of the
 }
+
 [PAGE 344]
 {
-novice, 'tis a deadly
-mistake to regard it
-as the sole value of
-a weapon. While it
-may prove devastating
-indeed as a means of
-causing damage, a
-weapon must also
+LINE=novice, 'tis a deadly
+LINE=mistake to regard it
+LINE=as the sole value of
+LINE=a weapon. While it
+LINE=may prove devastating
+LINE=indeed as a means of
+LINE=causing damage, a
+LINE=weapon must also
 }
+
 [PAGE 345]
 {
-serve as stout shield
-when engaged in
-combat.
- Hence the second
-issue to which to pay
-attention is the
-amount of protection
-that a weapon may
+LINE=serve as stout shield
+LINE=when engaged in
+LINE=combat.
+LINE= Hence the second
+LINE=issue to which to pay
+LINE=attention is the
+LINE=amount of protection
+LINE=that a weapon may
 }
+
 [PAGE 346]
 {
-offer. Pay close
-attention to the
-guard on it, if it be
-a blade, or the
-stoutness of its wood
-if it is a pole arm.
- Oft related to this
-is the weight of the
+LINE=offer. Pay close
+LINE=attention to the
+LINE=guard on it, if it be
+LINE=a blade, or the
+LINE=stoutness of its wood
+LINE=if it is a pole arm.
+LINE= Oft related to this
+LINE=is the weight of the
 }
+
 [PAGE 347]
 {
-weapon, for a heavy
-weapon is more
-difficult to maneuver
-to block with, though
-it may do more damage
-to thy opponent.
- If a weapon is too
-heavy for the wielder
+LINE=weapon, for a heavy
+LINE=weapon is more
+LINE=difficult to maneuver
+LINE=to block with, though
+LINE=it may do more damage
+LINE=to thy opponent.
+LINE= If a weapon is too
+LINE=heavy for the wielder
 }
+
 [PAGE 348]
 {
-to move it freely,
-they should choose
-another and not
-attempt to prove
-their prowess by the
-size of their sword.
- The reach of a
-weapon both increases
+LINE=to move it freely,
+LINE=they should choose
+LINE=another and not
+LINE=attempt to prove
+LINE=their prowess by the
+LINE=size of their sword.
+LINE= The reach of a
+LINE=weapon both increases
 }
+
 [PAGE 349]
 {
-its defensive
-ability, and renders
-it more useful in
-open spaces as it
-allows attack against
-the opponent without
-the need to close.
-But be aware of the
+LINE=its defensive
+LINE=ability, and renders
+LINE=it more useful in
+LINE=open spaces as it
+LINE=allows attack against
+LINE=the opponent without
+LINE=the need to close.
+LINE=But be aware of the
 }
+
 [PAGE 350]
 {
-limitations of thy
-weapon! For a weapon
-with great reach may
-be useless in close
-quarters, for lack of
-space to maneuver it.
-Should that dagger-
-wielding enemy close
+LINE=limitations of thy
+LINE=weapon! For a weapon
+LINE=with great reach may
+LINE=be useless in close
+LINE=quarters, for lack of
+LINE=space to maneuver it.
+LINE=Should that dagger-
+LINE=wielding enemy close
 }
+
 [PAGE 351]
 {
-on thee and thy
-halberd, 'tis best to
-flee.
- Lastly, a factor
-that must always be
-considered is the
-condition of the
-weapon. It might be a
+LINE=on thee and thy
+LINE=halberd, 'tis best to
+LINE=flee.
+LINE= Lastly, a factor
+LINE=that must always be
+LINE=considered is the
+LINE=condition of the
+LINE=weapon. It might be a
 }
+
 [PAGE 352]
 {
-wondrous magical
-blade of surpassing
-sharpness and it may
-leap to block blows
-with a mind of its
-own. It also might be
-of such flimsy
-construction, or
+LINE=wondrous magical
+LINE=blade of surpassing
+LINE=sharpness and it may
+LINE=leap to block blows
+LINE=with a mind of its
+LINE=own. It also might be
+LINE=of such flimsy
+LINE=construction, or
 }
+
 [PAGE 353]
 {
-damaged to such an
-extent, that the
-first time it clangs
-against steel, 'twill
-shatter into useless
-shards.
- Seek ye a good
-blacksmith should thy
+LINE=damaged to such an
+LINE=extent, that the
+LINE=first time it clangs
+LINE=against steel, 'twill
+LINE=shatter into useless
+LINE=shards.
+LINE= Seek ye a good
+LINE=blacksmith should thy
 }
+
 [PAGE 354]
 {
-weapon become
-damaged, but be aware
-that their
-ministrations may
-simply make the
-matter worse.
- While mages of some
-ability oft create
+LINE=weapon become
+LINE=damaged, but be aware
+LINE=that their
+LINE=ministrations may
+LINE=simply make the
+LINE=matter worse.
+LINE= While mages of some
+LINE=ability oft create
 }
+
 [PAGE 355]
 {
-magical weapons
-which enhance skill,
-are preternaturally
-sharp, or incinerate
-the enemy as they
-fall, to my mind the
-greatest gift that
-they can grant a
+LINE=magical weapons
+LINE=which enhance skill,
+LINE=are preternaturally
+LINE=sharp, or incinerate
+LINE=the enemy as they
+LINE=fall, to my mind the
+LINE=greatest gift that
+LINE=they can grant a
 }
+
 [PAGE 356]
 {
-stout sword is to
-make it resistant to
-damage, for thy own
-skill can make up the
-difference. Except
-for the fireball, but
-if the corpse is
-charred, then so will
+LINE=stout sword is to
+LINE=make it resistant to
+LINE=damage, for thy own
+LINE=skill can make up the
+LINE=difference. Except
+LINE=for the fireball, but
+LINE=if the corpse is
+LINE=charred, then so will
 }
+
 [PAGE 357]
 {
-be the possessions,
-which maketh looting
-difficult!
+LINE=be the possessions,
+LINE=which maketh looting
+LINE=difficult!
 }
 
 // ============================ Beltran's Guide to Guilds
@@ -4457,159 +4766,173 @@ PAGE=369
 PAGE=370
 PAGE=371
 }
+
 [PAGE 358]
 {
- This reference work
-is intended merely to
-serve as a resource
-for those curious as
-to the full range of
-trades and societies
-extant in Britannia
-and nearby nations.
+LINE= This reference work
+LINE=is intended merely to
+LINE=serve as a resource
+LINE=for those curious as
+LINE=to the full range of
+LINE=trades and societies
+LINE=extant in Britannia
+LINE=and nearby nations.
 }
+
 [PAGE 359]
 {
-For each trade or
-guild, their blazon
-is given.
- Armorer's Guild.
-Gold bar above black
-bar.
- Association of
-Warriors. Blue cross
+LINE=For each trade or
+LINE=guild, their blazon
+LINE=is given.
+LINE= Armorer's Guild.
+LINE=Gold bar above black
+LINE=bar.
+LINE= Association of
+LINE=Warriors. Blue cross
 }
+
 [PAGE 360]
 {
-on a red field.
- Barters' Guild.
-Green and white
-stripes, diagonal.
- Blacksmith's Guild.
-Gold alongside black.
- Federation of Rogues
-and Beggars. Red
+LINE=on a red field.
+LINE= Barters' Guild.
+LINE=Green and white
+LINE=stripes, diagonal.
+LINE= Blacksmith's Guild.
+LINE=Gold alongside black.
+LINE= Federation of Rogues
+LINE=and Beggars. Red
 }
+
 [PAGE 361]
 {
-above black.
- Fighters and
-Footmen. Blue
-horzontal bar on red
-field.
- Guild of Archers. A
-gold swath parting
-red and blue.
+LINE=above black.
+LINE= Fighters and
+LINE=Footmen. Blue
+LINE=horzontal bar on red
+LINE=field.
+LINE= Guild of Archers. A
+LINE=gold swath parting
+LINE=red and blue.
 }
+
 [PAGE 362]
 {
- Guild of Armaments.
-Swath of gold on
-black field, gold
-accents.
- Guild of Assassins.
-Black and red
-quartered.
- Guild of Barbers.
+LINE= Guild of Armaments.
+LINE=Swath of gold on
+LINE=black field, gold
+LINE=accents.
+LINE= Guild of Assassins.
+LINE=Black and red
+LINE=quartered.
+LINE= Guild of Barbers.
 }
+
 [PAGE 363]
 {
-Red and white
-stripes.
- Guild of Cavalry and
-Horse. Vertical blue
-on a red field.
- Guild of Fishermen.
-Blue and white,
-quartered.
+LINE=Red and white
+LINE=stripes.
+LINE= Guild of Cavalry and
+LINE=Horse. Vertical blue
+LINE=on a red field.
+LINE= Guild of Fishermen.
+LINE=Blue and white,
+LINE=quartered.
 }
+
 [PAGE 364]
 {
- Guild of Mages.
-Purple and blue, in a
-crossed pennant
-pattern.
- Guild of
-Provisioners. White
-bar above green bar.
- Guild of Sorcery. A
+LINE= Guild of Mages.
+LINE=Purple and blue, in a
+LINE=crossed pennant
+LINE=pattern.
+LINE= Guild of
+LINE=Provisioners. White
+LINE=bar above green bar.
+LINE= Guild of Sorcery. A
 }
+
 [PAGE 365]
 {
-field divided
-diagonally in blue
-and purple.
- Healers Guild. Gold
-swath dividing green
-from purple, gold
-accents.
- Lord British's
+LINE=field divided
+LINE=diagonally in blue
+LINE=and purple.
+LINE= Healers Guild. Gold
+LINE=swath dividing green
+LINE=from purple, gold
+LINE=accents.
+LINE= Lord British's
 }
+
 [PAGE 366]
 {
-Healers of Virtue.
-Golden ankh on dark
-green.
- Masters of Illusion.
-Blue and purple
-checkers.
- Merchants' Guild.
-Gold coins on green
+LINE=Healers of Virtue.
+LINE=Golden ankh on dark
+LINE=green.
+LINE= Masters of Illusion.
+LINE=Blue and purple
+LINE=checkers.
+LINE= Merchants' Guild.
+LINE=Gold coins on green
 }
+
 [PAGE 367]
 {
-field.
- Mining Cooperative.
-A gold cross,
-quartering blue and
-black.
- Order of Engineers.
-Purple, gold, and
-blue vertical.
+LINE=field.
+LINE= Mining Cooperative.
+LINE=A gold cross,
+LINE=quartering blue and
+LINE=black.
+LINE= Order of Engineers.
+LINE=Purple, gold, and
+LINE=blue vertical.
 }
+
 [PAGE 368]
 {
- Sailors' Maritime
-Association. A white
-bar centered on a
-blue field.
- Seamen's Chapter.
-Blue and white in a
-crossed pennant
-pattern.
+LINE= Sailors' Maritime
+LINE=Association. A white
+LINE=bar centered on a
+LINE=blue field.
+LINE= Seamen's Chapter.
+LINE=Blue and white in a
+LINE=crossed pennant
+LINE=pattern.
 }
+
 [PAGE 369]
 {
- Society of Cooks and
-Chefs. White and red
-diagonal fields
-checker on green
-field.
- Society of
-Shipwrights. White
-diagonal aboe blue.
+LINE= Society of Cooks and
+LINE=Chefs. White and red
+LINE=diagonal fields
+LINE=checker on green
+LINE=field.
+LINE= Society of
+LINE=Shipwrights. White
+LINE=diagonal aboe blue.
 }
+
 [PAGE 370]
 {
- Society of Thieves.
-Black and red
-diagonal stripes.
- Society of
-Weaponsmakers. Gold
-diagonal above black.
- Tailor's Hall.
-Purple above gold
+LINE= Society of Thieves.
+LINE=Black and red
+LINE=diagonal stripes.
+LINE= Society of
+LINE=Weaponsmakers. Gold
+LINE=diagonal above black.
+LINE= Tailor's Hall.
+LINE=Purple above gold
 }
+
 [PAGE 371]
 {
-above red.
- The Bardic
-Collegium. Purple and
-red checkers on gold
-field.
- Traders' Guild.
-White bar centered
-down green field.
+LINE=above red.
+LINE= The Bardic
+LINE=Collegium. Purple and
+LINE=red checkers on gold
+LINE=field.
+LINE= Traders' Guild.
+LINE=White bar centered
+LINE=down green field.
 }
 
 // ============================ Britannian Flora
@@ -4638,208 +4961,227 @@ PAGE=388
 PAGE=389
 PAGE=390
 }
+
 [PAGE 372]
 {
- Oft 'pon rambling
-through the woods
-avoiding bears have I
-spotted some plant
-whose like I have
-never seen before,
-and concluded that I
-was a blithering
+LINE= Oft 'pon rambling
+LINE=through the woods
+LINE=avoiding bears have I
+LINE=spotted some plant
+LINE=whose like I have
+LINE=never seen before,
+LINE=and concluded that I
+LINE=was a blithering
 }
+
 [PAGE 373]
 {
-idiot for failing to
-notice it in the
-past. Equally as oft
-have I concluded that
-I was a worse idiot
-for not running
-faster from the bear.
- While not all my
+LINE=idiot for failing to
+LINE=notice it in the
+LINE=past. Equally as oft
+LINE=have I concluded that
+LINE=I was a worse idiot
+LINE=for not running
+LINE=faster from the bear.
+LINE= While not all my
 }
+
 [PAGE 374]
 {
-readers may share
-my proclivities for
-tree-climbing, it
-occurred to me that
-mayhap mine
-information might
-serve some humble
-purpose.
+LINE=readers may share
+LINE=my proclivities for
+LINE=tree-climbing, it
+LINE=occurred to me that
+LINE=mayhap mine
+LINE=information might
+LINE=serve some humble
+LINE=purpose.
 }
+
 [PAGE 375]
 {
- The two most unique
-flowering plants in
-the Britannian
-countryside are the
-orfleur and the
-whiteflower, also
-called white hornes.
- The orfleur is
+LINE= The two most unique
+LINE=flowering plants in
+LINE=the Britannian
+LINE=countryside are the
+LINE=orfleur and the
+LINE=whiteflower, also
+LINE=called white hornes.
+LINE= The orfleur is
 }
+
 [PAGE 376]
 {
-notable for its
-massive orange-red
-blossoms, which dwarf
-marigolds like the
-sun dwarfs your
-common fireball
-spell. The odor of
-said blooms is best
+LINE=notable for its
+LINE=massive orange-red
+LINE=blossoms, which dwarf
+LINE=marigolds like the
+LINE=sun dwarfs your
+LINE=common fireball
+LINE=spell. The odor of
+LINE=said blooms is best
 }
+
 [PAGE 377]
 {
-described as
-peppermint-apple,
-with a dash of
-garlic. 'Tis a
-popular potted plant
-despite, or perhaps
-because of, its
-exotic nature.
+LINE=described as
+LINE=peppermint-apple,
+LINE=with a dash of
+LINE=garlic. 'Tis a
+LINE=popular potted plant
+LINE=despite, or perhaps
+LINE=because of, its
+LINE=exotic nature.
 }
+
 [PAGE 378]
 {
- Whiteflowers exude a
-subtle fragrance not
-unlike that of
-freshly shaven wood
-mixed with cool lemon
-ice. Their tall
-stands always droop
-with the heavy weight
+LINE= Whiteflowers exude a
+LINE=subtle fragrance not
+LINE=unlike that of
+LINE=freshly shaven wood
+LINE=mixed with cool lemon
+LINE=ice. Their tall
+LINE=stands always droop
+LINE=with the heavy weight
 }
+
 [PAGE 379]
 {
-of the massive
-blooms, oft as large
-as a child's head.
- The flowers are so
-large that one may
-scoop out the pollen
-in handfuls, and
-during the spring
+LINE=of the massive
+LINE=blooms, oft as large
+LINE=as a child's head.
+LINE= The flowers are so
+LINE=large that one may
+LINE=scoop out the pollen
+LINE=in handfuls, and
+LINE=during the spring
 }
+
 [PAGE 380]
 {
-season many a prank
-hath been played by
-idle boys 'pon their
-sisters by dumping
-said pollen into
-their clothing
-drawers, causing
-sneezes for days.
+LINE=season many a prank
+LINE=hath been played by
+LINE=idle boys 'pon their
+LINE=sisters by dumping
+LINE=said pollen into
+LINE=their clothing
+LINE=drawers, causing
+LINE=sneezes for days.
 }
+
 [PAGE 381]
 {
- The most interesting
-native tree to
-Britannia is the
-spider tree. The
-reason for its naming
-is obscure, but may
-have to do with the
-twisted gray stalks
+LINE= The most interesting
+LINE=native tree to
+LINE=Britannia is the
+LINE=spider tree. The
+LINE=reason for its naming
+LINE=is obscure, but may
+LINE=have to do with the
+LINE=twisted gray stalks
 }
+
 [PAGE 382]
 {
-from which the
-spherical canopy
-sprouts. 'Tis
-something of a
-misnomer to term
-these "trunks" as
-they are spindly and
-flexible. Spider
+LINE=from which the
+LINE=spherical canopy
+LINE=sprouts. 'Tis
+LINE=something of a
+LINE=misnomer to term
+LINE=these "trunks" as
+LINE=they are spindly and
+LINE=flexible. Spider
 }
+
 [PAGE 383]
 {
-trees provide a
-fresh, piney smell to
-a room and are
-therefore often
-potted.
- In jungle climes,
-one finds the blade
-plant, whose sharp
+LINE=trees provide a
+LINE=fresh, piney smell to
+LINE=a room and are
+LINE=therefore often
+LINE=potted.
+LINE= In jungle climes,
+LINE=one finds the blade
+LINE=plant, whose sharp
 }
+
 [PAGE 384]
 {
-leaves oft collect
-water for the thirsty
-traveler, yet can
-draw blood easily.
- The deadliest
-plant, if you can
-call a fungus such,
-is the Exploding Red
+LINE=leaves oft collect
+LINE=water for the thirsty
+LINE=traveler, yet can
+LINE=draw blood easily.
+LINE= The deadliest
+LINE=plant, if you can
+LINE=call a fungus such,
+LINE=is the Exploding Red
 }
+
 [PAGE 385]
 {
-Spotted Toadstool. No
-pattern can be
-discerned to its
-habitats save malice,
-for merely
-approaching results
-in the cap exploding
-with powder, noxious
+LINE=Spotted Toadstool. No
+LINE=pattern can be
+LINE=discerned to its
+LINE=habitats save malice,
+LINE=for merely
+LINE=approaching results
+LINE=in the cap exploding
+LINE=with powder, noxious
 }
+
 [PAGE 386]
 {
-gas, and tiny painful
-pellets flying in all
-directions.
-Unfortunately, 'tis
-impossible to tell it
-apart from the
-Ordinary Red Spotted
-Toadstool save
+LINE=gas, and tiny painful
+LINE=pellets flying in all
+LINE=directions.
+LINE=Unfortunately, 'tis
+LINE=impossible to tell it
+LINE=apart from the
+LINE=Ordinary Red Spotted
+LINE=Toadstool save
 }
+
 [PAGE 387]
 {
-through
-experimentation.
- Truly odd among the
-varied flora of
-Britannia, however,
-are those which bear
-names clearly alien
-to our tongue. Among
+LINE=through
+LINE=experimentation.
+LINE= Truly odd among the
+LINE=varied flora of
+LINE=Britannia, however,
+LINE=are those which bear
+LINE=names clearly alien
+LINE=to our tongue. Among
 }
+
 [PAGE 388]
 {
-these I name the
-Tuscany pine (for I
-have never seen a
-region of this world
-named Tuscany), the
-o'hil tree, whose
-very name sounds like
-some tropical isle,
+LINE=these I name the
+LINE=Tuscany pine (for I
+LINE=have never seen a
+LINE=region of this world
+LINE=named Tuscany), the
+LINE=o'hil tree, whose
+LINE=very name sounds like
+LINE=some tropical isle,
 }
+
 [PAGE 389]
 {
-and the welsh poppy,
-which while different
-from the ordinary
-poppy in color and
-appearance, is
-prefaced with the odd
-word "welsh," which
-as far as I know
+LINE=and the welsh poppy,
+LINE=which while different
+LINE=from the ordinary
+LINE=poppy in color and
+LINE=appearance, is
+LINE=prefaced with the odd
+LINE=word "welsh," which
+LINE=as far as I know
 }
+
 [PAGE 390]
 {
-means to forgo paying
-a debt.
+LINE=means to forgo paying
+LINE=a debt.
 }
 
 // ============================ Dimensional Travel, a Monograph
@@ -4868,210 +5210,229 @@ PAGE=407
 PAGE=408
 PAGE=409
 }
+
 [PAGE 391]
 {
- 'Tis beyond the
-scope of this small
-monograph to discuss
-the details of moon
-gates, and the
-manners in which they
-distort the fabric of
-reality in such a
+LINE= 'Tis beyond the
+LINE=scope of this small
+LINE=monograph to discuss
+LINE=the details of moon
+LINE=gates, and the
+LINE=manners in which they
+LINE=distort the fabric of
+LINE=reality in such a
 }
+
 [PAGE 392]
 {
-manner as to permit
-the passage of living
-flesh from place to
-place, world to
-world, or indeed from
-dimension to
-dimension.
- Instead, allow me to
+LINE=manner as to permit
+LINE=the passage of living
+LINE=flesh from place to
+LINE=place, world to
+LINE=world, or indeed from
+LINE=dimension to
+LINE=dimension.
+LINE= Instead, allow me to
 }
+
 [PAGE 393]
 {
-bring thy attention,
-Gentle Reader, to the
-curious
-characteristics that
-are shared by certain
-individuals within
-our realm.
- Long has it been
+LINE=bring thy attention,
+LINE=Gentle Reader, to the
+LINE=curious
+LINE=characteristics that
+LINE=are shared by certain
+LINE=individuals within
+LINE=our realm.
+LINE= Long has it been
 }
+
 [PAGE 394]
 {
-known that the blue
-moon gate permits
-travel from place to
-place, and none have
-trouble in taking
-this path. Yet 'tis
-also known, albeit
-only to a few, that
+LINE=known that the blue
+LINE=moon gate permits
+LINE=travel from place to
+LINE=place, and none have
+LINE=trouble in taking
+LINE=this path. Yet 'tis
+LINE=also known, albeit
+LINE=only to a few, that
 }
+
 [PAGE 395]
 {
-certain individuals
-are unable to
-traverse the black
-moon gates that
-permit travel from
-one dimension to
-another.
- The noted mage and
+LINE=certain individuals
+LINE=are unable to
+LINE=traverse the black
+LINE=moon gates that
+LINE=permit travel from
+LINE=one dimension to
+LINE=another.
+LINE= The noted mage and
 }
+
 [PAGE 396]
 {
-peer of our realm,
-Lord Blackthorn, once
-told me in
-conversation that his
-arcane research had
-indicated that the
-issue was one of
-conversation of
+LINE=peer of our realm,
+LINE=Lord Blackthorn, once
+LINE=told me in
+LINE=conversation that his
+LINE=arcane research had
+LINE=indicated that the
+LINE=issue was one of
+LINE=conversation of
 }
+
 [PAGE 397]
 {
-ether. To wit, given
-the postulate that
-matter within a given
-dimension may be but
-a cross-[of
-ethereal matter that
-exists in multiple
-dimensions, it
+LINE=ether. To wit, given
+LINE=the postulate that
+LINE=matter within a given
+LINE=dimension may be but
+LINE=a cross-[of
+LINE=ethereal matter that
+LINE=exists in multiple
+LINE=dimensions, it
 }
+
 [PAGE 398]
 {
-becomes obvious that
-said ethereal
-structure cannot
-enter dimensions in
-which it is already
-present.
- Imagine an
-individual (and the
+LINE=becomes obvious that
+LINE=said ethereal
+LINE=structure cannot
+LINE=enter dimensions in
+LINE=which it is already
+LINE=present.
+LINE= Imagine an
+LINE=individual (and the
 }
+
 [PAGE 399]
 {
-Lord Blackthorn
-hinted that he was
-one such) who exists
-already in some form
-in multiple
-dimensions; said
-individual would not
-be able to cross into
+LINE=Lord Blackthorn
+LINE=hinted that he was
+LINE=one such) who exists
+LINE=already in some form
+LINE=in multiple
+LINE=dimensions; said
+LINE=individual would not
+LINE=be able to cross into
 }
+
 [PAGE 400]
 {
-another dimension
-because HE IS
-ALREADY THERE.
- The implications of
-this are staggering,
-and merit further
-study. 'Tis well
-known by theorists in
+LINE=another dimension
+LINE=because HE IS
+LINE=ALREADY THERE.
+LINE= The implications of
+LINE=this are staggering,
+LINE=and merit further
+LINE=study. 'Tis well
+LINE=known by theorists in
 }
+
 [PAGE 401]
 {
-the field that
-divisions in ethereal
-structure of an
-individual are
-already implicit at
-the temporal level,
-as causality forces
-divisions upon the
+LINE=the field that
+LINE=divisions in ethereal
+LINE=structure of an
+LINE=individual are
+LINE=already implicit at
+LINE=the temporal level,
+LINE=as causality forces
+LINE=divisions upon the
 }
+
 [PAGE 402]
 {
-ether. This is the
-basic operating
-mechanism by which
-white moon gates
-function, permitting
-time travel.
- As time travel is
-not barred by the
+LINE=ether. This is the
+LINE=basic operating
+LINE=mechanism by which
+LINE=white moon gates
+LINE=function, permitting
+LINE=time travel.
+LINE= As time travel is
+LINE=not barred by the
 }
+
 [PAGE 403]
 {
-presence of an
-earlier self (though
-encountering said
-earlier self can
-prove arcanely
-perilous), there must
-be some rigidity to
-the ethereal
+LINE=presence of an
+LINE=earlier self (though
+LINE=encountering said
+LINE=earlier self can
+LINE=prove arcanely
+LINE=perilous), there must
+LINE=be some rigidity to
+LINE=the ethereal
 }
+
 [PAGE 404]
 {
-structure that bars
-multiple
-instantiations of
-structures from
-manifesting within
-the same context.
- If one regards time
-and causal
+LINE=structure that bars
+LINE=multiple
+LINE=instantiations of
+LINE=structures from
+LINE=manifesting within
+LINE=the same context.
+LINE= If one regards time
+LINE=and causal
 }
+
 [PAGE 405]
 {
-bifurcation as a web,
-perhaps the
-appropriate analogy
-for dimensional
-matrices is that of a
-crystalline structure
-with rigid linkages.
-The only way inwhich
+LINE=bifurcation as a web,
+LINE=perhaps the
+LINE=appropriate analogy
+LINE=for dimensional
+LINE=matrices is that of a
+LINE=crystalline structure
+LINE=with rigid linkages.
+LINE=The only way inwhich
 }
+
 [PAGE 406]
 {
-an individual such as
-Lord Blackthorn, who
-exists in multiple
-dimensional matrices,
-can cross worlds via
-a black moon gate,
-would be for the
-entire crystalline
+LINE=an individual such as
+LINE=Lord Blackthorn, who
+LINE=exists in multiple
+LINE=dimensional matrices,
+LINE=can cross worlds via
+LINE=a black moon gate,
+LINE=would be for the
+LINE=entire crystalline
 }
+
 [PAGE 407]
 {
-structure of the
-dimension to
-perfectly match the
-ethereal resonance of
-the destination
-dimension.
- The problem of why
-certain individuals
+LINE=structure of the
+LINE=dimension to
+LINE=perfectly match the
+LINE=ethereal resonance of
+LINE=the destination
+LINE=dimension.
+LINE= The problem of why
+LINE=certain individuals
 }
+
 [PAGE 408]
 {
-are already
-replicated in
-multiple crystalline
-matrices is one that
-I fail to provide any
-schema for in these
-poor theories. It is
-my fondest hope that
+LINE=are already
+LINE=replicated in
+LINE=multiple crystalline
+LINE=matrices is one that
+LINE=I fail to provide any
+LINE=schema for in these
+LINE=poor theories. It is
+LINE=my fondest hope that
 }
+
 [PAGE 409]
 {
-someday someone
-shall conquer that
-thorny problem and
-enlighten the world.
+LINE=someday someone
+LINE=shall conquer that
+LINE=thorny problem and
+LINE=enlighten the world.
 }
 
 // ============================ The Major Trade Associations
@@ -5100,209 +5461,228 @@ PAGE=426
 PAGE=427
 PAGE=428
 }
+
 [PAGE 410]
 {
- There are ten major
-trade associations
-that operate
-legitimately in the
-lands of Britannia
-and among its trading
-partners. Many of
-these guilds are
+LINE= There are ten major
+LINE=trade associations
+LINE=that operate
+LINE=legitimately in the
+LINE=lands of Britannia
+LINE=and among its trading
+LINE=partners. Many of
+LINE=these guilds are
 }
+
 [PAGE 411]
 {
-divided into local or
-specialty sub guilds,
-who use the same
-colors but vary the
-heraldic pattern.
- There are many
-lesser trade
-associations that
+LINE=divided into local or
+LINE=specialty sub guilds,
+LINE=who use the same
+LINE=colors but vary the
+LINE=heraldic pattern.
+LINE= There are many
+LINE=lesser trade
+LINE=associations that
 }
+
 [PAGE 412]
 {
-have closed
-membership, and one
-can join them only by
-invitation. Beltran's
-Guide to Guilds is
-the definitive text
-on the full range of
-guilds and other
+LINE=have closed
+LINE=membership, and one
+LINE=can join them only by
+LINE=invitation. Beltran's
+LINE=Guide to Guilds is
+LINE=the definitive text
+LINE=on the full range of
+LINE=guilds and other
 }
+
 [PAGE 413]
 {
-associations in
-Britannia, and I
-heartily recommend
-it.
- In what follows I
-have attempted to
-bring together the
-known information
+LINE=associations in
+LINE=Britannia, and I
+LINE=heartily recommend
+LINE=it.
+LINE= In what follows I
+LINE=have attempted to
+LINE=bring together the
+LINE=known information
 }
+
 [PAGE 414]
 {
-regarding these
-guilds. I offer thee
-the name, typical
-membership, heraldic
-colors, known
-specialty
-organizations within
-the larger guild, and
+LINE=regarding these
+LINE=guilds. I offer thee
+LINE=the name, typical
+LINE=membership, heraldic
+LINE=colors, known
+LINE=specialty
+LINE=organizations within
+LINE=the larger guild, and
 }
+
 [PAGE 415]
 {
-any known
-affiliations to other
-guilds, which often
-occur because of
-trade reasons.
-
-The Guild of Arcane
-Arts
+LINE=any known
+LINE=affiliations to other
+LINE=guilds, which often
+LINE=occur because of
+LINE=trade reasons.
+LINE=
+LINE=The Guild of Arcane
+LINE=Arts
 }
+
 [PAGE 416]
 {
-Members: alchemists
-and wizards
-Colors: blue and
-purple
-Sub guilds:
-Illusionist, Mages,
-Wizards
-Affiliations:
+LINE=Members: alchemists
+LINE=and wizards
+LINE=Colors: blue and
+LINE=purple
+LINE=Sub guilds:
+LINE=Illusionist, Mages,
+LINE=Wizards
+LINE=Affiliations:
 }
+
 [PAGE 417]
 {
-Healer's Guild
-
-The Warrior's Guild
-Members: mercenaries,
-soldiery, guardsmen,
-weapons masters,
-paladins.
-Colors: Blue and red
+LINE=Healer's Guild
+LINE=
+LINE=The Warrior's Guild
+LINE=Members: mercenaries,
+LINE=soldiery, guardsmen,
+LINE=weapons masters,
+LINE=paladins.
+LINE=Colors: Blue and red
 }
+
 [PAGE 418]
 {
-Sub guilds: Cavalry,
-Fighters, Warriors
-Affiliations: League
-of Rangers
-
-League of Rangers
-Members: rangers,
-bowyers, animal
+LINE=Sub guilds: Cavalry,
+LINE=Fighters, Warriors
+LINE=Affiliations: League
+LINE=of Rangers
+LINE=
+LINE=League of Rangers
+LINE=Members: rangers,
+LINE=bowyers, animal
 }
+
 [PAGE 419]
 {
-trainers
-Colors: Red, gold and
-blue
-
-Guild of Healers
-Members: healers
-Colors: Green, gold,
-and purple
+LINE=trainers
+LINE=Colors: Red, gold and
+LINE=blue
+LINE=
+LINE=Guild of Healers
+LINE=Members: healers
+LINE=Colors: Green, gold,
+LINE=and purple
 }
+
 [PAGE 420]
 {
-Affiliations: Guild
-of Arcane Arts
-
-Mining Cooperative
-Members: miners
-Colors: blue and
-black checkers, with
-a gold cross
+LINE=Affiliations: Guild
+LINE=of Arcane Arts
+LINE=
+LINE=Mining Cooperative
+LINE=Members: miners
+LINE=Colors: blue and
+LINE=black checkers, with
+LINE=a gold cross
 }
+
 [PAGE 421]
 {
-Affiliations: Order
-of Engineers
-
-Merchants'
-Association
-Members: innkeepers,
-tavern keepers,
-jewelers,
+LINE=Affiliations: Order
+LINE=of Engineers
+LINE=
+LINE=Merchants'
+LINE=Association
+LINE=Members: innkeepers,
+LINE=tavern keepers,
+LINE=jewelers,
 }
+
 [PAGE 422]
 {
-provisioners
-Colors: gold coins on
-a green field for
-Merchants. White and
-green for the others.
-Sub guilds: Barters,
-Provisioners,
-Traders, Merchants.
+LINE=provisioners
+LINE=Colors: gold coins on
+LINE=a green field for
+LINE=Merchants. White and
+LINE=green for the others.
+LINE=Sub guilds: Barters,
+LINE=Provisioners,
+LINE=Traders, Merchants.
 }
+
 [PAGE 423]
 {
-
-Order of Engineers
-Members: tinkers and
-engineers
-Colors: Blue, gold,
-and purple vertical
-bars
-Affiliations: Mining
+LINE=
+LINE=Order of Engineers
+LINE=Members: tinkers and
+LINE=engineers
+LINE=Colors: Blue, gold,
+LINE=and purple vertical
+LINE=bars
+LINE=Affiliations: Mining
 }
+
 [PAGE 424]
 {
-Cooperative
-
-Society of Clothiers
-Members: tailors and
-weavers
-Colors: Purple, gold,
-and red horizontal
-bars
+LINE=Cooperative
+LINE=
+LINE=Society of Clothiers
+LINE=Members: tailors and
+LINE=weavers
+LINE=Colors: Purple, gold,
+LINE=and red horizontal
+LINE=bars
 }
+
 [PAGE 425]
 {
-
-Maritime Guild
-Members: fishermen,
-sailors, map makers,
-ship writes
-Colors: blue and
-white
-Sub guilds:
+LINE=
+LINE=Maritime Guild
+LINE=Members: fishermen,
+LINE=sailors, map makers,
+LINE=ship writes
+LINE=Colors: blue and
+LINE=white
+LINE=Sub guilds:
 }
+
 [PAGE 426]
 {
-Fishermen, Sailors,
-Ship writes
-
-Bardic Collegium
-Members: bards,
-musicians,
-storytellers, and
-other performers
+LINE=Fishermen, Sailors,
+LINE=Ship writes
+LINE=
+LINE=Bardic Collegium
+LINE=Members: bards,
+LINE=musicians,
+LINE=storytellers, and
+LINE=other performers
 }
+
 [PAGE 427]
 {
-Colors: Purple, red
-and gold checkerboard
-
-Society of Thieves
-Members: beggars,
-cutpurses, assassins,
-and brigands
-Colors: red and black
+LINE=Colors: Purple, red
+LINE=and gold checkerboard
+LINE=
+LINE=Society of Thieves
+LINE=Members: beggars,
+LINE=cutpurses, assassins,
+LINE=and brigands
+LINE=Colors: red and black
 }
+
 [PAGE 428]
 {
-Sub guilds: Rogues
-(beggars), Assassins,
-Thieves
+LINE=Sub guilds: Rogues
+LINE=(beggars), Assassins,
+LINE=Thieves
 }
 
 // ============================ The Rankings of Trades
@@ -5321,101 +5701,110 @@ PAGE=435
 PAGE=436
 PAGE=437
 }
+
 [PAGE 429]
 {
- Whilst 'tis true
-that within each
-trade, one finds
-differing titles and
-accolades granted to
-the members of a
-given guild,
-nonetheless for the
+LINE= Whilst 'tis true
+LINE=that within each
+LINE=trade, one finds
+LINE=differing titles and
+LINE=accolades granted to
+LINE=the members of a
+LINE=given guild,
+LINE=nonetheless for the
 }
+
 [PAGE 430]
 {
-betterment of trade
-and understanding, we
-must have a
-commonality of
-titling.
- For those who may
-find themselves
-ignorant of the
+LINE=betterment of trade
+LINE=and understanding, we
+LINE=must have a
+LINE=commonality of
+LINE=titling.
+LINE= For those who may
+LINE=find themselves
+LINE=ignorant of the
 }
+
 [PAGE 431]
 {
-finder distinctions
-between a three-knot
-member of the
-Sailor's Maritime
-Association and a
-second thaumaturge,
-this book shall serve
-as a simple
+LINE=finder distinctions
+LINE=between a three-knot
+LINE=member of the
+LINE=Sailor's Maritime
+LINE=Association and a
+LINE=second thaumaturge,
+LINE=this book shall serve
+LINE=as a simple
 }
+
 [PAGE 432]
 {
-introduction to the
-common cant be used
-when members of
-differing guilds and
-trade organizations
-must trade with each
-other and must
-establish relative
+LINE=introduction to the
+LINE=common cant be used
+LINE=when members of
+LINE=differing guilds and
+LINE=trade organizations
+LINE=must trade with each
+LINE=other and must
+LINE=establish relative
 }
+
 [PAGE 433]
 {
-credentials.
-Neophyte
- Has shown interest
-in learning the craft
-and some meager
-talent.
-Novice
- Is practicing basic
+LINE=credentials.
+LINE=Neophyte
+LINE= Has shown interest
+LINE=in learning the craft
+LINE=and some meager
+LINE=talent.
+LINE=Novice
+LINE= Is practicing basic
 }
+
 [PAGE 434]
 {
-skills but has not
-been admitted to full
-standing.
- Apprentice
- A student of the
-discipline.
- Journeyman
- Warranted to
+LINE=skills but has not
+LINE=been admitted to full
+LINE=standing.
+LINE= Apprentice
+LINE= A student of the
+LINE=discipline.
+LINE= Journeyman
+LINE= Warranted to
 }
+
 [PAGE 435]
 {
-practice the
-discipline under the
-eyes of a tutor.
- Expert
- A full member of the
-guild.
- Adept
- A member of the
+LINE=practice the
+LINE=discipline under the
+LINE=eyes of a tutor.
+LINE= Expert
+LINE= A full member of the
+LINE=guild.
+LINE= Adept
+LINE= A member of the
 }
+
 [PAGE 436]
 {
-guild qualified to
-teach others.
- Master
- Acknowledged as
-qualified to lead a
-hall or business.
- Grandmaster
- Rarely a permanent
+LINE=guild qualified to
+LINE=teach others.
+LINE= Master
+LINE= Acknowledged as
+LINE=qualified to lead a
+LINE=hall or business.
+LINE= Grandmaster
+LINE= Rarely a permanent
 }
+
 [PAGE 437]
 {
-title, granted in
-common parlance to
-those who have shown
-extreme mastery of
-their craft recently.
+LINE=title, granted in
+LINE=common parlance to
+LINE=those who have shown
+LINE=extreme mastery of
+LINE=their craft recently.
 }
 
 // ============================ Treatise on Alchemy
@@ -5437,130 +5826,142 @@ PAGE=447
 PAGE=448
 PAGE=449
 }
+
 [PAGE 438]
 {
- The alchemical arts
-are notable for their
-deceptive simplicity.
-'Tis true that to our
-best knowledge
-currently, there are
-but eight valid
-potions that can be
+LINE= The alchemical arts
+LINE=are notable for their
+LINE=deceptive simplicity.
+LINE='Tis true that to our
+LINE=best knowledge
+LINE=currently, there are
+LINE=but eight valid
+LINE=potions that can be
 }
+
 [PAGE 439]
 {
-made (though I
-emphasize that new
-discoveries may
-always await).
-However, the delicate
-balance of confecting
-the potions is
-difficult indeed, and
+LINE=made (though I
+LINE=emphasize that new
+LINE=discoveries may
+LINE=always await).
+LINE=However, the delicate
+LINE=balance of confecting
+LINE=the potions is
+LINE=difficult indeed, and
 }
+
 [PAGE 440]
 {
-requires great skill.
- To give thee an
-example of the
-simpler potions that
-can be created by
-those well-versed in
-the subtleties of
-alchemy.
+LINE=requires great skill.
+LINE= To give thee an
+LINE=example of the
+LINE=simpler potions that
+LINE=can be created by
+LINE=those well-versed in
+LINE=the subtleties of
+LINE=alchemy.
 }
+
 [PAGE 441]
 {
- Black pearl, that
-rare substance that
-is oft found lying
-unannounced upon the
-surface of the
-ground,when properly
-crushed with mortar
-and pestle, can yield
+LINE= Black pearl, that
+LINE=rare substance that
+LINE=is oft found lying
+LINE=unannounced upon the
+LINE=surface of the
+LINE=ground,when properly
+LINE=crushed with mortar
+LINE=and pestle, can yield
 }
+
 [PAGE 442]
 {
-a fine powder. Said
-powder in the proper
-proportions when
-mixed via the
-alchemical arts can
-yield a wonderfully
-refreshing drink.
- The revolting blood
+LINE=a fine powder. Said
+LINE=powder in the proper
+LINE=proportions when
+LINE=mixed via the
+LINE=alchemical arts can
+LINE=yield a wonderfully
+LINE=refreshing drink.
+LINE= The revolting blood
 }
+
 [PAGE 443]
 {
-moss so gingerly
-scraped off window
-sills by fastidious
-housewives is but a
-tiny cousin to the
-wilder version, which
-when properly
-prepared yields a
+LINE=moss so gingerly
+LINE=scraped off window
+LINE=sills by fastidious
+LINE=housewives is but a
+LINE=tiny cousin to the
+LINE=wilder version, which
+LINE=when properly
+LINE=prepared yields a
 }
+
 [PAGE 444]
 {
-magical liquid that
-for a time can make
-the imbiber a more
-agile and dexterous
-individual.
- However, beware of
-the deadly
-nightshade, for it
+LINE=magical liquid that
+LINE=for a time can make
+LINE=the imbiber a more
+LINE=agile and dexterous
+LINE=individual.
+LINE= However, beware of
+LINE=the deadly
+LINE=nightshade, for it
 }
+
 [PAGE 445]
 {
-yields a deceptively
-sweet-tasting poison
-that can prove highly
-fatal to the drinker,
-and in fact is also
-used by assassins to
-coat their blades.
-Fortunately, his
+LINE=yields a deceptively
+LINE=sweet-tasting poison
+LINE=that can prove highly
+LINE=fatal to the drinker,
+LINE=and in fact is also
+LINE=used by assassins to
+LINE=coat their blades.
+LINE=Fortunately, his
 }
+
 [PAGE 446]
 {
-latter are of
-poisoning is little
-known!
- There is much to
-reward the student of
-alchemy, indeed. The
-rumors of longtime
-alchemists losing
+LINE=latter are of
+LINE=poisoning is little
+LINE=known!
+LINE= There is much to
+LINE=reward the student of
+LINE=alchemy, indeed. The
+LINE=rumors of longtime
+LINE=alchemists losing
 }
+
 [PAGE 447]
 {
-their hair and
-acquiring an
-unhealthy pallor, not
-to mention unsightly
-blotches upon their
-once-fair skin, are
-unhappily, true. Yet
-the joys of the mind
+LINE=their hair and
+LINE=acquiring an
+LINE=unhealthy pallor, not
+LINE=to mention unsightly
+LINE=blotches upon their
+LINE=once-fair skin, are
+LINE=unhappily, true. Yet
+LINE=the joys of the mind
 }
+
 [PAGE 448]
 {
-make up for the
-complete loss of
-interest that others
-may have in thee as
-an object of
-courtship, and I have
-never regretted that
-choice. Honestly,
+LINE=make up for the
+LINE=complete loss of
+LINE=interest that others
+LINE=may have in thee as
+LINE=an object of
+LINE=courtship, and I have
+LINE=never regretted that
+LINE=choice. Honestly,
 }
+
 [PAGE 449]
 {
-truly, Not once.
+LINE=truly, Not once.
 }
 
 // ============================ UOX3 Story Chapter One - Death
@@ -5582,135 +5983,147 @@ PAGE=459
 PAGE=460
 PAGE=461
 }
+
 [PAGE 450]
 {
- You knew that the
-world was ending
-right now before your
-eyes, and there was
-nothing you could do
-about it anymore.
-Lord British was dead
-and the Guardians
+LINE= You knew that the
+LINE=world was ending
+LINE=right now before your
+LINE=eyes, and there was
+LINE=nothing you could do
+LINE=about it anymore.
+LINE=Lord British was dead
+LINE=and the Guardians
 }
+
 [PAGE 451]
 {
-demon legions were
-swarming all through
-the once proud city
-of Britain. Bodies
-were lying all around
-the streets, thieves
-next to nobles and
-the former castle
+LINE=demon legions were
+LINE=swarming all through
+LINE=the once proud city
+LINE=of Britain. Bodies
+LINE=were lying all around
+LINE=the streets, thieves
+LINE=next to nobles and
+LINE=the former castle
 }
+
 [PAGE 452]
 {
-guards.
- That body which you
-used to call your own
-is still bleeding at
-your slightly
-transparent feet but
-it is obviously too
-late for any kind of
+LINE=guards.
+LINE= That body which you
+LINE=used to call your own
+LINE=is still bleeding at
+LINE=your slightly
+LINE=transparent feet but
+LINE=it is obviously too
+LINE=late for any kind of
 }
+
 [PAGE 453]
 {
-medical treatment.
-Your spells have
-allowed you to take
-two of those red
-abnormities with you,
-but when the
-Shadowlord Astaroth
-approached you, you
+LINE=medical treatment.
+LINE=Your spells have
+LINE=allowed you to take
+LINE=two of those red
+LINE=abnormities with you,
+LINE=but when the
+LINE=Shadowlord Astaroth
+LINE=approached you, you
 }
+
 [PAGE 454]
 {
-knew that your last
-minute has come. You
-stood paralysed as
-his dark finger
-stretched out to your
-chest and when it
-touched you, you had
-left your body even
+LINE=knew that your last
+LINE=minute has come. You
+LINE=stood paralysed as
+LINE=his dark finger
+LINE=stretched out to your
+LINE=chest and when it
+LINE=touched you, you had
+LINE=left your body even
 }
+
 [PAGE 455]
 {
-before it hit the
-ground. You notice
-that some of those
-who are falling to
-the assault of the
-demons don't even
-leave a spirit behind
-anymore; it seems
+LINE=before it hit the
+LINE=ground. You notice
+LINE=that some of those
+LINE=who are falling to
+LINE=the assault of the
+LINE=demons don't even
+LINE=leave a spirit behind
+LINE=anymore; it seems
 }
+
 [PAGE 456]
 {
-like after his death
-the magic that Lord
-British gave to his
-citizens to survive
-past their own death
-is beginning to fade.
- Having wandered
-through the bloody
+LINE=like after his death
+LINE=the magic that Lord
+LINE=British gave to his
+LINE=citizens to survive
+LINE=past their own death
+LINE=is beginning to fade.
+LINE= Having wandered
+LINE=through the bloody
 }
+
 [PAGE 457]
 {
-streets for some time
-you see that there is
-still some light
-spilling through the
-windows of one of the
-nearby houses. You
-glance up to the sign
-above the door and
+LINE=streets for some time
+LINE=you see that there is
+LINE=still some light
+LINE=spilling through the
+LINE=windows of one of the
+LINE=nearby houses. You
+LINE=glance up to the sign
+LINE=above the door and
 }
+
 [PAGE 458]
 {
-note the symbol of
-the virtues, the
-ankh, painted onto
-it. Even though you
-ghostly state denies
-all colors of the
-world reach you,
-somehow you still
+LINE=note the symbol of
+LINE=the virtues, the
+LINE=ankh, painted onto
+LINE=it. Even though you
+LINE=ghostly state denies
+LINE=all colors of the
+LINE=world reach you,
+LINE=somehow you still
 }
+
 [PAGE 459]
 {
-recognize the golden
-color of the symbol.
-After thinking for
-only a moment you
-reach for the
-doorknob, only to see
-your hand go right
-through it. "Oh, I
+LINE=recognize the golden
+LINE=color of the symbol.
+LINE=After thinking for
+LINE=only a moment you
+LINE=reach for the
+LINE=doorknob, only to see
+LINE=your hand go right
+LINE=through it. "Oh, I
 }
+
 [PAGE 460]
 {
-forgot...", you smile
-to yourself, these
-words being only a
-whisper in the storm
-of the fighting to
-those still standing
-locked in combat with
-the demonic hordes.
+LINE=forgot...", you smile
+LINE=to yourself, these
+LINE=words being only a
+LINE=whisper in the storm
+LINE=of the fighting to
+LINE=those still standing
+LINE=locked in combat with
+LINE=the demonic hordes.
 }
+
 [PAGE 461]
 {
- Despite your current
-disembodied state you
-take a deep breath
-and then step right
-through the closed
-door.
+LINE= Despite your current
+LINE=disembodied state you
+LINE=take a deep breath
+LINE=and then step right
+LINE=through the closed
+LINE=door.
 }
 
 // ============================ UOX3 Chapter Two - End of the world
@@ -5746,287 +6159,313 @@ PAGE=485
 PAGE=486
 PAGE=487
 }
+
 [PAGE 462]
 {
- Inside the building
-you can make out a
-few people in grey
-robes, sitting around
-a candle like it
-could protect them
-from the Guardians
-assault outside. One
+LINE= Inside the building
+LINE=you can make out a
+LINE=few people in grey
+LINE=robes, sitting around
+LINE=a candle like it
+LINE=could protect them
+LINE=from the Guardians
+LINE=assault outside. One
 }
+
 [PAGE 463]
 {
-of the people seems
-to note your presense
-and turns around:
- "Ah, another lost
-soul that has found
-the way here. With
-the forces of chaos
-drawing into this
+LINE=of the people seems
+LINE=to note your presense
+LINE=and turns around:
+LINE= "Ah, another lost
+LINE=soul that has found
+LINE=the way here. With
+LINE=the forces of chaos
+LINE=drawing into this
 }
+
 [PAGE 464]
 {
-realm, my healing
-powers are fading
-from minute to
-minute, but I might
-try to give you a new
-body if you assist
-me".
- The healer is
+LINE=realm, my healing
+LINE=powers are fading
+LINE=from minute to
+LINE=minute, but I might
+LINE=try to give you a new
+LINE=body if you assist
+LINE=me".
+LINE= The healer is
 }
+
 [PAGE 465]
 {
-beginning to make
-arcane gestures and
-you feel a wave of
-restoring energy rush
-through your astral
-body. With the rest
-of your powers you
-finally succeed to
+LINE=beginning to make
+LINE=arcane gestures and
+LINE=you feel a wave of
+LINE=restoring energy rush
+LINE=through your astral
+LINE=body. With the rest
+LINE=of your powers you
+LINE=finally succeed to
 }
+
 [PAGE 466]
 {
-become physical
-again.
- "This is it", the
-healer says, "my
-powers are now
-completely gone". You
-place your weak body
-among the others and
+LINE=become physical
+LINE=again.
+LINE= "This is it", the
+LINE=healer says, "my
+LINE=powers are now
+LINE=completely gone". You
+LINE=place your weak body
+LINE=among the others and
 }
+
 [PAGE 467]
 {
-listen to the screams
-outside, although
-those are becoming
-less and less by now.
- You know that this
-new life will
-certainly only last
-for a couple of
+LINE=listen to the screams
+LINE=outside, although
+LINE=those are becoming
+LINE=less and less by now.
+LINE= You know that this
+LINE=new life will
+LINE=certainly only last
+LINE=for a couple of
 }
+
 [PAGE 468]
 {
-minutes, as the magic
-forces which bind
-this world together
-are beginning to
-fail, with obvious
-consequences:
-Lightnings are
-striking down from
+LINE=minutes, as the magic
+LINE=forces which bind
+LINE=this world together
+LINE=are beginning to
+LINE=fail, with obvious
+LINE=consequences:
+LINE=Lightnings are
+LINE=striking down from
 }
+
 [PAGE 469]
 {
-the sky by the dozen,
-giant earthquakes are
-threatening to tear
-the land apart and
-you can almost feel
-the pure evil power
-of the Guardian
-condensing in the
+LINE=the sky by the dozen,
+LINE=giant earthquakes are
+LINE=threatening to tear
+LINE=the land apart and
+LINE=you can almost feel
+LINE=the pure evil power
+LINE=of the Guardian
+LINE=condensing in the
 }
+
 [PAGE 470]
 {
-air, converting this
-world to - what? You
-remember hearing one
-of the court mages
-whisper with his
-dying breath that the
-Guardian would use
-conquered worlds to
+LINE=air, converting this
+LINE=world to - what? You
+LINE=remember hearing one
+LINE=of the court mages
+LINE=whisper with his
+LINE=dying breath that the
+LINE=Guardian would use
+LINE=conquered worlds to
 }
+
 [PAGE 471]
 {
-create the
-Shadowlords. If that
-is true, then this
-world is really lost.
- You glance out
-through the window
-and see one of the
-black moongates open
+LINE=create the
+LINE=Shadowlords. If that
+LINE=is true, then this
+LINE=world is really lost.
+LINE= You glance out
+LINE=through the window
+LINE=and see one of the
+LINE=black moongates open
 }
+
 [PAGE 472]
 {
-with more demons
-stepping out of it. A
-thought crosses your
-mind: There can be no
-place worse than this
-one, so it might be
-worth the try. You
-tell the others that
+LINE=with more demons
+LINE=stepping out of it. A
+LINE=thought crosses your
+LINE=mind: There can be no
+LINE=place worse than this
+LINE=one, so it might be
+LINE=worth the try. You
+LINE=tell the others that
 }
+
 [PAGE 473]
 {
-you intend to go
-through one of those
-gates to survive the
-end of this world and
-most of them agree to
-try it. You walk over
-to the door and
-silently unlock it
+LINE=you intend to go
+LINE=through one of those
+LINE=gates to survive the
+LINE=end of this world and
+LINE=most of them agree to
+LINE=try it. You walk over
+LINE=to the door and
+LINE=silently unlock it
 }
+
 [PAGE 474]
 {
-and open it just so
-much that you can get
-a look at a part of
-the road outside.
-What you see is
-terrible. Sweet
-Dreams Inn is already
-completely burned
+LINE=and open it just so
+LINE=much that you can get
+LINE=a look at a part of
+LINE=the road outside.
+LINE=What you see is
+LINE=terrible. Sweet
+LINE=Dreams Inn is already
+LINE=completely burned
 }
+
 [PAGE 475]
 {
-down and the ground
-seems to be painted
-with blood.
- "Now!", you scream
-as you see another of
-the black gates open
-just a few steps away
-from the door. You
+LINE=down and the ground
+LINE=seems to be painted
+LINE=with blood.
+LINE= "Now!", you scream
+LINE=as you see another of
+LINE=the black gates open
+LINE=just a few steps away
+LINE=from the door. You
 }
+
 [PAGE 476]
 {
-hit the door open and
-start to run, but
-just a second before
-you would have
-reached the gate a
-demon steps out of
-it, looking down at
-you in a quite angry
+LINE=hit the door open and
+LINE=start to run, but
+LINE=just a second before
+LINE=you would have
+LINE=reached the gate a
+LINE=demon steps out of
+LINE=it, looking down at
+LINE=you in a quite angry
 }
+
 [PAGE 477]
 {
-way. You signal the
-other to run into the
-gate while you divert
-the creature, even
-though you have no
-idea on how to do
-that. As it rushes
-toward you, you
+LINE=way. You signal the
+LINE=other to run into the
+LINE=gate while you divert
+LINE=the creature, even
+LINE=though you have no
+LINE=idea on how to do
+LINE=that. As it rushes
+LINE=toward you, you
 }
+
 [PAGE 478]
 {
-notice one of Lord
-Britishs personal
-castle guards lying
-on the ground here.
-Still in his hand you
-see one of the famous
-order shields,
-magically treated by
+LINE=notice one of Lord
+LINE=Britishs personal
+LINE=castle guards lying
+LINE=on the ground here.
+LINE=Still in his hand you
+LINE=see one of the famous
+LINE=order shields,
+LINE=magically treated by
 }
+
 [PAGE 479]
 {
-the King himself. You
-reach for it and with
-all your strength
-hold it in front of
-you as the demon
-brings his fist down
-on you.
- The shield is
+LINE=the King himself. You
+LINE=reach for it and with
+LINE=all your strength
+LINE=hold it in front of
+LINE=you as the demon
+LINE=brings his fist down
+LINE=on you.
+LINE= The shield is
 }
+
 [PAGE 480]
 {
-shattered in two
-under the might of
-the blow, but by that
-the magic still
-inherent in it is
-released in a
-brilliant flash of
-light; not enough to
+LINE=shattered in two
+LINE=under the might of
+LINE=the blow, but by that
+LINE=the magic still
+LINE=inherent in it is
+LINE=released in a
+LINE=brilliant flash of
+LINE=light; not enough to
 }
+
 [PAGE 481]
 {
-kill the demon, but
-enough to render it
-helpless for a moment
-and you do not need
-any more time to run
-between its legs and
-towards the black
-gate. Knowing that
+LINE=kill the demon, but
+LINE=enough to render it
+LINE=helpless for a moment
+LINE=and you do not need
+LINE=any more time to run
+LINE=between its legs and
+LINE=towards the black
+LINE=gate. Knowing that
 }
+
 [PAGE 482]
 {
-this world could die
-any second now you
-jump through the
-gate...
- You find yourself
-flying through some
-sort of dark tunnel;
-at the end of which
+LINE=this world could die
+LINE=any second now you
+LINE=jump through the
+LINE=gate...
+LINE= You find yourself
+LINE=flying through some
+LINE=sort of dark tunnel;
+LINE=at the end of which
 }
+
 [PAGE 483]
 {
-you see another
-world. But you can't
-say that world
-appears much better
-to you than the one
-you just left,
-because it looks like
-the homeland of the
+LINE=you see another
+LINE=world. But you can't
+LINE=say that world
+LINE=appears much better
+LINE=to you than the one
+LINE=you just left,
+LINE=because it looks like
+LINE=the homeland of the
 }
+
 [PAGE 484]
 {
-demons. Thousands of
-them are waiting at
-the exit of the gate
-and it seems like
-they have already
-taken care of those
-that entered the gate
-before you. You look
+LINE=demons. Thousands of
+LINE=them are waiting at
+LINE=the exit of the gate
+LINE=and it seems like
+LINE=they have already
+LINE=taken care of those
+LINE=that entered the gate
+LINE=before you. You look
 }
+
 [PAGE 485]
 {
-back over your
-shoulder at the place
-you came from and at
-the same moment that
-world ends. Suddendly
-the gate, having lost
-one of its exits
-vanishes, leaving you
+LINE=back over your
+LINE=shoulder at the place
+LINE=you came from and at
+LINE=the same moment that
+LINE=world ends. Suddendly
+LINE=the gate, having lost
+LINE=one of its exits
+LINE=vanishes, leaving you
 }
+
 [PAGE 486]
 {
-suspended in the
-Ethereal Void.
- You see millions of
-stars all around you,
-except that those are
-no stars but worlds;
-just like the one you
-were born and lived
+LINE=suspended in the
+LINE=Ethereal Void.
+LINE= You see millions of
+LINE=stars all around you,
+LINE=except that those are
+LINE=no stars but worlds;
+LINE=just like the one you
+LINE=were born and lived
 }
+
 [PAGE 487]
 {
-in until this day,
-and another one of
-them is now serving
-the Guardian...
+LINE=in until this day,
+LINE=and another one of
+LINE=them is now serving
+LINE=the Guardian...
 }
 
 // ============================ UOX3 Chapter Three - The lost splinter
@@ -6051,170 +6490,185 @@ PAGE=500
 PAGE=501
 PAGE=502
 }
+
 [PAGE 488]
 {
- You awaken. You are
-lying on a perfectly
-ordinary bed in an
-absolutely normal
-room of an inn. You
-rise to your feet and
-look out of the
-window to see the
+LINE= You awaken. You are
+LINE=lying on a perfectly
+LINE=ordinary bed in an
+LINE=absolutely normal
+LINE=room of an inn. You
+LINE=rise to your feet and
+LINE=look out of the
+LINE=window to see the
 }
+
 [PAGE 489]
 {
-wonderful town of
-Britain, still quite
-unharmed as if that
-which you remember
-never happened. You
-get dressed and walk
-down the stairs of
-the inn. The first
+LINE=wonderful town of
+LINE=Britain, still quite
+LINE=unharmed as if that
+LINE=which you remember
+LINE=never happened. You
+LINE=get dressed and walk
+LINE=down the stairs of
+LINE=the inn. The first
 }
+
 [PAGE 490]
 {
-thing you notice is
-the lack of people
-that are usually
-shoving past each
-other here. On the
-street you see that
-this phenomenon is
-not limited to the
+LINE=thing you notice is
+LINE=the lack of people
+LINE=that are usually
+LINE=shoving past each
+LINE=other here. On the
+LINE=street you see that
+LINE=this phenomenon is
+LINE=not limited to the
 }
+
 [PAGE 491]
 {
-inn, but seems to be
-present all around
-Britain.
- You spin around as
-you notice a movement
-in the corner of your
-eye. Your eyes widen
-as you see Lord
+LINE=inn, but seems to be
+LINE=present all around
+LINE=Britain.
+LINE= You spin around as
+LINE=you notice a movement
+LINE=in the corner of your
+LINE=eye. Your eyes widen
+LINE=as you see Lord
 }
+
 [PAGE 492]
 {
-Blackthorne himself
-standing there as if
-the Guardians attack
-on Britannia never
-happened.
- "I guess thou hast
-questions on your
-mind", your hear him,
+LINE=Blackthorne himself
+LINE=standing there as if
+LINE=the Guardians attack
+LINE=on Britannia never
+LINE=happened.
+LINE= "I guess thou hast
+LINE=questions on your
+LINE=mind", your hear him,
 }
+
 [PAGE 493]
 {
-"like why thou art
-here when your
-memories tell thee
-that everything must
-be quite different.
-The reason for that
-is that thou art no
-longer in the world
+LINE="like why thou art
+LINE=here when your
+LINE=memories tell thee
+LINE=that everything must
+LINE=be quite different.
+LINE=The reason for that
+LINE=is that thou art no
+LINE=longer in the world
 }
+
 [PAGE 494]
 {
-that thou knowest -
-nor one even like it.
-As thou possibly
-knowest, there are
-thousands of copies
-of the land called
-Britannia existing in
-the shards of
+LINE=that thou knowest -
+LINE=nor one even like it.
+LINE=As thou possibly
+LINE=knowest, there are
+LINE=thousands of copies
+LINE=of the land called
+LINE=Britannia existing in
+LINE=the shards of
 }
+
 [PAGE 495]
 {
-Mondains foul gem of
-immortality. Now, for
-some reason when the
-worlds were split
-from each other, this
-special world was
-created without any
-inhabitants. Now, as
+LINE=Mondains foul gem of
+LINE=immortality. Now, for
+LINE=some reason when the
+LINE=worlds were split
+LINE=from each other, this
+LINE=special world was
+LINE=created without any
+LINE=inhabitants. Now, as
 }
+
 [PAGE 496]
 {
-the creature calling
-himself the Guardian
-conquered other
-worlds like yours,
-some people always
-entered one of the
-black moongates in
-the moment of
+LINE=the creature calling
+LINE=himself the Guardian
+LINE=conquered other
+LINE=worlds like yours,
+LINE=some people always
+LINE=entered one of the
+LINE=black moongates in
+LINE=the moment of
 }
+
 [PAGE 497]
 {
-destruction and thus
-ending up here. Thou
-mightest call this
-world the Lost
-Splinter. Well, I
-would really like to
-discuss this matter
-further with thee,
+LINE=destruction and thus
+LINE=ending up here. Thou
+LINE=mightest call this
+LINE=world the Lost
+LINE=Splinter. Well, I
+LINE=would really like to
+LINE=discuss this matter
+LINE=further with thee,
 }
+
 [PAGE 498]
 {
-but I am due for a
-game of chess with
-Lord British."
- "He lives?", you
-exclaim. "Well, in
-fact the two of us
-ended up here when we
-were fleeing from the
+LINE=but I am due for a
+LINE=game of chess with
+LINE=Lord British."
+LINE= "He lives?", you
+LINE=exclaim. "Well, in
+LINE=fact the two of us
+LINE=ended up here when we
+LINE=were fleeing from the
 }
+
 [PAGE 499]
 {
-world that later
-became the Shadowlord
-Nosfentor." His face
-turns sad: "How
-fitting to run away
-from that world which
-became the embodiment
-of cowardice... But
+LINE=world that later
+LINE=became the Shadowlord
+LINE=Nosfentor." His face
+LINE=turns sad: "How
+LINE=fitting to run away
+LINE=from that world which
+LINE=became the embodiment
+LINE=of cowardice... But
 }
+
 [PAGE 500]
 {
-now I must hasten to
-the castle. Feel free
-to take a look around
-this world. There are
-not many people here,
-but at least the
-ecology yield more
-than enough food and
+LINE=now I must hasten to
+LINE=the castle. Feel free
+LINE=to take a look around
+LINE=this world. There are
+LINE=not many people here,
+LINE=but at least the
+LINE=ecology yield more
+LINE=than enough food and
 }
+
 [PAGE 501]
 {
-resources for us
-few."
- As you watch the
-Lord disappear down
-the street you start
-to think. At least
-you would be safe
-from the Guardian
+LINE=resources for us
+LINE=few."
+LINE= As you watch the
+LINE=Lord disappear down
+LINE=the street you start
+LINE=to think. At least
+LINE=you would be safe
+LINE=from the Guardian
 }
+
 [PAGE 502]
 {
-here - for now. You
-start to walk through
-an unusually empty
-Britain; there is so
-much to learn about
-this world, so you
-might as well start
-right now.
+LINE=here - for now. You
+LINE=start to walk through
+LINE=an unusually empty
+LINE=Britain; there is so
+LINE=much to learn about
+LINE=this world, so you
+LINE=might as well start
+LINE=right now.
 }
 
 // ============================ My personal book
@@ -6234,75 +6688,85 @@ PAGE=510
 PAGE=511
 PAGE=512
 }
+
 [PAGE 503]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 504]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 505]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 506]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 507]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 508]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 509]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 510]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 511]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
+
 [PAGE 512]
 {
-Your text here.
-No more than 21
-characters per line
-8 lines max
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
 }
 
 [BOOK 33]
@@ -6316,29 +6780,33 @@ PAGE=515
 PAGE=516
 PAGE=517
 }
+
 [PAGE 513]
 {
-To write a msg
-here,You need to go
-into the Misc.scp and
-go to [Page 513
-and replace this msg :).
-}
-[PAGE 514]
-{
-More News....
-}
-[PAGE 515]
-{
-More News....
-}
-[PAGE 516]
-{
-More News....
-}
-[PAGE 517]
-{
-Well 5 Pages Should
-Be Enough :)
+LINE=To write a msg
+LINE=here,You need to go
+LINE=into the Misc.scp and
+LINE=go to [Page 513
+LINE=and replace this msg :).
 }
 
+[PAGE 514]
+{
+LINE=More News....
+}
+
+[PAGE 515]
+{
+LINE=More News....
+}
+
+[PAGE 516]
+{
+LINE=More News....
+}
+
+[PAGE 517]
+{
+LINE=Well 5 Pages Should
+LINE=Be Enough :)
+}

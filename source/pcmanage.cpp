@@ -718,10 +718,10 @@ void updates( CSocket *s )
 	if( Updates == NULL )
 		return;
 
-	UString updateData;
+	UString updateData = "";
 	for( UString tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
 	{
-		updateData += tag + " " + Updates->GrabData() + " ";
+		updateData += Updates->GrabData() + " ";
 	}
 	CPUpdScroll toSend( 2 );
 	toSend.AddString( updateData.c_str() );

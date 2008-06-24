@@ -121,10 +121,6 @@ private:
 	// Timers
 	TIMERVAL	worldTimers[tWORLD_COUNT];
 
-	// Items & Characters
-	SERIAL		nextCharSerial, nextItemSerial;
-	UI32		imem, cmem;
-
 	// Console & Program Level Vars
 	bool		error;
 	bool		keeprun;
@@ -156,19 +152,6 @@ public:
 	// Timers
 	void		SetTimer( CWM_TID timerID, TIMERVAL newVal );
 	TIMERVAL	GetTimer( CWM_TID timerID ) const;
-
-	// Items & Characters
-	void		SetNextItemSerial( SERIAL newVal );
-	SERIAL		GetNextItemSerial( void ) const;
-	void		IncNextItemSerial( void );
-	void		SetNextCharSerial( SERIAL newVal );
-	SERIAL		GetNextCharSerial( void ) const;
-	void		IncNextCharSerial( void );
-	void		SetIMem( UI32 newVal );
-	UI32		GetIMem( void ) const;
-	void		SetCMem( UI32 newVal );
-	UI32		GetCMem( void ) const;
-	void		IncCMem( void );
 
 	// Console & Program Level Vars
 	void		SetError( bool newVal );

@@ -288,7 +288,7 @@ void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
 
 						for( tag = page->First(); !page->AtEnd(); tag = page->Next() )
 						{
-							temp = tag + " " + page->GrabData();
+							temp = page->GrabData();
 							cpbpSend.AddLine( temp );
 						}
 						cpbpSend.Finalize();
