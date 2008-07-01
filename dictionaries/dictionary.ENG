@@ -1731,7 +1731,7 @@
 1765=You have successfully created a campfire.
 1766=You are too close to the target.
 1767=You are too far away from the archery butte to get an accurate shot.
-1768=You would do better to stand in front of the archery butte.
+1768=You would do better to stand in front of the archery butte. 
 1769=You aren't properly lined up with the archery butte to get an accurate shot.
 1770=You do not have any arrows with which to practice.
 1771=You do not have any crossbow bolts with which to practice.
@@ -1746,7 +1746,8 @@
 1780=That pet is already stuffed, it can't eat more.
 1781=That pet accepts your food and happily eats it.
 1782=Today's purchases total %i gold. I am keeping %i gold for my self.
+1783=You are too fatigued to move, because you are carrying too much weight!
+1784=You are overloaded. Current/Max: %i/%i
 }
-
 EOF
 
