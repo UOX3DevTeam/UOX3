@@ -401,7 +401,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 			if( c->GetStamina() <= 0 )
 			{
 				c->SetStamina( 0 );
-				mSock->sysmessage( 1382 );
+				mSock->sysmessage( 1783 );
 				deny( mSock, c, sequence );
 #if DEBUG_WALKING
 				Console.Print( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, c->GetName() );

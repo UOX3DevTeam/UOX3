@@ -1175,6 +1175,13 @@ bool CPIDropItem::Handle( void )
 	else 
 		Drop( tSock, item, dest, x, y, z, gridLoc );
 
+	// Display overloaded message if character is overloaded as a result of the above
+	if( Weight->isOverloaded( ourChar ) )
+	{
+		SI32 maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+		SI32 currentWeight = ourChar->GetWeight() / 100;
+		tSock->sysmessage( 1784, currentWeight, maxWeight ); //You are overloaded. Current / Max: %i / %i
+	}
 	return true;
 }
 

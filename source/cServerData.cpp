@@ -129,7 +129,7 @@ void CServerData::ResetDefaults( void )
 	CombatAttackStamina( -2 );
 	NPCTrainingStatus( true );
 	CharHideWhileMounted( true );
-	WeightPerStr( 5 );
+	WeightPerStr( 3.5 );
 	SystemTimer( tSERVER_POLYMORPH, 90 );
 	ServerOverloadPackets( true );
 	AdvancedPathfinding( true );

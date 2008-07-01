@@ -396,7 +396,7 @@ void CWeight::subtractItemWeight( CItem *pack, CItem *item )
 //o--------------------------------------------------------------------------o
 bool CWeight::isOverloaded( CChar *mChar ) const
 {
-	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 30) )
+	if( (mChar->GetWeight() /  100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 40) )
 		return true;
 	return false;
 }

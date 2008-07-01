@@ -1,3 +1,10 @@
+7/02/2008 - Xuri
+	Changed the system message being displayed when fatigued due to being overloaded
+	Added system message for when character becomes overloaded after picking up item
+	The math for calculating max carrying capactity for players matches OSI values more closely
+	Default WeightPerStr changed from 5 to 3.5, to closer match the values used by OSI
+	Updated dictionary files with two new system messages
+
 6/22/2008 - giwo
 	Modified books.dfn to use the standard TAG=DATA format. Each line in a PAGE section is now preceeded with LINE=
 	Modified motdtips.dfn to use the standard TAG=DATA format. Each line in a TIP or MOTD secion is now preceeded with LINE=
