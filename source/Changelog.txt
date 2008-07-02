@@ -4,6 +4,7 @@
 	The math for calculating max carrying capactity for players matches OSI values more closely
 	Default WeightPerStr changed from 5 to 3.5, to closer match the values used by OSI
 	Updated dictionary files with two new system messages
+	Added a check to the 'POLY command to prevent characters from polymorphing into an invalid, client-crashing id (0x20)
 
 6/22/2008 - giwo
 	Modified books.dfn to use the standard TAG=DATA format. Each line in a PAGE section is now preceeded with LINE=
