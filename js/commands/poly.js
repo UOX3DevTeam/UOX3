@@ -11,7 +11,7 @@ function command_POLY( socket, cmdString )
 		var newBody 	= parseInt( cmdString );
 		var skinVal 	= pUser.colour;
 	
-		if( newBody <= 0x7CF )
+		if( newBody <= 0x7CF && newBody != 0x20  )
 		{
 			pUser.id = newBody;
 			pUser.orgID = newBody;
