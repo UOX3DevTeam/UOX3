@@ -371,13 +371,13 @@ function onEquip( pEquipper, iEquipped )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnFall">onFall</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onFall( pFall, fallDistance )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pFall falls fallDistance
-<tr><td valign="top" width="25%"><b>Notes</b><td>pFall can be either an npc or pc<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Notes</b><td>pFall can be either an npc or pc, will only trigger if fallDistance is over 20, so it does not trigger whenever a character walks down steps/off small ledges/down hills, etc.<br>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onFall( pFall, fallDistance )
 {
-	if( fallDistance > 10 )
-		pFall.SysMessage("Ouch!");
+	if( fallDistance > 20 )
+		pFall.SysMessage("Yikes! That was a long fall!");
 }
 </pre></table>
 

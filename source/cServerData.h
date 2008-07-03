@@ -143,7 +143,7 @@ private:
 	SI16		ambientsounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	SI16		htmlstatusenabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
 	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
-	UI08		weightPerSTR;					//	How much weight per point of STR a character can hold.
+	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 
 	// SpeedUp
@@ -544,8 +544,8 @@ public:
 	void		CharHideWhileMounted( bool value );
 	bool		CharHideWhileMounted( void ) const;
 
-	void		WeightPerStr( UI08 newVal );
-	UI08		WeightPerStr( void ) const;
+	void		WeightPerStr( R32 newVal );
+	R32			WeightPerStr( void ) const;
 
 	void		ServerOverloadPackets( bool newVal );
 	bool		ServerOverloadPackets( void ) const;

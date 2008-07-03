@@ -1,3 +1,9 @@
+7/03/2008 - Xuri
+	Animal taming no longer checks for the "ANIMAL"-tag in creatures.dfn
+	Converted WeightPerStr from UI08 to R32, so it can support decimal values
+	The onFall JS event will now work if characters fall further than 20 Z tiles (CChar.cpp)
+	Updated onFall JS Event in Javascript Documentation
+
 7/02/2008 - Xuri
 	Changed the system message being displayed when fatigued due to being overloaded
 	Added system message for when character becomes overloaded after picking up item

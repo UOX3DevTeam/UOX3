@@ -1005,18 +1005,18 @@ bool CServerData::CharHideWhileMounted( void ) const
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class	-	UI08 WeightPerStr()
+//|	Function/Class	-	R32 WeightPerStr()
 //|	Date			-	3/12/2003
 //|	Developer(s)	-	Zane
 //|	Company/Team	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Purpose			-	Amount of Weight one can hold per point of STR
 //o--------------------------------------------------------------------------o
-UI08 CServerData::WeightPerStr( void ) const
+R32 CServerData::WeightPerStr( void ) const
 {
 	return weightPerSTR;
 }
-void CServerData::WeightPerStr( UI08 newVal )
+void CServerData::WeightPerStr( R32 newVal )
 {
 	weightPerSTR = newVal;
 }
@@ -1566,7 +1566,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << std::endl;
 		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << std::endl;
 		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << std::endl;
-		ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
+		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
+		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << std::endl;
 		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
 		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << std::endl;
 		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << std::endl;
@@ -2263,7 +2264,8 @@ void CServerData::HandleLine( const UString tag, const UString value )
 		ServerSecondsPerUOMinute( value.toUShort() );
 		break;
 	case 0x070E:	 // WEIGHTPERSTR[0132]
-		WeightPerStr( value.toUByte() );
+		//WeightPerStr( value.toUByte() );
+		WeightPerStr( value.toFloat() );
 		break;
 	case 0x071B:	 // POLYDURATION[0133]
 		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
