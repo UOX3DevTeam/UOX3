@@ -3433,8 +3433,19 @@ void CChar::SendWornItems( CSocket *mSock )
 
 void CChar::WalkZ( SI08 newZ )
 {
+	bool JSEventUsed = false;
+
 	oldLocZ = z;
 	z		= newZ;
+	UI08 fallDistance = oldLocZ - z;
+
+	if( fallDistance > MAX_Z_FALL )
+	{
+		const UI16 FallTrig = GetScriptTrigger();
+		cScript *toExecute = JSMapping->GetScript( FallTrig );
+		if( toExecute != NULL )
+			JSEventUsed = toExecute->OnFall( (this), fallDistance );
+	}
 }
 
 void CChar::WalkDir( SI08 newDir )
