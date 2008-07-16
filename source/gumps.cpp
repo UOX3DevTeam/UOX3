@@ -1578,7 +1578,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
 
-	if( mChar->GetCommandLevel() >= CL_GM )
+	if( mChar->GetCommandLevel() >= CL_GM || mChar->GetAccount().wAccountIndex == 0 )
 	{
 		CItem *j = calcItemObjFromSer( id );
 		if( !ValidateObject( j ) ) 

@@ -1,3 +1,8 @@
+7/16/2008 - Xuri
+	TWEAK now works for any admin character, no matter their commandlevel (gumps.cpp)
+	The onPickup JS-event should now work
+	Updated onPickup JS Event in Javascript Documentation
+
 7/03/2008 - Xuri
 	Animal taming no longer checks for the "ANIMAL"-tag in creatures.dfn
 	Converted WeightPerStr from UI08 to R32, so it can support decimal values
