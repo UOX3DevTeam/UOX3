@@ -498,9 +498,41 @@ function onLeaving( iLeft, objLeaving, objType )
 <tr><th colspan=2 bgcolor="maroon"><a name="OnPickupEvent">onPickup</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPickup( iPickedUp, pGrabber )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pGrabber picks up iPickedUp
-<tr><td valign="top" width="25%"><b>Notes</b><td>iPickedUp's script is activated.<br><b><big>CURRENTLY BROKEN!!!</big></b>
+<tr><td valign="top" width="25%"><b>Notes</b><td>iPickedUp's script is activated.
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onPickup( iPickedUp, pGrabber )
+{
+	var pSock = pGrabber.socket;
+
+	//Check the value of pSock.pickupSpot to determine where the item was picked up from
+	switch( pSock.pickupSpot )
+	{
+		case 0: //nowhere
+			pGrabber.TextMessage( "I picked up this item from... NOWHERE!" );
+			break;		
+		case 1: //ground
+			pGrabber.TextMessage( "I picked up this item from the ground." );
+			break;		
+		case 2: //ownpack
+			pGrabber.TextMessage( "I picked up this item from my own backpack." );
+			break;		
+		case 3: //otherpack
+			pGrabber.TextMessage( "I picked up this item from a container." );
+			break;		
+		case 4: //paperdoll
+			pGrabber.TextMessage( "I picked up this item from my paperdoll." );
+			break;		
+		case 5: //bank
+			pGrabber.TextMessage( "I picked up this item from my bank box." );
+			break;
+		default:
+			pGrabber.TextMessage( "Error. Redo from Start." );
+			break;
+	}
+	
+	//Use return false to disallow the pickup and bounce item
+	//return false;
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">

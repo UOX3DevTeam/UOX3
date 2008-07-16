@@ -180,7 +180,7 @@ public:
 	bool		OnStatLoss( CChar *player, UI32 stat );
 	bool		OnStatChange( CChar *player, UI32 stat );
 	bool		OnDrop( CItem *item, CChar *dropper );
-	bool		OnPickup( CItem *item, CChar *pickerUpper );
+	SI08		OnPickup( CItem *item, CChar *pickerUpper );
 	bool		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	bool		OnDecay( CItem *decaying );
 	bool		OnLeaving( CMultiObj *left, CBaseObject *leaving );

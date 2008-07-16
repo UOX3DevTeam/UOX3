@@ -657,7 +657,8 @@ bool cScript::OnDrop( CItem *item, CChar *dropper )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
+// Replaced this with new function, this one didn't work for some reason
+/*bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
 {
 	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ) )
 		return false;
@@ -675,6 +676,49 @@ bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
 		SetEventExists( seOnPickup, false );
 
 	return ( retVal == JS_TRUE );
+}*/
+
+SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnPickup, "onPickup" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal	= -1;
+
+	jsval params[2], rval;
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, pickerUpper, runTime );
+	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( itemObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPickup", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnPickup, false );
+		return RV_NOFUNC;
+	}
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+		else if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
 }
 
 bool cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )

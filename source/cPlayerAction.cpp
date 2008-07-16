@@ -328,6 +328,17 @@ bool CPIGetItem::Handle( void )
 		return true;
 	}
 
+	UI16 targTrig		= i->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
+		{
+			tSock->Send( &bounce );
+			return true;
+		}
+	}
+
 	Effects->PlaySound( tSock, 0x0057, true );
 	if( i->GetAmount() > 1 )
 	{
@@ -363,14 +374,6 @@ bool CPIGetItem::Handle( void )
 	if( iCont == NULL )
 		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
-
-	UI16 targTrig		= i->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( targTrig );
-	if( toExecute != NULL )
-	{
-		if( !toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
-			Bounce( tSock, i );
-	}
 
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
