@@ -1698,7 +1698,7 @@ void tweakCharMenu( CSocket *s, CChar *c )
 void CPIGumpInput::HandleTweakCharText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
-	if( mChar->GetCommandLevel() >= CL_GM )
+	if( mChar->GetCommandLevel() >= CL_GM || mChar->GetAccount().wAccountIndex == 0 )
 	{
 		CChar *j = calcCharObjFromSer( id );
 		if( !ValidateObject( j ) ) 
