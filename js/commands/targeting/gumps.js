@@ -75,6 +75,7 @@ function onCallback0( socket, ourObj )
 		addEntry( myGump, "Buy Value:", ourObj.buyvalue );
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );
 		addEntry( myGump, "Is Corpse:", ourObj.corpse?1:0 );
+		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
 		if( ourObj.isSpawner )
 		{
 			addStringEntry( myGump, "SpawnSection:", ourObj.spawnsection );
@@ -156,6 +157,7 @@ function onCallback1( socket, ourObj )
 		else
 			addEntry( myGump, "Race:", 0 );
 		addEntry( myGump, "CommandLevel:", ourObj.commandlevel );
+		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
 		myGump.AddPageButton( 10, 260, 4014, 2 );
 		myGump.Send( socket );
 		myGump.Free;

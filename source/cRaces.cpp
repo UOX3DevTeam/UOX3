@@ -214,8 +214,6 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				return;
 			}
 		}
-		Effects->PlayStaticAnimation( s, 0x373A, 0, 15 );
-		Effects->PlaySound( s, 0x01E9 );
 		s->SetRaceGate( x );
 		s->SetRace( x );
 
@@ -300,6 +298,9 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				s->SetOrgSkin( hairColor );
 			}
 		}
+		s->Teleport();
+		Effects->PlayStaticAnimation( s, 0x373A, 0, 15 );
+		Effects->PlaySound( s, 0x01E9 );
 	}
 	else 
 		mSock->sysmessage( 372 );

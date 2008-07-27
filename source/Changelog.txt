@@ -1,3 +1,10 @@
+7/27/2008 - Xuri
+	Entry for ScriptID added to 'CSTATS, 'ISTATS and 'TWEAK menu
+	Fixed an erroneous example in JavaScript Docs
+	Fixed an update-issue with race-gates
+	Increased MAX_Z_LEVITATE from 10 to 15 to better deal with moving on uneven terrain (like in T2A)
+	It should now be possible to walk through secret entrances made up of walk-through-able grass/mountain tiles
+
 7/16/2008 - Xuri
 	TWEAK now works for any admin character, no matter their commandlevel (gumps.cpp)
 	The onPickup JS-event should now work
