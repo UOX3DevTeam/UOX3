@@ -257,7 +257,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			var Text2 = gumpData.getEdit(1);
 			pUser.SysMessage( "The second TextEntry was: "+Text2 )
 			var OtherButton = gumpData.getButton(0);
-			switch(RadioButton)
+			switch( OtherButton )
 			{ 
 				case 0:
 					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );

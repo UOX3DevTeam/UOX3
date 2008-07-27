@@ -84,7 +84,7 @@ cMovement *Movement;
 
 #define XYMAX					256		// Maximum items UOX can handle on one X/Y square
 #define MAX_ITEM_Z_INFLUENCE	10		// Any item above this height is discarded as being too far away to effect the char
-#define MAX_Z_LEVITATE			10		// Maximum total height to reach a tile marked as 'LEVITATABLE'
+#define MAX_Z_LEVITATE			15		// Maximum total height to reach a tile marked as 'LEVITATABLE'
 										// Items with a mark as climbable have no height limit
 
 inline UI08 turn_clock_wise( UI08 dir )

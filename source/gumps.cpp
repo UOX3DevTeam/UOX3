@@ -201,6 +201,7 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 28:	// Buy Value
 		case 29:	// Sell Value
 		case 30:	// Carve
+		case 36:	// ScriptTrigger ID
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 495 + button );	// allow 0x for hex value
 			break;
 		case 7:		// Moveable
@@ -220,7 +221,7 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
-		case 36:	// Spawnobj/Spawnobjlist
+		case 37:	// Spawnobj/Spawnobjlist
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;
@@ -261,6 +262,7 @@ void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 15:	// Mana
 		case 21:	// Kills
 		case 27:	// Carve
+		case 29:	// ScriptTrigger ID
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 1700 + button );	// allow 0x for hex
 			break;
 		case 10:	// Strength
@@ -1556,6 +1558,7 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.AddData( "Corpse", i->isCorpse()?1:0 );
 	tweakItem.AddData( "Visible", i->GetVisible() );
 	tweakItem.AddData( "Creator", i->GetCreator() );
+	tweakItem.AddData( "Script ID:", i->GetScriptTrigger() );
 	if( i->GetObjType() == OT_SPAWNER )
 	{
 		CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
@@ -1625,7 +1628,8 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 33:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
 			case 34:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 			case 35:	j->SetCreator( reply.toULong() );			break;	// Creator
-			case 36:
+			case 36:	j->SetScriptTrigger( reply.toULong() );		break; //ScriptTrigger ID
+			case 37:
 						if( j->GetObjType() == OT_SPAWNER )
 							((CSpawnItem *)j)->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}
@@ -1685,6 +1689,7 @@ void tweakCharMenu( CSocket *s, CChar *c )
 	tweakChar.AddData( "Weight", c->GetWeight() );
 	tweakChar.AddData( "Carve", c->GetCarve() );
 	tweakChar.AddData( "Visible", c->GetVisible() );
+	tweakChar.AddData( "Script ID:", c->GetScriptTrigger() );
 	tweakChar.Send( 2, true, c->GetSerial() );
 }
 
@@ -1776,6 +1781,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 26:	j->SetWeight( reply.toShort() );				break;	// Weight
 			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
 			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
+			case 29:	j->SetScriptTrigger( reply.toULong() );			break;	// ScriptTrigger ID
 		}
 		tweakCharMenu( tSock, j );
 	}

@@ -632,8 +632,10 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const map_st map = SeekMap( x, y, worldNumber );
 	// make sure nothing can move into black areas
-	if( 430 == map.id || 475 == map.id || 580 == map.id || 610 == map.id ||
-		611 == map.id || 612 == map.id || 613 == map.id)
+	if( 430 == map.id || 431 == map.id || 432 == map.id ||
+		433 == map.id || 434 == map.id || 475 == map.id ||
+		580 == map.id || 610 == map.id || 611 == map.id ||
+		612 == map.id || 613 == map.id)
 		return ILLEGAL_Z;
 	return map.z;
 }
