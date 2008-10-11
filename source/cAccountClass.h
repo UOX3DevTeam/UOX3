@@ -99,13 +99,16 @@ public:
 	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
 		wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
 		dwLastIP( 0x00000000 ), bChanged( false )
+#if UOX_PLATFORM == WIN32
+		, dbRetrieved( false )
+#endif
 	{
 		for( UI08 i = 0; i < 6; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
 			lpCharacters[i] = NULL;
 		}
-	};
+	}
 	void reset( void )
 	{
 		sUsername		= "";
@@ -123,7 +126,10 @@ public:
 			lpCharacters[i] = NULL;
 		}
 		wFlags.reset();
-	};
+#if UOX_PLATFORM == WIN32
+		dbRetrieved = false;
+#endif
+	}
 	std::string					sUsername;
 	std::string					sPassword;
 	std::string					sPath;
@@ -136,6 +142,9 @@ public:
 	bool						bChanged;
 	UI32						dwCharacters[6];
 	CChar *						lpCharacters[6];
+#if UOX_PLATFORM == WIN32
+	bool						dbRetrieved;
+#endif
 } CAccountBlock;
 
 // Class typdefs to help simplify the use of map STL
@@ -203,6 +212,12 @@ private:
 	MAPUSERNAMEID	m_mapUsernameIDMap;
 	UI16			m_wHighestAccount;
 	std::string		m_sAccountsDirectory;
+
+#if UOX_PLATFORM == WIN32
+	bool					LoadFromDB( UI16& numLoaded );
+	bool					SaveToDB( UI16& numSaved );
+	bool					FinaliseBlock( CAccountBlock& toFinalise );
+#endif
 };
 
 extern cAccountClass *Accounts;

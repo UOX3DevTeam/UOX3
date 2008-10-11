@@ -392,6 +392,24 @@ static JSExtendedClass UOXParty_class =
 	JSCLASS_NO_RESERVED_MEMBERS
 }; 
 
+#if P_ODBC == 1
+
+static JSClass UOXODBC_class =
+{
+	"UOXODBC",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CODBCProps_getProperty,
+	CODBCProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub 
+};
+
+#endif
+
 }
 
 #endif

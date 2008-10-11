@@ -247,7 +247,11 @@ namespace UOX
 		spellsObj				=	JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
 		accountsObj				=	JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
 		consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
-
+#if P_ODBC == 1
+		protoList[JSP_ODBC]		=	JS_InitClass( cx, obj, NULL, &UOXODBC_class,		NULL,		0,		CODBCProperties,		CODBC_Methods,		NULL,	NULL );
+		odbcObj					=	JS_DefineObject( cx, obj, "ODBC", &UOXODBC_class, protoList[JSP_ODBC], 0 );
+		JS_LockGCThing( cx, odbcObj );
+#endif
 		JS_LockGCThing( cx, spellsObj );
 		//JS_AddRoot( cx, &spellsObj );
 		JS_LockGCThing( cx, accountsObj );

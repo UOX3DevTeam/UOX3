@@ -410,6 +410,16 @@ enum CPartyProperties
 	CPARTYP_COUNT
 };
 
+#if P_ODBC == 1
+
+enum CODBCProperties
+{
+	CODBCP_LASTSUCCEEDED = 0,
+	CODBCP_COUNT
+};
+
+#endif
+
 }
 
 #endif

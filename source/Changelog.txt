@@ -1,3 +1,12 @@
+Oct 12, 2008 - Maarc
+
+	#ifdef'd ODBCManager implementation.  You will need to enable through Config.h, and add 2 files to project.
+	Accounts load and save from a database, falling back to read/write if connection doesn't exist
+	Both logins are logged into SQL database
+	ODBCManager exposed to JS Engine - note, columns MUST be fetched in ascending numeric starting from 0
+	Long strings printed to the console will now wrap in a friendly fashion
+	Unknown INI file tags will now print out at startup
+
 7/27/2008 - Xuri
 	Entry for ScriptID added to 'CSTATS, 'ISTATS and 'TWEAK menu
 	Fixed an erroneous example in JavaScript Docs

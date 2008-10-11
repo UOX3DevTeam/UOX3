@@ -260,7 +260,7 @@ public:
 	void		ServerStartPrivs( UI16 value );
 	void		ServerStartGold( SI16 value );
 	bool		ParseINI( const std::string filename );
-	void		HandleLine( const UString tag, const UString value );
+	bool		HandleLine( const UString tag, const UString value );
 
 	void		Load( void );
 	bool		save( void );

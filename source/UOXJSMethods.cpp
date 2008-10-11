@@ -51,6 +51,10 @@
 #include "combat.h"
 #include "PartySystem.h"
 
+#if P_ODBC == 1
+#include "ODBCManager.h"
+#endif
+
 namespace UOX
 {
 
@@ -5994,6 +5998,104 @@ JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, j
 	*rval = BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() );
 	return JS_TRUE;
 }
+
+#if P_ODBC == 1
+JSBool CODBC_BeginTransaction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "BeginTransaction: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	*rval = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().BeginTransaction() );
+	return JS_TRUE;
+}
+JSBool CODBC_FinaliseTransaction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "FinaliseTransaction: Invalid count of arguments :%d, needs :1(commit/rollback)", argc );
+		return JS_FALSE;
+	}
+	JSEncapsulate toAdd( cx, &(argv[0]) );
+	*rval = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().FinaliseTransaction( toAdd.toBool() ) );
+	return JS_TRUE;
+}
+JSBool CODBC_ExecuteQuery( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "ExecuteQuery: Invalid count of arguments :%d, needs :1", argc );
+		return JS_FALSE;
+	}
+	JSEncapsulate query( cx, &(argv[0]) );
+	int index;
+	if( query.isType( JSOT_STRING ) )
+	{
+		bool didExecute	= ODBCManager::getSingleton().ExecuteQuery( query.toString(), &index );
+		*rval			= INT_TO_JSVAL( index );
+	}
+	else
+	{
+		MethodError( "ExecuteQuery: Query must be a string" );
+		return JS_FALSE;
+	}
+	return JS_TRUE;
+}
+JSBool CODBC_QueryRelease( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "QueryRelease: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	*rval = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().QueryRelease() );
+	return JS_TRUE;
+}
+JSBool CODBC_FetchRow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "FetchRow: Invalid count of arguments :%d, needs :1(index)", argc );
+		return JS_FALSE;
+	}
+	JSEncapsulate toAdd( cx, &(argv[0]) );
+	*rval = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().FetchRow( toAdd.toInt() ) );
+	return JS_TRUE;
+}
+JSBool CODBC_GetColumn( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		MethodError( "GetColumn: Invalid count of arguments :%d, needs :2(col #, index)", argc );
+		return JS_FALSE;
+	}
+	JSEncapsulate	colNum( cx, &(argv[0]) );
+	JSEncapsulate	index( cx, &(argv[2]) );
+	UString			valueRet;
+	bool execOK = ODBCManager::getSingleton().GetColumn( colNum.toInt(), valueRet, index.toInt() );
+	if( execOK )
+	{
+		JSString *strValue	= NULL;
+		strValue			= JS_NewStringCopyZ( cx, valueRet.c_str() );
+		*rval				= STRING_TO_JSVAL( strValue );
+	}
+	argv[1] = BOOLEAN_TO_JSVAL( execOK );
+	return JS_TRUE;
+}
+
+JSBool CODBC_LastOK( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "LastOK: Invalid count of arguments :%d, needs :0", argc );
+		return JS_FALSE;
+	}
+	*rval = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().LastSucceeded() );
+	return JS_TRUE;
+}
+
+#endif
 
 }
 

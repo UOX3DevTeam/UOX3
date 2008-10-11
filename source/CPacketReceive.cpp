@@ -15,6 +15,9 @@
 #include "skills.h"
 #include "PartySystem.h"
 
+#if P_ODBC == 1
+#include "ODBCManager.h"
+#endif
 namespace UOX
 {
 
@@ -177,6 +180,19 @@ bool CPIFirstLogin::Handle( void )
 		t = LDR_UNKNOWNUSER;
 	if( t == LDR_NODENY && actbTemp->wFlags.test( AB_FLAGS_ONLINE ) )
 		t = LDR_ACCOUNTINUSE;
+#if P_ODBC == 1
+	std::string iSQL	= "INSERT INTO AccountLoginHistory( Username, Password, IPAddress4, WhenAttempted, AttemptStatus ) VALUES( '";
+	iSQL				+=  username + "', '";
+	char ipAddy[16];
+	sprintf( ipAddy, "%i.%i.%i.%i", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+	iSQL				+=  pass1 + "', '";
+	iSQL				+=  ipAddy;
+	iSQL				+=  "', ";
+	iSQL				+=  "getdate(), ";
+	iSQL				+=  UString::number( t ) + " );";
+	ODBCManager::getSingleton().ExecuteQuery( iSQL );
+	ODBCManager::getSingleton().QueryRelease();
+#endif
 	if( t != LDR_NODENY )
 	{
 		CPLoginDeny pckDeny( t );
@@ -394,6 +410,19 @@ bool CPISecondLogin::Handle( void )
 	}
 	else
 		t = LDR_UNKNOWNUSER;
+#if P_ODBC == 1
+	std::string iSQL	= "INSERT INTO AccountLoginHistory( Username, Password, IPAddress4, WhenAttempted, AttemptStatus ) VALUES( '";
+	iSQL				+=  Name() + "', '";
+	char ipAddy[16];
+	sprintf( ipAddy, "%i.%i.%i.%i", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+	iSQL				+=  pass1 + "', '";
+	iSQL				+=  ipAddy;
+	iSQL				+=  "', ";
+	iSQL				+=  "getdate(), ";
+	iSQL				+=  UString::number( t ) + " );";
+	ODBCManager::getSingleton().ExecuteQuery( iSQL );
+	ODBCManager::getSingleton().QueryRelease();
+#endif
 	if( t != LDR_NODENY )
 	{
 		tSock->AcctNo( AB_INVALID_ID );

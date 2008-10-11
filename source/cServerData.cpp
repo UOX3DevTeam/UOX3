@@ -8,6 +8,10 @@
 	#include <direct.h>
 #endif
 
+#if P_ODBC == 1
+	#include "ODBCManager.h"
+#endif
+
 namespace UOX
 {
 #define	MAX_TRACKINGTARGETS	128
@@ -68,6 +72,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|"
+	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
 void CServerData::ResetDefaults( void )
@@ -1678,6 +1683,10 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << std::endl;
 		ofsOutput << "}" << std::endl;
 		
+#if P_ODBC == 1
+		ODBCManager::getSingleton().SaveSettings( ofsOutput );
+#endif
+		
 		ofsOutput.close();
 		rvalue = true;
 	}
@@ -1813,7 +1822,10 @@ bool CServerData::ParseINI( const std::string filename )
 				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
 				{
 					data = sect->GrabData().simplifyWhiteSpace();
-					HandleLine( tag, data );
+					if( !HandleLine( tag, data ) )
+					{
+						Console.Warning( "Unhandled tag '%s'", tag.c_str() );
+					}
 				}
 			}
 			Console.PrintDone();
@@ -1828,9 +1840,11 @@ bool CServerData::ParseINI( const std::string filename )
 	return rvalue;
 }
 
-void CServerData::HandleLine( const UString tag, const UString value )
+bool CServerData::HandleLine( const UString tag, const UString value )
 {
-	switch( UOX3INI_LOOKUP.find( tag.c_str() ) )
+	bool rvalue = true;
+	std::string::size_type lFind = UOX3INI_LOOKUP.find( tag.c_str() );
+	switch( lFind )
 	{
 	case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
 	case 0x000C:	 // SERVERNAME[0002]
@@ -2321,9 +2335,22 @@ void CServerData::HandleLine( const UString tag, const UString value )
 	case 0x0823:	 // BASICTOOLTIPSONLY[0150]
 		BasicTooltipsOnly( (value.toByte() == 1) );
 		break;
+#if P_ODBC == 1
+	case 0x0835:	 // ODBCDSN[0151]
+		ODBCManager::getSingleton().SetDatabase( value );
+		break;
+	case 0x083D:	 // ODBCUSER[0152]
+		ODBCManager::getSingleton().SetUsername( value );
+		break;
+	case 0x0846:	 // ODBCPASS[0153]
+		ODBCManager::getSingleton().SetPassword( value );
+		break;
+#endif
 	default:
+		rvalue = false;
 		break;
 	}
+	return rvalue;
 }
 
 void CServerData::ServerStartGold( SI16 value )

@@ -33,6 +33,9 @@ enum JSPrototypes
 	JSP_CONSOLE,
 	JSP_FILE,
 	JSP_PARTY,
+#if P_ODBC == 1
+	JSP_ODBC,
+#endif
 	JSP_COUNT
 };
 
@@ -49,7 +52,9 @@ private:
 	JSObject * spellsObj;
 	JSObject * accountsObj;
 	JSObject * consoleObj;
-
+#if P_ODBC == 1
+	JSObject * odbcObj;
+#endif
 	JSRuntime * jsRuntime;
 	JSContext * jsContext;
 	JSObject * jsGlobal;

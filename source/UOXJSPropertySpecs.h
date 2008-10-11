@@ -477,11 +477,21 @@ static JSPropertySpec CResourceProperties[] =
 
 static JSPropertySpec CPartyProperties[] =
 {
-	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM },
-	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO  },
-	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM },
-	{	NULL,		(SI08)NULL,			(UI08)0				}
+	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM	},
+	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO	},
+	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM	},
+	{	NULL,			(SI08)NULL,				(UI08)0				}
 };
+
+#if P_ODBC == 1
+
+static JSPropertySpec CODBCProperties[] =
+{
+	{ "lastOK",			CODBCP_LASTSUCCEEDED,	JSPROP_ENUMPERMRO	},
+	{	NULL,			(SI08)NULL,				(UI08)0				}
+};
+
+#endif
 
 }
 

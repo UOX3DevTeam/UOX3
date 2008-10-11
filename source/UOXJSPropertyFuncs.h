@@ -68,6 +68,13 @@ JSPropertyFunc CPartyProps_getProperty;
 JSPropertyFunc CPartyProps_setProperty;
 JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
 
+#if P_ODBC == 1
+
+JSPropertyFunc CODBCProps_getProperty;
+JSPropertyFunc CODBCProps_setProperty;
+
+#endif
+
 }
 
 #endif

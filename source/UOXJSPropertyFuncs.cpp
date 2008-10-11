@@ -39,6 +39,10 @@
 
 #include "PartySystem.h"
 
+#if P_ODBC == 1
+#include "ODBCManager.h"
+#endif
+
 namespace UOX
 {
 	void MakeShop( CChar *c );
@@ -1897,4 +1901,35 @@ namespace UOX
 			*bp = ( srcParty == NULL && trgObj.isType( JSOT_NULL ) ) ? JS_TRUE : JS_FALSE;
 		return JS_TRUE;
 	}
+
+#if P_ODBC == 1
+
+	JSBool CODBCProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CODBCP_LASTSUCCEEDED:		break;
+			default:						break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+	JSBool CODBCProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		if( JSVAL_IS_INT( id ) ) 
+		{
+			int realID = JSVAL_TO_INT( id );
+			switch( realID )
+			{
+			case CODBCP_LASTSUCCEEDED:	*vp = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().LastSucceeded() );	break;
+			default:					Console.Warning( "No such property exists" );							break;
+			}
+		}
+		return JS_TRUE;
+	}
+
+#endif
 }
