@@ -12,6 +12,9 @@
 //o--------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cVersionClass.h"
+#if P_ODBC == 1
+#include "ODBCManager.h"
+#endif
 
 namespace UOX
 {
@@ -833,8 +836,209 @@ size_t cAccountClass::size()
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
+#if P_ODBC == 1
+bool cAccountClass::FinaliseBlock( CAccountBlock& toFinalise )
+{
+	for( int y = 0; y < CHARACTERCOUNT; ++y )
+	{
+		if( toFinalise.dwCharacters[y] != INVALIDSERIAL )
+		{
+			toFinalise.lpCharacters[y] = calcCharObjFromSer( toFinalise.dwCharacters[y] );
+			if( toFinalise.lpCharacters[y] != NULL )
+				toFinalise.lpCharacters[y]->SetAccount( toFinalise );
+		}
+	}
+	m_mapUsernameIDMap[toFinalise.wAccountIndex]	= toFinalise;
+	m_mapUsernameMap[toFinalise.sUsername]			= &m_mapUsernameIDMap[toFinalise.wAccountIndex];
+	return true;
+}
+bool cAccountClass::SaveToDB( UI16& numSaved )
+{
+	bool rvalue = true;
+	numSaved	= 0;
+
+	ODBCManager::getSingleton().BeginTransaction();
+	for( MAPUSERNAMEID_CITERATOR i = m_mapUsernameIDMap.begin(); i != m_mapUsernameIDMap.end(); ++i )
+	{
+		const CAccountBlock *curr = &(i->second);
+		if( curr->dbRetrieved )
+		{	// From DB, so UPDATE
+			std::string uSQL = "UPDATE Account SET";
+			uSQL			+= " Password = '" + curr->sPassword + "'";
+			uSQL			+= ", ContactDetails = '" + curr->sContact + "'";
+			uSQL			+= ", IsBanned = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_BANNED )?"1":"0");
+			uSQL			+= ", IsSuspended = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_SUSPENDED )?"1":"0");
+			uSQL			+= ", IsPublic = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_PUBLIC )?"1":"0");
+			uSQL			+= ", IsOnline = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_ONLINE )?"1":"0");
+			uSQL			+= ", IsSeer = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_SEER )?"1":"0");
+			uSQL			+= ", IsCounselor = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_COUNSELOR )?"1":"0");
+			uSQL			+= ", IsGM = ";
+			uSQL			+= (curr->wFlags.test( AB_FLAGS_GM )?"1":"0");
+			uSQL			+= ", LastUpdated = getdate()";
+			uSQL			+= " WHERE AccountID = " + UString::number( curr->wAccountIndex ) + ";";
+			Console.Warning( uSQL.c_str() );
+			ODBCManager::getSingleton().ExecuteQuery( uSQL );
+			uSQL			= "DELETE FROM AccountCharacters WHERE AccountID = " + UString::number( curr->wAccountIndex ) + ";";
+			Console.Warning( uSQL.c_str() );
+			ODBCManager::getSingleton().ExecuteQuery( uSQL );
+		}
+		else
+		{	// Not from DB, so INSERT
+			std::string iSQL = "INSERT INTO Account( AccountID, Username, Password, ContactDetails, IsBanned, IsSuspended, IsPublic, IsOnline, IsSeer, IsCounselor, IsGM, LastUpdated ) VALUES( ";
+			iSQL			+= "  " + UString::number( curr->wAccountIndex );
+			iSQL			+= ", '" + curr->sUsername + "'";
+			iSQL			+= ", '" + curr->sPassword + "'";
+			iSQL			+= ", '" + curr->sContact + "'";
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_BANNED )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_SUSPENDED )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_PUBLIC )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_ONLINE )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_SEER )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_COUNSELOR )?"1":"0");
+			iSQL			+= ", ";
+			iSQL			+= (curr->wFlags.test( AB_FLAGS_GM )?"1":"0");
+			iSQL			+= ", getdate()";
+			Console.Warning( iSQL.c_str() );
+			ODBCManager::getSingleton().ExecuteQuery( iSQL );
+		}
+		for( int z = 0; z < CHARACTERCOUNT; ++z )
+		{
+			if( curr->lpCharacters[z] != NULL )
+			{
+				std::string cSQL	= "INSERT INTO AccountCharacters( AccountID, Serial ) VALUES( ";
+				cSQL				+= UString::number( curr->wAccountIndex ) + ", " + UString::number( curr->lpCharacters[z]->GetSerial() ) + " );";
+				Console.Warning( cSQL.c_str() );
+				ODBCManager::getSingleton().ExecuteQuery( cSQL );
+			}
+		}
+		++numSaved;
+	}
+	ODBCManager::getSingleton().FinaliseTransaction( true );
+	return rvalue;
+}
+bool cAccountClass::LoadFromDB( UI16& numLoaded )
+{
+	bool rvalue = true;
+	UString values[13];
+	bool valueFound[13];
+
+	int index = -1;
+	std::string sql	= "SELECT Account.AccountID, Account.Username, Account.Password, Account.ContactDetails, Account.IsBanned, Account.IsSuspended, Account.IsPublic, Account.IsOnline, Account.IsSeer, Account.IsCounselor, Account.IsGM, Account.LastUpdated, AccountCharacters.Serial FROM         Account LEFT OUTER JOIN AccountCharacters ON Account.AccountID = AccountCharacters.AccountID ORDER BY Account.AccountID, AccountCharacters.Serial";
+	bool execQuery	= ODBCManager::getSingleton().ExecuteQuery( sql, &index );
+	if( execQuery )
+	{
+		CAccountBlock actB;
+		int prevID		= -1;
+		numLoaded		= 0;
+		bool bRetrieved = false;
+		int charCount	= -1;
+		int iTemp		= 0;
+		while( ODBCManager::getSingleton().FetchRow( index ) )
+		{
+			// 0	Account.AccountID
+			// 1	Account.Username
+			// 2	Account.Password
+			// 3	Account.ContactDetails
+			// 4	Account.IsBanned
+			// 5	Account.IsSuspended
+			// 6	Account.IsPublic
+			// 7	Account.IsOnline
+			// 8	Account.IsSeer
+			// 9	Account.IsCounselor
+			// 10	Account.IsGM
+			// 11	Account.LastUpdated
+			// 12	AccountCharacters.Serial
+			for( int x = 0; x < 13; ++x )
+			{
+				valueFound[x] = ODBCManager::getSingleton().GetColumn( x, values[x], index );
+				if( !valueFound[x] )
+					Console.Warning( "ODBC: Error retrieving column %i on record %i", x, numLoaded );
+			}
+			if( valueFound[0] )
+			{	// we have an ID
+				int realID = values[0].toInt();
+				if( realID != prevID )
+				{	// next account retrieved
+					if( bRetrieved )
+					{	// tidy up previous account
+						FinaliseBlock( actB );
+					}
+					actB.reset();
+					actB.dbRetrieved	= true;
+					actB.wAccountIndex	= realID;
+					bRetrieved			= true;
+					prevID				= realID;
+					charCount			= -1;
+					++numLoaded;
+					if( valueFound[1] )
+						actB.sUsername = values[1].stripWhiteSpace();
+					else
+						Console.Warning( "ODBC: Account with no username! [%i]", actB.wAccountIndex );
+					if( valueFound[2] )
+						actB.sPassword = values[2].stripWhiteSpace();
+					else
+						Console.Warning( "ODBC: Account with no username! [%i]", actB.wAccountIndex );
+					if( valueFound[3] )
+						actB.sContact = values[3];
+					if( valueFound[4] )
+						actB.wFlags.set( AB_FLAGS_BANNED,	( values[4].toInt() != 0 ) );
+					if( valueFound[5] )
+						actB.wFlags.set( AB_FLAGS_SUSPENDED,( values[5].toInt() != 0 ) );
+					if( valueFound[6] )
+						actB.wFlags.set( AB_FLAGS_PUBLIC,	( values[6].toInt() != 0 ) );
+					if( valueFound[8] )
+						actB.wFlags.set( AB_FLAGS_SEER,		( values[8].toInt() != 0 ) );
+					if( valueFound[9] )
+						actB.wFlags.set( AB_FLAGS_COUNSELOR,( values[9].toInt() != 0 ) );
+					if( valueFound[10] )
+						actB.wFlags.set( AB_FLAGS_GM,		( values[10].toInt() != 0 ) );
+				}
+				++charCount;
+				if( charCount < CHARACTERCOUNT )
+				{
+					if( valueFound[12] && values[12] != "NULL" )
+						actB.dwCharacters[charCount] = values[12].toInt();
+					else
+						actB.dwCharacters[charCount] = INVALIDSERIAL;
+				}
+				else
+				{
+					Console.Warning( "ODBC: Too many characters on account" );
+				}
+			}
+		}
+		if( bRetrieved )
+		{	// tidy up previous account
+			FinaliseBlock( actB );
+		}
+		ODBCManager::getSingleton().QueryRelease();
+	}
+	else
+		rvalue = false;
+	return rvalue;
+}
+#endif
+
 UI16 cAccountClass::Load(void)
 {
+#if P_ODBC == 1
+	UI16 retVal = 0;
+	if( LoadFromDB( retVal ) )
+		return retVal;
+#endif
+
 	// Now we can load the accounts file in and re fill the map.
 	std::string sAccountsADM( m_sAccountsDirectory );
 	sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='\\'||m_sAccountsDirectory[m_sAccountsDirectory.length()-1]=='/')?"accounts.adm":"/accounts.adm";
@@ -1661,6 +1865,11 @@ CAccountBlock& cAccountClass::GetAccountByID( UI16 wAccountID )
 //o--------------------------------------------------------------------------o
 UI16 cAccountClass::Save(bool bForceLoad)
 {
+#if P_ODBC == 1
+	UI16 numSaved = 0;
+	if( SaveToDB( numSaved ) )
+		return numSaved;
+#endif
 	// Ok were not going to mess around. so we open truncate the file and write
 	std::string sTemp(m_sAccountsDirectory);
 	if( sTemp[sTemp.length()-1]=='\\'||sTemp[sTemp.length()-1]=='/' )

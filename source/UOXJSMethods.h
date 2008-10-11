@@ -247,6 +247,18 @@ JSMethodFunc CSocket_FirstTriggerWord;
 JSMethodFunc CSocket_NextTriggerWord;
 JSMethodFunc CSocket_FinishedTriggerWords;
 
+#if P_ODBC == 1
+
+JSMethodFunc CODBC_BeginTransaction;
+JSMethodFunc CODBC_FinaliseTransaction;
+JSMethodFunc CODBC_ExecuteQuery;
+JSMethodFunc CODBC_QueryRelease;
+JSMethodFunc CODBC_FetchRow;
+JSMethodFunc CODBC_GetColumn;
+JSMethodFunc CODBC_LastOK;
+
+#endif
+
 static JSFunctionSpec CGump_Methods[] =  
 { 	
 	{ "Free",					CGump_Free,					0, 0, 0 },
@@ -527,8 +539,24 @@ static JSFunctionSpec CParty_Methods[] =
 	{ "GetMember",		CParty_GetMember,			1, 0, 0 },
 	{ "Add",			CParty_Add,					1, 0, 0 },
 	{ "Remove",			CParty_Remove,				1, 0, 0 },
-	{ NULL,					NULL,					0, 0, 0 }
+	{ NULL,				NULL,						0, 0, 0 }
 };
+
+#if P_ODBC == 1
+
+static JSFunctionSpec CODBC_Methods[] =  
+{ 	
+	{ "BeginTransaction",		CODBC_BeginTransaction,		0, 0, 0 },
+	{ "FinaliseTransaction",	CODBC_FinaliseTransaction,	1, 0, 0 },
+	{ "ExecuteQuery",			CODBC_ExecuteQuery,			1, 0, 0 },
+	{ "QueryRelease",			CODBC_QueryRelease,			0, 0, 0 },
+	{ "FetchRow",				CODBC_FetchRow,				1, 0, 0 },
+	{ "GetColumn",				CODBC_GetColumn,			2, 0, 0 },
+	{ "LastOK",					CODBC_LastOK,				0, 0, 0 },
+	{ NULL,						NULL,						0, 0, 0 }
+};
+
+#endif
 
 }
 

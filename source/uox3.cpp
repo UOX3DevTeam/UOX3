@@ -65,6 +65,10 @@
 #include "PartySystem.h"
 #include "CJSEngine.h"
 
+#if P_ODBC == 1
+#include "ODBCManager.h"
+#endif
+
 namespace UOX
 {
 
@@ -82,6 +86,10 @@ timeval current;
 
 ObjectFactory *	objFactory;
 PartyFactory *	partySys;
+#if P_ODBC == 1
+ODBCManager *	odbcMan;
+#endif
+
 
 //o---------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -1737,6 +1745,10 @@ void Shutdown( SI32 retCode )
 
 	delete partySys;
 	delete objFactory;
+#if P_ODBC == 1
+	ODBCManager::getSingleton().Disconnect();
+	delete odbcMan;
+#endif
 
 	Console << "Server shutdown complete!" << myendl;
 	Console << "Thank you for supporting " << CVersionClass::GetName() << myendl;
@@ -2576,6 +2588,10 @@ int main( int argc, char *argv[] )
 
 		if(( cwmWorldState = new CWorldMain ) == NULL ) 
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
+#if P_ODBC == 1
+		odbcMan			= NULL;
+		odbcMan			= new ODBCManager();
+#endif
 		cwmWorldState->ServerData()->Load();
 
 		Console << "Initializing and creating class pointers... " << myendl;
@@ -2585,6 +2601,13 @@ int main( int argc, char *argv[] )
 		ParseArgs( argc, argv );
 		Console.PrintSectionBegin();
 
+#if P_ODBC == 1
+		Console << "Connecting to database ... ";
+		if( ODBCManager::getSingleton().Connect() )
+			Console.PrintDone();
+		else
+			Console.PrintFailed();
+#endif
 		cwmWorldState->ServerData()->LoadTime();
 
 		Console << "Loading skill advancement      ";

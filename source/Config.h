@@ -15,6 +15,10 @@ This file has been adapted from OgreConfig.h, but customised to our purposes
 
 #define P_TIMESTAMP 1
 
+// Define this if you want the ODBC functionality
+
+#define P_ODBC 0
+
 // configure options
 #ifdef HAVE_CONFIG_H
 #include "config.h"

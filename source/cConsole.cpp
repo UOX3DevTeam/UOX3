@@ -109,7 +109,34 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 CConsole& CConsole::operator<<( const char *outPut )
 {
 	StartOfLineCheck();
-	std::cout << outPut;
+	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
+	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
+	std::string toDisplay = outPut;
+	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X )
+	{
+		bool wrapDone = false;
+		while( !wrapDone )
+		{
+			GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
+			int diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
+			if( diff > toDisplay.length() )
+			{
+				std::cout << toDisplay;
+				wrapDone = true;
+			}
+			else
+			{
+				std::cout << toDisplay.substr( 0, diff );
+				(*this) << myendl;
+				StartOfLineCheck();
+				toDisplay = toDisplay.substr( diff );
+			}
+		}
+	}
+	else
+	{
+		std::cout << outPut;
+	}
 	return (*this);
 }
 CConsole& CConsole::operator<<( const UI08 *outPut )
@@ -649,11 +676,11 @@ void CConsole::MoveTo( int x, int y )
 #endif
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	bool CConsole::LogEcho( void )
-//|	Date					-	2/03/2003
+//|	Function		-	bool CConsole::LogEcho( void )
+//|	Date			-	2/03/2003
 //|	Developers		-	Maarc
 //|	Organization	-	UOX3DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
@@ -665,11 +692,11 @@ bool CConsole::LogEcho( void )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void CConsole::LogEcho( bool value )
-//|	Date					-	2/03/2003
+//|	Function		-	void CConsole::LogEcho( bool value )
+//|	Date			-	2/03/2003
 //|	Developers		-	Maarc
 //|	Organization	-	UOX3DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
