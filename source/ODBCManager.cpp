@@ -272,22 +272,27 @@ namespace UOX
 		lastState = false;
 		if( allocationState >= ALLOC_STMT )
 		{
-			char szData[256];
-			SQLINTEGER cbData;
-			HSTMT hstmt = statementList[index];
-			rc = SQLGetData( hstmt, colNumber + 1, SQL_C_CHAR, szData, sizeof( szData ), &cbData );
-			if( rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO )
+			if( index < statementList.size() )
 			{
-				lastState = true;
-				if( cbData != -1 )	// NULL!
-					value	= szData;
-				else
-					value	= "NULL";
-				if( rc == SQL_SUCCESS_WITH_INFO )
+				char szData[256];
+				SQLINTEGER cbData;
+				HSTMT hstmt = statementList[index];
+				rc = SQLGetData( hstmt, colNumber + 1, SQL_C_CHAR, szData, sizeof( szData ), &cbData );
+				if( rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO )
+				{
+					lastState = true;
+					if( cbData != -1 )	// NULL!
+						value	= szData;
+					else
+						value	= "NULL";
+					if( rc == SQL_SUCCESS_WITH_INFO )
+						DisplayError( SQL_HANDLE_STMT, hstmt );
+				}
+				else if( rc == SQL_ERROR )
 					DisplayError( SQL_HANDLE_STMT, hstmt );
 			}
-			else if( rc == SQL_ERROR )
-				DisplayError( SQL_HANDLE_STMT, hstmt );
+			else
+				Console.Warning( "ODBC: Invalid statement number %i (max %i)", index, statementList.size() );
 		}
 		return lastState;
 	}

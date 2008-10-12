@@ -1,5 +1,10 @@
 Oct 12, 2008 - Maarc
 
+	Bug fix on GetColumn JS implementation
+	Error checking on statement indexes in GetColumn() in ODBCManager
+
+Oct 12, 2008 - Maarc
+
 	#ifdef'd ODBCManager implementation.  You will need to enable through Config.h, and add 2 files to project.
 	Accounts load and save from a database, falling back to read/write if connection doesn't exist
 	Both logins are logged into SQL database
