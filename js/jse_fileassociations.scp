@@ -248,6 +248,7 @@
 1050=commands/targeting/makeshop.js
 1051=commands/targeting/rndtile.js
 1052=commands/time.js
+1053=commands/accountlogins.js
 }
 
 //-------------------------------------------
