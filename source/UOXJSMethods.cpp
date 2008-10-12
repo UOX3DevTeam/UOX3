@@ -6071,7 +6071,7 @@ JSBool CODBC_GetColumn( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	JSEncapsulate	colNum( cx, &(argv[0]) );
-	JSEncapsulate	index( cx, &(argv[2]) );
+	JSEncapsulate	index( cx, &(argv[1]) );
 	UString			valueRet;
 	bool execOK = ODBCManager::getSingleton().GetColumn( colNum.toInt(), valueRet, index.toInt() );
 	if( execOK )
