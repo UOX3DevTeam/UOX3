@@ -332,7 +332,7 @@ bool CPIGetItem::Handle( void )
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
 	{
-		if( toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
+		if( !toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
 		{
 			tSock->Send( &bounce );
 			return true;
