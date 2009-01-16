@@ -220,8 +220,8 @@ bool CPIFirstLogin::Handle( void )
 		}
 		tSock->Send( &toSend );
 	}
-	CPEnableClientFeatures ii;
-	tSock->Send( &ii );
+	//CPEnableClientFeatures ii;
+	//tSock->Send( &ii );
 	return true;
 }
 

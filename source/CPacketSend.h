@@ -1067,7 +1067,11 @@ public:
 class CPClientVersion : public CPUOXBuffer
 {
 protected:
+	virtual void	InternalReset( void );
 public:
+	virtual			~CPClientVersion()
+	{
+	}
 					CPClientVersion();
 };
 

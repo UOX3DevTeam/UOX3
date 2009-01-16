@@ -583,6 +583,9 @@ bool CPICreateCharacter::Handle( void )
 		CChar *mChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
 		if( mChar != NULL )
 		{
+			CPClientVersion verCheck;
+			tSock->Send( &verCheck );
+
 			SI32 totalstats, totalskills;
 			UI08 i;
 			R32 percheck;
@@ -760,6 +763,9 @@ void startChar( CSocket *mSock, bool onCreate )
 		CChar *mChar = mSock->CurrcharObj();
 		if( ValidateObject( mChar ) )
 		{
+			CPClientVersion verCheck;
+			mSock->Send( &verCheck );
+
 			CAccountBlock& actbTemp = mSock->GetAccount();
 			if( actbTemp.wAccountIndex != AB_INVALID_ID )
 			{
