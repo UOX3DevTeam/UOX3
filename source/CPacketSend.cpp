@@ -5709,4 +5709,17 @@ void CPPartyTell::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
 }
+
+//0xBD Packet - Client version request
+
+void CPClientVersion::InternalReset( void )
+{
+	pStream.ReserveSize( 3 );
+	pStream.WriteByte( 0, 0xBD );
+	pStream.WriteByte( 2, 0x03 );
+}
+CPClientVersion::CPClientVersion()
+{
+	InternalReset();
+}
 }
