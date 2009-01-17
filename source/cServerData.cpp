@@ -67,10 +67,10 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"DUNGEONLEVEL|CURRENTLEVEL|BRIGHTLEVEL|BASERANGE|BASETIMER|MAXTARGETS|MSGREDISPLAYTIME|"
 	"MURDERDECAYTIMER|MAXKILLS|CRIMINALTIMER|MINECHECK|OREPERAREA|ORERESPAWNTIMER|ORERESPAWNAREA|LOGSPERAREA|LOGSRESPAWNTIMER|LOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
 	"MAXRANGE|SPELLMAXRANGE|DISPLAYHITMSG|MONSTERSVSANIMALS|"
-	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
+	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|DARKLEVEL|"
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
-	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|PACKETOVERLOADS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
@@ -2139,67 +2139,67 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 	case 0x056A:	 // ESCORTDONEEXPIRE[0099]
 		SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
 		break;
-	case 0x057B:	 // LIGHTDARKLEVEL[0100]
+	case 0x057B:	 // DARKLEVEL[0100]
 		WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
 		break;
-	case 0x058A:	 // TITLECOLOUR[0101]
+	case 0x0585:	 // TITLECOLOUR[0101]
 		TitleColour( value.toUShort() );
 		break;
-	case 0x0596:	 // LEFTTEXTCOLOUR[0102]
+	case 0x0591:	 // LEFTTEXTCOLOUR[0102]
 		LeftTextColour( value.toUShort() );
 		break;
-	case 0x05A5:	 // RIGHTTEXTCOLOUR[0103]
+	case 0x05A0:	 // RIGHTTEXTCOLOUR[0103]
 		RightTextColour( value.toUShort() );
 		break;
-	case 0x05B5:	 // BUTTONCANCEL[0104]
+	case 0x05B0:	 // BUTTONCANCEL[0104]
 		ButtonCancel( value.toUShort() );
 		break;
-	case 0x05C2:	 // BUTTONLEFT[0105]
+	case 0x05BD:	 // BUTTONLEFT[0105]
 		ButtonLeft( value.toUShort() );
 		break;
-	case 0x05CD:	 // BUTTONRIGHT[0106]
+	case 0x05C8:	 // BUTTONRIGHT[0106]
 		ButtonRight( value.toUShort() );
 		break;
-	case 0x05D9:	 // BACKGROUNDPIC[0107]
+	case 0x05D4:	 // BACKGROUNDPIC[0107]
 		BackgroundPic( value.toUShort() );
 		break;
-	case 0x05E7:	 // POLLTIME[0108]
+	case 0x05E2:	 // POLLTIME[0108]
 		TownNumSecsPollOpen( value.toULong() );
 		break;
-	case 0x05F0:	 // MAYORTIME[0109]
+	case 0x05EB:	 // MAYORTIME[0109]
 		TownNumSecsAsMayor( value.toULong() );
 		break;
-	case 0x05FA:	 // TAXPERIOD[0110]
+	case 0x05F5:	 // TAXPERIOD[0110]
 		TownTaxPeriod( value.toULong() );
 		break;
-	case 0x0604:	 // GUARDSPAID[0111]
+	case 0x05FF:	 // GUARDSPAID[0111]
 		TownGuardPayment( value.toULong() );
 		break;
-	case 0x060F:	 // DAY[0112]
+	case 0x060A:	 // DAY[0112]
 		ServerTimeDay( value.toShort() );
 		break;
-	case 0x0613:	 // HOURS[0113]
+	case 0x060E:	 // HOURS[0113]
 		ServerTimeHours( value.toUByte() );
 		break;
-	case 0x0619:	 // MINUTES[0114]
+	case 0x0614:	 // MINUTES[0114]
 		ServerTimeMinutes( value.toUByte() );
 		break;
-	case 0x0621:	 // SECONDS[0115]
+	case 0x061C:	 // SECONDS[0115]
 		ServerTimeSeconds( value.toUByte() );
 		break;
-	case 0x0629:	 // AMPM[0116]
+	case 0x0624:	 // AMPM[0116]
 		ServerTimeAMPM( value.toUShort() != 0 );
 		break;
-	case 0x062E:	 // SKILLLEVEL[0117]
+	case 0x0629:	 // SKILLLEVEL[0117]
 		SkillLevel( value.toUByte() );
 		break;
-	case 0x0639:	 // SNOOPISCRIME[0118]
+	case 0x0634:	 // SNOOPISCRIME[0118]
 		SnoopIsCrime( value.toUShort() != 0 );
 		break;
-	case 0x0646:	 // BOOKSDIRECTORY[0119]
+	case 0x0641:	 // BOOKSDIRECTORY[0119]
 		Directory( CSDDP_BOOKS, value );
 		break;
-	case 0x0655:	 // SERVERLIST[0120]
+	case 0x0650:	 // SERVERLIST[0120]
 	{
 		UString sname, sip, sport;
 		struct hostent *lpHostEntry = NULL;
@@ -2245,104 +2245,104 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 		}
 		break;
 	}
-	case 0x0660:	 // PORT[0121]
+	case 0x065B:	 // PORT[0121]
 		ServerPort( value.toUShort() );
 		break;
-	case 0x0665:	 // ACCESSDIRECTORY[0122]
+	case 0x0660:	 // ACCESSDIRECTORY[0122]
 		Directory( CSDDP_ACCESS, value );
 		break;
-	case 0x0675:	 // LOGSDIRECTORY[0123]
+	case 0x0670:	 // LOGSDIRECTORY[0123]
 		Directory( CSDDP_LOGS, value );
 		break;
-	case 0x0683:	 // ACCOUNTISOLATION[0124]
+	case 0x067E:	 // ACCOUNTISOLATION[0124]
 		break;
-	case 0x0694:	 // HTMLDIRECTORY[0125]
+	case 0x068F:	 // HTMLDIRECTORY[0125]
 		Directory( CSDDP_HTML, value );
 		break;
-	case 0x06A2:	 // SHOOTONANIMALBACK[0126]
+	case 0x069D:	 // SHOOTONANIMALBACK[0126]
 		ShootOnAnimalBack( value.toUShort() == 1 );
 		break;
-	case 0x06B4:	 // NPCTRAININGENABLED[0127]
+	case 0x06AF:	 // NPCTRAININGENABLED[0127]
 		NPCTrainingStatus( value.toUShort() == 1 );
 		break;
-	case 0x06C7:	 // DICTIONARYDIRECTORY[0128]
+	case 0x06C2:	 // DICTIONARYDIRECTORY[0128]
 		Directory( CSDDP_DICTIONARIES, value );
 		break;
-	case 0x06DB:	 // BACKUPSAVERATIO[0129]
+	case 0x06D6:	 // BACKUPSAVERATIO[0129]
 		BackupRatio( value.toShort() );
 		break;
-	case 0x06EB:	 // HIDEWILEMOUNTED[0130]
+	case 0x06E6:	 // HIDEWILEMOUNTED[0130]
 		CharHideWhileMounted( value.toShort() == 1 );
 		break;
-	case 0x06FB:	 // SECONDSPERUOMINUTE[0131]
+	case 0x06F6:	 // SECONDSPERUOMINUTE[0131]
 		ServerSecondsPerUOMinute( value.toUShort() );
 		break;
-	case 0x070E:	 // WEIGHTPERSTR[0132]
+	case 0x0709:	 // WEIGHTPERSTR[0132]
 		//WeightPerStr( value.toUByte() );
 		WeightPerStr( value.toFloat() );
 		break;
-	case 0x071B:	 // POLYDURATION[0133]
+	case 0x0716:	 // POLYDURATION[0133]
 		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
 		break;
-	case 0x0728:	 // UOGENABLED[0134]
+	case 0x0723:	 // UOGENABLED[0134]
 		ServerUOGEnabled( value.toShort()==1 );
 		break;
-	case 0x0733:	 // NETRCVTIMEOUT[0135]
+	case 0x072E:	 // NETRCVTIMEOUT[0135]
 		ServerNetRcvTimeout( value.toULong() );
 		break;
-	case 0x0741:	 // NETSNDTIMEOUT[0136]
+	case 0x073C:	 // NETSNDTIMEOUT[0136]
 		ServerNetSndTimeout( value.toULong() );
 		break;
-	case 0x074F:	 // NETRETRYCOUNT[0137]
+	case 0x074A:	 // NETRETRYCOUNT[0137]
 		ServerNetRetryCount( value.toULong() );
 		break;
-	case 0x075D:	 // CLIENTFEATURES[0138]
+	case 0x0758:	 // CLIENTFEATURES[0138]
 		SetClientFeatures( value.toUShort() );
 		break;
-	case 0x076C:	 // PACKETOVERLOADS[0139]
+	case 0x0767:	 // PACKETOVERLOADS[0139]
 		ServerOverloadPackets( (value.toByte() == 1) );
 		break;
-	case 0x077C:	 // NPCMOVEMENTSPEED[0140]
+	case 0x0777:	 // NPCMOVEMENTSPEED[0140]
 		NPCWalkingSpeed( value.toFloat() );
 		break;
-	case 0x078D:	 // PETHUNGEROFFLINE[0141]
+	case 0x0788:	 // PETHUNGEROFFLINE[0141]
 		PetHungerOffline( (value.toByte() == 1) );
 		break;
-	case 0x079E:	 // PETOFFLINETIMEOUT[0142]
+	case 0x0799:	 // PETOFFLINETIMEOUT[0142]
 		PetOfflineTimeout( value.toUShort() );
 		break;
-	case 0x07B0:	 // PETOFFLINECHECKTIMER[0143]
+	case 0x07AB:	 // PETOFFLINECHECKTIMER[0143]
 		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
 		break;
-	case 0x07C5:	 // ARCHERRANGE[0144]
+	case 0x07C0:	 // ARCHERRANGE[0144]
 		CombatArcherRange( value.toShort() );
 		break;
-	case 0x07D1:	 // ADVANCEDPATHFINDING[0145]
+	case 0x07CC:	 // ADVANCEDPATHFINDING[0145]
 		AdvancedPathfinding( (value.toByte() == 1) );
 		break;
-	case 0x07E5:	 // SERVERFEATURES[0146]
+	case 0x07E0:	 // SERVERFEATURES[0146]
 		SetServerFeatures( value.toULong() );
 		break;
-	case 0x07F4:	 // LOOTINGISCRIME[0147]
+	case 0x07EF:	 // LOOTINGISCRIME[0147]
 		LootingIsCrime( (value.toByte() == 1) );
 		break;
-	case 0x0803:	 // NPCRUNNINGSPEED[0148]
+	case 0x07FE:	 // NPCRUNNINGSPEED[0148]
 		NPCRunningSpeed( value.toFloat() );
 		break;
-	case 0x0813:	 // NPCFLEEINGSPEED[0149]
+	case 0x080E:	 // NPCFLEEINGSPEED[0149]
 		NPCFleeingSpeed( value.toFloat() );
 		break;
-	case 0x0823:	 // BASICTOOLTIPSONLY[0150]
+	case 0x081E:	 // BASICTOOLTIPSONLY[0150]
 		BasicTooltipsOnly( (value.toByte() == 1) );
 		break;
 #if P_ODBC == 1
-	case 0x0835:	 // ODBCDSN[0151]
+	case 0x0830:	 // ODBCDSN[0151]
 		ODBCManager::getSingleton().SetDatabase( value );
 		break;
-	case 0x083D:	 // ODBCUSER[0152]
+	case 0x0838:	 // ODBCUSER[0152]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0846:	 // ODBCPASS[0153]
+	case 0x0841:	 // ODBCPASS[0153]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif
