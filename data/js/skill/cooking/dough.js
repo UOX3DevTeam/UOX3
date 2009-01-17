@@ -4,7 +4,7 @@
 // 14/06/2005 Xuri; Fixed the script :P
 // use flour : target water pitcher : get dough
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	var srcSock = pUser.socket;	// get users socket
 	if( iUsed.container != null )	// is it in users pack?
@@ -13,12 +13,18 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return false;
 		}
 		else
 		{
-			srcSock.tempObj = iUsed;
-			srcSock.CustomTarget( 0, "Which pitcher of water to use?" );// let the user target the heat source
+			if( iUsed.id == 0x1039 || iUsed.id == 0x1045 )
+			{
+				iUsed.id++;
+			}
+			else
+			{
+				srcSock.tempObj = iUsed;
+				srcSock.CustomTarget( 0, "Which pitcher of water to use?" );// let the user target a pitcher of water to use
+			}
 		}
 	}
 	else
@@ -33,7 +39,7 @@ function onCallback0( tSock, targSerial )
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
+	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 )
 	{ //Target is a Maptile
@@ -46,6 +52,12 @@ function onCallback0( tSock, targSerial )
 	// Target is a Dynamic Item
 	if( StrangeByte == 0 )
 	{
+		//If target self, close the flour bag
+		if( targSerial == iUsed )
+		{
+			targSerial.id--;
+			return;
+		}
 		if( targSerial.id != 0x0FF8 && targSerial.id != 0x0FF9 && targSerial.id != 0x1f9d && targSerial.id != 0x1f9e ) // is the item of the right type?
 		{
 			tSock.SysMessage( "That is not a pitcher of water." );
@@ -68,7 +80,7 @@ function onCallback0( tSock, targSerial )
 				return;
 			}	
 		}
-		// remove one dough
+		// remove one flour
 		var iMakeResource = pUser.ResourceCount( 0x1045 );	// is there enough resources to use up to make it
 		if( iMakeResource < 1 )
 		{
@@ -84,18 +96,23 @@ function onCallback0( tSock, targSerial )
 						pUser.SysMessage( "There is not enough flour in your pack!" );
 						return;
 					}
-					var iID = 0x103a;
+					else
+						var iID = 0x103a;
 				}
-				var iID = 0x1039;
+				else
+					var iID = 0x1039;
 			}
-			var iID = 0x1046;
+			else
+				var iID = 0x1046;
 		}
 		else
 			var iID = 0x1045;
-		pUser.UseResource( 1, iID ); // uses up a resource (amount, item ID, item colour)
+		pUser.SysMessage( "Resource to use: " + iID );
+		//pUser.UseResource( 1, iID ); // uses up a resource (amount, item ID, item colour)
+		iUsed.Delete();
 		pUser.SoundEffect( 0x0134, true );
 		// check the skill
-			if( !pUser.CheckSkill( 13, 1, 200 ) )	// character to check, skill #, minimum skill, and maximum skill
+		if( !pUser.CheckSkill( 13, 1, 1000 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
 			pUser.SysMessage( "You tried to make dough but failed." );
 			return;
@@ -104,6 +121,11 @@ function onCallback0( tSock, targSerial )
 			targSerial.id = 0x0FF7;
 		if( targSerial.id == 0x0ff9 || targSerial.id == 0x1f9d )
 			targSerial.id = 0x0FF6;
+		targSerial.SetTag( "ContentsType", 1 );
+		targSerial.SetTag( "EmptyGlass", 3 );
+		targSerial.SetTag( "UsesLeft", 0 );
+		targSerial.SetTag( "ContentsName", "nothing" );
+
 		var itemMade = CreateBlankItem( pUser.socket, pUser, 1, "#", 0x103D, 0x0, "ITEM", true ); // makes a dough
 		pUser.SysMessage( "You make some dough." );
 	}

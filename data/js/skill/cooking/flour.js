@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // use wheat : target flour mill : get flour
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -20,9 +20,9 @@ function onUse ( pUser, iUsed )
 			if( countOfResource < 4 )
 			{
 				srcSock.SysMessage( "You do not have enough resources! You need 4 sheaves of wheat!" );
-				return false;
 			}
-			srcSock.CustomTarget( 0, "Where do you wish to grind the wheat?" );
+			else
+				srcSock.CustomTarget( 0, "Where do you wish to grind the wheat?" );
 		}
 	}
 	else
@@ -37,7 +37,7 @@ function onCallback0( tSock, targSerial )
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
+	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 )
 	{ //Target is a Maptile

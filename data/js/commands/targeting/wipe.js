@@ -150,7 +150,7 @@ function onIterate( toCheck )
 				var tY 		= toCheck.y;
 				if( tX >= x1 && tX <= x2 && tY >= y1 && tY <= y2 )
 					shouldWipe = !iWipe;
-				if( shouldWipe )
+				if( shouldWipe && toCheck.wipable )
 				{
 					toCheck.Delete();
 					return true;

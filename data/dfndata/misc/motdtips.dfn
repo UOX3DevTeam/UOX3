@@ -7,7 +7,7 @@
 
 [MOTD]
 {
-Welcome to the world of Britannia.  Running on UOX3, The Ultima Offline eXperiment
+LINE=Welcome to the world of Britannia.  Running on UOX3, The Ultima Offline eXperiment
 }
 
 [TIPS]
@@ -19,19 +19,19 @@ TIP=3
 
 [TIP 1]
 {
-Did you know that these tips are customizable by your host?
+LINE=Did you know that these tips are customizable by your host?
 }
 
 [TIP 2]
 {
-Did you know there's a command which the players can report bugs with? 
-Just use 'REPORTBUG <text>
+LINE=Did you know there's a command which the players can report bugs with? 
+LINE=Just use 'REPORTBUG <text>
 }
 
 [TIP 3]
 {
-You can find out more about UOX3 at http://www.uox3dev.net, or
-at http://www.uox3.org
+LINE=You can find out more about UOX3 at http://www.uox3dev.net, or
+LINE=at http://www.uox3.org
 }
 
 EOF

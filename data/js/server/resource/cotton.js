@@ -4,7 +4,7 @@
 // Then a timer will start, and no more cotton can be picked until it runs out.
 var resourceGrowthDelay = 120000; //Delay in milliseconds before resources respawns
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )

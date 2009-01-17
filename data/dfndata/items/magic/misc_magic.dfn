@@ -67,3 +67,15 @@ value=22 11
 decay=1
 good=28
 }
+
+[moonstone]
+{
+get=base_item
+name=moonstone
+id=0x0f8b
+weight=100
+value=2 1
+decay=1
+good=28
+script=5016
+}

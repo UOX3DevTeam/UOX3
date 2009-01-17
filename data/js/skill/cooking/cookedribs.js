@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // Raw cut of ribs : heat source : Cut of ribs 
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -15,7 +15,6 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return false;
 		}
 		else
 			// let the user target the heat source
@@ -32,7 +31,7 @@ function onCallback0( tSock, targSerial )
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
+	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 )
 	{ //Target is a Maptile

@@ -1,6 +1,6 @@
 // Pitchers and Bottles - Jugs and Mugs, by Xuri (xuri@sensewave.com)
-// Version: 1.5
-// Last Updated: July 2nd 2006
+// Version: 1.6
+// Last Updated: June 7th 2007
 //
 // Script for using pitchers, bottles, jugs, mugs, goblets and glasses
 // (Oh yeah, and buckets and water-basins too)
@@ -15,7 +15,7 @@
 // Todo: Descriptions for how full a liquid container is
 scriptID = 2100;
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var isInRange = pUser.InRange( iUsed, 3 ); //if character is within range of 2 tiles of target
@@ -51,7 +51,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	var StrangeByte   = pSock.GetWord( 1 );
 	var targX	= pSock.GetWord( 11 );
 	var targY	= pSock.GetWord( 13 );
-	var targZ	= pSock.GetByte( 16 );
+	var targZ	= pSock.GetSByte( 16 );
 	var tileID	= pSock.GetWord( 17 );
 	var Pitcher = pSock.tempObj;
 	if(( pUser.x > targX + 3 ) || ( pUser.x < targX - 3 ) || ( pUser.y > targY + 3 ) || ( pUser.y < targY - 3 ) || ( pUser.z > targZ + 15 ) || ( pUser.z < targZ - 15 ))
@@ -204,7 +204,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 	var StrangeByte   = pSock.GetWord( 1 );
 	var targX	= pSock.GetWord( 11 );
 	var targY	= pSock.GetWord( 13 );
-	var targZ	= pSock.GetByte( 16 );
+	var targZ	= pSock.GetSByte( 16 );
 	var tileID	= pSock.GetWord( 17 );
 	var UsesLeft;
 	var Pitcher = pSock.tempObj;
@@ -329,6 +329,11 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		{
 			pUser.SysMessage( "Impossible. Can't be done." );
 			return;
+		}
+		//If Target is an open sack of flour, or a bowl of flour
+		if( tileID == 0x0aed || tileID == 0x1046 || tileID == 0x154d )
+		{
+			
 		}
 		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) || 
 		( tileID >= 0x1f95 && tileID <= 0x1f9e ) || ( myTarget.GetTag( "ContentsType" ) > 1 ))

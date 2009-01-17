@@ -264,13 +264,22 @@ good=50
 }
 
 [0x14F5]
-{
+{ S
 get=base_item
 name=spyglass
 id=0x14F5
-weight=300
+weight=100
 value=2 1
 restock=20
 decay=1
 good=50
+script=5017
 }
+
+[0x14f6]
+{ E
+get=0x14F5
+name=spyglass
+id=0x14f6
+}
+

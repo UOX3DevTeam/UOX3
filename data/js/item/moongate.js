@@ -1,4 +1,4 @@
-// Moongate.js (v1.2) 
+// Moongate.js (v1.3) 
 // Gump driven gates for location and facet travel 
 // Rais 7th Feb 02 
 // Contact: uox_rais@hotmail.com
@@ -18,8 +18,16 @@
 // Updates: 
 // 5/3/02: Made the actual gump routine a function, save's having the exact same code twice 
 // 15/2/06: Included script with UOX3 by default (Xuri)
+// 20/5/07: v1.3 - Added locations in Malas & Tokuno (Xuri)
 
-function onUse( pUser, iUsed ) 
+//Set to 0 to disable teleport locations for a certain map from appearing in the moongate menu
+var enableFelucca = 1;
+var enableTrammel = 1;
+var enableIlshenar = 1;
+var enableMalas = 1;
+var enableTokuno = 1;
+
+function onUseChecked( pUser, iUsed ) 
 { 
   // get users socket 
   var srcSock = pUser.socket; 
@@ -39,12 +47,13 @@ function onUse( pUser, iUsed )
 
   //Compare the 2, if the same, then we are allready using this gate 
   if( Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] ) 
-    return; 
+    return false; 
   else 
     pUser.SetTag("ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3]); 
 
   // this Creates our gump 
-  var ret=displaygump(srcSock, pUser); 
+  var ret=displaygump(srcSock, pUser);
+  return false;
 } 
 
 function onCollide( srcSock, pUser, iUsed ) 
@@ -95,13 +104,13 @@ function onGumpPress(srcSock,myButton)
 
   //Where we going... Fel or tram 
   if(myButton >=5 && myButton <= 12) 
-    tWorld=0;  //Going to Tram 
+    tWorld=0;  //Going to Fel 
   if(myButton >=13 && myButton <= 20) 
-    tWorld=1;  //Going to fel 
+    tWorld=1;  //Going to Tram 
 
   switch(myButton) 
   { 
-    //Tram Fell (world 0 and 1) 
+    //Fel Tram (world 0 and 1) 
     case 5: 
     case 13: 
     { 
@@ -198,6 +207,38 @@ function onGumpPress(srcSock,myButton)
       srcChar.Teleport( 1721,218,96 ,2 );  //Chaos 
       break; 
     }
+    //Malas
+    case 30: 
+    { 
+      srcChar.Teleport( 1015,527,-65 ,3 );  //New Luna
+      break; 
+    }
+    case 31: 
+    { 
+      srcChar.Teleport( 1054,358,-86 ,3 );  //Old Luna
+      break; 
+    }
+    case 32: 
+    { 
+      srcChar.Teleport( 1997,1386,-85 ,3 );  //Umbra
+      break; 
+    }
+    //Tokuno Islands
+    case 33: 
+    { 
+      srcChar.Teleport( 1169,998,42 ,4 );  //Isamu~Jima 
+      break; 
+    }
+    case 34: 
+    { 
+      srcChar.Teleport( 801,1204,25 ,4 );  //Makoto~Jima 
+      break; 
+    }
+    case 35: 
+    { 
+      srcChar.Teleport( 270,628,15 ,4 );  //Homare~Jima 
+      break; 
+    }
   } 
 
   //Default Stuff, if you have clicked on a button >=5 then you have gone somwhere 
@@ -211,19 +252,17 @@ function displaygump(srcSock, pUser)
   var myGump = new Gump; 
 
   // add a background 
-  myGump.AddPage(1);  //Page 1 Tramel 
+  myGump.AddPage(1);  //Page 1 Felucca 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
   myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
   //Cancel Button 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
   myGump.AddText( 80, 210, 0, "CANCEL" ); 
   //Facet Buttons 
-  myGump.AddText( 70, 70, 12, "Trammel" ); 
-  myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
-  myGump.AddText( 70, 90, 0, "Felucca" ); 
-  myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 ); 
-  myGump.AddText( 70, 110, 0, "Iishenar" ); 
-  myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 ); 
+  if( enableFelucca == 1 )
+  {
+  	myGump.AddText( 70, 70, 12, "Felucca" ); 
+  	myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
   //Location Buttons 
   myGump.AddText( 170, 70, 0, "Britian" ); 
   myGump.AddButton( 150, 75, 0x837, 1, 0, 5 ); 
@@ -240,39 +279,80 @@ function displaygump(srcSock, pUser)
   myGump.AddText( 170, 190, 0, "Yew" ); 
   myGump.AddButton( 150, 195, 0x837, 1, 0, 11 ); 
   myGump.AddText( 170, 210, 0, "Jhelom" ); 
-  myGump.AddButton( 150, 215, 0x837, 1, 0, 12 ); 
+  myGump.AddButton( 150, 215, 0x837, 1, 0, 12 );   	
+  }
+  if( enableTrammel == 1 )
+  {
+  	myGump.AddText( 70, 90, 0, "Trammel" ); 
+  	myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+  }
+  if( enableIlshenar == 1 )
+  {
+  	myGump.AddText( 70, 110, 0, "Iishenar" ); 
+  	myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
+  }
+  if( enableMalas == 1 )
+  {
+  	myGump.AddText( 70, 130, 0, "Malas" );
+  	myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );    
+  }
+  if( enableTokuno == 1 )
+  {
+  	myGump.AddText( 70, 150, 0, "Tokuno Islands" );
+  	myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+  }
 
-  myGump.AddPage (2);  //Page 2 Fel 
+  //PAGE 2
+  myGump.AddPage (2);  //Page 2 Trammel 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
   myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
 
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
   myGump.AddText( 80, 210, 0, "CANCEL" ); 
 
-  myGump.AddText( 70, 70, 0, "Trammel" ); 
-  myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
-  myGump.AddText( 70, 90, 12, "Felucca" ); 
-  myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 ); 
-  myGump.AddText( 70, 110, 0, "Iishenar" ); 
-  myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 ); 
-
-  myGump.AddText( 170, 70, 0, "Britian" ); 
-  myGump.AddButton( 150, 75, 0x837, 1, 0, 13 ); 
-  myGump.AddText( 170, 90, 0, "Magincia" ); 
-  myGump.AddButton( 150, 95, 0x837, 1, 0, 14 ); 
-  myGump.AddText( 170, 110, 0, "Moonglow" ); 
-  myGump.AddButton( 150, 115, 0x837, 1, 0, 15 ); 
-  myGump.AddText( 170, 130, 0, "Skara Brea" ); 
-  myGump.AddButton( 150, 135, 0x837, 1, 0, 16 ); 
-  myGump.AddText( 170, 150, 0, "Trinsic" ); 
-  myGump.AddButton( 150, 155, 0x837, 1, 0, 17 ); 
-  myGump.AddText( 170, 170, 0, "Vesper" ); 
-  myGump.AddButton( 150, 175, 0x837, 1, 0, 18 ); 
-  myGump.AddText( 170, 190, 0, "Yew" ); 
-  myGump.AddButton( 150, 195, 0x837, 1, 0, 19 ); 
-  myGump.AddText( 170, 210, 0, "Jhelom" ); 
-  myGump.AddButton( 150, 215, 0x837, 1, 0, 20 ); 
-
+  if( enableFelucca == 1 )
+  {
+  	myGump.AddText( 70, 70, 0, "Felucca" ); 
+  	myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
+  }
+  if( enableTrammel == 1 )
+  {
+  	myGump.AddText( 70, 90, 12, "Trammel" ); 
+  	myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+  	myGump.AddText( 170, 70, 0, "Britian" ); 
+  	myGump.AddButton( 150, 75, 0x837, 1, 0, 13 ); 
+  	myGump.AddText( 170, 90, 0, "Magincia" ); 
+  	myGump.AddButton( 150, 95, 0x837, 1, 0, 14 ); 
+  	myGump.AddText( 170, 110, 0, "Moonglow" ); 
+  	myGump.AddButton( 150, 115, 0x837, 1, 0, 15 ); 
+  	myGump.AddText( 170, 130, 0, "Skara Brea" ); 
+  	myGump.AddButton( 150, 135, 0x837, 1, 0, 16 ); 
+  	myGump.AddText( 170, 150, 0, "Trinsic" ); 
+  	myGump.AddButton( 150, 155, 0x837, 1, 0, 17 ); 
+  	myGump.AddText( 170, 170, 0, "Vesper" ); 
+  	myGump.AddButton( 150, 175, 0x837, 1, 0, 18 ); 
+  	myGump.AddText( 170, 190, 0, "Yew" ); 
+  	myGump.AddButton( 150, 195, 0x837, 1, 0, 19 ); 
+  	myGump.AddText( 170, 210, 0, "Jhelom" ); 
+  	myGump.AddButton( 150, 215, 0x837, 1, 0, 20 );  	
+  }
+  if( enableIlshenar == 1 )
+  {
+  	myGump.AddText( 70, 110, 0, "Iishenar" ); 
+  	myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
+  }
+  if( enableMalas == 1 )
+  {
+  	myGump.AddText( 70, 130, 0, "Malas" );
+  	myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );    
+  }
+  if( enableTokuno == 1 )
+  {
+  	myGump.AddText( 70, 150, 0, "Tokuno Islands" );
+  	myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+  }
+ 
+  //PAGE 3
   myGump.AddPage (3);  //Page 3 IIsh 
   myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
   myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
@@ -280,31 +360,130 @@ function displaygump(srcSock, pUser)
   myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
   myGump.AddText( 80, 210, 0, "CANCEL" ); 
 
-  myGump.AddText( 70, 70, 0, "Trammel" ); 
-  myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
-  myGump.AddText( 70, 90, 0, "Felucca" ); 
-  myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 ); 
-  myGump.AddText( 70, 110, 12, "Iishenar" ); 
-  myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 ); 
+  if( enableFelucca == 1 )
+  {
+  	myGump.AddText( 70, 70, 0, "Felucca" ); 
+  	myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
+  }
+  if( enableTrammel == 1 )
+  {
+  	myGump.AddText( 70, 90, 0, "Trammel" ); 
+  	myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+  }
+  if( enableIlshenar == 1 )
+  {
+  	myGump.AddText( 70, 110, 12, "Iishenar" ); 
+  	myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
 
-  myGump.AddText( 170, 70, 0, "Compassion" ); 
-  myGump.AddButton( 150, 75, 0x837, 1, 0, 21 ); 
-  myGump.AddText( 170, 90, 0, "Honesty" ); 
-  myGump.AddButton( 150, 95, 0x837, 1, 0, 22 ); 
-  myGump.AddText( 170, 110, 0, "Honor" ); 
-  myGump.AddButton( 150, 115, 0x837, 1, 0, 23 ); 
-  myGump.AddText( 170, 130, 0, "Humility" ); 
-  myGump.AddButton( 150, 135, 0x837, 1, 0, 24 ); 
-  myGump.AddText( 170, 150, 0, "Justice" ); 
-  myGump.AddButton( 150, 155, 0x837, 1, 0, 25 ); 
-  myGump.AddText( 170, 170, 0, "Sacrafice" ); 
-  myGump.AddButton( 150, 175, 0x837, 1, 0, 26 ); 
-  myGump.AddText( 170, 190, 0, "Sprirituality" ); 
-  myGump.AddButton( 150, 195, 0x837, 1, 0, 27 ); 
-  myGump.AddText( 170, 210, 0, "Valor" ); 
-  myGump.AddButton( 150, 215, 0x837, 1, 0, 28 ); 
-  myGump.AddText( 170, 230, 0, "Chaos" ); 
-  myGump.AddButton( 150, 235, 0x837, 1, 0, 29 ); 
+  	myGump.AddText( 170, 70, 0, "Compassion" ); 
+  	myGump.AddButton( 150, 75, 0x837, 1, 0, 21 ); 
+  	myGump.AddText( 170, 90, 0, "Honesty" ); 
+  	myGump.AddButton( 150, 95, 0x837, 1, 0, 22 ); 
+  	myGump.AddText( 170, 110, 0, "Honor" ); 
+  	myGump.AddButton( 150, 115, 0x837, 1, 0, 23 ); 
+  	myGump.AddText( 170, 130, 0, "Humility" ); 
+  	myGump.AddButton( 150, 135, 0x837, 1, 0, 24 ); 
+  	myGump.AddText( 170, 150, 0, "Justice" ); 
+  	myGump.AddButton( 150, 155, 0x837, 1, 0, 25 ); 
+  	myGump.AddText( 170, 170, 0, "Sacrafice" ); 
+  	myGump.AddButton( 150, 175, 0x837, 1, 0, 26 ); 
+  	myGump.AddText( 170, 190, 0, "Sprirituality" ); 
+  	myGump.AddButton( 150, 195, 0x837, 1, 0, 27 ); 
+  	myGump.AddText( 170, 210, 0, "Valor" ); 
+  	myGump.AddButton( 150, 215, 0x837, 1, 0, 28 ); 
+  	myGump.AddText( 170, 230, 0, "Chaos" ); 
+  	myGump.AddButton( 150, 235, 0x837, 1, 0, 29 );   	  	
+  }
+  if( enableMalas == 1 )
+  {
+  	myGump.AddText( 70, 130, 0, "Malas" );
+  	myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );    
+  }
+  if( enableTokuno == 1 )
+  {
+  	myGump.AddText( 70, 150, 0, "Tokuno Islands" );
+  	myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+  }
 
+  //PAGE 4
+  myGump.AddPage (4);  //Page 4 Malas
+  myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
+  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+	
+  myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
+  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+	
+  if( enableFelucca == 1 )
+  {
+  	myGump.AddText( 70, 70, 0, "Felucca" ); 
+  	myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
+  }
+  if( enableTrammel == 1 )
+  {
+  	myGump.AddText( 70, 90, 0, "Trammel" ); 
+  	myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+  }
+  if( enableIlshenar == 1 )
+  {
+  	myGump.AddText( 70, 110, 0, "Iishenar" ); 
+  	myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
+  }
+  if( enableMalas == 1 )
+  {
+  	myGump.AddText( 70, 130, 12, "Malas" );
+  	myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );
+
+  	myGump.AddText( 170, 70, 0, "New Luna" ); 
+  	myGump.AddButton( 150, 75, 0x837, 1, 0, 30 ); 
+  	myGump.AddText( 170, 90, 0, "Old Luna" ); 
+  	myGump.AddButton( 150, 95, 0x837, 1, 0, 31 ); 
+  	myGump.AddText( 170, 110, 0, "Umbra" ); 
+  	myGump.AddButton( 150, 115, 0x837, 1, 0, 32 ); 
+  }
+  if( enableTokuno == 1 )
+  {
+  	myGump.AddText( 70, 150, 0, "Tokuno Islands" );
+  	myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+  }
+
+  //PAGE 5
+  myGump.AddPage (5);  //Page 4 Tokuno Islands
+  myGump.AddBackground(20, 20, 260, 245, 0x23f0); 
+  myGump.AddText( 40, 40, 0, "Pick your destination:" ); 
+
+  myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 ); 
+  myGump.AddText( 80, 210, 0, "CANCEL" ); 
+
+  if( enableFelucca == 1 )
+  {
+  	myGump.AddText( 70, 70, 0, "Felucca" ); 
+  	myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 ); 
+  }
+  if( enableTrammel == 1 )
+  {
+  	myGump.AddText( 70, 90, 0, "Trammel" ); 
+  	myGump.AddButton( 48, 95, 0x4b9, 0, 2, 0 );
+  }
+  if( enableIlshenar == 1 )
+  {
+  	myGump.AddText( 70, 110, 0, "Iishenar" ); 
+  	myGump.AddButton( 48, 115, 0x4b9, 0, 3, 0 );
+  }
+  if( enableMalas == 1 )
+  {
+  	myGump.AddText( 70, 130, 0, "Malas" );
+  	myGump.AddButton( 48, 135, 0x4b9, 0, 4, 0 );    
+  }
+  if( enableTokuno == 1 )
+  {
+  	myGump.AddText( 70, 150, 12, "Tokuno Islands" );
+  	myGump.AddButton( 48, 155, 0x4b9, 0, 5, 0 );
+  	myGump.AddText( 170, 70, 0, "Isamu~Jima" ); 
+  	myGump.AddButton( 150, 75, 0x837, 1, 0, 33 ); 
+  	myGump.AddText( 170, 90, 0, "Makoto~Jima" ); 
+  	myGump.AddButton( 150, 95, 0x837, 1, 0, 34 ); 
+  	myGump.AddText( 170, 110, 0, "Homare~Jima" ); 
+  	myGump.AddButton( 150, 115, 0x837, 1, 0, 35 );  	
+  }
   myGump.Send( srcSock ); 
 }

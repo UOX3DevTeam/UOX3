@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
@@ -33,6 +33,8 @@ function onUse( pUser, iUsed )
 					default:
 						break;
 				}
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
 				break;
 			case 2:		// Cure Potion
 				var pPoison = pUser.poison;
@@ -44,17 +46,17 @@ function onUse( pUser, iUsed )
 						case 1:
 							if( ( pPoison == 1 && chanceToCure < 81 ) || ( pPoison == 2 && chanceToCure < 41 ) ||
 							    ( pPoison == 3 && chanceToCure < 21 ) || ( pPoison == 4 && chanceToCure < 6 ) )
-								pUser.poison = 0;
+								pUser.SetPoisoned(0,0);
 							break;
 						case 2:
 							if( pPoison == 1 || ( pPoison == 2 && chanceToCure < 81 ) ||
 							  ( pPoison == 3 && chanceToCure < 41 ) || ( pPoison == 4 && chanceToCure < 21 ) )
-								pUser.poison = 0;
+								pUser.SetPoisoned(0,0);
 							break;
 						case 3:
 							if( pPoison == 1 || pPoison == 2  || ( pPoison == 3 && chanceToCure < 81 ) ||
 							  ( pPoison == 4 && chanceToCure < 61 ) )
-								pUser.poison = 0;
+								pUser.SetPoisoned(0,0);
 							break;
 						default:
 							break;
@@ -71,6 +73,8 @@ function onUse( pUser, iUsed )
 				}
 				else
 					socket.SysMessage( GetDictionaryEntry( 1344, socket.Language ) ); //The potion had no effect.
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 3:		// Explosion Potion
 				var pRegion = pUser.region;
@@ -88,6 +92,8 @@ function onUse( pUser, iUsed )
 					DoTempEffect( 1, pUser, iUsed, 17, 0, 4, 0 );
 					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.Language ) ); //Now would be a good time to throw it!
 				}
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 4:		// Heal Potion
 				switch( iUsed.morez )
@@ -109,20 +115,24 @@ function onUse( pUser, iUsed )
 				}
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 				pUser.SoundEffect( 0x01E3, true );
-				DoTempEffect( 0, pUser, pUser, 2, 0, 0, 0 );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 5:		// Night Sight Potion
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 				pUser.SoundEffect( 0x01E3, true );
 				DoTempEffect( 0, pUser, pUser, 2, 0, 0, 0 );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
 				break;
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
-					pUser.poison = iUsed.morez;
+					pUser.SetPoisoned( iUsed.morez, 180*1000 );
 				
-				pUser.SetTimer( 5, (180*1000) );	// Poison Wearoff Timer
 				pUser.SoundEffect( 0x0246, true );
 				socket.SysMessage( GetDictionaryEntry( 1352, socket.Language ) ); //You poisoned yourself! *sigh*
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion				
 				break;
 			case 7:		// Refresh Potion
 				switch( iUsed.morez )
@@ -140,6 +150,8 @@ function onUse( pUser, iUsed )
 				}
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 				pUser.SoundEffect( 0x01F2, true );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion			
 				break;
 			case 8:		// Strength Potion
 				switch( iUsed.morez )
@@ -157,6 +169,8 @@ function onUse( pUser, iUsed )
 				}
 				pUser.StaticEffect( 0x0373A, 0, 15 );
 				pUser.SoundEffect( 0x01EE, true );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			case 9:		// Mana Potion
 				switch( iUsed.morez )
@@ -172,6 +186,8 @@ function onUse( pUser, iUsed )
 				}
 				pUser.StaticEffect( 0x376A, 0x09, 0x06 );
 				pUser.SoundEffect( 0x01E7, true );
+				pUser.isUsingPotion = true;
+				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
 			default:
 				break;
@@ -208,7 +224,7 @@ function onCallback0( socket, ourObj )
 		{
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
-			var z = socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			var z = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 			iUsed.Teleport( x, y, z );
 		}
 

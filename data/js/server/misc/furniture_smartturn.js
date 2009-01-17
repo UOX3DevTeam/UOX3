@@ -2,7 +2,7 @@
 // 17/06/2001 Yeshe; yeshe@manofmystery.org
 // if you use/move a piece of furniture it should rotate accordingly
 
-function onUse( pUser, iUsed ) 
+function onUseChecked( pUser, iUsed ) 
 { 
 	// get users socket
 	var srcSock = pUser.socket;

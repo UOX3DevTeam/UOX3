@@ -169,3 +169,113 @@ weight=1
 layer=16
 movable=2
 }
+
+[0x2FBF]
+{
+get=base_item
+name=Mid Long Elf
+id=0x2FBF
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FC0]
+{
+get=base_item
+name=Long Feather Elf
+id=0x2FC0
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FC1]
+{
+get=base_item
+name=Short Elf
+id=0x2FC1
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FC2]
+{
+get=base_item
+name=Mullet Elf
+id=0x2FC2
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FCC]
+{
+get=base_item
+name=Flower Elf
+id=0x2FCC
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FCD]
+{
+get=base_item
+name=Long Elf
+id=0x2FCD
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FCE]
+{
+get=base_item
+name=Topknot Elf
+id=0x2FCE
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FCF]
+{
+get=base_item
+name=Long Braid Elf
+id=0x2FCF
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FD0]
+{
+get=base_item
+name=Buns Elf
+id=0x2FD0
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FD1]
+{
+get=base_item
+name=Spiked Elf
+id=0x2FD1
+weight=1
+layer=0x0b
+movable=2
+}
+
+[0x2FD2]
+{
+get=base_item
+name=Long Elf
+id=0x2FD2
+weight=1
+layer=0x0b
+movable=2
+}

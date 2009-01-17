@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // use dough : target heat source : get bread
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -15,7 +15,6 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return;
 		}
 		else
 			// let the user target the heat source
@@ -23,6 +22,7 @@ function onUse ( pUser, iUsed )
 	}
 	else
 		pUser.SysMessage( "This has to be in your backpack!" );
+	return false;
 }
 
 function onCallback0( tSock, targSerial )
@@ -31,7 +31,7 @@ function onCallback0( tSock, targSerial )
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
+	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 || ( StrangeByte == 0 && targSerial.isChar ))
 	{ //Target is a Maptile/Character
@@ -55,15 +55,10 @@ function onCallback0( tSock, targSerial )
 			pUser.SysMessage( "You dont seem to have any dough!" );
 			return;
 		}
-		if( pUser.skills[13] < 200 ) 
-		{
-			pUser.SysMessage( "You are not skilled enough to do that." );
-			return;
-		}
 		pUser.UseResource( 1, 0x103D ); // uses up a resource (amount, item ID, item colour)
 		pUser.SoundEffect( 0x0055, true );
 		// check the skill
-			if( !pUser.CheckSkill( 13, 200, 500 ) )	// character to check, skill #, minimum skill, and maximum skill
+		if( !pUser.CheckSkill( 13, 0, 200 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
 			pUser.SysMessage( "You burnt the dough to crisp." );
 			return;

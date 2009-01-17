@@ -2,7 +2,7 @@
 // Last Updated: January 24th 2005
 // five balls of yarn : loom : bolt of cloth
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;

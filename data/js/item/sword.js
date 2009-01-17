@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
@@ -87,6 +87,7 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	if( ownerObj && mChar.serial == ownerObj.serial )
 	{
 		CreateBlankItem( socket, mChar, 4, "raw fish steak", 0x097A, 0x0000, "ITEM", true );
+		mChar.SysMessage( "You slice a fish to steaks." );
 		if( ourObj.amount > 1 )
 			ourObj.amount = ourObj.amount-1;
 		else
@@ -100,7 +101,7 @@ function MakeKindling( socket, mChar )
 {
 	var distX = Math.abs( mChar.x - socket.GetWord( 11 ) );
 	var distY = Math.abs( mChar.y - socket.GetWord( 13 ) );
-	var distZ = Math.abs( mChar.z - socket.GetByte( 16 ) );
+	var distZ = Math.abs( mChar.z - socket.GetSByte( 16 ) );
 
 	if( distX > 5 || distY > 5 || distZ > 9 )
 	{

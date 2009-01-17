@@ -49,7 +49,6 @@
 101=skill/cooking/flour.js
 102=skill/cooking/dough.js
 103=skill/cooking/bread.js
-104=skill/cooking/rawfish.js
 105=skill/cooking/cookedfish.js
 106=skill/cooking/cookedribs.js
 107=skill/cooking/cookedbird.js
@@ -151,6 +150,7 @@
 
 // AI-Stuff
 3200=npc/ai/cow_tipping.js
+3201=npc/ai/banker.js
 
 // General Skills
 4000=skill/healing.js
@@ -184,6 +184,10 @@
 5011=item/moongate.js
 5012=item/oilcloth.js
 5013=item/key.js
+5014=item/clock.js
+5015=item/bankcheck.js
+5016=item/moonstone.js
+5017=item/spyglass.js
 }
 
 //-------------------------------------------
@@ -243,6 +247,8 @@
 1049=commands/targeting/showdetail.js
 1050=commands/targeting/makeshop.js
 1051=commands/targeting/rndtile.js
+1052=commands/time.js
+1053=commands/accountlogins.js
 }
 
 //-------------------------------------------

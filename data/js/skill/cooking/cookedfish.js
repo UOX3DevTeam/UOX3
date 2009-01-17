@@ -3,7 +3,7 @@
 // 21/07/2003 Xuri; Updated/rewrote the script
 // Raw fish steak  : Heat source : Cooked fish steak
 
-function onUse ( pUser, iUsed ) 
+function onUseChecked ( pUser, iUsed ) 
 {
 	// get users socket
 	var srcSock = pUser.socket;
@@ -15,7 +15,6 @@ function onUse ( pUser, iUsed )
 		if( iPackOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( "This has to be in your backpack!" );
-			return false;
 		}
 		else
 			// let the user target the heat source
@@ -33,7 +32,7 @@ function onCallback0( tSock, targSerial )
 	var StrangeByte   = tSock.GetWord( 1 );
 	var targX	= tSock.GetWord( 11 );
 	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetByte( 16 );
+	var targZ	= tSock.GetSByte( 16 );
 	var tileID	= tSock.GetWord( 17 );
 	if( tileID == 0 )
 	{ //Target is a Maptile
@@ -64,7 +63,7 @@ function onCallback0( tSock, targSerial )
 		pUser.UseResource( 1, 0x097A ); // uses up a resource (amount, item ID, item colour)
 		pUser.SoundEffect( 0x0021, true );
 		// check the skill
-		if( !pUser.CheckSkill( 13, 1, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
+		if( !pUser.CheckSkill( 13, 0, 300 ) )	// character to check, skill #, minimum skill, and maximum skill
 		{
 			pUser.SysMessage( "You burnt the fish to crisp." );
 			return;

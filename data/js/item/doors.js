@@ -4,7 +4,7 @@ doorTypes = new Array (
 	0x084C, 0x0866, 0x190E, 0x1FED
 );
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket )
@@ -138,6 +138,26 @@ function onUse( pUser, iUsed )
 		{
 			if( socket )
 				pUser.TextMessage( GetDictionaryEntry( 405, socket.Language ), false, 0x047e );
+		}
+	}
+
+	// The below block of code allows "linked" double-doors
+	// to be opened at the same time, if they've been setup
+	// using the 'LINKDOORS command
+	if( iUsed.GetTag( "linked" ) == true )
+	{
+		if( pUser.socket.clickY == -1 )
+		{
+			var LinkedDoor = CalcItemFromSer( iUsed.GetTag( "linkSer1"), iUsed.GetTag( "linkSer2"), iUsed.GetTag( "linkSer3"),  iUsed.GetTag( "linkSer4"));
+			if( LinkedDoor )
+			{
+				pUser.socket.clickY = 1;
+				onUseChecked( pUser, LinkedDoor );
+			}
+		}
+		else if( pUser.socket.clickY == 1 )
+		{
+			pUser.socket.clickY = -1;
 		}
 	}
 
@@ -307,9 +327,12 @@ function GetDoorType( iUsed )
 function FindKey( pUser, iUsed )
 {
 	var foundKey = false;
-	var pPack = pUser.pack;
-	if( pPack != null )
-		foundKey = FindKeyInPack( pUser, pPack, iUsed );
+	if( iUsed.more > 0 )
+	{
+		var pPack = pUser.pack;
+		if( pPack != null )
+			foundKey = FindKeyInPack( pUser, pPack, iUsed );
+	}
 	
 	return foundKey;
 }

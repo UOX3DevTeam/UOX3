@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	if( socket && iUsed && iUsed.isItem )
@@ -28,7 +28,7 @@ function onCallback1( socket, ourObj )
 		{
 			targX = socket.GetWord( 11 );
 			targY = socket.GetWord( 13 );
-			targZ = socket.GetByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
+			targZ = socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		}
 		mChar.SoundEffect( 0x01FE, true );
 		mChar.SetLocation( targX, targY, targZ );

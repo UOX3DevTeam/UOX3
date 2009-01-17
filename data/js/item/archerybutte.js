@@ -1,11 +1,20 @@
-function onUse( pUser, iUsed )
+function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var lastUsedBy = iUsed.GetTag( "lastUsedBy" );
+	var lastUsed = iUsed.GetTag( "lastUsed" );	
+	var timeNow = GetCurrentClock();
+	
+	if( pUser.dead == 1 )
+	{
+		pUser.SysMessage( GetDictionaryEntry( 330, pSock.Language )); //You are dead and cannot do that.
+		return false;
+	}
+	
 	if(( lastUsedBy != null || lastUsedBy != 0 ) && lastUsedBy != pUser.serial & 0x00FFFFFF )
 	{
-		var lastUsed = iUsed.GetTag( "lastUsed" );	
-		var timeNow = GetCurrentClock();
+		pUser.TextMessage( lastUsed );
+		pUser.TextMessage( timeNow );
 		if(( lastUsed + 10000 ) > timeNow )
 		{
 			pUser.SysMessage( "Someone else is using this right now." );
@@ -50,8 +59,13 @@ function onUse( pUser, iUsed )
 		else
 			pUser.SysMessage( GetDictionaryEntry( 1766, pSock.Language )); //You are too close to the target.
 	}
-	else if( !iUsed.InRange( pUser, 6 ))
+	else if( !iUsed.InRange( pUser, 7 ))
 		pUser.SysMessage( GetDictionaryEntry( 1767, pSock.Language )); //You are too far away from the archery butte to get an accurate shot.
+	else if(( lastUsed + 1500 ) > timeNow )
+	{
+		pUser.SysMessage( "You must wait a moment before using this again." );
+		return false;
+	}	
 	else
 	{ //Close enough, and not too far away =)
 		if( pUser.isonhorse )
@@ -140,12 +154,12 @@ function onUse( pUser, iUsed )
 			pUser.DoAction( combatAnim );
 			ammoType = parseInt( ammoType );
 			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false ); 
+			var points = 0;
 			if(!pUser.CheckSkill( 31, 0, 250 ))
 			{
 				pUser.SoundEffect( 0x0238, true );
 				pUser.SysMessage( GetDictionaryEntry( 951, pSock.Language )); //You miss the target.
-				var totalShots = iUsed.GetTag( "totalShots" ) + 1;
-				iUsed.SetTag( "totalShots", totalShots );
+				iUsed.TextMessage( pUser.name +" misses!" );
 			}
 			else
 			{
@@ -159,7 +173,6 @@ function onUse( pUser, iUsed )
 				if( BullseyeChance > iNum )
 				{
 					//BULLSEYE!
-					var points = 0;
 					var bullseyeShots = iUsed.GetTag( "bullseyeShots" );
 					iUsed.SetTag( "bullseyeShots", bullseyeShots + 1 );
 					if( bullseyeShots > 0 )
@@ -181,7 +194,6 @@ function onUse( pUser, iUsed )
 				else if( InnerChance > iNum )
 				{
 					//Inner Ring
-					var points = 0;
 					var innerShots = iUsed.GetTag( "innerShots" );
 					iUsed.SetTag( "innerShots", innerShots + 1 );
 					if( innerShots > 0 )
@@ -203,7 +215,6 @@ function onUse( pUser, iUsed )
 				else if( MiddleChance > iNum )
 				{
 					//Middle Ring
-					var points = 0;
 					var middleShots = iUsed.GetTag( "middleShots" );
 					iUsed.SetTag( "middleShots", middleShots + 1 );
 					if( middleShots > 0 )
@@ -225,7 +236,6 @@ function onUse( pUser, iUsed )
 				else
 				{
 					//Outer Ring
-					var points = 0;
 					var outerShots = iUsed.GetTag( "outerShots" );
 					iUsed.SetTag( "outerShots", outerShots + 1 );
 					if( outerShots > 0 )
@@ -244,15 +254,15 @@ function onUse( pUser, iUsed )
 						var points = 2;
 					}
 				}
-				var totalShots = iUsed.GetTag( "totalShots" ) + 1;
-				iUsed.SetTag( "totalShots", totalShots );
-				var totalScore = iUsed.GetTag( "totalScore" ) + points;
-				iUsed.SetTag( "totalScore", totalScore );
-				iUsed.TextMessage( "Score: "+totalScore+" after "+totalShots+" shots." );
-				iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
-				var lastUsed = GetCurrentClock();
-				iUsed.SetTag( "lastUsed", lastUsed );
 			}
+			var totalShots = iUsed.GetTag( "totalShots" ) + 1;
+			iUsed.SetTag( "totalShots", totalShots );
+			var totalScore = iUsed.GetTag( "totalScore" ) + points;
+			iUsed.SetTag( "totalScore", totalScore );
+			iUsed.TextMessage( "Score: "+totalScore+" after "+totalShots+" shots." );
+			iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
+			var lastUsed = GetCurrentClock();
+			iUsed.SetTag( "lastUsed", lastUsed );			
 		}
 	}
 	return false;

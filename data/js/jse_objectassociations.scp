@@ -27,11 +27,6 @@
 
 // Dough : Heat source : Bread
 0x103d=103
-// knives : fish : raw fish steak
-0x0ec4=104
-0x0ec5=104
-0x13f6=104
-0x13f7=104
 
 // Raw fish steak  : Heat source : Cooked fish steak
 0x097a=105
@@ -535,4 +530,7 @@
 0x100A=5007
 0x100B=5007
 
+// Clock
+0x104B=5014
+0x104C=5014
 }

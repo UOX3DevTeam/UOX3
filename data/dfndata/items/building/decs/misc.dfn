@@ -675,24 +675,6 @@ weight=100
 movable=2
 }
 
-[0x14f5]
-{ S
-get=base_item
-name=spyglass
-id=0x14f5
-weight=100
-movable=2
-}
-
-[0x14f6]
-{ E
-get=base_item
-name=spyglass
-id=0x14f6
-weight=100
-movable=2
-}
-
 [0x14f7]
 { E
 get=base_item

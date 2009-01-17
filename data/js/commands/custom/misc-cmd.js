@@ -10,6 +10,7 @@
 // 5. June 2005 - Added DECAY and NODECAY commands
 // 21. June 2005 - Added XSAY command
 // 15. January 2006 - Cleaned up the script, removed redundant return-statements, etc.
+// 19. May 2007 - Added LINKDOORS and UNLINKDOORS commands
 
 function CommandRegistration()
 {
@@ -25,6 +26,8 @@ function CommandRegistration()
 	RegisterCommand( "nodecay", 2, true ); //Will turn off decay for the targeted item.
 	RegisterCommand( "decay", 2, true ); //Will turn on decay for the targeted item.
 	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
+	RegisterCommand( "linkdoors", 2, true ); //Link two doors together so that if one is opened, both will open.
+	RegisterCommand( "unlinkdoors", 2, true ); //Unlinks two doors (use command on both!)
 }
 
 function command_RENAME( pSock, execString )
@@ -258,7 +261,7 @@ function onCallback5( pSock, myTarget )
 	var pUser = pSock.currentChar; 
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
-	var targZ = pSock.GetByte( 16 );
+	var targZ = pSock.GetSByte( 16 );
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{ //add backpack on character
 		var tempObj = myTarget.FindItemLayer(21);
@@ -397,4 +400,79 @@ function onCallback12( pSock, myTarget )
 	}
 	else
 		pUser.SysMessage( "You must target either a character or a dynamic item." );
+}
+
+
+function command_LINKDOORS( pSock, execString )
+{
+	pSock.CustomTarget( 13, "Which two doors do you want to link? (1/2)" );
+}
+
+function onCallback13( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isItem && pSock.clickX != 1)
+	{
+		pSock.tempObj = myTarget;
+		pSock.clickX = 1;
+		pSock.CustomTarget( 13, "Which two doors do you want to link? (2/2)" );
+	}
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem && pSock.clickX == 1)
+	{
+		var Door1 = pSock.tempObj;
+		var Door2 = myTarget;
+		
+		Door1.SetTag( "linked", true );
+		Door1.SetTag( "linkSer1", Door2.GetSerial(1) ); 
+		Door1.SetTag( "linkSer2", Door2.GetSerial(2) ); 
+		Door1.SetTag( "linkSer3", Door2.GetSerial(3) ); 
+		Door1.SetTag( "linkSer4", Door2.GetSerial(4) ); 
+		
+		Door2.SetTag( "linked", true );
+		Door2.SetTag( "linkSer1", Door1.GetSerial(1) ); 
+		Door2.SetTag( "linkSer2", Door1.GetSerial(2) ); 
+		Door2.SetTag( "linkSer3", Door1.GetSerial(3) ); 
+		Door2.SetTag( "linkSer4", Door1.GetSerial(4) ); 
+		pUser.SysMessage( "The two doors have been linked." );
+		pSock.clickX = null;
+	}
+	else
+		pUser.SysMessage( "You need to target an item." );
+}
+
+function command_UNLINKDOORS( pSock, execString )
+{
+	pSock.CustomTarget( 14, "Unlink which two doors? (1/2)" );
+}
+
+function onCallback14( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	if( !pSock.GetWord( 1 ) && myTarget.isItem && pSock.clickX != 1)
+	{
+		pSock.tempObj = myTarget;
+		pSock.clickX = 1;
+		pSock.CustomTarget( 14, "Unlink which two doors? (2/2)" );
+	}
+	else if( !pSock.GetWord( 1 ) && myTarget.isItem && pSock.clickX == 1)
+	{
+		var Door1 = pSock.tempObj;
+		var Door2 = myTarget;
+		
+		Door1.SetTag( "linked", null );
+		Door1.SetTag( "linkSer1", null ); 
+		Door1.SetTag( "linkSer2", null ); 
+		Door1.SetTag( "linkSer3", null ); 
+		Door1.SetTag( "linkSer4", null ); 
+		
+		Door2.SetTag( "linked", null );
+		Door2.SetTag( "linkSer1", null ); 
+		Door2.SetTag( "linkSer2", null ); 
+		Door2.SetTag( "linkSer3", null ); 
+		Door2.SetTag( "linkSer4", null ); 
+		pUser.SysMessage( "The two doors have been unlinked." );
+		pSock.clickX = null;
+	}
+	else
+		pUser.SysMessage( "You need to target an item." );	
 }

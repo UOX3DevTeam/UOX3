@@ -1,4 +1,4 @@
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner != pUser )

@@ -5,7 +5,7 @@
 // The user may or may not manage to harvest wax or honey, and he/she may or may not
 // manage to avoid being stung by bees =)
 
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )

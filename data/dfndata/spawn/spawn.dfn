@@ -26,10 +26,12 @@
 // Y1=1				// This is the upper left Y of the box
 // X2=5000			// This is the lower right X of the box
 // Y2=5000                      // This is the lower right Y of the box
+// PREFZ=18			// This is the maximum Z influence a dynamic or static item can have on spawning.
 // WORLD=#		        // This is the World which to Spawn WORLD=0 (for Brit) WORLD=2 (for Ilsh)
 // MINTIME=0			// This is the minimum time for the item or npc to spawn
 // MAXTIME=0			// This is the maximum time for the item or npc to spawn
 // CALL=#			// Amount to spawn in one call
+// ONLYOUTSIDE=#		// Set this to 1 if items and chars should only spawn outside of buildings.
 // }				// Of course this is the closing }
 
 EOF
