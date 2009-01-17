@@ -1,3 +1,6 @@
+1/17/2009 - giwo
+	Possible fix for clients > 6.0.5.0.
+
 1/16/2009 - giwo (0.98-3.7v)
 	Implemented 0xBD CPClientVersion packet to request the version from the client.
 
