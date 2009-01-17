@@ -972,6 +972,9 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		} 
 		else
 		{
+			if( mSock->Buffer()[0] == 0xEF )
+				mSock->Receive( 21, false );
+
 			mSock->NewClient( false );
 			if( mSock->GetDWord( 0 ) == 0x12345678 )
 				LoginDisconnect( s );
