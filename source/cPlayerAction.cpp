@@ -1107,10 +1107,54 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	if( !ValidateObject( nItem ) )
 		return;
 
-	UI16 targTrig			= nItem->GetScriptTrigger();
+	bool executeCont	= true;
+	UI16 targTrig		= nItem->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
-		toExecute->OnDrop( nItem, mChar );
+	{
+		UI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
+		switch( rVal )
+		{
+			case 0:	// no such event
+			default:
+				executeCont = true;
+				break;
+			case 1:	// bounce, no code
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					Weight->subtractItemWeight( mChar, nItem );
+				Bounce( mSock, nItem );
+				return;	// stack not deleted, as we're bouncing
+			case 2:	// don't bounce, use code
+				executeCont = false;
+				break;
+			case 3:	// don't bounce, don't use code
+				executeCont = true;
+				break;
+		}
+	}
+	if( executeCont )
+	{
+		targTrig			= nCont->GetScriptTrigger();
+		toExecute	= JSMapping->GetScript( targTrig );
+		if( toExecute != NULL )
+		{
+			UI08 rVal = toExecute->OnDropItemOnItem( nItem, mChar, nCont );	// returns 1 if we should bounce it
+			switch( rVal )
+			{
+				case 2:	// don't bounce, use code
+				case 0:	// no such event
+				default:
+					break;
+				case 1:	// bounce, no code
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+						Weight->subtractItemWeight( mChar, nItem );
+					Bounce( mSock, nItem );
+					return;	// stack not deleted, as we're bouncing
+				case 3:	// don't bounce, don't use code
+					return;
+			}
+		}
+	}
 
 	bool stackDeleted = false;
 	CTile& tile = Map->SeekTile( nItem->GetID() );
