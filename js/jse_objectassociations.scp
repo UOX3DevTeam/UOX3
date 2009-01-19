@@ -517,6 +517,10 @@
 // Bow Repair Tool
 0x10E7=4001
 
+// Inscription Tool
+0x0fbf=815
+0x0fc0=815
+
 // Bandage
 0x0E21=4000
 
