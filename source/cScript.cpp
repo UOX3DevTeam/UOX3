@@ -637,6 +637,27 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill )
 	return ( retVal == JS_TRUE );
 }
 
+bool cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
+{
+	if( !ValidateObject( mChar ) || !ValidateObject( tChar ) )
+		return false;
+	if( !ExistAndVerify( seOnVirtueGumpPress, "onVirtueGumpPress" ) )
+		return false;
+
+	jsval rval, params[3];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+	JSObject *targObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
+	
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( targObj );
+	params[2] = INT_TO_JSVAL( buttonID );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onVirtueGumpPress", 3, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnVirtueGumpPress, false );
+
+	return ( retVal == JS_TRUE );
+}
+
 bool cScript::OnDrop( CItem *item, CChar *dropper )
 {
 	if( !ValidateObject( item ) || !ValidateObject( dropper ) )
@@ -664,7 +685,7 @@ UI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 	if( !ExistAndVerify( seOnDropItemOnItem, "onDropItemOnItem" ) )
 		return 0;
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, dropper, runTime );
 	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
 	JSObject *destObj = JSEngine->AcquireObject( IUE_ITEM, dest, runTime );
@@ -672,7 +693,7 @@ UI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 	params[0] = OBJECT_TO_JSVAL( itemObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( destObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnItem", 2, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnItem", 3, params, &rval );
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDropItemOnItem, false );
 
@@ -1002,7 +1023,7 @@ UI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 	if( !ExistAndVerify( seOnDropItemOnNpc, "onDropItemOnNpc" ) )
 		return 0;
 		
-	jsval rval, params[2];
+	jsval rval, params[3];
 
 	JSObject *srcObj	= JSEngine->AcquireObject( IUE_CHAR, srcChar, runTime );
 	JSObject *dstObj	= JSEngine->AcquireObject( IUE_CHAR, dstChar, runTime );

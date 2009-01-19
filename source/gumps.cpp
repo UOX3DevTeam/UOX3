@@ -1397,13 +1397,19 @@ bool CPIGumpMenuSelect::Handle( void )
 
 	if( gumpID == 461 ) // Virtue gump
 	{
+		CChar *targChar = NULL;
 		if( buttonID == 1 && switchCount > 0 ) // Clicked on a players Virtue Gump icon
 		{
 			SERIAL targSer = tSock->GetDWord( 19 );
+			targChar = calcCharObjFromSer( targSer );
 		}
 		else // Clicked an item on the virtue gump
-		{
-		}
+			targChar = calcCharObjFromSer( id );
+
+		cScript *toExecute = JSMapping->GetScript( (UI16)0 ); // Global script	
+		if( toExecute != NULL )
+			toExecute->OnVirtueGumpPress( tSock->CurrcharObj(), targChar, buttonID );
+
 		return true;
 	}
 
