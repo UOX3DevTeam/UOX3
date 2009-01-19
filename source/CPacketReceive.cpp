@@ -1285,14 +1285,17 @@ std::string CPIGumpMenuSelect::GetTextUString( UI08 number ) const
 }
 void CPIGumpMenuSelect::BuildTextLocations( void )
 {
-	size_t i = textOffset + 4;	// first is textOffset + 4, to walk past the number of text strings
-	textLocationOffsets.resize( textCount );
-	for( size_t j = 0; j < textCount; ++j )
+	if( textCount > 0 )
 	{
-		textLocationOffsets[j] = static_cast<wchar_t>(i);
-		i += 2;	// skip the text ID
-		UI16 textLen = tSock->GetWord( i );
-		i += ( 2 * textLen + 2 );	// we need to add the + 2 for the text len field
+		size_t i = textOffset + 4;	// first is textOffset + 4, to walk past the number of text strings
+		textLocationOffsets.resize( textCount );
+		for( size_t j = 0; j < textCount; ++j )
+		{
+			textLocationOffsets[j] = static_cast<wchar_t>(i);
+			i += 2;	// skip the text ID
+			UI16 textLen = tSock->GetWord( i );
+			i += ( 2 * textLen + 2 );	// we need to add the + 2 for the text len field
+		}
 	}
 }
 

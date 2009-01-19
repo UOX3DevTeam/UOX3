@@ -582,6 +582,9 @@ void CSocket::LoginComplete( bool newVal )
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the current spell type of the socket
+//|						0 - Normal spellcast
+//|						1 - Scroll
+//|						2 - Wand
 //o---------------------------------------------------------------------------o
 UI08 CSocket::CurrentSpellType( void ) const
 {
@@ -1664,25 +1667,30 @@ UI32 CSocket::BytesReceived( void ) const
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Opens the status window
 //o---------------------------------------------------------------------------o
-void CSocket::statwindow( CChar *i )
+void CSocket::statwindow( CChar *targChar )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( targChar ) )
 		return;
 
 	if( !LoginComplete() )
 		return;
 
-	CPStatWindow toSend( (*i), (*this) );
-	
 	CChar *mChar = CurrcharObj();
+
+	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS && 
+		(targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
+		return;
+
+	CPStatWindow toSend( (*targChar), (*this) );
+	
 	//Zippy 9/17/01 : fixed bug of your name on your own stat window
-	toSend.NameChange( mChar != i && ( mChar->IsGM() || i->GetOwnerObj() == mChar ) );
-	toSend.Gold( GetItemAmount( i, 0x0EED ) );
-	toSend.AC( Combat->calcDef( i, 0, false ) );
-	toSend.Weight( static_cast<UI16>(i->GetWeight() / 100) );
+	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
+	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
+	toSend.AC( Combat->calcDef( targChar, 0, false ) );
+	toSend.Weight( static_cast<UI16>(targChar->GetWeight() / 100) );
 	Send( &toSend );
 
-	CPExtendedStats exStats( (*i) );
+	CPExtendedStats exStats( (*targChar) );
 	Send( &exStats );
 }
 

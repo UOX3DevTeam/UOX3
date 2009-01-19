@@ -250,16 +250,22 @@ namespace UOX
 			inviter->sysmessage( "You cannot invite an npc or unknown player" );
 			return;
 		}
-		Party *ourParty = Get( inviter->CurrcharObj() );
+		CChar *inviterChar = inviter->CurrcharObj();
+		if( ValidateObject( inviterChar ) && inviterChar == toInvite )
+		{
+			inviter->sysmessage( "You cannot invite yourself to a party" );
+			return;
+		}
+		Party *ourParty = Get( inviterChar );
 		if( ourParty == NULL )
 		{
-			Party *tParty = Create( inviter->CurrcharObj() );
+			Party *tParty = Create( inviterChar );
 		}
 		CSocket *targSock = toInvite->GetSocket();
 		if( targSock != NULL )
 		{
 			CPPartyInvitation toSend;
-			toSend.Leader( inviter->CurrcharObj() );
+			toSend.Leader( inviterChar );
 			targSock->Send( &toSend );
 			targSock->sysmessage( "You have been invited to join a party, type /accept or /decline to deal with the invitation" );
 		}
