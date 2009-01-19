@@ -7,6 +7,7 @@
 	Fixed some issues in shoplist.dfn
 	Fixed an error in tailoring.js where invalid socket and character objects were referenced
 	Removed a debug-message from taming.js
+	Pen and Ink-items will now work similar to using the inscription skill directly
 
 1/19/2009 - giwo (0.98-4.0b)
 	Fixed an issue causing smelted iron ore to combine with colored ore already in a players pack.

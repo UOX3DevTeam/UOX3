@@ -3,6 +3,23 @@ function SkillRegistration()
 	RegisterSkill( 23, true );	// Inscription
 }
 
+function onUseChecked( pUser, iUsed )
+{
+	var socket = pUser.socket;
+	if( socket && iUsed && iUsed.isItem )
+	{
+		var itemOwner = GetPackOwner( iUsed, 0 );
+		if( itemOwner == null || itemOwner.serial != pUser.serial )
+		{
+			pUser.SysMessage( "This must be in your backpack or equipped before it can be used." );
+			return false;
+		}
+		else
+			socket.CustomTarget( 0, GetDictionaryEntry( 865, socket.Language ) );
+	}
+	return false;
+}
+
 function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
