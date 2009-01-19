@@ -955,6 +955,12 @@ m_mage
 f_mage
 }
 
+[NPCLIST scribe]
+{
+m_scribe
+f_scribe
+}
+
 [NPCLIST shipwright]
 {
 m_shipwright
