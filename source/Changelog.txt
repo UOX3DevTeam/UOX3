@@ -1,3 +1,13 @@
+1/19/2009 - Xuri
+	Automatic worldsaves can now be disabled by setting SAVESTIMER in UOX.INI to 0
+	Added blank scrolls and empty books to ScribeShopping SHOPLIST
+	Added new vendor NPCs using ScribeShopping shoplist: m_scribe and f_scribe
+	Added new scribe-spawner item, and added it to GM-menu
+	Sorted male and female NPCs and vendors alphabetically in the NPCs-menu
+	Fixed some issues in shoplist.dfn
+	Fixed an error in tailoring.js where invalid socket and character objects were referenced
+	Removed a debug-message from taming.js
+
 1/19/2009 - giwo
 	Added onDropItemOnItem( iDropped, cDropper, iDroppedOn ) JS Event to handle dropping an item on another item.
 	Added onVirtueGumpPress( pUser, cTarg, buttonNum ) JS Event to handle clicking the Virtue gump icon (and subsequent menus).

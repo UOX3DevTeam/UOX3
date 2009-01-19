@@ -28,7 +28,7 @@ function onCallback1( socket, ourObj )
 		var resID = ourObj.id;
 		if( resID >= 0x0F95 && resID <= 0x0F9C )
 		{
-			CreateBlankItem( pSock, pUser, 50, "#", 0x1766, 0, "ITEM", true );
+			CreateBlankItem( socket, mChar, 50, "#", 0x1766, 0, "ITEM", true );
 			if( ourObj.amount > 1 )
 				ourObj.amount = ourObj.amount - 1;
 			else

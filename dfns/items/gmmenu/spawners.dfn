@@ -848,6 +848,16 @@ type=62
 amount=2
 }
 
+[scribe-spawn]
+{
+get=base_spawner
+name=Scribe Spawn
+spawnobjlist=scribe
+id=0x1397
+type=62
+amount=2
+}
+
 [shipwright-spawn]
 {
 get=base_spawner

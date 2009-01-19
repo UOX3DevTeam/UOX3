@@ -5,7 +5,6 @@ function SkillRegistration()
 
 function onSkill( pUser, objType, skillUsed )
 {
-	pUser.TextMessage( "WHAT?" );
 	var pSock = pUser.socket;
 	if( pSock )
 		pSock.CustomTarget( 0, GetDictionaryEntry( 859, pSock.Language ) );
