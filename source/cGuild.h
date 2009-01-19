@@ -108,6 +108,7 @@ public:
 	bool		IsNeutral( GUILDID otherGuild ) const;
 	bool		IsAlly( GUILDID otherGuild ) const;
 
+	void		SetGuildFaction( GuildType newFaction );
 	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );
 	void		Save( std::ofstream &toSave, GUILDID gNum );
 	void		Load( ScriptSection *toRead );
