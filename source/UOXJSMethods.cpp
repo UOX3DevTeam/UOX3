@@ -2711,7 +2711,10 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			Magic->CastSpell( sock, myChar );
 		}
 		else
+		{
 			spellSuccess = Magic->SelectSpell( sock, spellCast );
+			*rval = BOOLEAN_TO_JSVAL( spellSuccess );
+		}
 	}
 	return JS_TRUE;
 }
