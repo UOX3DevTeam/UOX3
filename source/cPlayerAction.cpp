@@ -2302,21 +2302,21 @@ bool CPIDblClick::Handle( void )
 		return true;
 
 	//	Begin Scrolls check
-	if( iUsed->GetID( 1 ) == 0x1F && ( iUsed->GetID( 2 ) > 0x2C && iUsed->GetID( 2 ) < 0x6D ) )
-	{
-		bool success = false;
-		tSock->CurrentSpellType( 1 );	// spell from scroll
-		if( iUsed->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
-			success = Magic->SelectSpell( tSock, 7 );
-		if( iUsed->GetID( 2 ) >= 0x2E && iUsed->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
-			success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D );
-		else if( iUsed->GetID( 2 ) >= 0x35 && iUsed->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
-			success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D + 1 );
+	//if( iUsed->GetID( 1 ) == 0x1F && ( iUsed->GetID( 2 ) > 0x2C && iUsed->GetID( 2 ) < 0x6D ) )
+	//{
+	//	bool success = false;
+	//	tSock->CurrentSpellType( 1 );	// spell from scroll
+	//	if( iUsed->GetID( 2 ) == 0x2D )	// Reactive Armor spell scrolls
+	//		success = Magic->SelectSpell( tSock, 7 );
+	//	if( iUsed->GetID( 2 ) >= 0x2E && iUsed->GetID( 2 ) <= 0x34 )  // first circle spell scrolls
+	//		success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D );
+	//	else if( iUsed->GetID( 2 ) >= 0x35 && iUsed->GetID( 2 ) <= 0x6C )  // 2 to 8 circle spell scrolls
+	//		success = Magic->SelectSpell( tSock, iUsed->GetID( 2 ) - 0x2D + 1 );
 
-		if( success )
-			iUsed->IncAmount( -1 );
-		return true;
-	}
+	//	if( success )
+	//		iUsed->IncAmount( -1 );
+	//	return true;
+	//}
 	tSock->sysmessage( 486 );
 	return true;
 }
