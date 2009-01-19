@@ -1387,22 +1387,35 @@ bool CPIGumpMenuSelect::Handle( void )
 	gumpID		= tSock->GetDWord( 7 );
 	buttonID	= tSock->GetDWord( 11 );
 	switchCount	= tSock->GetDWord( 15 );
-	textOffset	= 19 + (4 * switchCount);
-	textCount	= tSock->GetDWord( textOffset );
 
 #if defined( UOX_DEBUG_MODE )
 	Console << "CPIGumpMenuSelect::Handle(void)" << myendl;
 	Console << "        GumpID : " << gumpID << myendl;
 	Console << "      ButtonID : " << buttonID << myendl;
 	Console << "   SwitchCount : " << switchCount << myendl;
+#endif
+
+	if( gumpID == 461 ) // Virtue gump
+	{
+		if( buttonID == 1 && switchCount > 0 ) // Clicked on a players Virtue Gump icon
+		{
+			SERIAL targSer = tSock->GetDWord( 19 );
+		}
+		else // Clicked an item on the virtue gump
+		{
+		}
+		return true;
+	}
+
+	textOffset	= 19 + (4 * switchCount);
+	textCount	= tSock->GetDWord( textOffset );
+
+#if defined( UOX_DEBUG_MODE )
 	Console << "    TextOffset : " << textOffset << myendl;
 	Console << "     TextCount : " << textCount << myendl;
 #endif
 
 	BuildTextLocations();
-
-	if( tSock == NULL )
-		return true;
 
 	if( buttonID > 10000 ) 
 	{
@@ -1425,13 +1438,6 @@ bool CPIGumpMenuSelect::Handle( void )
 	{
 		MultiGumpCallback( tSock, id, buttonID );
 		return true;
-	}
-	else if( gumpID == 0x01CD )
-	{
-#if defined( _MSC_VER )
-#pragma note( "Newly passed button press due to the pentagram in the 2D and 3D clients" )
-#pragma note( "The question is... what does it DO?" )
-#endif
 	}
 	else if( gumpID > 13 ) 
 		return true; //increase this value with each new gump added.

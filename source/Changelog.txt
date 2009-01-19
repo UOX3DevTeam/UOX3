@@ -1,3 +1,8 @@
+1/18/2009 - giwo (0.98-4.0a)
+	Fixed a crash caused by clicking on the Virtue Gump icon in the paperdoll
+	Added some checking before sending a status window to ensure the character is visible and in range
+	Added some checks to prevent one from inviting themselves to a party
+
 1/17/2009 - giwo
 	Fixed the handling for the UOX ini tags OVERLOADPACKETS and DARKLEVEL
 
