@@ -657,6 +657,47 @@ bool cScript::OnDrop( CItem *item, CChar *dropper )
 	return ( retVal == JS_TRUE );
 }
 
+UI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
+{
+	if( !ValidateObject( item ) || !ValidateObject( dropper ) || !ValidateObject( dest ) )
+		return 0;
+	if( !ExistAndVerify( seOnDropItemOnItem, "onDropItemOnItem" ) )
+		return 0;
+
+	jsval params[2], rval;
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, dropper, runTime );
+	JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, item, runTime );
+	JSObject *destObj = JSEngine->AcquireObject( IUE_ITEM, dest, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( itemObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( destObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDropItemOnItem", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnDropItemOnItem, false );
+
+	UI08 funcRetVal = 0;
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_INT( rval ) )
+		{
+			// script returns
+			// 0 == bounce
+			// 1 == don't bounce, use code
+			// 2 == don't bounce, don't use code
+			// Our func returns values 1 higher
+			funcRetVal = static_cast< UI08 >(JSVAL_TO_INT( rval ) + 1);
+			if( funcRetVal < 1 || funcRetVal > 3 )
+				funcRetVal = 2;	// don't bounce, use code
+		}
+		else
+			funcRetVal = 2;	// don't bounce, use code
+	}
+	else
+		funcRetVal = 2;	// don't bounce, use code
+	return funcRetVal;
+}
+
 // Replaced this with new function, this one didn't work for some reason
 /*bool cScript::OnPickup( CItem *item, CChar *pickerUpper )
 {
