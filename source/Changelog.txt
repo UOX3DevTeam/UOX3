@@ -1,5 +1,6 @@
 1/19/2009 - giwo
 	Added onDropItemOnItem( iDropped, cDropper, iDroppedOn ) JS Event to handle dropping an item on another item.
+	Added onVirtueGumpPress( pUser, cTarg, buttonNum ) JS Event to handle clicking the Virtue gump icon (and subsequent menus).
 
 1/18/2009 - giwo
 	Moved the magic scroll handling from cPlayerAction.cpp out to JavaScript (items/magicscroll.js)
