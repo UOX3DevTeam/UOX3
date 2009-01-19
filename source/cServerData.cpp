@@ -429,7 +429,7 @@ bool CServerData::ServerBackupStatus( void ) const
 void CServerData::ServerSavesTimer( UI32 timer )
 {
 	serversavestimer = timer;
-	if( timer > 0 && timer < 180 )	// 3 minutes is the lowest value you can set saves for
+	if( timer < 180 )						// 3 minutes is the lowest value you can set saves for
 		serversavestimer = 300;	// 10 minutes default
 }
 

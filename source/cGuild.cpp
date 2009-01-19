@@ -804,6 +804,27 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 	}
 }
 
+void CGuild::SetGuildFaction( GuildType newFaction )
+{
+	Type( newFaction );
+
+	if( newFaction != GT_STANDARD )
+	{
+		SERLIST_CITERATOR cIter;
+		for( cIter = members.begin(); cIter != members.end(); ++cIter )
+		{
+			CChar *memberChar	= calcCharObjFromSer( (*cIter) );
+			if( !memberChar->GetGuildToggle() )
+			{
+				memberChar->SetGuildToggle( true );
+				CSocket *memberSock	= memberChar->GetSocket();
+				if( memberSock != NULL )
+					memberSock->sysmessage( 154 ); // Let him know about the change
+			}
+		}
+	}
+}
+
 const std::string CGuild::TypeName( void )
 {
 	return GTypeNames[Type()];
@@ -1324,9 +1345,9 @@ void CGuildCollection::GumpChoice( CSocket *s )
 		case BasePage+3:								// Guild type
 			switch( button )
 			{
-				case 2:		gList[trgGuild]->Type( GT_STANDARD );	break;
-				case 3:		gList[trgGuild]->Type( GT_ORDER );		break;
-				case 4:		gList[trgGuild]->Type( GT_CHAOS );		break;
+				case 2:		gList[trgGuild]->SetGuildFaction( GT_STANDARD );	break;
+				case 3:		gList[trgGuild]->SetGuildFaction( GT_ORDER );		break;
+				case 4:		gList[trgGuild]->SetGuildFaction( GT_CHAOS );		break;
 				case 5:		Menu( s, BasePage + 2, trgGuild );		break;
 			}
 			break;
@@ -1359,7 +1380,7 @@ void CGuildCollection::GumpChoice( CSocket *s )
 				Menu( s, BasePage + 17, trgGuild, gList[trgGuild]->MemberNumber( button - 2 ) );	// display member number
 			break;
 		case BasePage+8:								// Member dismiss
-			if( gList[trgGuild]->NumMembers() >= (button - 2) )
+			if( gList[trgGuild]->NumMembers() <= (button - 2) )
 				Menu( s, BasePage + 2, trgGuild );
 			else
 			{
@@ -1372,13 +1393,13 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			}
 			break;
 		case BasePage+9:								// Dismiss recruit
-			if( gList[trgGuild]->NumRecruits() >= (button - 2) )
+			if( gList[trgGuild]->NumRecruits() <= (button - 2) )
 				Menu( s, BasePage + 2, trgGuild );
 			else
 				gList[trgGuild]->RemoveRecruit( gList[trgGuild]->RecruitNumber( button - 2 ) );
 			break;
 		case BasePage+10:								// Accept recruit
-			if( gList[trgGuild]->NumRecruits() >= (button - 2) )
+			if( gList[trgGuild]->NumRecruits() <= (button - 2) )
 				Menu( s, BasePage + 2, trgGuild );
 			else
 			{
@@ -1387,6 +1408,8 @@ void CGuildCollection::GumpChoice( CSocket *s )
 				{
 					gList[trgGuild]->RecruitToMember( (*tChar) );
 					tChar->SetGuildNumber( trgGuild );
+					if( gList[trgGuild]->Type() != GT_STANDARD )
+						tChar->SetGuildToggle( true );
 				}
 			}
 			break;
@@ -1397,6 +1420,9 @@ void CGuildCollection::GumpChoice( CSocket *s )
 		case BasePage+13:								// Declare war list
 			offCounter = tCtr = 0;
 			ourList = gList[trgGuild]->GuildRelationList();
+			if( ourList->size() <= (button - 2) )
+				Menu( s, BasePage + 2, trgGuild );
+
 			toCheck = ourList->begin();
 			while( toCheck != ourList->end() )
 			{
@@ -1419,6 +1445,9 @@ void CGuildCollection::GumpChoice( CSocket *s )
 		case BasePage+14:								// Declare peace list
 			offCounter = tCtr = 0;
 			ourList = gList[trgGuild]->GuildRelationList();
+			if( ourList->size() <= (button - 2) )
+				Menu( s, BasePage + 2, trgGuild );
+
 			toCheck = ourList->begin();
 			while( toCheck != ourList->end() )
 			{

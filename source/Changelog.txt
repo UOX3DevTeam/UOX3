@@ -8,7 +8,10 @@
 	Fixed an error in tailoring.js where invalid socket and character objects were referenced
 	Removed a debug-message from taming.js
 
-1/19/2009 - giwo
+1/19/2009 - giwo (0.98-4.0b)
+	Fixed an issue causing smelted iron ore to combine with colored ore already in a players pack.
+	Fixed a bug making it impossible to accept or deny a recruit into a guild.
+	Added functionality to automatically turn on the Guild title display of all members when a guild aligns with Chaos/Order.
 	Added onDropItemOnItem( iDropped, cDropper, iDroppedOn ) JS Event to handle dropping an item on another item.
 	Added onVirtueGumpPress( pUser, cTarg, buttonNum ) JS Event to handle clicking the Virtue gump icon (and subsequent menus).
 
