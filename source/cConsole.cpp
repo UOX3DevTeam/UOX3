@@ -109,6 +109,7 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 CConsole& CConsole::operator<<( const char *outPut )
 {
 	StartOfLineCheck();
+#if UOX_PLATFORM == PLATFORM_WIN32
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 	std::string toDisplay = outPut;
@@ -134,6 +135,7 @@ CConsole& CConsole::operator<<( const char *outPut )
 		}
 	}
 	else
+#endif
 	{
 		std::cout << outPut;
 	}
