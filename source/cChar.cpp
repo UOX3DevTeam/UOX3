@@ -3873,7 +3873,21 @@ bool CChar::GetStabled( void ) const
 void CChar::SetStabled( bool newValue )
 {
 	if( IsValidNPC() )
+	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
+		CChar *oldOwner = GetOwnerObj();
+		if( ValidateObject( oldOwner ))
+		{
+			if( newValue == true )
+			{
+				oldOwner->GetPetList()->Remove( this );
+			}
+			else if( newValue == false )
+			{
+				oldOwner->GetPetList()->Add( this );
+			}
+		}
+	}
 }
 
 //o---------------------------------------------------------------------------o

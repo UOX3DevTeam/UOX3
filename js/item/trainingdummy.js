@@ -60,8 +60,29 @@ function onUseChecked( pUser, iUsed )
 		iUsed.StartTimer( 3000, 1, false );
 	}
 	else
+	{
+		//Safety measure in case timer ever breaks and dummy never stops swinging
+		safetyMeasure( iUsed );
+		
 		pUser.SysMessage( GetDictionaryEntry( 483, pSock.Language )); //You must wait for it to stop swinging!
+	}
 	return false;
+}
+
+function safetyMeasure( iUsed )
+{
+	var failedToUse = iUsed.GetTag( "failedToUse" );
+	
+	//Check if 4 or more failed attempts have been made
+	if( failedToUse > 3 ) 
+		stopDummy( iUsed );
+	else
+	{
+		// Else, add to failed attempts
+		failedToUse++;
+		iUsed.SetTag( "failedToUse", failedToUse );
+	}
+	
 }
 
 function onTimer( iUsed, timerID )
@@ -69,9 +90,18 @@ function onTimer( iUsed, timerID )
 	//If timer is 1, stop the swinging dummy
 	if( timerID == 1 )
 	{
-		if( iUsed.id == 0x1071 )
-			iUsed.id--;
-		else if( iUsed.id == 0x1075 )
-			iUsed.id--;
+		stopDummy( iUsed );
 	}	
+}
+
+function stopDummy( iUsed )
+{
+	if( iUsed )
+	{
+		if( iUsed.id == 0x1071 || iUsed.id == 0x1072 || iUsed.id == 0x1073 )
+			iUsed.id = 0x1070;
+		else if( iUsed.id == 0x1075 || iUsed.id == 0x1076 || iUsed.id == 0x1077 )
+			iUsed.id = 0x1074;
+		iUsed.SetTag( "failedToUse", 0 ); 	//reset values on dummy
+	}
 }

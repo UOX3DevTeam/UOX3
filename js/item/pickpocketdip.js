@@ -8,11 +8,17 @@ function onUseChecked( pUser, iUsed )
 		pUser.SysMessage( GetDictionaryEntry( 482, pSock.Language )); //You need to be closer to use that.
 		return false;
 	}
-	else if( iUsed.id == 0x1EC3 || iUsed.id == 0x1EC0 ) //if pickpocket dip is motionless
+	if( iUsed.id == 0x1E2C )
+		iUsed.id == 0x1EC0; //Convert useless dummy to useful dummy
+	else if( iUsed.id == 0x1E2D )
+		iUsed.id == 0x1EC3; //convert useless dummy to useful dummy
+	else if( iUsed.id == 0x1EC0 || iUsed.id == 0x1EC3 ) //if pickpocket dip is motionless
 	{
 		//Check if the pickpocket dip is already in use (to delay how often one can use it)
 		if( iUsed.GetTag( "inUse" ) > 0 )
 		{
+			//Safety measure in case timer ever breaks.
+			safetyMeasure( iUsed );
 			pUser.SysMessage( GetDictionaryEntry( 1762, pSock.Language )); //You must wait before you can use that item again.
 			return false;
 		}
@@ -47,15 +53,54 @@ function onUseChecked( pUser, iUsed )
 		}
 	}
 	else
+	{
+		//Safety measure in case timer ever breaks.
+		safetyMeasure( iUsed );
 		pUser.SysMessage( GetDictionaryEntry( 483, pSock.Language )); //You must wait for it to stop swinging!
+	}
 	return false;
+}
+
+function safetyMeasure( iUsed )
+{
+	var failedToUse = iUsed.GetTag( "failedToUse" );
+	
+	//Check if 4 or more failed attempts have been made
+	if( failedToUse > 3 ) 
+		stopDummy( iUsed );
+	else
+	{
+		// Else, add to failed attempts
+		failedToUse++;
+		iUsed.SetTag( "failedToUse", failedToUse );
+	}
 }
 
 function onTimer( iUsed, timerID )
 {
 	//If timer is 1, stop the swinging pickpocket dip
 	if( timerID == 1 )
-		iUsed.id--;
+	{
+		// Let's call the stopDummy function!
+		stopDummy( iUsed );
+	}
 	if( timerID == 2 )
-		iUsed.SetTag( "inUse", null );	
+	{
+		//player stole from dummy successfully, so it didn't move. Reset it.
+		iUsed.SetTag( "inUse", null );
+		iUsed.SetTag( "failedToUse", 0 );
+	}
+}
+
+function stopDummy( iUsed )
+{
+	if( iUsed )
+	{
+		if( iUsed.id == 0x1ec1 || iUsed.id == 0x1ec2 )
+			iUsed.id = 0x1ec0; //stop dummy from moving
+		else if( iUsed.id == 0x1ec4 || iUsed.id == 0x1ec5 )
+			iUsed.id = 0x1ec3; //stop dummy from moving
+		iUsed.SetTag( "failedToUse", 0 ); 	//reset values on dummy
+		iUsed.SetTag( "inUse", null ); 		//reset values on dummy
+	}
 }
