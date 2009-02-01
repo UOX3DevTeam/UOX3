@@ -1,3 +1,8 @@
+2/01/2009 - Xuri
+	Updated trainingdummy.js and pickpocketdip.js with code that will auto-fix them should their timers ever break
+	Pets are removed from petlist when their stabled flag is set to true, and added again when set to false
+	Players will no longer have to shove through characters that are permanently hidden
+
 1/19/2009 - Xuri
 	Automatic worldsaves can now be disabled by setting SAVESTIMER in UOX.INI to 0
 	Added blank scrolls and empty books to ScribeShopping SHOPLIST

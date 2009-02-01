@@ -832,8 +832,8 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 			continue;
 		if( ourChar->GetX() == x && ourChar->GetY() == y && ourChar->GetZ() == z )
 		{
-			if( !IsGMBody( ourChar ) && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) &&
-				ourChar->GetCommandLevel() < CL_CNS )
+			if(( ourChar->GetVisible() != VT_PERMHIDDEN ) && ( !IsGMBody( ourChar ) && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) &&
+				ourChar->GetCommandLevel() < CL_CNS ))
 			{
 				didShove = true;
 
