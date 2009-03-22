@@ -521,7 +521,13 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
 		if( !Map->MapExists( worldNum ) )
 			worldNum = caster->WorldNumber();
-		caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+		if( worldNum != caster->WorldNumber() )
+		{
+			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+			SendMapChange( caster->WorldNumber(), sock, false );
+		}
+		else
+			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
 		sock->sysmessage( 682 );
 		return true;
 	}
@@ -1461,7 +1467,13 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			dirOffset = 1;
 		else
 			dirOffset = -1;
-		mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ() );
+		if( otherGate->WorldNumber() != mChar->WorldNumber() )
+		{
+			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber() );
+			SendMapChange( mChar->WorldNumber(), mSock, false );
+		}
+		else
+			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber() );
 		if( !mChar->IsNpc() )
 		{
 			CDataList< CChar * > *myPets = mChar->GetPetList();

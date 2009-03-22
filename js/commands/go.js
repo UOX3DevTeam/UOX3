@@ -53,6 +53,7 @@ function command_GO( socket, cmdString )
 			var worldnum = mChar.worldnumber;
 			if( splitString[3] )
 				worldnum = parseInt( splitString[3] );
+
 			if( splitString[2] )
 			{
 				x = parseInt( splitString[0] );
@@ -61,7 +62,6 @@ function command_GO( socket, cmdString )
 			}
 			else
 				return;
-
 			mChar.SetLocation( x, y, z, worldnum );
 			break;
 		}

@@ -1,3 +1,13 @@
+3/22/2009 - Xuri (0.98-4.0c)
+	Fixed travelling by recall spell or magic gate between worlds
+	Fixed Jailing and Releasing players in worlds other than world 0
+	Fixed issue with the 'ADD command that would put items in your backpack instead of target's backpack
+	Removed a TriggerEvent from go.js that should not have been there
+	Corrected scripttrigger for newly created bankchecks in banker.js
+	Fixed teleport entries from Serpent's Hold to Fire dungeon (Ghostwolf)
+	Added new midilist section (23) for dungeon music (Ghostwolf)
+	Added MIDILIST=23 entry in region 29 (dungeons)
+
 2/01/2009 - Xuri
 	Updated trainingdummy.js and pickpocketdip.js with code that will auto-fix them should their timers ever break
 	Pets are removed from petlist when their stabled flag is set to true, and added again when set to false

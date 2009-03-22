@@ -38,6 +38,10 @@ SI08 JailCell::Z( void ) const
 { 
 	return z; 
 }
+UI08 JailCell::World( void ) const
+{
+	return world;
+}
 void JailCell::X( SI16 nVal )				
 { 
 	x = nVal; 
@@ -50,6 +54,10 @@ void JailCell::Z( SI08 nVal )
 { 
 	z = nVal; 
 }
+void JailCell::World( UI08 nVal )
+{
+	world = nVal;
+}
 void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow ) 
 { 
 	if( !ValidateObject( pAdd ) )
@@ -61,7 +69,9 @@ void JailCell::AddOccupant( CChar *pAdd, SI32 secsFromNow )
 	toAdd->x = pAdd->GetX();
 	toAdd->y = pAdd->GetY();
 	toAdd->z = pAdd->GetZ();
-	pAdd->SetLocation( x, y, z );
+	toAdd->world = pAdd->WorldNumber();
+	pAdd->SetLocation( x, y, z, world );
+	SendMapChange( pAdd->WorldNumber(), pAdd->GetSocket(), false );
 	playersInJail.push_back( toAdd );
 }
 
@@ -96,7 +106,7 @@ void JailCell::PeriodicCheck( void )
 				EraseOccupant( i );
 			else
 			{
-				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z );
+				toRelease->SetLocation( playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world );
 				toRelease->SetCell( -1 );
 				EraseOccupant( i );
 			}
@@ -118,6 +128,7 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 			outStream << "OLDX=" << std::dec << mOccupant->x << std::endl;
 			outStream << "OLDY=" << mOccupant->y << std::endl;
 			outStream << "OLDZ=" << (SI16)mOccupant->z << std::endl;
+			outStream << "WORLD=" << (UI08)mOccupant->world << std::endl;
 			outStream << "RELEASE=" << mOccupant->releaseTime << std::endl;
 			outStream << "}" << std::endl << std::endl;
 		}
@@ -210,6 +221,8 @@ void JailSystem::ReadData( void )
 								toPush.y = data.toShort();
 							else if( UTag == "OLDZ" )
 								toPush.z = data.toByte();
+							else if( UTag == "WORLD" )
+								toPush.world = data.toByte();
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
@@ -265,7 +278,8 @@ void JailSystem::ReleasePlayer( CChar *toRelease )
 			continue;
 		if( mOccupant->pSerial == toRelease->GetSerial() )
 		{
-			toRelease->SetLocation( mOccupant->x, mOccupant->y, mOccupant->z );
+			toRelease->SetLocation( mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world );
+			SendMapChange( mOccupant->world, toRelease->GetSocket(), false );
 			toRelease->SetCell( -1 );
 			jails[cellNum].EraseOccupant( iCounter );
 			return;
