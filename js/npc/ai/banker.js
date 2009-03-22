@@ -5,7 +5,7 @@
 //The maximum amount of items depositable in a bank box
 // - unfortunately only used when depositing items using the DEPOSIT command
 var maxBankItemAmt = 125;
-var bankCheckTrigger = 5014;
+var bankCheckTrigger = 5015;
 
 function onSpeech( strSaid, pTalking, pTalkingTo )
 {

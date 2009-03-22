@@ -92,7 +92,7 @@ function onCallback1( socket, ourObj )
 		{ //If target is a character, add item to backpack
 			var backpack = ourObj.FindItemLayer(21);
 			if( backpack != null )
-				var newItem = CreateBlankItem( socket, mChar, 1, "#", itemID, 0, "ITEM", true );
+				var newItem = CreateBlankItem( socket, ourObj, 1, "#", itemID, 0, "ITEM", true );
 			else
 				mChar.SysMessage( "That character has no backpack, no item added" );
 		}
@@ -127,7 +127,7 @@ function onCallback2( socket, ourObj )
 		{ //If target is a character, add item to backpack
 			var backpack = ourObj.FindItemLayer(21);
 			if( backpack != null )
-				var newItem = CreateDFNItem( socket, mChar, iSection, 1, "ITEM", true );
+				var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", true );
 			else
 				mChar.SysMessage( "That character has no backpack, no item added" );
 		}
