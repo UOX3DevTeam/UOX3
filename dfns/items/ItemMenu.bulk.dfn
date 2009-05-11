@@ -9796,6 +9796,15 @@ ADDITEM=0x0df5
 ITEMMENU=74
 }
 
+[ITEMMENU 167]
+{
+missile_weapons.dfn
+0x26ac=bola
+ADDITEM=0x26ac
+<=Previous Menu
+ITEMMENU=74
+}
+
 [ITEMMENU 94]
 {
 hanging_armor.dfn
@@ -13020,6 +13029,10 @@ ADDITEM=0x0EB4
 ADDITEM=0x0E9D
 0x0e9e=tambourine
 ADDITEM=0x0E9e
+0x2805=bamboo flute
+ADDITEM=0x2805
+0x2807=bamboo flute
+ADDITEM=0x2807
 <=Previous Menu
 ITEMMENU=126
 }

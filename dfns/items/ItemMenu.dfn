@@ -302,6 +302,8 @@ ITEMMENU=84
 ITEMMENU=89
 <=Wands
 ITEMMENU=90
+<=Missile Weapons
+ITEMMENU=167
 <=Previous Menu
 ITEMMENU=5
 }

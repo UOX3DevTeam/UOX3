@@ -439,6 +439,13 @@ name=mass dispel scroll
 id=0x1F62
 }
 
+[0x1F63]
+{
+get=base_seventh_scroll
+name=meteor storm scroll
+id=0x1F63
+}
+
 [0x1F64]
 {
 get=base_seventh_scroll

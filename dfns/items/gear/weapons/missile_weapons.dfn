@@ -1,0 +1,12 @@
+[0x26AC]
+{
+get=base_item
+name=bola
+id=0x26AC
+weight=500
+value=46 23
+restock=10
+movable=1
+decay=1
+good=23
+}

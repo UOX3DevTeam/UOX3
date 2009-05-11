@@ -573,6 +573,7 @@ EQUIPITEM=listobject43
 EQUIPITEM=listobject45
 COLORLIST=11
 SHOPLIST=TrainerShopping
+SCRIPT=3105
 }
 
 [f_fisher]

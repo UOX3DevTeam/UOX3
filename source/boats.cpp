@@ -466,7 +466,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	if( !ValidateObject( tiller ) || !ValidateObject( p1 ) || !ValidateObject( p2 ) || !ValidateObject( hold ) )
 		return;
 
-	CPPauseResume prSend( 1 );
+	CPPauseResume prSend( 0 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( boat, DIST_BUILDRANGE );
 	SOCKLIST_CITERATOR cIter;
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
@@ -564,7 +564,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 	SI16 id2	= b->GetID( 2 );
 	UI08 olddir = b->GetDir();
 
-	CPPauseResume prSend( 1 );
+	CPPauseResume prSend( 0 );
 	SOCKLIST nearbyChars = FindNearbyPlayers( b, DIST_BUILDRANGE );
 	SOCKLIST_CITERATOR cIter;
 	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )

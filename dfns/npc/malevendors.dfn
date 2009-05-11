@@ -670,6 +670,7 @@ EQUIPITEM=listobject25
 COLORLIST=11
 GOLD=0 50
 SHOPLIST=TrainerShopping
+SCRIPT=3105
 }
 
 [m_fisher]

@@ -95,6 +95,8 @@ function GetInstrument( pUser )
 				case 0x0EB2:
 				case 0x0EB3:
 				case 0x0EB4:
+				case 0x2805:
+				case 0x2807:
 					return toCheck;
 				default:
 					break;
@@ -141,6 +143,13 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 			soundID = 0x004C;
 		else
 			soundID = 0x004D;
+		break;
+	case 0x2805:	//Bamboo Flute
+	case 0x2807:
+		if( wellPlayed )
+			soundID = 0x504;
+		else
+			soundID = 0x503;
 		break;
 	default:
 		return;
