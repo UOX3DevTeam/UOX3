@@ -458,6 +458,8 @@
 0x0EB2=136	// Harp
 0x0EB3=136	// Lute
 0x0EB4=136	// Lute
+0x2805=136	// Bamboo Flute
+0x2807=136	// Bamboo Flute
 
 // Lockpicks
 0x14FB=4008
@@ -537,6 +539,9 @@
 // Clock
 0x104B=5014
 0x104C=5014
+
+// Bola
+0x26AC=5019
 
 // Magic Scrolls
 0x1F2D=5018

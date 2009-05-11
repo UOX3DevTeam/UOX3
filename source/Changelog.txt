@@ -1,3 +1,27 @@
+5/11/2009 - Xuri
+	Fixed client/server synch-issue with boats by changing prSend( 1 ) to prSend( 0 ) in boat movement code (Jediman)
+	Added stablemaster JS-script and assigned it to the animal-trainer vendors (Xuri)
+ 		Available commands: claim (list|pet-name), stable
+	Added missing Meteor Storm Scroll to DFNDATA/ITEMS/MAGIC/scrolls.dfn (Ghostwolf)
+	Added a new DFN (DFNDATA\NPC\lbrraces.dfn) with Meer and Juka NPCs  (Ghostwolf)
+	Added Meer and Juka races to races.dfn (Ghostwolf)
+	Added Meer and Juka NPCs to GM-menu under Humanoid NPCs (Xuri)
+	Fixed messed up smithing gump (Ghostwolf)
+	Added Jhelom fighting pit to regions.dfn and renumbered the regions (Ghostwolf)
+	Added other regions included dungeons, guard outpost, etc (Ghostwolf)
+	Added regions in Trammel, Ilshenar, Malas and the Map of Tokuno Note (Ghostwolf)
+	Updated instalog-section with Trammel and Ilshenar inns (Ghostwolf)
+	Changed Bucc's Den regions to not guarded (Ghostwolf)
+	Added two new NPCs - [shade] and [armeddaemon] to DFNDATA/NPC/undead.dfn and DFNDATA/NPC/daemons.dfn(Ghostwolf)
+	Tweaked ID of existing [daemon] to that of the unarmed one (Xuri)
+	Added Shade and Armed Daemon entries to GM menu (Xuri)
+	Added support for bamboo flute in musicianship/enticement/peacemaking JS-scripts (dragon slayer)
+	Added entries for bamboo flutes in DFNDATA/ITEMS/SKILLS/MISC/music_instruments.dfn (Xuri)
+	Added bamboo flute to GM-menu under music instruments, and entries in jse_objectassociations.dfn (Xuri)
+	Added new JS-script for bolas - JS/ITEM/bola.js (dragon slayer)
+	Added entry for bola in a new DFN file: DFNDATA/ITEMS/GEAR/WEAPONS/missile_weapons.dfn (Xuri)
+	Added entry for bola in jse_objectassociations.dfn (Xuri)
+
 3/22/2009 - Xuri (0.98-4.0c)
 	Fixed travelling by recall spell or magic gate between worlds
 	Fixed Jailing and Releasing players in worlds other than world 0

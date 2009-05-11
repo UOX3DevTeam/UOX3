@@ -36,6 +36,13 @@ function onUseChecked( pUser, iUsed )
 		else
 			soundID = 0x004D;
 		break;
+	case 0x2805:	//Bamboo Flute
+	case 0x2807:
+		if( wellPlayed )
+			soundID = 0x504;
+		else
+			soundID = 0x503;
+		break;
 	default:
 		return false;
 	}

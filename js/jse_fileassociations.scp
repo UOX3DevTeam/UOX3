@@ -146,6 +146,7 @@
 3103=npc/pets/static_packhorse.js
 3104=npc/pets/static_packllama.js
 // pets from pet static end
+3105=npc/ai/stablemaster.js
 // ------------------------
 
 // AI-Stuff
@@ -189,6 +190,7 @@
 5016=item/moonstone.js
 5017=item/spyglass.js
 5018=item/magicscroll.js
+5019=item/bola.js
 }
 
 //-------------------------------------------
