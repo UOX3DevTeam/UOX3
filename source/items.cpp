@@ -229,6 +229,8 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_SPAWNOBJ:
 			case DFNTAG_SPAWNOBJLIST:
 				break;
+			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break; 
+			case DFNTAG_PACKITEM:   Items->AddRespawnItem( applyTo, cdata, true, false); break;
 			default:					Console.Warning( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
 		}
 	}

@@ -1,3 +1,6 @@
+11/08/2009 - Xuri
+	Added support for LOOT and PACKITEM dfn tags in item-defintions, for pre-adding items to containers (Shudderz)
+
 5/11/2009 - Xuri
 	Fixed client/server synch-issue with boats by changing prSend( 1 ) to prSend( 0 ) in boat movement code (Jediman)
 	Added stablemaster JS-script and assigned it to the animal-trainer vendors (Xuri)
