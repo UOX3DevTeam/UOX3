@@ -1236,7 +1236,10 @@ void HouseLockdown( CSocket *s ) // Abaddon
 				return;
 			}
 			if( multi->GetLockDownCount() < multi->GetMaxLockDowns() )
+			{
 				multi->LockDownItem( itemToLock );
+				s->sysmessage( 1786 );
+			}
 			else
 				s->sysmessage( "You have too many locked down items" );
 			return;
@@ -1257,25 +1260,33 @@ void HouseRelease( CSocket *s ) // Abaddon
 	VALIDATESOCKET( s );
 	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
 
-	if( ValidateObject( itemToLock ) || !itemToLock->IsLockedDown() )
+	if( ValidateObject( itemToLock ) ) // || !itemToLock->IsLockedDown() )
 	{
-		CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
-		s->TempObj( NULL );
-		// time to lock it down!
-		CMultiObj *multi = findMulti( itemToLock );
-		if( ValidateObject( multi ) )
+		if( itemToLock->IsLockedDown() )
 		{
-			if( multi != house )
+			CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
+			s->TempObj( NULL );
+			// time to release it!
+			CMultiObj *multi = findMulti( itemToLock );
+			if( ValidateObject( multi ) )
 			{
-				s->sysmessage( 1109 );
+				if( multi != house )
+				{
+					s->sysmessage( 1109 );
+					return;
+				}
+				if( multi->GetLockDownCount() > 0 )
+				{
+					multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
+					s->sysmessage( 1787 );
+				}
 				return;
 			}
-			if( multi->GetLockDownCount() > 0 )
-				multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
-			return;
+			// not in a multi!
+			s->sysmessage( 1107 );
 		}
-		// not in a multi!
-		s->sysmessage( 1107 );
+		else
+			s->sysmessage( 1785 );
 	}
 	else
 		s->sysmessage( 1108 );

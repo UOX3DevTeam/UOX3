@@ -1,5 +1,7 @@
 1/24/2010 - Xuri
 	Added definition of 0x1EB9 as a Tinker Tool in jse_objectassociations.scp
+	Added system messages confirming when items have been locked down or released in a house
+	Fixed a bug where targeting a non-valid object would crash UOX3 when trying to release locked down items
 
 11/08/2009 - Xuri
 	Added support for LOOT and PACKITEM dfn tags in item-defintions, for pre-adding items to containers (Shudderz)
