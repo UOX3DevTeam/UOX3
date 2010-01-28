@@ -1748,6 +1748,9 @@
 1782=Today's purchases total %i gold. I am keeping %i gold for my self.
 1783=You are too fatigued to move, because you are carrying too much weight!
 1784=You are overloaded. Current/Max: %i/%i
+1785=That item is not currently locked down.
+1786=The lock down the targeted item.
+1787=You release the targeted item.
 }
 EOF
 
