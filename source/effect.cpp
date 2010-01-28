@@ -555,7 +555,9 @@ void cEffects::checktempeffects( void )
 				break;
 			case 43:
 				src = calcCharObjFromSer( Effect->Source() );
-				if( src->GetID() == 0xCF )
+				if( !ValidateObject( src ) )	// char doesn't exist!
+					break;
+				else if( src->GetID() == 0xCF )
 					break;
 
 				src->SetID( 0xCF ); // Thats all we need to do
