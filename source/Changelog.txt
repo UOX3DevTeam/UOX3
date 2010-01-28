@@ -1,5 +1,5 @@
 1/28/2010 - Xuri (0.98-4.0d)
-	Added a validationcheck to effects.cpp which stopped a server crash from occuring on startup
+	Fixed a servercrash that occured when server tried to regrown wool on shorn sheep that were dead
 	
 1/24/2010 - Xuri
 	Added definition of 0x1EB9 as a Tinker Tool in jse_objectassociations.scp
