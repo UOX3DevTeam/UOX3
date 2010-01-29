@@ -303,6 +303,9 @@ bool CWeight::IsWeightedContainer( CItem *toCheck )
 	case IL_FACIALHAIR:	// beard
 	case IL_MOUNT:		// steed
 	case IL_BANKBOX:	// bank box
+	case IL_BUYCONTAINER: //Contains items that NPC is interested in buying from 
+	case IL_BOUGHTCONTAINER: //Contains items shopkeepers have bought from players
+	case IL_SELLCONTAINER:  //Contains items shopkeepers sell to players
 		return false;	// no weight for any of these
 	default:
 		break;

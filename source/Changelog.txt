@@ -1,3 +1,7 @@
+1/29/2010 - Xuri
+	Fixed an issue that caused NPC shopkeepers to get overloaded by the weight of items in their shop-layers
+	Fixed an incorrect entry in namelists.dfn
+	
 1/28/2010 - Xuri (0.98-4.0d)
 	Fixed a servercrash that occured when server tried to regrown wool on shorn sheep that were dead
 	
