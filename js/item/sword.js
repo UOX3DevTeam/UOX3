@@ -70,13 +70,7 @@ function BowCraft( socket, mChar, ourObj, tileID )
 {
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
-	{
-		var countResource = mChar.ResourceCount( tileID );
-		if( countResource >= 2 )
-			socket.MakeMenu( 49, 8 );
-		else
-			socket.SysMessage( GetDictionaryEntry( 782, socket.Language ) );
-	}
+		socket.MakeMenu( 49, 8 );
 	else
 		socket.SysMessage( GetDictionaryEntry( 781, socket.Language ) );
 }

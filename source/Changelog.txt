@@ -1,3 +1,8 @@
+1/30/2010 - Xuri
+	Fixed an issue with sword.js which stopped you from carving shafts/kindling from a single wooden log
+	Re-ordered IDs listed under METAL in DFNDATA/CREATE/resources.dfn to make UOX3 give same ingot-types when smelting
+		player-crafted items as when smelting raw ore.
+
 1/29/2010 - Xuri
 	Fixed an issue that caused NPC shopkeepers to get overloaded by the weight of items in their shop-layers
 	Fixed an incorrect entry in namelists.dfn
