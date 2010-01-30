@@ -32,8 +32,8 @@ ID=0x1be0
 
 [RESOURCE METAL]
 {
-ID=0x1bef
 ID=0x1bf2
+ID=0x1bef
 }
 
 [RESOURCE CLOTH]
