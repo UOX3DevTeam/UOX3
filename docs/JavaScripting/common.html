@@ -48,7 +48,7 @@ Worldnumber 1= Felucca.<br>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void FirstItem();
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns a handle to the first item in the container.  If it's null, then there are no items.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var mItem;
 	for( mItem = someCont.FirstItem(); !someCont.FinishedItems(); mItem = someCont.NextItem() )

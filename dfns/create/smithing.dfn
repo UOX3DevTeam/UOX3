@@ -67,7 +67,7 @@ MENU=0
 } 
 [SUBMENU 3] 
 { Shields 
-ITEM=1 
+ITEM=367
 ITEM=2 
 ITEM=3 
 ITEM=4 
@@ -246,17 +246,6 @@ ITEM=366
 MENU=3 
 } 
 
-[ITEM 1] 
-{ 
-NAME=buckler 
-ID=0x1b73 
-RESOURCE=METAL 10 
-SKILL=7 0 100 
-ADDITEM=0x1b73 
-MINRANK=1 
-MAXRANK=10 
-SOUND=0x002A 
-} 
 [ITEM 2] 
 { 
 NAME=bronze 
@@ -271,7 +260,7 @@ SOUND=0x002A
 [ITEM 3] 
 { 
 NAME=metal 
-ID=0x1b7b 
+ID=0x1b7b
 RESOURCE=METAL 14 
 SKILL=7 0 200 
 ADDITEM=0x1b7b 
@@ -978,6 +967,19 @@ MINRANK=1
 MAXRANK=10 
 SOUND=0x002A 
 } 
+
+[ITEM 367] 
+{ 
+NAME=buckler 
+ID=0x1b73 
+RESOURCE=METAL 10 
+SKILL=7 0 100 
+ADDITEM=0x1b73 
+MINRANK=1 
+MAXRANK=10 
+SOUND=0x002A 
+} 
+
 
 // end of blacksmithing section 
 //*****************************************

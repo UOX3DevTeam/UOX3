@@ -20,7 +20,7 @@
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Spawns an item from a DFN section number/id.
 <tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>sectionToMake - section # to spawn from<br>int Amount - Amount of items to spawn (Optional)<br>objectType - specify the type of object being added: "BASEOBJ" "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"<br>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var myItem = CreateDFNItem( pUser.socket, pUser, "0x09d0", 10, "ITEM", true );
 	pUser.SysMessage( "Oh my, 10 apples just appeared in my backpack! Magic!" );
@@ -33,7 +33,7 @@ function onUse( pUser, iUsed )
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Spawns a "blank" item with values from the UO client's tiledata file.
 <tr><td valign="top" width="25%"><b>Notes</b><td><b>Parameters:</b><br>socket - socket to refresh to (and ensure weight is added)<br>character - required to know the pack/character to spawn it to<br>amount - The amount of items to spawn<br>itemName - the name to give to the newly spawned item<br>itemID - itemID(hex) to spawn item from<br>colour - colour of the spawned item<br>objectType - specify the type of object being added: "BASEOBJ" "CHARACTER", "ITEM", "SPAWNER", "MULTI", "BOAT"<br>inPack - True/false whether to spawn in pack or not<br>bSend - Whether or not to send update to all players
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var myItem = CreateBlankItem( pUser.socket, pUser, 10, "apple", 0x09d0, 0x0, "ITEM", true );
 	pUser.SysMessage( "Oh my, 10 apples just appeared in my backpack! Magic!" );

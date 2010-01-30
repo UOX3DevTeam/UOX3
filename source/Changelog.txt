@@ -2,6 +2,12 @@
 	Fixed an issue with sword.js which stopped you from carving shafts/kindling from a single wooden log
 	Re-ordered IDs listed under METAL in DFNDATA/CREATE/resources.dfn to make UOX3 give same ingot-types when smelting
 		player-crafted items as when smelting raw ore.
+	Moved buckler-entry in smithing.dfn from item 1 to item 367 as it doesn't seem possible to craft item number 1
+	Added missing pickpocket-dummy entries to jse_objectassociations.scp
+	Added decayable = false to freeze command in misc-cmd.js
+	Did some minor updates to the JavaScript Documentation
+	Did some tweaks to some tailoring js-files to make spinning wheels stop breaking if global onCreateDFN script is present
+	Removed erroneous DEF values from leather.dfn, studded_leather.dfn and bone.dfn - should use values from base_armor.dfn
 
 1/29/2010 - Xuri
 	Fixed an issue that caused NPC shopkeepers to get overloaded by the weight of items in their shop-layers

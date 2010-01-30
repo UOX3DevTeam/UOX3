@@ -27,7 +27,7 @@
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>DoMovingEffect( srcObject, trgObject, effect, speed, loop, explode, [hue], [renderMode] );<br>DoMovingEffect( srcObject, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode] );	
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Does a moving effect (eg fireball) from srcObject to trgObject, or srcObject to targ location<br>effect is the ID of the moving effect<br>explode == 0 no explosion<br>explode == 1 explodes<br>hue = the colour of the effect<br>rendermode = unknown, leave at 0 or leave out<br>hue and renderMode are OPTIONAL, none, one or both can be left out, but if setting renderMode, hue MUST be specified
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )  
+function onUseChecked( pUser, iUsed )  
 {
 	DoMovingEffect( pUser, pUser, 0x36D5, 0x07, 0x00, true, 0x1EC ); 
 }

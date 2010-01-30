@@ -46,20 +46,20 @@ function onCallback0( tSock, myTarget )
 		pUser.SysMessage( GetDictionaryEntry( 393, tSock.Language ) ); //That is too far away
 		return;
 	}
-    	var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
-    	if( iMakeResource < 1 )
-    	{
+    var iMakeResource = pUser.ResourceCount( iUsed.id );	// is there enough resources to use up to make it
+    if( iMakeResource < 1 )
+    {
 		pUser.SysMessage( "You dont seem to have enough flax bundles!" );
   		return;
 	}
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
 	{
-        	pUser.UseResource( 1, iUsed.id ); 	// remove some flax
+		pUser.UseResource( 1, iUsed.id ); 	// remove some flax
 		pUser.SoundEffect( 0x021A, true );        
-	        var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fA0", 6, "ITEM", true ); // makes spools of thread
-		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
 		myTarget.id++;
-		myTarget.StartTimer( 2000, 0, true );
+		myTarget.StartTimer( 2000, 1, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fA0", 1, "ITEM", true ); // makes spools of thread
+		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
 	}
 	else
 		pUser.SysMessage( GetDictionaryEntry( 821, tSock.Language ) ); //You failed to spin your material.
@@ -68,7 +68,7 @@ function onCallback0( tSock, myTarget )
 
 function onTimer( spinWheel, timerID )
 {
-	if( timerID == 0 )
+	if( timerID == 1 )
 	{
 		spinWheel.id = spinWheel.id - 1;
 	}
