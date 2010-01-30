@@ -711,7 +711,7 @@ function onSkill( objUsing, skillUsed, objType )
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow action after speech-input has been requested.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed)
+function onUseChecked( pUser, iUsed)
 {
 	pUser.SysMessage( "What do you want to rename this item to:" );
 	pUser.SpeechInput(1, iUsed);

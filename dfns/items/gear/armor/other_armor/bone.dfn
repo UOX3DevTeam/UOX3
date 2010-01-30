@@ -3,7 +3,6 @@
 get=bone_arms
 name=bone arms
 id=0x144e
-def=4
 }
 
 [0x144f]
@@ -11,7 +10,6 @@ def=4
 get=bone_armor
 name=bone armor
 id=0x144f
-def=13
 }
 
 [0x1450]
@@ -19,7 +17,6 @@ def=13
 get=bone_gloves
 name=bone gloves
 id=0x1450
-def=2
 }
 
 [0x1451]
@@ -27,7 +24,6 @@ def=2
 get=bone_helmet
 name=bone helmet
 id=0x1451
-def=4
 }
 
 [0x1452]
@@ -35,7 +31,6 @@ def=4
 get=bone_leggings
 name=bone leggings
 id=0x1452
-def=4
 }
 
 [0x1453]
@@ -43,7 +38,6 @@ def=4
 get=bone_arms
 name=bone arms
 id=0x1453
-def=4
 }
 
 [0x1454]
@@ -51,7 +45,6 @@ def=4
 get=bone_armor
 name=bone armor
 id=0x1454
-def=13
 }
 
 [0x1455]
@@ -59,7 +52,6 @@ def=13
 get=bone_gloves
 name=bone gloves
 id=0x1455
-def=2
 }
 
 [0x1456]
@@ -67,7 +59,6 @@ def=2
 get=bone_helmet
 name=bone helmet
 id=0x1456
-def=4
 }
 
 [0x1457]
@@ -75,7 +66,6 @@ def=4
 get=bone_leggings
 name=bone leggings
 id=0x1457
-def=4
 }
 
 [0x1f0b]
@@ -87,7 +77,7 @@ weight=500
 layer=6
 good=14
 hp=70
-def=3
+def=20
 restock=15
 movable=1
 decay=1

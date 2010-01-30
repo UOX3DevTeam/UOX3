@@ -54,12 +54,12 @@ function onCallback0( tSock, myTarget )
 	}
 	if( pUser.CheckSkill( 34, 0, 1000 ) )
 	{
-        	pUser.UseResource( 1, iUsed.id ); 	// remove cotton
+		pUser.UseResource( 1, iUsed.id ); 	// remove cotton
 		pUser.SoundEffect( 0x021b, true );        
-	        var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fa0", 6, "ITEM", true );  // makes some spools of thread
-		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
 		myTarget.id++;
 		myTarget.StartTimer( 2000, 0, true );
+		var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0fa0", 6, "ITEM", true );  // makes some spools of thread
+		pUser.SysMessage( "You spin some spools of thread, and put them in your backpack." );
 	}
 	else
 		pUser.SysMessage( GetDictionaryEntry( 821, tSock.Language ) ); //You failed to spin your material.

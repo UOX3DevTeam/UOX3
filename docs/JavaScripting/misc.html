@@ -105,7 +105,7 @@ var MapTile = GetTileIDAtMapCoord( 0, 0, 0 ); // gets tile at 0,0 in Britannia
 which is called "functionName", along with the arguments defined afterwards, seperated by commas.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
 <pre>
-TriggerEvent( 8000, "onUse", pUser, pItem );
+TriggerEvent( 8000, "onUseChecked", pUser, pItem );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -115,7 +115,7 @@ TriggerEvent( 8000, "onUse", pUser, pItem );
 of the radiusObject (item or character), for the purpose of area-effects.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
 <pre>
-function onUse( pUser, pSock );
+function onUseChecked( pUser, pSock );
 {
 	AreaCharacterFunction( "myAreaFunc", pUser, 10, pSock );
 }

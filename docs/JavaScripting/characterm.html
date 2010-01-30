@@ -452,7 +452,7 @@ myChar.Release();
 <tr><td class="property">Purpose		<td class="value">Spawns a character from a DFN entry (section)
 <tr><td class="property">Parameters		<td class="value">section - The entry string in npc-DFNs to spawn from.<br>x, y and z - The target location to spawn at<br>worldNumber - The world that it will spawn in (0 == britannia, 2 == ilshenar)
 <tr><td class="property">Example of Usage	<td class="value"><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var nSpawned = SpawnNPC( "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
 	if( nSpawned != null )

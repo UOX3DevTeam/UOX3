@@ -186,6 +186,7 @@ function onCallback1( pSock, myTarget )
 	else if( !pSock.GetWord( 1 ) && myTarget.isItem  )
 	{
 		myTarget.movable = 2;
+		myTarget.decayable = false;
 		pUser.SysMessage( "The selected item has been frozen." );
 	}
 	else
