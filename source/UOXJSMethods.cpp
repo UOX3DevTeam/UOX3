@@ -3776,15 +3776,16 @@ JSBool CItem_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o--------------------------------------------------------------------------o	
 JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 2 )
 	{
-		MethodError( "ApplyRank: Invalid number of arguments (takes 1)" );
+		MethodError( "ApplyRank: Invalid number of arguments (takes 2)" );
 		return JS_FALSE;
 	}
 	CItem *myItem	= (CItem *)JS_GetPrivate( cx, obj );
 	int rank		= JSVAL_TO_INT( argv[0] );
+	int maxrank		= JSVAL_TO_INT( argv[1] );
 
-	Skills->ApplyRank( NULL, myItem, rank );
+	Skills->ApplyRank( NULL, myItem, rank, maxrank );
 	return JS_TRUE;
 }
 

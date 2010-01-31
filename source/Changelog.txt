@@ -1,3 +1,11 @@
+1/31/2010 - Xuri (0.98-4.0e)
+	Added DEF values to standard clothing, footwear and headwear
+	Minor fix to JS/COMMANDS/TARGETING/add.js which ensures that the script won't break under some very specific circumstances
+	System-message rapporting how many ingots player gets when smelting player-made items should now rapport correct amount
+	Made GetScriptItemSettings look for "x" instead of "0x" in harditems.dfn, fixes some stacking issues with ingots
+	Corrected IDs for gold coins and kindling in harditems.dfn by removing leading 0s in the IDs
+	Crafting system can now handle MAXRANK values up to 255
+
 1/30/2010 - Xuri
 	Fixed an issue with sword.js which stopped you from carving shafts/kindling from a single wooden log
 	Re-ordered IDs listed under METAL in DFNDATA/CREATE/resources.dfn to make UOX3 give same ingot-types when smelting

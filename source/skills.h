@@ -159,7 +159,7 @@ public:
 	void NewMakeMenu( CSocket *s, int menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );
 	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry );
-	void ApplyRank( CSocket *s, CItem *c, UI08 rank );
+	void ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank );
 	void HandleMakeMenu( CSocket *s, int button, int menu );
 
 	void CreateTrackingMenu( CSocket *s, UI16 m );

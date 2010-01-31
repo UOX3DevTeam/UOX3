@@ -394,7 +394,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "SetCont",			CItem_SetCont,				1, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,			1, 0, 0 },
 	{ "Refresh",			CItem_Refresh,				0, 0, 0 },
-	{ "ApplyRank",			CItem_ApplyRank,			1, 0, 0 },
+	{ "ApplyRank",			CItem_ApplyRank,			2, 0, 0 },
 	{ "FirstItem",			CBase_FirstItem,			0, 0, 0 },
 	{ "NextItem",			CBase_NextItem,				0, 0, 0 },
 	{ "FinishedItems",		CBase_FinishedItems,		0, 0, 0 },

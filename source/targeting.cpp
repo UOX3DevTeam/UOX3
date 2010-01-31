@@ -1466,7 +1466,7 @@ void SmeltTarget( CSocket *s )
 
 	Skills->CheckSkill( mChar, MINING, (SI16)avgMin, (SI16)avgMax );
 
-	R32 sumAmountRestored = 0.0f;
+	UI08 sumAmountRestored = 0;
 
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
@@ -1476,7 +1476,7 @@ void SmeltTarget( CSocket *s )
 		sumAmountRestored += amtToRestore;
 		Items->CreateItem( s, mChar, itemID, amtToRestore, itemColour, OT_ITEM, true );
 	}
-
+	
 	s->sysmessage( 1116, sumAmountRestored );
 	i->Delete();
 }
