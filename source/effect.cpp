@@ -293,7 +293,8 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	{
 		targItem->SetName2( targItem->GetName().c_str() );
 		SI32 rank = Skills->CalcRankAvg( src, (*toMake) );
-		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank) );
+		SI32 maxrank = toMake->maxRank;
+		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank) );
 		
 		// if we're not a GM, see if we should store our creator
 		if( !src->IsGM() && toMake->skillReqs.size() > 0 )

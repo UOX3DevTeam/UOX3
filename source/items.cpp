@@ -475,7 +475,7 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 //o--------------------------------------------------------------------------o
 void cItem::GetScriptItemSettings( CItem *iCreated )
 {
-	const UString item = "0x" + UString::number( iCreated->GetID(), 16 );
+	const UString item = "x" + UString::number( iCreated->GetID(), 16 );
 	ScriptSection *toFind = FileLookup->FindEntrySubStr( item, hard_items_def );
 	if( toFind != NULL )
 		ApplyItemSection( iCreated, toFind );

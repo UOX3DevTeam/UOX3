@@ -71,21 +71,22 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
+//|   Function    :  void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 //|   Date        :  24 August 1999
 //|   Programmer  :  Magius(CHE)
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Modify variables based on item's rank.
 //o---------------------------------------------------------------------------o
 
-void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
+void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 {
 	char tmpmsg[512];
 	*tmpmsg='\0';
-	
+
 	if( cwmWorldState->ServerData()->RankSystemStatus() )
 	{
 		c->SetRank( rank );
+		
 		if( c->GetLoDamage() > 0 ) 
 			c->SetLoDamage( (SI16)( ( rank * c->GetLoDamage() ) / 10 ) );
 		if( c->GetHiDamage() > 0 ) 
@@ -98,13 +99,18 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
-		
-		if( rank <= 10 )
-			s->sysmessage( 783 + rank );
+
+		// Convert item's rank to a value between 1 and 10, to fit rank system messages
+		UI08 tempRank = floor((( rank * 100 ) / maxrank ) / 10 );
+
+		if( tempRank >= 1 && tempRank <= 10 )
+			s->sysmessage( 783 + tempRank );
+		else if( tempRank < 1 )
+			s->sysmessage( 784 );
+
 	}
 	else 
 		c->SetRank( rank );
-	
 }
 
 //o---------------------------------------------------------------------------o
