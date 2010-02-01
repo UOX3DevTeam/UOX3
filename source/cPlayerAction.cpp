@@ -340,7 +340,7 @@ bool CPIGetItem::Handle( void )
 	}
 
 	Effects->PlaySound( tSock, 0x0057, true );
-	if( i->GetAmount() > 1 )
+	if( i->GetAmount() > 1 && i->GetObjType() != OT_SPAWNER )
 	{
 		UI16 amount = tSock->GetWord( 5 );
 		if( amount > i->GetAmount() )

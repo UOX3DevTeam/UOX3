@@ -1238,7 +1238,9 @@ void HouseLockdown( CSocket *s ) // Abaddon
 			if( multi->GetLockDownCount() < multi->GetMaxLockDowns() )
 			{
 				multi->LockDownItem( itemToLock );
-				s->sysmessage( 1786 );
+				UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
+				s->sysmessage( 1786 ); //You lock down the targeted item
+				s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
 			}
 			else
 				s->sysmessage( "You have too many locked down items" );
@@ -1278,7 +1280,9 @@ void HouseRelease( CSocket *s ) // Abaddon
 				if( multi->GetLockDownCount() > 0 )
 				{
 					multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
-					s->sysmessage( 1787 );
+					UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
+					s->sysmessage( 1787 ); //You lock down the targeted item
+					s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
 				}
 				return;
 			}

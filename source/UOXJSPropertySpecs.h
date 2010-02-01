@@ -325,6 +325,7 @@ static JSPropertySpec CItemProps[] =
 	{ "mininterval",	CIP_MININTERVAL,	JSPROP_ENUMANDPERM },
 	{ "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM },
 	{ "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM },
+	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM },
 	{ NULL,			(SI08)NULL,			(UI08)0}
 };
 

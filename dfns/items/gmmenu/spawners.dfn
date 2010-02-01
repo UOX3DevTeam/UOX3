@@ -1,10 +1,11 @@
 [base_spawner]
 {
 get=base_item
-weight=500
+weight=50000
 interval=1 5
 visible=1
 decay=0
+movable=2
 }
 
 [orcspawn]

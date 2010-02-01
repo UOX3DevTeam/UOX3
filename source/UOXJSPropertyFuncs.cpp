@@ -324,6 +324,19 @@ namespace UOX
 					if( gPriv->GetObjType() == OT_SPAWNER )
 						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 1 ) );
 					break;
+				case CIP_MULTI:
+					CMultiObj *multi;
+					multi = gPriv->GetMultiObj();
+
+					if( !ValidateObject( multi ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						// Otherwise Acquire an object
+						JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myObj );
+					}
+					break;
 				default:
 					break;
 			}

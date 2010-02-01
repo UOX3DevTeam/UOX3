@@ -1,3 +1,11 @@
+2/1/2010 - Xuri (0.98-4.0g)
+	Fixed an issue with open doors in player houses that could cause them to decay if they were open during decay-check
+	Fixed an issue with locked down items decaying (despite being inside houses)
+	A system message should now be displayed when locking down items, showing how many lockdowns remain
+	Added JS Item property: multi - A read-only Object-reference to the multi a specific item is inside
+	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground 
+	Added movable=2 and weight=50000 to Base_spawner-definition to make it impossible for players to steal them
+
 2/1/2010 - Xuri (0.98-4.0f)
 	Added script for Dice and Cup-item, which lets players use said item to...(drumroll, please)...roll dice!
 	Fixed an issue where NPCs could spawn at Z -128
