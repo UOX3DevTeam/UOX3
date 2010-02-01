@@ -526,7 +526,7 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 	// Multis
 	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
 	{
-		if( ValidateObject( toDecay.GetMultiObj() ) )
+		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() || ValidateObject( toDecay.GetMultiObj() ) )
 		{				
 			toDecay.SetDecayTime( nextDecayItems );
 			return false;
