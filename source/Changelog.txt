@@ -1,3 +1,9 @@
+2/1/2010 - Xuri (0.98-4.0f)
+	Added script for Dice and Cup-item, which lets players use said item to...(drumroll, please)...roll dice!
+	Fixed an issue where NPCs could spawn at Z -128
+	Fixed an issue with regional spawns and type 69 spawners which would cause NPCs to be spawned in blocked locations
+	Fixed an issue with type 62 spawners which would cause NPCs to spawn at Z 0 (Shudderz)
+
 1/31/2010 - Xuri (0.98-4.0e)
 	Added DEF values to standard clothing, footwear and headwear
 	Minor fix to JS/COMMANDS/TARGETING/add.js which ensures that the script won't break under some very specific circumstances

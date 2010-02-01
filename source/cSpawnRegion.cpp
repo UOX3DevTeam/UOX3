@@ -558,7 +558,11 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 			if( ILLEGAL_Z != staticz )
 				z = staticz;
 		}
-		
+
+		//Break out of loop if z is still invalid, no point in continuing
+		if( z == ILLEGAL_Z )
+			break;
+
 		// First go through the lists of already stored good locations
 		if( !waterCreature )
 		{
@@ -595,10 +599,13 @@ bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 		{
 			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
 			{
-				rvalue = true;
-				validLandPos.push_back( point3( x, y, z ) );
-				validLandPosCheck[ y + ( x << 16) ] = z;
-				break;
+				if( z != ILLEGAL_Z )
+				{
+					rvalue = true;
+					validLandPos.push_back( point3( x, y, z ) );
+					validLandPosCheck[ y + ( x << 16) ] = z;
+					break;
+				}
 			}
 		}
 		else if( Map->ValidSpawnLocation( x, y, z, worldNumber, false ) && ( waterCreature || amphiCreature ) )
