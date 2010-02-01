@@ -364,7 +364,7 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 	
 	while( !foundSpot )
 	{
-		targZ = 0;
+		targZ = z;
 		if( --k < 0 ) //this CAN be a bit laggy. adjust as nessicary
 		{
 			if( xAway > 0 && yAway > 0 )

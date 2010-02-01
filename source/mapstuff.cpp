@@ -635,7 +635,7 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 	if( 430 == map.id || 431 == map.id || 432 == map.id ||
 		433 == map.id || 434 == map.id || 475 == map.id ||
 		580 == map.id || 610 == map.id || 611 == map.id ||
-		612 == map.id || 613 == map.id)
+		612 == map.id || 613 == map.id )
 		return ILLEGAL_Z;
 	return map.z;
 }
@@ -934,7 +934,11 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 		const map_st map = SeekMap( x, y, worldNumber );
 		if( map.z == z )
 		{
+			if( z == ILLEGAL_Z )
+				return true;
 			CLand& land = SeekLand( map.id );
+			if( land.CheckFlag( TF_BLOCKING ) ) // is it impassable?
+				return true;
 			if( waterWalk )
 			{
 				if( !land.CheckFlag( TF_WET ) )
