@@ -375,6 +375,7 @@
 
 //Fletching Tool
 0x1020=4005
+0x1022=4005
 0x1BD1=4005
 0x1BD4=4005
 
@@ -517,8 +518,9 @@
 0x10E6=4006
 
 // Tinker Tool
-0x1EBC=4003
+0x1EB8=4003
 0x1EB9=4003
+0x1EBC=4003
 
 // Leather Repair Tool
 0x0EC1=4002

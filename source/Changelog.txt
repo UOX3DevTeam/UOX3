@@ -1,3 +1,8 @@
+2/3/2010 - Xuri
+	The duping command (dupe.js) should now be able to dupe spawner-objects properly
+	Added missing Tinker Tools and Fletching Tools to jse_objectassociations.scp (Puck)
+	Fixed an incorrect name-entry in namelists.dfn (Puck)
+
 2/1/2010 - Xuri (0.98-4.0g)
 	Fixed an issue with open doors in player houses that could cause them to decay if they were open during decay-check
 	Fixed an issue with locked down items decaying (despite being inside houses)
