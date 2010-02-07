@@ -47,6 +47,10 @@ const UI32 BIT_ANIMALSGUARDED		= 25;
 const UI32 BIT_ADVANCEDPATHFIND		= 26;
 const UI32 BIT_LOOTINGISCRIME		= 27;
 const UI32 BIT_BASICTOOLTIPSONLY	= 28;
+const UI32 BIT_GLOBALITEMDECAY		= 29;
+const UI32 BIT_SCRIPTITEMSDECAYABLE	= 30;
+const UI32 BIT_BASEITEMSDECAYABLE	= 31;
+const UI32 BIT_ITEMDECAYINHOUSES	= 32;
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -71,7 +75,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
-	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|"
+	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -210,6 +214,10 @@ void CServerData::ResetDefaults( void )
 	// No replacement I can see
 	EscortsEnabled( true );
 	BasicTooltipsOnly( false );
+	GlobalItemDecay( true );
+	ScriptItemsDecayable( true );
+	BaseItemsDecayable( false );
+	ItemDecayInHouses( false );
 	SystemTimer( tSERVER_ESCORTWAIT, 900 );
 	SystemTimer( tSERVER_ESCORTACTIVE, 600 );
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
@@ -935,6 +943,74 @@ bool CServerData::BasicTooltipsOnly( void ) const
 	return boolVals.test( BIT_BASICTOOLTIPSONLY );
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool GlobalItemDecay()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles on or off decay on global scale
+//o--------------------------------------------------------------------------o
+void CServerData::GlobalItemDecay( bool newVal )
+{
+	boolVals.set( BIT_GLOBALITEMDECAY, newVal );
+}
+bool CServerData::GlobalItemDecay( void ) const
+{
+	return boolVals.test( BIT_GLOBALITEMDECAY );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ScriptItemsDecayable()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for items added through scripts
+//o--------------------------------------------------------------------------o
+void CServerData::ScriptItemsDecayable( bool newVal )
+{
+	boolVals.set( BIT_SCRIPTITEMSDECAYABLE, newVal );
+}
+bool CServerData::ScriptItemsDecayable( void ) const
+{
+	return boolVals.test( BIT_SCRIPTITEMSDECAYABLE );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool BaseItemsDecayable()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for base items added
+//o--------------------------------------------------------------------------o
+void CServerData::BaseItemsDecayable( bool newVal )
+{
+	boolVals.set( BIT_BASEITEMSDECAYABLE, newVal );
+}
+bool CServerData::BaseItemsDecayable( void ) const
+{
+	return boolVals.test( BIT_BASEITEMSDECAYABLE );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ItemDecayInHouses()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for non-locked down items in houses
+//o--------------------------------------------------------------------------o
+void CServerData::ItemDecayInHouses( bool newVal )
+{
+	boolVals.set( BIT_ITEMDECAYINHOUSES, newVal );
+}
+bool CServerData::ItemDecayInHouses( void ) const
+{
+	return boolVals.test( BIT_ITEMDECAYINHOUSES );
+}
+
 void CServerData::CombatMonstersVsAnimals( bool newVal )
 {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
@@ -1580,6 +1656,10 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
 		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << std::endl;
 		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << std::endl;
+		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << std::endl;
+		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << std::endl;
+		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << std::endl;
+		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << std::endl;
 		ofsOutput << "}" << std::endl;
 
 		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
@@ -2335,14 +2415,27 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 	case 0x081E:	 // BASICTOOLTIPSONLY[0150]
 		BasicTooltipsOnly( (value.toByte() == 1) );
 		break;
+	case 0x0830:	 // GLOBALITEMDECAY[0151]
+		GlobalItemDecay( (value.toByte() == 1) );
+		break;
+	case 0x0840:	 // SCRIPTITEMSDECAYABLE[0152]
+		ScriptItemsDecayable( (value.toByte() == 1) );
+		break;
+	case 0x0855:	 // BASEITEMSDECAYABLE[0152]
+		BaseItemsDecayable( (value.toByte() == 1) );
+		break;
+	case 0x0868:	 // ITEMDECAYINHOUSES[0153]
+		ItemDecayInHouses( (value.toByte() == 1) );
+		break;
+
 #if P_ODBC == 1
-	case 0x0830:	 // ODBCDSN[0151]
+	case 0x087A:	 // ODBCDSN[0154]
 		ODBCManager::getSingleton().SetDatabase( value );
 		break;
-	case 0x0838:	 // ODBCUSER[0152]
+	case 0x0882:	 // ODBCUSER[0155]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0841:	 // ODBCPASS[0153]
+	case 0x088B:	 // ODBCPASS[0156]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif

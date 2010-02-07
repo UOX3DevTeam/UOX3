@@ -148,7 +148,7 @@ get=base_item
 name=skull
 id=0x1ae0
 weight=100
-movable=2
+movable=1
 }
 
 [0x1ae1]

@@ -99,7 +99,7 @@ decay=1
 }
 
 // Medium-small Ore Pile
-[0x19bb]
+[0x19ba]
 {
 weight=700
 pileable=1

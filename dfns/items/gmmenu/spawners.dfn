@@ -1,6 +1,7 @@
 [base_spawner]
 {
 get=base_item
+id=0x1F14
 weight=50000
 interval=1 5
 visible=1
@@ -131,6 +132,7 @@ amount=3
 
 [airelemspawn]
 {
+get=base_spawner
 name=Air Elemental Spawner
 id=0x1F14
 type=62
@@ -174,7 +176,7 @@ get=base_spawner
 name=Poison Elemental Spawner
 id=0x1F14
 type=62
-spawnobj=poisonel
+spawnobj=poisonele
 amount=2
 }
 
@@ -294,7 +296,7 @@ get=base_spawner
 name=Dungeon Spawner
 id=0x1F14
 type=62
-spawnobjlist=dungeonlist
+spawnobjlist=dungeonspawn
 amount=3
 }
 
@@ -304,7 +306,7 @@ get=base_spawner
 name=Eerie Spawner
 id=0x1F14
 type=62
-MOREX=1040
+spawnobjlist=eerielist
 amount=2
 }
 
@@ -602,7 +604,7 @@ amount=2
 [alch-spawn]
 {
 get=base_spawner
-name=Achemist Spawn
+name=Alchemist Spawn
 spawnobjlist=alchemist
 id=0x1397
 type=62
@@ -924,7 +926,7 @@ amount=2
 {
 get=base_spawner
 name=Guard Spawn
-spawnobjlist=guards
+spawnobjlist=guard
 id=0x1397
 type=62
 amount=2

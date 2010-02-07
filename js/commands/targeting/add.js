@@ -107,7 +107,6 @@ function onCallback1( socket, ourObj )
 		}
 		if( newItem )
 		{
-			newItem.decayable = false;
 			if( newItem.id != itemID )
 			{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
 				mChar.SysMessage( "Specified item-ID does not exist." );
@@ -219,7 +218,10 @@ function command_ADDX( socket, cmdString )
 		}
 		var newItem = CreateBlankItem( socket, mChar, 1, "#", targID, 0, "ITEM", false );
 		if( newItem )
+		{
 			newItem.SetLocation( mChar.x, mChar.y, targZ );
+		}
+			
 		if( newItem.id != targID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
 			mChar.SysMessage( "Specified item-ID does not exist." );

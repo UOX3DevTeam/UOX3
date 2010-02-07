@@ -34,11 +34,11 @@ decay=1
 good=46
 }
 
-[0x19BB]
+[0x19BA]
 { Medium-small Pile
 get=base_item
 name=iron ore
-id=0x19BB
+id=0x19BA
 weight=700
 movable=1
 pileable=1

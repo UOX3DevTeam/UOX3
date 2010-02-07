@@ -36,6 +36,7 @@ protected:
 	UI16			maxhp; // Max number of hit points an item can have.
 	UI08			spd; //The speed of the weapon
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
+	SI08			dir; //direction an item can have
 	TIMERVAL		tempTimer;
 	TIMERVAL		decaytime;
 

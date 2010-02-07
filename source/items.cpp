@@ -99,27 +99,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_DEF:			applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );	break;
 			case DFNTAG_DEX:			applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
-			case DFNTAG_DIR:			
-				{
-										UString UTag = cdata.upper();
-										if( UTag == "NE" )
-											applyTo->SetDir( NORTHEAST );
-										else if( UTag == "E" )
-											applyTo->SetDir( EAST );
-										else if( UTag == "SE" )
-											applyTo->SetDir( SOUTHEAST );
-										else if( UTag == "S" )
-											applyTo->SetDir( SOUTH );
-										else if( UTag == "SW" )
-											applyTo->SetDir( SOUTHWEST );
-										else if( UTag == "W" )
-											applyTo->SetDir( WEST );
-										else if( UTag == "NW" )
-											applyTo->SetDir( NORTHWEST );
-										else if( UTag == "N" )
-											applyTo->SetDir( NORTH );
-				}
-										break;
+			case DFNTAG_DIR:			applyTo->SetDir( cdata.toByte() );			break;
 			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
 			case DFNTAG_DECAY:			
 										if( ndata == 1 )
@@ -267,7 +247,11 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 	if( iColour != 0x0000 )
 		iCreated->SetColour( iColour );
 
-	iCreated->SetDecayable( true );
+	// Only set item to decayable by default if ini setting is enabled
+	if( cwmWorldState->ServerData()->BaseItemsDecayable() )
+	{
+		iCreated->SetDecayable( true );
+	}
 
 	GetScriptItemSettings( iCreated );
 
@@ -450,7 +434,11 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 		if( iCreated == NULL )
 			return NULL;
 
-		iCreated->SetDecayable( true );
+		// Only set item to decayable by default if ini setting is enabled
+		if( cwmWorldState->ServerData()->ScriptItemsDecayable() )
+		{
+			iCreated->SetDecayable( true );
+		}
 
 		if( !ApplyItemSection( iCreated, itemCreate ) )
 			Console.Error( "Trying to apply an item section failed" );
@@ -516,7 +504,8 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o---------------------------------------------------------------------------o
 bool DecayItem( CItem& toDecay, const UI32 nextDecayItems ) 
 {
-	if( toDecay.GetDecayTime() == 0 ) 
+
+	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() ) 
 	{
 		toDecay.SetDecayTime( nextDecayItems );
 		return false;
@@ -526,8 +515,10 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 	// Multis
 	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
 	{
-		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() || ValidateObject( toDecay.GetMultiObj() ) )
-		{				
+		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() || 
+			( ValidateObject( toDecay.GetMultiObj() ) && 
+			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) )
+		{
 			toDecay.SetDecayTime( nextDecayItems );
 			return false;
 		}

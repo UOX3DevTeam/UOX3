@@ -1,3 +1,19 @@
+2/7/2010 - Xuri (0.98-4.0h)
+	Added new UOX.INI settings:
+		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just 
+						resets the decay-timer when it reaches 0
+		SCRIPTITEMSDECAYABLE - Toggles whether DFN-items will decay by default or not. Can be overriden by DECAY tag in item-DFNs
+		BASEITEMSDECAYABLE - Toggles whether base-items will decay by default or not. Can be overriden by DECAY tag in harditems.dfn
+		ITEMDECAYINHOUSES - Toggles default decay of non-locked down items inside multis (houses and boats)
+	Removed lines from add.js that set decayable as true or false (except for spawners), default decay now handled by ini-settings
+	Made skulls dropped as loot by Bonemages movable
+	Fixed several issues with spawners.dfn, including incorrect names and spawnobject-entries (Puck)
+	Added default ID to base_spawner item in DFNDATA/ITEMS/GMMENU/spawners.dfn to make it spawnable without invalid gfx
+	Fixed an incorrect ID for Iron Ore in DFNDATA/HARDITEMS/harditems.dfn and DFNDATA/ITEMS/SKILL/RESOURCES/mining.dfn
+	Fixed a bug that stopped UOX3 from reading and applying DIR values from item-DFNs correctly
+	Added DIR values to all lightsources in DFNDATA/ITEMS/BUILDING/lighting.dfn
+	Added DIR values to all .js files in JS/SERVER/LIGHT/ folder, enabling players to turn on/off lightsources
+		
 2/3/2010 - Xuri
 	The duping command (dupe.js) should now be able to dupe spawner-objects properly
 	Added missing Tinker Tools and Fletching Tools to jse_objectassociations.scp (Puck)
