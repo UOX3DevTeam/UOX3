@@ -5,5 +5,6 @@ function onUseChecked( pUser, iUsed )
 {
     pUser.SoundEffect( 0x0047, true );
     iUsed.id = 0x1858;
+    iUsed.dir = 2;
     return false;
 }

@@ -1080,6 +1080,11 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					SetDesc( data.c_str() );
 					rvalue = true;
 				}
+				if( UTag == "DIR" )
+				{
+					SetDir( data.toByte() );
+					rvalue = true;
+				}
 				else if( UTag == "DYEABLE" )
 				{
 					SetDye( data.toUByte() == 1 );

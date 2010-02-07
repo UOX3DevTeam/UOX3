@@ -106,7 +106,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 32 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 33 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -416,6 +416,18 @@ public:
 
 	void		BasicTooltipsOnly( bool value );
 	bool		BasicTooltipsOnly( void ) const;
+
+	void		GlobalItemDecay( bool value );
+	bool		GlobalItemDecay( void ) const;
+
+	void		ScriptItemsDecayable( bool value );
+	bool		ScriptItemsDecayable( void ) const;
+
+	void		BaseItemsDecayable( bool value );
+	bool		BaseItemsDecayable( void ) const;
+
+	void		ItemDecayInHouses( bool value );
+	bool		ItemDecayInHouses( void ) const;
 
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;

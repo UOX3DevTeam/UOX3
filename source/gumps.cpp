@@ -1574,10 +1574,15 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	if( i->GetObjType() == OT_SPAWNER )
 	{
 		CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
+
+		std::string spawnSection = spawnItem->GetSpawnSection();
+		if( spawnSection.empty() )
+			spawnSection = "0";
+
 		if( spawnItem->IsSectionAList() )
-			tweakItem.AddData( "Spawnobjlist", spawnItem->GetSpawnSection() );
+			tweakItem.AddData( "Spawnobjlist", spawnSection );
 		else
-			tweakItem.AddData( "Spawnobj", spawnItem->GetSpawnSection() );
+			tweakItem.AddData( "Spawnobj", spawnSection );
 	}
 	tweakItem.Send( 1, true, i->GetSerial() );
 }

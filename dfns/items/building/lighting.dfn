@@ -27,6 +27,21 @@ get=base_item
 name=wall sconce
 id=0x09fd
 movable=2
+dir=14
+}
+
+[0x09fe]
+{ E, burning (anim)
+get=0x09fd
+name=wall sconce
+id=0x09fe
+}
+
+[0x09ff]
+{ E, burning (anim)
+get=0x09fd
+name=wall sconce
+id=0x09ff
 }
 
 [0x0a00]
@@ -51,6 +66,21 @@ get=base_item
 name=wall sconce
 id=0x0a02
 movable=2
+dir=11
+}
+
+[0x0a03]
+{ S, burning (anim)
+get=base_item
+name=wall sconce
+id=0x0a03
+}
+
+[0x0a04]
+{ S, burning (anim)
+get=base_item
+name=wall sconce
+id=0x0a04
 }
 
 [0x0a05]
@@ -75,6 +105,21 @@ get=base_item
 name=wall torch
 id=0x0a07
 movable=2
+dir=8
+}
+
+[0x0a08]
+{ E, burning (anim)
+get=base_item
+name=wall torch
+id=0x0a08
+}
+
+[0x0a09]
+{ E, burning (anim)
+get=base_item
+name=wall torch
+id=0x0a09
 }
 
 [0x0a0a]
@@ -99,6 +144,21 @@ get=base_item
 name=wall torch
 id=0x0a0c
 movable=2
+dir=5
+}
+
+[0x0a0d]
+{ S, burning (anim)
+get=0x0a0c
+name=wall torch
+id=0x0a0d
+}
+
+[0x0a0e]
+{ S, burning (anim)
+get=0x0a0c
+name=wall torch
+id=0x0a0e
 }
 
 [0x0a0f]
@@ -109,26 +169,21 @@ id=0x0a0f
 weight=200
 value=6,3
 decay=1
+dir=2
 }
 
 [0x0a10]
 { small candlestick, player carryable
-get=base_item
+get=0x0a0f
 name=candle
 id=0x0a10
-weight=200
-value=6,3
-decay=1
 }
 
 [0x0a11]
 { small candlestick, player carryable
-get=base_item
+get=0x0a0f
 name=candle
 id=0x0a11
-weight=200
-value=6,3
-decay=1
 }
 
 [0x0a12]
@@ -139,26 +194,21 @@ id=0x0a12
 weight=100
 value=7,3
 decay=1
+dir=1
 }
 
 [0x0a13]
 { player carryable
-get=base_item
+get=0x0a12
 name=torch
 id=0x0a13
-weight=100
-value=7,3
-decay=1
 }
 
 [0x0a14]
 { player carryable
-get=base_item
+get=0x0a12
 name=torch
 id=0x0a14
-weight=100
-value=7,3
-decay=1
 }
 
 [0x0a15]
@@ -169,6 +219,21 @@ id=0x0a15
 weight=200
 value=7,2
 decay=1
+dir=8
+}
+
+[0x0a16]
+{ E hanging, burning (anim)
+get=0x0a15
+name=lantern
+id=0x0a16
+}
+
+[0x0a17]
+{ E hanging, burning (anim)
+get=0x0a15
+name=lantern
+id=0x0a17
 }
 
 [0x0a18]
@@ -189,6 +254,21 @@ id=0x0a1a
 weight=200
 value=7,2
 decay=1
+dir=5
+}
+
+[0x0a1b]
+{ S hanging, burning (anim)
+get=0x0a1a
+name=lantern
+id=0x0a1b
+}
+
+[0x0a1c]
+{ S hanging, burning (anim)
+get=0x0a1a
+name=lantern
+id=0x0a1c
 }
 
 [0x0a1d]
@@ -209,6 +289,21 @@ id=0x0a22
 weight=200
 value=7,2
 decay=1
+dir=1
+}
+
+[0x0a23]
+{ burning (anim)
+get=0x0a22
+name=lantern
+id=0x0a23
+}
+
+[0x0a24]
+{ burning (anim)
+get=0x0a22
+name=lantern
+id=0x0a24
 }
 
 [0x0a25]
@@ -264,6 +359,21 @@ name=candle
 id=0x0b1a
 weight=100
 decay=1
+dir=2
+}
+
+[0x0b1b]
+{ candlestick, burning (anim)
+get=0x0b1a
+name=candle
+id=0x0b1b
+}
+
+[0x0b1c]
+{ candlestick, burning (anim)
+get=0x0b1a
+name=candle
+id=0x0b1c
 }
 
 [0x0b1d]
@@ -273,6 +383,21 @@ name=candlabra
 id=0x0b1d
 weight=300
 decay=1
+dir=1
+}
+
+[0x0b1e]
+{ small, burning (anim)
+get=0x0b1d
+name=candlabra
+id=0x0b1e
+}
+
+[0x0b1f]
+{ small, burning (anim)
+get=0x0b1d
+name=candlabra
+id=0x0b1f
 }
 
 [0x0b26]
@@ -282,6 +407,21 @@ name=candlabra
 id=0x0b26
 weight=300
 decay=1
+dir=29
+}
+
+[0x0b27]
+{ large, burning (anim)
+get=0x0b26
+name=candlabra
+id=0x0b27
+}
+
+[0x0b28]
+{ large, burning (anim)
+get=0x0b26
+name=candlabra
+id=0x0b28
 }
 
 [0x0b20]
@@ -290,6 +430,7 @@ get=base_item
 name=lamp post
 id=0x0b20
 movable=2
+dir=29
 }
 
 [0x0b21]
@@ -306,6 +447,7 @@ get=base_item
 name=lamp post
 id=0x0b22
 movable=2
+dir=29
 }
 
 [0x0b23]
@@ -322,6 +464,7 @@ get=base_item
 name=lamp post
 id=0x0b24
 movable=2
+dir=29
 }
 
 [0x0b25]
@@ -338,6 +481,21 @@ get=base_item
 name=brazier
 id=0x0e31
 movable=2
+dir=1
+}
+
+[0x0e32]
+{ fired (anim)
+get=0x0e31
+name=brazier
+id=0x0e32
+}
+
+[0x0e33]
+{ fired (anim)
+get=0x0e31
+name=brazier
+id=0x0e33
 }
 
 [0x0fac]
@@ -346,6 +504,7 @@ get=base_item
 name=fire pit
 id=0x0fac
 movable=2
+dir=1
 }
 
 [0x19aa]
@@ -354,6 +513,7 @@ get=base_item
 name=brazier
 id=0x19aa
 movable=2
+dir=1
 }
 
 [0x19bb]
@@ -362,6 +522,7 @@ get=base_item
 name=brazier
 id=0x19bb
 movable=2
+dir=2
 }
 
 [0x19ab]
@@ -370,6 +531,7 @@ get=base_item
 name=fire
 id=0x19ab
 movable=2
+dir=1
 }
 
 [0x1ecd]
@@ -378,6 +540,7 @@ get=base_item
 name=light
 id=0x1ecd
 value=81,40
+dir=29
 }
 
 [0x1ece]
@@ -402,6 +565,7 @@ get=base_item
 name=light
 id=0x1ed0
 value=81,40
+dir=29
 }
 
 [0x1ed1]
@@ -448,6 +612,7 @@ get=base_item
 name=campfire
 id=0x0de3
 movable=2
+dir=29
 }
 
 [0x0de7]
@@ -472,6 +637,7 @@ get=base_item
 name=embers
 id=0x0de9
 movable=2
+dir=2
 }
 
 [0x0dea]
@@ -496,6 +662,7 @@ get=base_item
 name=skull with candle
 id=0x1854
 decay=1
+dir=1
 }
 
 [0x1857]
@@ -512,6 +679,7 @@ get=base_item
 name=skull with candle
 id=0x1858
 decay=1
+dir=1
 }
 
 [0x142c]
@@ -521,6 +689,7 @@ name=candle
 id=0x142c
 weight=100
 decay=1
+dir=2
 }
 
 [0x142f]
@@ -539,6 +708,7 @@ name=candle
 id=0x1430
 weight=100
 decay=1
+dir=2
 }
 
 [0x1433]
@@ -557,6 +727,7 @@ name=candle
 id=0x1434
 weight=100
 decay=1
+dir=2
 }
 
 [0x1437]
