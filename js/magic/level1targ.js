@@ -220,29 +220,31 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 function checkReagents( mChar, mSpell )
 {
 	var failedCheck = 0;
-	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
-		failedCheck = 1;
-	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
-		failedCheck = 1;
-	if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
-		failedCheck = 1;
-	if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
-		failedCheck = 1;
-	if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
-		failedCheck = 1;
-	if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
-		failedCheck = 1;
-	if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
-		failedCheck = 1;
-	if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
-		failedCheck = 1;
-	if( failedCheck == 1 )
+	if( mChar.noNeedReags == false )
 	{
-		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
-		return false;
+		if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
+			failedCheck = 1;
+		if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
+			failedCheck = 1;
+		if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
+			failedCheck = 1;
+		if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
+			failedCheck = 1;
+		if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
+			failedCheck = 1;
+		if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
+			failedCheck = 1;
+		if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
+			failedCheck = 1;
+		if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
+			failedCheck = 1;
+		if( failedCheck == 1 )
+		{
+			mChar.SysMessage( GetDictionaryEntry( 702, mChar.socket.Language ) );  // not enough reagents to cast spell
+			return false;
+		}
 	}
-	else
-		return true;
+	return true;
 }
 
 function deleteReagents( mChar, mSpell )
@@ -436,15 +438,6 @@ function MagicDamage( p, amount, attacker, mSock, element )
 
 	//p.TextMessage( "p not dead or below 0 health" );
 
-	if( p.CheckSkill( 16, 0, 1000 ) )
-	{
-		//p.TextMessage( "Successful eval int check" );
-		var dmgReduction = RandomNumber( 0, p.skills.evaluatingintel ) / 10000;
-		//p.TextMessage( "Bleeding off " + dmgReduction + " damage" );
-		amount -= ( amount * dmgReduction );
-		if( amount < 1 )
-			amount = 1;
-	}
 	//p.TextMessage( "Damage to do: " + amount );
 	if( p.frozen && p.dexterity > 0 )
 	{
@@ -465,6 +458,10 @@ function MagicDamage( p, amount, attacker, mSock, element )
 
 		if( damage <= 0 )
 			damage = 1;
+		
+		// Double spell-damage against non-human NPCs
+		if( p.npc && !p.isHuman )
+			damage *= 2;
 
 		p.Damage( damage, attacker, true );
 		p.ReactOnDamage( element, attacker );
@@ -476,25 +473,30 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	var mMagery = caster.skills.magery;
 	if( spellNum == 3 )	// Feeblemind
 	{
+		// Target Resist Check
+		var spellResisted = CheckTargetResist( caster, ourTarg, mSpell.circle );
+		
 		//caster.TextMessage( "Casting feeblemind" );
 		DoTempEffect( 0, sourceChar, ourTarg, 4, (mMagery / 100), 0, 0);	
 	}
 	else if( spellNum == 4 )	// Heal
 	{
+		var baseHealing = Math.round( RandomNumber( mSpell.baseDmg / 2, mSpell.baseDmg ));
+		
 		//caster.TextMessage( "Casting Heal" );
 		var bonus = (mMagery/500) + (mMagery/100);
 		//caster.TextMessage( "Healing bonus " + bonus );
 		//caster.TextMessage( "Old health " + ourTarg.health );
 		if( bonus != 0 )
 		{
-			var rAdd = RandomNumber( 0, 5 ) + bonus;
+			var rAdd = baseHealing + bonus;
 			//caster.TextMessage( "Adding " + rAdd + " health!" );
 			ourTarg.health += rAdd;
 		}
 		else
 		{
 			//caster.TextMessage( "Adding 4 health!" );
-			ourTarg.health += 4;
+			ourTarg.health += baseHealing;
 		}
 		//caster.TextMessage( "New health " + ourTarg.health );
 		//caster.TextMessage( "Subtracting health" );
@@ -504,11 +506,71 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	}
 	else if( spellNum == 5 )	// Magic arrow
 	{
-		//caster.TextMessage( "Casting Magic Arrow!" );
-		var baseDamage = 2 + RandomNumber( 0, 5 );
-		var mageryAdjust = ( mMagery / 2000 + 1 );
-		//caster.TextMessage( "Base damage " + baseDamage );
-		//caster.TextMessage( "Magery multiplier: " + mageryAdjust );
-		MagicDamage( ourTarg, baseDamage * mageryAdjust, caster, caster.socket, 5 );
+		var baseDamage = mSpell.baseDmg;
+		
+		// Target Resist Check
+		var spellResisted = CheckTargetResist( caster, ourTarg, mSpell.circle );
+		
+		// Apply spell-damage modifiers to baseDamage
+		baseDamage = CalcSpellDamage( caster, ourTarg, baseDamage, spellResisted );
+		
+		// caster.TextMessage( "Casting Magic Arrow!" );
+		MagicDamage( ourTarg, baseDamage, caster, caster.socket, 5 );
 	}
+}
+
+function CheckTargetResist( caster, ourTarg, circle )
+{
+	var i = ourTarg.CheckSkill( 26, 80*circle, 800+(80*circle) );
+	if( ValidateObject( ourTarg ) )
+	{
+		var defaultChance = ourTarg.skills.magigresistance / 5;
+		var resistChance = ourTarg.skills.magicresistance - ((( caster.skills.magery - 20 ) / 5 ) + ( circle * 5 )); 
+		if( defaultChance > resistChance )
+			resistChance = defaultChance;
+		if( RandomNumber( 1, 100 ) < resistChance / 10 )
+		{
+			var tSock = ourTarg.socket;
+			if( tSock != null )
+				tSock.SysMessage( GetDictionaryEntry( 699, tSock.Language ) );				
+			i = true;
+		}
+		else
+			i = false;		
+	}
+	else
+	{
+		if( i )
+		{
+			var tSock = ourTarg.socket;
+			if( tSock != null )
+				tSock.SysMessage( GetDictionaryEntry( 699, tSock.Language ) );				
+		}
+	}
+	return i;
+}
+
+function CalcSpellDamage( caster, ourTarg, baseDamage, spellResisted )
+{
+	baseDamage = RandomNumber( baseDamage / 2, baseDamage );
+	
+	if( spellResisted )
+		baseDamage = baseDamage / 2 );
+		
+	var casterEval = caster.skills.evaluatingintel / 10;
+	var targetResist = ourTarg.skills.magicresistance / 10;
+	if( targetResist > casterEval )
+		baseDamage *= ((( casterEval - targetResist ) / 200 ) + 1 );
+	else
+		baseDamage *= ((( casterEval - targetResist ) / 500 ) + 1 );
+		
+	int i = RandomNumber( 0, 4 );
+	if( i <= 2 )
+		baseDamage = Math.round( RandomNumber( RandomNumber( basedamage / 2, baseDamage ) / 2, baseDamage ));
+	else if( i == 3 )
+		baseDamage = Math.round( RandomNumber( baseDamage / 2, baseDamage );
+	else //keep current damage
+		baseDamage = Math.round( baseDamage );
+	
+	return baseDamage;
 }

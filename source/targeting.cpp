@@ -844,17 +844,27 @@ bool BuyShop( CSocket *s, CChar *c )
 		return false;
 	if( !ValidateObject( c ) )
 		return false;
-	CItem *buyPack		= c->GetItemAtLayer( IL_BUYCONTAINER );
+
+	//Check if vendor has onBuy script running
+	UI16 charTrig		= c->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnBuy( s, c ) )
+			return false;
+	}
+
+	CItem *sellPack		= c->GetItemAtLayer( IL_SELLCONTAINER );
 	CItem *boughtPack	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
 	
-	if( !ValidateObject( buyPack ) || !ValidateObject( boughtPack ) )
+	if( !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 		return false;
 
 	CPItemsInContainer iic;
 	iic.UOKRFlag( (s->ClientType() == CV_UOKR ) );
 	iic.Type( 0x02 );
-	iic.VendorSerial( buyPack->GetSerial() );
-	CPOpenBuyWindow obw( buyPack, c, iic, s );
+	iic.VendorSerial( sellPack->GetSerial() );
+	CPOpenBuyWindow obw( sellPack, c, iic, s );
 
 	CPItemsInContainer iic2;
 	iic2.UOKRFlag( (s->ClientType() == CV_UOKR ) );
@@ -938,21 +948,12 @@ void NpcResurrectTarget( CChar *i )
 					{
 						j->Delete();
 						
-						c = Items->CreateItem( NULL, i, 0x1F03, 1, 0, OT_ITEM );
+						c = Items->CreateScriptItem( NULL, i, "resurrection_robe", 1, OT_ITEM );
 						if( c != NULL )
-						{
-							c->SetName( "a resurrect robe" );
-							c->SetLayer( IL_ROBE );
-							if( c->SetCont( i ) )
-								c->SetDye( true );
-						}
+							c->SetCont( i );
 					}
 				}
 			}
-			//UI16 targTrig		= i->GetScriptTrigger();
-			//cScript *toExecute	= JSMapping->GetScript( targTrig );
-			//if( toExecute != NULL )
-			//	toExecute->OnResurrect( i );
 		}
 		else
 			mSock->sysmessage( 1080 );
@@ -996,7 +997,7 @@ void HouseOwnerTarget( CSocket *s )
 
 	killKeys( house->GetSerial() );
 
-	CItem *key = Items->CreateItem( oSock, own, 0x100F, 1, 0, OT_ITEM, true );	// gold key for everything else
+	CItem *key = Items->CreateScriptItem( oSock, own, "0x100F", 1, OT_ITEM, true );	// gold key for everything else
 	if( key == NULL )
 		return;
 	key->SetName( "a house key" );
@@ -1475,10 +1476,10 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		UI16 itemID = ourCreateEntry->resourceNeeded[skCtr].idList.front();
+		UString itemID = UString::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
-		Items->CreateItem( s, mChar, itemID, amtToRestore, itemColour, OT_ITEM, true );
+		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );
 	}
 	
 	s->sysmessage( 1116, sumAmountRestored );

@@ -109,7 +109,8 @@ typedef struct __STARTLOCATIONDATA__
 //	EviLDeD	-	End
 
 // Max values
-const UI08 MAX_NAME		= 60;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
+const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
+								// Xuri - Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 15;

@@ -1802,6 +1802,8 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 						iUsed->SetTempVar( CITV_MOREY, 0 );
 						iUsed->SetOffSpell( 0 );
 					}
+					//Update item so player will see how many charges remain (if any)
+					iUsed->Dirty( UT_UPDATE );
 				}
 			}
 			return true;

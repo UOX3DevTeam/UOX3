@@ -989,7 +989,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	if( mChar.GetReattackAt() == 0 )
 		mChar.SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
 	
-	if( mChar.GetNpcWander() != WT_FLEE && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
+	if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
 	{
 		mChar.SetOldNpcWander( mChar.GetNpcWander() );
 		mChar.SetNpcWander( WT_FLEE );

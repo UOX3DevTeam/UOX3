@@ -130,7 +130,7 @@ namespace UOX
 
 				const size_t iterPos		= (rIter - objData.begin());
 				const size_t iCounterPos	= (objIterator - objData.begin());
-	
+
 				for( size_t q = 0; q < objIteratorBackup.size(); ++q )
 				{
 					if( objIteratorBackup[q] > 0 && iterPos <= objIteratorBackup[q] )

@@ -3446,6 +3446,14 @@ void CPUpdScroll::SetLength( UI16 len )
 //	BYTE explodes 
 //	BYTE[4] hue 
 //	BYTE[4] renderMode 
+//	Rendermode details:
+//		One 	 Darken 
+//		Two 	 Lighten 
+//		Three 	 Transparent to dark colors to emphasize the bright colors 
+//		Four 	 Semi-transparent (high transparency) 
+//		Five 	 Translucent (near the present) 
+//		Six 	 "Negapoji" (???) reversal 
+//		Seven 	 Invert background "Negapoji Keta"(???)
 //Server message
 void CPGraphicalEffect2::InternalReset( void )
 {
@@ -4662,7 +4670,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	}
 	else
 	{
-		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount )
+		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	    	tempEntry.ourText = UString::sprintf( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
 		else
 			tempEntry.ourText = UString::sprintf( " \t%s\t ",cItem.GetName().c_str() );
@@ -4670,11 +4678,25 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	tempEntry.stringNum = 1050045;
 	FinalizeData( tempEntry, totalStringLen );
 
+	if( cItem.IsLockedDown() )
+	{
+		tempEntry.stringNum = 501643;
+		FinalizeData( tempEntry, totalStringLen );
+	}
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{
 		tempEntry.stringNum = 1050044;
 		tempEntry.ourText = UString::sprintf( "%u\t%i",cItem.GetContainsList()->Num(), (cItem.GetWeight()/100) );
 		FinalizeData( tempEntry, totalStringLen );
+		if( ( cItem.GetWeightMax() / 100 ) >= 1 )
+		{
+			//Uncomment and replace 0 with maxitem value if we ever implement it
+			//tempEntry.stringNum = 1072226;
+			//tempEntry.ourText = UString::sprintf( "%u\t%i", 0, ( cItem.GetWeightMax() / 100 ) );
+			tempEntry.stringNum = 1060658;
+			tempEntry.ourText = UString::sprintf( "Capacity\t%i Stones", ( cItem.GetWeightMax() / 100 ) );
+			FinalizeData( tempEntry, totalStringLen );
+		}
 	}
 	else if( cItem.GetType() == IT_HOUSESIGN )
 	{
@@ -4692,10 +4714,10 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
 	{
 		tempEntry.stringNum = 1060584;
-		tempEntry.ourText = UString::number( cItem.GetHP() );
+		tempEntry.ourText = UString::number( cItem.GetTempVar( CITV_MOREZ ) );
 		FinalizeData( tempEntry, totalStringLen );
 	}
-	else if( ( cItem.GetWeight() / 100 ) >= 1 )
+	else if( ( cItem.GetWeight() / 100 ) >= 1 && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT )
 	{
 		if( ( cItem.GetWeight() / 100 ) == 1 )
 			tempEntry.stringNum = 1072788;
@@ -4916,18 +4938,18 @@ void CPSellList::InternalReset( void )
 }
 void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 {
-	CItem *sellPack = vendorID.GetItemAtLayer( IL_SELLCONTAINER );
+	CItem *buyPack = vendorID.GetItemAtLayer( IL_BUYCONTAINER );
 	CItem *ourPack	= mChar.GetPackItem();
 
 	numItems			= 0;
 	size_t packetLen	= 9;
 
-	if( ValidateObject( sellPack ) && ValidateObject( ourPack ) )
+	if( ValidateObject( buyPack ) && ValidateObject( ourPack ) )
 	{
 		CTownRegion *tReg = NULL;
 		if( cwmWorldState->ServerData()->TradeSystemStatus() )
 			tReg = calcRegionFromXY( vendorID.GetX(), vendorID.GetY(), vendorID.WorldNumber() );
-		CDataList< CItem * > *spCont = sellPack->GetContainsList();
+		CDataList< CItem * > *spCont = buyPack->GetContainsList();
 		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
 		{
 			if( ValidateObject( spItem ) )

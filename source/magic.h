@@ -123,9 +123,10 @@ private:
 	SI16		sclo;
 	SI16		schi;
 	UI16		jsScript;
+	SI16		baseDmg;
 public:
 	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ), 
-		circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 )
+		circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
 
@@ -170,7 +171,10 @@ public:
 	{
 		mana = newVal;
 	}
-
+	SI16 BaseDmg( void ) const
+	{
+		return baseDmg;
+	}
 	reag_st	Reagants( void ) const
 	{
 		return reags;
@@ -259,6 +263,10 @@ public:
 	{
 		strToSay = toPut;
 	}
+	void BaseDmg( SI16 newVal )
+	{
+		baseDmg = newVal;
+	}
 	void ScrollLow( SI16 newVal )
 	{
 		sclo = newVal;
@@ -316,14 +324,14 @@ public:
 };
 
 
-#define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *
-#define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *
-#define MAGIC_LOCATION_LIST CSocket *, CChar *, SI16, SI16, SI08
-#define MAGIC_FIELD_LIST CSocket *, CChar *, UI08, SI16, SI16, SI08
-#define MAGIC_AREA_STUB_LIST CChar *, CChar *
-#define MAGIC_NOTARG_LIST CSocket *, CChar *
+#define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *, SI08
+#define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *, SI08
+#define MAGIC_LOCATION_LIST CSocket *, CChar *, SI16, SI16, SI08, SI08
+#define MAGIC_FIELD_LIST CSocket *, CChar *, UI08, SI16, SI16, SI08, SI08
+#define MAGIC_AREA_STUB_LIST CChar *, CChar *, SI08, SI08
+#define MAGIC_NOTARG_LIST CSocket *, CChar *, SI08
 
-#define MAGIC_TEST_LIST CSocket *, CChar *, CChar *, CChar *
+#define MAGIC_TEST_LIST CSocket *, CChar *, CChar *, CChar *, SI08
 
 #define MAGIC_TESTFUNC	bool (*)( MAGIC_TEST_LIST )
 #define MAGIC_CHARFUNC	bool (*)( MAGIC_CHARTARG_LIST )
@@ -350,11 +358,12 @@ struct MagicTable_s
 	bool			(*mag_extra) ();	// extra data - see above
 };
 
-bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) );
+bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell );
 bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir );
 bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
+SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted );
 
 extern const MagicTable_s						magic_table[];
 

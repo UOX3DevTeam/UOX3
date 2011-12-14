@@ -1,3 +1,74 @@
+14/12/2011 - Xuri (0.98-4.0i)
+	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
+	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
+	Added support for six new JS events: 
+		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
+		onSell( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
+		onBuyFromVendor(socket, objVendor, objBought ) - triggers for item while item is being bought from an NPC vendor; return false in script to block sale, defaults to true
+		onBoughtFromVendor( socket, objVendor, objBought ) - triggers on item after purchase has gone through and item has reached the player's backpack
+		onSellToVendor( socket, objVendor, objSold ) - triggers for item while item is being sold to an NPC vendor; return false in script to block sale, defaults to true
+		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack 
+	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
+	Added onBoughtFromVendor JS events to pet-statue scripts in JS/NPC/PETS/ to automagically turn statues into live pets immediately after being bought
+	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
+	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
+	Added an extra check to CPISellItem to make sure the character trying to sell items still owns those items when accepting trade
+	(Added a temporary workaround for NPC pathfinding with long queues of NPCs trying to reach the same target)
+	Added new DFN tags for ranged weapons, defining ammunition id required (color optional) and missile-effect id played (color/rendermode optional):
+		AMMO=id (color)
+		AMMOFX=id (color rendermode)
+	Added AMMO and AMMOFX tags to ranged weapons in archery.dfn, aos_weapons.dfn, se_weapons.dfn and baseitem.dfn
+	Added support for Fukiya blowguns as an Archery weapon in code
+	Added new item DFN tag (and JS item property) to define maximum amount of stones (weight) a container can hold (replaces hardcoded value):
+		WEIGHTMAX=# (defaults to 40000 - or 400.00 stones - for all containers)
+	Added container-capactity information to item tooltip
+	Added "Locked Down" text to item tooltips for locked down items. Refresh seems funky though.
+	Fixed an issue where tooltips would display the current weight of and amount of items being spawned by container-spawners
+	Fixed a server crash caused by the Item Identification-skill when used on items of type 15 - IT_MAGICWAND
+	Fixed item-tooltip that describes remaining charges on an item of type 15 - IT_MAGICWAND.
+	Fixed an issue with the JS Method Open for File Objects where it wouldn't allow opening files for appending or writing, only reading
+	Fixed name in addmenu for item 0x0F64 (unused torch)
+	Fixed TrainerShopping list in DFNDATA/ITEMS/shoplist.dfn - now refers to actual animal-statue items in DFNs
+	Fixed DIR values for various wall sconces (DFNDATA/ITEMS/lighting.dfn) and heating stands (DFNDATA/SKILLS/TOOLS/alchemy.dfn)
+	Fixed some incorrect scriptIDs for lightsources in jse_fileassociations.scp and jse_objectassociations.scp
+	Fixed broken smithing of agapite items due to duplicate item-numbers between agapite and gold crafting DFNs (DFNDATA/CREATE/smithing_agapite.dfn)
+	Fixed 'SETRACE command, no longer tries to use non-existing method to set character's race (JS/COMMANDS/setrace.js)
+	Fixed some confusion with how vendor buy/sell backpacks were handled internally in code
+	Fixed an issue where onCreate JS scripts would not run for duped items
+	Updated dictionary-files with a missing systemmessage used to inform of remaining amount of lockdowns in houses
+	Changed MAX_NAME to a 128 byte limit to support long item names.
+	Changed JS scripts for lights to save DIR to MOREX when turning light off, and load DIR from MOREX when turning on. Sets default DIR if no MOREX value can be found.
+	Changed some items spawned through code to use CreateScriptItem (DFN based) instead of CreateItem (Tiledata-based):
+		Leftover arrows and crossbow-bolts that appear on ground during combat
+		All cases where gold coins are spawned (newbie gold, random fishing, gravedigging, result of trading, NPC escort reward, etc)
+		Ingots created from smelting items
+		Resurrection robes (DFN entry added to DFNDATA/ITEMS/GEAR/CLOTHING/clothing.dfn for potential tweaking)
+	The empty bottles that appear after using a potion will now be DFN based (JS/ITEM/potion.js)
+	Fixed an error in JS/ITEM/diceandcup.js (dragon slayer)
+	Made spawners of type IT_AREASPAWNER (69) use the MORE value ('set more 0x0000XXYY) to determine offset area to spawn in
+	Corrected hit sounds for bows and crossbows, were using dart sound
+	Changed miss-sound for bows and crossbows to make them different from melee weapon misses
+	Randomized impact-sounds for melee weapons
+	Randomized get-hit sounds for male and female human characters
+	Revamped spell-damage and magic-resist systems:
+		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check: 
+			SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted )
+		Updated cMagic::CheckResist() with magic resistance formulas based on pre-AoS information
+		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn. 
+			For damage-spells, it's the maximum potential basedamage done before bonuses (or penalties) based on target resist, caster eval int and item resistances.
+			For healing spells, it's the maximum potential basehealing done before potential bonuses
+		Damage-spells updated to use new methods for calculating damage and magic resistances, both of which should now be close to pre-AoS implementation
+		Changed Chain Lightning and Meteor Swarm spells to split the total damage done between all targets
+		Mind Blast changes:
+			Mind Blast will now never exceed 60% of target max-health, nor above 120% of BASEDMG
+			If target's Int stat makes out a larger percentage of his/her total stats (Sum of Str, Dex, Int) than the caster's, spell backfires onto caster
+		Debuff-spells like Clumsy, Feeblemind, Weaken and Curse can no longer be fully resisted. Resisting will halve the effect-duration instead.
+		Spells will now only do double damaga against non-human NPCs (monsters and animals)
+		Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
+		Updated JS/MAGIC/level1targ.js with new magic damage and resist system, and added noNeedReags check on caster to potentially skip reagent checks
+		Fixed (visual-only) issue where damage-numbers would display over head of caster twice if caster was also target
+		Added JS Spell property "name" - can be used to get the name of a spell as defined in the dictionary-files (entries 593-662)	
+	
 2/7/2010 - Xuri (0.98-4.0h)
 	Added new UOX.INI settings:
 		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just 

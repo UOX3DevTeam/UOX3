@@ -47,7 +47,11 @@ enum ScriptEvent
 	seOnClick,
 	seOnFall,
 	seOnSell,
+	seOnSellToVendor,
 	seOnBuy,
+	seOnBuyFromVendor,
+	seOnSoldToVendor,
+	seOnBoughtFromVendor,
 	seOnAISliver,			//	**
 	seOnSystemSlice,
 	seOnUnknownTrigger,
@@ -241,6 +245,12 @@ public:
 	
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
 	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue );
+	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
+	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
+	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnSell( CSocket *targSock, CChar *objVendor );
+	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
+	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
 
 	//	Critical handler type stuff
 	bool		IsFiring( void );

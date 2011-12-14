@@ -4,6 +4,8 @@
 #include "CPacketSend.h"
 #include "classes.h"
 #include "townregion.h"
+#include "CJSMapping.h"
+#include "cScript.h"
 
 #undef DBGFILE
 #define DBGFILE "vendor.cpp"
@@ -106,10 +108,15 @@ bool CPIBuyItem::Handle( void )
 	std::vector< UI08 > layer;
 	std::vector< UI16 > amount;
 
+	// vector for storing all objects that actually end up in user backpack
+	std::vector< CItem * > boughtItems;
+
 	CChar *npc		= calcCharObjFromSer( tSock->GetDWord( 3 ) );
 	UI16 itemtotal	= static_cast<UI16>((tSock->GetWord( 1 ) - 8) / 7);
 	if( itemtotal > 511 ) 
 		return true;
+
+	boughtItems.reserve( itemtotal );
 	bitems.resize( itemtotal );
 	amount.resize( itemtotal );
 	layer.resize( itemtotal );
@@ -122,6 +129,7 @@ bool CPIBuyItem::Handle( void )
 		amount[i]	= tSock->GetWord( 13 + baseOffset );
 		goldtotal	+= ( amount[i] * ( bitems[i]->GetBuyValue() ) );
 	}
+
 	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->BuyThreshold() ));
 	if( useBank )
 		playergoldtotal = GetBankCount( mChar, 0x0EED );
@@ -133,6 +141,19 @@ bool CPIBuyItem::Handle( void )
 		{
 			if( bitems[i]->GetAmount() < amount[i] )
 				soldout = true;
+
+			// Check if onBuyFromVendor JS event is present for each item being purchased
+			// If true, and a return false has been returned from the script, halt the purchase
+			UI16 targTrig		= bitems[i]->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) )
+				{
+					bitems.clear(); //needed???
+					return true;
+				}
+			}
 		}
 		if( soldout )
 		{
@@ -176,6 +197,7 @@ bool CPIBuyItem::Handle( void )
 						{
 							iMade->SetCont( p );
 							iMade->PlaceInPack();
+							boughtItems.push_back( iMade );
 						}
 					}
 					else
@@ -187,6 +209,7 @@ bool CPIBuyItem::Handle( void )
 							{
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
+								boughtItems.push_back( iMade );
 							}
 						}
 					}
@@ -197,7 +220,7 @@ bool CPIBuyItem::Handle( void )
 				{
 					switch( layer[i] )
 					{
-						case 0x1A: // Buy Container
+						case 0x1A: // Sell Container
 							if( biTemp->isPileable() )
 							{
 								iMade = Items->DupeItem( tSock, biTemp, amount[i] );
@@ -205,6 +228,7 @@ bool CPIBuyItem::Handle( void )
 								{
 									iMade->SetCont( p );
 									iMade->PlaceInPack();
+									boughtItems.push_back( iMade );
 								}
 							}
 							else
@@ -216,16 +240,19 @@ bool CPIBuyItem::Handle( void )
 									{
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
+										boughtItems.push_back( iMade );
 									}
 								}
-								iMade = NULL;
 							}
 							biTemp->IncAmount( -amount[i], true );
 							biTemp->SetRestock( biTemp->GetRestock() + amount[i] );
 							break;
 						case 0x1B: // Bought Container
 							if( biTemp->isPileable() )
+							{
 								biTemp->SetCont( p );
+								boughtItems.push_back( biTemp );
+							}
 							else
 							{
 								for( j = 0; j < amount[i]-1; ++j )
@@ -235,16 +262,27 @@ bool CPIBuyItem::Handle( void )
 									{
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
+										boughtItems.push_back( iMade );
 									}
 								}
 								biTemp->SetCont( p );
 								biTemp->SetAmount( 1 );
+								boughtItems.push_back( biTemp );
 							}
 							break;
 						default:
 							Console.Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
 							break;
 					}
+				}
+			}
+			for( i = 0; i < boughtItems.size(); ++i )
+			{
+				if( boughtItems[i] )
+				{
+					cScript *toGrab = JSMapping->GetScript( boughtItems[i]->GetScriptTrigger() );
+					if( toGrab != NULL )
+						toGrab->OnBoughtFromVendor( tSock, npc, boughtItems[i] );
 				}
 			}
 		}
@@ -279,9 +317,9 @@ bool CPISellItem::Handle( void )
 		CItem *buyPack		= n->GetItemAtLayer( IL_BUYCONTAINER );
 		CItem *boughtPack	= n->GetItemAtLayer( IL_BOUGHTCONTAINER );
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
-		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) )
+		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 			return true;
-		CItem *j = NULL, *k = NULL;
+		CItem *j = NULL, *k = NULL, *l = NULL;
 		UI16 amt = 0, maxsell = 0;
 		UI08 i = 0;
 		UI32 totgold = 0, value = 0;
@@ -304,13 +342,26 @@ bool CPISellItem::Handle( void )
 			amt = tSock->GetWord( 13 + (6*i) );
 			if( ValidateObject( j ) )
 			{
-				if( j->GetAmount() < amt )
+				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )
 				{
 					n->TextMessage( NULL, 1343, TALK, false );
 					return true;
 				}
+
+				// Check if onSellToVendor JS event is present for each item being sold
+				// If true, and a value of "false" has been returned from the script, halt the sale
+				UI16 targTrig		= j->GetScriptTrigger();
+				cScript *toExecute	= JSMapping->GetScript( targTrig );
+				if( toExecute != NULL )
+				{
+					if( toExecute->OnSellToVendor( tSock, n, j ) )
+					{
+						return true;
+					}
+				}
+
 				CItem *join = NULL;
-				CDataList< CItem * > *pCont = sellPack->GetContainsList();
+				CDataList< CItem * > *pCont = boughtPack->GetContainsList();
 				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ) )
@@ -328,10 +379,14 @@ bool CPISellItem::Handle( void )
 							value = calcValue( j, k->GetSellValue() );
 					}
 				}
+
+				// If an object already exist in the boughtPack that this one can be joined to...
 				if( ValidateObject( join ) )
 				{
 					join->IncAmount( amt );
 					join->SetRestock( join->GetRestock() - amt );
+					l = join;
+
 					totgold += ( amt * value );
 					if( j->GetAmount() == amt )
 						j->Delete();
@@ -340,11 +395,25 @@ bool CPISellItem::Handle( void )
 				}
 				else
 				{
+					//Otherwise, move this item to the vendor's boughtPack
 					totgold += ( amt * value );
-					j->SetCont( boughtPack );
 
 					if( j->GetAmount() != amt ) 
-						Items->DupeItem( tSock, j, j->GetAmount() - amt );
+					{
+						l = Items->DupeItem( tSock, j, amt );
+						j->SetAmount( j->GetAmount() - amt );
+					}
+					else
+						l = j;
+
+					if( ValidateObject( l ) )
+						l->SetCont( boughtPack );
+				}
+				if( l )
+				{
+					cScript *toGrab = JSMapping->GetScript( l->GetScriptTrigger() );
+					if( toGrab != NULL )
+						toGrab->OnSoldToVendor( tSock, n, l );
 				}
 			} 
 		}
@@ -352,11 +421,11 @@ bool CPISellItem::Handle( void )
 		Effects->goldSound( tSock, totgold );
 		while( totgold > MAX_STACK )
 		{
-			Items->CreateItem( tSock, mChar, 0x0EED, MAX_STACK, 0, OT_ITEM, true );
+			Items->CreateScriptItem( tSock, mChar, "0x0EED", MAX_STACK, OT_ITEM, true );
 			totgold -= MAX_STACK;
 		}
 		if( totgold > 0 )
-			Items->CreateItem( tSock, mChar, 0x0EED, totgold, 0, OT_ITEM, true );
+			Items->CreateScriptItem( tSock, mChar, "0x0EED", totgold, OT_ITEM, true );
 	}
 	
 	CPBuyItem clrSend;
@@ -377,7 +446,7 @@ void restockNPC( CChar& i, bool stockAll )
 	if( !i.IsShop() )
 		return;	// if we aren't a shopkeeper, why bother?
 
-	CItem *ci = i.GetItemAtLayer( IL_BUYCONTAINER );
+	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
 	if( ValidateObject( ci ) )
 	{
 		CDataList< CItem * > *ciCont = ci->GetContainsList();

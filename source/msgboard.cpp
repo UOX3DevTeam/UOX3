@@ -901,7 +901,7 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 		// Less than 75 gold for a escort is pretty cheesey, so if its between 1 and 75, add a randum amount of between 75 to 100 gold
 		if( servicePay < 75 ) 
 			servicePay += RandomNum( 75, 100 );
-		Items->CreateItem( mSock, mChar, 0x0EED, servicePay, 0, OT_ITEM, true );
+		Items->CreateScriptItem( mSock, mChar, "0x0EED", servicePay, OT_ITEM, true );
 		Effects->goldSound( mSock, servicePay );
 		mNPC->TextMessage( mSock, 739, TALK, false, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}

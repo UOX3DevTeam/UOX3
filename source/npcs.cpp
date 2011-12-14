@@ -162,7 +162,10 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, std::string npc )
 	cCreated->SetSpawn( iSpawner->GetSerial() );
 	SI16 awayX = 0, awayY = 0;
 	if( iType == IT_AREASPAWNER && iSpawner->GetCont() == NULL )
-		awayX = awayY = 10;
+	{
+		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
+		awayY = iSpawner->GetTempVar( CITV_MORE, 4 );
+	}
 	else if( iType == IT_ESCORTNPCSPAWNER && iSpawner->GetCont() == NULL )
 	{
 		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
@@ -400,9 +403,9 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 //o---------------------------------------------------------------------------o
 void cCharStuff::LoadShopList( const std::string list, CChar *c )
 {
-	CItem *buyLayer		= c->GetItemAtLayer( IL_BUYCONTAINER );
-	CItem *boughtLayer	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
-	CItem *sellLayer	= c->GetItemAtLayer( IL_SELLCONTAINER );
+	CItem *buyLayer		= c->GetItemAtLayer( IL_BUYCONTAINER ); //Contains items the NPC is willing to buy
+	CItem *boughtLayer	= c->GetItemAtLayer( IL_BOUGHTCONTAINER ); //Contains items the NPC has already bought
+	CItem *sellLayer	= c->GetItemAtLayer( IL_SELLCONTAINER ); //Contains items the NPC will sell
 
 	UString sect		= "SHOPLIST " + list;
 	sect				= sect.stripWhiteSpace();
@@ -440,7 +443,7 @@ void cCharStuff::LoadShopList( const std::string list, CChar *c )
 					if( retitem != NULL )
 					{
 						retitem->SetCont( sellLayer );
-						retitem->SetSellValue( retitem->GetBuyValue() / 2 );
+						//retitem->SetSellValue( retitem->GetBuyValue() / 2 );
 						retitem->PlaceInPack();
 						if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
 							retitem->SetName( retitem->GetName2() );
@@ -551,7 +554,7 @@ void MakeShop( CChar *c )
 		return;
 	c->SetShop( true );
 	CItem *tPack = NULL;
-	for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
+	for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i )
 	{
 		tPack = c->GetItemAtLayer( static_cast<ItemLayers>(i) );
 		if( !ValidateObject( tPack ) )
@@ -789,7 +792,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( !ValidateObject( mypack ) )
 													mypack = applyTo->GetPackItem();
 												if( ValidateObject( mypack ) )
-													retitem = Items->CreateItem( NULL, applyTo, 0x0EED, static_cast<UI16>(RandomNum( ndata, odata )), 0, OT_ITEM, true );
+													retitem = Items->CreateScriptItem( NULL, applyTo, "0x0EED", static_cast<UI16>(RandomNum( ndata, odata )), OT_ITEM, true );
 												else
 													Console.Warning( "Bad NPC Script with problem no backpack for gold" );
 											}

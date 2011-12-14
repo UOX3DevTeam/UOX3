@@ -202,6 +202,11 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 29:	// Sell Value
 		case 30:	// Carve
 		case 36:	// ScriptTrigger ID
+		case 37:	// AmmoID
+		case 38:	// AmmoHue
+		case 39:	// AmmoFX
+		case 40:	// AmmoFXHue
+		case 41:	// AmmoFXRender (mode)
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 495 + button );	// allow 0x for hex value
 			break;
 		case 7:		// Moveable
@@ -216,12 +221,13 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 11:	// Amount
 		case 12:	// Strength
 		case 25:	// Weight
+		case 42:	// WeightMax
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 495 + button );	// allow 0x for hex value
 			break;
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
-		case 37:	// Spawnobj/Spawnobjlist
+		case 43:	// Spawnobj/Spawnobjlist
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;
@@ -1571,6 +1577,12 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.AddData( "Visible", i->GetVisible() );
 	tweakItem.AddData( "Creator", i->GetCreator() );
 	tweakItem.AddData( "Script ID:", i->GetScriptTrigger() );
+	tweakItem.AddData( "AmmoID:", i->GetAmmoID() );
+	tweakItem.AddData( "AmmoHue:", i->GetAmmoHue() );
+	tweakItem.AddData( "AmmoFX:", i->GetAmmoFX() );
+	tweakItem.AddData( "AmmoFXHue:", i->GetAmmoFXHue() );
+	tweakItem.AddData( "AmmoFXRender:", i->GetAmmoFXRender() );
+	tweakItem.AddData( "WeightMax:", i->GetWeightMax() );
 	if( i->GetObjType() == OT_SPAWNER )
 	{
 		CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
@@ -1646,7 +1658,13 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 34:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 			case 35:	j->SetCreator( reply.toULong() );			break;	// Creator
 			case 36:	j->SetScriptTrigger( reply.toULong() );		break; //ScriptTrigger ID
-			case 37:
+			case 37:	j->SetAmmoID( reply.toUShort() );			break; //AmmoID
+			case 38:	j->SetAmmoHue( reply.toUShort() );			break; //AmmoHue
+			case 39:	j->SetAmmoFX( reply.toUShort() );			break; //AmmoFX
+			case 40:	j->SetAmmoFXHue( reply.toUShort() );		break; //AmmoFXHue
+			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
+			case 42:	j->SetWeightMax( reply.toLong() );			break; //WeightMax
+			case 43:
 						if( j->GetObjType() == OT_SPAWNER )
 							((CSpawnItem *)j)->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}

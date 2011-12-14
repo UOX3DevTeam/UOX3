@@ -229,6 +229,7 @@ void CMultiObj::LockDownItem( CItem *toLock )
 				return;
 		}
 		toLock->LockDown();
+		toLock->Dirty( UT_UPDATE );
 		lockedList.push_back( toLock );
 	}
 }
@@ -247,6 +248,7 @@ void CMultiObj::RemoveLockDown( CItem *toRemove )
 	{
 		if( (*rIter) == toRemove )
 		{
+			toRemove->Dirty( UT_UPDATE );
 			lockedList.erase( rIter );
 			toRemove->SetMovable( 0 );
 			return;

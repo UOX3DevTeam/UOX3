@@ -61,7 +61,7 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 		{
 			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) // Is item an pack or container?
 				amtDeleted += DeleteSubItemAmount( i, total, realID, realColour );
-			else if( i->GetID() == realID && ( realColour == 0 || i->GetColour() == realColour ) )
+			else if( i->GetID() == realID && i->GetColour() == realColour )
 			{
 				if( i->GetAmount() <= total )
 				{

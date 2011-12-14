@@ -555,9 +555,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13FD: //heavy crossbow
 		case 0x26C3: //repeating crossbow - AoS
 		case 0x26CD: //repeating crossbow - AoS
-		//case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
-		//case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 			return XBOWS;
+		case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
+		case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
+			return BLOWGUNS;
 		// Normal Fencing Weapons
 		case 0x0F51: //dagger
 		case 0x0F52: //dagger
@@ -629,6 +630,8 @@ UI08 CHandleCombat::getBowType( CItem *bItem )
 			return BOWS;
 		case XBOWS:
 			return XBOWS;
+		case BLOWGUNS:
+			return BLOWGUNS;
 		default:
 			return 0;
 	}
@@ -667,6 +670,7 @@ UI08 CHandleCombat::getCombatSkill( CItem *wItem )
 			return FENCING;
 		case BOWS:
 		case XBOWS:
+		case BLOWGUNS:
 			return ARCHERY;
 		case WRESTLING:
 		default:
@@ -993,8 +997,8 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		}
 	}
 
-	if( total < 2 && hitLoc != 0 )
-		total = 2;
+	//if( total < 2 && hitLoc != 0 )
+	//	total = 2;
 	return (UI16)total;
 }
 
@@ -1014,7 +1018,8 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 	switch( getWeaponType( j ) )
 	{
 		case BOWS:				animToPlay = 0x1B;	break;
-		case XBOWS:				animToPlay = 0x1C;	break;
+		case XBOWS:				
+		case BLOWGUNS:			animToPlay = 0x1C;	break;
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
 		case DUAL_SWORD:
@@ -1051,7 +1056,8 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 	switch( getWeaponType( j ) )
 	{
 		case BOWS:				animToPlay = 0x12;									break;
-		case XBOWS:				animToPlay = 0x13;									break;
+		case XBOWS:				
+		case BLOWGUNS:			animToPlay = 0x13;									break;
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
 		case ONEHND_LG_SWORDS:
@@ -1120,14 +1126,29 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 //o---------------------------------------------------------------------------o
 void CHandleCombat::PlayMissedSoundEffect( CChar *p )
 {
+	CItem *weapon = getWeapon( p );
+
 	if( !ValidateObject( p ) )
 		return;
 
-	switch( RandomNum( 0, 2 ) )
+	switch( getWeaponType( weapon ) )
 	{
-		case 0:	Effects->PlaySound( p, 0x0238 );	break;
-		case 1:	Effects->PlaySound( p, 0x0239 );	break;
-		default: Effects->PlaySound( p, 0x023A );	break;
+		case BOWS: 
+		case XBOWS: Effects->PlaySound( p, RandomNum( 0x04c8, 0x04c9 )); break;
+		case BLOWGUNS: Effects->PlaySound( p, 0x052F ); break;
+		default:
+			switch( RandomNum( 0, 2 ) )
+			{
+				case 0:
+					Effects->PlaySound( p, 0x0238 );
+					break;
+				case 1:
+					Effects->PlaySound( p, 0x0239 );
+					break;
+				default:
+					Effects->PlaySound( p, 0x023A );
+				break;
+			}
 	}
 }
 
@@ -1148,29 +1169,32 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 		case TWOHND_AXES:
 		case DEF_MACES:
 		case LG_MACES:
-			Effects->PlaySound( p, 0x0232 ); // Whoosh Weapons
+			Effects->PlaySound( p, RandomNum( 0x0232, 0x0233 )); // Whoosh Weapons
 			break;
 		case DEF_SWORDS:
 		case DEF_FENCING:
 		case TWOHND_FENCING:
 		case DUAL_FENCING_STAB:
-			Effects->PlaySound( p, 0x023C ); // Stabbing Weapons
+			Effects->PlaySound( p, RandomNum( 0x023B, 0x023C )); // Stabbing Weapons
 			break;
 		case BARDICHE:
-			Effects->PlaySound( p, 0x0236 ); // Bardiche
+			Effects->PlaySound( p, RandomNum( 0x0236, 0x0237 )); // Bardiche
 			break;
 		case SLASH_SWORDS:
 		case DUAL_SWORD:
 		case DUAL_FENCING_SLASH:
-			Effects->PlaySound( p, 0x023B ); // Slashing Weapons
-			break;
 		case ONEHND_LG_SWORDS:
+			Effects->PlaySound( p, RandomNum( 0x023B, 0x023C )); // Slashing Weapons
+			break;
 		case TWOHND_LG_SWORDS:
-			Effects->PlaySound( p, 0x0237 ); // Large Swords
+			Effects->PlaySound( p, RandomNum( 0x0236, 0x0237 )); // Large Swords
 			break;
 		case BOWS:
 		case XBOWS:
-			Effects->PlaySound( p, 0x0223 ); // Bows
+			Effects->PlaySound( p, 0x0234 ); // Bows
+			break;
+		case BLOWGUNS:
+			Effects->PlaySound( p, RandomNum( 0x0223, 0x0224 )); //Darts
 			break;
 		case WRESTLING:
 		default:
@@ -1392,8 +1416,8 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 					damage *= 2;
 			}
 
-			// If the attack is magic and the target a NPC double the damage
-			if( getFightSkill == MAGERY && ourTarg->IsNpc() )
+			// If the attack is magic and the target a NPC but not a human, double the damage
+			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !ourTarg->isHuman() )
 				damage *= 2;
 			break;
 	}
@@ -1534,6 +1558,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
 	const UI16 attackSkill		= UOX_MIN( 1000, (int)mChar.GetSkill( getFightSkill ) );
+	UI16 ammoID = 0;
+	UI16 ammoHue = 0;
+	UI16 ammoFX = 0;
+	UI16 ammoFXHue = 0;
+	UI16 ammoFXRender = 0;
+
 	//Defender Skill values
 	CItem *defWeapon			= getWeapon( ourTarg );
 	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
@@ -1573,10 +1603,16 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( getFightSkill == ARCHERY )
 		{
 			bowType = getBowType( mWeapon );
-			if( mChar.IsNpc() || DeleteItemAmount( &mChar, 1, ((bowType == BOWS) ? 0x0F3F : 0x1BFB) ) == 1 )
+			ammoID = mWeapon->GetAmmoID();
+			ammoHue = mWeapon->GetAmmoHue();
+			ammoFX = mWeapon->GetAmmoFX();
+			ammoFXHue = mWeapon->GetAmmoFXHue();
+			ammoFXRender = mWeapon->GetAmmoFXRender();
+
+			if( mChar.IsNpc() || ( ammoID != 0 && DeleteItemAmount( &mChar, 1, ammoID,  ammoHue ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
-				Effects->PlayMovingAnimation( &mChar, ourTarg, ((bowType == BOWS) ? 0x0F42 : 0x1BFE), 0x08, 0x00, 0x00 );
+				Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 			}
 			else
 			{
@@ -1602,8 +1638,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		
 		if( !skillPassed )
 		{
-			if( getFightSkill == ARCHERY && !RandomNum( 0, 2 ) )
-				Items->CreateItem( NULL, ourTarg, ((bowType == BOWS) ? 0x0F3F : 0x1BFB), 1, 0, OT_ITEM );
+			if( getFightSkill == ARCHERY && mWeapon->GetAmmoID() != 0 && !RandomNum( 0, 2 ) )
+			{
+				ammoID = mWeapon->GetAmmoID();
+				ammoHue = mWeapon->GetAmmoHue();
+				Items->CreateItem( NULL, ourTarg, ammoID, 1, ammoHue, OT_ITEM, false );
+			}
 
 			PlayMissedSoundEffect( &mChar );
 		}
@@ -1617,9 +1657,9 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			switch( ourTarg->GetID() )
 			{
 			case 0x025E:	// elf/human female
-			case 0x0191:	Effects->PlaySound( ourTarg, 0x014B );									break;
+			case 0x0191:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
 			case 0x025D:	// elf/human male
-			case 0x0190:	Effects->PlaySound( ourTarg, 0x0156 );									break;
+			case 0x0190:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
 			default:
 				{
 					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetID()].GetSound( SND_DEFEND );

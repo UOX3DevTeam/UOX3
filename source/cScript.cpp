@@ -1521,43 +1521,58 @@ bool cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 
 bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 {
+	// this method is causing the server to crash.
+	// or at least, something it is calling.
+	// I have traced the problem to in the call to JSEngine->AquireObject
+	// - spdddmn
+
 	if( tSock == NULL )
 		return false;
 	jsval params[2], rval;
 	int objType			= 2;	// 2 == null, 1 == char, 0 == item
 	CBaseObject *mObj	= NULL;
 	JSObject *myObj2	= NULL;
-	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-	params[0] = OBJECT_TO_JSVAL( myObj );
-	if( targeted >= BASEITEMSERIAL )
+	try
 	{
-		mObj	= calcItemObjFromSer( targeted );
-		objType = 0;
-	}
-	else
-	{
-		mObj	= calcCharObjFromSer( targeted );
-		objType	= 1;
-	}
-	if( !ValidateObject( mObj ) )
-	{
-		objType		= 2;
-		params[1]	= JSVAL_NULL;
-	}
-	else
-	{
-		if( objType == 0 )
-			myObj2 = JSEngine->AcquireObject( IUE_ITEM, mObj, runTime );
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+		if(myObj == NULL) 
+			return false;
+		params[0] = OBJECT_TO_JSVAL( myObj );
+		if( targeted >= BASEITEMSERIAL )
+		{
+			mObj	= calcItemObjFromSer( targeted );
+			objType = 0;
+		}
 		else
-			myObj2 = JSEngine->AcquireObject( IUE_CHAR, mObj, runTime );
-		params[1] = OBJECT_TO_JSVAL( myObj2 );
+		{
+			mObj	= calcCharObjFromSer( targeted );
+			objType	= 1;
+		}
+		if( !ValidateObject( mObj ) )
+		{
+			objType		= 2;
+			params[1]	= JSVAL_NULL;
+		}
+		else
+		{
+			if( objType == 0 )
+				myObj2 = JSEngine->AcquireObject( IUE_ITEM, mObj, runTime );
+			else
+				myObj2 = JSEngine->AcquireObject( IUE_CHAR, mObj, runTime );
+			params[1] = OBJECT_TO_JSVAL( myObj2 );
+		}
+		// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
+		JS_SetGlobalObject( targContext, targObject );
+		char targetFunction[32];
+		sprintf( targetFunction, "onCallback%i", callNum );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, targetFunction, 2, params, &rval );
+		return ( retVal == JS_TRUE );
 	}
-	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
-	JS_SetGlobalObject( targContext, targObject );
-	char targetFunction[32];
-	sprintf( targetFunction, "onCallback%i", callNum );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, targetFunction, 2, params, &rval );
-	return ( retVal == JS_TRUE );
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp DoCallback()");
+	}
+	return false;
 }
 
 JSObject *cScript::Object( void ) const
@@ -2520,6 +2535,258 @@ bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
 	if( retVal == JS_FALSE )
 		SetEventExists( seOnDamage, false );
 	
+	return ( retVal == JS_TRUE );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnBuy( CSocket *tSock, CChar *objVendor )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
+{
+	if( !ValidateObject( objVendor ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnBuy, "onBuy" ) )
+		return false;
+
+	SI08 funcRetVal	= -1;
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuy", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnBuy, false );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnSell( CSocket *tSock, CChar *objVendor )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
+{
+	if( !ValidateObject( objVendor ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnSell, "onSell" ) )
+		return false;
+
+	SI08 funcRetVal	= -1;
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSell", 2, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnSell, false );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows determining what happens when an item is in the
+//|					process of being bought from an NPC vendor
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+{
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ) )
+		return false;
+
+	SI08 funcRetVal	= -1;
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+	JSObject *myObj2	= NULL;
+	if( objItemBought->GetObjType() == OT_ITEM )
+		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnBuyFromVendor, false );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows determining what happens when an item is in the
+//|					process of being sold to an NPC vendor
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+{
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ) )
+		return false;
+
+	SI08 funcRetVal	= -1;
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+	JSObject *myObj2	= NULL;
+	if( objItemSold->GetObjType() == OT_ITEM )
+		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnSellToVendor, false );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows determining what happens AFTER an item has been
+//|					bought from an NPC vendor
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+{
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ) )
+		return false;
+
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+	JSObject *myObj2	= NULL;
+	if( objItemBought->GetObjType() == OT_ITEM )
+		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnBoughtFromVendor, false );
+	return ( retVal == JS_TRUE );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+//|	Programmer	-	Xuri
+//|	Date		-	26th November, 2011
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Allows determining what happens AFTER an item has been
+//|					sold to an NPC vendor
+//o---------------------------------------------------------------------------o
+SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+{
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == NULL )
+		return false;
+	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ) )
+		return false;
+
+	jsval rval, params[3];
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
+	JSObject *myObj2	= NULL;
+	if( objItemSold->GetObjType() == OT_ITEM )
+		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = OBJECT_TO_JSVAL( charObj );
+	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnSoldToVendor, false );
 	return ( retVal == JS_TRUE );
 }
 

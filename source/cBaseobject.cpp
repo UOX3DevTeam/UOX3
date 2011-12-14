@@ -1485,38 +1485,35 @@ bool CBaseObject::Load( std::ifstream &inStream )
 bool CBaseObject::HandleLine( UString &UTag, UString &data )
 {
 	static std::string staticTagName = "";
-	bool rvalue = false;
+	bool rvalue = true;
 	size_t numSections = 0;
 
-	switch( (UTag.data()[0]) )
+	switch( (UTag[0]) )
 	{
 		case 'C':
 			if( UTag == "COLOUR" )
 			{
 				colour = data.toUShort();
-				rvalue = true;
 			}
 			else if( UTag == "CARVE" )
 			{
 				carve	= data.toShort();
-				rvalue	= true;
 			}
+			else
+				rvalue = false;
 			break;
 		case 'D':
 			if( UTag == "DAMAGE" )
 			{
 				hidamage	= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
 				lodamage	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				rvalue		= true;
 			}
-			if( UTag == "DIRECTION" )
+			else if( UTag == "DIRECTION" )
 			{
 				dir		= data.toUByte();
-				rvalue	= true;
 			}
 			else if( UTag == "DEXTERITY" )
 			{
-				rvalue= true;
 				if( data.sectionCount( "," ) != 0 )
 				{
 					dexterity	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
@@ -1528,7 +1525,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			else if( UTag == "DEXTERITY2" )
 			{
 				dx2		= data.toShort();
-				rvalue	= true;
 			}
 			else if( UTag == "DEFENSE" )
 			{
@@ -1545,42 +1541,38 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				}
 				else
 					SetResist( data.toUShort(), PHYSICAL );
-				rvalue = true;
-			}
-			else if( UTag == "DWORDS" )
-			{
-				rvalue				= true;
 			}
 			else if( UTag == "DISABLED" )
 			{
 				SetDisabled( data.toUShort() == 1 );
-				rvalue = true;
 			}
+			else
+				rvalue = false;
 			break;
 		case 'F':
 			if( UTag == "FAME" )
 			{
 				SetFame( data.toShort() );
-				rvalue	= true;
 			}
+			else
+				rvalue = false; 
 			break;
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
 				hitpoints	= data.toShort();
-				rvalue		= true;
 			}
 			else if( UTag == "HIDAMAGE" )
 			{
 				hidamage	= data.toShort();
-				rvalue		= true;
 			}
+			else
+				rvalue = false;
 			break;
 		case 'I':
 			if( UTag == "ID" )
 			{
 				id		= data.toUShort();
-				rvalue	= true;
 			}
 			else if( UTag == "INTELLIGENCE" )
 			{
@@ -1591,25 +1583,25 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				}
 				else
 					intelligence = data.toShort();
-				rvalue = true;
 			}
 			else if( UTag == "INTELLIGENCE2" )
 			{
 				in2		= data.toShort();
-				rvalue	= true;
 			}
+			else 
+				rvalue = false;
 			break;
 		case 'K':
 			if( UTag == "KARMA" )
 			{
 				SetKarma( data.toShort() );
-				rvalue = true;
 			}
 			else if( UTag == "KILLS" )
 			{
 				SetKills( data.toShort() );
-				rvalue = true;
 			}
+			else 
+				rvalue = false;
 			break;
 		case 'L':
 			if( UTag == "LOCATION" )
@@ -1618,56 +1610,54 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				y			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
 				z			= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
 				worldNumber = data.section( ",", 3, 3 ).stripWhiteSpace().toUByte();
-				rvalue		= true;
 			}
 			else if( UTag == "LODAMAGE" )
 			{
 				lodamage	= data.toShort();
-				rvalue		= true;
 			}
+			else 
+				rvalue = false;
 			break;
 		case 'M':
 			if( UTag == "MANA" )
 			{
 				mana	= data.toShort();
-				rvalue	= true;
 			}
 			else if( UTag == "MULTIID" )
 			{
 				multis = (CMultiObj *)data.toULong();
-				rvalue = true;
 			}
+			else
+				rvalue = false;
 			break;
 		case 'N':
 			if( UTag == "NAME" )
 			{
 				name = data.substr( 0, MAX_NAME );
-				rvalue = true;
 			}
+			else 
+				rvalue = false;			
 			break;
 		case 'O':
-			if( UTag == "OBJECTTYPE" )
-			{
-				rvalue	= true;
-			}
-			else if( UTag == "OWNERID" )
+			if( UTag == "OWNERID" )
 			{
 				owner	= data.toULong();
-				rvalue	= true;
 			}
+			else
+				rvalue = false;			
 			break;
 		case 'P':
 			if( UTag == "POISONED" )
 			{
 				poisoned	= data.toUByte();
-				rvalue		= true;
 			}
+			else
+				rvalue = false;			
 			break;
 		case 'R':
 			if( UTag == "RACE" )
 			{
 				race	= data.toUShort();
-				rvalue	= true;
 			}
 			else if( UTag == "REPUTATION" )
 			{
@@ -1677,24 +1667,22 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 					SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
 					SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
 				}
-				rvalue	= true;
 			}
+			else
+				rvalue = false;			
 			break;
 		case 'S':
 			if( UTag == "STAMINA" )
 			{
 				stamina	= data.toShort();
-				rvalue	= true;
 			}
 			else if( UTag == "SPAWNERID" )
 			{
 				spawnserial = data.toULong();
-				rvalue		= true;
 			}
 			else if( UTag == "SERIAL" )
 			{
 				serial = data.toULong();
-				rvalue = true;
 			}
 			else if( UTag == "STRENGTH" )
 			{
@@ -1705,29 +1693,26 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				}
 				else
 					strength = data.toShort();
-				rvalue = true;
 			}
 			else if( UTag == "STRENGTH2" )
 			{
 				st2		= data.toShort();
-				rvalue	= true;
 			}
 			else if( UTag == "SCPTRIG" )
 			{
 				scriptTrig	= data.toUShort();
-				rvalue		= true;
 			}
+			else
+				rvalue = false;			
 			break;
 		case 'T':
 			if( UTag == "TITLE" )
 			{
 				title = data.substr( 0, MAX_TITLE );
-				rvalue = true;
 			}
 			else if( UTag == "TAGNAME" )
 			{
 				staticTagName	= data;
-				rvalue			= true;
 			}
 			else if( UTag == "TAGVAL" )
 			{
@@ -1737,7 +1722,6 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				tagvalObject.m_Destroy		= FALSE;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
-				rvalue = true;
 			}
 			else if( UTag == "TAGVALS" )
 			{
@@ -1748,27 +1732,28 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				tagvalObject.m_Destroy=FALSE;
 				tagvalObject.m_StringValue=localString;
 				SetTag( staticTagName, tagvalObject );
-				rvalue = true;
+
 			}
+		else
+			rvalue = false;			
 			break;
 		case 'V':
 			if( UTag == "VISIBLE" )
 			{
 				visible	= (VisibleTypes)data.toByte();
-				rvalue	= true;
 			}
 			break;
 		case 'W':
 			if( UTag == "WEIGHT" )
 			{
 				SetWeight( data.toLong() );
-				rvalue = true;
 			}
 			else if( UTag == "WORLDNUMBER" )
 			{
 				worldNumber = data.toUByte();
-				rvalue		= true;
 			}
+		else
+			rvalue = false;			
 			break;
 		case 'X':
 			if( UTag == "XYZ" )
@@ -1776,8 +1761,9 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				x		= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
 				y		= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
 				z		= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
-				rvalue	= true;
 			}
+		else
+			rvalue = false;			
 			break;
 		default:
 			rvalue = false;

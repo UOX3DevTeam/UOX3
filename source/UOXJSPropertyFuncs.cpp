@@ -33,6 +33,7 @@
 #include "ssection.h"
 #include "classes.h"
 #include "movement.h"
+#include "Dictionary.h"
 
 #include "jsobj.h"
 #include "jsutil.h"
@@ -96,6 +97,7 @@ namespace UOX
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSString *tString = NULL;
+		UString spellName = "";
 		size_t i;
 		bool bDone = false;
 
@@ -114,12 +116,24 @@ namespace UOX
 					}
 					break;
 				case CSP_ACTION:			*vp = INT_TO_JSVAL( gPriv->Action() );					break;
+				case CSP_BASEDMG:			*vp = INT_TO_JSVAL( gPriv->BaseDmg() );					break;
 				case CSP_DELAY:				*vp = INT_TO_JSVAL( gPriv->Delay() );					break;
 				case CSP_HEALTH:			*vp = INT_TO_JSVAL( gPriv->Health() );					break;
 				case CSP_STAMINA:			*vp = INT_TO_JSVAL( gPriv->Stamina() );					break;
 				case CSP_MANA:				*vp = INT_TO_JSVAL( gPriv->Mana() );					break;
 				case CSP_MANTRA:			tString = JS_NewStringCopyZ( cx, gPriv->Mantra().c_str() );
 											*vp = STRING_TO_JSVAL( tString );
+											break;
+				case CSP_NAME:				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
+											{
+												if( &Magic->spells[i] == gPriv - 1  ) 
+												{
+													spellName = Dictionary->GetEntry( magic_table[i].spell_name );
+													tString = JS_NewStringCopyZ( cx, spellName.c_str() );
+													*vp = STRING_TO_JSVAL( tString );
+													bDone = true;
+												}
+											}
 											break;
 				case CSP_STRTOSAY:			tString = JS_NewStringCopyZ( cx, gPriv->StringToSay().c_str() );
 											*vp = STRING_TO_JSVAL( tString );
@@ -280,6 +294,7 @@ namespace UOX
 				case CIP_RESTOCK:		*vp = INT_TO_JSVAL( gPriv->GetRestock() );		break;
 				case CIP_DEVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDevineLocked() ); break;
 				case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
+				case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
 				case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
 				case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
 				case CIP_DESC:
@@ -304,6 +319,11 @@ namespace UOX
 				case CIP_CANBELOCKEDDOWN:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeLockedDown() );	break;
 				case CIP_ISCONTTYPE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsContType() );			break;
 				case CIP_CARVESECTION:	*vp = INT_TO_JSVAL( gPriv->GetCarve() );				break;
+				case CIP_AMMOID:		*vp = INT_TO_JSVAL( gPriv->GetAmmoID() );				break;
+				case CIP_AMMOHUE:		*vp = INT_TO_JSVAL( gPriv->GetAmmoHue() );				break;
+				case CIP_AMMOFX:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFX() );				break;
+				case CIP_AMMOFXHUE:		*vp = INT_TO_JSVAL( gPriv->GetAmmoFXHue() );			break;
+				case CIP_AMMOFXRENDER:	*vp = INT_TO_JSVAL( gPriv->GetAmmoFXRender() );			break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -411,7 +431,7 @@ namespace UOX
 										break;
 				case CIP_LODAMAGE:		gPriv->SetLoDamage( (SI16)encaps.toInt() );					break;
 				case CIP_HIDAMAGE:		gPriv->SetHiDamage( (SI16)encaps.toInt() );					break;
-				case CIP_SPEED:			gPriv->SetSpeed( (UI08)encaps.toInt() );						break;
+				case CIP_SPEED:			gPriv->SetSpeed( (UI08)encaps.toInt() );					break;
 				case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
 				case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
 				case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
@@ -424,6 +444,7 @@ namespace UOX
 				case CIP_RESTOCK:		gPriv->SetRestock( (UI16)encaps.toInt() );					break;
 				case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
 				case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
+				case CIP_WEIGHTMAX:		gPriv->SetWeightMax( (SI32)encaps.toInt() );				break;
 				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
 				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
@@ -443,6 +464,11 @@ namespace UOX
 				case CIP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );						break;
 				case CIP_ISDOOROPEN:	gPriv->SetDoorOpen( encaps.toBool() );						break;
 				case CIP_CARVESECTION:	gPriv->SetCarve( encaps.toInt() );							break;
+				case CIP_AMMOID:		gPriv->SetAmmoID( (UI16)encaps.toInt() );					break;
+				case CIP_AMMOHUE:		gPriv->SetAmmoHue( (UI16)encaps.toInt() );					break;
+				case CIP_AMMOFX:		gPriv->SetAmmoFX( (UI16)encaps.toInt() );					break;
+				case CIP_AMMOFXHUE:		gPriv->SetAmmoFXHue( (UI16)encaps.toInt() );				break;
+				case CIP_AMMOFXRENDER:	gPriv->SetAmmoFXRender( (UI16)encaps.toInt() );				break;
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
@@ -1047,7 +1073,7 @@ namespace UOX
 					{
 						gPriv->SetShop( false );
 						CItem *tPack = NULL;
-						for( UI08 i = IL_BUYCONTAINER; i <= IL_SELLCONTAINER; ++i )
+						for( UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i )
 						{
 							tPack = gPriv->GetItemAtLayer( static_cast<ItemLayers>(i) );
 							if( ValidateObject( tPack ) )

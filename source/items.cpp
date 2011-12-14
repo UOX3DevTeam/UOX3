@@ -71,6 +71,22 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 
 		switch( tag )
 		{
+			case DFNTAG_AMMO:
+										//applyTo->SetAmmoID( static_cast<UI16>( ndata ));
+										//applyTo->SetAmmoHue( static_cast<UI16>( odata ));
+										applyTo->SetAmmoID( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+										if( cdata.sectionCount( " " ) > 0 )
+											applyTo->SetAmmoHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
+										break;
+			case DFNTAG_AMMOFX:
+										applyTo->SetAmmoFX( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+										if( cdata.sectionCount( " " ) > 0 )
+										{
+											applyTo->SetAmmoFXHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
+											if( cdata.sectionCount( " " ) > 1 )
+												applyTo->SetAmmoFXRender( cdata.section( " ", 2, 2 ).stripWhiteSpace().toUShort() );
+										}
+										break;
 			case DFNTAG_AMOUNT:			
 										if( ndata > 0 )
 											applyTo->SetAmount( ndata );					
@@ -178,6 +194,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										applyTo->SetSellValue( odata );
 										break;
 			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
+			case DFNTAG_WEIGHTMAX:		applyTo->SetWeightMax( ndata );				break;
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 			case DFNTAG_ADDMENUITEM:
 				Console.Print(cdata.c_str());
@@ -879,6 +896,11 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 		DupeItem( s, i, MAX_STACK );
 	}
 	c->SetAmount( amount );
+
+	cScript *toGrab = JSMapping->GetScript( c->GetScriptTrigger() );
+	if( toGrab != NULL )
+		toGrab->OnCreate( c, false );
+
 	return c;
 }
 

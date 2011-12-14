@@ -271,6 +271,7 @@ function getWeaponType( pUser )
 			pUser.SetTag( "weaponType", weaponType );	
 		}
 	}
+	return true;
 }
 
 function getCombatSkill()
@@ -317,4 +318,5 @@ function getCombatSkill()
 		// Nullify the temporary tag that was set by calling getWeaponType function earlier
 		pUser.SetTag( "weaponType", null );
 	}
+	return true;
 }
