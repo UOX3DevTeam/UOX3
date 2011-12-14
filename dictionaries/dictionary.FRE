@@ -563,8 +563,17 @@
 526=Entrez la nouvelle valeur de Colorable pour l'objet. (0/1)
 527=Entrez la nouvelle valeur de Corpse pour l'objet. (0/1)
 528=Entrez le nouveau nom de Createur pour l'objet.
-529=Bouton presse inconnu.
-530=Bouton presse inconnu.
+529=Entrez la nouvelle valeur de Visible pour l'objet. (0/1)
+530=Entrez la nouvelle valeur de Creator serial pour l'objet.
+531=Entrez la nouvelle valeur de Script Trigger ID pour l'objet.
+532=Entrez la nouvelle valeur de AmmoID pour l'objet.
+533=Entrez la nouvelle valeur de AmmoHue pour l'objet.
+534=Entrez la nouvelle valeur de AmmoFX pour l'objet.
+535=Entrez la nouvelle valeur de AmmoFXHue pour l'objet.
+536=Entrez la nouvelle valeur de AmmoFXRender pour l'objet (0-7).
+537=Entrez la nouvelle valeur de WeightMax pour l'objet en decimal.
+538=Entrez la nouvelle valeur de spawnobj/spawnobjlist pour l'objet.
+539=Bouton presse inconnu.
 540=Il y a eu une erreur au moment de vous enlever de la ville, contactez un MJ rapidement!
 541=Vous ne pouvez voir les taxes d'une ville dans laquelle vous n'etes pas.
 542=Selectionnez la personne pour qui voter.
@@ -801,7 +810,7 @@
 699=Vous reussisez a resister a l'energie magique!
 700=Vous n'etes plus immobilise.
 701=Votre concentration a ete interrompue
-702=Vous n'avez pas assez de reactifs pour lancer ce sort. [
+702=Vous n'avez pas assez de reactifs pour lancer ce sort.
 703=Vous avez evite le boulet de canon, et subissez moins de domages.
 704=Vous etes en prison et ne pouvez lancer de sorts!
 705=Ceci n'est pas autorise ici.
@@ -1908,8 +1917,9 @@
 1783=You are too fatigued to move, because you are carrying too much weight!
 1784=You are overloaded. Current/Max: %i/%i
 1785=That item is not currently locked down.
-1786=The lock down the targeted item.
+1786=You lock down the targeted item.
 1787=You release the targeted item.
+1788=(%i lockdowns remaining)
 }
 
 EOF

@@ -519,9 +519,15 @@
 528=Enter the new Corpse toggle for the item. (0/1)
 529=Enter the new Visible toggle for the item. (0/1)
 530=Enter the new Creator serial for the item.
-531=Enter the new spawnobj/spawnobjlist for the item.
-532=Unknown button pressed.
-533=Unknown button pressed.
+531=Enter the new ScriptTrigger ID for the item.
+532=Enter the new AmmoID value for the item.
+533=Enter the new AmmoHue value for the item.
+534=Enter the new AmmoFX value for the item.
+535=Enter the new AmmoFXHue value for the item.
+536=Enter the new AmmoFXRender value for the item (0-7).
+537=Enter the new WeightMax value for the item in decimal.
+538=Enter the new spawnobj/spawnobjlist for the item.
+539=Unknown button pressed.
 540=There was an error removing you from your town, contact a GM promptly!
 541=Can't view taxes for a town you are not in.
 542=Select person to vote for.
@@ -684,7 +690,7 @@
 699=You feel yourself resisting magical energy!
 700=You are no longer frozen.
 701=Your concentration has been broken.
-702=You do not have enough reagents to cast that spell. [
+702=You do not have enough reagents to cast that spell.
 703=You have dodged the cannon blast, and have taken less damage.
 704=You are in jail and cannot cast spells!
 705=This is not allowed here.
@@ -1749,8 +1755,9 @@
 1783=You are too fatigued to move, because you are carrying too much weight!
 1784=You are overloaded. Current/Max: %i/%i
 1785=That item is not currently locked down.
-1786=The lock down the targeted item.
+1786=You lock down the targeted item.
 1787=You release the targeted item.
+1788=(%i lockdowns remaining)
 }
 EOF
 
