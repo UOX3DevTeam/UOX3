@@ -29,6 +29,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "stamina",			CSP_STAMINA,			JSPROP_ENUMANDPERM },
 	{ "mana",				CSP_MANA,				JSPROP_ENUMANDPERM },
 	{ "mantra",				CSP_MANTRA,				JSPROP_ENUMANDPERM },
+	{ "name",				CSP_NAME,				JSPROP_ENUMANDPERM },
 	{ "strToSay",			CSP_STRTOSAY,			JSPROP_ENUMANDPERM },
 	{ "scrollLow",			CSP_SCROLLLOW,			JSPROP_ENUMANDPERM },
 	{ "scrollHigh",			CSP_SCROLLHIGH,			JSPROP_ENUMANDPERM },
@@ -54,6 +55,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM },
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM },
+	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,				(UI08)0			   }
 };
 
@@ -296,6 +298,7 @@ static JSPropertySpec CItemProps[] =
 	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM },
 	{ "devinelock",		CIP_DEVINELOCK,		JSPROP_ENUMANDPERM },
 	{ "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM },
+	{ "weightmax",		CIP_WEIGHTMAX,		JSPROP_ENUMANDPERM },
 	{ "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM },
 	{ "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM },
 	{ "desc",			CIP_DESC,			JSPROP_ENUMANDPERM },
@@ -318,6 +321,11 @@ static JSPropertySpec CItemProps[] =
 	{ "canBeLockedDown",CIP_CANBELOCKEDDOWN,JSPROP_ENUMPERMRO },
 	{ "isContType",		CIP_ISCONTTYPE,		JSPROP_ENUMPERMRO },
 	{ "carveSection",	CIP_CARVESECTION,	JSPROP_ENUMANDPERM },
+	{ "ammoID",			CIP_AMMOID,			JSPROP_ENUMANDPERM },
+	{ "ammoHue",		CIP_AMMOHUE,		JSPROP_ENUMANDPERM },
+	{ "ammoFX",			CIP_AMMOFX,			JSPROP_ENUMANDPERM },
+	{ "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM },
+	{ "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM },
 
 	// The Following vars are specific to CSpawnItem objects
 	{ "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM },

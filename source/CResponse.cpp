@@ -608,6 +608,16 @@ CVendorSellResponse::CVendorSellResponse( bool vendVal, std::string text ) : CBa
 }
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
+
+	//Check if vendor has onSell script running
+	UI16 charTrig		= Npc->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnSell( mSock, Npc ) ) //if script returns true, don't continue
+			return false;
+	}
+
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 	CPSellList toSend;
 	if( toSend.CanSellItems( (*mChar), (*Npc) ) )
@@ -676,7 +686,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 					Npc->TextMessage( mSock, 1327, TALK, false );
 			}
 			if( give ) 
-				Items->CreateItem( mSock, mChar, 0x0EED, give, 0, OT_ITEM, true );
+				Items->CreateScriptItem( mSock, mChar, "0x0EED", give, OT_ITEM, true );
 			
 			Npc->TextMessage( mSock, 1328, TALK, false, earned, pay, give );
 		} 

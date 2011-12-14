@@ -36,6 +36,7 @@ public:
 	bool CheckStamina( CChar *s, int num );
 	bool CheckHealth( CChar *s, int num );
 	bool CheckMagicReflect( CChar *i );
+
 	void MagicDamage( CChar *p, SI16 amount, CChar *attacker = NULL, WeatherType element = NONE );
 	void SpellFail( CSocket *s );
 	void SubtractMana( CChar *s, int mana );

@@ -184,6 +184,7 @@ public:
 	virtual bool			DumpBody( std::ofstream &outStream ) const;
 	bool					DumpFooter( std::ofstream &outStream ) const;
 	bool					Load( std::ifstream &inStream );
+
 	virtual bool			HandleLine( UString &UTag, UString &data );
 
 	RACEID					GetRace( void ) const;

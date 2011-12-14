@@ -566,7 +566,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		addNewbieItem( tSock, mChar, "DEFAULT FEMALE", pantsColour, shirtColour );
 
 	// Give the character some gold
-	CreatedItems[GOLD] = Items->CreateItem( tSock, mChar, 0x0EED, cwmWorldState->ServerData()->ServerStartGold(), 0, OT_ITEM, true );
+	CreatedItems[GOLD] = Items->CreateScriptItem( tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true );
 }
 //o---------------------------------------------------------------------------o
 //|	Function	-	void createChar( CSocket *mSock )
@@ -949,9 +949,9 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 		switch( iLayer )
 		{
 		case IL_NONE:
-		case IL_BUYCONTAINER:
-		case IL_BOUGHTCONTAINER:
 		case IL_SELLCONTAINER:
+		case IL_BOUGHTCONTAINER:
+		case IL_BUYCONTAINER:
 		case IL_BANKBOX:
 			continue;
 		case IL_HAIR:

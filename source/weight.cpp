@@ -422,11 +422,12 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 		return checkCharWeight( ourChar, (CChar *)pack->GetCont(), item );
 
 	const SI32 packWeight = pack->GetWeight();
+	SI32 packWeightMax = pack->GetWeightMax();
 	SI32 itemWeight = item->GetWeight();
 	if( item->GetAmount() > 1 )
 		itemWeight *= item->GetAmount();
-	if( (itemWeight + packWeight) <= MAX_PACKWEIGHT )
-	{	// Calc the weight and compare to MAX_PACKWEIGHT
+	if( (itemWeight + packWeight) <= packWeightMax ) //<= MAX_PACKWEIGHT )
+	{	// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
 		if( pack->GetCont() == NULL )	// No container above pack
 			return true;
 		if( pack->GetContSerial() >= BASEITEMSERIAL )	// pack is in another pack, lets ensure it won't overload that pack

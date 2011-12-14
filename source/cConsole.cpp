@@ -207,6 +207,7 @@ CConsole& CConsole::operator<<( CBaseObject *outPut )
 	(*this) << outPut->GetSerial();
 	return (*this);
 }
+
 CConsole& CConsole::operator<<( std::ostream& outPut )
 {
 	StartOfLineCheck();
@@ -1279,22 +1280,22 @@ void CConsole::DisplaySettings( void )
 
 	// Server.scp status --- By Magius(CHE)
 	(*this) << "Server Settings:" << myendl;
-	
+
 	(*this) << "   -Archiving[";
 	if( cwmWorldState->ServerData()->ServerBackupStatus() )
 		(*this) << "Enabled]. (" << cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ) << ")" << myendl;
 	else 
 		(*this) << "Disabled]" << myendl;
-	
+
 	(*this) << "   -Weapons & Armour Rank System: ";
 	(*this) << activeMap[cwmWorldState->ServerData()->RankSystemStatus()] << myendl;
-	
+
 	(*this) << "   -Vendors buy by item name: ";
 	(*this) << activeMap[cwmWorldState->ServerData()->SellByNameStatus()] << myendl;
-	
+
 	(*this) << "   -Adv. Trade System: ";
 	(*this) << activeMap[cwmWorldState->ServerData()->TradeSystemStatus()] << myendl;
-	
+
 	(*this) << "   -Crash Protection: ";
 	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() < 1 )
 		(*this) << "Disabled!" << myendl;

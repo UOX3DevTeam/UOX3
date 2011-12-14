@@ -1,7 +1,7 @@
 function onUseChecked( pUser, iUsed )
 { 
-	var Dice1 = RandomNumber( 1, 6 );
-	var Dice2 = RandomNumber( 1, 6 );
+	var iDice1 = RandomNumber( 1, 6 );
+	var iDice2 = RandomNumber( 1, 6 );
 	
 	var pName = pUser.name;
 	

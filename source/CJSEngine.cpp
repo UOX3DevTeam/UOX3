@@ -136,7 +136,7 @@ namespace UOX
 	JSObject *CJSEngine::AcquireObject( IUEEntries iType, void *index, UI08 runTime )
 	{
 		JSObject *retVal = NULL;
-		if( runTime < runtimeList.size() )
+		if( index != NULL && runTime < runtimeList.size() )
 			retVal = runtimeList[runTime]->AcquireObject( iType, index );
 
 		return retVal;

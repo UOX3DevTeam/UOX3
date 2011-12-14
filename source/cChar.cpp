@@ -3683,10 +3683,13 @@ bool CChar::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CChar::Delete( void )
 {
-	++(cwmWorldState->deletionQueue[this]);
-	Cleanup();
-	SetDeleted( true );
-	ShouldSave( false );
+	if( cwmWorldState->deletionQueue.count(this) == 0 )
+	{
+		++(cwmWorldState->deletionQueue[this]);
+		Cleanup();
+		SetDeleted( true );
+		ShouldSave( false );
+	}
 }
 
 // Player Only Functions
@@ -5514,7 +5517,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 		CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
 		if( mSock != NULL )
 			mSock->Send( &toDisplay );
-		if( attSock != NULL )
+		if( attSock != NULL && attSock != mSock )
 			attSock->Send( &toDisplay );
 		if( attOwnerSock != NULL )
 			attOwnerSock->Send( &toDisplay );

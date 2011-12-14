@@ -1299,6 +1299,48 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 		bool bFound			= false;
 		int pf_neg			= ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
 		UI08 newDir			= Direction( newx, newy, gx, gy );
+
+		// Temporary random fix for NPCs queuing up in a long line... add random change of direction
+		// ----->
+		if( RandomNum( 0, 10 ) == 10 )
+		{
+			if( RandomNum( 0, 2 ) == 2 )
+			{
+				if( RandomNum( 0, 1 ) == 1 )
+				{
+					if( newDir < 0x06 )
+						newDir += 0x02;
+					else
+						newDir = 0x00;
+				}
+				else
+				{
+					if( newDir > 0x01 )
+						newDir -= 0x02;
+					else
+						newDir = 0x07;
+				}
+			}
+			else
+			{
+				if( RandomNum( 0, 1 ) == 1 )
+				{
+					if( newDir < 0x07 )
+						newDir += 0x01;
+					else
+						newDir = 0x00;
+				}
+				else
+				{
+					if( newDir > 0x00 )
+						newDir -= 0x01;
+					else
+						newDir = 0x07;
+				}
+			}
+		}
+		// <-----
+
 		bool canMoveInDir	= false;
 		if( newDir < 8 && calc_move( c, newx, newy, newz, newDir ) )
 		{
@@ -1398,6 +1440,8 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 		shouldRun = (( j&0x80 ) != 0);
 		NpcWalk( &mChar, j, mChar.GetNpcWander() );
 		break;
+	case WT_FROZEN:			// No movement whatsoever!
+		break;
 	case WT_FLEE: //FLEE!!!!!!
 		kChar = mChar.GetTarg();
 		if( !ValidateObject( kChar ) )
@@ -1487,7 +1531,7 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 //o--------------------------------------------------------------------------o	
 void cMovement::NpcMovement( CChar& mChar )
 {
-	if( mChar.IsFrozen() || !mChar.IsNpc() )
+	if( mChar.IsFrozen() || !mChar.IsNpc() || mChar.GetNpcWander() == WT_FROZEN )
 		return;
 
 	bool shouldRun		= false;
@@ -1504,6 +1548,7 @@ void cMovement::NpcMovement( CChar& mChar )
             if( ValidateObject( l ) && ( isOnline( (*l) ) || l->IsNpc() ) )
             {
 				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
+
 				const UI16 charDist	= getDist( &mChar, l );
                 if( charDir < 8 && ( charDist <= 1 || ( Combat->getCombatSkill( Combat->getWeapon( &mChar ) ) == ARCHERY && charDist <= cwmWorldState->ServerData()->CombatArcherRange() ) ) )
 				{
@@ -1946,6 +1991,48 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			while( parentSer != 0 )
 			{
 				UI08 newDir = Direction( curX, curY, targX, targY );
+
+				// Temporary random fix for NPCs queuing up in a long line... add random change of direction
+				// ----->
+				if( RandomNum( 0, 10 ) == 10 )
+				{
+					if( RandomNum( 0, 5 ) == 5 )
+					{
+						if( RandomNum( 0, 1 ) == 1 )
+						{
+							if( newDir < 0x06 )
+								newDir += 0x02;
+							else
+								newDir = 0x00;
+						}
+						else
+						{
+							if( newDir > 0x01 )
+								newDir -= 0x02;
+							else
+								newDir = 0x07;
+						}
+					}
+					else
+					{
+						if( RandomNum( 0, 1 ) == 1 )
+						{
+							if( newDir < 0x07 )
+								newDir += 0x01;
+							else
+								newDir = 0x00;
+						}
+						else
+						{
+							if( newDir > 0x00 )
+								newDir -= 0x01;
+							else
+								newDir = 0x07;
+						}
+					}
+				}
+				// <-----
+
 				if( willRun )
 					newDir |= 0x80;
 

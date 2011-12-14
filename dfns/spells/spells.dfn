@@ -3,7 +3,7 @@
 // #~               Originally Created in 1998 by Tauriel               ~#
 // ~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~
 // ***********************************************************************
-// * Last Updated:    	14 May 2003                                     *
+// * Last Updated:    	6 November 2011                                  *
 // ***********************************************************************
 
 // ENABLE: 0 - No, 1 - Yes           MANTRA: Words of Power
@@ -27,6 +27,7 @@
 // Clumsy
 [SPELL 1]
 {
+NAME=Clumsy
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -54,6 +55,7 @@ SOUNDFX=0x01DF
 // Create Food
 [SPELL 2]
 {
+NAME=Create Food
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -79,6 +81,7 @@ SOUNDFX=0x01E3
 // Feeblemind
 [SPELL 3]
 {
+NAME=Feeblemind
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -106,7 +109,9 @@ SOUNDFX=0x01E4
 // Heal
 [SPELL 4]
 {
+NAME=Heal
 ENABLE=1
+BASEDMG=4
 CIRCLE=1
 MANA=4
 LOSKILL=11
@@ -133,7 +138,9 @@ SOUNDFX=0x01F2
 // Magic Arrow
 [SPELL 5]
 {
+NAME=Magic Arrow
 ENABLE=1
+BASEDMG=8
 CIRCLE=1
 MANA=4
 LOSKILL=11
@@ -160,6 +167,7 @@ MOVEFX=36 E4 05 00 01
 // Night Sight
 [SPELL 6]
 {
+NAME=Night Sight
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -186,6 +194,7 @@ SOUNDFX=0x01E3
 // Reactive Armour
 [SPELL 7]
 {
+NAME=Reactive Armour
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -213,6 +222,7 @@ SOUNDFX=0x01EE
 // Weaken
 [SPELL 8]
 {
+NAME=Weaken
 ENABLE=1
 CIRCLE=1
 MANA=4
@@ -240,6 +250,7 @@ SOUNDFX=0x01E6
 // Agility
 [SPELL 9]
 {
+NAME=Agility
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -267,6 +278,7 @@ SOUNDFX=0x01E7
 // Cunning
 [SPELL 10]
 {
+NAME=Cunning
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -294,6 +306,7 @@ SOUNDFX=0x01EB
 // Cure
 [SPELL 11]
 {
+NAME=Cure
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -321,7 +334,9 @@ SOUNDFX=0x01E3
 // Harm
 [SPELL 12]
 {
+NAME=Harm
 ENABLE=1
+BASEDMG=12
 CIRCLE=2
 MANA=6
 LOSKILL=61
@@ -348,6 +363,7 @@ SOUNDFX=0x01F1
 // Magic Trap
 [SPELL 13]
 {
+NAME=Magic Trap
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -374,6 +390,7 @@ SOUNDFX=0x01F0
 // Magic Untrap
 [SPELL 14]
 {
+NAME=Magic Untrap
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -400,6 +417,7 @@ SOUNDFX=0x01F1
 // Protection
 [SPELL 15]
 {
+NAME=Protection
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -427,6 +445,7 @@ SOUNDFX=0x01F8
 // Strength
 [SPELL 16]
 {
+NAME=Strength
 ENABLE=1
 CIRCLE=2
 MANA=6
@@ -454,6 +473,7 @@ SOUNDFX=0x01EE
 // Bless
 [SPELL 17]
 {
+NAME=Bless
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -481,7 +501,9 @@ SOUNDFX=0x01EA
 // Fireball
 [SPELL 18]
 {
+NAME=Fireball
 ENABLE=1
+BASEDMG=17
 CIRCLE=3
 MANA=9
 LOSKILL=161
@@ -508,6 +530,7 @@ SOUNDFX=0x015E
 // Magic Lock
 [SPELL 19]
 {
+NAME=Magic Lock
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -534,6 +557,7 @@ SOUNDFX=0x0200
 // Poison
 [SPELL 20]
 {
+NAME=Poison
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -561,6 +585,7 @@ SOUNDFX=0x01E1
 // Telekinesis
 [SPELL 21]
 {
+NAME=Telekinesis
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -586,6 +611,7 @@ SOUNDFX=0x01F6
 // Teleport
 [SPELL 22]
 {
+NAME=Teleport
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -613,6 +639,7 @@ SOUNDFX=0x01FE
 // Unlock
 [SPELL 23]
 {
+NAME=Unlock
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -639,6 +666,7 @@ SOUNDFX=0x0200
 // Wall of Stone
 [SPELL 24]
 {
+NAME=Wall of Stone
 ENABLE=1
 CIRCLE=3
 MANA=9
@@ -665,6 +693,7 @@ SOUNDFX=0x01F6
 // Arch Cure
 [SPELL 25]
 {
+NAME=Arch Cure
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -692,6 +721,7 @@ SOUNDFX=0x01E9
 // Arch Protection
 [SPELL 26]
 {
+NAME=Arch Protection
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -718,6 +748,7 @@ SOUNDFX=0x01F8
 // Curse
 [SPELL 27]
 {
+NAME=Curse
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -745,6 +776,7 @@ SOUNDFX=0x01E1
 // Fire Field
 [SPELL 28]
 {
+NAME=Fire Field
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -771,7 +803,9 @@ SOUNDFX=0x020C
 // Greater Heal
 [SPELL 29]
 {
+NAME=Greater Heal
 ENABLE=1
+BASEDMG=12
 CIRCLE=4
 MANA=11
 LOSKILL=261
@@ -798,7 +832,9 @@ SOUNDFX=0x0202
 // Lightning
 [SPELL 30]
 {
+NAME=Lightning
 ENABLE=1
+BASEDMG=21
 CIRCLE=4
 MANA=11
 LOSKILL=261
@@ -824,6 +860,7 @@ SOUNDFX=0x0029
 // Mana Drain
 [SPELL 31]
 {
+NAME=Mana Drain
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -851,6 +888,7 @@ SOUNDFX=0x01F9
 // Recall
 [SPELL 32]
 {
+NAME=Recall
 ENABLE=1
 CIRCLE=4
 MANA=11
@@ -877,6 +915,7 @@ SOUNDFX=0x01FC
 // Blade Spirits
 [SPELL 33]
 {
+NAME=Blade Spirits
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -904,6 +943,7 @@ SOUNDFX=0x0212
 // Dispel Field
 [SPELL 34]
 {
+NAME=Dispel Field
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -930,6 +970,7 @@ SOUNDFX=0x0201
 // Incognito
 [SPELL 35]
 {
+NAME=Incognito
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -955,6 +996,7 @@ SOUNDFX=0x0203
 // Magic Reflection
 [SPELL 36]
 {
+NAME=Magic Reflection
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -981,7 +1023,9 @@ SOUNDFX=0x01E9
 // Mind Blast
 [SPELL 37]
 {
+NAME=Mind Blast
 ENABLE=1
+BASEDMG=32
 CIRCLE=5
 MANA=14
 LOSKILL=361
@@ -1008,6 +1052,7 @@ SOUNDFX=0x0213
 // Paralyze
 [SPELL 38]
 {
+NAME=Paralyze
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -1035,6 +1080,7 @@ SOUNDFX=0x0204
 // Poison Field
 [SPELL 39]
 {
+NAME=Poison Field
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -1061,6 +1107,7 @@ SOUNDFX=0x020C
 // Summon Creature
 [SPELL 40]
 {
+NAME=Summon Creature
 ENABLE=1
 CIRCLE=5
 MANA=14
@@ -1085,6 +1132,7 @@ FLAGS=0x0005
 // Dispel
 [SPELL 41]
 {
+NAME=Dispel
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1112,7 +1160,9 @@ SOUNDFX=0x0204
 // Energy Bolt
 [SPELL 42]
 {
+NAME=Energy Bolt
 ENABLE=1
+BASEDMG=42
 CIRCLE=6
 MANA=20
 LOSKILL=461
@@ -1120,7 +1170,7 @@ HISKILL=901
 SCLO=261
 SCHI=701
 MANTRA=Corp Por
-ACTION=17
+ACTION=16
 DELAY=30
 ASH=0
 DRAKE=0
@@ -1139,7 +1189,9 @@ MOVEFX=37 9F 07 00 01
 // Explosion
 [SPELL 43]
 {
+NAME=Explosion
 ENABLE=1
+BASEDMG=42
 CIRCLE=6
 MANA=20
 LOSKILL=461
@@ -1166,6 +1218,7 @@ SOUNDFX=0x0207
 // Invisibility
 [SPELL 44]
 {
+NAME=Invisibility
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1192,6 +1245,7 @@ SOUNDFX=0x0203
 // Mark
 [SPELL 45]
 {
+NAME=Mark
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1218,6 +1272,7 @@ SOUNDFX=0x01FA
 // Mass Curse
 [SPELL 46]
 {
+NAME=Mass Curse
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1245,6 +1300,7 @@ SOUNDFX=0x01FC
 // Paralyze Field
 [SPELL 47]
 {
+NAME=Paralyze Field
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1271,6 +1327,7 @@ SOUNDFX=0x020B
 // Reveal
 [SPELL 48]
 {
+NAME=Reveal
 ENABLE=1
 CIRCLE=6
 MANA=20
@@ -1297,7 +1354,9 @@ SOUNDFX=0x01FD
 // Chain Lightning
 [SPELL 49]
 {
+NAME=Chain Lightning
 ENABLE=1
+BASEDMG=49
 CIRCLE=7
 MANA=40
 LOSKILL=661
@@ -1323,6 +1382,7 @@ SOUNDFX=0x0029
 // Energy Field
 [SPELL 50]
 {
+NAME=Energy Field
 ENABLE=1
 CIRCLE=7
 MANA=40
@@ -1349,7 +1409,9 @@ SOUNDFX=0x0210
 // Flamestrike
 [SPELL 51]
 {
+NAME=Flamestrike
 ENABLE=1
+BASEDMG=49
 CIRCLE=7
 MANA=40
 LOSKILL=661
@@ -1376,6 +1438,7 @@ SOUNDFX=0x0208
 // Gate Travel
 [SPELL 52]
 {
+NAME=Gate Travel
 ENABLE=1
 CIRCLE=7
 MANA=40
@@ -1402,6 +1465,7 @@ SOUNDFX=0x020E
 // Mana Vampire
 [SPELL 53]
 {
+NAME=Mana Vampire
 ENABLE=1
 CIRCLE=7
 MANA=40
@@ -1429,6 +1493,7 @@ SOUNDFX=0x01FA
 // Mass Dispel
 [SPELL 54]
 {
+NAME=Mass Dispel
 ENABLE=1
 CIRCLE=7
 MANA=40
@@ -1456,7 +1521,9 @@ SOUNDFX=0x0204
 // Meteor Swarm
 [SPELL 55]
 {
+NAME=Meteor Swarm
 ENABLE=1
+BASEDMG=49
 CIRCLE=7
 MANA=40
 LOSKILL=661
@@ -1483,6 +1550,7 @@ SOUNDFX=0x0160
 // Polymorph
 [SPELL 56]
 {
+NAME=Polymorph
 ENABLE=1
 CIRCLE=7
 MANA=40
@@ -1508,7 +1576,9 @@ SOUNDFX=0x020F
 // Earthquake
 [SPELL 57]
 {
+NAME=Earthquake
 ENABLE=1
+BASEDMG=52
 CIRCLE=8
 MANA=50
 LOSKILL=761
@@ -1533,6 +1603,7 @@ SOUNDFX=0x021F
 // Energy Vortex
 [SPELL 58]
 {
+NAME=Energy Vortex
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1559,6 +1630,7 @@ SOUNDFX=0x0216
 // Resurrection
 [SPELL 59]
 {
+NAME=Resurrection
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1585,6 +1657,7 @@ SOUNDFX=0x0215
 // Summon Air Elemental
 [SPELL 60]
 {
+NAME=Summon Air Elemental
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1610,6 +1683,7 @@ SOUNDFX=0x0217
 // Summon Daemon
 [SPELL 61]
 {
+NAME=Summon Daemon
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1635,6 +1709,7 @@ SOUNDFX=0x0216
 // Summon Earth Elemental
 [SPELL 62]
 {
+NAME=Summon Earth Elemental
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1660,6 +1735,7 @@ SOUNDFX=0x0217
 // Summon Fire Elemental
 [SPELL 63]
 {
+NAME=Summon Fire Elemental
 ENABLE=1
 CIRCLE=8
 MANA=50
@@ -1685,6 +1761,7 @@ SOUNDFX=0x0217
 // Summon Water Elemental
 [SPELL 64]
 {
+NAME=Summon Water Elemental
 ENABLE=1
 CIRCLE=8
 MANA=50

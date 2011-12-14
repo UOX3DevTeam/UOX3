@@ -182,73 +182,87 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 	return true;
 }
 
-bool splClumsy( CChar *caster, CChar *target, CChar *src )
+bool splClumsy( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
-bool splCreateFood( CSocket *sock, CChar *caster )
+bool splCreateFood( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	CItem *j = Items->CreateItem( sock, caster, 0x09D3, 1, 0x0000, OT_ITEM, true );
 	if( ValidateObject( j ) )
 		j->SetType( IT_FOOD );
 	return true;
 }
-bool splFeeblemind( CChar *caster, CChar *target, CChar *src )
+bool splFeeblemind( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
+	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
 	Effects->tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
-bool splHeal( CChar *caster, CChar *target, CChar *src )
+bool splHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
+	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
+	SI16 baseHealing = HalfRandomNum( Magic->spells[curSpell].BaseDmg() );
+
 	int bonus = (caster->GetSkill( MAGERY )/500) + ( caster->GetSkill( MAGERY )/100 );
 	if( bonus != 0 )
-		target->Heal( RandomNum( 0, 5 ) + bonus, caster );
+	{
+		baseHealing += bonus;
+		target->Heal( baseHealing, caster );
+	}
 	else
-		target->Heal( 4 );
-	Magic->SubtractHealth( caster, bonus, 4 );
+		target->Heal( baseHealing );
+	Magic->SubtractHealth( caster, bonus, Magic->spells[curSpell].Health() );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splMagicArrow( CChar *caster, CChar *target, CChar *src )
+bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	Magic->MagicDamage( target, (1+(RandomNum( 0, 1 ))+1)*(caster->GetSkill( MAGERY )/2000+1), caster, COLD );
+	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Magic->MagicDamage( target, spellDamage, caster, COLD );
 	return true;
 }
-bool splNightSight( CChar *caster, CChar *target, CChar *src )
+bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 2, 0, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splReactiveArmor( CChar *caster, CChar *target, CChar *src )
+bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
 	target->SetReactiveArmour( true );
 	return true;
 }
-bool splWeaken( CChar *caster, CChar *target, CChar *src )
+bool splWeaken( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
-bool splAgility( CChar *caster, CChar *target, CChar *src )
+bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splCunning( CChar *caster, CChar *target, CChar *src )
+bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splCure( CChar *caster, CChar *target, CChar *src )
+bool splCure( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	target->SetPoisoned( 0 );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
@@ -256,15 +270,18 @@ bool splCure( CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
-bool splHarm( CChar *caster, CChar *target, CChar *src )
+bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 2 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/500+1, caster, COLD );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/250+RandomNum( 1, 2 ), caster, COLD );
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Magic->MagicDamage( target, spellDamage, caster, COLD );
 	return true;
 }
-bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target )
+bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() && target->GetID() != 0x0E75 )  
 	{
@@ -275,7 +292,7 @@ bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 663 );
 	return true;
 }
-bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target )
+bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() )
 	{
@@ -297,21 +314,21 @@ bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 668 );
 	return true;
 }
-bool splProtection( CChar *caster, CChar *target, CChar *src )
+bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splStrength( CChar *caster, CChar *target, CChar *src )
+bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splBless( CChar *caster, CChar *target, CChar *src )
+bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	int j = caster->GetSkill( MAGERY )/100;
 	Effects->tempeffect( src, target, 11, j, j, j);
@@ -319,15 +336,18 @@ bool splBless( CChar *caster, CChar *target, CChar *src )
 		criminal( caster );
 	return true;
 }
-bool splFireball( CChar *caster, CChar *target, CChar *src )
+bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 3 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 280 + 1, caster, HEAT );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 140 + RandomNum( 1, 4 ), caster, HEAT );
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 	return true;
 }
-bool splMagicLock( CSocket *sock, CChar *caster, CItem *target )
+bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	ItemTypes type = target->GetType();
 	if( ( type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT ) && ( target->GetID( 1 ) != 0x0E || target->GetID( 2 ) != 0x75 ) )
@@ -347,7 +367,7 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 669 ); 
 	return true;
 }
-bool splPoison( CChar *caster, CChar *target, CChar *src )
+bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( Magic->CheckResist( caster, target, 1 ) )
 		return false;
@@ -357,7 +377,7 @@ bool splPoison( CChar *caster, CChar *target, CChar *src )
 
 	return true;
 }
-bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target )
+bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() )
 	{
@@ -373,7 +393,7 @@ bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 668 );
 	return true;
 }
-bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber() );
 	if( ValidateObject( m ) && m->GetOwnerObj() != caster && !caster->IsNpc() )
@@ -409,7 +429,7 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	Magic->doStaticEffect( caster, 22 );
 	return true;
 }
-bool splUnlock( CSocket *sock, CChar *caster, CItem *target )
+bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->isDevineLocked() )
 	{
@@ -434,66 +454,68 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target )
 		sock->sysmessage( 678 );
 	return true;
 }
-bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x0080, x, y, z, fieldDir );
 }
 
-void ArchCureStub( CChar *caster, CChar *target )
+void ArchCureStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	target->SetPoisoned( 0 );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 }
-bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &ArchCureStub );
+	AreaAffectSpell( sock, caster, &ArchCureStub, curSpell );
 	return true;
 }
 
-void ArchProtectionStub( CChar *caster, CChar *target )
+void ArchProtectionStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	Magic->playSound( target, 26 );
 	Magic->doStaticEffect( target, 15 );	// protection
 	Effects->tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 }
-bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &ArchProtectionStub );
+	AreaAffectSpell( sock, caster, &ArchProtectionStub, curSpell );
 	return true;
 }
-bool splCurse( CChar *caster, CChar *target, CChar *src )
+bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( !Magic->CheckResist( caster, target, 1 ) )
-	{
-		int j = caster->GetSkill( MAGERY ) / 100;
-		Effects->tempeffect(caster, target, 12, j, j, j);
-	}
+	int j = caster->GetSkill( MAGERY ) / 100;
+	Effects->tempeffect(caster, target, 12, j, j, j);
 	return true;
 }
-bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x398C, x, y, z, fieldDir );
 }
-bool splGreaterHeal( CChar *caster, CChar *target, CChar *src )
+bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	int srcHealth	= target->GetHP();
-	int j			= caster->GetSkill( MAGERY ) / 30 + RandomNum( 1, 12 );
+	int baseHealing = Magic->spells[curSpell].BaseDmg();
+	int j			= caster->GetSkill( MAGERY ) / 30 + HalfRandomNum( baseHealing );
+
 	target->Heal( j, caster );
 	Magic->SubtractHealth( caster, UOX_MIN( target->GetStrength(), (SI16)(srcHealth + j) ), 29 );
 	if( target->IsMurderer() )
 		criminal( caster );
 	return true;
 }
-bool splLightning( CChar *caster, CChar *target, CChar *src )
+bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
 	Effects->bolteffect( target );
-	if( Magic->CheckResist( caster, target, 4 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1, 2 ), caster, LIGHTNING );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, LIGHTNING );
+	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 	return true;
 }
-bool splManaDrain( CChar *caster, CChar *target, CChar *src )
+bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 4 ) )
 	{
@@ -503,7 +525,7 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src )
 	}
 	return true;
 }
-bool splRecall( CSocket *sock, CChar *caster, CItem *i )
+bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
 	{
@@ -533,12 +555,12 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i )
 	}
 	return false;
 }
-bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
 }
-bool splDispelField( CSocket *sock, CChar *caster )
+bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
 	if( ValidateObject( i ) )
@@ -562,7 +584,7 @@ bool splDispelField( CSocket *sock, CChar *caster )
 }
 void setRandomName( CChar *s, const std::string namelist );
 
-bool splIncognito( CSocket *sock, CChar *caster )
+bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->IsIncognito() )
 	{
@@ -648,40 +670,51 @@ bool splIncognito( CSocket *sock, CChar *caster )
 	caster->IsIncognito( true );
 	return true;
 }
-bool splMagicReflection( CSocket *sock, CChar *caster )
+bool splMagicReflection( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	caster->SetPermReflected( true );
 	return true;
 }
-bool splMindBlast( CChar *caster, CChar *target, CChar *src )
+bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( caster->GetIntelligence() > target->GetIntelligence() )
-	{
-		if( Magic->CheckResist( caster, target, 5 ) )
-			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/4, src, COLD );
-		else
-			Magic->MagicDamage( target, (src->GetIntelligence() - target->GetIntelligence())/2, src, COLD );
-	}
-	else
-	{
-		if( Magic->CheckResist( caster, src, 5 ) )
-			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/4, src, COLD );
-		else
-			Magic->MagicDamage( src, (target->GetIntelligence() - src->GetIntelligence())/2, src, COLD );
-	}
+	SI16 spellDamage = 0;
+	SI16 baseDamage = 0;
+
+	SI16 targetStats = target->GetIntelligence() + target->GetStrength() + target->GetDexterity();
+	SI16 casterStats = caster->GetIntelligence() + caster->GetStrength() + caster->GetDexterity();
+	
+	//If target's int makes out a larger percentage of the total stats than the caster's, backfire spell onto caster
+	if(( target->GetIntelligence() * 100 ) / targetStats > ( caster->GetIntelligence() * 100 ) / casterStats )
+		target = src;
+
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	baseDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = baseDamage;
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+	
+	//Damage should not exceed 60% of target maxhp
+	if( spellDamage > ( target->GetMaxHP() * 0.6 ) )
+		spellDamage = (SI16) roundNumber( target->GetMaxHP() * 0.6 );
+
+	//Damage should not exceed basedamage from DFN + 20%
+	if( spellDamage > baseDamage * 1.20 )
+		spellDamage = baseDamage * 1.20;
+
+	Magic->MagicDamage( target, spellDamage, src, COLD );
 	return true;
 }
-bool splParalyze( CChar *caster, CChar *target, CChar *src )
+bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ) )
 		Effects->tempeffect( caster, target, 1, 0, 0, 0 );
 	return true;
 }
-bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x3915, x, y, z, fieldDir );
 }
-bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 380 )
 		return false;
@@ -689,7 +722,7 @@ bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 		Magic->SummonMonster( sock, caster, 0, x, y, z );
 	return true;
 }
-bool splDispel( CChar *caster, CChar *target, CChar *src )
+bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( target->IsDispellable() )
 	{
@@ -708,23 +741,29 @@ bool splDispel( CChar *caster, CChar *target, CChar *src )
 	}
 	return true;
 }
-bool splEnergyBolt( CChar *caster, CChar *target, CChar *src )
+bool splEnergyBolt( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 6 ) ) 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/120, caster, LIGHTNING );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/35+RandomNum(1,10), caster, LIGHTNING );
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 	return true;
 }
-bool splExplosion( CChar *caster, CChar *target, CChar *src )
+bool splExplosion( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 6 ) )
-		Effects->tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 120 + RandomNum( 1, 5 ) ), 0, 0 );
-	else 
-		Effects->tempeffect( src, target, 27, (caster->GetSkill( MAGERY ) / 40 + RandomNum( 1, 10 ) ), 0, 0 );
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Effects->tempeffect( src, target, 27, spellDamage, 0, 0 );
 	return true;
 }
-bool splInvisibility( CChar *caster, CChar *target, CChar *src )
+bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	target->SetVisible( VT_INVISIBLE );
 	target->SetTimer( tCHAR_INVIS, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_INVISIBILITY ) );
@@ -747,7 +786,7 @@ bool splInvisibility( CChar *caster, CChar *target, CChar *src )
 //o--------------------------------------------------------------------------o
 //|	Returns				-	[TRUE] If Successfull, [FALSE] otherwise
 //o--------------------------------------------------------------------------o	
-bool splMark( CSocket *sock, CChar *caster, CItem *i )
+bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	// Sept 22, 2002 - Xuri
 	if( i->IsLockedDown() )
@@ -772,7 +811,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i )
 	return true;
 }
 
-void MassCurseStub( CChar *caster, CChar *target )
+void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
@@ -790,16 +829,16 @@ void MassCurseStub( CChar *caster, CChar *target )
 	Effects->tempeffect( caster, target, 12, j, j, j );
 
 }
-bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &MassCurseStub );
+	AreaAffectSpell( sock, caster, &MassCurseStub, curSpell );
 	return true;
 }
-bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x3967, x, y, z, fieldDir );
 }
-bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) || caster->IsGM() )
 	{ 
@@ -838,7 +877,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
 	return true;
 }
 
-void ChainLightningStub( CChar *caster, CChar *target )
+void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
@@ -854,29 +893,40 @@ void ChainLightningStub( CChar *caster, CChar *target )
 		def = target;
 
 	Effects->bolteffect( def );
-	if( Magic->CheckResist( caster, target, 4 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 180 + RandomNum( 1 ,2 ), caster, LIGHTNING );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY ) / 90 + RandomNum( 1, 5 ), caster, LIGHTNING );
+	
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	//If targetCOunt is > 1, do equal damage to two targets, split damage on more targets
+	if( targCount > 1 )
+		spellDamage = ( spellDamage * 2 ) / targCount;
+
+	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 }
-bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &ChainLightningStub );
+	AreaAffectSpell( sock, caster, &ChainLightningStub, curSpell );
 	return true;
 }
-bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z )
+bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x3946, x, y, z, fieldDir );
 }
-bool splFlameStrike( CChar *caster, CChar *target, CChar *src )
+bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	if( Magic->CheckResist( caster, target, 7 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, HEAT );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40+RandomNum(1,25), caster, HEAT );
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 	return true;
 }
-bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
+bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
 	{
@@ -884,6 +934,7 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
 		return false;
 	}
 	else
+
 	{
 		UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
 		if( !Map->MapExists( worldNum ) )
@@ -893,7 +944,7 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i )
 	}
 	return true;
 }
-bool splManaVampire( CChar *caster, CChar *target, CChar *src )
+bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ) )
 	{
@@ -911,7 +962,7 @@ bool splManaVampire( CChar *caster, CChar *target, CChar *src )
 	return true;
 }
 
-void MassDispelStub( CChar *caster, CChar *target )
+void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsDispellable() )
 	{
@@ -934,13 +985,13 @@ void MassDispelStub( CChar *caster, CChar *target )
 	}
 }
 
-bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &MassDispelStub );
+	AreaAffectSpell( sock, caster, &MassDispelStub, curSpell );
 	return true;
 }
 
-void MeteorSwarmStub( CChar *caster, CChar *target )
+void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
@@ -948,20 +999,31 @@ void MeteorSwarmStub( CChar *caster, CChar *target )
 		return;	// GMs/Invuls can't be killed
 	if( target->IsNpc() ) 
 		Combat->AttackTarget( target, caster );
+
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	//If targetCOunt is > 1, do equal damage to two targets, split damage on more targets
+	if( targCount > 1 )
+		spellDamage = ( spellDamage * 2 ) / targCount;
+
 	Effects->PlaySound( target, 0x160 ); 
 	Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
-	if( Magic->CheckResist( caster, target, 7 ) )
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/80, caster, HEAT );
-	else 
-		Magic->MagicDamage( target, caster->GetSkill( MAGERY )/40, caster, HEAT );
+
+	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 }
 
-bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ) )
+bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell )
 {
 	SI16 x1, x2, y1, y2;
 	SI08 z1, z2;
 	x1 = x2 = y1 = y2 = z1 = z2 = 0;
-	bool HurtSelf = false;
+	SI08 targCount = 0;
+	UI16 i;
+	std::vector< CChar * > targetList;
 	
 	Magic->BoxSpell( sock, caster, x1, x2, y1, y2, z1, z2 );
 
@@ -981,14 +1043,12 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 			if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
 				tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
 			{
-				if( tempChar == caster )
-				{//we can't cast on ourselves till this loop is over, because me might kill ourself, then try to LOS with someone after we are deleted.
-					HurtSelf = true;
-					continue;
+				if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING  ) || caster->IsGM() )
+				{
+					//Store target candidates in targetList
+					targetList.push_back( tempChar );
+					//trgFunc( caster, tempChar, curSpell, targCount );
 				}
-
-				if( LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING  ) || caster->IsGM() )
-					trgFunc( caster, tempChar );
 				else if( sock != NULL )
 					sock->sysmessage( 688 );
 			}
@@ -996,17 +1056,21 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 		regChars->Pop();
 	}
 
-	if( HurtSelf )	
-		trgFunc( caster, caster );
+	// Iterate through list of valid targets, do damage
+	targCount = targetList.size();
+	for( i = 0; i < targetList.size(); ++i )
+	{
+		trgFunc( caster, targetList[i], curSpell, targCount );
+	}
 
 	return true;
 }
-bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src )
+bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	AreaAffectSpell( sock, caster, &MeteorSwarmStub );
+	AreaAffectSpell( sock, caster, &MeteorSwarmStub, curSpell );
 	return true;
 }
-bool splPolymorph( CSocket *sock, CChar *caster )
+bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->IsPolymorphed() )
 	{
@@ -1016,20 +1080,33 @@ bool splPolymorph( CSocket *sock, CChar *caster )
 	Magic->PolymorphMenu( sock, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
 	return true;
 }
-void EarthquakeStub( CChar *caster, CChar *target )
+void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	int distx	= abs(target->GetX() - caster->GetX() );
 	int disty	= abs(target->GetY() - caster->GetY() );
-	int dmg		= (caster->GetSkill( MAGERY )/40) + ( RandomNum( 0, 19 ) - 10 );
 	int dmgmod	= UOX_MIN( distx, disty );
 	dmgmod		= -(dmgmod - 7);
-	target->Damage( (dmg + dmgmod), caster, true );
+
+	SI16 spellDamage = 0;
+	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+
+	spellDamage = Magic->spells[curSpell].BaseDmg();
+	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
+
+	//If targetCOunt is > 1, do equal damage to two targets, split damage on more targets
+	//if( targCount > 1 )
+	//	spellDamage = ( spellDamage * 2 ) / targCount;
+
+	//Apply bonus damage based on target distance from center of earthquake
+	spellDamage += dmgmod;
+
+	target->Damage( spellDamage, caster, true );
 	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 	
 	if( target->GetStamina() == -1 )
 		target->SetStamina( 0 );
 	
-	if( !target->IsNpc() && isOnline( (*target) ) )
+	if(( !target->IsNpc() && isOnline((*target))) || ( target->IsNpc() && target->isHuman() ))
 	{
 		if( RandomNum( 0, 1 ) ) 
 			Effects->PlayCharacterAnimation( target, 0x15 );
@@ -1044,7 +1121,7 @@ void EarthquakeStub( CChar *caster, CChar *target )
 		}
 	} 
 }
-bool splEarthquake( CSocket *sock, CChar *caster )
+bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	criminal( caster );
 	if( sock != NULL )
@@ -1053,17 +1130,17 @@ bool splEarthquake( CSocket *sock, CChar *caster )
 		sock->SetWord( 13, caster->GetY() );
 		sock->SetByte( 16, caster->GetZ() );
 	}
-	AreaAffectSpell( sock, caster, &EarthquakeStub );
+	AreaAffectSpell( sock, caster, &EarthquakeStub, curSpell );
 	return true;
 }
-bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z )
+bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 1, x, y, z );
 	return true;
 }
-bool splResurrection( CChar *caster, CChar *target, CChar *src )
+bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( target->IsDead() )
 	{
@@ -1072,66 +1149,66 @@ bool splResurrection( CChar *caster, CChar *target, CChar *src )
 	}
 	return false;
 }
-bool splSummonAir( CSocket *sock, CChar *caster )
+bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 2, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonDaemon( CSocket *sock, CChar *caster )
+bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 7, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonEarth( CSocket *sock, CChar *caster )
+bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 3, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonFire( CSocket *sock, CChar *caster )
+bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 4, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splSummonWater( CSocket *sock, CChar *caster )
+bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 5, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splRandom( CSocket *sock, CChar *caster )
+bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
 	Magic->SummonMonster( sock, caster, 8, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
-bool splNecro1( CChar *caster, CChar *target, CChar *src )
+bool splNecro1( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
-bool splNecro2( CSocket *sock, CChar *caster )
+bool splNecro2( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	Magic->SummonMonster( sock, caster, 9, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
 	return true;
 }
-bool splNecro3( CChar *caster, CChar *target, CChar *src )
+bool splNecro3( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
-bool splNecro4( CChar *caster, CChar *target, CChar *src )
+bool splNecro4( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
-bool splNecro5( CChar *caster, CChar *target, CChar *src )  
+bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )  
 {
 	return true;
 }
@@ -1767,20 +1844,28 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 {
 	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
 	CSocket *s = NULL;
-	if( i )
+	if( ValidateObject( attacker ) )
 	{
-		if( ValidateObject( attacker ) )
+		// Check what is higher between user's normal resistchance and a fallback value
+		// To ensure user always has a chance of resisting, however small (except at resist-skill 0)
+		SI16 defaultChance = defender->GetSkill( MAGICRESISTANCE ) / 5;
+		SI16 resistChance = defender->GetSkill( MAGICRESISTANCE ) - ((( attacker->GetSkill( MAGERY ) - 20 ) / 5 ) + ( circle * 5 ));
+		if( defaultChance > resistChance )
+			resistChance = defaultChance;
+		
+		if( RandomNum( 1, 100 ) < resistChance / 10 )
 		{
-			if( ( defender->GetSkill( MAGICRESISTANCE ) - attacker->GetSkill( EVALUATINGINTEL ) ) >= 0 )
-			{
-				s = defender->GetSocket();
-				if( s != NULL )
-					s->sysmessage( 699 );
-			}
-			else
-				i = false;
+			s = defender->GetSocket();
+			if( s != NULL )
+				s->sysmessage( 699 );
+			i = true;
 		}
 		else
+			i = false;
+	}
+	else
+	{
+		if( i )
 		{
 			s = defender->GetSocket();
 			if( s != NULL )
@@ -1791,7 +1876,44 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 }
 
 //o---------------------------------------------------------------------------o
-//|     Class         :          MagicDamage( CChar *p, int amount, CChar *attacker )
+//|     Class         :          CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool SpellResisted )
+//|     Date          :          November 7th 2011
+//|     Programmer    :          Xuri
+//o---------------------------------------------------------------------------o
+//|     Purpose       :          Calculate Spell Damage after skill-modifiers
+//o---------------------------------------------------------------------------o
+
+SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool spellResisted )
+{
+	// Randomize in upper-half of damage range for some variety
+	spellDamage = HalfRandomNum( spellDamage );
+
+	// If spell was resisted, halve damage
+	if( spellResisted )
+		spellDamage = (SI16) roundNumber( spellDamage / 2 );
+
+	// Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
+	UI16 casterEval = caster->GetSkill( EVALUATINGINTEL )/10;
+	UI16 targetResist = target->GetSkill( MAGICRESISTANCE )/10;
+	if( targetResist > casterEval )
+		spellDamage *= ((( casterEval - targetResist ) / 200.0f ) + 1 );
+	else
+		spellDamage *= ((( casterEval - targetResist ) / 500.0f ) + 1 );
+
+	// Randomize some more to get broader min/max damage values
+	int i = RandomNum( 0, 4 );
+	if( i <= 2 )
+		spellDamage = roundNumber( RandomNum( static_cast<SI16>( HalfRandomNum( spellDamage ) / 2 ), spellDamage ));
+	else if( i == 3 )
+		spellDamage = roundNumber( HalfRandomNum( spellDamage ));
+	else //keep current spellDamage
+		spellDamage = roundNumber( spellDamage );
+
+	return spellDamage;
+}
+
+//o---------------------------------------------------------------------------o
+//|     Class         :          MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType dmgType )
 //|     Date          :          Unknown
 //|     Programmer    :          Unknown
 //o---------------------------------------------------------------------------o
@@ -1807,8 +1929,7 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		return;
 
 	CSocket *mSock = p->GetSocket();
-	if( Skills->CheckSkill( p, EVALUATINGINTEL, 0, 1000 ) ) 
-		amount = (SI16)UOX_MAX( 1, amount - ( amount * ( p->GetSkill( EVALUATINGINTEL )/10000 ) ) ); // Take off 0 to 10% damage but still hurt at least 1hp (1000/10000=0.10)
+
 	if( p->IsFrozen() && p->GetDexterity() > 0 )
 	{
 		p->SetFrozen( false );
@@ -2552,7 +2673,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 								{
 									tScriptExec->OnSpellTarget( i, caster, curSpell );
 								}
-								(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
+								(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 								break;
 							default:
 								Console.Error( " Unknown Travel spell %i, magic.cpp", curSpell );
@@ -2658,7 +2779,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							{
 								tScriptExec->OnSpellTarget( c, caster, curSpell );
 							}
-							(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( caster, c, src );
+							(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( caster, c, src, curSpell );
 							break;
 						case 66: // Cannon Firing
 							if( CheckParry( c, 6 ) )
@@ -2678,7 +2799,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							{
 								tScriptExec->OnSpellTarget( c, caster, curSpell );
 							}
-							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src );
+							(*((MAGIC_TESTFUNC)magic_table[curSpell-1].mag_extra))( s, caster, c, src, curSpell );
 							break;
 						default:
 							Console.Error( " Unknown CharacterTarget spell %i, magic.cpp", curSpell );
@@ -2736,7 +2857,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 					UI08 j = getFieldDir( caster, x, y );
 					playSound( src, curSpell );
 					doStaticEffect( src, curSpell );
-					(*((MAGIC_FIELDFUNC)magic_table[curSpell-1].mag_extra))( s, caster, j, x, y, z );
+					(*((MAGIC_FIELDFUNC)magic_table[curSpell-1].mag_extra))( s, caster, j, x, y, z, curSpell );
 				}
 				else if( spells[curSpell].RequireNoTarget() )
 				{
@@ -2763,7 +2884,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 64:// Summon water Elemental
 						case 65:// Summon Hero
 						case 58:// Energy Vortex
-							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z );
+							(*((MAGIC_LOCFUNC)magic_table[curSpell-1].mag_extra))( s, caster, x, y, z, curSpell );
 							break;
 						default:
 							Console.Error( " Unknown LocationTarget spell %i", curSpell );
@@ -2793,7 +2914,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 						case 19:	// Magic Lock
 						case 23:	// Magic Unlock
 						case 21:	// Telekinesis
-							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i );
+							(*((MAGIC_ITEMFUNC)magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 							break;
 						default:
 							Console.Error( " Unknown ItemTarget spell %i, magic.cpp", curSpell );
@@ -2830,7 +2951,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 			case 64:	// Summon Water Elemental
 			case 65:	// Summon Hero
 			case 67:
-				(*((MAGIC_NOFUNC)magic_table[curSpell-1].mag_extra))( s, caster );
+				(*((MAGIC_NOFUNC)magic_table[curSpell-1].mag_extra))( s, caster, curSpell );
 				break;
 			default:	
 				Console.Error( " Unknown NonTarget spell %i, magic.cpp", curSpell );
@@ -2889,6 +3010,10 @@ void cMagic::LoadScript( void )
 									spells[i].Action( data.toUShort() );
 								else if( UTag == "ASH" ) 
 									mRegs->ash = data.toUByte();
+								break;
+							case 'B':
+								if( UTag == "BASEDMG" )
+									spells[i].BaseDmg( data.toShort() );
 								break;
 							case 'C':
 								if( UTag == "CIRCLE" )

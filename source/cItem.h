@@ -36,7 +36,7 @@ protected:
 	UI16			maxhp; // Max number of hit points an item can have.
 	UI08			spd; //The speed of the weapon
 	SI08			movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
-	SI08			dir; //direction an item can have
+	UI08			dir; //direction an item can have
 	TIMERVAL		tempTimer;
 	TIMERVAL		decaytime;
 
@@ -55,6 +55,9 @@ protected:
 	SERIAL			glow;	// LB identifies glowing objects
 	COLOUR			glowColour;
 	UI08			glow_effect;
+	UI16			ammo[2]; // Ammo ID and Hue
+	UI16			ammoFX[3]; // Ammo-effect ID, Hue and rendermode
+	SI32			weightMax; //Maximum weight a container can hold
 
 	std::bitset< WEATHNUM >	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
@@ -195,6 +198,24 @@ public:
 
 	SI08			GetMadeWith( void ) const;
 	void			SetMadeWith( SI08 newValue );
+
+	UI16			GetAmmoID( void ) const;
+	void			SetAmmoID( UI16 newValue );
+
+	UI16			GetAmmoHue( void ) const;
+	void			SetAmmoHue( UI16 newValue );
+
+	UI16			GetAmmoFX( void ) const;
+	void			SetAmmoFX( UI16 newValue );
+
+	UI16			GetAmmoFXHue( void ) const;
+	void			SetAmmoFXHue( UI16 newValue );
+
+	UI16			GetAmmoFXRender( void ) const;
+	void			SetAmmoFXRender( UI16 newValue );
+	
+	SI32			GetWeightMax( void ) const;
+	void			SetWeightMax( SI32 newValue );
 
 	// Note by Magius: Value range to -ALLSKILLS-1 to ALLSKILLS+1
 	// To calculate skill used to made this item:

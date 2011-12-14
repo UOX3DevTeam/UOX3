@@ -16,7 +16,6 @@
 #include "regions.h"
 #include "Dictionary.h"
 #include "movement.h"
-
 #undef DBGFILE
 #define DBGFILE "skills.cpp"
 
@@ -101,7 +100,7 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
-		UI08 tempRank = floor((( rank * 100 ) / maxrank ) / 10 );
+		UI08 tempRank = floor(static_cast<float>((( rank * 100 ) / maxrank ) / 10 ));
 
 		if( tempRank >= 1 && tempRank <= 10 )
 			s->sysmessage( 783 + tempRank );
@@ -407,7 +406,7 @@ void cSkills::GraveDig( CSocket *s )
 			else
 			{  // Create between 1 and 15 goldpieces and place directly in backpack
 				UI08 nAmount = RandomNum( 1, 15 );
-				Items->CreateItem( s, nCharID, 0x0EED, nAmount, 0, OT_ITEM, true );
+				Items->CreateScriptItem( s, nCharID, "0x0EED", nAmount, OT_ITEM, true );
 				Effects->goldSound( s, nAmount );
 				if( nAmount == 1 )
 					s->sysmessage( 810, nAmount );
@@ -786,16 +785,20 @@ void cSkills::ItemIDTarget( CSocket *s )
 		{
 			if( i->GetType() != IT_MAGICWAND )
 			{
-				s->sysmessage( 1553 );
+				// Only display "no magical properties" message if Name2 is different from "#"
+				if( i->GetName2()[0] && ( !strcmp( i->GetName2(), "#" ) ) )
+					s->sysmessage( 1553 );
 				return;
 			}
 			if( CheckSkill( mChar, ITEMID, 500, 750 ) )
 			{
 				UI16 spellToScan = static_cast<UI16>(( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1);
+				// Fetch spellname from Dictionary-files, based on entry from magic_table[]
+				UString spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
 				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
-					s->sysmessage( 1555, magic_table[spellToScan].spell_name );
+					s->sysmessage( 1555, spellName.c_str() );
 				else
-					s->sysmessage( 1556, magic_table[spellToScan].spell_name, i->GetTempVar( CITV_MOREZ ) );
+					s->sysmessage( 1556, spellName.c_str(), i->GetTempVar( CITV_MOREZ ) );
 			}
 			else
 				s->sysmessage( 1554 );
@@ -923,7 +926,7 @@ void cSkills::Fish( CSocket *mSock, CChar *mChar )
 			else
 			{	// Create between 200 and 1300 gold
 				UI16 nAmount = RandomNum( 200, 1300 );
-				Items->CreateItem( mSock, mChar, 0x0EED, nAmount, 0, OT_ITEM, true );
+				Items->CreateScriptItem( mSock, mChar, "0x0EED", nAmount, OT_ITEM, true );
 				Effects->goldSound( mSock, nAmount );
 				mSock->sysmessage( 851, nAmount );
 			}
@@ -1105,7 +1108,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		return;
 	}
 	CItem *itemCont = (CItem *)item->GetCont(); 
-	if( itemCont != NULL && itemCont->GetLayer() >= IL_BUYCONTAINER && itemCont->GetLayer() <= IL_SELLCONTAINER ) // is it in the buy or sell layer of a vendor?
+	if( itemCont != NULL && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
 	{
 		s->sysmessage( 874 );
 		return;

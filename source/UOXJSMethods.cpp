@@ -3970,7 +3970,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
 	char *filename	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	UString mode	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
-	if( mode.lower().find_first_of("rwa",0,1) == std::string::npos )
+	if( mode.lower().find_first_of("rwa",0,3) == std::string::npos )
 	{
 		MethodError( "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;

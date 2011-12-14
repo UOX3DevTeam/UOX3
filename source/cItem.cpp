@@ -81,6 +81,7 @@ const UI16			DEFITEM_MAXHP			= 0;
 const SI08			DEFITEM_OFFSPELL		= 0;
 const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
+const SI32			DEFITEM_WEIGHTMAX		= 0;
 
 CItem::CItem() : CBaseObject(),
 contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
@@ -88,10 +89,12 @@ madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_G
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), 
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
-creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
+	ammo[0] = ammo[1] = 0;
+	ammoFX[0] = ammoFX[1] = ammoFX[2] = 0;
 	objType		= OT_ITEM;
 	strcpy( name2, "#" );
 	name		= "#";
@@ -760,6 +763,66 @@ void CItem::SetGlowEffect( UI08 newValue )
 	glow_effect = newValue;
 }
 
+UI16 CItem::GetAmmoID( void ) const
+{
+	return ammo[0];
+}
+
+void CItem::SetAmmoID( UI16 newValue )
+{
+	ammo[0] = newValue;
+}
+
+UI16 CItem::GetAmmoHue( void ) const
+{
+	return ammo[1];
+}
+
+void CItem::SetAmmoHue( UI16 newValue )
+{
+	ammo[1] = newValue;
+}
+
+UI16 CItem::GetAmmoFX( void ) const
+{
+	return ammoFX[0];
+}
+
+void CItem::SetAmmoFX( UI16 newValue )
+{
+	ammoFX[0] = newValue;
+}
+
+UI16 CItem::GetAmmoFXHue( void ) const
+{
+	return ammoFX[1];
+}
+
+void CItem::SetAmmoFXHue( UI16 newValue )
+{
+	ammoFX[1] = newValue;
+}
+
+UI16 CItem::GetAmmoFXRender( void ) const
+{
+	return ammoFX[2];
+}
+
+void CItem::SetAmmoFXRender( UI16 newValue )
+{
+	ammoFX[2] = newValue;
+}
+
+SI32 CItem::GetWeightMax( void ) const
+{
+	return weightMax;
+}
+
+void CItem::SetWeightMax( SI32 newValue )
+{
+	weightMax = newValue;
+}
+
 void CItem::IncID( SI16 incAmount )
 {
 	SetID( id + incAmount );
@@ -912,6 +975,11 @@ void CItem::CopyData( CItem *target )
 	target->SetGlow( GetGlow() );
 	target->SetGlowColour( GetGlowColour() );
 	target->SetGlowEffect( GetGlowEffect() );
+	target->SetAmmoID( GetAmmoID() );
+	target->SetAmmoHue( GetAmmoHue() );
+	target->SetAmmoFX( GetAmmoFX() );
+	target->SetAmmoFXHue( GetAmmoFXHue() );
+	target->SetAmmoFXRender( GetAmmoFXRender() );
 	target->SetGood( GetGood() );
 	target->SetHiDamage( GetHiDamage() );
 	target->SetHP( GetHP() );
@@ -954,6 +1022,7 @@ void CItem::CopyData( CItem *target )
 	target->SetSellValue( GetSellValue() );
 	target->SetVisible( GetVisible() );
 	target->SetWeight( GetWeight() );
+	target->SetWeightMax( GetWeightMax() );
 	target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
@@ -995,6 +1064,8 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "MoreXYZ=" << "0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << std::endl;
 	dumping << "Glow=" << "0x" << GetGlow() << std::endl;
 	dumping << "GlowBC=" << "0x" << GetGlowColour() << std::endl;
+	dumping << "Ammo=" << "0x" << GetAmmoID() << ",0x" << GetAmmoHue() << std::endl;
+	dumping << "AmmoFX=" << "0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << std::endl;
 	dumping << "Spells=" << "0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << std::endl;
 
 	// Decimal / String Values
@@ -1004,6 +1075,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	dumping << "Type=" << static_cast<SI16>(GetType()) << std::endl;
 	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
 	dumping << "Amount=" << GetAmount() << std::endl;
+	dumping << "WeightMax=" << GetWeightMax() << std::endl;
 	dumping << "MaxHP=" << GetMaxHP() << std::endl;
 	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
 	dumping << "Movable=" << (SI16)GetMovable() << std::endl;
@@ -1034,7 +1106,37 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
-				if( UTag == "AMOUNT" )
+				if( UTag == "AMMO" )
+				{
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetAmmoID( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+						SetAmmoHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					}
+					else
+					{
+						SetAmmoID( data.toULong() );
+						SetAmmoHue( ( 0 ) );
+					}
+					rvalue = true;
+				}
+				else if( UTag == "AMMOFX" )
+				{
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetAmmoFX( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
+						SetAmmoFXHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						SetAmmoFXRender( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+					}
+					else
+					{
+						SetAmmoFX( data.toULong() );
+						SetAmmoFXHue( ( 0 ) );
+						SetAmmoFXRender( ( 0 ) );
+					}
+					rvalue = true;
+				}
+				else if( UTag == "AMOUNT" )
 				{
 					amount = data.toUShort();
 					rvalue = true;
@@ -1303,7 +1405,12 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				break;
 			case 'W':
-				if( UTag == "WIPE" )
+				if( UTag == "WEIGHTMAX" )
+				{
+					SetWeightMax( data.toLong() );
+					rvalue = true;
+				}
+				else if( UTag == "WIPE" )
 				{
 					SetWipeable( data.toUByte() == 1 );
 					rvalue = true;
@@ -1707,7 +1814,7 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 	{
 		bool isGM = mChar->IsGM();
 		ItemLayers iLayer = GetLayer();
-		if( !isGM && ( iLayer == IL_BUYCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_SELLCONTAINER ) )
+		if( !isGM && ( iLayer == IL_SELLCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_BUYCONTAINER ) )
 			return;
 
 		CPAddItemToCont itemSend;
@@ -1943,10 +2050,13 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 //o---------------------------------------------------------------------------o
 void CItem::Delete( void )
 {
-	++(cwmWorldState->deletionQueue[this]);
-	Cleanup();
-	SetDeleted( true );
-	ShouldSave( false );
+	if(cwmWorldState->deletionQueue.count(this)==0)
+	{
+		++(cwmWorldState->deletionQueue[this]);
+		Cleanup();
+		SetDeleted( true );
+		ShouldSave( false );
+	}
 }
 
 CDataList< CItem * > * CItem::GetContainsList( void )
