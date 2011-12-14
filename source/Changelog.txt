@@ -1,5 +1,6 @@
 14/12/2011 - Xuri (0.98-4.0i)
 	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
+	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
 	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
 	Added support for six new JS events: 
 		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
@@ -10,7 +11,6 @@
 		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack 
 	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
 	Added onBoughtFromVendor JS events to pet-statue scripts in JS/NPC/PETS/ to automagically turn statues into live pets immediately after being bought
-	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
 	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
 	Added an extra check to CPISellItem to make sure the character trying to sell items still owns those items when accepting trade
 	(Added a temporary workaround for NPC pathfinding with long queues of NPCs trying to reach the same target)
@@ -35,7 +35,7 @@
 	Fixed 'SETRACE command, no longer tries to use non-existing method to set character's race (JS/COMMANDS/setrace.js)
 	Fixed some confusion with how vendor buy/sell backpacks were handled internally in code
 	Fixed an issue where onCreate JS scripts would not run for duped items
-	Updated dictionary-files with a missing systemmessage used to inform of remaining amount of lockdowns in houses
+	Updated dictionary-files with some more messages, including a missing systemmessage used to inform of remaining amount of lockdowns in houses
 	Changed MAX_NAME to a 128 byte limit to support long item names.
 	Changed JS scripts for lights to save DIR to MOREX when turning light off, and load DIR from MOREX when turning on. Sets default DIR if no MOREX value can be found.
 	Changed some items spawned through code to use CreateScriptItem (DFN based) instead of CreateItem (Tiledata-based):
@@ -67,7 +67,7 @@
 		Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
 		Updated JS/MAGIC/level1targ.js with new magic damage and resist system, and added noNeedReags check on caster to potentially skip reagent checks
 		Fixed (visual-only) issue where damage-numbers would display over head of caster twice if caster was also target
-		Added JS Spell property "name" - can be used to get the name of a spell as defined in the dictionary-files (entries 593-662)	
+		Added JS Spell property "name" - can be used to get the name of a spell as defined in the dictionary-files (entries 593-662)
 	
 2/7/2010 - Xuri (0.98-4.0h)
 	Added new UOX.INI settings:
