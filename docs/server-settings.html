@@ -32,8 +32,6 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 	    [<a class="indexLink" href="#system">facet</a>]<br>
     	[<a class="indexLink" href="#playserverlist">play server list</a>]<br>
 	    [<a class="indexLink" href="#networkserverlist">network server list</a>]<br>
-	    [<a class="indexLink" href="#xftpd">xftpd</a>]<br>
-	    [<a class="indexLink" href="#xftpc">xftpc</a>]<br>
     	[<a class="indexLink" href="#skillstats">skill &amp; stats</a>]<br>
 	    [<a class="indexLink" href="#timers">timers</a>]<br>
 	    [<a class="indexLink" href="#directories">directories</a>]<br>
@@ -385,8 +383,12 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="right">Duration of the polymorph spell. </td>
           </tr>
           <tr>
-            <td class="left">CLIENTSUPPORT</td>
-            <td class="right">Flags that represent the supported clients. </td>
+            <td class="left">CLIENTFEATURES</td>
+            <td class="right"></td>
+          </tr>
+          <tr>
+            <td class="left">SERVERFEATURES</td>
+            <td class="right"> </td>
           </tr>
           <tr>
             <td class="left">OVERLOADPACKETS</td>
@@ -395,6 +397,30 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           <tr>
             <td class="left">ADVANCEDPATHFINDING</td>
             <td class="right">Enables/disables the A* Pathfinding routine </td>
+          </tr>
+          <tr>
+            <td class="left">LOOTINGISCRIME</td>
+            <td class="right">Toggles whether looting corpses is a crime or not </td>
+          </tr>
+          <tr>
+            <td class="left">BASICTOOLTIPSONLY</td>
+            <td class="right">If set to 1, tooltips will only show name and weight of items </td>
+          </tr>
+          <tr>
+            <td class="left">GLOBALITEMDECAY</td>
+            <td class="right">Toggles decay on/off on a global scale. Does not remove decay flag from items, only stops them from decaying </td>
+          </tr>
+          <tr>
+            <td class="left">SCRIPTITEMSDECAYABLE</td>
+            <td class="right">Toggles default decay status of DFN items. Can be overriden by DECAY tag in item-DFNs </td>
+          </tr>
+          <tr>
+            <td class="left">BASEITEMSDECAYABLE</td>
+            <td class="right">Toggles default decay status of base items. Can be overriden by DECAY tag in harditems.dfn </td>
+          </tr>
+          <tr>
+            <td class="left">ITEMDECAYINHOUSES</td>
+            <td class="right">Toggles default decay status of non-locked down items in multis (houses and boats). Defaults to off. </td>
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
@@ -420,7 +446,15 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <tr>
             <td class="left">NPCMOVEMENTSPEED</td>
-            <td class="right">Allows customization of NPC movement speed</td>
+            <td class="right">Allows customization of NPC movement speed. Can be overridden by WALKINGSPEED tag in NPC-DFNs</td>
+          </tr>
+          <tr>
+            <td class="left"> NPCRUNNINGSPEED</td>
+            <td class="right">Allows customization of NPC running speed. Can be overridden by RUNNINGSPEED tag in NPC-DFNs</td>
+          </tr>
+          <tr>
+            <td class="left">NPCFLEEINGSPEED</td>
+            <td class="right">Allows customization of NPC fleeing speed. Can be overridden by FLEEINGSPEED tag in NPC-DFNs</td>
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
