@@ -20,7 +20,7 @@ public:
 	CGump( bool myNoMove, bool myNoClose );
 	~CGump();
 
-	void Add( const std::string Tag, const std::string Text );
+	void Add( const std::string& Tag, const std::string& Text );
 	void Send( CSocket *target );
 	
 	// Common add functions
@@ -68,7 +68,7 @@ public:
 	GumpDisplay( CSocket *target );
 	GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
 	~GumpDisplay();
-	void SetTitle( const std::string newTitle );
+	void SetTitle( const std::string& newTitle );
 	void Send( long gumpNum, bool isMenu, SERIAL serial );
 	void Delete( void );
 };

@@ -1,3 +1,157 @@
+19/03/2012 - Xuri (0.99)
+	Fixed various errors in JS/MAGIC/level1targ.js
+	Added support (but no functionality) for Spellweaving, Imbuing, Mysticism and Throwing skills in code and skills.dfn)
+	Updated kindling.js and added bedroll.js (original by dragon slayer, rewritten by Xuri) to support secure logouts from camping
+	Updated dictionary-files with new system messages related to the camping-skill
+	Added container-gump support for container items like bones and various SE/SA-related containers
+	Corrected sound-effect played when dropping items into baskets of various kinds
+	Made cut-up-leather and furs pileable in DFNDATA/ITEMS/SKILLS/RESOURCES/leatherworking.dfn (dragon slayer)
+	Added additional lootlists for tinkerparts, instruments, tools, vegetables, clothing, reagents and potions in DFNDATA/ITEMS/lootlists.dfn (dragon slayer)
+	Updated JS/ITEM/food.js so bowls, plates, etc will be left behind instead of eaten along with the food (dragon slayer)
+	Added empty wooden bowls to DFNDATA/ITEMS/BUILDING/DECS/kitchen.dfn
+	Updated DFNDATA/MAPS/tiles.dfn with proper height-override values for rope ladders - should be 22 not 10
+	Fixed a bug where NPCs would continue following and attacking characters that turned invisible/hidden
+	Players who turn invisible will now stop swinging at nearby targets in combat
+	Fixed a bug where players could equip both one-hander and two-hander weapons at the same time
+	Fixed a bug where newly created characters could end with two conflicting weapons equipped at the same time
+	Added additional deed/boat-model IDs to "modelmulti"-list in DFNDATA/ITEMS/itemtypes.dfn to make these usable as house/boat-deeds
+	Added fix to properly set the mounted-state for NPCs that spawn with a mount-item pre-equipped
+	Fixed issue where there was no distance-check on Field-spells. They now use CombatMaxSpellRange setting from UOX.INI like other spells
+	Fixed issue where the wrong GFX would be displayed for Field-spells aligned north/south
+	Fixed issue where NPCs without fencing or swordsmanship would not be allowed to poison anyone in combat. Tough luck, spiders!
+	Fixed issue with some NPCs using invalid values for POISONSTRENGTH. The valid range of poisons goes from 1 (weak) to 4 (deadly).
+	Added three new sections to DFNDATA/NEWBIE/newbie.dfn - [DEFAULT ELF MALE], [DEFAULT ELF FEMALE] and [DEFAULT ALL]
+	Added item and character-direction to ISTATS and CSTATS commands in JS/COMMANDS/TARGETING/gumps.js
+	Fixed an issue where containers with specific MORE values were interpreted as being trapped. Trapped containers now use MOREZ instead of MORE.
+	Fixed some issues with boat-movement (drifting/turning left/right, in particular) being blocked in cases where it shouldn't be
+	Fixed an issue where boat-commands to drift left/right could be spammed to move boat at high speeds. Now limited to normal boat speed multiplied by 1.5
+	Fixed an issue where static water tiles would block placement of boats
+	Fixed Tillerman-location on large ships turned southwards
+	Fixed an issue with JS/NPC/AI/stablemaster.js where, in specific circumstances, claiming stabled pets by name didn't work
+	Nearby pets will now teleport along with their owner into/onto houses/boats when those are placed
+	Fixed some cases in JS/MAGIC/clumsy.js where it tried to send sysmessages through sockets, to NPCs - who have no such thing
+	Added torches to ProvisionerShopping shoplist in DFNDATA/ITEMS/shoplist.dfn
+	Moved TurnTorward() method in JS/ITEM/axe.js to after the area resource-check, so player only turns if there is chopping to be done
+	Reduced chance of creature-sounds playing slightly. The more creatures, the higher the chance a sound will play.
+	Parts of movement code rewritten to solve Z-related issues (xantier)
+	Fixed various other issues with the walking-code
+	Removed hacky workaround for bug with NPC pathfinding leading to queues of NPCs all lined up, replaced by proper pathfinding
+	Made some tweaks to various parts of the NPC pathfinding code
+		Reduced default maxSteps variable in advanced pathfinding routine from 1000 steps to 500 steps for performance reasons
+			The maxSteps variable will also increase/decrease depending on the type of movement the pathfinding is for
+		Added a safeguard against NPCs repeatedly failing at advanced pathfinding and slowing down the server as a result. Now resets their NPCWANDERMODE on critical failures.
+		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path. 
+			Once it reaches a certain threshold, NPC can push past a blocking character, or alternatively stop whatever it's doing (fleeing, following, etc).
+		Advanced Pathfinding will now take into account characters blocking the way when generating valid paths - no more queued up NPCs in long lines!
+		Enabled pathfinding in water for water-walking creatures
+		NPCs that fail to pathfind while fleeing will abort fleeing and re-engage their opponent in combat
+		NPCs that fail to pathfind while in combat will abort combat and enter a state of "evasion" for a short time, during which
+			...Other characters wont block their movement
+			...They can't be attacked
+			...They won't attack anyone
+			...They'll try to move back to their bounding box, if they have one
+	Added some randomization in how NPCs pick their targets in combat, so not all NPCs pick the same target at the same time
+	MAX_VISRANGE and DEFSOCK_RANGE increased from 15 to 18 to better deal with item-updates in higher-resolution clients
+	JS events OnDeathBlow and OnDispel can now be used to override death and/or dispelling of summoned creatures (and magical fields), by returning false from the script
+		Note that for OnDeathBlow overriding code means that things like fame/karma-calculations and criminal/murderer-flags and timers need to be manually set in the script
+	Improvements to LineOfSight-code:
+		LoS no longer checks against a hardcoded list of items, but instead uses tiledata-flags (missing flags can be overriden through tiles.dfn)
+		LoS-checks will no longer be done for NPCs against targets that have visible status VT_PERMHIDDEN or VT_GHOSTHIDDED
+		LoS-checks should now work more consistently - no more NPCs aggroing players through walls! (Eolirin)
+			Note that this also has a benefit for server performance, as less aggroing NPCs mean less unneccesary attempts at NPC pathfinding!
+	Fixed incorrect offset on upstairs door in 2-story villa in DFNDATA/HOUSE/house.dfn
+	Added house-deed for Farmer's Cabin, and added this to the house-deeds itemmenu (DFNDATA\HOUSE\house.dfn and DFNDATA\ITEMS\ItemMenu.bulk.dfn)
+	Added support for INVISIBLE tag for house-items in DFNDATA\HOUSE\house.dfn. Allows adding invisible items to houses.
+	Added invisible wooden floor tile in second floor of 2 Story Log Cabin house to fix moving up rope ladder (DFNDATA\HOUSE\house.dfn)
+	Fixed sign-placement for 2 Story Log Cabin house (DFNDATA\HOUSE\house.dfn)
+	Updated methods for detecting client-versions for incoming connections, and how these are stored on the socket object
+	Added support for Stygian Abyss clients (classic version only, from v6.0.14.2 to 7.0.8.2)
+	Added support for High Seas clients (classic version only, from v7.0.9.0 to 7.0.15.1?)
+	Added support for creation of SA-specific Gargoyle-characters if client and server support this through CLIENTFEATURES and SERVERFEATURES bits
+		NOTE: Gargoyle-specific features and/or special-cases are not yet implemented! Highly experimental.
+	Added support for the SA-specific map (map5.mul - Termur) to DFNDATA/MAPS/maps.dfn
+	Added support for extended itemIDs (0x3FFF to 0xFFFF) used in SA and HS clients. Maximum supported depends on size of tiledata run on the server.
+	Added support for reading new versions of tiledata.mul and multi.mul. No settings needed, version-handling taken care of automatically.
+	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class. 
+		This replaces packet 0x1A in client-versions 7.0+, and enables displaying items and multis with IDs extending beyond 0x3FFF
+	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
+		Can be enabled/disabled through UOX.INI setting PAPERDOLLGUILDBUTTON=0/1. Defaults to 0.
+	Updated packet 0x88 to properly show combat-status of character in paperdoll
+	Updated packet 0xBA (Tracking Arrow) for HS clients - from 6 bytes to 10 bytes, to include target serial.
+	Updated packet 0x99 (Multi Placement) for HS clients - from 26 to 30 bytes, to include multi hues.
+	Added new NPCAI for passive NPCs who can be attacked, but will never attack back: AI_PASSIVE = 7
+	Updated Wall of Stone-spell to no longer place walls on the same tiles as where characters are standing
+	Added brute-force updating of character's total weight when main backpack is opened, as a quick-fix for broken character weights
+	Updated packet 0xA9 (Character List/Starting Locations) with UO:SA and UO:HS-specific handling.
+	Updated packet 0x24 (Draw Container, from 7 to 9 bytes) to support Container Type-flag in UO:HS clients, to ensure that containers, spellbooks and vendors continue working.
+	Changed the upper limit for the amount of stamina that can contribute to faster attack-speeds (for NPCs only) from 100 to 300
+		This increases their maximum theoretical attack-speed from attacking every 1.5 seconds to roughly every 0.75 seconds
+	Fixed incorrect Meditation skill-entry for lich NPCs (DFNDATA\NPC\undead.dfn) - was set to max 9500 (950.0), should have been 950 (95.0)
+	Earthquake-spells will no longer affect mounted targets, animation-wise
+	Added new UOX.INI option to determine whether attack-speed bonuses are gained from Stamina (default) or Dexterity: ATTACKSPEEDFROMSTAMINA=1/0
+	Added new UOX.INI option to control the displaying of damage-numbers in combat (previously used DISPLAYHITMSG for numbers too): DISPLAYDAMAGENUMBERS=1/0
+	Implemented better support for Yell (1.5 * normal speech distance) and Whisper (1 tile distance for players, 3 for GMs)
+	Whispering will no longer take hidden players out of hiding
+	Normal players can no longer see regular speech from permanently hidden GMs or Counselors
+	Normal players can see whispers from permanently hidden GMs or Counselors, if they're within distance (3 tiles)
+	Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client-versions for the server:
+		CLIENTSUPPORT4000=0/1
+		CLIENTSUPPORT5000=0/1
+		CLIENTSUPPORT6000=0/1
+		CLIENTSUPPORT6050=0/1
+		CLIENTSUPPORT7000=0/1
+		CLIENTSUPPORT7090=0/1
+		CLIENTSUPPORT70160=0/1
+		CLIENTSUPPORT70240=0/1
+		NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned. This means that CLIENTSUPPORT4000, for instance,
+		 will allow or disallow connections from clients 4.0.0 to 4.0.11f. Also note that while it is possible to enable support for all clients at the same time,
+		 it highly recommended to restrict support for client versions that match up to what the server is running.
+	Fixed various issues with the skill-gump (crashes) and skill-locks (not working/showing weird gumps instead of arrows/lock)
+	Added new UOX.INI option: EXTENDEDSTARTINGSTATS=0/1
+		If enabled, makes new characters start with 90 statpoints (selectable in clients 7.0.16.0+ only, lower versions only get 90 if using templates) instead of 80.
+	Added new UOX.INI option: EXTENDEDSTARTINGSKILLS=0/1
+		If enabled, allows for four starting skills (selectable in clients 7.0.16.0+ only, lower versions only get 4th skill if using templates) instead of three
+	Added (very) experimental support for UO:Enhanced clients v4.0.23.1+
+	Did some minor code-cleanup stuff, including but not limited to:
+		Reduced scope of some local variables to where they are actually needed/used
+		Changed some const std::strings function parameters to references instead of values
+		Changed some "stuff.size() == 0"-checks to "stuff.empty()"
+		Changed some "stuff.size() != 0"-checks to "!stuff.empty()"
+		Removed some variables that were initialized but never used
+	Increased world-loading speeds by ~35-40%, and saving by ~30-35% (your mileage may vary, this was tested on Windows 7, on an SSD)
+	Included <climits> in mapstuff.h and <stdlib.h> in cDice.cpp to fix a compiling issue in Linux
+	Updated some JS Console Methods in JS/COMMANDS/consoletest.js
+	Made the WIPEABLE bit a member of cBaseObj instead of cItem, so it can be used by both items, spawners, characters and multis - though only works for items and spawners atm
+	Updated the 'WIPE command to not delete non-wipeable items and spawners
+	Fixed a crash-bug in JS/COMMANDS/gumps.js where the 'ISTATS command could crash the server if used on a spawner-object with no spawnsection set
+	Fixed read-only books (setup through DFNDATA/MISC/books.dfn) by updating the MORE dfn-tags in DFNDATA/ITEMS/MISC/books.dfn
+	Implemented support for automatically renaming books when the book titles are updated by players
+	Fixed broken Bulletin Boards - should no longer freeze the client, and can actually be used for posting messages again
+	Disabled MsgBoardMaintenance() in CWorldMain::CheckAutoTimers() until someone can figure out why they break bulletin boards
+	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer) 
+	Added Ter'Mur Map Area (REGION 250) to DFNDATA/REGIONS/regions.dfn
+	Added code to shut down UOX3 (instead of crashing later on) if it fails to load any regions from region DFN scripts
+	Changed all references to MAP in DFNDATA/REGIONS/regions.dfn to WORLD (which unlike MAP is actually read by UOX3 in this file)
+	Fixed an issue in JS/SKILL/TAILORING/scissors.js where the script was referencing socket, but should have referenced pSock (dragon slayer)
+	Updated JS/teleport.scp with teleport-locations for new maps (dragon slayer)
+	Updated JS/teleport.scp with fixes for a whole bunch of old locations, and added some missing ones
+	Added layers to DFNDATA/ITEMS/MISC/jewelry.dfn (dragon slayer)
+	Added ML-era weapons to JS/SERVER/DATA/weapontypes.js (dragon slayer)
+	Added code-support for SA-era weapons, and added them to JS/SERVER/DATA/weapontypes.js and JS/jse_objectassociations.scp
+	Updated House-gump in DFNDATA/MISC/gumps.dfn (dragon slayer/Blue Dragon)
+	Updated JS/ITEM/sword.js to use CreateDFNItem instead of CreateBlankItem for raw fish steaks and kindling (dragon slayer)
+	Added cutting hides into leather through JS/SKILL/TAILORING/scissors.js (dragon slayer)
+	Added MAPUOPWRAP tag to DFNDATA/MAPS/maps.dfn - only used by clients 7.0.24+
+	Added support for reading map#LegacyMUL.uop files (regular map#.mul files with a uop header) in clients 7.0.24+
+	Fixed an issue where an NPC knowing too many skills could crash UOX3 if when listing them in response to a player
+	Players can now train skills from NPCs using the "train <skill>" phrases.
+	Corrected coordinates for REGION 75 (Destard)
+	Disabled detection of keypress "0" in JS/CONSOLE/console.js so UOX3 will actually reload all scripts when pressing 0
+	Moved reloading of JS/teleport.scp from the already slow DFN-reload (console option 7) to the much faster Regions-reload (console option 4)
+	Fixed an issue where some creatures with ANTIBLINK tag set in UOX3/DFNDATA/CREATURES/creatures.dfn would play get-hit animations as attack-animations
+	Added numerous creatures to DFNDATA/CREATURES/creatures.dfn, though some only have placeholder icons and sounds.
+	Updated various UOX3 documentation (installation, configuration, server-settings, JavaScript docs)
+	
 14/12/2011 - Xuri (0.98-4.0i)
 	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
 	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)

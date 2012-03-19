@@ -95,7 +95,7 @@ public:
 	void			DoesHunger( bool newValue );
 
 	void			Skill( SKILLVAL newValue, int iNum );
-	void			Name( const std::string newName );
+	void			Name( const std::string& newName );
 	void			RequiresBeard( bool newValue );
 	void			NoBeard( bool newValue );
 	void			IsPlayerRace( bool newValue );

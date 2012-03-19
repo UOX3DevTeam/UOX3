@@ -855,7 +855,7 @@ void CRace::Skill( SKILLVAL newValue, int iNum )
 {
 	iSkills[iNum] = newValue;
 }
-void CRace::Name( const std::string newName )
+void CRace::Name( const std::string& newName )
 {
 	raceName = newName;
 }

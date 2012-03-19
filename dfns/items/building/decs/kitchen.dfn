@@ -6,6 +6,32 @@
 // NOT TRIGGERED YET, ITEMS NOT USABLE YET
 // For use with the UOX emulator or any with permission from the author
 
+[0x15F8]
+{
+get=base_item
+name=a wooden bowl
+id=0x15F8
+weight=1
+value=2 1
+restock=100
+movable=1
+decay=1
+good=4
+}
+
+[0x1605]
+{
+get=base_item
+name=a large wooden bowl
+id=0x1605
+weight=200
+value=2 1
+restock=100
+movable=1
+decay=1
+good=4
+}
+
 [0x15FD]
 {
 get=base_item

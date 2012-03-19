@@ -39,7 +39,17 @@ bool isValidAttackTarget( CChar& mChar, CChar *cTarget )
 {
 	if( ValidateObject( cTarget ) && &mChar != cTarget )
 	{
-		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE  )
+		if( mChar.IsNpc() && cTarget->IsNpc() )
+		{
+			//We don't want NPCs to attack one another if either of them are water-walking creatures
+			//as they can't reach one another in any case
+			bool targetWaterWalk = cwmWorldState->creatures[cTarget->GetID()].IsWater();
+			bool attackerWaterWalk = cwmWorldState->creatures[mChar.GetID()].IsWater();
+			if(( attackerWaterWalk && !targetWaterWalk ) || ( !attackerWaterWalk && targetWaterWalk ))
+				return false;
+		}
+
+		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE || cTarget->IsEvading() )
 			return false;
 		if( objInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ) )
 		{
@@ -134,6 +144,8 @@ void HandleFighterAI( CChar& mChar )
 				{
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
+						if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+							continue;
 						Combat->AttackTarget( &mChar, tempChar );
 						regChars->Pop();
 						return;
@@ -251,6 +263,8 @@ void HandleEvilAI( CChar& mChar )
 					RaceRelate raceComp = Races->Compare( tempChar, &mChar );
 					if( raceComp >= RACE_ALLY )	// Allies
 						continue;
+					if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+						continue;
 					Combat->AttackTarget( &mChar, tempChar );
 					regChars->Pop();	// restore before returning
 					return;
@@ -285,6 +299,8 @@ void HandleChaoticAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
+					if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+						continue;
 					Combat->AttackTarget( &mChar, tempChar );
 					regChars->Pop();
 					return;
@@ -324,6 +340,8 @@ void HandleAnimalAI( CChar& mChar )
 					{
 						if( ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != AI_ANIMAL ) || hunger < 2  )
 						{
+							if( RandomNum( 0, 100 ) >= 50 ) // 50% chance to attack tempChar, 50% chance to attack next tempChar
+								continue;
 							Combat->AttackTarget( &mChar, tempChar );
 							regChars->Pop();
 							return;
@@ -351,8 +369,9 @@ void CheckAI( CChar& mChar )
 	{
 	case AI_BANKER:													// Banker
 	case AI_PLAYERVENDOR:											// Player Vendors.
-	case AI_NONE:											break;	// No AI for these special NPC's.
-
+	case AI_NONE:													// No special AI, default NPC behavior
+	case AI_DUMMY:												// Passive AI - doesn't attack nor fight back
+		break;	// No AI for these special NPC's.
 	case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
 	case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
 	case AI_GUARD:			HandleGuardAI( mChar );			break;	// Guard

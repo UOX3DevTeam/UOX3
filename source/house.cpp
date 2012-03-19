@@ -124,6 +124,8 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				}
 				else if( UTag == "MOVEABLE" )
 					hItem->SetMovable( 1 );
+				else if( UTag == "INVISIBLE" )
+					hItem->SetVisible( VT_PERMHIDDEN );
 				else if( UTag == "LOCK" && houseID >= 0x4000 )//lock it with the house key
 					hItem->SetTempVar( CITV_MORE, house->GetSerial() );
 				else if( UTag == "X" )//offset + or - from the center of the house:
@@ -165,7 +167,10 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 //			you don't build a house on top of your self..... this had to be done So you 
 //			could extra space around houses, (12+) and they would still be buildable.
 			{
-				mSock->sysmessage( 577 );
+				if( isBoat )
+					mSock->sysmessage( 7 );
+				else
+					mSock->sysmessage( 577 );
 				return false;
 			}
 			else if( !isMulti )
@@ -198,8 +203,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	const SI16 x = mSock->GetWord( 11 );
 	const SI16 y = mSock->GetWord( 13 );
-	const SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
-
+	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
+	UI32 targetSerial = mSock->GetDWord( 7 );
 	if( mSock->GetDWord( 7 ) != INVALIDSERIAL || getDist( mChar->GetLocation(), point3( x, y, z ) ) >= DIST_BUILDRANGE )
 	{
 		mSock->sysmessage( 577 );
@@ -235,6 +240,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			cy = data.toShort();
 		else if( UTag == "CHARZ" )
 			cz = data.toByte();
+		else if( UTag == "Z" ) //to allow offsetting houses in Z to fix multis like Farmer's Cabin
+			z = z + data.toByte();
 		else if( UTag == "ITEMSDECAY" )
 			itemsWillDecay = ( data.toShort() == 1 );
 		else if( UTag == "HOUSE_ITEM" )
@@ -304,6 +311,17 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
 	}
 	mChar->SetLocation( x + cx, y + cy, z + cz );
+
+	//Teleport pets as well
+	CDataList< CChar * > *myPets = mChar->GetPetList();
+	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
+	{
+		if( ValidateObject( pet ) )
+		{
+			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+				pet->SetLocation( mChar );
+		}
+	}
 }
 
 bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )

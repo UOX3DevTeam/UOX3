@@ -107,7 +107,7 @@ void		LoadPlaces( void );
 //o---------------------------------------------------------------------------o
 void		restockNPC( CChar& i, bool stockAll );
 void		clearTrades( void );
-void		sysBroadcast( const std::string txt );
+void		sysBroadcast( const std::string& txt );
 void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems );
 void		CheckAI( CChar& mChar );
@@ -172,7 +172,9 @@ void DoMessageLoop( void )
 					{
 					case '0':	cwmWorldState->ServerData()->Load();		break;	// Reload INI file
 					case '1':	Accounts->Load();							break;	// Reload accounts
-					case '2':	UnloadRegions();	LoadRegions();			break;	// Reload regions
+					case '2':	UnloadRegions();
+								LoadRegions(); 
+								LoadTeleportLocations();					break;	// Reload regions/TeleportLocations
 					case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
 					case '4':	Magic->LoadScript();						break;	// Reload spells
 					case '5':	JSMapping->Reload( SCPT_COMMAND );	
@@ -378,6 +380,13 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 	if( s->IsOnHorse() )
 		return;
 
+	//No mounting horses for gargoyles!
+	if( s->GetID() == 0x029A || s->GetID() == 0x029B )
+	{
+		sockPtr->sysmessage( 1798 );
+		return;
+	}
+
 	if( !objInRange( s, x, DIST_NEXTTILE ) )
 		return;
 	if( x->GetOwnerObj() == s || Npcs->checkPetFriend( s, x ) || s->IsGM() )
@@ -579,7 +588,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( mChar.IsDead() )
 		return false;
 	
-	LIGHTLEVEL toShow;
+	UI16 dbScript = 0;
+
 	UI16 c;
 	if( mChar.GetHP() > mChar.GetMaxHP() )
 		mChar.SetHP( mChar.GetMaxHP() );
@@ -682,6 +692,13 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 		mChar.ExposeToView();
 
+	// Take NPC out of EvadeState
+	if( mChar.IsNpc() && mChar.IsEvading() && mChar.GetTimer( tNPC_EVADETIME ) <= cwmWorldState->GetUICurrentTime() )
+	{
+		mChar.SetEvadeState( false );
+		//Console.Warning( "EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+	}
+
 	// Hunger Code
 	mChar.DoHunger( mSock );
 	
@@ -734,12 +751,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 						mChar.Damage( (SI16)pcalc );
 						break;
 					default:
-						Console.Error( " Fallout of switch statement without default. uox3.cpp, genericCheck()" );
+						Console.Error( " Fallout of switch statement without default. uox3.cpp, genericCheck(), mChar.GetPoisoned() not within valid range." );
 						mChar.SetPoisoned( 0 );
 						break;
 				}
 				if( mChar.GetHP() < 1 && !mChar.IsDead() )
 				{
+					dbScript		= mChar.GetScriptTrigger();
+					cScript *toExecute	= JSMapping->GetScript( dbScript );
+					if( toExecute != NULL )
+					{
+						if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
+							return false;
+					}
+
 					HandleDeath( (&mChar) );
 					if( mSock != NULL )
 						mSock->sysmessage( 1244 );
@@ -788,6 +813,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( doWeather )
 	{
 		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+		LIGHTLEVEL toShow;
 		if( Races->VisLevel( mChar.GetRace() ) > curLevel )
 			toShow = 0;
 		else
@@ -814,6 +840,14 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		return true;
 	else if( mChar.GetHP() <= 0 )
 	{
+		dbScript	= mChar.GetScriptTrigger();
+		cScript *toExecute	= JSMapping->GetScript( dbScript );
+		if( toExecute != NULL )
+		{
+			if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
+				return false;
+		}
+
 		HandleDeath( (&mChar) );
 		return true;
 	}
@@ -896,6 +930,8 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			{
 				CPTrackingArrow tSend = (*mChar.GetTrackingTarget());
 				tSend.Active( 0 );
+				if( mSock->ClientType() >= CV_HS2D )
+					tSend.AddSerial( mChar.GetTrackingTarget()->GetSerial() );
 				mSock->Send( &tSend );
 			}
 		}
@@ -1099,13 +1135,13 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
 	bool doPetOfflineCheck				= false;
-	MAPUSERNAMEID_ITERATOR I;
 
 	// modify this stuff to take into account more variables
 	if( accountFlush <= GetUICurrentTime() || GetOverflow() )
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
+		MAPUSERNAMEID_ITERATOR I;
 		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
 			CAccountBlock& actbTemp = I->second;
@@ -1235,12 +1271,18 @@ void CWorldMain::CheckAutoTimers( void )
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
-			if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
+			//
+			// !!!DISABLED!!! Either the MsgBoardMaintenance() function (or sub-functions)
+			// read in the messages incorrectly, or they get saved back out incorrectly.
+			// Either way, it completely messes up bulletin boards, so it's disabled for now.
+			//
+#pragma note( "MsgBoardMaintenance() disabled until someone can figure out why it breaks bullein boards!" )
+			/*if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
 			{
 				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
 				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
-			}
+			}*/
 
 			SetAutoSaved( false );
 			SaveNewWorld( false );
@@ -1655,7 +1697,7 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 void Shutdown( SI32 retCode )
 {
 	Console.PrintSectionBegin();
-	Console << "Beginning UOX final shut down sequence..." << myendl;
+	Console << myendl << "Beginning UOX final shut down sequence..." << myendl;
 
 	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() >= 1 && retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
@@ -1859,6 +1901,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_HEALING:			skillToSet = HEALING;							break;
 				case DFNTAG_HERDING:			skillToSet = HERDING;							break;
 				case DFNTAG_HIDING:				skillToSet = HIDING;							break;
+				case DFNTAG_IMBUING:			skillToSet = IMBUING;							break;
 				case DFNTAG_INTELLIGENCE:		applyTo->SetIntelligence( static_cast<SI16>(RandomNum( ndata, odata )) );	break;
 				case DFNTAG_ITEMID:				skillToSet = ITEMID;							break;
 				case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;						break;
@@ -1886,6 +1929,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_MEDITATION:			skillToSet = MEDITATION;					break;
 				case DFNTAG_MINING:				skillToSet = MINING;						break;
 				case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;					break;
+				case DFNTAG_MYSTICISM:			skillToSet = MYSTICISM;						break;
 				case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;					break;
 				case DFNTAG_NINJITSU:			skillToSet = NINJITSU;						break;
 				case DFNTAG_PARRYING:			skillToSet = PARRYING;						break;
@@ -1912,6 +1956,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) );	break;
 				case DFNTAG_SKIN:				applyTo->SetSkin( cdata.toUShort() );		break;
 				case DFNTAG_SNOOPING:			skillToSet = SNOOPING;						break;
+				case DFNTAG_SPELLWEAVING:		skillToSet = SPELLWEAVING;					break;
 				case DFNTAG_SPIRITSPEAK:		skillToSet = SPIRITSPEAK;					break;
 				case DFNTAG_STEALING:			skillToSet = STEALING;						break;
 				case DFNTAG_STEALTH:			skillToSet = STEALTH;						break;
@@ -1920,6 +1965,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_TAILORING:			skillToSet = TAILORING;						break;
 				case DFNTAG_TAMING:				skillToSet = TAMING;						break;
 				case DFNTAG_TASTEID:			skillToSet = TASTEID;						break;
+				case DFNTAG_THROWING:			skillToSet = THROWING;						break;
 				case DFNTAG_TINKERING:			skillToSet = TINKERING;						break;
 				case DFNTAG_TRACKING:			skillToSet = TRACKING;						break;
 				case DFNTAG_VETERINARY:			skillToSet = VETERINARY;					break;
@@ -2016,7 +2062,7 @@ void doLight( CSocket *s, UI08 level )
 	}
 
 	CTownRegion *curRegion	= mChar->GetRegion();
-	CWeather *wSys			= Weather->Weather( curRegion->GetWeather() );
+	CWeather *wSys = Weather->Weather( curRegion->GetWeather() );
 	LIGHTLEVEL toShow;
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
@@ -2132,22 +2178,43 @@ void doLight( CChar *mChar, UI08 level )
 //o---------------------------------------------------------------------------o
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
-	CTile& tile = Map->SeekTile( mItem.GetID() );
 	UString temp	= mItem.GetName() ;
 	temp			= temp.simplifyWhiteSpace();
-	if( temp.substr( 0, 1 ) == "#" )
-	{
-		temp =  static_cast< UString >( tile.Name() );
-	}
-	
 	const UI16 getAmount = mItem.GetAmount();
-	if( getAmount == 1 )
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
-		if( tile.CheckFlag( TF_DISPLAYAN ) )
-			temp = "an " + temp;
-		else if( tile.CheckFlag( TF_DISPLAYA ) )
-			temp = "a " + temp;
+		//7.0.9.0 data and later
+		CTileHS& tile = Map->SeekTileHS( mItem.GetID() );
+		if( temp.substr( 0, 1 ) == "#" )
+		{
+			temp =  static_cast< UString >( tile.Name() );
+		}
+		
+		if( getAmount == 1 )
+		{
+			if( tile.CheckFlag( TF_DISPLAYAN ) )
+				temp = "an " + temp;
+			else if( tile.CheckFlag( TF_DISPLAYA ) )
+				temp = "a " + temp;
+		}
 	}
+	else
+	{
+		//7.0.8.2 data and earlier
+		CTile& tile = Map->SeekTile( mItem.GetID() );
+		if( temp.substr( 0, 1 ) == "#" )
+		{
+			temp =  static_cast< UString >( tile.Name() );
+		}
+		
+		if( getAmount == 1 )
+		{
+			if( tile.CheckFlag( TF_DISPLAYAN ) )
+				temp = "an " + temp;
+			else if( tile.CheckFlag( TF_DISPLAYA ) )
+				temp = "a " + temp;
+		}
+	}	
 
 	// Find out if the name has a % in it
 	if( temp.sectionCount( "%" ) > 0 )

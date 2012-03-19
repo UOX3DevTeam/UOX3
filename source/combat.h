@@ -22,7 +22,8 @@ enum WeaponTypes
 	DUAL_SWORD,
 	DUAL_FENCING_STAB,
 	DUAL_FENCING_SLASH,
-	BLOWGUNS
+	BLOWGUNS,
+	THROWN
 };
 
 class CHandleCombat

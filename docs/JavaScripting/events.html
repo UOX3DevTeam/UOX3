@@ -63,11 +63,86 @@ tChar.DoAction( 111 );
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnBuyEvent">onBuy</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onBuy( pSock, Vendor )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b>
+<td>Runs on NPC vendor before tradegump opens
+<tr><td valign="top" width="25%"><b>Notes</b><td>Can be used to completely block access to a vendor based on criterias of one's choosing.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow more control over who can access NPC vendors.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onBuy( pSock, Vendor )
+{
+	// If player does not belong to the undead race, vendor wants nothing to do with him!
+	if( pSock.currentChar.raceID != 11 )
+	{
+		Vendor.TextMessage( "Sorry, I don't sell to the likes of you!" );
+		return false;
+	}
+	else
+		return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnBuyFromVendorEvent">onBuyFromVendor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onBuyFromVendor( pSock, Vendor, iBought )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on item after player verifies purchase, but before purchase has gone through
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return false will block the sale from going through, without closing the menu.<br>Return true will make the purchase go through as normal.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow restricting the purchase of specific items
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onBuyFromVendor( pSock, Vendor, iBought )
+{
+	var pUser = pSock.currentChar;
+	pUser.TextMessage( "I am buying an item ("+iBought.name+") from a vendor!" );
+	Vendor.TextMessage( "I am selling an item!" );
+	return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnBoughtFromVendorEvent">onBoughtFromVendor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onBoughtFromVendor( pSock, Vendor, iBought )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on item after purchase has gone through and item has reached player's backpack.
+<tr><td valign="top" width="25%"><b>Notes</b><td>Used, amongst other things, for automatically turning pet-statues bought from animal-trainers into actual pets
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow manipulating the item that has been bought, immediately after it reaches the player's backpack.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onBoughtFromVendor( pSock, Vendor, iBought )
+{
+	var pUser = pSock.currentChar;
+	pUser.TextMessage( "I bought an item ("+iBought.name+") from a vendor!" );
+	Vendor.TextMessage( "I just sold an item to some random dude!" );
+	return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnCallbackEvent">onCallback</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onCallback#( socket, target )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggered for player who selects a target initiated from a CustomTarget method
+<tr><td valign="top" width="25%"><b>Notes</b><td># behind onCallback function-name is linked to the # used in the CustomTarget method that initiated the targeting cursor.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To handle callbacks from targeting cursors
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function CommandRegistration()
+{
+	RegisterCommand( "disconnect", 2, true );
+}
+function command_DISCONNECT( socket, cmdString )
+{
+	var targMsg = GetDictionaryEntry( 196, socket.Language );
+	<strong>socket.CustomTarget( 0, targMsg );</strong>
+}
+<strong>function onCallback0( socket, ourObj )</strong>
+{
+	if( !socket.GetWord( 1 ) && ourObj.isChar && ourObj.online )
+	{
+		var targSock = ourObj.socket;
+		if( targSock && targSock != socket )
+		{
+			socket.SysMessage( GetDictionaryEntry( 1029, socket.Language ) );
+			targSock.SysMessage( GetDictionaryEntry( 1030, targSock.Language ) );
+			targSock.Disconnect();
+		}
+	}
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -229,11 +304,12 @@ function onDeath( pDead )
 <tr><td valign="top" width="25%"><b>Notes</b>  
 <tr><td valign="top" width="25%"><b>Purpose</b>
 <td>Custom reactions after a killing blow has been made 
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>function onDeathBlow( pKilled, pKiller )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDeathBlow( pDead, pKiller )
 {
-	pKiller.SysMessage( &quot;You just killed &quot; + pKilled.name + &quot;!&quot; );
-	if( pKilled.socket )
-		pKilled.SysMessage( pKiller.name + " just killed you!" );
+	pDead.health = pDead.health + 10;	
+	pDead.TextMessage( "But I'm not dead!" );
+	return true;
 }</pre>
 </table>
 
@@ -326,6 +402,30 @@ function onDrop( iDropped, pDropper )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnDropItemOnItemEvent">onDropItemOnItem</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When iDropped is dropped by cDropper on iDroppedOn
+<tr><td valign="top" width="25%"><b>Notes</b><td>First iDropped's script is activated, and if it doesn't bounce, then same script is activated for iDroppedOn<br>Return Value Table:<br> 0 == bounce<br> 1 == don't bounce, use code<br> 2 == don't bounce, don't use code
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onDropItemOnItem( iDropped, cDropper, iDroppedOn )
+{
+	if( iDropped.id == 0x1f14 ) //If the item being dropped is a recall rune
+	{
+		if( iDroppedOn.id == 0x0efa ) //If the item being dropped on is a spellbook
+		{
+			cDropper.TextMessage("I am dropping "+iDropped.name+" on a "+iDroppedOn.name );
+		}
+	}
+	else
+	{
+		cDropper.TextMessage( "Generic error message!" );
+		return 0;
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnDropItemOnNPCEvent">onDropItemOnNpc</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When iDropped is dropped on pDroppedOn
@@ -338,6 +438,23 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 	pDroppedOn.TextMessage("Fudge off!");
 	iDropped.colour =13;
 	return 0;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnEnterRegionEvent">onEnterRegion</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onEnterRegion( pEntering, regionEntered )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pEntering enters regionEntered
+<tr><td valign="top" width="25%"><b>Notes</b><td>Region-scripts can be attached to regions through regions.dfn, using the script=# tag
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow custom reactions when players enter regions
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onEnterRegion( pEntering, regionEntered )
+{
+	if( pEntering.raceID != 11 )
+	{
+		//sound the alarm! non-undead intruder to region
+		//spawn undead guards
+	}
 }
 </pre></table>
 
@@ -387,6 +504,15 @@ function onFall( pFall, fallDistance )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onFlagChange( pChanging, newStatus, oldStatus );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When a player's status changes.  IE innocent -> criminal, criminal->murderer, and so on.
 <tr><td valign="top" width="25%"><b>Notes</b><td>May not fire instantly when the action is made.  However, won't be long after change occurs will it be visible.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnGumpInputEvent">onGumpInput</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
@@ -450,6 +576,44 @@ function onGumpPress( pSock, pButton, gumpData )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnIterateEvent">onIterate</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onIterate( object )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>On every object our iterator comes across.  
+<tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on running the loop<br>if return value is false, then the loop is halted
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow JS to loop through all world objects.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function doStuff( socket, pUser )
+{
+	socket.SysMessage( "Killing all NPCs" );
+	var numKilled = IterateOver( "CHARACTER" );
+	socket.SysMessage( "Killed " + NumToString( numKilled ) + " NPCs " );
+}
+
+function onIterate( charCheck )
+{
+	if( !charCheck )
+		return false;
+	if( charCheck.npc )
+		charCheck.Kill();
+	return true;		
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnLeaveRegionEvent">onLeaveRegion</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLeaveRegion( pLeaver, regionLeft )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pLeaver leaves regionLeft
+<tr><td valign="top" width="25%"><b>Notes</b><td>Region-scripts can be attached to regions through the script=# tag in regions.dfn
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow reactions when characters leave regions
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onLeaveRegion( pLeaver, regionLeft )
+{
+	//if pLeaver is not allowed to leave the region
+	//turn him into a criminal and spawn guards to go after him!
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnLeavingEvent">onLeaving</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLeaving( iLeft, objLeaving, objType )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>when objLeaving leaves the multi object iLeft
@@ -465,12 +629,34 @@ function onLeaving( iLeft, objLeaving, objType )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnLightChangeEvent">onLightChange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLightChange( object, lightlevel )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for object (char or item) when lightlevel changes
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table> 
+function onLightChange( object, lightlevel )
+{
+	(pseudo-code)
+	<em>if( object && object is item )
+	{
+		if( object.id equals unlit lamppost )
+		{
+			if( lightlevel > 10 ) //high light levels = dark, low light levels = bright
+			{
+				object.id = lit lamppost
+			}
+		}
+		else if( object.id equals lit lamppost )
+		{
+			if( lightlevel < 10 )
+			{
+				object.id = unlit lamppost
+			}
+		}
+	}</em>
+}
+</pre></table>
+
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnLogin">onLogin</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onLogin( sockPlayer, pChar )
@@ -493,6 +679,19 @@ function onLeaving( iLeft, objLeaving, objType )
 <br>{
 <br>	sockPlayer.SysMessage ( "Farewell! Come back soon." );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnPacketReceive">onPacketReceive</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onPacketReceive( socket, packetNum )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When receiving a network packet
+<tr><td valign="top" width="25%"><b>Notes</b><td>OVERLOADPACKETS needs to be enabled in UOX.INI and each specific packet must be registered in jse_fileassociations.scp
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Similar as "packet-hooks" in other emulators - allows overriding network packet-handling without modifying the server source-code
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onPacketReceive( socket, packetNum )
+{
+	//???
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -534,15 +733,6 @@ function onLeaving( iLeft, objLeaving, objType )
 	//Use return false to disallow the pickup and bounce item
 	//return false;
 }
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnPortalEvent">onPortal</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
-<tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -588,11 +778,54 @@ function onScrollCast( pUser, spellID )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnSellEvent">onSell</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSell( pSock, Vendor )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on vendor before tradegump opens.
 <tr><td valign="top" width="25%"><b>Notes</b><td>
-<tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control over who can sell stuff to specific vendors.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSell( pSock, Vendor )
+{
+	// If player does not belong to the undead race, vendor wants nothing to do with him!
+	if( pSock.currentChar.raceID != 11 )
+	{
+		Vendor.TextMessage( "RIGHT! As if I would buy from you..." );
+		return false;
+	}
+	else
+		return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSellToVendorEvent">onSellToVendor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSellToVendor( pSock, Vendor, iSold )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on item after player verifies sale, but before sale actually goes through.
+<tr><td valign="top" width="25%"><b>Notes</b><td>Return false will block the sale from going through, without closing the menu.<br>Return true will make the sale go through as normal.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control over the selling of specific items to vendors
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSellToVendor( pSock, Vendor, iSold )
+{
+	var pUser = pSock.currentChar;
+	pUser.TextMessage( "I am selling an item ("+iSold.name+") to a vendor!" );
+	Vendor.TextMessage( "I am buying an item!" );
+	return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSoldToVendorEvent">onSoldToVendor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSoldToVendor( pSock, Vendor, iSold )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on item after it has already been sold to the NPC vendor and has reached the NPC vendor's "bought"-backpack
+<tr><td valign="top" width="25%"><b>Notes</b><td>If the item sold to the vendor stacks with items already there, the script will run on the entire stack, not just the one item specifically sold!
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control over what happens after specific items have been sold to NPCs. 
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onSoldToVendor( pSock, Vendor, iSold )
+{
+	var pUser = pSock.currentChar;
+	pUser.TextMessage( "I sold an item ("+iSold.name+") to a vendor!" );
+	Vendor.TextMessage( "I just bought an item from some random dude!" );
+	return true;
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -676,6 +909,24 @@ function onSkill( objUsing, skillUsed, objType )
 	pUser.SysMessage( "Overriding default skillgump, opening custom one instead..." );
 	// Insert custom skillgump here!
 }
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSpellGainEvent">onSpellGain</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellGain( spellBook, spellNum )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggered for spellbooks when spells are added to them
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow overriding what happens when spells are added to spellbooks?
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnSpellLossEvent">onSpellLoss</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSpellLoss( spellBook, spellNum )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggered for spellbooks when spells are removed from them
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow overriding what happens when spells are removed from spellbooks?
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -897,6 +1148,15 @@ function onSwing( iSwung, pSwinging, pSwingAt )
 </pre></table> 
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnTempChangeEvent">onTempChange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTempChange( object, temperature )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for object (char/item) when temperature changes
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow reactions for characters/items when temperature changes
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnTimerEvent">onTimer</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onTimer( tChar, timerID )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When tempeffect 40 (StartTimer) duration has elapsed for timer timerID
@@ -980,11 +1240,20 @@ function onUseUnChecked( pUser, iUsed )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnXYZEvent">onXYZEvent</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>
+<tr><th colspan=2 bgcolor="maroon"><a name="OnVirtueGumpPressEvent">onVirtueGumpPress</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onVirtueGumpPress( mChar, tChar, buttonID )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When Virtue gumps are pressed?
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnWeatherChangeEvent">onWeatherChange</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onWeatherChange( object, weatherType )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Triggers for object (char/item) when weather changes
+<tr><td valign="top" width="25%"><b>Notes</b><td>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow reactions for characters/items when weather changes
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 </pre></table>
 
@@ -995,30 +1264,6 @@ function onUseUnChecked( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Notes</b><td>objType == 0 indicates objVanish is a character<br>objType == 1 indicates objVanish is an item
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To take actions based on when things go out of range.  For instance, if you ran out of range of your attacker, you might decide to automatically try and hide.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnIterateEvent">onIterate</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onIterate( object )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>On every object our iterator comes across.  
-<tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on running the loop<br>if return value is false, then the loop is halted
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow JS to loop through all world objects.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function doStuff( socket, pUser )
-{
-	socket.SysMessage( "Killing all NPCs" );
-	var numKilled = IterateOver( "CHARACTER" );
-	socket.SysMessage( "Killed " + NumToString( numKilled ) + " NPCs " );
-}
-
-function onIterate( charCheck )
-{
-	if( !charCheck )
-		return false;
-	if( charCheck.npc )
-		charCheck.Kill();
-	return true;		
-}
 </pre></table>
 
 <center>

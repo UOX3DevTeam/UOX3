@@ -37,7 +37,7 @@ function onCallback0( pSock, myTarget )
 			var isInRange = pUser.InRange( myTarget, 3 );
 			if( !isInRange )
 		 	{
-				pSock.SysMessage( GetDictionaryEntry( 461, socket.Language ) ); // You are too far away.
+				pSock.SysMessage( GetDictionaryEntry( 461, pSock.Language ) ); // You are too far away.
 				return;
 			}
 			else if( myTarget.id == 0x00df || myTarget.id == 0x00cf )
@@ -85,6 +85,13 @@ function onCallback0( pSock, myTarget )
 			{ //Cut folded cloth/clothes into bandages
 				pSock.SysMessage( "You cut the material into bandage and place it in your backpack." );
 				var itemMade = CreateDFNItem( pSock, pUser, "0x0e21", myTarget.amount, "ITEM", true );  //give the player some bandages
+				myTarget.Delete();
+				return;
+			}
+			else if( tileID >= 4216 && tileID <= 4217 ) // <-- Decimal item-ids
+			{ //Cut up hides into leather
+				pSock.SysMessage( "You cut the material into leather and place it in your backpack." );
+				var itemMade = CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount, "ITEM", true );  //give the player some leather
 				myTarget.Delete();
 				return;
 			}

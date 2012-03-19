@@ -37,7 +37,7 @@ fd_set errsock;
 
 void killTrades( CChar *i );
 void DoorMacro( CSocket *s );
-void sysBroadcast( const std::string txt );
+void sysBroadcast( const std::string& txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 {
@@ -159,6 +159,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	CChar *p = s->CurrcharObj();
 	bool valid = false;
 	SI16 x = p->GetX(), y = p->GetY();
+	UI08 world = p->WorldNumber();
 	CMultiObj *multi = NULL;
 
 	killTrades( p );
@@ -169,7 +170,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	{
 		for( size_t a = 0; a < cwmWorldState->logoutLocs.size(); ++a )
 		{
-			if( cwmWorldState->logoutLocs[a].x1 <= x && cwmWorldState->logoutLocs[a].y1 <= y && cwmWorldState->logoutLocs[a].x2 >= x && cwmWorldState->logoutLocs[a].y2 >= y )
+			if( cwmWorldState->logoutLocs[a].x1 <= x && cwmWorldState->logoutLocs[a].y1 <= y && cwmWorldState->logoutLocs[a].x2 >= x && cwmWorldState->logoutLocs[a].y2 >= y && cwmWorldState->logoutLocs[a].worldNum == world )
 			{
 				valid = true;
 				break;
@@ -350,8 +351,9 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			delete toMake;
 			return;
 		}
-		sprintf( temp, "FIREWALL: Forwarding address %i.%i.%i.%i --> Access Granted!", part[0], part[1], part[2], part[3] );
-		messageLoop << temp;
+		//Firewall-messages are really only needed when firewall blocks, not when it lets someone through. Leads to information overload in console. Commenting out.
+		//sprintf( temp, "FIREWALL: Forwarding address %i.%i.%i.%i --> Access Granted!", part[0], part[1], part[2], part[3] );
+		//messageLoop << temp;
 		sprintf( temp, "Client %i [%i.%i.%i.%i] connected [Total:%i]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
 		messageLoop << temp;
 		loggedInClients.push_back( toMake );
@@ -481,19 +483,19 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	if( s >= connClients.size() )
 		return;
 
-	int count, ho, mi, se, total, book;
-	size_t j = 0;
 	char temp[1024];
 	CSocket *mSock = connClients[s];
 
 	if( mSock == NULL )
 		return;
-
+	
+	int book;
 	if( mSock->NewClient() )
 	{
-		count = mSock->Receive( 4 );
+		int count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
+			int ho, mi, se, total;
 			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho = total / 3600;
 			total -= ho * 3600;
@@ -517,11 +519,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	{
 		mSock->InLength( 0 );
 		CChar *ourChar = mSock->CurrcharObj();
-		UI08 packetID;
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
-			packetID = buffer[0];
+			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
 				// April 5, 2004 - EviLDeD - There is a great chance that alot of the times this will be UOG2 connecting to get information from the server
@@ -536,7 +537,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 			Console.Print( "Packet ID: 0x%x\n", packetID );
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
-				mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
+			{
+				if( !mSock->ForceOffline() ) //Don't refresh idle-timer if character is being forced offline
+					mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
+			}
 
 			bool doSwitch		= true;
 			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
@@ -565,6 +569,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 			}
 			if( doSwitch )
 			{
+				size_t j = 0;
 				switch( packetID )
 				{
 					case 0x01: // Main Menu on the character select screen
@@ -932,13 +937,13 @@ void cNetworkStuff::Transfer( CSocket *mSock )
 
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 {
-	int count, ho, mi, se, total;
 	CSocket *mSock = loggedInClients[s];
 	if( mSock == NULL )
 		return;
 	char temp[128];
 	if( mSock->NewClient() )
 	{
+		int count, ho, mi, se, total;
 		count = mSock->Receive( 4 );
 		// March 1, 2004 - EviLDeD - Implemented support for UOG request for client connection count and possibly other server values
 		if( memcmp(mSock->Buffer(),"UOG\0",sizeof(UI08)*4) == 0 && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in CSocket returns to fast and doesn't get the correct revieved byte count.
@@ -972,8 +977,11 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		} 
 		else
 		{
-			if( mSock->Buffer()[0] == 0xEF )
-				mSock->Receive( 21, false );
+			if( mSock->Buffer()[0] == 0xEF || mSock->Buffer()[0] == 0xC0 )
+			{
+				WhichLoginPacket( mSock->Buffer()[0], mSock );
+				//mSock->Receive( 21, false );
+			}
 
 			mSock->NewClient( false );
 			if( mSock->GetDWord( 0 ) == 0x12345678 )
@@ -995,6 +1003,13 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 					sprintf( temp, "UOG Stats Sent or Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
 				else
 					sprintf( temp, "Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
+				messageLoop << temp;
+				LoginDisconnect( s );
+				return;
+			}
+			else if( mSock->FirstPacket() && packetID == 0 )
+			{
+				sprintf( temp, "Buffer is empty, no packets to read. Disconnecting client. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() ); 
 				messageLoop << temp;
 				LoginDisconnect( s );
 				return;

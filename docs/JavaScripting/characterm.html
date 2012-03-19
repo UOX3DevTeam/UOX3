@@ -210,9 +210,12 @@ void UseResource( amount, realitemid, colour );</pre>
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="StartTimer">StartTimer</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void StartTimer( numMiliSec, timerID );</pre>
-<tr><td class="property">Purpose		<td class="value">Starts a timer that will elapse after numHundredthsOfSec seconds pass, for a character tChar.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered.
-<tr><td class="property">Example of Usage	<td class="value"><pre>myChar.StartTimer( 600, 0 );
+<tr><td class="property">Prototype		<td class="value"><pre>void StartTimer( numMiliSec, timerID, callback );</pre>
+<tr><td class="property">Purpose		<td class="value">Starts a timer that will elapse after numHundredthsOfSec seconds pass, for a character tChar.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered. Which script it triggers in depends on the (optional, defaults to false) third parameter, which can be <strong>true</strong> (calls back to existing script), <strong>false</strong> (calls back into object's script) or an <strong>int</strong> (scriptID to call back to). This optional parameter defaults to false if not specified.
+<tr><td class="property">Example of Usage	
+<td class="value"><pre>myChar.StartTimer( 600, 0, true ); //Timer calls back to object's script</br>
+myChar.StartTimer( 1200, 0, false ); //Timer calls back to existing script</br>
+myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
 </pre></table>
 
 <p>&nbsp;</p>
@@ -328,6 +331,24 @@ myChar.ExplodeItem( myItem );
 for the specified amount of time (in milliseconds). NOTE: Timer seems to be broken, as character stays hidden forever.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.SetInvisible( 1, 1000 );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetInvisible">AddSpell</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void AddSpell( spellNum )</pre>
+<tr><td class="property">Purpose		<td class="value">Adds specified spell to the character's spell-book
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myChar.AddSpell( 3 ); //adds Feeblemind spell to myChar's spellbook (if he has one)
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="SetInvisible">SpellFail</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void SpellFail()</pre>
+<tr><td class="property">Purpose		<td class="value">Does the actions associated in code with spell failure. Use after character fails to cast a spell, will play fail-effect, sound and give player default fail-message
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myChar.SpellFail();
 </pre></table>
 
 <p>&nbsp;</p>
@@ -492,8 +513,99 @@ void Resist( resistanceType, amount );</pre>
 var coldResist = pUser.Resist( 4 );</pre>
 </table>
 
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="SpellMoveEffect">SpellMoveEffect</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void SpellMoveEffect( targetChar, mSpell )</pre>
+<tr><td class="property">Purpose		<td class="value">Play the MOVEFX effect specified for the specified spell in SPELLS.DFN, from the sourceChar to the targetChar
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+var spellNum	= mChar.spellCast;
+var mSpell	= Spells[spellNum];
+mChar.SpellMoveEffect( targetChar, mSpell );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="SpellStaticEffect">SpellStaticEffect</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void SpellStaticEffect( mSpell )</pre>
+<tr><td class="property">Purpose		<td class="value">Play the STATFX effect specified for the specified spell in SPELLS.DFN, on the specificed character
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+var spellNum	= mChar.spellCast;
+var mSpell	= Spells[spellNum];
+targetChar.SpellStaticEffect( mSpell );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="BreakConcentration">BreakConcentration</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void BreakConcentration()
+bool BreakConcentration( socket )</pre>
+<tr><td class="property">Purpose		<td class="value">Break a caster's concentration
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myNPC.BreakConcentration(); //for NPCs, who have no sockets
+myPlayer.BreakConcentration( mSocket ); //for players, who DO have sockets
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="FindItemType">FindItemType</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void FindItemType( itemType )</pre>
+<tr><td class="property">Purpose		<td class="value">Look for items of a certain type in character's pack
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+var spellBook = myPlayer.FindItemType( 9 ); //does the player have a spellbook?
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="InitWanderArea">InitWanderArea</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void InitWanderArea()</pre>
+<tr><td class="property">Purpose		<td class="value">Initialize a WanderArea (10x10 box, or 10 radius circle) for the specified NPC. Will only work if they already have a wandermode set to box or circle.
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myNPC.InitWanderArea();
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="ReactOnDamage">ReactOnDamage</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void ReactOnDamage( damageType, attacker ); <br>void ReactOnDamage( damageType, attacker );</pre>
+<tr><td class="property">Purpose		<td class="value">Make a character react on damage
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myChar.ReactOnDamage( 2 );
+myChar.ReactOnDamage( 2, attackerChar );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="Damage">Damage</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void Damage( amount ); <br>void Damage( amount, healer );</pre>
+<tr><td class="property">Purpose		<td class="value">Cause damage to a character
+<tr><td class="property">Parameters		<td class="value">doRepSys true/false = flag as criminal?
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myChar.Damage( 15 );
+myChar.Damage( 15, attackerChar );
+myChar.Damage( 15, attackerChar, true );
+</pre></table>
+
+<p>&nbsp;</p>
+<table class="method">
+<tr><th colspan=3 bgcolor="maroon"><a name="Heal">Heal</a>
+<tr><td class="property">Prototype		<td class="value"><pre>void Heal( amount ); <br>void Heal( amount, attacker ); <br>void Heal( amount, attacker, doRepSys );</pre>
+<tr><td class="property">Purpose		<td class="value">Heal a character
+<tr><td class="property">Parameters		<td class="value">
+<tr><td class="property">Example of Usage	<td class="value"><pre>
+myChar.Heal( 15 );
+myChar.Heal( 15, healerChar );
+</pre></table>
+
 <p>&nbsp;</p><center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
-<font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font> |||
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Re-Rewrite and further updates: @Copyright 2003-2012 <a href="http://www.uox3.org">WWW.UOX3.ORG</a> Xuri</font>
 </center>
 </body>

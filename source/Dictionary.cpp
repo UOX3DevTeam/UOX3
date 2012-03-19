@@ -33,9 +33,10 @@ CDictionary::~CDictionary()
 {
 }
 
-CDictionary::CDictionary( const std::string filepath, const std::string language )
+CDictionary::CDictionary( const std::string& filepath, const std::string& language )
 {
 	CDictionary();	//	Call default constructor for this Class
+#pragma note( "Is the above line valid? You supposedly cannot call constructors from constructors in c++..." )
 
 	if( language.empty() )
 		Language = "ZRO";
@@ -146,7 +147,7 @@ CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
 	}
 }
 
-CDictionaryContainer::CDictionaryContainer( const std::string filepath ) : defaultLang( ZERO )
+CDictionaryContainer::CDictionaryContainer( const std::string& filepath ) : defaultLang( ZERO )
 {
 	std::string buildName;
 	for( UI16 i = (UI16)DL_UNKNOWN; i < (UI16)DL_COUNT; ++i )

@@ -464,7 +464,7 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a command is valid
 //o---------------------------------------------------------------------------o
-bool cCommands::CommandExists( const std::string cmdName )
+bool cCommands::CommandExists( const std::string& cmdName )
 {
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	return ( toFind != CommandMap.end() );
@@ -517,7 +517,7 @@ bool cCommands::FinishedCommandList( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
 //o---------------------------------------------------------------------------o
-CommandMapEntry *cCommands::CommandDetails( const std::string cmdName )
+CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 {
 	if( !CommandExists( cmdName ) )
 		return NULL;

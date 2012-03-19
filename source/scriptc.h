@@ -14,15 +14,15 @@ class Script
 {
 public:
 	long lastModTime;
-	Script( const std::string _filename, DEFINITIONCATEGORIES d, bool disp = true );
+	Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp = true );
 	~Script();
 
-	ScriptSection * FindEntry( const std::string section );
-	ScriptSection *	FindEntrySubStr( const std::string section );
+	ScriptSection * FindEntry( const std::string& section );
+	ScriptSection *	FindEntrySubStr( const std::string& section );
 	ScriptSection *	FirstEntry( void );
 	ScriptSection *	NextEntry( void );
 
-	bool isin( const std::string section );
+	bool isin( const std::string& section );
 	std::string EntryName( void );
 	size_t NumEntries( void ) const
 	{

@@ -605,14 +605,12 @@ REGIONLIST CMapHandler::PopulateList( CBaseObject *mObj )
 REGIONLIST CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber )
 {
 	REGIONLIST nearbyRegions;
-	bool isOnList	= false;
 	const SI16 xOffset	= MapRegion->GetGridX( x );
 	const SI16 yOffset	= MapRegion->GetGridY( y );
 	for( SI08 counter1 = -1; counter1 <= 1; ++counter1 )
 	{
 		for( SI08 counter2 = -1; counter2 <= 1; ++counter2 )
 		{
-			isOnList			= false;
 			CMapRegion *MapArea	= GetMapRegion( xOffset + counter1, yOffset + counter2, worldNumber );
 			if( MapArea == NULL )
 				continue;
@@ -752,7 +750,6 @@ void CMapHandler::Load( void )
 //	const int onePercent	= (int)((float)(AreaX*AreaY)/100.0f);
 	UI32 count				= 0;
 	std::ifstream readDestination;
-
 	Console.TurnYellow();
 	Console << "0%";
 	UI32 s_t				= getclock();
@@ -781,8 +778,7 @@ void CMapHandler::Load( void )
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
 			filename	= basePath + UString::number( counter1 ) + "." + UString::number( counter2 ) + ".wsc";	// let's name our file
-			readDestination.open( filename.c_str() );					// let's open it 
-
+			readDestination.open( filename.c_str());					// let's open it 
 			readDestination.seekg( 0, std::ios::beg );
 
 			if( readDestination.eof() || readDestination.fail() )

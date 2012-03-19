@@ -364,11 +364,11 @@ public:
 	void				At( SI32 newTime )				{	timeToSayAt = newTime;			}
 	void				CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
 
-	void Speech( const std::string said )
+	void Speech( const std::string& said )
 	{
 		toSay = said.substr( 0, MAX_SPEECH - 1 );
 	}
-	void SpeakerName( const std::string spkName )
+	void SpeakerName( const std::string& spkName )
 	{
 		sName = spkName.substr( 0, MAX_NAME - 1 );
 	}

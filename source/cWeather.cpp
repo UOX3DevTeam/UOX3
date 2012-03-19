@@ -2090,7 +2090,6 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 		R32 baseDamage			= (R32)Races->Damage( mChar.GetRace(), LIGHT );
 		R32 lightLevel			= (R32)Races->LightLevel( mChar.GetRace() );
 		R32 currentLight		= 255;
-		R32 dungeonLight		= 255;
 		R32 lightMin			= 255;
 		R32 lightMax			= 255;
 		int	message				= 0;
@@ -2120,6 +2119,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 		
 		if ( mChar.inDungeon() )
 		{
+			R32 dungeonLight		= 255;
 			dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
 
 

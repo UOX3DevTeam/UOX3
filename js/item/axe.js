@@ -92,7 +92,6 @@ function ChopTree( socket, mChar )
 		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
 		return;
 	}
-	mChar.TurnToward( targX, targY );
 
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateLog( mResource, socket );
@@ -101,6 +100,8 @@ function ChopTree( socket, mChar )
 		socket.SysMessage( GetDictionaryEntry( 840, socket.Language ) );
 		return;
 	}
+
+	mChar.TurnToward( targX, targY );
 
 	if( mChar.isonhorse )
 		mChar.DoAction( 0x1C );

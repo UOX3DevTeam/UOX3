@@ -38,7 +38,7 @@ void CollectGarbage( void );
 void endmessage( int x );
 void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
-void sysBroadcast( const std::string txt );
+void sysBroadcast( const std::string& txt );
 void HandleHowTo( CSocket *sock, int cmdNumber );
 void Wiping( CSocket *s );
 
@@ -184,9 +184,9 @@ void command_addaccount( CSocket *s)
 	char *szPassword	= NULL;
 	char *szPrivs		= NULL;
 	CAccountBlock actbTemp;
-	UI16 nFlags = 0x0000;
 	if( Commands->NumArguments() > 1 )
 	{
+		UI16 nFlags = 0x0000;
 		szCommandLine	= (char *)Commands->CommandString( 2 ).c_str();
 		szCommand		= strtok( szCommandLine, " " );
 		szUsername		= strtok( NULL, " " );

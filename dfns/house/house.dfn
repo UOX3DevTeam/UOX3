@@ -265,14 +265,17 @@ HOUSE_DEED=largesmithydeed
 }
 
 [HOUSE 17]
-{ Farm House
+{ Farmer's Cabin
 ID=0x4BB8
 SPACEX=5
 SPACEY=5
 CHARX=0
 CHARY=0
 CHARZ=0
+Z=1
+HOUSE_DEED=farmerscabindeed
 HOUSE_ITEM=42
+HOUSE_ITEM=119
 }
 
 [HOUSE 18]
@@ -441,6 +444,7 @@ CHARZ=7
 HOUSE_ITEM=113
 HOUSE_ITEM=114
 HOUSE_ITEM=115
+HOUSE_ITEM=120
 HOUSE_DEED=2storylogcabindeed
 }
 
@@ -992,7 +996,7 @@ Z=5
 { Door (inside bedroom)
 ITEM=0x06E7
 LOCK
-X=-2
+X=-3
 Y=-1
 Z=25
 }
@@ -1029,8 +1033,8 @@ Z=6
 ITEM=housesign
 LOCK
 X=4
-Y=5
-Z=14
+Y=7
+Z=9
 }
 
 [HOUSE ITEM 114]
@@ -1078,3 +1082,21 @@ Y=3
 Z=4
 }
 
+[HOUSE ITEM 119]
+{ Sign (farmer's cabin)
+ITEM=housesign_2
+LOCK
+X=4
+Y=4
+Z=7
+}
+
+[HOUSE ITEM 120]
+{ woodenfloor tile to circumvent broken ladder
+ITEM=0x04BC
+INVISIBLE
+LOCK
+X=3
+Y=-5
+Z=29
+}

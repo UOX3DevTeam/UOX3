@@ -38,6 +38,8 @@ const UI32 BIT_POSTLOADED	=	2;
 const UI32 BIT_SPAWNED		=	3;
 const UI32 BIT_SAVE			=	4;
 const UI32 BIT_DISABLED		=	5;
+const UI32 BIT_WIPEABLE		=	6;
+
 
 //o--------------------------------------------------------------------------
 //|	Function		-	CBaseObject destructor
@@ -90,7 +92,6 @@ const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 
-
 //o--------------------------------------------------------------------------o
 //|	Function		-	CBaseObject constructor
 //|	Date			-	26 July, 2000
@@ -107,7 +108,7 @@ hitpoints( DEFBASE_HP ), visible( DEFBASE_VISIBLE ), hidamage( DEFBASE_HIDAMAGE 
 lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ), 
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ), 
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
-poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ),
+poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
 fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
 {
 	objSettings.reset();
@@ -186,7 +187,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			return;
 		}
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
-		if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
+		else if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
 			I->second.m_Destroy		= FALSE;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
@@ -208,6 +209,27 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			tags[tagname] = tagval;
 	}
 }
+
+SI16 CBaseObject::GetOldTargLocX( void ) const
+{
+	return oldTargLocX;
+}
+
+SI16 CBaseObject::GetOldTargLocY( void ) const
+{
+	return oldTargLocY;
+}
+
+void CBaseObject::SetOldTargLocX( SI16 newValue )
+{
+	oldTargLocX = newValue;
+}
+
+void CBaseObject::SetOldTargLocY( SI16 newValue )
+{
+	oldTargLocY = newValue;
+}
+
 //o--------------------------------------------------------------------------
 //|	Function		-	SI16 GetX()
 //|	Date			-	26 July, 2000
@@ -590,38 +612,39 @@ void CBaseObject::SetSerial( SERIAL newSerial )
 //o--------------------------------------------------------------------------
 bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination;
-	std::ostringstream dumping( destination );
+	//static std::string destination; //static, construct only once
+	//static std::ostringstream objectDump( destination ); //static, construct only once
+	//objectDump.str(std::string()); // clear the stream
+	//destination = ""; // clear the string
 	SI16 temp_st2, temp_dx2, temp_in2;
 
-
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "Serial=" << "0x" << serial << std::endl;
-	dumping << "ID=" << "0x" << id << std::endl;
-	dumping << "Colour=" << "0x" << colour << std::endl;
-	dumping << "Direction=" << "0x" << (SI16)dir << std::endl;
+	outStream << std::hex;
+	outStream << "Serial=" << "0x" << serial << '\n';
+	outStream << "ID=" << "0x" << id << '\n';
+	outStream << "Colour=" << "0x" << colour << '\n';
+	outStream << "Direction=" << "0x" << (SI16)dir << '\n';
 	if( ValidateObject( multis ) )
 	{
-		dumping << "MultiID=" << "0x";
+		outStream << "MultiID=" << "0x";
 		try
 		{
-			dumping << multis->GetSerial() << std::endl;
+			outStream << multis->GetSerial() << '\n';
 		}
 		catch( ... )
 		{
-			dumping << "FFFFFFFF" << std::endl;
+			outStream << "FFFFFFFF" << '\n';
 			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
 		}
 	}
-	dumping << "SpawnerID=" << "0x" << spawnserial << std::endl;
-	dumping << "OwnerID=" << "0x" << owner << std::endl;
+	outStream << "SpawnerID=" << "0x" << spawnserial << '\n';
+	outStream << "OwnerID=" << "0x" << owner << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "Name=" << name << std::endl;
-	dumping << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << std::endl;
-	dumping << "Title=" << title << std::endl;
+	outStream << std::dec;
+	outStream << "Name=" << name << '\n';
+	outStream << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << '\n';
+	outStream << "Title=" << title << '\n';
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
 	temp_dx2 = dx2;
@@ -643,48 +666,45 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 		}
 	}
 	//=========== BUGFIX END (by Dark-Storm)
-	dumping << "Weight="  << weight << std::endl;
-	dumping << "Mana=" << mana << std::endl;
-	dumping << "Stamina=" << stamina << std::endl;
-	dumping << "Dexterity=" << dexterity << "," << temp_dx2 << std::endl;
-	dumping << "Intelligence=" << intelligence << "," << temp_in2 << std::endl;
-	dumping << "Strength=" << strength << "," << temp_st2 << std::endl;
-	dumping << "HitPoints=" << hitpoints << std::endl;
-	dumping << "Race=" << race << std::endl;
-	dumping << "Visible=" << (SI16)visible << std::endl;
-	dumping << "Disabled=" << (isDisabled()?"1":"0") << std::endl;
-	dumping << "Damage=" << lodamage << "," << hidamage << std::endl;
-	dumping << "Poisoned=" << (SI16)poisoned << std::endl;
-	dumping << "Carve=" << GetCarve() << std::endl;
-	dumping << "Defense=";
+	outStream << "Weight="  << weight << '\n';
+	outStream << "Mana=" << mana << '\n';
+	outStream << "Stamina=" << stamina << '\n';
+	outStream << "Dexterity=" << dexterity << "," << temp_dx2 << '\n';
+	outStream << "Intelligence=" << intelligence << "," << temp_in2 << '\n';
+	outStream << "Strength=" << strength << "," << temp_st2 << '\n';
+	outStream << "HitPoints=" << hitpoints << '\n';
+	outStream << "Race=" << race << '\n';
+	outStream << "Visible=" << (SI16)visible << '\n';
+	outStream << "Disabled=" << (isDisabled()?"1":"0") << '\n';
+	outStream << "Damage=" << lodamage << "," << hidamage << '\n';
+	outStream << "Poisoned=" << (SI16)poisoned << '\n';
+	outStream << "Carve=" << GetCarve() << '\n';
+	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
 	{
 		if( GetResist( (WeatherType)resist ) >= 10 )
-			dumping <<  GetResist( (WeatherType)resist ) << "," ;
+			outStream <<  GetResist( (WeatherType)resist ) << "," ;
 		else
-			dumping << "0" <<  GetResist( (WeatherType)resist ) << ",";
+			outStream << "0" <<  GetResist( (WeatherType)resist ) << ",";
 	}
-	dumping << "[END]" << std::endl;
-	dumping << "ScpTrig=" << scriptTrig << std::endl;
-	dumping << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << std::endl;
+	outStream << "[END]" << '\n';
+	outStream << "ScpTrig=" << scriptTrig << '\n';
+	outStream << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << '\n';
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
 	for( CI = tags.begin(); CI != tags.end(); ++CI )
 	{
-		dumping << "TAGNAME=" << CI->first << std::endl;
+		outStream << "TAGNAME=" << CI->first << '\n';
 		if( CI->second.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			dumping << "TAGVALS=" << CI->second.m_StringValue << std::endl;
+			outStream << "TAGVALS=" << CI->second.m_StringValue << '\n';
 		}
 		else
 		{
-			dumping << "TAGVAL=" << ((SI32)CI->second.m_IntValue) << std::endl;
+			outStream << "TAGVAL=" << ((SI32)CI->second.m_IntValue) << '\n';
 		}
 	}
 	//====================================================================================
-
-	outStream << dumping.str();
-
 	// We can have exceptions, but return no errors ?
 	return true;
 }
@@ -1147,7 +1167,7 @@ void CBaseObject::SetHiDamage( SI16 newValue )
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
-//|	Purpose			-	Sets the object's multi to newMulti
+//|	Purpose			-	Sets the object's low damage value
 //o--------------------------------------------------------------------------
 void CBaseObject::SetLoDamage( SI16 newValue )
 {
@@ -1442,7 +1462,7 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 //o--------------------------------------------------------------------------
 bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 {
-	outStream << std::endl << "o---o" << std::endl << std::endl;
+	outStream << '\n' << "o---o" << '\n' << '\n';
 	return true;
 }
 
@@ -1748,6 +1768,10 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				SetWeight( data.toLong() );
 			}
+			else if( UTag == "WIPE" )
+			{
+				SetWipeable( data.toUByte() == 1 );
+			}
 			else if( UTag == "WORLDNUMBER" )
 			{
 				worldNumber = data.toUByte();
@@ -1997,6 +2021,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetKarma( karma );
 	target->SetFame( fame );
 	target->SetKills( kills );
+	target->SetWipeable( isWipeable() );
 }
 
 point3 CBaseObject::GetOldLocation( void )
@@ -2053,6 +2078,23 @@ SI16 CBaseObject::GetKills( void ) const
 void CBaseObject::SetKills( SI16 value )
 {
 	kills = value;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	bool isWipeable()
+//|	Date			-	Unknown
+//|	Programmer		-	Abaddon
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose		-	object is wipeable
+//o--------------------------------------------------------------------------
+bool CBaseObject::isWipeable( void ) const
+{
+	return objSettings.test( BIT_WIPEABLE );
+}
+void CBaseObject::SetWipeable( bool newValue )
+{
+	objSettings.set( BIT_WIPEABLE, newValue );
 }
 
 

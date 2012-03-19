@@ -995,7 +995,7 @@ struct JSConstDoubleSpec {
  */
 struct JSPropertySpec {
     const char      *name;
-    int8            tinyid;
+    int16           tinyid;
     uint8           flags;
     JSPropertyOp    getter;
     JSPropertyOp    setter;

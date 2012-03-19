@@ -431,7 +431,7 @@ void cWhoList::Update( void )
 		{
 			CAccountBlock& actbSearch = I->second;
 			//
-			for( i = 0; i < 6; ++i )
+			for( i = 0; i < 7; ++i )
 			{
 				ourChar = actbSearch.lpCharacters[i];
 				if( ValidateObject( ourChar ) )

@@ -12,12 +12,14 @@ function spellTimerCheck( mChar, mSock )
 		mChar.TextMessage( mChar.isCasting );
 		if( mChar.isCasting )
 		{
-			mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
 			return false;
 		}
 		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
 		{
-			mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
 			return false;
 		}
 	}
@@ -41,7 +43,8 @@ function spellEnableCheck( mChar, mSock, mSpell )
 {
 	if( !mSpell.enabled )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -61,7 +64,8 @@ function itemInHandCheck( mChar, mSock, spellType )
 			var itemLHand = mChar.FindItemLayer( 0x02 );
 			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
 			{
-				mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -79,7 +83,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		return true;
 
 	var mSpell	= Spells[spellNum];
-	var spellType = mSock.currentSpellType;
+	var spellType = mChar.currentSpellType;
 
 	mChar.spellCast = spellNum;
 
@@ -90,7 +94,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	var ourRegion = mChar.region;
 	if( (spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()) )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -98,7 +103,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 	if( !ourRegion.canCastAggressive && mSpell.agressiveSpell )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -127,7 +133,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
 
-	mChar.BreakConcentration( mSock );
+	if( mSock )
+		mChar.BreakConcentration( mSock );
 	
 	if( mChar.commandlevel < 2  )
 	{
@@ -146,7 +153,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -154,7 +162,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -162,7 +171,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -553,9 +563,9 @@ function CheckTargetResist( caster, ourTarg, circle )
 function CalcSpellDamage( caster, ourTarg, baseDamage, spellResisted )
 {
 	baseDamage = RandomNumber( baseDamage / 2, baseDamage );
-	
+	caster.TextMessage( "BOOM" );
 	if( spellResisted )
-		baseDamage = baseDamage / 2 );
+		baseDamage = baseDamage / 2;
 		
 	var casterEval = caster.skills.evaluatingintel / 10;
 	var targetResist = ourTarg.skills.magicresistance / 10;
@@ -564,11 +574,11 @@ function CalcSpellDamage( caster, ourTarg, baseDamage, spellResisted )
 	else
 		baseDamage *= ((( casterEval - targetResist ) / 500 ) + 1 );
 		
-	int i = RandomNumber( 0, 4 );
+	var i = RandomNumber( 0, 4 );
 	if( i <= 2 )
-		baseDamage = Math.round( RandomNumber( RandomNumber( basedamage / 2, baseDamage ) / 2, baseDamage ));
+		baseDamage = Math.round( RandomNumber( RandomNumber( baseDamage / 2, baseDamage ) / 2, baseDamage ));
 	else if( i == 3 )
-		baseDamage = Math.round( RandomNumber( baseDamage / 2, baseDamage );
+		baseDamage = Math.round( RandomNumber( baseDamage / 2, baseDamage ));
 	else //keep current damage
 		baseDamage = Math.round( baseDamage );
 	

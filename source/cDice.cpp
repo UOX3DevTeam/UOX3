@@ -1,5 +1,6 @@
 #include <string>
 #include "cdice.h"
+#include <stdlib.h>
 
 namespace UOX
 {

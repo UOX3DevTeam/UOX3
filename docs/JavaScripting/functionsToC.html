@@ -16,6 +16,7 @@
 <li><a href="#CharMethods" target="_self">Character Methods</a>
 <li><a href="#ItemMethods" target="_self">Item Methods</a>
 <li><a href="#SockMethods" target="_self">Socket Methods</a>
+<li><a href="#PacketMethods" target="_self">Packet Methods</a>
 <li><a href="#GuildStuff" target="_self">Guild Stuff</a>
 <li><a href="#RegionMethods" target="_self">Region Methods</a>
 <li><a href="#RaceMethods" target="_self">Race Methods</a>
@@ -34,6 +35,8 @@
 <li><a href="#TownFuncs" target="_self">Town Functions</a>
 <li><a href="#FileMethods" target="_self">File I/O Methods</a>
 <li><a href="#StringFuncs" target="_self">String Functions</a>
+<li><a href="#AccountMethods" target="_self">Account Methods</a>
+<li><a href="#PartyMethods" target="_self">Party Methods</a>
 </font></ul>
 <p><h3>Property Index:</h3>
 <ul><font size=2>
@@ -124,9 +127,8 @@
 	<li><a href="characterm.html#SetPoisoned">SetPoisoned</a>
 	<li><a href="characterm.html#ExplodeItem">ExplodeItem</a>
 	<li><a href="characterm.html#SetInvisible">SetInvisible</a>
-	<li>ApplySection
-	<li>AddSpell
-	<li>SpellFail
+	<li><a href="characterm.html#AddSpell">AddSpell</a>
+	<li><a href="characterm.html#SpellFail">SpellFail</a>
 	<li><a href="characterm.html#ExecuteCommand">ExecuteCommand</a>
 	<li><a href="characterm.html#WalkTo">WalkTo</a>
 	<li><a href="characterm.html#RunTo">RunTo</a>
@@ -141,24 +143,22 @@
 	<li><a href="characterm.html#Jail">Jail</a>
 	<li><a href="characterm.html#Release">Release</a>
 	<li><a href="characterm.html#Defense">Defense</a>
-	<li>GetTimer
-	<li>SetTimer
-	<li>SpellMoveEffect
-	<li>SpellStaticEffect
-	<li>BreakConcentration
-	<li>FindItemType
-	<li>InitWanderArea
-	<li>CanSee
-	<li>ReactOnDamage
-	<li>Damage
-	<li>Heal
+	<li><a href="characterm.html#SpellMoveEffect">SpellMoveEffect</a>
+	<li><a href="characterm.html#SpellStaticEffect">SpellStaticEffect</a>
+	<li><a href="characterm.html#BreakConcentration">BreakConcentration</a>
+	<li><a href="characterm.html#FindItemType">FindItemType</a>
+	<li><a href="characterm.html#InitWanderArea">InitWanderArea</a>
+	<li><a href="characterm.html#ReactOnDamage">ReactOnDamage</a>
+	<li><a href="characterm.html#Damage">Damage</a>
+	<li><a href="characterm.html#Heal">Heal</a>
 </ul>
-<li><p><a href="itemm.html">Character Functions</a>
+<li><p><a href="characterm.html">Character Functions</a>
 <ul>
 	<li><a href="characterm.html#SpawnNPC">SpawnNPC</a>
 </ul>
 <li><p><a href="common.html">Common Methods</a>
 <ul>
+	<li><a href="common.html#SE_ApplySection">ApplySection</a>
 	<li><a href="common.html#SE_SetLocation">SetLocation</a>
 	<li><a href="common.html#SE_Teleport">Teleport</a>
 	<li><a href="common.html#SE_Delete">Delete</a>
@@ -172,6 +172,7 @@
 	<li><a href="common.html#SE_GetNumTags">GetNumTags</a>
 	<li><a href="common.html#SE_StaticEffect">StaticEffect</a>
 	<li><a href="common.html#SE_Resist">Resist</a>
+	<li><a href="common.html#SE_CanSee">CanSee</a>
 </ul>
 </ul>
 
@@ -196,6 +197,7 @@
 	<li><a href="itemm.html#PlaceInPack">PlaceInPack</a>
 	<li><a href="itemm.html#Dupe">Dupe</a>
 	<li><a href="itemm.html#Carve">Carve</a>
+	<li><a href="itemm.html#Refresh">Refresh</a>
 </ul>
 <li><p><a href="itemm.html">Item Functions</a>
 <ul>
@@ -204,6 +206,7 @@
 </ul>
 <li><p><a href="common.html">Common Methods</a>
 <ul>
+	<li><a href="common.html#SE_ApplySection">ApplySection</a>
 	<li><a href="common.html#SE_SetLocation">SetLocation</a>
 	<li><a href="common.html#SE_Teleport">Teleport</a>
 	<li><a href="common.html#SE_Delete">Delete</a>
@@ -217,6 +220,7 @@
 	<li><a href="common.html#SE_GetNumTags">GetNumTags</a>
 	<li><a href="common.html#SE_StaticEffect">StaticEffect</a>
 	<li><a href="common.html#SE_Resist">Resist</a>
+	<li><a href="common.html#SE_CanSee">CanSee</a>
 </ul>
 </ul>
 
@@ -246,17 +250,28 @@
 	<li><a href="socketm.html#SetWord">SetWord</a>
 	<li><a href="socketm.html#SetDWord">SetDWord</a>
 	<li><a href="socketm.html#SetString">SetString</a>
-	<li><a href="socketm.html#SE_ReadBytes">ReadBytes</a>
-	<li><a href="socketm.html#SE_DisplayDamage">DisplayDamage</a>
+	<li><a href="socketm.html#ReadBytes">ReadBytes</a>
+	<li><a href="socketm.html#DisplayDamage">DisplayDamage</a>
+	<li><a href="socketm.html#SendAddMenu">SendAddMenu</a>
 </ul>
 <li><p><a href="socketf.html">Socket Functions</a>
 <ul>
 	<li><a href="socketf.html#SE_CreateBuffer">CreateBuffer</a>
 	<li><a href="socketf.html#SE_DestroyBuffer">DestroyBuffer</a>
 	<li><a href="socketf.html#SE_SendBuffer">SendBuffer</a>
-	<li>RegisterPacketHandler
-	<li>UnregisterPacketHandler
 </ul>
+</ul>
+
+<p><a name="PacketMethods" href="packets.html"></a><h3>Packet Methods - (<a href="#index" target="_self">goto Top</a>)</h3>
+<ul>
+	<li><a href="packets.html#SE_RegisterPacket">RegisterPacket</a>
+	<li><a href="packets.html#ReserveSize">ReserveSize</a>
+	<li><a href="packets.html#WriteByte">WriteByte</a>
+	<li><a href="packets.html#WriteShort">WriteShort</a>
+	<li><a href="packets.html#WriteLong">WriteLong</a>
+	<li><a href="packets.html#WriteString">WriteString</a>
+	<li><a href="packets.html#Send">Send</a>
+	<li><a href="packets.html#Free">Free</a>
 </ul>
 
 <p><h3><a name="GuildStuff">Guild Stuff</a> - (<a href="#index" target="_self">goto Top</a>)</h3>
@@ -292,15 +307,16 @@
 <li><p><a href="racep.html">Race Property List</a>
 <li><p><a href="races.html">Race Functions</a>
 <ul>
+	<li><a href="races.html#SE_CanWearArmour">CanWearArmour</a>
 	<li><a href="races.html#SE_GetRaceCount">GetRaceCount</a>
 	<li><a href="races.html#SE_IsRaceWeakToWeather">IsRaceWeakToWeather</a>
 	<li><a href="races.html#SE_RaceRequiresBeard">RaceRequiresBeard</a>
 	<li><a href="races.html#SE_RaceRequiresNoBeard">RaceRequiresNoBeard</a>
 	<li><a href="races.html#SE_CanRaceWearArmour">CanRaceWearArmour</a>
 	<li><a href="races.html#SE_GetRaceSkillAdjustment">GetRaceSkillAdjustment</a>
-	<li><a href="races.html#SE_IsValidRaceHairColour">IsValidRaceHairColour</a>
-	<li><a href="races.html#SE_IsValidRaceSkinColour">IsValidRaceSkinColour</a>
-	<li><a href="races.html#SE_IsValidRaceBeardColour">IsValidRaceBeardColour</a>
+	<li><a href="races.html#SE_IsValidRaceHairColour">IsValidHairColour</a>
+	<li><a href="races.html#SE_IsValidRaceSkinColour">IsValidSkinColour</a>
+	<li><a href="races.html#SE_IsValidRaceBeardColour">IsValidBeardColour</a>
 	<li><a href="races.html#SE_RaceCompare">RaceCompare</a>
 	<li><a href="races.html#SE_RaceCompareByRace">RaceCompareByRace</a>
 	<li><a href="races.html#SE_RaceGate">RaceGate</a>
@@ -411,6 +427,7 @@
 	<li><a href="misc.html#SE_GetTileIDAtMapCoord">GetTileIDAtMapCoord</a>
 	<li><a href="misc.html#SE_TriggerEvent">TriggerEvent</a>
 	<li><a href="misc.html#SE_AreaCharacterFunction">AreaCharacterFunction</a>
+	<li><a href="misc.html#SE_AreaItemFunction">AreaItemFunction</a>
 	<li><a href="misc.html#SE_UseDoor">UseDoor</a>
 	<li><a href="misc.html#SE_SendStaticStats">SendStaticStats</a>
 	<li><a href="misc.html#SE_GetTileHeight">GetTileHeight</a>
@@ -420,6 +437,11 @@
 	<li><a href="misc.html#SE_WorldDungeonLevel">WorldDungeonLevel</a>
 	<li><a href="misc.html#SE_ValidateObject">ValidateObject</a>
 	<li><a href="misc.html#SE_ReloadJSFile">ReloadJSFile</a>
+	<li><a href="misc.html#SE_GetTimer">GetTimer</a>
+	<li><a href="misc.html#SE_SetTimer">SetTimer</a>
+	<li><a href="misc.html#SE_Moon">Moon</a>
+	<li><a href="misc.html#SE_CreateParty">CreateParty</a>
+	<li><a href="misc.html#SE_GetSocketFromIndex">GetSocketFromIndex</a>
 </ul>
 <p><a name="CommandFuncs" href="command.html"></a><h3>Command Functions - (<a href="#index" target="_self">goto Top</a>)</h3>
 <ul>
@@ -492,5 +514,19 @@
 	<li><a href="string.html#SE_NumToString">NumToString</a>
 	<li><a href="string.html#SE_NumToHexString">NumToHexString</a>
 </ul>
+
+<p><a name="AccountMethods" href="accountm.html"></a><h3>Account Methods- (<a href="#index" target="_self">goto Top</a>)</h3>
+<ul>
+	<li><a href="accountm.html#AddAccount">AddAccount</a>
+	<li><a href="accountm.html#DelAccount">DelAccount</a>
+</ul>
+
+<p><a name="PartyMethods" href="party.html"></a><h3>Party Methods- (<a href="#index" target="_self">goto Top</a>)</h3>
+<ul>
+	<li><a href="party.html#Add">Add</a>
+	<li><a href="party.html#Remove">Remove</a>
+	<li><a href="party.html#GetMember">GetMember</a>
+</ul>
+
 
 </body>

@@ -39,10 +39,12 @@ function CallWipe( socket, cmdString )
 			var counter	= 0;
 			var counterStr	= "";
 			socket.SysMessage( "Wiping " + uKey );
+			Console.PrintSectionBegin();
 			if( saidAll || uKey == "ITEMS" )
 			{
 				Console.Print( mChar.name + " has initiated an item wipe.\n" );
 				isItem 		= true;
+				isSpawner	= false;
 				counter 	= IterateOver( "ITEM" );
 				counterStr 	= counter.toString();
 				Console.Print( "Item wipe deleted " + counterStr + " items.\n" );
@@ -52,11 +54,23 @@ function CallWipe( socket, cmdString )
 			{
 				Console.Print( mChar.name + " has initiated a npc wipe.\n" );
 				isItem 		= false;
+				isSpawner	= false;
 				counter 	= IterateOver( "CHARACTER" );
 				counterStr 	= counter.toString();
 				Console.Print( "NPC wipe deleted " + counterStr + " npcs.\n" );
 				socket.SysMessage( "Wiped " + counterStr + " npcs" );
 			}
+			if( saidAll || uKey == "SPAWNERS" )
+			{
+				Console.Print( mChar.name + " has initiated a spawner wipe.\n" );
+				isItem		= false;
+				isSpawner	= true;
+				counter 	= IterateOver( "SPAWNER" );
+				counterStr 	= counter.toString();
+				Console.Print( "Spawner wipe deleted " + counterStr + " spawners.\n" );
+				socket.SysMessage( "Wiped " + counterStr + " spawners" );
+			}
+			Console.PrintDone();
 		}
 	}
 	else
@@ -100,12 +114,14 @@ function DoWipe( socket, ourObj )
 		y2 	= tmpLoc;
 	}
 
+	Console.PrintSectionBegin();
 	Console.Print( mChar.name + " has initiated a wipe.\n" );
 	socket.SysMessage( "Wiping.." );
 	var counter 	= IterateOver( "ITEM" );
 	var counterStr	= counter.toString();
 	socket.SysMessage( "Wiped " + counterStr + " items" );
 	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
+	Console.PrintDone();
 
 	socket.clickX = -1;
 	socket.clickY = -1;
@@ -124,15 +140,15 @@ function onIterate( toCheck )
 	{
 		if( all )
 		{
-			if( isItem && toCheck.isItem )
+			if( isItem && toCheck.isItem == true && toCheck.isSpawner == false && toCheck.wipable )
 			{
-				if( toCheck.wipable && toCheck.container == null && toCheck.type != 202 )
+				if( toCheck.container == null && toCheck.type != 202 )
 				{
 					toCheck.Delete();
 					return true;
 				}
 			}
-			else if( !isItem && toCheck.isChar )
+			else if( !isItem && toCheck.isChar == true )
 			{
 				if( toCheck.npc && toCheck.aitype != 17 && !toCheck.tamed )
 				{
@@ -140,20 +156,29 @@ function onIterate( toCheck )
 					return true;
 				}
 			}
+			else if( isSpawner && toCheck.isSpawner == true && toCheck.wipable )
+			{
+				toCheck.Delete();
+				return true;
+			}
 		}
 		else
 		{
-			if( toCheck.isItem && toCheck.container == null )
+			if( toCheck.isItem == true && toCheck.container == null )
 			{
-				var shouldWipe 	= iWipe;
-				var tX 		= toCheck.x;
-				var tY 		= toCheck.y;
-				if( tX >= x1 && tX <= x2 && tY >= y1 && tY <= y2 )
-					shouldWipe = !iWipe;
-				if( shouldWipe && toCheck.wipable )
+				var toCheckMulti = toCheck.multi;
+				if( !toCheckMulti ) //Only wipe items that aren't inside a valid multi
 				{
-					toCheck.Delete();
-					return true;
+					var shouldWipe 	= iWipe;
+					var tX 		= toCheck.x;
+					var tY 		= toCheck.y;
+					if( tX >= x1 && tX <= x2 && tY >= y1 && tY <= y2 )
+						shouldWipe = !iWipe;
+					if( shouldWipe )
+					{
+						toCheck.Delete();
+						return true;
+					}
 				}
 			}
 		}

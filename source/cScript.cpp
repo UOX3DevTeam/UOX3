@@ -172,7 +172,6 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targScript == NULL )
 	{
 		throw std::runtime_error( "Compilation failed" );
-		return;
 	}
 	jsval rval;
 	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
@@ -481,12 +480,15 @@ bool cScript::OnSteal( CChar *thief, CItem *theft )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnDispel( CBaseObject *dispelled )
+SI08 cScript::OnDispel( CBaseObject *dispelled )
 {
+	const SI08 RV_NOFUNC = -1;
+
 	if( !ValidateObject( dispelled ) )
 		return false;
 	if( !ExistAndVerify( seOnDispel, "onDispel" ) )
 		return false;
+	UI08 funcRetVal = 0;
 
 	jsval params[2], rval;
 	JSObject *myObj;
@@ -504,10 +506,31 @@ bool cScript::OnDispel( CBaseObject *dispelled )
 	params[0] = OBJECT_TO_JSVAL( myObj );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDispel", 2, params, &rval );
-	if( retVal == JS_FALSE )
-		SetEventExists( seOnDispel, false );
 
-	return ( retVal == JS_TRUE );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDispel, false );
+		return RV_NOFUNC;
+	}
+
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_IS_INT( rval ) )
+				return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+			else if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
 }
 
 bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
@@ -2453,13 +2476,16 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	return funcRetVal;
 }
 
-bool cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
+SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 {
-	if( !ValidateObject( mKilled ) || !ValidateObject( mKiller ) )
-		return false;
-	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ) )
-		return false;
+	const SI08 RV_NOFUNC = -1;
 
+	if( !ValidateObject( mKilled ) ) // || !ValidateObject( mKiller ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ) )
+		return RV_NOFUNC;
+
+	SI08 funcRetVal	= -1;
 	jsval rval, params[2];
 	JSObject *killedObj = JSEngine->AcquireObject( IUE_CHAR, mKilled, runTime );
 	JSObject *killerObj = JSEngine->AcquireObject( IUE_CHAR, mKiller, runTime );
@@ -2468,9 +2494,29 @@ bool cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	params[1] = OBJECT_TO_JSVAL( killerObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDeathBlow", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnDeathBlow, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	{
+		if( JSVAL_IS_BOOLEAN( rval ) )
+		{
+			if( JSVAL_IS_INT( rval ) )
+				return static_cast< SI08 >(JSVAL_TO_INT( rval ));
+			else if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
+				funcRetVal = 0;		// we do want hard code to execute
+			else
+				funcRetVal = 1;		// we DON'T want hard code to execute
+		}
+		else
+			funcRetVal = 0;	// default to hard code
+	}
+	else
+		funcRetVal = 0;	// default to hard code
+
+	return funcRetVal;
 }
 
 SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill )

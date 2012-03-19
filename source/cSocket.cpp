@@ -38,7 +38,7 @@ void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 		else
 			outStream << ".";
 	}
-	outStream << std::endl;
+	outStream << '\n';
 }
 
 void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 >& myBuffer )
@@ -371,6 +371,22 @@ void CSocket::FirstPacket( bool newValue )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  void/bool CSocket::ForceOffline( void/bool newValue )
+//|   Date        -  March 1st, 2012
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Used by client-restriction code to mark connections for delayed kicking
+//o---------------------------------------------------------------------------o
+bool CSocket::ForceOffline( void ) const
+{
+	return forceOffline;
+}
+void CSocket::ForceOffline( bool newValue )
+{
+	forceOffline = newValue;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  SI32 CSocket::IdleTimeout( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
@@ -498,7 +514,7 @@ const SI16				DEFSOCK_CLICKX					= -1;
 const SI16				DEFSOCK_CLICKY					= -1;
 const bool				DEFSOCK_NEWCLIENT				= true;
 const bool				DEFSOCK_FIRSTPACKET				= true;
-const UI08				DEFSOCK_RANGE					= 15;
+const UI08				DEFSOCK_RANGE					= 18;
 const bool				DEFSOCK_CRYPTCLIENT				= false;
 const SI16				DEFSOCK_WALKSEQUENCE			= -1;
 const char				DEFSOCK_CURSPELLTYPE			= 0;
@@ -512,7 +528,8 @@ const SI16				DEFSOCK_PX						= 0;
 const SI16				DEFSOCK_PY						= 0;
 const SI08				DEFSOCK_PZ						= 0;
 const UnicodeTypes		DEFSOCK_LANG					= UT_ENU;
-const ClientTypes		DEFSOCK_CLITYPE					= CV_NORMAL;
+const ClientTypes		DEFSOCK_CLITYPE					= CV_DEFAULT;
+const ClientVersions	DEFSOCK_CLIVERSHORT				= CVS_DEFAULT;
 const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
 const UI32				DEFSOCK_BYTESSENT				= 0;
 const UI32				DEFSOCK_BYTESRECEIVED			= 0;
@@ -524,7 +541,7 @@ tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
-pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
+pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
 bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE )
 {
 	InternalReset();
@@ -607,9 +624,9 @@ bool CSocket::FlushBuffer( bool doLog )
 {
 	if( outlength > 0 )
 	{
-		UI32 len;
 		if( cryptclient )
 		{
+			UI32 len;
 			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
 			send( cliSocket, (char *)xoutbuffer, len, 0 );
@@ -1342,6 +1359,14 @@ void CSocket::ClientType( ClientTypes newVer )
 	cliType = newVer;
 }
 
+ClientVersions CSocket::ClientVerShort( void ) const
+{
+	return cliVerShort;
+}
+void CSocket::ClientVerShort( ClientVersions newVer )
+{
+	cliVerShort = newVer;
+}
 
 UI08 CSocket::ClientVersionMajor( void ) const
 {
@@ -1637,6 +1662,9 @@ void CSocket::mtarget( UI16 itemID, SI32 dictEntry )
 	toSend.MultiModel( itemID );
 	toSend.RequestType( 1 );
 
+	if( ClientVersion() >= CV_HS2D && ClientVerShort() >= CVS_7090 )
+		toSend.SetHue( 0 );
+
 	sysmessage( txt.c_str() );
 	TargetOK( true );
 	Send( &toSend );
@@ -1681,12 +1709,16 @@ void CSocket::statwindow( CChar *targChar )
 		(targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
 		return;
 
+	CPHealthBarStatus hpBarStatus( (*targChar), (*this ));
+	Send( &hpBarStatus );
+
 	CPStatWindow toSend( (*targChar), (*this) );
 	
 	//Zippy 9/17/01 : fixed bug of your name on your own stat window
 	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
 	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
 	toSend.AC( Combat->calcDef( targChar, 0, false ) );
+
 	toSend.Weight( static_cast<UI16>(targChar->GetWeight() / 100) );
 	Send( &toSend );
 
@@ -1785,11 +1817,62 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 			case PT_DRESSER:
 				contSend.Model( 0x51 );
 				break;
+			case PT_STOCKING:
+				contSend.Model( 0x103 );
+				break;
+			case PT_GIFTBOX1:
+				contSend.Model( 0x102 );
+				break;
+			case PT_GIFTBOX2:
+				contSend.Model( 0x11E );
+				break;
+			case PT_GIFTBOX3:
+				contSend.Model( 0x11B );
+				break;
+			case PT_GIFTBOX4:
+				contSend.Model( 0x11C );
+				break;
+			case PT_GIFTBOX5:
+				contSend.Model( 0x11D );
+				break;
+			case PT_GIFTBOX6:
+				contSend.Model( 0x11F );
+				break;
+			case PT_SEBASKET:
+				contSend.Model( 0x108 );
+				break;
+			case PT_SEARMOIRE1:
+				contSend.Model( 0x105 );
+				break;
+			case PT_SEARMOIRE2:
+				contSend.Model( 0x106 );
+				break;
+			case PT_SEARMOIRE3:
+				contSend.Model( 0x107 );
+				break;
+			case PT_SECHEST1:
+				contSend.Model( 0x109 );
+				break;
+			case PT_SECHEST2:
+				contSend.Model( 0x10B );
+				break;
+			case PT_SECHEST3:
+				contSend.Model( 0x10A );
+				break;
+			case PT_SECHEST4:
+				contSend.Model( 0x10C );
+				break;
+			case PT_SECHEST5:
+				contSend.Model( 0x10D );
+				break;
 			case PT_UNKNOWN:
 				Console.Warning( "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
 				return;
 		}
-	}   
+	}
+	if( ClientType() >= CV_HS2D && ClientVerShort() >= CVS_7090 )
+		contSend.ContType( 0x7D );
+
 	Send( &contSend );
 	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
 	Send( &itemsIn );
@@ -1877,7 +1960,7 @@ void CSocket::ClearTimers( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Launch a webpage from within the client
 //o---------------------------------------------------------------------------o
-void CSocket::OpenURL( const std::string txt )
+void CSocket::OpenURL( const std::string& txt )
 {
 	sysmessage( 1210 );
 	CPWebLaunch toSend( txt );

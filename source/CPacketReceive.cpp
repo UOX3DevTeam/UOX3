@@ -14,6 +14,7 @@
 #include "cMagic.h"
 #include "skills.h"
 #include "PartySystem.h"
+#include "cGuild.h"
 
 #if P_ODBC == 1
 #include "ODBCManager.h"
@@ -26,7 +27,7 @@ void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 ) /
 	int i = 0;
 	pass1 = "";
 	int pass0Len = pass0.length();
-	while( pass0[i] != '/' && i < pass0Len ) 
+	while( i < pass0Len && pass0[i] != '/' ) 
 		++i;
 	pass1 = pass0.substr( 0, i );
 	if( i < pass0Len ) 
@@ -50,13 +51,18 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 		case 0x73:	return ( new CPIKeepAlive( s )			);
 		case 0x80:	return ( new CPIFirstLogin( s )			);
 		case 0x83:	return ( new CPIDeleteCharacter( s )	);	// Character Delete
+		case 0x8D:	return ( new CPICreateCharacter( s )	);	// Character creation for 3D/Enhanced clients
 		case 0x91:	return ( new CPISecondLogin( s )		);
 		case 0xA0:	return ( new CPIServerSelect( s )		);
 		case 0xA4:	return ( new CPISpy( s )				);
-		case 0xBB:	return NULL;								// No idea
+		case 0xBB:	return NULL;								// Ultima Messenger - old, no longer used
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return ( new CPISubcommands( s )		);	// general overall packet
+		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
+		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
+		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
+		case 0xFF:	return NULL;								// Firt packet in old clients?
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
@@ -96,6 +102,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0x7D:	return ( new CPIGumpChoice( s )			);
 		case 0x80:	return ( new CPIFirstLogin( s )			);
 		case 0x83:	return ( new CPIDeleteCharacter( s )	);
+		case 0x8D:	return ( new CPICreateCharacter( s )	);	// Character creation for 3D/Enhanced clients
 		case 0x91:	return ( new CPISecondLogin( s )		);
 		case 0x93:	return NULL;								// Books - title page
 		case 0x95:	return ( new CPIDyeWindow( s )			);
@@ -114,11 +121,13 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xBD:	return ( new CPIClientVersion( s )		);
 		case 0xBF:	return ( new CPISubcommands( s )		);	// Assorted commands
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
+		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
 		case 0xD0:	return NULL;								// Configuration File
 		case 0xD1:	return NULL;								// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
+		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
 		default:	return NULL;
 	}
 	return NULL;
@@ -175,6 +184,63 @@ bool CPIFirstLogin::Handle( void )
 			t = LDR_ACCOUNTDISABLED;
 		else if( actbTemp->sPassword != pass1 )
 			t = LDR_BADPASSWORD;
+		else
+		{
+			// Handle client-restrictions, disconnect if client-version isn't supported
+			// Client-versions below 6.0.5.0 can only be verified after they're ingame, so can only
+			// be blocked in FirstLogin if _all_ client versions below 6.0.5.0 are blocked
+			if( tSock->ClientType() == CV_T2A )
+			{
+				if( !cwmWorldState->ServerData()->ClientSupport4000() && !cwmWorldState->ServerData()->ClientSupport5000() && !cwmWorldState->ServerData()->ClientSupport6000() )
+				{
+					t = LDR_COMMSFAILURE;
+					Console << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
+				}
+			}
+			else if( tSock->ClientType() <= CV_KR3D )
+			{
+				if( !cwmWorldState->ServerData()->ClientSupport6050() )
+				{
+					t = LDR_COMMSFAILURE;
+					Console << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
+				}
+			}
+			else if( tSock->ClientType() <= CV_SA3D )
+			{
+				if( !cwmWorldState->ServerData()->ClientSupport7000() )
+				{
+					t = LDR_COMMSFAILURE;
+					Console << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
+				}
+			}
+			else if( tSock->ClientType() <= CV_HS3D )
+			{
+				if( tSock->ClientVerShort() < CVS_70160 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport7090() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.9.0 - 7.0.15.1). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() < CVS_70240 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport70160() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() >= CVS_70240 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport70240() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
+					}
+				}
+			}
+		}
 	}
 	else
 		t = LDR_UNKNOWNUSER;
@@ -211,6 +277,14 @@ bool CPIFirstLogin::Handle( void )
 
 		actbTemp->wFlags.set( AB_FLAGS_ONLINE, true );
 
+		//Add temp-clientversion info to account here, to be used for second login
+		if( actbTemp->dwLastClientVer == 0 || tSock->ClientType() != CV_DEFAULT )
+		{
+			actbTemp->dwLastClientVer = tSock->ClientVersion();
+			actbTemp->dwLastClientType = tSock->ClientType();
+			actbTemp->dwLastClientVerShort = tSock->ClientVerShort();
+		}
+
 		UI16 servcount = cwmWorldState->ServerData()->ServerCount();
 		CPGameServerList toSend( servcount );
 		for( UI16 i = 0; i < servcount; ++i )
@@ -220,6 +294,10 @@ bool CPIFirstLogin::Handle( void )
 		}
 		tSock->Send( &toSend );
 	}
+	// If socket's ClientType is still CV_DEFAULT, it's an old client,
+	// since there was no packet before 0x80 where ClientType changed
+	if( tSock->ClientType() == CV_DEFAULT )
+		tSock->ClientType( CV_T2A );
 	//CPEnableClientFeatures ii;
 	//tSock->Send( &ii );
 	return true;
@@ -256,6 +334,7 @@ void CPIFirstLogin::InternalReset( void )
 {
 	userID.reserve( 30 );
 	password.reserve( 30 );
+	unknown = 0;
 }
 
 const std::string CPIFirstLogin::Name( void )
@@ -346,6 +425,7 @@ void CPISecondLogin::InternalReset( void )
 {
 	sid.reserve( 30 );
 	password.reserve( 30 );
+	keyUsed = 0;
 }
 CPISecondLogin::CPISecondLogin()
 {
@@ -397,6 +477,11 @@ bool CPISecondLogin::Handle( void )
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
 		tSock->SetAccount( actbTemp );
 
+	// Add socket version info from first login, stored in account, to new socket!
+	tSock->ClientVersion( actbTemp.dwLastClientVer );
+	tSock->ClientType( (ClientTypes)actbTemp.dwLastClientType );
+	tSock->ClientVerShort( (ClientVersions)actbTemp.dwLastClientVerShort );
+
 	std::string pass0, pass1, pass2;
 	pass0 = Pass();
 	pSplit( pass0, pass1, pass2 );
@@ -433,23 +518,136 @@ bool CPISecondLogin::Handle( void )
 	}
 	else
 	{
+		//Send supported client features before character-list stuff
+		CPEnableClientFeatures ii( tSock );
+		tSock->Send( &ii );
+
 		UI08 charCount = 0;
-		for( UI08 i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 7; ++i )
 		{
 			if( actbTemp.dwCharacters[i] != INVALIDSERIAL )
 				++charCount;
 		}
 		CServerData *sd		= cwmWorldState->ServerData();
 		size_t serverCount	= sd->NumServerLocations();
-		CPCharAndStartLoc toSend( actbTemp, charCount, static_cast<UI08>(serverCount) );
+		CPCharAndStartLoc toSend( actbTemp, charCount, static_cast<UI08>(serverCount), tSock );
 		for( size_t j = 0; j < serverCount; ++j )
 		{
-			toSend.AddStartLocation( sd->ServerLocation( j ), static_cast<UI08>(j) );
+			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )
+				toSend.NewAddStartLocation( sd->ServerLocation( j ), static_cast<UI08>(j) );
+			else
+				toSend.AddStartLocation( sd->ServerLocation( j ), static_cast<UI08>(j) );
 		}
-		CPEnableClientFeatures ii;
-		tSock->Send( &ii );
 		tSock->Send( &toSend );
 	}
+	return true;
+}
+
+// KR/2D Client Login/Seed
+// Packet: 0xEF
+// Sent By: Client
+// Size: 21 bytes
+//
+//Packet Build
+// BYTE[1] cmd
+// BYTE[4] seed, usually the client local ip
+// BYTE[4] client major version
+// BYTE[4] client minor version
+// BYTE[4] client revision version
+// BYTE[4] client prototype version
+//
+//Subcommand Build
+// N/A
+//
+//Notes
+// Normally older client send a 4 byte seed (local ip).
+// Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending
+// this packet.
+void CPINewClientVersion::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPINewClientVersion 0xEF --> Length: " << std::dec << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "Version        : " << tSock->ClientVersion() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+void CPINewClientVersion::InternalReset( void )
+{
+//	len = 0;
+	seed = 0;
+	majorVersion = 0;
+	minorVersion = 0;
+	clientRevision = 0;
+	clientPrototype = 0;
+}
+CPINewClientVersion::CPINewClientVersion()
+{
+	InternalReset();
+}
+CPINewClientVersion::CPINewClientVersion( CSocket *s ) : CPInputBuffer( s )
+{
+	InternalReset();
+	Receive();
+//	Handle();
+}
+void CPINewClientVersion::Receive( void )
+{
+	if( tSock->GetByte( 0 ) == 0xC0 )
+	{
+		tSock->ClientType( CV_T2A );
+	}
+	else if( tSock->GetByte( 0 ) == 0xEF )
+	{
+		tSock->Receive( 21, false );
+		seed		= tSock->GetDWord( 1 );
+		majorVersion = tSock->GetDWord( 5 );
+		minorVersion = tSock->GetDWord( 9 );
+		clientRevision = tSock->GetDWord( 13 );
+		clientPrototype = tSock->GetDWord( 17 );
+		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
+
+		UString verString = UString::number( majorVersion ) + "." + UString::number( minorVersion ) + "." + UString::number( clientRevision ) + "." + UString::number( clientPrototype );
+		Console << verString << myendl;
+
+		// Set client-version based on information received so far. We need this to be able to send the correct info during login
+		// Needs to be refined in second client-version pass (CPIClientVersion)
+		if( tSock->ClientVersion() <= 100666881 ) // If under or equal to 6.0.14.1, which in reality means between 6.0.5.0 and 6.0.14.1
+			tSock->ClientType( CV_KR2D );
+		else if( tSock->ClientVersion() >= 10066881 )
+		{
+			if( tSock->ClientVersion() >= 1000000000 ) // 1124079360 is 4.0.23.1?
+			{
+				//UO Enhanced client 4.0.23.1 and above
+				//should use same version numbering scheme as classic client internally
+				tSock->ClientType( CV_HS3D );
+				if( clientRevision <= 15 )
+					tSock->ClientVerShort( CVS_70151 );
+				else if( clientRevision < 24 )
+					tSock->ClientVerShort( CVS_70160 );
+				else
+					tSock->ClientVerShort( CVS_70240 );
+			}
+			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
+				tSock->ClientType( CV_SA2D );
+			else if( tSock->ClientVersion() >= 117440814 && clientRevision >= 9 )
+			{
+				tSock->ClientType( CV_HS2D );
+				// Set temporary client-versions to be used by client-support option during login
+				if( clientRevision <= 15 )
+					tSock->ClientVerShort( CVS_70151 );
+				else if( clientRevision < 24 )
+					tSock->ClientVerShort( CVS_70160 );
+				else
+					tSock->ClientVerShort( CVS_70240 );
+
+			}
+		}
+		tSock->ReceivedVersion( true );
+	}
+}
+
+bool CPINewClientVersion::Handle( void )
+{
 	return true;
 }
 
@@ -520,49 +718,187 @@ char *CPIClientVersion::Offset( void )
 }
 bool CPIClientVersion::Handle( void )
 {
+	if( tSock->ClientVerShort() != CVS_DEFAULT )
+		return true;
+
 	char *verString	= Offset();
 	verString[len]	= 0;
-	UI08 major, minor, sub, letter;
 
-	std::string s( verString );
-	UString us = UString( s );
-	UI08 secCount = us.sectionCount( "." );
-	std::istringstream ss( s );
-	char period;
-	ss >> major >> period;
-	ss >> minor >> period;
-	if( secCount == 3 )
+	// Only need this bit for clients prior to 6.0.5.0 (6.0.0.0 to 6.0.4.x are classified as CV_T2A up until this point)
+	// Version already received in packet 0xEF for 6.0.5.0+
+	if( tSock->ClientType() < CV_KR2D )
 	{
-		ss >> sub >> period;
-		ss >> letter;
+		UI08 major, minor, sub, letter;
+
+		std::string s( verString );	
+		UString us = UString( s );
+		UI08 secCount = us.sectionCount( "." );
+
+		std::istringstream ss( s );
+		char period;
+		ss >> major >> period;
+		ss >> minor >> period;
+		if( secCount == 3 )
+		{
+			ss >> sub >> period;
+			ss >> letter;
+		}
+		else
+		{
+			UI08 temp;
+			ss >> sub;
+			ss >> temp;
+			if( isalpha( temp ) )
+				letter = temp;
+			else
+			{
+				UString tempSubString;
+				std::stringstream tempHackSS;
+				tempHackSS << sub;
+				tempHackSS >> tempSubString;
+				tempHackSS.str("");
+				tempHackSS.clear();
+				tempHackSS << ( tempSubString += temp );
+				int tempSubInt;
+				tempHackSS >> tempSubInt;
+				sub = tempSubInt;
+				ss >> letter;
+			}
+		}
+
+		major	= ShiftValue( major,  '0', '9', true );
+		minor	= ShiftValue( minor,  '0', '9', true );
+		sub		= ShiftValue( sub,    '0', '9', true );
+		if( secCount == 3 )
+			letter	= ShiftValue( letter, '0', '9', true );
+		else
+		{
+			letter	= ShiftValue( letter, 'a', 'z', false );
+			letter	= ShiftValue( letter, 'A', 'Z', false );
+		}
+
+		tSock->ClientVersion( major, minor, sub, letter );
+		Console << verString << myendl;
 	}
-	else
-		ss >> sub >> letter;
 
-	major	= ShiftValue( major,  '0', '9', true );
-	minor	= ShiftValue( minor,  '0', '9', true );
-	sub		= ShiftValue( sub,    '0', '9', true );
-	if( secCount == 3 )
-		letter	= ShiftValue( letter, '0', '9', true );
-	else
-	{
-		letter	= ShiftValue( letter, 'a', 'z', false );
-		letter	= ShiftValue( letter, 'A', 'Z', false );
-	}
-
-	tSock->ClientVersion( major, minor, sub, letter );
-
-	Console << verString << myendl;
-
-	if( tSock->ClientVersion() >= 100663559 )
-		tSock->ClientType( CV_UOKR );
-	else if( strstr( verString, "Dawn" ) )
+	if( strstr( verString, "Dawn" ) )
 		tSock->ClientType( CV_UO3D );
 	else if( strstr( verString, "Krrios" ) )
 		tSock->ClientType( CV_KRRIOS );
+	else
+		SetClientVersionShortAndType( tSock, verString );
 	tSock->ReceivedVersion( true );
 	return true;
 }
+
+void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verString )
+{
+	UI08 CliVerMajor = tSock->ClientVersionMajor();
+	//UI08 CliVerMinor = tSock->ClientVersionMinor(); //uncomment if needed
+	UI08 CliVerSub = tSock->ClientVersionSub();
+	UI08 CliVerLetter = tSock->ClientVersionLetter();
+	UI32 CliVer = tSock->ClientVersion();
+
+	if( CliVer < 100663559 )
+	{
+		if( CliVerMajor == 4 )
+		{
+			tSock->ClientType( CV_T2A );
+			if( tSock->ClientVersionSub() < 7 )
+				tSock->ClientVerShort( CVS_400 );
+			else if( CliVerSub < 11 || ( CliVerSub == 11 && CliVerLetter < 2 ))
+				tSock->ClientVerShort( CVS_407a );
+			else if( CliVerSub == 11 && CliVerLetter >= 2 )  // 4.0.11f really belongs in the CV_ML type though...
+				tSock->ClientVerShort( CVS_4011c );
+			if( !cwmWorldState->ServerData()->ClientSupport4000() )
+			{
+				tSock->ForceOffline( true );
+				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
+				tSock->sysmessage( 1796, verString );
+				Console << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
+			}
+		}
+		else if( CliVerMajor == 5 )
+		{
+			tSock->ClientType( CV_ML );
+			if( tSock->ClientVersionSub() < 2 )
+				tSock->ClientVerShort( CVS_500a );
+			else if( CliVerSub < 8 || ( CliVerSub == 8 && CliVerLetter < 2 ))
+				tSock->ClientVerShort( CVS_502a );
+			else if( CliVerSub > 8 || ( CliVerSub == 8 && CliVerLetter >= 2 ))
+				tSock->ClientVerShort( CVS_5082 );
+			if( !cwmWorldState->ServerData()->ClientSupport5000() )
+			{
+				tSock->ForceOffline( true );
+				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
+				tSock->sysmessage( 1796, verString );
+				Console << "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..." << myendl;
+			}
+		}
+	}
+	else if( CliVer >= 100663559 && CliVer <= 100666881 )
+	{
+		tSock->ClientType( CV_KR2D );
+		if( CliVerSub >= 5 && CliVerSub <= 14 )
+			tSock->ClientVerShort( CVS_6050 );
+		else
+		{
+			if( CliVerSub < 1 || ( CliVerSub == 1 && CliVerLetter < 7 ))
+				tSock->ClientVerShort( CVS_6000 );
+			else if( CliVerSub < 5 )
+				tSock->ClientVerShort( CVS_6017 );
+			if( !cwmWorldState->ServerData()->ClientSupport6000() )
+			{
+				tSock->ForceOffline( true );
+				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
+				tSock->sysmessage( 1796, verString );
+				Console << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
+			}
+		}
+	}
+	else if( CliVer > 100666881 )
+	{
+		if( CliVer <= 117442562 && tSock->ClientType() == CV_SA2D )
+		{
+			tSock->ClientType( CV_SA2D );
+			if( CliVerMajor == 6 && CliVerSub == 14 && CliVerLetter >= 2 )
+				tSock->ClientVerShort( CVS_60142 );
+			else if( CliVerMajor == 7 && CliVerSub < 9 )
+				tSock->ClientVerShort( CVS_7000 );
+		}
+		else if( CliVer >= 117440814 && tSock->ClientType() == CV_HS2D )
+		{
+			tSock->ClientType( CV_HS2D );
+			if( CliVerSub < 13 )
+				tSock->ClientVerShort( CVS_7090 );
+			else if( CliVerSub <= 15 && CliVerLetter <= 0 )
+				tSock->ClientVerShort( CVS_70130 );
+			else if( CliVerSub == 15 && CliVerLetter == 1 )
+				tSock->ClientVerShort( CVS_70151 );
+			else if( CliVerSub >= 16 && CliVerSub < 24 )
+				tSock->ClientVerShort( CVS_70160 );
+			else if( CliVerSub >= 24 )
+				tSock->ClientVerShort( CVS_70240 );
+		}
+		else if( CliVer >= 1000000000 && tSock->ClientType() == CV_HS3D ) // 1124079360 is 4.0.23.1?
+		{
+			//UO Enhanced client 4.0.23.1 and above
+			//should use same version numbering scheme as classic client internally
+			tSock->ClientType( CV_HS3D );
+			if( CliVerSub < 13 )
+				tSock->ClientVerShort( CVS_7090 );
+			else if( CliVerSub <= 15 && CliVerLetter <= 0 )
+				tSock->ClientVerShort( CVS_70130 );
+			else if( CliVerSub == 15 && CliVerLetter == 1 )
+				tSock->ClientVerShort( CVS_70151 );
+			else if( CliVerSub >= 16 && CliVerSub < 24 )
+				tSock->ClientVerShort( CVS_70160 );
+			else if( CliVerSub >= 24 )
+				tSock->ClientVerShort( CVS_70240 );
+		}
+	}
+}
+
 
 //	0xC8 Packet
 //	Last Modified on Monday, 4’th-Sep-2002  
@@ -609,9 +945,14 @@ bool CPIUpdateRangeChange::Handle( void )
 	// Krrios' client behaves (go Krrios!), but the UO ones don't
 	switch( tSock->ClientType() )
 	{
-		case CV_NORMAL:
+		case CV_DEFAULT:
 		case CV_T2A:
 		case CV_UO3D:
+		case CV_ML:
+		case CV_KR2D:
+		case CV_KR3D:
+		case CV_SA2D:
+		case CV_SA3D:
 			tSock->Range( tSock->GetByte( 1 ) - 4 );
 			break;
 		default:
@@ -759,6 +1100,7 @@ bool CPIKeepAlive::Handle( void )
 //	BYTE cmd 
 //	BYTE[4] pattern (0xedededed) 
 //	BYTE getType 
+//		0x00 - GodClient command
 //		0x04 - Basic Stats (Packet 0x11 Response) 
 //		0x05 = Request Skills (Packet 0x3A Response) 
 //	BYTE[4] playerID 
@@ -1168,7 +1510,7 @@ CPIDropItem::CPIDropItem( CSocket *s ) : CPInputBuffer( s )
 void CPIDropItem::Receive( void )
 {
 	uokrFlag = false;
-	if( tSock->ClientType() == CV_UOKR )
+	if( tSock->ClientVerShort() >= CVS_6017 )
 		uokrFlag = true;
 
 	tSock->Receive( (uokrFlag ? 15 : 14), false );
@@ -1725,7 +2067,7 @@ void CPIGumpChoice::Receive( void )
 //	BYTE[4] vendorID 
 //	BYTE flag 
 //		0x00 - no items following 
-//		0x02 - items following 
+//		0x02 - items following
 //	For each item 
 //		BYTE (0x1A) 
 //		BYTE[4] itemID (from 3C packet) 
@@ -1793,7 +2135,118 @@ void CPIDeleteCharacter::Receive( void )
 // void CPIDeleteCharacter::Handle() implimented in pcmanage.cpp	
 
 //0x00 Packet
-//Last Modified on Sunday, 19-Oct-2003 
+//0xF8 Packet (2 extra bytes, only in clients 7.0.16+)
+//0x8D Packet (for 3D/Enhanced clients)
+//Last Modified on Monday, 4-Mar-2012 
+CPICreateCharacter::CPICreateCharacter()
+{
+}
+CPICreateCharacter::CPICreateCharacter( CSocket *s ) : CPInputBuffer( s )
+{
+	Receive();
+}
+void CPICreateCharacter::Receive( void )
+{
+	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
+		Create3DCharacter();
+	else
+		Create2DCharacter();
+}
+
+/*Create New Character (3D clients).
+Packet: 0x8D - Size: 146 bytes
+Packet Build
+	BYTE[1] cmd 
+	BYTE[2] packet length 
+	BYTE[4] pattern1 (0xedededed) 
+	BYTE[4] character index/slot
+	BYTE[30] character name 
+	BYTE[30] unknown (character password?)
+	BYTE[1] profession
+	BYTE[1] client flags (0x01 = Felucca Facet, 0x02 = Trammel Facet, 0x04 = Ilshenar Facet, 0x08 = Malas Facet, 0x10 = Tokuno Facet, 0x20 = Ter Mur Facet, 0x40 = UO3D Client, 0x80 = Reserved for Facet06, 0x100 = UOTD. Also, starting locations? Hm)
+	BYTE[1] gender (male=0, female=1) 
+	BYTE[1] race (human=0, elf=1, gargoyle=2)
+	BYTE[1] strength 
+	BYTE[1] dexterity 
+	BYTE[1] intelligence 
+	BYTE[2] skin color 
+	BYTE[4] unknown (0) 
+	BYTE[4] unknown (0) 
+	BYTE[1] skill1 
+	BYTE[1] skill1 value 
+	BYTE[1] skill2 
+	BYTE[1] skill2 value 
+	BYTE[1] skill3 
+	BYTE[1] skill3 value 
+	BYTE[1] skill4 
+	BYTE[1] skill4 value 
+	BYTE[25] unknown (0) 
+	BYTE[1] unknown (0x0B) 
+	BYTE[2] hair color 
+	BYTE[2] hair style 
+	BYTE[1] unknown (0x0C) 
+	BYTE[4] unknown (0) 
+	BYTE[1] unknown (0x0D) 
+	BYTE[2] shirt color 
+	BYTE[2] shirt style/item id
+	BYTE[1] unknown (0x0F) 
+	BYTE[2] face color 
+	BYTE[2] face style/item id
+	BYTE[1] unknown (0x10) 
+	BYTE[2] beard color  // the last two might be reversed
+	BYTE[2] beard style/item id*/
+//
+void CPICreateCharacter::Create3DCharacter( void )
+{
+	tSock->Receive( 146, false );
+	Network->Transfer( tSock );
+
+	packetSize		= tSock->GetWord( 1 ); // Byte[2]
+	pattern1		= tSock->GetDWord( 3 ); // Byte[4]
+	slot			= tSock->GetDWord( 7 ); // Byte[4]
+	profession		= tSock->GetByte( 71 ); // Byte[1]
+	clientFlags		= tSock->GetByte( 72 ); // Byte[1]
+	sex				= tSock->GetByte( 73 ); // Byte[1]
+	race			= tSock->GetByte( 74 ); // Byte[1]
+	str				= tSock->GetByte( 75 ); // Byte[1]
+	dex				= tSock->GetByte( 76 ); // Byte[1]
+	intel			= tSock->GetByte( 77 ); // Byte[1]
+	skinColour		= tSock->GetWord( 78 ); // Byte[2]
+	unknown1		= tSock->GetDWord( 80 ); // Byte[4]
+	unknown2		= tSock->GetDWord( 84 ); // Byte[4]
+	skill[0]		= tSock->GetByte( 88 ); // Byte[1]
+	skillValue[0]	= tSock->GetByte( 89 ); // Byte[1]
+	skill[1]		= tSock->GetByte( 90 ); // Byte[1]
+	skillValue[1]	= tSock->GetByte( 91 ); // Byte[1]
+	skill[2]		= tSock->GetByte( 92 ); // Byte[1]
+	skillValue[2]	= tSock->GetByte( 93 ); // Byte[1]
+	UI08 byteNum = 94;
+	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
+	{
+		skill[3]		= tSock->GetByte( 94 ); // Byte[1]
+		skillValue[3]	= tSock->GetByte( 95 ); // Byte[1]
+		byteNum = 96;
+	}
+	unknown4		= tSock->GetByte( byteNum+25 ); // Byte[1] // 121
+	hairColour		= tSock->GetWord( byteNum+26 ); // Byte[2] // 122
+	hairStyle		= tSock->GetWord( byteNum+28 ); // Byte[2] // 124
+	unknown5		= tSock->GetByte( byteNum+30 ); // Byte[1]
+	unknown6		= tSock->GetDWord( byteNum+31 ); // Byte[4]
+	unknown7		= tSock->GetByte( byteNum+35 ); // Byte[1]
+	shirtColour		= tSock->GetWord( byteNum+36 ); // Byte[2]
+	shirtID			= tSock->GetWord( byteNum+38 ); // Byte[2]
+	unknown8		= tSock->GetByte( byteNum+40 ); // Byte[1]
+	faceColour		= tSock->GetWord( byteNum+41 ); // Byte[2]
+	faceID			= tSock->GetWord( byteNum+43 ); // Byte[2]
+	unknown9		= tSock->GetByte( byteNum+45 ); // Byte[1]
+	facialHairColour= tSock->GetWord( byteNum+46 ); // Byte[2]
+	facialHair		= tSock->GetWord( byteNum+48 ); // Byte[2]
+
+	memcpy( charName, &tSock->Buffer()[11], 30 ); // Byte[30]
+	memcpy( password, &tSock->Buffer()[41], 30 ); // Byte[30]
+	memcpy( unknown3, &tSock->Buffer()[96], 25 ); // Byte[25]
+}
+/*
 //Create Character (104 bytes) 
 //	BYTE cmd								0
 //	BYTE[4] pattern1 (0xedededed)			1
@@ -1822,21 +2275,19 @@ void CPIDeleteCharacter::Receive( void )
 //	BYTE[4] clientIP						96
 //	BYTE[2] shirt color						100
 //	BYTE[2] pants color						102
-CPICreateCharacter::CPICreateCharacter()
+*/
+void CPICreateCharacter::Create2DCharacter( void )
 {
-}
-CPICreateCharacter::CPICreateCharacter( CSocket *s ) : CPInputBuffer( s )
-{
-	Receive();
-}
-void CPICreateCharacter::Receive( void )
-{
-	tSock->Receive( 104, false );
+	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
+		tSock->Receive( 106, true );
+	else
+		tSock->Receive( 104, false );
 	Network->Transfer( tSock );
 
 	pattern1		= tSock->GetDWord( 1 );
 	pattern2		= tSock->GetDWord( 5 );
 	pattern3		= tSock->GetByte( 9 );
+	profession		= tSock->GetByte( 54 ); // Byte[54]
 	sex				= tSock->GetByte( 70 );
 	str				= tSock->GetByte( 71 );
 	dex				= tSock->GetByte( 72 );
@@ -1847,50 +2298,106 @@ void CPICreateCharacter::Receive( void )
 	skillValue[1]	= tSock->GetByte( 77 );
 	skill[2]		= tSock->GetByte( 78 );
 	skillValue[2]	= tSock->GetByte( 79 );
-	skinColour		= tSock->GetWord( 80 );
-	hairStyle		= tSock->GetWord( 82 );
-	hairColour		= tSock->GetWord( 84 );
-	facialHair		= tSock->GetWord( 86 );
-	facialHairColour= tSock->GetWord( 88 );
-	locationNumber	= tSock->GetWord( 90 );
-	unknown			= tSock->GetWord( 92 );
-	slot			= tSock->GetWord( 94 );
-	ipAddress		= tSock->GetDWord( 96 );
-	shirtColour		= tSock->GetWord( 100 );
-	pantsColour		= tSock->GetWord( 102 );
+	UI08 byteNum = 80;
+	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
+	{
+		skill[3]		= tSock->GetByte( 80 );
+		skillValue[3]	= tSock->GetByte( 81 );
+		byteNum = 82;
+	}
+	skinColour		= tSock->GetWord( byteNum );
+	hairStyle		= tSock->GetWord( byteNum+2 );
+	hairColour		= tSock->GetWord( byteNum+4 );
+	facialHair		= tSock->GetWord( byteNum+6 );
+	facialHairColour= tSock->GetWord( byteNum+8 );
+
+	unknown			= tSock->GetByte( byteNum+10 );
+	locationNumber	= tSock->GetByte( byteNum+11 );
+	slot			= tSock->GetDWord( byteNum+12 );
+	ipAddress		= tSock->GetDWord( byteNum+16 );
+	shirtColour		= tSock->GetWord( byteNum+20 );
+	pantsColour		= tSock->GetWord( byteNum+22 );
+
 	memcpy( charName, &tSock->Buffer()[10], 30 );
-	memcpy( password, &tSock->Buffer()[40], 30 );
+	memcpy( password, &tSock->Buffer()[40], 30 ); // Does this really have anything to do with passwords?
 }
 
 void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 {
-	if( fullHeader )
-		outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << TimeStamp() << std::endl;
-
-	outStream << "Pattern1       : " << pattern1 << std::endl;
-	outStream << "Pattern2       : " << pattern2 << std::endl;
-	outStream << "Pattern3       : " << (int)pattern3 << std::endl;
-	outStream << "Character Name : " << charName << std::endl;
-	outStream << "Password       : " << password << std::endl;
-	outStream << "Sex            : " << (int)sex << std::endl;
-	outStream << "Strength       : " << (int)str << std::endl;
-	outStream << "Dexterity      : " << (int)dex << std::endl;
-	outStream << "Intelligence   : " << (int)intel << std::endl;
-	outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << std::endl;
-	outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << std::endl;
-	outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
-	outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
-	outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
-	outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
-	outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
-	outStream << "Location Number: " << locationNumber << std::endl;
-	outStream << "Unknown        : " << unknown << std::endl;
-	outStream << "Slot           : " << (int)slot << std::endl;
-	outStream << "IP Address     : " << ipAddress << std::endl;
-	outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
-	outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
+	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
+	{
+		if( fullHeader )
+		{
+				outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp() << std::endl;
+		}
+		outStream << "Pattern1       : " << pattern1 << std::endl;
+		outStream << "Slot           : " << (int)slot << std::endl;
+		outStream << "Character Name : " << charName << std::endl;
+		outStream << "Password       : " << password << std::endl;
+		outStream << "Profession     : " << (int)profession << std::endl;
+		outStream << "Client Flags   : " << (int)clientFlags << std::endl;
+		outStream << "Sex            : " << (int)sex << std::endl;
+		outStream << "Race           : " << (int)race << std::endl;
+		outStream << "Strength       : " << (int)str << std::endl;
+		outStream << "Dexterity      : " << (int)dex << std::endl;
+		outStream << "Intelligence   : " << (int)intel << std::endl;
+		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
+		outStream << "Unknown1       : " << (int)unknown1 << std::endl;
+		outStream << "Unknown2       : " << (int)unknown2 << std::endl;
+		outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << " " << (int)skill[3] << std::endl;
+		outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << " " << (int)skillValue[3] << std::endl;
+		outStream << "Unknown3       : " << (int)unknown3 << std::endl;
+		outStream << "Unknown4       : " << (int)unknown4 << std::endl;
+		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
+		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
+		outStream << "Unknown5       : " << (int)unknown5 << std::endl;
+		outStream << "Unknown6       : " << (int)unknown6 << std::endl;
+		outStream << "Unknown7       : " << (int)unknown7 << std::endl;
+		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
+		outStream << "Shirt ID       : " << std::hex << shirtID << std::dec << std::endl;
+		outStream << "Unknown8       : " << (int)unknown8 << std::endl;
+		outStream << "Face Colour    : " << std::hex << faceColour << std::dec << std::endl;
+		outStream << "Face ID		 : " << std::hex << faceID << std::dec << std::endl;
+		outStream << "Unknown9       : " << (int)unknown9 << std::endl;
+		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
+		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
+		outStream << "  Raw dump     :" << std::endl;
+		CPInputBuffer::Log( outStream, false );
+	}
+	else
+	{
+		if( fullHeader )
+		{
+			if( tSock->GetByte( 0 ) == 0xF8 )
+				outStream << "[RECV]Packet   : CPICreateCharacter 0xF8 --> Length: 106" << TimeStamp() << std::endl;
+			else
+				outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << TimeStamp() << std::endl;
+		}
+		outStream << "Pattern1       : " << pattern1 << std::endl;
+		outStream << "Pattern2       : " << pattern2 << std::endl;
+		outStream << "Pattern3       : " << (int)pattern3 << std::endl;
+		outStream << "Character Name : " << charName << std::endl;
+		outStream << "Password       : " << password << std::endl;
+		outStream << "Sex            : " << (int)sex << std::endl;
+		outStream << "Strength       : " << (int)str << std::endl;
+		outStream << "Dexterity      : " << (int)dex << std::endl;
+		outStream << "Intelligence   : " << (int)intel << std::endl;
+		outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << std::endl;
+		outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << std::endl;
+		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
+		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
+		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
+		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
+		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
+		outStream << "Location Number: " << locationNumber << std::endl;
+		outStream << "Unknown        : " << unknown << std::endl;
+		outStream << "Slot           : " << (int)slot << std::endl;
+		outStream << "IP Address     : " << ipAddress << std::endl;
+		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
+		outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
+		outStream << "  Raw dump     :" << std::endl;
+		CPInputBuffer::Log( outStream, false );
+	}
 }
 
 
@@ -1923,6 +2430,16 @@ void CPIPlayCharacter::Receive( void )
 	pattern		= tSock->GetDWord( 1 );
 	slotChosen	= tSock->GetByte( 68 );
 	ipAddress	= tSock->GetDWord( 69 );
+
+	//Reset client-info stored in account, so it's ready for login with a new client
+	//NOTE: We can't do this until after character-selection, in case user
+	//goes back to server-selection instead - in which case the socket's clientversion info is lost!
+//	tSock->AcctNo( AB_INVALID_ID );
+	CAccountBlock& actbTemp = tSock->GetAccount();
+	actbTemp.dwLastClientVer = 0;
+	actbTemp.dwLastClientType = 0;
+	actbTemp.dwLastClientVerShort = 0;
+
 	memcpy( charName, &tSock->Buffer()[5], 30 );
 	memcpy( unknown, &tSock->Buffer()[35], 33 );
 }
@@ -2961,7 +3478,6 @@ void CPISpellbookSelect::Receive( void )
 }
 bool CPISpellbookSelect::Handle( void )
 {
-	int book;
 	CChar *ourChar	= tSock->CurrcharObj();
 	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
 	CItem *p		= ourChar->GetPackItem();
@@ -2976,7 +3492,7 @@ bool CPISpellbookSelect::Handle( void )
 
 		if( validLoc )
 		{
-			book = (buffer[7]<<8) + (buffer[8]); 
+			int book = (buffer[7]<<8) + (buffer[8]); 
 			if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
 			{
 				if( ourChar->IsFrozen() )
@@ -3026,8 +3542,8 @@ void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
 //				0x0012 - House Customization :: Switch Floors 
 //				0x0019 - Special Moves :: Activate/Deactivate 
 //				0x001A - House Customization :: Revert 
-//				0x0028 - Quests :: Unknown
-//				0x0032 - Guild  :: Unknown
+//				0x0028 - Quests :: Paperdoll button
+//				0x0032 - Guild  :: Paperdoll button
 
 //	Packet Description:
 //		This packet is used to perform various actions, mostly related to AOS features.
@@ -3048,25 +3564,34 @@ void CPIAOSCommand::Receive( void )
 }
 bool CPIAOSCommand::Handle( void )
 {
-/*	switch( tSock->GetWord( 7 ) )	// Which subcommand?
+	switch( tSock->GetWord( 7 ) )	// Which subcommand?
 	{
-	case 0x0002:	outStream << "House Customisation :: Backup";					break;
-	case 0x0003:	outStream << "House Customisation :: Restore";					break;
-	case 0x0004:	outStream << "House Customisation :: Commit";					break;
-	case 0x0005:	outStream << "House Customisation :: Destroy Item";				break;
-	case 0x0006:	outStream << "House Customisation :: Place Item";				break;
-	case 0x000C:	outStream << "House Customisation :: Exit";						break;
-	case 0x000D:	outStream << "House Customisation :: Place Multi (Stairs)";		break;
-	case 0x000E:	outStream << "House Customisation :: Synch";					break;
-	case 0x0010:	outStream << "House Customisation :: Clear";					break;
-	case 0x0012:	outStream << "House Customisation :: Switch Floors";			break;
-	case 0x0019:	outStream << "Special Moves :: Activate / Deactivate";			break;
-	case 0x001A:	outStream << "House Customisation :: Revert";					break;
-	case 0x0028:	outStream << "Guild :: Unknown";								break;
-	case 0x0032:	outStream << "Quests :: Unknown";								break; 
-	default:		outStream << "Unknown " << tSock->GetWord( 7 );					break;
+	/*case 0x0002:	break;	//House Customisation :: Backup
+	case 0x0003:	break;	//House Customisation :: Restore
+	case 0x0004:	break;	//House Customisation :: Commit
+	case 0x0005:	break;	//House Customisation :: Destroy Item
+	case 0x0006:	break;	//House Customisation :: Place Item
+	case 0x000C:	break;	//House Customisation :: Exit
+	case 0x000D:	break;	//House Customisation :: Place Multi (Stairs)
+	case 0x000E:	break;	//House Customisation :: Synch
+	case 0x0010:	break;	//House Customisation :: Clear
+	case 0x0012:	break;	//House Customisation :: Switch Floors
+	case 0x0019:	break;	//Special Moves :: Activate / Deactivate
+	case 0x001A:	break;	//House Customisation :: Revert*/
+	case 0x0028:			//Guild :: Paperdoll button
+					if( cwmWorldState->ServerData()->PaperdollGuildButton() )
+					{
+						if( tSock->CurrcharObj()->GetGuildNumber() != - 1 )
+							GuildSys->Menu( tSock, BasePage + 1, static_cast<GUILDID>( tSock->CurrcharObj()->GetGuildNumber() ));
+						else
+							tSock->sysmessage( 1793 );
+						return true;
+					}
+					break;	
+	case 0x0032:	break;	//Quests :: Unknown
+	default:		break;
 	}
-	*/
+	
 	return false;
 }
 void CPIAOSCommand::Log( std::ofstream &outStream, bool fullHeader )

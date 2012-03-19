@@ -6,13 +6,42 @@ namespace UOX
 
 enum ClientTypes
 {
-	CV_NORMAL = 0,
-	CV_T2A,
-	CV_UO3D,
-	CV_UOKR,
-	CV_KRRIOS,
+	CV_DEFAULT = 0,
 	CV_UNKNOWN,
+	CV_KRRIOS,
+	CV_T2A,		// From 4.0.0p to 4.0.11c
+	CV_UO3D,	// Third Dawn 3D client
+	CV_ML,		// From 4.0.11f to 5.0.9.1
+	CV_KR2D,	// From 6.0.0.0+ to 6.0.14.1, first packet sent is 0xEF. 
+	CV_KR3D,
+	CV_SA2D,	// From 6.0.14.2 to 7.0.8.2, Stygian Abyss expansion client. First patcket sent is 0xEF, requires 0xB9 size-change from 3 to 5, new 0xF3 packet replacex 0x1A
+	CV_SA3D,
+	CV_HS2D,	// From 7.0.9.0 to infinity (so far), High Seas expansion client
+	CV_HS3D,
 	CV_COUNT
+};
+
+// Only client-versions with major packet changes included. Clients between two versions "belong" to the nearest previous version
+enum ClientVersions
+{
+	CVS_DEFAULT = 0,
+	CVS_400,
+	CVS_407a,
+	CVS_4011c,
+	CVS_500a,
+	CVS_502a,
+	CVS_5082,
+	CVS_6000,
+	CVS_6017,
+	CVS_6050,
+	CVS_60142,
+	CVS_7000,
+	CVS_7090,
+	CVS_70130,
+	CVS_70151,
+	CVS_70160,
+	CVS_70240,
+	CVS_COUNT
 };
 
 enum cS_TID
@@ -68,6 +97,7 @@ private:
 	bool			newClient;
 	bool			firstPacket;
 	bool			cryptclient;
+	bool			forceOffline;
 
 	size_t			cliSocket;		// client
 	UI08			clientip[4];
@@ -103,6 +133,7 @@ private:
 	UnicodeTypes	lang;
 	UI32			clientVersion;
 	ClientTypes		cliType;
+	ClientVersions	cliVerShort;
 	UI08			range;
 
 	bool			receivedVersion;
@@ -127,6 +158,9 @@ public:
 	UI08			ClientVersionMinor( void ) const;
 	UI08			ClientVersionSub( void ) const;
 	UI08			ClientVersionLetter( void ) const;
+
+	ClientVersions	ClientVerShort( void ) const;
+	void			ClientVerShort( ClientVersions newVer );
 
 	ClientTypes		ClientType( void ) const;
 	void			ClientType( ClientTypes newVer );
@@ -167,6 +201,7 @@ public:
 	UI16			NextTrigWord( void );
 	bool			FinishedTrigWords( void );
 	void			ClearTrigWords( void );
+	bool			ForceOffline( void ) const;
 
 	// Temporary Variables
 	CBaseObject *	TempObj( void ) const;
@@ -221,6 +256,7 @@ public:
 	void			ClientIP4( UI08 newValue );
 	void			NewClient( bool newValue );
 	void			Range( UI08 value );
+	void			ForceOffline( bool newValue );
 
 	//	Temporary Variables
 	void			TempObj( CBaseObject *newValue );
@@ -276,7 +312,7 @@ public:
 	void			updateskill( UI08 skillnum );
 	void			openPack( CItem *i, bool isPlayerVendor = false );
 	void			openBank( CChar *i );
-	void			OpenURL( const std::string txt );
+	void			OpenURL( const std::string& txt );
 
 	bool			ReceivedVersion( void ) const;
 	void			ReceivedVersion( bool value );

@@ -432,6 +432,10 @@ static JSPropertySpec CSkillsProps[] =
 	{ "chivalry",			CHIVALRY,			JSPROP_ENUMANDPERM },
 	{ "bushido",			BUSHIDO,			JSPROP_ENUMANDPERM },
 	{ "ninjitsu",			NINJITSU,			JSPROP_ENUMANDPERM },
+	{ "spellweaving",		SPELLWEAVING,		JSPROP_ENUMANDPERM },
+	{ "imbuing",			IMBUING,			JSPROP_ENUMANDPERM },
+	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM },
+	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM },
 	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,			(UI08)0}
 };

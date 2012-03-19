@@ -358,7 +358,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 {
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
 	STRINGLIST *longList = priorityFile.List();
-	if( longList->size() > 0 )
+	if( !longList->empty() )
 	{
 		std::string filename = (*longList)[0];
 		//	Do we have any priority informat?

@@ -98,7 +98,6 @@ namespace UOX
 			return JS_FALSE;
 		JSString *tString = NULL;
 		UString spellName = "";
-		size_t i;
 		bool bDone = false;
 
 		if( JSVAL_IS_INT( id ) ) 
@@ -106,7 +105,7 @@ namespace UOX
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CSP_ID:
-					for( i = 0; i < Magic->spells.size() && !bDone; ++i )
+					for( size_t i = 0; i < Magic->spells.size() && !bDone; ++i )
 					{
 						if( &Magic->spells[i] == gPriv ) 
 						{
@@ -124,7 +123,7 @@ namespace UOX
 				case CSP_MANTRA:			tString = JS_NewStringCopyZ( cx, gPriv->Mantra().c_str() );
 											*vp = STRING_TO_JSVAL( tString );
 											break;
-				case CSP_NAME:				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
+				case CSP_NAME:				for( size_t i = 0; i < Magic->spells.size() && !bDone; ++i )
 											{
 												if( &Magic->spells[i] == gPriv - 1  ) 
 												{
@@ -176,7 +175,6 @@ namespace UOX
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
 		JSString *tString = NULL;
-		CRace *TempRace = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
 			switch( JSVAL_TO_INT( id ) )
@@ -271,19 +269,22 @@ namespace UOX
 				case CIP_ISITEM:	*vp = JSVAL_TRUE;								break;
 				case CIP_ISSPAWNER:	*vp = BOOLEAN_TO_JSVAL(gPriv->GetObjType() == OT_SPAWNER);	break;
 				case CIP_RACE:
-					TempRace = Races->Race( gPriv->GetRace() );
+					{
+						CRace *TempRace = NULL;
+						TempRace = Races->Race( gPriv->GetRace() );
 
-					if( TempRace == NULL )
-					{
-						*vp = JSVAL_NULL;
+						if( TempRace == NULL )
+						{
+							*vp = JSVAL_NULL;
+						}
+						else
+						{
+							// Otherwise Acquire an object
+							JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+							*vp = OBJECT_TO_JSVAL( myRace );
+						}
+						break;
 					}
-					else
-					{
-						// Otherwise Acquire an object
-						JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
-						*vp = OBJECT_TO_JSVAL( myRace );
-					}
-					break;
 				case CIP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );		break;
 				case CIP_RANK:			*vp = INT_TO_JSVAL( gPriv->GetRank() );			break;
 				case CIP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );		break;
@@ -496,10 +497,7 @@ namespace UOX
 	JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		CItem *TempItem			= NULL;
-		CRace *TempRace			= NULL;
 		JSObject *TempObject	= NULL;
-		UI08 TempTownID			= 0xFF;
-		GUILDID TempGuildID		= -1;
 		CChar *gPriv			= (CChar *)JS_GetPrivate( cx, obj );
 
 		if( !ValidateObject( gPriv ) )
@@ -597,17 +595,20 @@ namespace UOX
 				case CCP_FROZEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFrozen() );				break;
 				case CCP_COMMANDLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetCommandLevel() );				break;
 				case CCP_RACE:
-					TempRace = Races->Race( gPriv->GetRace() );
-
-					if( TempRace == NULL )
-						*vp = JSVAL_NULL;
-					else
 					{
-						// Otherwise Acquire an object
-						JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
-						*vp = OBJECT_TO_JSVAL( myRace );
+						CRace *TempRace			= NULL;
+						TempRace = Races->Race( gPriv->GetRace() );
+
+						if( TempRace == NULL )
+							*vp = JSVAL_NULL;
+						else
+						{
+							// Otherwise Acquire an object
+							JSObject *myRace	= JSEngine->AcquireObject( IUE_RACE, TempRace, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+							*vp = OBJECT_TO_JSVAL( myRace );
+						}
+						break;
 					}
-					break;
 				case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
 				case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
 				case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
@@ -624,6 +625,10 @@ namespace UOX
 					case 0x025F:	*vp = INT_TO_JSVAL( 2 );							break;
 					case 0x025E:	// elf female, dead or alive
 					case 0x0260:	*vp = INT_TO_JSVAL( 3 );							break;
+					case 0x029A:	// gargoyle male, dead or alive
+					case 0x02B6:	*vp = INT_TO_JSVAL( 4 );							break;
+					case 0x029B:	// gargoyle female, dead or alive
+					case 0x02B7:	*vp = INT_TO_JSVAL( 5 );							break;
 					default:		*vp = INT_TO_JSVAL( 0xFF );							break;
 					}
 					break;
@@ -645,31 +650,37 @@ namespace UOX
 						}
 					}
 				case CCP_TOWN:
-					TempTownID = gPriv->GetTown();
-
-					// We need to decide here whether 0xFF is a valid town (wilderness) or not
-					// i would say no its not
-					if( TempTownID == 0xFF )
-						*vp = JSVAL_NULL;
-					else
 					{
-						// Should build the town here
-						JSObject *myTown	= JSEngine->AcquireObject( IUE_REGION, cwmWorldState->townRegions[TempTownID], JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
-						*vp = OBJECT_TO_JSVAL( myTown );
+						UI08 TempTownID			= 0xFF;
+						TempTownID = gPriv->GetTown();
+
+						// We need to decide here whether 0xFF is a valid town (wilderness) or not
+						// i would say no its not
+						if( TempTownID == 0xFF )
+							*vp = JSVAL_NULL;
+						else
+						{
+							// Should build the town here
+							JSObject *myTown	= JSEngine->AcquireObject( IUE_REGION, cwmWorldState->townRegions[TempTownID], JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+							*vp = OBJECT_TO_JSVAL( myTown );
+						}
+						break;
 					}
-					break;
 				case CCP_GUILD:
-					TempGuildID = gPriv->GetGuildNumber();
-
-					// Character has no guild
-					if( TempGuildID == -1 ) // isn't there a constant or something like?
-						*vp = JSVAL_NULL;
-					else
 					{
-						JSObject *myGuild	= JSEngine->AcquireObject( IUE_GUILD, GuildSys->Guild( TempGuildID ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
-						*vp = OBJECT_TO_JSVAL( myGuild );
+						GUILDID TempGuildID		= -1;
+						TempGuildID = gPriv->GetGuildNumber();
+
+						// Character has no guild
+						if( TempGuildID == -1 ) // isn't there a constant or something like?
+							*vp = JSVAL_NULL;
+						else
+						{
+							JSObject *myGuild	= JSEngine->AcquireObject( IUE_GUILD, GuildSys->Guild( TempGuildID ), JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+							*vp = OBJECT_TO_JSVAL( myGuild );
+						}
+						break;
 					}
-					break;
 				case CCP_SOCKET:
 					{ // So we can declare the variables here
 						CSocket *tSock = gPriv->GetSocket();
@@ -704,7 +715,6 @@ namespace UOX
 				case CCP_ATWAR:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAtWar() );			break;
 				case CCP_SPELLCAST:		*vp = INT_TO_JSVAL( gPriv->GetSpellCast() );		break;
 				case CCP_ISCASTING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCasting() || gPriv->IsJSCasting() );		break;
-
 				case CCP_TOWNPRIV:		*vp = INT_TO_JSVAL( gPriv->GetTownPriv() );			break;
 				case CCP_GUILDTITLE:	
 										tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
@@ -951,6 +961,18 @@ namespace UOX
 							gPriv->SetID( 0x0260 );
 						else
 							gPriv->SetID( 0x025E );
+						break;
+					case 4:	// gargoyle male
+						if( gPriv->IsDead() )
+							gPriv->SetID( 0x02B6 );
+						else
+							gPriv->SetID( 0x029A );
+						break;
+					case 5: // gargoyle female
+						if( gPriv->IsDead() )
+							gPriv->SetID( 0x02B7 );
+						else
+							gPriv->SetID( 0x029B );
 						break;
 					default:
 						break;
@@ -1295,7 +1317,6 @@ namespace UOX
 	JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		CRace *gPriv = (CRace *)JS_GetPrivate( cx, obj );
-		UI08 TempRace;
 
 		if( gPriv == NULL )
 			return JS_FALSE;
@@ -1305,7 +1326,7 @@ namespace UOX
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CRP_ID:
-					for( TempRace = 0; TempRace < Races->Count(); ++TempRace )
+					for( UI08 TempRace = 0; TempRace < Races->Count(); ++TempRace )
 					{
 						if( Races->Race( TempRace ) == gPriv )
 						{
@@ -1412,7 +1433,6 @@ namespace UOX
 					break;
 				case CSOCKP_WALKSEQUENCE:		gPriv->WalkSequence( (SI16)encaps.toInt() );			break;
 				case CSOCKP_CURRENTSPELLTYPE:	gPriv->CurrentSpellType( (SI08)encaps.toInt() );		break;
-					break;
 				case CSOCKP_LOGGING:			gPriv->Logging( encaps.toBool() );						break;
 				case CSOCKP_BYTESSENT:
 				case CSOCKP_BYTESRECEIVED:
@@ -1600,7 +1620,9 @@ namespace UOX
 				}
 			}
 			else
+			{
 				myChar->SetSkill( NewSkillValue, SkillID );
+			}
 		}
 		else if( myClass.ClassName() == "UOXBaseSkills" )
 		{
@@ -1628,7 +1650,9 @@ namespace UOX
 				}
 			}
 			else
+			{
 				myChar->SkillUsed( encaps.toBool(), SkillID );
+			}
 		}
 		else if( myClass.ClassName() == "UOXSkillsLock" )
 		{
@@ -1640,7 +1664,9 @@ namespace UOX
 				}
 			}
 			else
+			{
 				myChar->SetSkillLock( (SkillLock)NewSkillValue, SkillID );
+			}
 		}
 
 		if( !myChar->IsNpc() )
@@ -1656,7 +1682,9 @@ namespace UOX
 					}
 				}
 				else
+				{
 					toFind->updateskill( SkillID );
+				}
 			}
 		}
 		return JS_TRUE;

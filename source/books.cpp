@@ -74,6 +74,8 @@ bool CPINewBookHeader::Handle( void )
 			memcpy( titleBuff, &tSock->Buffer()[13], (titleLen>61?61:titleLen) );
 			memcpy( authBuff, &tSock->Buffer()[15+titleLen], (authorLen>31?31:authorLen) );
 
+			mBook->SetName( titleBuff );
+
 			file.seekp( 0, std::ios::beg );
 			if( !file.fail() )
 			{
@@ -386,14 +388,14 @@ void cBooks::DeleteBook( CItem *id )
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cBooks::CreateBook( const std::string fileName, CChar *mChar, CItem *mBook )
+//|	Function		-	void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook )
 //|	Date			-	11/5/2005
 //|	Developers		-	giwo
 //|	Organization	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Formats a newly created .bok file, this must be done with any new book file
 //o--------------------------------------------------------------------------o
-void cBooks::CreateBook( const std::string fileName, CChar *mChar, CItem *mBook )
+void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook )
 {
 	char wBuffer[2];
 	char line[34];

@@ -15,7 +15,8 @@
 namespace UOX
 {
 #define	MAX_TRACKINGTARGETS	128
-#define SKILLCAP			7000
+#define SKILLTOTALCAP		7000
+#define SKILLCAP			1000
 #define STATCAP				325
 
 const UI32 BIT_ANNOUNCESAVES		= 0;
@@ -51,6 +52,15 @@ const UI32 BIT_GLOBALITEMDECAY		= 29;
 const UI32 BIT_SCRIPTITEMSDECAYABLE	= 30;
 const UI32 BIT_BASEITEMSDECAYABLE	= 31;
 const UI32 BIT_ITEMDECAYINHOUSES	= 32;
+const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
+const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
+const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
+const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
+const UI32 BIT_SERVERUSINGHSTILES	= 37;
+const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
+const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
+const UI32 BIT_MAPISUOPWRAPPED		= 40;
+
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
@@ -75,7 +85,8 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
-	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|"
+	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
+	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -115,7 +126,8 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
 	SystemTimer( tSERVER_POISON, 180 );
 	SystemTimer( tSERVER_DECAY, 300 );
-	ServerSkillCap( 7000 );
+	ServerSkillTotalCap( 7000 );
+	ServerSkillCap( 1000 );
 	ServerStatCap( 325 );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 300 );
@@ -135,6 +147,8 @@ void CServerData::ResetDefaults( void )
 	DeathAnimationStatus( true );
 	ShowOfflinePCs( true );
 	CombatDisplayHitMessage( true );
+	CombatDisplayDamageNumbers( true );
+	CombatAttackSpeedFromStamina( true );
 	CombatAttackStamina( -2 );
 	NPCTrainingStatus( true );
 	CharHideWhileMounted( true );
@@ -203,7 +217,7 @@ void CServerData::ResetDefaults( void )
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
 	
-	CheckBoatSpeed( 0.75 );
+	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
 	PlayerPersecutionStatus( false );
@@ -226,7 +240,7 @@ void CServerData::ResetDefaults( void )
 	
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.7 );
+	NPCWalkingSpeed( 0.5 );
 	NPCRunningSpeed( 0.2 );
 	NPCFleeingSpeed( 0.4 );
 	AccountFlushTimer( 0.0 );
@@ -267,8 +281,9 @@ void CServerData::ResetDefaults( void )
 	TownGuardPayment( 3600 );		// guards paid every hour
 
 	SetClientFeature( CF_BIT_CHAT, true );
+	SetClientFeature( CF_BIT_UOR, true );
+	SetClientFeature( CF_BIT_TD, true );
 	SetClientFeature( CF_BIT_LBR, true );
-	SetClientFeature( CF_BIT_UNKNOWN2, true );
 	SetClientFeature( CF_BIT_AOS, true );
 	SetClientFeature( CF_BIT_SIXCHARS, true );
 	SetClientFeature( CF_BIT_SE, true );
@@ -280,6 +295,19 @@ void CServerData::ResetDefaults( void )
 	SetServerFeature( SF_BIT_SIXCHARS, true );
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
+
+	// Enable login-support for any supported client version by default.
+	ClientSupport4000( true );
+	ClientSupport5000( true );
+	ClientSupport6000( true );
+	ClientSupport6050( true );
+	ClientSupport7000( true );
+	ClientSupport7090( true );
+	ClientSupport70160( true );
+	ClientSupport70240( true );
+
+	ExtendedStartingStats( true );
+	ExtendedStartingSkills( true );
 
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
@@ -446,6 +474,18 @@ UI32 CServerData::ServerSavesTimerStatus( void ) const
 	return serversavestimer;
 }
 
+void CServerData::ServerSkillTotalCap( UI16 cap )
+{
+	skilltotalcap = cap;
+	if( cap < 1 )		// Default is on second loop sleeping
+		skilltotalcap = SKILLTOTALCAP;
+}
+
+UI16 CServerData::ServerSkillTotalCapStatus( void ) const
+{
+	return skilltotalcap;
+}
+
 void CServerData::ServerSkillCap( UI16 cap )
 {
 	skillcap = cap;
@@ -457,6 +497,7 @@ UI16 CServerData::ServerSkillCapStatus( void ) const
 {
 	return skillcap;
 }
+
 
 void CServerData::ServerSkillDelay( UI08 skdelay )
 {
@@ -734,6 +775,24 @@ bool CServerData::SnoopIsCrime( void ) const
 	return boolVals.test( BIT_SNOOPISCRIME );
 }
 
+void CServerData::ExtendedStartingStats( bool newVal )
+{
+	boolVals.set( BIT_EXTENDEDSTARTINGSTATS, newVal );
+}
+bool CServerData::ExtendedStartingStats( void ) const
+{
+	return boolVals.test( BIT_EXTENDEDSTARTINGSTATS );
+}
+
+void CServerData::ExtendedStartingSkills( bool newVal )
+{
+	boolVals.set( BIT_EXTENDEDSTARTINGSKILLS, newVal );
+}
+bool CServerData::ExtendedStartingSkills( void ) const
+{
+	return boolVals.test( BIT_EXTENDEDSTARTINGSKILLS );
+}
+
 void CServerData::PlayerPersecutionStatus( bool newVal )
 {
 	boolVals.set( BIT_PERSECUTIONSTATUS, newVal );
@@ -896,9 +955,49 @@ bool CServerData::CombatDisplayHitMessage( void ) const
 	return boolVals.test( BIT_SHOWHITMESSAGE );
 }
 
+void CServerData::CombatDisplayDamageNumbers( bool newVal )
+{
+	boolVals.set( BIT_SHOWDAMAGENUMBERS, newVal );
+}
+
+bool CServerData::CombatDisplayDamageNumbers( void ) const
+{
+	return boolVals.test( BIT_SHOWDAMAGENUMBERS );
+}
+
+void CServerData::CombatAttackSpeedFromStamina( bool newVal )
+{
+	boolVals.set( BIT_ATTSPEEDFROMSTAMINA, newVal );
+}
+
+bool CServerData::CombatAttackSpeedFromStamina( void ) const
+{
+	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
+}
+
 void CServerData::CombatNPCDamageRate( SI16 value )
 {
 	combatnpcdamagerate = value;
+}
+
+void CServerData::ServerUsingHSMultis( bool newVal )
+{
+	boolVals.set( BIT_SERVERUSINGHSMULTIS, newVal );
+}
+
+bool CServerData::ServerUsingHSMultis( void ) const
+{
+	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
+}
+
+void CServerData::ServerUsingHSTiles( bool newVal )
+{
+	boolVals.set( BIT_SERVERUSINGHSTILES, newVal );
+}
+
+bool CServerData::ServerUsingHSTiles( void ) const
+{
+	return boolVals.test( BIT_SERVERUSINGHSTILES );
 }
 
 SI16 CServerData::CombatNPCDamageRate( void ) const
@@ -1009,6 +1108,15 @@ void CServerData::ItemDecayInHouses( bool newVal )
 bool CServerData::ItemDecayInHouses( void ) const
 {
 	return boolVals.test( BIT_ITEMDECAYINHOUSES );
+}
+
+void CServerData::PaperdollGuildButton( bool newVal )
+{
+	boolVals.set( BIT_PAPERDOLLGUILDBUTTON, newVal );
+}
+bool CServerData::PaperdollGuildButton( void ) const
+{
+	return boolVals.test( BIT_PAPERDOLLGUILDBUTTON );
 }
 
 void CServerData::CombatMonstersVsAnimals( bool newVal )
@@ -1151,6 +1259,23 @@ void CServerData::AdvancedPathfinding( bool newVal )
 bool CServerData::AdvancedPathfinding( void ) const
 {
 	return boolVals.test( BIT_ADVANCEDPATHFIND );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool MapIsUOPWrapped()
+//|	Date			-	3/14/2012
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not mapfiles are uop-wrapped
+//o--------------------------------------------------------------------------o
+void CServerData::MapIsUOPWrapped( bool newVal )
+{
+	boolVals.set( BIT_MAPISUOPWRAPPED, newVal );
+}
+bool CServerData::MapIsUOPWrapped( void ) const
+{
+	return boolVals.test( BIT_MAPISUOPWRAPPED );
 }
 
 //o--------------------------------------------------------------------------o
@@ -1454,12 +1579,12 @@ bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
 	return clientFeatures.test( bitNum );
 }
 
-UI16 CServerData::GetClientFeatures( void ) const
+UI32 CServerData::GetClientFeatures( void ) const
 {
-	return static_cast<UI16>(clientFeatures.to_ulong());
+	return static_cast<UI32>(clientFeatures.to_ulong());
 }
 
-void CServerData::SetClientFeatures( UI16 nVal )
+void CServerData::SetClientFeatures( UI32 nVal )
 {
 	clientFeatures = nVal;
 }
@@ -1549,26 +1674,37 @@ bool CServerData::save( std::string filename )
 	ofsOutput.open( filename.c_str(), std::ios::out );
 	if( ofsOutput.is_open() )
 	{
-		ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 1 ) << std::endl << "//================================" << std::endl << std::endl;
-		ofsOutput << "[system]" << std::endl << "{" << std::endl;
-		ofsOutput << "SERVERNAME=" << ServerName() << std::endl;
-		ofsOutput << "PORT=" << ServerPort() << std::endl;
-		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << std::endl;
-		ofsOutput << "NETSNDTIMEOUT=" << "3" << std::endl;
-		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << std::endl;
-		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << std::endl;
-		ofsOutput << "CRASHPROTECTION=" << static_cast<UI16>(ServerCrashProtectionStatus()) << std::endl;
-		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << std::endl;
-		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << std::endl;
-		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << std::endl;
-		ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus()?1:0) << std::endl;
-		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << std::endl;
-		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << std::endl;
-		ofsOutput << "ACCOUNTISOLATION=" << "1" << std::endl;
-		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << std::endl;
-		ofsOutput << "}" << std::endl << std::endl;
+		ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 1 ) << '\n' << "//================================" << '\n' << '\n';
+		ofsOutput << "[system]" << '\n' << "{" << '\n';
+		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
+		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
+		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
+		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << '\n';
+		ofsOutput << "CRASHPROTECTION=" << static_cast<UI16>(ServerCrashProtectionStatus()) << '\n';
+		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
+		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
+		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
+		ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus()?1:0) << '\n';
+		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
+		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
+		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
+		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
+		ofsOutput << "}" << '\n' << '\n';
 
-		ofsOutput << std::endl << "[play server list]" << std::endl << "{" << std::endl;
+		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
+		ofsOutput << "CLIENTSUPPORT4000=" << (ClientSupport4000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT5000=" << (ClientSupport5000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT6000=" << (ClientSupport6000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT6050=" << (ClientSupport6050()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT7000=" << (ClientSupport7000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT7090=" << (ClientSupport7090()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70160=" << (ClientSupport70160()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70240=" << (ClientSupport70240()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
 
 		std::vector< physicalServer >::iterator slIter;
 		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
@@ -1578,191 +1714,196 @@ bool CServerData::save( std::string filename )
 				ofsOutput << slIter->getDomain() << ",";
 			else
 				ofsOutput << slIter->getIP() << ",";
-			ofsOutput << slIter->getPort() << std::endl;
+			ofsOutput << slIter->getPort() << '\n';
 		}
-		ofsOutput << "}" << std::endl;
+		ofsOutput << "}" << '\n';
 
-		ofsOutput << std::endl << "[skill & stats]" << std::endl << "{" << std::endl;
-		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << std::endl;
-		ofsOutput << "SKILLCAP=" << ServerSkillCapStatus() << std::endl;
-		ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << std::endl;
-		ofsOutput << "STATCAP=" << ServerStatCapStatus() << std::endl;
-		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << std::endl;
-		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << std::endl;
-		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << std::endl;
-		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
+		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
+		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
+		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats()?1:0) << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills()?1:0) << '\n';
+		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
+		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
+		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << '\n';
+		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[timers]" << std::endl << "{" << std::endl;
-		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << std::endl;
-		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << std::endl;
-		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << std::endl;
-		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << std::endl;
-		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << std::endl;
-		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << std::endl;
-		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << std::endl;
-		ofsOutput << "POISONTIMER=" << SystemTimer( tSERVER_POISON ) << std::endl;
-		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << std::endl;
-		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << std::endl;
-		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << std::endl;
-		ofsOutput << "MANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << std::endl;
-		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << std::endl;
-		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << std::endl;
-		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << std::endl;
-		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
+		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
+		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
+		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
+		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
+		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << '\n';
+		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << '\n';
+		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << '\n';
+		ofsOutput << "POISONTIMER=" << SystemTimer( tSERVER_POISON ) << '\n';
+		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << '\n';
+		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << '\n';
+		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << '\n';
+		ofsOutput << "MANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << '\n';
+		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << '\n';
+		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
+		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
+		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[directories]" << std::endl << "{" << std::endl;
-		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << std::endl;
-		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << std::endl;
-		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << std::endl;
-		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << std::endl;
-		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << std::endl;
-		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << std::endl;
-		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << std::endl;
-		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << std::endl;
-		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << std::endl;
-		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << std::endl;
-		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << std::endl;
-		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << std::endl;
-		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
+		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
+		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
+		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
+		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
+		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
+		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
+		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
+		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
+		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
+		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
+		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
+		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[settings]" << std::endl << "{" << std::endl;
-		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << std::endl;
-		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << std::endl;
-		ofsOutput << "DEATHANIMATION=" << (DeathAnimationStatus()?1:0) << std::endl;
-		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << std::endl;
-		ofsOutput << "AMBIENTFOOTSTEPS=" << (AmbientFootsteps()?1:0) << std::endl;
-		ofsOutput << "INTERNALACCOUNTCREATION=" << (InternalAccountStatus()?1:0) << std::endl;
-		ofsOutput << "SHOWOFFLINEPCS=" << (ShowOfflinePCs()?1:0) << std::endl;
-		ofsOutput << "ROGUESENABLED=" << (RogueStatus()?1:0) << std::endl;
-		ofsOutput << "PLAYERPERSECUTION=" << (PlayerPersecutionStatus()?1:0) << std::endl;
-		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << std::endl;
-		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << std::endl;
-		ofsOutput << "SELLBYNAME=" << (SellByNameStatus()?1:0) << std::endl;
-		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << std::endl;
-		ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus()?1:0) << std::endl;
-		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << std::endl;
-		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << std::endl;
-		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << std::endl;
-		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << std::endl;
-		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << std::endl;
-		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << std::endl;
-		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << std::endl;
-		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << std::endl;
-		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << std::endl;
-		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << std::endl;
-		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << std::endl;
-		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << std::endl;
-		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << std::endl;
-		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << std::endl;
-		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << std::endl;
-		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << std::endl;
-		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
+		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
+		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
+		ofsOutput << "DEATHANIMATION=" << (DeathAnimationStatus()?1:0) << '\n';
+		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
+		ofsOutput << "AMBIENTFOOTSTEPS=" << (AmbientFootsteps()?1:0) << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << (InternalAccountStatus()?1:0) << '\n';
+		ofsOutput << "SHOWOFFLINEPCS=" << (ShowOfflinePCs()?1:0) << '\n';
+		ofsOutput << "ROGUESENABLED=" << (RogueStatus()?1:0) << '\n';
+		ofsOutput << "PLAYERPERSECUTION=" << (PlayerPersecutionStatus()?1:0) << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
+		ofsOutput << "SELLBYNAME=" << (SellByNameStatus()?1:0) << '\n';
+		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
+		ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus()?1:0) << '\n';
+		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
+		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
+		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << '\n';
+		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
+		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << '\n';
+		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
+		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
+		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
+		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
+		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << '\n';
+		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
+		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
+		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << '\n';
+		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
+		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
+		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
+		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
+		ofsOutput << "PAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
 
-		ofsOutput << std::endl << "[speedup]" << std::endl << "{" << std::endl;
-		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << std::endl;
-		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << std::endl;
-		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << std::endl;
-		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << std::endl;
-		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << std::endl;
-		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << std::endl;
-		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
+		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
+		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << '\n';
+		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
+		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
+		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
+		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[message boards]" << std::endl << "{" << std::endl;
-		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << std::endl;
-		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
+		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
+		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
+		ofsOutput << "}" << '\n';
 
-		ofsOutput << std::endl << "[escorts]" << std::endl << "{" << std::endl;
-		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << std::endl;
-		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << std::endl;
-		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << std::endl;
-		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
+		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << '\n';
+		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
+		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[worldlight]" << std::endl << "{" << std::endl;
-		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << std::endl;
-		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << std::endl;
-		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << std::endl;
-		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
+		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
+		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
+		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
+		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[tracking]" << std::endl << "{" << std::endl;
-		ofsOutput << "BASERANGE=" << TrackingBaseRange() << std::endl;
-		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << std::endl;
-		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << std::endl;
-		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
+		ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
+		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
+		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
+		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[reputation]" << std::endl << "{" << std::endl;
-		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << std::endl;
-		ofsOutput << "MAXKILLS=" << RepMaxKills() << std::endl;
-		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
+		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
+		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
+		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[resources]" << std::endl << "{" << std::endl;
-		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << std::endl;
-		ofsOutput << "OREPERAREA=" << ResOre() << std::endl;
-		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << std::endl;
-		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << std::endl;
-		ofsOutput << "LOGSPERAREA=" << ResLogs() << std::endl;
-		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << std::endl;
-		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
+		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
+		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
+		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
+		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << '\n';
+		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
+		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
+		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[hunger]" << std::endl << "{" << std::endl;
-		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << std::endl;
-		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << std::endl;
-		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << std::endl;
-		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
+		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
+		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
+		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
+		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[combat]" << std::endl << "{" << std::endl;
-		ofsOutput << "MAXRANGE=" << CombatMaxRange() << std::endl;
-		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << std::endl;
-		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << std::endl;
-		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << std::endl;
-		ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << std::endl;
-		ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << std::endl;
-		ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << std::endl;
-		ofsOutput << "NPCDAMAGERATE=" << CombatNPCDamageRate() << std::endl;
-		ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << std::endl;
-		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << std::endl;
-		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << std::endl;
-		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << std::endl;
-		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
+		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
+		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << '\n';
+		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << '\n';
+		ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers()?1:0) << '\n';
+		ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << '\n';
+		ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << '\n';
+		ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << '\n';
+		ofsOutput << "NPCDAMAGERATE=" << CombatNPCDamageRate() << '\n';
+		ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
+		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
+		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
+		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
+		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
+		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[start locations]" << std::endl << "{" << std::endl;
+		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
-			ofsOutput << "LOCATION=" << startlocations[lCtr].town << "," << startlocations[lCtr].description << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << std::endl;
-		ofsOutput << "}" << std::endl;
+			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].clilocDesc << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[startup]" << std::endl << "{" << std::endl;
-		ofsOutput << "STARTGOLD=" << ServerStartGold() << std::endl;
-		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
+		ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
+		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[gumps]" << std::endl << "{" << std::endl;
-		ofsOutput << "TITLECOLOUR=" << TitleColour() << std::endl;
-		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << std::endl;
-		ofsOutput << "RIGHTTEXTCOLOUR=" << RightTextColour() << std::endl;
-		ofsOutput << "BUTTONCANCEL=" << ButtonCancel() << std::endl;
-		ofsOutput << "BUTTONLEFT=" << ButtonLeft() << std::endl;
-		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << std::endl;
-		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
+		ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
+		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
+		ofsOutput << "RIGHTTEXTCOLOUR=" << RightTextColour() << '\n';
+		ofsOutput << "BUTTONCANCEL=" << ButtonCancel() << '\n';
+		ofsOutput << "BUTTONLEFT=" << ButtonLeft() << '\n';
+		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
+		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
+		ofsOutput << "}" << '\n';
 		
-		ofsOutput << std::endl << "[towns]" << std::endl << "{" << std::endl;
-		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << std::endl;
-		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << std::endl;
-		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << std::endl;
-		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << std::endl;
-		ofsOutput << "}" << std::endl;
+		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
+		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
+		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
+		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
+		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "}" << '\n';
 		
 #if P_ODBC == 1
 		ODBCManager::getSingleton().SaveSettings( ofsOutput );
@@ -1882,7 +2023,7 @@ void CServerData::dumpLookup( int lookupid )
 //o--------------------------------------------------------------------------o
 //|	Returns			-
 //o--------------------------------------------------------------------------o
-bool CServerData::ParseINI( const std::string filename )
+bool CServerData::ParseINI( const std::string& filename )
 {
 	bool rvalue = false;
 	if( !filename.empty() )
@@ -1921,7 +2062,7 @@ bool CServerData::ParseINI( const std::string filename )
 	return rvalue;
 }
 
-bool CServerData::HandleLine( const UString tag, const UString value )
+bool CServerData::HandleLine( const UString& tag, const UString& value )
 {
 	bool rvalue = true;
 	std::string::size_type lFind = UOX3INI_LOOKUP.find( tag.c_str() );
@@ -1954,7 +2095,7 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 		ServerSavesTimer( value.toULong() );
 		break;
 	case 0x0085:	 // SKILLCAP[0011]
-		ServerSkillCap( value.toUShort() );
+		ServerSkillTotalCap( value.toUShort() );
 		break;
 	case 0x008E:	 // SKILLDELAY[0012]
 		ServerSkillDelay( value.toUByte() );
@@ -2378,7 +2519,7 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 		ServerNetRetryCount( value.toULong() );
 		break;
 	case 0x0758:	 // CLIENTFEATURES[0138]
-		SetClientFeatures( value.toUShort() );
+		SetClientFeatures( value.toULong() );
 		break;
 	case 0x0767:	 // PACKETOVERLOADS[0139]
 		ServerOverloadPackets( (value.toByte() == 1) );
@@ -2431,15 +2572,54 @@ bool CServerData::HandleLine( const UString tag, const UString value )
 	case 0x087a:	// COMBATEXPLODEDELAY[0154]
 		CombatExplodeDelay( value.toULong() );
 		break;
+	case 0x88d:		// PAPERDOLLGUILDBUTTON[0155]
+		PaperdollGuildButton( value.toByte() == 1 );
+		break;
+	case 0x08a2:	// ATTACKSPEEDFROMSTAMINA[0156]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x08b9:	 // DISPLAY DAMAGE NUMBERS[0157]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x08ce:	 // CLIENTSUPPORT4000[0158]
+		ClientSupport4000( value.toUShort() == 1 );
+		break;
+	case 0x08e0:	 // CLIENTSUPPORT5000[0159]
+		ClientSupport5000( value.toUShort() == 1 );
+		break;
+	case 0x08f2:	 // CLIENTSUPPORT6000[0160]
+		ClientSupport6000( value.toUShort() == 1 );
+		break;
+	case 0x0904:	 // CLIENTSUPPORT6050[0161]
+		ClientSupport6050( value.toUShort() == 1 );
+		break;
+	case 0x0916:	 // CLIENTSUPPORT7000[0162]
+		ClientSupport7000( value.toUShort() == 1 );
+		break;
+	case 0x0928:	 // CLIENTSUPPORT7090[0163]
+		ClientSupport7090( value.toUShort() == 1 );
+		break;
+	case 0x093a:	 // CLIENTSUPPORT70160[0164]
+		ClientSupport70160( value.toUShort() == 1 );
+		break;
+	case 0x094d:	 // EXTENDED STARTING STATS[0165]
+		ExtendedStartingStats( value.toUShort() == 1 );
+		break;
+	case 0x0963:	 // EXTENDED STARTING SKILLS[0166]
+		ExtendedStartingSkills( value.toUShort() == 1 );
+		break;
+	case 0x097a:	// CLIENTSUPPORT70240[0167]
+		ClientSupport70240( value.toUShort() == 1 );
+		break;
 
 #if P_ODBC == 1
-	case 0x0891:	 // ODBCDSN[0155]
-		ODBCManager::getSingleton().SetDatabase( value );
+	case 0x098d:	 // ODBCDSN[0168]
+		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0899:	 // ODBCUSER[0156]
+	case 0x0995:	 // ODBCUSER[0169]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0901:	 // ODBCPASS[0157]
+	case 0x099e:	 // ODBCPASS[0170]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif
@@ -2530,29 +2710,33 @@ void CServerData::PostLoadDefaults( void )
 {
 	if( startlocations.empty() )
 	{
-		ServerLocation( "Yew,Center,545,982,0" );
-		ServerLocation( "Minoc,Tavern,2477,411,15" );
-		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10" );
-		ServerLocation( "Moonglow,Docks,4406,1045,0" );
-		ServerLocation( "Trinsic,West Gate,1832,2779,0" );
-		ServerLocation( "Magincia,Docks,3675,2259,20" );
-		ServerLocation( "Jhelom,Docks,1492,3696,0" );
-		ServerLocation( "Skara Brae,Docks,639,2236,0" );
-		ServerLocation( "Vesper,Ironwood Inn,2771,977,0" );
+		ServerLocation( "Yew,Center,545,982,0,0,1075072" );
+		ServerLocation( "Minoc,Tavern,2477,411,15,0,1075073" );
+		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,1075074" );
+		ServerLocation( "Moonglow,Docks,4406,1045,0,0,1075075" );
+		ServerLocation( "Trinsic,West Gate,1832,2779,0,0,1075076" );
+		ServerLocation( "Magincia,Docks,3675,2259,20,0,1075077" );
+		ServerLocation( "Jhelom,Docks,1492,3696,0,0,1075078" );
+		ServerLocation( "Skara Brae,Docks,639,2236,0,0,1075079" );
+		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,1075080" );
 	}
 }
 
 void CServerData::ServerLocation( std::string toSet )
 {
 	UString temp( toSet );
-	if( temp.sectionCount( "," ) == 4 )	// Wellformed server location
+	if( temp.sectionCount( "," ) == 6 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x = temp.section( ",", 2, 2 ).toShort();
-		toAdd.y = temp.section( ",", 3, 3 ).toShort();
-		toAdd.z = temp.section( ",", 4, 4 ).toShort();
-		strcpy( toAdd.town, temp.section( ",", 0, 0 ).c_str() );
-		strcpy( toAdd.description, temp.section( ",", 1, 1 ).c_str() );
+		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
+		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
+		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
+		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toLong();
+		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
+		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
 		startlocations.push_back( toAdd );
 	}
 	else
@@ -2600,14 +2784,14 @@ void CServerData::SaveTime( void )
 		return;
 	}
 
-	timeDestination << "[TIME]" << std::endl << "{" << std::endl;
-	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << std::endl;
-	timeDestination << "DAY=" << ServerTimeDay() << std::endl;
-	timeDestination << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << std::endl;
-	timeDestination << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << std::endl;
-	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << std::endl;
-	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << std::endl;
-	timeDestination << "}" << std::endl << std::endl;
+	timeDestination << "[TIME]" << '\n' << "{" << '\n';
+	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << '\n';
+	timeDestination << "DAY=" << ServerTimeDay() << '\n';
+	timeDestination << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << '\n';
+	timeDestination << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << '\n';
+	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
+	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
+	timeDestination << "}" << '\n' << '\n';
 
 	timeDestination.close();
 }
@@ -2780,15 +2964,15 @@ UI16 CServerData::ServerCount( void ) const
 	return static_cast<UI16>(serverList.size());
 }
 
-void physicalServer::setName(const std::string newName)
+void physicalServer::setName(const std::string& newName)
 {
   name = newName;
 }
-void physicalServer::setDomain(const std::string newDomain)
+void physicalServer::setDomain(const std::string& newDomain)
 {
   domain = newDomain;
 }
-void physicalServer::setIP(const std::string newIP)
+void physicalServer::setIP(const std::string& newIP)
 {
   ip = newIP;
 }

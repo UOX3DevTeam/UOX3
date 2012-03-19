@@ -18,7 +18,7 @@ namespace UOX
 CGuildCollection *GuildSys;
 
 #define DEFAULTCHARTER "UOX3 DevTeam Guildstone"
-#define DEFAULTWEBPAGE "http://www.uox3dev.net/"
+#define DEFAULTWEBPAGE "http://www.uox3.org/"
 
 CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" ), stone( INVALIDSERIAL ), master( INVALIDSERIAL )
 {
@@ -636,34 +636,34 @@ GUILDREL *CGuild::GuildRelationList( void )	// NOTE: This is aimed ONLY at menu 
 
 void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
 {
-	toSave << "[GUILD " << gNum << ']' << std::endl << "{" << std::endl;
-	toSave << "NAME=" << name << std::endl;
-	toSave << "ABBREVIATION=" << abbreviation << std::endl;
-	toSave << "TYPE=" << GTypeNames[gType] << std::endl;
-	toSave << "CHARTER=" << charter << std::endl;
-	toSave << "WEBPAGE=" << webpage << std::endl;
-	toSave << "STONE=" << stone << std::endl;
-	toSave << "MASTER=" << master << std::endl;
+	toSave << "[GUILD " << gNum << ']' << '\n' << "{" << '\n';
+	toSave << "NAME=" << name << '\n';
+	toSave << "ABBREVIATION=" << abbreviation << '\n';
+	toSave << "TYPE=" << GTypeNames[gType] << '\n';
+	toSave << "CHARTER=" << charter << '\n';
+	toSave << "WEBPAGE=" << webpage << '\n';
+	toSave << "STONE=" << stone << '\n';
+	toSave << "MASTER=" << master << '\n';
 	SERLIST_ITERATOR counter;
 	counter = recruits.begin();
 	while( counter != recruits.end() )
 	{
-		toSave << "RECRUIT=" << (*counter) << std::endl;
+		toSave << "RECRUIT=" << (*counter) << '\n';
 		++counter;
 	}
 	counter = members.begin();
 	while( counter != members.end() )
 	{
-		toSave << "MEMBER=" << (*counter) << std::endl;
+		toSave << "MEMBER=" << (*counter) << '\n';
 		++counter;
 	}
 	GUILDREL::const_iterator relly = relationList.begin();
 	while( relly != relationList.end() )
 	{
-		toSave << GRelationNames[relly->second] << " " << relly->first <<std::endl;
+		toSave << GRelationNames[relly->second] << " " << relly->first <<'\n';
 		++relly;
 	}
-	toSave << "}" << std::endl << std::endl;
+	toSave << "}" << '\n' << '\n';
 }
 void CGuild::Load( ScriptSection *toRead )
 {

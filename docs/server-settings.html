@@ -3,7 +3,7 @@
 <!-- Meta Information -->
 <meta name="author" content="Geir Ove Alnes aka Xuri">
 <style type="text/css">
-BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-serif; background-color:#082044;color:#000000;}
+BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-serif; background-color:#32668A;color:#000000;}
 #main{padding-bottom:20px;width:85%;margin:10px 0% 0px 5%;border:1px solid #000;background-color:#FFF;}
 .header{height:75px;width:100%;margin:5px 0% 0px 0px;background-color:#000; }
 .PageHeader{ margin: 5px 0px 5px 0px; text-align: center; border: 2px solid black; border-left:0px;border-right:0px;font-weight: bold; font-size: 18px; background-color:#84B0FB; width:100%;}
@@ -25,11 +25,14 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 <div id="main">
 	<div class="header"><img src="logo.gif" alt="UOX3 logo" height="75px" align="right"></div>
 	<div class="PageHeader"> -= UOX3 Server-Settings =- </div>
+	<center><p>| <a href="installation.html">Install and Configure UOX3</a> |
+						<a href="client-config.html">Configure the UO Client</a> |
+						<a href="commandlist.html">Commandlist</a> |</p></center>	
 	<div class="SectionHeader">Index of Contents</div>
   <div class="Section">
   <table width="90%"><tr><td width="50%">
 		[<a class="indexLink" href="#system">system</a>]<br>
-	    [<a class="indexLink" href="#system">facet</a>]<br>
+	    [<a class="indexLink" href="#clientsupport">clientsupport</a>]<br>
     	[<a class="indexLink" href="#playserverlist">play server list</a>]<br>
 	    [<a class="indexLink" href="#networkserverlist">network server list</a>]<br>
     	[<a class="indexLink" href="#skillstats">skill &amp; stats</a>]<br>
@@ -123,6 +126,45 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
         </table></div>
 		<a class="topLink" href="#top">(Back to top)</a>
+	<a name="clientsupport"></a>
+	    <div class="SectionHeader">[clientsupport]</div>
+		<div class="Section">
+		<table align="center" class="myTable">
+          <tr>
+            <td class="left">CLIENTSUPPORT4000</td>
+            <td class="right">Enables login-support for all clients in the 4.0.x range</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT5000</td>
+            <td class="right">Enables login-support for all clients in the 5.0.x range</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT6000</td>
+            <td class="right">Enables login-support for clients from 6.0.0 to 6.0.4.x</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT6050</td>
+            <td class="right">Enables login-support for clients from 6.0.5.0 to 6.0.14.x</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT7000</td>
+            <td class="right">Enables login-support for clients from 7.0.0.0 to 7.0.8.x</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT7090</td>
+            <td class="right">Enables login-support for clients from 7.0.9.0 to 7.0.15.x</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT70160</td>
+            <td class="right">Enables login-support for clients from 7.0.16.0 to 7.0.23.x</td>
+          </tr>
+          <tr>
+            <td class="left">CLIENTSUPPORT70240</td>
+            <td class="right">Enables login-support for clients from 7.0.24.0 and up</td>
+          </tr>
+          <p><strong>NOTE:</strong> While it is possible (and it is even the default setting) to enable login-support for all the ranges of client-versions listed below, how well they will work depends very much on what version of the datafiles are used on the server. It is <strong><em>highly recommended</em></strong> to restrict client-support to whichever range of versions is closest to the client-version the datafiles in use on the server are from.</p>
+        </table></div>
+	<a class="topLink" href="#top">(Back to top)</a>		
 	<a name="playserverlist"></a>
 	    <div class="SectionHeader">[play server list]</div>
 		<div class="Section">
@@ -155,6 +197,14 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           <tr>
             <td class="left">STATCAP</td>
             <td class="right">Total number of statpoints available for each player. </td>
+          </tr>
+          <tr>
+            <td class="left">EXTENDEDSTARTINGSTATS</td>
+            <td class="right">Toggles whether to allow the extended starting stats (90 statpoints in total) for new characters created with client versions 7.0.16+</td>
+          </tr>
+          <tr>
+            <td class="left">EXTENDEDSTARTINGSKILLS</td>
+            <td class="right">Toggles whether to allow the fourth starting skill (and 120 skillpoints in total) for new characters created with client versions 7.0.16+</td>
           </tr>
           <tr>
             <td class="left">MAXSTEALTH<wbr>MOVEMENT</td>
@@ -327,8 +377,8 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="right">If enabled, new accounts are created automatically when someone logs in with an unknown username. </td>
           </tr>
           <tr>
-            <td class="left">SHOWHIDDENNPCS</td>
-            <td class="right">If enabled, hidden NPCs will be viewable by GMs. </td>
+            <td class="left">SHOWOFFLINEPCS</td>
+            <td class="right">If enabled, offline PCs can be seen by GMs. </td>
           </tr>
           <tr>
             <td class="left">ROGUESENABLED</td>
@@ -384,11 +434,11 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <tr>
             <td class="left">CLIENTFEATURES</td>
-            <td class="right"></td>
+            <td class="right">Can be used to enable/disable specific expansion-related features, client-side. For an in-depth description, check this forum-thread at uox3.org: <a href="http://www.uox3.org/forums/viewtopic.php?t=2289">UO client versions/expansions and compatibility with UOX3</a></td>
           </tr>
           <tr>
             <td class="left">SERVERFEATURES</td>
-            <td class="right"> </td>
+            <td class="right">Can be used to enable/disable specific expansion-related features, server-side. For an in-depth description, check this forum-thread at uox3.org: <a href="http://www.uox3.org/forums/viewtopic.php?t=2289">UO client versions/expansions and compatibility with UOX3</a></td>
           </tr>
           <tr>
             <td class="left">OVERLOADPACKETS</td>
@@ -396,11 +446,11 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <tr>
             <td class="left">ADVANCEDPATHFINDING</td>
-            <td class="right">Enables/disables the A* Pathfinding routine </td>
+            <td class="right">Enables/disables the A* Pathfinding routine for NPCs</td>
           </tr>
           <tr>
             <td class="left">LOOTINGISCRIME</td>
-            <td class="right">Toggles whether looting corpses is a crime or not </td>
+            <td class="right">Toggles whether looting (innocent/blue) corpses is a crime or not</td>
           </tr>
           <tr>
             <td class="left">BASICTOOLTIPSONLY</td>
@@ -421,6 +471,10 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           <tr>
             <td class="left">ITEMDECAYINHOUSES</td>
             <td class="right">Toggles default decay status of non-locked down items in multis (houses and boats). Defaults to off. </td>
+          </tr>
+          <tr>
+            <td class="left">PAPERDOLLGUILDBUTTON</td>
+            <td class="right">Toggles whether or not the Guild-button on the paperdoll can be used as a shortcut for interacting with guildstones. Defaults to on. </td>
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
@@ -634,6 +688,10 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="right">If 1, hit messages are displayed in combat. </td>
           </tr>
           <tr>
+            <td class="left">DISPLAY<wbr>DAMAGENUMBERS</td>
+            <td class="right">If 1, damage numbers are displayed above characters in combat. </td>
+          </tr>
+          <tr>
             <td class="left">MONSTERS<wbr>VSANIMALS</td>
             <td class="right">If 1, monsters can attack animals. </td>
           </tr>
@@ -662,8 +720,16 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="right">Amount of stamina lost when hitting an opponent. </td>
           </tr>
           <tr>
+            <td class="left">ATTACK<wbr>SPEEDFROMSTAMINA</td>
+            <td class="right">Toggles whether attack-speed bonuses are gained from a character's stamina, instead of their dexterity. Defaults to 1 (on).</td>
+          </tr>
+          <tr>
             <td class="left">SHOOTON<wbr>ANIMALBACK</td>
             <td class="right">If 1, archery from horseback is possible. </td>
+          </tr>
+          <tr>
+            <td class="left">COMBAT<wbr>EXPLODEDELAY</td>
+            <td class="right">The amount of time it takes for the damage from the Explosion spell to be inflicted on the target.</td>
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
@@ -673,7 +739,7 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 		<table align="center" class="myTable">
           <tr>
             <td class="left">LOCATION</td>
-            <td class="right">Startlocations (not working) </td>
+            <td class="right">Startlocations used by the character-creation process in the client. Fixed amount of locations, using the following format: <strong>LOCATION=TOWN,BUILDING,X,Y,Z,WORLD,CLILOCMSG</strong> (description of town)</td>
           </tr>
         </table>
 		</div>	<a class="topLink" href="#top">(Back to top)</a>

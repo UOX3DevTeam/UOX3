@@ -16,6 +16,13 @@
 <h3><a name="CharItemFuncs">Character and Item common functions</a></h3>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetLocation">ApplySection</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ApplySection( scriptSection );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Applies a DFN section to an item/character
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>object.ApplySection( "orcishlord" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_SetLocation">SetLocation</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetLocation( short targX, short targY, SCHAR targZ );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Moves the object to (targX, targY, targZ )
@@ -177,6 +184,20 @@ function onUseChecked( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Resist( type );<br>void Resist( type, value );</pre>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Gets and sets the resistance values of a char or item.<br>Types are:<ol><li>Armor</li><li>Light</li><li>Water</li><li>Cold</li><li>Heat</li><li>Energy</li><li>Poison</li></ol>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Set the Armor value of an item to 25:<br>mItem.Resist( 1, 25 );<br>&nbsp;<br>Get the armor value of an item:<br>value = mItem.Resist( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CanSee">CanSee</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanSee( object );<br>bool CanSee( x, y, z );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>LineOfSight-checking; check if character/socket can see a specified object/target location
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+if( !myChar.CanSee( targetChar ))
+	return;
+
+if( myChar.CanSee( targetChar.x, targetChar.y, targetChar.z )
+{
+	//Do stuff!
+}
 </pre></table>
 
 <p>&nbsp;</p><center>

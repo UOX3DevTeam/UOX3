@@ -163,10 +163,6 @@ bool CTownRegion::Load( Script *ss )
 				if( UTag == "VOTE" && location != 0xFFFFFFFF )
 					townMember[location].targVote = data.toULong();
 				break;
-			case 'W':
-				if( UTag == "WORLD" )
-					worldNumber = data.toUByte();
-				break;
 		}
 	}
 	return true;
@@ -174,36 +170,36 @@ bool CTownRegion::Load( Script *ss )
 bool CTownRegion::Save( std::ofstream &outStream )
 // entry is the region #, fp is the file to save in
 {
-	outStream << "[TOWNREGION " << static_cast<UI16>(regionNum) << "]" << std::endl << "{" << std::endl;
-	outStream << "RACE=" << race << std::endl;
-	outStream << "GUARDOWNER=" << guardowner << std::endl;
-	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << std::endl;
-	outStream << "PRIV=" << static_cast<UI16>(priv.to_ulong()) << std::endl;
-	outStream << "RESOURCEAMOUNT=" << goldReserved << std::endl;
-	outStream << "TAXEDID=" << std::hex << "0x" << taxedResource << std::dec << std::endl;
-	outStream << "TAXEDAMOUNT=" << taxedAmount << std::endl;
-	outStream << "GUARDSPURCHASED=" << guardsPurchased << std::endl;
-	outStream << "TIMEG=" << timeSinceGuardsPaid << std::endl;
-	outStream << "TIMET=" << timeSinceTaxedMembers << std::endl;
-	outStream << "RESOURCECOLLECTED=" << resourceCollected << std::endl;
-	outStream << "HEALTH=" << health << std::endl;
-	outStream << "ELECTIONTIME=" << timeToElectionClose << std::endl;
-	outStream << "POLLTIME=" << timeToNextPoll << std::endl;
-	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << std::endl;
-	outStream << "NUMGUARDS=" << numGuards << std::endl;
+	outStream << "[TOWNREGION " << static_cast<UI16>(regionNum) << "]" << '\n' << "{" << '\n';
+	outStream << "RACE=" << race << '\n';
+	outStream << "GUARDOWNER=" << guardowner << '\n';
+	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << '\n';
+	outStream << "PRIV=" << static_cast<UI16>(priv.to_ulong()) << '\n';
+	outStream << "RESOURCEAMOUNT=" << goldReserved << '\n';
+	outStream << "TAXEDID=" << std::hex << "0x" << taxedResource << std::dec << '\n';
+	outStream << "TAXEDAMOUNT=" << taxedAmount << '\n';
+	outStream << "GUARDSPURCHASED=" << guardsPurchased << '\n';
+	outStream << "TIMEG=" << timeSinceGuardsPaid << '\n';
+	outStream << "TIMET=" << timeSinceTaxedMembers << '\n';
+	outStream << "RESOURCECOLLECTED=" << resourceCollected << '\n';
+	outStream << "HEALTH=" << health << '\n';
+	outStream << "ELECTIONTIME=" << timeToElectionClose << '\n';
+	outStream << "POLLTIME=" << timeToNextPoll << '\n';
+	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << '\n';
+	outStream << "NUMGUARDS=" << numGuards << '\n';
 
 	std::vector< townPers >::const_iterator mIter;
 	for( mIter = townMember.begin(); mIter != townMember.end(); ++mIter )
 	{
-		outStream << "MEMBER=" << std::hex << "0x" << (*mIter).townMember << std::endl;
-		outStream << "VOTE=" << "0x" << (*mIter).targVote << std::dec << std::endl;
+		outStream << "MEMBER=" << std::hex << "0x" << (*mIter).townMember << '\n';
+		outStream << "VOTE=" << "0x" << (*mIter).targVote << std::dec << '\n';
 	}
 	std::vector< UI08 >::const_iterator aIter;
 	for( aIter = alliedTowns.begin(); aIter != alliedTowns.end(); ++aIter )
 	{
-		outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << std::endl;
+		outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << '\n';
 	}
-	outStream << "}" << std::endl << std::endl;
+	outStream << "}" << '\n' << '\n';
 	return true;
 }
 void CTownRegion::CalcNewMayor( void )
@@ -1042,7 +1038,7 @@ bool CTownRegion::PeriodicCheck( void )
 			mayor->SetTownpriv( 1 );	// mayor becomes a basic member again, so he can't do anything while the poll is occuring :>
 	}
 
-	if( now > timeToElectionClose && townMember.size() != 0 )	// election finished
+	if( now > timeToElectionClose && !townMember.empty() )// election finished
 	{
 		TellMembers( 1166 );
 		CalcNewMayor();
@@ -1078,8 +1074,16 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 
 	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
 	toSend.AddText( "Population %i", GetPopulation() );
-	CTile& tile = Map->SeekTile( GetResourceID() );
-	toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	{
+		CTileHS& tile = Map->SeekTileHS( GetResourceID() );
+		toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
+	}
+	else
+	{
+		CTile tile = Map->SeekTile( GetResourceID() );
+		toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
+	}
 	toSend.Finalize();
 	sock->Send( &toSend );
 }

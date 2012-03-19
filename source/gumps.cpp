@@ -677,7 +677,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddCommand( "text %u %u %u %u", 15, yStart+65, 52, linenum++);
 		toSend.AddText( "Thank you for choosing UOX3!" );
 		toSend.AddCommand( "htmlgump %u %u %u %u %u %u %u", 58, yStart+83, 200, 20, linenum++,0,0);
-		toSend.AddText( "<a href=\"http://www.uox3dev.net/\">www.uox3dev.net</a>" );
+		toSend.AddText( "<a href=\"http://www.uox3.org/\">www.uox3.org</a>" );
 		// Need a seperator
 		if( s->ClientVersionMajor() >= 4 )
 			toSend.AddCommand( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 );
@@ -991,7 +991,7 @@ bool CPIHelpRequest::Handle( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Used when player pages a counselor
 //o---------------------------------------------------------------------------o
-void CPage( CSocket *s, const std::string reason )
+void CPage( CSocket *s, const std::string& reason )
 {
 	CChar *mChar = s->CurrcharObj();
 	bool x = false;
@@ -1045,7 +1045,7 @@ void CPage( CSocket *s, const std::string reason )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Used when player calls a GM
 //o---------------------------------------------------------------------------o
-void GMPage( CSocket *s, const std::string reason )
+void GMPage( CSocket *s, const std::string& reason )
 {
 	bool x = false;
 	CChar *mChar = s->CurrcharObj();
@@ -2119,7 +2119,7 @@ void GumpDisplay::Delete( void )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Set a gumps title
 //o---------------------------------------------------------------------------o
-void GumpDisplay::SetTitle( const std::string newTitle )
+void GumpDisplay::SetTitle( const std::string& newTitle )
 {
 	title = newTitle;
 }

@@ -79,7 +79,7 @@ void InitStringToObjType( void )
 
 ObjectType FindObjTypeFromString( UString strToFind )
 {
-	if( stringToObjType.size() == 0 )	// if we haven't built our array yet
+	if( stringToObjType.empty() )	// if we haven't built our array yet
 		InitStringToObjType();
 	std::map< std::string, ObjectType >::const_iterator toFind = stringToObjType.find( strToFind.upper() );
 	if( toFind != stringToObjType.end() )
@@ -150,7 +150,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 // Speech related functions
-void sysBroadcast( const std::string txt );
+void sysBroadcast( const std::string& txt );
 JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -749,13 +749,13 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	CChar *myChar			= (CChar *)JS_GetPrivate( cx, mChar );
 	int amount				= (int)JSVAL_TO_INT( argv[2] );
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );
-	bool isString			= false;
-	std::string szItemName;
+	bool isString			= false; //Never used!!
+	std::string szItemName;			 //Never used!!
 	UI16 itemID				= INVALIDID;
 	if( JSVAL_IS_STRING( argv[4] ) )
 	{
-		szItemName = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) );
-		isString = true;
+		szItemName = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ) ); //Never used!!
+		isString = true; //Never used!!
 	}
 	else
 		itemID				= (UI16)JSVAL_TO_INT( argv[4] );
@@ -1502,6 +1502,7 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	case 0:	// Reload regions
 			UnloadRegions();
 			LoadRegions();
+			LoadTeleportLocations();
 			break;
 	case 1:	// Reload spawn regions
 			UnloadSpawnRegions();
@@ -1515,7 +1516,6 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 			break;
 	case 4:	// Reload DFNs
 			FileLookup->Reload();
-			LoadTeleportLocations();
 			LoadSkills();
 			Skills->Load();
 			break;
@@ -1582,17 +1582,39 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( targetID != 0 )	// we might have a static rock or mountain
 		{
 			CStaticIterator msi( targetX, targetY, worldNumber );
-			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+			CMulHandler tileXTemp;
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 			{
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if( targetZ == stat->zoff )
+				//7.0.9.2 tiledata and later
+				for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 				{
-					GumpDisplay staticStat( mySock, 300, 300 );
-					staticStat.SetTitle( "Item [Static]" );
-					staticStat.AddData( "ID", targetID, 5 );
-					staticStat.AddData( "Height", tile.Height() );
-					staticStat.AddData( "Name", tile.Name() );
-					staticStat.Send( 4, false, INVALIDSERIAL );
+					CTileHS& tile = Map->SeekTileHS( stat->itemid );
+					if( targetZ == stat->zoff )
+					{
+						GumpDisplay staticStat( mySock, 300, 300 );
+						staticStat.SetTitle( "Item [Static]" );
+						staticStat.AddData( "ID", targetID, 5 );
+						staticStat.AddData( "Height", tile.Height() );
+						staticStat.AddData( "Name", tile.Name() );
+						staticStat.Send( 4, false, INVALIDSERIAL );
+					}
+				}
+			}
+			else
+			{
+				//7.0.8.2 tiledata and earlier
+				for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+				{
+					CTile& tile = Map->SeekTile( stat->itemid );
+					if( targetZ == stat->zoff )
+					{
+						GumpDisplay staticStat( mySock, 300, 300 );
+						staticStat.SetTitle( "Item [Static]" );
+						staticStat.AddData( "ID", targetID, 5 );
+						staticStat.AddData( "Height", tile.Height() );
+						staticStat.AddData( "Name", tile.Name() );
+						staticStat.Send( 4, false, INVALIDSERIAL );
+					}
 				}
 			}
 		}
@@ -1600,11 +1622,21 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		{
 			// manually calculating the ID's if a maptype
 			const map_st map1 = Map->SeekMap( targetX, targetY, worldNumber );
-			CLand& land = Map->SeekLand( map1.id );
 			GumpDisplay mapStat( mySock, 300, 300 );
 			mapStat.SetTitle( "Item [Map]" );
 			mapStat.AddData( "ID", targetID, 5 );
-			mapStat.AddData( "Name", land.Name() );
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			{
+				//7.0.9.0 data and later
+				CLandHS& land = Map->SeekLandHS( map1.id );
+				mapStat.AddData( "Name", land.Name() );
+			}
+			else
+			{
+				//7.0.8.2 data and earlier
+				CLand& land = Map->SeekLand( map1.id );
+				mapStat.AddData( "Name", land.Name() );
+			}	
 			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}

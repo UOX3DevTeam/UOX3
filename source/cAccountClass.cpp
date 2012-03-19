@@ -21,7 +21,7 @@ namespace UOX
 
 cAccountClass *Accounts;
 
-const UI08 CHARACTERCOUNT = 6;
+const UI08 CHARACTERCOUNT = 7;
 
 //o--------------------------------------------------------------------------o
 //|	Function		-	Class Construction and Desctruction

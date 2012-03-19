@@ -6,6 +6,7 @@ namespace UOX
 {
 
 #define MAX_COLLISIONS 1024
+#define LOSXYMAX		256		// Maximum items UOX can handle on one X/Y square
 
 // Contains all current line of sight functionality
 
@@ -150,7 +151,7 @@ struct vector2D
 {
 	R32 x;
 	R32 y;
-	vector2D()
+	vector2D(): x( 0 ), y( 0 )
 	{
 	}
 	vector2D( R32 X, R32 Y ) : x(X), y(Y)
@@ -163,7 +164,7 @@ struct vector3D
 	SI32 x;
 	SI32 y;
 	SI08 z;
-	vector3D()
+	vector3D(): x( 0 ), y( 0 ), z( 0 )
 	{
 	}
 	vector3D( SI32 X, SI32 Y, SI08 Z ) : x(X), y(Y), z(Z)
@@ -278,66 +279,36 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 	return false;
 }
 
-bool CheckIDs( UI08 typeToCheck, UI16 idToCheck, SI08 z1, SI08 z2 )
+bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck )
 {
 	switch( typeToCheck )
 	{
-		case TREES_BUSHES: // Trees, Shrubs, bushes
-			if( idToCheck == 3240 || idToCheck == 3242 ||( idToCheck >= 3215 && idToCheck <= 3218 ) ||
-				( idToCheck >= 3272 && idToCheck <= 3280 ) || idToCheck == 3283 || idToCheck == 3286 ||
-				idToCheck == 3288 || idToCheck == 3290 || idToCheck == 3293 || idToCheck == 3296 ||
-				idToCheck == 3299 || idToCheck == 3302 || idToCheck == 3305 || idToCheck == 3306 ||
-				idToCheck == 3320 || idToCheck == 3323 || idToCheck == 3326 || idToCheck == 3329 ||
-				idToCheck == 3381 || idToCheck == 3383 || idToCheck == 3384 || idToCheck == 3394 ||
-				idToCheck == 3395 || ( idToCheck >= 3416 && idToCheck <= 3418 ) ||
-				idToCheck == 3440 || idToCheck == 3461 || idToCheck == 3476 || idToCheck == 3480 ||
-				idToCheck == 3484 || idToCheck == 3488 || idToCheck == 3492 || idToCheck == 3496 ||
-				idToCheck == 3512 || idToCheck == 3513 || ( idToCheck >= 4792 && idToCheck <= 4795 ) )
-			{
-				return true;
-			}
+		case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags listed below, assume it's a tree! :P
+			if( toCheck->CheckFlag( TF_FOLIAGE ) || ( toCheck->CheckFlag( TF_BLOCKING ) && 
+				!toCheck->CheckFlag( TF_WALL ) && !toCheck->CheckFlag( TF_SURFACE ) && !toCheck->CheckFlag( TF_WINDOW ) ||
+				!toCheck->CheckFlag( TF_CLIMBABLE ) && !toCheck->CheckFlag( TF_WET ) && !toCheck->CheckFlag( TF_ROOF ) ||
+				!toCheck->CheckFlag( TF_CONTAINER )))
+				return false;
 			break;
 		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-			if( ( idToCheck >= 6 && idToCheck <= 748 ) || ( idToCheck >= 761 && idToCheck <= 881 ) ||
-				( idToCheck >= 895 && idToCheck <= 1006 ) || ( idToCheck >= 1057 && idToCheck <= 1061 ) ||
-				idToCheck == 1072 || idToCheck == 1073 || ( idToCheck >= 1080 && idToCheck <= 1166 ) ||
-				( idToCheck >= 2347 && idToCheck <= 2412 ) || ( idToCheck >= 16114 && idToCheck <= 16134 ) ||
-				( idToCheck >= 8538 && idToCheck <= 8553 ) || ( idToCheck >= 9535 && idToCheck <= 9555 ) ||
-				idToCheck == 12583 ||
-				( idToCheck >= 1801 && idToCheck <= 2000 ) ) //stairs
-			{
+			if( toCheck->CheckFlag( TF_WALL ) || toCheck->CheckFlag( TF_NOSHOOT ) || toCheck->CheckFlag( TF_WINDOW ))
 				return true;
-			}
 			break;
 		case DOORS: // Doors, not gates
-			if( ( idToCheck >= 1653 && idToCheck <= 1782 ) || ( idToCheck >= 8173 && idToCheck <= 8188 ) )
-			{
+			if( toCheck->CheckFlag( TF_DOOR ))
 				return true;
-			}
 			break;
 		case ROOFING_SLANTED: // Roofing Slanted
-			if( ( idToCheck >= 1414 && idToCheck <= 1578 ) || ( idToCheck >= 1587 && idToCheck <= 1590 ) ||
-				( idToCheck >= 1608 && idToCheck <= 1617 ) || ( idToCheck >= 1630 && idToCheck <= 1652 ) ||
-				( idToCheck >= 1789 && idToCheck <= 1792 ) )
-			{
+			if( toCheck->CheckFlag( TF_ROOF ))
 				return true;
-			}
 			break;
 		case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
-			if( ( idToCheck >= 1169 && idToCheck <= 1413 ) || ( idToCheck >= 1508 && idToCheck <= 1514 ) ||
-				( idToCheck >= 1579 && idToCheck <= 1586 ) || ( idToCheck >= 1591 && idToCheck <= 1598 ) )
-			{
-				if( (z1 - 15) != z2 ) // in case of char and target on same roof
-					return true;
-			}
+			if( toCheck->CheckFlag( TF_SURFACE ))
+				return true;
 			break;
 		case LAVA_WATER:  // Lava, water
-			if( ( idToCheck >= 4846 && idToCheck <= 4941 ) || ( idToCheck >= 6038 && idToCheck <= 6066 ) ||
-				( idToCheck >= 12934 && idToCheck <= 12977 ) || ( idToCheck >= 13371 && idToCheck <= 13420 ) ||
-				( idToCheck >= 13422 && idToCheck <= 13638 ) || ( idToCheck >= 13639 && idToCheck <= 13665 ) )
-			{
+			if( toCheck->CheckFlag( TF_WET ))
 				return true;
-			}
 			break;
 		default:
 			break;
@@ -374,50 +345,148 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	{
 		if( toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2 )
 		{
-			CTile& iTile = Map->SeekTile( toCheck->GetID() );
-			for( i = 0; i < collisioncount; ++i )
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 			{
-				checkLoc = &collisions[i];
-				if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
-					return toCheck->GetID();
+				//7.0.9.0 data and later
+				CTileHS& iTile = Map->SeekTileHS( toCheck->GetID() );
+				for( i = 0; i < collisioncount; ++i )
+				{
+					checkLoc = &collisions[i];
+					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
+						return toCheck->GetID();
+				}
+			}
+			else
+			{
+				//7.0.8.2 data and earlier
+				CTile& iTile = Map->SeekTile( toCheck->GetID() );
+				for( i = 0; i < collisioncount; ++i )
+				{
+					checkLoc = &collisions[i];
+					if( curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()) )
+						return toCheck->GetID();
+				}
 			}
 		}
 	}
 	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
 	{
 		const UI16 multiID = static_cast<UI16>(toCheck->GetID() - 0x4000);
-		SI32 length = Map->SeekMulti( multiID );
+		SI32 length = 0;
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			length = Map->SeekMultiHS( multiID ); //7.0.9.0 tiledata and later
+		else
+			length = Map->SeekMulti( multiID ); //7.0.8.2 tiledata and earlier
 		if( length == -1 || length >= 17000000 )//Too big... bug fix hopefully (Abaddon 13 Sept 1999)
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
-			CLand& land = Map->SeekLand( map1.id );
-			if( land.CheckFlag( TF_WET ) ) // is it water?
-				toCheck->SetID( 0x4001 );
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			{
+				//7.0.9.0 tiledata and later
+				CLandHS& land = Map->SeekLandHS( map1.id );
+				if( land.CheckFlag( TF_WET ) ) // is it water?
+					toCheck->SetID( 0x4001 );
+				else
+					toCheck->SetID( 0x4064 );
+			}
 			else
-				toCheck->SetID( 0x4064 );
+			{
+				//7.0.8.2 tiledata and earlier
+				CLand& land = Map->SeekLand( map1.id );
+				if( land.CheckFlag( TF_WET ) ) // is it water?
+					toCheck->SetID( 0x4001 );
+				else
+					toCheck->SetID( 0x4064 );
+			}		
 			length = 0;
 		}
 
-		for( SI32 k = 0; k < length; ++k )
+		if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 		{
-			Multi_st& multi = Map->SeekIntoMulti( multiID, k );
-			if( multi.visible )
+			for( SI32 k = 0; k < length; ++k )
 			{
-				const SI16 checkX = (curX + multi.x);
-				const SI16 checkY = (curY + multi.y);
-				if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
+				MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, k );
+				if( multi.visible )
 				{
-					const SI08 checkZ = (curZ + multi.z);
-					CTile& multiTile = Map->SeekTile( multi.tile );
-					for( i = 0; i < collisioncount; ++i )
+					const SI16 checkX = (curX + multi.x);
+					const SI16 checkY = (curY + multi.y);
+					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
 					{
-						checkLoc = &collisions[i];
-						if( checkX == checkLoc->x && checkY == checkLoc->y &&
-							( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
-							( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+						const SI08 checkZ = (curZ + multi.z);
+						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 						{
-								return multi.tile;
+							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
+							for( i = 0; i < collisioncount; ++i )
+							{
+								checkLoc = &collisions[i];
+								if( checkX == checkLoc->x && checkY == checkLoc->y &&
+									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+								{
+										return multi.tile;
+								}
+							}
+						}
+						else
+						{
+							CTile& multiTile = Map->SeekTile( multi.tile );
+							for( i = 0; i < collisioncount; ++i )
+							{
+								checkLoc = &collisions[i];
+								if( checkX == checkLoc->x && checkY == checkLoc->y &&
+									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+								{
+										return multi.tile;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			for( SI32 k = 0; k < length; ++k )
+			{
+				Multi_st& multi = Map->SeekIntoMulti( multiID, k );
+				if( multi.visible )
+				{
+					const SI16 checkX = (curX + multi.x);
+					const SI16 checkY = (curY + multi.y);
+					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
+					{
+						const SI08 checkZ = (curZ + multi.z);
+						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+						{
+							//7.0.9.0 data and later
+							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
+							for( i = 0; i < collisioncount; ++i )
+							{
+								checkLoc = &collisions[i];
+								if( checkX == checkLoc->x && checkY == checkLoc->y &&
+									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+								{
+										return multi.tile;
+								}
+							}
+						}
+						else
+						{
+							//7.0.8.2 data and earlier
+							CTile& multiTile = Map->SeekTile( multi.tile );
+							for( i = 0; i < collisioncount; ++i )
+							{
+								checkLoc = &collisions[i];
+								if( checkX == checkLoc->x && checkY == checkLoc->y &&
+									( ( checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height()) ) ||
+									( multiTile.Height() <= 2 && abs( checkLoc->z - checkZ ) <= dz ) ) )
+								{
+										return multi.tile;
+								}
+							}
 						}
 					}
 				}
@@ -528,43 +597,40 @@ Look at uox3.h to see options. Works like npc magic.
 			++collisioncount;
 		}
 	}
-	else if( distX >= distY )
-	{
-		for( i = 1; i < distX; ++i )
-		{
-			line2D toCollide = line2D( vector2D( (R32)( startX + (sgn_x * i) ), 0.0f ), vector2D( 0.0f, 1.0f ) );
-			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
-
-			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
-			{
-				// the next one is somewhat tricky, if the line of sight exactly cuts a coordinate,
-				// we just have to take that coordinate...
-				collisions[collisioncount] = ( vector3D( (R32)roundNumber( temp.x ), (R32)roundNumber( temp.y ), (SI08)(startZ + (dz * (R32)i * sgn_z))) );
-				// but if not, we have to take BOTH coordinates, which the calculated collision is between!
-				if( roundNumber( temp.y ) != temp.y )
-					collisions[++collisioncount] = ( vector3D( (R32)roundNumber( temp.x )+sgn_x, (R32)roundNumber( temp.y )+sgn_y, (SI08)(startZ + (dz * (R32)i * sgn_z))) );
-
-				++collisioncount;
-			}
-		}
+	else if( distX == distY ) // if we're on a perfect diagonal, we can just go up all coords in both x and y at the same time 
+	{ 
+		for( i = 1; i <= distX; ++i ) 
+		{ 
+			collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
+			++collisioncount; 
+		} 
 	}
-	else
-	{
-		for( i = 1; i < distY; ++i )
-		{
-			line2D toCollide = line2D( vector2D( 0.0f, (R32)( startY + (sgn_y * i) ) ), vector2D( 1.0f, 0.0f ) );
-			vector2D temp = lineofsight.Projection2D().CollideLines2D( toCollide );
-
-			if( ( temp.x != -1 ) && ( temp.y != -1 ) )
-			{
-				collisions[collisioncount] = ( vector3D( (R32)roundNumber( temp.x ), (R32)roundNumber( temp.y ), (SI08)(startZ + (dz * (R32)i * sgn_z))) );
-				if( roundNumber( temp.x ) != temp.x )
-					collisions[++collisioncount] = ( vector3D( (R32)roundNumber( temp.x )+sgn_x, (R32)roundNumber( temp.y )+sgn_y, (SI08)(startZ + (dz * (R32)i * sgn_z))) );
-
-				++collisioncount;
-			}
-		}
-	}
+	else 
+	{      
+		R32 steps = 0; 
+		if(distX > distY) 
+		{ 
+			steps = (R32)distX/(R32)distY;
+			if( steps == 0 )
+				steps = 1;
+			for( i = 1; i < distX; ++i ) 
+			{ 
+				collisions[collisioncount] = vector3D( startX + (sgn_x * i), startY + (sgn_y * (R32)roundNumber(i/steps)), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
+				++collisioncount; 
+			} 
+		} 
+		else if(distY > distX)
+		{ 
+			steps = (R32)distY/(R32)distX;
+			if( steps == 0 )
+				steps = 1;
+			for( i = 1; i < distY; ++i ) 
+			{ 
+				collisions[collisioncount] = vector3D( startX + (sgn_x * (R32)roundNumber(i/steps)), startY + (sgn_y * i), (SI08)(startZ + (dz * (R32)i * sgn_z)) ); 
+				++collisioncount; 
+			} 
+		} 
+	} 
 
 	////////////////////////////////////////////////////////
 	////////////////  This determines what to check for
@@ -587,8 +653,8 @@ Look at uox3.h to see options. Works like npc magic.
 			itemtype *= 2;
 	}
 
-	std::vector< UI16 > itemids;
-	itemids.resize( 0 );
+	CTileUni losItemList[LOSXYMAX];
+	UI16 itemCount		= 0;
 
 	// We already have to run through all the collisions in this function, so lets just check and push the ID rather than coming back to it later.
 	REGIONLIST nearbyRegions = MapRegion->PopulateList( startX, startY, worldNumber );
@@ -606,7 +672,27 @@ Look at uox3.h to see options. Works like npc magic.
 
 			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
-				itemids.push_back( idToPush );
+			{
+				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+				{
+					//7.0.9.0 data and later
+					CTileHS& itemToCheck = Map->SeekTileHS( idToPush );
+					losItemList[itemCount].Height(itemToCheck.Height());
+					losItemList[itemCount].SetID( idToPush );
+					losItemList[itemCount].Flags( itemToCheck.Flags() );
+				}
+				else
+				{
+					//7.0.8.2 data and earlier
+					CTile& itemToCheck = Map->SeekTile( idToPush );
+					losItemList[itemCount].Height(itemToCheck.Height());
+					losItemList[itemCount].SetID( idToPush );
+					losItemList[itemCount].Flags( itemToCheck.Flags() );
+				}
+				++itemCount;
+				if( itemCount >= LOSXYMAX )	// don't overflow
+					break;
+			}
 		}
 		regItems->Pop();
 	}
@@ -625,22 +711,46 @@ Look at uox3.h to see options. Works like npc magic.
 		// Statics
 		while( stat != NULL )
 		{
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-				( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 			{
-				itemids.push_back( stat->itemid );
+				//7.0.9.0 data and later
+				CTileHS& tile = Map->SeekTileHS( stat->itemid );
+				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
+					( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+				{
+					losItemList[itemCount].Height(tile.Height());
+					losItemList[itemCount].SetID( stat->itemid );
+					losItemList[itemCount].Flags( tile.Flags() );
+				}
 			}
+			else
+			{
+				//7.0.8.2 data and earlier
+				CTile& tile = Map->SeekTile( stat->itemid );
+				if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
+					( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+				{
+					losItemList[itemCount].Height(tile.Height());
+					losItemList[itemCount].SetID( stat->itemid );
+					losItemList[itemCount].Flags( tile.Flags() );
+				}
+			}
+			++itemCount;
+			if( itemCount >= LOSXYMAX )	// don't overflow
+				break;
 			stat = msi.Next();
 		}
 	}
 
+	CTileUni *tb;
 	size_t j;
-	for( std::vector<UI16>::const_iterator iIter = itemids.begin(); iIter != itemids.end(); ++iIter )
+
+	for( i = 0; i < itemCount; ++i )
 	{
 		for( j = 0; j < checkthistotal; ++j )
 		{
-			if( CheckIDs( checkthis[j], (*iIter), startZ, destZ ) )
+			tb = &losItemList[i];
+			if( CheckFlags( checkthis[j], tb ))
 				return blocked;
 		}
 	}

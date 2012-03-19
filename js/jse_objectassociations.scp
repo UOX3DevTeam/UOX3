@@ -429,6 +429,32 @@
 0x26C4=5009 //scythe - AoS
 0x255B=5009 //ophidian bardiche - LBR
 0x2577=5009 //naginata - LBR
+0x0907=5009 //gargish shortblade - SA
+0x4076=5009 //gargish shortblade - SA
+0x48C6=5009 //gargish bone harvester - SA
+0x48C7=5009 //gargish bone harvester - SA
+0x0908=5009 //gargish talwar - SA
+0x4075=5009 //gargish talwar - SA
+0x090C=5009 //gargish glass sword - SA
+0x4073=5009 //gargish glass sword - SA
+0x0900=5009 //gargish stone war sword - SA
+0x4071=5009 //gargish stone war sword - SA
+0x48B6=5009 //gargish butcherknife - SA
+0x48B7=5009 //gargish butcherknife - SA
+0x48BA=5009 //gargish katana - SA
+0x48BB=5009 //gargish katana - SA		
+0x090B=5009 //gargish dread sword - SA
+0x4074=5009 //gargish dread sword - SA
+0x48B4=5009 //gargish bardiche - SA
+0x48B5=5009 //gargish bardiche - SA
+0x48C4=5009 //gargish scythe - SA
+0x48C5=5009 //gargish scythe - SA
+0x2306=5009 //gargish dagger - SA
+0x406A=5009 //gargish dagger
+0x08FE=5009 //gargish bloodblade - SA
+0x4072=5009 //gargish bloodblade - SA
+0x48BC=5009 //gargish kryss - SA
+0x48BD=5009 //gargish kryss - SA
 
 //Daggers
 0x0F51=5009 //dagger
@@ -455,6 +481,12 @@
 0x255D=5010 //ratman axe - LBR
 0x2564=5010 //troll axe - LBR
 0x2570=5010 //hatchet - LBR
+0x48AE=5010 //gargish cleaver
+0x48AF=5010 //gargish cleaver
+0x48B0=5010 //gargish battleaxe - SA
+0x48B1=5010 //gargish battleaxe - SA
+0x48B2=5010 //gargish axe - SA
+0x48B3=5010 //gargish axe - SA
 
 // Musical Instruments
 0x0E9C=136	// Drum

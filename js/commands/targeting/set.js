@@ -107,6 +107,13 @@ function onCallback0( socket, ourObj )
 		ourObj.tempdex = nVal;
 		okMsg( socket );
 		break;
+	case "WIPABLE":
+	case "WIPEABLE":
+		socket.SysMessage( ourObj.wipable );
+		ourObj.wipable = (nVal == 1);
+		socket.SysMessage( ourObj.wipable );
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, nVal );
@@ -130,12 +137,9 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.amount = nVal;
 		okMsg( socket );
 		break;
+	case "MOVEABLE":
 	case "MOVABLE":
 		ourItem.movable = nVal;
-		okMsg( socket );
-		break;
-	case "WIPABLE":
-		ourItem.wipable = (nVal == 1);
 		okMsg( socket );
 		break;
 	case "BUYVALUE":
@@ -334,6 +338,7 @@ function HandleSetChar( socket, ourChar, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "DIR":
+	case "DIRECTION":
 		ourChar.direction = nVal;
 		okMsg( socket );
 		break;

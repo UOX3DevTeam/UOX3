@@ -16,7 +16,7 @@ struct pfNode
 	UI08	gCost;
 	size_t	parent;
 	SI08	z;
-	pfNode() : hCost( 0 ), gCost( 0 ), parent( 0 )
+	pfNode() : hCost( 0 ), gCost( 0 ), parent( 0 ), z( 0 )
 	{
 	}
 	pfNode( UI16 nHC, UI08 nGC, UI32 nPS, SI08 nZ ) : hCost( nHC ), gCost( nGC ), parent( nPS ), z( nZ )
@@ -46,6 +46,7 @@ public:
 	void	NpcMovement( CChar& mChar );
 	void	PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV );
 	UI08	Direction( CChar *c, SI16 x, SI16 y );
+	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
 private:
 	bool	PFGrabNodes( CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ, UI32 parentSer, std::map< UI32, pfNode >& openList, std::map< UI32, UI32 >& closedList, std::deque< nodeFCost >& fCostList );
 	SI08	calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk = false );
@@ -56,16 +57,21 @@ private:
 	bool	isFrozen( CChar *c, CSocket *mSock, SI16 sequence );
 	bool	isOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
 
+	bool	IsOk( UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, bool ignoreDoor, bool waterWalk );
+	void	GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top );
+	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, bool waterWalk );
+
 	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
 	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
 	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
 
 	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
 
-	bool	CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz );
 	void	NpcWalk( CChar *i, UI08 j, SI08 getWander );
 	SI16	GetXfromDir( UI08 dir, SI16 x );
 	SI16	GetYfromDir( UI08 dir, SI16 y );
+
+	void	BoundingBoxTeleport( CChar *c, UI16 fx2Actual, UI16 fy2Actual, SI16 newz, SI16 newy );
 
 	bool	VerifySequence( CChar *c, CSocket *mSock, SI16 sequence);
 	bool	CheckForRunning( CChar *c, UI08 dir );

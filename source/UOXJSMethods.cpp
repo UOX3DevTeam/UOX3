@@ -2693,7 +2693,6 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	
 	SI08 spellCast = (SI08)JSVAL_TO_INT( argv[0] );
-	bool spellSuccess;
 
 	if( myChar->IsNpc() )
 	{
@@ -2712,7 +2711,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		}
 		else
 		{
-			spellSuccess = Magic->SelectSpell( sock, spellCast );
+			bool spellSuccess = Magic->SelectSpell( sock, spellCast );
 			*rval = BOOLEAN_TO_JSVAL( spellSuccess );
 		}
 	}
@@ -2755,7 +2754,7 @@ JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 1 && argc > 3 )
+	if( argc < 2 || argc > 3 )
 	{
 		MethodError( "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
 		return JS_FALSE;
@@ -2813,7 +2812,7 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc < 1 && argc > 2 )
+	if( argc < 1 || argc > 2 )
 	{
 		MethodError( "(SetInvisible) Invalid Number of Arguments %d, needs: 1 or 2", argc );
 		return JS_FALSE;
@@ -3870,7 +3869,6 @@ JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 	char	*lpszUsername = NULL;
-	UI16	ui16AccountID;
 	// Ok get out object from the global context
 	if( JSVAL_IS_STRING(argv[0]) )
 	{
@@ -3884,7 +3882,7 @@ JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}	
 	else if( JSVAL_IS_INT( argv[0] ) )
 	{
-		ui16AccountID = (UI16)JSVAL_TO_INT(argv[0]);
+		UI16 ui16AccountID = (UI16)JSVAL_TO_INT(argv[0]);
 		if( !Accounts->DelAccount( ui16AccountID ) )
 		{
 			MethodError(" Account.DelAccount(accountID): Unable to remove account specified.");
@@ -4870,6 +4868,14 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		MethodError( "Kill: Invalid character passed" );
 		return JS_FALSE;
 	}
+
+	UI16 dbScript		= mChar->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( dbScript );
+	if( toExecute != NULL )
+	{
+		if( toExecute->OnDeathBlow( mChar, NULL ) == 1 ) // if it exists and we don't want hard code, return
+			return JS_FALSE;
+	}
 	HandleDeath( mChar );
 	return JS_TRUE;
 }
@@ -5577,8 +5583,6 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	bool doRepsys;
-
 	if( argc != 1 && argc != 2 && argc != 3)
 	{
 		MethodError( "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount and attacker) or 3 (amount, attacker and doRepsys)", argc );
@@ -5615,6 +5619,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			}
 		}
 	}
+	bool doRepsys = false;
 	if( argc >= 3 )
 	{
 		doRepsys = ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );

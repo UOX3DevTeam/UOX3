@@ -18,7 +18,7 @@ class CDictionary
 {
 public:
 					CDictionary();
-					CDictionary( const std::string filepath, const std::string language );
+					CDictionary( const std::string& filepath, const std::string& language );
 					~CDictionary();
 	std::string 	operator[]( const SI32 Num );
 	std::string 	GetEntry( const SI32 Num );
@@ -44,7 +44,7 @@ private:
 	UnicodeTypes	defaultLang;
 public:
 					CDictionaryContainer();
-					CDictionaryContainer( const std::string filepath );
+					CDictionaryContainer( const std::string& filepath );
 			 		~CDictionaryContainer();
 	SI32			LoadDictionary( void );
 	std::string 	operator[]( const SI32 Num );	// only default lang
