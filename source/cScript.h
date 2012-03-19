@@ -58,8 +58,6 @@ enum ScriptEvent
 	seOnLightChange,
 	seOnWeatherChange,
 	seOnTempChange,
-	seOnXYZEvent,
-	seOnPortal,
 	seOnTimer,				//	**
 	seOnDeath,				//	**
 	seOnResurrect,			//	**
@@ -173,7 +171,7 @@ public:
 	bool		InRange( CChar *person, CBaseObject *objInRange );
 	bool		OnCollide( CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith );
 	bool		OnSteal( CChar *thief, CItem *theft );
-	bool		OnDispel( CBaseObject *dispelled );
+	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
 	bool		OnAttack( CChar *attacker, CChar *defender );
@@ -241,7 +239,7 @@ public:
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
-	bool		OnDeathBlow( CChar *mKilled, CChar *mKiller );
+	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 	
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill );
 	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue );

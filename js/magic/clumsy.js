@@ -10,24 +10,27 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	{
 		if( mChar.isCasting )
 		{
-			mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.Language ) );
 			return true;
 		}
 		else if( mChar.GetTimer( 6 ) > GetCurrentClock() )
 		{
-			mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.Language ) );
 			return true;
 		}
 	}
 
 	var mSpell	= Spells[spellNum];
-	var spellType 	= mSock.currentSpellType;
+	var spellType 	= mChar.currentSpellType;
 
 	mChar.spellCast = spellNum;
 
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 704, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -38,7 +41,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	var ourRegion = mChar.region;
 	if( (spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()) )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -47,7 +51,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( !ourRegion.canCastAggressive && mSpell.agressiveSpell )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -56,7 +61,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	
 	if( !mSpell.enabled )
 	{
-		mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
+		if( mSock )
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.Language ) );
 		mChar.SetTimer( 6, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -85,7 +91,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			var itemLHand = mChar.FindItemLayer( 0x02 );
 			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
 			{
-				mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -97,7 +104,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
 
-	mChar.BreakConcentration( mSock );
+	if( mSock )
+		mChar.BreakConcentration( mSock );
 
 	if( mChar.commandlevel < 2  )
 	{
@@ -116,7 +124,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			if( mSpell.mana > mChar.mana )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -124,7 +133,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.stamina > mChar.stamina )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -132,7 +142,8 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 			if( mSpell.health >= mChar.health )
 			{
-				mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
+				if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.Language ) );
 				mChar.SetTimer( 6, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -265,7 +276,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	var mSpell	= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
-
+	
 	if( mSock )
 		spellType = mSock.currentSpellType;
 

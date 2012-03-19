@@ -25,7 +25,7 @@ namespace UOX
 //|	Purpose			-	Returns true if the file's stats can be found (testing 
 //|						its existence)
 //o--------------------------------------------------------------------------
-bool get_modification_date( const std::string filename, time_t* mod_time )
+bool get_modification_date( const std::string& filename, time_t* mod_time )
 {
 	struct stat stat_buf;
 
@@ -110,7 +110,7 @@ void Script::reload( bool disp )
 //|	Purpose			-	Builds the script, reading in the information from
 //|						the script file.
 //o--------------------------------------------------------------------------
-Script::Script( const std::string _filename, DEFINITIONCATEGORIES d, bool disp ) : errorState( false ), dfnCat( d )
+Script::Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp ) : errorState( false ), dfnCat( d )
 {
 	filename = _filename;
 	if( !get_modification_date( filename.c_str(), &last_modification ) ) 
@@ -142,7 +142,7 @@ Script::~Script()
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if the section named section is in the script
 //o--------------------------------------------------------------------------
-bool Script::isin( const std::string section )
+bool Script::isin( const std::string& section )
 {
 	UString temp( section );
 	SSMAP::const_iterator iSearch = defEntries.find( temp.upper() );
@@ -160,7 +160,7 @@ bool Script::isin( const std::string section )
 //|	Purpose			-	Returns a ScriptSection * to the section named "section"
 //|						if it exists, otherwise returning NULL
 //o--------------------------------------------------------------------------
-ScriptSection *Script::FindEntry( const std::string section )
+ScriptSection *Script::FindEntry( const std::string& section )
 {
 	ScriptSection *rvalue = NULL;
 	SSMAP::const_iterator iSearch = defEntries.find( section );
@@ -178,7 +178,7 @@ ScriptSection *Script::FindEntry( const std::string section )
 //|	Purpose			-	Find the first ScriptSection * (if any) that has the
 //|						string section in the section name
 //o--------------------------------------------------------------------------
-ScriptSection *Script::FindEntrySubStr( const std::string section )
+ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
 	ScriptSection *rvalue = NULL;
 	UString usection( section );

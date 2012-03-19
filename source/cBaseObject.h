@@ -99,13 +99,16 @@ protected:
 	void			AddToMulti( bool fireTrigger = true );
 
 	UI08					poisoned;
-	std::bitset< 6 >		objSettings;
+	std::bitset< 7 >		objSettings;
 
 	UI16			resistances[WEATHNUM];
 
 	SI16			oldLocX;
 	SI16			oldLocY;
 	SI08			oldLocZ;
+
+	SI16			oldTargLocX;
+	SI16			oldTargLocY;
 
 	SI16			fame;
 	SI16			karma;
@@ -137,11 +140,15 @@ public:
 	virtual					~CBaseObject();
 							CBaseObject( void );
 
+	SI16					GetOldTargLocX( void ) const;
+	SI16					GetOldTargLocY( void ) const;
 	SI16					GetX( void ) const;
 	SI16					GetY( void ) const;
 	SI08					GetZ( void ) const;
 	point3					GetLocation( void ) const;
 
+	void					SetOldTargLocX( SI16 newvalue );
+	void					SetOldTargLocY( SI16 newvalue );
 	void					SetX( SI16 newValue );
 	void					SetY( SI16 newValue );
 	void					SetZ( SI08 newValue );
@@ -262,6 +269,7 @@ public:
 	bool					isSpawned( void ) const;
 	bool					ShouldSave( void ) const;
 	bool					isDisabled( void ) const;
+	bool					isWipeable( void ) const;
 
 	void					SetFree( bool newVal );
 	void					SetDeleted( bool newVal );
@@ -269,6 +277,7 @@ public:
 	void					SetSpawned( bool newVal );
 	void					ShouldSave( bool newVal );
 	void					SetDisabled( bool newVal );
+	void					SetWipeable( bool newValue );
 
 	SI16					GetFame( void ) const;
 	void					SetFame( SI16 value );

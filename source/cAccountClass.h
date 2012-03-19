@@ -98,12 +98,12 @@ private:
 public:
 	CAccountBlock( void ) : sUsername( "" ), sPassword( "" ), sPath( "" ), sContact( "" ),
 		wAccountIndex( 0xFFFF ), wTimeBan( 0x0000 ), dwInGame( INVALIDSERIAL ),
-		dwLastIP( 0x00000000 ), bChanged( false )
+		dwLastIP( 0x00000000 ), bChanged( false ), dwLastClientVer( 0 ), dwLastClientType( 0 ), dwLastClientVerShort( 0 )
 #if UOX_PLATFORM == WIN32
 		, dbRetrieved( false )
 #endif
 	{
-		for( UI08 i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
 			lpCharacters[i] = NULL;
@@ -120,7 +120,7 @@ public:
 		dwInGame		= 0xFFFFFFFF;
 		dwLastIP		= 0x00000000;
 		bChanged		= false;
-		for( UI08 i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 7; ++i )
 		{
 			dwCharacters[i] = 0xFFFFFFFF;
 			lpCharacters[i] = NULL;
@@ -139,9 +139,12 @@ public:
 	UI16						wTimeBan;
 	UI32						dwInGame;
 	UI32						dwLastIP;
+	UI32						dwLastClientVer;
+	UI08						dwLastClientType;
+	UI08						dwLastClientVerShort;
 	bool						bChanged;
-	UI32						dwCharacters[6];
-	CChar *						lpCharacters[6];
+	UI32						dwCharacters[7];
+	CChar *						lpCharacters[7];
 #if UOX_PLATFORM == WIN32
 	bool						dbRetrieved;
 #endif

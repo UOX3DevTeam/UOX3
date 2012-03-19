@@ -8,10 +8,10 @@ enum TargetIDs;
 
 enum TriggerWords
 {
-	TW_BALANCE			= 0x0001,		// Balance
-	TW_BANK				= 0x0002,		// Bank
-	TW_GUARDS			= 0x0007,		// Guard
-	TW_QUESTDEST		= 0x001D,		// Destination
+	TW_BALANCE			= 0x0001,		// balance/statement
+	TW_BANK				= 0x0002,		// bank
+	TW_GUARDS			= 0x0007,		// guard/guards
+	TW_QUESTDEST		= 0x001D,		// destination
 	TW_QUESTTAKE		= 0x001E,		// I will take thee
 	TW_HOUSELOCKDOWN	= 0x0023,		// I wish to lock this down
 	TW_HOUSERELEASE		= 0x0024,		// I wish to release this
@@ -20,25 +20,36 @@ enum TriggerWords
 	TW_HOUSEEJECT		= 0x0033,		// Remove Thyself
 	TW_HOUSEBAN			= 0x0034,		// I Ban Thee
 	TW_STOP2			= 0x0036,
-	TW_VENDORBUY		= 0x003C,		// Vendor Buy
-	TW_VENDORVIEW		= 0x003D,		// Vendor View
-	TW_VENDORGOLD		= 0x003E,		// Vendor Gold
-	TW_VENDORSTATUS		= 0x003F,		// Vendor Status
-	TW_VENDORDISMISS	= 0x0040,		// Vendor Dismiss
+	TW_VENDORBUY		= 0x003C,		// Vendor Buy/Purchase
+	TW_VENDORVIEW		= 0x003D,		// Vendor View/Browse/Look
+	TW_VENDORGOLD		= 0x003E,		// Vendor Gold/Collect/Get
+	TW_VENDORSTATUS		= 0x003F,		// Vendor Status/Info
+	TW_VENDORDISMISS	= 0x0040,		// Vendor Dismiss/Replace
 	TW_SETNAME			= 0x0042,		// Set Name
 	TW_BOATFORWARD		= 0x0045,		// Forward
-	TW_BOATBACKWARD		= 0x0046,		// Backward
-	TW_BOATLEFT			= 0x0047,		// Left
-	TW_BOATRIGHT		= 0x0048,		// Right
+	TW_BOATBACKWARD		= 0x0046,		// Backward/Backwards/Back
+	TW_BOATLEFT			= 0x0047,		// Left/Drift Left
+	TW_BOATRIGHT		= 0x0048,		// Right/Drift Right
 	TW_BOATSTARBOARD	= 0x0049,		// Starboard
 	TW_BOATPORT			= 0x004A,		// Port
 	TW_BOATSTOP			= 0x004F,		// Stop
 	TW_BOATTURNRIGHT	= 0x0065,		// Turn Right
 	TW_BOATTURNLEFT		= 0x0066,		// Turn Left
-	TW_BOATTURNAROUND	= 0x0067,		// Turn Around
+	TW_BOATTURNAROUND	= 0x0067,		// Turn Around/Come About
 	TW_BOATUNFURL		= 0x0068,		// Unfurl Sail
 	TW_BOATFURL			= 0x0069,		// Furl Sail
 	TW_TRAIN			= 0x006C,		// Train, Teach
+	TW_TRAINPARRY		= 0x006D,		// Train Parrying/Parry/Battle/Defense
+	TW_TRAINHEAL		= 0x006E,		// Train First/Aid/Heal/Healing/Medicine
+	TW_TRAINHIDE		= 0x006F,		// Train Hide/Hiding
+	TW_TRAINSTEAL		= 0x0070,		// Train Steal/Stealing
+	TW_TRAINALCHEMY		= 0x0071,		// Train Alchemy
+	TW_TRAINANIMLORE	= 0x0072,		// Train Animal/Train Lore
+	TW_TRAINIDENTIFY	= 0x0073,		// Train Appraising/Identifying/Appraise/Item/Identification/Identify
+	TW_TRAINARMSLORE	= 0x0074,		// Train Armslore/Arms
+	TW_TRAINBEG			= 0x0075,		// Train Beg/Begging
+	TW_TRAINSMITH		= 0x0076,		// Train Blacksmith/Smith/Blacksmithy/Smithing/Blacksmithing
+
 	TW_FOLLOW2			= 0x00E8,		// Follow
 	TW_GOLD				= 0x0134,		// Gold
 	TW_VENDORSELL		= 0x014D,		// Vendor Sell

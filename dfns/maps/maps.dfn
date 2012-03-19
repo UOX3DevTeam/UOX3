@@ -1,5 +1,5 @@
-// v.03
-// Last updated 9/21/2005 - giwo
+// v.04
+// Last updated 2/18/2012 - Xuri
 // This file contains the filenames and X/Y Block sizes for Ultima Online maps.
 // This file is current for Client versions 5.0.0a and above, please use maps.old if your client version is 4.x or below.
 
@@ -64,3 +64,11 @@ X=1448
 Y=1448
 }
 
+[MAP 5]	// Termur
+{
+MAP=map5.mul
+STATICS=statics5.mul
+STAIDX=staidx5.mul
+X=1280
+Y=4096
+}

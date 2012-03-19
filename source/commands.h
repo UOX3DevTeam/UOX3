@@ -49,12 +49,12 @@ public:
 	void			Load( void );
 	void			Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo );
 
-	bool			CommandExists( const std::string cmdName );
+	bool			CommandExists( const std::string& cmdName );
 	const std::string FirstCommand( void );
 	const std::string NextCommand( void );
 	bool			FinishedCommandList( void );
 
-	CommandMapEntry *CommandDetails( const std::string cmdName );
+	CommandMapEntry *CommandDetails( const std::string& cmdName );
 
 	cCommands();
 	~cCommands();

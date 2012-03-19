@@ -219,20 +219,45 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				if( targetID1 != 0 && targetID2 != 0 )	// we might have a static rock or mountain
 				{
 					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
+					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 					{
-						CTile& tile = Map->SeekTile( stat->itemid );
-						if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
-							return true;
+						//7.0.9.0 data and later
+						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
+						{
+							CTileHS& tile = Map->SeekTileHS( stat->itemid );
+							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
+								return true;
+						}
+					}
+					else
+					{
+						//7.0.8.2 data and earlier
+						for( Static_st *stat = msi.Next(); stat != NULL; stat = msi.Next() )
+						{
+							CTile& tile = Map->SeekTile( stat->itemid );
+							if( targetZ == stat->zoff && ( !strcmp( tile.Name(), "rock" ) || !strcmp( tile.Name(), "mountain" ) || !strcmp( tile.Name(), "cave" ) ) )
+								return true;
+						}
 					}
 				}
 				else		// or it could be a map only
 				{  
 					// manually calculating the ID's if a maptype
 					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					CLand& land = Map->SeekLand( map1.id );
-					if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
-						return true; 
+					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+					{
+						//7.0.9.0 tiledata and later
+						CLandHS& land = Map->SeekLandHS( map1.id );
+						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
+							return true; 
+					}
+					else
+					{
+						//7.0.8.2 tiledata and earlier
+						CLand& land = Map->SeekLand( map1.id );
+						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
+							return true; 
+					}		
 				}
 			}
 			break;
@@ -408,10 +433,7 @@ void cSkills::GraveDig( CSocket *s )
 				UI08 nAmount = RandomNum( 1, 15 );
 				Items->CreateScriptItem( s, nCharID, "0x0EED", nAmount, OT_ITEM, true );
 				Effects->goldSound( s, nAmount );
-				if( nAmount == 1 )
-					s->sysmessage( 810, nAmount );
-				else
-					s->sysmessage( 810, nAmount );
+				s->sysmessage( 810, nAmount );
 			}
 			break;
 		case 6:
@@ -648,7 +670,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	UI08 amtToGain			= 1;
 	if( success )
 		amtToGain			= cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
-	UI16 skillCap			= cwmWorldState->ServerData()->ServerSkillCapStatus();
+	UI16 skillCap			= cwmWorldState->ServerData()->ServerSkillTotalCapStatus();
 
 	if( c->IsNpc() )
 	{
@@ -837,24 +859,49 @@ void cSkills::FishTarget( CSocket *s )
 	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
 	bool validLocation = false;
 	if( ValidateObject( targetItem ) )
-		validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
+		validLocation = Map->SeekTileHS( targetItem->GetID() ).CheckFlag( TF_WET );
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-		for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
-				validLocation = true;
+			//7.0.9.0 data and later
+			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+			{
+				CTileHS& tile = Map->SeekTileHS( stat->itemid );
+				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
+					validLocation = true;
+			}
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+			{
+				CTile& tile = Map->SeekTile( stat->itemid );
+				if( targetZ == stat->zoff && tile.CheckFlag( TF_WET ) )	// right place, and wet
+					validLocation = true;
+			}
 		}
 	}
 	else		// or it could be a map only
 	{  
 		// manually calculating the ID's if a maptype
 		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-		CLand& land = Map->SeekLand( map1.id );
-		if( land.CheckFlag( TF_WET ) )
-			validLocation = true; 
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 tiledata and later
+			CLandHS& land = Map->SeekLandHS( map1.id );
+			if( land.CheckFlag( TF_WET ) )
+				validLocation = true; 
+		}
+		else
+		{
+			//7.0.8.2 tiledata and earlier
+			CLand& land = Map->SeekLand( map1.id );
+			if( land.CheckFlag( TF_WET ) )
+				validLocation = true; 
+		}		
 	}
 	if( validLocation )
 	{
@@ -1396,6 +1443,8 @@ void cSkills::Track( CChar *i )
 		return;
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
+	if( s->ClientType() >= CV_HS2D )
+		tSend.AddSerial( i->GetTrackingTarget()->GetSerial() );
 	s->Send( &tSend );
 }
 

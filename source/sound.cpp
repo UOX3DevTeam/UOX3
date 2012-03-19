@@ -103,7 +103,24 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 					case 0x0E79:	// pouch
 					case 0x09B0:	// pouch
 					case 0x2AF8:	// Shopkeeper buy, sell and sold layers
+					case 0x2256:	// bagball
+					case 0x2257:	// bagball
 						effectID = 0x0048;
+						break;
+					case 0x0E7A:	// picnic basket
+					case 0x24D5:	// SE basket
+					case 0x24D6:	// SE basket
+					case 0x24D9:	// SE basket
+					case 0x24DA:	// SE basket
+					case 0x0990:	// basket
+					case 0x09AC:	// bushel
+					case 0x09B1:	// basket
+					case 0x24D7:	// SE basket
+					case 0x24D8:	// SE basket
+					case 0x24DD:	// SE basket
+					case 0x24DB:	// SE basket
+					case 0x24DC:	// SE basket
+						effectID = 0x004F;
 						break;
 				}
 			}
@@ -138,12 +155,12 @@ void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 //o---------------------------------------------------------------------------o
 void cEffects::playDeathSound( CChar *i )
 {
-	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E )// Female Death (human/elf)
+	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E || i->GetOrgID() == 0x029B )// Female Death (human/elf/gargoyle)
 	{
 		UI16 deathSound = 0x0150 + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );
 	}
-	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D )	// Male Death (human/elf)
+	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D || i->GetOrgID() == 0x029A )	// Male Death (human/elf/gargoyle)
 	{
 		UI16 deathSound = 0x015A + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );
@@ -208,12 +225,17 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 		if( cwmWorldState->creatures.find( xx ) == cwmWorldState->creatures.end() )
 			return;
 
-		basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
-		if( basesound != 0x00 )
+		//Play creature sounds, but add a small chance that they won't, to give players a break every now and then
+		UI08 soundChance = RandomNum( static_cast<size_t>(0), inrange.size() + 9  );
+		if( soundChance > 5 )
 		{
-			CPPlaySoundEffect toSend = (*soundSrc);
-			toSend.Model( basesound );
-			mSock.Send( &toSend );
+			basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
+			if( basesound != 0x00 )
+			{
+				CPPlaySoundEffect toSend = (*soundSrc);
+				toSend.Model( basesound );
+				mSock.Send( &toSend );
+			}
 		}
 	}
 	else // play random mystic-sounds also if no creature is in range
@@ -320,21 +342,45 @@ void cEffects::playTileSound( CSocket *mSock )
 		Static_st *stat = msi.Next();
 		if( stat )
 		{
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if( tile.CheckFlag( TF_WET ) )
-				tileType = TT_WATER;
+			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+			{
+				//7.0.9.0 data and later
+				CTileHS& tile = Map->SeekTileHS( stat->itemid );
+				if( tile.CheckFlag( TF_WET ) )
+					tileType = TT_WATER;
+				else
+				{
+					char search1[10];
+					strcpy( search1, "wood" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_WOODEN;
+					strcpy( search1, "ston" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_STONE;
+					strcpy( search1, "gras" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_GRASS;
+				}
+			}
 			else
 			{
-				char search1[10];
-				strcpy( search1, "wood" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_WOODEN;
-				strcpy( search1, "ston" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_STONE;
-				strcpy( search1, "gras" );
-				if( strstr( tile.Name(), search1 ) )
-					tileType = TT_GRASS;
+				//7.0.8.2 data and earlier
+				CTile& tile = Map->SeekTile( stat->itemid );
+				if( tile.CheckFlag( TF_WET ) )
+					tileType = TT_WATER;
+				else
+				{
+					char search1[10];
+					strcpy( search1, "wood" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_WOODEN;
+					strcpy( search1, "ston" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_STONE;
+					strcpy( search1, "gras" );
+					if( strstr( tile.Name(), search1 ) )
+						tileType = TT_GRASS;
+				}
 			}
 		}
 	}

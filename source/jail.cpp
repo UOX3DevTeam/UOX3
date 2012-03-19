@@ -122,15 +122,15 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 		JailOccupant *mOccupant = (*jIter);
 		if( mOccupant != NULL )
 		{
-			outStream << "[PRISONER]" << std::endl << "{" << std::endl;
-			outStream << "CELL=" << cellNumber << std::endl;
-			outStream << "SERIAL=" << std::hex << mOccupant->pSerial << std::endl;
-			outStream << "OLDX=" << std::dec << mOccupant->x << std::endl;
-			outStream << "OLDY=" << mOccupant->y << std::endl;
-			outStream << "OLDZ=" << (SI16)mOccupant->z << std::endl;
-			outStream << "WORLD=" << (UI08)mOccupant->world << std::endl;
-			outStream << "RELEASE=" << mOccupant->releaseTime << std::endl;
-			outStream << "}" << std::endl << std::endl;
+			outStream << "[PRISONER]" << '\n' << "{" << '\n';
+			outStream << "CELL=" << cellNumber << '\n';
+			outStream << "SERIAL=" << std::hex << mOccupant->pSerial << '\n';
+			outStream << "OLDX=" << std::dec << mOccupant->x << '\n';
+			outStream << "OLDY=" << mOccupant->y << '\n';
+			outStream << "OLDZ=" << (SI16)mOccupant->z << '\n';
+			outStream << "WORLD=" << (UI08)mOccupant->world << '\n';
+			outStream << "RELEASE=" << mOccupant->releaseTime << '\n';
+			outStream << "}" << '\n' << '\n';
 		}
 	}
 }

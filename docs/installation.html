@@ -3,7 +3,7 @@
 <!-- Meta Information -->
 <meta name="author" content="Geir Ove Alnes aka Xuri">
 <style type="text/css">
-BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-serif; background-color:#082044;color:#000000;}
+BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-serif; background-color:#32668A;color:#000000;}
 #main{padding-bottom:20px;width:85%;margin:10px 0% 0px 5%;border:1px solid #000;background-color:#FFF;}
 .header{height:75px;width:100%;margin:5px 0% 0px 0px;background-color:#000; }
 .PageHeader{ margin: 5px 0px 5px 0px; text-align: center; border: 2px solid black; border-left:0px;border-right:0px;font-weight: bold; font-size: 18px; background-color:#84B0FB; width:100%;}
@@ -21,6 +21,9 @@ BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-seri
 <div id="main">
 	<div class="header"><img src="logo.gif" alt="UOX3 logo" height="75px" align="right"></div>
 	<div class="PageHeader"> -= Installing and Configuring UOX3 =- </div>
+	<center><p>| <a href="client-config.html">Configure the UO Client</a> |
+						<a href="server-settings.html">Server Settings</a> |
+						<a href="commandlist.html">Commandlist</a> |</p></center>
 	<div class="SectionHeader">NOTE</div>
 		<p class="Section"><abbr title="Ultima Offline eXperiment III">UOX3</abbr> is free software; you can redistribute it and/or modify
 		  it under the terms of the <a href="gpl-license.txt" target="_blank">GNU General Public License</a> as published by the <a href="http://www.fsf.org/" target="_blank">Free Software Foundation</a>; either version 2 of the License, or
@@ -35,13 +38,14 @@ BODY{ margin:0px 10px 10px 10px;font-family:Verdana, Helvetica, Arial, sans-seri
 		<p class="Section"><em>* * * In addition to that license, if you are running this program or modified 
 versions of it on a public system you <strong>HAVE TO</strong> make the complete source of the version used by you available or provide people with a location to download it. * * * </em></p>
 		<div class="SectionHeader">Installing UOX3</div>
-		<p class="Section">To install UOX3, first download the All-In-One UOX3 package from the <a href="http://www.uox3.org/downloads.shtml" target="_blank">Downloads</a>-page at <a href="http://www.uox3.org" target="_blank">UOX3.org</a>. You'll need a program capable of unpacking .ZIP files to extract the files from the package, so if you don't already have one, and your Operative System doesn't natively support these files, go download WinZip.</p>
-		<p class="Section"><em>Note that there may be newer UOX3 versions available since the the latest release, these versions can be accessed by downloading the sourcecode from the CVS and <a href="http://www.uox3.org/forum/viewtopic.php?t=453" title="Forum-thread on How to compile UOX3d">compiling it yourself</strong>, or by downloading an <a href="http://www.uox3.org/forum/viewtopic.php?t=825" title="Link to UOX3 experimental build">experimental build</a>. It's recommended that you download the latest experimental build if it's much newer than the latest release-version, to get the latest fixes and additions to UOX3.</em></p>
-		<p class="Section">Once that is out of the way, doubleclick on the All-In-One zip-file and click the 'Extract' button, or click on the Actions-menu and select &quot;Extract&quot; from there. Now enter a path to where you want the UOX3 files to be unpacked. Popular choices include C:\UOX3 or D:\UOX3. Once all the files have been extracted, proceed to the next section of this document. </p>
+		<p class="Section">There is no complex installation process for UOX3. Just download, unzip, and run. UOX3 makes no changes to your system. Should you ever want to "uninstall" UOX3, just delete the UOX3 folder and it's gone.</p>
+		<p class="Section">To "install" UOX3, first download the All-In-One UOX3 package from the <a href="http://www.uox3.org/downloads.shtml" target="_blank">Downloads</a>-page at <a href="http://www.uox3.org" target="_blank">UOX3.org</a>. You'll need a program capable of unpacking .ZIP files to extract the files from the package, so if you don't already have one, and your Operative System doesn't natively support these files, go download WinZip, 7Zip, WinRar or another program that supports extracting .zip files.</p>
+		<p class="Section"><em>Note that there may be newer UOX3 versions available since the the latest release, these versions can be accessed by downloading the sourcecode from the CVS and <a href="http://www.uox3.org/forums/viewtopic.php?t=453" title="Forum-thread on How to compile UOX3d">compiling it yourself</a>, or by downloading an <a href="http://www.uox3.org/forums/viewtopic.php?t=825" title="Link to UOX3 experimental build">experimental build</a>. It's recommended that you download the latest experimental build if it's much newer than the latest release-version, to get the latest fixes and additions to UOX3.</em></p>
+		<p class="Section">Once that is out of the way, doubleclick on the All-In-One zip-file and click the 'Extract' button, or click on the Actions-menu and select &quot;Extract&quot; from there. Now enter a path to where you want the UOX3 files to be unpacked. Popular choices include C:\UOX3 or D:\UOX3, but there are no (known) restrictions on this. Once all the files have been extracted, proceed to the next section of this document. </p>
 	<div class="SectionHeader">Configuring UOX3</div>
-		<p class="Section">After extracting the UOX3 files, browse your way to the newly created UOX3 folder using Explorer or My Computer, then double-click the UOX.INI file (if no file-extensions show up for your files, double-click the one named UOX listed as a &quot;Configurations Settings&quot;-file) to open it in a text-editor. </p>
+		<p class="Section">After extracting the UOX3 files, browse your way to the newly created UOX3 folder using Explorer or My Computer, then double-click the UOX.INI file (if no file-extensions show up for your files, double-click the one named UOX listed as a &quot;Configurations Settings&quot;-file) to open it in a text-editor.</p>
 		<p class="SectionHeader2">Configuration Step 1 - Name and IP, please </p>
-		<p class="Section">The <strong>UOX.INI</strong> contains a multitude of settings, but you should concentrate on only two for now, simply to get your server up and running as it should. The first thing you should do is set the name and IP-address of your UOX3 shard, so locate the <em>[play server list]</em> section, which by default will look something like this:</p>
+		<p class="Section">The <strong>UOX.INI</strong> contains a multitude of settings, and in the future you definitely want to go back in here for some customization, restricting which client-versions are allowed on your shard, etc - but for now you should concentrate on only two, simply to get your server up and running. The first thing you should do is set the name and IP-address of your UOX3 shard, so locate the <em>[play server list]</em> section, which by default will look something like this:</p>
 		<p class="blockSection"><em>[play server list]<br>
 	    {<br>
 	    SERVERLIST=Default UOX3 Server,127.0.0.1,2593<br>
@@ -62,7 +66,7 @@ versions of it on a public system you <strong>HAVE TO</strong> make the complete
 		<p class="blockSection">(In the last example, the following files from the UO folder would be copied to a &quot;datafiles&quot;-folder inside the UOX3 folder: map0.mul, staidx0.mul, statics0.mul, map0.mul, tiledata.mul, multi.mul and multi.idx)</p>
 		<p class="Section">When done, save and close <strong>UOX.INI</strong>. </p>
 		<p class="SectionHeader2">Configuration Step 3 - Account Setup</p>
-		<p class="Section">The last thing you'll need to do before you're done configuring UOX3, is to locate <strong>ACCOUNTS.ADM</strong> in UOX3\ACCOUNTS\ and open it using your favourite text-editor - for instance Notepad. The first thing you'll see in that file, is the commented (prefixed by //) example-account. Scroll down past that until you reach the first uncommented account-section, named <strong>SECTION ACCOUNT 0</strong>. </p>
+		<p class="Section">The last thing you'll need to do before you're done configuring UOX3, is to locate <strong>ACCOUNTS.ADM</strong> in UOX3\ACCOUNTS\ and open it using your favourite text-editor - for instance Notepad (or better yet, Notepad++). The first thing you'll see in that file, is the commented (prefixed by //) example-account. Scroll down past that until you reach the first uncommented account-section, named <strong>SECTION ACCOUNT 0</strong>. </p>
 		<p class="Section">That account is your shard's <strong>ADMIN</strong>-account, and you should change the username and password from <em>admin/admin</em> to something a bit harder to guess. Don't make it too hard though, as this is the account you will be logging in with when you need to administer your shard. Any characters created using this account will automatically gain GameMaster-privileges and will have access to all commands in UOX3.</p>
 		<p class="Section">After you've changed the default username and password, the first account should look something like this:</p>
 		<p class="blockSection"><em>SECTION ACCOUNT 0<br>

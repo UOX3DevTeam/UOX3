@@ -320,12 +320,25 @@ bool CPIGetItem::Handle( void )
 		i->SetGuarded( false );
 	}
 
-	CTile& tile = Map->SeekTile( i->GetID() );
-	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
-		tSock->Send( &bounce );
-		return true;
+		CTileHS& tile = Map->SeekTileHS( i->GetID() );
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			tSock->Send( &bounce );
+			return true;
+		}
+	}
+	else
+	{
+		CTile& tile = Map->SeekTile( i->GetID() );
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			tSock->Send( &bounce );
+			return true;
+		}
 	}
 
 	UI16 targTrig		= i->GetScriptTrigger();
@@ -492,22 +505,53 @@ bool CPIEquipItem::Handle( void )
 			return true;
 		}
 	}
-	CTile& tile = Map->SeekTile( i->GetID() );
-	if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
-		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
-		Bounce( tSock, i );
-		return true;
+		CTileHS& tile = Map->SeekTileHS( i->GetID() );
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			Bounce( tSock, i );
+			return true;
+		}
+	}
+	else
+	{
+		CTile& tile = Map->SeekTile( i->GetID() );
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			Bounce( tSock, i );
+			return true;
+		}
 	}
 
 	if( i->GetLayer() == IL_NONE )
 		i->SetLayer( static_cast<ItemLayers>(tSock->GetByte( 5 )) );
 
-	// 1/13/2003 - Xuri - Fix for equiping an item to more than one hand, or multiple equiping.
+	// 1/13/2003 - Xuri - Fix for equipping an item to more than one hand, or multiple equipping.
 	if( i->GetCont() != k )
 	{
+		bool conflictItem = true;
 		CItem *j = k->GetItemAtLayer( i->GetLayer() );
-		if( ValidateObject( j ) )
+		if( !ValidateObject( j ))
+		{
+			if( i->GetLayer() == IL_RIGHTHAND )
+				j = k->GetItemAtLayer( IL_LEFTHAND );
+			else if( i->GetLayer() == IL_LEFTHAND )
+				j = k->GetItemAtLayer( IL_RIGHTHAND );
+
+			// GetDir-check is to allow for torches and lanterns, 
+			// which use left-hand layer but are not 2-handers or shields
+			if( ValidateObject( j ) && !i->IsShieldType() && i->GetDir() == 0 )
+			{
+				if( j->IsShieldType() || j->GetDir() != 0 )
+					conflictItem = false;
+			}
+			else
+				conflictItem = false;
+		}
+		if( conflictItem == true )
 		{
 			tSock->sysmessage( 1744 );
 			Bounce( tSock, i );
@@ -523,6 +567,9 @@ bool CPIEquipItem::Handle( void )
 	}
 
 	i->SetCont( k );
+
+	CPDropItemApproved lc;
+	tSock->Send( &lc );
 
 	Effects->PlaySound( tSock, 0x0057, false );
 	return true;
@@ -578,7 +625,7 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 	return stackDeleted;
 }
 
-bool IsOnFoodList( const std::string sFoodList, const UI16 sItemID )
+bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 {
 	bool doesEat = false;
 
@@ -797,14 +844,29 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	if( toExecute != NULL )
 		toExecute->OnDrop( i, nChar );
 
-	CTile& tile = Map->SeekTile( i->GetID() );
-	if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
-		( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( nChar, i );
-		Bounce( mSock, i );
-		return;
+		CTileHS& tile = Map->SeekTileHS( i->GetID() );
+		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( nChar, i );
+			Bounce( mSock, i );
+			return;
+		}
+	}
+	else
+	{
+		CTile& tile = Map->SeekTile( i->GetID() );
+		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
+			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( nChar, i );
+			Bounce( mSock, i );
+			return;
+		}
 	}
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
@@ -849,6 +911,9 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 		Effects->itemSound( mSock, i, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
 	}
+	// IF client-version is above 6.0.1.7, send approval packet for dropping item. If not, don't.
+	CPDropItemApproved lc;
+	mSock->Send( &lc );
 }
 
 void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped, SI16 x, SI16 y, SI08 gridLoc )
@@ -1157,14 +1222,32 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	}
 
 	bool stackDeleted = false;
-	CTile& tile = Map->SeekTile( nItem->GetID() );
-	if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
-		( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
-		if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
-			Weight->subtractItemWeight( mChar, nItem );
-		Bounce( mSock, nItem );
-		return;
+		//7.0.9.0 data and later
+		CTileHS& tile = Map->SeekTileHS( nItem->GetID() );
+		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+			( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
+			Bounce( mSock, nItem );
+			return;
+		}
+	}
+	else
+	{
+		//7.0.8.2 data and earlier
+		CTile& tile = Map->SeekTile( nItem->GetID() );
+		if( !mChar->AllMove() && ( nItem->GetMovable() == 2 || ( nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar ) ||
+			( tile.Weight() == 255 && nItem->GetMovable() != 1 ) ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, nItem );
+			Bounce( mSock, nItem );
+			return;
+		}
 	}
 
 	if( nCont->GetType() == IT_TRADEWINDOW && FindItemOwner( nCont ) == mChar )	// Trade window
@@ -1537,8 +1620,11 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	pd.Text( tempstr );
 
 	CChar *mChar = s->CurrcharObj();
-	if( ValidateObject( mChar ) && ( mChar == pdoll ) || ( mChar->IsGM() ) )
+	if( ValidateObject( mChar ) && ( mChar == pdoll ))
+		pd.FlagByte( 0x02 | ( mChar->IsAtWar() ? 0x01 : 0x00 ));
+	else if( ValidateObject( mChar ) && mChar->IsGM() )
 		pd.FlagByte( 0x02 );
+	
 	s->Send( &pd );
 
 	for( CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems(); wearItem = pdoll->NextItem() )
@@ -1598,7 +1684,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				mSock->sysmessage( 1214 );
 			return; 
 		}
-		else if( !c->isHuman() && c->GetID() != 0x0192 && c->GetID() != 0x0193 ) // Is a monster
+		else if( !c->isHuman() && !c->IsDead() ) // c->GetID() != 0x0192 && c->GetID() != 0x0193 && c->GetID() != 0x025F && c->GetID() != 0x0260 ) // Is a monster
 		{
 			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
 			{
@@ -1701,7 +1787,11 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 							if( iChar->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 								mSock->openPack( iUsed, true );
 							else
+							{
+								if( mChar->GetPackItem() == iUsed )
+									mChar->SetWeight( Weight->calcCharWeight( mChar ));
 								mSock->openPack( iUsed );
+							}
 						}
 						else if( iChar->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 							mSock->openPack( iUsed, true );
@@ -1720,7 +1810,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			if( packOpened )
 			{
-				if( canTrap && iUsed->GetTempVar( CITV_MORE, 1 ) )// Is trapped
+				if( canTrap && iUsed->GetTempVar( CITV_MOREZ, 1 ))// Is trapped
 					Magic->MagicTrap( mChar, iUsed );
 			}
 			else
@@ -2113,7 +2203,7 @@ void InitTagToItemType( void )
 	tagToItemType["HAIRDYE"]				= IT_HAIRDYE;
 }
 
-ItemTypes FindItemTypeFromTag( const UString strToFind )
+ItemTypes FindItemTypeFromTag( const UString& strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
@@ -2306,11 +2396,11 @@ bool CPIDblClick::Handle( void )
 	ItemTypes iType		= findItemType( iUsed );
 
 	UI16 itemID			= iUsed->GetID();
-	UI16 envTrig		= 0;
 	UI16 itemTrig		= iUsed->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( itemTrig );
 	if( itemTrig == 0 || toExecute == NULL )
 	{
+		UI16 envTrig		= 0;
 		if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(iType) ) )
 		{
 			envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(iType) );

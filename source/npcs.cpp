@@ -31,7 +31,7 @@ cCharStuff *Npcs = NULL;
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Add loot to monsters packs
 //o---------------------------------------------------------------------------o
-CItem *cCharStuff::addRandomLoot( CItem *s, const std::string lootlist )
+CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 {
 	CItem *retitem			= NULL;
 	UString sect			= "LOOTLIST " + lootlist;
@@ -112,7 +112,7 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a random npc from an npclist in specified dfn file
 //o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateRandomNPC( const std::string npcList )
+CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 {
 	CChar *cCreated			= NULL;
 	UString sect			= "NPCLIST " + npcList;
@@ -176,6 +176,8 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, std::string npc )
 
 	if( iType == IT_ESCORTNPCSPAWNER )
 		MsgBoardQuestEscortCreate( cCreated );
+
+	cCreated->SetWipeable( true );
 
 	return cCreated;
 }
@@ -401,7 +403,7 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Loads the shopping list pointed to by data in items.scp
 //o---------------------------------------------------------------------------o
-void cCharStuff::LoadShopList( const std::string list, CChar *c )
+void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 {
 	CItem *buyLayer		= c->GetItemAtLayer( IL_BUYCONTAINER ); //Contains items the NPC is willing to buy
 	CItem *boughtLayer	= c->GetItemAtLayer( IL_BOUGHTCONTAINER ); //Contains items the NPC has already bought
@@ -495,7 +497,7 @@ void cCharStuff::LoadShopList( const std::string list, CChar *c )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Sets a character with a random name from NPC.scp namelist
 //o---------------------------------------------------------------------------o
-void setRandomName( CChar *s, const std::string namelist )
+void setRandomName( CChar *s, const std::string& namelist )
 {
 	UString sect	= "RANDOMNAME " + namelist;
 	sect			= sect.stripWhiteSpace();
@@ -522,7 +524,7 @@ void setRandomName( CChar *s, const std::string namelist )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Randomly colors character
 //o---------------------------------------------------------------------------o
-UI16 addRandomColor( const std::string colorlist )
+UI16 addRandomColor( const std::string& colorlist )
 {
 	UString sect					= "RANDOMCOLOR " + colorlist;
 	sect							= sect.stripWhiteSpace();
@@ -812,6 +814,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											applyTo->SetID( static_cast<UI16>(ndata) );
 											applyTo->SetOrgID( static_cast<UI16>(ndata) );
 											break;
+			case DFNTAG_IMBUING:			skillToSet = IMBUING;					break;
 			case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;				break;
 			case DFNTAG_INTELLIGENCE:
 											applyTo->SetIntelligence( static_cast<SI16>(RandomNum( ndata, odata )) );
@@ -841,6 +844,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_MEDITATION:			skillToSet = MEDITATION;				break;
 			case DFNTAG_MINING:				skillToSet = MINING;					break;
 			case DFNTAG_MUSICIANSHIP:		skillToSet = MUSICIANSHIP;				break;
+			case DFNTAG_MYSTICISM:			skillToSet = MYSTICISM;					break;
 			case DFNTAG_NAME:				applyTo->SetName( cdata );				break;
 			case DFNTAG_NAMELIST:			setRandomName( applyTo, cdata );		break;
 			case DFNTAG_NECROMANCY:			skillToSet = NECROMANCY;				break;
@@ -979,6 +983,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetSpDelay( static_cast<SI08>(ndata) );
 											break;
+			case DFNTAG_SPELLWEAVING:		skillToSet = SPELLWEAVING;				break;
 			case DFNTAG_SPLIT:				
 											if( !isGate )
 												applyTo->SetSplit( static_cast<UI08>(ndata) );
@@ -1004,6 +1009,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 											if( !isGate )
 												applyTo->SetScriptTrigger( static_cast<UI16>(ndata) );
 											break;
+			case DFNTAG_THROWING:			skillToSet = THROWING;					break;
 			case DFNTAG_TITLE:				applyTo->SetTitle( cdata );		break;
 			case DFNTAG_TOTAME:				
 											if( !isGate )
@@ -1159,9 +1165,9 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Handle monster gates (polymorphs players into monster bodies)
 //o---------------------------------------------------------------------------o
-void MonsterGate( CChar *s, const std::string scriptEntry )
+void MonsterGate( CChar *s, const std::string& scriptEntry )
 {
-	CItem *mypack = NULL, *retitem = NULL;
+	CItem *mypack = NULL;
 	if( s->IsNpc() ) 
 		return;
 
@@ -1197,7 +1203,6 @@ void MonsterGate( CChar *s, const std::string scriptEntry )
 						n->SetType( IT_CONTAINER );
 						n->SetDye( true );
 						mypack = n;
-						retitem = n;
 					}
 				}
 				z->SetCont( mypack );

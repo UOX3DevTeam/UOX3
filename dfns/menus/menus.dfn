@@ -31,10 +31,8 @@ GUIINFORMATION
 Web=Links
 SHARD=HOMEPAGE: Redirects you to this Shard's homepage.
 WEBLINK=http://www.yourshard.com
-UOX3=HOMEPAGE: Redirects you to the official UOX3 homepage.
-WEBLINK=http://http://www.uox3dev.net
-DMBDEV=UOX3 SITE: A resource site for UOX3.
-WEBLINK=http://www.uox3.org
+UOX3=HOMEPAGE: Redirects you to the UOX3 homepage.
+WEBLINK=http://http://www.uox3.org
 UO=HOMEPAGE: The official Ultima Online homepage.
 WEBLINK=http://www.uo.com
 }

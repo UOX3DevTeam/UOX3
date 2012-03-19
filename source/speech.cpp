@@ -143,7 +143,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 }
 
 //o-------------------------------------------------------------------------
-//|	Function	-	sysBroadcast( std::string txt )
+//|	Function	-	sysBroadcast( std::string& txt )
 //|	Date		-	Unknown
 //|	Programmer	-	UOX DevTeam
 //|	Modification-	EviLDeD(February 27, 2000)
@@ -152,7 +152,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 //|						in the console thread that allows text to be entered on
 //|						the console and it be shipped out to all logged in players.
 //o-------------------------------------------------------------------------
-void sysBroadcast( const std::string txt )
+void sysBroadcast( const std::string& txt )
 {
 	if( !txt.empty() )
 	{
@@ -229,7 +229,7 @@ bool CPITalkRequest::Handle( void )
 			}
 		}
 
-		if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE )
+		if( Type() != WHISPER && ( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ))
 			mChar->ExposeToView();
 		
 		if( ( Type() == YELL || Type() == ASCIIYELL ) && mChar->CanBroadcast() )
@@ -313,14 +313,23 @@ bool CPITalkRequest::Handle( void )
 			}
 			tSock->Send( txtToSend );
 
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+			SOCKLIST nearbyChars;
+			// Distance at which other players can hear the speech depends on speech-type
+			if( Type() == WHISPER && !mChar->IsGM() && !mChar->IsCounselor() )
+				nearbyChars = FindNearbyPlayers( mChar, 1 );
+			else if( Type() == WHISPER && ( mChar->IsGM() || mChar->IsCounselor() ))
+				nearbyChars = FindNearbyPlayers( mChar, 3 );
+			else if( Type() == YELL )
+				nearbyChars = FindNearbyPlayers( mChar, ( DIST_SAMESCREEN * 1.5 ));
+			else
+				nearbyChars = FindNearbyPlayers( mChar );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				CSocket *tSock	= (*cIter);
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
-					if( tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
+					if( mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer( tPC_SPIRITSPEAK ) == 0 )// GM/Counselors can see ghosts talking always Seers?
 					{
 						if( mChar->IsDead() && !tChar->IsDead() )  // Ghost can talk normally to other ghosts
 							tSock->Send( ghostedText );
@@ -335,7 +344,26 @@ bool CPITalkRequest::Handle( void )
 							tSock->Send( txtToSend );
 					}
 					else
-						tSock->Send( txtToSend );
+					{
+						if( mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE || mChar->GetVisible() == VT_PERMHIDDEN )
+						{
+							if(( tChar->IsGM() || tChar->IsCounselor() ) || Type() == WHISPER )
+							{
+								tSock->sysmessage( 1794, mChar->GetName().c_str() );
+								tSock->Send( txtToSend );
+							}
+						}
+						else
+						{
+							if( Type() == YELL && !objInRange( tChar, mChar, DIST_SAMESCREEN ) )
+							{
+								tSock->sysmessage( 1795, mChar->GetName().c_str() );
+								tSock->Send( txtToSend );
+							}
+							else
+								tSock->Send( txtToSend );
+						}
+					}
 				}
 			}
 

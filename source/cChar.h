@@ -29,6 +29,7 @@ enum cC_TID
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
 	tNPC_SUMMONTIME,
+	tNPC_EVADETIME,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
@@ -67,6 +68,8 @@ private:
 
 		UI08				splitNum;
 		UI08				splitChance;
+
+		SI08				pathFail;
 
 		SI16				fx[2]; //NPC Wander Point x
 		SI16				fy[2]; //NPC Wander Point y
@@ -272,7 +275,7 @@ public:
 	void		SetTamedHungerWildChance( UI08 newValue );
 	void		SetTown( UI08 newValue );
 	void		SetFood( std::string food );
-	
+
 	UI08		GetBrkPeaceChanceGain( void ) const;
 	void		SetBrkPeaceChanceGain( UI08 newValue );
 
@@ -296,6 +299,7 @@ public:
 
 	bool		isUnicode( void ) const;
 	bool		IsNpc( void ) const;
+	bool		IsEvading( void ) const;
 	bool		IsShop( void ) const;
 	bool		IsDead( void ) const;
 	bool		GetCanAttack( void ) const;
@@ -318,6 +322,7 @@ public:
 
 	void		setUnicode( bool newVal );
 	void		SetNpc( bool newVal );
+	void		SetEvadeState( bool newVal );
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );
 	void		SetCanAttack( bool newValue );
@@ -589,6 +594,9 @@ public:
 	void		SetHoldG( UI32 newValue );
 	void		SetSplit( UI08 newValue );
 	void		SetSplitChance( UI08 newValue );
+
+	SI08		GetPathFail( void ) const;
+	void		SetPathFail( SI08 newValue );
 
 	void			SetGuarding( CBaseObject *newValue );
 

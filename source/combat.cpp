@@ -43,10 +43,14 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		return false;
 	if( cAttack->GetTarg() == cTarget )
 		return false;
+	if( cTarget->GetVisible() > 2 )
+		return false;
 	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( NULL, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
 		return false;
 
-	if( !cAttack->GetCanAttack() ) // Is the char allowed to attack?
+	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
+		return false;
+	if( cAttack->GetNPCAiType() == AI_DUMMY ) // If passive, don't allow attack
 		return false;
 
 	bool returningAttack = false;
@@ -56,10 +60,13 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	cAttack->SetAttackFirst( ( cTarget->GetTarg() != cAttack ) );
 	if( !cTarget->IsInvulnerable() && (!ValidateObject( cTarget->GetTarg() ) || !objInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )) )	// Only invuln don't fight back
 	{
-		cTarget->SetTarg( cAttack );
-		cTarget->SetAttacker( cAttack );
-		cTarget->SetAttackFirst( false );
-		returningAttack = true;
+		if( cTarget->GetNPCAiType() != AI_DUMMY )
+		{
+			cTarget->SetTarg( cAttack );
+			cTarget->SetAttacker( cAttack );
+			cTarget->SetAttackFirst( false );
+			returningAttack = true;
+		}
 
 		if( cTarget->GetSocket() != NULL )
 		{
@@ -239,7 +246,25 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			s->sysmessage( 333 );
 			return;
 		}
+		if( i->IsEvading() )
+		{
+			s->sysmessage( 1792 );
+			return;
+		}
 		
+		// Deal with players attacking NPCs they're escorting!
+		if( i->IsNpc() && i->GetQuestType() == 0xFF && i->GetOwnerObj() == ourChar )
+		{
+			i->SetNpcWander( WT_FREE );   // Wander freely
+			i->SetFTarg( NULL );			 // Reset follow target
+			i->SetQuestType( 0 );         // Reset quest type
+			i->SetQuestDestRegion( 0 );   // Reset quest destination region
+			// Set a timer to automatically delete the NPC
+			i->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
+			i->SetOwner( NULL );
+			i->TextMessage( NULL, 1797, TALK, false ); // Send out the rant about being abandoned
+		}
+
 		//flag them FIRST so that anything attacking them as a result of this is not flagged.
 		if( WillResultInCriminal( ourChar, i ) ) //REPSYS
 		{
@@ -290,7 +315,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			return;
 	}
 
-	if( !cAttack->GetCanAttack() ) // Is the char allowed to attack?
+	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
 		return;
 
 	if( !StartAttack( cAttack, cTarget ) )
@@ -396,6 +421,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x257E: //short sword - LBR
 		case 0x27A4: //wakizashi - SE
 		case 0x27EF: //wakizashi - SE
+		case 0x0907: //gargish shortblade - SA
+		case 0x4076: //gargish shortblade - SA
+		case 0x48C6: //gargish bone harvester - SA
+		case 0x48C7: //gargish bone harvester - SA
 			return DEF_SWORDS;
 		// Default Swords
 		case 0x13F6: //butcher knife
@@ -408,8 +437,16 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x13BA: //viking sword
 		case 0x255E: //ratman sword - LBR
 		case 0x2560: //skeleton scimitar - LBR
-		case 0x2D29: //elven machete - ML
-		case 0x2D35: //elven machete - ML
+		case 0x0908: //gargish talwar - SA
+		case 0x4075: //gargish talwar - SA
+		case 0x090C: //gargish glass sword - SA
+		case 0x4073: //gargish glass sword - SA
+		case 0x0900: //gargish stone war sword - SA
+		case 0x4071: //gargish stone war sword - SA
+		case 0x48B6: //gargish butcherknife - SA
+		case 0x48B7: //gargish butcherknife - SA
+		case 0x48BA: //gargish katana - SA
+		case 0x48BB: //gargish katana - SA
 			return SLASH_SWORDS;
 		// One-Handed Lg. Swords
 		case 0x0F5E: //broadsword
@@ -420,6 +457,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2554: //daemon sword - LBR
 		case 0x2D27: //radiant scimitar - ML
 		case 0x2D33: //radiant scimitar - ML
+		case 0x2D29: //elven machete - ML
+		case 0x2D35: //elven machete - ML
+		case 0x090B: //gargish dread sword - SA
+		case 0x4074: //gargish dread sword - SA
 			return ONEHND_LG_SWORDS;
 		// Two-Handed Lg. Swords
 		case 0x143E: //halberd
@@ -443,6 +484,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x26C4: //scythe - AoS
 		case 0x255B: //ophidian bardiche - LBR
 		case 0x2577: //naginata - LBR
+		case 0x48B4: //gargish bardiche - SA
+		case 0x48B5: //gargish bardiche - SA
+		case 0x48C4: //gargish scythe - SA
+		case 0x48C5: //gargish scythe - SA
 			return BARDICHE;
 		// One-Handed Axes
 		case 0x0EC2: //cleaver
@@ -451,6 +496,8 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x0E86: //pickaxe
 		case 0x2567: //orc lord battleaxe - LBR
 		case 0x2579: //pick - LBR
+		case 0x48AE: //gargish cleaver
+		case 0x48AF: //gargish cleaver
 			return ONEHND_AXES;
 		// Two-Handed Axes
 		case 0x13FA: //large battle axe
@@ -473,6 +520,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2570: //hatchet - LBR
 		case 0x2D28: //ornate axe - ML
 		case 0x2D34: //ornate axe - ML
+		case 0x48B0: //gargish battleaxe - SA
+		case 0x48B1: //gargish battleaxe - SA
+		case 0x48B2: //gargish axe - SA
+		case 0x48B3: //gargish axe - SA
 			return TWOHND_AXES;
 		// Default Maces
 		case 0x13E3: //smith's hammer
@@ -501,6 +552,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2D30: //diamond mace - ML
 		case 0x2D25: //wild staff - ML
 		case 0x2D31: //wild staff - ML
+		case 0x0903: //gargish disc mace - SA
+		case 0x406E: //gargish disc mace - SA
+		case 0x48C2: //gargish maul - SA
+		case 0x48C3: //gargish maul - SA
 			return DEF_MACES;
 		// Large Maces
 		case 0x13F4: //crook
@@ -534,6 +589,14 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x27F1: //tetsubo - SE
 		case 0x27AE: //nunchako - SE
 		case 0x27F9: //nunchako - SE
+		case 0x48C0: //gargish war hammer - SA
+		case 0x48C1: //gargish war hammer - SA
+		case 0x48CC: //gargish tessen - SA
+		case 0x48CD: //gargish tessen - SA
+		case 0x0905: //gargish glass staff - SA
+		case 0x4070: //gargish glass staff - SA
+		case 0x0906: //gargish serpentstone staff - SA
+		case 0x406F: //gargish serpentstone staff - SA
 			return LG_MACES;
 		// Bows
 		case 0x13B1: //bow
@@ -577,6 +640,12 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2D2E: //leafblade - ML
 		case 0x2D23: //war cleaver - ML
 		case 0x2D2F: //war cleaver - ML
+		case 0x2306: //gargish dagger - SA
+		case 0x406A: //gargish dagger
+		case 0x08FE: //gargish bloodblade - SA
+		case 0x4072: //gargish bloodblade - SA
+		case 0x48BC: //gargish kryss - SA
+		case 0x48BD: //gargish kryss - SA
 			return DEF_FENCING;
 		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
@@ -596,6 +665,12 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x257B: //spear - LBR
 		case 0x27A7: //lajatang - SE
 		case 0x27F2: //lajatang - SE
+		case 0x0904: //gargish dual pointed spear - SA
+		case 0x406D: //gargish dual pointed spear - SA
+		case 0x48C8: //gargish pike - SA
+		case 0x48C9: //gargish pike - SA
+		case 0x48CA: //gargish lance - SA
+		case 0x48CB: //gargish lance - SA
 			return TWOHND_FENCING;
 		case 0x27AF: //sai - SE
 		case 0x27FA: //sai - SE
@@ -604,10 +679,23 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x27F6: //tekagi - SE
 		case 0x27AD: //kama - SE
 		case 0x27F8: //kama - SE
+		case 0x48CE: //gargish tekagi - SA
+		case 0x48CF: //gargish tekagi - SA
 			return DUAL_FENCING_SLASH;
 		case 0x27A9: //daisho - SE
 		case 0x27F4: //daisho - SE
+		case 0x08FD: //gargish dual short axes - SA
+		case 0x4068: //gargish dual short axes - SA
+		case 0x48D0: //gargish daisho - SA
+		case 0x48D1: //gargish daisho - SA
 			return DUAL_SWORD;
+		case 0x08FF: //gargish boomerang - SA
+		case 0x4067: //gargish boomerang - SA
+		case 0x0901: //gargish cyclone - SA
+		case 0x406C: //gargish cyclone - SA
+		case 0x090A: //gargish soul glaive - SA
+		case 0x406B: //gargish soul glaive - SA
+			return THROWN;
 		default: // Wrestling
 			return WRESTLING;
 	}
@@ -672,6 +760,8 @@ UI08 CHandleCombat::getCombatSkill( CItem *wItem )
 		case XBOWS:
 		case BLOWGUNS:
 			return ARCHERY;
+		case THROWN:
+			return THROWING;
 		case WRESTLING:
 		default:
 			return WRESTLING;
@@ -1076,9 +1166,9 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 		default:
 			switch( RandomNum( 0, 2 ) )
 			{
-				case 0:		animToPlay = 0x0A;										break;  //fist straight-punch
-				case 1:		animToPlay = 0x09;										break;  //fist top-down
-				default:	animToPlay = 0x1F;										break;  //fist over-head
+				case 0:		animToPlay = 0x0B;										break;
+				case 1:		animToPlay = 0x09;										break;
+				default:	animToPlay = 0x1F;										break;
 			}
 			break;
 	}
@@ -1088,20 +1178,20 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 {
 	UI16 charID = mChar->GetID();
-	if( charID < 0x0190 )
+	if( charID < 0x0190 || ( charID > 0x0193 && ( charID < 0x025d || charID > 0x029b ) && charID != 0x02B6 && charID != 0x02B7 ))
 	{
-		UI08 aa = RandomNum( 4, 6 ); // some creatures dont have animation #4
+		UI08 aa = 0;
 		if( cwmWorldState->creatures[charID].AntiBlink() )
+			aa = RandomNum( 5, 6 ); // some creatures dont have animation #4, or it's not an attack
+		else
+			aa = RandomNum( 4, 6 );
+		if( charID == 5 ) // eagles need special treatment
 		{
-			++aa;
-			if( charID == 5 ) // eagles need special treatment
+			switch( RandomNum( 0, 2 ) )
 			{
-				switch( RandomNum( 0, 2 ) )
-				{
-					case 0: aa = 0x1;  break;
-					case 1: aa = 0x14; break;
-					case 2: aa = 0x4;  break;
-				}
+				case 0: aa = 0x1;  break;
+				case 1: aa = 0x14; break;
+				case 2: aa = 0x4;  break;
 			}
 		}
 		Effects->PlayCharacterAnimation( mChar, aa ); 
@@ -1520,11 +1610,11 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 
 void CHandleCombat::HandleSplittingNPCs( CChar *toSplit )
 {
-	UI08 splitnum;
 	if( toSplit->GetSplit() > 0 && toSplit->GetHP() >= 1 )
 	{
 		if( RandomNum( 0, 100 ) <= toSplit->GetSplitChance() )
 		{
+			UI08 splitnum;
 			if( toSplit->GetSplit() == 1 ) 
 				splitnum = 1;
 			else 
@@ -1558,18 +1648,11 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
 	const UI16 attackSkill		= UOX_MIN( 1000, (int)mChar.GetSkill( getFightSkill ) );
-	UI16 ammoID = 0;
-	UI16 ammoHue = 0;
-	UI16 ammoFX = 0;
-	UI16 ammoFXHue = 0;
-	UI16 ammoFXRender = 0;
 
 	//Defender Skill values
 	CItem *defWeapon			= getWeapon( ourTarg );
 	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
 	const UI16 defendSkill		= UOX_MIN( 1000, (int)ourTarg->GetSkill( getTargetSkill ) );
-
-	UI08 bowType		= 0;
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -1602,12 +1685,11 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 		if( getFightSkill == ARCHERY )
 		{
-			bowType = getBowType( mWeapon );
-			ammoID = mWeapon->GetAmmoID();
-			ammoHue = mWeapon->GetAmmoHue();
-			ammoFX = mWeapon->GetAmmoFX();
-			ammoFXHue = mWeapon->GetAmmoFXHue();
-			ammoFXRender = mWeapon->GetAmmoFXRender();
+			UI16 ammoID = mWeapon->GetAmmoID();
+			UI16 ammoHue = mWeapon->GetAmmoHue();
+			UI16 ammoFX = mWeapon->GetAmmoFX();
+			UI16 ammoFXHue = mWeapon->GetAmmoFXHue();
+			UI16 ammoFXRender = mWeapon->GetAmmoFXRender();
 
 			if( mChar.IsNpc() || ( ammoID != 0 && DeleteItemAmount( &mChar, 1, ammoID,  ammoHue ) == 1 ))
 			{
@@ -1640,8 +1722,8 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		{
 			if( getFightSkill == ARCHERY && mWeapon->GetAmmoID() != 0 && !RandomNum( 0, 2 ) )
 			{
-				ammoID = mWeapon->GetAmmoID();
-				ammoHue = mWeapon->GetAmmoHue();
+				UI16 ammoID = mWeapon->GetAmmoID();
+				UI16 ammoHue = mWeapon->GetAmmoHue();
 				Items->CreateItem( NULL, ourTarg, ammoID, 1, ammoHue, OT_ITEM, false );
 			}
 
@@ -1656,10 +1738,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 			switch( ourTarg->GetID() )
 			{
-			case 0x025E:	// elf/human female
-			case 0x0191:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
-			case 0x025D:	// elf/human male
-			case 0x0190:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
+			case 0x025E:	// elf/human/garg female
+			case 0x0191:
+			case 0x029B:	Effects->PlaySound( ourTarg, RandomNum( 0x014B, 0x014F ));				break;
+			case 0x025D:	// elf/human/garg male
+			case 0x0190:
+			case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
 			default:
 				{
 					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetID()].GetSound( SND_DEFEND );
@@ -1671,7 +1755,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 			if( mChar.GetPoisonStrength() && ourTarg->GetPoisoned() < mChar.GetPoisonStrength() )
 			{
-				if( ( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 ) )
+				if( ( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 ) || mChar.IsNpc() )
 				{
 					ourTarg->SetPoisoned( mChar.GetPoisonStrength() );
 					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32> (40 / ourTarg->GetPoisoned() )) ); // a lev.1 poison takes effect after 40 secs, a deadly pois.(lev.4) takes 40/4 secs - AntiChrist
@@ -1814,7 +1898,7 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 
 void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16 playerDistance )
 {
-	if( !npcAttack->GetCanAttack() )
+	if( !npcAttack->GetCanAttack() || npcAttack->IsEvading() )
 		return;
 
 	if( npcAttack->GetTimer( tNPC_SPATIMER ) <= cwmWorldState->GetUICurrentTime() )
@@ -1920,7 +2004,18 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 
 R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
-	R32 getDelay	= (R32)( (R32)UOX_MIN( mChar->GetStamina(), static_cast<SI16>(100) ) + 100 );
+	SI16 statOffset = 0;
+	if( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() )
+		statOffset = mChar->GetStamina();
+	else
+		statOffset = mChar->GetDexterity();
+
+	R32 getDelay = 0;
+	if( mChar->IsNpc() ) // Allow NPCs more speed based off of available stamina than players
+		getDelay	= (R32)( (R32)UOX_MIN( statOffset, static_cast<SI16>(300) ) + 100 );
+	else
+		getDelay	= (R32)( (R32)UOX_MIN( statOffset, static_cast<SI16>(100) ) + 100 );
+
 	int getOffset	= 0;
 	int baseValue	= 15000;
 
@@ -2052,12 +2147,18 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	if( ourTarg == NULL )
 		return;
 
+	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
+	{
+		//Console.Warning( "Exited CombatLoop for NPC due to EvadeTimer.\n" );
+		return;
+	}
+
 	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		bool validTarg = false;
 		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->isFree() && ( ourTarg->IsNpc() || isOnline( (*ourTarg) ) ) )
 		{
-			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != AI_PLAYERVENDOR )
+			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE )
 			{
 				if( charInRange( &mChar, ourTarg ) )
 				{

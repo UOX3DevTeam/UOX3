@@ -281,8 +281,6 @@ void TeleTarget( CSocket *s )
 void DyeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	int b;
-	UI16 colour, k;
 	CItem *i		= NULL;
 	CChar *c		= NULL;
 	SERIAL serial	= s->GetDWord( 7 );
@@ -316,14 +314,14 @@ void DyeTarget( CSocket *s )
 			i = calcItemObjFromSer( serial );
 			if( !ValidateObject( i ) )
 				return;
-			colour = (UI16)(( (s->AddID1())<<8 ) + s->AddID2());
+			UI16 colour = (UI16)(( (s->AddID1())<<8 ) + s->AddID2());
 			if( !s->DyeAll() )
 			{
 				if( colour < 0x0002 || colour > 0x03E9 )
 					colour = 0x03E9;
 			}
 			
-			b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
+			int b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
 			if( !b )
 				i->SetColour( colour );
 		}
@@ -333,7 +331,7 @@ void DyeTarget( CSocket *s )
 			if( !ValidateObject( c ) )
 				return;
 			UI16 body = c->GetID();
-			k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
+			UI16 k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
 
 			if( (k&0x4000) == 0x4000 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
 				k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
@@ -526,37 +524,75 @@ void InfoTarget( CSocket *s )
 
 		// manually calculating the ID's if it's a maptype
 		const map_st map1 = Map->SeekMap( x, y, worldNumber );
-		CLand& land = Map->SeekLand( map1.id );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
-
 		mapStat.AddData( "Tilenum", map1.id );
-		mapStat.AddData( "Flags", land.FlagsNum(), 1 );
-		mapStat.AddData( "Name", land.Name() );
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 tiledata and later
+			CLandHS& land = Map->SeekLandHS( map1.id );
+			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
+			mapStat.AddData( "Name", land.Name() );
+		}
+		else
+		{
+			//7.0.8.2 tiledata and earlier
+			CLand& land = Map->SeekLand( map1.id );
+			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
+			mapStat.AddData( "Name", land.Name() );
+		}		
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	} 
 	else
 	{
-		CTile& tile = Map->SeekTile( tileID );
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 data and later
+			CTileHS& tile = Map->SeekTileHS( tileID );
 
-		GumpDisplay statTile( s, 300, 300 );
-		statTile.SetTitle( "Map Tile" );
+			GumpDisplay statTile( s, 300, 300 );
+			statTile.SetTitle( "Map Tile" );
 
-		statTile.AddData( "Tilenum", tileID, 1 );
-		statTile.AddData( "Flags", tile.FlagsNum(), 1 );
-		statTile.AddData( "Weight", tile.Weight(), 0 );
-		statTile.AddData( "Layer", tile.Layer(), 1 );
-		statTile.AddData( "Hue", tile.Hue(), 1 );
-		statTile.AddData( "Anim", tile.Animation(), 1 );
-		statTile.AddData( "Quantity", tile.Quantity(), 1 );
-		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
-		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
-		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
-		statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
-		statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
-		statTile.AddData( "Height", tile.Height(), 0 );
-		statTile.AddData( "Name", tile.Name() );
-		statTile.Send( 4, false, INVALIDSERIAL );
+			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Flags", tile.FlagsNum(), 1 );
+			statTile.AddData( "Weight", tile.Weight(), 0 );
+			statTile.AddData( "Layer", tile.Layer(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Anim", tile.Animation(), 1 );
+			statTile.AddData( "Quantity", tile.Quantity(), 1 );
+			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
+			statTile.AddData( "Height", tile.Height(), 0 );
+			statTile.AddData( "Name", tile.Name() );
+			statTile.Send( 4, false, INVALIDSERIAL );
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			CTile& tile = Map->SeekTile( tileID );
+
+			GumpDisplay statTile( s, 300, 300 );
+			statTile.SetTitle( "Map Tile" );
+
+			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Flags", tile.FlagsNum(), 1 );
+			statTile.AddData( "Weight", tile.Weight(), 0 );
+			statTile.AddData( "Layer", tile.Layer(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Anim", tile.Animation(), 1 );
+			statTile.AddData( "Quantity", tile.Quantity(), 1 );
+			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
+			statTile.AddData( "Height", tile.Height(), 0 );
+			statTile.AddData( "Name", tile.Name() );
+			statTile.Send( 4, false, INVALIDSERIAL );
+		}
 	}
 }
 
@@ -861,13 +897,15 @@ bool BuyShop( CSocket *s, CChar *c )
 		return false;
 
 	CPItemsInContainer iic;
-	iic.UOKRFlag( (s->ClientType() == CV_UOKR ) );
+	if( s->ClientVerShort() >= CVS_6017 )
+		iic.UOKRFlag( true );
 	iic.Type( 0x02 );
 	iic.VendorSerial( sellPack->GetSerial() );
 	CPOpenBuyWindow obw( sellPack, c, iic, s );
 
 	CPItemsInContainer iic2;
-	iic2.UOKRFlag( (s->ClientType() == CV_UOKR ) );
+	if( s->ClientVerShort() >= CVS_6017 )
+		iic2.UOKRFlag( true );
 	iic2.Type( 0x02 );
 	iic2.VendorSerial( boughtPack->GetSerial() );
 	CPOpenBuyWindow obw2( boughtPack, c, iic2, s );
@@ -875,6 +913,8 @@ bool BuyShop( CSocket *s, CChar *c )
 	CPDrawContainer toSend;
 	toSend.Model( 0x0030 );
 	toSend.Serial( c->GetSerial() );
+	if( s->ClientType() >= CV_HS2D && s->ClientVerShort() >= CVS_7090 )
+		toSend.ContType( 0x00 );
 
 	s->Send( &iic );
 	s->Send( &iic2 );
@@ -1386,7 +1426,6 @@ void MakeStatusTarget( CSocket *sock )
 	else if( origCommand != 0 )
 		targetChar->SetName( playerName.stripWhiteSpace() );
 
-	CItem *retitem	= NULL;
 	CItem *mypack	= targetChar->GetPackItem();
 
 	if( targLevel->stripOff.any() )
@@ -1425,7 +1464,6 @@ void MakeStatusTarget( CSocket *sock )
 									iMade->SetType( IT_CONTAINER );
 									iMade->SetDye( true );
 									mypack = iMade;
-									retitem = iMade;
 								}
 							}
 							z->SetCont( mypack );
@@ -1436,6 +1474,7 @@ void MakeStatusTarget( CSocket *sock )
 			}
 		}
 	}
+	targetChar->Teleport();
 }
 
 void SmeltTarget( CSocket *s )

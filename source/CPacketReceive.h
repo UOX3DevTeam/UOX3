@@ -79,6 +79,30 @@ public:
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual void	SetClientVersionShortAndType( CSocket *s, char *verString );
+};
+
+class CPINewClientVersion : public CPInputBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+	//char *			Offset( void );
+	//SI16			len;
+	UI32			seed;
+	UI32			majorVersion;
+	UI32			minorVersion;
+	UI32			clientRevision;
+	UI32			clientPrototype;
+
+public:
+	virtual			~CPINewClientVersion()
+	{
+	}
+					CPINewClientVersion();
+					CPINewClientVersion( CSocket *s );
+	virtual void	Receive( void );
+	virtual bool	Handle( void );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
 class CPIUpdateRangeChange : public CPInputBuffer
@@ -475,8 +499,8 @@ protected:
 	UI08	str;
 	UI08	dex;
 	UI08	intel;
-	UI08	skill[3];
-	UI08	skillValue[3];
+	UI08	skill[4];
+	UI08	skillValue[4];
 	COLOUR	skinColour;
 	UI16	hairStyle;
 	COLOUR	hairColour;
@@ -488,6 +512,24 @@ protected:
 	UI32	ipAddress;
 	COLOUR	shirtColour;
 	COLOUR	pantsColour;
+	
+	//extra for 3DCharCreate - 0x8D
+	UI08	packetSize;
+	UI08	profession;
+	UI08	clientFlags;
+	UI08	race;
+	UI16	unknown1;
+	UI16	unknown2;
+	char	unknown3[25];
+	UI16	unknown4;
+	UI08	unknown5;
+	UI16	unknown6;
+	UI08	unknown7;
+	UI08	unknown8;
+	UI08	unknown9;
+	UI16	shirtID;
+	COLOUR	faceColour;
+	UI16	faceID;
 
 	void	newbieItems( CChar *mChar );
 public:
@@ -496,8 +538,12 @@ public:
 	}
 					CPICreateCharacter();
 					CPICreateCharacter( CSocket *s );
+	virtual void	Create2DCharacter( void );
+	virtual void	Create3DCharacter( void );
 	virtual void	Receive( void );
 	virtual bool	Handle( void );
+	virtual void	SetNewCharGender( CChar *mChar );
+	virtual void	SetNewCharSkillsStats( CChar *mChar );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 

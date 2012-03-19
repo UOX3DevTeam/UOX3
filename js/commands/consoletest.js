@@ -28,8 +28,8 @@ function command_CONSOLETEST( socket, cmdString )
 	Console.PrintSpecial( 4, "PrintSpecial test" );
 	Console.MoveTo( 33, -1 );
 	Console.Print( "MoveTo test" );
-	Console.Error( 1, "Hello world!" );
-	Console.Warning( 1, "Hello world!" );
+	Console.Error( "Hello world!" );
+	Console.Warning( "Hello world!" );
 	Console.Log( "Doh, a deer, a female deer!" );
 	Console.Log( "Doh, a deer, a female deer 2!", "simpsons.log" );
 	Console.Print( "Current mode : " + Console.mode );

@@ -323,7 +323,7 @@ void CMultiObj::SetMaxLockDowns( UI16 newValue )
 //o--------------------------------------------------------------------------o
 bool CMultiObj::DumpHeader( std::ofstream &outStream ) const
 {
-	outStream << "[HOUSE]" << std::endl;
+	outStream << "[HOUSE]" << '\n';
 	return true;
 }
 
@@ -338,28 +338,25 @@ bool CMultiObj::DumpHeader( std::ofstream &outStream ) const
 //o--------------------------------------------------------------------------o
 bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-	
 	CItem::DumpBody( outStream );
 
 	// Hexadecimal Values
-	dumping << std::hex;
+	outStream << std::hex;
 
 	// Decimal / String Values
-	dumping << std::dec;
+	outStream << std::dec;
 	std::map< CChar *, UI08 >::const_iterator oIter;
 	for( oIter = housePrivList.begin(); oIter != housePrivList.end(); ++oIter )
 	{
 		if( ValidateObject( oIter->first ) )
 		{
 			if( oIter->second == HOUSEPRIV_OWNER )
-				dumping << "CoOwner=";
+				outStream << "CoOwner=";
 			else if( oIter->second == HOUSEPRIV_BANNED )
-				dumping << "Banned=";
+				outStream << "Banned=";
 			else
 				continue;
-			dumping << oIter->first->GetSerial() << std::endl;
+			outStream << oIter->first->GetSerial() << '\n';
 		}
 	}
 
@@ -367,13 +364,12 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	for( lIter = lockedList.begin(); lIter != lockedList.end(); ++lIter )
 	{
 		if( ValidateObject( (*lIter) ) )
-			dumping << "LockedItem=" << (*lIter)->GetSerial() << std::endl;
+			outStream << "LockedItem=" << (*lIter)->GetSerial() << '\n';
 	}
 
-	dumping << "MaxLockedDown=" << maxLockedDown << std::endl;
+	outStream << "MaxLockedDown=" << maxLockedDown << '\n';
 	// Add deedname= to the save :) We need a way to preserve the name of the item
-	dumping << "DeedName=" << deed << std::endl;
-	outStream << dumping.str();
+	outStream << "DeedName=" << deed << '\n';
 	return true;
 }
 
@@ -584,7 +580,7 @@ CBoatObj::~CBoatObj()
 //o--------------------------------------------------------------------------o
 bool CBoatObj::DumpHeader( std::ofstream &outStream ) const
 {
-	outStream << "[BOAT]" << std::endl;
+	outStream << "[BOAT]" << '\n';
 	return true;
 }
 
@@ -599,21 +595,16 @@ bool CBoatObj::DumpHeader( std::ofstream &outStream ) const
 //o--------------------------------------------------------------------------o
 bool CBoatObj::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-
 	CMultiObj::DumpBody( outStream );
 
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "Hold=" << "0x" << hold << std::endl;
-	dumping << "Planks=" << "0x" << planks[0] << ",0x" << planks[1] << std::endl;
-	dumping << "Tiller=" << "0x" << tiller << std::dec << std::endl;
+	outStream << std::hex;
+	outStream << "Hold=" << "0x" << hold << '\n';
+	outStream << "Planks=" << "0x" << planks[0] << ",0x" << planks[1] << '\n';
+	outStream << "Tiller=" << "0x" << tiller << std::dec << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	
-	outStream << dumping.str();
+	outStream << std::dec;
 	return true;
 }
 

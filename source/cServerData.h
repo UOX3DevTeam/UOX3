@@ -4,32 +4,50 @@
 
 namespace UOX
 {
-
 	enum ClientFeatures
 	{
-		CF_BIT_CHAT = 0,
-		CF_BIT_LBR,
-		CF_BIT_UNKNOWN,
-		CF_BIT_UNKNOWN2,
-		CF_BIT_AOS,
-		CF_BIT_SIXCHARS,
-		CF_BIT_SE,
-		CF_BIT_ML,
-		CF_BIT_EXPANSION = 15,
+		CF_BIT_CHAT = 0,		// 0x01
+		CF_BIT_UOR,				// 0x02
+		CF_BIT_TD,				// 0x04
+		CF_BIT_LBR,				// 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
+		CF_BIT_AOS,				// 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
+		CF_BIT_SIXCHARS,		// 0x20
+		CF_BIT_SE,				// 0x40
+		CF_BIT_ML,				// 0x80
+		CF_BIT_EIGHTAGE,		// 0x100
+		CF_BIT_NINTHAGE,		// 0x200
+		CF_BIT_TENTHAGE,		// 0x400
+		CF_BIT_UNKNOWN1,		// 0x800 - Increased housing/bank storage?
+		CF_BIT_SEVENCHARS,		// 0x1000
+		//CF_BIT_KRFACES,		// 0x2000
+		//CF_BIT_TRIAL,			// 0x4000
+		CF_BIT_EXPANSION = 15,	// 0x8000
+		CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
+		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
+		CF_BIT_GOTHHOUSE,		// 0x40000 
+		CF_BIT_RUSTHOUSE,		// 0x80000
 		CF_BIT_COUNT
 	};
 
 	enum ServerFeatures
 	{
-		SF_BIT_UNKNOWN1 = 0,
-		SF_BIT_IGR,
-		SF_BIT_CHARLIMIT,
-		SF_BIT_CONTEXTMENUS,
-		SF_BIT_ONECHAR,
-		SF_BIT_AOS,
-		SF_BIT_SIXCHARS,
-		SF_BIT_SE,
-		SF_BIT_ML,
+		SF_BIT_UNKNOWN1 = 0,	// 0x01
+		SF_BIT_IGR,				// 0x02
+		SF_BIT_ONECHAR,			// 0x04 - One char only, Siege-server style
+		SF_BIT_CONTEXTMENUS,	// 0x08
+		SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
+		SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
+		SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
+		SF_BIT_SE,				// 0x80
+		SF_BIT_ML,				// 0x100
+		// Uncomment when adding support for newer client versions
+		SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
+		SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
+		SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
+		SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?
+		SF_BIT_UNKNOWN5 = 13,	// 0x2000 - added with UO:SA launch
+		//SF_BIT_NEWMOVE,		// 0x4000 - new movement system
+		//SF_BIT_FACTIONAREAS,	// 0x8000 - Unlock new Felucca faction-areas*/
 		SF_BIT_COUNT
 	};
 
@@ -84,9 +102,9 @@ enum CSDDirectoryPaths
 class physicalServer
 {
 public:
-  void setName(const std::string newName);
-  void setDomain(const std::string newDomain);
-  void setIP(const std::string newIP);
+  void setName(const std::string& newName);
+  void setDomain(const std::string& newDomain);
+  void setIP(const std::string& newIP);
   void setPort(UI16 newPort);
   std::string getName( void ) const;
   std::string getDomain( void ) const;
@@ -106,7 +124,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 33 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 41 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -122,13 +140,24 @@ private:
 	UI32		netRetryCount;					// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
 	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
 
+	// Client Support
+	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
+	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2
+	bool		Clients6000Enabled;				// Allow client connections from 6.0.0.0 to 6.0.4.0
+	bool		Clients6050Enabled;				// Allow client connections from 6.0.5.0 to 6.0.14.2
+	bool		Clients7000Enabled;				// Allow client connections from 7.0.0.0 to 7.0.8.2
+	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1
+	bool		Clients70160Enabled;			// Allow client connections from 7.0.16.0 to 7.0.23.1
+	bool		Clients70240Enabled;			// Allow client connections from 7.0.24.0+
+
 	// facet block
 	bool		useFacetSaves;
 	std::vector< std::string > facetNameList;
 	std::vector< UI32 > facetAccessFlags;
 
 	// Skills & Stats
-	UI16		skillcap;						//	A cap on the total of all a PC's skills
+	UI16		skilltotalcap;					//	A cap on the total of all a PC's skills
+	UI16		skillcap;						//	A cap on each individual PC skill
 	UI08		skilldelay;						//	Number of seconds after a skill is used before another skill can be used
 	UI16		statcap;						//	A cap on the total of a PC's stats
 	SI16		maxstealthmovement;				//	Max number of steps allowed with stealth skill at 100.0
@@ -145,6 +174,7 @@ private:
 	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
 	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
+	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -240,9 +270,9 @@ public:
 	size_t		GetServerFeatures( void ) const;
 
 	void		SetClientFeature( ClientFeatures, bool );
-	void		SetClientFeatures( UI16 );
+	void		SetClientFeatures( UI32 );
 	bool		GetClientFeature( ClientFeatures ) const;
-	UI16		GetClientFeatures( void ) const;
+	UI32		GetClientFeatures( void ) const;
 
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
@@ -259,8 +289,8 @@ public:
 	void		DungeonLightLevel( LIGHTLEVEL value );
 	void		ServerStartPrivs( UI16 value );
 	void		ServerStartGold( SI16 value );
-	bool		ParseINI( const std::string filename );
-	bool		HandleLine( const UString tag, const UString value );
+	bool		ParseINI( const std::string& filename );
+	bool		HandleLine( const UString& tag, const UString& value );
 
 	void		Load( void );
 	bool		save( void );
@@ -297,6 +327,8 @@ public:
 	UI32		ServerSavesTimerStatus( void ) const;
 	void		ServerMainThreadTimer( UI32 threadtimer );
 	UI32		ServerMainThreadTimerStatus( void ) const;
+	void		ServerSkillTotalCap( UI16 cap );
+	UI16		ServerSkillTotalCapStatus( void ) const;
 	void		ServerSkillCap( UI16 cap );
 	UI16		ServerSkillCapStatus( void ) const;
 	void		ServerSkillDelay( UI08 skdelay );
@@ -319,6 +351,30 @@ public:
 	void		ServerNetRcvTimeout(UI32 timeoutValue) { netRcvTimeout = timeoutValue; }
 	UI32		ServerNetSndTimeout(void) const { return netSndTimeout; }
 	void		ServerNetSndTimeout(UI32 timeoutValue) { netSndTimeout = timeoutValue; }
+
+	// ClientSupport used to determine login-restrictions
+	bool		ClientSupport4000(void) const { return Clients4000Enabled; }
+	void		ClientSupport4000(bool cliSuppValue) { Clients4000Enabled = cliSuppValue; }
+	bool		ClientSupport5000(void) const { return Clients5000Enabled; }
+	void		ClientSupport5000(bool cliSuppValue) { Clients5000Enabled = cliSuppValue; }
+	bool		ClientSupport6000(void) const { return Clients6000Enabled; }
+	void		ClientSupport6000(bool cliSuppValue) { Clients6000Enabled = cliSuppValue; }
+	bool		ClientSupport6050(void) const { return Clients6050Enabled; }
+	void		ClientSupport6050(bool cliSuppValue) { Clients6050Enabled = cliSuppValue; }
+	bool		ClientSupport7000(void) const { return Clients7000Enabled; }
+	void		ClientSupport7000(bool cliSuppValue) { Clients7000Enabled = cliSuppValue; }
+	bool		ClientSupport7090(void) const { return Clients7090Enabled; }
+	void		ClientSupport7090(bool cliSuppValue) { Clients7090Enabled = cliSuppValue; }
+	bool		ClientSupport70160(void) const { return Clients70160Enabled; }
+	void		ClientSupport70160(bool cliSuppValue) { Clients70160Enabled = cliSuppValue; }
+	bool		ClientSupport70240(void) const { return Clients70240Enabled; }
+	void		ClientSupport70240(bool cliSuppValue) { Clients70240Enabled = cliSuppValue; }
+
+	// Enable/disable higher total for starting stats, and/or fourth starting skill in clients 7.0.16+
+	void		ExtendedStartingStats( bool setting );
+	bool		ExtendedStartingStats( void ) const;
+	void		ExtendedStartingSkills( bool setting );
+	bool		ExtendedStartingSkills( void ) const;
 
 	// Define all Path Get/Set's here please
 	void		Directory( CSDDirectoryPaths dp, std::string value );
@@ -402,6 +458,19 @@ public:
 	void		CombatDisplayHitMessage( bool value );
 	bool		CombatDisplayHitMessage( void ) const;
 
+	void		CombatDisplayDamageNumbers( bool value );
+	bool		CombatDisplayDamageNumbers( void ) const;
+
+	void		CombatAttackSpeedFromStamina( bool value );
+	bool		CombatAttackSpeedFromStamina( void ) const;
+
+	void		ServerUsingHSMultis( bool value );
+	bool		ServerUsingHSMultis( void ) const;
+
+	void		ServerUsingHSTiles( bool value );
+	bool		ServerUsingHSTiles( void ) const;
+
+
 	void		CombatAttackStamina( SI16 value );
 	SI16		CombatAttackStamina( void ) const;
 
@@ -428,6 +497,9 @@ public:
 
 	void		ItemDecayInHouses( bool value );
 	bool		ItemDecayInHouses( void ) const;
+
+	void		PaperdollGuildButton( bool value );
+	bool		PaperdollGuildButton( void) const;
 
 	void		CombatMonstersVsAnimals( bool value );
 	bool		CombatMonstersVsAnimals( void ) const;
@@ -567,6 +639,9 @@ public:
 
 	void		AdvancedPathfinding( bool value );
 	bool		AdvancedPathfinding( void ) const;
+
+	void		MapIsUOPWrapped( bool value );
+	bool		MapIsUOPWrapped( void ) const;
 
 	void		LootingIsCrime( bool value );
 	bool		LootingIsCrime( void ) const;

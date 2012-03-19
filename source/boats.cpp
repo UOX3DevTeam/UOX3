@@ -58,7 +58,7 @@ const SI16 iLargeShipOffsets[4][4][2] =
 { 
     { {-2,-1},	{2,-1},	{0,-5},	{1,5} },
     { {1,-2},	{1,2},	{5,0},	{-5,0}},
-    { {2,1},	{-2,1},	{0,5},	{0,5} },
+    { {2,1},	{-2,1},	{0,5},	{0,-5} },
     { {-1,2},	{-1,-2},{-5, 0},{5,0} } 
 };
 //Ship Items
@@ -198,7 +198,7 @@ void OpenPlank( CItem *p )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
 //o---------------------------------------------------------------------------o
-bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
+bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
 {
 	map_st map;
 	SI16 cx = b->GetX(), cy = b->GetY();
@@ -246,37 +246,104 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			return true;
 	}
 
+	// If boat-movement includes turning, boat-direction needs to be switched around
+	if( turnBoat )
+	{
+		switch( boatDir&0x0F )
+		{
+			case NORTHEAST:	// U
+			case SOUTHWEST:	// D
+			case NORTH:	// N
+			case SOUTH:	// S
+				boatDir = 2;
+				break;
+			case EAST: // E
+			case WEST: // W
+			case SOUTHEAST:	// E
+			case NORTHWEST:	// W
+				boatDir = 0;
+				break;
+			default: break;
+		}
+	}
+
 	//small = 5,11 
 	//medium = 5, 13
 	//large = 5, 15
-	switch( dir&0x0F )
+	switch( moveDir&0x0F )
 	{
 		case NORTHEAST:	// U
 		case SOUTHWEST:	// D
 		case NORTH:	// N
 		case SOUTH:	// S
-			x1 = cx - 2;
-			x2 = cx + 2;
-			switch( type )
+			switch( boatDir&0x0F )
 			{
-				case 1: y1 = cy - 6; y2 = cy + 6; break;
-				case 2: y1 = cy - 6; y2 = cy + 7; break;
-				case 3: y1 = cy - 8; y2 = cy + 8; break;
-				default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+				case NORTHEAST:	// U
+				case SOUTHWEST:	// D
+				case NORTH:	// N
+				case SOUTH:	// S
+					x1 = cx - 2; //Width of N/S ship as it moves N/S
+					x2 = cx + 3; //Width of N/S ship as it moves N/S
+					switch( type )
+					{
+						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves N/S
+						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves N/S
+						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves N/S
+						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+					}
+					break;
+				case EAST: // E
+				case WEST: // W
+				case SOUTHEAST:	// E
+				case NORTHWEST:	// W
+					y1 = cy - 2; //Width of E/W ship as it moves N/S
+					y2 = cy + 3; //Width of E/W ship as it moves N/S
+					switch( type )
+					{
+						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves N/S
+						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves N/S
+						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves N/S
+						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+					}
+					break;
+				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		case EAST: // E
 		case WEST: // W
 		case SOUTHEAST:	// E
 		case NORTHWEST:	// W
-			y1 = cy - 2;
-			y2 = cy + 2;
-			switch( type )
+			switch( boatDir&0x0F )
 			{
-				case 1: x1 = cx - 6; x2 = cx + 6; break;
-				case 2: x1 = cx - 7; x2 = cx + 7; break;
-				case 3: x1 = cx - 8; x2 = cx + 8; break;
-				default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+				case EAST: // E
+				case WEST: // W
+				case SOUTHEAST:	// E
+				case NORTHWEST:	// W
+					y1 = cy - 2; //Width of E/W ship as it moves E/W
+					y2 = cy + 3; //Width of E/W ship as it moves E/W
+					switch( type )
+					{
+						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves E/W
+						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves E/W
+						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves E/W
+						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+					}
+					break;
+				case NORTHEAST:	// U
+				case SOUTHWEST:	// D
+				case NORTH:	// N
+				case SOUTH:	// S
+					x1 = cx - 2; //Width of N/S ship as it moves E/W
+					x2 = cx + 3; //Width of N/S ship as it moves E/W
+					switch( type )
+					{
+						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves E/W
+						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves E/W
+						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves E/W
+						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+					}
+					break;
+				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		default: return true;
@@ -293,22 +360,48 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 dir )
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				map = Map->SeekMap( x, y, worldNumber );
-				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
-					return true;
+				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+				{
+					//7.0.9.0 tiledata and later
+					CLandHS& land = Map->SeekLandHS( map.id );
+					if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+						return true;
+				}
+				else
+				{
+					//7.0.8.2 tiledata and earlier
+					CLand& land = Map->SeekLand( map.id );
+					if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+						return true;
+				}		
 			}
 			else
 			{ //static tile
 				msi = new CStaticIterator( x, y, worldNumber );
 				for( Static_st *stat = msi->First(); stat != NULL; stat = msi->Next() )
 				{
-					CTile& tile = Map->SeekTile( stat->itemid );
-					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
+					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 					{
-						delete msi;
-						return true;
+						//7.0.9.0 data and later
+						CTileHS& tile = Map->SeekTileHS( stat->itemid );
+						SI08 zt = stat->zoff + tile.Height();
+						if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
+						{
+							delete msi;
+							return true;
+						}
 					}
+					else
+					{
+						//7.0.8.2 data and earlier
+						CTile& tile = Map->SeekTile( stat->itemid );
+						SI08 zt = stat->zoff + tile.Height();
+						if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
+						{
+							delete msi;
+							return true;
+						}
+					}		
 				}
 				delete msi;
 			}
@@ -344,7 +437,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 			return false;
 	}
 
-	if( BlockBoat( b, 0, 0, 0 ) )
+	if( BlockBoat( b, 0, 0, 0, 0, false ) )
 	{
 		s->sysmessage( 7 );
 		return false;
@@ -489,7 +582,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		}
 		return;
 	}
-	if( BlockBoat( boat, tx, ty, dir ) )
+	if( BlockBoat( boat, tx, ty, dir, boat->GetDir(), false ) )
 	{
 		boat->SetMoveType( 0 );
 		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -601,7 +694,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn )
 		id2 -= 4;//Now you know what the min/max id is for :-)
 
 	prSend.Mode( 0 );
-	if( BlockBoat( b, 0, 0, b->GetDir() ) )
+	if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ) )
 	{
 		b->SetDir( olddir );
 		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
@@ -684,7 +777,7 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 	SI16 tx = 0, ty = 0;
 	CheckDirection( dir&0x0F, tx, ty );
 
-	if( !BlockBoat( myBoat, tx, ty, dir ) )
+	if( !BlockBoat( myBoat, tx, ty, dir, myBoat->GetDir(), true ) )
 	{
 		tiller->TextMessage( mSock, 10 );
 		TurnBoat( myBoat, rightTurn );
@@ -738,6 +831,11 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 		TurnBoat( boat, true );
 		break;
 	case TW_BOATLEFT:
+		if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+			break;
+		else
+			mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+
 		if( dir >= 2 )
 			dir -= 2;
 		else
@@ -746,6 +844,11 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 		MoveBoat( dir, boat );
 		break;
 	case TW_BOATRIGHT:
+		if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+			break;
+		else
+			mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+
 		dir += 2;
 		if( dir > 7 )
 			dir -= 8;
@@ -799,9 +902,9 @@ void ModelBoat( CSocket *s, CBoatObj *i )
 	SERIAL serial = i->GetSerial();
 	if( i->GetOwnerObj() == mChar )
 	{
-		if( mChar->GetMultiObj() == i )
+		if( mChar->GetMultiObj() == i && getDist( mChar, p1 ) <= getDist( mChar, p2 ))
 			LeaveBoat( s, p1 );
-		if( mChar->GetMultiObj() == i )
+		else if( mChar->GetMultiObj() == i && getDist( mChar, p2 ) <= getDist( mChar, p1 ))
 			LeaveBoat( s, p2 );
 
 		if( i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0 )

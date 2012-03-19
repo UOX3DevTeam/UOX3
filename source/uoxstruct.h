@@ -83,7 +83,7 @@ public:
 struct point3
 {
 	R32		x, y, z;
-			point3()
+			point3(): x( 0 ), y( 0 ), z( 0 )
 			{
 			}
 			point3( UI16 X, UI16 Y, SI08 Z ) : x( X ), y( Y ), z( Z )
@@ -236,6 +236,7 @@ struct LogoutLocationEntry
 	SI16 y1;
 	SI16 x2;
 	SI16 y2;
+	UI08 worldNum;
 };
 
 struct advance_st
@@ -256,7 +257,7 @@ struct TitlePair_st
 	TitlePair_st() : lowBound( 0 ), toDisplay( "" )
 	{
 	}
-	TitlePair_st( SI16 lB, const std::string toDisp ) : lowBound( lB )
+	TitlePair_st( SI16 lB, const std::string& toDisp ) : lowBound( lB )
 	{
 		toDisplay = toDisp;
 	}

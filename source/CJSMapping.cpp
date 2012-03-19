@@ -343,7 +343,6 @@ CJSMappingSection::~CJSMappingSection()
 //o--------------------------------------------------------------------------o
 void CJSMappingSection::Parse( Script *fileAssocData )
 {
-	UI16 scriptID			= 0xFFFF;
 	UString basePath		= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
 	UI08 runTime			= 0;
@@ -353,6 +352,7 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 	
 	if( mSection != NULL )
 	{
+		UI16 scriptID = 0xFFFF;
 		size_t i = 0;
 		UString data, fullPath;
 		for( UString tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )

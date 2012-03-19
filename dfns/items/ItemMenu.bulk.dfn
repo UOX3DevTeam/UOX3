@@ -9166,6 +9166,8 @@ ADDITEM=sandstonepatiohousedeed
 ADDITEM=2storylogcabindeed
 0x014F0=large marble patio house deed
 ADDITEM=largemarblepatiohousedeed
+0x014F0=farmer's cabin deed
+ADDITEM=farmerscabindeed
 <=Previous Menu
 ITEMMENU=4
 }

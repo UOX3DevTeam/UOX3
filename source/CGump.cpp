@@ -25,12 +25,12 @@ CGump::~CGump()
 }
 
 // Procedure for "raw" adding new tags/texts
-void CGump::Add( const std::string Tag, const std::string Text )
+void CGump::Add( const std::string& Tag, const std::string& Text )
 {
-	if( Tag.size() > 0 )
+	if( !Tag.empty() )
 		TagList.push_back( Tag );
 
-	if( Text.size() > 0 )
+	if( !Text.empty() )
 		TextList.push_back( Text );
 }
 

@@ -70,6 +70,40 @@ bool validHairStyle( UI16 id, UI16 bodyID )
 			break;
 		}
 		break;
+	case 0x029A:	// gargoyle male
+		switch( id )
+		{
+		case 0x4258: //
+		case 0x4259: //
+		case 0x425A: //
+		case 0x425B: //
+		case 0x425C: //
+		case 0x425D: //
+		case 0x425E: //
+		case 0x425F: //
+			rvalue = true;
+			break;
+		default:
+			break;
+		}
+		break;
+	case 0x029B:	// gargoyle female
+		switch( id )
+		{
+		case 0x4261: //
+		case 0x4262: //
+		case 0x4273: //
+		case 0x4274: //
+		case 0x4275: //
+		case 0x4276: //
+		case 0x42AA: //
+		case 0x42AB: //
+			rvalue = true;
+			break;
+		default:
+			break;
+		}
+		break;
 	default:		// human otherwise
 		switch( id )
 		{
@@ -101,22 +135,35 @@ bool validHairStyle( UI16 id, UI16 bodyID )
 //|   Purpose     :  Check if selected beard is a valid beard type
 //|					 in his pack, on his paperdoll or in his hands
 //o---------------------------------------------------------------------------o
-bool validBeard( UI16 id )
+bool validBeard( UI16 id, UI16 bodyID )
 {
-	bool rvalue;
-	switch( id )
+	bool rvalue = false;
+	switch( bodyID )
 	{
-		case 0x203E:
-		case 0x203F:
-		case 0x2040:
-		case 0x2041:
-		case 0x204B:
-		case 0x204C:
-		case 0x204D:
+	case 0x029A:	// gargoyle male
+		switch( id )
+		{
+		case 0x42AD:
+		case 0x42AE:
+		case 0x42AF: //1701?
+		case 0x42B0:
 			rvalue = true;
 			break;
-		default:
-			rvalue = false;
+		}
+		break;
+	default: // human male
+		switch( id )
+		{
+			case 0x203E:
+			case 0x203F:
+			case 0x2040:
+			case 0x2041:
+			case 0x204B:
+			case 0x204C:
+			case 0x204D:
+				rvalue = true;
+				break;
+		}
 	}
 	return rvalue;
 }
@@ -173,6 +220,10 @@ COLOUR validSkinColour( UI16 id, UI16 bodyID )
 		case 2307:	rvalue = id;	break;
 		default:	rvalue = 191;	break;	// nope, it's not, let's default
 		}
+		break;
+	case 0x029A:
+	case 0x029B:	//gargoyle male/female
+		rvalue = Capped( id, static_cast<UI16>(0x06DB), static_cast<UI16>(0x06F3) );
 		break;
 	default:	// human male/female
 		rvalue = Capped( id, static_cast<UI16>(0x03EA), static_cast<UI16>(0x0422) );
@@ -252,6 +303,11 @@ COLOUR validHairColour( UI16 id, UI16 bodyID )
 		case 2131:	rvalue = id;	break;
 		default:	rvalue = 52;	break;	// nope, it's not, let's default
 		}
+		break;
+	case 0x29A:	// gargoyle male
+	case 0x29B: // gargoyle female
+		// not all colors used, but easier than specialcasing each one
+		rvalue = Capped( id, static_cast< UI16 >(0x06E0), static_cast< UI16 >(0x076B) ); 
 		break;
 	default:	// human male/female
 		rvalue = Capped( id, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
@@ -384,7 +440,6 @@ bool CPIDeleteCharacter::Handle( void )
 				Accounts->DelCharacter( actbTemp->wAccountIndex , slot );
 				ourObj->Delete();
 			}
-
 		}
 		else
 		{
@@ -394,17 +449,20 @@ bool CPIDeleteCharacter::Handle( void )
 		}
 
 		UI08 charCount = 0;
-		for( UI08 i = 0; i < 6; ++i )
+		for( UI08 i = 0; i < 7; ++i )
 		{
 			if( ValidateObject( actbTemp->lpCharacters[i] ) )
 				++charCount;
 		}
 		CServerData *sd		= cwmWorldState->ServerData();
 		UI08 serverCount	= static_cast<UI08>(sd->NumServerLocations());
-		CPCharAndStartLoc toSend( (*actbTemp), charCount, serverCount );
+		CPCharAndStartLoc toSend( (*actbTemp), charCount, serverCount, tSock );
 		for( UI08 j = 0; j < serverCount; ++j )
 		{
-			toSend.AddStartLocation( sd->ServerLocation( j ), j );
+			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )
+				toSend.NewAddStartLocation( sd->ServerLocation( j ), j );
+			else
+				toSend.AddStartLocation( sd->ServerLocation( j ), j );
 		}
 		tSock->Send( &toSend );
 	}
@@ -439,20 +497,47 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 					{
 						n = Items->CreateScriptItem( socket, c, data.section( ",", 0, 0 ).stripWhiteSpace(), 1, OT_ITEM, true );
 						if( n != NULL )
+						{
 							n->SetAmount( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						}
 					}
 					else
+					{
 						n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
+					}
 				}
 				else if( UTag == "EQUIPITEM" )
 				{
 					n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
 					if( n != NULL && n->GetLayer() != IL_NONE )
 					{
-						if( c->GetItemAtLayer( n->GetLayer() ) != NULL )
+						bool conflictItem = true;
+						CItem *j = c->GetItemAtLayer( n->GetLayer() );
+						if( !ValidateObject( j ))
+						{
+							if( n->GetLayer() == IL_RIGHTHAND )
+								j = c->GetItemAtLayer( IL_LEFTHAND );
+							else if( n->GetLayer() == IL_LEFTHAND )
+								j = c->GetItemAtLayer( IL_RIGHTHAND );
+
+							// GetDir-check is to allow for torches and lanterns, 
+							// which use left-hand layer but are not 2-handers or shields
+							if( ValidateObject( j ) && !n->IsShieldType() && n->GetDir() == 0 )
+							{
+								if( j->IsShieldType() || j->GetDir() != 0 )
+									conflictItem = false;
+							}
+							else
+							{
+								conflictItem = false;
+							}
+						}
+						if( conflictItem == true )
 							n->SetCont( c->GetPackItem() );
 						else
+						{
 							n->SetCont( c );
+						}
 						
 						//Apply the choosen colour
 						if( ( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0)
@@ -461,7 +546,7 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 							n->SetDye( true );
 						}
 
-						if( n->GetLayer() == IL_INNERSHIRT && shirtColour != 0)
+						if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0)
 						{
 							n->SetColour( shirtColour );
 							n->SetDye( true );
@@ -509,10 +594,13 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			CreatedItems[HAIR]->SetCont( mChar );
 		}
 	}
-	if( validBeard( facialHair ) && sex == 0 )
+	if( validBeard( facialHair, mChar->GetID() ) && ( mChar->GetID() == 0x0190 || mChar->GetID() == 0x029A )) //Male human or male gargoyle
 	{
 		ItemID				= facialHair;
-		ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
+		if( mChar->GetID() == 0x029A ) // gargoyle male
+			ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x06E0), static_cast< UI16 >(0x076B) );
+		else // human male
+			ItemColour			= Capped( facialHairColour, static_cast< UI16 >(0x044E), static_cast< UI16 >(0x04AD) );
 		CreatedItems[BEARD] = Items->CreateItem( tSock, mChar, ItemID, 1, ItemColour, OT_ITEM );
 		if( CreatedItems[BEARD] != NULL )
 		{
@@ -552,7 +640,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 
 	// Give scripted newbie items precedence over default clothing
 	std::sort( vecSkills.rbegin(), vecSkills.rend() );
-	for( UI08 i = 0; i < 3 ; ++i )
+
+	UI08 numStartSkills = 3; // 0 included
+	if( cwmWorldState->ServerData()->ExtendedStartingSkills() )
+		numStartSkills = 4;
+
+	for( UI08 i = 0; i < numStartSkills ; ++i )
 	{
 		if( vecSkills[i].value > 0 )
 		{
@@ -560,14 +653,28 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			addNewbieItem( tSock, mChar, whichsect, 0, 0 );
 		}
 	}
-	if( mChar->GetID() == 0x0190 || mChar->GetID() == 0x025D )
-		addNewbieItem( tSock, mChar, "DEFAULT MALE", pantsColour, shirtColour );
-	else
-		addNewbieItem( tSock, mChar, "DEFAULT FEMALE", pantsColour, shirtColour );
 
+	// Add default for all characters
+	addNewbieItem( tSock, mChar, "DEFAULT ALL", pantsColour, shirtColour );
+
+	// Add gender/race-specific items
+	if( mChar->GetID() == 0x0190 )
+		addNewbieItem( tSock, mChar, "DEFAULT MALE", pantsColour, shirtColour );
+	else if( mChar->GetID() == 0x0191 )
+		addNewbieItem( tSock, mChar, "DEFAULT FEMALE", pantsColour, shirtColour );
+	else if( mChar->GetID() == 0x025D )
+		addNewbieItem( tSock, mChar, "DEFAULT ELF MALE", pantsColour, shirtColour );
+	else if( mChar->GetID() == 0x025E )
+		addNewbieItem( tSock, mChar, "DEFAULT ELF FEMALE", pantsColour, shirtColour );
+	else if( mChar->GetID() == 0x029A )
+		addNewbieItem( tSock, mChar, "DEFAULT GARG FEMALE", pantsColour, shirtColour );
+	else if( mChar->GetID() == 0x029B )
+		addNewbieItem( tSock, mChar, "DEFAULT GARG FEMALE", pantsColour, shirtColour );
+	
 	// Give the character some gold
 	CreatedItems[GOLD] = Items->CreateScriptItem( tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true );
 }
+
 //o---------------------------------------------------------------------------o
 //|	Function	-	void createChar( CSocket *mSock )
 //|	Programmer	-	UOX3 DevTeam
@@ -578,6 +685,8 @@ bool CPICreateCharacter::Handle( void )
 {
 	// This function needs to be decomposed
 	// Way too large from a maintenance perspective
+	// --> I split certain things out into a few new functions to make this a bit more manageable
+
 	if( tSock != NULL )
 	{
 		CChar *mChar = static_cast< CChar * >(ObjectFactory::getSingleton().CreateObject( OT_CHAR ));
@@ -585,10 +694,6 @@ bool CPICreateCharacter::Handle( void )
 		{
 			CPClientVersion verCheck;
 			tSock->Send( &verCheck );
-
-			SI32 totalstats, totalskills;
-			UI08 i;
-			R32 percheck;
 
 			tSock->CurrcharObj( mChar );
 			mChar->SetName( charName );
@@ -602,20 +707,8 @@ bool CPICreateCharacter::Handle( void )
 				actbRec.dwInGame = mChar->GetSerial();
 				mChar->SetAccount( actbRec );
 			}
-			UI16 pGenderID = 0x190;
-			switch( sex )
-			{
-			default:						break;
-			case 1:		pGenderID = 0x0191;	break;	// human female
-			case 2:		pGenderID = 0x025D;	break;	// elf male
-			case 3:		pGenderID = 0x025E;	break;	// elf female
-			}
 
-			mChar->SetID( pGenderID );
-			mChar->SetOrgID( pGenderID );
-
-			mChar->SetSkin( validSkinColour( skinColour, pGenderID ) | 0x8000 );
-			mChar->SetOrgSkin( mChar->GetSkin() );
+			SetNewCharGender( mChar );
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 			
@@ -625,63 +718,16 @@ bool CPICreateCharacter::Handle( void )
 				mChar->SetPriv( 0xFF );
 				mChar->SetCommandLevel( CL_GM );
 			}
+
+			if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
+				locationNumber = clientFlags;
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
-			
 			if( toGo == NULL )
 				toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
-
 			mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
 			mChar->SetDir( SOUTH );
 
-			//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
-			mChar->SetStrength( Capped( str, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
-			mChar->SetDexterity( Capped( dex, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
-			mChar->SetIntelligence( Capped( intel, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
-
-			totalstats = mChar->GetStrength() + mChar->GetDexterity() + mChar->GetIntelligence();
-
-			// This should never happen, unless someone is trying to "hack" it.
-			if( totalstats != 80 )
-			{
-				percheck = ( mChar->GetStrength() / (R32)totalstats );
-				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 80, 10.0f, 60.0f ) ) );
-				percheck = ( mChar->GetDexterity() / (R32)totalstats );
-				mChar->SetDexterity( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f ) ) );
-				percheck = ( mChar->GetIntelligence() / (R32)totalstats );
-				mChar->SetIntelligence( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f ) ) );
-			}
-
-			mChar->SetHP( mChar->GetMaxHP() );
-			mChar->SetStamina( mChar->GetMaxStam() );
-			mChar->SetMana( mChar->GetMaxMana() );
-			if( skillValue[0] > 50 )
-				skillValue[0] = 50;
-			totalskills = skillValue[0];
-			if( skillValue[1] > 50 )
-				skillValue[1] = 50;
-			totalskills += skillValue[1];
-			if( skillValue[2] > 50 )
-				skillValue[2] = 50;
-			if( skillValue[2] + totalskills > 100 )
-				skillValue[2] = static_cast< UI08 >(100 - totalskills);
-			
-			mChar->SetRace( 0 );
-			mChar->SetRaceGate( 65535 );
-			UI08 priSkill	= skill[0];
-			UI08 scdSkill	= skill[1];
-			UI08 thrdSkill	= skill[2];
-
-			for( i = 0; i < ALLSKILLS; ++i )
-			{
-				mChar->SetBaseSkill( 0, i );
-				if( i == priSkill )
-					mChar->SetBaseSkill( (UI16)(skillValue[0] * 10), i );
-				else if( i == scdSkill )
-					mChar->SetBaseSkill( (UI16)(skillValue[1] * 10), i );
-				else if( i == thrdSkill )
-					mChar->SetBaseSkill( (UI16)(skillValue[2] * 10), i );
-				Skills->updateSkillLevel( mChar, i );
-			}
+			SetNewCharSkillsStats( mChar );
 
 			newbieItems( mChar );
 
@@ -705,6 +751,306 @@ bool CPICreateCharacter::Handle( void )
 		}
 	}
 	return true;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void SetNewCharStatsSkills( CChar *mChar )
+//|	Programmer	-	Xuri
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Sets skills and stats for newly created characters
+//o---------------------------------------------------------------------------o
+void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
+{
+	SI32 totalstats, totalskills;
+	UI08 i;
+	R32 percheck;
+
+	if( profession != 0 ) //player picked a character profession during character creation
+	{
+		bool extStats = cwmWorldState->ServerData()->ExtendedStartingStats();
+		bool extSkills = cwmWorldState->ServerData()->ExtendedStartingSkills();
+
+		// Which skills and stats a character starts with depends on chosen profession,
+		// plus ExtendedStartingStats/Skills-setting in UOX.INI. 
+		// Matches old (4.x - 7.0.8.x) or new (7.0.9+) profession-templates in client, but we
+		// shouldn't trust client-data!
+		switch( profession )
+		{
+		case 1: // Warrior
+			skill[0] = ( extSkills ? 40 : 27 ); // Swordsmanship or Tactics
+			skill[1] = ( extSkills ? 27 : 17 );	// Tactics or Healing
+			skill[2] = ( extSkills ? 17 : 40 );	// Healing or Swordsmanship
+			skill[3] = ( extSkills ? 1 : 0xFF ); // Anatomy or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 45 ); // 30 or 45 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 5 ); // 30 or 5 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( extStats ? 45 : 35 );
+			mChar->SetDexterity( 35 );
+			mChar->SetIntelligence( 10 );
+			break;
+		case 2: // Mage
+			skill[0] = ( extSkills ? 25 : 25 ); // Magery or Magery
+			skill[1] = ( extSkills ? 16 : 46 ); // Evaulate Intelligence or Meditation
+			skill[2] = ( extSkills ? 46 : 43 ); // Meditation or Wrestling
+			skill[3] = ( extSkills ? 43 : 0xFF ); // Wrestling or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 25 );
+			mChar->SetDexterity( extStats ? 20 : 10 );
+			mChar->SetIntelligence( 45 );
+			break;
+		case 3: // Blacksmith
+			skill[0] = ( extSkills ? 7 : 7 );	// Blacksmithing
+			skill[1] = ( extSkills ? 45 : 37 );	// Mining or Tinkering
+			skill[2] = ( extSkills ? 37 : 45 );	// Tinkering or Mining
+			skill[3] = ( extSkills ? 34 : 0xFF );	// Tailoring or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 45 ); // 30 or 45 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 5 ); // 30 or 5 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 60 );
+			mChar->SetDexterity( extStats ? 15 : 10 );
+			mChar->SetIntelligence( extStats ? 15 : 10);
+			break;
+		case 4: // Necromancer
+			skill[0] = ( extSkills ? 49 : 49 );	// Necromancy
+			skill[1] = ( extSkills ? 32 : 40 );	// Spirit Speak or Swordsmanship
+			skill[2] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
+			skill[3] = ( extSkills ? 46 : 0xFF );	// Meditation or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 30 ); // 30 or 30 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 20 ); // 30 or 20 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 25 );
+			mChar->SetDexterity( 20 );
+			mChar->SetIntelligence( extStats ? 45 : 35 );
+			break;
+		case 5: // Paladin
+			skill[0] = ( extSkills ? 51 : 51 );	// Chivalry
+			skill[1] = ( extSkills ? 40 : 27 );	// Swordsmanship or Tactics
+			skill[2] = ( extSkills ? 27 : 43 );	// Tactics or Wrestling
+			skill[3] = ( extSkills ? 50 : 0xFF );	// Focus or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 45 );
+			mChar->SetDexterity( 20 );
+			mChar->SetIntelligence( extStats ? 25 : 15 );
+			break;
+		case 6: // Samurai
+			skill[0] = ( extSkills ? 52 : 52 );	// Bushido
+			skill[1] = ( extSkills ? 40 : 40 );	// Swordsmanship
+			skill[2] = ( extSkills ? 50 : 43 );	// Focus or Wrestling
+			skill[3] = ( extSkills ? 5 : 0xFF );	// Parrying or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 40 );
+			mChar->SetDexterity( 30 );
+			mChar->SetIntelligence( extStats ? 20 : 10 );
+			break;
+		case 7: // Ninja
+			skill[0] = ( extSkills ? 53 : 53 ); // Ninjitsu or Ninjitsu
+			skill[1] = ( extSkills ? 42 : 21 ); // Fencing or Hiding
+			skill[2] = ( extSkills ? 21 : 43 ); // Hiding or Wrestling
+			skill[3] = ( extSkills ? 47 : 0xFF ); // Stealth or nothing
+			skillValue[0] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[1] = ( extSkills ? 30 : 50 ); // 30 or 50 skillpoints
+			skillValue[2] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			skillValue[3] = ( extSkills ? 30 : 0 ); // 30 or 0 skillpoints
+			mChar->SetStrength( 40 );
+			mChar->SetDexterity( 30 );
+			mChar->SetIntelligence( extStats ? 20 : 10 );
+			break;
+		default:
+			Console.Error( "Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() );
+			break;
+		}
+	}
+	else // Player did not pick a profession during character creation, but chose to customize his character
+	{
+		//	Date Unknown - Thyme - Modified to fit in with new client, and 80 total starting stats. The highest any one stat can be is 60, and the lowest is 10.
+		mChar->SetStrength( Capped( str, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
+		mChar->SetDexterity( Capped( dex, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
+		mChar->SetIntelligence( Capped( intel, static_cast< UI08 >(10), static_cast< UI08 >(60) ) );
+
+		totalstats = mChar->GetStrength() + mChar->GetDexterity() + mChar->GetIntelligence();
+		if( totalstats != 80 && !cwmWorldState->ServerData()->ExtendedStartingStats() )
+		{
+			if( totalstats > 80 )
+			{
+				// If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
+				Console.Error( "Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+				percheck = ( mChar->GetStrength() / (R32)totalstats );
+				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 80, 10.0f, 60.0f ) ) );
+				percheck = ( mChar->GetDexterity() / (R32)totalstats );
+				mChar->SetDexterity( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f ) ) );
+				percheck = ( mChar->GetIntelligence() / (R32)totalstats );
+				mChar->SetIntelligence( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f ) ) );
+			}
+			else
+			{
+				Console.Error( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+			}
+		}
+		else if( totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats() )
+		{
+			if( totalstats > 90 )
+			{
+				// If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
+				Console.Error( "Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+				percheck = ( mChar->GetStrength() / (R32)totalstats );
+				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 90, 10.0f, 60.0f ) ) );
+				percheck = ( mChar->GetDexterity() / (R32)totalstats );
+				mChar->SetDexterity( static_cast<UI08>(Capped( percheck * 90, 10.0f, 60.0f ) ) );
+				percheck = ( mChar->GetIntelligence() / (R32)totalstats );
+				mChar->SetIntelligence( static_cast<UI08>(Capped( percheck * 90, 10.0f, 60.0f ) ) );
+			}
+			else
+			{
+				Console.Error( "Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+			}
+		}
+
+		if( skillValue[0] > 50 )
+			skillValue[0] = 50;
+		totalskills = skillValue[0];
+		if( skillValue[1] > 50 )
+			skillValue[1] = 50;
+		totalskills += skillValue[1];
+		if( skillValue[2] > 50 )
+			skillValue[2] = 50;
+		if( !cwmWorldState->ServerData()->ExtendedStartingSkills() )
+		{
+			if( skillValue[2] + totalskills > 100 )
+				skillValue[2] = static_cast< UI08 >(100 - totalskills);
+			totalskills += skillValue[2];
+			if( totalskills < 100 )
+			{
+				Console.Error( "Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+			}
+		}
+		else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
+		{
+			if( skillValue[2] + totalskills > 120 )
+				skillValue[2] = static_cast< UI08 >(120 - totalskills);
+			totalskills += skillValue[2];
+			if( skillValue[3] > 50 )
+				skillValue[3] = 50;
+			if( skillValue[3] + totalskills > 120 )
+				skillValue[3] = static_cast< UI08 >(120 - totalskills);
+			totalskills += skillValue[3];
+			if( totalskills < 120 )
+			{
+				Console.Error( "Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() );
+			}
+		}
+	}
+
+	mChar->SetHP( mChar->GetMaxHP() );
+	mChar->SetStamina( mChar->GetMaxStam() );
+	mChar->SetMana( mChar->GetMaxMana() );
+
+	mChar->SetRace( 0 );
+	mChar->SetRaceGate( 65535 );
+	UI08 firstSkill		= skill[0];
+	UI08 secondSkill	= skill[1];
+	UI08 thirdSkill		= skill[2];
+	UI08 fourthSkill	= skill[3];
+
+	for( i = 0; i < ALLSKILLS; ++i )
+	{
+		mChar->SetBaseSkill( 0, i );
+		if( i == firstSkill )
+			mChar->SetBaseSkill( (UI16)(skillValue[0] * 10), i );
+		else if( i == secondSkill )
+			mChar->SetBaseSkill( (UI16)(skillValue[1] * 10), i );
+		else if( i == thirdSkill )
+			mChar->SetBaseSkill( (UI16)(skillValue[2] * 10), i );
+		else if( i == fourthSkill )
+		{
+			if( cwmWorldState->ServerData()->ExtendedStartingSkills() )
+				mChar->SetBaseSkill( (UI16)(skillValue[3] * 10), i );
+		}
+		Skills->updateSkillLevel( mChar, i );
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void SetNewCharGender( CChar *mChar )
+//|	Programmer	-	Xuri
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Sets gender for newly created characters
+//o---------------------------------------------------------------------------o
+void CPICreateCharacter::SetNewCharGender( CChar *mChar )
+{
+	UI16 pGenderID = 0x0190;
+	bool gargCreation = false;
+	bool elfCreation = false;
+	if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SA ) )
+		gargCreation = true;
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_ML ) )
+		elfCreation = true;
+
+	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
+	{
+		switch( sex )
+		{
+		case 0:
+			switch( race )
+			{
+			case 1: pGenderID = 0x0190; break;	// human male
+			case 2:	pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
+			case 3: pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
+			}
+			break;
+		case 1:
+			switch( race )
+			{
+			case 1: pGenderID = 0x0191;	break;	// human female
+			case 2: pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
+			case 3: pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
+			}
+			break;
+		}
+	}
+	else if( tSock->ClientType() >= CV_SA2D )
+	{
+		switch( sex )
+		{
+		case 0:		pGenderID = 0x0190; break;	// human male
+		case 1:		pGenderID = 0x0191;	break;	// human female
+		case 2:		pGenderID = 0x0190; break;	// human male
+		case 3:		pGenderID = 0x0191;	break;	// human female
+		case 4:		pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male
+		case 5:		pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female
+		case 6:		pGenderID = ( gargCreation ? 0x029A : 0x0190 );	break;	// Gargoyle male
+		case 7:		pGenderID = ( gargCreation ? 0x029B : 0x0191 );	break;	// Gargoyle female
+		default:	break;
+		}
+	}
+	else
+	{
+		switch( sex )
+		{
+		case 0:		pGenderID = 0x0190; break;	// human male
+		case 1:		pGenderID = 0x0191;	break;	// human female
+		case 2:		pGenderID = ( elfCreation ? 0x025D : 0x0190 ); break; // elf male (human if server doesn't allow elf but client tried anyway)
+		case 3:		pGenderID = ( elfCreation ? 0x025E : 0x0191 ); break; // elf female (human if server doesn't allow elf but client tried anyway)
+		default:						break;
+		}
+	}
+
+	mChar->SetID( pGenderID );
+	mChar->SetOrgID( pGenderID );
+
+	mChar->SetSkin( validSkinColour( skinColour, pGenderID ) | 0x8000 );
+	mChar->SetOrgSkin( mChar->GetSkin() );
 }
 
 //o---------------------------------------------------------------------------o
@@ -732,7 +1078,7 @@ void updates( CSocket *s )
 	s->Send( &toSend );
 }
 
-void sysBroadcast( const std::string txt );
+void sysBroadcast( const std::string& txt );
 //o---------------------------------------------------------------------------o
 //|   Function    :  void startChar( CSocket *mSock, bool onCreate )
 //|   Date        :  Unknown
@@ -852,6 +1198,7 @@ void startChar( CSocket *mSock, bool onCreate )
 				if( onLoginScp != NULL )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
+
 			mSock->LoginComplete( true );
     
 			if( mChar->WorldNumber() > 0 )
@@ -1051,6 +1398,8 @@ void HandleDeath( CChar *mChar )
 		case 0x0191:	mChar->SetID( 0x0193 );	break;	// human female, or others
 		case 0x025D:	mChar->SetID( 0x025F );	break;	// elf male
 		case 0x025E:	mChar->SetID( 0x0260 );	break;	// elf female
+		case 0x029A:	mChar->SetID( 0x02B6 ); break;	// gargoyle male
+		case 0x029B:	mChar->SetID( 0x02B7 ); break;	// gargoyle female
 		}
 
 		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );

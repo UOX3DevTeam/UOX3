@@ -1920,6 +1920,15 @@
 1786=You lock down the targeted item.
 1787=You release the targeted item.
 1788=(%i lockdowns remaining)
+1789=There is not a spot nearby to place your campfire.
+1790=You feel it would take a few moments to secure your camp.
+1791=The camp is now secure.
+1792=The targeted NPC is in a state of evasion and cannot be attacked.
+1793=You are not currently in a guild. Go buy a guildstone!
+1794=(Whisper from %s)
+1795=(Yelled by %s)
+1796=Your current client-version (%s) is not supported by this shard. You will be disconnected.
+1797=Woe is me! My escort has betrayed me!
+1798=You cannot mount.
 }
-
 EOF

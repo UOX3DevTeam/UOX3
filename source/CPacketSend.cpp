@@ -217,7 +217,7 @@ CPacketSpeech::CPacketSpeech() : isUnicode( false )
 	pStream.WriteByte(   20, 0 );
 }
 
-void CPacketSpeech::SpeakerName( const std::string toPut )
+void CPacketSpeech::SpeakerName( const std::string& toPut )
 {
 	size_t len = toPut.length();
 	if( len >= 30 )
@@ -259,7 +259,7 @@ void CPacketSpeech::Type( SpeechType toPut )
 {
 	pStream.WriteByte( 9, static_cast<UI08>(toPut) );
 }
-void CPacketSpeech::Speech( const std::string toPut )
+void CPacketSpeech::Speech( const std::string& toPut )
 {
 	size_t len			= toPut.length();
 	const size_t newLen	= 44 + len + 1;
@@ -370,7 +370,7 @@ void CPExtMove::CopyData( CChar &toCopy )
 	const UI08 BIT_DEAD		= 7;	// 0x80
 	const UI08 BIT_POISONED	= 2;	// 0x04
 	const UI08 BIT_FEMALE	= 1;	// 0x02
-	const UI08 BIT_GOLDEN	= 3;	// 0x08
+	//const UI08 BIT_GOLDEN	= 3;	// 0x08
 
 	pStream.WriteLong(  1, toCopy.GetSerial() );
 	pStream.WriteShort( 5, toCopy.GetID() );
@@ -387,7 +387,7 @@ void CPExtMove::CopyData( CChar &toCopy )
 	std::bitset< 8 > flag( 0 );
 	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
 	flag.set( BIT_DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
-	flag.set( BIT_POISONED, (toCopy.GetPoisoned() != 0) );
+	flag.set( BIT_POISONED, (toCopy.GetPoisoned() != 0) ); // Changes to Flying in SA clients? 7.0+?
 #pragma note( "we need to update this here to determine what goes on with elves too!" )
 	flag.set( BIT_FEMALE, (toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E) );
 //	flag.set( BIT_GOLDEN, (toCopy.GetHP() == toCopy.GetMaxHP()) );
@@ -516,17 +516,18 @@ void CPLightLevel::Level( LIGHTLEVEL level )
 
 void CPUpdIndSkill::InternalReset( void )
 {
-	pStream.ReserveSize( 11 );
+	pStream.ReserveSize( 13 );
 	pStream.WriteByte(  0, 0x3A );
-	pStream.WriteShort( 1, 0x000B ); // Length of message
-	pStream.WriteByte(  3, 0xFF); // single entry
+	pStream.WriteShort( 1, 0x000D ); // Length of message
+	pStream.WriteByte(  3, 0xDF); // delta, capped
 }
 void CPUpdIndSkill::CopyData( CChar& i, UI08 sNum )
 {
 	SkillNum( sNum );
 	Skill( i.GetSkill( sNum ) );
 	BaseSkill( i.GetBaseSkill( sNum ) );
-	Lock( (UI08)i.GetSkillLock( sNum ) );
+	Lock( (SkillLock)i.GetSkillLock( sNum ) );
+	Cap( (UI16)cwmWorldState->ServerData()->ServerSkillCapStatus() );
 }
 CPUpdIndSkill::CPUpdIndSkill()
 {
@@ -543,7 +544,7 @@ void CPUpdIndSkill::Character( CChar& i, UI08 sNum )
 }
 void CPUpdIndSkill::SkillNum( UI08 sNum )
 {
-	pStream.WriteByte( 5, sNum );
+	pStream.WriteShort( 4, sNum );
 }
 void CPUpdIndSkill::Skill( SI16 skillval )
 {
@@ -553,9 +554,13 @@ void CPUpdIndSkill::BaseSkill( SI16 skillval )
 {
 	pStream.WriteShort( 8, skillval );
 }
-void CPUpdIndSkill::Lock( UI08 lockVal )
+void CPUpdIndSkill::Lock( SkillLock lockVal )
 {
 	pStream.WriteByte( 10, lockVal );
+}
+void CPUpdIndSkill::Cap( SI16 capVal )
+{
+	pStream.WriteShort( 11, capVal );
 }
 
 //0x3B Packet
@@ -1007,7 +1012,7 @@ void CPPaperdoll::FlagByte( UI08 fVal )
 {
 	pStream.WriteByte( 65, fVal );
 }
-void CPPaperdoll::Text( const std::string toPut )
+void CPPaperdoll::Text( const std::string& toPut )
 {
 	if( toPut.length() > 60 )
 	{
@@ -1357,6 +1362,7 @@ void CPPlayMusic::MusicID( SI16 musicID )
 //	BYTE[4] item id 
 //	BYTE[2] model-Gump 
 //		0x003c = backpack 
+//	BYTE[2] container type // added in UO:HS clients, 0x00 for vendors, 0x7D for spellbooks and containers
 void CPDrawContainer::InternalReset( void )
 {
 	pStream.ReserveSize( 7 );
@@ -1373,7 +1379,12 @@ CPDrawContainer::CPDrawContainer( CItem &toCopy )
 }
 void CPDrawContainer::Model( UI16 newModel )
 {
-	pStream.WriteShort( 5, newModel );
+	pStream.WriteShort( 5, newModel ); //-1?
+}
+void CPDrawContainer::ContType( UI16 contType )
+{
+	pStream.ReserveSize( 9 );
+	pStream.WriteShort( 7, contType );
 }
 CPDrawContainer &CPDrawContainer::operator=( CItem &toCopy )
 {
@@ -1558,11 +1569,19 @@ void CPTargetCursor::CursorType( UI08 nType )
 //	BYTE[2] currentHitpoints 
 //	BYTE[2] maxHitpoints 
 //	BYTE[1] name change flag (0x1 = allowed, 0 = not allowed)
-//	BYTE[1] flag 
-//		(0x00 no more data following (end of packet here).  
-//		0x01 more data after this flag following, 
-//		0x03: like 1, with extended info)
-//	BYTE sex (0=male, 1=female) 
+//	BYTE[1] Status Flag/Supported Features
+//		Status Flag
+//		0x00: no more data following (end of packet here).
+//		0x01: T2A Extended Info
+//		0x03: UOR Extended Info
+//		0x04: AOS Extended Info (4.0+)
+//		0x05: UOML Extended Info (5.0+)
+//		0x06: UOKR Extended Info (UOKR+)
+//	BYTE sex + race
+//		0: Male Human
+//		1: Female Human
+//		2: Male Elf
+//		3: Female Elf
 //	BYTE[2] str 
 //	BYTE[2] dex 
 //	BYTE[2] int 
@@ -1572,27 +1591,65 @@ void CPTargetCursor::CursorType( UI08 nType )
 //	BYTE[2] maxMana 
 //	BYTE[4] gold 
 //	BYTE[2] armor class 
-//	BYTE[2] weight 
-//	If (flag == 3) (fill new statusbar data)
-// 	BYTE[2]  statcap
-//	BYTE  pets current
-//	BYTE pets max
-//	If (flag == 4) 
-//	BYTE[2]	fireresist
-//	BYTE[2]	coldresist
-//	BYTE[2]	poisonresist
-//	BYTE[2]	energyresist
-//	BYTE[2]	luck
-//	BYTE[2]	damage max 
-//	BYTE[2]	damage min
-//	BYTE[4]	unknown
+//	BYTE[2] weight
+//	If (flag 5 or higher - ML attributes 5.0+)
+//		BYTE[2] Max Weight
+//		BYTE[1] Race (see notes)
+//		UOML+ Race Flag
+//			1: Human
+//			2: Elf
+//			3: Gargoyle
+//	If (flag == 3) (UO:R attributes)
+// 		BYTE[2]  statcap
+//		BYTE  pets current
+//		BYTE pets max
+//	If (flag == 4 - AoS attributes 4.0+) 
+//		BYTE[2]	fireresist
+//		BYTE[2]	coldresist
+//		BYTE[2]	poisonresist
+//		BYTE[2]	energyresist
+//		BYTE[2]	luck
+//		BYTE[2]	damage max 
+//		BYTE[2]	damage min
+//		BYTE[4]	Tithing points (Paladin Books)
+// If (flag 6 or higher - KR attributes) 
+//		BYTE[2] Hit Chance Increase
+//		BYTE[2] Swing Speed Increase
+//		BYTE[2] Damage Chance Increase
+//		BYTE[2] Lower Reagent Cost
+//		BYTE[2] Hit Points Regeneration
+//		BYTE[2] Stamina Regeneration
+//		BYTE[2] Mana Regeneration
+//		BYTE[2] Reflect Physical Damage
+//		BYTE[2] Enhance Potions
+//		BYTE[2] Defense Chance Increase
+//		BYTE[2] Spell Damage Increase
+//		BYTE[2] Faster Cast Recovery
+//		BYTE[2] Faster Casting
+//		BYTE[2] Lower Mana Cost
+//		BYTE[2] Strength Increase
+//		BYTE[2] Dexterity Increase
+//		BYTE[2] Intelligence Increase
+//		BYTE[2] Hit Points Increase
+//		BYTE[2] Stamina Increase
+//		BYTE[2] Mana Increase
+//		BYTE[2] Maximum Hit Points Increase
+//		BYTE[2] Maximum Stamina Increase
+//		BYTE[2] Maximum Mana Increase
 
 //Note: Server Message
 //Note: For characters other than the player, currentHitpoints and maxHitpoints are not the actual values.  MaxHitpoints is a fixed value, and currentHitpoints works like a percentage.
+
 void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 {
 	if( target.ReceivedVersion() )
 	{
+		/*if( target.ClientVersionMajor() >= 6 )
+		{
+		}
+		else if( target.ClientVersionMajor() >= 5 )
+		{
+		}*/
 		if( target.ClientVersionMajor() >= 4 )
 		{
 			extended3 = true;
@@ -1625,11 +1682,14 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		MaxHP( toCopy.GetMaxHP() );
 	}
 	NameChange( false );
-#pragma note( "We need to check what the values are, OSI wise, for this value.  Are elfs 2/3?" )
-	if( toCopy.GetID() == 0x0190 || toCopy.GetID() == 0x0192 )
+	if( toCopy.GetID() == 0x0190 || toCopy.GetOrgID() == 0x0190 ) // Male huamn
 		Sex( 0 );
-	else
+	else if( toCopy.GetID() == 0x0191 || toCopy.GetOrgID() == 0x0191 ) // Female human
 		Sex( 1 );
+	else if( toCopy.GetID() == 0x025D || toCopy.GetOrgID() == 0x025D ) // Male elf
+		Sex( 2 );
+	else if( toCopy.GetID() == 0x025E || toCopy.GetOrgID() == 0x025E ) // Female elf
+		Sex( 3 );
 	if( isDead )
 	{
 		Strength( 0 );
@@ -1691,7 +1751,7 @@ void CPStatWindow::Serial( SERIAL toSet )
 {
 	pStream.WriteLong( 3, toSet );
 }
-void CPStatWindow::Name( const std::string nName )
+void CPStatWindow::Name( const std::string& nName )
 {
 	if( nName.length() >= 30 )
 	{
@@ -1893,7 +1953,6 @@ CPLoginComplete::CPLoginComplete()
 	pStream.WriteByte( 0, 0x55 );
 }
 
-
 //0x69 Packet
 //Last Modified on Thursday, 23-Apr-1998 19:26:05 EDT 
 //Change Text/Emote Color (5 bytes) 
@@ -1980,9 +2039,16 @@ bool CPPauseResume::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_NORMAL:
+	case CV_DEFAULT:
 	case CV_T2A:
 	case CV_UO3D:
+	case CV_ML:
+	case CV_KR2D:
+	case CV_KR3D:
+	case CV_SA2D:
+	case CV_SA3D:
+	case CV_HS2D:
+	case CV_HS3D:
 		if( mSock->ClientVersionMajor() >= 4 )
 			return false;
 		break;
@@ -2007,12 +2073,12 @@ CPWebLaunch::CPWebLaunch()
 {
 	InternalReset();
 }
-CPWebLaunch::CPWebLaunch( const std::string txt )
+CPWebLaunch::CPWebLaunch( const std::string& txt )
 {
 	InternalReset();
 	Text( txt );
 }
-void CPWebLaunch::Text( const std::string txt )
+void CPWebLaunch::Text( const std::string& txt )
 {
 	const SI16 tLen = (SI16)txt.length() + 4;
 	SetSize( tLen );
@@ -2061,7 +2127,11 @@ void CPTrackingArrow::Active( UI08 value )
 {
 	pStream.WriteByte( 1, value );
 }
-
+void CPTrackingArrow::AddSerial( SERIAL targetSerial )
+{
+	pStream.ReserveSize( 10 );
+	pStream.WriteLong( 6, targetSerial );
+}
 CPTrackingArrow::CPTrackingArrow( CBaseObject &toCopy )
 {
 	InternalReset();
@@ -2177,6 +2247,11 @@ void CPMultiPlacementView::MultiModel( SI16 toSet )
 {
 	pStream.WriteShort( 18, toSet );
 }
+void CPMultiPlacementView::SetHue( UI16 hueValue )
+{
+	pStream.ReserveSize( 30 );
+	pStream.WriteLong( 26, hueValue );
+}
 CPMultiPlacementView &CPMultiPlacementView::operator=( CItem &target )
 {
 	CopyData( target );
@@ -2189,28 +2264,36 @@ CPMultiPlacementView::CPMultiPlacementView( SERIAL toSet )
 	DeedSerial( toSet );
 }
 
-CPEnableClientFeatures::CPEnableClientFeatures()
+CPEnableClientFeatures::CPEnableClientFeatures( CSocket *mSock )
 {
 //Enable locked client features (3 bytes) 
-//·        BYTE cmd 
-//·        BYTE[2] feature#
-//	0x01	T2A upgrade, enables chatbutton
-//	0x02	Enables LBR update.  (of course LBR installation is required)
-//			(plays MP3 instead of midis, 2D LBR client shows new LBR monsters, ... )
-//	0x04	Unknown, never seen it set	(single char?)
-//	0x08	Unknown, set on OSI servers that have AOS code - no matter of account status (doesn’t seem to “unlock/lock” anything on client side)
-//	0x10	Enables AOS update (necro/paladin skills for all clients, malas map/AOS monsters if AOS installation present)
-//	0x20	Sixth Character Slot
-//	0x40	Samurai Empire?
-//	0x80	Elves?
-//	0x100
-//	0x200
-//	0x400
-//	0x800
-//	0x1000
-//	0x2000
-//	0x4000	
-//	0x8000	Since client 4.0 this bit has to be set, otherwise bits 3..14 are ignored.
+//·        Original Legacy Client Version
+//·        BYTE[1] 0xB9 (cmd)
+//·        BYTE[2] Feature Bitflag
+//·         From Legacy Client 6.0.14.2+
+//·        BYTE[1] 0xB9 (cmd)
+//·        BYTE[4] Feature Bitflag
+//	0x00	None
+//	0x01	Enable T2A features: chat-button, regions
+//	0x02	Enable UOR features
+//	0x04	Enable TD features
+//	0x08	Enable LBR features: skills, maps, mp3s, LBR monsters in 2D client
+//	0x10	Enable AOS update (Necromancer/Paladin skills, malas map/AOS monsters if AOS installation present)
+//	0x20	Enable Sixth Character Slot
+//	0x40	Enable SE features: Ninja/Samurai, spells, skills, map, housing tiles
+//	0x80	Enable ML features: elven race, spells, skills, housing tiles
+//	0x100	Enable the Eight Age splash screen
+//	0x200	Enable the Ninth Age splash screen and crystal/shadow housing tiles
+//	0x400	Enable the Tenth Age
+//	0x800	Enable increased housing and bank-storage
+//	0x1000	Enable 7th character slot
+//	0x2000	Enable KR faces
+//	0x4000	Enable Trial Account
+//	0x8000	Live (non-trial) Account. Since client 4.0 this bit has to be set, otherwise bits 3..14 are ignored.
+//	0x10000	Enable SA features: gargoyle race, spells, skills, housing tiles
+//	0x20000	Enable HS features
+//	0x40000	Enable Gothing housing tiles
+//	0x80000	Enable Rustic housing tiles
 // Thus	0		neither T2A NOR LBR, equal to not sending it at all, 
 //		1		is T2A, chatbutton, 
 //		2		is LBR without chatbutton, 
@@ -2220,9 +2303,20 @@ CPEnableClientFeatures::CPEnableClientFeatures()
 // Note2: on OSI  servers this controls features OSI enables/disables via “upgrade codes.”
 // Note3: a 3 doesn’t seem to “hurt” older (NON LBR) clients.
 
-	pStream.ReserveSize( 3 );
-	pStream.WriteByte( 0, 0xB9 );
-	pStream.WriteShort( 1, cwmWorldState->ServerData()->GetClientFeatures() );
+	if( mSock->ClientType() <= CV_KR3D )
+	{
+		//Clients 6.0.14.1 and lower
+		pStream.ReserveSize( 3 );
+		pStream.WriteByte( 0, 0xB9 );
+		pStream.WriteShort( 1, cwmWorldState->ServerData()->GetClientFeatures() );
+	}
+	if( mSock->ClientType() >= CV_SA2D )
+	{
+		//Clients 6.0.14.2 and higher
+		pStream.ReserveSize( 5 );
+		pStream.WriteByte( 0, 0xB9 );
+		pStream.WriteLong( 1, cwmWorldState->ServerData()->GetClientFeatures() );
+	}
 }
 
 void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
@@ -2230,24 +2324,48 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 	if( fullHeader )
 		outStream << "[SEND]Packet     : CPEnableClientFeatures 0xB9 --> Length: 3" << TimeStamp() << std::endl;
 
-	UI16 lastByte = pStream.GetUShort( 1 );
+	UI32 lastByte = pStream.GetUShort( 1 );
 	outStream << "Flags          : " << std::hex << (UI32)lastByte << std::dec << std::endl;
 	if( (lastByte&0x01) == 0x01 )
-		outStream << "               : T2A features (including chat)" << std::endl;
+		outStream << "               : Enabled T2A features (including chat)" << std::endl;
 	if( (lastByte&0x02) == 0x02 )
-		outStream << "               : Enabled LBR support" << std::endl;
+		outStream << "               : Enabled UO:R support" << std::endl;
 	if( (lastByte&0x04) == 0x04 )
-		outStream << "               : Unknown 1 (single char?)" << std::endl;
+		outStream << "               : Enabled UO:TD support" << std::endl;
 	if( (lastByte&0x08) == 0x08 )
-		outStream << "               : Unknown 2 (doesn't matter?)" << std::endl;
+		outStream << "               : Enabled LBR support" << std::endl;
 	if( (lastByte&0x10) == 0x10 )
 		outStream << "               : Enabled AOS support" << std::endl;
 	if( (lastByte&0x20) == 0x20 )
 		outStream << "               : Enabled Sixth Character Slot?" << std::endl;
 	if( (lastByte&0x40) == 0x40 )
-		outStream << "               : Enable Samurai Empire?" << std::endl;
+		outStream << "               : Enabled Samurai Empire?" << std::endl;
 	if( (lastByte&0x80) == 0x80 )
-		outStream << "               : Enable Elves and ML?" << std::endl;
+		outStream << "               : Enabled Elves and ML" << std::endl;
+	if( (lastByte&0x100) == 0x100 )
+		outStream << "               : Enabled Eight Age splash-screen" << std::endl;
+	if( (lastByte&0x200) == 0x200 )
+		outStream << "               : Enabled Ninth Age splash-screen" << std::endl;
+	if( (lastByte&0x400) == 0x400 )
+		outStream << "               : Enabled Tenth Age splash-screen" << std::endl;
+	if( (lastByte&0x800) == 0x800 )
+		outStream << "               : Enabled increased housing and bank-storage" << std::endl;
+	if( (lastByte&0x1000) == 0x1000 )
+		outStream << "               : Enabled 7th character slot" << std::endl;
+	if( (lastByte&0x2000) == 0x2000 )
+		outStream << "               : Enabled KR faces" << std::endl;
+	if( (lastByte&0x4000) == 0x4000 )
+		outStream << "               : Enabled Trial Account" << std::endl;
+	if( (lastByte&0x8000) == 0x8000 )
+		outStream << "               : Enabled Live (non-trial) account" << std::endl;
+	if( (lastByte&0x10000) == 0x10000 )
+		outStream << "               : Enable SA features" << std::endl;
+	if( (lastByte&0x20000) == 0x20000 )
+		outStream << "               : Enabled HS features" << std::endl;
+	if( (lastByte&0x40000) == 0x40000 )
+		outStream << "               : Enabled Gothing housing tiles" << std::endl;
+	if( (lastByte&0x80000) == 0x80000 )
+		outStream << "               : Enabled Rustic housing tiles" << std::endl;
 
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
@@ -2267,6 +2385,7 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 //	BYTE[2] color 
 void CPAddItemToCont::InternalReset( void )
 {
+	uokrFlag = false;
 	pStream.ReserveSize( 20 );
 	pStream.WriteByte( 0, 0x25 );
 	pStream.WriteByte( 7, 0 );
@@ -2436,6 +2555,24 @@ void CPFightOccurring::Defender( CChar &defender )
 	Defender( defender.GetSerial() );
 }
 
+//0x34 Packet
+//Last modified on Thursday, 19-Nov-1998 
+//Get Player Status (10 bytes) 
+//	BYTE[1] command 
+//	BYTE[2] Length
+//	BYTE[1] Type	0x00 - Full List of skills, 
+//					0xFF - Single skill update, 
+//					0x02 - Full List of skills with skill cap for each skill
+//					0xDF - Single skill update with skill cap for skill
+//	Repeat for each skill:
+//		BYTE[2] Skill ID number
+//		BYTE[2] Skill Value * 10
+//		BYTE[2] Unmodified Value * 10
+//		BYTE[1] Skill Lock
+//	If( Type == 2 || Type == 0xDF )
+//		BYTE[2] Skill Cap
+//	Byte[2] Null terminated(0000) - Only if Type == 0x00
+
 void CPSkillsValues::InternalReset( void )
 {
 	pStream.ReserveSize( 1 );
@@ -2450,15 +2587,28 @@ void CPSkillsValues::CopyData( CChar &toCopy )
 void CPSkillsValues::SetCharacter( CChar &toCopy )
 {
 	for( SI08 i = 0; i < NumSkills(); ++i )
-		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), (UI08)toCopy.GetSkillLock( i ) );
+		SkillEntry( i, toCopy.GetSkill( i ), toCopy.GetBaseSkill( i ), toCopy.GetSkillLock( i ) );
+}
+
+void CPSkillsValues::NumSkills( UI08 numSkills )
+{
+	// multiply numSkills with amount of bytes needed per skill
+	// plus the additional bytes needed for packet details
+	BlockSize( 6 + ( numSkills * 9 ));
+}
+UI08 CPSkillsValues::NumSkills( void )
+{
+	int size = pStream.GetShort( 1 );
+	size -= 6;
+	size /= 9;
+	return (UI08)size;
 }
 
 void CPSkillsValues::BlockSize( SI16 newValue )
 {
 	pStream.ReserveSize( newValue );
-	pStream.WriteShort( 1, newValue );
-	pStream.WriteByte(  3, 0x00 );	// full list
-	pStream.WriteByte(  4, 0x00 );
+	pStream.WriteShort( 1, newValue ); //packet size, variable based on amount of skills
+	pStream.WriteByte(  3, 0x02 );	// full list, capped
 	pStream.WriteByte(  newValue-1, 0x00 );	// finish off with a double NULL
 	pStream.WriteByte(  newValue-2, 0x00 );
 }
@@ -2471,25 +2621,15 @@ CPSkillsValues::CPSkillsValues( CChar &toCopy )
 	InternalReset();
 	CopyData( toCopy );
 }
-void CPSkillsValues::NumSkills( UI08 numSkills )
-{
-	BlockSize( numSkills * 7 + 6 );
-}
-UI08 CPSkillsValues::NumSkills( void )
-{
-	int size = pStream.GetShort( 1 );
-	size -= 6;
-	size /= 7;
-	return (UI08)size;
-}
 
-void CPSkillsValues::SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, UI08 skillLock )
+void CPSkillsValues::SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock )
 {
-	int offset = skillID * 7 + 5;
-	pStream.WriteByte(  offset, skillID + 1 );
-	pStream.WriteShort( offset + 1, skillVal );
-	pStream.WriteShort( offset + 3, baseSkillVal );
-	pStream.WriteByte(  offset + 5, skillLock ); 
+	int offset = ( skillID * 9 ) + 4;
+	pStream.WriteShort( offset, skillID + 1 );
+	pStream.WriteShort( offset + 2, skillVal );
+	pStream.WriteShort( offset + 4, baseSkillVal );
+	pStream.WriteByte(  offset + 6, skillLock ); 
+	pStream.WriteShort( offset + 7, (UI16)cwmWorldState->ServerData()->ServerSkillCapStatus() );
 }
 CPSkillsValues &CPSkillsValues::operator=( CChar &toCopy )
 {
@@ -2581,7 +2721,7 @@ void CPBookTitlePage::Pages( SI16 pages )
 {
 	pStream.WriteShort( 7, pages );
 }
-void CPBookTitlePage::Title( const std::string txt )
+void CPBookTitlePage::Title( const std::string& txt )
 {
 	if( txt.length() >= 60 )
 	{
@@ -2591,7 +2731,7 @@ void CPBookTitlePage::Title( const std::string txt )
 	else
 		pStream.WriteString( 9, txt, txt.size() );
 }
-void CPBookTitlePage::Author( const std::string txt )
+void CPBookTitlePage::Author( const std::string& txt )
 {
 	if( txt.length() >= 30 )
 	{
@@ -2633,12 +2773,12 @@ CPGumpTextEntry::CPGumpTextEntry()
 {
 	InternalReset();
 }
-CPGumpTextEntry::CPGumpTextEntry( const std::string text )
+CPGumpTextEntry::CPGumpTextEntry( const std::string& text )
 {
 	InternalReset();
 	Text1( text );
 }
-CPGumpTextEntry::CPGumpTextEntry( const std::string text1, const std::string text2 )
+CPGumpTextEntry::CPGumpTextEntry( const std::string& text1, const std::string& text2 )
 {
 	InternalReset();
 	Text1( text1 );
@@ -2671,14 +2811,14 @@ void CPGumpTextEntry::Format( SERIAL id )
 	SI16 t1Len = Text1Len();
 	pStream.WriteLong( t1Len + 13, id );
 }
-void CPGumpTextEntry::Text1( const std::string txt )
+void CPGumpTextEntry::Text1( const std::string& txt )
 {
 	size_t sLen = txt.length();
 	BlockSize( 20 + sLen );	// 11 + 1 + 8
 	Text1Len( sLen + 1 );
 	pStream.WriteString( 11, txt, sLen );
 }
-void CPGumpTextEntry::Text2( const std::string txt )
+void CPGumpTextEntry::Text2( const std::string& txt )
 {
 	size_t sLen			= txt.length();
 	SI16 currentSize	= CurrentSize();
@@ -2775,7 +2915,13 @@ void CPLoginDeny::DenyReason( LoginDenyReason reason )
 }
 
 //	Subcommand 8: Set cursor hue / Set MAP 
-//	BYTE hue  (0 = Felucca, unhued / BRITANNIA map.  1 = Trammel, hued gold / BRITANNIA map, 2 = (switch to) ILSHENAR map)
+//	BYTE hue  
+//		0x00 = Felucca, unhued / BRITANNIA map.  
+//		0x01 = Trammel, hued gold / BRITANNIA map
+//		0x02 = Ilshenar
+//		0x03 = Malas
+//		0x04 = Tokuno
+//		0x05 = TerMur)
 //	Note: Server Message
 
 void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
@@ -2861,7 +3007,7 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 	if( ValidateObject( container ) )
 	{
 		InternalReset();
-		if( mSock->ClientType() == CV_UOKR )
+		if( mSock->ClientVerShort() >= CVS_6017 )
 			UOKRFlag( true );
 		Type( contType );
 		PlayerVendor( isPVendor );
@@ -3135,7 +3281,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 
 //0xA9 Packet
 //Last Modified on Sunday, 28-Jul-2002
-//Characters / Starting Locations (Variable # of bytes) 
+//Character List / Starting Locations (Variable # of bytes) 
 //	BYTE cmd 
 //	BYTE[2] blockSize 
 //	BYTE # of characters 
@@ -3165,6 +3311,11 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Characters --" << std::endl;
 
 	UI32 startLocOffset, realChars;
+	if( pStream.GetByte( 3 ) > 6 )
+	{
+		startLocOffset	= 424;
+		realChars		= 7;
+	}
 	if( pStream.GetByte( 3 ) > 5 )
 	{
 		startLocOffset	= 364;
@@ -3250,75 +3401,124 @@ void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
 
 void CPCharAndStartLoc::InternalReset( void )
 {
+	packetSize = 0;
+	numCharacters = 0;
 	pStream.ReserveSize( 4 );
 	pStream.WriteByte( 0, 0xA9 );
-}
-
-void CPCharAndStartLoc::CopyData( CAccountBlock& toCopy )
-{
-	for( UI08 i = 0; i < 6; ++i )
-	{
-		if( toCopy.lpCharacters[i] != NULL )
-			AddCharacter( toCopy.lpCharacters[i], i );
-	}
 }
 
 CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock& actbBlock, UI08 numCharacters, UI08 numLocations )
+CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock& actbBlock, UI08 numCharacters, UI08 numLocations, CSocket *mSock )
 {
 	InternalReset();
-	NumberOfCharacters( numCharacters );
-	NumberOfLocations( numLocations );
-	CopyData(actbBlock);
-}
-void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations )
-{
-	// was 305 +, now 309 +
-	UI16 packetSize;
-	if( pStream.GetByte( 3 ) > 5 )
-		packetSize = (UI16)(369 + 63 * numLocations);
+
+	UI08 noLoopBytes = 9; 
+	if( mSock->ClientType() == CV_SA3D || mSock->ClientType() == CV_HS3D )
+		noLoopBytes = 11;
+
+	UI08 charSlots = 5;
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_SIXCHARS ) &&
+		cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SIXCHARS ) && 
+		mSock->ClientVersionMajor() >= 4 )
+		charSlots = 6;
+	if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_SEVENCHARS ) &&
+		cwmWorldState->ServerData()->GetClientFeature( CF_BIT_SEVENCHARS ) && 
+		mSock->ClientVersionMajor() >= 7 )
+		charSlots = 7;
+	
+	if( mSock->ClientType() >= CV_HS2D && mSock->ClientVersionSub() >= 13 )
+	{
+		packetSize = (UI16)( noLoopBytes + ( charSlots * 60 ) + ( numLocations * 89 ));
+		pStream.ReserveSize( packetSize );
+		pStream.WriteShort( 1, packetSize );
+		pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
+	}
 	else
-		packetSize = (UI16)(309 + 63 * numLocations);
-	pStream.ReserveSize( packetSize );
-	pStream.WriteShort( 1, packetSize );
-	// If we are going to support the 6char client flag then we need to make sure we push this offset furtner down.
-	if( pStream.GetByte( 3 ) > 5 )
-		pStream.WriteByte( 364, numLocations );
-	else
-		pStream.WriteByte( 304, numLocations );
-	pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
+	{
+		packetSize = (UI16)( noLoopBytes + ( charSlots * 60 ) + ( numLocations * 63 ));
+		pStream.ReserveSize( packetSize );
+		pStream.WriteShort( 1, packetSize );
+		pStream.WriteLong( packetSize - 4, cwmWorldState->ServerData()->GetServerFeatures() );
+	}
+
+	pStream.WriteByte( 3, charSlots );
+
+	if( mSock->ClientType() == CV_SA3D || mSock->ClientType() == CV_HS3D ) //maybe 7.0.13+ too?
+		pStream.WriteShort( packetSize - 2, 0x00 ); // last used character slot?
+
+	CopyData( actbBlock );
+	NumberOfLocations( numLocations, mSock );
 }
-void CPCharAndStartLoc::NumberOfCharacters( UI08 numCharacters )
+
+void CPCharAndStartLoc::CopyData( CAccountBlock& toCopy )
 {
-	pStream.WriteByte( 3, numCharacters );
+	UI16 baseOffset = 0;
+	for( UI08 i = 0; i < pStream.GetByte( 3 ); ++i )
+	{
+		baseOffset = (UI16)(4 + ( i * 60 ));
+		if( toCopy.lpCharacters[i] != NULL )
+			AddCharacter( toCopy.lpCharacters[i], i );
+		else
+		{
+			pStream.WriteString( baseOffset, "", 60 );
+		}
+	}
 }
 
 void CPCharAndStartLoc::AddCharacter( CChar *toAdd, UI08 charOffset )
 {
+	UI16 baseOffset = 0;
+	baseOffset = (UI16)(4 + ( charOffset * 60 ));
 	if( !ValidateObject( toAdd ) )
+	{
+		pStream.WriteString( baseOffset, "", 60 );
 		return;
-	UI16 baseOffset = (UI16)(4 + charOffset * 60);
-	pStream.WriteString( baseOffset, toAdd->GetName(), 59 );
-	// extra 30 bytes unused, as we don't use a character password
+	}
+	pStream.WriteString( baseOffset, toAdd->GetName(), 60 );
+}
+
+void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
+{
+	UI16 byteOffset = 0;
+	byteOffset = (UI16)( 4 + ( pStream.GetByte( 3 ) * 60 ));
+	pStream.WriteByte( byteOffset, numLocations );
 }
 
 void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 {
 	if( sLoc == NULL )
 		return;
-	UI16 baseOffset;
-	if( pStream.GetByte( 3 ) > 5 )
-			baseOffset = (UI16)(365 + locOffset * 63);
-	else
-			baseOffset = (UI16)(305 + locOffset * 63);
-	pStream.WriteByte( baseOffset, locOffset );
-	size_t townLen				= strlen( sLoc->town );
-	size_t descLen				= strlen( sLoc->description );
-	pStream.WriteString( baseOffset+1, sLoc->town, townLen );
-	pStream.WriteString( baseOffset+32, sLoc->description, descLen );
+
+	UI16 baseOffset = 0;
+	baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
+	baseOffset += ( locOffset * 63 );
+
+	pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
+	pStream.WriteString( baseOffset+1, sLoc->oldTown, 31 );
+	pStream.WriteString( baseOffset+33, sLoc->oldDescription, 31 );
+}
+
+void CPCharAndStartLoc::NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
+{
+	if( sLoc == NULL )
+		return;
+
+	UI16 baseOffset = 0;
+	baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
+	baseOffset += ( locOffset * 89 );
+
+	pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
+	pStream.WriteString( baseOffset+1, sLoc->newTown, 32 );
+	pStream.WriteString( baseOffset+33, sLoc->newDescription, 32 );
+	pStream.WriteLong( baseOffset+65, sLoc->x );
+	pStream.WriteLong( baseOffset+69, sLoc->y );
+	pStream.WriteLong( baseOffset+73, sLoc->z );
+	pStream.WriteLong( baseOffset+77, sLoc->worldNum );
+	pStream.WriteLong( baseOffset+81, sLoc->clilocDesc );
+	pStream.WriteLong( baseOffset+85, 0x00 );
 }
 
 CPCharAndStartLoc& CPCharAndStartLoc::operator=( CAccountBlock& actbBlock )
@@ -3704,6 +3904,144 @@ void CPCorpseClothing::CopyData( CItem& toCopy )
 	NumberOfItems( itemCount );
 }
 
+//
+//0xF3 Packet
+//Last Modified on Sunday, 19-Feb-2012
+//New Object Information (24 bytes SA, 26 bytes HS)
+//
+// Byte cmd
+// Byte[2] 0x1 // always 0x1 on OSI
+// Byte[1] DataType // 0x00 = Item , 0x01 = Character, 0x02 = Multi
+// Byte[4] Serial
+// Byte[2] Object ID // for multi its same value as the multi has in multi.mul
+// Byte[1] Offset/Facing // 0x00 if Multi
+// Byte[2] Amount // 0x1 if Multi
+// Byte[2] Amount // 0x1 if Multi , no idea why Amount is sent 2 times
+// Byte[2] X
+// Byte[2] Y
+// Byte[1] Z
+// Byte[1] Layer // 0x00 if Multi / Light Level (TileData.Quality or 0 for Mobiles)
+// Byte[2] Color // 0x00 if Multi
+// Byte[1] Flag // 0x20 = Movable if normally not , 0x80 = Hidden , 0x00 if Multi
+// IF ITEM
+//	Byte[2] Access (for items only, 0x01 = Player Item, 0x00 = World Item)
+//Notes
+// Replaces 0x1A packet for clients 7.0.0.0+
+// Required to to display items with IDs over 0x3FFF (old 0x1A packet only works with items up to that ID)
+
+void CPNewObjectInfo::InternalReset( void )
+{	
+	pStream.ReserveSize( 24 );
+	pStream.WriteByte( 0, 0xF3 );
+	pStream.WriteShort( 1, 0x1 );
+}
+void CPNewObjectInfo::CopyData( CItem& mItem, CChar& mChar )
+{
+	if( mItem.CanBeObjType( OT_MULTI ) )
+		CopyMultiData( static_cast<CMultiObj&>(mItem), mChar );
+	else if( mItem.CanBeObjType( OT_ITEM ) )
+		CopyItemData( mItem, mChar );
+}
+
+void CPNewObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
+{
+	bool isInvisible	= (mItem.GetVisible() != VT_VISIBLE);
+	bool isMovable		= (mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ));
+
+	pStream.WriteByte( 3, 0x00 ); //DataType
+	pStream.WriteLong( 4, mItem.GetSerial() ); //Serial
+
+	// if player is a gm, this item is shown like a candle (so that he can move it),
+	// ....if not, the item is a normal invisible light source!
+	if( mChar.IsGM() && mItem.GetID() == 0x1647 )
+		pStream.WriteShort( 8, 0x0A0F );
+	else
+		pStream.WriteShort( 8, mItem.GetID() );
+
+	pStream.WriteByte( 10, 0x00 ); //Offset/Facing?
+
+	//Amount
+	pStream.WriteShort( 11, mItem.GetAmount() );
+	pStream.WriteShort( 13, mItem.GetAmount() );
+
+	//Location
+	pStream.WriteShort( 15, mItem.GetX() );
+	pStream.WriteShort( 17, mItem.GetY() );
+	pStream.WriteByte( 19, mItem.GetZ() );
+
+	//Direction/Light Level
+	pStream.WriteByte( 20, 	mItem.GetDir() );
+
+	if( mChar.IsGM() && mItem.GetID() == 0x1647 ) //Lightsource
+		pStream.WriteShort( 21, 0x00C6 );
+	else
+		pStream.WriteShort( 21, mItem.GetColour() );
+
+	//Flags
+	if( isInvisible )
+		pStream.WriteByte( 23, (pStream.GetByte( 23 ) | 0x80) );
+	if( isMovable )
+		pStream.WriteByte( 23, (pStream.GetByte( 23 ) | 0x20) );
+
+	if( mChar.GetSocket()->ClientType() >= CV_HS2D )
+	{
+		pStream.ReserveSize( 26 );
+		pStream.WriteShort( 24, 0x00 ); // HS requires 2 extra bytes
+	}
+}
+
+void CPNewObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
+{
+	pStream.WriteByte( 3, 0x02 ); //DataType
+	pStream.WriteLong( 4, mMulti.GetSerial() ); //Serial
+
+	int itemID = mMulti.GetID();
+	itemID &= 0x3FFF;
+	if( mChar.ViewHouseAsIcon() )
+		pStream.WriteShort( 8, 0x14F0 );
+	else
+		pStream.WriteShort( 8, itemID ); //Client wants real ID from multi
+
+	pStream.WriteByte( 10, 0 ); //Offset/Facing? 0 or 0x00 - does it matter?
+
+	//Amount
+	pStream.WriteShort( 11, 1 ); //1 or 0x1 - does it matter? can multis have amounts higher than 1?
+	pStream.WriteShort( 13, 1 ); //1 or 0x1 - does it matter? can multis have amounts higher than 1?
+
+	//Location
+	pStream.WriteShort( 15, mMulti.GetX() );
+	pStream.WriteShort( 17, mMulti.GetY() );
+	pStream.WriteByte( 19, mMulti.GetZ() );
+
+	//Light Level
+	pStream.WriteByte( 20, 	0x00 );
+
+	pStream.WriteShort( 21, mMulti.GetColour() ); //Central mast on classic boats can have a color, apparently!
+
+	//Flags
+	pStream.WriteByte( 23, 0x00 );
+
+	if( mChar.GetSocket()->ClientType() >= CV_HS2D ) //required for boats to work properly?
+	{
+		pStream.ReserveSize( 26 );
+		pStream.WriteShort( 24, 0x00 ); // HS requires 2 extra bytes
+	}
+}
+
+CPNewObjectInfo::CPNewObjectInfo()
+{
+	InternalReset();
+}
+CPNewObjectInfo::CPNewObjectInfo( CItem& mItem, CChar& mChar )
+{
+	InternalReset();
+	CopyData( mItem, mChar );
+}
+
+void CPNewObjectInfo::Objects( CItem& mItem, CChar& mChar )
+{
+	CopyData( mItem, mChar );
+}
 //0x1A Packet
 //Last Modified on Saturday, 13-Apr-1999 
 //Object Information (Variable # of bytes) 
@@ -4087,7 +4425,7 @@ void CPSecureTrading::Action( UI08 value )
 {
 	pStream.WriteByte( 3, value );
 }
-void CPSecureTrading::Name( const std::string nameFollowing )
+void CPSecureTrading::Name( const std::string& nameFollowing )
 {
 	pStream.ReserveSize( 47 );
 	pStream.WriteByte(	 2, 47 );
@@ -4198,7 +4536,7 @@ void CPBookPage::NewPage( SI16 pNum )
 		pStream.WriteShort( baseOffset, pNum );
 	pStream.WriteByte( baseOffset + 3, 8 );	// 8 lines per page
 }
-void CPBookPage::AddLine( const std::string line )
+void CPBookPage::AddLine( const std::string& line )
 {
 	UI16 baseOffset = bookLength;
 	size_t strLen	= line.length() + 1;
@@ -4291,7 +4629,7 @@ void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
 	commands.push_back( msg );
 }
 
-void CPSendGumpMenu::AddCommand( const std::string actualCommand, ... )
+void CPSendGumpMenu::AddCommand( const std::string& actualCommand, ... )
 {
 	va_list argptr;
 	char msg[512];
@@ -4336,7 +4674,7 @@ void CPSendGumpMenu::AddText( const char *actualText, ... )
 	text.push_back( msg );
 }
 
-void CPSendGumpMenu::AddText( const std::string actualText, ... )
+void CPSendGumpMenu::AddText( const std::string& actualText, ... )
 {
 	va_list argptr;
 	char msg[512];
@@ -4471,13 +4809,13 @@ void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
 void CPNewSpellBook::InternalReset( void )
 {
 	pStream.ReserveSize( 23 );
-	pStream.WriteByte( 0, 0xBF );
+	pStream.WriteByte( 0, 0xBF ); //Main packet
 	pStream.WriteShort( 1, 23 );
-	pStream.WriteShort( 3, 0x1B );
+	pStream.WriteShort( 3, 0x1B ); //Subcommand
 	pStream.WriteShort( 5, 0x01 );
-	pStream.WriteByte( 11, 0x0E );
-	pStream.WriteByte( 12, 0xFA );
-	pStream.WriteShort( 13, 1 );
+	pStream.WriteByte( 11, 0x0E ); // Graphic part I?
+	pStream.WriteByte( 12, 0xFA ); // Graphic part II?
+	pStream.WriteShort( 13, 1 );// Offset
 }
 void CPNewSpellBook::CopyData( CItem& obj )
 {
@@ -4506,7 +4844,7 @@ bool CPNewSpellBook::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_NORMAL:
+	case CV_DEFAULT:
 	case CV_T2A:
 	case CV_UO3D:
 		if( mSock->ClientVersionMajor() < 4 )
@@ -4556,7 +4894,7 @@ bool CPDisplayDamage::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_NORMAL:
+	case CV_DEFAULT:
 	case CV_T2A:
 	case CV_UO3D:
 		if( mSock->ClientVersionMajor() < 4 )
@@ -4608,7 +4946,7 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 		return false;
 	switch( mSock->ClientType() )
 	{
-	case CV_NORMAL:
+	case CV_DEFAULT:
 	case CV_T2A:
 	case CV_UO3D:
 		if( mSock->ClientVersionMajor() < 4 )
@@ -4628,13 +4966,13 @@ bool CPQueryToolTip::ClientCanReceive( CSocket *mSock )
 //
 //  BYTE cmd 
 //  BYTE[2] length 
-//  BYTE[2] unknown1, always 1 
-//  BYTE[4] serial 
+//  BYTE[2] unknown1, always 0x001 
+//  BYTE[4] serial of item/creature
 //  BYTE unknown2, always 0 
-//  BYTE unknown3, always 0 
+//  BYTE unknown3, always 0
 //  BYTE[4]  list ID (see notes) 
 //  Loop
-//    BYTE[4]  Localization#
+//    BYTE[4]  Localization/Cliloc#
 //    if (Localization#==0) break loop
 //    BYTE[2] text length
 //    BYTE[text length]  little endian Unicode text, not 0 terminated 
@@ -4875,11 +5213,13 @@ void CPToolTip::CopyData( SERIAL objSer, bool addAmount, bool playerVendor )
 	}
 
 	size_t packetLen = 14 + totalStringLen + 5;
+	//size_t packetLen = 15 + totalStringLen + 5;
 	pStream.ReserveSize( packetLen );
 	pStream.WriteShort( 1, packetLen );
 	pStream.WriteLong(  5, objSer );
 
 	size_t modifier = 14;
+	//size_t modifier = 15;
 	//loop through all lines
 	for( size_t i = 0; i < ourEntries.size(); ++i )
 	{
@@ -5030,8 +5370,9 @@ void CPOpenMessageBoard::InternalReset( void )
 {
 	pStream.ReserveSize( 38 );
 	pStream.WriteByte(   0, 0x71 );
-	pStream.WriteByte(   2, 38 );
-	pStream.WriteString( 8, "Bulletin Board", 15 );
+	pStream.WriteShort(	 1, 38 );
+	pStream.WriteByte(   3, 0x00 ); //was 38
+//	pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
 }
 
 void CPOpenMessageBoard::CopyData( CSocket *mSock )
@@ -5043,8 +5384,32 @@ void CPOpenMessageBoard::CopyData( CSocket *mSock )
 		pStream.WriteLong( 4, msgBoard->GetSerial() );
 		// If the name the item (Bulletin Board) has been defined, display it
 		// instead of the default "Bulletin Board" title.
+		std::string msgBoardName = msgBoard->GetName();
+		if( msgBoardName != "#" )
+		{
+			if( msgBoardName.length() >= 29 )
+			{
+				pStream.WriteString( 8, msgBoardName, 29 );
+			}
+			else
+			{
+				pStream.WriteString( 8, msgBoardName, msgBoardName.length() );
+			}
+		}
+		else
+		{
+			pStream.WriteString( 8, "Bulletin Board", 29 ); //was 15
+		}
+		pStream.WriteByte( 37, 0x00 );
+	/*	pStream.WriteLong( 4, msgBoard->GetSerial() );
+		// If the name the item (Bulletin Board) has been defined, display it
+		// instead of the default "Bulletin Board" title.
 		if( msgBoard->GetName() != "#" )
-			pStream.WriteString( 8, msgBoard->GetName(), 21 );
+			pStream.WriteString( 8, msgBoard->GetName(), 22 ); //was 21
+		else
+			pStream.WriteString( 8, "Bulletin Board", 22 ); //was 15
+		pStream.WriteLong( 30, 0x402000FF );
+		pStream.WriteLong( 34, 0x00 );*/
 	}
 }
 
@@ -5092,7 +5457,78 @@ void CPOpenMsgBoardPost::InternalReset( void )
 
 void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost )
 {
-	size_t totSize = 7 + mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
+	size_t totSize = 19 + mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
+	std::vector< std::string >::const_iterator pIter;
+	if( !bFullPost ) //index
+	{
+		pStream.ReserveSize( totSize );
+		pStream.WriteShort( 1, static_cast<UI16>(totSize) ); //packetSize
+		pStream.WriteLong( 4, mSock->GetDWord( 4 ) ); // board serial
+		pStream.WriteLong( 8, (mbPost.Serial + BASEITEMSERIAL) ); //message serial
+		SERIAL pSerial = mbPost.ParentSerial; // thread serial
+		if( pSerial )
+			pSerial += BASEITEMSERIAL;
+		else
+			pSerial += 0x80000000; //was 0x80000000
+		pStream.WriteLong( 12, pSerial );
+		size_t byteOffset = 16;
+
+		pStream.WriteByte( byteOffset, mbPost.PosterLen );
+		pStream.WriteString( ++byteOffset, (char *)mbPost.Poster, mbPost.PosterLen );
+		byteOffset += mbPost.PosterLen;
+		pStream.WriteByte( byteOffset-1, 0x00 );
+
+		pStream.WriteByte( byteOffset, mbPost.SubjectLen );
+		pStream.WriteString( ++byteOffset, (char *)mbPost.Subject, mbPost.SubjectLen );
+		byteOffset += mbPost.SubjectLen;
+		pStream.WriteByte( byteOffset-1, 0x00 );
+
+		pStream.WriteByte( byteOffset, mbPost.DateLen );
+		pStream.WriteString( ++byteOffset, (char *)mbPost.Date, mbPost.DateLen );
+		byteOffset += mbPost.DateLen;
+		pStream.WriteByte( byteOffset-1, 0x00 );
+	}
+	else if( bFullPost ) //full post
+	{
+		//totSize += 14;
+		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
+			totSize += (*pIter).size()+3;
+		pStream.ReserveSize( totSize );
+		pStream.WriteShort( 1, static_cast<UI16>(totSize) ); //packet size
+		pStream.WriteLong( 4, mSock->GetDWord( 1 ) ); //board serial
+		pStream.WriteLong( 8, (mbPost.Serial + BASEITEMSERIAL) ); //message serial
+		size_t offset = 12;
+
+		pStream.WriteByte( offset, mbPost.PosterLen );
+		pStream.WriteString( ++offset, (char *)mbPost.Poster, mbPost.PosterLen );
+		offset += mbPost.PosterLen;
+
+		pStream.WriteByte( offset, mbPost.SubjectLen );
+		pStream.WriteString( ++offset, (char *)mbPost.Subject, mbPost.SubjectLen );
+		offset += mbPost.SubjectLen;
+
+		pStream.WriteByte( offset, mbPost.DateLen );
+		pStream.WriteString( ++offset, (char *)mbPost.Date, mbPost.DateLen );
+		offset += mbPost.DateLen;
+
+		pStream.WriteShort( offset, 0x0190 ); //postedbody
+		pStream.WriteShort( offset+=2, 0x03F7 ); //postedhue
+		pStream.WriteByte(  offset+=2, 0x00 ); // postedequip-length?
+		//pStream.WriteString( offset, "'01''91''84''0A''06''1E''FD''01''0B''15''2E''01''0B''17''0B''01''BB''20''46''04''66''13''F8''00''00''0E''75''00''00'", 29 );
+
+		//offset += 29;
+		pStream.WriteByte( ++offset, mbPost.Lines );
+
+		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
+		{
+			pStream.WriteByte( ++offset, (*pIter).size()+2 );
+			pStream.WriteString( ++offset, (*pIter), (*pIter).size() );
+			offset += (*pIter).size();
+			pStream.WriteByte( offset, 0x32 );
+			pStream.WriteByte( ++offset, 0x00 );
+		}
+	}
+	/*size_t totSize = 8 + mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
 
 	std::vector< std::string >::const_iterator pIter;
 	if( bFullPost )
@@ -5122,7 +5558,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 		if( pSerial )
 			pSerial += BASEITEMSERIAL;
 		else
-			pSerial += 0x80000000;
+			pSerial += 0; //was 0x80000000
 		pStream.WriteLong( offset, pSerial );
 		offset += 4;
 	}
@@ -5144,7 +5580,9 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 		pStream.WriteShort( offset, 0x0190 );
 		pStream.WriteShort( offset+=2, 0x03F7 );
 		pStream.WriteByte(  offset+=2, 0x00 );
+		//pStream.WriteString( offset, "'01''91''84''0A''06''1E''FD''01''0B''15''2E''01''0B''17''0B''01''BB''20''46''04''66''13''F8''00''00''0E''75''00''00'", 29 );
 
+		//offset += 29;
 		pStream.WriteByte( ++offset, mbPost.Lines );
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
 		{
@@ -5155,6 +5593,8 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 			pStream.WriteByte( ++offset, 0x00 );
 		}
 	}
+	else
+		pStream.WriteByte( offset, 0x00 ); //?*/
 }
 
 CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& mbPost, bool fullPost )
@@ -5171,19 +5611,40 @@ void CPSendMsgBoardPosts::InternalReset( void )
 	pStream.WriteShort( 1, 5 );
 }
 
-void CPSendMsgBoardPosts::CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
+void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
 {
-	size_t offset = pStream.GetSize();
-	pStream.ReserveSize( offset+19 );
+	size_t byteOffset = pStream.GetSize();
+	if( mSock->ClientVerShort() >= CVS_6017 )
+		pStream.ReserveSize( byteOffset+20 );
+	else
+		pStream.ReserveSize( byteOffset+19 );
 
-	pStream.WriteLong(  offset, (mSerial + BASEITEMSERIAL) );
-	pStream.WriteShort( offset+4, 0x0EB0 );
-	pStream.WriteByte(  offset+6, 0x00 );
-	pStream.WriteShort( offset+7, 0x0001 );
-	pStream.WriteShort( offset+9, 0x0000 );
-	pStream.WriteShort( offset+11, 0x0000 );
-	pStream.WriteLong(  offset+13, oSerial );
-	pStream.WriteShort( offset+17, 0x0000 );
+	pStream.WriteLong(  byteOffset, (mSerial + BASEITEMSERIAL) );
+	pStream.WriteShort( byteOffset+4, 0x0EB0 ); // Item ID
+	pStream.WriteByte(	byteOffset+6, 0 ); // itemID offset
+	pStream.WriteShort( byteOffset+7, 0x0001 ); // item amount
+	pStream.WriteShort( byteOffset+9, 0x00 ); // xLoc
+	pStream.WriteShort( byteOffset+11, 0x00 ); // yLoc
+	if( mSock->ClientVerShort() >= CVS_6017 )
+	{
+		pStream.WriteByte(	byteOffset+13, 0 ); // grid location
+		pStream.WriteLong(  byteOffset+14, oSerial ); // container serial
+		pStream.WriteShort( byteOffset+18, 0x00 ); // item color
+	}
+	else
+	{
+		pStream.WriteLong(  byteOffset+13, oSerial ); // container serial
+		pStream.WriteShort( byteOffset+17, 0x00 ); // item color
+	}
+/*	pStream.WriteLong(  byteOffset, (mSerial + BASEITEMSERIAL) );
+	pStream.WriteShort( byteOffset+4, 0x0EB0 ); // Item ID - unused item
+	pStream.WriteByte(  byteOffset+6, 0x00 ); //unknown
+	pStream.WriteShort( byteOffset+7, 0x0001 ); //item amount
+	pStream.WriteShort( byteOffset+9, 0x0000 ); //xLoc
+	pStream.WriteShort( byteOffset+11, 0x0000 ); //yLoc
+	pStream.WriteByte(	byteOffset+13, 0 ); //container grid
+	pStream.WriteLong(  byteOffset+14, oSerial ); // container serial
+	pStream.WriteShort( byteOffset+18, 0x0000 ); // item color*/
 
 	++postCount;
 }
@@ -5227,6 +5688,100 @@ void CPExtendedStats::InternalReset( void )
 }
 
 void CPExtendedStats::CopyData( CChar& mChar )
+{
+	pStream.WriteLong( 6, mChar.GetSerial() );
+
+	const UI08 strength		= static_cast<UI08>((mChar.GetSkillLock( STRENGTH )&0x3) << 4);
+	const UI08 dexterity	= static_cast<UI08>((mChar.GetSkillLock( DEXTERITY )&0x3) << 2);
+	const UI08 intelligence	= static_cast<UI08>(mChar.GetSkillLock( INTELLECT )&0x3);
+
+	pStream.WriteByte( 11, (strength | dexterity | intelligence) );
+}
+
+//0x16 Packet - UO3D Mobile New Health Bar Status
+//	BYTE[1]	cmd
+//	BYTE[2]	Packet Size
+//	BYTE[4]	Serial
+//	BYTE[2]	Extended (1 if status bar is green or yellow, else 0)
+//	BYTE[2]	Status Color (0x01 = Green, 0x02 = Yellow, sends only if extended == 1)
+//	BYTE[1] Flag (0x00 = Remove Status Color, 0x01 = Enable Status Color, sends only if extended == 1)
+// If mobile is poisoned, flag value > 0x00 - poison level. Since 4.0.7.0/7.0.7.0, sends to both 2d and 3d but works only in 3d. Server sends it as response for 0x34 Mobile Status Query.
+//0x17 Packet - Mobile Health Bar Status Update
+//	BYTE[1] cmd
+//	BYTE[2]	Packet Size
+//	BYTE[4]	Mobile Serial
+//	BYTE[2]	0x01
+//	BYTE[2]	Status Color (0x01 = Green, 0x02 = Yellow, 0x03 = Red)
+//	BYTE[1]	Flag (0x00 = Remove Status Color, 0x01 = Enable Status Color)
+// If mobile is poisoned, flag value > 0x00 - poison level
+CPHealthBarStatus::CPHealthBarStatus()
+{
+	InternalReset();
+}
+
+CPHealthBarStatus::CPHealthBarStatus( CChar &mChar, CSocket &tSock )
+{
+	InternalReset();
+	SetHBStatusData( mChar, tSock );
+	CopyData( mChar );
+}
+
+void CPHealthBarStatus::InternalReset( void )
+{
+	pStream.ReserveSize( 9 );
+}
+
+void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock )
+{
+	if( tSock.ClientType() >= CV_SA2D )
+	{
+		pStream.WriteByte(  0, 0x16 );
+		pStream.WriteLong(	3, mChar.GetSerial() );
+		CChar *sockChar = tSock.CurrcharObj();
+		if(( mChar.GetGuildNumber() == sockChar->GetGuildNumber() ) || mChar.IsInvulnerable() )
+		{
+			pStream.ReserveSize( 12 );
+			pStream.WriteShort( 1, 12 );
+			pStream.WriteShort( 7, 0x01 );
+			if( mChar.GetGuildNumber() == sockChar->GetGuildNumber() )
+				pStream.WriteShort( 9, 1 );
+			else if( mChar.IsInvulnerable() )
+				pStream.WriteShort( 9, 2 );
+			else
+				pStream.WriteShort( 9, 0 );
+
+			if( mChar.GetPoisoned() > 0 )
+				pStream.WriteByte( 11, mChar.GetPoisoned() );
+			else
+				pStream.WriteByte( 11, 0 );
+		}
+		else
+			pStream.WriteShort( 7, 0x0 ); //Packet ends
+	}
+	else
+	{
+		pStream.ReserveSize( 12 );
+		pStream.WriteByte(  0, 0x17 );
+		pStream.WriteShort( 1, 12 );
+		pStream.WriteLong(	3, mChar.GetSerial() );
+		pStream.WriteShort( 7, 0x01 );
+		CChar *sockChar = tSock.CurrcharObj();
+		if( mChar.GetGuildNumber() == sockChar->GetGuildNumber() )
+			pStream.WriteShort( 9, 1 );
+		else if( mChar.IsInvulnerable() )
+			pStream.WriteShort( 9, 2 );
+		else if( mChar.GetNPCAiType() == AI_EVIL || mChar.IsMurderer() )
+			pStream.WriteShort( 9, 3 );
+		else
+			pStream.WriteShort( 9, 0 );
+		if( mChar.GetPoisoned() > 0 )
+			pStream.WriteByte( 11, mChar.GetPoisoned() );
+		else
+			pStream.WriteByte( 11, 0 );
+	}
+}
+
+void CPHealthBarStatus::CopyData( CChar& mChar )
 {
 	pStream.WriteLong( 6, mChar.GetSerial() );
 
@@ -5339,12 +5894,12 @@ void CPNewBookHeader::Pages( UI16 numPages )
 	pStream.WriteShort( 9, numPages );
 }
 
-void CPNewBookHeader::Author( const std::string newAuthor )
+void CPNewBookHeader::Author( const std::string& newAuthor )
 {
 	author = newAuthor;
 }
 
-void CPNewBookHeader::Title( const std::string newTitle )
+void CPNewBookHeader::Title( const std::string& newTitle )
 {
 	title = newTitle;
 }
@@ -5540,7 +6095,7 @@ void CPClilocMessage::Message( UI32 messageNum )
 	pStream.WriteLong( 14, messageNum );
 }
 
-void CPClilocMessage::Name( const std::string name )
+void CPClilocMessage::Name( const std::string& name )
 {
 	if( name.size() > 29 )
 	{
@@ -5551,7 +6106,7 @@ void CPClilocMessage::Name( const std::string name )
 		pStream.WriteString( 18, name, 30 );
 }
 
-void CPClilocMessage::ArgumentString( const std::string arguments )
+void CPClilocMessage::ArgumentString( const std::string& arguments )
 {
 	const size_t stringLen = arguments.size();
 	const UI16 packetLen = static_cast<UI16>(pStream.GetShort( 1 ) + (stringLen * 2) + 2);
@@ -5744,4 +6299,18 @@ CPClientVersion::CPClientVersion()
 {
 	InternalReset();
 }
+
+//0x29 Packet
+//Last Modified on Thursday, 23-Feb-2012
+//Drop Item Approved (1 byte)
+//	BYTE cmd 
+// 6.1.0.7+ / only for UOKR 3D client, maybe? Not sure. Client accepts it, but works fine without, too.
+//	Server responds with this packet when client sends Drop on Paperdoll (0x13) or Drop Item (0x08). 
+// Prior to this version, it was only sent for Drop on Paperdoll (0x13).
+CPDropItemApproved::CPDropItemApproved()
+{
+	pStream.ReserveSize( 1 );
+	pStream.WriteByte( 0, 0x29 );
+}
+
 }

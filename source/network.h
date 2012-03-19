@@ -64,7 +64,7 @@ public:
 		internalBuffer[pos+2] = static_cast<UI08>((toWrite&0x0000FF00)>>8);
 		internalBuffer[pos+3] = static_cast<UI08>((toWrite&0x000000FF)%256);
 	}
-	void	WriteString( size_t pos, const std::string toWrite, size_t len )
+	void	WriteString( size_t pos, const std::string& toWrite, size_t len )
 	{
 		if( (pos+len) >= internalBuffer.size() )
 			internalBuffer.resize( pos+len );

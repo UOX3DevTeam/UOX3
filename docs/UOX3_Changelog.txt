@@ -1,6 +1,604 @@
 UOX3 Changelog
 ------------------------
 -==============================-
+-= 19/03/2012 - UOX3 0.99     =-
+-==============================-
+Contributors: Xuri, giwo, Ghostwolf, dragon slayer, xantier, Eolirin, puck, spddmn, Shudderz, Jediman
+
+Source Changes/Fixes:
+	Fixed a crash caused by clicking on the Virtue Gump icon in the paperdoll
+	Added some checking before sending a status window to ensure the character is visible and in range
+	Added some checks to prevent one from inviting themselves to a party
+	Fixed a bug with the JS Method Char.CastSpell() where it never returned a value to the calling script.
+	Fixed an issue causing smelted iron ore to combine with colored ore already in a players pack.
+	Fixed a bug making it impossible to accept or deny a recruit into a guild.
+	Added functionality to automatically turn on the Guild title display of all members when a guild aligns with Chaos/Order.
+	Added onDropItemOnItem( iDropped, cDropper, iDroppedOn ) JS Event to handle dropping an item on another item.
+	Added onVirtueGumpPress( pUser, cTarg, buttonNum ) JS Event to handle clicking the Virtue gump icon (and subsequent menus).
+	Automatic worldsaves can now be disabled by setting SAVESTIMER in UOX.INI to 0
+	Pets are removed from petlist when their stabled flag is set to true, and added again when set to false
+	Players will no longer have to shove through characters that are permanently hidden
+	Fixed travelling by recall spell or magic gate between worlds
+	Fixed Jailing and Releasing players in worlds other than world 0
+	Fixed client/server synch-issue with boats by changing prSend( 1 ) to prSend( 0 ) in boat movement code (Jediman)
+	Added support for LOOT and PACKITEM dfn tags in item-defintions, for pre-adding items to containers (Shudderz)
+	Added system messages confirming when items have been locked down or released in a house
+	Fixed a bug where targeting a non-valid object would crash UOX3 when trying to release locked down items
+	Fixed a servercrash that occured when server tried to regrown wool on shorn sheep that were dead
+	Fixed an issue that caused NPC shopkeepers to get overloaded by the weight of items in their shop-layers
+	System-message rapporting how many ingots player gets when smelting player-made items should now rapport correct amount
+	Crafting system can now handle MAXRANK values up to 255
+	Fixed an issue where NPCs could spawn at Z -128
+	Fixed an issue with regional spawns and type 69 spawners which would cause NPCs to be spawned in blocked locations
+	Fixed an issue with type 62 spawners which would cause NPCs to spawn at Z 0 (Shudderz)
+	Fixed an issue with open doors in player houses that could cause them to decay if they were open during decay-check
+	Fixed an issue with locked down items decaying (despite being inside houses)
+	A system message should now be displayed when locking down items, showing how many lockdowns remain
+	Added JS Item property: multi - A read-only Object-reference to the multi a specific item is inside
+	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground 
+	Added new UOX.INI settings:
+		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just 
+						resets the decay-timer when it reaches 0
+		SCRIPTITEMSDECAYABLE - Toggles whether DFN-items will decay by default or not. Can be overriden by DECAY tag in item-DFNs
+		BASEITEMSDECAYABLE - Toggles whether base-items will decay by default or not. Can be overriden by DECAY tag in harditems.dfn
+		ITEMDECAYINHOUSES - Toggles default decay of non-locked down items inside multis (houses and boats)
+	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
+	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
+	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
+	Added support for six new JS events: 
+		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
+		onSell( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
+		onBuyFromVendor(socket, objVendor, objBought ) - triggers for item while item is being bought from an NPC vendor; return false in script to block sale, defaults to true
+		onBoughtFromVendor( socket, objVendor, objBought ) - triggers on item after purchase has gone through and item has reached the player's backpack
+		onSellToVendor( socket, objVendor, objSold ) - triggers for item while item is being sold to an NPC vendor; return false in script to block sale, defaults to true
+		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack 
+	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
+	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
+	Added an extra check to CPISellItem to make sure the character trying to sell items still owns those items when accepting trade
+	Added a temporary workaround for NPC pathfinding with long queues of NPCs trying to reach the same target
+	Added new DFN tags for ranged weapons, defining ammunition id required (color optional) and missile-effect id played (color/rendermode optional):
+		AMMO=id (color)
+		AMMOFX=id (color rendermode)
+	Added support for Fukiya blowguns as an Archery weapon in code
+	Added new item DFN tag (and JS item property) to define maximum amount of stones (weight) a container can hold (replaces hardcoded value):
+		WEIGHTMAX=# (defaults to 40000 - or 400.00 stones - for all containers)
+	Added container-capactity information to item tooltip
+	Added "Locked Down" text to item tooltips for locked down items. Refresh seems funky though.
+	Fixed an issue where tooltips would display the current weight of and amount of items being spawned by container-spawners
+	Fixed a server crash caused by the Item Identification-skill when used on items of type 15 - IT_MAGICWAND
+	Fixed item-tooltip that describes remaining charges on an item of type 15 - IT_MAGICWAND.
+	Fixed an issue with the JS Method Open for File Objects where it wouldn't allow opening files for appending or writing, only reading
+	Fixed some confusion with how vendor buy/sell backpacks were handled internally in code
+	Changed MAX_NAME to a 128 byte limit to support long item names.
+	Changed some items spawned through code to use CreateScriptItem (DFN based) instead of CreateItem (Tiledata-based):
+		Leftover arrows and crossbow-bolts that appear on ground during combat
+		All cases where gold coins are spawned (newbie gold, random fishing, gravedigging, result of trading, NPC escort reward, etc)
+		Ingots created from smelting items
+		Resurrection robes (DFN entry added to DFNDATA/ITEMS/GEAR/CLOTHING/clothing.dfn for potential tweaking)
+	Made spawners of type IT_AREASPAWNER (69) use the MORE value ('set more 0x0000XXYY) to determine offset area to spawn in
+	Corrected hit sounds for bows and crossbows, were using dart sound
+	Changed miss-sound for bows and crossbows to make them different from melee weapon misses
+	Randomized impact-sounds for melee weapons
+	Randomized get-hit sounds for male and female human characters
+	Revamped spell-damage and magic-resist systems:
+		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check: 
+			SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted )
+		Updated cMagic::CheckResist() with magic resistance formulas based on pre-AoS information
+		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn. 
+			For damage-spells, it's the maximum potential basedamage done before bonuses (or penalties) based on target resist, caster eval int and item resistances.
+			For healing spells, it's the maximum potential basehealing done before potential bonuses
+		Damage-spells updated to use new methods for calculating damage and magic resistances, both of which should now be close to pre-AoS implementation
+		Changed Chain Lightning and Meteor Swarm spells to split the total damage done between all targets
+		Mind Blast changes:
+			Mind Blast will now never exceed 60% of target max-health, nor above 120% of BASEDMG
+			If target's Int stat makes out a larger percentage of his/her total stats (Sum of Str, Dex, Int) than the caster's, spell backfires onto caster
+		Debuff-spells like Clumsy, Feeblemind, Weaken and Curse can no longer be fully resisted. Resisting will halve the effect-duration instead.
+		Spells will now only do double damaga against non-human NPCs (monsters and animals)
+		Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
+		Updated JS/MAGIC/level1targ.js with new magic damage and resist system, and added noNeedReags check on caster to potentially skip reagent checks
+		Fixed (visual-only) issue where damage-numbers would display over head of caster twice if caster was also target
+		Added JS Spell property "name" - can be used to get the name of a spell as defined in the dictionary-files (entries 593-662)
+	Added support (but no functionality) for Spellweaving, Imbuing, Mysticism and Throwing skills in code and skills.dfn
+	Added container-gump support for container items like bones and various SE/SA-related containers
+	Corrected sound-effect played when dropping items into baskets of various kinds
+	Fixed a bug where NPCs would continue following and attacking characters that turned invisible/hidden
+	Players who turn invisible will now stop swinging at nearby targets in combat
+	Fixed a bug where players could equip both one-hander and two-hander weapons at the same time
+	Fixed a bug where newly created characters could end with two conflicting weapons equipped at the same time
+	Added fix to properly set the mounted-state for NPCs that spawn with a mount-item pre-equipped
+	Fixed issue where there was no distance-check on Field-spells. They now use CombatMaxSpellRange setting from UOX.INI like other spells
+	Fixed issue where the wrong GFX would be displayed for Field-spells aligned north/south
+	Fixed issue where NPCs without fencing or swordsmanship would not be allowed to poison anyone in combat. Tough luck, spiders!
+	Fixed issue with some NPCs using invalid values for POISONSTRENGTH. The valid range of poisons goes from 1 (weak) to 4 (deadly).
+	Fixed an issue where containers with specific MORE values were interpreted as being trapped. Trapped containers now use MOREZ instead of MORE.
+	Fixed some issues with boat-movement (drifting/turning left/right, in particular) being blocked in cases where it shouldn't be
+	Fixed an issue where boat-commands to drift left/right could be spammed to move boat at high speeds. Now limited to normal boat speed multiplied by 1.5
+	Fixed an issue where static water tiles would block placement of boats
+	Fixed Tillerman-location on large ships turned southwards
+	Nearby pets will now teleport along with their owner into/onto houses/boats when those are placed
+	Reduced chance of creature-sounds playing slightly. The more creatures, the higher the chance a sound will play.
+	Parts of movement code rewritten to solve Z-related issues (xantier)
+	Fixed various other issues with the walking-code
+	Removed hacky workaround for bug with NPC pathfinding leading to queues of NPCs all lined up, replaced by proper pathfinding
+	Made some tweaks to various parts of the NPC pathfinding code
+		Reduced default maxSteps variable in advanced pathfinding routine from 1000 steps to 500 steps for performance reasons
+			The maxSteps variable will also increase/decrease depending on the type of movement the pathfinding is for
+		Added a safeguard against NPCs repeatedly failing at advanced pathfinding and slowing down the server as a result. Now resets their NPCWANDERMODE on critical failures.
+		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path. 
+			Once it reaches a certain threshold, NPC can push past a blocking character, or alternatively stop whatever it's doing (fleeing, following, etc).
+		Advanced Pathfinding will now take into account characters blocking the way when generating valid paths - no more queued up NPCs in long lines!
+		Enabled pathfinding in water for water-walking creatures
+		NPCs that fail to pathfind while fleeing will abort fleeing and re-engage their opponent in combat
+		NPCs that fail to pathfind while in combat will abort combat and enter a state of "evasion" for a short time, during which
+			...Other characters wont block their movement
+			...They can't be attacked
+			...They won't attack anyone
+			...They'll try to move back to their bounding box, if they have one
+	Added some randomization in how NPCs pick their targets in combat, so not all NPCs pick the same target at the same time
+	MAX_VISRANGE and DEFSOCK_RANGE increased from 15 to 18 to better deal with item-updates in higher-resolution clients
+	JS events OnDeathBlow and OnDispel can now be used to override death and/or dispelling of summoned creatures (and magical fields), by returning false from the script
+		Note that for OnDeathBlow overriding code means that things like fame/karma-calculations and criminal/murderer-flags and timers need to be manually set in the script
+	Improvements to LineOfSight-code:
+		LoS no longer checks against a hardcoded list of items, but instead uses tiledata-flags (missing flags can be overriden through tiles.dfn)
+		LoS-checks will no longer be done for NPCs against targets that have visible status VT_PERMHIDDEN or VT_GHOSTHIDDED
+		LoS-checks should now work more consistently - no more NPCs aggroing players through walls! (Eolirin)
+			Note that this also has a benefit for server performance, as less aggroing NPCs mean less unneccesary attempts at NPC pathfinding!
+	Added support for INVISIBLE tag for house-items in DFNDATA\HOUSE\house.dfn. Allows adding invisible items to houses.
+	Updated methods for detecting client-versions for incoming connections, and how these are stored on the socket object
+	Added support for Stygian Abyss clients (classic version only, from v6.0.14.2 to 7.0.8.2)
+	Added support for High Seas clients (classic version only, from v7.0.9.0 to 7.0.15.1?)
+	Added support for creation of SA-specific Gargoyle-characters if client and server support this through CLIENTFEATURES and SERVERFEATURES bits
+		NOTE: Gargoyle-specific features and/or special-cases are not yet implemented! Highly experimental.
+	Added support for extended itemIDs (0x3FFF to 0xFFFF) used in SA and HS clients. Maximum supported depends on size of tiledata run on the server.
+	Added support for reading new versions of tiledata.mul and multi.mul. No settings needed, version-handling taken care of automatically.
+	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class. 
+		This replaces packet 0x1A in client-versions 7.0+, and enables displaying items and multis with IDs extending beyond 0x3FFF
+	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
+		Can be enabled/disabled through UOX.INI setting PAPERDOLLGUILDBUTTON=0/1. Defaults to 0.
+	Updated packet 0x88 to properly show combat-status of character in paperdoll
+	Updated packet 0xBA (Tracking Arrow) for HS clients - from 6 bytes to 10 bytes, to include target serial.
+	Updated packet 0x99 (Multi Placement) for HS clients - from 26 to 30 bytes, to include multi hues.
+	Added new NPCAI for passive NPCs who can be attacked, but will never attack back: AI_PASSIVE = 7
+	Updated Wall of Stone-spell to no longer place walls on the same tiles as where characters are standing
+	Added brute-force updating of character's total weight when main backpack is opened, as a quick-fix for broken character weights
+	Updated packet 0xA9 (Character List/Starting Locations) with UO:SA and UO:HS-specific handling.
+	Updated packet 0x24 (Draw Container, from 7 to 9 bytes) to support Container Type-flag in UO:HS clients, to ensure that containers, spellbooks and vendors continue working.
+	Changed the upper limit for the amount of stamina that can contribute to faster attack-speeds (for NPCs only) from 100 to 300
+		This increases their maximum theoretical attack-speed from attacking every 1.5 seconds to roughly every 0.75 seconds
+	Earthquake-spells will no longer affect mounted targets, animation-wise
+	Added new UOX.INI option to determine whether attack-speed bonuses are gained from Stamina (default) or Dexterity: ATTACKSPEEDFROMSTAMINA=1/0
+	Added new UOX.INI option to control the displaying of damage-numbers in combat (previously used DISPLAYHITMSG for numbers too): DISPLAYDAMAGENUMBERS=1/0
+	Implemented better support for Yell (1.5 * normal speech distance) and Whisper (1 tile distance for players, 3 for GMs)
+	Whispering will no longer take hidden players out of hiding
+	Normal players can no longer see regular speech from permanently hidden GMs or Counselors
+	Normal players can see whispers from permanently hidden GMs or Counselors, if they're within distance (3 tiles)
+	Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client-versions for the server:
+		CLIENTSUPPORT4000=0/1
+		CLIENTSUPPORT5000=0/1
+		CLIENTSUPPORT6000=0/1
+		CLIENTSUPPORT6050=0/1
+		CLIENTSUPPORT7000=0/1
+		CLIENTSUPPORT7090=0/1
+		CLIENTSUPPORT70160=0/1
+		CLIENTSUPPORT70240=0/1
+		NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned. This means that CLIENTSUPPORT4000, for instance,
+		 will allow or disallow connections from clients 4.0.0 to 4.0.11f. Also note that while it is possible to enable support for all clients at the same time,
+		 it highly recommended to restrict support for client versions that match up to what the server is running.
+	Fixed various issues with the skill-gump (crashes) and skill-locks (not working/showing weird gumps instead of arrows/lock)
+	Added new UOX.INI option: EXTENDEDSTARTINGSTATS=0/1
+		If enabled, makes new characters start with 90 statpoints (selectable in clients 7.0.16.0+ only, lower versions only get 90 if using templates) instead of 80.
+	Added new UOX.INI option: EXTENDEDSTARTINGSKILLS=0/1
+		If enabled, allows for four starting skills (selectable in clients 7.0.16.0+ only, lower versions only get 4th skill if using templates) instead of three
+	Added (very) experimental support for UO:Enhanced clients v4.0.23.1+
+	Did some minor code-cleanup stuff, including but not limited to:
+		Reduced scope of some local variables to where they are actually needed/used
+		Changed some const std::strings function parameters to references instead of values
+		Changed some "stuff.size() == 0"-checks to "stuff.empty()"
+		Changed some "stuff.size() != 0"-checks to "!stuff.empty()"
+		Removed some variables that were initialized but never used
+	Increased world-loading speeds by ~35-40%, and saving by ~30-35% (your mileage may vary, this was tested on Windows 7, on an SSD)
+	Included <climits> in mapstuff.h and <stdlib.h> in cDice.cpp to fix a compiling issue in Linux
+	Made the WIPEABLE bit a member of cBaseObj instead of cItem, so it can be used by both items, spawners, characters and multis - though only works for items and spawners atm
+	Implemented support for automatically renaming books when the book titles are updated by players
+	Fixed broken Bulletin Boards - should no longer freeze the client, and can actually be used for posting messages again
+	Disabled MsgBoardMaintenance() in CWorldMain::CheckAutoTimers() until someone can figure out why they break bulletin boards
+	Added code to shut down UOX3 (instead of crashing later on) if it fails to load any regions from region DFN scripts
+	Added support for reading map#LegacyMUL.uop files (regular map#.mul files with a uop header) in clients 7.0.24+
+	Fixed an issue where an NPC knowing too many skills could crash UOX3 if when listing them in response to a player
+	Players can now train skills from NPCs using the "train <skill>" phrases.
+	Moved reloading of JS/teleport.scp from the already slow DFN-reload (console option 7) to the much faster Regions-reload (console option 4)
+	Fixed an issue where some creatures with ANTIBLINK tag set in UOX3/DFNDATA/CREATURES/creatures.dfn would play get-hit animations as attack-animations
+
+JScript Changes/Fixes:
+	Moved the magic scroll handling from cPlayerAction.cpp out to JavaScript (items/magicscroll.js)
+	Fixed an error in tailoring.js where invalid socket and character objects were referenced
+	Removed a debug-message from taming.js
+	Pen and Ink-items will now work similar to using the inscription skill directly
+	Updated trainingdummy.js and pickpocketdip.js with code that will auto-fix them should their timers ever break
+	Fixed issue with the 'ADD command that would put items in your backpack instead of target's backpack
+	Removed a TriggerEvent from go.js that should not have been there
+	Corrected scripttrigger for newly created bankchecks in banker.js
+	Added stablemaster JS-script and assigned it to the animal-trainer vendors (Xuri)
+ 		Available commands: claim (list|pet-name), stable
+	Added support for bamboo flute in musicianship/enticement/peacemaking JS-scripts (dragon slayer)
+	Added new JS-script for bolas - JS/ITEM/bola.js (dragon slayer)
+	Added entry for bola in jse_objectassociations.dfn (Xuri)
+	Added bamboo flute to GM-menu under music instruments, and entries in jse_objectassociations.dfn (Xuri)
+	Added definition of 0x1EB9 as a Tinker Tool in jse_objectassociations.scp
+	Fixed an issue with sword.js which stopped you from carving shafts/kindling from a single wooden log
+	Added missing pickpocket-dummy entries to jse_objectassociations.scp
+	Added decayable = false to freeze command in misc-cmd.js
+	Did some tweaks to some tailoring js-files to make spinning wheels stop breaking if global onCreateDFN script is present
+	Minor fix to JS/COMMANDS/TARGETING/add.js which ensures that the script won't break under some very specific circumstances
+	Added script for Dice and Cup-item, which lets players use said item to...(drumroll, please)...roll dice!
+	The duping command (dupe.js) should now be able to dupe spawner-objects properly
+	Added missing Tinker Tools and Fletching Tools to jse_objectassociations.scp (Puck)
+	Removed lines from add.js that set decayable as true or false (except for spawners), default decay now handled by ini-settings
+	Added DIR values to all .js files in JS/SERVER/LIGHT/ folder, enabling players to turn on/off lightsources
+	Added onBoughtFromVendor JS events to pet-statue scripts in JS/NPC/PETS/ to automagically turn statues into live pets immediately after being bought
+	Fixed some incorrect scriptIDs for lightsources in jse_fileassociations.scp and jse_objectassociations.scp
+	Fixed 'SETRACE command, no longer tries to use non-existing method to set character's race (JS/COMMANDS/setrace.js)
+	Fixed an issue where onCreate JS scripts would not run for duped items
+	Changed JS scripts for lights to save DIR to MOREX when turning light off, and load DIR from MOREX when turning on. Sets default DIR if no MOREX value can be found.
+	The empty bottles that appear after using a potion will now be DFN based (JS/ITEM/potion.js)
+	Fixed an error in JS/ITEM/diceandcup.js (dragon slayer)
+	Fixed various errors in JS/MAGIC/level1targ.js
+	Updated kindling.js and added bedroll.js (original by dragon slayer, rewritten by Xuri) to support secure logouts from camping
+	Updated JS/ITEM/food.js so bowls, plates, etc will be left behind instead of eaten along with the food (dragon slayer)
+	Added item and character-direction to ISTATS and CSTATS commands in JS/COMMANDS/TARGETING/gumps.js
+	Fixed an issue with JS/NPC/AI/stablemaster.js where, in specific circumstances, claiming stabled pets by name didn't work
+	Fixed some cases in JS/MAGIC/clumsy.js where it tried to send sysmessages through sockets, to NPCs - who have no such thing
+	Moved TurnTorward() method in JS/ITEM/axe.js to after the area resource-check, so player only turns if there is chopping to be done
+	Updated some JS Console Methods in JS/COMMANDS/consoletest.js
+	Added ML-era weapons to JS/SERVER/DATA/weapontypes.js (dragon slayer)
+	Added code-support for SA-era weapons, and added them to JS/SERVER/DATA/weapontypes.js and JS/jse_objectassociations.scp
+	Updated JS/ITEM/sword.js to use CreateDFNItem instead of CreateBlankItem for raw fish steaks and kindling (dragon slayer)
+	Added cutting hides into leather through JS/SKILL/TAILORING/scissors.js (dragon slayer)
+	Disabled detection of keypress "0" in JS/CONSOLE/console.js so UOX3 will actually reload all scripts when pressing 0
+	Updated the 'WIPE command to not delete non-wipeable items and spawners
+	Fixed a crash-bug in JS/COMMANDS/gumps.js where the 'ISTATS command could crash the server if used on a spawner-object with no spawnsection set
+	Fixed an issue in JS/SKILL/TAILORING/scissors.js where the script was referencing socket, but should have referenced pSock (dragon slayer)
+	Updated JS/teleport.scp with teleport-locations for new maps (dragon slayer)
+	Updated JS/teleport.scp with fixes for a whole bunch of old locations, and added some missing ones
+
+DFN Changes/Fixes:
+	Added blank scrolls and empty books to ScribeShopping SHOPLIST
+	Added new vendor NPCs using ScribeShopping shoplist: m_scribe and f_scribe
+	Added new scribe-spawner item, and added it to GM-menu
+	Sorted male and female NPCs and vendors alphabetically in the NPCs-menu
+	Fixed some issues in shoplist.dfn
+	Fixed teleport entries from Serpent's Hold to Fire dungeon (Ghostwolf)
+	Added new midilist section (23) for dungeon music (Ghostwolf)
+	Added MIDILIST=23 entry in region 29 (dungeons)
+	Added missing Meteor Storm Scroll to DFNDATA/ITEMS/MAGIC/scrolls.dfn (Ghostwolf)
+	Added a new DFN (DFNDATA\NPC\lbrraces.dfn) with Meer and Juka NPCs  (Ghostwolf)
+	Added Meer and Juka races to races.dfn (Ghostwolf)
+	Added Meer and Juka NPCs to GM-menu under Humanoid NPCs (Xuri)
+	Fixed messed up smithing gump (Ghostwolf)
+	Added Jhelom fighting pit to regions.dfn and renumbered the regions (Ghostwolf)
+	Added other regions included dungeons, guard outpost, etc (Ghostwolf)
+	Added regions in Trammel, Ilshenar, Malas and the Map of Tokuno Note (Ghostwolf)
+	Updated instalog-section with Trammel and Ilshenar inns (Ghostwolf)
+	Changed Bucc's Den regions to not guarded (Ghostwolf)
+	Added two new NPCs - [shade] and [armeddaemon] to DFNDATA/NPC/undead.dfn and DFNDATA/NPC/daemons.dfn(Ghostwolf)
+	Tweaked ID of existing [daemon] to that of the unarmed one (Xuri)
+	Added Shade and Armed Daemon entries to GM menu (Xuri)
+	Added entries for bamboo flutes in DFNDATA/ITEMS/SKILLS/MISC/music_instruments.dfn (Xuri)
+	Added entry for bola in a new DFN file: DFNDATA/ITEMS/GEAR/WEAPONS/missile_weapons.dfn (Xuri)
+	Fixed an incorrect entry in namelists.dfn
+	Re-ordered IDs listed under METAL in DFNDATA/CREATE/resources.dfn to make UOX3 give same ingot-types when smelting
+		player-crafted items as when smelting raw ore.
+	Moved buckler-entry in smithing.dfn from item 1 to item 367 as it doesn't seem possible to craft item number 1
+	Removed erroneous DEF values from leather.dfn, studded_leather.dfn and bone.dfn - should use values from base_armor.dfn
+	Added DEF values to standard clothing, footwear and headwear
+	Made GetScriptItemSettings look for "x" instead of "0x" in harditems.dfn, fixes some stacking issues with ingots
+	Corrected IDs for gold coins and kindling in harditems.dfn by removing leading 0s in the IDs
+	Added movable=2 and weight=50000 to Base_spawner-definition to make it impossible for players to steal them
+	Fixed an incorrect name-entry in namelists.dfn (Puck)
+	Made skulls dropped as loot by Bonemages movable
+	Fixed several issues with spawners.dfn, including incorrect names and spawnobject-entries (Puck)
+	Added default ID to base_spawner item in DFNDATA/ITEMS/GMMENU/spawners.dfn to make it spawnable without invalid gfx
+	Fixed an incorrect ID for Iron Ore in DFNDATA/HARDITEMS/harditems.dfn and DFNDATA/ITEMS/SKILL/RESOURCES/mining.dfn
+	Fixed a bug that stopped UOX3 from reading and applying DIR values from item-DFNs correctly
+	Added DIR values to all lightsources in DFNDATA/ITEMS/BUILDING/lighting.dfn
+	Added AMMO and AMMOFX tags to ranged weapons in archery.dfn, aos_weapons.dfn, se_weapons.dfn and baseitem.dfn
+	Fixed name in addmenu for item 0x0F64 (unused torch)
+	Fixed TrainerShopping list in DFNDATA/ITEMS/shoplist.dfn - now refers to actual animal-statue items in DFNs
+	Fixed DIR values for various wall sconces (DFNDATA/ITEMS/lighting.dfn) and heating stands (DFNDATA/SKILLS/TOOLS/alchemy.dfn)
+	Fixed broken smithing of agapite items due to duplicate item-numbers between agapite and gold crafting DFNs (DFNDATA/CREATE/smithing_agapite.dfn)
+	Made cut-up-leather and furs pileable in DFNDATA/ITEMS/SKILLS/RESOURCES/leatherworking.dfn (dragon slayer)
+	Added additional lootlists for tinkerparts, instruments, tools, vegetables, clothing, reagents and potions in DFNDATA/ITEMS/lootlists.dfn (dragon slayer)
+	Added empty wooden bowls to DFNDATA/ITEMS/BUILDING/DECS/kitchen.dfn
+	Updated DFNDATA/MAPS/tiles.dfn with proper height-override values for rope ladders - should be 22 not 10
+	Added additional deed/boat-model IDs to "modelmulti"-list in DFNDATA/ITEMS/itemtypes.dfn to make these usable as house/boat-deeds
+	Added three new sections to DFNDATA/NEWBIE/newbie.dfn - [DEFAULT ELF MALE], [DEFAULT ELF FEMALE] and [DEFAULT ALL]
+	Added torches to ProvisionerShopping shoplist in DFNDATA/ITEMS/shoplist.dfn
+	Fixed incorrect offset on upstairs door in 2-story villa in DFNDATA/HOUSE/house.dfn
+	Added house-deed for Farmer's Cabin, and added this to the house-deeds itemmenu (DFNDATA\HOUSE\house.dfn and DFNDATA\ITEMS\ItemMenu.bulk.dfn)
+	Added invisible wooden floor tile in second floor of 2 Story Log Cabin house to fix moving up rope ladder (DFNDATA\HOUSE\house.dfn)
+	Fixed sign-placement for 2 Story Log Cabin house (DFNDATA\HOUSE\house.dfn)
+	Added support for the SA-specific map (map5.mul - Termur) to DFNDATA/MAPS/maps.dfn
+	Fixed incorrect Meditation skill-entry for lich NPCs (DFNDATA\NPC\undead.dfn) - was set to max 9500 (950.0), should have been 950 (95.0)
+	Fixed read-only books (setup through DFNDATA/MISC/books.dfn) by updating the MORE dfn-tags in DFNDATA/ITEMS/MISC/books.dfn
+	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer) 
+	Added Ter'Mur Map Area (REGION 250) to DFNDATA/REGIONS/regions.dfn
+	Changed all references to MAP in DFNDATA/REGIONS/regions.dfn to WORLD (which unlike MAP is actually read by UOX3 in this file)
+	Added layers to DFNDATA/ITEMS/MISC/jewelry.dfn (dragon slayer)
+	Updated House-gump in DFNDATA/MISC/gumps.dfn (dragon slayer/Blue Dragon)
+	Added MAPUOPWRAP tag to DFNDATA/MAPS/maps.dfn - only used by clients 7.0.24+
+	Added numerous creatures to DFNDATA/CREATURES/creatures.dfn, though some only have placeholder icons and sounds.
+	Corrected coordinates for REGION 75 (Destard)
+
+Misc Changes/Fixes:
+	Did some minor updates to the JavaScript Documentation
+	Updated dictionary-files with some more messages, including a missing systemmessage used to inform of remaining amount of lockdowns in houses
+	Updated dictionary-files with new system messages related to the camping-skill
+	Updated various UOX3 documentation (installation, configuration, server-settings, JavaScript docs)
+
+
+-==============================-
+-= 17/01/2009 - UOX3 0.98-4.0 =-
+-==============================-
+Contributors: grimson, Xuri, giwo, maarc, Cavalier, supermoleet
+(For a detailed list of who updated what and when, check the CVS changelog)
+
+Source Changes/Fixes:
+	Fixed an issue causing JS gumps to interfere with eachother.
+	Fixed an issue causing serial numbers in the istats gump to display improperly.
+	Fixed an issue with CPFightOccurring packet which would cause the client to lockup.
+	Made use of the CPFightOccurring packet during combat.
+	Fixed an issue when a monster attacked a player who was not in combat UOX3 
+	 would not inform the client of a new target.
+	Added a flag to CChar::PushDirection() allowing us to push to the front or back of the pathToFollow list.
+	Changed CChar::mNPC::pathToFollow to a deque for more robust functionality.
+	Fixed an issue with the A* Pathfinding routine causing creatures to path in reverse.
+	Added some debugging information to A* Pathfinding (when running in Debug mode).
+	Fixed a possible issue with TextEntry in JS gumps.
+	Fixed an issue with the following JS events:
+		OnSnooped
+		OnSpellGain
+		OnSpellLoss
+		OnCommand
+		OnPacketReceive
+	Fixed several MingW32 compiler warnings.
+	Fixed a Flagging issue with Racial enemies.
+	Added uox.ini flag to disable/enable the A* Pathfinding routine: ADVANCEDPATHFINDING=0/1
+	Fixed an issue causing errors when compiling under *nix.
+	Fixed an issue causing monsters to constantly attempt to pathfind to a target they can't reach.
+	Made onResurrect trigger before a resurrection instead of after, added option to override hard code by returning false
+	Fixed an issue making it impossible to place items on tables.
+	Fixed an issue with the uox.ini entry for log resource respawn area.
+	Simplified many entries in uox.ini, making them easier to read.
+	Fixed a crash when attempting to place a house item outside a house.
+	Fixed the location check when placing house items to allow them to be placed inside houses.
+	Added a check on house items to only allow them to be placed in your house (Or anywhere by GM's).
+	Bumped up the limit on items in create.dfn from 999 to 32,766.
+	Removed FOREIGN and MINAMOUNT tags from ore entries in skills.dfn as they were superfluous
+	Fixed CHANCEFORBIGORE tag handling from regions.dfn to give a % chance out of 100 to get a pile of 5 rather than 1 ore.
+	Modified the order of the arguments in the RESOURCE tag in create-DFNs to fit the following:
+		RESOURCE=ID AMOUNT COLOUR (AMOUNT and COLOUR are optional)
+	Changed item limit in create dfn down to 4,999 to fix a bug in gump handling.
+	Fixed several issues with the UseResource JS Method
+	UseResource JS Method can now be used with both items (containers) and characters
+	Added CPIAOSCommand packet including logging
+	Changed CPISubcommands::Receive so that it doesn't log multiple times
+	Updated party packet details
+	Added basic party implementation.  Adding, removal and kicking works, speech does not
+	Added sent packets CPPartyMemberList, CPPartyMemberRemove and CPPartyInvitation
+	Updated dragging contents out of packs so that pet friends should be able to do so
+	Added CPPartyTell packet
+	Promoted Party::SendPacket to public method
+	Added speech (individual and group) to party methods
+	Added commentary to some of the party classes headers
+	Updated AddMember() and RemoveMember() to return a bool as to it's success
+	Updated Leader() change code so that the leader is always first on the list
+	Added isNPC property to the Party class to help us with how our code will go
+	CChar now has an InParty() method, which is currently unused - will be used for fast lookups of party presence later.  This is NOT to be saved, as it disappears on server shutdown.
+	Exposed the new party classes to the JS Engine
+		var partyObject = CreateParty( leader );	// Returns NULL if the party failed to be made
+
+		Party Class
+			Methods
+				bool Remove( memberToRemove );
+				bool Add( memberToAdd );		// If it's a PC, then it will send an INVITE ONLY  It is up to the PC to accept/decline
+				obj  GetMember( index );		// Returns a character object for the member at that index
+			Properties
+				leader					// Character object that is the leader, can return null - EDITABLE
+				memberCount				// Returns the number of characters in the group - READONLY
+				isNPC					// Returns true if it's an NPC party, false if not - EDITABLE
+
+		Character Class
+			Properties
+				party					// Returns a party object that is the party associated, or null - READONLY (use party management for this!)
+				partyLootable				// Boolean that dictates whether the character is lootable by the party - EDITABLE - Note that if you are not in a party, this does nothing!
+	Fixed the spawning of NPCs in CSpawnRegion::RegionSpawnChar() so that they are put into the correct world.
+	Updated UOX3_Official.dsp to contain the files from the party system.
+	Change cMagic::SelectSpell() to first check for reagents and then for skill.
+	Added more details to the weapon tooltips.
+	Fixed %tstamp output in the HTML templates.
+	Fixed a compiler warning with the Party System
+	Fixed an issue causing weight not to be added when grabbing items from a bank box.
+	Moved BankBox creation to Player creation, addressing a situation where the first
+		time a player opened his bank it would close immediately or crash the client.
+	Added FindRootContainer() to simplify finding the top-most item containing other items.
+	Fixed an issue causing it to be "snooping" to open a pack in a trade window.
+	Added support for the OnPickup() JS Hook, note a return value of false will bounce the item.
+	Fixed an issue with TriggerEvent() that can cause a script to stop functioning if the triggered event did not return true
+	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
+	Exported telltime function along with the clock item and 'time command handling to JS.
+	Fix a bug where items, that have a script but no onPickup event, get always bounced.
+	Allow party members to remove themselfes from the party, even if they aren't the leader.
+	Update the CPWalkOK Packet (0x22), the second byte contains the notoriety value (flag color) and make use of it.
+	Added a new target type to the speech system, SPTRG_ONLYRECEIVER which sends the message
+	 only to the receiver and doesn't display it on the sender.
+	Use the new target type in CSocket::objMessage() and CSocket::ShowCharName() to display
+	 the player name and serial only to the char requesting the information.
+	Fix the format of the pingIP field in the CPGameServerList::AddServer() function. Now the
+	 client shows, after a moment, latency and packet loss information for the servers. It still
+	 doesn't work all the time.
+	Small rewrite of the weather system. Calculate snow, rain and storm intensitys only every
+	 server hour and use their values for the amount of weather effects on the screen.
+	Committed some linux build error fixes on behalf of Cavalier
+	Allowed customization of supported client features via uox.ini
+		CLIENTFEATURES
+		SERVERFEATURES
+		Note that these are bit-settings similar to the way STARTPRIV works.
+		One will need knowledge of how to set individual bits in a value,
+		or an editor to customize these features.
+	Removed CLIENTSUPPORT from the uox.ini
+	Fix the onCreate JS script functions, they used the same event id. So if one didn't exist the other was also marked as not existing.
+	Changed CPICreateCharacter::Handle(), if the start location for the new PC isn't send
+	 by the client it now uses the first start location from the uox.ini instead of the fixed
+	 location in britain.
+	Use an enum for the states of the skill locks, makes reading the code a bit easier.
+	Fixed cSkills::HandleSkillChange(), the re-ordering of the atrophy created doubles
+	 and dropped entrys.
+	Rewrote cSkills::AdvanceStats() so that the statlocks are actually used.
+	Fixed cMagic::CheckBook(), it was calculating wrong numbers for the spells.
+	Let chars randomly fall forward or backward when they die.
+	The DISPLAYHITMSG setting from the uox.ini now also controls the damage display.
+	Fixed the position of the coprse item when the char died falling forward.
+	Corpses should now display the hair and beard of the char they where created from.
+	Modified CItem::SetCont() so that it checks against the item layer instead of fixed
+	 IDs to see if an item is hair or a beard.
+	Fixed a bug where we dropped the hair and beard items, from corpses, on the ground.
+	Added a new setting to the uox.ini, LOOTINGISCRIME. If you set it to 0 looting
+	 corpses of innocent chars is not taken as a crime.
+	Fixed and changed parts of the walking code. If NPCs have the RUNS tag set they
+	 will really run when they attack, instead of just showing the running animation.
+	Tamed chars will now run, if the char they follow is running, this should reduce
+	 the warping effect of them a bit.
+	Remove some not needed code and slow fleeing NPCs a bit down, so that other chars
+	 can still catch up with them.
+	Make sure we check for scripts envoked by type or id before we use the global script.
+	Added JavaScript function "Moon( moonNum, newVal )" which will get and set the server moon values.
+	Modified JavaScript Item.decaytime and Item.tempTimer to calculate the new value as a future time in seconds (unless a 0 is passed).
+	Fixed a couple crashes caused by targeting non-PC's in the PartySystem.
+	Modified cMovement::NpcMovement() and cMovement::HandleNPCWander() so that NPCs
+	 only run while they still have stamina left.
+	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they
+	 work the same way as NPCMOVEMENTSPEED.
+	Added three new DFN tags for NPCs. WALKINGSPEED, RUNNINGSPEED and FLEEINGSPEED 
+	 they also work the same way as the uox.ini settings, and will override those if present.
+	Allow faster attacks on fleeing NPCs, so they won't be chased without an end.
+	Allow following NPCs to run if their target went to far away, so they can catch up on it.
+	Fix reading of the new SPEED DFN tags for NPCs.
+	Added the JavaScript CSocket methods FirstTriggerWord(), NextTriggerWord(), FinishedTriggerWords() to allow handling trigger words sent from the client during speech.
+	Added support for updated UOKR packets.
+	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the
+	 tooltips will only contain basic information, like the name and the weight of an item.
+	Use an enum for racial relations, should help with reading the code.
+	Fix a bug where racial allys would attack each other.
+	Added new JS property for items: "speed" this can be used to get and set the speed of weapons.
+	Added new setting to spawn.dfn: "ONLYOUTSIDE" set this to one so that items and chars
+	 will only spawn outside of buildings in that area.
+	Modified the spawn code for spawnregions so that NPCs with wandermode 3 (box) and 4 (circle)
+	 keep within the spawnarea boundaries.
+	Send NPCs that left their wander area for some reasons back there.
+	Force the wandermode of NPCs spawned by spawnregions to 3 (box), so they can travel the whole spawnregion.
+	Properly initialize the wander area when the location of an NPC changes.
+	Use the old OSI way of calculating hit chances.
+	Properly initialize the wander area when the wandermode of an NPC changes.
+	Use stamina instead of dexterity when calculating the attack delay to match up with the old OSI combat calculations.
+	Split onUse into onUseChecked and onUseUnChecked.
+	Made magical shortbows and elven composite bows fire arrows instead of crossbolts
+	Added support for Visual Studio 2008
+	Fixed an issue causing a player to be poisoned when a JS call to SetPoisoned(0,0) was made.
+	Fixed several issues with tracking.
+	Fixed a crash caused by passing an invalid object to the JS Method TurnToward
+	Modified UString to function without crashing under VS2008
+	Fixed a bug in CItem::RemoveFromSight() causing items inside containers on the ground not to properly notify nearby players when removed.
+	Fixed a bug in CPIDropItem() when the compiler does not automatically instantiate booleans to false
+	Fixed an infinite loop crash caused by a DFN entry calling itself with GET
+	Added JS Character Propery "poisonStrength" to set the strength of the poison a character will inflict on his foe during combat.
+	Implemented supermoleet's fix for the black screen after logging in to a different world
+	Added error handling to prevent a crash if GetByte/GetWord/GetDWord were passed an invalid offset
+	Changed the tweakItem and tweakChar handlers to use command level rather than the "IsGM" flag.
+	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.	
+	Modified the JSMethod CBase_GetTag to avoid a possible crash.
+	Removed the following variables from CWorldMain cmem, imem, nextCharSerial, nextItemSerial as this functionality is handled by the ObjectFactory
+	Changed the system message being displayed when fatigued due to being overloaded
+	Added system message for when character becomes overloaded after picking up item
+	The math for calculating max carrying capactity for players matches OSI values more closely
+	Default WeightPerStr changed from 5 to 3.5, to closer match the values used by OSI
+	Animal taming no longer checks for the "ANIMAL"-tag in creatures.dfn
+	Converted WeightPerStr from UI08 to R32, so it can support decimal values
+	The onFall JS event will now work if characters fall further than 20 Z tiles (CChar.cpp)
+	TWEAK now works for any admin character, no matter their commandlevel (gumps.cpp)
+	The onPickup JS-event should now work
+	Entry for ScriptID added to 'CSTATS, 'ISTATS and 'TWEAK menu
+	Fixed an update-issue with race-gates
+	Increased MAX_Z_LEVITATE from 10 to 15 to better deal with moving on uneven terrain (like in T2A)
+	It should now be possible to walk through secret entrances made up of walk-through-able grass/mountain tiles
+	#ifdef'd ODBCManager implementation.  You will need to enable through Config.h, and add 2 files to project.
+	Accounts load and save from a database, falling back to read/write if connection doesn't exist
+	Both logins are logged into SQL database
+	ODBCManager exposed to JS Engine - note, columns MUST be fetched in ascending numeric starting from 0
+	Long strings printed to the console will now wrap in a friendly fashion
+	Unknown INI file tags will now print out at startup
+	Bug fix on GetColumn JS implementation
+	Error checking on statement indexes in GetColumn() in ODBCManager
+	Fixed a bug that prevented players from picking up/moving items in their own backpacks
+	Implemented 0xBD CPClientVersion packet to request the version from the client.
+	Possible fix for clients > 6.0.5.0.
+	Fixed the handling for the UOX ini tags OVERLOADPACKETS and DARKLEVEL
+		
+JScript Changes/Fixes:
+	Added new command (rndtile.js) that allows tiling random items of a specific hue at a specific height
+		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)	
+	Added "ARMOUR" as an alternate spelling used along with the 'SET command
+	Found and fixed a total of 19 missing semicolons in 15 different JavaScripts
+	Modified sword.js and axe.js so bladed weapons can be used as magic weapons (of TYPE 15)
+	Minor modifications to several JavaScript files
+	Items with wipable status set to 0 should no longer be removed when using the 'WIPE command
+	Added support in doors.js for linked double-doors that will both open at the same time
+	Added new command - 'LINKDOORS - used to link doubledoors together, and 'UNLINKDOORS to unlink them
+	Added new script (bankers.js) that replaces hardcoded banker-AI and adds CHECK and DEPOSIT # / <target> commands
+	Added new script (bankcheck.js) that handles the functionality of bank-checks
+	Assigned script 3201 to bankers, and removed NPCAI=8
+	Added teleport locations for Malas and Tokuno to moongate.js, and added configuration values at top of script
+	Fixed door.js allowing a locked door without an associated key to always be openable.
+	Fixed multiple JS-scripts that would not work correctly with negative Z values (Used GetSByte instead of GetByte)
+	Fixed a few "You can't think of a way to use that item"-messages appearing when using certain JS-based items
+	Removed rawfish.js and the script entries for it, no longer used.
+	Added new JS script for moonstones, used to create gates between felucca & trammel
+	Added new JS script for spyglasses, used to see the phases of the moons
+	Added new DFN item: [moonstone], uses new moonstone JS script
+	Drinking healing potions will no longer also give the user night-sight
+	Cure-potions should be working again (stranf)
+	Drinking a poison-potion will now poison one's character
+	A timer now stops players from using multiple potions rapidly
+	Fixed some errors in jail.js that could mess up jailing/releasing characters 
+	Added new function (getCombatSkill) to weapontypes.js for returning skill used by equipped weapon as a string
+	Removed entry 104 (rawfish.js) from jse_fileassociations.scp as it was no longer in use
+	Archerybuttes work again, and should have a "machine-gun"-issue fixed
+	Scripts that used onUse() now use onUseChecked()
+	Added a check to the 'POLY command to prevent characters from polymorphing into an invalid, client-crashing id (0x20)
+
+DFN Changes/Fixes:
+	Added smithing DFNs for coloured ingots (Armor and shields only, no weapons).
+	Added a commented out MOUNTID for the polar bear in creatures.dfn. Uncomment for ridable polar bears.
+	Corrected SPACEX/SPACEY (clear space necessary to place the house) values for all houses.
+	Updated skills.dfn with changes mentioned by giwo about FOREIGN and MINAMOUNT tags.
+	Remove remains of the time command from command.dfn.
+	Added elven hair styles to the dfns.
+	Changed mapdefinitions (maps.dfn) for Trammel to map1.mul, statics1.mul and staidx1.mul
+	Removed duplicate spyglass entries in item-DFNs, and added script tag for new spyglass JS script
+	Fixed hex-id of turnips in foods2.dfn, these turnips should now be stackable
+	Fixed hex-id of studded sleeves in studded_leather.dfn, previously used hex-id for gloves
+	Tweaked the region surrounding Buccaneer's Den so it extends around all buildings in the town
+	Modified books.dfn to use the standard TAG=DATA format. Each line in a PAGE section is now preceded with LINE=
+	Modified motdtips.dfn to use the standard TAG=DATA format. Each line in a TIP or MOTD section is now preceded with LINE=
+
+Misc Changes/Fixes:
+	Updated JavaScript Documentation to 0.44, and added missing commands to command list
+	Updated UOX3_changelog.txt in the Docs-folder to include updates up to 0.98.3-7
+	Updated dictionary files with two new system messages
+	Updated onFall JS Event in Javascript Documentation
+	Updated onPickup JS Event in Javascript Documentation
+	Fixed an erroneous example in JavaScript Docs
+
+-==============================-
 -= 08/04/2006 - UOX3 0.98-3.7 =-
 -==============================-
 Contributors: giwo, Grimson, Xuri

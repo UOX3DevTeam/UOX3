@@ -42,8 +42,8 @@ public:
 	virtual void	Language( UnicodeTypes toPut );
 	virtual void	Unicode( bool toPut );
 	virtual void	Type( SpeechType toPut );
-	virtual void	Speech( const std::string toPut );
-	virtual void	SpeakerName( const std::string toPut );
+	virtual void	Speech( const std::string& toPut );
+	virtual void	SpeakerName( const std::string& toPut );
 			void	GhostIt( UI08 method );
 	virtual			~CPacketSpeech()
 					{
@@ -156,7 +156,8 @@ public:
 	virtual void	SkillNum( UI08 sNum );
 	virtual void	Skill( SI16 skillval );
 	virtual void	BaseSkill( SI16 skillval );
-	virtual void	Lock( UI08 lockVal );
+	virtual void	Lock( SkillLock lockVal );
+	virtual void	Cap( SI16 capVal );
 };
 
 class CPBuyItem : public CPUOXBuffer
@@ -290,7 +291,7 @@ public:
 					CPPaperdoll( CChar &toCopy );
 	virtual void	Serial( SERIAL tSerial );
 	virtual void	FlagByte( UI08 fVal );
-	virtual void	Text( const std::string toPut );
+	virtual void	Text( const std::string& toPut );
 	CPPaperdoll &	operator=( CChar &toCopy );
 };
 
@@ -400,6 +401,7 @@ public:
 	}
 					CPDrawContainer( CItem &toCopy );
 	virtual void	Model( UI16 newModel );
+	virtual void	ContType( UI16 contType );
 	virtual void	Serial( SERIAL toSet );
 	CPDrawContainer &operator=( CItem &toCopy );
 };
@@ -468,7 +470,7 @@ public:
 	}
 					CPStatWindow( CChar &toCopy, CSocket &target );
 	virtual void	Serial( SERIAL toSet );
-	virtual void	Name( const std::string nName );
+	virtual void	Name( const std::string& nName );
 	virtual void	CurrentHP( SI16 nValue );
 	virtual void	MaxHP( SI16 nValue );
 	virtual void	NameChange( bool nValue );
@@ -591,8 +593,8 @@ public:
 	{
 	}
 					CPWebLaunch();
-					CPWebLaunch( const std::string txt );
-	virtual void	Text( const std::string txt );
+					CPWebLaunch( const std::string& txt );
+	virtual void	Text( const std::string& txt );
 };
 
 class CPTrackingArrow : public CPUOXBuffer
@@ -608,6 +610,7 @@ public:
 					CPTrackingArrow( CBaseObject &toCopy );
 	virtual void	Location( SI16 x, SI16 y );
 	virtual void	Active( UI08 value );
+	virtual void	AddSerial( SERIAL targetSerial );
 	CPTrackingArrow &operator=( CBaseObject &toCopy );
 };
 
@@ -655,13 +658,14 @@ public:
 	virtual void	RequestType( UI08 rType );
 	virtual void	DeedSerial( SERIAL toSet );
 	virtual void	MultiModel( SI16 toSet );
+	virtual void	SetHue( UI16 hueValue );
 	CPMultiPlacementView &operator=( CItem &target );
 };
 
 class CPEnableClientFeatures : public CPUOXBuffer
 {
 public:
-					CPEnableClientFeatures();
+					CPEnableClientFeatures( CSocket *mSock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
@@ -748,7 +752,7 @@ public:
 					CPSkillsValues( CChar &toCopy );
 	virtual void	NumSkills( UI08 numSkills );
 	virtual void	SetCharacter( CChar &toCopy );
-	virtual void	SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, UI08 skillLock );
+	virtual void	SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock );
 	CPSkillsValues &operator=( CChar &toCopy );
 };
 
@@ -790,8 +794,8 @@ public:
 	virtual void	WriteFlag( UI08 flag );
 	virtual void	NewFlag( UI08 flag );
 	virtual void	Pages( SI16 pages );
-	virtual void	Title( const std::string txt );
-	virtual void	Author( const std::string txt );
+	virtual void	Title( const std::string& txt );
+	virtual void	Author( const std::string& txt );
 };
 
 class CPUltimaMessenger : public CPUOXBuffer
@@ -820,16 +824,16 @@ public:
 	{
 	}
 					CPGumpTextEntry();
-					CPGumpTextEntry( const std::string text );
-					CPGumpTextEntry( const std::string text1, const std::string text2 );
+					CPGumpTextEntry( const std::string& text );
+					CPGumpTextEntry( const std::string& text1, const std::string& text2 );
 	virtual void	Serial( SERIAL id );
 	virtual void	ParentID( UI08 newVal );
 	virtual void	ButtonID( UI08 newVal );
 	virtual void	Cancel( UI08 newVal );	// 0 = disable, 1 = enable
 	virtual void	Style( UI08 newVal );	// 0 = disable, 1 = normal, 2 = numerical
 	virtual void	Format( SERIAL id );	// if style 1, max text len, if style 2, max num len
-	virtual void	Text1( const std::string txt );
-	virtual void	Text2( const std::string txt );
+	virtual void	Text1( const std::string& txt );
+	virtual void	Text2( const std::string& txt );
 };
 
 class CPMapChange : public CPUOXBuffer
@@ -913,16 +917,18 @@ class CPCharAndStartLoc : public CPUOXBuffer
 protected:
 	virtual void	InternalReset( void );
 	virtual void	CopyData( CAccountBlock& toCopy );
+	UI16			packetSize;
+	UI08			numCharacters;
 public:
 	virtual			~CPCharAndStartLoc()
 	{
 	}
 					CPCharAndStartLoc();
-					CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations );
-	virtual void	NumberOfLocations( UI08 numLocations );
-	virtual void	NumberOfCharacters( UI08 numCharacters );
+					CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
+	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
-	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
+	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset  );
+	virtual void	NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
 	CPCharAndStartLoc& operator=( CAccountBlock& actbBlock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
@@ -996,6 +1002,22 @@ public:
 	void			Objects( CItem& mItem, CChar& mChar );
 };
 
+class CPNewObjectInfo : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+	void			CopyData( CItem& mItem, CChar& mChar );
+	void			CopyItemData( CItem& mItem, CChar& mChar );
+	void			CopyMultiData( CMultiObj& mObj, CChar& mChar );
+public:
+					CPNewObjectInfo();
+					CPNewObjectInfo( CItem& mItem, CChar& mChar );
+	virtual			~CPNewObjectInfo()
+					{
+					}
+	void			Objects( CItem& mItem, CChar& mChar );
+};
+
 class CPGameServerList : public CPUOXBuffer
 {
 protected:
@@ -1023,7 +1045,7 @@ public:
 					{
 					}
 	void			Action( UI08 value );
-	void			Name( const std::string nameFollowing );
+	void			Name( const std::string& nameFollowing );
 };
 
 class CPGodModeToggle : public CPUOXBuffer
@@ -1147,7 +1169,7 @@ public:
 	void			Serial( SERIAL value );
 	void			NewPage( SI16 pNum = -1 );
 	void			NewPage( SI16 pNum, const STRINGLIST *lines );
-	void			AddLine( const std::string line );
+	void			AddLine( const std::string& line );
 	void			Finalize( void );
 };
 
@@ -1165,9 +1187,9 @@ public:
 	void			X( UI32 value );
 	void			Y( UI32 value );
 	void			AddCommand( const char *actualCommand, ... );
-	void			AddCommand( const std::string actualCommand, ... );
+	void			AddCommand( const std::string& actualCommand, ... );
 	void			AddText( const char *actualText, ... );
-	void			AddText( const std::string actualText, ... );
+	void			AddText( const std::string& actualText, ... );
 	void			Finalize( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader );
 };
@@ -1292,9 +1314,24 @@ public:
 	virtual			~CPSendMsgBoardPosts()
 	{
 	}
-	virtual void	CopyData( SERIAL mSerial, UI08 pToggle, SERIAL oSerial );
+	virtual void	CopyData( CSocket *msock, SERIAL mSerial, UI08 pToggle, SERIAL oSerial );
 	void			Finalize( void );
 					CPSendMsgBoardPosts();
+};
+
+class CPHealthBarStatus : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+					CPHealthBarStatus();
+					CPHealthBarStatus( CChar& mChar, CSocket &target );
+	virtual			~CPHealthBarStatus()
+	{
+	}
+
+	virtual void	CopyData( CChar& mChar );
+	virtual void	SetHBStatusData( CChar& mChar, CSocket &target );
 };
 
 class CPExtendedStats : public CPUOXBuffer
@@ -1338,8 +1375,8 @@ public:
 	void			Flag1( UI08 toSet );
 	void			Flag2( UI08 toSet );
 	void			Pages( UI16 numPages );
-	void			Author( const std::string author );
-	void			Title( const std::string title );
+	void			Author( const std::string& author );
+	void			Title( const std::string& title );
 	void			Finalize( void );
 };
 
@@ -1374,8 +1411,8 @@ public:
 	void			Hue( UI16 hueColor );
 	void			Font( UI16 fontType );
 	void			Message( UI32 messageNum );
-	void			Name( const std::string name );
-	void			ArgumentString( const std::string arguments );
+	void			Name( const std::string& name );
+	void			ArgumentString( const std::string& arguments );
 };
 
 class CPPartyMemberList : public CPUOXBuffer
@@ -1427,6 +1464,12 @@ public:
 					{
 					}
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
+};
+
+class CPDropItemApproved : public CPUOXBuffer
+{
+public:
+					CPDropItemApproved();
 };
 
 }

@@ -100,11 +100,16 @@ typedef struct __STARTLOCATIONDATA__
 	{
 		memset( this, 0x00, sizeof( __STARTLOCATIONDATA__ ) );
 	}
-	char	town[32];
-	char	description[32];
+	char	oldTown[31];
+	char	oldDescription[31];
+	char	newTown[32];
+	char	newDescription[32];
 	SI16	x;
 	SI16	y;
 	SI16	z;
+	SI16	worldNum;
+	UI32	clilocDesc;
+
 } STARTLOCATION, *LPSTARTLOCATION;
 //	EviLDeD	-	End
 
@@ -113,7 +118,7 @@ const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will
 								// Xuri - Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
-const UI08 MAX_VISRANGE	= 15;
+const UI08 MAX_VISRANGE	= 18;
 const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
 const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
 

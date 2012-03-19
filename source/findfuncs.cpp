@@ -238,7 +238,11 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	if( !ValidateObject( m ) )
 		return false;
 	const UI16 multiID = static_cast<UI16>(m->GetID() - 0x4000);
-	SI32 length = Map->SeekMulti( multiID );
+	SI32 length = 0;
+	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
+		length = Map->SeekMultiHS( multiID );
+	else
+		length = Map->SeekMulti( multiID );
 	if( length == -1 || length >= 17000000 )
 	{
 		// the length associated with the multi means one thing
@@ -249,16 +253,34 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		length = 0;
 
 		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		CLand& land = Map->SeekLand( map1.id );
-		if( land.CheckFlag( TF_WET ) ) // is it water?
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
-			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
-			// So either: 1) Let the user fix it in the worldfile once its saved
-			// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
-			m->SetID( 0x4001 );
+			//7.0.9.0 tiledata and later
+			CLandHS& land = Map->SeekLandHS( map1.id );
+			if( land.CheckFlag( TF_WET ) ) // is it water?
+			{
+				// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
+				// So either: 1) Let the user fix it in the worldfile once its saved
+				// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
+				m->SetID( 0x4001 );
+			}
+			else
+				m->SetID( 0x4064 );
 		}
 		else
-			m->SetID( 0x4064 );
+		{
+			//7.0.8.2 tiledata and earlier
+			CLand& land = Map->SeekLand( map1.id );
+			if( land.CheckFlag( TF_WET ) ) // is it water?
+			{
+				// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
+				// So either: 1) Let the user fix it in the worldfile once its saved
+				// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial
+				m->SetID( 0x4001 );
+			}
+			else
+				m->SetID( 0x4064 );
+		}	
 	}
 
 	UI08 zOff = 1;
@@ -268,15 +290,32 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 	const SI16 baseX = m->GetX();
 	const SI16 baseY = m->GetY();
 	const SI08 baseZ = m->GetZ();
-	for( SI32 j = 0; j < length; ++j )
+	if( cwmWorldState->ServerData()->ServerUsingHSMultis() )
 	{
-		Multi_st& multi = Map->SeekIntoMulti( multiID, j );
-
-		if( (baseX + multi.x) == x && (baseY + multi.y) == y )
+		for( SI32 j = 0; j < length; ++j )
 		{
-			const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
-			if( abs( multiZ - z ) <= zOff )
-				return true;
+			MultiHS_st& multi = Map->SeekIntoMultiHS( multiID, j );
+
+			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
+			{
+				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
+				if( abs( multiZ - z ) <= zOff )
+					return true;
+			}
+		}
+	}
+	else
+	{
+		for( SI32 j = 0; j < length; ++j )
+		{
+			Multi_st& multi = Map->SeekIntoMulti( multiID, j );
+
+			if( (baseX + multi.x) == x && (baseY + multi.y) == y )
+			{
+				const SI08 multiZ = (baseZ + multi.z + Map->TileHeight( multi.tile ) );
+				if( abs( multiZ - z ) <= zOff )
+					return true;
+			}
 		}
 	}
 	return false;

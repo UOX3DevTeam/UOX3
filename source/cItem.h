@@ -100,7 +100,6 @@ public:
 	bool			isPileable( void ) const;
 	bool			isDyeable( void ) const;
 	bool			isCorpse( void ) const;
-	bool			isWipeable( void ) const;
 	bool			isGuarded( void ) const;
 	bool			isSpawnerList( void ) const;
 
@@ -113,7 +112,6 @@ public:
 	void			SetPileable( bool newValue );
 	void			SetDye( bool newValue );
 	void			SetCorpse( bool newValue );
-	void			SetWipeable( bool newValue );
 	virtual void	SetGuarded( bool newValue );
 	void			SetSpawnerList( bool newValue );
 

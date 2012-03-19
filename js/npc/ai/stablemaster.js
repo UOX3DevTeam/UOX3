@@ -83,7 +83,11 @@ function onSpeech( strSaid, pTalking, StableMaster )
 //and if it does, release it directly without displaying the menu
 function claimPetByName( pTalking, StableMaster, strSaid )
 {
-	var splitString = strSaid.split( " " );
+	var splitString = strSaid.toLowerCase().split("vendor ")[1];
+	if( splitString )
+		var splitString = splitString.split( " " );
+	else 
+		var splitString = strSaid.split( " " );
 	if( splitString[1] && splitString[1].toUpperCase() != "LIST" )
 	{
 		var i = 0;

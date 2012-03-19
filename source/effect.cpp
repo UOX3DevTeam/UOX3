@@ -297,7 +297,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank) );
 		
 		// if we're not a GM, see if we should store our creator
-		if( !src->IsGM() && toMake->skillReqs.size() > 0 )
+		if( !src->IsGM() && !toMake->skillReqs.empty() )
 		{
 			targItem->SetCreator( src->GetSerial() );
 			int avgSkill, sumSkill = 0;
@@ -486,6 +486,7 @@ void cEffects::checktempeffects( void )
 				equipCheckNeeded = true;
 				break;
 			case 25:
+				// Same result no matter if the if-check is true or false? What is this effect even for?
 				if( Effect->More2() == 0 )
 					Effect->ObjPtr()->SetDisabled( false );
 				else
@@ -1107,37 +1108,32 @@ void cEffects::LoadEffects( void )
 //o-----------------------------------------------------------------------o
 bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
 	CBaseObject *getPtr = NULL;
 
-	effectDestination << "[EFFECT]" << std::endl;
+	effectDestination << "[EFFECT]" << '\n';
 
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "Source=" << "0x" << Source() << std::endl;
-	dumping << "Dest=" << "0x" << Destination() << std::endl;
+	effectDestination << std::hex;
+	effectDestination << "Source=" << "0x" << Source() << '\n';
+	effectDestination << "Dest=" << "0x" << Destination() << '\n';
 
 	getPtr = ObjPtr();
-	dumping << "ObjPtr=" << "0x";
+	effectDestination << "ObjPtr=" << "0x";
 	if( ValidateObject( getPtr ) )
-		dumping << getPtr->GetSerial() << std::endl;
+		effectDestination << getPtr->GetSerial() << '\n';
 	else
-		dumping << INVALIDSERIAL << std::endl;
+		effectDestination << INVALIDSERIAL << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "Expire=" << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << std::endl;
-	dumping << "Number=" << static_cast<UI16>(Number()) << std::endl;  
-	dumping << "More1=" << More1() << std::endl;
-	dumping << "More2=" << More2() << std::endl;
-	dumping << "More3=" << More3() << std::endl;
-	dumping << "Dispel=" << Dispellable() << std::endl;
-	dumping << "AssocScript=" << AssocScript() << std::endl;
-
-	effectDestination << dumping.str();
-
-	effectDestination << std::endl << "o---o" << std::endl << std::endl;
+	effectDestination << std::dec;
+	effectDestination << "Expire=" << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << '\n';
+	effectDestination << "Number=" << static_cast<UI16>(Number()) << '\n';
+	effectDestination << "More1=" << More1() << '\n';
+	effectDestination << "More2=" << More2() << '\n';
+	effectDestination << "More3=" << More3() << '\n';
+	effectDestination << "Dispel=" << Dispellable() << '\n';
+	effectDestination << "AssocScript=" << AssocScript() << '\n';
+	effectDestination << '\n' << "o---o" << '\n' << '\n';
 	return true;
 }
 

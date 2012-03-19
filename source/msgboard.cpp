@@ -126,7 +126,7 @@ void MsgBoardOpen( CSocket *mSock )
 				{
 					if( tmpToggle )	// If it's 0, flagged for deletion
 					{
-						mbSend.CopyData( tmpSerial, tmpToggle, boardSer );
+						mbSend.CopyData( mSock, tmpSerial, tmpToggle, boardSer );
 						mSock->PostAcked( tmpSerial );
 					}
 				}
@@ -226,9 +226,10 @@ void MsgBoardList( CSocket *mSock )
 					else
 						postAck = mSock->NextPostAck();
 				}
-
 				totalSize += msgBoardPost.Size;
 				file.seekg( totalSize, std::ios::beg );
+				if( totalSize > 3000 || msgBoardPost.Serial == 0 ) //HACCKKKK!!!1one. Without this in place, it will loop for ever :(
+					file.close();
 			}
 			file.close();
 		}
@@ -249,7 +250,7 @@ void MsgBoardList( CSocket *mSock )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Updates nextMsgID with the next available message serial.
 //o--------------------------------------------------------------------------o
-bool GetMaxSerial( const std::string fileName, UI08 *nextMsgID, const PostTypes msgType )
+bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes msgType )
 {
 	SERIAL msgIDSer = ( calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] ) );
 	if( msgIDSer == INVALIDSERIAL )
@@ -333,7 +334,7 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 //o--------------------------------------------------------------------------o
 //|	Description		-	Writes a new post to the .bbf file, returning the messages SERIAL
 //o--------------------------------------------------------------------------o
-SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string fileName, const PostTypes msgType )
+SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
 {
 	SERIAL msgID = INVALIDSERIAL;
 
@@ -460,7 +461,8 @@ void MsgBoardPost( CSocket *tSock )
 	if( msgID != INVALIDSERIAL )
 	{
 		CPAddItemToCont toAdd;
-		toAdd.UOKRFlag( (tSock->ClientType() == CV_UOKR) );
+		if( tSock->ClientVerShort() >= CVS_6017 )
+			toAdd.UOKRFlag( true );
 		toAdd.Serial( (msgID | BASEITEMSERIAL) );
 		toAdd.Container( tSock->GetDWord( 4 ) );
 		tSock->Send( &toAdd );
@@ -992,7 +994,7 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 
 	remove( fileName.c_str() );
 
-	Console.Print( "Deleted MessageBoard file for Board Serial 0x%X", msgBoardSer );
+	Console.Print( "Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer );
 }
 
 //o--------------------------------------------------------------------------o

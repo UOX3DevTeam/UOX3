@@ -523,7 +523,7 @@ void CWorldMain::doWorldLight( void )
 
 void fileArchive( void );
 void CollectGarbage( void );
-void sysBroadcast( const std::string txt );
+void sysBroadcast( const std::string& txt );
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	SaveNewWorld( bool x )
 //|	Date			-	1997
@@ -660,12 +660,11 @@ void CWorldMain::SaveStatistics( void )
 		Console.Error( "Failed to open %s for writing", statsFile.c_str() );
 		return;
 	}
-
-	statsDestination << "[STATISTICS]" << std::endl << "{" << std::endl;
-	statsDestination << "PLAYERCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << std::endl;
-	statsDestination << "ITEMCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << std::endl;
-	statsDestination << "MULTICOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_MULTI ) << std::endl;
-	statsDestination << "}" << std::endl << std::endl;
+	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
+	statsDestination << "PLAYERCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << '\n';
+	statsDestination << "ITEMCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << '\n';
+	statsDestination << "MULTICOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_MULTI ) << '\n';
+	statsDestination << "}" << '\n' << '\n';
 
 	statsDestination.close();
 }

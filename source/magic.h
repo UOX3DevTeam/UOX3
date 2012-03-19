@@ -255,11 +255,11 @@ public:
 	{
 		return (flags&0x100) == 0x100;
 	}
-	void Mantra( const std::string toPut )
+	void Mantra( const std::string& toPut )
 	{
 		mantra = toPut;
 	}
-	void StringToSay( const std::string toPut )
+	void StringToSay( const std::string& toPut )
 	{
 		strToSay = toPut;
 	}

@@ -56,7 +56,7 @@ const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
 const UI32 BIT_DYEABLE		=	3;
 const UI32 BIT_CORPSE		=	4;
-const UI32 BIT_WIPEABLE		=	5;
+const UI32 BIT_UNUSED		=	5; //was wipeable
 const UI32 BIT_GUARDED		=	6;
 const UI32 BIT_SPAWNERLIST	=	7;
 
@@ -261,6 +261,8 @@ bool CItem::SetCont( CBaseObject *newCont )
 				contIsGround = false;
 				if( isPostLoaded() )
 					Weight->addItemWeight( charWearing, this );
+				if( this->GetLayer() == IL_MOUNT && charWearing->IsNpc() )
+					charWearing->SetOnHorse( true );
 			}
 		}
 		else
@@ -368,23 +370,6 @@ bool CItem::isCorpse( void ) const
 void CItem::SetCorpse( bool newValue )
 {
 	bools.set( BIT_CORPSE, newValue );
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	bool isWipeable()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Item is wipeable
-//o--------------------------------------------------------------------------
-bool CItem::isWipeable( void ) const
-{
-	return bools.test( BIT_WIPEABLE );
-}
-void CItem::SetWipeable( bool newValue )
-{
-	bools.set( BIT_WIPEABLE, newValue );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1023,7 +1008,7 @@ void CItem::CopyData( CItem *target )
 	target->SetVisible( GetVisible() );
 	target->SetWeight( GetWeight() );
 	target->SetWeightMax( GetWeightMax() );
-	target->SetWipeable( isWipeable() );
+	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
 	for( int i = 0; i < WEATHNUM; ++i )
@@ -1042,59 +1027,53 @@ void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 
 bool CItem::DumpHeader( std::ofstream &outStream ) const
 {
-	outStream << "[ITEM]" << std::endl;
+	outStream << "[ITEM]" << '\n';
 	return true;
 }
 
 
 bool CItem::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-
 	CBaseObject::DumpBody( outStream );
 
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "GridLoc=" << "0x" << (SI16)GetGridLocation() << std::endl;
-	dumping << "Layer=" << "0x" << (SI16)GetLayer() << std::endl;
-	dumping << "Cont=" << "0x" << GetContSerial() << std::endl;
-	dumping << "More=" << "0x" << GetTempVar( CITV_MORE ) << std::endl;
-	dumping << "Creator=" << "0x" << GetCreator() << std::endl;
-	dumping << "MoreXYZ=" << "0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << std::endl;
-	dumping << "Glow=" << "0x" << GetGlow() << std::endl;
-	dumping << "GlowBC=" << "0x" << GetGlowColour() << std::endl;
-	dumping << "Ammo=" << "0x" << GetAmmoID() << ",0x" << GetAmmoHue() << std::endl;
-	dumping << "AmmoFX=" << "0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << std::endl;
-	dumping << "Spells=" << "0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << std::endl;
+	outStream << std::hex;
+	outStream << "GridLoc=" << "0x" << (SI16)GetGridLocation() << '\n';
+	outStream << "Layer=" << "0x" << (SI16)GetLayer() << '\n';
+	outStream << "Cont=" << "0x" << GetContSerial() << '\n';
+	outStream << "More=" << "0x" << GetTempVar( CITV_MORE ) << '\n';
+	outStream << "Creator=" << "0x" << GetCreator() << '\n';
+	outStream << "MoreXYZ=" << "0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << '\n';
+	outStream << "Glow=" << "0x" << GetGlow() << '\n';
+	outStream << "GlowBC=" << "0x" << GetGlowColour() << '\n';
+	outStream << "Ammo=" << "0x" << GetAmmoID() << ",0x" << GetAmmoHue() << '\n';
+	outStream << "AmmoFX=" << "0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << '\n';
+	outStream << "Spells=" << "0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "Name2=" << GetName2() << std::endl;
-	dumping << "Desc=" << GetDesc() << std::endl;
-	dumping << "Type=" << static_cast<SI16>(GetType()) << std::endl;
-	dumping << "Offspell=" << (SI16)GetOffSpell() << std::endl;
-	dumping << "Amount=" << GetAmount() << std::endl;
-	dumping << "WeightMax=" << GetWeightMax() << std::endl;
-	dumping << "MaxHP=" << GetMaxHP() << std::endl;
-	dumping << "Speed=" << (SI16)GetSpeed() << std::endl;
-	dumping << "Movable=" << (SI16)GetMovable() << std::endl;
-	dumping << "Priv=" << (SI16)GetPriv() << std::endl;
-	dumping << "Value=" << GetBuyValue() << "," << GetSellValue() << std::endl;
-	dumping << "Restock=" << GetRestock() << std::endl;
-	dumping << "AC=" << (SI16)GetArmourClass() << std::endl;
-	dumping << "Rank=" << (SI16)GetRank() << std::endl;
-	dumping << "Sk_Made=" << (SI16)GetMadeWith() << std::endl;
-	dumping << "Bools=" << (SI16)(bools.to_ulong()) << std::endl;
-	dumping << "Good=" << GetGood() << std::endl;
-	dumping << "GlowType=" << (SI16)GetGlowEffect() << std::endl;
-	dumping << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
+	outStream << std::dec;
+	outStream << "Name2=" << GetName2() << '\n';
+	outStream << "Desc=" << GetDesc() << '\n';
+	outStream << "Type=" << static_cast<SI16>(GetType()) << '\n';
+	outStream << "Offspell=" << (SI16)GetOffSpell() << '\n';
+	outStream << "Amount=" << GetAmount() << '\n';
+	outStream << "WeightMax=" << GetWeightMax() << '\n';
+	outStream << "MaxHP=" << GetMaxHP() << '\n';
+	outStream << "Speed=" << (SI16)GetSpeed() << '\n';
+	outStream << "Movable=" << (SI16)GetMovable() << '\n';
+	outStream << "Priv=" << (SI16)GetPriv() << '\n';
+	outStream << "Value=" << GetBuyValue() << "," << GetSellValue() << '\n';
+	outStream << "Restock=" << GetRestock() << '\n';
+	outStream << "AC=" << (SI16)GetArmourClass() << '\n';
+	outStream << "Rank=" << (SI16)GetRank() << '\n';
+	outStream << "Sk_Made=" << (SI16)GetMadeWith() << '\n';
+	outStream << "Bools=" << (SI16)(bools.to_ulong()) << '\n';
+	outStream << "Good=" << GetGood() << '\n';
+	outStream << "GlowType=" << (SI16)GetGlowEffect() << '\n';
+	outStream << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
-	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << std::endl;
-	dumping << "EntryMadeFrom=" << EntryMadeFrom() << std::endl;
-
-	outStream << dumping.str();
-
+	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << '\n';
+	outStream << "EntryMadeFrom=" << EntryMadeFrom() << '\n';
 	return true;
 }
 
@@ -1408,11 +1387,6 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				if( UTag == "WEIGHTMAX" )
 				{
 					SetWeightMax( data.toLong() );
-					rvalue = true;
-				}
-				else if( UTag == "WIPE" )
-				{
-					SetWipeable( data.toUByte() == 1 );
 					rvalue = true;
 				}
 				break;
@@ -1783,8 +1757,16 @@ void CItem::SendToSocket( CSocket *mSock )
 			if( GetVisible() != VT_VISIBLE || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ) )	// Not a GM, and not the Owner
 				return;
 		}
-		CPObjectInfo toSend( (*this), (*mChar) );
-		mSock->Send( &toSend );
+		if( mSock->ClientType() >= CV_SA2D )
+		{
+			CPNewObjectInfo toSend( (*this), (*mChar) );
+			mSock->Send( &toSend );
+		}
+		else
+		{
+			CPObjectInfo toSend( (*this), (*mChar) );
+			mSock->Send( &toSend );
+		}
 		if( isCorpse() )
 		{
 			CPCorpseClothing cpcc( this );
@@ -1818,7 +1800,8 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 			return;
 
 		CPAddItemToCont itemSend;
-		itemSend.UOKRFlag( (mSock->ClientType() == CV_UOKR) );
+		if( mSock->ClientVerShort() >= CVS_6017 )
+			itemSend.UOKRFlag( true );
 		itemSend.Object( (*this) );
 		if( isGM && GetID() == 0x1647 )
 		{
@@ -2149,7 +2132,7 @@ void CSpawnItem::IsSectionAList( bool newVal )
 //o---------------------------------------------------------------------------o
 bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 {
-	outStream << "[SPAWNITEM]" << std::endl;
+	outStream << "[SPAWNITEM]" << '\n';
 	return true;
 }
 
@@ -2162,15 +2145,10 @@ bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 //o---------------------------------------------------------------------------o
 bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-
 	CItem::DumpBody( outStream );
-	dumping << "Interval=" << (UI16)GetInterval( 0 ) << "," << (UI16)GetInterval( 1 ) << std::endl;
-	dumping << "SpawnSection=" << GetSpawnSection() << std::endl;
-	dumping << "IsSectionAList=" << (UI16)(IsSectionAList()?1:0) << std::endl;
-	outStream << dumping.str();
-
+	outStream << "Interval=" << (UI16)GetInterval( 0 ) << "," << (UI16)GetInterval( 1 ) << '\n';
+	outStream << "SpawnSection=" << GetSpawnSection() << '\n';
+	outStream << "IsSectionAList=" << (UI16)(IsSectionAList()?1:0) << '\n';
 	return true;
 }
 

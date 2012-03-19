@@ -55,7 +55,7 @@ const std::string CSpawnRegion::GetName( void ) const
 	return name;
 }
 
-void CSpawnRegion::SetName( const std::string newName )
+void CSpawnRegion::SetName( const std::string& newName )
 {
 	name = newName;
 }
@@ -472,12 +472,12 @@ void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	CChar *CSpawn = NULL;
-	SI16 x, y;
-	SI08 z;
 	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
 	
 	if( CSpawn != NULL )
 	{
+		SI16 x, y;
+		SI08 z;
 		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
 		{
 				// NPCs should always wander the whole spawnregion

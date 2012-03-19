@@ -198,7 +198,9 @@ PACKITEM=0x0f88,30
 PACKITEM=0x0f8c,30
 PACKITEM=0x0f8d,30
 PACKITEM=0x0e76
-PACKITEM=listobject9,3
+PACKITEM=listobject9
+PACKITEM=listobject9
+PACKITEM=listobject9
 }
 
 // Resisting Spells.
@@ -409,24 +411,39 @@ PACKITEM=0x23a0 //book of ninjitsu
 {
 }
 
-// Is granted to all male players, despite skill.
+// Is granted to all male human players, despite skill.
 [DEFAULT MALE]
 {
-PACKITEM=0x0fef
-PACKITEM=0x0a0f
-EQUIPITEM=0x0f51
 EQUIPITEM=0x1539
 EQUIPITEM=0x1517
-EQUIPITEM=0x170F
 }
 
-// Is granted to all female players, despite skill.
+// Is granted to all female human players, despite skill.
 [DEFAULT FEMALE]
 {
-PACKITEM=0x0fef
-PACKITEM=0x0a0f
-EQUIPITEM=0x0f51
 EQUIPITEM=0x1516
 EQUIPITEM=0x1EFD
+}
+
+// Is granted to all male elf players, despite skill.
+[DEFAULT ELF MALE]
+{
+EQUIPITEM=0x1539
+EQUIPITEM=0x1517
+}
+
+// Is granted to all female elf players, despite skill.
+[DEFAULT ELF FEMALE]
+{
+EQUIPITEM=0x1516
+EQUIPITEM=0x1EFD
+}
+
+// Is granted to all players, despite skill, gender or race
+[DEFAULT ALL]
+{
+EQUIPITEM=0x0f51
 EQUIPITEM=0x170F
+PACKITEM=0x0fef
+PACKITEM=0x0a0f
 }

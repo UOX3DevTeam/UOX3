@@ -74,7 +74,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	return ourNpcs;
 }
 
-bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string text )
+bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
 	CChar *Npc			= NULL;
 	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_INRANGE );
@@ -191,6 +191,12 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 		case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
 		case TW_RESIGN:				GuildSys->Resign( mSock );												break;
 		default:
+			//This is to handle the "train <skill>" keywords
+			if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
+				trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
+			{
+				tResp = new CTrainingResponse( text );									break;
+			}
 #if defined( UOX_DEBUG_MODE )
 			Console.Print( "Unhandled TriggerWord sent by the client 0x%X\n", trigWord );
 #endif
@@ -216,7 +222,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() ) 
 		return;
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
+	CHARLIST npcList = findNearbyNPCs( mChar, DIST_NEARBY );
 	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 	{
 		CChar *Npc = (*npcCtr);
@@ -320,6 +326,8 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		char temp2[512];
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 		UString UText = UString( ourText ).upper();
+		UString skillName = "";
+		bool foundString = false;
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
@@ -329,12 +337,45 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
 				mSock->TempObj( NULL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
-				for( UI08 i = 0; i < ALLSKILLS; ++i )
+				if( UText.sectionCount( " " ) != 0 ) //Only if string has more than one word
 				{
-					if( findString( UText, cwmWorldState->skill[i].name ) )
+					//Search for perfect match first
+					for( UI08 i = 0; i < ALLSKILLS; ++i )
 					{
-						skill = i;  //Leviathan fix
-						break;
+						if( findString( UText, cwmWorldState->skill[i].name ))
+						{
+							skill = i;
+							break;
+						}
+					}
+					//Then combine first 4 letters in each
+					if( skill == -1 )
+					{
+						UText = (UText.section( " ", 1, 1 )).substr(0,4); //search using first three letters only
+						for( UI08 i = 0; i < ALLSKILLS; ++i )
+						{
+							skillName = (cwmWorldState->skill[i].name).substr(0,4); //search using first three letters only
+							foundString = findString( UText, skillName );
+							if( foundString )
+							{
+								skill = i;
+								break;
+							}
+						}
+					}
+					//If we STILL didn't find a match, try a reverse lookup!
+					if( skill == -1 )
+					{
+						for( UI08 i = 0; i < ALLSKILLS; ++i )
+						{
+							skillName = cwmWorldState->skill[i].name;
+							foundString = findString( cwmWorldState->skill[i].name, UText );
+							if( foundString )
+							{
+								skill = i;
+								break;
+							}
+						}
 					}
 				}
 				if( skill == -1 ) // Didn't ask to be trained in a specific skill - Leviathan fix
@@ -351,16 +392,22 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							sprintf( temp2, "%s, ", UString( cwmWorldState->skill[j].name ).lower().c_str() );
+							sprintf( temp2, " %s,", UString( cwmWorldState->skill[j].name ).lower().c_str() );
 							if( !skillsToTrainIn ) 
-								temp2[0] = toupper( temp2[0] ); // If it's the first skill,  capitalize it.
+								temp2[1] = toupper( temp2[1] ); // If it's the first skill,  capitalize it.
+							if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
+							{
+								sprintf( temp2, " and possibly more " );
+								strcat( temp, temp2 );
+								break;
+							}
 							strcat( temp, temp2 );
 							++skillsToTrainIn;
 						}
 					}
 					if( skillsToTrainIn )
 					{
-						temp[strlen( temp ) - 2] = '.'; // Make last character a . not a ,  just to look nicer
+						temp[strlen( temp ) - 1] = '.'; // Make last character a . not a ,  just to look nicer
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
@@ -654,9 +701,9 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
-		UI32 pay = 0, give = Npc->GetHoldG(), t = 0, earned = Npc->GetHoldG();
 		if( mChar == Npc->GetOwnerObj() )
 		{
+			UI32 pay = 0, give = Npc->GetHoldG(), t = 0, earned = Npc->GetHoldG();
 			if( Npc->GetHoldG() <= 0 )
 			{
 				Npc->TextMessage( mSock, 1326, TALK, false );

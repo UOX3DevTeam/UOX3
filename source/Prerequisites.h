@@ -123,6 +123,7 @@ namespace UOX {
 	class CJSMapping;
 	class CJSMappingSection;
 	class CLand;
+	class CLandHS;
 	class cMagic;
 	class CMagicMove;
 	class CMagicStat;
@@ -150,6 +151,7 @@ namespace UOX {
 	class CTEffect;
 	class CThreadQueue;
 	class CTile;
+	class CTileHS;
 	class CTileUni;
 	class CTownRegion;
 	class CVersionClass;

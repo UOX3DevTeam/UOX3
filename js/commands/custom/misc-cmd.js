@@ -28,6 +28,7 @@ function CommandRegistration()
 	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
 	RegisterCommand( "linkdoors", 2, true ); //Link two doors together so that if one is opened, both will open.
 	RegisterCommand( "unlinkdoors", 2, true ); //Unlinks two doors (use command on both!)
+	RegisterCommand( "undress", 2, true ); //Character will completely undress all equipped items
 }
 
 function command_RENAME( pSock, execString )
@@ -477,3 +478,21 @@ function onCallback14( pSock, myTarget )
 	else
 		pUser.SysMessage( "You need to target an item." );	
 }
+
+function command_UNDRESS( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	var i = 0;
+	for( i = 0; i <= 24; i++ ) 
+	{
+		var tempObj = pUser.FindItemLayer(i);
+		if( tempObj != null )
+		{
+			if( i != 11 && i != 16 && i != 21 )
+			{
+				tempObj.container = pUser.pack;
+			}
+		}
+	}	
+}
+

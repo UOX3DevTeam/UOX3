@@ -23,10 +23,9 @@ namespace UOX
 //o---------------------------------------------------------------------------o
 UI32 calcValue( CItem *i, UI32 value )
 {
-	UI32 mod = 10;
-
 	if( i->GetType() == IT_POTION )
 	{
+		UI32 mod = 10;
 		if( i->GetTempVar( CITV_MOREX ) > 500 )
 			++mod;
 		if( i->GetTempVar( CITV_MOREX ) > 900 )
@@ -96,7 +95,7 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 //o---------------------------------------------------------------------------o
 bool CPIBuyItem::Handle( void )
 {
-	UI16 i, j;
+	UI16 i;
 	UI32 playergoldtotal, goldtotal = 0;
 	bool soldout	= false, clear = false;
 	CChar *mChar	= tSock->CurrcharObj();
@@ -184,6 +183,7 @@ bool CPIBuyItem::Handle( void )
 			}
 			CItem *biTemp;
 			CItem *iMade = NULL;
+			UI16 j;
 			for( i = 0; i < itemtotal; ++i )
 			{
 				biTemp	= bitems[i];

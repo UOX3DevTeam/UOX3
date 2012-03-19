@@ -20,9 +20,9 @@ namespace UOX
 
 cItem *Items = NULL;
 
-ItemTypes FindItemTypeFromTag( const UString strToFind );
+ItemTypes FindItemTypeFromTag( const UString& strToFind );
 
-bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString cdata )
+bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
 {
 	if( !ValidateObject( applyTo ) )
 		return false;
@@ -42,7 +42,7 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 	return false;
 }
 
-UI16 addRandomColor( const std::string colorlist );
+UI16 addRandomColor( const std::string& colorlist );
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 //|	Programmer	-	Unknown
@@ -72,8 +72,6 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 		switch( tag )
 		{
 			case DFNTAG_AMMO:
-										//applyTo->SetAmmoID( static_cast<UI16>( ndata ));
-										//applyTo->SetAmmoHue( static_cast<UI16>( odata ));
 										applyTo->SetAmmoID( cdata.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
 										if( cdata.sectionCount( " " ) > 0 )
 											applyTo->SetAmmoHue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUShort() );
@@ -324,7 +322,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item,
 //|	Description		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
 //o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string itemList )
+CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -353,7 +351,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string itemList )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a random item from an itemlist in specified dfn file
 //o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( const std::string sItemList, const UI08 worldNum )
+CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum )
 {
 	CItem * iCreated	= NULL;
 	UString sect		= "ITEMLIST " + sItemList;
@@ -385,7 +383,7 @@ CItem *cItem::CreateRandomItem( const std::string sItemList, const UI08 worldNum
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a multi, and looks for an entry in harditems.dfn
 //o--------------------------------------------------------------------------o
-CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string cName, const UI16 iID, const bool isBoat )
+CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
 	if( mCreated == NULL ) 
@@ -576,6 +574,15 @@ PackTypes cItem::getPackType( CItem *i )
 	switch( i->GetID() )
 	{
 		case 0x2006:	// coffin
+		case 0x0ECA:	// bones
+		case 0x0ECB:	// bones
+		case 0x0ECC:	// bones
+		case 0x0ECD:	// bones
+		case 0x0ECE:	// bones
+		case 0x0ECF:	// bones
+		case 0x0ED0:	// bones
+		case 0x0ED1:	// bones
+		case 0x0ED2:	// bones
 			packType = PT_COFFIN;
 			break;
 		case 0x0E75:	// backpack
@@ -584,6 +591,8 @@ PackTypes cItem::getPackType( CItem *i )
 			packType = PT_PACK;
 			break;
 		case 0x0E76:	// leather bag
+		case 0x2256:	// bagball
+		case 0x2257:	// bagball
 			packType = PT_BAG;
 			break;
 		case 0x0E77:	// barrel
@@ -595,11 +604,18 @@ PackTypes cItem::getPackType( CItem *i )
 			packType = PT_BARREL;
 			break;
 		case 0x0E7A:	// square basket
+		case 0x24D5:	// SE basket
+		case 0x24D6:	// SE basket
+		case 0x24D9:	// SE basket
+		case 0x24DA:	// SE basket
 			packType = PT_SQBASKET;
 			break;
 		case 0x0990:	// round basket
-		case 0x09AC:
-		case 0x09B1:
+		case 0x09AC:	// round bushel
+		case 0x09B1:	// round basket
+		case 0x24D7:	// SE basket
+		case 0x24D8:	// SE basket
+		case 0x24DD:	// SE basket
 			packType = PT_RBASKET;
 			break;
 		case 0x0E40:	// gold chest
@@ -673,6 +689,68 @@ PackTypes cItem::getPackType( CItem *i )
 			else
 				packType = PT_PACK2;
 			break;
+		case 0x232A:	// giftbox
+		case 0x232B:	// giftbox
+			packType = PT_GIFTBOX1;
+			break;
+		case 0x2857:	// SE armoire
+		case 0x2858:	// SE armoire
+			packType = PT_SEARMOIRE1;
+			break;
+		case 0x285B:	// SE armoire
+		case 0x285C:	// SE armoire
+			packType = PT_SEARMOIRE2;
+			break;
+		case 0x285D:	// SE armoire
+		case 0x285E:	// SE armoire
+		case 0x2859:	// SE armoire
+		case 0x285A:	// SE armoire
+			packType = PT_SEARMOIRE3;
+			break;
+		case 0x24DB:	// SE basket
+		case 0x24DC:	// SE basket
+			packType = PT_SEBASKET;
+			break;
+		case 0x280B:	// SE chest
+		case 0x280C:	// SE chest
+			packType = PT_SECHEST1;
+			break;
+		case 0x280D:	// SE chest
+		case 0x280E:	// SE chest
+			packType = PT_SECHEST2;
+			break;
+		case 0x280F:	// SE chest
+		case 0x2810:	// SE chest
+			packType = PT_SECHEST3;
+			break;
+		case 0x2811:	// SE chest
+		case 0x2812:	// SE chest
+		case 0x2815:	// SE cabinet
+		case 0x2816:	// SE cabinet
+		case 0x2817:	// SE chest
+		case 0x2818:	// SE chest
+			packType = PT_SECHEST4;
+			break;
+		case 0x2813:	// SE chest
+		case 0x2814:	// SE chest
+			packType = PT_SECHEST5;
+			break;
+		case 0x46A5:	// SA giftbox
+		case 0x46A6:	// SA giftbox
+			packType = PT_GIFTBOX2;
+			break;
+		case 0x46A2:	// SA giftbox
+			packType = PT_GIFTBOX3;
+			break;
+		case 0x46A3:	// SA giftbox
+			packType = PT_GIFTBOX4;
+			break;
+		case 0x46A4:	// SA giftbox
+			packType = PT_GIFTBOX5;
+			break;
+		case 0x46A7:	// SA giftbox
+			packType = PT_GIFTBOX6;
+			break;
 		default:
 			packType = PT_UNKNOWN;
 			break;
@@ -686,7 +764,7 @@ PackTypes cItem::getPackType( CItem *i )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Item spawning stuff
 //o---------------------------------------------------------------------------o
-void cItem::AddRespawnItem( CItem *s, const std::string x, const bool inCont, const bool randomItem )
+void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem )
 {
 	if( !ValidateObject( s ) || x.empty() )
 		return;
@@ -717,6 +795,7 @@ void cItem::AddRespawnItem( CItem *s, const std::string x, const bool inCont, co
 				case PT_BAG:
 				case PT_SQBASKET:
 				case PT_RBASKET:
+				case PT_SEBASKET:
 					c->SetY( ( RandomNum( 0, 49 ) ) + 50 );
 					break;
 				case PT_BOOKCASE:
@@ -724,6 +803,14 @@ void cItem::AddRespawnItem( CItem *s, const std::string x, const bool inCont, co
 				case PT_WARMOIRE:
 				case PT_DRAWER:
 				case PT_DRESSER:
+				case PT_SECHEST1:
+				case PT_SECHEST2:
+				case PT_SECHEST3:
+				case PT_SECHEST4:
+				case PT_SECHEST5:
+				case PT_SEARMOIRE1:
+				case PT_SEARMOIRE2:
+				case PT_SEARMOIRE3:
 					c->SetY( ( RandomNum( 0, 49 ) ) + 30 );
 					break;
 				case PT_MBOX:

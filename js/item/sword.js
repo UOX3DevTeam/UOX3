@@ -80,7 +80,7 @@ function MakeFishSteaks( socket, mChar, ourObj )
 	var ownerObj = GetPackOwner( ourObj, 0 );
 	if( ownerObj && mChar.serial == ownerObj.serial )
 	{
-		CreateBlankItem( socket, mChar, 4, "raw fish steak", 0x097A, 0x0000, "ITEM", true );
+		CreateDFNItem( mChar.socket, mChar, "0x097A", 4, "ITEM", true );
 		mChar.SysMessage( "You slice a fish to steaks." );
 		if( ourObj.amount > 1 )
 			ourObj.amount = ourObj.amount-1;
@@ -109,7 +109,7 @@ function MakeKindling( socket, mChar )
 		mChar.DoAction( 0x0D );
 
 	mChar.SoundEffect( 0x013E, true );
-	CreateBlankItem( socket, mChar, 1, "#", 0x0DE1, 0x0000, "ITEM", true );
+	CreateDFNItem( socket, mChar, "0x0DE1", 1, "ITEM", true );
 	socket.SysMessage( GetDictionaryEntry( 1049, socket.Language ) );
 }
 

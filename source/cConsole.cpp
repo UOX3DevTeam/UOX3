@@ -890,10 +890,6 @@ void CConsole::Poll( void )
 void CConsole::Process( int c )
 {
 	char outputline[128], temp[1024];
-	bool kill		= false;
-	int indexcount	= 0;
-	int j;
-	int keyresp;
 	CSocket *tSock	= NULL;
 
 	if( c == '*' )
@@ -929,6 +925,9 @@ void CConsole::Process( int c )
 				return;
 			}
 		}
+		int indexcount	= 0;
+		bool kill		= false;
+		int j = 0;
 		switch( c )
 		{
 			case '!':
@@ -942,6 +941,7 @@ void CConsole::Process( int c )
 				messageLoop << MSG_WORLDSAVE;
 				break;
 		case 'Y':
+			int keyresp;
 			std::cout << "System: ";
 			while( !kill )
 			{
@@ -1049,6 +1049,9 @@ void CConsole::Process( int c )
 					UnloadRegions();
 					LoadRegions();
 					messageLoop << MSG_PRINTDONE;
+					messageLoop << "     Loading Teleport Locations... ";
+					LoadTeleportLocations();
+					messageLoop << MSG_PRINTDONE;
 					// Reload the serve spawn regions
 					messageLoop << "     Loading Spawn Regions... ";
 					UnloadSpawnRegions();
@@ -1061,7 +1064,6 @@ void CConsole::Process( int c )
 					// Reload DFN's
 					messageLoop << "     Loading Server DFN... ";
 					FileLookup->Reload();
-					LoadTeleportLocations();
 					messageLoop << MSG_PRINTDONE;
 					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
 					messageLoop << "     Loading JSE Scripts... ";
@@ -1130,7 +1132,6 @@ void CConsole::Process( int c )
 			case 'W':                
 				// Display logged in chars
 				messageLoop << "CMD: Current Users in the World:";
-				j = 0;
 				CSocket *iSock;
 				Network->PushConn();
 				for( iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )

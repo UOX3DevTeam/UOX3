@@ -372,6 +372,13 @@ void LoadRegions( void )
 			}
 		}
 	}
+	if( regEntry == "" )
+	{
+		// No regions found? :O Shut down UOX3, or we'll run into trouble later.
+		Console.PrintFailed();
+		Shutdown( FATAL_UOX3_ALLOC_MAPREGIONS );
+	}
+
 	if( performLoad )
 	{
 		delete ourRegions;
@@ -393,8 +400,10 @@ void LoadRegions( void )
 		else if( UTag == "X2" )
 			toAdd.x2 = data.toShort();
 		else if( UTag == "Y2" )
-		{
 			toAdd.y2 = data.toShort();
+		else if( UTag == "WORLD" )
+		{
+			toAdd.worldNum = data.toByte();
 			cwmWorldState->logoutLocs.push_back( toAdd );
 		}
 	}

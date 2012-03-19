@@ -70,7 +70,7 @@ public:
 	SI16		GetY2( void ) const;
 	SI08		GetPrefZ( void ) const;
 
-	void		SetName( const std::string newName );
+	void		SetName( const std::string& newName );
 	void		SetRegionNum( UI16 newVal );
 	void		SetMaxCharSpawn( size_t newVal );
 	void		SetMaxItemSpawn( size_t newVal );

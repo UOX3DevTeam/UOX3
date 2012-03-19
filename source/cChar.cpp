@@ -109,6 +109,7 @@ const UI32 BIT_MAXSTAMFIXED		=	25;
 const UI32 BIT_CANATTACK		=	26;
 const UI32 BIT_INBUILDING		=	27;
 const UI32 BIT_INPARTY			=	28;	// This property is not saved
+const UI32 BIT_EVADE			=	29; // This property is not saved
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -142,7 +143,9 @@ hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speech
 speechCallback( NULL ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origID( DEFPLAYER_ORIGID ), 
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( NULL ), townvote( DEFPLAYER_TOWNVOTE ), townpriv( DEFPLAYER_TOWNPRIV )
 {
-	memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
+	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
+	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot (Xuri)
+	memset( &lockState[0],		0, sizeof( lockState ));
 
 	for( UI08 j = 0; j <= INTELLECT; ++j )
 		atrophy[j] = j;
@@ -176,6 +179,7 @@ const UI16			DEFNPC_BOOLFLAG				= 0;
 const UI16			DEFNPC_TAMEDHUNGERRATE		= 0;
 const UI08			DEFNPC_HUNGERWILDCHANCE		= 0;
 const R32			DEFNPC_MOVEMENTSPEED		= -1;
+const SI08			DEFNPC_PATHFAIL				= -1;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
@@ -183,7 +187,7 @@ reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_S
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( NULL ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ), 
 tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ),
-runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED )
+runningSpeed( DEFNPC_MOVEMENTSPEED ), fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -307,6 +311,24 @@ bool CChar::IsValidPlayer( void ) const
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  SI08 PathFail()
+//|   Date        -  Unknown
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Number of times Pathfinding has failed for an NPC - resets on success
+//o---------------------------------------------------------------------------o
+SI08 CChar::GetPathFail( void ) const
+{
+	SI08 rVal = DEFNPC_PATHFAIL;
+		rVal = mNPC->pathFail;
+	return rVal;
+}
+void CChar::SetPathFail( SI08 newValue )
+{
+	if( IsValidNPC() )
+		mNPC->pathFail = newValue;
+}
+//o---------------------------------------------------------------------------o
 //|   Function    -  SI08 Hunger()
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
@@ -341,11 +363,10 @@ bool CChar::SetHunger( SI08 newValue )
 //o---------------------------------------------------------------------------o
 void CChar::DoHunger( CSocket *mSock )
 {
-	UI16 hungerRate;
-	SI16 hungerDamage;
-
 	if ( !IsDead() && !IsInvulnerable() )	// No need to do anything on dead or invulnerable chars
 	{
+		UI16 hungerRate;
+		SI16 hungerDamage;
 		if( !IsNpc() && mSock != NULL )	// Do Hunger for player chars
 		{
 			if( WillHunger() && GetCommandLevel() == CL_PLAYER  )
@@ -563,6 +584,22 @@ bool CChar::IsNpc( void ) const
 void CChar::SetNpc( bool newVal )
 {
 	bools.set( BIT_NPC, newVal );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool IsEvading( void ) const
+//|   Date        -  04/02/2012
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the character is evading
+//o---------------------------------------------------------------------------o
+bool CChar::IsEvading( void ) const
+{
+	return bools.test( BIT_EVADE );
+}
+void CChar::SetEvadeState( bool newVal )
+{
+	bools.set( BIT_EVADE, newVal );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1916,86 +1953,81 @@ bool CChar::FinishedItems( void )
 
 bool CChar::DumpHeader( std::ofstream &outStream ) const
 {
-	outStream << "[CHARACTER]" << std::endl;
+	outStream << "[CHARACTER]" << '\n';
 	return true;
 }
 
 bool CChar::DumpBody( std::ofstream &outStream ) const
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "GuildFealty=" << "0x" << GetGuildFealty() << std::endl;  
-	dumping << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << std::endl;
-	dumping << "Privileges=" << "0x" << GetPriv() << std::endl;
+	outStream << std::hex;
+	outStream << "GuildFealty=" << "0x" << GetGuildFealty() << '\n';  
+	outStream << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << '\n';
+	outStream << "Privileges=" << "0x" << GetPriv() << '\n';
 	if( ValidateObject( packitem ) )
-		dumping << "PackItem=" << "0x" << packitem->GetSerial() << std::endl;	// store something meaningful
+		outStream << "PackItem=" << "0x" << packitem->GetSerial() << '\n';	// store something meaningful
 	else
-		dumping << "PackItem=" << "0x" << INVALIDSERIAL << std::endl;
+		outStream << "PackItem=" << "0x" << INVALIDSERIAL << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "GuildTitle=" << GetGuildTitle() << std::endl;  
-	dumping << "Hunger=" << (SI16)GetHunger() << std::endl;
-	dumping << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << std::endl;
-	dumping << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << std::endl;
+	outStream << std::dec;
+	outStream << "GuildTitle=" << GetGuildTitle() << '\n';  
+	outStream << "Hunger=" << (SI16)GetHunger() << '\n';
+	outStream << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << '\n';
+	outStream << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << '\n';
 	if ( GetMaxHPFixed() )
-		dumping << "MAXHP=" << (SI16)maxHP << std::endl;
+		outStream << "MAXHP=" << (SI16)maxHP << '\n';
 	if ( GetMaxManaFixed() )
-		dumping << "MAXMANA=" << (SI16)maxMana << std::endl;
+		outStream << "MAXMANA=" << (SI16)maxMana << '\n';
 	if ( GetMaxStamFixed() )
-		dumping << "MAXSTAM=" << (SI16)maxStam << std::endl;
-	dumping << "Town=" << (SI16)GetTown() << std::endl;
-	dumping << "SummonTimer=" << GetTimer( tNPC_SUMMONTIME ) << std::endl;
-	dumping << "MayLevitate=" << (MayLevitate()?1:0) << std::endl;
-	dumping << "Stealth=" << (SI16)GetStealth() << std::endl;
-	dumping << "Reserved=" << (SI16)GetCell() << std::endl;
-	dumping << "Region=" << (SI16)GetRegionNum() << std::endl;
-	dumping << "AdvanceObject=" << GetAdvObj() << std::endl;
-	dumping << "AdvRaceObject=" << GetRaceGate() << std::endl;
+		outStream << "MAXSTAM=" << (SI16)maxStam << '\n';
+	outStream << "Town=" << (SI16)GetTown() << '\n';
+	outStream << "SummonTimer=" << GetTimer( tNPC_SUMMONTIME ) << '\n';
+	outStream << "MayLevitate=" << (MayLevitate()?1:0) << '\n';
+	outStream << "Stealth=" << (SI16)GetStealth() << '\n';
+	outStream << "Reserved=" << (SI16)GetCell() << '\n';
+	outStream << "Region=" << (SI16)GetRegionNum() << '\n';
+	outStream << "AdvanceObject=" << GetAdvObj() << '\n';
+	outStream << "AdvRaceObject=" << GetRaceGate() << '\n';
 
 	// Write out the BaseSkills and the SkillLocks here
 	// Format: BaseSkills=[0,34]-[1,255]-[END]
-	dumping << "BaseSkills=";
+	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
-		dumping << "[" << (SI32)bsc << "," << GetBaseSkill( bsc ) << "]-";
-	dumping << "[END]" << std::endl;
+		outStream << "[" << (SI32)bsc << "," << GetBaseSkill( bsc ) << "]-";
+	outStream << "[END]" << '\n';
 
-	dumping << "GuildNumber=" << GetGuildNumber() << std::endl;
-	dumping << "FontType=" << (SI16)GetFontType() << std::endl;
-	dumping << "TownTitle=" << (SI16)(GetTownTitle()?1:0) << std::endl;
+	outStream << "GuildNumber=" << GetGuildNumber() << '\n';
+	outStream << "FontType=" << (SI16)GetFontType() << '\n';
+	outStream << "TownTitle=" << (SI16)(GetTownTitle()?1:0) << '\n';
 	//-------------------------------------------------------------------------------------------
-	dumping << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << std::endl;
-	dumping << "CanAttack=" << (SI16)(GetCanAttack()?1:0) << std::endl;
-	dumping << "AllMove=" << (SI16)(AllMove()?1:0) << std::endl;
-	dumping << "IsNpc=" << (SI16)(IsNpc()?1:0) << std::endl;
-	dumping << "IsShop=" << (SI16)(IsShop()?1:0) << std::endl;
-	dumping << "Dead=" << (SI16)(IsDead()?1:0) << std::endl;
-	dumping << "CanTrain=" << (SI16)(CanTrain()?1:0) << std::endl;
-	dumping << "IsWarring=" << (SI16)(IsAtWar()?1:0) << std::endl;
-	dumping << "GuildToggle=" << (SI16)(GetGuildToggle()?1:0) << std::endl;
-	dumping << "PoisonStrength=" << (UI16)(GetPoisonStrength()) << std::endl;
-	dumping << "WillHunger=" << (SI16)(WillHunger()?1:0) << std::endl;
+	outStream << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << '\n';
+	outStream << "CanAttack=" << (SI16)(GetCanAttack()?1:0) << '\n';
+	outStream << "AllMove=" << (SI16)(AllMove()?1:0) << '\n';
+	outStream << "IsNpc=" << (SI16)(IsNpc()?1:0) << '\n';
+	outStream << "IsShop=" << (SI16)(IsShop()?1:0) << '\n';
+	outStream << "Dead=" << (SI16)(IsDead()?1:0) << '\n';
+	outStream << "CanTrain=" << (SI16)(CanTrain()?1:0) << '\n';
+	outStream << "IsWarring=" << (SI16)(IsAtWar()?1:0) << '\n';
+	outStream << "GuildToggle=" << (SI16)(GetGuildToggle()?1:0) << '\n';
+	outStream << "PoisonStrength=" << (UI16)(GetPoisonStrength()) << '\n';
+	outStream << "WillHunger=" << (SI16)(WillHunger()?1:0) << '\n';
 
 	TIMERVAL mTime = GetTimer( tCHAR_MURDERRATE );
-	dumping << "MurderTimer=";
+	outStream << "MurderTimer=";
 	if( mTime == 0 || mTime < cwmWorldState->GetUICurrentTime() )
-		dumping << (SI16)0 << std::endl;
+		outStream << (SI16)0 << '\n';
 	else
-		dumping << (UI32)(mTime - cwmWorldState->GetUICurrentTime()) << std::endl;
+		outStream << (UI32)(mTime - cwmWorldState->GetUICurrentTime()) << '\n';
 
 	TIMERVAL pTime = GetTimer( tCHAR_PEACETIMER );
-	dumping << "PeaceTimer=";
+	outStream << "PeaceTimer=";
 	if( pTime == 0 || pTime < cwmWorldState->GetUICurrentTime() )
-		dumping << (SI16)0 << std::endl;
+		outStream << (SI16)0 << '\n';
 	else
-		dumping << (UI32)(pTime - cwmWorldState->GetUICurrentTime()) << std::endl;
-
-	outStream << dumping.str();
+		outStream << (UI32)(pTime - cwmWorldState->GetUICurrentTime()) << '\n';
 
 	if( IsValidPlayer() )
 		mPlayer->DumpBody( outStream );
@@ -2006,83 +2038,73 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 
 void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 {
-	std::string destination; 
-	std::ostringstream dumping( destination ); 
-
 	// Hexadecimal Values
-	dumping << std::hex;
+	outStream << std::hex;
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "NpcAIType=" << aiType << std::endl;
-	dumping << "Taming=" << taming << std::endl;
-	dumping << "Peaceing=" << peaceing << std::endl;
-	dumping << "Provoing=" << provoing << std::endl;
-	dumping << "HoldG=" << goldOnHand << std::endl;
-	dumping << "Split=" << (SI16)splitNum << "," << (SI16)splitChance << std::endl;
-	dumping << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << std::endl;
-	dumping << "NpcWander=" << (SI16)wanderMode << "," << (SI16)oldWanderMode << std::endl;
-	dumping << "SPAttack=" << spellAttack << "," << (SI16)spellDelay << std::endl;
-	dumping << "QuestType=" << (SI16)questType << std::endl;
-	dumping << "QuestRegions=" << (SI16)questOrigRegion << "," << (SI16)questDestRegion << std::endl;
-	dumping << "FleeAt=" << fleeAt << std::endl;
-	dumping << "ReAttackAt=" << reAttackAt << std::endl;
-	dumping << "NPCFlag=" << (SI16)npcFlag << std::endl;
-	dumping << "Mounted=" << (SI16)(boolFlags.test( BIT_MOUNTED )?1:0) << std::endl;
-	dumping << "Stabled=" << (SI16)(boolFlags.test( BIT_STABLED )?1:0) << std::endl;
-	dumping << "TamedHungerRate=" << tamedHungerRate << std::endl;
-	dumping << "TamedHungerWildChance=" << (SI16)hungerWildChance << std::endl;
-	dumping << "Foodlist=" << foodList << std::endl;
-	dumping << "WalkingSpeed=" << walkingSpeed << std::endl;
-	dumping << "RunningSpeed=" << runningSpeed << std::endl;
-	dumping << "FleeingSpeed=" << fleeingSpeed << std::endl;
-
-	outStream << dumping.str();
+	outStream << std::dec;
+	outStream << "NpcAIType=" << aiType << '\n';
+	outStream << "Taming=" << taming << '\n';
+	outStream << "Peaceing=" << peaceing << '\n';
+	outStream << "Provoing=" << provoing << '\n';
+	outStream << "HoldG=" << goldOnHand << '\n';
+	outStream << "Split=" << (SI16)splitNum << "," << (SI16)splitChance << '\n';
+	outStream << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << '\n';
+	outStream << "NpcWander=" << (SI16)wanderMode << "," << (SI16)oldWanderMode << '\n';
+	outStream << "SPAttack=" << spellAttack << "," << (SI16)spellDelay << '\n';
+	outStream << "QuestType=" << (SI16)questType << '\n';
+	outStream << "QuestRegions=" << (SI16)questOrigRegion << "," << (SI16)questDestRegion << '\n';
+	outStream << "FleeAt=" << fleeAt << '\n';
+	outStream << "ReAttackAt=" << reAttackAt << '\n';
+	outStream << "NPCFlag=" << (SI16)npcFlag << '\n';
+	outStream << "Mounted=" << (SI16)(boolFlags.test( BIT_MOUNTED )?1:0) << '\n';
+	outStream << "Stabled=" << (SI16)(boolFlags.test( BIT_STABLED )?1:0) << '\n';
+	outStream << "TamedHungerRate=" << tamedHungerRate << '\n';
+	outStream << "TamedHungerWildChance=" << (SI16)hungerWildChance << '\n';
+	outStream << "Foodlist=" << foodList << '\n';
+	outStream << "WalkingSpeed=" << walkingSpeed << '\n';
+	outStream << "RunningSpeed=" << runningSpeed << '\n';
+	outStream << "FleeingSpeed=" << fleeingSpeed << '\n';
 }
 
 void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 {
-	std::string destination;
-	std::ostringstream dumping( destination );
-
 	// Hexadecimal Values
-	dumping << std::hex;
-	dumping << "RobeSerial=" << "0x" << robe << std::endl;
-	dumping << "OriginalID=" << "0x" << origID << ",0x" << origSkin << std::endl;
-	dumping << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << std::endl;
-	dumping << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << std::endl;
-	dumping << "TownVote=" << "0x" << townvote << std::endl;
+	outStream << std::hex;
+	outStream << "RobeSerial=" << "0x" << robe << '\n';
+	outStream << "OriginalID=" << "0x" << origID << ",0x" << origSkin << '\n';
+	outStream << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << '\n';
+	outStream << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << '\n';
+	outStream << "TownVote=" << "0x" << townvote << '\n';
 
 	// Decimal / String Values
-	dumping << std::dec;
-	dumping << "Account=" << accountNum << std::endl;
-	dumping << "LastOn=" << lastOn << std::endl;
-	dumping << "LastOnSecs=" << lastOnSecs << std::endl;
-	dumping << "OrgName=" << origName << std::endl;
-	dumping << "CommandLevel=" << (SI16)commandLevel << std::endl;	// command level
-	dumping << "Squelched=" << (SI16)squelched << std::endl;
-	dumping << "Deaths=" << deaths << std::endl;
-	dumping << "FixedLight=" << (SI16)fixedLight << std::endl;
-	dumping << "TownPrivileges=" << (SI16)townpriv << std::endl;
-	dumping << "Atrophy=";
+	outStream << std::dec;
+	outStream << "Account=" << accountNum << '\n';
+	outStream << "LastOn=" << lastOn << '\n';
+	outStream << "LastOnSecs=" << lastOnSecs << '\n';
+	outStream << "OrgName=" << origName << '\n';
+	outStream << "CommandLevel=" << (SI16)commandLevel << '\n';	// command level
+	outStream << "Squelched=" << (SI16)squelched << '\n';
+	outStream << "Deaths=" << deaths << '\n';
+	outStream << "FixedLight=" << (SI16)fixedLight << '\n';
+	outStream << "TownPrivileges=" << (SI16)townpriv << '\n';
+	outStream << "Atrophy=";
 	for( UI08 atc = 0; atc <= INTELLECT; ++atc )
 	{
-		dumping << (SI16)atrophy[atc] << "," ;
+		outStream << (SI16)atrophy[atc] << "," ;
 	}
-	dumping << "[END]" << std::endl;
+	outStream << "[END]" << '\n';
 
 	// Format: SkillLocks=[0,34]-[1,255]-[END]
-	dumping << "SkillLocks=";
+	outStream << "SkillLocks=";
 	for( UI08 slc = 0; slc <= INTELLECT; ++slc )
 	{
 		if( lockState[slc] <= 2 )
-			dumping << "[" << (SI16)slc << "," << (SI16)lockState[slc] << "]-";
+			outStream << "[" << (SI16)slc << "," << (SI16)lockState[slc] << "]-";
 		else
-			dumping << "[" << (SI16)slc << ",0]-";
+			outStream << "[" << (SI16)slc << ",0]-";
 	}
-	dumping << "[END]" << std::endl;
-
-	outStream << dumping.str();
+	outStream << "[END]" << '\n';
 }
 
 //o-----------------------------------------------------------------------o
@@ -2588,10 +2610,10 @@ void CChar::StopSpell( void )
 
 bool CChar::HandleLine( UString &UTag, UString& data )
 {
-	size_t numSections = 0;
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		size_t numSections = 0;
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
@@ -3188,7 +3210,7 @@ bool CChar::LoadRemnants( void )
 		SetID( GetOrgID() );
 
 	const UI16 acct = GetAccount().wAccountIndex;
-	if( GetID() > 0x3E2 )
+	if( GetID() > 0x4DF )
 	{
 		if( acct == AB_INVALID_ID )
 		{
@@ -3274,7 +3296,8 @@ void CChar::PostLoadProcessing( void )
 		SetPackItem( calcItemObjFromSer( tempSerial ) );
 	else
 		SetPackItem( NULL );
-	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT )
+	SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+	if( GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight )
 		SetWeight( Weight->calcCharWeight( this ) );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		Skills->updateSkillLevel( this, i );
@@ -3309,6 +3332,8 @@ bool CChar::isHuman( void )
 	case 0x0191:	// Female Human
 	case 0x025D:	// Male Elf
 	case 0x025E:	// Female Elf
+	case 0x029A:	// Male Gargoyle
+	case 0x029B:	// Female Gargoyle
 	case 0x03DB:	// GM Body
 		rvalue = true;
 		break;
@@ -3364,6 +3389,8 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				else
 					txtColor = GetSayColour();
 			}
+			else if( msgType == SYSTEM )
+				txtColor = 0x07FA;
 			if( !txtColor || txtColor == 0x1700 )
 				txtColor = 0x5A;
 
@@ -3540,7 +3567,7 @@ void CChar::Cleanup( void )
 			CAccountBlock& mAcct = GetAccount();
 			if( mAcct.wAccountIndex != AB_INVALID_ID )
 			{
-				for( UI08 actr = 0; actr < 6; ++actr )
+				for( UI08 actr = 0; actr < 7; ++actr )
 				{
 					if( mAcct.lpCharacters[actr] != NULL && mAcct.lpCharacters[actr]->GetSerial() == GetSerial() )
 					{
@@ -5483,7 +5510,7 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 				if( GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE )
 					ExposeToView();
 
-				if( !IsAtWar() && !attacker->IsInvulnerable() )
+				if( !IsAtWar() && !attacker->IsInvulnerable() && GetNPCAiType() != AI_DUMMY )
 				{
 					SetTarg( attacker );
 					ToggleCombat();
@@ -5511,8 +5538,8 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 			attOwnerSock = attacker->GetOwnerObj()->GetSocket();
 	}
 
-	// Display damage
-	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
+	// Display damage numbers
+	if( cwmWorldState->ServerData()->CombatDisplayDamageNumbers() )
 	{
 		CPDisplayDamage toDisplay( (*this), (UI16)damageValue );
 		if( mSock != NULL )
@@ -5588,7 +5615,10 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 	UI16 dbScript		= GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( dbScript );
 	if( toExecute != NULL )
-		toExecute->OnDeathBlow( this, attacker );
+	{
+		if( toExecute->OnDeathBlow( this, attacker ) == 1 ) // if it exists and we don't want hard code, return
+			return;
+	}
 	
 	if( ValidateObject( attacker ) )
 	{
