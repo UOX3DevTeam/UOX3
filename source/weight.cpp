@@ -301,7 +301,7 @@ void CWeight::addItemWeight( CItem *pack, CItem *item )
 	SI32 totalWeight = pack->GetWeight();
 	
 	if( calcAddWeight( item, totalWeight ) )
-		pack->SetWeight( totalWeight, false );
+		pack->SetWeight( totalWeight, false );//why false?
 	else
 		pack->SetWeight( MAX_WEIGHT, false );
 

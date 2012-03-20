@@ -69,8 +69,24 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 	bouncing->Dirty( UT_UPDATE );
 	bouncer->Send( &bounce );
 	bouncer->PickupSpot( PL_NOWHERE );
+	bouncer->SetCursorItem( NULL );
 }
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	PickupBounce( CSocket *bouncer, CItem *bouncing )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating item.
+//o---------------------------------------------------------------------------o
+void PickupBounce( CSocket *bouncer )
+{
+	if( bouncer == NULL )
+		return;
+	CPBounce bounce( 0 );
+	bouncer->Send( &bounce );
+	bouncer->PickupSpot( PL_NOWHERE );
+	bouncer->SetCursorItem( NULL );
+}
 //o---------------------------------------------------------------------------o
 //|   Function    :  CItem *autoStack( CSocket *mSock, CItem *i, CItem *pack )
 //|   Date        :  8/14/01
@@ -211,7 +227,7 @@ bool CPIGetItem::Handle( void )
 //			if( iOwner != ourChar && ( ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			if( otherPackCheck || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			{
-				tSock->Send( &bounce );
+				PickupBounce( tSock );
 				return true;
 			}
 			if( iCont->CanBeObjType( OT_ITEM ) )
@@ -219,7 +235,7 @@ bool CPIGetItem::Handle( void )
 				CItem *contItem = static_cast<CItem *>(iCont);
 				if( contItem->GetType() == IT_TRADEWINDOW ) // Trade Window
 				{
-					tSock->Send( &bounce );
+					PickupBounce( tSock );
 					return true;
 				}
 				CItem *recurseItem = FindRootContainer( contItem );
@@ -253,7 +269,7 @@ bool CPIGetItem::Handle( void )
 			CItem *x = static_cast<CItem *>(iOwner);
 			if( !objInRange( ourChar, x, DIST_NEARBY ) )
 			{
-				tSock->Send( &bounce );
+				PickupBounce( tSock );
 				return true;
 			}
 
@@ -262,7 +278,7 @@ bool CPIGetItem::Handle( void )
 				CMultiObj *ourMulti = x->GetMultiObj();
 				if( ValidateObject( ourMulti ) && !ourMulti->IsOwner( ourChar ) )
 				{
-					tSock->Send( &bounce );
+					PickupBounce( tSock );
 					return true;
 				}
 			}
@@ -286,14 +302,14 @@ bool CPIGetItem::Handle( void )
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
 		if( !objInRange( ourChar, i, DIST_NEARBY ) )
 		{
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 	}
 
 	if( i->isCorpse() || !checkItemRange( ourChar, x ) )
 	{
-		tSock->Send( &bounce );
+		PickupBounce( tSock );
 		return true;
 	}
 
@@ -301,7 +317,7 @@ bool CPIGetItem::Handle( void )
 	{
 		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && x->GetMultiObj() != ourChar->GetMultiObj() )
 		{
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 		i->SetMulti( INVALIDSERIAL );
@@ -326,7 +342,7 @@ bool CPIGetItem::Handle( void )
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 	}
@@ -336,7 +352,7 @@ bool CPIGetItem::Handle( void )
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 	}
@@ -347,7 +363,7 @@ bool CPIGetItem::Handle( void )
 	{
 		if( !toExecute->OnPickup( i, ourChar ) )	// returns false if we should bounce it
 		{
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 	}
@@ -379,7 +395,7 @@ bool CPIGetItem::Handle( void )
 		if( !Weight->checkCharWeight( NULL, ourChar, i ) )
 		{
 			tSock->sysmessage( 1743 );
-			tSock->Send( &bounce );
+			PickupBounce( tSock );
 			return true;
 		}
 	}
@@ -388,10 +404,14 @@ bool CPIGetItem::Handle( void )
 		MapRegion->RemoveItem( i );
 	i->RemoveFromSight();
 
+	tSock->SetCursorItem( i );
+
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
 	return true;
 }
+
+
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  Equip( CSocket *mSock )
@@ -567,6 +587,10 @@ bool CPIEquipItem::Handle( void )
 	}
 
 	i->SetCont( k );
+
+	//Reset PickupSpot after dropping the item
+	tSock->PickupSpot( PL_NOWHERE );
+	tSock->SetCursorItem( NULL );
 
 	CPDropItemApproved lc;
 	tSock->Send( &lc );
@@ -839,6 +863,13 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		return;
 	}
 
+	//Bounce if no valid pickupspot exists
+	if( mSock->PickupSpot() == PL_NOWHERE )
+	{
+		Bounce( mSock, i );
+		return;
+	}
+
 	UI16 targTrig		= i->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
@@ -913,6 +944,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	}
 	// IF client-version is above 6.0.1.7, send approval packet for dropping item. If not, don't.
 	CPDropItemApproved lc;
+
 	mSock->Send( &lc );
 }
 
@@ -1312,6 +1344,10 @@ bool CPIDropItem::Handle( void )
 		SI32 currentWeight = ourChar->GetWeight() / 100;
 		tSock->sysmessage( 1784, currentWeight, maxWeight ); //You are overloaded. Current / Max: %i / %i
 	}
+
+	//Reset PickupSpot after dropping the item
+	tSock->PickupSpot( PL_NOWHERE );
+	tSock->SetCursorItem( NULL );
 	return true;
 }
 
