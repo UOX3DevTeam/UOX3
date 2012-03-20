@@ -542,7 +542,7 @@ range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum )
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
 {
 	InternalReset();
 }
@@ -1320,6 +1320,23 @@ void CSocket::PickupY( SI16 y )
 void CSocket::PickupZ( SI08 z )
 {
 	pZ = z;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  CItem * CursorItem()
+//|   Date        -  March 20th, 2012
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Item being held on a player's mouse cursor
+//o---------------------------------------------------------------------------o
+CItem *CSocket::GetCursorItem( void ) const
+{
+	return cursorItem;
+}
+void CSocket::SetCursorItem( CItem *newCursorItem )
+{
+	if( ValidateObject( newCursorItem ) )
+	cursorItem = newCursorItem;
 }
 
 CSocket *CPInputBuffer::GetSocket( void ) const

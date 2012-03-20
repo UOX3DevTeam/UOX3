@@ -5061,7 +5061,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			tempEntry.stringNum = 1072788;
 		else
 			tempEntry.stringNum = 1072789;
-		tempEntry.ourText = UString::number( ( cItem.GetWeight() / 100 ) );
+		tempEntry.ourText = UString::number( ( cItem.GetWeight() / 100 ) * cItem.GetAmount() );
 		FinalizeData( tempEntry, totalStringLen );
 	}
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() )

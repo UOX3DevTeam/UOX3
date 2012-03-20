@@ -127,6 +127,8 @@ private:
 	SI16			pX;
 	SI16			pY;
 	SI08			pZ;
+	CItem *			cursorItem; //pointer to item held on mouse cursor
+
 
 	UI32			Pack( void *pvIn, void *pvOut, int len );
 
@@ -171,6 +173,8 @@ public:
 
 	bool			LoginComplete( void ) const;
 
+	CItem *			GetCursorItem( void ) const;
+	void			SetCursorItem( CItem *newValue );
 	SI16			PickupX( void ) const;
 	SI16			PickupY( void ) const;
 	SI08			PickupZ( void ) const;

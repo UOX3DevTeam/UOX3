@@ -195,6 +195,16 @@ void cNetworkStuff::LogOut( CSocket *s )
 			}
 		}
 	}
+	//If player is holding an item on the cursor, and it was picked up off the ground, drop it back to the ground
+	if( s->GetCursorItem() )
+	{
+		if( s->PickupSpot() == PL_GROUND )
+		{
+			CItem * i = s->GetCursorItem();
+			i->SetCont( NULL );
+			i->SetLocation( p->GetX(), p->GetY(), p->GetZ() );
+		}
+	}
 	
 	CAccountBlock& actbAccount = s->GetAccount();
 	if( valid )
