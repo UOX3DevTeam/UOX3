@@ -5,6 +5,7 @@
 	Added new function void PickupBounce() in cPlayerAction.cpp to avoid having to repeat some shared code all over CPIGetItem::Handle()
 	Added CSocket::SetCursorItem() and CSocket:GetCursorItem() to be used for storing temporary pointers to items held by players on the mouse-cursor
 	Fixed an issue where items picked up off the ground and held on the mouse-cursor while disconnecting/being disconnected would make said items vanish permanently
+	Fixed MaxWeight-value in status-gump for clients v5+ - will now reflect the actual MaxWeight calculated based on UOX.INI setting WEIGHTPERSTR
 
 19/03/2012 - Xuri (0.99)
 	Fixed various errors in JS/MAGIC/level1targ.js
