@@ -1736,7 +1736,6 @@ void CSocket::statwindow( CChar *targChar )
 	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
 	toSend.AC( Combat->calcDef( targChar, 0, false ) );
 
-	toSend.Weight( static_cast<UI16>(targChar->GetWeight() / 100) );
 	Send( &toSend );
 
 	CPExtendedStats exStats( (*targChar) );

@@ -1646,11 +1646,17 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		/*if( target.ClientVersionMajor() >= 6 )
 		{
-		}
-		else if( target.ClientVersionMajor() >= 5 )
-		{
 		}*/
-		if( target.ClientVersionMajor() >= 4 )
+		if( target.ClientVersionMajor() >= 5 )
+		{
+			extended3 = true;
+			extended4 = true;
+			extended5 = true;
+			pStream.ReserveSize( 91 );
+			pStream.WriteByte( 2, 91 );
+			Flag( 5 );
+		}
+		else if( target.ClientVersionMajor() >= 4 )
 		{
 			extended3 = true;
 			extended4 = true;
@@ -1710,6 +1716,32 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Mana( toCopy.GetMana() );
 		MaxMana( toCopy.GetMaxMana() );
 	}
+	Weight( static_cast<UI16>(toCopy.GetWeight() / 100) );
+	if( extended5 )
+	{
+		MaxWeight( toCopy.GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40 );
+		UI16 bodyID = toCopy.GetID();
+		switch( bodyID )
+		{
+		case 0x0190:
+		case 0x0191:
+		case 0x0192:
+		case 0x0193:
+			Race( 0x01 ); break; //human
+		case 0x025D:
+		case 0x025E:
+		case 0x025F:
+		case 0x0260:
+			Race( 0x02 ); break; //elf
+		case 0x029A:
+		case 0x029B:
+		case 0x02B6:
+		case 0x02B7:
+			Race( 0x03 ); break; //gargoyle
+		default:
+			Race( 0x01 ); break;
+		}
+	}
 	if( extended3 )
 	{
 		StatCap( cwmWorldState->ServerData()->ServerStatCapStatus() );
@@ -1736,6 +1768,9 @@ void CPStatWindow::InternalReset( void )
 	pStream.WriteByte( 2, 66 );
 	extended3 = false;
 	extended4 = false;
+	extended5 = false;
+	extended6 = false;
+	byteOffset = 0;
 	Flag( 0 );
 }
 CPStatWindow::CPStatWindow()
@@ -1820,63 +1855,79 @@ void CPStatWindow::AC( UI16 nValue )
 void CPStatWindow::Weight( UI16 nValue )
 {
 	pStream.WriteShort( 64, nValue );
+	byteOffset = 66;
 }
-
+//extended5
+void CPStatWindow::MaxWeight( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value ); 
+	byteOffset += 2;
+}
+void CPStatWindow::Race( UI08 value )
+{
+	pStream.WriteByte( byteOffset, value );
+	byteOffset += 1;
+}
+//extended5 end
+//extended3 start
 void CPStatWindow::StatCap( UI16 value )
 {
-	if( extended3 )
-		pStream.WriteShort( 66, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::CurrentPets( UI08 value )
 {
-	if( extended3 )
-		pStream.WriteByte( 68, value );
+	pStream.WriteByte( byteOffset, value );
+	byteOffset += 1;
 }
 void CPStatWindow::MaxPets( UI08 value )
 {
-	if( extended3 )
-		pStream.WriteByte( 69, value );
+	pStream.WriteByte( byteOffset, value );
+	byteOffset += 1;
 }
+//extended3 end
+//extended4 start
 void CPStatWindow::FireResist( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 70, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::ColdResist( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 72, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::PoisonResist( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 74, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::EnergyResist( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 76, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::Luck( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 78, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::DamageMin( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 80, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::DamageMax( UI16 value )
 {
-	if( extended4 )
-		pStream.WriteShort( 82, value );
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
 }
 void CPStatWindow::Unknown( UI32 value )
 {
-	if( extended4 )
-		pStream.WriteLong( 84, value );
+	pStream.WriteLong( byteOffset, value );
+	byteOffset += 4;
 }
+//extended4 end
 
 //0x53 Packet
 //Last Modified on Sunday, 13-Feb-2000 

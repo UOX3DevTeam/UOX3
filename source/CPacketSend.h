@@ -462,6 +462,9 @@ class CPStatWindow : public CPUOXBuffer
 protected:
 	bool			extended3;
 	bool			extended4;
+	bool			extended5;
+	bool			extended6;
+	size_t			byteOffset;
 	virtual void	InternalReset( void );
 public:
 					CPStatWindow();
@@ -473,6 +476,8 @@ public:
 	virtual void	Name( const std::string& nName );
 	virtual void	CurrentHP( SI16 nValue );
 	virtual void	MaxHP( SI16 nValue );
+	virtual void	MaxWeight( UI16 value );
+	virtual void	Race( UI08 value );
 	virtual void	NameChange( bool nValue );
 	virtual void	Flag( UI08 nValue );
 	virtual void	Sex( UI08 nValue );

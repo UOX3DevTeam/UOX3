@@ -718,9 +718,6 @@ char *CPIClientVersion::Offset( void )
 }
 bool CPIClientVersion::Handle( void )
 {
-	if( tSock->ClientVerShort() != CVS_DEFAULT )
-		return true;
-
 	char *verString	= Offset();
 	verString[len]	= 0;
 
