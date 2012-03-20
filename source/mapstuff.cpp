@@ -239,15 +239,17 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 	UString mapMUL		= mMap.mapFile;
 	UString mapUOPWrap	= mMap.mapFileUOPWrap;
 	UString lName		= basePath + mapMUL;
+	cwmWorldState->ServerData()->MapIsUOPWrapped( false );
 	mMap.mapObj			= new UOXFile( lName.c_str(), "rb" );
 	Console << "\t" << lName << "(/" << mapUOPWrap << ")\t\t";
 
 	//if no map0.mul was found, check if there's a map#LegacyMul.uop
 	if(( mMap.mapObj == NULL || !mMap.mapObj->ready() ) && !mapUOPWrap.empty() )
 	{
-		cwmWorldState->ServerData()->MapIsUOPWrapped( true );
 		UString lName	= basePath + mapUOPWrap;
 		mMap.mapObj		= new UOXFile( lName.c_str(), "rb" );
+		if( mMap.mapObj->ready() )
+			cwmWorldState->ServerData()->MapIsUOPWrapped( true );
 	}
 	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 	{
