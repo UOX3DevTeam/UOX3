@@ -237,5 +237,15 @@ RESTOCK=5
 GOOD=9
 }
 
+[farmerscabindeed]
+{
+NAME=farmer's cabin deed
+ID=0x14F0
+MOREX=17
+VALUE=55000
+RESTOCK=5
+GOOD=9
+}
+
 EOF
 

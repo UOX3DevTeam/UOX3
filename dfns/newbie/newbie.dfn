@@ -189,15 +189,7 @@ PACKITEM=0x14FB,20
 EQUIPITEM=0x1F03
 EQUIPITEM=0x1718
 EQUIPITEM=0x0efa
-PACKITEM=0x0f7a,30
-PACKITEM=0x0f7b,30
-PACKITEM=0x0f84,30
-PACKITEM=0x0f85,30
-PACKITEM=0x0f86,30
-PACKITEM=0x0f88,30
-PACKITEM=0x0f8c,30
-PACKITEM=0x0f8d,30
-PACKITEM=0x0e76
+PACKITEM=bagofreagents
 PACKITEM=listobject9
 PACKITEM=listobject9
 PACKITEM=listobject9
@@ -437,6 +429,18 @@ EQUIPITEM=0x1517
 {
 EQUIPITEM=0x1516
 EQUIPITEM=0x1EFD
+}
+
+// Is granted to all male gargoyle players, despite skill.
+[DEFAULT GARG MALE]
+{
+EQUIPITEM=0x1F03
+}
+
+// Is granted to all female gargoyle players, despite skill.
+[DEFAULT GARG FEMALE]
+{
+EQUIPITEM=0x1F03
 }
 
 // Is granted to all players, despite skill, gender or race

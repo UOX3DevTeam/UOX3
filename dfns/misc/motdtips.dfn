@@ -30,8 +30,7 @@ LINE=Just use 'REPORTBUG <text>
 
 [TIP 3]
 {
-LINE=You can find out more about UOX3 at http://www.uox3dev.net, or
-LINE=at http://www.uox3.org
+LINE=You can find out more about UOX3 at http://www.uox3.org
 }
 
 EOF

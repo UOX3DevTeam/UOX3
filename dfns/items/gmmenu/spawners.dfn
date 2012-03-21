@@ -1072,4 +1072,14 @@ type=62
 amount=2
 }
 
+[escortspawn]
+{
+get=base_spawner
+name=Escort Spawn
+id=0x1f14
+type=125
+spawnobjlist=escorts
+amount=1
+}
+
 EOF

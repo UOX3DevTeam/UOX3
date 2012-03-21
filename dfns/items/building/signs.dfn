@@ -1067,6 +1067,15 @@ MOREX=4
 MOREY=1
 }
 
+[housesign_2]
+{ E
+get=base_item
+name=Brass sign
+id=0x0BD1
+type=203
+MOREX=4
+MOREY=1
+}
 
 EOF
 // Email me with bugs\comments\complaints about this file (see top of file for address)
