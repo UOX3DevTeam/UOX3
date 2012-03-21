@@ -5520,7 +5520,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 		if( pSerial )
 			pSerial += BASEITEMSERIAL;
 		else
-			pSerial += 0x80000000; //was 0x80000000
+			pSerial += 0x80000000;
 		pStream.WriteLong( 12, pSerial );
 		size_t byteOffset = 16;
 
@@ -5541,7 +5541,6 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 	}
 	else if( bFullPost ) //full post
 	{
-		//totSize += 14;
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
 			totSize += (*pIter).size()+3;
 		pStream.ReserveSize( totSize );
@@ -5565,9 +5564,7 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 		pStream.WriteShort( offset, 0x0190 ); //postedbody
 		pStream.WriteShort( offset+=2, 0x03F7 ); //postedhue
 		pStream.WriteByte(  offset+=2, 0x00 ); // postedequip-length?
-		//pStream.WriteString( offset, "'01''91''84''0A''06''1E''FD''01''0B''15''2E''01''0B''17''0B''01''BB''20''46''04''66''13''F8''00''00''0E''75''00''00'", 29 );
 
-		//offset += 29;
 		pStream.WriteByte( ++offset, mbPost.Lines );
 
 		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
@@ -5579,73 +5576,6 @@ void CPOpenMsgBoardPost::CopyData( CSocket *mSock, const msgBoardPost_st& mbPost
 			pStream.WriteByte( ++offset, 0x00 );
 		}
 	}
-	/*size_t totSize = 8 + mbPost.DateLen + mbPost.PosterLen + mbPost.SubjectLen;
-
-	std::vector< std::string >::const_iterator pIter;
-	if( bFullPost )
-	{
-		totSize += 14;
-		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
-			totSize += (*pIter).size()+3;
-	}
-	else
-		totSize += 12;
-
-	pStream.ReserveSize( totSize );
-	pStream.WriteShort( 1, static_cast<UI16>(totSize) );
-
-	if( bFullPost )
-		pStream.WriteLong( 4, mSock->GetDWord( 1 ) );
-	else
-		pStream.WriteLong( 4, mSock->GetDWord( 4 ) );
-
-	pStream.WriteLong( 8, (mbPost.Serial + BASEITEMSERIAL) );
-
-	size_t offset = 12;
-
-	if( !bFullPost )
-	{
-		SERIAL pSerial = mbPost.ParentSerial;
-		if( pSerial )
-			pSerial += BASEITEMSERIAL;
-		else
-			pSerial += 0; //was 0x80000000
-		pStream.WriteLong( offset, pSerial );
-		offset += 4;
-	}
-
-	pStream.WriteByte( offset, mbPost.PosterLen );
-	pStream.WriteString( ++offset, (char *)mbPost.Poster, mbPost.PosterLen );
-	offset += mbPost.PosterLen;
-
-	pStream.WriteByte( offset, mbPost.SubjectLen );
-	pStream.WriteString( ++offset, (char *)mbPost.Subject, mbPost.SubjectLen );
-	offset += mbPost.SubjectLen;
-
-	pStream.WriteByte( offset, mbPost.DateLen );
-	pStream.WriteString( ++offset, (char *)mbPost.Date, mbPost.DateLen );
-	offset += mbPost.DateLen;
-
-	if( bFullPost )
-	{
-		pStream.WriteShort( offset, 0x0190 );
-		pStream.WriteShort( offset+=2, 0x03F7 );
-		pStream.WriteByte(  offset+=2, 0x00 );
-		//pStream.WriteString( offset, "'01''91''84''0A''06''1E''FD''01''0B''15''2E''01''0B''17''0B''01''BB''20''46''04''66''13''F8''00''00''0E''75''00''00'", 29 );
-
-		//offset += 29;
-		pStream.WriteByte( ++offset, mbPost.Lines );
-		for( pIter = mbPost.msgBoardLine.begin(); pIter != mbPost.msgBoardLine.end(); ++pIter )
-		{
-			pStream.WriteByte( ++offset, (*pIter).size()+2 );
-			pStream.WriteString( ++offset, (*pIter), (*pIter).size() );
-			offset += (*pIter).size();
-			pStream.WriteByte( offset, 0x32 );
-			pStream.WriteByte( ++offset, 0x00 );
-		}
-	}
-	else
-		pStream.WriteByte( offset, 0x00 ); //?*/
 }
 
 CPOpenMsgBoardPost::CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& mbPost, bool fullPost )
@@ -5687,15 +5617,6 @@ void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, UI08 pToggle
 		pStream.WriteLong(  byteOffset+13, oSerial ); // container serial
 		pStream.WriteShort( byteOffset+17, 0x00 ); // item color
 	}
-/*	pStream.WriteLong(  byteOffset, (mSerial + BASEITEMSERIAL) );
-	pStream.WriteShort( byteOffset+4, 0x0EB0 ); // Item ID - unused item
-	pStream.WriteByte(  byteOffset+6, 0x00 ); //unknown
-	pStream.WriteShort( byteOffset+7, 0x0001 ); //item amount
-	pStream.WriteShort( byteOffset+9, 0x0000 ); //xLoc
-	pStream.WriteShort( byteOffset+11, 0x0000 ); //yLoc
-	pStream.WriteByte(	byteOffset+13, 0 ); //container grid
-	pStream.WriteLong(  byteOffset+14, oSerial ); // container serial
-	pStream.WriteShort( byteOffset+18, 0x0000 ); // item color*/
 
 	++postCount;
 }
@@ -6017,7 +5938,7 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 
 	pStream.WriteShort( offset, 0x000A );	// Open Paperdoll
 	pStream.WriteShort( offset+=2, 6123 );
-	if( toCopy.isHuman() )
+	if( cwmWorldState->creatures[toCopy.GetID()].IsHuman() )
 	{
 		pStream.WriteShort( offset+=2, 0x0020 );
 		pStream.WriteShort( offset+=2, 0x03E0 );
@@ -6030,7 +5951,7 @@ void CPPopupMenu::CopyData( CChar& toCopy )
 
 	pStream.WriteShort( offset+=2, 0x000B );	// Open Backpack
 	pStream.WriteShort( offset+=2, 6145 );
-	if( ( toCopy.isHuman() || toCopy.GetID() == 0x0123 || toCopy.GetID() == 0x0124 ) && ValidateObject( toCopy.GetPackItem() )  )
+	if( ( cwmWorldState->creatures[toCopy.GetID()].IsHuman() || toCopy.GetID() == 0x0123 || toCopy.GetID() == 0x0124 ) && ValidateObject( toCopy.GetPackItem() )  )
 	{
 		pStream.WriteShort( offset+=2, 0x0020 );
 		pStream.WriteShort( offset+=2, 0x03E0 );

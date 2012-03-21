@@ -203,12 +203,12 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		hairobject	= s->GetItemAtLayer( IL_HAIR );
 		if( pRace->GenderRestriction() != 0 )
 		{
-			if( pRace->GenderRestriction() != FEMALE && ( s->GetID() == 0x0191 || s->GetID() == 0x025E ) )
+			if( pRace->GenderRestriction() != FEMALE && ( s->GetID() == 0x0191 || s->GetID() == 0x025E || s->GetID() == 0x029B || s->GetID() == 0x02EF || s->GetID() == 0x00B8 || s->GetID() == 0x00BA ) )
 			{
 				mSock->sysmessage( 370 );
 				return;
 			}
-			if( pRace->GenderRestriction() != MALE && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) )
+			if( pRace->GenderRestriction() != MALE && ( s->GetID() == 0x0190 || s->GetID() == 0x025D || s->GetID() == 0x029A || s->GetID() == 0x02EE || s->GetID() == 0x00B7 || s->GetID() == 0x00B9 ) )
 			{
 				mSock->sysmessage( 370 );
 				return;

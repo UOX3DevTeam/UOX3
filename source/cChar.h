@@ -544,7 +544,6 @@ public:
 
 	virtual void	SetPoisoned( UI08 newValue );
 		
-	bool			isHuman( void );
 	bool			inDungeon( void );
 	bool			inBuilding( void );
 

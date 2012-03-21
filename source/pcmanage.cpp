@@ -1255,7 +1255,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 	iCorpse->SetName2( mChar.GetName().c_str() );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
-	iCorpse->SetTempVar( CITV_MOREY, 2, mChar.isHuman() );
+	iCorpse->SetTempVar( CITV_MOREY, 2, cwmWorldState->creatures[mChar.GetID()].IsHuman() );
 	iCorpse->SetTempVar( CITV_MOREZ, mChar.GetFlag() );
 	iCorpse->SetTempTimer( cwmWorldState->GetUICurrentTime() );
 	if( !mChar.IsNpc() )
@@ -1400,6 +1400,12 @@ void HandleDeath( CChar *mChar )
 		case 0x025E:	mChar->SetID( 0x0260 );	break;	// elf female
 		case 0x029A:	mChar->SetID( 0x02B6 ); break;	// gargoyle male
 		case 0x029B:	mChar->SetID( 0x02B7 ); break;	// gargoyle female
+		case 0x00B7:
+		case 0x00B9:
+		case 0x02EE:	mChar->SetID( 0x0192 );	break;	// savage male
+		case 0x00B8:
+		case 0x00BA:
+		case 0x02EF:	mChar->SetID( 0x0192 );	break;	// savage female		
 		}
 
 		CItem *c = Items->CreateItem( NULL, mChar, 0x204E, 1, 0, OT_ITEM );

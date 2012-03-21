@@ -1151,7 +1151,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	if( target->GetStamina() == -1 )
 		target->SetStamina( 0 );
 	
-	if(( !target->IsNpc() && isOnline((*target))) || ( target->IsNpc() && target->isHuman() ))
+	if(( !target->IsNpc() && isOnline((*target))) || ( target->IsNpc() && cwmWorldState->creatures[target->GetID()].IsHuman() ))
 	{
 		if( !target->IsOnHorse() )
 		{

@@ -79,7 +79,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	{
 		criminal( cAttack );
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
-		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
+		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
 		{
 			cTarget->TextMessage( NULL, 335, TALK, true );
 			callGuards( cTarget, cAttack );
@@ -270,7 +270,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			criminal( ourChar );
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
-			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && i->isHuman() )
+			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[i->GetID()].IsHuman() )
 			{
 				i->TextMessage( NULL, 335, TALK, true );
 				callGuards( i, ourChar );
@@ -329,7 +329,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded )
 		{
-			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cTarget->isHuman() )
+			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
 			{
 				cTarget->TextMessage( NULL, 1282, TALK, true );
 				callGuards( cTarget, cAttack );
@@ -1055,7 +1055,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 	
 	SI32 total = mChar->GetResist( resistType );
 
-	if( !mChar->IsNpc() || mChar->isHuman() )	// Polymorphed Characters and GM's can still wear armor
+	if( !mChar->IsNpc() || cwmWorldState->creatures[mChar->GetID()].IsHuman() ) // Polymorphed Characters and GM's can still wear armor
 	{
 		CItem *defendItem = NULL;
 		if( hitLoc == 0 )
@@ -1178,7 +1178,7 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 {
 	UI16 charID = mChar->GetID();
-	if( charID < 0x0190 || ( charID > 0x0193 && ( charID < 0x025d || charID > 0x029b ) && charID != 0x02B6 && charID != 0x02B7 ))
+	if( !cwmWorldState->creatures[charID].IsHuman() )
 	{
 		UI08 aa = 0;
 		if( cwmWorldState->creatures[charID].AntiBlink() )
@@ -1507,7 +1507,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 			}
 
 			// If the attack is magic and the target a NPC but not a human, double the damage
-			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !ourTarg->isHuman() )
+			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetID()].IsHuman() )
 				damage *= 2;
 			break;
 	}
@@ -1798,7 +1798,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( ourTarg->IsNpc() )
 					HandleSplittingNPCs( ourTarg );
 			}
-			if( mChar.isHuman() )
+			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
 				PlayHitSoundEffect( &mChar, mWeapon );
 
 			if( toExecute != NULL )

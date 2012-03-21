@@ -793,7 +793,7 @@ namespace UOX
 				case CCP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDispellable() );			break;
 				case CCP_NONEEDREAGS:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoNeedReags() );				break;
 				case CCP_ISANIMAL:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetID()].IsAnimal() ); break;
-				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( gPriv->isHuman() );					break;
+				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetID()].IsHuman() ); break;
 				case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgID() );					break;
 				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;

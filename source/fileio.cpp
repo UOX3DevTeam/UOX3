@@ -533,6 +533,10 @@ void LoadCreatures( void )
 							if( UTag == "FLIES" )
 								cwmWorldState->creatures[i].CanFly( true );
 							break;
+						case 'H':
+							if( UTag == "HUMAN" )
+								cwmWorldState->creatures[i].IsHuman( true );
+							break;
 						case 'I':
 							if( UTag == "ICON" )
 								cwmWorldState->creatures[i].Icon( data.toUShort() );

@@ -155,12 +155,12 @@ void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 //o---------------------------------------------------------------------------o
 void cEffects::playDeathSound( CChar *i )
 {
-	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E || i->GetOrgID() == 0x029B )// Female Death (human/elf/gargoyle)
+	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E || i->GetOrgID() == 0x029B || i->GetOrgID() == 0x00B8 || i->GetOrgID() == 0x00BA || i->GetID() == 0x02EF ) // Female Death (human/elf/gargoyle/savage)
 	{
 		UI16 deathSound = 0x0150 + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );
 	}
-	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D || i->GetOrgID() == 0x029A )	// Male Death (human/elf/gargoyle)
+	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D || i->GetOrgID() == 0x029A || i->GetOrgID() == 0x00B7 || i->GetOrgID() == 0x00B9 || i->GetOrgID() == 0x02EE ) // Male Death (human/elf/gargoyle/savage)
 	{
 		UI16 deathSound = 0x015A + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );

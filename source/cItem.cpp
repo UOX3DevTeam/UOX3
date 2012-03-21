@@ -2236,9 +2236,9 @@ bool CSpawnItem::HandleItemSpawner( void )
 	{
 		std::string listObj = GetSpawnSection();
 		if( !listObj.empty() )
-			Items->AddRespawnItem( this, listObj, false, IsSectionAList() );
+			Items->AddRespawnItem( this, listObj, false, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), false );
+			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), false, 1 );
 		else
 		{
 			Console.Warning( "Bad Item Spawner Found, Deleting" );
@@ -2275,9 +2275,9 @@ bool CSpawnItem::HandleSpawnContainer( void )
 		if( GetType() == IT_SPAWNCONT )
 			SetType( IT_LOCKEDSPAWNCONT ); // Lock the container
 		if( !listObj.empty() )
-			Items->AddRespawnItem( this, listObj, true, IsSectionAList() );
+			Items->AddRespawnItem( this, listObj, true, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), true );
+			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), true, 1 );
 		else
 		{
 			Console.Warning( "Bad Spawn Container Found, Deleting" );

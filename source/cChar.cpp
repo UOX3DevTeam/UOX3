@@ -3318,32 +3318,6 @@ bool CChar::IsJailed( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool CChar::isHuman( void )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Check if character is Human or Creature
-//o---------------------------------------------------------------------------o
-bool CChar::isHuman( void )
-{
-	bool rvalue	= false;
-	switch( GetOrgID() )
-	{
-	case 0x0190:	// Male Human
-	case 0x0191:	// Female Human
-	case 0x025D:	// Male Elf
-	case 0x025E:	// Female Elf
-	case 0x029A:	// Male Gargoyle
-	case 0x029B:	// Female Gargoyle
-	case 0x03DB:	// GM Body
-		rvalue = true;
-		break;
-	default:
-		break;
-	}
-	return rvalue;
-}
-
-//o---------------------------------------------------------------------------o
 //|	Function	-	bool CChar::inDungeon( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
@@ -5576,7 +5550,7 @@ void CChar::Damage( SI16 damageValue, CChar *attacker, bool doRepsys )
 			{
 				criminal( attacker );
 				bool regionGuarded = ( GetRegion()->IsGuarded() );
-				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != AI_GUARD && isHuman() )
+				if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() && GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[this->GetID()].IsHuman() )
 				{
 					TextMessage( NULL, 335, TALK, true );
 					callGuards( this, attacker );
