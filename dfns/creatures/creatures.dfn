@@ -16,6 +16,7 @@
 //              # ANTIBLINK 	these creatures don't have animation #4, if not set creature will randomly disappear in battle
 //                              	if you find a creature that blinks while fighting, set that bit
 //              # ANIMAL	creature is an animal
+//				# HUMAN		creature is a human, and supports human sounds and animations
 //              # MOVEMENT=WATER creature is moving in water.
 //		# MOVEMENT=LAND	 creature is moving on land.
 //		# MOVEMENT=BOTH  creature can move on land and water.
@@ -2000,24 +2001,28 @@ MOVEMENT=LAND
 { Savage Male
 ICON=0x20CD
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0xb8]
 { Savage Female
 ICON=0x20CE
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0xb9]
 { Savage Male
 ICON=0x20CD
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0xba]
 { Savage Female
 ICON=0x20CE
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0xbb]
@@ -3265,6 +3270,7 @@ MOVEMENT=LAND
 ICON=0x2106
 SOUND_DIE=0x15c
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x191]
@@ -3272,6 +3278,7 @@ MOVEMENT=LAND
 ICON=0x2107
 SOUND_DIE=0x151
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x192]
@@ -3331,6 +3338,7 @@ MOVEMENT=LAND
 ICON=0x2106
 SOUND_DIE=0x15c
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x25e]
@@ -3338,6 +3346,7 @@ MOVEMENT=LAND
 ICON=0x2107
 SOUND_DIE=0x151
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x25d]
@@ -3362,6 +3371,7 @@ SOUND_DEFEND=0x5fa
 SOUND_DIE=0x5f9
 //ANTIBLINK?
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x29b]
@@ -3374,6 +3384,7 @@ SOUND_DEFEND=0x5f6
 SOUND_DIE=0x5f5
 //ANTIBLINK?
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x2b1]
@@ -3417,6 +3428,7 @@ SOUND_DEFEND=0x5e2
 SOUND_DIE=0x5e1
 //ANTIBLINK?
 MOVEMENT=LAND
+MOUNTID=0x3EC6
 }
 
 [CREATURE 0x2cc]
@@ -3790,6 +3802,7 @@ MOVEMENT=LAND
 ICON=0x20cd
 SOUND_DIE=0x15c
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x2ef]
@@ -3797,6 +3810,7 @@ MOVEMENT=LAND
 ICON=0x20ce
 SOUND_DIE=0x151
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x2f0]
@@ -4353,6 +4367,7 @@ ICON=0x20CB
 SOUND_DEFEND=0x0155
 SOUND_DIE=0x15c
 MOVEMENT=LAND
+HUMAN
 }
 
 [CREATURE 0x3E6]

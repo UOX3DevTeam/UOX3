@@ -135,6 +135,13 @@ type=12
 type=12
 }
 
+//Arrows and Crossbow-bolts 
+[0xf3fx1bfb] 
+{ 
+weight=1 
+pileable=1 
+decay=1 
+}
 
 EOF
 

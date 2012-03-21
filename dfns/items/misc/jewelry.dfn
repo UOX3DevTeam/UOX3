@@ -13,6 +13,7 @@ good=37
 get=base_jewelry
 name=necklace
 id=0x1085
+layer=0x0a
 }
 
 [0x1086]
@@ -20,6 +21,7 @@ id=0x1085
 get=base_jewelry
 name=bracelet
 id=0x1086
+layer=0x0e
 }
 
 [0x1087]
@@ -27,6 +29,7 @@ id=0x1086
 get=base_jewelry
 name=earrings
 id=0x1087
+layer=0x12
 }
 
 [0x1088]
@@ -34,6 +37,7 @@ id=0x1087
 get=base_jewelry
 name=necklace
 id=0x1088
+layer=0x0a
 }
 
 [0x1089]
@@ -41,6 +45,7 @@ id=0x1088
 get=base_jewelry
 name=necklace
 id=0x1089
+layer=0x0a
 }
 
 [0x108a]
@@ -48,6 +53,7 @@ id=0x1089
 get=base_jewelry
 name=ring
 id=0x108a
+layer=0x08
 }
 
 [0x108b]

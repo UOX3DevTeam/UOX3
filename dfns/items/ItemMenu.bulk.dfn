@@ -11839,6 +11839,8 @@ ITEMMENU=8
 [ITEMMENU 115]
 {
 reagents.dfn
+0x0e76=bag of reagents
+ADDITEM=bagofreagents
 0x0f7a=black pearl
 ADDITEM=0x0f7a
 0x0f7b=blood moss

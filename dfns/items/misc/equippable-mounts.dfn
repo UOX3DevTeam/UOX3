@@ -334,3 +334,11 @@ ID=0x3EAD
 LAYER=25
 NEWBIE
 }
+
+[boura]
+{
+NAME=a horse
+ID=0x3EC6
+LAYER=25
+NEWBIE
+}

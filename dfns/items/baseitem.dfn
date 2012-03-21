@@ -4,6 +4,7 @@ name=
 id=0x0000
 dir=
 weight=
+weightmax=
 value=
 layer=
 good=
@@ -36,6 +37,8 @@ more=
 script=
 spawnobj=
 spawnobjlist=
+ammo=
+ammofx=
 }
 
 
