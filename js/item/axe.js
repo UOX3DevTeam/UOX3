@@ -132,7 +132,7 @@ function onTimer( mChar, timerID )
 			if( mChar.CheckSkill( 44, 0, 1000 ) )
 			{
 				mResource.logAmount = mResource.logAmount-1;
-				CreateBlankItem( socket, mChar, 10, "#", 0x1BE0, 0x0000, "ITEM", true );
+				CreateDFNItem( socket, mChar, "0x1BE0", 10, "ITEM", true );
 				socket.SysMessage( GetDictionaryEntry( 1435, socket.Language ) );
 			}
 			else
