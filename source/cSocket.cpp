@@ -1598,7 +1598,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 	}
 	else
 	{
-		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !i->isHuman() )
+		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetID()].IsHuman() )
 			newName += " (tame) ";
 	}
 	if( i->IsInvulnerable() )

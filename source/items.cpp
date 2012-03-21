@@ -225,7 +225,12 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 			case DFNTAG_SPAWNOBJLIST:
 				break;
 			case DFNTAG_LOOT:       Items->AddRespawnItem( applyTo, cdata, true, true); break; 
-			case DFNTAG_PACKITEM:   Items->AddRespawnItem( applyTo, cdata, true, false); break;
+			case DFNTAG_PACKITEM:
+				if( cdata.sectionCount( "," ) != 0 )
+					Items->AddRespawnItem( applyTo, cdata.section( ",", 0, 0 ), true, false, cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort() ); //section 0 = id, section 1 = amount
+				else
+					Items->AddRespawnItem( applyTo, cdata, true, false, 1 );
+				break;
 			default:					Console.Warning( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata );	break;
 		}
 	}
@@ -764,7 +769,7 @@ PackTypes cItem::getPackType( CItem *i )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Item spawning stuff
 //o---------------------------------------------------------------------------o
-void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem )
+void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem, const UI16 itemAmount )
 {
 	if( !ValidateObject( s ) || x.empty() )
 		return;
@@ -775,6 +780,12 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 		c = CreateBaseScriptItem( x, s->WorldNumber() );
 	if( c == NULL )
 		return;
+
+	if( itemAmount > 1 )
+	{
+		if( c->isPileable() )
+			c->SetAmount( itemAmount );
+	}
 
 	if( inCont )
 		c->SetCont( s );

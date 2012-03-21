@@ -110,7 +110,7 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 		PlayCharacterAnimation( mChar, 0x1B );
 		return;
 	}
-	if( ( mChar->IsOnHorse() || !mChar->isHuman() ) && actionID == 0x22 )
+	if( ( mChar->IsOnHorse() || !cwmWorldState->creatures[mChar->GetID()].IsHuman() ) && actionID == 0x22 )
 		return;
 	PlayCharacterAnimation( mChar, actionID );
 }

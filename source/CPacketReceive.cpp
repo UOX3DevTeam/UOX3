@@ -2637,9 +2637,11 @@ bool CPIDyeWindow::Handle( void )
 			UI16 body = c->GetID();
 			SI32 b = newValue&0x4000; 
 
-			if( ( ( newValue>>8 ) < 0x80 ) && ( (body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ) )
+			if( ( ( newValue>>8 ) < 0x80 ) && ( (body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ||
+				(body >= 0x00B7 && body <= 0x00BA) || (body == 0x02EE || body == 0x02EF )))
+			{
 				newValue += 0x8000;
-
+			}
 			if( b == 16384 && (body >= 0x0190 && body <= 0x03e1 ) ) 
 				newValue = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
 
@@ -3364,11 +3366,11 @@ bool CPIPopupMenuSelect::Handle( void )
 	switch( popupEntry )
 	{
 	case 0x000A:	// Open Paperdoll
-		if( targChar->isHuman() )
+		if( cwmWorldState->creatures[targChar->GetID()].IsHuman() )
 			PaperDoll( tSock, targChar );
 		break;
 	case 0x000B:	// Open Backpack
-		if( mChar->GetCommandLevel() >= CL_CNS || targChar->isHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
+		if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetID()].IsHuman() || targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 )	// Only Humans and Pack Animals have Packs
 		{
 			if( mChar->IsDead() )
 				tSock->sysmessage( 392 );

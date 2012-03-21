@@ -1,3 +1,18 @@
+21/03/2012 - Xuri (0.99.1)
+	Futureproofed map-loading/reading code to support both UOP-wrapped and regular maps on a map-per-map basis. May not never need to, but still.
+	Added new DFN-tag for creatures - "HUMAN". This now replaces the hard-coded list of "human" body IDs that is checked when playing animations, sounds, etc.
+	Added "HUMAN" DFN-tag to DFNDATA/CREATURES/creatures.dfn for all male/female player bodies, the GM body and all Savage human bodies
+	Added NEWBIE-tag to items in DFNDATA/ITEMS/GMMENU/gm_skins.dfn (dragon slayer)
+	Added MOUNTID=0x3EC6 to CREATURE 0x2cb (Boura) in DFNDATA/CREATURES/creatures.dfn (dragon slayer)
+	Added an equippable boura mount-item (for NPCs) to DFNDATA/ITEMS/MISC/equippable-mounts.dfn
+	Added some more missing regions to DFNDATA/REGIONS/regions.dfn (dragon slayer)
+	Added support for specifying the amount of items to add (only works for stackable items) to a container using the PACKITEM tag. Syntax: PACKITEM=itemid,amount
+	Added new item to DFNDATA/ITEMS/MAGIC/reagents.dfn: bagofreagents - a bag containing 30 of each basic reagent.
+	Added bagofreagents-item to Magic->Reagents portion of Add-menu in DFNDATA/ITEMS/ItemMenu.bulk.dfn
+	Replaced PACKITEM-lines specifically for reagents for magery in newbie.dfn with PACKITEM=bagofreagents
+	Updated JS/ITEM/axe.js to use CreateDFNItem instead of CreateBlankItem to create new logs
+	Submitted some updates to some DFN/JS-files that had somehow not been committed to the CVS properly
+
 20/03/2012 - Xuri
 	Fixed weight showing up incorrectly in item-tooltips for stacks of items
 	Fixed a weight-related issue by clearing the CSocket variable pSpot (pickupspot) after dropping items

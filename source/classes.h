@@ -50,7 +50,7 @@ class cItem
 public:
 	CItem *		DupeItem( CSocket *s, CItem *i, UI32 amount );
 	void		GlowItem( CItem *i );
-	void		AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem = false );
+	void		AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem = false, UI16 itemAmount = 1 );
 	void		CheckEquipment( CChar *p );
 	void		StoreItemRandomValue( CItem *i, CTownRegion *tReg );
 	PackTypes	getPackType( CItem *i );

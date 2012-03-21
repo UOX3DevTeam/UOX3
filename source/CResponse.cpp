@@ -331,7 +331,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
-			if( Npc->isHuman() )
+			if( cwmWorldState->creatures[Npc->GetID()].IsHuman() )
 			{
 				// Stop the NPC from moving for a minute while talking with the player
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );

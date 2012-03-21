@@ -1371,7 +1371,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 			if( !ValidateObject( tempChar ) )
 				continue;
 			id = tempChar->GetID();
-			if( ( !tempChar->isHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
+			if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
 			{
 				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
 				if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
@@ -2542,7 +2542,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 			s->sysmessage( 991 );
 			if( target->IsNpc() )
 			{
-				if( target->isHuman() )
+				if( cwmWorldState->creatures[target->GetID()].IsHuman() && target->GetNPCAiType() != AI_EVIL && target->GetNPCAiType() != AI_HEALER_E )
 				{
 					target->TextMessage( s, 994 + RandomNum( 0, 2 ), TALK, false );
 					if( cwmWorldState->ServerData()->SnoopIsCrime() )

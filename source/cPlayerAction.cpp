@@ -755,7 +755,7 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 		else if( isGM || targNPC->GetID() == 0x0123 || targNPC->GetID() == 0x0124 )	// It's a pack animal
 			dropResult = 2;
 	}
-	else if( targNPC->isHuman() )
+	else if( cwmWorldState->creatures[targNPC->GetID()].IsHuman() )
 	{
 		if( static_cast<CChar *>(mSock->TempObj()) != targNPC )
 		{
@@ -1720,7 +1720,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 				mSock->sysmessage( 1214 );
 			return; 
 		}
-		else if( !c->isHuman() && !c->IsDead() ) // c->GetID() != 0x0192 && c->GetID() != 0x0193 && c->GetID() != 0x025F && c->GetID() != 0x0260 ) // Is a monster
+		else if( !cwmWorldState->creatures[c->GetID()].IsHuman() && !c->IsDead() )
 		{
 			if( c->GetID() == 0x0123 || c->GetID() == 0x0124 )	// Is a pack animal
 			{
