@@ -1,3 +1,14 @@
+24/03/2012 - Xuri
+	Added several new JS Gump Methods:
+		AddGumpColor( left, top, gumpID, hue ) // Adds a gump-image to the gumpstream, with a hue
+		AddPictureColor( left, top, artID, hue ) // Adds a tile-picture to the gumpstream, with a hue
+		AddToolTip( clilocID ) // Adds a tooltip to the previous gump-element that was added.
+		AddTextEntryLimited( left, top, width, height, hue, relay, initialTextIndex, actualText, size ) // Add a text-entry gump with restriction on entry-length
+		AddButtonTileArt( tL, tR, gumpIDnorm, gumpIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) // Add a tile-picture as a part of a gump-button.
+		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); // 
+	Added missing script=5021 tag to the bedroll in DFNDATA/ITEMS/GEAR/provisions.dfn
+	Added some script-crash protection in JS/ITEM/bedroll.js
+	
 21/03/2012 - Xuri (0.99.1)
 	Futureproofed map-loading/reading code to support both UOP-wrapped and regular maps on a map-per-map basis. May not never need to, but still.
 	Added new DFN-tag for creatures - "HUMAN". This now replaces the hard-coded list of "human" body IDs that is checked when playing animations, sounds, etc.

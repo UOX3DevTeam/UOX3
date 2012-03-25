@@ -43,21 +43,28 @@ JSMethodFunc CPacket_ReserveSize;
 JSMethodFunc CGump_Free;
 JSMethodFunc CGump_AddBackground;
 JSMethodFunc CGump_AddButton;
+JSMethodFunc CGump_AddButtonTileArt;
 JSMethodFunc CGump_AddPageButton;
 JSMethodFunc CGump_AddCheckbox;
 JSMethodFunc CGump_AddCheckerTrans;
 JSMethodFunc CGump_AddCroppedText;
 JSMethodFunc CGump_AddGroup;
 JSMethodFunc CGump_AddGump;
+JSMethodFunc CGump_AddGumpColor;
 JSMethodFunc CGump_AddHTMLGump;
 JSMethodFunc CGump_AddPage;
 JSMethodFunc CGump_AddPicture;
+JSMethodFunc CGump_AddPictureColor;
 JSMethodFunc CGump_AddRadio;
 JSMethodFunc CGump_AddText;
 JSMethodFunc CGump_AddTextEntry;
+JSMethodFunc CGump_AddTextEntryLimited;
 JSMethodFunc CGump_AddTiledGump;
+JSMethodFunc CGump_AddToolTip;
 JSMethodFunc CGump_AddXMFHTMLGump;
 JSMethodFunc CGump_AddXMFHTMLGumpColor;
+JSMethodFunc CGump_AddXMFHTMLTok;
+//JSMethodFunc CGump_MasterGump;
 JSMethodFunc CGump_NoClose;
 JSMethodFunc CGump_NoDispose;
 JSMethodFunc CGump_NoMove;
@@ -261,30 +268,37 @@ JSMethodFunc CODBC_LastOK;
 
 static JSFunctionSpec CGump_Methods[] =  
 { 	
-	{ "Free",					CGump_Free,					0, 0, 0 },
-	{ "AddBackground",			CGump_AddBackground,		5, 0, 0 },
-	{ "AddButton",				CGump_AddButton,			6, 0, 0 },
-	{ "AddPageButton",			CGump_AddPageButton,		4, 0, 0 },
-	{ "AddCheckbox",			CGump_AddCheckbox,			5, 0, 0 },
-	{ "AddCheckerTrans",		CGump_AddCheckerTrans,		4, 0, 0 },
-	{ "AddCroppedText",			CGump_AddCroppedText,		6, 0, 0 },
-	{ "AddGroup",				CGump_AddGroup,				1, 0, 0 },
-	{ "AddGump",				CGump_AddGump,				3, 0, 0 },
-	{ "AddHTMLGump",			CGump_AddHTMLGump,			7, 0, 0 },
-	{ "AddPage",				CGump_AddPage,				1, 0, 0 },
-	{ "AddPicture",				CGump_AddPicture,			3, 0, 0 },
-	{ "AddRadio",				CGump_AddRadio,				5, 0, 0 },
-	{ "AddText",				CGump_AddText,				4, 0, 0 },
-	{ "AddTextEntry",			CGump_AddTextEntry,			8, 0, 0 },
-	{ "AddTiledGump",			CGump_AddTiledGump,			5, 0, 0 },
-	{ "AddXMFHTMLGump",			CGump_AddXMFHTMLGump,		7, 0, 0 },
-	{ "AddXMFHTMLGumpColor",	CGump_AddXMFHTMLGumpColor,	8, 0, 0 },
-	{ "NoClose",				CGump_NoClose,				0, 0, 0 },
-	{ "NoDispose",				CGump_NoDispose,			0, 0, 0 },
-	{ "NoMove",					CGump_NoMove,				0, 0, 0 },
-	{ "NoResize",				CGump_NoResize,				0, 0, 0 },
-	{ "Send",					CGump_Send,					1, 0, 0 },
-	{ NULL,						NULL,						0, 0, 0 }
+	{ "Free",						CGump_Free,							0, 0, 0 },
+	{ "AddBackground",				CGump_AddBackground,				5, 0, 0 },
+	{ "AddButton",					CGump_AddButton,					6, 0, 0 },
+	{ "AddButtonTileArt",			CGump_AddButtonTileArt,				11, 0, 0 },
+	{ "AddPageButton",				CGump_AddPageButton,				4, 0, 0 },
+	{ "AddCheckbox",				CGump_AddCheckbox,					5, 0, 0 },
+	{ "AddCheckerTrans",			CGump_AddCheckerTrans,				4, 0, 0 },
+	{ "AddCroppedText",				CGump_AddCroppedText,				6, 0, 0 },
+	{ "AddGroup",					CGump_AddGroup,						1, 0, 0 },
+	{ "AddGump",					CGump_AddGump,						3, 0, 0 },
+	{ "AddGumpColor",				CGump_AddGumpColor,					4, 0, 0 },
+	{ "AddHTMLGump",				CGump_AddHTMLGump,					7, 0, 0 },
+	{ "AddPage",					CGump_AddPage,						1, 0, 0 },
+	{ "AddPicture",					CGump_AddPicture,					3, 0, 0 },
+	{ "AddPictureColor",			CGump_AddPictureColor,				4, 0, 0 },
+	{ "AddRadio",					CGump_AddRadio,						5, 0, 0 },
+	{ "AddText",					CGump_AddText,						4, 0, 0 },
+	{ "AddTextEntry",				CGump_AddTextEntry,					8, 0, 0 },
+	{ "AddTextEntryLimited",		CGump_AddTextEntryLimited,			9, 0, 0 },
+	{ "AddTiledGump",				CGump_AddTiledGump,					5, 0, 0 },
+	{ "AddToolTip",					CGump_AddToolTip,					1, 0, 0 },
+	{ "AddXMFHTMLGump",				CGump_AddXMFHTMLGump,				7, 0, 0 },
+	{ "AddXMFHTMLGumpColor",		CGump_AddXMFHTMLGumpColor,			8, 0, 0 },
+	{ "AddXMFHTMLTok",				CGump_AddXMFHTMLTok,				8, 0, 0 },
+//	{ "MasterGump",					CGump_MasterGump,					1, 0, 0 },
+	{ "NoClose",					CGump_NoClose,						0, 0, 0 },
+	{ "NoDispose",					CGump_NoDispose,					0, 0, 0 },
+	{ "NoMove",						CGump_NoMove,						0, 0, 0 },
+	{ "NoResize",					CGump_NoResize,						0, 0, 0 },
+	{ "Send",						CGump_Send,							1, 0, 0 },
+	{ NULL,							NULL,								0, 0, 0 }
 };
 
 static JSFunctionSpec CChar_Methods[] =  
