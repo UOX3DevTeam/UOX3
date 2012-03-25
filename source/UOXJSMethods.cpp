@@ -483,6 +483,8 @@ JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o--------------------------------------------------------------------------o
 //|	Description		-	Allows you to specify nodispose on create
 //| Comments		-	What nodispose is, I have no idea what so ever
+//|					-   (It's possible it is used to prevent gumps from being closed
+//|					-	using the "Close Dialogs" client macro)
 //o--------------------------------------------------------------------------o
 //|	Returns			-
 //o--------------------------------------------------------------------------o	
@@ -539,6 +541,43 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date			-	24th March, 2012
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//|	Status			-	
+//o--------------------------------------------------------------------------o
+//|	Description		-	In theory allows overriding gumpIDs, but doesn't seem
+//|					-	to work, so commented out until someone can figure it out
+//o--------------------------------------------------------------------------o
+//|	Returns			-
+//o--------------------------------------------------------------------------o	
+/*JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "MasterGump: Wrong count of Parameters, needs 1" );
+		return JS_FALSE;
+	}
+
+	SI32 gumpID = (SI32)JSVAL_TO_INT( argv[0] );
+	SEGump *gList = (SEGump *)JS_GetPrivate( cx, obj );
+	
+	if( gList == NULL )
+	{
+		MethodError( "MasterGump: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	char temp[256];
+	sprintf( temp, "mastergump %i", gumpID );
+
+	gList->one->push_back( temp );
+	
+	return JS_TRUE;
+}*/
+
 JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 5 )
@@ -589,6 +628,39 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	char temp[256];
 	sprintf( temp, "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage + 1, x1, x2, x3 );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 11 )
+	{
+		MethodError( "AddButtonTileArt: Invalid number of arguments (takes 11)" );
+		return JS_FALSE;
+	}
+	SI16 tL = (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR = (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 tileIDnorm = (UI16)JSVAL_TO_INT( argv[2] );
+	UI16 tileIDpush = (UI16)JSVAL_TO_INT( argv[3] );
+	SI16 buttonType = (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 pageNum = (SI16)JSVAL_TO_INT( argv[5] );
+	SI16 buttonID = (SI16)JSVAL_TO_INT( argv[6] );
+	SI16 tileID = (SI16)JSVAL_TO_INT( argv[7] );
+	SI16 hue = (SI16)JSVAL_TO_INT( argv[8] );
+	SI16 tileX = (SI16)JSVAL_TO_INT( argv[9] );
+	SI16 tileY = (SI16)JSVAL_TO_INT( argv[10] );
+	SI32 cliloc = 0;
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddButtonTileArt: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIDnorm, tileIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -766,6 +838,55 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
+JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		MethodError( "AddGumpColor: Invalid number of arguments (takes 4)" );
+		return JS_FALSE;
+	}
+	
+	SI16 tL			= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR			= (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage		= (UI16)JSVAL_TO_INT( argv[2] );
+	SI32 rgbColour	= (SI32)JSVAL_TO_INT( argv[3] );	// colour
+	
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddGumpColor: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "gumppic %i %i %i hue=%li", tL, tR, gImage, rgbColour );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1  )
+	{
+		MethodError( "AddToolTip: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+	
+	SI32 tooltip = (SI32)JSVAL_TO_INT( argv[0] );
+	
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddToolTip: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "tooltip %lu", tooltip );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date			-	16th February, 2003
@@ -864,6 +985,33 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	return JS_TRUE;
 }
+
+JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 4 )
+	{
+		MethodError( "AddPicture: Invalid number of arguments (takes 4)" );
+		return JS_FALSE;
+	}
+
+	SI16 tL			= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR			= (SI16)JSVAL_TO_INT( argv[1] );
+	UI16 gImage		= (UI16)JSVAL_TO_INT( argv[2] );
+	SI32 rgbColour	= (SI32)JSVAL_TO_INT( argv[3] );	// colour
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddPictureColor: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "tilepichue %i %i %i %li", tL, tR, gImage, rgbColour );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
 JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 5 )
@@ -966,6 +1114,45 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	return JS_TRUE;
 }
+
+JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 9 )
+	{
+		MethodError( "AddTextEntryLimited: Invalid number of arguments (takes 9)" );
+		return JS_FALSE;
+	}
+	
+	SI16 tL					= (SI16)JSVAL_TO_INT( argv[0] );
+	SI16 tR					= (SI16)JSVAL_TO_INT( argv[1] );
+	SI16 width				= (SI16)JSVAL_TO_INT( argv[2] );
+	SI16 height				= (SI16)JSVAL_TO_INT( argv[3] );
+	SI16 hue				= (SI16)JSVAL_TO_INT( argv[4] );
+	SI16 relay				= (SI16)JSVAL_TO_INT( argv[5] );
+	SI16 initialTextIndex	= (SI16)JSVAL_TO_INT( argv[6] );
+ 	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ) );
+	SI16 textEntrySize		= (SI16)JSVAL_TO_INT( argv[8] );
+
+	if( test == NULL )
+	{
+		MethodError( "AddTextEntryLimited: Text is required" );
+		return JS_FALSE;
+	}
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddTextEntryLimited: Couldn't find gump associated with object");
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize );
+	gList->one->push_back( temp );
+	gList->two->push_back( test );
+
+	return JS_TRUE;
+}
+
 //o--------------------------------------------------------------------------o
 //|	Function/Class	-	JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date			-	14th February, 2003
@@ -1087,6 +1274,43 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
 	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %li %li %li %li", x, y, width, height, number, iBrd, iScrl, rgbColour );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 8 )
+	{
+		MethodError( "AddXMFHTMLTok: Invalid number of arguments (takes at least 8)" );
+		return JS_FALSE;
+	}
+
+	SI16 x				= (SI16)JSVAL_TO_INT( argv[0] ); // x
+	SI16 y				= (SI16)JSVAL_TO_INT( argv[1] ); // y
+	SI16 width			= (SI16)JSVAL_TO_INT( argv[2] ); // width
+	SI16 height			= (SI16)JSVAL_TO_INT( argv[3] ); // height
+	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
+	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	SI32 rgbColour		= (SI32)JSVAL_TO_INT( argv[6] );	// colour
+	SI32 number			= (SI32)JSVAL_TO_INT( argv[7] ); // number
+
+	char *TextString1	= JS_GetStringBytes( JS_ValueToString( cx, argv[8] ) ); //ClilocArgument1
+	char *TextString2	= JS_GetStringBytes( JS_ValueToString( cx, argv[9] ) ); //ClilocArgument2
+	char *TextString3	= JS_GetStringBytes( JS_ValueToString( cx, argv[10] ) ); //ClilocArgument3
+
+	SEGump *gList = (SEGump*)JS_GetPrivate( cx, obj );
+	if( gList == NULL )
+	{
+		MethodError( "AddXMFHTMLTok: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+
+	SI32 iBrd	= (hasBorder?1:0);
+	SI32 iScrl	= (hasScrollbar?1:0);
+	char temp[256];
+	sprintf( temp, "xmfhtmltok %i %i %i %i %li %li %li %li @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;

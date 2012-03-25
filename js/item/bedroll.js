@@ -120,13 +120,19 @@ function onGumpPress(srcSock, myButtonID)
 		case 0: // User cancelled manually, so kill timer to auto-close gump, and reset tempObj
 			srcSock.SysMessage( "You cancel the logout." );
 			srcSock.tempObj = null;
-			iUsed.KillTimers();
-			iUsed.SetTag( "inuseby", null );
+			if( iUsed )
+			{
+				iUsed.KillTimers();
+				iUsed.SetTag( "inuseby", null );
+			}
 			break; 
 		case 1: // Log out button
 			srcSock.SysMessage( "Logging out.") ; 
-			iUsed.KillTimers();
-			iUsed.SetTag( "inuseby", null );
+			if( iUsed )
+			{	
+				iUsed.KillTimers();
+				iUsed.SetTag( "inuseby", null );
+			}
 			srcSock.Disconnect();
 			break;
 		default:

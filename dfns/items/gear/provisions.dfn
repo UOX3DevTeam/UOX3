@@ -8,6 +8,7 @@ value=6 2
 restock=100
 movable=1
 decay=1
+script=5021
 }
 
 [0x14EB]
