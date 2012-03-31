@@ -58,6 +58,15 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 			SI16 y = bouncer->PickupY();
 			SI08 z = bouncer->PickupZ();
 			bouncing->SetLocation( x, y, z );
+
+			//If item bounces out of range, bounce it to character's feet instead
+			if( !objInRange( bouncer, bouncing, DIST_INRANGE ))
+			{
+				x = bouncer->CurrcharObj()->GetX();
+				y = bouncer->CurrcharObj()->GetY();
+				z = bouncer->CurrcharObj()->GetZ();
+				bouncing->SetLocation( x, y, z );
+			}
 		}
 			break;
 		case PL_OWNPACK:
@@ -224,7 +233,6 @@ bool CPIGetItem::Handle( void )
 						otherPackCheck = false;
 				}
 			}
-//			if( iOwner != ourChar && ( ( !ourChar->IsGM() && iOwner->GetOwnerObj() != ourChar ) ) || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			if( otherPackCheck || !objInRange( ourChar, iOwner, DIST_NEARBY ) )
 			{
 				PickupBounce( tSock );
@@ -300,7 +308,7 @@ bool CPIGetItem::Handle( void )
 	{
 		tSock->PickupSpot( PL_GROUND );
 		tSock->PickupLocation( i->GetX(), i->GetY(), i->GetZ() );
-		if( !objInRange( ourChar, i, DIST_NEARBY ) )
+		if( !ourChar->IsGM() && ( !objInRange( ourChar, i, DIST_NEARBY ) || !LineOfSight( tSock, ourChar, i->GetX(), i->GetY(), i->GetZ(), WALLS_CHIMNEYS + DOORS, true )))
 		{
 			PickupBounce( tSock );
 			return true;
@@ -901,13 +909,13 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	}
 	if( mSock->GetByte( 5 ) != 0xFF )	// Dropped in a specific location or on an item
 	{
-		/*if( !Map->ValidSpawnLocation( x, y, z, nChar->WorldNumber() ) )
+		if( !nChar->IsGM() && !LineOfSight( mSock, nChar, x, y, z, WALLS_CHIMNEYS + DOORS, true ))
 		{
 			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( nChar, i );
 			Bounce( mSock, i );
 			return;
-		}*/
+		}
 		i->SetCont( NULL );
 		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber() );
 	}
@@ -2306,7 +2314,7 @@ ItemTypes findItemType( CItem *i )
 bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType )
 {
 	CChar *iChar = NULL;
-	if( ourChar->IsDead() )
+	if( ourChar->IsDead() && iType != IT_PLANK && iType != IT_HOUSESIGN )
 	{
 		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
 		{
@@ -2322,7 +2330,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	{
 		bool canUse = checkItemRange( ourChar, iUsed );
 		if( canUse )
-			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || checkItemLineOfSight( ourChar, iUsed ) );
+			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || ( !ourChar->IsGM() && checkItemLineOfSight( ourChar, iUsed ) ));
 		if( !canUse )
 		{
 			tSock->sysmessage( 389 );

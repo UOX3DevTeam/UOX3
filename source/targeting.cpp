@@ -257,7 +257,7 @@ void TeleTarget( CSocket *s )
 	}
 	CChar *mChar = s->CurrcharObj();
 
-	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )	
+	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false ) )	
 	{
 		if( s->CurrentSpellType() != 2 )  // not a wand cast
 		{

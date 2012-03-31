@@ -45,7 +45,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		return false;
 	if( cTarget->GetVisible() > 2 )
 		return false;
-	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( NULL, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( NULL, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 		return false;
 
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
@@ -1661,7 +1661,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		toExecute->OnSwing( mWeapon, &mChar, ourTarg );
 
 	if( !checkDist && getFightSkill == ARCHERY )
-		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING );
+		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
 
 	if( checkDist )
 	{

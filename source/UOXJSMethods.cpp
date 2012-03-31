@@ -5726,7 +5726,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		y	= static_cast<SI16>(JSVAL_TO_INT( argv[1] ));
 		z	= static_cast<SI08>(JSVAL_TO_INT( argv[2] ));
 	}
-	*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) ) ;
+	*rval = BOOLEAN_TO_JSVAL( LineOfSight( mSock, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) ) ;
 	return JS_TRUE;
 }
 

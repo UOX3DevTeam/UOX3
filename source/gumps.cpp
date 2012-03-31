@@ -660,7 +660,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.AddCommand( "gumppictiled %u %u %u %u %u", xStart + 22, yWidth - 50, 165, 5, 0x145E );
 	// Ok, now the job of pulling the rest of the first itemmenu information and making tabs for them
 	toSend.AddCommand( "text %u %u %u %u",20,yWidth-40, 94, linenum++ );
-	toSend.AddText( "(c)1997-2004 UOXDev Team" );
+	toSend.AddText( "(c)1997-2012 UOX3 DevTeam" );
 
 	// Ok here we have some conditions that we need to filter. First being the menu called.
 	UI32 xOffset;

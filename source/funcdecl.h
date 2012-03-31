@@ -191,7 +191,7 @@ R32		roundNumber( R32 toRound);
 bool	FileExists( std::string filepath );
 void	DismountCreature( CChar *s );
 size_t	getTileName( CItem& mItem, std::string& itemname );
-bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor );
+bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ );
 bool	checkItemLineOfSight( CChar *mChar, CItem *i );
 void	Shutdown( SI32 retCode );
 void	HandleDeath( CChar *mChar );

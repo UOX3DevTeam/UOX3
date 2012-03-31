@@ -1,3 +1,10 @@
+31/03/2012 - Xuri
+	Fixed an AND vs OR issue in CMulHandler::DoesStaticBlock() that caused an if-statement to behave incorrectly
+	Updated LineOfSight() function with a new boolean parameter that allows LoS-checks based from the Z-level at a character's feet instead of at his head
+	Added LineOfSight-checks for players (does not affect GMs) picking up/dropping items from/onto the ground, to stop an exploit with CircleOfTransparency
+	When dropping an item into an invalid location, and the player is out of range of the original location where the item was picked up, it will now be dropped on the ground
+	Players should now be able to use boat-planks and house-signs even while dead
+	
 24/03/2012 - Xuri
 	Added several new JS Gump Methods:
 		AddGumpColor( left, top, gumpID, hue ) // Adds a gump-image to the gumpstream, with a hue

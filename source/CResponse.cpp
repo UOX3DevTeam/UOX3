@@ -620,7 +620,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 		CChar *Npc = (*npcCtr);
 		if( Npc->IsShop() || Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
-			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 				continue;
 
 			if( saidVendor || findString( ourText, UString(Npc->GetName()).upper() ) )
