@@ -4,6 +4,7 @@
 	Added LineOfSight-checks for players (does not affect GMs) picking up/dropping items from/onto the ground, to stop an exploit with CircleOfTransparency
 	When dropping an item into an invalid location, and the player is out of range of the original location where the item was picked up, it will now be dropped on the ground
 	Players should now be able to use boat-planks and house-signs even while dead
+	Fixed an issue introduced with the updated LoS-checks in the previous commit
 	
 24/03/2012 - Xuri
 	Added several new JS Gump Methods:
