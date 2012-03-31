@@ -1115,7 +1115,7 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 			CTileHS& tile = SeekTileHS( stat->itemid );
 			if( checkWater )
 			{
-				if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_WET ) ))
+				if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) ))
 					return true;
 			}
 			else
@@ -1130,7 +1130,7 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 			CTile& tile = SeekTile( stat->itemid );
 			if( checkWater )
 			{
-				if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_WET ) ))
+				if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) ))
 					return true;
 			}
 			else

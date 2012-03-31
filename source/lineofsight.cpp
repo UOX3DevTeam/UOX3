@@ -291,7 +291,7 @@ bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck )
 				return false;
 			break;
 		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-			if( toCheck->CheckFlag( TF_WALL ) || toCheck->CheckFlag( TF_NOSHOOT ) || toCheck->CheckFlag( TF_WINDOW ))
+			if( toCheck->CheckFlag( TF_WALL ) || ( toCheck->CheckFlag( TF_NOSHOOT ) && !toCheck->CheckFlag( TF_SURFACE) ) || toCheck->CheckFlag( TF_WINDOW ))
 				return true;
 			break;
 		case DOORS: // Doors, not gates
@@ -496,14 +496,14 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	return INVALIDID;
 }
 //o--------------------------------------------------------------------------
-//|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor )
+//|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor, bool useSurfaceZ )
 //|	Date			-	03 July, 2001
 //|	Programmer		-	Abaddon
 //|	Modified		-	18 March, 2002, sereg
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns true if there is line of sight between src and trg
 //o--------------------------------------------------------------------------
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor )
+bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
 {
 /*
 Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
@@ -532,7 +532,7 @@ Look at uox3.h to see options. Works like npc magic.
 		return not_blocked;		// target canceled
 
 	const SI16 startX = mChar->GetX(), startY = mChar->GetY();
-	const SI08 startZ = mChar->GetZ() + 15; // standard eye height of most bodies
+	const SI08 startZ = ( useSurfaceZ ? mChar->GetZ() : ( mChar->GetZ() + 15 )); // standard eye height of most bodies if useSurfaceZ is false, use feet height if true
 
 	if( (startX == destX) && (startY == destY) && (startZ == destZ) )
 		return not_blocked;		// if source and target are on the same position
@@ -543,15 +543,17 @@ Look at uox3.h to see options. Works like npc magic.
 	const SI32 distZ	= abs( static_cast<SI32>(destZ - startZ) );
 
 	line3D lineofsight	= line3D( vector3D( startX, startY, startZ ), vector3D( distX, distY, distZ ) );
+
 	const R64 rBlah		= (distX * distX) + (distY * distY);
 	const SI32 distance	= static_cast<SI32>(sqrt( rBlah ));
 
 	if( distance > 18 )
 		return blocked;
 
+	//Note - commented out since it stopped LoS through walls!
 	//If target is next to us and within our field of view
-	if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
-		return not_blocked;
+	//if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
+	//	return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];
 	SI16 x1, y1, x2, y2;
@@ -750,7 +752,7 @@ Look at uox3.h to see options. Works like npc magic.
 		for( j = 0; j < checkthistotal; ++j )
 		{
 			tb = &losItemList[i];
-			if( CheckFlags( checkthis[j], tb ))
+			if( !mChar->IsGM() && CheckFlags( checkthis[j], tb ))
 				return blocked;
 		}
 	}
@@ -785,8 +787,8 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 	{
 		const SI08 height = Map->TileHeight( itemOwner->GetID() );
 		// Can we see the top or bottom of the item
-		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) ||
-			LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) ||
+			LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			inSight = true;
 	}
 

@@ -3328,7 +3328,7 @@ bool CPIPopupMenuRequest::Handle( void )
 		if( myChar == NULL )
 			return true;
 
-		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING ) )
+		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			return true;
 
 		CPPopupMenu toSend( (*myChar) );
