@@ -2330,7 +2330,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	{
 		bool canUse = checkItemRange( ourChar, iUsed );
 		if( canUse )
-			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || ( !ourChar->IsGM() && checkItemLineOfSight( ourChar, iUsed ) ));
+			canUse = (iType == IT_DOOR || iType == IT_LOCKEDDOOR || checkItemLineOfSight( ourChar, iUsed ) );
 		if( !canUse )
 		{
 			tSock->sysmessage( 389 );
