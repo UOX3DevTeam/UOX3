@@ -483,7 +483,6 @@ void MsgBoardPost( CSocket *tSock )
 bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
 {
 	char buffer[4];
-	char tmpLine[256];
 
 	file.read( buffer, 2 );
 	msgBoardPost.Size = ( (buffer[0]<<8) + buffer[1] );
@@ -494,6 +493,7 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 	msgBoardPost.Serial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
 	if( !file.fail() && ( msgBoardPost.Serial == msgSerial || msgSerial == INVALIDSERIAL ) )
 	{
+		char tmpLine[256];
 		file.seekg( -(msgBoardPost.Size-2), std::ios::cur );
 
 		file.read( buffer, 1 );
@@ -613,18 +613,19 @@ void MsgBoardRemovePost( CSocket *mSock )
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) + fileName;
 
-	SERIAL tmpSerial	= 0;
-	size_t totalSize	= 0;
-	UI16 tmpSize		= 0;
-	char rBuffer[4];
 	bool foundPost		= false;
-	bool removeReply	= true;
 
 	const SERIAL msgSer = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
 
 	std::fstream file ( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 	if( file.is_open() )
 	{
+		SERIAL tmpSerial	= 0;
+		size_t totalSize	= 0;
+		UI16 tmpSize		= 0;
+		char rBuffer[4];
+		bool removeReply	= true;
+		
 		while( !file.eof() )
 		{
 			removeReply = false;
@@ -839,13 +840,13 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 //o--------------------------------------------------------------------------o
 void MsgBoardQuestEscortCreate( CChar *mNPC )
 {
-	const UI08 npcRegion		= mNPC->GetRegionNum();
-	UI08 destRegion				= npcRegion;
+	const UI16 npcRegion		= mNPC->GetRegionNum();
+	UI16 destRegion				= npcRegion;
 	const size_t escortSize		= cwmWorldState->escortRegions.size();
 
 	if( !cwmWorldState->escortRegions.empty() && ( escortSize > 1 || cwmWorldState->escortRegions[0] != npcRegion )  )
 	{
-		for( UI08 i = 0; i < 50 && npcRegion == destRegion; ++i )
+		for( UI16 i = 0; i < 50 && npcRegion == destRegion; ++i )
 			destRegion = cwmWorldState->escortRegions[RandomNum( static_cast<size_t>(0), (escortSize-1) )];
 	}
 
@@ -938,15 +939,16 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 
 	fileName += "region" + UString::number( mNPC->GetQuestOrigRegion() ) + ".bbf";
 
-	SERIAL tmpSerial	= 0;
-	size_t totalSize	= 0;
-	UI16 tmpSize		= 0;
-	char rBuffer[4];
 
 	std::fstream file;
 	file.open( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 	if( file.is_open() )
 	{
+		SERIAL tmpSerial	= 0;
+		size_t totalSize	= 0;
+		UI16 tmpSize		= 0;
+		char rBuffer[4];
+
 		file.seekg( 0, std::ios::beg );
 		while( !file.eof() )
 		{

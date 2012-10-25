@@ -2887,7 +2887,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 			if( ValidateObject( getTarg ) )
 			{
-				if( !getTarg->CanBeObjType( OT_ITEM ) || ((CItem *)getTarg)->GetCont() == NULL )
+				if( !getTarg->CanBeObjType( OT_ITEM ) || (static_cast<CItem *>(getTarg))->GetCont() == NULL )
 				{
 					x = getTarg->GetX();
 					y = getTarg->GetY();

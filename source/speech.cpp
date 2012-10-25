@@ -287,7 +287,7 @@ bool CPITalkRequest::Handle( void )
 			if( IsUnicode() )
 			{
 				uniTxtToSend = new CPUnicodeSpeech();
-				uniTxtToSend->Object( *((CPITalkRequestUnicode *)this) );
+				uniTxtToSend->Object( *(static_cast<CPITalkRequestUnicode *>(this)) );
 				uniTxtToSend->Object( *mChar );
 				txtToSend = uniTxtToSend;
 
@@ -299,7 +299,7 @@ bool CPITalkRequest::Handle( void )
 			}
 			else
 			{
-				asciiTxtToSend = new CPacketSpeech( *((CPITalkRequestAscii *)this) );
+				asciiTxtToSend = new CPacketSpeech( *(static_cast<CPITalkRequestAscii *>(this)) );
 				asciiTxtToSend->SpeakerSerial( mChar->GetSerial() );
 				asciiTxtToSend->SpeakerModel( mChar->GetID() );
 				asciiTxtToSend->SpeakerName( mChar->GetName() );

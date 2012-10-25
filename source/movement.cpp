@@ -232,7 +232,6 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	const SI16 oldx = c->GetX();
 	const SI16 oldy = c->GetY();
 
-	UI08 tempDir = dir&0x07;
 	// see if we have stopped to turn or if we are moving
 	const bool amTurning = ( (dir&0x07) != c->GetDir() );
 	if( !amTurning )
@@ -1260,6 +1259,14 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 						}
 						if( toExecute != NULL )
 							toExecute->OnCollide( mSock, mChar, tItem );
+						else
+						{
+							// Item being stepped on didn't have a script, so let's check if character has one instead
+							const UI16 charTrig	= mChar->GetScriptTrigger();
+							cScript *toExecute	= JSMapping->GetScript( charTrig );
+							if( toExecute != NULL )
+								toExecute->OnCollide( mSock, mChar, tItem );
+						}
 					}
 				}
 				HandleObjectCollisions( mSock, mChar, tItem, type );
@@ -1805,7 +1812,6 @@ void cMovement::NpcMovement( CChar& mChar )
 	if( mChar.IsFrozen() || !mChar.IsNpc() || mChar.GetNpcWander() == WT_FROZEN )
 		return;
 
-	bool shouldRun		= false;
 	bool canRun			= ( (mChar.GetStamina() > 0) && mChar.CanRun() );
 
     if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
@@ -1813,6 +1819,7 @@ void cMovement::NpcMovement( CChar& mChar )
 #if DEBUG_NPCWALK
 		Console.Print( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", mChar.GetName(), mChar.GetNpcWander(), mChar.IsAtWar(), j );
 #endif
+		bool shouldRun		= false;
 		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
         {
             CChar *l = mChar.GetAttacker();
@@ -1831,6 +1838,16 @@ void cMovement::NpcMovement( CChar& mChar )
 						mChar.SetDir( charDir );
 						Walking( NULL, &mChar, charDir, 256 );
 						return;
+					}
+					else if(( !los && charDist <= 1 ) || ( !los && mChar.GetZ() - l->GetZ() >= 20 ))
+					{
+						mChar.SetOldTargLocX( 0 );
+						mChar.SetOldTargLocY( 0 );
+						mChar.SetTimer( tNPC_EVADETIME, BuildTimeValue( 5 ) );
+						mChar.SetEvadeState( true );
+						mChar.TextMessage( NULL, "[Evading]", SYSTEM, false );
+						Combat->InvalidateAttacker( &mChar );
+						//Console.Warning( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
 					}
 				}
 				else

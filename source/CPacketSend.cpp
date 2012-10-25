@@ -3152,8 +3152,11 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 		{
 			if( !ctr->isFree() )
 			{
-				AddItem( ctr, itemCount, mSock );
-				++itemCount;
+				if( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() ) // don't show GM hidden objects to non-GM players.
+				{
+					AddItem( ctr, itemCount, mSock );
+					++itemCount;
+				}
 			}
 		}
 	}

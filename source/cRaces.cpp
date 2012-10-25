@@ -179,7 +179,6 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	if( !ValidateObject( s ) )
 		return;
 	CItem *hairobject = NULL, *beardobject = NULL;
-	UI16 hairColor = 0;
 
 	CRace *pRace = Race( x );
 	if( pRace == NULL )
@@ -193,6 +192,7 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 	}
 	if( s->GetRaceGate() == 65535 || always )
 	{
+		UI16 hairColor = 0;
 		std::map< UI08, std::string > lossMap;
 
 		lossMap[STRENGTH] = "strength";

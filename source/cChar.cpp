@@ -210,8 +210,8 @@ const SI08			DEFCHAR_CELL 				= -1;
 const SERIAL		DEFCHAR_TARG 				= INVALIDSERIAL;
 const SERIAL		DEFCHAR_ATTACKER 			= INVALIDSERIAL;
 const SI08			DEFCHAR_HUNGER 				= 6;
-const UI08			DEFCHAR_REGIONNUM 			= 255;
-const UI08			DEFCHAR_TOWN 				= 0;
+const UI16			DEFCHAR_REGIONNUM 			= 255;
+const UI16			DEFCHAR_TOWN 				= 0;
 const UI16			DEFCHAR_ADVOBJ 				= 0;
 const SERIAL		DEFCHAR_GUILDFEALTY			= INVALIDSERIAL;
 const SI16			DEFCHAR_GUILDNUMBER			= -1;
@@ -504,17 +504,17 @@ void CChar::checkPetOfflineTimeout( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  UI08 Town()
+//|   Function    -  UI16 Town()
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  The town the character belongs to
 //o---------------------------------------------------------------------------o
-UI08 CChar::GetTown( void ) const
+UI16 CChar::GetTown( void ) const
 {
 	return town;
 }
-void CChar::SetTown( UI08 newValue )
+void CChar::SetTown( UI16 newValue )
 {
 	town = newValue;
 }
@@ -1151,11 +1151,11 @@ CTownRegion *CChar::GetRegion( void ) const
 		return cwmWorldState->townRegions[0xFF];
 	return cwmWorldState->townRegions[regionNum];
 }
-void CChar::SetRegion( UI08 newValue )
+void CChar::SetRegion( UI16 newValue )
 {
 	regionNum = newValue;
 }
-UI08 CChar::GetRegionNum( void ) const
+UI16 CChar::GetRegionNum( void ) const
 {
 	return regionNum;
 }
@@ -3022,7 +3022,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "REGION" )
 				{
-					SetRegion( data.toUByte() );
+					SetRegion( data.toUShort() );
 					rvalue = true;
 				}
 				else if( UTag == "REATTACKAT" )
@@ -3434,14 +3434,13 @@ void CChar::SendWornItems( CSocket *mSock )
 
 void CChar::WalkZ( SI08 newZ )
 {
-	bool JSEventUsed = false;
-
 	oldLocZ = z;
 	z		= newZ;
 	UI08 fallDistance = oldLocZ - z;
 
 	if( fallDistance > MAX_Z_FALL )
 	{
+		bool JSEventUsed = false;
 		const UI16 FallTrig = GetScriptTrigger();
 		cScript *toExecute = JSMapping->GetScript( FallTrig );
 		if( toExecute != NULL )

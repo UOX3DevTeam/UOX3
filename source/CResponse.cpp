@@ -680,9 +680,9 @@ CVendorViewResponse::CVendorViewResponse( bool vendVal, std::string text ) : CBa
 }
 bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	CItem *pack		= NULL;
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
+		CItem *pack		= NULL;
 		Npc->TextMessage( mSock, 385, TALK, false );
 		pack = Npc->GetPackItem();
 		if( ValidateObject( pack ) )
@@ -753,7 +753,6 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
-		UI32 pay = 0;
 		if( mChar == Npc->GetOwnerObj() )
 		{
 			if( Npc->GetHoldG() <= 0 )
@@ -762,6 +761,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			} 
 			else
 			{
+				UI32 pay = 0;
 				if( Npc->GetHoldG() > 9 )
 				{
 					pay = (int)( Npc->GetHoldG() / 10 );

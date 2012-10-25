@@ -889,9 +889,6 @@ void CConsole::Poll( void )
 
 void CConsole::Process( int c )
 {
-	char outputline[128], temp[1024];
-	CSocket *tSock	= NULL;
-
 	if( c == '*' )
 	{
 		if( cwmWorldState->GetSecure() )
@@ -925,6 +922,8 @@ void CConsole::Process( int c )
 				return;
 			}
 		}
+		CSocket *tSock	= NULL;
+		char outputline[128], temp[1024];
 		int indexcount	= 0;
 		bool kill		= false;
 		int j = 0;

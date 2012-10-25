@@ -344,7 +344,7 @@ void LoadRegions( void )
 		ourRegions = new Script( regionsFile, NUM_DEFS, false );
 	}
 
-	UI08 i = 0;
+	UI16 i = 0;
 	UString regEntry;
 	for( Script *regScp = FileLookup->FirstScript( regions_def ); !FileLookup->FinishedScripts( regions_def ); regScp = FileLookup->NextScript( regions_def ) )
 	{
@@ -359,7 +359,7 @@ void LoadRegions( void )
 			regEntry = regScp->EntryName();
 			if( regEntry.section( " ", 0, 0 ) == "REGION" )
 			{
-				i = regEntry.section( " ", 1, 1 ).toUByte();
+				i = regEntry.section( " ", 1, 1 ).toUShort();
 				if( cwmWorldState->townRegions.find( i ) == cwmWorldState->townRegions.end() )
 				{
 					cwmWorldState->townRegions[i] = new CTownRegion( i );

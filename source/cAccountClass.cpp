@@ -102,13 +102,16 @@ UI16 cAccountClass::CreateAccountSystem(void)
 	std::string sAccessAdm = sActPath;
 	sAccessAdm += (sActPath[sActPath.length()-1]=='\\'||sActPath[sActPath.length()-1]=='/')?"access.adm":"/access.adm";
 	// Create stream and open the Access.adm file if it exists.
-	bool bIsNew = true;
+	//bool bIsNew = true;
 	std::fstream fs1( sAccessAdm.c_str(),std::ios::in );
-	if( !fs1.is_open() )
-	{
+
+	// Following is commented out, as it only serves to set bIsNew=false at the moment, which is not used anywhere
+	//if( !fs1.is_open() )
+	//{
 		// Ok there was no access.adm this implies that this is a pre v0.97.00 release
-		bIsNew=false;
-	}
+	//	bIsNew=false;
+	//}
+
 	// Build the full path and filename string here for accounts.adm
 	std::string sAccountsAdm = sActPath;
 	sAccountsAdm += (sActPath[sActPath.length()-1]=='\\'||sActPath[sActPath.length()-1]=='/')?"accounts.adm":"/accounts.adm";

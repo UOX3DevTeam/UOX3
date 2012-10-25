@@ -279,7 +279,7 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 	return false;
 }
 
-bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck )
+bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
 {
 	switch( typeToCheck )
 	{
@@ -304,7 +304,12 @@ bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck )
 			break;
 		case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
 			if( toCheck->CheckFlag( TF_SURFACE ))
-				return true;
+			{
+				if( useSurfaceZ ? ( startZ != destZ ) : (( startZ - 15) != destZ ))
+				{
+					return true;
+				}
+			}
 			break;
 		case LAVA_WATER:  // Lava, water
 			if( toCheck->CheckFlag( TF_WET ))
@@ -550,10 +555,9 @@ Look at uox3.h to see options. Works like npc magic.
 	if( distance > 18 )
 		return blocked;
 
-	//Note - commented out since it stopped LoS through walls!
 	//If target is next to us and within our field of view
-	//if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
-	//	return not_blocked;
+	if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ) )
+		return not_blocked;
 
 	vector3D collisions[ MAX_COLLISIONS ];
 	SI16 x1, y1, x2, y2;
@@ -672,6 +676,10 @@ Look at uox3.h to see options. Works like npc magic.
 			if( !ValidateObject( toCheck ) )
 				continue;
 
+			// If item toCheck is at the exact same spot as the target location, it should not block LoS.
+			if( toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ )
+				continue;
+
 			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
 			{
@@ -752,7 +760,7 @@ Look at uox3.h to see options. Works like npc magic.
 		for( j = 0; j < checkthistotal; ++j )
 		{
 			tb = &losItemList[i];
-			if( !mChar->IsGM() && CheckFlags( checkthis[j], tb ))
+			if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
 				return blocked;
 		}
 	}
@@ -785,11 +793,26 @@ bool checkItemLineOfSight( CChar *mChar, CItem *i )
 		inSight = true;
 	else
 	{
-		const SI08 height = Map->TileHeight( itemOwner->GetID() );
+		const SI08 height = Map->TileHeight( itemOwner->GetID() ); // Retrieves actual height of item, unrelated to world-coordinate
 		// Can we see the top or bottom of the item
-		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) ||
-			LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+		if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+		{
 			inSight = true;
+		}
+		else if( height > 0 ) // Only bother checking for the top of the item if the item has an actual height value, otherwise it's essentially same check twice
+		{
+			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+			{
+				inSight = true;
+			}
+		}
+		if( inSight == false )// If both the previous checks failed, try checking from character's Z location to top of item instead
+		{
+			if( LineOfSight( NULL, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true ) )
+			{
+				inSight = true;
+			}
+		}
 	}
 
 	return inSight;

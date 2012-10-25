@@ -177,15 +177,15 @@ void command_fixspawn( void )
 void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
-	char szBuffer[128];
-	char *szCommandLine	= NULL;
-	char *szCommand		= NULL;
-	char *szUsername	= NULL;
-	char *szPassword	= NULL;
-	char *szPrivs		= NULL;
 	CAccountBlock actbTemp;
 	if( Commands->NumArguments() > 1 )
 	{
+		char szBuffer[128];
+		char *szCommandLine	= NULL;
+		char *szCommand		= NULL;
+		char *szUsername	= NULL;
+		char *szPassword	= NULL;
+		char *szPrivs		= NULL;
 		UI16 nFlags = 0x0000;
 		szCommandLine	= (char *)Commands->CommandString( 2 ).c_str();
 		szCommand		= strtok( szCommandLine, " " );
@@ -221,7 +221,7 @@ void command_getlight( CSocket *s )
 	if( !ValidateObject( mChar ) )
 		return;
 	CTownRegion *tRegion	= mChar->GetRegion();
-	UI08 wID				= tRegion->GetWeather();
+	UI16 wID				= tRegion->GetWeather();
 	CWeather *sys			= Weather->Weather( wID );
 	if( sys != NULL )
 	{

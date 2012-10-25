@@ -325,11 +325,11 @@ void startChar( CSocket *mSock, bool onCreate = false );
 //o---------------------------------------------------------------------------o
 bool CPIPlayCharacter::Handle( void )
 {
-	bool disconnect = false;
 	if( tSock != NULL )
 	{
 		if( tSock->AcctNo() != AB_INVALID_ID )
 		{
+			bool disconnect = false;
 			CAccountBlock&  actbRec	= tSock->GetAccount();
 			CChar *kChar			= NULL;
 			CChar *ourChar			= NULL;

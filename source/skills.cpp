@@ -621,9 +621,9 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 			skillCheck = ( chanceskillsuccess >= RandomNum( 0, UOX_MIN( 1000, (highSkill+100) ) ) );
 		
 		CSocket *mSock = s->GetSocket();
-		bool mageryUp = true;
 		if( mSock != NULL )
 		{
+			bool mageryUp = true;
 			mageryUp = ( mSock->CurrentSpellType() == 0 );
 			
 			if( s->GetBaseSkill( sk ) < highSkill )
@@ -1154,7 +1154,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 		s->sysmessage( 874 );
 		return;
 	}
-	CItem *itemCont = (CItem *)item->GetCont(); 
+	CItem *itemCont = static_cast<CItem *>(item->GetCont());
 	if( itemCont != NULL && itemCont->GetLayer() >= IL_SELLCONTAINER && itemCont->GetLayer() <= IL_BUYCONTAINER ) // is it in the sell or buy layer of a vendor?
 	{
 		s->sysmessage( 874 );

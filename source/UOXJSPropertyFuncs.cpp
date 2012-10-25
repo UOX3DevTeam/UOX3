@@ -93,15 +93,15 @@ namespace UOX
 
 	JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		SpellInfo *gPriv = (SpellInfo*)JS_GetPrivate( cx, obj );
+		SpellInfo *gPriv = static_cast<SpellInfo*>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		UString spellName = "";
-		bool bDone = false;
 
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			JSString *tString = NULL;
+			bool bDone = false;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CSP_ID:
@@ -169,14 +169,14 @@ namespace UOX
 
 	JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CItem *gPriv = (CItem *)JS_GetPrivate( cx, obj );
+		CItem *gPriv = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
 		SERIAL TempSerial = INVALIDSERIAL;
 
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CIP_NAME:
@@ -329,21 +329,21 @@ namespace UOX
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
 					{
-						tString = JS_NewStringCopyZ( cx, ((CSpawnItem *)gPriv)->GetSpawnSection().c_str() );
+						tString = JS_NewStringCopyZ( cx, (static_cast<CSpawnItem *>(gPriv))->GetSpawnSection().c_str() );
 						*vp = STRING_TO_JSVAL( tString );
 					}
 					break;
 				case CIP_SECTIONALIST:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->IsSectionAList() );
+						*vp = INT_TO_JSVAL( (static_cast<CSpawnItem *>(gPriv))->IsSectionAList() );
 					break;
 				case CIP_MININTERVAL:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 0 ) );
+						*vp = INT_TO_JSVAL( (static_cast<CSpawnItem *>(gPriv))->GetInterval( 0 ) );
 					break;
 				case CIP_MAXINTERVAL:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						*vp = INT_TO_JSVAL( ((CSpawnItem *)gPriv)->GetInterval( 1 ) );
+						*vp = INT_TO_JSVAL( (static_cast<CSpawnItem *>(gPriv))->GetInterval( 1 ) );
 					break;
 				case CIP_MULTI:
 					CMultiObj *multi;
@@ -367,7 +367,7 @@ namespace UOX
 
 	JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CItem *gPriv = (CItem *)JS_GetPrivate( cx, obj );
+		CItem *gPriv = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -385,7 +385,7 @@ namespace UOX
 				case CIP_OWNER:		
 					if( *vp != JSVAL_NULL ) 
 					{	 
-						CChar *myChar = (CChar*)encaps.toObject(); 
+						CChar *myChar = static_cast<CChar*>(encaps.toObject());
 						if( !ValidateObject( myChar ) ) 
 							break; 
 						gPriv->SetOwner( myChar ); 
@@ -404,7 +404,7 @@ namespace UOX
 				case CIP_CONTAINER:
 					if( *vp != JSVAL_NULL )
 					{
-						CBaseObject *myObj = (CBaseObject*)encaps.toObject();
+						CBaseObject *myObj = static_cast<CBaseObject*>(encaps.toObject());
 						if( !ValidateObject( myObj ) )
 							break;
 						gPriv->SetCont( myObj );
@@ -473,19 +473,19 @@ namespace UOX
 				// The following entries are specifically for CSpawnItem objects
 				case CIP_SPAWNSECTION:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetSpawnSection( encaps.toString() );
+						(static_cast<CSpawnItem *>(gPriv))->SetSpawnSection( encaps.toString() );
 					break;
 				case CIP_SECTIONALIST:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->IsSectionAList( encaps.toBool() );
+						(static_cast<CSpawnItem *>(gPriv))->IsSectionAList( encaps.toBool() );
 					break;
 				case CIP_MININTERVAL:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetInterval( 0, (UI08)encaps.toInt() );
+						(static_cast<CSpawnItem *>(gPriv))->SetInterval( 0, (UI08)encaps.toInt() );
 					break;
 				case CIP_MAXINTERVAL:
 					if( gPriv->GetObjType() == OT_SPAWNER )
-						((CSpawnItem *)gPriv)->SetInterval( 1, (UI08)encaps.toInt() );
+						(static_cast<CSpawnItem *>(gPriv))->SetInterval( 1, (UI08)encaps.toInt() );
 					break;
 				default:
 					break;
@@ -496,15 +496,15 @@ namespace UOX
 
 	JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CItem *TempItem			= NULL;
-		JSObject *TempObject	= NULL;
-		CChar *gPriv			= (CChar *)JS_GetPrivate( cx, obj );
+		CChar *gPriv			= static_cast<CChar *>(JS_GetPrivate( cx, obj ));
 
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			CItem *TempItem			= NULL;
+			JSObject *TempObject	= NULL;
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CCP_NAME:
@@ -651,7 +651,7 @@ namespace UOX
 					}
 				case CCP_TOWN:
 					{
-						UI08 TempTownID			= 0xFF;
+						UI16 TempTownID			= 0xFF;
 						TempTownID = gPriv->GetTown();
 
 						// We need to decide here whether 0xFF is a valid town (wilderness) or not
@@ -839,7 +839,7 @@ namespace UOX
 
 	JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CChar *gPriv = (CChar *)JS_GetPrivate( cx, obj );
+		CChar *gPriv = static_cast<CChar *>(JS_GetPrivate( cx, obj ));
 		if( !ValidateObject( gPriv ) )
 			return JS_FALSE;
 
@@ -859,7 +859,7 @@ namespace UOX
 				case CCP_OWNER:		
 					if( *vp != JSVAL_NULL )
 					{
-						CChar *myChar = (CChar*)encaps.toObject();
+						CChar *myChar = static_cast<CChar*>(encaps.toObject());
 						if( !ValidateObject( myChar ) )
 							break;
 						gPriv->SetOwner( myChar );
@@ -878,7 +878,7 @@ namespace UOX
 					//TODO: Check if the user(admin per jscript) can set the target
 					if( *vp != JSVAL_NULL )
 					{
-						CChar *myChar = (CChar *)encaps.toObject();
+						CChar *myChar = static_cast<CChar *>(encaps.toObject());
 						if( !ValidateObject( myChar ) )
 							break;
 						gPriv->SetTarg( myChar );
@@ -980,7 +980,7 @@ namespace UOX
 					break;
 				case CCP_NPC:			gPriv->SetNpc( encaps.toBool() );					break;
 				case CCP_DIRECTION:		gPriv->SetDir( (UI08)encaps.toInt() );				break;
-				case CCP_REGION:		gPriv->SetRegion( (UI08)encaps.toInt() );			break;
+				case CCP_REGION:		gPriv->SetRegion( (UI16)encaps.toInt() );			break;
 				case CCP_TOWN:
 					cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember( *gPriv );
 					cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember( *gPriv );
@@ -990,7 +990,7 @@ namespace UOX
 
 					if( *vp != JSVAL_NULL )
 					{
-						CGuild *myGuild = (CGuild*)encaps.toObject();
+						CGuild *myGuild = static_cast<CGuild*>(encaps.toObject());
 						myGuild->NewRecruit( gPriv->GetSerial() );
 					}
 					break;
@@ -1032,7 +1032,7 @@ namespace UOX
 				case CCP_ATTACKER:
 					if( *vp != JSVAL_NULL )
 					{
-						CChar *myChar = (CChar *)encaps.toObject();
+						CChar *myChar = static_cast<CChar *>(encaps.toObject());
 						if( !ValidateObject( myChar ) )
 							break;
 						gPriv->SetAttacker( myChar );
@@ -1125,12 +1125,12 @@ namespace UOX
 
 	JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CTownRegion *gPriv = (CTownRegion *)JS_GetPrivate( cx, obj );
+		CTownRegion *gPriv = static_cast<CTownRegion *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CREGP_NAME:
@@ -1174,7 +1174,7 @@ namespace UOX
 	}
 	JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CTownRegion *gPriv = (CTownRegion *)JS_GetPrivate( cx, obj );
+		CTownRegion *gPriv = static_cast<CTownRegion *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1206,12 +1206,12 @@ namespace UOX
 	}
 	JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CGuild *gPriv = (CGuild *)JS_GetPrivate( cx, obj );
+		CGuild *gPriv = static_cast<CGuild *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CGP_NAME:
@@ -1270,7 +1270,7 @@ namespace UOX
 	}
 	JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CGuild *gPriv = (CGuild *)JS_GetPrivate( cx, obj );
+		CGuild *gPriv = static_cast<CGuild *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1283,7 +1283,7 @@ namespace UOX
 				case CGP_MASTER:
 											if( *vp != JSVAL_NULL )
 											{
-												CChar *myChar = (CChar*)encaps.toObject();
+												CChar *myChar = static_cast<CChar*>(encaps.toObject());
 												if( !ValidateObject( myChar ) )
 													break;
 												gPriv->Master( (*myChar) );
@@ -1294,7 +1294,7 @@ namespace UOX
 				case CGP_STONE:
 											if( *vp != JSVAL_NULL )
 											{
-												CItem *myItem = (CItem *)encaps.toObject();
+												CItem *myItem = static_cast<CItem *>(encaps.toObject());
 												if( !ValidateObject( myItem ) )
 													break;
 												gPriv->Stone( (*myItem) );
@@ -1316,13 +1316,13 @@ namespace UOX
 	}
 	JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CRace *gPriv = (CRace *)JS_GetPrivate( cx, obj );
+		CRace *gPriv = static_cast<CRace *>(JS_GetPrivate( cx, obj ));
 
 		if( gPriv == NULL )
 			return JS_FALSE;
-		JSString *tString = NULL;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CRP_ID:
@@ -1362,7 +1362,7 @@ namespace UOX
 
 	JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CRace *gPriv = (CRace *)JS_GetPrivate( cx, obj );
+		CRace *gPriv = static_cast<CRace *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1394,7 +1394,7 @@ namespace UOX
 
 	JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CSocket *gPriv = (CSocket *)JS_GetPrivate( cx, obj );
+		CSocket *gPriv = static_cast<CSocket *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		JSEncapsulate encaps( cx, vp );
@@ -1406,7 +1406,7 @@ namespace UOX
 					break;
 				case CSOCKP_CURRENTCHAR:
 					{
-						CChar *mChar = (CChar *)encaps.toObject();
+						CChar *mChar = static_cast<CChar *>(encaps.toObject());
 						if( ValidateObject( mChar ) )
 							gPriv->CurrcharObj( mChar );
 					}
@@ -1419,7 +1419,7 @@ namespace UOX
 												if( *vp == JSVAL_NULL )
 													gPriv->TempObj( NULL );
 												else
-													gPriv->TempObj( (CBaseObject *)encaps.toObject() );		break;
+													gPriv->TempObj( static_cast<CBaseObject *>(encaps.toObject() ));		break;
 				case CSOCKP_BUFFER:
 					break;
 				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
@@ -1461,13 +1461,13 @@ namespace UOX
 
 	JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		CSocket *gPriv = (CSocket *)JS_GetPrivate( cx, obj );
-		CChar *myChar;
-		JSString *tString = NULL;
+		CSocket *gPriv = static_cast<CSocket *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		if( JSVAL_IS_INT( id ) ) 
 		{
+			CChar *myChar;
+			JSString *tString = NULL;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CSOCKP_ACCOUNT:
@@ -1578,7 +1578,7 @@ namespace UOX
 	JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		JSEncapsulate myClass( cx, obj );
-		CChar *myChar = (CChar*)myClass.toObject();
+		CChar *myChar = static_cast<CChar*>(myClass.toObject());
 
 		if( !ValidateObject( myChar ) )
 			return JS_FALSE;
@@ -1600,7 +1600,7 @@ namespace UOX
 	JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		JSEncapsulate myClass( cx, obj );
-		CChar *myChar = (CChar*)myClass.toObject();
+		CChar *myChar = static_cast<CChar*>(myClass.toObject());
 
 		if( !ValidateObject( myChar ) )
 			return JS_FALSE;
@@ -1692,7 +1692,7 @@ namespace UOX
 
 	JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		SEGumpData *gPriv = (SEGumpData *)JS_GetPrivate( cx, obj );
+		SEGumpData *gPriv = static_cast<SEGumpData *>(JS_GetPrivate( cx, obj ));
 		
 		if( gPriv == NULL )
 			return JS_FALSE;
@@ -1765,7 +1765,7 @@ namespace UOX
 
 	JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		ScriptSection *gPriv = (ScriptSection *)JS_GetPrivate( cx, obj );
+		ScriptSection *gPriv = static_cast<ScriptSection *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 		if( JSVAL_IS_INT( id ) ) 
@@ -1798,7 +1798,7 @@ namespace UOX
 
 	JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		MapResource_st *gPriv = (MapResource_st*)JS_GetPrivate( cx, obj );
+		MapResource_st *gPriv = static_cast<MapResource_st*>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 
@@ -1819,7 +1819,7 @@ namespace UOX
 
 	JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		MapResource_st *gPriv = (MapResource_st*)JS_GetPrivate( cx, obj );
+		MapResource_st *gPriv = static_cast<MapResource_st*>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 
@@ -1839,7 +1839,7 @@ namespace UOX
 
 	JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		Party *gPriv = (Party *)JS_GetPrivate( cx, obj );
+		Party *gPriv = static_cast<Party *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 
@@ -1875,7 +1875,7 @@ namespace UOX
 
 	JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
-		Party *gPriv = (Party *)JS_GetPrivate( cx, obj );
+		Party *gPriv = static_cast<Party *>(JS_GetPrivate( cx, obj ));
 		if( gPriv == NULL )
 			return JS_FALSE;
 
@@ -1906,7 +1906,7 @@ namespace UOX
 	JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		JSEncapsulate srcObj( cx, obj );
-		CSocket *srcSock = (CSocket *)srcObj.toObject();
+		CSocket *srcSock = static_cast<CSocket *>(srcObj.toObject());
 		JSEncapsulate trgObj( cx, &v );
 		if( trgObj.isType( JSOT_OBJECT ) )
 		{
@@ -1914,7 +1914,7 @@ namespace UOX
 				*bp = JS_FALSE;
 			else
 			{
-				CSocket *trgSock	= (CSocket *)trgObj.toObject();
+				CSocket *trgSock	= static_cast<CSocket *>(trgObj.toObject());
 				*bp = ( srcSock == trgSock ) ? JS_TRUE : JS_FALSE;
 			}
 		}
@@ -1925,7 +1925,7 @@ namespace UOX
 	JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		JSEncapsulate srcObj( cx, obj );
-		CBaseObject *src = (CBaseObject *)srcObj.toObject();
+		CBaseObject *src = static_cast<CBaseObject *>(srcObj.toObject());
 		if( !ValidateObject( src ) )
 			*bp = JS_FALSE;
 		else
@@ -1937,7 +1937,7 @@ namespace UOX
 					*bp = JS_FALSE;
 				else
 				{
-					CBaseObject *trg = (CBaseObject *)trgObj.toObject();
+					CBaseObject *trg = static_cast<CBaseObject *>(trgObj.toObject());
 					if( !ValidateObject( trg ) ) 
 						*bp = JS_FALSE;
 					else	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
@@ -1952,7 +1952,7 @@ namespace UOX
 	JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		JSEncapsulate srcObj( cx, obj );
-		Party *srcParty = (Party *)srcObj.toObject();
+		Party *srcParty = static_cast<Party *>(srcObj.toObject());
 		JSEncapsulate trgObj( cx, &v );
 		if( trgObj.isType( JSOT_OBJECT ) )
 		{
@@ -1960,7 +1960,7 @@ namespace UOX
 				*bp = JS_FALSE;
 			else
 			{
-				Party *trgParty	= (Party *)trgObj.toObject();
+				Party *trgParty	= static_cast<Party *>(trgObj.toObject());
 				*bp = ( srcParty == trgParty ) ? JS_TRUE : JS_FALSE;
 			}
 		}
