@@ -203,11 +203,11 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 		nSock->Send( &cpstTwo );
 	}
 
-	CItem *i = NULL;
 	CItem *bp1 = p1->GetPackItem();
 	CItem *bp2 = p2->GetPackItem();
 	if( ValidateObject( bp1 ) && ValidateObject( bp2 ) )
 	{
+		CItem *i = NULL;
 		CDataList< CItem * > *c1Cont = tradeWindowOne->GetContainsList();
 		for( i = c1Cont->First(); !c1Cont->Finished(); i = c1Cont->Next() )
 		{
@@ -261,9 +261,9 @@ void cancelTrade( CItem *tradeWindowOne )
 bool CPITradeMessage::Handle( void )
 {
 	CItem *tradeWindowOne = calcItemObjFromSer( tSock->GetDWord( 4 ) );
-	CItem *tradeWindowTwo = NULL;
 	if( ValidateObject( tradeWindowOne ) )
 	{
+		CItem *tradeWindowTwo = NULL;
 		switch( tSock->GetByte( 3 ) )
 		{
 			case 0://Start trade - Never happens, sent out by the server only.
@@ -300,10 +300,10 @@ bool killTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		{
 			if( i->GetType() == IT_TRADEWINDOW )
 			{
-				CChar *k = (CChar *)i->GetCont();
+				CChar *k = static_cast<CChar *>(i->GetCont());
 				if( ValidateObject( k ) )
 				{
-					CChar *mChar = (CChar *)extraData;
+					CChar *mChar = static_cast<CChar *>(extraData);
 					if( k == mChar )
 						cancelTrade( i );
 				}

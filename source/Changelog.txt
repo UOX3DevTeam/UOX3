@@ -1,3 +1,20 @@
+25/10/2012 - Xuri
+	OnCollide JS event can now be triggered from character scripts. NOTE: If both item and character have scripts attached, item script takes precedence.
+	Fixed an issue where some LineofSight-checks (for double-clicking items, for instance) would erroneously fail to succeed
+	Lumberjacking will now check if user is in range of target both at start and end of the chopping-process (previously start only)
+	Fixed an incorrectly named variable in js/server/resources/bananas.js (dragon slayer)
+	Added missing NPC entries: gazerlarva (dragon slayer)
+	Updated dfndata/regions/regions.dfn to disallow Mark/Recall/Gate-spells in Felucca dungeons, and added some missing brackets (dragon slayer)
+	Added support for randomizing the direction an NPC will face in when spawned. To do so, use "RND" as the specified direction in their DFNs.
+	A pet being ordered to attack its owner (player), or another pet under the same ownership, should no longer result in criminal charges against the player in question.
+	Fixed an issue where locked down items could get removed from the multi when bouncing back on pickup-attempts
+	Fixed an issue where NPCs would never leave combat with targets that were unreachable on a different floor of a building than them.
+	Items with visibility value of 3 (Permanent Hidden/GM Hidden) will now not show up to players in containers
+	Members of the same party should no longer become criminals from attacking one another
+	Expanded the maximum amount of available regions in regions.dfn from 255 to 65535
+	Minor cleanup done in various parts of the source
+	Corrected weight of iron ingots in dfndata/items/skills/resources/smithing.dfn - they should now weigh 1 stone (weight=100) each.
+	
 31/03/2012 - Xuri
 	Fixed an AND vs OR issue in CMulHandler::DoesStaticBlock() that caused an if-statement to behave incorrectly
 	Updated LineOfSight() function with a new boolean parameter that allows LoS-checks based from the Z-level at a character's feet instead of at his head

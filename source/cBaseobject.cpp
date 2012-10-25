@@ -408,7 +408,7 @@ void CBaseObject::SetID( UI16 newValue )
 {
 	CBaseObject *checkCont = NULL;
 	if( isPostLoaded() && CanBeObjType( OT_ITEM ) )
-		checkCont = ((CItem *)this)->GetCont();
+		checkCont = (static_cast<CItem *>(this))->GetCont();
 	
 	if( ValidateObject( checkCont ) )
 		Weight->subtractItemWeight( checkCont, static_cast<CItem *>(this) );

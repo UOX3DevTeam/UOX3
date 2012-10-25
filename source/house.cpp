@@ -410,12 +410,12 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 	if( house->IsOwner( toAdd ) || house->IsOnBanList( toAdd ) )
 		return 2;
 
-	const UI08 OWNER	= 0;
-	const UI08 BAN		= 1;
 	SI16 sx, sy, ex, ey;
 	Map->MultiArea( house, sx, sy, ex, ey );
 	if( toAdd->GetX() >= sx && toAdd->GetY() >= sy && toAdd->GetX() <= ex && toAdd->GetY() <= ey )
 	{
+		const UI08 OWNER	= 0;
+		const UI08 BAN		= 1;
 		switch( mode )
 		{
 			default:

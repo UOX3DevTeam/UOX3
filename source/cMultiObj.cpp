@@ -179,7 +179,7 @@ void CMultiObj::RemoveFromMulti( CBaseObject *toRemove )
 	{
 		charInMulti.Remove( static_cast< CChar * >(toRemove) );
 		if( CanBeObjType( OT_BOAT ) && charInMulti.Num() == 0 )
-			((CBoatObj *)this)->SetMoveType( 0 );
+			(static_cast<CBoatObj *>(this))->SetMoveType( 0 );
 	}
 	else
 		itemInMulti.Remove( static_cast< CItem * >(toRemove) );

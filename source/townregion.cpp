@@ -51,7 +51,7 @@ const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
 const UI08		DEFTOWN_FINDBIGORE			= 0;
 const UI16		DEFTOWN_NUMGUARDS			= 10;
 
-CTownRegion::CTownRegion( UI08 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), 
+CTownRegion::CTownRegion( UI16 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), 
 regionNum( region ), midilist( DEFTOWN_MIDILIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
 taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
@@ -194,7 +194,7 @@ bool CTownRegion::Save( std::ofstream &outStream )
 		outStream << "MEMBER=" << std::hex << "0x" << (*mIter).townMember << '\n';
 		outStream << "VOTE=" << "0x" << (*mIter).targVote << std::dec << '\n';
 	}
-	std::vector< UI08 >::const_iterator aIter;
+	std::vector< UI16 >::const_iterator aIter;
 	for( aIter = alliedTowns.begin(); aIter != alliedTowns.end(); ++aIter )
 	{
 		outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << '\n';
@@ -375,7 +375,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				if( UTag == "ESCORTS" ) 
 				{
 					// Load the region number in the global array of valid escortable regions
-					if( data.toUByte() == 1 )
+					if( data.toUShort() == 1 )
 						cwmWorldState->escortRegions.push_back( regionNum );
 				} // End - Dupois
 				break;
@@ -1109,7 +1109,7 @@ void CTownRegion::DoDamage( SI16 reduction )
 	
 }
 
-bool CTownRegion::IsAlliedTown( UI08 townToCheck ) const
+bool CTownRegion::IsAlliedTown( UI16 townToCheck ) const
 {
 	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
 	{
@@ -1119,7 +1119,7 @@ bool CTownRegion::IsAlliedTown( UI08 townToCheck ) const
 	return false;
 }
 
-bool CTownRegion::MakeAlliedTown( UI08 townToMake )
+bool CTownRegion::MakeAlliedTown( UI16 townToMake )
 {
 	if( regionNum == townToMake )
 		return false;
@@ -1383,11 +1383,11 @@ void CTownRegion::SetScriptTrigger( UI16 newValue )
 	jsScript = newValue;
 }
 
-UI08 CTownRegion::GetRegionNum( void ) const
+UI16 CTownRegion::GetRegionNum( void ) const
 {
 	return regionNum;
 }
-void CTownRegion::SetRegionNum( UI08 newVal )
+void CTownRegion::SetRegionNum( UI16 newVal )
 {
 	regionNum = newVal;
 }

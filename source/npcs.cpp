@@ -705,6 +705,37 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													applyTo->SetDir( NORTHWEST );
 												else if( cupper == "N" )
 													applyTo->SetDir( NORTH );
+												else if( cupper == "RND" )
+												{
+													UI08 rndDir = RandomNum( 0, 7 );
+													switch( rndDir )
+													{
+													case 0:
+														applyTo->SetDir( NORTHEAST );
+														break;
+													case 1:
+														applyTo->SetDir( EAST );
+														break;
+													case 2:
+														applyTo->SetDir( SOUTHEAST );
+														break;
+													case 3:
+														applyTo->SetDir( SOUTH );
+														break;
+													case 4:
+														applyTo->SetDir( SOUTHWEST );
+														break;
+													case 5:
+														applyTo->SetDir( WEST );
+														break;
+													case 6:
+														applyTo->SetDir( NORTHWEST );
+														break;
+													case 7:
+														applyTo->SetDir( NORTH );
+														break;
+													}
+												}
 											}
 											break;
 			case DFNTAG_EMOTECOLOUR:		
@@ -1118,10 +1149,10 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //o---------------------------------------------------------------------------o
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
-	CChar *getFriend		= NULL;
 	CHARLIST *petFriends	= pet->GetFriendList();
 	if( petFriends != NULL )
 	{
+		CChar *getFriend		= NULL;
 		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
 		{
 			getFriend = (*I);

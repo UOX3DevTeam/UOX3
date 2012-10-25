@@ -323,7 +323,7 @@ bool CPIGetItem::Handle( void )
 
 	if( x->GetMultiObj() != NULL )
 	{
-		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && x->GetMultiObj() != ourChar->GetMultiObj() )
+		if( ( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND ) && ( x->GetMultiObj() != ourChar->GetMultiObj() || x->IsLockedDown() ))
 		{
 			PickupBounce( tSock );
 			return true;
@@ -347,7 +347,7 @@ bool CPIGetItem::Handle( void )
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			PickupBounce( tSock );
@@ -357,7 +357,7 @@ bool CPIGetItem::Handle( void )
 	else
 	{
 		CTile& tile = Map->SeekTile( i->GetID() );
-		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
+		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
 		{
 			PickupBounce( tSock );
@@ -1692,7 +1692,6 @@ void MountCreature( CSocket *mSock, CChar *s, CChar *x );
 void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 {
 	CChar *mChar	= mSock->CurrcharObj();
-	CItem *pack		= NULL;
 	CChar *c		= calcCharObjFromSer( serial );
 	if( !ValidateObject( c ) )
 		return;
@@ -1708,6 +1707,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 
 	if( c->IsNpc() )
 	{
+		CItem *pack		= NULL;
 		if( cwmWorldState->creatures[c->GetID()].MountID() != 0 )	// Is a mount
 		{
 			if( ( c->IsTamed() && ( c->GetOwnerObj() == mChar || Npcs->checkPetFriend( mChar, c ) ) ) || mChar->GetCommandLevel() >= CL_GM )
@@ -2313,7 +2313,6 @@ ItemTypes findItemType( CItem *i )
 
 bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType )
 {
-	CChar *iChar = NULL;
 	if( ourChar->IsDead() && iType != IT_PLANK && iType != IT_HOUSESIGN )
 	{
 		if( iType == IT_RESURRECTOBJECT )	// Check for a resurrect item type
@@ -2346,6 +2345,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 		}
 		tSock->SetTimer( tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_OBJECTUSAGE ) );
 
+		CChar *iChar = NULL;
 		if( iUsed->GetCont() != NULL )
 		{
 			iChar = FindItemOwner( iUsed );
@@ -2566,7 +2566,6 @@ bool CPISingleClick::Handle( void )
 
 	char temp2[200];
 	std::string realname;
-	char temp[512];
 
 	CChar *mChar = tSock->CurrcharObj();
 
@@ -2589,11 +2588,12 @@ bool CPISingleClick::Handle( void )
 	UI16 getAmount = i->GetAmount();
 	if( i->GetCont() != NULL && i->GetContSerial() >= BASEITEMSERIAL )
 	{
-		CChar *w = FindItemOwner( (CItem *)i->GetCont() );
+		CChar *w = FindItemOwner( static_cast<CItem *>( i->GetCont() ));
 		if( ValidateObject( w ) )
 		{
 			if( w->GetNPCAiType() == AI_PLAYERVENDOR )
 			{
+				char temp[512];
 				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 				{
 					CChar *mCreater = calcCharObjFromSer( i->GetCreator() );

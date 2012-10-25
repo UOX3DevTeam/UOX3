@@ -170,7 +170,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
-	if( button <= 0 )
+	if( button == 0 )
 	{
 		s->sysmessage( 1700 );
 		return;
@@ -244,7 +244,7 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
-	if( button <= 0 )
+	if( button == 0 )
 	{
 		s->sysmessage( 1700 );
 		return;
@@ -541,7 +541,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI08 i			= 0;
 	CChar *mChar	= s->CurrcharObj();
 
-	if( !mChar->IsGM() && m < 990 && m > 999 )
+	if( !mChar->IsGM() && m < 990 || m > 999 )
 	{
 		s->sysmessage( 337 );
 		return;
@@ -994,7 +994,6 @@ bool CPIHelpRequest::Handle( void )
 void CPage( CSocket *s, const std::string& reason )
 {
 	CChar *mChar = s->CurrcharObj();
-	bool x = false;
 	UI08 a1 = mChar->GetSerial( 1 );
 	UI08 a2 = mChar->GetSerial( 2 );
 	UI08 a3 = mChar->GetSerial( 3 );
@@ -1017,6 +1016,7 @@ void CPage( CSocket *s, const std::string& reason )
 		}
 		else
 		{
+			bool x = false;
 			char temp[1024];
 			sprintf( temp, "Counselor Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() );
 			Network->PushConn();
@@ -1047,7 +1047,6 @@ void CPage( CSocket *s, const std::string& reason )
 //o---------------------------------------------------------------------------o
 void GMPage( CSocket *s, const std::string& reason )
 {
-	bool x = false;
 	CChar *mChar = s->CurrcharObj();
 	UI08 a1 = mChar->GetSerial( 1 );
 	UI08 a2 = mChar->GetSerial( 2 );
@@ -1070,6 +1069,7 @@ void GMPage( CSocket *s, const std::string& reason )
 		}
 		else
 		{
+			bool x = false;
 			char temp[1024];
 			sprintf( temp, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() );
 			Network->PushConn();
@@ -1666,7 +1666,7 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 42:	j->SetWeightMax( reply.toLong() );			break; //WeightMax
 			case 43:
 						if( j->GetObjType() == OT_SPAWNER )
-							((CSpawnItem *)j)->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
+							(static_cast<CSpawnItem *>(j))->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}
 		tweakItemMenu( tSock, j );
 	}

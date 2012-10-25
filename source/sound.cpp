@@ -65,7 +65,7 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 	{
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
-			CSocket *mSock = ((CChar *)baseObj)->GetSocket();
+			CSocket *mSock = (static_cast<CChar *>(baseObj))->GetSocket();
 			if( mSock != NULL )
 				mSock->Send( &toSend );
 		}
@@ -95,7 +95,7 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 		{
 			if( getCont->GetObjType() == OT_ITEM )
 			{
-				CItem *iCont = (CItem *)getCont;
+				CItem *iCont = static_cast<CItem *>(getCont);
 				switch( iCont->GetID() )
 				{
 					case 0x0E75:	// backpack

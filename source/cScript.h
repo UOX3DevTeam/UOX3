@@ -210,8 +210,8 @@ public:
 	bool		OnHungerChange( CChar *pChanging, SI08 newStatus );
 	bool		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	bool		OnSnooped( CChar *snooped, CChar *snooper, bool success );
-	bool		OnEnterRegion( CChar *entering, SI16 region );
-	bool		OnLeaveRegion( CChar *entering, SI16 region );
+	bool		OnEnterRegion( CChar *entering, UI16 region );
+	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	bool		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellID );

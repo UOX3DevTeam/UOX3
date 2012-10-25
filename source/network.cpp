@@ -160,7 +160,6 @@ void cNetworkStuff::LogOut( CSocket *s )
 	bool valid = false;
 	SI16 x = p->GetX(), y = p->GetY();
 	UI08 world = p->WorldNumber();
-	CMultiObj *multi = NULL;
 
 	killTrades( p );
 
@@ -179,6 +178,7 @@ void cNetworkStuff::LogOut( CSocket *s )
 	}
 	if( !valid )
 	{
+		CMultiObj *multi = NULL;
 		if( !ValidateObject( p->GetMultiObj() ) )
 			multi = findMulti( p );
 		else
@@ -493,13 +493,11 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	if( s >= connClients.size() )
 		return;
 
-	char temp[1024];
 	CSocket *mSock = connClients[s];
 
 	if( mSock == NULL )
 		return;
 	
-	int book;
 	if( mSock->NewClient() )
 	{
 		int count = mSock->Receive( 4 );
@@ -532,6 +530,8 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
+			char temp[1024];
+			int book;
 			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
@@ -645,9 +645,9 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 							// This'll find our spellbook for us
 							CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
 							CItem *p		= ourChar->GetPackItem();
-							bool validLoc	= false;
 							if( ValidateObject( sBook ) )
 							{
+								bool validLoc	= false;
 								if( sBook->GetCont() == ourChar )
 									validLoc = true;
 								else if( ValidateObject( p ) && sBook->GetCont() == p )
@@ -950,7 +950,6 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	CSocket *mSock = loggedInClients[s];
 	if( mSock == NULL )
 		return;
-	char temp[128];
 	if( mSock->NewClient() )
 	{
 		int count, ho, mi, se, total;
@@ -1005,6 +1004,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		UI08 *buffer = mSock->Buffer();
 		if( mSock->Receive( 1, false ) > 0 )
 		{
+			char temp[128];
 			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
@@ -1159,7 +1159,6 @@ CSocket *cNetworkStuff::LastSocket( void )
 
 void cNetworkStuff::LoadFirewallEntries( void )
 {
-	SI16 p[4];
 	UString token;
 	std::string fileToUse;
 	if( !FileExists( "banlist.ini" ) )
@@ -1174,6 +1173,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 		Script *firewallData = new Script( fileToUse, NUM_DEFS, false );
 		if( firewallData != NULL )
 		{
+			SI16 p[4];
 			ScriptSection *firewallSect = NULL;
 			UString tag, data;
 			for( firewallSect = firewallData->FirstEntry(); firewallSect != NULL; firewallSect = firewallData->NextEntry() )

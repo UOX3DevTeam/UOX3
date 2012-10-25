@@ -1658,13 +1658,13 @@ void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 {
 	if( !ValidateObject( src ) || s == NULL )
 		return;
-	char title[150];
-	char abbreviation[5];
-	char guildtype[10] = { 0, };
 
 	GUILDID sGuild = src->GetGuildNumber();
 	if( sGuild != -1 && src->GetGuildToggle() )
 	{
+		char title[150];
+		char abbreviation[5];
+		
 		CGuild *mGuild = Guild( sGuild );
 		if( mGuild == NULL )
 			return;
@@ -1673,6 +1673,7 @@ void CGuildCollection::DisplayTitle( CSocket *s, CChar *src ) const
 			strcpy( abbreviation, "none" );
 		if( mGuild->Type() != GT_STANDARD )
 		{
+			char guildtype[10] = { 0, };
 			strcpy( guildtype, GTypeNames[mGuild->Type()].c_str() );
 			if( src->GetGuildTitle()[0] != 0 )
 				sprintf( title, "[%s, %s] [%s]", src->GetGuildTitle().c_str(), abbreviation, guildtype );

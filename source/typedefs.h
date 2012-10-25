@@ -49,7 +49,7 @@ typedef UI32		SERIAL;
 typedef SI08		RACEREL;
 typedef UI16		SKILLVAL;
 typedef SI08		RANGE;
-typedef UI08		weathID;
+typedef UI16		weathID;
 typedef SI16		GUILDID;
 
 const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
@@ -88,8 +88,8 @@ typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
 typedef std::map< UI16, CSpawnRegion * >					SPAWNMAP;
 typedef std::map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
 //
-typedef std::map< UI08, CTownRegion * >						TOWNMAP;
-typedef std::map< UI08, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
+typedef std::map< UI16, CTownRegion * >						TOWNMAP;
+typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
 
 typedef void (TargetFunc)( CSocket *s );
 

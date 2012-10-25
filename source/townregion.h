@@ -45,7 +45,7 @@ private:
 		}
 	};
 
-	UI08				regionNum;
+	UI16				regionNum;
 	std::string			name;
 	UI16				midilist;
 	UI08				worldNumber;
@@ -56,7 +56,7 @@ private:
 	std::vector< std::string >	guards;
 	std::vector< orePref >		orePreferences;
 	std::vector< townPers >		townMember;
-	std::vector< UI08 >			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
+	std::vector< UI16 >			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
 	std::vector< regLocs >		locations;
 	std::map< SI32, GoodData_st > goodList;
 	std::string			guardList;
@@ -92,7 +92,7 @@ private:
 
 public:
 
-						CTownRegion( UI08 region );
+						CTownRegion( UI16 region );
 						~CTownRegion();
 
 	bool				DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag = -1 );
@@ -113,8 +113,8 @@ public:
 	bool				CanCastAggressive( void ) const;
 	bool				IsDungeon( void ) const;
 	bool				IsMemberOfTown( CChar *player ) const;
-	bool				IsAlliedTown( UI08 townToCheck ) const;
-	bool				MakeAlliedTown( UI08 townToMake );
+	bool				IsAlliedTown( UI16 townToCheck ) const;
+	bool				MakeAlliedTown( UI16 townToMake );
 
 	void				IsGuarded( bool value );
 	void				CanMark( bool value );
@@ -169,8 +169,8 @@ public:
 	UI16				GetScriptTrigger( void ) const;
 	void				SetScriptTrigger( UI16 newValue );
 
-	UI08				GetRegionNum( void ) const;
-	void				SetRegionNum( UI08 newVal );
+	UI16				GetRegionNum( void ) const;
+	void				SetRegionNum( UI16 newVal );
 
 	size_t				GetNumLocations( void ) const;
 	const regLocs *		GetLocation( size_t locNum ) const;

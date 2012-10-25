@@ -80,19 +80,14 @@ function ChopTree( socket, mChar )
 		socket.SysMessage( "You are too busy to do that" );
 		return;
 	}
-
-	var targX = socket.GetWord( 11 );
-	var targY = socket.GetWord( 13 );
-	var distX = Math.abs( mChar.x - targX );
-	var distY = Math.abs( mChar.y - targY );
-	var distZ = Math.abs( mChar.z - socket.GetSByte( 16 ) );
-
-	if( distX > 2 || distY > 2 || distZ > 9 )
+	if( !CheckDistance( socket, mChar ) )
 	{
 		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
 		return;
 	}
-
+	
+	var targX = socket.GetWord( 11 );
+	var targY = socket.GetWord( 13 );
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
 	RegenerateLog( mResource, socket );
 	if( mResource.logAmount <= 0 )
@@ -103,28 +98,40 @@ function ChopTree( socket, mChar )
 
 	mChar.TurnToward( targX, targY );
 
-	if( mChar.isonhorse )
-		mChar.DoAction( 0x1C );
-	else
-		mChar.DoAction( 0x0D );
-
-	mChar.SoundEffect( 0x013E, true );
-
 	socket.clickX = targX;
 	socket.clickY = targY;
 	mChar.skillsused.lumberjacking = true;
-	mChar.StartTimer( 1500, 1, true );
+	mChar.StartTimer( 200, 2, true );
+}
+
+function CheckDistance( socket, mChar )
+{
+	var targX = socket.GetWord( 11 );
+	var targY = socket.GetWord( 13 );
+	var distX = Math.abs( mChar.x - targX );
+	var distY = Math.abs( mChar.y - targY );
+	var distZ = Math.abs( mChar.z - socket.GetSByte( 16 ) );
+
+	if( distX > 2 || distY > 2 || distZ > 9 )
+		return false;
+	else
+		return true;
 }
 
 function onTimer( mChar, timerID )
 {
+	var socket = mChar.socket;
 	switch( timerID )
 	{
 	case 0:
 		mChar.skillsused.lumberjacking = false;
-		var socket = mChar.socket;
 		if( socket )
 		{
+			if( !CheckDistance( socket, mChar ) )
+			{
+				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+				return;
+			}
 			var mResource = ResourceRegion( socket.clickX, socket.clickY, mChar.worldnumber );
 			socket.clickX = 0;
 			socket.clickY = 0;
@@ -144,6 +151,15 @@ function onTimer( mChar, timerID )
 		}
 		break;
 	case 1:
+		if( socket )
+		{
+			if( !CheckDistance( socket, mChar ) )
+			{
+				socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
+				mChar.skillsused.lumberjacking = false;
+				return;
+			}
+		}
 		if( mChar.isonhorse )
 			mChar.DoAction( 0x1C );
 		else
@@ -152,6 +168,16 @@ function onTimer( mChar, timerID )
 		mChar.SoundEffect( 0x013E, true );
 
 		mChar.StartTimer( 1500, 0, true );
+		break;
+	case 2:
+		if( mChar.isonhorse )
+			mChar.DoAction( 0x1C );
+		else
+			mChar.DoAction( 0x0D );
+	
+		mChar.SoundEffect( 0x013E, true );
+		
+		mChar.StartTimer( 1300, 1, true );	
 		break;
 	}
 }

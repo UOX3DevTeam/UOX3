@@ -255,7 +255,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 		contObj = newCont;
 		if( newCont->GetObjType() == OT_CHAR )
 		{
-			CChar *charWearing = (CChar *)newCont;
+			CChar *charWearing = static_cast<CChar *>(newCont);
 			if( ValidateObject( charWearing ) && charWearing->WearItem( this ) )
 			{
 				contIsGround = false;
@@ -267,7 +267,7 @@ bool CItem::SetCont( CBaseObject *newCont )
 		}
 		else
 		{
-			CItem *itemHolder = (CItem *)newCont;
+			CItem *itemHolder = static_cast<CItem *>(newCont);
 			if( itemHolder != NULL )
 			{
 				contIsGround = false;
@@ -900,7 +900,7 @@ void CItem::RemoveSelfFromCont( void )
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
-			CChar *targChar = (CChar *)contObj;
+			CChar *targChar = static_cast<CChar *>(contObj);
 			if( ValidateObject( targChar ) )
 			{
 				Weight->subtractItemWeight( targChar, this );
@@ -909,7 +909,7 @@ void CItem::RemoveSelfFromCont( void )
 		}
 		else
 		{
-			CItem *targItem = (CItem *)contObj;
+			CItem *targItem = static_cast<CItem *>(contObj);
 			if( ValidateObject( targItem ) )
 			{
 				Weight->subtractItemWeight( targItem, this );
@@ -1702,7 +1702,7 @@ void CItem::Update( CSocket *mSock )
 	}
 	else if( iCont->GetObjType() == OT_CHAR )
 	{
-		CChar *charCont = (CChar *)iCont;
+		CChar *charCont = static_cast<CChar *>(iCont);
 		if( charCont != NULL )
 		{
 			CPWornItem toWear = (*this);
@@ -1720,7 +1720,7 @@ void CItem::Update( CSocket *mSock )
 	}
 	else
 	{
-		CItem *itemCont = (CItem *)iCont;
+		CItem *itemCont = static_cast<CItem *>(iCont);
 		if( itemCont != NULL )
 		{
 			ObjectType oType = OT_CBO;
@@ -1823,7 +1823,6 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 //o---------------------------------------------------------------------------o
 void CItem::RemoveFromSight( CSocket *mSock )
 {
-	CChar *tChar			= NULL;
 	CPRemoveItem toRemove	= (*this);
 	CBaseObject *iCont		= GetCont();
 
@@ -1843,6 +1842,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				mSock->Send( &toRemove );
 			else
 			{
+				CChar *tChar			= NULL;
 				SOCKLIST nearbyChars;
 				if( rItem == this )
 					nearbyChars = FindPlayersInOldVisrange( rItem );

@@ -482,8 +482,6 @@ bool cScript::OnSteal( CChar *thief, CItem *theft )
 
 SI08 cScript::OnDispel( CBaseObject *dispelled )
 {
-	const SI08 RV_NOFUNC = -1;
-
 	if( !ValidateObject( dispelled ) )
 		return false;
 	if( !ExistAndVerify( seOnDispel, "onDispel" ) )
@@ -509,6 +507,7 @@ SI08 cScript::OnDispel( CBaseObject *dispelled )
 
 	if( retVal == JS_FALSE )
 	{
+		const SI08 RV_NOFUNC = -1;
 		SetEventExists( seOnDispel, false );
 		return RV_NOFUNC;
 	}
@@ -1773,7 +1772,7 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	JS_CallFunctionName( targContext, targObject, "onGumpInput", 2, params, &rval );
 }
 
-bool cScript::OnEnterRegion( CChar *entering, SI16 region )
+bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 {
 	if( !ValidateObject( entering ) )
 		return false;
@@ -1791,7 +1790,7 @@ bool cScript::OnEnterRegion( CChar *entering, SI16 region )
 	return ( retVal == JS_TRUE );
 }
 
-bool cScript::OnLeaveRegion( CChar *leaving, SI16 region )
+bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 {
 	if( !ValidateObject( leaving ) )
 		return false;
@@ -2102,10 +2101,10 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 
 	params[0]			= OBJECT_TO_JSVAL( srcObj );
 	params[1]			= OBJECT_TO_JSVAL( tmpObj );
-	JSObject *sockObj	= NULL;
 
 	if( s != NULL )
 	{
+		JSObject *sockObj	= NULL;
 		sockObj		= JSEngine->AcquireObject( IUE_SOCK, s, runTime );
 		params[2]	= OBJECT_TO_JSVAL( sockObj );
 	}

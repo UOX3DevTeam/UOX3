@@ -868,7 +868,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			tSock->ClientType( CV_HS2D );
 			if( CliVerSub < 13 )
 				tSock->ClientVerShort( CVS_7090 );
-			else if( CliVerSub <= 15 && CliVerLetter <= 0 )
+			else if( CliVerSub <= 15 && CliVerLetter == 0 )
 				tSock->ClientVerShort( CVS_70130 );
 			else if( CliVerSub == 15 && CliVerLetter == 1 )
 				tSock->ClientVerShort( CVS_70151 );
@@ -884,7 +884,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			tSock->ClientType( CV_HS3D );
 			if( CliVerSub < 13 )
 				tSock->ClientVerShort( CVS_7090 );
-			else if( CliVerSub <= 15 && CliVerLetter <= 0 )
+			else if( CliVerSub <= 15 && CliVerLetter == 0 )
 				tSock->ClientVerShort( CVS_70130 );
 			else if( CliVerSub == 15 && CliVerLetter == 1 )
 				tSock->ClientVerShort( CVS_70151 );
@@ -1790,9 +1790,9 @@ bool CPITalkRequest::HandleCommon( void )
 			a3 = ourChar->GetSerial( 3 );
 			a4 = ourChar->GetSerial( 4 );
 
-			HelpRequest *tempPageCns;
 			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
 			{
+				HelpRequest *tempPageCns;
 				tempPageCns = CounselorQueue->Current();
 				tempPageCns->Reason( Text() );
 				tempPageCns->WhoPaging( ourChar->GetSerial() );
@@ -3480,10 +3480,10 @@ bool CPISpellbookSelect::Handle( void )
 	CChar *ourChar	= tSock->CurrcharObj();
 	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
 	CItem *p		= ourChar->GetPackItem();
-	bool validLoc	= false;
 	UI08 *buffer	= tSock->Buffer();
 	if( ValidateObject( sBook ) )
 	{
+		bool validLoc	= false;
 		if( sBook->GetCont() == ourChar )
 			validLoc = true;
 		else if( ValidateObject( p ) && sBook->GetCont() == p )

@@ -1350,8 +1350,8 @@ void MakeTownAlly( CSocket *s )
 		s->sysmessage( 1110 );
 		return;
 	}
-	UI08 srcTown = mChar->GetTown();
-	UI08 trgTown = targetChar->GetTown();
+	UI16 srcTown = mChar->GetTown();
+	UI16 trgTown = targetChar->GetTown();
 
 	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
 		s->sysmessage( 1111 );
@@ -1655,7 +1655,7 @@ bool CPITargetCursor::Handle( void )
 			}
 			else if( a3 == 1 )	// CustomTarget
 			{
-				cScript *tScript	= (cScript *)tSock->TempInt();
+				cScript *tScript	=(cScript *)tSock->TempInt();
 				if( tScript != NULL )
 					tScript->DoCallback( tSock, tSock->GetDWord( 7 ), static_cast<UI08>(targetID) );
 				return true;

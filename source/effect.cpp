@@ -448,7 +448,7 @@ void cEffects::checktempeffects( void )
 				break;
 			case 17: //Explosion potion
 				src = calcCharObjFromSer( Effect->Source() );
-				explodeItem( src->GetSocket(), (CItem *)Effect->ObjPtr() ); //explode this item
+				explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
 				break;
 			case 18: //Polymorph spell
 				s->SetID( s->GetOrgID() );
@@ -533,9 +533,9 @@ void cEffects::checktempeffects( void )
 				//Make sure to check for a specific script when the previous checks ended in the global script.
 				if( ( tScript == NULL || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
 				{
-					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(((CItem *)myObj)->GetType()) ) )
+					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) )
 					{
-						scpNum	= JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(((CItem *)myObj)->GetType()) );
+						scpNum	= JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) );
 						tScript = JSMapping->GetScript( scpNum );
 					}
 					else if( JSMapping->GetEnvokeByID()->Check( myObj->GetID() ) )
@@ -950,7 +950,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 //o--------------------------------------------------------------------------
 void cEffects::SaveEffects( void )
 {
-	std::ofstream writeDestination, effectDestination;
+	std::ofstream writeDestination, effectDestination; //writeDestination seems to be unused
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
 	int s_t							= getclock();
 
@@ -996,17 +996,17 @@ void cEffects::LoadEffects( void )
 {
 	std::ifstream input;
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "effects.wsc";
-	CTEffect *toLoad;
 
 	input.open( filename.c_str(), std::ios_base::in );
 	input.seekg( 0, std::ios::beg );
-
-	char line[1024];
 
 	UString tag, data, UTag;
 
 	if( input.is_open() )
 	{
+		CTEffect *toLoad;
+		char line[1024];
+
 		while( !input.eof() && !input.fail() )
 		{
 			input.getline( line, 1024 );

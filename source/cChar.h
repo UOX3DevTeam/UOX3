@@ -168,8 +168,8 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
-	UI08		town;       // Matches Region number in regions.scp
-	UI08		regionNum;
+	UI16		town;       // Matches Region number in regions.scp
+	UI16		regionNum;
 
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
@@ -267,13 +267,13 @@ public:
 	SI08		GetHunger( void ) const;
 	UI16		GetTamedHungerRate( void ) const;
 	UI08		GetTamedHungerWildChance( void ) const;
-	UI08		GetTown( void ) const;
+	UI16		GetTown( void ) const;
 	std::string GetFood( void ) const;
 
 	bool		SetHunger( SI08 newValue );
 	void		SetTamedHungerRate( UI16 newValue );
 	void		SetTamedHungerWildChance( UI08 newValue );
-	void		SetTown( UI08 newValue );
+	void		SetTown( UI16 newValue );
 	void		SetFood( std::string food );
 
 	UI08		GetBrkPeaceChanceGain( void ) const;
@@ -377,13 +377,13 @@ public:
 	UI08		GetRunning( void ) const;
 	UI08		GetStep( void ) const;
 	CTownRegion *GetRegion( void ) const;
-	UI08		GetRegionNum( void ) const;
+	UI16		GetRegionNum( void ) const;
 
 	void			SetCell( SI08 newVal );
 	void			SetStealth( SI08 newValue );
 	void			SetRunning( UI08 newValue );
 	void			SetStep( UI08 newValue );
-	void			SetRegion( UI08 newValue );
+	void			SetRegion( UI16 newValue );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
 	virtual void	SetLocation( const CBaseObject *toSet );

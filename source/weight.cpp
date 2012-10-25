@@ -261,9 +261,9 @@ bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
 void CWeight::addItemWeight( CBaseObject *getObj, CItem *item )
 {
 	if( getObj->GetObjType() == OT_CHAR )
-		addItemWeight( (CChar *)getObj, item );
+		addItemWeight( static_cast<CChar *>(getObj), item );
 	else
-		addItemWeight( (CItem *)getObj, item );
+		addItemWeight( static_cast<CItem *>(getObj), item );
 }
 
 //o--------------------------------------------------------------------------o
@@ -364,9 +364,9 @@ bool CWeight::IsWeightedContainer( CItem *toCheck )
 void CWeight::subtractItemWeight( CBaseObject *getObj, CItem *item )
 {
 	if( getObj->GetObjType() == OT_CHAR )
-		subtractItemWeight( (CChar *)getObj, item );
+		subtractItemWeight( static_cast<CChar *>(getObj), item );
 	else
-		subtractItemWeight( (CItem *)getObj, item );
+		subtractItemWeight( static_cast<CItem *>(getObj), item );
 }
 
 //o--------------------------------------------------------------------------o
@@ -459,7 +459,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 		return true;
 
 	if( pack->GetContSerial() < BASEITEMSERIAL )		// If the pack's container is a character, (it's his root pack), we don't have a container weight limit
-		return checkCharWeight( ourChar, (CChar *)pack->GetCont(), item );
+		return checkCharWeight( ourChar, static_cast<CChar *>(pack->GetCont()), item );
 
 	const SI32 packWeight = pack->GetWeight();
 	SI32 packWeightMax = pack->GetWeightMax();
@@ -471,7 +471,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 		if( pack->GetCont() == NULL )	// No container above pack
 			return true;
 		if( pack->GetContSerial() >= BASEITEMSERIAL )	// pack is in another pack, lets ensure it won't overload that pack
-			return checkPackWeight( ourChar, (CItem *)pack->GetCont(), item );
+			return checkPackWeight( ourChar, static_cast<CItem *>(pack->GetCont()), item );
 	}
 	return false;
 }

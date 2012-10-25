@@ -656,7 +656,7 @@ void CEnvoke::Parse( void )
 {
 	envokeList.clear();
 
-	std::ifstream envokefile;
+	//std::ifstream envokefile; //Unused variable?
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
 	if( !FileExists( filename ) )
 	{

@@ -101,17 +101,17 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	UI08 more2			= (UI08)JSVAL_TO_INT( argv[5] );
 	UI08 more3			= (UI08)JSVAL_TO_INT( argv[6] );
 
-	JSObject *myitemptr = NULL;
 	CItem *myItemPtr	= NULL;
 
 	if( argc == 8 )
 	{
+		JSObject *myitemptr = NULL;
 		myitemptr = JSVAL_TO_OBJECT( argv[7] );
-		myItemPtr = (CItem *)JS_GetPrivate( cx, myitemptr );
+		myItemPtr = static_cast<CItem *>(JS_GetPrivate( cx, myitemptr ));
 	}
 
 	JSObject *mysrc		= JSVAL_TO_OBJECT( argv[1] );
-	CChar *mysrcChar	= (CChar*)JS_GetPrivate( cx, mysrc );
+	CChar *mysrcChar	= static_cast<CChar*>(JS_GetPrivate( cx, mysrc ));
 
 	if( !ValidateObject( mysrcChar ) )
 	{
@@ -122,7 +122,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( iType == 0 )	// character
 	{
 		JSObject *mydestc = JSVAL_TO_OBJECT( argv[2] );
-		CChar *mydestChar = (CChar*)JS_GetPrivate( cx, mydestc );
+		CChar *mydestChar = static_cast<CChar*>(JS_GetPrivate( cx, mydestc ));
 
 		if( !ValidateObject( mydestChar ) )
 		{
@@ -137,7 +137,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	else
 	{
 		JSObject *mydesti = JSVAL_TO_OBJECT( argv[2] );
-		CItem *mydestItem = (CItem *)JS_GetPrivate( cx, mydesti );
+		CItem *mydestItem = static_cast<CItem *>(JS_GetPrivate( cx, mydesti ));
 
 		if( !ValidateObject( mydestItem ) )
 		{
@@ -225,7 +225,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 	JSObject *srcObj	= JSVAL_TO_OBJECT( argv[0] );
-	CBaseObject *src	= (CBaseObject *)JS_GetPrivate( cx, srcObj );
+	CBaseObject *src	= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcObj ));
 	if( !ValidateObject( src ) )
 	{
 		DoSEErrorMessage( "DoMovingEffect: Invalid source object" );
@@ -248,7 +248,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	else
 	{
 		JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
-		trg					= (CBaseObject *)JS_GetPrivate( cx, trgObj );
+		trg					= static_cast<CBaseObject *>(JS_GetPrivate( cx, trgObj ));
 		if( !ValidateObject( trg ) )
 		{
 			DoSEErrorMessage( "DoMovingEffect: Invalid target object" );
@@ -293,9 +293,9 @@ JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		return JS_FALSE;
 	}
 	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sock	= (CSocket *)JS_GetPrivate( cx, mSock );
+	CSocket *sock	= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	JSObject *mChar = JSVAL_TO_OBJECT( argv[1] );
-	CChar *player	= (CChar *)JS_GetPrivate( cx, mChar );
+	CChar *player	= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
 	if( !ValidateObject( player ) )
 	{
 		DoSEErrorMessage( "MakeItem: Invalid character" );
@@ -699,11 +699,11 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argv[0] != JSVAL_NULL )
 	{
 		JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-		mySock					= (CSocket *)JS_GetPrivate( cx, mSock );
+		mySock					= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	}
 
 	JSObject *mChar				= JSVAL_TO_OBJECT( argv[1] );
-	CChar *myChar				= (CChar *)JS_GetPrivate( cx, mChar );
+	CChar *myChar				= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ) );
 	bool bInPack				= true;
@@ -742,11 +742,11 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( argv[0] != JSVAL_NULL )
 	{
 		JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
-		mySock				= (CSocket *)JS_GetPrivate( cx, mSock );
+		mySock				= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	}
 
 	JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-	CChar *myChar			= (CChar *)JS_GetPrivate( cx, mChar );
+	CChar *myChar			= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
 	int amount				= (int)JSVAL_TO_INT( argv[2] );
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );
 	bool isString			= false; //Never used!!
@@ -824,7 +824,7 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( argc == 1 )
 	{
 		JSObject *myitemptr = JSVAL_TO_OBJECT( argv[0] );
-		CBaseObject *myItemPtr = (CBaseObject *)JS_GetPrivate( cx, myitemptr );
+		CBaseObject *myItemPtr = static_cast<CBaseObject *>(JS_GetPrivate( cx, myitemptr ));
 		if( ValidateObject( myItemPtr ) )
 		{
 			xLoc		= myItemPtr->GetX();
@@ -930,8 +930,8 @@ JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	{
 		return JS_FALSE;
 	}
-	UI08 town	= (UI08)JSVAL_TO_INT( argv[0] );
-	UI08 sTown	= (UI08)JSVAL_TO_INT( argv[1] );
+	UI16 town	= (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 sTown	= (UI16)JSVAL_TO_INT( argv[1] );
 	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
 	return JS_TRUE;
 }
@@ -975,8 +975,8 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	JSObject *mDoor	= JSVAL_TO_OBJECT( argv[1] );
 
-	CSocket *mySock	= (CSocket *)JS_GetPrivate( cx, mSock );
-	CItem *myDoor	= (CItem *)JS_GetPrivate( cx, mDoor );
+	CSocket *mySock	= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
+	CItem *myDoor	= static_cast<CItem *>(JS_GetPrivate( cx, mDoor ));
 
 	if( !ValidateObject( myDoor ) )
 	{
@@ -1044,7 +1044,7 @@ JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( mType == 0 )	// item
 	{
 		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
-		CItem *myItem	= (CItem *)JS_GetPrivate( cx, mItem );
+		CItem *myItem	= static_cast<CItem *>(JS_GetPrivate( cx, mItem ));
 		pOwner			= FindItemOwner( myItem );
 	}
 	else				// serial
@@ -1071,7 +1071,7 @@ JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar = (CSocket *)JS_GetPrivate( cx, mysockptr );
+	CSocket *sChar = static_cast<CSocket *>(JS_GetPrivate( cx, mysockptr ));
 	if( sChar == NULL )
 	{
 		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
@@ -1098,7 +1098,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar		= (CSocket *)JS_GetPrivate( cx, mysockptr );
+	CSocket *sChar		= static_cast<CSocket *>(JS_GetPrivate( cx, mysockptr ));
 	if( sChar == NULL )
 	{
 		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
@@ -1290,7 +1290,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	}
 
 	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject		= (CBaseObject *)JS_GetPrivate( cx, srcBaseObj );
+	CBaseObject *srcObject		= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcBaseObj ));
 
 	if( !ValidateObject( srcObject ) )
 	{
@@ -1301,7 +1301,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	if( argc == 4 )
 	{
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcSocketObj );
+		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
 	}
 	
 	UI16 retCounter				= 0;
@@ -1351,7 +1351,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 
 	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject		= (CBaseObject *)JS_GetPrivate( cx, srcBaseObj );
+	CBaseObject *srcObject		= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcBaseObj ));
 
 	if( !ValidateObject( srcObject ) )
 	{
@@ -1362,7 +1362,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( argc == 4 )
 	{
 		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= (CSocket *)JS_GetPrivate( cx, srcSocketObj );
+		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
 	}
 	
 	UI16 retCounter					= 0;
@@ -1443,7 +1443,7 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 	}
 
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= (CSocket *)JS_GetPrivate( cx, mSock );
+	CSocket *mySock			= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	CChar *myChar			= mySock->CurrcharObj();
 	std::string textToYell	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	UI08 commandLevel		= (UI08)JSVAL_TO_INT( argv[2] );
@@ -1562,7 +1562,7 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	} 
 
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= (CSocket *)JS_GetPrivate( cx, mSock );
+	CSocket *mySock			= static_cast<CSocket *>(JS_GetPrivate( cx, mSock ));
 	if( mySock == NULL )
 	{
 		DoSEErrorMessage( "SendStaticStats: passed an invalid socket!" );
@@ -1658,7 +1658,7 @@ JSBool SE_GetTileHeight( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
-	cScript *myScript = (cScript *)extraData;
+	cScript *myScript = static_cast<cScript *>(extraData);
 	return myScript->OnIterate( a, b );
 }
 
@@ -1891,7 +1891,7 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" ) 
 	{
-		CBaseObject *myObj	= (CBaseObject *)myClass.toObject();
+		CBaseObject *myObj	= static_cast<CBaseObject *>(myClass.toObject());
 		*rval				= BOOLEAN_TO_JSVAL( ValidateObject( myObj ) );
 	}
 	else

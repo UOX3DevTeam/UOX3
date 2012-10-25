@@ -880,7 +880,7 @@ void cItem::GlowItem( CItem *i )
 		}
 		else // Equipped
 		{
-			CChar *s = (CChar *)getCont;
+			CChar *s = static_cast<CChar *>(getCont);
 			if( ValidateObject( s ) )
 			{
 				j->SetCont( getCont );

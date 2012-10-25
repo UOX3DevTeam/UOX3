@@ -2452,10 +2452,10 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x0650:	 // SERVERLIST[0120]
 	{
 		UString sname, sip, sport;
-		struct hostent *lpHostEntry = NULL;
 		physicalServer toAdd;
 		if( value.sectionCount( "," ) == 2 )
 		{
+			struct hostent *lpHostEntry = NULL;
 			sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
 			sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
 			sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
@@ -2833,10 +2833,10 @@ void CServerData::LoadTime( void )
 	input.open( filename.c_str(), std::ios_base::in );
 	input.seekg( 0, std::ios::beg );
 
-	char line[1024];
 
 	if( input.is_open() )
 	{
+		char line[1024];
 		while( !input.eof() && !input.fail() )
 		{
 			input.getline( line, 1024 );

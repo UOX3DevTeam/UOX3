@@ -1657,11 +1657,11 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 {
 	if( !ErrorCode )
 		return;
-	char temp[1024];
 	if( cwmWorldState->ServerData()->ServerCrashProtectionStatus() > 1 )
 	{		
 		if( cwmWorldState->GetErrorCount() < 10 )
 		{
+			char temp[1024];
 			cwmWorldState->IncErrorCount();
 			
 			sprintf( temp, "Server crash #%lu from unknown error, restarting.", cwmWorldState->GetErrorCount() );
@@ -2301,7 +2301,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 							{
 								if( toScan->GetType() == IT_TOWNSTONE )
 								{
-									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI08>(toScan->GetTempVar( CITV_MOREX ))];
+									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI16>(toScan->GetTempVar( CITV_MOREX ))];
 									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
@@ -2379,15 +2379,24 @@ void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 bool WillResultInCriminal( CChar *mChar, CChar *targ )
 {
 	CChar *tOwner = targ->GetOwnerObj();
+	CChar *mOwner = mChar->GetOwnerObj();
+	Party *mCharParty = PartyFactory::getSingleton().Get( mChar );
 	if( !ValidateObject( mChar ) || !ValidateObject( targ ) || mChar == targ ) 
 		return false;
 	else if( !GuildSys->ResultInCriminal( mChar, targ ) || Races->Compare( mChar, targ ) <= RACE_ENEMY ) 
+		return false;
+	else if( mCharParty && mCharParty->HasMember( targ ) )
 		return false;
 	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
 		return false;
 	else if( ValidateObject( tOwner ) )
 	{
 		if( tOwner == mChar || tOwner == mChar->GetOwnerObj() )
+			return false;
+	}
+	else if( ValidateObject( mOwner ) )
+	{
+		if( mOwner == targ || mOwner == targ->GetOwnerObj() )
 			return false;
 	}
 	else if( targ->IsInnocent() )
