@@ -1,3 +1,21 @@
+[NPCLIST escorts]
+{
+m_seeker
+f_seeker
+m_gypsy
+f_gypsy
+m_peasant
+f_peasant
+m_noble
+f_noble
+m_sailor
+f_sailor
+m_fighter
+f_fighter
+m_pirate
+f_pirate
+}
+
 [NPCLIST arcticlist]
 {
 polarbear
@@ -953,6 +971,12 @@ f_leatherworker
 {
 m_mage
 f_mage
+}
+
+[NPCLIST scribe]
+{
+m_scribe
+f_scribe
 }
 
 [NPCLIST shipwright]

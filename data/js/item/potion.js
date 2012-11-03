@@ -201,7 +201,7 @@ function onUseChecked( pUser, iUsed )
 
 			iUsed.Delete();
 
-			var eBottle = CreateBlankItem( socket, pUser, 1, "#", 0x0F0E, 0, "ITEM", true );
+			var eBottle = CreateDFNItem( pUser.socket, pUser, "0x0F0E", 1, "ITEM", true );
 			if( eBottle && eBottle.isItem )
 				eBottle.decay = true;
 		}

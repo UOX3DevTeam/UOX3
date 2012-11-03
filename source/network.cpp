@@ -1,49 +1,55 @@
 #include "uox3.h"
 #include "network.h"
-#include "books.h"
-#include "msgboard.h"
 #include "movement.h"
 #include "wholist.h"
-#include "commands.h"
 #include "skills.h"
 #include "cMagic.h"
-#include "PageVector.h"
-#include "gump.h"
-#include "trigger.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
+#include "cThreadQueue.h"
+#include "CPacketSend.h"
+#include "scriptc.h"
+#include "ssection.h"
+#include "cServerDefinitions.h"
+#include "Dictionary.h"
+#include "mapstuff.h"
 
-#if defined(__unix__)
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include <sys/ioctl.h>
+#include "ObjectFactory.h"
+
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#include <sys/ioctl.h>
 #endif
 
 #undef DBGFILE
 #define DBGFILE "Network.cpp"
 
-//#define DEBUG_PACKET
-
-void cNetworkStuff::FlushBuffer( UOXSOCKET s ) // Sends buffered data at once
+namespace UOX
 {
-	connClients[s]->FlushBuffer();
-}
+
+cNetworkStuff *Network = NULL;
+
+#define _DEBUG_PACKET	0
+
+fd_set conn;
+fd_set all;
+fd_set errsock;
+
+void killTrades( CChar *i );
+void DoorMacro( CSocket *s );
+void sysBroadcast( const std::string& txt );
 
 void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 {
-	for( int i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
-		FlushBuffer( i );
-	for( UI32 j = 0; j < loggedInClients.size(); j++ )
-		loggedInClients[j]->FlushBuffer();
-	for( UI32 k = 0; k < xgmClients.size(); k++ )
-		xgmClients[k]->FlushBuffer();
+	SOCKLIST_CITERATOR toClear;
+	for( toClear = connClients.begin(); toClear != connClients.end(); ++toClear )
+		(*toClear)->FlushBuffer();
+	for( toClear = loggedInClients.begin(); toClear != loggedInClients.end(); ++toClear )
+		(*toClear)->FlushBuffer();
 }
 
 // set the laston character member value to the current date/time
-void cNetworkStuff::setLastOn( cSocket *s )
+void cNetworkStuff::setLastOn( CSocket *s )
 {
 	assert( s != NULL );
 	
@@ -56,11 +62,15 @@ void cNetworkStuff::setLastOn( cSocket *s )
 	else
 	{
 		// some ctime()s like to stick \r\n on the end, we don't want that
-		for( int end = strlen(t) - 1; end >= 0 && isspace(t[end]); --end )
+		size_t mLen = strlen( t );
+		for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
 			t[end] = '\0';
 	}
 	if( s->CurrcharObj() != NULL )
+	{
 		s->CurrcharObj()->SetLastOn( t );
+		s->CurrcharObj()->SetLastOnSecs( ltime );
+	}
 }
 
 void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
@@ -73,38 +83,36 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 
 	if( currChar != NULL )
 	{
-		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->GetServerJoinPartAnnouncementsStatus() ) 
+		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() ) 
 		{
-			sprintf( temp, Dictionary->GetEntry( 752 ), currChar->GetName() );
-			sysbroadcast( temp );//message upon leaving a server 
+			sprintf( temp, Dictionary->GetEntry( 752 ).c_str(), currChar->GetName().c_str() );
+			sysBroadcast( temp );//message upon leaving a server 
 		} 
 	}
 	if( connClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK actbAccount;
-		actbAccount = connClients[s]->GetAccount();
+		CAccountBlock &actbAccount = connClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{
-			if( actbAccount.wAccountIndex != AB_INVALID_ID )
-				actbAccount.wFlags &= 0xFFFFFFF7;
+			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
 		}
 	}
 	//Instalog
 	if( currChar != NULL )
 	{
-		if( !currChar->isFree() && isOnline( currChar ) )
+		if( !currChar->isFree() && connClients[s] != NULL )
 		{
 			// October 6, 2002 - Brakhtus Support for the onLogout event.
-			cScript *onLogoutScp = Trigger->GetScript(currChar->GetScriptTrigger());
-			if(onLogoutScp!=NULL)
+			cScript *onLogoutScp = JSMapping->GetScript(currChar->GetScriptTrigger());
+			if( onLogoutScp!=NULL )
 				onLogoutScp->OnLogout(connClients[s], currChar);
 			else
 			{
-				onLogoutScp = Trigger->GetScript(0);
-				if(onLogoutScp!=NULL)
+				onLogoutScp = JSMapping->GetScript( (UI16)0 );
+				if( onLogoutScp!=NULL )
 					onLogoutScp->OnLogout(connClients[s],currChar);
 			}
-			LogOut( s );
+			LogOut( connClients[s] );
 		}
 	}
 	try
@@ -112,16 +120,19 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 		connClients[s]->AcctNo( AB_INVALID_ID );
 		connClients[s]->IdleTimeout( -1 );
 		connClients[s]->FlushBuffer();
+		connClients[s]->ClearTimers();
 		connClients[s]->CloseSocket();
+		if( currConnIter != connClients.begin() && currConnIter >= ( connClients.begin() + s) )
+			--currConnIter;
+		for( size_t q = 0; q < connIteratorBackup.size(); ++q )
+		{
+			if( connIteratorBackup[q] != connClients.begin() && connIteratorBackup[q] >= (connClients.begin() + s) )
+				--connIteratorBackup[q];
+		}
 		delete connClients[s];
 		connClients.erase( connClients.begin() + s );
-		for( unsigned int q = 0; q < connIteratorBackup.size(); q++ )
-		{
-			if( connIteratorBackup[q] >= s )
-				connIteratorBackup[q]--;
-		}
 	}
-	catch(...)
+	catch( ... )
 	{
 		Console << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
 	}
@@ -132,112 +143,115 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void cNetworkStuff::LogOut( UOXSOCKET s )
-//|	Date					-	
+//|	Function		-	void cNetworkStuff::LogOut( UOXSOCKET s )
+//|	Date			-	
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	Process client logout, and process instalog settings
 //|
 //|	Modification	-	Date Unknown - Added multi checked to instalog processing
 //o--------------------------------------------------------------------------o
-void cNetworkStuff::LogOut( UOXSOCKET s )
+void cNetworkStuff::LogOut( CSocket *s )
 {
 	// This would probably be a good place to do the disconnect
-	CChar *p = connClients[s]->CurrcharObj();
-	int a;
+	CChar *p = s->CurrcharObj();
 	bool valid = false;
 	SI16 x = p->GetX(), y = p->GetY();
-	CMultiObj *multi = NULL;
+	UI08 world = p->WorldNumber();
 
-	if( p->GetCommandLevel() >= CNS_CMDLEVEL || p->GetAccount().wAccountIndex == 0 ) 
+	killTrades( p );
+
+	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().wAccountIndex == 0 ) 
 		valid = true;
 	else 
 	{
-		for( a = 0; static_cast<UI32>(a) < cwmWorldState->GetLogoutCount(); a++ )
+		for( size_t a = 0; a < cwmWorldState->logoutLocs.size(); ++a )
 		{
-			if( cwmWorldState->logout[a].x1 <= x && cwmWorldState->logout[a].y1 <= y && cwmWorldState->logout[a].x2 >= x && cwmWorldState->logout[a].y2 >= y )
+			if( cwmWorldState->logoutLocs[a].x1 <= x && cwmWorldState->logoutLocs[a].y1 <= y && cwmWorldState->logoutLocs[a].x2 >= x && cwmWorldState->logoutLocs[a].y2 >= y && cwmWorldState->logoutLocs[a].worldNum == world )
 			{
 				valid = true;
 				break;
 			}
 		}
 	}
-
 	if( !valid )
 	{
-		if( p->GetMultiObj() == NULL )
+		CMultiObj *multi = NULL;
+		if( !ValidateObject( p->GetMultiObj() ) )
 			multi = findMulti( p );
-		else 
-			multi = static_cast<CMultiObj *>(p->GetMultiObj() );
-	}
-	
-	if( multi != NULL && !valid )//It they are in a multi... and it's not already valid (if it is why bother checking?)
-	{
-		CItem *b = getPack( p );
-		if( b != NULL )
+		else
+			multi = static_cast< CMultiObj * >(p->GetMultiObj() );
+		if( ValidateObject( multi ) )
 		{
-			for( CItem *getItem = b->FirstItemObj(); !b->FinishedItems(); getItem = b->NextItemObj() )
+			if( multi->IsOwner( p ) )
+				valid = true;
+			else if( !p->IsGM() )
 			{
-				if( getItem != NULL )
-				{
-					if( getItem->GetType() == 7 && getItem->GetMore() == multi->GetSerial() )
-					{//a key to this multi
-						valid = true;//Log 'em out now!
-						break;
-					}
-				}
+				SI16 sx, sy, ex, ey;
+				Map->MultiArea( multi, sx, sy, ex, ey );
+				p->SetLocation( ex, ey + 1, p->GetZ() );
 			}
 		}
 	}
+	//If player is holding an item on the cursor, and it was picked up off the ground, drop it back to the ground
+	if( s->GetCursorItem() )
+	{
+		if( s->PickupSpot() == PL_GROUND )
+		{
+			CItem * i = s->GetCursorItem();
+			i->SetCont( NULL );
+			i->SetLocation( p->GetX(), p->GetY(), p->GetZ() );
+		}
+	}
 	
-	ACCOUNTSBLOCK actbAccount;
-	actbAccount=p->GetAccount();
+	CAccountBlock& actbAccount = s->GetAccount();
 	if( valid )
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = INVALIDSERIAL;
-		p->SetLogout( -1 );
+		p->SetTimer( tPC_LOGOUT, 0 );
+		s->ClearTimers();
 	}
 	else
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 			actbAccount.dwInGame = p->GetSerial();
-		p->SetLogout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) )) );
+		p->SetTimer( tPC_LOGOUT, cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT ) );
 	}
-	p->Teleport();
+	s->LoginComplete( false );
+	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
+	p->SetSocket( NULL );
+	p->SetLocation( p );
 }
 
 void cNetworkStuff::sockInit( void )
 {
-//	char h1=0, h2=0, h3=0, h4=0;
 	int bcode;
 	
-	kr = true;
-	faul = false;
+	cwmWorldState->SetKeepRun( true );
+	cwmWorldState->SetError( false );
 	
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	int on = 1;
 #endif
 	
 	a_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if( a_socket < 0 )
 	{
-		Console.Error( 0, " Unable to create socket");
-#if !defined(__unix__)
-		Console.Error( 0, " Code %i", WSAGetLastError() );
+		Console.Error( " Unable to create socket");
+#if UOX_PLATFORM == PLATFORM_WIN32
+		Console.Error( " Code %i", WSAGetLastError() );
 #else
 		Console << myendl;
 #endif
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
-		kr = false;
-		faul = true;
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 		return;
 	}
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	setsockopt( a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
 #endif
 	
@@ -246,16 +260,14 @@ void cNetworkStuff::sockInit( void )
 	memset( (char *) &connection, 0, len_connection_addr );
 	connection.sin_family = AF_INET;
 	connection.sin_addr.s_addr = htonl( INADDR_ANY );
-	connection.sin_port = htons( cwmWorldState->ServerData()->GetServerPort() );
+	connection.sin_port = htons( cwmWorldState->ServerData()->ServerPort() );
 	bcode = bind( a_socket, (struct sockaddr *)&connection, len_connection_addr );
 	
 	if( bcode < 0 )
 	{
-		Console.Error( 0, " Unable to bind socket 1 - Error code: %i", bcode );
+		Console.Error( " Unable to bind socket 1 - Error code: %i", bcode );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
-		kr = false;
-		faul = true;
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
 		return;
 	}
@@ -266,19 +278,27 @@ void cNetworkStuff::sockInit( void )
 	ioctlsocket( a_socket, FIONBIO, &mode );
 
 	listen( a_socket, 42 );
-//	ph1 = h1;
-//	ph2 = h2;
-//	ph3 = h3;
-//	ph4 = h4;
 }
 
 void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 {
-	int i;
 	closesocket( a_socket );
-	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
-		connClients[i]->CloseSocket();
+	for( SOCKLIST_CITERATOR toClose = connClients.begin(); toClose != connClients.end(); ++toClose )
+	{
+		(*toClose)->CloseSocket();
+	}
 }
+
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#ifdef FD_SETSIZE
+		#if FD_SETSIZE < 256
+			#undef FD_SETSIZE
+			#define FD_SETSIZE 256 
+		#endif
+	#else
+		#define FD_SETSIZE 256 
+	#endif
+#endif
 
 void cNetworkStuff::CheckConn( void ) // Check for connection requests
 {
@@ -289,16 +309,21 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	if( s > 0 )
 	{
 		int len = sizeof( struct sockaddr_in );
-		int newClient;
-#if !defined(__unix__)
+		size_t newClient;
+#if UOX_PLATFORM == PLATFORM_WIN32
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, &len );
 #else
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
+		if( newClient >= FD_SETSIZE )
+		{
+			Console.Error( "accept() returning unselectable fd!" );
+			return;
+		}
 #endif
-		cSocket *toMake = new cSocket( newClient );
+		CSocket *toMake = new CSocket( newClient );
 		if( newClient < 0 )
 		{
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 			int errorCode = WSAGetLastError();
 			if( errorCode == WSAEWOULDBLOCK )
 #else
@@ -308,9 +333,8 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			{
 				delete toMake;
 				return;
-
 			}
-			Console.Error( 0, "Error at client connection!" );
+			Console.Error( "Error at client connection!" );
 			cwmWorldState->SetKeepRun( true );
 			cwmWorldState->SetError( true );
 			delete toMake;
@@ -337,8 +361,9 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 			delete toMake;
 			return;
 		}
-		sprintf( temp, "FIREWALL: Forwarding address %i.%i.%i.%i --> Access Granted!", part[0], part[1], part[2], part[3] );
-		messageLoop << temp;
+		//Firewall-messages are really only needed when firewall blocks, not when it lets someone through. Leads to information overload in console. Commenting out.
+		//sprintf( temp, "FIREWALL: Forwarding address %i.%i.%i.%i --> Access Granted!", part[0], part[1], part[2], part[3] );
+		//messageLoop << temp;
 		sprintf( temp, "Client %i [%i.%i.%i.%i] connected [Total:%i]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
 		messageLoop << temp;
 		loggedInClients.push_back( toMake );
@@ -347,7 +372,7 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	}
 	if( s < 0 )
 	{
-		Console.Error( 0, " Select (Conn) failed!" );
+		Console.Error( " Select (Conn) failed!" );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -357,9 +382,9 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 {
 	bool match[4];
-	for( unsigned int i = 0; i < slEntries.size(); i++ )
+	for( size_t i = 0; i < slEntries.size(); ++i )
 	{
-		for( UI08 k = 0; k < 4; k++ )
+		for( UI08 k = 0; k < 4; ++k )
 		{
 			if( slEntries[i].b[k] == -1 )
 				match[k] = true;
@@ -373,37 +398,38 @@ bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 }
 cNetworkStuff::~cNetworkStuff()
 {
-	int i, s = 0;
-	for( i = 0; static_cast<unsigned int>(i) < loggedInClients.size(); i++ )
+	size_t i = 0;
+	size_t s = 0;
+	for( i = 0; i < loggedInClients.size(); ++i )
 	{
 		loggedInClients[i]->FlushBuffer();
 		loggedInClients[i]->CloseSocket();
 		delete loggedInClients[i];
 	}
-	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
+	for( i = 0; i < connClients.size(); ++i )
 	{
-		FlushBuffer( i );
+		connClients[i]->FlushBuffer();
 		connClients[i]->CloseSocket();
-		s = max( s, connClients[i]->CliSocket() + 1 );
+		s = UOX_MAX( s, connClients[i]->CliSocket() + 1 );
 		delete connClients[i];
 	}
+
+	loggedInClients.resize( 0 );
+	connClients.resize( 0 );
 	closesocket( s );
-	ShutdownXGM();
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	WSACleanup();
 #endif
 }
 
 void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 {
-	int i;
-	
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
 	int nfds = 0;
-	for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
+	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
 	{
-		int clientSock = connClients[i]->CliSocket();
+		int clientSock = (*toCheck)->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
@@ -412,24 +438,22 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
-		int oldnow = cwmWorldState->GetPlayersOnline();
-		for( i = 0; i < cwmWorldState->GetPlayersOnline(); i++ )
+		size_t oldnow = cwmWorldState->GetPlayersOnline();
+		for( size_t i = 0; i < cwmWorldState->GetPlayersOnline(); ++i )
 		{
 			if( FD_ISSET( connClients[i]->CliSocket(), &errsock ) )
 			{
 				Disconnect( i );
-				//Disconnect( connClients[i]->CliSocket() );
 			}
 			if( ( FD_ISSET( connClients[i]->CliSocket(), &all ) ) && ( oldnow == cwmWorldState->GetPlayersOnline() ) )
 			{
 				try
 				{
 					GetMsg( i );
-					//GetMsg(connClients[i]->CliSocket());
 				}
 				catch( socket_error& blah )
 				{
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 						Console << "Client disconnected" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
@@ -439,66 +463,48 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 #endif
 					Disconnect( i );	// abnormal error
 				}
-				if( cwmWorldState->GetExecuteBatch() ) 
-					batchcheck( GetSockPtr( i ) );
 			}
 		}
 	}
 	else if( s == SOCKET_ERROR )
 	{
-//		Console << WSAGetLastError() << myendl;
-//		Console << WSANOTINITIALISED << myendl;
 	}
 }
 
 
-cNetworkStuff::cNetworkStuff() : xgmRunning( false ), peakConnectionCount( 0 ) // Initialize sockets
+cNetworkStuff::cNetworkStuff() : peakConnectionCount( 0 ) // Initialize sockets
 {
+	FD_ZERO( &conn );
 	sockInit();
 	LoadFirewallEntries();
-	StartupXGM(32621);
 }
 
-cSocket& cNetworkStuff::GetSocket( UOXSOCKET s )
+CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
-	return *(connClients[s]);
-}
-
-cSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
-{
-	if( s < 0 || s >= static_cast<UOXSOCKET>(connClients.size()) )
+	if( s >= connClients.size() )
 		return NULL;
 	return connClients[s];
 }
 
-cPInputBuffer *WhichPacket( UI08 packetID, cSocket *s );
-
+CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
+CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
 void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 {
-	if( s == -1 )
+	if( s >= connClients.size() )
 		return;
 
-	int count, ho, mi, se, total, j, book;
-	SERIAL serial;
-	CItem *i = NULL;
-	char nonuni[512];
-	char temp[1024];
-	cSocket *mSock = GetSockPtr( s );
-	cSocket *tSock = NULL;
+	CSocket *mSock = connClients[s];
 
 	if( mSock == NULL )
 		return;
-
-	int myoffset = 13;
-	int myincrement = 2;
-	int myj = 12;
-
+	
 	if( mSock->NewClient() )
 	{
-		count = mSock->Receive( 4 );
+		int count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
+			int ho, mi, se, total;
+			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho = total / 3600;
 			total -= ho * 3600;
 			mi = total / 60;
@@ -521,686 +527,280 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	{
 		mSock->InLength( 0 );
 		CChar *ourChar = mSock->CurrcharObj();
-		UI08 packetID;
 		UI08 *buffer = mSock->Buffer();
-		if( mSock->Receive( 1 ) > 0 )
+		if( mSock->Receive( 1, false ) > 0 )
 		{
-			packetID = buffer[0];
+			char temp[1024];
+			int book;
+			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
-				Console << "Non-ignition client attempting to cut in, disconnecting them: IP " << (SI32)mSock->ClientIP1() << "." << (SI32)mSock->ClientIP2() << "." << (SI32)mSock->ClientIP3() << "." << (SI32)mSock->ClientIP4() << myendl;
+				// April 5, 2004 - EviLDeD - There is a great chance that alot of the times this will be UOG2 connecting to get information from the server
+				if(cwmWorldState->ServerData()->ServerUOGEnabled())
+					Console << "UOG Stats request completed. Disconnecting client. [" << (SI32)mSock->ClientIP4() << "." << (SI32)mSock->ClientIP3() << "." << (SI32)mSock->ClientIP2() << "." << (SI32)mSock->ClientIP1() << "]" << myendl;
+				else
+					Console << "Encrypted client attempting to cut in, disconnecting them: IP " << (SI32)mSock->ClientIP1() << "." << (SI32)mSock->ClientIP2() << "." << (SI32)mSock->ClientIP3() << "." << (SI32)mSock->ClientIP4() << myendl;
 				Disconnect( s );
 				return;
 			}
+#if _DEBUG_PACKET
+			Console.Print( "Packet ID: 0x%x\n", packetID );
+#endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
-				mSock->IdleTimeout( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( LOGIN_TIMEOUT ) )) );
-			cPInputBuffer *test = WhichPacket( packetID, mSock );
-			bool doSwitch = true;
-			if( test != NULL )
 			{
-				if( test->Handle() )
-					doSwitch = false;
-				delete test;
+				if( !mSock->ForceOffline() ) //Don't refresh idle-timer if character is being forced offline
+					mSock->IdleTimeout( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_LOGINTIMEOUT ) );
+			}
+
+			bool doSwitch		= true;
+			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
+			{
+				std::map< UI16, UI16 >::const_iterator pFind = packetOverloads.find( packetID );
+				if( pFind != packetOverloads.end() )
+				{
+					cScript *pScript = JSMapping->GetScript( pFind->second );
+					if( pScript != NULL )
+					{
+						doSwitch = false;
+						pScript->OnPacketReceive( mSock, packetID );
+					}
+				}
 			}
 			if( doSwitch )
 			{
-				CItem *speechItem = NULL;
-				UI16 scpTrig;
-				cScript *myScript;
-				
-
+				CPInputBuffer *test	= WhichPacket( packetID, mSock );
+				if( test != NULL )
+				{
+					mSock->ReceiveLogging( test );
+					if( test->Handle() )
+						doSwitch = false;
+					delete test;
+				}
+			}
+			if( doSwitch )
+			{
+				size_t j = 0;
 				switch( packetID )
 				{
-				case 0x01: // Main Menu on the character select screen
-					Disconnect( s );
-					break;
-				case 0x03:// Speech
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					ourChar->BreakConcentration( mSock );
-					ourChar->setUnicode( false );
-					speechItem = calcItemObjFromSer( ourChar->GetSpeechItem() );
-					switch( ourChar->GetSpeechMode() )
-					{
-					case 3: // Player vendor item pricing
-						j = makeNum( (char *)&buffer[8] );
-						if( j > 0 )
+					case 0x01: // Main Menu on the character select screen
+						Disconnect( s );
+						break;
+					case 0x72:// Combat Mode
+						mSock->Receive( 5 );
+						ourChar->SetWar( buffer[1] != 0 );
+						ourChar->SetTarg( NULL );
+						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
+							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1 ) );
+						else
+							ourChar->SetTimer( tCHAR_TIMEOUT, ourChar->GetTimer( tCHAR_TIMEOUT ) + 1000 );
+						mSock->Send( buffer, 5 );
+#if defined( _MSC_VER )
+	#pragma note( "Flush location" )
+#endif
+						mSock->FlushBuffer();
+						Movement->CombatWalk( ourChar );
+						Effects->dosocketmidi( mSock );
+						ourChar->BreakConcentration( mSock );
+						break;
+					case 0x12:// Ext. Command
+						mSock->Receive( 3 );
+						mSock->Receive( mSock->GetWord( 1 ) );
+						ourChar->BreakConcentration( mSock );
+						if( buffer[3] == 0xC7 ) // Action
 						{
-							speechItem->SetBuyValue( j );
-							sysmessage( mSock, 753, j );
+							if( ourChar->IsOnHorse() ) // Ripper
+								return; // can't bow or salute on horse
+							if( !strcmp( (char *)&buffer[4], "bow" ) ) 
+								if( ( (ourChar->GetID() >= 0x190) &&
+									(ourChar->GetID() <= 0x193) ) ||
+									(ourChar->GetID() == 0x3DB) )
+									Effects->PlayCharacterAnimation( ourChar, 0x20 );
+								else
+									Effects->PlayCharacterAnimation( ourChar, 0x12 );
+							if( !strcmp( (char *)&buffer[4], "salute" ) ) 
+								if( ( (ourChar->GetID() >= 0x190) &&
+									(ourChar->GetID() <= 0x193) ) ||
+									(ourChar->GetID() == 0x3DB) )
+									Effects->PlayCharacterAnimation( ourChar, 0x21 );
+								else
+									Effects->PlayCharacterAnimation( ourChar, 0x11 );
+							break;
 						} 
-						else 
-							sysmessage( mSock, 754, speechItem->GetBuyValue() );
-						sysmessage( mSock, 755 );
-						ourChar->SetSpeechMode( 4 );
-						return;
-					case 4: // Player vendor item describing
-						speechItem->SetDesc( (char *)&buffer[8] );
-						sysmessage( mSock, 756, &buffer[8] );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 7: // Rune renaming
-						char tempname[512];
-						sprintf( tempname, Dictionary->GetEntry( 684 ), &buffer[8] );
-						speechItem->SetName( tempname );
-						sysmessage( mSock, 757, &buffer[8] );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 6: // Name deed
-						ourChar->SetName( (char*)&buffer[8] );
-						sysmessage( mSock, 758, &buffer[8] );
-						ourChar->SetSpeechMode( 0 );
-						Items->DeleItem( speechItem );
-						ourChar->SetSpeechItem( INVALIDSERIAL );
-						return;
-					case 5:	// Key renaming
-					case 8: // Sign renaming
-						speechItem->SetName( (char*)&buffer[8] );
-						sysmessage( mSock, 759, &buffer[8] );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 9: // JavaScript speech
-						scpTrig = ourChar->GetSpeechCallback();
-						myScript = Trigger->GetScript( scpTrig );
-						
-						if( myScript != NULL )
-							myScript->OnSpeechInput( ourChar, speechItem, (char*)&buffer[8] );
-
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 1: // GM Page
-						UI08 a1, a2, a3, a4;
-						if( GMQueue->GotoPos( GMQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
+						else if( buffer[3] == 0x58 )
 						{
-							HelpRequest *tempPage = NULL;
-							tempPage = GMQueue->Current();
-							a1 = ourChar->GetSerial( 1 );
-							a2 = ourChar->GetSerial( 2 );
-							a3 = ourChar->GetSerial( 3 );
-							a4 = ourChar->GetSerial( 4 );
-
-							tempPage->Reason( (char*)&buffer[8] );
-							tempPage->WhoPaging( ourChar->GetSerial() );
-							sprintf( temp, "GM Page from %s [%x %x %x %x]: %s", ourChar->GetName(), a1, a2, a3, a4, tempPage->Reason() );
-							bool x = false;
-							Network->PushConn();
-							for( tSock = FirstSocket(); !FinishedSockets(); tSock = NextSocket() )
-							{
-								CChar *tChar = tSock->CurrcharObj();
-								if( tChar == NULL )
-									continue;
-
-								if( tChar->IsGMPageable() )
-								{
-									x = true;
-									sysmessage( tSock, temp );
-								}
-							}
-							Network->PopConn();
-							if( x )
-								sysmessage( mSock, 363 );
-							else 
-								sysmessage( mSock, 364 );
+							DoorMacro( mSock );
+							break;
 						}
-						ourChar->SetPageGM( 0 );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 2: // Counselor Page
-						a1 = ourChar->GetSerial( 1 );
-						a2 = ourChar->GetSerial( 2 );
-						a3 = ourChar->GetSerial( 3 );
-						a4 = ourChar->GetSerial( 4 );
-
-						HelpRequest *tempPageCns;
-						if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
+						else if( buffer[3] == 0x24 ) // Skill
 						{
-							tempPageCns = CounselorQueue->Current();
-							tempPageCns->Reason( (char*)&buffer[8] );
-							tempPageCns->WhoPaging( ourChar->GetSerial() );
-							sprintf( temp, "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName(), a1, a2, a3, a4, tempPageCns->Reason() );
-							bool x = false;
-							Network->PushConn();
-							for( tSock = FirstSocket(); !FinishedSockets(); tSock = NextSocket() )
-							{
-								CChar *tChar = tSock->CurrcharObj();
-								if( tChar == NULL )
-									continue;
-
-								if( tChar->IsGMPageable() )
-								{
-									x = true;
-									sysmessage( tSock, temp );
-								}
-							}
-							Network->PopConn();
-							if( x )
-								sysmessage( mSock, 360 );
-							else 
-								sysmessage( mSock, 361 );
-						}
-
-						ourChar->SetPageGM( 0 );
-						ourChar->SetSpeechMode( 0 );
-					case 0: // normal speech
-					default:
-						if( ourChar->GetSquelched() )
-							sysmessage( mSock, 760 );
-						else 
-							talking( mSock );
-						break;
-					}
-					break;
-				case 0xAD: // Unicode Speech
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					ourChar->setUnicode( true );
-
-					// Check for command word versions of this packet
-					myoffset = 13;
-					myincrement = 2;
-					myj = 12;
-
-					switch( buffer[3] )
-					{
-					case 0xC0:
-					case 0xC9:
-					case 0xC1:
-					case 0xC2:
-					case 0xC6:
-					case 0xC8:
-						myincrement = 1;
-						buffer[3] &= 0x0F;	// set to normal to send it back
-						switch( buffer[13] & 0xF0 )
-						{		// Copy the buffer up, and convert it to unicode
-						case 0x10:	myoffset = 15;		break;
-						case 0x20:	myoffset = 17;		break;
-						case 0x30:	myoffset = 18;		break;
-						case 0x40:	myoffset = 20;		break;
-						}
-						//
-						//	Now adjust the buffer
-						int iWord;
-						iWord = mSock->GetWord( 1 );
-						myj = 12;
-						char mytempbuf[512];
-						int mysize;
-						mysize = iWord - myoffset;
-						for( j = 0; j < mysize; j++ )
-							mytempbuf[j] = buffer[j + myoffset];
-						for( j = 0; j < mysize; j++ )
-						{	// we would overwrite our buffer, so we need to catch it before we do that.
-							buffer[myj++] = 0;
-							buffer[myj++] = mytempbuf[j];
-						}
-						buffer[myj-1] = 0;
-						iWord = ((iWord - myoffset) * 2) + 12;
-						buffer[1] = static_cast< UI08 >((( iWord & 0xFF00 ) >> 8 ));
-						buffer[2] = static_cast< UI08 >(iWord & 0x00FF);
-						break;
-					default:
-						break;
-					}
-					ourChar->BreakConcentration( mSock );
-					for( j = 13; j < mSock->GetWord( 1 ); j += 2 )
-						nonuni[(j-13)/2] = buffer[j];
-					speechItem = calcItemObjFromSer( ourChar->GetSpeechItem() );
-					switch( ourChar->GetSpeechMode() )
-					{
-					case 3:
-						j = makeNum( nonuni );
-						if( j > 0 )
-						{
-							speechItem->SetBuyValue( j );
-							sysmessage( mSock, 753, j );
-							sysmessage( mSock, 755 );
+							j = 4;
+							while( buffer[j] != ' ' ) 
+								++j;
+							buffer[j] = 0;
+							Skills->SkillUse( mSock, UString( (char*)&buffer[4] ).toUByte() );
+							break;
 						} 
-						else 
+						else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
 						{
-							sysmessage( mSock, 754, speechItem->GetBuyValue() );
-							sysmessage( mSock, 755 );
-						}
-						ourChar->SetSpeechMode( 4 );
-						return;
-					case 4:
-						speechItem->SetDesc( nonuni );
-						sysmessage( mSock, 756, nonuni );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 7:
-						char tempname[512];
-						sprintf( tempname, Dictionary->GetEntry( 684 ), nonuni );
-						speechItem->SetName( tempname );
-						sysmessage( mSock, 757, nonuni );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 6:
-						ourChar->SetName( nonuni );
-						sysmessage( mSock, 758, nonuni );
-						Items->DeleItem( speechItem );
-						ourChar->SetSpeechMode( 0 );
-						ourChar->SetSpeechItem( INVALIDSERIAL );
-						return;
-					case 5:
-					case 8:
-						speechItem->SetName( nonuni );
-						sysmessage( mSock, 759, nonuni );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 9: // JavaScript speech
-						scpTrig = ourChar->GetSpeechCallback();
-						myScript = Trigger->GetScript( scpTrig );
-						
-						if( myScript != NULL )
-							myScript->OnSpeechInput( ourChar, speechItem, nonuni );
-
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 1:
-						UI08 a1, a2, a3, a4;
-						a1 = ourChar->GetSerial( 1 );
-						a2 = ourChar->GetSerial( 2 );
-						a3 = ourChar->GetSerial( 3 );
-						a4 = ourChar->GetSerial( 4 );
-						if( GMQueue->GotoPos( GMQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
-						{
-							HelpRequest *tempPage;
-							tempPage = GMQueue->Current();
-							tempPage->Reason( nonuni );
-							tempPage->WhoPaging( ourChar->GetSerial() );
-							sprintf(temp, "GM Page from %s [%x %x %x %x]: %s", ourChar->GetName(), a1, a2, a3, a4, nonuni );
-							bool x = false;
-							Network->PushConn();
-							for( tSock = FirstSocket(); !FinishedSockets(); tSock = NextSocket() )
+							// This'll find our spellbook for us
+							CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
+							CItem *p		= ourChar->GetPackItem();
+							if( ValidateObject( sBook ) )
 							{
-								CChar *tChar = tSock->CurrcharObj();
-								if( tChar == NULL )
-									continue;
+								bool validLoc	= false;
+								if( sBook->GetCont() == ourChar )
+									validLoc = true;
+								else if( ValidateObject( p ) && sBook->GetCont() == p )
+									validLoc = true;
 
-								if( tChar->IsGMPageable() )
+								if( validLoc )
 								{
-									x = true;
-									sysmessage( tSock, temp );
-								}
-							}
-							Network->PopConn();
-							if( x )
-								sysmessage( mSock, 363 );
-							else 
-								sysmessage( mSock, 364 );
-						}
-						ourChar->SetPageGM( 0 );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 2:
-						a1 = ourChar->GetSerial( 1 );
-						a2 = ourChar->GetSerial( 2 );
-						a3 = ourChar->GetSerial( 3 );
-						a4 = ourChar->GetSerial( 4 );
-						if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
-						{
-							HelpRequest *tempPageCns;
-							tempPageCns = CounselorQueue->Current();
-							tempPageCns->Reason( nonuni );
-							tempPageCns->WhoPaging( ourChar->GetSerial() );
-							sprintf( temp, "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName(), a1, a2, a3, a4, tempPageCns->Reason() );
-							bool x = false;
-							Network->PushConn();
-							for( tSock = FirstSocket(); !FinishedSockets(); tSock = NextSocket() )
-							{
-								CChar *tChar = tSock->CurrcharObj();
-								if( tChar == NULL )
-									continue;
-
-								if( tChar->IsGMPageable() )
-								{
-									x = true;
-									sysmessage( tSock, temp );
-								}
-							}
-							Network->PopConn();
-							if( x )
-								sysmessage( mSock, 360 );
-							else 
-								sysmessage( mSock, 361 );
-						}
-						ourChar->SetPageGM( 0 );
-						ourChar->SetSpeechMode( 0 );
-						return;
-					case 0:
-					default:
-						if( ourChar->GetSquelched() )
-							sysmessage( mSock, 760 );
-						else 
-							unicodetalking( mSock );
-						break;
-					}
-					break;    
-				case 0x72:// Combat Mode
-					mSock->Receive( 5 );
-					ourChar->SetWar( buffer[1] != 0 );
-					ourChar->SetTarg( INVALIDSERIAL );
-					if( static_cast<UI32>(ourChar->GetTimeout()) <= cwmWorldState->GetUICurrentTime() )
-						ourChar->SetTimeout( BuildTimeValue( 1 ) );
-					else
-						ourChar->SetTimeout( ourChar->GetTimeout() + CLOCKS_PER_SEC );
-					mSock->Send( buffer, 5 );
-					Movement->CombatWalk( ourChar );
-					Effects->dosocketmidi( mSock );
-					ourChar->BreakConcentration( mSock );
-					break;
-				case 0x12:// Ext. Command
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					ourChar->BreakConcentration( mSock );
-					if( buffer[3] == 0xC7 ) // Action
-					{
-						if( ourChar->IsOnHorse() ) // Ripper
-							return; // can't bow or salute on horse
-						if( !strcmp( (char *)&buffer[4], "bow" ) ) 
-							if( ( (ourChar->GetID() >= 0x190) &&
-								(ourChar->GetID() <= 0x193) ) ||
-								(ourChar->GetID() == 0x3DB) )
-								Effects->action( mSock, 0x20 );
-							else
-								Effects->action( mSock, 0x12 );
-						if( !strcmp( (char *)&buffer[4], "salute" ) ) 
-							if( ( (ourChar->GetID() >= 0x190) &&
-								(ourChar->GetID() <= 0x193) ) ||
-								(ourChar->GetID() == 0x3DB) )
-								Effects->action( mSock, 0x21 );
-							else
-								Effects->action( mSock, 0x11 );
-						break;
-					} 
-					else if( buffer[3] == 0x58 )
-					{
-						DoorMacro( mSock );
-						break;
-					}
-					else if( buffer[3] == 0x24 ) // Skill
-					{
-						j = 4;
-						while( buffer[j] != ' ' ) 
-							j++;
-						buffer[j] = 0;
-						Skills->SkillUse( mSock, static_cast<UI08>(makeNum( (char*)&buffer[4] )) );
-						break;
-					} 
-					else if( buffer[3] == 0x27 || buffer[3] == 0x56 )  // Spell
-					{
-						// This'll find our spellbook for us
-						CItem *sBook = FindItemOfType( ourChar, 9 );
-						CItem *p = getPack( ourChar );
-						bool validLoc;
-						validLoc = false;
-						if( sBook != NULL )
-						{
-							if( sBook->GetCont() == ourChar )
-								validLoc = true;
-							else if( p != NULL && sBook->GetCont() == p )
-								validLoc = true;
-
-							if( validLoc )
-							{
-								book = buffer[4] - 0x30;
-								if( buffer[5] > 0x20 )
-									book = ( book * 10 ) + ( buffer[5] - 0x30 );
-								if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
-								{
-									if( ourChar->IsFrozen() )
+									book = buffer[4] - 0x30;
+									if( buffer[5] > 0x20 )
+										book = ( book * 10 ) + ( buffer[5] - 0x30 );
+									if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
 									{
-										if( ourChar->GetCasting() )
-											sysmessage( mSock, 762 );
+										if( ourChar->IsFrozen() )
+										{
+											if( ourChar->IsCasting() )
+												mSock->sysmessage( 762 );
+											else
+												mSock->sysmessage( 763 );
+										}
 										else
-											sysmessage( mSock, 763 );
+										{
+											mSock->CurrentSpellType( 0 );
+											Magic->SelectSpell( mSock, book );
+										}
 									}
 									else
-									{
-										mSock->CurrentSpellType( 0 );
-										Magic->SelectSpell( mSock, book );
-									}
+										mSock->sysmessage( 764 );
 								}
 								else
-									sysmessage( mSock, 764 );
+									mSock->sysmessage( 765 );
 							}
-							else
-								sysmessage( mSock, 765 );
-						}
-					} 
-					else 
-					{
-						if( buffer[2] == 0x05 && buffer[3] == 0x43 )  // Open spell book
-							Magic->SpellBook( mSock );
-						break;
-					}
-					break;
-				case 0x9B:// GM Page
-					mSock->Receive( 0x102 );
-					gmmenu( mSock, 1 );
-					break;
-				case 0x7D:// Choice
-					mSock->Receive( 13 );
-					choice( mSock );
-					break;
-				case 0x95:// Color Select
-					mSock->Receive( 9 );
-					Commands->DyeTarget( mSock );
-					break;
-				case 0x66:// Read Book
-					int size;
-					mSock->Receive( 3 );
-					size = mSock->GetWord( 1 );
-					mSock->Receive( size );
-
-					i = calcItemObjFromSer( mSock->GetDWord( 3 ) );
-					if( i != NULL )
-					{		
-						if( i->GetMoreX() != 666 && i->GetMoreX() != 999 ) 
-							Books->ReadPreDefBook( mSock, i, mSock->GetWord( 9 ) );  // call old books read-method
-						if( i->GetMoreX() == 666 ) // writeable book -> copy page data send by client to the class-page buffer
+						} 
+						else 
 						{
-							char *pagebuffer = mSock->PageBuffer();
-							for( j = 13; j <= size; j++ ) // copy (written) page data in class-page buffer
-								pagebuffer[j-13] = buffer[j];
-							Books->ReadWritableBook( mSock, i, mSock->GetWord( 9 ), mSock->GetWord( 11 ) ); 
+							if( buffer[2] == 0x05 && buffer[3] == 0x43 )  // Open spell book
+								Magic->SpellBook( mSock );
+							break;
 						}
-						if( i->GetMoreX() == 999 ) 
-							Books->ReadNonWritableBook( mSock, i, mSock->GetWord( 9 ) ); // new books readonly
-					}
-					break;
+						break;
+					// client sends them out if the title and/or author gets changed on a writeable book
+					// its NOT send (anymore?) when a book is closed as many packet docus state.
+					// LB 7-dec 1999
+					case 0x93:	// Old Book Packet, no longer sent by the client
+						mSock->Receive( 99 );
+						break;
+					case 0x69:// Client text change
+						mSock->Receive( 3 );// What a STUPID message...  It would be useful if
+						mSock->Receive( mSock->GetWord( 1 ) );// it included the color changed to, but it doesn't!
+						break;
+					case 0xB6:// T2A Popuphelp request
+						mSock->Receive( 9 );
+						break;
+					case 0xB8:// T2A Profile request
+						mSock->Receive( 3 );
+						mSock->Receive( mSock->GetWord( 1 ) );		// this is how it's really done
 
-				// client sends them out if the titel and/or author gets changed on a writable book
-				// its NOT send (anymore?) when a book is closed as many packet docus state.
-				// LB 7-dec 1999
-				case 0x93:
-					char author[31], title[61], ch;
-
-					mSock->Receive( 99 );
-					serial = mSock->GetDWord( 1 );
-					i = calcItemObjFromSer( serial );
-					if( i == NULL ) 
-						return;
-					Books->changeAT = true;
-
-					j = 9; ch = 1;
-					char *titlebuffer;
-					titlebuffer = mSock->TitleBuffer();
-					while( ch != 0 )
-					{
-						ch = buffer[j];
-						title[j-9] = ch;
-						titlebuffer[j-9] = ch;
-						j++;
-						if( j > 69 ) 
-							ch=0;
-					}
-					j = 69; ch = 1;
-					char *authorbuffer;
-					authorbuffer = mSock->AuthorBuffer();
-					while( ch != 0 )
-					{
-						ch = buffer[j];
-						author[j-69] = ch;
-						authorbuffer[j-69] = ch;
-						j++;
-						if( j > 99 )
-							ch = 0;
-					}
-					break;
-				case 0xAC:// Textentry input
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					Gumps->Input( mSock );
-					break;
-				case 0x3B:// Buy from vendor...
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					buyItem( mSock );
-					break;
-				case 0x9F:// Sell to vendor...
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					sellItem( mSock );
-					break;
-				case 0x69:// Client text change
-					mSock->Receive( 3 );// What a STUPID message...  It would be useful if
-					mSock->Receive( mSock->GetWord( 1 ) );// it included the color changed to, but it doesn't!
-					break;
-				case 0x6F:// Secure Trading message
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					doTradeMsg( mSock );
-					break;
-				case 0xB6:// T2A Popuphelp request
-					mSock->Receive( 9 );
-					break;
-				case 0xB8:// T2A Profile request
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );		// this is how it's really done
-
-					if( buffer[3] == 1 )		// Set profile, not feasible yet
-						sysmessage( mSock, 768 );
-					else
-					{
-						SERIAL targSerial;
-						CHARACTER player;
-						targSerial = mSock->GetDWord( 4 );
-						player = calcCharFromSer( targSerial );
-						if( player == INVALIDSERIAL )
-							sysmessage( mSock, 769 );
+						if( buffer[3] == 1 )		// Set profile, not feasible yet
+							mSock->sysmessage( 768 );
 						else
 						{
-							UI08 tempBuffer[1024];
-							char ourMessage[20];
-							memset( tempBuffer, 0, sizeof( tempBuffer[0] ) * 1024 );	// zero it out
-							tempBuffer[0] = 0xB8;
-							tempBuffer[3] = buffer[4];
-							tempBuffer[4] = buffer[5];
-							tempBuffer[5] = buffer[6];
-							tempBuffer[6] = buffer[7];
-							strncpy( (char *)&tempBuffer[7], chars[player].GetName(), 30 );
-							strncpy( (char *)&tempBuffer[38], chars[player].GetTitle(), 30 );
-							strcpy( ourMessage, "Test of Char Profile" );
-							for( j = 0; j < static_cast<int>(strlen( ourMessage )); j++ )
+							SERIAL targSerial = mSock->GetDWord( 4 );
+							CChar *player = calcCharObjFromSer( targSerial );
+							if( !ValidateObject( player ) )
+								mSock->sysmessage( 769 );
+							else
 							{
-								tempBuffer[69 + j * 2] = 0;
-								tempBuffer[70 + j * 2] = ourMessage[j];
+								// Still doesn't work
+	//	Request Char Profile (Variable # of bytes) 
+	//	BYTE cmd 
+	//	BYTE[2] blockSize
+	//	BYTE mode (CLIENT ONLY! Does not exist in server message.)
+	//	BYTE[4] id
+	//	If request, ends here.
+	//	If Update request
+	//	BYTE[2] cmdType (0x0001 – Update)
+	//	BYTE[2] msglen (# of unicode characters)
+	//	BYTE[msglen][2] new profile, in unicode, not null terminated.
+	//	Else If from server
+	//	BYTE[?] title (not unicode, null terminated.)
+	//	BYTE[?][2] static profile  ( unicode string can't  be edited )
+	//	BYTE[2] (0x0000) (static profile terminator)
+	//	BYTE[?][2] profile (in unicode, can be edited)
+	//	BYTE[2] (0x0000) (profile terminator)
+
+								UI08 tempBuffer[1024];
+								std::string ourMessage;
+								memset( tempBuffer, 0, sizeof( tempBuffer[0] ) * 1024 );	// zero it out
+								tempBuffer[0] = 0xB8;
+								tempBuffer[3] = buffer[4];
+								tempBuffer[4] = buffer[5];
+								tempBuffer[5] = buffer[6];
+								tempBuffer[6] = buffer[7];
+								size_t plNameLen = player->GetName().size();
+								strncpy( (char *)&tempBuffer[7], player->GetName().c_str(), 30 );
+								size_t mj = 8 + plNameLen;
+								size_t plTitleLen = player->GetName().size() + 1;
+								for( size_t k = 0; k < plTitleLen; ++k )
+								{
+									tempBuffer[mj++] = 0;
+									tempBuffer[mj++] = player->GetName().data()[k];
+								}
+								mj += 2;
+								ourMessage = "Test of Char Profile";
+								for( j = 0; j < ourMessage.size(); ++j )
+								{
+									tempBuffer[mj++] = 0;
+									tempBuffer[mj++] = ourMessage[j];
+								}
+								mj += 2;
+								tempBuffer[2] = mj;
+								mSock->Send( tempBuffer, mj );
+	#if defined( _MSC_VER )
+	#pragma note( "Flush location" )
+	#endif
+								mSock->FlushBuffer();
 							}
-							tempBuffer[69 + strlen( ourMessage ) * 2] = 0;
-							tempBuffer[70 + strlen( ourMessage ) * 2] = 0;
-							tempBuffer[2] = 68 + 2 * strlen( ourMessage ) + 2;
-							mSock->Send( tempBuffer, tempBuffer[2] );
-						}
-					}
-						// Send this
-	//					UI08 m_Cmd;		// 0=0xB8
-	//					NWORD m_len;	// 1 - 2
-	//					NDWORD m_UID;	// 3-6=uid
-	//					char m_desc1[MAX_NAME_SIZE+1];	// ???Description 1 (not unicode!, name, zero terminated)
-	//					char m_desc2[MAX_NAME_SIZE+1];	// ???Description 2 (not unicode!, guild?? fame/karma??? zero terminated)
-	//					WCHAR m_desc3[1024];					// ???Description 3 (unicode!, zero terminated)
-					break;
-					// Dupois
-				case 0x71:// Message Board Item
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					MsgBoardEvent( mSock );
-					break;
-					// Dupois - End
-					
-				case 0xBB: // No idea
-					mSock->Receive( 9 );
-					break;
-				case 0x3A:	// skills management packet
-					mSock->Receive( 6 );	// it's always 6 so Westy tells me... let's not be intelligent =)
-					UI16 skillNum;
-					skillNum = mSock->GetWord( 3 );
-					ourChar->SetSkillLock( buffer[5], skillNum );
-					break;
-
-				case 0xBF:
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					UI16 subCmd;
-					subCmd = mSock->GetWord( 3 );	// specific sub command
-					switch( subCmd )
-					{
-					case 1:	break;	// Server message sent to client.  6 keys, each a long, Initialize Fast Walk Prevention
-					case 2:	break;	// Server message.  1 long, new key.  Add key to fast walk stack
-					case 5:	break;	// Unknown.  2 longs.  First is 00000320, second is 00000005
-					case 6:			// 1 byte, sub command.  Yippee, sub sub commands
-						UI08 partyCmd;
-						partyCmd = mSock->GetByte( 5 );
-						switch( partyCmd )
-						{
-						case 1:		// 2 variants.  1 long, if 0 is targeting cursor, id of party member to add.  Client message
-									// second variant.  1 byte, number of members.  4 bytes per member, which is ID.  Server message
-							break;
-						case 2:		// 2 variants.  Remove party member.  single long, serial of party member to remove.  if 0, targeting appears.  Client message
-									// second variant.  1 byte, number of members now in party.  1 long, serial of player removed.  NumMembers long follows, ID of each member
-							break;
-						case 3:		// Tell party member a message. 1 SERIAL (of target, from client, of source, from server).  Null terminated Unicode message
-							// Byte[4] ID.  Byte[n][2] Message
-							break;
-						case 4:		// Tell full party message.  NULL terminated Unicode message
-							// Byte[n][2] message. client part.
-							// UI08[4] ID.  UI08[n][2] full message.  Server message
-							break;
-						case 6:		// Party can loot me?  1 byte, canloot.  0 == no, 1 == yes
-							break;
-						case 8:		// Accept join party invitation.  1 long, party leader's serial
-							break;
-						case 9:		// Decline party invitation.  1 LONG, party leader's serial
-							break;
 						}
 						break;
-					case 8:	// Set cursor hue.  1 byte.  Server message.  0 == felucca, unhued. 1 = Trammel, hued gold
+					case 0xBB:
+						//	Ultima Messenger (9 bytes)
+						//	BYTE cmd
+						//	BYTE[4] id1
+						//	BYTE[4] id2
+						//	Note: This is both a client and server message.
+						mSock->Receive( 9 );
 						break;
-					case 11:	// Client language.  3 bytes.  "ENU" for english
-						break;
-					case 12:	// Closed status gump.  4 bytes.  1 long, player serial
+					case 0x3A:	// skills management packet
+						mSock->Receive( 6 );	// it's always 6 so Westy tells me... let's not be intelligent =)
+						UI16 skillNum;
+						skillNum = mSock->GetWord( 3 );
+						ourChar->SetSkillLock( (SkillLock)buffer[5], (UI08)skillNum );
 						break;
 
-					case 14:	// UOTD actions
-						// 9 bytes long
-						Effects->action( mSock, mSock->GetWord( 7 ) );
+					case 0x56:
+						Console << "'Plot Course' button on a map clicked." << myendl;
 						break;
-					}
-					break;
-				
-				case 0x56:
-					Console << "'Plot Course' button on a map clicked." << myendl;
-					break;
-				default:
-					FD_ZERO( &all );
-					FD_SET( mSock->CliSocket(), &all );
-					int nfds;
-					nfds = mSock->CliSocket() + 1;
-					if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
-						mSock->Receive( 2560 );
-					sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
-					Console << temp << myendl;
-					break;
+					case 0xD0:
+						// Configuration file
+						mSock->Receive( 3 );
+						mSock->Receive( mSock->GetWord( 1 ) );
+						break;
+					case 0xD9:
+						break;
+					default:
+						FD_ZERO( &all );
+						FD_SET( mSock->CliSocket(), &all );
+						int nfds;
+						nfds = mSock->CliSocket() + 1;
+						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
+							mSock->Receive( 2560 );
+						sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
+						Console << temp << myendl;
+						break;
 				}
 			}
 		}
@@ -1214,7 +814,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 {
 	fd_set all;
 	fd_set errsock;
-	int i;
+	size_t i;
 	
 	cwmWorldState->uoxtimeout.tv_sec = 0;
 	cwmWorldState->uoxtimeout.tv_usec = 1;
@@ -1222,10 +822,10 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
 	
-	int nfds = 0;
-	for( i = 0; i < static_cast<int>(loggedInClients.size()); i++ )
+	size_t nfds = 0;
+	for( i = 0; i < loggedInClients.size(); ++i )
 	{
-		int clientSock = loggedInClients[i]->CliSocket();
+		size_t clientSock = loggedInClients[i]->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
@@ -1234,13 +834,12 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
-		int oldnow = loggedInClients.size();
-		for( i = 0; i < static_cast<int>(loggedInClients.size()); i++ )
+		size_t oldnow = loggedInClients.size();
+		for( i = 0; i < loggedInClients.size(); ++i )
 		{
 			if( FD_ISSET( loggedInClients[i]->CliSocket(), &errsock ) )
 			{
 				LoginDisconnect( i );
-				//LoginDisconnect(loggedInClients[i]->CliSocket());
 				continue;
 			}
 			if( ( FD_ISSET( loggedInClients[i]->CliSocket(), &all ) ) && ( oldnow == loggedInClients.size() ) )
@@ -1248,11 +847,10 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 				try
 				{
 					GetLoginMsg( i );
-					//GetLoginMsg(loggedInClients[i]->CliSocket());
 				}
 				catch( socket_error& blah )
 				{
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 						messageLoop << "Client disconnected";
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
@@ -1260,7 +858,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 					else if( blah.ErrorNumber() != -1 )
 					{
 						char temp[128];
-						sprintf( temp, "Socket error: %i", blah.ErrorNumber() );
+						sprintf( temp, "Socket error: %li", blah.ErrorNumber() );
 						messageLoop << temp;
 					}
 #endif
@@ -1271,7 +869,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	}
 	else if( s == SOCKET_ERROR )
 	{
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 		int errorCode = WSAGetLastError();
 		if( errorCode != 10022 )
 			Console << (SI32)errorCode << myendl;
@@ -1282,7 +880,7 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
 {
 	char temp[128];
-	sprintf( temp, "LoginClient %i disconnected.", s );
+	sprintf( temp, "LoginClient %lu disconnected.", s );
 	messageLoop << temp;
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();
@@ -1290,51 +888,53 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of pla
 	//Zippy 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
 	if( loggedInClients[s]->AcctNo() != AB_INVALID_ID ) 
 	{
-		ACCOUNTSBLOCK actbAccount = loggedInClients[s]->GetAccount();
+		CAccountBlock& actbAccount = loggedInClients[s]->GetAccount();
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
-			actbAccount.wFlags&=0xFFFFFFF7;
+		{
+			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
+		}
 	}
 
+	for( size_t q = 0; q < loggIteratorBackup.size(); ++q )
+	{
+		if( loggIteratorBackup[q] != loggedInClients.begin() && loggIteratorBackup[q] >= (loggedInClients.begin() + s) )
+			--loggIteratorBackup[q];
+	}
 	delete loggedInClients[s];
 	loggedInClients.erase( loggedInClients.begin() + s );
-	for( unsigned int q = 0; q < loggIteratorBackup.size(); q++ )
-	{
-		if( loggIteratorBackup[q] >= s )
-			loggIteratorBackup[q]--;
-	}
 }
 
-void cNetworkStuff::LoginDisconnect( cSocket *s ) // Force disconnection of player //Instalog
+void cNetworkStuff::LoginDisconnect( CSocket *s ) // Force disconnection of player //Instalog
 {
 	UOXSOCKET i = FindLoginPtr( s );
 	LoginDisconnect( i );
-	//LoginDisconnect(s->CliSocket());
 }
 
-void cNetworkStuff::Disconnect( cSocket *s ) // Force disconnection of player //Instalog
+void cNetworkStuff::Disconnect( CSocket *s ) // Force disconnection of player //Instalog
 {
 	UOXSOCKET i = FindNetworkPtr( s );
 	Disconnect( i );
 }
 
-UOXSOCKET cNetworkStuff::FindLoginPtr( cSocket *s )
+UOXSOCKET cNetworkStuff::FindLoginPtr( CSocket *s )
 {
-	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(loggedInClients.size()); i++ )
+	for( UOXSOCKET i = 0; i < loggedInClients.size(); ++i )
 	{
 		if( loggedInClients[i] == s )
 			return i;
 	}
-	return -1;
+	return 0xFFFFFFFF;
 }
 
 
 // Transfers from the logged in queue to the in world queue
 // Takes something out of the logging in queue and places it in the in world queue
 // REQUIRES THREAD SAFETY
-UOXSOCKET cNetworkStuff::Transfer( UOXSOCKET s )
+void cNetworkStuff::Transfer( CSocket *mSock )
 {
-	if( s == -1 )
-		return -1;
+	UOXSOCKET s = FindLoginPtr( mSock );
+	if( s >= loggedInClients.size() )
+		return;
 	InternalControl.On();
 	connClients.push_back( loggedInClients[s] );
 	loggedInClients.erase( loggedInClients.begin() + s );
@@ -1342,27 +942,43 @@ UOXSOCKET cNetworkStuff::Transfer( UOXSOCKET s )
 	if( cwmWorldState->GetPlayersOnline() > peakConnectionCount )
 		peakConnectionCount = cwmWorldState->GetPlayersOnline();
 	InternalControl.Off();
-	return cwmWorldState->GetPlayersOnline()-1;
+	return;
 }
 
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 {
-	int count, ho, mi, se, total;
-	cSocket *mSock = loggedInClients[s];
+	CSocket *mSock = loggedInClients[s];
 	if( mSock == NULL )
 		return;
-	char temp[128];
 	if( mSock->NewClient() )
 	{
+		int count, ho, mi, se, total;
 		count = mSock->Receive( 4 );
-		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
+		// March 1, 2004 - EviLDeD - Implemented support for UOG request for client connection count and possibly other server values
+		if( memcmp(mSock->Buffer(),"UOG\0",sizeof(UI08)*4) == 0 && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in CSocket returns to fast and doesn't get the correct revieved byte count.
 		{
-			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / CLOCKS_PER_SEC;
-			ho = total / 3600;
-			total -= ho * 3600;
-			mi = total / 60;
-			total -= mi * 60;
-			se = total;
+			// ok this is UOG calling for server info. Just return the current data count and be done with it.
+			UI08 szTBuf[512];
+			memset((char*)szTBuf,0x00,sizeof(UI08)*512);
+			total	= ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
+			ho		= total / 3600;
+			total	-= ho * 3600;
+			mi		= total / 60;
+			total	-= mi * 60;
+			se		= total;
+			// April 5, 2004 - EviLDeD - Please leave the place holders incode. They are not read in from the ini as of yet but will be as I get time and solidify the exact values needed
+			sprintf( (char*)szTBuf, "UOX3:sn=%s,cs=0x%04X,st=[ut:%02i:%02i:%02i][cn:%i][ic:%i][cc:%i][me:0x%08X][ma:0x%04X,%s,%s,%s,%s]\x0", cwmWorldState->ServerData()->ServerName().c_str(), cwmWorldState->ServerData()->GetClientFeatures(), ho, mi, se, cwmWorldState->GetPlayersOnline()+1, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), 0xDEADFEED, 0x000D, "Felucia", "Trammel", "Ilshenar", "Malas" );
+			mSock->Send( (char*)szTBuf,strlen((char*)szTBuf)+1);
+			mSock->NewClient( false );
+		}
+		else if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
+		{
+			total	= ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
+			ho		= total / 3600;
+			total	-= ho * 3600;
+			mi		= total / 60;
+			total	-= mi * 60;
+			se		= total;
 			UI08 uoxmonitor[100];
 			sprintf( (char *)uoxmonitor, "UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
 			mSock->Send( uoxmonitor, strlen( (char *)uoxmonitor ) );
@@ -1370,7 +986,12 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		} 
 		else
 		{
-//			mSock->ClientIP( mSock->GetDWord( 0 ) );
+			if( mSock->Buffer()[0] == 0xEF || mSock->Buffer()[0] == 0xC0 )
+			{
+				WhichLoginPacket( mSock->Buffer()[0], mSock );
+				//mSock->Receive( 21, false );
+			}
+
 			mSock->NewClient( false );
 			if( mSock->GetDWord( 0 ) == 0x12345678 )
 				LoginDisconnect( s );
@@ -1379,89 +1000,102 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	}
 	else
 	{
-		UOXSOCKET trnsfr;
 		mSock->InLength( 0 );
-		UI08 packetID;
 		UI08 *buffer = mSock->Buffer();
-		if( mSock->Receive( 1 ) > 0 )
+		if( mSock->Receive( 1, false ) > 0 )
 		{
-			packetID = buffer[0];
+			char temp[128];
+			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
-				sprintf( temp, "Non-ignition client attempting to cut in, disconnecting them: IP %i.%i.%i.%i", mSock->ClientIP1(), mSock->ClientIP2(), mSock->ClientIP3(), mSock->ClientIP4() );
+				// April 5, 2004 - EviLDeD -  Hmmm there are two of these ?
+				if(cwmWorldState->ServerData()->ServerUOGEnabled())
+					sprintf( temp, "UOG Stats Sent or Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
+				else
+					sprintf( temp, "Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
 				messageLoop << temp;
 				LoginDisconnect( s );
 				return;
 			}
-			cPInputBuffer *test = WhichPacket( packetID, mSock );
-			bool doSwitch = true;
-			if( test != NULL )
+			else if( mSock->FirstPacket() && packetID == 0 )
 			{
-				if( test->Handle() )
-					doSwitch = false;
-				delete test;
+				sprintf( temp, "Buffer is empty, no packets to read. Disconnecting client. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() ); 
+				messageLoop << temp;
+				LoginDisconnect( s );
+				return;
 			}
-			if( packetID == 0x5D )
+			bool doSwitch = true;
+			if( cwmWorldState->ServerData()->ServerOverloadPackets() )
 			{
-
-				// ----------------------------------------------------
-				// As a first imprention of the 0xB9 feature packet
-				// Should add a system to correctly report back to the
-				// clients the correct features as this packet will make
-				// the LBR creatures invis instead of replacing them
-				// with the old animations.
-				// Flag 1 Enable chat
-				// Flag 2 Enable LBR
-				// Rest unknown
-				// ----------------------------------------------------
-				// Mr. Fixit (03-17-2002)
-			    char activatelbr[5] = "\xB9\xFF\xFF\xFF";	
-			    mSock->Send( activatelbr, 3 );
-			    messageLoop << "Activating everything in client (Chat/LBR etc).";
-				// ----------------------------------------------------
-
+				std::map< UI16, UI16 >::const_iterator pFind = packetOverloads.find( packetID );
+				if( pFind != packetOverloads.end() )
+				{
+					cScript *pScript = JSMapping->GetScript( pFind->second );
+					if( pScript != NULL )
+						doSwitch = !pScript->OnPacketReceive( mSock, packetID );
+				}
 			}
 			if( doSwitch )
 			{
-
+				CPInputBuffer *test = NULL;
+				try
+				{
+					test = WhichLoginPacket( packetID, mSock );
+				}
+				catch( socket_error& )
+				{
+					Console.Warning( "Bad packet request thrown! [packet ID: 0x%x]", packetID );
+					mSock->FlushIncoming();
+					return;
+				}
+				if( test != NULL )
+				{
+#ifdef _DEBUG_PACKET
+					Console.Log( "Logging packet ID: 0x%X", "loginthread.txt", packetID );
+#endif
+					mSock->ReceiveLogging( test );
+					if( test->Handle() )
+						doSwitch = false;
+					delete test;
+				}
+			}
+			if( doSwitch )
+			{
 				switch( packetID )
 				{
-				case 0x01:// Main Menu on the character select screen
-					LoginDisconnect( s );
-					break;
-				case 0x83:// Character Delete
-					mSock->Receive( 0x27 );
-					deleteChar( mSock );
-					break;
-				case 0x00:// Character Create
-					mSock->Receive( 104 );
-					trnsfr = Transfer( s );
-					createChar( mSock );
-					break;
-				case 0x5D:// Character Select
-					mSock->Receive( 0x49 );
-					trnsfr = Transfer( s );
-					playChar( mSock );
-					break;
-				case 0xBB: // No idea
-					mSock->Receive( 9 );
-					break;
-				case 0xBF:
-					mSock->Receive( 3 );
-					mSock->Receive( mSock->GetWord( 1 ) );
-					
-					break;
-				default:
-					int nfds;
-					fd_set all;
-					FD_ZERO( &all );
-					FD_SET( mSock->CliSocket(), &all );
-					nfds = mSock->CliSocket() + 1;
-					if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
-						mSock->Receive( 2560 );
-					sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
-					messageLoop << temp;
-					break;
+					case 0x01:
+						//Disconnect Notification (5 bytes) 
+						//	BYTE cmd 
+						//	BYTE[4] pattern (0xFFFFFFFF)
+						//Note:  Client message
+						//Note:  Sent when the user chooses to return to the main menu from the character select menu. 
+						//Note:  Since the character select menu no longer has a main menu button, this message is no longer sent.
+						//Note:  It’s send again in current 3.0.x clients. When player does "paper-doll logout"
+						LoginDisconnect( s );
+						break;
+					case 0xBB:
+						// Ultima Messenger  (9 bytes) 
+						//	BYTE cmd 
+						//	BYTE[4] id1
+						//	BYTE[4] id2
+						//Note: This is both a client and server message.
+						mSock->Receive( 9 );
+						break;
+					case 0xBF:
+						mSock->Receive( 3 );
+						mSock->Receive( mSock->GetWord( 1 ) );
+						break;
+					default:
+						int nfds;
+						fd_set all;
+						FD_ZERO( &all );
+						FD_SET( mSock->CliSocket(), &all );
+						nfds = mSock->CliSocket() + 1;
+						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
+							mSock->Receive( 2560 );
+						sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
+						messageLoop << temp;
+						break;
 				}
 			}
 		}
@@ -1470,51 +1104,54 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	}
 }
 
-UOXSOCKET cNetworkStuff::FindNetworkPtr( cSocket *toFind )
+UOXSOCKET cNetworkStuff::FindNetworkPtr( CSocket *toFind )
 {
-	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(connClients.size()); i++ )
+	for( UOXSOCKET i = 0; i < connClients.size(); ++i )
 	{
 		if( connClients[i] == toFind )
 			return i;
 	}
-	return -1;
+	return INVALID_SOCKET;
 }
 
-cSocket *cNetworkStuff::FirstSocket( void )
+CSocket *cNetworkStuff::FirstSocket( void )
 {
-	currConnIter = 0;
-	if( FinishedSockets() )
-		return NULL;
-	return connClients[currConnIter];
+	CSocket *retSock = NULL;
+	currConnIter = connClients.begin();
+	if( !FinishedSockets() )
+		retSock = (*currConnIter);
+	return retSock;
 }
-cSocket *cNetworkStuff::NextSocket( void )
+CSocket *cNetworkStuff::NextSocket( void )
 {
-	if( FinishedSockets() )
-		return NULL;
-	currConnIter++;
-	if( FinishedSockets() )
-		return NULL;
-	return connClients[currConnIter];
+	CSocket *retSock = NULL;
+	if( !FinishedSockets() )
+	{
+		++currConnIter;
+		if( !FinishedSockets() )
+			retSock = (*currConnIter);
+	}
+	return retSock;
 }
 bool cNetworkStuff::FinishedSockets( void )
 {
-	return ( currConnIter >= static_cast<SI32>(connClients.size() ));
+	return ( currConnIter == connClients.end() );
 }
 
-cSocket *cNetworkStuff::PrevSocket( void )
+CSocket *cNetworkStuff::PrevSocket( void )
 {
-	if( currConnIter == 0 )
+	if( currConnIter == connClients.begin() )
 		return NULL;
-	currConnIter--;
-	return connClients[currConnIter];
+	--currConnIter;
+	return (*currConnIter);
 }
-cSocket *cNetworkStuff::LastSocket( void )
+CSocket *cNetworkStuff::LastSocket( void )
 {
-	currConnIter = connClients.size();
-	if( currConnIter != 0 )
+	currConnIter = connClients.end();
+	if( currConnIter != connClients.begin() )
 	{
-		currConnIter--;
-		return connClients[currConnIter];
+		--currConnIter;
+		return (*currConnIter);
 	}
 	else
 		return NULL;
@@ -1522,304 +1159,76 @@ cSocket *cNetworkStuff::LastSocket( void )
 
 void cNetworkStuff::LoadFirewallEntries( void )
 {
-	FILE *firewallEntries = NULL;
-	char *p, inputline[80];
-	SI16 p1, p2, p3, p4;
-	firewallEntries = fopen( "shitlist.ini", "rt" );
-	if( firewallEntries == NULL )
-		firewallEntries = fopen( "firewall.ini", "rt" );
-	if( firewallEntries != NULL ) 
+	UString token;
+	std::string fileToUse;
+	if( !FileExists( "banlist.ini" ) )
 	{
-		while( fgets( inputline, 79, firewallEntries ) != NULL )
+		if( FileExists( "firewall.ini" ) )
+			fileToUse = "firewall.ini";
+	}
+	else
+		fileToUse = "banlist.ini";
+	if( !fileToUse.empty() ) 
+	{
+		Script *firewallData = new Script( fileToUse, NUM_DEFS, false );
+		if( firewallData != NULL )
 		{
-			if( ( p = strtok( inputline, "." ) ) != NULL )
+			SI16 p[4];
+			ScriptSection *firewallSect = NULL;
+			UString tag, data;
+			for( firewallSect = firewallData->FirstEntry(); firewallSect != NULL; firewallSect = firewallData->NextEntry() )
 			{
-				if( strcmp( p, "*" ) == 0 )
-					p1 = -1;
-				else
-					p1 = static_cast<SI16>(makeNum( p ));
-				if( ( p = strtok( NULL, "." ) ) != NULL )
+				if( firewallSect != NULL )
 				{
-					if( strcmp( p, "*" ) == 0 )
-						p2 = -1;
-					else
-						p2 =static_cast<SI16>( makeNum( p ));
-					if( ( p = strtok( NULL, "." ) ) != NULL )
+					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{
-						if( strcmp( p, "*" ) == 0 )
-							p3 = -1;
-						else
-							p3 = static_cast<SI16>(makeNum( p ));
-						if( ( p = strtok( NULL, "\0" ) ) != NULL )
+						if( tag.upper() == "IP" )
 						{
-							if( strcmp( p, "*" ) == 0 )
-								p4 = -1;
-							else
-								p4 = static_cast<SI16>(makeNum( p ));
-
-							slEntries.push_back( FirewallEntry( p1, p2, p3, p4 ) );
-							p1 = p2 = p3 = p4 = false;
+							data = firewallSect->GrabData();
+							if( !data.empty() )
+							{
+								if( data.sectionCount( "." ) == 3 )	// Wellformed IP address
+								{
+									for( UI08 i = 0; i < 4; ++i )
+									{
+										token = data.section( ".", i, i );
+										if( token == "*" )
+											p[i] = -1;
+										else
+											p[i] = token.toShort();
+									}
+									slEntries.push_back( FirewallEntry( p[0], p[1], p[2], p[3] ) );
+								}
+								else if( data != "\n" && data != "\r" )
+									Console.Error( "Malformed IP address in banlist.ini (line: %s)", data.c_str() );
+							}
 						}
 					}
 				}
 			}
 		}
-		fclose( firewallEntries );
+		delete firewallData;
 	}
 }
 
-void cNetworkStuff::StartupXGM( int nPortArg )
+void cNetworkStuff::RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptID )
 {
-	xgmSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
-	if( xgmSocket < 0 )
-	{
-		Console.Error( 0, "Unable to create XGM socket" );
-#if !defined(__unix__)
-		Console.Error( 0, "Code %i", WSAGetLastError() );
-#endif
-		return;
-	}
-#if defined(__unix__)
-	int on;
-	setsockopt( xgmSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof( on ) );
-#endif
-	
-	UI32 len_connection_addr = sizeof( struct sockaddr_in );
-	sockaddr_in connection;
-	memset( (char *) &connection, 0, len_connection_addr );
-	connection.sin_family = AF_INET;
-	connection.sin_addr.s_addr = htonl( INADDR_ANY );
-	connection.sin_port = htons( nPortArg );
-	int bcode = bind( xgmSocket, (struct sockaddr *)&connection, len_connection_addr );
-	
-	if( bcode < 0 )
-	{
-		Console.Error( 0, " Unable to bind socket for XGM - Error code: %i", bcode );
-		return;
-	}
-	listen( xgmSocket, 42 );
-	xgmRunning = true;
-}
-
-void cNetworkStuff::CheckXGM( void )
-{
-	fd_set all;
-	fd_set errsock;
-	FD_ZERO( &all );
-	FD_ZERO( &errsock );
-	int nfds = 0;
-
-	for( unsigned int i = 0; i < xgmClients.size(); i++ )
-	{
-		int clientSock = xgmClients[i]->CliSocket();
-		FD_SET( clientSock, &all );
-		FD_SET( clientSock, &errsock );
-		if( clientSock + 1 > nfds )
-			nfds = clientSock + 1;
-	}
-	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
-	if( s > 0 )
-	{
-		int oldnow = xgmClients.size();
-		for( UI32 i = 0; i < xgmClients.size(); i++ )
-		{
-			cSocket *mXGMSock = xgmClients[i];
-			if( mXGMSock == NULL )
-			{
-				Console << "Lost XGM socket " << i << " is NULL!" << myendl;
-				continue;
-			}
-			if( FD_ISSET( mXGMSock->CliSocket(), &errsock ) )
-			{
-				XGMDisconnect( i );
-				continue;
-			}
-			if( ( FD_ISSET( mXGMSock->CliSocket(), &all ) ) && ( oldnow == xgmClients.size() ) )
-			{
-				try
-				{
-					GetXGMMsg( i );
-				}
-				catch( socket_error& blah )
-				{
-#if defined(__unix__)
-					Console << "Client disconnected" << myendl;
-#else
-					if( blah.ErrorNumber() == WSAECONNRESET )
-						Console << "Client disconnected" << myendl;
-					else if( blah.ErrorNumber() != -1 )
-						Console << "Socket error: " << (SI32)blah.ErrorNumber() << myendl;
-#endif
-					XGMDisconnect( i );	// abnormal error
-				}
-			}
-		}
-	}
-	else if( s == SOCKET_ERROR )
-	{
-//		Console << WSAGetLastError() << myendl;
-//		Console << WSANOTINITIALISED << myendl;
-	}
-}
-void cNetworkStuff::ShutdownXGM( void )
-{
-	closesocket( xgmSocket );
-	for( unsigned int i = 0; i < xgmClients.size(); i++ )
-	{
-		xgmClients[i]->CloseSocket();
-		delete xgmClients[i];
-		xgmClients[i] = NULL;
-	}
-
-}
-
-void cNetworkStuff::XGMDisconnect( UOXSOCKET s )
-{
-	Console << "XGMClient " << s << " disconnected. [Total:" << (SI32)(xgmClients.size()-1) << "]" << myendl;
-
-	xgmClients[s]->FlushBuffer();
-	xgmClients[s]->CloseSocket();
-
-	delete xgmClients[s];
-	xgmClients.erase( xgmClients.begin() + s );
-	for(unsigned int q = 0; q < xgmIteratorBackup.size(); q++ )
-	{
-		if( xgmIteratorBackup[q] >= s )
-			xgmIteratorBackup[q]--;
-	}
-}
-
-void cNetworkStuff::XGMDisconnect( cSocket *s )
-{
-	UOXSOCKET i = FindXGMPtr( s );
-	XGMDisconnect( i );
-}
-
-UOXSOCKET cNetworkStuff::FindXGMPtr( cSocket *s )
-{
-	for( UOXSOCKET i = 0; i < static_cast<UOXSOCKET>(xgmClients.size()); i++ )
-	{
-		if( xgmClients[i] == s )
-			return i;
-	}
-	return -1;
-}
-
-cPInputBuffer *WhichXGMPacket( UI08 packetID, cSocket *s );
-
-void cNetworkStuff::GetXGMMsg( UOXSOCKET s )
-{
-	cSocket *mSock = xgmClients[s];
-	if( mSock == NULL )
-		return;
-	mSock->InLength( 0 );
-	UI08 *buffer = mSock->Buffer();
-	char temp[1024];
-	if( mSock->Receive( 1 ) > 0 )
-	{
-		UI08 packetID = buffer[0];
-		if( mSock->FirstPacket() && packetID != 0x00 )
-		{
-			sprintf( temp, "Invalid XGM client attempting to connect, disconnecting them: IP %i.%i.%i.%i", mSock->ClientIP1(), mSock->ClientIP2(), mSock->ClientIP3(), mSock->ClientIP4() );
-			messageLoop << temp;
-			XGMDisconnect( s );
-			return;
-		}
-		cPInputBuffer *test = WhichXGMPacket( packetID, mSock );
-		if( test != NULL )
-		{
-			test->Handle();
-			delete test;
-		}
-		else
-		{
-			fd_set all;
-			FD_ZERO( &all );
-			FD_SET( mSock->CliSocket(), &all );
-			int nfds = mSock->CliSocket() + 1;
-			if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
-				mSock->Receive( 2560 );
-			sprintf( temp, "Unknown message from client: 0x%02X - Ignored", packetID );
-			Console << temp << myendl;
-		}
-	}
-	else	// Sortta error type thing, they disconnected already
-		XGMDisconnect( s );
+	UI16 packetID = static_cast<UI16>((subCmd<<8) + packet);
+	packetOverloads[packetID] = scriptID;
 }
 
 void cNetworkStuff::CheckConnections( void )
 {
 	CheckConn();
-	CheckXGMConn();
-}
-
-void cNetworkStuff::CheckXGMConn( void )
-{
-	fd_set xgmConn;
-	FD_ZERO( &xgmConn );
-	FD_SET( xgmSocket, &xgmConn );
-	int nfds = xgmSocket + 1;
-	int s = select( nfds, &xgmConn, NULL, NULL, &cwmWorldState->uoxtimeout );
-	if( s > 0 )
-	{
-		sockaddr_in client_addr;
-		int len = sizeof( struct sockaddr_in );
-#if !defined(__unix__)
-		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, &len );
-#else
-		int newClient = accept( xgmSocket, (struct sockaddr *)&client_addr, (socklen_t *)&len );
-#endif
-		cSocket *toMake = new cSocket( newClient );
-		if( newClient < 0 )
-		{
-			Console.Error( 0, "Error at client xGM connection!" );
-			cwmWorldState->SetKeepRun( true );
-			cwmWorldState->SetError( true );
-			delete toMake;
-			return;
-		}
-		toMake->ClientType( CV_XGM );
-		//	EviLDeD	-	April 5, 2000
-		//	Due to an attack on the shard, and the true inability to determine who did what 
-		//	I am implementing a firewall entry system, any IP on this list will be immediatly dropped.
-		//	This is a light weight firewall attempt to stop some people that are attacking
-		//	a shard that they can easily create new accounts automatically on.
-		//	ListFormat: x.x.x.x --> * means any for that domain class
-		//   _  _  _ 
-		UI08 part[4];
-		part[0] = (UI08)(client_addr.sin_addr.s_addr&0xFF);
-		part[1] = (UI08)((client_addr.sin_addr.s_addr&0xFF00)>>8);
-		part[2] = (UI08)((client_addr.sin_addr.s_addr&0xFF0000)>>16);
-		part[3] = (UI08)((client_addr.sin_addr.s_addr&0xFF000000)>>24);
-		if( IsFirewallBlocked( part ) )
-		{
-			Console << "FIREWALL: Blocking address " << part[0] << "." << part[1] << "." << part[2] << "." << part[3] << "--> Blocked!" << myendl;
-			closesocket( newClient );
-			delete toMake;
-			return;
-		}
-		Console << "FIREWALL: Forwarding address " << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << " --> Access Granted" << myendl;
-		Console << "XGMClient " << (SI32)cwmWorldState->GetPlayersOnline() << " [" << (SI32)(part[0]) << "." << (SI32)(part[1]) << "." << (SI32)(part[2]) << "." << (SI32)(part[3]) << "] connected [Total:" << (SI32)(cwmWorldState->GetPlayersOnline()+1) << "]" << myendl;
-		xgmClients.push_back( toMake );
-		return;
-	}
-	if( s < 0 )
-	{
-		Console.Error( 0, " Select (Conn) failed!" );
-		cwmWorldState->SetKeepRun( false );
-		cwmWorldState->SetError( true );
-		return;
-	}
 }
 
 void cNetworkStuff::CheckMessages( void )
 {
 	CheckLoginMessage();
 	CheckMessage();
-	CheckXGM();
 }
 
-SI32 cNetworkStuff::PeakConnectionCount( void ) const
+size_t cNetworkStuff::PeakConnectionCount( void ) const
 {
 	return peakConnectionCount;
 }
@@ -1827,41 +1236,25 @@ SI32 cNetworkStuff::PeakConnectionCount( void ) const
 void cNetworkStuff::PushConn( void )
 {
 	On();
-
 	connIteratorBackup.push_back( currConnIter );
 }
 void cNetworkStuff::PopConn( void )
 {
 	currConnIter = connIteratorBackup.back();
 	connIteratorBackup.pop_back();
-
 	Off();
 }
 
 void cNetworkStuff::PushLogg( void )
 {
 	On();
-
 	loggIteratorBackup.push_back( currLoggIter );
 }
 void cNetworkStuff::PopLogg( void )
 {
-	currLoggIter = connIteratorBackup.back();
-	connIteratorBackup.pop_back();
-
+	currLoggIter = loggIteratorBackup.back();
+	loggIteratorBackup.pop_back();
 	Off();
 }
 
-void cNetworkStuff::PushXGM( void )
-{
-	On();
-
-	xgmIteratorBackup.push_back( currXGMIter );
-}
-void cNetworkStuff::PopXGM( void )
-{
-	currXGMIter = xgmIteratorBackup.back();
-	xgmIteratorBackup.pop_back();
-
-	Off();
 }

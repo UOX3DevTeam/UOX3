@@ -13,8 +13,6 @@ function onUseUnChecked( pUser, iUsed )
 	
 	if(( lastUsedBy != null || lastUsedBy != 0 ) && lastUsedBy != pUser.serial & 0x00FFFFFF )
 	{
-		pUser.TextMessage( lastUsed );
-		pUser.TextMessage( timeNow );
 		if(( lastUsed + 10000 ) > timeNow )
 		{
 			pUser.SysMessage( "Someone else is using this right now." );

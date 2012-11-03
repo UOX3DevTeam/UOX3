@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,7 +7,7 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>Functions, Methods, Properties and Event handling</h3>
@@ -51,6 +52,24 @@
     </table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddButtonTileArt">AddButtonTileArt</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButtonTileArt( topHeight, topLeft, buttonImage, unk1, unk2, unk3, tileID, hue, tileX, tileY );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump, with tileArt as part of the button
+<tr><td valign="top" width="25%"><b>Other info</b>
+    <td>I believe that having an unk1 of 1 indicates the gump will close. unk2 
+      should be the button's unique ID, and I *think* that unk3 is the page it 
+      is on. tileID is tileArt added as part of the button, hue is the tileArt hue, and tileX and tileY is the tileArt's offset compared to the topHeight, topLeft coordinates<br>
+      <br>
+      When the button is pressed, onGumpPress event is called, iButton is 0 if 
+      the gump has been closed without pressing a button.<br>
+      <br>
+      function onGumpPress( Sock, iButton ) { }
+  <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+      <pre>myGump.AddButtonTileArt( 13, 290, 5050, 1, 1, 1, 1193, 0, 10, 10 );
+</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddPageButton">AddPageButton</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddPageButton( topHeight, topLeft, buttonImage, pageNum );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump allowing you to navigate pages without an onGumpPress event.
@@ -85,7 +104,7 @@
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddGroup">AddGroup</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddGroup( groupNum );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>???
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>For grouping sets of radio buttons
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddGroup( 1 );
 </pre></table>
 
@@ -94,6 +113,13 @@
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddGump( topHeight, topLeft, gumpImage );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a gump on the current gump (ie any image in the gumps part of InsideUO).
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddGump( 5, 260, 1141 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddGumpColor">AddGumpColor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddGumpColor( topHeight, topLeft, gumpImage, hue );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a gump on the current gump (ie any image in the gumps part of InsideUO). Same as AddGump, but with an additional parameter for hue/color.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddGump( 5, 260, 1141, 1154 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -109,6 +135,13 @@
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddPicture( topHeight, topLeft, tilePic );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the image tilePic to the gump at topHeight/topLeft.  tilePic is an ITEM ID.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddPicture( 5, 111, 0x0EED );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddPictureColor">AddPictureColor</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddPictureColor( topHeight, topLeft, tilePic, hue );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the image tilePic to the gump at topHeight/topLeft, with color hue.  tilePic is an ITEM ID.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddPictureColor( 5, 111, 0x0EED, 1154 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -139,11 +172,29 @@ myGump.AddText( 30, 30, 0, "Test text" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddTextEntryLimited">AddTextEntryLimited</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddTextEntryLimited( topHeight, topLeft, width, height, hue, unk4, textID, defaultText, maxLength );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>It adds a text entry with default text to the gump
+<tr><td valign="top" width="25%"><b>Other info</b><td>unk4 is..? seems to work when set to 1.  textID uses an ID which is also automaticly assigned to any AddText line, so be sure to place all AddTextEntry lines after any AddText lines, then assign these with the proper textIDs starting with the next free ID that hasn't been assigned as an ID for an AddText line..  maxLength specifies max amount of text that can be entered
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddTextEntryLimited( 20, 62, 200, 20, 10, 1, 1, "Default text", 20 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddTiledGump">AddTiledGump</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddTiledGump( left, top, width, height, gumpID );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Tiles specified gump within specified area
 <tr><td valign="top" width="25%"><b>Other info</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddTiledGump( left, top, width, height, gumpID );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddToolTip">AddToolTip</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddToolTip( clilocNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a cliloc-based tooltip to the gump-element added prior to AddToolTip
+<tr><td valign="top" width="25%"><b>Other info</b><td>-
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myGump.AddPicture( 175, 50, 3644 );
+myGump.AddToolTip( 1015094 ); //adds tooltip with cliloc 1015094 to the gump-picture added on the previous line
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -157,9 +208,20 @@ myGump.AddText( 30, 30, 0, "Test text" );
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddXMFHTMLGumpColor">AddXMFHTMLGumpColor</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddXMFHTMLGumpColor( left, top, width, height, number, hasBorder, hasScrollbar, rgbColour );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. Not sure if theres any real use for it in player run shards, unless you can some how edit the cliloc files in the UO directory
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. 
 <tr><td valign="top" width="25%"><b>Other info</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1, 1, 1, ?? );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddXMFHTMLTok">AddXMFHTMLTok</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddXMFHTMLTok( left, top, width, height, hasBorder, hasScrollbar, rgbColour, clilocNum, clilocArg1, clilocArg2, clilocArg3  );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. (Any of) the three cliloc-arguments are optional, but there must minimum be however many the cliloc requires.
+<tr><td valign="top" width="25%"><b>Other info</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1060656, 99 );
+myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1060658, 99, "BottlesOfBeer" );
+myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -188,7 +250,7 @@ myGump.AddText( 30, 30, 0, "Test text" );
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_NoDispose">NoDispose</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void NoDispose();
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>???
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Gump cannot be closed through client's "Close Dialogs"-macro
 <tr><td valign="top" width="25%"><b>Other info</b><td>-
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.NoDispose();
 </pre></table>
@@ -220,7 +282,7 @@ myGump.AddText( 30, 30, 0, "Test text" );
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><a name="Gump_Example"><font color="white"><b>GumpExample</b></a></font>
 <td><b><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var myGump = new Gump; // create a new gump
 	myGump.AddBackground( 0, 0, 300, 300, 2600 ); // add an automic scaled background
@@ -257,7 +319,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			var Text2 = gumpData.getEdit(1);
 			pUser.SysMessage( "The second TextEntry was: "+Text2 )
 			var OtherButton = gumpData.getButton(0);
-			switch(RadioButton)
+			switch( OtherButton )
 			{ 
 				case 0:
 					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );

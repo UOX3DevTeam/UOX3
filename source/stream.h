@@ -13,6 +13,24 @@
 #ifndef _STREAM_H_
 #define _STREAM_H_
 #include <sstream>
+
+/*#ifndef ios_base
+	#define ios_base ios
+	namespace std
+	{
+		inline ios& left( ios& i )
+		{
+			i.setf( ios::left, ios::adjustfield ); 
+			return i;
+		}
+		inline ios& right( ios& i )
+		{
+			i.setf( ios::right, ios::adjustfield );
+			return i;
+		}
+	}
+#endif*/
+
 #endif
 
 /* This code is causing trouble. Remming it out temporarly.

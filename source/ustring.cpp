@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) 
+#if defined(_MSC_VER)
 	#if _MSC_VER < 1300
 		#pragma warning( disable : 4786 )
 		#pragma warning( disable : 4514 )
@@ -12,8 +12,11 @@
 	#define UOXVALIST std::va_list
 #endif
 
+#include "Prerequisites.h"
 #include "ustring.h" 
 
+namespace UOX
+{
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString::UString(): stdstring() 
@@ -68,8 +71,6 @@ UString UString::simplifyWhiteSpace() const
 {
 	UString working = (*this).stripWhiteSpace() ;
 	UString data ="" ;
-	//std::string::iterator iter ;
-	//iter = working.begin() ;
 	bool first = false ;
 	char value[2] ;
 	value[1] = 0 ;
@@ -96,13 +97,13 @@ UString UString::simplifyWhiteSpace() const
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(const char* sep,int start,int stop)
+UString UString::section(const char* sep,int start,int stop) const
 {
 	std::string temp = sep ;
 	return (section(temp,start,stop) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(std::string sep,int start,int stop)
+UString UString::section(std::string sep,int start,int stop) const
 {
 	UString data ;
 	int count = -1 ;
@@ -184,7 +185,10 @@ UString  UString::setNum ( short n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -204,7 +208,10 @@ UString  UString::setNum ( unsigned short n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -224,7 +231,10 @@ UString  UString::setNum ( int n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -244,7 +254,10 @@ UString  UString::setNum ( unsigned int n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -264,7 +277,10 @@ UString  UString::setNum ( long n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -284,7 +300,10 @@ UString  UString::setNum ( unsigned long n, int base  )
 			input >> std::dec >> data ;
 			break ;
 		case 16:
-			input >> std::hex >> data ;
+			input.fill( '0' );
+			input.width( 4 );
+			input.setf( std::ios::uppercase );
+			input >> std::hex >> std::right >> data ;
 			break ;
 		case 8:
 			input >> std::oct>> data ;
@@ -293,8 +312,6 @@ UString  UString::setNum ( unsigned long n, int base  )
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-//UString & UString::setNum ( float n, char f = 'g', int prec = 6 ) ;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number (float n)
@@ -319,99 +336,94 @@ UString UString::number (double n)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( long n, int base  ) 
 {
-
-	UString data ;
-
-	std::stringstream input ;
-	input << n ;
-
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input >> std::hex >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
-
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( unsigned long n, int base )
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input >> std::hex >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::number ( int n, int base  )
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input >> std::hex >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 UString UString::number ( unsigned int n, int base  ) 
 {
-	std::stringstream input ;
-	input << n ;
-	UString data ;
-	switch ( base )
+	UString data;
+	std::stringstream input;
+	switch( base )
 	{
-		case 10:
-			input >> std::dec >> data ;
-			break ;
-		case 16:
-			input >> std::hex >> data ;
-			break ;
-		case 8:
-			input >> std::oct>> data ;
-			break ;
+	case 10:
+		input << std::dec << n;
+		break;
+	case 16:
+		input << std::hex << n;
+		break;
+	case 8:
+		input << std::oct << n;
+		break;
 	}
+	input >> data;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::lower() const
 {
-	UString sReturn = *this; 
+	UString sReturn(this->c_str()); 
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::tolower);
 	return ( sReturn );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 UString UString::upper() const
 {
-	UString sReturn = *this;
-
+	UString sReturn(this->c_str());
 	std::transform(sReturn.begin(), sReturn.end(), sReturn.begin(), ::toupper);
 	return ( sReturn );
 }
@@ -423,7 +435,7 @@ float UString::toFloat(bool * ok) const
 	input << *this ;
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -434,7 +446,7 @@ double UString::toDouble(bool * ok)  const
 	input << *this ;
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -479,7 +491,7 @@ short UString::toShort ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -516,7 +528,7 @@ unsigned short UString::toUShort ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 
 	return ( data );
@@ -553,7 +565,7 @@ int UString::toInt ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -590,7 +602,7 @@ unsigned int UString::toUInt ( bool * ok , int base ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 
 	return ( data );
@@ -627,7 +639,7 @@ long UString::toLong ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -664,7 +676,7 @@ unsigned long UString::toULong ( bool * ok , int base  ) const
 	}
 	input >> data ;
 	if( ok != NULL )
-		(*ok) = input.good() ;
+		(*ok) = !input.bad() ;
 
 	return ( data );
 
@@ -695,17 +707,16 @@ UString UString::removeComment() const
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-std::string UString::replaceSlash(const std::string data)
+std::string& UString::replaceSlash( std::string& data )
 {
 	std::string value = "\\" ;
 	std::string::size_type index = 0 ;
-	std::string input = data ;
 
-	while ( (index = input.find(value,index)) != std::string::npos )
+	while ( (index = data.find( value, index ) ) != std::string::npos )
 	{
-		input = input.replace(index,1,"/") ;
+		data = data.replace(index,1,"/") ;
 	}
-	return ( input );
+	return ( data );
 
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -725,7 +736,6 @@ UString UString::operator+(const char * input )
 {
 	UString temp(input) ;
 	UString base = *this ;
-//	return base + temp ;
 	return (stdstring)base + (stdstring)temp;
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -736,7 +746,7 @@ UString UString::sprintf(const char* format,...)
 
 	UOXVALIST marker;
 	va_start( marker, format ) ;
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	_vsnprintf( buffer, 2048, format, marker );
 #else
 	vsnprintf( buffer, 2048, format, marker );
@@ -751,7 +761,7 @@ UString UString::sprintf(const char* format,...)
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-int UString::sectionCount(std::string sep) 
+int UString::sectionCount(std::string sep) const
 {
 	int count = -1 ;
 
@@ -770,7 +780,7 @@ int UString::sectionCount(std::string sep)
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-int UString::sectionCount(const char* sep)
+int UString::sectionCount(const char* sep) const
 {
 	return ( sectionCount(std::string(sep)) );
 }
@@ -786,3 +796,4 @@ bool UString::operator==( const char *input )
 	return rvalue;
 }
 
+}

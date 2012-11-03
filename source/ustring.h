@@ -1,21 +1,23 @@
-#ifndef __STRING_H
-#define __STRING_H
+#ifndef __USTRING_H
+#define __USTRING_H
 // Ssytem Includes
-#include <string>
-#include <cstdarg>
-#include <cstdio> 
-#include <sstream>
-#include <algorithm>
+//#include <string>
+//#include <cstdarg>
+//#include <cstdio> 
+//#include "stream.h"
+//#include <algorithm>
 
 
 typedef std::string stdstring ;
+
+namespace UOX
+{
 
 // Defines
 
 #define MYWHITESPACE " \t\v\f\0 "
 #define COMMENTTAG "//"
 
-//#define MYNONWHITESPACE "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=`~!@#$%^&*()_+|,<.>/?;:'[{]}\"\\"
 //! String class with extensions
 /*! This string class mimics many of the capaiblities provided by QString in the 
 	Trolltech QT library.  It has methods to handle number conversion's, convert
@@ -44,14 +46,14 @@ public:
 	//! Remove all trailing and leading white space
 	UString stripWhiteSpace() const ;
 	//! Using the specified sep as a delimitor, return the specifed section of the string
-	UString section(std::string sep, int start, int stop=std::string::npos) ;
+	UString section(std::string sep, int start, int stop=std::string::npos) const;
 	//! Overloaded member of the above
-	UString section(const char* sep, int start, int stop=std::string::npos) ;
+	UString section(const char* sep, int start, int stop=std::string::npos) const;
 
 	//!  How many "sections" are in this string ?
-	int sectionCount(std::string sep) ;
+	int sectionCount(std::string sep) const;
 	//!  How many "sections" are in this string ?
-	int sectionCount(const char* sep) ;
+	int sectionCount(const char* sep) const;
 
 	unsigned char toUByte( bool *ok = 0, int base = -1 ) const;
 	char toByte( bool *ok = 0, int base = 10 ) const;
@@ -83,7 +85,7 @@ public:
 	UString removeComment() const ;
 	UString comment() const ;
 
-	std::string replaceSlash(const std::string data);
+	static std::string& replaceSlash( std::string& data );
 	UString fixDirectory()  ;
 
 	UString operator+(const char * ) ;
@@ -95,11 +97,9 @@ public:
 	static UString number ( unsigned int n, int base = 10 )  ;
 	static UString number (float n) ;
 	static UString number (double n) ;
-	//static UString sprintf(std::string format,...) ;
 	static UString sprintf(const char* format,...) ;
-
-
-protected:
-
 };
+
+}
+
 #endif

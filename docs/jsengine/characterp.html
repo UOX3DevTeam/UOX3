@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,7 +7,7 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>Functions, Methods, Properties and Event handling</h3>
@@ -55,13 +56,17 @@
     <td>The characters' current health.
   <tr>
     <td>scripttrigger
-    <td>
+    <td>The JavaScript-ID assigned to this item.
   <tr>
     <td>privateword
     <td>
   <tr>
     <td>worldnumber
     <td>The number of the world this character is currently in.
+		<blockquote>0=Felucca<br>
+		1=Trammel<br>
+		2=Ilshenar<br>
+		3=Malas</blockquote>
   <tr>
     <td>target
     <td>The characters' current target.
@@ -75,8 +80,14 @@
     <td>strength
     <td>The strength attribute of the character.
   <tr>
+    <td>baseskills
+    <td>Used to get and set the baseskill value of the characters' selected skill (IE myChar.baseskills.alchemy = 1000).
+  <tr>
     <td>skills
     <td>Used to set and return a specific skill value of a character.
+  <tr>
+    <td>skilluse
+    <td>
   <tr>
     <td>mana
     <td>The characters' current mana.
@@ -84,8 +95,8 @@
     <td>stamina
     <td>The characters' current stamina.
   <tr>
-    <td>pack
-    <td>The root pack (backpack) of the character.
+    <td>charpack
+    <td>Returns the root pack (backpack) of the character as a JS-object.
   <tr>
     <td>fame
     <td>The fame reputation of a character.
@@ -93,17 +104,14 @@
     <td>karma
     <td>The karma reputation of a character.
   <tr>
-    <td>defense
-    <td>The total defense of a character (with armor).
-  <tr>
     <td>attack
     <td>The characters' current attack value (damage).
   <tr>
     <td>hunger
-    <td>The hunger level of a character.
+    <td>The hunger level of a character. (1 - 6, Extremely hungry - Not hungry)
   <tr>
     <td>frozen
-    <td>Toggles whether or not a character can move.
+    <td>Toggles whether or not a character is frozen to the ground.
   <tr>
     <td>commandlevel
     <td>The characters command level:<ul>
@@ -113,64 +121,58 @@
 	3 = Admin</ul>
   <tr>
     <td>race
-    <td>The characters' race.
+    <td>Returns the character's race as a JS-object.
   <tr>
     <td>criminal
-    <td>The characters' status as a criminal.
+    <td>The characters' status as a criminal. (true/false)
   <tr>
     <td>murderer
-    <td>The characters' status as a murderer.
+    <td>The characters' status as a murderer. (true/false)
   <tr>
     <td>innocent
-    <td>The characters' status as an innocent.
+    <td>The characters' status as an innocent. (true/false)
   <tr>
     <td>murdercount
     <td>Total number of players this character has killed.
   <tr>
     <td>gender
-    <td>The gender of a character.
+    <td>The gender of a character. (0 = male, 1 = female, 2 = unknown)
   <tr>
     <td>dead
-    <td>The characters' status (alive or dead).
+    <td>Returns true if character is dead, false if character is alive.
   <tr>
     <td>npc
-    <td>Used to determine if a character is an npc or pc.
+    <td>Used to determine if a character is an NPC or PC. Returns true if character is an NPC.
   <tr>
     <td>online
-    <td>Is the player online.
+    <td>Is the player online. (true/false)
   <tr>
     <td>direction
-    <td>The direction the character is facing.
+    <td>The direction the character is facing. (1-8)
   <tr>
     <td>region
-    <td>The region this character is currently in.
+    <td>Returns the region this character is currently in, as a JS-object.
   <tr>
     <td>town
-    <td>The town this character is currently in.
+    <td>Returns the town this character is currently in, as a JS-object.
   <tr>
     <td>guild
-    <td>The guild this character is a member of.
-  <tr>
-    <td>baseskills
-    <td>Used to get and set the baseskill value of the characters' selected skill (IE myChar.baseskills.alchemy = 1000).
-  <tr>
-    <td>skillsused
-    <td>
+    <td>Returns the guild this character is a member of, as a JS-object.
   <tr>
     <td>socket
-    <td>The socket attached to this player.
+    <td>Returns the socket attached to this player as a JS-object.
   <tr>
     <td>isChar
-    <td>Returns true if this object is a character.
+    <td>Returns true, as this object is a character.
   <tr>
     <td>isItem
-    <td>Returns true if this object is an item.
+    <td>Returns false, as this object is not an item.
   <tr>
     <td>isSpawner
-    <td>Returns true if this object is a spawn item.
+    <td>Returns false, as this object is not a spawner.
   <tr>
     <td>raceID
-    <td>
+    <td>Returns the Race ID (from races.dfn) of the character.
   <tr>
     <td>maxhp
     <td>The maximum health of this character.
@@ -192,37 +194,37 @@
 	6 = Pathfinding</ul>
   <tr>
     <td>isonhorse
-    <td>Toggles whether or not the character is currently riding a horse.
+    <td>Character is mounted on a horse/other mount, true or false.
   <tr>
-    <td>tempdex
+    <td>tdexterity
     <td>
   <tr>
-    <td>tempint
+    <td>tintelligence
     <td>
   <tr>
-    <td>tempstr
+    <td>tstrength
     <td>
   <tr>
     <td>poison
-    <td>Character is poisoned
+    <td>Set/Get the poison-level of the character (0 if not poisoned).
   <tr>
     <td>lightlevel
     <td>The fixed light level of the character.
   <tr>
-    <td>armour
-    <td>The base defense of a character (before armor).
-  <tr>
     <td>vulnerable
     <td>Sets character to either vulnerable (true) or invulnerable (false).
   <tr>
-    <td>willhunger
-    <td>Sets character to either hunger (true) or stay full(false).
+    <td>hungerstatus
+    <td>Enables (true) or disables (false) the "hunger-mode" of this character.
   <tr>
     <td>lodamage
     <td>The minimum amount of damage an npc will do.
   <tr>
     <td>hidamage
     <td>The maximum amount of damage an npc will do.
+  <tr>
+    <td>flag
+    <td>
   <tr>
     <td>atWar
     <td>Toggles whether or not a character is at war.
@@ -231,7 +233,7 @@
     <td>The spell this character is casting.
   <tr>
     <td>isCasting
-    <td>Character is casting a spell.
+    <td>Character is casting a spell, true or false.
   <tr>
     <td>townPriv
     <td>The privledges this character has with his town.
@@ -252,7 +254,7 @@
     <td>The character attacking this character.
   <tr>
     <td>raceGate
-    <td>Character has used a race gate.
+    <td>Character has used a race gate, true or false.
   <tr>
     <td>skillLock
     <td>
@@ -300,10 +302,85 @@
     <td>The total weight of this character.
   <tr>
     <td>squelch
-    <td>The squelched status of this character.
+    <td>The squelched status of this character. (0 = not squelched - can talk, 1 = squelched - can't talk)
   <tr>
     <td>isJailed
-    <td>Is this character in jail?
+    <td>True if character is jailed, false if not.
+  <tr>
+    <td>magicReflect
+    <td>Does this character have permanent magic reflection?
+  <tr>
+    <td>tamed
+    <td>Is the character tamed?
+  <tr>
+    <td>isUsingPotion
+    <td>True if potion-use-timer hasn't elapsed since last potion was used, false if it has.
+  <tr>
+    <td>stealth
+    <td>Determines wheather or not character is stealthing.
+  <tr>
+    <td>skillToTame
+    <td>The skill-value required to tame this character.
+  <tr>
+    <td>isPolymorphed
+    <td>Character is polymorphed (true/false)
+  <tr>
+    <td>isIncognito
+    <td>Character is under influence of the Incognito spell (true/false)
+  <tr>
+    <td>canRun
+    <td>Character can run in combat mode (NPCs only, true/false)
+  <tr>
+    <td>isMeditating
+    <td>Character is meditating(?) (true/false)
+  <tr>
+    <td>isGM
+    <td>Character is a GM (true/false)
+  <tr>
+    <td>canBroadcast
+    <td>Character can broadcast messages to all other players (true/false)
+  <tr>
+    <td>singClickSer
+    <td>When character single clicks an item/other character, the serial of said object is displayed (true/false)
+  <tr>
+    <td>noSkillTitles
+    <td>No skilltitles will be displayed on the character's paperdoll (true/false)
+  <tr>
+    <td>isGMPageable
+    <td>Character can read & react to GM Pages? (true/false)
+  <tr>
+    <td>canSnoop
+    <td>Character can snoop other characters' backpacks without skillcheck against snooping skill (true/false)
+  <tr>
+    <td>isCounselor
+    <td>Character is a counselor (true/false)
+  <tr>
+    <td>noNeedMana
+    <td>Character doesn't use any mana when casting spells (true/false)
+  <tr>
+    <td>noNeedReags
+    <td>Character doesn't need any reagents to cast spells (true/false)
+  <tr>
+    <td>isDispellable
+    <td>Character is dispellable using the Dispelling-spells (true/false)
+  <tr>
+    <td>orgID
+    <td>Get/Set the original skin ID of a character (the one it reverts back to after polymorph, for instance)
+  <tr>
+    <td>orgSkin
+    <td>Get/Set the original skin colour of a character
+  <tr>
+    <td>isAnimal
+    <td>Returns true/false depending on if character is an animal
+  <tr>
+    <td>isHuman
+    <td>Returns true/false depending on if character is a human/elf/ghost/gm
+  <tr>
+    <td>isShop
+    <td>Get/set whether character is a shopkeeper or not
+  <tr>
+    <td>attackFirst
+    <td>Get/set whether character attacked first or not
   </table>
 
 <center>

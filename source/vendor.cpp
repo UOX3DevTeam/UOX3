@@ -1,531 +1,437 @@
 #include "uox3.h"
 #include "commands.h"
 #include "cEffects.h"
-#include "packets.h"
+#include "CPacketSend.h"
+#include "classes.h"
+#include "townregion.h"
+#include "CJSMapping.h"
+#include "cScript.h"
 
 #undef DBGFILE
 #define DBGFILE "vendor.cpp"
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void PlVGetgold( cSocket *mSock, CChar *v )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Get gold when player buys an item off a player vendor
-//o---------------------------------------------------------------------------o
-void PlVGetgold( cSocket *mSock, CChar *v )
+#include "ObjectFactory.h"
+
+namespace UOX
 {
-	CChar *mChar = mSock->CurrcharObj();
-	UI32 pay = 0, give = v->GetHoldG(), t = 0;
-	if( mChar == v->GetOwnerObj() )
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	UI32 calcValue( CItem *i, UI32 value )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Calculate the value of an item
+//o---------------------------------------------------------------------------o
+UI32 calcValue( CItem *i, UI32 value )
+{
+	if( i->GetType() == IT_POTION )
 	{
-		if( v->GetHoldG() <= 0 )
-		{
-			npcTalk( mSock, v, 1326, false );
-			v->SetHoldG( 0 );
-			return;
-		} 
-		else if( v->GetHoldG() > 0 && v->GetHoldG() <= MAX_STACK )
-		{
-			if( v->GetHoldG() > 9 )
-			{
-				pay = (int)( v->GetHoldG() / 10 );
-				give = v->GetHoldG() - pay;
-			} 
-			else 
-			{
-				pay = v->GetHoldG();
-				give = 0;
-			}
-			v->SetHoldG( 0 );
-		}
-		else 
-		{
-			t = v->GetHoldG() - MAX_STACK;	// yank of 65 grand, then do calculations
-			v->SetHoldG( t );
-			pay = 6554;
-			give = 58981;
-			if( t > 0 )
-				npcTalk( mSock, v, 1327, false );
-		}
-		if( give ) 
-			Items->SpawnItem( mSock, mChar, give, "#", 1, 0x0EED, 0, true, true);
-		
-		npcTalk( mSock, v, 1328, false, v->GetHoldG(), pay, give );
-	} 
-	else 
-		npcTalk( mSock, v, 1329, false );
+		UI32 mod = 10;
+		if( i->GetTempVar( CITV_MOREX ) > 500 )
+			++mod;
+		if( i->GetTempVar( CITV_MOREX ) > 900 )
+			++mod;
+		if( i->GetTempVar( CITV_MOREX ) > 1000 )
+			++mod;
+		if( i->GetTempVar( CITV_MOREZ ) > 1 )
+			mod += (3*(i->GetTempVar( CITV_MOREZ )-1));
+		value=(value*mod)/10;
+	}
+
+	if( i->GetRank() > 0 && i->GetRank() < 10 && cwmWorldState->ServerData()->RankSystemStatus() )
+		value = (UI32)( i->GetRank() * value ) / 10;
+	if( value < 1 )
+		value = 1;
+
+	if( !i->GetRndValueRate() )
+		i->SetRndValueRate( 0 );
+	if( i->GetRndValueRate() != 0 && cwmWorldState->ServerData()->TradeSystemStatus() )
+		value += (UI32)(value*i->GetRndValueRate())/1000;
+	if( value < 1 )
+		value = 1;
+	return value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void buyItem( cSocket *mSock )
+//|	Function	-	UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Calculate the value of a good
+//o---------------------------------------------------------------------------o
+UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
+{
+	if( tReg == NULL )
+		return value;
+
+	SI16 good			= i->GetGood();
+	SI32 regvalue		= 0;
+
+	if( good <= -1 )
+		return value;
+
+	if( isSelling )
+		regvalue = tReg->GetGoodSell( static_cast<UI08>(i->GetGood()) );
+	else
+		regvalue = tReg->GetGoodBuy( static_cast<UI08>(i->GetGood()) );
+
+	UI32 x = (UI32)( value * abs( regvalue ) ) / 1000;
+
+	if( regvalue < 0 )
+		value -= x;
+	else
+		value += x;
+
+	if( value < 1 )
+		value = 1;
+
+	return value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    :  void buyItem( CSocket *mSock )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player buys an item from a vendor
 //o---------------------------------------------------------------------------o
-void buyItem( cSocket *mSock )
+bool CPIBuyItem::Handle( void )
 {
-	int i, j;
-	int itemtotal;
+	UI16 i;
 	UI32 playergoldtotal, goldtotal = 0;
-	bool soldout = false, clear = false;
-	CChar *mChar = mSock->CurrcharObj();
-	CItem *p = getPack( mChar );
-	if( p == NULL ) 
-		return;
+	bool soldout	= false, clear = false;
+	CChar *mChar	= tSock->CurrcharObj();
+	CItem *p		= mChar->GetPackItem();
+	if( !ValidateObject( p ) ) 
+		return true;
 
-	std::vector< int > bitems, amount, layer;
+	ITEMLIST bitems;
+	std::vector< UI08 > layer;
+	std::vector< UI16 > amount;
 
-	CChar *npc = calcCharObjFromSer( mSock->GetDWord( 3 ) );
-	
-	itemtotal = (mSock->GetWord( 1 ) - 8) / 7;
+	// vector for storing all objects that actually end up in user backpack
+	std::vector< CItem * > boughtItems;
+
+	CChar *npc		= calcCharObjFromSer( tSock->GetDWord( 3 ) );
+	UI16 itemtotal	= static_cast<UI16>((tSock->GetWord( 1 ) - 8) / 7);
 	if( itemtotal > 511 ) 
-		return;
+		return true;
+
+	boughtItems.reserve( itemtotal );
 	bitems.resize( itemtotal );
 	amount.resize( itemtotal );
 	layer.resize( itemtotal );
 	int baseOffset = 0;
-	for( i = 0; i < itemtotal; i++ )
+	for( i = 0; i < itemtotal; ++i )
 	{
 		baseOffset	= 7 * i;
-		layer[i]	= mSock->GetByte( 8 + baseOffset );
-		bitems[i]	= calcItemFromSer( mSock->GetDWord( 9 + baseOffset ) );
-		amount[i]	= mSock->GetWord( 13 + baseOffset );
-		goldtotal	+= ( amount[i] * ( items[bitems[i]].GetBuyValue() ) );
+		layer[i]	= tSock->GetByte( 8 + baseOffset );
+		bitems[i]	= calcItemObjFromSer( tSock->GetDWord( 9 + baseOffset ) );
+		amount[i]	= tSock->GetWord( 13 + baseOffset );
+		goldtotal	+= ( amount[i] * ( bitems[i]->GetBuyValue() ) );
 	}
-	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->GetBuyThreshold() ));
+
+	bool useBank = (goldtotal >= static_cast<UI32>(cwmWorldState->ServerData()->BuyThreshold() ));
 	if( useBank )
 		playergoldtotal = GetBankCount( mChar, 0x0EED );
 	else
-		playergoldtotal = GetAmount( mChar, 0x0EED );
+		playergoldtotal = GetItemAmount( mChar, 0x0EED );
 	if( playergoldtotal >= goldtotal || mChar->IsGM() )
 	{
-		for( i = 0; i < itemtotal; i++ )
+		for( i = 0; i < itemtotal; ++i )
 		{
-			if( items[bitems[i]].GetAmount() < amount[i] )
+			if( bitems[i]->GetAmount() < amount[i] )
 				soldout = true;
+
+			// Check if onBuyFromVendor JS event is present for each item being purchased
+			// If true, and a return false has been returned from the script, halt the purchase
+			UI16 targTrig		= bitems[i]->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( targTrig );
+			if( toExecute != NULL )
+			{
+				if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) )
+				{
+					bitems.clear(); //needed???
+					return true;
+				}
+			}
 		}
 		if( soldout )
 		{
-			npcTalk( mSock, npc, 1336, false );
+			npc->TextMessage( tSock, 1336, TALK, false );
 			clear = true;
 		}
 		else
 		{
 			if( mChar->IsGM() )
-				npcTalkAll( npc, 1337, false, mChar->GetName() );
+				npc->TextMessage( NULL, 1337, TALK, false, mChar->GetName().c_str() );
 			else
 			{
 				if( goldtotal == 1 )
-					npcTalkAll( npc, 1338, false, mChar->GetName(), goldtotal );
+					npc->TextMessage( NULL, 1338, TALK, false, mChar->GetName().c_str(), goldtotal );
 				else
-					npcTalkAll( npc, 1339, false, mChar->GetName(), goldtotal );
+					npc->TextMessage( NULL, 1339, TALK, false, mChar->GetName().c_str(), goldtotal );
 
-				Effects->goldSound( mSock, goldtotal );
+				Effects->goldSound( tSock, goldtotal );
 			}
 			
 			clear = true;
 			if( !mChar->IsGM() ) 
 			{
 				if( useBank )
-					DeleteBankItem( mChar, 0x0EED, 0, goldtotal );
+					DeleteBankItem( mChar, goldtotal, 0x0EED );
 				else
-					DeleteQuantity( mChar, 0x0EED, goldtotal );
+					DeleteItemAmount( mChar, goldtotal, 0x0EED );
 			}
-			int biTemp;
+			CItem *biTemp;
 			CItem *iMade = NULL;
-			for( i = 0; i < itemtotal; i++ )
+			UI16 j;
+			for( i = 0; i < itemtotal; ++i )
 			{
-				biTemp = bitems[i];
-				iMade = NULL;
-				if( items[biTemp].GetAmount() > amount[i] )
+				biTemp	= bitems[i];
+				iMade	= NULL;
+				if( biTemp->GetAmount() > amount[i] )
 				{
-					if( items[biTemp].isPileable() )
+					if( biTemp->isPileable() )
 					{
-						iMade = Commands->DupeItem( mSock, &items[biTemp], amount[i] );
+						iMade = Items->DupeItem( tSock, biTemp, amount[i] );
 						if( iMade != NULL )
 						{
-							iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-							iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
 							iMade->SetCont( p );
-							RefreshItem( iMade );
+							iMade->PlaceInPack();
+							boughtItems.push_back( iMade );
 						}
 					}
 					else
 					{
-						for( j = 0; j < amount[i]; j++ )
+						for( j = 0; j < amount[i]; ++j )
 						{
-							iMade = Commands->DupeItem( mSock, &items[biTemp], 1 );
+							iMade = Items->DupeItem( tSock, biTemp, 1 );
 							if( iMade != NULL )
 							{
-								iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-								iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
 								iMade->SetCont( p );
-								RefreshItem( iMade );
+								iMade->PlaceInPack();
+								boughtItems.push_back( iMade );
 							}
 						}
 					}
-					items[biTemp].SetAmount( items[biTemp].GetAmount() - amount[i] );
-					items[biTemp].SetRestock( items[biTemp].GetRestock() + amount[i] );
+					biTemp->IncAmount( -amount[i], true );
+					biTemp->SetRestock( biTemp->GetRestock() + amount[i] );
 				}
 				else
 				{
 					switch( layer[i] )
 					{
-					case 0x1A: // Buy Container
-						if( items[biTemp].isPileable() )
-						{
-							iMade = Commands->DupeItem( mSock, &items[biTemp], amount[i] );
-							if( iMade != NULL )
+						case 0x1A: // Sell Container
+							if( biTemp->isPileable() )
 							{
-								iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-								iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
-								iMade->SetCont( p );
-								RefreshItem( iMade );
-							}
-						}
-						else
-						{
-							for( j = 0; j < amount[i]; j++ )
-							{
-								iMade = Commands->DupeItem( mSock, &items[biTemp], 1 );
+								iMade = Items->DupeItem( tSock, biTemp, amount[i] );
 								if( iMade != NULL )
 								{
-									iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-									iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
 									iMade->SetCont( p );
-									RefreshItem( iMade );
+									iMade->PlaceInPack();
+									boughtItems.push_back( iMade );
 								}
 							}
-							iMade = NULL;
-						}
-						items[biTemp].SetAmount( items[biTemp].GetAmount() - amount[i] );
-						items[biTemp].SetRestock( items[biTemp].GetRestock() + amount[i] );
-						break;
-					case 0x1B: // Bought Container
-						if( items[biTemp].isPileable() )
-						{
-							items[biTemp].SetCont( p );
-							RefreshItem( &items[biTemp] );
-						}
-						else
-						{
-							for( j = 0; j < amount[i]-1; j++ )
+							else
 							{
-								iMade = Commands->DupeItem( mSock, &items[biTemp], 1 );
-								if( iMade != NULL )
+								for( j = 0; j < amount[i]; ++j )
 								{
-									iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-									iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
-									iMade->SetCont( p );
-									RefreshItem( iMade );
+									iMade = Items->DupeItem( tSock, biTemp, 1 );
+									if( iMade != NULL )
+									{
+										iMade->SetCont( p );
+										iMade->PlaceInPack();
+										boughtItems.push_back( iMade );
+									}
 								}
 							}
-
-							items[biTemp].SetCont( p );
-							items[biTemp].SetAmount( 1 );
-							RefreshItem( &items[biTemp] );
-						}
-						break;
-					default:
-						Console.Error( 2, " Fallout of switch statement without default. vendor.cpp, buyItem()" );
+							biTemp->IncAmount( -amount[i], true );
+							biTemp->SetRestock( biTemp->GetRestock() + amount[i] );
+							break;
+						case 0x1B: // Bought Container
+							if( biTemp->isPileable() )
+							{
+								biTemp->SetCont( p );
+								boughtItems.push_back( biTemp );
+							}
+							else
+							{
+								for( j = 0; j < amount[i]-1; ++j )
+								{
+									iMade = Items->DupeItem( tSock, biTemp, 1 );
+									if( iMade != NULL )
+									{
+										iMade->SetCont( p );
+										iMade->PlaceInPack();
+										boughtItems.push_back( iMade );
+									}
+								}
+								biTemp->SetCont( p );
+								biTemp->SetAmount( 1 );
+								boughtItems.push_back( biTemp );
+							}
+							break;
+						default:
+							Console.Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
+							break;
 					}
 				}
-				/*if( iMade != NULL )
+			}
+			for( i = 0; i < boughtItems.size(); ++i )
+			{
+				if( boughtItems[i] )
 				{
-					iMade->SetX( (UI16)( 20 + ( RandomNum( 0, 49 ) ) ) );
-					iMade->SetY( (UI16)( 85 + ( RandomNum( 0, 75 ) ) ) );
-					iMade->SetCont( p );
-					RefreshItem( iMade );
-				}*/
+					cScript *toGrab = JSMapping->GetScript( boughtItems[i]->GetScriptTrigger() );
+					if( toGrab != NULL )
+						toGrab->OnBoughtFromVendor( tSock, npc, boughtItems[i] );
+				}
 			}
 		}
 	}
 	else
-		npcTalkAll( npc, 1340, false );
+		npc->TextMessage( NULL, 1340, TALK, false );
 	
 	if( clear )
 	{
 		CPBuyItem clrSend;
-		clrSend.Serial( mSock->GetDWord( 3 ) );
-		mSock->Send( &clrSend );
+		clrSend.Serial( tSock->GetDWord( 3 ) );
+		tSock->Send( &clrSend );
 	}
-	statwindow( mSock, mChar );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Send available sell items to client for Sell list
-//o---------------------------------------------------------------------------o
-void sendSellSubItem( CChar *npc, CItem *p, CItem *q, UI08 *m1, int &m1t)
-{
-	UI32 value;
-	int z;
-	char ciname[MAX_NAME];
-	char cinam2[MAX_NAME];
-	char itemname[MAX_NAME];
-	
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			strcpy( ciname, i->GetName() );
-			strcpy( cinam2, q->GetName() );
-			strupr( ciname );
-			strupr( cinam2 );
-			
-			if( i->GetType() == 1 )
-				sendSellSubItem( npc, i, q, m1, m1t );
-			else if( i->GetID() == q->GetID() && i->GetType() == q->GetType() &&
-				m1[8] < 60 && ( !cwmWorldState->ServerData()->GetSellByNameStatus() ||
-				( cwmWorldState->ServerData()->GetSellByNameStatus() && !strcmp( ciname, cinam2 ) ) ) )
-			{
-				m1[m1t+0] = i->GetSerial( 1 );
-				m1[m1t+1] = i->GetSerial( 2 );
-				m1[m1t+2] = i->GetSerial( 3 );
-				m1[m1t+3] = i->GetSerial( 4 );
-				m1[m1t+4] = i->GetID( 1 );
-				m1[m1t+5] = i->GetID( 2 );
-				m1[m1t+6] = i->GetColour( 1 );
-				m1[m1t+7] = i->GetColour( 2 );
-				m1[m1t+8] = (UI08)(i->GetAmount()>>8);
-				m1[m1t+9] = (UI08)(i->GetAmount()%256);
-				value = calcValue( i, (UI32)q->GetBuyValue() );
-				if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-					value = calcGoodValue( npc, q, value, true );
-				m1[m1t+10] = (UI08)(value>>8);
-				m1[m1t+11] = (UI08)(value%256);
-				m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
-				m1[m1t+13] = (UI08)(getTileName( i, itemname ));
-				m1t += 14;
-				for( z = 0; z <m1[m1t-1]; z++ )
-					m1[m1t+z] = itemname[z];
-
-				m1t += m1[m1t-1];
-				m1[8]++;
-			}
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool sendSellStuff( cSocket *s, CChar *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Send Vendor Sell List to client
-//o---------------------------------------------------------------------------o
-bool sendSellStuff( cSocket *s, CChar *i )
-{
-	char itemname[256];
-	UI32 value;
-	UI08 m1[2048];
-	char m2[2];
-	char ciname[256];
-	char cinam2[256];
-	
-	CItem *vendorPack = i->GetItemAtLayer( 0x1C );	// find the acceptable sell layer
-	if( vendorPack == NULL ) 
-		return false;	// no layer
-	
-	m2[0] = 0x33;
-	m2[1] = 0x01;
-	CChar *mChar = s->CurrcharObj();
-	s->Send( m2, 2 );
-	
-	CItem *pack = getPack( mChar );				// no pack for the player
-	if( pack == NULL ) 
-		return false;
-	
-	m1[0] = 0x9E; // Header
-	m1[1] = 0; // Size
-	m1[2] = 0; // Size
-	m1[3] = i->GetSerial( 1 );
-	m1[4] = i->GetSerial( 2 );
-	m1[5] = i->GetSerial( 3 );
-	m1[6] = i->GetSerial( 4 );
-	m1[7] = 0; // Num items
-	m1[8] = 0; // Num items
-	int m1t = 9;
-
-	for( CItem *q = vendorPack->FirstItemObj(); !vendorPack->FinishedItems(); q = vendorPack->NextItemObj() )
-	{
-		if( q != NULL )
-		{
-			for( CItem *j = pack->FirstItemObj(); !pack->FinishedItems(); j = pack->NextItemObj() )
-			{
-				if( j != NULL )
-				{
-					strcpy( ciname, j->GetName() );
-					strcpy( cinam2, q->GetName() );
-					strupr( ciname );
-					strupr( cinam2 );
-					if( j->GetType() == 1 )
-						sendSellSubItem( i, j, q, m1, m1t );
-					else if( ( j->GetID() == q->GetID() && j->GetType() == q->GetType() &&
-						m1[8] < 60 && !cwmWorldState->ServerData()->GetSellByNameStatus() ) || ( cwmWorldState->ServerData()->GetSellByNameStatus() && 
-						!strcmp( ciname, cinam2 ) ) )
-					{
-						m1[m1t+0] = j->GetSerial( 1 );
-						m1[m1t+1] = j->GetSerial( 2 );
-						m1[m1t+2] = j->GetSerial( 3 );
-						m1[m1t+3] = j->GetSerial( 4 );
-						m1[m1t+4] = j->GetID( 1 );
-						m1[m1t+5] = j->GetID( 2 );
-						m1[m1t+6] = j->GetColour( 1 );
-						m1[m1t+7] = j->GetColour( 2 );
-						m1[m1t+8] = (UI08)(j->GetAmount()>>8);
-						m1[m1t+9] = (UI08)(j->GetAmount()%256);
-						value = calcValue( j, (UI32)q->GetBuyValue() );
-						if( cwmWorldState->ServerData()->GetTradeSystemStatus() )
-							value = calcGoodValue( i, j, value, true );
-						m1[m1t+10] = (UI08)(value>>8);
-						m1[m1t+11] = (UI08)(value%256);
-						m1[m1t+12] = 0;// Unknown... 2nd length byte for string?
-						m1[m1t+13] = (UI08)(getTileName( j, itemname ));
-						m1t=m1t+14;
-						for( int z = 0; z < m1[m1t-1]; z++ )
-							m1[m1t+z]=itemname[z];
-
-						m1t=m1t+m1[m1t-1];
-						m1[8]++;
-					}
-				}
-			}
-		}
-	}
-	
-	m1[1] = (UI08)(m1t>>8);
-	m1[2] = (UI08)(m1t%256);
-	if( m1[8] != 0 )
-		s->Send( m1, m1t );
-	else
-		npcTalkAll( i, 1341, false );
-	m2[0] = 0x33;
-	m2[1] = 0x00;
-	s->Send( m2, 2 );
 	return true;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  void sellItem( cSocket *mSock )
+//|   Function    :  void sellItem( CSocket *mSock )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Player sells an item to the vendor
 //o---------------------------------------------------------------------------o
-void sellItem( cSocket *mSock )
+bool CPISellItem::Handle( void )
 {
-	if( mSock->GetByte( 8 ) != 0 )
+	if( tSock->GetByte( 8 ) != 0 )
 	{
-		CChar *mChar = mSock->CurrcharObj();
-		CChar *n			= calcCharObjFromSer( mSock->GetDWord( 3 ) );
-		if( n == NULL || mChar == NULL )
-			return;
-		CItem *sellPack		= n->GetItemAtLayer( 0x1A );
-		CItem *boughtPack	= n->GetItemAtLayer( 0x1B );
-		CItem *buyPack		= n->GetItemAtLayer( 0x1C );
-		CItem *j, *k;
-		UI16 i, amt, maxsell = 0;
+		CChar *mChar	= tSock->CurrcharObj();
+		CChar *n		= calcCharObjFromSer( tSock->GetDWord( 3 ) );
+		if( !ValidateObject( n ) || !ValidateObject( mChar ) )
+			return true;
+		CItem *buyPack		= n->GetItemAtLayer( IL_BUYCONTAINER );
+		CItem *boughtPack	= n->GetItemAtLayer( IL_BOUGHTCONTAINER );
+		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
+		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
+			return true;
+		CItem *j = NULL, *k = NULL, *l = NULL;
+		UI16 amt = 0, maxsell = 0;
+		UI08 i = 0;
 		UI32 totgold = 0, value = 0;
-		for( i = 0; i < mSock->GetByte( 8 ); i++ )
+		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( mSock->GetDWord( 9 + (6*i) ) );
-			amt = mSock->GetWord( 13 + (6*i) );
+			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
+			amt = tSock->GetWord( 13 + (6*i) );
 			maxsell += amt;
 		}
 
-		if( maxsell > cwmWorldState->ServerData()->GetSellMaxItemsStatus() )
+		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			npcTalkAll( n, 1342, false, mChar->GetName(), cwmWorldState->ServerData()->GetSellMaxItemsStatus() );
-			return;
+			n->TextMessage( NULL, 1342, TALK, false, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			return true;
 		}
 
-		for( i = 0; i < mSock->GetByte( 8 ); i++ )
+		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( mSock->GetDWord( 9 + (6*i) ) );
-			amt = mSock->GetWord( 13 + (6*i) );
-			if( j != NULL )
+			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
+			amt = tSock->GetWord( 13 + (6*i) );
+			if( ValidateObject( j ) )
 			{
-				if( j->GetAmount() < amt )
+				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )
 				{
-					npcTalkAll( n, 1343, false );
-					return;
+					n->TextMessage( NULL, 1343, TALK, false );
+					return true;
 				}
-				CItem *join = NULL;
-				for( k = sellPack->FirstItemObj(); !sellPack->FinishedItems(); k = sellPack->NextItemObj() )
+
+				// Check if onSellToVendor JS event is present for each item being sold
+				// If true, and a value of "false" has been returned from the script, halt the sale
+				UI16 targTrig		= j->GetScriptTrigger();
+				cScript *toExecute	= JSMapping->GetScript( targTrig );
+				if( toExecute != NULL )
 				{
-					if( k != NULL )
+					if( toExecute->OnSellToVendor( tSock, n, j ) )
+					{
+						return true;
+					}
+				}
+
+				CItem *join = NULL;
+				CDataList< CItem * > *pCont = boughtPack->GetContainsList();
+				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
+				{
+					if( ValidateObject( k ) )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
 							join = k;
 					}
 				}
-				for( k = buyPack->FirstItemObj(); !buyPack->FinishedItems(); k = buyPack->NextItemObj() )
+				pCont = buyPack->GetContainsList();
+				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
-					if( k != NULL )
+					if( ValidateObject( k ) )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							value = calcValue( j, (UI32)k->GetBuyValue() );
+							value = calcValue( j, k->GetSellValue() );
 					}
 				}
-				if( join != NULL )
+
+				// If an object already exist in the boughtPack that this one can be joined to...
+				if( ValidateObject( join ) )
 				{
-					join->SetAmount( join->GetAmount() + amt );
+					join->IncAmount( amt );
 					join->SetRestock( join->GetRestock() - amt );
+					l = join;
+
 					totgold += ( amt * value );
 					if( j->GetAmount() == amt )
-						Items->DeleItem( j );
+						j->Delete();
 					else
-					{
-						j->SetAmount( j->GetAmount() - amt );
-						RefreshItem( j );
-					}
+						j->IncAmount( -amt );
 				}
 				else
 				{
+					//Otherwise, move this item to the vendor's boughtPack
 					totgold += ( amt * value );
-					j->SetCont( boughtPack );
-					//remove from shopkeeps inventory lookup tauriel
-
-					CPRemoveItem toRemove = (*j);
-					Network->PushConn();
-					for( cSocket *zSock = Network->FirstSocket(); !Network->FinishedSockets(); zSock = Network->NextSocket() )
-						zSock->Send( &toRemove );
-					Network->PopConn();
 
 					if( j->GetAmount() != amt ) 
-						Commands->DupeItem( mSock, j, j->GetAmount() - amt );
+					{
+						l = Items->DupeItem( tSock, j, amt );
+						j->SetAmount( j->GetAmount() - amt );
+					}
+					else
+						l = j;
+
+					if( ValidateObject( l ) )
+						l->SetCont( boughtPack );
+				}
+				if( l )
+				{
+					cScript *toGrab = JSMapping->GetScript( l->GetScriptTrigger() );
+					if( toGrab != NULL )
+						toGrab->OnSoldToVendor( tSock, n, l );
 				}
 			} 
 		}
-		Items->addGold( mSock, totgold );
-		Effects->goldSound( mSock, totgold );
+
+		Effects->goldSound( tSock, totgold );
+		while( totgold > MAX_STACK )
+		{
+			Items->CreateScriptItem( tSock, mChar, "0x0EED", MAX_STACK, OT_ITEM, true );
+			totgold -= MAX_STACK;
+		}
+		if( totgold > 0 )
+			Items->CreateScriptItem( tSock, mChar, "0x0EED", totgold, OT_ITEM, true );
 	}
 	
 	CPBuyItem clrSend;
-	clrSend.Serial( mSock->GetDWord( 3 ) );
-	mSock->Send( &clrSend );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void restock( bool stockAll )
-//|   Date        :  3/15/2003
-//|   Programmer  :	 Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Restock all NPC Vendors
-//o---------------------------------------------------------------------------o
-void restock( bool stockAll )
-{
-	for( CHARACTER c = 0; c < cwmWorldState->GetCharCount(); c++ )
-	{
-		if( c != INVALIDSERIAL && chars[c].IsShop() )
-			restockNPC( &chars[c], stockAll );
-	}
+	clrSend.Serial( tSock->GetDWord( 3 ) );
+	tSock->Send( &clrSend );
+	return true;
 }
 
 //o---------------------------------------------------------------------------o
@@ -535,32 +441,60 @@ void restock( bool stockAll )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Restock NPC Vendors
 //o---------------------------------------------------------------------------o
-void restockNPC( CChar *i, bool stockAll )
+void restockNPC( CChar& i, bool stockAll )
 {
-	if( i == NULL || !i->IsShop() )
+	if( !i.IsShop() )
 		return;	// if we aren't a shopkeeper, why bother?
 
-	CItem *ci = i->GetItemAtLayer( 0x1A );
-	if( ci != NULL )
+	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
+	if( ValidateObject( ci ) )
 	{
-		for( CItem *c = ci->FirstItemObj(); !ci->FinishedItems(); c = ci->NextItemObj() )
+		CDataList< CItem * > *ciCont = ci->GetContainsList();
+		for( CItem *c = ciCont->First(); !ciCont->Finished(); c = ciCont->Next() )
 		{
-			if( c != NULL )
+			if( ValidateObject( c ) )
 			{
 				if( stockAll )
 				{
-					c->SetAmount( c->GetAmount() + c->GetRestock() );
+					c->IncAmount( c->GetRestock() );
 					c->SetRestock( 0 );
 				}
 				else if( c->GetRestock() )
 				{
-					UI16 stockAmt = min( c->GetRestock(), ( c->GetRestock() / 2 ) + 1 );
-					c->SetAmount( c->GetAmount() + stockAmt );
+					UI16 stockAmt = UOX_MIN( c->GetRestock(), static_cast<UI16>(( c->GetRestock() / 2 ) + 1) );
+					c->IncAmount( stockAmt );
 					c->SetRestock( c->GetRestock() - stockAmt );
 				}
-				if( cwmWorldState->ServerData()->GetTradeSystemStatus() ) 
-					Items->StoreItemRandomValue( c, calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber() ) );
+				if( cwmWorldState->ServerData()->TradeSystemStatus() ) 
+				{
+					CTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber() );
+					Items->StoreItemRandomValue( c, tReg );
+				}
 			}
 		}
 	}
+}
+
+bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
+{
+	bool retVal = true;
+	CChar *c = static_cast< CChar * >(a);
+	if( ValidateObject( c ) )
+			restockNPC( (*c), (b == 1) );
+
+	return retVal;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    :  void restock( bool stockAll )
+//|   Date        :  3/15/2003
+//|   Programmer  :	 Zane
+//o---------------------------------------------------------------------------o
+//|   Purpose     :  Restock all NPC Vendors
+//o---------------------------------------------------------------------------o
+void restock( bool stockAll )
+{
+	UI32 b = (stockAll ? 1 : 0);
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &restockFunctor );
+}
+
 }

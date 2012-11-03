@@ -1,27 +1,19 @@
-// msgboard.h
-//
+#ifndef __MSGBOARD_H__
+#define __MSGBOARD_H__
 
-// Maximum number of posts per board
-// BUFFER SIZE = 2560 
-// Therefore 0x3c max size = 2560 - 5 ( 0x3c header info ) 
-//                         = 2550 
-//
-//                           2550 / 19 ( item segment size per msg ) 
-//                         = 134 
-// Round down to 128 Messages allowable on a message board (better safe than sorry)
-// MAXPOSTS = 128 
-#define MAXPOSTS        128
-
-// Maximum number of entries in a ESCORTS list in the MSGBOARD.SCP file
-#define MAXENTRIES      256
-
+namespace UOX
+{
 // Different types of user posts
 enum PostTypes
 {
-	LOCALPOST =		0,
-	REGIONALPOST,
-	GLOBALPOST
+	PT_GLOBAL =		1,
+	PT_REGIONAL,
+	PT_LOCAL
 };
+
+const UI32 BASEGLOBALPOST	= 0x01000000;
+const UI32 BASEREGIONPOST	= 0x02000000;
+const UI32 BASELOCALPOST	= 0x03000000;
 
 // Different types of QUESTS (nQuestType)
 // Added for Quests (ESCORTS)
@@ -30,19 +22,43 @@ enum PostTypes
 // for a user post is 0x05 and I also use this field to determine whether the
 // post is marked for deletion (0x00).  In order to allow for the maximum number
 // of different quest types, I opted to start high and count down.
-#define ESCORTQUEST 0xFF
-#define BOUNTYQUEST 0xFE
-#define ITEMQUEST   0xFD
+enum QuestTypes
+{
+	QT_NOQUEST		= 0x00,
+	QT_ITEMQUEST	= 0xFD,
+	QT_BOUNTYQUEST	= 0xFE,
+	QT_ESCORTQUEST	= 0xFF
+};
 
+struct msgBoardPost_st
+{
+	UI32 Serial;
+	UI16 Size;
+	UI08 PosterLen;
+	char Poster[MAX_NAME];
+	UI08 SubjectLen;
+	char Subject[256];
+	UI08 DateLen;
+	char Date[256];
+	UI08 Lines;
+	UI32 ParentSerial;
+	UI08 Toggle;
 
-// Function Prototypes 
-void    MsgBoardEvent( cSocket *s );
-void    MsgBoardSetPostType( cSocket *s, int nPostType );
-void    MsgBoardGetPostType( cSocket *s );
-bool    MsgBoardPostQuest( SERIAL nSerial, int nQuestType );
-void    MsgBoardQuestEscortCreate( CChar *npcIndex );
-void    MsgBoardQuestEscortArrive( CChar *npcIndex, cSocket *mSock );
-void    MsgBoardQuestEscortDelete( CChar *npcIndex );
-void    MsgBoardQuestEscortRemovePost( CChar *npcIndex );
+	STRINGLIST msgBoardLine;
+
+	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 ), Toggle( 0 )
+	{
+		msgBoardLine.resize( 0 );
+	}
+};
+
+// Function Prototypes
+void    MsgBoardQuestEscortCreate( CChar *mNPC );
+void    MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC );
+void    MsgBoardQuestEscortRemovePost( CChar *mNPC );
+void	MsgBoardRemoveFile( const SERIAL msgBoardSer );
 void    MsgBoardMaintenance( void );
 
+}
+
+#endif

@@ -1,78 +1,97 @@
 #ifndef __Classes_h
 #define __Classes_h
 
-#include <queue>
-//using namespace std;
-#include "threadsafeobject.h"
-class CChar;
-class CItem;
-class cSocket;
-class CMultiObj;
-class cSpawnRegion;
-class BinBuffer;
+namespace UOX
+{
 
-#include "cBaseObject.h"
-#include "cChar.h"
-#include "cItem.h"
-#include "cMultiObj.h"
-
-class ScriptSection;	// forward declaration
-class cScript;
+enum PackTypes
+{
+	PT_UNKNOWN = 0,
+	PT_COFFIN,
+	PT_PACK,
+	PT_PACK2,
+	PT_BAG,
+	PT_BARREL,
+	PT_SQBASKET,
+	PT_RBASKET,
+	PT_WCHEST,
+	PT_SCHEST,
+	PT_GCHEST,
+	PT_WBOX,
+	PT_MBOX,
+	PT_CRATE,
+	PT_SHOPPACK,
+	PT_DRAWER,
+	PT_BANK,
+	PT_BOOKCASE,
+	PT_FARMOIRE,
+	PT_WARMOIRE,
+	PT_DRESSER,
+	PT_STOCKING,
+	PT_GIFTBOX1,
+	PT_GIFTBOX2,
+	PT_GIFTBOX3,
+	PT_GIFTBOX4,
+	PT_GIFTBOX5,
+	PT_GIFTBOX6,
+	PT_SECHEST1,
+	PT_SECHEST2,
+	PT_SECHEST3,
+	PT_SECHEST4,
+	PT_SECHEST5,
+	PT_SEBASKET,
+	PT_SEARMOIRE1,
+	PT_SEARMOIRE2,
+	PT_SEARMOIRE3
+};
 
 class cItem
 {
 public:
+	CItem *		DupeItem( CSocket *s, CItem *i, UI32 amount );
 	void		GlowItem( CItem *i );
-	CItem *		MemItemFree( ITEM& offset, bool zeroSer, UI08 itemType = 0 );
-	void		DeleItem( CItem *i );
-	void		menuAddItem( cSocket *s, std::string item );
-	CItem *		CreateScriptItem( cSocket *s, std::string name, bool nSpawned, UI08 worldNumber );
-	CItem *		SpawnItem( cSocket *nSocket, CChar *ch, UI32 nAmount, const char *cName, bool nStackable, UI16 realItemID, UI16 realColour, bool nPack, bool nSend );
-	CItem *		SpawnItemToPack( cSocket *s, CChar *mChar, int nItem, bool nDigging );
-	CItem *		SpawnItemToPack( cSocket *s, CChar *mChar, std::string name, bool nDigging );
-	CMultiObj *	SpawnMulti( CChar *ch, const char *cName, UI16 realItemID );
-	bool		DecayItem( CItem *i );
-	void		RespawnItem( CItem *i );
-	void		AddRespawnItem( CItem *s, UI32 x, bool inCont );
-	void		AddRespawnItem( CItem *s, const char *x, bool inCont, bool randomItem );
+	void		AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem = false, UI16 itemAmount = 1 );
 	void		CheckEquipment( CChar *p );
-	void		StoreItemRandomValue( CItem *i, UI08 tmpreg );
-	CItem *		SpawnRandomItem( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cItemID);
-	void		addGold( cSocket *s, UI32 amt );
+	void		StoreItemRandomValue( CItem *i, CTownRegion *tReg );
+	PackTypes	getPackType( CItem *i );
+
+	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false );
+	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, const UI16 iAmount, const ObjectType itemType, const bool inPack = false, const UI16 iColor = 0xFFFF );
+	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const UI16 iAmount, const ObjectType itemType = OT_ITEM );
+	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat ); 
+	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
+	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
 
 private:
-	CItem *		CreateItem( cSocket *s, std::string name, UI08 worldNumber );
-	CItem *		CreateRandomItem( cSocket *s, const char *sItemList, bool nSpawned, UI08 worldNumber );
-	void		GetScriptItemSetting( CItem *c );
-	UI08		PackType( UI16 id );
+	void		GetScriptItemSettings( CItem *iCreated );
+	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack );
+	CItem *		CreateRandomItem( const std::string& sItemList, const UI08 worldNumber );
 };
 
 class cCharStuff
 {
 private:
-	void		FindSpotForNPC( CChar *c, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z );
-	CChar *		CreateScriptNpc( std::string targNPC, UI08 worldNumber );
-	CChar *		CreateScriptNpc( int    targNPC, UI08 worldNumber );
-	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation );
-	void		PostSpawnUpdate( CChar *x );
-	void		LoadShopList( const char *list, CChar *c );
+	void		FindSpotForNPC( CChar *c, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber );
+	void		LoadShopList( const std::string& list, CChar *c );
+	CItem *		addRandomLoot( CItem *s, const std::string& lootlist );
 
 public:
-	void		DeleteChar( CChar *k );
-	CChar *		MemCharFree( CHARACTER& offset, bool zeroSer = false );
-	CItem *		addRandomLoot( CItem *s, const char * lootlist );
-	CChar *		CreateRandomNpc( const char *npclist, UI08 worldNumber );
-	CChar *		SpawnNPC( cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
-	CChar *		SpawnNPC( CItem *i, std::string npcNum, UI08 worldNumber, bool randomNPC );
-	CChar *		AddNPC( cSocket *s, cSpawnRegion *spawnReg, std::string npcNum, UI08 worldNumber );
-	CChar *		AddNPCxyz( cSocket *s, std::string npcNum, SI16 x1, SI16 y1, SI08 z1, UI08 worldNumber );
-	void		Split( CChar *k );
-	void		CheckAI( CChar *i );
-	CChar *		getGuardingPet( CChar *mChar, SERIAL guarded );
+	CChar *		CreateBaseNPC( UString ourNPC );
+	CChar *		CreateRandomNPC( const std::string& npcList );
+
+	CChar *		CreateNPC( CSpawnItem *iSpawner, std::string npc );
+	CChar *		CreateNPCxyz( std::string npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	void		PostSpawnUpdate( CChar *cCreated );
+	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate = false );
+	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
 	bool		checkPetFriend( CChar *mChar, CChar *pet );
 	void		stopPetGuarding( CChar *pet );
-	CChar *		SpawnRandomMonster( cSocket *nCharID, DEFINITIONCATEGORIES sourceDFN, char* cList, char* cNpcID);
 };
+
+extern cItem *Items;
+extern cCharStuff *Npcs;
+
+}
 
 #endif
 

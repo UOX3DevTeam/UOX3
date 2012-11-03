@@ -1,16 +1,21 @@
-#include <stack>
-
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
 
+#include <stack>
+
+namespace UOX
+{
+
 typedef std::vector< Script * > VECSCRIPTLIST;
+typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;
+typedef std::vector< Script * >::const_iterator VECSCRIPTLIST_CITERATOR;
 typedef	std::stack< std::string > dirList;
 
 class cDirectoryListing
 {
-protected:
 private:
 	typedef std::vector< cDirectoryListing > DIRLIST;
+	typedef std::vector< cDirectoryListing >::iterator DIRLIST_ITERATOR;
 
 	bool			PushDir( DEFINITIONCATEGORIES toMove );
 	bool			PushDir( std::string toMove );
@@ -46,32 +51,44 @@ public:
 	STRINGLIST *	FlattenedShortList( void );
 };
 
-class cServerDefinitions
+class CServerDefinitions
 {
-protected:
 private:
 	std::vector< VECSCRIPTLIST >			ScriptListings;
-	std::map< std::string, SI16 >	priorityMap;
-	SI16							defaultPriority;
+	VECSCRIPTLIST_ITERATOR					slIter;
 
+	std::map< std::string, SI16 >			priorityMap;
+	SI16									defaultPriority;
+
+	void				LoadDFNCategory( DEFINITIONCATEGORIES toLoad );
 	void				ReloadScriptObjects( void );
 	void				BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized );
 	void				CleanPriorityMap( void );
-	void				DisplayPriorityMap( void );
 
 	SI16				GetPriority( const char *file );
-public:
-						cServerDefinitions();
-						cServerDefinitions( const char *indexfilename );
-	virtual				~cServerDefinitions();
-	bool				Reload( void );
 
-	ScriptSection	*	FindEntry( const char *toFind, DEFINITIONCATEGORIES typeToFind );
-	Script			*	FindScript( const char *toFind, DEFINITIONCATEGORIES typeToFind );
-	SI32				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
-	SI32				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
-	VECSCRIPTLIST			*	GetFiles( DEFINITIONCATEGORIES typeToFind );
+	void				Cleanup( void );
+public:
+						CServerDefinitions();
+						CServerDefinitions( const char *indexfilename );
+						~CServerDefinitions();
+	bool				Reload( void );
+	bool				Dispose( DEFINITIONCATEGORIES toDispose );
+
+	ScriptSection	*	FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind );
+	ScriptSection	*	FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind );
+	size_t				CountOfEntries( DEFINITIONCATEGORIES typeToFind );
+	size_t				CountOfFiles( DEFINITIONCATEGORIES typeToFind );
+	void				DisplayPriorityMap( void );
+
+	Script			*	FirstScript( DEFINITIONCATEGORIES typeToFind );
+	Script			*	NextScript( DEFINITIONCATEGORIES typeToFind );
+	bool				FinishedScripts( DEFINITIONCATEGORIES typeToFind );
 };
+
+extern CServerDefinitions *FileLookup;
+
+}
 
 #endif
 

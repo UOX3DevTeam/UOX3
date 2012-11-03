@@ -2,172 +2,207 @@
 #define __MAPSTUFF_H__
 
 #include "mapclasses.h"
+#include <climits>
 
-// full comments on this class are available in mapstuff.cpp
-class MapStaticIterator
+namespace UOX
 {
-private:
-	staticrecord staticArray;
-	SI32 baseX, baseY, pos;
-	UI08 remainX, remainY;
-	UI32 index, length, tileid;
-	bool exactCoords;
-	UI08 worldNumber;
 
-public:
-	MapStaticIterator( UI32 x, UI32 y, UI08 world, bool exact = true );
-	virtual ~MapStaticIterator() { };
+const UI08 MAX_Z_STEP	= 9;
+const UI08 MAX_Z_FALL	= 20;
 
-	staticrecord *First( void );
-	staticrecord *Next( void );
-	void GetTile( CTile *tile) const;
-	UI32 GetPos() const { return pos; }
-	UI32 GetLength() const { return length; }
+/*
+enum UOMapType
+{
+	UOMT_BRITANNIA	= 0,
+	UOMT_UNKNOWN1	= 1,
+	UOMT_ILSHENAR	= 2,
+	UOMT_MALAS		= 3,
+	UOMT_COUNT		= 4,
+	UOMT_UNKNOWN	= 0xFF
 };
+*/
 
-struct MultiCache
+struct StaticsIndex_st
 {
-	SI32	length;	// already done the / by multi length here, this is the size of our array!
-	st_multi *cache;
-	SI16	lx;
-	SI16	ly;
-	SI16	hx;
-	SI16	hy;
-	MultiCache() : length( -1 ), cache( NULL ), lx( 0 ), ly( 0 ), hx( 0 ), hy( 0 ) { }
-};
-
-struct StaCache_st
-{
-	staticrecord *Cache;
-	UI16 CacheLen;
-	StaCache_st() : Cache( NULL ), CacheLen( 0 ) { }
-	virtual ~StaCache_st() 
-	{ 
-		if( Cache != NULL ) 
-			delete [] Cache; 
+	UI32 offset;
+	UI32 length;
+	UI32 unknown;
+	StaticsIndex_st() : offset( 0 ), length( 0 ), unknown( 0 )
+	{
 	}
 };
 
-typedef std::vector< StaCache_st > StaCacheLine;
-
-class StaWorldCache
+struct MapData_st
 {
-protected:
-	std::vector< StaCacheLine >	CacheList;
+	std::string		mapFile;
+	std::string		mapFileUOPWrap;
+	std::string		staticsFile;
+	std::string		staidxFile;
+	std::string		mapDiffFile;
+	std::string		mapDiffListFile;
+	std::string		staticsDiffFile;
+	std::string		staticsDiffListFile;
+	std::string		staticsDiffIndexFile;
+	UI16			xBlock;
+	UI16			yBlock;
+	UOXFile	*		mapObj;
+	UOXFile *		staticsObj;
+	UOXFile *		staidxObj;
+	UOXFile *		mapDiffObj;
+	UOXFile *		staticsDiffObj;
 
-public:
-	StaWorldCache( SI16 maxX, SI16 maxY );
-	StaWorldCache( void );
-	virtual void	Resize( SI16 maxX, SI16 maxY );
-	virtual			~StaWorldCache();
-	StaCacheLine *	GrabCacheLine( SI16 maxX );
+	std::map< UI32, UI32 > mapDiffList;
+	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
+
+	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ), 
+		staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ), 
+		staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
+	{
+		mapDiffList.clear();
+		staticsDiffIndex.clear();
+	}
+	~MapData_st();
 };
 
-class cMapStuff
+// full comments on this class are available in mapstuff.cpp
+class CStaticIterator
 {
-//Variables
 private:
-	friend class MapStaticIterator;
+	Static_st	staticArray;
+	SI16		baseX, baseY;
+	UI32		pos;
+	UI08		remainX, remainY;
+	UI32		index, length;
+	bool		exactCoords;
+	UI08		worldNumber;
+	bool		useDiffs;
+public:
+				CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact = true );
+				~CStaticIterator()
+				{
+				};
 
-	// moved from global vars into here - fur 11/3/1999
-	UOXFile *verfile, *tilefile, *multifile, *midxfile;
+	Static_st *	First( void );
+	Static_st *	Next( void );
+	SI32		GetPos() const		{ return pos; }
+	UI32		GetLength() const	{ return length; }
+};
 
-	UOXFile	*	mapArrays[NumberOfWorlds];
-	UOXFile	*	statArrays[NumberOfWorlds];
-	UOXFile	*	sidxArrays[NumberOfWorlds];
-	UOMapType	uomapTypes[NumberOfWorlds];
-
-	// tile caching items
-	CTile		tilecache[0x4000];
-
-	// static caching items
-	UI32		StaticBlocks;
-
-	// map caching items
-	struct MapCache
+class CMulHandler
+{
+private:
+	struct MultiItemsIndex_st
 	{
-		UI16 xb;
-		UI16 yb;
-		UI08 xo;
-		UI08 yo;
-		map_st Cache;
+		Multi_st *	items;		// point into where the items begin.
+		SI32		size;				// # of items.
+		SI16		lx, ly, hx, hy;
+		SI08		lz, hz;
+					MultiItemsIndex_st() : items( NULL ), size( -1 ), 
+						lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ), 
+						lz( SCHAR_MAX ), hz( SCHAR_MIN )
+					{}
+		void		Include( SI16 x, SI16 y, SI08 z );	
 	};
-	MapCache Map0Cache[NumberOfWorlds][MAP0CACHE];
-	std::vector< MultiCache *> multiCache;	// here's our cache, this allows us to resize it!
 
-	// version caching items
-	versionrecord *versionCache;
-	UI32	versionRecordCount;
-	UI16	multiCount;
+	struct MultiItemsIndexHS_st
+	{
+		MultiHS_st *	items;		// point into where the items begin.
+		SI32		size;				// # of items.
+		SI16		lx, ly, hx, hy;
+		SI08		lz, hz;
+					MultiItemsIndexHS_st() : items( NULL ), size( -1 ), 
+						lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ), 
+						lz( SCHAR_MAX ), hz( SCHAR_MIN )
+					{}
+		void		Include( SI16 x, SI16 y, SI08 z );	
+	};
+
+	typedef std::vector< MapData_st >					MAPLIST;
+	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
+
+//Variables
+	// all the world's map and static Items.
+	// multiItem, tileSet, and verdata(patches really)
+	CLand    *			landTile;			// the 512*32 pieces of land tile
+	CLandHS *			landTileHS;			// the 512*32 pieces of land tile
+	CTile    *			staticTile;			// the 512*32 pieces of static tile set
+	CTileHS *			staticTileHS;		// the 512*32 pieces of static tile set
+	Multi_st *			multiItems;			// the multis cache(shadow) from files
+	MultiHS_st *		multiItemsHS;		// the multis cache(shadow) from files
+	MultiItemsIndex_st *multiIndex;			// here's our index to multiItems
+	MultiItemsIndexHS_st *multiIndexHS;		// here's our index to multiItems
+	size_t				multiIndexSize;		// the length of index
+	size_t				multiSize;
+	size_t				tileDataSize;
+
+	MAPLIST				MapList;
+
+// Functions
+	SI08			MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ );
+	UI16			MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
+
+	UI16			DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater = false );
+	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk );
+	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk );
+	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck );
 
 	// caching functions
-	void	CacheTiles( void );
-	void	CacheStatics( void );
-	void	CacheMultis( void );
-	void	CalculateMultiSizes( void );
-	void	SeekMultiSizes( UI16 multiNum, SI16& x1, SI16& x2, SI16& y1, SI16& y2 );
-
-	std::string	BuildFilePath( const char *fName );
-public:
-	char mapname[80], sidxname[80], statname[80], vername[80], tilename[80], multiname[80], midxname[80];
-	UI32 StaMem, TileMem, versionMemory;
-	UI32 Map0CacheHit, Map0CacheMiss;
-
-	StaWorldCache StaticCache[NumberOfWorlds];
-	bool	Cache;
-	
-// Functions
-private:
-	bool	VerLand( int landnum, CLand *land );
-	SI08	MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz );
-	int		MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz );
-	SI32	VerSeek( SI32 file, SI32 block );
-	bool	VerTile( int tilenum, CTile *tile );
-	bool	TileWalk( int tilenum );
-	void	CacheVersion( void );
-
-	int		DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool	DoesTileBlock( int tilenum );
-	bool	DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-
-	bool	InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
-
-	UOMapType	CalcFromFileLength( UOXFile *toCalcFrom );
+	void			LoadMapsDFN( void );
+	void			LoadMultis( const std::string& basePath );
+	void			LoadDFNOverrides( void );
+	void			LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps );
+	void			LoadTileData( const std::string& basePath );
 
 public:
-			cMapStuff();
-	virtual ~cMapStuff();
+					CMulHandler();
+					~CMulHandler();
 
-	void	Load( void );
-
-	UOMapType	GetMapType( UI08 worldNumber );
+	void			Load( void );
 
 	// height functions
-	SI08	StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	SI08	DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	SI08	MapElevation( SI16 x, SI16 y, UI08 worldNumber );
-	SI08	AverageMapElevation( SI16 x, SI16 y, UI16 &id, UI08 worldNumber );
-	SI08	TileHeight( UI16 tilenum );
-	SI08	Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
-	bool	IsTileWet( int tilenum );
+	SI08			StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
+	SI08			DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ );
+	SI08			MapElevation( SI16 x, SI16 y, UI08 worldNumber );
+	SI08			TileHeight( UI16 tilenum );
+	SI08			Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber );
+	bool			inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	bool IsIgnored(UI16 landnum) { 
+		if (landnum == 2 || landnum == 0x1DB || ( landnum >= 0x1AE && landnum <= 0x1B5 ))
+			return true;
+		else
+			return false;
+	}
 
 	// look at tile functions
-	void	MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	void	SeekTile( int tilenum, CTile *tile );
-	void	SeekMulti( UI32 multinum, SI32 *length );
-	st_multi *SeekIntoMulti( int multinum, int number );
-	void	SeekLand( int landnum, CLand *land );
-	map_st	SeekMap0( SI16 x, SI16 y, UI08 worldNumber );
-	bool	IsRoofOrFloorTile( CTile *tile );
-	bool	IsRoofOrFloorTile( CTileUni *tile );
+	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
+	SI32			SeekMulti( UI16 multinum );
+	SI32			SeekMultiHS( UI16 multinum );
+	Multi_st &		SeekIntoMulti( UI16 multinum, SI32 number );
+	MultiHS_st &	SeekIntoMultiHS( UI16 multinum, SI32 number );
+	bool			IsValidTile( UI16 tileNum );
+	CTile &			SeekTile( UI16 tileNum );
+	CTileHS &		SeekTileHS( UI16 tileNum );
+	CLand &			SeekLand( UI16 landNum );
+	CLandHS &		SeekLandHS( UI16 landNum );
+	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions
-	bool	CanMonsterMoveHere( SI16 x, SI16 y, SI08 z, UI08 worldNumber );
-	StaCache_st *GrabCacheEntry( SI16 x, SI16 y, UI08 worldNumber );
+	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater = true );
+	bool			ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater );
+	bool			MapExists( UI08 worldNumber );
+	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 
-	bool	MapExists( UI08 worldNumber );
+	MapData_st&		GetMapData( UI08 mapNum );
+	UI08			MapCount( void ) const;
+
+	size_t			GetTileMem( void ) const;
+	size_t			GetMultisMem( void ) const;
 };
 
+extern CMulHandler *Map;
+
+}
 
 #endif
 

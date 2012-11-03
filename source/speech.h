@@ -1,6 +1,27 @@
 #ifndef __SPEECH_H__
 #define __SPEECH_H__
 
+namespace UOX
+{
+
+enum SpeechTarget
+{
+	SPTRG_INDIVIDUAL = 0,		// aimed at individual person
+	SPTRG_PCS,					// all PCs in range
+	SPTRG_PCNPC,				// all NPCs and PCs in range
+	SPTRG_BROADCASTPC,				// ALL PCs everywhere + NPCs in range
+	SPTRG_BROADCASTALL,
+	SPTRG_ONLYRECEIVER			// only the receiver
+};
+
+enum SpeakerType
+{
+	SPK_SYSTEM = 0,
+	SPK_CHARACTER,
+	SPK_ITEM,
+	SPK_UNKNOWN
+};
+
 const std::string DistinctLanguageNames[DL_COUNT] =
 {
 	"UNK",
@@ -292,7 +313,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 
 class CSpeechEntry
 {
-protected:
+private:
 	SpeechType		typeOfSpeech;
 	bool			antiSpam;
 	bool			unicode;
@@ -302,44 +323,57 @@ protected:
 	SpeechTarget	targType;
 	FontType		targFont;
 	UnicodeTypes	targLanguage;
-	long			timeToSayAt;	// time when it should be said
-	char			toSay[MAX_SPEECH];
-	char			sName[32];			// sysname potentially
+	SI32			timeToSayAt;	// time when it should be said
+	std::string		toSay;
+	std::string		sName;
 	UI08			minCmdLevelToReceive;
 
 public:
-	CSpeechEntry() : typeOfSpeech( TALK ), antiSpam( true ), unicode( true ), speechColour( 0 ), speaker( INVALIDSERIAL ), spokenTo( INVALIDSERIAL ), targType( SPTRG_PCS ), targFont( FNT_NORMAL ), targLanguage( UT_ENU ), timeToSayAt( -1 ), minCmdLevelToReceive( 0 ) { }
-	virtual	~CSpeechEntry() { }
+	CSpeechEntry() : typeOfSpeech( TALK ), antiSpam( true ), unicode( true ), speechColour( 0 ), speaker( INVALIDSERIAL ), spokenTo( INVALIDSERIAL ), targType( SPTRG_PCS ), targFont( FNT_NORMAL ), targLanguage( UT_ENU ), timeToSayAt( -1 ), minCmdLevelToReceive( 0 )
+	{
+		toSay.reserve( MAX_SPEECH );
+		sName.reserve( MAX_NAME );
+	}
+	~CSpeechEntry()
+	{
+	}
 
-	inline SpeechType	Type( void )			{	return typeOfSpeech;	}
-	inline bool			AntiSpam( void )		{	return antiSpam;		}
-	inline bool			Unicode( void )			{	return unicode;			}
-	inline COLOUR		Colour( void )			{	return speechColour;	}
-	inline SERIAL		Speaker( void )			{	return speaker;			}
-	inline SERIAL		SpokenTo( void )		{	return spokenTo;		}
-	inline SpeechTarget	TargType( void )		{	return targType;		}
-	inline FontType		Font( void )			{	return targFont;		}
-	inline UnicodeTypes	Language( void )		{	return targLanguage;	}
-	inline long			At( void )				{	return timeToSayAt;		}
-	inline const char *	Speech( void )			{	return toSay;	}
-	inline const char *	SpeakerName( void )		{	return sName;	}
-	inline UI08			CmdLevel( void )		{	return minCmdLevelToReceive;	}
+	SpeechType			Type( void ) const				{	return typeOfSpeech;			}
+	bool				AntiSpam( void ) const			{	return antiSpam;				}
+	bool				Unicode( void ) const			{	return unicode;					}
+	COLOUR				Colour( void ) const			{	return speechColour;			}
+	SERIAL				Speaker( void ) const			{	return speaker;					}
+	SERIAL				SpokenTo( void ) const			{	return spokenTo;				}
+	SpeechTarget		TargType( void ) const			{	return targType;				}
+	FontType			Font( void ) const				{	return targFont;				}
+	UnicodeTypes		Language( void ) const			{	return targLanguage;			}
+	SI32				At( void ) const				{	return timeToSayAt;				}
+	const std::string	Speech( void ) const			{	return toSay;					}
+	const std::string	SpeakerName( void ) const		{	return sName;					}
+	UI08				CmdLevel( void ) const			{	return minCmdLevelToReceive;	}
 
-	inline void			Type( SpeechType type )			{	typeOfSpeech = type;	}
-	inline void			AntiSpam( bool value )			{	antiSpam = value;		}
-	inline void			Unicode( bool value )			{	unicode = value;		}
-	inline void			Colour( COLOUR value )			{	speechColour = value;	}
-	inline void			Speaker( SERIAL value )			{	speaker = value;		}
-	inline void			SpokenTo( SERIAL value )		{	spokenTo = value;		}
-	inline void			TargType( SpeechTarget type )	{	targType = type;		}
-	inline void			Font( FontType type )			{	targFont = type;		}
-	inline void			Language( UnicodeTypes val )	{	targLanguage = val;		}
-	inline void			At( long newTime )				{	timeToSayAt = newTime;	}
-	inline void			Speech( const char *said )		{	strncpy( toSay, said, (sizeof(char)*MAX_SPEECH) );			}
-	inline void			SpeakerName( const char *spkName )	{	strncpy( sName, spkName, (sizeof(char)*MAX_NAME) );	}
-	inline void			CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
+	void				Type( SpeechType type )			{	typeOfSpeech = type;			}
+	void				AntiSpam( bool value )			{	antiSpam = value;				}
+	void				Unicode( bool value )			{	unicode = value;				}
+	void				Colour( COLOUR value )			{	speechColour = value;			}
+	void				Speaker( SERIAL value )			{	speaker = value;				}
+	void				SpokenTo( SERIAL value )		{	spokenTo = value;				}
+	void				TargType( SpeechTarget type )	{	targType = type;				}
+	void				Font( FontType type )			{	targFont = type;				}
+	void				Language( UnicodeTypes val )	{	targLanguage = val;				}
+	void				At( SI32 newTime )				{	timeToSayAt = newTime;			}
+	void				CmdLevel( UI08 nLevel )			{	minCmdLevelToReceive = nLevel;	}
 
-	inline SpeakerType	SpkrType( void )
+	void Speech( const std::string& said )
+	{
+		toSay = said.substr( 0, MAX_SPEECH - 1 );
+	}
+	void SpeakerName( const std::string& spkName )
+	{
+		sName = spkName.substr( 0, MAX_NAME - 1 );
+	}
+
+	SpeakerType	SpkrType( void ) const
 	{
 		if( speaker == INVALIDSERIAL )
 			return SPK_SYSTEM;
@@ -350,30 +384,36 @@ public:
 	}
 };
 
-typedef std::vector< CSpeechEntry >	SPEECHLIST;
-typedef SPEECHLIST::iterator	SPEECHITERATOR;
+typedef std::vector< CSpeechEntry * >	SPEECHLIST;
+typedef std::vector< CSpeechEntry * >::iterator SPEECHLIST_ITERATOR;
+typedef std::vector< CSpeechEntry * >::reverse_iterator SPEECHLIST_RITERATOR;
+typedef std::vector< CSpeechEntry * >::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue
 {
-protected:
+private:
 	int				pollTime;		// MILLISECONDS How often to poll the queue
 	SPEECHLIST		speechList;
 	bool			runAsThread;
 
-	void			SayIt( SPEECHITERATOR toSay );
+	void			SayIt( CSpeechEntry& toSay );
 	bool			InternalPoll( void );
 public:
 					CSpeechQueue( void );
-	virtual			~CSpeechQueue();
+					~CSpeechQueue();
 
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
-	CSpeechEntry *	Add( void );		// Make space in queue, and return pointer to new entry
+	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
 	int				PollTime( void ) const;
 	void			PollTime( int value );
 	void			RunAsThread( bool newValue );
 	bool			RunAsThread( void ) const;
 	void			DumpInFile( void );
 };
+
+extern CSpeechQueue *SpeechSys;
+
+}
 
 #endif
 

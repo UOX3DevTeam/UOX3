@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,7 +7,7 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>API and Event handling</h3>
@@ -163,6 +164,25 @@ void WhoList();
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Reads bytecount bytes from socket
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.ReadBytes( 12 );
 </pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="DisplayDamage" id="DisplayDamage">DisplayDamage</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void DisplayDamage( pUser, damage );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Displays specified damage value over character's head 
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>socket.DisplayDamage( pUser, 15 );</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr>
+  <th colspan=3 bgcolor="maroon"><a name="SendAddMenu" id="SendAddMenu">SendAddMenu</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SendAddMenu( menuNum );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Send the Add-menu to the character
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>socket.SendAddMenu( 1 );</pre>
+</table>
+
 
 <center>
 <font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||

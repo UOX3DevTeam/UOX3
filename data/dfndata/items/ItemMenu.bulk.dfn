@@ -135,7 +135,7 @@ ADDITEM=0x1433
 ADDITEM=0x1434
 0x1437=candle
 ADDITEM=0x1437
-0x0F64=torch%es%
+0x0F64=torch
 ADDITEM=0x0F64
 <=Previous Menu
 ITEMMENU=2
@@ -7320,6 +7320,13 @@ ADDITEM=0x0077
 ADDITEM=0x0078
 0x0079=stone wall
 ADDITEM=0x0079
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 162]
+{
+stone_walls.dfn
 0x007A=stone arch
 ADDITEM=0x007A
 0x007B=stone arch
@@ -7450,13 +7457,6 @@ ADDITEM=0x00F2
 ADDITEM=0x00F4
 0x00F6=stone wall
 ADDITEM=0x00F6
-<=Previous Menu
-ITEMMENU=18
-}
-
-[ITEMMENU 162]
-{
-stone_walls.dfn
 0x00F8=marble wall
 ADDITEM=0x00F8
 0x00F9=marble wall
@@ -7551,6 +7551,13 @@ ADDITEM=0x0124
 ADDITEM=0x0125
 0x0126=marble wall
 ADDITEM=0x0126
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 168]
+{
+stone_walls.dfn
 0x03B7=stone ruins
 ADDITEM=0x03B7
 0x03B8=stone ruins
@@ -7699,6 +7706,13 @@ ADDITEM=0x3127
 ADDITEM=0x253F
 0x0158=sandstone wall
 ADDITEM=0x0158
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 169]
+{
+stone_walls.dfn
 0x0159=sandstone wall
 ADDITEM=0x0159
 0x015A=sandstone wall
@@ -9166,6 +9180,8 @@ ADDITEM=sandstonepatiohousedeed
 ADDITEM=2storylogcabindeed
 0x014F0=large marble patio house deed
 ADDITEM=largemarblepatiohousedeed
+0x014F0=farmer's cabin deed
+ADDITEM=farmerscabindeed
 <=Previous Menu
 ITEMMENU=4
 }
@@ -9792,6 +9808,15 @@ ADDITEM=0x0df3
 ADDITEM=0x0df4
 0x0df5=wand
 ADDITEM=0x0df5
+<=Previous Menu
+ITEMMENU=74
+}
+
+[ITEMMENU 167]
+{
+missile_weapons.dfn
+0x26ac=bola
+ADDITEM=0x26ac
 <=Previous Menu
 ITEMMENU=74
 }
@@ -11014,6 +11039,8 @@ ADDSPAWNER=mage-spawn
 ADDSPAWNER=miner-spawn
 0x1397=Provisioner Spawn
 ADDSPAWNER=provision-spawn
+0x1397=Scribe Spawn
+ADDSPAWNER=scribe-spawn
 0x1397=Shipwright Spawn
 ADDSPAWNER=shipwright-spawn
 0x1397=Spinner Spawn
@@ -11826,6 +11853,8 @@ ITEMMENU=8
 [ITEMMENU 115]
 {
 reagents.dfn
+0x0e76=bag of reagents
+ADDITEM=bagofreagents
 0x0f7a=black pearl
 ADDITEM=0x0f7a
 0x0f7b=blood moss
@@ -13018,6 +13047,10 @@ ADDITEM=0x0EB4
 ADDITEM=0x0E9D
 0x0e9e=tambourine
 ADDITEM=0x0E9e
+0x2805=bamboo flute
+ADDITEM=0x2805
+0x2807=bamboo flute
+ADDITEM=0x2807
 <=Previous Menu
 ITEMMENU=126
 }

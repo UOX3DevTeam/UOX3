@@ -1,4 +1,3 @@
-
 //o---------------------------------------------------------------------------o
 //| Queue.cpp
 //o---------------------------------------------------------------------------o
@@ -8,11 +7,15 @@
 //| Coder:	Abaddon
 //o---------------------------------------------------------------------------o
 
-
 #include "uox3.h"
 #include "PageVector.h"
 #include "gump.h"
-#include <algorithm>
+
+namespace UOX
+{
+
+PageVector *GMQueue;
+PageVector *CounselorQueue;
 
 inline bool operator==( const HelpRequest& x, const HelpRequest& y )
 {
@@ -21,23 +24,24 @@ inline bool operator==( const HelpRequest& x, const HelpRequest& y )
 
 inline bool operator<( const HelpRequest& x, const HelpRequest& y )
 {
-	return( x.Priority() < y.Priority() );
+	return ( x.Priority() < y.Priority() );
 }
 
 inline bool operator>( const HelpRequest& x, const HelpRequest& y )
 {
-	return( x.Priority() > y.Priority() );
+	return ( x.Priority() > y.Priority() );
 }
 
 bool PageVector::AtEnd( void ) const
 {
-	return( currentPos < 0 || static_cast<UI32>(currentPos) >= Queue.size() );
+	return ( currentPos == Queue.end() );
 }
 
-PageVector::PageVector() : currentPos( -1 ), maxID( 0 )
+PageVector::PageVector() : maxID( 0 )
 {
-	title[0] = 0;
+	title = "";
 	Queue.resize( 0 );
+	currentPos = Queue.end();
 }
 
 PageVector::~PageVector()
@@ -48,7 +52,7 @@ PageVector::~PageVector()
 SERIAL PageVector::Add( HelpRequest *toAdd )
 {
 	HelpRequest *adding = new HelpRequest;
-#ifdef DEBUG
+#if defined( UOX_DEBUG_MODE )
 	if( adding == NULL )
 		return INVALIDSERIAL;
 #endif
@@ -63,95 +67,97 @@ bool PageVector::Remove( void )
 {
 	if( AtEnd() )
 		return false;
-	delete Queue[currentPos];
-	for( UI32 index = static_cast<UI32>(currentPos); index < Queue.size() - 1; index++ )
-		Queue[index] = Queue[index+1];
-	Queue.resize( Queue.size() - 1 );
+	delete (*currentPos);
+	Queue.erase( currentPos );
 	return true;
 }
 
 HelpRequest *PageVector::First( void )
 {
-	currentPos = 0;
+	currentPos = Queue.begin();
 	if( AtEnd() )
 		return NULL;	// empty queue!
-	return Queue[currentPos];
+	return (*currentPos);
 }
 
 HelpRequest *PageVector::Next( void )
 {
-	currentPos++;
+	++currentPos;
 	if( AtEnd() )
 		return NULL;	// at end, return NULL!
-	return Queue[currentPos];
+	return (*currentPos);
 }
 
-UI32 PageVector::NumEntries( void ) const
+size_t PageVector::NumEntries( void ) const
 {
 	return Queue.size();
 }
 
 void PageVector::KillQueue( void )
 {
-	for( UI32 counter = 0; counter < Queue.size(); counter++ )
+	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		delete Queue[counter];
 	}
-	Queue.resize( 0 );
+	Queue.clear();
 }
 
-void PageVector::SendAsGump( cSocket *toSendTo )
+void PageVector::SendAsGump( CSocket *toSendTo )
 {
 	GumpDisplay GQueue( toSendTo, 320, 340 );
 	GQueue.SetTitle( title );
 
-	for( UI32 counter = 0; counter < Queue.size(); counter++ )
+	std::vector< HelpRequest * >::iterator qIter;
+	for( qIter = Queue.begin(); qIter != Queue.end(); ++qIter )
 	{
-		if( !Queue[counter]->IsHandled() )
+		if( (*qIter) == NULL )
+			continue;
+		if( !(*qIter)->IsHandled() )
 		{
-			CChar *mChar = calcCharObjFromSer( Queue[counter]->WhoPaging() );
-			if( mChar != NULL )
-				GQueue.AddData( mChar->GetName(), Queue[counter]->TimeOfPage() );
+			CChar *mChar = calcCharObjFromSer( (*qIter)->WhoPaging() );
+			if( ValidateObject( mChar ) )
+				GQueue.AddData( mChar->GetName(), (*qIter)->TimeOfPage() );
 		}
 	}
 	GQueue.Send( 4, false, INVALIDSERIAL );
 }
 
-void PageVector::SetTitle( const char *newTitle )
+void PageVector::SetTitle( std::string newTitle )
 {
-	strncpy( title, newTitle, 25 );
+	title = newTitle;
 }
 
-PageVector::PageVector( const char *newTitle ) : currentPos( -1 )
+PageVector::PageVector( std::string newTitle )
 {
 	SetTitle( newTitle );
 	Queue.resize( 0 );
+	currentPos = Queue.end();
 }
 
 bool PageVector::GotoPos( SI32 pos )
 {
 	if( pos < 0 || static_cast<UI32>(pos) >= Queue.size() )
 		return false;
-	currentPos = pos;
+	currentPos = (Queue.begin() + pos);
 	return true;
 }
 
 SI32 PageVector::CurrentPos( void ) const
 {
-	return currentPos;
+	return (currentPos - Queue.begin());
 }
 
 SERIAL PageVector::GetCallNum( void ) const
 {
 	if( AtEnd() )
 		return INVALIDSERIAL;
-	return Queue[currentPos]->RequestID();
+	return (*currentPos)->RequestID();
 }
 
 SI32 PageVector::FindCallNum( SERIAL callNum )
 // returns position of page with call number callNum
 { 
-	for( UI32 counter = 0; counter < Queue.size(); counter++ )
+	for( size_t counter = 0; counter < Queue.size(); ++counter )
 	{
 		if( Queue[counter]->RequestID() == callNum )
 			return counter;
@@ -162,10 +168,40 @@ SI32 PageVector::FindCallNum( SERIAL callNum )
 HelpRequest *PageVector::Current( void )
 {
 	if( !AtEnd() )
-		return Queue[currentPos];
+		return (*currentPos);
 	else
 		return NULL;
 }
+
+bool PageVector::AnswerNextCall( CSocket *mSock, CChar *mChar )
+{
+	bool retVal		= false;
+	CChar *isPaging = NULL;
+	for( HelpRequest *tempPage = First(); !AtEnd(); tempPage = Next() )
+	{
+		if( !tempPage->IsHandled() )
+		{
+			isPaging = calcCharObjFromSer( tempPage->WhoPaging() );
+			if( ValidateObject( isPaging ) )
+			{
+				GumpDisplay QNext( mSock, 300, 200 );
+				QNext.AddData( "Pager: ", isPaging->GetName() );
+				QNext.AddData( "Problem: ", tempPage->Reason() );
+				QNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
+				QNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
+				QNext.Send( 4, false, INVALIDSERIAL );
+				tempPage->IsHandled( true );
+				mChar->SetLocation( isPaging );
+				mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
+				retVal = true;
+				break;
+			}
+		}
+	}
+	return retVal;
+}
+
+
 
 //o---------------------------------------------------------------------------o
 //|	Class		:	~HelpRequest()
@@ -240,13 +276,13 @@ time_t HelpRequest::TimeOfPage( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|	Class		:	const char *Reason( void )
+//|	Class		:	std::string Reason( void )
 //|	Date		:	10 September 2001
 //|	Programmer	:	Abaddon
 //o---------------------------------------------------------------------------o
 //| Purpose		:	Returns the reason that the request was made
 //o---------------------------------------------------------------------------o
-const char * HelpRequest::Reason( void ) const
+std::string HelpRequest::Reason( void ) const
 {
 	return reason;
 }
@@ -324,15 +360,15 @@ void HelpRequest::TimeOfPage( time_t pTime )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Class		:	Reason( const char *pReason )
+//|	Class		:	Reason( std::string pReason )
 //|	Date		:	10 September 2001
 //|	Programmer	:	Abaddon
 //o---------------------------------------------------------------------------o
 //| Purpose		:	Sets the reason for the page
 //o---------------------------------------------------------------------------o
-void HelpRequest::Reason( const char *pReason )
+void HelpRequest::Reason( std::string pReason )
 {
-	strcpy( reason, pReason );
+	reason = pReason;
 }
 
 //o---------------------------------------------------------------------------o
@@ -345,4 +381,6 @@ void HelpRequest::Reason( const char *pReason )
 void HelpRequest::RequestID( SERIAL hrid )
 {
 	helpReqID = hrid;
+}
+
 }

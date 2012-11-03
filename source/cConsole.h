@@ -8,12 +8,10 @@
 // NOTE: I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence
 //#pragma note( "I wish Error, and Log, to subclass from CConsole, so we have multiple streams that we can write to, in essence" )
 
-class CEndL;
+namespace UOX
+{
 
 #define MAX_CONSOLE_BUFF 512
-#if !defined(__unix__)
-#define vsnprintf _vsnprintf
-#endif
 
 const UI08 CNORMAL	= 0;
 const UI08 CBLUE	= 1;
@@ -26,9 +24,12 @@ class CConsole
 {
 public:
 	CConsole();
-	virtual ~CConsole();
+	~CConsole();
 
-	virtual void	Flush( void ) { std::cout.flush(); }
+	void Flush( void )
+	{
+		std::cout.flush();
+	}
 
 	CConsole& operator<<( const SI08 *outPut );
 	CConsole& operator<<( const char *outPut );
@@ -37,13 +38,14 @@ public:
 	CConsole& operator<<( const UI32 &outPut );
 	CConsole& operator<<( const SI08 &outPut );
 	CConsole& operator<<( const UI08 &outPut );
-	CConsole& operator<<( const cBaseObject *outPut );
+	CConsole& operator<<( const CBaseObject *outPut );
 	CConsole& operator<<( const SI16 &outPut );
 	CConsole& operator<<( const UI16 &outPut );
 	CConsole& operator<<( const std::string &outPut );
 	CConsole& operator<<( const std::ostream& outPut );
+	CConsole& operator<<( const size_t &outPut );
 
-	CConsole& operator<<( cBaseObject *outPut );
+	CConsole& operator<<( CBaseObject *outPut );
 	CConsole& operator<<( std::ostream& outPut );
 	CConsole& operator<<( CEndL& myObj );
 
@@ -53,26 +55,11 @@ public:
 	void	Print( const char *toPrint, ... );
 	void	Log( const char *toLog, const char *filename, ... );
 	void	Log( const char *toLog, ... );
-	void	Error( UI08 level, const char *toWrite, ... );
-	void	Warning( UI08 level, const char *toWrite, ... );
+	void	Error( const char *toWrite, ... );
+	void	Warning( const char *toWrite, ... );
 
-	UI16	Left( void ) const;
-	UI16	Top( void ) const;
-	UI16	Height( void ) const;
-	UI16	Width( void ) const;
-	bool	CanPrint( UI08 type, UI08 level ) const;
-	UI16	FilterSetting( void ) const;
 	UI08	CurrentMode( void ) const;
-	UI08	CurrentLevel( void ) const;
-
-	void	Left( UI16 nVal );
-	void	Top( UI16 nVal );
-	void	Height( UI16 nVal );
-	void	Width( UI16 nVal );
-	void	FilterBit( UI08 type, UI08 level, bool status );
-	void	FilterSetting( UI16 value );
 	void	CurrentMode( UI08 value );
-	void	CurrentLevel( UI08 value );
 
 	void	PrintSectionBegin( void );
 
@@ -91,32 +78,74 @@ public:
 	void	PrintBasedOnVal( bool value );
 	void	MoveTo( int x, int y = -1 );//y=-1 will move on the current line
 
-	bool	LogEcho(void);
-	void	LogEcho(bool value);	
-	void	PrintSpecial(UI08 color, const char *toPrint,...);
-protected:
-	UI16	left, top, height, width;	// for differing windows
-	UI16	curLeft, curTop;
-	UI16	filterSettings;
-	UI08	currentMode, currentLevel;
-	UI08	previousColour;
-	bool	logEcho;
-#if !defined(__unix__)
+	bool	LogEcho( void );
+	void	LogEcho( bool value );	
+	void	PrintSpecial( UI08 color, const char *toPrint, ... );
+	void	Poll( void );
+	void	Cloak( char *callback );
+
+	void	RegisterKey( int key, std::string cmdName, UI16 scriptID );
+	void	RegisterFunc( std::string key, std::string cmdName, UI16 scriptID );
+	void	SetKeyStatus( int key, bool isEnabled );
+	void	SetFuncStatus( std::string key, bool isEnabled );
+	void	Registration( void );
+
+private:
+
+	struct JSConsoleEntry
+	{
+		UI16		scriptID;
+		bool		isEnabled;
+		std::string cmdName;
+		JSConsoleEntry() : scriptID( 0 ), isEnabled( true ), cmdName( "" )
+		{
+		}
+		JSConsoleEntry( UI16 id, std::string cName ) : scriptID( id ), isEnabled( true ), cmdName( cName )
+		{
+		}
+	};
+
+	typedef std::map< std::string, JSConsoleEntry >				JSCONSOLEFUNCMAP;
+	typedef std::map< std::string, JSConsoleEntry >::iterator	JSCONSOLEFUNCMAP_ITERATOR;
+	typedef std::map< int, JSConsoleEntry >						JSCONSOLEKEYMAP;
+	typedef std::map< int, JSConsoleEntry >::iterator			JSCONSOLEKEYMAP_ITERATOR;
+
+	JSCONSOLEKEYMAP		JSKeyHandler;
+	JSCONSOLEFUNCMAP	JSConsoleFunctions;
+	UI16				height, width;	// for differing windows
+	UI16				curLeft, curTop;
+	std::bitset< 16 >	filterSettings;
+	UI08				currentMode;
+	UI08				previousColour;
+	bool				logEcho;
+#if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE						hco;
 	CONSOLE_SCREEN_BUFFER_INFO	csbi;
+#else
+	bool			forceNL;
 #endif
 	void	PrintStartOfLine( void );
 	void	StartOfLineCheck(void);
+	int		cl_getch( void );
+	void	Process( int c );
+	void	DisplaySettings( void );
 };
 
 class CEndL
 {
 public:
-	void Action( CConsole& test ) { test << "\n"; test.Flush(); }
+	void Action( CConsole& test )
+	{
+		test << "\n"; test.Flush();
+	}
 private:
 
 };
 
+extern CConsole								Console;
+extern CEndL								myendl;
+
+}
 
 #endif
 

@@ -3,7 +3,6 @@
 get=studded_sleeves
 name=studded sleeves
 id=0x13d4
-def=2
 }
 
 [0x13d5]
@@ -11,7 +10,6 @@ def=2
 get=studded_gloves
 name=studded gloves
 id=0x13d5
-def=1
 }
 
 [0x13d6]
@@ -19,7 +17,6 @@ def=1
 get=studded_gorget
 name=studded gorget
 id=0x13d6
-def=2
 }
 
 [0x13da]
@@ -27,7 +24,6 @@ def=2
 get=studded_leggings
 name=studded leggings
 id=0x13da
-def=3
 }
 
 [0x13db]
@@ -35,7 +31,6 @@ def=3
 get=studded_tunic
 name=studded tunic
 id=0x13db
-def=8
 }
 
 [0x13dc]
@@ -43,7 +38,6 @@ def=8
 get=studded_sleeves
 name=studded sleeves
 id=0x13dc
-def=2
 }
 
 [0x13dd]
@@ -51,7 +45,6 @@ def=2
 get=studded_gloves
 name=studded gloves
 id=0x13dd
-def=1
 }
 
 [0x13e1]
@@ -59,7 +52,6 @@ def=1
 get=studded_leggings
 name=studded leggings
 id=0x13e1
-def=3
 }
 
 [0x13e2]
@@ -67,7 +59,6 @@ def=3
 get=studded_tunic
 name=studded tunic
 id=0x13e2
-def=8
 }
 
 // Female Studded Armor
@@ -77,7 +68,6 @@ def=8
 get=studded_armor
 name=studded armor
 id=0x1c02
-def=7
 }
 
 [0x1c03]
@@ -85,7 +75,6 @@ def=7
 get=studded_armor
 name=studded armor
 id=0x1c03
-def=7
 }
 
 [0x1c0c]
@@ -93,7 +82,6 @@ def=7
 get=studded_bustier
 name=studded bustier
 id=0x1c0c
-def=7
 }
 
 [0x1c0d]
@@ -101,5 +89,4 @@ def=7
 get=studded_bustier
 name=studded bustier
 id=0x1c0d
-def=7
 }

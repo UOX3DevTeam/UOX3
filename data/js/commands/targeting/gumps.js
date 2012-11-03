@@ -25,7 +25,7 @@ function onCallback0( socket, ourObj )
 	{
 		position 	= 40;
 		var myGump 	= new Gump;
-		myGump.AddBackground( 0, 0, 300, 300, 2600 );
+		myGump.AddBackground( 0, 0, 300, 350, 2600 );
 		myGump.AddButton( 260, 15, 4017, 1, 0, 1 );
 		myGump.AddText( 45, 15, 0, "Dynamic Item Stats" );
 		myGump.AddPage( 1 );
@@ -71,14 +71,20 @@ function onCallback0( socket, ourObj )
 		addHexEntry( myGump, "More Z:", ourObj.morez );
 		addEntry( myGump, "Poisoned:", ourObj.poison );
 		addEntry( myGump, "Weight:", ourObj.weight );
+		addEntry( myGump, "BaseWeight:", ourObj.baseWeight );
 		addEntry( myGump, "Decay:", ourObj.decayable?1:0 );
 		addEntry( myGump, "Buy Value:", ourObj.buyvalue );
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );
+		
 		addEntry( myGump, "Is Corpse:", ourObj.corpse?1:0 );
 		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
+		addEntry( myGump, "Direction:", ourObj.dir );
 		if( ourObj.isSpawner )
 		{
-			addStringEntry( myGump, "SpawnSection:", ourObj.spawnsection );
+			if( ourObj.spawnsection )
+				addStringEntry( myGump, "SpawnSection:", ourObj.spawnsection );
+			else
+				addStringEntry( myGump, "SpawnSection:", "0" );
 			addEntry( myGump, "IsASpawnList:", ourObj.sectionalist?1:0 );
 			addEntry( myGump, "Min Spawn Time:", ourObj.mininterval );
 			addEntry( myGump, "Max Spawn Time:", ourObj.maxinterval );
@@ -158,6 +164,7 @@ function onCallback1( socket, ourObj )
 			addEntry( myGump, "Race:", 0 );
 		addEntry( myGump, "CommandLevel:", ourObj.commandlevel );
 		addEntry( myGump, "Script ID:", ourObj.scripttrigger );
+		addEntry( myGump, "Direction:", ourObj.direction );
 		myGump.AddPageButton( 10, 260, 4014, 2 );
 		myGump.Send( socket );
 		myGump.Free;

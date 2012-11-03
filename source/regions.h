@@ -3,93 +3,116 @@
 //									So forgive any newbie mistakes :)
 //									-- Side note, I wanted regions to be more generic, but
 //									now that I have to do this, time doesn't allow for it yet.
-
 #ifndef __Region_h
 #define __Region_h
 
+#include "mapstuff.h"
 
-typedef UI32 vIterator;
-
-class SubRegion
+namespace UOX
 {
-protected:
-	CHARLIST charData;
-	ITEMLIST itemData;
-	std::vector< vIterator > charIteratorBackup;
-	std::vector< vIterator > itemIteratorBackup;
-
-	vIterator charCounter;
-	vIterator itemCounter;
-
-public:
-	SubRegion(); //constructor
-	virtual			~SubRegion(); //destructor
-	virtual CItem *	GetCurrentItem( void );
-	virtual CChar *	GetCurrentChar( void );
-
-	virtual CItem *	FirstItem( void );
-	virtual CChar *	FirstChar( void );
-
-	virtual CItem *	GetNextItem( void );
-	virtual CChar *	GetNextChar( void );
-
-	virtual bool	FinishedItems( void );
-	virtual bool	FinishedChars( void );
-
-	virtual bool	AddItem( CItem *toAdd );
-	virtual bool	AddChar( CChar *toAdd );
-
-	virtual bool	RemoveItem( CItem *toRemove );
-	virtual bool	RemoveChar( CChar *toRemove );
-
-	virtual void	SaveToDisk( std::ofstream& writeDestination, SI32 mode, std::ofstream &houseDestination );
-	virtual void	LoadFromDisk( std::ifstream& readDestination, SI32 mode );
-
-	virtual void	PopItem( void );
-	virtual void	PopChar( void );
-	virtual void	PushItem( void );
-	virtual void	PushChar( void );
-
-};
 
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
 
-const SI16 UpperX = (SI16)(6144 / MapColSize);
-const SI16 UpperY = (SI16)(4096 / MapRowSize);
+const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
+const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 
-class cMapRegion
-{
-private:
-	SubRegion		internalRegions[UpperX][UpperY][NumberOfWorlds];
-	SubRegion		overFlow;
-	virtual void	LoadHouseMulti( std::ifstream &houseDestination, SI32 mode );
+	struct MapResource_st
+	{
+		SI16	oreAmt;
+		UI32	oreTime;
+		SI16	logAmt;
+		UI32	logTime;
 
-public:
-						cMapRegion(); //constructor
-	virtual				~cMapRegion(); //destructor
+		MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+		{
+		}
+	};
 
-	virtual SubRegion *	GetCell( SI16 x, SI16 y, UI08 worldNumber );
+	class CMapRegion
+	{
+	private:
+		CDataList< CItem * >	itemData;
+		CDataList< CChar * >	charData;
+	public:
+		CDataList< CItem * > *	GetItemList( void );
+		CDataList< CChar * > *	GetCharList( void );
 
-	virtual bool		AddItem( CItem *nItem );
-	virtual bool		RemoveItem( CItem *nItem );
+								CMapRegion()
+								{
+								};
+								~CMapRegion()
+								{
+								};
 
-	virtual bool		AddChar( CChar *toAdd );
-	virtual bool		RemoveChar( CChar *toRemove );
+		void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
+	};
 
-	virtual void		Save( void );
-	virtual void		Load( void );
+	class CMapWorld
+	{
+	private:
+		SI16								upperArrayX;
+		SI16								upperArrayY;
+		UI16								resourceX;
+		UI16								resourceY;
+		std::vector< CMapRegion >			mapRegions;
+		std::vector< MapResource_st >		mapResources;
+	public:
+						CMapWorld( void );
+						CMapWorld( UI08 worldNum );
+						~CMapWorld( void );
 
-	virtual int			GetGridIndex( SI16 x, SI16 y );
-//	virtual SubRegion *	GetGrid( int gridIndex, UI08 worldNumber );
-	virtual SubRegion *	GetGrid( int xOffset, int yOffset, UI08 worldNumber );
+		CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
 
-	virtual int			GetGridX( SI16 x );
-	virtual int			GetGridY( SI16 y );
+		MapResource_st&	GetResource( SI16 x, SI16 y );
 
-	virtual bool		Add( cBaseObject *toAdd );
-	virtual bool		Remove( cBaseObject *toRemove );
-};
+		void			LoadResources( UI08 worldNum );
+		void			SaveResources( UI08 worldNUm );
+	};
+
+	class CMapHandler
+	{
+	private:
+		typedef std::vector< CMapWorld * >				WORLDLIST;
+		typedef std::vector< CMapWorld * >::iterator	WORLDLIST_ITERATOR;
+
+		WORLDLIST		mapWorlds;
+		CMapRegion		overFlow;
+
+		void		LoadFromDisk( std::ifstream& readDestination, int baseValue, int fileSize, int maxSize );
+	public:
+					CMapHandler();
+					~CMapHandler();
+
+		void		Save( void );
+		void		Load( void );
+
+		bool		AddItem( CItem *nItem );
+		bool		RemoveItem( CItem *nItem );
+
+		bool		AddChar( CChar *toAdd );
+		bool		RemoveChar( CChar *toRemove );
+
+		bool		ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum );
+		bool		ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum );
+
+		CMapRegion *GetMapRegion( CBaseObject *mObj );
+		CMapRegion *GetMapRegion( SI16 xOffset, SI16 yOffset, UI08 worldNumber );
+
+		SI16		GetGridX( SI16 x );
+		SI16		GetGridY( SI16 y );
+
+		REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
+		REGIONLIST	PopulateList( CBaseObject *mObj );
+
+		CMapWorld *	GetMapWorld( UI08 worldNum );
+
+		MapResource_st * GetResource( SI16 x, SI16 y, UI08 worldNum );
+	};
+
+	extern CMapHandler *MapRegion;
+
+}
 
 #endif
 

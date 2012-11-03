@@ -1,84 +1,101 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
-typedef std::map< SERIAL, cBaseObject *> baseMap;
-typedef baseMap::iterator			baseMapIterator;
-typedef baseMap::const_iterator		baseMapConstIterator;
-
-typedef std::map< SERIAL, CChar *>		baseCharMap;
-typedef baseCharMap::iterator		baseCharMapIterator;
-typedef baseCharMap::const_iterator	baseCharMapConstIterator;
+namespace UOX
+{
 
 class CMultiObj : public CItem
 {
 protected:
-	baseMap				itemInMulti;
-	baseMap				charInMulti;
-	baseCharMap			owners;
-	baseCharMap			banList;
+	std::string			deed;
+
+	std::map< CChar *, UI08 >	housePrivList;
+
 	ITEMLIST			lockedList;
 	UI16				maxLockedDown;
 
-	baseMapIterator		itemMultiIterator;
-	baseMapIterator		charMultiIterator;
+	virtual bool		LoadRemnants( void );
 
-	bool				CharIsInMulti( cBaseObject *toFind ) const;
-	bool				ItemIsInMulti( cBaseObject *toFind ) const;
-
-	void				RemoveCharFromMulti( cBaseObject *toFind );
-	void				RemoveItemFromMulti( cBaseObject *toFind );
-
-	void				AddCharToMulti( cBaseObject *toFind );
-	void				AddItemToMulti( cBaseObject *toFind );
-
-	virtual void		Cleanup( void );
-	virtual bool		LoadRemnants( int arrayOffset );
+	CDataList< CItem * >	itemInMulti;
+	CDataList< CChar * >	charInMulti;
 
 public:
-						CMultiObj( ITEM nItem, bool zeroSer );
+						CMultiObj();
 	virtual				~CMultiObj();
 
-	virtual	void		AddToBanList( CChar *toBan );
-	virtual	void		RemoveFromBanList( CChar *toRemove );
+	void				AddToBanList( CChar *toBan );
+	void				RemoveFromBanList( CChar *toRemove );
 
-	virtual	void		AddAsOwner( CChar *newOwner );
-	virtual	void		RemoveAsOwner( CChar *toRemove );
-	virtual	void		ClearOwners( void );
+	void				AddAsOwner( CChar *newOwner );
+	void				RemoveAsOwner( CChar *toRemove );
 
-	virtual bool		IsInMulti( cBaseObject *toFind ) const;
-	virtual bool		IsOnBanList( CChar *toBan ) const;
-	virtual bool		IsOwner( CChar *toFind ) const;
+	bool				IsOnBanList( CChar *toBan ) const;
+	bool				IsOwner( CChar *toFind ) const;
 
-	virtual void		AddToMulti( cBaseObject *toAdd );
-	virtual void		RemoveFromMulti( cBaseObject *toRemove );
+	void				AddToMulti( CBaseObject *toAdd );
+	void				RemoveFromMulti( CBaseObject *toRemove );
 
-	virtual UI32		GetLockDownCount( void ) const;
-	virtual UI32		GetMaxLockDowns( void ) const;
-	virtual void		SetMaxLockDowns( UI16 newValue );
-	virtual void		LockDownItem( CItem *toLock );
-	virtual void		RemoveLockDown( CItem *toRemove );
+	size_t				GetLockDownCount( void ) const;
+	UI32				GetMaxLockDowns( void ) const;
+	void				SetMaxLockDowns( UI16 newValue );
+	void				LockDownItem( CItem *toLock );
+	void				RemoveLockDown( CItem *toRemove );
 
-	virtual bool		Save( std::ofstream &outStream, int mode );
-	virtual bool		DumpHeader( std::ofstream &outStream, int mode ) const;
-	virtual bool		DumpBody( std::ofstream &outStream, int mode ) const;
-	virtual bool		DumpFooter( std::ofstream &outStream, int mode ) const;
-	virtual bool		Load( std::ifstream &inStream, int arrayOffset );
-	virtual bool		Load( BinBuffer &buff, int arrayOffset );
-	virtual bool		HandleLine( char *tag, char *data );
-	virtual bool		HandleBinTag( UI08 tag, BinBuffer &buff );
-
-	virtual CChar *		FirstCharMulti( void );
-	virtual CChar *		NextCharMulti( void );
-	virtual bool		FinishedCharMulti( void ) const;
-
-	virtual CItem *		FirstItemMulti( void );
-	virtual CItem *		NextItemMulti( void );
-	virtual bool		FinishedItemMulti( void ) const;
-	virtual void		PostLoadProcessing( UI32 index );
+	virtual bool		Save( std::ofstream &outStream );
+	virtual bool		DumpHeader( std::ofstream &outStream ) const;
+	virtual bool		DumpBody( std::ofstream &outStream ) const;
+	virtual bool		HandleLine( UString &UTag, UString &data );
 
 	virtual void		SetOwner( CChar *newOwner );
+
+	std::string			GetDeed( void ) const;
+	void				SetDeed( std::string newDeed );
+
+	virtual void		Cleanup( void );
+
+	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+
+	CDataList< CChar * > *	GetCharsInMultiList( void );
+	CDataList< CItem * > *	GetItemsInMultiList( void );
 };
 
+class CBoatObj : public CMultiObj
+{
+protected:
+	SERIAL				tiller;
+	SERIAL				planks[2];
+	SERIAL				hold;
+	UI08				moveType;
+
+	TIMERVAL			nextMoveTime;
+
+private:
+	virtual bool		DumpHeader( std::ofstream &outStream ) const;
+	virtual bool		DumpBody( std::ofstream &outStream ) const;
+
+	virtual bool		HandleLine( UString &UTag, UString &data );
+
+public:
+						CBoatObj();
+	virtual				~CBoatObj();
+
+	SERIAL				GetTiller( void ) const;
+	SERIAL				GetPlank( UI08 plankNum ) const;
+	SERIAL				GetHold( void ) const;
+	UI08				GetMoveType( void ) const;
+
+	void				SetPlank( UI08 plankNum, SERIAL newVal );
+	void				SetTiller( SERIAL newVal );
+	void				SetHold( SERIAL newVal );
+	void				SetMoveType( UI08 newVal );
+
+	TIMERVAL			GetMoveTime( void ) const;
+	void				SetMoveTime( TIMERVAL newVal );
+
+	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+};
+
+}
 
 #endif
 

@@ -1,5 +1,10 @@
 #include "cThreadQueue.h"
 
+namespace UOX
+{
+
+CThreadQueue					messageLoop;
+
 CThreadQueue::CThreadQueue()
 {
 }
@@ -29,7 +34,7 @@ MessagePassed CThreadQueue::GrabMessage( void )
 	MutexOff();	
 	return toReturn;	
 }
-void CThreadQueue::NewMessage( MessageType toAdd, char *data )
+void CThreadQueue::NewMessage( MessageType toAdd, const char *data )
 { 
 	MutexOn();
 	MessagePassed adding;
@@ -40,4 +45,6 @@ void CThreadQueue::NewMessage( MessageType toAdd, char *data )
 		strncpy( adding.data, data, 128 );
 	internalQueue.push( adding );
 	MutexOff();	
+}
+
 }

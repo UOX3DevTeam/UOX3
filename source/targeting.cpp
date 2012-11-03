@@ -1,173 +1,180 @@
 #include "uox3.h"
-#include "cdice.h"
-#include "mstring.h"
 #include "skills.h"
-#include "boats.h"
 #include "cGuild.h"
 #include "townregion.h"
-#include "cRaces.h"
 #include "cServerDefinitions.h"
 #include "commands.h"
 #include "cMagic.h"
 #include "ssection.h"
 #include "gump.h"
-#include "trigger.h"
-#include "mapstuff.h"
+#include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"
-#include "packets.h"
+#include "CPacketSend.h"
+#include "classes.h"
+#include "regions.h"
+#include "combat.h"
+#include "magic.h"
+#include "Dictionary.h"
+
+#include "ObjectFactory.h"
+#include "PartySystem.h"
 
 #undef DBGFILE
 #define DBGFILE "targeting.cpp"
 
-void cTargets::PlVBuy( cSocket *s )//PlayerVendors
+namespace UOX
 {
-	if( s == NULL )
+
+void tweakItemMenu( CSocket *s, CItem *j );
+void tweakCharMenu( CSocket *s, CChar *c );
+void OpenPlank( CItem *p );
+
+void PlVBuy( CSocket *s )//PlayerVendors
+{
+	VALIDATESOCKET( s );
+
+	CChar *vChar = static_cast<CChar *>(s->TempObj());
+	s->TempObj( NULL );
+	if( !ValidateObject( vChar ) || vChar->isFree() ) 
 		return;
 
-	CHARACTER v = s->AddX();
-	if( v == INVALIDSERIAL || v > cwmWorldState->GetCMem() ) 
-		return;
-	if( chars[v].isFree() ) 
-		return;
+	CChar *mChar	= s->CurrcharObj();
+	UI32 gleft		= GetItemAmount( mChar, 0x0EED );
 
-	CChar *mChar = s->CurrcharObj();
-	UI32 gleft = calcGold( mChar );
-
-	CItem *p = getPack( mChar );
-	if( p == NULL ) 
+	CItem *p		= mChar->GetPackItem();
+	if( !ValidateObject( p ) ) 
 	{
-		sysmessage( s, 773 ); 
+		s->sysmessage( 773 ); 
 		return; 
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL ) 
-		return;	
-	if( i->GetCont() == NULL ) 
+	if( !ValidateObject( i ) || i->GetCont() == NULL ) 
 		return;
 	
-	CItem *np = (CItem *)i->GetCont();
-	CChar *npc = getPackOwner( np );
-	if( npc != &chars[v] || chars[v].GetNPCAiType() != 17 ) 
+	if( FindItemOwner( i ) != vChar )
 		return;
-	
-	if( mChar == chars[v].GetOwnerObj() )
+	if( vChar->GetNPCAiType() != AI_PLAYERVENDOR )
+		return;
+	if( mChar == vChar->GetOwnerObj() )
 	{
-		npcTalk( s, &chars[v], 999, false );
+		vChar->TextMessage( s, 999, TALK, false );
 		return;
 	}
+	if ( i->GetBuyValue() <= 0 )
+		return;
 
-	if( gleft < static_cast<UI32>(i->GetBuyValue()) ) 
+	if( gleft < i->GetBuyValue() ) 
 	{
-		npcTalk( s, &chars[v], 1000, false );
+		vChar->TextMessage( s, 1000, TALK, false );
 		return;
 	} 
 	else 
 	{
-		UI32 tAmount = DeleteQuantity( mChar, 0x0EED, (UI32)i->GetBuyValue() );
+		UI32 tAmount = DeleteItemAmount( mChar, i->GetBuyValue(), 0x0EED );
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
 	
-	npcTalk( s, &chars[v], 1001, false );
-	chars[v].SetHoldG( chars[v].GetHoldG() + i->GetBuyValue() );
+	vChar->TextMessage( s, 1001, TALK, false );
+	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
 
 	i->SetCont( p );	// move containers
-	RefreshItem( i );
-	statwindow( s, mChar );
 }
 
-void cTargets::HandleGuildTarget( cSocket *s )
+void HandleGuildTarget( CSocket *s )
 {
-	CChar *trgChar;
-	CChar *mChar = s->CurrcharObj();
-	CGuild *mGuild = NULL, *tGuild = NULL;
+	VALIDATESOCKET( s );
+	CChar *trgChar	= NULL;
+	CChar *mChar	= s->CurrcharObj();
+	CGuild *mGuild	= NULL, *tGuild = NULL;
 	switch( s->GetByte( 5 ) )
 	{
-	case 0:	// recruit character
-		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-		if( trgChar != NULL )
-		{
-			if( trgChar->GetGuildNumber() == -1 )	// no existing guild
+		case 0:	// recruit character
+			trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+			if( ValidateObject( trgChar ) )
 			{
-				mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
-				if( mGuild != NULL )
-					mGuild->NewRecruit( (*trgChar) );
-			}
-			else
-				sysmessage( s, 1002 );
-		}
-		break;
-	case 1:		// declare fealty
-		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-		if( trgChar != NULL )
-		{
-			if( trgChar->GetGuildNumber() == mChar->GetGuildNumber() )	// same guild
-				mChar->SetGuildFealty( trgChar->GetSerial() );
-			else
-				sysmessage( s, 1003 );
-		}
-		break;
-	case 2:	// declare war
-		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-		if( trgChar != NULL )
-		{
-			if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
-			{
-				if( trgChar->GetGuildNumber() == -1 )
-					sysmessage( s, 1004 );
-				else
-				{
-					mGuild = GuildSys->Guild(mChar->GetGuildNumber() );
-					if( mGuild != NULL )
-					{
-						mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
-						tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-						if( tGuild != NULL )
-							tGuild->TellMembers( 1005, mGuild->Name() );
-					}
-				}
-			}
-			else
-				sysmessage( s, 1006 );
-		}
-		break;
-	case 3:	// declare ally
-		trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-		if( trgChar != NULL )
-		{
-			if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
-			{
-				if( trgChar->GetGuildNumber() == -1 )
-					sysmessage( s, 1004 );
-				else
+				if( trgChar->GetGuildNumber() == -1 )	// no existing guild
 				{
 					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
 					if( mGuild != NULL )
+						mGuild->NewRecruit( (*trgChar) );
+				}
+				else
+					s->sysmessage( 1002 );
+			}
+			break;
+		case 1:		// declare fealty
+			trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+			if( ValidateObject( trgChar ) )
+			{
+				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber() )	// same guild
+					mChar->SetGuildFealty( trgChar->GetSerial() );
+				else
+					s->sysmessage( 1003 );
+			}
+			break;
+		case 2:	// declare war
+			trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+			if( ValidateObject( trgChar ) )
+			{
+				if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
+				{
+					if( trgChar->GetGuildNumber() == -1 )
+						s->sysmessage( 1004 );
+					else
 					{
-						mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
-						tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
-						if( tGuild != NULL )
-							tGuild->TellMembers( 1007, mGuild->Name() );
+						mGuild = GuildSys->Guild(mChar->GetGuildNumber() );
+						if( mGuild != NULL )
+						{
+							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
+							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
+							if( tGuild != NULL )
+								tGuild->TellMembers( 1005, mGuild->Name().c_str() );
+						}
 					}
 				}
+				else
+					s->sysmessage( 1006 );
 			}
-			else
-				sysmessage( s, 1006 );
-		}
-		break;
+			break;
+		case 3:	// declare ally
+			trgChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+			if( ValidateObject( trgChar ) )
+			{
+				if( trgChar->GetGuildNumber() != mChar->GetGuildNumber() )
+				{
+					if( trgChar->GetGuildNumber() == -1 )
+						s->sysmessage( 1004 );
+					else
+					{
+						mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+						if( mGuild != NULL )
+						{
+							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
+							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
+							if( tGuild != NULL )
+								tGuild->TellMembers( 1007, mGuild->Name().c_str() );
+						}
+					}
+				}
+				else
+					s->sysmessage( 1006 );
+			}
+			break;
 	}
 
 }
 
-void HandleSetScpTrig( cSocket *s )
+void HandleSetScpTrig( CSocket *s )
 {
-	UI16 targTrig = (UI16)s->AddX();
-	cScript *toExecute = Trigger->GetScript( targTrig );
-	if( toExecute == NULL )
+	VALIDATESOCKET( s );
+	UI16 targTrig		= (UI16)s->TempInt();
+	cScript *toExecute	= JSMapping->GetScript( targTrig );
+	if( targTrig && toExecute == NULL )
 	{
-		sysmessage( s, "No such script is known to the server" );
+		s->sysmessage( 1752 );
 		return;
 	}
 
@@ -175,475 +182,72 @@ void HandleSetScpTrig( cSocket *s )
 	if( ser < BASEITEMSERIAL )
 	{	// character
 		CChar *targChar = calcCharObjFromSer( ser );
-		if( targChar != NULL )
+		if( ValidateObject( targChar ) )
 		{
 			targChar->SetScriptTrigger( targTrig );
-			sysmessage( s, 1653 );
+			s->sysmessage( 1653 );
 		}
 	}
 	else
 	{	// item
 		CItem *targetItem = calcItemObjFromSer( ser );
-		if( targetItem != NULL )
+		if( ValidateObject( targetItem ) )
 		{
-			sysmessage( s, 1652 );
+			s->sysmessage( 1652 );
 			targetItem->SetScriptTrigger( targTrig );
 		}
 	}
 }
 
-void cTargets::MultiTarget( cSocket *s ) // If player clicks on something with the targetting cursor
+void BuildHouse( CSocket *s, UI08 houseEntry );
+void BuildHouseTarget( CSocket *s )
 {
-	CChar *mChar = s->CurrcharObj();
+	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-	{
-		if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
-			mChar->StopSpell();
-		return; // do nothing if user cancels, avoids CRASH! - Morrolan
-	}
-	
-	UI08 a1 = s->GetByte( 2 );
-	UI08 a2 = s->GetByte( 3 );
-	UI08 a3 = s->GetByte( 4 );
-	UI08 a4 = s->GetByte( 5 );
-	s->TargetOK( false );
-	if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().wAccountIndex != 0 )
-	{
-		sysmessage( s, 1008 );
-		if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
-			mChar->StopSpell();
 		return;
-	}
-	if( a1 == 0 && a2 == 1 )
-	{
-		if( a3 == 2 )	// GUILDS!!!!!
-		{
-			HandleGuildTarget( s );
-			return;
-		}
-		if( a3 == 1 ) // CustomTarget() !!!!
-		{
-			UI16 scriptNum = (UI16)s->AddX();
-			cScript *tScript = Trigger->GetScript( scriptNum );
-			if( tScript != NULL )
-				tScript->DoCallback( s, s->GetDWord( 7 ), a4 );
-			return;
-		}
- 		if( a3 == 0 )
-		{
-			CItem *targetItem;
-			switch( a4 )
-			{
-			case 0:		AddTarget( s );						break;
-			case 1:		RenameTarget( s );					break;
-			case 2:		TeleTarget( s );					break;	
-			case 3:		RemoveTarget( s );					break;
-			case 4:		DyeTarget( s );						break;
-			case 5:		NewzTarget( s );					break;
-			case 6:		TypeTarget( s );					break;
-			case 7:		IDtarget( s );						break;
-			case 8:		XgoTarget( s );						break;
-			case 9:		PrivTarget( s );					break;
-			case 10:	MoreTarget( s );					break;
-			case 11:	KeyTarget( s );						break;
-			case 12:	IstatsTarget( s );					break;
-			case 13:	CstatsTarget( s );					break;
-			case 14:	Skills->RepairLeather( s );			break;
-			case 15:	Skills->RepairBow( s );				break;
-			case 16:	KillTarget( s, 0x0B );				break;
-			case 17:	KillTarget( s, 0x10 );				break;
-			case 18:	KillTarget( s, 0x15 );				break;
-			case 19:	FontTarget( s );					break;
-			case 20:	GhostTarget( s );					break;
-			case 21:	ResurrectionTarget( s ); break; // needed for /resurrect command
-			case 22:	BoltTarget( s );					break;
-			case 23:	AmountTarget( s );					break;
-			case 24:	Skills->RepairMetal( s );			break;
-			case 25:	CloseTarget( s );					break;
-			case 26:	AddMenuTarget( s, true, s->XText() ); break;
-			case 27:	NpcMenuTarget( s );					break;
-			case 28:	MovableTarget( s );					break;
-			case 29:	Skills->ArmsLoreTarget( s );		break;
-			case 30:	OwnerTarget( s );					break;
-			case 31:	ColorsTarget( s );					break;
-			case 32:	DvatTarget( s );					break;
-			case 33:	AddNpcTarget( s );					break;
-			case 34:	FreezeTarget( s );					break;
-			case 35:	UnfreezeTarget( s );				break;
-			case 36:	AllSetTarget( s );					break;
-			case 37:	Skills->AnatomyTarget( s );			break;
-			case 38:	Magic->Recall( s );					break;					
-			case 39:	Magic->Mark( s );					break;					
-			case 40:	Skills->ItemIDTarget( s );			break;
-			case 41:	Skills->EvaluateIntTarget( s );		break;
-			case 42:	Skills->TameTarget( s );			break;
-			case 43:	Magic->Gate( s );					break;					
-			case 44:	Magic->Heal( s );					break; // we need this for /heal command
-			case 45:	Skills->FishTarget( s );			break;
-			case 46:	InfoTarget( s );					break;
-			case 47:	TitleTarget( s );					break;
-			case 48:	ShowDetail( s );					break;
-			case 49:	MakeTownAlly( s );					break;
-			case 50:	Skills->Smith( s );					break;
-			case 51:	Skills->Mine( s );					break;
-			case 52:	Skills->SmeltOre( s );				break;
-			case 53:	npcAct( s );						break;
-//			case 54:	GetAccount( s );					break;
-			case 55:	WstatsTarget( s );					break;
-			case 56:	NpcTarget( s );						break;
-			case 57:	NpcTarget2( s );					break;
-			case 58:	NpcResurrectTarget( mChar );		break;
-			case 59:	NpcCircleTarget( s );				break;
-			case 60:	NpcWanderTarget( s );				break;
-			case 61:	VisibleTarget( s );					break;
-			case 62:	TweakTarget( s );					break;
-			case 63:	MoreXTarget( s );					break;
-			case 64:	MoreYTarget( s );					break;
-			case 65:	MoreZTarget( s );					break;
-			case 66:	MoreXYZTarget( s );					break;
-			case 67:	NpcRectTarget( s );					break;
-			case 68: 
-				targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
-				if( targetItem != NULL )
-				{
-					sysmessage( s, 1010 );
-					targetItem->enhanced ^= 0x0001;	// Set DevineLock bit in items
-				}
-				break;
-			case 69: 
-				targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
-				if( targetItem != NULL )
-				{
-					sysmessage( s, 1011 );
-					targetItem->enhanced &= 0xFFFE;	// ReSet DevineLock bit in items
-				}
-				break;
-			case 70: MakeStatusTarget( s );				break;
-			case 71: HandleSetScpTrig( s );				break;
-			case 72: DeleteCharTarget( s );				break;
-	// FREE		case 73: break;
-	// FREE		case 74: break;
-	// FREE		case 75: break;
-			case 76: AxeTarget( s );					break;
-			case 77: Skills->DetectHidden( s );			break;
-	// FREE		case 78: break;
-			case 79: Skills->ProvocationTarget1( s );	break;
-			case 80: Skills->ProvocationTarget2( s );	break;
-			case 81: Skills->EnticementTarget1( s );	break;
-			case 82: Skills->EnticementTarget2( s );	break;
-	// FREE		case 83: break;
-	// FREE		case 84: break;
-	// FREE		case 85: break;
-			case 86: SwordTarget( s );					break;
-			case 87:									break;
-			case 88: SetDirTarget( s );					break;
-			case 89: ObjPrivTarget( s );				break;
-			case 90: AreaCommand( s );					break;
-	// FREE		case 91: break;
-	// FREE		case 92: break;
-	// FREE		case 93: break;
-	// FREE		case 94: break;
-	// FREE		case 95: break;
-	// FREE		case 96: break;
-	// FREE		case 97: break;
-	// FREE		case 98: break;
-	// FREE		case 99: break;
-	// FREE		case 100: break;
-			case 100: Magic->CastSpell( s, mChar ); break;
-	// FREE		case 101: break;
-	// FREE		case 102: break;
-	// FREE		case 103: break;
-			case 104: 			
-				if( mChar->GetAccount().wAccountIndex == 0 )
-					 CommandLevel( s ); 
-				else
-					sysmessage( s, 1009 );
-					break;
 
-			case 105: Commands->RemoveShop( s );		break;
-			case 106: NpcAITarget( s );					break;
-			case 107: xBankTarget( s );					break;
-			case 108: Skills->AlchemyTarget( s );		break;
-//			case 109: Skills->BottleTarget( s );		break;
-			case 110: DupeTarget( s );					break;
-			case 111: MoveToBagTarget( s );				break;
-			case 112: SellStuffTarget( s );				break;
-			case 113: ManaTarget( s );					break;
-			case 114: StaminaTarget( s );				break;
-			case 115: GmOpenTarget( s );				break;
-			case 116: MakeShopTarget( s );				break;
-			case 117: FollowTarget( s );				break;
-			case 118: AttackTarget( s );				break;
-			case 119: TransferTarget( s );				break;
-			case 120: GuardTarget( s );					break;
-			case 121: BuyShopTarget( s );				break;
-			case 122: SetBuyValueTarget( s );			break;
-			case 123: SetRestockTarget( s );			break;
-			case 124: FriendTarget( s );				break;
-			case 125: SetSellValueTarget( s );			break;
-	// FREE		case 125: break;
-			case 126: JailTarget( s, INVALIDSERIAL );	break;
-			case 127: ReleaseTarget( s, INVALIDSERIAL );	break;
-			case 128: Skills->CreateBandageTarget( s );	break;
-	// FREE	case 129:									break;
-			case 130: Skills->HealingSkillTarget( s );	break;
-			case 131: permHideTarget( s );				break;
-			case 132: unHideTarget( s );				break;
-			case 133: SetWipeTarget( s );				break;
-			case 134: Skills->Carpentry( s );			break;
-			case 135:									break;
-			case 136: XTeleport( s, 0 );				break;
-	// FREE		case 137: break;
-	// FREE		case 138: break;
-	// FREE		case 139: break;
-	// FREE		case 140: break;
-	// FREE		case 141: break;
-	// FREE		case 142: break;
-	// FREE		case 143: break;
-	// FREE		case 144: break;
-	// FREE		case 145: break;
-	// FREE		case 146: break;
-	// FREE		case 147: break;
-	// FREE		case 148: break;
-	// FREE		case 149: break;
-			case 150: SetSpAttackTarget( s );			break;
-			case 151: FullStatsTarget( s );				break;
-			case 152: Skills->BeggingTarget( s );		break;
-			case 153: Skills->AnimalLoreTarget( s );	break;
-			case 154: Skills->ForensicsTarget( s );		break;
-			case 155: 
-				{
-					mChar->SetPoisonSerial( s->GetDWord( 7 ) );
-					target( s, 0, 156, 1613 );
-					return;
-				}
-			case 156: Skills->PoisoningTarget( s );		break;
-	// FREE		case 157: break;
-	// FREE		case 158: break;
-	// FREE		case 159: break;
-			case 160: Skills->Inscribe( s );			break;
-			case 161: region[mChar->GetTown()]->VoteForMayor( s ); break; 
-			case 162: Skills->LockPick( s );			break;
-	// FREE		case 163: break;
-			case 164: Skills->Wheel( s );				break;
-			case 165: Skills->Loom( s );				break;
-	// FREE		case 166: break;
-			case 167: Skills->Tailoring( s );			break;
-			case 168: Skills->handleCooking( s );		break;	// Was CookMeat()
-	//FREE		case 169: break;
-			case 170: LoadCannon( s );					break;
-	//FREE		case 171: break;
-			case 172: Skills->Fletching( s );			break;
-			case 173:											// Was MakeDough()
-			case 174: Skills->handleCooking( s );		break;	// Was MakePizza() - Single function to handle both - Zane
-			case 175: SetPoisonTarget( s );				break;
-			case 176: SetPoisonedTarget( s );			break;
-			case 177: SetSpaDelayTarget( s );			break;
-			case 178: SetAdvObjTarget( s );				break;
-			case 179: SetInvulFlag( s );				break;
-			case 180: Skills->Tinkering( s );			break;
-			case 181: Skills->PoisoningTarget( s );		break;  
-	//FREE		case 182: break;
-			case 183: Skills->TinkerAxel( s );			break;
-			case 184: Skills->TinkerAwg( s );			break;
-			case 185: Skills->TinkerClock( s );			break;
-			case 186: vialtarget( s );					break;
-	//FREE		case 187: break;
-	//FREE		case 188: break;
-	//FREE		case 189: break;
-	//FREE		case 190: break;
-	//FREE		case 191: break;
-	//FREE		case 192: break;
-	//FREE		case 193: break;
-	//FREE		case 194: break;
-	//FREE		case 195: break;
-	//FREE		case 196: break;
-	//FREE		case 197: break;
-			case 198: Tiling( s );						break;
-			case 199: Wiping( s );						break;
-			case 200:									break;
-			case 201:									break;
-			case 202:									break;
-			case 203:									break;
-	//		case 204: triggertarget(s);					break;
-			case 205: Skills->StealingTarget( s );		break;
-			case 206: CanTrainTarget( s );				break;
-			case 207: ExpPotionTarget( s );				break;
-			case 209: SetSplitTarget( s );				break;
-			case 210: SetSplitChanceTarget( s );		break;
-			case 212: Commands->Possess( s );			break;
-	// FREE		case 213: break;
-	// FREE		case 214: break;
-	// FREE		case 215: break;
-	// FREE		case 216: break;
-	// FREE		case 217: break;
-	// FREE		case 218: break;
-	// FREE		case 219: break;
-//			case 220: Guilds->Recruit( s );				break;
-//			case 221: Guilds->TargetWar( s );			break;
-			case 222: TeleStuff( s );					break;        
-			case 223: SquelchTarg( s );					break;//Squelch
-			case 224: PlVBuy( s );						break;//PlayerVendors
-			
-	//		case 225: Priv3XTarget(s); break; // SETPRIV3 +/- target
-			case 227: HouseOwnerTarget( s );			break;
-			case 228: HouseEjectTarget( s );			break;
-			case 229: HouseBanTarget( s );				break;
-			case 230: HouseFriendTarget( s );			break;
-			case 231: HouseUnlistTarget( s );			break;
-			case 232: HouseLockdown( s );				break; // Abaddon 17th December 1999
-			case 233: HouseRelease( s );				break; // Abaddon 17th December 1999
-	// FREE		case 234: break;
-			
-			case 235: BanTarg( s );						break;
-	// FREE		case 236: break;
-			case 237: SmeltTarget( s );					break;
-	// FREE		case 238: break;
-	// FREE		case 239: break;
-	// FREE		case 240: break;
-	// FREE		case 241: break;
-	// FREE		case 242: break;
-	// FREE		case 243: break;
-	// FREE		case 244: break;
-	// FREE		case 245: break;
-	// FREE		case 246: break;
-			case 247: ShowSkillTarget( s );				break;
-	// FREE	case 248: break;
-			case 249: UnglowTarget( s );				break;
+	BuildHouse( s, s->AddID1() );//If its a valid house, send it to buildhouse!
 
-			case 250: IncZTarget( s );					break;
-			case 251: NewXTarget( s );					break;
-			case 252: NewYTarget( s );					break;
-			case 253: IncXTarget( s );					break;
-			case 254: IncYTarget( s );					break;
-			case 255: GlowTarget( s );					break;
-				
-			default:
-				Console.Error( 2, " Fallout of switch statement (%i) without default. targeting.cpp, multitarget()", a4 );
-			}
-		}
-	}
-}
-
-#pragma note( "Function Warning: cTargets::BanTarg() does nothing" )
-void cTargets::BanTarg( cSocket *s )
-// PARAM WARNING: s is an unreferenced parameter
-{
-
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void AddTarget( cSocket *s)
-//|   Date        -  UnKnown
-//|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 29, 1998)
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Adds an item when using /add # # .
-//o---------------------------------------------------------------------------o
-void cTargets::AddTarget( cSocket *s )
-{
-	if( s == NULL || s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	bool pileable = false;
-	CTile tile;
-	
-	if( s->AddID1() == 0x40 )
-	{
-		switch( s->AddID2() )
-		{
-		case 100:
-		case 102:
-		case 104:
-		case 106:
-		case 108:
-		case 110:
-		case 112:
-		case 114:
-		case 116:
-		case 118:
-		case 120:
-		case 122:
-		case 124:
-		case 126:
-		case 140:
-			buildHouse( s, s->AddID3() );//If its a valid house, send it to buildhouse!
-			return; // Morrolan, here we WANT fall-thru, don't mess with this switch
-		}
-	}
-	UI16 modelNum = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
-	Map->SeekTile( modelNum, &tile );
-	if( tile.Stackable() ) 
-		pileable = true;
-	
-	CItem *c = Items->SpawnItem( NULL, s->CurrcharObj(), 1, "#", pileable, modelNum, 0, false, false );
-	if( c == NULL ) 
-		return;
-	c->SetPriv( 0 );	//Make them not decay
-	const SI16 tX = s->GetWord( 11 );
-	const SI16 tY = s->GetWord( 13 );
-	const SI08 tZ = (SI08)(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
-	
-	if( c->GetCont() == NULL )
-		c->SetLocation( tX, tY, tZ );
-	else
-	{
-		c->SetX( tX );
-		c->SetY( tY );
-		c->SetZ( tZ );
-	}
-	RefreshItem( c );
 	s->AddID1( 0 );
-	s->AddID2( 0 );
 }
 
-void cTargets::RenameTarget( cSocket *s )
+void AddScriptNpc( CSocket *s )
+// Abaddon 17th February, 2000
+// Need to return the character we've made, else summon creature at least will fail
+// We make the char, but never pass it back up the chain
 {
-	if( s == NULL )
+	VALIDATESOCKET( s );
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
-	SERIAL serial = s->GetDWord( 7 );
+	
+	CChar *mChar			= s->CurrcharObj();
+	const SI16 coreX		= s->GetWord( 11 );
+	const SI16 coreY		= s->GetWord( 13 );
+	const SI08 coreZ		= static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
+	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber() );
+}
+
+void TeleTarget( CSocket *s )
+{
+	VALIDATESOCKET( s );
+	if( s->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+
+	const SERIAL serial = s->GetDWord( 7 );
+
+	CBaseObject *mObj = NULL;
 	if( serial >= BASEITEMSERIAL )
-	{
-		CItem *i = calcItemObjFromSer( serial );
-		if( i != NULL )
-		{
-			if( s->AddX() == 1 ) //rename2
-				i->SetName2( s->XText() );
-			else
-				i->SetName( s->XText() );
-		}
-	}
+		mObj = calcItemObjFromSer( serial );
 	else
-	{
-		CChar *c = calcCharObjFromSer( serial );
-		if( c != NULL )
-		{
-			c->SetName( s->XText() );
-			statwindow( s, c );
-		}
-	}
-}
-
-void cTargets::TeleTarget( cSocket *s )
-{
-	if( s == NULL || s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	SERIAL serial = s->GetDWord( 7 );
-
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		sysmessage( s, 717 );
-		return;
-	}
+		mObj = calcCharObjFromSer( serial );
 
 	SI16 targX, targY;
 	SI08 targZ;
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
+	if( ValidateObject( mObj ) )
 	{
-		targX = c->GetX();
-		targY = c->GetY();
-		targZ = c->GetZ();
+		targX = mObj->GetX();
+		targY = mObj->GetY();
+		targZ = mObj->GetZ();
 	}
 	else
 	{
@@ -653,7 +257,7 @@ void cTargets::TeleTarget( cSocket *s )
 	}
 	CChar *mChar = s->CurrcharObj();
 
-	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )	
+	if( mChar->IsGM() || LineOfSight( s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false ) )	
 	{
 		if( s->CurrentSpellType() != 2 )  // not a wand cast
 		{
@@ -670,49 +274,23 @@ void cTargets::TeleTarget( cSocket *s )
 		Effects->PlaySound( s, 0x01FE, true );
 		
 		mChar->SetLocation( targX, targY, targZ );
-		mChar->Teleport();
-		Effects->staticeffect( mChar, 0x372A, 0x09, 0x06 );
+		Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 	} 
 }
 
-void cTargets::RemoveTarget( cSocket *s )
+void DyeTarget( CSocket *s )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		sysmessage( s, 1013 );
-		Items->DeleItem( i );
-    } 
-	else 
-	{
-		CChar *c = calcCharObjFromSer( serial );
-		if( c == NULL )
-			return;
-		if( c->GetAccount().wAccountIndex != AB_INVALID_ID && !c->IsNpc() )
-		{ 
-			sysmessage( s, 1014 );
-			return;
-		}
-		sysmessage( s, 1015 );
-		Npcs->DeleteChar( c );
-	}
-}
-
-void cTargets::DyeTarget( cSocket *s )
-{
-	int b;
-	UI16 colour, k;
-	CItem *i = NULL;
-	CChar *c = NULL;
-	SERIAL serial = s->GetDWord( 7 );
+	VALIDATESOCKET( s );
+	CItem *i		= NULL;
+	CChar *c		= NULL;
+	SERIAL serial	= s->GetDWord( 7 );
 	if( s->AddID1() == 0xFF && s->AddID2() == 0xFF )
 	{
 		CPDyeVat toSend;
 		if( serial >= BASEITEMSERIAL )
 		{
 			i = calcItemObjFromSer( serial );
-			if( i != NULL )
+			if( ValidateObject( i ) )
 			{
 				toSend = (*i);
 				s->Send( &toSend );
@@ -721,7 +299,7 @@ void cTargets::DyeTarget( cSocket *s )
 		else
 		{
 			c = calcCharObjFromSer( serial );
-			if( c != NULL )
+			if( ValidateObject( c ) )
 			{
 				toSend = (*c);
 				toSend.Model( 0x2106 );
@@ -734,455 +312,129 @@ void cTargets::DyeTarget( cSocket *s )
 		if( serial >= BASEITEMSERIAL )
 		{
 			i = calcItemObjFromSer( serial );
-			if( i == NULL )
+			if( !ValidateObject( i ) )
 				return;
-			colour = (UI16)(( (s->AddID1())<<8 ) + s->AddID2());
+			UI16 colour = (UI16)(( (s->AddID1())<<8 ) + s->AddID2());
 			if( !s->DyeAll() )
 			{
 				if( colour < 0x0002 || colour > 0x03E9 )
 					colour = 0x03E9;
 			}
 			
-			b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
+			int b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
 			if( !b )
-			{
 				i->SetColour( colour );
-				RefreshItem( i );
-			}
 		}
 		else
 		{
 			c = calcCharObjFromSer( serial );
-			if( c == NULL )
+			if( !ValidateObject( c ) )
 				return;
 			UI16 body = c->GetID();
-			k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
-			
-			b = k&0x4000; 
-			if( b == 16384 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
+			UI16 k = (UI16)(( ( s->AddID1() )<<8 ) + s->AddID2());
+
+			if( (k&0x4000) == 0x4000 && ( body >= 0x0190 && body <= 0x03E1 ) ) 
 				k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
 			
 			if( k != 0x8000 ) // 0x8000 also crashes client ...
 			{	
 				c->SetSkin( k );
-				c->SetxSkin( k );
-				c->Teleport();
+				c->SetOrgSkin( k );
 			}
 		}
 	}
 }
 
-void cTargets::NewzTarget( cSocket *s )
+void KeyTarget( CSocket *s )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		i->SetZ( static_cast<SI08>(s->AddX()) );
-		RefreshItem( i );
-		return;
-	}
-
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
-	{
-		c->SetDispZ( static_cast<SI08>(s->AddX()) );
-		c->SetZ( static_cast<SI08>(s->AddX()) );
-		c->Teleport();
-	}
-}
-
-void cTargets::TypeTarget( cSocket *s )
-{
+	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetType( s->AddID1() );
-}
-
-
-void cTargets::IDtarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		i->SetID( (UI16)(( (s->AddID1())<<8) + s->AddID2()) );
-		RefreshItem( i );
-		return;
-	}
-
-	CChar *c = calcCharObjFromSer( serial );
-	if( c == NULL )
-		return;
-	c->SetID( ( (s->AddID1())<<8) + s->AddID2() );
-	c->SetxID( c->GetID() );
-	c->SetOrgID( c->GetID() );
-	c->Teleport();
-}
-
-void cTargets::XTeleport( cSocket *s, UI08 x )
-{
-	SERIAL serial = INVALIDSERIAL;
-	CChar *c = NULL;
-	// Abaddon 17th February 2000 Converted if to switch (easier to read)
-	// Also made it so that it calls teleport, not updatechar, else you don't get the items in range
-	CChar *mChar = s->CurrcharObj();
-	switch( x )
-	{
-	case 0:
-		serial = s->GetDWord( 7 );
-		c = calcCharObjFromSer( serial );
-		break;
-	case 5:
-		serial = calcserial( (UI08)makenumber( 1 ), (UI08)makenumber( 2 ), (UI08)makenumber( 3 ), (UI08)makenumber( 4 ) );
-		c = calcCharObjFromSer( serial );
-		break;
-	case 2:
-		cSocket *mSock;
-		mSock = calcSocketObjFromSock( makenumber(1) );
-		if( mSock != NULL )
-			c = mSock->CurrcharObj();
-		else 
-			return;
-		break;
-	default:
-		sysmessage( s, 1654, x );
-		return;
-	}
-	
-	if( c != NULL )
-	{
-		c->SetLocation( mChar );
-		c->Teleport();
-		return;
-	}
-
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		i->SetLocation( mChar );
-		RefreshItem( i );
-	}
-}
-
-void cTargets::XgoTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
+	if( !ValidateObject( i ) )
 		return;
 
-	i->SetLocation( static_cast<SI16>(s->AddX()), static_cast<SI16>(s->AddY()), s->AddZ() );
-	i->Teleport();
-}
-
-void cTargets::MoreXYZTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-
-	i->SetMoreX( s->AddX() );
-	i->SetMoreY( s->AddY() );
-	i->SetMoreZ( s->AddZ() );
-}
-
-void cTargets::MoreXTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetMoreX( s->AddX() );
-}
-
-void cTargets::MoreYTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetMoreY( s->AddX() );
-}
-
-void cTargets::MoreZTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetMoreZ( s->AddX() );
-}
-
-void cTargets::PrivTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-
-	CChar *mChar = s->CurrcharObj();
-	char temp[1024], temp2[1024];
-	sprintf( temp, "%s.log", mChar->GetName() );
-	sprintf( temp2, "%s has given %s Priv [%x][%x]", mChar->GetName(), i->GetName(), s->AddID1(), s->AddID2() );
-	i->SetPriv( s->AddID1() );
-	i->SetPriv2( s->AddID2() );
-	Console.Log( temp2, temp );
-}
-
-void cTargets::MoreTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetMore( s->AddID() );
-		RefreshItem( i );
-	}
-}
-
-void cTargets::KeyTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-
-	CChar *mChar = s->CurrcharObj();
-	SERIAL moreSerial = s->AddID();
-	if( i->GetMore() == 0 )
+	CChar *mChar		= s->CurrcharObj();
+	SERIAL moreSerial	= s->AddID();
+	if( i->GetTempVar( CITV_MORE ) == 0 )
 	{       
-		if( i->GetType() == 7 && objInRange( mChar, i, 2 ) )
+		if( i->GetType() == IT_KEY && objInRange( mChar, i, DIST_NEARBY ) )
 		{
 			if( !Skills->CheckSkill( mChar, TINKERING, 400, 1000 ) ) 
 			{
-				sysmessage( s, 1016 );
-				Items->DeleItem( i );
+				s->sysmessage( 1016 );
+				i->Delete();
 				return;
 			}
-			i->SetMore( moreSerial );
-			sysmessage( s, 1017 );
-			return;
+			i->SetTempVar( CITV_MORE, moreSerial );
+			s->sysmessage( 1017 );
 		}
 	}
-	else if( i->GetMore() == moreSerial || s->AddID1() == 0xFF )
+	else if( i->GetTempVar( CITV_MORE ) == moreSerial || s->AddID1() == 0xFF )
 	{
-		if( ( i->GetType() == 1 || i->GetType() == 63 ) && objInRange( mChar, i, 2 ) )
+		if( objInRange( mChar, i, DIST_NEARBY ) )
 		{
-			if( i->GetType() == 1 ) 
-				i->SetType( 8 );
-			else if( i->GetType() == 63 ) 
-				i->SetType( 64 );
-			sysmessage( s, 1018 );
-			return;
-		}
-		if( i->GetType() == 7 && objInRange( mChar, i, 2 ) )
-		{
-			mChar->SetSpeechItem( i->GetSerial() );
-			mChar->SetSpeechMode( 5 );
-			sysmessage( s, 1019 );
-			return;
-		}
-		if( ( i->GetType() == 8 || i->GetType() == 64 ) && objInRange( mChar, i, 2 ) )
-		{
-			if( i->GetType() == 8 ) 
-				i->SetType( 1 );
-			if( i->GetType() == 64 ) 
-				i->SetType( 63 );
-			sysmessage( s, 1020 );
-			return;
-		}
-		if( i->GetType() == 12 && objInRange( mChar, i, 2 ) )
-		{
-			i->SetType( 13 );
-			sysmessage( s, 1021 );
-			Effects->PlaySound( s, 0x0049, true );
-			return;
-		}
-		if( i->GetType() == 13 && objInRange( mChar, i, 2 ) )
-		{
-			i->SetType( 12 );
-			sysmessage( s, 1022 );
-			Effects->PlaySound( s, 0x0049, true );
-			return;
-		}
-		if( i->GetID() == 0x0BD2 )
-		{
-			sysmessage( s, 1023 );
-			mChar->SetSpeechMode( 8 );
-			mChar->SetSpeechItem( i->GetSerial() );
-			return;
-		}
-		if( i->GetType() == 117 )
-		{
-			Boats->OpenPlank( i );
-			RefreshItem( i );
-		}
-	}
-	else
-	{
-		if( i->GetType() == 7 ) 
-			sysmessage( s, 1024 );
-		else if( i->GetMore( 1 ) == 0 ) 
-			sysmessage( s, 1025 );
-		else 
-			sysmessage( s, 1026 );
-	}
-}
-
-
-void cTargets::IstatsTarget( cSocket *s )
-{
-	CTile tile;
-	if( s->GetDWord( 7 ) == 0 )
-	{
-		UI08 worldNumber = 0;
-		CChar *mChar = s->CurrcharObj();
-		if( mChar != NULL )
-			worldNumber = mChar->WorldNumber();
-		UI16 targetID = s->GetWord( 0x11 );
-		SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
-		SI16 targetY = s->GetWord( 0x0D );
-		SI08 targetZ = s->GetByte( 0x10 );
-		if( targetID != 0 )	// we might have a static rock or mountain
-		{
-			MapStaticIterator msi( targetX, targetY, worldNumber );
-			staticrecord *stat = NULL;
-			while( ( ( stat = msi.Next() ) != NULL ) )
+			switch( i->GetType() )
 			{
-				msi.GetTile(&tile);
-				if( targetZ == stat->zoff )
-				{
-					GumpDisplay staticStat( s, 300, 300 );
-					staticStat.SetTitle( "Item [Static]" );
-					staticStat.AddData( "ID", targetID, 5 );
-					staticStat.AddData( "Height", tile.Height() );
-					staticStat.AddData( "Name", tile.Name() );
-					staticStat.Send( 4, false, INVALIDSERIAL );
-				}
+			case IT_CONTAINER:
+			case IT_SPAWNCONT:
+				if( i->GetType() == IT_CONTAINER ) 
+					i->SetType( IT_LOCKEDCONTAINER );
+				else if( i->GetType() == IT_SPAWNCONT ) 
+					i->SetType( IT_LOCKEDSPAWNCONT );
+				s->sysmessage( 1018 );
+				break;
+			case IT_KEY:
+				mChar->SetSpeechItem( i );
+				mChar->SetSpeechMode( 5 );
+				s->sysmessage( 1019 );
+				break;
+			case IT_LOCKEDCONTAINER:
+			case IT_LOCKEDSPAWNCONT:
+				if( i->GetType() == IT_LOCKEDCONTAINER ) 
+					i->SetType( IT_CONTAINER );
+				if( i->GetType() == IT_LOCKEDSPAWNCONT ) 
+					i->SetType( IT_SPAWNCONT );
+				s->sysmessage( 1020 );
+				break;
+			case IT_DOOR:
+				i->SetType( IT_LOCKEDDOOR );
+				s->sysmessage( 1021 );
+				Effects->PlaySound( s, 0x0049, true );
+				break;
+			case IT_LOCKEDDOOR:
+				i->SetType( IT_DOOR );
+				s->sysmessage( 1022 );
+				Effects->PlaySound( s, 0x0049, true );
+				break;
+			case IT_HOUSESIGN:
+				s->sysmessage( 1023 );
+				mChar->SetSpeechMode( 8 );
+				mChar->SetSpeechItem( i );
+				break;
+			case IT_PLANK:
+				OpenPlank( i );
+				s->sysmessage( "You open the plank" );
+				break;
 			}
 		}
-		else		// or it could be a map only
-		{  // manually calculating the ID's if a maptype
-			map_st map1;
-			CLand land;
-			map1 = Map->SeekMap0( targetX, targetY, worldNumber );
-			Map->SeekLand( map1.id, &land );
-			GumpDisplay mapStat( s, 300, 300 );
-			mapStat.SetTitle( "Item [Map]" );
-			mapStat.AddData( "ID", targetID, 5 );
-			mapStat.AddData( "Name", land.Name() );
-			mapStat.Send( 4, false, INVALIDSERIAL );
-		}
+		else
+			s->sysmessage( 393 );
 	}
 	else
 	{
-		CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-		if( i == NULL )
-			return;
-		GumpDisplay dynamicStat( s, 300, 300 );
-		dynamicStat.SetTitle( "Item [Dynamic]" );
-
-		SERIAL itemSerial = i->GetSerial();
-		SERIAL contSerial = i->GetContSerial();
-		SERIAL moreVal = i->GetMore();
-		SERIAL ownerSerial = i->GetOwner();
-		UI16 itemID = i->GetID();
-		UI16 itemColour = i->GetColour();
-		int hpStuff = ((i->GetHP())<<8) + i->GetMaxHP();
-		int itemDamage = ((i->GetLoDamage())<<8) + i->GetHiDamage();
-		long int decayTime = int(R64(int(i->GetDecayTime()-cwmWorldState->GetUICurrentTime())/CLOCKS_PER_SEC));
-
-		dynamicStat.AddData( "Serial", itemSerial, 3 );
-		dynamicStat.AddData( "ID", itemID, 5 );
-		dynamicStat.AddData( "Name", i->GetName() );
-		dynamicStat.AddData( "Name2", i->GetName2() );
-		dynamicStat.AddData( "Colour", itemColour, 5 );
-		dynamicStat.AddData( "Cont Serial", contSerial, 3 );
-		dynamicStat.AddData( "Layer", i->GetLayer() );
-		dynamicStat.AddData( "Type", i->GetType() );
-		dynamicStat.AddData( "Moveable", i->GetMovable() );
-		dynamicStat.AddData( "More", moreVal, 3 );
-		dynamicStat.AddData( "X coord", i->GetX() );
-		dynamicStat.AddData( "Y coord", i->GetY() );
-		dynamicStat.AddData( "Z coord", i->GetZ() );
-		dynamicStat.AddData( "Amount", i->GetAmount() );
-		dynamicStat.AddData( "Owner", ownerSerial, 3 );
-		dynamicStat.AddData( "Privs", i->GetPriv() );
-		dynamicStat.AddData( "Strength", i->GetStrength() );
-		dynamicStat.AddData( "HP/Max", hpStuff, 6 );
-		dynamicStat.AddData( "Damage", itemDamage, 6 );
-		dynamicStat.AddData( "Defense", i->GetDef() );
-		dynamicStat.AddData( "Rank", i->GetRank() );
-		dynamicStat.AddData( "More X", i->GetMoreX() );
-		dynamicStat.AddData( "More Y", i->GetMoreY() );
-		dynamicStat.AddData( "More Z", i->GetMoreZ() );
-		dynamicStat.AddData( "Poisoned", i->GetPoisoned() );
-		dynamicStat.AddData( "Weight", i->GetWeight() );
-		dynamicStat.AddData( "Creator", i->GetCreator() );
-		dynamicStat.AddData( "Madewith", i->GetMadeWith() );
-		dynamicStat.AddData( "DecayTime", decayTime );
-		dynamicStat.AddData( "Decay", i->isDecayable()?1:0 );
-		dynamicStat.AddData( "Good", i->GetGood() );
-		dynamicStat.AddData( "RandomValueRate", i->GetRndValueRate() );
-		dynamicStat.AddData( "Value", i->GetBuyValue() );
-		//dynamicStat.AddData( "SellValue", i->GetSellValue() );
-		dynamicStat.AddData( "Carve", i->GetCarve() );
-		dynamicStat.Send( 4, false, INVALIDSERIAL );
+		if( i->GetType() == IT_KEY ) 
+			s->sysmessage( 1024 );
+		else if( i->GetTempVar( CITV_MORE, 1 ) == 0 ) 
+			s->sysmessage( 1025 );
+		else 
+			s->sysmessage( 1026 );
 	}
 }
 
-void cTargets::CstatsTarget( cSocket *s )
+void WstatsTarget( CSocket *s )
 {
+	VALIDATESOCKET( s );
 	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-	GumpDisplay charStat( s, 300, 300 );
-	charStat.SetTitle( "Character" );
-	UI16 charID = i->GetID();
-	UI16 charSkin = i->GetSkin();
-	int charPrivs = (i->GetPriv()<<8) + i->GetPriv2();
-	SERIAL charSerial = i->GetSerial();
-
-	ACCOUNTSBLOCK actbTemp;
-	actbTemp=i->GetAccount();
-
-	charStat.AddData( "Serial", charSerial, 3 );
-	charStat.AddData( "Body Type", charID, 5 );
-	charStat.AddData( "Name", i->GetName() );
-	charStat.AddData( "Skin", charSkin, 5 );
-	charStat.AddData( "Account", actbTemp.wAccountIndex );
-	charStat.AddData( "Privs", charPrivs, 5 );
-	charStat.AddData( "Strength", i->GetStrength() );
-	charStat.AddData( "Dexterity", i->GetDexterity() );
-	charStat.AddData( "Intelligence", i->GetIntelligence() );
-	charStat.AddData( "Mana", i->GetMana() );
-	charStat.AddData( "Hitpoints", i->GetHP() );
-	charStat.AddData( "Stamina", i->GetStamina() );
-	charStat.AddData( "X coord", i->GetX() );
-	charStat.AddData( "Y coord", i->GetY() );
-	charStat.AddData( "Z coord", i->GetZ() );
-	charStat.AddData( "Timeout", i->GetTimeout() );
-	charStat.AddData( "Fame", i->GetFame() );
-	charStat.AddData( "Karma", i->GetKarma() );
-	charStat.AddData( "Deaths", i->GetDeaths() );
-	charStat.AddData( "Kills", i->GetKills() );
-	charStat.AddData( "AI Type", i->GetNPCAiType()  );
-	charStat.AddData( "NPC Wander", i->GetNpcWander() );
-	charStat.AddData( "Weight", i->GetWeight() );
-	charStat.AddData( "Poisoned", i->GetPoisoned() );
-	charStat.AddData( "Poison", i->GetPoison() );
-	charStat.AddData( "Hunger", i->GetHunger() );
-	charStat.AddData( "Attacker", i->GetAttacker() );
-	charStat.AddData( "Target", i->GetTarg() );
-	charStat.AddData( "Carve", i->GetCarve() );
-	charStat.AddData( "Race", i->GetRace() );
-	charStat.AddData( "RaceGate", i->GetRaceGate() );
-	charStat.AddData( "CommandLevel", i->GetCommandLevel() );
-	// 
-	if( actbTemp.wAccountIndex != AB_INVALID_ID )
-		charStat.AddData( "Last On", i->GetLastOn() );
-	//
-	charStat.Send( 4, false, INVALIDSERIAL );
-	
-	Gumps->Open( s, i, 8 );
-	statwindow( s, i );
-}
-
-void cTargets::WstatsTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
+	if( !ValidateObject( i ) )
 		return;
 	GumpDisplay wStat( s, 300, 300 );
 	wStat.SetTitle( "Walking Stats" );
@@ -1194,169 +446,22 @@ void cTargets::WstatsTarget( cSocket *s )
 	wStat.AddData( "X", i->GetX() );
 	wStat.AddData( "Y", i->GetY() );
 	char temp[15];
-	sprintf( temp, "%d/%d", i->GetZ(), i->GetDispZ() );
-	wStat.AddData( "Z/DispZ", temp );
+	sprintf( temp, "%d", i->GetZ() );
+	wStat.AddData( "Z", temp );
 	wStat.AddData( "Wander", i->GetNpcWander() );
-	wStat.AddData( "FX1", i->GetFx( 1 ) );
-	wStat.AddData( "FY1", i->GetFy( 1 ) );
+	wStat.AddData( "FX1", i->GetFx( 0 ) );
+	wStat.AddData( "FY1", i->GetFy( 0 ) );
 	wStat.AddData( "FZ1", i->GetFz() );
-	wStat.AddData( "FX2", i->GetFx( 2 ) );
-	wStat.AddData( "FY2", i->GetFy( 2 ) );
+	wStat.AddData( "FX2", i->GetFx( 1 ) );
+	wStat.AddData( "FY2", i->GetFy( 1 ) );
 	wStat.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTargets::KillTarget( cSocket *s, UI08 layer )
+void ColorsTarget( CSocket *s )
 {
-	CChar *k = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( k != NULL )
-	{
-		CItem *i = k->GetItemAtLayer( layer );
-		if( i != NULL )
-			Items->DeleItem( i );
-	}
-}
-
-void cTargets::FontTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetFontType( s->AddID1() );
-}
-
-
-void cTargets::GhostTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-	if( !i->IsDead() )
-	{
-		i->SetAttacker( s->Currchar() );
-		Effects->bolteffect( i );
-		Effects->PlaySound( i, 0x0029 );
-		doDeathStuff( i );
-	} 
-	else 
-		sysmessage( s, 1028 );
-}
-
-
-void cTargets::BoltTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		Effects->bolteffect( i );
-		Effects->PlaySound( i, 0x0029 );
-	}
-}
-
-void cTargets::AmountTarget( cSocket *s )
-{
+	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetAmount( s->AddX() );
-		RefreshItem( i );
-	}
-}
-
-void cTargets::CloseTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )	
-		return;
-	cSocket *j = calcSocketObjFromChar( i );
-	if( j != NULL )
-	{
-		sysmessage( s, 1029 );
-		sysmessage( j, 1030 );
-		Network->Disconnect( calcSocketFromSockObj( j ) );
-	}
-}
-
-// sockets
-CItem * cTargets::AddMenuTarget( cSocket *s, bool x, char *addmitem ) //Tauriel 11-22-98 updated for new items
-{
-	if( s == NULL )
-		return NULL;
-
-	if( s->GetDWord( 11 ) == INVALIDSERIAL ) 
-		return NULL;
-
-	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->CreateScriptItem( s, addmitem, false, mChar->WorldNumber() );
-	if( c == NULL ) 
-		return NULL;
-
-	if( x )
-		RefreshItem( c );
-
-	return c;
-}
-
-CChar *cTargets::NpcMenuTarget( cSocket *s )
-// Abaddon 17th February, 2000
-// Need to return the character we've made, else summon creature at least will fail
-// We make the char, but never pass it back up the chain
-{
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return NULL;
-	
-	char *x = s->XText();
-	CChar *mChar = s->CurrcharObj();
-	return Npcs->AddNPC( s, NULL, x, mChar->WorldNumber() );
-}
-
-void cTargets::MovableTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetMovable( static_cast<SI08>(s->AddX()) );
-		RefreshItem( i );
-	}
-}
-
-void cTargets::VisibleTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	if( s->GetByte( 7 ) >= 0x40 )
-	{
-		CItem *i = calcItemObjFromSer( serial );
-		if( i != NULL )
-		{
-			i->SetVisible( static_cast<SI08>(s->AddX()) );
-			RefreshItem( i );
-		}
-	} 
-	else 
-	{
-		CChar *c = calcCharObjFromSer( serial );
-		if( c != NULL )
-		{
-			c->SetHidden( static_cast<SI08>(s->AddX()) );
-			c->Update();
-		}
-	}
-}
-
-void cTargets::OwnerTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CChar *i = calcCharObjFromSer( serial );
-	if( i != NULL )
-		i->SetOwner( (cBaseObject *)calcCharObjFromSer( s->AddID() ) );
-	
-	CItem *c = calcItemObjFromSer( serial );
-	if( c != NULL )
-		c->SetOwner( (cBaseObject *)calcCharObjFromSer( s->AddID() ) );
-}
-
-void cTargets::ColorsTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
+	if( !ValidateObject( i ) )
 		return;
 	if( i->GetID() == 0x0FAB || i->GetID() == 0x0EFF || i->GetID() == 0x0E27 )	// dye vat, hair dye
 	{
@@ -1364,14 +469,15 @@ void cTargets::ColorsTarget( cSocket *s )
 		s->Send( &toSend );
 	}
 	else
-		sysmessage( s, 1031 );
+		s->sysmessage( 1031 );
 }
 
-void cTargets::DvatTarget( cSocket *s )
+void DvatTarget( CSocket *s )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i == NULL )
+	VALIDATESOCKET( s );
+	SERIAL serial	= s->GetDWord( 7 );
+	CItem *i		= calcItemObjFromSer( serial );
+	if( !ValidateObject( i ) )
 		return;
 
 	CChar *mChar = s->CurrcharObj();
@@ -1379,427 +485,223 @@ void cTargets::DvatTarget( cSocket *s )
 	{
 		if( i->GetCont() != NULL )
 		{
-			CChar *c = getPackOwner( i );
-			if( c != NULL && c != mChar )
+			CChar *c = FindItemOwner( i );
+			if( ValidateObject( c ) && c != mChar )
 			{
-				sysmessage( s, 1032 );
+				s->sysmessage( 1032 );
 				return;
 			}
 		}
 		i->SetColour( ( ( s->AddID1() )<<8) + s->AddID2() );
-		RefreshItem( i );
 		Effects->PlaySound( s, 0x023E, true );
 	}
 	else
-		sysmessage( s, 1033 );
+		s->sysmessage( 1033 );
 }
 
-void cTargets::AddNpcTarget( cSocket *s )
+void InfoTarget( CSocket *s )
 {
+	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 
-	CHARACTER npcOff;
-	CChar *npc = Npcs->MemCharFree( npcOff );
-	if( npc == NULL )
-		return;
-
-	npc->SetName( "Dummy" );
-	npc->SetID( ( ( s->AddID1() )<<8 ) + s->AddID2() );
-	npc->SetxID( npc->GetID() );
-	npc->SetOrgID( npc->GetID() );
-	npc->SetSkin( 0 );
-	npc->SetxSkin( 0 );
-	npc->SetSkillTitles( true );
-	npc->SetLocation( s->GetWord( 11 ), s->GetWord( 13 ), s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
-	npc->SetNpc( true );
-	npc->Update();
-}
-
-void cTargets::FreezeTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetFrozen( true );
-}
-
-void cTargets::UnfreezeTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetFrozen( false );
-}
-
-// DarkStorm: Updated AllSetTarget to process the string information sent by
-// the client.
-void cTargets::AllSetTarget( cSocket *s )
-{
-	mstring Command( s->XText() );
-	SERIAL Serial = s->GetDWord( 7 );
-
-	cBaseObject *myObject = NULL;
-	if( Serial >= BASEITEMSERIAL )
-		myObject = calcItemObjFromSer( Serial );
-	else
-		myObject = calcCharObjFromSer( Serial );
-
-	if( myObject == NULL )
-		return;
-	
-	// Split Command into 2 parts, key and value
-	vector< mstring > Parts = Command.split( " ", 2 );
-
-	if( Parts.size() < 2 ) 
+	if( !s->GetByte( 1 ) && s->GetDWord( 7 ) < BASEITEMSERIAL )
 	{
-		sysmessage( s, "Invalid command: '%s'", s->XText() );
+		s->sysmessage( "This command can not be used on characters." );
 		return;
 	}
 
-	mstring Key = Parts[ 0 ];
-	mstring Value = Parts[ 1 ];
-	Key = Key.upper();
+	const SI16 x		= s->GetWord( 11 );
+	const SI16 y		= s->GetWord( 13 );
+	const UI16 tileID	= s->GetWord( 17 );
 
-	// Log EVERYTHING
-	// Check whatever we targetted
-	if( myObject->GetObjType() == OT_CHAR )
-		Commands->Log( "/set", s->CurrcharObj(), (CChar*)myObject, s->XText() );
-	else 
+	if( tileID == 0 )
 	{
-		// It gets a bit more complicated for items
-		char Message[1024];
-		sprintf( Message, "Setting '%s'on '%s'", s->XText(), myObject->GetName() );
-		Commands->Log( "/set", s->CurrcharObj(), NULL, Message );
-	}
+		UI08 worldNumber = 0;
+		CChar *mChar = s->CurrcharObj();
+		if( ValidateObject( mChar ) )
+			worldNumber = mChar->WorldNumber();
 
-	// Do Character specific stuff here...
-	if( myObject->GetObjType() == OT_CHAR )
-	{	
-		CChar *myChar = static_cast< CChar* >( myObject );
-		cSocket *charSock = calcSocketObjFromChar( myChar );
-
-		// Allskills
-		if( Key.compare( "ALLSKILLS" ) )
-		{
-			for( UI08 i = 0; i < ALLSKILLS; i++ )
-			{
-				myChar->SetBaseSkill( Value.toSI16(), i );
-				Skills->updateSkillLevel( myChar, i );
-
-				if( charSock != NULL ) 
-					updateskill( charSock, i );
-			}
-
-			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );				
-			return;
-		}
-
-		// Look for matching skills
-		for( UI08 i = 0; i < ALLSKILLS; i++ )
-		{
-			if( Key.compare( skillname[ i ] ) )
-			{
-				myChar->SetBaseSkill( Value.toSI16(), i );
-				Skills->updateSkillLevel( myChar, i );
-
-				if( charSock != NULL ) 
-					updateskill( charSock, i );
-
-				sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );				
-				return;
-			}
-		}
-
-		// XSkin, OrgSkin
-		if( Key.compare( "XSKIN" ) )
-		{
-			myChar->SetxSkin( Value.toUI16() );
-			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );
-			return;
-		}
-		else if( Key.compare( "ORGSKIN" ) )
-		{
-			myChar->SetOrgSkin( Value.toUI16() );
-			sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myChar->GetName() );
-			return;
-		}
-	}
-
-	// Settings for normal Base Objects
-	// Set the name
-	if( Key.compare( "NAME" ) )
-	{
-		myObject->SetName( Value.c_str() );
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// updateStats
-	// 0: Strength
-	// 1: Intelligence
-	// 2: Dexterity
-
-	// Set the Strength
-	else if( ( Key.compare( "STR" ) ) || ( Key.compare( "STRENGTH" ) ) )
-	{
-		myObject->SetStrength( Value.toSI16() );
-	
-		if( myObject->GetObjType() == OT_CHAR )
-		{
-			updateStats( (CChar*)myObject, 0 );
-		}
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the Dexterity
-	else if( ( Key.compare( "DEX" ) ) || ( Key.compare( "DEXTERITY" ) ) )
-	{
-		myObject->SetDexterity( Value.toSI16() );
-
-		if( myObject->GetObjType() == OT_CHAR )
-		{
-			updateStats( (CChar*)myObject, 0 );
-		}
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the intelligence
-	else if( ( Key.compare( "INT" ) ) || ( Key.compare( "INTELLIGENCE" ) ) )
-	{
-		myObject->SetIntelligence( Value.toSI16() );
-
-		if( myObject->GetObjType() == OT_CHAR )
-		{
-			updateStats( (CChar*)myObject, 0 );
-		}
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the fame
-	else if( Key.compare( "FAME" ) )
-	{
-		myObject->SetFame( Value.toSI16() );
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the karma
-	else if( Key.compare( "KARMA" ) )
-	{
-		myObject->SetKarma( Value.toSI16() );
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the kills
-	else if( Key.compare( "KILLS" ) )
-	{
-		myObject->SetKills( Value.toSI16() );
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	// Set the Color/Hue/Colour
-	else if( ( Key.compare( "COLOR" ) ) || ( Key.compare( "COLOUR" ) ) || ( Key.compare( "HUE" ) ) )
-	{
-		myObject->SetColour( Value.toUI16() );
-
-		sysmessage( s, "Succesfully set '%s' on '%s'", s->XText(), myObject->GetName() );
-		return;
-	}
-
-	/*CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	
-	if( i == NULL )
-		return;
-	
-	CChar *mChar = s->CurrcharObj();
-	Commands->Log( "/set", mChar, i, "PostUsage" );
-
-	cSocket *kSock = calcSocketObjFromChar( i );
-
-	if( s->AddX() < TRUESKILLS )
-	{
-		i->SetBaseSkill( s->AddY(), s->AddX() );
-		Skills->updateSkillLevel( i, s->AddX() );
-		if( kSock != NULL ) 
-			updateskill( kSock, s->AddX() );
-	}
-	else 
-	{
-		UI08 j;
-		switch( s->AddX() )
-		{
-		case ALLSKILLS:
-			for( j = 0; j < TRUESKILLS; j++ )
-			{
-				i->SetBaseSkill( s->AddY(), j );
-				Skills->updateSkillLevel( i, j );
-				if( kSock != NULL ) 
-					updateskill( kSock, j );
-			}
-			break;
-		case STRENGTH:
-			i->SetStrength( s->AddY() );
-			for( j = 0; j < TRUESKILLS; j++ )
-			{
-				Skills->updateSkillLevel( i, j );
-				if( kSock != NULL ) 
-					updateskill( kSock, j );
-			}
-			if( kSock != NULL ) 
-				statwindow( kSock, i );
-			break;
-		case DEXTERITY:
-			i->SetDexterity( s->AddY() );
-			for( j = 0; j < TRUESKILLS; j++ )
-			{
-				Skills->updateSkillLevel( i, j );
-				if( kSock != NULL ) 
-					updateskill( kSock, j );
-			}
-			if( kSock != NULL ) 
-				statwindow( kSock, i );
-			break;
-		case INTELLECT:
-			i->SetIntelligence( s->AddY() );
-			for( j = 0; j < TRUESKILLS; j++ )
-			{
-				Skills->updateSkillLevel( i, j );
-				if( kSock != NULL ) 
-					updateskill( kSock, j );
-			}
-			if( kSock != NULL ) 
-				statwindow( kSock, i );
-			break;
-		case FAME:
-			i->SetFame( s->AddY() );
-			break;
-		case KARMA:
-			i->SetKarma( s->AddY() );
-			break;
-		case SKILLS + 1:
-			i->SetKills( s->AddY() );
-			break;
-		}
-	}*/
-}
-
-void cTargets::InfoTarget( cSocket *s )
-{
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	map_st map1;
-	CLand land;
-	
-	SI16 x = s->GetWord( 0x0B );
-	SI16 y = s->GetWord( 0x0D );
-//	SI08 z = s->GetByte( 0x10 );
-
-	UI08 worldNumber = 0;
-	CChar *mChar = s->CurrcharObj();
-	if( mChar != NULL )
-		worldNumber = mChar->WorldNumber();
-	if( s->GetWord( 0x11 ) == 0 )
-	{  // manually calculating the ID's if it's a maptype
-		map1 = Map->SeekMap0( x, y, worldNumber );
-		Map->SeekLand( map1.id, &land );
+		// manually calculating the ID's if it's a maptype
+		const map_st map1 = Map->SeekMap( x, y, worldNumber );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
-
 		mapStat.AddData( "Tilenum", map1.id );
-		mapStat.AddData( "Flag1", land.Flag1(), 1 );
-		mapStat.AddData( "Flag2", land.Flag2(), 1 );
-		mapStat.AddData( "Flag3", land.Flag3(), 1 );
-		mapStat.AddData( "Flag4", land.Flag4(), 1 );
-		mapStat.AddData( "Unknown1", land.Unknown1(), 1 );
-		mapStat.AddData( "Unknown2", land.Unknown2(), 1 );
-		mapStat.AddData( "Name", land.Name() );
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 tiledata and later
+			CLandHS& land = Map->SeekLandHS( map1.id );
+			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
+			mapStat.AddData( "Name", land.Name() );
+		}
+		else
+		{
+			//7.0.8.2 tiledata and earlier
+			CLand& land = Map->SeekLand( map1.id );
+			mapStat.AddData( "Flags", land.FlagsNum(), 1 );
+			mapStat.AddData( "Name", land.Name() );
+		}		
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	} 
 	else
 	{
-		CTile tile;
-		UI16 tilenum = s->GetWord( 0x11 );
-		Map->SeekTile( tilenum, &tile );
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 data and later
+			CTileHS& tile = Map->SeekTileHS( tileID );
 
-		GumpDisplay statTile( s, 300, 300 );
-		statTile.SetTitle( "Map Tile" );
+			GumpDisplay statTile( s, 300, 300 );
+			statTile.SetTitle( "Map Tile" );
 
-		statTile.AddData( "Tilenum", tilenum );
-		statTile.AddData( "Flag1", tile.Flag1(), 1 );
-		statTile.AddData( "Flag2", tile.Flag2(), 1 );
-		statTile.AddData( "Flag3", tile.Flag3(), 1 );
-		statTile.AddData( "Flag4", tile.Flag4(), 1 );
-		statTile.AddData( "Weight", tile.Weight() );
-		statTile.AddData( "Layer", tile.Layer(), 1 );
-		statTile.AddData( "Anim", tile.Animation(), 1 );
-		statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
-		statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
-		statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
-		statTile.AddData( "Height", tile.Height(), 1 );
-		statTile.AddData( "Name", tile.Name() );
-		statTile.Send( 4, false, INVALIDSERIAL );
+			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Weight", tile.Weight(), 0 );
+			statTile.AddData( "Layer", tile.Layer(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Anim", tile.Animation(), 1 );
+			statTile.AddData( "Quantity", tile.Quantity(), 1 );
+			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
+			statTile.AddData( "Height", tile.Height(), 0 );
+			statTile.AddData( "Name", tile.Name() );
+			statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
+			statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
+			statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
+			statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ) );
+			statTile.AddData( "--> Translucent", tile.CheckFlag( TF_TRANSLUCENT ) );
+			statTile.AddData( "--> Wall", tile.CheckFlag( TF_WALL ) );
+			statTile.AddData( "--> Damaging", tile.CheckFlag( TF_DAMAGING ) );
+			statTile.AddData( "--> Blocking", tile.CheckFlag( TF_BLOCKING ) );
+			statTile.AddData( "--> Wet", tile.CheckFlag( TF_WET ) );
+			statTile.AddData( "--> Unknown1", tile.CheckFlag( TF_UNKNOWN1 ) );
+			statTile.AddData( "--> Surface", tile.CheckFlag( TF_SURFACE ) );
+			statTile.AddData( "--> Climbable", tile.CheckFlag( TF_CLIMBABLE ) );
+			statTile.AddData( "--> Stackable", tile.CheckFlag( TF_STACKABLE ) );
+			statTile.AddData( "--> Window", tile.CheckFlag( TF_WINDOW ) );
+			statTile.AddData( "--> NoShoot", tile.CheckFlag( TF_NOSHOOT ) );
+			statTile.AddData( "--> DisplayA", tile.CheckFlag( TF_DISPLAYA ) );
+			statTile.AddData( "--> DisplayAn", tile.CheckFlag( TF_DISPLAYAN ) );
+			statTile.AddData( "--> Description", tile.CheckFlag( TF_DESCRIPTION ) );
+			statTile.AddData( "--> Foilage", tile.CheckFlag( TF_FOLIAGE ) );
+			statTile.AddData( "--> PartialHue", tile.CheckFlag( TF_PARTIALHUE ) );
+			statTile.AddData( "--> Unknown2", tile.CheckFlag( TF_UNKNOWN2 ) );
+			statTile.AddData( "--> Map", tile.CheckFlag( TF_MAP ) );
+			statTile.AddData( "--> Container", tile.CheckFlag( TF_CONTAINER ) );
+			statTile.AddData( "--> Wearable", tile.CheckFlag( TF_WEARABLE ) );
+			statTile.AddData( "--> Light", tile.CheckFlag( TF_LIGHT ) );
+			statTile.AddData( "--> Animated", tile.CheckFlag( TF_ANIMATED ) );
+			statTile.AddData( "--> NoDiagonal", tile.CheckFlag( TF_NODIAGONAL ) ); //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyle
+			statTile.AddData( "--> Unknown3", tile.CheckFlag( TF_UNKNOWN3 ) );
+			statTile.AddData( "--> Armor", tile.CheckFlag( TF_ARMOR ) );
+			statTile.AddData( "--> Roof", tile.CheckFlag( TF_ROOF ) );
+			statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
+			statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
+			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
+			statTile.Send( 4, false, INVALIDSERIAL );
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			CTile& tile = Map->SeekTile( tileID );
+
+			GumpDisplay statTile( s, 300, 300 );
+			statTile.SetTitle( "Map Tile" );
+
+			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Weight", tile.Weight(), 0 );
+			statTile.AddData( "Layer", tile.Layer(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Anim", tile.Animation(), 1 );
+			statTile.AddData( "Quantity", tile.Quantity(), 1 );
+			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
+			statTile.AddData( "Unknown2", tile.Unknown2(), 1 );
+			statTile.AddData( "Unknown3", tile.Unknown3(), 1 );
+			statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
+			statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
+			statTile.AddData( "Height", tile.Height(), 0 );
+			statTile.AddData( "Name", tile.Name() );
+			statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
+			statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
+			statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
+			statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ) );
+			statTile.AddData( "--> Translucent", tile.CheckFlag( TF_TRANSLUCENT ) );
+			statTile.AddData( "--> Wall", tile.CheckFlag( TF_WALL ) );
+			statTile.AddData( "--> Damaging", tile.CheckFlag( TF_DAMAGING ) );
+			statTile.AddData( "--> Blocking", tile.CheckFlag( TF_BLOCKING ) );
+			statTile.AddData( "--> Wet", tile.CheckFlag( TF_WET ) );
+			statTile.AddData( "--> Unknown1", tile.CheckFlag( TF_UNKNOWN1 ) );
+			statTile.AddData( "--> Surface", tile.CheckFlag( TF_SURFACE ) );
+			statTile.AddData( "--> Climbable", tile.CheckFlag( TF_CLIMBABLE ) );
+			statTile.AddData( "--> Stackable", tile.CheckFlag( TF_STACKABLE ) );
+			statTile.AddData( "--> Window", tile.CheckFlag( TF_WINDOW ) );
+			statTile.AddData( "--> NoShoot", tile.CheckFlag( TF_NOSHOOT ) );
+			statTile.AddData( "--> DisplayA", tile.CheckFlag( TF_DISPLAYA ) );
+			statTile.AddData( "--> DisplayAn", tile.CheckFlag( TF_DISPLAYAN ) );
+			statTile.AddData( "--> Description", tile.CheckFlag( TF_DESCRIPTION ) );
+			statTile.AddData( "--> Foilage", tile.CheckFlag( TF_FOLIAGE ) );
+			statTile.AddData( "--> PartialHue", tile.CheckFlag( TF_PARTIALHUE ) );
+			statTile.AddData( "--> Unknown2", tile.CheckFlag( TF_UNKNOWN2 ) );
+			statTile.AddData( "--> Map", tile.CheckFlag( TF_MAP ) );
+			statTile.AddData( "--> Container", tile.CheckFlag( TF_CONTAINER ) );
+			statTile.AddData( "--> Wearable", tile.CheckFlag( TF_WEARABLE ) );
+			statTile.AddData( "--> Light", tile.CheckFlag( TF_LIGHT ) );
+			statTile.AddData( "--> Animated", tile.CheckFlag( TF_ANIMATED ) );
+			statTile.AddData( "--> NoDiagonal", tile.CheckFlag( TF_NODIAGONAL ) ); //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyle
+			statTile.AddData( "--> Unknown3", tile.CheckFlag( TF_UNKNOWN3 ) );
+			statTile.AddData( "--> Armor", tile.CheckFlag( TF_ARMOR ) );
+			statTile.AddData( "--> Roof", tile.CheckFlag( TF_ROOF ) );
+			statTile.AddData( "--> Door", tile.CheckFlag( TF_DOOR ) );
+			statTile.AddData( "--> StairBack", tile.CheckFlag( TF_STAIRBACK ) );
+			statTile.AddData( "--> StairRight", tile.CheckFlag( TF_STAIRRIGHT ) );
+			statTile.Send( 4, false, INVALIDSERIAL );
+		}
 	}
-	sysmessage( s, 1034 );
 }
 
-void cTargets::TweakTarget( cSocket *s )
+void TweakTarget( CSocket *s )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
+	VALIDATESOCKET( s );
+	SERIAL serial	= s->GetDWord( 7 );
+	CChar *c		= calcCharObjFromSer( serial );
+	if( ValidateObject( c ) )
 		tweakCharMenu( s, c );
 	else 
 	{
 		CItem *i = calcItemObjFromSer( serial );
-		if( i != NULL )
+		if( ValidateObject( i ) )
 			tweakItemMenu( s, i );
 	}
 }
 
-void cTargets::LoadCannon( cSocket *s )
+void LoadCannon( CSocket *s )
 {
+	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
+	if( !ValidateObject( i ) )
 		return;
 	SERIAL moreSerial = s->AddID();
-	if( i->GetMore() == moreSerial || s->AddID1() == 0xFF )
+	if( i->GetTempVar( CITV_MORE ) == moreSerial || s->AddID1() == 0xFF )
 	{
-		if( i->GetMoreZ() == 0 && objInRange( s, i, 2 ) )
+		if( i->GetTempVar( CITV_MOREZ ) == 0 && objInRange( s, i, DIST_NEARBY ) )
 		{
-			i->SetMoreZ( 1 );
-			sysmessage( s, 1035 );
+			i->SetTempVar( CITV_MOREZ, 1 );
+			s->sysmessage( 1035 );
 		}
 		else
 		{
-			if( i->GetMore( 1 ) == 0x00 ) 
-				sysmessage( s, 1036 );
+			if( i->GetTempVar( CITV_MORE, 1 ) == 0x00 ) 
+				s->sysmessage( 1036 );
 			else 
-				sysmessage( s, 1037 );
+				s->sysmessage( 1037 );
 		}
 	}
 }
 
-void cTargets::SetInvulFlag( cSocket *s )
+void Tiling( CSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
 {
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetInvulnerable( s->AddX() == 1 );
-}
-
-void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
-{
+	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 
@@ -1807,7 +709,7 @@ void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls thi
 	{
 		s->ClickX( s->GetWord( 11 ) );
 		s->ClickY( s->GetWord( 13 ) );
-		target( s, 0, 198, 1038 );
+		s->target( 0, TARGET_TILING, 1038 );
 		return;
 	}
 
@@ -1831,569 +733,29 @@ void cTargets::Tiling( cSocket *s )  // Clicking the corners of tiling calls thi
 		y2 = j;
 	}
 	
-	if( s->AddID1() == 0x40 )
-	{
-		switch( s->AddID2() )
-		{
-		case 100:
-		case 102:
-		case 104:
-		case 106:
-		case 108:
-		case 110:
-		case 112:
-		case 114:
-		case 116:
-		case 118:
-		case 120:
-		case 122:
-		case 124:
-		case 126:
-		case 140:
-			AddTarget( s );
-			return;
-		}
-	}
-
-	bool pileable = false;
 	UI16 addid = (UI16)(( ( s->AddID1() ) << 8 ) + s->AddID2());
-	CTile tile;
-	Map->SeekTile( addid, &tile );
-	if( tile.Stackable() ) 
-		pileable = true;
 
 	CItem *c = NULL;
-	for( SI16 x = x1; x <= x2; x++ )
+	for( SI16 x = x1; x <= x2; ++x )
 	{
-		for( SI16 y = y1; y <= y2; y++ ) 
+		for( SI16 y = y1; y <= y2; ++y ) 
 		{
-			c = Items->SpawnItem( NULL, s->CurrcharObj(), 1, "#", pileable, addid, 0, false, false );
-			if( c == NULL ) 
+			c = Items->CreateItem( NULL, s->CurrcharObj(), addid, 1, 0, OT_ITEM );
+			if( !ValidateObject( c ) ) 
 				return;
-			c->SetPriv( 0 );	//Make them not decay
+			c->SetDecayable( false );
 			c->SetLocation( x, y, s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ) );
-			RefreshItem( c );
 		}
 	}
 	s->AddID1( 0 );
 	s->AddID2( 0 );
 }
 
-void cTargets::AreaCommand( cSocket *s )
-{
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	if( s->ClickX() == -1 && s->ClickY() == -1 )
-	{
-		s->ClickX( s->GetWord( 11 ) );
-		s->ClickY( s->GetWord( 13 ) );
-		target( s, 0, 90, 1040 );
-		return;
-	}
-	
-	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
-	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
-	
-	s->ClickX( -1 );
-	s->ClickY( -1 );
-	
-	SI16 c;
-	
-	if( x1 > x2 ) 
-	{ 
-		c = x1;
-		x1 = x2;
-		x2 = c;
-	}
-	if( y1 > y2 ) 
-	{ 
-		c = y1; 
-		y1 = y2; 
-		y2 = c;
-	}
-
-	enum AreaCommandTypes
-	{
-		ACT_DYE = 0,
-		ACT_WIPE,
-		ACT_INCX,
-		ACT_INCY,
-		ACT_INCZ,
-		ACT_SETX,
-		ACT_SETY,
-		ACT_SETZ,
-		ACT_SETTYPE,
-		ACT_NEWBIE,
-		ACT_SETSCPTRIG,
-		INVALID_CMD,
-		ACT_CMDCOUNT
-	};
-
-	const string areaCommandStrings[ACT_CMDCOUNT] =
-	{
-		"dye",
-		"wipe",
-		"incx",
-		"incy",
-		"incz",
-		"setx",
-		"sety",
-		"setz",
-		"settype",
-		"newbie",
-		"setscptrig",
-		""
-	};
-
-	AreaCommandTypes cmdType = INVALID_CMD;
-
-	char *orgString = NULL, *foundSpace = NULL;
-	char temp[512];
-
-	orgString = s->XText();
-	if( orgString == NULL )
-		return;
-
-	UI16 j = 0;
-	UI16 sLen = strlen( orgString );
-	for( j = 0; j < sLen; j++ )
-	{
-		if( orgString[j] == ' ' )
-		{
-			foundSpace = &orgString[j];
-			break;
-		}
-	}
-
-	if( foundSpace == NULL )
-	{
-		strcpy( temp, orgString );
-	}
-	else
-	{
-
-		UI16 sLen2 = (UI16)(foundSpace - orgString);
-		strncpy( temp, orgString, sLen2 );
-		temp[sLen2] = 0;
-	}
-
-	for( AreaCommandTypes k = ACT_DYE; k < INVALID_CMD; k = (AreaCommandTypes)((int)k + 1) )
-	{
-		if( !strcmp( temp, areaCommandStrings[k].c_str() ) )
-		{
-			cmdType = k;
-			break;
-		}
-	}
-
-	if( cmdType == INVALID_CMD )
-	{
-		sysmessage( s, "Unknown command type" );
-		return;
-	}
-
-	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ )
-	{
-		if( items[i].isFree() )
-			continue;
-		if( items[i].GetCont() != NULL )
-			continue;
-		if( items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 )
-		{
-			switch( cmdType )
-			{
-			case ACT_DYE:	// dye
-				items[i].SetColour( (UI16)makeNum( foundSpace ) );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_WIPE:	// wipe
-				Items->DeleItem( &items[i] );
-				break;
-			case ACT_INCX: // incx
-				MapRegion->RemoveItem( &items[i] );
-				items[i].IncX( (SI16)makeNum( foundSpace ) );
-				MapRegion->AddItem( &items[i] );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_INCY:	// incy
-				MapRegion->RemoveItem( &items[i] );
-				items[i].IncY( (SI16)makeNum( foundSpace ) );
-				MapRegion->AddItem( &items[i] );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_INCZ:	// incz
-				items[i].IncZ( (SI08)makeNum( foundSpace ) );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_SETX: // setx
-				MapRegion->RemoveItem( &items[i] );
-				items[i].SetX( (SI16)makeNum( foundSpace ) );
-				MapRegion->AddItem( &items[i] );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_SETY:	// sety
-				MapRegion->RemoveItem( &items[i] );
-				items[i].SetY( (SI16)makeNum( foundSpace ) );
-				MapRegion->AddItem( &items[i] );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_SETZ:	// setz
-				items[i].SetZ( (SI08)makeNum( foundSpace ) );
-				RefreshItem( &items[i] );
-				break;
-			case ACT_SETTYPE: // settype
-				items[i].SetType( (UI08)makeNum( foundSpace ) );
-				break;
-			case ACT_NEWBIE:	// newbie
-				items[i].SetNewbie( makeNum( foundSpace ) != 0 );
-				break;
-			case ACT_SETSCPTRIG:	// set script #
-				items[i].SetScriptTrigger( static_cast<UI16>(makeNum( foundSpace )) );
-				break;
-			default:
-				break;
-			}
-			// process command here!
-		}
-	}
-}
-
-
-void cTargets::Wiping( cSocket *s )  // Clicking the corners of wiping calls this function - Crwth 01/11/1999
-{
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	if( s->ClickX() == -1 && s->ClickY() == -1 )
-	{
-		s->ClickX( s->GetWord( 11 ) );
-		s->ClickY( s->GetWord( 13 ) );
-		if( s->AddID1() ) 
-			target( s, 0, 199, 1039 );
-		else 
-			target( s, 0, 199, 1040 );
-		return;
-	}
-	
-	SI16 x1 = s->ClickX(), x2 = s->GetWord( 11 );
-	SI16 y1 = s->ClickY(), y2 = s->GetWord( 13 );
-	
-	s->ClickX( -1 );
-	s->ClickY( -1 );
-	
-	SI16 c;
-	
-	if( x1 > x2 ) 
-	{ 
-		c = x1;
-		x1 = x2;
-		x2 = c;
-	}
-	if( y1 > y2 ) 
-	{ 
-		c = y1; 
-		y1 = y2; 
-		y2 = c;
-	}
-
-	ITEM i;
-	if( s->AddID1() == 1  )
-	{  // addid1[s]==1 means to inverse wipe
-		for( i = 0; i < cwmWorldState->GetItemCount(); i++ )
-		{
-			if(!(items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 ) 
-				&& items[i].GetCont() == NULL && !items[i].isWipeable() )
-				Items->DeleItem( &items[i] );
-		}
-	}
-	else 
-	{
-		for( i = 0; i < cwmWorldState->GetItemCount(); i++ )
-		{
-			if( items[i].GetX() >= x1 && items[i].GetX() <= x2 && items[i].GetY() >= y1 && items[i].GetY() <= y2 
-				&& items[i].GetCont() == NULL && !items[i].isWipeable() )
-				Items->DeleItem( &items[i] );
-		}
-	}
-}
-
-void cTargets::ExpPotionTarget( cSocket *s ) //Throws the potion and places it (unmovable) at that spot
-{
-	SI16 x = s->GetWord( 11 );
-	SI16 y = s->GetWord( 13 );
-	SI08 z = s->GetByte( 16 );
-	CChar *mChar = s->CurrcharObj();
-	if( x != -1 )
-	{
-		if( LineOfSight( s, mChar, x, y, z, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED ) )
-		{
-			CItem *i = calcItemObjFromSer( s->AddID() );
-			if( i != NULL )
-			{
-				i->SetCont( NULL );
-				i->SetLocation( x, y, z );
-				i->SetMovable( 2 ); //make item unmovable once thrown
-				Effects->movingeffect( mChar, i, 0x0F0D, 0x11, 0x00, 0x00 );
-				RefreshItem( i );
-			}
-		} 
-		else 
-			sysmessage( s, 1041 );
-	}
-}
-
-void cTargets::SquelchTarg( cSocket *s )
-{
-	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( p != NULL )
-	{
-		if( p->IsGM() )
-		{
-			sysmessage( s, 1042 );
-			return;
-		} 
-		if( p->GetSquelched() )
-		{
-			p->SetSquelched( 0 );
-			sysmessage( s, 1655 );
-			sysmessage( calcSocketObjFromChar( p ), 1043 );
-			p->SetMuteTime( -1 );
-		} 
-		else 
-		{
-			p->SetMuteTime( -1 );
-			p->SetSquelched( 1 );
-			sysmessage( s, 1044 );
-			sysmessage( calcSocketObjFromChar( p ), 761 );
-			if( s->AddID1() != 0xFF && s->AddID1() != 0 )			// 255 used to be -1, not good for UI08s
-			{
-				p->SetMuteTime( BuildTimeValue( s->AddID1() ) );
-				s->AddID1( 255 );
-				p->SetSquelched( 2 );
-			}
-		}
-	}
-}
-
-
-void cTargets::TeleStuff( cSocket *s )
-{
-    static UI32 targ = INVALIDSERIAL;//What/who to tele
-    if( targ == INVALIDSERIAL )
-	{
-		SERIAL serial = s->GetDWord( 7 );
-		if( s->GetByte( 7 ) == 0xFF ) 
-			return;
-		targ = calcCharFromSer( serial );
-		
-		if( targ != INVALIDSERIAL )
-		{
-			targ += 1000000;
-			target( s, 0, 222, 1045 );
-		} 
-		else 
-		{
-			targ = calcItemFromSer( serial );
-			if( targ != INVALIDSERIAL )
-				target( s, 0, 222, 1046 );
-		}
-		return;
-	} 
-	else 
-	{
-		if( s->GetByte( 11 ) == 0xFF )
-			return;
-		CHARACTER i;
-		SI16 x = s->GetWord( 11 );
-		SI16 y = s->GetWord( 13 );
-		SI08 z = s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) );
-		
-		if( targ > 999999 )//character
-		{
-			sysmessage( s, 1047 );
-			i = targ - 1000000;
-			chars[i].SetLocation( x, y, z );
-			chars[i].Teleport();
-		} 
-		else 
-		{
-			i = targ;
-			items[i].SetLocation( x, y, z );
-			sysmessage( s, 1048 );
-			RefreshItem( &items[i] );
-		}
-		targ = INVALIDSERIAL;
-	}
-}
-
-void cTargets::SwordTarget( cSocket *s )
-{
-	if( s == NULL )
-		return;
-
-	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
-
-	if( mChar == NULL )
-		return;
-
-	if( p != NULL )
-	{
-		if( p->GetID() == 0xCF )
-		{
-			// Unshorn sheep
-			// -> Add Wool and change id of the Sheep
-			CItem *c = Items->SpawnItemToPack( s, mChar, "0x0DF8", false );
-
-			p->SetID( 0xDF );			
-			p->Teleport();
-
-			// Add an effect so the sheep can regain it's wool
-			cDice myDice( 2, 3, 0 );
-			UI32 Delay = myDice.roll();
-
-			Effects->tempeffect( p, p, 43, static_cast<UI16>(Delay*300), 0, 0 );
-		}
-		else
-		{
-			// Already sheered
-			//sysmessage( s, "" );
-		}
-
-		return;
-	}
-	
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
-	UI16 targetID = s->GetWord( 0x11 );
-
-	switch( targetID )
-	{
-		case 0x0CD0:
-		case 0x0CD3:
-		case 0x0CD6:
-		case 0x0CD8:
-		case 0x0CDA:
-		case 0x0CDD:
-		case 0x0CE0:
-		case 0x0CE3:
-		case 0x0CE6:
-		case 0x0CCA:
-		case 0x0CCB:
-		case 0x0CCC:
-		case 0x0CCD:
-		case 0x0C12:
-		case 0x0CB8:
-		case 0x0CB9:
-		case 0x0CBA:
-		case 0x0CBB:
-		{
-			SI16 targetX = s->GetWord( 0x0B );		// store our target x y and z locations
-			SI16 targetY = s->GetWord( 0x0D );
-			SI08 targetZ = s->GetByte( 0x10 );
-
-			SI08 distZ = abs( targetZ - mChar->GetZ() );
-			SI16 distY = abs( targetY - mChar->GetY() );
-			SI16 distX = abs( targetX - mChar->GetX() );
-
-			if( distY > 5 || distX > 5 || distZ > 9 )
-			{
-				sysmessage( s, 393 );
-				return;
-			}
-			if( !mChar->IsOnHorse() )
-				Effects->action( s, 0x0D );
-			else 
-				Effects->action( s, 0x1D );
-			Effects->PlaySound( s, 0x013E, true );
-			CItem *c = Items->SpawnItem( NULL, mChar, 1, "#", true, 0x0DE1, 0, false, false ); //Kindling
-			if( c == NULL ) 
-				return;
-
-			c->SetLocation( mChar );
-			RefreshItem( c );
-			sysmessage( s, 1049 );
-			return;
-		}
-		case 0x09CC: 
-		case 0x09CD: 
-		case 0x09CE: 
-		case 0x09CF: 
-		{	
-			CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) ); 
-			if( i == NULL ) 
-				return;		
-			if( getPackOwner( i ) != mChar ) 
-			{ 
-				sysmessage( s, 775 ); 
-				return; 
-			} 
-			else 
-			{ 
-				UI32 getAmt = GetAmount( mChar, i->GetID() ); 
-				if( getAmt < 1 ) 
-				{ 
-					sysmessage( s, 776 ); 
-					return; 
-				} 
-				Effects->PlaySound( s, 0x013E, true); // I'm not sure 
-				CItem *c = Items->SpawnItem( s, mChar, 4, "raw fish steak", true, 0x097A, 0, true, true); 
-				if( c == NULL ) 
-				{ 
-					return; 
-				} 
-				DecreaseItemAmount( i ); 
-				return; 
-			} 
-		}
-		case 0x1BDD:
-		case 0x1BE0:
-		{
-			Skills->BowCraft( s );
-			return;
-		}
-		case 0x2006:
-		{
-			CorpseTarget( s );
-			return;
-		}
-	}
-	sysmessage( s, 1050 );
-}
-
-void cTargets::CorpseTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-		return;
-	bool n = false;
-	if( objInRange( s, i, 1 ) ) 
-	{
-		s->AddMItem( i );
-		Effects->action( s, 0x20 );
-		n = true;
-		if( i->GetMore( 1 ) == 0 )
-		{
-			i->SetMore( 1, 1 );
-			if( i->GetMoreY() || i->GetCarve() != -1 )
-				newCarveTarget( s, i );
-		} 
-		else 
-			sysmessage( s, 1051 );
-	}
-	if( !n ) 
-		sysmessage( s, 393 );
-}
-
-
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	09/22/2002
+//|	Function/Class	-	void newCarveTarget( CSocket *s, CItem *i )
+//|	Date			-	09/22/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Target carving system.
 //|									
@@ -2405,1659 +767,676 @@ void cTargets::CorpseTarget( cSocket *s )
 //|									& made all body parts that are carved from human corpse	
 //|									lie in same direction.
 //o--------------------------------------------------------------------------o
-//|	Returns				-	N/A 
-//o--------------------------------------------------------------------------o	
-void cTargets::newCarveTarget( cSocket *s, CItem *i )
+bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 {
-	bool deletecorpse = false;
+	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
+	if( !ValidateObject( toCreate ) ) 
+		return false;
+	toCreate->SetName( UString::sprintf( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetLocation( corpse );
+	toCreate->SetOwner( corpse->GetOwnerObj() );
+	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+	return true;
+}
+void newCarveTarget( CSocket *s, CItem *i )
+{
+	VALIDATESOCKET( s );
+
 	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->SpawnItem( NULL, mChar, 1, "#", false, 0x122A, 0, false, false ); // add the blood puddle
+	CItem *c = Items->CreateItem( NULL, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
 	if( c == NULL ) 
 		return;
-	MapRegion->RemoveItem( c );
-
-	c->SetLocation( s->AddMItem() );
+	c->SetLocation( i );
 	c->SetMovable( 2 );
-	c->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) )) );
-	RefreshItem( c );
+	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 
-	char temp[1024];
 	// if it's a human corpse
 	// Sept 22, 2002 - Xuri - Corrected the alignment of body parts that are carved.
-	if( i->GetMoreY() )
+	if( i->GetTempVar( CITV_MOREY, 2 ) )
 	{
-		// create the Head
-		sprintf( temp, Dictionary->GetEntry( 1058 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1DAE, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Body
-		sprintf( temp, Dictionary->GetEntry( 1059 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1CED, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		sprintf( temp, Dictionary->GetEntry( 1057 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1DAD, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Left Arm
-		sprintf( temp, Dictionary->GetEntry( 1060 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1D80, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Right Arm
-		sprintf( temp, Dictionary->GetEntry( 1061 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1DAF, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Left Leg
-		sprintf( temp, Dictionary->GetEntry( 1062 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1DB2, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		// create the Right Leg
-		sprintf( temp, Dictionary->GetEntry( 1063 ), i->GetName2() );
-		c = Items->SpawnItem( NULL, mChar, 1, temp, true, 0x1D81, 0, false, false );
-		if( c == NULL ) 
-			return;
-		c->SetLayer( 0x01 );
-		c->SetCont( i );
-		c->SetOwner( i->GetOwnerObj() );
-
-		//human: always delete corpse!
-		deletecorpse = true;
-		criminal( mChar );
-	} 
-	else
-	{
-		char sect[512];
-		sprintf( sect, "CARVE %i", i->GetCarve() );
-		ScriptSection *toFind = FileLookup->FindEntry( sect, carve_def );
+		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
 		if( toFind == NULL )
 			return;
-		const char *tag = NULL;
-		const char *data = NULL;
-		UI08 worldNumber = mChar->WorldNumber();
+		UString tag;
+		UString data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			data = toFind->GrabData();
-			if( !strcmp( "ADDITEM", tag ) )
+			if( tag.upper() == "ADDITEM" )
 			{
-				c = Items->CreateScriptItem( s, data, false, worldNumber );
-				if( c != NULL )
+				data = toFind->GrabData();
+				if( data.sectionCount( "," ) != 0 )
+					if( !CreateBodyPart( mChar, i, data.section( ",", 0, 0 ).stripWhiteSpace().toUShort(), data.section( ",", 1, 1 ).stripWhiteSpace().toLong() ) )
+						return;
+			}
+		}
+
+		criminal( mChar );
+
+		CDataList< CItem * > *iCont = i->GetContainsList();
+		for( c = iCont->First(); !iCont->Finished(); c = iCont->Next() )
+		{
+			if( ValidateObject( c ) )
+			{
+				if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR )
 				{
-					c->SetCont( i );
-					c->SetX( 20 + RandomNum( 0, 49 ) );
-					c->SetY( 85 + RandomNum( 0, 74 ) );
-					c->SetZ( 9 );
-					RefreshItem( c );
+					c->SetCont( NULL );
+					c->SetLocation( i );
+					c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 				}
 			}
 		}
-	}
-
-	if( deletecorpse )
+		i->Delete();
+	} 
+	else
 	{
-		for( c = i->FirstItemObj(); !i->FinishedItems(); c = i->NextItemObj() )
+		UString sect			= "CARVE " + UString::number( i->GetCarve() );
+		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
+		if( toFind == NULL )
+			return;
+		UString tag;
+		UString data;
+		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( c != NULL )
+			if( tag.upper() == "ADDITEM" )
 			{
-				c->SetCont( NULL );
-				c->SetLocation( i );
-				c->SetDecayTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( DECAY ) )) );
-				RefreshItem( c );
+				data = toFind->GrabData();
+				if( data.sectionCount( "," ) != 0 )
+					Items->CreateScriptItem( s, mChar, data.section( ",", 0, 0 ).stripWhiteSpace(), data.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
+				else
+					Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
 			}
 		}
-		Items->DeleItem( i );
 	}
 }
 
-void cTargets::TitleTarget( cSocket *s )
+void CorpseTarget( CSocket *s )
 {
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetTitle( s->XText() );
-}
-
-void cTargets::NpcTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		s->AddID( i->GetSerial() );
-		target( s, 0, 57, "Select NPC to follow this player." );
-	}
-}
-
-void cTargets::NpcTarget2( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->IsNpc() )
-		{
-			i->SetFTarg( calcCharFromSer( s->AddID() ) );
-			i->SetNpcWander( 1 );
-		}
-	}
-}
-
-void cTargets::NpcRectTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->IsNpc() )
-		{
-			i->SetFx( static_cast<SI16>(s->AddX()), 1 );
-			i->SetFy( static_cast<SI16>(s->AddY()), 1 );
-			i->SetFz( -1 );
-			i->SetFx( static_cast<SI16>(s->AddX2()), 2 );
-			i->SetFy( static_cast<SI16>(s->AddY2()), 2 );
-			i->SetNpcWander( 3 );
-		}
-	}
-}
-
-void cTargets::NpcCircleTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->IsNpc() )
-		{
-			i->SetFx( static_cast<SI16>(s->AddX()), 1 );
-			i->SetFy( static_cast<SI16>(s->AddY()), 1 );
-			i->SetFz( -1 );
-			i->SetFx( static_cast<SI16>(s->AddX2()), 2 );
-			i->SetNpcWander( 4 );
-		}
-	}
-}
-
-void cTargets::NpcWanderTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->IsNpc() )
-			i->SetNpcWander( static_cast<SI08>(s->TempInt()) );
-	}
-}
-
-void cTargets::NpcAITarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetNPCAiType( static_cast<SI16>(s->AddX()) );
-}
-
-void cTargets::xBankTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		openBank( s, i );
-}
-void cTargets::xSpecialBankTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		openSpecialBank( s, i );
-}
-
-void cTargets::DupeTarget( cSocket *s )
-{
-	if( s->AddID1() >= 1 )
-	{
-		UI08 dupetimes = s->AddID1();
-		CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-		if( i != NULL )
-		{
-			for( UI08 dupeit = 0; dupeit < dupetimes; dupeit++ )
-				Commands->DupeItem( s, i, i->GetAmount() );
-		}
-	}
-}
-
-void cTargets::MoveToBagTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i == NULL )
-		return;
+	VALIDATESOCKET( s );
+	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	CChar *mChar = s->CurrcharObj();
-	CItem *p = getPack( mChar );
-	if( i->GetSerial() == serial )
+	if( !ValidateObject( i ) || !ValidateObject( mChar ) )
+		return;
+	if( objInRange( mChar, i, DIST_NEARBY ) ) 
 	{
-		if( i->GetCont() == NULL )
-			MapRegion->RemoveItem( i );
-		i->SetX( RandomNum( 0, 79 ) + 50 );
-		i->SetY( RandomNum( 0, 79 ) + 50 );
-		i->SetZ( 9 );
-		if( p != NULL ) 
-			i->SetCont( p );
-		i->SetDecayTime( 0 );//reset decaytimer
-		CPRemoveItem toRemove = (*i);
-
-		Network->PushConn();
-		for( cSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-			tSock->Send( &toRemove );
-		Network->PopConn();
-		RefreshItem( i );
-	}
-}
-
-void cTargets::SellStuffTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		sendSellStuff( s, i );
-}
-
-void cTargets::ReleaseTarget( cSocket *s, SERIAL c )
-{
-	CChar *i = NULL;
-	if( c == INVALIDSERIAL )
-		i = calcCharObjFromSer( s->GetDWord( 7 ) );	
-	else
-		i = calcCharObjFromSer( c );
-	if( i != NULL )
-	{
-		if( !i->IsJailed() )
-			sysmessage( s, 1064 );
-		else
+		Effects->PlayCharacterAnimation( mChar, 0x20 );
+		if( i->GetTempVar( CITV_MOREY, 1 ) == 0 )
 		{
-			JailSys->ReleasePlayer( i );
-			sysmessage( s, 1065, i->GetName() );
-		}
+			i->SetTempVar( CITV_MOREY, 1, 1 );
+			if( i->GetTempVar( CITV_MOREY, 2 ) || i->GetCarve() != -1 )
+				newCarveTarget( s, i );
+		} 
+		else 
+			s->sysmessage( 1051 );
 	}
-}
-
-void cTargets::GmOpenTarget( cSocket *s )
-{
-	CChar *toCheck = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( toCheck == NULL )
-	{
-		sysmessage( s, 1066 );
-		return;
-	}
-
-	CItem *i = toCheck->GetItemAtLayer( static_cast<UI08>(s->TempInt()) );
-	if( i != NULL )
-	{
-		openPack( s, i );
-		return;
-	}
-	sysmessage( s, 1067 );
-}
-
-void cTargets::StaminaTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
-		i->SetStamina( i->GetMaxStam() );
-		updateStats( i, 2 );
-		return;
-	}
-	sysmessage( s, 1066 );
-}
-
-void cTargets::ManaTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
-		i->SetMana( i->GetMaxMana() );
-		updateStats( i, 1 );
-		return;
-	}
-	sysmessage( s, 1066 );
-}
-
-void cTargets::MakeShopTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		Commands->MakeShop( i );
-		sysmessage( s, 1068 );
-		return;
-	}
-	sysmessage( s, 1069 );
-}
-
-void cTargets::JailTarget( cSocket *s, SERIAL c )
-{
-	CChar *i = NULL;
-	if( c == INVALIDSERIAL )
-		i = calcCharObjFromSer( s->GetDWord( 7 ) );	  
 	else
-		i = calcCharObjFromSer( c );
-	
-    if( i == NULL ) 
-		return;
-
-	if( i->IsJailed() )
-	{
-		sysmessage( s, 1070 );
-		return;
-	}
-    if( !JailSys->JailPlayer( i, 0xFFFFFFFF ) )
-		sysmessage( s, 1072 );
+		s->sysmessage( 393 );
 }
 
-void cTargets::AttackTarget( cSocket *s )
+void AttackTarget( CSocket *s )
 {
-	CChar *target = calcCharObjFromSer( s->AddID() );
-	CChar *target2 = calcCharObjFromSer( s->GetDWord( 7 ) );
+	VALIDATESOCKET( s );
+	CChar *target	= static_cast<CChar *>(s->TempObj());
+	CChar *target2	= calcCharObjFromSer( s->GetDWord( 7 ) );
+	s->TempObj( NULL );
 	
-	if( target2 == NULL || target == NULL ) 
+	if( !ValidateObject( target2 ) || !ValidateObject( target ) ) 
 		return;
 	if( target2 == target )
 	{
-		sysmessage( s, 1073 );
+		s->sysmessage( 1073 );
 		return;
 	}
-	npcAttackTarget( target2, target );
+	Combat->AttackTarget( target, target2 );
 	if( target2->IsInnocent() && target2 != target->GetOwnerObj() )
 	{
-		CChar *pOwner = (CChar *)target->GetOwnerObj();
-		if( pOwner != NULL )
+		CChar *pOwner = target->GetOwnerObj();
+		if( ValidateObject( pOwner ) && WillResultInCriminal( pOwner, target2 ) )
 			criminal( pOwner );
 	}
 }
 
-void cTargets::FollowTarget( cSocket *s )
+void FollowTarget( CSocket *s )
 {
-	CChar *char1 = calcCharObjFromSer( s->AddID() );
-	CHARACTER char2 = calcCharFromSer( s->GetDWord( 7 ) );
+	VALIDATESOCKET( s );
+	CChar *char1	= static_cast<CChar *>(s->TempObj());
+	CChar *char2	= calcCharObjFromSer( s->GetDWord( 7 ) );
+	s->TempObj( NULL );
+	if( !ValidateObject( char1 ) || !ValidateObject( char2 ) )
+		return;
 	
 	char1->SetFTarg( char2 );
-	char1->SetNpcWander( 1 );
+	char1->SetNpcWander( WT_FOLLOW );
 }
 
-void cTargets::TransferTarget( cSocket *s )
+void TransferTarget( CSocket *s )
 {
-	CChar *char1 = calcCharObjFromSer( s->AddID() );
+	VALIDATESOCKET( s );
+	CChar *char1 = static_cast<CChar *>(s->TempObj());
 	CChar *char2 = calcCharObjFromSer( s->GetDWord( 7 ) );
+	s->TempObj( NULL );
 	
-	if( char1 == NULL )
+	if( !ValidateObject( char1 ) )
 		return;
 
-	if( char2 == NULL )
+	if( !ValidateObject( char2 ) )
 	{
-		sysmessage( s, "Please select a valid character to transfer the house to" );
+		s->sysmessage( 1066 );
 		return;
 	}
 	if( char1 == char2 )
 	{
-		sysmessage( s, "You cannot transfer it to yourself" );
+		s->sysmessage( 1066 );
 		return;
 	}
+
+	Npcs->stopPetGuarding( char1 );
+
+	char1->TextMessage( NULL, 1074, TALK, false, char1->GetName().c_str(), char2->GetName().c_str() );
 	
-	npcTalkAll( char1, 1074, false, char1->GetName(), char2->GetName() );
-	
-	char1->SetOwner( (cBaseObject *)char2 );
-	char1->SetNpcWander( 1 );
-	
-	char1->SetFTarg( INVALIDSERIAL );
-	char1->SetNpcWander( 0 );
+	char1->SetOwner( char2 );
+	char1->SetFTarg( NULL );
+	char1->SetNpcWander( WT_FREE );
 }
 
-void cTargets::BuyShopTarget( cSocket *s )
+bool BuyShop( CSocket *s, CChar *c )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CChar *i = calcCharObjFromSer( serial );
-	if( i != NULL )
+	if( s == NULL )
+		return false;
+	if( !ValidateObject( c ) )
+		return false;
+
+	//Check if vendor has onBuy script running
+	UI16 charTrig		= c->GetScriptTrigger();
+	cScript *toExecute	= JSMapping->GetScript( charTrig );
+	if( toExecute != NULL )
 	{
-		BuyShop( s, i );
-		return;
+		if( toExecute->OnBuy( s, c ) )
+			return false;
 	}
-	sysmessage( s, 1075 );
-}
 
-bool cTargets::BuyShop( cSocket *s, CChar *c )
-{
-	if( c == NULL )
-		return false;
-	CItem *buyPack		= c->GetItemAtLayer( 0x1A );
-	CItem *boughtPack	= c->GetItemAtLayer( 0x1B );
+	CItem *sellPack		= c->GetItemAtLayer( IL_SELLCONTAINER );
+	CItem *boughtPack	= c->GetItemAtLayer( IL_BOUGHTCONTAINER );
 	
-	if( buyPack == NULL || boughtPack == NULL )
+	if( !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 		return false;
-	
-	buyPack->Sort();
-	boughtPack->Sort();
-	c->SendToSocket( s, false, c );
 
-	CPItemsInContainer iic( buyPack );		s->Send( &iic );
-	CPOpenBuyWindow obw( buyPack, c );		s->Send( &obw );
+	CPItemsInContainer iic;
+	if( s->ClientVerShort() >= CVS_6017 )
+		iic.UOKRFlag( true );
+	iic.Type( 0x02 );
+	iic.VendorSerial( sellPack->GetSerial() );
+	CPOpenBuyWindow obw( sellPack, c, iic, s );
 
-	CPItemsInContainer iic2( boughtPack );	s->Send( &iic2 );
-	CPOpenBuyWindow obw2( boughtPack, c );	s->Send( &obw2 );
+	CPItemsInContainer iic2;
+	if( s->ClientVerShort() >= CVS_6017 )
+		iic2.UOKRFlag( true );
+	iic2.Type( 0x02 );
+	iic2.VendorSerial( boughtPack->GetSerial() );
+	CPOpenBuyWindow obw2( boughtPack, c, iic2, s );
 
 	CPDrawContainer toSend;
 	toSend.Model( 0x0030 );
 	toSend.Serial( c->GetSerial() );
+	if( s->ClientType() >= CV_HS2D && s->ClientVerShort() >= CVS_7090 )
+		toSend.ContType( 0x00 );
+
+	s->Send( &iic );
+	s->Send( &iic2 );
+	s->Send( &obw );
+	s->Send( &obw2 );
 	s->Send( &toSend );
-	statwindow( s, s->CurrcharObj() ); // Make sure the gold total has been sent.
+
+	s->statwindow( s->CurrcharObj() ); // Make sure the gold total has been sent.
 	return true;
 }
 
-void cTargets::SetBuyValueTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetBuyValue( s->AddX() );
-		return;
-	}
-	sysmessage( s, 1076 );
-}
-
-void cTargets::SetSellValueTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetSellValue( s->AddX() );
-		return;
-	}
-	sysmessage( s, 1076 );
-}
-
-void cTargets::SetRestockTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetRestock( static_cast<UI16>(s->AddX()) );
-		return;
-	}
-	sysmessage( s, 1076 );
-}
-
-
-void cTargets::permHideTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( i->GetHidden() == 1 )
-		{
-			sysmessage( s, 833 );
-			return;
-		}
-		i->SetPermHidden( true );
-		i->SetHidden( 1 );
-		i->Update();
-	}
-}
-
-void cTargets::unHideTarget( cSocket *s )
-{
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( c != NULL )
-	{
-		if( !c->IsGM() && !c->IsCounselor() )
-			c->SetPermHidden( false );
-	}
-	s->AddX( 0 );
-	VisibleTarget( s );	// better code reuse!
-}
-
-void cTargets::SetWipeTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetWipeable( s->AddID1() != 0 );
-		RefreshItem( i );
-	}
-}
-void cTargets::SetSpAttackTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetSpAttack( static_cast<SI16>(s->TempInt()) );
-}
-
-void cTargets::SetSpaDelayTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetSpDelay( static_cast<SI08>(s->TempInt()) );
-}
-
-void cTargets::SetPoisonTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetPoison( static_cast<SI08>(s->TempInt() ));
-}
-
-void cTargets::SetPoisonedTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->SetPoisoned( static_cast<SI08>(s->TempInt()) );
-		i->SetPoisonWearOffTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->GetSystemTimerStatus( POISON ) )) );
-		i->SendToSocket( calcSocketObjFromChar( i ), true, i );
-	}
-}
-
-void cTargets::FullStatsTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		Effects->PlaySound( i, 0x01F2 );
-		Effects->staticeffect( i, 0x376A, 0x09, 0x06 );
-		i->SetMana( i->GetMaxMana() );
-		i->SetHP( i->GetMaxHP() );
-		i->SetStamina( i->GetMaxStam() );
-		updateStats( i, 0 );
-		updateStats( i, 1 );
-		updateStats( i, 2 );
-		return;
-	}
-	sysmessage( s, 1077 );
-}
-
-
-void cTargets::SetAdvObjTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetAdvObj( static_cast<UI16>(s->TempInt()) );
-}
-
-//---------------------------------------------------------------------------o
-//|	Class		:	CanTrainTarget( cSocket *s )
-//|	Date		:	1-3-99
-//|	Programmer	:	Antrhacks
 //o---------------------------------------------------------------------------o
-//| Purpose		:Used for training by NPC's
-//o---------------------------------------------------------------------------o
-void cTargets::CanTrainTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		if( !i->IsNpc() )
-		{
-			sysmessage( s, 1078 );
-			return;
-		}
-		i->SetCanTrain( !i->CanTrain() );
-	}
-}
-
-void cTargets::SetSplitTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetSplit( static_cast<UI08>(s->TempInt()) );
-}
-
-void cTargets::SetSplitChanceTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		i->SetSplitChance( static_cast<UI08>(s->TempInt()) );
-}
-
-void cTargets::AxeTarget( cSocket *s )
-{
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-	
-	UI16 realID = s->GetWord( 0x11 );
-    // [krazyglue] it may take more lines, but at least its readable and easier to debug =)
-	if( realID == 0x0CD0 || realID == 0x0CD3 || realID == 0x0CD6 || realID == 0x0CD8 || realID == 0x0CDA || 
-		realID == 0x0CDD || realID == 0x0CE0 || realID == 0x0CE3 || realID == 0x0CE6 || realID == 0x0D58 || 
-		realID >= 0x0CCA && realID <= 0x0CCE || realID >= 0x12B8 && realID <= 0x12BB || realID == 0x0D42 ||
-		realID == 0x0D43 || realID == 0x0D58 || realID == 0x0D59 || realID == 0x0D70 || realID == 0x0D85 || 
-		realID == 0x0D94 || realID == 0x0D95 || realID == 0x0D98 || realID == 0x0DA4 || realID == 0x0DA8 )
-	{
-		Skills->TreeTarget( s );
-	}
-	else if( realID == 0x2006 )
-		CorpseTarget( s );
-    else 
-		Skills->BowCraft( s );
-}
-
-void cTargets::ObjPrivTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		switch( s->AddID1() )
-		{
-		case 0:	i->SetDecayable( false );		break;
-		case 1:	i->SetDecayable( true );		break;
-		case 3:	i->SetPriv( s->AddID2() );	break;
-		}
-	}
-}
-
-void cTargets::SetDirTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	if( s->GetByte( 7 ) >= 0x40 )
-	{
-		CItem *i = calcItemObjFromSer( serial );
-		if( i != NULL )
-		{
-			i->SetDir( static_cast<UI08>(s->AddX()) );
-			RefreshItem( i );
-			return;
-		}
-	}
-	else
-	{
-		CChar *c = calcCharObjFromSer( serial );
-		if( c != NULL )
-		{
-			c->SetDir( static_cast<UI08>((s->AddX()) & 0x0F) );	// make sure high-bits are cleared
-			c->Update();
-			return;
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void npcresurrecttarget( CChar *i )
-//|   Date        -  UnKnown
-//|   Programmer  -  UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
+//|   Function		-  void npcresurrecttarget( CChar *i )
+//|   Date			-  UnKnown
+//|   Programmer	-  UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
 //|									
 //|	Modification	-	09/22/2002	-	Xuri - Made players not appear with full 
 //|									health/stamina after being resurrected by NPC Healer
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Resurrects a character
 //o---------------------------------------------------------------------------o
-void cTargets::NpcResurrectTarget( CChar *i )
+void NpcResurrectTarget( CChar *i )
 {
-	if( i == NULL )
+	if( !ValidateObject( i ) )
 		return;
 
 	if( i->IsNpc() )
 	{
-		Console.Error( 2, Dictionary->GetEntry( 1079 ), i );
+		Console.Error( Dictionary->GetEntry( 1079 ).c_str(), i );
 		return;
 	}
-	cSocket *mSock = calcSocketObjFromChar( i );
-	if( i->IsDead() && mSock != NULL )
+	CSocket *mSock = i->GetSocket();
+	// the char is a PC, but not logged in.....
+	if( mSock != NULL )
 	{
-		Fame( i, 0 );
-		Effects->PlaySound( i, 0x0214 );
-		i->SetID( i->GetOrgID() );
-		i->SetxID( i->GetOrgID() );
-		i->SetSkin( i->GetxSkin() );
-		i->SetDead( false );
-		// Sept 22, 2002 - Xuri
-		i->SetHP( i->GetMaxHP() / 10 );
-		i->SetStamina( i->GetMaxStam() / 10 );
-		//
-		i->SetMana( i->GetMaxMana() / 10 );
-		i->SetAttacker( INVALIDSERIAL );
-		i->SetAttackFirst( false );
-		i->SetWar( false );
-		CItem *c = NULL;
-		for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
+		if( i->IsDead() )
 		{
-			if( j != NULL && !j->isFree() )
+			UI16 charTrig		= i->GetScriptTrigger();
+			cScript *toExecute	= JSMapping->GetScript( charTrig );
+			if( toExecute != NULL )
 			{
-				if( j->GetLayer() == 0x1A )
+				if( toExecute->OnResurrect( i ) == 1 )	// if it exists and we don't want hard code, return
+					return;
+			}
+
+			Fame( i, 0 );
+			Effects->PlaySound( i, 0x0214 );
+			i->SetID( i->GetOrgID() );
+			i->SetSkin( i->GetOrgSkin() );
+			i->SetDead( false );
+			// Sept 22, 2002 - Xuri
+			i->SetHP( i->GetMaxHP() / 10 );
+			i->SetStamina( i->GetMaxStam() / 10 );
+			//
+			i->SetMana( i->GetMaxMana() / 10 );
+			i->SetAttacker( NULL );
+			i->SetAttackFirst( false );
+			i->SetWar( false );
+			i->SetHunger( 6 );
+			CItem *c = NULL;
+			for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )
+			{
+				if( ValidateObject( j ) && !j->isFree() )
 				{
-					j->SetLayer( 0x15 );	
-					i->SetPackItem( j );
-				}
-				if( j->GetSerial() == i->GetRobe() )
-				{
-					Items->DeleItem( j );
-					
-					c = Items->SpawnItem( NULL, i, 1, "a resurrect robe", false, 0x1F03, 0, false, false );
-					if( c != NULL )
+					if( j->GetLayer() == IL_BUYCONTAINER )
 					{
-						c->SetLayer( 0x16 );
-						if( c->SetCont( i ) )
-							c->SetDye( true );
+						j->SetLayer( IL_PACKITEM );	
+						i->SetPackItem( j );
+					}
+					if( j->GetSerial() == i->GetRobe() )
+					{
+						j->Delete();
+						
+						c = Items->CreateScriptItem( NULL, i, "resurrection_robe", 1, OT_ITEM );
+						if( c != NULL )
+							c->SetCont( i );
 					}
 				}
 			}
 		}
-		i->Teleport();
-		UI16 targTrig = i->GetScriptTrigger();
-		cScript *toExecute = Trigger->GetScript( targTrig );
-		if( toExecute != NULL )
-			toExecute->OnResurrect( i );
+		else
+			mSock->sysmessage( 1080 );
 	}
 	else
-		sysmessage( mSock, 1080 );
+		Console.Warning( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() );
 }
 
 
-void cTargets::NewXTarget( cSocket *s )
+void killKeys( SERIAL targSerial );
+void HouseOwnerTarget( CSocket *s )
 {
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		MapRegion->RemoveItem( i );
-		i->SetX( static_cast<SI16>(s->AddX()) );
-		MapRegion->AddItem( i );
-		RefreshItem( i );
-	}
-	
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
-	{
-		c->SetLocation( static_cast<SI16>(s->AddX()), static_cast<SI16>(c->GetY()), static_cast<SI08>(c->GetZ()) );
-		c->Teleport();
-	}
-	
-}
-
-void cTargets::NewYTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		MapRegion->RemoveItem( i );
-		i->SetY( static_cast<SI16>(s->AddX()) );
-		MapRegion->AddItem( i );
-		RefreshItem( i );
-	}
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
-	{
-		c->SetLocation( static_cast<SI16>(c->GetX()), static_cast<SI16>(s->AddX()), c->GetZ() );
-		c->Teleport();
-	}
-	
-}
-
-void cTargets::IncXTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		MapRegion->RemoveItem( i );
-		i->IncX( static_cast<SI16>(s->AddX()) );
-		MapRegion->AddItem( i );
-		RefreshItem( i );
-	}
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
-	{
-		c->SetLocation( static_cast<SI16>(c->GetX() + s->AddX()), static_cast<SI16>(c->GetY()), c->GetZ() );
-		c->Teleport();
-	}
-}
-
-void cTargets::IncYTarget( cSocket *s )
-{
-	SERIAL serial = s->GetDWord( 7 );
-	CItem *i = calcItemObjFromSer( serial );
-	if( i != NULL )
-	{
-		MapRegion->RemoveItem( i );
-		i->IncY( static_cast<SI16>(s->AddX()) );
-		MapRegion->AddItem( i );
-		RefreshItem( i );
-	}
-	CChar *c = calcCharObjFromSer( serial );
-	if( c != NULL )
-	{
-		c->SetLocation( static_cast<SI16>(c->GetX()), static_cast<SI16>(c->GetY() + s->AddX()), c->GetZ() );
-		c->Teleport();
-	}
-}
-
-void cTargets::HouseOwnerTarget( cSocket *s )
-{
+	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
-	if( mChar == NULL )
+	if( !ValidateObject( mChar ) )
 		return;
 
 	SERIAL o_serial = s->GetDWord( 7 );
 	if( o_serial == INVALIDSERIAL ) 
 		return;
 
-	CChar *own		= calcCharObjFromSer( o_serial );
-	cSocket *oSock	= calcSocketObjFromChar( own );
-
-	CItem *sign = calcItemObjFromSer( s->AddID() );
-	CItem *house = calcItemObjFromSer( sign->GetMore() );
-	if( sign == NULL || house == NULL )
+	CChar *own = calcCharObjFromSer( o_serial );
+	if( !ValidateObject( own ) )
 		return;
-	sign->SetOwner( (cBaseObject *)own );
-	house->SetOwner( (cBaseObject *)own );
+
+	CSocket *oSock = own->GetSocket();
+	if( oSock == NULL )
+		return;
+
+	CItem *sign = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( !ValidateObject( sign ) )
+		return;
+
+	CItem *house = calcItemObjFromSer( sign->GetTempVar( CITV_MORE ) );;
+	if( !ValidateObject( house ) )
+		return;
+
+	sign->SetOwner( own );
+	house->SetOwner( own );
 
 	killKeys( house->GetSerial() );
 
-	CItem *key = NULL;
-	if( oSock != NULL ) 
-	{
-		key = Items->SpawnItem( oSock, own, 1, "a house key", false, 0x100F, 0, true, true );//gold key for everything else
-		if( key == NULL ) 
-			return;
-	} 
-	else 
-	{
-		key = Items->SpawnItem( NULL, own, 1, "a house key", false, 0x100F, 0, false, false );//gold key for everything else
-		if( key == NULL ) 
-			return;
-		key->SetLocation( own );
-		RefreshItem( key );
-	}
+	CItem *key = Items->CreateScriptItem( oSock, own, "0x100F", 1, OT_ITEM, true );	// gold key for everything else
+	if( key == NULL )
+		return;
+	key->SetName( "a house key" );
+	key->SetTempVar( CITV_MORE, house->GetSerial() );
+	key->SetType( IT_KEY );
 
-	key->SetMore( house->GetSerial() );
-	key->SetType( 7 );
-
-	sysmessage( s, 1081, own->GetName() );
-	sysmessage( oSock, 1082, mChar->GetName() );
+	s->sysmessage( 1081, own->GetName().c_str() );
+	oSock->sysmessage( 1082, mChar->GetName().c_str() );
 }
 
-void cTargets::HouseEjectTarget( cSocket *s )
+void HouseEjectTarget( CSocket *s )
 {
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = calcItemObjFromSer( s->AddID() );
-	if( c != NULL && h != NULL ) 
+	VALIDATESOCKET( s );
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		SI16 sx, sy, ex, ey;
-		Map->MultiArea( (CMultiObj *)h, sx, sy, ex, ey );
-		if( c->GetX() >= sx && c->GetY() >= sy && c->GetX() <= ex && c->GetY() <= ey )
+		SI16 x1, y1, x2, y2;
+		Map->MultiArea( h, x1, y1, x2, y2 );
+		if( c->GetX() >= x1 && c->GetY() >= y1 && c->GetX() <= x2 && c->GetY() <= y2 )
 		{
-			c->SetLocation( ex, ey, c->GetZ() );
-			c->Teleport();
-			sysmessage( s, 1083 );
-		} 
+			c->SetLocation( x2, (y2+1), c->GetZ() );
+			s->sysmessage( 1083 );
+		}
 		else 
-			sysmessage( s, 1084 );
+			s->sysmessage( 1084 );
 	}
 }
 
-void cTargets::HouseBanTarget( cSocket *s )
+UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
+void HouseBanTarget( CSocket *s )
 {
-	// first, eject the player
-	HouseEjectTarget( s );
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = calcItemObjFromSer( s->AddID() );
-	if( c != NULL && h != NULL ) 
+	VALIDATESOCKET( s );
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		int r = AddToHouse( house, c, 1 );
+		UI08 r = AddToHouse( h, c, 1 );
 		if( r == 1 ) 
-			sysmessage( s, 1085, c->GetName() );
+			s->sysmessage( 1085, c->GetName().c_str() );
 		else if( r == 2 ) 
-			sysmessage( s, 1086 );
+			s->sysmessage( 1086 );
 		else 
-			sysmessage( s, 1087 );
+			s->sysmessage( 1087 );
 	}
 }
 
-void cTargets::HouseFriendTarget( cSocket *s )
+void HouseFriendTarget( CSocket *s )
 {
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = calcItemObjFromSer( s->AddID() );
-	if( c != NULL && h != NULL ) 
+	VALIDATESOCKET( s );
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	= static_cast<CMultiObj *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		int r = AddToHouse( house, c );
+		UI08 r = AddToHouse( h, c );
 		if( r == 1 ) 
 		{
-			sysmessage( calcSocketObjFromChar( c ), 1089 );
-			sysmessage( s, 1088, c->GetName() );
+			CSocket *cSock = c->GetSocket();
+			if( cSock != NULL )
+				cSock->sysmessage( 1089 );
+			s->sysmessage( 1088, c->GetName().c_str() );
 		} 
 		else if( r == 2 ) 
-			sysmessage( s, 1090 );
+			s->sysmessage( 1090 );
 		else 
-			sysmessage( s, 1091 );
+			s->sysmessage( 1091 );
 	}
 }
 
-void cTargets::HouseUnlistTarget( cSocket *s )
+bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode );
+void HouseUnlistTarget( CSocket *s )
 {
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	CItem *h = calcItemObjFromSer( s->AddID() );
-	if( c != NULL && h != NULL ) 
+	VALIDATESOCKET( s );
+	CChar *c		= calcCharObjFromSer( s->GetDWord( 7 ) );
+	CMultiObj *h	=  static_cast<CMultiObj *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( c ) && ValidateObject( h ) ) 
 	{
-		CMultiObj *house = static_cast<CMultiObj *>(h);
-		int r = DeleteFromHouseList( house, c );
-		if( r > 0 ) 
-			sysmessage( s, 1092, c->GetName() );
+		bool r = DeleteFromHouseList( h, c, static_cast<UI08>(s->TempInt()) );
+		if( r )
+			s->sysmessage( 1092, c->GetName().c_str() );
 		else 
-			sysmessage( s, 1093 );
+			s->sysmessage( 1093 );
 	}
 }
 
-void cTargets::GlowTarget( cSocket *s )
+void ShowSkillTarget( CSocket *s )
 {
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL ) 
-	{ 
-		sysmessage( s, 1095 ); 
-		return; 
-	}
-	CChar *mChar = s->CurrcharObj(), *k = NULL;
-	if( mChar == NULL )
-		return;
-
-	if( i->GetGlow() > 0 ) 
+	VALIDATESOCKET( s );
+	CChar *mChar = calcCharObjFromSer( s->GetDWord( 7 ) );
+	if( !ValidateObject( mChar ) )
 	{
-		sysmessage( s, 1097 );
+		s->sysmessage( 1103 );
 		return;
 	}
 
-	cBaseObject *getCont = i->GetCont();
-	if( getCont != NULL )
+	SI32 dispType = s->TempInt();
+	UI16 skillVal;
+
+	GumpDisplay showSkills( s, 300, 300 );
+	showSkills.SetTitle( "Skills Info" );
+	for( UI08 i = 0; i < ALLSKILLS; ++i )
 	{
-		if( getCont->GetObjType() == OT_ITEM )
-			k = getPackOwner( (CItem *)getCont );
+		if( dispType == 0 || dispType == 1 )
+			skillVal = mChar->GetBaseSkill( i );
 		else
-			k = (CChar *)getCont;
+			skillVal = mChar->GetSkill( i );
 
-		if( k != mChar )
-		{
-			sysmessage( s, 1096 );
-			return;
-		}
+		if( skillVal > 0 || dispType%2 == 0 )
+			showSkills.AddData( cwmWorldState->skill[i].name, UString::number( (float)skillVal/10 ), 8 );
 	}
-
-	i->SetGlowColour( i->GetColour() );
-
-	CItem *c = Items->SpawnItem( s, mChar, 1, "glower", false, 0x1647, 0, false, true ); // spawn light emitting object
-	if( c == NULL )
-		return;
-
-    c->SetDir( 29 );
-	c->SetVisible( 0 );
-	c->SetMovable( 2 );
-	MapRegion->RemoveItem( c );
-	//c->SetLayer( items[i].GetLayer() );
-	if( getCont == NULL || getCont->GetObjType() == OT_ITEM ) // if not equipped -> coords of the light-object = coords of the 
-	{
-		c->SetX( i->GetX() );
-		c->SetY( i->GetY() );
-		c->SetZ( i->GetZ() );
-	} 
-	else // if equipped -> place lightsource at player ( height= approx hand level )
-	{ 
-		c->SetX( mChar->GetX() );
-		c->SetY( mChar->GetY() );
-		c->SetZ( mChar->GetZ() + 4 );
-	}
-
-    c->SetPriv( 0 ); // doesnt decay
-
-	i->SetGlow( c->GetSerial() ); // set glow-identifier
-
-	RefreshItem( i );
-	RefreshItem( c );
-
-	mChar->SendToSocket( s, false, mChar );
-	sysmessage( s, 1098 );
+	showSkills.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTargets::UnglowTarget( cSocket *s )
+void FriendTarget( CSocket *s )
 {
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
-	{ 
-		sysmessage( s, 1099 ); 
-		return; 
-	}
-	CChar *mChar = s->CurrcharObj(), *k = NULL;
-	if( mChar == NULL )
-		return;
-
-	cBaseObject *getCont = i->GetCont();
-	if( getCont != NULL ) 
-	{      
-		if( getCont->GetObjType() == OT_ITEM )
-			k = getPackOwner( (CItem *)getCont );
-		else
-			k = (CChar *)getCont;
-
-		if( k != mChar )
-		{
-			sysmessage( s, 1100 );
-			return;
-		}
-	}
-
-	CItem *j = calcItemObjFromSer( i->GetGlow() );
-	if( i->GetGlow() == 0 || j == NULL ) 
-	{
-		sysmessage( s, 1101 );
-		return;
-	}
-
-	i->SetColour( i->GetGlowColour() );
-
-	Items->DeleItem( j );   
-	i->SetGlow( 0 );
-	RefreshItem( i );
-	mChar->SendToSocket( s, false, mChar );
-
-	sysmessage( s, 1102 );
-}
-
-void cTargets::ShowSkillTarget( cSocket *s )
-{
-	CChar *p = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( p == NULL )
-	{
-		sysmessage( s, 1103 );
-		return;
-	}
-	char spc[2]="\x20";
-	char temp[1024];
-	int j, k, zz, ges = 0;
-	char skill_info[(ALLSKILLS+1)*40];
-	char sk[25];
-
-	int z = s->AddX();
-	if( z < 0 || z > 3 ) 
-		z = 0;
-	if( z == 2 || z == 3 ) 
-		sprintf( skill_info, "%s's skills:", p->GetName() ); 
-	else 
-		sprintf( skill_info, "%s's baseskills:", p->GetName() );
-	int b = strlen( p->GetName() ) + 11;
-	if( b > 23 ) 
-		b = 23;
-
-	int c;
-	for( c = b; c <= 26; c++ )
-	{
-		strcpy( temp, spc );
-		strcpy( &skill_info[strlen( skill_info )], temp );
-	}
-
-	numtostr( ges, sk );
-	sprintf( temp, "sum: %s", sk );
-	strcpy( &skill_info[strlen( skill_info )], temp );
-	for( int a = 0; a < ALLSKILLS; a++ )
-	{
-		if( z == 0 || z == 1 ) 
-			k = p->GetBaseSkill( a ); 
-		else 
-			k = p->GetSkill( a );
-		if( z == 0 || z == 2 ) 
-			zz = 9; 
-		else 
-			zz = -1;
-
-		if( k > zz ) // show only if skills >= 1
-		{
-			if( z == 2 || z == 3 ) 
-				j = p->GetSkill( a )/10; 
-			else 
-				j = p->GetBaseSkill( a )/10; // get skill value
-			numtostr( j, sk );  // skill-value string in sk
-			ges += j;
-			sprintf( temp, "%s%s%s", skillname[a], spc, sk );
-			strcpy( &skill_info[strlen( skill_info )], temp );
-
-			b = strlen( skillname[a] ) + strlen( sk ) + 1; // it doesn't like \n's, so insert spaces till end of line
-			if( b > 23 )
-				b = 23;
-			for( c = b; c <= 26; c++ )
-			{
-				strcpy( temp, spc );
-				strcpy( &skill_info[strlen( skill_info )], temp );
-			}
-		}
-	}
-
-	numtostr( ges, sk );
-	sprintf( temp, "sum: %s  ", sk );
-	strcpy( &skill_info[ strlen( skill_info )], temp );
-
-	CPUpdScroll toSend( 2 );
-	toSend.AddString( skill_info );
-	toSend.Finalize();
-	s->Send( &toSend );
-}
-
-void cTargets::FriendTarget( cSocket *s )
-{
+	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
-	if( mChar == NULL )
+	if( !ValidateObject( mChar ) )
 		return;
 
 	CChar *targChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( targChar == NULL )
+	if( !ValidateObject( targChar ) )
 	{
-		sysmessage( s, 1103 );
+		s->sysmessage( 1103 );
 		return;
 	}
-	if( targChar->IsNpc() || !isOnline( targChar ) || targChar == mChar )
+	if( targChar->IsNpc() || !isOnline( (*targChar) ) || targChar == mChar )
 	{
-		sysmessage( s, 1622 );
+		s->sysmessage( 1622 );
 		return;
 	}
 
-	CChar *pet = calcCharObjFromSer( s->AddID() );
+	CChar *pet = static_cast<CChar *>(s->TempObj());
+	s->TempObj( NULL );
 	if( Npcs->checkPetFriend( targChar, pet ) )
 	{
-		sysmessage( s, 1621 );
+		s->sysmessage( 1621 );
 		return;
 	}
 
 	CHARLIST *petFriends = pet->GetFriendList();
+	// Make sure to cover the STL response
 	if( petFriends != NULL )
 	{
-		if( petFriends->size() >= 20 )
+		if( petFriends->size() >= 10 )
 		{
-			sysmessage( s, 1623 );
+			s->sysmessage( 1623 );
 			return;
 		}
 	}
 
 	pet->AddFriend( targChar );
-	sysmessage( s, 1624, pet->GetName(), targChar->GetName() );
+	s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
 
-	cSocket *targSock = calcSocketObjFromChar( targChar );
+	CSocket *targSock = targChar->GetSocket();
 	if( targSock != NULL )
-		sysmessage( targSock, 1625, mChar->GetName(), pet->GetName() );
+		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
 }
 
-void cTargets::GuardTarget( cSocket *s )
+void GuardTarget( CSocket *s )
 //PRE:	Pet has been commanded to guard
 //POST: Pet guards person, if owner currently
 //DEV:	Abaddon
 //DATE: 3rd October
 {
+	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
-	if( mChar == NULL )
+	if( !ValidateObject( mChar ) )
 		return;
 
-	CChar *petGuarding = calcCharObjFromSer( s->AddID() );
-	if( petGuarding == NULL )
+	CChar *petGuarding = static_cast<CChar *>(s->TempObj());
+	s->TempObj( NULL );
+	if( !ValidateObject( petGuarding ) )
 		return;
+
+	Npcs->stopPetGuarding( petGuarding );
 
 	CChar *charToGuard = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( charToGuard != NULL )
+	if( ValidateObject( charToGuard ) )
 	{
 		if( charToGuard != petGuarding->GetOwnerObj() && !Npcs->checkPetFriend( charToGuard, petGuarding ) )
 		{
-			sysmessage( s, 1628 );
+			s->sysmessage( 1628 );
 			return;
 		}
-		petGuarding->SetNPCAiType( 32 ); // 32 is guard mode
-		petGuarding->SetGuarding( charToGuard->GetSerial() );
+		petGuarding->SetNPCAiType( AI_PET_GUARD ); // 32 is guard mode
+		petGuarding->SetGuarding( charToGuard );
 		mChar->SetGuarded( true );
 		return;
 	}
 	CItem *itemToGuard = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( itemToGuard != NULL && !itemToGuard->isPileable() )
+	if( ValidateObject( itemToGuard ) && !itemToGuard->isPileable() )
 	{
-		CItem *p = getPack( mChar );
-		if( p != NULL )
+		CMultiObj *multi = itemToGuard->GetMultiObj();
+		if( ValidateObject( multi ) )
 		{
-			if( itemToGuard->GetCont() == p || itemToGuard->GetCont() == mChar )
+			if( multi->GetOwnerObj() == mChar )
 			{
+				petGuarding->SetNPCAiType( AI_PET_GUARD );
+				petGuarding->SetGuarding( itemToGuard );
 				itemToGuard->SetGuarded( true );
-				petGuarding->SetGuarding( calcItemFromSer( itemToGuard->GetSerial() ) );
 			}
 		}
 		else
-		{
-			CMultiObj *multi = findMulti( itemToGuard );
-			if( multi != NULL )
-			{
-				if( multi->GetOwnerObj() == mChar )
-				{
-					itemToGuard->SetGuarded( true );
-					petGuarding->SetGuarding( itemToGuard->GetSerial() );
-				}
-			}
-			else
-				sysmessage( s, 1628 );
-		}
+			s->sysmessage( 1628 );
 	}
 }
 
-void cTargets::ResurrectionTarget( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-		NpcResurrectTarget( i );	// npcresurrect checks to see it's valid
-}
-
-void cTargets::HouseLockdown( cSocket *s ) // Abaddon
+void HouseLockdown( CSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house
 // POST:	either locks down the item, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
 // DATE:	17th December, 1999
 {
+	VALIDATESOCKET( s );
 	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( itemToLock != NULL )
+	if( ValidateObject( itemToLock ) )
 	{
 		if( !itemToLock->CanBeLockedDown() )
 		{
-			sysmessage( s, 1106 );
+			s->sysmessage( 1106 );
 			return;
 		}
-		CItem *house = calcItemObjFromSer( s->AddID() );
+		CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
+		s->TempObj( NULL );
 		// time to lock it down!
 		CMultiObj *multi = findMulti( itemToLock );
-		if( multi != NULL )
+		if( ValidateObject( multi ) )
 		{
 			if( multi != house )
 			{
-				sysmessage( s, 1105 );
+				s->sysmessage( 1105 );
 				return;
 			}
-			multi->LockDownItem( itemToLock );
-			RefreshItem( itemToLock );
+			if( multi->GetLockDownCount() < multi->GetMaxLockDowns() )
+			{
+				multi->LockDownItem( itemToLock );
+				UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
+				s->sysmessage( 1786 ); //You lock down the targeted item
+				s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
+			}
+			else
+				s->sysmessage( "You have too many locked down items" );
 			return;
 		}
 		// not in a multi!
-		sysmessage( s, 1107 );
+		s->sysmessage( 1107 );
 	}
 	else
-		sysmessage( s, 1108 );
+		s->sysmessage( 1108 );
 }
 
-void cTargets::HouseRelease( cSocket *s ) // Abaddon
+void HouseRelease( CSocket *s ) // Abaddon
 // PRE:		S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
 // POST:	either releases the item from lockdown, or puts a message to the owner saying he's a moron
 // CODER:	Abaddon
 // DATE:	17th December, 1999
 {
+	VALIDATESOCKET( s );
 	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
 
-	if( itemToLock != NULL || !itemToLock->IsLockedDown() )
+	if( ValidateObject( itemToLock ) ) // || !itemToLock->IsLockedDown() )
 	{
-		CItem *house = calcItemObjFromSer( s->AddID() );	// let's find our house
-		// time to lock it down!
-		CMultiObj *multi = findMulti( itemToLock );
-		if( multi != NULL )
+		if( itemToLock->IsLockedDown() )
 		{
-			if( multi != house )
+			CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
+			s->TempObj( NULL );
+			// time to release it!
+			CMultiObj *multi = findMulti( itemToLock );
+			if( ValidateObject( multi ) )
 			{
-				sysmessage( s, 1109 );
+				if( multi != house )
+				{
+					s->sysmessage( 1109 );
+					return;
+				}
+				if( multi->GetLockDownCount() > 0 )
+				{
+					multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
+					UI16 lockDownsLeft = multi->GetMaxLockDowns() - multi->GetLockDownCount();
+					s->sysmessage( 1787 ); //You lock down the targeted item
+					s->sysmessage( 1788, lockDownsLeft ); //%i lockdowns remaining
+				}
 				return;
 			}
-			multi->RemoveLockDown( itemToLock );	// Default as stored by the client, perhaps we should keep a backup?
-			RefreshItem( itemToLock );
-			return;
+			// not in a multi!
+			s->sysmessage( 1107 );
 		}
-		// not in a multi!
-		sysmessage( s, 1107 );
+		else
+			s->sysmessage( 1785 );
 	}
 	else
-		sysmessage( s, 1108 );
+		s->sysmessage( 1108 );
 }
 
-void cTargets::ShowDetail( cSocket *s ) // Abaddon
-// PRE:		S is the socket of the person getting the item information
-// POST:	prints out detailed information about an item
-// CODER:	Abaddon
-// DATE:	11th January, 2000
+void MakeTownAlly( CSocket *s )
 {
-	char message[512];
-	CItem *itemToCheck = calcItemObjFromSer( s->GetDWord( 7 ) );
-
-	if( itemToCheck != NULL )
-	{
-		switch( itemToCheck->GetType() )
-		{
-		case 0:
-			strcpy( message, "Default type" );
-			break;
-		case 1:	// container/backpack
-			strcpy( message, "Container/backpack:" );
-			if( itemToCheck->GetMoreB( 1 ) > 0 )
-				strcat( message, "Magically trapped" );
-			break;
-		case 2:	// opener for castle gate 1
-			strcpy( message, "Opener for order gate" );
-			break;
-		case 3:	// castle gate 1
-			strcpy( message, "Order gate" );
-			break;
-		case 4:	// opener for castle gate 2
-			strcpy( message, "Opener for Chaos gate" );
-			break;
-		case 5:	// castle gate 2
-			strcpy( message, "Chaos gate" );
-			break;
-		case 6:	// teleporter rune
-			strcpy( message, "Teleporter rune, acts like teleport was cast" );
-			break;
-		case 7:	// key
-			strcpy( message, "Key" );
-			break;
-		case 8:	// locked container
-			strcpy( message, "Locked container:" );
-			if( itemToCheck->GetMoreB( 1 ) > 0 )
-				strcat( message, "Magically trapped" );
-			break;
-		case 9:	// Spellbook (item 14FA)
-			strcpy( message, "Spellbook" );
-			break;
-		case 10:	// map( item 0E EB )
-			strcpy( message, "This opens a map based on the serial num of the item" );
-			break;
-		case 11:	// book
-			sprintf( message, "A book:Entry in misc.scp: %li", itemToCheck->GetMore() );
-			break;
-		case 12:	// doors
-			strcpy( message, "Unlocked door" );
-			break;
-		case 13:	// locked door
-			strcpy( message, "Locked door" );
-			break;
-		case 14:	// food
-			strcpy( message, "Food item, reduces hunger by one point" );
-			break;
-		case 15:	// magic wand
-			sprintf( message, "Magic wand\nCircle: %i:Spell within circle: %i:Charges left: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
-			break;
-		case 16:	// resurrection object
-			strcpy( message, "Resurrection object" );
-			break;
-		case 17:	// full mortar (alchemy)
-			strcpy( message, "Full mortar/alchemy, more info at a later date" );
-			break;
-		case 18:	// enchanted item (Crystal ball)
-			strcpy( message, "Enchanted item that displays a random message" );
-			break;
-		case 19:	// potion
-			strcpy( message, "Potion: " );
-			switch( itemToCheck->GetMoreY() )
-			{
-			case 1: // Agility Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Agility potion" );	break;
-				case 2:		strcat( message, "Greater Agility potion" );	break;
-				default:	strcat( message, "Unknown Agility potion" );	break;
-				}
-				break;
-			case 2: // Cure Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Lesser cure potion" ); break;
-				case 2:		strcat( message, "Cure potion" ); break;
-				case 3:		strcat( message, "Greater Cure potion" ); break;
-				default:	strcat( message, "Unknown cure potion" ); break;
-				}
-				break;
-			case 3: // Explosion Potion
-				strcat( message, "Explosion potion" );
-				break;
-			case 4: // Heal Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Lesser Heal potion" );	break;
-				case 2:		strcat( message, "Heal potion" ); break;
-				case 3:		strcat( message, "Greater Heal potion" ); break;
-				default:	strcat( message, "Unknown Heal potion" );
-				}
-				break;
-			case 5: // Night Sight Potion
-				strcat( message, "Night sight potion" );
-				break;
-			case 6: // Poison Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 0:		strcat( message, "Poison potion with no poison" ); break;
-				case 1:		strcat( message, "Lesser Poison potion" ); break;
-				case 2:		strcat( message, "Poison potion" ); break;
-				case 3:		strcat( message, "Greater Poison potion" ); break;
-				case 4:		strcat( message, "Deadly Poison potion" ); break;
-				default:	strcat( message, "Unknown Poison potion" );  break;
-				}
-				break;
-			case 7: // Refresh Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Lesser Refresh potion" ); break;
-				case 2:		strcat( message, "Refresh potion" );	break;
-				default:	strcat( message, "Unknown Refresh potion" ); break;
-				}
-				break;
-			case 8: // Strength Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Lesser Strength potion" );	break;
-				case 2:		strcat( message, "Strength potion" ); break;
-				default:	strcat( message, "Unknown Strength potion" ); break;
-				}
-				break;
-			case 9: // Mana Potion
-				switch( itemToCheck->GetMoreZ() )
-				{
-				case 1:		strcat( message, "Lesser Mana potion" );	break;
-				case 2:		strcat( message, "Mana potion" ); break;
-				default:	strcat( message, "Unknown Mana potion" ); break;
-				}
-				break;
-			default:
-				strcat( message, "Unknown potion" );
-				break;
-			}
-			break;
-		case 35:	// townstone deed/stone
-			if( itemToCheck->GetID() == 0x14F0 )
-				strcpy( message, "Townstone deed, will make townstone" );
-			else
-				strcpy( message, "Townstone, use to find out information on the town" );
-			break;
-		case 50:	// recall rune
-			if( itemToCheck->GetMoreX() == 0 && itemToCheck->GetMoreY() == 0 && itemToCheck->GetMoreZ() == 0 )	// changed, to fix, Lord Vader
-				strcpy( message,"Unmarked recall rune");
-			else
-				strcpy( message, "This will rename a recall rune" );
-			break;
-		case 51:	// start gate
-			CItem *otherGate1;
-			otherGate1 = calcItemObjFromSer( itemToCheck->GetMoreX() );
-			sprintf( message, "Start gate going to X %i Y %i Z %i", otherGate1->GetX(), otherGate1->GetY(), otherGate1->GetZ() );
-			break;
-		case 52:	// end gate
-			CItem *otherGate2;
-			otherGate2 = calcItemObjFromSer( itemToCheck->GetMoreX() );
-			sprintf( message, "End gate going to X %i Y %i Z %i", otherGate2->GetX(), otherGate2->GetY(), otherGate2->GetZ() );
-			break;
-		case 60:	// object teleporter
-			sprintf( message, "A teleporter going to X %i Y %i Z %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
-			break;
-		case 61:	// item spawner
-			sprintf( message, "Item spawner:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
-			break;
-		case 62:	// monster/npc spanwer
-			sprintf( message, "Monster/NPC spawner:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetAmount(), itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
-			break;
-		case 63:	// spawn container
-			strcpy( message, "Item Spawn container:" );
-			if( itemToCheck->GetMoreB( 1 ) > 0 )
-				strcat( message, "Magically trapped:" );
-			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
-			break;
-		case 64:	// locked spawn container
-			strcpy( message, "Locked item spawn container:" );
-			if( itemToCheck->GetMoreB( 1 ) > 0 )
-				strcat( message, "Magically trapped:" );
-			sprintf( message, "%sRespawn max time: %i:Respawn min time: %i", message, itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
-			break;
-		case 65:	// unlockable item spawner container
-			strcpy( message, "Unlockable item spawner container" );
-			break;
-		case 69:	// area spawner
-			sprintf( message, "Area spawner:X +/- value: %i:Y +/- value: %i:Amount: %i:NpcNum: %i:Respawn max time: %i:Respawn min time: %i", itemToCheck->GetMore( 3 ), itemToCheck->GetMore( 4 ), itemToCheck->GetAmount(), itemToCheck->GetMoreX(), itemToCheck->GetMoreZ(), itemToCheck->GetMoreY() );
-			break;
-		case 80:	// single use advancement gate
-			sprintf( message, "Single use advancement gate: advance.scp entry %i", itemToCheck->GetMoreX() );
-			break;
-		case 81:	// multi-use advancement gate
-			sprintf( message, "Multi use advancement gate: advance.scp entry %i", itemToCheck->GetMoreX() );
-			break;
-		case 82:	// monster gate
-			sprintf( message, "Monster gate: monster number %i", itemToCheck->GetMoreX() );
-			break;
-		case 83:	// race gates
-			sprintf( message, "Race Gate:Turns into %s:", Races->Name( static_cast<RACEID>(itemToCheck->GetMoreX()) ) );
-			if( itemToCheck->GetMoreY() == 1 )
-				strcat( message, "Constantly reuseable:" );
-			else
-				strcat( message, "One time use only:" );
-			if( Races->IsPlayerRace( static_cast<RACEID>(itemToCheck->GetMoreX() )) )
-				strcat( message, "Player Race:" );
-			else
-				strcat( message, "NPC Race only:" );
-			break;
-		case 85:	// damage object
-			sprintf( message, "Damage object:Minimum damage %i:Maximum Damage %i", itemToCheck->GetMoreX() + itemToCheck->GetMoreY(), itemToCheck->GetMoreX() + itemToCheck->GetMoreZ() );
-			break;
-		case 86:	// sound object
-			sprintf( message, "Sound object:Percent chance of sound being played: %i:Sound effect to play: %i %i", itemToCheck->GetMoreZ(), itemToCheck->GetMoreX(), itemToCheck->GetMoreY() );
-			break;
-		case 87:	// trash container
-			strcpy( message, "A trash container" );
-			break;
-		case 88:	// sound object
-			sprintf( message, "Sound object that plays whenever someone is near:Soundeffect: %i\nRadius: %i\nProbability: %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
-			break;
-		case 89:	// map change
-			sprintf( message, "Map Change object that changes world:World: %i", itemToCheck->GetMore() );
-			break;
-		case 100:	// not documented
-			strcpy( message, "Looks like hide/unhide object:More detail to come later\n" );
-			break;
-		case 101:	// morph object morex = npc# in npc.scp
-			sprintf( message, "Morph object:Morphs char into body %x %x", itemToCheck->GetMoreX()>>8, itemToCheck->GetMoreX()%256 );
-			break;
-		case 102:	// unmorph
-			strcpy( message, "Unmorph object, unmorphs back to body before using it as type 101, switches to 101 again" );
-			break;
-		case 103:	// army enlistment object
-			sprintf( message, "Army enlistment object: Army #%i", itemToCheck->GetMoreX() );
-			break;
-		case 104:	// teleport object (use triggers now)
-			sprintf( message, "Teleport object: X %i Y %i Z %i", itemToCheck->GetMoreX(), itemToCheck->GetMoreY(), itemToCheck->GetMoreZ() );
-			break;
-		case 105:	// drink object
-			strcpy( message, "You can drink this" );
-			break;
-		case 117:	// backpack?
-			strcpy( message, "I believe that this is a backpack, though it could be ship related" );
-			break;
-		case 125:	// escort npc spawner
-			strcpy( message, "Escort NPC spawner, behaves like type 62/69" );
-			break;
-		case 181:	// fireworks wand
-			sprintf( message, "A fireworks wand with %i charges left on it", itemToCheck->GetMoreX() );
-			break;
-		case 185:	// smoking type
-			sprintf( message, "Smoking object: Duration %i secs", itemToCheck->GetMoreX() );
-			break;
-		case 202:	// guildstone deed
-			strcpy( message, "Guildstone deed" );
-			break;
-		case 203:	// opens gump menu
-			strcpy( message, "Opens housing gump: " );
-			break;
-		case 217:	// player vendor deed
-			strcpy( message, "Player vendor deed");
-			break;
-		case 234:	// world change gate
-			sprintf( message, "World change gate: %i", itemToCheck->GetMoreX() );
-			break;
-		}
-		sysmessage( s, message );
-	}
-	else
-		sysmessage( s, 1656 );
-}
-
-void cTargets::CommandLevel( cSocket *s )
-{
-	CChar *targToEdit = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( targToEdit != NULL )
-		targToEdit->SetCommandLevel( static_cast<UI08>(s->AddX()) );
-}
-
-void cTargets::MakeTownAlly( cSocket *s )
-{
+	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
-	if( mChar == NULL )
+	if( !ValidateObject( mChar ) )
 		return;
 
 	CChar *targetChar = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( targetChar == NULL )
+	if( !ValidateObject( targetChar ) )
 	{
-		sysmessage( s, 1110 );
+		s->sysmessage( 1110 );
 		return;
 	}
-	UI08 srcTown = mChar->GetTown();
-	UI08 trgTown = targetChar->GetTown();
+	UI16 srcTown = mChar->GetTown();
+	UI16 trgTown = targetChar->GetTown();
 
-//	if( srcTown == trgTown )
-//		sysmessage( s, "That person already belongs to your town" );
-//	else
-//	{
-		if( !region[srcTown]->MakeAlliedTown( trgTown ) )	
-			sysmessage( s, 1111 );
-//	}
+	if( !cwmWorldState->townRegions[srcTown]->MakeAlliedTown( trgTown ) )	
+		s->sysmessage( 1111 );
 }
 
-void cTargets::MakeStatusTarget( cSocket *sock )
+void MakeStatusTarget( CSocket *sock )
 {
+	VALIDATESOCKET( sock );
 	CChar *targetChar = calcCharObjFromSer( sock->GetDWord( 7 ) );
-	if( targetChar == NULL )
+	if( !ValidateObject( targetChar ) )
 	{
-		sysmessage( sock, 1110 );
+		sock->sysmessage( 1110 );
 		return;
 	}
-	UI08 origCommand = targetChar->GetCommandLevel();
-
-	commandLevel_st *targLevel = Commands->GetClearance( sock->XText() );
-	commandLevel_st *origLevel = Commands->GetClearance( origCommand );
+	UI08 origCommand			= targetChar->GetCommandLevel();
+	commandLevel_st *targLevel	= Commands->GetClearance( sock->XText() );
+	commandLevel_st *origLevel	= Commands->GetClearance( origCommand );
 	
 	if( targLevel == NULL )
 	{
-		sysmessage( sock, 1112 );
+		sock->sysmessage( 1112 );
 		return;
 	}
 	CChar *mChar = sock->CurrcharObj();
@@ -4065,7 +1444,7 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 
 	UI08 targetCommand = targLevel->commandLevel;
 	sprintf( temp, "account%i.log", mChar->GetAccount().wAccountIndex );
-	sprintf( temp2, "%s has made %s a %s.\n", mChar->GetName(), targetChar->GetName(), targLevel->name );
+	sprintf( temp2, "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
 	Console.Log( temp2, temp );
 
 	DismountCreature( targetChar );
@@ -4073,19 +1452,20 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 	if( targLevel->targBody != 0 )
 	{
 		targetChar->SetID( targLevel->targBody );
-		targetChar->SetSkin( targLevel->bodyColour );
-		targetChar->SetxID( targLevel->targBody );
 		targetChar->SetOrgID( targLevel->targBody );
-		targetChar->SetxSkin( targLevel->bodyColour );
+	}
+	if( targLevel->bodyColour != 0 )
+	{
+		targetChar->SetSkin( targLevel->bodyColour );
+		targetChar->SetOrgSkin( targLevel->bodyColour );
 	}
 
-	targetChar->SetPriv( (targLevel->defaultPriv)%256 );
-	targetChar->SetPriv2( (targLevel->defaultPriv)>>8 );
+	targetChar->SetPriv( targLevel->defaultPriv );
 	targetChar->SetCommandLevel( targetCommand );
 	
 	if( targLevel->allSkillVals != 0 )
 	{
-		for( UI08 j = 0; j < TRUESKILLS; j++ )
+		for( UI08 j = 0; j < ALLSKILLS; ++j )
 		{
 			targetChar->SetBaseSkill( targLevel->allSkillVals, j );
 			targetChar->SetSkill( targLevel->allSkillVals, j );
@@ -4097,105 +1477,88 @@ void cTargets::MakeStatusTarget( cSocket *sock )
 		targetChar->SetHP( 100 );
 		targetChar->SetMana( 100 );
 	}
-	char *playerName = (char *)targetChar->GetName();
 
+	UString playerName = targetChar->GetName();
+	if( targetCommand != origCommand && origLevel != NULL )
+	{
+		const size_t position = playerName.find( origLevel->name );
+		if( position != std::string::npos )
+			playerName.replace( position, origLevel->name.size(), "" );
+	}
 	if( targetCommand != 0 && targetCommand != origCommand )
-	{
-		if( origLevel != NULL )
-		{	// Strip name off it
-			if( !strnicmp( origLevel->name, playerName, strlen( origLevel->name ) ) )
-				playerName += ( strlen( origLevel->name ) + 1 );
-		}
-		sprintf( temp, "%s %s", targLevel->name, playerName );
-		targetChar->SetName( temp );
-	}
+		targetChar->SetName( UString::sprintf( "%s %s", targLevel->name.c_str(), playerName.stripWhiteSpace().c_str() ).stripWhiteSpace() );
 	else if( origCommand != 0 )
-	{
-		if( origLevel != NULL )
-		{	// Strip name off it
-			if( !strnicmp( origLevel->name, playerName, strlen( origLevel->name ) ) )
-				playerName += ( strlen( origLevel->name ) + 1 );
-		}
-		strcpy( temp, (const char*)playerName );
-		targetChar->SetName( temp );
-	}
-	CItem *retitem = NULL;
-	CItem *mypack = getPack( targetChar );
+		targetChar->SetName( playerName.stripWhiteSpace() );
 
-	if( targLevel->stripOff )
+	CItem *mypack	= targetChar->GetPackItem();
+
+	if( targLevel->stripOff.any() )
 	{
-		for( UI08 lyrCounter = 0; lyrCounter < MAXLAYERS; lyrCounter++ )
+		for( CItem *z = targetChar->FirstItem(); !targetChar->FinishedItems(); z = targetChar->NextItem() )
 		{
-			CItem *z = targetChar->GetItemAtLayer( lyrCounter );
-			if( z != NULL )
+			if( ValidateObject( z ) )
 			{
-				switch( lyrCounter )
+				switch( z->GetLayer() )
 				{
-				case 0x0B:
-				case 0x10:
-					Items->DeleItem( z );
-					break;
-				case 0x15:
-				case 0x1D:
-					break;
-				default:
-					if( mypack == NULL )
-						mypack = getPack( targetChar );
-					if( mypack == NULL )
-					{
-						CItem *iMade = Items->SpawnItem( NULL, targetChar, 1, "#", false, 0x0E75, 0, false, false );
-						targetChar->SetPackItem( iMade );
-						if( iMade == NULL ) 
-							return;
-						iMade->SetLayer( 0x15 );
-						if( iMade->SetCont( targetChar ) )
+					case IL_HAIR:
+					case IL_FACIALHAIR:
+						if( targLevel->stripOff.test( BIT_STRIPHAIR ) )
+							z->Delete();
+						break;
+					case IL_NONE:
+					case IL_MOUNT:
+					case IL_PACKITEM:
+					case IL_BANKBOX:
+						break;
+					default:
+						if( targLevel->stripOff.test( BIT_STRIPITEMS ) )
 						{
-							iMade->SetType( 1 );
-							iMade->SetDye( true );
-							mypack = iMade;
-							retitem = iMade;
+							if( !ValidateObject( mypack ) )
+								mypack = targetChar->GetPackItem();
+							if( !ValidateObject( mypack ) )
+							{
+								CItem *iMade = Items->CreateItem( NULL, targetChar, 0x0E75, 1, 0, OT_ITEM );
+								if( !ValidateObject( iMade ) ) 
+									return;
+								targetChar->SetPackItem( iMade );
+								iMade->SetDecayable( false );
+								iMade->SetLayer( IL_PACKITEM );
+								if( iMade->SetCont( targetChar ) )
+								{
+									iMade->SetType( IT_CONTAINER );
+									iMade->SetDye( true );
+									mypack = iMade;
+								}
+							}
+							z->SetCont( mypack );
+							z->PlaceInPack();
 						}
-					}
-					z->SetX( ( RandomNum( 0, 79 ) + 50 ) );
-					z->SetY( ( RandomNum( 0, 79 ) + 50 ) );
-					z->SetZ( 9 );
-					z->SetCont( mypack );
-
-					CPRemoveItem toRemove = (*z);
-					
-					Network->PushConn();
-					for( cSocket *cSock = Network->FirstSocket(); !Network->FinishedSockets(); cSock = Network->NextSocket() )
-						cSock->Send( &toRemove );
-					Network->PopConn();
-					RefreshItem( z );
-					break;
+						break;
 				}
 			}
 		}
 	}
-	if( targLevel->targBody != 0 )
-		targetChar->Teleport();
-	else
-		targetChar->Update();
+	targetChar->Teleport();
 }
 
-void cTargets::SmeltTarget( cSocket *s )
+void SmeltTarget( CSocket *s )
 {
-#pragma note( "Smelting needs to be heavily updated" )
+	VALIDATESOCKET( s );
+
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL || i->GetCont() == NULL )
+	if( !ValidateObject( i ) || i->GetCont() == NULL )
 		return;
 	if( i->GetCreator() == INVALIDSERIAL )
 	{
-		sysmessage( s, 1113 );
+		s->sysmessage( 1113 );
 		return;
 	}
-	SI32 iMadeFrom = i->EntryMadeFrom();
+	UI16 iMadeFrom = i->EntryMadeFrom();
 
-	createEntry *ourCreateEntry = Skills->FindItem( static_cast<UI16>(iMadeFrom ));
-	if( iMadeFrom == -1 || ourCreateEntry == NULL )
+	createEntry *ourCreateEntry = Skills->FindItem( iMadeFrom );
+	if( iMadeFrom == 0 || ourCreateEntry == NULL )
 	{
-		sysmessage( s, 1114 );
+		s->sysmessage( 1114 );
 		return;
 	}
 
@@ -4204,66 +1567,223 @@ void cTargets::SmeltTarget( cSocket *s )
 	R32 avgMin = ourCreateEntry->AverageMinSkill();
 	if( mChar->GetSkill( MINING ) < avgMin )
 	{
-		sysmessage( s, 1115 );
+		s->sysmessage( 1115 );
 		return;
 	}
 	R32 avgMax = ourCreateEntry->AverageMaxSkill();
 
 	Skills->CheckSkill( mChar, MINING, (SI16)avgMin, (SI16)avgMax );
 
-	R32 sumAmountRestored = 0.0f;
+	UI08 sumAmountRestored = 0;
 
-	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); skCtr++ )
+	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		UI16 itemID = ourCreateEntry->resourceNeeded[skCtr].itemID;
+		UString itemID = UString::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
-		Items->SpawnItem( s, mChar, amtToRestore, "#", true, itemID, itemColour, true, true );
+		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );
 	}
-
-	sysmessage( s, 1116, sumAmountRestored );
-	Items->DeleItem( i );
+	
+	s->sysmessage( 1116, sumAmountRestored );
+	i->Delete();
 }
 
-void cTargets::IncZTarget( cSocket *s )
+void VialTarget( CSocket *mSock )
 {
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( i != NULL )
-	{
-		i->IncZ( static_cast<SI16>(s->AddX()) );
-		RefreshItem( i );
+	VALIDATESOCKET( mSock );
+	SERIAL targSerial = mSock->GetDWord( 7 );
+	if( targSerial == INVALIDSERIAL )
 		return;
-	}
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( c != NULL )
-	{
-		c->SetLocation( c->GetX(), c->GetY(), static_cast<SI08>(c->GetZ() + s->AddX()) );
-		c->Teleport();
-	}
-}
 
-void cTargets::DeleteCharTarget( cSocket *s )
-{
-	CChar *c = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( s->CurrcharObj() == c )
-	{
-		sysmessage( s, "You cannot delete yourself" );
+	CChar *mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
 		return;
-	}
-	if( c != NULL )
+
+	CItem *nVialID = static_cast<CItem *>(mSock->TempObj());
+	mSock->TempObj( NULL );
+	if( ValidateObject( nVialID ) )
 	{
-		if( c->IsNpc() )
+		CItem *nDagger = Combat->getWeapon( mChar );
+		if( !ValidateObject( nDagger ) ) 
 		{
-			sysmessage( s, 1658 );
+			mSock->sysmessage( 742 );
 			return;
 		}
-		if( isOnline( c ) )
+		if( nDagger->GetID() != 0x0F51 && nDagger->GetID() != 0x0F52 )
 		{
-			cSocket *tSock = calcSocketObjFromChar( c );
-			sysmessage( tSock, 1659 );
-			Network->Disconnect( calcSocketFromSockObj( tSock ) );
+			mSock->sysmessage( 743 );
+			return;
 		}
-		Npcs->DeleteChar( c );
+
+		nVialID->SetTempVar( CITV_MORE, 1, 0 );
+		if( targSerial >= BASEITEMSERIAL )
+		{	// it's an item
+			CItem *targItem = calcItemObjFromSer( targSerial );
+			if( !targItem->isCorpse() )
+				mSock->sysmessage( 749 );
+			else
+			{
+				nVialID->SetTempVar( CITV_MORE, 1, targItem->GetTempVar( CITV_MORE, 1 ) );
+				Karma( mChar, NULL, -1000 );
+				if( targItem->GetTempVar( CITV_MORE, 2 ) < 4 )
+				{
+					mSock->sysmessage( 750 );
+					Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
+					targItem->SetTempVar( CITV_MORE, 2, targItem->GetTempVar( CITV_MORE, 2 ) + 1 );
+				}
+				else 
+					mSock->sysmessage( 751 );
+			}
+		}
+		else
+		{	// it's a char
+			CChar *targChar = calcCharObjFromSer( targSerial );
+			if( targChar == mChar )
+			{
+				if( targChar->GetHP() <= 10 )
+					mSock->sysmessage( 744 );
+				else
+					mSock->sysmessage( 745 );
+			}
+			else if( objInRange( mChar, targChar, DIST_NEARBY ) )
+			{
+				if( targChar->IsNpc() )
+				{
+					if( targChar->GetID( 1 ) == 0x00 && ( targChar->GetID( 2 ) == 0x0C ||
+						( targChar->GetID( 2 ) >= 0x3B && targChar->GetID( 2 ) <= 0x3D ) ) )
+						nVialID->SetTempVar( CITV_MORE, 1, 1 );
+				}
+				else
+				{
+					CSocket *nCharSocket = targChar->GetSocket();
+					nCharSocket->sysmessage( 746, mChar->GetName().c_str() );
+				}
+				if( WillResultInCriminal( mChar, targChar ) )
+					criminal( mChar );
+				Karma( mChar, targChar, -targChar->GetKarma() );
+			}
+			else
+			{
+				mSock->sysmessage( 747 );
+				return;
+			}
+			targChar->Damage( RandomNum( 0, 5 ) + 2 );
+			Skills->MakeNecroReg( mSock, nVialID, 0x0E24 );
+		}
+	}	
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function		-	void MultiTarget( CSocket *s )
+//|	Date			-	Unknown
+//|	Developers		-	Unknown
+//|	Organization	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Runs various commands based upon the target ID we sent to the socket
+//o--------------------------------------------------------------------------o
+//| Modifications	-	Overhauled to use an enum allowing simple modification (Zane)
+//o--------------------------------------------------------------------------o
+bool CPITargetCursor::Handle( void )
+{
+	CChar *mChar = tSock->CurrcharObj();
+	if( tSock->TargetOK() )
+	{
+		if( !tSock->GetByte( 1 ) && !tSock->GetDWord( 7 ) && tSock->GetDWord( 11 ) == INVALIDSERIAL )
+		{
+			if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
+				mChar->StopSpell();
+			return true; // do nothing if user cancels, avoids CRASH! - Morrolan
+		}
+		if( tSock->GetByte( 1 ) == 1 && !tSock->GetDWord( 7 ) )
+			tSock->SetDWord( 7, INVALIDSERIAL );	// Client sends TargSer as 0 when we target an XY/Static, use INVALIDSERIAL as 0 could be a valid Serial - giwo
+
+		UI08 a1 = tSock->GetByte( 2 );
+		UI08 a2 = tSock->GetByte( 3 );
+		UI08 a3 = tSock->GetByte( 4 );
+		TargetIDs targetID = (TargetIDs)tSock->GetByte( 5 );
+		tSock->TargetOK( false );
+		if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().wAccountIndex != 0 )
+		{
+			tSock->sysmessage( 1008 );
+			if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right
+				mChar->StopSpell();
+			return true;
+		}
+		if( a1 == 0 && a2 == 1 )
+		{
+			if( a3 == 2 )	// Guilds
+			{
+				HandleGuildTarget( tSock );
+				return true;
+			}
+			else if( a3 == 1 )	// CustomTarget
+			{
+				cScript *tScript	=(cScript *)tSock->TempInt();
+				if( tScript != NULL )
+					tScript->DoCallback( tSock, tSock->GetDWord( 7 ), static_cast<UI08>(targetID) );
+				return true;
+			}
+ 			else if( a3 == 0 )
+			{
+				switch( targetID )
+				{
+					case TARGET_ADDSCRIPTNPC:	AddScriptNpc( tSock );					break;
+					case TARGET_BUILDHOUSE:		BuildHouseTarget( tSock );				break;
+					case TARGET_TELE:			TeleTarget( tSock );					break;	
+					case TARGET_DYE:			DyeTarget( tSock );						break;
+					case TARGET_KEY:			KeyTarget( tSock );						break;
+					case TARGET_DYEALL:			ColorsTarget( tSock );					break;
+					case TARGET_DVAT:			DvatTarget( tSock );					break;
+					case TARGET_INFO:			InfoTarget( tSock );					break;
+					case TARGET_WSTATS:			WstatsTarget( tSock );					break;
+					case TARGET_NPCRESURRECT:	NpcResurrectTarget( mChar );			break;
+					case TARGET_TWEAK:			TweakTarget( tSock );					break;
+					case TARGET_MAKESTATUS:		MakeStatusTarget( tSock );				break;
+					case TARGET_SETSCPTRIG:		HandleSetScpTrig( tSock );				break;
+					case TARGET_LOADCANNON:		LoadCannon( tSock );					break;
+					case TARGET_VIAL:			VialTarget( tSock );					break;
+					case TARGET_TILING:			Tiling( tSock );						break;
+					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;
+					// Vendors
+					case TARGET_PLVBUY:			PlVBuy( tSock );						break;
+					// Town Stuff
+					case TARGET_TOWNALLY:		MakeTownAlly( tSock );					break;
+					case TARGET_VOTEFORMAYOR:	cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor( tSock ); break;
+					// House Functions
+					case TARGET_HOUSEOWNER:		HouseOwnerTarget( tSock );				break;
+					case TARGET_HOUSEEJECT:		HouseEjectTarget( tSock );				break;
+					case TARGET_HOUSEBAN:		HouseBanTarget( tSock );				break;
+					case TARGET_HOUSEFRIEND:	HouseFriendTarget( tSock );				break;
+					case TARGET_HOUSEUNLIST:	HouseUnlistTarget( tSock );				break;
+					case TARGET_HOUSELOCKDOWN:	HouseLockdown( tSock );					break;
+					case TARGET_HOUSERELEASE:	HouseRelease( tSock );					break;
+					// Pets
+					case TARGET_FOLLOW:			FollowTarget( tSock );					break;
+					case TARGET_ATTACK:			AttackTarget( tSock );					break;
+					case TARGET_TRANSFER:		TransferTarget( tSock );				break;
+					case TARGET_GUARD:			GuardTarget( tSock );					break;
+					case TARGET_FRIEND:			FriendTarget( tSock );					break;
+					// Magic
+					case TARGET_CASTSPELL:		Magic->CastSpell( tSock, mChar );		break;					
+					// Skills Functions
+					case TARGET_ITEMID:			Skills->ItemIDTarget( tSock );			break;
+					case TARGET_FISH:			Skills->FishTarget( tSock );			break;
+					case TARGET_SMITH:			Skills->Smith( tSock );					break;
+					case TARGET_MINE:			Skills->Mine( tSock );					break;
+					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
+					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
+					case TARGET_SMELT:			SmeltTarget( tSock );					break;
+					case TARGET_STEALING:		Skills->StealingTarget( tSock );		break;
+					case TARGET_PARTYADD:		PartyFactory::getSingleton().CreateInvite( tSock );	break;
+					case TARGET_PARTYREMOVE:	PartyFactory::getSingleton().Kick( tSock );			break;
+					default:															break;
+				}
+			}
+		}
 	}
+	mChar->BreakConcentration( tSock );
+	return true;
+}
+
 }

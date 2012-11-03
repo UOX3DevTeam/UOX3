@@ -17,6 +17,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x0f50]
@@ -36,6 +38,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x13b1]
@@ -46,8 +50,8 @@ id=0x13b1
 weight=700
 value=46 23
 layer=2
-lodamage=9
-hidamage=41
+lodamage=15
+hidamage=15
 hp=31 60
 spd=20
 str=20
@@ -55,6 +59,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
 }
 
 [0x13b2]
@@ -74,6 +80,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
 }
 
 [0x13fc]
@@ -93,6 +101,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x13fd]
@@ -112,6 +122,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x0f3f]

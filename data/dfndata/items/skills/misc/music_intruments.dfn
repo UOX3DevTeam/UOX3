@@ -70,3 +70,20 @@ weight=100
 value=24 12
 }
 
+[0x2805]
+{
+get=base_instrument
+name=bamboo flute
+id=0x2805
+weight=100
+value=24 12
+}
+
+[0x2807]
+{
+get=base_instrument
+name=bamboo flute
+id=0x2807
+weight=100
+value=24 12
+}

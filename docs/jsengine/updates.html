@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,16 +7,97 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>Functions, Methods, Properties and Event handling</h3>
 </center>
-<h2>Revision History - Last Update: 28 July 2004</h2>
+<h2>Revision History - Last Update: 18 March 2012 </h2>
 <table border="1" width="100%" cellspacing="0" cellpadding="2">
   <tr>
     <th bgcolor="maroon">Version
-    <th bgcolor="maroon">Change 
+    <th bgcolor="maroon">Change
+  <tr>
+    <td>0.48</td>
+    <td>
+	<b>Gump Methods Added:</b> AddButtonTileArt, AddGumpColor, AddPictureColor, AddTextEntryLimited, AddToolTip, AddXMFHTMLTok<br>
+    </td>
+  </tr>        
+  <tr>
+    <td>0.47</td>
+    <td>
+	<b>Events Added:</b> onVirtueGumpPress, onDropItemOnItem, onWeatherChange, onTempChange, onCallback#, onGumpInput, onEnterRegion, onLeaveRegion, onSpellGain, onSpellLoss, onCommand, onPacketReceive, onBuy, onBuyFromVendor, onBoughtFromVendor, onSell, onSellToVendor, onSoldToVendor<br>
+	<b>Events Updated:</b> onDeathBlow<br>
+	<b>Events Removed:</b> onPortal (unused), onXYZEvent (unused)<br>
+	<b>Character Methods Updated:</b> AddSpell, SpellFail, SpellMoveEffect, SpellStaticEffect, BreakConcentration, FindItemType, InitWanderArea, ReactOnDamage, Damage, Heal<br>
+	<b>Item Methods Added:</b> Refresh <br>
+	<b>Race Functions Added:</b> CanWearArmor <br>
+	<b>Socket Methods Added:</b> SendAddMenu <br>
+	<b>Common Methods Updated:</b> ApplySection, CanSee <br>
+	<b>Packet Methods Added:</b> RegisterPacket, ReserveSize, WriteByte, WriteShort, WriteLong, WriteString, Send, Free <br>
+	<b>Misc Methods Added:</b> GetTimer, SetTimer, Moon, CreateParty, GetSocketFromIndex, AreaItemFunction<br>
+    </td>
+  </tr>        
+  <tr>
+    <td>0.46</td>
+    <td>
+	<b>Updated:</b> All references to onUse() changed to onUseChecked()<br>
+    </td>
+  </tr>        
+  <tr>
+    <td>0.45</td>
+    <td>
+	<b>Added:</b> ODBC object<br>
+	<b>ODBC Methods Added:</b>	BeginTransaction, FinaliseTransaction, ExecuteQuery, QueryRelease, FetchRow, GetColumn, LastOK<br />
+	<b>ODBC Properties Added:</b> lastOK<br>
+	<b>Updated:</b> CSS of this documentation.  Updated DOCTYPE of the pages.  Updated contact on FAQ to point to uox3.org forums.<br>
+    </td>
+  </tr>    
+  <tr>
+    <td>0.44</td>
+    <td>
+	<b>Events Added:</b> onCombatDamageCalc, onDamage, onDeathBlow<br>
+	<b>Functions Added:</b> ApplyDefenseModifiers, ApplyDamageBonuses, ValidateObject, ResourceRegion, ResourceTime, ResourceAmount, ResourceArea, ReloadJSFile<br>
+	<b>Character Methods Added:</b>	Defense<br>
+	<b>Item Methods Added:</b> Carve<br>
+	<b>Common Methods Added:</b> Resist<br>
+	<b>Socket Methods Added:</b> DisplayDamage<br>
+	<b>Console Methods Added:</b> Print, Log, Error, Warning, PrintSectionBegin, TurnYellow, TurnRed, TurnGreen, TurnBlue, TurnNormal, TurnBrightWhite, PrintDone, PrintFailed, PrintPassed, ClearScreen, PrintBasedOnVal, MoveTo, PrintSpecial, BeginShutdown, Reload
+	<b>Resource Functions Added:</b> ResourceRegion, ResourceTime, ResourceArea, ResourceAmount<br>
+	<b>Console Properties Added:</b> mode, logEcho<br>
+	<b>Character Properties Added:</b> orgID, orgSkin, isAnimal, isHuman, isShop, attackFirst<br>
+	<b>Item Properties Added:</b> carveSection, tempTimer<br>
+	<b>Resource Properties Added:</b> logAmount, logTime, oreAmount, oreTime
+    </td>
+  </tr>    
+  <tr>
+    <td>0.43</td>
+    <td>
+	<b>Events Added:</b> onCharDoubleClick, onSkillGump, onCombatStart, onCombatEnd<br>
+    </td>
+  </tr>    
+  <tr>
+    <td>0.42</td>
+    <td>
+	<b>Item Methods Added:</b> LockDown<br>
+	<b>Item Properties Added:</b> isNewbie, isDispellable, isPileable, isDyeable, isWipeable, isGuarded, isDoorOpen, isFieldSpell, isLockedDown, isShieldType, isMetalType, isLeatherType, canBeLockedDown, isContType, madeWith, entryMadeFrom<br>
+	<b>Character Properties Updated:</b> isPolymorphed, isIncognito, canRun, isMeditating, isGM, canBroadcast, singClickSer, noSkillTitles, isGMPageable, canSnoop, isCounselor, noNeedMana, isDispellable, noNeedReags
+    </td>
+  </tr>
+  <tr>
+    <td>0.41</td>
+    <td><b>Events Changed:</b> onCreateDFN &amp; onCreateTile instead of onCreate, onDrop<br>
+	<b>Socket Properties Updated:</b> wasIdleWarned, firstPacket, cryptClient, walkSequence, currentSpellType, pickupX, pickupY, pickupZ, pickupSpot, language, target<br>
+	<b>Item Properties Updated:</b> scripttrigger, worldnumber, movable, raceID, race, rank, desc, <br>
+	<b>Character Properties Updated:</b> scripttrigger, worldnumber, charpack, hunger, race, criminal, murderer, innocent, gender, region, town, guild, socket, raceID, magicReflect, tamed, isUsingPotion, stealth, skillToTame<br>
+	<b>Guild Properties Updated:</b> name, type, numMembers, numRecruits, charter, abbreviation, webpage<br>
+	<b>Race Properties Added:</b> id, name, weakToWeather, requiresBeard, requiresNoBeard, isPlayerRace, genderRestrict, armourClass, languageSkillMin, skillAdjustment, poisonReistance, magicResistance, visibleDistance, nightVision<br>
+	<b>Region Properties Added:</b> name, mayor, race, tax, taxResource, canMark, canRecall, canGate, isGuarded, canCastAggressive, health, isDungeon, chanceBigOre, chanceColourOre, numOrePrefs, orePrefs, population, members<br>
+	<b>Spell Properties Added:</b> id, action, delay, health, stamina, mana, mantra, strToSay, scrollLow, scrollHigh, circle, loSkill, highSkill, ginseng, moss, drake, pearl, silk, ash, shade, garlic, requireTarget, requireItem, requireLocation, requireChar, travelSpell, fieldSpell, reflectable, agressiveSpell, resistable, soundEffect, enabled<br>
+	<b>Account Properties Added:</b> username, password, flags, path, comment, character1, character2, character3, character4, character5, character6
+    </td>
+  </tr>
+
   <tr>
     <td>0.40</td>
     <td><b>Events Added:</b> onIterate<br>

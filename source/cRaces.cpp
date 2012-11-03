@@ -7,19 +7,32 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "cEffects.h"
+#include "classes.h"
+#include "CJSEngine.h"
+#include "power.h"
 
-const RACEREL MIN_ENEMY = -1;
-const RACEREL MIN_ALLY  = -1;
-const RACEREL NEUTRAL   = 0;
+namespace UOX
+{
+
+cRaces *Races = NULL;
+
+const UI08 MALE = 1;
+const UI08 FEMALE = 2;
+
 const RACEREL MAX_ENEMY = -100;
 const RACEREL MAX_ALLY  = 100;
 
+const UI32 BIT_REQBEARD		= 0;
+const UI32 BIT_NOBEARD		= 1;
+const UI32 BIT_PLAYERRACE	= 2;
+const UI32 BIT_NOHAIR		= 3;
+
 bool cRaces::InvalidRace( RACEID x ) const
 {
-	return( x >= races.size() );
+	return ( x >= races.size() );
 }
 
-const char *cRaces::Name( RACEID race ) const
+const std::string cRaces::Name( RACEID race ) const
 // PRE:	race is a valid race
 // POST:	returns pointer to a string
 {
@@ -41,12 +54,14 @@ cRaces::~cRaces( void )
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
-	for( UI32 i = 0; i < races.size(); i++ )
+	JSEngine->ReleaseObject( IUE_RACE, this );
+
+	for( size_t i = 0; i < races.size(); ++i )
 	{
 		delete races[i];
 		races[i] = NULL;
 	}
-	races.resize( 0 );
+	races.clear();
 }
 
 void cRaces::DefaultInitCombat( void )
@@ -66,23 +81,22 @@ void cRaces::load( void )
 	UI32 raceCount = 0;
 	bool done = false;
 
-	char sect[512];
-	const char *tag = NULL;
-	const char *data = NULL;
+	UString sect;
+	UString tag;
+	UString data;
 
 	while( !done )
 	{
-		sprintf( sect, "RACE %d", raceCount );
+		sect					= "RACE " + UString::number( raceCount );
 		ScriptSection *tempSect = FileLookup->FindEntry( sect, race_def );
 		if( tempSect == NULL )
 			done = true;
 		else
-			raceCount++;
+			++raceCount;
 	}
 
-	races.resize( raceCount );
-	for( i = 0; i < raceCount; i++ )
-		races[i] = new CRace( raceCount );
+	for( i = 0; i < raceCount; ++i )
+		races.push_back( new CRace( raceCount ) );
 
 	ScriptSection *CombatMods = FileLookup->FindEntry( "COMBAT MODS", race_def );
 	if( CombatMods != NULL )
@@ -94,14 +108,14 @@ void cRaces::load( void )
 		}
 		else
 		{
-			if( strcmp( tag, "MODCOUNT" ) )
+			if( tag.upper() != "MODCOUNT" )
 			{
 				Console << "MODCOUNT must come before any entries!" << myendl;
 				DefaultInitCombat();
 			}
 			else
 			{
-				UI32 modifierCount = makeNum( CombatMods->GrabData() );
+				UI32 modifierCount = CombatMods->GrabData().toULong();
 				if( modifierCount < 4 )
 				{
 					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;
@@ -110,12 +124,12 @@ void cRaces::load( void )
 				else
 				{
 					combat.resize( modifierCount );
-					for( i = 0; i < modifierCount; i++ )
+					for( i = 0; i < modifierCount; ++i )
 					{
 						tag = CombatMods->Next();
 						data = CombatMods->GrabData();
-						if( data != NULL )
-							combat[i].value = static_cast<UI08>(makeNum( data ));
+						if( !data.empty() )
+							combat[i].value = data.toUByte();
 						else
 							combat[i].value = 100;
 					}
@@ -127,54 +141,32 @@ void cRaces::load( void )
 	{
 		DefaultInitCombat();
 	}
-	for( i = 0; i < raceCount; i++ )
-	{
-		races[i]->Load( i, combat.size() );
-	}
+	for( size_t er = 0; er < raceCount; ++er )
+		races[er]->Load( er, combat.size() );
 }
 
-SI08 cRaces::Compare( PLAYER player1, PLAYER player2 ) const
-// PRE: player1.race and player2.race are below the maximum number of races
-// POST: Returns 0 if no enemy or ally, 1 if enemy, or 2 if ally
+RaceRelate cRaces::Compare( CChar *player1, CChar *player2 ) const
 {
-	RACEID r1 = chars[player1].GetRace();
-	RACEID r2 = chars[player2].GetRace();
-	if( r1 >= races.size() ) // invalid race?
-	{
-		Console.Error( 2, Dictionary->GetEntry( 368 ), player1, r1 );
-		return 0;
-	}
-	else if( r2 >= races.size() ) // invalid race?
-	{
-		Console.Error( 2, Dictionary->GetEntry( 368 ), player2, r2 );
-		return 0;
-	}
-	else
-		return races[r1]->RaceRelation( r2 ); // enemy race
-}
-
-SI08 cRaces::Compare( CChar *player1, CChar *player2 ) const
-{
-	if( player1 == NULL || player2 == NULL )
-		return 0;
+	if( !ValidateObject( player1 ) || !ValidateObject( player2 ) )
+		return RACE_NEUTRAL;
 	RACEID r1 = player1->GetRace();
 	RACEID r2 = player2->GetRace();
 	if( r1 >= races.size() || r2 >= races.size() )
-		return 0;
+		return RACE_NEUTRAL;
 	return races[r1]->RaceRelation( r2 );
 }
 
-SI08 cRaces::CompareByRace( RACEID race1, RACEID race2 ) const
+RaceRelate cRaces::CompareByRace( RACEID race1, RACEID race2 ) const
 // PRE: race1 and race2 are below the maximum number of races
-// POST: Returns 0 if no enemy or ally, 1 if enemy, or 2 if ally
+// POST: Returns 0 if no enemy or ally, -1 if enemy, or 1 if ally
 {
 	if( race1 >= races.size() ) // invalid race?
 	{
-		return 0;
+		return RACE_NEUTRAL;
 	}
 	else if( race2 >= races.size() ) // invalid race?
 	{
-		return 0;
+		return RACE_NEUTRAL;
 	}
 	else
 		return races[race1]->RaceRelation( race2 ); // enemy race
@@ -184,46 +176,44 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 // PRE:	PLAYER s is valid, x is a race index and always = 0 or 1
 // POST: PLAYER s belongs to new race x or doesn't change based on restrictions
 {
-	if( s == NULL )
+	if( !ValidateObject( s ) )
 		return;
 	CItem *hairobject = NULL, *beardobject = NULL;
-	UI16 hairColor = 0;
 
 	CRace *pRace = Race( x );
 	if( pRace == NULL )
 		return;
 
-	cSocket *mSock = calcSocketObjFromChar( s );
+	CSocket *mSock = s->GetSocket();
 	if( !pRace->IsPlayerRace() )
 	{
-		sysmessage( mSock, 369 );
+		mSock->sysmessage( 369 );
 		return;
 	}
 	if( s->GetRaceGate() == 65535 || always )
 	{
+		UI16 hairColor = 0;
 		std::map< UI08, std::string > lossMap;
 
 		lossMap[STRENGTH] = "strength";
 		lossMap[DEXTERITY] = "speed";
 		lossMap[INTELLECT] = "wisdom";
 	
-		beardobject = s->GetItemAtLayer( 0x10 );
-		hairobject	= s->GetItemAtLayer( 0x0B );
+		beardobject = s->GetItemAtLayer( IL_FACIALHAIR );
+		hairobject	= s->GetItemAtLayer( IL_HAIR );
 		if( pRace->GenderRestriction() != 0 )
 		{
-			if( pRace->GenderRestriction() != FEMALE && s->GetID() == 0x0191 )
+			if( pRace->GenderRestriction() != FEMALE && ( s->GetID() == 0x0191 || s->GetID() == 0x025E || s->GetID() == 0x029B || s->GetID() == 0x02EF || s->GetID() == 0x00B8 || s->GetID() == 0x00BA ) )
 			{
-				sysmessage( mSock, 370 );
+				mSock->sysmessage( 370 );
 				return;
 			}
-			if( pRace->GenderRestriction() != MALE && s->GetID() == 0x0190 )
+			if( pRace->GenderRestriction() != MALE && ( s->GetID() == 0x0190 || s->GetID() == 0x025D || s->GetID() == 0x029A || s->GetID() == 0x02EE || s->GetID() == 0x00B7 || s->GetID() == 0x00B9 ) )
 			{
-				sysmessage( mSock, 370 );
+				mSock->sysmessage( 370 );
 				return;
 			}
 		}
-		Effects->staticeffect( s, 0x373A, 0, 15 );
-		Effects->PlaySound( s, 0x01E9 );
 		s->SetRaceGate( x );
 		s->SetRace( x );
 
@@ -232,11 +222,11 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 		stats[1] = s->ActualDexterity();
 		stats[2] = s->ActualIntelligence();
 
-		for( UI08 counter = STRENGTH; counter <= INTELLECT; counter++ )
+		for( UI08 counter = STRENGTH; counter <= INTELLECT; ++counter )
 		{
 			if( stats[counter-STRENGTH] > pRace->Skill( counter ) )
 			{
-				sysmessage( mSock, 371, lossMap[counter].c_str() );
+				mSock->sysmessage( 371, lossMap[counter].c_str() );
 				stats[counter-STRENGTH] = pRace->Skill( counter );
 			}
 			else 
@@ -248,10 +238,8 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			s->SetDexterity( stats[1] );
 		if( stats[2] != 0 )
 			s->SetIntelligence( stats[2] );
-		if( mSock != NULL )
-			statwindow( mSock, s );
 
-		if( hairobject != NULL )
+		if( ValidateObject( hairobject ) )
 		{
 			if( pRace->IsHairRestricted() )
 			{
@@ -260,33 +248,30 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				{
 					hairColor = RandomHair( x );
 					hairobject->SetColour( hairColor );
-					RefreshItem( hairobject );
 				}
 			}
 			if( pRace->NoHair() )
 			{
-				Items->DeleItem( hairobject );
+				hairobject->Delete();
 				hairobject = NULL;
 			}
 		}
-		if( pRace->RequiresBeard() && s->GetID() == 0x0190 && beardobject == NULL )
+		if( pRace->RequiresBeard() && ( s->GetID() == 0x0190 || s->GetID() == 0x025D ) && !ValidateObject( beardobject ) )
 		{
 			if( pRace->IsBeardRestricted() )
 				hairColor = RandomBeard( x );
 			else
 				hairColor = 0x0480;
-			CItem *n = Items->SpawnItem( NULL, s, 1, "#", false, 0x204C, hairColor, false, false );
+			CItem *n = Items->CreateItem( NULL, s, 0x204C, 1, hairColor, OT_ITEM );
 			if( n != NULL )
 			{
-				n->SetLayer( 0x10 );
+				n->SetDecayable( false );
+				n->SetLayer( IL_FACIALHAIR );
 				if( n->SetCont( s ) )
-				{
-					RefreshItem( n );
 					beardobject = n;
-				}
 			}
 		}
-		if( beardobject != NULL )
+		if( ValidateObject( beardobject ) )
 		{
 			if( pRace->IsBeardRestricted() )
 			{
@@ -295,12 +280,11 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 				{
 					hairColor = RandomBeard( x );
 					beardobject->SetColour( hairColor );
-					RefreshItem( beardobject );
 				}
 			}
 			if( pRace->NoBeard() )
 			{
-				Items->DeleItem( beardobject );
+				beardobject->Delete();
 				beardobject = NULL;
 			}
 		}
@@ -311,14 +295,15 @@ void cRaces::gate( CChar *s, RACEID x, bool always )
 			{
 				hairColor = RandomSkin( x );	// get random skin in range
 				s->SetSkin( hairColor );
-				s->SetxSkin( hairColor );
 				s->SetOrgSkin( hairColor );
 			}
 		}
-		s->Update();
+		s->Teleport();
+		Effects->PlayStaticAnimation( s, 0x373A, 0, 15 );
+		Effects->PlaySound( s, 0x01E9 );
 	}
 	else 
-		sysmessage( mSock, 372 );
+		mSock->sysmessage( 372 );
 }
 
 bool cRaces::beardInRange( COLOUR color, RACEID x ) const
@@ -381,24 +366,6 @@ void cRaces::GenderRestrict( GENDER gender, RACEID race )
 	if( InvalidRace( race ) )
 		return;
 	races[race]->GenderRestriction( gender );
-}
-
-bool cRaces::LightAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{ 
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByLight();
-}
-
-void cRaces::LightAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByLight( value );
 }
 
 bool cRaces::RequireBeard( RACEID race ) const
@@ -495,13 +462,12 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns chance difference to race x in skill skill
 {
-//	assert( skill <= SKILLS );
 	if( InvalidRace( x ) )
 		return 0;
 	if( skill >= ALLSKILLS )
 		return 0;
-	int modifier = races[x]->Skill( skill );
-	if( modifier >= static_cast<int>(combat.size()) )
+	SKILLVAL modifier = races[x]->Skill( skill );
+	if( modifier >= static_cast<SKILLVAL>(combat.size()) )
 		return -(combat[modifier].value);
 	else
 		return (combat[modifier].value);
@@ -514,7 +480,7 @@ SI32 cRaces::FightPercent( int skill, RACEID x ) const
 {
 	if( InvalidRace( x ) )
 		return 100;
-	int modifier = races[x]->Skill( skill );
+	SKILLVAL modifier = races[x]->Skill( skill );
 	int divValue = combat[modifier].value / 10;
 	divValue = divValue / 10;
 	if( divValue == 0 )
@@ -526,7 +492,7 @@ SI32 cRaces::FightPercent( int skill, RACEID x ) const
 	return 100;
 }
 
-void cRaces::RacialInfo( RACEID race, RACEID toSet, RACEREL value )
+void cRaces::RacialInfo( RACEID race, RACEID toSet, RaceRelate value )
 // PRE:		race and toSet are valid races, value is a valid relation
 // POST:	the relation between race and toset is set to value
 {
@@ -540,7 +506,7 @@ void cRaces::RacialEnemy( RACEID race, RACEID enemy )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, enemy, MIN_ENEMY );
+	RacialInfo( race, enemy, RACE_ENEMY );
 }
 void cRaces::RacialAlly( RACEID race, RACEID ally )
 // PRE:		race and ally are valid
@@ -548,7 +514,7 @@ void cRaces::RacialAlly( RACEID race, RACEID ally )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, ally, MIN_ALLY );
+	RacialInfo( race, ally, RACE_ALLY );
 }
 void cRaces::RacialNeutral( RACEID race, RACEID neutral )
 // PRE:		race and neutral are valid
@@ -556,7 +522,7 @@ void cRaces::RacialNeutral( RACEID race, RACEID neutral )
 {
 	if( InvalidRace( race ) )
 		return;
-	RacialInfo( race, neutral, NEUTRAL );
+	RacialInfo( race, neutral, RACE_NEUTRAL );
 }
 
 
@@ -574,172 +540,6 @@ void cRaces::LanguageMin( SKILLVAL toSetTo, RACEID race )
 	if( InvalidRace( race ) )
 		return;
 	races[race]->LanguageMin( toSetTo );
-}
-
-
-// SNOW SECTION
-
-void cRaces::SnowDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, SNOW, value );
-}
-
-bool cRaces::SnowAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedBySnow();
-}
-
-void cRaces::SnowAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedBySnow( value );
-}
-
-
-// RAIN SECTION
-
-void cRaces::RainDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by light
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, RAIN, value );
-}
-
-bool cRaces::RainAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by light
-{ 
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByRain();
-}
-
-void cRaces::RainAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by rain
-{
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByRain( value );
-}
-
-// COLD SECTION
-
-void cRaces::ColdDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets how much race is affected by cold
-{
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, COLD, value ); 
-}
-
-bool cRaces::ColdAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by cold
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByCold();
-}
-
-void cRaces::ColdAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by cold
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByCold( value );
-}
-
-
-// HEAT SECTION
-
-void cRaces::HeatDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is true or false
-// POST:	sets how much race is affected by heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, HEAT, value );
-}
-
-bool cRaces::HeatAffect( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns if race is affected adversely by heat
-{
-	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByHeat();
-}
-
-void cRaces::HeatAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	races[race]->AffectedByHeat( value );
-}
-
-
-// LIGHT SECTION
-
-void cRaces::LightDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is valid UI08
-// POST:	sets how much race is affected by light
-{
-	if( InvalidRace( race ) )
-		return;
-	Damage( race, LIGHT, value ); 
-}
-
-SI08 cRaces::LightDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, LIGHT );
-}
-
-SI08 cRaces::RainDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, RAIN );
-}
-
-SI08 cRaces::SnowDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, SNOW );
-}
-
-SI08 cRaces::HeatDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, HEAT );
-}
-
-SI08 cRaces::ColdDamage( RACEID race ) const
-{
-	if( InvalidRace( race ) )
-		return 0;
-	return Damage( race, COLD );
 }
 
 void cRaces::LightLevel( RACEID race, LIGHTLEVEL value )
@@ -760,141 +560,95 @@ LIGHTLEVEL cRaces::LightLevel( RACEID race ) const
 	return races[race]->LightLevel(); 
 }
 
-void cRaces::LightSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from light
+void cRaces::ColdLevel( RACEID race, COLDLEVEL value )
+// PRE:	Race is valid, value is a valid cold level
+// POST:	the cold level that race burns at is set to value
 { 
 	if( InvalidRace( race ) )
 		return;
-	Secs( race, LIGHT, value );
+	races[race]->ColdLevel( value ); 
 }
 
-SECONDS cRaces::LightSecs( RACEID race ) const
+COLDLEVEL cRaces::ColdLevel( RACEID race ) const
 // PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from light
+// POST:	Returns the cold level that race burns at
 { 
 	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, LIGHT ); 
+		return 0;
+	return races[race]->ColdLevel(); 
 }
 
-// LIGHTNING SECTION
-
-void cRaces::LightningDamage( RACEID race, SI08 value )
-// PRE:	Race is valid, value is valid UI08
-// POST:	sets how much race is affected by lightning
+void cRaces::HeatLevel( RACEID race, HEATLEVEL value )
+// PRE:	Race is valid, value is a valid heat level
+// POST:	the light heat that race burns at is set to value
 { 
 	if( InvalidRace( race ) )
 		return;
-	Damage( race, LIGHTNING, value );
+	races[race]->HeatLevel( value ); 
 }
 
-bool cRaces::LightningAffect( RACEID race ) const
+HEATLEVEL cRaces::HeatLevel( RACEID race ) const
 // PRE:	Race is valid
-// POST:	Returns if race is affected adversely by lightning
+// POST:	Returns the heat level that race burns at
 { 
 	if( InvalidRace( race ) )
-		return false;
-	return races[race]->AffectedByLightning();
+		return 0;
+	return races[race]->HeatLevel(); 
 }
 
-void cRaces::LightningAffect( bool value, RACEID race )
-// PRE:	Race is valid, value is true or false
-// POST:	sets whether race is affected by lightning
+void cRaces::DoesHunger( RACEID race, bool value )
 { 
 	if( InvalidRace( race ) )
 		return;
-	races[race]->AffectedByLightning( value );
+	races[race]->DoesHunger( value ); 
+}
+bool cRaces::DoesHunger( RACEID race ) const
+{ 
+	if( InvalidRace( race ) )
+		return 0;
+	return races[race]->DoesHunger(); 
 }
 
-void cRaces::RainSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from rain
+void cRaces::SetHungerRate( RACEID race, UI16 value )
 { 
 	if( InvalidRace( race ) )
 		return;
-	Secs( race, RAIN, value ); 
+	races[race]->SetHungerRate( value ); 
 }
-
-SECONDS cRaces::RainSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from rain
+UI16 cRaces::GetHungerRate( RACEID race ) const
 { 
 	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, RAIN ); 
+		return 0;
+	return races[race]->GetHungerRate(); 
 }
 
-void cRaces::SnowSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from snow
+void cRaces::SetHungerDamage( RACEID race, SI16 value )
 { 
 	if( InvalidRace( race ) )
 		return;
-	Secs( race, SNOW, value ); 
+	races[race]->SetHungerDamage( value ); 
 }
-
-SECONDS cRaces::SnowSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from snow
+SI16 cRaces::GetHungerDamage( RACEID race ) const
 { 
 	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, SNOW ); 
+		return 0;
+	return races[race]->GetHungerDamage(); 
 }
 
-void cRaces::HeatSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from heat
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, HEAT, value ); 
+bool cRaces::Affect( RACEID race, WeatherType element ) const
+{
+	bool rValue = false;
+	if( !InvalidRace( race ) )
+		rValue = races[race]->AffectedBy( element );
+	return rValue;
 }
 
-SECONDS cRaces::HeatSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from heat
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, HEAT ); 
-}
-
-void cRaces::ColdSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from cold
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, COLD, value ); 
-}
-
-SECONDS cRaces::ColdSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from cold
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, COLD ); 
-}
-
-void cRaces::LightningSecs( RACEID race, SECONDS value )
-// PRE:	Race is valid, value is a valid number of seconds
-// POST:	sets the number of seconds between burns for race from lightning
-{ 
-	if( InvalidRace( race ) )
-		return;
-	Secs( race, LIGHTNING, value );
-}
-
-SECONDS cRaces::LightningSecs( RACEID race ) const
-// PRE:	Race is valid
-// POST:	Returns number of seconds between burns for race from lightning
-{ 
-	if( InvalidRace( race ) )
-		return 1;
-	return Secs( race, LIGHTNING ); 
+void cRaces::Affect( RACEID race, WeatherType element, bool value )
+{
+	if( !InvalidRace( race ) )
+	{
+		races[race]->AffectedBy( value, element );
+	}
 }
 
 SECONDS cRaces::Secs( RACEID race, WeatherType element ) const
@@ -1034,50 +788,25 @@ SKILLVAL CRace::Skill( int skillNum ) const
 {
 	return iSkills[skillNum];
 }
-const char * CRace::Name( void ) const
+const std::string CRace::Name( void ) const
 {
-	return raceName.c_str();
+	return raceName;
 }
 bool CRace::RequiresBeard( void ) const
 {
-	return ( (bools&0x0001) == 0x0001 );
+	return bools.test( BIT_REQBEARD );
 }
 bool CRace::NoBeard( void ) const
 {
-	return ( (bools&0x0002) == 0x0002 );
+	return bools.test( BIT_NOBEARD );
 }
 bool CRace::IsPlayerRace( void ) const
 {
-	return ( (bools&0x0004) == 0x0004 );
+	return bools.test( BIT_PLAYERRACE );
 }
-bool CRace::AffectedByLight( void ) const
-{
-	return ( (bools&0x0008) == 0x0008 );
-}
-bool CRace::AffectedByRain( void ) const
-{
-	return ( (bools&0x0010) == 0x0010 );
-}
-bool CRace::AffectedByCold( void ) const
-{
-	return ( (bools&0x0020) == 0x0020 );
-}
-bool CRace::AffectedByHeat( void ) const
-{
-	return ( (bools&0x0040) == 0x0040 );
-}
-bool CRace::AffectedByLightning( void ) const
-{
-	return ( (bools&0x0080) == 0x0080 );
-}
-bool CRace::AffectedBySnow( void ) const
-{
-	return ( (bools&0x0100) == 0x0100 );
-}
-
 bool CRace::NoHair( void ) const
 {
-	return ( (bools&0x0200) == 0x0200 );
+	return bools.test( BIT_NOHAIR );
 }
 
 GENDER CRace::GenderRestriction( void ) const
@@ -1087,6 +816,14 @@ GENDER CRace::GenderRestriction( void ) const
 LIGHTLEVEL CRace::LightLevel( void ) const
 {
 	return lightLevel;
+}
+COLDLEVEL CRace::ColdLevel( void ) const
+{
+	return coldLevel;
+}
+HEATLEVEL CRace::HeatLevel( void ) const
+{
+	return heatLevel;
 }
 LIGHTLEVEL CRace::NightVision( void ) const
 {
@@ -1118,80 +855,35 @@ void CRace::Skill( SKILLVAL newValue, int iNum )
 {
 	iSkills[iNum] = newValue;
 }
-void CRace::Name( const char *newName )
+void CRace::Name( const std::string& newName )
 {
 	raceName = newName;
 }
 void CRace::RequiresBeard( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0001;
-	else
-		bools &= 0xFFFE;
+	bools.set( BIT_REQBEARD, newValue );
 }
 void CRace::NoBeard( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0002;
-	else
-		bools &= 0xFFFD;
+	bools.set( BIT_NOBEARD, newValue );
 }
 void CRace::IsPlayerRace( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0004;
-	else
-		bools &= 0xFFFB;
-}
-void CRace::AffectedByLight( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0008;
-	else
-		bools &= 0xFFF7;
-}
-void CRace::AffectedByRain( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0010;
-	else
-		bools &= 0xFFEF;
-}
-void CRace::AffectedByCold( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0020;
-	else
-		bools &= 0xFFDF;
-}
-void CRace::AffectedByHeat( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0040;
-	else
-		bools &= 0xFFBF;
-}
-void CRace::AffectedByLightning( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0080;
-	else
-		bools &= 0xFF7F;
-}
-void CRace::AffectedBySnow( bool newValue )
-{
-	if( newValue )
-		bools |= 0x0100;
-	else
-		bools &= 0xFEFF;
+	bools.set( BIT_PLAYERRACE, newValue );
 }
 
 void CRace::NoHair( bool newValue )
 {
-	if( newValue )
-		bools |= 0x0200;
-	else
-		bools &= 0xFDFF;
+	bools.set( BIT_NOHAIR, newValue );
+}
+
+bool CRace::AffectedBy( WeatherType iNum ) const
+{
+	return weatherAffected.test( iNum );
+}
+void CRace::AffectedBy( bool value, WeatherType iNum )
+{
+	weatherAffected.set( iNum, value );
 }
 
 void CRace::GenderRestriction( GENDER newValue )
@@ -1201,6 +893,14 @@ void CRace::GenderRestriction( GENDER newValue )
 void CRace::LightLevel( LIGHTLEVEL newValue )
 {
 	lightLevel = newValue;
+}
+void CRace::ColdLevel( COLDLEVEL newValue )
+{
+	coldLevel = newValue;
+}
+void CRace::HeatLevel( HEATLEVEL newValue )
+{
+	heatLevel = newValue;
 }
 void CRace::NightVision( LIGHTLEVEL newValue )
 {
@@ -1227,12 +927,37 @@ void CRace::VisibilityRange( RANGE newValue )
 	visDistance = newValue;
 }
 
+UI16 CRace::GetHungerRate( void ) const
+{
+	return hungerRate;
+}
+void CRace::SetHungerRate( UI16 newValue )
+{
+	hungerRate = newValue;
+}
+SI16 CRace::GetHungerDamage( void ) const
+{
+	return hungerDamage;
+}
+void CRace::SetHungerDamage( SI16 newValue )
+{
+	hungerDamage = newValue;
+}
+bool CRace::DoesHunger( void ) const
+{
+	return doesHunger;
+}
+void CRace::DoesHunger( bool newValue )
+{
+	doesHunger = newValue;
+}
+
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
 {
 	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
 	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
-	memset( &weathSecs[0], 0, sizeof( SECONDS ) * WEATHNUM );
+	memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
 	
 	Skill( 100, STRENGTH );
 	Skill( 100, DEXTERITY );
@@ -1240,7 +965,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
-
+	DoesHunger( false );
+	SetHungerRate( 0 );
+	SetHungerDamage( 0 );
 }
 
 
@@ -1259,13 +986,16 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	HPModifier( 0 );
 	ManaModifier( 0 );
 	StamModifier( 0 );
-
+	DoesHunger( false );
+	SetHungerRate( 0 );
+	SetHungerDamage( 0 );
+	weatherAffected.reset();
 }
 void CRace::NumEnemyRaces( int iNum )
 {
 	racialEnemies.resize( iNum );
 }
-SI08 CRace::RaceRelation( RACEID race ) const
+RaceRelate CRace::RaceRelation( RACEID race ) const
 {
 	return racialEnemies[race];
 }
@@ -1274,42 +1004,42 @@ COLOUR CRace::RandomSkin( void ) const
 {
 	if( !IsSkinRestricted() )
 		return 0;
-	int sNum = RandomNum( 0, skinColours.size() - 1 );
+	size_t sNum = RandomNum( static_cast< size_t >(0), skinColours.size() - 1 );
 	return (COLOUR)RandomNum( skinColours[sNum].cMin, skinColours[sNum].cMax );
 }
 COLOUR CRace::RandomHair( void ) const
 {
 	if( !IsHairRestricted() )
 		return 0;
-	int sNum = RandomNum( 0, hairColours.size() - 1 );
+	size_t sNum = RandomNum( static_cast< size_t >(0), hairColours.size() - 1 );
 	return (COLOUR)RandomNum( hairColours[sNum].cMin, hairColours[sNum].cMax );
 }
 COLOUR CRace::RandomBeard( void ) const
 {
 	if( !IsBeardRestricted() )
 		return 0;
-	int sNum = RandomNum( 0, beardColours.size() - 1 );
+	size_t sNum = RandomNum( static_cast< size_t >(0), beardColours.size() - 1 );
 	return (COLOUR)RandomNum( beardColours[sNum].cMin, beardColours[sNum].cMax );
 }
 
 bool CRace::IsSkinRestricted( void ) const
 {
-	return ( skinColours.size() != 0 );
+	return ( !skinColours.empty() );
 }
 bool CRace::IsHairRestricted( void ) const
 {
-	return ( hairColours.size() != 0 );
+	return ( !hairColours.empty() );
 }
 bool CRace::IsBeardRestricted( void ) const
 {
-	return ( beardColours.size() != 0 );
+	return ( !beardColours.empty() );
 }
 
 bool CRace::IsValidSkin( COLOUR val ) const
 {
 	if( !IsSkinRestricted() )
 		return true;
-	for( UI32 i = 0; i < skinColours.size(); i++ )
+	for( size_t i = 0; i < skinColours.size(); ++i )
 	{
 		if( val >= skinColours[i].cMin && val <= skinColours[i].cMax )
 			return true;
@@ -1320,7 +1050,7 @@ bool CRace::IsValidHair( COLOUR val ) const
 {
 	if( !IsHairRestricted() )
 		return true;
-	for( UI32 i = 0; i < hairColours.size(); i++ )
+	for( size_t i = 0; i < hairColours.size(); ++i )
 	{
 		if( val >= hairColours[i].cMin && val <= hairColours[i].cMax )
 			return true;
@@ -1331,7 +1061,7 @@ bool CRace::IsValidBeard( COLOUR val ) const
 {
 	if( !IsBeardRestricted() )
 		return true;
-	for( UI32 i = 0; i < beardColours.size(); i++ )
+	for( size_t i = 0; i < beardColours.size(); ++i )
 	{
 		if( val >= beardColours[i].cMin && val <= beardColours[i].cMax )
 			return true;
@@ -1339,7 +1069,7 @@ bool CRace::IsValidBeard( COLOUR val ) const
 	return false;
 }
 
-void CRace::RaceRelation( SI08 value, RACEID race )
+void CRace::RaceRelation( RaceRelate value, RACEID race )
 {
 	racialEnemies[race] = value;
 }
@@ -1383,212 +1113,236 @@ void CRace::StamModifier( SI16 value )
 		StamMod = -99;
 }
 
-void CRace::Load( SI32 sectNum, int modCount )
+void CRace::Load( size_t sectNum, int modCount )
 {
-	char sect[16];
-	const char *tag = NULL;
-	const char *data = NULL;
+	UString tag;
+	UString data;
+	UString UTag;
 	SI32 raceDiff = 0;
-	sprintf( sect, "RACE %d", sectNum );
+	UString sect = "RACE " + UString::number( sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
 
 	for( tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next() )
 	{
+		UTag = tag.upper();
 		data = RacialPart->GrabData();
 		switch( tag[0] )
 		{
+			case 'a':
+			case 'A':
+				if( UTag == "ARMORREST" )
+					ArmourClassRestriction( data.toUByte() );		// 8 classes, value 0 is all, else it's a bit comparison
+				break;
 
-		case 'a':
-		case 'A':
-			if( !strcmp( "ARMORREST", tag ) )
-				ArmourClassRestriction( static_cast<ARMORCLASS>(makeNum( data )) );		// 8 classes, value 0 is all, else it's a bit comparison
-			break;
+			case 'b':
+			case 'B':
+				if( UTag == "BEARDMIN" )
+					beardMin = data.toUShort();
+				else if( UTag == "BEARDMAX" )
+					beardColours.push_back( ColourPair( beardMin, data.toUShort() ) );
+				break;
 
-		case 'b':
-		case 'B':
-			if( !strcmp( "BEARDMIN", tag ) )
-				beardMin = (UI16)makeNum( data );
-			else if( !strcmp( "BEARDMAX", tag ) )
-				beardColours.push_back( ColourPair( beardMin, (UI16)makeNum( data ) ) );
-			break;
+			case 'c':
+			case 'C':
+				if( UTag == "COLDAFFECT" )	// are we affected by cold?
+					AffectedBy( true, COLD );
+				else if( UTag == "COLDLEVEL" )	// cold level at which to take damage
+					ColdLevel( data.toUShort() );
+				else if( UTag == "COLDDAMAGE" )	// how much damage to take from cold
+					WeatherDamage( data.toUShort(), COLD );
+				else if( UTag == "COLDSECS" )		// how often cold affects in secs
+					WeatherSeconds( data.toUShort(), COLD );
+				break;
 
-		case 'c':
-		case 'C':
-			if( !strcmp( "COLDAFFECT", tag ) )	// are we affected by light?
-				AffectedByCold( true );
-			else if( !strcmp( "COLDDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data )), COLD );
-			else if( !strcmp( "COLDSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), COLD );
-			break;
+			case 'd':
+			case 'D':
+				if( UTag == "DEXCAP" )
+					Skill( data.toUShort(), DEXTERITY );
+				break;
 
-		case 'd':
-		case 'D':
-			if( !strcmp( "DEXCAP", tag ) )
-				Skill( static_cast<SKILLVAL>(makeNum( data )), DEXTERITY );
-			break;
+			case 'g':
+			case 'G':
+				if( UTag == "GENDER" )
+				{
+					if( data.upper() == "MALE" )
+						GenderRestriction( MALE );
+					else if( data.upper() == "FEMALE" )
+						GenderRestriction( FEMALE );
+					else
+						GenderRestriction( MALE );
+				}
+				break;
 
-		case 'g':
-		case 'G':
-			if( !strcmp( "GENDER", tag ) )
-			{
-				if( !strcmp( "MALE", data ) )
-					GenderRestriction( MALE );
-				else if( !strcmp( "FEMALE", data ) )
-					GenderRestriction( FEMALE );
-				else
-					GenderRestriction( MALE );
-			}
-			break;
+			case 'h':
+			case 'H':
+				if( UTag == "HAIRMIN" )
+					hairMin = data.toUShort();
+				else if( UTag == "HAIRMAX" )
+					hairColours.push_back( ColourPair( hairMin, data.toUShort() ) );
+				else if( UTag == "HEATAFFECT" )	// are we affected by light?
+					AffectedBy( true, HEAT );
+				else if( UTag == "HEATDAMAGE" )	// how much damage to take from light
+					WeatherDamage( data.toUShort(), HEAT );
+				else if( UTag == "HEATLEVEL" )	// heat level at which to take damage
+					HeatLevel( data.toUShort() );
+				else if( UTag == "HEATSECS" )		// how often light affects in secs
+					WeatherSeconds( data.toUShort(), HEAT );
+				else if( UTag == "HPMOD" ) // how much additional percent of strength are hitpoints
+					HPModifier( data.toShort() );
+				else if( UTag == "HUNGER" )	// does race suffer from hunger
+					if( data.sectionCount( "," ) != 0 )
+					{
+						SetHungerRate( static_cast<UI16>(data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() ) );
+						SetHungerDamage( static_cast<SI16>(data.section( ",", 1, 1 ).stripWhiteSpace().toShort() ) );
+					}
+					else
+					{
+						SetHungerRate( 0 );
+						SetHungerDamage( 0 );
+					}
+					if( GetHungerRate() > 0 )
+						DoesHunger( true );
+					else
+						DoesHunger( false );
+				break;
 
-		case 'h':
-		case 'H':
-			if( !strcmp( "HAIRMIN", tag ) )
-				hairMin = (UI16)makeNum( data );
-			else if( !strcmp( "HAIRMAX", tag ) )
-				hairColours.push_back( ColourPair( hairMin, (UI16)makeNum( data ) ) );
-			else if( !strcmp( "HEATAFFECT", tag ) )	// are we affected by light?
-				AffectedByHeat( true );
-			else if( !strcmp( "HEATDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data )), HEAT );
-			else if( !strcmp( "HEATSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), HEAT );
-			else if( !strcmp( "HPMOD", tag ) ) // how much additional percent of strength are hitpoints
-				HPModifier( static_cast<SI16>(makeNum( data )) );
-			break;
+			case 'i':
+			case 'I':
+				if( UTag == "INTCAP" )
+					Skill( data.toUShort(), INTELLECT );
+				break;
 
-		case 'i':
-		case 'I':
-			if( !strcmp( "INTCAP", tag ) )
-				Skill( static_cast<SKILLVAL>(makeNum( data )), INTELLECT );
-			break;
+			case 'l':
+			case 'L':
+				if( UTag == "LIGHTAFFECT" )	// are we affected by light?
+					AffectedBy( true, LIGHT );
+				else if( UTag == "LIGHTDAMAGE" )	// how much damage to take from light
+					WeatherDamage( data.toUShort(), LIGHT );
+				else if( UTag == "LIGHTLEVEL" )	// light level at which to take damage
+					LightLevel( data.toUShort() );
+				else if( UTag == "LIGHTSECS" )		// how often light affects in secs
+					WeatherSeconds( data.toUShort(), LIGHT );
 
-		case 'l':
-		case 'L':
-			if( !strcmp( "LIGHTAFFECT", tag ) )	// are we affected by light?
-				AffectedByLight( true );
-			else if( !strcmp( "LIGHTDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data )), LIGHT );
-			else if( !strcmp( "LIGHTLEVEL", tag ) )	// light level at which to take damage
-				LightLevel( static_cast<LIGHTLEVEL>(makeNum( data )) );
-			else if( !strcmp( "LIGHTSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), LIGHT );
+				else if( UTag == "LIGHTNINGAFFECT" )	// are we affected by light?
+					AffectedBy( true, LIGHTNING );
+				else if( UTag == "LIGHTNINGDAMAGE" )	// how much damage to take from light
+					WeatherDamage( data.toUShort(), LIGHTNING );
+				else if( UTag == "LIGHTNINGCHANCE" )		// how big is the chance to get hit by a lightning
+					WeatherSeconds( data.toUShort(), LIGHTNING );
+				else if( UTag == "LANGUAGEMIN" ) // set language min 
+					LanguageMin( data.toUShort() ); 
+				break;
 
-			else if( !strcmp( "LIGHTNINGAFFECT", tag ) )	// are we affected by light?
-				AffectedByLightning( true );
-			else if( !strcmp( "LIGHTNINGDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data) ), LIGHTNING );
-			else if( !strcmp( "LIGHTNINGSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), LIGHTNING );
-			else if( !strcmp( "LANGUAGEMIN", tag ) ) // set language min 
-				LanguageMin( static_cast<SKILLVAL>(makeNum( data )) ); 
-			break;
+			case 'm':
+			case 'M':
+				if( UTag == "MAGICRESISTANCE" )	// magic resistance?
+					MagicResistance( data.toFloat() );
+				else if( UTag == "MANAMOD" ) // how much additional percent of int are mana
+					ManaModifier( data.toShort() );
+				break;
 
-		case 'm':
-		case 'M':
-			if( !strcmp( "MAGICRESISTANCE", tag ) )	// magic resistance?
-				MagicResistance( static_cast<R32>(atof( data ) ));
-			else if( !strcmp( "MANAMOD", tag ) ) // how much additional percent of int are mana
-				ManaModifier( static_cast<SI16>(makeNum( data )) );
-			break;
+			case 'n':
+			case 'N':
+				if( UTag == "NAME" )
+					Name( data );
+				else if( UTag == "NOBEARD" )
+					NoBeard( true );
+				else if( UTag == "NIGHTVIS" )					// night vision level... light bonus
+					NightVision( data.toUByte() );
+				break;
 
-		case 'n':
-		case 'N':
-			if( !strcmp( tag, "NAME" ) )
-				Name( data );
-			else if( !strcmp( "NOBEARD", tag ) )
-				NoBeard( true );
-			else if( !strcmp( "NIGHTVIS", tag ) )					// night vision level... light bonus
-				NightVision( static_cast<LIGHTLEVEL>(makeNum( data )) );
-			break;
+			case 'p':
+			case 'P':
+				if( UTag == "PLAYERRACE" ) // is it a player race?
+					IsPlayerRace( (data.toUByte() != 0) );
+				else if( UTag == "POISONRESISTANCE" )	// poison resistance?
+					PoisonResistance( data.toFloat() );
+				else if( UTag == "PARENTRACE" )
+				{
+					CRace *pRace = Races->Race( data.toUShort() );
+					if( pRace != NULL )
+						(*this) = (*pRace);
+				}
+				break;
 
-		case 'p':
-		case 'P':
-			if( !strcmp( "PLAYERRACE", tag ) ) // is it a player race?
-				IsPlayerRace( (makeNum( data ) != 0) );
-			else if( !strcmp( "POISONRESISTANCE", tag ) )	// poison resistance?
-				PoisonResistance( static_cast<R32>(atof( data ) ));
-			else if( !strcmp( "PARENTRACE", tag ) )
-			{
-				CRace *pRace = Races->Race( static_cast<RACEID>(makeNum( tag )) );
-				if( pRace != NULL )
-					(*this) = (*pRace);
-			}
-			break;
+			case 'r':
+			case 'R':
+				if( UTag == "REQUIREBEARD" )
+					RequiresBeard( true );
+				else if( UTag == "RAINAFFECT" )	// are we affected by light?
+					AffectedBy( true, RAIN );
+				else if( UTag == "RAINDAMAGE" )	// how much damage to take from light
+					WeatherDamage( data.toUShort(), RAIN );
+				else if( UTag == "RAINSECS" )		// how often light affects in secs
+					WeatherSeconds( data.toUShort(), RAIN );
+				else if( UTag == "RACERELATION" )
+				{
+					if( data.sectionCount( " " ) != 0 )
+						RaceRelation( static_cast<RaceRelate>(data.section( " ", 1, 1 ).stripWhiteSpace().toByte()), data.section( " ", 0, 0 ).stripWhiteSpace().toUShort() );
+				}
+				else if( UTag == "RACIALENEMY" )
+				{
+					raceDiff = data.toLong();
+					if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
+						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid enemy race " << raceDiff << myendl;
+					else
+						RaceRelation( RACE_ENEMY, static_cast<RACEID>(raceDiff) );
+				}
+				else if( UTag == "RACIALAID" )
+				{
+					raceDiff = data.toLong();
+					if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
+						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
+					else
+						RaceRelation( RACE_ALLY, static_cast<RACEID>(raceDiff ));
+				}
+				break;
 
-		case 'r':
-		case 'R':
-			if( !strcmp( "REQUIREBEARD", tag ) )
-				RequiresBeard( true );
-			else if( !strcmp( "RAINAFFECT", tag ) )	// are we affected by light?
-				AffectedByRain( true );
-			else if( !strcmp( "RAINDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data )), RAIN );
-			else if( !strcmp( "RAINSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), RAIN );
-			else if( !strcmp( "RACERELATION", tag ) )
-			{
-				int nValue;
-				if( sscanf( data, "%i %i", &raceDiff, &nValue ) == 2 )	// found 2 values
-					RaceRelation( (SI08)nValue, static_cast<RACEID>(raceDiff) );
-			}
-			else if( !strcmp( "RACIALENEMY", tag ) )
-			{
-				raceDiff = makeNum( data );
-				if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
-					Console << "Error in race " << sectNum << ", invalid enemy race " << raceDiff << myendl;
-				else
-					RaceRelation( MIN_ENEMY, static_cast<RACEID>(raceDiff) );
-			}
-			else if( !strcmp( "RACIALAID", tag ) )
-			{
-				raceDiff = makeNum( data );
-				if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
-					Console << "Error in race " << sectNum << ", invalid ally race " <<  raceDiff << myendl;
-				else
-					RaceRelation( MIN_ALLY, static_cast<RACEID>(raceDiff ));
-			}
-			break;
+			case 's':
+			case 'S':
+				if( UTag == "STRCAP" )
+					Skill( data.toUShort(), STRENGTH );
+				else if( UTag == "SKINMIN" )
+					skinMin = data.toUShort();
+				else if( UTag == "SKINMAX" )
+					skinColours.push_back( ColourPair( skinMin, data.toUShort() ) );
+				else if( UTag == "SNOWAFFECT" )	// are we affected by light?
+					AffectedBy( true, SNOW );
+				else if( UTag == "SNOWDAMAGE" )	// how much damage to take from light
+					WeatherDamage( data.toUShort(), SNOW );
+				else if( UTag == "SNOWSECS" )		// how often light affects in secs
+					WeatherSeconds( data.toUShort(), SNOW );
+				else if( UTag == "STORMAFFECT" )	// are we affected by storm?
+					AffectedBy( true, STORM );
+				else if( UTag == "STORMDAMAGE" )	// how much damage to take from storm
+					WeatherDamage( data.toUShort(), STORM );
+				else if( UTag == "STORMSECS" )		// how often storm affects in secs
+					WeatherSeconds( data.toUShort(), STORM );
+				else if( UTag == "STAMMOD" ) // how much additional percent of int are mana
+					StamModifier( data.toShort() );
+				break;
 
-		case 's':
-		case 'S':
-			if( !strcmp( tag, "STRCAP" ) )
-				Skill( static_cast<SKILLVAL>(makeNum( data) ), STRENGTH );
-			else if( !strcmp( "SKINMIN", tag ) )
-				skinMin = (UI16)makeNum( data );
-			else if( !strcmp( "SKINMAX", tag ) )
-				skinColours.push_back( ColourPair( skinMin, (UI16)makeNum( data ) ) );
-			else if( !strcmp( "SNOWAFFECT", tag ) )	// are we affected by light?
-				AffectedBySnow( true );
-			else if( !strcmp( "SNOWDAMAGE", tag ) )	// how much damage to take from light
-				WeatherDamage( static_cast<SI08>(makeNum( data )), SNOW );
-			else if( !strcmp( "SNOWSECS", tag ) )		// how often light affects in secs
-				WeatherSeconds( static_cast<SECONDS>(makeNum( data )), SNOW );
-			else if( !strcmp( "STAMMOD", tag ) ) // how much additional percent of int are mana
-				StamModifier( static_cast<SI16>(makeNum( data) ) );
-			break;
-
-		case 'v':
-		case 'V':
-			if( !strcmp( "VISRANGE", tag ) )					// set visibility range ... defaults to 18
-				VisibilityRange( static_cast<RANGE>(makeNum( data )) );
-			break;
-
+			case 'v':
+			case 'V':
+				if( UTag == "VISRANGE" )					// set visibility range ... defaults to 18
+					VisibilityRange( data.toByte() );
+				break;
 		}
 
-		for( int iCountA = 0; iCountA < TRUESKILLS; iCountA++ )
+		for( int iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
-			char skillthing[64];
-			sprintf( skillthing, "%sG", skillname[iCountA] );
-			if( !strcmp( skillthing, tag ) )
-				Skill( static_cast<SKILLVAL>(makeNum( data )), iCountA );
+			UString skillthing = cwmWorldState->skill[iCountA].name;
+			skillthing += "G";
+			if( skillthing == tag )
+				Skill( data.toUShort(), iCountA );
 			else
 			{
-				sprintf( skillthing, "%sL", skillname[iCountA] );
-				if( !strcmp( skillthing, tag ) )
-					Skill( modCount + static_cast<SKILLVAL>(makeNum( data )), iCountA );
+				skillthing = cwmWorldState->skill[iCountA].name;
+				skillthing += "L";
+				if( skillthing == tag )
+					Skill( modCount + data.toUShort(), iCountA );
 			}
 		}
 	}
@@ -1620,24 +1374,24 @@ void CRace::PoisonResistance( R32 value )
 CRace& CRace::operator =( CRace& trgRace )
 {
 	memcpy( iSkills, trgRace.iSkills, sizeof( SKILLVAL ) * SKILLS );
-	raceName = trgRace.raceName;;
+	raceName = trgRace.raceName;
 
 	beardColours.resize( trgRace.beardColours.size() );
-	for( UI32 bCtr = 0; bCtr < beardColours.size(); bCtr++ )
+	for( size_t bCtr = 0; bCtr < beardColours.size(); ++bCtr )
 	{
 		beardColours[bCtr].cMax = trgRace.beardColours[bCtr].cMax;
 		beardColours[bCtr].cMin = trgRace.beardColours[bCtr].cMin;
 	}
 
 	hairColours.resize( trgRace.hairColours.size() );
-	for( UI32 hCtr = 0; hCtr < hairColours.size(); hCtr++ )
+	for( size_t hCtr = 0; hCtr < hairColours.size(); ++hCtr )
 	{
 		hairColours[hCtr].cMax = trgRace.hairColours[hCtr].cMax;
 		hairColours[hCtr].cMin = trgRace.hairColours[hCtr].cMin;
 	}
 
 	skinColours.resize( trgRace.skinColours.size() );
-	for( UI32 sCtr = 0; sCtr < skinColours.size(); sCtr++ )
+	for( size_t sCtr = 0; sCtr < skinColours.size(); ++sCtr )
 	{
 		skinColours[sCtr].cMax = trgRace.skinColours[sCtr].cMax;
 		skinColours[sCtr].cMin = trgRace.skinColours[sCtr].cMin;
@@ -1647,7 +1401,7 @@ CRace& CRace::operator =( CRace& trgRace )
 	restrictGender = trgRace.restrictGender;
 
 	racialEnemies.resize( trgRace.racialEnemies.size() );
-	for( UI32 rCtr = 0; rCtr < racialEnemies.size(); rCtr++ )
+	for( size_t rCtr = 0; rCtr < racialEnemies.size(); ++rCtr )
 		racialEnemies[rCtr] = trgRace.racialEnemies[rCtr];
 
 	lightLevel = trgRace.lightLevel;
@@ -1665,8 +1419,9 @@ CRace& CRace::operator =( CRace& trgRace )
 	return (*this);
 }
 
-SI32 cRaces::Count( void ) const
+size_t cRaces::Count( void ) const
 {
 	return races.size();
 }
 
+}

@@ -1,283 +1,96 @@
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
+//|	Function/Class	-	
+//|	Date			-	10/17/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o
-//|	Notes					-	
+//|	Notes			-	
 //o--------------------------------------------------------------------------o
 #include <string>
 #include "cVersionClass.h"
 
+namespace UOX
+{
+
 //o---------------------------------------------------------------------------o
 // product info
 //o---------------------------------------------------------------------------o
-#define VER "0.97.04"
-#define BUILD "1a"
-#define REALBUILD "0"
-#define SVER "2.0"
-#define CVER "2.0"
-#define IVER "2.0"
-#define PRODUCT "Ultima Offline eXperiment 3"
-#define NAME "The Official DevTeam"
-#define EMAIL "http://uox3.sourceforge.net/"
-#define PROGRAMMERS "UOX3 DevTeam"
-
-cVersionClass CVC;
+const std::string VER				= "0.99";
+const std::string BUILD				= "2";
+const std::string REALBUILD			= "0";
+const std::string SVER				= "2.0";
+const std::string CVER				= "2.0";
+const std::string IVER				= "2.0";
+const std::string PRODUCT			= "Ultima Offline eXperiment 3";
+const std::string NAME				= "The UOX3 DevTeam";
+const std::string EMAIL				= "http://openuo.sourceforge.net/";
+const std::string PROGRAMMERS		= "UOX3 DevTeam";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-cVersionClass::cVersionClass()
+CVersionClass::CVersionClass()
 {
-	SetVersion(VER);
-	SetBuild(BUILD);
-	SetRealBuild(REALBUILD);
-	SetScriptVersion(SVER);
-	SetItemVersion(CVER);
-	SetCharacterVersion(IVER);
-	SetProductName(PRODUCT);
-	SetName(NAME);
-	SetProgrammers(EMAIL);
-	SetEmail(PROGRAMMERS);
 }
 //o---------------------------------------------------------------------------o
-cVersionClass::~cVersionClass()
+CVersionClass::~CVersionClass()
 {
 
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetVersion(char *szVersion)
+std::string CVersionClass::GetVersion( void )
 {
-	strncpy(szIVersion,szVersion,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetVersion(void)
-{
-	return szIVersion;
+	return VER;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetBuild(char *szBuild)
+std::string CVersionClass::GetBuild( void )
 {
-	strncpy(szIBuild,szBuild,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetBuild(void)
-{
-	return szIBuild;
+	return BUILD;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetRealBuild(char *szRealBuild)
+std::string CVersionClass::GetRealBuild( void )
 {
-	strncpy(szIRealBuild,szRealBuild,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetRealBuild(void)
-{
-	return szIRealBuild;
+	return REALBUILD;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetScriptVersion(char *szScriptVersion)
+std::string CVersionClass::GetScriptVersion( void )
 {
-	strncpy(szIScriptsVersion,szScriptVersion,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetScriptVersion(void)
-{
-	return szIScriptsVersion;
+	return SVER;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetCharacterVersion(char *szCharacterVersion)
+std::string CVersionClass::GetCharacterVersion( void )
 {
-	strncpy(szICharactersVersion,szCharacterVersion,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetCharacterVersion(void)
-{
-	return szICharactersVersion;
+	return CVER;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetItemVersion(char *szItemVersion)
+std::string CVersionClass::GetItemVersion( void )
 {
-	strncpy(szIItemsVersion,szItemVersion,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetItemVersion(void)
-{
-	return szIItemsVersion;
+	return IVER;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetProductName(char *szProduct)
+std::string CVersionClass::GetProductName( void )
 {
-	strncpy(szIProductName,szProduct,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetProductName(void)
-{
-	return szIProductName;
+	return PRODUCT;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetName(char *szName)
+std::string CVersionClass::GetName( void )
 {
-	strncpy(szIName,szName,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetName(void)
-{
-	return szIName;
+	return NAME;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetEmail(char *szEmail)
+std::string CVersionClass::GetEmail( void )
 {
-	strncpy(szIEmail,szEmail,sizeof(char)*32);
-}
-//
-char *cVersionClass::GetEmail(void)
-{
-	return szIEmail;
+	return EMAIL;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	
-//|	Date					-	10/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
-//|	Notes					-	
-//o--------------------------------------------------------------------------o	
-void cVersionClass::SetProgrammers(char *szProgrammers)
+std::string CVersionClass::GetProgrammers( void )
 {
-	strncpy(szIProgrammers,szProgrammers,sizeof(char)*32);
+	return PROGRAMMERS;
 }
-//
-char *cVersionClass::GetProgrammers(void)
-{
-	return szIProgrammers;
+
 }

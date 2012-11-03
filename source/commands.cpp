@@ -1,75 +1,88 @@
 #include "uox3.h"
 #include "commands.h"
-
-#include "cSpawnRegion.h"
 #include "cServerDefinitions.h"
-#include "PageVector.h"
 #include "ssection.h"
-#include "gump.h"
-#include "trigger.h"
-#include "mapstuff.h"
+#include "CJSMapping.h"
 #include "cScript.h"
-#include "cEffects.h"
-#include "network.h"
+#include "CPacketSend.h"
 
 #undef DBGFILE
 #define DBGFILE "commands.cpp"
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void splitline( char *toSplit )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Puts single words of cline into a comm array
-//o---------------------------------------------------------------------------o
-void splitline( char *toSplit )
+namespace UOX
 {
-	int i = 0;
-	char *d = " ";
-	char *s = strtok( toSplit, d );
-	while( s != NULL )
-	{
-		comm[i] = s;
-		i++;
-		s = strtok( NULL, d );
-	}
-	Commands->SetNumArguments( i );
-}
+
+cCommands *Commands			= NULL;
 
 cCommands::cCommands()
 {
 	CommandReset();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	static inline void doTarget( cSocket *s, UI08 targID, SI32 dictEntry )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Do targeting stuff
-//o---------------------------------------------------------------------------o
-static inline void doTarget( cSocket *s, UI08 targID, SI32 dictEntry )
+cCommands::~cCommands()
 {
-	target( s, 0, targID, dictEntry );
+	CommandMap.clear();
+	TargetMap.clear();
+	JSCommandMap.clear();
+	for( size_t clearIter = 0; clearIter < clearance.size(); ++clearIter )
+	{
+		delete clearance[clearIter];
+		clearance[clearIter] = NULL;
+	}
+	clearance.clear();
 }
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SI32 NumArguments( void )
+//o---------------------------------------------------------------------------o
+//|	Function		-	UI08 NumArguments( void )
 //|	Date			-	3/12/2003
 //|	Programmer		-	Zane
-//|	Modified		-
-//o--------------------------------------------------------------------------
+//|	Modified		-	4/2/2003 - Reduced to a UI08 - Zane
+//o---------------------------------------------------------------------------o
 //|	Purpose			-	Number of arguments in a command
-//o--------------------------------------------------------------------------
-SI32 cCommands::GetNumArguments( void )
+//o---------------------------------------------------------------------------o
+UI08 cCommands::NumArguments( void )
 {
-	return tnum;
+	return static_cast<UI08>(commandString.sectionCount( " " ) + 1 );
 }
-void cCommands::SetNumArguments( SI32 newVal )
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI32 cCommands::Argument( UI08 argNum )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Grabs argument argNum and converts it to an integer
+//o---------------------------------------------------------------------------o
+SI32 cCommands::Argument( UI08 argNum )
 {
-	tnum = newVal;
+	SI32 retVal = 0;
+	UString tempString = CommandString( argNum + 1, argNum + 1 );
+	if( !tempString.empty() )
+		retVal = tempString.toLong();
+
+	return retVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	UString cCommands::CommandString( UI08 section, UI08 end )
+//|	Date		-	4/02/2003
+//|	Programmer	-	Zane
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Comm value
+//o---------------------------------------------------------------------------o
+UString cCommands::CommandString( UI08 section, UI08 end )
+{
+	UString retString;
+	if( end != 0 )
+		retString = commandString.section( " ", section - 1, end - 1 );
+	else
+		retString = commandString.section( " ", section - 1 );
+	return retString;
+}
+void cCommands::CommandString( UString newValue )
+{
+	commandString = newValue;
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function		-	void cCommands::Command( cSocket *s )
+//|	Function		-	void cCommands::Command( CSocket *s )
 //|	Date			-	
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
@@ -77,770 +90,126 @@ void cCommands::SetNumArguments( SI32 newVal )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Handles commands sent from client
 //o--------------------------------------------------------------------------o
-//| Modifications	-	
+//| Modifications	-	25 June, 2003
+//|						Made it accept a CPITalkRequest, allowing to remove
+//|						the need for Offset and unicode decoding
 //o--------------------------------------------------------------------------o
-void cCommands::Command( cSocket *s )
+void cCommands::Command( CSocket *s, CChar *mChar, UString text )
 {
-	char *comm;
-	char nonuni[512];
-	cmd_offset = 9;
+	CommandString( text.simplifyWhiteSpace() );
+	if( NumArguments() < 1 )
+		return;
+	UString command = CommandString( 1, 1 ).upper();	// discard the leading '
 
-	memset( s->TBuffer(), 0, MAXBUFFER );
-	CChar *mChar = s->CurrcharObj();
-	char *tbuffer = (char *)s->TBuffer();
-	int i = 9;
-	if( !mChar->isUnicode() )
+	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
+	if( toFind != JSCommandMap.end() )
 	{
-		for( i = 9; s->GetByte( i ) != 0; i++ )
+		if( toFind->second.isEnabled )
 		{
-			tbuffer[i] = s->GetByte( i );
-			s->SetByte( i, toupper( s->GetByte( i ) ) );
-		}
-		tbuffer[i] = 0;
-		splitline( (char *)&(s->Buffer()[8]) );
-		if( GetNumArguments() < 1 ) 
+			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			// from now on, account 0 ALWAYS has admin access, regardless of command level
+			if( !plClearance )
+			{
+				Log( command, mChar, NULL, "Insufficient clearance" );
+				s->sysmessage( 337 );
+				return;
+			}
+			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
+			if( toExecute != NULL )
+			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
+#if defined( UOX_DEBUG_MODE )
+				Console.Print( "Executing JS command %s\n", command.c_str() );
+#endif
+				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
+			}
+			Log( command, mChar, NULL, "Cleared" );
 			return;
-		comm = (char *)&(s->Buffer()[9]); 
+		}
 	}
-	else
-	{
-		cmd_offset = 14;
-		// we will have to convert from unicode to non-unicode
-		for( i = 13; i < s->GetWord( 1 ); i += 2 )
-			nonuni[( i - 13 ) / 2] = s->GetByte( i );
-		i = 14;
-		while( nonuni[i - 13] != 0 )
-		{
-			tbuffer[i] = nonuni[i-13];
-			nonuni[i-13] = toupper( nonuni[i-13] );
-			i++;
-		} 
-		tbuffer[i] = 0; 
-		splitline( &nonuni[1] );
-		if( GetNumArguments() < 1 ) 
-			return; 
-		comm = &nonuni[1];
-	} 
 
-	TargetTableIterator findTarg = targ_table.find( comm );
-	if( findTarg != targ_table.end() )
+	TARGETMAP_ITERATOR findTarg = TargetMap.find( command );
+	if( findTarg != TargetMap.end() )
 	{
 		bool plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 		if( !plClearance )
 		{
-			Log( comm, mChar, NULL, "Insufficient clearance" );
-			sysmessage( s, 337 );
+			Log( command, mChar, NULL, "Insufficient clearance" );
+			s->sysmessage( 337 );
 			return;
 		}
-		Log( comm, mChar, NULL, "Cleared" );
+		Log( command, mChar, NULL, "Cleared" );
 		switch( findTarg->second.cmdType )
 		{
-		case CMD_TARGET:
-			doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			break;
-		case CMD_TARGETX:
-			if( GetNumArguments() == 2 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			}
-			else 
-				sysmessage( s, 338 );
-			break;
-		case CMD_TARGETXY:
-			if( GetNumArguments() == 3 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				s->AddY( makenumber( 2 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			}
-			else 
-				sysmessage( s, 339 );
-			break;
-		case CMD_TARGETXYZ:
-			if( GetNumArguments() == 4 ) 
-			{
-				s->AddX( makenumber( 1 ) );
-				s->AddY( makenumber( 2 ) );
-				s->AddZ( makenumber( 3 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 340 );
-			break;
-		case CMD_TARGETID1:
-			if( GetNumArguments() == 2 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 338 );
-			break;
-		case CMD_TARGETID2:
-			if( GetNumArguments() == 3 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 339 );	
-			break;
-		case CMD_TARGETID3:
-			if( GetNumArguments() == 4 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				s->AddID3( makenumber( 3 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 340 );
-			break;
-		case CMD_TARGETID4:
-			if( GetNumArguments() == 5 ) 
-			{
-				s->AddID1( makenumber( 1 ) );
-				s->AddID2( makenumber( 2 ) );
-				s->AddID3( makenumber( 3 ) );
-				s->AddID4( makenumber( 4 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 344 );
-			break;
-		case CMD_TARGETTMP:
-			if( GetNumArguments() == 2 ) 
-			{
-				s->TempInt( makenumber( 1 ) );
-				doTarget( s, findTarg->second.targID, findTarg->second.dictEntry );
-			} 
-			else 
-				sysmessage( s, 338 );
-			break;
+			case CMD_TARGET:
+				s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				break;
+			case CMD_TARGETXYZ:
+				if( NumArguments() == 4 )
+				{
+					s->ClickX( static_cast<SI16>(Argument( 1 )) );
+					s->ClickY( static_cast<SI16>(Argument( 2 )) );
+					s->ClickZ( static_cast<SI08>(Argument( 3 )) );
+					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				}
+				else
+					s->sysmessage( 340 );
+				break;
+			case CMD_TARGETINT:
+				if( NumArguments() == 2 )
+				{
+					s->TempInt( Argument( 1 ) );
+					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				}
+				else
+					s->sysmessage( 338 );
+				break;
+			case CMD_TARGETTXT:
+				if( NumArguments() > 1 )
+				{
+					s->XText( CommandString( 2 ) );
+					s->target( 0, findTarg->second.targID, findTarg->second.dictEntry );
+				}
+				else
+					s->sysmessage( "This command requires more arguments!" );
+				break;
 		}
-		return;
 	}
 	else
 	{
-		CmdTableIterator toFind = cmd_table.find( comm );
-		if( toFind == cmd_table.end() ) 
-		{ 	
-			cScript *toGrab=Trigger->GetScript( mChar->GetScriptTrigger() ); 	
-			if( toGrab == NULL || !toGrab->OnCommand( s ) ) 		
-				sysmessage( s, 336 ); 	
-			return; 
-		} 	
+		COMMANDMAP_ITERATOR toFind = CommandMap.find( command );
+		if( toFind == CommandMap.end() )
+		{
+			cScript *toGrab = JSMapping->GetScript( mChar->GetScriptTrigger() );
+			if( toGrab == NULL || !toGrab->OnCommand( s ) )
+				s->sysmessage( 336 );
+			return;
+		}
 		else
 		{
 			bool plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
-				Log( comm, mChar, NULL, "Insufficient clearance" );
-				sysmessage( s, 337 );
+				Log( command, mChar, NULL, "Insufficient clearance" );
+				s->sysmessage( 337 );
 				return;
 			}
-			Log( comm, mChar, NULL, "Cleared" );
+			Log( command, mChar, NULL, "Cleared" );
 
-			switch( toFind->second.cmdType ) 
+			switch( toFind->second.cmdType )
 			{
-			case CMD_FUNC:
-				(*((CMD_EXEC)toFind->second.cmd_extra)) (s);
-				break;
-			case CMD_ITEMMENU:
-				NewAddMenu( s, (int)toFind->second.cmd_extra );
-				break;
-			default:
-				sysmessage( s, 346 );
-				break;
-			}
-			return;
-		}
-	}
-	sysmessage( s, "BUG: Should never reach end of command() function!" );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::MakeShop( CChar *c )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Turn an NPC into a shopkeeper
-//o---------------------------------------------------------------------------o
-void cCommands::MakeShop( CChar *c )
-{
-	if( c == NULL )
-		return;
-	CItem *n = NULL;
-	c->SetShop( true );
-
-	CItem *buyPack		= c->GetItemAtLayer( 0x1A );
-	CItem *boughtPack	= c->GetItemAtLayer( 0x1B );
-	CItem *sellPack		= c->GetItemAtLayer( 0x1C );
-	if( buyPack == NULL )
-	{
-		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
-		if( n != NULL )
-		{
-			n->SetLayer( 0x1A );
-			if( !n->SetCont( c ) )
-				Items->DeleItem( n );
-			else
-			{
-				n->SetType( 1 );
-				n->SetNewbie( true );
-			}
-		}
-	}
-	if( boughtPack == NULL )
-	{
-		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
-		if( n != NULL )
-		{
-			n->SetLayer( 0x1B );
-			if( n->SetCont( c ) )
-			{
-				n->SetType( 1 );
-				n->SetNewbie( true );
-			}
-		}
-	}
-	if( sellPack == NULL )
-	{
-		n = Items->SpawnItem( NULL, c, 1, "#", false, 0x2AF8, 0, false, false );
-		if( n != NULL )
-		{
-			n->SetLayer( 0x1C );
-			if( n->SetCont( c ) )
-			{
-				n->SetType( 1 );
-				n->SetNewbie( true );
-			}
-		}
-	}
-	c->Teleport();
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::showQue( cSocket *s, bool isGM )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Shows next unhandled call in the queue
-//o---------------------------------------------------------------------------o
-void cCommands::showQue( cSocket *s, bool isGM )
-{
-	if( isGM )
-		GMQueue->SendAsGump( s );
-	else
-		CounselorQueue->SendAsGump( s );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::nextCall( cSocket *s, bool isGM )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send GM/Counsellor to next call in the que
-//o---------------------------------------------------------------------------o
-void cCommands::nextCall( cSocket *s, bool isGM )
-{
-	CChar *j = NULL;
-	int x = 0;
-	CChar *mChar = s->CurrcharObj();
-	if( mChar->GetCallNum() != 0 )
-		closeCall( s, isGM );
-	HelpRequest *tempPage = NULL;
-	if( isGM )
-	{
-		for( tempPage = GMQueue->First(); !GMQueue->AtEnd(); tempPage = GMQueue->Next() )
-		{
-			if( !tempPage->IsHandled() )
-			{
-				j = calcCharObjFromSer( tempPage->WhoPaging() );
-				if( j != NULL )
-				{
-					GumpDisplay GMNext( s, 300, 200 );
-					GMNext.AddData( "Pager: ", j->GetName() );
-					GMNext.AddData( "Problem: ", tempPage->Reason() );
-					GMNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-					GMNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
-					GMNext.Send( 4, false, INVALIDSERIAL );
-					tempPage->IsHandled( true );
-					mChar->SetLocation( j );
-					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID() ));
-					mChar->Teleport();
-					x++;
-				}
-				if( x > 0 )
+				case CMD_FUNC:
+					(*((CMD_EXEC)toFind->second.cmd_extra)) ();
+					break;
+				case CMD_SOCKFUNC:
+					(*((CMD_SOCKEXEC)toFind->second.cmd_extra)) (s);
+					break;
+				default:
+					s->sysmessage( 346 );
 					break;
 			}
 		}
-		if( x == 0 ) 
-			sysmessage( s, 347 );
 	}
-	else //Player is a counselor
-	{
-		x = 0;
-		for( tempPage = CounselorQueue->First(); !CounselorQueue->AtEnd(); tempPage = CounselorQueue->Next() )
-		{
-			if( !tempPage->IsHandled() )
-			{
-				j = calcCharObjFromSer( tempPage->WhoPaging() );
-				if( j != NULL )
-				{
-					GumpDisplay CNext( s, 300, 200 );
-					CNext.AddData( "Pager: ", j->GetName() );
-					CNext.AddData( "Problem: ", tempPage->Reason() );
-					CNext.AddData( "Serial number ", tempPage->WhoPaging(), 3 );
-					CNext.AddData( "Paged at: ", tempPage->TimeOfPage() );
-					CNext.Send( 4, false, INVALIDSERIAL );
-					tempPage->IsHandled( true );
-					mChar->SetCallNum( static_cast<SI16>(tempPage->RequestID()) );
-					mChar->SetLocation( j );
-					mChar->Teleport();
-					x++;
-					break;
-				}
-			}
-			if( x > 0 ) 
-				break;
-		}
-		if( x == 0 ) 
-			sysmessage( s, 348 );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::closeCall( cSocket *s, bool isGM )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Closes an open call in the Que
-//o---------------------------------------------------------------------------o
-void cCommands::closeCall( cSocket *s, bool isGM )
-{
-	CChar *mChar = s->CurrcharObj();
-	if( mChar->GetCallNum() != 0 )
-	{
-		if( isGM )
-		{
-			if( GMQueue->GotoPos( GMQueue->FindCallNum( mChar->GetCallNum() ) ) )
-			{ 
-				GMQueue->Remove();
-				mChar->SetCallNum( 0 );
-				sysmessage( s, 1285 );
-			}
-		}
-		else
-		{
-			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( mChar->GetCallNum() ) ) )
-			{
-				CounselorQueue->Remove();
-				mChar->SetCallNum( 0 );
-				sysmessage( s, 1286 );
-			}
-		}
-	}
-	else
-		sysmessage( s, 1287 );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::KillSpawn( cSocket *s, int r )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Kill spawns in a spawnregion
-//o---------------------------------------------------------------------------o
-void cCommands::KillSpawn( cSocket *s, int r )
-{
-	int killed = 0;
-
-	sysmessage( s, 349 );
-	for( CHARACTER i = 0; i < cwmWorldState->GetCharCount(); i++ )
-	{
-		if( chars[i].GetSpawn( 1 ) < 0x40 && chars[i].GetSpawn( 3 ) == r && chars[i].GetSpawn( 2 ) == 1 ) // spawn2 == 1 if spawned by region
-		{
-			CChar *iDead = &chars[i];
-			Effects->bolteffect( iDead );
-			Effects->PlaySound( iDead, 0x0029 );
-			Npcs->DeleteChar( iDead );
-            killed++;
-		}
-	}
-	doGCollect();
-	sysmessage( s, "Done." );
-	sysmessage( s, 350, killed, r );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::RegSpawnMax( cSocket *s, cSpawnRegion *spawnReg )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Spawn a region to its maximum capacity
-//o---------------------------------------------------------------------------o
-void cCommands::RegSpawnMax( cSocket *s, cSpawnRegion *spawnReg )
-{
-	SI32 spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
-	if( spawn > 250 )
-	{
-		sysmessage( s, 351 );
-		spawn = 250;
-	}
-  	char temps[MAX_REGIONNAME + 150];
-	sprintf( temps, Dictionary->GetEntry( 352 ), spawnReg->GetName(), spawnReg->GetRegionNum(), spawn );
-	sysbroadcast( temps );
-
-	for( SI32 i = 1; i < spawn; i++ )
-		spawnReg->doRegionSpawn();
-	spawnReg->SetNextTime( BuildTimeValue( static_cast<R32>(60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() )) ) );
-
-	sysmessage( s, 353, spawn, spawnReg->GetName(), spawnReg->GetRegionNum() );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::RegSpawnNum( cSocket *s, cSpawnRegion *spawnReg, int n)
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Do a certain number of spawns in a region
-//o---------------------------------------------------------------------------o
-void cCommands::RegSpawnNum( cSocket *s, cSpawnRegion *spawnReg, int n)
-{
-	if( n > 250 )
-	{
-		sysmessage( s, 354 );
-		return;
-	}
-	else
-	{
-		SI32 spawn = ( spawnReg->GetMaxSpawn() - spawnReg->GetCurrent() );
-		char temps[MAX_REGIONNAME + 150];
-		if( spawn < n )
-			sysmessage( s, 355, n, spawnReg->GetName(), spawnReg->GetRegionNum(), spawn, spawnReg->GetMaxSpawn() );
-		else 
-			spawn = n;
-		sprintf( temps, Dictionary->GetEntry( 356 ), spawnReg->GetName(), spawnReg->GetRegionNum(), spawn);
-		sysbroadcast( temps );
-		for( SI32 i = 1; i < spawn; i++ )
-			spawnReg->doRegionSpawn();
-
-		spawnReg->SetNextTime( BuildTimeValue(static_cast<R32>( 60 * RandomNum( spawnReg->GetMinTime(), spawnReg->GetMaxTime() ) )) );
-		sysmessage( s, 357, spawn, spawnReg->GetName(), spawnReg->GetRegionNum() );
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::KillAll( cSocket *s, int percent, char* sysmsg)
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Kill all NPC's in a world
-//o---------------------------------------------------------------------------o
-void cCommands::KillAll( cSocket *s, int percent, const char* sysmsg )
-{
-	sysmessage( s, 358 );
-	sysbroadcast( sysmsg );
-	for( CHARACTER i = 0; i < cwmWorldState->GetCharCount(); i++ )
-	{
-		if( chars[i].IsNpc() )
-		{
-			if( RandomNum( 0, 99 ) + 1 <= percent )
-			{
-				CChar *iDead = &chars[i];
-				Effects->bolteffect( iDead );
-				Effects->PlaySound( iDead, 0x0029 );
-				doDeathStuff( iDead );
-			}
-		}
-	}
-	sysmessage( s, "Done." );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function	  -  void CPage( int s, char *reason )
-//|   Date		  -  Unknown
-//|   Programmer  -  Unknown  (Touched tabstops by EviLDeD Dec 23, 1998)
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Used when player pages a counselor
-//o---------------------------------------------------------------------------o
-void cCommands::CPage( cSocket *s, const char *reason )
-{
-	CChar *mChar = s->CurrcharObj();
-	bool x = false;
-	UI08 a1 = mChar->GetSerial( 1 );
-	UI08 a2 = mChar->GetSerial( 2 );
-	UI08 a3 = mChar->GetSerial( 3 );
-	UI08 a4 = mChar->GetSerial( 4 );
-	
-	HelpRequest pageToAdd;
-	pageToAdd.Reason( reason );
-	pageToAdd.WhoPaging( mChar->GetSerial() );
-	pageToAdd.IsHandled( false );
-	pageToAdd.TimeOfPage( time( NULL ) );
-
-	int callNum = CounselorQueue->Add( &pageToAdd );
-	if( callNum != -1 )
-	{
-		mChar->SetPlayerCallNum( callNum );
-		mChar->SetPageGM( 2 );
-		if( !strcmp( reason, "OTHER" ) )
-		{
-			mChar->SetSpeechMode( 2 );
-			sysmessage( s, 359 );
-		}
-		else
-		{
-			mChar->SetPageGM( 0 );
-			char temp[1024];
-			sprintf( temp, "Counselor Page from %s [%x %x %x %x]: %s", mChar->GetName(), a1, a2, a3, a4, reason );
-			Network->PushConn();
-			for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-			{
-				CChar *iChar = iSock->CurrcharObj();
-				if( iChar->IsGMPageable() || iChar->IsCounselor() )
-				{
-					x = true;
-					sysmessage( iSock, temp );
-				}
-			}
-			Network->PopConn();
-			if( x )
-				sysmessage( s, 360 );
-			else 
-				sysmessage( s, 361 );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function	  :  void GMPage( cSocket *s, char *reason )
-//|   Date		  :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Used when player calls a GM
-//o---------------------------------------------------------------------------o
-void cCommands::GMPage( cSocket *s, const char *reason )
-{
-	bool x = false;
-	CChar *mChar = s->CurrcharObj();
-	UI08 a1 = mChar->GetSerial( 1 );
-	UI08 a2 = mChar->GetSerial( 2 );
-	UI08 a3 = mChar->GetSerial( 3 );
-	UI08 a4 = mChar->GetSerial( 4 );
-	
-	HelpRequest pageToAdd;
-	pageToAdd.Reason( reason );
-	pageToAdd.WhoPaging( mChar->GetSerial() );
-	pageToAdd.IsHandled( false );
-	pageToAdd.TimeOfPage( time( NULL ) );
-	int callNum = GMQueue->Add( &pageToAdd );
-	if( callNum != -1 )
-	{
-		mChar->SetPlayerCallNum( callNum );
-		mChar->SetPageGM( 1 );
-		if( !strcmp( reason, "OTHER" ) )
-		{
-			mChar->SetSpeechMode( 1 );
-			sysmessage( s, 362 );
-		}
-		else
-		{
-			mChar->SetPageGM( 0 );
-			char temp[1024];
-			sprintf( temp, "Page from %s [%x %x %x %x]: %s", mChar->GetName(), a1, a2, a3, a4, reason );
-			Network->PushConn();
-			for( cSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-			{
-				CChar *iChar = iSock->CurrcharObj();
-				if( iChar == NULL )
-					continue;
-				if( iChar->IsGMPageable() )
-				{
-					x = true;
-					sysmessage( iSock, temp );
-				}
-			}
-			Network->PopConn();
-			if( x )
-				sysmessage( s, 363 );
-			else 
-				sysmessage( s, 364 );
-		}
-	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::DyeItem( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Change hue of the target
-//o---------------------------------------------------------------------------o
-void cCommands::DyeTarget( cSocket *s )
-{
-	CItem *i = calcItemObjFromSer( s->GetDWord( 1 ) );
-	if( i != NULL )
-	{
-		UI16 colour = s->GetWord( 7 );
-           
-		if( !s->DyeAll() )
-		{
-			if( colour < 0x0002 || colour > 0x03E9 )
-				colour = 0x03E9;
-		}
-	
-		i->SetColour( colour );
-		RefreshItem( i );
-		
-		Effects->PlaySound( s, 0x023E, true );
-		return;
-	}
-
-	CChar *mChar = s->CurrcharObj();
-	CChar *c = calcCharObjFromSer( s->GetDWord( 1 ) );
-	if( c != NULL )
-	{
-		if( !mChar->IsGM() ) 
-			return;
-
-		UI16 k = s->GetWord( 7 );
-		UI16 body = c->GetID();
-		SI32 b = k&0x4000; 
-
-		if( ( ( k>>8 ) < 0x80 ) && body >= 0x0190 && body <= 0x0193 ) 
-			k += 0x8000;
-
-		if( b == 16384 && (body >= 0x0190 && body <= 0x03e1 ) ) 
-			k = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
-
-		if( k != 0x8000 )
-		{
-			c->SetSkin( k );
-			c->SetxSkin( k );
-			c->Teleport();
-		} 
-	}
-	Effects->PlaySound( s, 0x023E, true );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::AddHere( cSocket *s, SI08 z )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Add an item at players location
-//o---------------------------------------------------------------------------o
-void cCommands::AddHere( cSocket *s, SI08 z )
-{
-	CTile tile;
-	UI16 itemID = ((s->AddID1())<<8) + s->AddID2();
-	
-	Map->SeekTile( itemID, &tile );
-	bool pileable = tile.Stackable();
-	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->SpawnItem( NULL, mChar, 1, "#", pileable, itemID, 0, false, false );
-	if( c != NULL )
-	{
-		c->SetLocation( mChar->GetX(), mChar->GetY(), z );
-		c->SetDoorDir( 0 );
-		c->SetPriv( 0 );
-		RefreshItem( c );
-	}
-	s->AddID1( 0 );
-	s->AddID2( 0 );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::MakePlace( cSocket *s, int i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Change teleport location to x,y,z
-//o---------------------------------------------------------------------------o
-void cCommands::MakePlace( cSocket *s, int i )
-{
-	SI16 x = 0, y = 0;
-	SI08 z = 0;
-	char temp[1024];
-	sprintf( temp, "LOCATION %i", i );
-	ScriptSection *Location = FileLookup->FindEntry( temp, location_def );
-	if( Location == NULL )
-		return;
-	for( const char *tag = Location->First(); !Location->AtEnd(); tag = Location->Next() )
-	{
-		const char *data = Location->GrabData();
-		if( !strcmp( tag, "X" ) )
-			x = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Y" ) )
-			y = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Z" ) )
-			z = (SI08)makeNum( data );
-	}
-	s->AddX( x );
-	s->AddY( y );
-	s->AddZ( z );
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Dupe selected item
-//o---------------------------------------------------------------------------o
-CItem *cCommands::DupeItem( cSocket *s, CItem *i, UI32 amount )
-{
-	CChar *mChar = s->CurrcharObj();
-	CItem *p = getRootPack( i ), *cp = mChar->GetPackItem();
-
-	if ( ( p == NULL && cp == NULL ) || mChar == NULL || i->isCorpse() )
-		return NULL;
-	
-	CItem *c = i->Dupe();
-	if( c == NULL )
-		return NULL;
-
-	c->IncX(2);
-	c->IncY(2);
-	c->IncZ(1);
-
-	if ( p == NULL && cp != NULL )
-		c->SetCont( cp );
-
-	if( amount > MAX_STACK )
-	{
-		amount -= MAX_STACK;
-		DupeItem( s, i, amount );
-	}
-	c->SetAmount( amount );
-	if( c->GetSpawnObj() != NULL )
-		nspawnsp.AddSerial( c->GetSpawn(), calcItemFromSer( c->GetSerial() ) );
-
-	RefreshItem( c );
-	return c;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Wipe( cSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Wipes all items in a world
-//o---------------------------------------------------------------------------o
-void cCommands::Wipe( cSocket *s )
-{
-	CChar *mChar = s->CurrcharObj();
-	Console << mChar->GetName() << " has initiated an item wipe" << myendl;
-	
-	for( ITEM k = 0; k <= cwmWorldState->GetItemCount(); k++ )
-	{
-		if( items[k].GetCont() == NULL && !items[k].isWipeable() )
-			Items->DeleItem( &items[k] );
-	}
-	sysbroadcast( Dictionary->GetEntry( 365 ) ); 
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Possess( cSocket *s ) 
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Allow a GM to take over the body of another Character
-//o---------------------------------------------------------------------------o
-void cCommands::Possess( cSocket *s ) 
-{
-	sysmessage( s, 1635 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -851,7 +220,6 @@ void cCommands::Possess( cSocket *s )
 //o---------------------------------------------------------------------------o
 void cCommands::Load( void )
 {
-	SI32 tablePos;
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
 	if( commands == NULL )
@@ -860,154 +228,142 @@ void cCommands::Load( void )
 		return;
 	}
 
-	const char *tag = NULL;
-	const char *data = NULL;
+	UString tag;
+	UString data;
+	UString UTag;
 
 	STRINGLIST	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
-		data = commands->GrabData();
-		CmdTableIterator toFind = cmd_table.find( tag );
-		TargetTableIterator findTarg = targ_table.find( tag );
-		if( toFind == cmd_table.end() && findTarg == targ_table.end() )
+		data						= commands->GrabData();
+		COMMANDMAP_ITERATOR toFind	= CommandMap.find( tag );
+		TARGETMAP_ITERATOR findTarg	= TargetMap.find( tag );
+		if( toFind == CommandMap.end() && findTarg == TargetMap.end() )
 			badCommands.push_back( tag ); // make sure we don't index into array at -1
 		else
 		{
-			commandCount++;
-			if( toFind != cmd_table.end() )
-				toFind->second.cmdLevelReq = makeNum( data );
-			else if ( findTarg != targ_table.end() )
-				findTarg->second.cmdLevelReq = makeNum( data );
-//			if( commandCount % 10 == 0 )
-//				Console << ".";
+			++commandCount;
+			if( toFind != CommandMap.end() )
+				toFind->second.cmdLevelReq		= data.toUByte();
+			else if( findTarg != TargetMap.end() )
+				findTarg->second.cmdLevelReq	= data.toUByte();
 		}
 		// check for commands here
 	}
-	if( badCommands.size() > 0 )
+	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		for( tablePos = 0; static_cast<unsigned int>(tablePos) < badCommands.size(); tablePos++ )
-			Console << "Invalid command '" << badCommands[tablePos].c_str() << "' found in commands.dfn!" << myendl;
-	}
-
-	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
-	if( cmdClearance == NULL )
-	{
-		InitClearance();
-		return;
-	}
-
-	int currentWorking;
-	for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
-	{
-		data = cmdClearance->GrabData();
-		currentWorking = clearance.size();
-		clearance.push_back( new commandLevel_st );
-		memset( &clearance[currentWorking], 0, sizeof( commandLevel_st ) );
-		strcpy( clearance[currentWorking]->name, tag );
-		clearance[currentWorking]->commandLevel = static_cast<UI08>(makeNum( data ));
-	}
-	for( UI32 tempCounter = 0; tempCounter < clearance.size(); tempCounter++ )
-	{
-		cmdClearance = FileLookup->FindEntry( clearance[tempCounter]->name, command_def );
-		if( cmdClearance == NULL )
-			continue;
-		for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+		STRINGLIST_CITERATOR tablePos = badCommands.begin();
+		while( tablePos != badCommands.end() )
 		{
-			data = cmdClearance->GrabData();
-			if( !strcmp( tag, "NICKCOLOUR" ) )
-				clearance[tempCounter]->nickColour = (UI16)makeNum( data );
-			else if( !strcmp( tag, "DEFAULTPRIV" ) )
-				clearance[tempCounter]->defaultPriv = (UI16)makeNum( data );
-			else if( !strcmp( tag, "BODYID" ) )
-				clearance[tempCounter]->targBody = (UI16)makeNum( data );
-			else if( !strcmp( tag, "ALLSKILL" ) )
-				clearance[tempCounter]->allSkillVals = (UI16)makeNum( data );
-			else if( !strcmp( tag, "BODYCOLOUR" ) )
-				clearance[tempCounter]->bodyColour = (UI16)makeNum( data );
-			else if( !strcmp( tag, "STRIPOFF" ) )
-				clearance[tempCounter]->stripOff = ( makeNum( data ) != 0 );
-			else
-				Console << myendl << "Unknown tag in " << clearance[tempCounter]->name << ": " << tag << " with data of " << data << myendl;
+			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
+			++tablePos;
 		}
 	}
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::RemoveShop( cSocket *s )
-//|	Programmer	-	Abaddon
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Removes shopkeeper layers from a character
-//o---------------------------------------------------------------------------o
-void cCommands::RemoveShop( cSocket *s )
-{
-	CChar *i = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( i == NULL )
+	
+	Console << "   o Loading command levels" << myendl;
+	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
+	if( cmdClearance == NULL )
+		InitClearance();
+	else
 	{
-		sysmessage( s, 366 );
-		return;
+		size_t currentWorking;
+		for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+		{
+			data			= cmdClearance->GrabData();
+			currentWorking	= clearance.size();
+			clearance.push_back( new commandLevel_st );
+			clearance[currentWorking]->name			= tag;
+			clearance[currentWorking]->commandLevel = data.toUByte();
+		}
+		std::vector< commandLevel_st * >::const_iterator cIter;
+		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
+		{
+			commandLevel_st *ourClear = (*cIter);
+			if( ourClear == NULL )
+				continue;
+			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
+			if( cmdClearance == NULL )
+				continue;
+			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+			{
+				UTag = tag.upper();
+				data = cmdClearance->GrabData();
+				if( UTag == "NICKCOLOUR" )
+					ourClear->nickColour = data.toUShort();
+				else if( UTag == "DEFAULTPRIV" )
+					ourClear->defaultPriv = data.toUShort();
+				else if( UTag == "BODYID" )
+					ourClear->targBody = data.toUShort();
+				else if( UTag == "ALLSKILL" )
+					ourClear->allSkillVals = data.toUShort();
+				else if( UTag == "BODYCOLOUR" )
+					ourClear->bodyColour = data.toUShort();
+				else if( UTag == "STRIPHAIR" )
+					ourClear->stripOff.set( BIT_STRIPHAIR, true );
+				else if( UTag == "STRIPITEMS" )
+					ourClear->stripOff.set( BIT_STRIPITEMS, true );
+				else
+					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+			}
+		}
 	}
 
-	i->SetShop( false );
-	CItem *buyLayer   = i->GetItemAtLayer( 0x1A );
-	CItem *sellLayer  = i->GetItemAtLayer( 0x1B );
-	CItem *otherLayer = i->GetItemAtLayer( 0x1C );
-	if( buyLayer != NULL )
-		Items->DeleItem( buyLayer );
-	if( sellLayer != NULL )
-		Items->DeleItem( sellLayer );
-	if( otherLayer != NULL )
-		Items->DeleItem( otherLayer );
-	sysmessage( s, 367 );
+	// Now we'll load our JS commands, what fun!
+	CJSMappingSection *commandSection = JSMapping->GetSection( SCPT_COMMAND );
+	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
+	{
+		if( ourScript != NULL )
+			ourScript->ScriptRegistration( "Command" );
+	}
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::Log( char *command, CHARACTER player1, CHARACTER player2, char *extraInfo )
+//|	Function	-	void cCommands::Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
 //o---------------------------------------------------------------------------o
-void cCommands::Log( char *command, CChar *player1, CChar *player2, char *extraInfo )
+void cCommands::Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo )
 {
-	char logName[MAX_PATH];
-	sprintf( logName, "%scommand.log", cwmWorldState->ServerData()->GetLogsDirectory() );
-	FILE *commandLog = fopen( logName, "a+" );
-	if( commandLog == NULL )
+	std::string logName	= cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + "command.log";
+	std::ofstream logDestination;
+	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
+	if( !logDestination.is_open() )
 	{
-		Console.Error( 1, "Unable to open command log file %s!", logName );
+		Console.Error( "Unable to open command log file %s!", logName.c_str() );
 		return;
 	}
 	char dateTime[1024];
 	RealTime( dateTime );
 
-	if( player2 != NULL )
-		fprintf( commandLog, "[%s] %s (serial: %i ) used command <%s> on player %s (serial: %i ) Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), command, player2->GetName(), player2->GetSerial(), extraInfo );
-	else
-		fprintf( commandLog, "[%s] %s (serial: %i ) used command <%s> Extra Info: %s\n", dateTime, player1->GetName(), player1->GetSerial(), command, extraInfo );
-	fclose( commandLog );
+	logDestination << "[" << dateTime << "] ";
+	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << " ) ";
+	logDestination << "used command <" << command << "> ";
+	if( ValidateObject( player2 ) )
+		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " ) ";
+	logDestination << "Extra Info: " << extraInfo << std::endl;
+	logDestination.close();
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *cCommands::GetClearance( const char *clearName )
+//|	Function	-	commandLevel_st *cCommands::GetClearance( UString clearName )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
 //o---------------------------------------------------------------------------o
-commandLevel_st *cCommands::GetClearance( const char *clearName )
+commandLevel_st *cCommands::GetClearance( UString clearName )
 {
-	char *nameBackup;
-	nameBackup = new char[strlen( clearName ) + 1];
-	strcpy( nameBackup, clearName );
-	nameBackup = strupr( nameBackup );
-	for( UI32 counter = 0; counter < clearance.size(); counter++ )
+	if( clearance.empty() )
+		return NULL;
+	commandLevel_st *clearPointer;
+	std::vector< commandLevel_st * >::const_iterator clearIter;
+	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
-		if( !strcmp( nameBackup, clearance[counter]->name ) )
-		{
-			delete [] nameBackup;
-			return clearance[counter];
-		}
+		clearPointer = (*clearIter);
+		if( clearName.upper() == clearPointer->name )
+			return clearPointer;
 	}
-	delete [] nameBackup;
 	return NULL;
 }
 
@@ -1019,13 +375,13 @@ commandLevel_st *cCommands::GetClearance( const char *clearName )
 //o---------------------------------------------------------------------------o
 UI16 cCommands::GetColourByLevel( UI08 commandLevel )
 {
-	int clearanceSize = clearance.size();
-	if( clearanceSize <= 0 )
+	size_t clearanceSize = clearance.size();
+	if( clearanceSize == 0 )
 		return 0x005A;
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0]->nickColour;
 
-	for( int counter = 0; counter < ( clearanceSize - 1 ); counter++ )
+	for( size_t counter = 0; counter < ( clearanceSize - 1 ); ++counter )
 	{
 		if( commandLevel <= clearance[counter]->commandLevel && commandLevel > clearance[counter+1]->commandLevel )
 			return clearance[counter]->nickColour;
@@ -1045,9 +401,9 @@ void cCommands::InitClearance( void )
 	clearance.push_back( new commandLevel_st );
 	clearance.push_back( new commandLevel_st );
 
-	strcpy( clearance[0]->name, "GM" );
-	strcpy( clearance[1]->name, "COUNSELOR" );
-	strcpy( clearance[2]->name, "PLAYER" );
+	clearance[0]->name = "GM";
+	clearance[1]->name = "COUNSELOR";
+	clearance[2]->name = "PLAYER";
 
 	clearance[0]->commandLevel = 2;
 	clearance[1]->commandLevel = 1;
@@ -1071,6 +427,13 @@ void cCommands::InitClearance( void )
 	clearance[0]->allSkillVals = 1000;
 	clearance[1]->allSkillVals = 0;
 	clearance[2]->allSkillVals = 0;
+
+	// Strip Everything
+	clearance[0]->stripOff.set( BIT_STRIPHAIR, true );
+	clearance[0]->stripOff.set( BIT_STRIPITEMS, true );
+
+	clearance[1]->stripOff.set( BIT_STRIPHAIR, true );
+	clearance[1]->stripOff.set( BIT_STRIPITEMS, true );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1081,13 +444,13 @@ void cCommands::InitClearance( void )
 //o---------------------------------------------------------------------------o
 commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 {
-	int clearanceSize = clearance.size();
-	if( clearanceSize <= 0 )
+	size_t clearanceSize = clearance.size();
+	if( clearanceSize == 0 )
 		return NULL;
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0];
 
-	for( int counter = 0; counter < ( clearanceSize - 1 ); counter++ )
+	for( size_t counter = 0; counter < ( clearanceSize - 1 ); ++counter )
 	{
 		if( commandLevel <= clearance[counter]->commandLevel && commandLevel > clearance[counter+1]->commandLevel )
 			return clearance[counter];
@@ -1096,45 +459,45 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool cCommands::CommandExists( char *cmdName )
+//|	Function	-	bool cCommands::CommandExists( const std::string cmdName )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if a command is valid
 //o---------------------------------------------------------------------------o
-bool cCommands::CommandExists( char *cmdName )
+bool cCommands::CommandExists( const std::string& cmdName )
 {
-	CmdTableIterator toFind = cmd_table.find( cmdName );
-	return ( toFind != cmd_table.end() );
+	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
+	return ( toFind != CommandMap.end() );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	const char * cCommands::FirstCommand( void )
+//|	Function	-	const std::string cCommands::FirstCommand( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get first command in cmd_table
 //o---------------------------------------------------------------------------o
-const char * cCommands::FirstCommand( void )
+const std::string cCommands::FirstCommand( void )
 {
-	cmdPointer = cmd_table.begin();
+	cmdPointer = CommandMap.begin();
 	if( FinishedCommandList() )
-		return NULL;
-	return cmdPointer->first.c_str();
+		return "";
+	return cmdPointer->first;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	const char * cCommands::NextCommand( void )
+//|	Function	-	const std::string cCommands::NextCommand( void )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get next command in cmd_table
 //o---------------------------------------------------------------------------o
-const char * cCommands::NextCommand( void )
+const std::string cCommands::NextCommand( void )
 {
 	if( FinishedCommandList() )
-		return NULL;
-	cmdPointer++;
+		return "";
+	++cmdPointer;
 	if( FinishedCommandList() )
-		return NULL;
-	return cmdPointer->first.c_str();
+		return "";
+	return cmdPointer->first;
 }
 
 //o---------------------------------------------------------------------------o
@@ -1145,19 +508,23 @@ const char * cCommands::NextCommand( void )
 //o---------------------------------------------------------------------------o
 bool cCommands::FinishedCommandList( void )
 {
-	return ( cmdPointer == cmd_table.end() );
+	return ( cmdPointer == CommandMap.end() );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	cmdtable_mapentry *cCommands::CommandDetails( char *cmdName )
+//|	Function	-	cmdtable_mapentry *cCommands::CommandDetails( const std::string cmdName )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
 //o---------------------------------------------------------------------------o
-cmdtable_mapentry *cCommands::CommandDetails( char *cmdName )
+CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
 {
 	if( !CommandExists( cmdName ) )
 		return NULL;
-	CmdTableIterator toFind = cmd_table.find( cmdName );
+	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
+	if( toFind == CommandMap.end() )
+		return NULL;
 	return &(toFind->second);
+}
+
 }

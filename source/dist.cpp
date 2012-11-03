@@ -2,100 +2,75 @@
 // There's a chance that a number of these could become inline
 #include "uox3.h"
 #include "cRaces.h"
+#include "regions.h"
 
+namespace UOX
+{
+	
 //o---------------------------------------------------------------------------o
 //|	Function	-	bool checkItemRange( CChar *mChar, CItem *i, UI16 distance )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Checks if an item is within a certain distance (based on
-//|					its container and location)
+//|	Purpose		-	Checks if an item is within reach
 //o---------------------------------------------------------------------------o
-bool checkItemRange( CChar *mChar, CItem *i, UI16 distance )
+bool checkItemRange( CChar *mChar, CItem *i )
 {
-	CChar *itemOwner = NULL;
+	if( mChar->IsGM() || mChar->IsCounselor() )
+		return true;
 
-	bool checkRange = false;
+	CBaseObject *itemOwner	= i;
+	bool checkRange			= false;
 
 	if( i->GetCont() != NULL ) // It's inside another container, we need root container to calculate distance
 	{
-		itemOwner = getPackOwner( i );
-		if( itemOwner == NULL ) // In a pack on the ground!
-		{
-			CItem *rootContainer = getRootPack( i );
-			if( rootContainer == NULL )
-				Console.Error( 2, "Pack with serial %li has an invalid container chain!", i->GetSerial() );
-			else
-				checkRange = objInRange( mChar, rootContainer, distance );
-		}
+		ObjectType objType	= OT_CBO;
+		CBaseObject *iOwner = FindItemOwner( i, objType );
+		if( iOwner != NULL )
+			itemOwner = iOwner;
 	}
-	else  // It's on the ground
-		checkRange = objInRange( mChar, i, distance );
-
-	bool isGM = mChar->IsGM();
-	bool isCounselor = mChar->IsCounselor();
-	bool isPackOwner = ( itemOwner == mChar );
-	bool isPetOwner = ( itemOwner != NULL && itemOwner != mChar && (CChar *)(itemOwner->GetOwnerObj()) == mChar );
-
-	if( isGM || isCounselor || isPackOwner || isPetOwner )
-		return true;
+	if( itemOwner == mChar )
+		checkRange = true;
 	else
-		return checkRange;
+		checkRange = objInRange( mChar, itemOwner, DIST_NEARBY );
+
+	return checkRange;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance )
+//|	Function	-	bool objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance )
 //|	Date		-	2/12/2003
 //| Programmer	-	Zane
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if BaseObject obj is within a certain distance
 //o---------------------------------------------------------------------------o
-bool objInRange( cSocket *mSock, cBaseObject *obj, UI16 distance )
+bool objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar == NULL )
-		return false;
-	if( mChar == obj )
-		return true;
-	if( mChar->WorldNumber() != obj->WorldNumber() )
-		return false;
-	point3 difference = mChar->GetLocation() - obj->GetLocation();
-	return ( difference.MagSquared() <= ( distance * distance ) );
+	return objInRange( mChar, obj, distance );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool objInRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+//|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another
 //|					object
 //o---------------------------------------------------------------------------o
-bool objInRange( cBaseObject *a, cBaseObject *b, UI16 distance )
+bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
-	if( a == b )
-		return true;
-	if( a->WorldNumber() != b->WorldNumber() )
-		return false;
-	point3 difference = a->GetLocation() - b->GetLocation();
-	return ( difference.MagSquared() <= ( distance * distance ) );
+	return ( getDist( a, b ) <= distance );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool itemInRange( cSocket *s, CItem *i )
+//|	Function	-	bool objInRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Check if item i in visual range
+//|	Purpose		-	Check if an object is within a certain distance of another
+//|					object
 //o---------------------------------------------------------------------------o
-bool itemInRange( CChar *mChar, CItem *i )
+bool objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance )
 {
-	if( mChar == NULL || i == NULL )
-		return false;
-	SI08 vr;
-	if( i->GetID( 1 ) >= 0x40 ) 
-		vr = BUILDRANGE;
-	else
-		vr = MAX_VISRANGE + Races->VisRange( mChar->GetRace() );
-	point3 difference = mChar->GetLocation() - i->GetLocation();
-	return ( difference.MagSquared() <= ( vr * vr ) );
+	return ( getOldDist( a, b ) <= distance );
 }
 
 //o---------------------------------------------------------------------------o
@@ -106,63 +81,61 @@ bool itemInRange( CChar *mChar, CItem *i )
 //o---------------------------------------------------------------------------o
 bool charInRange( CChar *a, CChar *b )
 {
-	if( a == NULL || b == NULL )
+	if( !ValidateObject( a ) )
 		return false;
-	if( a == b )
-		return true;
-	if( a->WorldNumber() != b->WorldNumber() )
-		return false;
-	SI16 visRange = MAX_VISRANGE + Races->VisRange( a->GetRace() );
-	point3 difference = a->GetLocation() - b->GetLocation();
-	return ( difference.MagSquared() <= ( visRange * visRange ) );
+	SI16 visRange		= MAX_VISRANGE + Races->VisRange( a->GetRace() );
+	return objInRange( a, b, static_cast<UI16>(visRange) );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI16 getDist( cBaseObject *a, cBaseObject *b )
+//|	Function	-	UI16 getDist( CBaseObject *a, CBaseObject *b )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the distance between two objects
 //o---------------------------------------------------------------------------o
-UI16 getDist( cBaseObject *a, cBaseObject *b )
+UI16 getDist( CBaseObject *a, CBaseObject *b )
 {
-	if( a == NULL || b == NULL ) 
-		return 0xFFFF;
+	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
+		return DIST_OUTOFRANGE;
+	if( a == b )
+		return DIST_SAMETILE;
 	if( a->WorldNumber() != b->WorldNumber() )
-		return 0xFFFF;
-	point3 difference = a->GetLocation() - b->GetLocation();
-	return (SI16)difference.Mag();
+		return DIST_OUTOFRANGE;
+	return getDist( a->GetLocation(), b->GetLocation() );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool inBankRange( CChar *i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Checks if player is in the range of a banker
-//o---------------------------------------------------------------------------o
-bool inBankRange( CChar *i )
+UI16 getDist( point3 a, point3 b )
 {
-	if( i == NULL ) 
-		return false;
-	SI16 x = i->GetX(), y = i->GetY();
-
-	UI08 worldNumber = i->WorldNumber();
-	SubRegion *Cell = MapRegion->GetCell( x, y, worldNumber );
-	if( Cell != NULL )
-	{
-		Cell->PushChar();
-		for( CChar *bankCheck = Cell->FirstChar(); !Cell->FinishedChars(); bankCheck = Cell->GetNextChar() )
-		{
-			if( bankCheck->GetNPCAiType() == 0x08 )
-			{
-				if( objInRange( i, bankCheck, 6 ) )
-				{
-					Cell->PopChar();
-					return true;
-				}
-			}
-		}
-		Cell->PopChar();
-	}
-	return false;
+	point3 difference = a - b;
+	return static_cast<UI16>(difference.Mag());
 }
 
+UI16 getOldDist( CBaseObject *a, CBaseObject *b )
+{
+	if( !ValidateObject( a ) || !ValidateObject( b ) ) 
+		return DIST_OUTOFRANGE;
+	if( a == b )
+		return DIST_SAMETILE;
+	if( a->WorldNumber() != b->WorldNumber() )
+		return DIST_OUTOFRANGE;
+	point3 distA;
+	point3 distB;
+	distA = a->GetOldLocation();
+	distB = b->GetLocation();
+	point3 difference = distA - distB;
+	return static_cast<UI16>(difference.Mag());
+}
+
+UI16 getDist3D( CBaseObject *a, CBaseObject *b )
+{
+	if( !ValidateObject( a ) || !ValidateObject( b ) )
+		return DIST_OUTOFRANGE;
+	if( a == b )
+		return DIST_SAMETILE;
+	if( a->WorldNumber() != b->WorldNumber() )
+		return DIST_OUTOFRANGE;
+	point3 difference = a->GetLocation() - b->GetLocation();
+	return static_cast<UI16>(difference.Mag3D());
+}
+
+}

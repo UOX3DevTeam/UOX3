@@ -1,6 +1,9 @@
 #ifndef __CDICE__
 #define __CDICE__
 
+namespace UOX
+{
+
 class cDice
 {
 private:
@@ -13,7 +16,7 @@ public:
 			cDice();
 			cDice( std::string dieString );
 			cDice( int d, int s, int a );
-	virtual	~cDice();
+			~cDice();
 
 	int		roll( void );
 	void	setDice( int newDice );
@@ -21,5 +24,6 @@ public:
 	void	setAddition( int newAddition );
 };
 
-#endif
+}
 
+#endif

@@ -2,15 +2,19 @@
 #define __CSKILLCLASS_H__
 
 #include <algorithm>
-//using namespace std;
+
+namespace UOX
+{
 
 class cSkillClass
 {
 public:
-	int skill;
-	int value;
+	UI08 skill;
+	UI16 value;
 
-	cSkillClass( int nskill, int nvalue ) : skill(nskill), value(nvalue) {}
+	cSkillClass( UI08 nskill, UI16 nvalue ) : skill( nskill ), value( nvalue )
+	{
+	}
 };
 
 inline bool operator==(const cSkillClass& x, const cSkillClass& y)
@@ -26,6 +30,8 @@ inline bool operator<(const cSkillClass& x, const cSkillClass& y)
 inline bool operator>(const cSkillClass& x, const cSkillClass& y)
 {
 	return ( ( x.value == y.value ) ? ( x.skill > y.skill ) : ( x.value > y.value ) );
+}
+
 }
 
 #endif

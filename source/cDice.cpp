@@ -1,13 +1,9 @@
-#if defined(_MSC_VER)
-#if _MSC_VER < 1300
-
-#pragma warning( disable : 4786 )
-#pragma warning( disable : 4514 )
-#endif
-#endif
-
 #include <string>
 #include "cdice.h"
+#include <stdlib.h>
+
+namespace UOX
+{
 
 inline int RandomNum( int nLowNum, int nHighNum )
 {
@@ -52,7 +48,7 @@ void cDice::setAddition( int newAddition )
 int cDice::roll( void )
 {
 	int sum = 0;
-	for( int rolls = 0; rolls < dice; rolls++ )
+	for( int rolls = 0; rolls < dice; ++rolls )
 	{
 		sum += RandomNum( 1, sides );
 	}
@@ -62,34 +58,33 @@ int cDice::roll( void )
 
 bool cDice::convStringToDice( std::string dieString )
 {
-	int dLoc = -1, pLoc = -1;
-	dice = 1;
-	sides = 1;
-	addition = 0;
-	dLoc = dieString.find( "d" );
-	if( dLoc <= 0 )
+	dice		= 1;
+	sides		= 1;
+	addition	= 0;
+	size_t dLoc = dieString.find( "d" );
+	if( dLoc == std::string::npos )
 		return false;
 	char tmpString[10];
-	int tmpCounter;
-	for( tmpCounter = 0; tmpCounter < dLoc; tmpCounter++ )
+	size_t tmpCounter;
+	for( tmpCounter = 0; tmpCounter < dLoc; ++tmpCounter )
 		tmpString[tmpCounter] = dieString[tmpCounter];
-	tmpString[tmpCounter] = 0;
-	dice = atoi( tmpString );
-	pLoc = dieString.find( "+" );
-	if( pLoc <= 0 )
+	tmpString[tmpCounter]	= 0;
+	dice					= atoi( tmpString );
+	size_t pLoc				= dieString.find( "+" );
+	if( pLoc == std::string::npos )
 	{	// no +
-		for( tmpCounter = dLoc+1; static_cast<unsigned int>(tmpCounter) < dieString.length(); tmpCounter++ )
+		for( tmpCounter = dLoc+1; tmpCounter < dieString.length(); ++tmpCounter )
 			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
 		tmpString[tmpCounter-dLoc-1] = 0;
 		sides = atoi( tmpString );
 	}
 	else
 	{
-		for( tmpCounter = dLoc+1; tmpCounter < pLoc; tmpCounter++ )
+		for( tmpCounter = dLoc+1; tmpCounter < pLoc; ++tmpCounter )
 			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
 		tmpString[tmpCounter-dLoc-1] = 0;
 		sides = atoi( tmpString );
-		for( tmpCounter = pLoc + 1; static_cast<unsigned int>(tmpCounter) < dieString.length(); tmpCounter++ )
+		for( tmpCounter = pLoc + 1; tmpCounter < dieString.length(); ++tmpCounter )
 			tmpString[tmpCounter-pLoc-1] = tmpString[tmpCounter];
 		tmpString[tmpCounter-pLoc-1] = 0;
 		addition = atoi( tmpString );
@@ -97,4 +92,4 @@ bool cDice::convStringToDice( std::string dieString )
 	return true;
 }
 
-
+}

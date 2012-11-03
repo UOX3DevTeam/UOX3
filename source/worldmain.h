@@ -10,237 +10,241 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #endif
-#include "cServerData.h"
-#include "jail.h"
 
-struct location_st
+namespace UOX
 {
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
-	UI08 region;
+
+enum CWM_TID
+{
+	tWORLD_NEXTFIELDEFFECT = 0,
+	tWORLD_NEXTNPCAI,
+	tWORLD_SHOPRESTOCK,
+	tWORLD_HUNGERDAMAGE,
+	tWORLD_LIGHTTIME,
+	tWORLD_PETOFFLINECHECK,
+	tWORLD_COUNT
 };
 
-struct logout_st//Instalog
+class CServerProfile
 {
-	SI16 x1;
-	SI16 y1;
-	SI16 x2;
-	SI16 y2;
-};
+private:
+	UI32 networkTime;
+	UI32 timerTime;
+	UI32 autoTime;
+	UI32 loopTime;
+	UI32 networkTimeCount;
+	UI32 timerTimeCount;
+	UI32 autoTimeCount;
+	UI32 loopTimeCount;
 
-struct advance_st
-{
-	UI16 base;
-	UI16 success;
-	UI16 failure;
-};
+	SI32 globalRecv;
+	SI32 globalSent;
+public:
+			CServerProfile();
+			~CServerProfile();
 
-struct skill_st
-{
-	UI16 strength;
-	UI16 dexterity;
-	UI16 intelligence;
-	char madeword[50];
-	std::vector< advance_st > advancement;
-};
+	UI32	NetworkTime( void ) const;
+	UI32	TimerTime( void ) const;
+	UI32	AutoTime( void ) const;
+	UI32	LoopTime( void ) const;
 
-struct title_st // For custom titles
-{
-	char fame[MAX_FAMETITLE];
-	char skill[MAX_TITLE];
-	char prowess[MAX_TITLE];
-};
+	void	NetworkTime( UI32 newVal );
+	void	TimerTime( UI32 newVal );
+	void	AutoTime( UI32 newVal );
+	void	LoopTime( UI32 newVal );
 
-// Scriptable Murder Tags - Zane
-struct MurderPair
-{
-	SI16 loBound;
-	std::string toDisplay;
-	MurderPair() : loBound( 0 ) { }
-	MurderPair( SI16 lB, const char *toDisp ) : loBound( lB ) { toDisplay = toDisp; }
+	void	IncNetworkTime( UI32 toInc );
+	void	IncTimerTime( UI32 toInc );
+	void	IncAutoTime( UI32 toInc );
+	void	IncLoopTime( UI32 toInc );
+
+	UI32	NetworkTimeCount( void ) const;
+	UI32	TimerTimeCount( void ) const;
+	UI32	AutoTimeCount( void ) const;
+	UI32	LoopTimeCount( void ) const;
+
+	void	NetworkTimeCount( UI32 newVal );
+	void	TimerTimeCount( UI32 newVal );
+	void	AutoTimeCount( UI32 newVal );
+	void	LoopTimeCount( UI32 newVal );
+
+	void	IncNetworkTimeCount( void );
+	void	IncTimerTimeCount( void );
+	void	IncAutoTimeCount( void );
+	void	IncLoopTimeCount( void );
+
+	SI32	GlobalReceived( void ) const;
+	SI32	GlobalSent( void ) const;
+
+	void	GlobalReceived( SI32 newVal );
+	void	GlobalSent( SI32 newVal );
 };
 
 class CWorldMain  
 {
-protected:
-	// Timers
-	UI32	nextfieldeffecttime;
-	UI32	nextnpcaitime;
-	UI32	shoprestocktime;			// Shop respawn timer
-	UI32	hungerdamagetimer;			// Hunger damage timer
-	UI32	polyduration;
+private:
+	struct skill_st
+	{
+		UI16 strength;
+		UI16 dexterity;
+		UI16 intelligence;
+		std::string madeword;
+		std::vector< advance_st > advancement;
+		UI16 jsScript;
+		std::string name;
+		skill_st()
+		{
+			ResetDefaults();
+		}
+		void ResetDefaults( void )
+		{
+			strength		= 0;
+			dexterity		= 0;
+			intelligence	= 0;
+			jsScript		= 0xFFFF;
+			madeword		= "made";
+			name			= "";
+			advancement.resize( 0 );
+		}
+	};
 
-	// Items & Characters
-	UI32	charcount, itemcount;
-	SERIAL	charcount2, itemcount2;
-	UI32	imem, cmem;
-	UI08	weight_per_str;
+	// Custom Titles
+	struct title_st
+	{
+		std::string fame;
+		std::string skill;
+		title_st() : fame( "" ), skill( "" )
+		{
+		}
+	};
+
+	// Timers
+	TIMERVAL	worldTimers[tWORLD_COUNT];
 
 	// Console & Program Level Vars
-	bool	error;
-	bool	keeprun;
-	bool	secure; // Secure mode
-	UI32	ErrorCount;
-	bool	Loaded;
+	bool		error;
+	bool		keeprun;
+	bool		secure; // Secure mode
+	UI32		ErrorCount;
+	bool		Loaded;
 
 	// Time Functions
-	UI16	secondsperuominute;		// Number of seconds for a UOX minute.
-	UI32	uotickcount;
-	UI32	starttime, endtime, lclock;
-	bool	overflow;
-	UI32	uiCurrentTime;
-	UI32	lighttime;
+	UI32		uotickcount;
+	UI32		starttime, endtime, lclock;
+	bool		overflow;
+	UI32		uiCurrentTime;
 
 	// Worldsave
-	UI32	oldtime, newtime;
-	bool	autosaved;
-	UI08	worldSaveProgress;
+	UI32		oldtime, newtime;
+	bool		autosaved;
+	SaveStatus	worldSaveProgress;
+	
+	// IP Update
+	UI32		oldIPtime, newIPtime;
+	bool		ipupdated;
 
 	// Misc
-	SI32	now;					// Players online
-	bool	showlayer;
-	UI16	totalspawnregions;
-	bool	xgm;
-	SI32	executebatch;
-	UI16	locationcount;
-	UI32	logoutcount;				// Instalog
-	UI08	escortRegions;
-	UI08	validEscortRegion[256];
-	SI32	erroredLayers[MAXLAYERS];
+	size_t		playersOnline;					// Players online
+	bool		reloadingScripts;
+	bool		classesInitialized;
 
 public:
 	// Timers
-	void	SetNextFieldEffectTime( UI32 newVal );
-	UI32	GetNextFieldEffectTime( void );
-	void	SetNextNPCAITime( UI32 newVal );
-	UI32	GetNextNPCAITime( void );
-	void	SetShopRestockTime( UI32 newVal );
-	UI32	GetShopRestockTime( void );
-	void	SetHungerDamageTimer( UI32 newVal );
-	UI32	GetHungerDamageTimer( void );
-	void	SetPolyDuration( UI32 newVal );
-	UI32	GetPolyDuration( void );
-
-	// Items & Characters
-	void	SetItemCount( UI32 newVal );
-	UI32	GetItemCount( void );
-	void	IncItemCount( void );
-	void	SetCharCount( UI32 newVal );
-	UI32	GetCharCount( void );
-	void	IncCharCount( void );
-	void	SetItemCount2( SERIAL newVal );
-	SERIAL	GetItemCount2( void );
-	void	IncItemCount2( void );
-	void	SetCharCount2( SERIAL newVal );
-	SERIAL	GetCharCount2( void );
-	void	IncCharCount2( void );
-	void	SetIMem( UI32 newVal );
-	UI32	GetIMem( void );
-	void	IncIMem( void );
-	void	SetCMem( UI32 newVal );
-	UI32	GetCMem( void );
-	void	IncCMem( void );
-	void	SetWeightPerStr( UI08 newVal );
-	UI08	GetWeightPerStr( void );
+	void		SetTimer( CWM_TID timerID, TIMERVAL newVal );
+	TIMERVAL	GetTimer( CWM_TID timerID ) const;
 
 	// Console & Program Level Vars
-	void	SetError( bool newVal );
-	bool	GetError( void );
-	void	SetKeepRun( bool newVal );
-	bool	GetKeepRun( void );
-	void	SetSecure( bool newVal );
-	bool	GetSecure( void );
-	void	SetErrorCount( UI32 newVal );
-	UI32	GetErrorCount( void );
-	void	IncErrorCount( void );
-	void	SetLoaded( bool newVal );
-	bool	GetLoaded( void );
+	void		SetError( bool newVal );
+	bool		GetError( void ) const;
+	void		SetKeepRun( bool newVal );
+	bool		GetKeepRun( void ) const;
+	void		SetSecure( bool newVal );
+	bool		GetSecure( void ) const;
+	void		SetErrorCount( UI32 newVal );
+	UI32		GetErrorCount( void ) const;
+	void		IncErrorCount( void );
+	void		SetLoaded( bool newVal );
+	bool		GetLoaded( void ) const;
 
 	// Time Functions
-	void	SetUICurrentTime( UI32 newVal );
-	UI32	GetUICurrentTime( void );
-	void	SetSecondsPerUOMinute( UI16 newVal );
-	UI16	GetSecondsPerUOMinute( void );
-	void	SetUOTickCount( UI32 newVal );
-	UI32	GetUOTickCount( void );
-	void	SetOverflow( bool newVal );
-	bool	GetOverflow( void );
-	void	SetStartTime( UI32 newVal );
-	UI32	GetStartTime( void );
-	void	SetEndTime( UI32 newVal );
-	UI32	GetEndTime( void );
-	void	SetLClock( UI32 newVal );
-	UI32	GetLClock( void );
-	void	SetLightTime( UI32 newVal );
-	UI32	GetLightTime( void );
-
+	void		SetUICurrentTime( UI32 newVal );
+	UI32		GetUICurrentTime( void ) const;
+	void		SetUOTickCount( UI32 newVal );
+	UI32		GetUOTickCount( void ) const;
+	void		SetOverflow( bool newVal );
+	bool		GetOverflow( void ) const;
+	void		SetStartTime( UI32 newVal );
+	UI32		GetStartTime( void ) const;
+	void		SetEndTime( UI32 newVal );
+	UI32		GetEndTime( void ) const;
+	void		SetLClock( UI32 newVal );
+	UI32		GetLClock( void ) const;
+	
 	// Worldsave
-	void	SetNewTime( UI32 newVal );
-	UI32	GetNewTime( void );
-	void	SetOldTime( UI32 newVal );
-	UI32	GetOldTime( void );
-	void	SetAutoSaved( bool newVal );
-	bool	GetAutoSaved( void );
-	void	SetWorldSaveProgress( UI08 newVal );
-	UI08	GetWorldSaveProgress( void );
+	void		SetNewTime( UI32 newVal );
+	UI32		GetNewTime( void ) const;
+	void		SetOldTime( UI32 newVal );
+	UI32		GetOldTime( void ) const;
+	void		SetAutoSaved( bool newVal );
+	bool		GetAutoSaved( void ) const;
+	void		SetWorldSaveProgress( SaveStatus newVal );
+	SaveStatus	GetWorldSaveProgress( void ) const;
+	
+	// IP update
+	UI32		GetNewIPTime( void ) const;
+	void		SetNewIPTime( UI32 newVal );
+	UI32		GetOldIPTime( void ) const;
+	void		SetOldIPTime( UI32 newVal );
+	void		SetIPUpdated( bool newVal );
+	bool		GetIPUpdated( void ) const;
 
 	// Misc
-	void	SetPlayersOnline( SI32 newVal );
-	SI32	GetPlayersOnline( void );
-	void	DecPlayersOnline( void );
-	void	SetDisplayLayers( bool newVal );
-	bool	GetDisplayLayers( void );
-	void	SetTotalSpawnRegions( UI16 newVal );
-	UI16	GetTotalSpawnRegions( void );
-	void	IncTotalSpawnRegions( void );
-	void	SetXGMEnabled( bool newVal );
-	bool	GetXGMEnabled( void );
-	void	SetExecuteBatch( SI32 newVal );
-	SI32	GetExecuteBatch( void );
-	void	SetLocationCount( UI16 newVal );
-	UI16	GetLocationCount( void );
-	void	SetLogoutCount( UI32 newVal );
-	UI32	GetLogoutCount( void );
-	void	IncLogoutCount( void );
-	void	SetEscortRegions( UI08 newVal );
-	UI08	GetEscortRegions( void );
-	void	IncEscortRegions( void );
-	void	SetValidEscortRegion( UI08 part, UI08 newVal );
-	UI08	GetValidEscortRegion( UI08 part );
-	void	SetErroredLayer( UI08 part, SI32 newVal );
-	SI32	GetErroredLayer( UI08 part );
-	void	IncErroredLayer( UI08 part );
+	void		SetPlayersOnline( size_t newVal );
+	size_t		GetPlayersOnline( void ) const;
+	void		DecPlayersOnline( void );
+	bool		GetReloadingScripts( void ) const;
+	void		SetReloadingScripts( bool newVal );
+	void		ClassesInitialized( bool newVal );
+	bool		ClassesInitialized( void ) const;
+
+	void		CheckAutoTimers( void );
 
 	// Structs
+	std::map< UI16, CCreatures >		creatures;
 	timeval								uoxtimeout;
-	location_st							location[4000];				// Locations ( for town regions)
-	logout_st							logout[1024];					// Instalog
-	skill_st							skill[SKILLS+1];				// Skill data
+	skill_st							skill[INTELLECT+1];				// Skill data
 	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
-	std::vector< MurderPair >			murdererTags;
-	std::vector< JailCell >				jails;
-	std::vector< TeleLocationEntry >	teleLocs;
+	std::vector< TitlePair_st >			prowessTitles;
+	std::vector< TitlePair_st >			murdererTags;
+	std::vector< CTeleLocationEntry >	teleLocs;
+	std::vector< LogoutLocationEntry >	logoutLocs;
+	std::vector< UI08 >					escortRegions;
+	std::map< UI16, GoPlaces_st >		goPlaces;
+	SPAWNMAP							spawnRegions;
+	TOWNMAP								townRegions;
+	CDataList< CTEffect * >				tempEffects;
 
-	void	ResetDefaults( void );
-	void	CheckTimers( void );
-	void	doWorldLight( void );
+	QUEUEMAP							refreshQueue;
+	QUEUEMAP							deletionQueue;
 
-	virtual bool	announce( void );
-	virtual void	announce( bool choice );
-	virtual void	savenewworld( bool x );
+	void		CheckTimers( void );
+	void		doWorldLight( void );
+	void		SaveNewWorld( bool x );
+
 					CWorldMain();
-	virtual			~CWorldMain();
-	bool			Saving( void );
-	cServerData *	ServerData( void );
+					~CWorldMain();
+	CServerData *	ServerData( void );
+	CServerProfile * ServerProfile( void );
 private:
-	bool			isSaving;
-	bool			DisplayWorldSaves;
-
 	void			RegionSave( void );
+	void			SaveStatistics( void );
 
-	cServerData *	sData;
+	CServerData *	sData;
+	CServerProfile * sProfile;
 };
+
+extern CWorldMain								*cwmWorldState;
+
+}
 
 #endif

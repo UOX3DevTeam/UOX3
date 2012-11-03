@@ -2,761 +2,694 @@
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
 
-#define REGENRATE1 8 // Seconds to heal ONE hp
-#define REGENRATE2 3 // Seconds to heal ONE stm
-#define REGENRATE3 5 // Seconds to heal ONE mn
-#define PLAYERCORPSEDECAYMULTIPLIER 3
-#define SPIRITSPEAKTIMER 30 // spiritspeak lasts at least 30 seconds, additional time is calculated by Skill & INT
-#define BEGGINGRANGE 3                  // begging range
-#define FISHINGTIMEBASE 10              // it takes at least FISHINGTIMEBASE sec to fish
-#define FISHINGTIMER 5
-#define DECAYTIMER 300  // 5 minute decay rate
-#define HUNGERRATE 6000 // 15 minutes
-#define HUNGERDAMAGERATE 10 //every 10 seconds
-#define HUNGERDAMAGE 2 //-2 hp
-#define POISONTIMER 180
-#define POTIONDELAY 10
-#define SPECIALBANKTRIGGER "WARE" // AntiChrist - default word trigger for special bank
-#define STATCAP 999
-#define SKILLCAP 999999
-#define INVISTIMER 60 // invisibility spell lasts 1 minute
-#define SKILLDELAY 5   // Skill usage delay     (5 seconds)
-#define OBJECTDELAY 1
-#define GATETIMER 30
-#define ATTACKSTAMINA -2 // AntiChrist - attacker loses stamina when hits
-#define MONSTERS_VS_ANIMALS 0 // By default monsters won't attack animals
-#define ANIMALS_ATTACK_CHANCE 15 // By default 15% of chance to attack an animal
-#define ANIMALS_GUARDED 0 // By default players can attack animals without summoning guards
-#define MAX_ABSORBTION 20 // 20 Arm (single armour piece) -- Magius(CHE)
-#define MAX_NON_HUMAN_ABSORBTION 100 // 100 Arm (total armour) -- Magius(CHE)
-#define NPC_DAMAGE_RATE 2 // DAMAGE / NPC_DAMAGE_RATE for NPCs -- Magius(CHE)
-#define NPC_BASE_FLEEAT 20
-#define NPC_BASE_REATTACKAT 40
-#define SELLBYNAME 1 // Values = 0(Disabled) or 1(Enabled) - The NPC Vendors buy from you if your item has the same name of his item! --- Magius(CHE)
-#define SKILLLEVEL 5 // Range from 1 to 10 - This value if the difficult to create an item using a make command: 1 is easy, 5 is normal (default), 10 is difficult! - Magius(CHE)
-#define SELLMAXITEM 5 // Set maximum amount of items that one player can sell at a time ( 5 is standard OSI ) --- Magius(CHE)
-#define RANKSYSTEM 1 // Rank sstem to make various type of a single item based on the creator's skill! - Magius(CHE)
-#define NPCSPEED 1	// 2 steps every second, ab said to change this to 0.5 - fur - NPC's slowed down a bit - Zane
-#define TRACKINGRANGE 10        // tracking range is at least TRACKINGRANGE, additional distance is calculated by Skill,INT
-#define MAXTRACKINGTARGETS 20   // maximum number of trackable targets
-#define TRACKINGTIMER 30        // tracking last at least TRACKINGTIMER seconds, additional time is calculated by Skill,INT, & DEX
-#define TRACKINGDISPLAYTIME 30  // tracking will display above the character every TRACKINGDISPLAYTIME seconds
+namespace UOX
+{
+	enum ClientFeatures
+	{
+		CF_BIT_CHAT = 0,		// 0x01
+		CF_BIT_UOR,				// 0x02
+		CF_BIT_TD,				// 0x04
+		CF_BIT_LBR,				// 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
+		CF_BIT_AOS,				// 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works for 4.0+
+		CF_BIT_SIXCHARS,		// 0x20
+		CF_BIT_SE,				// 0x40
+		CF_BIT_ML,				// 0x80
+		CF_BIT_EIGHTAGE,		// 0x100
+		CF_BIT_NINTHAGE,		// 0x200
+		CF_BIT_TENTHAGE,		// 0x400
+		CF_BIT_UNKNOWN1,		// 0x800 - Increased housing/bank storage?
+		CF_BIT_SEVENCHARS,		// 0x1000
+		//CF_BIT_KRFACES,		// 0x2000
+		//CF_BIT_TRIAL,			// 0x4000
+		CF_BIT_EXPANSION = 15,	// 0x8000
+		CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
+		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
+		CF_BIT_GOTHHOUSE,		// 0x40000 
+		CF_BIT_RUSTHOUSE,		// 0x80000
+		CF_BIT_COUNT
+	};
 
+	enum ServerFeatures
+	{
+		SF_BIT_UNKNOWN1 = 0,	// 0x01
+		SF_BIT_IGR,				// 0x02
+		SF_BIT_ONECHAR,			// 0x04 - One char only, Siege-server style
+		SF_BIT_CONTEXTMENUS,	// 0x08
+		SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
+		SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
+		SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
+		SF_BIT_SE,				// 0x80
+		SF_BIT_ML,				// 0x100
+		// Uncomment when adding support for newer client versions
+		SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
+		SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
+		SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
+		SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?
+		SF_BIT_UNKNOWN5 = 13,	// 0x2000 - added with UO:SA launch
+		//SF_BIT_NEWMOVE,		// 0x4000 - new movement system
+		//SF_BIT_FACTIONAREAS,	// 0x8000 - Unlock new Felucca faction-areas*/
+		SF_BIT_COUNT
+	};
+
+enum cSD_TID
+{
+	tSERVER_ERROR = -1,
+	tSERVER_CORPSEDECAY = 0,	// Amount of time for a corpse to decay.
+	tSERVER_WEATHER,			// Amount of time between changing light levels (day cycles).
+	tSERVER_SHOPSPAWN,			// Amount of time between shopkeeper restocks.
+	tSERVER_DECAY,				// Amount of time a decayable item will remain on the ground before dissapearing.
+	tSERVER_INVISIBILITY,		// Duration of the invisibility spell.
+	tSERVER_OBJECTUSAGE,		// Amount of time a player must wait between using objects.
+	tSERVER_GATE,				// Duration of a summoned moongate.
+	tSERVER_POISON,				// Duration of the poison effect on a character.
+	tSERVER_LOGINTIMEOUT,		// Amount of time for an idle connection to time out.
+	tSERVER_HITPOINTREGEN,		// Amount of time required to regenerate a single point of health.
+	tSERVER_STAMINAREGEN,		// Amount of time required to regenerate a single point of stamina.
+	tSERVER_MANAREGEN,			// Amount of time required to regenerate a single point of mana.
+	tSERVER_FISHINGBASE,		// Base time for fishing skill to complete.
+	tSERVER_FISHINGRANDOM,		// Max random time for fishing skill to complete.
+	tSERVER_SPIRITSPEAK,		// Duration of the spirit speak skill.
+	tSERVER_HUNGERRATE,			// Amount of time a player has before his hunger level decreases.
+	tSERVER_POLYMORPH,			// Duration of the polymorph spell.
+	tSERVER_ESCORTWAIT,			// Amount of time until an escort NPC will dissapear while waiting for a player to start his quest.
+	tSERVER_ESCORTACTIVE,		// Amount of time until an escort NPC will dissapear while a player is escorting him.
+	tSERVER_ESCORTDONE,			// Amount of time until an escort NPC will dissapear when his quest is finished.
+	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
+	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
+	tSERVER_POTION,				// Delay between using potions
+	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
+	tSERVER_COUNT
+};
+
+enum CSDDirectoryPaths
+{
+	CSDDP_ROOT = 0,
+	CSDDP_DATA,
+	CSDDP_DEFS,
+	CSDDP_ACCESS,
+	CSDDP_ACCOUNTS,
+	CSDDP_SCRIPTS,
+	CSDDP_BACKUP,
+	CSDDP_MSGBOARD,
+	CSDDP_SHARED,
+	CSDDP_HTML,
+	CSDDP_LOGS,
+	CSDDP_DICTIONARIES,
+	CSDDP_BOOKS,
+	CSDDP_COUNT
+};
 
 class physicalServer
 {
 public:
-  void setName(const std::string newName);
-  void setDomain(const std::string newDomain);
-  void setIP(const std::string newIP);
-  void setPort(SI16 newPort);
-  std::string getName(void);
-  std::string getDomain(void);
-  std::string getIP(void);
-  SI16 getPort(void);
+  void setName(const std::string& newName);
+  void setDomain(const std::string& newDomain);
+  void setIP(const std::string& newIP);
+  void setPort(UI16 newPort);
+  std::string getName( void ) const;
+  std::string getDomain( void ) const;
+  std::string getIP( void ) const;
+  UI16 getPort( void ) const;
 
 private:
 	std::string name;
 	std::string domain;
 	std::string ip;
-	SI16 port;
+	UI16 port;
 };
 
-class cServerData 
+class CServerData 
 {
-protected:
+private:
 
-	UI16		port;
+	std::bitset< CF_BIT_COUNT > clientFeatures;
+	std::bitset< SF_BIT_COUNT > serverFeatures;
+	std::bitset< 46 >	boolVals;						// Many values stored this way, rather than using bools.
+
 	// ServerSystems
-	UI08		saveMode;
-	bool		isvalid;
-	std::vector< physicalServer > serverList;
-	UI32		consolelogenabled;
-	UI32		crashprotectionenabled;
-	char		commandprefix;					//	March 20, 2000 - EviLDeD
-	bool		announcesaves;					//	December 27, 1998 - EviLDeD
-	bool		joinpartmsgsenabled;
-	bool		mulcachingenabled;
-	bool		backupsenabled;
-	UI08		accountisolationlevel;	//	EviLDeD: 022602: Added this to support account isolation
-	SI16		antilagsavesperloop;
-	SI16		backupRatio;
-	UI32		serversavestimer;
-	UI32		mainthreadsleep;
+	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
+	UI16		port;							//	Port number that the server listens on, for connections
+	std::vector< physicalServer > serverList;	//	Series of server entries for shard list
+	UI08		consolelogenabled;				//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
+	UI08		crashprotectionenabled;			//	Level of crash protection - number of crash restart attempts before stopping - NEVER ACTIVELY USED
+	char		commandprefix;					//	Character that acts as the command prefix
+	SI16		backupRatio;					//	Number of saves before a backup occurs
+	UI32		serversavestimer;				//	Number of seconds between world saves
+	UI32		netRcvTimeout;					// 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly laggy nets this would drop alot of packets, and disconnect people.
+	UI32		netSndTimeout;					// 04/03/2004 - Not used at this time.
+	UI32		netRetryCount;					// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
+	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
+
+	// Client Support
+	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
+	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2
+	bool		Clients6000Enabled;				// Allow client connections from 6.0.0.0 to 6.0.4.0
+	bool		Clients6050Enabled;				// Allow client connections from 6.0.5.0 to 6.0.14.2
+	bool		Clients7000Enabled;				// Allow client connections from 7.0.0.0 to 7.0.8.2
+	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1
+	bool		Clients70160Enabled;			// Allow client connections from 7.0.16.0 to 7.0.23.1
+	bool		Clients70240Enabled;			// Allow client connections from 7.0.24.0+
+
+	// facet block
+	bool		useFacetSaves;
+	std::vector< std::string > facetNameList;
+	std::vector< UI32 > facetAccessFlags;
 
 	// Skills & Stats
-	UI32		skillcap;								// Unknown - LB skill cap
-	UI32		skilldelay;
-	UI32		statcap;								// Unknown - AntiChrist stat cap
-	UI32		statdelay;							// December 26, 2000 - EviLDeD moved here from server.scp to unify uox3.ini
-	SI16		maxstealthmovement;				// AntiChrist - max number of steps allowed with stealth skill at 100.0
-	SI16		maxstaminamovement;				// AntiChrist - max number of steps allowed with stealth skill at 100.0
-	UI32		skilladvancemodifier;
-	UI32		statadvancemodifier;
-	bool		snoopiscrime;
+	UI16		skilltotalcap;					//	A cap on the total of all a PC's skills
+	UI16		skillcap;						//	A cap on each individual PC skill
+	UI08		skilldelay;						//	Number of seconds after a skill is used before another skill can be used
+	UI16		statcap;						//	A cap on the total of a PC's stats
+	SI16		maxstealthmovement;				//	Max number of steps allowed with stealth skill at 100.0
+	SI16		maxstaminamovement;				//	Max number of steps allowed while running before stamina is reduced
 
 	// ServerTimers
-	UI32		corpsedecaytimer;
-	UI32		lootdecaytimer;					// December 26, 2000 - EviLDeD - Support item decay for items that are in the open(not in containers)
-	UI32		weathertimer;
-	UI32		shopspawntimer;
-	UI32		decaytimer;							// December 26, 2000 - EviLDeD - Can use this as a generic item decay timer?
-	UI32		invisibilitytimer;
-	UI32		objectusagetimer;
-	UI32		gatetimer;
-	UI32		poisontimer;
-	UI32		logintimeout;
-	UI32		hitpointregentimer;
-	UI32		staminaregentimer;
-	UI32		manaregentimer;
-	SI16		armoraffectregentimer;	// Should armor slow mana regen ?
-	UI32		fishingbasetimer;
-	UI32		fishingrandomtimer;
-	UI32		spiritspeaktimer;
-	UI32		beggingtimer;
-
+	UI16		serverTimers[tSERVER_COUNT];
 	// Directories
-	std::string		rootdirectory;			// Don't want arrays of strings
-	std::string		datadirectory;			// This is the mulfiledirectory
-	std::string		defsdirectory;
-	std::string		accessdirectory;
-	std::string		accountsdirectory;
-	std::string		scriptsdirectory;
-	std::string		backupdirectory;
-	std::string		msgboarddirectory;
-	std::string		shareddirectory;		// This is where all files that will be shared with clients andother servers willbe kept
-	std::string		htmldirectory;			// Self explanitory.
-	std::string		logsdirectory;
-	std::string		dictionarydirectory;
-	std::string		booksdirectory;
+	std::string serverDirectories[CSDDP_COUNT];
 
 	// Settings
-	bool		lootdecayswithcorpse;
-	bool		guardsenabled;
-	bool		deathanimationenabled;
-	SI16		ambientsounds;
-	bool		ambientfootsteps;
-	bool		externalaccountsenabled;// February 10, 2000 - EviLDeD - Use the www account creation system. Causes autoload on worldsaves
-	bool		internalaccountsenabled;// Create accounts when people log in with unknown name/password
-	bool		showhiddennpcsenabled;
-	bool		roguesenabled;
-	bool		engraveenabled;
-	bool		uoxbotenabled;
-	bool		playerpersecution;				// AntiChrist - persecute thing
-	bool		lagfixenabled;						// LB Lag Fix
-	bool		accountflushenabled;
-	SI16		htmlstatusenabled;				// If >0 then # of seconds between updates
-	bool		sellbynameenabled;				// Magius(CHE) 
-	SI16		sellmaxitems;							// Magius(CHE) 
-	bool		tradesystemenabled;				// Magius(CHE) 
-	bool		ranksystemenabled;				// Magius(CHE) 
-	SI16		npctilecheck;
-	SI16		cutscrollrequirement;			// AntiChrist - cut skill requirements for scrolls
-	bool		wildernessbankenabled;		// AntiChrist - special bank
-	std::string		wildernessbanktrigger;	// AntiChrist - special bank trigger EviLDeD Dec 30, 2000 changed this to a string
-	bool		heartbeat;
-	bool		npctraining;
-	SI16		charhidewhilemounted;			// EviLDeD - Support for Xuri's Hide while Mounted fix
+	SI16		ambientsounds;					//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
+	SI16		htmlstatusenabled;				//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
+	SI16		sellmaxitems;					//	Maximum number of items that can be sold to a vendor
+	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
+	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
+	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
 
 	// SpeedUp
-	R64			checkitems;
-	R64			checknpcs;
-	R64			checkboats;
-	R64			checknpcai;
-	R64			checkspawnregions;
-	R64			checkmemory;
-	R64			npcSpeed;
-	R64			flushTime;
+	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
+	R64			checkboats;						//	How often (in seconds) boats are checked for motion and so forth
+	R64			checknpcai;						//	How often (in seconds) NPCs can execute an AI routine
+	R64			checkspawnregions;				//	How often (in seconds) spawn regions are checked for new spawns
+	R32			npcWalkingSpeed;				//	Speed at which walking NPCs move
+	R32			npcRunningSpeed;				//	Speed at which running NPCs move
+	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
+	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
 
 	// MessageBoards
-	UI32		keepmessages;
-	SI16		msgadminlevel;
-	SI16		msgpostinglevel;
-	SI16		msgremovallevel;
-	SI16		maxmessagesallowed;
-	SI16		maxmessagesreaction;
-
-	// Escorts
-	bool		escortsenabled;
-	UI32		escortinitexpire;
-	UI32		escortactiveexpire;
-	UI32		escortdoneexpire;
+	UI08		msgpostinglevel;				//	If not 0, then players can post
+	UI08		msgremovallevel;				//	If not 0, then players can remove posts
 
 	// WorldLight
-	SI16		moon[2];
-	SI16		moonupdate[2];
-	SI16		dungeonlightlevel;
-	SI16		fixedlightlevel;
-	SI16		currentlightlevel;
-	SI16		brightnesslightlevel;
+	LIGHTLEVEL	dungeonlightlevel;				//	Default light level for a dungeon, if not subject to a weather system
+	LIGHTLEVEL	currentlightlevel;				//	Default current light level if not subject to a weather system
+	LIGHTLEVEL	brightnesslightlevel;			//	Default brightest light level if not subject to a weather system
+	LIGHTLEVEL	darknesslightlevel;				//	Default darkest light level if not subject to a weather system
 
-	// WorldTimer		: This is now loaded in from the uoxclock.def file
-	SI16		days;
-	UI08		hours;
-	UI08		minutes;
-	UI08		seconds;
-	SI16		uosecondsperminute;
-	bool		ampm;
-
-	// Begging
-	SI16		beggingrange;
+	// WorldTimer								//	days/hours/minutes/seconds to it's own file?
+	UI16		secondsperuominute;				//	Number of seconds for a UOX minute.
+	SI16		moon[2];						//	Moon current state
+	SI16		days;							//	Number of days the world has been running (persistent)
+	UI08		hours;							//	Number of hours the world has been running (persistent)
+	UI08		minutes;						//	Number of minutes the world has been running (persistent)
+	UI08		seconds;						//	Number of seconds the world has been running (persistent)
+	bool		ampm;							//	Whether our current time is in the morning or afternoon
 
 	// Tracking
-	UI32		trackingbaserange;
-	UI32		trackingbasetimer;
-	UI32		trackingmaxtargets;
-	UI32		trackingmsgredisplaytimer;
-
+	UI16		trackingbaserange;				//	Minimum range even a novice can track from
+	UI16		trackingbasetimer;				//	Tracking timer - maximum time for a GM to track at
+	UI08		trackingmaxtargets;				//	Maximum number of targets that can be tracked
+	UI16		trackingmsgredisplaytimer;		//	How often (in seconds) the tracking message is redisplayed
 
 	// Reputation
-	UI32		murderdecaytimer;
-	UI32		criminaldecaytimer;
-	UI32		maxmurdersallowed;
+	UI16		maxmurdersallowed;				//	Maximum number of kills before turning red
 
 	// Resources
-	SI16		minecheck;
-	UI32		oreperarea;
-	UI32		orerespawntimer;
-	UI32		orerespawnarea;
-	UI32		logcheck;
-	UI32		logsperarea;
-	UI32		logsrespawntimer;
-	UI32		logsrespawnarea;
+	UI08		minecheck;						//	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region based (not working)
+	SI16		oreperarea;						//	TIMERVAL? Maximum number of ores in a resource area
+	UI16		orerespawntimer;				//	Time at which ore is respawned (only 1 ore, not all)
+	UI16		orerespawnarea;					//	Number of ore areas (ie Y x Y where Y == value)
+	SI16		logsperarea;					//	Maximum number of logs in a resource area
+	UI16		logsrespawntimer;				//	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
+	UI16		logsrespawnarea;				//	Number of log areas (ie Y x Y where Y == value)
 
 	// Hunger & Food
-	UI32		hungerrate;
-	UI32		hungerdamageratetimer;
-	SI16		hungerdamage;
-	UI32		hungerthreshold;						// Not sure what this does at this point Dec 27, 2000 - EviLDeD
+	SI16		hungerdamage;					//	Amount of damage applied if hungry and below threshold
 
 	// Combat
-	SI16		combatmaxrange;
-	SI16		combatwrestlingspeed;
-	SI16		combatmaxspellrange;
-	SI16		combatmaxmeleedamage;
-	SI16		combatmaxspelldamage;				// EviLDeD Dec 30, 2000
-	bool		combatcriticalsenabled;
-	SI16		combatmaxpoisoningdistance;
-	bool		combatdisplayhitmessage;
-	SI16		combatmaxhumanabsorbtion;		// Magius(CHE) --- Maximum Armour of the single pieces of armour (for player)!
-	SI16		combatmaxnonhumanabsorbtion;// Magius(CHE) --- Maximum Armour of the total armour (for NPC)!
-	bool		combatmonstersvsanimals;
-	SI16		combatanimalattackchance;
-	bool		combatanimalsguarded;
-	SI16		combatnpcdamagerate;				// Magius(CHE) --- DAmage divided by this number if the attacked is an NPC!
-	SI16		combatnpcbasefleeat;
-	SI16		combatnpcbasereattackat;
-	SI16		combatattackstamina;				// AntiChrist (6) - for ATTACKSTAMINA
-	R32			combatExplodeDelay;
-	bool		shootonanimalback;		// sereg - lets make that optional
+	SI16		combatmaxrange;					//	RANGE?  Range at which combat can actually occur
+	SI16		combatarcherrange;				//	RANGE?  Range at which archers stop charging the enemy
+	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
+	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
+	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
+	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
+	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
+	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
+	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
 
 	// Start & Location Settings
 	std::vector< STARTLOCATION >	startlocations;
-	SI16		startgold;
-	SI16		startprivs[2];
-	SI16		skillmodifiers[64];
-	SI16		statmodifiers[6];
+	SI16		startgold;						//	Amount of gold created when a PC is made
+	UI16		startprivs;						//	Starting privileges of characters
 
 	// Anything under this comment is left here for symantics
-	UI32 skilllevel; // Magius(CHE) 
-	SI16 buyThreshold;
-	SI16 niceness;		//	Abaddon wtf is this ?  And define Skilllevel for me and this buyThreshold.
+	UI08		skilllevel;						//	Some skill value associated with the rank system
+	SI16		buyThreshold;					//	Value above which money will be sourced from the bank rather than the player
 
 	// Gump stuff
-	UI16	titleColour;
-	UI16	leftTextColour;
-	UI16	rightTextColour;
-	UI16	buttonCancel;
-	UI16	buttonLeft;
-	UI16	buttonRight;
-	UI16	backgroundPic;
+	UI16		titleColour;					//	Default text colour for titles in gumps
+	UI16		leftTextColour;					//	Default text colour for left text in gumps (2 column ones)
+	UI16		rightTextColour;				//	Default text colour for right text in gumps
+	UI16		buttonCancel;					//	Default Button ID for cancel button in gumps
+	UI16		buttonLeft;						//	Default Button ID for left button in gumps
+	UI16		buttonRight;					//	Default Button ID for right button in gumps
+	UI16		backgroundPic;					//	Default Gump ID for background gump
 
 	// Townstone stuff
-	long numSecsPollOpen;
-	long numSecsAsMayor;
-	long taxPeriod;			// # of seconds
-	long guardPayment;	// # of seconds between guard payments
+	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
+	UI32		numSecsAsMayor;					//	Time (in seconds) that a PC would be a mayor
+	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs 
+	UI32		guardPayment;					//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults( void );
 
-	SI16	potiondelay;
-	bool	srvScpSectHeader;
-
 public:
-	UI08	SaveMode( void ) const;
-	UI08	SaveMode( UI08 );
-	long	VersionCheck( const char *filename );
-	SI16	darknesslightlevel;
-	SI16	GetWorldLightDarkLevel( void );
-	SI16	GetWorldLightBrightLevel( void );
-	SI16	GetWorldLightCurrentLevel( void );
-	SI16	GetWorldFixedLightLevel( void );
-	SI16	GetDungeonLightLevel( void );
-	SI16	GetServerMoonUpdate( SI16 slot );
-	SI16	GetServerMoon( SI16 slot );
-	UI32	GetServerManaRegenTimer( void );
-	UI32	GetServerStaminaRegenTimer( void );
-	UI32	GetServerHitpointRegenTimer( void );
-	UI32	GetMsgBoardKeepMsgsStatus( void );
-	UI32	GetWeatherTimer( void );
-	UI32	GetPoisonTimer( void );
-	UI32	GetServerDecayTimer( void );
-	UI08	GetServerStartPrivs( SI16 slot ) const;
-	SI16	GetServerStartGold( void ) const;
+	void		SetServerFeature( ServerFeatures, bool );
+	void		SetServerFeatures( size_t );
+	bool		GetServerFeature( ServerFeatures ) const;
+	size_t		GetServerFeatures( void ) const;
 
-	void	SetWorldLightDarkLevel( SI16 value );
-	void	SetWorldLightBrightLevel( SI16 value );
-	void	SetWorldLightCurrentLevel( SI16 value );
-	void	SetWorldFixedLightLevel( SI16 value );
-	void	SetDungeonLightLevel( SI16 value );
-	void	SetServerMoonUpdate( SI16 slot, SI16 value );
-	void	SetServerMoon( SI16 slot, SI16 value );
-	void	SetServerManaRegenTimer( UI32 value );
-	void	SetServerStaminaRegenTimer( UI32 value );
-	void	SetServerHitpointRegenTimer( UI32 value);
-	void	SetMsgBoardKeepMsgs( UI32 value);
-	void	SetWeatherTimer( UI32 value );
-	void	SetPoisonTimer( UI32 value );
-	void	SetServerDecayTimer( UI32 value );
-	void	SetServerStartPrivs( SI16 slot, UI08 value );
-	void	SetServerStartGold( SI16 value );
-	cServerData * ParseUox3ServerScp( const char *filename );
-	cServerData * ParseUox3Ini( const char * filename, long ver );
+	void		SetClientFeature( ClientFeatures, bool );
+	void		SetClientFeatures( UI32 );
+	bool		GetClientFeature( ClientFeatures ) const;
+	UI32		GetClientFeatures( void ) const;
 
-	virtual cServerData *load( void );
-	virtual cServerData *load( const char *filename );
-	virtual bool save( void );
-	virtual bool save( const char *filename );
+	SI16		ServerMoon( SI16 slot ) const;
+	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
+	LIGHTLEVEL	WorldLightBrightLevel( void ) const;
+	LIGHTLEVEL	WorldLightCurrentLevel( void ) const;
+	LIGHTLEVEL	DungeonLightLevel( void ) const;
+	UI16		ServerStartPrivs( void ) const;
+	SI16		ServerStartGold( void ) const;
+
+	void		ServerMoon( SI16 slot, SI16 value );
+	void		WorldLightDarkLevel( LIGHTLEVEL value );
+	void		WorldLightBrightLevel( LIGHTLEVEL value );
+	void		WorldLightCurrentLevel( LIGHTLEVEL value );
+	void		DungeonLightLevel( LIGHTLEVEL value );
+	void		ServerStartPrivs( UI16 value );
+	void		ServerStartGold( SI16 value );
+	bool		ParseINI( const std::string& filename );
+	bool		HandleLine( const UString& tag, const UString& value );
+
+	void		Load( void );
+	bool		save( void );
+	bool		save( std::string filename );
 
 	void		ResetDefaults( void );
 
-				cServerData( void );
-	virtual		~cServerData();
-	void		SetServerName( const char *setname );
-	void		SetServerDomain( const char *setdomain );
-	void		SetServerIP( const char *setip );
-	const char *GetServerName( void );
-	const char *GetServerDomain( void );
-	const char *GetServerIP( void );
-	void		SetServerPort( SI16 setport );
-	SI16		GetServerPort( void );
-	void		SetServerConsoleLog( UI32 setting );
-	UI32		GetServerConsoleLogStatus( void );
-	virtual void SetServerCommandPrefix( char cmdvalue );
-	char		GetServerCommandPrefix( void );
-	void		SetServerAnnounceSaves( bool setting );
-	bool		GetServerAnnounceSavesStatus( void );
-	void		SetServerJoinPartAnnouncements( bool setting );
-	bool		GetServerJoinPartAnnouncementsStatus( void );
-	void		SetServerMulCaching( bool setting );
-	bool		GetServerMulCachingStatus( void );
-	void		SetServerBackups( bool setting );
-	bool		GetServerBackupStatus( void );
-	void		SetServerAntiLagSavesPerLoop(SI16 value);		// Unused
-	SI16		GetServerAntiLagSavesPerLoop( void );			// Unused
-	void		SetServerSavesTimer( UI32 timer );
-	UI32		GetServerSavesTimerStatus( void );
-	void		SetServerMainThreadTimer( UI32 threadtimer );
-	UI32		GetServerMainThreadTimerStatus( void );
-	void		SetServerSkillCap( UI32 cap );
-	UI32		GetServerSkillCapStatus( void );
-	void		SetServerSkillDelay( UI32 skdelay );
-	UI32		GetServerSkillDelayStatus( void );
-	void		SetServerStatDelay( UI32 stdelay );
-	UI32		GetServerStatCapStatus( void );
-	void		SetServerStatCap( UI32 cap );
-	UI32		GetServerStatDelayStatus( void );
-	void		SetMaxStealthMovement( SI16 value );
-	SI16		GetMaxStealthMovement( void );
-	void		SetMaxStaminaMovement( SI16 value );
-	SI16		GetMaxStaminaMovement( void );
-	void		SetSkillAdvanceModifier( UI32 value );
-	UI32		GetSkillAdvanceModifier( void );
-	void		SetStatAdvanceModifier( UI32 value );
-	UI32		GetStatAdvanceModifier( void );
-	void		SetSystemTimer( TID timerid, UI32 value );
-	SI32		GetSystemTimerStatus( TID timerid );
+	void		RefreshIPs( void );
+
+				CServerData( void );
+				~CServerData();
+	void		ServerName( std::string setname );
+	void		ServerDomain( std::string setdomain );
+	void		ServerIP( std::string setip );
+	std::string ServerName( void ) const;
+	std::string ServerDomain( void ) const;
+	std::string ServerIP( void ) const;
+	
+	void		ServerPort( UI16 setport );
+	UI16		ServerPort( void ) const;
+	void		ServerConsoleLog( UI08 setting );
+	UI08		ServerConsoleLogStatus( void ) const;
+	void		ServerCommandPrefix( char cmdvalue );
+	char		ServerCommandPrefix( void ) const;
+	void		ServerAnnounceSaves( bool setting );
+	bool		ServerAnnounceSavesStatus( void ) const;
+	void		ServerJoinPartAnnouncements( bool setting );
+	bool		ServerJoinPartAnnouncementsStatus( void ) const;
+	void		ServerMulCaching( bool setting );
+	bool		ServerMulCachingStatus( void ) const;
+	void		ServerBackups( bool setting );
+	bool		ServerBackupStatus( void ) const;
+	void		ServerSavesTimer( UI32 timer );
+	UI32		ServerSavesTimerStatus( void ) const;
+	void		ServerMainThreadTimer( UI32 threadtimer );
+	UI32		ServerMainThreadTimerStatus( void ) const;
+	void		ServerSkillTotalCap( UI16 cap );
+	UI16		ServerSkillTotalCapStatus( void ) const;
+	void		ServerSkillCap( UI16 cap );
+	UI16		ServerSkillCapStatus( void ) const;
+	void		ServerSkillDelay( UI08 skdelay );
+	UI08		ServerSkillDelayStatus( void ) const;
+	void		ServerStatCap( UI16 cap );
+	UI16		ServerStatCapStatus( void ) const;
+	void		MaxStealthMovement( SI16 value );
+	SI16		MaxStealthMovement( void ) const;
+	void		MaxStaminaMovement( SI16 value );
+	SI16		MaxStaminaMovement( void ) const;
+	void		SystemTimer( cSD_TID timerid, UI16 value );
+	UI16		SystemTimer( cSD_TID timerid ) const;
+	TIMERVAL	BuildSystemTimeValue( cSD_TID timerID ) const;
+
+	bool		ServerUOGEnabled(void) const { return uogEnabled; }
+	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }
+	UI32		ServerNetRetryCount(void) const { return netRetryCount; }
+	void		ServerNetRetryCount(UI32 retryValue) { netRetryCount = retryValue; }
+	UI32		ServerNetRcvTimeout(void) const { return netRcvTimeout; }
+	void		ServerNetRcvTimeout(UI32 timeoutValue) { netRcvTimeout = timeoutValue; }
+	UI32		ServerNetSndTimeout(void) const { return netSndTimeout; }
+	void		ServerNetSndTimeout(UI32 timeoutValue) { netSndTimeout = timeoutValue; }
+
+	// ClientSupport used to determine login-restrictions
+	bool		ClientSupport4000(void) const { return Clients4000Enabled; }
+	void		ClientSupport4000(bool cliSuppValue) { Clients4000Enabled = cliSuppValue; }
+	bool		ClientSupport5000(void) const { return Clients5000Enabled; }
+	void		ClientSupport5000(bool cliSuppValue) { Clients5000Enabled = cliSuppValue; }
+	bool		ClientSupport6000(void) const { return Clients6000Enabled; }
+	void		ClientSupport6000(bool cliSuppValue) { Clients6000Enabled = cliSuppValue; }
+	bool		ClientSupport6050(void) const { return Clients6050Enabled; }
+	void		ClientSupport6050(bool cliSuppValue) { Clients6050Enabled = cliSuppValue; }
+	bool		ClientSupport7000(void) const { return Clients7000Enabled; }
+	void		ClientSupport7000(bool cliSuppValue) { Clients7000Enabled = cliSuppValue; }
+	bool		ClientSupport7090(void) const { return Clients7090Enabled; }
+	void		ClientSupport7090(bool cliSuppValue) { Clients7090Enabled = cliSuppValue; }
+	bool		ClientSupport70160(void) const { return Clients70160Enabled; }
+	void		ClientSupport70160(bool cliSuppValue) { Clients70160Enabled = cliSuppValue; }
+	bool		ClientSupport70240(void) const { return Clients70240Enabled; }
+	void		ClientSupport70240(bool cliSuppValue) { Clients70240Enabled = cliSuppValue; }
+
+	// Enable/disable higher total for starting stats, and/or fourth starting skill in clients 7.0.16+
+	void		ExtendedStartingStats( bool setting );
+	bool		ExtendedStartingStats( void ) const;
+	void		ExtendedStartingSkills( bool setting );
+	bool		ExtendedStartingSkills( void ) const;
 
 	// Define all Path Get/Set's here please
-	void		SetRootDirectory( char *text );
-	const char *GetRootDirectory( void );
-	void		SetDefsDirectory( char *text );
-	const char *GetDefsDirectory( void );
-	void		SetBooksDirectory( char *text );
-	const char *GetBooksDirectory( void );
-	void		SetAccessDirectory( char *text );
-	const char *GetAccessDirectory( void );
-	void		SetAccountsDirectory( char *text );
-	const char *GetAccountsDirectory( void );
-	void		SetScriptsDirectory( char *text );
-	const char *GetScriptsDirectory( void );
-	void		SetBackupDirectory( char *text );
-	const char *GetBackupDirectory( void );
-	void		SetMsgBoardDirectory( char *text );
-	const char *GetMsgBoardDirectory( void );
-	void		SetSharedDirectory( char *text );
-	const char *GetSharedDirectory( void );
-	void		SetHTMLDirectory( char *text );
-	const char *GetHTMLDirectory( void );
-	void		SetDataDirectory( char *text );
-	const char *GetDataDirectory( void );
-	void		SetLogsDirectory( char *text );
-	const char *GetLogsDirectory( void );
-	void		SetDictionaryDirectory( char *text );
-	const char *GetDictionaryDirectory( void );
+	void		Directory( CSDDirectoryPaths dp, std::string value );
+	std::string Directory( CSDDirectoryPaths dp );
 
-	void		SetServerCrashProtection( UI32 setting );
-	UI32		GetServerCrashProtectionStatus( void );
+	void		ServerCrashProtection( UI08 setting );
+	UI08		ServerCrashProtectionStatus( void ) const;
 
-	void		SetCorpseLootDecay( bool value );
-	bool		GetCorpseLootDecay( void );
+	void		CorpseLootDecay( bool value );
+	bool		CorpseLootDecay( void ) const;
 
-	void		SetGuardStatus( bool value );
-	bool		GetGuardsStatus( void );
+	void		GuardStatus( bool value );
+	bool		GuardsStatus( void ) const;
 
-	void		SetDeathAnimationStatus( bool value );
-	bool		GetDeathAnimationStatus( void );
+	void		DeathAnimationStatus( bool value );
+	bool		DeathAnimationStatus( void ) const;
 
-	void		SetWorldAmbientSounds( SI16 value );
-	SI16		GetWorldAmbientSounds( void );
+	void		WorldAmbientSounds( SI16 value );
+	SI16		WorldAmbientSounds( void ) const;
 
-	void		SetAmbientFootsteps( bool value );
-	bool		GetAmbientFootsteps( void );
+	void		AmbientFootsteps( bool value );
+	bool		AmbientFootsteps( void ) const;
 
-	void		SetExternalAccountStatus( bool value );
-	bool		GetExternalAccountStatus( void );
+	void		InternalAccountStatus( bool value );
+	bool		InternalAccountStatus( void ) const;
 
-	void		SetInternalAccountStatus( bool value );
-	bool		GetInternalAccountStatus( void );
+	void		ShowOfflinePCs( bool value );
+	bool		ShowOfflinePCs( void ) const;
 
-	void		SetShowHiddenNpcStatus( bool value );
-	bool		GetShowHiddenNpcStatus( void );
+	void		RogueStatus( bool value );
+	bool		RogueStatus( void ) const;
 
-	void		SetRogueStatus( bool value );
-	bool		GetRogueStatus( void );
+	void		SnoopIsCrime( bool value );
+	bool		SnoopIsCrime( void ) const;
 
-	void		SetSnoopIsCrime( bool value );
-	bool		GetSnoopIsCrime( void );
+	void		PlayerPersecutionStatus( bool value );
+	bool		PlayerPersecutionStatus( void ) const;
 
-	void		SetEngraveStatus( bool value );
-	bool		GetEngraveStatus( void );
+	void		HtmlStatsStatus( SI16 value );
+	SI16		HtmlStatsStatus( void ) const;
 
-	void		SetUoxBotStatus( bool value );		// Unused
-	bool		GetUoxBotStatus( void );			// Unused
+	void		SellByNameStatus( bool value );
+	bool		SellByNameStatus( void ) const;
 
-	void		SetPlayerPersecutionStatus( bool value );
-	bool		GetPlayerPersecutionStatus( void );
+	void		SellMaxItemsStatus( SI16 value );
+	SI16		SellMaxItemsStatus( void ) const;
 
-	void		SetLagFixStatus( bool value );		// Unused
-	bool		GetLagFixStatus( void );			// Unused
+	void		TradeSystemStatus( bool value );
+	bool		TradeSystemStatus( void ) const;
 
-	void		SetHtmlStatsStatus( SI16 value );
-	SI16		GetHtmlStatsStatus( void );
+	void		RankSystemStatus( bool value );
+	bool		RankSystemStatus( void ) const;
 
-	void		SetSellByNameStatus( bool value );
-	bool		GetSellByNameStatus( void );
+	void		CutScrollRequirementStatus( bool value );
+	bool		CutScrollRequirementStatus( void ) const;
 
-	void		SetSellMaxItemsStatus( SI16 value );
-	SI16		GetSellMaxItemsStatus( void );
+	void		NPCTrainingStatus( bool setting );
+	bool		NPCTrainingStatus( void ) const;
 
-	void		SetTradeSystemStatus( bool value );
-	bool		GetTradeSystemStatus( void );
+	void		CheckItemsSpeed( R64 value );
+	R64			CheckItemsSpeed( void ) const;
 
-	void		SetRankSystemStatus( bool value );
-	bool		GetRankSystemStatus( void );
+	void		CheckBoatSpeed( R64 value );
+	R64			CheckBoatSpeed( void ) const;
 
-	void		SetCutScrollRequirementStatus( SI16 value );
-	SI16		GetCutScrollRequirementStatus( void );
+	void		CheckNpcAISpeed( R64 value );
+	R64			CheckNpcAISpeed( void ) const;
 
-	SI16		GetNpcTileCheckStatus( void );		// Unused
-	void		SetNpcTileCheckStatus( SI16 value );// Unused
+	void		CheckSpawnRegionSpeed( R64 value );
+	R64			CheckSpawnRegionSpeed( void ) const;
 
-	void		SetNPCTrainingStatus( bool setting );
-	bool		GetNPCTrainingStatus( void );
+	void		MsgBoardPostingLevel( UI08 value );
+	UI08		MsgBoardPostingLevel( void ) const;
 
-	void		SetWildernessBankStatus( bool value );
-	bool		GetWildernessBankStatus( void );
+	void		MsgBoardPostRemovalLevel( UI08 value );
+	UI08		MsgBoardPostRemovalLevel( void ) const;
 
-	void		SetWildernessBankTriggerString( const char *value );
-	const char *GetWildernessBankTriggerString( void );
+	void		MineCheck( UI08 value );
+	UI08		MineCheck( void ) const;
 
-	void		SetSystemHeartBeatStatus( bool value );
-	bool		GetSystemHeartBeatStatus( void );
+	void		CombatDisplayHitMessage( bool value );
+	bool		CombatDisplayHitMessage( void ) const;
 
-	void		SetCheckItemsSpeed( R64 value );
-	R64			GetCheckItemsSpeed( void );
+	void		CombatDisplayDamageNumbers( bool value );
+	bool		CombatDisplayDamageNumbers( void ) const;
 
-	void		SetCheckNpcSpeed( R64 value );
-	R64			GetCheckNpcSpeed( void );
+	void		CombatAttackSpeedFromStamina( bool value );
+	bool		CombatAttackSpeedFromStamina( void ) const;
 
-	void		SetCheckBoatSpeed( R64 value );
-	R64			GetCheckBoatSpeed( void );
+	void		ServerUsingHSMultis( bool value );
+	bool		ServerUsingHSMultis( void ) const;
 
-	void		SetCheckNpcAISpeed( R64 value );
-	R64			GetCheckNpcAISpeed( void );
+	void		ServerUsingHSTiles( bool value );
+	bool		ServerUsingHSTiles( void ) const;
 
-	void		SetCheckSpawnRegionSpeed( R64 value );
-	R64			GetCheckSpawnRegionSpeed( void );
 
-	void		SetCheckMemorySpeed( R64 value );
-	R64			GetCheckMemorySpeed( void );
+	void		CombatAttackStamina( SI16 value );
+	SI16		CombatAttackStamina( void ) const;
 
-	void		SetKeepMessagesStatus( bool value );
-	bool		GetKeepMessagesStatus( void );
+	void		CombatNPCDamageRate( SI16 value );
+	SI16		CombatNPCDamageRate( void ) const;
 
-	void		SetMsgBoardAdminLevel( SI16 value );
-	SI16		GetMsgBoardAdminLevel( void );
+	UI08		SkillLevel( void ) const;
+	void		SkillLevel( UI08 value );
 
-	void		SetMsgBoardPostingLevel( SI16 value );
-	SI16		GetMsgBoardPostingLevel( void );
+	void		EscortsEnabled( bool value );
+	bool		EscortsEnabled( void ) const;
 
-	void		SetMsgBoardPostRemovalLevel( SI16 value );
-	SI16		GetMsgBoardPostRemovalLevel( void );
+	void		BasicTooltipsOnly( bool value );
+	bool		BasicTooltipsOnly( void ) const;
 
-	void		SetMsgBoardMaxMessageCount( SI16 value );
-	SI16		GetMsgBoardMaxMessageCount( void );
+	void		GlobalItemDecay( bool value );
+	bool		GlobalItemDecay( void ) const;
 
-	void		SetMsgBoardMaxMessageseaction( SI16 value );
-	SI16		GetMsgBoardMaxMessagesReaction( void );
+	void		ScriptItemsDecayable( bool value );
+	bool		ScriptItemsDecayable( void ) const;
 
-	void		SetMineCheck( SI16 value );
-	SI16		GetMineCheck( void );
+	void		BaseItemsDecayable( bool value );
+	bool		BaseItemsDecayable( void ) const;
 
-	void		SetCombatDisplayHitMessage( bool value );
-	bool		GetCombatDisplayHitMessage( void );
+	void		ItemDecayInHouses( bool value );
+	bool		ItemDecayInHouses( void ) const;
 
-	void		SetCombatMaxHumanAbsorbtion( SI16 value );
-	SI16		GetCombatMaxHumanAbsorbtion( void );
+	void		PaperdollGuildButton( bool value );
+	bool		PaperdollGuildButton( void) const;
 
-	void		SetCombatMaxNonHumanAbsorbtion( SI16 value );
-	SI16		GetCombatMaxNonHumanAbsorbtion( void );
+	void		CombatMonstersVsAnimals( bool value );
+	bool		CombatMonstersVsAnimals( void ) const;
 
-	void		SetCombatAttackStamina( SI16 value );
-	SI16		GetCombatAttackStamina( void );
+	void		CombatAnimalsAttackChance( UI08 value );
+	UI08		CombatAnimalsAttackChance( void ) const;
 
-	void		SetCombatNPCDamageRate( SI16 value );
-	SI16		GetCombatNPCDamageRate( void );
+	void		HungerDamage( SI16 value );
+	SI16		HungerDamage( void ) const;
 
-	UI32		GetSkillLevel( void );
-	void		SetSkillLevel( UI32 value );
+	void		PetHungerOffline( bool value );
+	bool		PetHungerOffline( void ) const;
 
-	void		SetEscortsEnabled( bool value );
-	bool		GetEscortsEnabled( void );
+	void		PetOfflineTimeout( UI16 value );
+	UI16		PetOfflineTimeout( void ) const;
 
-	void		SetEscortInitExpire( UI32 value );
-	UI32		GetEscortInitExpire( void );
+	void		BuyThreshold( SI16 value );
+	SI16		BuyThreshold( void ) const;
 
-	void		SetEscortActiveExpire( UI32 value );
-	UI32		GetEscortActiveExpire( void );
+	void		BackupRatio( SI16 value );
+	SI16		BackupRatio( void ) const;
 
-	void		SetEscortDoneExpire( UI32 value );
-	UI32		GetEscortDoneExpire( void );
+	void		CombatMaxRange( SI16 value );
+	SI16		CombatMaxRange( void ) const;
 
-	void		SetCombatMonstersVsAnimals( bool value );
-	bool		GetCombatMonstersVsAnimals( void );
+	void		CombatArcherRange( SI16 value );
+	SI16		CombatArcherRange( void ) const;
 
-	void		SetCombatAnimalsAttackChance( SI16 value );
-	SI16		GetCombatAnimalsAttackChance( void );
+	void		CombatMaxSpellRange( SI16 value );
+	SI16		CombatMaxSpellRange( void ) const;
 
-	void		SetServerArmorAffectManaRegen( SI16 value );
-	SI16		GetServerArmorAffectManaRegen( void );
+	void		CombatExplodeDelay( UI16 value );
+	UI16		CombatExplodeDelay( void ) const;
 
-	void		SetHungerRate( UI32 value );
-	UI32		GetHungerRate( void );
+	void		CombatAnimalsGuarded( bool value );
+	bool		CombatAnimalsGuarded( void ) const;
 
-	void		SetHungerDamageRateTimer( UI32 value );
-	UI32		GetHungerDamageRateTimer( void );
+	void		CombatNPCBaseFleeAt( SI16 value );
+	SI16		CombatNPCBaseFleeAt( void ) const;
 
-	void		SetHungerDamage( SI16 value );
-	SI16		GetHungerDamage( void );
+	void		CombatNPCBaseReattackAt( SI16 value );
+	SI16		CombatNPCBaseReattackAt( void ) const;
 
-	void		SetHungerThreshold( UI32 value );
-	UI32		GetHungerThreshold( void );
+	void		ShootOnAnimalBack( bool setting );
+	bool		ShootOnAnimalBack( void ) const;
 
-	void		SetPotionDelay( SI16 value );
-	SI16		GetPotionDelay( void );
+	void		NPCWalkingSpeed( R32 value );
+	R32			NPCWalkingSpeed( void ) const;
 
-	void		SetBuyThreshold( SI16 value );
-	SI16		GetBuyThreshold( void );
+	void		NPCRunningSpeed( R32 value );
+	R32			NPCRunningSpeed( void ) const;
 
-	void		SetBackupRatio( SI16 value );
-	SI16		GetBackupRatio( void );
+	void		NPCFleeingSpeed( R32 value );
+	R32			NPCFleeingSpeed( void ) const;
 
-	void		SetCombatWrestlingSpeed( SI16 value );
-	SI16		GetCombatWrestlingSpeed( void );
+	void		TitleColour( UI16 value );
+	UI16		TitleColour( void ) const;
 
-	void		SetCombatMaxMeleeDamage( SI16 value );
-	SI16		GetCombatMaxMeleeDamage( void );
+	void		LeftTextColour( UI16 value );
+	UI16		LeftTextColour( void ) const;
 
-	void		SetCombatMaxPoisoningDistance( SI16 value );
-	SI16		GetCombatMaxPoisoningDistance( void );
+	void		RightTextColour( UI16 value );
+	UI16		RightTextColour( void ) const;
 
-	void		SetCombatMaxRange( SI16 value );
-	SI16		GetCombatMaxRange( void );
+	void		ButtonCancel( UI16 value );
+	UI16		ButtonCancel( void ) const;
 
-	void		SetCombatMaxSpellRange( SI16 value );
-	SI16		GetCombatMaxSpellRange( void );
+	void		ButtonLeft( UI16 value );
+	UI16		ButtonLeft( void ) const;
 
-	void		SetCombatMaxSpellDamage( SI16 value );
-	SI16		GetCombatMaxSpellDamage( void ) const;
+	void		ButtonRight( UI16 value );
+	UI16		ButtonRight( void ) const;
 
-	void		SetCombatCriticalsEnabled( bool value );	// Unused
-	bool		GetCombatCriticalsEnabled( void );			// Unused
+	void		BackgroundPic( UI16 value );
+	UI16		BackgroundPic( void ) const;
 
-	void		SetCombatExplodeDelay( R32 value );
-	R32			GetCombatExplodeDelay( void );
+	void		TownNumSecsPollOpen( UI32 value );
+	UI32		TownNumSecsPollOpen( void ) const;
 
-	void		SetCombatAnimalsGuarded( bool value );
-	bool		GetCombatAnimalsGuarded( void );
+	void		TownNumSecsAsMayor( UI32 value );
+	UI32		TownNumSecsAsMayor( void ) const;
 
-	void		SetCombatNPCBaseFleeAt( SI16 value );
-	SI16		GetCombatNPCBaseFleeAt( void );
+	void		TownTaxPeriod( UI32 value );
+	UI32		TownTaxPeriod( void ) const;
 
-	void		SetCombatNPCBaseReattackAt( SI16 value );
-	SI16		GetCombatNPCBaseReattackAt( void );
+	void		TownGuardPayment( UI32 value );
+	UI32		TownGuardPayment( void ) const;
 
-	void		SetShootOnAnimalBack( bool setting );
-	bool		GetShootOnAnimalBack( void );
+	void		RepMaxKills( UI16 value );
+	UI16		RepMaxKills( void ) const;
 
-	void		SetNPCSpeed( R64 value );
-	R64			GetNPCSpeed( void );
+	void		ResLogs( SI16 value );
+	SI16		ResLogs( void ) const;
 
-	void		SetNiceness( SI16 value );
-	SI16		GetNiceness( void );
+	void		ResLogTime( UI16 value );
+	UI16		ResLogTime( void ) const;
 
-	void		SetTitleColour( UI16 value );
-	UI16		GetTitleColour( void );
+	void		ResLogArea( UI16 value );
+	UI16		ResLogArea( void ) const;
 
-	void		SetLeftTextColour( UI16 value );
-	UI16		GetLeftTextColour( void );
+	void		ResOre( SI16 value );
+	SI16		ResOre( void ) const;
 
-	void		SetRightTextColour( UI16 value );
-	UI16		GetRightTextColour( void );
+	void		ResOreTime( UI16 value );
+	UI16		ResOreTime( void ) const;
 
-	void		SetButtonCancel( UI16 value );
-	UI16		GetButtonCancel( void );
+	void		ResOreArea( UI16 value );
+	UI16		ResOreArea( void ) const;
 
-	void		SetButtonLeft( UI16 value );
-	UI16		GetButtonLeft( void );
+	void		AccountFlushTimer( R64 value );
+	R64			AccountFlushTimer( void ) const;
 
-	void		SetButtonRight( UI16 value );
-	UI16		GetButtonRight( void );
+	void		TrackingBaseRange( UI16 value );
+	UI16		TrackingBaseRange( void ) const;
 
-	void		SetBackgroundPic( UI16 value );
-	UI16		GetBackgroundPic( void );
+	void		TrackingMaxTargets( UI08 value );
+	UI08		TrackingMaxTargets( void ) const;
 
-	void		SetTownNumSecsPollOpen( long value );
-	long		GetTownNumSecsPollOpen( void );
+	void		TrackingBaseTimer( UI16 value );
+	UI16		TrackingBaseTimer( void ) const;
 
-	void		SetTownNumSecsAsMayor( long value );
-	long		GetTownNumSecsAsMayor( void );
-
-	void		SetTownTaxPeriod( long value );
-	long		GetTownTaxPeriod( void );
-
-	void		SetTownGuardPayment( long value );
-	long		GetTownGuardPayment( void );
-
-	void		SetRepMurderDecay( long value );
-	long		GetRepMurderDecay( void );
-
-	void		SetRepMaxKills( int value );
-	int			GetRepMaxKills( void );
-
-	void		SetRepCrimTime( int value );
-	int			GetRepCrimTime( void );
-
-	void		SetResLogs( UI32 value );
-	UI32		GetResLogs( void );
-
-	void		SetResLogTime( UI32 value );
-	UI32		GetResLogTime( void );
-
-	void		SetResLogArea( UI32 value );
-	UI32		GetResLogArea( void );
-
-	void		SetResOre( UI32 value );
-	UI32		GetResOre( void );
-
-	void		SetResOreTime( UI32 value );
-	UI32		GetResOreTime( void );
-
-	void		SetResOreArea( UI32 value );
-	UI32		GetResOreArea( void );
-
-	void		SetAccountFlushTimer( R64 value );
-	R64			GetAccountFlushTimer( void );
-
-	void		SetTrackingBaseRange( UI32 value );
-	UI32		GetTrackingBaseRange( void );
-
-	void		SetTrackingMaxTargets( UI32 value );
-	UI32		GetTrackingMaxTargets( void );
-
-	void		SetTrackingBaseTimer( UI32 value );
-	UI32		GetTrackingBaseTimer( void );
-
-	void		SetTrackingRedisplayTime( UI32 value );
-	UI32		GetTrackingRedisplayTime( void );
-
-	void		SetBeggingRange( SI16 value );
-	SI16		GetBeggingRange( void );
-
-	void		SetFishingBaseTime( UI32 value );
-	UI32		GetFishingBaseTime( void );
-
-	void		SetFishingRandomTime( UI32 value );
-	UI32		GetFishingRandomTime( void );
-
-	void		SetSpiritSpeakTimer( UI32 value );
-	UI32		GetSpiritSpeakTimer( void );
+	void		TrackingRedisplayTime( UI16 value );
+	UI16		TrackingRedisplayTime( void ) const;
 
 	// Sept 22, 2002 - EviLDeD - Support for Xuri's HideWhileMounted fix.
-	void		SetCharHideWhileMounted( SI16 value );
-	SI16		GetCharHideWhileMounted( void );
+	void		CharHideWhileMounted( bool value );
+	bool		CharHideWhileMounted( void ) const;
 
-//protected:
-	void DumpLookup(int lookupid);
-	//	EviLDeD: 022602: Added this so I could check the paths, make sure they are correct
-	void DumpPaths( void );
-	// 
+	void		WeightPerStr( R32 newVal );
+	R32			WeightPerStr( void ) const;
 
-	void		SetServerLocation( const char *toSet );
-	LPSTARTLOCATION GetServerLocation( UI32 locNum );
+	void		ServerOverloadPackets( bool newVal );
+	bool		ServerOverloadPackets( void ) const;
 
-	UI32			GetNumServerLocations( void ) const;
+	void		ArmorAffectManaRegen( bool newVal );
+	bool		ArmorAffectManaRegen( void ) const;
 
-	SI16			GetServerTimeDay( void ) const;
-	UI08			GetServerTimeHours( void ) const;
-	UI08			GetServerTimeMinutes( void ) const;
-	UI08			GetServerTimeSeconds( void ) const;
-	bool			GetServerTimeAMPM( void ) const;
+	void		AdvancedPathfinding( bool value );
+	bool		AdvancedPathfinding( void ) const;
 
-	void			SetServerTimeDay( SI16 nValue );
-	void			SetServerTimeHours( UI08 nValue );
-	void			SetServerTimeMinutes( UI08 nValue );
-	void			SetServerTimeSeconds( UI08 nValue );
-	void			SetServerTimeAMPM( bool nValue );
+	void		MapIsUOPWrapped( UI08 mapNum, bool value );
+	bool		MapIsUOPWrapped( UI08 mapNum ) const;
+
+	void		LootingIsCrime( bool value );
+	bool		LootingIsCrime( void ) const;
+
+	void		dumpLookup( int lookupid );
+	void		dumpPaths( void );
+
+	void			ServerLocation( std::string toSet );
+	LPSTARTLOCATION ServerLocation( size_t locNum );
+
+	size_t			NumServerLocations( void ) const;
+
+	UI16			ServerSecondsPerUOMinute( void ) const;
+	void			ServerSecondsPerUOMinute( UI16 newVal );
+
+	SI16			ServerTimeDay( void ) const;
+	UI08			ServerTimeHours( void ) const;
+	UI08			ServerTimeMinutes( void ) const;
+	UI08			ServerTimeSeconds( void ) const;
+	bool			ServerTimeAMPM( void ) const;
+
+	void			ServerTimeDay( SI16 nValue );
+	void			ServerTimeHours( UI08 nValue );
+	void			ServerTimeMinutes( UI08 nValue );
+	void			ServerTimeSeconds( UI08 nValue );
+	void			ServerTimeAMPM( bool nValue );
+
+	void			SaveTime( void );
+	void			LoadTime( void );
+	void			LoadTimeTags( std::ifstream &input );
 
 	// These functions return TRUE if it's a new day
-	bool			IncSecond( void );
-	bool			IncMinute( void );
-	bool			IncHour( void );
-	bool			IncDay( void );
+	bool			incSecond( void );
+	bool			incMinute( void );
+	bool			incHour( void );
+	bool			incDay( void );
 
-	void			IncMoon( int mNumber );
+	void			incMoon( int mNumber );
 
-	physicalServer *GetServerEntry( UI16 entryNum );
-	UI32			GetServerCount( void ) const;
-
-	bool			ServerScriptSectionHeader( void ) const;
-	void			ServerScriptSectionHeader( bool value );
+	physicalServer *ServerEntry( UI16 entryNum );
+	UI16			ServerCount( void ) const;
 
 private: 
-  void setDirectoryHelper( std::string dirName, std::string &dir, char *text ); 
-  bool resettingDefaults; 
+	bool			resettingDefaults; 
 
 };
+
+}
 
 #endif
 

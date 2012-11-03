@@ -1,64 +1,90 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+namespace UOX
+{
+
+class CPIGumpInput;
+
+enum GuildType
+{
+	GT_STANDARD = 0,
+	GT_ORDER,
+	GT_CHAOS,
+	GT_UNKNOWN,
+	GT_COUNT
+};
+
+enum GUILDRELATION
+{
+	GR_NEUTRAL = 0,
+	GR_WAR,
+	GR_ALLY,
+	GR_UNKNOWN,
+	GR_SAME,
+	GR_COUNT
+};
+
 const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknown" };
 const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
 const SI16 BasePage = 8000;
 
-typedef std::map< GuildID, GuildRelation >	GUILDREL;
+typedef std::map< GUILDID, GUILDRELATION >	GUILDREL;
+typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
+typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
 
 class CGuild
 {
-protected:
+private:
 	std::string		name;
-	char		abbreviation[4];
-	GuildType	gType;
+	char			abbreviation[4];
+	GuildType		gType;
 	std::string		charter;
 	std::string		webpage;
-	SERIAL		stone;
-	SERIAL		master;
-	SERLIST		recruits;
-	SERLIST		members;
-	GUILDREL	relationList;
+	SERIAL			stone;
+	SERIAL			master;
+	SERLIST			recruits;
+	SERLIST			members;
+	GUILDREL		relationList;
 
-	SERLIST::iterator	recruitPtr;
-	SERLIST::iterator	memberPtr;
+	SERLIST_ITERATOR	recruitPtr;
+	SERLIST_ITERATOR	memberPtr;
 
-	GUILDREL::iterator	warPtr;
-	GUILDREL::iterator	allyPtr;
+	GUILDREL_ITERATOR	warPtr;
+	GUILDREL_ITERATOR	allyPtr;
 public:
 
-	GuildID		FirstWar( void );
-	GuildID		NextWar( void );
+	GUILDID		FirstWar( void );
+	GUILDID		NextWar( void );
 	bool		FinishedWar( void );
 
-	GuildID		FirstAlly( void );
-	GuildID		NextAlly( void );
+	GUILDID		FirstAlly( void );
+	GUILDID		NextAlly( void );
 	bool		FinishedAlly( void );
 
 				CGuild();
-	virtual		~CGuild();
-	const char *Name( void ) const;
-	const char *Abbreviation( void ) const;
-	GuildType	Type( void ) const;
-	const char *Charter( void ) const;
-	const char *Webpage( void ) const;
+				~CGuild();
+	const std::string	Name( void ) const;
+	const char *		Abbreviation( void ) const;
+	GuildType			Type( void ) const;
+	const std::string	Charter( void ) const;
+	const std::string	Webpage( void ) const;
 	SERIAL		Stone( void ) const;
 	SERIAL		Master( void ) const;
 	SERIAL		FirstRecruit( void );
 	SERIAL		NextRecruit( void );
 	bool		FinishedRecruits( void );
-	SERIAL		RecruitNumber( UI32 rNum ) const;
+	SERIAL		RecruitNumber( size_t rNum ) const;
 	SERIAL		FirstMember( void );
 	SERIAL		NextMember( void );
 	bool		FinishedMember( void );
-	SERIAL		MemberNumber( UI32 rNum ) const;
+	SERIAL		MemberNumber( size_t rNum ) const;
 
-	void		Name( const char *txt );
+	void		Name( std::string txt );
 	void		Abbreviation( const char *txt );
 	void		Type( GuildType nType );
-	void		Charter( const char *txt );
-	void		Webpage( const char *txt );
+	void		Charter( std::string txt );
+	void		Webpage( std::string txt );
 	void		Stone( SERIAL newStone );
 	void		Stone( CItem &newStone );
 	void		Master( SERIAL newMaster );
@@ -74,26 +100,26 @@ public:
 	void		RecruitToMember( CChar &newMember );
 	void		RecruitToMember( SERIAL newMember );
 
-	int			NumMembers( void ) const;
-	int			NumRecruits( void ) const;
+	size_t		NumMembers( void ) const;
+	size_t		NumRecruits( void ) const;
 
-	GuildRelation	RelatedToGuild( GuildID otherGuild ) const;
-	bool		IsAtWar( GuildID otherGuild ) const;
-	bool		IsNeutral( GuildID otherGuild ) const;
-	bool		IsAlly( GuildID otherGuild ) const;
+	GUILDRELATION	RelatedToGuild( GUILDID otherGuild ) const;
+	bool		IsAtWar( GUILDID otherGuild ) const;
+	bool		IsNeutral( GUILDID otherGuild ) const;
+	bool		IsAlly( GUILDID otherGuild ) const;
 
-	void		SetGuildRelation( GuildID otherGuild, GuildRelation toSet );
-	void		Save( std::ofstream &toSave, GuildID gNum );
+	void		SetGuildFaction( GuildType newFaction );
+	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );
+	void		Save( std::ofstream &toSave, GUILDID gNum );
 	void		Load( ScriptSection *toRead );
 
 	GUILDREL *	GuildRelationList( void );	// NOTE: This is aimed ONLY at menu stuff
 
 	void		CalcMaster( void );
 
-	void		TellMembers( char *txt, ... );
 	void		TellMembers( SI32 dictEntry, ... );
 
-	const char *TypeName( void );
+	const std::string TypeName( void );
 
 	bool		IsRecruit( SERIAL toCheck ) const;
 	bool		IsMember( SERIAL toCheck ) const;
@@ -101,34 +127,39 @@ public:
 	bool		IsMember( CChar &toCheck ) const;
 };
 
-typedef std::map< GuildID, CGuild * > GUILDLIST;
+typedef std::map< GUILDID, CGuild * > GUILDLIST;
 class CGuildCollection
 {
-protected:
+private:
 	GUILDLIST		gList;
 
-	void			ToggleAbbreviation( cSocket *s );
-	void			Erase( GuildID toErase );
-	GuildID			MaximumGuild( void );
+	void			ToggleAbbreviation( CSocket *s );
+	void			Erase( GUILDID toErase );
+	GUILDID			MaximumGuild( void );
 public:
-	void			Resign( cSocket *s );
+	void			Resign( CSocket *s );
 					CGuildCollection();
-	UI32			NumGuilds( void ) const;
-	GuildID			NewGuild( void );
-	CGuild *		Guild( GuildID num ) const;
-	CGuild *		operator[]( GuildID num );
+	size_t			NumGuilds( void ) const;
+	GUILDID			NewGuild( void );
+	CGuild *		Guild( GUILDID num ) const;
+	CGuild *		operator[]( GUILDID num );
 	void			Save( void );
 	void			Load( void );
-	GuildRelation	Compare( GuildID srcGuild, GuildID trgGuild ) const;
-	GuildRelation	Compare( CChar *src, CChar *trg ) const;
-	void			Menu( cSocket *s, SI16 menu, GuildID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
-	void			GumpInput( cSocket *s );
-	void			GumpChoice( cSocket *s );
-	void			PlaceStone( cSocket *s, CItem *deed );
-	bool			ResultInCriminal( GuildID srcGuild, GuildID trgGuild ) const;
+	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
+	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
+	void			Menu( CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
+	void			GumpInput( CPIGumpInput *gi );
+	void			GumpChoice( CSocket *s );
+	void			PlaceStone( CSocket *s, CItem *deed );
+	bool			ResultInCriminal( GUILDID srcGuild, GUILDID trgGuild ) const;
 	bool			ResultInCriminal( CChar *src, CChar *trg ) const;
-	void			DisplayTitle( cSocket *s, CChar *src ) const;
-	virtual			~CGuildCollection();
+	void			DisplayTitle( CSocket *s, CChar *src ) const;
+					~CGuildCollection();
 };
+
+extern CGuildCollection	*GuildSys;
+
+}
+
 #endif
 

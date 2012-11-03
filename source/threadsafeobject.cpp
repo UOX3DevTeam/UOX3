@@ -1,14 +1,13 @@
 #include "threadsafeobject.h"
-#if defined(__unix__)
-#include <pthread.h>
-#endif
+
+namespace UOX
+{
 
 ThreadSafeObject::ThreadSafeObject()
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	d_mutex = CreateMutex( NULL, false, NULL );
 #else
-	//d_mutex = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutexattr_t mutexAttr;
 	pthread_mutexattr_init( &mutexAttr );
 
@@ -21,7 +20,7 @@ ThreadSafeObject::ThreadSafeObject()
 }
 ThreadSafeObject::~ThreadSafeObject()
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	if( d_mutex != NULL )
 	{
 		CloseHandle( d_mutex );
@@ -35,7 +34,7 @@ ThreadSafeObject::~ThreadSafeObject()
 
 void ThreadSafeObject::MutexOn( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	WaitForSingleObject( d_mutex, INFINITE );
 #else
 	pthread_mutex_lock( &d_mutex );
@@ -43,9 +42,11 @@ void ThreadSafeObject::MutexOn( void )
 }
 void ThreadSafeObject::MutexOff( void )
 {
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	ReleaseMutex( d_mutex );
 #else
 	pthread_mutex_unlock( &d_mutex );
 #endif
+}
+
 }

@@ -4,15 +4,26 @@
 //o---------------------------------------------------------------------------o
 //| Script Section class implementation
 //o---------------------------------------------------------------------------o
-
-#pragma warning( disable : 4511 )	// copy constructor could not be generated
-#pragma warning( disable : 4512 )	// assignment operator could not be generated
-#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
-#pragma warning( disable : 4786 )	// Gets rid of BAD stl warnings
-
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
+namespace UOX
+{
+
+// 04302004 - Added a new tag DFNTAG_ADDMENUITEM to support the auto generation of the addmenu based on items that are contained in the DFN's
+//						We will still use the menu group item and group/subgroup stuff, however we will no longer have a list of items in a dfn that 
+//						we display in the addmenu. 
+//						Format: ADDMENUITEM=Group/SubGroupID,ImageID,PositionWeight,Type,Flags
+//						Where:
+//							Group				: Actual group owner that this item will be listed under on the addmenu gump
+//							TileID				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display 
+//							PositionWeight		:	Basic measure in which is used to base the items location in the addmenu page.
+//													Basically a value of 0 - 8/10 which ever max amount of entries we get on an addgump page
+//													(0) having the highest priority, etc. To kind of help sorting Otherwise items will be listed 
+//													as they are read in from the DFN's at parsing time.
+//							Flags				:	(0) not visible on the addmenu  (1) Visible on the addmenu
+//							ObjectID			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
+//
 enum DFNTAGS
 {
 	DFNTAG_AC = 0,
@@ -27,10 +38,12 @@ enum DFNTAGS
 	DFNTAG_BEGGING,
 	DFNTAG_BLACKSMITHING,
 	DFNTAG_BOWCRAFT,
+	DFNTAG_BUSHIDO,
 	DFNTAG_CAMPING,
 	DFNTAG_CARPENTRY,
 	DFNTAG_CARTOGRAPHY,
 	DFNTAG_CARVE,
+	DFNTAG_CHIVALRY,
 	DFNTAG_COLD,
 	DFNTAG_COLOUR,
 	DFNTAG_COLOURLIST,
@@ -38,7 +51,10 @@ enum DFNTAGS
 	DFNTAG_COOKING,
 	DFNTAG_CORPSE,
 	DFNTAG_CREATOR,
+	DFNTAG_CUSTOMSTRINGTAG,
+	DFNTAG_CUSTOMINTTAG,
 	DFNTAG_DAMAGE,
+	DFNTAG_ELEMENTRESIST,
 	DFNTAG_DECAY,
 	DFNTAG_DEF,
 	DFNTAG_DETECTINGHIDDEN,
@@ -50,19 +66,20 @@ enum DFNTAGS
 	DFNTAG_DOORFLAG,
 	DFNTAG_DYE,
 	DFNTAG_EMOTECOLOUR,
-	DFNTAG_ENHANCED,
 	DFNTAG_ENTICEMENT,
 	DFNTAG_EVALUATINGINTEL,
 	DFNTAG_FAME,
 	DFNTAG_FENCING,
 	DFNTAG_FISHING,
 	DFNTAG_FLEEAT,
+	DFNTAG_FOCUS,
 	DFNTAG_FORENSICS,
 	DFNTAG_FX1,
 	DFNTAG_FX2,
 	DFNTAG_FY1,
 	DFNTAG_FY2,
 	DFNTAG_FZ1,
+	DFNTAG_FOOD,
 	DFNTAG_GET,
 	DFNTAG_GLOW,
 	DFNTAG_GLOWBC,
@@ -76,11 +93,12 @@ enum DFNTAGS
 	DFNTAG_HIDAMAGE,
 	DFNTAG_HIDING,
 	DFNTAG_HP,
+	DFNTAG_HPMAX,
 	DFNTAG_ID,
 	DFNTAG_INTELLIGENCE,
 	DFNTAG_INTADD,
 	DFNTAG_INSCRIPTION,
-	DFNTAG_ITEM,
+	DFNTAG_EQUIPITEM,
 	DFNTAG_ITEMID,
 	DFNTAG_KARMA,
 	DFNTAG_LAYER,
@@ -106,7 +124,9 @@ enum DFNTAGS
 	DFNTAG_NAME,
 	DFNTAG_NAME2,
 	DFNTAG_NAMELIST,
+	DFNTAG_NECROMANCY,
 	DFNTAG_NEWBIE,
+	DFNTAG_NINJITSU,
 	DFNTAG_NOTRAIN,
 	DFNTAG_NPCAI,
 	DFNTAG_NPCWANDER,
@@ -115,12 +135,11 @@ enum DFNTAGS
 	DFNTAG_PARRYING,
 	DFNTAG_PEACEMAKING,
 	DFNTAG_PILEABLE,
-	DFNTAG_POISON,
+	DFNTAG_POISONDAMAGE,
+	DFNTAG_POISONSTRENGTH,
 	DFNTAG_POISONED,
 	DFNTAG_POISONING,
 	DFNTAG_PRIV,
-	DFNTAG_PRIV1,
-	DFNTAG_PRIV2,
 	DFNTAG_PROVOCATION,
 	DFNTAG_RACE,
 	DFNTAG_RAIN,
@@ -159,13 +178,16 @@ enum DFNTAGS
 	DFNTAG_TACTICS,
 	DFNTAG_TAILORING,
 	DFNTAG_TAMING,
+	DFNTAG_TAMEDHUNGER,
+	DFNTAG_WILLHUNGER,
 	DFNTAG_TASTEID,
 	DFNTAG_TINKERING,
 	DFNTAG_TITLE,
 	DFNTAG_TOTAME,
+	DFNTAG_TOPROV,
+	DFNTAG_TOPEACE,
 	DFNTAG_TRACKING,
 	DFNTAG_TYPE,
-	DFNTAG_TYPE2,
 	DFNTAG_VALUE,
 	DFNTAG_VETERINARY,
 	DFNTAG_VISIBLE,
@@ -174,85 +196,115 @@ enum DFNTAGS
 	DFNTAG_WRESTLING,
 	DFNTAG_ITEMLIST,
 	DFNTAG_NPCLIST,
-	DFNTAG_CATEGORY,
-	DFNTAG_NOTES,
-	DFNTAG_ID2,
-	DFNTAG_SKIN2,
 	DFNTAG_STAMINA,
+	DFNTAG_STAMINAMAX,
 	DFNTAG_MANA,
-	DFNTAG_SPEED,
-	DFNTAG_NOMOVE,
-	DFNTAG_POISONCHANCE,
-	DFNTAG_POISONSTRENGTH,
-	DFNTAG_MOD1,
-	DFNTAG_MOD2,
-	DFNTAG_MOD3,
-	DFNTAG_ALIGNMENT,
+	DFNTAG_MANAMAX,
+	DFNTAG_ADVOBJ,
+	DFNTAG_DYEHAIR,
+	DFNTAG_DYEBEARD,
+	DFNTAG_KILLHAIR,
+	DFNTAG_KILLBEARD,
+	DFNTAG_KILLPACK,
+	DFNTAG_POLY,
+	DFNTAG_ADDMENUITEM,
+	DFNTAG_INTERVAL,
+	DFNTAG_FLAG,
+	DFNTAG_WALKINGSPEED,
+	DFNTAG_RUNNINGSPEED,
+	DFNTAG_FLEEINGSPEED,
+	DFNTAG_AMMO,
+	DFNTAG_AMMOFX,
+	DFNTAG_WEIGHTMAX,
+	DFNTAG_SPELLWEAVING,
+	DFNTAG_IMBUING,
+	DFNTAG_MYSTICISM,
+	DFNTAG_THROWING,
 	DFNTAG_COUNTOFTAGS
 };
 
+typedef struct __ADDMENUITEM__
+{
+	UI32	itemIndex;
+	UString itemName;
+	UI32	groupID;
+	UI32	tileID;
+	UI32	weightPosition;
+	UI32	objectFlags;
+	UI32	objectID;
+	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ), 
+		weightPosition( 0 ), objectFlags( 0 ), objectID( 0 )
+	{
+	}
+} ADDMENUITEM, *LPADDMENUITEM;
+
+extern std::multimap< UI32, ADDMENUITEM >						g_mmapAddMenuMap;
+typedef std::multimap< UI32, ADDMENUITEM >::iterator			ADDMENUMAP_ITERATOR;
+typedef std::multimap< UI32, ADDMENUITEM >::const_iterator		ADDMENUMAP_CITERATOR;
+
 class ScriptSection
 {
+	friend class Script;
 private:
 	struct sectData
 	{
-		char *tag;
-		char *data;
-		sectData() : tag( NULL ), data( NULL ) {}
+		UString tag;
+		UString data;
+		sectData() : tag( "" ), data( "" )
+		{
+		}
 	};
 	struct sectDataV2
 	{
 		DFNTAGS tag;
-		char *	cdata;
-		UI32	ndata;
-		UI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( NULL ), ndata( INVALIDSERIAL ), odata( INVALIDSERIAL ) {}
+		UString	cdata;
+		SI32	ndata;
+		SI32	odata;
+		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
+		{
+		}
 	};
 
-	std::vector< sectData * >	data;
-	std::vector< sectDataV2 * >	dataV2;
-	bool					fileOpened;
-	bool					arrayFilled;
-	SI08					fileType;
-	FILE *					dataFile;
-	SI16					currentPos, currentPos2;
+	std::vector< sectData * >				data;
+	std::vector< sectDataV2 * >				dataV2;
+	std::vector< sectData * >::iterator		currentPos;
+	std::vector< sectDataV2 * >::iterator	currentPos2;
 	DEFINITIONCATEGORIES	dfnCat;
 
-	void					GrabLine( char *temp ); 
-	void					ParseLine( char *scp1, char *scp2 ); 
-	
 	bool					npcList;
 	bool					itemList;
 
-	const char				*npcListData;
-	const char				*itemListData;
+	UString					npcListData;
+	UString					itemListData;
 
 public:
 							ScriptSection( void );
-							ScriptSection( FILE *targFile, DEFINITIONCATEGORIES d );
-	bool					GrabFromFile( void );
-	virtual					~ScriptSection();
-	const char *			First( void );
+							ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
+							~ScriptSection();
+	const UString			First( void );
 	DFNTAGS					FirstTag( void );
-	const char *			Next( void );
+	const UString			Next( void );
 	DFNTAGS					NextTag( void );
-	const char *			Prev( void );
+	const UString			Prev( void );
 	DFNTAGS					PrevTag( void );
 	bool					AtEnd( void );
 	bool					AtEndTags( void );
-	const char *			GrabData( void );
-	const char *			GrabData( UI32& ndata, UI32& odata );
+	const UString			GrabData( void );
+	const UString			GrabData( SI32& ndata, SI32& odata );
 	bool					FlushData( void );
-	SI32					NumEntries( void );
-	const char *			MoveTo( short int position );
+	size_t					NumEntries( void ) const;
+	const UString			MoveTo( size_t position );
 	bool					CloseFile( void );
-	void					Remove( UI16 position );
-	void					Append( const char *tag, const char *data );
-	bool					ItemListExist(void) const;
-	bool					NpcListExist(void) const;
-	const char *	ItemListData(void) const;
-	const char *	NpcListData(void) const;
+	void					Remove( size_t position );
+	void					Append( UString tag, UString data );
+	bool					ItemListExist( void ) const;
+	bool					NpcListExist( void ) const;
+	const UString			ItemListData( void ) const;
+	const UString			NpcListData( void ) const;
+	void					createSection( std::fstream& inputbuf );
 };
+
+}
 
 #endif
 

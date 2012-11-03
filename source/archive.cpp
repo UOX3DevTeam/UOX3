@@ -1,42 +1,46 @@
 #include "uox3.h"
-#ifdef __unix__
+#include "regions.h"
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 #else
 	#include <direct.h>
 #endif
 
+namespace UOX
+{
+
 const SI32 BUFFERSIZE = 16384;
 
-bool fileCopy( const char *sourceFile, const char *targetFile )
+bool fileCopy( std::string sourceFile, std::string targetFile )
 {
-	if( sourceFile == NULL || targetFile == NULL )
-		return false;
-	FILE *source = fopen( sourceFile, "rb" );	
-	if( source == NULL )
-		return false;
-	FILE *target = fopen( targetFile, "wb" );
-	if( target == NULL )
+	bool rvalue = false;
+	if( !sourceFile.empty() && !targetFile.empty() )
 	{
-		fclose( source );
-		return false;
-	}
-	UI08 buffer[BUFFERSIZE];
-	while( !feof( source ) )
-	{
-		SI32 amtRead = fread( buffer, 1, BUFFERSIZE, source );
-		SI32 amtWritten = fwrite( buffer, 1, amtRead, target );
-		if( amtWritten != amtRead )
+		std::fstream source;
+		std::fstream target;
+		source.open( sourceFile.c_str(), std::ios_base::in | std::ios_base::binary );
+		target.open( targetFile.c_str(), std::ios_base::out | std::ios_base::binary );
+		if( target.is_open() && source.is_open() )
 		{
-			fclose( source );
-			fclose( target );
-			return false;
+			rvalue = true;
+			char buffer[BUFFERSIZE];
+			while( !source.eof() )
+			{
+				source.read( buffer, BUFFERSIZE );
+				std::streamsize amtRead = source.gcount();
+				if( amtRead > 0 )
+				{
+					target.write( buffer, amtRead );
+				}
+			}
 		}
+		// We put these out of the if scope, since one may be open.  It doesn't hurt closing a stream not open
+		source.close();
+		target.close();
 	}
-	fclose( source );
-	fclose( target );
-	return true;
+	return rvalue;
 }
-   
+
 //o---------------------------------------------------------------------------o
 //|   Function    :  void fileArchive( void )
 //|   Date        :  11th April, 2002
@@ -45,15 +49,14 @@ bool fileCopy( const char *sourceFile, const char *targetFile )
 //|   Purpose     :  Makes a backup copy of a file in the shared directory.
 //|                  puts the copy in the backup directory
 //o---------------------------------------------------------------------------o
-static void backupFile(char * filename, char * backupDir)
+static void backupFile( std::string filename, std::string backupDir )
 {
-        char backupFromFileName[MAX_PATH];
-        char backupToFileName[MAX_PATH];
-	
-	sprintf(backupFromFileName, "%s%s", cwmWorldState->ServerData()->GetSharedDirectory(), filename);
-	sprintf(backupToFileName, "%s%s", backupDir, filename);
+	UString			to( backupDir );
+	to				= to.fixDirectory();
+	to				+= filename;
+	UString from	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + filename;
 
-	fileCopy( backupFromFileName, backupToFileName );
+	fileCopy( from, to );
 }
 
 //o---------------------------------------------------------------------------o
@@ -69,66 +72,55 @@ void fileArchive( void )
 	time_t mytime;
 	time( &mytime );
 	tm *ptime = localtime( &mytime );			// get local time
-	const char *timenow = asctime( ptime );   // convert it to a string
+	const char *timenow = asctime( ptime );		// convert it to a string
 
 	char timebuffer[256];
 	strcpy( timebuffer, timenow );
-    
+
 	// overwriting the characters that aren't allowed in paths
-	for( UI32 a = 0; a < strlen( timebuffer ); a++ )
+	for( UI32 a = 0; a < strlen( timebuffer ); ++a )
 	{
 		if( isspace( timebuffer[a] ) || timebuffer[a] == ':' )
 			timebuffer[a]='-';
 	}
 
-	char filename1[MAX_PATH]; //, filename2[MAX_PATH];
+	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
+	backupRoot				+= timebuffer;
+	int makeResult = _mkdir( backupRoot.c_str(), 0777 );
+	if( makeResult == 0 )
+	{
+		Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
 
-	sprintf( filename1, "%s/%s", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
-	int makeResult = _mkdir( filename1,0777 );
-	if( makeResult != 0 )
+		backupFile( "house.wsc", backupRoot );
+
+		// effect backups
+		backupFile( "effects.wsc", backupRoot );
+
+		const SI16 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
+		const SI16 AreaY = UpperY / 8;
+		char backupPath[MAX_PATH + 1];
+		char filename1[MAX_PATH];
+
+		sprintf( backupPath, "%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timebuffer );
+
+		for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
+		{
+			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
+			{
+				sprintf( filename1, "%i.%i.wsc", counter1, counter2 );
+				backupFile( filename1, backupRoot );
+			}
+		}
+		backupFile( "overflow.wsc", backupRoot );
+		backupFile( "jails.wsc", backupRoot );
+		backupFile( "guilds.wsc", backupRoot );
+		backupFile( "regions.wsc", backupRoot );
+	}
+	else
 	{
 		Console << "Cannot create backup directory, please check available disk space" << myendl;
-		return;
 	}
-
-	sprintf( filename1, "%s%s/accounts", cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
-	makeResult = _mkdir( filename1,0777 );
-	if( makeResult != 0 )
-		Console << "Cannot create accounts backup directory, please check available disk space" << myendl;
-	//else if ( Accounts->SaveAccounts( (std::string)filename1, (std::string)filename1 ) == -1 )
-		//Console << "Cannot save accounts for backup" << myendl;
-	Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
-
-	char backupDir[MAX_PATH];
-
-	sprintf( backupDir, "%s%s/", 
-		 cwmWorldState->ServerData()->GetBackupDirectory(), timebuffer );
-	backupFile("house.wsc", backupDir);
-
-	// effect backups
-	backupFile("effects.wsc", backupDir);
-
-	const SI32 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
-	const SI32 AreaY = UpperY / 8;
-	char backupPath[MAX_PATH + 1];
-
-	sprintf(backupPath, "%s%s/", 
-		cwmWorldState->ServerData()->GetSharedDirectory(), timebuffer );
-
-	for( SI32 counter1 = 0; counter1 < AreaX; counter1++ )	// move left->right
-	{
-		for( SI32 counter2 = 0; counter2 < AreaY; counter2++ )	// move up->down
-		{
-			sprintf( filename1, "%i.%i.wsc", counter1, counter2 );
-			backupFile(filename1, backupDir);
-		}
-	}
-	
-	backupFile("overflow.wsc", backupDir);
-	backupFile("jails.wsc", backupDir);
-	backupFile("guilds.wsc", backupDir);
-	backupFile("regions.wsc", backupDir);
-
 	Console << "Finished backup" << myendl;
-	return;
+}
+
 }

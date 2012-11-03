@@ -5,8 +5,24 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "cEffects.h"
-#include "packets.h"
+#include "CPacketSend.h"
+#include "scriptc.h"
+#include "mapstuff.h"
+#include "cScript.h"
+#include "CJSMapping.h"
+#include "combat.h"
 
+namespace UOX
+{
+
+#define EFFECTIVE 2
+const UI08 MAXVAL	= 0;
+const UI08 MINVAL	= 1;
+const UI08 CURRVAL	= 2;
+const UI08 TEMP		= 0;
+const UI08 WIND		= 1;
+
+cWeatherAb *Weather = NULL;
 // Version History
 // 1.0		Abaddon		Unknown
 //			Initial implementation
@@ -26,12 +42,26 @@ CWeather::CWeather()
 	RainChance( 10 );
 	SnowChance( 1 );
 	HeatChance( 10 );
+	StormChance( 1 );
 	LightMin( 300 );
 	LightMax( 300 );
 	CurrentLight( 300 );
 
 	MaxTemp( 30 );
-	MinTemp( 0 );
+	MinTemp( 5 );
+	RainTempDrop( 5 );
+	StormTempDrop( 10 );
+	ColdIntensityHigh( 0 );
+	HeatIntensityHigh( 35 );
+	StormIntensityHigh( 100 );
+	SnowIntensityHigh( 100 );
+	RainIntensityHigh( 100 );
+	StormIntensityLow( 0 );
+	SnowIntensityLow( 0 );
+	RainIntensityLow( 0 );
+	StormIntensity( 0 );
+	SnowIntensity( 0 );
+	RainIntensity( 0 );
 	Temp( 15 );
 	MaxWindSpeed( 0 );
 	MinWindSpeed( 0 );
@@ -100,15 +130,19 @@ void CWeather::CurrentLight( R32 value )
 //|   Purpose     -  Updates the current light level of the system and the 
 //|					 current temperature of the system.
 //|					 Wind is not currently updated
-//|					 Chooses a random intensity if snow or rain is falling
 //o---------------------------------------------------------------------------o
 bool CWeather::PeriodicUpdate( void )
 {
 	R32 currTemp;
 
-	UI08 hour = cwmWorldState->ServerData()->GetServerTimeHours();
-	UI08 minute = cwmWorldState->ServerData()->GetServerTimeMinutes();
-	bool ampm = cwmWorldState->ServerData()->GetServerTimeAMPM();
+	UI08 hour	= cwmWorldState->ServerData()->ServerTimeHours();
+	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
+	bool ampm	= cwmWorldState->ServerData()->ServerTimeAMPM();
+
+	if( StormDelay() && StormBrewing() )
+		StormActive( true );
+	else if( StormBrewing() )
+		StormDelay( true );
 
 	if( LightMin() < 300 && LightMax() < 300 )
 	{
@@ -132,12 +166,20 @@ bool CWeather::PeriodicUpdate( void )
 		currTemp = effTempMax - tempLightChange;	// maximum temperature minus time
 	else
 		currTemp = effTempMin + tempLightChange;	// minimum temperature plus time 
-	Temp( currTemp );
-	if( SnowActive() && SnowThreshold() > currTemp )
-		SnowIntensity( (UI08)RandomNum( 1, 4 ) );
+	
+	if( StormActive() )
+	{
+		currTemp -= StormTempDrop();
+		if ( currTemp < 0 )
+			currTemp = 0;
+	}
 	else if( RainActive() )
-		RainIntensity( (UI08)RandomNum( 1, 4 ) );
-
+	{
+		currTemp -= RainTempDrop();
+		if ( currTemp < 0 )
+			currTemp = 0;
+	}
+	Temp( currTemp );
 	return true;
 }
 
@@ -147,93 +189,132 @@ bool CWeather::PeriodicUpdate( void )
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the system up for a new day
-//|					 Heat wave, cold snap, snow and rain is recalculated
-//|					 Under heat wave or cold snap, new effective max and min
-//|					 temperatures are calculated
+//|					 Heat wave, cold snap are calculated
 //o---------------------------------------------------------------------------o
 void CWeather::NewDay( void )
 {
-	bool isSnowing = false, isRaining = false, isHeatWave = false, isColdDay = false;
+	bool isHeatWave = false, isColdDay = false;
 
 	R32	effTempMax		= MaxTemp();
 	R32	effTempMin		= MinTemp();
-	UI08	chanceForWeath	= (UI08)RandomNum( 0, 100 );
-	if( chanceForWeath < HeatChance() )
+	R32 currentTemp;
+
+	if( (UI08)RandomNum( 0, 100 ) <= HeatChance() )
 	{
 		isHeatWave = true;
-		HeatIntensity( (UI08)RandomNum( 1, 4 ) );
-		effTempMax += RandomNum( 0, (int)(effTempMax / 10 * HeatIntensity() ) );
+		currentTemp = RandomNum( (int)effTempMax, (int)HeatIntensityHigh() );
+		effTempMax = currentTemp;
+		effTempMin = currentTemp;
 	}
-	if( chanceForWeath < ColdChance() )
+	else if( (UI08)RandomNum( 0, 100 ) <= ColdChance() )
 	{
 		isColdDay = true;
-		ColdIntensity( (UI08)RandomNum( 1, 4 ) );
-		effTempMin -= RandomNum( 0, (int)(effTempMin / 10 * ColdIntensity() ) );
+		currentTemp = RandomNum( (int)ColdIntensityHigh(), (int)effTempMin );
+		effTempMax = currentTemp;
+		effTempMin = currentTemp;
 	}
-	if( chanceForWeath < SnowChance() )
-	{
-		isSnowing = true;
-		SnowIntensity( (UI08)RandomNum( 1, 4 ) );
-	}
-	if( chanceForWeath < RainChance() )
-	{
-		isRaining = true;
-		RainIntensity( RandomNum( 1, 4 ) );
-	}
-
 	HeatActive( isHeatWave );
 	ColdActive( isColdDay );
-	SnowActive( isSnowing );
-	RainActive( isRaining );
 
 	EffectiveMaxTemp( effTempMax );
 	EffectiveMinTemp( effTempMin );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char Intensity( UI08 weathType ) const
+//|   Function    -  void NewHour( void )
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Calculates rain, snow and storm changes.
+//o---------------------------------------------------------------------------o
+void CWeather::NewHour( void )
+{
+	bool isSnowing = false, isRaining = false, isStorm = false;
+	if( (UI08)RandomNum( 0, 100 ) <= StormChance() )
+	{
+		isStorm = true;
+	}
+	if( (UI08)RandomNum( 0, 100 ) <= SnowChance() )
+	{
+		isSnowing = true;
+	}
+	if( (UI08)RandomNum( 0, 100 ) <= RainChance() )
+	{
+		isRaining = true;
+	}
+	if( !isStorm ) {
+		StormDelay( false );
+		StormActive( false );
+	}
+
+	//Calculate intensity values for the weather types
+	RainIntensity( (SI08)RandomNum( RainIntensityLow(), RainIntensityHigh() ) );
+	SnowIntensity( (SI08)RandomNum( SnowIntensityLow(), SnowIntensityHigh() ) );
+	StormIntensity( (SI08)RandomNum( StormIntensityLow(), StormIntensityHigh() ) );
+
+	SnowActive( isSnowing );
+	RainActive( isRaining );
+	StormBrewing( isStorm );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 Intensity( UI08 weathType ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the weather weathType
 //o---------------------------------------------------------------------------o
-char CWeather::Intensity( UI08 weathType ) const
+SI08 CWeather::IntensityHigh( UI08 weathType ) const
+{
+	return weather[weathType].IntensityHigh;
+}
+SI08 CWeather::IntensityLow( UI08 weathType ) const
+{
+	return weather[weathType].IntensityLow;
+}
+SI08 CWeather::Intensity( UI08 weathType ) const
 {
 	return weather[weathType].Intensity;
 }
-
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( UI08 weathType, char value )
+//|   Function    -  void Intensity( UI08 weathType, SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the intensity of weather weathType to value
 //o---------------------------------------------------------------------------o
-void CWeather::Intensity( UI08 weathType, char value )
+void CWeather::IntensityHigh( UI08 weathType, SI08 value )
+{
+	weather[weathType].IntensityHigh = value;
+}
+void CWeather::IntensityLow( UI08 weathType, SI08 value )
+{
+	weather[weathType].IntensityLow = value;
+}
+void CWeather::Intensity( UI08 weathType, SI08 value )
 {
 	weather[weathType].Intensity = value;
 }
-
 //o---------------------------------------------------------------------------o
-//|   Function    -  char Chance( UI08 weathType ) const
+//|   Function    -  SI08 Chance( UI08 weathType ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the chance of weather weathType occurring
 //o---------------------------------------------------------------------------o
-char CWeather::Chance( UI08 weathType ) const
+SI08 CWeather::Chance( UI08 weathType ) const
 {
 	return weather[weathType].Chance;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void HeatActive( UI08 weathType, char value )
+//|   Function    -  void HeatActive( UI08 weathType, SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the chance of weather weathType occuring to value
 //o---------------------------------------------------------------------------o
-void CWeather::Chance( UI08 weathType, char value )
+void CWeather::Chance( UI08 weathType, SI08 value )
 {
 	weather[weathType].Chance = value;
 }
@@ -267,13 +348,21 @@ void CWeather::Value( UI08 valType, UI08 valOff, R32 value )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char SnowIntensity( void ) const
+//|   Function    -  SI08 SnowIntensity( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the snow (if any)
 //o---------------------------------------------------------------------------o
-char CWeather::SnowIntensity( void ) const
+SI08 CWeather::SnowIntensityHigh( void ) const
+{
+	return weather[SNOW].IntensityHigh;
+}
+SI08 CWeather::SnowIntensityLow( void ) const
+{
+	return weather[SNOW].IntensityLow;
+}
+SI08 CWeather::SnowIntensity( void ) const
 {
 	return weather[SNOW].Intensity;
 }
@@ -285,9 +374,37 @@ char CWeather::SnowIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the rain, if any
 //o---------------------------------------------------------------------------o
-char CWeather::RainIntensity( void ) const
+SI08 CWeather::RainIntensityHigh( void ) const
+{
+	return weather[RAIN].IntensityHigh;
+}
+SI08 CWeather::RainIntensityLow( void ) const
+{
+	return weather[RAIN].IntensityLow;
+}
+SI08 CWeather::RainIntensity( void ) const
 {
 	return weather[RAIN].Intensity;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 StormIntensity( void ) const
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the intensity of the storm, if any
+//o---------------------------------------------------------------------------o
+SI08 CWeather::StormIntensityHigh( void ) const
+{
+	return weather[STORM].IntensityHigh;
+}
+SI08 CWeather::StormIntensityLow( void ) const
+{
+	return weather[STORM].IntensityLow;
+}
+SI08 CWeather::StormIntensity( void ) const
+{
+	return weather[STORM].Intensity;
 }
 
 //o---------------------------------------------------------------------------o
@@ -297,21 +414,21 @@ char CWeather::RainIntensity( void ) const
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the heat wave, if any
 //o---------------------------------------------------------------------------o
-char CWeather::HeatIntensity( void ) const
+SI08 CWeather::HeatIntensityHigh( void ) const
 {
-	return weather[HEAT].Intensity;
+	return weather[HEAT].IntensityHigh;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char ColdIntensity( void ) const
+//|   Function    -  SI08 ColdIntensity( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of the cold snap, if any
 //o---------------------------------------------------------------------------o
-char CWeather::ColdIntensity( void ) const
+SI08 CWeather::ColdIntensityHigh( void ) const
 {
-	return weather[COLD].Intensity;
+	return weather[COLD].IntensityHigh;
 }
 
 //o---------------------------------------------------------------------------o
@@ -351,6 +468,30 @@ R32 CWeather::Temp( void ) const
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the amount the temperature drops when it rains
+//o---------------------------------------------------------------------------o
+R32 CWeather::RainTempDrop( void ) const
+{
+	return rainTempDrop;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 StormTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the amount the temperature drops when it storms
+//o---------------------------------------------------------------------------o
+R32 CWeather::StormTempDrop( void ) const
+{
+	return stormTempDrop;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  R32 MaxWindSpeed( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
@@ -387,49 +528,61 @@ R32 CWeather::WindSpeed( void ) const
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char RainChance( void ) const
+//|   Function    -  SI08 RainChance( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the chance of rain for the day
 //o---------------------------------------------------------------------------o
-char CWeather::RainChance( void ) const
+SI08 CWeather::RainChance( void ) const
 {
 	return weather[RAIN].Chance;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char SnowChance( void ) const
+//|   Function    -  SI08 SnowChance( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the chance of snow for the day
 //o---------------------------------------------------------------------------o
-char CWeather::SnowChance( void ) const
+SI08 CWeather::SnowChance( void ) const
 {
 	return weather[SNOW].Chance;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char HeatChance( void ) const
+//|   Function    -  SI08 StormChance( void ) const
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the chance of storm for the day
+//o---------------------------------------------------------------------------o
+SI08 CWeather::StormChance( void ) const
+{
+	return weather[STORM].Chance;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 HeatChance( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the chance of a heat wave for the day
 //o---------------------------------------------------------------------------o
-char CWeather::HeatChance( void ) const
+SI08 CWeather::HeatChance( void ) const
 {
 	return weather[HEAT].Chance;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char ColdChance( void ) const
+//|   Function    -  SI08 ColdChance( void ) const
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the chance of a cold snap for the day
 //o---------------------------------------------------------------------------o
-char CWeather::ColdChance( void ) const
+SI08 CWeather::ColdChance( void ) const
 {
 	return weather[COLD].Chance;
 }
@@ -480,6 +633,42 @@ bool CWeather::RainActive( void ) const
 bool CWeather::SnowActive( void ) const
 {
 	return weather[SNOW].Active;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool StormBrewing( void ) const
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the weather system is brewing a storm
+//o---------------------------------------------------------------------------o
+bool CWeather::StormBrewing( void ) const
+{
+	return weather[STORMBREW].Active;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool StormActive( void ) const
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the weather system is storming
+//o---------------------------------------------------------------------------o
+bool CWeather::StormActive( void ) const
+{
+	return weather[STORM].Active;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool StormDelay( void ) const
+//|   Date        -  17th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the storm delay is over
+//o---------------------------------------------------------------------------o
+bool CWeather::StormDelay( void ) const
+{
+	return stormDelay;
 }
 
 //o---------------------------------------------------------------------------o
@@ -567,97 +756,169 @@ void CWeather::Temp( R32 value )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void SnowIntensity( char value )
+//|   Function    -  R32 RainTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the amount the temperature drops when it rains
+//o---------------------------------------------------------------------------o
+void CWeather::RainTempDrop( R32 value )
+{
+	rainTempDrop = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 StormTempDrop( void ) const
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the amount the temperature drops when it storms
+//o---------------------------------------------------------------------------o
+void CWeather::StormTempDrop( R32 value )
+{
+	stormTempDrop = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void SnowIntensity( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the snow intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::SnowIntensity( char value )
+void CWeather::SnowIntensityHigh( SI08 value )
+{
+	weather[SNOW].IntensityHigh = value;
+}
+void CWeather::SnowIntensityLow( SI08 value )
+{
+	weather[SNOW].IntensityLow = value;
+}
+void CWeather::SnowIntensity( SI08 value )
 {
 	weather[SNOW].Intensity = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void HeatIntensity( char value )
+//|   Function    -  void StormIntensity( SI08 value )
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the storm intensity of the system
+//o---------------------------------------------------------------------------o
+void CWeather::StormIntensityHigh( SI08 value )
+{
+	weather[STORM].IntensityHigh = value;
+}
+void CWeather::StormIntensityLow( SI08 value )
+{
+	weather[STORM].IntensityLow = value;
+}
+void CWeather::StormIntensity( SI08 value )
+{
+	weather[STORM].Intensity = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void HeatIntensity( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the heat intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::HeatIntensity( char value )
+void CWeather::HeatIntensityHigh( SI08 value )
 {
-	weather[HEAT].Intensity = value;
+	weather[HEAT].IntensityHigh = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void RainIntensity( char value )
+//|   Function    -  void RainIntensity( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the rain intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::RainIntensity( char value )
+void CWeather::RainIntensityHigh( SI08 value )
+{
+	weather[RAIN].IntensityHigh = value;
+}
+void CWeather::RainIntensityLow( SI08 value )
+{
+	weather[RAIN].IntensityLow = value;
+}
+void CWeather::RainIntensity( SI08 value )
 {
 	weather[RAIN].Intensity = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void ColdIntensity( char value )
+//|   Function    -  void ColdIntensity( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the cold intensity of the system
 //o---------------------------------------------------------------------------o
-void CWeather::ColdIntensity( char value )
+void CWeather::ColdIntensityHigh( SI08 value )
 {
-	weather[COLD].Intensity = value;
+	weather[COLD].IntensityHigh = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void RainChance( char value )
+//|   Function    -  void RainChance( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the chance of rain in the system
 //o---------------------------------------------------------------------------o
-void CWeather::RainChance( char value )
+void CWeather::RainChance( SI08 value )
 {
 	weather[RAIN].Chance = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void SnowChance( char value )
+//|   Function    -  void SnowChance( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the chance of snow in the system
 //o---------------------------------------------------------------------------o
-void CWeather::SnowChance( char value )
+void CWeather::SnowChance( SI08 value )
 {
 	weather[SNOW].Chance = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void HeatChance( char value )
+//|   Function    -  void StormChance( SI08 value )
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the chance of a storm brewing in the system
+//o---------------------------------------------------------------------------o
+void CWeather::StormChance( SI08 value )
+{
+	weather[STORM].Chance = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void HeatChance( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the chance of a heat wave in the system
 //o---------------------------------------------------------------------------o
-void CWeather::HeatChance( char value )
+void CWeather::HeatChance( SI08 value )
 {
 	weather[HEAT].Chance = value;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void ColdChance( char value )
+//|   Function    -  void ColdChance( SI08 value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the chance of a cold snap in the system
 //o---------------------------------------------------------------------------o
-void CWeather::ColdChance( char value )
+void CWeather::ColdChance( SI08 value )
 {
 	weather[COLD].Chance = value;
 }
@@ -771,6 +1032,42 @@ void CWeather::SnowActive( bool value )
 }
 
 //o---------------------------------------------------------------------------o
+//|   Function    -  void StormBrewing( bool value )
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  Grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets whether a storm is brewing or not
+//o---------------------------------------------------------------------------o
+void CWeather::StormBrewing( bool value )
+{
+	weather[STORMBREW].Active = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void StormActive( bool value )
+//|   Date        -  11th April, 2001
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets whether a storm is active or not
+//o---------------------------------------------------------------------------o
+void CWeather::StormActive( bool value )
+{
+	weather[STORM].Active = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void StormDelay( bool value )
+//|   Date        -  11th April, 2001
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the storm delay
+//o---------------------------------------------------------------------------o
+void CWeather::StormDelay( bool value )
+{
+	stormDelay = value;
+}
+
+//o---------------------------------------------------------------------------o
 //|   Function    -  void HeatActive( bool value )
 //|   Date        -  11th April, 2001
 //|   Programmer  -  Abaddon
@@ -804,6 +1101,7 @@ void CWeather::ColdActive( bool value )
 //o---------------------------------------------------------------------------o
 cWeatherAb::cWeatherAb()
 {
+	weather.resize( 0 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -815,7 +1113,7 @@ cWeatherAb::cWeatherAb()
 //o---------------------------------------------------------------------------o
 cWeatherAb::~cWeatherAb()
 {
-	weather.resize( 0 );
+	weather.clear();
 }
 
 //o---------------------------------------------------------------------------o
@@ -825,7 +1123,7 @@ cWeatherAb::~cWeatherAb()
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns count of weather systems
 //o---------------------------------------------------------------------------o
-UI32 cWeatherAb::Count( void ) const
+size_t cWeatherAb::Count( void ) const
 {
 	return weather.size();
 }
@@ -839,92 +1137,119 @@ UI32 cWeatherAb::Count( void ) const
 //o---------------------------------------------------------------------------o
 bool cWeatherAb::Load( void )
 {
-	weathID wthCount = 0;
-	bool done = false;
-	char sect[512];
-	while( !done )
+	weather.resize( FileLookup->CountOfEntries( weathab_def ) );
+	UString tag, data, UTag;
+	UString entryName;
+	size_t i = 0;
+	for( Script *weathScp = FileLookup->FirstScript( weathab_def ); !FileLookup->FinishedScripts( weathab_def ); weathScp = FileLookup->NextScript( weathab_def ) )
 	{
-		sprintf( sect, "WEATHERAB %d", wthCount );
-		ScriptSection *tempSect = FileLookup->FindEntry( sect, weathab_def );
-		if( tempSect == NULL )
-			done = true;
-		else
-			wthCount++;
-	}
-	ScriptSection *WeatherStuff = NULL;
-	weather.resize( wthCount );
-
-	const char *tag = NULL;
-	const char *data = NULL;
-
-	for( UI16 i = 0; i < weather.size(); i++ )
-	{
-		sprintf( sect, "WEATHERAB %d", i );
-		WeatherStuff = FileLookup->FindEntry( sect, weathab_def );
-		if( WeatherStuff == NULL )
+		if( weathScp == NULL )
 			continue;
 
-		for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
+		for( ScriptSection *WeatherStuff = weathScp->FirstEntry(); WeatherStuff != NULL; WeatherStuff = weathScp->NextEntry() )
 		{
-			data = WeatherStuff->GrabData();
-			switch( tag[0] )
+			if( WeatherStuff == NULL )
+				continue;
+
+			entryName			= weathScp->EntryName();
+			i					= entryName.section( " ", 1, 1 ).toULong();
+			if( i >= weather.size() )
+				weather.resize( i+1 );
+
+			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
+				UTag = tag.upper();
+				data = WeatherStuff->GrabData();
+				switch( tag[0] )
+				{
+					case 'c':
+					case 'C':
+						if( UTag == "COLDCHANCE" )			// chance for a cold day
+							ColdChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "COLDINTENSITY" )	// cold intensity
+							ColdIntensityHigh( static_cast<weathID>(i), data.toByte() );
+						break;
 
-			case 'c':
-			case 'C':
-				if( !strcmp( "COLDCHANCE", tag ) )			// chance for a cold day
-					ColdChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				else if( !strcmp( "COLDINTENSITY", tag ) )	// cold intensity
-					ColdIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data ) ));
-				break;
+					case 'h':
+					case 'H':
+						if( UTag == "HEATCHANCE" )			// chance for a hot day
+							HeatChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "HEATINTENSITY" )	// heat intensity
+							HeatIntensityHigh( static_cast<weathID>(i), data.toByte() );
+						break;
 
-			case 'h':
-			case 'H':
-				if( !strcmp( "HEATCHANCE", tag ) )			// chance for a hot day
-					HeatChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				else if( !strcmp( "HEATINTENSITY", tag ) )	// heat intensity
-					HeatIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				break;
+					case 'l':
+					case 'L':
+						if( UTag == "LIGHTMIN" )			// minimum light level
+							LightMin( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "LIGHTMAX" )		// maximum light level
+							LightMax( static_cast<weathID>(i), data.toFloat() );
+						break;
 
-			case 'l':
-			case 'L':
-				if( !strcmp( "LIGHTMIN", tag ) )			// minimum light level
-					LightMin( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				else if( !strcmp( "LIGHTMAX", tag ) )		// maximum light level
-					LightMax( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				break;
+					case 'm':
+					case 'M':
+						if( UTag == "MAXTEMP" )				// maximum temperature
+							MaxTemp( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MINTEMP" )		// minimum temperature
+							MinTemp( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MAXWIND" )		// maximum wind speed
+							MaxWindSpeed( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "MINWIND" )		// minimum wind speed
+							MinWindSpeed( static_cast<weathID>(i), data.toFloat() );
+						break;
 
-			case 'm':
-			case 'M':
-				if( !strcmp( "MAXTEMP", tag ) )				// maximum temperature
-					MaxTemp( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				else if( !strcmp( "MINTEMP", tag ) )		// minimum temperature
-					MinTemp( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				else if( !strcmp( "MAXWIND", tag ) )		// maximum wind speed
-					MaxWindSpeed( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				else if( !strcmp( "MINWIND", tag ) )		// minimum wind speed
-					MinWindSpeed( static_cast<weathID>(i), static_cast<R32>(atof( data )) );
-				break;
-
-			case 'r':
-			case 'R':
-
-				if( !strcmp( "RAINCHANCE", tag ) )			// chance of rain
-					RainChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				else if( !strcmp( "RAININTENSITY", tag ) )	// intensity of rain
-					RainIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				break;
-
-			case 's':
-			case 'S':
-
-				if( !strcmp( "SNOWCHANCE", tag ) )			// chance of snow
-					SnowChance( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				else if( !strcmp( "SNOWINTENSITY", tag ) )	// intensity of snow
-					SnowIntensity( static_cast<weathID>(i), static_cast<char>(makeNum( data )) );
-				else if( !strcmp( "SNOWTHRESHOLD", tag ) )	// temperature at which snow kicks in
-					SnowThreshold( static_cast<weathID>(i), static_cast<R32>(atof( data ) ));
-				break;
+					case 'r':
+					case 'R':
+						if( UTag == "RAINCHANCE" )			// chance of rain
+							RainChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "RAININTENSITY" )	// intensity of rain
+							if( data.sectionCount( "," ) != 0 )
+							{
+								RainIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								RainIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								RainIntensityLow( static_cast<weathID>(i), 0 );
+								RainIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
+						else if( UTag == "RAINTEMPDROP" )			// temp drop of rain
+							RainTempDrop( static_cast<weathID>(i), data.toByte() );
+						break;
+					case 's':
+					case 'S':
+						if( UTag == "SNOWCHANCE" )			// chance of snow
+							SnowChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "SNOWINTENSITY" )	// intensity of snow
+							if( data.sectionCount( "," ) != 0 )
+							{
+								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								SnowIntensityLow( static_cast<weathID>(i), 0 );
+								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
+						else if( UTag == "SNOWTHRESHOLD" )	// temperature at which snow kicks in
+							SnowThreshold( static_cast<weathID>(i), data.toFloat() );
+						else if( UTag == "STORMCHANCE" )	// chance of a storm
+							StormChance( static_cast<weathID>(i), data.toByte() );
+						else if( UTag == "STORMINTENSITY" )	// chance of a storm
+							if( data.sectionCount( "," ) != 0 )
+							{
+								SnowIntensityLow( static_cast<weathID>(i), data.section( ",", 0, 0 ).stripWhiteSpace().toByte() );
+								SnowIntensityHigh( static_cast<weathID>(i), data.section( ",", 1, 1 ).stripWhiteSpace().toByte() );
+							}
+							else
+							{
+								SnowIntensityLow( static_cast<weathID>(i), 0 );
+								SnowIntensityHigh( static_cast<weathID>(i), data.toByte() );
+							}
+						else if( UTag == "STORMTEMPDROP" )			// temp drop of storm
+							StormTempDrop( static_cast<weathID>(i), data.toByte() );
+						break;
+				}
 			}
 		}
 	}
@@ -932,49 +1257,65 @@ bool cWeatherAb::Load( void )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char Intensity( weathID toCheck, UI08 weathType )
+//|   Function    -  SI08 Intensity( weathID toCheck, UI08 weathType )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to return intensity of a weather type
 //o---------------------------------------------------------------------------o
-char cWeatherAb::Intensity( weathID toCheck, UI08 weathType )
+SI08 cWeatherAb::IntensityHigh( weathID toCheck, UI08 weathType )
+{
+	return weather[toCheck].IntensityHigh( weathType );
+}
+SI08 cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType )
+{
+	return weather[toCheck].IntensityLow( weathType );
+}
+SI08 cWeatherAb::Intensity( weathID toCheck, UI08 weathType )
 {
 	return weather[toCheck].Intensity( weathType );
 }
 		
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( weathID toCheck, UI08 weathType, char value )
+//|   Function    -  void Intensity( weathID toCheck, UI08 weathType, SI08 value )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to set the intensity of a particular weather type
 //o---------------------------------------------------------------------------o
-void cWeatherAb::Intensity( weathID toCheck, UI08 weathType, char value )
+void cWeatherAb::IntensityHigh( weathID toCheck, UI08 weathType, SI08 value )
+{
+	weather[toCheck].IntensityHigh( weathType, value );
+}
+void cWeatherAb::IntensityLow( weathID toCheck, UI08 weathType, SI08 value )
+{
+	weather[toCheck].IntensityLow( weathType, value );
+}
+void cWeatherAb::Intensity( weathID toCheck, UI08 weathType, SI08 value )
 {
 	weather[toCheck].Intensity( weathType, value );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char Chance( weathID toCheck, UI08 weathType )
+//|   Function    -  SI08 Chance( weathID toCheck, UI08 weathType )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to return chance of a weather type
 //o---------------------------------------------------------------------------o
-char cWeatherAb::Chance( weathID toCheck, UI08 weathType )
+SI08 cWeatherAb::Chance( weathID toCheck, UI08 weathType )
 {
 	return weather[toCheck].Chance( weathType );
 }
 		
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( weathID toCheck, UI08 weathType, char value )
+//|   Function    -  void Chance( weathID toCheck, UI08 weathType, SI08 value )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Helper func to set the chance of finding a weather type
 //o---------------------------------------------------------------------------o
-void cWeatherAb::Chance( weathID toCheck, UI08 weathType, char value )
+void cWeatherAb::Chance( weathID toCheck, UI08 weathType, SI08 value )
 {
 	weather[toCheck].Chance( weathType, value );
 }
@@ -994,7 +1335,7 @@ R32 cWeatherAb::Value( weathID toCheck, UI08 valType, UI08 valOff )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void Intensity( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
+//|   Function    -  void Value( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
@@ -1008,51 +1349,87 @@ void cWeatherAb::Value( weathID toCheck, UI08 valType, UI08 valOff, R32 value )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char SnowIntensity( weathID toCheck )
+//|   Function    -  SI08 SnowIntensity( weathID toCheck )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's snow
 //o---------------------------------------------------------------------------o
-char cWeatherAb::SnowIntensity( weathID toCheck )
+SI08 cWeatherAb::SnowIntensityHigh( weathID toCheck )
+{
+	return IntensityHigh( toCheck, SNOW );
+}
+SI08 cWeatherAb::SnowIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, SNOW );
+}
+SI08 cWeatherAb::SnowIntensity( weathID toCheck )
 {
 	return Intensity( toCheck, SNOW );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char RainIntensity( weathID toCheck )
+//|   Function    -  SI08 StormIntensity( weathID toCheck )
+//|   Date        -  16th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the intensity of toCheck's storm
+//o---------------------------------------------------------------------------o
+SI08 cWeatherAb::StormIntensityHigh( weathID toCheck )
+{
+	return IntensityHigh( toCheck, STORM );
+}
+SI08 cWeatherAb::StormIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, STORM );
+}
+SI08 cWeatherAb::StormIntensity( weathID toCheck )
+{
+	return Intensity( toCheck, STORM );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI08 RainIntensity( weathID toCheck )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's rain
 //o---------------------------------------------------------------------------o
-char cWeatherAb::RainIntensity( weathID toCheck )
+SI08 cWeatherAb::RainIntensityHigh( weathID toCheck )
+{
+	return IntensityHigh( toCheck, RAIN );
+}
+SI08 cWeatherAb::RainIntensityLow( weathID toCheck )
+{
+	return IntensityLow( toCheck, RAIN );
+}
+SI08 cWeatherAb::RainIntensity( weathID toCheck )
 {
 	return Intensity( toCheck, RAIN );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char HeatIntensity( weathID toCheck )
+//|   Function    -  SI08 HeatIntensity( weathID toCheck )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's heat
 //o---------------------------------------------------------------------------o
-char cWeatherAb::HeatIntensity( weathID toCheck )
+SI08 cWeatherAb::HeatIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, HEAT );
+	return IntensityHigh( toCheck, HEAT );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char ColdIntensity( weathID toCheck )
+//|   Function    -  SI08 ColdIntensity( weathID toCheck )
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the intensity of toCheck's cold
 //o---------------------------------------------------------------------------o
-char cWeatherAb::ColdIntensity( weathID toCheck )
+SI08 cWeatherAb::ColdIntensityHigh( weathID toCheck )
 {
-	return Intensity( toCheck, COLD );
+	return IntensityHigh( toCheck, COLD );
 }
 
 //o---------------------------------------------------------------------------o
@@ -1089,6 +1466,30 @@ R32 cWeatherAb::MinTemp( weathID toCheck )
 R32 cWeatherAb::Temp( weathID toCheck )
 {
 	return Value( toCheck, CURRVAL, TEMP );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( weathID toCheck )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the rain temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+R32 cWeatherAb::RainTempDrop( weathID toCheck )
+{
+	return weather[toCheck].RainTempDrop();
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  R32 RainTempDrop( weathID toCheck )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the storm temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+R32 cWeatherAb::StormTempDrop( weathID toCheck )
+{
+	return weather[toCheck].StormTempDrop();
 }
 
 //o---------------------------------------------------------------------------o
@@ -1199,52 +1600,115 @@ void cWeatherAb::Temp( weathID toCheck, R32 value )
 	Value( toCheck, CURRVAL, TEMP, value );
 }
 
-void cWeatherAb::SnowIntensity( weathID toCheck, char value )
+//o---------------------------------------------------------------------------o
+//|   Function    -  void RainTempDrop( weathID toCheck, R32 value )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the rain temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+void cWeatherAb::RainTempDrop( weathID toCheck, R32 value )
+{
+	weather[toCheck].RainTempDrop( value );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void StormTempDrop( weathID toCheck, R32 value )
+//|   Date        -  19th Feb, 2006
+//|   Programmer  -  grimson
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the storm temperature drop of toCheck
+//o---------------------------------------------------------------------------o
+void cWeatherAb::StormTempDrop( weathID toCheck, R32 value )
+{
+	weather[toCheck].StormTempDrop( value );
+}
+
+void cWeatherAb::SnowIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, SNOW, value );
+}
+void cWeatherAb::SnowIntensityLow( weathID toCheck, SI08 value )
+{
+	IntensityLow( toCheck, SNOW, value );
+}
+void cWeatherAb::SnowIntensity( weathID toCheck, SI08 value )
 {
 	Intensity( toCheck, SNOW, value );
 }
-void cWeatherAb::RainIntensity( weathID toCheck, char value )
+
+void cWeatherAb::StormIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, STORM, value );
+}
+void cWeatherAb::StormIntensityLow( weathID toCheck, SI08 value )
+{
+	IntensityLow( toCheck, STORM, value );
+}
+void cWeatherAb::StormIntensity( weathID toCheck, SI08 value )
+{
+	Intensity( toCheck, STORM, value );
+}
+
+void cWeatherAb::RainIntensityHigh( weathID toCheck, SI08 value )
+{
+	IntensityHigh( toCheck, RAIN, value );
+}
+void cWeatherAb::RainIntensityLow( weathID toCheck, SI08 value )
+{
+	IntensityLow( toCheck, RAIN, value );
+}
+void cWeatherAb::RainIntensity( weathID toCheck, SI08 value )
 {
 	Intensity( toCheck, RAIN, value );
 }
-void cWeatherAb::HeatIntensity( weathID toCheck, char value )
+
+void cWeatherAb::HeatIntensityHigh( weathID toCheck, SI08 value )
 {
-	Intensity( toCheck, HEAT, value );
+	IntensityHigh( toCheck, HEAT, value );
 }
-void cWeatherAb::ColdIntensity( weathID toCheck, char value )
+void cWeatherAb::ColdIntensityHigh( weathID toCheck, SI08 value )
 {
-	Intensity( toCheck, COLD, value );
+	IntensityHigh( toCheck, COLD, value );
 }
-void cWeatherAb::RainChance( weathID toCheck, char value )
+void cWeatherAb::RainChance( weathID toCheck, SI08 value )
 {
 	Chance( toCheck, RAIN, value );
 }
-void cWeatherAb::SnowChance( weathID toCheck, char value )
+void cWeatherAb::SnowChance( weathID toCheck, SI08 value )
 {
 	Chance( toCheck, SNOW, value );
 }
-void cWeatherAb::HeatChance( weathID toCheck, char value )
+void cWeatherAb::StormChance( weathID toCheck, SI08 value )
+{
+	Chance( toCheck, STORM, value );
+}
+void cWeatherAb::HeatChance( weathID toCheck, SI08 value )
 {
 	Chance( toCheck, HEAT, value );
 }
-void cWeatherAb::ColdChance( weathID toCheck, char value )
+void cWeatherAb::ColdChance( weathID toCheck, SI08 value )
 {
 	Chance( toCheck, COLD, value );
 }
 
-char cWeatherAb::RainChance( weathID toCheck )
+SI08 cWeatherAb::RainChance( weathID toCheck )
 {
 	return Chance( toCheck, RAIN );
 }
-char cWeatherAb::SnowChance( weathID toCheck )
+SI08 cWeatherAb::SnowChance( weathID toCheck )
 {
 	return Chance( toCheck, SNOW );
 }
-char cWeatherAb::HeatChance( weathID toCheck )
+SI08 cWeatherAb::StormChance( weathID toCheck )
+{
+	return Chance( toCheck, STORM );
+}
+SI08 cWeatherAb::HeatChance( weathID toCheck )
 {
 	return Chance( toCheck, HEAT );
 }
-char cWeatherAb::ColdChance( weathID toCheck )
+SI08 cWeatherAb::ColdChance( weathID toCheck )
 {
 	return Chance( toCheck, COLD );
 }
@@ -1261,8 +1725,17 @@ void cWeatherAb::SnowThreshold( weathID toCheck, R32 value )
 
 bool cWeatherAb::NewDay( void )
 {
-	for( weathID currval = 0; currval < weather.size(); currval++ )
-		weather[currval].NewDay();
+	std::vector< CWeather >::iterator wIter;
+	for( wIter = weather.begin(); wIter != weather.end(); ++wIter )
+		(*wIter).NewDay();
+	return true;
+}
+
+bool cWeatherAb::NewHour( void )
+{
+	std::vector< CWeather >::iterator wIter;
+	for( wIter = weather.begin(); wIter != weather.end(); ++wIter )
+		(*wIter).NewHour();
 	return true;
 }
 
@@ -1286,20 +1759,40 @@ R32 cWeatherAb::EffectiveMinTemp( weathID toCheck )
 
 bool cWeatherAb::DoStuff( void )
 {
-	for( weathID currval = 0; currval < weather.size(); currval++ )
-		weather[currval].PeriodicUpdate();
+	std::vector< CWeather >::iterator wIter;
+	for( wIter = weather.begin(); wIter != weather.end(); ++wIter )
+		(*wIter).PeriodicUpdate();
 	return true;
 }
-
+void cWeatherAb::HeatActive( weathID toCheck, bool value )
+{
+	weather[toCheck].HeatActive( value );
+}
+void cWeatherAb::ColdActive( weathID toCheck, bool value )
+{
+	weather[toCheck].ColdActive( value );
+}
 void cWeatherAb::RainActive( weathID toCheck, bool value )
 {
 	weather[toCheck].RainActive( value );
 }
-void cWeatherAb::SnowActive( weathID toCheck, bool value )
+void cWeatherAb::StormBrewing( weathID toCheck, bool value )
 {
-	weather[toCheck].SnowActive( value );
+	weather[toCheck].StormBrewing( value );
+}
+void cWeatherAb::StormActive( weathID toCheck, bool value )
+{
+	weather[toCheck].StormActive( value );
 }
 
+bool cWeatherAb::HeatActive( weathID toCheck )
+{
+	return weather[toCheck].HeatActive();
+}
+bool cWeatherAb::ColdActive( weathID toCheck )
+{
+	return weather[toCheck].ColdActive();
+}
 bool cWeatherAb::RainActive( weathID toCheck )
 {
 	return weather[toCheck].RainActive();
@@ -1308,54 +1801,204 @@ bool cWeatherAb::SnowActive( weathID toCheck )
 {
 	return weather[toCheck].SnowActive();
 }
-
-bool cWeatherAb::DoPlayerStuff( CChar *p )
+bool cWeatherAb::StormBrewing( weathID toCheck )
 {
-	if( p == NULL || p->IsNpc() )
+	return weather[toCheck].StormBrewing();
+}
+bool cWeatherAb::StormActive( weathID toCheck )
+{
+	return weather[toCheck].StormActive();
+}
+
+bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
+{
+	if( !ValidateObject( p ) || p->IsNpc() )
 		return true;
-	weathID currval = region[p->GetRegion()]->GetWeather();
-	cSocket *s = calcSocketObjFromChar( p );
-	if( currval > weather.size() || weather.size() == 0 )
+	weathID currval = p->GetRegion()->GetWeather();
+	if( currval > weather.size() || weather.empty() || p->inBuilding() )
 	{
 		if( s != NULL )
 		{
 			CPWeather dry( 0xFF, 0x00, 0 );
 			s->Send( &dry );
+			if( p->GetWeathDamage( SNOW ) != 0 )
+				p->SetWeathDamage( 0, SNOW );
+			if( p->GetWeathDamage( STORM ) != 0 )
+				p->SetWeathDamage( 0, STORM );
+			if( p->GetWeathDamage( RAIN ) != 0 )
+				p->SetWeathDamage( 0, RAIN );
+			if( p->GetWeathDamage( COLD ) != 0 )
+				p->SetWeathDamage( 0, COLD );
+			if( p->GetWeathDamage( HEAT ) != 0 )
+				p->SetWeathDamage( 0, HEAT );
+			SendJSWeather( p, LIGHT, 0 );
 		}
 		return false;
 	}
 
+	bool isStorm   = StormActive( currval );
+	bool brewStorm = StormBrewing( currval );
 	bool isSnowing = SnowActive( currval );
 	bool isRaining = RainActive( currval );
-	if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
+	SI08 temp	   = (SI08)Temp( currval );
+
+	if( isStorm )
 	{
-		DoPlayerWeather( s, 2, (SI08)Temp( currval ) );
+		DoPlayerWeather( s, 5, temp, currval );
+		if( p->GetWeathDamage( STORM ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
+	}
+	else if( brewStorm )
+	{
+		DoPlayerWeather( s, 4, temp, currval );
+	} 
+	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
+	{
+		DoPlayerWeather( s, 2, temp, currval );
 		if( p->GetWeathDamage( SNOW ) == 0 )
-			p->SetWeathDamage( BuildTimeValue( Races->SnowSecs( p->GetRace() ) ), SNOW );
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
 	} 
 	else if( isRaining )
 	{
-		DoPlayerWeather( s, 1, (SI08)Temp( currval ) );
+		DoPlayerWeather( s, 1, temp, currval );
 		if( p->GetWeathDamage( RAIN ) == 0 )
-			p->SetWeathDamage( BuildTimeValue( Races->RainSecs( p->GetRace() ) ), RAIN );
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		SendJSWeather( p, STORM, temp );
 	}
 	else
 	{
-		DoPlayerWeather( s, 0, (SI08)Temp( currval ) );
+		DoPlayerWeather( s, 0, temp, currval );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+		SendJSWeather( p, STORM, temp );
+	}
+
+	if( (Races->Affect( p->GetRace(), HEAT )) && p->GetWeathDamage( HEAT ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), HEAT )) )), HEAT );
+
+	if( (Races->Affect( p->GetRace(), COLD )) && p->GetWeathDamage( COLD ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), COLD )) )), COLD );
+
+	return true;
+}
+
+bool cWeatherAb::DoNPCStuff( CChar *p )
+{
+	if( !ValidateObject( p ) )
+		return true;
+	weathID currval = p->GetRegion()->GetWeather();
+	if( currval > weather.size() || weather.empty() || p->inBuilding() )
+	{
+		SendJSWeather( p, LIGHT, 0 );
+		return false;
+	}
+
+	bool isStorm   = StormActive( currval );
+	bool isSnowing = SnowActive( currval );
+	bool isRaining = RainActive( currval );
+	SI08 temp = (SI08)Temp( currval );
+
+	if( isStorm )
+	{
+		SendJSWeather( p, STORM, temp );
+		if( p->GetWeathDamage( STORM ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), STORM )) )), STORM );
 		if( p->GetWeathDamage( SNOW ) != 0 )
 			p->SetWeathDamage( 0, SNOW );
 		if( p->GetWeathDamage( RAIN ) != 0 )
 			p->SetWeathDamage( 0, RAIN );
 	}
+	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
+	{
+		SendJSWeather( p, SNOW, temp );
+		if( p->GetWeathDamage( SNOW ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), SNOW )) )), SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+	} 
+	else if( isRaining )
+	{
+		SendJSWeather( p, RAIN, temp );
+		if( p->GetWeathDamage( RAIN ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), RAIN )) )), RAIN );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+	}
+	else
+	{
+		SendJSWeather( p, LIGHT, temp );
+		if( p->GetWeathDamage( SNOW ) != 0 )
+			p->SetWeathDamage( 0, SNOW );
+		if( p->GetWeathDamage( STORM ) != 0 )
+			p->SetWeathDamage( 0, STORM );
+		if( p->GetWeathDamage( RAIN ) != 0 )
+			p->SetWeathDamage( 0, RAIN );
+	}
+
+	if( (Races->Affect( p->GetRace(), HEAT )) && p->GetWeathDamage( HEAT ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), HEAT )) )), HEAT );
+
+	if( (Races->Affect( p->GetRace(), COLD )) && p->GetWeathDamage( COLD ) == 0 )
+			p->SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( p->GetRace(), COLD )) )), COLD );
+
 	return true;
 }
 
-void cWeatherAb::DoPlayerWeather( cSocket *s, UI08 weathType, SI08 currentTemp )
+void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp )
+{
+	cScript *onWeatherChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onWeatherChangeScp != NULL )
+		onWeatherChangeScp->OnWeatherChange( mChar, weathType );
+	else 
+	{
+		onWeatherChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onWeatherChangeScp != NULL )
+			onWeatherChangeScp->OnWeatherChange( mChar, weathType );
+	}
+
+	cScript *onTempChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
+	if( onTempChangeScp != NULL )
+		onTempChangeScp->OnTempChange( mChar, currentTemp );
+	else 
+	{
+		onTempChangeScp = JSMapping->GetScript( (UI16)0 );
+		
+		if( onTempChangeScp != NULL )
+			onTempChangeScp->OnTempChange( mChar, currentTemp );
+	}
+}
+
+void cWeatherAb::DoPlayerWeather( CSocket *s, UI08 weathType, SI08 currentTemp, weathID currval )
 // Weather Types 
 // 0 - dry
 // 1 - rain
 // 2 - snow
 // 3 - rain and snow
+// 4 - storm is brewing
+// 5 - storm
 {
 //	Byte 1 - 0x65 (Weather)
 //	Byte 2 - Weather Type(  0, rain, 1, fierce storm, 2, snow, 3 a storm is brewing, and 0xFF none )
@@ -1364,29 +2007,38 @@ void cWeatherAb::DoPlayerWeather( cSocket *s, UI08 weathType, SI08 currentTemp )
 
 	if( s == NULL )
 		return;
+
 	CPWeather dry( 0xFF, 0x00, currentTemp );
-	CPWeather rain( 0x00, 0x40, currentTemp );
-	CPWeather storm( 0x01, 0x40, currentTemp );
-	CPWeather snow( 0x02, 0x40, currentTemp );
-	CPWeather strmbrw( 0x03, 0x40, currentTemp );
+	CPWeather rain( 0x00, (UI08)RainIntensity( currval ), currentTemp );
+	CPWeather storm( 0x01, (UI08)StormIntensity( currval ), currentTemp );
+	CPWeather snow( 0x02, (UI08)SnowIntensity( currval ), currentTemp );
+	CPWeather strmbrw( 0x03, (UI08)(StormIntensity( currval ) / 2), currentTemp );
 	
 	CChar *mChar = s->CurrcharObj();
 	s->Send( &dry );
 
 	switch( weathType )
 	{
-	case 0:								break;
-	case 1:		s->Send( &rain );		break;
-	case 2:
-		Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
-		s->Send( &snow );
-		break;
-	case 3:
-		s->Send( &rain );
-		Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
-		s->Send( &snow );
-		break;
-	default:							break;
+		case 0:								break;
+		case 1:		s->Send( &rain );		break;
+		case 2:
+			Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
+			s->Send( &snow );
+			break;
+		case 3:
+			s->Send( &rain );
+			Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
+			s->Send( &snow );
+			break;
+		case 4:
+			Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
+			s->Send( &strmbrw );
+			break;
+		case 5:
+			Effects->PlaySound( mChar, 0x14 + RandomNum( 0, 1 ) );
+			s->Send( &storm );
+			break;
+		default:							break;
 	}
 }
 
@@ -1398,6 +2050,10 @@ void cWeatherAb::LightMax( weathID toCheck, R32 newValue )
 {
 	weather[toCheck].LightMax( newValue );
 }
+void cWeatherAb::CurrentLight( weathID toCheck, R32 newValue )
+{
+	weather[toCheck].CurrentLight( newValue );
+}
 
 R32 cWeatherAb::LightMin( weathID toCheck )
 {
@@ -1406,6 +2062,10 @@ R32 cWeatherAb::LightMin( weathID toCheck )
 R32 cWeatherAb::LightMax( weathID toCheck )
 {
 	return weather[toCheck].LightMax();
+}
+R32 cWeatherAb::CurrentLight( weathID toCheck )
+{
+	return weather[toCheck].CurrentLight();
 }
 
 CWeather *cWeatherAb::Weather( weathID toCheck )
@@ -1416,229 +2076,224 @@ CWeather *cWeatherAb::Weather( weathID toCheck )
 		return &weather[toCheck];
 }
 
-// FUNCTION NEEDS REWORKING
-bool doLightEffect( CChar *i )
+bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 {
 	bool didDamage = false;
+
+	if( mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect( mChar.GetRace(), LIGHT ) || mChar.inBuilding() )
+		return false;
 	
-	if( i == NULL )
-		return false;
-	if( i->IsNpc() || i->IsGM() || !isOnline( i ) || !Races->LightAffect( i->GetRace() ) )
-		return false;
-
-	UI08 hour = cwmWorldState->ServerData()->GetServerTimeHours();
-	bool ampm = cwmWorldState->ServerData()->GetServerTimeAMPM();
-
-	cSocket *mSock = calcSocketObjFromChar( i );
-	if( i->GetFixedLight() != 255 )
+	if( mChar.GetWeathDamage( LIGHT ) != 0 && mChar.GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
 	{
-		if( hour < 5 && ampm || hour >= 5 && !ampm )	// time of day we can be burnt
+		R32 damageModifier		= 0;
+		SI32 damage				= 0;
+		R32 baseDamage			= (R32)Races->Damage( mChar.GetRace(), LIGHT );
+		R32 lightLevel			= (R32)Races->LightLevel( mChar.GetRace() );
+		R32 currentLight		= 255;
+		R32 lightMin			= 255;
+		R32 lightMax			= 255;
+		int	message				= 0;
+		bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
+
+		weathID weatherSys = mChar.GetRegion()->GetWeather();
+		if( !weather.empty() && weatherSys < weather.size() )
 		{
-			if( i->GetWeathDamage( LIGHT ) != 0 )
-			{
-				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-				{
-					sysmessage( mSock, 1216 );
-					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
-					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-					Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( i, 0x0208 );     
-					didDamage = true;
-				}
-			}
+			lightMin = LightMin( weatherSys );
+			lightMax = LightMax( weatherSys );
+
+			if( lightMin < 300 && lightMax < 300 )
+				currentLight = CurrentLight( weatherSys );
 			else
-				i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-			
-		}
-		else if( hour < 6 && ampm || hour >= 4 && !ampm )	// slightly burnt at this time of day
-		{
-			if( i->GetWeathDamage( LIGHT ) != 0 )
 			{
-				if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-				{
-					sysmessage( mSock, 1217 );
-					i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-					i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-					Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-					Effects->PlaySound( i, 0x0208 );     
-					didDamage = true;
-				}
+				currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+				lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
+				lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			}
 		}
 		else
 		{
-			i->SetWeathDamage( 0, LIGHT );
-			if( hour > 3 && hour < 4 && !ampm )
-				sysmessage( mSock, 1215 );
+			currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+			lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
+			lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
 		}
-	}
-	else
-	{
-		if( !i->inDungeon() )
+		
+		if ( mChar.inDungeon() )
 		{
-			if( hour < 5 && ampm || hour >= 5 && !ampm )
+			R32 dungeonLight		= 255;
+			dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
+
+
+			if (lightLevel > dungeonLight )
 			{
-				if( i->GetWeathDamage( LIGHT ) != 0 )
-				{
-					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-					{
-						sysmessage( mSock, 1216 );
-						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) );
-						i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-						Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( i, 0x0208 );     
-						didDamage = true;
-					}
-				}
+				if( lightLevel > 0)
+					damageModifier = ( dungeonLight / lightLevel );
 				else
-					i->SetWeathDamage( BuildTimeValue( Races->LightSecs( i->GetRace() ) ), LIGHT );
-				
+					damageModifier = 0;
+
+				damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			
+				if( roundNumber( damageModifier ) > 0 )
+					message = 1216;
+				else
+					message = 1217;
 			}
-			else if( hour < 6 && ampm || hour >= 4 && !ampm )
+			else if( lightLevel == currentLight )
+			{	
+				if( ampm )
+					message = 1218;
+				else
+					message = 1215;
+			}
+		}
+		else
+		{
+			if (lightLevel > currentLight )
 			{
-				if( i->GetWeathDamage( LIGHT ) != 0 )
+				if( lightLevel > 0)
+					damageModifier = ( currentLight / lightLevel );
+				else
+					damageModifier = 0;
+
+				damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			
+				if( roundNumber( damageModifier ) > 0 )
+					message = 1216;
+				else
+					message = 1217;
+			}
+			else if( lightLevel == currentLight )
+			{	
+				if( ampm )
+					message = 1218;
+				else
+					message = 1215;
+			}
+		}
+		
+		damage = Combat->ApplyDefenseModifiers( LIGHT, NULL, &mChar, 0, 0, damage, true);
+		
+		if( damage > 0 )
+		{
+			mChar.Damage( damage );
+			Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+			Effects->PlaySound( (&mChar), 0x0208 );     
+			didDamage = true;
+
+			if( message != 0 && mSock != NULL)
+				mSock->sysmessage( message );
+		}
+		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT )) )), LIGHT );
+	}
+	return didDamage;
+}
+
+bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element )
+{
+	WeatherType resistElement = element;
+
+	if( element == NONE || element == LIGHT || element == WEATHNUM )
+		return false;
+	
+	if( mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect( mChar.GetRace(), element ) || mChar.inBuilding())
+		return false;
+
+	bool didDamage			= false;
+	weathID weatherSys = mChar.GetRegion()->GetWeather();
+	if( !(weatherSys > weather.size() || weather.empty()) && mChar.GetWeathDamage( element ) != 0 && mChar.GetWeathDamage( element ) <= cwmWorldState->GetUICurrentTime())
+	{
+		const R32 tempCurrent	= Temp( weatherSys );
+		//const R32 tempMax		= MaxTemp( weatherSys );
+		//const R32 tempMin		= MinTemp( weatherSys );
+		//const R32 tempSnowMax	= SnowThreshold( weatherSys );
+		const R32 tempEffMax	= EffectiveMaxTemp( weatherSys );
+		const R32 tempEffMin	= EffectiveMinTemp( weatherSys );
+
+
+		R32 damageModifier		= 0;
+		SI32 damage				= 0;
+		R32 baseDamage			= (R32)Races->Damage( mChar.GetRace(), element );
+		R32 heatLevel			= (R32)Races->HeatLevel( mChar.GetRace() );
+		R32 coldLevel			= (R32)Races->ColdLevel( mChar.GetRace() );
+
+		int	damageMessage		= 0;
+		UI16 damageAnim			= 0x373A;
+
+		if( element == RAIN )
+		{
+			damageModifier = (R32)RainIntensity( weatherSys );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
+			damageMessage = 1219;
+			resistElement = NONE;
+		}
+
+		if( element == SNOW )
+		{
+			damageModifier = (R32)SnowIntensity( weatherSys );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
+			damageMessage = 1220;
+			// Snow is also cold damage when it comes to resistance values
+			resistElement = COLD;
+		}
+
+		if( element == STORM)
+		{
+			damageModifier = (R32)StormIntensity( weatherSys );
+			damage = (SI32)roundNumber( ( baseDamage / 100 ) * damageModifier );
+			damageMessage = 1775;
+			resistElement = NONE;
+
+			if( Races->Affect( mChar.GetRace(), LIGHTNING ) )
+			{
+				if( (UI08)RandomNum( 0, 100 ) <= Races->Secs( mChar.GetRace(), LIGHTNING ) )
 				{
-					if( i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-					{
-						sysmessage( mSock, 1217 );
-						i->SetHP( i->GetHP() - Races->LightDamage( i->GetRace() ) / 2 );
-						i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-						Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-						Effects->PlaySound( i, 0x0208 );     
-						didDamage = true;
-					}
+					damage = (SI32)Races->Damage( mChar.GetRace(), LIGHTNING );
+					Effects->bolteffect( &mChar );
+					damageMessage = 1777;
+					damageAnim = 0x0;
+					resistElement = LIGHTNING;
 				}
 			}
+		}
+
+		if( element == COLD && tempCurrent <= coldLevel )
+		{
+			if( (coldLevel - tempEffMin) != 0)
+				damageModifier = ( (tempCurrent - tempEffMin) / (coldLevel - tempEffMin) );
+			else 
+				damageModifier = 0;
+
+			damage = (SI32)roundNumber( baseDamage - ( baseDamage * damageModifier));
+			damageMessage = 1776;
+		}
+
+		if( element == HEAT && tempCurrent >= heatLevel)
+		{
+			if( (tempEffMax - heatLevel) != 0)
+				damageModifier = ( (tempCurrent - heatLevel) / (tempEffMax - heatLevel) );
 			else
-			{
-				i->SetWeathDamage( 0, LIGHT );
-				if( hour > 3 && hour < 4 && !ampm )
-					sysmessage( mSock, 1215 );
-			}
+				damageModifier = 0;
+			
+			damage = (SI32)roundNumber( baseDamage * damageModifier);
+			damageMessage = 1221;
+			damageAnim = 0x3709;
 		}
-		else
-		{
-			if( hour >= 5 && hour <= 6 && ampm && i->GetWeathDamage( LIGHT ) <= cwmWorldState->GetUICurrentTime() )
-			{
-				sysmessage( mSock, 1218 );
-				i->SetWeathDamage( BuildTimeValue( static_cast<R32>(Races->LightSecs( i->GetRace() ) * 2 )), LIGHT );
-			}
-		}
-	}
-	return didDamage;
-}
 
-bool doRainEffect( CChar *i )
-{
-	if( i == NULL )
-		return false;
-	if( i->IsNpc() || !isOnline( i ) || !Races->RainAffect( i->GetRace() ) )
-		return false;
-	bool didDamage = false;
-	if( !i->inDungeon() && Weather->RainActive( region[i->GetRegion()]->GetWeather() ) )
-	{
-		if( i->GetWeathDamage( RAIN ) != 0 && i->GetWeathDamage( RAIN ) <= cwmWorldState->GetUICurrentTime() )
-		{
-			sysmessage( calcSocketObjFromChar( i ), 1219 );
-			i->SetHP( i->GetHP() - Races->RainDamage( i->GetRace() ) );
-			i->SetWeathDamage( BuildTimeValue( Races->RainSecs( i->GetRace() ) ), RAIN );
-			Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-			Effects->PlaySound( i, 0x0208 );     
-			didDamage = true;
-		}
-		else
-			i->SetWeathDamage( BuildTimeValue( Races->RainSecs( i->GetRace() ) ), RAIN );
-	}
-	else
-		i->SetWeathDamage( 0, RAIN );
-	return didDamage;
-}
+		damage = Combat->ApplyDefenseModifiers( resistElement, NULL, &mChar, 0, 0, damage, true);
 
-bool doSnowEffect( CChar *i )
-{
-	if( i == NULL )
-		return false;
-	if( i->IsNpc() || !isOnline( i ) || !Races->SnowAffect( i->GetRace() ) )
-		return false;
-	bool didDamage = false;
-	if( !i->inDungeon() && Weather->SnowActive( region[i->GetRegion()]->GetWeather() ) )
-	{
-		if( i->GetWeathDamage( SNOW ) != 0 && i->GetWeathDamage( SNOW ) <= cwmWorldState->GetUICurrentTime() )
+		if( damage > 0 )
 		{
-			sysmessage( calcSocketObjFromChar( i ), 1220 );
-			i->SetHP( i->GetHP() - Races->SnowDamage( i->GetRace() ) );
-			i->SetWeathDamage( BuildTimeValue( Races->SnowSecs( i->GetRace() ) ), SNOW );
-			Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-			Effects->PlaySound( i, 0x0208 );     
-			didDamage = true;
-		}
-		else
-			i->SetWeathDamage( BuildTimeValue( Races->SnowSecs( i->GetRace() ) ), SNOW );
-	}
-	else
-		i->SetWeathDamage( 0, SNOW );
-	return didDamage;
-}
-
-bool doHeatEffect( CChar *i )
-{
-	if( i == NULL )
-		return false;
-	if( i->IsNpc() || !isOnline( i ) || !Races->HeatAffect( i->GetRace () ) )
-		return false;
-	bool didDamage = false;
-	UI08 charRegion = i->GetRegion();
-	UI08 weatherSys = region[charRegion]->GetWeather();
-	if( weatherSys != 255 )
-	{
-		R32 tempCurrent = Weather->Temp( weatherSys );
-		R32 tempMax = Weather->MaxTemp( weatherSys );
-		R32 tempMin = Weather->MinTemp( weatherSys );
-		if( tempCurrent > ( tempMax - tempMin ) / 4 * 3 )	// 3/4 of the temp is done
-		{
-			if( i->GetWeathDamage( HEAT ) != 0 && i->GetWeathDamage( HEAT ) <= cwmWorldState->GetUICurrentTime() )
-			{
-				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
-				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->HeatDamage( i->GetRace() ) * damageModifier )) );
-				i->SetStamina( i->GetStamina() - 2 );
-				sysmessage( calcSocketObjFromChar( i ), 1221 );
-				Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-				Effects->PlaySound( i, 0x0208 );     
+				mChar.Damage( damage );
+				mChar.SetStamina( mChar.GetStamina() - 2 );
+				if( mSock != NULL )
+					mSock->sysmessage( damageMessage );
+				if( damageAnim != 0x0)
+					Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );
+				Effects->PlaySound( (&mChar), 0x0208 );     
 				didDamage = true;
-			}
-			i->SetWeathDamage( BuildTimeValue( Races->HeatSecs( i->GetRace() ) ), HEAT );
 		}
+		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), element )) )), element );
 	}
 	return didDamage;
 }
 
-bool doColdEffect( CChar *i )
-{
-	if( i == NULL )
-		return false;
-	if( i->IsNpc() || !isOnline( i ) || !Races->HeatAffect( i->GetRace () ) )
-		return false;
-	bool didDamage = false;
-	UI08 charRegion = i->GetRegion();
-	UI08 weatherSys = region[charRegion]->GetWeather();
-	if( weatherSys != 255 )
-	{
-		R32 tempCurrent = Weather->Temp( weatherSys );
-		R32 tempMax = Weather->MaxTemp( weatherSys );
-		R32 tempMin = Weather->MinTemp( weatherSys );
-		if( tempCurrent < ( tempMax - tempMin ) / 4 * 1 )	// 3/4 of the temp is done
-		{
-			if( i->GetWeathDamage( COLD ) != 0 && i->GetWeathDamage( COLD ) <= cwmWorldState->GetUICurrentTime() )
-			{
-				R32 damageModifier = ( tempMax - tempCurrent ) / 5;
-				i->SetHP((SI16)( i->GetHP() - ( (R32)Races->ColdDamage( i->GetRace() ) * damageModifier ) ));
-				sysmessage( calcSocketObjFromChar( i ), 1606 );
-				Effects->staticeffect( i, 0x3709, 0x09, 0x19 );
-				Effects->PlaySound( i, 0x0208 );     
-				didDamage = true;
-			}
-			i->SetWeathDamage( BuildTimeValue( Races->HeatSecs( i->GetRace() ) ), HEAT );
-		}
-	}
-	return didDamage;
 }

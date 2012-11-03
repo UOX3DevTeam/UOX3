@@ -1,35 +1,26 @@
 // House code for deed creation by Tal Strake, revised by Cironian
 
 #include "uox3.h"
-#include "boats.h"
-#include "movement.h"
+#include "mapstuff.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
-#include "mapstuff.h"
-#include "packets.h"
-
+#include "CPacketSend.h"
+#include "classes.h"
+#include "regions.h"
+#include "Dictionary.h"
 
 #undef DBGFILE
 #define DBGFILE "house.cpp"
 
-void mtarget( cSocket *s, SERIAL ser, UI16 itemID, const char *txt )
-{
-	CPMultiPlacementView toSend( ser );
-	toSend.MultiModel( itemID );
-	toSend.RequestType( 1 );
+#include "ObjectFactory.h"
 
-	sysmessage( s, txt );
-	s->TargetOK( true );
-	s->Send( &toSend );
-}
-
-void mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, const char *txt )
+namespace UOX
 {
-	mtarget( s, calcserial( a1, a2, a3, a4 ), (UI16)((b1<<8) + b2), txt );
-}
+
+bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void buildHouse( cSocket *s, UI32 i )
+//|   Function    -  void buildHouse( CSocket *s, UI08 i )
 //|   Date        -  UnKnown - Rewrite Date 1/24/99
 //|   Programmer  -  UnKnown - Rewrite by Zippy (onlynow@earthlink.net)
 //o---------------------------------------------------------------------------o
@@ -38,380 +29,401 @@ void mtarget( cSocket *s, UI08 a1, UI08 a2, UI08 a3, UI08 a4, UI08 b1, UI08 b2, 
 //|						using HOUSE ITEM, (this includes all doors!) and locked "LOCK"
 //|						Space around the house with SPACEX/Y and CHAR offset CHARX/Y/Z
 //o---------------------------------------------------------------------------o
-void buildHouse( cSocket *s, UI32 i )
+void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 {
-	SI16 x, y, sx = 0, sy = 0, cx = 0, cy = 0;
-	SI08 z, cz = 8;
-	int k, l;					//Temps
-	int hitem[100],icount=0;	//extra "house items" (up to 100)
-	char sect[512];				//file reading
-	char itemsdecay = 0;		// set to 1 to make stuff decay in houses
-	static int looptimes = 0;	//for targeting
-	bool boat = false;			//Boats
-	int hdeed = 0;				//deed id #
-	const char *tag = NULL;
-	const char *data = NULL;
-	if( s->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
-
 	UI16 houseID = 0;
-	hitem[0] = 0;//avoid problems if there are no HOUSE_ITEMs by initializing the first one as 0
-	if( i )
-	{
-		sprintf( sect, "HOUSE %d", i );//and BTW, .find() adds SECTION on there for you....
-		ScriptSection *House = FileLookup->FindEntry( sect, house_def );
-		if( House == NULL )
-			return;
-		for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
-		{
-			data = House->GrabData();
-			if( !strcmp( tag,"ID") )
-				houseID = (UI16)makeNum( data );
-			else if( !strcmp( tag,"SPACEX" ) )
-				sx = static_cast<SI16>(makeNum( data ) + 1);
-			else if( !strcmp( tag,"SPACEY" ) )
-				sy = static_cast<SI16>(makeNum( data ) + 1);
-			else if( !strcmp( tag,"CHARX" ) )
-				cx = static_cast<SI16>(makeNum( data ));
-			else if( !strcmp( tag,"CHARY" ) )
-				cy = static_cast<SI16>(makeNum( data ));
-			else if( !strcmp( tag,"CHARZ" ) )
-				cz = static_cast<SI08>(makeNum( data ));
-			else if( !strcmp( tag, "ITEMSDECAY" ) )
-				itemsdecay = static_cast<char>(makeNum( data ));
-			else if( !strcmp( tag,"HOUSE_ITEM" ) )
-			{
-				hitem[icount] = makeNum( data );
-				icount++;
-			}
-			else if( !strcmp( tag, "HOUSE_DEED" ) )
-				hdeed = makeNum( data );
-			else if( !strcmp( tag, "BOAT") ) 
-				boat = true;	//Boats
-		}
-		if( !houseID )
-		{
-			Console.Error( 1, "Bad house script # %i!\n",i);
-			return;
-		}
-	}
-	if( !looptimes )
-	{
-		if( i )
-		{
-			s->AddID1( 0x40 );
-			s->AddID2( 100 );
-			if( houseID >= 0x4000 )
-				mtarget( s, calcserial( 0, 1, 0, 0 ), houseID - 0x4000, Dictionary->GetEntry( 576, s->Language() ) );
-			else
-				target( s, 0, 0, 576 );
-		}
-		else
-			mtarget( s, 0, 1, 0, 0, s->AddID1() - 0x40, s->AddID2(), Dictionary->GetEntry( 576, s->Language() ) );
-
-		looptimes++;//for when we come back after they target something
+	UString tag, data;
+	UString sect			= "HOUSE " + UString::number( houseEntry );
+	ScriptSection *House	= FileLookup->FindEntry( sect, house_def );
+	if( House == NULL )
 		return;
-	}
-	if( looptimes )
+	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
-		CChar *mChar = s->CurrcharObj();
-		if( mChar == NULL )
-			return;
-		UI08 worldNumber = mChar->WorldNumber();
-		looptimes = 0;
-		x = s->GetWord( 11 );
-		y = s->GetWord( 13 );
-		z = static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
-		if( !mChar->IsGM() )
+		data = House->GrabData();
+		if( tag.upper() == "ID" )
 		{
-			if( x > 6200 || y > 4200 )
-			{
-				sysmessage( s, 577 );
-				return;
-			}
-
-			for( k = -sx; k < sx; k++ ) //check the SPACEX and SPACEY to make sure they are valid locations....
-			{
-				for( l = -sy; l < sy; l++ )
-				{
-					if( ( !Movement->validNPCMove( x+k, y+l, z, mChar ) ) &&
-						( ( mChar->GetX() != x+k ) && ( mChar->GetY() != y+l ) ) )
-//					This will take the char making the house out of the space check, be careful 
-//					you don't build a house on top of your self..... this had to be done So you 
-//					could extra space around houses, (12+) and they would still be buildable.
-					{
-						sysmessage( s, 577 );
-						return;
-					}
-				}
-			}
+			houseID = data.toUShort();
+			break;
 		}
-		char temp[1024];
-		CMultiObj *house = NULL;
-		CItem *fakeHouse = NULL;
+	}
+	if( !houseID )
+		Console.Error( "Bad house script: #%u\n", houseEntry );
+	else
+	{
+		mSock->AddID1( houseEntry );
 		if( houseID >= 0x4000 )
-		{
-			if( (houseID%256) >= 18 ) 
-				sprintf( temp, "%s's house", mChar->GetName() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
-			else 
-				strcpy( temp, "a mast" );
-			house = Items->SpawnMulti( mChar, temp, houseID );
-			if( house == NULL )
-				return;
-
-			house->SetLocation( x, y, z );
-			house->SetPriv( 0 );
-			house->SetMore( itemsdecay, 4 ); // set to 1 to make items in houses decay
-			house->SetMoreX( hdeed ); // crackerjack 8/9/99 - for converting back *into* deeds
-			house->SetOwner( mChar );
-		}
+			mSock->mtarget( static_cast<UI16>(houseID - 0x4000), 576 );
 		else
-		{
-			strcpy( temp, "#" );
-			fakeHouse = Items->SpawnItem( s, mChar, 1, temp, false, houseID, 0, false, true );
-			if( fakeHouse == NULL )
-				return;
-			fakeHouse->SetLocation( x, y, z );
-
-			fakeHouse->SetPriv( 0 );
-			fakeHouse->SetOwner( (cBaseObject *)mChar );
-			fakeHouse->SetDecayable( false );
-		}
-
-		mChar->SetMaking( 0 );
-		
-		if( !hitem[0] && !boat )
-		{
-			mChar->Teleport();
-			return;//If there's no extra items, we don't really need a key, or anything else do we? ;-)
-		}
-
-		if( boat ) //Boats
-		{
-			if( !Boats->CreateBoat( s, house, (houseID%256), i ) )
-			{
-				Items->DeleItem( house );
-				return;
-			} 
-		}
-
-		if( i )//Boats->.. Moved from up there ^
-			Items->DeleItem( calcItemObjFromSer( mChar->GetSpeechItem() ) );
-
-		mChar->SetSpeechItem( INVALIDSERIAL );
-
-		//Key...
-		CItem *key = NULL;
-		if( houseID >= 0x4000 )
-		{
-			if( (houseID%256) >= 112 && (houseID%256) <= 115 ) 
-				key = Items->SpawnItem( s, mChar, 1, "a tent key", false, 0x1010, 0, true, true );//iron key for tents
-			else if( (houseID%256) <= 0x18 ) 
-				key = Items->SpawnItem( s, mChar,1,"a ship key", false, 0x1013, 0, true, true );//Boats -Rusty Iron Key
-			else 
-				key = Items->SpawnItem( s, mChar, 1, "a house key", false, 0x100F, 0, true, true );//gold key for everything else
-
-			if( key != NULL )
-			{
-				key->SetMore( house->GetSerial() );
-				key->SetType( 7 );
-			}
-		}
-		ScriptSection *HouseItem = NULL;
-		CItem *hItem = NULL;
-		for( k = 0; k < icount; k++ )//Loop through the HOUSE_ITEMs
-		{
-			sprintf( sect, "HOUSE ITEM %i", hitem[k] );
-			HouseItem = FileLookup->FindEntry( sect, house_def );
-			if( HouseItem != NULL )
-			{
-				hItem = NULL;	// clear it out
-				for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
-				{
-					data = HouseItem->GrabData();
-					if( !strcmp( tag, "ITEM" ) )
-					{
-						hItem = Items->CreateScriptItem( s, data, false, worldNumber );
-						if( hItem == NULL )
-						{
-							Console << "Error in house creation, item " << data << " could not be made" << myendl;
-							break;
-						}
-						else
-						{
-							hItem->SetMovable( 2 );//Non-Moveable by default
-							hItem->SetPriv( 0 );//since even things in houses decay, no-decay by default
-							hItem->SetLocation( x, y, z );
-							hItem->SetOwner( (cBaseObject *)mChar );
-							if( houseID >= 0x4000 )
-								hItem->SetMulti( house );
-						}
-					}
-					else if( !strcmp( tag, "DECAY" ) )
-						hItem->SetDecayable( true );
-					else if( !strcmp( tag, "NODECAY" ) )
-						hItem->SetDecayable( false );
-					else if( !strcmp( tag, "PACK" ) )//put the item in the Builder's Backpack
-					{
-						CItem *pack = getPack( mChar );
-						hItem->SetCont( pack );
-						hItem->SetX( RandomNum( 31, 120 ) );
-						hItem->SetY( RandomNum( 31, 120 ) );
-						hItem->SetZ( 9 );
-					}
-					else if( !strcmp( tag, "MOVEABLE" ) )
-						hItem->SetMovable( 1 );
-					else if( !strcmp( tag, "LOCK" ) && houseID >= 0x4000 )//lock it with the house key
-						hItem->SetMore( house->GetSerial() );
-					else if( !strcmp( tag, "X" ) )//offset + or - from the center of the house:
-						hItem->SetX( x + static_cast<SI16>(makeNum( data )) );
-					else if( !strcmp( tag, "Y" ) )
-						hItem->SetY( y + static_cast<SI16>(makeNum( data )) );
-					else if( !strcmp( tag, "Z" ) )
-						hItem->SetZ( z + static_cast<SI08>(makeNum( data )) );
-				}
-				if( hItem != NULL && hItem->GetCont() == NULL )
-					MapRegion->AddItem( hItem );
-			}
-		}
-		// map regions not done here... hmmm... not good!!!  Not a safe assumption we're in same region
-		mChar->SetLocation( x + cx, y + cy, z + cz );
-		mChar->Teleport();
+			mSock->target( 0, TARGET_BUILDHOUSE, 576 );
 	}
 }
-
-// turn a house into a deed if possible. - crackerjack 8/9/99
-// s = socket of player
-// i = house item # in items[]
-// morex on the house item must be set to deed item # in items.scp.
-void deedHouse( cSocket *s, CItem *i )
+void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseID )
 {
-	if( i == NULL ) 
-		return;
-
-	SI16 x1, y1, x2, y2;
-	int keyCount = 0;
-	CItem *pvDeed = NULL;
-	CChar *mChar = s->CurrcharObj();
-	char temp[1024];
-
-	if( i->GetOwnerObj() == mChar || mChar->IsGM() )
+	if( houseID >= 0x4000 )
 	{
-		Map->MultiArea( (CMultiObj *)i, x1, y1, x2, y2 );
+		std::string scriptName;
+		if( (houseID%256) >= 0x70 && (houseID%256) <= 0x73 ) // It's a tent
+			scriptName = "tent_key";
+		else if( (houseID%256) <= 0x18 )					// It's a boat
+			scriptName = "boat_key";
+		else
+			scriptName = "house_key";
 
-#pragma note( "DEPENDENT ON NUMERIC ITEM SECTION" )
-		CItem *ii = Items->SpawnItemToPack( s, mChar, i->GetMoreX(), false );	// need to make before delete
-		if( ii == NULL ) 
-			return;
-        
-		sysmessage( s, 578, i->GetName() );
-		UI08 ser1 = i->GetSerial( 1 );
-		UI08 ser2 = i->GetSerial( 2 );
-		UI08 ser3 = i->GetSerial( 3 );
-		UI08 ser4 = i->GetSerial( 4 );
-		Items->DeleItem( i );
-		sysmessage( s, 579, ii->GetName() );
-		// door/sign delete
-		int xOffset = MapRegion->GetGridX( mChar->GetX() );
-		int yOffset = MapRegion->GetGridY( mChar->GetY() );
-		UI08 worldNumber = mChar->WorldNumber();
-		for( SI08 counter1 = -1; counter1 <= 1; counter1++ )
+		CItem *key = Items->CreateScriptItem( mSock, mChar, scriptName, 1, OT_ITEM, true );
+		if( ValidateObject( key ) )
 		{
-			for( SI08 counter2 = -1; counter2 <= 1; counter2++ )
+			key->SetTempVar( CITV_MORE, house->GetSerial() );
+			key->SetType( IT_KEY );
+		}
+	}
+}
+void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+{
+	UString tag, data, UTag;
+	ScriptSection *HouseItem = NULL;
+	CItem *hItem = NULL;
+	STRINGLIST_CITERATOR hiIter;
+	for( hiIter = houseItems.begin(); hiIter != houseItems.end(); ++hiIter )//Loop through the HOUSE_ITEMs
+	{
+		UString sect = "HOUSE ITEM " + (*hiIter);
+		HouseItem = FileLookup->FindEntry( sect, house_def );
+		if( HouseItem != NULL )
+		{
+			SI16 hiX = x, hiY = y;
+			SI08 hiZ = z;
+			UI08 hWorld = house->WorldNumber();
+			hItem = NULL;	// clear it out
+			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
-				SubRegion *toCheck = MapRegion->GetGrid( xOffset + counter1, yOffset + counter2, worldNumber );
-				if( toCheck == NULL )	continue;
-				CItem *itemCheck;
-				CChar *charCheck;
-				toCheck->PushChar();
-				toCheck->PushItem();
-				for( itemCheck = toCheck->FirstItem(); !toCheck->FinishedItems(); itemCheck = toCheck->GetNextItem() )
+				UTag = tag.upper();
+				data = HouseItem->GrabData();
+				if( UTag == "ITEM" )
 				{
-					if( itemCheck == NULL )		
-						continue;
-					if( itemCheck->GetX() >= x1 && itemCheck->GetY() >= y1 && itemCheck->GetX() <= x2 && itemCheck->GetY() <= y2 )
+					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1 );
+					if( hItem == NULL )
 					{
-						if( itemCheck->GetType() == 203 || itemCheck->GetType() == 12 || itemCheck->GetType() == 13 )
-							Items->DeleItem( itemCheck );
+						Console << "Error in house creation, item " << data << " could not be made" << myendl;
+						break;
+					}
+					else
+					{
+						hItem->SetMovable( 2 );//Non-Moveable by default
+						hItem->SetLocation( house );
+						hItem->SetOwner( mChar );
 					}
 				}
-				for( charCheck = toCheck->FirstChar(); !toCheck->FinishedChars(); charCheck = toCheck->GetNextChar() )
+				else if( UTag == "DECAY" )
+					hItem->SetDecayable( true );
+				else if( UTag == "NODECAY" )
+					hItem->SetDecayable( false );
+				else if( UTag == "PACK" )//put the item in the Builder's Backpack
 				{
-					if( charCheck == NULL )
-						continue;
-					if( charCheck->GetX() >= x1 && charCheck->GetY() >= y1 && charCheck->GetX() <= x2 && charCheck->GetY() <= y2 )
-					{
-						if( charCheck->GetNPCAiType() == 17 ) // player vendor in right place
-						{
-							sprintf( temp, Dictionary->GetEntry( 580 ), charCheck->GetName() );
-							pvDeed = Items->SpawnItem( NULL, mChar, 1, temp, false, 0x14F0, 0, true, false );
-							if( pvDeed != NULL )
-							{
-								pvDeed->SetType( 217 );
-								pvDeed->SetBuyValue( 2000 );
-								RefreshItem( pvDeed );
-							}
-							sysmessage( s, 581, charCheck->GetName() );
-							Npcs->DeleteChar( charCheck );
-						}
-					}
+					CItem *pack = mChar->GetPackItem();
+					hItem->SetCont( pack );
+					hItem->PlaceInPack();
 				}
-				toCheck->PopChar();
-				toCheck->PopItem();
+				else if( UTag == "MOVEABLE" )
+					hItem->SetMovable( 1 );
+				else if( UTag == "INVISIBLE" )
+					hItem->SetVisible( VT_PERMHIDDEN );
+				else if( UTag == "LOCK" && houseID >= 0x4000 )//lock it with the house key
+					hItem->SetTempVar( CITV_MORE, house->GetSerial() );
+				else if( UTag == "X" )//offset + or - from the center of the house:
+					hiX += data.toShort();
+				else if( UTag == "Y" )
+					hiY += data.toShort();
+				else if( UTag == "Z" )
+					hiZ += data.toShort();
 			}
+			if( ValidateObject( hItem ) && hItem->GetCont() == NULL )
+				hItem->SetLocation( hiX, hiY, hiZ, hWorld );
 		}
-		SERIAL serialToMatch = calcserial( ser1, ser2, ser3, ser4 );
-		sysmessage( s, 582 );
-		for( ITEM a = 0; a < cwmWorldState->GetItemCount(); a++ )		// we HAVE to have an itemcount, because when you replace the house, the serial will be different
-		{										// so we have to remove all keys that used that serial
-			if( items[a].GetMore() == serialToMatch && items[a].GetType() == 7 )
-			{
-				Items->DeleItem( &items[a] );
-				keyCount++;
-			}
-		}
-		sysmessage( s, 583, keyCount );
-		return;
 	}
 }
 
+bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti )
+{
+	const UI08 worldNum = mChar->WorldNumber();
+
+	MapData_st& mMap = Map->GetMapData( worldNum );
+	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() )
+	{
+		mSock->sysmessage( 577 );
+		return false;
+	}
+
+	SI16 curX, curY;
+	const SI16 charX = mChar->GetX();
+	const SI16 charY = mChar->GetY();
+	for( SI16 k = -spaceX; k <= spaceX; ++k )
+	{
+		curX = x+k;
+		for( SI16 l = -spaceY; l <= spaceY; ++l )
+		{
+			curY = y+l;
+			if( ( !Map->ValidMultiLocation( curX, curY, z, worldNum, !isBoat ) && ( charX != curX && charY != curY ) ) ||
+				( isMulti && findMulti( curX, curY, z, worldNum ) != NULL ) )// Lets not place a multi on/in another multi
+//			This will take the char making the house out of the space check, be careful 
+//			you don't build a house on top of your self..... this had to be done So you 
+//			could extra space around houses, (12+) and they would still be buildable.
+			{
+				if( isBoat )
+					mSock->sysmessage( 7 );
+				else
+					mSock->sysmessage( 577 );
+				return false;
+			}
+			else if( !isMulti )
+			{
+				if( mChar->GetCommandLevel() < CL_GM )
+				{
+					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum );
+					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) )
+					{
+						mSock->sysmessage( "This object must be placed in your house" );
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}
+
+void BuildHouse( CSocket *mSock, UI08 houseEntry )
+{
+	if( mSock->GetDWord( 11 ) == INVALIDSERIAL )
+		return;
+	if( !houseEntry )
+		return;
+
+	CChar *mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	const SI16 x = mSock->GetWord( 11 );
+	const SI16 y = mSock->GetWord( 13 );
+	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
+	UI32 targetSerial = mSock->GetDWord( 7 );
+	if( mSock->GetDWord( 7 ) != INVALIDSERIAL || getDist( mChar->GetLocation(), point3( x, y, z ) ) >= DIST_BUILDRANGE )
+	{
+		mSock->sysmessage( 577 );
+		return;
+	}
+
+	SI16 sx = 0, sy = 0, cx = 0, cy = 0;
+	SI08 cz = 7;
+	STRINGLIST houseItems;
+	houseItems.resize( 0 );
+	bool itemsWillDecay = false;
+	bool isBoat			= false;
+	UString houseDeed, tag, data, UTag;
+	UI16 houseID		= 0;
+
+	UString sect = "HOUSE " + UString::number( houseEntry );
+	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
+	if( House == NULL )
+		return;
+	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
+	{
+		UTag = tag.upper();
+		data = House->GrabData();
+		if( UTag == "ID" )
+			houseID = data.toUShort();
+		else if( UTag == "SPACEX" )
+			sx = static_cast<SI16>(data.toShort() + 1);
+		else if( UTag == "SPACEY" )
+			sy = static_cast<SI16>(data.toShort() + 1);
+		else if( UTag == "CHARX" )
+			cx = data.toShort();
+		else if( UTag == "CHARY" )
+			cy = data.toShort();
+		else if( UTag == "CHARZ" )
+			cz = data.toByte();
+		else if( UTag == "Z" ) //to allow offsetting houses in Z to fix multis like Farmer's Cabin
+			z = z + data.toByte();
+		else if( UTag == "ITEMSDECAY" )
+			itemsWillDecay = ( data.toShort() == 1 );
+		else if( UTag == "HOUSE_ITEM" )
+			houseItems.push_back( data );
+		else if( UTag == "HOUSE_DEED" )
+			houseDeed = data;
+		else if( UTag == "BOAT" ) 
+			isBoat = true;	//Boats
+	}
+
+	if( !houseID )
+	{
+		Console.Error( "Bad house script # %u!", houseEntry );
+		return;
+	}
+
+	const bool isMulti = (houseID >= 0x4000);
+	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) )
+		return;
+
+	char temp[1024];
+	CMultiObj *house = NULL;
+	CItem *fakeHouse = NULL;
+	if( isMulti )
+	{
+		if( (houseID%256) > 18 ) 
+			sprintf( temp, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
+		else 
+			strcpy( temp, "a mast" );
+		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
+		if( house == NULL )
+			return;
+
+		house->SetLocation( x, y, z );
+		house->SetDecayable( itemsWillDecay );
+		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
+		house->SetOwner( mChar );
+	}
+	else
+	{
+		fakeHouse = Items->CreateItem( mSock, mChar, houseID, 1, 0, OT_ITEM );
+		if( fakeHouse == NULL )
+			return;
+		fakeHouse->SetLocation( x, y, z );
+		fakeHouse->SetOwner( mChar );
+		fakeHouse->SetDecayable( false );
+	}
+
+	if( isBoat ) //Boats
+	{
+		CBoatObj *bObj = static_cast<CBoatObj *>(house);
+		if( bObj == NULL || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
+		{
+			house->Delete();
+			return;
+		} 
+	}
+
+	mChar->GetSpeechItem()->Delete();
+	mChar->SetSpeechItem( NULL );
+
+	CreateHouseKey( mSock, mChar, house, houseID );
+	if( !houseItems.empty() )
+	{
+		if( isMulti )
+			fakeHouse = house;
+		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
+	}
+	mChar->SetLocation( x + cx, y + cy, z + cz );
+
+	//Teleport pets as well
+	CDataList< CChar * > *myPets = mChar->GetPetList();
+	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
+	{
+		if( ValidateObject( pet ) )
+		{
+			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+				pet->SetLocation( mChar );
+		}
+	}
+}
+
+bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
+{
+	UI32 *ourData		= (UI32 *)extraData;
+	SERIAL targSerial	= ourData[0];
+	if( ValidateObject( a ) && a->CanBeObjType( OT_ITEM ) )
+	{
+		CItem *i = static_cast< CItem * >(a);
+		if( i->GetType() == IT_KEY && i->GetTempVar( CITV_MORE ) == targSerial ) // make key uselss
+			i->Delete();
+	}
+	return true;
+}
 void killKeys( SERIAL targSerial )
 // This function is rather CPU-expensive, but AFAIK there is no
 // better way to find all keys than to do it this way.. :/
 {
-	for( ITEM i = 0; i < cwmWorldState->GetItemCount(); i++ ) 
+	UI32 toPass[1];
+	toPass[0]	= targSerial;
+	UI32 b		= 0;
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, toPass, &KillKeysFunctor );
+}
+
+// turn a house into a deed if possible. - crackerjack 8/9/99
+// s = socket of player
+// i = house object
+// morex on the house item must be set to deed item # in items.scp.
+void deedHouse( CSocket *s, CMultiObj *i )
+{
+	if( !ValidateObject( i ) )
+		return;
+
+	CChar *mChar = s->CurrcharObj();
+
+	if( i->GetOwnerObj() == mChar || mChar->IsGM() )
 	{
-		if( items[i].GetType() == 7 && items[i].GetMore() == targSerial ) // make key uselss
-			items[i].SetMore( 0 );
+		CItem *pvDeed = NULL;
+		char temp[1024];
+
+		CItem *ii = Items->CreateScriptItem( s, mChar, i->GetDeed(), 1, OT_ITEM, true );	// need to make before delete
+		if( ii == NULL ) 
+			return;
+        
+		s->sysmessage( 578, i->GetName().c_str() );
+		s->sysmessage( 579, ii->GetName().c_str() );
+
+		CDataList< CChar * > *charList = i->GetCharsInMultiList();
+		for( CChar *tChar = charList->First(); !charList->Finished(); tChar = charList->Next() )
+		{
+			if( !ValidateObject( tChar ) )
+				continue;
+			if( tChar->GetMultiObj() == i )
+			{
+				// Delete Player Vendors
+				if( tChar->GetNPCAiType() == AI_PLAYERVENDOR ) // player vendor in right place
+				{
+					sprintf( temp, Dictionary->GetEntry( 580 ).c_str(), tChar->GetName().c_str() );
+					pvDeed = Items->CreateItem( NULL, mChar, 0x14F0, 1, 0, OT_ITEM, true );
+					if( ValidateObject( pvDeed ) )
+					{
+						pvDeed->SetName( temp );
+						pvDeed->SetType( IT_PLAYERVENDORDEED );
+						pvDeed->SetBuyValue( 2000 );
+					}
+					s->sysmessage( 581, tChar->GetName().c_str() );
+					tChar->Delete();
+				}
+				else
+					tChar->SetMulti( INVALIDSERIAL );
+			}
+		}
+
+		SERIAL serialToMatch = i->GetSerial();
+		s->sysmessage( 582 );
+		killKeys( serialToMatch );
+		i->Delete();
 	}
 }
 
-bool OnHouseList( CMultiObj *house, CChar *toCheck )
-{
-	if( house == NULL || toCheck == NULL )
-		return false;
-	return house->IsOwner( toCheck );
-}
 UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 {
-	if( house == NULL || toAdd == NULL )
+	if( !ValidateObject( house ) || !ValidateObject( toAdd ) )
 		return 0;
-	const UI08 OWNER = 0;
-	const UI08 BAN = 1;
+
 	if( house->IsOwner( toAdd ) || house->IsOnBanList( toAdd ) )
 		return 2;
 
 	SI16 sx, sy, ex, ey;
 	Map->MultiArea( house, sx, sy, ex, ey );
-	// Make an object with the character's serial & the list type
-	// and put it "inside" the house item.
 	if( toAdd->GetX() >= sx && toAdd->GetY() >= sy && toAdd->GetX() <= ex && toAdd->GetY() <= ey )
 	{
+		const UI08 OWNER	= 0;
+		const UI08 BAN		= 1;
 		switch( mode )
 		{
-		default:
-		case OWNER:		house->AddAsOwner( toAdd );		break;
-		case BAN:		house->AddToBanList( toAdd );	break;
+			default:
+			case OWNER:		house->AddAsOwner( toAdd );		break;
+			case BAN:
+				toAdd->SetLocation( ex, (ey+1), toAdd->GetZ() );
+				house->AddToBanList( toAdd );
+				break;
 		}
 		return 1;
 	}
@@ -420,65 +432,25 @@ UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode )
 }
 bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode )
 {
-	if( house == NULL || toDelete == NULL )
+	if( !ValidateObject( house ) || !ValidateObject( toDelete ) )
 		return false;
+
+	if( !house->IsOwner( toDelete ) && !house->IsOnBanList( toDelete ) )
+		return false;
+
+	const UI08 OWNER	= 0;
+	const UI08 BAN		= 1;
 	switch( mode )
 	{
-	default:
-	case 0:	// owner
-		house->RemoveAsOwner( toDelete );
-		break;
-	case 1:	// ban
-		house->RemoveFromBanList( toDelete );
-		break;
+		default:
+		case OWNER:	// owner
+			house->RemoveAsOwner( toDelete );
+			break;
+		case BAN:	// ban
+			house->RemoveFromBanList( toDelete );
+			break;
 	}
 	return true;
 }
-void house_speech( cSocket *mSock, const char *talk )
-{
-	if( mSock == NULL ) 
-		return;
 
-	UnicodeTypes sLang = mSock->Language();
-
-	char msg[512], msg2[512];
-	CChar *mChar = mSock->CurrcharObj();
-	CMultiObj *realHouse = findMulti( mChar );
-	if( realHouse == NULL ) 
-		return; // not in a house, so we don't care.
-	if( realHouse->GetObjType() != OT_MULTI )
-		return;
-
-	strcpy( msg2, talk );
-	strcpy( msg, strupr( msg2 ) ); // krazyglue - above two lines aren't necessary
-	if( strstr( msg, Dictionary->GetEntry( 584, sLang ) ) ) 
-	{ // realHouse ban
-		mSock->AddID( realHouse->GetSerial() );
-		target( mSock, 0, 229, 585 );
-		return;
-	}
-	if( strstr( msg, Dictionary->GetEntry( 586, sLang ) ) ) 
-	{ // kick out of realHouse
-		mSock->AddID( realHouse->GetSerial() );
-		target( mSock, 0, 228, 587 );
-		return;
-	}
-	if( strstr( msg, Dictionary->GetEntry( 588, sLang ) ) )
-	{ // lock down item
-		if( realHouse->GetLockDownCount() < realHouse->GetMaxLockDowns() )
-		{
-			mSock->AddID( realHouse->GetSerial() );
-			target( mSock, 0, 232, 589 );
-		}
-		return;
-	}
-	if( strstr( msg, Dictionary->GetEntry( 590, sLang ) ) )
-	{ // lock down item
-		if( realHouse->GetLockDownCount() > 0 )
-		{
-			mSock->AddID( realHouse->GetSerial() );
-			target( mSock, 0, 233, 591 );
-		}
-		return;
-	}
 }

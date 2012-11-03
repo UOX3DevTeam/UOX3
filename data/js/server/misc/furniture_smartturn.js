@@ -36,7 +36,6 @@ function onUseChecked( pUser, iUsed )
 	}
 
 	var direction = 0;
-
 	if( ( absX > absY ) && ( relX < 0 ) ) 
 	{
 		direction = 1;

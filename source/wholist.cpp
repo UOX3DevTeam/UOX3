@@ -1,7 +1,18 @@
 #include "uox3.h"
 #include "wholist.h"
-#include "targeting.h"
 #include "network.h"
+#include "CPacketSend.h"
+#include "Dictionary.h"
+#include "jail.h"
+#include "commands.h"
+
+namespace UOX
+{
+
+cWhoList *WhoList;
+cWhoList *OffList;
+
+void	TweakTarget( CSocket *s );
 
 void cWhoList::ResetUpdateFlag( void )
 // PRE:		WhoList class is active
@@ -41,15 +52,10 @@ void cWhoList::FlagUpdate( void )
 // DATE:	12th February, 2000
 {
 	needsUpdating = true;
-
 }
-#pragma note( "Param Warning: in cWhoList::SendSocket(), option is unrefrenced" )
-void cWhoList::SendSocket( cSocket *toSendTo, UI08 option )
+void cWhoList::SendSocket( CSocket *toSendTo )
 // PRE:		WhoList class is active
-// POST:	Sends the wholist to the socket, depending on option
-//			0 = On/off line players
-//			1 = Online players
-//			2 = Offline players
+// POST:	Sends the wholist to the socket
 // CODER:	Abaddon
 // DATE:	12th February, 2000
 {
@@ -69,7 +75,7 @@ void cWhoList::GMEnter( void )
 // CODER:	Abaddon
 // DATE:	12th February, 2000
 {
-	gmCount++;
+	++gmCount;
 }
 
 void cWhoList::GMLeave( void )
@@ -79,19 +85,7 @@ void cWhoList::GMLeave( void )
 // DATE:	12th February, 2000
 {
 	if( gmCount != 0 )
-		gmCount--;
-}
-#pragma note( "Param Warning: in cWhoList::GrabSerial(), index is unrefrenced" )
-SERIAL cWhoList::GrabSerial( CHARACTER index )
-// PRE:		WhoList class is active
-// POST:	Returns serial as refered to by index
-// CODER:	Abaddon
-// DATE:	12th February, 2000
-{
-//	if( index >= onlineEntries.size() )
-//		return offlineEntries[index - onlineEntries.size()]->player;
-//	return onlineEntries[index]->player;
-	return INVALIDSERIAL;
+		--gmCount;
 }
 
 void cWhoList::Delete( void )
@@ -112,12 +106,10 @@ void cWhoList::AddSerial( SERIAL toAdd )
 // CODER:	Abaddon
 // DATE:	23rd February, 2000
 {
-	int size = whoMenuData.size();
-	whoMenuData.resize( size + 1 );
-	whoMenuData[size] = toAdd;
+	whoMenuData.push_back( toAdd );
 }
 
-void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
+void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 // PRE:		WhoList class is active
 // POST:	Does action based upon button selected
 // CODER:	Abaddon
@@ -128,223 +120,209 @@ void cWhoList::ButtonSelect( cSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	if( buttonPressed < 200 )
 	{		
 		buttonPressed -= 7;
-		sourceChar->SetMaking( buttonPressed );
+		toSendTo->AddID( buttonPressed );
 		Command( toSendTo, type, buttonPressed );
 		return;
 	}
 
 	GMLeave();
-	SERIAL ser = sourceChar->GetMaking();
+	SERIAL ser = toSendTo->AddID();
 	if( ser == INVALIDSERIAL )
 	{
-		sysmessage( toSendTo, 1387 );
+		toSendTo->sysmessage( 1387 );
 		return;
 	}
 
 	SERIAL charSerial = whoMenuData[ser];
 
 	CChar *targetChar = calcCharObjFromSer( charSerial ); // find selected char ...
-	if( targetChar == NULL )
+	if( !ValidateObject( targetChar ) )
 	{
-		sysmessage( toSendTo, 1387 );
+		toSendTo->sysmessage( 1387 );
 		return;
 	}
-	cSocket *trgSock = NULL;
+	CSocket *trgSock = NULL;
 	switch( buttonPressed )
 	{
-	case 200://gochar
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1388 );
-			return;
-		}
-		if( sourceChar->WorldNumber() != targetChar->WorldNumber() )
-		{
-			sourceChar->SetLocation( targetChar );
-			SendMapChange( targetChar->WorldNumber(), toSendTo );
-		}
-		else
-			sourceChar->SetLocation( targetChar );
-		sourceChar->Teleport();
-		break;
-	case 201://xtele
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1389 );
-			return;
-		}
-		if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
-		{
-			targetChar->SetLocation( sourceChar );
-			trgSock = calcSocketObjFromChar( targetChar );
-			SendMapChange( sourceChar->WorldNumber(), trgSock );
-		}
-		else
-			targetChar->SetLocation( sourceChar );
-		targetChar->Teleport();
-		break;
-	case 202://jail char
-		if( sourceChar == targetChar )
-		{
-			sysmessage( toSendTo, 1390 );
-			break;
-		}
-		else
-		{
+		case 200://gochar
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				sysmessage( toSendTo, 1391 );
+				toSendTo->sysmessage( 1388 );
 				return;
 			}
-			Targ->JailTarget( toSendTo, targetChar->GetSerial() );
-			break;
-		}						 
-	case 203://release
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1392 );
-			return;
-		}
-		Targ->ReleaseTarget( toSendTo, targetChar->GetSerial() );
-		break;
-	case 204:
-		if( targetChar == sourceChar )
-		{
-			sysmessage( toSendTo, 1393 );
-			break;
-		}
-		else
-		{
-			if( !::isOnline( targetChar ) )	// local var overloads it
+			if( sourceChar->WorldNumber() != targetChar->WorldNumber() )
 			{
-				sysmessage( toSendTo, 1394 );		// you realize the break isn't necessary?
+				sourceChar->SetLocation( targetChar );
+				SendMapChange( targetChar->WorldNumber(), toSendTo );
+			}
+			else
+				sourceChar->SetLocation( targetChar );
+			break;
+		case 201://xtele
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+			{
+				toSendTo->sysmessage( 1389 );
+				return;
+			}
+			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
+			{
+				targetChar->SetLocation( sourceChar );
+				trgSock = targetChar->GetSocket();
+				SendMapChange( sourceChar->WorldNumber(), trgSock );
+			}
+			else
+				targetChar->SetLocation( sourceChar );
+			break;
+		case 202://jail char
+			if( sourceChar == targetChar )
+			{
+				toSendTo->sysmessage( 1390 );
 				break;
 			}
+			else
+			{
+				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+				{
+					toSendTo->sysmessage( 1391 );
+					return;
+				}
+				if( targetChar->IsJailed() )
+					toSendTo->sysmessage( 1070 );
+
+				else if( !JailSys->JailPlayer( targetChar, 0xFFFFFFFF ) )
+					toSendTo->sysmessage( 1072 );
+				break;
+			}						 
+		case 203://release
 			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
 			{
-				sysmessage( toSendTo, 1395 );
+				toSendTo->sysmessage( 1392 );
 				return;
 			}
-			sysmessage( toSendTo, 1396 );
-			Network->Disconnect( calcSocketFromChar( targetChar ) );
+			if( !targetChar->IsJailed() )
+				toSendTo->sysmessage( 1064 );
+			else
+			{
+				JailSys->ReleasePlayer( targetChar );
+				toSendTo->sysmessage( 1065, targetChar->GetName().c_str() );
+			}
 			break;
-		}
-	case 205:	// not active currently, a remote where
-		// make it prettier later!
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1397 );
-			return;
-		}
-		sysmessage( toSendTo, "X: %i Y: %i Z: %i World: %i", targetChar->GetX(), targetChar->GetY(), targetChar->GetZ(), targetChar->WorldNumber() );
-		break;
-	case 206:	// remote cstats
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1398 );
-			return;
-		}
-		toSendTo->SetDWord( 7, targetChar->GetSerial() );
-		Targ->CstatsTarget( toSendTo );
-		break;
-	case 207:	// remote tweak
-		if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
-		{
-			sysmessage( toSendTo, 1399 );
-			return;
-		}
-		toSendTo->SetDWord( 7, targetChar->GetSerial() );
-		Targ->TweakTarget( toSendTo );
-		break;
-	default:
-		Console.Error( 2, " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
+		case 204:
+			if( targetChar == sourceChar )
+			{
+				toSendTo->sysmessage( 1393 );
+				break;
+			}
+			else
+			{
+				if( !UOX::isOnline( (*targetChar) ) )	// local var overloads it
+				{
+					toSendTo->sysmessage( 1394 );		// you realize the break isn't necessary?
+					break;
+				}
+				if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+				{
+					toSendTo->sysmessage( 1395 );
+					return;
+				}
+				toSendTo->sysmessage( 1396 );
+				Network->Disconnect( targetChar->GetSocket() );
+				break;
+			}
+		case 205:
+			// make it prettier later!
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+			{
+				toSendTo->sysmessage( 1397 );
+				return;
+			}
+			toSendTo->sysmessage( "X: %i Y: %i Z: %i World: %u", targetChar->GetX(), targetChar->GetY(), targetChar->GetZ(), targetChar->WorldNumber() );
+			break;
+		case 206:	// remote cstats
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+			{
+				toSendTo->sysmessage( 1398 );
+				return;
+			}
+			toSendTo->SetDWord( 7, targetChar->GetSerial() );
+			Commands->Command( toSendTo, targetChar, "cstats" );
+			break;
+		case 207:	// remote tweak
+			if( targetChar->GetCommandLevel() > sourceChar->GetCommandLevel() )
+			{
+				toSendTo->sysmessage( 1399 );
+				return;
+			}
+			toSendTo->SetDWord( 7, targetChar->GetSerial() );
+			TweakTarget( toSendTo );
+			break;
+		default:
+			Console.Error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
+			break;
 	}
 }
 
-void cWhoList::Command( cSocket *toSendTo, UI08 type, UI16 buttonPressed )
+void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 {
 	SERIAL serial = whoMenuData[buttonPressed];
 	CChar *targetChar = calcCharObjFromSer( serial ); // find selected char ...
 
-	if( targetChar == NULL )
+	if( !ValidateObject( targetChar ) )
 	{
-		sysmessage( toSendTo, 1387 );
+		toSendTo->sysmessage( 1387 );
 		return;
 	}
 	
-	STRINGLIST one, two;
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( type );
 
-	UnicodeTypes sLang = toSendTo->Language();
-	UI16 lColour = cwmWorldState->ServerData()->GetLeftTextColour(), tColour = cwmWorldState->ServerData()->GetTitleColour();
-	UI16 butRight = cwmWorldState->ServerData()->GetButtonRight();
+	UnicodeTypes sLang	= toSendTo->Language();
+	UI16 lColour		= cwmWorldState->ServerData()->LeftTextColour();
+	UI16 tColour		= cwmWorldState->ServerData()->TitleColour();
+	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
-	one.push_back( "nomove" );
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	char temp[512];
-	sprintf( temp,"resizepic 0 0 %i 260 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 30 300 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 30 40 %i 0", tColour );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	sprintf( temp, "text 30 60 %i 1", tColour );
-	one.push_back( temp );
+	toSend.AddCommand( "nomove" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 30 40 %u 0", tColour );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "text 30 60 %u 1", tColour );
+	toSend.AddCommand( "page 1" );
 
-	one.push_back( "page 1" );
+	toSend.AddCommand( "text 50 90 %u 2", lColour );	//goto text
+	toSend.AddCommand( "text 50 110 %u 3", lColour );	//gettext
+	toSend.AddCommand( "text 50 130 %u 4", lColour );	//Jail text
+	toSend.AddCommand( "text 50 150 %u 5", lColour );	//Release text
+	toSend.AddCommand( "text 50 170 %u 6", lColour );	//Kick user text
+	toSend.AddCommand( "text 50 190 %u 7", lColour );
+	toSend.AddCommand( "text 50 210 %u 8", lColour );
+	toSend.AddCommand( "text 50 230 %u 9", lColour );
+	toSend.AddCommand( "text 50 270 %u 10", lColour );
+	toSend.AddCommand( "button 20 90 %u %i 1 0 200", butRight, butRight + 1 ); //goto button
+	toSend.AddCommand( "button 20 110 %u %i 1 0 201", butRight, butRight + 1 ); //get button
+	toSend.AddCommand( "button 20 130 %u %i 1 0 202", butRight, butRight + 1 ); //Jail button
+	toSend.AddCommand( "button 20 150 %u %i 1 0 203", butRight, butRight + 1 ); //Release button
+	toSend.AddCommand( "button 20 170 %u %i 1 0 204", butRight, butRight + 1 ); //kick button
+	toSend.AddCommand( "button 20 190 %u %i 1 0 205", butRight, butRight + 1 ); //Where button
+	toSend.AddCommand( "button 20 210 %u %i 1 0 206", butRight, butRight + 1 ); //Cstats button
+	toSend.AddCommand( "button 20 230 %u %i 1 0 207", butRight, butRight + 1 ); //Tweak button
 
-	sprintf( temp, "text 50 90 %i 2", lColour );	//goto text
-	one.push_back( temp );
-	sprintf( temp, "text 50 110 %i 3", lColour );	//gettext
-	one.push_back( temp );
-	sprintf( temp, "text 50 130 %i 4", lColour );	//Jail text
-	one.push_back( temp );
-	sprintf( temp, "text 50 150 %i 5", lColour );	//Release text
-	one.push_back( temp );
-	sprintf( temp, "text 50 170 %i 6", lColour );	//Kick user text
-	one.push_back( temp );
-	sprintf( temp, "text 50 190 %i 7", lColour );
-	one.push_back( temp );
-	sprintf( temp, "text 50 210 %i 8", lColour );
-	one.push_back( temp );
-	sprintf( temp, "text 50 230 %i 9", lColour );
-	one.push_back( temp );
-	sprintf( temp, "text 50 270 %i 10", lColour );
-	one.push_back( temp );
-	sprintf( temp, "button 20 90 %i %i 1 0 200", butRight, butRight + 1 ); //goto button
-	one.push_back( temp );
-	sprintf( temp, "button 20 110 %i %i 1 0 201", butRight, butRight + 1 ); //get button
-	one.push_back( temp );
-	sprintf( temp, "button 20 130 %i %i 1 0 202", butRight, butRight + 1 ); //Jail button
-	one.push_back( temp );
-	sprintf( temp, "button 20 150 %i %i 1 0 203", butRight, butRight + 1 ); //Release button
-	one.push_back( temp );
-	sprintf( temp, "button 20 170 %i %i 1 0 204", butRight, butRight + 1 ); //kick button
-	one.push_back( temp );
-	sprintf( temp, "button 20 190 %i %i 1 0 205", butRight, butRight + 1 ); //Where button
-	one.push_back( temp );
-	sprintf( temp, "button 20 210 %i %i 1 0 206", butRight, butRight + 1 ); //Cstats button
-	one.push_back( temp );
-	sprintf( temp, "button 20 230 %i %i 1 0 207", butRight, butRight + 1 ); //Tweak button
-	one.push_back( temp );
+	toSend.AddText( "User %u selected (account %u)",buttonPressed, targetChar->GetAccount().wAccountIndex);
+	toSend.AddText( "Name: %s", targetChar->GetName().c_str() );   
+	toSend.AddText( Dictionary->GetEntry( 1400, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1401, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1402, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1403, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1404, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1405, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1406, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1407, sLang ) );
+	toSend.AddText( "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 ) );   
 
-
-	sprintf( temp, "User %i selected (account %i)",buttonPressed, targetChar->GetAccount().wAccountIndex);
-	two.push_back( temp );
-	sprintf( temp, "Name: %s", targetChar->GetName() );   
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1400, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1401, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1402, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1403, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1404, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1405, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1406, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1407, sLang ) );
-	sprintf( temp, "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 ) );   
-	two.push_back( temp );
-
-	SendVecsAsGump( toSendTo, one, two, type, INVALIDSERIAL );
+	toSend.Finalize();
+	toSendTo->Send( &toSend );
 }
 
 void cWhoList::ZeroWho( void )
@@ -370,23 +348,23 @@ void cWhoList::Update( void )
 	Delete();
 
 	char temp[512];
-	int i,k;
-	int numPerPage = 13;
+	size_t i				= 0;
+	const UI32 numPerPage	= 13;
 	UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 	
-	k = cwmWorldState->GetPlayersOnline();
-	int realCount = 1;
+	size_t k		= cwmWorldState->GetPlayersOnline();
+	int realCount	= 1;
 	//--static pages
 	one.push_back( "noclose" );
 	one.push_back( "page 0"  );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
+	sprintf( temp, "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
 	one.push_back( temp );
-	sprintf( temp, "button 250 15 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1 );
+	sprintf( temp, "button 250 15 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 );
 	one.push_back( temp );
-	sprintf( temp, "text 45 15 %i 0", cwmWorldState->ServerData()->GetTitleColour() );
+	sprintf( temp, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour() );
 	one.push_back( temp );
 
-	sprintf( temp, "page %i", pagenum );
+	sprintf( temp, "page %lu", pagenum );
 	one.push_back( temp );
 
 	sprintf( temp, "Wholist" );
@@ -395,31 +373,31 @@ void cWhoList::Update( void )
 	//--Start User List
 	if( online )
 	{
-		for( i = 0; i < k; i++ )
+		for( i = 0; i < k; ++i )
 		{
-			cSocket *tSock = calcSocketObjFromSock( i );
-			CChar *tChar = tSock->CurrcharObj();
-			if( tChar == NULL )
+			CSocket *tSock	= Network->GetSockPtr( i );
+			CChar *tChar	= tSock->CurrcharObj();
+			if( !ValidateObject( tChar ) )
 				continue;
 			if( realCount > 0 && !(realCount%numPerPage) )
 			{
 				position = 40;
-				pagenum++;
-				sprintf(temp, "page %i", pagenum );
+				++pagenum;
+				sprintf(temp, "page %lu", pagenum );
 				one.push_back( temp );
 			}
-			sprintf( temp, "text 50 %i %i %i", position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum ); 
+			sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 			one.push_back( temp );
-			sprintf( temp, "button 20 %i %i %i %i 0 %i", position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum, buttonnum );
+			sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
 			one.push_back( temp );
-			sprintf( temp, " %s", tChar->GetName() );
+			sprintf( temp, " %s", tChar->GetName().c_str() );
 			two.push_back( temp );
 			AddSerial( tChar->GetSerial() );
 
 			position += 20;
-			linenum++;
-			buttonnum++;
-			realCount++;
+			++linenum;
+			++buttonnum;
+			++realCount;
 		}
 		
 		sprintf( temp, "Wholist [%i online]", realCount - 1 );
@@ -429,59 +407,57 @@ void cWhoList::Update( void )
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %i", pagenum );
+			sprintf( temp, "page %lu", pagenum );
 			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum - 1 ); //back button
+				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
 				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum + 1 );
+				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
 				one.push_back( temp );
 			}
-			pagenum++;
+			++pagenum;
 		}
 	}
 	else
 	{
-		ACCOUNTSBLOCK actbSearch;
-		actbSearch.wAccountIndex=AB_INVALID_ID;
 		MAPUSERNAMEID_ITERATOR I;
 		//
 		CChar *ourChar = NULL;
-		for(I=Accounts->begin();I!=Accounts->end();I++)
+		for( I = Accounts->begin(); I != Accounts->end(); ++I )
 		{
-			actbSearch = I->second;
+			CAccountBlock& actbSearch = I->second;
 			//
-			for( i = 0; i < 5; i++ )
+			for( i = 0; i < 7; ++i )
 			{
 				ourChar = actbSearch.lpCharacters[i];
-				if( ourChar != NULL )
+				if( ValidateObject( ourChar ) )
 				{
-					if( !::isOnline( ourChar ) )
+					if( !UOX::isOnline( (*ourChar) ) )
 					{
 						if( realCount > 0 && !(realCount%numPerPage) )
 						{
 							position = 40;
-							pagenum++;
-							sprintf(temp, "page %i", pagenum );
+							++pagenum;
+							sprintf(temp, "page %lu", pagenum );
 							one.push_back( temp );
 						}
-						sprintf( temp, "text 50 %i %i %i", position, cwmWorldState->ServerData()->GetLeftTextColour(), linenum ); 
+						sprintf( temp, "text 50 %lu %u %lu", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ); 
 						one.push_back( temp );
-						sprintf( temp, "button 20 %i %i %i %i 0 %i", position, cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum, buttonnum );
+						sprintf( temp, "button 20 %lu %u %i %lu 0 %lu", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum );
 						one.push_back( temp );
 
-						sprintf( temp, " %s (%s)", ourChar->GetName(), ourChar->GetLastOn() );
+						sprintf( temp, " %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() );
 						two.push_back( temp );
 						AddSerial( ourChar->GetSerial() );
 
 						position += 20;
-						linenum++;
-						buttonnum++;
-						realCount++;
+						++linenum;
+						++buttonnum;
+						++realCount;
 					}
 				}
 			}
@@ -493,20 +469,22 @@ void cWhoList::Update( void )
 		k = realCount;
 		for( i = 0; i < k; i += numPerPage )
 		{
-			sprintf( temp, "page %i", pagenum );
+			sprintf( temp, "page %lu", pagenum );
 			one.push_back( temp );
 			if( i >= numPerPage )
 			{
-				sprintf( temp, "button 50 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonLeft(), cwmWorldState->ServerData()->GetButtonLeft() + 1, pagenum - 1 ); //back button
+				sprintf( temp, "button 50 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 ); //back button
 				one.push_back( temp );
 			}
 			if( ( k > numPerPage ) && ( ( i + numPerPage ) < k ) )
 			{
-				sprintf( temp, "button 260 300 %i %i 0 %i", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1, pagenum + 1 );
+				sprintf( temp, "button 260 300 %u %i 0 %li", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 );
 				one.push_back( temp );
 			}
-			pagenum++;
+			++pagenum;
 		}
 	}		
 	ResetUpdateFlag();
+}
+
 }

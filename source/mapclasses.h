@@ -1,173 +1,338 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
-#include "fileio.h"
+#include "power.h"
 
-class BaseTile
+namespace UOX
 {
-protected:
-	UI08 flag1;
-	UI08 flag2;
-	UI08 flag3;
-	UI08 flag4;
-public:
-	BaseTile() : flag1( 0 ), flag2( 0 ), flag3( 0 ), flag4( 0 ) { }
-	virtual ~BaseTile() {}
-	UI08 Flag1( void )			{	return flag1;		}
-	UI08 Flag2( void )			{	return flag2;		}
-	UI08 Flag3( void )			{	return flag3;		}
-	UI08 Flag4( void )			{	return flag4;		}
 
-	void Flag1( UI08 newVal )	{	flag1 = newVal;			}
-	void Flag2( UI08 newVal )	{	flag2 = newVal;			}
-	void Flag3( UI08 newVal )	{	flag3 = newVal;			}
-	void Flag4( UI08 newVal )	{	flag4 = newVal;			}
+#define PACK_NEEDED
 
-	bool AtFloorLevel( void )	{	return (flag1&0x01) == 0x01;	}
-	bool Holdable( void )		{	return (flag1&0x02) == 0x02;	}
-	bool SignGuildBanner( void ){	return (flag1&0x04) == 0x04;	}
-	bool WebDirtBlood( void )	{	return (flag1&0x08) == 0x08;	}
-	bool WallVertTile( void )	{	return (flag1&0x10) == 0x10;	}
-	bool Damaging( void )		{	return (flag1&0x20) == 0x20;	}
-	bool Blocking( void )		{	return (flag1&0x40) == 0x40;	}
-	bool LiquidWet( void )		{	return (flag1&0x80) == 0x80;	}
+struct Static_st
+{
+	UI16 itemid;
+	UI08 xoff;
+	UI08 yoff;
+	SI08 zoff;
+	char align;	// force word alignment by hand to avoid bus errors - fur
+} PACK_NEEDED;
 
-	bool Unknown1( void )		{	return (flag2&0x01) == 0x01;	}
-	bool Standable( void )		{	return (flag2&0x02) == 0x02;	}
-	bool Climbable( void )		{	return (flag2&0x04) == 0x04;	}
-	bool Stackable( void )		{	return (flag2&0x08) == 0x08;	}
-	bool WindowArchDoor( void )	{	return (flag2&0x10) == 0x10;	}
-	bool CannotShootThru( void ){	return (flag2&0x20) == 0x20;	}
-	bool DisplayAsA( void )		{	return (flag2&0x40) == 0x40;	}
-	bool DisplayAsAn( void )	{	return (flag2&0x80) == 0x80;	}
-
-	bool DescriptionTile( void ){	return (flag3&0x01) == 0x01;	}
-	bool FadeWithTrans( void )	{	return (flag3&0x02) == 0x02;	}
-	bool Unknown2( void )		{	return (flag3&0x04) == 0x04;	}
-	bool Unknown3( void )		{	return (flag3&0x08) == 0x08;	}
-	bool Map( void )			{	return (flag3&0x10) == 0x10;	}
-	bool Container( void )		{	return (flag3&0x20) == 0x20;	}
-	bool Equipable( void )		{	return (flag3&0x40) == 0x40;	}
-	bool LightSource( void )	{	return (flag3&0x80) == 0x80;	}
-
-	bool Animated( void )		{	return (flag4&0x01) == 0x01;	}
-	bool Unknown4( void )		{	return (flag4&0x02) == 0x02;	}
-	bool Walk( void )			{	return (flag4&0x04) == 0x04;	}
-	bool WholeBodyItem( void )	{	return (flag4&0x08) == 0x08;	}
-	bool WallRoofWeap( void )	{	return (flag4&0x10) == 0x10;	}
-	bool Door( void )			{	return (flag4&0x20) == 0x20;	}
-	bool ClimbableBit1( void )	{	return (flag4&0x40) == 0x40;	}
-	bool ClimbableBit2( void )	{	return (flag4&0x80) == 0x80;	}
-	UI08 ClimbableBits( void )		
-		{	
-			UI08 p1 = 0, p2 = 0; 
-			if( ClimbableBit1() ) 
-				p1 = 1; 
-			if( ClimbableBit2() ) 
-				p2 = 1;			
-			return (UI08)(p1 * 2 + p2);
-		}
+struct map_st
+{
+	UI16 id;
+	SI08 z;
 };
-class CTile : public BaseTile
+
+struct MultiIndex_st
+{
+	SI32 start;
+	SI32 length;
+	SI32 unknown;
+} PACK_NEEDED;
+
+struct Multi_st
+{
+	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors - fur
+	UI16 tile;
+	SI16 x;
+	SI16 y;
+	SI08 z;
+	SI08 empty;
+} PACK_NEEDED;
+
+struct MultiHS_st
+{
+	SI32 visible;  // this needs to be first so it is word aligned to avoid bus errors - fur
+	UI16 tile;
+	SI16 x;
+	SI16 y;
+	SI08 z;
+	SI08 empty;
+	SI32 unknown1;
+} PACK_NEEDED;
+
+enum TileFlags
+{
+	TF_FLOORLEVEL	= 0,
+	TF_HOLDABLE,
+	TF_TRANSPARENT,
+	TF_TRANSLUCENT,
+	TF_WALL,
+	TF_DAMAGING,
+	TF_BLOCKING,
+	TF_WET,
+	TF_UNKNOWN1,
+	TF_SURFACE,
+	TF_CLIMBABLE,
+	TF_STACKABLE,
+	TF_WINDOW,
+	TF_NOSHOOT,
+	TF_DISPLAYA,
+	TF_DISPLAYAN,
+	TF_DESCRIPTION,
+	TF_FOLIAGE,
+	TF_PARTIALHUE,
+	TF_UNKNOWN2,
+	TF_MAP,
+	TF_CONTAINER,
+	TF_WEARABLE,
+	TF_LIGHT,
+	TF_ANIMATED,
+	TF_NODIAGONAL, //HOVEROVER in SA clients and later, to determine if tiles can be moved on by flying gargoyles
+	TF_UNKNOWN3,
+	TF_ARMOR,
+	TF_ROOF,
+	TF_DOOR,
+	TF_STAIRBACK,
+	TF_STAIRRIGHT,
+	TF_COUNT
+};
+
+class CBaseTile
 {
 protected:
-	SI32 unknown1;  // longs must go at top to avoid bus errors - fur
-	SI32 animation;
+	std::bitset< TF_COUNT >	flags;
+public:
+	CBaseTile()
+	{
+		flags.reset();
+	}
+	virtual ~CBaseTile()
+	{
+	}
+	UI08 Flag( UI08 part ) const
+	{
+		UI32 mFlags = flags.to_ulong();
+		UI08 retVal = 0;
+		switch( part )
+		{
+			case 0:	retVal = static_cast<UI08>(mFlags>>24);	break;
+			case 1:	retVal = static_cast<UI08>(mFlags>>16);	break;
+			case 2: retVal = static_cast<UI08>(mFlags>>8);	break;
+			case 3: retVal = static_cast<UI08>(mFlags%256);	break;
+		}
+		return retVal;
+	}
+	UI32 FlagsNum( void ) const					{	return flags.to_ulong();	}
+	std::bitset< TF_COUNT > Flags( void ) const	{	return flags;				}
+	void Flags( std::bitset< TF_COUNT > newVal ){	flags = newVal;				}
+
+	bool CheckFlag( TileFlags toCheck ) const
+	{
+		if( toCheck >= TF_COUNT )
+			return false;
+		return flags.test( toCheck );
+	}
+	void SetFlag( TileFlags toSet, bool newVal )
+	{
+		if( toSet >= TF_COUNT )
+			return;
+		flags.set( toSet, newVal );
+	}
+};
+
+class CTileHS : public CBaseTile
+{
+private:
+	UI32 unknown0;
 	UI08 weight;
 	SI08 layer;
-	SI08 unknown2;
-	SI08 unknown3;
+	UI16 unknown1;
+	UI08 unknown2;
+	UI08 quantity;
+	UI16 animation;
+	UI08 unknown3;
+	UI08 hue;
+	UI08 unknown4;
+	UI08 unknown5;
 	SI08 height;
-	SI08 name[23];	// manually padded to long to avoid bus errors - fur
+	SI08 name[20];
 
 public:
-	CTile() : unknown1( 0 ), unknown2( 0 ), unknown3( 0 ), weight( 0 ), height( 0 ), layer( 0 ), animation( 0 ) { name[0] = 0; }
-	CTile( UOXFile *toRead ) { Read( toRead ); }
-	CTile( std::ifstream &toRead );
+	CTileHS() : unknown0( 0 ), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
+	{
+		name[0] = 0;
+	}
+	CTileHS( UOXFile *toRead )
+	{
+		Read( toRead );
+	}
 	void Read( UOXFile *toRead );
-	SI32 Unknown1( void )	{	return unknown1;	}
-	SI32 Animation( void )	{	return animation;	}
-	UI08 Weight( void )		{	return weight;		}
-	SI08 Layer( void )		{	return layer;		}
-	SI08 Unknown2( void )	{	return unknown2;	}
-	SI08 Unknown3( void )	{	return unknown3;	}
-	SI08 Height( void )		{	return height;		}
-	char *Name( void )		{	return (char *)name;}
+	UI32 Unknown0( void ) const		{	return unknown0;		}
+	UI16 Unknown1( void ) const		{	return unknown1;		}
+	UI08 Unknown2( void ) const		{	return unknown2;		}
+	UI08 Unknown3( void ) const		{	return unknown3;		}
+	UI08 Unknown4( void ) const		{	return unknown4;		}
+	UI08 Unknown5( void ) const		{	return unknown5;		}
+	UI08 Hue( void ) const			{	return hue;				}
+	UI08 Quantity( void ) const		{	return quantity;		}
+	UI16 Animation( void ) const	{	return animation;		}
+	UI08 Weight( void ) const		{	return weight;			}
+	SI08 Layer( void ) const		{	return layer;			}
+	SI08 Height( void ) const		{	return height;			}
+	char *Name( void ) const		{	return (char *)name;	}
 
-	void Unknown1( SI32 newVal )	{	unknown1 = newVal;		}
-	void Animation( SI32 newVal )	{	animation = newVal;		}
+	void Unknown0( UI32 newVal )	{	unknown0 = newVal;		}
+	void Unknown1( UI16 newVal )	{	unknown1 = newVal;		}
+	void Unknown2( UI08 newVal )	{	unknown2 = newVal;		}
+	void Unknown3( UI08 newVal )	{	unknown3 = newVal;		}
+	void Unknown4( UI08 newVal )	{	unknown4 = newVal;		}
+	void Unknown5( UI08 newVal )	{	unknown5 = newVal;		}
+	void Animation( UI16 newVal )	{	animation = newVal;		}
 	void Weight( UI08 newVal )		{	weight = newVal;		}
 	void Layer( SI08 newVal )		{	layer = newVal;			}
-	void Unknown2( SI08 newVal )	{	unknown2 = newVal;		}
-	void Unknown3( SI08 newVal )	{	unknown3 = newVal;		}
 	void Height( SI08 newVal )		{	height = newVal;		}
-	void Name( char *newVal )		{	strcpy( (char *)name, (char *)newVal );	}
+	void Hue( UI08 newVal )			{	hue = newVal;			}
+	void Quantity( UI08 newVal )	{	quantity = newVal;		}
+	void Name( const char *newVal )
+	{
+		strncpy( (char *)name, newVal, 20 );
+	}
 
 };
 
-class CLand : public BaseTile
+class CTile : public CBaseTile
 {
-protected:
-	SI08 unknown1;
-	SI08 unknown2;
+private:
+	UI08 weight;
+	SI08 layer;
+	UI16 unknown1;
+	UI08 unknown2;
+	UI08 quantity;
+	UI16 animation;
+	UI08 unknown3;
+	UI08 hue;
+	UI08 unknown4;
+	UI08 unknown5;
+	SI08 height;
+	SI08 name[20];
+
+public:
+	CTile() : weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 )
+	{
+		name[0] = 0;
+	}
+	CTile( UOXFile *toRead )
+	{
+		Read( toRead );
+	}
+	void Read( UOXFile *toRead );
+	UI16 Unknown1( void ) const		{	return unknown1;		}
+	UI08 Unknown2( void ) const		{	return unknown2;		}
+	UI08 Unknown3( void ) const		{	return unknown3;		}
+	UI08 Unknown4( void ) const		{	return unknown4;		}
+	UI08 Unknown5( void ) const		{	return unknown5;		}
+	UI08 Hue( void ) const			{	return hue;				}
+	UI08 Quantity( void ) const		{	return quantity;		}
+	UI16 Animation( void ) const	{	return animation;		}
+	UI08 Weight( void ) const		{	return weight;			}
+	SI08 Layer( void ) const		{	return layer;			}
+	SI08 Height( void ) const		{	return height;			}
+	char *Name( void ) const		{	return (char *)name;	}
+
+	void Unknown1( UI16 newVal )	{	unknown1 = newVal;		}
+	void Unknown2( UI08 newVal )	{	unknown2 = newVal;		}
+	void Unknown3( UI08 newVal )	{	unknown3 = newVal;		}
+	void Unknown4( UI08 newVal )	{	unknown4 = newVal;		}
+	void Unknown5( UI08 newVal )	{	unknown5 = newVal;		}
+	void Animation( UI16 newVal )	{	animation = newVal;		}
+	void Weight( UI08 newVal )		{	weight = newVal;		}
+	void Layer( SI08 newVal )		{	layer = newVal;			}
+	void Height( SI08 newVal )		{	height = newVal;		}
+	void Hue( UI08 newVal )			{	hue = newVal;			}
+	void Quantity( UI08 newVal )	{	quantity = newVal;		}
+	void Name( const char *newVal )
+	{
+		strncpy( (char *)name, newVal, 20 );
+	}
+
+};
+
+class CLandHS : public CBaseTile
+{
+private:
+	UI32 unknown1;
+	UI16 textureID;
 	SI08 name[20];
 public:
-	CLand() : unknown1( 0 ), unknown2( 0 ) { name[0] = 0; }
-	CLand( std::ifstream &toRead );
-	CLand( UOXFile *toRead ) { Read( toRead ); }
-	void	Read( UOXFile *toRead );
+	CLandHS() : unknown1( 0 ), textureID( 0 )
+	{
+		name[0] = 0;
+	}
+	CLandHS( UOXFile *toRead )
+	{
+		Read( toRead );
+	}
 
-	char	Unknown1( void )	{	return unknown1;		}
-	char	Unknown2( void )	{	return unknown2;		}
-	char *	Name( void )		{	return (char *)name;	}
+	void Read( UOXFile *toRead );
 
-	void	Unknown1( char newVal )			{	unknown1 = newVal;				}
-	void	Unknown2( char newVal )			{	unknown2 = newVal;				}
-	void	Name( char *newVal )			{	strcpy( (char *)name, newVal );	}
+	UI32 Unknown1( void ) const		{	return unknown1;		}
+	UI16 TextureID( void ) const	{	return textureID;		}
+	char *Name( void ) const		{	return (char *)name;	}
+
+	void Unknown1( UI32 newVal )	{	unknown1 = newVal;		}
+	void TextureID( UI08 newVal )	{	textureID = newVal;		}
+	void Name( char *newVal )
+	{
+		strncpy( (char *)name, newVal, 20 );
+	}
 };
 
-class CTileUni : public BaseTile
+class CLand : public CBaseTile
 {
-protected:
-	SI08 basez;
-	char mType;		// 0 = Terrain, 1 = Item
-	UI16 id;
+private:
+	UI16 textureID;
+	SI08 name[20];
+public:
+	CLand() : textureID( 0 )
+	{
+		name[0] = 0;
+	}
+	CLand( UOXFile *toRead )
+	{
+		Read( toRead );
+	}
+
+	void Read( UOXFile *toRead );
+
+	UI16 TextureID( void ) const	{	return textureID;		}
+	char *Name( void ) const		{	return (char *)name;	}
+
+	void TextureID( UI08 newVal )	{	textureID = newVal;		}
+	void Name( char *newVal )
+	{
+		strncpy( (char *)name, newVal, 20 );
+	}
+};
+
+class CTileUni : public CBaseTile
+{
+private:
+	SI08 baseZ;
+	UI08 mType;		// 0 = Terrain, 1 = Item
+	UI16 mID;
+	SI08 top;
 	SI08 height;
-	UI08 weight;
 
 public:
-			CTileUni() : basez( 0 ), mType( 0 ), id( 0 ), height( 0 ), weight( 0 ) { }
-
-	SI08	BaseZ( void ) const		{ return basez;		}
-	char	Type( void ) const		{ return mType;		}
-	UI16	ID( void ) const		{ return id;		}
-	SI08	Height( void ) const	{ return height;	}
-	UI08	Weight( void ) const	{ return weight;	}
-
-	void	BaseZ( SI08 nVal )		{ basez = nVal;		}
-	void	Type( char nVal )		{ mType = nVal;		}
-	void	ID( UI16 nVal )			{ id = nVal;		}
-	void	Height( SI08 nVal )		{ height = nVal;	}
-	void	Weight( UI08 nVal )		{ weight = nVal;	}
-	CTileUni	&operator=( CLand &toCopy )
+	CTileUni() : baseZ( 0 ), mType( 0 ), mID( 0 ), top( 0 ), height( 0 )
 	{
-		Flag1( toCopy.Flag1() );
-		Flag2( toCopy.Flag2() );
-		Flag3( toCopy.Flag3() );
-		Flag4( toCopy.Flag4() );
-		return (*this);
 	}
-	CTileUni	&operator=( CTile &toCopy )
-	{
-		Flag1( toCopy.Flag1() );
-		Flag2( toCopy.Flag2() );
-		Flag3( toCopy.Flag3() );
-		Flag4( toCopy.Flag4() );
-		Height( toCopy.Height() );
-		Weight( toCopy.Weight() );
-		return (*this);
-	}
+
+	SI08 BaseZ( void ) const	{	return baseZ;	}
+	SI08 Top( void ) const		{	return top;		}
+	UI08 Type( void ) const		{	return mType;	}
+	SI08 Height( void )  const    {   return height; }
+	UI16 GetID( void )  const    {   return mID; }
+
+	void BaseZ( SI08 nVal )		{	baseZ	= nVal;	}
+	void Type( UI08 nVal )		{	mType	= nVal;	}
+	void Top( SI08 nVal )		{	top		= nVal;	}
+	void Height(SI08 nval)      {   height  = nval; }
+	void SetID(UI16 nval)      {   mID  = nval; }
 };
+
+}
 
 #endif
 

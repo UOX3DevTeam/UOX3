@@ -9,6 +9,6 @@ function command_SETRACE( socket, cmdString )
 	{
 		var pUser = socket.currentChar;
 		var race = parseInt( cmdString );
-		RaceGate( socket, pUser, race );
+		pUser.raceID = race;
 	}
 }

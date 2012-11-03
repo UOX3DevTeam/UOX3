@@ -61,6 +61,7 @@ value=2 1
 restock=20
 decay=1
 good=51
+dir=2
 }
 
 [0x184d]
@@ -85,6 +86,7 @@ value=2 1
 restock=20
 decay=1
 good=51
+dir=2
 }
 
 

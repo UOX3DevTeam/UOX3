@@ -99,18 +99,18 @@
 530=server/light/lamp03_off.js
 531=server/light/heatingstand01_on.js
 532=server/light/heatingstand01_off.js
-532=server/light/heatingstand02_on.js
-533=server/light/heatingstand02_off.js
-534=server/light/candle05_on.js
-535=server/light/candle05_off.js
-536=server/light/candle06_on.js
-537=server/light/candle06_off.js
-538=server/light/candle07_on.js
-539=server/light/candle07_off.js
-540=server/light/candle08_on.js
-541=server/light/candle08_off.js
-542=server/light/candle09_on.js
-546=server/light/candle09_off.js
+533=server/light/heatingstand02_on.js
+534=server/light/heatingstand02_off.js
+535=server/light/candle05_on.js
+536=server/light/candle05_off.js
+537=server/light/candle06_on.js
+538=server/light/candle06_off.js
+539=server/light/candle07_on.js
+540=server/light/candle07_off.js
+541=server/light/candle08_on.js
+542=server/light/candle08_off.js
+543=server/light/candle09_on.js
+544=server/light/candle09_off.js
 //-------------------------------------------
 // Resource Harvesting[2000-2099]
 2001=server/resource/apples.js
@@ -146,6 +146,7 @@
 3103=npc/pets/static_packhorse.js
 3104=npc/pets/static_packllama.js
 // pets from pet static end
+3105=npc/ai/stablemaster.js
 // ------------------------
 
 // AI-Stuff
@@ -188,6 +189,10 @@
 5015=item/bankcheck.js
 5016=item/moonstone.js
 5017=item/spyglass.js
+5018=item/magicscroll.js
+5019=item/bola.js
+5020=item/diceandcup.js
+5021=item/bedroll.js
 }
 
 //-------------------------------------------
@@ -249,6 +254,7 @@
 1051=commands/targeting/rndtile.js
 1052=commands/time.js
 1053=commands/accountlogins.js
+1054=commands/fixcontweight.js
 }
 
 //-------------------------------------------

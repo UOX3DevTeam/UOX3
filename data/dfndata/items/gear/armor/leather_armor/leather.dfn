@@ -5,7 +5,6 @@
 get=leather_sleeves
 name=leather sleeves
 id=0x13c5
-def=2
 }
 
 [0x13c6]
@@ -13,7 +12,6 @@ def=2
 get=leather_gloves
 name=leather gloves
 id=0x13c6
-def=1
 }
 
 [0x13c7]
@@ -21,7 +19,6 @@ def=1
 get=leather_gorget
 name=leather gorget
 id=0x13c7
-def=1
 }
 
 [0x1db9]
@@ -36,7 +33,6 @@ id=0x1db9
 get=leather_leggings
 name=leather leggings
 id=0x13cb
-def=3
 }
 
 [0x13cc]
@@ -44,7 +40,6 @@ def=3
 get=leather_tunic
 name=leather tunic
 id=0x13cc
-def=4
 }
 
 [0x13cd]
@@ -52,7 +47,6 @@ def=4
 get=leather_sleeves
 name=leather sleeves
 id=0x13cd
-def=2
 }
 
 [0x13ce]
@@ -60,7 +54,6 @@ def=2
 get=leather_gloves
 name=leather gloves
 id=0x13ce
-def=1
 }
 
 [0x13d2]
@@ -68,14 +61,12 @@ def=1
 get=leather_leggings
 name=leather leggings
 id=0x13d2
-def=3
 }
 
 [0x1dba]
 { right facing
 get=leather_cap
 name=leather cap
-id=0x1dba
 }
 
 [0x13d3]
@@ -83,7 +74,6 @@ id=0x1dba
 get=leather_tunic
 name=leather tunic
 id=0x13d3
-def=4
 }
 
 // Female
@@ -93,7 +83,6 @@ def=4
 get=leather_shorts
 name=leather shorts
 id=0x1c00
-def=2
 }
 
 [0x1c01]
@@ -101,7 +90,6 @@ def=2
 get=leather_shorts
 name=leather shorts
 id=0x1c01
-def=2
 }
 
 [0x1c06]
@@ -109,7 +97,6 @@ def=2
 get=leather_armor
 name=leather armor
 id=0x1c06
-def=6
 }
 
 [0x1c07]
@@ -117,7 +104,6 @@ def=6
 get=leather_armor
 name=leather armor
 id=0x1c07
-def=6
 }
 
 [0x1c08]
@@ -125,7 +111,6 @@ def=6
 get=leather_skirt
 name=leather skirt
 id=0x1c08
-def=2
 }
 
 [0x1c09]
@@ -133,7 +118,6 @@ def=2
 get=leather_skirt
 name=leather skirt
 id=0x1c09
-def=2
 }
 
 [0x1c0a]
@@ -141,7 +125,6 @@ def=2
 get=leather_bustier
 name=leather bustier
 id=0x1c0a
-def=6
 }
 
 [0x1c0b]
@@ -149,7 +132,6 @@ def=6
 get=leather_bustier
 name=leather bustier
 id=0x1c0b
-def=6
 }
 
 //Necromancer newbie armor

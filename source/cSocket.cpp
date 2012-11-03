@@ -1,17 +1,20 @@
 #include "uox3.h"
-#include "packets.h"
+#include "CPacketSend.h"
+#include "speech.h"
+#include "cRaces.h"
+#include "cGuild.h"
+#include "commands.h"
+#include "combat.h"
+#include "classes.h"
+#include "Dictionary.h"
+#include "CJSEngine.h"
 
-#if defined(__unix__)
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <errno.h>
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#include <sys/ioctl.h>
 #endif
 
-const UI32 DefaultClientVersion = calcserial( 2, 0, 0, 0 );
-const ClientTypes DefaultClientType = CV_NORMAL;
+namespace UOX
+{
 
 //	1.0		Abaddon		29th November, 2000
 //			Initial implementation
@@ -19,7 +22,74 @@ const ClientTypes DefaultClientType = CV_NORMAL;
 //			Also has logging support, and non-blocking IO support
 //			Makes use of a socket_error exception class
 
+#if defined( UOX_DEBUG_MODE )
+const bool LOGDEFAULT = true;
+#else
 const bool LOGDEFAULT = false;
+#endif
+
+void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
+{
+	outStream << "  ";
+	for( UI08 parseBuff = 0; parseBuff < num; ++parseBuff )
+	{
+		if( strToDump[parseBuff] && strToDump[parseBuff] != 0x0A && strToDump[parseBuff] != 0x0D && strToDump[parseBuff] != 0x09 )
+			outStream << strToDump[parseBuff];
+		else
+			outStream << ".";
+	}
+	outStream << '\n';
+}
+
+void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 >& myBuffer )
+{
+	outStream << std::hex;
+	char qbuffer[8];
+	memset( qbuffer, 0x00, 8 );
+	UI08 j = 0;
+	for( size_t i = 0; i < buffLen; ++i )
+	{
+		qbuffer[j++] = myBuffer[i];
+		outStream << " " << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
+		if( j > 7 )
+		{
+			dumpStream( outStream, qbuffer, 8 );
+			j = 0;
+		}
+	}
+	if( j < 8 )
+	{
+		for( UI08 k = j; k < 8; ++k )
+			outStream << " --";
+		dumpStream( outStream, qbuffer, j );
+	}
+	outStream << std::endl << std::endl;
+}
+
+void doPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
+{
+	outStream << std::hex;
+	char qbuffer[8];
+	memset( qbuffer, 0x00, 8 );
+	UI08 j = 0;
+	for( size_t i = 0; i < buffLen; ++i )
+	{
+		qbuffer[j++] = myBuffer[i];
+		outStream << " " << (myBuffer[i] < 16?"0":"") << (UI16)myBuffer[i];
+		if( j > 7 )
+		{
+			dumpStream( outStream, qbuffer, 8 );
+			j = 0;
+		}
+	}
+	if( j < 8 )
+	{
+		for( UI08 k = j; k < 8; ++k )
+			outStream << " --";
+		dumpStream( outStream, qbuffer, j );
+	}
+	outStream << std::endl << std::endl;
+}
 
 long socket_error::ErrorNumber( void ) const
 {
@@ -44,25 +114,25 @@ socket_error::socket_error( const long errorNumber ) : errorNum( errorNumber ), 
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::CliSocket( void )
+//|   Function    -  size_t CSocket::CliSocket( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the socket identifier for our socket
 //o---------------------------------------------------------------------------o
-int cSocket::CliSocket( void ) const
+size_t CSocket::CliSocket( void ) const
 {
 	return cliSocket;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::CliSocket( int newValue )
+//|   Function    -  void CSocket::CliSocket( size_t newValue )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Assigns a new socket value
 //o---------------------------------------------------------------------------o
-void cSocket::CliSocket( int newValue )
+void CSocket::CliSocket( size_t newValue )
 {
 	cliSocket = newValue;
 	UI32 mode = 1;
@@ -71,637 +141,556 @@ void cSocket::CliSocket( int newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  bool cSocket::CryptClient( void )
+//|   Function    -  bool CSocket::CryptClient( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the true if the socket is set to crypt mode
 //o---------------------------------------------------------------------------o
-bool cSocket::CryptClient( void ) const
+bool CSocket::CryptClient( void ) const
 {
 	return cryptclient;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::CryptClient( bool newValue )
+//|   Function    -  void CSocket::CryptClient( bool newValue )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the value of the socket's crypt mode
 //o---------------------------------------------------------------------------o
-void cSocket::CryptClient( bool newValue )
+void CSocket::CryptClient( bool newValue )
 {
 	cryptclient = newValue;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char *cSocket::XText( void )
+//|   Function    -  std::string CSocket::XText( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the socket's xtext buffer
 //o---------------------------------------------------------------------------o
-char *cSocket::XText( void )
+std::string CSocket::XText( void )
 {
-	return &xtext[0];
+	return xtext;
 }
 
-void cSocket::XText( const char *newValue )
+void CSocket::XText( std::string newValue )
 {
-	strncpy( xtext, newValue, 64 );
-	xtext[64] = 0;
+	xtext = newValue;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  CItem *cSocket::AddMItem( void )
+//|   Function    -  CBaseObject *TempObj()
+//|   Date        -  October 31, 2003
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Temporary storage for CChar and CItem objects
+//o---------------------------------------------------------------------------o
+CBaseObject *CSocket::TempObj( void ) const
+{
+	return tmpObj;
+}
+void CSocket::TempObj( CBaseObject *newValue )
+{
+	tmpObj = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI32 TempInt()
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the socket's addmitem
+//|   Purpose     -  The tempint of the socket
 //o---------------------------------------------------------------------------o
-CItem *cSocket::AddMItem( void ) const
-{
-	return addmitem;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddMItem( CItem *newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's addmitem
-//o---------------------------------------------------------------------------o
-void cSocket::AddMItem( CItem *newValue )
-{
-	addmitem = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI08 cSocket::AddZ( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Return's the socket's addz
-//o---------------------------------------------------------------------------o
-SI08 cSocket::AddZ( void ) const
-{
-	return addz;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddZ( SI08 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's addz
-//o---------------------------------------------------------------------------o
-void cSocket::AddZ( SI08 newValue )
-{
-	addz = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::AddX( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the addx associated with the socket
-//o---------------------------------------------------------------------------o
-SI32 cSocket::AddX( void ) const
-{
-	return addx[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddX( int newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's addx value
-//o---------------------------------------------------------------------------o
-void cSocket::AddX( SI32 newValue )
-{
-	addx[0] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::AddY( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the addy associated with the socket
-//o---------------------------------------------------------------------------o
-SI32 cSocket::AddY( void ) const
-{
-	return addy[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddY( int newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's addy value
-//o---------------------------------------------------------------------------o
-void cSocket::AddY( SI32 newValue )
-{
-	addy[0] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::AddX2( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the second addx associated with the socket
-//o---------------------------------------------------------------------------o
-SI32 cSocket::AddX2( void ) const
-{
-	return addx[1];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddX2( int newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's second addx value
-//o---------------------------------------------------------------------------o
-void cSocket::AddX2( SI32 newValue )
-{
-	addx[1] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::AddY2( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the socket's second addy value
-//o---------------------------------------------------------------------------o
-SI32 cSocket::AddY2( void ) const
-{
-	return addy[1];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddY2( int newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the socket's second addy value
-//o---------------------------------------------------------------------------o
-void cSocket::AddY2( SI32 newValue )
-{
-	addy[1] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 cSocket::AddID1( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the first addid associated with the socket
-//o---------------------------------------------------------------------------o
-UI08 cSocket::AddID1( void ) const
-{
-	return addid[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 cSocket::AddID2( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the second addid associated with the socket
-//o---------------------------------------------------------------------------o
-UI08 cSocket::AddID2( void ) const
-{
-	return addid[1];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 cSocket::AddID3( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the third addid associated with the socket
-//o---------------------------------------------------------------------------o
-UI08 cSocket::AddID3( void ) const
-{
-	return addid[2];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 cSocket::AddID4( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the fourth addid associated with the socket
-//o---------------------------------------------------------------------------o
-UI08 cSocket::AddID4( void ) const
-{
-	return addid[3];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID1( UI08 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the first addid associated with the socket
-//o---------------------------------------------------------------------------o
-void cSocket::AddID1( UI08 newValue )
-{
-	addid[0] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID2( UI08 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the second addid associated with the socket
-//o---------------------------------------------------------------------------o
-void cSocket::AddID2( UI08 newValue )
-{
-	addid[1] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID3( UI08 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the third addid associated with the socket
-//o---------------------------------------------------------------------------o
-void cSocket::AddID3( UI08 newValue )
-{
-	addid[2] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID4( UI08 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the fourth addid associated with the socket
-//o---------------------------------------------------------------------------o
-void cSocket::AddID4( UI08 newValue )
-{
-	addid[3] = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  char cSocket::DyeAll( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the dyeall status of a socket
-//o---------------------------------------------------------------------------o
-char cSocket::DyeAll( void ) const
-{
-	return dyeall;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::DyeAll( char newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the dyeall status of a socket
-//o---------------------------------------------------------------------------o
-void cSocket::DyeAll( char newValue )
-{
-	dyeall = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::CloseSocket( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Closes the open socket
-//o---------------------------------------------------------------------------o
-void cSocket::CloseSocket( void )
-{
-	closesocket( cliSocket );
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  CHARACTER cSocket::Currchar( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the game character associated with the current socket
-//o---------------------------------------------------------------------------o
-CHARACTER cSocket::Currchar( void ) const
-{
-	return currchar;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::Currchar( CHARACTER newChar )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the game character associated with the current socket
-//o---------------------------------------------------------------------------o
-void cSocket::Currchar( CHARACTER newChar )
-{
-	currchar = newChar;
-	if( currchar != INVALIDSERIAL )
-		currCharObj = &chars[currchar];
-	else
-		currCharObj = NULL;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool cSocket::FirstPacket( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if it's the first packet received
-//o---------------------------------------------------------------------------o
-bool cSocket::FirstPacket( void ) const
-{
-	return firstPacket;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::FirstPacket( bool newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the socket has received it's first packet yet
-//o---------------------------------------------------------------------------o
-void cSocket::FirstPacket( bool newValue )
-{
-	firstPacket = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI32 cSocket::IdleTimeout( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the time point at which the char times out
-//o---------------------------------------------------------------------------o
-SI32 cSocket::IdleTimeout( void ) const
-{
-	return idleTimeout;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::IdleTimeout( long newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the time point at which the char times out
-//o---------------------------------------------------------------------------o
-void cSocket::IdleTimeout( SI32 newValue )
-{
-	idleTimeout = newValue;
-	wasIdleWarned = false;
-}
-
-bool cSocket::WasIdleWarned( void ) const
-{
-	return wasIdleWarned;
-}
-
-void cSocket::WasIdleWarned( bool value )
-{
-	wasIdleWarned = value;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 *cSocket::Buffer( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns a pointer to the buffer of the socket
-//o---------------------------------------------------------------------------o
-UI08 *cSocket::Buffer( void )
-{
-	return &buffer[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 *cSocket::OutBuffer( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns a pointer to the outgoing buffer of the socket
-//o---------------------------------------------------------------------------o
-UI08 *cSocket::OutBuffer( void )
-{
-	return &outbuffer[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 *cSocket::TBuffer( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns a pointer to the socket's TBuffer
-//o---------------------------------------------------------------------------o
-UI08 *cSocket::TBuffer( void )
-{
-	return &tbuffer[0];
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI16 cSocket::WalkSequence( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the point in the walk sequence of the socket
-//o---------------------------------------------------------------------------o
-SI16 cSocket::WalkSequence( void ) const
-{
-	return walkSequence;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::WalkSequence( SI16 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the walk sequence value of the socket
-//o---------------------------------------------------------------------------o
-void cSocket::WalkSequence( SI16 newValue )
-{
-	walkSequence = newValue;
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    -	UI16 cSocket::AcctNo( void )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Returns the ID of the account number socket belongs to
-//o---------------------------------------------------------------------------o
-UI16 cSocket::AcctNo( void ) const
-{
-	return wAccountID;
-}
-
-//o---------------------------------------------------------------------------o
-//|		Function    -	void cSocket::AcctNo( UI16 newValue )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Sets the ID of the account number the socket belongs to
-//o---------------------------------------------------------------------------o
-void cSocket::AcctNo( UI16 newValue )
-{
-	if( !Accounts->GetAccountByID( newValue, (ACCOUNTSBLOCK&)actbAccount ) )
-	{
-		wAccountID = AB_INVALID_ID;
-		actbAccount.wAccountIndex = AB_INVALID_ID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  int cSocket::TempInt( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the tempint of the socket
-//o---------------------------------------------------------------------------o
-SI32 cSocket::TempInt( void ) const
+SI32 CSocket::TempInt( void ) const
 {
 	return tempint;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::TempInt( int newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the tempint value of the socket
-//o---------------------------------------------------------------------------o
-void cSocket::TempInt( SI32 newValue )
+void CSocket::TempInt( SI32 newValue )
 {
 	tempint = newValue;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI08 cSocket::AddID5( void )
+//|   Function    -  SI08 ClickZ()
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the addid5 of the socket
+//|   Purpose     -  Return's the socket's addz
 //o---------------------------------------------------------------------------o
-SI08 cSocket::AddID5( void ) const
+SI08 CSocket::ClickZ( void ) const
 {
-	return addid5;
+	return clickz;
+}
+
+void CSocket::ClickZ( SI08 newValue )
+{
+	clickz = newValue;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::AddID5( SI08 newValue )
+//|   Function    -  UI32 AddID()
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the fifth addid associated with the socket
+//|   Purpose     -  The addid associated with the socket
 //o---------------------------------------------------------------------------o
-void cSocket::AddID5( SI08 newValue )
+void CSocket::AddID( UI32 newValue )
 {
-	addid5 = newValue;
+	addid[0] = (UI08)( newValue>>24 );
+	addid[1] = (UI08)( newValue>>16 );
+	addid[2] = (UI08)( newValue>>8 );
+	addid[3] = (UI08)( newValue%256 );
 }
 
-cSocket::cSocket() : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID( AB_INVALID_ID ),
-tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( NULL ), newClient( true ), firstPacket( true ), range( 15 ),
-cryptclient( false ), cliSocket( INVALID_SOCKET ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
-outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postAckCount( 0 ), postCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
-pX( 0 ), pY( 0 ), pZ( 0 ), lang( UT_ENU ), cliType( DefaultClientType ), clientVersion( DefaultClientVersion ), bytesReceived( 0 ), bytesSent( 0 )
+UI32 CSocket::AddID( void ) const
 {
-	InternalReset();
-	actbAccount.wAccountIndex = AB_INVALID_ID;
+	return calcserial( addid[0], addid[1], addid[2], addid[3] );
 }
 
-cSocket::~cSocket()
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 AddID1()
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The first addid associated with the socket
+//o---------------------------------------------------------------------------o
+UI08 CSocket::AddID1( void ) const
+{
+	return addid[0];
+}
+void CSocket::AddID1( UI08 newValue )
+{
+	addid[0] = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 AddID2()
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The second addid associated with the socket
+//o---------------------------------------------------------------------------o
+UI08 CSocket::AddID2( void ) const
+{
+	return addid[1];
+}
+
+void CSocket::AddID2( UI08 newValue )
+{
+	addid[1] = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 AddID3()
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The third addid associated with the socket
+//o---------------------------------------------------------------------------o
+UI08 CSocket::AddID3( void ) const
+{
+	return addid[2];
+}
+
+void CSocket::AddID3( UI08 newValue )
+{
+	addid[2] = newValue;
+}
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 AddID4()
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  The fourth addid associated with the socket
+//o---------------------------------------------------------------------------o
+UI08 CSocket::AddID4( void ) const
+{
+	return addid[3];
+}
+
+void CSocket::AddID4( UI08 newValue )
+{
+	addid[3] = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 DyeAll( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  DyeAll status of a socket
+//o---------------------------------------------------------------------------o
+UI08 CSocket::DyeAll( void ) const
+{
+	return dyeall;
+}
+
+void CSocket::DyeAll( UI08 newValue )
+{
+	dyeall = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void CSocket::CloseSocket( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Closes the open socket
+//o---------------------------------------------------------------------------o
+void CSocket::CloseSocket( void )
 {
 	closesocket( cliSocket );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  char cSocket::CurrentSpellType( void )
+//|   Function    -  bool CSocket::FirstPacket( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if it's the first packet received
+//o---------------------------------------------------------------------------o
+bool CSocket::FirstPacket( void ) const
+{
+	return firstPacket;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void CSocket::FirstPacket( bool newValue )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets whether the socket has received it's first packet yet
+//o---------------------------------------------------------------------------o
+void CSocket::FirstPacket( bool newValue )
+{
+	firstPacket = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void/bool CSocket::ForceOffline( void/bool newValue )
+//|   Date        -  March 1st, 2012
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Used by client-restriction code to mark connections for delayed kicking
+//o---------------------------------------------------------------------------o
+bool CSocket::ForceOffline( void ) const
+{
+	return forceOffline;
+}
+void CSocket::ForceOffline( bool newValue )
+{
+	forceOffline = newValue;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI32 CSocket::IdleTimeout( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the time point at which the char times out
+//o---------------------------------------------------------------------------o
+SI32 CSocket::IdleTimeout( void ) const
+{
+	return idleTimeout;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void CSocket::IdleTimeout( long newValue )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the time point at which the char times out
+//o---------------------------------------------------------------------------o
+void CSocket::IdleTimeout( SI32 newValue )
+{
+	idleTimeout = newValue;
+	wasIdleWarned = false;
+}
+
+bool CSocket::WasIdleWarned( void ) const
+{
+	return wasIdleWarned;
+}
+
+void CSocket::WasIdleWarned( bool value )
+{
+	wasIdleWarned = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 *CSocket::Buffer( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns a pointer to the buffer of the socket
+//o---------------------------------------------------------------------------o
+UI08 *CSocket::Buffer( void )
+{
+	return &buffer[0];
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  UI08 *CSocket::OutBuffer( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns a pointer to the outgoing buffer of the socket
+//o---------------------------------------------------------------------------o
+UI08 *CSocket::OutBuffer( void )
+{
+	return &outbuffer[0];
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SI16 CSocket::WalkSequence( void )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns the point in the walk sequence of the socket
+//o---------------------------------------------------------------------------o
+SI16 CSocket::WalkSequence( void ) const
+{
+	return walkSequence;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void CSocket::WalkSequence( SI16 newValue )
+//|   Date        -  November 29th, 2000
+//|   Programmer  -  Abaddon
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Sets the walk sequence value of the socket
+//o---------------------------------------------------------------------------o
+void CSocket::WalkSequence( SI16 newValue )
+{
+	walkSequence = newValue;
+}
+
+void CSocket::AddTrigWord( UI16 toAdd )
+{
+	trigWords.push_back( toAdd );
+}
+
+UI16 CSocket::FirstTrigWord( void )
+{
+	UI16 retVal	= 0xFFFF;
+	twIter		= trigWords.begin();
+	if( !FinishedTrigWords() )
+		retVal = (*twIter);
+	return retVal;
+}
+
+UI16 CSocket::NextTrigWord( void )
+{
+	UI16 retVal = 0xFFFF;
+	if( !FinishedTrigWords() )
+	{
+		++twIter;
+		if( !FinishedTrigWords() )
+			retVal = (*twIter);
+	}
+	return retVal;
+}
+
+bool CSocket::FinishedTrigWords( void )
+{
+	return ( twIter == trigWords.end() );
+}
+
+void CSocket::ClearTrigWords( void )
+{
+	trigWords.resize( 0 );
+	twIter = trigWords.end();
+}
+
+const SI32				DEFSOCK_IDLETIMEOUT				= -1;
+const SI32				DEFSOCK_TEMPINT					= 0;
+const UI08				DEFSOCK_DYEALL					= 0;
+const SI08				DEFSOCK_CLICKZ					= -1;
+const SI16				DEFSOCK_CLICKX					= -1;
+const SI16				DEFSOCK_CLICKY					= -1;
+const bool				DEFSOCK_NEWCLIENT				= true;
+const bool				DEFSOCK_FIRSTPACKET				= true;
+const UI08				DEFSOCK_RANGE					= 18;
+const bool				DEFSOCK_CRYPTCLIENT				= false;
+const SI16				DEFSOCK_WALKSEQUENCE			= -1;
+const char				DEFSOCK_CURSPELLTYPE			= 0;
+const int				DEFSOCK_OUTLENGTH				= 0;
+const int				DEFSOCK_INLENGTH				= 0;
+const bool				DEFSOCK_LOGGING					= LOGDEFAULT;
+const int				DEFSOCK_POSTACKCOUNT			= 0;
+const PickupLocations	DEFSOCK_PSPOT					= PL_NOWHERE;
+const SERIAL			DEFSOCK_PFROM					= INVALIDSERIAL;
+const SI16				DEFSOCK_PX						= 0;
+const SI16				DEFSOCK_PY						= 0;
+const SI08				DEFSOCK_PZ						= 0;
+const UnicodeTypes		DEFSOCK_LANG					= UT_ENU;
+const ClientTypes		DEFSOCK_CLITYPE					= CV_DEFAULT;
+const ClientVersions	DEFSOCK_CLIVERSHORT				= CVS_DEFAULT;
+const UI32				DEFSOCK_CLIENTVERSION			= calcserial( 4, 0, 0, 0 );
+const UI32				DEFSOCK_BYTESSENT				= 0;
+const UI32				DEFSOCK_BYTESRECEIVED			= 0;
+const bool				DEFSOCK_RECEIVEDVERSION			= false;
+const bool				DEFSOCK_LOGINCOMPLETE			= false;
+
+CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ), 
+tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
+range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
+currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
+postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
+pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
+{
+	InternalReset();
+}
+
+CSocket::~CSocket()
+{
+	JSEngine->ReleaseObject( IUE_SOCK, this );
+
+	if( ValidateObject( currCharObj ) )
+		currCharObj->SetSocket( NULL );
+	closesocket( cliSocket );
+}
+
+void CSocket::InternalReset( void )
+{
+	memset( buffer, 0, MAXBUFFER );
+	memset( outbuffer, 0, MAXBUFFER );
+	xtext.reserve( MAXBUFFER );
+	addid[0] = addid[1] = addid[2] = addid[3] = 0;
+	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
+	// set the socket to nonblocking
+	UI32 mode = 1;
+	ioctlsocket( cliSocket, FIONBIO, &mode );
+	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
+		pcTimers[mTID] = 0;
+	accountNum = AB_INVALID_ID;
+	trigWords.resize( 0 );
+	twIter = trigWords.end();
+	postAcked.clear();
+	ackIter = postAcked.end();
+	largeBuffer.resize( 0 );
+	largePackBuffer.resize( 0 );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool LoginComplete()
+//|   Date        -  August 26th, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns whether this socket has fully logged in
+//o---------------------------------------------------------------------------o
+bool CSocket::LoginComplete( void ) const
+{
+	return loginComplete;
+}
+void CSocket::LoginComplete( bool newVal )
+{
+	loginComplete = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  char CSocket::CurrentSpellType( void )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Returns the current spell type of the socket
+//|						0 - Normal spellcast
+//|						1 - Scroll
+//|						2 - Wand
 //o---------------------------------------------------------------------------o
-char cSocket::CurrentSpellType( void ) const
+UI08 CSocket::CurrentSpellType( void ) const
 {
 	return currentSpellType;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  void cSocket::CurrentSpellType( char newValue )
+//|   Function    -  void CSocket::CurrentSpellType( char newValue )
 //|   Date        -  November 29th, 2000
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the spell type of the socket
 //o---------------------------------------------------------------------------o
-void cSocket::CurrentSpellType( char newValue )
+void CSocket::CurrentSpellType( UI08 newValue )
 {
 	currentSpellType = newValue;
 }
 
-bool cSocket::FlushBuffer( bool doLog )
+bool CSocket::FlushBuffer( bool doLog )
 {
 	if( outlength > 0 )
 	{
-		int len;
 		if( cryptclient )
 		{
-			char xoutbuffer[MAXBUFFER*2];
+			UI32 len;
+			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
-			send( cliSocket, xoutbuffer, len, 0 );
+			send( cliSocket, (char *)xoutbuffer, len, 0 );
 		}
 		else
 			send( cliSocket, (char *)&outbuffer[0], outlength, 0 );
 		if( Logging() && doLog )
 		{
-			FILE *fp = NULL;
-			char filename[MAX_PATH];
 			SERIAL toPrint;
-			if( currchar == INVALIDSERIAL )
+			if( !ValidateObject( currCharObj ) )
 				toPrint = INVALIDSERIAL;
 			else
-				toPrint = chars[currchar].GetSerial();
-			sprintf( filename, "%s/logs/%i.snd", cwmWorldState->ServerData()->GetRootDirectory(), toPrint );
-			char qbuffer[8];
-			int j = 0;
-			memset( qbuffer, 0x00, 8 );
-			if( ( fp = fopen( filename, "a" ) ) != NULL )
+				toPrint = currCharObj->GetSerial();
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+			std::ofstream logDestination;
+			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
+			if( logDestination.is_open() )
 			{
-				fprintf( fp, "[SEND]Packet: 0x%2X --> Length: %li\n", outbuffer[0], outlength );
-				for( int i = 0; i < outlength; i++ )
-				{
-					qbuffer[j++] = outbuffer[i];
-					fprintf( fp, "0x%2X ", outbuffer[i] );
-					if( j >= 7 )
-					{
-						fprintf( fp, "  %s\n", qbuffer );
-						j = 0;
-					}
-				}
-				fprintf( fp, "  %s\n\n", qbuffer );
-				fclose( fp );
+				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
+				doPacketLogging( logDestination, outlength, outbuffer );
+				logDestination.close();
 			}
 			else
+				Console.Error( "Failed to open socket log %s", logFile.c_str() );
+			bytesSent += outlength;
+		}
+		outlength = 0;
+		return true;
+	}
+	else
+		return false;
+}
+
+bool CSocket::FlushLargeBuffer( bool doLog )
+{
+	if( outlength > 0 )
+	{
+		if( cryptclient )
+		{
+			largePackBuffer.resize( outlength * 2 );
+			int len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
+			send( cliSocket, (char *)&largePackBuffer[0], len, 0 );
+		}
+		else
+			send( cliSocket, (char *)&largeBuffer[0], outlength, 0 );
+
+		if( Logging() && doLog )
+		{
+			SERIAL toPrint;
+			if( !ValidateObject( currCharObj ) )
+				toPrint = INVALIDSERIAL;
+			else
+				toPrint = currCharObj->GetSerial();
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+			std::ofstream logDestination;
+			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
+			if( logDestination.is_open() )
 			{
-				Console.Error( 1, "Failed to open socket log %s", filename );
+				logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16?"0":"") << std::hex << (UI16)outbuffer[0] << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
+				doPacketLogging( logDestination, outlength, largeBuffer );
+				logDestination.close();
 			}
+			else
+				Console.Error( "Failed to open socket log %s", logFile.c_str() );
 			bytesSent += outlength;
 		}
 		outlength = 0;
@@ -725,10 +714,10 @@ static UI32 bit_table[257][2] =
 	{0x09, 0x87}, 	{0x09, 0xC6}, 	{0x09, 0x177},	{0x09, 0x89}, 	{0x09, 0xD6}, 	{0x09, 0x8C}, 	{0x09, 0x1EE},	{0x09, 0x1EB}, 
 	{0x09, 0x84}, 	{0x09, 0x164}, 	{0x09, 0x175},	{0x09, 0x1CD}, 	{0x08, 0x5E}, 	{0x09, 0x88}, 	{0x09, 0x12B},	{0x09, 0x172}, 
 	{0x09, 0x10A},	{0x09, 0x8D}, 	{0x09, 0x13A},	{0x09, 0x11C}, 	{0x0A, 0x1E1},	{0x0A, 0x1E0}, 	{0x09, 0x187},	{0x0A, 0x1DC}, 
-	{0x0A, 0x1DF},	{0x07, 0x74}, 	{0x09, 0x19F},	{0x08, 0x8D},		{0x08, 0xE4}, 	{0x07, 0x79}, 	{0x09, 0xEA}, 	{0x09, 0xE1}, 
+	{0x0A, 0x1DF},	{0x07, 0x74}, 	{0x09, 0x19F},	{0x08, 0x8D},	{0x08, 0xE4}, 	{0x07, 0x79}, 	{0x09, 0xEA}, 	{0x09, 0xE1}, 
 	{0x08, 0x40}, 	{0x07, 0x41}, 	{0x09, 0x10B},	{0x09, 0xB0}, 	{0x08, 0x6A}, 	{0x08, 0xC1}, 	{0x07, 0x71}, 	{0x07, 0x78}, 
 	{0x08, 0xB1}, 	{0x09, 0x14C}, 	{0x07, 0x43}, 	{0x08, 0x76}, 	{0x07, 0x66}, 	{0x07, 0x4D}, 	{0x09, 0x8A}, 	{0x06, 0x2F}, 
-	{0x08, 0xC9},		{0x09, 0xCE}, 	{0x09, 0x149},	{0x09, 0x160}, 	{0x0A, 0x1BA}, 	{0x0A, 0x19E}, 	{0x0A, 0x39F}, 	{0x09, 0xE5}, 
+	{0x08, 0xC9},	{0x09, 0xCE}, 	{0x09, 0x149},	{0x09, 0x160}, 	{0x0A, 0x1BA}, 	{0x0A, 0x19E}, 	{0x0A, 0x39F}, 	{0x09, 0xE5}, 
 	{0x09, 0x194}, 	{0x09, 0x184}, 	{0x09, 0x126}, 	{0x07, 0x30}, 	{0x08, 0x6C}, 	{0x09, 0x121}, 	{0x09, 0x1E8}, 	{0x0A, 0x1C1}, 
 	{0x0A, 0x11D}, 	{0x0A, 0x163}, 	{0x0A, 0x385}, 	{0x0A, 0x3DB}, 	{0x0A, 0x17D}, 	{0x0A, 0x106}, 	{0x0A, 0x397}, 	{0x0A, 0x24E}, 
 	{0x07, 0x2E}, 	{0x08, 0x98}, 	{0x0A, 0x33C}, 	{0x0A, 0x32E}, 	{0x0A, 0x1E9}, 	{0x09, 0xBF}, 	{0x0A, 0x3DF}, 	{0x0A, 0x1DD}, 
@@ -742,69 +731,91 @@ static UI32 bit_table[257][2] =
 	{0x0A, 0x17C}, 	{0x0A, 0x30A}, 	{0x0A, 0x2E0}, 	{0x0A, 0x276}, 	{0x0A, 0x250}, 	{0x0B, 0x3E3}, 	{0x0A, 0x396}, 	{0x0A, 0x18F}, 
 	{0x0A, 0x204}, 	{0x0A, 0x206}, 	{0x0A, 0x230}, 	{0x0A, 0x265}, 	{0x0A, 0x212}, 	{0x0A, 0x23E}, 	{0x0B, 0x3AC}, 	{0x0B, 0x393}, 
 	{0x0B, 0x3E1}, 	{0x0A, 0x1DE}, 	{0x0B, 0x3D6}, 	{0x0A, 0x31D}, 	{0x0B, 0x3E5}, 	{0x0B, 0x3E4}, 	{0x0A, 0x207}, 	{0x0B, 0x3C7}, 
-	{0x0A, 0x277}, 	{0x0B, 0x3D4}, 	{0x08, 0xC0},		{0x0A, 0x162}, 	{0x0A, 0x3DA}, 	{0x0A, 0x124}, 	{0x0A, 0x1B4}, 	{0x0A, 0x264}, 
+	{0x0A, 0x277}, 	{0x0B, 0x3D4}, 	{0x08, 0xC0},	{0x0A, 0x162}, 	{0x0A, 0x3DA}, 	{0x0A, 0x124}, 	{0x0A, 0x1B4}, 	{0x0A, 0x264}, 
 	{0x0A, 0x33D}, 	{0x0A, 0x1D1}, 	{0x0A, 0x1AF}, 	{0x0A, 0x39E}, 	{0x0A, 0x24F}, 	{0x0B, 0x373}, 	{0x0A, 0x249}, 	{0x0B, 0x372}, 
 	{0x09, 0x167}, 	{0x0A, 0x210}, 	{0x0A, 0x23A}, 	{0x0A, 0x1B8}, 	{0x0B, 0x3AF}, 	{0x0A, 0x18E}, 	{0x0A, 0x2EC}, 	{0x07, 0x62}, 
 	{0x04, 0x0D}
 };
 
-int cSocket::Pack( void *pvIn, void *pvOut, int len )
+UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
 {
-	UI08 *pIn = (UI08 *)pvIn;
-	UI08 *pOut = (UI08 *)pvOut;
-
-	int actByte = 0, bitByte = 0;
+	UI32 packedLength	= 0;
+	int bitByte			= 0;
 	int nrBits;
 	UI32 value;
 
 	while( len-- )
 	{
-		nrBits = bit_table[*pIn][0];
-		value = bit_table[*pIn++][1];
+		nrBits	= bit_table[*pIn][0];
+		value	= bit_table[*pIn++][1];
 
 		while( nrBits-- )
 		{
-			pOut[actByte] = (pOut[actByte] << 1) | (UI08)((value >> nrBits) & 0x1);
+			pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
 
 			bitByte = (bitByte + 1) & 0x07;
-			if( !bitByte ) 
-				actByte++;
+			if( !bitByte )
+				++packedLength;
 		}
 	}
 
-	nrBits = bit_table[256][0];
-	value = bit_table[256][1];
+	nrBits	= bit_table[256][0];
+	value	= bit_table[256][1];
 
 	while( nrBits-- )
 	{
-		pOut[actByte] = (pOut[actByte] << 1) | (UI08)((value >> nrBits) & 0x1);
+		pOut[packedLength] = static_cast<UI08>((pOut[packedLength] << 1) | (UI08)((value >> nrBits) & 0x1));
 
 		bitByte = (bitByte + 1) & 0x07;
-		if( !bitByte ) 
-			actByte++;
+		if( !bitByte )
+			++packedLength;
 	}
 
 	if( bitByte )
 	{
 		while( bitByte < 8 )
 		{
-			pOut[actByte] <<= 1;
-			bitByte++;
+			pOut[packedLength] <<= 1;
+			++bitByte;
 		}
-		actByte++;
+		++packedLength;
 	}
-	return actByte;
+	return packedLength;
 }
 
-void cSocket::Send( const void *point, int length ) // Buffering send function
+UI32 CSocket::Pack( void *pvIn, void *pvOut, int len )
 {
-	if( outlength + length > MAXBUFFER ) 
+	UI08 *pIn = (UI08 *)pvIn;
+	UI08 *pOut = (UI08 *)pvOut;
+
+	return DoPack( pIn, pOut, len );
+}
+
+void CSocket::Send( const void *point, int length ) // Buffering send function
+{
+	if( outlength + length > MAXBUFFER )
 		FlushBuffer();
-	memcpy( &outbuffer[outlength], point, length );
+	if( outlength > 0 )
+		Console.Print( "Fragmented packet! [packet: %i]\n", outbuffer[0] );
+		// sometimes we send enormous packets... oh what fun
+	if( length > MAXBUFFER )
+	{
+#if defined( UOX_DEBUG_MODE )
+		Console.Print( "Large packet found [%i]\n", outbuffer[0] );
+#endif
+		largeBuffer.resize( length );
+		memcpy( &largeBuffer[0], point, length );
+		outlength = length;
+		FlushLargeBuffer();
+		return;
+	}
+	else
+		memcpy( &outbuffer[outlength], point, length );
+
 	outlength += length;
 }
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 int GrabLastError( void )
 {
 	return errno;
@@ -816,12 +827,48 @@ int GrabLastError( void )
 }
 #endif
 
-int cSocket::Receive( int x )
+void CSocket::FlushIncoming( void )
 {
 	int count = 0;
-	char recvAttempts = 0;
-	long curTime = getclock();
-	long nexTime = curTime;
+	do
+	{
+		count = recv( cliSocket, (char *)&buffer[inlength], 1, 0 );
+	} while( count > 0 );
+}
+
+void CSocket::ReceiveLogging( CPInputBuffer *toLog )
+{
+	if( Logging() )
+	{
+		SERIAL toPrint;
+		if( !ValidateObject( currCharObj ) )
+			toPrint = INVALIDSERIAL;
+		else
+			toPrint = currCharObj->GetSerial();
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".rcv";
+		std::ofstream logDestination;
+		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
+		if( !logDestination.is_open() )
+		{
+			Console.Error( "Failed to open socket log %s", logFile.c_str() );
+			return;
+		}
+		if( toLog != NULL )
+			toLog->Log( logDestination );
+		else
+		{
+			logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << inlength << TimeStamp() << std::endl;
+			doPacketLogging( logDestination, inlength, buffer );
+		}
+		logDestination.close();
+	}
+}
+int CSocket::Receive( int x, bool doLog )
+{
+	int count			= 0;
+	UI08 recvAttempts	= 0;
+	long curTime		= getclock();
+	long nexTime		= curTime;
 	do
 	{
 		count = recv( cliSocket, (char *)&buffer[inlength], x - inlength, 0 );
@@ -832,7 +879,7 @@ int cSocket::Receive( int x )
 		else if( count == SOCKET_ERROR )
 		{
 			int lastError = GrabLastError();
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 			if( lastError != EWOULDBLOCK )
 #else
 			if( lastError != WSAEWOULDBLOCK )
@@ -840,272 +887,220 @@ int cSocket::Receive( int x )
 				throw socket_error( lastError );
 			UOXSleep( 20 );
 		}
-		recvAttempts++;
+		++recvAttempts;
 		nexTime = getclock();
-		if( recvAttempts == 24 || (nexTime - curTime) > 2 * CLOCKS_PER_SEC )	// looks like we're not going to get it!
-			throw socket_error( "Socket receive error" );
+		// You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and NETRETRYCOUNT respectivly
+		if( recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() || (nexTime - curTime) > (SI32)(cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000) )
+		{ // looks like we're not going to get it!
+			// April 3, 2004 - EviLDeD - If we have some data, then we need to return it. Some of the network logic is looking at count size. this way we can also validate on the calling side so we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it, if we call for 4 and get get NOTHING then throw... Just my thoughts - EviLDeD
+			if( count <= 0 )
+				throw socket_error( "Socket receive error" );
+		}
 	}
 	while( x != 2560 && x != inlength );
-	if( Logging() )
-	{
-		FILE *fp = NULL;
-		char filename[MAX_PATH];
-		SERIAL toPrint;
-		if( currchar == INVALIDSERIAL )
-			toPrint = INVALIDSERIAL;
-		else
-			toPrint = chars[currchar].GetSerial();
-		sprintf( filename, "%s/logs/%i.rcv", cwmWorldState->ServerData()->GetRootDirectory(), toPrint );
-		char qbuffer[8];	memset( qbuffer, 0x00, 8 );
-		int j = 0;
-		if( ( fp = fopen( filename, "a" ) ) != NULL )
-		{
-			fprintf( fp, "[RECV]Packet: 0x%2X --> Length: %li\n\n", buffer[0], x );
-			for( int counter = 0; counter < count; counter++ )
-			{
-				qbuffer[j++] = buffer[counter];
-				fprintf(fp, "0x%2X ", buffer[counter] );
-				if( j >= 7 )
-				{
-					fprintf( fp, "  %s\n", qbuffer );
-					j = 0;
-				}
-			}
-			fprintf( fp, "  %s\n\n", qbuffer );
-			fclose( fp );
-		}
-		else
-		{
-			Console.Error( 1, "Failed to open socket log %s", filename );
-		}
-		bytesReceived += count;
-	}
+	if( doLog )
+		ReceiveLogging( NULL );
+	bytesReceived += count;
 	return count;
 }
 
-void cSocket::InternalReset( void )
-{
-//	memset( &itemmake, 0, sizeof( make_st ) );
-	memset( buffer, 0, MAXBUFFER );
-	memset( outbuffer, 0, MAXBUFFER );
-	memset( tbuffer, 0, MAXBUFFER );
-	memset( xtext, 0, 65 );
-	ClearAuthor();
-	ClearTitle();
-	ClearPage();
-	addx[0] = addx[1] = 0;
-	addy[0] = addy[1] = 0;
-	addid[0] = addid[1] = addid[2] = addid[3] = 0;
-	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
-	// set the socket to nonblocking
-	UI32 mode = 1;
-	ioctlsocket( cliSocket, FIONBIO, &mode );
-}
-cSocket::cSocket( int sockNum ) : currCharObj( NULL )/*, actbAccount()*/, idleTimeout( -1 ), currchar( INVALIDSERIAL ), wAccountID(AB_INVALID_ID),
-tempint( 0 ), dyeall( 0 ), addz( 0 ), addmitem( NULL ), newClient( true ), firstPacket( true ), range( 15 ),
-cryptclient( false ), cliSocket( sockNum ), walkSequence( -1 ), addid5( 0 ), currentSpellType( 0 ),
-outlength( 0 ), inlength( 0 ), logging( LOGDEFAULT ), postCount( 0 ), postAckCount( 0 ), pSpot( PL_NOWHERE ), pFrom( INVALIDSERIAL ),
-pX( 0 ), pY( 0 ), pZ( 0 ), lang( UT_ENU ), cliType( DefaultClientType ), clientVersion( DefaultClientVersion ), bytesReceived( 0 ), bytesSent( 0 )
-{
-	InternalReset();
-}
-
-void cSocket::ClearAuthor( void )
-{
-	memset( authorbuffer, '~', 32 );
-}
-void cSocket::ClearTitle( void )
-{
-	memset( titlebuffer, '~', 62 );
-}
-void cSocket::ClearPage( void )
-{
-	memset( pagebuffer, '~', 512 );
-}
-
-void cSocket::OutLength( int newValue )
+void CSocket::OutLength( int newValue )
 {
 	outlength = newValue;
 }
-void cSocket::InLength( int newValue )
+void CSocket::InLength( int newValue )
 {
 	inlength = newValue;
 }
-int cSocket::OutLength( void ) const
+int CSocket::OutLength( void ) const
 {
 	return outlength;
 }
-int cSocket::InLength( void ) const
+int CSocket::InLength( void ) const
 {
 	return inlength;
 }
 
-bool cSocket::Logging( void ) const
+bool CSocket::Logging( void ) const
 {
 	return logging;
 }
 
-void cSocket::Logging( bool newValue )
+void CSocket::Logging( bool newValue )
 {
 	logging = newValue;
 }
 
-CChar *cSocket::CurrcharObj( void ) const
+CChar *CSocket::CurrcharObj( void ) const
 {
 	return currCharObj;
 }
 
-void cSocket::CurrcharObj( CChar *newValue )
+void CSocket::CurrcharObj( CChar *newValue )
 {
+	if( ValidateObject( currCharObj ) )
+	{
+		if( currCharObj->GetSocket() == this )
+			currCharObj->SetSocket( NULL );
+	}
+	if( ValidateObject( newValue ) )
+		newValue->SetSocket( this );
 	currCharObj = newValue;
-	if( newValue != NULL )
-		currchar = calcCharFromSer( currCharObj->GetSerial() );
-	else
-		currchar = INVALIDSERIAL;	// NULL character is invalidserial, for comparisons
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	ACCOUNTSBLOCK &cSocket::GetAccount(void)
-//|	Date					-	1/17/2003 6:21:59 AM
+//|	Function		-	CAccountBlock &CSocket::GetAccount(void)
+//|	Date			-	1/17/2003 6:21:59 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	Return to the calling function this objects accounts 
-//|									referance.
+//|							referance.
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-ACCOUNTSBLOCK &cSocket::GetAccount(void)
+CAccountBlock& CSocket::GetAccount( void )
 {
-	return actbAccount;
+	return Accounts->GetAccountByID( accountNum );
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function			-	void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
-//|	Date					-	1/17/2003 7:01:23 AM
+//|	Function		-	void CSocket::SetAccount( CAccountBlock &actbBlock )
+//|	Date			-	1/17/2003 7:01:23 AM
 //|	Developers		-	EviLDeD
 //|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
+//|	Status			-	Currently under development
 //o--------------------------------------------------------------------------o
 //|	Description		-	
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-void cSocket::SetAccount(ACCOUNTSBLOCK &actbBlock)
+void CSocket::SetAccount( CAccountBlock& actbBlock )
 {
-	if(actbBlock.wAccountIndex==AB_INVALID_ID)
-	{
-		actbAccount.wAccountIndex=AB_INVALID_ID;
-		return;
-	}
-	actbAccount=actbBlock;
-	wAccountID=actbAccount.wAccountIndex;
+	accountNum = actbBlock.wAccountIndex;
 }
-//
-void cSocket::SetAccount(std::string sUsername)
-{
-	if(!Accounts->GetAccountByName(sUsername,(ACCOUNTSBLOCK&)actbAccount))
-	{
-		// Ok there was an error setting an account to this character.
-		wAccountID=AB_INVALID_ID;
-		actbAccount.wAccountIndex=wAccountID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
-//
-void cSocket::SetAccount(SI16 wNewAccountID)
-{
-	if(!Accounts->GetAccountByID(wNewAccountID,(ACCOUNTSBLOCK&)actbAccount))
-	{
-		// Ok there was an error setting an account to this character.
-		wAccountID=AB_INVALID_ID;
-		actbAccount.wAccountIndex=wAccountID;
-		return;
-	}
-	wAccountID = actbAccount.wAccountIndex;
-}
-//
 
+//o---------------------------------------------------------------------------o
+//|		Function    -	UI16 CSocket::AcctNo( void )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Returns the ID of the account number socket belongs to
+//o---------------------------------------------------------------------------o
+UI16 CSocket::AcctNo( void ) const
+{
+	return accountNum;
+}
 
-UI08 cSocket::ClientIP1( void ) const
+//o---------------------------------------------------------------------------o
+//|		Function    -	void CSocket::AcctNo( UI16 newValue )
+//|		Date        -	November 29th, 2000
+//|		Programmer  -	Abaddon
+//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
+//|						accounts changes
+//o---------------------------------------------------------------------------o
+//|		Purpose     -	Sets the ID of the account number the socket belongs to
+//o---------------------------------------------------------------------------o
+void CSocket::AcctNo( UI16 newValue )
+{
+	accountNum = newValue;
+}
+
+UI08 CSocket::ClientIP1( void ) const
 {
 	return clientip[0];
 }
-UI08 cSocket::ClientIP2( void ) const
+UI08 CSocket::ClientIP2( void ) const
 {
 	return clientip[1];
 }
-UI08 cSocket::ClientIP3( void ) const
+UI08 CSocket::ClientIP3( void ) const
 {
 	return clientip[2];
 }
-UI08 cSocket::ClientIP4( void ) const
+UI08 CSocket::ClientIP4( void ) const
 {
 	return clientip[3];
 }
 
-void cSocket::ClientIP1( UI08 newValue )
+void CSocket::ClientIP1( UI08 newValue )
 {
 	clientip[0] = newValue;
 }
-void cSocket::ClientIP2( UI08 newValue )
+void CSocket::ClientIP2( UI08 newValue )
 {
 	clientip[1] = newValue;
 }
-void cSocket::ClientIP3( UI08 newValue )
+void CSocket::ClientIP3( UI08 newValue )
 {
 	clientip[2] = newValue;
 }
-void cSocket::ClientIP4( UI08 newValue )
+void CSocket::ClientIP4( UI08 newValue )
 {
 	clientip[3] = newValue;
 }
 
-bool cSocket::NewClient( void ) const
+bool CSocket::NewClient( void ) const
 {
 	return newClient;
 }
 
-void cSocket::NewClient( bool newValue )
+void CSocket::NewClient( bool newValue )
 {
 	newClient = newValue;
 }
 
-UI32 cSocket::GetDWord( int offset )
+UI32 CSocket::GetDWord( size_t offset )
 {
-	return calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
+	UI32 retVal = 0;
+	if( offset+3 >= MAXBUFFER )
+		Console.Error( "GetDWord was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = calcserial( buffer[offset], buffer[offset+1], buffer[offset+2], buffer[offset+3] );
+	return retVal;
 }
 
-UI16 cSocket::GetWord( int offset )
+UI16 CSocket::GetWord( size_t offset )
 {
-	return (UI16)((buffer[offset]<<8) + buffer[offset+1]);
+	UI16 retVal = 0;
+	if( offset+1 >= MAXBUFFER )
+		Console.Error( "GetWord was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = (UI16)((buffer[offset]<<8) + buffer[offset+1]);
+	return retVal;
 }
 
-UI08 cSocket::GetByte( int offset )
+UI08 CSocket::GetByte( size_t offset )
 {
-	return buffer[offset];
+	UI08 retVal = 0;
+	if( offset >= MAXBUFFER )
+		Console.Error( "GetByte was passed an invalid offset value 0x%X", offset );
+	else
+		retVal = buffer[offset];
+	return retVal;
 }
 
-void cSocket::SetDWord( int offset, UI32 newValue )
+void CSocket::SetDWord( size_t offset, UI32 newValue )
 {
 	buffer[offset]   = (UI08)( newValue>>24 );
 	buffer[offset+1] = (UI08)( newValue>>16 );
 	buffer[offset+2] = (UI08)( newValue>>8 );
 	buffer[offset+3] = (UI08)( newValue%256 );
 }
-void cSocket::SetWord( int offset, UI16 newValue ) 
+void CSocket::SetWord( size_t offset, UI16 newValue ) 
 {
 	buffer[offset]   = (UI08)( newValue>>8 );
 	buffer[offset+1] = (UI08)( newValue%256 );
 }
-void cSocket::SetByte( int offset, UI08 newValue )
+void CSocket::SetByte( size_t offset, UI08 newValue )
 {
 	buffer[offset] = newValue;
 }
 
-void cSocket::ClientIP( long newValue )
+void CSocket::ClientIP( UI32 newValue )
 {
 	clientip[0] = (UI08)( newValue>>24 );
 	clientip[1] = (UI08)( newValue>>16 );
@@ -1113,399 +1108,983 @@ void cSocket::ClientIP( long newValue )
 	clientip[3] = (UI08)( newValue%256 );
 }
 
-void cSocket::TargetOK( bool newValue )
+void CSocket::TargetOK( bool newValue )
 {
 	targetok = newValue;
 }
 
-bool cSocket::TargetOK( void ) const
+bool CSocket::TargetOK( void ) const
 {
 	return targetok;
 }
 
-void cSocket::AddID( UI32 newValue )
-{
-	addid[0] = (UI08)( newValue>>24 );
-	addid[1] = (UI08)( newValue>>16 );
-	addid[2] = (UI08)( newValue>>8 );
-	addid[3] = (UI08)( newValue%256 );
-}
-
-UI32 cSocket::AddID( void ) const
-{
-	return calcserial( addid[0], addid[1], addid[2], addid[3] );
-}
-
-void cSocket::ClickX( SI16 newValue )
+void CSocket::ClickX( SI16 newValue )
 {
 	clickx = newValue;
 }
-void cSocket::ClickY( SI16 newValue )
+void CSocket::ClickY( SI16 newValue )
 {
 	clicky = newValue;
 }
-SI16 cSocket::ClickX( void ) const
+SI16 CSocket::ClickX( void ) const
 {
 	return clickx;
 }
-SI16 cSocket::ClickY( void ) const
+SI16 CSocket::ClickY( void ) const
 {
 	return clicky;
 }
 
-char cSocket::PostAcked( int x, int y ) const
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL FirstPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Moves to the start of the post ack list
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::FirstPostAck( void )
 {
-	return postAcked[x][y];
+	SERIAL retVal = INVALIDSERIAL;
+	ackIter = postAcked.begin();
+	if( !FinishedPostAck() )
+		retVal = (*ackIter);
+	return retVal;
 }
-int cSocket::PostCount( void ) const
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  SERIAL NextPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Moves to the next post to ack in the list
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::NextPostAck( void )
 {
-	return postCount;
+	SERIAL retVal = INVALIDSERIAL;
+	if( !FinishedPostAck() )
+	{
+		++ackIter;
+		if( !FinishedPostAck() )
+			retVal = (*ackIter);
+	}
+	return retVal;
 }
-int cSocket::PostAckCount( void ) const
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  bool FinishedPostAck( void )
+//|   Date        -  July 14, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Returns true if the iterator is at the end of the list
+//o---------------------------------------------------------------------------o
+bool CSocket::FinishedPostAck( void )
+{
+	return (ackIter == postAcked.end() );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  void RemovePostAck( void )
+//|   Date        -  July 16, 2005
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Removes post from the queue
+//o---------------------------------------------------------------------------o
+SERIAL CSocket::RemovePostAck( void )
+{
+	SERIAL retVal = INVALIDSERIAL;
+	if( !FinishedPostAck() )
+	{
+		ackIter = postAcked.erase( ackIter );
+		if( !FinishedPostAck() )
+			retVal = (*ackIter);
+	}
+	return retVal;
+}
+
+size_t CSocket::PostCount( void ) const
+{
+	return postAcked.size();
+}
+size_t CSocket::PostAckCount( void ) const
 {
 	return postAckCount;
 }
 
-void cSocket::PostAcked( int x, int y, char newValue )
+void CSocket::PostClear( void )
 {
-	postAcked[x][y] = newValue;
+	postAcked.clear();
 }
-void cSocket::PostCount( int newValue )
+
+void CSocket::PostAcked( SERIAL newValue )
 {
-	postCount = newValue;
+	postAcked.push_back( newValue );
 }
-void cSocket::PostAckCount( int newValue )
+
+void CSocket::PostAckCount( size_t newValue )
 {
 	postAckCount = newValue;
 }
 
-void cSocket::Send( cPBuffer *toSend )
+void CSocket::Send( CPUOXBuffer *toSend )
 {
 	if( toSend == NULL )
 		return;
-	Send( toSend->Pointer(), toSend->Length() );
+
+	// If the client cannot receive it validly, abort, abort!
+	if( !toSend->ClientCanReceive( this ) )
+		return;
+
+	UI32 len = 0;
+	if( cryptclient )
+	{
+		len = toSend->Pack();
+		send( cliSocket, (char *)toSend->PackedPointer(), len, 0 );
+	}
+	else
+	{
+		len = toSend->GetPacketStream().GetSize();
+		send( cliSocket, (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
+	}
+
+	bytesSent += len;
+
 	if( Logging() )
 	{
-	FILE *fp = NULL;
-	char filename[MAX_PATH];
-	SERIAL toPrint;
-	if( currchar == INVALIDSERIAL )
-		toPrint = INVALIDSERIAL;
-	else
-		toPrint = chars[currchar].GetSerial();
-	sprintf( filename, "%s/logs/%i.snd", cwmWorldState->ServerData()->GetRootDirectory(), toPrint );
-	fp = fopen( filename, "a" );
-	toSend->Log( fp );
-	if( fp != NULL )
-		fclose( fp );
+		SERIAL toPrint;
+		if( !ValidateObject( currCharObj ) )
+			toPrint = INVALIDSERIAL;
+		else
+			toPrint = currCharObj->GetSerial();
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + UString::number( toPrint ) + ".snd";
+		std::ofstream logDestination;
+		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
+		if( !logDestination.is_open() )
+		{
+			Console.Error( "Failed to open socket log %s", logFile.c_str() );
+			return;
+		}
+		toSend->Log( logDestination );
+		logDestination.close();
 	}
-	FlushBuffer( false );
 }
 
-void cSocket::PickupSpot( PickupLocations newValue )
+void CSocket::PickupSpot( PickupLocations newValue )
 {
 	pSpot = newValue;
 }
-PickupLocations	cSocket::PickupSpot( void ) const
+PickupLocations	CSocket::PickupSpot( void ) const
 {
 	return pSpot;
 }
-SERIAL cSocket::PickupSerial( void ) const
+SERIAL CSocket::PickupSerial( void ) const
 {
 	return pFrom;
 }
-void cSocket::PickupSerial( SERIAL pickupSerial )
+void CSocket::PickupSerial( SERIAL pickupSerial )
 {
 	pFrom = pickupSerial;
 }
 
-SI16 cSocket::PickupX( void ) const
+SI16 CSocket::PickupX( void ) const
 {
 	return pX;
 }
 
-SI16 cSocket::PickupY( void ) const
+SI16 CSocket::PickupY( void ) const
 {
 	return pY;
 }
 
-SI08 cSocket::PickupZ( void ) const
+SI08 CSocket::PickupZ( void ) const
 {
 	return pZ;
 }
 
-void cSocket::PickupLocation( SI16 x, SI16 y, SI08 z )
+void CSocket::PickupLocation( SI16 x, SI16 y, SI08 z )
 {
 	pX = x;
 	pY = y;
 	pZ = z;
 }
 
-void cSocket::PickupX( SI16 x )
+void CSocket::PickupX( SI16 x )
 {
 	pX = x;
 }
 
-void cSocket::PickupY( SI16 y )
+void CSocket::PickupY( SI16 y )
 {
 	pY = y;
 }
 
-void cSocket::PickupZ( SI08 z )
+void CSocket::PickupZ( SI08 z )
 {
 	pZ = z;
 }
 
-char *cSocket::AuthorBuffer( void )
+//o---------------------------------------------------------------------------o
+//|   Function    -  CItem * CursorItem()
+//|   Date        -  March 20th, 2012
+//|   Programmer  -  Xuri
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Item being held on a player's mouse cursor
+//o---------------------------------------------------------------------------o
+CItem *CSocket::GetCursorItem( void ) const
 {
-	return authorbuffer;
+	return cursorItem;
 }
-char *cSocket::TitleBuffer( void )
+void CSocket::SetCursorItem( CItem *newCursorItem )
 {
-	return titlebuffer;
-}
-char *cSocket::PageBuffer( void )
-{
-	return pagebuffer;
-}
-void cSocket::AuthorBuffer( const char *newValue )
-{
-	strcpy( authorbuffer, newValue );
-}
-void cSocket::PageBuffer( const char *newValue )
-{
-	strcpy( pagebuffer, newValue );
-}
-void cSocket::TitleBuffer( const char *newValue )
-{
-	strcpy( titlebuffer, newValue );
+	if( ValidateObject( newCursorItem ) )
+	cursorItem = newCursorItem;
 }
 
-int cPBuffer::Length( void )
-{
-	return internalBuffer.size();
-}
-
-void cPBuffer::Log( FILE *fp )
-{
-	if( fp == NULL )
-		return;
-	char qbuffer[8];
-	char j = 0;
-	fprintf( fp, "[SEND]Packet: 0x%2X --> Length: %li\n", internalBuffer[0], internalBuffer.size() );
-	for( UI32 i = 0; i < internalBuffer.size(); i++ )
-	{
-		qbuffer[j++] = internalBuffer[i];
-		if( internalBuffer[i] < 10 )
-			fprintf( fp, "0x0%X ", internalBuffer[i] );
-		else
-			fprintf( fp, "0x%2X ", internalBuffer[i] );
-		if( j >= 7 )
-		{
-			fprintf( fp, "  %s\n", qbuffer );
-			j = 0;
-		}
-	}
-	fprintf( fp, "  %s\n\n", qbuffer );
-}
-
-UI08& cPBuffer::operator [] ( long int Num )
-{
-	if( Num < 0 || Num > Length() )
-		throw std::runtime_error("out of bounds");
-	return internalBuffer[Num];
-}
-
-cPBuffer::cPBuffer()
-{
-	internalBuffer.resize( 0 );
-}
-
-cPBuffer::cPBuffer( char *initBuffer, int len )
-{
-	internalBuffer.resize( len );
-	for( int i = 0; i < len; i++ )
-		internalBuffer[i] = initBuffer[i];
-}
-
-cPBuffer::cPBuffer( cPBuffer *initBuffer )
-{
-	internalBuffer.resize( initBuffer->Length() );
-	for( int i = 0; i < initBuffer->Length(); i++ )
-		internalBuffer[i] = (*initBuffer)[i];
-}
-
-cPBuffer::~cPBuffer()
-{
-//	internalBuffer.resize( 0 );
-}
-
-void cPBuffer::Resize( int newLen )
-{
-	internalBuffer.resize( newLen );
-}
-
-UI08 *cPBuffer::Pointer( void )
-{
-	return &internalBuffer[0];
-}
-
-
-cPInputBuffer::cPInputBuffer() : tSock( NULL )
-{
-}
-cPInputBuffer::cPInputBuffer( cSocket *input )
-{
-	SetSocket( input );
-}
-void cPInputBuffer::Receive( void )
-{
-}
-UI08& cPInputBuffer::operator[] ( long int num )
-{
-	return internalBuffer[num];
-}
-int cPInputBuffer::Length( void )
-{
-	return internalBuffer.size();
-}
-UI08 *cPInputBuffer::Pointer( void )
-{
-	return &internalBuffer[0];
-}
-void cPInputBuffer::Log( FILE *fp )
-{
-	if( fp == NULL )
-		return;
-	char qbuffer[8];
-	char j = 0;
-	fprintf( fp, "[RECV]Packet: 0x%2X --> Length: %li\n", internalBuffer[0], internalBuffer.size() );
-	for( UI32 i = 0; i < internalBuffer.size(); i++ )
-	{
-		qbuffer[j++] = internalBuffer[i];
-		if( internalBuffer[i] < 10 )
-			fprintf( fp, "0x0%X ", internalBuffer[i] );
-		else
-			fprintf( fp, "0x%2X ", internalBuffer[i] );
-		if( j >= 7 )
-		{
-			fprintf( fp, "  %s\n", qbuffer );
-			j = 0;
-		}
-	}
-	fprintf( fp, "  %s\n\n", qbuffer );
-}
-
-long cPInputBuffer::DWord( int offset )
-{
-	return ( (internalBuffer[offset]<<24) + (internalBuffer[offset+1]<<16) + (internalBuffer[offset+2]<<8) + internalBuffer[offset+3] );
-}
-
-SI32 cPInputBuffer::Word( int offset )
-{
-	return ( (internalBuffer[offset]<<8) + internalBuffer[offset+1] );
-}
-
-UI08 cPInputBuffer::Byte( int offset )
-{
-	return internalBuffer[offset];
-}
-
-
-bool cPInputBuffer::Handle( void )
-{
-	return false;
-}
-
-void cPInputBuffer::SetSocket( cSocket *toSet )
-{
-	tSock = toSet;
-}
-
-cSocket *cPInputBuffer::GetSocket( void ) const
+CSocket *CPInputBuffer::GetSocket( void ) const
 {
 	return tSock;
 }
 
-UnicodeTypes cSocket::Language( void ) const
+UnicodeTypes CSocket::Language( void ) const
 {
 	return lang;
 }
 
-void cSocket::Language( UnicodeTypes newVal )
+void CSocket::Language( UnicodeTypes newVal )
 {
 	lang = newVal;
 }
 
-UI32 cSocket::ClientVersion( void ) const
+UI32 CSocket::ClientVersion( void ) const
 {
 	return clientVersion;
 }
-void cSocket::ClientVersion( UI32 newVer )
+void CSocket::ClientVersion( UI32 newVer )
 {
 	clientVersion = newVer;
 }
-void cSocket::ClientVersion( UI08 major, UI08 minor, UI08 sub, UI08 letter )
+void CSocket::ClientVersion( UI08 major, UI08 minor, UI08 sub, UI08 letter )
 {
 	ClientVersion( calcserial( major, minor, sub, letter ) );
 }
 
-ClientTypes cSocket::ClientType( void ) const
+ClientTypes CSocket::ClientType( void ) const
 {
 	return cliType;
 }
-void cSocket::ClientType( ClientTypes newVer )
+void CSocket::ClientType( ClientTypes newVer )
 {
 	cliType = newVer;
 }
 
+ClientVersions CSocket::ClientVerShort( void ) const
+{
+	return cliVerShort;
+}
+void CSocket::ClientVerShort( ClientVersions newVer )
+{
+	cliVerShort = newVer;
+}
 
-UI08 cSocket::ClientVersionMajor( void ) const
+UI08 CSocket::ClientVersionMajor( void ) const
 {
 	return (UI08)(clientVersion>>24);
 }
 
-UI08 cSocket::ClientVersionMinor( void ) const
+UI08 CSocket::ClientVersionMinor( void ) const
 {
 	return (UI08)(clientVersion>>16);
 }
 
-UI08 cSocket::ClientVersionSub( void ) const
+UI08 CSocket::ClientVersionSub( void ) const
 {
 	return (UI08)(clientVersion>>8);
 }
 
-UI08 cSocket::ClientVersionLetter( void ) const
+UI08 CSocket::ClientVersionLetter( void ) const
 {
 	return (UI08)(clientVersion%256);
 }
 
-void cSocket::ClientVersionMajor( UI08 value )
+void CSocket::ClientVersionMajor( UI08 value )
 {
 	ClientVersion( value, ClientVersionMinor(), ClientVersionSub(), ClientVersionLetter() );
 }
 
-void cSocket::ClientVersionMinor( UI08 value )
+void CSocket::ClientVersionMinor( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), value, ClientVersionSub(), ClientVersionLetter() );
 }
 
-void cSocket::ClientVersionSub( UI08 value )
+void CSocket::ClientVersionSub( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), ClientVersionMinor(), value, ClientVersionLetter() );
 }
 
-void cSocket::ClientVersionLetter( UI08 value )
+void CSocket::ClientVersionLetter( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), ClientVersionMinor(), ClientVersionSub(), value );
 }
 
-void cSocket::Range( UI08 value )
+void CSocket::Range( UI08 value )
 {
 	range = value;
 }
 
-UI08 cSocket::Range( void ) const
+UI08 CSocket::Range( void ) const
 {
 	return range;
+}
+
+void CSocket::sysmessage( const char *txt, ... ) // System message (In lower left corner)
+{
+	va_list argptr;
+	if( txt == NULL )
+		return;
+
+	CChar *mChar = CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	char msg[512];
+	va_start( argptr, txt );
+	vsprintf( msg, txt, argptr );
+	va_end( argptr );
+	
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( msg );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( 0x0040 );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
+}
+
+void CSocket::sysmessage( SI32 dictEntry, ... )	// System message (based on dictionary entry)
+{
+	CChar *mChar = CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		return;
+
+	va_list argptr;
+	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
+	if( txt.empty() )
+		return;
+	char msg[512];
+	va_start( argptr, dictEntry );
+	vsprintf( msg, txt.c_str(), argptr );
+	va_end( argptr );
+
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( msg );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( INVALIDSERIAL );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( 0x0040 );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_INDIVIDUAL );
+}
+
+//o---------------------------------------------------------------------------o
+//|		Function    :	void objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
+//|		Date        :	2/11/2003
+//|		Programmer  :	Zane
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
+//o---------------------------------------------------------------------------o
+void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
+{
+	if( !ValidateObject( getObj ) )
+		return;
+
+	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
+	if( txt.empty() )
+		return;
+
+	va_list argptr;
+
+	char msg[512];
+	va_start( argptr, Colour );
+	vsprintf( msg, txt.c_str(), argptr );
+	va_end( argptr );
+	objMessage( msg, getObj, secsFromNow, Colour );
+}
+
+//o---------------------------------------------------------------------------o
+//|		Function    :	void objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
+//|		Date        :	2/11/2003
+//|		Programmer  :	Zane
+//o---------------------------------------------------------------------------o
+//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
+//o---------------------------------------------------------------------------o
+void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
+{
+	UI16 targColour = Colour;
+
+	if( txt == NULL )
+		return;
+	CChar *mChar		= CurrcharObj();
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( txt );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( getObj->GetSerial() );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Type( SYSTEM );
+	toAdd.At( BuildTimeValue( secsFromNow ) );
+	toAdd.TargType( SPTRG_ONLYRECEIVER );
+
+	if( getObj->GetObjType() == OT_ITEM )
+	{
+		CItem *getItem = static_cast< CItem *>(getObj);
+		if( getItem->isCorpse() )
+		{
+			CChar *targChar = getItem->GetOwnerObj();
+			if( ValidateObject( targChar ) )
+				targColour = GetFlagColour( mChar, targChar );
+			else
+			{
+				switch( getItem->GetTempVar( CITV_MOREZ ) )
+				{
+					case 0x01:	targColour = 0x0026;	break;	//red
+					case 0x02:	targColour = 0x03B2;	break;	// gray
+					case 0x08:	targColour = 0x0049;	break;	// green
+					case 0x10:	targColour = 0x0030;	break;	// orange
+					default:
+					case 0x04:	targColour = 0x005A;	break;	// blue
+				}
+			}
+		}
+	}
+
+	if( targColour == 0x0 || targColour == 0x1700)
+		toAdd.Colour( 0x03B2 );
+	else
+		toAdd.Colour( targColour );
+}
+
+void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a character
+{
+	UI08 a1 = i->GetSerial( 1 );
+	UI08 a2 = i->GetSerial( 2 );
+	UI08 a3 = i->GetSerial( 3 );
+	UI08 a4 = i->GetSerial( 4 );
+	UString newName = i->GetName();
+	CChar *mChar = CurrcharObj();
+	if( mChar->GetSingClickSer() || showSer )
+		objMessage( 1737, i, 0.0f, 0x03B2, a1, a2, a3, a4 );
+	if( !i->IsNpc() )
+	{
+		if( i->GetSquelched() )
+			objMessage( 1736, i );
+		if( i->GetCommandLevel() < CL_CNS && i->GetFame() >= 10000 )	// Morollan, only normal players have titles now
+		{
+			if( i->GetID( 2 ) == 0x91 )
+				newName = UString::sprintf( Dictionary->GetEntry( 1740, Language() ).c_str(), newName.c_str() );	// Morrolan, added Lord/Lady to title overhead
+			else if( i->GetID( 1 ) == 0x90 )
+				newName = UString::sprintf( Dictionary->GetEntry( 1739, Language() ).c_str(), newName.c_str() );
+		}
+		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race (Abaddon)
+		{
+			newName += " (";
+			newName += Races->Name( i->GetRace() );
+			newName += ")";
+		}
+		if( i->GetTownPriv() == 2 )
+			newName = UString::sprintf( Dictionary->GetEntry( 1738, Language() ).c_str(), newName.c_str() );
+		if( !isOnline( (*i) ) )
+			newName += " (OFF)";
+	}
+	else
+	{
+		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetID()].IsHuman() )
+			newName += " (tame) ";
+	}
+	if( i->IsInvulnerable() )
+		newName += " (invulnerable)";
+	if( i->IsFrozen() )
+		newName += " (frozen) ";
+	if( i->IsGuarded() )
+		newName += " (guarded)";
+	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
+		GuildSys->DisplayTitle( this, i );
+	
+	CSpeechEntry& toAdd = SpeechSys->Add();
+	toAdd.Speech( newName );
+	toAdd.Font( FNT_NORMAL );
+	toAdd.Speaker( i->GetSerial() );
+	toAdd.SpokenTo( mChar->GetSerial() );
+	toAdd.Colour( GetFlagColour( mChar, i ) );
+	toAdd.Type( SYSTEM );
+	toAdd.At( cwmWorldState->GetUICurrentTime() );
+	toAdd.TargType( SPTRG_ONLYRECEIVER );
+}
+
+COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
+{
+	COLOUR retVal = 0x0058;
+	switch( trg->FlagColour( src ) )
+	{
+	case FC_INNOCENT:		retVal = 0x0058;		break;	// Blue
+	case FC_NEUTRAL:
+	case FC_CRIMINAL:
+	default:				retVal = 0x03B2;		break;	// Gray
+	case FC_MURDERER:		retVal = 0x0026;		break;	// Red
+	case FC_FRIEND:			retVal = 0x0043;		break;	// Green
+	case FC_ENEMY:			retVal = 0x0030;		break;	// Orange
+	case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
+	}
+
+	return retVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void target()
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Send targeting cursor to client
+//o---------------------------------------------------------------------------o
+void CSocket::target( UI08 targType, UI08 targID, const char *txt )
+{
+	CPTargetCursor toSend;
+	toSend.ID( calcserial( 0, 1, targType, targID ) );
+	toSend.Type( 1 );
+	TargetOK( true );
+	sysmessage( txt );
+	Send( &toSend );
+}
+
+void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
+{
+	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
+	if( txt.empty() )
+		return;
+
+	va_list argptr;
+
+	char msg[512];
+	va_start( argptr, dictEntry );
+	vsprintf( msg, txt.c_str(), argptr );
+	va_end( argptr );
+	target( targType, targID, msg );
+}
+
+void CSocket::mtarget( UI16 itemID, SI32 dictEntry )
+{
+	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
+	if( txt.empty() )
+		return;
+	CPMultiPlacementView toSend( calcserial( 0, 1, 0, TARGET_BUILDHOUSE ) );
+	toSend.MultiModel( itemID );
+	toSend.RequestType( 1 );
+
+	if( ClientVersion() >= CV_HS2D && ClientVerShort() >= CVS_7090 )
+		toSend.SetHue( 0 );
+
+	sysmessage( txt.c_str() );
+	TargetOK( true );
+	Send( &toSend );
+}
+
+bool CSocket::ReceivedVersion( void ) const
+{
+	return receivedVersion;
+}
+void CSocket::ReceivedVersion( bool value )
+{
+	receivedVersion = value;
+}
+
+UI32 CSocket::BytesSent( void ) const
+{
+	return bytesSent;
+}
+
+UI32 CSocket::BytesReceived( void ) const
+{
+	return bytesReceived;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void statwindow( CChar *i )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Opens the status window
+//o---------------------------------------------------------------------------o
+void CSocket::statwindow( CChar *targChar )
+{
+	if( !ValidateObject( targChar ) )
+		return;
+
+	if( !LoginComplete() )
+		return;
+
+	CChar *mChar = CurrcharObj();
+
+	if( mChar != targChar && mChar->GetCommandLevel() < CL_CNS && 
+		(targChar->GetVisible() != VT_VISIBLE || ( !targChar->IsNpc() && !isOnline( (*targChar) ) ) || !charInRange(mChar, targChar) ) )
+		return;
+
+	CPHealthBarStatus hpBarStatus( (*targChar), (*this ));
+	Send( &hpBarStatus );
+
+	CPStatWindow toSend( (*targChar), (*this) );
+	
+	//Zippy 9/17/01 : fixed bug of your name on your own stat window
+	toSend.NameChange( mChar != targChar && ( mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar ) );
+	toSend.Gold( GetItemAmount( targChar, 0x0EED ) );
+	toSend.AC( Combat->calcDef( targChar, 0, false ) );
+
+	Send( &toSend );
+
+	CPExtendedStats exStats( (*targChar) );
+	Send( &exStats );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void updateskill( UI08 skillnum )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Update a certain skill
+//o---------------------------------------------------------------------------o
+void CSocket::updateskill( UI08 skillnum )
+{
+	CChar *mChar = CurrcharObj();
+	CPUpdIndSkill toSend( (*mChar), (UI08)skillnum );
+	Send( &toSend );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void openPack( CSocket *s, CItem *i )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Open backpack and display contents
+//o---------------------------------------------------------------------------o
+void CSocket::openPack( CItem *i, bool isPlayerVendor )
+{
+	if( !ValidateObject( i ) )
+	{
+		Console.Warning( "openPack() was passed an invalid item" );
+		return;
+	}
+	CPDrawContainer contSend = (*i);
+	contSend.Model( 0x3C );
+
+	if( i->GetID( 1 ) == 0x3E )            // boats
+		contSend.Model( 0x4C );
+	else
+	{
+		switch( Items->getPackType( i ) )
+		{
+			case PT_COFFIN:
+				contSend.Model( 0x09 );
+				break;
+			case PT_PACK:
+			case PT_PACK2:
+				contSend.Model( 0x3C );
+				break;
+			case PT_BAG:
+				contSend.Model( 0x3D );
+				break;
+			case PT_BARREL:
+				contSend.Model( 0x3E );
+				break;
+			case PT_SQBASKET:
+				contSend.Model( 0x3F );
+				break;
+			case PT_RBASKET:
+				contSend.Model( 0x41 );
+				break;
+			case PT_GCHEST:
+				contSend.Model( 0x42 );
+				break;
+			case PT_WBOX:
+				contSend.Model( 0x43 );
+				break;
+			case PT_CRATE:
+				contSend.Model( 0x44 );
+				break;
+			case PT_SHOPPACK:
+				contSend.Model( 0x47 );
+				break;
+			case PT_DRAWER:
+				contSend.Model( 0x48 );
+				break;
+			case PT_WCHEST:
+				contSend.Model( 0x49 );
+				break;
+			case PT_MBOX:
+				contSend.Model( 0x4B );
+				break;
+			case PT_SCHEST:
+			case PT_BANK:
+				contSend.Model( 0x4A );
+				break;
+			case PT_BOOKCASE:
+				contSend.Model( 0x4D );
+				break;
+			case PT_FARMOIRE:
+				contSend.Model( 0x4E );
+				break;
+			case PT_WARMOIRE:
+				contSend.Model( 0x4F );
+				break;
+			case PT_DRESSER:
+				contSend.Model( 0x51 );
+				break;
+			case PT_STOCKING:
+				contSend.Model( 0x103 );
+				break;
+			case PT_GIFTBOX1:
+				contSend.Model( 0x102 );
+				break;
+			case PT_GIFTBOX2:
+				contSend.Model( 0x11E );
+				break;
+			case PT_GIFTBOX3:
+				contSend.Model( 0x11B );
+				break;
+			case PT_GIFTBOX4:
+				contSend.Model( 0x11C );
+				break;
+			case PT_GIFTBOX5:
+				contSend.Model( 0x11D );
+				break;
+			case PT_GIFTBOX6:
+				contSend.Model( 0x11F );
+				break;
+			case PT_SEBASKET:
+				contSend.Model( 0x108 );
+				break;
+			case PT_SEARMOIRE1:
+				contSend.Model( 0x105 );
+				break;
+			case PT_SEARMOIRE2:
+				contSend.Model( 0x106 );
+				break;
+			case PT_SEARMOIRE3:
+				contSend.Model( 0x107 );
+				break;
+			case PT_SECHEST1:
+				contSend.Model( 0x109 );
+				break;
+			case PT_SECHEST2:
+				contSend.Model( 0x10B );
+				break;
+			case PT_SECHEST3:
+				contSend.Model( 0x10A );
+				break;
+			case PT_SECHEST4:
+				contSend.Model( 0x10C );
+				break;
+			case PT_SECHEST5:
+				contSend.Model( 0x10D );
+				break;
+			case PT_UNKNOWN:
+				Console.Warning( "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
+				return;
+		}
+	}
+	if( ClientType() >= CV_HS2D && ClientVerShort() >= CVS_7090 )
+		contSend.ContType( 0x7D );
+
+	Send( &contSend );
+	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
+	Send( &itemsIn );
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	void openBank( CChar *i )
+//|	Programmer	-	UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Opens players bank box
+//o---------------------------------------------------------------------------o
+void CSocket::openBank( CChar *i )
+{
+	CItem *bankBox = NULL;
+	char temp[1024];
+
+	bankBox = i->GetItemAtLayer( IL_BANKBOX );
+	if( ValidateObject( bankBox ) )
+	{
+		if( bankBox->GetType() == IT_CONTAINER && bankBox->GetTempVar( CITV_MOREX ) == 1 )
+		{
+			CPWornItem toWearO = (*bankBox);
+			Send( &toWearO );
+			openPack( bankBox );
+			return;
+		}
+	}
+	
+	sprintf( temp, Dictionary->GetEntry( 1283 ).c_str(), i->GetName().c_str() );
+	bankBox = Items->CreateItem( NULL, i, 0x09AB, 1, 0, OT_ITEM );
+	bankBox->SetName( temp );
+	bankBox->SetLayer( IL_BANKBOX );
+	bankBox->SetOwner( i );
+	bankBox->SetDecayable( false );
+	if( !bankBox->SetCont( i ) )
+		return;
+	bankBox->SetTempVar( CITV_MOREX, 1 );
+	bankBox->SetType( IT_CONTAINER );
+	CPWornItem toWear = (*bankBox);
+	Send( &toWear );
+	openPack( bankBox );
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  TIMERVAL Timer()
+//|   Date        -  September 25, 2003
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Temporary Timer Values associated to the character connected
+//|						to the socket
+//o---------------------------------------------------------------------------o
+
+TIMERVAL CSocket::GetTimer( cS_TID timerID ) const
+{
+	TIMERVAL rvalue = 0;
+	if( timerID != tPC_COUNT )
+		rvalue = pcTimers[timerID];
+	return rvalue;
+}
+void CSocket::SetTimer( cS_TID timerID, TIMERVAL value )
+{
+	if( timerID != tPC_COUNT )
+		pcTimers[timerID] = value;
+}
+
+//o---------------------------------------------------------------------------o
+//|   Function    -  TIMERVAL ClearTimers()
+//|   Date        -  September 25, 2003
+//|   Programmer  -  giwo
+//o---------------------------------------------------------------------------o
+//|   Purpose     -  Resets all timers (but mutetime) to 0 used when player logs out
+//o---------------------------------------------------------------------------o
+void CSocket::ClearTimers( void )
+{
+	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
+	{
+		if( mTID != tPC_MUTETIME )
+			pcTimers[mTID] = 0;
+	}
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	OpenURL( const std::string txt )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Launch a webpage from within the client
+//o---------------------------------------------------------------------------o
+void CSocket::OpenURL( const std::string& txt )
+{
+	sysmessage( 1210 );
+	CPWebLaunch toSend( txt );
+	Send( &toSend );
+}
+
+CPUOXBuffer::CPUOXBuffer()
+{
+	InternalReset();
+}
+
+CPUOXBuffer::CPUOXBuffer( CPUOXBuffer *initBuffer )
+{
+	InternalReset();
+	pStream.ReserveSize( initBuffer->GetPacketStream().GetSize() );
+	pStream.WriteArray( 0, initBuffer->GetPacketStream().GetBuffer(), initBuffer->GetPacketStream().GetSize() );
+}
+
+CPUOXBuffer::~CPUOXBuffer()
+{
+	packedBuffer.resize( 0 );
+}
+
+CPUOXBuffer &CPUOXBuffer::operator=( CPUOXBuffer &copyFrom )
+{
+	size_t packetSize = copyFrom.GetPacketStream().GetSize();
+	pStream.ReserveSize( packetSize );
+	pStream.WriteArray( 0, copyFrom.GetPacketStream().GetBuffer(), packetSize );
+	return (*this);
+}
+
+void CPUOXBuffer::InternalReset( void )
+{
+	packedBuffer.resize( 0 );
+	isPacked				=	false;
+	packedLength			=	0;
+}
+
+const UI08 *CPUOXBuffer::PackedPointer( void ) const
+{
+	return (const UI08 *)&packedBuffer[0];
+}
+
+bool CPUOXBuffer::ClientCanReceive( CSocket *mSock )
+{
+	// Default implementation, all clients can receive all packets
+	return true;
+}
+
+UI32 CPUOXBuffer::Pack( void )
+{
+	if( isPacked )
+		return packedLength;
+
+	packedBuffer.resize( pStream.GetSize() * 2 );
+
+	size_t len	= pStream.GetSize();
+
+	UI08 *pIn	= (UI08 *)pStream.GetBuffer();
+	UI08 *pOut	= (UI08 *)&packedBuffer[0];
+
+	isPacked	= true;
+
+	packedLength = DoPack( pIn, pOut, len );
+	return packedLength;
+}
+
+CPacketStream& CPUOXBuffer::GetPacketStream( void )
+{
+	return pStream;
+}
+
+UI32 CPUOXBuffer::PackedLength( void ) const
+{
+	return packedLength;
+}
+
+void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet: 0x" << (pStream.GetByte( 0 ) < 16?"0":"") << std::hex << (UI16)pStream.GetByte( 0 ) << "--> Length:" << std::dec << pStream.GetSize() << TimeStamp() << std::endl;
+	doPacketLogging( outStream, pStream.GetSize(), pStream.GetBuffer() );
+}
+
+CPInputBuffer::CPInputBuffer() : tSock( NULL )
+{
+}
+CPInputBuffer::CPInputBuffer( CSocket *input )
+{
+	SetSocket( input );
+}
+void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
+{
+	UI08 *buffer	= tSock->Buffer();
+	const UI32 len	= tSock->InLength();
+	if( fullHeader )
+		outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10?"0":"") << (UI16)buffer[0] << " --> Length: " << std::dec << len << TimeStamp() << std::endl;
+	doPacketLogging( outStream, len, buffer );
+}
+
+bool CPInputBuffer::Handle( void )
+{
+	return false;
+}
+
+void CPInputBuffer::SetSocket( CSocket *toSet )
+{
+	tSock = toSet;
+}
+
 }

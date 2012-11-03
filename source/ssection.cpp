@@ -1,12 +1,14 @@
-
 //o---------------------------------------------------------------------------o
-//| ssection.h
+//| ssection.cpp
 //o---------------------------------------------------------------------------o
 //| Script Section class implementation
 //o---------------------------------------------------------------------------o
 
 #include "uox3.h"
 #include "ssection.h"
+
+namespace UOX
+{
 
 const UI08 DFN_STRING		= 0;
 const UI08 DFN_NUMERIC		= 1;
@@ -15,6 +17,7 @@ const UI08 DFN_NODATA		= 3;
 const UI08 DFN_UNKNOWN		= 4;
 const UI08 DFN_DOUBLENUMERIC= 5;
 
+// 04302004 - Added DFN_UPPERSTRING to support the new DFNTAG_ADDMENUITEM tag
 const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 {
 	DFN_NUMERIC,		//	DFNTAG_AC = 0,
@@ -29,10 +32,12 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_BEGGING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_BLACKSMITHING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_BOWCRAFT,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_BUSHIDO
 	DFN_DOUBLENUMERIC,	//	DFNTAG_CAMPING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_CARPENTRY,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_CARTOGRAPHY,
 	DFN_NUMERIC,		//	DFNTAG_CARVE,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_CHIVALRY,
 	DFN_NUMERIC,		//	DFNTAG_COLD,
 	DFN_NUMERIC,		//	DFNTAG_COLOUR,
 	DFN_STRING,			//	DFNTAG_COLOURLIST,
@@ -40,7 +45,10 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_COOKING,
 	DFN_NUMERIC,		//	DFNTAG_CORPSE,
 	DFN_NUMERIC,		//	DFNTAG_CREATOR,
+	DFN_STRING,			//	DFNTAG_CUSTOMSTRINGTAG,
+	DFN_STRING,			//	DFNTAG_CUSTOMINTTAG,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DAMAGE,
+	DFN_STRING,			//	DFNTAG_ELEMENTRESIST,
 	DFN_NUMERIC,		//	DFNTAG_DECAY,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DEF,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DETECTINGHIDDEN,
@@ -52,24 +60,25 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_DOORFLAG,
 	DFN_NUMERIC,		//	DFNTAG_DYE,
 	DFN_NUMERIC,		//	DFNTAG_EMOTECOLOUR,
-	DFN_NUMERIC,		//	DFNTAG_ENHANCED,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_ENTICEMENT,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_EVALUATINGINTEL,
 	DFN_NUMERIC,		//	DFNTAG_FAME,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_FENCING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_FISHING,
 	DFN_NUMERIC,		//	DFNTAG_FLEEAT,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_FOCUS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_FORENSICS,
 	DFN_NUMERIC,		//	DFNTAG_FX1,
 	DFN_NUMERIC,		//	DFNTAG_FX2,
 	DFN_NUMERIC,		//	DFNTAG_FY1,
 	DFN_NUMERIC,		//	DFNTAG_FY2,
 	DFN_NUMERIC,		//	DFNTAG_FZ1,
+	DFN_UPPERSTRING,	//	DFNTAG_FOOD,
 	DFN_UPPERSTRING,	//	DFNTAG_GET,
 	DFN_NUMERIC,		//	DFNTAG_GLOW,
 	DFN_NUMERIC,		//	DFNTAG_GLOWBC,
 	DFN_NUMERIC,		//	DFNTAG_GLOWTYPE,
-	DFN_NUMERIC,		//	DFNTAG_GOLD,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_GOLD,
 	DFN_NUMERIC,		//	DFNTAG_GOOD,
 	DFN_STRING,			//	DFNTAG_HAIRCOLOUR,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HEALING,
@@ -77,12 +86,13 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HERDING,
 	DFN_NUMERIC,		//	DFNTAG_HIDAMAGE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_HIDING,
-	DFN_NUMERIC,		//	DFNTAG_HP,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_HP,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_HPMAX,
 	DFN_NUMERIC,		//	DFNTAG_ID,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_INTELLIGENCE,
 	DFN_NUMERIC,		//	DFNTAG_INTADD,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_INSCRIPTION,
-	DFN_UPPERSTRING,	//	DFNTAG_ITEM,
+	DFN_UPPERSTRING,	//	DFNTAG_EQUIPITEM,
 	DFN_NUMERIC,		//	DFNTAG_ITEMID,
 	DFN_NUMERIC,		//	DFNTAG_KARMA,
 	DFN_NUMERIC,		//	DFNTAG_LAYER,
@@ -108,7 +118,9 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_STRING,			//	DFNTAG_NAME,
 	DFN_STRING,			//	DFNTAG_NAME2,
 	DFN_STRING,			//	DFNTAG_NAMELIST,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_NECROMANCY,
 	DFN_NODATA,			//	DFNTAG_NEWBIE,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_NINJITSU,
 	DFN_NODATA,			//	DFNTAG_NOTRAIN,
 	DFN_NUMERIC,		//	DFNTAG_NPCAI,
 	DFN_NUMERIC,		//	DFNTAG_NPCWANDER,
@@ -117,12 +129,11 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_PARRYING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_PEACEMAKING,
 	DFN_NUMERIC,		//	DFNTAG_PILEABLE,
-	DFN_NUMERIC,		//	DFNTAG_POISON,
+	DFN_NUMERIC,		//	DFNTAG_POISONDAMAGE,
+	DFN_NUMERIC,		//	DFNTAG_POISONSTRENGTH
 	DFN_NUMERIC,		//	DFNTAG_POISONED,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_POISONING,
 	DFN_NUMERIC,		//	DFNTAG_PRIV,
-	DFN_NUMERIC,		//	DFNTAG_PRIV1,
-	DFN_NUMERIC,		//	DFNTAG_PRIV2,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_PROVOCATION,
 	DFN_NUMERIC,		//	DFNTAG_RACE,
 	DFN_NUMERIC,		//	DFNTAG_RAIN,
@@ -161,248 +172,283 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TACTICS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TAILORING,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TAMING,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_TAMEDHUNGER,
+	DFN_NUMERIC,		//	DFNTAG_WILLHUNGER,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TASTEID,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TINKERING,
 	DFN_STRING,			//	DFNTAG_TITLE,
 	DFN_NUMERIC,		//	DFNTAG_TOTAME,
+	DFN_NUMERIC,		//	DFNTAG_TOPROV,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_TOPEACE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_TRACKING,
 	DFN_NUMERIC,		//	DFNTAG_TYPE,
-	DFN_NUMERIC,		//	DFNTAG_TYPE2,
-	DFN_NUMERIC,		//	DFNTAG_VALUE,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_VALUE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_VETERINARY,
 	DFN_NUMERIC,		//	DFNTAG_VISIBLE,
 	DFN_NUMERIC,		//	DFNTAG_WEIGHT,
 	DFN_NUMERIC,		//	DFNTAG_WIPE,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_WRESTLING,
-	DFN_UPPERSTRING,	//	DFNTAG_ITEMLIST
-	DFN_UPPERSTRING,	//	DFNTAG_NPCLIST
-	DFN_STRING,			//  DFNTAG_NOTES
-	DFN_STRING			//  DFNTAG_CATEGORY
+	DFN_UPPERSTRING,	//	DFNTAG_ITEMLIST,
+	DFN_UPPERSTRING,	//	DFNTAG_NPCLIST,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_STAMINA,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_STAMINAMAX,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_MANA,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_MANAMAX,
+	DFN_NUMERIC,		//	DFNTAG_ADVOBJ
+	DFN_NUMERIC,		//	DFNTAG_DYEHAIR
+	DFN_NUMERIC,		//	DFNTAG_DYEBEARD
+	DFN_NODATA,			//	DFNTAG_KILLHAIR
+	DFN_NODATA,			//	DFNTAG_KILLBEARD
+	DFN_NODATA,			//	DFNTAG_KILLPACK
+	DFN_NUMERIC,		//	DFNTAG_POLY
+	DFN_UPPERSTRING,	//	DFNTAG_ADDMENUITEM
+	DFN_DOUBLENUMERIC,	//	DFNTAG_INTERVAL
+	DFN_UPPERSTRING,	//	DFNTAG_FLAG
+	DFN_STRING,			//  DFNTAG_WALKINGSPEED
+	DFN_STRING,			//  DFNTAG_RUNNINGSPEED
+	DFN_STRING,			//  DFNTAG_FLEEINGSPEED
+	DFN_STRING,			//	DFNTAG_AMMO
+	DFN_STRING,			//	DFNTAG_AMMOFX
+	DFN_NUMERIC,		//	DFNTAG_WEIGHTMAX
+	DFN_DOUBLENUMERIC,	//	DFNTAG_SPELLWEAVING
+	DFN_DOUBLENUMERIC,	//	DFNTAG_IMBUING
+	DFN_DOUBLENUMERIC,	//	DFNTAG_MYSTICISM
+	DFN_DOUBLENUMERIC	//	DFNTAG_THROWING
 };
 
 struct strToDFNLookup
 {
-	const char *strToAdd;
-	DFNTAGS		dfnToAdd;
+	UString	strToAdd;
+	DFNTAGS	dfnToAdd;
 };
 
 std::map< std::string, DFNTAGS > strToDFNTag;
 
 void InitStrToDFN( void )
 {
-	strToDFNLookup stuffToAdd[] = 
-	{
-		{"AC", DFNTAG_AC},
-		{"ALCHEMY", DFNTAG_ALCHEMY},
-		{"AMOUNT", DFNTAG_AMOUNT},
-		{"ANATOMY", DFNTAG_ANATOMY},
-		{"ANIMALLORE", DFNTAG_ANIMALLORE},
-		{"ARCHERY", DFNTAG_ARCHERY},
-		{"ARMSLORE", DFNTAG_ARMSLORE},
-		{"ATT", DFNTAG_ATT},
-		{"BACKPACK", DFNTAG_BACKPACK},
-		{"BEGGING", DFNTAG_BEGGING},
-		{"BLACKSMITHING", DFNTAG_BLACKSMITHING},
-		{"BOWCRAFT", DFNTAG_BOWCRAFT},
-		{"CAMPING", DFNTAG_CAMPING},
-		{"CARPENTRY", DFNTAG_CARPENTRY},
-		{"CARTOGRAPHY", DFNTAG_CARTOGRAPHY},
-		{"CARVE", DFNTAG_CARVE},
-		{"CATEGORY", DFNTAG_CATEGORY},
-		{"COLD", DFNTAG_COLD},
-		{"COLOR", DFNTAG_COLOUR},
-		{"COLOUR", DFNTAG_COLOUR},
-		{"COLORLIST", DFNTAG_COLOURLIST},
-		{"COLOURLIST", DFNTAG_COLOURLIST},
-		{"COLORMATCHHAIR", DFNTAG_COLOURMATCHHAIR},
-		{"COLOURMATCHHAIR", DFNTAG_COLOURMATCHHAIR},
-		{"COOKING", DFNTAG_COOKING},
-		{"CORPSE", DFNTAG_CORPSE},
-		{"CREATOR", DFNTAG_CREATOR},
-		{"DAMAGE", DFNTAG_DAMAGE},
-		{"DECAY", DFNTAG_DECAY},
-		{"DEF", DFNTAG_DEF},
-		{"DETECTINGHIDDEN", DFNTAG_DETECTINGHIDDEN},
-		{"DEX", DFNTAG_DEX},
-		{"DEXTERITY", DFNTAG_DEX},
-		{"DX", DFNTAG_DEX},
-		{"DEXADD", DFNTAG_DEXADD},
-		{"DX2", DFNTAG_DEXADD},
-		{"DIR", DFNTAG_DIR},
-		{"DIRECTION", DFNTAG_DIR},
-		{"DISPELLABLE", DFNTAG_DISPELLABLE},
-		{"DISABLED", DFNTAG_DISABLED},
-		{"DOORFLAG", DFNTAG_DOORFLAG},
-		{"DYE", DFNTAG_DYE},
-		{"DYEABLE", DFNTAG_DYE},
-		{"EMOTECOLOR", DFNTAG_EMOTECOLOUR},
-		{"EMOTECOLOUR", DFNTAG_EMOTECOLOUR},
-		{"ENHANCED", DFNTAG_ENHANCED},
-		{"ENTICEMENT", DFNTAG_ENTICEMENT},
-		{"EVALUATINGINTEL", DFNTAG_EVALUATINGINTEL},
-		{"FAME", DFNTAG_FAME},
-		{"FENCING", DFNTAG_FENCING},
-		{"FISHING", DFNTAG_FISHING},
-		{"FLEEAT", DFNTAG_FLEEAT},
-		{"FORENSICS", DFNTAG_FORENSICS},
-		{"FX1", DFNTAG_FX1},
-		{"FX2", DFNTAG_FX2},
-		{"FY1", DFNTAG_FY1},
-		{"FY2", DFNTAG_FY2}, 
-		{"FZ1", DFNTAG_FZ1},
-		{"GET", DFNTAG_GET},
-		{"GLOW", DFNTAG_GLOW},
-		{"GLOWBC", DFNTAG_GLOWBC},
-		{"GLOWTYPE", DFNTAG_GLOWTYPE},
-		{"GOLD", DFNTAG_GOLD},
-		{"GOOD", DFNTAG_GOOD},
-		{"HAIRCOLOR", DFNTAG_HAIRCOLOUR},
-		{"HAIRCOLOUR", DFNTAG_HAIRCOLOUR},
-		{"HEALING", DFNTAG_HEALING},
-		{"HEAT", DFNTAG_HEAT},
-		{"HERDING", DFNTAG_HERDING},
-		{"HIDAMAGE", DFNTAG_HIDAMAGE},
-		{"HIDING", DFNTAG_HIDING},
-		{"HP", DFNTAG_HP},
-		{"ID", DFNTAG_ID},
-		{"ID2", DFNTAG_ID2},
-		{"IN", DFNTAG_INTELLIGENCE},
-		{"INTELLIGENCE", DFNTAG_INTELLIGENCE},
-		{"INT", DFNTAG_INTELLIGENCE},
-		{"IN2", DFNTAG_INTADD},
-		{"INTADD", DFNTAG_INTADD},
-		{"INSCRIPTION", DFNTAG_INSCRIPTION},
-		{"ITEM", DFNTAG_ITEM},
-		{"ITEMLIST", DFNTAG_ITEMLIST},
-		{"ITEMID", DFNTAG_ITEMID},
-		{"KARMA", DFNTAG_KARMA},
-		{"LAYER", DFNTAG_LAYER},
-		{"LIGHT", DFNTAG_LIGHT},
-		{"LIGHTNING", DFNTAG_LIGHTNING},
-		{"LOCKPICKING", DFNTAG_LOCKPICKING},
-		{"LODAMAGE", DFNTAG_LODAMAGE},
-		{"LOOT", DFNTAG_LOOT},
-		{"LUMBERJACKING", DFNTAG_LUMBERJACKING},
-		{"MACEFIGHTING", DFNTAG_MACEFIGHTING},
-		{"MAGERY", DFNTAG_MAGERY},
-		{"MAGICRESISTANCE", DFNTAG_MAGICRESISTANCE},
-		{"MANA", DFNTAG_MANA},
-		{"MAXHP", DFNTAG_MAXHP},
-		{"MEDITATION", DFNTAG_MEDITATION},
-		{"MINING", DFNTAG_MINING},
-		{"MOD1", DFNTAG_MOD1},
-		{"MOD2", DFNTAG_MOD2},
-		{"MOD3", DFNTAG_MOD3},
-		{"MOVABLE", DFNTAG_MOVABLE},
-		{"MORE", DFNTAG_MORE},
-		{"MORE2", DFNTAG_MORE2},
-		{"MOREX", DFNTAG_MOREX},
-		{"MOREY", DFNTAG_MOREY},
-		{"MOREZ", DFNTAG_MOREZ},
-		{"MUSICIANSHIP", DFNTAG_MUSICIANSHIP},
-		{"NAME", DFNTAG_NAME},
-		{"NAME2", DFNTAG_NAME2},
-		{"NAMELIST", DFNTAG_NAMELIST},
-		{"NEWBIE", DFNTAG_NEWBIE},
-		{"NOMOVE", DFNTAG_NOMOVE},
-		{"NOTES", DFNTAG_NOTES},
-		{"NOTRAIN", DFNTAG_NOTRAIN},
-		{"NPCAI", DFNTAG_NPCAI},
-		{"NPCLIST", DFNTAG_NPCLIST},
-		{"NPCWANDER", DFNTAG_NPCWANDER},
-		{"OFFSPELL", DFNTAG_OFFSPELL},
-		{"PACKITEM", DFNTAG_PACKITEM},
-		{"PARRYING", DFNTAG_PARRYING},
-		{"PEACEMAKING", DFNTAG_PEACEMAKING},
-		{"PILEABLE", DFNTAG_PILEABLE},
-		{"POISON", DFNTAG_POISON},
-		{"POISONCHANCE", DFNTAG_POISONCHANCE},
-		{"POISONSTRENGTH", DFNTAG_POISONSTRENGTH},
-		{"POISONED", DFNTAG_POISONED},
-		{"POISONING", DFNTAG_POISONING},
-		{"PRIV", DFNTAG_PRIV},
-		{"PRIV1", DFNTAG_PRIV1},
-		{"PRIV2", DFNTAG_PRIV2},
-		{"PROVOCATION", DFNTAG_PROVOCATION},
-		{"RACE", DFNTAG_RACE},
-		{"RAIN", DFNTAG_RAIN},
-		{"RANK", DFNTAG_RANK},
-		{"REATTACKAT", DFNTAG_REATTACKAT},
-		{"REMOVETRAPS", DFNTAG_REMOVETRAPS},
-		{"RESTOCK", DFNTAG_RESTOCK},
-		{"RSHOPITEM", DFNTAG_RSHOPITEM},
-		{"RUNS", DFNTAG_RUNS},
-		{"SAYCOLOR", DFNTAG_SAYCOLOUR},
-		{"SAYCOLOUR", DFNTAG_SAYCOLOUR},
-		{"SCRIPT", DFNTAG_SCRIPT},
-		{"SELLITEM", DFNTAG_SELLITEM},
-		{"SHOPITEM", DFNTAG_SHOPITEM},
-		{"SHOPKEEPER", DFNTAG_SHOPKEEPER},
-		{"SHOPLIST", DFNTAG_SHOPLIST},
-		{"SK_MADE", DFNTAG_SK_MADE},
-		{"SKILL", DFNTAG_SKILL},
-//		{"SKILL%i", DFNTAG_SKILLVAR},
-		{"SKIN", DFNTAG_SKIN},
-		{"SKIN2", DFNTAG_SKIN2},
-		{"SKINLIST", DFNTAG_SKINLIST},
-		{"SNOOPING", DFNTAG_SNOOPING},
-		{"SNOW", DFNTAG_SNOW},
-		{"SPADELAY", DFNTAG_SPADELAY},
-		{"SPATTACK", DFNTAG_SPATTACK},
-		{"SPAWNOBJ", DFNTAG_SPAWNOBJ},
-		{"SPAWNOBJLIST", DFNTAG_SPAWNOBJLIST},
-		{"SPD", DFNTAG_SPD},
-		{"SPEED", DFNTAG_SPD},
-		{"SPIRITSPEAK", DFNTAG_SPIRITSPEAK},
-		{"SPLIT", DFNTAG_SPLIT},
-		{"SPLITCHANCE", DFNTAG_SPLITCHANCE},
-		{"ST", DFNTAG_STRENGTH},
-		{"STAMINA", DFNTAG_STAMINA},
-		{"STR", DFNTAG_STRENGTH},
-		{"STRENGTH", DFNTAG_STRENGTH},
-		{"ST2", DFNTAG_STRADD},
-		{"STRADD", DFNTAG_STRADD},
-		{"STEALING", DFNTAG_STEALING},
-		{"STEALTH", DFNTAG_STEALTH},
-		{"SWORDSMANSHIP", DFNTAG_SWORDSMANSHIP},
-		{"TACTICS", DFNTAG_TACTICS},
-		{"TAILORING", DFNTAG_TAILORING},
-		{"TAMING", DFNTAG_TAMING},
-		{"TASTEID", DFNTAG_TASTEID},
-		{"TINKERING", DFNTAG_TINKERING},
-		{"TITLE", DFNTAG_TITLE},
-		{"TOTAME", DFNTAG_TOTAME},
-		{"TRACKING", DFNTAG_TRACKING},
-		{"TYPE", DFNTAG_TYPE},
-		{"TYPE2", DFNTAG_TYPE2},
-		{"VALUE", DFNTAG_VALUE},
-		{"VETERINARY", DFNTAG_VETERINARY},
-		{"VISIBLE", DFNTAG_VISIBLE},
-		{"WEIGHT", DFNTAG_WEIGHT},
-		{"WIPE", DFNTAG_WIPE},
-		{"WRESTLING", DFNTAG_WRESTLING},
-		{NULL, DFNTAG_COUNTOFTAGS}
-	};
-	int iCounter = 0;
-	while( stuffToAdd[iCounter].strToAdd != NULL )
-	{
-		strToDFNTag[stuffToAdd[iCounter].strToAdd] = stuffToAdd[iCounter].dfnToAdd;
-		++iCounter;
-	};
+	// VC6 doesn't like assigning "text" to UString/std::string in a table like fashion
+	strToDFNTag["AC"]				=	DFNTAG_AC;
+	strToDFNTag["ADDMENUITEM"]		=	DFNTAG_ADDMENUITEM;
+	strToDFNTag["ADVOBJ"]			=	DFNTAG_ADVOBJ;
+	strToDFNTag["ALCHEMY"]			=	DFNTAG_ALCHEMY;
+	strToDFNTag["AMMO"]				=	DFNTAG_AMMO;
+	strToDFNTag["AMMOFX"]			=	DFNTAG_AMMOFX;
+	strToDFNTag["AMOUNT"]			=	DFNTAG_AMOUNT;
+	strToDFNTag["ANATOMY"]			=	DFNTAG_ANATOMY;
+	strToDFNTag["ANIMALLORE"]		=	DFNTAG_ANIMALLORE;
+	strToDFNTag["ARCHERY"]			=	DFNTAG_ARCHERY;
+	strToDFNTag["ARMSLORE"]			=	DFNTAG_ARMSLORE;
+	strToDFNTag["ATT"]				=	DFNTAG_ATT;
+	strToDFNTag["BACKPACK"]			=	DFNTAG_BACKPACK;
+	strToDFNTag["BEGGING"]			=	DFNTAG_BEGGING;
+	strToDFNTag["BLACKSMITHING"]	=	DFNTAG_BLACKSMITHING;
+	strToDFNTag["BOWCRAFT"]			=	DFNTAG_BOWCRAFT;
+	strToDFNTag["BUSHIDO"]			=	DFNTAG_BUSHIDO;
+	strToDFNTag["CAMPING"]			=	DFNTAG_CAMPING;
+	strToDFNTag["CARPENTRY"]		=	DFNTAG_CARPENTRY;
+	strToDFNTag["CARTOGRAPHY"]		=	DFNTAG_CARTOGRAPHY;
+	strToDFNTag["CARVE"]			=	DFNTAG_CARVE;
+	strToDFNTag["CHIVALRY"]			=	DFNTAG_CHIVALRY;
+	strToDFNTag["COLD"]				=	DFNTAG_COLD;
+	strToDFNTag["COLOR"]			=	DFNTAG_COLOUR;
+	strToDFNTag["COLOUR"]			=	DFNTAG_COLOUR;
+	strToDFNTag["COLORLIST"]		=	DFNTAG_COLOURLIST;
+	strToDFNTag["COLOURLIST"]		=	DFNTAG_COLOURLIST;
+	strToDFNTag["COLORMATCHHAIR"]	=	DFNTAG_COLOURMATCHHAIR;
+	strToDFNTag["COLOURMATCHHAIR"]	=	DFNTAG_COLOURMATCHHAIR;
+	strToDFNTag["COOKING"]			=	DFNTAG_COOKING;
+	strToDFNTag["CORPSE"]			=	DFNTAG_CORPSE;
+	strToDFNTag["CREATOR"]			=	DFNTAG_CREATOR;
+	strToDFNTag["CUSTOMSTRINGTAG"]	=	DFNTAG_CUSTOMSTRINGTAG;
+	strToDFNTag["CUSTOMINTTAG"]		=	DFNTAG_CUSTOMINTTAG;
+	strToDFNTag["DAMAGE"]			=	DFNTAG_DAMAGE;
+	strToDFNTag["ELEMENTRESIST"]	=	DFNTAG_ELEMENTRESIST;
+	strToDFNTag["DECAY"]			=	DFNTAG_DECAY;
+	strToDFNTag["DEF"]				=	DFNTAG_DEF;
+	strToDFNTag["DETECTINGHIDDEN"]	=	DFNTAG_DETECTINGHIDDEN;
+	strToDFNTag["DEX"]				=	DFNTAG_DEX;
+	strToDFNTag["DEXTERITY"]		=	DFNTAG_DEX;
+	strToDFNTag["DX"]				=	DFNTAG_DEX;
+	strToDFNTag["DEXADD"]			=	DFNTAG_DEXADD;
+	strToDFNTag["DX2"]				=	DFNTAG_DEXADD;
+	strToDFNTag["DIR"]				=	DFNTAG_DIR;
+	strToDFNTag["DIRECTION"]		=	DFNTAG_DIR;
+	strToDFNTag["DISPELLABLE"]		=	DFNTAG_DISPELLABLE;
+	strToDFNTag["DISABLED"]			=	DFNTAG_DISABLED;
+	strToDFNTag["DOORFLAG"]			=	DFNTAG_DOORFLAG;
+	strToDFNTag["DYE"]				=	DFNTAG_DYE;
+	strToDFNTag["DYEABLE"]			=	DFNTAG_DYE;
+	strToDFNTag["DYEHAIR"]			=	DFNTAG_DYEHAIR;
+	strToDFNTag["DYEBEARD"]			=	DFNTAG_DYEBEARD;
+	strToDFNTag["EMOTECOLOR"]		=	DFNTAG_EMOTECOLOUR;
+	strToDFNTag["EMOTECOLOUR"]		=	DFNTAG_EMOTECOLOUR;
+	strToDFNTag["ENTICEMENT"]		=	DFNTAG_ENTICEMENT;
+	strToDFNTag["EVALUATINGINTEL"]	=	DFNTAG_EVALUATINGINTEL;
+	strToDFNTag["FAME"]				=	DFNTAG_FAME;
+	strToDFNTag["FENCING"]			=	DFNTAG_FENCING;
+	strToDFNTag["FISHING"]			=	DFNTAG_FISHING;
+	strToDFNTag["FLAG"]				=	DFNTAG_FLAG;
+	strToDFNTag["FLEEAT"]			=	DFNTAG_FLEEAT;
+	strToDFNTag["FLEEINGSPEED"]		=	DFNTAG_FLEEINGSPEED;
+	strToDFNTag["FOCUS"]			=	DFNTAG_FOCUS;
+	strToDFNTag["FORENSICS"]		=	DFNTAG_FORENSICS;
+	strToDFNTag["FX1"]				=	DFNTAG_FX1;
+	strToDFNTag["FX2"]				=	DFNTAG_FX2;
+	strToDFNTag["FY1"]				=	DFNTAG_FY1;
+	strToDFNTag["FY2"]				=	DFNTAG_FY2; 
+	strToDFNTag["FZ1"]				=	DFNTAG_FZ1;
+	strToDFNTag["FOOD"]				=	DFNTAG_FOOD;
+	strToDFNTag["GET"]				=	DFNTAG_GET;
+	strToDFNTag["GLOW"]				=	DFNTAG_GLOW;
+	strToDFNTag["GLOWBC"]			=	DFNTAG_GLOWBC;
+	strToDFNTag["GLOWTYPE"]			=	DFNTAG_GLOWTYPE;
+	strToDFNTag["GOLD"]				=	DFNTAG_GOLD;
+	strToDFNTag["GOOD"]				=	DFNTAG_GOOD;
+	strToDFNTag["HAIRCOLOR"]		=	DFNTAG_HAIRCOLOUR;
+	strToDFNTag["HAIRCOLOUR"]		=	DFNTAG_HAIRCOLOUR;
+	strToDFNTag["HEALING"]			=	DFNTAG_HEALING;
+	strToDFNTag["HEAT"]				=	DFNTAG_HEAT;
+	strToDFNTag["HERDING"]			=	DFNTAG_HERDING;
+	strToDFNTag["HIDAMAGE"]			=	DFNTAG_HIDAMAGE;
+	strToDFNTag["HIDING"]			=	DFNTAG_HIDING;
+	strToDFNTag["HP"]				=	DFNTAG_HP;
+	strToDFNTag["HPMAX"]			=	DFNTAG_HPMAX;
+	strToDFNTag["ID"]				=	DFNTAG_ID;
+	strToDFNTag["IMBUING"]			=	DFNTAG_IMBUING;
+	strToDFNTag["IN"]				=	DFNTAG_INTELLIGENCE;
+	strToDFNTag["INTELLIGENCE"]		=	DFNTAG_INTELLIGENCE;
+	strToDFNTag["INT"]				=	DFNTAG_INTELLIGENCE;
+	strToDFNTag["IN2"]				=	DFNTAG_INTADD;
+	strToDFNTag["INTADD"]			=	DFNTAG_INTADD;
+	strToDFNTag["INTERVAL"]			=	DFNTAG_INTERVAL;
+	strToDFNTag["INSCRIPTION"]		=	DFNTAG_INSCRIPTION;
+	strToDFNTag["EQUIPITEM"]		=	DFNTAG_EQUIPITEM;
+	strToDFNTag["ITEMLIST"]			=	DFNTAG_ITEMLIST;
+	strToDFNTag["ITEMID"]			=	DFNTAG_ITEMID;
+	strToDFNTag["KARMA"]			=	DFNTAG_KARMA;
+	strToDFNTag["KILLHAIR"]			=	DFNTAG_KILLHAIR;
+	strToDFNTag["KILLBEARD"]		=	DFNTAG_KILLBEARD;
+	strToDFNTag["KILLPACK"]			=	DFNTAG_KILLPACK;
+	strToDFNTag["LAYER"]			=	DFNTAG_LAYER;
+	strToDFNTag["LIGHT"]			=	DFNTAG_LIGHT;
+	strToDFNTag["LIGHTNING"]		=	DFNTAG_LIGHTNING;
+	strToDFNTag["LOCKPICKING"]		=	DFNTAG_LOCKPICKING;
+	strToDFNTag["LODAMAGE"]			=	DFNTAG_LODAMAGE;
+	strToDFNTag["LOOT"]				=	DFNTAG_LOOT;
+	strToDFNTag["LUMBERJACKING"]	=	DFNTAG_LUMBERJACKING;
+	strToDFNTag["MACEFIGHTING"]		=	DFNTAG_MACEFIGHTING;
+	strToDFNTag["MAGERY"]			=	DFNTAG_MAGERY;
+	strToDFNTag["MAGICRESISTANCE"]	=	DFNTAG_MAGICRESISTANCE;
+	strToDFNTag["MANA"]				=	DFNTAG_MANA;
+	strToDFNTag["MANAMAX"]			=	DFNTAG_MANAMAX;
+	strToDFNTag["MAXHP"]			=	DFNTAG_MAXHP;
+	strToDFNTag["MEDITATION"]		=	DFNTAG_MEDITATION;
+	strToDFNTag["MINING"]			=	DFNTAG_MINING;
+	strToDFNTag["MOVABLE"]			=	DFNTAG_MOVABLE;
+	strToDFNTag["MORE"]				=	DFNTAG_MORE;
+	strToDFNTag["MORE2"]			=	DFNTAG_MORE2;
+	strToDFNTag["MOREX"]			=	DFNTAG_MOREX;
+	strToDFNTag["MOREY"]			=	DFNTAG_MOREY;
+	strToDFNTag["MOREZ"]			=	DFNTAG_MOREZ;
+	strToDFNTag["MUSICIANSHIP"]		=	DFNTAG_MUSICIANSHIP;
+	strToDFNTag["MYSTICISM"]		=	DFNTAG_MYSTICISM;
+	strToDFNTag["NAME"]				=	DFNTAG_NAME;
+	strToDFNTag["NAME2"]			=	DFNTAG_NAME2;
+	strToDFNTag["NAMELIST"]			=	DFNTAG_NAMELIST;
+	strToDFNTag["NECROMANCY"]		=	DFNTAG_NECROMANCY;
+	strToDFNTag["NEWBIE"]			=	DFNTAG_NEWBIE;
+	strToDFNTag["NINJITSU"]			=	DFNTAG_NINJITSU;
+	strToDFNTag["NOTRAIN"]			=	DFNTAG_NOTRAIN;
+	strToDFNTag["NPCAI"]			=	DFNTAG_NPCAI;
+	strToDFNTag["NPCLIST"]			=	DFNTAG_NPCLIST;
+	strToDFNTag["NPCWANDER"]		=	DFNTAG_NPCWANDER;
+	strToDFNTag["OFFSPELL"]			=	DFNTAG_OFFSPELL;
+	strToDFNTag["PACKITEM"]			=	DFNTAG_PACKITEM;
+	strToDFNTag["PARRYING"]			=	DFNTAG_PARRYING;
+	strToDFNTag["PEACEMAKING"]		=	DFNTAG_PEACEMAKING;
+	strToDFNTag["PILEABLE"]			=	DFNTAG_PILEABLE;
+	strToDFNTag["POLY"]				=	DFNTAG_POLY;
+	strToDFNTag["POISONDAMAGE"]		=	DFNTAG_POISONDAMAGE;
+	strToDFNTag["POISONSTRENGTH"]	=	DFNTAG_POISONSTRENGTH;
+	strToDFNTag["POISONED"]			=	DFNTAG_POISONED;
+	strToDFNTag["POISONING"]		=	DFNTAG_POISONING;
+	strToDFNTag["PRIV"]				=	DFNTAG_PRIV;
+	strToDFNTag["PROVOCATION"]		=	DFNTAG_PROVOCATION;
+	strToDFNTag["RACE"]				=	DFNTAG_RACE;
+	strToDFNTag["RAIN"]				=	DFNTAG_RAIN;
+	strToDFNTag["RANK"]				=	DFNTAG_RANK;
+	strToDFNTag["REATTACKAT"]		=	DFNTAG_REATTACKAT;
+	strToDFNTag["REMOVETRAPS"]		=	DFNTAG_REMOVETRAPS;
+	strToDFNTag["RESTOCK"]			=	DFNTAG_RESTOCK;
+	strToDFNTag["RSHOPITEM"]		=	DFNTAG_RSHOPITEM;
+	strToDFNTag["RUNS"]				=	DFNTAG_RUNS;
+	strToDFNTag["RUNNINGSPEED"]		=	DFNTAG_RUNNINGSPEED;
+	strToDFNTag["SAYCOLOR"]			=	DFNTAG_SAYCOLOUR;
+	strToDFNTag["SAYCOLOUR"]		=	DFNTAG_SAYCOLOUR;
+	strToDFNTag["SCRIPT"]			=	DFNTAG_SCRIPT;
+	strToDFNTag["SELLITEM"]			=	DFNTAG_SELLITEM;
+	strToDFNTag["SHOPITEM"]			=	DFNTAG_SHOPITEM;
+	strToDFNTag["SHOPKEEPER"]		=	DFNTAG_SHOPKEEPER;
+	strToDFNTag["SHOPLIST"]			=	DFNTAG_SHOPLIST;
+	strToDFNTag["SK_MADE"]			=	DFNTAG_SK_MADE;
+	strToDFNTag["SKILL"]			=	DFNTAG_SKILL;
+	strToDFNTag["SKIN"]				=	DFNTAG_SKIN;
+	strToDFNTag["SKINLIST"]			=	DFNTAG_SKINLIST;
+	strToDFNTag["SNOOPING"]			=	DFNTAG_SNOOPING;
+	strToDFNTag["SNOW"]				=	DFNTAG_SNOW;
+	strToDFNTag["SPADELAY"]			=	DFNTAG_SPADELAY;
+	strToDFNTag["SPATTACK"]			=	DFNTAG_SPATTACK;
+	strToDFNTag["SPAWNOBJ"]			=	DFNTAG_SPAWNOBJ;
+	strToDFNTag["SPAWNOBJLIST"]		=	DFNTAG_SPAWNOBJLIST;
+	strToDFNTag["SPD"]				=	DFNTAG_SPD;
+	strToDFNTag["SPEED"]			=	DFNTAG_SPD;
+	strToDFNTag["SPELLWEAVING"]		=	DFNTAG_SPELLWEAVING;
+	strToDFNTag["SPIRITSPEAK"]		=	DFNTAG_SPIRITSPEAK;
+	strToDFNTag["SPLIT"]			=	DFNTAG_SPLIT;
+	strToDFNTag["SPLITCHANCE"]		=	DFNTAG_SPLITCHANCE;
+	strToDFNTag["ST"]				=	DFNTAG_STRENGTH;
+	strToDFNTag["STAMINA"]			=	DFNTAG_STAMINA;
+	strToDFNTag["STAMINAMAX"]		=	DFNTAG_STAMINAMAX;
+	strToDFNTag["STR"]				=	DFNTAG_STRENGTH;
+	strToDFNTag["STRENGTH"]			=	DFNTAG_STRENGTH;
+	strToDFNTag["ST2"]				=	DFNTAG_STRADD;
+	strToDFNTag["STRADD"]			=	DFNTAG_STRADD;
+	strToDFNTag["STEALING"]			=	DFNTAG_STEALING;
+	strToDFNTag["STEALTH"]			=	DFNTAG_STEALTH;
+	strToDFNTag["SWORDSMANSHIP"]	=	DFNTAG_SWORDSMANSHIP;
+	strToDFNTag["TACTICS"]			=	DFNTAG_TACTICS;
+	strToDFNTag["TAILORING"]		=	DFNTAG_TAILORING;
+	strToDFNTag["TAMING"]			=	DFNTAG_TAMING;
+	strToDFNTag["TAMEDHUNGER"]		=	DFNTAG_TAMEDHUNGER;
+	strToDFNTag["TASTEID"]			=	DFNTAG_TASTEID;
+	strToDFNTag["THROWING"]			=	DFNTAG_THROWING;
+	strToDFNTag["TINKERING"]		=	DFNTAG_TINKERING;
+	strToDFNTag["TITLE"]			=	DFNTAG_TITLE;
+	strToDFNTag["TOTAME"]			=	DFNTAG_TOTAME;
+	strToDFNTag["TOPROV"]			=	DFNTAG_TOPROV;
+	strToDFNTag["TOPEACE"]			=	DFNTAG_TOPEACE;
+	strToDFNTag["TRACKING"]			=	DFNTAG_TRACKING;
+	strToDFNTag["TYPE"]				=	DFNTAG_TYPE;
+	strToDFNTag["VALUE"]			=	DFNTAG_VALUE;
+	strToDFNTag["VETERINARY"]		=	DFNTAG_VETERINARY;
+	strToDFNTag["VISIBLE"]			=	DFNTAG_VISIBLE;
+	strToDFNTag["WALKINGSPEED"]		=	DFNTAG_WALKINGSPEED;
+	strToDFNTag["WEIGHT"]			=	DFNTAG_WEIGHT;
+	strToDFNTag["WEIGHTMAX"]		=	DFNTAG_WEIGHTMAX;
+	strToDFNTag["WILLHUNGER"]		=	DFNTAG_WILLHUNGER;
+	strToDFNTag["WIPE"]				=	DFNTAG_WIPE;
+	strToDFNTag["WRESTLING"]		=	DFNTAG_WRESTLING;
 }
 void CleanupStrToDFN( void )
 {
 	strToDFNTag.clear();
 }
 
-DFNTAGS FindDFNTagFromStr( const char *strToFind )
+DFNTAGS FindDFNTagFromStr( UString strToFind )
 {
-	if( strToDFNTag.size() == 0 )	// if we haven't built our array yet
+	if( strToDFNTag.empty() ) // if we haven't built our array yet
 		InitStrToDFN();
-	char tempString[512];
-	strcpy( tempString, strToFind );
-	strupr( tempString );
-	std::map< std::string, DFNTAGS >::iterator toFind = strToDFNTag.find( tempString );
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strToFind.upper() );
 	if( toFind != strToDFNTag.end() )
 		return toFind->second;
 	return DFNTAG_COUNTOFTAGS;
@@ -416,12 +462,13 @@ DFNTAGS FindDFNTagFromStr( const char *strToFind )
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Default constructor, initializing all variables
 //o--------------------------------------------------------------------------
-ScriptSection::ScriptSection( void ) : fileOpened( false ), arrayFilled( false ), dataFile( NULL ), 
-currentPos( -1 ), fileType( -1 ), dfnCat( NUM_DEFS ), currentPos2( -1 ), npcListData( NULL ), itemListData( NULL ),
-npcList( false ), itemList( false )
+ScriptSection::ScriptSection( void ) : dfnCat( NUM_DEFS ), 
+npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );
+	currentPos	= data.end();
+	currentPos2	= dataV2.end();
 }
 
 //o--------------------------------------------------------------------------
@@ -433,35 +480,16 @@ npcList( false ), itemList( false )
 //|	Purpose			-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 //o--------------------------------------------------------------------------
-ScriptSection::ScriptSection( FILE *targFile, DEFINITIONCATEGORIES d ) : fileOpened( true ), arrayFilled( false ), 
-dataFile( targFile ), currentPos( -1 ), fileType( -1 ), dfnCat( d ), currentPos2( -1 ), npcListData( NULL ), itemListData( NULL ),
-npcList( false ), itemList( false )
+ScriptSection::ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d ) : 
+dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );
-	GrabFromFile();
-	fileOpened = false;
+	createSection( input );
+	currentPos	= data.end();
+	currentPos2	= dataV2.end();
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool CloseFile( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if the file was closed, or false if it
-//|						was already closed
-//o--------------------------------------------------------------------------
-bool ScriptSection::CloseFile( void )
-{
-	if( !fileOpened )
-		return false;
-	fileOpened = false;
-	if( dataFile == NULL )
-		return false;
-	fclose( dataFile );
-	return true;
-}
 
 //o--------------------------------------------------------------------------
 //|	Function		-	bool AtEnd( void )
@@ -475,202 +503,86 @@ bool ScriptSection::AtEnd( void )
 // PRE:		vector loaded and init'd
 // POST:	returns true if at end of array now
 {
-	if( currentPos < 0 )	// broken precondition
-		return false;
-	if( static_cast<UI16>(currentPos) >= data.size() )
-		return true;
-	return false;
+	return ( currentPos == data.end() );
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	char *First( void )
+//|	Function		-	UString First( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the first tag at the start of the section
 //o--------------------------------------------------------------------------
-const char *ScriptSection::First( void )
+const UString ScriptSection::First( void )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of first entry
 {
-	currentPos = 0;
-	if( AtEnd() )
-		return NULL;
-	return data[currentPos]->tag;
+	UString rvalue;
+	currentPos = data.begin();
+	if( !AtEnd() )
+		rvalue = (*currentPos)->tag;
+	return rvalue;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	char *Next( void )
+//|	Function		-	UString Next( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the next tag in the section, or NULL if no more
 //o--------------------------------------------------------------------------
-const char *ScriptSection::Next( void )
+const UString ScriptSection::Next( void )
 {
-	currentPos++;
-	if( AtEnd() )
-		return NULL;
-	return data[currentPos]->tag;
+	UString rvalue;
+	if( !AtEnd() )
+	{
+		++currentPos;
+		if( !AtEnd() )
+			rvalue = (*currentPos)->tag;
+	}
+	return rvalue;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	char *MoveTo( SI16 position )
+//|	Function		-	UString MoveTo( size_t position )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-   
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Moves to position in the section and returns the tag there
 //o--------------------------------------------------------------------------
-const char *ScriptSection::MoveTo( SI16 position )
+const UString ScriptSection::MoveTo( size_t position )
 // PRE:		vector loaded and init'd
 // POST:	returns string (tag) of next entry
 {
-	if( AtEnd() )
-		return NULL;
-	currentPos = position;
-	return data[currentPos]->tag;
+	UString rvalue;
+	std::vector< sectData * >::iterator curPos	= currentPos;
+	currentPos									= (data.begin() + position);
+	if( !AtEnd() )
+		rvalue		= (*currentPos)->tag;
+	else
+		currentPos	= curPos;
+	return rvalue;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	char *GrabData( void )
+//|	Function		-	UString GrabData( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the data for the current tag
 //o--------------------------------------------------------------------------
-const char *ScriptSection::GrabData( void )
+const UString ScriptSection::GrabData( void )
 // PRE:		At a valid location, init'd data
 // POST:	returns string of data of current entry
 {
-	if( AtEnd() )
-		return NULL;
-	return data[currentPos]->data;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	bool GrabFromFile( void )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Reads the currently opened file, parsing in a section
-//|						Returns true if it contains some entries
-//o--------------------------------------------------------------------------
-bool ScriptSection::GrabFromFile( void )
-{
-	if( !fileOpened )
-		return false;
-	arrayFilled = true;
-	sectData *toAdd = NULL;
-	sectDataV2 *toAdd2 = NULL;
-	char scp1[512], scp2[512];
-	DFNTAGS mTag;
-	strcpy( scp1, "{" );
-	do
-	{
-		ParseLine( scp1, scp2 );
-		if( scp1[0] != '}' && !feof( dataFile ) )
-		{
-			switch( dfnCat )
-			{
-			case hard_items_def:	// as it's the same format as items_def, in essence
-			case npc_def:
-			case items_def:
-				mTag = FindDFNTagFromStr( scp1 );
-				if( mTag != DFNTAG_COUNTOFTAGS )	// we have a validly recognized tag
-				{
-					if( dfnDataTypes[mTag] != DFN_NODATA && scp2[0] == 0 )	// it's a valid tag, needs data though!
-						break;
-					toAdd2 = new sectDataV2;
-					toAdd2->tag = mTag;
-
-					switch( dfnDataTypes[mTag] )
-					{
-					case DFN_UPPERSTRING:	
-						strupr( scp2 );
-					case DFN_STRING:
-						toAdd2->cdata = new char[strlen( scp2 ) + 1];
-						strcpy( toAdd2->cdata, scp2 );
-						break;
-					case DFN_NUMERIC:
-						toAdd2->ndata = makeNum( scp2 );
-						break;
-					case DFN_DOUBLENUMERIC:
-						char dntemp[256];
-						gettokennum( scp2, 0, dntemp );
-						toAdd2->ndata = makeNum( dntemp );
-						gettokennum( scp2, 1, dntemp );
-						toAdd2->odata = makeNum( dntemp );
-						if( toAdd2->odata == 0 )
-							toAdd2->odata = toAdd2->ndata;
-						break;
-					case DFN_NODATA:
-					case DFN_UNKNOWN:	
-						toAdd2->cdata = NULL;
-						break;
-					}					
-					dataV2.push_back( toAdd2 );
-				}
-				else
-				{
-					toAdd = new sectData;
-					toAdd->tag = new char[strlen( scp1 ) + 1];
-					toAdd->data = new char[strlen( scp2 ) + 1];
-					strcpy( toAdd->tag, scp1 );
-					strcpy( toAdd->data, scp2 );
-					data.push_back( toAdd );
-				}
-				break;
-			case spawn_def:
-			case create_def:
-			case command_def:
-				strupr( scp1 );
-			default:
-				toAdd = new sectData;
-				toAdd->tag = new char[strlen( scp1 ) + 1];
-				toAdd->data = new char[strlen( scp2 ) + 1];
-				strcpy( toAdd->tag, scp1 );
-				strcpy( toAdd->data, scp2 );
-				data.push_back( toAdd );
-				break;
-			}
-		}
-	} while( scp1[0] != '}' && !feof( dataFile ) );
-	if( data.size() == 0 && dataV2.size() == 0 )
-	{
-		arrayFilled = false;
-		currentPos = -1;
-		return false;
-	}
-	DFNTAGS tag = DFNTAG_COUNTOFTAGS;
-	UI32 tValue, uValue;
-	if( dfnCat == items_def )
-	{
-		for( tag = FirstTag(); !AtEndTags(); tag = NextTag() )
-		{
-			if( tag == DFNTAG_ITEMLIST )
-			{
-				itemList = true;
-				itemListData = GrabData( tValue, uValue );
-			}
-		}
-	}
-	if( dfnCat == npc_def )
-	{
-		for( tag = FirstTag(); !AtEndTags(); tag = NextTag() )
-		{
-			if( tag == DFNTAG_NPCLIST )
-			{
-				npcList = true;
-				npcListData = GrabData( tValue, uValue );
-			}
-		}
-	}
-	return true;
+	UString rvalue;
+	if( !AtEnd() )
+		rvalue = (*currentPos)->data;
+	return rvalue;
 }
 
 //o--------------------------------------------------------------------------
@@ -684,11 +596,8 @@ bool ScriptSection::GrabFromFile( void )
 //o--------------------------------------------------------------------------
 ScriptSection::~ScriptSection()
 {
-	bool flushResult = false;
-	CloseFile();
-	flushResult = FlushData();
-	if( !flushResult )
-		Console.Error( 3, "Section unable to flush data!" );
+	if( !FlushData() )
+		Console.Error( "Section unable to flush data!" );
 }
 
 //o--------------------------------------------------------------------------
@@ -701,247 +610,136 @@ ScriptSection::~ScriptSection()
 //o--------------------------------------------------------------------------
 bool ScriptSection::FlushData( void )
 {
-	for( UI32 i = 0; i < data.size(); i++ )
+	for( size_t i = 0; i < data.size(); ++i )
 	{
-		delete [] data[i]->data;
-		delete [] data[i]->tag;
 		delete data[i];
 	}
-	for( UI32 j = 0; j < dataV2.size(); j++ )
+	for( size_t j = 0; j < dataV2.size(); ++j )
 	{
-		switch( dfnDataTypes[dataV2[j]->tag] )
-		{
-		case DFN_STRING:
-		case DFN_UPPERSTRING:
-			delete [] dataV2[j]->cdata;
-			break;
-		default:
-			break;
-		};
 		delete dataV2[j];
 	}
-	arrayFilled = false;
 	data.resize( 0 );
 	dataV2.resize( 0 );
 	return true;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	ParseLine( char *scp1, char *scp2 )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Parses a line from the file, turning it into a tag / data pair
-//o--------------------------------------------------------------------------
-void ScriptSection::ParseLine( char *scp1, char *scp2 )
-{
-	if( scp1 == NULL || scp2 == NULL )
-		return;
-	char temp[1024];
-	GrabLine( temp );
-	int i = 0;
-	scp1[0] = 0;
-	scp2[0] = 0;
-	while( temp[i] != 0 && temp[i] != '=' )
-	{
-		i++;
-	}
-	strncpy( scp1, temp, i );
-	scp1[i] = 0;
-	if( scp1[0] != '}' && temp[i] != 0 ) 
-		strcpy( scp2, temp + i + 1 );
-	return;
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	GrabLine( char *temp )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Reads a line from the script, ensuring no buffer overflow
-//|						and that it's not a comment, NULL, or start of section
-//o--------------------------------------------------------------------------
-void ScriptSection::GrabLine( char *temp )
-{
-	if( temp == NULL )
-		return;
-	if( dataFile == NULL )
-	{
-		strcpy( temp, "EOF" );
-		return;
-	}
-	bool valid = false;
-	temp[0] = 0;
-	bool partialComment = false;
-	while( !valid )
-	{
-		int i = 0;
-		if( feof( dataFile ) ) 
-		{
-			temp[i] = 0;
-			return;
-		}
-
-		partialComment = false;
-		char c = (char)fgetc( dataFile );
-		while( c != 10 && i < 1024 )	// don't overflow our buffer
-		{
-			if( c != 13 )
-			{
-				temp[i] = c;
-				++i;
-			}
-			if( feof( dataFile ) ) 
-			{
-				temp[i] = 0;
-				return;
-			}
-			if( c == '/' )
-			{
-				if( !partialComment )
-					partialComment = true;
-				else
-				{
-					temp[i-2] = 0;	// NULL it
-					while( c != 10 && c != 13 && i < 1024 && !feof( dataFile ) )
-						c = (char)fgetc( dataFile );	// eat data until the end of the line
-					break;
-				}
-			}
-			else if( partialComment )
-				partialComment = false;
-			c = (char)fgetc( dataFile );
-			if( c == 9 ) 
-				c = 32;	// if we actually have a tab, then replace it with a space!
-		}
-		temp[i] = 0;
-		valid = true;
-		if( temp[0] == '/' && temp[1] == '/' ) 
-			valid = false;
-		else if( temp[0] == '{' )
-			valid = false;
-		else if( temp[0] == 0 ) 
-			valid = false;
-	}
-}
-
-//o--------------------------------------------------------------------------
-//|	Function		-	SI32 NumEntries( void )
+//|	Function		-	size_t NumEntries( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the number of entries in the section
 //o--------------------------------------------------------------------------
-SI32 ScriptSection::NumEntries( void )
+size_t ScriptSection::NumEntries( void ) const
 {
 	return data.size();
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	char *Prev( void )
+//|	Function		-	UString Prev( void )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the previous tag, or NULL if at start
 //o--------------------------------------------------------------------------
-const char *ScriptSection::Prev( void )
+const UString ScriptSection::Prev( void )
 {
-	currentPos--;
-	if( AtEnd() )
-		return NULL;
-	return data[currentPos]->tag;
+	UString rvalue;
+	if( currentPos != data.begin() )
+	{
+		--currentPos;
+		if( !AtEnd() )
+			rvalue = (*currentPos)->tag;
+	}
+	return rvalue;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	Remove( UI16 position )
+//|	Function		-	Remove( size_t position )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-   Mr. Fixit (11-15-2001)
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Removes the tag/data pair at position in the array
 //o--------------------------------------------------------------------------
-void ScriptSection::Remove( UI16 position )
+void ScriptSection::Remove( size_t position )
 // PRE:		vector loaded and init'd
 // POST:	removes thing at position
 {
 	if( AtEnd() )
 		return;
-	delete [] data[position]->data;
-	delete [] data[position]->tag;
 	delete data[position];
-	for( UI16 iCounter = position; iCounter < ( data.size() - 1 ); iCounter++ )
-		data[iCounter] = data[iCounter + 1];
-	data.resize( data.size() - 1 );
+	data.erase( data.begin() + position );
 }
 
-
 //o--------------------------------------------------------------------------
-//|	Function		-	Append( const char *tagToAdd, const char *dataToAdd )
+//|	Function		-	Append( UString tagToAdd, UString dataToAdd )
 //|	Date			-	Unknown
 //|	Programmer		-	Abaddon
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Adds a new tag/data pair at the end of the section
 //o--------------------------------------------------------------------------
-void ScriptSection::Append( const char *tagToAdd, const char *dataToAdd )
+void ScriptSection::Append( UString tagToAdd, UString dataToAdd )
 {
-	int targPos = data.size();
-	data.resize( data.size() + 1 );
-
-	data[targPos] = new sectData;
-	data[targPos]->tag = new char[strlen( tagToAdd ) + 1];
-	data[targPos]->data = new char[strlen( dataToAdd ) + 1];
-	strcpy( data[targPos]->tag, tagToAdd );
-	strcpy( data[targPos]->data, dataToAdd );
+	sectData *toAdd	= new sectData;
+	toAdd->tag		= tagToAdd;
+	toAdd->data		= dataToAdd;
+	data.push_back( toAdd );
 }
 
-const char *ScriptSection::GrabData( UI32& ndata, UI32& odata )
+const UString ScriptSection::GrabData( SI32& ndata, SI32& odata )
 {
+	UString rvalue;
 	if( AtEndTags() )
 	{
 		ndata = INVALIDSERIAL;
 		odata = INVALIDSERIAL;
-		return NULL;
 	}
 	else
 	{
-		ndata = dataV2[currentPos2]->ndata;
-		odata = dataV2[currentPos2]->odata;
-		return dataV2[currentPos2]->cdata;
+		ndata	= (*currentPos2)->ndata;
+		odata	= (*currentPos2)->odata;
+		rvalue	= (*currentPos2)->cdata;
 	}
+	return rvalue;
 }
 bool ScriptSection::AtEndTags( void )
 {
-	if( currentPos2 < 0 )	// broken precondition
-		return false;
-	if( static_cast<UI16>(currentPos2) >= dataV2.size() )
+	if( currentPos2 == dataV2.end() )
 		return true;
 	return false;
 }
 DFNTAGS ScriptSection::PrevTag( void )
 {
-	--currentPos2;
-	if( AtEndTags() )
-		return DFNTAG_COUNTOFTAGS;
-	return dataV2[currentPos2]->tag;
+	DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
+	if( currentPos2 != dataV2.begin() )
+	{
+		--currentPos2;
+		if( !AtEndTags() )
+			rValue = (*currentPos2)->tag;
+	}
+	return rValue;
 }
 DFNTAGS ScriptSection::NextTag( void )
 {
-	++currentPos2;
-	if( AtEndTags() )
-		return DFNTAG_COUNTOFTAGS;
-	return dataV2[currentPos2]->tag;
+	DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
+	if( !AtEndTags() )
+	{
+		++currentPos2;
+		if( !AtEndTags() )
+			rValue = (*currentPos2)->tag;
+	}
+	return rValue;
 }
 DFNTAGS ScriptSection::FirstTag( void )
 {
-	currentPos2 = 0;
+	currentPos2 = dataV2.begin();
 	if( AtEndTags() )
 		return DFNTAG_COUNTOFTAGS;
-	return dataV2[currentPos2]->tag;
+	return (*currentPos2)->tag;
 }
 
 //o--------------------------------------------------------------------------
@@ -971,27 +769,181 @@ bool ScriptSection::NpcListExist( void ) const
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	const char *ItemListData( void ) const
+//|	Function		-	UString ItemListData( void ) const
 //|	Date			-	12 January, 2003
 //|	Programmer		-	Maarc
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the itemlist data
 //o--------------------------------------------------------------------------
-const char * ScriptSection::ItemListData( void ) const
+const UString ScriptSection::ItemListData( void ) const
 {
 	return itemListData;
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	const char *NpcListData( void ) const
+//|	Function		-	UString NpcListData( void ) const
 //|	Date			-	12 January, 2003
 //|	Programmer		-	Maarc
 //|	Modified		-
 //o--------------------------------------------------------------------------
 //|	Purpose			-	Returns the npclist data
 //o--------------------------------------------------------------------------
-const char * ScriptSection::NpcListData( void ) const
+const UString ScriptSection::NpcListData( void ) const
 {
 	return npcListData;
+}
+
+//o--------------------------------------------------------------------------
+//|	Function		-	void createSection( std::fstream& input )
+//|	Date			-	Unknown
+//|	Programmer		-	
+//|	Modified		-
+//o--------------------------------------------------------------------------
+//|	Purpose			-	Creates section data from the input stream passed in
+//o--------------------------------------------------------------------------
+
+UI32 groupHolder = 0;
+UI32 itemIndexHolder = 0;
+
+void ScriptSection::createSection( std::fstream& input )
+{
+	char line[2048];
+	UString sLine;
+	sectData *toAdd		= NULL;
+	sectDataV2 *toAdd2	= NULL;
+	DFNTAGS mTag;
+	UString tag, value,localName;
+	// Now the reverse comes into play!
+	while( !input.eof() && sLine.substr( 0, 1 ) != "}" && !input.fail() )
+	{
+		input.getline( line, 2048 );
+		sLine = line;
+		sLine = sLine.removeComment().stripWhiteSpace();
+		if( sLine != "}" && !sLine.empty() )
+		{
+			// do something here
+			if( sLine.substr( 0, 1 ) != "}" )
+			{
+				tag		= sLine.section( "=", 0, 0 ).stripWhiteSpace();
+				value	= sLine.section( "=", 1, 1 ).stripWhiteSpace();
+				switch( dfnCat )
+				{
+					case advance_def:
+					case hard_items_def:	// as it's the same format as items_def, in essence
+					case npc_def:
+					case items_def:
+						mTag = FindDFNTagFromStr( tag );
+						if( mTag != DFNTAG_COUNTOFTAGS	&& mTag != DFNTAG_ITEMLIST && mTag != DFNTAG_NPCLIST )	// we have a validly recognized tag
+						{
+							if( dfnDataTypes[mTag] != DFN_NODATA && value.empty() )	// it's a valid tag, needs data though!
+								break;
+							toAdd2 = new sectDataV2;
+							toAdd2->tag = mTag;
+
+							switch( dfnDataTypes[mTag] )
+							{
+								case DFN_UPPERSTRING:	
+									value = value.upper();
+									if( tag.upper() == "ADDMENUITEM" )
+									{
+										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
+										// Format: ADDMENUITEM=CategoryID,GroupID,SubGroupID,TileID,WeightPosition,TypeID,ObjectFlags, ObjectID
+										ADDMENUITEM amiLocalCopy;
+										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
+										amiLocalCopy.itemName = localName;
+										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toULong();
+										if(amiLocalCopy.groupID != groupHolder)
+										{
+											groupHolder = amiLocalCopy.groupID;
+											itemIndexHolder = 0;
+										}
+										else
+										{
+											itemIndexHolder += 1;
+										}
+										amiLocalCopy.itemIndex = itemIndexHolder;
+										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toULong();
+										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toULong();
+										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toULong();
+										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toULong();
+										if( amiLocalCopy.tileID == INVALIDSERIAL ) 
+											amiLocalCopy.tileID = amiLocalCopy.objectID;
+										// Need to shove it into the multimap
+										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
+									}
+										toAdd2->cdata = value;
+									break;
+								case DFN_STRING:
+									if(tag.upper()=="NAME")
+										localName = value;
+									toAdd2->cdata = value;
+									break;
+								case DFN_NUMERIC:
+									toAdd2->ndata = value.toLong();
+									break;
+								case DFN_DOUBLENUMERIC:
+									// Best I can tell the seperator here is a space
+									value = value.simplifyWhiteSpace();
+									if( value.sectionCount( " " ) != 0 )
+									{
+										toAdd2->ndata = value.section( " ", 0, 0 ).toLong();
+										toAdd2->odata = value.section( " ", 1, 1 ).toLong();
+									}
+									else
+									{
+										toAdd2->ndata = value.toLong();
+										toAdd2->odata = toAdd2->ndata;
+									}
+									break;
+								case DFN_NODATA:
+								case DFN_UNKNOWN:	
+									toAdd2->cdata = "";
+									break;
+							}					
+							dataV2.push_back( toAdd2 );
+						}
+						else
+						{
+							toAdd		= new sectData;
+							toAdd->tag	= tag;
+							toAdd->data = value;
+							data.push_back( toAdd );
+							if( dfnCat == items_def )
+							{
+								if( mTag == DFNTAG_ITEMLIST )
+								{
+									itemList = true;
+									itemListData = value;
+								}
+							}
+							else if( dfnCat == npc_def )
+							{
+								if( mTag == DFNTAG_NPCLIST )
+								{
+									npcList = true;
+									npcListData = value;
+								}
+							}
+						}
+						break;
+					case spawn_def:
+					case create_def:
+					case command_def:
+						tag = tag.upper();
+					default:
+						toAdd = new sectData;
+						toAdd->tag	= tag;
+						toAdd->data	= value;
+						data.push_back( toAdd );
+						break;
+				}
+			}
+		}
+	}
+	// Now some cleanup
+	if( data.empty() && dataV2.empty() )
+		currentPos = data.end();
+}
+
 }

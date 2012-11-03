@@ -2,9 +2,9 @@
 #define __CTHREADQUEUE_H__
 
 #include "threadsafeobject.h"
-#include <queue>
 
-//using namespace std;
+namespace UOX
+{
 
 enum MessageType
 {
@@ -17,6 +17,7 @@ enum MessageType
 	MSG_PRINTDONE,
 	MSG_PRINTFAILED,
 	MSG_SECTIONBEGIN,
+	MSG_RELOAD,
 	MSG_COUNT
 };
 
@@ -28,16 +29,20 @@ struct MessagePassed
 
 class CThreadQueue : public ThreadSafeObject
 {
-protected:
+private:
 	std::queue< MessagePassed >	internalQueue;
 public:
 					CThreadQueue();
-	void			NewMessage( MessageType toAdd, char *data = NULL );
+	void			NewMessage( MessageType toAdd, const char *data = NULL );
 	MessagePassed	GrabMessage( void );
 	bool			Empty( void );
 	CThreadQueue &	operator<<( MessageType newMessage );
 	CThreadQueue &	operator<<( char *toPush );
 };
+
+extern CThreadQueue							messageLoop;
+
+}
 
 #endif
 

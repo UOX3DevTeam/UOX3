@@ -1,6 +1,5 @@
 #include "uox3.h"
 #include "townregion.h"
-
 #include "cRaces.h"
 #include "cServerDefinitions.h"
 #include "cSpawnRegion.h"
@@ -10,11 +9,14 @@
 #include "gump.h"
 #include "mapstuff.h"
 #include "scriptc.h"
+#include "CPacketSend.h"
+#include "jail.h"
+#include "Dictionary.h"
+#include "classes.h"
+#include "CJSEngine.h"
 
-#ifndef va_start
-	#include <cstdarg>
-//	using namespace std;
-#endif
+namespace UOX
+{
 
 // Implementation of town regions
 
@@ -22,196 +24,214 @@ const SI08 MAYOR = 0x01;
 const SI08 ENEMY = 0x02;
 const SI08 JOINER = 0x03;
 
-cTownRegion::cTownRegion( UI08 region ) : race( 0 ), weather( 255 ), priv( 0 ), regionNum( region ), midilist( 0 ),
-mayorSerial( INVALIDSERIAL ), taxedResource( 0x0EED ), taxedAmount( 0 ), goldReserved( 0 ), guardsPurchased( 0 ),
-resourceCollected( 0 ), visualAppearance( WRLD_SPRING ), health( 30000 ), timeToElectionClose( 0 ), timeToNextPoll( 0 ), 
-timeSinceGuardsPaid( 0 ), timeSinceTaxedMembers( 0 ), worldNumber( 0 )
+const UI32 BIT_GUARDED		=	0;
+const UI32 BIT_MARK			=	1;
+const UI32 BIT_GATE			=	2;
+const UI32 BIT_RECALL		=	3;
+const UI32 BIT_AGGRESSIVE	=	6;
+const UI32 BIT_DUNGEON		=	7;
+
+const RACEID	DEFTOWN_RACE				= 0;
+const weathID	DEFTOWN_WEATHER				= 255;
+const SI32		DEFTOWN_MIDILIST			= 0;
+const SERIAL	DEFTOWN_MAYOR				= INVALIDSERIAL;
+const UI16		DEFTOWN_TAXEDRESOURCE		= 0x0EED;
+const UI16		DEFTOWN_TAXEDAMOUNT			= 0;
+const SI32		DEFTOWN_GOLDRESERVED		= 0;
+const SI16		DEFTOWN_GUARDSPURCHASED		= 0;
+const long		DEFTOWN_RESOURCECOLLECTED	= 0;
+const WorldType	DEFTOWN_VISUALAPPEARANCE	= WRLD_SPRING;
+const SI16		DEFTOWN_HEALTH				= 30000;
+const long		DEFTOWN_ELECTIONCLOSE		= 0;
+const long		DEFTOWN_NEXTPOLL			= 0;
+const long		DEFTOWN_GUARDSPAID			= 0;
+const long		DEFTOWN_TAXEDMEMBERS		= 0;
+const UI08		DEFTOWN_WORLDNUMBER			= 0;
+const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
+const UI08		DEFTOWN_FINDBIGORE			= 0;
+const UI16		DEFTOWN_NUMGUARDS			= 10;
+
+CTownRegion::CTownRegion( UI16 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), 
+regionNum( region ), midilist( DEFTOWN_MIDILIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
+taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
+resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
+timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ), 
+timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ), worldNumber( DEFTOWN_WORLDNUMBER ), jsScript( DEFTOWN_JSSCRIPT ), 
+chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS )
 {
-	guards.resize( 0 );
+	priv.reset();
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
-	memset( goodsell, 0, sizeof( goodsell[0] ) * 256 );
-	memset( goodbuy,  0, sizeof(  goodbuy[0] ) * 256 );
-	memset( goodrnd1, 0, sizeof( goodrnd1[0] ) * 256 );
-	memset( goodrnd2, 0, sizeof( goodrnd2[0] ) * 256 );
-	strcpy( name, Dictionary->GetEntry( 1117 ) );
-	strcpy( guardowner, Dictionary->GetEntry( 1118 ) );
+	orePreferences.resize( 0 );
+	locations.resize( 0 );
+	name		= Dictionary->GetEntry( 1117 );
+	guardowner	= Dictionary->GetEntry( 1118 );
+	guardList	= "guard";
+	goodList.clear();
 }
 
-cTownRegion::~cTownRegion()
+CTownRegion::~CTownRegion()
 {
-	guards.resize( 0 );
+	JSEngine->ReleaseObject( IUE_REGION, this );
+
 	townMember.resize( 0 );
 	alliedTowns.resize( 0 );
+	orePreferences.resize( 0 );
+	locations.resize( 0 );
 }
 
-bool cTownRegion::Load( Script *ss )
+bool CTownRegion::Load( Script *ss )
 // ss is a script section containing all the data!
 {
-	int location = -1;
-	int guardUpper;
-	char temp[512];
-	const char *tag = NULL;
-	const char *data = NULL;
-	sprintf( temp, "TOWNREGION %i", regionNum );
-	if( !ss->isin( temp ) )	// doesn't exist
+	size_t location = 0xFFFFFFFF;
+	UString tag;
+	UString data;
+	UString UTag;
+	UString sect = "TOWNREGION " + UString::number( regionNum );
+	if( !ss->isin( sect ) )	// doesn't exist
 		return false;
 
-	ScriptSection *target = ss->FindEntry( temp );
+	ScriptSection *target = ss->FindEntry( sect );
 	for( tag = target->First(); !target->AtEnd(); tag = target->Next() )
 	{
+		UTag = tag.upper();
 		data = target->GrabData();
-		switch( tag[0] )
+		switch( (UTag.data()[0]) )
 		{
-		case 'A':
-			if( !strcmp( tag, "ALLYTOWN" ) )
-			{
-				guardUpper = alliedTowns.size();
-				alliedTowns.resize( guardUpper + 1 );
-				alliedTowns[guardUpper] = (UI08)makeNum( data );
-			}
-			break;
-		case 'E':
-			if( !strcmp( tag, "ELECTIONTIME" ) )
-				timeToElectionClose = makeNum( data );
-			break;
-		case 'G':
-			if( !strcmp( tag, "GUARDOWNER" ) )
-				strncpy( guardowner, data, 49 );
-			else if( !strcmp( tag, "GUARD" ) )	// load our purchased guard
-			{
-				guardUpper = guards.size();
-				guards.resize( guardUpper + 1 );
-				guards[guardUpper] = makeNum( data );
-			}
-			else if( !strcmp( tag, "GUARDSBOUGHT" ) ) // num guards bought
-				guardsPurchased = (SI16)makeNum( data );
-			break;
-		case 'H':
-			if( !strcmp( tag, "HEALTH" ) )
-				health = (SI16)makeNum( data );
-			break;
-		case 'M':
-			if( !strcmp( tag, "MEMBER" ) )
-			{
-				location = townMember.size();
-				townMember.resize( location + 1 );
-				townMember[location].targVote = INVALIDSERIAL;
-				townMember[location].townMember = makeNum( data );
-			}
-			else if( !strcmp( tag, "MAYOR" ) )
-				mayorSerial = makeNum( data );
-			break;
-		case 'N':
-			if( !strcmp( tag, "NAME" ) )
-				strncpy( name, data, 49 );
-			break;
-		case 'P':
-			if( !strcmp( tag, "PRIV" ) )
-				priv = (UI08)makeNum( data );
-			else if( !strcmp( tag, "POLLTIME" ) )
-				timeToNextPoll = makeNum( data );
-			break;
-		case 'R':
-			if( !strcmp( tag, "RACE" ) )
-				race = static_cast<RACEID>(makeNum( data ));
-			else if( !strcmp( tag, "RESOURCEAMOUNT" ) )
-				goldReserved = makeNum( data );
-			else if( !strcmp( tag, "RESOURCECOLLECTED" ) )
-				resourceCollected = makeNum( data );
-			break;
-		case 'T':
-			if( !strcmp( tag, "TAXEDID" ) )
-				taxedResource = (UI16)makeNum( data );
-			else if( !strcmp( tag, "TAXEDAMOUNT" ) )
-				taxedAmount = (UI16)makeNum( data );
-			else if( !strcmp( tag, "TIMET" ) )
-				timeSinceTaxedMembers = makeNum( data );
-			else if( !strcmp( tag, "TIMEG" ) )
-				timeSinceGuardsPaid = makeNum( data );
-			break;
-		case 'V':
-			if( !strcmp( tag, "VOTE" ) && location != -1 )
-				townMember[location].targVote = makeNum( data );
-			break;
-		case 'W':
-			if( !strcmp( tag, "WEATHER" ) )
-				weather = (UI08)makeNum( data );
-			else if( !strcmp( tag, "WORLD" ) )
-				worldNumber = (UI08)makeNum( data );
-			break;
+			case 'A':
+				if( UTag == "ALLYTOWN" )
+					alliedTowns.push_back( data.toUByte() );
+				break;
+			case 'E':
+				if( UTag == "ELECTIONTIME" )
+					timeToElectionClose = data.toLong();
+				break;
+			case 'G':
+				if( UTag == "GUARDOWNER" )
+					guardowner = data;
+				else if( UTag == "GUARD" )	// load our purchased guard
+					++numGuards;
+				else if( UTag == "GUARDSBOUGHT" ) // num guards bought
+					guardsPurchased = data.toShort();
+				break;
+			case 'H':
+				if( UTag == "HEALTH" )
+					health = data.toShort();
+				break;
+			case 'M':
+				if( UTag == "MEMBER" )
+				{
+					location = townMember.size();
+					townMember.resize( location + 1 );
+					townMember[location].targVote = INVALIDSERIAL;
+					townMember[location].townMember = data.toULong();
+				}
+				else if( UTag == "MAYOR" )
+					mayorSerial = data.toULong();
+				break;
+			case 'N':
+				if( UTag == "NAME" )
+					name = data.substr( 0, 49 );
+				else if( UTag == "NUMGUARDS" )
+					numGuards = data.toUShort();
+				break;
+			case 'P':
+				if( UTag == "PRIV" )
+					priv = data.toUByte();
+				else if( UTag == "POLLTIME" )
+					timeToNextPoll = data.toLong();
+				break;
+			case 'R':
+				if( UTag == "RACE" )
+					race = data.toUShort();
+				else if( UTag == "RESOURCEAMOUNT" )
+					goldReserved = data.toLong();
+				else if( UTag == "RESOURCECOLLECTED" )
+					resourceCollected = data.toLong();
+				break;
+			case 'T':
+				if( UTag == "TAXEDID" )
+					taxedResource = data.toUShort();
+				else if( UTag == "TAXEDAMOUNT" )
+					taxedAmount = data.toUShort();
+				else if( UTag == "TIMET" )
+					timeSinceTaxedMembers = data.toLong();
+				else if( UTag == "TIMEG" )
+					timeSinceGuardsPaid = data.toLong();
+				break;
+			case 'V':
+				if( UTag == "VOTE" && location != 0xFFFFFFFF )
+					townMember[location].targVote = data.toULong();
+				break;
 		}
 	}
 	return true;
 }
-bool cTownRegion::Save( FILE *fp )
+bool CTownRegion::Save( std::ofstream &outStream )
 // entry is the region #, fp is the file to save in
 {
-	fprintf( fp, "[TOWNREGION %i]\n{\n", regionNum );
-	fprintf( fp, "WEATHER=%i\n", weather );
-	fprintf( fp, "RACE=%i\n", race );
-	fprintf( fp, "NAME=%s\n", name );
-	fprintf( fp, "GUARDOWNER=%s\n", guardowner );
-	fprintf( fp, "MAYOR=%i\n", mayorSerial );
-	fprintf( fp, "PRIV=%i\n", priv );
-	fprintf( fp, "RESOURCEAMOUNT=%i\n", goldReserved );
-	fprintf( fp, "TAXEDID=%x\n", taxedResource );
-	fprintf( fp, "TAXEDAMOUNT=%i\n", taxedAmount );
-	fprintf( fp, "GUARDSPURCHASED=%i\n", guardsPurchased );
-	fprintf( fp, "TIMEG=%li\n", timeSinceGuardsPaid );		// time since guards paid
-	fprintf( fp, "TIMET=%li\n", timeSinceTaxedMembers );	// time since taxed
-	fprintf( fp, "RESOURCECOLLECTED=%li\n", resourceCollected );	// amount of taxes we've collected
-	fprintf( fp, "HEALTH=%i\n", health );
-	fprintf( fp, "ELECTIONTIME=%li\n", timeToElectionClose );	// time to election close
-	fprintf( fp, "POLLTIME=%li\n", timeToNextPoll );	// time to next poll
-	fprintf( fp, "WORLD=%i\n", worldNumber );	// time to next poll
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )
-	{
-		fprintf( fp, "MEMBER=%i\n", townMember[counter].townMember );
-		fprintf( fp, "VOTE=%i\n", townMember[counter].targVote );
-	}
-	for( UI32 guardCount = 0; guardCount < guards.size(); guardCount++ )
-	{
-		fprintf( fp, "GUARD=%i\n", guards[guardCount] );
-	}
-	for( UI32 allyCount = 0; allyCount < alliedTowns.size(); allyCount++ )
-	{
-		fprintf( fp, "ALLYTOWN=%i\n", alliedTowns[allyCount] );
-	}
+	outStream << "[TOWNREGION " << static_cast<UI16>(regionNum) << "]" << '\n' << "{" << '\n';
+	outStream << "RACE=" << race << '\n';
+	outStream << "GUARDOWNER=" << guardowner << '\n';
+	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << '\n';
+	outStream << "PRIV=" << static_cast<UI16>(priv.to_ulong()) << '\n';
+	outStream << "RESOURCEAMOUNT=" << goldReserved << '\n';
+	outStream << "TAXEDID=" << std::hex << "0x" << taxedResource << std::dec << '\n';
+	outStream << "TAXEDAMOUNT=" << taxedAmount << '\n';
+	outStream << "GUARDSPURCHASED=" << guardsPurchased << '\n';
+	outStream << "TIMEG=" << timeSinceGuardsPaid << '\n';
+	outStream << "TIMET=" << timeSinceTaxedMembers << '\n';
+	outStream << "RESOURCECOLLECTED=" << resourceCollected << '\n';
+	outStream << "HEALTH=" << health << '\n';
+	outStream << "ELECTIONTIME=" << timeToElectionClose << '\n';
+	outStream << "POLLTIME=" << timeToNextPoll << '\n';
+	outStream << "WORLD=" << static_cast<UI16>(worldNumber) << '\n';
+	outStream << "NUMGUARDS=" << numGuards << '\n';
 
-	fprintf( fp, "}\n\n" );
+	std::vector< townPers >::const_iterator mIter;
+	for( mIter = townMember.begin(); mIter != townMember.end(); ++mIter )
+	{
+		outStream << "MEMBER=" << std::hex << "0x" << (*mIter).townMember << '\n';
+		outStream << "VOTE=" << "0x" << (*mIter).targVote << std::dec << '\n';
+	}
+	std::vector< UI16 >::const_iterator aIter;
+	for( aIter = alliedTowns.begin(); aIter != alliedTowns.end(); ++aIter )
+	{
+		outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << '\n';
+	}
+	outStream << "}" << '\n' << '\n';
 	return true;
 }
-void cTownRegion::CalcNewMayor( void )
+void CTownRegion::CalcNewMayor( void )
 // There has got to be a better way than this hideous O(n^2) algy
 {
-	if( townMember.size() == 0 )
+	if( townMember.empty() )
 		return;
 	// if there are no members, there are no new mayors
 	std::vector< int > votes;
 	votes.resize( townMember.size() );
-	for( UI32 counter = 0; counter < votes.size(); counter++ )
+	for( size_t counter = 0; counter < votes.size(); ++counter )
 	{
 		votes[counter] = 0;	// init the count before adding
-		for( UI32 counter2 = 0; counter2 < votes.size(); counter2++ )
+		for( size_t counter2 = 0; counter2 < votes.size(); ++counter2 )
 		{
 			if( townMember[counter].townMember == townMember[counter2].targVote )
-				votes[counter]++;
+				++votes[counter];
 		}
 	}
-	int maxIndex = 0;
-	for( UI32 indexCounter = 1; indexCounter < votes.size(); indexCounter++ )
+	size_t maxIndex = 0;
+	for( size_t indexCounter = 1; indexCounter < votes.size(); ++indexCounter )
 	{
 		if( votes[indexCounter] > votes[maxIndex] )
 			maxIndex = indexCounter;
 	}
 	// maxIndex is now our new mayor!
 	CChar *oldMayor = GetMayor();
-	if( mayorSerial == townMember[maxIndex].townMember )
+	if( ValidateObject( oldMayor ) && mayorSerial == townMember[maxIndex].townMember )
 	{
-		cSocket *targSock = calcSocketObjFromChar( calcCharObjFromSer( mayorSerial ) );
+		CSocket *targSock = oldMayor->GetSocket();
 		if( targSock != NULL )
-			sysmessage( targSock, 1119 );
+			targSock->sysmessage( 1119 );
 		// welcome the mayor back for another term
 	}
 	if( votes[maxIndex] > 0 )
@@ -220,45 +240,47 @@ void cTownRegion::CalcNewMayor( void )
 		mayorSerial = 0xFFFFFFF;
 
 	CChar *newMayor = GetMayor();
-	if( oldMayor != NULL )
+	if( ValidateObject( oldMayor ) )
 		oldMayor->SetTownpriv( 1 );
-	if( newMayor != NULL )
+	if( ValidateObject( newMayor ) )
 		newMayor->SetTownpriv( 2 );	// set mayor priv last
 	if( newMayor != oldMayor )
 	{
-		if( oldMayor == NULL && newMayor != NULL )
-			TellMembers( 1120, newMayor->GetName() );
-		else if( oldMayor != NULL && newMayor == NULL )
+		const bool oldMayorExists = ValidateObject( oldMayor );
+		const bool newMayorExists = ValidateObject( newMayor );
+		if( !oldMayorExists && newMayorExists )
+			TellMembers( 1120, newMayor->GetName().c_str() );
+		else if( oldMayorExists && !newMayorExists )
 			TellMembers( 1121 );
-		else if( oldMayor != NULL && newMayor != NULL )
-			TellMembers( 1122, oldMayor->GetName(), newMayor->GetName() );
+		else if( oldMayorExists && newMayorExists )
+			TellMembers( 1122, oldMayor->GetName().c_str(), newMayor->GetName().c_str() );
 		else
 			TellMembers( 1123 );
 	}
-	else if( newMayor != NULL )
-		TellMembers( 1124, oldMayor->GetName() );
+	else if( ValidateObject( newMayor ) )
+		TellMembers( 1124, oldMayor->GetName().c_str() );
 	else
 		TellMembers( 1123 );
 }
-CChar * cTownRegion::GetMayor( void )
-// returns the index into chars[] of the mayor
+CChar * CTownRegion::GetMayor( void )
+// returns the mayor character
 {
 	return calcCharObjFromSer( mayorSerial );
 }
 
-SERIAL cTownRegion::GetMayorSerial( void ) const
+SERIAL CTownRegion::GetMayorSerial( void ) const
 // returns the mayor's serial
 {
 	return mayorSerial;
 }
 
-bool cTownRegion::AddAsTownMember( CChar& toAdd )
+bool CTownRegion::AddAsTownMember( CChar& toAdd )
 // toAdd is the character to add
 {
-	if( Races->CompareByRace( toAdd.GetRace(), race ) == 1 )	// if we're racial enemies
+	if( Races->CompareByRace( toAdd.GetRace(), race ) <= RACE_ENEMY )	// if we're racial enemies
 		return false;	// we can't have a racial enemy in the town!
 
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )		// exhaustive error checking
+	for( UI32 counter = 0; counter < townMember.size(); ++counter )		// exhaustive error checking
 	{
 		if( townMember[counter].townMember == toAdd.GetSerial() )
 			return false;	// already exists in our town!
@@ -271,12 +293,12 @@ bool cTownRegion::AddAsTownMember( CChar& toAdd )
 	toAdd.SetTownpriv( 1 );	// set as resident
 	return true;
 }
-bool cTownRegion::RemoveTownMember( CChar& toAdd )
+bool CTownRegion::RemoveTownMember( CChar& toAdd )
 {
 	if( toAdd.GetTown() != regionNum )
 		return false;	// not in our town
 
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 	{
 		if( toAdd.GetSerial() == townMember[counter].townMember )
 		{
@@ -289,48 +311,40 @@ bool cTownRegion::RemoveTownMember( CChar& toAdd )
 	return false;	// we're not in our town
 }
 
-bool cTownRegion::InitFromScript( int& l )
+bool oreSkillComparator (orePref o1, orePref o2)
 {
-	ScriptSection *Regions;
-	const char *tag = NULL;
-	const char *data = NULL;
-	char sect[512];
-	int actgood = -1;
-	bool orePrefLoaded = false;
-	guards.resize( 10 );
-	UI32 a;
-	for( a = 0; a < 10; a++ )
-	{
-		guards[a] = RandomNum( 1000, 1001 );
-	}
-	a = 0;
-	minColourSkill = 600;
-	chanceFindBigOre = 80;
-	chanceColourOre = 10;
-	sprintf( sect, "REGION %i", regionNum );
-	Regions = FileLookup->FindEntry( sect, regions_def );
-	if( Regions == NULL ) 
+	if (o1.oreIndex == NULL)
 		return false;
-	else
-	{
-		for( tag = Regions->First(); !Regions->AtEnd(); tag = Regions->Next() )
-		{
-			data = Regions->GrabData();
-			switch( tag[0] )
-			{
+	if (o2.oreIndex == NULL)
+		return true;
+	return o1.oreIndex->minSkill > o2.oreIndex->minSkill;
+}
 
-			case 'a':
+bool CTownRegion::InitFromScript( ScriptSection *toScan )
+{
+	UString tag;
+	UString data;
+	UString UTag;
+	int actgood				= -1;
+	bool orePrefLoaded		= false;
+	numGuards			= 10;
+	chanceFindBigOre	= 80;
+	regLocs ourLoc;
+	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+	{
+		UTag = tag.upper();
+		data = toScan->GrabData();
+		switch( (UTag.data()[0]) )
+		{
 			case 'A':
-				if( !strcmp( "ABWEATH", tag ) )
-				{
-					weather = (UI08)makeNum( data );
-				}
-				else if( !strcmp( "APPEARANCE", tag ) )
+				if( UTag == "ABWEATH" )
+					weather = data.toUByte();
+				else if( UTag == "APPEARANCE" )
 				{
 					visualAppearance = WRLD_COUNT;
 					for( WorldType wt = WRLD_SPRING; wt < WRLD_COUNT; wt = (WorldType)(wt + (WorldType)1) )
 					{
-						if( !strcmp( data, WorldTypeNames[wt].c_str() ) )
+						if( data == WorldTypeNames[wt] )
 						{
 							visualAppearance = wt;
 							break;
@@ -340,293 +354,271 @@ bool cTownRegion::InitFromScript( int& l )
 						visualAppearance = WRLD_UNKNOWN;
 				}
 				break;
-			case 'b':
 			case 'B':
-				if( !strcmp( "BUYABLE", tag ) )
+				if( UTag == "BUYABLE" )
 				{
-					if( actgood >-1 )
-						goodbuy[actgood] = makeNum( data );
+					if( actgood > -1 )
+						goodList[actgood].buyVal = data.toLong();
 					else
-						Console.Error( 2, "regions dfn -> You must write BUYABLE after GOOD <num>!" );
+						Console.Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 				}
 				break;
-
-			case 'c':
 			case 'C':
-				if( !strcmp( tag, "COLOURMINSKILL" ) )
-					minColourSkill = (SI16)makeNum( data );
-				else if( !strcmp( tag, "CHANCEFORBIGORE" ) )
-					chanceFindBigOre = (UI08)makeNum( data );
-				else if( !strcmp( tag, "CHANCEFORCOLOUR" ) )
-					chanceColourOre = (UI08)makeNum( data );
+				if( UTag == "CHANCEFORBIGORE" )
+					chanceFindBigOre = data.toUByte();
 				break;
-
-			case 'd':
 			case 'D':
-				if( !strcmp( tag, "DUNGEON" ) )
-				{
-					if( makeNum( data ) != 0 )
-						priv |= 0x80;
-				}
+				if( UTag == "DUNGEON" )
+					IsDungeon( (data.toUByte() == 1) );
 				break;
-			case 'e':
 			case 'E':
-				if( !strcmp( "ESCORTS", tag ) )
+				if( UTag == "ESCORTS" ) 
 				{
 					// Load the region number in the global array of valid escortable regions
-					if( makeNum( data ) == 1 )
-					{
-						// Store the region index into the valid escort region array
-						cwmWorldState->SetValidEscortRegion( cwmWorldState->GetEscortRegions(), regionNum );
-						cwmWorldState->IncEscortRegions();
-					}
+					if( data.toUShort() == 1 )
+						cwmWorldState->escortRegions.push_back( regionNum );
 				} // End - Dupois
 				break;
-
-			case 'g':
 			case 'G':
-				if( !strcmp( "GUARDNUM", tag ) )
-				{
-					if( a < 10 )
-					{
-						if( a >= guards.size() )
-							guards.resize( a + 1 );
-
-						guards[a++] = makeNum( data );
-					}
-					else
-						Console.Error( 2, "Region %i has more than 10 'GUARDNUM'.  The ones after 10 will be discarded", regionNum );
-				}
-				else if( !strcmp( "GUARDOWNER", tag ) )
-					strcpy( guardowner, data );
-				else if( !strcmp( "GUARDED", tag ) )
-				{
-					if( makeNum( data ) ) 
-						priv |= 0x01;   
-				}
-				else if( !strcmp( "GATE", tag ) )
-				{
-					if( makeNum( data ) ) 
-						priv |= 0x04;
-				}
-				else if( !strcmp( "GOOD", tag ) )
-					actgood = makeNum( data );
+				if( UTag == "GUARDNUM" )
+					break;
+				else if( UTag == "GUARDLIST" )
+					guardList = data;
+				else if( UTag == "GUARDOWNER" )
+					guardowner = data;
+				else if( UTag == "GUARDED" )
+					IsGuarded( (data.toUByte() == 1) );
+				else if( UTag == "GATE" )
+					CanGate( (data.toUByte() == 1) );
+				else if( UTag == "GOOD" )
+					actgood = data.toLong();
 				break;
-			case 'm':
 			case 'M':
-				if( !strcmp("MIDILIST", tag ) )
-					midilist = makeNum( data );
-				else if( !strcmp("MAGICDAMAGE", tag ) )
-				{
-					if( !makeNum( data ) )
-						priv |= 0x40;
-				}
-				else if( !strcmp("MARK", tag ) )
-				{
-					if( makeNum( data ) )
-						priv |= 0x02;
-				}
+				if( UTag == "MIDILIST" )
+					midilist = data.toUShort();
+				else if( UTag == "MAGICDAMAGE" )
+					CanCastAggressive( (data.toUByte() == 1) );
+				else if( UTag == "MARK" )
+					CanMark( (data.toUByte() == 1) );
 				break;
-			case 'n':
 			case 'N':
-				if( !strcmp("NAME", tag ) )
+				if( UTag == "NAME" )
 				{
-					strcpy( name, data );
+					name = data;
 					actgood = -1; // Magius(CHE)
 				}
 				break;
-			case 'o':
 			case 'O':
-				if( !strcmp( "OREPREF", tag ) )
+				if( UTag == "OREPREF" )
 				{
-					const char *numPart;
-					char oreName[512];
+					UString numPart;
+					std::string oreName;
 					orePref toPush;
-					numPart = data;
-					while( (*numPart) != ' ' && (*numPart) != 0x00 && (*numPart) != 0x13 && (*numPart) != 0x10 )
-						numPart++;
-					strncpy( oreName, data, numPart - data );
-					oreName[numPart-data] = 0x00;
-					toPush.oreIndex = Skills->GetOreIndex( oreName );
-					if( toPush.oreIndex != -1 )
+					data			= data.simplifyWhiteSpace();
+					oreName			= data.section( " ", 0, 0 );
+					toPush.oreIndex = Skills->FindOre( oreName );
+					if( toPush.oreIndex != NULL )
 					{
-						if( *numPart != ' ' )
+						if( data.sectionCount( " " ) == 0 )
 							toPush.percentChance = 100 / Skills->GetNumberOfOres();
 						else
-							toPush.percentChance = static_cast<UI08>(makeNum( numPart ));
+							toPush.percentChance = data.section( " ", 1, 1 ).toByte();
 						orePreferences.push_back( toPush );
 						orePrefLoaded = true;
 					}
 					else
-						Console.Error( 2, "Invalid ore preference in region %i as %s", regionNum, oreName );
+						Console.Error( "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() );
 				}
 				break;
-			case 'r':
 			case 'R':
-
-				if( !strcmp( "RECALL", tag ) )
-				{
-					if( makeNum( data ) ) 
-						priv |= 0x08;
-				}
-				else if( !strcmp( "RANDOMVALUE", tag ) )
+				if( UTag == "RECALL" )
+					CanRecall( (data.toUByte() == 1) );
+				else if( UTag == "RANDOMVALUE" )
 				{
 					if( actgood > -1 )
 					{
-						char temp[256];
-						gettokennum( data, 0, temp );
-						goodrnd1[actgood] = makeNum( temp );
-						gettokennum( data, 1, temp );
-						goodrnd2[actgood] = makeNum( temp );
-						if( goodrnd2[actgood] < goodrnd1[actgood] )
+						if( data.sectionCount( " " ) != 0 )
 						{
-							Console.Error( 2, " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodrnd2[actgood], goodrnd1[actgood] );
-							goodrnd2[actgood] = goodrnd1[actgood] = 0;
+							goodList[actgood].rand1 = data.section( " ", 0, 0 ).toLong();
+							goodList[actgood].rand2 = data.section( " ", 1, 1 ).toLong();
+						}
+						else
+						{
+							goodList[actgood].rand1 = data.toLong();
+							goodList[actgood].rand2 = goodList[actgood].rand1;
+						}
+						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
+						{
+							Console.Error( " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 );
+							goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
 						}
 					}
 					else
-						Console.Error( 2, " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
+						Console.Error( " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
 				}
-				else if( !strcmp( "RACE", tag ) )
-					race = static_cast<RACEID>(makeNum( data ));
+				else if( UTag == "RACE" )
+					race = data.toUShort();
 				break;
-
-			case 's':
 			case 'S':
-				if( !strcmp( "SELLABLE", tag ) )
+				if( UTag == "SELLABLE" )
 				{
 					if( actgood > -1 )
-						goodsell[actgood] = makeNum( data );
+						goodList[actgood].sellVal = data.toLong();
 					else
-						Console.Error( 2, " regions dfn -> You must write SELLABLE after GOOD <num>!" );
+						Console.Error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
 				}
-				else if( !strcmp( "SPAWN", tag ) )
+				else if( UTag == "SPAWN" )
 				{
-					cSpawnRegion *spawnReg = spawnregion[cwmWorldState->GetTotalSpawnRegions()];
-					if( spawnReg != NULL )
+					UString sect = "PREDEFINED_SPAWN " + data;
+					ScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
+					if( predefSpawn == NULL )
+						Console.Warning( "Undefined region spawn %s, check your regions.scp and spawn.scp files", data.c_str() );
+					else
 					{
-						spawnReg->SetX1( cwmWorldState->location[l-1].x1 );
-						spawnReg->SetY1( cwmWorldState->location[l-1].y1 );
-						spawnReg->SetX2( cwmWorldState->location[l-1].x2 );
-						spawnReg->SetY2( cwmWorldState->location[l-1].y2 );
-						FileIO->LoadPreDefSpawnRegion( cwmWorldState->GetTotalSpawnRegions(), data );
+						for( UI16 i = 0xFFFF; i > 0; --i )
+						{
+							if( cwmWorldState->spawnRegions.find( i ) != cwmWorldState->spawnRegions.end() )
+							{
+								CSpawnRegion *spawnReg			= new CSpawnRegion( i );
+								cwmWorldState->spawnRegions[i]	= spawnReg;
+								if( spawnReg != NULL )
+								{
+									spawnReg->SetX1( locations[locations.size() - 1].x1 );
+									spawnReg->SetY1( locations[locations.size() - 1].y1 );
+									spawnReg->SetX2( locations[locations.size() - 1].x2 );
+									spawnReg->SetY2( locations[locations.size() - 1].y2 );
+									spawnReg->Load( predefSpawn );
+								}
+								break;
+							}
+						}
 					}
-					cwmWorldState->IncTotalSpawnRegions();
 				}
+				else if( UTag == "SCRIPT" )
+					jsScript = data.toUShort();
 				break;
-
-			case 'w':
 			case 'W':
-				if( !strcmp( tag, "WORLD" ) )
-					worldNumber = (UI08)makeNum( data );
+				if( UTag == "WORLD" )
+					worldNumber = data.toUByte();
 				break;
-			case 'x':
 			case 'X':
-				if( !strcmp( "X1", tag ) )
-					cwmWorldState->location[l].x1 = (SI16)makeNum( data );
-				else if( !strcmp( "X2", tag ) )
-					cwmWorldState->location[l].x2 = (SI16)makeNum( data );
+				if( UTag == "X1" )
+					ourLoc.x1 = data.toShort();
+				else if( UTag == "X2" )
+					ourLoc.x2 = data.toShort();
 				break;
-			case 'y':
 			case 'Y':
-
-				if( !strcmp( "Y1", tag ) )
-					cwmWorldState->location[l].y1 = (SI16)makeNum( data );
-				else if( !strcmp( "Y2", tag ) )
+				if( UTag == "Y1" )
+					ourLoc.y1 = data.toShort();
+				else if( UTag == "Y2" )
 				{
-					cwmWorldState->location[l].y2 = (SI16)makeNum( data );
-					cwmWorldState->location[l].region = regionNum;
-					l++;
+					ourLoc.y2 = data.toShort();
+					locations.push_back( ourLoc );
 				}
 				break;
-			}
 		}
 	}
 	if( !orePrefLoaded )
 	{
 		orePref toLoad;
-		int numOres = Skills->GetNumberOfOres();
-		for( int myCounter = 0; myCounter < Skills->GetNumberOfOres(); myCounter++ )
+		size_t numOres = Skills->GetNumberOfOres();
+		for( size_t myCounter = 0; myCounter < numOres; ++myCounter )
 		{
-			toLoad.oreIndex = myCounter;
-			toLoad.percentChance = (UI08)(100 / numOres);
+			toLoad.oreIndex			= Skills->GetOre( myCounter );
+			toLoad.percentChance	= (UI08)(100 / numOres);
 			orePreferences.push_back( toLoad );
 		}
 	}
+	// sort orePreferences in order of descending minSkill
+	std::sort( orePreferences.begin(), orePreferences.end(), oreSkillComparator );
 	return true;
 }
 
-bool cTownRegion::IsGuarded( void ) const
+bool CTownRegion::IsGuarded( void ) const
 {
-	return ( ( priv&0x01 ) == 0x01 );
+	return priv.test( BIT_GUARDED );
 }
 
-bool cTownRegion::CanMark( void ) const
+bool CTownRegion::CanMark( void ) const
 {
-	return ( ( priv&0x02 ) == 0x02 );
+	return priv.test( BIT_MARK );
 }
 
-bool cTownRegion::CanGate( void ) const
+bool CTownRegion::CanGate( void ) const
 {
-	return ( ( priv&0x04 ) == 0x04 );
+	return priv.test( BIT_GATE );
 }
 
-bool cTownRegion::CanRecall( void ) const
+bool CTownRegion::CanRecall( void ) const
 {
-	return ( ( priv&0x08 ) == 0x08 );
+	return priv.test( BIT_RECALL );
 }
 
-bool cTownRegion::CanCastAggressive( void ) const
+bool CTownRegion::CanCastAggressive( void ) const
 {
-	return ( ( priv&0x40 ) == 0x40 );
+	return priv.test( BIT_AGGRESSIVE );
 }
 
-const char *cTownRegion::GetName( void ) const
+std::string CTownRegion::GetName( void ) const
 {
 	return name;
 }
-const char *cTownRegion::GetOwner( void ) const
+std::string CTownRegion::GetOwner( void ) const
 {
 	return guardowner;
 }
 
-weathID cTownRegion::GetWeather( void ) const
+weathID CTownRegion::GetWeather( void ) const
 {
 	return weather;
 }
 
-SI32 cTownRegion::GetGoodSell( UI08 index ) const
+SI32 CTownRegion::GetGoodSell( UI08 index ) const
 {
-	return goodsell[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.sellVal;
+	return rVal;
 }
-SI32 cTownRegion::GetGoodBuy( UI08 index ) const
+SI32 CTownRegion::GetGoodBuy( UI08 index ) const
 {
-	return goodbuy[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.buyVal;
+	return rVal;
 }
-SI32 cTownRegion::GetGoodRnd1( UI08 index ) const
+SI32 CTownRegion::GetGoodRnd1( UI08 index ) const
 {
-	return goodrnd1[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.rand1;
+	return rVal;
 }
-SI32 cTownRegion::GetGoodRnd2( UI08 index ) const
+SI32 CTownRegion::GetGoodRnd2( UI08 index ) const
 {
-	return goodrnd2[index];
+	SI32 rVal = 0;
+	std::map< SI32, GoodData_st >::const_iterator gIter = goodList.find( index );
+	if( gIter != goodList.end() )
+		rVal = gIter->second.rand2;
+	return rVal;
 }
 
-SI32 cTownRegion::GetMidiList( void ) const
+UI16 CTownRegion::GetMidiList( void ) const
 {
 	return midilist;
 }
 
-long cTownRegion::GetRandomGuard( void )
+CChar * CTownRegion::GetRandomGuard( void )
 {
-	int guardCount = guards.size();
-	if( guardCount == 0 )
-		return 1000;
-	else
-		return ( guards[rand()%guardCount] );
+	CChar *ourGuard = Npcs->CreateRandomNPC( guardList );
+	ourGuard->SetNPCAiType( AI_GUARD );
+	return ourGuard;
 }
 
-bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
+bool CTownRegion::DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag )
 {
 	if( flag == MAYOR )
 	{
@@ -636,12 +628,12 @@ bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
 	CChar *tChar = sock->CurrcharObj();
 	if( !IsMemberOfTown( tChar ) )
 	{
-		if( Races->CompareByRace( tChar->GetRace(), race ) > 0 )	// if we're racial enemies
+		if( Races->CompareByRace( tChar->GetRace(), race ) <= RACE_ENEMY )	// if we're racial enemies
 		{
 			if( tChar->GetTown() != 255 )
 				SendEnemyGump( sock );
 			else
-				sysmessage( sock, 1125 );
+				sock->sysmessage( 1125 );
 			return true;
 		}
 		else if( tChar->GetTown() != 255 ) // another town person
@@ -650,7 +642,7 @@ bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
 			{
 				if( !AddAsTownMember( (*tChar) ) )
 				{
-					sysmessage( sock, 1126 );
+					sock->sysmessage( 1126 );
 					return false;
 				}
 				DisplayTownMenu( used, sock, flag );
@@ -670,11 +662,11 @@ bool cTownRegion::DisplayTownMenu( CItem *used, cSocket *sock, SI08 flag )
 	return true;
 }
 
-bool cTownRegion::IsMemberOfTown( CChar *player ) const
+bool CTownRegion::IsMemberOfTown( CChar *player ) const
 {
-	if( player == NULL )
+	if( !ValidateObject( player ) )
 		return false;
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 	{
 		if( townMember[counter].townMember == player->GetSerial() )
 			return true;
@@ -682,268 +674,200 @@ bool cTownRegion::IsMemberOfTown( CChar *player ) const
 	return false;
 }
 
-void cTownRegion::SendEnemyGump( cSocket *sock )
+void CTownRegion::SendEnemyGump( CSocket *sock )
 {
-	char temp[512];
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( 3 );
 
-	STRINGLIST one, two;
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	one.push_back( "page 1" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "page 1" );
 
-	two.push_back( "Enemy" );
-	sprintf( temp, "gumppic 25 50 1141" );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 35 51 %i 1", cwmWorldState->ServerData()->GetRightTextColour() );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 25 71 %i 2", cwmWorldState->ServerData()->GetRightTextColour() );	// population
-	one.push_back( temp );
-	sprintf( temp, "text 55 111 %i 3", cwmWorldState->ServerData()->GetRightTextColour() );	// Seize townstone
-	one.push_back( temp );
-	sprintf( temp, "text 55 131 %i 4", cwmWorldState->ServerData()->GetRightTextColour() );	// Destroy townstone
-	one.push_back( temp );
+	toSend.AddText( "Enemy" );
+	toSend.AddCommand( "gumppic 25 50 1141" );	// town name
+	toSend.AddCommand( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() );	// town name
+	toSend.AddCommand( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() );	// population
+	toSend.AddCommand( "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour() );	// Seize townstone
+	toSend.AddCommand( "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour() );	// Destroy townstone
 
-	sprintf( temp, "button 25 111 %i %i 1 0 61", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// seize townstone
-	one.push_back( temp );
-	sprintf( temp, "button 25 131 %i %i 1 0 62", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// destroy townstone
-	one.push_back( temp );
-	sprintf( temp, "%s (%s)", name, Races->Name( race ) );
-	two.push_back( temp );
-	sprintf( temp, "Population %i", GetPopulation() );
-	two.push_back( temp );
-	two.push_back( "Seize Townstone" );
-	two.push_back( "Attack Townstone" );
+	toSend.AddCommand( "button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// seize townstone
+	toSend.AddCommand( "button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// destroy townstone
+	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
+	toSend.AddText( "Population %i", GetPopulation() );
+	toSend.AddText( "Seize Townstone" );
+	toSend.AddText( "Attack Townstone" );
 
-	SendVecsAsGump( sock, one, two, 3, INVALIDSERIAL );
+	toSend.Finalize();
+	sock->Send( &toSend );
 }
-void cTownRegion::SendBasicInfo( cSocket *sock )
+void CTownRegion::SendBasicInfo( CSocket *sock )
 {
 	GumpDisplay BasicGump( sock );
 	BasicGump.SetTitle( "Basic Townstone gump" );
 	BasicGump.Send( 4, false, INVALIDSERIAL );
 }
-void cTownRegion::SendPotentialMember( cSocket *sock )
+void CTownRegion::SendPotentialMember( CSocket *sock )
 {
-	STRINGLIST one, two;
-	char temp[512];
 	UnicodeTypes sLang	= sock->Language();
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( 3 );
 
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	one.push_back( "page 1" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "page 1" );
 
-	sprintf( temp, "Outsider" );	// our title
-	two.push_back( temp );
-	sprintf( temp, "gumppic 25 50 1141" );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 35 51 %i 1", cwmWorldState->ServerData()->GetRightTextColour() );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 25 71 %i 2", cwmWorldState->ServerData()->GetRightTextColour() );	// population
-	one.push_back( temp );
-	sprintf( temp, "text 55 91 %i 3", cwmWorldState->ServerData()->GetRightTextColour() );	// join town
-	one.push_back( temp );
-	sprintf( temp, "text 55 111 %i 4", cwmWorldState->ServerData()->GetRightTextColour() );	// view taxes (to help make decisions about joining?)
-	one.push_back( temp );
+	toSend.AddText( "Outsider" );	// our title
+	toSend.AddCommand( "gumppic 25 50 1141" );	// town name
+	toSend.AddCommand( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() );	// town name
+	toSend.AddCommand( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() );	// population
+	toSend.AddCommand( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() );	// join town
+	toSend.AddCommand( "text 55 111 %u 4", cwmWorldState->ServerData()->RightTextColour() );	// view taxes (to help make decisions about joining?)
 
-	sprintf( temp, "button 25 91 %i %i 1 0 41", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// leave town
-	one.push_back( temp );
-	sprintf( temp, "button 25 111 %i %i 1 0 3", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// view taxes
-	one.push_back( temp );
+	toSend.AddCommand( "button 25 91 %u %i 1 0 41", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// leave town
+	toSend.AddCommand( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// view taxes
 
-	sprintf( temp, "%s (%s)", name, Races->Name( race ) );
-	two.push_back( temp );
-	sprintf( temp, Dictionary->GetEntry( 1127, sLang ), GetPopulation() );
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1128, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1129, sLang ) );
+	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
 
-	SendVecsAsGump( sock, one, two, 3, INVALIDSERIAL );
+	toSend.AddText( Dictionary->GetEntry( 1127, sLang ), GetPopulation() );
+	toSend.AddText( Dictionary->GetEntry( 1128, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1129, sLang ) );
+
+	toSend.Finalize();
+	sock->Send( &toSend );
 }
 
-void cTownRegion::SendMayorGump( cSocket *sock )
+void CTownRegion::SendMayorGump( CSocket *sock )
 {
-	STRINGLIST one, two;
-	char temp[512];
 	UnicodeTypes sLang	= sock->Language();
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( 3 );
 
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	one.push_back( "page 1" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "page 1" );
 
-	two.push_back( "Mayor Controls" );	// our title
+	toSend.AddText( "Mayor Controls" );	// our title
 
-	one.push_back( "gumppic 25 50 1141" );	// town name
-	one.push_back( "gumppic 25 260 1141" );
-	sprintf( temp, "text 35 51 %i 1", cwmWorldState->ServerData()->GetRightTextColour() );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 25 71 %i 2", cwmWorldState->ServerData()->GetRightTextColour() );	// population
-	one.push_back( temp );
-	sprintf( temp, "text 55 91 %i 3", cwmWorldState->ServerData()->GetRightTextColour() ); // set taxes
-	one.push_back( temp );
-	sprintf( temp, "text 55 280 %i 4", cwmWorldState->ServerData()->GetRightTextColour() ); // return to main menu
-	one.push_back( temp );
-	sprintf( temp, "text 55 111 %i 5", cwmWorldState->ServerData()->GetRightTextColour() ); // list town members
-	one.push_back( temp );
-	sprintf( temp, "text 55 131 %i 6", cwmWorldState->ServerData()->GetRightTextColour() ); // force early election
-	one.push_back( temp );
-	sprintf( temp, "text 55 151 %i 7", cwmWorldState->ServerData()->GetRightTextColour() ); // purchase more guards
-	one.push_back( temp );
-	sprintf( temp, "text 55 171 %i 8", cwmWorldState->ServerData()->GetRightTextColour() ); // fire a guard
-	one.push_back( temp );
-	sprintf( temp, "text 55 261 %i 9", cwmWorldState->ServerData()->GetRightTextColour() ); // treasury amount
-	one.push_back( temp );
-	sprintf( temp, "text 55 191 %i 10", cwmWorldState->ServerData()->GetRightTextColour() );	// make ally
-	one.push_back( temp );
+	toSend.AddCommand( "gumppic 25 50 1141" );	// town name
+	toSend.AddCommand( "gumppic 25 260 1141" );
+	toSend.AddCommand( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() );	// town name
+	toSend.AddCommand( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() );	// population
+	toSend.AddCommand( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() ); // set taxes
+	toSend.AddCommand( "text 55 280 %u 4", cwmWorldState->ServerData()->RightTextColour() ); // return to main menu
+	toSend.AddCommand( "text 55 111 %u 5", cwmWorldState->ServerData()->RightTextColour() ); // list town members
+	toSend.AddCommand( "text 55 131 %u 6", cwmWorldState->ServerData()->RightTextColour() ); // force early election
+	toSend.AddCommand( "text 55 151 %u 7", cwmWorldState->ServerData()->RightTextColour() ); // purchase more guards
+	toSend.AddCommand( "text 55 171 %u 8", cwmWorldState->ServerData()->RightTextColour() ); // fire a guard
+	toSend.AddCommand( "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour() ); // treasury amount
+	toSend.AddCommand( "text 55 191 %u 10", cwmWorldState->ServerData()->RightTextColour() );	// make ally
 
-	sprintf( temp, "button 25 91 %i %i 1 0 21", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // set taxes 
-	one.push_back( temp );
-	sprintf( temp, "button 25 111 %i %i 1 0 22", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // list town members 
-	one.push_back( temp );
-	sprintf( temp, "button 25 131 %i %i 1 0 23", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // force early election
-	one.push_back( temp );
-	sprintf( temp, "button 25 151 %i %i 1 0 24", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // purchase more guards
-	one.push_back( temp );
-	sprintf( temp, "button 25 171 %i %i 1 0 25", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // fire a guard
-	one.push_back( temp );
-	sprintf( temp, "button 25 280 %i %i 1 0 40", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // return to main menu
-	one.push_back( temp );
-	sprintf( temp, "button 25 191 %i %i 1 0 26", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 ); // make ally of other town
-	one.push_back( temp );
+	toSend.AddCommand( "button 25 91 %u %i 1 0 21", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // set taxes 
+	toSend.AddCommand( "button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // list town members 
+	toSend.AddCommand( "button 25 131 %u %i 1 0 23", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // force early election
+	toSend.AddCommand( "button 25 151 %u %i 1 0 24", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // purchase more guards
+	toSend.AddCommand( "button 25 171 %u %i 1 0 25", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // fire a guard
+	toSend.AddCommand( "button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // return to main menu
+	toSend.AddCommand( "button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 ); // make ally of other town
 
-	sprintf( temp, "%s (%s)", name, Races->Name( race ) );
-	two.push_back( temp );
-	sprintf( temp, Dictionary->GetEntry( 1130, sLang ), GetPopulation() );
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1131, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1132, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1133, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1134, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1135, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1136, sLang ) );
-	sprintf( temp, Dictionary->GetEntry( 1137, sLang ), goldReserved );
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1138, sLang ) );
+	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
+	toSend.AddText( Dictionary->GetEntry( 1130, sLang ), GetPopulation() );
+	toSend.AddText( Dictionary->GetEntry( 1131, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1132, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1133, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1134, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1135, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1136, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1137, sLang ), goldReserved );
+	toSend.AddText( Dictionary->GetEntry( 1138, sLang ) );
 
-	SendVecsAsGump( sock, one, two, 3, INVALIDSERIAL );
+	toSend.Finalize();
+	sock->Send( &toSend );
 }
 
-void cTownRegion::SendDefaultGump( cSocket *sock )
+void CTownRegion::SendDefaultGump( CSocket *sock )
 {
-	STRINGLIST one, two;
-	char temp[512];
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( 3 );
 
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	one.push_back( "page 1" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "page 1" );
 
-	two.push_back( "Generic View" );	// our title
-	one.push_back( "gumppic 25 50 1141" );	// town name
-	sprintf( temp, "text 35 51 %i 1", cwmWorldState->ServerData()->GetRightTextColour() );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 25 71 %i 2", cwmWorldState->ServerData()->GetRightTextColour() );	// population
-	one.push_back( temp );
-	sprintf( temp, "text 55 91 %i 3", cwmWorldState->ServerData()->GetRightTextColour() );	// leave town
-	one.push_back( temp );
-	sprintf( temp, "text 55 111 %i 4", cwmWorldState->ServerData()->GetRightTextColour() );	// view taxes
-	one.push_back( temp );
-	sprintf( temp, "text 55 131 %i 5", cwmWorldState->ServerData()->GetRightTextColour() );	// toggle town title on/off
-	one.push_back( temp );
-	sprintf( temp, "text 55 151 %i 6", cwmWorldState->ServerData()->GetRightTextColour() );	// vote for mayor
-	one.push_back( temp );
-	sprintf( temp, "text 55 171 %i 7", cwmWorldState->ServerData()->GetRightTextColour() );	// donate resource
-	one.push_back( temp );
-	sprintf( temp, "tilepic 205 171 %i", GetResourceID() );				// picture of the resource
-	one.push_back( temp );
-	sprintf( temp, "text 55 191 %i 8", cwmWorldState->ServerData()->GetRightTextColour() );	// view budget
-	one.push_back( temp );
-	sprintf( temp, "text 55 211 %i 9", cwmWorldState->ServerData()->GetRightTextColour() );	// view allied towns
-	one.push_back( temp );
-	sprintf( temp, "text 55 231 %i 10", cwmWorldState->ServerData()->GetRightTextColour() );	// view enemy towns
-	one.push_back( temp );
+	toSend.AddText( "Generic View" );	// our title
+	toSend.AddCommand( "gumppic 25 50 1141" );	// town name
+	toSend.AddCommand( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() );	// town name
+	toSend.AddCommand( "text 25 71 %u 2", cwmWorldState->ServerData()->RightTextColour() );	// population
+	toSend.AddCommand( "text 55 91 %u 3", cwmWorldState->ServerData()->RightTextColour() );	// leave town
+	toSend.AddCommand( "text 55 111 %u 4", cwmWorldState->ServerData()->RightTextColour() );	// view taxes
+	toSend.AddCommand( "text 55 131 %u 5", cwmWorldState->ServerData()->RightTextColour() );	// toggle town title on/off
+	toSend.AddCommand( "text 55 151 %u 6", cwmWorldState->ServerData()->RightTextColour() );	// vote for mayor
+	toSend.AddCommand( "text 55 171 %u 7", cwmWorldState->ServerData()->RightTextColour() );	// donate resource
+	toSend.AddCommand( "tilepic 205 171 %u", GetResourceID() );				// picture of the resource
+	toSend.AddCommand( "text 55 191 %u 8", cwmWorldState->ServerData()->RightTextColour() );	// view budget
+	toSend.AddCommand( "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour() );	// view allied towns
+	toSend.AddCommand( "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour() );	// view enemy towns
 
-	sprintf( temp, "button 25 91 %i %i 1 0 2", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// leave town
-	one.push_back( temp );
-	sprintf( temp, "button 25 111 %i %i 1 0 3", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// view taxes
-	one.push_back( temp );
-	sprintf( temp, "button 25 131 %i %i 1 0 4", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// toggle title
-	one.push_back( temp );
-	sprintf( temp, "button 25 151 %i %i 1 0 5", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// vote for mayor
-	one.push_back( temp );
-	sprintf( temp, "button 25 171 %i %i 1 0 6", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// donate gold
-	one.push_back( temp );
-	sprintf( temp, "button 25 191 %i %i 1 0 7", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// view budget
-	one.push_back( temp );
-	sprintf( temp, "button 25 211 %i %i 1 0 8", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// view allied towns
-	one.push_back( temp );
-	sprintf( temp, "button 25 231 %i %i 1 0 9", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );	// view enemy towns
-	one.push_back( temp );
+	toSend.AddCommand( "button 25 91 %u %i 1 0 2", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// leave town
+	toSend.AddCommand( "button 25 111 %u %i 1 0 3", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// view taxes
+	toSend.AddCommand( "button 25 131 %u %i 1 0 4", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// toggle title
+	toSend.AddCommand( "button 25 151 %u %i 1 0 5", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// vote for mayor
+	toSend.AddCommand( "button 25 171 %u %i 1 0 6", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// donate gold
+	toSend.AddCommand( "button 25 191 %u %i 1 0 7", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// view budget
+	toSend.AddCommand( "button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// view allied towns
+	toSend.AddCommand( "button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );	// view enemy towns
 
 	CChar *mChar		= sock->CurrcharObj();
 	UnicodeTypes sLang	= sock->Language();
-	sprintf( temp, "%s (%s)", name, Races->Name( race ) );
-	two.push_back( temp );
-	sprintf( temp, Dictionary->GetEntry( 1139, sLang ), GetPopulation() );
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1140, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1141, sLang ) );
-	sprintf( temp, Dictionary->GetEntry( 1142, sLang ), mChar->GetTownTitle()?"Off":"On" );
-	two.push_back( temp );
-	two.push_back( Dictionary->GetEntry( 1143, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1144, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1145, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1146, sLang ) );
-	two.push_back( Dictionary->GetEntry( 1147, sLang ) );
+	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
+	toSend.AddText( Dictionary->GetEntry( 1139, sLang ), GetPopulation() );
+	toSend.AddText( Dictionary->GetEntry( 1140, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1141, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1142, sLang ), mChar->GetTownTitle()?"Off":"On" );
+	toSend.AddText( Dictionary->GetEntry( 1143, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1144, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1145, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1146, sLang ) );
+	toSend.AddText( Dictionary->GetEntry( 1147, sLang ) );
 
 	if( mChar->GetTownPriv() == 2 || mChar->IsGM() ) // if we've got a mayor (remove isGM check!)
 	{
-		sprintf( temp, "button 25 281 %i %i 1 0 20", cwmWorldState->ServerData()->GetButtonRight(), cwmWorldState->ServerData()->GetButtonRight() + 1 );
-		one.push_back( temp );
-		sprintf( temp, "text 55 281 %i 11", cwmWorldState->ServerData()->GetLeftTextColour() );
-		one.push_back( temp );
-		sprintf( temp, Dictionary->GetEntry( 1148, sLang ) );
-		two.push_back( temp );
+		toSend.AddCommand( "button 25 281 %u %i 1 0 20", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1 );
+		toSend.AddCommand( "text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour() );
+		toSend.AddText( Dictionary->GetEntry( 1148, sLang ) );
 	}
-	SendVecsAsGump( sock, one, two, 3, INVALIDSERIAL );
-
+	toSend.Finalize();
+	sock->Send( &toSend );
 }
-SI32 cTownRegion::GetPopulation( void ) const
+size_t CTownRegion::GetPopulation( void ) const
 {
 	return townMember.size();
 }
 
-void cTownRegion::DisplayTownMembers( cSocket *sock )
+void CTownRegion::DisplayTownMembers( CSocket *sock )
 {
 	GumpDisplay townListing( sock, 300, 300 );
 	townListing.SetTitle( Dictionary->GetEntry( 1149, sock->Language() ) );
 	CChar *sChar = sock->CurrcharObj();
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 	{
 		CChar *townChar = calcCharObjFromSer( townMember[counter].townMember );
-		if( townChar != NULL )
+		if( ValidateObject( townChar ) )
 		{
 			if( sChar->IsGM() )
 				townListing.AddData( townChar->GetName(), townChar->GetSerial(), 3 );
@@ -953,49 +877,49 @@ void cTownRegion::DisplayTownMembers( cSocket *sock )
 		else
 		{
 			RemoveCharacter( counter );
-			counter--;
+			--counter;
 		}
 	}
 	townListing.Send( 4, false, INVALIDSERIAL );
 }
 
-bool cTownRegion::VoteForMayor( cSocket *sock )
+bool CTownRegion::VoteForMayor( CSocket *sock )
 {
-	SERIAL serial = sock->GetDWord( 7 );
-	CChar *srcChar = sock->CurrcharObj();
-	CChar *target = calcCharObjFromSer( serial );
-	if( target != NULL )
+	SERIAL serial	= sock->GetDWord( 7 );
+	CChar *srcChar	= sock->CurrcharObj();
+	CChar *target	= calcCharObjFromSer( serial );
+	if( ValidateObject( target ) )
 	{
 		if( !IsMemberOfTown( target ) )	// he's not in our town!
 		{
-			sysmessage( sock, 1150 );
+			sock->sysmessage( 1150 );
 			return false;
 		}
 		SERIAL serialPos = FindPositionOf( (*srcChar) );
 		if( serialPos == INVALIDSERIAL )
 		{
-			sysmessage( sock, 1151 );
+			sock->sysmessage( 1151 );
 			return false;
 		}
 		if( townMember[serialPos].targVote != INVALIDSERIAL )
 		{
-			sysmessage( sock, 1152 );
+			sock->sysmessage( 1152 );
 			return false;
 		}
 		townMember[serialPos].targVote = target->GetSerial();
-		sysmessage( sock, 1153 );
+		sock->sysmessage( 1153 );
 		return true;
 	}
 	else
 	{
-		sysmessage( sock, 1154 );
+		sock->sysmessage( 1154 );
 		return false;
 	}
 }
 
-SERIAL cTownRegion::FindPositionOf( CChar& toAdd )
+SERIAL CTownRegion::FindPositionOf( CChar& toAdd )
 {
-	for( SERIAL counter = 0; counter < townMember.size(); counter++ )
+	for( SERIAL counter = 0; counter < townMember.size(); ++counter )
 	{
 		if( townMember[counter].townMember == toAdd.GetSerial() )
 			return counter;
@@ -1003,71 +927,68 @@ SERIAL cTownRegion::FindPositionOf( CChar& toAdd )
 	return INVALIDSERIAL;
 }
 
-UI16 cTownRegion::GetResourceID( void ) const
+UI16 CTownRegion::GetResourceID( void ) const
 {
 	return taxedResource;
 }
 
-bool cTownRegion::DonateResource( cSocket *s, SI32 amount )
+bool CTownRegion::DonateResource( CSocket *s, SI32 amount )
 {
 	goldReserved += amount;
 	CChar *tChar = s->CurrcharObj();
 	if( amount > 1000 )
-		sysmessage( s, 1155, tChar->GetName() );
+		s->sysmessage( 1155, tChar->GetName().c_str() );
 	else if( amount > 750 )
-		sysmessage( s, 1156, tChar->GetName() );
+		s->sysmessage( 1156, tChar->GetName().c_str() );
 	else if( amount > 500 )
-		sysmessage( s, 1157, tChar->GetName() );
+		s->sysmessage( 1157, tChar->GetName().c_str() );
 	else if( amount > 250 )
-		sysmessage( s, 1158, tChar->GetName() );
+		s->sysmessage( 1158, tChar->GetName().c_str() );
 	else
-		sysmessage( s, 1159, tChar->GetName() );
+		s->sysmessage( 1159, tChar->GetName().c_str() );
 	return true;
 }
 
-bool cTownRegion::PurchaseGuard( cSocket *sock, UI08 number )
+bool CTownRegion::PurchaseGuard( CSocket *sock, UI08 number )
 {
 	if( number * 10000 < goldReserved )	// if we don't have the cash
 	{
-		sysmessage( sock, 1160 );
+		sock->sysmessage( 1160 );
 		return false;
 	}
 
 	goldReserved -= (number * 10000);
-	int maxGuardIndex = guards.size();
-	guards.resize( maxGuardIndex + number );
-
-	for( UI32 counter = maxGuardIndex; counter < guards.size(); counter++ )
-		guards[counter] = RandomNum( 1000, 1001 );
+	for( UI08 counter = 0; counter < number; ++counter )
+		++numGuards;
 	return true;
 }
 
-bool cTownRegion::ViewBudget( cSocket *sock )
+bool CTownRegion::ViewBudget( CSocket *sock )
 {
 	UnicodeTypes sLang = sock->Language();
 	GumpDisplay Budget( sock, 300, 300 );
 	Budget.SetTitle( Dictionary->GetEntry( 1161, sLang ) );
 	Budget.AddData( Dictionary->GetEntry( 1162, sLang ), guardsPurchased );
-	Budget.AddData( Dictionary->GetEntry( 1163, sLang ), guards.size() );
-	Budget.AddData( Dictionary->GetEntry( 1164, sLang ), guards.size() * 20 );
+	Budget.AddData( Dictionary->GetEntry( 1163, sLang ), numGuards );
+	Budget.AddData( Dictionary->GetEntry( 1164, sLang ), numGuards * 20 );
 	Budget.Send( 4, false, INVALIDSERIAL );
 
 	return true;
 }
 
-bool cTownRegion::PeriodicCheck( void )
+bool CTownRegion::PeriodicCheck( void )
 {
 	time_t now;
 	time( &now );
-	if( difftime( now, timeSinceTaxedMembers ) >= cwmWorldState->ServerData()->GetTownTaxPeriod() )
+	if( difftime( now, timeSinceTaxedMembers ) >= cwmWorldState->ServerData()->TownTaxPeriod() )
 	{
-		for( UI32 memberCounter = 0; memberCounter < townMember.size(); memberCounter++ )
+		for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 		{
 			CChar *townMem = calcCharObjFromSer( townMember[memberCounter].townMember );
-			if( townMem != NULL )
+			if( ValidateObject( townMem ) )
 			{
 				UI16 resourceID = GetResourceID();
-				UI32 numResources = GetAmount( townMem, resourceID );
+				UI32 numResources = GetItemAmount( townMem, resourceID );
 
 				if( taxedAmount > numResources )
 				{
@@ -1076,48 +997,48 @@ bool cTownRegion::PeriodicCheck( void )
 						JailSys->JailPlayer( townMem, 900 );
 					else
 					{
-						DeleteQuantity( townMem, resourceID, numResources );
-						DeleteBankItem( townMem, resourceID, 0, bankAmount - numResources );
+						DeleteItemAmount( townMem, numResources, resourceID );
+						DeleteBankItem( townMem, bankAmount - numResources, resourceID );
 					}
 				}
 				else
 				{
-					DeleteQuantity( townMem, resourceID, taxedAmount );
+					DeleteItemAmount( townMem, taxedAmount, resourceID );
 					resourceCollected += taxedAmount;
 				}
 			}
 		}
 		timeSinceTaxedMembers = now;
 	}
-	if( difftime( now, timeSinceGuardsPaid ) >= cwmWorldState->ServerData()->GetTownGuardPayment() )	// init to 1000 seconds
+	if( difftime( now, timeSinceGuardsPaid ) >= cwmWorldState->ServerData()->TownGuardPayment() )	// init to 1000 seconds
 	{
-		if( goldReserved < static_cast<SI32>(( 20 * guards.size() )) )
+		if( goldReserved < static_cast<SI32>(( 20 * numGuards )) )
 		{
 			// insufficient resources
 			bool enoughGuards = false;
 			while( !enoughGuards )
 			{
-				guards.resize( guards.size() - 1 );
-				enoughGuards = ( goldReserved >= static_cast<SI32>(( 20 * guards.size() ) ));
+				--numGuards;
+				enoughGuards = ( goldReserved >= static_cast<SI32>(( 20 * numGuards ) ));
 			}
 		}
-		goldReserved -= 20 * guards.size();
+		goldReserved -= 20 * numGuards;
 		timeSinceGuardsPaid = now;
 	}
 
-	if( now > timeToNextPoll && townMember.size() != 0 )
+	if( now > timeToNextPoll && !townMember.empty() )
 	{
 		TellMembers( 1165 );
-		for( UI32 counter = 0; counter < townMember.size(); counter++ )
+		for( size_t counter = 0; counter < townMember.size(); ++counter )
 			townMember[counter].targVote = INVALIDSERIAL;
-		timeToElectionClose = now + cwmWorldState->ServerData()->GetTownNumSecsPollOpen();	// 2 days polls are open
-		timeToNextPoll = timeToElectionClose + cwmWorldState->ServerData()->GetTownNumSecsAsMayor();	// secs as mayor over the top of the end of the poll
-		CChar *mayor = GetMayor();
-		if( mayor != NULL )
+		timeToElectionClose = now + cwmWorldState->ServerData()->TownNumSecsPollOpen();	// 2 days polls are open
+		timeToNextPoll		= timeToElectionClose + cwmWorldState->ServerData()->TownNumSecsAsMayor();	// secs as mayor over the top of the end of the poll
+		CChar *mayor		= GetMayor();
+		if( ValidateObject( mayor ) )
 			mayor->SetTownpriv( 1 );	// mayor becomes a basic member again, so he can't do anything while the poll is occuring :>
 	}
 
-	if( now > timeToElectionClose && townMember.size() != 0 )	// election finished
+	if( now > timeToElectionClose && !townMember.empty() )// election finished
 	{
 		TellMembers( 1166 );
 		CalcNewMayor();
@@ -1126,57 +1047,53 @@ bool cTownRegion::PeriodicCheck( void )
 	return true;
 }	
 
-WorldType cTownRegion::GetAppearance( void ) const
+WorldType CTownRegion::GetAppearance( void ) const
 {
 	return visualAppearance;
 }
 
-void cTownRegion::ViewTaxes( cSocket *sock )
+void CTownRegion::ViewTaxes( CSocket *sock )
 {
-	STRINGLIST one, two;
-	char temp[512];
+	CPSendGumpMenu toSend;
+	toSend.UserID( INVALIDSERIAL );
+	toSend.GumpID( 3 );
 
-	one.push_back( "noclose" );
-	one.push_back( "page 0" );
-	sprintf( temp, "resizepic 0 0 %i 320 340", cwmWorldState->ServerData()->GetBackgroundPic() );
-	one.push_back( temp );
-	sprintf( temp, "button 280 10 %i %i 1 0 1", cwmWorldState->ServerData()->GetButtonCancel(), cwmWorldState->ServerData()->GetButtonCancel() + 1); //OKAY
-	one.push_back( temp );
-	sprintf( temp, "text 70 10 %i 0", cwmWorldState->ServerData()->GetTitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	one.push_back( temp );
-	one.push_back( "page 1" );
+	toSend.AddCommand( "noclose" );
+	toSend.AddCommand( "page 0" );
+	toSend.AddCommand( "resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic() );
+	toSend.AddCommand( "button 280 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1); //OKAY
+	toSend.AddCommand( "text 70 10 %u 0", cwmWorldState->ServerData()->TitleColour() );           //text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.AddCommand( "page 1" );
 
+	toSend.AddText( "Taxes" );	// our title
+	toSend.AddCommand( "gumppic 25 50 1141" );	// town name
+	toSend.AddCommand( "text 35 51 %u 1", cwmWorldState->ServerData()->RightTextColour() );	// town name
+	toSend.AddCommand( "text 35 71 %u 2", cwmWorldState->ServerData()->RightTextColour() );	// population
+	toSend.AddCommand( "text 35 111 %u 3", cwmWorldState->ServerData()->RightTextColour() ); // # of resources
+	toSend.AddCommand( "tilepic 5 111 %u", GetResourceID() );				// picture of the resource
 
-	two.push_back( "Taxes" );	// our title
-	sprintf( temp, "gumppic 25 50 1141" );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 35 51 %i 1", cwmWorldState->ServerData()->GetRightTextColour() );	// town name
-	one.push_back( temp );
-	sprintf( temp, "text 35 71 %i 2", cwmWorldState->ServerData()->GetRightTextColour() );	// population
-	one.push_back( temp );
-	sprintf( temp, "text 35 111 %i 3", cwmWorldState->ServerData()->GetRightTextColour() ); // # of resources
-	one.push_back( temp );
-	sprintf( temp, "tilepic 5 111 %i", GetResourceID() );				// picture of the resource
-	one.push_back( temp );
-
-	sprintf( temp, "%s (%s)", name, Races->Name( race ) );
-	two.push_back( temp );
-	sprintf( temp, "Population %i", GetPopulation() );
-	two.push_back( temp );
-	CTile tile;
-	Map->SeekTile( GetResourceID(), &tile );
-	sprintf(  temp, "%i %ss", taxedAmount, tile.Name() );
-	two.push_back( temp );
-
-	SendVecsAsGump( sock, one, two, 3, INVALIDSERIAL );
+	toSend.AddText( "%s (%s)", name.c_str(), Races->Name( race ).c_str() );
+	toSend.AddText( "Population %i", GetPopulation() );
+	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	{
+		CTileHS& tile = Map->SeekTileHS( GetResourceID() );
+		toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
+	}
+	else
+	{
+		CTile tile = Map->SeekTile( GetResourceID() );
+		toSend.AddText( "%i %ss", taxedAmount, tile.Name() );
+	}
+	toSend.Finalize();
+	sock->Send( &toSend );
 }
 
-SI16 cTownRegion::GetHealth( void ) const
+SI16 CTownRegion::GetHealth( void ) const
 {
 	return health;
 }
 
-void cTownRegion::DoDamage( SI16 reduction )
+void CTownRegion::DoDamage( SI16 reduction )
 {
 	health -= reduction;
 	if( health < 0 )
@@ -1192,9 +1109,9 @@ void cTownRegion::DoDamage( SI16 reduction )
 	
 }
 
-bool cTownRegion::IsAlliedTown( UI08 townToCheck ) const
+bool CTownRegion::IsAlliedTown( UI16 townToCheck ) const
 {
-	for( UI32 counter = 0; counter < alliedTowns.size(); counter++ )
+	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
 	{
 		if( alliedTowns[counter] == townToCheck )
 			return true;
@@ -1202,7 +1119,7 @@ bool cTownRegion::IsAlliedTown( UI08 townToCheck ) const
 	return false;
 }
 
-bool cTownRegion::MakeAlliedTown( UI08 townToMake )
+bool CTownRegion::MakeAlliedTown( UI16 townToMake )
 {
 	if( regionNum == townToMake )
 		return false;
@@ -1213,115 +1130,125 @@ bool cTownRegion::MakeAlliedTown( UI08 townToMake )
 		return false;
 	}
 
-	if( Races->CompareByRace( region[townToMake]->GetRace(), race ) == 1 )	// if we're racial enemies
+	if( Races->CompareByRace( cwmWorldState->townRegions[townToMake]->GetRace(), race ) <= RACE_ENEMY )	// if we're racial enemies
 		return false;
 
-	int location = alliedTowns.size();
-	alliedTowns.resize( location + 1 );
-	alliedTowns[location] = townToMake;	// let's ally ourselves
-	TellMembers( 1172, name, region[townToMake]->GetName() );
+	// let's ally ourselves
+	alliedTowns.push_back( townToMake );
+	TellMembers( 1172, name.c_str(), cwmWorldState->townRegions[townToMake]->GetName().c_str() );
 	return true;
 
 }
 
-void cTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower left corner)
+void CTownRegion::TellMembers( SI32 dictEntry, ...) // System message (In lower left corner)
 {
 	char msg[512];
 	char tmpMsg[512];
 
-	for( UI32 memberCounter = 0; memberCounter < townMember.size(); memberCounter++ )
+	for( size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter )
 	{
 		CChar *targetChar = calcCharObjFromSer( townMember[memberCounter].townMember );
-		cSocket *targetSock = calcSocketObjFromChar( targetChar );
+		if( !ValidateObject( targetChar ) )
+			continue;
+
+		CSocket *targetSock = targetChar->GetSocket();
 		if( targetSock != NULL )
 		{
-			const char *txt = Dictionary->GetEntry( dictEntry, targetSock->Language() );
+			std::string txt = Dictionary->GetEntry( dictEntry, targetSock->Language() );
 
 			strcpy( msg, "TOWN: " );
 			va_list argptr;
 			va_start( argptr, dictEntry );
-			vsprintf( tmpMsg, txt, argptr );
+			vsprintf( tmpMsg, txt.c_str(), argptr );
 			va_end( argptr );
 			strcat( msg, tmpMsg );
 
-			CSpeechEntry *toAdd = SpeechSys->Add();
-			toAdd->Speech( msg );
-			toAdd->Font( FNT_NORMAL );
-			toAdd->Speaker( INVALIDSERIAL );
-			toAdd->SpokenTo( townMember[memberCounter].townMember );
-			toAdd->Colour( 0x000B );
-			toAdd->Type( SYSTEM );
-			toAdd->At( cwmWorldState->GetUICurrentTime() );
-			toAdd->TargType( SPTRG_INDIVIDUAL );
+			CSpeechEntry& toAdd = SpeechSys->Add();
+			toAdd.Speech( msg );
+			toAdd.Font( FNT_NORMAL );
+			toAdd.Speaker( INVALIDSERIAL );
+			toAdd.SpokenTo( townMember[memberCounter].townMember );
+			toAdd.Colour( 0x000B );
+			toAdd.Type( SYSTEM );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
 		}
 	}
 }
 
-RACEID cTownRegion::GetRace( void ) const
+RACEID CTownRegion::GetRace( void ) const
 {
 	return race;
 }
 
-void cTownRegion::SendAlliedTowns( cSocket *sock )
+void CTownRegion::SendAlliedTowns( CSocket *sock )
 {
 	GumpDisplay Ally( sock, 300, 300 );
 	char temp[100];
-	sprintf( temp, Dictionary->GetEntry( 1173, sock->Language() ), alliedTowns.size() );
+	sprintf( temp, Dictionary->GetEntry( 1173, sock->Language() ).c_str(), alliedTowns.size() );
 	Ally.SetTitle( temp );
-	for( UI32 counter = 0; counter < alliedTowns.size(); counter++ )
-		Ally.AddData( region[alliedTowns[counter]]->GetName(), " " );
+	for( size_t counter = 0; counter < alliedTowns.size(); ++counter )
+		Ally.AddData( cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " " );
 
 	Ally.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTownRegion::ForceEarlyElection( void )
+void CTownRegion::ForceEarlyElection( void )
 {
 	time_t now;
 	time(&now);
-	CChar *mayor = GetMayor();
-	timeToNextPoll = now;	// time to open poll
+	CChar *mayor	= GetMayor();
+	timeToNextPoll	= now;	// time to open poll
 	TellMembers( 1174 );
-	for( UI32 counter = 0; counter < townMember.size(); counter++ )
+	for( size_t counter = 0; counter < townMember.size(); ++counter )
 		townMember[counter].targVote = INVALIDSERIAL;
-	if( mayor != NULL )
+	if( ValidateObject( mayor ) )
 		mayor->SetTownpriv( 1 );
 }
 
-void cTownRegion::SendEnemyTowns( cSocket *sock )
+void CTownRegion::SendEnemyTowns( CSocket *sock )
 {
 	GumpDisplay Enemy( sock, 300, 300 );
 	char temp[100];
 	UI08 enemyCount = 0;
-	for( UI16 counter = 0; counter < 256; counter++ )
+	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
+	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
+	TOWNMAP_CITERATOR ourTown = cwmWorldState->townRegions.find( regionNum );
+	while( tIter != tEnd )
 	{
-		if( counter != regionNum && Races->CompareByRace( race, region[counter]->GetRace() ) == 1 )	// if we're racial enemies, and not the same as ourselves
+		CTownRegion *myReg = tIter->second;
+		if( myReg != NULL )
 		{
-			enemyCount++;
-			Enemy.AddData( region[counter]->GetName(), Races->Name( region[counter]->GetRace() ) );
+			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
+			{
+				++enemyCount;
+				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
+			}
 		}
+		++tIter;
 	}
-	sprintf( temp, "Enemy Towns (%i)", enemyCount );
+	sprintf( temp, "Enemy Towns (%u)", enemyCount );
 	Enemy.SetTitle( temp );
 	Enemy.Send( 4, false, INVALIDSERIAL );
 }
 
-void cTownRegion::Possess( UI08 possessorTown )
+void CTownRegion::Possess( CTownRegion *possessorTown )
 {
-	region[possessorTown]->SetRace( race );
-	region[possessorTown]->TellMembers( 1175 );
-	region[possessorTown]->SetReserves( region[possessorTown]->GetReserves() + GetReserves() / 3 * 2 );
-	region[possessorTown]->SetTaxesLeft( region[possessorTown]->GetTaxes() + GetTaxes() / 3 * 2 );
+	possessorTown->SetRace( race );
+	possessorTown->TellMembers( 1175 );
+	possessorTown->SetReserves( possessorTown->GetReserves() + GetReserves() / 3 * 2 );
+	possessorTown->SetTaxesLeft( possessorTown->GetTaxes() + GetTaxes() / 3 * 2 );
 	TellMembers( 1176 );
-	MakeAlliedTown( possessorTown );
-	region[possessorTown]->MakeAlliedTown( regionNum );
+	MakeAlliedTown( possessorTown->GetRegionNum() );
+	possessorTown->MakeAlliedTown( regionNum );
 
 	// remove the old members, preparing the way for the new ones
 	CChar *targChar;
-	for( int counter = townMember.size() - 1; counter >= 0; counter++ )
+	for( size_t counter = townMember.size() - 1; counter >= 0 && counter < townMember.size(); ++counter )
 	{
 		targChar = calcCharObjFromSer( townMember[counter].townMember );
 		RemoveCharacter( counter );
-		if( targChar != NULL )
+		if( ValidateObject( targChar ) )
 		{
 			targChar->SetTown( 255 );
 			targChar->SetTownpriv( 0 );
@@ -1330,157 +1257,150 @@ void cTownRegion::Possess( UI08 possessorTown )
 	townMember.resize( 0 );
 }
 
-long cTownRegion::GetReserves( void ) const
+long CTownRegion::GetReserves( void ) const
 {
 	return resourceCollected;
 }
-long cTownRegion::GetTaxes( void ) const
+long CTownRegion::GetTaxes( void ) const
 {
 	return goldReserved;
 }
-void cTownRegion::SetTaxesLeft( long newValue )
+void CTownRegion::SetTaxesLeft( long newValue )
 {
 	goldReserved = newValue;
 }
-void cTownRegion::SetReserves( long newValue )
+void CTownRegion::SetReserves( long newValue )
 {
 	resourceCollected = newValue;
 }
-void cTownRegion::SetRace( RACEID newRace )
+void CTownRegion::SetRace( RACEID newRace )
 {
 	race = newRace;
 }
-SI16 cTownRegion::GetMinColourSkill( void ) const
-{
-	return minColourSkill;
-}
-UI08 cTownRegion::GetChanceBigOre( void ) const
+UI08 CTownRegion::GetChanceBigOre( void ) const
 {
 	return chanceFindBigOre;
 }
-UI08 cTownRegion::GetChanceColourOre( void ) const
+bool CTownRegion::RemoveCharacter( size_t position )
 {
-	return chanceColourOre;
-}
-bool cTownRegion::RemoveCharacter( int position )
-{
-#pragma note( "Town banks don't exist yet, so don't delete them!" )
-//	Items->DeleItem( calcItemFromSer( townMember[position].PlayerBank->GetSerial() ) );
-	for( unsigned int counter2 = position; counter2 < ( townMember.size() - 1 ); counter2++ )
-	{
-		townMember[counter2].townMember = townMember[counter2+1].townMember;
-		townMember[counter2].targVote   = townMember[counter2+1].targVote;
-		townMember[counter2].PlayerBank = townMember[counter2+1].PlayerBank;
-	}
-	townMember.resize( townMember.size() - 1 );
+	townMember.erase( townMember.begin() + position );
 	return true;
 }
-SI32 cTownRegion::GetNumOrePreferences( void ) const
+size_t CTownRegion::GetNumOrePreferences( void ) const
 {
 	return orePreferences.size();
 }
-const orePref *cTownRegion::GetOrePreference( SI32 targValue ) const
+const orePref *CTownRegion::GetOrePreference( size_t targValue ) const
 {
-	if( targValue < 0 || targValue >= static_cast<SI32>(orePreferences.size()) )
+	if( targValue >= orePreferences.size() )
 		return NULL;
 	return &orePreferences[targValue];
 }
 
-SI32 cTownRegion::GetOreChance( void ) const
+SI32 CTownRegion::GetOreChance( void ) const
 {
 	int sumReturn = 0;
-	for( UI32 i = 0; i < orePreferences.size(); i++ )
-		sumReturn += orePreferences[i].percentChance;
+	std::vector< orePref >::const_iterator oIter;
+	for( oIter = orePreferences.begin(); oIter != orePreferences.end(); ++oIter )
+		sumReturn += (*oIter).percentChance;
 	return sumReturn;
 }
-bool cTownRegion::IsDungeon( void ) const
+bool CTownRegion::IsDungeon( void ) const
 {
-	return( (priv&0x80) == 0x80 );
+	return priv.test( BIT_DUNGEON );
 }
 
-UI32 cTownRegion::NumGuards( void ) const
+UI16 CTownRegion::NumGuards( void ) const
 {
-	return guards.size();
+	return numGuards;
 }
 
-UI08 cTownRegion::WorldNumber( void ) const
+UI08 CTownRegion::WorldNumber( void ) const
 {
 	return worldNumber;
 }
 
-void cTownRegion::IsGuarded( bool value )
+void CTownRegion::IsGuarded( bool value )
 {
-	if( value )
-		priv |= 0x01;
-	else
-		priv &= 0xFE;
+	priv.set( BIT_GUARDED, value );
 }
-void cTownRegion::CanMark( bool value )
+void CTownRegion::CanMark( bool value )
 {
-	if( value )
-		priv |= 0x02;
-	else
-		priv &= 0xFD;
+	priv.set( BIT_MARK, value );
 }
-void cTownRegion::CanGate( bool value )
+void CTownRegion::CanGate( bool value )
 {
-	if( value )
-		priv |= 0x04;
-	else
-		priv &= 0xFB;
+	priv.set( BIT_GATE, value );
 }
-void cTownRegion::CanRecall( bool value )
+void CTownRegion::CanRecall( bool value )
 {
-	if( value )
-		priv |= 0x08;
-	else
-		priv &= 0xF7;
+	priv.set( BIT_RECALL, value );
 }
-void cTownRegion::CanCastAggressive( bool value )
+void CTownRegion::CanCastAggressive( bool value )
 {
-	if( value )
-		priv |= 0x40;
-	else
-		priv &= 0xBF;
+	priv.set( BIT_AGGRESSIVE, value );
 }
-void cTownRegion::IsDungeon( bool value )
+void CTownRegion::IsDungeon( bool value )
 {
-	if( value )
-		priv |= 0x80;
-	else
-		priv &= 0x7F;
+	priv.set( BIT_DUNGEON, value );
 }
-void cTownRegion::SetName( const char *toSet )
+void CTownRegion::SetName( std::string toSet )
 {
-	strncpy( name, toSet, 49 );
-	name[49] = 0;
+	name = toSet.substr( 0, 49 );
 }
 
-void cTownRegion::TaxedAmount( UI16 amount )
+void CTownRegion::TaxedAmount( UI16 amount )
 {
 	taxedAmount = amount;
 }
 
-UI16 cTownRegion::TaxedAmount( void ) const
+UI16 CTownRegion::TaxedAmount( void ) const
 {
 	return taxedAmount;
 }
 
-void cTownRegion::SetResourceID( UI16 resID )
+void CTownRegion::SetResourceID( UI16 resID )
 {
 	taxedResource = resID;
 }
 
-void cTownRegion::SetHealth( SI16 newValue )
+void CTownRegion::SetHealth( SI16 newValue )
 {
 	health = newValue;
 }
 
-void cTownRegion::SetChanceBigOre( UI08 newValue )
+void CTownRegion::SetChanceBigOre( UI08 newValue )
 {
 	chanceFindBigOre = newValue;
 }
-void cTownRegion::SetChanceColourOre( UI08 newValue )
+
+UI16 CTownRegion::GetScriptTrigger( void ) const
 {
-	chanceColourOre = newValue;
+	return jsScript;
+}
+void CTownRegion::SetScriptTrigger( UI16 newValue )
+{
+	jsScript = newValue;
+}
+
+UI16 CTownRegion::GetRegionNum( void ) const
+{
+	return regionNum;
+}
+void CTownRegion::SetRegionNum( UI16 newVal )
+{
+	regionNum = newVal;
+}
+
+size_t CTownRegion::GetNumLocations( void ) const
+{
+	return locations.size();
+}
+const regLocs *CTownRegion::GetLocation( size_t locNum ) const
+{
+	if( locNum >= locations.size() )
+		return NULL;
+	return &locations[locNum];
+}
+
 }

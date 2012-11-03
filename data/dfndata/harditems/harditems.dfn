@@ -35,7 +35,7 @@ type=232
 }
 
 //Kindling
-[0x0de1]
+[0xde1]
 {
 pileable=1
 decay=1
@@ -44,7 +44,7 @@ value=0,1
 }
 
 //Gold
-[x0eed]
+[xeed]
 {
 pileable=1
 decay=1
@@ -99,7 +99,7 @@ decay=1
 }
 
 // Medium-small Ore Pile
-[0x19bb]
+[0x19ba]
 {
 weight=700
 pileable=1
@@ -135,6 +135,13 @@ type=12
 type=12
 }
 
+//Arrows and Crossbow-bolts 
+[0xf3fx1bfb] 
+{ 
+weight=1 
+pileable=1 
+decay=1 
+}
 
 EOF
 

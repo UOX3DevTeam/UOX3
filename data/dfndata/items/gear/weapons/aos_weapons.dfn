@@ -323,6 +323,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
 }
 
 [0x26cc]
@@ -342,6 +344,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x0f3f
+ammofx=0x0f42
 }
 
 [0x26c3]
@@ -361,6 +365,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x26cd]
@@ -380,6 +386,8 @@ restock=10
 movable=1
 decay=1
 good=23
+ammo=0x1bfb
+ammofx=0x1bfe
 }
 
 [0x26ce]

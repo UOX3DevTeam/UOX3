@@ -199,27 +199,26 @@
 0xb25=529
 0xb24=530
 // 1849 <> 184a, SW heating stand
-0x1849=533
-0x184a=534
+0x1849=531
+0x184a=532
 // 184d <> 184e, NE heating stand
-0x184d=535
-0x184e=536
+0x184d=533
+0x184e=534
 // 1853 <> 1854, right skull with candle
-0x1853=537
-0x1854=538
+0x1853=535
+0x1854=536
 // 1857 <> 1858, left skull with candle
-0x1857=539
-0x1858=540
+0x1857=537
+0x1858=538
 // 142f <> 142c, thick candle
-0x142f=541
-0x142c=542
+0x142f=539
+0x142c=540
 // 1433 <> 1430, middle candle
-// 0x1433=543
-// 0x1430=544
-
+0x1433=541
+0x1430=542
 // 1437 <> 1434, slim candle
-// 0x1437=545
-0x1434=546
+0x1437=543
+0x1434=544
 // light sources end
 // -----------------
 // -----------------------------------
@@ -360,8 +359,14 @@
 0x1077=5005
 
 //Pickpocket Dips
+0x1E2C=5006
+0x1E2D=5006
 0x1EC0=5006
+0x1EC1=5006
+0x1EC2=5006
 0x1EC3=5006
+0x1EC4=5006
+0x1EC5=5006
 
 //Kindling -> Campfires
 0x0DE1=5008
@@ -369,6 +374,7 @@
 
 //Fletching Tool
 0x1020=4005
+0x1022=4005
 0x1BD1=4005
 0x1BD4=4005
 
@@ -423,6 +429,32 @@
 0x26C4=5009 //scythe - AoS
 0x255B=5009 //ophidian bardiche - LBR
 0x2577=5009 //naginata - LBR
+0x0907=5009 //gargish shortblade - SA
+0x4076=5009 //gargish shortblade - SA
+0x48C6=5009 //gargish bone harvester - SA
+0x48C7=5009 //gargish bone harvester - SA
+0x0908=5009 //gargish talwar - SA
+0x4075=5009 //gargish talwar - SA
+0x090C=5009 //gargish glass sword - SA
+0x4073=5009 //gargish glass sword - SA
+0x0900=5009 //gargish stone war sword - SA
+0x4071=5009 //gargish stone war sword - SA
+0x48B6=5009 //gargish butcherknife - SA
+0x48B7=5009 //gargish butcherknife - SA
+0x48BA=5009 //gargish katana - SA
+0x48BB=5009 //gargish katana - SA		
+0x090B=5009 //gargish dread sword - SA
+0x4074=5009 //gargish dread sword - SA
+0x48B4=5009 //gargish bardiche - SA
+0x48B5=5009 //gargish bardiche - SA
+0x48C4=5009 //gargish scythe - SA
+0x48C5=5009 //gargish scythe - SA
+0x2306=5009 //gargish dagger - SA
+0x406A=5009 //gargish dagger
+0x08FE=5009 //gargish bloodblade - SA
+0x4072=5009 //gargish bloodblade - SA
+0x48BC=5009 //gargish kryss - SA
+0x48BD=5009 //gargish kryss - SA
 
 //Daggers
 0x0F51=5009 //dagger
@@ -449,6 +481,12 @@
 0x255D=5010 //ratman axe - LBR
 0x2564=5010 //troll axe - LBR
 0x2570=5010 //hatchet - LBR
+0x48AE=5010 //gargish cleaver
+0x48AF=5010 //gargish cleaver
+0x48B0=5010 //gargish battleaxe - SA
+0x48B1=5010 //gargish battleaxe - SA
+0x48B2=5010 //gargish axe - SA
+0x48B3=5010 //gargish axe - SA
 
 // Musical Instruments
 0x0E9C=136	// Drum
@@ -458,6 +496,8 @@
 0x0EB2=136	// Harp
 0x0EB3=136	// Lute
 0x0EB4=136	// Lute
+0x2805=136	// Bamboo Flute
+0x2807=136	// Bamboo Flute
 
 // Lockpicks
 0x14FB=4008
@@ -509,6 +549,8 @@
 0x10E6=4006
 
 // Tinker Tool
+0x1EB8=4003
+0x1EB9=4003
 0x1EBC=4003
 
 // Leather Repair Tool
@@ -516,6 +558,10 @@
 
 // Bow Repair Tool
 0x10E7=4001
+
+// Inscription Tool
+0x0fbf=815
+0x0fc0=815
 
 // Bandage
 0x0E21=4000
@@ -533,4 +579,76 @@
 // Clock
 0x104B=5014
 0x104C=5014
+
+// Bola
+0x26AC=5019
+
+// Magic Scrolls
+0x1F2D=5018
+0x1F2E=5018
+0x1F2F=5018
+0x1F30=5018
+0x1F31=5018
+0x1F32=5018
+0x1F33=5018
+0x1F34=5018
+0x1F35=5018
+0x1F36=5018
+0x1F37=5018
+0x1F38=5018
+0x1F39=5018
+0x1F3A=5018
+0x1F3B=5018
+0x1F3C=5018
+0x1F3D=5018
+0x1F3E=5018
+0x1F3F=5018
+0x1F40=5018
+0x1F41=5018
+0x1F42=5018
+0x1F43=5018
+0x1F44=5018
+0x1F45=5018
+0x1F46=5018
+0x1F47=5018
+0x1F48=5018
+0x1F49=5018
+0x1F4A=5018
+0x1F4B=5018
+0x1F4C=5018
+0x1F4D=5018
+0x1F4E=5018
+0x1F4F=5018
+0x1F50=5018
+0x1F51=5018
+0x1F52=5018
+0x1F53=5018
+0x1F54=5018
+0x1F55=5018
+0x1F56=5018
+0x1F57=5018
+0x1F58=5018
+0x1F59=5018
+0x1F5A=5018
+0x1F5B=5018
+0x1F5C=5018
+0x1F5D=5018
+0x1F5E=5018
+0x1F5F=5018
+0x1F60=5018
+0x1F61=5018
+0x1F62=5018
+0x1F63=5018
+0x1F64=5018
+0x1F65=5018
+0x1F66=5018
+0x1F67=5018
+0x1F68=5018
+0x1F69=5018
+0x1F6A=5018
+0x1F6B=5018
+0x1F6C=5018
+
+// Dice and Cup
+0x0FA7=5020
 }

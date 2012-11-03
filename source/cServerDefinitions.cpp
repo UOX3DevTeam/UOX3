@@ -3,16 +3,20 @@
 #include "ssection.h"
 #include "scriptc.h"
 
-#if defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
-#   include <unistd.h>
 #else
 	#include <direct.h>
 #endif
 
-#if !defined(__unix__)
+#if UOX_PLATFORM == PLATFORM_WIN32
 	#define getcwd _getcwd
 #endif
+
+namespace UOX
+{
+
+CServerDefinitions *FileLookup;
 
 std::string CurrentWorkingDir( void )
 {
@@ -20,7 +24,7 @@ std::string CurrentWorkingDir( void )
 
 	if( !getcwd( cwd, MAX_PATH + 1 ) )
 	{
-		Console.Error( 1, "Failed to allocate enough room for cwd" );
+		Console.Error( "Failed to allocate enough room for cwd" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return cwd;
@@ -28,44 +32,24 @@ std::string CurrentWorkingDir( void )
 std::string BuildPath( std::string extra )
 {
 	std::string temp = CurrentWorkingDir();
-	temp += "/";
-	temp += extra;
+	temp += "/" + extra;
 	return temp;
-}
-
-void PathFix( char *sPath )
-{
-	// Loop through each char and replace the '\' to '/'
-	for( unsigned int i = 0; i < strlen( sPath ); i++ )
-	{
-		if( sPath[i] == '\\' )
-			sPath[i] = '/';
-	}
-}
-void PathFix( std::string& sPath )
-{
-	// Loop through each char and replace the '\' to '/'
-	for( unsigned int i = 0; i < sPath.length(); i++ )
-	{
-		if( sPath[i] == '\\' )
-			sPath[i] = '/';
-	}
 }
 
 std::string ShortDirectory( std::string sPath )
 {
 	std::string building = "";
-	int iFound = 0;
-	for( iFound = sPath.length() - 1; iFound >= 0; iFound-- )
+	size_t iFound = 0xFFFFFFFF;
+	for( iFound = sPath.length() - 1; iFound >= 0 && iFound < sPath.length(); --iFound )
 	{
 		if( sPath[iFound] == '/' )
 			break;
 	}
-	if( iFound < 0 )
+	if( iFound >= sPath.length() )
 		return sPath;
 	else
 	{
-		for( unsigned int i = iFound + 1; i < sPath.length(); i++ )
+		for( size_t i = iFound + 1; i < sPath.length(); ++i )
 			building += sPath[i];
 	}
 	return building;
@@ -82,39 +66,40 @@ const std::string dirnames[NUM_DEFS] =
 	"location",
 	"menus",
 	"spells",
-	"tracking",
 	"newbie",
 	"titles",
 	"advance",
-	"digging",
 	"house",
 	"colors",
 	"spawn",
 	"html",
 	"race",
-	"polymorph",
 	"weather",
 	"harditems",
 	"command",
 	"msgboard",
 	"carve",
-	"fishing"
+	"creatures",
+	"maps"
 };
 
-cServerDefinitions::cServerDefinitions() : defaultPriority( 0 )
+std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
+
+CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
-	
+	Console << "   o Clearing AddMenuMap entries(" << g_mmapAddMenuMap.size() << ")" << myendl;
+	g_mmapAddMenuMap.clear();
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
 	Console.PrintSectionBegin();
 }
 
-cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
+CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
 {
 	Console.PrintSectionBegin();
-	Console << "Loading server scripts..." << myendl;
+	Console << "Loading server scripts...." << myendl;
 	
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
@@ -124,81 +109,114 @@ cServerDefinitions::cServerDefinitions( const char *indexfilename ) : defaultPri
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	bool cServerDefinitions::Reload( void )
-//|	Date					-	04/17/2002
+//|	Function/Class	-	bool CServerDefinitions::Reload( void )
+//|	Date			-	04/17/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Reload the dfn files.
+//|	Modification	-	04042004 - EviLDeD - Added the code to clear out the 
+//|									Auto-AddMenu items so there isn't any duplication in the
+//|									multimap
 //o--------------------------------------------------------------------------o
 //|	Returns				-	[TRUE] if succesfull
 //o--------------------------------------------------------------------------o	
-bool cServerDefinitions::Reload( void )
+bool CServerDefinitions::Reload( void )
 {
+	// We need to clear out the AddMenuItem Map
+	g_mmapAddMenuMap.clear();
+	//
+	Cleanup();
 	ScriptListings.clear();
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
 	return true;
 }
 
-cServerDefinitions::~cServerDefinitions()
+void CServerDefinitions::Cleanup( void )
 {
-	for( UI32 i = 0; i < ScriptListings.size(); i++ )
+	std::vector< VECSCRIPTLIST >::iterator slIter;
+	for( slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter )
 	{
-		for( UI32 j = 0; j < ScriptListings[i].size(); j++ )
+		VECSCRIPTLIST& toDel = (*slIter);
+		for( size_t j = 0; j < toDel.size(); ++j )
 		{
-			VECSCRIPTLIST *toDel = &(ScriptListings[i]);
-			if( toDel == NULL )
+			if( toDel[j] == NULL )
 				continue;
-			delete (*toDel)[j];
-			(*toDel)[j] = NULL;
+
+			delete toDel[j];
+			toDel[j] = NULL;
 		}
 	}
 }
 
-ScriptSection *cServerDefinitions::FindEntry( const char *toFind, DEFINITIONCATEGORIES typeToFind )
+CServerDefinitions::~CServerDefinitions()
 {
-	if( toFind == NULL || typeToFind == NUM_DEFS )
-		return NULL;
-	VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-	if( toDel == NULL )
-		return NULL;
-	for( UI32 i = 0; i < toDel->size(); i++ )
-	{
-		if( (*toDel)[i] != NULL )
-		{
-			Script *toCheck = (*toDel)[i];
-			if( toCheck == NULL )
-				continue;
-			ScriptSection *found = toCheck->FindEntry( toFind );
-			if( found != NULL )
-				return found;
-		}
-	}
-	return NULL;
+	Cleanup();
 }
 
-Script *cServerDefinitions::FindScript( const char *toFind, DEFINITIONCATEGORIES typeToFind )
+bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 {
-	if( toFind == NULL || typeToFind == NUM_DEFS )
-		return NULL;
-	VECSCRIPTLIST *toDel = &(ScriptListings[typeToFind]);
-	if( toDel == NULL )
-		return NULL;
-	for( UI32 i = 0; i < toDel->size(); i++ )
+	bool retVal = false;
+	if( toDispose != NUM_DEFS )
 	{
-		if( (*toDel)[i] != NULL )
+		VECSCRIPTLIST& toDel = ScriptListings[toDispose];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
-			Script *toCheck = (*toDel)[i];
-			if( toCheck == NULL )
-				continue;
-			ScriptSection *found = toCheck->FindEntry( toFind );
-			if( found != NULL )
-				return toCheck;
+			Script *toDelete = (*dIter);
+			if( toDelete != NULL )
+			{
+				retVal = true;
+				delete toDelete;
+			}
+		}
+		toDel.clear();
+	}
+	return retVal;
+}
+
+ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
+{
+	ScriptSection *rvalue = NULL;
+
+	if( !toFind.empty() && typeToFind != NUM_DEFS )
+	{
+		UString tUFind = UString( toFind ).upper();
+
+		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
+		{
+			Script *toCheck = (*dIter);
+			if( toCheck != NULL )
+			{
+				rvalue = toCheck->FindEntry( tUFind );
+				if( rvalue != NULL )
+					break;
+			}
 		}
 	}
-	return NULL;
+	return rvalue;
+}
+
+ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
+{
+	ScriptSection *rvalue = NULL;
+	if( !toFind.empty() && typeToFind != NUM_DEFS )
+	{
+		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
+		{
+			Script *toCheck = (*dIter);
+			if( toCheck != NULL )
+			{
+				rvalue = toCheck->FindEntrySubStr( toFind );
+				if( rvalue != NULL )
+					break;
+			}
+		}
+	}
+	return rvalue;
 }
 
 const std::string defExt = "*.dfn";
@@ -207,133 +225,162 @@ struct PrioScan
 {
 	std::string	filename;
 	SI16	priority;
-	PrioScan() : filename( "" ), priority( 0 ) { }
-	PrioScan( const char *toUse, SI16 mPrio ) : filename( toUse ), priority( mPrio ) { }
+	PrioScan() : filename( "" ), priority( 0 )
+	{
+	}
+	PrioScan( const char *toUse, SI16 mPrio ) : filename( toUse ), priority( mPrio )
+	{
+	}
 };
 
-void SortPrioVec( std::vector< PrioScan * > *toSort )
+inline bool operator==( const PrioScan& x, const PrioScan& y )
 {
-	if( toSort == NULL )
-		return;
-	for( SI32 i = 0; i < (SI32)(toSort->size() - 1); i++ )
+	return ( x.priority == y.priority );
+}
+
+inline bool operator<( const PrioScan& x, const PrioScan& y )
+{
+	return ( x.priority < y.priority );
+}
+
+inline bool operator>( const PrioScan& x, const PrioScan& y )
+{
+	return ( x.priority > y.priority );
+}
+
+void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
+{
+	CleanPriorityMap();
+	defaultPriority = 0;
+	UI08 wasPriod = 2;
+	BuildPriorityMap( toLoad, wasPriod );
+
+	cDirectoryListing fileList( toLoad, defExt );
+	fileList.Flatten( true );
+	STRINGLIST *shortListing	= fileList.FlattenedShortList();
+	STRINGLIST *longListing		= fileList.FlattenedList();
+
+	std::vector< PrioScan >	mSort;
+	for( size_t i = 0; i < shortListing->size(); ++i )
 	{
-		for( SI32 j = i + 1; j < (SI32)toSort->size(); j++ )
+		mSort.push_back( PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
+	}
+	if( !mSort.empty() )
+	{
+		std::sort( mSort.begin(), mSort.end() );
+		Console.Print( "Section %20s : %6i", dirnames[toLoad].c_str(), 0 );
+		size_t iTotal = 0;
+		Console.TurnYellow();
+
+		std::vector< PrioScan >::const_iterator mIter;
+		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter )
 		{
-			if( (*toSort)[i]->priority < (*toSort)[j]->priority )
-			{
-				PrioScan *temp = (*toSort)[i];
-				(*toSort)[i] = (*toSort)[j];
-				(*toSort)[j] = temp;
-			}
+			Console.Print( "\b\b\b\b\b\b" );
+			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
+			iTotal += ScriptListings[toLoad].back()->NumEntries();
+			Console.Print( "%6i", iTotal );
 		}
+
+		Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad ) );
+		Console.TurnNormal();
+		Console.Print( " entries" );
+		switch( wasPriod )
+		{
+			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
+			case 1:	
+				Console.PrintSpecial( CGREEN,		"done" );		
+				break;	// file exist, no section
+			default:
+			case 2:	
+				Console.PrintSpecial( CBLUE,	"done" );		
+				break;	// no file
+		};
 	}
 }
 
-void cServerDefinitions::ReloadScriptObjects( void )
+void CServerDefinitions::ReloadScriptObjects( void )
 {
 	Console << myendl;
 
-	for( int sCtr = 0; sCtr < NUM_DEFS; sCtr++ )
+	for( int sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
 	{
-		CleanPriorityMap();
-		defaultPriority = 0;
-		UI08 wasPriod = 2;
-		BuildPriorityMap( (DEFINITIONCATEGORIES)sCtr, wasPriod );
-		cDirectoryListing fileList( (DEFINITIONCATEGORIES)sCtr, defExt );
-		fileList.Flatten( true );
-		std::vector< PrioScan * >	mSort;
-		STRINGLIST *shortListing	= fileList.FlattenedShortList();
-		STRINGLIST *longListing		= fileList.FlattenedList();
-		for( UI32 i = 0; i < shortListing->size(); i++ )
-		{
-			const char *fullname	= (*longListing)[i].c_str();
-			const char *shortname	= (*shortListing)[i].c_str();
-			mSort.push_back( new PrioScan( fullname, GetPriority( shortname ) ) );
-		}
-		if( mSort.size() > 0 )
-		{
-			SortPrioVec( &mSort );
-			Console.Print( "Section %20s : %6i", dirnames[sCtr].c_str(), 0 );
-			UI32 iTotal = 0;
-			Console.TurnYellow();
-			for( UI32 iFile = 0; iFile < mSort.size(); iFile++ )
-			{
-				Console.Print( "\b\b\b\b\b\b" );
-				ScriptListings[sCtr].push_back( new Script( mSort[iFile]->filename, (DEFINITIONCATEGORIES)sCtr, false ) );
-				iTotal += (ScriptListings[sCtr])[iFile]->NumEntries();
-				Console.Print( "%6i", iTotal );
-				delete mSort[iFile];
-				mSort[iFile] = NULL;
-			}
-			Console.Print( "\b\b\b\b\b\b%6i", CountOfEntries( (DEFINITIONCATEGORIES)sCtr ) );
-			Console.Print( " entries" );
-			switch( wasPriod )
-			{
-			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
-			case 1:	Console.PrintSpecial( CRED,		"unprioritized - no section" );		break;	// file exist, no section
-			default:
-			case 2:	Console.PrintSpecial( CBLUE,	"unprioritized - no file" );		break;	// no file
-			};
-		}
+		LoadDFNCategory( (DEFINITIONCATEGORIES)sCtr );
 	}
 	CleanPriorityMap();
 }
 
-SI32 cServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
+size_t CServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 {
-	SI32 sumEntries = 0;
+	size_t sumEntries = 0;
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
 	if( toScan == NULL )
 		return 0;
-	for( UI32 counter = 0; counter < toScan->size(); counter++ )
-		sumEntries += (*toScan)[counter]->NumEntries();
+
+	for( VECSCRIPTLIST_CITERATOR cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
+		sumEntries += (*cIter)->NumEntries();
 	return sumEntries;
 }
 
-SI32 cServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
+size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 {
 	return ScriptListings[typeToFind].size();
 }
 
-VECSCRIPTLIST *cServerDefinitions::GetFiles( DEFINITIONCATEGORIES typeToFind )
+Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 {
-	return &(ScriptListings[typeToFind]);
+	Script *retScript = NULL;
+	slIter = ScriptListings[typeToFind].begin();
+	if( !FinishedScripts( typeToFind ) )
+		retScript = (*slIter);
+	return retScript;
+}
+Script * CServerDefinitions::NextScript( DEFINITIONCATEGORIES typeToFind )
+{
+	Script *retScript = NULL;
+	if( !FinishedScripts( typeToFind ) )
+	{
+		++slIter;
+		if( !FinishedScripts( typeToFind ) )
+			retScript = (*slIter);
+	}
+	return retScript;
+}
+bool CServerDefinitions::FinishedScripts( DEFINITIONCATEGORIES typeToFind )
+{
+	return ( slIter == ScriptListings[typeToFind].end() );
 }
 
-void cServerDefinitions::CleanPriorityMap( void )
+void CServerDefinitions::CleanPriorityMap( void )
 {
-	priorityMap.erase( priorityMap.begin(), priorityMap.end() );
+	priorityMap.clear();
 }
-void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
+void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
 {
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
 	STRINGLIST *longList = priorityFile.List();
-	if( longList->size() > 0 )
+	if( !longList->empty() )
 	{
-		std::string filename = (*longList)[0].c_str();
+		std::string filename = (*longList)[0];
 		//	Do we have any priority informat?
-		FILE *toScan = fopen( filename.c_str(), "r" );
-		if( toScan != NULL )	// the file exists, so perhaps we do
+		if( FileExists( filename ) )	// the file exists, so perhaps we do
 		{
-			Script *prio = new Script( filename.c_str(), category, false );	// generate a script for it
+			Script *prio = new Script( filename, category, false );	// generate a script for it
 			if( prio != NULL )	// successfully made a script
 			{
-				const char *tag = NULL;
-				const char *data = NULL;
+				UString tag;
+				UString data;
 				ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
 				if( prioInfo != NULL )
 				{
 					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
 						data = prioInfo->GrabData();
-						if( !strcmp( tag, "DEFAULTPRIORITY" ) )
-							defaultPriority = (SI16)(makeNum( data ));
+						if( tag.upper() == "DEFAULTPRIORITY" )
+							defaultPriority = data.toShort();
 						else
 						{
-							char filenametemp[128];
-							strcpy( filenametemp, tag );
-							strlwr( filenametemp );
-							priorityMap[filenametemp] = (SI16)(makeNum( data ));
+							std::string filenametemp = tag.lower();
+							priorityMap[filenametemp] = data.toShort();
 						}
 					}
 					wasPrioritized = 0;
@@ -341,47 +388,45 @@ void cServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 				else
 					wasPrioritized = 1;
 				delete prio;	// remove script
+				prio = NULL;
 			}
 			else
 				wasPrioritized = 2;
-			fclose( toScan );	// close file
 			return;
 		}
 	}
-#ifdef _DEBUG
-//	Console.Warning( 1, "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+#if defined( UOX_DEBUG_MODE )
+//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
 #endif
 	wasPrioritized = 2;
 }
 
-void cServerDefinitions::DisplayPriorityMap( void )
+void CServerDefinitions::DisplayPriorityMap( void )
 {
 	Console << "Dumping map... " << myendl;
-	std::map< std::string, SI16 >::iterator p = priorityMap.begin();
+	std::map< std::string, SI16 >::const_iterator p = priorityMap.begin();
 	while( p != priorityMap.end() )
 	{
-		Console << p->first.c_str() << " : " << p->second << myendl;
-		p++;
+		Console << p->first << " : " << p->second << myendl;
+		++p;
 	}
 	Console << "Dumped" << myendl;
 }
 
-SI16 cServerDefinitions::GetPriority( const char *file )
+SI16 CServerDefinitions::GetPriority( const char *file )
 {
-	char lowername[MAX_PATH];
-	strcpy( lowername, file );
-	strlwr( lowername );
+	SI16 retVal = defaultPriority;
+	UString lowername = UString( file ).lower();
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
-	if( p == priorityMap.end() )
-		return defaultPriority;
-	else
-		return p->second;
+	if( p != priorityMap.end() )
+		retVal = p->second;
+	return retVal;
 }
 
 bool cDirectoryListing::PushDir( DEFINITIONCATEGORIES toMove )
 {
-	char filePath[MAX_PATH];
-	sprintf( filePath, "%s%s", cwmWorldState->ServerData()->GetDefsDirectory(), dirnames[toMove].c_str() );
+	std::string filePath	= cwmWorldState->ServerData()->Directory( CSDDP_DEFS );
+	filePath				+= dirnames[toMove];
 	return PushDir( filePath );
 }
 bool cDirectoryListing::PushDir( std::string toMove )
@@ -392,13 +437,13 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	if( _chdir( toMove.c_str() ) == 0 )
 	{
 		currentDir = toMove;
-		PathFix( toMove );
+		UString::replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
 		return true;
 	}
 	else
 	{
-		Console.Error( 1, "DFN directory %s does not exist", toMove.c_str() );
+		Console.Error( "DFN directory %s does not exist", toMove.c_str() );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return false;
@@ -407,7 +452,7 @@ void cDirectoryListing::PopDir( void )
 {
 	if( dirs.empty() )
 	{
-		Console.Error( 1, "cServerDefinition::PopDir called, but dirs is empty" );
+		Console.Error( "cServerDefinition::PopDir called, but dirs is empty" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	else
@@ -476,24 +521,30 @@ STRINGLIST *cDirectoryListing::FlattenedShortList( void )
 void cDirectoryListing::InternalRetrieve( void )
 {
 	char filePath[512];
-#if defined(__unix__)
-	DIR *dir = opendir(".");
-	struct dirent *dirp = NULL;
 
-	while( ( dirp = readdir( dir ) ) )	
-	{
-		if( dirp->d_type == DT_DIR && doRecursion )
-		{
-			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) )
-				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) );
-			continue;
+#if UOX_PLATFORM != PLATFORM_WIN32
+	DIR *dir = opendir("."); 
+	struct dirent *dirp = NULL; 
+	struct stat dirstat; 
+
+	while( ( dirp = readdir( dir ) ) ) 
+	{ 
+		stat( dirp->d_name, &dirstat ); 
+		if( S_ISDIR( dirstat.st_mode ) ) 
+		{ 
+			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) && doRecursion ) 
+			{ 
+				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) ); 
+				Console.Print( "%s/%s/n", currentDir.c_str(), dirp->d_name ); 
+			}
+			continue; 
 		}
-		shortList.push_back( dirp->d_name );
-		sprintf( filePath, "%s/%s", currentDir.c_str(), dirp->d_name );
-		filenameList.push_back( filePath );
-	}
+		shortList.push_back( dirp->d_name ); 
+		sprintf( filePath, "%s/%s", CurrentWorkingDir().c_str(), dirp->d_name ); 
+		filenameList.push_back( filePath ); 
+	} 
 
-#else
+#else 
 
 	WIN32_FIND_DATA toFind;
 	HANDLE findHandle = FindFirstFile( extension.c_str(), &toFind );		// grab first file that meets spec
@@ -574,9 +625,10 @@ void cDirectoryListing::Flatten( bool isParent )
 {
 	ClearFlatten();
 	std::string temp;
-	for( unsigned int j = 0; j < filenameList.size(); j++ )
+	STRINGLIST_ITERATOR sIter;
+	for( sIter = filenameList.begin(); sIter != filenameList.end(); ++sIter )
 	{
-		flattenedFull.push_back( filenameList[j] );
+		flattenedFull.push_back( (*sIter) );
 		if( isParent )
 			temp = "";
 		else
@@ -584,15 +636,16 @@ void cDirectoryListing::Flatten( bool isParent )
 			temp = shortCurrentDir;
 			temp += "/";
 		}
-		temp += shortList[j];
+		temp += (*sIter);
 		flattenedShort.push_back( temp );
 	}
-	for( unsigned int i = 0; i < subdirectories.size(); i++ )
+	DIRLIST_ITERATOR dIter;
+	for( dIter = subdirectories.begin(); dIter != subdirectories.end(); ++dIter )
 	{
-		subdirectories[i].Flatten( false );
-		STRINGLIST *shortFlat	= subdirectories[i].FlattenedShortList();
-		STRINGLIST *longFlat	= subdirectories[i].FlattenedList();
-		for( unsigned int k = 0; k < longFlat->size(); k++ )
+		(*dIter).Flatten( false );
+		STRINGLIST *shortFlat	= (*dIter).FlattenedShortList();
+		STRINGLIST *longFlat	= (*dIter).FlattenedList();
+		for( size_t k = 0; k < longFlat->size(); ++k )
 		{
 			flattenedFull.push_back( (*longFlat)[k] );
 			if( isParent )
@@ -605,11 +658,13 @@ void cDirectoryListing::Flatten( bool isParent )
 			temp += (*shortFlat)[k];
 			flattenedShort.push_back( temp );
 		}
-		subdirectories[i].ClearFlatten();
+		(*dIter).ClearFlatten();
 	}
 }
 void cDirectoryListing::ClearFlatten( void )
 {
 	flattenedFull.clear();
 	flattenedShort.clear();
+}
+
 }

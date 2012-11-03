@@ -1,155 +1,155 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
 
-class CChar : public cBaseObject
+namespace UOX
 {
-		ACCOUNTSBLOCK ourAccount;
-		SI16		npcaitype;
-		SERIAL		petguarding; // Get what a pet is guarding
-		SERIAL		making; // skill number of skill using to make item, 0 if not making anything, used for house building, reduce at later date, for changeover
-		SI16		taming; //Skill level required for taming	// candidate for SI16
-		SI32		weight; //Total weight
-		SI08		blocked;
-		SI08		hunger;  // Level of hungerness, 6 = full, 0 = "empty"
-		UI08		fixedlight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
-		UI08		town;       //Matches Region number in regions.scp
-		UI08		med; // 0=not meditating, 1=meditating //Morrolan - Meditation 
-		UI08		trainingplayerin; // Index in skillname of the skill the NPC is training the player in
-		SI32		account;
-		SI32		carve; // for new carve system
-		UI32		holdg; // Gold a player vendor is holding for Owner
-		SI32		addMenuLoc; // add menu location (ie menu)
 
-		UI08		split;	// won't split into more than 255
-		UI08		splitchnc;	// candidate for reduction!! char??
+	enum cNPC_FLAG
+	{
+		fNPC_NEUTRAL = 0,
+		fNPC_INNOCENT,
+		fNPC_EVIL
+	};
 
-		UI32		bools;	// lots of flags
-		bool		remove;
+enum cC_TID
+{
+	// Global Character Timers
+	tCHAR_TIMEOUT = 0,
+	tCHAR_INVIS,
+	tCHAR_HUNGER,
+	tCHAR_POISONTIME,
+	tCHAR_POISONTEXT,
+	tCHAR_POISONWEAROFF,
+	tCHAR_SPELLTIME,
+	tCHAR_ANTISPAM,
+	tCHAR_CRIMFLAG,
+	tCHAR_MURDERRATE,
+	tCHAR_PEACETIMER,
+	// NPC Timers
+	tNPC_MOVETIME,
+	tNPC_SPATIMER,
+	tNPC_SUMMONTIME,
+	tNPC_EVADETIME,
+	// PC Timers
+	tPC_LOGOUT,
+	tCHAR_COUNT
+};
+
+struct DamageTrackEntry
+{
+	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageDone( INVALIDSERIAL ) { }
+	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageDone( lstDmgDn ) { }
+	SERIAL		damager;			// who did the damage?
+	SI32		damageDone;			// how much damage has been accumulated?
+	TIMERVAL	lastDamageDone;		// when was the last time that damage was done?
+};
+
+bool DTEgreater( DamageTrackEntry &elem1, DamageTrackEntry &elem2 );
+
+class CChar : public CBaseObject
+{
+private:
+	typedef std::map< ItemLayers, CItem * >				LAYERLIST;
+	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
+	typedef CDataList< DamageTrackEntry * >				DAMAGETRACK;
+
+	struct NPCValues_st
+	{
+							NPCValues_st();
+		void				DumpBody( std::ofstream& outStream );
+
+		SI16				aiType;
+		CBaseObject *		petGuarding;
+		SI16				taming;
+		SI16				peaceing;
+		SI16				provoing;
+		UI08				trainingPlayerIn;
+		UI32				goldOnHand;
+
+		UI08				splitNum;
+		UI08				splitChance;
+
+		SI08				pathFail;
+
+		SI16				fx[2]; //NPC Wander Point x
+		SI16				fy[2]; //NPC Wander Point y
+		SI08				fz; //NPC Wander Point z
+
+		SI08				wanderMode; // NPC Wander Mode
+		SI08				oldWanderMode; // Used for fleeing npcs
+		std::deque< UI08 >	pathToFollow;	// let's use a queue of directions to follow
+
+		SI16				spellAttack;
+		SI08				spellDelay;	// won't time out for more than 255 seconds!
+
+		UI08				questType;
+		UI08				questDestRegion;
+		UI08				questOrigRegion;
+			
+		SI16				fleeAt;		// HP Level to flee at
+		SI16				reAttackAt;	// HP Level to re-Attack at
+
+		CHARLIST			petFriends;
+		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
+		UI08				hungerWildChance;	// The chance that the char get's wild when hungry
+		UString				foodList;
+
+		SERIAL				fTarg; // NPC Follow Target
+
+		cNPC_FLAG			npcFlag;
+		
+		std::bitset< 8 >	boolFlags;
+
+		R32					walkingSpeed;
+		R32					runningSpeed;
+		R32					fleeingSpeed;
+	};
+
+	struct PlayerValues_st
+	{
+					PlayerValues_st();
+		void		DumpBody( std::ofstream& outStream );
+
+		CSocket *	socket;
 
 		SERIAL		robe;
-		SERIAL		townvote;
-		SERIAL		trainer;		// Serial of the NPC training the char, -1 if none.
-		SERIAL		guildfealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
-		SERIAL		poisonserial;	// poisoning skill
 
-		char		orgname[MAX_NAME]; // original name - for Incognito
-		char		laston[MAX_LASTON]; //Last time a character was on
-		char		guildtitle[MAX_GUILDTITLE];	// Title Guildmaster granted player						(DasRaetsel)
+		SERIAL		trackingTarget; // Tracking target ID
+		CHARLIST	trackingTargets;
 
-		SI32		timeout; // Combat timeout (For hitting)
-		SI32		logout;//Time till logout for this char -1 means in the world or already logged out //Instalog // -1 on UI32, now signed long
-		UI32		regen[3];
-		UI32		npcmovetime; // Next time npc will walk
-		UI32		invistimeout;
-		UI32		hungertime; // Timer used for hunger, one point is dropped every 20 min
-		UI32		spiritspeaktimer; // Timer used for duration of spirit speak
-		UI32		spatimer;
-		UI32		summontimer; //Timer for summoned creatures.
-		UI32		trackingtimer; // Timer used for the duration of tracking
-		UI32		fishingtimer; // Timer used to delay the catching of fish
-		UI32		poisontime; // poison damage timer
-		UI32		poisontxt; // poision text timer
-		UI32		poisonwearofftime; // makes poision wear off ...
-		SI32		spelltime; //Time when they are done casting....
-		UI32		nextact; //time to next spell action..
-		UI32		antispamtimer; // anti spam
-		UI32		skilldelay;
-		SI32		crimflag; //Time when No longer criminal -1=Not Criminal
-		SI32		mutetime; //Time till they are UN-Squelched.
-		SI32		objectdelay;
-		TIMERVAL	weathDamage[WEATHNUM];			// Light Damage timer
-		SI32		murderrate; //#of ticks until one murder decays //REPSYS 
-		UI32		trackingdisplaytimer;
+		UI16		accountNum;
 
-		UI16		xid; // Backup of body type for ghosts
-		UI16		orgid; // Backup of body type for polymorph
-		UI16		hairstyle;
-		UI16		beardstyle;
-		UI16		envokeid;
+		UI16		origID; // Backup of body type for polymorph
+		UI16		origSkin;
+		std::string	origName; // original name - for Incognito
 
-		UI16		orgSkin;
-		UI16		xskin;
-		UI16		haircolor;
-		UI16		beardcolour;
-		UI16		saycolor;
-		UI16		emotecolor;
+		UI16		hairStyle;
+		UI16		beardStyle;
+		COLOUR		hairColour;
+		COLOUR		beardColour;
 
-		bool		may_levitate;
-		bool		willHunger;
+		std::string	lastOn; //Last time a character was on
+		UI32		lastOnSecs; //Last time a character was on in seconds.
 
-		SI16		fx1; //NPC Wander Point 1 x	// this, plus fx2, are being used to store item indices.  WRONG WRONG WRONG!!!
-		SI16		fx2; //NPC Wander Point 2 x	// DON'T USE IT PEOPLE!!!
-		SI16		oldx; 
-		SI16		oldy; 
-		SI16		fy1; //NPC Wander Point 1 y
-		SI16		fy2; //NPC Wander Point 2 y
-		SI08		fz1; //NPC Wander Point 1 z
-		SI08		dispz; 
-		SI08 		oldz;
-		SI08		stealth; // stealth ( steps already done, -1=not using )
-		SI08		dir2;
-		SI08		cell; // Reserved for jailing players
-		SI08		npcWander; // NPC Wander Mode
-		SI08		oldnpcWander; // Used for fleeing npcs
-		SI08		fly_steps; // number of step the creatures flies if it can fly
-		UI08		running; // Stamina Loose while running
-		UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
-		std::queue< UI08 >	pathToFollow;	// let's use a queue of directions to follow
-		UI08		regionNum;
-		
-		CItem *		packitem; // Only used during character creation
-		CHARACTER	targ; // Current combat target
-		CHARACTER	attacker; // Character who attacked this character
-		CHARACTER	ftarg; // NPC Follow Target
-		CItem *		smeltitem;
-		SERIAL		skillitem;
-		UI16		advobj; //Has used advance gate?
-		CHARACTER	swingtarg; //Tagret they are going to hit after they swing
-		CHARACTER	trackingtarget; // Tracking target ID
-		CHARACTER	trackingtargets[MAXTRACKINGTARGETS];
-		RACEID		raceGate;						// Race gate that has been used
-
-		SI08		casting; // 0/1 is the cast casting a spell?
-		SI08		spellCast;
-		SI16		spellaction; //Action of the current spell....
-		SI16		spattack;
-		SI08		spadelay;	// won't time out for more than 255 seconds!
-
-		UI08		questType;
-		UI08		questDestRegion;
-		UI08		questOrigRegion;
-		
-		SI16		fleeat;		// hp level I believe, so we could really reduce this!
-		SI16		reattackat;	// I believe it's hp again, so candidate for SI16?
-
-		UI16		priv;
 		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
 		UI08		postType;
+		SI16		callNum;		// Callnum GM or Counsellor is on
+		SI16		playerCallNum;	// Players call number in GM or Counsellor Queue
+
+		UI08		squelched; // zippy  - squelching
+		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
+		UI16		deaths;
+
+		SERIAL		townvote;
 		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
 
-		UI16		baseskill[ALLSKILLS+1]; // Base skills without stat modifiers
-		UI16		skill[ALLSKILLS+1]; // List of skills (with stat modifiers)
-		UI16		atrophy[ALLSKILLS+1];
-		UI08		lockState[ALLSKILLS+1];	// state of the skill locks
+		UI08		atrophy[INTELLECT+1];
+		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
 
-		SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-		UI16		deaths;
-		SI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
-
-		SI16		callnum; //GM Paging
-		SI16		playercallnum; //GM Paging	// shrinkage!
-		SI16		pagegm; //GM Paging	// shrinkage!
-		
-		SI08		fonttype; // Speech font to use
-		UI08		squelched; // zippy  - squelching
-
-		SI08		poison; // used for poison skill 
-		SI08		poisoned; // type of poison
-
-		SERIAL		speechItem;
+		CItem *		speechItem;
 		UI08		speechMode;
 		UI08		speechID;
-		UI16		speechCallback;
+		cScript *	speechCallback;
 		// speechMode valid values
 		// 0 normal speech
 		// 1 GM page
@@ -161,554 +161,569 @@ class CChar : public cBaseObject
 		// 7 Rune renaming
 		// 8 Sign renaming
 		// 9 JavaScript speech
+	};
+// Base Characters
+protected:
+	NPCValues_st	*	mNPC;
+	PlayerValues_st	*	mPlayer;
 
-		bool		InUse;
-		bool		Saved;
-		long		SavedAt;
+	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
+	UI16		town;       // Matches Region number in regions.scp
+	UI16		regionNum;
 
-		CItem *		itemLayers[MAXLAYERS];
-		CHARLIST	petsControlled;
-		CHARLIST	petFriends;
-		ITEMLIST	ownedItems;
-		UI32		skillUsed[2];	// no more than 64 skills
+	UI08		brkPeaceChanceGain;
+	UI08		brkPeaceChance;
 
-		UI16		maxHP;
-		UI16		maxHP_oldstr;
-		RACEID		maxHP_oldrace;
-		SI16		maxMana;
-		UI16		maxMana_oldint;
-		RACEID		maxMana_oldrace;
-		SI16		maxStam;
-		UI16		maxStam_olddex;
-		RACEID		maxStam_oldrace;
+	std::bitset< 32 >		bools;	// lots of flags
+	std::bitset< 16 >		priv;
 
-		void		RemoveSelfFromOwner( void );
-		void		AddSelfToOwner( void );
+	SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
+	SERIAL		guildfealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
+	std::string	guildtitle;	// Title Guildmaster granted player						(DasRaetsel)
 
-		UI16 ID2;
-		UI16 Skin2;
-		UI16 Stamina;
-		UI16 Mana;
-		UI16 Nomove;
-		UI16 PoisonChance;
-		UI16 PoisonStrength;
+	TIMERVAL	charTimers[tCHAR_COUNT];
 
-	public:
+	TIMERVAL	regen[3];
+	TIMERVAL	weathDamage[WEATHNUM];			// Light Damage timer
+	UI08		nextact;						//time to next spell action..
 
-		void SetPoisonStrength( UI16 value );
-		void SetPoisonChance( UI16 value );
-		void SetNoMove( UI16 value );
-		//void SetMana( UI16 value);
-		void SetStamina( UI16 value );
-		void SetSkin2( UI16 value );
-		void SetID2( UI16 value );
-		UI16 GetPoisonStrength( void ) const;
-		UI16 GetPoisonChance( void ) const;
-		UI16 GetNoMove( void ) const;
-		//UI16 GetMana( void );
-		UI16 GetStamina( void ) const;
-		UI16 GetSkin2( void ) const;
-		UI16 GetID2( void ) const;
+	SI08		fonttype; // Speech font to use
+	COLOUR		saycolor;
+	COLOUR		emotecolor;
 
-
-		CHARLIST *	GetPetList( void );
-		CHARLIST *	GetFriendList( void );
-		ITEMLIST *	GetOwnedItems( void );
-
-		bool		IsMounted( void ) const;
-		bool		MayLevitate( void ) const;
-		void		MayLevitate( bool newValue );
-		void		AddPet( CChar *toAdd );
-		void		RemovePet( CChar *toRemove );
-		void		AddFriend( CChar *toAdd );
-		void		RemoveFriend( CChar *toRemove );
-
-		void		AddOwnedItem( CItem *toAdd );
-		void		RemoveOwnedItem( CItem *toRemove );
-
-		bool		IsInUse( void ) const;
-		bool		IsSaved( void ) const;
-		SI32		GetSavedAt( void ) const;
-
-		void		SetInUse( bool newValue );
-		void		SetSaved( bool newValue );
-		void		SetSavedAt( SI32 newValue );
-
-		SI16		GetNPCAiType( void ) const;
-		SI32		GetWeight( void ) const;
-		SERIAL		GetMaking( void ) const;
-		SI16		GetTaming( void ) const;
-		SI08		GetHidden( void ) const;
-		SI08		GetHunger( void ) const;
-		SI08		IsBlocked( void ) const;
-		UI08		GetFixedLight( void ) const;
-		UI08		GetTown( void ) const;
-		UI08		GetMed( void ) const;
-		UI08		GetTrainingPlayerIn( void ) const;
-		SI32		GetAccount( void ) const;
-		SI32		GetCarve( void ) const;
-		UI32		GetHoldG( void ) const;
-		//
-		void		SetAccount(SI16 wAccountID);
-		void		SetAccount(ACCOUNTSBLOCK &actbAccount);
-		void		SetAccount(std::string sUsername);
-		ACCOUNTSBLOCK &GetAccount(void);
-		const ACCOUNTSBLOCK &GetConstAccount( void ) const;
-		//
-		void		SetWeight( SI32 newVal );		// Character c is a reference to our place in the chars[]
-		void		SetFixedLight( UI08 newVal );
-		void		SetHidden( SI08 newValue );		// same as weight
-		void		SetHunger( SI08 newValue );
-		void		SetNPCAiType( SI16 newValue );
-		void		SetMaking( ITEM newValue );
-		void		SetBlocked( SI08 newValue );
-		void		SetTaming( SI16 newValue );
-		void		SetTown( UI08 newValue );
-		void		SetMed( UI08 newValue );
-		void		SetHoldG( UI32 newValue );
-		void		SetCarve( SI32 newValue );
-		void		SetTrainingPlayerIn( UI08 newValue );
-
-		void		DecHunger( const SI08 amt = 1 );
-
-		UI08		GetSplit( void ) const;
-		UI08		GetSplitChance( void ) const;
-
-		void		SetSplit( UI08 newValue );
-		void		SetSplitChance( UI08 newValue );
-
-		bool		isFree( void ) const;
-		bool		isUnicode( void ) const;
-		bool		IsNpc( void ) const;
-		bool		IsShop( void ) const;
-		bool		IsDead( void ) const;
-		bool		IsAtWar( void ) const;
-		bool		DidAttackFirst( void ) const;
-		bool		IsOnHorse( void ) const;
-		bool		GetTownTitle( void ) const;
-		bool		GetReactiveArmour( void ) const;
-		bool		CanTrain( void ) const;
-		bool		GetGuildToggle( void ) const;
-		bool		IsTamed( void ) const;
-		bool		IsGuarded( void ) const;
-		bool		CanRun( void ) const;
-
-		void		setFree( bool newVal );
-		void		setUnicode( bool newVal );
-		void		SetNpc( bool newVal );
-		void		SetShop( bool newVal );
-		void		SetDead( bool newValue );
-		void		SetWar( bool newValue );
-		void		SetAttackFirst( bool newValue );
-		void		SetOnHorse( bool newValue );
-		void		SetTownTitle( bool newValue );
-		void		SetReactiveArmour( bool newValue );
-		void		SetCanTrain( bool newValue );
-		void		SetGuildToggle( bool newValue );
-		void		SetTamed( bool newValue );
-		void		SetGuarded( bool newValue );
-		void		SetRun( bool newValue );
-
-		void		SetSerial( SERIAL newSerial, CHARACTER c );
-		void		SetRobe( UI32 newValue );
-		void		SetOwner( cBaseObject *newValue );
-		void		SetSpawn( SERIAL newValue, CHARACTER c );
-		void		SetTownVote( UI08 newValue, UI08 part );
-		void		SetTownVote( UI32 newValue );
-		void		SetTrainer( UI32 newValue );
-		void		SetGuildFealty( UI32 newValue );
-		void		SetPoisonSerial( UI32 newValue );
-
-		UI32		GetRobe( void ) const;
-		UI32		GetTownVote( void ) const;
-		UI32		GetTrainer( void ) const;
-		UI32		GetGuildFealty( void ) const;
-		UI32		GetPoisonSerial( void ) const;
-		UI08		GetRobe( UI08 part ) const;
-		UI08		GetTownVote( UI08 part ) const;
-
-		const char *GetOrgName( void ) const;
-		const char *GetLastOn( void ) const;
-		const char *GetGuildTitle( void ) const;
-
-		void		SetOrgName(		const char *newName );
-		void		SetLastOn(		const char *newValue );
-		void		SetGuildTitle(	const char *newValue );
-
-		SI32		GetTimeout( void ) const;	// candidate for SI16?
-		SI32		GetLogout( void ) const;
-		UI32		GetRegen( UI08 part ) const;
-		UI32		GetNpcMoveTime( void ) const;
-		UI32		GetInvisTimeout( void ) const;
-		UI32		GetHungerTime( void ) const;
-		UI32		GetSpiritSpeakTimer( void ) const;
-		UI32		GetSpaTimer( void ) const;
-		UI32		GetSummonTimer( void ) const;
-		UI32		GetTrackingTimer( void ) const;
-		UI32		GetFishingTimer( void ) const;
-		UI32		GetPoisonTime( void ) const;
-		UI32		GetPoisonTextTime( void ) const;
-		UI32		GetPoisonWearOffTime( void ) const;
-		SI32		GetSpellTime( void ) const;
-		UI32		GetNextAct( void ) const;
-		UI32		GetAntiSpamTimer( void ) const;
-		UI32		GetSkillDelay( void ) const;
-		SI32		GetCrimFlag( void ) const;
-		SI32		GetMuteTime( void ) const;
-		SI32		GetObjectDelay( void ) const;
-		TIMERVAL	GetWeathDamage( UI08 part ) const;
-		SI32		GetMurderRate( void ) const;
-		UI32		GetTrackingDisplayTimer( void ) const;
-		SERIAL		GetGuarding( void ) const;
-
-		void		SetTimeout( SI32 newValue );
-		void		SetRegen( UI32 newValue, UI08 part );
-		void		SetNpcMoveTime( UI32 newValue );
-		void		SetInvisTimeout( SI32 newValue );
-		void		SetHungerTime( SI32 newValue );
-		void		SetSpiritSpeakTimer( UI32 newValue );
-		void		SetSpaTimer( UI32 newValue );
-		void		SetSummonTimer( UI32 newValue );
-		void		SetTrackingTimer( UI32 newValue );
-		void		SetFishingTimer( UI32 newValue );
-		void		SetPoisonTime( UI32 newValue );
-		void		SetPoisonTextTime( UI32 newValue );
-		void		SetPoisonWearOffTime( UI32 newValue );
-		void		SetCrimFlag( SI32 newValue );
-		void		SetSpellTime( UI32 newValue );
-		void		SetNextAct( UI32 newValue );
-		void		SetMuteTime( SI32 newValue );
-		void		SetLogout( SI32 newValue );
-		void		SetWeathDamage( TIMERVAL newValue, UI08 part );
-		void		SetAntiSpamTimer( UI32 newValue );
-		void		SetSkillDelay( UI32 newValue );
-		void		SetObjectDelay( SI32 newValue );
-		void		SetMurderRate( SI32 newValue );
-		void		SetTrackingDisplayTimer( UI32 newValue );
-		void		SetGuarding( SERIAL newValue );
-
-		UI08		GetID( UI08 part ) const;	// 1 for id1, 2 for id2
-		UI08		GetxID( UI08 part ) const;	// 1 for xid1, 2 for xid2
-		UI08		GetOrgID( UI08 part ) const;	// 1 for orgid1, 2 for orgid2
-		UI08		GetHairStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetBeardStyle( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI16		GetID( void ) const;	// returns id1<<8 + id2
-		UI16		GetxID( void ) const;	// returns xid1<<8 + xid2
-		UI16		GetOrgID( void ) const;	// returns orgid1<<8 + orgid2
-		UI16		GetHairStyle( void ) const;
-		UI16		GetBeardStyle( void ) const;
-
-		void		SetxID( UI08 value, UI08 part );
-		void		SetxID( UI16 value );	// sets both parts!
-		void		SetOrgID( UI08 value, UI08 part );
-		void		SetOrgID( UI16 value );	// sets both parts!
-		void		SetHairStyle( UI08 value, UI08 part );
-		void		SetHairStyle( UI16 value );
-		void		SetBeardStyle( UI08 value, UI08 part );
-		void		SetBeardStyle( UI16 value );
-
-		UI08		GetSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetOrgSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetxSkin( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetHairColour( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetBeardColour( UI08 part ) const;	// in reality, we only need a SI16 to hold it all
-		UI08		GetSayColour( UI08 part ) const;
-		UI08		GetEmoteColour( UI08 part ) const;
-		UI16		GetEmoteColour( void ) const;
-		UI16		GetSayColour( void ) const;
-		UI16		GetHairColour( void ) const;
-		UI16		GetBeardColour( void ) const;
-		UI16		GetSkin( void ) const;
-		UI16		GetOrgSkin( void ) const;
-		UI16		GetxSkin( void ) const;
-
-		void		SetSkin( UI08 value, UI08 part );
-		void		SetSkin( UI16 value );
-		void		SetOrgSkin( UI08 value, UI08 part );
-		void		SetOrgSkin( UI16 value );
-		void		SetxSkin( UI08 value, UI08 part );
-		void		SetxSkin( UI16 value );
-		void		SetHairColour( UI08 value, UI08 part );
-		void		SetHairColour( UI16 value );
-		void		SetBeardColour( UI08 value, UI08 part );
-		void		SetBeardColour( UI16 value );
-		void		SetEmoteColour( UI08 value, UI08 part );
-		void		SetEmoteColour( UI16 newValue );
-		void		SetSayColour( UI08 value, UI08 part );
-		void		SetSayColour( UI16 newValue );
-
-		SI16		GetFx( UI08 part ) const;
-		SI16		GetFy( UI08 part ) const;
-		SI08		GetDispZ( void ) const;
-		SI08		GetFz( void ) const;
-		SI08		GetStealth( void ) const;
-		SI08		GetDir2( void ) const;
-		SI08		GetCell( void ) const;
-		SI08		GetNpcWander( void ) const;
-		SI08		GetOldNpcWander( void ) const;
-		SI08		GetFlySteps( void ) const;
-		UI08		GetRunning( void ) const;
-		UI08		GetStep( void ) const;
-		UI08		GetRegion( void ) const;
-
-		void		SetDispZ( SI08 newZ );
-		void		SetFx( SI16 newVal, UI08 part );
-		void		SetFy( SI16 newVal, UI08 part );
-		void		SetFz( SI08 newVal );
-		void		SetDir2( SI08 newValue );
-		void		SetCell( SI08 newVal );
-		void		SetStealth( SI08 newValue );
-		void		SetRunning( UI08 newValue );
-		void		SetNpcWander( SI08 newValue );
-		void		SetOldNpcWander( SI08 newValue );
-		void		SetFlySteps( SI08 newValue );
-		void		SetStep( UI08 newValue );
-		void		SetRegion( UI08 newValue );
-		void		SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
-		void		SetLocation( SI16 newX, SI16 newY, SI08 newZ );
-		void		SetLocation( const cBaseObject *toSet );
-		void		SetLocation( struct point3 &targ );
-
-		CItem *		GetPackItem( void ) const;
-		CHARACTER	GetTarg( void ) const;
-		CHARACTER	GetAttacker( void ) const;
-		CHARACTER	GetFTarg( void ) const;
-		CItem *		GetSmeltItem( void ) const;
-		SERIAL		GetSkillItemSerial( void ) const;
-		CItem *		GetSkillItem( void ) const;
-		UI16		GetAdvObj( void ) const;
-		CHARACTER	GetSwingTarg( void ) const;
-		CHARACTER	GetTrackingTarget( void ) const;
-		CHARACTER	GetTrackingTargets( UI08 targetNum ) const;
-		RACEID		GetRaceGate( void ) const;
-
-		void		SetPackItem( CItem *newVal );
-		void		SetTarg( CHARACTER newTarg );
-		void		SetAttacker( CHARACTER newValue );
-		void		SetFTarg( CHARACTER newTarg );
-		void		SetSkillItem(CItem *newValue );
-		void		SetSkillItemSerial( SERIAL newValue );
-		void		SetSmeltItem( CItem *newValue );
-		void		SetAdvObj( UI16 newValue );
-		void		SetSwingTarg( CHARACTER newValue );
-		void		SetTrackingTarget( CHARACTER newValue );
-		void		SetRaceGate( RACEID newValue );
-		void		SetTrackingTargets( CHARACTER newValue, UI08 targetNum );
-
-		SI08		GetCasting( void ) const;
-		SI08		GetSpellCast( void ) const;
-		SI16		GetSpellAction( void ) const;
-		SI16		GetSpAttack( void ) const;
-		SI08		GetSpDelay( void ) const;
-
-		void		SetSpellCast( SI08 newValue );
-		void		SetCasting( SI08 newValue );
-		void		SetSpellAction( SI16 newValue );
-		void		SetSpAttack( SI16 newValue );
-		void		SetSpDelay( SI08 newValue );
-
-		UI08		GetQuestType( void ) const;
-		UI08		GetQuestOrigRegion( void ) const;
-		UI08		GetQuestDestRegion( void ) const;
-
-		void		SetQuestDestRegion( UI08 newValue );
-		void		SetQuestType( UI08 newValue );
-		void		SetQuestOrigRegion( UI08 newValue );
-
-		SI16		GetFleeAt( void ) const;
-		SI16		GetReattackAt( void ) const;
-
-		void		SetFleeAt( SI16 newValue );
-		void		SetReattackAt( SI16 newValue );
-
-		UI08		GetCommandLevel( void ) const;
-		UI08		GetPostType( void ) const;
-		UI08		GetPriv( void ) const;
-		UI08		GetPriv2( void ) const;
-		SI08		GetTownPriv( void ) const;
-		bool		IsGM( void ) const;
-		bool		CanBroadcast( void ) const;
-		bool		IsInvulnerable( void ) const;
-		bool		GetSingClickSer( void ) const;
-		bool		NoSkillTitles( void ) const;
-		bool		IsGMPageable( void ) const;
-		bool		CanSnoop( void ) const;
-		bool		IsCounselor( void ) const;
-
-		void		SetGM( bool newValue );
-		void		SetBroadcast( bool newValue );
-		void		SetInvulnerable( bool newValue );
-		void		SetSingClickSer( bool newValue );
-		void		SetSkillTitles( bool newValue );
-		void		SetGMPageable( bool newValue );
-		void		SetSnoop( bool newValue );
-		void		SetCounselor( bool newValue );
-		bool		AllMove( void ) const;
-		bool		IsFrozen( void ) const;
-		bool		ViewHouseAsIcon( void ) const;
-		bool		IsPermHidden( void ) const;
-		bool		NoNeedMana( void ) const;
-		bool		IsDispellable( void ) const;
-		bool		IsPermReflected( void ) const;
-		bool		NoNeedReags( void ) const;
-		bool		GetRemove( void ) const;
-
-		void		SetAllMove( bool newValue );
-		void		SetFrozen( bool newValue );
-		void		SetViewHouseAsIcon( bool newValue );
-		void		SetPermHidden( bool newValue );
-		void		SetNoNeedMana( bool newValue );
-		void		SetDispellable( bool newValue );
-		void		SetPermReflected( bool newValue );
-		void		SetNoNeedReags( bool newValue );
-		void		SetRemove( bool newValue );
-
-		void		SetPriv( UI08 newValue );
-		void		SetPriv2( UI08 newValue );
-		void		SetPostType( UI08 newValue );
-		void		SetCommandLevel( UI08 newValue );
-		void		SetTownpriv( SI08 newValue );
-
-		UI16		GetBaseSkill( UI08 skillToGet ) const;
-		UI16		GetAtrophy( UI08 skillToGet ) const;
-		UI08		GetSkillLock( UI08 skillToGet ) const;
-		UI16		GetSkill( UI08 skillToGet ) const;
-
-		void		SetBaseSkill( UI16 newSkillValue, UI08 skillToSet );
-		void		SetSkill( UI16 newSkillValue, UI08 skillToSet );
-		void		SetAtrophy( UI16 newValue, UI08 skillToSet );
-		void		SetSkillLock( UI08 newSkillValue, UI08 skillToSet );
-
-		UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
-		SI16		GetGuildNumber( void ) const;
-		SI08		GetFlag( void ) const;
-
-		void		SetDeaths( UI16 newVal );
-		void		SetFlag( SI08 newValue );
-		void		SetFlagRed( void );
-		void		SetFlagBlue( void );
-		void		SetFlagGray( void );
-		void		SetGuildNumber( SI16 newValue );
-
-		SI16		GetCallNum( void ) const;
-		SI16		GetPageGM( void ) const;
-		SI16		GetPlayerCallNum( void ) const;
-
-		void		SetPlayerCallNum( SI16 newValue );
-		void		SetCallNum( SI16 newValue );
-		void		SetPageGM( SI16 newValue );
-
-		SI08		GetSpeech( void ) const;
-		SI08		GetFontType( void ) const;
-		UI08		GetSquelched( void ) const;
-
-		void		SetFontType( SI08 newType );
-		void		SetSquelched( UI08 newValue );
-
-		SI08		GetPoison( void ) const;
-		SI08		GetPoisoned( void ) const;
-
-		void		SetPoison( SI08 newValue );
-		void		SetPoisoned( SI08 newValue );
-
-					CChar( CHARACTER c, bool zeroSer = false );
-		virtual		~CChar();
-
-		CChar *		Dupe( void );
-		void		RemoveFromSight( void );
-		void		SendToSocket( cSocket *s, bool sendDispZ, CChar *c );
-		void		Teleport( void );
-		void		ExposeToView( void );
-		void		HideFromView( void );
-		void		Update( void );
-
-		SERIAL		GetSpeechItem( void ) const;
-		UI08		GetSpeechMode( void ) const;
-		UI08		GetSpeechID( void ) const;
-		UI16		GetSpeechCallback( void ) const;
-
-		void		SetSpeechItem( SERIAL newValue );
-		void		SetSpeechMode( UI08 newValue );
-		void		SetSpeechID( UI08 newValue );
-		void		SetSpeechCallback( UI16 newValue );
+	SI08		stealth; // stealth ( steps already done, -1=not using )
+	SI08		cell; // Reserved for jailing players
+	UI08		running; // Stamina Loose while running
+	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 		
-		SI32		GetAddPart( void ) const;
-		void		SetAddPart( SI32 newValue );
-		CItem *		GetItemAtLayer( UI08 Layer ) const;
-		bool		WearItem( CItem *toWear );
-		bool		TakeOffItem( UI08 Layer );
+	CItem *		packitem; // Characters backpack
+	SERIAL		targ; // Current combat target
+	SERIAL		attacker; // Character who attacked this character
+	UI16		advobj; //Has used advance gate?
+	RACEID		raceGate;						// Race gate that has been used
 
-		CItem *		FirstItem( void ) const;
-		CItem *		NextItem( void ) const;
-		bool		FinishedItems( void ) const;
-		UI32		NumItems( void ) const;
+	SI08		spellCast;
 
-		bool		IsValidMount( void ) const;
+	SKILLVAL	baseskill[ALLSKILLS]; // Base skills without stat modifiers
+	SKILLVAL	skill[INTELLECT+1]; // List of skills (with stat modifiers)
 
-		bool		GetHungerStatus( void ) const;
-		void		SetHungerStatus( bool );
+	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
 
-		virtual bool	Save( std::ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpHeader( std::ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpBody( std::ofstream &outStream, SI32 mode ) const;
-		virtual bool	DumpFooter( std::ofstream &outStream, SI32 mode ) const;
-		virtual bool	Load( std::ifstream &inStream, CHARACTER arrayOffset );
-		virtual bool	Load( BinBuffer &buff, CHARACTER arrayOffset );
-		virtual bool	HandleLine( char *tag, char *data );
-		virtual bool	HandleBinTag( UI08 tag, BinBuffer &buff );
-		virtual bool	LoadRemnants( int arrayOffset );
-		void			BreakConcentration( cSocket *sock = NULL );
-		virtual bool	IsUsingPotion( void ) const;
-		void			SetUsingPotion( bool newVal );
+	LAYERLIST				itemLayers;
+	LAYERLIST_ITERATOR		layerCtr;
+	CDataList< CChar * >	petsControlled;
+	ITEMLIST				ownedItems;
+	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
+	std::bitset< UT_COUNT >	updateTypes;
 
-		virtual SI16	ActualStrength( void ) const;
-		virtual SI16	GetStrength( void ) const;
+	UI16		maxHP;
+	UI16		maxHP_oldstr;
+	SI16		maxMana;
+	UI16		maxMana_oldint;
+	SI16		maxStam;
+	UI16		maxStam_olddex;
+	RACEID		oldRace;
 
-		virtual SI16	ActualDexterity( void ) const;
-		virtual SI16	GetDexterity( void ) const;
+	UI08		PoisonStrength;
 
-		virtual SI16	ActualIntelligence( void ) const;
-		virtual SI16	GetIntelligence( void ) const;
+	DAMAGETRACK		damageDealt;
+	DAMAGETRACK		damageHealed;
 
-		virtual void	IncStrength2( SI16 toAdd = 1 );
-		virtual void	IncDexterity2( SI16 toAdd = 1 );
-		virtual void	IncIntelligence2( SI16 toAdd = 1 );
+	virtual bool	DumpHeader( std::ofstream &outStream ) const;
+	virtual bool	DumpBody( std::ofstream &outStream ) const;
+	virtual bool	HandleLine( UString &UTag, UString &data );
+	virtual bool	LoadRemnants( void );
 
-		virtual bool	IsMurderer( void ) const;
-		virtual bool	IsCriminal( void ) const;
-		virtual bool	IsInnocent( void ) const;
+	void		CopyData( CChar *target );
 
-		void			StopSpell( void );
-		bool			SkillUsed( UI08 skillNum ) const;
-		void			SkillUsed( bool value, UI08 skillNum );
+	void		CreateNPC( void );
+	void		CreatePlayer( void );
 
-		virtual void	PostLoadProcessing( UI32 index );
+	bool		IsValidNPC( void ) const;
+	bool		IsValidPlayer( void ) const;
 
-		UI08			PopDirection( void );
-		void			PushDirection( UI08 newDir );
-		bool			StillGotDirs( void ) const;
-		void			FlushPath( void );
 
-		bool			IsPolymorphed( void ) const;
-		bool			IsIncognito( void ) const;
-		void			IsPolymorphed( bool newValue );
-		void			IsIncognito( bool newValue );
-		bool			IsJailed( void ) const;
+public:
 
-		virtual void	SetMaxHP( UI16 newmaxhp, SI16 newoldstr, RACEID newoldrace );
-		virtual void	SetMaxMana( SI16 newmaxmana, SI16 newoldint, RACEID newoldrace );
-		virtual void	SetMaxStam( SI16 newmaxstam, SI16 newolddex, RACEID newoldrace );
-		virtual UI16	GetMaxHP( void );
-		virtual SI16	GetMaxMana( void );
-		virtual SI16	GetMaxStam( void );
-		void			SetMana( SI16 mn );
+	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true );
+
+	bool		GetUpdate( UpdateTypes updateType ) const;
+	void		ClearUpdate( void );
+	virtual void	Dirty( UpdateTypes updateType );
+
+	void		UpdateDamageTrack( void );
+
+	void		SetPoisonStrength( UI08 value );
+	UI08		GetPoisonStrength( void ) const;
+
+	CDataList< CChar * > *	GetPetList( void );
+	ITEMLIST *	GetOwnedItems( void );
+
+	void		AddOwnedItem( CItem *toAdd );
+	void		RemoveOwnedItem( CItem *toRemove );
+
+	void		DoHunger( CSocket *mSock );
+	void		checkPetOfflineTimeout( void );
+	SI08		GetHunger( void ) const;
+	UI16		GetTamedHungerRate( void ) const;
+	UI08		GetTamedHungerWildChance( void ) const;
+	UI16		GetTown( void ) const;
+	std::string GetFood( void ) const;
+
+	bool		SetHunger( SI08 newValue );
+	void		SetTamedHungerRate( UI16 newValue );
+	void		SetTamedHungerWildChance( UI08 newValue );
+	void		SetTown( UI16 newValue );
+	void		SetFood( std::string food );
+
+	UI08		GetBrkPeaceChanceGain( void ) const;
+	void		SetBrkPeaceChanceGain( UI08 newValue );
+
+	UI08		GetBrkPeaceChance( void ) const;
+	void		SetBrkPeaceChance( UI08 newValue );
+
+	void		SetMounted( bool newValue );
+	bool		GetMounted( void ) const;
+
+	void		SetStabled( bool newValue );
+	bool		GetStabled( void ) const;
+
+	void		SetMaxHPFixed( bool newValue );
+	bool		GetMaxHPFixed( void ) const;
+	void		SetMaxManaFixed( bool newValue );
+	bool		GetMaxManaFixed( void ) const;
+	void		SetMaxStamFixed( bool newValue );
+	bool		GetMaxStamFixed( void ) const;
+
+	bool		DecHunger( const SI08 amt = 1 );
+
+	bool		isUnicode( void ) const;
+	bool		IsNpc( void ) const;
+	bool		IsEvading( void ) const;
+	bool		IsShop( void ) const;
+	bool		IsDead( void ) const;
+	bool		GetCanAttack( void ) const;
+	bool		IsAtWar( void ) const;
+	bool		DidAttackFirst( void ) const;
+	bool		IsOnHorse( void ) const;
+	bool		GetTownTitle( void ) const;
+	bool		GetReactiveArmour( void ) const;
+	bool		CanTrain( void ) const;
+	bool		GetGuildToggle( void ) const;
+	bool		IsTamed( void ) const;
+	bool		IsGuarded( void ) const;
+	bool		CanRun( void ) const;
+	bool		IsUsingPotion( void ) const;
+	bool		MayLevitate( void ) const;
+	bool		WillHunger( void ) const;
+	bool		IsMeditating( void ) const;
+	bool		IsCasting( void ) const;
+	bool		IsJSCasting( void ) const;
+
+	void		setUnicode( bool newVal );
+	void		SetNpc( bool newVal );
+	void		SetEvadeState( bool newVal );
+	void		SetShop( bool newVal );
+	void		SetDead( bool newValue );
+	void		SetCanAttack( bool newValue );
+	void		SetPeace( UI32 newValue );
+	void		SetWar( bool newValue );
+	void		SetAttackFirst( bool newValue );
+	void		SetOnHorse( bool newValue );
+	void		SetTownTitle( bool newValue );
+	void		SetReactiveArmour( bool newValue );
+	void		SetCanTrain( bool newValue );
+	void		SetGuildToggle( bool newValue );
+	void		SetTamed( bool newValue );
+	void		SetGuarded( bool newValue );
+	void		SetRun( bool newValue );
+	void		SetUsingPotion( bool newVal );
+	void		SetLevitate( bool newValue );
+	void		SetHungerStatus( bool newValue );
+	void		SetMeditating( bool newValue );
+	void		SetCasting( bool newValue );
+	void		SetJSCasting( bool newValue );
+	void		SetInBuilding( bool newValue );
+
+	void		SetTownVote( UI32 newValue );
+	void		SetGuildFealty( UI32 newValue );
+
+	UI32		GetTownVote( void ) const;
+	UI32		GetGuildFealty( void ) const;
+
+	std::string	GetGuildTitle( void ) const;
+	void		SetGuildTitle( std::string newValue );
+
+	TIMERVAL	GetTimer( cC_TID timerID ) const;
+	TIMERVAL	GetRegen( UI08 part ) const;
+	TIMERVAL	GetWeathDamage( UI08 part ) const;
+	UI08		GetNextAct( void ) const;
+
+	void		SetTimer( cC_TID timerID, TIMERVAL value );
+	void		SetRegen( TIMERVAL newValue, UI08 part );
+	void		SetWeathDamage( TIMERVAL newValue, UI08 part );
+	void		SetNextAct( UI08 newVal );
+
+	COLOUR		GetEmoteColour( void ) const;
+	COLOUR		GetSayColour( void ) const;
+	UI16		GetSkin( void ) const;
+
+	void		SetSkin( UI16 value );
+	void		SetEmoteColour( COLOUR newValue );
+	void		SetSayColour( COLOUR newValue );
+
+	SI08		GetStealth( void ) const;
+	SI08		GetCell( void ) const;
+	UI08		GetRunning( void ) const;
+	UI08		GetStep( void ) const;
+	CTownRegion *GetRegion( void ) const;
+	UI16		GetRegionNum( void ) const;
+
+	void			SetCell( SI08 newVal );
+	void			SetStealth( SI08 newValue );
+	void			SetRunning( UI08 newValue );
+	void			SetStep( UI08 newValue );
+	void			SetRegion( UI16 newValue );
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
+	virtual void	SetLocation( const CBaseObject *toSet );
+	void			WalkZ( SI08 newZ );
+	void			WalkDir( SI08 newDir );
+
+	CItem *		GetPackItem( void );
+	CChar *		GetTarg( void ) const;
+	CChar *		GetAttacker( void ) const;
+	UI16		GetAdvObj( void ) const;
+	RACEID		GetRaceGate( void ) const;
+
+	void		SetPackItem( CItem *newVal );
+	void		SetTarg( CChar *newTarg );
+	void		SetAttacker( CChar *newValue );
+	void		SetAdvObj( UI16 newValue );
+	void		SetRaceGate( RACEID newValue );
+
+	SI08		GetSpellCast( void ) const;
+	void		SetSpellCast( SI08 newValue );
+
+	UI16		GetPriv( void ) const;
+	SI08		GetTownPriv( void ) const;
+	bool		IsGM( void ) const;
+	bool		CanBroadcast( void ) const;
+	bool		IsInvulnerable( void ) const;
+	bool		GetSingClickSer( void ) const;
+	bool		NoSkillTitles( void ) const;
+	bool		IsGMPageable( void ) const;
+	bool		CanSnoop( void ) const;
+	bool		IsCounselor( void ) const;
+	bool		AllMove( void ) const;
+	bool		IsFrozen( void ) const;
+	bool		ViewHouseAsIcon( void ) const;
+	bool		NoNeedMana( void ) const;
+	bool		IsDispellable( void ) const;
+	bool		IsPermReflected( void ) const;
+	bool		NoNeedReags( void ) const;
+
+	void		SetGM( bool newValue );
+	void		SetBroadcast( bool newValue );
+	void		SetInvulnerable( bool newValue );
+	void		SetSingClickSer( bool newValue );
+	void		SetSkillTitles( bool newValue );
+	void		SetGMPageable( bool newValue );
+	void		SetSnoop( bool newValue );
+	void		SetCounselor( bool newValue );
+	void		SetAllMove( bool newValue );
+	void		SetFrozen( bool newValue );
+	void		SetViewHouseAsIcon( bool newValue );
+	void		SetNoNeedMana( bool newValue );
+	void		SetDispellable( bool newValue );
+	void		SetPermReflected( bool newValue );
+	void		SetNoNeedReags( bool newValue );
+
+	void		SetPriv( UI16 newValue );
+	void		SetTownpriv( SI08 newValue );
+
+	UI16		GetBaseSkill( UI08 skillToGet ) const;
+	UI16		GetSkill( UI08 skillToGet ) const;
+
+	void		SetBaseSkill( SKILLVAL newSkillValue, UI08 skillToSet );
+	void		SetSkill( SKILLVAL newSkillValue, UI08 skillToSet );
+
+	UI16		GetDeaths( void ) const;		// can we die 4 billion times?!
+	SI16		GetGuildNumber( void ) const;
+	UI08		GetFlag( void ) const;
+
+	void		SetDeaths( UI16 newVal );
+	void		SetFlag( UI08 newValue );
+	void		SetGuildNumber( SI16 newValue );
+
+	SI08		GetFontType( void ) const;
+	void		SetFontType( SI08 newType );
+
+	CSocket *	GetSocket( void ) const;
+	void		SetSocket( CSocket *newVal );
+
+				CChar();
+	virtual		~CChar();
+
+	CChar *			Dupe( void );
+	virtual void	RemoveFromSight( CSocket *mSock = NULL );
+	void			SendWornItems( CSocket *s );
+	void			Teleport( void );
+	void			ExposeToView( void );
+	virtual void	Update( CSocket *mSock = NULL );
+	virtual void	SendToSocket( CSocket *s );
+
+	CItem *			GetItemAtLayer( ItemLayers Layer );
+	bool			WearItem( CItem *toWear );
+	bool			TakeOffItem( ItemLayers Layer );
+
+	CItem *			FirstItem( void );
+	CItem *			NextItem( void );
+	bool			FinishedItems( void );
+
+	void			BreakConcentration( CSocket *sock = NULL );
+
+	virtual bool	Save( std::ofstream &outStream );
+	virtual void	PostLoadProcessing( void );
+
+	SI16			ActualStrength( void ) const;
+	virtual SI16	GetStrength( void ) const;
+
+	SI16			ActualDexterity( void ) const;
+	virtual SI16	GetDexterity( void ) const;
+
+	SI16			ActualIntelligence( void ) const;
+	virtual SI16	GetIntelligence( void ) const;
+
+	void			IncStrength2( SI16 toAdd = 1 );
+	void			IncDexterity2( SI16 toAdd = 1 );
+	void			IncIntelligence2( SI16 toAdd = 1 );
+
+	bool			IsMurderer( void ) const;
+	bool			IsCriminal( void ) const;
+	bool			IsInnocent( void ) const;
+	bool			IsNeutral( void ) const;
+
+	void			SetFlagRed( void );
+	void			SetFlagBlue( void );
+	void			SetFlagGray( void );
+	void			SetFlagNeutral( void );
+
+	void			StopSpell( void );
+	bool			SkillUsed( UI08 skillNum ) const;
+	void			SkillUsed( bool value, UI08 skillNum );
+
+	bool			IsPolymorphed( void ) const;
+	bool			IsIncognito( void ) const;
+	void			IsPolymorphed( bool newValue );
+	void			IsIncognito( bool newValue );
+	bool			IsJailed( void ) const;
+
+	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
+	void			SetFixedMaxHP( SI16 newmaxhp );
+	void			SetMaxMana( SI16 newmaxmana, UI16 newoldint, RACEID newoldrace );
+	void			SetFixedMaxMana( SI16 newmaxmana );
+	void			SetMaxStam( SI16 newmaxstam, UI16 newolddex, RACEID newoldrace );
+	void			SetFixedMaxStam( SI16 newmaxstam );
+	virtual UI16	GetMaxHP( void );
+	SI16			GetMaxMana( void );
+	SI16			GetMaxStam( void );
+	virtual void	SetMana( SI16 newValue );
+	virtual void	SetHP( SI16 newValue );
+	virtual void	SetStamina( SI16 newValue );
+	virtual void	SetStrength( SI16 newValue );
+	virtual void	SetDexterity( SI16 newValue );
+	virtual void	SetIntelligence( SI16 newValue );
+	virtual void	SetStrength2( SI16 newValue );
+	virtual void	SetDexterity2( SI16 newValue );
+	virtual void	SetIntelligence2( SI16 newValue );
+	void			IncStamina( SI16 toInc );
+	void			IncMana( SI16 toInc );
+
+	void			ToggleCombat( void );
+
+	virtual void	SetPoisoned( UI08 newValue );
 		
-		bool			IsInBank( CItem* i );
-		UI08			GetBestSkill( void );
-		bool			isHuman( void );
-		bool			inDungeon( void );
+	bool			inDungeon( void );
+	bool			inBuilding( void );
+
+	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
+	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... );
+
+	virtual void	Cleanup( void );
+	virtual void	Delete( void );
+	virtual bool	CanBeObjType( ObjectType toCompare ) const;
+	
+	FlagColors		FlagColour( CChar *toCompare );
+	void			Heal( SI16 healValue, CChar *healer = NULL );
+	void			Damage( SI16 damageValue, CChar *attacker = NULL, bool doRepsys = false );
+	void			ReactOnDamage( WeatherType damageType, CChar *attacker = NULL );
+	void			Die( CChar *attacker, bool doRepsys );
+
+	// Values determining if the character is in a party or not, save us shortcutting in a few places
+	// These values don't get saved or loaded, as only NPC parties get rebuilt, and that will be done
+	// via the PartyFactory Load/Save routines, and not through here
+	void			InParty( bool value );
+	bool			InParty( void ) const;
+
+// NPC Characters
+protected:
+	virtual void	RemoveSelfFromOwner( void );
+	virtual void	AddSelfToOwner( void );
+public:
+	CHARLIST *	GetFriendList( void );
+
+	void		AddFriend( CChar *toAdd );
+	void		RemoveFriend( CChar *toRemove );
+
+	SI16		GetNPCAiType( void ) const;
+	SI16		GetTaming( void ) const;
+	SI16		GetPeaceing( void ) const;
+	SI16		GetProvoing( void ) const;
+	UI08		GetTrainingPlayerIn( void ) const;
+	UI32		GetHoldG( void ) const;
+	UI08		GetSplit( void ) const;
+	UI08		GetSplitChance( void ) const;
+
+	void		SetNPCAiType( SI16 newValue );
+	void		SetTaming( SI16 newValue );
+	void		SetPeaceing( SI16 newValue );
+	void		SetProvoing( SI16 newValue );
+	void		SetTrainingPlayerIn( UI08 newValue );
+	void		SetHoldG( UI32 newValue );
+	void		SetSplit( UI08 newValue );
+	void		SetSplitChance( UI08 newValue );
+
+	SI08		GetPathFail( void ) const;
+	void		SetPathFail( SI08 newValue );
+
+	void			SetGuarding( CBaseObject *newValue );
+
+	CBaseObject *	GetGuarding( void ) const;
+
+	SI16		GetFx( UI08 part ) const;
+	SI16		GetFy( UI08 part ) const;
+	SI08		GetFz( void ) const;
+	SI08		GetNpcWander( void ) const;
+	SI08		GetOldNpcWander( void ) const;
+
+	void		SetFx( SI16 newVal, UI08 part );
+	void		SetFy( SI16 newVal, UI08 part );
+	void		SetFz( SI08 newVal );
+	void		SetNpcWander( SI08 newValue );
+	void		SetOldNpcWander( SI08 newValue );
+
+	CChar *		GetFTarg( void ) const;
+	void		SetFTarg( CChar *newTarg );
+
+	SI16		GetSpAttack( void ) const;
+	SI08		GetSpDelay( void ) const;
+
+	void		SetSpAttack( SI16 newValue );
+	void		SetSpDelay( SI08 newValue );
+
+	UI08		GetQuestType( void ) const;
+	UI08		GetQuestOrigRegion( void ) const;
+	UI08		GetQuestDestRegion( void ) const;
+
+	void		SetQuestDestRegion( UI08 newValue );
+	void		SetQuestType( UI08 newValue );
+	void		SetQuestOrigRegion( UI08 newValue );
+
+	SI16		GetFleeAt( void ) const;
+	SI16		GetReattackAt( void ) const;
+
+	void		SetFleeAt( SI16 newValue );
+	void		SetReattackAt( SI16 newValue );
+
+	UI08		PopDirection( void );
+	void		PushDirection( UI08 newDir, bool pushFront = false );
+	bool		StillGotDirs( void ) const;
+	void		FlushPath( void );
+
+	cNPC_FLAG	GetNPCFlag( void ) const;
+	void		SetNPCFlag( cNPC_FLAG flagType );
+
+	R32			GetWalkingSpeed( void ) const;
+	void		SetWalkingSpeed( R32 newValue );
+
+	R32			GetRunningSpeed( void ) const;
+	void		SetRunningSpeed( R32 newValue );
+
+	R32			GetFleeingSpeed( void ) const;
+	void		SetFleeingSpeed( R32 newValue );
+
+// Player Characters
+public:
+	void					SetAccount( CAccountBlock& actbAccount );
+	CAccountBlock &			GetAccount(void);
+	UI16					GetAccountNum( void ) const;
+	void					SetAccountNum( UI16 newVal );
+
+	void		SetRobe( SERIAL newValue );
+	SERIAL		GetRobe( void ) const;
+
+	UI16		GetOrgID( void ) const;
+	void		SetOrgSkin( UI16 value );
+	void		SetOrgID( UI16 value );
+	UI16		GetOrgSkin( void ) const;
+	std::string	GetOrgName( void ) const;
+	void		SetOrgName( std::string newName );
+
+	UI08		GetCommandLevel( void ) const;
+	void		SetCommandLevel( UI08 newValue );
+	UI08		GetPostType( void ) const;
+	void		SetPostType( UI08 newValue );
+	void		SetPlayerCallNum( SI16 newValue );
+	void		SetCallNum( SI16 newValue );
+
+	SI16		GetCallNum( void ) const;
+	SI16		GetPlayerCallNum( void ) const;
+
+	void		SetLastOn( std::string newValue );
+	std::string GetLastOn( void ) const;
+	void		SetLastOnSecs( UI32 newValue );
+	UI32		GetLastOnSecs( void ) const;
+
+
+	CChar *		GetTrackingTarget( void ) const;
+	CChar *		GetTrackingTargets( UI08 targetNum ) const;
+	void		SetTrackingTarget( CChar *newValue );
+	void		SetTrackingTargets( CChar *newValue, UI08 targetNum );
+
+	UI08		GetSquelched( void ) const;
+	void		SetSquelched( UI08 newValue );
+
+	CItem *		GetSpeechItem( void ) const;
+	UI08		GetSpeechMode( void ) const;
+	UI08		GetSpeechID( void ) const;
+	cScript *	GetSpeechCallback( void ) const;
+
+	void		SetSpeechMode( UI08 newValue );
+	void		SetSpeechID( UI08 newValue );
+	void		SetSpeechCallback( cScript *newValue );
+	void		SetSpeechItem( CItem *newValue );
+
+	UI16		GetHairStyle( void ) const;
+	UI16		GetBeardStyle( void ) const;
+	COLOUR		GetHairColour( void ) const;
+	COLOUR		GetBeardColour( void ) const;
+
+	void		SetHairColour( COLOUR value );
+	void		SetBeardColour( COLOUR value );
+	void		SetHairStyle( UI16 value );
+	void		SetBeardStyle( UI16 value );
+
+	UI08		GetFixedLight( void ) const;
+	void		SetFixedLight( UI08 newVal );
+
+	UI08		GetAtrophy( UI08 skillToGet ) const;
+	SkillLock	GetSkillLock( UI08 skillToGet ) const;
+	void		SetAtrophy( UI08 newValue, UI08 skillToSet );
+	void		SetSkillLock( SkillLock newValue, UI08 skillToSet );
 };
 
+}
 
 #endif
 

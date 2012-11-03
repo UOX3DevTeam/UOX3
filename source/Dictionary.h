@@ -11,49 +11,49 @@
 #endif // _MSC_VER > 1000
 #endif
 
-typedef std::map<long, std::string> ourDict;
-
-const SI32 dictCANTOPEN = -1;
-const SI32 dictDUPESECTION = -2;
-const SI32 dictDUPEOPENBRACE = -3;
-const SI32 dictNOOPENBRACE = -4;
+namespace UOX
+{
 
 class CDictionary
 {
 public:
 					CDictionary();
-					CDictionary( const char *filepath, const char *language );
-	virtual			~CDictionary();
-	const char *	operator[]( SI32 Num );
-	const char *	GetEntry( SI32 Num );
+					CDictionary( const std::string& filepath, const std::string& language );
+					~CDictionary();
+	std::string 	operator[]( const SI32 Num );
+	std::string 	GetEntry( const SI32 Num );
 
 public:
 	void			ShowList( void );
 	SI32			LoadDictionary( void );
-	SI32			NumberOfEntries( void );
-	void			SetValid( bool newVal );
-	bool			GetValid( void );
+	size_t			NumberOfEntries( void ) const;
+	void			SetValid( const bool newVal );
+	bool			GetValid( void ) const;
 
 private:
 	bool IsValid;
-	char PathToDictionary[512];
-	char Language[8];
+	std::string PathToDictionary;
+	std::string Language;
 	std::map< long, std::string > Text2;
 };
 
 class CDictionaryContainer
 {
 private:
-	CDictionary		*dictList[TOTAL_LANGUAGES];
+	CDictionary		*dictList[DL_COUNT];
 	UnicodeTypes	defaultLang;
 public:
 					CDictionaryContainer();
-					CDictionaryContainer( const char *filepath );
-	virtual 		~CDictionaryContainer();
+					CDictionaryContainer( const std::string& filepath );
+			 		~CDictionaryContainer();
 	SI32			LoadDictionary( void );
-	const char *	operator[]( SI32 Num );	// only default lang
-	const char *	GetEntry( SI32 Num, UnicodeTypes toDisp = ZERO );
-	void			SetDefaultLang( UnicodeTypes newType );
+	std::string 	operator[]( const SI32 Num );	// only default lang
+	std::string 	GetEntry( const SI32 Num, const UnicodeTypes toDisp = ZERO );
+	void			SetDefaultLang( const UnicodeTypes newType );
 };
+
+extern CDictionaryContainer *Dictionary;
+
+}
 
 #endif

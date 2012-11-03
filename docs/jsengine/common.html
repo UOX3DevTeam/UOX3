@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,13 +7,20 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>API and Event handling</h3>
 </center>
 
 <h3><a name="CharItemFuncs">Character and Item common functions</a></h3>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetLocation">ApplySection</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>ApplySection( scriptSection );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Applies a DFN section to an item/character
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>object.ApplySection( "orcishlord" );
+</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_SetLocation">SetLocation</a>
@@ -47,7 +55,7 @@ Worldnumber 1= Felucca.<br>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void FirstItem();
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns a handle to the first item in the container.  If it's null, then there are no items.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onUse( pUser, iUsed )
+function onUseChecked( pUser, iUsed )
 {
 	var mItem;
 	for( mItem = someCont.FirstItem(); !someCont.FinishedItems(); mItem = someCont.NextItem() )
@@ -90,7 +98,7 @@ function onUse( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mObj.DistanceTo( ourObj );
 </pre></table>
 
-{p}&nbsp;</p><table border="1" width="100%" cellspacing="0">
+{p}&nbsp;<p></p><table border="1" width="100%" cellspacing="0">
   <tr>
     <th colspan=3 bgcolor="maroon"><a name="SE_GetTag">GetTag</a> 
   <tr>
@@ -169,6 +177,27 @@ function onUse( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void StaticEffect( Effect, speed, loop );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Does a static effect for a char. <br>NOTE: Anyone got a list of the possible effects?
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>MyChar.StaticEffect( 0x376A, 9, 6 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Resist">Resist</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int Resist( type );<br>void Resist( type, value );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Gets and sets the resistance values of a char or item.<br>Types are:<ol><li>Armor</li><li>Light</li><li>Water</li><li>Cold</li><li>Heat</li><li>Energy</li><li>Poison</li></ol>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>Set the Armor value of an item to 25:<br>mItem.Resist( 1, 25 );<br>&nbsp;<br>Get the armor value of an item:<br>value = mItem.Resist( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CanSee">CanSee</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanSee( object );<br>bool CanSee( x, y, z );</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>LineOfSight-checking; check if character/socket can see a specified object/target location
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+if( !myChar.CanSee( targetChar ))
+	return;
+
+if( myChar.CanSee( targetChar.x, targetChar.y, targetChar.z )
+{
+	//Do stuff!
+}
 </pre></table>
 
 <p>&nbsp;</p><center>

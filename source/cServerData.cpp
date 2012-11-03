@@ -1,1854 +1,1665 @@
 #include "uox3.h"
-#include "cServerData.h"
+#include "scriptc.h"
+#include "ssection.h"
 
-#if defined(__unix__)
-	#include <sys/types.h>
-  #include <netdb.h>
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
+#if UOX_PLATFORM != PLATFORM_WIN32
 	#include <dirent.h>
 #else
-        #include <direct.h>
+	#include <direct.h>
 #endif
 
-//using namespace std;
+#if P_ODBC == 1
+	#include "ODBCManager.h"
+#endif
 
-// Legacy lookup for the server.scp file	(January 30, 2001 - EviLDeD)
-// NOTE:	Very important the first lookups required duplication or the search fails on them
-const std::string SERVERCFG_LOOKUP("|CRASH_PROTECTION|CRASH_PROTECTION|SKILLCAP|STATCAP|USESPECIALBANK|SPECIALBANKTRIGGER|"
-	"DECAYTIMER|PLAYERCORPSEDECAYMULTIPLIER|LOOTDECAYSWITHCORPSE|INVISTIMER|SKILLDELAY|SKILLLEVEL|OBJECTDELAY|GATETIMER|SHOWDEATHANIM|GUARDSACTIVE|BG_SOUNDS|ANNOUNCE_WORLDSAVES|WWWACCOUNTS|ARCHIVEPATH|SAVE_PER_LOOP|"
-	"BACKUP_SAVE_RATIO|UOXBOT|POISONTIMER|JOINMSG|PARTMSG|LOG|ROGUE|WEATHERTIME|SHOPTIME|SHOWLOGGEDOUTPCS|CHAR_TIME_OUT|MAXSTEALTHSTEPS|RUNNINGSTAMINASTEPS|BOAT_SPEED|HTML|CUT_SCROLL_REQUIREMENTS|PERSECUTION|"
-	"AUTO_CREATE_ACCTS|MSGBOARDPATH|MSGPOSTACCESS|MSGPOSTREMOVE|MSGRETENTION|ESCORTACTIVE|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|ESCORTDONEEXPIRE|FOOTSTEPS|COMMANDPREFIX|PORT|NICE|LORDB_LAG_FIX|CHECK_ITEMS|"
-	"CHECK_NPCS|NPC_TILE_CHECK|CHECK_NPCAI|CHECK_SPAWNREGIONS|CHECKMEM|CACHE_MULS|ACCOUNTFLUSH|MAXRANGE|WRESTLESPEED|MAX_RANGE_SPELL|MAXDMG|DEATH_ON_THROAT|DIST_TO_POISON|COMBAT_HIT_MESSAGE|MAX_ABSORBTION|"
-	"MAX_NON_HUMAN_ABSORBTION|MONSTERS_VS_ANIMALS|ANIMALS_ATTACK_CHANCE|ANIMALS_GUARDED|NPC_DAMAGE_RATE|NPC_BASE_FLEEAT|NPC_BASE_REATTACKAT|ATTACKSTAMINA|SELLBYNAME|SELLMAXITEM|TRADESYSTEM|RANKSYSTEM|"
-	"HITPOINTS_REGENRATE|STAMINA_REGENRATE|MANA_REGENRATE|ARMOR_AFFECT_MANA_REGEN|HUNGERRATE|HUNGER_DAMAGE|HUNGER_DAMAGE_RATE|MINECHECK|ORE_PER_AREA|ORE_RESPAWN_TIME|ORE_RESPAWN_AREA|LOGS_PER_AREA|LOG_RESPAWN_TIME|"
-	"LOG_RESPAWN_AREA|MURDER_DECAY|MAXKILLS|CRIMINAL_TIME|BASE_TRACKING_RANGE|MAX_TRACKING_TARGETS|BASE_TRACKING_TIME|TRACKING_MESSAGE_REDISPLAY_TIME|BEGGING_RANGE|BASE_FISHING_TIME|"
-	"RANDOM_FISHING_TIME|SECTION SPIRITSPEAK|SPIRITSPEAKTIMER|DAY|HOUR|MINUTE|AMPM|MOON1|MOON2|MOON1UPDATE|MOON2UPDATE|DUNGEONLIGHTLEVEL|WORLDFIXEDLEVEL|WORLDCURLEVEL|WORLDBRIGHTLEVEL|WORLDDARKLEVEL|SECONDSPERUOMINUTE|"
-	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|SNOOPISCRIME|ENGRAVEENABLED"
-);
+namespace UOX
+{
+#define	MAX_TRACKINGTARGETS	128
+#define SKILLTOTALCAP		7000
+#define SKILLCAP			1000
+#define STATCAP				325
+
+const UI32 BIT_ANNOUNCESAVES		= 0;
+const UI32 BIT_ANNOUNCEJOINPART		= 1;
+const UI32 BIT_SERVERBACKUP			= 2;
+const UI32 BIT_SHOOTONANIMALBACK	= 3;
+const UI32 BIT_NPCTRAINING			= 4;
+const UI32 BIT_LOOTDECAYSONCORPSE	= 5;
+const UI32 BIT_GUARDSENABLED		= 6;
+const UI32 BIT_PLAYDEATHANIMATION	= 7;
+const UI32 BIT_AMBIENTFOOTSTEPS		= 8;
+const UI32 BIT_INTERNALACCOUNTS		= 9;
+const UI32 BIT_SHOWOFFLINEPCS		= 10;
+const UI32 BIT_ROGUESTATUS			= 11;
+const UI32 BIT_SNOOPISCRIME			= 12;
+const UI32 BIT_PERSECUTIONSTATUS	= 13;
+const UI32 BIT_SELLBYNAME			= 14;
+const UI32 BIT_TRADESYSSTATUS		= 15;
+const UI32 BIT_RANKSYSSTATUS		= 16;
+const UI32 BIT_CUTSCROLLREQ			= 17;
+const UI32 BIT_SHOWHITMESSAGE		= 18;
+const UI32 BIT_ESCORTSTATUS			= 19;
+const UI32 BIT_MONSTERSVSANIMALS	= 20;
+const UI32 BIT_PETHUNGEROFFLINE		= 21;
+const UI32 BIT_HIDEWHILEMOUNTED		= 22;
+const UI32 BIT_OVERLOADPACKETS		= 23;
+const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
+const UI32 BIT_ANIMALSGUARDED		= 25;
+const UI32 BIT_ADVANCEDPATHFIND		= 26;
+const UI32 BIT_LOOTINGISCRIME		= 27;
+const UI32 BIT_BASICTOOLTIPSONLY	= 28;
+const UI32 BIT_GLOBALITEMDECAY		= 29;
+const UI32 BIT_SCRIPTITEMSDECAYABLE	= 30;
+const UI32 BIT_BASEITEMSDECAYABLE	= 31;
+const UI32 BIT_ITEMDECAYINHOUSES	= 32;
+const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
+const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
+const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
+const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
+const UI32 BIT_SERVERUSINGHSTILES	= 37;
+const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
+const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
+const UI32 BIT_MAP0ISUOPWRAPPED		= 40;
+const UI32 BIT_MAP1ISUOPWRAPPED		= 41;
+const UI32 BIT_MAP2ISUOPWRAPPED		= 42;
+const UI32 BIT_MAP3ISUOPWRAPPED		= 43;
+const UI32 BIT_MAP4ISUOPWRAPPED		= 44;
+const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
+
 
 // New uox3.ini format lookup	
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
 // (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
+// (September 06 2003 - Maarc) Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
+// (October 16, 2003 - giwo) Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
+// (April 3, 2004 = EviLDeD) Added new tags, for UOG support, as well as new facet tags etc.
+// (June 15, 2004 - EviLDeD) Added the new tags for the xFTPd, and xFTPc support.
 // NOTE:	Very important the first lookups required duplication or the search fails on them
-const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESPERLOOP|SAVESTIMER|MAINTHREADSLEEP|" 
-	"SKILLCAP|SKILLDELAY|STATCAP|STATDELAY|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|CORPSEDECAYTIMER|LOOTDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
-	"OBJECTUSETIMER||GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|ARMORAFFECTREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
-	"BEGGINGTIMER|DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
-	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|EXTERNALACCOUNTCREATION|INTERNALACCOUNTCREATION|SHOWHIDDENNPCS|ROGUESENABLED|UOXBOTENABLED|PLAYERPERSECUTION|LAGFIX|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
-	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|NPCTILECHECK|CUTSCROLLREQUIREMENTS|WILDERNESSBANKENABLED|WILDERNESSBANKKEYWORD|HEARTBEAT|SPEEDCHECKITEMS|SPEEDCHECKNPCS|SPEEDCHECKBOATS|SPEEDCHECKNPCAI|"
-	"SPEEDCHECKSPAWNREGIONS|SPEEDCHECKMEMORY|MSGBOARDKEEPMESSAGES|MSGBOARDADMINLEVEL|MSGBOARDPOSTINGLEVEL|MSGBOARDREMOVALLEVEL|MSGBOARDMAXMESSAGESALLOWED|MSGBOARDMAXMSGSRESPONSE|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|LIGHTMOON1|LIGHTMOON1UPDATE|LIGHTMOON2|"
-	"LIGHTMOON2UPDATE|LIGHTDUNGEONLEVEL|LIGHTFIXEDLEVEL|LIGHTCURRENTLEVEL|LIGHTBRIGHTLEVEL|BEGGINGRANGE|TRACKINGBASERANGE|TRACKINGBASETIMER|TRACKINGMAXTARGETS|TRACKINGMSGREDISPLAYTIME|"
-	"REPSYSMURDERDECAYTIMER|REPSYSMAXKILLS|REPSYSCRIMINALTIMER|RESOURCEMINECHECK|RESOURCEOREPERAREA|RESOURCEORERESPAWNTIMER|RESOURCEORERESPAWNAREA|RESOURCELOGSPERAREA|RESPURCELOGSRESPAWNTIMER|RESOURCELOGSRESPAWNAREA|HUNGERRATE|HUNGERDAMAGERATETIMER|HUNGERDMGVAL|HUNGERTHRESHOLD|"
-	"COMBATMAXRANGE|COMBATWRESTLESPEED|COMBATSPELLMAXRANGE|COMBATMAXMELEEDAMAGE|COMBATMAXSPELLDAMAGE|COMBATALLOWCRITICALS|COMBATMAXPOISONINGDISTANCE|COMBATDISPLAYHITMSG|COMBATMAXHUMANABSORBTION|COMBATMAXNONHUMANABSORBTION|COMBATMONSTERSVSANIMALS|"
-	"COMBATANIMALATTACKCHANCE|COMBATANIMALSGUARDED|COMBATNPCDAMAGERATE|COMBATNPCBASEFLEEAT|COMBATNPCBASEREATTACKAT|COMBATATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS1|STARTPRIVS2|ESCORTDONEEXPIRE|LIGHTDARKLEVEL|"
-	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|ENGRAVEENABLED|BOOKSDIRECTORY|SERVERLIST|SCRIPTSECTIONHEADER|PORT|SAVEMODE|"
-	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|STARTGOLD|HIDEWILEMOUNTED"
+const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|" 
+	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
+	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
+	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
+	"AMBIENTSOUNDS|AMBIENTFOOTSTEPS|INTERNALACCOUNTCREATION|SHOWOFFLINEPCS|ROGUESENABLED|PLAYERPERSECUTION|ACCOUNTFLUSH|HTMLSTATUSENABLED|"
+	"SELLBYNAME|SELLMAXITEMS|TRADESYSTEM|RANKSYSTEM|CUTSCROLLREQUIREMENTS|CHECKITEMS|CHECKBOATS|CHECKNPCAI|"
+	"CHECKSPAWNREGIONS|POSTINGLEVEL|REMOVALLEVEL|ESCORTENABLED|ESCORTINITEXPIRE|ESCORTACTIVEEXPIRE|MOON1|MOON2|"
+	"DUNGEONLEVEL|CURRENTLEVEL|BRIGHTLEVEL|BASERANGE|BASETIMER|MAXTARGETS|MSGREDISPLAYTIME|"
+	"MURDERDECAYTIMER|MAXKILLS|CRIMINALTIMER|MINECHECK|OREPERAREA|ORERESPAWNTIMER|ORERESPAWNAREA|LOGSPERAREA|LOGSRESPAWNTIMER|LOGSRESPAWNAREA|HUNGERRATE|HUNGERDMGVAL|"
+	"MAXRANGE|SPELLMAXRANGE|DISPLAYHITMSG|MONSTERSVSANIMALS|"
+	"ANIMALATTACKCHANCE|ANIMALSGUARDED|NPCDAMAGERATE|NPCBASEFLEEAT|NPCBASEREATTACKAT|ATTACKSTAMINA|LOCATION|STARTGOLD|STARTPRIVS|ESCORTDONEEXPIRE|DARKLEVEL|"
+	"TITLECOLOUR|LEFTTEXTCOLOUR|RIGHTTEXTCOLOUR|BUTTONCANCEL|BUTTONLEFT|BUTTONRIGHT|BACKGROUNDPIC|POLLTIME|MAYORTIME|TAXPERIOD|GUARDSPAID|DAY|HOURS|MINUTES|SECONDS|AMPM|SKILLLEVEL|SNOOPISCRIME|BOOKSDIRECTORY|SERVERLIST|PORT|"
+	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
+	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
+	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
+	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|"
+	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
-void cServerData::SetServerName( const char *setname )
+void CServerData::ResetDefaults( void )
 {
-	if( !setname )
+	resettingDefaults = true;
+	serverList.resize( 1 );		// Set the initial count to hold one server. 
+
+	ServerIP( "127.0.0.1" );
+	ServerPort( 2593 );
+	serverList[0].setPort( 2593 );
+	ServerName( "Default UOX3 Server" );
+
+	SystemTimer( tSERVER_POTION, 10 );
+	ServerMoon( 0, 0 );
+	ServerMoon( 1, 0 );
+	DungeonLightLevel( 3 );
+	WorldLightCurrentLevel( 0 );
+	WorldLightBrightLevel( 0 );
+	WorldLightDarkLevel( 5 );
+
+	ServerSecondsPerUOMinute( 5 );
+	ServerTimeDay( 0 );
+	ServerTimeHours( 0 );
+	ServerTimeMinutes( 0 );
+	ServerTimeSeconds( 0 );
+	ServerTimeAMPM( 0 );
+
+	ServerCrashProtection( 1 );
+	InternalAccountStatus( false );
+	CombatMaxRange( 10 );
+	CombatArcherRange( 7 );
+	CombatMaxSpellRange( 10 );
+	CombatExplodeDelay( 2 );
+	
+	// load defaults values
+	SystemTimer( tSERVER_SHOPSPAWN, 300 );
+	SystemTimer( tSERVER_POISON, 180 );
+	SystemTimer( tSERVER_DECAY, 300 );
+	ServerSkillTotalCap( 7000 );
+	ServerSkillCap( 1000 );
+	ServerStatCap( 325 );
+	CorpseLootDecay( true );
+	ServerSavesTimer( 300 );
+	
+	SystemTimer( tSERVER_INVISIBILITY, 60 );
+	SystemTimer( tSERVER_HUNGERRATE, 6000 );
+	HungerDamage( 2 );
+	
+	ServerSkillDelay( 5 );
+	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
+	SystemTimer( tSERVER_HITPOINTREGEN, 8 );
+	SystemTimer( tSERVER_STAMINAREGEN, 3 );
+	SystemTimer( tSERVER_MANAREGEN, 5 );
+	ArmorAffectManaRegen( true );
+	SystemTimer( tSERVER_GATE, 30 );
+	MineCheck( 1 );
+	DeathAnimationStatus( true );
+	ShowOfflinePCs( true );
+	CombatDisplayHitMessage( true );
+	CombatDisplayDamageNumbers( true );
+	CombatAttackSpeedFromStamina( true );
+	CombatAttackStamina( -2 );
+	NPCTrainingStatus( true );
+	CharHideWhileMounted( true );
+	WeightPerStr( 3.5 );
+	SystemTimer( tSERVER_POLYMORPH, 90 );
+	ServerOverloadPackets( true );
+	AdvancedPathfinding( true );
+	LootingIsCrime( true );
+
+	CombatMonstersVsAnimals( true );
+	CombatAnimalsAttackChance( 15 );
+	CombatAnimalsGuarded( false );
+	CombatNPCBaseFleeAt( 20 );
+	CombatNPCBaseReattackAt( 40 );
+	ShootOnAnimalBack( false );
+	SellByNameStatus( false );
+	SkillLevel( 5 );
+	SellMaxItemsStatus( 5 );
+	CombatNPCDamageRate( 2 );
+	RankSystemStatus( true );
+
+	char curWorkingDir[1024];
+	GetCurrentDirectory( 1024, curWorkingDir );
+	UString wDir( curWorkingDir );
+	wDir = wDir.fixDirectory();
+	UString tDir;
+	Directory( CSDDP_ROOT, wDir );
+	tDir = wDir + "muldata/";
+	Directory( CSDDP_DATA, tDir );
+	tDir = wDir + "dfndata/";
+	Directory( CSDDP_DEFS, tDir );
+	tDir = wDir + "accounts/";
+	Directory( CSDDP_ACCOUNTS, tDir );
+	Directory( CSDDP_ACCESS, tDir );
+	tDir = wDir + "js/";
+	Directory( CSDDP_SCRIPTS, tDir );
+	tDir = wDir + "archives/";
+	Directory( CSDDP_BACKUP, tDir );
+	tDir = wDir + "msgboards/";
+	Directory( CSDDP_MSGBOARD, tDir );
+	tDir = wDir + "shared/";
+	Directory( CSDDP_SHARED, tDir );
+	tDir = wDir + "html/";
+	Directory( CSDDP_HTML, tDir );
+	tDir = wDir + "books/";
+	Directory( CSDDP_BOOKS, tDir );
+	tDir = wDir + "dictionaries/";
+	Directory( CSDDP_DICTIONARIES, tDir );
+	tDir = wDir + "logs/";
+	Directory( CSDDP_LOGS, tDir );
+
+	BuyThreshold( 2000 );
+	GuardStatus( true );
+	ServerAnnounceSaves( true );
+	WorldAmbientSounds( 5 );
+	ServerJoinPartAnnouncements( true );
+	ServerConsoleLog( 1 );
+	RogueStatus( true );
+	SystemTimer( tSERVER_WEATHER, 60 );
+	SystemTimer( tSERVER_LOGINTIMEOUT, 300 );
+	BackupRatio( 5 );
+	MaxStealthMovement( 10 );
+	MaxStaminaMovement( 15 );
+	SnoopIsCrime( false );
+	PetOfflineTimeout( 5 );
+	PetHungerOffline( true );
+	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
+	
+	CheckBoatSpeed( 0.65 );
+	CheckNpcAISpeed( 1 );
+	CutScrollRequirementStatus( true );
+	PlayerPersecutionStatus( false );
+	HtmlStatsStatus( -1 );
+	
+	MsgBoardPostingLevel( 0 );
+	MsgBoardPostRemovalLevel( 0 );
+	// No replacement I can see
+	EscortsEnabled( true );
+	BasicTooltipsOnly( false );
+	GlobalItemDecay( true );
+	ScriptItemsDecayable( true );
+	BaseItemsDecayable( false );
+	ItemDecayInHouses( false );
+	SystemTimer( tSERVER_ESCORTWAIT, 900 );
+	SystemTimer( tSERVER_ESCORTACTIVE, 600 );
+	SystemTimer( tSERVER_ESCORTDONE, 600 );
+	AmbientFootsteps( false );
+	ServerCommandPrefix( '\'' );
+	
+	CheckSpawnRegionSpeed( 30 );
+	CheckItemsSpeed( 1.5 );
+	NPCWalkingSpeed( 0.5 );
+	NPCRunningSpeed( 0.2 );
+	NPCFleeingSpeed( 0.4 );
+	AccountFlushTimer( 0.0 );
+	
+	ResLogs( 3 );
+	ResLogTime( 600 );
+	ResLogArea( 10 );
+	ResOre( 10 );
+	ResOreTime( 600 );
+	ResOreArea( 10 );
+	//REPSYS
+	SystemTimer( tSERVER_CRIMINAL, 120 );
+	RepMaxKills( 4 );
+	SystemTimer( tSERVER_MURDERDECAY, 60 );
+	//RepSys ---^
+	TrackingBaseRange( 10 );
+	TrackingMaxTargets( 20 );
+	TrackingBaseTimer( 30 );
+	TrackingRedisplayTime( 30 );
+
+	SystemTimer( tSERVER_FISHINGBASE, 10 );
+	SystemTimer( tSERVER_FISHINGRANDOM, 5 );
+	SystemTimer( tSERVER_SPIRITSPEAK, 30 );
+
+	// Abaddon, March 21, 2000
+
+	TitleColour( 0 );
+	LeftTextColour( 0 );
+	RightTextColour( 0 );
+	ButtonCancel( 4017 );
+	ButtonLeft( 4014 );
+	ButtonRight( 4005 );
+	BackgroundPic( 2600 );
+
+	TownNumSecsPollOpen( 3600 );	// one hour
+	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
+	TownTaxPeriod( 1800 );			// taxed every 30 minutes
+	TownGuardPayment( 3600 );		// guards paid every hour
+
+	SetClientFeature( CF_BIT_CHAT, true );
+	SetClientFeature( CF_BIT_UOR, true );
+	SetClientFeature( CF_BIT_TD, true );
+	SetClientFeature( CF_BIT_LBR, true );
+	SetClientFeature( CF_BIT_AOS, true );
+	SetClientFeature( CF_BIT_SIXCHARS, true );
+	SetClientFeature( CF_BIT_SE, true );
+	SetClientFeature( CF_BIT_ML, true );
+	SetClientFeature( CF_BIT_EXPANSION, true );
+
+	SetServerFeature( SF_BIT_CONTEXTMENUS, true );
+	SetServerFeature( SF_BIT_AOS, true );
+	SetServerFeature( SF_BIT_SIXCHARS, true );
+	SetServerFeature( SF_BIT_SE, true );
+	SetServerFeature( SF_BIT_ML, true );
+
+	for( int i = 0; i < 6; i++ )
 	{
-		serverList[0].setName("Default UOX Server");
-		return;
+		MapIsUOPWrapped( i, false );
 	}
-	serverList[0].setName(setname);
+
+	// Enable login-support for any supported client version by default.
+	ClientSupport4000( true );
+	ClientSupport5000( true );
+	ClientSupport6000( true );
+	ClientSupport6050( true );
+	ClientSupport7000( true );
+	ClientSupport7090( true );
+	ClientSupport70160( true );
+	ClientSupport70240( true );
+
+	ExtendedStartingStats( true );
+	ExtendedStartingSkills( true );
+
+	ServerStartGold( 1000 );
+	ServerStartPrivs( 0 );
+	SystemTimer( tSERVER_CORPSEDECAY, 900 );
+	resettingDefaults = false;
+	PostLoadDefaults();	
+}
+CServerData::CServerData( void )
+{
+	ResetDefaults();
+}
+CServerData::~CServerData()
+{
 }
 
-const char *cServerData::GetServerName( void )
+void CServerData::RefreshIPs( void )
 {
-	return serverList[0].getName().c_str();
-}
+	struct hostent *lpHostEntry = NULL;
 
-void cServerData::SetServerDomain( const char *setdomain )
-{
-	if( !setdomain )
+	std::vector< physicalServer >::iterator slIter;
+	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
 	{
-		serverList[0].setDomain("");
-		return;
+		if( !slIter->getDomain().empty() )
+		{
+			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
+			if( lpHostEntry != NULL )
+			{
+				struct in_addr *pinaddr;
+				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+				slIter->setIP( inet_ntoa(*pinaddr) );
+			}
+		}
+	} 
+}
+
+void CServerData::ServerName( std::string setname )
+{
+	if( serverList.empty() )
+		serverList.resize( 1 );
+	serverList[0].setName( setname );
+	if( setname.empty() )
+	{
+		serverList[0].setName( "Default UOX Server" );
 	}
-	serverList[0].setDomain(setdomain);
 }
 
-const char *cServerData::GetServerDomain( void )
+std::string CServerData::ServerName( void ) const
 {
-	return serverList[0].getDomain().c_str();
+	return serverList[0].getName();
 }
 
-void cServerData::SetServerIP( const char *setip )
+void CServerData::ServerDomain( std::string setdomain )
 {
-	if(!setip)
-	{
+	if( serverList.empty() )
+		serverList.resize( 1 );
+	if( setdomain.empty() )
+		serverList[0].setDomain( "" );
+	else
+		serverList[0].setDomain( setdomain );
+}
+
+std::string CServerData::ServerDomain( void ) const
+{
+	return serverList[0].getDomain();
+}
+
+void CServerData::ServerIP( std::string setip )
+{
+	if( serverList.empty() )
+		serverList.resize( 1 );
+	if( setip.empty() )
 		serverList[0].setIP("127.0.0.1");
-		return;
-	}
-	serverList[0].setIP(setip);
+	else
+		serverList[0].setIP(setip);
 }
 
-const char *cServerData::GetServerIP( void )
+std::string CServerData::ServerIP( void ) const
 {
-	return serverList[0].getIP().c_str();
+	return serverList[0].getIP();
 }
 
-void cServerData::SetServerPort( SI16 setport )
+void CServerData::ServerPort( UI16 setport )
 {
-	if( (unsigned) setport < 1 )
-	{
+	if( setport == 0 )
 		port = 2593;
-		return;
-	}
-	port = setport;
+	else
+		port = setport;
 }
 
-SI16 cServerData::GetServerPort( void )
+UI16 CServerData::ServerPort( void ) const
 {
 	return port;
 }
 
-void cServerData::SetServerConsoleLog( UI32 setting )
+void CServerData::ServerConsoleLog( UI08 setting )
 {
 	consolelogenabled = setting;
 }
 
-UI32 cServerData::GetServerConsoleLogStatus( void )
+UI08 CServerData::ServerConsoleLogStatus( void ) const
 {
 	return consolelogenabled;
 }
 
-void cServerData::SetServerCrashProtection( UI32 setting )
+void CServerData::ServerCrashProtection( UI08 setting )
 {
-	crashprotectionenabled = (setting > 5 && !(setting<1) ) ? 1 : setting;
+	crashprotectionenabled = (setting > 5 && !(setting < 1)) ? 1 : setting;
 }
 
-UI32 cServerData::GetServerCrashProtectionStatus( void )
+UI08 CServerData::ServerCrashProtectionStatus( void ) const
 {
 	return crashprotectionenabled;
 }
 
-void cServerData::SetServerCommandPrefix( char cmdvalue )
+void CServerData::ServerCommandPrefix( char cmdvalue )
 {
 	commandprefix = cmdvalue;
 }
 
-char cServerData::GetServerCommandPrefix( void )
+char CServerData::ServerCommandPrefix( void ) const
 {
 	return commandprefix;
 }
 
-void cServerData::SetServerAnnounceSaves( bool setting )
+void CServerData::ServerAnnounceSaves( bool newVal )
 {
-	announcesaves = setting;
+	boolVals.set( BIT_ANNOUNCESAVES, newVal );
 }
 
-bool cServerData::GetServerAnnounceSavesStatus( void )
+bool CServerData::ServerAnnounceSavesStatus( void ) const
 {
-	return announcesaves;
+	return boolVals.test( BIT_ANNOUNCESAVES );
 }
 
-void cServerData::SetServerJoinPartAnnouncements( bool setting )
+void CServerData::ServerJoinPartAnnouncements( bool newVal )
 {
-	joinpartmsgsenabled = setting;
+	boolVals.set( BIT_ANNOUNCEJOINPART, newVal );
 }
 
-bool cServerData::GetServerJoinPartAnnouncementsStatus( void )
+bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
 {
-	return joinpartmsgsenabled;
+	return boolVals.test( BIT_ANNOUNCEJOINPART );
 }
 
-void cServerData::SetServerMulCaching( bool setting )
+void CServerData::ServerBackups( bool newVal )
 {
-	mulcachingenabled = setting;
+	boolVals.set( BIT_SERVERBACKUP, newVal );
 }
 
-bool cServerData::GetServerMulCachingStatus( void )
+bool CServerData::ServerBackupStatus( void ) const
 {
-	return mulcachingenabled;
+	return boolVals.test( BIT_SERVERBACKUP );
 }
 
-void cServerData::SetServerBackups( bool setting )
+void CServerData::ServerSavesTimer( UI32 timer )
 {
-	backupsenabled = setting;
-}
-
-bool cServerData::GetServerBackupStatus( void )
-{
-	return backupsenabled;
-}
-
-void cServerData::SetServerAntiLagSavesPerLoop( SI16 value )
-{
-	if( value < 0 )
-	{
-		antilagsavesperloop = 0;
-		return;
-	}
-	antilagsavesperloop = value;
-}
-
-SI16 cServerData::GetServerAntiLagSavesPerLoop( void )
-{
-	return antilagsavesperloop;
-}
-
-void cServerData::SetServerSavesTimer( UI32 timer )
-{
-	if( timer < 180 )						// 3 minutes is the lowest value you can set saves for
-	{
-		serversavestimer = 300;	// 10 minutes default
-		return;
-	}
 	serversavestimer = timer;
+	if( timer < 180 )						// 3 minutes is the lowest value you can set saves for
+		serversavestimer = 300;	// 10 minutes default
 }
 
-UI32 cServerData::GetServerSavesTimerStatus( void )
+UI32 CServerData::ServerSavesTimerStatus( void ) const
 {
 	return serversavestimer;
 }
 
-void cServerData::SetServerMainThreadTimer( UI32 threadtimer )
+void CServerData::ServerSkillTotalCap( UI16 cap )
 {
-	if( threadtimer < 1000 )		// Default is on second loop sleeping
-	{
-		mainthreadsleep = 500;
-		return;
-	}
-	mainthreadsleep = threadtimer;
-}
-
-UI32 cServerData::GetServerMainThreadTimerStatus( void )
-{
-	return mainthreadsleep;
-}
-
-void cServerData::SetServerSkillCap( UI32 cap )
-{
+	skilltotalcap = cap;
 	if( cap < 1 )		// Default is on second loop sleeping
-	{
-		skillcap = 7000;
-		return;
-	}
-	skillcap = cap;
+		skilltotalcap = SKILLTOTALCAP;
 }
 
-UI32 cServerData::GetServerSkillCapStatus( void )
+UI16 CServerData::ServerSkillTotalCapStatus( void ) const
+{
+	return skilltotalcap;
+}
+
+void CServerData::ServerSkillCap( UI16 cap )
+{
+	skillcap = cap;
+	if( cap < 1 )		// Default is on second loop sleeping
+		skillcap = SKILLCAP;
+}
+
+UI16 CServerData::ServerSkillCapStatus( void ) const
 {
 	return skillcap;
 }
 
-void cServerData::SetServerSkillDelay( UI32 skdelay )
+
+void CServerData::ServerSkillDelay( UI08 skdelay )
 {
-	if( skdelay < 1 )		// Default is on second loop sleeping
-	{
-		skilldelay = 5;
-		return;
-	}
 	skilldelay = skdelay;
 }
 
-UI32 cServerData::GetServerSkillDelayStatus( void )
+UI08 CServerData::ServerSkillDelayStatus( void ) const
 {
 	return skilldelay;
 }
 
-void cServerData::SetServerStatCap( UI32 cap )
+void CServerData::ServerStatCap( UI16 cap )
 {
-	if( cap < 1 )		// Default is on second loop sleeping
-	{
-		statcap = 300;
-		return;
-	}
 	statcap = cap;
+	if( cap < 1 )		// Default is on second loop sleeping
+		statcap = STATCAP;
 }
 
-UI32 cServerData::GetServerStatCapStatus( void )
+UI16 CServerData::ServerStatCapStatus( void ) const
 {
 	return statcap;
 }
 
-void cServerData::SetServerStatDelay( UI32 stdelay )
-{
-	if( stdelay < 1 )		// Default is on second loop sleeping
-	{
-		statdelay = 5;
-		return;
-	}
-	statdelay = stdelay;
-}
-
-UI32 cServerData::GetServerStatDelayStatus( void )
-{
-	return statdelay;
-}
-
-void cServerData::SetMaxStealthMovement( SI16 value )
+void CServerData::MaxStealthMovement( SI16 value )
 {
 	maxstealthmovement = value;
 }
 
-SI16 cServerData::GetMaxStealthMovement( void )
+SI16 CServerData::MaxStealthMovement( void ) const
 {
 	return maxstealthmovement;
 }
 
-void cServerData::SetMaxStaminaMovement( SI16 value )
+void CServerData::MaxStaminaMovement( SI16 value )
 {
 	maxstaminamovement = value;
 }
 
-SI16 cServerData::GetMaxStaminaMovement( void )
+SI16 CServerData::MaxStaminaMovement( void ) const
 {
 	return maxstaminamovement;
 }
 
-void cServerData::SetSkillAdvanceModifier( UI32 value )
+TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
 {
-	skilladvancemodifier = value;
+	return BuildTimeValue( static_cast<R32>(SystemTimer( timerID )) );
 }
 
-UI32 cServerData::GetSkillAdvanceModifier( void )
+void CServerData::SystemTimer( cSD_TID timerid, UI16 value )
 {
-	return skilladvancemodifier;
+	serverTimers[timerid] = value;
 }
 
-void cServerData::SetStatAdvanceModifier( UI32 value )
+UI16 CServerData::SystemTimer( cSD_TID timerid ) const
 {
-	statadvancemodifier = value;
+	return serverTimers[timerid];
 }
 
-UI32 cServerData::GetStatAdvanceModifier( void )
+std::string CServerData::Directory( CSDDirectoryPaths dp )
 {
-	return statadvancemodifier;
+	std::string rvalue;
+	if( dp != CSDDP_COUNT )
+		rvalue = serverDirectories[dp];
+	return rvalue;
 }
 
-void cServerData::SetSystemTimer( TID timerid, UI32 value )
+void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 {
-	switch( timerid )
+	if( dp != CSDDP_COUNT )
 	{
-		case CORPSE_DECAY:			corpsedecaytimer = value;				break;
-		case LOOT_DECAY:			lootdecaytimer = value;					break;
-		case WEATHER:				weathertimer = value;					break;
-		case SHOP_SPAWN:			shopspawntimer = value;					break;
-		case DECAY:					decaytimer = value;						break;
-		case INVISIBILITY:			invisibilitytimer = value;				break;
-		case OBJECT_USAGE:			objectusagetimer = value;				break;
-		case GATE:					gatetimer = value;						break;
-		case POISON:				poisontimer = value;					break;
-		case LOGIN_TIMEOUT:			logintimeout = value;					break;
-		case HITPOINT_REGEN:		hitpointregentimer = value;				break;
-		case STAMINA_REGEN:			staminaregentimer = value;				break;
-		case MANA_REGEN:			manaregentimer = value;					break;
-		case ARMORAFFECTMANA_REGEN:	armoraffectregentimer = (SI16)value;	break;
-		case BASE_FISHING:			fishingbasetimer = value;				break;
-		case RANDOM_FISHING:		fishingrandomtimer = value;				break;
-		case SPIRIT_SPEAK:			spiritspeaktimer = value;				break;
-		case BEGGING_T:				beggingtimer = value;					break;
-		default:															break;
-	}
-}
-
-SI32 cServerData::GetSystemTimerStatus( TID timerid )
-{
-	switch( timerid )
-	{
-		case CORPSE_DECAY:			return corpsedecaytimer;
-		case LOOT_DECAY:			return lootdecaytimer;
-		case WEATHER:				return weathertimer;
-		case SHOP_SPAWN:			return shopspawntimer;
-		case DECAY:					return decaytimer;
-		case INVISIBILITY:			return invisibilitytimer;
-		case OBJECT_USAGE:			return objectusagetimer;
-		case GATE:					return gatetimer;
-		case POISON:				return poisontimer;
-		case LOGIN_TIMEOUT:			return logintimeout;
-		case HITPOINT_REGEN:		return hitpointregentimer;
-		case STAMINA_REGEN:			return staminaregentimer;
-		case MANA_REGEN:			return manaregentimer;
-		case ARMORAFFECTMANA_REGEN:	return armoraffectregentimer;
-		case BASE_FISHING:			return fishingbasetimer;
-		case RANDOM_FISHING:		return fishingrandomtimer;
-		case SPIRIT_SPEAK:			return spiritspeaktimer;
-		case BEGGING_T:				return beggingtimer;
-		default:					break;
-	}
-	return TIMER_ERROR;
-}
-
-void cServerData::setDirectoryHelper( std::string dirName, std::string &dir, char *text )
-{
-        // First, let's normalize the path name and fix common errors
-        const char dirSep = '/';
-
-        if (!text)
-	{
-		Console.Error( 1, " %s directory is blank, set in uox.ini", dirName.c_str() );
-		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
-		return;
-        }
-
-	// remove all trailing spaces...
-	int length = strlen(text);
-	while (text[length - 1] == ' ')
-	        text[--length] = '\0';
-
-	// Make sure we're terminated with a directory separator
-	// Just incase it's not set in the .ini
-#if defined(__unix__)
-	bool addSep = text[length - 1] != dirSep;
-#else
-	bool addSep = (text[length - 1] != dirSep) && (text[length - 1] != '\\');
-#endif
-
-	bool error = false;
-	if( !resettingDefaults )
-	{
-#if defined(__unix__)
-		DIR *dirPtr = opendir( text );
-		if( !dirPtr )
-			error = true;
-		else
-			closedir( dirPtr );
-#else
-		char curWorkingDir[1024];
-		GetCurrentDirectory( 1024, curWorkingDir );
-		int iResult = _chdir( text );
-		if( iResult != 0 )
-			error = true;
-		else
-			_chdir( curWorkingDir );	// move back to where we were
-#endif
-	}
-
-	if (error)
-	{
-	        Console.Error( 1, " %s directory %s does not exist", dirName.c_str(), text );
+		std::string verboseDirectory;
+		switch( dp )
+		{
+			case CSDDP_ROOT:			verboseDirectory = "Root directory";			break;
+			case CSDDP_DATA:			verboseDirectory = "Data directory";			break;
+			case CSDDP_DEFS:			verboseDirectory = "DFNs directory";			break;
+			case CSDDP_ACCESS:			verboseDirectory = "Access directory";			break;
+			case CSDDP_ACCOUNTS:		verboseDirectory = "Accounts directory";		break;
+			case CSDDP_SCRIPTS:			verboseDirectory = "Scripts directory";			break;
+			case CSDDP_BACKUP:			verboseDirectory = "Backup directory";			break;
+			case CSDDP_MSGBOARD:		verboseDirectory = "Messageboard directory";	break;
+			case CSDDP_SHARED:			verboseDirectory = "Shared directory";			break;
+			case CSDDP_HTML:			verboseDirectory = "HTML directory";			break;
+			case CSDDP_LOGS:			verboseDirectory = "Logs directory";			break;
+			case CSDDP_DICTIONARIES:	verboseDirectory = "Dictionary directory";		break;
+			case CSDDP_BOOKS:			verboseDirectory = "Books directory";			break;
+			case CSDDP_COUNT:
+			default:					verboseDirectory = "Unknown directory";			break;
+		};
+		// First, let's normalize the path name and fix common errors
+		UString sText( value );
+		// remove all trailing and leading spaces...
+		sText = sText.stripWhiteSpace();
+		if( sText.empty() )
+		{
+			Console.Error( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() );
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
-	}
-	else
-	{
-	        if( !text )
-		        dir = "./";
+			return;
+		}
+
+		// Make sure we're terminated with a directory separator
+		// Just incase it's not set in the .ini
+		// and convert the windows backward slashes to forward slashes
+
+		sText = sText.fixDirectory();
+
+		bool error = false;
+		if( !resettingDefaults )
+		{
+			char curWorkingDir[1024];
+			GetCurrentDirectory( 1024, curWorkingDir );
+			int iResult = _chdir( sText.c_str() );
+			if( iResult != 0 )
+				error = true;
+			else
+				_chdir( curWorkingDir );	// move back to where we were
+		}
+
+		if( error )
+		{
+				Console.Error( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() );
+				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
+		}
 		else
 		{
-		        dir = text;
-			if (addSep)
-			  dir += dirSep;
+			// There was a check to see if text was empty, to set to "./".  However, if text was blank, we bailed out in the
+			// beginning of the routine
+			serverDirectories[dp] = value;
 		}
 	}
 }
 
-void cServerData::SetRootDirectory( char *text )
+bool CServerData::ShootOnAnimalBack( void ) const
 {
-	setDirectoryHelper( "Root directory", rootdirectory, text );
+	return boolVals.test( BIT_SHOOTONANIMALBACK );
 }
 
-const char *cServerData::GetRootDirectory( void )
+void CServerData::ShootOnAnimalBack( bool newVal )
 {
-	return rootdirectory.c_str();
+	boolVals.set( BIT_SHOOTONANIMALBACK, newVal );
 }
 
-const char *cServerData::GetHTMLDirectory( void )
+bool CServerData::NPCTrainingStatus( void ) const
 {
-	return htmldirectory.c_str();
+	return boolVals.test( BIT_NPCTRAINING );
 }
 
-void cServerData::SetHTMLDirectory( char *text )
+void CServerData::NPCTrainingStatus( bool newVal )
 {
-	setDirectoryHelper( "HTML directory", htmldirectory, text );
-}
-
-
-const char *cServerData::GetDataDirectory( void )
-{
-	return datadirectory.c_str();
-}
-
-void cServerData::SetDataDirectory( char *text )
-{
-	setDirectoryHelper( "Data directory", datadirectory, text );
-}
-
-const char *cServerData::GetDefsDirectory( void )
-{
-	return defsdirectory.c_str();
-}
-
-void cServerData::SetDefsDirectory( char *text )
-{
-	setDirectoryHelper( "DFNs directory", defsdirectory, text );
-}
-
-const char *cServerData::GetBooksDirectory( void )
-{
-	return booksdirectory.c_str();
-}
-
-void cServerData::SetBooksDirectory( char *text )
-{
-	setDirectoryHelper( "Books directory", booksdirectory, text );
-}
-
-const char *cServerData::GetScriptsDirectory( void )
-{
-	return scriptsdirectory.c_str();
-}
-
-void cServerData::SetScriptsDirectory( char *text )
-{
-	setDirectoryHelper( "Scripts directory", scriptsdirectory, text );
-}
-
-const char *cServerData::GetBackupDirectory( void )
-{
-	return backupdirectory.c_str();
-}
-
-void cServerData::SetBackupDirectory( char *text )
-{
-	setDirectoryHelper( "Backup directory", backupdirectory, text );
-}
-
-bool cServerData::GetShootOnAnimalBack( void )
-{
-	return shootonanimalback;
-}
-
-void cServerData::SetShootOnAnimalBack( bool setting )
-{
-	shootonanimalback = setting;
-}
-
-bool cServerData::GetNPCTrainingStatus( void )
-{
-	return npctraining;
-}
-
-void cServerData::SetNPCTrainingStatus( bool setting )
-{
-	npctraining = setting;
+	boolVals.set( BIT_NPCTRAINING, newVal );
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	const char *cServerData::GetAccessDirectory( void )
-//|	Date					-	02/07/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 Development Team
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	This path specified where to find the fast look up file
-//|									for shard access. This is a fast patch for those that
-//|									rely on external account cratioon web scripts. Some
-//|									problems can be found accessing outside a webservers
-//|									local hdd space which is invalid running web scripts.
-//|									This path ensures that UOX3 will look elsewhere for that
-//|									account lookup file. Meaning that you can keep it in
-//|									context for your webtools over your network topography.
-//|									
-//|	Modification	-	02/21/2002	-	Need to put the lowercase stuff here instead
-//o--------------------------------------------------------------------------o
-//|	Returns				- [const char*] Pointing to a buffer that contains the
-//|									path to the Access.adm file.
-//o--------------------------------------------------------------------------o
-const char *cServerData::GetAccessDirectory( void )
-{
-	return accessdirectory.c_str();
-}
-void cServerData::SetAccessDirectory( char *text )
-{
-	setDirectoryHelper( "Access directory", accessdirectory, text );
-}
-//
-const char *cServerData::GetAccountsDirectory( void )
-{
-	return accountsdirectory.c_str();
-}
-
-void cServerData::SetAccountsDirectory( char *text )
-{
-	setDirectoryHelper( "Accounts directory", accountsdirectory, text );
-}
-
-const char *cServerData::GetMsgBoardDirectory( void )
-{
-	return msgboarddirectory.c_str();
-}
-
-void cServerData::SetMsgBoardDirectory( char *text)
-{
-	setDirectoryHelper( "Msgboard directory", msgboarddirectory, text );
-}
-
-const char *cServerData::GetSharedDirectory( void )
-{
-	return shareddirectory.c_str();
-}
-
-void cServerData::SetSharedDirectory( char *text )
-{
-	setDirectoryHelper( "Shared directory", shareddirectory, text );
-}
-
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	const char *cServerData::GetLogsDirectory( void )
-//|	Date					-	02/26/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-	[const char*] Pointing to the Log path data
-//o--------------------------------------------------------------------------o
-const char *cServerData::GetLogsDirectory( void )
-{
-	return logsdirectory.c_str();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	void cServerData::SetLogsDirectory( char *text )
-//|	Date					-	02/26/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-	N/A
-//o--------------------------------------------------------------------------o
-void cServerData::SetLogsDirectory( char *text )
-{
-	setDirectoryHelper( "Logs directory", logsdirectory, text );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	const char *cServerData::GetDictionaryDirectory( void )
-//|	Date					-	04/07/2002
-//|	Developer(s)	-	duckhead
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//|	Returns				-	[const char*] Pointing to the Log path data
-//o--------------------------------------------------------------------------o
-const char *cServerData::GetDictionaryDirectory( void )
-{
-	return dictionarydirectory.c_str();
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	void cServerData::SetDictionaryDirectory( char *text )
-//|	Date					-	04/07/2002
-//|	Developer(s)	-	duckhead
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Holds the location of the dictionary files
-//o--------------------------------------------------------------------------o
-//|	Returns				-	N/A
-//o--------------------------------------------------------------------------o
-void cServerData::SetDictionaryDirectory( char *text )
-{
-	setDirectoryHelper( "Dictionary directory", dictionarydirectory, text );
-}
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	void cServerData::DumpPaths( void )
-//|	Date					-	02/26/2002
+//|	Function/Class	-	void CServerData::dumpPaths( void )
+//|	Date			-	02/26/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status				-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Needed a function that would dump out the paths. If you
-//|									add any paths to the server please make sure that you
-//|									place exports to the console here to please so it can
-//|									belooked up if needed. 
+//|							add any paths to the server please make sure that you
+//|							place exports to the console here to please so it can
+//|							belooked up if needed. 
 //o--------------------------------------------------------------------------o
 //|	Returns				-	N/A
 //o--------------------------------------------------------------------------o
-void cServerData::DumpPaths( void )
+void CServerData::dumpPaths( void )
 {
 	Console.PrintSectionBegin();
 	Console << "PathDump: \n";
-	Console << "    Root      : " << GetRootDirectory() << "\n";
-	Console << "    Accounts  : " << GetAccountsDirectory() << "\n";
-	Console << "    Access    : " << GetAccessDirectory() << "\n";
-	Console << "    Mul(Data) : " << GetDataDirectory() << "\n";
-	Console << "    DFN(Defs) : " << GetDefsDirectory() << "\n";
-	Console << "    JScript   : " << GetScriptsDirectory() << "\n";
-	Console << "    HTML      : " << GetHTMLDirectory() << "\n";
-	Console << "    MSGBoards : " << GetMsgBoardDirectory() << "\n";
-	Console << "    Books     : " << GetBooksDirectory() << "\n";
-	Console << "    Shared    : " << GetSharedDirectory() << "\n";
-	Console << "    Backups   : " << GetBackupDirectory() << "\n";
-	Console << "    Logs      : " << GetLogsDirectory() << "\n";
+	Console << "    Root      : " << Directory( CSDDP_ROOT ) << "\n";
+	Console << "    Accounts  : " << Directory( CSDDP_ACCOUNTS ) << "\n";
+	Console << "    Access    : " << Directory( CSDDP_ACCESS ) << "\n";
+	Console << "    Mul(Data) : " << Directory( CSDDP_DATA ) << "\n";
+	Console << "    DFN(Defs) : " << Directory( CSDDP_DEFS ) << "\n";
+	Console << "    JScript   : " << Directory( CSDDP_SCRIPTS ) << "\n";
+	Console << "    HTML      : " << Directory( CSDDP_HTML ) << "\n";
+	Console << "    MSGBoards : " << Directory( CSDDP_MSGBOARD ) << "\n";
+	Console << "    Books     : " << Directory( CSDDP_BOOKS ) << "\n";
+	Console << "    Shared    : " << Directory( CSDDP_SHARED ) << "\n";
+	Console << "    Backups   : " << Directory( CSDDP_BACKUP ) << "\n";
+	Console << "    Logs      : " << Directory( CSDDP_LOGS ) << "\n";
 	Console.PrintSectionBegin();
 }
 
-void cServerData::SetCorpseLootDecay( bool value )
+void CServerData::CorpseLootDecay( bool newVal )
 {
-	lootdecayswithcorpse = value;
+	boolVals.set( BIT_LOOTDECAYSONCORPSE, newVal );
 }
 
-bool cServerData::GetCorpseLootDecay( void )
+bool CServerData::CorpseLootDecay( void ) const
 {
-	return lootdecayswithcorpse;
+	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
 }
 
-void cServerData::SetGuardStatus( bool value )
+void CServerData::GuardStatus( bool newVal )
 {
-	guardsenabled = value;
+	boolVals.set( BIT_GUARDSENABLED, newVal );
 }
 
-bool cServerData::GetGuardsStatus( void )
+bool CServerData::GuardsStatus( void ) const
 {
-	return guardsenabled;
+	return boolVals.test( BIT_GUARDSENABLED );
 }
 
-void cServerData::SetDeathAnimationStatus( bool value )
+void CServerData::DeathAnimationStatus( bool newVal )
 {
-	deathanimationenabled = value;
+	boolVals.set( BIT_PLAYDEATHANIMATION, newVal );
 }
 
-bool cServerData::GetDeathAnimationStatus( void )
+bool CServerData::DeathAnimationStatus( void ) const
 {
-	return deathanimationenabled;
+	return boolVals.test( BIT_PLAYDEATHANIMATION );
 }
 
-void cServerData::SetWorldAmbientSounds( SI16 value )
+void CServerData::WorldAmbientSounds( SI16 value )
 {
 	if( value < 0 )
-	{
 		ambientsounds = 0;
-		return;
-	}
-	ambientsounds = value;
+	else
+		ambientsounds = value;
 }
 
-SI16 cServerData::GetWorldAmbientSounds( void )
+SI16 CServerData::WorldAmbientSounds( void ) const
 {
 	return ambientsounds;
 }
 
-void cServerData::SetAmbientFootsteps( bool value )
+void CServerData::AmbientFootsteps( bool newVal )
 {
-	ambientfootsteps = value;
+	boolVals.set( BIT_AMBIENTFOOTSTEPS, newVal );
 }
 
-bool cServerData::GetAmbientFootsteps( void )
+bool CServerData::AmbientFootsteps( void ) const
 {
-	return ambientfootsteps;
+	return boolVals.test( BIT_AMBIENTFOOTSTEPS );
 }
 
-void cServerData::SetExternalAccountStatus( bool value )
+void CServerData::InternalAccountStatus( bool newVal )
 {
-	externalaccountsenabled = value;
+	boolVals.set( BIT_INTERNALACCOUNTS, newVal );
 }
 
-bool cServerData::GetExternalAccountStatus( void )
+bool CServerData::InternalAccountStatus( void ) const
 {
-	return externalaccountsenabled;
+	return boolVals.test( BIT_INTERNALACCOUNTS );
 }
 
-void cServerData::SetInternalAccountStatus( bool value )
+void CServerData::ShowOfflinePCs( bool newVal )
 {
-	internalaccountsenabled = value;
+	boolVals.set( BIT_SHOWOFFLINEPCS, newVal );
 }
 
-bool cServerData::GetInternalAccountStatus( void )
+bool CServerData::ShowOfflinePCs( void ) const
 {
-	return internalaccountsenabled;
+	return boolVals.test( BIT_SHOWOFFLINEPCS );
 }
 
-void cServerData::SetShowHiddenNpcStatus( bool value )
+void CServerData::RogueStatus( bool newVal )
 {
-	showhiddennpcsenabled = value;
+	boolVals.set( BIT_ROGUESTATUS, newVal );
 }
 
-bool cServerData::GetShowHiddenNpcStatus( void )
+bool CServerData::RogueStatus( void ) const
 {
-	return showhiddennpcsenabled;
+	return boolVals.test( BIT_ROGUESTATUS );
 }
 
-void cServerData::SetRogueStatus( bool value )
+void CServerData::SnoopIsCrime( bool newVal )
 {
-	roguesenabled = value;
+	boolVals.set( BIT_SNOOPISCRIME, newVal );
+}
+bool CServerData::SnoopIsCrime( void ) const
+{
+	return boolVals.test( BIT_SNOOPISCRIME );
 }
 
-bool cServerData::GetRogueStatus( void )
+void CServerData::ExtendedStartingStats( bool newVal )
 {
-	return roguesenabled;
+	boolVals.set( BIT_EXTENDEDSTARTINGSTATS, newVal );
+}
+bool CServerData::ExtendedStartingStats( void ) const
+{
+	return boolVals.test( BIT_EXTENDEDSTARTINGSTATS );
 }
 
-void cServerData::SetSnoopIsCrime( bool value )
+void CServerData::ExtendedStartingSkills( bool newVal )
 {
-	snoopiscrime = value;
+	boolVals.set( BIT_EXTENDEDSTARTINGSKILLS, newVal );
 }
-bool cServerData::GetSnoopIsCrime( void )
+bool CServerData::ExtendedStartingSkills( void ) const
 {
-	return snoopiscrime;
-}
-
-void cServerData::SetEngraveStatus( bool value )
-{
-	engraveenabled = value;
+	return boolVals.test( BIT_EXTENDEDSTARTINGSKILLS );
 }
 
-bool cServerData::GetEngraveStatus( void )
+void CServerData::PlayerPersecutionStatus( bool newVal )
 {
-	return engraveenabled;
+	boolVals.set( BIT_PERSECUTIONSTATUS, newVal );
 }
 
-void cServerData::SetUoxBotStatus( bool value )
+bool CServerData::PlayerPersecutionStatus( void ) const
 {
-	uoxbotenabled = value;
+	return boolVals.test( BIT_PERSECUTIONSTATUS );
 }
 
-bool cServerData::GetUoxBotStatus( void )
-{
-	return uoxbotenabled;
-}
-
-void cServerData::SetPlayerPersecutionStatus( bool value )
-{
-	playerpersecution = value;
-}
-
-bool cServerData::GetPlayerPersecutionStatus( void )
-{
-	return playerpersecution;
-}
-
-void cServerData::SetLagFixStatus( bool value )
-{
-	lagfixenabled = value;
-}
-
-bool cServerData::GetLagFixStatus( void )
-{
-	return lagfixenabled;
-}
-
-void cServerData::SetHtmlStatsStatus( SI16 value )
+void CServerData::HtmlStatsStatus( SI16 value )
 {
 	htmlstatusenabled = value;
 }
 
-SI16 cServerData::GetHtmlStatsStatus( void )
+SI16 CServerData::HtmlStatsStatus( void ) const
 {
 	return htmlstatusenabled;
 }
 
-void cServerData::SetSellByNameStatus( bool value )
+void CServerData::SellByNameStatus( bool newVal )
 {
-	sellbynameenabled = value;
+	boolVals.set( BIT_SELLBYNAME, newVal );
 }
 
-bool cServerData::GetSellByNameStatus( void )
+bool CServerData::SellByNameStatus( void ) const
 {
-	return sellbynameenabled;
+	return boolVals.test( BIT_SELLBYNAME );
 }
 
-void cServerData::SetSellMaxItemsStatus( SI16 value )
+void CServerData::SellMaxItemsStatus( SI16 value )
 {
 	sellmaxitems = value;
 }
 
-SI16 cServerData::GetSellMaxItemsStatus( void )
+SI16 CServerData::SellMaxItemsStatus( void ) const
 {
 	return sellmaxitems;
 }
 
-void cServerData::SetTradeSystemStatus( bool value )
+void CServerData::TradeSystemStatus( bool newVal )
 {
-	tradesystemenabled = value;
+	boolVals.set( BIT_TRADESYSSTATUS, newVal );
 }
 
-bool cServerData::GetTradeSystemStatus( void )
+bool CServerData::TradeSystemStatus( void ) const
 {
-	return tradesystemenabled;
+	return boolVals.test( BIT_TRADESYSSTATUS );
 }
 
-void cServerData::SetRankSystemStatus( bool value )
+void CServerData::RankSystemStatus( bool newVal )
 {
-	ranksystemenabled = value;
+	boolVals.set( BIT_RANKSYSSTATUS, newVal );
 }
 
-bool cServerData::GetRankSystemStatus( void )
+bool CServerData::RankSystemStatus( void ) const
 {
-	return ranksystemenabled;
+	return boolVals.test( BIT_RANKSYSSTATUS );
 }
 
-SI16 cServerData::GetNpcTileCheckStatus( void )
+void CServerData::CutScrollRequirementStatus( bool newVal )
 {
-	return npctilecheck;
+	boolVals.set( BIT_CUTSCROLLREQ, newVal );
 }
 
-void cServerData::SetNpcTileCheckStatus( SI16 value )
+bool CServerData::CutScrollRequirementStatus( void ) const
 {
-	npctilecheck = value;
+	return boolVals.test( BIT_CUTSCROLLREQ );
 }
 
-void cServerData::SetCutScrollRequirementStatus( SI16 value )
-{
-	cutscrollrequirement = value;
-}
-
-SI16 cServerData::GetCutScrollRequirementStatus( void )
-{
-	return cutscrollrequirement;
-}
-
-void cServerData::SetWildernessBankStatus( bool value )
-{
-	wildernessbankenabled = value;
-}
-
-bool cServerData::GetWildernessBankStatus( void )
-{
-	return wildernessbankenabled;
-}
-
-void cServerData::SetWildernessBankTriggerString( const char *value )
-{
-	wildernessbanktrigger = value;
-}
-
-const char *cServerData::GetWildernessBankTriggerString( void )
-{
-	return wildernessbanktrigger.c_str();
-}
-
-void cServerData::SetSystemHeartBeatStatus( bool value )
-{
-	heartbeat = value;
-}
-
-bool cServerData::GetSystemHeartBeatStatus( void )
-{
-	return heartbeat;
-}
-
-void cServerData::SetCheckItemsSpeed( R64 value )
+void CServerData::CheckItemsSpeed( R64 value )
 {
 	if( value < 0.0 )
-	{
 		checkitems = 0.0;
-		return;
-	}
-	checkitems = value;
+	else
+		checkitems = value;
 }
 
-R64 cServerData::GetCheckItemsSpeed( void )
+R64 CServerData::CheckItemsSpeed( void ) const
 {
 	return checkitems;
 }
 
-void cServerData::SetCheckNpcSpeed( R64 value )
+void CServerData::CheckBoatSpeed( R64 value )
 {
 	if( value < 0.0 )
-	{
-		checknpcs = 0.0;
-		return;
-	}
-	checknpcs = value;
-}
-
-R64 cServerData::GetCheckNpcSpeed( void )
-{
-	return checknpcs;
-}
-
-void cServerData::SetCheckBoatSpeed( R64 value )
-{
-	if( value < 0.0 )
-	{
 		checkboats = 0.0;
-		return;
-	}
-	checkboats = value;
+	else
+		checkboats = value;
 }
 
-R64 cServerData::GetCheckBoatSpeed( void )
+R64 CServerData::CheckBoatSpeed( void ) const
 {
 	return checkboats;
 }
 
-void cServerData::SetCheckNpcAISpeed( R64 value )
+void CServerData::CheckNpcAISpeed( R64 value )
 {
 	if( value < 0.0 )
-	{
 		checknpcai = 0.0;
-		return;
-	}
-	checknpcai = value;
+	else
+		checknpcai = value;
 }
 
-R64 cServerData::GetCheckNpcAISpeed( void )
+R64 CServerData::CheckNpcAISpeed( void ) const
 {
 	return checknpcai;
 }
 
-void cServerData::SetCheckSpawnRegionSpeed( R64 value )
+void CServerData::CheckSpawnRegionSpeed( R64 value )
 {
 	if( value < 0.0 )
-	{
 		checkspawnregions = 0.0;
-		return;
-	}
-	checkspawnregions = value;
+	else
+		checkspawnregions = value;
 }
 
-R64 cServerData::GetCheckSpawnRegionSpeed( void )
+R64 CServerData::CheckSpawnRegionSpeed( void ) const
 {
 	return checkspawnregions;
 }
 
-void cServerData::SetCheckMemorySpeed( R64 value )
-{
-	if( value < 0.0 )
-	{
-		checkmemory = 0.0;
-		return;
-	}
-	checkmemory=value;
-}
-
-R64 cServerData::GetCheckMemorySpeed( void )
-{
-	return checkmemory;
-}
-
-void cServerData::SetMsgBoardAdminLevel( SI16 value )
-{
-	msgadminlevel = value;
-}
-
-SI16 cServerData::GetMsgBoardAdminLevel( void )
-{
-	return msgadminlevel;
-}
-
-void cServerData::SetMsgBoardPostingLevel( SI16 value )
+void CServerData::MsgBoardPostingLevel( UI08 value )
 {
 	msgpostinglevel = value;
 }
 
-SI16 cServerData::GetMsgBoardPostingLevel( void )
+UI08 CServerData::MsgBoardPostingLevel( void ) const
 {
 	return msgpostinglevel;
 }
 
-void cServerData::SetMsgBoardPostRemovalLevel( SI16 value )
+void CServerData::MsgBoardPostRemovalLevel( UI08 value )
 {
 	msgremovallevel = value;
 }
 
-SI16 cServerData::GetMsgBoardPostRemovalLevel( void )
+UI08 CServerData::MsgBoardPostRemovalLevel( void ) const
 {
 	return msgremovallevel;
 }
 
-void cServerData::SetMsgBoardMaxMessageCount( SI16 value )
-{
-	maxmessagesallowed = value;
-}
-
-SI16 cServerData::GetMsgBoardMaxMessageCount( void )
-{
-	return maxmessagesallowed;
-}
-
-void cServerData::SetMsgBoardMaxMessageseaction( SI16 value )
-{
-	maxmessagesreaction = value;
-}
-
-SI16 cServerData::GetMsgBoardMaxMessagesReaction( void )
-{
-	return maxmessagesreaction;
-}
-
-void cServerData::SetMineCheck( SI16 value )
+void CServerData::MineCheck( UI08 value )
 {
 	minecheck = value;
 }
 
-SI16 cServerData::GetMineCheck( void )
+UI08 CServerData::MineCheck( void ) const
 {
 	return minecheck;
 }
 
-void cServerData::SetCombatDisplayHitMessage( bool value )
+void CServerData::CombatDisplayHitMessage( bool newVal )
 {
-	combatdisplayhitmessage = value;
+	boolVals.set( BIT_SHOWHITMESSAGE, newVal );
 }
 
-bool cServerData::GetCombatDisplayHitMessage( void )
+bool CServerData::CombatDisplayHitMessage( void ) const
 {
-	return combatdisplayhitmessage;
+	return boolVals.test( BIT_SHOWHITMESSAGE );
 }
 
-void cServerData::SetCombatMaxHumanAbsorbtion( SI16 value )
+void CServerData::CombatDisplayDamageNumbers( bool newVal )
 {
-	combatmaxhumanabsorbtion = value;
+	boolVals.set( BIT_SHOWDAMAGENUMBERS, newVal );
 }
 
-SI16 cServerData::GetCombatMaxHumanAbsorbtion( void )
+bool CServerData::CombatDisplayDamageNumbers( void ) const
 {
-	return combatmaxhumanabsorbtion;
+	return boolVals.test( BIT_SHOWDAMAGENUMBERS );
 }
 
-void cServerData::SetCombatMaxNonHumanAbsorbtion( SI16 value )
+void CServerData::CombatAttackSpeedFromStamina( bool newVal )
 {
-	combatmaxnonhumanabsorbtion = value;
+	boolVals.set( BIT_ATTSPEEDFROMSTAMINA, newVal );
 }
 
-SI16 cServerData::GetCombatMaxNonHumanAbsorbtion( void )
+bool CServerData::CombatAttackSpeedFromStamina( void ) const
 {
-	return combatmaxnonhumanabsorbtion;
+	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
 }
 
-void cServerData::SetCombatNPCDamageRate( SI16 value )
+void CServerData::CombatNPCDamageRate( SI16 value )
 {
 	combatnpcdamagerate = value;
 }
 
-SI16 cServerData::GetCombatNPCDamageRate( void )
+void CServerData::ServerUsingHSMultis( bool newVal )
+{
+	boolVals.set( BIT_SERVERUSINGHSMULTIS, newVal );
+}
+
+bool CServerData::ServerUsingHSMultis( void ) const
+{
+	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
+}
+
+void CServerData::ServerUsingHSTiles( bool newVal )
+{
+	boolVals.set( BIT_SERVERUSINGHSTILES, newVal );
+}
+
+bool CServerData::ServerUsingHSTiles( void ) const
+{
+	return boolVals.test( BIT_SERVERUSINGHSTILES );
+}
+
+SI16 CServerData::CombatNPCDamageRate( void ) const
 {
 	return combatnpcdamagerate;
 }
 
-void cServerData::SetCombatAttackStamina( SI16 value )
+void CServerData::CombatAttackStamina( SI16 value )
 {
 	combatattackstamina = value;
 }
 
-SI16 cServerData::GetCombatAttackStamina( void )
+SI16 CServerData::CombatAttackStamina( void ) const
 {
 	return combatattackstamina;
 }
 
-UI32 cServerData::GetSkillLevel( void )
+UI08 CServerData::SkillLevel( void ) const
 {
 	return skilllevel;
 }
-void cServerData::SetSkillLevel( UI32 value )
+void CServerData::SkillLevel( UI08 value )
 {
 	skilllevel = value;
 }
 
-void cServerData::SetEscortsEnabled( bool value )
+void CServerData::EscortsEnabled( bool newVal )
 {
-	escortsenabled = value;
+	boolVals.set( BIT_ESCORTSTATUS, newVal );
 }
-bool cServerData::GetEscortsEnabled( void )
+bool CServerData::EscortsEnabled( void ) const
 {
-	return escortsenabled;
-}
-
-void cServerData::SetEscortInitExpire( UI32 value )
-{
-	escortinitexpire = value;
-}
-UI32 cServerData::GetEscortInitExpire( void )
-{
-	return escortinitexpire;
+	return boolVals.test( BIT_ESCORTSTATUS );
 }
 
-void cServerData::SetEscortActiveExpire( UI32 value )
+void CServerData::BasicTooltipsOnly( bool newVal )
 {
-	escortactiveexpire = value;
+	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
 }
-UI32 cServerData::GetEscortActiveExpire( void )
+bool CServerData::BasicTooltipsOnly( void ) const
 {
-	return escortactiveexpire;
-}
-
-void cServerData::SetEscortDoneExpire( UI32 value )
-{
-	escortdoneexpire = value;
-}
-UI32 cServerData::GetEscortDoneExpire( void )
-{
-	return escortdoneexpire;
+	return boolVals.test( BIT_BASICTOOLTIPSONLY );
 }
 
-void cServerData::SetCombatMonstersVsAnimals( bool value )
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool GlobalItemDecay()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles on or off decay on global scale
+//o--------------------------------------------------------------------------o
+void CServerData::GlobalItemDecay( bool newVal )
 {
-	combatmonstersvsanimals = value;
+	boolVals.set( BIT_GLOBALITEMDECAY, newVal );
 }
-bool cServerData::GetCombatMonstersVsAnimals( void )
+bool CServerData::GlobalItemDecay( void ) const
 {
-	return combatmonstersvsanimals;
+	return boolVals.test( BIT_GLOBALITEMDECAY );
 }
 
-void cServerData::SetCombatAnimalsAttackChance( SI16 value )
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ScriptItemsDecayable()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for items added through scripts
+//o--------------------------------------------------------------------------o
+void CServerData::ScriptItemsDecayable( bool newVal )
 {
+	boolVals.set( BIT_SCRIPTITEMSDECAYABLE, newVal );
+}
+bool CServerData::ScriptItemsDecayable( void ) const
+{
+	return boolVals.test( BIT_SCRIPTITEMSDECAYABLE );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool BaseItemsDecayable()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for base items added
+//o--------------------------------------------------------------------------o
+void CServerData::BaseItemsDecayable( bool newVal )
+{
+	boolVals.set( BIT_BASEITEMSDECAYABLE, newVal );
+}
+bool CServerData::BaseItemsDecayable( void ) const
+{
+	return boolVals.test( BIT_BASEITEMSDECAYABLE );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ItemDecayInHouses()
+//|	Date			-	2/07/2010
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles default decay for non-locked down items in houses
+//o--------------------------------------------------------------------------o
+void CServerData::ItemDecayInHouses( bool newVal )
+{
+	boolVals.set( BIT_ITEMDECAYINHOUSES, newVal );
+}
+bool CServerData::ItemDecayInHouses( void ) const
+{
+	return boolVals.test( BIT_ITEMDECAYINHOUSES );
+}
+
+void CServerData::PaperdollGuildButton( bool newVal )
+{
+	boolVals.set( BIT_PAPERDOLLGUILDBUTTON, newVal );
+}
+bool CServerData::PaperdollGuildButton( void ) const
+{
+	return boolVals.test( BIT_PAPERDOLLGUILDBUTTON );
+}
+
+void CServerData::CombatMonstersVsAnimals( bool newVal )
+{
+	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+}
+bool CServerData::CombatMonstersVsAnimals( void ) const
+{
+	return boolVals.test( BIT_MONSTERSVSANIMALS );
+}
+
+void CServerData::CombatAnimalsAttackChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
 	combatanimalattackchance = value;
 }
-SI16 cServerData::GetCombatAnimalsAttackChance( void )
+UI08 CServerData::CombatAnimalsAttackChance( void ) const
 {
 	return combatanimalattackchance;
 }
 
-void cServerData::SetServerArmorAffectManaRegen( SI16 value )
-{
-	armoraffectregentimer = value;
-}
-SI16 cServerData::GetServerArmorAffectManaRegen( void )
-{
-	return armoraffectregentimer;
-}
-
-void cServerData::SetHungerRate( UI32 value )
-{
-	hungerrate = value;
-}
-UI32 cServerData::GetHungerRate( void )
-{
-	return hungerrate;
-}
-
-void cServerData::SetHungerDamageRateTimer( UI32 value )
-{
-	hungerdamageratetimer = value;
-}
-UI32 cServerData::GetHungerDamageRateTimer( void )
-{
-	return hungerdamageratetimer;
-}
-
-void cServerData::SetHungerDamage( SI16 value )
+void CServerData::HungerDamage( SI16 value )
 {
 	hungerdamage = value;
 }
-SI16 cServerData::GetHungerDamage( void )
+SI16 CServerData::HungerDamage( void ) const
 {
 	return hungerdamage;
 }
 
-void cServerData::SetHungerThreshold( UI32 value )
+void CServerData::PetOfflineTimeout( UI16 value )
 {
-	hungerthreshold = value;
+	petOfflineTimeout = value;
 }
-UI32 cServerData::GetHungerThreshold( void )
+UI16 CServerData::PetOfflineTimeout( void ) const
 {
-	return hungerthreshold;
-}
-
-void cServerData::SetPotionDelay( SI16 value )
-{
-	potiondelay = value;
-}
-SI16 cServerData::GetPotionDelay( void )
-{
-	return potiondelay;
+	return petOfflineTimeout;
 }
 
-void cServerData::SetBuyThreshold( SI16 value )
+void CServerData::PetHungerOffline( bool newVal )
+{
+	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
+}
+bool CServerData::PetHungerOffline( void ) const
+{
+	return boolVals.test( BIT_PETHUNGEROFFLINE );
+}
+
+void CServerData::BuyThreshold( SI16 value )
 {
 	buyThreshold = value;
 }
-SI16 cServerData::GetBuyThreshold( void )
+SI16 CServerData::BuyThreshold( void ) const
 {
 	return buyThreshold;
 }
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	void cServerData::SetCharHideWhileMounted( SI16 value )
-//|	Date					-	09/22/2002
+//|	Function/Class	-	bool CharHideWhileMounted()
+//|	Date			-	09/22/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Set the value of the config related to hiding while 
-//|									mounted.
+//|	Description		-	Toggle characters ability to hide whilst mounted
 //o--------------------------------------------------------------------------o
-//|	Returns				-	NA
-//o--------------------------------------------------------------------------o	
-void cServerData::SetCharHideWhileMounted( SI16 value )
+void CServerData::CharHideWhileMounted( bool newVal )
 {
-	if(value<0 || value>1)
-		charhidewhilemounted=0;
-	else
-		charhidewhilemounted=value;
+	boolVals.set( BIT_HIDEWHILEMOUNTED, newVal );
+}
+bool CServerData::CharHideWhileMounted( void ) const
+{
+	return boolVals.test( BIT_HIDEWHILEMOUNTED );
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	SI16 cServerData::GetCharHideWhileMounted( void )
-//|	Date					-	09/22/2002
-//|	Developer(s)	-	EviLDeD
+//|	Function/Class	-	R32 WeightPerStr()
+//|	Date			-	3/12/2003
+//|	Developer(s)	-	Zane
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Get the value of the config related to hiding while 
-//|									mounted.
+//|	Purpose			-	Amount of Weight one can hold per point of STR
 //o--------------------------------------------------------------------------o
-//|	Returns				-	[SI16] containing the value of the member.
-//o--------------------------------------------------------------------------o	
-SI16 cServerData::GetCharHideWhileMounted( void )
+R32 CServerData::WeightPerStr( void ) const
 {
-	if(charhidewhilemounted<0 || charhidewhilemounted>1)
-		return 0;
-	return charhidewhilemounted;
+	return weightPerSTR;
+}
+void CServerData::WeightPerStr( R32 newVal )
+{
+	weightPerSTR = newVal;
 }
 
-void cServerData::SetBackupRatio( SI16 value )
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ServerOverloadPackets()
+//|	Date			-	11/20/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Enables / Disables Packet handling in JS
+//o--------------------------------------------------------------------------o
+bool CServerData::ServerOverloadPackets( void ) const
+{
+	return boolVals.test( BIT_OVERLOADPACKETS );
+}
+void CServerData::ServerOverloadPackets( bool newVal )
+{
+	boolVals.set( BIT_OVERLOADPACKETS, newVal );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool ArmorAffectManaRegen()
+//|	Date			-	3/20/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not armor affects mana regeneration
+//o--------------------------------------------------------------------------o
+bool CServerData::ArmorAffectManaRegen( void ) const
+{
+	return boolVals.test( BIT_ARMORAFFECTMANAREGEN );
+}
+void CServerData::ArmorAffectManaRegen( bool newVal )
+{
+	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool AdvancedPathfinding()
+//|	Date			-	7/16/2005
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not we use the A* Pathfinding routine
+//o--------------------------------------------------------------------------o
+void CServerData::AdvancedPathfinding( bool newVal )
+{
+	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
+}
+bool CServerData::AdvancedPathfinding( void ) const
+{
+	return boolVals.test( BIT_ADVANCEDPATHFIND );
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool MapIsUOPWrapped()
+//|	Date			-	3/14/2012
+//|	Developer(s)	-	Xuri
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not mapfiles are uop-wrapped
+//o--------------------------------------------------------------------------o
+void CServerData::MapIsUOPWrapped( UI08 mapNum, bool newVal )
+{
+	switch( mapNum )
+	{
+	case 0: boolVals.set( BIT_MAP0ISUOPWRAPPED, newVal ); break;
+	case 1: boolVals.set( BIT_MAP1ISUOPWRAPPED, newVal ); break;
+	case 2: boolVals.set( BIT_MAP2ISUOPWRAPPED, newVal ); break;
+	case 3: boolVals.set( BIT_MAP3ISUOPWRAPPED, newVal ); break;
+	case 4: boolVals.set( BIT_MAP4ISUOPWRAPPED, newVal ); break;
+	case 5: boolVals.set( BIT_MAP5ISUOPWRAPPED, newVal ); break;
+	default: break;
+	}
+}
+bool CServerData::MapIsUOPWrapped( UI08 mapNum ) const
+{
+	switch( mapNum )
+	{
+	case 0: return boolVals.test( BIT_MAP0ISUOPWRAPPED );
+	case 1: return boolVals.test( BIT_MAP1ISUOPWRAPPED );
+	case 2: return boolVals.test( BIT_MAP2ISUOPWRAPPED );
+	case 3: return boolVals.test( BIT_MAP3ISUOPWRAPPED );
+	case 4: return boolVals.test( BIT_MAP4ISUOPWRAPPED );
+	case 5: return boolVals.test( BIT_MAP5ISUOPWRAPPED );
+	default: return false; break;
+	}
+}
+
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	bool LootingIsCrime()
+//|	Date			-	4/09/2007
+//|	Developer(s)	-	grimson
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Purpose			-	Toggles whether or not looting of corpses can be a crime
+//o--------------------------------------------------------------------------o
+void CServerData::LootingIsCrime( bool newVal )
+{
+	boolVals.set( BIT_LOOTINGISCRIME, newVal );
+}
+bool CServerData::LootingIsCrime( void ) const
+{
+	return boolVals.test( BIT_LOOTINGISCRIME );
+}
+
+void CServerData::BackupRatio( SI16 value )
 {
 	backupRatio = value;
 }
-SI16 cServerData::GetBackupRatio( void )
+SI16 CServerData::BackupRatio( void ) const
 {
 	return backupRatio;
 }
 
-void cServerData::ResetDefaults( void )
-{
-	resettingDefaults = true;
-	port = 2593;
-	saveMode = 0;
-	serverList.resize( 1 );		// Set the initial count to hold one server. 
-
-	SetPotionDelay( POTIONDELAY );
-	SetServerMoon( 0, 0 );
-	SetServerMoon( 1, 0 );
-	SetServerMoonUpdate( 0, 0 );
-	SetServerMoonUpdate( 1, 0 );
-	SetDungeonLightLevel( 3 );
-	SetWorldFixedLightLevel( 0 );
-	SetWorldLightCurrentLevel( 0 );
-	SetWorldLightBrightLevel( 0 );
-	SetWorldLightDarkLevel( 5 );
-
-	SetServerTimeDay( 0 );
-	SetServerTimeHours( 0 );
-	SetServerTimeMinutes( 0 );
-	SetServerTimeSeconds( 0 );
-	SetServerTimeAMPM( 0 );
-
-	SetServerCrashProtection( 1 );
-	SetInternalAccountStatus( false );
-	SetCombatWrestlingSpeed( 8 );
-	SetCombatMaxMeleeDamage( 120 );
-	SetCombatMaxSpellDamage( 120 );
-	SetCombatMaxPoisoningDistance( 2 );
-	SetCombatMaxRange( 10 );
-	SetCombatMaxSpellRange( 10 );
-	SetCombatCriticalsEnabled( true );
-	SetCombatExplodeDelay( 0 );
-	SetWildernessBankTriggerString( SPECIALBANKTRIGGER );
-	SetWildernessBankStatus( false );
-	
-	// load defaults values
-	SetSystemTimer( SHOP_SPAWN, 300 );
-	SetSystemTimer( POISON, POISONTIMER );
-	SetPotionDelay( POTIONDELAY );
-	SetSystemTimer( DECAY, DECAYTIMER );
-	SetServerSkillCap( SKILLCAP );
-	SetServerStatCap( STATCAP );
-	SetSystemTimer( PLAYER_CORPSE, 3 );
-	SetCorpseLootDecay( true );
-	SetServerAntiLagSavesPerLoop( 0 );
-	
-	SetSystemTimer( INVISIBILITY, INVISTIMER );
-	SetHungerRate( HUNGERRATE );
-	SetHungerDamageRateTimer( HUNGERDAMAGERATE );
-	SetHungerDamage( HUNGERDAMAGE );
-	SetHungerThreshold( 3 );
-	
-	SetServerSkillDelay( SKILLDELAY );
-	SetSystemTimer( OBJECT_USAGE, OBJECTDELAY );
-	SetSystemTimer( HITPOINT_REGEN, REGENRATE1 );
-	SetSystemTimer( STAMINA_REGEN, REGENRATE2 );
-	SetSystemTimer( MANA_REGEN, REGENRATE3 );
-	SetSystemTimer( ARMORAFFECTMANA_REGEN, 0 );
-	SetSystemTimer( GATE, GATETIMER );
-	SetMineCheck( 2 );
-	SetDeathAnimationStatus( true );
-	SetShowHiddenNpcStatus( true );
-	SetCombatDisplayHitMessage( true );
-	SetCombatAttackStamina( ATTACKSTAMINA );
-	SetNPCTrainingStatus( true );
-
-	SetCombatMonstersVsAnimals( true );
-	SetCombatAnimalsAttackChance( ANIMALS_ATTACK_CHANCE );
-	SetCombatAnimalsGuarded( false );
-	SetCombatNPCBaseFleeAt( NPC_BASE_FLEEAT );
-	SetCombatNPCBaseReattackAt( NPC_BASE_REATTACKAT );
-	SetCombatMaxHumanAbsorbtion( MAX_ABSORBTION );
-	SetCombatMaxNonHumanAbsorbtion( MAX_NON_HUMAN_ABSORBTION );
-	SetShootOnAnimalBack( false );
-	SetSellByNameStatus( false );
-	SetSkillLevel( SKILLLEVEL );
-	SetSellMaxItemsStatus( SELLMAXITEM );
-	SetCombatNPCDamageRate( NPC_DAMAGE_RATE );
-	SetRankSystemStatus( true );
-
-#if defined(__unix__)
-	char curWorkingDir[1024], tempStuff[1024];
-	GetCurrentDirectory( 1024, curWorkingDir );
-	SetRootDirectory( curWorkingDir );
-	sprintf( tempStuff, "%s/muldata/", curWorkingDir );
-	SetDataDirectory( tempStuff );
-	sprintf( tempStuff, "%s/dfndata/", curWorkingDir );
-	SetDefsDirectory( tempStuff );
-	sprintf( tempStuff, "%s/accounts/", curWorkingDir );
-	SetAccountsDirectory( tempStuff );
-	SetAccessDirectory( tempStuff );
-	sprintf( tempStuff, "%s/scripts/", curWorkingDir );
-	SetScriptsDirectory( tempStuff );
-	sprintf( tempStuff, "%s/archives/", curWorkingDir );
-	SetBackupDirectory( tempStuff );
-	sprintf( tempStuff, "%s/msgboards/", curWorkingDir );
-	SetMsgBoardDirectory( tempStuff );
-	sprintf( tempStuff, "%s/shared/", curWorkingDir );
-	SetSharedDirectory( tempStuff );
-	sprintf( tempStuff, "%s/html/", curWorkingDir );
-	SetHTMLDirectory( tempStuff );
-	sprintf( tempStuff, "%s/books/", curWorkingDir );
-	SetBooksDirectory( tempStuff );
-#else
-	SetRootDirectory( "./" );
-	SetDataDirectory( "./muldata/" );
-	SetDefsDirectory( "./dfndata/" );
-	SetAccountsDirectory( "./accounts/" );
-	SetAccessDirectory( "./accounts/" );
-	SetScriptsDirectory( "./scripts/" );
-	SetBackupDirectory( "./archives/" );
-	SetMsgBoardDirectory( "./msgboards/" );
-	SetSharedDirectory( "./shared/" );
-	SetHTMLDirectory( "./html/" );
-	SetBooksDirectory( "./books/" );
-#endif
-
-	SetBuyThreshold( 2000 );
-	SetGuardStatus( true );
-	SetServerAnnounceSaves( true );
-	SetExternalAccountStatus( false );
-	SetWorldAmbientSounds( 5 );
-	SetServerJoinPartAnnouncements( true );
-	SetServerConsoleLog( 1 );
-	SetRogueStatus( true );
-	SetEngraveStatus( true );
-	SetSystemTimer( WEATHER, 60 );
-	SetSystemTimer( LOGIN_TIMEOUT, 300 );
-	SetBackupRatio( 5 );
-	SetUoxBotStatus( false );
-	SetMaxStealthMovement( 10 );
-	SetMaxStaminaMovement( 15 );
-	SetSnoopIsCrime( false );
-	
-	SetCheckBoatSpeed( 0.75 );
-	SetCheckNpcAISpeed( 0.5 );
-	SetCutScrollRequirementStatus( true );
-	SetPlayerPersecutionStatus( true );
-	SetHtmlStatsStatus( -1 );
-	
-	SetMsgBoardPostingLevel( 0 );
-	SetMsgBoardPostRemovalLevel( 0 );
-	// No replacement I can see
-	SetMsgBoardKeepMsgs( 30 );           // Dupois - Added Dec 20, 1999 for message boards (30 Days)
-	SetEscortsEnabled( true );
-	SetEscortInitExpire( 86400 );
-	SetEscortActiveExpire( 1800 );
-	SetEscortDoneExpire( 1800 );
-	SetAmbientFootsteps( false );
-	SetServerCommandPrefix( '\'' );
-	SetStatAdvanceModifier( 20 );
-	
-	SetLagFixStatus( false );
-	SetCheckSpawnRegionSpeed( 30 );
-	SetCheckItemsSpeed( 1.5 );
-	SetCheckMemorySpeed( 30 );
-	SetCheckNpcSpeed( 2 );
-	SetNPCSpeed( 1.0 );
-	SetNiceness( 2 );
-	SetNpcTileCheckStatus( 24 );
-	SetAccountFlushTimer( 0.0 );
-	SetNPCSpeed( NPCSPEED );
-	
-	SetResLogs( 3 );
-	SetResLogTime( 600 );
-	SetResLogArea( 10 );
-	SetResOre( 10 );
-	SetResOreTime( 600 );
-	SetResOreArea( 10 );
-	//REPSYS
-	SetRepCrimTime( 120 );
-	SetRepMaxKills( 4 );
-	SetRepMurderDecay( 60 );
-	//RepSys ---^
-	SetTrackingBaseRange( TRACKINGRANGE );
-	SetTrackingMaxTargets( MAXTRACKINGTARGETS );
-	SetTrackingBaseTimer( TRACKINGTIMER );
-	SetTrackingRedisplayTime( TRACKINGDISPLAYTIME );
-	SetBeggingRange( BEGGINGRANGE );
-
-	SetFishingBaseTime( FISHINGTIMEBASE );
-	SetFishingRandomTime( FISHINGTIMER );
-	SetSpiritSpeakTimer( SPIRITSPEAKTIMER );
-
-	// Abaddon, March 21, 2000
-
-	SetTitleColour( 0 );
-	SetLeftTextColour( 0 );
-	SetRightTextColour( 0 );
-	SetButtonCancel( 4017 );
-	SetButtonLeft( 4014 );
-	SetButtonRight( 4005 );
-	SetBackgroundPic( 2600 );
-
-	SetTownNumSecsPollOpen( 3600 );	// one hour
-	SetTownNumSecsAsMayor( 36000 );	// 10 hours as mayor
-	SetTownTaxPeriod( 1800 );			// taxed every 30 minutes
-	SetTownGuardPayment( 3600 );		// guards paid every hour
-
-	SetServerStartGold( 1000 );
-	SetServerStartPrivs( 0, 0 );
-	SetServerStartPrivs( 1, 0 );
-	SetServerStatDelay( 5 );
-	SetSystemTimer( CORPSE_DECAY, PLAYERCORPSEDECAYMULTIPLIER );
-	SetSystemTimer( LOOT_DECAY, 0 );
-	SetSystemTimer( BEGGING_T, 3 );
-	ServerScriptSectionHeader( false );	// set to false to do DFN style lookups
-	resettingDefaults = false;
-	PostLoadDefaults();	
-}
-cServerData::cServerData( void )
-{
-	ResetDefaults();
-}
-cServerData::~cServerData()
-{
-}
-
-void cServerData::SetCombatWrestlingSpeed( SI16 value )
-{
-	combatwrestlingspeed = value;
-}
-
-SI16 cServerData::GetCombatWrestlingSpeed( void )
-{
-	return combatwrestlingspeed;
-}
-
-void cServerData::SetCombatMaxMeleeDamage( SI16 value )
-{
-	combatmaxmeleedamage = value;
-}
-
-SI16 cServerData::GetCombatMaxMeleeDamage( void )
-{
-	return combatmaxmeleedamage;
-}
-
-void cServerData::SetCombatMaxPoisoningDistance( SI16 value )
-{
-	combatmaxpoisoningdistance = value;
-}
-SI16 cServerData::GetCombatMaxPoisoningDistance( void )
-{
-	return combatmaxpoisoningdistance;
-}
-
-void cServerData::SetCombatMaxRange( SI16 value )
+void CServerData::CombatMaxRange( SI16 value )
 {
 	combatmaxrange = value;
 }
-SI16 cServerData::GetCombatMaxRange( void )
+SI16 CServerData::CombatMaxRange( void ) const
 {
 	return combatmaxrange;
 }
 
-void cServerData::SetCombatMaxSpellRange( SI16 value )
+void CServerData::CombatArcherRange( SI16 value )
+{
+	combatarcherrange = value;
+}
+SI16 CServerData::CombatArcherRange( void ) const
+{
+	return combatarcherrange;
+}
+
+void CServerData::CombatMaxSpellRange( SI16 value )
 {
 	combatmaxspellrange = value;
 }
-SI16 cServerData::GetCombatMaxSpellRange( void )
+SI16 CServerData::CombatMaxSpellRange( void ) const
 {
 	return combatmaxspellrange;
 }
 
-void cServerData::SetCombatCriticalsEnabled( bool value )
-{
-	combatcriticalsenabled = value;
-}
-bool cServerData::GetCombatCriticalsEnabled( void )
-{
-	return combatcriticalsenabled;
-}
-
-void cServerData::SetCombatExplodeDelay( R32 value )
+void CServerData::CombatExplodeDelay( UI16 value )
 {
 	combatExplodeDelay = value;
 }
-R32 cServerData::GetCombatExplodeDelay( void )
+UI16 CServerData::CombatExplodeDelay( void ) const
 {
 	return combatExplodeDelay;
 }
 
-void cServerData::SetCombatAnimalsGuarded( bool value )
+void CServerData::CombatAnimalsGuarded( bool newVal )
 {
-	combatanimalsguarded = value;
+	boolVals.set( BIT_ANIMALSGUARDED, newVal );
 }
-bool cServerData::GetCombatAnimalsGuarded( void )
+bool CServerData::CombatAnimalsGuarded( void ) const
 {
-	return combatanimalsguarded;
+	return boolVals.test( BIT_ANIMALSGUARDED );
 }
 
-void cServerData::SetCombatNPCBaseFleeAt( SI16 value )
+void CServerData::CombatNPCBaseFleeAt( SI16 value )
 {
 	combatnpcbasefleeat = value;
 }
-SI16 cServerData::GetCombatNPCBaseFleeAt( void )
+SI16 CServerData::CombatNPCBaseFleeAt( void ) const
 {
 	return combatnpcbasefleeat;
 }
 
-void cServerData::SetCombatNPCBaseReattackAt( SI16 value )
+void CServerData::CombatNPCBaseReattackAt( SI16 value )
 {
 	combatnpcbasereattackat = value;
 }
-SI16 cServerData::GetCombatNPCBaseReattackAt( void )
+SI16 CServerData::CombatNPCBaseReattackAt( void ) const
 {
 	return combatnpcbasereattackat;
 }
 
-void cServerData::SetNPCSpeed( R64 value )
+void CServerData::NPCWalkingSpeed( R32 value )
 {
-	npcSpeed = value;
+	npcWalkingSpeed = value;
 }
-R64 cServerData::GetNPCSpeed( void )
+R32 CServerData::NPCWalkingSpeed( void ) const
 {
-	return npcSpeed;
-}
-
-void cServerData::SetNiceness( SI16 value )
-{
-	niceness = value;
-}
-SI16 cServerData::GetNiceness( void )
-{
-	return niceness;
+	return npcWalkingSpeed;
 }
 
-void cServerData::SetTitleColour( UI16 value )
+void CServerData::NPCRunningSpeed( R32 value )
+{
+	npcRunningSpeed = value;
+}
+R32 CServerData::NPCRunningSpeed( void ) const
+{
+	return npcRunningSpeed;
+}
+
+void CServerData::NPCFleeingSpeed( R32 value )
+{
+	npcFleeingSpeed = value;
+}
+R32 CServerData::NPCFleeingSpeed( void ) const
+{
+	return npcFleeingSpeed;
+}
+
+void CServerData::TitleColour( UI16 value )
 {
 	titleColour = value;
 }
-UI16 cServerData::GetTitleColour( void )
+UI16 CServerData::TitleColour( void ) const
 {
 	return titleColour;
 }
 
-void cServerData::SetLeftTextColour( UI16 value )
+void CServerData::LeftTextColour( UI16 value )
 {
 	leftTextColour = value;
 }
-UI16 cServerData::GetLeftTextColour( void )
+UI16 CServerData::LeftTextColour( void ) const
 {
 	return leftTextColour;
 }
 
-void cServerData::SetRightTextColour( UI16 value )
+void CServerData::RightTextColour( UI16 value )
 {
 	rightTextColour = value;
 }
-UI16 cServerData::GetRightTextColour( void )
+UI16 CServerData::RightTextColour( void ) const
 {
 	return rightTextColour;
 }
 
-void cServerData::SetButtonCancel( UI16 value )
+void CServerData::ButtonCancel( UI16 value )
 {
 	buttonCancel = value;
 }
-UI16 cServerData::GetButtonCancel( void )
+UI16 CServerData::ButtonCancel( void ) const
 {
 	return buttonCancel;
 }
 
-void cServerData::SetButtonLeft( UI16 value )
+void CServerData::ButtonLeft( UI16 value )
 {
 	buttonLeft = value;
 }
-UI16 cServerData::GetButtonLeft( void )
+UI16 CServerData::ButtonLeft( void ) const
 {
 	return buttonLeft;
 }
 
-void cServerData::SetButtonRight( UI16 value )
+void CServerData::ButtonRight( UI16 value )
 {
 	buttonRight = value;
 }
-UI16 cServerData::GetButtonRight( void )
+UI16 CServerData::ButtonRight( void ) const
 {
 	return buttonRight;
 }
 
-void cServerData::SetBackgroundPic( UI16 value )
+void CServerData::BackgroundPic( UI16 value )
 {
 	backgroundPic = value;
 }
-UI16 cServerData::GetBackgroundPic( void )
+UI16 CServerData::BackgroundPic( void ) const
 {
 	return backgroundPic;
 }
 
-void cServerData::SetTownNumSecsPollOpen( long value )
+void CServerData::TownNumSecsPollOpen( UI32 value )
 {
 	numSecsPollOpen = value;
 }
-long cServerData::GetTownNumSecsPollOpen( void )
+UI32 CServerData::TownNumSecsPollOpen( void ) const
 {
 	return numSecsPollOpen;
 }
 
-void cServerData::SetTownNumSecsAsMayor( long value )
+void CServerData::TownNumSecsAsMayor( UI32 value )
 {
 	numSecsAsMayor = value;
 }
-long cServerData::GetTownNumSecsAsMayor( void )
+UI32 CServerData::TownNumSecsAsMayor( void ) const
 {
 	return numSecsAsMayor;
 }
 
-void cServerData::SetTownTaxPeriod( long value )
+void CServerData::TownTaxPeriod( UI32 value )
 {
 	taxPeriod = value;
 }
-long cServerData::GetTownTaxPeriod( void )
+UI32 CServerData::TownTaxPeriod( void ) const
 {
 	return taxPeriod;
 }
 
-void cServerData::SetTownGuardPayment( long value )
+void CServerData::TownGuardPayment( UI32 value )
 {
 	guardPayment = value;
 }
-long cServerData::GetTownGuardPayment( void )
+UI32 CServerData::TownGuardPayment( void ) const
 {
 	return guardPayment;
 }
 
-void cServerData::SetRepMurderDecay( long value )
-{
-	murderdecaytimer = value;
-}
-long cServerData::GetRepMurderDecay( void )
-{
-	return murderdecaytimer;
-}
-
-void cServerData::SetRepMaxKills( int value )
+void CServerData::RepMaxKills( UI16 value )
 {
 	maxmurdersallowed = value;
 }
-int cServerData::GetRepMaxKills( void )
+UI16 CServerData::RepMaxKills( void ) const
 {
 	return maxmurdersallowed;
 }
 
-void cServerData::SetRepCrimTime( int value )
-{
-	criminaldecaytimer = value;
-}
-int cServerData::GetRepCrimTime( void )
-{
-	return criminaldecaytimer;
-}
-
-void cServerData::SetResLogs( UI32 value )
+void CServerData::ResLogs( SI16 value )
 {
 	logsperarea = value;
 }
-UI32 cServerData::GetResLogs( void )
+SI16 CServerData::ResLogs( void ) const
 {
 	return logsperarea;
 }
 
-void cServerData::SetResLogTime( UI32 value )
+void CServerData::ResLogTime( UI16 value )
 {
 	logsrespawntimer = value;
 }
-UI32 cServerData::GetResLogTime( void )
+UI16 CServerData::ResLogTime( void ) const
 {
 	return logsrespawntimer;
 }
 
-void cServerData::SetResLogArea( UI32 value )
+void CServerData::ResLogArea( UI16 value )
 {
+	if( value < 10 )
+		value = 10;
 	logsrespawnarea = value;
 }
-UI32 cServerData::GetResLogArea( void )
+UI16 CServerData::ResLogArea( void ) const
 {
 	return logsrespawnarea;
 }
 
-void cServerData::SetResOre( UI32 value )
+void CServerData::ResOre( SI16 value )
 {
 	oreperarea = value;
 }
-UI32 cServerData::GetResOre( void )
+SI16 CServerData::ResOre( void ) const
 {
 	return oreperarea;
 }
 
-void cServerData::SetResOreTime( UI32 value )
+void CServerData::ResOreTime( UI16 value )
 {
 	orerespawntimer = value;
 }
-UI32 cServerData::GetResOreTime( void )
+UI16 CServerData::ResOreTime( void ) const
 {
 	return orerespawntimer;
 }
 
-void cServerData::SetResOreArea( UI32 value )
+void CServerData::ResOreArea( UI16 value )
 {
+	if( value < 10 )
+		value = 10;
 	orerespawnarea = value;
 }
-UI32 cServerData::GetResOreArea( void )
+UI16 CServerData::ResOreArea( void ) const
 {
 	return orerespawnarea;
 }
 
-void cServerData::SetAccountFlushTimer( R64 value )
+void CServerData::AccountFlushTimer( R64 value )
 {
 	flushTime = value;
 }
-R64 cServerData::GetAccountFlushTimer( void )
+R64 CServerData::AccountFlushTimer( void ) const
 {
 	return flushTime;
 }
 
+void CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal )
+{
+	clientFeatures.set( bitNum, nVal );
+}
+
+bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
+{
+	return clientFeatures.test( bitNum );
+}
+
+UI32 CServerData::GetClientFeatures( void ) const
+{
+	return static_cast<UI32>(clientFeatures.to_ulong());
+}
+
+void CServerData::SetClientFeatures( UI32 nVal )
+{
+	clientFeatures = nVal;
+}
+
+
+void CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal )
+{
+	serverFeatures.set( bitNum, nVal );
+}
+
+bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
+{
+	return serverFeatures.test( bitNum );
+}
+
+size_t CServerData::GetServerFeatures( void ) const
+{
+	return serverFeatures.to_ulong();
+}
+
+void CServerData::SetServerFeatures( size_t nVal )
+{
+	serverFeatures = nVal;
+}
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	bool cServerData::save( void )
-//|	Date					-	02/21/2002
+//|	Function/Class	-	bool CServerData::save( void )
+//|	Date			-	02/21/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
 //|	Description		-	Save the uox.ini out. This is the default save
 //o--------------------------------------------------------------------------o
-//|	Returns				- [TRUE] If successfull
+//|	Returns			- [TRUE] If successfull
 //o--------------------------------------------------------------------------o
-bool cServerData::save( void )
+bool CServerData::save( void )
 {
-	std::string s = GetRootDirectory();
-	s += "/uox.ini";
-	return save( s.c_str() );
+	std::string s = Directory( CSDDP_ROOT );
+	s += "uox.ini";
+	return save( s );
 }
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	bool cServerData::save( const char *filename )
-//|	Date					-	Unknown
+//|	Function/Class	-	bool CServerData::save( std::string filename )
+//|	Date			-	Unknown
 //|	Developer(s)	-	EviLDeD/Unknown
 //|	Company/Team	-	UOX3 DevTeam
 //|	Status				-	
@@ -1862,2117 +1673,1356 @@ bool cServerData::save( void )
 //|									
 //|	Modification	-	02/27/2002	-	Made sure that ALL directory paths are
 //|									written out to the ini file.
+//|									
+//|	Modification	-	04/03/2004	-	Added new tags to the system group
+//|									 
+//|										SERVERNAME		: Name of the server.
+//|										NETRCVTIMEOUT	: Timeout in seconds for recieving data
+//|										NETSNDTIMEOUT	: Timeout in seconds for sending data
+//|										UOGENABLED		: Does this server respond to UOGInfo Requests?
+//|																		0-No 1-Yes
+//|									
+//|	Modification	-	04/03/2004	-	Added new group [facet] with these tags 
+//|									
+//|										USEFACETSAVES	: Does the server seperate facet data?
+//|																		0-No : All data will be saved into the shared folder
+//|																		1-Yes: Each Facet will save its data into its own shared folder
+//|										MAP0-MAP3			:	Format= MAPx=Mapname,MapAccess
+//|									
+//|																		Where Mapname is the name of the map and
+//|																		MapAccess the set of bit flags that allow/deny features and map access
+//|									
 //o--------------------------------------------------------------------------o
 //|	Returns				-
 //o--------------------------------------------------------------------------o
-bool cServerData::save( const char *filename )
+bool CServerData::save( std::string filename )
 {
+	bool rvalue = false;
 	std::ofstream ofsOutput;
-	ofsOutput.open( filename, std::ios::out );
-	if( !ofsOutput.is_open() )
+	ofsOutput.open( filename.c_str(), std::ios::out );
+	if( ofsOutput.is_open() )
 	{
-		Console.Error( 1, "Unable to open file %s for writing", filename );
-		return false;
+		ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 1 ) << '\n' << "//================================" << '\n' << '\n';
+		ofsOutput << "[system]" << '\n' << "{" << '\n';
+		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
+		ofsOutput << "NETSNDTIMEOUT=" << "3" << '\n';
+		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
+		ofsOutput << "CONSOLELOG=" << static_cast<UI16>(ServerConsoleLogStatus()) << '\n';
+		ofsOutput << "CRASHPROTECTION=" << static_cast<UI16>(ServerCrashProtectionStatus()) << '\n';
+		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
+		ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
+		ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
+		ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus()?1:0) << '\n';
+		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
+		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
+		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
+		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
+		ofsOutput << "}" << '\n' << '\n';
+
+		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
+		ofsOutput << "CLIENTSUPPORT4000=" << (ClientSupport4000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT5000=" << (ClientSupport5000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT6000=" << (ClientSupport6000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT6050=" << (ClientSupport6050()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT7000=" << (ClientSupport7000()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT7090=" << (ClientSupport7090()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70160=" << (ClientSupport70160()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70240=" << (ClientSupport70240()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
+
+		std::vector< physicalServer >::iterator slIter;
+		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
+		{
+			ofsOutput << "SERVERLIST=" << slIter->getName() << ",";
+			if( !slIter->getDomain().empty() )
+				ofsOutput << slIter->getDomain() << ",";
+			else
+				ofsOutput << slIter->getIP() << ",";
+			ofsOutput << slIter->getPort() << '\n';
+		}
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
+		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
+		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
+		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats()?1:0) << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills()?1:0) << '\n';
+		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
+		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
+		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << '\n';
+		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
+		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
+		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
+		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
+		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
+		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << '\n';
+		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << '\n';
+		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << '\n';
+		ofsOutput << "POISONTIMER=" << SystemTimer( tSERVER_POISON ) << '\n';
+		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << '\n';
+		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << '\n';
+		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << '\n';
+		ofsOutput << "MANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << '\n';
+		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << '\n';
+		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
+		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
+		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
+		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
+		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
+		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
+		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
+		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
+		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
+		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
+		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
+		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
+		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
+		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
+		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
+		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
+		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
+		ofsOutput << "DEATHANIMATION=" << (DeathAnimationStatus()?1:0) << '\n';
+		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
+		ofsOutput << "AMBIENTFOOTSTEPS=" << (AmbientFootsteps()?1:0) << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << (InternalAccountStatus()?1:0) << '\n';
+		ofsOutput << "SHOWOFFLINEPCS=" << (ShowOfflinePCs()?1:0) << '\n';
+		ofsOutput << "ROGUESENABLED=" << (RogueStatus()?1:0) << '\n';
+		ofsOutput << "PLAYERPERSECUTION=" << (PlayerPersecutionStatus()?1:0) << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
+		ofsOutput << "SELLBYNAME=" << (SellByNameStatus()?1:0) << '\n';
+		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
+		ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus()?1:0) << '\n';
+		ofsOutput << "RANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
+		ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
+		ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << '\n';
+		ofsOutput << "HIDEWILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
+		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << '\n';
+		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
+		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
+		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
+		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
+		ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << '\n';
+		ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
+		ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
+		ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << '\n';
+		ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
+		ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
+		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
+		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
+		ofsOutput << "PAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton()?1:0) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
+		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
+		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << '\n';
+		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
+		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
+		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
+		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
+		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
+		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
+		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << '\n';
+		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
+		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
+		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
+		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
+		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
+		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
+		ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
+		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
+		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
+		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
+		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
+		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
+		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
+		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
+		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
+		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
+		ofsOutput << "ORERESPAWNAREA=" << ResOreArea() << '\n';
+		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
+		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
+		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
+		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
+		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
+		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
+		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
+		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
+		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << '\n';
+		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << '\n';
+		ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers()?1:0) << '\n';
+		ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << '\n';
+		ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << '\n';
+		ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << '\n';
+		ofsOutput << "NPCDAMAGERATE=" << CombatNPCDamageRate() << '\n';
+		ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
+		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
+		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
+		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
+		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
+		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
+		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
+			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].clilocDesc << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
+		ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
+		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
+		ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
+		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
+		ofsOutput << "RIGHTTEXTCOLOUR=" << RightTextColour() << '\n';
+		ofsOutput << "BUTTONCANCEL=" << ButtonCancel() << '\n';
+		ofsOutput << "BUTTONLEFT=" << ButtonLeft() << '\n';
+		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
+		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
+		ofsOutput << "}" << '\n';
+		
+		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
+		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
+		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
+		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
+		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "}" << '\n';
+		
+#if P_ODBC == 1
+		ODBCManager::getSingleton().SaveSettings( ofsOutput );
+#endif
+		
+		ofsOutput.close();
+		rvalue = true;
 	}
-	ofsOutput << "// UOX Initialization File. V" << MAKEWORD( 2, 0 ) << std::endl << "//================================" << std::endl << std::endl;
-	ofsOutput << "[system]" << std::endl;
-	ofsOutput << "PORT=" << GetServerPort() << std::endl;
-	ofsOutput << "SAVEMODE=" << ( SaveMode() == 1 ? "BINARY" : "ASCII" ) << std::endl;
-	ofsOutput << "CONSOLELOG=" << GetServerConsoleLogStatus() << std::endl;
-	ofsOutput << "CRASHPROTECTION=" << GetServerCrashProtectionStatus() << std::endl;
-	ofsOutput << "COMMANDPREFIX=" << GetServerCommandPrefix() << std::endl;
-	ofsOutput << "ANNOUNCEWORLDSAVES=" << (GetServerAnnounceSavesStatus()?1:0) << std::endl;
-	ofsOutput << "JOINPARTMSGS=" << (GetServerJoinPartAnnouncementsStatus()?1:0) << std::endl;
-	ofsOutput << "MULCACHING=" << (GetServerMulCachingStatus()?1:0) << std::endl;
-	ofsOutput << "BACKUPSENABLED=" << GetServerBackupStatus() << std::endl;
-	ofsOutput << "BACKUPSAVERATIO=" << GetBackupRatio() << std::endl;
-	ofsOutput << "SAVESTIMER=" << GetServerSavesTimerStatus() << std::endl;
-	ofsOutput << "MAINTHREADSLEEP=" << GetNiceness()  << std::endl;
-	ofsOutput << "ACCOUNTISOLATION=" << "1" /*GetAccountsIsolationLevel()*/ << std::endl;
-	ofsOutput << std::endl << "[play server list]" << std::endl;
-
-	for( UI32 cnt = 0; cnt < serverList.size(); cnt++ )
-	{
-		ofsOutput << "SERVERLIST=" << serverList[cnt].getName() << ",";
-		if( strlen( serverList[cnt].getDomain().c_str() ) > 0 )
-			ofsOutput << serverList[cnt].getDomain() << ",";
-		else
-			ofsOutput << serverList[cnt].getIP() << ",";
-		ofsOutput << serverList[cnt].getPort() << std::endl;
-	}
-
-	ofsOutput << std::endl << "[network server list]" << std::endl;
-
-	ofsOutput << std::endl << "[skill & stats]" << std::endl;
-	ofsOutput << "SKILLLEVEL=" << GetSkillLevel() << std::endl;
-	ofsOutput << "SKILLCAP=" << GetServerSkillCapStatus() << std::endl;
-	ofsOutput << "SKILLDELAY=" << GetServerSkillDelayStatus() << std::endl;
-	ofsOutput << "STATCAP=" << GetServerStatCapStatus() << std::endl;
-	ofsOutput << "STATDELAY=" << GetServerStatDelayStatus() << std::endl;
-	ofsOutput << "MAXSTEALTHMOVEMENTS=" << GetMaxStealthMovement() << std::endl;
-	ofsOutput << "MAXSTAMINAMOVEMENTS=" << GetMaxStaminaMovement() << std::endl;
-	ofsOutput << "SNOOPISCRIME=" << (GetSnoopIsCrime()?1:0) << std::endl;
-	
-	ofsOutput << std::endl << "[timers]" << std::endl;
-	ofsOutput << "CORPSEDECAYTIMER=" << GetSystemTimerStatus( CORPSE_DECAY ) << std::endl;
-	ofsOutput << "LOOTDECAYTIMER=" << GetSystemTimerStatus( LOOT_DECAY ) << std::endl;
-	ofsOutput << "WEATHERTIMER=" << GetSystemTimerStatus( WEATHER ) << std::endl;
-	ofsOutput << "SHOPSPAWNTIMER=" << GetSystemTimerStatus( SHOP_SPAWN ) << std::endl;
-	ofsOutput << "DECAYTIMER=" << GetSystemTimerStatus( DECAY ) << std::endl;
-	ofsOutput << "INVISIBILITYTIMER=" << GetSystemTimerStatus( INVISIBILITY ) << std::endl;
-	ofsOutput << "OBJECTUSETIMER=" << GetSystemTimerStatus( OBJECT_USAGE ) << std::endl;
-	ofsOutput << "GATETIMER=" << GetSystemTimerStatus( GATE ) << std::endl;
-	ofsOutput << "POISONTIMER=" << GetSystemTimerStatus( POISON ) << std::endl;
-	ofsOutput << "LOGINTIMEOUT=" << GetSystemTimerStatus( LOGIN_TIMEOUT ) << std::endl;
-	ofsOutput << "HITPOINTREGENTIMER=" << GetSystemTimerStatus( HITPOINT_REGEN ) << std::endl;
-	ofsOutput << "STAMINAREGENTIMER=" << GetSystemTimerStatus( STAMINA_REGEN ) << std::endl;
-	ofsOutput << "MANAREGENTIMER=" << GetSystemTimerStatus( MANA_REGEN ) << std::endl;
-	ofsOutput << "ARMORAFFECTREGENTIMER=" << GetSystemTimerStatus( ARMORAFFECTMANA_REGEN ) << std::endl;
-	ofsOutput << "BASEFISHINGTIMER=" << GetSystemTimerStatus( BASE_FISHING ) << std::endl;
-	ofsOutput << "RANDOMFISHINGTIMER=" << GetSystemTimerStatus( RANDOM_FISHING ) << std::endl;
-	ofsOutput << "SPIRITSPEAKTIMER=" << GetSystemTimerStatus( SPIRIT_SPEAK ) << std::endl;
-	ofsOutput << "BEGGINGTIMER=" << GetSystemTimerStatus( BEGGING_T ) << std::endl;
-
-	
-	ofsOutput << std::endl << "[directories]" << std::endl;
-	ofsOutput << "DIRECTORY=" << GetRootDirectory() << std::endl;
-	ofsOutput << "DATADIRECTORY=" << GetDataDirectory() << std::endl;
-	ofsOutput << "DEFSDIRECTORY=" << GetDefsDirectory() << std::endl;
-	ofsOutput << "BOOKSDIRECTORY=" << GetBooksDirectory() << std::endl;
-	ofsOutput << "ACTSDIRECTORY=" << GetAccountsDirectory() << std::endl;
-	ofsOutput << "SCRIPTSDIRECTORY=" << GetScriptsDirectory() << std::endl;
-	ofsOutput << "BACKUPDIRECTORY=" << GetBackupDirectory() << std::endl;
-	ofsOutput << "MSGBOARDDIRECTORY=" << GetMsgBoardDirectory() << std::endl;
-	ofsOutput << "SHAREDDIRECTORY=" << GetSharedDirectory() << std::endl;
-	// EviLDeD: 022702: The might be some of the reason that paths are fucked.
-	ofsOutput << "ACCESSDIRECTORY=" << GetAccessDirectory() << std::endl;
-	ofsOutput << "HTMLDIRECTORY=" << GetHTMLDirectory() << std::endl;
-	ofsOutput << "LOGSDIRECTORY=" << GetLogsDirectory() << std::endl;
-	ofsOutput << "DICTIONARYDIRECTORY=" << GetDictionaryDirectory() << std::endl;
-	
-	ofsOutput << std::endl << "[settings]" << std::endl;
-	ofsOutput << "SAVESPERLOOP=" << GetServerAntiLagSavesPerLoop() << std::endl;
-	ofsOutput << "LOOTDECAYSWITHCORPSE=" << (GetCorpseLootDecay()?1:0) << std::endl;
-	ofsOutput << "GUARDSACTIVE=" << (GetGuardsStatus()?1:0) << std::endl;
-	ofsOutput << "DEATHANIMATION=" << (GetDeathAnimationStatus()?1:0) << std::endl;
-	ofsOutput << "AMBIENTSOUNDS=" << GetWorldAmbientSounds() << std::endl;
-	ofsOutput << "AMBIENTFOOTSTEPS=" << (GetAmbientFootsteps()?1:0) << std::endl;
-	ofsOutput << "EXTERNALACCOUNTCREATION=" << (GetExternalAccountStatus()?1:0) << std::endl;
-	ofsOutput << "INTERNALACCOUNTCREATION=" << (GetInternalAccountStatus()?1:0) << std::endl;
-	ofsOutput << "SHOWHIDDENNPCS=" << (GetShowHiddenNpcStatus()?1:0) << std::endl;
-	ofsOutput << "ROGUESENABLED=" << (GetRogueStatus()?1:0) << std::endl;
-	ofsOutput << "ENGRAVEENABLED=" << (GetEngraveStatus()?1:0) << std::endl;
-	ofsOutput << "UOXBOTENABLED=" << (GetUoxBotStatus()?1:0) << std::endl;
-	ofsOutput << "PLAYERPERSECUTION=" << (GetPlayerPersecutionStatus()?1:0) << std::endl;
-	ofsOutput << "LAGFIX=" << (GetLagFixStatus()?1:0) << std::endl;
-	ofsOutput << "ACCOUNTFLUSH=" << GetAccountFlushTimer() << std::endl;
-	ofsOutput << "HTMLSTATUSENABLED=" << GetHtmlStatsStatus() << std::endl;
-	ofsOutput << "SELLBYNAME=" << (GetSellByNameStatus()?1:0) << std::endl;
-	ofsOutput << "SELLMAXITEMS=" << GetSellMaxItemsStatus() << std::endl;
-	ofsOutput << "TRADESYSTEM=" << (GetTradeSystemStatus()?1:0) << std::endl;
-	ofsOutput << "RANKSYSTEM=" << (GetRankSystemStatus()?1:0) << std::endl;
-	ofsOutput << "NPCTILECHECK=" << GetNpcTileCheckStatus() << std::endl;
-	ofsOutput << "CUTSCROLLREQUIREMENTS=" << (GetCutScrollRequirementStatus()?1:0) << std::endl;
-	ofsOutput << "WILDERNESSBANKENABLED=" << (GetWildernessBankStatus()?1:0) << std::endl;
-	ofsOutput << "WILDERNESSBANKKEYWORD=" << GetWildernessBankTriggerString() << std::endl;
-	ofsOutput << "HEARTBEAT=" << (GetSystemHeartBeatStatus()?1:0) << std::endl;
-	ofsOutput << "SCRIPTSECTIONHEADER=" << (ServerScriptSectionHeader()?1:0) << std::endl;
-	ofsOutput << "NPCTRAININGENABLED=" << (GetNPCTrainingStatus()?1:0) << std::endl;
-	ofsOutput << "HIDEWILEMOUNTED=" << (GetCharHideWhileMounted()?1:0) << std::endl;
-
-	ofsOutput << std::endl << "[speedup]" << std::endl;
-	ofsOutput << "SPEEDCHECKITEMS=" << GetCheckItemsSpeed() << std::endl;
-	ofsOutput << "SPEEDCHECKNPCS=" << GetCheckNpcSpeed() << std::endl;
-	ofsOutput << "SPEEDCHECKBOATS=" << GetCheckBoatSpeed() << std::endl;
-	ofsOutput << "SPEEDCHECKNPCAI=" << GetCheckNpcAISpeed() << std::endl;
-	ofsOutput << "SPEEDCHECKSPAWNREGIONS=" << GetCheckSpawnRegionSpeed() << std::endl;
-	ofsOutput << "SPEEDCHECKMEMORY=" << GetCheckMemorySpeed() << std::endl;
-	
-	ofsOutput << std::endl << "[message boards]" << std::endl;
-	ofsOutput << "MSGBOARDPOSTINGLEVEL=" << GetMsgBoardPostingLevel() << std::endl;
-	ofsOutput << "MSGBOARDREMOVALLEVEL=" << GetMsgBoardPostRemovalLevel() << std::endl;
-	ofsOutput << "MSGBOARDKEEPMESSAGES=" << GetMsgBoardKeepMsgsStatus() << std::endl;
-	//ofsOutput << "MSGBOARDADMINLEVEL=" << GetMsgBoardAdminLevel() << std::endl;
-	//ofsOutput << "MSGBOARDMAXMESSAGESALLOWED=" << GetMsgBoardMaxMsgsAllowed() << std::endl;
-	//ofsOutput << "MSGBOARDMAXMSGSRESPONSE=" << GetMsgBoardMaxMsgResponse() << std::endl;
-
-	ofsOutput << std::endl << "[escorts]" << std::endl;
-	ofsOutput << "ESCORTENABLED=" << GetEscortsEnabled() << std::endl;
-	ofsOutput << "ESCORTINITEXPIRE=" << GetEscortInitExpire() << std::endl;
-	ofsOutput << "ESCORTACTIVEEXPIRE=" << GetEscortActiveExpire() << std::endl;
-	ofsOutput << "ESCORTDONEEXPIRE=" << GetEscortDoneExpire() << std::endl;
-	
-	ofsOutput << std::endl << "[worldlight]" << std::endl;
-	ofsOutput << "LIGHTMOON1=" << GetServerMoon( 0 ) << std::endl;
-	ofsOutput << "LIGHTMOON1UPDATE=" << GetServerMoonUpdate( 0 ) << std::endl;
-	ofsOutput << "LIGHTMOON2=" << GetServerMoon( 1 ) << std::endl;
-	ofsOutput << "LIGHTMOON2UPDATE=" << GetServerMoonUpdate( 1 ) << std::endl;
-	ofsOutput << "LIGHTDUNGEONLEVEL=" << GetDungeonLightLevel() << std::endl;
-	ofsOutput << "LIGHTFIXEDLEVEL=" << GetWorldFixedLightLevel() << std::endl;
-	ofsOutput << "LIGHTCURRENTLEVEL=" << GetWorldLightCurrentLevel() << std::endl;
-	ofsOutput << "LIGHTBRIGHTLEVEL=" << GetWorldLightBrightLevel() << std::endl;
-	ofsOutput << "LIGHTDARKLEVEL=" << GetWorldLightDarkLevel() << std::endl;
-	ofsOutput << "DAY=" << GetServerTimeDay() << std::endl;
-	ofsOutput << "HOUR=" << GetServerTimeHours() << std::endl;
-	ofsOutput << "MINUTE=" << GetServerTimeMinutes() << std::endl;
-	ofsOutput << "AMPM=" << ( GetServerTimeAMPM() ? 1 : 0 ) << std::endl;
-	
-	ofsOutput << std::endl << "[begging]" << std::endl;
-	ofsOutput << "BEGGINGRANGE=" << GetBeggingRange() << std::endl;
-	
-	ofsOutput << std::endl << "[tracking]" << std::endl;
-	ofsOutput << "TRACKINGBASERANGE=" << GetTrackingBaseRange() << std::endl;
-	ofsOutput << "TRACKINGBASETIMER=" << GetTrackingBaseTimer() << std::endl;
-	ofsOutput << "TRACKINGMAXTARGETS=" << GetTrackingMaxTargets() << std::endl;
-	ofsOutput << "TRACKINGMSGREDISPLAYTIME=" << GetTrackingRedisplayTime() << std::endl;
-	
-	ofsOutput << std::endl << "[reputation]" << std::endl;
-	ofsOutput << "REPSYSMURDERDECAYTIMER=" << GetRepMurderDecay() << std::endl;
-	ofsOutput << "REPSYSMAXKILLS=" << GetRepMaxKills() << std::endl;
-	ofsOutput << "REPSYSCRIMINALTIMER=" << GetRepCrimTime() << std::endl;
-	
-	ofsOutput << std::endl << "[resources]" << std::endl;
-	ofsOutput << "RESOURCEMINECHECK=" << GetMineCheck() << std::endl;
-	ofsOutput << "RESOURCEOREPERAREA=" << GetResOre() << std::endl;
-	ofsOutput << "RESOURCEORERESPAWNTIMER=" << GetResOreTime() << std::endl;
-	ofsOutput << "RESOURCEORERESPAWNAREA=" << GetResOreArea() << std::endl;
-	ofsOutput << "RESOURCELOGSPERAREA=" << GetResLogs() << std::endl;
-	ofsOutput << "RESOURCELOGSRESPAWNTIMER=" << GetResLogTime() << std::endl;
-	ofsOutput << "RESPAWNLOGSRESPAWNAREA=" << GetResLogArea() << std::endl;
-	
-	ofsOutput << std::endl << "[hunger]" << std::endl;
-	ofsOutput << "HUNGERRATE=" << GetHungerRate() << std::endl;
-	ofsOutput << "HUNGERDAMAGERATETIMER=" << GetHungerDamageRateTimer() << std::endl;
-	ofsOutput << "HUNGERDMGVAL=" << GetHungerDamage() << std::endl;
-	ofsOutput << "HUNGERTHRESHOLD=" << GetHungerThreshold() << std::endl;
-
-	
-	ofsOutput << std::endl << "[combat]" << std::endl;
-	ofsOutput << "COMBATMAXRANGE=" << GetCombatMaxRange() << std::endl;
-	ofsOutput << "COMBATWRESTLESPEED=" << GetCombatWrestlingSpeed() << std::endl;
-	ofsOutput << "COMBATSPELLMAXRANGE=" << GetCombatMaxSpellRange() << std::endl;
-	ofsOutput << "COMBATMAXMELEEDAMAGE=" << GetCombatMaxMeleeDamage() << std::endl;
-	ofsOutput << "COMBATMAXSPELLDAMAGE=" << GetCombatMaxSpellDamage() << std::endl;
-	ofsOutput << "COMBATALLOWCRITICALS=" << GetCombatCriticalsEnabled() << std::endl;
-	ofsOutput << "COMBATMAXPOISONINGDISTANCE=" << GetCombatMaxPoisoningDistance() << std::endl;
-	ofsOutput << "COMBATDISPLAYHITMSG=" << (GetCombatDisplayHitMessage()?1:0) << std::endl;
-	ofsOutput << "COMBATMAXHUMANABSORBTION=" << GetCombatMaxHumanAbsorbtion() << std::endl;
-	ofsOutput << "COMBATMAXNONHUMANABSORBTION=" << GetCombatMaxNonHumanAbsorbtion() << std::endl;
-	ofsOutput << "COMBATMONSTERSVSANIMALS=" << (GetCombatMonstersVsAnimals()?1:0) << std::endl;
-	ofsOutput << "COMBATANIMALATTACKCHANCE=" << GetCombatAnimalsAttackChance() << std::endl;
-	ofsOutput << "COMBATANIMALSGUARDED=" << (GetCombatAnimalsGuarded()?1:0) << std::endl;
-	ofsOutput << "COMBATNPCDAMAGERATE=" << GetCombatNPCDamageRate() << std::endl;
-	ofsOutput << "COMBATNPCBASEFLEEAT=" << GetCombatNPCBaseFleeAt() << std::endl;
-	ofsOutput << "COMBATNPCBASEREATTACKAT=" << GetCombatNPCBaseReattackAt() << std::endl;
-	ofsOutput << "COMBATATTACKSTAMINA=" << GetCombatAttackStamina() << std::endl;
-	ofsOutput << "SHOOTONANIMALBACK=" << (GetShootOnAnimalBack()?1:0) << std::endl;
-	
-	ofsOutput << std::endl << "[start locations]" << std::endl;
-	for( UI32 lCtr = 0; lCtr < startlocations.size(); lCtr++ )
-		ofsOutput << "LOCATION=" << startlocations[lCtr].town << "," << startlocations[lCtr].description << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << std::endl;
-	
-	ofsOutput << std::endl << "[startup]" << std::endl;
-	ofsOutput << "STARTGOLD=" << GetServerStartGold() << std::endl;
-	ofsOutput << "STARTPRIVS1=" << (UI16)GetServerStartPrivs( 0 ) << std::endl;
-	ofsOutput << "STARTPRIVS2=" << (UI16)GetServerStartPrivs( 1 ) << std::endl;
-	
-	ofsOutput << std::endl << "[gumps]" << std::endl;
-	ofsOutput << "TITLECOLOUR=" << GetTitleColour() << std::endl;
-	ofsOutput << "LEFTTEXTCOLOUR=" << GetLeftTextColour() << std::endl;
-	ofsOutput << "RIGHTTEXTCOLOUR=" << GetRightTextColour() << std::endl;
-	ofsOutput << "BUTTONCANCEL=" << GetButtonCancel() << std::endl;
-	ofsOutput << "BUTTONLEFT=" << GetButtonLeft() << std::endl;
-	ofsOutput << "BUTTONRIGHT=" << GetButtonRight() << std::endl;
-	ofsOutput << "BACKGROUNDPIC=" << GetBackgroundPic() << std::endl;
-	
-	ofsOutput << std::endl << "[towns]" << std::endl;
-	ofsOutput << "POLLTIME=" << GetTownNumSecsPollOpen() << std::endl;
-	ofsOutput << "MAYORTIME=" << GetTownNumSecsAsMayor() << std::endl;
-	ofsOutput << "TAXPERIOD=" << GetTownTaxPeriod() << std::endl;
-	ofsOutput << "GUARDSPAID=" << GetTownGuardPayment() << std::endl;
-	
-	ofsOutput.close();
-	return true;
+	else
+		Console.Error( "Unable to open file %s for writing", filename.c_str() );
+	return rvalue;
 }
 
 //o------------------------------------------------------------------------
-//|	Function		-	cServerData *load( void )
-//|	Programmer	-	EviLDeD
-//|	Date				-	January 13, 2001
+//|	Function		-	Load()
+//|	Programmer		-	EviLDeD
+//|	Date			-	January 13, 2001
 //|	Modified		-
 //o------------------------------------------------------------------------
 //|	Purpose			-	Load up the uox.ini file and parse it into the internals
-//|	Returns			- pointer to the valid inmemory serverdata storage(this)
-//|								NULL is there is an error, or invalid file type
+//|	Returns			-	pointer to the valid inmemory serverdata storage(this)
+//|						NULL is there is an error, or invalid file type
 //o------------------------------------------------------------------------
-cServerData * cServerData::load( void )
+void CServerData::Load( void )
 {
-	std::string s = GetRootDirectory();
-	s += "/uox.ini";
-	return load( s.c_str() );
+	const UString fileName = Directory( CSDDP_ROOT ) + "uox.ini";
+	ParseINI( fileName );
 }
 
-//o------------------------------------------------------------------------
-//|	Function		-	cServerData *load()
-//|	Programmer	-	EviLDeD
-//|	Date				-	January 13, 2001
-//|	Modified		-
-//o------------------------------------------------------------------------
-//|	Purpose			-	Load up the specified file and parse it into the internals
-//|								providing that it is in the correct format.
-//|	Returns			- pointer to the valid inmemory serverdata storage(this) or
-//|								NULL is there is an error, or invalid file type
-//o------------------------------------------------------------------------
-cServerData * cServerData::load( const char *filename )
-{
-	long ver = VersionCheck( filename );
-	if( ver == MAKEWORD( 1, 0 ) || ver == MAKEWORD( 1, 1 ) )
-	{	// Version 1,0(default old format) so needs to parse the server.scp as well
-		char tempStuff[1024];
-		sprintf( tempStuff, "%s/server.scp", GetRootDirectory() );
-		ParseUox3ServerScp( tempStuff );
-		ParseUox3Ini( filename, ver );
-	}
-	else if( ver == MAKEWORD( 2, 0 ) )
-	{	// Version greater than 1.1 - in this case defaults to 2.0(newformat)
-		//printf("\n*** blah blah ***\n");
-		//cServerData *DumpTest = ParseUox3Ini(filename, ver);
-		ParseUox3Ini( filename, ver );
-	}
-	else if( ver == 0 )
-		return NULL;
-	return this;
-}
-
-void cServerData::SetTrackingBaseRange( UI32 value )
+void CServerData::TrackingBaseRange( UI16 value )
 {
 	trackingbaserange = value;
 }
-UI32 cServerData::GetTrackingBaseRange( void )
+UI16 CServerData::TrackingBaseRange( void ) const
 {
 	return trackingbaserange;
 }
 
-void cServerData::SetTrackingMaxTargets( UI32 value )
+void CServerData::TrackingMaxTargets( UI08 value )
 {
-	trackingmaxtargets = value;
+	if( value >= MAX_TRACKINGTARGETS )
+		trackingmaxtargets = MAX_TRACKINGTARGETS;
+	else
+		trackingmaxtargets = value;
 }
-UI32 cServerData::GetTrackingMaxTargets( void )
+UI08 CServerData::TrackingMaxTargets( void ) const
 {
 	return trackingmaxtargets;
 }
 
-void cServerData::SetTrackingBaseTimer( UI32 value )
+void CServerData::TrackingBaseTimer( UI16 value )
 {
 	trackingbasetimer = value;
 }
-UI32 cServerData::GetTrackingBaseTimer( void )
+UI16 CServerData::TrackingBaseTimer( void ) const
 {
 	return trackingbasetimer;
 }
 
-void cServerData::SetTrackingRedisplayTime( UI32 value )
+void CServerData::TrackingRedisplayTime( UI16 value )
 {
 	trackingmsgredisplaytimer = value;
 }
-UI32 cServerData::GetTrackingRedisplayTime( void )
+UI16 CServerData::TrackingRedisplayTime( void ) const
 {
 	return trackingmsgredisplaytimer;
 }
 
-void cServerData::SetBeggingRange( SI16 value )
-{
-	beggingrange = value;
-}
-SI16 cServerData::GetBeggingRange( void )
-{
-	return beggingrange;
-}
-
-void cServerData::SetFishingBaseTime( UI32 value )
-{
-	fishingbasetimer = value;
-}
-UI32 cServerData::GetFishingBaseTime( void )
-{
-	return fishingbasetimer;
-}
-
-void cServerData::SetFishingRandomTime( UI32 value )
-{
-	fishingrandomtimer = value;
-}
-UI32 cServerData::GetFishingRandomTime( void )
-{
-	return fishingrandomtimer;
-}
-
-void cServerData::SetSpiritSpeakTimer( UI32 value )
-{
-	spiritspeaktimer = value;
-}
-UI32 cServerData::GetSpiritSpeakTimer( void )
-{
-	return spiritspeaktimer;
-}
-
 //o-----------------------------------------------------------------------o
-//|	Function		-	void DumpLookup(int lookupid);
-//|	Date				-	January 31, 2001
+//|	Function	-	void DumpLookup( int lookupid );
+//|	Date		-	January 31, 2001
 //|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------o
-//|	Purpose			-	This simply outputs a text file that contains the index
-//|								and lookup name found in the lookuptables. Saves having
-//|								to do it by hand if you make changes. Must be called from
-//|								within the class if used.
+//|	Purpose		-	This simply outputs a text file that contains the index
+//|					and lookup name found in the lookuptables. Saves having
+//|					to do it by hand if you make changes. Must be called from
+//|					within the class if used.
 //o-----------------------------------------------------------------------o
-void cServerData::DumpLookup(int lookupid)
+void CServerData::dumpLookup( int lookupid )
 {
+	// lookup is no longer needed, as we don't support server.scp any more
+
 	std::ofstream ofsOutput;
-	cServerData sd;
-	char *source1 = NULL, *token = NULL;
 	char buffer[81];
 	int count = 0;
 
-	switch( lookupid )
+	ofsOutput.open( "uox.ini.lookup.txt", std::ios::out );
+	if( !ofsOutput.is_open() )
 	{
-		case 1:
-			ofsOutput.open( "uox.ini.lookup.txt", std::ios::out );
-			if( !ofsOutput.is_open() )
-			{
-				Console << "-o [DLOOKUP]: Unable to open file \"uox3.ini.lookup.txt\" for writing.." << myendl;
-				return;
-			}
-
-			source1 = (char*)UOX3INI_LOOKUP.c_str();
-
-			token = strtok( source1, "|" );
-			while( token != NULL )
-			{
-				sprintf( buffer, "case 0x%04X:\t // %s[%04i]\n\tcServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( token, strlen( token ) ), token, count++ );
-				ofsOutput << buffer;
-				token = strtok( NULL, "|" );
-			}
-			ofsOutput.close();
-			break;
-		case 0:
-		default:
-			ofsOutput.open( "server.scp.lookup.txt", std::ios::out );
-			if( !ofsOutput.is_open() )
-			{
-				Console << "|-o [DLOOKUP]: Unable to open file \"server.scp.lookup.txt\" for writing.." << myendl;
-				return;
-			}
-
-			source1 = (char*)SERVERCFG_LOOKUP.c_str();
-
-			token = strtok( source1, "|" );
-			while( token != NULL )
-			{
-				sprintf( buffer, "case 0x%04X:\t // %s[%04i]\n\tcServerData:\n\tbreak;\n", SERVERCFG_LOOKUP.find( token, strlen( token ) ), token, count++ );
-				ofsOutput << buffer;
-				token = strtok( NULL, "|" );
-			}
-			ofsOutput.close();
-			source1 = NULL;
-			count = 0;
-			break;
+		Console << "-o [DLOOKUP]: Unable to open file \"uox3.ini.lookup.txt\" for writing.." << myendl;
+		return;
 	}
+
+	UString tokens( UOX3INI_LOOKUP );
+	int numTokens = tokens.sectionCount( "|" );
+	for( int i = 0; i <= numTokens; i++ )
+	{
+		UString tokenStr = tokens.section( "|", i, i );
+		sprintf( buffer, "case 0x%04X:\t // %s[%04i]\n\tCServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( tokenStr.c_str(), tokenStr.length() ), tokenStr.c_str(), count++ );
+		ofsOutput << buffer;
+	}
+	ofsOutput.close();
 }
 
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
-//|	Date					-	02/26/2001
+//|	Function/Class	-	bool CServerData::ParseINI( const std::string filename )
+//|	Date			-	02/26/2001
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	Parse teh uox.ini file into its required information.
+//|	Description		-	Parse the uox.ini file into its required information.
 //|									
 //|	Modification	-	02/26/2002	-	Make sure that we parse out the logs, access
 //|									and other directories that we were not parsing/
 //o--------------------------------------------------------------------------o
-//|	Returns				-
+//|	Returns			-
 //o--------------------------------------------------------------------------o
-cServerData * cServerData::ParseUox3Ini( const char *filename, long ver )
+bool CServerData::ParseINI( const std::string& filename )
 {
-	if( !filename )
-		return NULL;
-	std::string sFilename = filename;
-	std::ifstream inFile;
-
-	Console << "Processing INI Settings (V" << (SI16)LOBYTE( ver ) << "." << (SI16)HIBYTE( ver ) << ") ";
-
-	// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-	inFile.open( sFilename.c_str(), std::ios::in );	
-	if( !inFile.is_open() )
+	bool rvalue = false;
+	if( !filename.empty() )
 	{
-		Console << "FAILED!" << myendl << "Error: Unable to open file." << sFilename << myendl;
-		return NULL;
-	}
-	char szLine[129];	// Trimmed this down to 80 to save some ram realestate
-	inFile.getline( szLine, 128 );	// Snatch the first line.
-	char *szpLineUpper = NULL;
-	char *l, *r, *p;
-	char  LineBuffer[81];
-	SI16 zflag = 0;
-	SI16 zi = 0,yi = 0;
-	serverList.clear();
-	startlocations.clear();
-	struct hostent *lpHostEntry=NULL;
-	while( !inFile.eof() )
-	{
-		strcpy( LineBuffer, szLine );
-		szpLineUpper = strupr( LineBuffer );
-		if( ( *(char*)szpLineUpper == '/' && *((char*)szpLineUpper + 1 ) == '/' ) || *(char*)szpLineUpper == '\n' )
+		Console << "Processing INI Settings  ";
+
+		Script toParse( filename, NUM_DEFS, false );
+		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
+		if( !toParse.IsErrored() )
 		{
-			inFile.getline( szLine, 128 );
-			continue;
+			serverList.clear();
+			startlocations.clear();
+			for( ScriptSection *sect = toParse.FirstEntry(); sect != NULL; sect = toParse.NextEntry() )
+			{
+				if( sect == NULL )
+					continue;
+				UString tag, data;
+				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
+				{
+					data = sect->GrabData().simplifyWhiteSpace();
+					if( !HandleLine( tag, data ) )
+					{
+						Console.Warning( "Unhandled tag '%s'", tag.c_str() );
+					}
+				}
+			}
+			Console.PrintDone();
+			rvalue = true;
 		}
-		if( ver == MAKEWORD( 1, 0 ) || ver == MAKEWORD( 1, 1 ) )	// otherwise it'll never attempt a v2 load
+		else
 		{
-			if( strncmp( szLine, "###", strlen( "###" ) ) == 0 )
-			{	// zflag == (0)-server info (1)-startlocations (2)-system settings
-				zflag++;
-				inFile.getline( szLine, 128 );
-				continue;
-			}
-			if( zflag == 0 )
-			{	//	Ok this is still server data for the server list parse it
-				zi = serverList.size() + 1;
-				serverList.resize( zi );
-				serverList[zi-1].setName(szLine);
-				inFile.getline( szLine, 128 );
-				if( inFile.eof() )
-				{
-					inFile.close();
-					Console << "FAILED!" << myendl << "Error: Error parsing server data." << myendl;
-					return NULL;
-				}
-				serverList[zi-1].setIP(szLine);
-				if( ver == MAKEWORD( 1, 1 ) )
-				{
-					inFile.getline( szLine, 128 );
-					if( inFile.eof() )
-					{
-						inFile.close();
-						Console << "FAILED!" << myendl << "Error: Error parsing server data." << myendl;
-						return NULL;
-					}
-					serverList[zi-1].setPort((SI16)makeNum( szLine )); 
-				}
-				else
-					serverList[zi-1].setPort(GetServerPort());	// old 1.0 doesn't support port numbers, here ya go Abaddon :)
-				serverList[zi-1].setDomain("");		// Ditto here too, there is no domain and its really arbitrary at this stage. Will be used later.
-				zi = 0;
-				inFile.getline( szLine, 128 ); // Save some cycles having to parse down the rest.
-				continue;
-			}
-			else if( zflag == 1 )
-			{	// OK this ons ins the start position list there are 9, not sure why the ### is there anyhow
-				zi = startlocations.size() + 1;
-				startlocations.resize(zi);
-				strncpy( startlocations[zi-1].town, szLine, 31 );
-				for( yi = 0; yi <= 3; yi++ )
-				{
-					inFile.getline( szLine, 128 );
-					if( inFile.eof() )
-					{
-						inFile.close();
-						Console << "FAILED!" << myendl << "Error: Error parsing startlocation data." << myendl;
-						return NULL;
-					}
-					switch( yi )
-					{
-						case 0:	
-							strncpy(startlocations[zi-1].description, szLine, 31 );
-							startlocations[zi-1].description[31] = 0;	// doesn't always NULL it
-							break; 
-						case 1:	startlocations[zi-1].x = (SI16)makeNum( szLine );	break;
-						case 2:	startlocations[zi-1].y = (SI16)makeNum( szLine );	break;
-						case 3:	startlocations[zi-1].z = (SI16)makeNum( szLine );	break;
-						default:
-							inFile.close();
-							Console << "FAILED!" << myendl << "Error: Invalid XYZ location encountered." << myendl;
-							return NULL;
-					}
-				}
-				zi = 0;
-				inFile.getline( szLine, 128 );		// Same cycle save here, its really small but its there
-				continue;
-			}
-			else if( zflag == 2 )
-			{	// server settings (lol if you could call it that)
-				char szTemp[129];	// There are windows API that can do this but I wasn't sure abotu linux so I did it this way instead. Viva La Linux!
-				strcpy( szTemp, szLine );
-				for( int jj = strlen( szLine ); jj >= 0; jj-- )
-				{
-					if( szTemp[jj] != '\\' && szTemp[jj] != '/' )
-						continue;
-					else
-					{
-						szTemp[jj] = 0x00;
-						break;
-					}
-				}
-				strcpy( szLine, szTemp );
-				SetDataDirectory( szLine );	//	Going to use the first mulfile listed as the directory for all mull files. Can always be changed later. :)
-				for( UI08 kk = 0; kk <= 5; kk++ )	// Loop out the other dir listings. FileIO's your friend the strangled computer instructor frantically scratched onto his postit notes before the class killed him. Bawhahahahahahahahaha
-				{
-					inFile.getline( szLine, 128 );
-					if( inFile.eof() )
-					{
-						inFile.close();
-						Console << "FAILED!" << myendl << "Error: Invalid MUL file count detected." << myendl;
-						return NULL;
-					}
-				}
-				// OK now need to parse out the rest of this file.
-				for( yi = 0; yi <= 4; yi++ )
-				{
-					inFile.getline( szLine, 128 );
-					if( inFile.eof() )
-					{
-						inFile.close();
-						Console << "FAILED!" << myendl << "Error: Error processing remainder of file" << myendl;
-						return NULL;
-					}
-					switch( yi )
-					{
-						case 0:	SetServerSavesTimer( (UI32)makeNum( szLine ) );		break;
-						case 1:	SetSystemHeartBeatStatus( makeNum( szLine ) == 1 );	break;
-						case 2:	SetServerStartGold( (SI16)makeNum( szLine ) );		break;
-						case 3:	SetServerStartPrivs( 0, (UI08)makeNum( szLine ) );	break;
-						case 4:	SetServerStartPrivs( 1, (UI08)makeNum( szLine ) );	break;
-						default:
-							inFile.close();
-							Console << "FAILED!" << myendl << "Error: Error parsing old version server settings." << myendl;
-							return NULL;
-					}
-				}
-				inFile.close();
-				Console.PrintDone();
-				return this;
-			}
-		}
-		else if( ver == MAKEWORD( 2, 0 ) )
-		{
-			char seperator[2];	
-			memset( seperator, 0x00, 2 );
-			*seperator='=';
-			l = strtok( szpLineUpper, seperator );
-			r = strtok( NULL, "\0" );	// Get tag/value seperation (if there a way to do this using string and the stl ab)
-			if( l == NULL )
-			{
-				inFile.getline( szLine, 128 );
-				continue;
-			}
-			SI32 offset = 0;
-			if( r != NULL )
-			{
-				offset = r - l;
-				r = &szLine[offset];
-			}
-
-			switch( UOX3INI_LOOKUP.find( l ) )
-			{
-				case 0x000C:	// SERVERNAME
-					SetServerName( (const char*)r );
-					break;
-				case 0x0017:	// CONSOLELOG
-					SetServerConsoleLog( makeNum( r ) );
-					break;
-				case 0x0022:	// CRASHPROTECTION
-					SetServerCrashProtection( makeNum( r ) );
-					break;
-				case 0x0032:	// COMMANDPREFIX
-					SetServerCommandPrefix( *r );	// return the first character of the return string only
-					break;
-				case 0x0040:	// ANNOUNCEWORLDSAVES
-					SetServerAnnounceSaves((makeNum( r )==1?true:false)); 
-					break;
-				case 0x0053:	// JOINPARTMSGS
-					SetServerJoinPartAnnouncements((makeNum(r)==1?true:false));
-					break;
-				case 0x0060:	// MULCACHING
-					SetServerMulCaching((makeNum( r )==1?true:false));
-					break;
-				case 0x006B:	// BACKUPSENABLED
-					SetServerBackups((makeNum( r )>0?true:false));
-					break;
-				case 0x007A:	// SAVESPERLOOP
-					//printf("\nr == %i(%s)\n",makeNum( r ),r);
-					SetServerAntiLagSavesPerLoop( (SI16)makeNum( r ) );
-					break;
-				case 0x0087:	// SAVESTIMER
-					SetServerSavesTimer( (UI32)makeNum( r ) );
-					break;
-				case 0x0092:	// MAINTHREADSLEEP
-					SetServerMainThreadTimer( (UI32)makeNum( r ) );
-					break;
-				case 0x00A2:	// SKILLCAP
-					SetServerSkillCap( (UI32)makeNum( r ) );
-					break;
-				case 0x00AB:	// SKILLDELAY
-					SetServerSkillDelay( (UI32)makeNum( r ) );
-					break;
-				case 0x00B6:	// STATCAP
-					SetServerStatCap( (UI32)makeNum( r ) );
-					break;
-				case 0x00BE:	// STATDELAY
-					SetServerStatDelay( (UI32)makeNum( r ) );
-					break;
-				case 0x00C8:	// MAXSTEALTHMOVEMENTS
-					SetMaxStealthMovement( (SI16)makeNum( r ) );
-					break;
-				case 0x00DC:	// MAXSTAMINAMOVEMENTS
-					SetMaxStaminaMovement( (SI16)makeNum( r ) );
-					break;
-				case 0x00F0:	// CORPSEDECAYTIMER
-					SetSystemTimer( CORPSE_DECAY, (UI32)makeNum( r ) );
-					break;
-				case 0x0101:	// LOOTDECAYTIMER
-					SetSystemTimer( LOOT_DECAY, (UI32)makeNum( r ) );
-					break;
-				case 0x0110:	// WEATHERTIMER
-					SetSystemTimer( WEATHER, (UI32)makeNum( r ) );
-					break;
-				case 0x011D:	// SHOWSPWANTIMER
-					SetSystemTimer( SHOP_SPAWN, (UI32)makeNum( r ) );
-					break;
-				case 0x00F6:	// DECAYTIMER
-					SetSystemTimer( DECAY, (UI32)makeNum( r ) );
-					break;
-				case 0x0137:	// INVISIBILITYTIMER
-					SetSystemTimer( INVISIBILITY, (UI32)makeNum( r ) );
-					break;
-				case 0x0149:	// OBJECTUSETIMER
-					SetSystemTimer( OBJECT_USAGE, (UI32)makeNum( r ) );
-					break;
-				case 0x0159:	// GATETIMER
-					SetSystemTimer( GATE, (UI32)makeNum( r ) );
-					break;
-				case 0x0163:	// POISONTIMER
-					SetSystemTimer( POISON, (UI32)makeNum( r ) );
-					break;
-				case 0x016F:	// LOGINTIMEOUT
-					SetSystemTimer( LOGIN_TIMEOUT, (UI32)makeNum( r ) );
-					break;
-				case 0x017C:	// HITPOINTREGENTIMER
-					SetSystemTimer( HITPOINT_REGEN, (UI32)makeNum( r ) );
-					break;
-				case 0x018F:	// STAMINAREGENTIMER
-					SetSystemTimer( STAMINA_REGEN, (UI32)makeNum( r ) );
-					break;
-				case 0x01A1:	// MANAREGENTIMER
-					SetSystemTimer( MANA_REGEN, (UI32)makeNum( r ) );
-					break;
-				case 0x01B0:	// ARMORAFFECTREGENTIMER
-					SetSystemTimer( ARMORAFFECTMANA_REGEN, (UI32)makeNum( r ) );
-					break;
-				case 0x01C6:	// BASEFISHINGTIMER
-					SetSystemTimer( BASE_FISHING, (UI32)makeNum( r ) );
-					break;
-				case 0x01D7:	// RANDOMFISHINGTIMER
-					SetSystemTimer( RANDOM_FISHING, (UI32)makeNum( r ) );
-					break;
-				case 0x01EA:	// SPIRITSPEAKTIMER
-					SetSystemTimer( SPIRIT_SPEAK, (UI32)makeNum( r ) );
-					break;
-				case 0x01FB:	// BEGGINGTIMER
-					SetSystemTimer( BEGGING_T, (UI32)makeNum( r ) );
-					break;
-				case 0x0208:	// DIRECTORY
-					SetRootDirectory( r );
-					break;
-				case 0x0212:	// DATADIRECTORY
-					SetDataDirectory( r );
-					break;
-				case 0x0220:	// DEFSDIRECTORY
-					SetDefsDirectory( r );
-					break;
-				case 0x022E:	// ACTSDIRECTORY
-					SetAccountsDirectory( r );
-					break;
-				case 0x023C:	// SCRIPTSDIRECTORY
-					SetScriptsDirectory( r );
-					break;
-				case 0x024D:	// BACKUPDIRECTORY
-					SetBackupDirectory( r );
-					break;
-				case 0x025D:	// MSGBOARDDIRECTORY
-					SetMsgBoardDirectory( r );
-					break;
-				case 0x026F:	// SHAREDDIRECTORY
-					SetSharedDirectory( r );
-					break;
-				case 0x027F:	// LOOTDECAYSWITHCORPSE
-					SetCorpseLootDecay( makeNum( r ) != 0 );
-					break;
-				case 0x0294:	// GUARDSACTIVE
-					SetGuardStatus( makeNum( r ) != 0 );
-					break;
-				case 0x02A1:	// DEATHANIMATION
-					SetDeathAnimationStatus( makeNum( r ) != 0 );
-					break;
-				case 0x02B0:	// AMBIENTSOUNDS
-					this->SetWorldAmbientSounds( (SI16)makeNum( r ) );
-					break;
-				case 0x02BE:	// AMBIENTFOOTSTEPS
-					SetAmbientFootsteps( makeNum( r ) != 0 );
-					break;
-				case 0x02CF:	// EXTERNALACCOUNTCREATION
-					SetExternalAccountStatus( makeNum( r ) != 0 );
-					break;
-				case 0x02E7:	// INTERNALACCOUNTCREATION
-					SetInternalAccountStatus( makeNum( r ) != 0 );
-					break;
-				case 0x02FF:	// SHOWHIDDENNPCS
-					SetShowHiddenNpcStatus( makeNum( r ) != 0 );
-					break;
-				case 0x030E:	// ROGUESENABLED
-					SetRogueStatus( makeNum( r ) != 0 );
-					break;
-				case 0x031C:	// UOXBOTENABLED
-					SetUoxBotStatus( makeNum( r ) != 0 );
-					break;
-				case 0x032A:	// PLAYERPERSECUTION
-					SetPlayerPersecutionStatus( makeNum( r ) != 0 );
-					break;
-				case 0x033C:	// LAGFIX
-					SetLagFixStatus( makeNum( r ) != 0 );
-					break;
-				case 0x0343:	// ACCOUNTFLUSH
-					SetAccountFlushTimer( atof( r ) );
-					break;
-				case 0x0350:	// HTMLSTATUSENABLED
-					SetHtmlStatsStatus( (SI16)makeNum( r ) );
-					break;
-				case 0x0362:	// SELLBYNAME
-					SetSellByNameStatus( makeNum( r ) == 1 );
-					break;
-				case 0x036D:	// SELLMAXITEMS
-					SetSellMaxItemsStatus( (SI16)makeNum( r ) );
-					break;
-				case 0x037A:	// TRADESYSTEM
-					SetTradeSystemStatus( makeNum( r ) != 0 );
-					break;
-				case 0x0386:	// RANKSYSTEM
-					SetRankSystemStatus( makeNum( r ) != 0 );
-					break;
-				case 0x0391:	// NPCTILECHECK
-					SetNpcTileCheckStatus( (SI16)makeNum( r ) );
-					break;
-				case 0x039E:	// CUTSCROLLREQUIREMENTS
-					SetCutScrollRequirementStatus( (SI16)makeNum( r ) );
-					break;
-				case 0x03B4:	// WILDERNESSBANKENABLED
-					SetWildernessBankStatus( makeNum( r ) == 1 );
-					break;
-				case 0x03CA:	// WILDERNESSBANKKEYWORD
-					SetWildernessBankTriggerString(r);
-					break;
-				case 0x03E0:	// HEARTBEAT
-					SetSystemHeartBeatStatus( makeNum( r ) != 0 );
-					break;
-				case 0x03EA:	// SPEEDCHECKITEMS
-					SetCheckItemsSpeed((R64)atof(r));
-					break;
-				case 0x03FA:	// SPEEDCHECKNPCS
-					SetCheckNpcSpeed((R64)atof(r));
-					break;
-				case 0x0409:	// SPEEDCHECKBOATS
-					SetCheckBoatSpeed((R64)atof(r));
-					break;
-				case 0x0419:	// SPEEDCHECKNPCAI
-					SetCheckNpcAISpeed((R64)atof(r));
-					break;
-				case 0x0429:	// SPEEDCHECKSPAWNREGIONS
-					SetCheckSpawnRegionSpeed((R64)atof(r));
-					break;
-				case 0x0440:	// SPEEDCHECKMEMORY
-					SetCheckMemorySpeed((R64)atof(r));
-					break;
-				case 0x0451:	// MSGBOARDKEEPMESSAGES
-					SetMsgBoardKeepMsgs( makeNum( r ) );
-					break;
-				case 0x0466:	// MSGBOARDADMINLEVEL
-					SetMsgBoardAdminLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x0479:	// MSGBOARDPOSTINGLEVEL
-					SetMsgBoardPostingLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x048E:	// MSGBOARDREMOVALLEVEL
-					SetMsgBoardPostRemovalLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x04A3:	// MSGBOARDMAXMESSAGESALLOWED
-					SetMsgBoardMaxMessageCount( (SI16)makeNum( r ) );
-					break;
-				case 0x04BE:	// MSGBOARDMAXMSGSRESPONSE
-					//SetMsgBoardMaxMessageseAction((SI16)makeNum(r));
-					break;
-				case 0x03D6:	// ESCOURTENABLED
-					SetEscortsEnabled( makeNum( r ) == 1 );
-					break;
-				case 0x04E4:	// ESCOURTINITEXPIRE
-					SetEscortInitExpire( (UI32)makeNum( r ) );
-					break;
-				case 0x04F5:	// ESCOURTACTIVEEXPIRE
-					SetEscortActiveExpire( (UI32)makeNum( r ) );
-					break;
-				case 0x0508:	// LIGHTMOON1
-					SetServerMoon( 0, (SI16)makeNum( r ) );
-					break;
-				case 0x0513:	// LIGHTMOON1UPDATE
-					SetServerMoonUpdate( 0, (SI16)makeNum( r ) );
-					break;
-				case 0x0524:	// LIGHTMOON2
-					SetServerMoon( 1, (SI16)makeNum( r ) );
-					break;
-				case 0x052F:	// LIGHTMOON2UPDATE
-					SetServerMoonUpdate( 1, (SI16)makeNum( r ) );
-					break;
-				case 0x0540:	// LIGHTDUNGEONLEVEL
-					SetDungeonLightLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x0552:	// LIGHTFIXEDLEVEL
-					SetWorldFixedLightLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x0562:	// LIGHTCURRENTLEVEL
-					SetWorldLightCurrentLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x0574:	// LIGHTBRIGHTLEVEL
-					SetWorldLightBrightLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x0585:	// BEGGINGRANGE
-					SetBeggingRange( (SI16)makeNum( r ) );
-					break;
-				case 0x0592:	 // TRACKINGBASERANGE[0091]
-					SetTrackingBaseRange( (UI32)makeNum( r ) );
-					break;
-				case 0x05A4:	 // TRACKINGBASETIMER[0092]
-					SetTrackingBaseTimer( (UI32)makeNum( r ) );
-					break;
-				case 0x05B6:	 // TRACKINGMAXTARGETS[0093]
-					SetTrackingMaxTargets( (UI32)makeNum( r ) );
-					break;
-				case 0x05C9:	 // TRACKINGMSGREDISPLAYTIME[0094]
-					SetTrackingRedisplayTime( (UI32)makeNum( r ) );
-					break;
-				case 0x05E2:	 // REPSYSMURDERDECAYTIMER[0095]
-					SetRepMurderDecay( (SI32)atol( r ) );
-					break;
-				case 0x05F9:	 // REPSYSMAXKILLS[0096]
-					SetRepMaxKills( (SI32)makeNum( r ) );
-					break;
-				case 0x0608:	 // REPSYSCRIMINALTIMER[0097]
-					SetRepCrimTime( (SI32)makeNum( r ) );
-					break;
-				case 0x061C:	 // RESOURCEMINECHECK[0098]
-					SetMineCheck( (SI16)makeNum(r) );
-					break;
-				case 0x062E:	 // RESOURCEOREPERAREA[0099]
-					SetResOre( (UI32)makeNum( r ) );
-					break;
-				case 0x0641:	 // RESOURCEORERESPAWNTIMER[0100]
-					SetResOreTime((UI32)makeNum(r));
-					break;
-				case 0x0659:	 // RESOURCEORERESPAWNAREA[0101]
-					SetResOreArea((UI32)makeNum(r));
-					break;
-				case 0x0670:	 // RESOURCELOGSPERAREA[0102]
-					SetResLogs((UI32)makeNum(r));
-					break;
-				case 0x0684:	 // RESPURCELOGSRESPAWNTIMER[0103]
-					SetResLogTime((UI32)makeNum(r));
-					break;
-				case 0x069D:	 // RESOURCELOGSRESPAWNAREA[0104]
-					SetResLogArea((UI32)makeNum(r));
-					break;
-				case 0x06B5:	 // HUNGERRATE[0105]
-					SetHungerRate((UI32)makeNum(r));
-					break;
-				case 0x06C0:	 // HUNGERDAMAGERATETIMER[0106]
-					SetHungerDamageRateTimer((UI32)makeNum(r));
-					break;
-				case 0x06D6:	 // HUNGERDMGVAL[0107]
-					SetHungerDamage( (SI16)makeNum( r ) );
-					break;
-				case 0x06E3:	 // HUNGERTHRESHOLD[0108]
-					SetHungerThreshold((UI32)makeNum(r));
-					break;
-				case 0x06F3:	 // COMBATMAXRANGE[0109]
-					SetCombatMaxRange((SI16)makeNum(r));
-					break;
-				case 0x0702:	 // COMBATWRESTLESPEED[0110]
-					SetCombatWrestlingSpeed((SI16)makeNum(r));
-					break;
-				case 0x0715:	 // COMBATSPELLMAXRANGE[0111]
-					SetCombatMaxSpellRange((SI16)makeNum(r));
-					break;
-				case 0x0729:	 // COMBATMAXMELEEDAMAGE[0112]
-					SetCombatMaxMeleeDamage((SI16)makeNum(r));
-					break;
-				case 0x073E:	 // COMBATMAXSPELLDAMAGE[0113]
-					//SetCombatMaxSpellDamage((SI16)makeNum(r));
-					break;
-				case 0x0753:	 // COMBATALLOWCRITICALS[0114]
-					SetCombatCriticalsEnabled( makeNum( r ) == 1 );
-					break;
-				case 0x0768:	 // COMBATMAXPOISONINGDISTANCE[0115]
-					SetCombatMaxPoisoningDistance((SI16)makeNum(r));
-					break;
-				case 0x0783:	 // COMBATDISPLAYHITMSG[0116]
-					SetCombatDisplayHitMessage( makeNum( r ) == 1 );
-					break;
-				case 0x0797:	 // COMBATMAXHUMANABSORBTION[0117]
-					SetCombatMaxHumanAbsorbtion((SI16)makeNum(r));
-					break;
-				case 0x07B0:	 // COMBATMAXNONHUMANABSORBTION[0118]
-					SetCombatMaxNonHumanAbsorbtion((SI16)makeNum(r));
-					break;
-				case 0x07CC:	 // COMBATMONSTERSVSANIMALS[0119]
-					SetCombatMonstersVsAnimals( makeNum( r ) == 1 );
-					break;
-				case 0x07E4:	 // COMBATANIMALATTACKCHANCE[0120]
-					SetCombatAnimalsAttackChance((SI16)makeNum(r));
-					break;
-				case 0x07FD:	 // COMBATANIMALSGUARDED[0121]
-					SetCombatAnimalsGuarded( makeNum( r ) == 1 );
-					break;
-				case 0x0812:	 // COMBATNPCDAMAGERATE[0122]
-					SetCombatNPCDamageRate((SI16)makeNum(r));
-					break;
-				case 0x0826:	 // COMBATNPCBASEFLEEAT[0123]
-					SetCombatNPCBaseFleeAt((SI16)makeNum(r));
-					break;
-				case 0x083A:	 // COMBATNPCBASEREATTACKAT[0124]
-					SetCombatNPCBaseReattackAt((SI16)makeNum(r));
-					break;
-				case 0x0852:	 // COMBATATTACKSTAMINA[0125]
-					SetCombatAttackStamina((SI16)makeNum(r));
-					break;
-				case 0x0866:	 // LOCATION[0126]
-					SetServerLocation( r );
-					break;
-				case 0x086F:	 // STARTGOLD[0127]
-					SetServerStartGold( (SI16)makeNum( r ) );
-					break;
-				case 0x0879:	 // STARTPRIVS1[0128]
-					SetServerStartPrivs( 0, (UI08)makeNum( r ) );
-					break;
-				case 0x0885:	 // STARTPRIVS2[0129]
-					SetServerStartPrivs( 1, (UI08)makeNum( r ) );
-					break;
-				case 0x0891:	 // ESCORTDONEEXPIRE[0130]
-					SetEscortDoneExpire( (UI32)makeNum( r ) );
-					break;
-				case 0x08A2:	 // LIGHTDARKLEVEL[0131]
-					SetWorldLightDarkLevel( (SI16)makeNum( r ) );
-					break;
-				case 0x08B1:	 // TITLECOLOUR[0132]
-					SetTitleColour( (UI16)makeNum( r ) );
-					break;
-				case 0x08BD:	 // LEFTTEXTCOLOUR[0133]
-					SetLeftTextColour( (UI16)makeNum( r ) );
-					break;
-				case 0x08CC:	 // RIGHTTEXTCOLOUR[0134]
-					SetRightTextColour( (UI16)makeNum( r ) );
-					break;
-				case 0x08DC:	 // BUTTONCANCEL[0135]
-					SetButtonCancel( (UI16)makeNum( r ) );
-					break;
-				case 0x08E9:	 // BUTTONLEFT[0136]
-					SetButtonLeft( (UI16)makeNum( r ) );
-					break;
-				case 0x08F4:	 // BUTTONRIGHT[0137]
-					SetButtonRight( (UI16)makeNum( r ) );
-					break;
-				case 0x0900:	 // BACKGROUNDPIC[0138]
-					SetBackgroundPic( (UI16)makeNum( r ) );
-					break;
-				case 0x090E:	 // POLLTIME[0139]
-					SetTownNumSecsPollOpen( (long)makeNum( r ) );
-					break;
-				case 0x0917:	 // MAYORTIME[0140]
-					SetTownNumSecsAsMayor( (long)makeNum( r ) );
-					break;
-				case 0x0921:	 // TAXPERIOD[0141]
-					SetTownTaxPeriod( (long)makeNum( r ) );
-					break;
-				case 0x092B:	 // GUARDSPAID[0142]
-					SetTownGuardPayment( (long)makeNum( r ) );
-					break;
-				case 0x0936:	 // DAY[0143]
-					SetServerTimeDay( (SI16)makeNum( r ) );
-					break;
-				case 0x093A:	 // HOURS[0144]
-					SetServerTimeHours( (UI08)makeNum( r ) );
-					break;
-				case 0x0940:	 // MINUTES[0145]
-					SetServerTimeMinutes( (UI08)makeNum( r ) );
-					break;
-				case 0x0948:	 // SECONDS[0146]
-					SetServerTimeSeconds( (UI08)makeNum( r ) );
-					break;
-				case 0x0950:	 // AMPM[0147]
-					SetServerTimeAMPM( makeNum( r ) != 0 );
-					break;
-				case 0x0955:	 // SKILLLEVEL[0148]
-					SetSkillLevel( (UI32)makeNum( r ) );
-					break;
-				case 0x0960:	 // SNOOPISCRIME[0149]
-					SetSnoopIsCrime( makeNum( r ) != 0 );
-					break;
-				case 0x096D:	 // ENGRAVEENABLED[0150]
-					SetEngraveStatus( makeNum( r ) != 0 );
-					break;
-				case 0x097C:	 // BOOKSDIRECTORY[0151]
-					SetBooksDirectory( r );
-					break;
-				case 0x098B:	 // SERVERLIST[0152]
-					zi = serverList.size() + 1;
-					serverList.resize( zi );
-					p = strtok( szLine, "=\n\r" );
-					
-					p = strtok( NULL, ",\n\r" );
-					serverList[zi-1].setName(p);
-					
-					p = strtok( NULL, ",\n\r" );
-					if(p!=NULL)
-					{
-						// Ok look up the data here see if its a number
-						bool bDomain=true;
-						if( ( lpHostEntry = gethostbyname( p ) ) == NULL )
-						{
-							// this was not a domain name so check for IP address
-							if( ( lpHostEntry = gethostbyaddr( p, strlen(p),AF_INET) ) == NULL )
-							{
-								// We get here it wasn't a valid IP either.
-								Console.Warning(1, "Failed to translate %s", p);
-								Console.Warning(1, "This shard will not show up on the shard listing");
-								serverList.resize( zi - 1 );
-								break;
-							}
-							bDomain=false;
-						}
-						// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-						if(bDomain)
-						{
-							// Store the domain name for later then seeing as its a valid one
-							serverList[zi-1].setDomain( p );
-						}
-						else
-						{
-							// this was a valid ip address so we will use an ip instead so clear the domain string.
-							serverList[zi-1].setDomain( "" );
-						}
-					}
-					// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
-					struct in_addr *pinaddr;
-					pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-			    serverList[zi-1].setIP( inet_ntoa(*pinaddr) );
-					p = strtok( NULL, ",\n\r" );
-				  serverList[zi-1].setPort((SI16)makeNum( p ));
-
-					zi = 0;
-					break;
-
-				case 0x0996:	 // SCRIPTSECTIONHEADER[0153]
-					ServerScriptSectionHeader( makeNum( r ) != 0 );
-					break;
-				case 0x09AA:	 // PORT[0154] // whatever that stands for..
-					SetServerPort( (SI16)makeNum( r ) );
-					break;
-				case 0x09AF:	 // SAVEMODE[0155]
-					if( !strcmp( r, "BINARY" ) ) 
-						SaveMode( 1 );
-					else 
-						SaveMode( 0 );
-					break;
-				case 0x09B8:	 // ACCESSDIRECTORY[0156]
-					cServerData::SetAccessDirectory( r );
-					break;
-				case 0x09C8:	 // LOGSDIRECTORY[0157]
-					cServerData::SetLogsDirectory( r );
-					break;
-				case 0x09D6:	 // ACCOUNTISOLATION[0158]
-					//cServerData::SetAccountIsolation( makeNum( r ) );
-					break;
-				case 0x09E7:	 // HTMLDIRECTORY[0159]
-					cServerData::SetHTMLDirectory( r );
-					break;
-				case 0x09F5:	 // SHOOTONANIMALBACK[0160]
-					cServerData::SetShootOnAnimalBack( makeNum( r ) == 1 );
-					break;
-				case 0x0A07:	 // NPCTRAININGENABLED[0161]
-					cServerData::SetNPCTrainingStatus( makeNum( r ) == 1 );
-					break;
-				case 0x0A1A:	 // DICTIONARYDIRECTORY[0162]
-					cServerData::SetDictionaryDirectory( r );
-				  break;
-				case 0x0A29:	 // BACKUPSAVERATIO[0163]
-					cServerData::SetBackupRatio( static_cast<SI16>(makeNum (r )) );
-					break;
-				case 0x0A3D:	 // HIDEWILEMOUNTED[0164]
-					cServerData::SetCharHideWhileMounted( static_cast<SI16>(makeNum(r)));
-					break;
-				default:
-					//Console << "Unknown tag \"" << l << "\" in " << filename << myendl;					break;
-					break;
-			}
-			inFile.getline( szLine, 127 );
-			continue;
+			Console.Warning( "%s File not found, Using default settings.", filename.c_str() );
+			cwmWorldState->ServerData()->save();
 		}
 	}
+	return rvalue;
+}
+
+bool CServerData::HandleLine( const UString& tag, const UString& value )
+{
+	bool rvalue = true;
+	std::string::size_type lFind = UOX3INI_LOOKUP.find( tag.c_str() );
+	switch( lFind )
+	{
+	case 0x0001:	// 04/03/2004 - EviLDeD - Seems that the new code can see the first case now. not completly tested, and its not going to kill us to allow the fall through
+	case 0x000C:	 // SERVERNAME[0002]
+		break;
+	case 0x0017:	 // CONSOLELOG[0003]
+		ServerConsoleLog( value.toUByte() );
+		break;
+	case 0x0022:	 // CRASHPROTECTION[0004]
+		ServerCrashProtection( value.toUByte() );
+		break;
+	case 0x0032:	 // COMMANDPREFIX[0005]
+		ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
+		break;
+	case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
+		ServerAnnounceSaves( (value.toUShort()==1?true:false) ); 
+		break;
+	case 0x0053:	 // JOINPARTMSGS[0007]
+		ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
+		break;
+	case 0x0060:	 // MULCACHING[0008]
+		break;
+	case 0x006B:	 // BACKUPSENABLED[0009]
+		ServerBackups( (value.toUShort()>0?true:false) );
+		break;
+	case 0x007A:	 // SAVESTIMER[0010]
+		ServerSavesTimer( value.toULong() );
+		break;
+	case 0x0085:	 // SKILLCAP[0011]
+		ServerSkillTotalCap( value.toUShort() );
+		break;
+	case 0x008E:	 // SKILLDELAY[0012]
+		ServerSkillDelay( value.toUByte() );
+		break;
+	case 0x0099:	 // STATCAP[0013]
+		ServerStatCap( value.toUShort() );
+		break;
+	case 0x00A1:	 // MAXSTEALTHMOVEMENTS[0014]
+		MaxStealthMovement( value.toShort() );
+		break;
+	case 0x00B5:	 // MAXSTAMINAMOVEMENTS[0015]
+		MaxStaminaMovement( value.toShort() );
+		break;
+	case 0x00C9:	 // ARMORAFFECTMANAREGEN[0016]
+		ArmorAffectManaRegen( (value.toUByte() > 0 ? true : false) );
+		break;
+	case 0x00DE:	 // CORPSEDECAYTIMER[0017]
+		SystemTimer( tSERVER_CORPSEDECAY, value.toUShort() );
+		break;
+	case 0x00EF:	 // WEATHERTIMER[0018]
+		SystemTimer( tSERVER_WEATHER, value.toUShort() );
+		break;
+	case 0x00FC:	 // SHOPSPAWNTIMER[0019]
+		SystemTimer( tSERVER_SHOPSPAWN, value.toUShort() );
+		break;
+	case 0x00E4:	 // DECAYTIMER[0020]
+		SystemTimer( tSERVER_DECAY, value.toUShort() );
+		break;
+	case 0x0116:	 // INVISIBILITYTIMER[0021]
+		SystemTimer( tSERVER_INVISIBILITY, value.toUShort() );
+		break;
+	case 0x0128:	 // OBJECTUSETIMER[0022]
+		SystemTimer( tSERVER_OBJECTUSAGE, value.toUShort() );
+		break;
+	case 0x0137:	 // GATETIMER[0023]
+		SystemTimer( tSERVER_GATE, value.toUShort() );
+		break;
+	case 0x0141:	 // POISONTIMER[0024]
+		SystemTimer( tSERVER_POISON, value.toUShort() );
+		break;
+	case 0x014D:	 // LOGINTIMEOUT[0025]
+		SystemTimer( tSERVER_LOGINTIMEOUT, value.toUShort() );
+		break;
+	case 0x015A:	 // HITPOINTREGENTIMER[0026]
+		SystemTimer( tSERVER_HITPOINTREGEN, value.toUShort() );
+		break;
+	case 0x016D:	 // STAMINAREGENTIMER[0027]
+		SystemTimer( tSERVER_STAMINAREGEN, value.toUShort() );
+		break;
+	case 0x017F:	 // MANAREGENTIMER[0028]
+		SystemTimer( tSERVER_MANAREGEN, value.toUShort() );
+		break;
+	case 0x018E:	 // BASEFISHINGTIMER[0029]
+		SystemTimer( tSERVER_FISHINGBASE, value.toUShort() );
+		break;
+	case 0x019F:	 // RANDOMFISHINGTIMER[0030]
+		SystemTimer( tSERVER_FISHINGRANDOM, value.toUShort() );
+		break;
+	case 0x01B2:	 // SPIRITSPEAKTIMER[0031]
+		SystemTimer( tSERVER_SPIRITSPEAK, value.toUShort() );
+		break;
+	case 0x01C3:	 // DIRECTORY[0032]
+		Directory( CSDDP_ROOT, value );
+		break;
+	case 0x01CD:	 // DATADIRECTORY[0033]
+		Directory( CSDDP_DATA, value );
+		break;
+	case 0x01DB:	 // DEFSDIRECTORY[0034]
+		Directory( CSDDP_DEFS, value );
+		break;
+	case 0x01E9:	 // ACTSDIRECTORY[0035]
+		Directory( CSDDP_ACCOUNTS, value );
+		break;
+	case 0x01F7:	 // SCRIPTSDIRECTORY[0036]
+		Directory( CSDDP_SCRIPTS, value );
+		break;
+	case 0x0208:	 // BACKUPDIRECTORY[0037]
+		Directory( CSDDP_BACKUP, value );
+		break;
+	case 0x0218:	 // MSGBOARDDIRECTORY[0038]
+		Directory( CSDDP_MSGBOARD, value );
+		break;
+	case 0x022A:	 // SHAREDDIRECTORY[0039]
+		Directory( CSDDP_SHARED, value );
+		break;
+	case 0x023A:	 // LOOTDECAYSWITHCORPSE[0040]
+		CorpseLootDecay( value.toUShort() != 0 );
+		break;
+	case 0x024F:	 // GUARDSACTIVE[0041]
+		GuardStatus( value.toUShort() != 0 );
+		break;
+	case 0x025C:	 // DEATHANIMATION[0042]
+		DeathAnimationStatus( value.toUShort() != 0 );
+		break;
+	case 0x026B:	 // AMBIENTSOUNDS[0043]
+		WorldAmbientSounds( value.toShort() );
+		break;
+	case 0x0279:	 // AMBIENTFOOTSTEPS[0044]
+		AmbientFootsteps( value.toUShort() != 0 );
+		break;
+	case 0x028A:	 // INTERNALACCOUNTCREATION[0045]
+		InternalAccountStatus( value.toUShort() != 0 );
+		break;
+	case 0x02A2:	 // SHOWOFFLINEPCS[0046]
+		ShowOfflinePCs( value.toUShort() != 0 );
+		break;
+	case 0x02B1:	 // ROGUESENABLED[0047]
+		RogueStatus( value.toUShort() != 0 );
+		break;
+	case 0x02BF:	 // PLAYERPERSECUTION[0048]
+		PlayerPersecutionStatus( value.toUShort() != 0 );
+		break;
+	case 0x02D1:	 // ACCOUNTFLUSH[0049]
+		AccountFlushTimer( value.toDouble() );
+		break;
+	case 0x02DE:	 // HTMLSTATUSENABLED[0050]
+		HtmlStatsStatus( value.toShort() );
+		break;
+	case 0x02F0:	 // SELLBYNAME[0051]
+		SellByNameStatus( value.toUShort() == 1 );
+		break;
+	case 0x02FB:	 // SELLMAXITEMS[0052]
+		SellMaxItemsStatus( value.toShort() );
+		break;
+	case 0x0308:	 // TRADESYSTEM[0053]
+		TradeSystemStatus( value.toUShort() != 0 );
+		break;
+	case 0x0314:	 // RANKSYSTEM[0054]
+		RankSystemStatus( value.toUShort() != 0 );
+		break;
+	case 0x031F:	 // CUTSCROLLREQUIREMENTS[0055]
+		CutScrollRequirementStatus( (value.toUShort() != 0) );
+		break;
+	case 0x0335:	 // CHECKITEMS[0056]
+		CheckItemsSpeed( value.toDouble() );
+		break;
+	case 0x0340:	 // CHECKBOATS[0057]
+		CheckBoatSpeed( value.toDouble() );
+		break;
+	case 0x034B:	 // CHECKNPCAI[0058]
+		CheckNpcAISpeed( value.toDouble() );
+		break;
+	case 0x0356:	 // CHECKSPAWNREGIONS[0059]
+		CheckSpawnRegionSpeed( value.toDouble() );
+		break;
+	case 0x0368:	 // POSTINGLEVEL[0060]
+		MsgBoardPostingLevel( value.toUByte() );
+		break;
+	case 0x0375:	 // REMOVALLEVEL[0061]
+		MsgBoardPostRemovalLevel( value.toUByte() );
+		break;
+	case 0x0382:	 // ESCORTENABLED[0062]
+		EscortsEnabled( value.toUShort() == 1 );
+		break;
+	case 0x0390:	 // ESCORTINITEXPIRE[0063]
+		SystemTimer( tSERVER_ESCORTWAIT, value.toUShort() );
+		break;
+	case 0x03A1:	 // ESCORTACTIVEEXPIRE[0064]
+		SystemTimer( tSERVER_ESCORTACTIVE, value.toUShort() );
+		break;
+	case 0x03B4:	 // MOON1[0065]
+		ServerMoon( 0, value.toShort() );
+		break;
+	case 0x03BA:	 // MOON2[0066]
+		ServerMoon( 1, value.toShort() );
+		break;
+	case 0x03C0:	 // DUNGEONLEVEL[0067]
+		DungeonLightLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x03CD:	 // CURRENTLEVEL[0068]
+		WorldLightCurrentLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x03DA:	 // BRIGHTLEVEL[0069]
+		WorldLightBrightLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x03E6:	 // BASERANGE[0070]
+		TrackingBaseRange( value.toUShort() );
+		break;
+	case 0x03F0:	 // BASETIMER[0071]
+		TrackingBaseTimer( value.toUShort() );
+		break;
+	case 0x03FA:	 // MAXTARGETS[0072]
+		TrackingMaxTargets( value.toUByte() );
+		break;
+	case 0x0405:	 // MSGREDISPLAYTIME[0073]
+		TrackingRedisplayTime( value.toUShort() );
+		break;
+	case 0x0416:	 // MURDERDECAYTIMER[0074]
+		SystemTimer( tSERVER_MURDERDECAY, value.toUShort() );
+		break;
+	case 0x0427:	 // MAXKILLS[0075]
+		RepMaxKills( value.toUShort() );
+		break;
+	case 0x0430:	 // CRIMINALTIMER[0076]
+		SystemTimer( tSERVER_CRIMINAL, value.toUShort() );
+		break;
+	case 0x043E:	 // MINECHECK[0077]
+		MineCheck( value.toUByte() );
+		break;
+	case 0x0448:	 // OREPERAREA[0078]
+		ResOre( value.toShort() );
+		break;
+	case 0x0453:	 // ORERESPAWNTIMER[0079]
+		ResOreTime( value.toUShort() );
+		break;
+	case 0x0463:	 // ORERESPAWNAREA[0080]
+		ResOreArea( value.toUShort() );
+		break;
+	case 0x0472:	 // LOGSPERAREA[0081]
+		ResLogs( value.toShort() );
+		break;
+	case 0x047E:	 // LOGSRESPAWNTIMER[0082]
+		ResLogTime( value.toUShort() );
+		break;
+	case 0x048F:	 // LOGSRESPAWNAREA[0083]
+		ResLogArea( value.toUShort() );
+		break;
+	case 0x049F:	 // HUNGERRATE[0084]
+		SystemTimer( tSERVER_HUNGERRATE, value.toUShort() );
+		break;
+	case 0x04AA:	 // HUNGERDMGVAL[0085]
+		HungerDamage( value.toShort() );
+		break;
+	case 0x04B7:	 // MAXRANGE[0086]
+		CombatMaxRange( value.toShort() );
+		break;
+	case 0x04C0:	 // SPELLMAXRANGE[0087]
+		CombatMaxSpellRange( value.toShort() );
+		break;
+	case 0x04CE:	 // DISPLAYHITMSG[0088]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x04DC:	 // MONSTERSVSANIMALS[0089]
+		CombatMonstersVsAnimals( value.toUShort() == 1 );
+		break;
+	case 0x04EE:	 // ANIMALATTACKCHANCE[0090]
+		CombatAnimalsAttackChance( value.toUByte() );
+		break;
+	case 0x0501:	 // ANIMALSGUARDED[0091]
+		CombatAnimalsGuarded( value.toUShort() == 1 );
+		break;
+	case 0x0510:	 // NPCDAMAGERATE[0092]
+		CombatNPCDamageRate( value.toShort() );
+		break;
+	case 0x051E:	 // NPCBASEFLEEAT[0093]
+		CombatNPCBaseFleeAt( value.toShort() );
+		break;
+	case 0x052C:	 // NPCBASEREATTACKAT[0094]
+		CombatNPCBaseReattackAt( value.toShort() );
+		break;
+	case 0x053E:	 // ATTACKSTAMINA[0095]
+		CombatAttackStamina( value.toShort() );
+		break;
+	case 0x054C:	 // LOCATION[0096]
+		ServerLocation( value );
+		break;
+	case 0x0555:	 // STARTGOLD[0097]
+		ServerStartGold( value.toShort() );
+		break;
+	case 0x055F:	 // STARTPRIVS[0098]
+		ServerStartPrivs( value.toUShort() );
+		break;
+	case 0x056A:	 // ESCORTDONEEXPIRE[0099]
+		SystemTimer( tSERVER_ESCORTDONE, value.toUShort() );
+		break;
+	case 0x057B:	 // DARKLEVEL[0100]
+		WorldLightDarkLevel( (LIGHTLEVEL)value.toUShort() );
+		break;
+	case 0x0585:	 // TITLECOLOUR[0101]
+		TitleColour( value.toUShort() );
+		break;
+	case 0x0591:	 // LEFTTEXTCOLOUR[0102]
+		LeftTextColour( value.toUShort() );
+		break;
+	case 0x05A0:	 // RIGHTTEXTCOLOUR[0103]
+		RightTextColour( value.toUShort() );
+		break;
+	case 0x05B0:	 // BUTTONCANCEL[0104]
+		ButtonCancel( value.toUShort() );
+		break;
+	case 0x05BD:	 // BUTTONLEFT[0105]
+		ButtonLeft( value.toUShort() );
+		break;
+	case 0x05C8:	 // BUTTONRIGHT[0106]
+		ButtonRight( value.toUShort() );
+		break;
+	case 0x05D4:	 // BACKGROUNDPIC[0107]
+		BackgroundPic( value.toUShort() );
+		break;
+	case 0x05E2:	 // POLLTIME[0108]
+		TownNumSecsPollOpen( value.toULong() );
+		break;
+	case 0x05EB:	 // MAYORTIME[0109]
+		TownNumSecsAsMayor( value.toULong() );
+		break;
+	case 0x05F5:	 // TAXPERIOD[0110]
+		TownTaxPeriod( value.toULong() );
+		break;
+	case 0x05FF:	 // GUARDSPAID[0111]
+		TownGuardPayment( value.toULong() );
+		break;
+	case 0x060A:	 // DAY[0112]
+		ServerTimeDay( value.toShort() );
+		break;
+	case 0x060E:	 // HOURS[0113]
+		ServerTimeHours( value.toUByte() );
+		break;
+	case 0x0614:	 // MINUTES[0114]
+		ServerTimeMinutes( value.toUByte() );
+		break;
+	case 0x061C:	 // SECONDS[0115]
+		ServerTimeSeconds( value.toUByte() );
+		break;
+	case 0x0624:	 // AMPM[0116]
+		ServerTimeAMPM( value.toUShort() != 0 );
+		break;
+	case 0x0629:	 // SKILLLEVEL[0117]
+		SkillLevel( value.toUByte() );
+		break;
+	case 0x0634:	 // SNOOPISCRIME[0118]
+		SnoopIsCrime( value.toUShort() != 0 );
+		break;
+	case 0x0641:	 // BOOKSDIRECTORY[0119]
+		Directory( CSDDP_BOOKS, value );
+		break;
+	case 0x0650:	 // SERVERLIST[0120]
+	{
+		UString sname, sip, sport;
+		physicalServer toAdd;
+		if( value.sectionCount( "," ) == 2 )
+		{
+			struct hostent *lpHostEntry = NULL;
+			sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
+			sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
+			sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
 	
-	Console.PrintDone();
-	return this;
-}
+			toAdd.setName( sname );
+			// Ok look up the data here see if its a number
+			bool bDomain = true;
+			if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == NULL )
+			{
+				// this was not a domain name so check for IP address
+				if( ( lpHostEntry = gethostbyaddr( sip.c_str(), sip.size(), AF_INET ) ) == NULL )
+				{
+					// We get here it wasn't a valid IP either.
+					Console.Warning( "Failed to translate %s", sip.c_str() );
+					Console.Warning( "This shard will not show up on the shard listing" );
+					break;
+				}
+				bDomain = false;
+			}
+			// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
+			if( bDomain )	// Store the domain name for later then seeing as its a valid one
+				toAdd.setDomain( sip );
+			else			// this was a valid ip address so we will use an ip instead so clear the domain string.
+				toAdd.setDomain( "" );
 
-cServerData * cServerData::ParseUox3ServerScp(const char *filename)
-{
-	if( !filename )
-		return NULL;
-	std::string sFilename = filename;
-	std::ifstream inFile;
-
-	Console << "Processing server file \"" << filename << "\"..." << "Detected V1...";
-
-	// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-	inFile.open( sFilename.c_str(), std::ios::in );	
-	if( !inFile.is_open() )
-	{
-		Console << "FAILED!" << myendl << "Error: Unable to open source file." << filename << myendl;
-		return NULL;
+			// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
+			struct in_addr *pinaddr;
+			pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
+			toAdd.setIP( inet_ntoa(*pinaddr) );
+			toAdd.setPort( sport.toUShort() );
+			serverList.push_back( toAdd );
+		}
+		else
+		{
+			Console.Warning( "Malformend Serverlist entry: %s", value.c_str() );
+			Console.Warning( "This shard will not show up on the shard listing" );
+		}
+		break;
 	}
-	char szLine[129];	// Trimmed this down to 80 to save some ram realestate
-	inFile.getline( szLine, 128 );	// Snatch the first line.
-	char *szpLineUpper = NULL, LineBuffer[129];
-	char *l = NULL, *r = NULL;
+	case 0x065B:	 // PORT[0121]
+		ServerPort( value.toUShort() );
+		break;
+	case 0x0660:	 // ACCESSDIRECTORY[0122]
+		Directory( CSDDP_ACCESS, value );
+		break;
+	case 0x0670:	 // LOGSDIRECTORY[0123]
+		Directory( CSDDP_LOGS, value );
+		break;
+	case 0x067E:	 // ACCOUNTISOLATION[0124]
+		break;
+	case 0x068F:	 // HTMLDIRECTORY[0125]
+		Directory( CSDDP_HTML, value );
+		break;
+	case 0x069D:	 // SHOOTONANIMALBACK[0126]
+		ShootOnAnimalBack( value.toUShort() == 1 );
+		break;
+	case 0x06AF:	 // NPCTRAININGENABLED[0127]
+		NPCTrainingStatus( value.toUShort() == 1 );
+		break;
+	case 0x06C2:	 // DICTIONARYDIRECTORY[0128]
+		Directory( CSDDP_DICTIONARIES, value );
+		break;
+	case 0x06D6:	 // BACKUPSAVERATIO[0129]
+		BackupRatio( value.toShort() );
+		break;
+	case 0x06E6:	 // HIDEWILEMOUNTED[0130]
+		CharHideWhileMounted( value.toShort() == 1 );
+		break;
+	case 0x06F6:	 // SECONDSPERUOMINUTE[0131]
+		ServerSecondsPerUOMinute( value.toUShort() );
+		break;
+	case 0x0709:	 // WEIGHTPERSTR[0132]
+		//WeightPerStr( value.toUByte() );
+		WeightPerStr( value.toFloat() );
+		break;
+	case 0x0716:	 // POLYDURATION[0133]
+		SystemTimer( tSERVER_POLYMORPH, value.toUShort() );
+		break;
+	case 0x0723:	 // UOGENABLED[0134]
+		ServerUOGEnabled( value.toShort()==1 );
+		break;
+	case 0x072E:	 // NETRCVTIMEOUT[0135]
+		ServerNetRcvTimeout( value.toULong() );
+		break;
+	case 0x073C:	 // NETSNDTIMEOUT[0136]
+		ServerNetSndTimeout( value.toULong() );
+		break;
+	case 0x074A:	 // NETRETRYCOUNT[0137]
+		ServerNetRetryCount( value.toULong() );
+		break;
+	case 0x0758:	 // CLIENTFEATURES[0138]
+		SetClientFeatures( value.toULong() );
+		break;
+	case 0x0767:	 // PACKETOVERLOADS[0139]
+		ServerOverloadPackets( (value.toByte() == 1) );
+		break;
+	case 0x0777:	 // NPCMOVEMENTSPEED[0140]
+		NPCWalkingSpeed( value.toFloat() );
+		break;
+	case 0x0788:	 // PETHUNGEROFFLINE[0141]
+		PetHungerOffline( (value.toByte() == 1) );
+		break;
+	case 0x0799:	 // PETOFFLINETIMEOUT[0142]
+		PetOfflineTimeout( value.toUShort() );
+		break;
+	case 0x07AB:	 // PETOFFLINECHECKTIMER[0143]
+		SystemTimer( tSERVER_PETOFFLINECHECK, value.toUShort() );
+		break;
+	case 0x07C0:	 // ARCHERRANGE[0144]
+		CombatArcherRange( value.toShort() );
+		break;
+	case 0x07CC:	 // ADVANCEDPATHFINDING[0145]
+		AdvancedPathfinding( (value.toByte() == 1) );
+		break;
+	case 0x07E0:	 // SERVERFEATURES[0146]
+		SetServerFeatures( value.toULong() );
+		break;
+	case 0x07EF:	 // LOOTINGISCRIME[0147]
+		LootingIsCrime( (value.toByte() == 1) );
+		break;
+	case 0x07FE:	 // NPCRUNNINGSPEED[0148]
+		NPCRunningSpeed( value.toFloat() );
+		break;
+	case 0x080E:	 // NPCFLEEINGSPEED[0149]
+		NPCFleeingSpeed( value.toFloat() );
+		break;
+	case 0x081E:	 // BASICTOOLTIPSONLY[0150]
+		BasicTooltipsOnly( (value.toByte() == 1) );
+		break;
+	case 0x0830:	 // GLOBALITEMDECAY[0151]
+		GlobalItemDecay( (value.toByte() == 1) );
+		break;
+	case 0x0840:	 // SCRIPTITEMSDECAYABLE[0152]
+		ScriptItemsDecayable( (value.toByte() == 1) );
+		break;
+	case 0x0855:	 // BASEITEMSDECAYABLE[0152]
+		BaseItemsDecayable( (value.toByte() == 1) );
+		break;
+	case 0x0868:	 // ITEMDECAYINHOUSES[0153]
+		ItemDecayInHouses( (value.toByte() == 1) );
+		break;
+	case 0x087a:	// COMBATEXPLODEDELAY[0154]
+		CombatExplodeDelay( value.toULong() );
+		break;
+	case 0x88d:		// PAPERDOLLGUILDBUTTON[0155]
+		PaperdollGuildButton( value.toByte() == 1 );
+		break;
+	case 0x08a2:	// ATTACKSPEEDFROMSTAMINA[0156]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x08b9:	 // DISPLAY DAMAGE NUMBERS[0157]
+		CombatDisplayHitMessage( value.toUShort() == 1 );
+		break;
+	case 0x08ce:	 // CLIENTSUPPORT4000[0158]
+		ClientSupport4000( value.toUShort() == 1 );
+		break;
+	case 0x08e0:	 // CLIENTSUPPORT5000[0159]
+		ClientSupport5000( value.toUShort() == 1 );
+		break;
+	case 0x08f2:	 // CLIENTSUPPORT6000[0160]
+		ClientSupport6000( value.toUShort() == 1 );
+		break;
+	case 0x0904:	 // CLIENTSUPPORT6050[0161]
+		ClientSupport6050( value.toUShort() == 1 );
+		break;
+	case 0x0916:	 // CLIENTSUPPORT7000[0162]
+		ClientSupport7000( value.toUShort() == 1 );
+		break;
+	case 0x0928:	 // CLIENTSUPPORT7090[0163]
+		ClientSupport7090( value.toUShort() == 1 );
+		break;
+	case 0x093a:	 // CLIENTSUPPORT70160[0164]
+		ClientSupport70160( value.toUShort() == 1 );
+		break;
+	case 0x094d:	 // EXTENDED STARTING STATS[0165]
+		ExtendedStartingStats( value.toUShort() == 1 );
+		break;
+	case 0x0963:	 // EXTENDED STARTING SKILLS[0166]
+		ExtendedStartingSkills( value.toUShort() == 1 );
+		break;
+	case 0x097a:	// CLIENTSUPPORT70240[0167]
+		ClientSupport70240( value.toUShort() == 1 );
+		break;
 
-	while( !inFile.eof() )
-	{
-		strcpy(LineBuffer,szLine);
-		//Console << szLine << myendl;
-		szpLineUpper = strupr( LineBuffer );
-		if( ( *(char*)szpLineUpper == '/' && *((char*)szpLineUpper + 1 ) == '/' ) || *(char*)szpLineUpper == '\n' )
-		{
-			inFile.getline( szLine, 128 );
-			continue;
-		}
-		l = strtok( szpLineUpper, " ");
-		r = strtok( NULL, "\0" );	// Get tag/value seperation (if there a way to do this using string and the stl ab)
-		if(l==NULL || (l!=NULL&&r==NULL) || !strcmp("SECTION",l) || *(l)=='{' || *(l)=='}')
-		{
-			inFile.getline( szLine, 128 );
-			continue;
-		}
-		int lookupidx=SERVERCFG_LOOKUP.find( l );
-		switch( lookupidx )
-		{
-			case 0x0001:	// CRASH_PROTECTION[0001]
-			case 0x0012:	// CRASH_PROTECTION[0001]
-				SetServerCrashProtection((UI32)makeNum(r));
-				break;
-			case 0x0023:	// SKILLCAP[0002]
-				SetServerSkillCap((UI32)makeNum(r));
-				break;
-			case 0x002C:	// STATCAP[0003]
-				SetServerStatCap((UI32)makeNum(r));
-				break;
-			case 0x0034:	// USESPECIALBANK[0004]
-				SetWildernessBankStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0043:	// SPECIALBANKTRIGGER[0005]
-				SetWildernessBankTriggerString(r);
-				break;
-			case 0x0056:	// DECAYTIMER[0006]
-				SetServerDecayTimer((UI32)makeNum(r));
-				break;
-			case 0x0061:	// PLAYERCORPSEDECAYMULTIPLIER[0007]
-				//SetCorpseDecayMultiplier((UI32)makeNum(r));
-				break;
-			case 0x007D:	// LOOTDECAYSWITHCORPSE[0008]
-				SetCorpseLootDecay( makeNum( r ) == 1 );
-				break;
-			case 0x0092:	 // INVISTIMER[0009]
-				SetSystemTimer( INVISIBILITY, ( (UI32)makeNum(r) ) );
-				break;
-			case 0x009D:	 // SKILLDELAY[0010]
-				SetServerSkillDelay( (UI32)makeNum(r));
-				break;
-			case 0x00A8:	 // SKILLLEVEL[0011]
-				SetSkillLevel((UI32)makeNum(r));
-				break;
-			case 0x00B3:	 // OBJECTDELAY[0012]
-				SetSystemTimer( OBJECT_USAGE, ((UI32)makeNum(r)) );
-				break;
-			case 0x00BF:	 // GATETIMER[0013]
-				SetSystemTimer( GATE, (UI32)makeNum(r) );
-				break;
-			case 0x00C9:	 // SHOWDEATHANIM[0014]
-				SetDeathAnimationStatus( makeNum( r ) == 1 );
-				break;
-			case 0x00D7:	 // GUARDSACTIVE[0015]
-				SetGuardStatus( makeNum( r ) == 1 );
-				break;
-			case 0x00E4:	 // BG_SOUNDS[0016]
-				SetWorldAmbientSounds((SI16)makeNum(r));
-				break;
-			case 0x00EE:	 // ANNOUNCE_WORLDSAVES[0017]
-				SetServerAnnounceSaves( makeNum( r ) == 1 );
-				break;
-			case 0x0102:	 // WWWACCOUNTS[0018]
-				SetExternalAccountStatus( makeNum( r ) == 1 );
-				break;
-			case 0x010E:	 // ARCHIVEPATH[0019]
-				SetBackupDirectory( r );
-				break;
-			case 0x011A:	 // SAVE_PER_LOOP[0020]
-				SetServerAntiLagSavesPerLoop((SI16)makeNum(r));	
-				break;
-			case 0x0128:	 // BACKUP_SAVE_RATIO[0021]
-				SetBackupRatio((SI16)makeNum(r));
-				break;
-			case 0x013A:	 // UOXBOT[0022]
-				SetUoxBotStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0141:	 // POISONTIMER[0023]
-				SetPoisonTimer((UI32)makeNum(r));
-				break;
-			case 0x014D:	 // JOINMSG[0024]
-				SetServerJoinPartAnnouncements( makeNum( r ) == 1 );
-				break;
-			case 0x0155:	 // PARTMSG[0025] Ignored now
-				break;
-			case 0x015D:	 // LOG[0026]
-				SetServerConsoleLog((SI08)makeNum(r));
-				break;
-			case 0x0161:	 // ROGUE[0027]
-				SetRogueStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0167:	 // WEATHERTIME[0028]
-				SetWeatherTimer((UI32)makeNum(r));
-				break;
-			case 0x0173:	 // SHOPTIME[0029]
-				SetSystemTimer( SHOP_SPAWN, (UI32)makeNum(r) );
-				break;
-			case 0x017C:	 // SHOWLOGGEDOUTPCS[0030]
-				SetShowHiddenNpcStatus( makeNum( r ) == 1 );
-				break;
-			case 0x018D:	 // CHAR_TIME_OUT[0031]
-				SetSystemTimer( LOGIN_TIMEOUT, ((UI32)makeNum(r)) );
-				break;
-			case 0x019B:	 // MAXSTEALTHSTEPS[0032]
-				SetMaxStealthMovement((SI16)makeNum(r));
-				break;
-			case 0x01AB:	 // RUNNINGSTAMINASTEPS[0033]
-				SetMaxStaminaMovement((SI16)makeNum(r));
-				break;
-			case 0x01BF:	 // BOAT_SPEED[0034]
-				SetCheckBoatSpeed((R64)atof(r));
-				break;
-			case 0x01CA:	 // HTML[0035]
-				SetHtmlStatsStatus((SI16)makeNum(r));
-				break;
-			case 0x01CF:	 // CUT_SCROLL_REQUIREMENTS[0036]
-				SetCutScrollRequirementStatus((SI16)(makeNum(r)));
-				break;
-			case 0x01E7:	 // PERSECUTION[0037]
-				SetPlayerPersecutionStatus( makeNum( r ) == 1 );
-				break;
-			case 0x01F3:	 // AUTO_CREATE_ACCTS[0038]
-				SetInternalAccountStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0205:	 // MSGBOARDPATH[0039]
-				SetMsgBoardDirectory(r);
-				break;
-			case 0x0212:	 // MSGPOSTACCESS[0040]
-				SetMsgBoardPostingLevel((SI16)makeNum(r));
-				break;
-			case 0x0220:	 // MSGPOSTREMOVE[0041]
-				SetMsgBoardPostRemovalLevel((SI16)makeNum(r));
-				break;
-			case 0x022E:	 // MSGRETENTION[0042]
-				SetMsgBoardKeepMsgs( (UI32)makeNum( r ) );
-				break;
-			case 0x023B:	 // ESCORTACTIVE[0043]
-				SetEscortsEnabled( makeNum( r ) == 1 );
-				break;
-			case 0x0248:	 // ESCORTINITEXPIRE[0044]
-				SetEscortInitExpire((UI32)makeNum(r));
-				break;
-			case 0x0259:	 // ESCORTACTIVEEXPIRE[0045]
-				SetEscortActiveExpire((UI32)makeNum(r));
-				break;
-			case 0x026C:	 // ESCORTDONEEXPIRE[0046]
-				SetEscortDoneExpire((UI32)makeNum(r));
-				break;
-			case 0x027D:	 // FOOTSTEPS[0047]
-				SetAmbientFootsteps( makeNum( r ) == 1 );
-				break;
-			case 0x0287:	 // COMMANDPREFIX[0048]
-				SetServerCommandPrefix((char)*r);
-				break;
-			case 0x0295:	 // PORT[0049]
-				SetServerPort((SI16)makeNum(r));
-				break;
-			case 0x029A:	 // NICE[0050] Not sure what this does
-				SetNiceness((SI16)makeNum(r));
-				break;
-			case 0x029F:	 // LORDB_LAG_FIX[0051]
-				SetLagFixStatus( makeNum( r ) == 1 );
-				break;
-			case 0x02AD:	 // CHECK_ITEMS[0052]
-				SetCheckItemsSpeed((R64)atof(r));
-				break;
-			case 0x02B9:	 // CHECK_NPCS[0053]
-				SetCheckNpcSpeed((R64)atof( r ));
-				break;
-			case 0x02C4:	 // NPC_TILE_CHECK[0054]
-				SetNpcTileCheckStatus( (SI16)makeNum( r ) );
-				break;
-			case 0x02D3:	 // CHECK_NPCAI[0055]
-				SetCheckNpcAISpeed((R64)atof(r));
-				break;
-			case 0x02DF:	 // CHECK_SPAWNREGIONS[0056]
-				SetCheckSpawnRegionSpeed((R64)atof(r));
-				break;
-			case 0x02F2:	 // CHECKMEM[0057]
-				SetCheckMemorySpeed((R64)atof(r));
-				break;
-			case 0x02FB:	 // CACHE_MULS[0058]
-				SetServerMulCaching( makeNum( r ) == 1 );
-				break;
-			case 0x0306:	 // ACCOUNTFLUSH[0059]
-				SetAccountFlushTimer( (R64)atof( r ) );
-				break;
-			case 0x0313:	 // MAXRANGE[0060] 
-				SetCombatMaxRange( (SI16)makeNum( r ) );
-				break;
-			case 0x031C:	 // WRESTLESPEED[0061]
-				SetCombatWrestlingSpeed((SI16)makeNum(r));
-				break;
-			case 0x0329:	 // MAX_RANGE_SPELL[0062]
-				SetCombatMaxSpellRange((SI16)makeNum(r));
-				break;
-			case 0x0339:	 // MAXDMG[0063]
-				SetCombatMaxMeleeDamage((SI16)makeNum(r));
-				break;
-			case 0x0340:	 // DEATH_ON_THROAT[0064]
-				SetCombatCriticalsEnabled( makeNum( r ) == 1 );
-				break;
-			case 0x0350:	 // DIST_TO_POISON[0065]
-				SetCombatMaxPoisoningDistance((SI16)makeNum(r));
-				break;
-			case 0x035F:	 // COMBAT_HIT_MESSAGE[0066]
-				SetCombatDisplayHitMessage( makeNum( r ) == 1 );
-				break;
-			case 0x0372:	 // MAX_ABSORBTION[0067]
-				SetCombatMaxHumanAbsorbtion((SI16)makeNum(r));
-				break;
-			case 0x0381:	 // MAX_NON_HUMAN_ABSORBTION[0068]
-				SetCombatMaxNonHumanAbsorbtion((SI16)makeNum(r));
-				break;
-			case 0x039A:	 // MONSTERS_VS_ANIMALS[0069]
-				SetCombatMonstersVsAnimals( makeNum( r ) == 1 );
-				break;
-			case 0x03AE:	 // ANIMALS_ATTACK_CHANCE[0070]
-				SetCombatAnimalsAttackChance((SI16)makeNum(r));
-				break;
-			case 0x03C4:	 // ANIMALS_GUARDED[0071]
-				SetCombatAnimalsGuarded( makeNum( r ) == 1 );
-				break;
-			case 0x03D4:	 // NPC_DAMAGE_RATE[0072]
-				SetCombatNPCDamageRate((SI16)makeNum(r));
-				break;
-			case 0x03E4:	 // NPC_BASE_FLEEAT[0073]
-				SetCombatNPCBaseFleeAt((SI16)makeNum(r));
-				break;
-			case 0x03F4:	 // NPC_BASE_REATTACKAT[0074]
-				SetCombatNPCBaseReattackAt((SI16)makeNum(r));
-				break;
-			case 0x0408:	 // ATTACKSTAMINA[0075]
-				SetCombatAttackStamina((SI16)makeNum(r));
-				break;
-			case 0x0416:	 // SELLBYNAME[0076]
-				SetSellByNameStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0421:	 // SELLMAXITEM[0077]
-				SetSellMaxItemsStatus((SI16)makeNum(r)); // rename this in the class to this name not with status on the end -> What Ab?
-				break;
-			case 0x042D:	 // TRADESYSTEM[0078]
-				SetTradeSystemStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0439:	 // RANKSYSTEM[0079]
-				SetRankSystemStatus( makeNum( r ) == 1 );
-				break;
-			case 0x0444:	 // HITPOINTS_REGENRATE[0080]
-				SetSystemTimer( HITPOINT_REGEN, (UI32)makeNum( r ) );
-				break;
-			case 0x0458:	 // STAMINA_REGENRATE[0081]
-				SetSystemTimer( STAMINA_REGEN, (UI32)makeNum( r ) );
-				break;
-			case 0x046A:	 // MANA_REGENRATE[0082]
-				SetSystemTimer( MANA_REGEN, (UI32)makeNum( r ) );
-				break;
-			case 0x0479:	 // ARMOR_AFFECT_MANA_REGEN[0083]
-				SetSystemTimer( ARMORAFFECTMANA_REGEN, (UI32)makeNum( r ) );
-				break;
-			case 0x0491:	 // HUNGERRATE[0084]
-				SetHungerRate((UI32)makeNum(r));
-				break;
-			case 0x049C:	 // HUNGER_DAMAGE[0085]
-				SetHungerDamage((SI16)makeNum(r));
-				break;
-			case 0x04AA:	 // HUNGER_DAMAGE_RATE[0086]
-				SetHungerDamageRateTimer((UI32)makeNum(r));
-				break;
-			case 0x04BD:	 // MINECHECK[0087]
-				SetMineCheck( (SI16)makeNum(r) );
-				break;
-			case 0x04C7:	 // ORE_PER_AREA[0088]
-				SetResOre((UI32)makeNum(r));
-				break;
-			case 0x04D4:	 // ORE_RESPAWN_TIME[0089]
-				SetResOreTime( (UI32)atol( r ) );
-				break;
-			case 0x04E5:	 // ORE_RESPAWN_AREA[0090]
-				SetResOreArea((UI32)makeNum(r));
-				break;
-			case 0x04F6:	 // LOGS_PER_AREA[0091]
-				SetResLogs((UI32)makeNum(r));
-				break;
-			case 0x0504:	 // LOG_RESPAWN_TIME[0092]
-				SetResLogTime( (UI32)atol(r) );
-				break;
-			case 0x0515:	 // LOG_RESPAWN_AREA[0093]
-				SetResLogArea((UI32)makeNum(r));
-				break;
-			case 0x0526:	 // MURDER_DECAY[0094]
-				SetRepMurderDecay((long)atol(r));
-				break;
-			case 0x0533:	 // MAXKILLS[0095]
-				SetRepMaxKills(makeNum(r));
-				break;
-			case 0x053C:	 // CRIMINAL_TIME[0096]
-				SetRepCrimTime(makeNum(r));
-				break;
-			case 0x054A:	 // BASE_TRACKING_RANGE[0097]
-				SetTrackingBaseRange((UI32)makeNum(r));
-				break;
-			case 0x055E:	 // MAX_TRACKING_TARGETS[0098]
-				SetTrackingMaxTargets( (UI32)makeNum(r));
-				break;
-			case 0x0573:	 // BASE_TRACKING_TIME[0099]
-				SetTrackingBaseTimer((UI32)makeNum(r));
-				break;
-			case 0x0586:	 // TRACKING_MESSAGE_REDISPLAY_TIME[0100]
-				SetTrackingRedisplayTime((UI32)makeNum(r));
-				break;
-			case 0x05A6:	 // BEGGING_RANGE[0101]
-				SetBeggingRange( (SI16)makeNum( r ) );
-				break;
-			case 0x05B4:	 // BASE_FISHING_TIME[0102]
-				SetFishingBaseTime((UI32)makeNum(r));
-				break;
-			case 0x05C6:	 // RANDOM_FISHING_TIME[0103]
-				SetFishingRandomTime((UI32)makeNum(r));
-				break;
-			case 0x05DA:	 // SECTION SPIRITSPEAK[0104]
-			case 0x05EE:	 // SPIRITSPEAKTIMER[0105]
-				SetSpiritSpeakTimer((UI32)makeNum(r));
-				break;
-			case 0x05FF:	 // DAY[0106]
-				SetServerTimeDay( (SI16)makeNum(r) );
-				break;
-			case 0x0603:	 // HOUR[0107]
-				SetServerTimeHours( (UI08)makeNum(r) );
-				break;
-			case 0x0608:	 // MINUTE[0108]
-				SetServerTimeMinutes( (UI08)makeNum(r) );
-				break;
-			case 0x060F:	 // AMPM[0109]
-				SetServerTimeAMPM( makeNum( r ) != 0 );
-				break;
-			case 0x0614:	 // MOON1[0110]
-				SetServerMoon(0,(SI16)makeNum(r));
-				break;
-			case 0x061A:	 // MOON2[0111]
-				SetServerMoon(1,(SI16)makeNum(r));
-				break;
-			case 0x0620:	 // MOON1UPDATE[0112]
-				SetServerMoonUpdate(0,(SI16)makeNum(r));
-				break;
-			case 0x062C:	 // MOON2UPDATE[0113]
-				SetServerMoonUpdate(1,(SI16)makeNum(r));
-				break;
-			case 0x0638:	 // DUNGEONLIGHTLEVEL[0114]
-				SetDungeonLightLevel((SI16)makeNum(r));
-				break;
-			case 0x064A:	 // WORLDFIXEDLEVEL[0115]
-				SetWorldFixedLightLevel((SI16)makeNum(r));
-				break;
-			case 0x065A:	 // WORLDCURLEVEL[0116]
-				SetWorldLightCurrentLevel((SI16)makeNum(r));
-				break;
-			case 0x0668:	 // WORLDBRIGHTLEVEL[0117]
-				SetWorldLightBrightLevel((SI16)makeNum(r));
-				break;
-			case 0x0679:	 // WORLDDARKLEVEL[0118]
-				SetWorldLightDarkLevel((SI16)makeNum(r));
-				break;
-			case 0x0688:	 // SECONDSPERUOMINUTE[0119]
-				break;
-			case 0x069B:	 // TITLECOLOUR[0120]
-				SetTitleColour( (UI16)makeNum( r ) );
-				break;
-			case 0x06A7:	 // LEFTTEXTCOLOUR[0121]
-				SetLeftTextColour( (UI16)makeNum( r ) );
-				break;
-			case 0x06B6:	 // RIGHTTEXTCOLOUR[0122]
-				SetRightTextColour( (UI16)makeNum( r ) );
-				break;
-			case 0x06C6:	 // BUTTONCANCEL[0123]
-				SetButtonCancel( (UI16)makeNum( r ) );
-				break;
-			case 0x06D3:	 // BUTTONLEFT[0124]
-				SetButtonLeft( (UI16)makeNum( r ) );
-				break;
-			case 0x06DE:	 // BUTTONRIGHT[0125]
-				SetButtonRight( (UI16)makeNum( r ) );
-				break;
-			case 0x06EA:	 // BACKGROUNDPIC[0126]
-				SetBackgroundPic( (UI16)makeNum( r ) );
-				break;
-			case 0x06F8:	 // POLLTIME[0127]
-				SetTownNumSecsPollOpen( (SI32)makeNum( r ) );
-				break;
-			case 0x0701:	 // MAYORTIME[0128]
-				SetTownNumSecsAsMayor( (SI32)makeNum( r ) );
-				break;
-			case 0x070B:	 // TAXPERIOD[0129]
-				SetTownTaxPeriod( (SI32)makeNum( r ) );
-				break;
-			case 0x0715:	 // GUARDSPAID[0130]
-				SetTownGuardPayment( (SI32)makeNum( r ) );
-				break;
-			case 0x0720:	 // SNOOPISCRIME[0131]
-				SetSnoopIsCrime( makeNum( r ) != 0 );
-				break;
-			case 0x072D:	 // ENGRAVEENABLED[0132]
-				SetEngraveStatus( makeNum( r ) != 0 );
-				break;
-		        case 0x086F:	 // STARTGOLD[0127]
-				SetServerStartGold( (SI16)makeNum( r ) );
-				break;
-			default:
-				inFile.getline( szLine, 128 );
-				continue;
-		}
-		inFile.getline( szLine, 128 );
+#if P_ODBC == 1
+	case 0x098d:	 // ODBCDSN[0168]
+		ODBCManager::getSingleton(0168.SetDatabase( value );
+		break;
+	case 0x0995:	 // ODBCUSER[0169]
+		ODBCManager::getSingleton().SetUsername( value );
+		break;
+	case 0x099e:	 // ODBCPASS[0170]
+		ODBCManager::getSingleton().SetPassword( value );
+		break;
+#endif
+	default:
+		rvalue = false;
+		break;
 	}
-	Console.PrintDone();
-
-	return this;
+	return rvalue;
 }
 
-void cServerData::SetServerStartGold( SI16 value )
+void CServerData::ServerStartGold( SI16 value )
 {
-	if( value < 0 )
-		return;
-	startgold = value;
+	if( value >= 0 )
+		startgold = value;
 }
 
 
-SI16 cServerData::GetServerStartGold( void ) const
+SI16 CServerData::ServerStartGold( void ) const
 {
 	return startgold;
 }
 
-void cServerData::SetServerStartPrivs( SI16 slot, UI08 value )
+void CServerData::ServerStartPrivs( UI16 value )
 {
-	if( slot < 0 || slot > 1 && value == 0xFFFF )
-		return;
-	startprivs[slot] = value;
+	startprivs = value;
 }
 
-UI08 cServerData::GetServerStartPrivs( SI16 slot ) const
+UI16 CServerData::ServerStartPrivs( void ) const
 {
-	if( slot < 0 || slot > 1 )
-		return 0;
-	return static_cast<UI08>(startprivs[slot]);
+	return startprivs;
 }
 
-void cServerData::SetServerDecayTimer( UI32 value )
+void CServerData::ServerMoon( SI16 slot, SI16 value )
 {
-	decaytimer=value;
+	if( slot >= 0 && slot <= 1 && value >= 0 )
+		moon[slot] = value;
 }
 
-UI32 cServerData::GetServerDecayTimer( void )
+SI16 CServerData::ServerMoon( SI16 slot ) const
 {
-	return decaytimer;
+	SI16 rvalue = -1;
+	if( slot >= 0 && slot <= 1 )
+		rvalue = moon[slot];
+	return rvalue;
 }
 
-void cServerData::SetPoisonTimer( UI32 value )
+void CServerData::DungeonLightLevel( LIGHTLEVEL value )
 {
-	poisontimer=value;
+	dungeonlightlevel = value;
 }
 
-UI32 cServerData::GetPoisonTimer( void )
-{
-	return poisontimer;
-}
-
-void cServerData::SetWeatherTimer( UI32 value )
-{
-	weathertimer=value;
-}
-
-UI32 cServerData::GetWeatherTimer( void )
-{
-	return weathertimer;
-}
-
-void cServerData::SetMsgBoardKeepMsgs( UI32 value )
-{
-	keepmessages = value;
-}
-
-UI32 cServerData::GetMsgBoardKeepMsgsStatus( void )
-{
-	return keepmessages;
-}
-
-void cServerData::SetServerHitpointRegenTimer( UI32 value )
-{
-	hitpointregentimer = value;
-}
-
-UI32 cServerData::GetServerHitpointRegenTimer( void )
-{
-	return hitpointregentimer;
-}
-
-void cServerData::SetServerStaminaRegenTimer( UI32 value )
-{
-	staminaregentimer = value;
-}
-
-UI32 cServerData::GetServerStaminaRegenTimer( void )
-{
-	return staminaregentimer;
-}
-
-void cServerData::SetServerManaRegenTimer( UI32 value )
-{
-	manaregentimer = value;
-}
-
-UI32 cServerData::GetServerManaRegenTimer( void )
-{
-	return manaregentimer;
-}
-
-void cServerData::SetServerMoon( SI16 slot, SI16 value )
-{
-	if( slot < 0 || slot > 1 || value < 0 )
-		return;
-	moon[slot]=value;
-}
-
-void cServerData::SetServerMoonUpdate( SI16 slot, SI16 value )
-{
-	if( slot < 0 || slot > 1 || value < 0 )
-		return;
-	moonupdate[slot]=value;
-}
-
-SI16 cServerData::GetServerMoon(SI16 slot)
-{
-	if(slot<0||slot>1)
-		return -1;
-	return moon[slot];
-}
-
-SI16 cServerData::GetServerMoonUpdate(SI16 slot)
-{
-	if(slot<0||slot>1)
-		return -1;
-	return moonupdate[slot];
-}
-
-void cServerData::SetDungeonLightLevel(SI16 value)
-{
-	if(value<0)
-		return;
-	dungeonlightlevel=value;
-}
-
-SI16 cServerData::GetDungeonLightLevel( void )
+LIGHTLEVEL CServerData::DungeonLightLevel( void ) const
 {
 	return dungeonlightlevel;
 }
 
-void cServerData::SetWorldFixedLightLevel(SI16 value)
+void CServerData::WorldLightCurrentLevel( LIGHTLEVEL value )
 {
-	if(value<0)
-		return;
-	fixedlightlevel=value;
+	currentlightlevel = value;
 }
 
-SI16 cServerData::GetWorldFixedLightLevel( void )
-{
-	return fixedlightlevel;
-}
-
-void cServerData::SetWorldLightCurrentLevel( SI16 value )
-{
-	if(value<0)
-		return;
-	currentlightlevel=value;
-}
-
-SI16 cServerData::GetWorldLightCurrentLevel( void )
+LIGHTLEVEL CServerData::WorldLightCurrentLevel( void ) const
 {
 	return currentlightlevel;
 }
 
-void cServerData::SetWorldLightBrightLevel(SI16 value)
+void CServerData::WorldLightBrightLevel( LIGHTLEVEL value )
 {
-	if( value < 0 )
-		return;
 	brightnesslightlevel = value;
 }
 
-SI16 cServerData::GetWorldLightBrightLevel( void )
+LIGHTLEVEL CServerData::WorldLightBrightLevel( void ) const
 {
 	return brightnesslightlevel;
 }
 
-void cServerData::SetWorldLightDarkLevel(SI16 value)
+void CServerData::WorldLightDarkLevel( LIGHTLEVEL value )
 {
-	if( value < 0 )
-		return;
 	darknesslightlevel=value;
 }
 
-SI16 cServerData::GetWorldLightDarkLevel( void )
+LIGHTLEVEL CServerData::WorldLightDarkLevel( void ) const
 {
 	return darknesslightlevel;
 }
 
-void cServerData::PostLoadDefaults( void )
+void CServerData::PostLoadDefaults( void )
 {
-	if( startlocations.size() == 0 )
+	if( startlocations.empty() )
 	{
-		SetServerLocation( "Yew,Center,545,982,0" );
-		SetServerLocation( "Minoc,Tavern,2477,411,15" );
-		SetServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10" );
-		SetServerLocation( "Moonglow,Docks,4406,1045,0" );
-		SetServerLocation( "Trinsic,West Gate,1832,2779,0" );
-		SetServerLocation( "Magincia,Docks,3675,2259,20" );
-		SetServerLocation( "Jhelom,Docks,1492,3696,0" );
-		SetServerLocation( "Skara Brae,Docks,639,2236,0" );
-		SetServerLocation( "Vesper,Ironwood Inn,2771,977,0" );
+		ServerLocation( "Yew,Center,545,982,0,0,1075072" );
+		ServerLocation( "Minoc,Tavern,2477,411,15,0,1075073" );
+		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,1075074" );
+		ServerLocation( "Moonglow,Docks,4406,1045,0,0,1075075" );
+		ServerLocation( "Trinsic,West Gate,1832,2779,0,0,1075076" );
+		ServerLocation( "Magincia,Docks,3675,2259,20,0,1075077" );
+		ServerLocation( "Jhelom,Docks,1492,3696,0,0,1075078" );
+		ServerLocation( "Skara Brae,Docks,639,2236,0,0,1075079" );
+		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,1075080" );
 	}
 }
 
-void cServerData::SetServerLocation( const char *toSet )
+void CServerData::ServerLocation( std::string toSet )
 {
-	char *toScan = NULL;
-	toScan = new char[strlen( toSet ) + 1];
-	strcpy( toScan, toSet );
-	char *parts[5] = { NULL, NULL, NULL, NULL, NULL };
-	char *token = NULL;
-	token = strtok( toScan, "," );
-	int pCounter = 0;
-	parts[pCounter++] = token;
-	while( token != NULL )
-	{
-		token = strtok( NULL, "," );
-		parts[pCounter++] = token;
-		if( pCounter == 5 )
-			break;
-	}
-	if( pCounter == 5 )	// Wellformed server location
+	UString temp( toSet );
+	if( temp.sectionCount( "," ) == 6 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x = (SI16)makeNum( parts[2] );
-		toAdd.y = (SI16)makeNum( parts[3] );
-		toAdd.z = (SI16)makeNum( parts[4] );
-		strcpy( toAdd.town, parts[0] );
-		strcpy( toAdd.description, parts[1] );
+		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
+		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
+		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
+		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toLong();
+		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
+		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
 		startlocations.push_back( toAdd );
 	}
 	else
 	{
-		Console.Error( 2, "Malformed location entry in ini file" );
+		Console.Error( "Malformed location entry in ini file" );
 	}
-	delete [] toScan;		// Must come last, or we delete our manipulation string before we manipulate it
 }
-LPSTARTLOCATION cServerData::GetServerLocation( UI32 locNum )
+LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 {
-	if( locNum >= startlocations.size() )
-		return NULL;
-	else
-		return &startlocations[locNum];
+	LPSTARTLOCATION rvalue = NULL;
+	if( locNum < startlocations.size() )
+		rvalue = &startlocations[locNum];
+	return rvalue;
 }
 
-UI32 cServerData::GetNumServerLocations( void ) const
+size_t CServerData::NumServerLocations( void ) const
 {
 	return startlocations.size();
 }
 
-
-void cServerData::SetCombatMaxSpellDamage( SI16 value )
+UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 {
-	combatmaxspelldamage = value;
+	return secondsperuominute;
 }
-SI16 cServerData::GetCombatMaxSpellDamage( void ) const
+void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 {
-	return combatmaxspelldamage;
+	secondsperuominute = newVal;
 }
 
-SI16 cServerData::GetServerTimeDay( void ) const
+//o--------------------------------------------------------------------------o
+//|	Function/Class	-	void CServerData::SaveTime( void )
+//|	Date			-	January 28th, 2007
+//|	Developer(s)	-	giwo
+//|	Company/Team	-	UOX3 DevTeam
+//o--------------------------------------------------------------------------o
+//|	Description		-	Outputs server time information to time.wsc in the /shared/ directory
+//o--------------------------------------------------------------------------o	
+void CServerData::SaveTime( void )
+{
+	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
+	std::ofstream	timeDestination( timeFile.c_str() );
+	if( !timeDestination ) 
+	{
+		Console.Error( "Failed to open %s for writing", timeFile.c_str() );
+		return;
+	}
+
+	timeDestination << "[TIME]" << '\n' << "{" << '\n';
+	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << '\n';
+	timeDestination << "DAY=" << ServerTimeDay() << '\n';
+	timeDestination << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << '\n';
+	timeDestination << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << '\n';
+	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
+	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
+	timeDestination << "}" << '\n' << '\n';
+
+	timeDestination.close();
+}
+
+void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void CServerData::LoadTime( void )
+{
+	std::ifstream input;
+	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
+
+	input.open( filename.c_str(), std::ios_base::in );
+	input.seekg( 0, std::ios::beg );
+
+
+	if( input.is_open() )
+	{
+		char line[1024];
+		while( !input.eof() && !input.fail() )
+		{
+			input.getline( line, 1024 );
+			UString sLine( line );
+			sLine = sLine.removeComment().stripWhiteSpace();
+			if( !sLine.empty() )
+			{
+				if( sLine.upper() == "[TIME]" )
+					LoadTimeTags( input );
+			}
+		}
+		input.close();
+	}
+}
+
+void CServerData::LoadTimeTags( std::ifstream &input )
+{
+	UString UTag, tag, data;
+	while( tag != "o---o" )
+	{
+		ReadWorldTagData( input, tag, data );
+		if( tag != "o---o" )
+		{
+			UTag = tag.upper();
+			if( UTag == "AMPM" )
+				ServerTimeAMPM( (data.toByte() == 1) );
+			else if( UTag == "CURRENTLIGHT" )
+				WorldLightCurrentLevel( data.toUShort() );
+			else if( UTag == "DAY" )
+				ServerTimeDay( data.toShort() );
+			else if( UTag == "HOUR" )
+				ServerTimeHours( data.toUShort() );
+			else if( UTag == "MINUTE" )
+				ServerTimeMinutes( data.toUShort() );
+			else if( UTag == "MOON" )
+			{
+				if( data.sectionCount( "," ) != 0 )
+				{
+					ServerMoon( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
+					ServerMoon( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
+				}
+			}
+		}
+	}
+	tag = "";
+}
+
+SI16 CServerData::ServerTimeDay( void ) const
 {
 	return days;
 }
-void cServerData::SetServerTimeDay( SI16 nValue )
+void CServerData::ServerTimeDay( SI16 nValue )
 {
 	days = nValue;
 }
-UI08 cServerData::GetServerTimeHours( void ) const
+UI08 CServerData::ServerTimeHours( void ) const
 {
 	return hours;
 }
-void cServerData::SetServerTimeHours( UI08 nValue )
+void CServerData::ServerTimeHours( UI08 nValue )
 {
 	hours = nValue;
 }
-UI08 cServerData::GetServerTimeMinutes( void ) const
+UI08 CServerData::ServerTimeMinutes( void ) const
 {
 	return minutes;
 }
-void cServerData::SetServerTimeMinutes( UI08 nValue )
+
+void CServerData::ServerTimeMinutes( UI08 nValue )
 {
 	minutes = nValue;
 }
-UI08 cServerData::GetServerTimeSeconds( void ) const
+UI08 CServerData::ServerTimeSeconds( void ) const
 {
 	return seconds;
 }
-void cServerData::SetServerTimeSeconds( UI08 nValue )
+void CServerData::ServerTimeSeconds( UI08 nValue )
 {
 	seconds = nValue;
 }
-bool cServerData::GetServerTimeAMPM( void ) const
+bool CServerData::ServerTimeAMPM( void ) const
 {
 	return ampm;
 }
-void cServerData::SetServerTimeAMPM( bool nValue )
+void CServerData::ServerTimeAMPM( bool nValue )
 {
 	ampm = nValue;
 }
 
-bool cServerData::IncSecond( void )
+bool CServerData::incSecond( void )
 {
-	seconds++;
+	bool rvalue = false;
+	++seconds;
 	if( seconds == 60 )
 	{
 		seconds = 0;
-		return IncMinute();
+		rvalue	= incMinute();
 	}
-	return false;
+	return rvalue;
 }
 
-void cServerData::IncMoon( int mNumber )
+void CServerData::incMoon( int mNumber )
 {
 	moon[mNumber] = (SI16)((moon[mNumber] + 1)%8);
 }
 
-bool cServerData::IncMinute( void )
+bool CServerData::incMinute( void )
 {
-	minutes++;
+	bool rvalue = false;
+	++minutes;
 	if( minutes%8 == 0 )
-		IncMoon( 0 );
+		incMoon( 0 );
 	if( minutes%3 == 0 )
-		IncMoon( 1 );
+		incMoon( 1 );
 
 	if( minutes == 60 )
 	{
 		minutes = 0;
-		return IncHour();
+		rvalue	= incHour();
 	}
-	return false;
+	return rvalue;
 }
 
-bool cServerData::IncHour( void )
+bool CServerData::incHour( void )
 {
-	hours++;
+	++hours;
 	bool retVal = false;
 	if( hours == 12 )
 	{
 		if( ampm )
-			retVal = IncDay();
-		hours = 0;
-		ampm = !ampm;
+			retVal = incDay();
+		hours	= 0;
+		ampm	= !ampm;
 	}
 	return retVal;
 }
 
-bool cServerData::IncDay( void )
+bool CServerData::incDay( void )
 {
-	days++;
+	++days;
 	return true;
 }
 
-long cServerData::VersionCheck( const char *filename )
+physicalServer *CServerData::ServerEntry( UI16 entryNum )
 {
-	long version = MAKEWORD( 0, 0 );
-	std::string sFilename = filename;
-	std::ifstream inFile( sFilename.c_str(), std::ios::in );
-	if( !inFile.is_open() )
-		return version;
-	char szLine[129];
-	inFile.getline( szLine, 128 );
-	char *left = NULL, *right = NULL;
-	left = strtok( szLine, "V" );
-	right = strtok( NULL, "\0" );
-
-	if( right == NULL )
-	{
-		if( atoi( szLine ) == 0 )
-		{
-			// ok passed first line.
-			inFile.getline( szLine,128 );
-			if( atoi( szLine ) > 0 )
-			{
-				// ok passed ip check
-				inFile.getline( szLine,128 );
-				if( atoi(szLine) > 0 )
-				{
-					// this is a port all is kewl. return 1.1
-					return MAKEWORD( 1, 1 );
-				}
-				return MAKEWORD( 1, 0 );
-			}
-			return MAKEWORD( 1, 0 );
-		}
-	}
-	return makeNum( right );
+	physicalServer *rvalue = NULL;
+	if( entryNum < serverList.size() )
+		rvalue = &serverList[entryNum];
+	return rvalue;
+}
+UI16 CServerData::ServerCount( void ) const
+{
+	return static_cast<UI16>(serverList.size());
 }
 
-physicalServer *cServerData::GetServerEntry( UI16 entryNum )
-{
-	if( entryNum >= serverList.size() )
-		return NULL;
-	return &serverList[entryNum];
-}
-UI32 cServerData::GetServerCount( void ) const
-{
-	return serverList.size();
-}
-
-bool cServerData::ServerScriptSectionHeader( void ) const
-{
-	return srvScpSectHeader;
-}
-
-void cServerData::ServerScriptSectionHeader( bool value )
-{
-	srvScpSectHeader = value;
-}
-
-
-UI08 cServerData::SaveMode( void ) const
-{
-	return saveMode;
-}
-
-UI08 cServerData::SaveMode( UI08 NewMode )
-{
-	if( NewMode <= 0 || NewMode > 1 )
-		saveMode = 0;
-	else
-		saveMode = 1;
-
-	return SaveMode();
-}
-
-/*static string translateHostName(const string name)
-{
-// we do a dns lookup on this
-   string ipAddress;
-   UI32 uiValue;
-
-		return name;
-#if defined(WIN32)
-   uiValue = inet_addr(name.c_str()) ;
-#  define gethostbyname2(host,family) gethostbyname(host)
-#else
-   uiValue = INADDR_NONE;
-#endif
-
-   ipAddress = ""; 
-   if (uiValue == INADDR_NONE)
-   {
-     hostent* ptrHost = NULL;
-     
-     ptrHost = gethostbyname2(name.c_str(),AF_INET);
-     if(ptrHost != NULL)
-     {
-       in_addr Address;
-       memcpy(&Address,*ptrHost->h_addr_list,4);
-       
-       // Format in Dotted Decimal.
-       ipAddress = inet_ntoa(Address);
-     }
-     else
-     {
-       // It ain't a name, might be a number
-       hostent* ptrHost = NULL;
-       
-       ptrHost = gethostbyaddr(name.c_str(), name.length(), AF_INET);
-       if (ptrHost != NULL)
-	 ipAddress = name;
-     }
-   }
-   return ipAddress ;
-}*/
-
-void physicalServer::setName(const std::string newName)
+void physicalServer::setName(const std::string& newName)
 {
   name = newName;
 }
-void physicalServer::setDomain(const std::string newDomain)
+void physicalServer::setDomain(const std::string& newDomain)
 {
   domain = newDomain;
 }
-void physicalServer::setIP(const std::string newIP)
+void physicalServer::setIP(const std::string& newIP)
 {
   ip = newIP;
 }
-void physicalServer::setPort(SI16 newPort)
+void physicalServer::setPort(UI16 newPort)
 {
   port = newPort;
 }
-std::string physicalServer::getName(void)
+std::string physicalServer::getName( void ) const
 {
   return name;
 }
-std::string physicalServer::getDomain(void)
+std::string physicalServer::getDomain( void ) const
 {
   return domain;
 }
-std::string physicalServer::getIP(void)
+std::string physicalServer::getIP( void ) const
 {
   return ip; 
 }
-SI16 physicalServer::getPort(void)
+UI16 physicalServer::getPort( void ) const
 {
   return port;
 }
 
+}

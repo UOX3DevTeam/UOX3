@@ -21,41 +21,37 @@
 #endif
 
 
-#if !defined(__unix__)
+#if UOX_PLATFORM != PLATFORM_WIN32
+	#include <sys/socket.h>
+	#include <netdb.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <string.h>
+	//#include <stricmp.h>
+	#include <stddef.h>
+		
+	#define SOCKET                int
+	#define INVALID_SOCKET        0xFFFFFFFF
+	#define SOCKET_ERROR          -1
+	#define SOCKADDR_IN           struct sockaddr_in
+	#if UOX_PLATFORM == PLATFORM_LINUX
+//		#define INADDR_NONE           -1
+		#define HTHREAD               thread_t
+	#else
+		#define HTHREAD               pthread_t
+	#endif
+	//#  define DWORD                 unsigned long
+	#define INVALID_HANDLE_VALUE  -1
 
-#ifdef USE_WINSOCK1
-#  include <winsock.h>
+	typedef void *(*LPTHREAD_START_ROUTINE)( void * ) ;
 #else
-#  include <winsock2.h>
-#endif
+	#ifdef USE_WINSOCK1
+		#include <winsock.h>
+	#else
+		#include <winsock2.h>
+	#endif
 
-#  define HTHREAD               HANDLE
-
-#elif defined UNIX
-
-#  include <sys/types.h>
-#  include <sys/socket.h>
-#  include <netdb.h>
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  include <string.h>
-#  include <stricmp.h>
-
-#  define SOCKET                int
-#  define INVALID_SOCKET        -1
-#  define SOCKET_ERROR          -1
-#  define SOCKADDR_IN           struct sockaddr_in
-#if !defined(__unix__)
-#   define INADDR_NONE           -1
-#   define HTHREAD               thread_t
-#else
-#  define HTHREAD               pthread_t
-#endif
-//#  define DWORD                 unsigned long
-#  define INVALID_HANDLE_VALUE  -1
-
-typedef void *(*LPTHREAD_START_ROUTINE)( void * ) ;
-
+	#  define HTHREAD               HANDLE
 #endif
 
 #endif

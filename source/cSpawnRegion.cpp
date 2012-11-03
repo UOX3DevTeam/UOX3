@@ -3,341 +3,335 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "mapstuff.h"
+#include "classes.h"
+#include "Dictionary.h"
 
-cSpawnRegion::cSpawnRegion( UI16 spawnregion ) : nexttime( 0 ), call( 1 ), x1( 0 ), x2( 0 ), y1( 0 ), y2( 0 ),
-maxcspawn( 0 ), maxispawn( 0 ), maxtime( 0 ), mintime( 0 ), regionnum( spawnregion ), curcspawn( 0 ), curispawn( 0 ),
-worldNumber( 0 )
+namespace UOX
 {
-	items.resize( 0 );
-	npcs.resize( 0 );
-	strncpy( name, Dictionary->GetEntry( 1117 ), MAX_REGIONNAME );
+
+const TIMERVAL	DEFSPAWN_NEXTTIME		= 0;
+const UI16		DEFSPAWN_CALL			= 1;
+const SI16		DEFSPAWN_X1				= 0;
+const SI16		DEFSPAWN_X2				= 0;
+const SI16		DEFSPAWN_Y1				= 0;
+const SI16		DEFSPAWN_Y2				= 0;
+const size_t	DEFSPAWN_MAXCSPAWN		= 0;
+const size_t	DEFSPAWN_MAXISPAWN		= 0;
+const UI08		DEFSPAWN_MAXTIME		= 0;
+const UI08		DEFSPAWN_MINTIME		= 0;
+const SI32		DEFSPAWN_CURCSPAWN		= 0;
+const SI32		DEFSPAWN_CURISPAWN		= 0;
+const UI08		DEFSPAWN_WORLDNUM		= 0;
+const SI08		DEFSPAWN_PREFZ			= 18;
+const bool		DEFSPAWN_ONLYOUTSIDE	= false;
+
+CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionnum( spawnregion ), maxcspawn( DEFSPAWN_MAXCSPAWN ), maxispawn( DEFSPAWN_MAXISPAWN ), 
+curcspawn( DEFSPAWN_CURCSPAWN ), curispawn( DEFSPAWN_CURISPAWN ), mintime( DEFSPAWN_MINTIME ), maxtime( DEFSPAWN_MAXTIME ), 
+nexttime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ), 
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE )
+{
+	sItems.resize( 0 );
+	sNpcs.resize( 0 );
+	name = Dictionary->GetEntry( 1117 );
 // note: doesn't go here, but i'll see it here.  when an item is spawned, as soon as it's moved it needs to lose it's
 // spawn setting.  If not, then when people pick up spawned items, they will disappear (on region spawns)
 }
 
-cSpawnRegion::~cSpawnRegion()
+CSpawnRegion::~CSpawnRegion()
 {
-	items.resize( 0 );
-	npcs.resize( 0 );
+	sItems.resize( 0 );
+	sNpcs.resize( 0 );
 // Wipe out all items and npcs
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	const char *GetName( void )
+//|	Function	-	std::string Name( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs region name
+//|	Purpose		-	Spawn Region's name
 //o---------------------------------------------------------------------------o
-const char *cSpawnRegion::GetName( void ) const
+const std::string CSpawnRegion::GetName( void ) const
 {
 	return name;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetName( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets region name (max 128 characters)
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetName( const char *newName )
+void CSpawnRegion::SetName( const std::string& newName )
 {
-	strncpy( name, newName, MAX_REGIONNAME );
+	name = newName;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetMaxSpawn( void )
+//|	Function	-	SI32 MaxSpawn( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs maximum amount of objects a region can spawn
+//|	Purpose		-	Maximum amount of objects a region can spawn
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxSpawn( void ) const
+size_t CSpawnRegion::GetMaxSpawn( void ) const
 {
 	return ( maxcspawn + maxispawn );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetMaxCharSpawn( void )
+//|	Function	-	SI32 MaxCharSpawn( void )
 //|	Programmer	-	Thyme
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Return maximum amount of characters to spawn
+//|	Purpose		-	Maximum amount of characters to spawn
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxCharSpawn( void ) const
+size_t CSpawnRegion::GetMaxCharSpawn( void ) const
 {
 	return maxcspawn;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetMaxItemSpawn( void )
-//|	Programmer	-	Thyme
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Return maximum amount of items to spawn
-//o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetMaxItemSpawn( void ) const
-{
-	return maxispawn;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetMaxCharSpawn( SI32 newVal )
-//|	Programmer	-	Thyme
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets maximum amount of characters a region can spawn
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMaxCharSpawn( SI32 newVal )
+void CSpawnRegion::SetMaxCharSpawn( size_t newVal )
 {
 	maxcspawn = newVal;
 }
 
+
 //o---------------------------------------------------------------------------o
-//|	Function	-	SetMaxItemSpawn( SI32 newVal )
+//|	Function	-	SI32 MaxItemSpawn( void )
 //|	Programmer	-	Thyme
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets maximum amount of items a region can spawn
+//|	Purpose		-	Maximum amount of items to spawn
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMaxItemSpawn( SI32 newVal )
+size_t CSpawnRegion::GetMaxItemSpawn( void ) const
+{
+	return maxispawn;
+}
+
+void CSpawnRegion::SetMaxItemSpawn( size_t newVal )
 {
 	maxispawn = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetCurrent( void )
+//|	Function	-	SI32 Current( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs current amount of objects spawned
+//|	Purpose		-	Current amount of objects spawned
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrent( void ) const
+SI32 CSpawnRegion::GetCurrent( void ) const
 {
 	return ( curcspawn + curispawn );
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetCurrentCharAmt( void )
+//|	Function	-	SI32 CurrentCharAmt( void )
 //|	Programmer	-	Thyme
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs current amount of characters spawned
+//|	Purpose		-	Current amount of characters spawned
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrentCharAmt( void ) const
+SI32 CSpawnRegion::GetCurrentCharAmt( void ) const
 {
 	return curcspawn;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetCurrentItemAmt( void )
-//|	Programmer	-	Thyme
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs current amount of items spawned
-//o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetCurrentItemAmt( void ) const
+void CSpawnRegion::IncCurrentCharAmt( SI16 incAmt )
 {
-	return curispawn;
+	curcspawn += incAmt;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI16 GetRegionNum( void )
+//|	Function	-	SI32 CurrentItemAmt( void )
+//|	Programmer	-	Thyme
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Current amount of items spawned
+//o---------------------------------------------------------------------------o
+SI32 CSpawnRegion::GetCurrentItemAmt( void ) const
+{
+	return curispawn;
+}
+void CSpawnRegion::IncCurrentItemAmt( SI16 incAmt )
+{
+	curispawn += incAmt;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	UI16 RegionNum( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs region number
+//|	Purpose		-	Spawn region number
 //o---------------------------------------------------------------------------o
-UI16 cSpawnRegion::GetRegionNum( void ) const
+UI16 CSpawnRegion::GetRegionNum( void ) const
 {
 	return regionnum;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetRegionNum( UI16 newVal )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets region number
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetRegionNum( UI16 newVal )
+void CSpawnRegion::SetRegionNum( UI16 newVal )
 {
 	regionnum = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI08 GetMinTime( void )
+//|	Function	-	UI08 MinTime( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs the minimum amount of time to pass before a spawnregion
+//|	Purpose		-	Minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-UI08 cSpawnRegion::GetMinTime( void ) const
+UI08 CSpawnRegion::GetMinTime( void ) const
 {
 	return mintime;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cSpawnRegion::SetMinTime( UI08 newVal )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets the minimum amount of time to pass before a spawnregion
-//|					spawns a new object
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMinTime( UI08 newVal )
+void CSpawnRegion::SetMinTime( UI08 newVal )
 {
 	mintime = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI08 GetMaxTime( void )
+//|	Function	-	UI08 MaxTime( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs the maximum amount of time to pass before a spawnregion
+//|	Purpose		-	Maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 //o---------------------------------------------------------------------------o
-UI08 cSpawnRegion::GetMaxTime( void ) const
+UI08 CSpawnRegion::GetMaxTime( void ) const
 {
 	return maxtime;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	cSpawnRegion::SetMaxTime( UI08 newVal )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets the maximum amount of time to pass before a spawnregion
-//|					spawns a new object
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetMaxTime( UI08 newVal )
+void CSpawnRegion::SetMaxTime( UI08 newVal )
 {
 	maxtime = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI32 GetNextTime( void )
+//|	Function	-	SI32 NextTime( void )
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grab when a spawnregion will next spawn a new object
+//|	Purpose		-	When a spawnregion will next spawn a new object
 //o---------------------------------------------------------------------------o
-SI32 cSpawnRegion::GetNextTime( void ) const
+TIMERVAL CSpawnRegion::GetNextTime( void ) const
 {
 	return nexttime;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetNextTime( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Set when a spawnregion will next spawn a new object
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetNextTime( SI32 newVal )
+void CSpawnRegion::SetNextTime( TIMERVAL newVal )
 {
 	nexttime = newVal;
 }
 
 //o--------------------------------------------------------------------------o
-//|	Function/Class-	void cSpawnRegion::SetZ( SI08 newVal )
-//|	Date					-	04/22/2002
+//|	Function/Class	-	SI08 Z()
+//|	Date			-	04/22/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status			-	
 //o--------------------------------------------------------------------------o
-//|	Description		-	
+//|	Description		-	Z Level of the Spawn Region
 //o--------------------------------------------------------------------------o
-void cSpawnRegion::SetZ( SI08 newVal )
+void CSpawnRegion::SetPrefZ( SI08 newVal )
 {
-	z = newVal;
+	prefZ = newVal;
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	SI08 cSpawnRegion::GetZ( void )
-//|	Date					-	04/22/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-SI08 cSpawnRegion::GetZ( void ) const
+SI08 CSpawnRegion::GetPrefZ( void ) const
 {
-	return z;
+	return prefZ;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI16 GetY1( void )
+//|	Function	-	SI16 Y1()
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs y1 to get the y pos of the top corner of the spawnregion
+//|	Purpose		-	The y pos of the top corner of the spawnregion
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetY1( void ) const
+SI16 CSpawnRegion::GetY1( void ) const
 {
 	return y1;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetY1( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets y1 to the y pos of the top corner of the spawnregion
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetY1( SI16 newVal )
+void CSpawnRegion::SetY1( SI16 newVal )
 {
 	y1 = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI16 GetX1( void )
+//|	Function	-	SI16 X1()
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs x1 to get the x pos of the top corner of the spawnregion
+//|	Purpose		-	The x pos of the top corner of the spawnregion
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetX1( void ) const
+SI16 CSpawnRegion::GetX1( void ) const
 {
 	return x1;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetX1( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets x1 to the x pos of the top corner of the spawnregion
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetX1( SI16 newVal )
+void CSpawnRegion::SetX1( SI16 newVal )
 {
 	x1 = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI16 GetY2( void )
+//|	Function	-	SI16 Y2()
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs y2 to get the y pos of the bottom corner of the spawnregion
+//|	Purpose		-	The y pos of the bottom corner of the spawn region
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetY2( void ) const
+SI16 CSpawnRegion::GetY2( void ) const
 {
 	return y2;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetY2( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets y2 to the y pos of the bottom corner of the spawnregion
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetY2( SI16 newVal )
+void CSpawnRegion::SetY2( SI16 newVal )
 {
 	y2 = newVal;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	SI16 GetX2( void )
+//|	Function	-	SI16 X2()
 //|	Programmer	-	Zane
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Grabs x2 to get the x pos of the bottom corner of the spawnregion
+//|	Purpose		-	The x pos of the bottom corner of the spawn region
 //o---------------------------------------------------------------------------o
-SI16 cSpawnRegion::GetX2( void ) const
+SI16 CSpawnRegion::GetX2( void ) const
 {
 	return x2;
 }
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SetX2( void )
-//|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets x2 to the x pos of the second corner of the spawnregion
-//o---------------------------------------------------------------------------o
-void cSpawnRegion::SetX2( SI16 newVal )
+void CSpawnRegion::SetX2( SI16 newVal )
 {
 	x2 = newVal;
+}
+
+//o---------------------------------------------------------------------------o
+//|	Function	-	UI08 WorldNumber()
+//|	Programmer	-	giwo
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	The world number of the spawnregion
+//o---------------------------------------------------------------------------o
+UI08 CSpawnRegion::WorldNumber( void ) const
+{
+	return worldNumber;
+}
+void CSpawnRegion::WorldNumber( UI08 newVal )
+{
+	worldNumber = newVal;
+}
+
+void CSpawnRegion::LoadNPCList( std::string npcList )
+{
+	UString sect = "NPCLIST " + npcList;
+	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
+	if( CharList != NULL )
+	{
+		for( UString npc = CharList->First() ; !CharList->AtEnd(); npc = CharList->Next() )
+		{
+			if( npc.upper() == "NPCLIST" )
+				LoadNPCList( CharList->GrabData() );
+			else
+				sNpcs.push_back( npc );
+		}
+	}
+}
+
+void CSpawnRegion::LoadItemList( std::string itemList )
+{
+	UString sect = "ITEMLIST " + itemList;
+	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
+	if( ItemList != NULL )
+	{
+		for( UString itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
+		{
+			if( itm.upper() == "ITEMLIST" )
+				LoadItemList( ItemList->GrabData() );
+			else
+				sItems.push_back( itm );
+		}
+	}
 }
 
 //o---------------------------------------------------------------------------o
@@ -346,132 +340,127 @@ void cSpawnRegion::SetX2( SI16 newVal )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Loads the spawnregion from spawn.scp script entry
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::Load( ScriptSection *toScan )
+void CSpawnRegion::Load( ScriptSection *toScan )
 {
-	const char *data2 = NULL;
-	char sect[512];
-	char data[512];
+	UString sect;
+	UString data;
+	UString UTag;
 
-	for( const char *tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+	for( UString tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
-		if( tag == NULL )
-			continue;
-
-		data2 = toScan->GrabData();
-		strcpy( data, data2 );
-		strupr( data );
-
-		if( !strcmp( tag, "NPCLIST" ) )
+		if( !tag.empty() )
 		{
-			sprintf( sect, "NPCLIST %s", data );
-			ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
-			if( CharList != NULL )
+			UTag = tag.upper();
+			data = toScan->GrabData();
+
+			if( UTag == "NPCLIST" )
+				LoadNPCList( data );
+			else if( UTag == "NPC" )
+				sNpcs.push_back( data );
+			else if( UTag == "ITEMLIST" )
+				LoadItemList( data );
+			else if( UTag == "ITEM" )
+				sItems.push_back( data );
+			else if( UTag == "MAXITEMS" )
+				maxispawn = data.toUInt();
+			else if( UTag == "MAXNPCS" )
+				maxcspawn = data.toUInt();
+			else if( UTag == "X1" )
+				x1 = data.toShort();
+			else if( UTag == "X2" )
+				x2 = data.toShort();
+			else if( UTag == "Y1" )
+				y1 = data.toShort();
+			else if( UTag == "Y2" )
+				y2 = data.toShort();
+			else if( UTag == "MINTIME" )
+				mintime = data.toUByte();
+			else if( UTag == "MAXTIME" )
+				maxtime = data.toUByte();
+			else if( UTag == "NAME" )
+				name = data;
+			else if( UTag == "CALL" )
+				call = data.toUShort();
+			else if( UTag == "WORLD" )
+				worldNumber = data.toUByte();
+			else if( UTag == "PREFZ" )
+				prefZ = data.toByte();
+			else if( UTag == "ONLYOUTSIDE" )
+				onlyOutside = (data.toByte() == 1);
+			else if( UTag == "VALIDLANDPOS" )
 			{
-				for( const char *itm = CharList->First() ; !CharList->AtEnd(); itm = CharList->Next() )
-					npcs.push_back( itm );
+				data = data.simplifyWhiteSpace();
+				if( data.sectionCount( "," ) == 2 )
+				{
+					validLandPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+					validLandPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+				}
+			}
+			else if( UTag == "VALIDWATERPOS" )
+			{
+				data = data.simplifyWhiteSpace();
+				if( data.sectionCount( "," ) == 2 )
+				{
+					validWaterPos.push_back( point3( data.section( ",", 0, 0 ).toUShort(), data.section( ",", 1, 1 ).toUShort(), data.section( ",", 2, 2 ).toUByte() ) );
+					validWaterPosCheck[ data.section( ",", 1, 1 ).toUShort() + ( data.section( ",", 0, 0 ).toUShort() << 16 ) ] = data.section( ",", 2, 2 ).toUByte();
+				}
 			}
 		}
-		else if( !strcmp( tag, "NPC" ) )
-			npcs.push_back( data );
-		else if( !strcmp( tag, "ITEMLIST" ) )
-		{
-			sprintf( sect, "ITEMLIST %s", data );
-			ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
-			if( ItemList != NULL )
-			{
-				for( const char *itm = ItemList->First() ; !ItemList->AtEnd(); itm = ItemList->Next() )
-					items.push_back( itm );
-			}
-		}
-		else if( !strcmp( tag, "ITEM" ) )
-			items.push_back( data );
-		else if( !strcmp( tag, "MAXITEMS" ) )
-			maxispawn = makeNum( data );
-		else if( !strcmp( tag, "MAXNPCS" ) )
-			maxcspawn = makeNum( data );
-		else if( !strcmp( tag, "X1" ) )
-			x1 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "X2" ) )
-			x2 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Y1" ) )
-			y1 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "Y2" ) )
-			y2 = (SI16)makeNum( data );
-		else if( !strcmp( tag, "MINTIME" ) )
-			mintime = static_cast<UI08>(makeNum( data ));
-		else if( !strcmp( tag, "MAXTIME" ) )
-			maxtime = static_cast<UI08>(makeNum( data ));
-		else if( !strcmp( tag, "NAME" ) )
-			strncpy( name, data, MAX_REGIONNAME );
-		else if( !strcmp( tag, "CALL" ) )
-			call = (SI16)makeNum( data );
-		else if( !strcmp( tag, "WORLD" ) )
-			worldNumber = (UI08)makeNum( data );
 	}
 }
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	doRegionSpawn( void )
-//|	Programmer	-	Unknown
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do spawn stuff for spawnregion
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::doRegionSpawn( void )
+void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
 {
-	SI32 j = 0;
-	SI32 k = 0;
-
-	if( npcs.size() == 0 )
+	if( sNpcs.empty() )
 		maxcspawn = 0;
-	if( items.size() == 0 )
+	if( sItems.empty() )
 		maxispawn = 0;
 
-	while( scharlist.size() < static_cast<unsigned int>(maxcspawn) )
-		scharlist.push_back(NULL);
-	while( sitemlist.size() < static_cast<unsigned int>(maxispawn ))
-		sitemlist.push_back(NULL);
-
-	for( SI32 i = 0 ; i < call ; i++ )
+	bool shouldSpawnChars = ( !sNpcs.empty() && maxcspawn > spawnedChars.Num() );
+	bool shouldSpawnItems = ( !sItems.empty() && maxispawn > spawnedItems.Num() );
+	if( shouldSpawnChars || shouldSpawnItems )
 	{
-		for( ; j < static_cast<SI32>(scharlist.size()) ; j++ )
+		CChar *spawnChar		= NULL;
+		CItem *spawnItem		= NULL;
+		const UI08 spawnChars	= (shouldSpawnChars?0:50);
+		const UI08 spawnItems	= (shouldSpawnItems?100:49);
+		for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
 		{
-			if( scharlist[j] != NULL )
-				continue;
-			else
+			if( RandomNum( spawnChars, spawnItems ) > 49 )
 			{
-				scharlist[j] = RegionSpawnChar();
-				if( scharlist[j] != NULL )
-					scharlist[j]->ShouldSave( false );
-				break;
-			}
-		}
-
-// sitemlist.size() should be 
-		for( ; k < static_cast<SI32>(sitemlist.size() ); k++ )
-		{
-			if( sitemlist[k] != NULL && !sitemlist[k]->ShouldSave())
-				continue;
-			else
-			{
-				sitemlist[k] = RegionSpawnItem();
-				if( sitemlist[k] != NULL )
+				if( shouldSpawnItems )
 				{
-					SI16 x = 0, y = 0;
-					SI08 z = 0;
-					if( FindSpotForItem( x, y, z ) )
+					spawnItem = RegionSpawnItem();
+					if( ValidateObject( spawnItem ) )
 					{
-						sitemlist[k]->SetLocation( x, y, z ); // On a move, we should set save to true
-						sitemlist[k]->SetSpawn( calcserial( 0, 1, static_cast<UI08>(regionnum), 0 ), calcItemFromSer( sitemlist[k]->GetSerial() ) );
-						RefreshItem( sitemlist[k] );
-						sitemlist[k]->ShouldSave( false );
-					} 
-					else 
-						Items->DeleItem( sitemlist[k] );
+						spawnedItems.Add( spawnItem );
+						++itemsSpawned;
+						shouldSpawnItems = (spawnedItems.Num() < maxispawn);
+					}
 				}
-				break;
+			}
+			else
+			{
+				if( shouldSpawnChars )
+				{
+					spawnChar = RegionSpawnChar();
+					if( ValidateObject( spawnChar ) )
+					{
+						spawnedChars.Add( spawnChar );
+						++npcsSpawned;
+						shouldSpawnChars = (spawnedChars.Num() < maxcspawn);
+					}
+				}
 			}
 		}
 	}
+	SetNextTime( BuildTimeValue( (R32)( 60 * RandomNum( GetMinTime(), GetMaxTime() ) ) ) );
 }
 
 //o---------------------------------------------------------------------------o
@@ -480,12 +469,35 @@ void cSpawnRegion::doRegionSpawn( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do a char spawn
 //o---------------------------------------------------------------------------o
-CChar *cSpawnRegion::RegionSpawnChar( void )
+CChar *CSpawnRegion::RegionSpawnChar( void )
 {
 	CChar *CSpawn = NULL;
-	CSpawn = Npcs->SpawnNPC( this, npcs[RandomNum( 0, npcs.size() - 1 )], worldNumber );
+	CSpawn = Npcs->CreateBaseNPC( sNpcs[RandomNum( static_cast< size_t >(0), sNpcs.size() - 1 )] );
+	
 	if( CSpawn != NULL )
-		CSpawn->IsSpawned( true );
+	{
+		SI16 x, y;
+		SI08 z;
+		if( FindCharSpotToSpawn( CSpawn, x, y, z ) )
+		{
+				// NPCs should always wander the whole spawnregion
+				CSpawn->SetNpcWander( WT_BOX );
+				CSpawn->SetFx( x1, 0 );
+				CSpawn->SetFx( x2, 1 );
+				CSpawn->SetFy( y1, 0 );
+				CSpawn->SetFy( y2, 1 );
+				CSpawn->SetLocation( x, y, z, worldNumber );
+				CSpawn->SetSpawned( true );
+				CSpawn->ShouldSave( false );
+				CSpawn->SetSpawn( static_cast<UI32>(regionnum) );
+				Npcs->PostSpawnUpdate( CSpawn );
+				IncCurrentCharAmt();
+		}
+		else
+		{
+			CSpawn->Delete();
+		}
+	}
 	return CSpawn;
 }
 
@@ -495,71 +507,287 @@ CChar *cSpawnRegion::RegionSpawnChar( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Do a item spawn
 //o---------------------------------------------------------------------------o
-CItem *cSpawnRegion::RegionSpawnItem( void )
+CItem *CSpawnRegion::RegionSpawnItem( void )
 {
 	CItem *ISpawn = NULL;
-	ISpawn = Items->CreateScriptItem( NULL, items[RandomNum( 0, items.size() - 1) ], false, worldNumber );
-	if( ISpawn != NULL )
-		ISpawn->IsSpawned( true );
+	SI16 x, y;
+	SI08 z;
+	if( FindItemSpotToSpawn( x, y, z ) )
+	{
+		ISpawn = Items->CreateBaseScriptItem( sItems[RandomNum( static_cast< size_t >(0), sItems.size() - 1 )], worldNumber, 1 );
+		if( ISpawn != NULL )
+		{
+			ISpawn->SetLocation( x, y, z );
+			ISpawn->SetSpawn( static_cast<UI32>(regionnum) );
+			ISpawn->SetSpawned( true );
+			ISpawn->ShouldSave( false );
+			IncCurrentItemAmt();
+		}
+	}
 	return ISpawn;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	bool FindSpotForItem( SI16 &x, SI16 &y, SI08 &z )
+//|	Function	-	bool FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 //|	Programmer	-	Unknown
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 //o---------------------------------------------------------------------------o
-bool cSpawnRegion::FindSpotForItem( SI16 &x, SI16 &y, SI08 &z )
+bool CSpawnRegion::FindCharSpotToSpawn( CChar *c, SI16 &x, SI16 &y, SI08 &z )
 {
-	for( UI08 a = 0; a < 100; a++ ) 
+	bool rvalue = false;
+	point3 currLoc;
+	std::map<UI32, SI08>::const_iterator checkValid;
+	SI08 z2 = ILLEGAL_Z;
+	const size_t landPosSize = validLandPos.size();
+	const size_t waterPosSize = validWaterPos.size();
+	bool waterCreature = cwmWorldState->creatures[c->GetID()].IsWater();
+	bool amphiCreature = cwmWorldState->creatures[c->GetID()].IsAmphibian();
+	for( UI08 a = 0; a < 100; ++a ) 
 	{
-		x = (SI16)(RandomNum( x1, x2 ));
-		y = (SI16)(RandomNum( y1, y2 ));
+		x = RandomNum( x1, x2 );
+		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
 		
-		if( Map->CanMonsterMoveHere( x, y, z, worldNumber ) )
-			return true;
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z = staticz;
+		}
+
+		//Break out of loop if z is still invalid, no point in continuing
+		if( z == ILLEGAL_Z )
+			break;
+
+		// First go through the lists of already stored good locations
+		if( !waterCreature )
+		{
+			if( !validLandPosCheck.empty() && landPosSize > 0 )
+			{
+				checkValid = validLandPosCheck.find( y + (x<<16));
+				if( checkValid != validLandPosCheck.end() )
+					z2 = (*checkValid).second;
+				
+				if(z2 == z && z != ILLEGAL_Z)
+				{
+					rvalue = true;
+					break;
+				}
+			}
+		}
+		else if( waterCreature || amphiCreature )
+		{
+			if( !validWaterPosCheck.empty() && waterPosSize > 0 )
+			{
+				checkValid = validWaterPosCheck.find( y + (x<<16));
+				if( checkValid != validWaterPosCheck.end() )
+					z2 = (*checkValid).second;
+				
+				if(z2 == z && z != ILLEGAL_Z)
+				{
+					rvalue = true;
+					break;
+				}
+			}
+		}
+		
+		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) && !waterCreature )
+		{
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				if( z != ILLEGAL_Z )
+				{
+					rvalue = true;
+					validLandPos.push_back( point3( x, y, z ) );
+					validLandPosCheck[ y + ( x << 16) ] = z;
+					break;
+				}
+			}
+		}
+		else if( Map->ValidSpawnLocation( x, y, z, worldNumber, false ) && ( waterCreature || amphiCreature ) )
+		{
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validWaterPos.push_back( point3( x, y, z ) );
+				validWaterPosCheck[ y + ( x << 16) ] = z;
+				break;
+			}
+		}
 	}
-	Console << "Problem regionspawn [" << regionnum << "] found. Nothing will be spawned" << myendl;
-	return false;
+
+	// If we haven't found a valid location pick a random location from the stored ones
+	if( !rvalue && !waterCreature && !validLandPos.empty() && landPosSize > 0)
+	{
+		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
+			rvalue = true;
+	}
+	else if( !rvalue && ( waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0 )
+	{
+		currLoc = validWaterPos[RandomNum( static_cast<size_t>(0), (waterPosSize-1) )];
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
+			rvalue = true;
+	}
+	return rvalue;
 }
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	bool FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
+//|	Programmer	-	Unknown
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Find a random spot within a region valid for dropping an item
+//o---------------------------------------------------------------------------o
+bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
+{
+	bool rvalue = false;
+	point3 currLoc;
+	SI08 z2 = ILLEGAL_Z;
+	std::map<UI32, SI08>::const_iterator checkValid;
+	const size_t landPosSize = validLandPos.size();
+
+	for( UI08 a = 0; a < 100; ++a ) 
+	{
+		x = RandomNum( x1, x2 );
+		y = RandomNum( y1, y2 );
+		z = Map->MapElevation( x, y, worldNumber );
+
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z = staticz;
+		}
+
+		// First go through the lists of already stored good locations
+		if( !validLandPosCheck.empty() && landPosSize > 0 )
+		{
+			checkValid = validLandPosCheck.find( y + (x<<16));
+			if( checkValid != validLandPosCheck.end() )
+				z2 = (*checkValid).second;
+			
+			if(z2 == z && z != ILLEGAL_Z )
+			{
+				rvalue = true;
+				break;
+			}
+		}
+
+		if( Map->ValidSpawnLocation( x, y, z, worldNumber ) )
+		{
+			if( onlyOutside == false || !Map->inBuilding( x, y, z, worldNumber ) )
+			{
+				rvalue = true;
+				validLandPos.push_back( point3( x, y, z ) );
+				validLandPosCheck[ y + ( x << 16) ] = z;
+				break;
+			}
+		}
+	}
+	
+	// If we haven't found a valid location pick a random location from the stored ones
+	if( !rvalue && !validLandPos.empty() && landPosSize > 0)
+	{
+		currLoc = validLandPos[RandomNum( static_cast<size_t>(0), (landPosSize-1) )];
+		x = static_cast<SI16>(currLoc.x);
+		y = static_cast<SI16>(currLoc.y);
+		z = static_cast<SI08>(currLoc.z);
+		// Recalculate the z coordinate to see whether something has changed
+		z2 = Map->MapElevation( x, y, worldNumber );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ );
+		if( ILLEGAL_Z != dynz )
+			z2 = dynz;
+		else
+		{
+			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticz )
+				z2 = staticz;
+		}
+
+		if(z2 == z)
+			rvalue = true;
+	}
+
+	return rvalue;
+}
 //o---------------------------------------------------------------------------o
 //|	Function	-	void checkSpawned()
 //|	Programmer	-	sereg
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Check if an item/npc should be removed from spawnlist and saved
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::checkSpawned( void )
+void CSpawnRegion::checkSpawned( void )
 {
-	CHARLIST::iterator i;
-	ITEMLIST::iterator j;
-
-	for( i = scharlist.begin(); i != scharlist.end(); i++ )
+	for( CChar *cCheck = spawnedChars.First(); !spawnedChars.Finished(); cCheck = spawnedChars.Next() )
 	{
-		CChar *charI = (CChar *)(*i);
-		if( charI == NULL )
-			continue;
-		if( charI->GetOwnerObj() != NULL )
+		if( ValidateObject( cCheck ) )
 		{
-			charI->ShouldSave( true );
-			charI = NULL;
+			if( ValidateObject( cCheck->GetOwnerObj() ) )
+			{
+				cCheck->ShouldSave( true );
+				spawnedChars.Remove( cCheck );
+			}
+		}
+		else
+		{
+			Console.Warning( "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
+			spawnedChars.Remove( cCheck );
 		}
 	}
 	
-	for( j = sitemlist.begin(); j != sitemlist.end(); j++ )
+	for( CItem *iCheck = spawnedItems.First(); !spawnedItems.Finished(); iCheck = spawnedItems.Next() )
 	{
-		CItem *itemJ = (CItem *)(*j);
-		if( itemJ == NULL )
-			continue;
-		if( itemJ->GetCont() != NULL )
+		if( ValidateObject( iCheck ) )
 		{
-			itemJ->ShouldSave( true );
-			itemJ = NULL;
+			if( ValidateObject( iCheck->GetCont() ) )
+			{
+				iCheck->ShouldSave( true );
+				spawnedItems.Remove( iCheck );
+			}
+		}
+		else
+		{
+			Console.Warning( "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
+			spawnedItems.Remove( iCheck );
 		}
 	}
-
 }
 
 //o---------------------------------------------------------------------------o
@@ -568,20 +796,10 @@ void cSpawnRegion::checkSpawned( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	delete a npc from spawnlist
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
+void CSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 {
-	CHARLIST::iterator i;
-
-	for( i = scharlist.begin(); i != scharlist.end(); i++ )
-	{
-		CChar *iChar = (*i);
-		if( iChar == NULL )
-			continue;
-		if( iChar == toDelete )
-		{
-			iChar = NULL;
-		}
-	}
+	if( spawnedChars.Remove( toDelete ) )
+		IncCurrentCharAmt( -1 );
 }
 
 //o---------------------------------------------------------------------------o
@@ -590,16 +808,20 @@ void cSpawnRegion::deleteSpawnedChar( CChar *toDelete )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	delete an item from spawnlist
 //o---------------------------------------------------------------------------o
-void cSpawnRegion::deleteSpawnedItem( CItem *toDelete )
+void CSpawnRegion::deleteSpawnedItem( CItem *toDelete )
 {
-	ITEMLIST::iterator i;
+	if( spawnedItems.Remove( toDelete ) )
+		IncCurrentItemAmt( -1 );
+}
 
-	for( i = sitemlist.begin(); i != sitemlist.end(); i++ )
-	{
-		CItem *iItem = (*i);
-		if( iItem == NULL )
-			continue;
-		if( iItem == toDelete )
-			iItem = NULL;
-	}
+CDataList< CItem * > * CSpawnRegion::GetSpawnedItemsList( void )
+{
+	return &spawnedItems;
+}
+
+CDataList< CChar * > * CSpawnRegion::GetSpawnedCharsList( void )
+{
+	return &spawnedChars;
+}
+
 }

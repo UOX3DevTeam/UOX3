@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
 <head>
@@ -6,7 +7,7 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
-<body bgcolor="#333399" text="#999999" link="lightblue" aLink="red" vLink="red">
+<body>
 <center>
 	<h1>UOX3 Script Engine</h1>
 	<h3>API and Event handling</h3>
@@ -104,17 +105,17 @@ var MapTile = GetTileIDAtMapCoord( 0, 0, 0 ); // gets tile at 0,0 in Britannia
 which is called "functionName", along with the arguments defined afterwards, seperated by commas.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
 <pre>
-TriggerEvent( 8000, "onUse", pUser, pItem );
+TriggerEvent( 8000, "onUseChecked", pUser, pItem );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_AreaCharacterFunction">AreaCharacterFunction</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>AreaCharacterFunction( "myAreaFunc", radiusObject, radius, socket );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Allows script to work with every that is found in the radius
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Allows script to work with every character that is found in the radius
 of the radiusObject (item or character), for the purpose of area-effects.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
 <pre>
-function onUse( pUser, pSock );
+function onUseChecked( pUser, pSock );
 {
 	AreaCharacterFunction( "myAreaFunc", pUser, 10, pSock );
 }
@@ -122,6 +123,23 @@ function myAreaFunc( srcChar, trgChar, pSock )
 {
 	trgChar.TextMessage( "Oh no I've been found!" );
 	pSock.SysMessage( "Found " + trgChar.name );
+}</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AreaItemFunction">AreaItemFunction</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>AreaItemFunction( "myAreaFunc", radiusObject, radius, socket );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Allows script to work with every item that is found in the radius
+of the radiusObject (item or character), for the purpose of area-effects.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td>
+<pre>
+function onUseChecked( pUser, pSock );
+{
+	AreaItemFunction( "myAreaFunc", pUser, 10, pSock );
+}
+function myAreaFunc( srcChar, trgItem, pSock )
+{
+	trgItem.TextMessage( "Oh no I've been found!" );
+	pSock.SysMessage( "Found " + trgItem.name );
 }</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -181,6 +199,84 @@ function onIterate( toCheck )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned char WorldDungeonLevel( [lightlevel] );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets and returns the dungeon light level of the world.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>WorldDungeonLevel( 1 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ValidateObject">ValidateObject</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool ValidateObject( object );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns true if argument is validated as an object
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+if( !ValidateObject( pUser ) )
+	return;
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ReloadJSFile">ReloadJSFile</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void ReloadJSFile( scriptID );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Reloads a specified JavaScript file depending on scriptID from jse_fileassociations.scp
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function CommandRegistration()
+{
+	RegisterCommand( "reloadjsfile", 3, true ); //Reload JavaScript file
+}
+
+function command_RELOADJSFILE( socket, cmdString )
+{
+	var scriptID = parseInt( cmdString );
+	socket.SysMessage( "Attempting Reload of JavaScript (ScriptID " + cmdString + ")" );
+	ReloadJSFile( scriptID );
+}</pre>
+</table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ValidateObject">GetTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool GetTimer( timerID );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b>
+<td>Returns the specified timer value
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myObj.GetTimer( 3 );</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_ValidateObject">SetTimer</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SetTimer( timerID, numMilliSeconds )
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the specified timer with the amount of miliseconds until it expires.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+mySock.SetTimer( 3, 1000 );</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_Moon">Moon</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Moon( moonNum, newVal );<br>bool Moon( moonNum )
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Get and set the server moon values for the two moons Felucca (0) and Trammel (1)
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var feluccaMoonphase = Moon( 0 );
+var TrammelMoonphase = Moon( 1 );
+Moon( 0, 7 ); //Set the moon Felucca to moonphase 7
+Moon( 1, 3 ); //Set the moon Trammel to moonphase 3
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CreateParty">CreateParty</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CreateParty( partyleader );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Create a new party/group with the specified character as leader
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var myParty = CreateParty( pUser ); //create a new party (myParty) with pUser as the leader
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetSocketFromIndex">GetSocketFromIndex</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool GetSocketFromIndex( socketIndex );
+</pre>
+<tr><td valign="top" width="25%"><b>Purpose</b><td>Create a socket-object based on the specified socketIndex
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var socket = GetSocketFromIndex( 0 ); //fetch whatever socket is connected to the server as socket/connection 0
 </pre></table>
 
 <center>

@@ -43,15 +43,15 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "__NEW_NETWORK__" /D "__USE_CMULTIOBJ__" /D "__NEW_PATHFIND__" /FR /YX /J /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /Fr /YX /J /FD /c
 # ADD BASE RSC /l 0xc09 /d "NDEBUG"
-# ADD RSC /l 0xc09 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo /o"Debug/UOX3_Official.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 ws2_32.lib js32.lib dtlmt.;ib kernel32.lib user32.lib advapi32.lib shell32.lib uuid.lib /nologo /subsystem:console /machine:I386 /out:"Release/UOX3.exe" /libpath:"JavaScript"
+# ADD LINK32 wsock32.lib kernel32.lib ws2_32.lib js32.lib /nologo /subsystem:console /machine:I386 /out:"Release/UOX3.exe" /libpath:"JavaScript"
 
 !ELSEIF  "$(CFG)" == "UOX3_Official - Win32 Debug"
 
@@ -67,16 +67,16 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MTd /W3 /Gi /GR /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
+# ADD CPP /nologo /MDd /W3 /Gi /GX /ZI /Od /I "../../boost" /D "WIN32" /D "_DEBUG" /D "_MBCS" /Fr /YX /J /FD /c
 # ADD BASE RSC /l 0xc09 /d "_DEBUG"
-# ADD RSC /l 0xc09 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ws2_32.lib js32.lib dtlmtd.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib advapi32.lib shell32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/UOX3.exe" /libpath:"JavaScript/" /libpath:"JavaScript"
-# SUBTRACT LINK32 /profile
+# ADD LINK32 ws2_32.lib kernel32.lib advapi32.lib shell32.lib js32.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/UOX3.exe" /libpath:"JavaScript/" /libpath:"JavaScript"
+# SUBTRACT LINK32 /profile /nodefaultlib
 
 !ELSEIF  "$(CFG)" == "UOX3_Official - Win32 DebugProfile"
 
@@ -93,9 +93,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gi /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "__NEW_NETWORK__" /D "__USE_CMULTIOBJ__" /FR /YX /J /FD /c
-# ADD CPP /nologo /MTd /W3 /Gi /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
+# ADD CPP /nologo /MTd /W3 /Gi /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /FR /YX /J /FD /c
 # ADD BASE RSC /l 0xc09 /d "_DEBUG"
-# ADD RSC /l 0xc09 /d "_DEBUG"
+# ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo /o"Debug/UOX3_Official.bsc"
@@ -117,6 +117,10 @@ LINK32=link.exe
 # Begin Group "Scripts"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\cServerDefinitions.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\Dictionary.cpp
@@ -151,10 +155,6 @@ SOURCE=.\cGuild.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\charhandle.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\cItem.cpp
 # End Source File
 # Begin Source File
@@ -172,14 +172,6 @@ SOURCE=.\cSpawnRegion.cpp
 # Begin Source File
 
 SOURCE=.\cThreadQueue.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\hash.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\itemhandler.cpp
 # End Source File
 # Begin Source File
 
@@ -211,7 +203,7 @@ SOURCE=.\cAccountClass.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\cClick.cpp
+SOURCE=.\CGump.cpp
 # End Source File
 # Begin Source File
 
@@ -279,11 +271,7 @@ SOURCE=.\msgboard.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\necro.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\network.cpp
+SOURCE=.\PartySystem.cpp
 # End Source File
 # Begin Source File
 
@@ -311,10 +299,6 @@ SOURCE=.\targeting.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\teffect.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\trade.cpp
 # End Source File
 # Begin Source File
@@ -332,10 +316,6 @@ SOURCE=.\wholist.cpp
 # Begin Source File
 
 SOURCE=.\worldmain.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\xgm.cpp
 # End Source File
 # End Group
 # Begin Group "Other"
@@ -359,19 +339,19 @@ SOURCE=.\cDice.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\cServerDefinitions.cpp
+SOURCE=.\cPlayerAction.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\debug.cpp
+SOURCE=.\CResponse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\cVersionClass.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\dist.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\door.cpp
 # End Source File
 # Begin Source File
 
@@ -387,31 +367,11 @@ SOURCE=.\findfuncs.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\globals.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\mstring.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\npcs.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\packets.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\pcmanage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\trigger.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\utilsys.cpp
 # End Source File
 # End Group
 # Begin Group "JS Engine"
@@ -419,7 +379,19 @@ SOURCE=.\utilsys.cpp
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\CJSEngine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CJSMapping.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\cScript.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\JSEncapsulate.cpp
 # End Source File
 # Begin Source File
 
@@ -434,17 +406,33 @@ SOURCE=.\UOXJSMethods.cpp
 SOURCE=.\UOXJSPropertyFuncs.cpp
 # End Source File
 # End Group
+# Begin Group "Network"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\CGump.cpp
+SOURCE=.\CPacketReceive.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\cVersionClass.cpp
+SOURCE=.\CPacketSend.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\network.cpp
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\ObjectFactory.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\uox3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ustring.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -459,23 +447,23 @@ SOURCE=.\cBaseObject.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CChar.h
+SOURCE=.\cChar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CConsole.h
+SOURCE=.\cConsole.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CGuild.h
+SOURCE=.\cGuild.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CItem.h
+SOURCE=.\cItem.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMultiObj.h
+SOURCE=.\cMultiObj.h
 # End Source File
 # Begin Source File
 
@@ -483,15 +471,11 @@ SOURCE=.\cSocket.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CThreadQueue.h
+SOURCE=.\cThreadQueue.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\funcdecl.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\hash.h
 # End Source File
 # Begin Source File
 
@@ -515,6 +499,14 @@ SOURCE=.\uoxstruct.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\cServerData.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\cServerDefinitions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Dictionary.h
 # End Source File
 # Begin Source File
@@ -531,10 +523,6 @@ SOURCE=.\ssection.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\boats.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\books.h
 # End Source File
 # Begin Source File
@@ -543,11 +531,15 @@ SOURCE=.\cAccountClass.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\cEffects.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\cHTMLSystem.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMagic.h
+SOURCE=.\cMagic.h
 # End Source File
 # Begin Source File
 
@@ -559,15 +551,11 @@ SOURCE=.\commands.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\craces.h
+SOURCE=.\cRaces.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\cweather.hpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DTL.h
+SOURCE=.\cWeather.hpp
 # End Source File
 # Begin Source File
 
@@ -595,7 +583,7 @@ SOURCE=.\msgboard.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\network.h
+SOURCE=.\PartySystem.h
 # End Source File
 # Begin Source File
 
@@ -607,15 +595,7 @@ SOURCE=.\skills.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\targeting.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\teffect.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\trigger.h
 # End Source File
 # Begin Source File
 
@@ -628,10 +608,6 @@ SOURCE=.\wholist.h
 # Begin Source File
 
 SOURCE=.\worldmain.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\xgm.h
 # End Source File
 # End Group
 # Begin Group "Other No. 1"
@@ -651,11 +627,7 @@ SOURCE=.\cmdtable.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\cServerData.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\cServerDefinitions.h
+SOURCE=.\CResponse.h
 # End Source File
 # Begin Source File
 
@@ -667,7 +639,7 @@ SOURCE=.\cSpawnRegion.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\debug.h
+SOURCE=.\cVersionClass.h
 # End Source File
 # Begin Source File
 
@@ -679,19 +651,7 @@ SOURCE=.\fileio.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\handlers.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\mapclasses.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mstring.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\packets.h
 # End Source File
 # Begin Source File
 
@@ -715,7 +675,7 @@ SOURCE=.\typedefs.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\utilsys.h
+SOURCE=.\uox3.h
 # End Source File
 # End Group
 # Begin Group "JS Engine Nr. 1"
@@ -723,7 +683,19 @@ SOURCE=.\utilsys.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\CJSEngine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CJSMapping.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\cScript.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\JSEncapsulate.h
 # End Source File
 # Begin Source File
 
@@ -750,15 +722,55 @@ SOURCE=.\UOXJSPropertyFuncs.h
 SOURCE=.\UOXJSPropertySpecs.h
 # End Source File
 # End Group
+# Begin Group "Network No. 1"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\uox3.h
+SOURCE=.\CPacketReceive.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CPacketSend.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\network.h
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\cVersionClass.h
+SOURCE=.\CDataList.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\Config.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ObjectFactory.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Platform.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Prerequisites.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Singleton.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\UOXStdHeaders.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ustring.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\uox3.ico

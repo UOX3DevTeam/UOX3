@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		iUsed.SetTag("initialized", 1); 	// Marks tree as initialized
 		iUsed.SetTag("Bananas",1); 		// If set to 1, there are bananas to be picked, if 0 there are no ripe bananas
-		iUsed.SetTag("BananaCounter", maxBananas); 	// Add 5 bananas to the tree initially
+		iUsed.SetTag("BananaCounter", maxResource); 	// Add 5 bananas to the tree initially
 	}
 	var Bananas = iUsed.GetTag("Bananas");
 	var BananaCount = iUsed.GetTag("BananaCounter");
@@ -58,7 +58,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("BananaCounter", maxBananas);
+		iUsed.SetTag("BananaCounter", maxResource);
 		iUsed.SetTag("Bananas", 1);
 	}
 }

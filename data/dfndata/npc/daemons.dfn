@@ -54,7 +54,7 @@ FLAG=NEUTRAL
 {
 NAME=a daemon
 NAMELIST=5
-ID=0x000a
+ID=0x0009
 SKIN=0000
 DIRECTION=N
 BACKPACK
@@ -95,6 +95,13 @@ CARVE=55
 RUNS
 RACE=10
 FLAG=NEUTRAL
+}
+
+[armeddaemon]
+{
+GET=daemon
+NAMELIST=5
+ID=0x000a
 }
 
 [exodus]

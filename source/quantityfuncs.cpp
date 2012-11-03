@@ -1,311 +1,92 @@
 #include "uox3.h"
 #include "weight.h"
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	UI32 getAmount( CChar *s, UI16 realID )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Get the total amount of an item on a character
-//o---------------------------------------------------------------------------o
-UI32 GetAmount( CChar *s, UI16 realID )
+namespace UOX
 {
-	CItem *p = getPack( s );
-	if( p == NULL ) 
-		return 0;
-	UI32 total = 0;
-	
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->GetID() == realID )
-				total += i->GetAmount();
-			if( i->GetType() == 1 || i->GetType() == 8 ) 
-				total += GetSubAmount( i, realID );
-		}
-	}
-	return total;
-}
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI32 getSubAmount( CItem *p, UI16 realID )
-//|	Programmer	-	Unknown
+//|	Function	-	UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o---------------------------------------------------------------------------o
-UI32 GetSubAmount( CItem *p, UI16 realID )
+UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 {
 	UI32 total = 0;
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
+	CDataList< CItem * > *pCont = p->GetContainsList();
+	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
-		if( i != NULL )
+		if( ValidateObject( i ) )
 		{
-			if( i->GetID() == realID )
+			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) 
+				total += GetSubItemAmount( i, realID, realColour );
+			else if( i->GetID() == realID && ( realColour == 0 || i->GetColour() == realColour ) )
 				total += i->GetAmount();
-			if( i->GetType() == 1 || i->GetType() == 8 ) 
-				total += GetSubAmount(i, realID );
 		}
 	}
 	return total;
 }
 
 //o---------------------------------------------------------------------------o
-//|	Function	-	UI32 deleQuan( CChar *s, UI16 realID, UI32 amount )
-//|	Programmer	-	Unknown
+//|	Function	-	UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
+//|	Programmer	-	UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|	Purpose		-	Delete specified amount of a certain item on a character
-//o---------------------------------------------------------------------------o
-UI32 DeleteQuantity( CChar *s, UI16 realID, UI32 amount )
-{
-	if( s == NULL )
-		return 0;
-	CItem *p = getPack( s );
-	if( p == NULL ) 
-		return 0;
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->GetType() == 1 )
-				amount -= DeleteSubQuantity( i, realID, amount );
-			if( i->GetID() == realID )
-			{
-				if( i->GetAmount() <= amount )
-				{
-					amount -= i->GetAmount();
-					Items->DeleItem( i );
-				}
-				else
-				{
-					DecreaseItemAmount( i, amount );
-					amount = 0;
-				}
-			}
-			if( amount == 0 ) 
-				return 0;
-		}
-	}
-	return amount;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	UI32 deleSubQuan( CItem *p, UI16 realID, UI32 amount )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Delete specified amount of a certain item in a pack
-//o---------------------------------------------------------------------------o
-UI32 DeleteSubQuantity( CItem *p, UI16 realID, UI32 amount )
-{
-	UI32 k, totaldel = 0;
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->GetType() == 1 )
-			{
-				k = DeleteSubQuantity( i, realID, amount );
-				amount -= k;
-				totaldel += k;
-			}
-			if( i->GetID() == realID )
-			{
-				if( i->GetAmount() <= amount )
-				{
-					amount -= i->GetAmount();
-					totaldel += i->GetAmount();
-					Items->DeleItem( i );
-				}
-				else
-				{
-					DecreaseItemAmount( i, amount );
-					totaldel += amount;
-					amount = 0;
-				}
-			}
-			if( amount == 0 ) 
-				return totaldel;
-		}
-	}
-	return totaldel;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :          UI32 getBankCount( CHARACTER p, UI16 itemID, UI16 colour = 0x0000 )
-//|     Date          :          October 23rd, 2000
-//|     Programmer    :          Abaddon
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Searches through the bank to count the amount
-//|                              of items with a specific ID and colour
-//|                              
-//o---------------------------------------------------------------------------o
-UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
-{
-	// colour not used yet
-	if( p == NULL )
-		return 0;
-	UI32 goldCount = 0;
-	ITEMLIST *ownedItems = p->GetOwnedItems();
-	for( ITEM ci = 0; ci < ownedItems->size(); ci++ )
-	{
-		CItem *oItem = (*ownedItems)[ci];
-		if( oItem != NULL )
-		{
-			if( oItem->GetType() == 1 && oItem->GetMoreX() == 1 )
-				goldCount += GetSubAmount( oItem, itemID );
-		}
-	}
-	return goldCount;
-}
-
-//o---------------------------------------------------------------------------o
-//|     Class         :         UI32 delBankItem( CHARACTER p, UI16 itemID, UI16 colour, UI32 amt )
-//|     Date          :         October 23rd, 2000
-//|     Programmer    :         Abaddon
-//o---------------------------------------------------------------------------o
-//|     Purpose       :         Searches through the bank to and deletes a 
-//|                             certain amount of a certain item
-//|								Returns how many left over
-//o---------------------------------------------------------------------------o
-UI32 DeleteBankItem( CChar *p, UI16 itemID, UI16 colour, UI32 amt )
-{
-	if( p == NULL )
-		return amt;
-	ITEMLIST *ownedItems = p->GetOwnedItems();
-	for( ITEM ci = 0; ci < ownedItems->size() && amt > 0; ci++ )
-	{
-		CItem *oItem = (*ownedItems)[ci];
-		if( oItem != NULL )
-		{
-			if( oItem->GetType() == 1 && oItem->GetMoreX() == 1 )
-			{
-				amt -= DeleteSubItemAmount( oItem, itemID, colour, amt );
-				if( amt == 0 )
-					return 0;
-			}
-		}
-	}
-	return amt;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI16 deleteItemsFromChar( CChar *toFind, UI16 itemID )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Remove all items of specific ID from player
-//o---------------------------------------------------------------------------o
-SI16 DeleteItemsFromChar( CChar *toFind, UI16 itemID )
-{
-	if( toFind == NULL )
-		return 0;
-	SI16 deleteCount = 0;
-	for( CItem *item = toFind->FirstItem(); !toFind->FinishedItems(); item = toFind->NextItem() )
-	{
-		if( item != NULL )
-		{
-			if( item->GetID() == itemID )
-			{
-				Items->DeleItem( item );
-				deleteCount++;
-			}
-			else if( item->GetLayer() == 0x15 )
-			{
-				SI16 tempDelete = DeleteItemsFromPack( item, itemID );
-				deleteCount += tempDelete;
-			}
-		}
-	}
-	return deleteCount;
-}
-
-//o---------------------------------------------------------------------------o
-//|	Function	-	SI16 deleteItemsFromPack( CItem *item, UI16 itemID )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Remove all items of specific ID from pack
-//o---------------------------------------------------------------------------o
-SI16 DeleteItemsFromPack( CItem *item, UI16 itemID )
-{
-	if( item == NULL )
-		return 0;
-	SI16 deleteCount = 0;
-	for( CItem *itemToFind = item->FirstItemObj(); !item->FinishedItems(); itemToFind = item->NextItemObj() )
-	{
-		if( itemToFind != NULL )
-		{
-			if( itemToFind->GetID() == itemID )
-			{
-				Items->DeleItem( itemToFind );
-				deleteCount++;
-			}
-			else if( itemToFind->GetType() == 1 || itemToFind->GetType() == 8 )	// search any subpacks, specifically pack and locked containers
-			{
-				SI16 tempDelete = DeleteItemsFromPack( itemToFind, itemID );
-				deleteCount += tempDelete;
-			}
-		}
-	}
-	return deleteCount;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI32 getItemAmt( CChar *s, UI16 realID, UI16 realColour )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Get the amount of an item of specified color on a character
+//|	Purpose		-	Get the total amount of an item on a character
 //o---------------------------------------------------------------------------o
 UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
 {
-	if( s == NULL )
+	CItem *p = s->GetPackItem();
+	if( !ValidateObject( p ) ) 
 		return 0;
-	CItem *p = getPack( s );
-	if( p == NULL ) 
-		return 0;
-	UI32 total = 0;
-	for( CItem *i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->GetID() == realID && i->GetColour() == realColour )
-				total += i->GetAmount();
-			if( i->GetType() == 1 )	// more types than this around!
-				total += GetSubItemAmount( i, realID, realColour );
-		}
-	}
-	return total;
+	return GetSubItemAmount( p, realID, realColour );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  UI32 getSubItemAmt( CItem *p, UI16 realID, UI16 realColour )
+//|   Function    :  UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Get the amount of an item of specified color in a pack
+//|   Purpose     :  Remove a certain amount of an item of specified color in a pack
 //o---------------------------------------------------------------------------o
-UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
+UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 {
-	if( p == NULL )
+	if( !ValidateObject( p ) )
 		return 0;
-
-	CItem *i;
-	UI32 total = 0;
-	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
+	UI32 amtDeleted = 0;
+	UI32 total		= amount;
+	CDataList< CItem * > *pCont = p->GetContainsList();
+	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
-		if( i != NULL )
+		if( ValidateObject( i ) )
 		{
-			if( i->GetID() == realID && i->GetColour() == realColour )
-				total += i->GetAmount();
-			if( i->GetType() == 1 ) 
-				total += GetSubItemAmount( i, realID, realColour );
+			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) // Is item an pack or container?
+				amtDeleted += DeleteSubItemAmount( i, total, realID, realColour );
+			else if( i->GetID() == realID && i->GetColour() == realColour )
+			{
+				if( i->GetAmount() <= total )
+				{
+					amtDeleted += i->GetAmount();
+					i->Delete();
+				}
+				else
+				{
+					i->IncAmount( -(SI32)total );
+					amtDeleted += total;
+				}
+			}
+			if( amtDeleted >= amount )
+				break;
+			else
+				total = static_cast<UI32>( amount - amtDeleted );
 		}
 	}
-	return total;
+	return amtDeleted;
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  UI32 DeleItemAmt( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
+//|	Function	:	UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
 //|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Remove a certain amount of an item of specified color on 
 //|									a character
@@ -314,132 +95,73 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 //|									
 //|	Modification	-	09/25/2002	-	Brakhtus - Weight Fixes
 //o---------------------------------------------------------------------------o
-UI32 DeleteItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 amount )
+UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
 {
-	if( s == NULL )
+	if( !ValidateObject( s ) )
 		return 0;
-	CItem *p = getPack( s );
-	if( p == NULL ) 
+	CItem *p = s->GetPackItem();
+	if( !ValidateObject( p ) ) 
 		return 0;
 
-	UI32 total = amount;
-	UI32 amtDeleted = 0, deld;
-	CItem *i;
-	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
-	{
-		if( i != NULL )
-		{
-			if( i->GetType() == 1 )	// Is item an pack or contaier ?
-			{
-				Weight->subtractItemWeight(s, i);
-				deld = DeleteSubItemAmount( i, realID, realColour, amount );
-				if(i)
-					Weight->addItemWeight(s,i);
-				total -= deld;
-				amtDeleted += deld;
-			}
-			if( i->GetID() == realID && i->GetColour() == realColour )
-			{
-				if( i->GetAmount() <= total )
-				{
-					total -= i->GetAmount();
-					amtDeleted += i->GetAmount();
-					Items->DeleItem( i );
-				}
-				else
-				{
-					Weight->subtractItemWeight(s,i);
-					DecreaseItemAmount( i, total );
-					if(i)
-						Weight->addItemWeight(s,i);
-					total = 0;
-					amtDeleted = amount;
-				}
-			}
-			if( total == 0 ) 
-				return amtDeleted;
-		}
-	}
-	return amtDeleted;
+	return DeleteSubItemAmount( p, amount, realID, realColour );
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    :  UI32 deleSubItemAmt( CItem *p, UI16 realID, UI16 realColour, UI32 amount )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
+//|     Class         :          UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour = 0x0000 )
+//|     Date          :          October 23rd, 2000
+//|     Programmer    :          UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Remove a certain amount of an item of specified color in a pack
+//|     Purpose       :          Searches through the bank to count the amount
+//|                              of items with a specific ID and colour
+//|                              
 //o---------------------------------------------------------------------------o
-UI32 DeleteSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 amount )
+UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 {
-	if( p == NULL )
+	if( !ValidateObject( p ) )
 		return 0;
-	UI32 totaldel = 0, k;
-	SI32 total = amount;
-	CItem *i;
-	for( i = p->FirstItemObj(); !p->FinishedItems(); i = p->NextItemObj() )
+	UI32 goldCount = 0;
+	ITEMLIST *ownedItems = p->GetOwnedItems();
+	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
 	{
-		if( i != NULL )
+		CItem *oItem = (*I);
+		if( ValidateObject( oItem ) || I == ownedItems->end() )
 		{
-			if( i->GetType() == 1 )
-			{
-				k = DeleteSubItemAmount( i, realID, realColour, total );
-				total -= k;
-				totaldel += k;
-			}
-			if( i->GetID() == realID && i->GetColour() == realColour )
-			{
-				if( i->GetAmount() <= total )
-				{
-					total -= i->GetAmount();
-					totaldel += i->GetAmount();
-					Items->DeleItem( i );
-				}
-				else
-				{
-					DecreaseItemAmount( i, total );
-					totaldel += total;
-					total = 0;
-				}
-			}
-			if( total == 0 ) 
-				return totaldel;
+			if( oItem->GetType() == IT_CONTAINER && oItem->GetTempVar( CITV_MOREX ) == 1 )
+				goldCount += GetSubItemAmount( oItem, itemID, colour );
 		}
 	}
-	return totaldel;
+	return goldCount;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function			-	CItem *DecreaseItemAmount( CItem *toDelete, UI16 amt )
-//|	Date					-	
-//|	Developers		-	Abaddon
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Decreases the amount of an item by amt
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-CItem *DecreaseItemAmount( CItem *toDelete, UI16 amt )
+//o---------------------------------------------------------------------------o
+//|     Class         :         UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
+//|     Date          :         October 23rd, 2000
+//|     Programmer    :         UOX3 DevTeam
+//o---------------------------------------------------------------------------o
+//|     Purpose       :         Searches through the bank to and deletes a 
+//|                             certain amount of a certain item
+//|								Returns how many left over
+//o---------------------------------------------------------------------------o
+UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
 {
-	if( toDelete == NULL )
-		return NULL;
-	if( toDelete->GetAmount() > 1 )
+	if( !ValidateObject( p ) )
+		return amt;
+	ITEMLIST *ownedItems = p->GetOwnedItems();
+	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end() && amt > 0; ++I )
 	{
-		toDelete->SetAmount( toDelete->GetAmount() - amt );
-		if( toDelete->GetAmount() < 1 )
+		CItem *oItem = (*I);
+		if( ValidateObject( oItem ) || I == ownedItems->end() )
 		{
-			Items->DeleItem( toDelete );
-			return NULL;
+			if( oItem->GetType() == IT_CONTAINER && oItem->GetTempVar( CITV_MOREX ) == 1 )
+			{
+				amt -= DeleteSubItemAmount( oItem, amt, itemID, colour );
+				if( amt == 0 )
+					return 0;
+			}
 		}
-		if( toDelete->GetAmount() == 1 )
-			RefreshItem( toDelete );
 	}
-	else
-	{
-
-		Items->DeleItem( toDelete );
-		return NULL;
-	}
-	return toDelete;
+	return amt;
 }
+
+}
+
