@@ -1,3 +1,34 @@
+03/11/2012 - Xuri (0.99.2)
+	Added support for optional amount-values behind LOOT DFN-tag, and expanded PACKITEM DFN-tag to support amount for non-stackable items as well.
+		Updated supported syntax goes as follows, with optional parameters shown in paranthesis:
+			LOOT=lootlist
+			LOOT=lootlist,amount
+			LOOT=lootlist,minamount maxamount
+			PACKITEM=itemid
+			PACKITEM=itemid,amount
+			PACKITEM=itemid,minamount maxamount
+			PACKITEM=listobject
+			PACKITEM=listobject,amount
+			PACKITEM=listobject,minamount maxamount
+	Fixed a bug in js/skill/healing.js that would stop players from being able to use skills after trying to cure poisoned characters with bandages
+	Updated timers for curing and healing in js/skill/healing.js - should now take longer to heal/cure oneself with bandages than to do the same with others
+	Added support for randomization in the AMOUNT DFN tag for items. 
+		Updated supported syntax: 
+			AMOUNT=amount
+			AMOUNT=minamount maxamount
+	Fixed an issue with corpses not having a maximum weight capacity defined; it is now set to 500 stones.
+	Fixed an issue with hairs and beards not being set correctly on corpses
+	UOX3 will no longer attempt to spawn items from lootlist/itemlist-entries titled "blank". These entries can be used to add some randomization.
+	Fixed some incorrect values for WEIGHT-tags in dfndata/items/gear/armor/base_armor.dfn
+	Fixed an issue with containers and weight, with the help of a new semi-permanent "baseWeight" property which is based on the initial weight of a spawned item.
+	Added support for viewing (ISTATS-menu) and tweaking (TWEAK-menu) the new baseWeight item property
+	Added new property for JS Item objects: baseWeight - should rarely if ever need to change, primarily used to fetch base weight of containers
+	Added new JS command: 'FIXCONTWEIGHT - will iterate through all in-game containers and update their baseWeight (forced), weight (if empty and not already set) and weightMax (if not already set) properties
+	Updated the 'INFO command with more detailed data about flags on the targeted tile
+	Potentially fixed a segmentation fault in Linux by replacing JS_NewString with JS_NewStringCopyN in JSBool CBase_GetTag()
+	Potentially fixed an issue with the Stone Walls/Stone Walls 2-sections of the add-menu, which could cause lengthy stalls when opened across network connections
+	The MINECHECK uox.ini setting now defaults to 1 (mountains/caves/rocks only)
+	
 25/10/2012 - Xuri
 	OnCollide JS event can now be triggered from character scripts. NOTE: If both item and character have scripts attached, item script takes precedence.
 	Fixed an issue where some LineofSight-checks (for double-clicking items, for instance) would erroneously fail to succeed

@@ -82,6 +82,7 @@ const SI08			DEFITEM_OFFSPELL		= 0;
 const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 const SI32			DEFITEM_WEIGHTMAX		= 0;
+const SI32			DEFITEM_BASEWEIGHT		= 0;
 
 CItem::CItem() : CBaseObject(),
 contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
@@ -89,7 +90,7 @@ madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_G
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ), 
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ), 
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ), 
-creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -256,13 +257,26 @@ bool CItem::SetCont( CBaseObject *newCont )
 		if( newCont->GetObjType() == OT_CHAR )
 		{
 			CChar *charWearing = static_cast<CChar *>(newCont);
-			if( ValidateObject( charWearing ) && charWearing->WearItem( this ) )
+			if( ValidateObject( charWearing ))
 			{
-				contIsGround = false;
-				if( isPostLoaded() )
-					Weight->addItemWeight( charWearing, this );
-				if( this->GetLayer() == IL_MOUNT && charWearing->IsNpc() )
-					charWearing->SetOnHorse( true );
+				if( charWearing->IsDead() && ( this->GetLayer() == IL_HAIR || this->GetLayer() == IL_FACIALHAIR ))
+				{
+					// if charWaring is dead, it means we're setting the cont on a duped item soon-to-be-moved to his corpse,
+					// so we don't want him to attempt to wear it.
+					contIsGround = false;
+					if( isPostLoaded() )
+					{
+						Weight->addItemWeight( charWearing, this );
+					}
+				}
+				else if( charWearing->WearItem( this ) )
+				{
+					contIsGround = false;
+					if( isPostLoaded() )
+						Weight->addItemWeight( charWearing, this );
+					if( this->GetLayer() == IL_MOUNT && charWearing->IsNpc() )
+						charWearing->SetOnHorse( true );
+				}
 			}
 		}
 		else
@@ -808,6 +822,16 @@ void CItem::SetWeightMax( SI32 newValue )
 	weightMax = newValue;
 }
 
+SI32 CItem::GetBaseWeight( void ) const
+{
+	return baseWeight;
+}
+
+void CItem::SetBaseWeight( SI32 newValue )
+{
+	baseWeight = newValue;
+}
+
 void CItem::IncID( SI16 incAmount )
 {
 	SetID( id + incAmount );
@@ -1008,6 +1032,7 @@ void CItem::CopyData( CItem *target )
 	target->SetVisible( GetVisible() );
 	target->SetWeight( GetWeight() );
 	target->SetWeightMax( GetWeightMax() );
+	target->SetBaseWeight( GetBaseWeight() );
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
@@ -1058,6 +1083,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Offspell=" << (SI16)GetOffSpell() << '\n';
 	outStream << "Amount=" << GetAmount() << '\n';
 	outStream << "WeightMax=" << GetWeightMax() << '\n';
+	outStream << "BaseWeight=" << GetBaseWeight() << '\n';
 	outStream << "MaxHP=" << GetMaxHP() << '\n';
 	outStream << "Speed=" << (SI16)GetSpeed() << '\n';
 	outStream << "Movable=" << (SI16)GetMovable() << '\n';

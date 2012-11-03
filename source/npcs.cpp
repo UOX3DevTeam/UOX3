@@ -43,17 +43,46 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 	{
 		i = RandomNum( static_cast< size_t >(0), i - 1 );
 		UString tag = LootList->MoveTo( i );
+		UString tagData = LootList->GrabData() ;
+
 		if( tag.empty() )
 			return NULL;
+		UI16 iAmount = 0;
+		UI16 LootChance = 0;
 		if( tag.upper() == "LOOTLIST" )
-			retitem = addRandomLoot( s, LootList->GrabData() );
+		{
+			if( tagData.sectionCount( "," ) != 0 ) // Amount specified behind lootlist entry? 
+			{
+				iAmount = tagData.section( ",", 1, 1).stripWhiteSpace().toUShort();
+				CItem *retitemNested = NULL;
+				for( UI16 iCount = 0; iCount < iAmount; ++iCount )
+				{
+					retitemNested = addRandomLoot( s, tagData.section( ",", 0, 0).stripWhiteSpace() );
+				}
+			}
+			else
+				retitem = addRandomLoot( s, LootList->GrabData() );
+		}
 		else
 		{
-			retitem = Items->CreateBaseScriptItem( tag, s->WorldNumber() );
-			if( retitem != NULL )
+			if( tag.sectionCount( "," ) != 0 ) // Amount specified behind lootlist entry? 
 			{
-				retitem->SetCont( s );
-				retitem->PlaceInPack();
+				iAmount = tag.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
+				retitem = Items->CreateBaseScriptItem( tag.section( ",", 0, 0 ).stripWhiteSpace(), s->WorldNumber(),  iAmount );
+				if( retitem != NULL )
+				{
+					retitem->SetCont( s );
+					retitem->PlaceInPack();
+				}
+			}
+			else
+			{
+				retitem = Items->CreateBaseScriptItem( tag, s->WorldNumber(), 1 );
+				if( retitem != NULL )
+				{
+					retitem->SetCont( s );
+					retitem->PlaceInPack();
+				}
 			}
 		}
 	}
@@ -426,7 +455,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_RSHOPITEM:
 				if( ValidateObject( buyLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber() );
+					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
 					if( retitem != NULL )
 					{
 						retitem->SetCont( buyLayer );
@@ -441,7 +470,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SELLITEM:
 				if( ValidateObject( sellLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber() );
+					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
 					if( retitem != NULL )
 					{
 						retitem->SetCont( sellLayer );
@@ -457,7 +486,7 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 			case DFNTAG_SHOPITEM:
 				if( ValidateObject( boughtLayer ) )
 				{
-					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber() );
+					retitem = Items->CreateBaseScriptItem( cdata, c->WorldNumber(), 1 );
 					if( retitem != NULL )
 					{
 						retitem->SetCont( boughtLayer );
@@ -746,7 +775,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 			case DFNTAG_EQUIPITEM:
 											if( !isGate )
 											{
-												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
+												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
 												if( retitem != NULL )
 												{
 													if( retitem->GetLayer() == IL_NONE )
@@ -859,7 +888,31 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												if( !ValidateObject( mypack ) )
 													mypack = applyTo->GetPackItem();
 												if( ValidateObject( mypack ) )
-													retitem = addRandomLoot( mypack, cdata );
+												{
+													if( !cdata.empty() )
+													{
+														if( cdata.sectionCount( "," ) != 0 )
+														{
+															UI16 iAmount = 0;
+															UString amountData = cdata.section( ",", 1, 1 );
+															if( amountData.sectionCount( " " ) != 0 ) // check if the second part of the tag-data contains two sections separated by a space
+															{
+																// Tag contained a minimum and maximum value for amount! Let's randomize!
+																iAmount = static_cast<UI16>(RandomNum( amountData.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), amountData.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ));
+															}
+															else
+															{
+																iAmount = cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
+															}
+															for( UI16 iCount = 0; iCount < iAmount;  ++iCount )
+															{
+																retitem = addRandomLoot( mypack, cdata.section( ",", 0, 0 ).stripWhiteSpace() );
+															}
+														}
+														else
+															retitem = addRandomLoot( mypack, cdata );
+													}
+												}
 												else
 													Console.Warning( "Bad NPC Script with problem no backpack for loot" );
 											}
@@ -901,8 +954,21 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 												{
 													if( !cdata.empty() )
 													{
-														if( cdata.sectionCount( "," ) != 0 )
-															retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort(), OT_ITEM, true );
+														if( cdata.sectionCount( "," ) != 0 ) // Check if the tag-data contains more than just the itemid
+														{
+															UI16 iAmount = 0;
+															UString amountData = cdata.section( ",", 1, 1 );
+															if( amountData.sectionCount( " " ) != 0 ) // check if the second part of the tag-data contains two sections separated by a space
+															{
+																// Tag contained a minimum and maximum value for amount! Let's randomize!
+																iAmount = static_cast<UI16>(RandomNum( amountData.section( " ", 0, 0 ).stripWhiteSpace().toUShort(), amountData.section( " ", 1, 1 ).stripWhiteSpace().toUShort() ));
+															}
+															else
+															{
+																iAmount = cdata.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
+															}
+															retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), iAmount, OT_ITEM, true );
+														}
 														else
 															retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
 													}
@@ -927,7 +993,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													buyPack = applyTo->GetItemAtLayer( IL_BUYCONTAINER );
 												if( ValidateObject( buyPack ) )
 												{
-													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
+													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
 													if( retitem != NULL )
 													{
 														retitem->SetCont( buyPack );
@@ -969,7 +1035,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													sellPack = applyTo->GetItemAtLayer( IL_SELLCONTAINER );
 												if( ValidateObject( sellPack ) )
 												{
-													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
+													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
 													if( retitem != NULL )
 													{
 														retitem->SetCont( sellPack );
@@ -989,7 +1055,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 													boughtPack = applyTo->GetItemAtLayer( IL_BOUGHTCONTAINER );
 												if( ValidateObject( boughtPack ) )
 												{
-													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
+													retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
 													if( retitem != NULL )
 													{
 														retitem->SetCont( boughtPack );

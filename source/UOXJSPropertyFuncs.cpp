@@ -296,6 +296,7 @@ namespace UOX
 				case CIP_DEVINELOCK:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDevineLocked() ); break;
 				case CIP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );		break;
 				case CIP_WEIGHTMAX:		*vp = INT_TO_JSVAL( gPriv->GetWeightMax() );	break;
+				case CIP_BASEWEIGHT:	*vp = INT_TO_JSVAL( gPriv->GetBaseWeight() );	break;
 				case CIP_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength() );		break;
 				case CIP_CORPSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isCorpse() );	break;
 				case CIP_DESC:
@@ -446,6 +447,7 @@ namespace UOX
 				case CIP_DEVINELOCK:	gPriv->SetDevineLock( encaps.toBool() );					break;
 				case CIP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );					break;
 				case CIP_WEIGHTMAX:		gPriv->SetWeightMax( (SI32)encaps.toInt() );				break;
+				case CIP_BASEWEIGHT:	gPriv->SetBaseWeight( (SI32)encaps.toInt() );				break;
 				case CIP_STRENGTH:		gPriv->SetStrength( (SI16)encaps.toInt() );					break;
 				case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 				case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;

@@ -99,7 +99,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 				data = HouseItem->GrabData();
 				if( UTag == "ITEM" )
 				{
-					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber() );
+					hItem = Items->CreateBaseScriptItem( data, mChar->WorldNumber(), 1 );
 					if( hItem == NULL )
 					{
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;

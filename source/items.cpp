@@ -86,7 +86,12 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										}
 										break;
 			case DFNTAG_AMOUNT:			
-										if( ndata > 0 )
+										if( ndata && odata )
+										{
+											UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
+											applyTo->SetAmount( rndAmount );
+										}
+										else if( ndata > 0 )
 											applyTo->SetAmount( ndata );					
 										break;
 			case DFNTAG_ATT:			applyTo->SetLoDamage( static_cast<SI16>(ndata) );
@@ -191,7 +196,9 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 										applyTo->SetBuyValue( ndata );
 										applyTo->SetSellValue( odata );
 										break;
-			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );				break;
+			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );
+										applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
+										break;
 			case DFNTAG_WEIGHTMAX:		applyTo->SetWeightMax( ndata );				break;
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 			case DFNTAG_ADDMENUITEM:
@@ -305,15 +312,29 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item,
 		return NULL;
 	}
 
-	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), itemType );
+	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, itemType );
 	if( iCreated == NULL )
 		return NULL;
 
-	if( iAmount > 1 && iCreated->isPileable() )
-		iCreated->SetAmount( iAmount );
-
 	if( iColor != 0xFFFF )
 		iCreated->SetColour( iColor );
+	if( iAmount > 1 && !iCreated->isPileable() )
+	{
+		// Turns out we need to spawn more than one item, let's do that here:
+		CItem *iCreated2 = NULL;
+		for( UI16 i = 0; i < iAmount-1; ++i ) //minus 1 because 1 item has already been created at this point
+		{
+			iCreated2 = CreateBaseScriptItem( item, mChar->WorldNumber(), 1, itemType );
+			if( iCreated2 )
+			{
+				if( iColor != 0xFFFF )
+					iCreated2->SetColour( iColor );
+				PlaceItem( mSock, mChar, iCreated2, inPack );
+			}
+		}
+		// Return the original item created in the function.
+		return PlaceItem( mSock, mChar, iCreated, inPack );
+	}
 
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
@@ -361,6 +382,10 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 	CItem * iCreated	= NULL;
 	UString sect		= "ITEMLIST " + sItemList;
 	sect				= sect.stripWhiteSpace();
+
+	if( sect == "blank" ) // The itemlist-entry is just a blank filler item 
+		return NULL;
+
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
 	if( ItemList != NULL )
 	{
@@ -373,7 +398,7 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 				if( k.upper() == "ITEMLIST" )
 					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum );
 				else
-					iCreated = CreateBaseScriptItem( k, worldNum );
+					iCreated = CreateBaseScriptItem( k, worldNum, 1 );
 			}
 		}
 	}
@@ -435,9 +460,13 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates a basic item from the scripts
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const ObjectType itemType )
+CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const ObjectType itemType )
 {
 	ourItem						= ourItem.stripWhiteSpace();
+
+	if( ourItem == "blank" ) // The lootlist-entry is just a blank filler item
+		return NULL;
+
 	ScriptSection *itemCreate	= FileLookup->FindEntry( ourItem, items_def );
 	if( itemCreate == NULL )
 	{
@@ -470,6 +499,9 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 		if( toGrab != NULL )
 			toGrab->OnCreate( iCreated, true );
 	}
+	if( iAmount > 1 && iCreated->isPileable() )
+		iCreated->SetAmount( iAmount );
+
 	return iCreated;
 }
 
@@ -777,14 +809,31 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 	if( randomItem )
 		c = CreateRandomItem( x, s->WorldNumber() );
 	else
-		c = CreateBaseScriptItem( x, s->WorldNumber() );
+		c = CreateBaseScriptItem( x, s->WorldNumber(), itemAmount );
 	if( c == NULL )
 		return;
 
-	if( itemAmount > 1 )
+	if( itemAmount > 1 && !c->isPileable() ) //Not stackable? Okay, spawn 'em all individually
 	{
-		if( c->isPileable() )
-			c->SetAmount( itemAmount );
+		CItem *iCreated2 = NULL;
+		for( UI08 i = 0; i < itemAmount; ++i )
+		{
+			if( randomItem )
+				iCreated2 = CreateRandomItem( x, s->WorldNumber() );
+			else
+				iCreated2 = CreateBaseScriptItem( x, s->WorldNumber(), 1 );
+			if( iCreated2 )
+			{
+				if( inCont )
+				{
+					iCreated2->SetCont( s );
+					iCreated2->PlaceInPack();
+				}
+				else
+					iCreated2->SetLocation( s );
+				iCreated2->SetSpawn( s->GetSerial() );
+			}
+		}
 	}
 
 	if( inCont )

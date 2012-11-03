@@ -57,7 +57,7 @@ public:
 
 	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false );
 	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, const UI16 iAmount, const ObjectType itemType, const bool inPack = false, const UI16 iColor = 0xFFFF );
-	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const ObjectType itemType = OT_ITEM );
+	CItem *		CreateBaseScriptItem( UString ourItem, const UI08 worldNumber, const UI16 iAmount, const ObjectType itemType = OT_ITEM );
 	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat ); 
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
 	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM );

@@ -1209,7 +1209,7 @@ void CConsole::Process( int c )
 			case 'v':
 			case 'V':
 				// Dump look up data to files so developers working with extending the ini will have a table to use
-				messageLoop << "| CMD: Creating Server.scp and Uox3.ini Tag Lookup files(For Developers)....";
+				messageLoop << "| CMD: Creating Uox.ini Tag Lookup files(For Developers)....";
 				cwmWorldState->ServerData()->dumpLookup( 0 );
 				cwmWorldState->ServerData()->save( "./uox.tst.ini" );
 				messageLoop << MSG_PRINTDONE;
@@ -1278,7 +1278,7 @@ void CConsole::DisplaySettings( void )
 	activeMap[true] = "Activated!";
 	activeMap[false] = "Disabled!";
 
-	// Server.scp status --- By Magius(CHE)
+	// UOX.ini status --- By Magius(CHE)
 	(*this) << "Server Settings:" << myendl;
 
 	(*this) << "   -Archiving[";

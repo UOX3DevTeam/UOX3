@@ -71,6 +71,7 @@ function onCallback0( socket, ourObj )
 		addHexEntry( myGump, "More Z:", ourObj.morez );
 		addEntry( myGump, "Poisoned:", ourObj.poison );
 		addEntry( myGump, "Weight:", ourObj.weight );
+		addEntry( myGump, "BaseWeight:", ourObj.baseWeight );
 		addEntry( myGump, "Decay:", ourObj.decayable?1:0 );
 		addEntry( myGump, "Buy Value:", ourObj.buyvalue );
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );

@@ -1987,6 +1987,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	char *lwrSpeech = new char[strlen(mySpeech)+1];
 	strcpy( lwrSpeech, mySpeech );
 	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
+	delete[] lwrSpeech;
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );

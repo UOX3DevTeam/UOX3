@@ -2144,7 +2144,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 			landBlock = true;
 	}		
 
-	bool considerLand = Map->IsIgnored( map.id );
+	bool considerLand = Map->IsIgnored( map.id ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 
 	SI08 startTop = 0;
 	SI08 startz = 0;

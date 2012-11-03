@@ -89,7 +89,7 @@ function onCallback1( socket, ourObj )
 
 					if( mChar.CheckSkill( skillNum, 800, 1000 ) && mChar.CheckSkill( 1, 800, 1000 ) )
 					{
-						var healTimer = 15000;
+						var healTimer = 10000;
 						SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 						mChar.StartTimer( healTimer, 0, true );
 					}
@@ -101,7 +101,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj.poison > 0 )	// Cure Poison
 			{
-				if( healSkill >= 800 && anatSkill >= 800 )
+				if( healSkill >= 600 && anatSkill >= 600 )
 				{
 					if( bItem.amount > 1 )
 						bItem.amount = bItem.amount-1;
@@ -113,10 +113,10 @@ function onCallback1( socket, ourObj )
 					if( mChar.CheckSkill( skillNum, 600, 1000 ) && mChar.CheckSkill( 1, 600, 1000 ) )
 					{
 						var healTimer;
-						if( mChar.serial == ourObj.serial )
-							healTimer = 6000;
+						if( mChar.serial == ourObj.serial ) // Curing yourself has a 9 to 15 second delay, depending on dexterity
+							healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);
 						else
-							healTimer = RandomNumber( 15000, 18000 );
+							healTimer = 6000; // Curing others has a 6 second delay
 
 						SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 						mChar.StartTimer( healTimer, 1, true );
@@ -142,13 +142,15 @@ function onCallback1( socket, ourObj )
 
 				if( ourObj.murderer || ourObj.criminal )
 					mChar.criminal = true;
+				if( ourObj != mChar && ourObj.socket )
+					ourObj.SysMessage( mChar.name+" is attempting to heal you." );
 				if( mChar.CheckSkill( skillNum, 0, 1000 ) )
 				{
 					var healTimer;
-					if( mChar.serial == ourObj.serial )
-						healTimer = parseInt((18 - (RandomNumber( 0, healSkill ) / 200)) * 1000);
+					if( mChar.serial == ourObj.serial ) // Healing yourself has a 9 to 16 second delay, depending on your dexterity.
+						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);					
 					else
-						healTimer = parseInt((7 - (RandomNumber( 0, healSkill ) / 330)) * 1000);
+						healTimer = 5000; // Healing others has a 5 second delay
 
 					SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
 					mChar.CheckSkill( 1, 0, 1000 );
@@ -205,7 +207,11 @@ function onTimer( mChar, timerID )
 	var socket 	= mChar.socket;
 	if( socket )
 	{
-		if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
+		if( mChar.dead )
+		{
+			socket.SysMessage( GetDictionaryEntry( 330, socket.Language ) );
+		}
+		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ) )
 		{
 			switch( timerID )
 			{
@@ -214,7 +220,7 @@ function onTimer( mChar, timerID )
 				socket.SysMessage( GetDictionaryEntry( 1272, socket.Language ) );
 				break;
 			case 1:	// Cure Poison
-				ourObj.SetPoisoned( 0 );
+				ourObj.SetPoisoned( 0, 0 );
 				ourObj.StaticEffect( 0x373A, 0, 15 );
 				ourObj.SoundEffect( 0x01E0, true );
 				socket.SysMessage( GetDictionaryEntry( 1274, socket.Language ) );

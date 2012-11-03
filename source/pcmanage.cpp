@@ -495,11 +495,8 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 				{
 					if( data.sectionCount( "," ) != 0 )
 					{
-						n = Items->CreateScriptItem( socket, c, data.section( ",", 0, 0 ).stripWhiteSpace(), 1, OT_ITEM, true );
-						if( n != NULL )
-						{
-							n->SetAmount( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
-						}
+						UI32 nAmount = data.section( ",", 1, 1 ).stripWhiteSpace().toUShort();
+						n = Items->CreateScriptItem( socket, c, data.section( ",", 0, 0 ).stripWhiteSpace(), nAmount, OT_ITEM, true );
 					}
 					else
 					{
@@ -1236,6 +1233,7 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 			iCorpse->SetDir( mChar.GetDir() );
 
 		iCorpse->SetAmount( mChar.GetID() );
+		iCorpse->SetWeightMax( 50000 ); // 500 stones
 		iCorpse->SetCorpse( true );
 	}
 	else
@@ -1373,6 +1371,8 @@ void HandleDeath( CChar *mChar )
 	bool createPack = ( mChar->GetID( 2 ) == 0x0D || mChar->GetID( 2 ) == 0x0F || mChar->GetID( 2 ) == 0x10 || mChar->GetID() == 0x023E );
 
 	UI08 fallDirection = (UI08)(RandomNum( 0, 100 ) % 2);
+	mChar->SetDead( true );
+
 	CItem *iCorpse = CreateCorpseItem( (*mChar), createPack, fallDirection );
 	if( iCorpse != NULL )
 	{
@@ -1382,7 +1382,6 @@ void HandleDeath( CChar *mChar )
 	}
 	Effects->playDeathSound( mChar );
 
-	mChar->SetDead( true );
 	mChar->SetWar( false );
 	mChar->StopSpell();
 	mChar->SetHP( 0 );

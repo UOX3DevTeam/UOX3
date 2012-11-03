@@ -1883,7 +1883,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_ENTICEMENT:			skillToSet = ENTICEMENT;						break;
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
-												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber() );
+												retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
 												if( retitem != NULL )
 												{
 													if( !retitem->SetCont( applyTo ) )

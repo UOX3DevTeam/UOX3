@@ -222,12 +222,13 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 12:	// Strength
 		case 25:	// Weight
 		case 42:	// WeightMax
+		case 43:	// BaseWeight
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 495 + button );	// allow 0x for hex value
 			break;
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
-		case 43:	// Spawnobj/Spawnobjlist
+		case 44:	// Spawnobj/Spawnobjlist
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;
@@ -541,7 +542,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI08 i			= 0;
 	CChar *mChar	= s->CurrcharObj();
 
-	if( !mChar->IsGM() && m < 990 || m > 999 )
+	if( !mChar->IsGM() && m > 990 && m < 999 ) // 990 - 999 reserved for online help system
 	{
 		s->sysmessage( 337 );
 		return;
@@ -1583,6 +1584,7 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.AddData( "AmmoFXHue:", i->GetAmmoFXHue() );
 	tweakItem.AddData( "AmmoFXRender:", i->GetAmmoFXRender() );
 	tweakItem.AddData( "WeightMax:", i->GetWeightMax() );
+	tweakItem.AddData( "BaseWeight:", i->GetBaseWeight() );
 	if( i->GetObjType() == OT_SPAWNER )
 	{
 		CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
@@ -1664,7 +1666,8 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 40:	j->SetAmmoFXHue( reply.toUShort() );		break; //AmmoFXHue
 			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
 			case 42:	j->SetWeightMax( reply.toLong() );			break; //WeightMax
-			case 43:
+			case 43:	j->SetBaseWeight( reply.toULong() );		break; //BaseWeight
+			case 44:
 						if( j->GetObjType() == OT_SPAWNER )
 							(static_cast<CSpawnItem *>(j))->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}
