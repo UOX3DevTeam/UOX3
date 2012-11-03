@@ -1333,6 +1333,10 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	}
 	if( !stackDeleted )
 		Effects->itemSound( mSock, nItem, ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) );
+
+	//Would be nice to do this to instantly update the stats & weight on the container the item is dropped on
+	// but unfortunately it seems like updating the container will also force-close it :/
+	// nCont->Dirty( UT_UPDATE );
 }
 
 bool CPIDropItem::Handle( void )

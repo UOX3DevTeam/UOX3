@@ -117,7 +117,7 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Regenerate Ore based on Server.scp Ore respawn settings
+//|   Purpose     :  Regenerate Ore based on UOX.INI Ore respawn settings
 //o---------------------------------------------------------------------------o
 void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 {
@@ -1475,7 +1475,7 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 //|   Date        :  Unknown
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when a Ghost attacks a Player.  If entry in server.scp
+//|   Purpose     :  Called when a Ghost attacks a Player.  If entry in UOX.INI
 //|					 is enabled, players mana decreases each time you try to
 //|					 persecute him
 //o---------------------------------------------------------------------------o

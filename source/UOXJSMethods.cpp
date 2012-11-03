@@ -2132,7 +2132,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	TAGMAPOBJECT localObject	= myObj->GetTag( localString );
 	if( localObject.m_ObjectType == TAGMAP_TYPE_STRING )
 	{
-		JSString *localJSString = JS_NewString( cx, (char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
+		JSString *localJSString = JS_NewStringCopyN( cx, (const char*)localObject.m_StringValue.c_str(),localObject.m_StringValue.length() );
 		*rval = (jsval)STRING_TO_JSVAL(localJSString);
 	}
 	else if( localObject.m_ObjectType == TAGMAP_TYPE_BOOL )

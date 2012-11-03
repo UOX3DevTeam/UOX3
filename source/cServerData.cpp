@@ -148,7 +148,7 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_MANAREGEN, 5 );
 	ArmorAffectManaRegen( true );
 	SystemTimer( tSERVER_GATE, 30 );
-	MineCheck( 2 );
+	MineCheck( 1 );
 	DeathAnimationStatus( true );
 	ShowOfflinePCs( true );
 	CombatDisplayHitMessage( true );

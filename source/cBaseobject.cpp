@@ -1510,6 +1510,12 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 
 	switch( (UTag[0]) )
 	{
+		case 'B':
+			if( UTag == "BASEWEIGHT" )
+			{
+				(static_cast<CItem *>(this))->SetBaseWeight( data.toULong() );
+			}
+			break;
 		case 'C':
 			if( UTag == "COLOUR" )
 			{

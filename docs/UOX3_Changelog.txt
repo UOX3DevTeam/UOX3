@@ -1,6 +1,78 @@
 UOX3 Changelog
 ------------------------
 -==============================-
+-= 03/11/2012 - UOX3 0.99.2   =-
+-==============================-
+Contributors: Xuri, dragon slayer
+
+Source Changes/Fixes:
+	Added several new JS Gump Methods:
+		AddGumpColor( left, top, gumpID, hue ) // Adds a gump-image to the gumpstream, with a hue
+		AddPictureColor( left, top, artID, hue ) // Adds a tile-picture to the gumpstream, with a hue
+		AddToolTip( clilocID ) // Adds a tooltip to the previous gump-element that was added.
+		AddTextEntryLimited( left, top, width, height, hue, relay, initialTextIndex, actualText, size ) // Add a text-entry gump with restriction on entry-length
+		AddButtonTileArt( tL, tR, gumpIDnorm, gumpIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) // Add a tile-picture as a part of a gump-button.
+		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); // 
+	Fixed an AND vs OR issue in CMulHandler::DoesStaticBlock() that caused an if-statement to behave incorrectly
+	Updated LineOfSight() function with a new boolean parameter that allows LoS-checks based from the Z-level at a character's feet instead of at his head
+	Added LineOfSight-checks for players (does not affect GMs) picking up/dropping items from/onto the ground, to stop an exploit with CircleOfTransparency
+	When dropping an item into an invalid location, and the player is out of range of the original location where the item was picked up, it will now be dropped on the ground
+	Players should now be able to use boat-planks and house-signs even while dead
+	Fixed an issue introduced with the updated LoS-checks in the previous commit
+	Added support for randomizing the direction an NPC will face in when spawned. To do so, use "RND" as the specified direction in their DFNs.
+	A pet being ordered to attack its owner (player), or another pet under the same ownership, should no longer result in criminal charges against the player in question.
+	Fixed an issue where locked down items could get removed from the multi when bouncing back on pickup-attempts
+	Fixed an issue where NPCs would never leave combat with targets that were unreachable on a different floor of a building than them.
+	Items with visibility value of 3 (Permanent Hidden/GM Hidden) will now not show up to players in containers
+	Members of the same party should no longer become criminals from attacking one another
+	Expanded the maximum amount of available regions in regions.dfn from 255 to 65535
+	Minor cleanup done in various parts of the source
+	OnCollide JS event can now be triggered from character scripts. NOTE: If both item and character have scripts attached, item script takes precedence.
+	Fixed an issue where some LineofSight-checks (for double-clicking items, for instance) would erroneously fail to succeed
+	Added support for optional amount-values behind LOOT DFN-tag, and expanded PACKITEM DFN-tag to support amount for non-stackable items as well.
+		Updated supported syntax goes as follows, with optional parameters shown in paranthesis:
+			LOOT=lootlist
+			LOOT=lootlist,amount
+			LOOT=lootlist,minamount maxamount
+			PACKITEM=itemid
+			PACKITEM=itemid,amount
+			PACKITEM=itemid,minamount maxamount
+			PACKITEM=listobject
+			PACKITEM=listobject,amount
+			PACKITEM=listobject,minamount maxamount
+	Added support for randomization in the AMOUNT DFN tag for items. 
+		Updated supported syntax: 
+			AMOUNT=amount
+			AMOUNT=minamount maxamount
+	Fixed an issue with corpses not having a maximum weight capacity defined; it is now set to 500 stones.
+	Fixed an issue with hairs and beards not being set correctly on corpses
+	UOX3 will no longer attempt to spawn items from lootlist/itemlist-entries titled "blank". These entries can be used to add some randomization.
+	Fixed an issue with containers and weight, with the help of a new semi-permanent "baseWeight" property which is based on the initial weight of a spawned item.
+	Added support for viewing (ISTATS-menu) and tweaking (TWEAK-menu) the new baseWeight item property
+	Added new property for JS Item objects: baseWeight - should rarely if ever need to change, primarily used to fetch base weight of containers
+	Updated the 'INFO command with more detailed data about flags on the targeted tile
+	Potentially fixed a segmentation fault in Linux by replacing JS_NewString with JS_NewStringCopyN in JSBool CBase_GetTag()
+	The MINECHECK uox.ini setting now defaults to 1 (mountains/caves/rocks only)
+
+JScript Changes/Fixes:
+	Added some script-crash protection in JS/ITEM/bedroll.js
+	Lumberjacking will now check if user is in range of target both at start and end of the chopping-process (previously start only)
+	Fixed an incorrectly named variable in js/server/resources/bananas.js (dragon slayer)
+	Fixed a bug in js/skill/healing.js that would stop players from being able to use skills after trying to cure poisoned characters with bandages
+	Updated timers for curing and healing in js/skill/healing.js - should now take longer to heal/cure oneself with bandages than to do the same with others
+	Added new JS command: 'FIXCONTWEIGHT - will iterate through all in-game containers and update their baseWeight (forced), weight (if empty and not already set) and weightMax (if not already set) properties
+
+DFN Changes/Fixes:
+	Added missing script=5021 tag to the bedroll in DFNDATA/ITEMS/GEAR/provisions.dfn
+	Added missing NPC entries: gazerlarva (dragon slayer)
+	Updated dfndata/regions/regions.dfn to disallow Mark/Recall/Gate-spells in Felucca dungeons, and added some missing brackets (dragon slayer)
+	Corrected weight of iron ingots in dfndata/items/skills/resources/smithing.dfn - they should now weigh 1 stone (weight=100) each.
+	Fixed some incorrect values for WEIGHT-tags in dfndata/items/gear/armor/base_armor.dfn
+	Potentially fixed an issue with the Stone Walls/Stone Walls 2-sections of the add-menu, which could cause lengthy stalls when opened across network connections
+
+Misc Changes/Fixes:
+
+-==============================-
 -= 21/03/2012 - UOX3 0.99.1   =-
 -==============================-
 Contributors: Xuri, dragon slayer

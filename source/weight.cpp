@@ -98,17 +98,25 @@ SI32 CWeight::calcWeight( CItem *pack )
 
 		if( i->IsContType() )	// Item is a container
 		{
-			if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+/*			// Code grabs weight of container based on tile-weight to get the "real" weight of the container
+			// This only works if the weight gotten from the tiledata is correct, however. If it's undefined it defaults to 255 stones!
+			// Instead, the code should maybe subtract the weight of all items contained in the container before re-adding them?*/
+
+			contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
+			if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
 			{
-				//7.0.9.0 data and later
-				CTileHS& tile = Map->SeekTileHS( i->GetID() );
-				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-			}
-			else
-			{
-				//7.0.8.2 data and earlier
-				CTile& tile = Map->SeekTile( i->GetID() );
-				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+				{
+					//7.0.9.0 data and later
+					CTileHS& tile = Map->SeekTileHS( i->GetID() );
+					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				}
+				else
+				{
+					//7.0.8.2 data and earlier
+					CTile& tile = Map->SeekTile( i->GetID() );
+					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				}
 			}
 			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
 			i->SetWeight( contWeight, false );		// Also update the weight property of the container
@@ -149,17 +157,21 @@ SI32 CWeight::calcCharWeight( CChar *mChar )
 		{
 			if( i->GetLayer() == IL_PACKITEM )
 			{
-				if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+				contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
+				if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
 				{
-					//7.0.9.0 data and later
-					CTileHS& tile = Map->SeekTileHS( i->GetID() );
-					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
-				}
-				else
-				{
-					//7.0.8.2 data and earlier
-					CTile& tile = Map->SeekTile( i->GetID() );
-					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+					{
+						//7.0.9.0 data and later
+						CTileHS& tile = Map->SeekTileHS( i->GetID() );
+						contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+					}
+					else
+					{
+						//7.0.8.2 data and earlier
+						CTile& tile = Map->SeekTile( i->GetID() );
+						contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+					}
 				}
 				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
 				i->SetWeight( contWeight, false );		// Also update the weight property of the container
