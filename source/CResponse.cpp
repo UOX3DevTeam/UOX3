@@ -703,7 +703,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 		CChar *mChar = mSock->CurrcharObj();
 		if( mChar == Npc->GetOwnerObj() )
 		{
-			UI32 pay = 0, give = Npc->GetHoldG(), t = 0, earned = Npc->GetHoldG();
+			UI32 pay = 0, give = Npc->GetHoldG(), earned = Npc->GetHoldG();
 			if( Npc->GetHoldG() <= 0 )
 			{
 				Npc->TextMessage( mSock, 1326, TALK, false );
@@ -725,7 +725,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			}
 			else 
 			{
-				t = Npc->GetHoldG() - MAX_STACK;	// yank of 65 grand, then do calculations
+				UI32 t = Npc->GetHoldG() - MAX_STACK;	// yank of 65 grand, then do calculations
 				Npc->SetHoldG( t );
 				pay = 6554;
 				give = 58981;
