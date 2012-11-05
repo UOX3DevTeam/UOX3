@@ -56,7 +56,9 @@ SERIAL PageVector::Add( HelpRequest *toAdd )
 	if( adding == NULL )
 		return INVALIDSERIAL;
 #endif
+#pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
 	memcpy( adding, toAdd, sizeof( HelpRequest ) );
+	//*adding = *toAdd; // Maybe we should do this instead?
 	Queue.push_back( adding );
 	adding->RequestID( ++maxID );
 	std::sort( Queue.begin(), Queue.end() );

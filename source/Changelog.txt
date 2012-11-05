@@ -1,3 +1,6 @@
+04/11/2012 - Xuri (0.99.2a)
+	Fixed issue introduced in previous version where any character-specific tags starting with the letter 'B' would not be loaded correctly from the worldfiles.
+	
 03/11/2012 - Xuri (0.99.2)
 	Added support for optional amount-values behind LOOT DFN-tag, and expanded PACKITEM DFN-tag to support amount for non-stackable items as well.
 		Updated supported syntax goes as follows, with optional parameters shown in paranthesis:

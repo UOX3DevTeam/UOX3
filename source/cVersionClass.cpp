@@ -21,14 +21,14 @@ namespace UOX
 // product info
 //o---------------------------------------------------------------------------o
 const std::string VER				= "0.99";
-const std::string BUILD				= "2";
+const std::string BUILD				= "2b";
 const std::string REALBUILD			= "0";
 const std::string SVER				= "2.0";
 const std::string CVER				= "2.0";
 const std::string IVER				= "2.0";
 const std::string PRODUCT			= "Ultima Offline eXperiment 3";
 const std::string NAME				= "The UOX3 DevTeam";
-const std::string EMAIL				= "http://openuo.sourceforge.net/";
+const std::string EMAIL				= "http://www.uox3.org/";
 const std::string PROGRAMMERS		= "UOX3 DevTeam";
 
 //////////////////////////////////////////////////////////////////////
