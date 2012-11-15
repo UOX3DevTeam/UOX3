@@ -2600,14 +2600,14 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x087a:	// COMBATEXPLODEDELAY[0154]
 		CombatExplodeDelay( value.toULong() );
 		break;
-	case 0x88d:		// PAPERDOLLGUILDBUTTON[0155]
+	case 0x088d:	// PAPERDOLLGUILDBUTTON[0155]
 		PaperdollGuildButton( value.toByte() == 1 );
 		break;
 	case 0x08a2:	// ATTACKSPEEDFROMSTAMINA[0156]
-		CombatDisplayHitMessage( value.toUShort() == 1 );
+		CombatAttackSpeedFromStamina( value.toUShort() == 1 );
 		break;
-	case 0x08b9:	 // DISPLAY DAMAGE NUMBERS[0157]
-		CombatDisplayHitMessage( value.toUShort() == 1 );
+	case 0x08b9:	 // DISPLAYDAMAGENUMBERS[0157]
+		CombatDisplayDamageNumbers( value.toUShort() == 1 );
 		break;
 	case 0x08ce:	 // CLIENTSUPPORT4000[0158]
 		ClientSupport4000( value.toUShort() == 1 );
@@ -2630,16 +2630,16 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x093a:	 // CLIENTSUPPORT70160[0164]
 		ClientSupport70160( value.toUShort() == 1 );
 		break;
-	case 0x094d:	 // EXTENDED STARTING STATS[0165]
+	case 0x094d:	 // EXTENDEDSTARTINGSTATS[0165]
 		ExtendedStartingStats( value.toUShort() == 1 );
 		break;
-	case 0x0963:	 // EXTENDED STARTING SKILLS[0166]
+	case 0x0963:	 // EXTENDEDSTARTINGSKILLS[0166]
 		ExtendedStartingSkills( value.toUShort() == 1 );
 		break;
 	case 0x097a:	// CLIENTSUPPORT70240[0167]
 		ClientSupport70240( value.toUShort() == 1 );
 		break;
-
+	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
 	case 0x098d:	 // ODBCDSN[0168]
 		ODBCManager::getSingleton(0168.SetDatabase( value );

@@ -1,3 +1,8 @@
+14/11/2012 - Xuri (0.99.2b)
+	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
+	Fixed a server crash in CMulHandler::CheckStaticFlag() which could crash the server when using a client-version below 7.0.9.0
+	Fixed a potential server crash in cSkills::FishTarget(), which would possibly crash the server when using a client-version below 7.0.9.0
+	
 04/11/2012 - Xuri (0.99.2a)
 	Fixed issue introduced in previous version where any character-specific tags starting with the letter 'B' would not be loaded correctly from the worldfiles.
 	
