@@ -859,7 +859,18 @@ void cSkills::FishTarget( CSocket *s )
 	CItem *targetItem = calcItemObjFromSer( s->GetDWord( 7 ) );
 	bool validLocation = false;
 	if( ValidateObject( targetItem ) )
-		validLocation = Map->SeekTileHS( targetItem->GetID() ).CheckFlag( TF_WET );
+	{
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 data and later
+			validLocation = Map->SeekTileHS( targetItem->GetID() ).CheckFlag( TF_WET );
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			validLocation = Map->SeekTile( targetItem->GetID() ).CheckFlag( TF_WET );
+		}
+	}
 	else if( targetID1 != 0 && targetID2 != 0 )
 	{
 		CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );

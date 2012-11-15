@@ -421,6 +421,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 						const SI08 checkZ = (curZ + multi.z);
 						if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 						{
+							//7.0.9.2 tiledata and later
 							CTileHS& multiTile = Map->SeekTileHS( multi.tile );
 							for( i = 0; i < collisioncount; ++i )
 							{
@@ -435,6 +436,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 						}
 						else
 						{
+							//7.0.8.2 tiledata and earlier
 							CTile& multiTile = Map->SeekTile( multi.tile );
 							for( i = 0; i < collisioncount; ++i )
 							{

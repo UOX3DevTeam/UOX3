@@ -875,6 +875,7 @@ bool CMulHandler::IsValidTile( UI16 tileNum )
 
 CTile& CMulHandler::SeekTile( UI16 tileNum )
 {
+	//7.0.8.2 tiledata and earlier
 	if( !IsValidTile( tileNum ) )
 	{
 		Console.Warning( "Invalid tile access, the offending tile number is %u", tileNum );
@@ -886,6 +887,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 }
 CTileHS& CMulHandler::SeekTileHS( UI16 tileNum )
 {
+	//7.0.9.2 tiledata and later
 	if( !IsValidTile( tileNum ) )
 	{
 		Console.Warning( "Invalid tile access, the offending tile number is %u", tileNum );
@@ -1149,8 +1151,18 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 	for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
 	{
 		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		if( elev == z && !SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
-			return false;
+		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+		{
+			//7.0.9.0 data and later
+			if( elev == z && !SeekTileHS( stat->itemid ).CheckFlag( toCheck ) )
+				return false;
+		}
+		else
+		{
+			//7.0.8.2 data and earlier
+			if( elev == z && !SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+				return false;
+		}
 	}
 	return true;
 }

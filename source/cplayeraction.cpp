@@ -346,6 +346,7 @@ bool CPIGetItem::Handle( void )
 
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
+		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
@@ -356,6 +357,7 @@ bool CPIGetItem::Handle( void )
 	}
 	else
 	{
+		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || i->IsLockedDown() ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
@@ -535,6 +537,7 @@ bool CPIEquipItem::Handle( void )
 	}
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
+		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
@@ -545,6 +548,7 @@ bool CPIEquipItem::Handle( void )
 	}
 	else
 	{
+		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !ourChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != ourChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
@@ -885,6 +889,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 	{
+		//7.0.9.2 tiledata and later
 		CTileHS& tile = Map->SeekTileHS( i->GetID() );
 		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
@@ -897,6 +902,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	}
 	else
 	{
+		//7.0.8.2 tiledata and earlier
 		CTile& tile = Map->SeekTile( i->GetID() );
 		if( !nChar->AllMove() && ( i->GetMovable() == 2 || ( i->IsLockedDown() && i->GetOwnerObj() != nChar ) ||
 			( tile.Weight() == 255 && i->GetMovable() != 1 ) ) )
