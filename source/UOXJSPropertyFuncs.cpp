@@ -102,10 +102,11 @@ namespace UOX
 		{
 			JSString *tString = NULL;
 			bool bDone = false;
+			size_t i = 0;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CSP_ID:
-					for( size_t i = 0; i < Magic->spells.size() && !bDone; ++i )
+					for( i = 0; i < Magic->spells.size() && !bDone; ++i )
 					{
 						if( &Magic->spells[i] == gPriv ) 
 						{
@@ -123,7 +124,7 @@ namespace UOX
 				case CSP_MANTRA:			tString = JS_NewStringCopyZ( cx, gPriv->Mantra().c_str() );
 											*vp = STRING_TO_JSVAL( tString );
 											break;
-				case CSP_NAME:				for( size_t i = 0; i < Magic->spells.size() && !bDone; ++i )
+				case CSP_NAME:				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
 											{
 												if( &Magic->spells[i] == gPriv - 1  ) 
 												{
@@ -1325,10 +1326,11 @@ namespace UOX
 		if( JSVAL_IS_INT( id ) ) 
 		{
 			JSString *tString = NULL;
+			UI08 TempRace = 0;
 			switch( JSVAL_TO_INT( id ) )
 			{
 				case CRP_ID:
-					for( UI08 TempRace = 0; TempRace < Races->Count(); ++TempRace )
+					for( TempRace = 0; TempRace < Races->Count(); ++TempRace )
 					{
 						if( Races->Race( TempRace ) == gPriv )
 						{
