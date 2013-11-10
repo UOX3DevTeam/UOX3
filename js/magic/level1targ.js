@@ -9,7 +9,6 @@ function spellTimerCheck( mChar, mSock )
 {
 	if( mChar.GetTimer( 6 ) != 0 )
 	{
-		mChar.TextMessage( mChar.isCasting );
 		if( mChar.isCasting )
 		{
 			if( mSock )
@@ -194,7 +193,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			return true;
 		}
 	}
-	   
+	
 	mChar.nextAct = 75;		// why 75?
 	
 	var delay = mSpell.delay * 100;
@@ -259,7 +258,6 @@ function checkReagents( mChar, mSpell )
 
 function deleteReagents( mChar, mSpell )
 {
-	mChar.TextMessage( mSpell.pearl + ", " + mSpell.moss + ", " + mSpell.garlic + ", " + mSpell.ginseng + ", " + mSpell.drake + ", " + mSpell.shade + ", " + mSpell.ash + ", " + mSpell.silk  );
 	mChar.UseResource( mSpell.pearl, 0x0F7A );
 	mChar.UseResource( mSpell.moss, 0x0F7B );
 	mChar.UseResource( mSpell.garlic, 0x0F84 );
@@ -279,7 +277,9 @@ function onTimer( mChar, timerID )
 	{
 		var ourTarg = mChar.target;
 		if( ourTarg && ourTarg.isChar )
-			onSpellSuccess( null, mChar, ourTarg );
+		{
+			onSpellSuccess( null, mChar, ourTarg, timerID );
+		}
 	}
 	else
 	{
@@ -295,16 +295,25 @@ function onCallback0( mSock, ourTarg )
 	{
 		var mChar = mSock.currentChar;
 		if( mChar )
-			onSpellSuccess( mSock, mChar, ourTarg );
+			onSpellSuccess( mSock, mChar, ourTarg, 0 );
 	}
 }
 
-function onSpellSuccess( mSock, mChar, ourTarg )
+function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 {
+	
 	if( mChar.isCasting )
 		return;
 
 	var spellNum	= mChar.spellCast;
+	if( spellNum == -1 )
+	{
+		if( spellID != -1 )
+			spellNum = spellID;
+		else
+			return;
+	}
+	
 	var mSpell	= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
@@ -332,9 +341,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( !mChar.CanSee( ourTarg ) )
-	{
 		return;
-	}
 	
 	var targRegion = ourTarg.region;
 	if( mSpell.agressiveSpell )
@@ -394,10 +401,8 @@ function SubtractHealth( mChar, health, mSpell )
 {
 	if( mChar.noNeedMana || mSpell.health == 0 )
 		return;
-	mChar.TextMessage( "Health to remove" );
 	if( mSpell.health < 0 )
 	{
-		mChar.TextMessage( "Removing unusual health" );
 		if( abs( mSpell.health * health ) > mChar.health )
 			mChar.health = 0;
 		else
@@ -405,7 +410,6 @@ function SubtractHealth( mChar, health, mSpell )
 	}
 	else
 	{
-		mChar.TextMessage( "Removing health of " + health );
 		mChar.health -= health;
 	}
 }
@@ -491,6 +495,12 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 	}
 	else if( spellNum == 4 )	// Heal
 	{
+		//Store original target
+		//var oldTarg = ourTarg;
+		
+		if( caster.npc )
+			ourTarg = caster;
+			
 		var baseHealing = Math.round( RandomNumber( mSpell.baseDmg / 2, mSpell.baseDmg ));
 		
 		//caster.TextMessage( "Casting Heal" );
@@ -513,6 +523,10 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 		//SubtractHealth( caster, bonus / 2, 4 );
 		if( ourTarg.murderer )
 			caster.criminal = true;
+			
+		//Restore original target
+		//if( caster.npc )
+		//	ourTarg = oldTarg;
 	}
 	else if( spellNum == 5 )	// Magic arrow
 	{
@@ -563,7 +577,6 @@ function CheckTargetResist( caster, ourTarg, circle )
 function CalcSpellDamage( caster, ourTarg, baseDamage, spellResisted )
 {
 	baseDamage = RandomNumber( baseDamage / 2, baseDamage );
-	caster.TextMessage( "BOOM" );
 	if( spellResisted )
 		baseDamage = baseDamage / 2;
 		

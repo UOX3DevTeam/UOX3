@@ -792,9 +792,18 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 			else
 				getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
 
-			if( doDamage && !p->IsNpc() && !RandomNum( 0, 5 ) )
+			if( doDamage && !p->IsNpc() && ( cwmWorldState->ServerData()->CombatWeaponDamageChance() >= RandomNum( 1, 100 )))
 			{
-				weapon->IncHP( -1 );
+				SI08 weaponDamage = 0;
+				UI08 weaponDamageMin = 0;
+				UI08 weaponDamageMax = 0;
+
+				weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
+				weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
+
+				weaponDamage -= RandomNum( weaponDamageMin, weaponDamageMax );
+				weapon->IncHP( weaponDamage );
+
 				if( weapon->GetHP() <= 0 )
 				{
 					CSocket *mSock = p->GetSocket();
@@ -1067,10 +1076,16 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		else
 			defendItem = getArmorDef( mChar, total, hitLoc, false, resistType );
 
-		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && RandomNum( 0, 1 ) )
+		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && ( cwmWorldState->ServerData()->CombatArmorDamageChance() >= RandomNum( 1, 100 )))
 		{
 			SI08 armorDamage = 0;	// Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
-			armorDamage -= RandomNum( 0, 1 );
+			UI08 armorDamageMin = 0;
+			UI08 armorDamageMax = 0;
+
+			armorDamageMin = cwmWorldState->ServerData()->CombatArmorDamageMin();
+			armorDamageMax = cwmWorldState->ServerData()->CombatArmorDamageMax();
+
+			armorDamage -= RandomNum( armorDamageMin, armorDamageMax );
 			defendItem->IncHP( armorDamage );
 
 			if( defendItem->GetHP() <= 0 )
@@ -1856,7 +1871,6 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 			else
 				return false;
 			break;
-		case 4:
 		case 29:
 			if( mChar->GetMaxHP() > mChar->GetHP() ) 
 				QuickSwitch( mChar, ourTarg, spellNum );
@@ -1871,7 +1885,9 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 			break;
 		case 1:
 		case 3:
+		case 4:
 		case 5:
+		case 12:
 		case 18:
 		case 20:
 		case 27:
@@ -1997,7 +2013,11 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			}
 			if( npcAttack->GetSpellCast() != -1 )
 				Magic->CastSpell( NULL, npcAttack );
-			npcAttack->SetTimer( tNPC_SPATIMER, BuildTimeValue( npcAttack->GetSpDelay() ) );
+
+			//Adjust spellDelay based on UOX.INI setting:
+			SI08 spellDelay = floor( ( npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed() ) + 0.5 );
+
+			npcAttack->SetTimer( tNPC_SPATIMER, BuildTimeValue( spellDelay ) );
 		}
 	}
 }
@@ -2040,8 +2060,10 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	if( ValidateObject(ourTarg) )
 		if( ourTarg->GetNpcWander() == WT_FLEE)
 			baseValue = 10000;
+	
+	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = (baseValue / (getDelay * getOffset));
+	getDelay = (baseValue / (getDelay * getOffset)) / globalAttackSpeed;
 	return getDelay;
 }
 
@@ -2163,7 +2185,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				if( charInRange( &mChar, ourTarg ) )
 				{
 					validTarg = true;
-					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 4 ) )
+					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 2 ) )
 						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );
 					else
 						HandleCombat( mSock, mChar, ourTarg );

@@ -185,6 +185,8 @@ private:
 	R32			npcRunningSpeed;				//	Speed at which running NPCs move
 	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
+	R32			globalattackspeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
+	R32			npcspellcastspeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 
 	// MessageBoards
 	UI08		msgpostinglevel;				//	If not 0, then players can post
@@ -236,6 +238,12 @@ private:
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
 	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
+	UI08		combatweapondamagechance;		//  Chance of weapons being damaged when attacking in combat (0-100)
+	UI08		combatweapondamagemin;			//  Minimum amount of hitpoints a weapon can lose when being damaged in combat
+	UI08		combatweapondamagemax;			//  Maximum amount of hitpoints a weapon can lose when being damaged in combat
+	UI08		combatarmordamagechance;		//  Chance of armor being damaged when defending in combat (0-100)
+	UI08		combatarmordamagemin;			//  Minimum amount of hitpoints an armor can lose when being damaged in combat
+	UI08		combatarmordamagemax;			//  Maximum amount of hitpoints an armor can lose when being damaged in combat
 
 	// Start & Location Settings
 	std::vector< STARTLOCATION >	startlocations;
@@ -446,6 +454,12 @@ public:
 	void		CheckSpawnRegionSpeed( R64 value );
 	R64			CheckSpawnRegionSpeed( void ) const;
 
+	void		GlobalAttackSpeed( R32 value );
+	R32			GlobalAttackSpeed( void ) const;
+
+	void		NPCSpellCastSpeed( R32 value );
+	R32			NPCSpellCastSpeed( void ) const;
+
 	void		MsgBoardPostingLevel( UI08 value );
 	UI08		MsgBoardPostingLevel( void ) const;
 
@@ -506,6 +520,24 @@ public:
 
 	void		CombatAnimalsAttackChance( UI08 value );
 	UI08		CombatAnimalsAttackChance( void ) const;
+
+	void		CombatWeaponDamageChance( UI08 value );
+	UI08		CombatWeaponDamageChance( void ) const;
+
+	void		CombatWeaponDamageMin( UI08 value );
+	UI08		CombatWeaponDamageMin( void ) const;
+
+	void		CombatWeaponDamageMax( UI08 value );
+	UI08		CombatWeaponDamageMax( void ) const;
+
+	void		CombatArmorDamageChance( UI08 value );
+	UI08		CombatArmorDamageChance( void ) const;
+
+	void		CombatArmorDamageMin( UI08 value );
+	UI08		CombatArmorDamageMin( void ) const;
+
+	void		CombatArmorDamageMax( UI08 value );
+	UI08		CombatArmorDamageMax( void ) const;
 
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;

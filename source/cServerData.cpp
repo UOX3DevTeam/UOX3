@@ -91,7 +91,8 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
-	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|"
+	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|WEAPONDAMAGECHANCE|"
+	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -174,6 +175,14 @@ void CServerData::ResetDefaults( void )
 	SellMaxItemsStatus( 5 );
 	CombatNPCDamageRate( 2 );
 	RankSystemStatus( true );
+	CombatWeaponDamageChance( 17 );
+	CombatWeaponDamageMin( 0 );
+	CombatWeaponDamageMax( 1 );
+	CombatArmorDamageChance( 33 );
+	CombatArmorDamageMin( 0 );
+	CombatArmorDamageMax( 1 );
+	GlobalAttackSpeed( 1.0 );
+	NPCSpellCastSpeed( 1.0 );
 
 	char curWorkingDir[1024];
 	GetCurrentDirectory( 1024, curWorkingDir );
@@ -985,6 +994,32 @@ bool CServerData::CombatAttackSpeedFromStamina( void ) const
 	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
 }
 
+void CServerData::GlobalAttackSpeed( R32 value )
+{
+	if( value < 0.0 )
+		globalattackspeed = 0.0;
+	else
+		globalattackspeed = value;
+}
+
+R32 CServerData::GlobalAttackSpeed( void ) const
+{
+	return globalattackspeed;
+}
+
+void CServerData::NPCSpellCastSpeed( R32 value )
+{
+	if( value < 0.0 )
+		npcspellcastspeed = 0.0;
+	else
+		npcspellcastspeed = value;
+}
+
+R32 CServerData::NPCSpellCastSpeed( void ) const
+{
+	return npcspellcastspeed;
+}
+
 void CServerData::CombatNPCDamageRate( SI16 value )
 {
 	combatnpcdamagerate = value;
@@ -1147,6 +1182,64 @@ void CServerData::CombatAnimalsAttackChance( UI08 value )
 UI08 CServerData::CombatAnimalsAttackChance( void ) const
 {
 	return combatanimalattackchance;
+}
+
+void CServerData::CombatWeaponDamageChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatweapondamagechance = value;
+}
+UI08 CServerData::CombatWeaponDamageChance( void ) const
+{
+	return combatweapondamagechance;
+}
+
+void CServerData::CombatWeaponDamageMin( UI08 value )
+{
+	combatweapondamagemin = value;
+}
+UI08 CServerData::CombatWeaponDamageMin( void ) const
+{
+	return combatweapondamagemin;
+}
+
+void CServerData::CombatWeaponDamageMax( UI08 value )
+{
+	combatweapondamagemax = value;
+}
+UI08 CServerData::CombatWeaponDamageMax( void ) const
+{
+	return combatweapondamagemax;
+}
+
+void CServerData::CombatArmorDamageChance( UI08 value )
+{
+	if( value > 100 )
+		value = 100;
+	combatarmordamagechance = value;
+}
+UI08 CServerData::CombatArmorDamageChance( void ) const
+{
+	return combatarmordamagechance;
+}
+
+void CServerData::CombatArmorDamageMin( UI08 value )
+{
+	combatarmordamagemin = value;
+}
+UI08 CServerData::CombatArmorDamageMin( void ) const
+{
+	return combatarmordamagemin;
+}
+
+void CServerData::CombatArmorDamageMax( UI08 value )
+{
+	combatarmordamagemax = value;
+}
+UI08 CServerData::CombatArmorDamageMax( void ) const
+{
+	return combatarmordamagemax;
 }
 
 void CServerData::HungerDamage( SI16 value )
@@ -1837,6 +1930,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
 		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
 		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
+		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
 		
 		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
@@ -1904,6 +1999,12 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
 		ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
 		ofsOutput << "COMBATEXPLODEDELAY=" << CombatExplodeDelay() << '\n';
+		ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
+		ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
+		ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<UI16>(CombatWeaponDamageMax()) << '\n';
+		ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
+		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
+		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
 		ofsOutput << "}" << '\n';
 		
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -2639,15 +2740,39 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x097a:	// CLIENTSUPPORT70240[0167]
 		ClientSupport70240( value.toUShort() == 1 );
 		break;
+	case 0x098d:	// WEAPONDAMAGECHANCE[0168]
+		CombatWeaponDamageChance( value.toUByte() );
+		break;
+	case 0x09a0:	// ARMORDAMAGECHANCE[0169]
+		CombatArmorDamageChance( value.toUByte() );
+		break;
+	case 0x09b2:	// WEAPONDAMAGEMIN[0170]
+		CombatWeaponDamageMin( value.toUByte() );
+		break;
+	case 0x09c2:	// WEAPONDAMAGEMAX[0171]
+		CombatWeaponDamageMax( value.toUByte() );
+		break;
+	case 0x09d2:	// ARMORDAMAGEMIN[0172]
+		CombatArmorDamageMin( value.toUByte() );
+		break;
+	case 0x09e1:	// ARMORDAMAGEMAX[0173]
+		CombatArmorDamageMax( value.toUByte() );
+		break;
+	case 0x09f0:	// GLOBALATTACKSPEED[0174]
+		GlobalAttackSpeed( value.toFloat() );
+		break;
+	case 0x0a02:	// NPCSPELLCASTSPEED[0175]
+		NPCSpellCastSpeed( value.toFloat() );
+		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x098d:	 // ODBCDSN[0168]
+	case 0x0a14:	 // ODBCDSN[0176]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0995:	 // ODBCUSER[0169]
+	case 0x0a1c:	 // ODBCUSER[0177]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x099e:	 // ODBCPASS[0170]
+	case 0x0a25:	 // ODBCPASS[0178]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif

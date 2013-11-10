@@ -1,3 +1,17 @@
+10/11/2013 - Xuri (0.99.2c)
+	Fixed some issues in CHandleCombat::CastSpell() and level1targ.js that stopped NPCs from casting Heal on themselves
+	Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable:
+		WEAPONDAMAGECHANCE=17 	// Chance of weapons taking damage when attacking
+		WEAPONDAMAGEMIN=0		// Minimum amount of damage a weapon takes if damaged in combat
+		WEAPONDAMAGEMAX=1		// Maximum amount of damage a weapon takes if damaged in combat
+		ARMORDAMAGECHANCE=25	// Chance of armor taking damage when defending
+		ARMORDAMAGEMIN=0		// Minimum amount of damage armor can take if damaged in combat
+		ARMORDAMAGEMAX=1		// Maximum amount of damage armor can take if damaged in combat
+	Added new UOX.INI settings for adjusting combat-speed on a global scale:
+		GLOBALATTACKSPEED=1 	// for adjusting speed of melee and ranged attacks globally for all chars
+		NPCSPELLCASTSPEED=1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
+	Increased the chance of NPCs attempting to cast spells instead of doing regular attacks in combat-rounds
+
 14/11/2012 - Xuri (0.99.2b)
 	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
 	Fixed a server crash in CMulHandler::CheckStaticFlag() which could crash the server when using a client-version below 7.0.9.0
