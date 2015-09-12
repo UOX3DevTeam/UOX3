@@ -1,3 +1,7 @@
+12/09/2015 - Xuri
+	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
+		FISHINGSTAMINALOSS=2	// The amount of stamina lost when using the fishing skill
+
 10/11/2013 - Xuri (0.99.2c)
 	Fixed some issues in CHandleCombat::CastSpell() and level1targ.js that stopped NPCs from casting Heal on themselves
 	Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable:
@@ -12,14 +16,14 @@
 		NPCSPELLCASTSPEED=1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
 	Increased the chance of NPCs attempting to cast spells instead of doing regular attacks in combat-rounds
 
-14/11/2012 - Xuri (0.99.2b)
+14/11/2012 - Xuri (0.99.2b+)
 	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
 	Fixed a server crash in CMulHandler::CheckStaticFlag() which could crash the server when using a client-version below 7.0.9.0
 	Fixed a potential server crash in cSkills::FishTarget(), which would possibly crash the server when using a client-version below 7.0.9.0
-	
-04/11/2012 - Xuri (0.99.2a)
+
+04/11/2012 - Xuri (0.99.2b)
 	Fixed issue introduced in previous version where any character-specific tags starting with the letter 'B' would not be loaded correctly from the worldfiles.
-	
+
 03/11/2012 - Xuri (0.99.2)
 	Added support for optional amount-values behind LOOT DFN-tag, and expanded PACKITEM DFN-tag to support amount for non-stackable items as well.
 		Updated supported syntax goes as follows, with optional parameters shown in paranthesis:
@@ -34,8 +38,8 @@
 			PACKITEM=listobject,minamount maxamount
 	Fixed a bug in js/skill/healing.js that would stop players from being able to use skills after trying to cure poisoned characters with bandages
 	Updated timers for curing and healing in js/skill/healing.js - should now take longer to heal/cure oneself with bandages than to do the same with others
-	Added support for randomization in the AMOUNT DFN tag for items. 
-		Updated supported syntax: 
+	Added support for randomization in the AMOUNT DFN tag for items.
+		Updated supported syntax:
 			AMOUNT=amount
 			AMOUNT=minamount maxamount
 	Fixed an issue with corpses not having a maximum weight capacity defined; it is now set to 500 stones.
@@ -50,7 +54,7 @@
 	Potentially fixed a segmentation fault in Linux by replacing JS_NewString with JS_NewStringCopyN in JSBool CBase_GetTag()
 	Potentially fixed an issue with the Stone Walls/Stone Walls 2-sections of the add-menu, which could cause lengthy stalls when opened across network connections
 	The MINECHECK uox.ini setting now defaults to 1 (mountains/caves/rocks only)
-	
+
 25/10/2012 - Xuri
 	OnCollide JS event can now be triggered from character scripts. NOTE: If both item and character have scripts attached, item script takes precedence.
 	Fixed an issue where some LineofSight-checks (for double-clicking items, for instance) would erroneously fail to succeed
@@ -67,7 +71,7 @@
 	Expanded the maximum amount of available regions in regions.dfn from 255 to 65535
 	Minor cleanup done in various parts of the source
 	Corrected weight of iron ingots in dfndata/items/skills/resources/smithing.dfn - they should now weigh 1 stone (weight=100) each.
-	
+
 31/03/2012 - Xuri
 	Fixed an AND vs OR issue in CMulHandler::DoesStaticBlock() that caused an if-statement to behave incorrectly
 	Updated LineOfSight() function with a new boolean parameter that allows LoS-checks based from the Z-level at a character's feet instead of at his head
@@ -75,7 +79,7 @@
 	When dropping an item into an invalid location, and the player is out of range of the original location where the item was picked up, it will now be dropped on the ground
 	Players should now be able to use boat-planks and house-signs even while dead
 	Fixed an issue introduced with the updated LoS-checks in the previous commit
-	
+
 24/03/2012 - Xuri
 	Added several new JS Gump Methods:
 		AddGumpColor( left, top, gumpID, hue ) // Adds a gump-image to the gumpstream, with a hue
@@ -83,10 +87,10 @@
 		AddToolTip( clilocID ) // Adds a tooltip to the previous gump-element that was added.
 		AddTextEntryLimited( left, top, width, height, hue, relay, initialTextIndex, actualText, size ) // Add a text-entry gump with restriction on entry-length
 		AddButtonTileArt( tL, tR, gumpIDnorm, gumpIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) // Add a tile-picture as a part of a gump-button.
-		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); // 
+		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); //
 	Added missing script=5021 tag to the bedroll in DFNDATA/ITEMS/GEAR/provisions.dfn
 	Added some script-crash protection in JS/ITEM/bedroll.js
-	
+
 21/03/2012 - Xuri (0.99.1)
 	Futureproofed map-loading/reading code to support both UOP-wrapped and regular maps on a map-per-map basis. May not never need to, but still.
 	Added new DFN-tag for creatures - "HUMAN". This now replaces the hard-coded list of "human" body IDs that is checked when playing animations, sounds, etc.
@@ -154,7 +158,7 @@
 		Reduced default maxSteps variable in advanced pathfinding routine from 1000 steps to 500 steps for performance reasons
 			The maxSteps variable will also increase/decrease depending on the type of movement the pathfinding is for
 		Added a safeguard against NPCs repeatedly failing at advanced pathfinding and slowing down the server as a result. Now resets their NPCWANDERMODE on critical failures.
-		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path. 
+		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path.
 			Once it reaches a certain threshold, NPC can push past a blocking character, or alternatively stop whatever it's doing (fleeing, following, etc).
 		Advanced Pathfinding will now take into account characters blocking the way when generating valid paths - no more queued up NPCs in long lines!
 		Enabled pathfinding in water for water-walking creatures
@@ -186,7 +190,7 @@
 	Added support for the SA-specific map (map5.mul - Termur) to DFNDATA/MAPS/maps.dfn
 	Added support for extended itemIDs (0x3FFF to 0xFFFF) used in SA and HS clients. Maximum supported depends on size of tiledata run on the server.
 	Added support for reading new versions of tiledata.mul and multi.mul. No settings needed, version-handling taken care of automatically.
-	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class. 
+	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class.
 		This replaces packet 0x1A in client-versions 7.0+, and enables displaying items and multis with IDs extending beyond 0x3FFF
 	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
 		Can be enabled/disabled through UOX.INI setting PAPERDOLLGUILDBUTTON=0/1. Defaults to 0.
@@ -242,7 +246,7 @@
 	Implemented support for automatically renaming books when the book titles are updated by players
 	Fixed broken Bulletin Boards - should no longer freeze the client, and can actually be used for posting messages again
 	Disabled MsgBoardMaintenance() in CWorldMain::CheckAutoTimers() until someone can figure out why they break bulletin boards
-	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer) 
+	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer)
 	Added Ter'Mur Map Area (REGION 250) to DFNDATA/REGIONS/regions.dfn
 	Added code to shut down UOX3 (instead of crashing later on) if it fails to load any regions from region DFN scripts
 	Changed all references to MAP in DFNDATA/REGIONS/regions.dfn to WORLD (which unlike MAP is actually read by UOX3 in this file)
@@ -265,18 +269,18 @@
 	Fixed an issue where some creatures with ANTIBLINK tag set in UOX3/DFNDATA/CREATURES/creatures.dfn would play get-hit animations as attack-animations
 	Added numerous creatures to DFNDATA/CREATURES/creatures.dfn, though some only have placeholder icons and sounds.
 	Updated various UOX3 documentation (installation, configuration, server-settings, JavaScript docs)
-	
+
 14/12/2011 - Xuri (0.98-4.0i)
 	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
 	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
 	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
-	Added support for six new JS events: 
+	Added support for six new JS events:
 		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
 		onSell( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
 		onBuyFromVendor(socket, objVendor, objBought ) - triggers for item while item is being bought from an NPC vendor; return false in script to block sale, defaults to true
 		onBoughtFromVendor( socket, objVendor, objBought ) - triggers on item after purchase has gone through and item has reached the player's backpack
 		onSellToVendor( socket, objVendor, objSold ) - triggers for item while item is being sold to an NPC vendor; return false in script to block sale, defaults to true
-		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack 
+		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack
 	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
 	Added onBoughtFromVendor JS events to pet-statue scripts in JS/NPC/PETS/ to automagically turn statues into live pets immediately after being bought
 	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
@@ -319,10 +323,10 @@
 	Randomized impact-sounds for melee weapons
 	Randomized get-hit sounds for male and female human characters
 	Revamped spell-damage and magic-resist systems:
-		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check: 
+		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check:
 			SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted )
 		Updated cMagic::CheckResist() with magic resistance formulas based on pre-AoS information
-		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn. 
+		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn.
 			For damage-spells, it's the maximum potential basedamage done before bonuses (or penalties) based on target resist, caster eval int and item resistances.
 			For healing spells, it's the maximum potential basehealing done before potential bonuses
 		Damage-spells updated to use new methods for calculating damage and magic resistances, both of which should now be close to pre-AoS implementation
@@ -336,10 +340,10 @@
 		Updated JS/MAGIC/level1targ.js with new magic damage and resist system, and added noNeedReags check on caster to potentially skip reagent checks
 		Fixed (visual-only) issue where damage-numbers would display over head of caster twice if caster was also target
 		Added JS Spell property "name" - can be used to get the name of a spell as defined in the dictionary-files (entries 593-662)
-	
+
 2/7/2010 - Xuri (0.98-4.0h)
 	Added new UOX.INI settings:
-		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just 
+		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just
 						resets the decay-timer when it reaches 0
 		SCRIPTITEMSDECAYABLE - Toggles whether DFN-items will decay by default or not. Can be overriden by DECAY tag in item-DFNs
 		BASEITEMSDECAYABLE - Toggles whether base-items will decay by default or not. Can be overriden by DECAY tag in harditems.dfn
@@ -352,7 +356,7 @@
 	Fixed a bug that stopped UOX3 from reading and applying DIR values from item-DFNs correctly
 	Added DIR values to all lightsources in DFNDATA/ITEMS/BUILDING/lighting.dfn
 	Added DIR values to all .js files in JS/SERVER/LIGHT/ folder, enabling players to turn on/off lightsources
-		
+
 2/3/2010 - Xuri
 	The duping command (dupe.js) should now be able to dupe spawner-objects properly
 	Added missing Tinker Tools and Fletching Tools to jse_objectassociations.scp (Puck)
@@ -363,7 +367,7 @@
 	Fixed an issue with locked down items decaying (despite being inside houses)
 	A system message should now be displayed when locking down items, showing how many lockdowns remain
 	Added JS Item property: multi - A read-only Object-reference to the multi a specific item is inside
-	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground 
+	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground
 	Added movable=2 and weight=50000 to Base_spawner-definition to make it impossible for players to steal them
 
 2/1/2010 - Xuri (0.98-4.0f)
@@ -394,10 +398,10 @@
 1/29/2010 - Xuri
 	Fixed an issue that caused NPC shopkeepers to get overloaded by the weight of items in their shop-layers
 	Fixed an incorrect entry in namelists.dfn
-	
+
 1/28/2010 - Xuri (0.98-4.0d)
 	Fixed a servercrash that occured when server tried to regrown wool on shorn sheep that were dead
-	
+
 1/24/2010 - Xuri
 	Added definition of 0x1EB9 as a Tinker Tool in jse_objectassociations.scp
 	Added system messages confirming when items have been locked down or released in a house
@@ -533,7 +537,7 @@ Oct 12, 2008 - Maarc
 6/22/2008 - giwo (0.98-3.7t)
 	Added error handling to prevent a crash if GetByte/GetWord/GetDWord were passed an invalid offset
 	Changed the tweakItem and tweakChar handlers to use command level rather than the "IsGM" flag.
-	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.	
+	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.
 
 6/22/2008 - Xuri
 	Fixed hex-id of turnips in foods2.dfn, these turnips should now be stackable
@@ -571,7 +575,7 @@ Oct 12, 2008 - Maarc
 	Split onUse into onUseChecked and onUseUnChecked.
 
 10/09/2007 - Xuri
-	Fixed some errors in jail.js that could mess up jailing/releasing characters 
+	Fixed some errors in jail.js that could mess up jailing/releasing characters
 	Added new function (getCombatSkill) to weapontypes.js for returning skill used by equipped weapon as a string
 
 9/08/2007 - grimson
@@ -660,7 +664,7 @@ Oct 12, 2008 - Maarc
 	Added new script (bankcheck.js) that handles the functionality of bank-checks
 	Assigned script 3201 to bankers, and removed NPCAI=8
 	Changed mapdefinitions (maps.dfn) for Trammel to map1.mul, statics1.mul and staidx1.mul
-	
+
 5/18/2007 - grimson
 	Make sure we check for scripts envoked by type or id before we use the global script.
 
@@ -868,7 +872,7 @@ Oct 12, 2008 - Maarc
 7/17/2006 - Xuri
 	Added new command (rndtile.js) that allows tiling random items of a specific hue at a specific height
 		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
-	
+
 7/15/2006 - giwo (0.98-3.7c [3.8 BETA])
 	Added a flag to CChar::PushDirection() allowing us to push to the front or back of the pathToFollow list.
 	Changed CChar::mNPC::pathToFollow to a deque for more robust functionality.
@@ -1060,7 +1064,7 @@ Oct 12, 2008 - Maarc
 	Fixed the guardzone for Delucia, was previously set to the graveyard north of the town
 
 4/18/2006 - Xuri
-	Items added using the RADD command in repeatingcmds.js will no longer decay by default 
+	Items added using the RADD command in repeatingcmds.js will no longer decay by default
 	Fixed the guardzone for Ocllo, X2 and Y2 were mixed up
 
 4/07/2006 - grimson
@@ -1103,7 +1107,7 @@ Oct 12, 2008 - Maarc
 
 4/05/2006 - grimson
 	Changed the use of the HP DFN tag for items so you can specify a range for a random value.
-	
+
 	DFN Changes:
 	Updated the stats for all weapons to fit the pre-AOS values. Pushed up the damage values
 	of AOS and SE weapons so that they are in the same area as the other weapons.
@@ -1159,7 +1163,7 @@ Oct 12, 2008 - Maarc
 		This event is called everytime combat damage is calculated. You can do your own damage
 		calculation and return the damage to override the engine damage calculation, or return
 		a negative damage value to use the engine damage calculation.
-		
+
 
 3/21/2006 - grimson
 	A small fix to ApplyDamageBonuses(), the race damage of a weapon was applied to the final
@@ -1297,7 +1301,7 @@ Oct 12, 2008 - Maarc
 	char that inflicted the damage.
 	Reduced CChar::Damage() to show, the damage, apply the damage, handle the
 	reputation effect, the peace breaking effect and the chars death.
-	
+
 	JS changes:
 	New JS functions:
 		damage = ApplyDamageBonuses( damageType, attacker, defender, fightSkill, hitLoc, baseDamage );
@@ -1309,7 +1313,7 @@ Oct 12, 2008 - Maarc
 			Note: damageType is currently unused.
 	Changed char function:
 		mChar.Damage( amount, attacker, doRepsys );
-	
+
 17th March, 2006 - Maarc
 	Changed the INI loading code so that it uses a Script rather than custom code
 
@@ -1570,7 +1574,7 @@ Oct 12, 2008 - Maarc
 	in CPacketReceive.cpp.
 	Changed CPIResyncReq::Handle() so that it actually does resend everything around
 	the player.
-	
+
 3/04/2006 - grimson
 	Added a new ini setting:
 	COMBATARCHERRANGE=#  This defines the range at which archers stop charging
@@ -1659,7 +1663,7 @@ Oct 12, 2008 - Maarc
 
 2/26/2006 - grimson
 	Modified cCharStuff::addRandomLoot() so that loot lists can contain links to other loot lists.
-	
+
 	DFN changes:
 		Changed the the numbers in the LOOT tags of NPCs to random lootlist entrys.
 		Fixed some GET tags in the armor dfns that were pointing to non existant items.
@@ -1770,7 +1774,7 @@ Oct 12, 2008 - Maarc
 	engine as the 2 new propertys:
 		.mounted	Can be used to get or set the mounted status
 		.stabled	Can be used to get or set the stabled status
-		
+
 2/22/2006 - grimson
 	Fixed a bug in CBase_Teleport() introduced by my earlier changes that caused teleports to other worlds
 	to fail with big x and/or y coordinates.
@@ -1789,7 +1793,7 @@ Oct 12, 2008 - Maarc
 		reaches a value of 4, then it looks for other animals, that don't have the aiANIMAL, and attacks
 		them. If the hunger level goes below 2 it will attack everything in range, even player chars.
 		If the animal kills it's target it's hunger level will be set to 6 again.
-		
+
 		Added 3 new JS propertys for chars:
 			.tamedHungerRate returns or sets the rate the char hungers when it is tamed.
 			.hungerWildChance returns or sets the chance of the char becoming wild if it's starving.
@@ -1807,7 +1811,7 @@ Oct 12, 2008 - Maarc
 			FOOD=abc   This sets the name of the foodlist for the tamed item.
 		Added a new list type for items:
 			FOODLIST   Defines a list of item IDs a tamed char will accept as food.
-	
+
 	DFN Changes:
 		Added a new file foodlists.dfn to the items folder containing an example list for horses.
 		Added the horse foodlist to mounts.dfn.
@@ -1821,7 +1825,7 @@ Oct 12, 2008 - Maarc
 			HUNGER=#,# the first value is the hunger rate the second the hunger damage.
 				   Note for players char the settings from the uox.ini apply if
 				   there are no settings specified for the race.
-		
+
 		Re-activated the pet-hunger system. Pets will now become hungry and upon starving
 		there is a configurable chance that they may become wild again. Note: Pets won't
 		die from hunger and their hunger value is reset after becoming wild again. The
@@ -1830,7 +1834,7 @@ Oct 12, 2008 - Maarc
 					of the pet becoming wild again. Note: The values are seperated
 					with a space instead of a comma on this tag.
 		To feed a pet just drag some food on it, currently all types of food work.
-		
+
 		There is also another new DFN tag:
 			WILLHUNGER=# if this is set to 0 the NPC will not suffer from any type of hunger.
 				     Note: You can also change that value for specific chars by using
@@ -2004,15 +2008,15 @@ Oct 12, 2008 - Maarc
 16th February, 2006 - Maarc (0.98-3.3i [3.4 BETA])
 	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people from compiling)
 	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced
-	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing 
+	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing
 	 and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage
 	 hasn't occurred in the past 5 minutes, they get taken off the list
-	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, because in 
-	 future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a sword, the 
+	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, because in
+	 future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a sword, the
 	 sword's kill count increases)
-	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking.  Future 
+	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking.  Future
 	 progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat
-	Broke out packet 0xBF into a CPI class of it's own.  Rather than making it a huge monolithic class, it internally hands it 
+	Broke out packet 0xBF into a CPI class of it's own.  Rather than making it a huge monolithic class, it internally hands it
 	 off to other packet handling classes
 
 
@@ -2090,7 +2094,7 @@ Oct 12, 2008 - Maarc
 
 2/13/2006 - grimson (0.98-3.3d [3.4 BETA])
 	Made shure to start world timers on server startup.
-	Changed startChar() to do a checkRegion() directly after a login. 
+	Changed startChar() to do a checkRegion() directly after a login.
 	Changed CWorldMain::doWorldLight to actually take the current time into account
 	when calculating the light level.
 
@@ -2139,7 +2143,7 @@ Oct 12, 2008 - Maarc
 	"z" level and closest to the coordinates of x and y. Or NULL if no item is found.
 	GetItem( x, y, z, world) - returns the item that is on the given coordinates or
 	NULL if there is no item.
-	
+
 2/12/2006 - grimson
 	The current HP and (if present) the fixed maxHP will now be saved on worldsaves.
 	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with
@@ -2341,8 +2345,8 @@ Oct 12, 2008 - Maarc
 	Updated 'set command to support setting of health (via health or hp)
 	NOTE: Tweak seems to be broken (the buttons don't fire anything), and I have no idea why
 	NOTE: Heal is currently a vampiric heal (some health is subtracted from the caster to heal the target).  This is *not* a new behaviour.
-	NOTE: Tweaked up magic arrow damage (a GM mage was doing less than 4 damage every time).  
-	Old magic arrow formula			
+	NOTE: Tweaked up magic arrow damage (a GM mage was doing less than 4 damage every time).
+	Old magic arrow formula
 		baseDamage	= 2 + Random( 0, 1 )
 		mageryMult	= (Magery / 2000) + 1 (maximum multiplier, 1.5)
 		Damage Dealt	= baseDamage * mageryMult - EvalIntCheck
@@ -2356,7 +2360,7 @@ Oct 12, 2008 - Maarc
 	Previously, a successful check would always draw off a fixed amount of damage ( 10% of your skill level )
 	Adjusted the JS socket property for characters, so that it returns an explicit NULL object if there is no socket attached
 	NOTE: Researching into JSExtendedClass instead of JSClass, so that we can implement equality testing (like, attacker != caster sorts of things)
-	
+
 
 25th January, 2006 - Maarc
 	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods
@@ -2741,13 +2745,13 @@ August 17 2005 - Maarc
 6/11/2005 - ShadowBranch
 	Changed the hardcoded default starting location from 1000, 1000, 0 to 1495, 1629, 10 - which is the Sweet Dreams Inn in Britain.
 
-6/9/2005 - giwo 
-   	Fixed a bug causing items not to be able to be picked up 
+6/9/2005 - giwo
+   	Fixed a bug causing items not to be able to be picked up
 
-6/8/2005 - Xuri 
-   	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed. 
+6/8/2005 - Xuri
+   	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed.
 
-6/7/2005 - Grimson 
+6/7/2005 - Grimson
    	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn
 
 4/22/2005 - giwo (0.98-2.8h)
@@ -2800,7 +2804,7 @@ August 17 2005 - Maarc
 	Included jr's fixes for cygwin compatability.
 	Began work on allowing UOX to compile under MinGW.
 	Many minor gcc warning fixes.
-	
+
 3/5/2005 - giwo (0.98-2.8c)
 	Fixed a couple memory leaks.
 	Fixed a couple areas where we were attempting to free memory that had already been freed.
@@ -2880,17 +2884,17 @@ February 5 2005 - Maarc
 	SaveStatistics() added to CWorldMain, which only really writes out the total of characters and items, but using it to help with a fix for WorldBuilder
 
 2/3/2005 - EviLDeD
-	Fixed a small problem with VC6 not liking the initializer list for the TAGMAPOBJECT structure. 
+	Fixed a small problem with VC6 not liking the initializer list for the TAGMAPOBJECT structure.
 
 2/3/2005 - EviLDeD
-	Fixed the Crash on save bug after reloading the JS. 
+	Fixed the Crash on save bug after reloading the JS.
 	Moved the TAGMAP system from jsval to TAGMAPOBJECT(See source)
 	Removed some of the console spam used for testing purposes
 
 1/30/2005 - EviLDeD (Contrib: Rynet)
 	Corrected a display problem with boats. This has been commented out due to being a work around for teh SetZ/SetDispZ bug which has been fixed I believe
 	Corrected some copy/referance issues in cSocket
- 
+
 1/28/2005 - EviLDeD
 	Removed CTriggerScript class as it was redundant. Moved functionality into CTrigger class
 	Improved the command load process by having CommandRegistration() send in the contextID responsible for command RegisterCommand()
@@ -2906,7 +2910,7 @@ February 5 2005 - Maarc
 	 crash at save time. Once this last issue is sorted out then this bug will be fixed.
 
 January 15 2005 - Maarc
-	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system 
+	Removed saving/loading of ObjectType property - reduces load time by 40 seconds (420 down from 460) on a 70k item / 2k char world converted from old system
 	Explicitly setting some pointers NULL after they have been destroyed
 	Removed call to StoreRandomItemValue() in CMultiObj::LoadRemnants() - not really necessary, and the function call needs to be after world load, not during (ie candidate for PostLoad, if any)
 
@@ -2982,9 +2986,9 @@ January 15 2005 - Maarc
 	Fixed some logistics with the new doors, they all should work now, as long as they are set to type 12.
 
 12/30/2004 - Xuri
-	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and 
+	Added support for the new Samurai Empire weapons, and added three new WeaponTypes, DUAL_SWORD, DUAL_FENCING_STAB and
 	 DUAL_FENCING_SLASH, to get more fitting combat animations for some of those weapons.
-		
+
 12/29/2004 - giwo
 	Removed CChar::dispz as it served no purpose.
 	Fixed an issue causing the Buy Window to not display prices and display items only after scrolling.
@@ -2996,8 +3000,8 @@ January 15 2005 - Maarc
 
 12/27/2004 - evilded
 	Added code for until now unsupported doors, including new SE doors (experimental!).
-	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port 
-	 listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if 
+	Uncommented PORT functionality in source. This is the port in which UOX3 will listen on, it is wrong to assume that the port
+	 listed on the first server list line in the ini file is correct. In almost ALL cases they would be the same however what if
 	 they are not, and there are multiple servers listed that do not share the same listening port 2593.
 
 11/24/2004 - giwo
@@ -3024,7 +3028,7 @@ January 15 2005 - Maarc
 	Changed some vector.size() comparisons to vector.empty().
 	Minor fixes with a couple packets.
 	Moved 'areacommand' out to JS.
-	
+
 8/13/2004 - giwo
 	Converted a few areas of code to using refrences rather than pointers.
 	Consolidated some code in cWeather.cpp and cRaces.cpp.
@@ -3096,7 +3100,7 @@ public:
 	NextItem();
 	FinishedItems();
 	NumItems();
-	
+
 	AddChar();
 	RemoveChar();
 
@@ -3112,7 +3116,7 @@ public:
 	------------------
 
 	Everything else is handled internally (and thus any bugs that arise can be fixed in one place, not half a dozen).
-	
+
 	JS Changes:
 		New character prop: magicReflect, sets and returns if they have magic reflect on
 		New character methods:
@@ -3142,7 +3146,7 @@ July 31 2004
 			TurnYellow		0
 			TurnRed			0
 			TurnGreen		0
-			TurnBlue		0 
+			TurnBlue		0
 			TurnNormal		0
 			TurnBrightWhite		0
 			PrintDone		0
@@ -3161,7 +3165,7 @@ July 31 2004
 			mode			filter mode
 			level			filter level, integer
 			logEcho			boolean - determines if log calls get echo'd to screen
-		
+
 	Wrote a console test driver script (command consoletest)
 	Posix compliance fix from xir
 	Added MSVC7.1 project files
@@ -3419,9 +3423,9 @@ July 28 2004 - Maarc
 		Removed GetGuildMaster function as it referred to old chars[] array
 		Converted CalcTargetedChar function to be similar to CalcTargetedItem so it returns a real object
 		onCallback%i will now set targeted to a NULL object if the object clicked on is not valid, or not an object (eg a tile)
-	
+
 	Added the following properties to the JS Character object
-	
+
 		townpriv
 		guildtitle
 		fonttype
@@ -3435,14 +3439,14 @@ July 28 2004 - Maarc
 		petCount		read only
 		ownedItemsCount		read only
 		cell
-	
+
 	Added the following methods to the JS Character Object
-	
+
 		GetTimer( timerID );
 		SetTimer( timerID, numMilliseconds );
-	
+
 	Valid values for timerID are:
-	
+
 		0	//	tCHAR_TIMEOUT
 		1	//	tCHAR_INVIS
 		2	//	tCHAR_HUNGER
@@ -3453,15 +3457,15 @@ July 28 2004 - Maarc
 		7	//	tCHAR_ANTISPAM
 		8	//	tCHAR_CRIMFLAG
 		9	//	tCHAR_MURDERRATE
-	
+
 			// NPC Timers
 		10	//	tNPC_MOVETIME
 		11	//	tNPC_SPATIMER
 		12	//	tNPC_SUMMONTIME
-	
+
 			// PC Timers
 		13	//	tPC_LOGOUT
-	
+
 	Updated CItem::SetCont so that it doesn't try and do things it shouldn't during world load
 	NOTE: We have an issue... we can't validly set all the weight stuff until the world's loaded
 	OKAY, the base default world now loads with the new object factory, and it's all fun and games.
@@ -3499,11 +3503,11 @@ July 28 2004 - Maarc
 	Begun the integration of  the ObjectFactory which is #ifdef'd at the moment.  The ObjectFactory integration does NOT compile, and error messages are left in place for what needs to be done.
 	Some of the stuff we need to be able to do with the ObjectFactory is essentially, a for every char/item in the world... so what we need to do is support FUNCTORS, I think that would be the most useful
 	The question becomes... what sort of functors?  something of the variety of:
-	
+
 	bool MyFunction( cBaseObject *working, UI32 &counter, void *extraData );
-	
+
 	As this will solve almost everything we want to do (reset kills, remove keys and so on), and allow us to bail out early if needed (via the bool, return true if continue, false if not)
-	
+
 	A few functions are implemented thusly (including world load postloadprocessing)
 
 03 July 2004 - Maarc
@@ -3514,9 +3518,9 @@ July 28 2004 - Maarc
 	Thrown *everything* into the UOX namespace
 	Predeclared most of your classes (not packets, and not a few other minor ones) in Prerequisites.h
 	Begun an implementation of an object factory for creation, destruction and recycling of objects.  This is not hooked into the main code pipeline, because some of it still relies on ITEM or CHARACTER types, which we want to eliminate (no more global chars or items!)
-	
+
 	Removed some SE functions (not JS object functions) that relied on chars[]/items[] and hence would fail miserably
-	
+
 		GetLightLevel
 		SetPrivateBitRange
 		GetPrivateBitRange
@@ -3540,38 +3544,38 @@ July 28 2004 - Maarc
 		RaceCompare
 		GetCharPack
 		SetSerial
-	
+
 		SetDecayTime
 		GetDecayTime
-	
+
 	chars[] and items[] are now really only referenced in a few small places (less than 10 by array on both, less than 50 by member funcs eg calling Count)
-	
+
 	================
 	Discussion Ideas
 	================
-	
+
 	OgreConfig	- Compile time configuration options
 	OgrePlatform	- Platform / compiler compatibility file - includes OgreConfig
 	OgrePrequesites	- Includes OgrePlatform.  Disables any compiler warnings, stl compliance (eg HashMap) and some typedefs (eg uchar).  Also includes OgreStdHeaders and forward declares any classes needed.
-	
+
 	Should lift off the Singleton class, as it would help with some of our data and initialisation
-	
+
 	Useful classes as Singleton (some possibly lifted from OGRE)
-	
+
 		LogManager
-	
+
 	Other potential useful classes
-	
+
 		template <> FactoryObj
 		ResourceManager
-	
-	
+
+
 	Other possibilities
-	
+
 		Asynchronous network!  Esp under windows, where it can callback at any time - inject events into a queue for the PC
 		Consider using a multimap or hash_multimap for storing our object types... given that hash_multimap is like standard, multimap may be a better bet
 		However, there are differences: multimaps are sorted, ergo inserts/deletes are logarithmic - hash_maps are not, only hashed, so constant time.  In theory, hash will be better, but given we do little in the way of insert/deletes, multimap would be agood start
-	
+
 7/2/2004 - giwo
 	Made use of OnDrop() JS function.
 	Cleaned up some areas where we were calling UString::upper() far too many times for a single string.
@@ -3590,15 +3594,15 @@ July 28 2004 - Maarc
 	Added CCP_SPELLCAST/"spellCast" property to JS Character objects
 	Added CCP_ISCASTING/"isCasting" property to JS Character objects
 	Added SetJSCasting/IsJSCasting to CChar but this is a *temporary* measure only.  When all spells are outsourced to the JS scripts, it can be removed, so that other code doesn't misbehave (ie the code currently will call CastSpell if you're in casting mode and the timer has elapsed... which won't happen under JS!)
-	
+
 	onSpellCast for JS spells has been changed to:
-	
+
 	onSpellCast( socket, character, directCast, spellNum );
-	
+
 	This allows for multiple spells registered in a single file (eg think all the summon ones, for instance)
 	StartTimer now looks like
 		BaseObject.StartTime( numMillis, TimerID[, optVal] );
-	
+
 	optVal can either be a boolean (call back into this script, so we don't have to know it's number... this solves non-item/npc scripts so magic can work right) or an integer (the script number to call back into)
 	A very basic workflow script exists for clumsy - it does not take everything into account, nor does it actually do the clumsy part, it's just an example.
 
@@ -3614,30 +3618,30 @@ July 28 2004 - Maarc
 	Added a #define CHARACTERCOUNT to cAccountClass to help centralise any changes
 	Removed old jsMagicTable_st data
 	Added spell equivalents to the JS command registration
-	
+
 		RegisterSpell( spellNumber, isEnabled );
 		DisableSpell( spellNumber );
 		EnableSpell( spellNumber );
-	
+
 	Spell JS files can be registered by adding entries like this:
-	
+
 	FILE=path/file.js
-	
+
 	into [MAGIC_SCRIPTS]
-	
+
 	Note that it automatically prepends the path to the JS scripts before it, so you only need to put in a relative path (ie same as command scripts)
-	
+
 	onSpellCast( socket, character, directCast );
-	
+
 	socket is the character's socket (not guaranteed to exist, only if PC is casting)
 	character is the character casting
 	directCast is a boolean
-			true if 
+			true if
 				an NPC
-			false if 
+			false if
 				a PC selecting from a spellbook, wand or scroll
 				a PC who has casted from a JS script depending on param (ie char.CastSpell( spellNum, true/false ) (if true))
-	
+
 	// It is the responsibility of the JS script to call the proper events (ie onSpellSuccess and so forth)
 	// They deal with their own mana subtraction and all sorts of things
 	// They also deal with valid regions and what not.  s is *not* guaranteed to be valid (ie it could be an NPC)
@@ -3661,16 +3665,16 @@ July 28 2004 - Maarc
 	//	*	If target, create onCallback function
 	//	*	On callback, do stuff
 	//	* NOTE * For area affect spells, use an AreaCharacterFunction
-	
+
 	Note to self - Want to update TriggerEvent so that you don't just pass a script number (though it's possible) but also a variant where you pass a character/socket/item, so that it can use the script associated with that
-	
+
 	The spell JS file also has to include a SpellRegistration command
-	
+
 	function SpellRegistration()
 	{
 		RegisterSpell( 1, true );	// say, clumsy, same as in the spells.dfn file
 	}
-	
+
 	As it stands, only 1 spell per file, unlike the JS commands, which I should probably fix up by adding a spell ID to onSpellCast and passing it all in (would make life much easier for area effect versions of single spells)
 
 6/27/2004 - giwo
@@ -3687,7 +3691,7 @@ July 28 2004 - Maarc
 	Implemented support for OSI displaying damage above victims head via CPDisplayDamage packet class.
 
 6/25/2004 - giwo
-	Fixed a small bug causing things to crash intermitently and appearingly random(Thanks Abaddon!) 
+	Fixed a small bug causing things to crash intermitently and appearingly random(Thanks Abaddon!)
 		There was ONE sName[32] still left in the code, and he found it! This is only an upate
 		pactch.
 
@@ -3727,7 +3731,7 @@ July 28 2004 - Maarc
 
 6/06/2004 - giwo
 	Many changes have been made. Specifically dealing with structure, and  STL conformity. Other changes include dynamic gm menu item
-	fetching, a very large bug preventing valid world files from being saved to disk correctly or at all. 
+	fetching, a very large bug preventing valid world files from being saved to disk correctly or at all.
 	Added a new GM Menu gump design with new functionality. Documentation to come, but you can now tag items directly from the DFN blocks and assign them to a itemmenu group dynamically at runtime.
 	fixed some spacing and other whitespace related issues.
 
@@ -4160,7 +4164,7 @@ Oct 04 2003 - giwo
 
 08 Sep 2003 - Maarc
 	Some sign issues fixed
-	Used std::min / std::max better.  VC6 issue, unsure about higher versions.  VC6 doesn't define min/max in std:: space, but _MIN/_MAX instead.  
+	Used std::min / std::max better.  VC6 issue, unsure about higher versions.  VC6 doesn't define min/max in std:: space, but _MIN/_MAX instead.
 	Consequently, non VC compilers have std::min/std::max remapped to std::_MIN and std::_MAX.  Not nice, but it works
 	Dead functions removed, cleanup of some logic, removed instances where comparisons were always true
 	Fixed warnings associated with the running changes implemented last night
@@ -4247,7 +4251,7 @@ Oct 04 2003 - giwo
 	Added a JSE class wrapper around UOX3 Account instance to provide access to methods
 	Implemented CAccountClass wrapper
 	   Created .AddAccount(name,pass,email,flags) to add an account to the server
-	   Created .DelAccount(name) or .DelAccount(accountid); 
+	   Created .DelAccount(name) or .DelAccount(accountid);
 	   NOTE: These are pretty self explanitary.
 	Updated JS implementation of wrapper for cAccountClass.  No longer var i = new CAccountClass syntax, it exposes a global object "Accounts"
 	With minor tweaks, managed to get Slasher's account editing stuff to work
@@ -4275,20 +4279,20 @@ Oct 04 2003 - giwo
 
 07 Aug 2003 - Maarc
 ===========
-	Overhauled HTMLTemplate Class to actually handle multiple templates correctly. 
-	
+	Overhauled HTMLTemplate Class to actually handle multiple templates correctly.
+
 	Templates Supported at this time are :
 
 	ETT_ALLTEMPLATES : Update aLL templates found in default_templates.dfn
 	ETT_GMSTATUS     : Update the GMSTATUS template
 	ETT_GUILD        : Update the GUILD template
-	ETT_OFFLINE      : Update the OFFLINE template(no player functionality yet) 
+	ETT_OFFLINE      : Update the OFFLINE template(no player functionality yet)
 	ETT_PLAYER       : Update the PLAYER template(no guild functionality yet)
 	ETT_ONLINE       : Update the default server STATUS template
 
 
 	Supported template Types:
-	
+
 	STATUS           :
 	PLAYER           :
 	GUILD            :
@@ -4303,13 +4307,13 @@ Oct 04 2003 - giwo
 	//|             a block.
 	//o-------------------------------------------------------o
 	[DEFAULT_STATUS]
-	{ 
+	{
 	TYPE=STATUS
 	NAME=Server Status Template
 	UPDATE=5
 	INPUT=C:/uox3/dfndata/html/online.htf
 	OUTPUT=D:/mywebserverdir/serverstatus.html
-	} 
+	}
 
 	[DEFAULT_PLAYER]
 	{
@@ -4346,7 +4350,7 @@ Oct 04 2003 - giwo
 	}
 
 	EOF
-	
+
 	NOTE: At all time in any template block the first tag MUST be the TYPE tag.
 
 	A detailed list of supported template tags will be forth comming.
@@ -4479,7 +4483,7 @@ Oct 04 2003 - giwo
 	If cannot wear an item, returns failure (only prints in debug mode)
 	Removed some commented code
 	Updated spellbooks to use packet classes
-	Slight spellbook speed up 
+	Slight spellbook speed up
 	Removed some dead variables
 	Some messages now only print in debug mode
 	Packet 0x98 (allnames 3D) moved to packet class
@@ -4503,112 +4507,112 @@ Oct 04 2003 - giwo
 	Should fix deleting characters
 
 30 Jun 2003 - Maarc
-	RefreshItem() changed to Item->Refresh() 
-	Implemented RefreshItem queueing 
-	talking/unicodetalking merged into generictalking 
-	Speech (both unicode and non-unicode) converted to a packet based system 
-	Much greater compliance with packet packing rules 
-	Very simple handler for NPC context menus (UOXClassic as inspiration) 
-	NPC context menus turned on by default during login 
-	All-names 3D basic implementation (for testing) 
-	Extended status window 
-	talk, talkAll, emote and emoteAll are character methods 
-	itemTalk is a method of an item 
-	sysmessage is a method of cSocket 
-	Removed DefBase object and used constants for defaulting instead 
-	Added ApplySection to Items and Chars in the JS engine 
-	Split SpawnItem into CreateDFNItem and CreateBlankItem 
-	Campfires now have 1 HP forced 
-	OnSpeech event altered. Forces script to return a value. (0 == NPCs/PCs 
-	see the speech, 1 == PCs see it, 2 == no one sees it, defaults to 0) 
-	Female bit specified on CPExtMove if person is female 
-	Yellow bit specified on CPExtMove if full health 
-	Command handlers no longer need the offset value, as speech is unified 
-	Books have partial packet class implementation 
-	Better use of BASEITEMSERIAL and INVALIDSERIAL 
-	CChar::SendToSocket implemented as packet class 
-	target() and mtarget() are cSocket methods 
-	Added pragma note for start of Move Guildstone functionality location 
-	structure cleanups/movement 
-	cCommands::MakeShop streamlined 
-	Prints to console when a fragmented packet is attempted 
-	Changed a dynamic memory allocation to static in cSocket::Send 
-	cGump::OPen converted to use packet class 
-	Addmenu no longer has nomove tag 
-	Spellbook start converted to packet class 
-	CPExtMove now handles flag setting 
-	Streamlined startChar routine 
-	I've removed these JS functions (as they have attrib or method equivs) 
+	RefreshItem() changed to Item->Refresh()
+	Implemented RefreshItem queueing
+	talking/unicodetalking merged into generictalking
+	Speech (both unicode and non-unicode) converted to a packet based system
+	Much greater compliance with packet packing rules
+	Very simple handler for NPC context menus (UOXClassic as inspiration)
+	NPC context menus turned on by default during login
+	All-names 3D basic implementation (for testing)
+	Extended status window
+	talk, talkAll, emote and emoteAll are character methods
+	itemTalk is a method of an item
+	sysmessage is a method of cSocket
+	Removed DefBase object and used constants for defaulting instead
+	Added ApplySection to Items and Chars in the JS engine
+	Split SpawnItem into CreateDFNItem and CreateBlankItem
+	Campfires now have 1 HP forced
+	OnSpeech event altered. Forces script to return a value. (0 == NPCs/PCs
+	see the speech, 1 == PCs see it, 2 == no one sees it, defaults to 0)
+	Female bit specified on CPExtMove if person is female
+	Yellow bit specified on CPExtMove if full health
+	Command handlers no longer need the offset value, as speech is unified
+	Books have partial packet class implementation
+	Better use of BASEITEMSERIAL and INVALIDSERIAL
+	CChar::SendToSocket implemented as packet class
+	target() and mtarget() are cSocket methods
+	Added pragma note for start of Move Guildstone functionality location
+	structure cleanups/movement
+	cCommands::MakeShop streamlined
+	Prints to console when a fragmented packet is attempted
+	Changed a dynamic memory allocation to static in cSocket::Send
+	cGump::OPen converted to use packet class
+	Addmenu no longer has nomove tag
+	Spellbook start converted to packet class
+	CPExtMove now handles flag setting
+	Streamlined startChar routine
+	I've removed these JS functions (as they have attrib or method equivs)
 
-		Gump_CreateGump 
-		Gump_AddButton 
-		Gump_AddText 
-		Gump_AddRadio 
-		Gump_AddPage 
-		Gump_AddPicture 
-		Gump_AddGump 
-		Gump_AddBackground 
-		Gump_AddTextEntry 
-		Gump_AddCheckbox 
-		Gump_Delete 
-		Gump_SendToSocket 
-		GetName2 
-		SetName2 
-		GetLowDamage 
-		GetHiDamage 
-		SetAtt 
-		GetAtt 
-		SetDef 
-		GetDef 
-		SetDecayable 
-		IsDecayable 
-		IsCriminal 
-		IsMurderer 
-		IsInnocent 
-		MakeCriminal 
-		MakeInnocent 
-		GetGender 
-		SetGender 
-		TurnToward 
-		DirectionTo 
-		GetRaceName 
-		SetRaceName 
-		IsPlayerRace 
-		GetRacialGenderRestrict 
-		GetRacialArmourClass 
-		GetRaceLanguageSkill 
-		GetRacePoisonResistance 
-		GetRaceMagicResistance 
-		GetRaceVisibleDistance 
-		GetRaceNightVision 
-		GetClientVersion 
-		GetClientType 
-	These have been migrated to newer methods: 
-		CastSpell (chars) 
-		AddSpell (chars) 
-		SpellFail (chars) 
-		ApplyRank (items) 
-		RequiresBeard (races) 
-		RequiresNoBeard (races) 
-		CanRaceWearArmour (races) 
-		IsValidHairColour (races) 
-		IsValidSkinColour (races) 
-		IsValidBeardColour (races) 
-	SpawnItem has been split into CreateDFNItem and CreateBlankItem. 
-	A new object type, UOXCFile, has been made. 
-		eg var mFile = new UOXCFile; 
-	It has the following methods 
-		Open 
-		Close 
-		Write 
-		Read 
-		ReadUntil 
-		Free 
+		Gump_CreateGump
+		Gump_AddButton
+		Gump_AddText
+		Gump_AddRadio
+		Gump_AddPage
+		Gump_AddPicture
+		Gump_AddGump
+		Gump_AddBackground
+		Gump_AddTextEntry
+		Gump_AddCheckbox
+		Gump_Delete
+		Gump_SendToSocket
+		GetName2
+		SetName2
+		GetLowDamage
+		GetHiDamage
+		SetAtt
+		GetAtt
+		SetDef
+		GetDef
+		SetDecayable
+		IsDecayable
+		IsCriminal
+		IsMurderer
+		IsInnocent
+		MakeCriminal
+		MakeInnocent
+		GetGender
+		SetGender
+		TurnToward
+		DirectionTo
+		GetRaceName
+		SetRaceName
+		IsPlayerRace
+		GetRacialGenderRestrict
+		GetRacialArmourClass
+		GetRaceLanguageSkill
+		GetRacePoisonResistance
+		GetRaceMagicResistance
+		GetRaceVisibleDistance
+		GetRaceNightVision
+		GetClientVersion
+		GetClientType
+	These have been migrated to newer methods:
+		CastSpell (chars)
+		AddSpell (chars)
+		SpellFail (chars)
+		ApplyRank (items)
+		RequiresBeard (races)
+		RequiresNoBeard (races)
+		CanRaceWearArmour (races)
+		IsValidHairColour (races)
+		IsValidSkinColour (races)
+		IsValidBeardColour (races)
+	SpawnItem has been split into CreateDFNItem and CreateBlankItem.
+	A new object type, UOXCFile, has been made.
+		eg var mFile = new UOXCFile;
+	It has the following methods
+		Open
+		Close
+		Write
+		Read
+		ReadUntil
+		Free
 
-	and properties: 
-		pos (read/write) 
-		length (read) 
-		eof (read) 
+	and properties:
+		pos (read/write)
+		length (read)
+		eof (read)
 
 
 25 Apr 2003 - giwo
@@ -4748,14 +4752,14 @@ Changed:
 07 Mar 2003 - giwo
 	Overhauls/Additions/Major Changes
 	Changed:
-	
+
 	Tweaks/Object Conversions/Misc Small Changes
 	Changed:
 		Changed CItem::Get/SetLayer() to a UI08
 		Fixed a bug in speech causing you to see your own text twice
 		Fixed a nasty crash bug caused by changing an items layer
 		Fixed a bug causing NPC's to always be the first attacker
-	
+
 	Removed:
 		CChar::Fame2() and CChar::Karma2()
 		CChar::Stamina2(), CChar::Mana2()
@@ -4765,7 +4769,7 @@ Changed:
 	Overhauls/Additions/Major Changes
 	Changed:
 		Armor DEF system overhauled to match OSI system
-	
+
 	Tweaks/Object Conversions/Misc Small Changes
 	Changed:
 		-Updated Hash Table Remove() calls to remove unrefrenced parameter "index"
@@ -4790,7 +4794,7 @@ Changed:
 			-Type,Type2 changed to Type=type,type2
 			-Light,Rain,Heat,Cold,Snow,Lightning changed to RaceDamage=Light,Rain,Heat,Cold,Snow,Lightning
 			-Fame,Karma,Kills changed to Reputation=fame,karma,kills
-	
+
 	Removed:
 		Removed all smoking stuff, as it's nothing but a waste of code
 
@@ -4805,7 +4809,7 @@ Changed:
 			-Better handling of overloaded for teleport / recall / walking
 			-Weight will max out at 65535 stones and can not go lower than 0 stones
 		-Items container is now set as a cBaseObject
-	
+
 	Tweaks/Object Conversions/Misc Small Changes
 	Changed:
 		-Fixed up itemsfx() and renamed it to itemSound(), now better handles Gold sfx and where an item was dropped (ie in a pack or on the ground)
@@ -4829,7 +4833,7 @@ Changed:
 		-Added PlayInstrument() in place of PlayInstrumentWell() / PlayInstrumentPoor()
 		-Added cSkills::doStealing() to take place of repetitious code in RandomSteal() and StealingTarget()
 		-Added objInRange() functions in place of charInRange()/itemInRange() funcs
-	
+
 	Changed:
 		-Converted inscribe.gmp to inscribe.dfn and used NewMakeMenu() in favor of the old make menu system
 		-Updated GetMagic() == 3 calls to IsLockedDown() calls (as that is all it should be used for)

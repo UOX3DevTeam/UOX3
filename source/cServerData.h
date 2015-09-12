@@ -24,7 +24,7 @@ namespace UOX
 		CF_BIT_EXPANSION = 15,	// 0x8000
 		CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
 		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
-		CF_BIT_GOTHHOUSE,		// 0x40000 
+		CF_BIT_GOTHHOUSE,		// 0x40000
 		CF_BIT_RUSTHOUSE,		// 0x80000
 		CF_BIT_COUNT
 	};
@@ -118,7 +118,7 @@ private:
 	UI16 port;
 };
 
-class CServerData 
+class CServerData
 {
 private:
 
@@ -175,6 +175,7 @@ private:
 	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
+	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -266,7 +267,7 @@ private:
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
 	UI32		numSecsAsMayor;					//	Time (in seconds) that a PC would be a mayor
-	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs 
+	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs
 	UI32		guardPayment;					//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults( void );
@@ -316,7 +317,7 @@ public:
 	std::string ServerName( void ) const;
 	std::string ServerDomain( void ) const;
 	std::string ServerIP( void ) const;
-	
+
 	void		ServerPort( UI16 setport );
 	UI16		ServerPort( void ) const;
 	void		ServerConsoleLog( UI08 setting );
@@ -484,6 +485,8 @@ public:
 	void		ServerUsingHSTiles( bool value );
 	bool		ServerUsingHSTiles( void ) const;
 
+	void		FishingStaminaLoss( SI16 value );
+	SI16		FishingStaminaLoss( void ) const;
 
 	void		CombatAttackStamina( SI16 value );
 	SI16		CombatAttackStamina( void ) const;
@@ -716,8 +719,8 @@ public:
 	physicalServer *ServerEntry( UI16 entryNum );
 	UI16			ServerCount( void ) const;
 
-private: 
-	bool			resettingDefaults; 
+private:
+	bool			resettingDefaults;
 
 };
 
