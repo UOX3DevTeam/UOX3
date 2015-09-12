@@ -67,7 +67,7 @@ const UI32 BIT_MAP4ISUOPWRAPPED		= 44;
 const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
 
 
-// New uox3.ini format lookup	
+// New uox3.ini format lookup
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
 // (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
@@ -76,7 +76,7 @@ const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
 // (April 3, 2004 = EviLDeD) Added new tags, for UOG support, as well as new facet tags etc.
 // (June 15, 2004 - EviLDeD) Added the new tags for the xFTPd, and xFTPc support.
 // NOTE:	Very important the first lookups required duplication or the search fails on them
-const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|" 
+const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|"
 	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
 	"OBJECTUSETIMER|GATETIMER|POISONTIMER|LOGINTIMEOUT|HITPOINTREGENTIMER|STAMINAREGENTIMER|MANAREGENTIMER|BASEFISHINGTIMER|RANDOMFISHINGTIMER|SPIRITSPEAKTIMER|"
 	"DIRECTORY|DATADIRECTORY|DEFSDIRECTORY|ACTSDIRECTORY|SCRIPTSDIRECTORY|BACKUPDIRECTORY|MSGBOARDDIRECTORY|SHAREDDIRECTORY|LOOTDECAYSWITHCORPSE|GUARDSACTIVE|DEATHANIMATION|"
@@ -92,14 +92,14 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
 	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|WEAPONDAMAGECHANCE|"
-	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|"
+	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
 void CServerData::ResetDefaults( void )
 {
 	resettingDefaults = true;
-	serverList.resize( 1 );		// Set the initial count to hold one server. 
+	serverList.resize( 1 );		// Set the initial count to hold one server.
 
 	ServerIP( "127.0.0.1" );
 	ServerPort( 2593 );
@@ -127,7 +127,7 @@ void CServerData::ResetDefaults( void )
 	CombatArcherRange( 7 );
 	CombatMaxSpellRange( 10 );
 	CombatExplodeDelay( 2 );
-	
+
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
 	SystemTimer( tSERVER_POISON, 180 );
@@ -137,11 +137,11 @@ void CServerData::ResetDefaults( void )
 	ServerStatCap( 325 );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 300 );
-	
+
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
-	
+
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
 	SystemTimer( tSERVER_HITPOINTREGEN, 8 );
@@ -183,6 +183,7 @@ void CServerData::ResetDefaults( void )
 	CombatArmorDamageMax( 1 );
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
+	FishingStaminaLoss( 2.0 );
 
 	char curWorkingDir[1024];
 	GetCurrentDirectory( 1024, curWorkingDir );
@@ -230,13 +231,13 @@ void CServerData::ResetDefaults( void )
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
-	
+
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
 	PlayerPersecutionStatus( false );
 	HtmlStatsStatus( -1 );
-	
+
 	MsgBoardPostingLevel( 0 );
 	MsgBoardPostRemovalLevel( 0 );
 	// No replacement I can see
@@ -251,14 +252,14 @@ void CServerData::ResetDefaults( void )
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
 	AmbientFootsteps( false );
 	ServerCommandPrefix( '\'' );
-	
+
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
 	NPCWalkingSpeed( 0.5 );
 	NPCRunningSpeed( 0.2 );
 	NPCFleeingSpeed( 0.4 );
 	AccountFlushTimer( 0.0 );
-	
+
 	ResLogs( 3 );
 	ResLogTime( 600 );
 	ResLogArea( 10 );
@@ -332,7 +333,7 @@ void CServerData::ResetDefaults( void )
 	ServerStartPrivs( 0 );
 	SystemTimer( tSERVER_CORPSEDECAY, 900 );
 	resettingDefaults = false;
-	PostLoadDefaults();	
+	PostLoadDefaults();
 }
 CServerData::CServerData( void )
 {
@@ -359,7 +360,7 @@ void CServerData::RefreshIPs( void )
 				slIter->setIP( inet_ntoa(*pinaddr) );
 			}
 		}
-	} 
+	}
 }
 
 void CServerData::ServerName( std::string setname )
@@ -674,12 +675,12 @@ void CServerData::NPCTrainingStatus( bool newVal )
 //|	Date			-	02/26/2002
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status				-
 //o--------------------------------------------------------------------------o
 //|	Description		-	Needed a function that would dump out the paths. If you
 //|							add any paths to the server please make sure that you
 //|							place exports to the console here to please so it can
-//|							belooked up if needed. 
+//|							belooked up if needed.
 //o--------------------------------------------------------------------------o
 //|	Returns				-	N/A
 //o--------------------------------------------------------------------------o
@@ -1018,6 +1019,16 @@ void CServerData::NPCSpellCastSpeed( R32 value )
 R32 CServerData::NPCSpellCastSpeed( void ) const
 {
 	return npcspellcastspeed;
+}
+
+void CServerData::FishingStaminaLoss( SI16 value )
+{
+	fishingstaminaloss = value;
+}
+
+SI16 CServerData::FishingStaminaLoss( void ) const
+{
+	return fishingstaminaloss;
 }
 
 void CServerData::CombatNPCDamageRate( SI16 value )
@@ -1736,7 +1747,7 @@ void CServerData::SetServerFeatures( size_t nVal )
 //|	Date			-	02/21/2002
 //|	Developer(s)	-	Unknown
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
+//|	Status			-
 //o--------------------------------------------------------------------------o
 //|	Description		-	Save the uox.ini out. This is the default save
 //o--------------------------------------------------------------------------o
@@ -1755,36 +1766,36 @@ bool CServerData::save( void )
 //|	Date			-	Unknown
 //|	Developer(s)	-	EviLDeD/Unknown
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
+//|	Status				-
 //o--------------------------------------------------------------------------o
-//|	Description		-	This is the full uox.ini save routing. 
-//|									
-//|	Modification	-	02/21/2002	-	Fixed paths not being saved back out 
-//|									
+//|	Description		-	This is the full uox.ini save routing.
+//|
+//|	Modification	-	02/21/2002	-	Fixed paths not being saved back out
+//|
 //|	Modification	-	02/21/2002	-	Added ini support for the isloation system
 //|									At this point it just defaults to Isolation level 1.
-//|									
+//|
 //|	Modification	-	02/27/2002	-	Made sure that ALL directory paths are
 //|									written out to the ini file.
-//|									
+//|
 //|	Modification	-	04/03/2004	-	Added new tags to the system group
-//|									 
+//|
 //|										SERVERNAME		: Name of the server.
 //|										NETRCVTIMEOUT	: Timeout in seconds for recieving data
 //|										NETSNDTIMEOUT	: Timeout in seconds for sending data
 //|										UOGENABLED		: Does this server respond to UOGInfo Requests?
 //|																		0-No 1-Yes
-//|									
-//|	Modification	-	04/03/2004	-	Added new group [facet] with these tags 
-//|									
+//|
+//|	Modification	-	04/03/2004	-	Added new group [facet] with these tags
+//|
 //|										USEFACETSAVES	: Does the server seperate facet data?
 //|																		0-No : All data will be saved into the shared folder
 //|																		1-Yes: Each Facet will save its data into its own shared folder
 //|										MAP0-MAP3			:	Format= MAPx=Mapname,MapAccess
-//|									
+//|
 //|																		Where Mapname is the name of the map and
 //|																		MapAccess the set of bit flags that allow/deny features and map access
-//|									
+//|
 //o--------------------------------------------------------------------------o
 //|	Returns				-
 //o--------------------------------------------------------------------------o
@@ -1851,7 +1862,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << '\n';
 		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
 		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
 		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
@@ -1870,7 +1881,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
 		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
 		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
 		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
@@ -1886,7 +1897,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
 		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
 		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
@@ -1920,6 +1931,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
 		ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
 		ofsOutput << "PAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton()?1:0) << '\n';
+		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
@@ -1933,7 +1945,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
 		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
 		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
 		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
@@ -1945,27 +1957,27 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
 		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
 		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
 		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
 		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
 		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
 		ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
 		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
 		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
 		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
 		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
 		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
 		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
 		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
 		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
@@ -1975,14 +1987,14 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
 		ofsOutput << "LOGSRESPAWNAREA=" << ResLogArea() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
 		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
 		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "ARCHERRANGE=" << CombatArcherRange() << '\n';
@@ -2006,17 +2018,17 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
 		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].clilocDesc << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
 		ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
 		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
 		ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
 		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
@@ -2026,18 +2038,18 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
 		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
 		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 #if P_ODBC == 1
 		ODBCManager::getSingleton().SaveSettings( ofsOutput );
 #endif
-		
+
 		ofsOutput.close();
 		rvalue = true;
 	}
@@ -2143,10 +2155,10 @@ void CServerData::dumpLookup( int lookupid )
 //|	Date			-	02/26/2001
 //|	Developer(s)	-	EviLDeD
 //|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
+//|	Status			-
 //o--------------------------------------------------------------------------o
 //|	Description		-	Parse the uox.ini file into its required information.
-//|									
+//|
 //|	Modification	-	02/26/2002	-	Make sure that we parse out the logs, access
 //|									and other directories that we were not parsing/
 //o--------------------------------------------------------------------------o
@@ -2210,7 +2222,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		ServerCommandPrefix( (value.data()[0]) );	// return the first character of the return string only
 		break;
 	case 0x0040:	 // ANNOUNCEWORLDSAVES[0006]
-		ServerAnnounceSaves( (value.toUShort()==1?true:false) ); 
+		ServerAnnounceSaves( (value.toUShort()==1?true:false) );
 		break;
 	case 0x0053:	 // JOINPARTMSGS[0007]
 		ServerJoinPartAnnouncements( (value.toUShort()==1?true:false) );
@@ -2560,7 +2572,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			sname	= value.section( ",", 0, 0 ).stripWhiteSpace();
 			sip		= value.section( ",", 1, 1 ).stripWhiteSpace();
 			sport	= value.section( ",", 2, 2 ).stripWhiteSpace();
-	
+
 			toAdd.setName( sname );
 			// Ok look up the data here see if its a number
 			bool bDomain = true;
@@ -2582,7 +2594,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 			else			// this was a valid ip address so we will use an ip instead so clear the domain string.
 				toAdd.setDomain( "" );
 
-			// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once 
+			// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
 			struct in_addr *pinaddr;
 			pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
 			toAdd.setIP( inet_ntoa(*pinaddr) );
@@ -2764,15 +2776,18 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x0a02:	// NPCSPELLCASTSPEED[0175]
 		NPCSpellCastSpeed( value.toFloat() );
 		break;
+	case 0x0a14:	// FISHINGSTAMINALOSS[0176]
+		FishingStaminaLoss( value.toFloat() );
+		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x0a14:	 // ODBCDSN[0176]
+	case 0x0a27:	 // ODBCDSN[0177]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0a1c:	 // ODBCUSER[0177]
+	case 0x0a2f:	 // ODBCUSER[0178]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0a25:	 // ODBCPASS[0178]
+	case 0x0a38:	 // ODBCPASS[0179]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif
@@ -2926,12 +2941,12 @@ void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 //|	Company/Team	-	UOX3 DevTeam
 //o--------------------------------------------------------------------------o
 //|	Description		-	Outputs server time information to time.wsc in the /shared/ directory
-//o--------------------------------------------------------------------------o	
+//o--------------------------------------------------------------------------o
 void CServerData::SaveTime( void )
 {
 	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
 	std::ofstream	timeDestination( timeFile.c_str() );
-	if( !timeDestination ) 
+	if( !timeDestination )
 	{
 		Console.Error( "Failed to open %s for writing", timeFile.c_str() );
 		return;
@@ -3143,7 +3158,7 @@ std::string physicalServer::getDomain( void ) const
 }
 std::string physicalServer::getIP( void ) const
 {
-  return ip; 
+  return ip;
 }
 UI16 physicalServer::getPort( void ) const
 {
