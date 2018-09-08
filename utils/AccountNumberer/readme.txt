@@ -1,1 +1,0 @@
-The AccountNumberer program is designed to work with 0.70 series account files.  It takes an account file (which has no section numbers) and rewrites it out (as accounts2.adm), with section numbers for each of the accounts, in the order they were entered into the accounts.adm file
