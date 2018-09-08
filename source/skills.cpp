@@ -35,33 +35,33 @@ const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu but
 //o---------------------------------------------------------------------------o
 SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 {
-	if( !cwmWorldState->ServerData()->RankSystemStatus() ) 
+	if( !cwmWorldState->ServerData()->RankSystemStatus() )
 		return 10;
 
 	R32 rankSum = 0;
 
 	int rk_range, rank;
 	R32 sk_range, randnum, randnum1;
-	
+
 	for( size_t i = 0; i < skillMake.skillReqs.size(); ++i )
 	{
 		rk_range = skillMake.maxRank - skillMake.minRank;
 		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
-		if( sk_range <= 0 ) 
+		if( sk_range <= 0 )
 			rank = skillMake.minRank;
-		else if( sk_range >= 1000 ) 
+		else if( sk_range >= 1000 )
 			rank = skillMake.maxRank;
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
-		if( randnum <= sk_range ) 
+		if( randnum <= sk_range )
 			rank = skillMake.maxRank;
 		else
 		{
 			randnum1 = (R32)( RandomNum( 0, 999 ) ) - (( randnum - sk_range ) / ( 11 - cwmWorldState->ServerData()->SkillLevel() ) );
 			rank = (int)( ( randnum1 * rk_range ) / 1000 );
 			rank += skillMake.minRank - 1;
-			if( rank > skillMake.maxRank ) 
+			if( rank > skillMake.maxRank )
 				rank = skillMake.maxRank;
-			if( rank < skillMake.minRank ) 
+			if( rank < skillMake.minRank )
 				rank = skillMake.minRank;
 		}
 		rankSum += rank;
@@ -85,16 +85,16 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 	if( cwmWorldState->ServerData()->RankSystemStatus() )
 	{
 		c->SetRank( rank );
-		
-		if( c->GetLoDamage() > 0 ) 
+
+		if( c->GetLoDamage() > 0 )
 			c->SetLoDamage( (SI16)( ( rank * c->GetLoDamage() ) / 10 ) );
-		if( c->GetHiDamage() > 0 ) 
+		if( c->GetHiDamage() > 0 )
 			c->SetHiDamage( (SI16)( ( rank * c->GetHiDamage() ) / 10 ) );
-		if( c->GetResist( PHYSICAL ) > 0 )      
+		if( c->GetResist( PHYSICAL ) > 0 )
 			c->SetResist( (UI16)( ( rank * c->GetResist( PHYSICAL ) ) / 10 ), PHYSICAL );
-		if( c->GetHP() > 0 )      
+		if( c->GetHP() > 0 )
 			c->SetHP( (SI16)( ( rank * c->GetHP() ) / 10 ) );
-		if( c->GetMaxHP() > 0 )   
+		if( c->GetMaxHP() > 0 )
 			c->SetMaxHP( (SI16)( ( rank * c->GetMaxHP() ) / 10 ) );
 		if( c->GetBuyValue() > 0 )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
@@ -108,7 +108,7 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			s->sysmessage( 784 );
 
 	}
-	else 
+	else
 		c->SetRank( rank );
 }
 
@@ -184,14 +184,14 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 				}
 				oreFound = true;
 				break;
-			}	
+			}
 		}
 	}
 	if( !oreFound )
 	{
 		if( getSkill >= 850 )
 		{
-			Items->CreateRandomItem( &mSock, "digginggems" ); 
+			Items->CreateRandomItem( &mSock, "digginggems" );
 			mSock.sysmessage( 983 );
 		}
 		else
@@ -241,23 +241,23 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 					}
 				}
 				else		// or it could be a map only
-				{  
+				{
 					// manually calculating the ID's if a maptype
 					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 					if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 					{
 						//7.0.9.0 tiledata and later
 						CLandHS& land = Map->SeekLandHS( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
-							return true; 
+						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
+							return true;
 					}
 					else
 					{
 						//7.0.8.2 tiledata and earlier
 						CLand& land = Map->SeekLand( map1.id );
-						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) ) 
-							return true; 
-					}		
+						if( !strcmp( "rock", land.Name() ) || !strcmp( land.Name(), "mountain" ) || !strcmp( land.Name(), "cave" ) )
+							return true;
+					}
 				}
 			}
 			break;
@@ -305,7 +305,7 @@ void cSkills::Mine( CSocket *s )
 		mSock.sysmessage( 799 );
 		return;
 	}
-	
+
 	mSock.SetTimer( tPC_SKILLDELAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ServerSkillDelayStatus() )) );
 
 	const UI08 targetID1 = mSock.GetByte( 17 );
@@ -344,18 +344,18 @@ void cSkills::Mine( CSocket *s )
 		Effects->PlayCharacterAnimation( mChar, 0x1A );
 	else
 		Effects->PlayCharacterAnimation( mChar, 0x0B );
-	
-	Effects->PlaySound( &mSock, 0x0125, true ); 
-	
+
+	Effects->PlaySound( &mSock, 0x0125, true );
+
 	if( CheckSkill( mChar, MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
 		if( orePart->oreAmt > 0 )
 			--orePart->oreAmt;
-		
+
 #if defined( UOX_DEBUG_MODE )
 		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() << "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
-			
+
 		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber() );
 		if( targetReg == NULL )
 			return;
@@ -384,25 +384,25 @@ void cSkills::GraveDig( CSocket *s )
 	VALIDATESOCKET( s );
 	SI16	nFame;
 	CItem *	nItemID = NULL;
-	
+
 	CChar *nCharID = s->CurrcharObj();
 	Karma( nCharID, NULL, -2000 ); // Karma loss no lower than the -2 pier
-	
+
 	if( nCharID->IsOnHorse() )
 		Effects->PlayCharacterAnimation( nCharID, 0x1A );
 	else
 		Effects->PlayCharacterAnimation( nCharID, 0x0b );
 	Effects->PlaySound( s, 0x0125, true );
-	if( !CheckSkill( nCharID, MINING, 0, 800 ) ) 
+	if( !CheckSkill( nCharID, MINING, 0, 800 ) )
 	{
 		s->sysmessage( 805 );
 		return;
 	}
-	
+
 	nFame = nCharID->GetFame();
 	if( nCharID->IsOnHorse() )
 		Effects->PlayCharacterAnimation( nCharID, 0x1A );
-	else  
+	else
 		Effects->PlayCharacterAnimation( nCharID, 0x0B );
 	Effects->PlaySound( s, 0x0125, true );
 	CChar *spawnCreature = NULL;
@@ -472,10 +472,10 @@ void cSkills::GraveDig( CSocket *s )
 //| Programmer  - Unknown
 //| Modified    - Abaddon(February 19, 2000)
 //o--------------------------------------------------------------------------
-//| Purpose     - Rewritten to use case and structure, you'll find it is 
-//|               easier to make it scriptable now. The structure is pretty 
+//| Purpose     - Rewritten to use case and structure, you'll find it is
+//|               easier to make it scriptable now. The structure is pretty
 //|               much all that'd be needed for any future ore->ingot conversions
-//|               scripting the ore would probably be even simpler, requires 
+//|               scripting the ore would probably be even simpler, requires
 //|               less info
 //o--------------------------------------------------------------------------
 void cSkills::SmeltOre( CSocket *s )
@@ -484,7 +484,7 @@ void cSkills::SmeltOre( CSocket *s )
 	CChar *chr			= s->CurrcharObj();
 	CItem *smeltedItem	= static_cast<CItem *>(s->TempObj());
 	CItem *anvil		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our anvil
-	
+
 	if( ValidateObject( anvil ) )					// if we have an anvil
 	{
 		switch( anvil->GetID() )	// Check to ensure it is an anvil
@@ -503,7 +503,7 @@ void cSkills::SmeltOre( CSocket *s )
 			case 0x19A6:
 			case 0x19A2:
 			case 0x199E:
-				if( objInRange( chr, anvil, DIST_NEARBY ) ) //Check if the forge is in range  
+				if( objInRange( chr, anvil, DIST_NEARBY ) ) //Check if the forge is in range
 				{
 					UI16 targColour		= smeltedItem->GetColour();
 					miningData *oreType	= FindOre( targColour );
@@ -546,8 +546,8 @@ void cSkills::SmeltOre( CSocket *s )
 			default:
 				s->sysmessage( 820 );
 				break;
-		}     
-	} 
+		}
+	}
 
 	s->TempObj( NULL );
 }
@@ -570,8 +570,8 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 	bool exists			= false;
 
 	if( tScript != NULL )
-		exists = tScript->OnSkillCheck( s, sk, lowSkill, highSkill );	
-	
+		exists = tScript->OnSkillCheck( s, sk, lowSkill, highSkill );
+
 	// o----------------------------------------------------------------------------o
 	// | Programmer:sereg, 15 March, 2002											|
 	// | Comment   :Now lets make this more readable, and even more mathematical:)	|
@@ -594,7 +594,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 	if( !exists )
 	{
 		SI32 chanceskillsuccess = 0;
-		
+
 		if( ( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) <= lowSkill )
 			return false;
 
@@ -613,26 +613,26 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 									 (R32)( (R32)( s->GetStrength() * cwmWorldState->skill[sk].strength ) / 100000.0f ) +
 									 (R32)( (R32)( s->GetDexterity() * cwmWorldState->skill[sk].dexterity ) / 100000.0f ) +
 									 (R32)( (R32)( s->GetIntelligence() * cwmWorldState->skill[sk].intelligence  ) / 100000.0f ) ) * 1000 );
-		
+
 		// chanceskillsuccess is a number between 0 and 1000, lets throw the dices now
 		if( s->GetCommandLevel() > 0 )
 			skillCheck = true;
 		else
 			skillCheck = ( chanceskillsuccess >= RandomNum( 0, UOX_MIN( 1000, (highSkill+100) ) ) );
-		
+
 		CSocket *mSock = s->GetSocket();
 		if( mSock != NULL )
 		{
 			bool mageryUp = true;
 			mageryUp = ( mSock->CurrentSpellType() == 0 );
-			
+
 			if( s->GetBaseSkill( sk ) < highSkill )
 			{
 				if( sk != MAGERY || ( sk == MAGERY && mageryUp ) )
 				{
 					if( AdvanceSkill( s, sk, skillCheck ) )
 					{
-						updateSkillLevel( s, sk ); 
+						updateSkillLevel( s, sk );
 						mSock->updateskill( sk );
 					}
 				}
@@ -642,7 +642,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 	else
 		skillCheck = true;
 	return skillCheck;
-}          
+}
 
 //o---------------------------------------------------------------------------o
 //|   Function    :  void cSkills::HandleSkillChange( CChar *c, UI16 sk )
@@ -650,11 +650,11 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 //|   Programmer  :  Unknown
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Do atrophy for player c:
-//|						find sk in our cronological list of atrophy skills, 
-//|						move it to the front, check total aginst skillcap to 
-//|						see if we need to lower a skill, if we do, again search 
+//|						find sk in our cronological list of atrophy skills,
+//|						move it to the front, check total aginst skillcap to
+//|						see if we need to lower a skill, if we do, again search
 //|						skills for a skill that can be lowered, if one is found
-//|						lower it and increase sk, if we can't find one, do 
+//|						lower it and increase sk, if we can't find one, do
 //|						nothing if atrophy is not need, increase sk.
 //o---------------------------------------------------------------------------o
 void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success )
@@ -682,12 +682,12 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 		}
 		return;
 	}
-	
+
 	if( mSock == NULL )
 		return;
 
 	srand( getclock() ); // Randomize
-	
+
 	atrop[ALLSKILLS] = 0;//set the last of out copy array
 	for( counter = 0; counter < ALLSKILLS; ++counter )
 	{
@@ -697,12 +697,12 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	for( counter = ALLSKILLS; counter > 0; --counter )
 	{//add up skills and find the one being increased
 		UI08 atrSkill = c->GetAtrophy( static_cast<UI08>(counter-1) );
-		
+
 		if( c->GetBaseSkill( atrSkill ) >= amtToGain && c->GetSkillLock( atrSkill ) == SKILL_DECREASE && atrSkill != sk )
 			toDec = atrSkill;//we found a skill that can be decreased, save it for later.
 
 		totalSkill += c->GetBaseSkill( static_cast<UI08>(counter-1) );
-		
+
 		atrop[counter] = atrop[counter-1];
 
 		if( atrop[counter] == sk )
@@ -710,7 +710,7 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	}
 
 	atrop[0] = sk;//set the first one to our current skill
-	
+
 	//copy it back in
 	for( counter = 0; counter < rem; ++counter )
 		c->SetAtrophy( atrop[counter], counter );
@@ -775,21 +775,21 @@ void cSkills::ItemIDTarget( CSocket *s )
 
 		std::string name;
 		name.reserve( MAX_NAME );
-		if( i->GetName2() && strcmp( i->GetName2(), "#" ) ) 
+		if( i->GetName2() && strcmp( i->GetName2(), "#" ) )
 			i->SetName( i->GetName2() );
-		if( i->GetName()[0] == '#') 
+		if( i->GetName()[0] == '#')
 			getTileName( (*i), name );
-		else 
+		else
 			name = i->GetName();
 		s->sysmessage( 1547, name.c_str() );
-		
+
 		char temp[1024];
 		if( i->GetCreator() != INVALIDSERIAL )
 		{
 			CChar *mCreater = calcCharObjFromSer( i->GetCreator() );
 			if( ValidateObject( mCreater ) )
 			{
-				if( i->GetMadeWith() > 0 ) 
+				if( i->GetMadeWith() > 0 )
 					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
 				else if( i->GetMadeWith() < 0 )
 					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
@@ -802,7 +802,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 		else
 			strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );
 		s->sysmessage( temp );
-		
+
 		if( mChar->GetSkill( ITEMID ) > 350 )
 		{
 			if( i->GetType() != IT_MAGICWAND )
@@ -896,7 +896,7 @@ void cSkills::FishTarget( CSocket *s )
 		}
 	}
 	else		// or it could be a map only
-	{  
+	{
 		// manually calculating the ID's if a maptype
 		const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -904,15 +904,15 @@ void cSkills::FishTarget( CSocket *s )
 			//7.0.9.0 tiledata and later
 			CLandHS& land = Map->SeekLandHS( map1.id );
 			if( land.CheckFlag( TF_WET ) )
-				validLocation = true; 
+				validLocation = true;
 		}
 		else
 		{
 			//7.0.8.2 tiledata and earlier
 			CLand& land = Map->SeekLand( map1.id );
 			if( land.CheckFlag( TF_WET ) )
-				validLocation = true; 
-		}		
+				validLocation = true;
+		}
 	}
 	if( validLocation )
 	{
@@ -931,7 +931,7 @@ void cSkills::FishTarget( CSocket *s )
 			s->sysmessage( 845 );
 			return;
 		}
-		mChar->SetStamina( mChar->GetStamina() - 2 );
+		mChar->SetStamina( mChar->GetStamina() - cwmWorldState->ServerData()->FishingStaminaLoss() );
 		Effects->PlayCharacterAnimation( mChar, 0x0b );
 		R32 baseTime;
 		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ) / 25);
@@ -953,7 +953,7 @@ void cSkills::FishTarget( CSocket *s )
 //o---------------------------------------------------------------------------o
 void cSkills::Fish( CSocket *mSock, CChar *mChar )
 {
-	if( !CheckSkill( mChar, FISHING, 0, 1000 ) ) 
+	if( !CheckSkill( mChar, FISHING, 0, 1000 ) )
 	{
 		mSock->sysmessage( 847 );
 		return;
@@ -1017,7 +1017,7 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->IsDead() )
 	{
-		ClilocMessage( s, 6, 0x0040, FNT_NORMAL, 500012 ); 
+		ClilocMessage( s, 6, 0x0040, FNT_NORMAL, 500012 );
 		//s->sysmessage( 392 );
 		return;
 	}
@@ -1077,14 +1077,14 @@ void cSkills::RandomSteal( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 	CChar *npc = calcCharObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( npc ) ) 
+	if( !ValidateObject( npc ) )
 		return;
 
 	CItem *p = npc->GetPackItem();
-	if( !ValidateObject( p ) ) 
+	if( !ValidateObject( p ) )
 	{
-		s->sysmessage( 875 ); 
-		return; 
+		s->sysmessage( 875 );
+		return;
 	}
 
 	CItem *item = NULL;
@@ -1155,7 +1155,7 @@ void cSkills::StealingTarget( CSocket *s )
 void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 {
 	VALIDATESOCKET( s );
-	if( npc == mChar ) 
+	if( npc == mChar )
 	{
 		s->sysmessage( 873 );
 		return;
@@ -1196,7 +1196,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			s->sysmessage( 879 );
 			return;
 		}
-		
+
 		const int getDefOffset	= UOX_MIN( stealCheck + ( (int)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
 		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
 		if( canSteal )
@@ -1214,16 +1214,16 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			toExecute	= JSMapping->GetScript( targTrig );
 			if( toExecute != NULL )
 				toExecute->OnStolenFrom( mChar, npc, item );
-		} 
-		else 
+		}
+		else
 			s->sysmessage( 881 );
-		
+
 		if( ( !canSteal && RandomNum( 1, 5 ) == 5 ) || mChar->GetSkill( STEALING ) < RandomNum( 0, 1001 ) )
 		{//Did they get caught? (If they fail 1 in 5 chance, other wise their skill away from 1000 out of 1000 chance)
 			s->sysmessage( 882 );
-			if( npc->IsNpc() ) 
+			if( npc->IsNpc() )
 				npc->TextMessage( NULL, 883, TALK, false );
-			
+
 			if( WillResultInCriminal( mChar, npc ) )
 				criminal( mChar );
 			char temp2[512], temp[512];
@@ -1232,8 +1232,8 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			{
 				sprintf( temp, Dictionary->GetEntry( 884 ).c_str(), mChar->GetName().c_str(), item->GetName().c_str() );
 				sprintf( temp2, Dictionary->GetEntry( 885 ).c_str(), mChar->GetName().c_str(), item->GetName().c_str(), npc->GetName().c_str() );
-			} 
-			else 
+			}
+			else
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
@@ -1255,8 +1255,8 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 					iSock->sysmessage( temp2 );
 			}
 		}
-	} 
-	else 
+	}
+	else
 		s->sysmessage( 886 );
 }
 //o---------------------------------------------------------------------------o
@@ -1345,7 +1345,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	UI08 MaxTrackingTargets = 0;
 	const UI16 distance		= (cwmWorldState->ServerData()->TrackingBaseRange() + (mChar->GetSkill( TRACKING ) / 50));
 	UnicodeTypes mLang		= s->Language();
-	
+
 	if( m == ( 2 + TRACKINGMENUOFFSET ) )
 	{
 		creatureType	= CT_CREATURE;
@@ -1410,7 +1410,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 		}
 		regChars->Pop();
 	}
-	
+
 	if( MaxTrackingTargets == 0 )
 	{
 		s->sysmessage( type );
@@ -1450,7 +1450,7 @@ void cSkills::Track( CChar *i )
 	CSocket *s = i->GetSocket();
 	VALIDATESOCKET( s );
 	CChar *trackTarg = i->GetTrackingTarget();
-	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 ) 
+	if( !ValidateObject( trackTarg ) || trackTarg->GetY() == -1 )
 		return;
 	CPTrackingArrow tSend = (*trackTarg);
 	tSend.Active( 1 );
@@ -1464,10 +1464,10 @@ void cSkills::Track( CChar *i )
 //|   Date        :  Unknown
 //|   Programmer  :  UOX3 DevTeam
 //o---------------------------------------------------------------------------o
-//|   Purpose     :  Calculate the skill of this character based on the 
+//|   Purpose     :  Calculate the skill of this character based on the
 //|					 characters baseskill and stats
 //o---------------------------------------------------------------------------o
-void cSkills::updateSkillLevel( CChar *c, UI08 s ) const 
+void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 {
 	UI16 sstr = cwmWorldState->skill[s].strength;
 	SI16 astr = c->ActualStrength();
@@ -1495,11 +1495,11 @@ void cSkills::Persecute( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *c		= s->CurrcharObj();
 	CChar *targChar	= c->GetTarg();
-	if( !ValidateObject( targChar ) || targChar->IsGM() ) 
+	if( !ValidateObject( targChar ) || targChar->IsGM() )
 		return;
-	
+
 	int decrease = (int)( c->GetIntelligence() / 10 ) + 3;
-	
+
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || c->IsGM() )
 	{
 		if( ( RandomNum( 0, 19 ) + c->GetIntelligence() ) > 45 ) // not always
@@ -1531,11 +1531,11 @@ void cSkills::Smith( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
 	CItem *packnum	= mChar->GetPackItem();
-	
-	if( !ValidateObject( packnum ) ) 
+
+	if( !ValidateObject( packnum ) )
 	{
-		s->sysmessage( 773 ); 
-		return; 
+		s->sysmessage( 773 );
+		return;
 	}
 
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
@@ -1589,9 +1589,9 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 			{
 				if( objInRange( mChar, tempItem, DIST_NEARBY ) )
 				{
-					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );     
+					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour() );
 					if( getAmt == 0 )
-					{ 
+					{
 						s->sysmessage( 980, oreType->name.c_str() );
 						regItems->Pop();
 						return;
@@ -1669,7 +1669,7 @@ bool cSkills::LoadMiningData( void )
 						data = individualOre->GrabData();
 						switch( (UTag.data()[0]) )	// break on tag
 						{
-							case 'C':	
+							case 'C':
 								if( UTag == "COLOUR" )
 									toAdd.colour = data.toUShort();
 								break;
@@ -1716,8 +1716,8 @@ void cSkills::Load( void )
 	}
 
 	Console.PrintDone();
-	
-	Console << "Loading creation menus         ";	
+
+	Console << "Loading creation menus         ";
 	LoadCreateMenus();
 	Console.PrintDone();
 
@@ -1950,9 +1950,9 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 {
 	bool advSkill = false;
 	SI16 skillGain;
-	
+
 	SI08 skillAdvance = FindSkillPoint( sk, s->GetBaseSkill( sk ) );
-	
+
 	if( skillUsed )
 		skillGain = ( cwmWorldState->skill[sk].advancement[skillAdvance].success );
 	else
@@ -1964,7 +1964,7 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 		if( s->GetSkillLock( sk ) == SKILL_INCREASE )
 			HandleSkillChange( s, sk, skillAdvance, skillUsed );
 	}
-	
+
 	if( s->GetSkillLock( sk ) != SKILL_LOCKED ) // if it's locked, stats can't advance
 		AdvanceStats( s, sk, skillUsed );
 	return advSkill;
@@ -2000,41 +2000,41 @@ SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Advance players stats
 //o---------------------------------------------------------------------------o
-void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess ) 
-{ 
-    CRace *pRace = Races->Race( s->GetRace() ); 
-	
+void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
+{
+    CRace *pRace = Races->Race( s->GetRace() );
+
     // If the Race is invalid just use the default race
     if( pRace == NULL )
 		pRace = Races->Race( 0 );
- 
+
     //make sure socket is no npc
-	if( s->IsNpc() ) 
+	if( s->IsNpc() )
 		return;
-	
-    UI32 ServStatCap = cwmWorldState->ServerData()->ServerStatCapStatus(); 
-    UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence(); 
-    SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100 
+
+    UI32 ServStatCap = cwmWorldState->ServerData()->ServerStatCapStatus();
+    UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence();
+    SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100
     int StatCount, nCount;
 	int toDec = 255;
 	UI16 maxChance = 100;
-    SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() }; 
-    UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence }; 
-	SkillLock StatLocks[3] = { s->GetSkillLock( STRENGTH ), s->GetSkillLock( DEXTERITY ), s->GetSkillLock( INTELLECT ) }; 
+    SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() };
+    UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence };
+	SkillLock StatLocks[3] = { s->GetSkillLock( STRENGTH ), s->GetSkillLock( DEXTERITY ), s->GetSkillLock( INTELLECT ) };
 
 	UI16 skillUpdTrig = s->GetScriptTrigger();
 	cScript *skillTrig = JSMapping->GetScript( skillUpdTrig );
 
-	
-    for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount ) 
-	{ 
-		nCount = StatCount - ALLSKILLS - 1;  
+
+    for ( StatCount = STRENGTH; StatCount <= INTELLECT; ++StatCount )
+	{
+		nCount = StatCount - ALLSKILLS - 1;
 
 		// if current stat isn't allowed to increase skip it.
 		if( StatLocks[nCount] == SKILL_INCREASE )
 		{
 
-			//  the following will calculate the chances for str/dex/int to increase 
+			//  the following will calculate the chances for str/dex/int to increase
 			//
 			//  it is divided into 2 "dices":
 			//  first dice: get the success-skillpoint of the stat out of skills.dfn in dependence
@@ -2043,15 +2043,15 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 			//  sec. dice:	get the chance for this stat to increase when the used skill has been used
 			//				(out of skills.dfn) => get x = statmodifier of skill
 
-			//  last make it a integer between 0 and 1000 normally (negative or 0==no chance) 
-	
+			//  last make it a integer between 0 and 1000 normally (negative or 0==no chance)
+
 			//	special dice 1: the stat wont increase above x% of the racial statcap. x% is equivalent to dice 2.
 			//  special dice 2: skill failed: decrease chance by 50%
 
 			//  k, first let us calculate both dices
 			UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) );
 			chanceStatGain = (SI16)(((float)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000);
-			// some mathematics in it ;) 
+			// some mathematics in it ;)
 
 			// now, lets implement the special dice 1 and additionally check for onStatGain javascript method
 			if( StatModifier[nCount] <= (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) )
@@ -2060,9 +2060,9 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 			// special dice 2
 			if( !skillsuccess )
 				maxChance *= 2;
-		
-			if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100 
-			{ 
+
+			if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100
+			{
 				// Check if we have to decrease a stat
 				if( ( ttlStats + 1) >= RandomNum( ServStatCap-10, ServStatCap ) )
 				{
@@ -2071,17 +2071,17 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 						if( StatLocks[i] == SKILL_DECREASE )
 						{
 							// Decrease the highest stat, that is allowed to decrease
-							if( toDec == 255 ) 
+							if( toDec == 255 )
 								toDec = i;
 							else
 								if( ActualStat[i] > ActualStat[toDec] )
 									toDec = i;
 						}
 					}
-	
-					switch( toDec ) 
-					{ 
-						case 0: 
+
+					switch( toDec )
+					{
+						case 0:
 							s->IncStrength( -1 );
 							ttlStats--;
 							if( skillTrig != NULL )
@@ -2089,8 +2089,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 								if( !skillTrig->OnStatLoss( s, STRENGTH ) )
 								skillTrig->OnStatChange( s, STRENGTH );
 							}
-							break; 
-						case 1: 
+							break;
+						case 1:
 							s->IncDexterity( -1 );
 							ttlStats--;
 							if( skillTrig != NULL )
@@ -2098,8 +2098,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 								if( !skillTrig->OnStatLoss( s, DEXTERITY ) )
 								skillTrig->OnStatChange( s, DEXTERITY );
 							}
-							break; 
-						case 2: 
+							break;
+						case 2:
 							s->IncIntelligence( -1 );
 							ttlStats--;
 							if( skillTrig != NULL )
@@ -2107,43 +2107,43 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 								if( !skillTrig->OnStatLoss( s, INTELLECT ) )
 								skillTrig->OnStatChange( s, INTELLECT );
 							}
-							break; 
-						default: 
-							break; 
-					} 
-					
+							break;
+						default:
+							break;
+					}
+
 				}
-	
+
 				// Do we still hit the stat limit?
 				if( ( ttlStats + 1) <= ServStatCap )
 				{
-					switch( StatCount ) 
-					{ 
-						case STRENGTH: 
-							s->IncStrength(); 
-							break; 
-						case DEXTERITY: 
-							s->IncDexterity(); 
-							break; 
-						case INTELLECT: 
-							s->IncIntelligence(); 
-							break; 
-						default: 
-							break; 
-					} 
-			
+					switch( StatCount )
+					{
+						case STRENGTH:
+							s->IncStrength();
+							break;
+						case DEXTERITY:
+							s->IncDexterity();
+							break;
+						case INTELLECT:
+							s->IncIntelligence();
+							break;
+						default:
+							break;
+					}
+
 					if( skillTrig != NULL )
 					{
 						if( !skillTrig->OnStatGained( s, StatCount, sk ) )
 							skillTrig->OnStatChange( s, StatCount );
 					}
-				
+
 					break;//only one stat at a time fellas
 				}
 			}
 		}
 	}
-	
+
 	s->Dirty( UT_STATWINDOW );
 	for( UI08 i = 0; i < ALLSKILLS; ++i )
 		updateSkillLevel( s, i );
@@ -2519,7 +2519,7 @@ void callGuards( CChar *mChar, CChar *targChar );
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Called when player snoops another PC/NPC's or a tamed animals pack
 //o---------------------------------------------------------------------------o
-void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack ) 
+void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
 
@@ -2532,7 +2532,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 			tSock->sysmessage( 992, mChar->GetName().c_str() );
 		return;
 	}
-	
+
 	if( CheckSkill( mChar, SNOOPING, 0, 1000 ) )
 	{
 		s->openPack( pack );
@@ -2541,7 +2541,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		if( successSnoop != NULL )
 			successSnoop->OnSnooped( target, mChar, true );
 	}
-	else 
+	else
 	{
 		bool doNormal = true;
 		cScript *failSnoop = JSMapping->GetScript( target->GetScriptTrigger() );
@@ -2594,20 +2594,20 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 6, 0 );
 		Effects->tempeffect( iCharID, iCharID, 9, 0, 9, 0 );
 		iItem = Items->CreateItem( nSocket, iCharID, 0x0F8F, 1, 0, OT_ITEM, true );
-		if( iItem == NULL ) 
+		if( iItem == NULL )
 			return;
 		iItem->SetName( "bone powder" );
 		iItem->SetTempVar( CITV_MOREX, 666 );
 		iItem->SetTempVar( CITV_MORE, 1, 1 ); // this will fill more with info to tell difference between ash and bone
 		nItem->Delete();
-		
+
 	}
 	if( itemID == 0x0E24 ) // Make vial of blood.
 	{
 		if( nItem->GetTempVar( CITV_MORE, 1 ) == 1 )
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F82, 1, 0, OT_ITEM, true );
-			if( iItem == NULL ) 
+			if( iItem == NULL )
 				return;
 			iItem->SetBuyValue( 15 );
 			iItem->SetTempVar( CITV_MOREX, 666 );
@@ -2615,7 +2615,7 @@ void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 		else
 		{
 			iItem = Items->CreateItem( nSocket, iCharID, 0x0F7D, 1, 0, OT_ITEM, true );
-			if( iItem == NULL ) 
+			if( iItem == NULL )
 				return;
 			iItem->SetBuyValue( 10 );
 			iItem->SetTempVar( CITV_MOREX, 666 );

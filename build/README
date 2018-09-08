@@ -1,0 +1,19 @@
+What is UOX3?
+
+UOX3 stands for Ultima Offline eXperiment 3, and can basically be described as an 
+Ultima Online server-emulator. It allows anyone and everyone to run their own 
+private Ultima Online shard (either offline or online) which they may then use 
+the official UO Client to connect to.
+
+BUILD
+=====
+
+Read the 'INSTALL' file for more detailed directions.
+
+uox3 uses the standard ./configure ; make. You need to use gmake, BSD
+make probably won't work. Remember, run ./configure --help to see what
+build options are available.
+
+In order to compile uox3, you need to have SpiderMonkey (Javascript) library 
+install. The configure script will fail if you don't. You can get it from 
+http://www.mozilla.org/js/spidermonkey/.
