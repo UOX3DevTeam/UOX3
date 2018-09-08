@@ -117,7 +117,12 @@ suit our own purposes
 
 // A quick define to overcome different names for the same function
 #	if UOX_COMPILER != COMPILER_GNUC
+#		if _MSC_VER < 1900
 #		define snprintf _snprintf
+#		endif
+#      if _MSC_VER >= 1900
+#        define STDC99
+#      endif
 #		if UOX_COMPILER == COMPILER_MSVC 
 #			if UOX_COMP_VER < 1500 // VS 2008 No longer needs this define (will throw a compile error)
 #				define vsnprintf _vsnprintf

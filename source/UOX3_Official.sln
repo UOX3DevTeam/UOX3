@@ -1,24 +1,24 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UOX3_Official", "UOX3_Official.vcproj", "{82A66DAD-C555-416B-94DF-9784AFBB11FC}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UOX3_Official", "UOX3_Official.vcxproj", "{82A66DAD-C555-416B-94DF-9784AFBB11FC}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		DebugProfile = DebugProfile
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugProfile|Default = DebugProfile|Default
+		Release|Default = Release|Default
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Debug.ActiveCfg = Debug|Win32
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Debug.Build.0 = Debug|Win32
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.DebugProfile.ActiveCfg = DebugProfile|Win32
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.DebugProfile.Build.0 = DebugProfile|Win32
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Release.ActiveCfg = Release|Win32
-		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Debug|Default.ActiveCfg = Debug|Win32
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Debug|Default.Build.0 = Debug|Win32
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.DebugProfile|Default.ActiveCfg = DebugProfile|Win32
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.DebugProfile|Default.Build.0 = DebugProfile|Win32
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Release|Default.ActiveCfg = Release|Win32
+		{82A66DAD-C555-416B-94DF-9784AFBB11FC}.Release|Default.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

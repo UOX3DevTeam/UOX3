@@ -845,6 +845,21 @@ public:
 
 };
 
+/*class CPIBandageMacro : public CPInputBuffer
+{
+public:
+	virtual			~CPIBandageMacro()
+	{
+	}
+	CPIBandageMacro();
+	CPIBandageMacro(CSocket *s);
+
+	virtual void	Receive(void);
+	virtual bool	Handle(void);
+	virtual void	Log(std::ofstream &outStream, bool fullHeader = true);
+
+};*/
+
 class CPISpellbookSelect : public CPInputBuffer
 {
 public:
