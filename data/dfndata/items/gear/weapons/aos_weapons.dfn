@@ -1,0 +1,429 @@
+// AOS WEAPONS
+// v1.0; 22/02/03; Initial setup of the file - most values seem to be correct, apart from VALUE - which all items have set to 40
+// until the real values are found/gathered.
+// (add new version comments here, copy above line please)
+
+[0x26ba]
+{ West/East
+get=base_item
+name=scythe
+id=0x26ba
+weight=500
+value=46 23
+layer=2
+lodamage=5
+hidamage=36
+hp=31 50
+spd=32
+str=45
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26c4]
+{ North/South
+get=base_item
+name=scythe
+id=0x26c4
+weight=500
+value=46 23
+layer=2
+lodamage=5
+hidamage=36
+hp=31 50
+spd=32
+str=45
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26bb]
+{ West/East
+get=base_item
+name=bone harvester
+id=0x26bb
+weight=300
+value=36 18
+layer=1
+lodamage=6
+hidamage=32
+hp=31 50
+spd=36
+str=25
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26c5]
+{ North/South
+get=base_item
+name=bone harvester
+id=0x26c5
+weight=300
+value=36 18
+layer=1
+lodamage=6
+hidamage=32
+hp=31 50
+spd=36
+str=25
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26bc]
+{ West/East
+get=base_item
+name=scepter
+id=0x26bc
+weight=800
+value=36 18
+layer=1
+lodamage=4
+hidamage=20
+hp=31 50
+spd=30
+str=40
+restock=10
+movable=1
+decay=1
+}
+
+[0x26c6]
+{ North/South
+get=base_item
+name=scepter
+id=0x26bc
+weight=800
+value=36 18
+layer=1
+lodamage=4
+hidamage=20
+hp=31 50
+spd=30
+str=40
+stradd=
+restock=10
+movable=1
+decay=1
+}
+
+[0x26bd]
+{ East/West
+get=base_item
+name=bladed staff
+id=0x26bd
+weight=400
+value=44 22
+layer=2
+lodamage=5
+hidamage=22
+hp=31 109
+spd=37
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26c7]
+{ North/South
+get=base_item
+name=bladed staff
+id=0x26c7
+weight=400
+value=44 22
+layer=2
+lodamage=5
+hidamage=22
+hp=31 109
+spd=37
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26be]
+{ East/West
+get=base_item
+name=pike
+id=0x26be
+weight=800
+value=42 21
+layer=2
+lodamage=9
+hidamage=38
+hp=31 50
+spd=37
+str=50
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26c8]
+{ North/South
+get=base_item
+name=pike
+id=0x26c8
+weight=800
+value=42 21
+layer=2
+lodamage=9
+hidamage=38
+hp=31 50
+spd=37
+str=50
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26bf]
+{ East/West
+get=base_item
+name=double bladed staff
+id=0x26bf
+weight=200
+value=40 20
+layer=2
+lodamage=10
+hidamage=42
+hp=31 50
+spd=49
+str=50
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26c9]
+{ North/South
+get=base_item
+name=double bladed staff
+id=0x26c9
+weight=200
+value=40 20
+layer=2
+lodamage=10
+hidamage=42
+hp=31 50
+spd=49
+str=50
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26c0]
+{ West/East
+get=base_item
+name=lance
+id=0x26c0
+weight=1200
+value=40 20
+layer=1
+lodamage=15
+hidamage=39
+hp=31 50
+spd=24
+str=95
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26ca]
+{ North/South
+get=base_item
+name=lance
+id=0x26ca
+weight=1200
+value=40 20
+layer=1
+lodamage=15
+hidamage=39
+hp=31 50
+spd=24
+str=95
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x26c1]
+{ West/East
+get=base_item
+name=crescent blade
+id=0x26c1
+weight=100
+value=44 22
+layer=2
+lodamage=6
+hidamage=34
+hp=31 50
+spd=47
+str=55
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26cb]
+{ North/South
+get=base_item
+name=crescent blade
+id=0x26cb
+weight=100
+value=44 22
+layer=2
+lodamage=6
+hidamage=34
+hp=31 50
+spd=47
+str=55
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26c2]
+{ West/East
+get=base_item
+name=composite bow
+id=0x26c2
+weight=500
+value=40 23
+layer=2
+lodamage=15
+hidamage=37
+hp=31 50
+spd=25
+str=45
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+}
+
+[0x26cc]
+{ North/South
+get=base_item
+name=composite bow
+id=0x26cc
+weight=500
+value=40 23
+layer=2
+lodamage=15
+hidamage=37
+hp=31 50
+spd=25
+str=45
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+}
+
+[0x26c3]
+{ West/East
+get=base_item
+name=repeating crossbow
+id=0x26c3
+weight=600
+value=48 24
+layer=2
+lodamage=10
+hidamage=42
+hp=31 50
+spd=41
+str=30
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x1bfb
+ammofx=0x1bfe
+}
+
+[0x26cd]
+{ North/South
+get=base_item
+name=repeating crossbow
+id=0x26cd
+weight=600
+value=48 24
+layer=2
+lodamage=10
+hidamage=42
+hp=31 50
+spd=41
+str=30
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x1bfb
+ammofx=0x1bfe
+}
+
+[0x26ce]
+{ West/East
+get=base_item
+name=paladin sword
+id=0x26ce
+weight=600
+value=80 40
+layer=1
+lodamage=10
+hidamage=37
+hp=31 50
+spd=33
+str=50
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x26cf]
+{ North/South
+get=base_item
+name=paladin sword
+id=0x26cf
+weight=600
+value=80 40
+layer=1
+lodamage=10
+hidamage=37
+hp=31 50
+spd=33
+str=50
+restock=10
+movable=1
+decay=1
+good=21
+}

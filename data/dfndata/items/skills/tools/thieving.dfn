@@ -1,0 +1,103 @@
+[0x14FB]
+{
+get=base_item
+name=lockpick
+id=0x14FB
+weight=10
+value=12 7
+restock=20
+pileable=1
+amount=1
+decay=1
+good=59
+}
+
+[0x14fc]
+{
+get=base_item
+name=lockpick
+id=0x14fc
+weight=10
+value=12 7
+restock=20
+pileable=1
+amount=1
+decay=1
+good=59
+}
+
+[0x14fd]
+{
+get=base_item
+name=lockpicks
+id=0x14fd
+weight=100
+value=18 9
+restock=20
+pileable=1
+amount=1
+decay=1
+good=59
+}
+
+[0x14fe]
+{
+get=base_item
+name=lockpicks
+id=0x14fe
+weight=100
+value=18 9
+restock=20
+pileable=1
+amount=1
+decay=1
+good=59
+}
+
+[disguise-kit]
+{
+get=base_item
+name=disguise kit
+id=0x0e05
+weight=100
+value=500 0
+restock=20
+decay=1
+good=59
+}
+
+[0x1e2c]
+{ S
+get=base_item
+name=pickpocket dip
+id=0x1e2c
+weight=6000
+movable=2
+}
+
+[0x1ec1]
+{ S swinging
+get=base_item
+name=pickpocket dip
+id=0x1ec0
+weight=6000
+movable=2
+}
+
+[0x1e2d]
+{ E
+get=base_item
+name=pickpocket dip
+id=0x1e2d
+weight=6000
+movable=2
+}
+
+[0x1ec4]
+{ E swinging
+get=base_item
+name=pickpocket dip
+id=0x1ec3
+weight=6000
+movable=2
+}

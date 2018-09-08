@@ -1,0 +1,54 @@
+// mount-statues.dfn
+// The various statues for player-mounts go in here.
+// v1.0; 27/02/05; Initial revision; Xuri; xuri@sensewave.com
+// (add new version comments here, copy above line please)
+// For use with the UOX emulator or any with permission from the author
+
+[horse_statue]
+{
+ID=0x2120
+NAME=Horse Statue
+VALUE=700 350
+SCRIPT=3100
+good=39
+}
+
+[ostard_statue]
+{
+ID=0x2135
+NAME=Desert Ostard Statue
+VALUE=700 350
+SCRIPT=3101
+good=39
+}
+
+[llama_statue]
+{
+ID=0x20F6
+NAME=Llama Statue
+MOREX=0xDC
+VALUE=700 350
+SCRIPT=3102
+good=39
+}
+
+[pack_horse_statue]
+{
+ID=0x2126
+NAME=Pack Horse Statue
+VALUE=700 350
+SCRIPT=3103
+good=39
+}
+
+[pack_llama_statue]
+{
+ID=0x2127
+NAME=Pack Llama Statue
+VALUE=700 350
+SCRIPT=3104
+good=39
+}
+
+EOF
+// Email me with bugs\comments\complaints about this file (see top of file for address)

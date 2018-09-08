@@ -1,0 +1,431 @@
+// Towns
+[ITEMMENU 6005]
+{
+Britain
+<=Blackthorn Castle
+GOPLACE=16
+<=Blackthorn Castle Entrance
+GOPLACE=22
+<=British Castle Entrance
+GOPLACE=21
+<=British Throne
+GOPLACE=15
+<=Center
+GOPLACE=20
+<=Farmlands
+GOPLACE=25
+<=Graveyard
+GOPLACE=26
+<=Park
+GOPLACE=24
+<=Sewers - T2A
+GOPLACE=303
+<=Suburbs
+GOPLACE=23
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6006]
+{
+Buccaneer's Den
+0x0BD1=Bathhouse
+GOPLACE=31
+0x0BD1=Docks
+GOPLACE=30
+0x0BD1=Hidden Caves
+GOPLACE=33
+0x0BD1=Pirates Plunder Tavern
+GOPLACE=32
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6007]
+{
+Cove
+0x0BD1=Cemetary
+GOPLACE=43
+0x0BD1=Gates
+GOPLACE=40
+0x0BD1=Guard Post
+GOPLACE=41
+0x0BD1=Orc Fort
+GOPLACE=42
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6008]
+{
+Jhelom
+0x0BD1=Cemetary
+GOPLACE=53
+0x0BD1=East Docks
+GOPLACE=52
+0x0BD1=Fighting Pit
+GOPLACE=51
+0x0BD1=Main Island
+GOPLACE=50
+0x0BD1=Medium Island
+GOPLACE=54
+0x0BD1=Small Island
+GOPLACE=55
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6009]
+{
+Magincia
+0x0BD1=Docks
+GOPLACE=60
+0x0BD1=Park
+GOPLACE=62
+0x0BD1=Parliament
+GOPLACE=61
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6010]
+{
+Minoc
+0x0BD1=Bridge
+GOPLACE=73
+0x0BD1=Gypsy Camp
+GOPLACE=72
+0x0BD1=Mining Camp
+GOPLACE=74
+0x0BD1=North
+GOPLACE=70
+0x0BD1=South
+GOPLACE=71
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6011]
+{
+Moonglow
+0x0BD1=Cemetary
+GOPLACE=84
+0x0BD1=Center
+GOPLACE=80
+0x0BD1=Docks
+GOPLACE=81
+0x0BD1=Telescope
+GOPLACE=82
+0x0BD1=Zoo
+GOPLACE=83
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6012]
+{
+Nujelm
+0x0BD1=Cemetary
+GOPLACE=96
+0x0BD1=Chess Board
+GOPLACE=95
+0x0BD1=Docks
+GOPLACE=90
+0x0BD1=East
+GOPLACE=93
+0x0BD1=North
+GOPLACE=92
+0x0BD1=Palace
+GOPLACE=91
+0x0BD1=West
+GOPLACE=94
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6013]
+{
+Ocllo
+0x0BD1=Docks
+GOPLACE=100
+0x0BD1=Farmlands
+GOPLACE=102
+0x0BD1=North
+GOPLACE=101
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6014]
+{
+Serpents Hold
+0x0BD1=North
+GOPLACE=110
+0x0BD1=South
+GOPLACE=112
+0x0BD1=South Guardpost
+GOPLACE=113
+0x0BD1=West Docks
+GOPLACE=111
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6015]
+{
+Skara Brae
+0x0BD1=East
+GOPLACE=125
+0x0BD1=East Docks
+GOPLACE=122
+0x0BD1=North
+GOPLACE=124
+0x0BD1=South
+GOPLACE=123
+0x0BD1=West
+GOPLACE=121
+0x0BD1=West Docks
+GOPLACE=120
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6016]
+{
+Trinsic
+0x0BD1=Center
+GOPLACE=130
+0x0BD1=East Docks
+GOPLACE=135
+0x0BD1=Island Park
+GOPLACE=136
+0x0BD1=North
+GOPLACE=133
+0x0BD1=South
+GOPLACE=134
+0x0BD1=South Gate
+GOPLACE=132
+0x0BD1=West Gate
+GOPLACE=131
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6017]
+{
+Vesper
+0x0BD1=Center
+GOPLACE=140
+0x0BD1=Docks
+GOPLACE=141
+0x0BD1=East
+GOPLACE=143
+0x0BD1=Grave Yard
+GOPLACE=144
+0x0BD1=North
+GOPLACE=142
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6018]
+{
+Wind
+0x0BD1=Caves
+GOPLACE=151
+0x0BD1=East
+GOPLACE=153
+0x0BD1=Outside Entrance
+GOPLACE=150
+0x0BD1=Park
+GOPLACE=155
+0x0BD1=South
+GOPLACE=152
+0x0BD1=West
+GOPLACE=154
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6019]
+{
+Yew
+0x0BD1=Cemetary
+GOPLACE=164
+0x0BD1=Center
+GOPLACE=160
+0x0BD1=Courts & Prisons
+GOPLACE=162
+0x0BD1=Empath Abbey
+GOPLACE=161
+0x0BD1=Hidden Cave
+GOPLACE=163
+0x0BD1=Orc Fort
+GOPLACE=165
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6020]
+{
+Papua
+<=Mage Shop
+GOPLACE=304
+<=Previous Menu
+ITEMMENU=6001
+}
+
+[ITEMMENU 6021]
+{
+Delucia
+<=Center
+GOPLACE=305
+<=Previous Menu
+ITEMMENU=6001
+}
+
+// Dungeons
+
+[ITEMMENU 6022]
+{
+Covetous
+<=Covetous Outside
+GOPLACE=200
+<=Covetous Level 1
+GOPLACE=201
+<=Covetous Level 2
+GOPLACE=202
+<=Covetous Level 3
+GOPLACE=203
+<=Covetous Lake
+GOPLACE=204
+<=Covetous Torture
+GOPLACE=205
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6023]
+{
+Deciet
+<=Deceit Outside
+GOPLACE=210
+<=Deceit Level 1
+GOPLACE=211
+<=Deceit Level 2
+GOPLACE=212
+<=Deceit Level 3
+GOPLACE=213
+<=Deceit Level 4
+GOPLACE=214
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6024]
+{
+Despise
+<=Despise Outside
+GOPLACE=220
+<=Despise Entryway
+GOPLACE=221
+<=Despise Level 1 Up
+GOPLACE=222
+<=Despise Level 2 Down
+GOPLACE=223
+<=Despise Level 3
+GOPLACE=224
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6025]
+{
+Destard
+<=Destard Outside
+GOPLACE=230
+<=Destard Level 1
+GOPLACE=231
+<=Destard Level 2
+GOPLACE=232
+<=Destard Level 3
+GOPLACE=233
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6026]
+{
+Hyloth
+<=Hythloth Outside
+GOPLACE=240
+<=Hythloth Level 1
+GOPLACE=241
+<=Hythloth Level 2
+GOPLACE=242
+<=Hythloth Level 3
+GOPLACE=243
+<=Hythloth Level 4
+GOPLACE=244
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6027]
+{
+Shame
+<=Shame Outside
+GOPLACE=250
+<=Shame Level 1
+GOPLACE=251
+<=Shame Level 2
+GOPLACE=252
+<=Shame Level 3
+GOPLACE=253
+<=Shame Level 4
+GOPLACE=254
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6028]
+{
+Wrong
+<=Wrong Outside
+GOPLACE=260
+<=Wrong Level 1
+GOPLACE=261
+<=Wrong Level 2
+GOPLACE=262
+<=Wrong Level 3
+GOPLACE=263
+<=Previous Menu
+ITEMMENU=6002
+}
+
+[ITEMMENU 6029]
+{
+Jail Cells
+<=Jail Cell 1
+GOPLACE=1
+<=Jail Cell 2
+GOPLACE=2
+<=Jail Cell 3
+GOPLACE=3
+<=Jail Cell 4
+GOPLACE=4
+<=Jail Cell 5
+GOPLACE=5
+<=Jail Cell 6
+GOPLACE=6
+<=Jail Cell 7
+GOPLACE=7
+<=Jail Cell 8
+GOPLACE=8
+<=Jail Cell 9
+GOPLACE=9
+<=Jail Cell 10
+GOPLACE=10
+<=Previous Menu
+ITEMMENU=6004
+}

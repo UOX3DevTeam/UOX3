@@ -1,0 +1,1085 @@
+[base_spawner]
+{
+get=base_item
+id=0x1F14
+weight=50000
+interval=1 5
+visible=1
+decay=0
+movable=2
+}
+
+[orcspawn]
+{
+get=base_spawner
+name=Orc Spawner
+id=0x1F14
+type=62
+spawnobj=orc
+amount=3
+}
+
+[orclordspawn]
+{
+get=base_spawner
+name=Orc Lord Spawner
+id=0x1F14
+type=62
+spawnobj=orclord
+amount=2
+}
+
+[orccaptspawn]
+{
+get=base_spawner
+name=Orc Capt Spawner
+id=0x1F14
+type=62
+spawnobj=orccaptain
+amount=2
+}
+
+[orcmagespawn]
+{
+get=base_spawner
+name=Orc Mage Spawner
+id=0x1F14
+type=62
+spawnobj=orcmage
+amount=2
+}
+
+[ettinspawn]
+{
+get=base_spawner
+name=Ettin Spawner
+id=0x1F14
+type=62
+spawnobj=ettin
+amount=3
+}
+
+[goatspawn]
+{
+get=base_spawner
+name=Goat Spawner
+id=0x1F14
+type=62
+spawnobj=goat
+amount=3
+}
+
+[harpyspawn]
+{
+get=base_spawner
+name=Harpy Spawner
+spawnobj=harpy
+id=0x1F14
+type=62
+amount=3
+}
+
+//random spawners
+[randorcspawn]
+{
+get=base_spawner
+name=Random Orc Spawner
+spawnobjlist=allorc
+id=0x1F14
+type=62
+amount=3
+}
+
+[randlizardspawn]
+{
+get=base_spawner
+name=Random Lizard Spawner
+id=0x1F14
+type=62
+spawnobjlist=alllizardlist
+amount=3
+}
+
+[randratmanspawn]
+{
+get=base_spawner
+name=Random Ratman Spawner
+id=0x1F14
+type=62
+spawnobjlist=allratmenlist
+amount=3
+}
+
+[randdragon]
+{
+get=base_spawner
+name=Random Dragon Spawner
+id=0x1F14
+type=62
+spawnobjlist=alldragonlist
+amount=2
+}
+
+[randbarn]
+{
+get=base_spawner
+name=Random Barn Spawner
+id=0x1F14
+type=62
+spawnobjlist=barnlist
+amount=3
+}
+
+[airelemspawn]
+{
+get=base_spawner
+name=Air Elemental Spawner
+id=0x1F14
+type=62
+spawnobj=airele
+amount=2
+}
+
+[earthelemspawn]
+{
+get=base_spawner
+name=Earth Elemental Spawner
+id=0x1F14
+type=62
+spawnobj=earthele
+amount=2
+}
+
+[fireelemspawn]
+{
+get=base_spawner
+name=Fire Elemental Spawner
+id=0x1F14
+type=62
+spawnobj=firele
+amount=2
+}
+
+[waterelemspawn]
+{
+get=base_spawner
+name=Water Elemental Spawner
+id=0x1F14
+type=62
+spawnobj=waterele
+amount=2
+}
+
+[poiselemspawn]
+{
+get=base_spawner
+name=Poison Elemental Spawner
+id=0x1F14
+type=62
+spawnobj=poisonele
+amount=2
+}
+
+[gserpentspawn]
+{
+get=base_spawner
+name=Giant Serpent Spawner
+id=0x1F14
+type=62
+spawnobj=giantserpent
+amount=2
+}
+
+[gspiderspawn]
+{
+get=base_spawner
+name=Giant Spider Spawner
+id=0x1F14
+type=62
+spawnobj=giantspider
+amount=2
+}
+
+[gscorppawn]
+{
+get=base_spawner
+name=Giant Scorpion Spawner
+id=0x1F14
+type=62
+spawnobj=scorpion
+amount=2
+}
+
+[lichspawn]
+{
+get=base_spawner
+name=Lich Spawner
+id=0x1F14
+type=62
+spawnobj=lich
+amount=2
+}
+
+[lichlordspawn]
+{
+get=base_spawner
+name=Lich Lord Spawner
+id=0x1F14
+type=62
+spawnobj=lichlord
+amount=2
+}
+
+[bonemagespawn]
+{
+get=base_spawner
+name=Bone Mage Spawner
+id=0x1F14
+type=62
+spawnobj=bonemage
+amount=2
+}
+
+[boneknightspawn]
+{
+get=base_spawner
+name=Bone Knight Spawner
+spawnobj=boneknight
+id=0x1F14
+type=62
+amount=2
+}
+
+[boneaxespawn]
+{
+get=base_spawner
+name=Bone Axeman Spawner
+spawnobj=boneaxeman
+id=0x1F14
+type=62
+amount=2
+}
+
+[arcticspawn]
+{
+get=base_spawner
+name=Arctic Spawner
+id=0x1F14
+type=62
+spawnobjlist=arcticlist
+amount=3
+}
+
+[cavespawn]
+{
+get=base_spawner
+name=Cave Spawner
+id=0x1F14
+type=62
+spawnobjlist=cavelist
+amount=3
+}
+
+[desertspawn]
+{
+get=base_spawner
+name=Desert Spawner
+id=0x1F14
+type=62
+spawnobjlist=desertlist
+amount=3
+}
+
+[dungeonspawn]
+{
+get=base_spawner
+name=Dungeon Spawner
+id=0x1F14
+type=62
+spawnobjlist=dungeonspawn
+amount=3
+}
+
+[eeriespawn]
+{
+get=base_spawner
+name=Eerie Spawner
+id=0x1F14
+type=62
+spawnobjlist=eerielist
+amount=2
+}
+
+[farmspawn]
+{
+get=base_spawner
+name=Farm Spawner
+id=0x1F14
+type=62
+spawnobjlist=farmlist
+amount=2
+}
+
+[forestspawn]
+{
+get=base_spawner
+name=Forest Spawner
+id=0x1F14
+type=62
+spawnobjlist=forestlist
+amount=2
+}
+
+[junglespawn]
+{
+get=base_spawner
+name=Jungle Spawner
+id=0x1F14
+type=62
+spawnobjlist=junglelist
+amount=2
+}
+
+[mountainspawn]
+{
+get=base_spawner
+name=Mountain Spawner
+id=0x1F14
+type=62
+spawnobjlist=mountainlist
+amount=2
+}
+
+[oceanspawn]
+{
+get=base_spawner
+name=Ocean Spawner
+id=0x1F14
+type=62
+spawnobjlist=oceanlist
+amount=2
+}
+
+[swampspawn]
+{
+get=base_spawner
+name=Swamp Spawner
+id=0x1F14
+type=62
+spawnobjlist=swamplist
+amount=2
+}
+
+[townspawn]
+{
+get=base_spawner
+name=Town Spawner
+id=0x1F14
+type=62
+spawnobjlist=townlist
+amount=2
+}
+
+[volcanicspawn]
+{
+get=base_spawner
+name=Volcanic Spawner
+id=0x1F14
+type=62
+spawnobjlist=volcaniclist
+amount=2
+}
+
+[diablospawn]
+{
+get=base_spawner
+name=Diablo Spawner
+id=0x1F14
+type=62
+spawnobjlist=diablolist
+amount=2
+}
+
+[dogandcat]
+{
+get=base_spawner
+name=Dog and Cat spawn
+id=0x1F14
+type=62
+spawnobjlist=dogandcatlist
+amount=2
+}
+
+[allbears]
+{
+get=base_spawner
+name=All Bear Spawn
+id=0x1F14
+type=62
+spawnobjlist=allbearlist
+amount=2
+}
+
+[swampcreatures]
+{
+get=base_spawner
+name=Swamp Creature Spawn
+id=0x1F14
+type=62
+spawnobjlist=swampcreaturelist
+amount=2
+}
+
+[junglecreatures]
+{
+get=base_spawner
+name=Jungle Creature Spawn
+id=0x1F14
+type=62
+spawnobjlist=junglecreaturelist
+amount=2
+}
+
+[livestock]
+{
+get=base_spawner
+name=Livestock Spawn
+id=0x1F14
+type=62
+spawnobjlist=livestocklist
+amount=2
+}
+
+[allbirds]
+{
+get=base_spawner
+name=All Birds Spawn
+id=0x1F14
+type=62
+spawnobjlist=allbirdlist
+amount=2
+}
+
+[allanimals]
+{
+get=base_spawner
+name=All Animals Spawn
+id=0x1F14
+type=62
+spawnobjlist=animallist
+amount=2
+}
+
+[smallanimals]
+{
+get=base_spawner
+name=Small Animal Spawn
+id=0x1F14
+type=62
+spawnobjlist=smallanimallist
+amount=2
+}
+
+[prodanimals]
+{
+get=base_spawner
+name=Productive Animal Spawn
+id=0x1F14
+type=62
+spawnobjlist=productiveanimallist
+amount=2
+}
+
+[strongundead]
+{
+get=base_spawner
+name=Strong Undead Spawn
+id=0x1F14
+type=62
+spawnobjlist=strongundeadlist
+amount=2
+}
+
+[weakundead]
+{
+get=base_spawner
+name=Weak Undead Spawn
+id=0x1F14
+type=62
+spawnobjlist=weakundeadlist
+amount=2
+}
+
+[allundead]
+{
+get=base_spawner
+name=All Undead Spawn
+id=0x1F14
+type=62
+spawnobjlist=allundeadlist
+amount=2
+}
+
+[ettinsogres]
+{
+get=base_spawner
+name=Ettins,Ogres and Trolls
+id=0x1F14
+type=62
+spawnobjlist=ettinogre
+amount=2
+}
+
+[weakorcs]
+{
+get=base_spawner
+name=Weak Orc Spawn
+id=0x1F14
+type=62
+spawnobjlist=weakorc
+amount=2
+}
+
+[strongorcs]
+{
+get=base_spawner
+name=Strong Orc Spawn
+id=0x1F14
+type=62
+spawnobjlist=strongorc
+amount=2
+}
+
+[orckin]
+{
+get=base_spawner
+name=Orc Kin Spawn
+id=0x1F14
+type=62
+spawnobjlist=allorckin
+amount=2
+}
+
+[daemons]
+{
+get=base_spawner
+name=All Daemons Spawn
+id=0x1F14
+type=62
+spawnobjlist=alldaemonlist
+amount=2
+}
+
+[elemsdaemons]
+{
+get=base_spawner
+name=Elemental & Daemon Spawn
+id=0x1F14
+type=62
+spawnobjlist=elementalsdaemons
+amount=2
+}
+
+[elementals]
+{
+get=base_spawner
+name=All Elementals Spawn
+id=0x1F14
+type=62
+spawnobjlist=allelementals
+amount=2
+}
+
+[overworld]
+{
+get=base_spawner
+name=All Overworld Spawn
+id=0x1F14
+type=62
+spawnobjlist=overworldlist
+amount=2
+}
+
+//Vendor Spawners
+[alch-spawn]
+{
+get=base_spawner
+name=Alchemist Spawn
+spawnobjlist=alchemist
+id=0x1397
+type=62
+amount=2
+}
+
+[anim-spawn]
+{
+get=base_spawner
+name=Anim Trainer Spawn
+spawnobjlist=animaltrainer
+id=0x1397
+type=62
+amount=2
+}
+
+[armourer-spawn]
+{
+get=base_spawner
+name=Armourer Spawn
+spawnobjlist=armourer
+id=0x1397
+type=62
+amount=2
+}
+
+[architect-spawn]
+{
+get=base_spawner
+name=Architect Spawn
+spawnobjlist=architect
+id=0x1397
+type=62
+amount=2
+}
+
+[baker-spawn]
+{
+get=base_spawner
+name=Baker Spawn
+spawnobjlist=baker
+id=0x1397
+type=62
+amount=2
+}
+
+[banker-spawn]
+{
+get=base_spawner
+name=Banker Spawn
+spawnobjlist=banker
+id=0x1397
+type=62
+amount=2
+}
+
+[bard-spawn]
+{
+get=base_spawner
+name=Bard Spawn
+spawnobjlist=bard
+id=0x1397
+type=62
+amount=2
+}
+
+[smith-spawn]
+{
+get=base_spawner
+name=Blacksmith Spawn
+spawnobjlist=blacksmith
+id=0x1397
+type=62
+amount=2
+}
+
+[bee-spawn]
+{
+get=base_spawner
+name=Beekeeper Spawn
+spawnobjlist=beekeeper
+id=0x1397
+type=62
+amount=2
+}
+
+[bowyer-spawn]
+{
+get=base_spawner
+name=Bowyer Spawn
+spawnobjlist=bowyer
+id=0x1397
+type=62
+amount=2
+}
+
+[butcher-spawn]
+{
+get=base_spawner
+name=Butcher Spawn
+spawnobjlist=butcher
+id=0x1397
+type=62
+amount=2
+}
+
+[carptenter-spawn]
+{
+get=base_spawner
+name=Carpenter Spawn
+spawnobjlist=carpenter
+id=0x1397
+type=62
+amount=2
+}
+
+[cobbler-spawn]
+{
+get=base_spawner
+name=Cobbler Spawn
+spawnobjlist=cobbler
+id=0x1397
+type=62
+amount=2
+}
+
+[cook-spawn]
+{
+get=base_spawner
+name=Cook Spawn
+spawnobjlist=cook
+id=0x1397
+type=62
+amount=2
+}
+
+[farmer-spawn]
+{
+get=base_spawner
+name=Farmer Spawn
+spawnobjlist=farmer
+id=0x1397
+type=62
+amount=2
+}
+
+[fisher-spawn]
+{
+get=base_spawner
+name=Fisherman Spawn
+spawnobjlist=fisher
+id=0x1397
+type=62
+amount=2
+}
+
+[healer-spawn]
+{
+get=base_spawner
+name=Healer Spawn
+spawnobjlist=healer
+id=0x1397
+type=62
+amount=2
+}
+
+[whealer-spawn]
+{
+get=base_spawner
+name=Wandering Healer Spawn
+spawnobjlist=whealer
+id=0x1397
+type=62
+amount=2
+}
+
+[herbal-spawn]
+{
+get=base_spawner
+name=Herbalist Spawn
+spawnobjlist=herbalist
+id=0x1397
+type=62
+amount=2
+}
+
+[innkeep-spawn]
+{
+get=base_spawner
+name=Innkeeper Spawn
+spawnobjlist=innkeeper
+id=0x1397
+type=62
+amount=2
+}
+
+[jewler-spawn]
+{
+get=base_spawner
+name=Jewler Spawn
+spawnobjlist=jeweler
+id=0x1397
+type=62
+amount=2
+}
+
+[leather-spawn]
+{
+get=base_spawner
+name=Leatherworker Spawn
+spawnobjlist=leatherworker
+id=0x1397
+type=62
+amount=2
+}
+
+[mage-spawn]
+{
+get=base_spawner
+name=Mage Spawn
+spawnobjlist=mage
+id=0x1397
+type=62
+amount=2
+}
+
+[miner-spawn]
+{
+get=base_spawner
+name=Miner Spawn
+spawnobjlist=miner
+id=0x1397
+type=62
+amount=2
+}
+
+[provision-spawn]
+{
+get=base_spawner
+name=Provisioner Spawn
+spawnobjlist=provisioner
+id=0x1397
+type=62
+amount=2
+}
+
+[scribe-spawn]
+{
+get=base_spawner
+name=Scribe Spawn
+spawnobjlist=scribe
+id=0x1397
+type=62
+amount=2
+}
+
+[shipwright-spawn]
+{
+get=base_spawner
+name=Shipwright Spawn
+spawnobjlist=shipwright
+id=0x1397
+type=62
+amount=2
+}
+
+[spinner-spawn]
+{
+get=base_spawner
+name=Spinner Spawn
+spawnobjlist=spinner
+id=0x1397
+type=62
+amount=2
+}
+
+[tailor-spawn]
+{
+get=base_spawner
+name=Tailor Spawn
+spawnobjlist=tailor
+id=0x1397
+type=62
+amount=2
+}
+
+[tinker-spawn]
+{
+get=base_spawner
+name=Tinker Spawn
+spawnobjlist=tinker
+id=0x1397
+type=62
+amount=2
+}
+
+[weaponsmith-spawn]
+{
+get=base_spawner
+name=Weaponsmith Spawn
+spawnobjlist=weaponsmith
+id=0x1397
+type=62
+amount=2
+}
+
+//Human non-Vendor spawns
+[basichuman-spawn]
+{
+get=base_spawner
+name=Basic Human Spawn
+spawnobjlist=basichuman
+id=0x1397
+type=62
+amount=2
+}
+
+[guard-spawn]
+{
+get=base_spawner
+name=Guard Spawn
+spawnobjlist=guard
+id=0x1397
+type=62
+amount=2
+}
+
+[archmage-spawn]
+{
+get=base_spawner
+name=Archmage Spawn
+spawnobjlist=murderer-archmage
+id=0x1397
+type=62
+amount=2
+}
+
+[pirate-spawn]
+{
+get=base_spawner
+name=Pirate Spawn
+spawnobjlist=pirate
+id=0x1397
+type=62
+amount=2
+}
+
+[fighter-spawn]
+{
+get=base_spawner
+name=Fighter Spawn
+spawnobjlist=fighter
+id=0x1397
+type=62
+amount=2
+}
+
+[sailor-spawn]
+{
+get=base_spawner
+name=Sailor Spawn
+spawnobjlist=sailor
+id=0x1397
+type=62
+amount=2
+}
+
+[brigand-spawn]
+{
+get=base_spawner
+name=Brigand Spawn
+spawnobjlist=brigand
+id=0x1397
+type=62
+amount=2
+}
+
+[beggar-spawn]
+{
+get=base_spawner
+name=Beggar Spawn
+spawnobjlist=beggar
+id=0x1397
+type=62
+amount=2
+}
+
+[noble-spawn]
+{
+get=base_spawner
+name=Noble Spawn
+spawnobjlist=noble
+id=0x1397
+type=62
+amount=2
+}
+
+[thief-spawn]
+{
+get=base_spawner
+name=Thief Spawn
+spawnobjlist=thief
+id=0x1397
+type=62
+amount=2
+}
+
+[peasant-spawn]
+{
+get=base_spawner
+name=Peasant Spawn
+spawnobjlist=peasant
+id=0x1397
+type=62
+amount=2
+}
+
+[gypsy-spawn]
+{
+get=base_spawner
+name=Gypsy Spawn
+spawnobjlist=gypsy
+id=0x1397
+type=62
+amount=2
+}
+
+[seeker-spawn]
+{
+get=base_spawner
+name=Seeker Spawn
+spawnobjlist=seeker
+id=0x1397
+type=62
+amount=2
+}
+
+[jailer-spawn]
+{
+get=base_spawner
+name=Jailer Spawn
+spawnobjlist=jailer
+id=0x1397
+type=62
+amount=2
+}
+
+[towncrier-spawn]
+{
+get=base_spawner
+name=Towncrier Spawn
+spawnobjlist=towncrier
+id=0x1397
+type=62
+amount=2
+}
+
+[artist-spawn]
+{
+get=base_spawner
+name=Artist Spawn
+spawnobjlist=artist
+id=0x1397
+type=62
+amount=2
+}
+
+[escortspawn]
+{
+get=base_spawner
+name=Escort Spawn
+id=0x1f14
+type=125
+spawnobjlist=escorts
+amount=1
+}
+
+EOF

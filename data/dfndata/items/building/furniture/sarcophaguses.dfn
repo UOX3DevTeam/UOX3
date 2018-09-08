@@ -1,0 +1,768 @@
+[0x1c60]
+{ E woman 1/6
+get=base_item
+name=sarcophagus
+id=0x1c60
+movable=2
+}
+
+[0x1c61]
+{ E woman 2/6
+get=base_item
+name=sarcophagus
+id=0x1c61
+movable=2
+}
+
+[0x1c62]
+{ E woman 3/6
+get=base_item
+name=sarcophagus
+id=0x1c62
+movable=2
+}
+
+[0x1c63]
+{ E woman 4/6
+get=base_item
+name=sarcophagus
+id=0x1c63
+movable=2
+}
+
+[0x1c64]
+{ E woman 5/6
+get=base_item
+name=sarcophagus
+id=0x1c64
+movable=2
+}
+
+[0x1c65]
+{ E woman 6/6
+get=base_item
+name=sarcophagus
+id=0x1c65
+movable=2
+}
+
+[0x1c66]
+{ E woman 1/3
+get=base_item
+name=sarcophagus lid
+id=0x1c66
+movable=2
+}
+
+[0x1c67]
+{ E woman 2/3
+get=base_item
+name=sarcophagus lid
+id=0x1c67
+movable=2
+}
+
+[0x1c68]
+{ E woman 3/3
+get=base_item
+name=sarcophagus lid
+id=0x1c68
+movable=2
+}
+
+[0x1c69]
+{ E open 1/6
+get=base_item
+name=sarcophagus
+id=0x1c69
+movable=2
+}
+
+[0x1c6a]
+{ E open 2/6
+get=base_item
+name=sarcophagus
+id=0x1c6a
+movable=2
+}
+
+[0x1c6b]
+{ E open 3/6
+get=base_item
+name=sarcophagus
+id=0x1c6b
+movable=2
+}
+
+[0x1c6c]
+{ E open 4/6
+get=base_item
+name=sarcophagus
+id=0x1c6c
+movable=2
+}
+
+[0x1c6d]
+{ E open 5/6
+get=base_item
+name=sarcophagus
+id=0x1c6d
+movable=2
+}
+
+[0x1c6e]
+{ E open 6/6
+get=base_item
+name=sarcophagus
+id=0x1c6e
+movable=2
+}
+
+[0x1c6f]
+{ E halfopen woman 1/8
+get=base_item
+name=sarcophagus
+id=0x1c6f
+movable=2
+}
+
+[0x1c70]
+{ E halfopen woman 2/8
+get=base_item
+name=sarcophagus
+id=0x1c70
+movable=2
+}
+
+[0x1c71]
+{ E halfopen woman 3/8
+get=base_item
+name=sarcophagus
+id=0x1c71
+movable=2
+}
+
+[0x1c72]
+{ E halfopen woman 4/8
+get=base_item
+name=sarcophagus
+id=0x1c72
+movable=2
+}
+
+[0x1c73]
+{ E halfopen woman 5/8
+get=base_item
+name=sarcophagus
+id=0x1c73
+movable=2
+}
+
+[0x1c74]
+{ E halfopen woman 6/8
+get=base_item
+name=sarcophagus
+id=0x1c74
+movable=2
+}
+
+[0x1c75]
+{ E halfopen woman 7/8
+get=base_item
+name=sarcophagus
+id=0x1c75
+movable=2
+}
+
+[0x1c76]
+{ E halfopen woman 8/8
+get=base_item
+name=sarcophagus
+id=0x1c76
+movable=2
+}
+
+[0x1c77]
+{ E man 1/6
+get=base_item
+name=sarcophagus
+id=0x1c77
+movable=2
+}
+
+[0x1c78]
+{ E man 2/6
+get=base_item
+name=sarcophagus
+id=0x1c78
+movable=2
+}
+
+[0x1c79]
+{ E man 3/6
+get=base_item
+name=sarcophagus
+id=0x1c79
+movable=2
+}
+
+[0x1c7a]
+{ E man 4/6
+get=base_item
+name=sarcophagus
+id=0x1c7a
+movable=2
+}
+
+[0x1c7b]
+{ E man 5/6
+get=base_item
+name=sarcophagus
+id=0x1c7b
+movable=2
+}
+
+[0x1c7c]
+{ E man 6/6
+get=base_item
+name=sarcophagus
+id=0x1c7c
+movable=2
+}
+
+[0x1c7d]
+{ E man 1/3
+get=base_item
+name=sarcophagus lid
+id=0x1c7d
+movable=2
+}
+
+[0x1c7e]
+{ E man 2/3
+get=base_item
+name=sarcophagus lid
+id=0x1c7e
+movable=2
+}
+
+[0x1c7f]
+{ E man 3/3
+get=base_item
+name=sarcophagus lid
+id=0x1c7f
+movable=2
+}
+
+[0x1c80]
+{ E open man 1/6
+get=base_item
+name=sarcophagus
+id=0x1c80
+movable=2
+}
+
+[0x1c81]
+{ E open man 2/6
+get=base_item
+name=sarcophagus
+id=0x1c81
+movable=2
+}
+
+[0x1c82]
+{ E open man 3/6
+get=base_item
+name=sarcophagus
+id=0x1c82
+movable=2
+}
+
+[0x1c83]
+{ E open man 4/6
+get=base_item
+name=sarcophagus
+id=0x1c83
+movable=2
+}
+
+[0x1c84]
+{ E open man 5/6
+get=base_item
+name=sarcophagus
+id=0x1c84
+movable=2
+}
+
+[0x1c85]
+{ E open man 6/6
+get=base_item
+name=sarcophagus
+id=0x1c85
+movable=2
+}
+
+[0x1c86]
+{ E halfopen man 1/10
+get=base_item
+name=sarcophagus
+id=0x1c86
+movable=2
+}
+
+[0x1c87]
+{ E halfopen man 2/10
+get=base_item
+name=sarcophagus
+id=0x1c87
+movable=2
+}
+
+[0x1c88]
+{ E halfopen man 3/10
+get=base_item
+name=sarcophagus
+id=0x1c88
+movable=2
+}
+
+[0x1c89]
+{ E halfopen man 4/10
+get=base_item
+name=sarcophagus
+id=0x1c89
+movable=2
+}
+
+[0x1c8a]
+{ E halfopen man 5/10
+get=base_item
+name=sarcophagus
+id=0x1c8a
+movable=2
+}
+
+[0x1c8b]
+{ E halfopen man 6/10
+get=base_item
+name=sarcophagus
+id=0x1c8b
+movable=2
+}
+
+[0x1c8c]
+{ E halfopen man 7/10
+get=base_item
+name=sarcophagus
+id=0x1c8c
+movable=2
+}
+
+[0x1c8d]
+{ E halfopen man 8/10
+get=base_item
+name=sarcophagus
+id=0x1c8d
+movable=2
+}
+
+[0x1c8e]
+{ E halfopen man 9/10
+get=base_item
+name=sarcophagus
+id=0x1c8e
+movable=2
+}
+
+[0x1c8f]
+{ E halfopen man 10/10
+get=base_item
+name=sarcophagus
+id=0x1c8f
+movable=2
+}
+
+[0x1c90]
+{ S woman 1/6
+get=base_item
+name=sarcophagus
+id=0x1c90
+movable=2
+}
+
+[0x1c91]
+{ S woman 2/6
+get=base_item
+name=sarcophagus
+id=0x1c91
+movable=2
+}
+
+[0x1c92]
+{ S woman 3/6
+get=base_item
+name=sarcophagus
+id=0x1c92
+movable=2
+}
+
+[0x1c93]
+{ S woman 4/6
+get=base_item
+name=sarcophagus
+id=0x1c93
+movable=2
+}
+
+[0x1c94]
+{ S woman 5/6
+get=base_item
+name=sarcophagus
+id=0x1c94
+movable=2
+}
+
+[0x1c95]
+{ S woman 6/6
+get=base_item
+name=sarcophagus
+id=0x1c95
+movable=2
+}
+
+[0x1c96]
+{ S woman 1/3
+get=base_item
+name=sarcophagus lid
+id=0x1c96
+movable=2
+}
+
+[0x1c97]
+{ S woman 2/3
+get=base_item
+name=sarcophagus lid
+id=0x1c97
+movable=2
+}
+
+[0x1c98]
+{ S woman 3/3
+get=base_item
+name=sarcophagus lid
+id=0x1c98
+movable=2
+}
+
+[0x1c99]
+{ S open 1/6
+get=base_item
+name=sarcophagus
+id=0x1c99
+movable=2
+}
+
+[0x1c9a]
+{ S open 2/6
+get=base_item
+name=sarcophagus
+id=0x1c9a
+movable=2
+}
+
+[0x1c9b]
+{ S open 3/6
+get=base_item
+name=sarcophagus
+id=0x1c9b
+movable=2
+}
+
+[0x1c9c]
+{ S open 4/6
+get=base_item
+name=sarcophagus
+id=0x1c9c
+movable=2
+}
+
+[0x1c9d]
+{ S open 5/6
+get=base_item
+name=sarcophagus
+id=0x1c9d
+movable=2
+}
+
+[0x1c9e]
+{ S open 6/6
+get=base_item
+name=sarcophagus
+id=0x1c9e
+movable=2
+}
+
+[0x1c9f]
+{ S halfopen woman 1/8
+get=base_item
+name=sarcophagus
+id=0x1c9f
+movable=2
+}
+
+[0x1ca0]
+{ S halfopen woman 2/8
+get=base_item
+name=sarcophagus
+id=0x1ca0
+movable=2
+}
+
+[0x1ca1]
+{ S halfopen woman 3/8
+get=base_item
+name=sarcophagus
+id=0x1ca1
+movable=2
+}
+
+[0x1ca2]
+{ S halfopen woman 4/8
+get=base_item
+name=sarcophagus
+id=0x1ca2
+movable=2
+}
+
+[0x1ca3]
+{ S halfopen woman 5/8
+get=base_item
+name=sarcophagus
+id=0x1ca3
+movable=2
+}
+
+[0x1ca4]
+{ S halfopen woman 6/8
+get=base_item
+name=sarcophagus
+id=0x1ca4
+movable=2
+}
+
+[0x1ca5]
+{ S halfopen woman 7/8
+get=base_item
+name=sarcophagus
+id=0x1ca5
+movable=2
+}
+
+[0x1ca6]
+{ S halfopen woman 8/8
+get=base_item
+name=sarcophagus
+id=0x1ca6
+movable=2
+}
+
+[0x1ca7]
+{ S man 1/6
+get=base_item
+name=sarcophagus
+id=0x1ca7
+movable=2
+}
+
+[0x1ca8]
+{ S man 2/6
+get=base_item
+name=sarcophagus
+id=0x1ca8
+movable=2
+}
+
+[0x1ca9]
+{ S man 3/6
+get=base_item
+name=sarcophagus
+id=0x1ca9
+movable=2
+}
+
+[0x1caa]
+{ S man 4/6
+get=base_item
+name=sarcophagus
+id=0x1caa
+movable=2
+}
+
+[0x1cab]
+{ S man 5/6
+get=base_item
+name=sarcophagus
+id=0x1cab
+movable=2
+}
+
+[0x1cac]
+{ S man 6/6
+get=base_item
+name=sarcophagus
+id=0x1cac
+movable=2
+}
+
+[0x1cad]
+{ S man 1/3
+get=base_item
+name=sarcophagus lid
+id=0x1cad
+movable=2
+}
+
+[0x1cae]
+{ S man 2/3
+get=base_item
+name=sarcophagus lid
+id=0x1cae
+movable=2
+}
+
+[0x1caf]
+{ S man 3/3
+get=base_item
+name=sarcophagus lid
+id=0x1caf
+movable=2
+}
+
+[0x1cb0]
+{ S open man 1/6
+get=base_item
+name=sarcophagus
+id=0x1cb0
+movable=2
+}
+
+[0x1cb1]
+{ S open man 2/6
+get=base_item
+name=sarcophagus
+id=0x1cb1
+movable=2
+}
+
+[0x1cb2]
+{ S open man 3/6
+get=base_item
+name=sarcophagus
+id=0x1cb2
+movable=2
+}
+
+[0x1cb3]
+{ S open man 4/6
+get=base_item
+name=sarcophagus
+id=0x1cb3
+movable=2
+}
+
+[0x1cb4]
+{ S open man 5/6
+get=base_item
+name=sarcophagus
+id=0x1cb4
+movable=2
+}
+
+[0x1cb5]
+{ S open man 6/6
+get=base_item
+name=sarcophagus
+id=0x1cb5
+movable=2
+}
+
+
+[0x1cb6]
+{ S halfopen man 1/10
+get=base_item
+name=sarcophagus
+id=0x1cb6
+movable=2
+}
+
+[0x1cb7]
+{ S halfopen man 2/10
+get=base_item
+name=sarcophagus
+id=0x1cb7
+movable=2
+}
+
+[0x1cb8]
+{ S halfopen man 3/10
+get=base_item
+name=sarcophagus
+id=0x1cb8
+movable=2
+}
+
+[0x1cb9]
+{ S halfopen man 4/10
+get=base_item
+name=sarcophagus
+id=0x1cb9
+movable=2
+}
+
+[0x1cba]
+{ S halfopen man 5/10
+get=base_item
+name=sarcophagus
+id=0x1cba
+movable=2
+}
+
+[0x1cbb]
+{ S halfopen man 6/10
+get=base_item
+name=sarcophagus
+id=0x1cbb
+movable=2
+}
+
+[0x1cbc]
+{ S halfopen man 7/10
+get=base_item
+name=sarcophagus
+id=0x1cbc
+movable=2
+}
+
+[0x1cbd]
+{ S halfopen man 8/10
+get=base_item
+name=sarcophagus
+id=0x1cbd
+movable=2
+}
+
+[0x1cbe]
+{ S halfopen man 9/10
+get=base_item
+name=sarcophagus
+id=0x1cbe
+movable=2
+}
+
+[0x1cbf]
+{ S halfopen man 10/10
+get=base_item
+name=sarcophagus
+id=0x1cbf
+movable=2
+}

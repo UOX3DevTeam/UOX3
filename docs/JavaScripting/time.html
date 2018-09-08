@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="TimeFuncs">Time Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetHour">GetHour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetHour();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the hour of the day
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iHour = GetHour();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetMinute">GetMinute</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetMinute();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the minute of the day
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMinute = GetMinute();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetDay">GetDay</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetDay();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the day number of the server (UO days since start)
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iDay = GetDay();
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SecondsPerUOMinute">SecondsPerUOMinute</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int SecondsPerUOMinute( [numSecs] );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets and Returns the number of real seconds which equal a UO minute
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iNumSecs = SecondsPerUOMinute();
+SecondsPerUOMinute( newNumSecs );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetCurrentClock">GetCurrentClock</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetCurrentClock();
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns server's uiCurrentTime, or number of clock ticks elapsed since startup
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iTime = GetCurrentClock();
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

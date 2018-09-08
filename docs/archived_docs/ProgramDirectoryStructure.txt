@@ -1,0 +1,81 @@
+There is actually a directory structure now from versions 0.95.00 and above.  Noteably, this is not QUITE permanent, but it is almost 100% complete now, we're just trying to see where we are going to put the JS scripts.  But here it is, anyway.
+
+UOX3
+|---archives
+|
+|---books
+|
+|---dfndata
+    |---advance
+    |---carve
+    |---colors
+    |---command
+    |---create
+    |---harditems
+    |---house
+    |---html
+    |---items
+    |---location
+    |---menus
+    |---misc
+    |---msgboard
+    |---necro
+    |---newbie
+    |---npc
+    |---polymorph
+    |---race
+    |---regions
+    |---skills
+    |---spawn
+    |---spells
+    |---titles
+    |---tracking
+    |---trigger
+    |---weather
+|
+|---help
+    |---commands
+|
+|---html
+|
+|---images
+|
+|---js
+    |---envoke
+        |---cooking
+        |---misc
+        |---light
+        |---farming
+        |---tailoring
+        |---furniture
+        |---pets
+    |---custom
+|
+|---logs
+|
+|---player
+|
+|---scripts
+|
+|---shared
+
+Purposes of each directory
+==========================
+archives       -       Unchanged from previous versions.  Archiving (once fixed) will go in here
+books          -       This contains all the books in the world
+dfndata        -       This is the parent dir where the definition files will ultimately reside.  Currently, it is SCP based (and existing scripts should work).
+                       Each subdirectory replaces an existing script.  The misc subdirectory is where you place your misc.scp, the npc directory is where you
+                       place your npc.scp.  Note that trigger is likely to be deprecated (currently old triggers.scp do nothing).
+help           -       Mostly unused at the moment.  Help files and other things will go here in future.  However, the commands subdirectory IS useful at the 
+                       moment.  If you place a file in there with the name of ACCT.txt, for instance, if you use 'howto and select ACCT, the contents of that
+                       file will be displayed along with other information.
+html           -       Default output directory for html output.
+images         -       Used with HTML as a default location for images
+logs           -       Logs of all sorts will be here.  That includes server logs, packet logs, and error logs (though not all currently do).
+player         -       Player HTML goes here, by default
+scripts        -       Information that does not fit into the existing script system goes here.  Noteably the multilanguage dictionaries do, as well as
+                       scpTrig.scp, envoke.scp and teleport.scp.
+shared         -       World file location.  Note that there is a distributed world file system now, breaking the world down into smaller geometries.
+                       A world converter IS being worked upon that will convert from this format to an old one, and vice versa.
+
+Please note that old trigger system scripts will NOT work, nor will old speech.scp.  And as such, it is difficult to convert from old->new and new->old, as this information will NOT be preserved.

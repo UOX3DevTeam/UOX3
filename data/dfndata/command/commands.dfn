@@ -1,0 +1,119 @@
+//*****************************************************************
+//*                         UOX3 Scripts v0.98                    *
+//*                                                               *
+//*                   http://www.uox3dev.net	                  *
+//*                                                               *
+//* Last Update : 3/17/2006                                       *
+//* Script : commands.dfn                                         *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* In here will be the overrides for the default command table   *
+//* Currently, an entry will look like this:                      *
+//*                                                               *
+//* (Command_Name) (Privilege-Level)                              *
+//*                                                               *
+//* (Privilege-Level) is 0 for player, 1 for counselor, 2 for GM  *
+//* Custom levels are also possible, if you want various degrees  *
+//* of access for different GMs                                   *
+//* Example :                                                     *
+//* RESEND 1  // the RESEND command can                           *
+//*           // be used by counselors and above                  *
+//*                                                               *
+//*****************************************************************
+// Priv Flags
+//	BIT_GM			=	0x0001;
+//	BIT_BROADCAST		=	0x0002;
+//	BIT_INVULNERABLE	=	0x0004;
+//	BIT_SINGCLICKSER	=	0x0008;
+//	BIT_SKILLTITLES		=	0x0010;
+//	BIT_GMPAGEABLE		=	0x0020;
+//	BIT_SNOOP		=	0x0040;
+//	BIT_COUNSELOR		=	0x0080;
+//	BIT_ALLMOVE		=	0x0100;
+//	BIT_FROZEN		=	0x0200;
+//	BIT_VIEWHOUSEASICON	=	0x0400;
+//	BIT_NONEEDMANA		=	0x0800;
+//	BIT_DISPELLABLE		=	0x1000;
+//	BIT_PERMREFLECTED	=	0x2000;
+//	BIT_NONEEDREAGS		=	0x4000;
+//*****************************************************************
+
+[COMMANDLEVELS]
+{
+ADMIN=5
+GM=2
+CNS=1
+PLAYER=0
+}
+
+[GM]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
+DEFAULTPRIV=0x787F	// default privs assigned (hex)
+BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x8021	// colour of body person turns
+STRIPITEMS		//Strip off equipped items and place them in backpack
+STRIPHAIR		//Strips off hair & beard
+}
+
+[CNS]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex)
+DEFAULTPRIV=0x009C	// default privs assigned (hex)
+BODYID=0x03DB		// default body ID assigned
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x8002	// colour of body person turns
+}
+
+[PLAYER]
+{
+NICKCOLOUR=0x0000	// colour of person's nick (hex)
+DEFAULTPRIV=0x0000	// default privs assigned (hex)
+BODYID=0x0190		// default body ID assigned
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x83ea	// colour of body person turns
+}
+
+[COMMAND_OVERRIDE]
+{
+//Players
+WHO=			0
+//Counselors
+CQ=			1
+DYE=                    1
+HOWTO=			1
+WSTATS=			1
+
+//GM's
+ANNOUNCE=		2
+COMMAND=		2
+GCOLLECT=		2
+GMMENU=			2
+GMS=			2
+GUARDS=			2
+GQ=			2
+LOADDEFAULTS=		2
+MEMSTATS=		2
+MINECHECK=		2
+PDUMP=			2
+REGSPAWN=		2
+RESPAWN=		2
+RESTOCK=		2
+SAVE=			2
+SETPOST=		2
+SETSCPTRIG=		2
+SETSHOPRESTOCKRATE=	2
+SETTIME=		2
+SHOWIDS=		2
+SHOWSKILLS=		2
+SHUTDOWN=		2
+SPAWNKILL=		2
+TELL=			2
+TILE=			2
+TWEAK=			2
+}
+
+EOF
+

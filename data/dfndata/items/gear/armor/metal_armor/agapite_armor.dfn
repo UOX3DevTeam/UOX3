@@ -1,0 +1,415 @@
+// Ringmail
+
+[0x13e5-a]
+{ left facing hanging
+get=ring_leggings
+name=ringmail leggings
+id=0x13e5
+color=0x979
+}
+
+[0x13e6-a]
+{ right facing
+get=ring_leggings
+name=ringmail leggings
+id=0x13e6
+color=0x979
+}
+
+[0x13e7-a]
+{ left facing
+get=ring_tunic
+name=ringmail tunic
+id=0x13e7
+color=0x979
+}
+
+[0x13e8-a]
+{
+get=ring_tunic
+name=ringmail tunic
+id=0x13e8
+color=0x979
+}
+
+[0x13e9-a]
+{
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13e9
+color=0x979
+}
+
+[0x13ea-a]
+{ left facing
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13ea
+color=0x979
+}
+
+
+[0x13eb-a]
+{
+get=ring_gloves
+name=ringmail gloves
+id=0x13eb
+color=0x979
+}
+
+[0x13ec-a]
+{ right facing
+get=ring_tunic
+name=ringmail tunic
+id=0x13ec
+color=0x979
+}
+
+[0x13ed-a]
+{ left facing
+get=ring_tunic
+name=ringmail tunic
+id=0x13ed
+color=0x979
+}
+
+[0x13ee-a]
+{ right facing
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13ee
+color=0x979
+}
+
+[0x13ef-a]
+{ left facing
+get=ring_sleeves
+name=ringmail sleeves
+id=0x13ef
+color=0x979
+}
+
+[0x13f0-a]
+{ right facing
+get=ring_leggings
+name=ringmail leggings
+id=0x13f0
+color=0x979
+}
+
+[0x13f1-a]
+{ left facing
+get=ring_leggings
+name=ringmail leggings
+id=0x13f1
+color=0x979
+}
+
+[0x13f2-a]
+{
+get=ring_gloves
+name=ringmail gloves
+id=0x13f2
+color=0x979
+}
+
+// chainmail
+
+[0x13BB-a]
+{ left facing chain coif
+get=chain_coif
+name=chainmail coif
+id=0x13bb
+color=0x979
+}
+
+[0x13bc-a]
+{ left facing hanging
+get=chain_leggings
+name=chainmail leggings
+id=0x13bc
+color=0x979
+}
+
+[0x13bd-a]
+{ left facing hanging
+get=chain_tunic
+name=chainmail tunic
+id=0x13bd
+color=0x979
+}
+
+[0x13be-a]
+{ left facing
+get=chain_leggings
+name=chainmail leggings
+id=0x13be
+color=0x979
+}
+
+[0x13bf-a]
+{ left facing
+get=chain_tunic
+name=chainmail tunic
+id=0x13bf
+color=0x979
+}
+
+[0x13c0-a]
+{ right facing chain coif
+get=chain_choif
+name=chainmail coif
+id=0x13c0
+color=0x979
+}
+
+[0x13c1-a]
+{ right facing hanging
+get=chain_tunic
+name=chainmail tunic
+id=0x13c1
+color=0x979
+movable=2
+decay=1
+}
+
+[0x13c2-a]
+{ right facing hanging
+get=chain_tunic
+name=chainmail tunic
+id=0x13c2
+color=0x979
+movable=2
+decay=1
+}
+
+[0x13c3-a]
+{ right facing
+get=chain_leggings
+name=chainmail leggings
+id=0x13c3
+color=0x979
+}
+
+[0x13c4-a]
+{ right facing
+get=chain_tunic
+name=chainmail tunic
+id=0x13c4
+color=0x979
+}
+
+[0x1c04-a]
+{ left facing - Female
+get=fem_plate
+name=platemail
+id=0x1c04
+color=0x979
+}
+
+[0x1c05-a]
+{ right facing - Female
+get=fem_plate
+name=platemail
+id=0x1c05
+color=0x979
+}
+
+// platemail
+
+[0x1410-a]
+{ left facing
+get=plate_arms
+name=platemail arms
+id=0x1410
+color=0x979
+}
+
+[0x1411-a]
+{ left facing
+get=plate_leggings
+name=platemail leggings
+id=0x1411
+color=0x979
+}
+
+[0x1413-a]
+{
+get=plate_gorget
+name=platemail gorget
+id=0x1413
+color=0x979
+}
+
+[0x1414-a]
+{ left facing
+get=plate_gloves
+name=platemail gloves
+id=0x1414
+color=0x979
+}
+
+[0x1415-a]
+{ left facing
+get=plate_chest
+name=platemail
+id=0x1415
+color=0x979
+}
+
+[0x1417-a]
+{ right facing
+get=plate_arms
+name=platemail arms
+id=0x1417
+color=0x979
+}
+
+[0x141a-a]
+{ right facing
+get=plate_leggings
+name=platemail leggings
+id=0x141a
+color=0x979
+}
+
+[0x1418-a]
+{ right facing
+get=plate_gloves
+name=platemail gloves
+id=0x1418
+color=0x979
+}
+
+[0x1416-a]
+{ right facing
+get=plate_chest
+name=platemail
+id=0x1416
+color=0x979
+}
+
+// helmets
+
+[0x1419-a]
+{ right facing
+get=plate_helm
+name=plate helm
+id=0x1419
+color=0x979
+}
+
+[0x1408-a]
+{ right facing
+get=CLOSE_HELMET
+name=close helm
+id=0x1408
+color=0x979
+}
+
+[0x1409-a]
+{ left facing
+get=CLOSE_HELMET
+name=close helm
+id=0x1409
+color=0x979
+}
+
+[0x140a-a]
+{ right facing
+get=helmet
+name=helmet
+id=0x140a
+color=0x979
+}
+
+[0x140b-a]
+{ left facing
+get=helmet
+name=helmet
+id=0x140b
+color=0x979
+}
+
+[0x140c-a]
+{ right facing
+get=bascinet
+name=bascinet
+id=0x140c
+color=0x979
+}
+
+[0x140d-a]
+{ left facing
+get=bascinet
+name=bascinet
+id=0x140d
+color=0x979
+}
+
+[0x140e-a]
+{ right facing
+get=nose_helm
+name=nose helm
+id=0x140e
+color=0x979
+}
+
+[0x140f-a]
+{ left facing
+get=nose_helm
+name=nose helm
+id=0x140f
+color=0x979
+}
+
+[0x1412-a]
+{ left facing
+get=plate_helm
+name=plate helm
+id=0x1412
+color=0x979
+}
+
+// shields
+
+[0x1b72-a]
+{ bronze shield
+get=bronze_shield
+name=bronze shield
+id=0x1b72
+color=0x979
+}
+
+[0x1b73-a]
+{ buckler
+get=buckler
+name=buckler
+id=0x1b73
+color=0x979
+}
+
+[0x1b74-a]
+{ kite shield
+get=metal_kite_shield
+name=kite shield
+id=0x1b74
+color=0x979
+}
+
+
+[0x1b76-a]
+{ heater shield
+get=heater_shield
+name=heater shield
+id=0x1b76
+color=0x979
+}
+
+[0x1b7b-a]
+{ metal shield
+get=metal_shield
+name=metal shield
+id=0x1b7b
+color=0x979
+}

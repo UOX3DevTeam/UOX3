@@ -1,0 +1,7 @@
+        TILEW <hex-id> x1 x2 y1 y2 z
+        TILEW <decimal> x1 x2 y1 y2 z
+
+  Purpose: 
+        Will tile specified item-id from UO
+        Client on each tile in the area 
+        x1 x2 y1 y2 z.

@@ -1,0 +1,673 @@
+// beds.dfn
+// All types of beds and sleeping places
+// v1.0; 18/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+
+[0x0a5a]
+{ E brown 1/2
+get=base_item
+name=bed
+id=0x0a5a
+weight=10000
+movable=2
+}
+
+[0x0a5b]
+{ E brown 2/2
+get=base_item
+name=bed
+id=0x0a5b
+weight=10000
+movable=2
+}
+
+[0x0a63]
+{ S grey cushion 1/2
+get=base_item
+name=bed
+id=0x0a63
+weight=10000
+movable=2
+}
+
+[0x0a5c]
+{ S grey cushion 2/2
+get=base_item
+name=bed
+id=0x0a5c
+weight=10000
+movable=2
+}
+
+[0x0a5d]
+{ E grey cushion 1/2
+get=base_item
+name=bed
+id=0x0a5d
+weight=10000
+movable=2
+}
+
+[0x0a62]
+{ E grey cushion 2/2
+get=base_item
+name=bed
+id=0x0a62
+weight=10000
+movable=2
+}
+
+[0x0a5e]
+{ S white 1/2
+get=base_item
+name=bed
+id=0x0a5e
+weight=10000
+movable=2
+}
+
+[0x0a5f]
+{ S white 2/2
+get=base_item
+name=bed
+id=0x0a5f
+weight=10000
+movable=2
+}
+
+[0x0a60]
+{ E white 1/2
+get=base_item
+name=bed
+id=0x0a60
+weight=10000
+movable=2
+}
+
+[0x0a61]
+{ E white 2/2
+get=base_item
+name=bed
+id=0x0a61
+weight=10000
+movable=2
+}
+
+[0x0a64]
+{ S brown 1/2
+get=base_item
+name=bed
+id=0x0a64
+weight=10000
+movable=2
+}
+
+[0x0a65]
+{ S brown 2/2
+get=base_item
+name=bed
+id=0x0a65
+weight=10000
+movable=2
+}
+
+[0x0a66]
+{ S messy (cushion) 1/2
+get=base_item
+name=bed
+id=0x0a66
+weight=10000
+movable=2
+}
+
+[0x0a67]
+{ S messy 1/2
+get=base_item
+name=bed
+id=0x0a67
+weight=10000
+movable=2
+}
+
+[0x0a68]
+{ S messy 2/2
+get=base_item
+name=bed
+id=0x0a68
+weight=10000
+movable=2
+}
+
+[0x0a69]
+{ E messy (cushion) 1/2
+get=base_item
+name=bed
+id=0x0a69
+weight=10000
+movable=2
+}
+
+[0x0a6a]
+{ E messy 1/2
+get=base_item
+name=bed
+id=0x0a6a
+weight=10000
+movable=2
+}
+
+[0x0a6b]
+{ E messy 2/2
+get=base_item
+name=bed
+id=0x0a6b
+weight=10000
+movable=2
+}
+
+[0x0a70]
+{ E 1/4
+get=base_item
+name=bed
+id=0x0a70
+weight=10000
+movable=2
+}
+
+[0x0a71]
+{ E 2/4
+get=base_item
+name=bed
+id=0x0a71
+weight=10000
+movable=2
+}
+
+[0x0a72]
+{ E 3/4
+get=base_item
+name=bed
+id=0x0a72
+weight=10000
+movable=2
+}
+
+[0x0a73]
+{ E 4/4
+get=base_item
+name=bed
+id=0x0a73
+weight=10000
+movable=2
+}
+
+[0x0a74]
+{ S 1/4
+get=base_item
+name=bed
+id=0x0a74
+weight=10000
+movable=2
+}
+
+[0x0a75]
+{ S 2/4
+get=base_item
+name=bed
+id=0x0a75
+weight=10000
+movable=2
+}
+
+[0x0a76]
+{ S 3/4
+get=base_item
+name=bed
+id=0x0a76
+weight=10000
+movable=2
+}
+
+[0x0a77]
+{ S 4/4
+get=base_item
+name=bed
+id=0x0a77
+weight=10000
+movable=2
+}
+
+[0x0a78]
+{ E grey 1/4
+get=base_item
+name=bed
+id=0x0a78
+weight=10000
+movable=2
+}
+
+[0x0a79]
+{ E grey 2/4
+get=base_item
+name=bed
+id=0x0a79
+weight=10000
+movable=2
+}
+
+[0x0a7a]
+{ E grey 3/4
+get=base_item
+name=bed
+id=0x0a7a
+weight=10000
+movable=2
+}
+
+[0x0a7b]
+{ E grey 4/4
+get=base_item
+name=bed
+id=0x0a7b
+weight=10000
+movable=2
+}
+
+[0x0a7c]
+{ E grey (cushion) 1/4
+get=base_item
+name=bed
+id=0x0a7c
+weight=10000
+movable=2
+}
+
+[0x0a7d]
+{ E grey (cushion) 2/4
+get=base_item
+name=bed
+id=0x0a7d
+weight=10000
+movable=2
+}
+
+[0x0a7e]
+{ S grey 1/4
+get=base_item
+name=bed
+id=0x0a7e
+weight=10000
+movable=2
+}
+
+[0x0a7f]
+{ S grey 2/4
+get=base_item
+name=bed
+id=0x0a7f
+weight=10000
+movable=2
+}
+
+[0x0a80]
+{ S grey 3/4
+get=base_item
+name=bed
+id=0x0a80
+weight=10000
+movable=2
+}
+
+[0x0a81]
+{ S grey 4/4
+get=base_item
+name=bed
+id=0x0a81
+weight=10000
+movable=2
+}
+
+[0x0a82]
+{ S grey (cushion) 1/4
+get=base_item
+name=bed
+id=0x0a82
+weight=10000
+movable=2
+}
+
+[0x0a83]
+{ S grey (cushion) 2/4
+get=base_item
+name=bed
+id=0x0a83
+weight=10000
+movable=2
+}
+
+[0x0a84]
+{ E white 1/4
+get=base_item
+name=bed
+id=0x0a84
+weight=10000
+movable=2
+}
+
+[0x0a85]
+{ E white 2/4
+get=base_item
+name=bed
+id=0x0a85
+weight=10000
+movable=2
+}
+
+[0x0a86]
+{ E white 3/4
+get=base_item
+name=bed
+id=0x0a86
+weight=10000
+movable=2
+}
+
+[0x0a87]
+{ E white 4/4
+get=base_item
+name=bed
+id=0x0a87
+weight=10000
+movable=2
+}
+
+[0x0a88]
+{ S white 1/4
+get=base_item
+name=bed
+id=0x0a88
+weight=10000
+movable=2
+}
+
+[0x0a89]
+{ S white 2/4
+get=base_item
+name=bed
+id=0x0a89
+weight=10000
+movable=2
+}
+
+[0x0a8a]
+{ S white 3/4
+get=base_item
+name=bed
+id=0x0a8a
+weight=10000
+movable=2
+}
+
+[0x0a8b]
+{ S white 4/4
+get=base_item
+name=bed
+id=0x0a8b
+weight=10000
+movable=2
+}
+
+[0x0a8c]
+{ E untidy 1/4
+get=base_item
+name=bed
+id=0x0a8c
+weight=10000
+movable=2
+}
+
+[0x0a8d]
+{ E untidy 2/4
+get=base_item
+name=bed
+id=0x0a8d
+weight=10000
+movable=2
+}
+
+[0x0a8e]
+{ E untidy 3/4
+get=base_item
+name=bed
+id=0x0a8e
+weight=10000
+movable=2
+}
+
+[0x0a8f]
+{ E untidy 4/4
+get=base_item
+name=bed
+id=0x0a8f
+weight=10000
+movable=2
+}
+
+[0x0a90]
+{ E untidy (cushion) 3/4
+get=base_item
+name=bed
+id=0x0a90
+weight=10000
+movable=2
+}
+
+[0x0a91]
+{ E untidy (cushion) 4/4
+get=base_item
+name=bed
+id=0x0a91
+weight=10000
+movable=2
+}
+
+[0x0ab0]
+{ S untidy 1/4
+get=base_item
+name=bed
+id=0x0ab0
+weight=10000
+movable=2
+}
+
+[0x0ab1]
+{ S untidy 2/4
+get=base_item
+name=bed
+id=0x0ab1
+weight=10000
+movable=2
+}
+
+[0x0ab2]
+{ S untidy 3/4
+get=base_item
+name=bed
+id=0x0ab2
+weight=10000
+movable=2
+}
+
+[0x0ab3]
+{ S untidy 4/4
+get=base_item
+name=bed
+id=0x0ab3
+weight=10000
+movable=2
+}
+
+[0x0ab4]
+{ S untidy (cushion) 3/4
+get=base_item
+name=bed
+id=0x0ab4
+weight=10000
+movable=2
+}
+
+[0x0ab5]
+{ S untidy (cushion) 4/4
+get=base_item
+name=bed
+id=0x0ab5
+weight=10000
+movable=2
+}
+
+[0x11ce]
+{ E plain 1/4
+get=base_item
+name=bed
+id=0x11ce
+weight=10000
+movable=2
+}
+
+[0x11cd]
+{ E plain 2/4
+get=base_item
+name=bed
+id=0x11cd
+weight=10000
+movable=2
+}
+
+[0x11d0]
+{ E plain 3/4
+get=base_item
+name=bed
+id=0x11d0
+weight=10000
+movable=2
+}
+
+[0x11d1]
+{ E plain 4/4
+get=base_item
+name=bed
+id=0x11d1
+weight=10000
+movable=2
+}
+
+[0x11d2]
+{ S plain 1/4
+get=base_item
+name=bed
+id=0x11d2
+weight=10000
+movable=2
+}
+
+[0x11d3]
+{ S plain 2/4
+get=base_item
+name=bed
+id=0x11d3
+weight=10000
+movable=2
+}
+
+[0x11d4]
+{ S plain 3/4
+get=base_item
+name=bed
+id=0x11d4
+weight=10000
+movable=2
+}
+
+[0x11d5]
+{ S plain 4/4
+get=base_item
+name=bed
+id=0x11d5
+weight=10000
+movable=2
+}
+
+[0x11f0]
+{ E 1/2
+get=base_item
+name=hammock
+id=0x11f0
+weight=10000
+movable=2
+}
+
+[0x11f1]
+{ E 2/2
+get=base_item
+name=hammock
+id=0x11f1
+weight=10000
+movable=2
+}
+
+[0x11f2]
+{ S 1/2
+get=base_item
+name=hammock
+id=0x11f2
+weight=10000
+movable=2
+}
+
+[0x11f3]
+{ S 2/2
+get=base_item
+name=hammock
+id=0x11f3
+weight=10000
+movable=2
+}
+
+[0x11fd]
+{ E 1/2
+get=base_item
+name=cot
+id=0x11fd
+weight=10000
+movable=2
+}
+
+[0x11fe]
+{ E 2/2
+get=base_item
+name=cot
+id=0x11fe
+weight=10000
+movable=2
+}
+
+[0x11ff]
+{ S 1/2
+get=base_item
+name=cot
+id=0x11ff
+weight=10000
+movable=2
+}
+
+[0x1200]
+{ S 2/2
+get=base_item
+name=cot
+id=0x1200
+weight=10000
+movable=2
+}

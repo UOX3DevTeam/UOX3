@@ -1,0 +1,900 @@
+// ruined.dfn
+// All ruined items and Unfinished furniture
+// v1.0; 25/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+
+[0x0c10]
+{ S
+get=base_item
+name=broken chair
+id=0x0c10
+weight=1000
+movable=2
+}
+
+[0x0c11]
+{ E
+get=base_item
+name=broken chair
+id=0x0c11
+weight=1000
+movable=2
+}
+
+[0x0c12]
+{ E
+get=base_item
+name=broken armoire
+id=0x0c12
+weight=1000
+movable=2
+}
+
+[0x0c13]
+{ S
+get=base_item
+name=broken armoire
+id=0x0c13
+weight=1000
+movable=2
+}
+
+[0x0c14]
+{ S
+get=base_item
+name=ruined bookcase
+id=0x0c14
+weight=1000
+movable=2
+}
+
+[0x0c15]
+{ E
+get=base_item
+name=ruined bookcase
+id=0x0c15
+weight=1000
+movable=2
+}
+
+[0x0c16]
+{
+get=base_item
+name=damaged books
+id=0x0c16
+weight=1000
+movable=2
+}
+
+[0x0c17]
+{ S
+get=base_item
+name=covered chair
+id=0x0c17
+weight=1000
+movable=2
+}
+
+[0x0c18]
+{ E
+get=base_item
+name=covered chair
+id=0x0c18
+weight=1000
+movable=2
+}
+
+[0x0c19]
+{ S hole
+get=base_item
+name=broken chair
+id=0x0c19
+weight=1000
+movable=2
+}
+
+[0x0c1a]
+{ E hole
+get=base_item
+name=broken chair
+id=0x0c1a
+weight=1000
+movable=2
+}
+
+[0x0c1b]
+{ S standing
+get=base_item
+name=broken chair
+id=0x0c1b
+weight=1000
+movable=2
+}
+
+[0x0c1c]
+{ E standing
+get=base_item
+name=broken chair
+id=0x0c1c
+weight=1000
+movable=2
+}
+
+[0x0c1d]
+{ W standing
+get=base_item
+name=broken chair
+id=0x0c1d
+weight=1000
+movable=2
+}
+
+[0x0c1e]
+{ N standing
+get=base_item
+name=broken chair
+id=0x0c1e
+weight=1000
+movable=2
+}
+
+[0x0c1f]
+{ E
+get=base_item
+name=broken clock
+id=0x0c1f
+weight=100
+movable=2
+}
+
+[0x0c20]
+{ E 1/2
+get=base_item
+name=broken dresser
+id=0x0c20
+weight=1000
+movable=2
+}
+
+[0x0c21]
+{ E 2/2
+get=base_item
+name=broken dresser
+id=0x0c21
+weight=1000
+movable=2
+}
+
+[0x0c22]
+{ S 1/2
+get=base_item
+name=broken dresser
+id=0x0c22
+weight=1000
+movable=2
+}
+
+[0x0c23]
+{ S 2/2
+get=base_item
+name=broken dresser
+id=0x0c23
+weight=1000
+movable=2
+}
+
+[0x0c24]
+{ S
+get=base_item
+name=broken furniture
+id=0x0c24
+weight=1000
+movable=2
+}
+
+[0x0c25]
+{ E
+get=base_item
+name=broken furniture
+id=0x0c25
+weight=1000
+movable=2
+}
+
+[0x0c26]
+{ E 1/3
+get=base_item
+name=ruined bed
+id=0x0c26
+weight=1000
+movable=2
+}
+
+[0x0c27]
+{ E 2/3
+get=base_item
+name=ruined bed
+id=0x0c27
+weight=1000
+movable=2
+}
+
+[0x0c28]
+{ E 3/3
+get=base_item
+name=ruined bed
+id=0x0c28
+weight=1000
+movable=2
+}
+
+[0x0c29]
+{ S 1/3
+get=base_item
+name=ruined bed
+id=0x0c29
+weight=1000
+movable=2
+}
+
+[0x0c2a]
+{ S 2/3
+get=base_item
+name=ruined bed
+id=0x0c2a
+weight=1000
+movable=2
+}
+
+[0x0c2b]
+{ S 3/3
+get=base_item
+name=ruined bed
+id=0x0c2b
+weight=1000
+movable=2
+}
+
+[0x0c2c]
+{ S
+get=base_item
+name=ruined painting
+id=0x0c2c
+weight=100
+movable=2
+}
+
+[0x0c2d]
+{
+get=base_item
+name=debris
+id=0x0c2d
+weight=500
+movable=2
+}
+
+[0x0c2e]
+{
+get=base_item
+name=debris
+id=0x0c2e
+weight=500
+movable=2
+}
+
+[0x0c2f]
+{
+get=base_item
+name=debris
+id=0x0c2f
+weight=500
+movable=2
+}
+
+[0x0c30]
+{
+get=base_item
+name=debris
+id=0x0c30
+weight=500
+movable=2
+}
+
+[0x1894]
+{ E 1/4
+get=base_item
+name=ruined bed
+id=0x1894
+weight=1000
+movable=2
+}
+
+[0x1895]
+{ E 2/4
+get=base_item
+name=ruined bed
+id=0x1895
+weight=1000
+movable=2
+}
+
+[0x1896]
+{ E 3/4
+get=base_item
+name=ruined bed
+id=0x1896
+weight=1000
+movable=2
+}
+
+[0x1897]
+{ E 4/4
+get=base_item
+name=ruined bed
+id=0x1897
+weight=1000
+movable=2
+}
+
+[0x1898]
+{ S 1/4
+get=base_item
+name=ruined bed
+id=0x1898
+weight=1000
+movable=2
+}
+
+[0x1899]
+{ S 2/4
+get=base_item
+name=ruined bed
+id=0x1899
+weight=1000
+movable=2
+}
+
+[0x189a]
+{ S 3/4
+get=base_item
+name=ruined bed
+id=0x189a
+weight=1000
+movable=2
+}
+
+[0x189b]
+{ S 4/4
+get=base_item
+name=ruined bed
+id=0x189b
+weight=1000
+movable=2
+}
+
+[0x1db3]
+{
+get=base_item
+name=broken barrel
+id=0x1db3
+weight=100
+movable=2
+}
+
+[0x1db4]
+{
+get=base_item
+name=broken barrel
+id=0x1db4
+weight=100
+movable=2
+}
+
+[0x1db5]
+{
+get=base_item
+name=broken barrel
+id=0x1db5
+weight=100
+movable=2
+}
+
+[0x1db6]
+{
+get=base_item
+name=broken barrel
+id=0x1db6
+weight=100
+movable=2
+}
+
+// Unfinished furniture
+
+[0x0a2d]
+{ S
+get=base_item
+name=drawer
+id=0x0a2d
+weight=100
+movable=2
+}
+
+[0x0a2e]
+{ S
+get=base_item
+name=drawer
+id=0x0a2e
+weight=100
+movable=2
+}
+
+[0x0a2f]
+{ S
+get=base_item
+name=drawer
+id=0x0a2f
+weight=100
+movable=2
+}
+
+[0x0a31]
+{ S fancy
+get=base_item
+name=drawer
+id=0x0a31
+weight=100
+movable=2
+}
+
+[0x0a32]
+{ S fancy
+get=base_item
+name=drawer
+id=0x0a32
+weight=100
+movable=2
+}
+
+[0x0a33]
+{ S fancy
+get=base_item
+name=drawer
+id=0x0a33
+weight=100
+movable=2
+}
+
+[0x0a35]
+{ E
+get=base_item
+name=drawer
+id=0x0a35
+weight=100
+movable=2
+}
+
+[0x0a36]
+{ E
+get=base_item
+name=drawer
+id=0x0a36
+weight=100
+movable=2
+}
+
+[0x0a37]
+{ E
+get=base_item
+name=drawer
+id=0x0a37
+weight=100
+movable=2
+}
+
+[0x0a39]
+{ E fancy
+get=base_item
+name=drawer
+id=0x0a39
+weight=100
+movable=2
+}
+
+[0x0a3a]
+{ E fancy
+get=base_item
+name=drawer
+id=0x0a3a
+weight=100
+movable=2
+}
+
+[0x0a3b]
+{ E fancy
+get=base_item
+name=drawer
+id=0x0a3b
+weight=100
+movable=2
+}
+
+[0x0a3e]
+{ S small
+get=base_item
+name=drawer
+id=0x0a3e
+weight=100
+movable=2
+}
+
+[0x0a3f]
+{ S small
+get=base_item
+name=drawer
+id=0x0a3f
+weight=100
+movable=2
+}
+
+[0x0a40]
+{ S small
+get=base_item
+name=drawer
+id=0x0a40
+weight=100
+movable=2
+}
+
+[0x0a41]
+{ S small
+get=base_item
+name=drawer
+id=0x0a41
+weight=100
+movable=2
+}
+
+[0x0a42]
+{ S small
+get=base_item
+name=drawer
+id=0x0a42
+weight=100
+movable=2
+}
+
+[0x0a43]
+{ S small
+get=base_item
+name=drawer
+id=0x0a43
+weight=100
+movable=2
+}
+
+[0x0a46]
+{ E small
+get=base_item
+name=drawer
+id=0x0a46
+weight=100
+movable=2
+}
+
+[0x0a47]
+{ E small
+get=base_item
+name=drawer
+id=0x0a47
+weight=100
+movable=2
+}
+
+[0x0a48]
+{ E small
+get=base_item
+name=drawer
+id=0x0a48
+weight=100
+movable=2
+}
+
+[0x0a49]
+{ E small
+get=base_item
+name=drawer
+id=0x0a49
+weight=100
+movable=2
+}
+
+[0x0a4a]
+{ E small
+get=base_item
+name=drawer
+id=0x0a4a
+weight=100
+movable=2
+}
+
+[0x0a4b]
+{ E small
+get=base_item
+name=drawer
+id=0x0a4b
+weight=100
+movable=2
+}
+
+[0x10e1]
+{
+get=base_item
+name=barrel hoops
+id=0x10e1
+weight=100
+movable=2
+}
+
+[0x10e2]
+{
+get=base_item
+name=barrel hoops
+id=0x10e2
+weight=100
+movable=2
+}
+
+[0x1db7]
+{
+get=base_item
+name=barrel hoops
+id=0x1db7
+weight=100
+movable=2
+}
+
+[0x1db8]
+{
+get=base_item
+name=barrel lid
+id=0x1db8
+weight=100
+movable=2
+}
+
+[0x1e6e]
+{ S
+get=base_item
+name=boards
+id=0x1e6e
+weight=100
+movable=2
+}
+
+[0x1e6f]
+{ S
+get=base_item
+name=chair
+id=0x1e6f
+weight=1000
+movable=2
+}
+
+[0x1e70]
+{ E
+get=base_item
+name=drawer
+id=0x1e70
+weight=100
+movable=2
+}
+
+[0x1e71]
+{ S
+get=base_item
+name=chest of drawers
+id=0x1e71
+weight=1000
+movable=2
+}
+
+[0x1e72]
+{ E
+get=base_item
+name=table
+id=0x1e72
+weight=1000
+movable=2
+}
+
+[0x1e73]
+{ S
+get=base_item
+name=table legs
+id=0x1e73
+weight=100
+movable=2
+}
+
+[0x1e74]
+{ E
+get=base_item
+name=table leg
+id=0x1e74
+weight=100
+movable=2
+}
+
+[0x1e75]
+{ standing
+get=base_item
+name=table legs
+id=0x1e75
+weight=100
+movable=2
+}
+
+[0x1e76]
+{ S
+get=base_item
+name=shelves
+id=0x1e76
+weight=500
+movable=2
+}
+
+[0x1e77]
+{ E
+get=base_item
+name=boards
+id=0x1e77
+weight=500
+movable=2
+}
+
+[0x1e78]
+{ chair
+get=base_item
+name=chair
+id=0x1e78
+weight=1000
+movable=2
+}
+
+[0x1e79]
+{ S
+get=base_item
+name=drawer
+id=0x1e79
+weight=100
+movable=2
+}
+
+[0x1e7a]
+{ E
+get=base_item
+name=chest of drawers
+id=0x1e7a
+weight=1000
+movable=2
+}
+
+[0x1e7b]
+{ S
+get=base_item
+name=table
+id=0x1e7b
+weight=2000
+movable=2
+}
+
+[0x1e7c]
+{ E
+get=base_item
+name=table legs
+id=0x1e7c
+weight=100
+movable=2
+}
+
+[0x1e7d]
+{ S
+get=base_item
+name=table leg
+id=0x1e7d
+weight=100
+movable=2
+}
+
+[0x1e7e]
+{ E
+get=base_item
+name=shelves
+id=0x1e7e
+weight=500
+movable=2
+}
+
+[0x1e7f]
+{
+get=base_item
+name=stool
+id=0x1e7f
+weight=500
+movable=2
+}
+
+[0x1e80]
+{ S
+get=base_item
+name=wooden box
+id=0x1e80
+weight=500
+movable=2
+}
+
+[0x1e81]
+{ E
+get=base_item
+name=wooden box
+id=0x1e81
+weight=500
+movable=2
+}
+
+[0x1e82]
+{
+get=base_item
+name=lathe work
+id=0x1e82
+weight=200
+movable=2
+}
+
+[0x1eb1]
+{ S
+get=base_item
+name=barrel staves
+id=0x1eb1
+weight=100
+movable=2
+}
+
+[0x1eb2]
+{ E
+get=base_item
+name=barrel staves
+id=0x1eb2
+weight=100
+movable=2
+}
+
+[0x1eb3]
+{ S
+get=base_item
+name=barrel staves
+id=0x1eb3
+weight=100
+movable=2
+}
+
+[0x1eb4]
+{ E
+get=base_item
+name=barrel staves
+id=0x1eb4
+weight=100
+movable=2
+}
+
+[0x1eb5]
+{
+get=base_item
+name=unfinished barrel
+id=0x1eb5
+weight=500
+movable=2
+}

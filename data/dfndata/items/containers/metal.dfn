@@ -1,0 +1,86 @@
+// Metal
+[0x09a8]
+{ S
+get=base_item
+name=metal box
+id=0x09a8
+weight=2000
+weightmax=400000
+value=14 7
+type=1
+restock=10
+movable=1
+good=6
+}
+
+[0x0e80]
+{ E (strong box)
+get=base_item
+name=metal box
+id=0x0e80
+weight=2000
+weightmax=400000
+value=14 7
+type=1
+restock=10
+movable=1
+good=6
+}
+
+[0x09ab]
+{ S
+get=base_item
+name=metal chest
+id=0x09ab
+weight=2000
+weightmax=400000
+value=40 20
+type=1
+restock=10
+movable=1
+good=6
+}
+
+[0x0e7c]
+{ E
+get=base_item
+name=metal chest
+id=0x0e7c
+weight=2000
+weightmax=400000
+value=40 20
+type=1
+restock=10
+movable=1
+good=6
+}
+
+[0x0e40]
+{ E goldparts
+get=base_item
+name=metal chest
+id=0x0e40
+weight=3000
+weightmax=400000
+value=40 20
+type=1
+restock=10
+movable=1
+good=6
+}
+
+[0x0e41]
+{ S goldparts
+get=base_item
+name=metal chest
+id=0x0e41
+weight=3000
+weightmax=400000
+value=40 20
+type=1
+restock=10
+movable=1
+good=6
+}
+
+

@@ -1,0 +1,254 @@
+// SWORDS
+
+[0x1440]
+{ facing West
+get=base_item
+name=cutlass
+id=0x1440
+weight=800
+value=26 13
+layer=1
+lodamage=6
+hidamage=28
+hp=31 70
+spd=45
+str=10
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x1441]
+{ facing North
+get=base_item
+name=cutlass
+id=0x1441
+weight=800
+value=26 13
+layer=1
+lodamage=6
+hidamage=28
+hp=31 70
+spd=45
+str=10
+restock=10
+decay=1
+good=21
+}
+
+[0x13fe]
+{ facing West
+get=base_item
+name=katana
+id=0x13fe
+weight=600
+value=34 17
+layer=1
+lodamage=5
+hidamage=26
+hp=31 90
+spd=58
+str=10
+restock=10
+decay=1
+good=21
+}
+
+[0x13ff]
+{ facing North
+get=base_item
+name=katana
+id=0x13ff
+weight=600
+value=34 17
+layer=1
+lodamage=5
+hidamage=26
+hp=31 90
+spd=58
+str=10
+restock=10
+decay=1
+good=21
+}
+
+[0x0f5e]
+{ facing North
+get=base_item
+name=broadsword
+id=0x0f5e
+weight=600
+value=42 21
+layer=1
+lodamage=5
+hidamage=29
+hp=31 100
+spd=45
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x0f5f]
+{ facing West
+get=base_item
+name=broadsword
+id=0x0f5f
+weight=600
+value=42 21
+layer=1
+lodamage=5
+hidamage=29
+hp=31 100
+spd=45
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x0f60]
+{ facing West
+get=base_item
+name=longsword
+id=0x0f60
+weight=700
+value=58 29
+layer=1
+lodamage=5
+hidamage=33
+hp=31 90
+spd=35
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x0f61]
+{ facing North
+get=base_item
+name=longsword
+id=0x0f61
+weight=700
+value=58 29
+layer=1
+lodamage=5
+hidamage=33
+hp=31 90
+spd=35
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x13b5]
+{ facing West
+get=base_item
+name=scimitar
+id=0x13b5
+weight=500
+value=36 18
+layer=1
+lodamage=4
+hidamage=30
+hp=31 90
+spd=43
+str=10
+restock=10
+decay=1
+good=21
+}
+
+[0x13b6]
+{ facing North
+get=base_item
+name=scimitar
+id=0x13b6
+weight=500
+value=36 18
+layer=1
+lodamage=4
+hidamage=30
+hp=31 90
+spd=43
+str=10
+restock=10
+decay=1
+good=21
+}
+
+[0x13b7]
+{ facing West
+get=base_item
+name=long sword
+id=0x13b7
+weight=100
+value=58 29
+layer=1
+lodamage=5
+hidamage=33
+hp=31 90
+spd=35
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x13b8]
+{ facing North
+get=base_item
+name=long sword
+id=0x13b8
+weight=100
+value=58 29
+layer=1
+lodamage=5
+hidamage=33
+hp=31 90
+spd=35
+str=25
+restock=10
+decay=1
+good=21
+}
+
+[0x13b9]
+{ facing North
+get=base_item
+name=viking sword
+id=0x13b9
+weight=600
+value=50 25
+layer=1
+lodamage=6
+hidamage=34
+hp=31 90
+spd=30
+str=40
+restock=10
+decay=1
+good=21
+}
+
+[0x13ba]
+{ facing West
+get=base_item
+name=viking sword
+id=0x13ba
+weight=600
+value=50 25
+layer=1
+lodamage=6
+hidamage=34
+hp=31 90
+spd=30
+str=40
+restock=10
+decay=1
+good=21
+}

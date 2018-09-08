@@ -1,0 +1,568 @@
+[0x122a]
+{
+get=base_item
+name=blood
+id=0x122a
+weight=100
+movable=2
+}
+
+[0x122b]
+{
+get=base_item
+name=blood
+id=0x122b
+weight=100
+movable=2
+}
+
+[0x122c]
+{
+get=base_item
+name=blood
+id=0x122c
+weight=100
+movable=2
+}
+
+[0x122d]
+{
+get=base_item
+name=blood
+id=0x122d
+weight=100
+movable=2
+}
+
+[0x122e]
+{
+get=base_item
+name=blood
+id=0x122e
+weight=100
+movable=2
+}
+
+[0x122f]
+{
+get=base_item
+name=blood smear
+id=0x122f
+weight=100
+movable=2
+}
+
+[0x1645]
+{
+get=base_item
+name=blood
+id=0x1645
+weight=100
+movable=2
+}
+
+[0x1cc7]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cc7
+weight=100
+movable=2
+}
+
+[0x1cc8]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cc8
+weight=100
+movable=2
+}
+
+[0x1cc9]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cc9
+weight=100
+movable=2
+}
+
+[0x1cca]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cca
+weight=100
+movable=2
+}
+
+[0x1ccb]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1ccb
+weight=100
+movable=2
+}
+
+[0x1ccc]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1ccc
+weight=100
+movable=2
+}
+
+[0x1ccd]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1ccd
+weight=100
+movable=2
+}
+
+[0x1cce]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cce
+weight=100
+movable=2
+}
+
+[0x1ccf]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1ccf
+weight=100
+movable=2
+}
+
+[0x1cd0]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd0
+weight=100
+movable=2
+}
+
+[0x1cd1]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd1
+weight=100
+movable=2
+}
+
+[0x1cd2]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd2
+weight=100
+movable=2
+}
+
+[0x1cd3]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd3
+weight=100
+movable=2
+}
+
+[0x1cd4]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd4
+weight=100
+movable=2
+}
+
+[0x1cd5]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd5
+weight=100
+movable=2
+}
+
+[0x1cd6]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd6
+weight=100
+movable=2
+}
+
+[0x1cd7]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd7
+weight=100
+movable=2
+}
+
+[0x1cd8]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd8
+weight=100
+movable=2
+}
+
+[0x1cd9]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cd9
+weight=100
+movable=2
+}
+
+[0x1cda]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cda
+weight=100
+movable=2
+}
+
+[0x1cdb]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cdb
+weight=100
+movable=2
+}
+
+[0x1cdc]
+{ combines many ways
+get=base_item
+name=blood
+id=0x1cdc
+weight=100
+movable=2
+}
+
+[0x1cf1]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf1
+weight=100
+movable=2
+}
+
+[0x1cf2]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf2
+weight=100
+movable=2
+}
+
+[0x1cf3]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf3
+weight=100
+movable=2
+}
+
+[0x1cf4]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf4
+weight=100
+movable=2
+}
+
+[0x1cf5]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf5
+weight=100
+movable=2
+}
+
+[0x1cf6]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf6
+weight=100
+movable=2
+}
+
+[0x1cf7]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf7
+weight=100
+movable=2
+}
+
+[0x1cf8]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf8
+weight=100
+movable=2
+}
+
+[0x1cf9]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cf9
+weight=100
+movable=2
+}
+
+[0x1cfa]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cfa
+weight=100
+movable=2
+}
+
+[0x1cfb]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cfb
+weight=100
+movable=2
+}
+
+[0x1cfc]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cfc
+weight=100
+movable=2
+}
+
+[0x1cfd]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cfd
+weight=100
+movable=2
+}
+
+[0x1cfe]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cfe
+weight=100
+movable=2
+}
+
+[0x1cff]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1cff
+weight=100
+movable=2
+}
+
+[0x1d00]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d00
+weight=100
+movable=2
+}
+
+[0x1d01]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d01
+weight=100
+movable=2
+}
+
+[0x1d02]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d02
+weight=100
+movable=2
+}
+
+[0x1d03]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d03
+weight=100
+movable=2
+}
+
+[0x1d04]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d04
+weight=100
+movable=2
+}
+
+[0x1d05]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d05
+weight=100
+movable=2
+}
+
+[0x1d06]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d06
+weight=100
+movable=2
+}
+
+[0x1d07]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d07
+weight=100
+movable=2
+}
+
+[0x1d08]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d08
+weight=100
+movable=2
+}
+
+[0x1d09]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d09
+weight=100
+movable=2
+}
+
+[0x1d0a]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0a
+weight=100
+movable=2
+}
+
+[0x1d0b]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0b
+weight=100
+movable=2
+}
+
+[0x1d0c]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0c
+weight=100
+movable=2
+}
+
+[0x1d0d]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0d
+weight=100
+movable=2
+}
+
+[0x1d0e]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0e
+weight=100
+movable=2
+}
+
+[0x1d0f]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d0f
+weight=100
+movable=2
+}
+
+[0x1d10]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d10
+weight=100
+movable=2
+}
+
+[0x1d11]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d11
+weight=100
+movable=2
+}
+
+[0x1d12]
+{ combines many ways
+get=base_item
+name=blood patch
+id=0x1d12
+weight=100
+movable=2
+}
+
+

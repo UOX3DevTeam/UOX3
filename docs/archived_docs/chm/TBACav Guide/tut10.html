@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Tutorial 10: Creating new manufacturing skills</title>
+</head>
+<body>
+<center><h1>Tutorial 10</h1><h2>Creating new manufacturing skills</h2><h4>Written by: [TBA]Cavalier</h4></center>
+<p>Last updated: 7th October, 2000
+<hr>
+<p>Continuing on from tutorial 6, I promised you that I'd show you all the different ways of creating new manufacturing skills. Well here it is, and it requires no hard coding to boot. For this tutorial I'm assuming you've read all the triggers tutorials and the create.scp guide. Having read the tutorial for adding new items to your shard will be a bonus. Well start off using the item trigger way, and then move onto using world triggers and envoking. At the end of each method I'll list the advantages and disadvantages of that particular method.
+
+<h3>The item trigger way</h3>
+<p>There are 2 ways to make new manufacturing skills, the first and probably easiest is to make a new item, bind a trigger to it that opens a makemenu, and to create the makemenu that is opened. For this example I will be using my new gem encrusted platemail. We start off by making the item used to create the final product. In my script there are several different creation items, but they are all smithing hammers. I will be using the saphire hammer, armour and makemenu. 
+
+<p>So here's the hammer item script:
+
+<p>This is pretty much a normal smithing hammer except it has two names (identified and non identified), a bluish colour and a trigger. The names and blue colour you should be able to work out, and here's the trigger:
+
+<p>Now what happens here is that I set a fail message and then have a smithing skill check. This is a failsafe so the script doesnt use the saphires and then tries to open the makemenu but fails because of lack of ingots or skill, you dont lose the saphires. Note I say only ingots here. This is because I didn't include the rubies in the make line at the very bottom (opens the makemenu, picks the skill and resource). If I had put it at the bottom in the make command, you would need the same amount of rubies and ingots that i had put in the makemenu RESOURCE line. Example is I put 12 for the resources to use in the makemenu. It would then want 12 of both resources (ingots and saphires) which is probably a bit much. So I just have it use two gems. The script runs through, plays some sounds aborts if there isn't any saphires or ingots and then it opens the makemenu. Here's the makemenu:
+
+<p>Yep, a typical example of a makemenu. You can only make platemail however, so all the items are listed in the one section. That's about it for that method, so here's the advantages and disadvantages:
+
+<h4>Advantages</h4>
+
+<h4>Disadvantages</h4>
+<p>You need to script a new item for it
+
+<h3>The world trigger way</h3>
+<p>The second metohd of creating items is fairly easy and uses the same ideas as the item trigger way, but it gives slightly different results.

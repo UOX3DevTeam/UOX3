@@ -1,0 +1,4 @@
+        GUMPMENU <value>
+
+  Purpose: 
+        Opens gump from list in misc.dfn

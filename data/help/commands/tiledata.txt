@@ -1,0 +1,4 @@
+        TILEDATA <target>
+  Purpose: 
+        Dumps tile-data of targeted map-tile
+        to server console.

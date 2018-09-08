@@ -1,0 +1,71 @@
+[0x0df2]
+{
+get=base_item
+name=wand
+id=0x0df2
+weight=200
+value=30 15
+layer=1
+lodamage=2
+hidamage=6
+hp=31 70
+spd=35
+str=0
+restock=5
+decay=1
+good=27
+}
+
+[0x0df3]
+{
+get=base_item
+name=wand
+id=0x0df3
+weight=200
+value=30 15
+layer=1
+lodamage=2
+hidamage=6
+hp=31 70
+spd=35
+str=0
+restock=5
+decay=1
+good=27
+}
+
+[0x0df4]
+{
+get=base_item
+name=wand
+id=0x0df4
+weight=200
+value=30 15
+layer=1
+lodamage=2
+hidamage=6
+hp=31 70
+spd=35
+str=0
+restock=5
+decay=1
+good=27
+}
+
+[0x0df5]
+{
+get=base_item
+name=wand
+id=0x0df5
+weight=200
+value=30 15
+layer=1
+lodamage=2
+hidamage=6
+hp=31 70
+spd=35
+str=0
+restock=5
+decay=1
+good=27
+}

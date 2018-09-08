@@ -1,0 +1,5 @@
+        IWIPE <x1 y1 x2 y2>/<target>
+
+  Purpose: 
+        Inverted Wipe, will wipe all items outside
+        targetted area/specified coordinates.

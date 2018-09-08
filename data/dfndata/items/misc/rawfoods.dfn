@@ -1,0 +1,228 @@
+// Rawfoods.dfn
+// raw food
+
+[base_raw_food]
+{
+get=base_item
+pileable=1
+good=40
+}
+
+[0x09f1]
+{
+get=base_raw_food
+name=cut of raw ribs
+id=0x09f1
+weight=100
+value=8 4
+}
+
+[0x1e15]
+{
+get=base_raw_food
+name=raw fish
+id=0x1e15
+weight=100
+value=2 1
+}
+
+[0x1e16]
+{
+get=base_raw_food
+name=raw fish
+id=0x1e16
+weight=100
+value=2 1
+}
+
+[0x1e17]
+{
+get=base_raw_food
+name=raw fish
+id=0x1e17
+weight=100
+value=2 1
+}
+
+[0x1e18]
+{
+get=base_raw_food
+name=raw fish
+id=0x1e18
+weight=100
+value=2 1
+}
+
+[0x1e19]
+{
+get=base_raw_food
+name=fish head
+id=0x1e19
+weight=50
+value=2 1
+}
+
+[0x1e1b]
+{
+get=base_raw_food
+name=fish heads
+id=0x1e1b
+weight=150
+value=2 1
+}
+
+[0x1e1a]
+{
+get=base_raw_food
+name=fish head
+id=0x1e1a
+weight=100
+value=2 1
+}
+
+[0x1609]
+{
+get=base_raw_food
+name=raw leg of lamb
+id=0x1609
+weight=200
+value=8 4
+}
+
+[0x1607]
+{
+get=base_raw_food
+name=raw chicken leg
+id=0x1607
+weight=100
+value=2 1
+}
+
+[0x1042]
+{
+get=base_raw_food
+name=unbaked pie
+id=0x1042
+weight=100
+value=4 2
+}
+
+[0x097a]
+{
+get=base_raw_food
+name=raw fish steak
+id=0x097a
+weight=10
+value=2 1
+}
+
+[0x09b9]
+{
+get=base_raw_food
+name=raw bird
+id=0x09b9
+weight=100
+value=2 1
+}
+
+[0x09ba]
+{
+get=base_raw_food
+name=raw bird
+id=0x09ba
+weight=100
+value=2 1
+}
+
+[0x09cc]
+{
+get=base_raw_food
+name=fish
+id=0x09cc
+weight=100
+value=2 1
+}
+
+
+[0x09cd]
+{
+get=base_raw_food
+name=fish
+id=0x09cd
+weight=100
+value=2 1
+}
+
+[0x09ce]
+{
+get=base_raw_food
+name=fish
+id=0x09ce
+weight=100
+value=2 1
+}
+
+[0x09cf]
+{
+get=base_raw_food
+name=fish
+id=0x09cf
+weight=100
+value=2 1
+}
+
+[0x0dd6]
+{
+get=base_raw_food
+name=small fish
+id=0x0dd6
+weight=500
+value=6 3
+}
+
+[0x0dd7]
+{
+get=base_raw_food
+name=small fish
+id=0x0dd7
+weight=500
+value=6 3
+}
+
+[0x0dd8]
+{
+get=base_raw_food
+name=small fish
+id=0x0dd8
+weight=500
+value=6 3
+}
+
+[0x0dd9]
+{
+get=base_raw_food
+name=small fish
+id=0x0dd9
+weight=500
+value=6 3
+}
+
+[0x1083]
+{
+get=base_raw_food
+name=uncooked pizza
+id=0x1083
+weight=100
+value=4 2
+restock=10
+}
+
+[0x09b5]
+{
+get=base_raw_food
+name=eggs
+id=0x09b5
+weight=100
+value=2 1
+restock=10
+}

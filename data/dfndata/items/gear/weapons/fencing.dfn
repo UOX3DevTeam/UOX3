@@ -1,0 +1,191 @@
+// FENCING WEAPONS
+
+[0x0f62]
+{ facing North
+get=base_item
+name=spear
+id=0x0f62
+weight=700
+value=32 16
+layer=2
+lodamage=2
+hidamage=36
+hp=31 80
+spd=46
+str=30
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0f63]
+{ facing West
+get=base_item
+name=spear
+id=0x0f63
+weight=700
+value=32 16
+layer=2
+lodamage=2
+hidamage=36
+hp=31 80
+spd=46
+str=30
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1400]
+{ facing West
+get=base_item
+name=kryss
+id=0x1400
+weight=100
+value=36 18
+layer=1
+lodamage=3
+hidamage=28
+hp=31 90
+spd=53
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1401]
+{ facing North
+get=base_item
+name=kryss
+id=0x1401
+weight=100
+value=36 18
+layer=1
+lodamage=3
+hidamage=28
+hp=31 90
+spd=53
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1402]
+{ facing West
+get=base_item
+name=short spear
+id=0x1402
+weight=400
+value=28 14
+layer=2
+lodamage=4
+hidamage=32
+hp=31 70
+spd=50
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1403]
+{ facing North
+get=base_item
+name=short spear
+id=0x1403
+weight=400
+value=28 14
+layer=2
+lodamage=4
+hidamage=32
+hp=31 70
+spd=50
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1404]
+{ facing West
+get=base_item
+name=war fork
+id=0x1404
+weight=900
+value=30 15
+layer=1
+lodamage=4
+hidamage=32
+hp=31 110
+spd=45
+str=35
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x1405]
+{ facing North
+get=base_item
+name=war fork
+id=0x1405
+weight=900
+value=30 15
+layer=1
+lodamage=4
+hidamage=32
+hp=31 110
+spd=45
+str=35
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e87]
+{ facing North
+get=base_item
+name=pitchfork
+id=0x0e87
+weight=1000
+value=25 12
+layer=2
+lodamage=4
+hidamage=16
+hp=31 60
+spd=45
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e88]
+{ facing West
+get=base_item
+name=pitchfork
+id=0x0e88
+weight=1000
+value=25 12
+layer=2
+lodamage=4
+hidamage=16
+hp=31 60
+spd=45
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}

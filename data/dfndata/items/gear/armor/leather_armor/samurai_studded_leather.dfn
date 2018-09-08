@@ -1,0 +1,70 @@
+[0x277c]
+{
+get=studded_do
+name=studded do
+id=0x277c
+}
+
+[0x27c7]
+{
+get=studded_do
+name=studded do
+id=0x27c7
+}
+
+[0x277f]
+{
+get=studded_hiro_sode
+name=studded hiro sode
+id=0x277f
+}
+
+[0x27ca]
+{
+get=studded_hiro_sode
+name=studded hiro sode
+id=0x27ca
+}
+
+[0x2787]
+{
+get=studded_suneate
+name=studded suneate
+id=0x2787
+}
+
+[0x27d2]
+{
+get=studded_suneate
+name=studded suneate
+id=0x27d2
+}
+
+[0x278b]
+{
+get=studded_haidate
+name=studded haidate
+id=0x278b
+}
+
+[0x27d6]
+{
+get=studded_haidate
+name=studded haidate
+id=0x27d6
+}
+
+[0x279d]
+{
+get=studded_mempo
+name=studded mempo
+id=0x279d
+}
+
+[0x27e8]
+{
+get=studded_mempo
+name=studded mempo
+id=0x27e8
+}
+

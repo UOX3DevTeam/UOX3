@@ -1,0 +1,814 @@
+[ITEMMENU 5004]
+{
+Agressive Animals
+0x25d0=Dire Wolf
+NPC=direwolf
+0x20d0=Giant Rat
+NPC=giantrat
+0x212f=Giant Toad
+NPC=gianttoad
+0x20e4=Scorpion
+NPC=scorpion
+0x2123=Sewer Rat
+NPC=sewerrat
+<=Previous Menu
+ITEMMENU=5001
+}
+
+[ITEMMENU 5005]
+{
+Non-Agressive Animals
+0x211a=Random Small Bird
+NPC=bird
+0x2118=Black Bear
+NPC=blackbear
+0x2101=Boar
+NPC=boar
+0x2118=Brown Bear
+NPC=brownbear
+0x20f0=Bull
+NPC=bull
+0x2130=Bullfrog
+NPC=bullfrog
+0x211a=Canary Bird
+NPC=canary
+0x211a=Crow
+NPC=crow
+0x211b=Cat
+NPC=cat
+0x20d1=Chicken
+NPC=chicken
+0x2583=Cougar
+NPC=cougar
+0x2103=Cow
+NPC=cow
+0x2588=Dog
+NPC=dog
+0x211d=Eagle
+NPC=eagle
+0x20ee=Falcon
+NPC=falcon
+0x2580=Goat
+NPC=goat
+0x2592=Gorilla
+NPC=gorilla
+0x25d1=Gray Wolf
+NPC=graywolf
+0x211e=Grizzly Bear
+NPC=grizbear
+0x20d4=Great Hart
+NPC=hart
+0x20ee=Hawk
+NPC=hawk
+0x20d4=Hind
+NPC=hind
+0x2125=Jack Rabbit
+NPC=jackrabbit
+0x2580=Mountain Goat
+NPC=mountaingoat
+0x2126=Packhorse
+NPC=packhorse
+0x2127=Packllama
+NPC=packllama
+0x25b5=Panther
+NPC=Panther
+0x20ee=Phoenix
+NPC=phoenix
+0x2101=Pig
+NPC=pig
+0x20e1=Polar Bear
+NPC=polarbear
+0x2125=Rabbit
+NPC=rabbit
+0x2123=Rat
+NPC=rat
+0x211a=Raven
+NPC=raven
+0x20e6=Sheep
+NPC=sheep
+0x25a3=Snow Leopard
+NPC=snowleopard
+0x25d3=Timber Wolf
+NPC=timberwolf
+0x25d2=White Wolf
+NPC=whitewolf
+0x2d97=Squirrel
+NPC=squirrel
+0x2d98=Ferret
+NPC=ferret
+<=Previous Menu
+ITEMMENU=5001
+}
+
+[ITEMMENU 5006]
+{
+Sea Creatures
+0x2593=Deep-Sea Serpent
+NPC=deepseaserpent
+0x20f1=Dolphin
+NPC=dolphin
+0x25a2=Kraken
+NPC=kraken
+0x2593=Sea Serpent
+NPC=seaserpent
+0x20ff=Walrus
+NPC=walrus
+<=Previous Menu
+ITEMMENU=5001
+}
+
+[ITEMMENU 5007]
+{
+Agressive Plants
+0x2582=Corpser
+NPC=corpser
+0x20fa=Reaper
+NPC=reaper
+0x25cb=Swamp Tentacle
+NPC=swamptentacle
+0x2582=Whipping Vine
+NPC=whippingvine
+0x2614=Quagmire
+NPC=quagmire
+0x2608=Bog Thing
+NPC=bogthing
+0x2607=Bogling
+NPC=bogling
+<=Previous Menu
+ITEMMENU=5001
+}
+
+[ITEMMENU 5008]
+{
+Arachnids
+0x25c4=Dread Spider
+NPC=dreadspider
+0x25c5=Frost Spider
+NPC=frostspider
+0x26c6=Giant Spider
+NPC=spider
+0x26c4=Giant Black Widow
+NPC=giantblackwidow
+0x25c9=Terathan Drone
+NPC=teradrone
+0x25cc=Terathan Warrior
+NPC=terawarrior
+0x25ca=Terathan Avenger
+NPC=teraavenger
+0x25cb=Terathan Matriarch
+NPC=teramatriarch
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5009]
+{
+Daemons
+0x2586=Balron
+NPC=balron
+0x2584=Daemon
+NPC=daemon
+0x2584=Armed Daemon
+NPC=armeddaemon
+0x2585=Exodus
+NPC=exodus
+0x2587=Ice Fiend
+NPC=icefiend
+0x259f=Imp
+NPC=imp
+0x25a6=Mongbat
+NPC=mongbat
+0x2605=Arcane Daemon
+NPC=arcanedaemon
+0x260e=Moloch Daemon
+NPC=moloch
+0x2609=Chaos Daemon
+NPC=chaosdaemon
+0x259f=Shadow Fiend
+NPC=shadowfiend
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5010]
+{
+Dragons
+0x20d6=Gray Dragon
+NPC=graydragon
+0x20d6=Red Dragon
+NPC=reddragon
+0x20d6=Gray Drake
+NPC=graydrake
+0x20d6=Red Drake
+NPC=reddrake
+0x20d6=Shadow Wyrm
+NPC=shadowwyrm
+0x20d6=White Wyrm
+NPC=whitewyrm
+0x20d6=Ancient Wyrm
+NPC=ancientwyrm
+0x25d4=Wyvern
+NPC=wyvern
+0x20d6=Serpentine Dragon
+NPC=serpentinedragon
+0x20d6=Skeletal Dragon
+NPC=skeletaldragon
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5011]
+{
+Elementals
+0x25d7=Air Elemental
+NPC=airele
+0x20d7=Earth Elemental
+NPC=earthele
+0x25d9=Fire Elemental
+NPC=firele
+0x25dd=Water Elemental
+NPC=waterele
+0x25d8=Blood Elemental
+NPC=bloodele
+0x25db=Poison Elemental
+NPC=poisonele
+0x25da=Ice Elemental
+NPC=iceele
+0x25dc=Snow Elemental
+NPC=snowele
+0x25d6=Acid Elemental
+NPC=acidele
+0x20d7=Agapite Elemental
+NPC=agapiteele
+0x20d7=Bronze Elemental
+NPC=bronzeele
+0x20d7=Copper Elemental
+NPC=copperele
+0x2620=Crystal Elemental
+NPC=crystalele
+0x20d7=Dull Copper Elemental
+NPC=dullcopperele
+0x20d7=Golden Elemental
+NPC=goldele
+0x20d7=Shadow Elemental
+NPC=shadowironele
+0x20d7=Valorite Elemental
+NPC=valoriteele
+0x20d7=Verite Elemental
+NPC=veriteele
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5012]
+{
+Gargoyles
+0x258d=Gargoyle
+NPC=gargoyle
+0x258e=Stone Gargoyle
+NPC=stonegargoyle
+0x258d=Enslaved Gargoyle
+NPC=enslavedgargoyle
+0x258d=Fire Gargoyle
+NPC=firegargoyle
+0x258d=Gargoyle Destroyer
+NPC=gargoyledestroyer
+0x258d=Gargoyle Enforcer
+NPC=gargoyleenforcer
+0x258d=Gargoyle Alchemist
+NPC=gargoylealchemist
+0x258d=Gargoyle Nason
+NPC=gargoylemason
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5013]
+{
+Giants
+0x20d8=Ettin
+NPC=ettin
+0x20d8=Ettin with Hammer
+NPC=hammerettin
+0x20df=Ogre
+NPC=ogre
+0x25a8=Ogre Lord
+NPC=ogrelord
+0x25a8=Artic Ogre Lord
+NPC=arcticogrelord
+0x20e9=Troll
+NPC=troll
+0x20e9=Troll with Axe
+NPC=axetroll
+0x20e9=Troll with Hammer
+NPC=hammertroll
+0x20e9=Frost Troll
+NPC=frosttroll
+0x212d=Cyclopedian Warrior
+NPC=cyclops
+0x25cd=Titan
+NPC=titan
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5014]
+{
+Humanoids
+0x25ae=Orc
+NPC=orc
+0x25ae=Orc with Club
+NPC=cluborc
+0x25af=an Orcish Captain
+NPC=orccaptain
+0x25b0=an Orcish Lord
+NPC=orclord
+0x25b1=an Orcish Mage
+NPC=orcmage
+0x25ae=Orc Bomber
+NPC=orcbomber
+0x25ae=Orc Scout
+NPC=orcscout
+0x02FC=a juka warrior
+NPC=jukawarrior
+0x02FD=a juka mage
+NPC=jukamage
+0x02FE=a juka lord
+NPC=jukalord
+0x0302=a meer mage
+NPC=meermage
+0x0303=a meer warrior
+NPC=meerwarrior
+0x0304=a meer eternal
+NPC=meereternal
+0x0305=a meer captain
+NPC=meercaptain
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5015]
+{
+Misc Monsters
+0x0=a Succubus
+NPC=succubus
+0x25b6=a Pixie
+NPC=pixie
+0x2581=a Centaur
+NPC=centaur
+0x2589=an Etheral Warrior
+NPC=ethwarrior
+0x2590=an Efreet
+NPC=efreet
+0x2597=a Hellcat
+NPC=hellcat
+0x2596=a Hellhound
+NPC=hellhound
+0x2596=a Large Hellcat
+NPC=largehellcat
+0x2594=a Stoneharpy
+NPC=stoneharpy
+0x258f=a Gazer
+NPC=gazer
+0x20dc=a Harpy
+NPC=harpy
+0x2595=a Headless One
+NPC=headless
+0x258f=an Elder Gazer
+NPC=eldergazer
+0x20eb=a Slime
+NPC=slime
+0x20eb=a Jwilson
+NPC=jwilson
+0x20eb=a Frost Ooze
+NPC=frostooze
+0x2100=a Wisp
+NPC=wisp
+0x2100=a Shadow Wisp
+NPC=shadowwisp
+0x258a=an evil mage
+NPC=evilmage
+0x258b=an evil mage lord
+NPC=evilmagelord
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5016]
+{
+Mounts
+0x259a=Horse(brown)
+NPC=brownhorse
+0x2599=Horse(gray)
+NPC=grayhorse
+0x2598=Horse
+NPC=horse
+0x2121=Horse(dark)
+NPC=darkhorse
+0x20f6=Llama
+NPC=llama
+0x25b4=Frenzied Ostard
+NPC=frenziedostard
+0x25b3=Forest Ostard
+NPC=forestostard
+0x25b2=Desert Ostard
+NPC=desertostard
+0x259c=Nightmare
+NPC=nightmare
+0x259c=Nightmare(dark)
+NPC=darknightmare
+0x259c=Nightmare(mane)
+NPC=manenightmare
+0x259c=Nightmare(pure)
+NPC=purenightmare
+0x25ce=Unicorn
+NPC=unicorn
+0x25a0=Ki-rin
+NPC=ki-rin
+0x259b=Dark Steed
+NPC=darksteed
+0x259d=Silver Steed
+NPC=silversteed
+0x2617=Skeletal Mount
+NPC=skeletalmount
+0x25ba=Sea Horse
+NPC=seahorse
+0x2124=Britannian War Horse
+NPC=warhorse1
+0x2124=Council of Mages War Horse
+NPC=warhorse2
+0x2124=Minax War Horse
+NPC=warhorse3
+0x2124=Shadowlord War Horse
+NPC=warhorse4
+0x2124=Fire Steed
+NPC=firesteed
+0x260f=Giant Beetle
+NPC=giantbeetle
+0x260f=Ridgeback
+NPC=ridgeback
+0x260f=Savage Ridgeback
+NPC=savageridgeback
+0x260f=Ethereal Ridgeback
+NPC=etherealridgeback
+0x260f=Swamp Dragon
+NPC=swampdragon
+0x260f=Armored Swamp Dragon
+NPC=armoredswampdragon
+0x260f=Ethereal Swamp Dragon
+NPC=etherealswampdragon
+0x281c=Giant Fire Beetle
+NPC=giantfirebeetle
+0x276a=hiryu
+NPC=giantbeetle
+0x2d95=Chimera
+NPC=chimera
+0x2d96=Cu Sidhe
+NPC=cusidhe
+0x2d9c=Mondain's Steed
+NPC=mondainsteed
+<=Previous Menu
+ITEMMENU=5001
+}
+
+[ITEMMENU 5017]
+{
+Reptiles
+0x20da=Alligator
+NPC=alligator
+0x25bf=Giant Serpent
+NPC=giantserpent
+0x20fc=Ice Snake
+NPC=icenake
+0x25c0=Ice Serpent
+NPC=iceserpent
+0x2131=Lava Lizard
+NPC=lavalizard
+0x20fc=Lava Snake
+NPC=lavasnake
+0x25c1=Lava Serpent
+NPC=lavaserpent
+0x25ad=Ophidian Warrior
+NPC=ophwarrior
+0x25ad=Ophidian Enforcer
+NPC=ophenforcer
+0x25aa=Ophidian Knight
+NPC=ophknight
+0x25aa=Ophidian Avenger
+NPC=ophavenger
+0x25ab=Ophidian Apprentice
+NPC=ophapprentice
+0x25a9=Ophidian Shaman
+NPC=ophshaman
+0x25ac=Ophidian Matriarch
+NPC=ophmatriarch
+0x25c2=Silver Serpent
+NPC=silverserpent
+0x20fc=Snake
+NPC=snake
+<=Previous Menu
+ITEMMENU=5002
+}
+
+[ITEMMENU 5018]
+{
+Undead
+0x25d5=a Zombie
+NPC=zombie
+0x25a5=a Lich Lord
+NPC=lichlord
+0x25a4=a Lich
+NPC=lich
+0x25c7=a Spectre
+NPC=spectre
+0x25c7=a Wraith
+NPC=wraith
+0x25c7=a Shade
+NPC=shade
+0x25bc=a Skeleton
+NPC=skeleton
+0x25bc=a Bone Axeman
+NPC=boneaxeman
+0x25bd=a Bone Knight
+NPC=boneknight
+0x25be=a Bone Magi
+NPC=bonemage
+0x25a7=a Mummy
+NPC=mummy
+0x25b8=a Rotting Corpse
+NPC=rottingcorpse
+0x2591=a Ghoul
+NPC=ghoul
+<=Previous Menu
+ITEMMENU=5002
+}
+
+// Human characters + vendors
+[ITEMMENU 5019]
+{
+Female People
+0x2107=Basic Female
+NPC=female
+0x2107=Archmage(Murderer)
+NPC=f_murderer-archmage
+0x2107=Artist
+NPC=f_artist
+0x2107=Beggar
+NPC=f_beggar
+0x2107=Brigand
+NPC=f_brigand
+0x2107=Fighter
+NPC=f_fighter
+0x2107=Guard
+NPC=f_guard
+0x2107=Gypsy
+NPC=f_gypsy
+0x2107=Jailer
+NPC=f_jailer
+0x2107=Noble
+NPC=f_noble
+0x2107=Peasant
+NPC=f_peasant
+0x2107=Pirate
+NPC=f_pirate
+0x2107=Sailor
+NPC=f_sailor
+0x2107=Seeker of Adventure
+NPC=f_seeker
+0x2107=Thief
+NPC=f_thief
+0x2107=Towncrier
+NPC=f_towncrier
+0x2107=Wandering Healer
+NPC=f_whealer
+<=Previous Menu
+ITEMMENU=5003
+}
+
+[ITEMMENU 5020]
+{
+Female Vendors
+0x2107=Alchemist
+NPC=f_alchemist
+0x2107=Animal Trainer
+NPC=f_animaltrainer
+0x2107=Architect
+NPC=f_architect
+0x2107=Armourer
+NPC=f_armourer
+0x2107=Baker
+NPC=f_baker
+0x2107=Banker
+NPC=f_banker
+0x2107=Bard
+NPC=f_bard
+0x2107=Beekeeper
+NPC=f_beekeeper
+0x2107=Blacksmith
+NPC=f_blacksmith
+0x2107=Bowyer
+NPC=f_bowyer
+0x2107=Butcher
+NPC=f_butcher
+0x2107=Carpenter
+NPC=f_carpenter
+0x2107=Cobbler
+NPC=f_cobbler
+0x2107=Cook
+NPC=f_cook
+0x2107=Farmer
+NPC=f_farmer
+0x2107=Fisher
+NPC=f_fisher
+0x2107=Healer
+NPC=f_healer
+0x2107=Herbalist
+NPC=f_herbalist
+0x2107=Innkeeper
+NPC=f_innkeeper
+0x2107=Jeweler
+NPC=f_jeweler
+0x2107=Leatherworker
+NPC=f_leatherworker
+0x2107=Mage
+NPC=f_mage
+0x2107=Miner
+NPC=f_miner
+0x2107=Provisioner
+NPC=f_provisioner
+0x2107=Scribe
+NPC=f_scribe
+0x2107=Shipwright
+NPC=f_shipwright
+0x2107=Spinner
+NPC=f_spinner
+0x2107=Tailor
+NPC=f_tailor
+0x2107=Tinker
+NPC=f_tinker
+0x2107=Weaponsmith
+NPC=f_weaponsmith
+<=Previous Menu
+ITEMMENU=5003
+}
+
+[ITEMMENU 5021]
+{
+Male People
+0x2106=Basic Male
+NPC=male
+0x2106=Archmage(Murderer)
+NPC=m_murderer-archmage
+0x2106=Artist
+NPC=m_artist
+0x2106=Beggar
+NPC=m_beggar
+0x2106=Brigand
+NPC=m_brigand
+0x2106=Fighter
+NPC=m_fighter
+0x2106=Guard
+NPC=m_guard
+0x2106=Gypsy
+NPC=m_gypsy
+0x2106=Jailer
+NPC=m_jailer
+0x2106=Noble
+NPC=m_noble
+0x2106=Peasant
+NPC=m_peasant
+0x2106=Pirate
+NPC=m_pirate
+0x2106=Sailor
+NPC=m_sailor
+0x2106=Seeker of Adventure
+NPC=m_seeker
+0x2106=Thief
+NPC=m_thief
+0x2106=Towncrier
+NPC=m_towncrier
+0x2106=Wandering Healer
+NPC=m_whealer
+<=Previous Menu
+ITEMMENU=5003
+}
+
+[ITEMMENU 5022]
+{
+Male Vendors
+0x2106=Alchemist
+NPC=m_alchemist
+0x2106=Animal Trainer
+NPC=m_animaltrainer
+0x2106=Architect
+NPC=m_architect
+0x2106=Armourer
+NPC=m_armourer
+0x2106=Banker
+NPC=m_banker
+0x2106=Baker
+NPC=m_baker
+0x2106=Bard
+NPC=m_bard
+0x2106=Beekeeper
+NPC=m_beekeeper
+0x2106=Blacksmith
+NPC=m_blacksmith
+0x2106=Bowyer
+NPC=m_bowyer
+0x2106=Butcher
+NPC=m_butcher
+0x2106=Carpenter
+NPC=m_carpenter
+0x2106=Cobbler
+NPC=m_cobbler
+0x2106=Cook
+NPC=m_cook
+0x2106=Farmer
+NPC=m_farmer
+0x2106=Fisher
+NPC=m_fisher
+0x2106=Healer
+NPC=m_healer
+0x2106=Herbalist
+NPC=m_herbalist
+0x2106=Innkeeper
+NPC=m_innkeeper
+0x2106=Jeweler
+NPC=m_jeweler
+0x2106=Leatherworker
+NPC=m_leatherworker
+0x2106=Mage
+NPC=m_mage
+0x2106=Miner
+NPC=m_miner
+0x2106=Provisioner
+NPC=m_provisioner
+0x2106=Scribe
+NPC=m_scribe
+0x2106=Shipwright
+NPC=m_shipwright
+0x2106=Spinner
+NPC=m_spinner
+0x2106=Tailor
+NPC=m_tailor
+0x2106=Tinker
+NPC=m_tinker
+0x2106=Weaponsmith
+NPC=m_weaponsmith
+<=Previous Menu
+ITEMMENU=5003
+}
+
+[ITEMMENU 5023]
+{
+Champions
+0x2d82=Chief Paroxysmus
+NPC=paroxysmus
+0x262c=an abyssmal horror
+NPC=abmyssalhorror
+0x2628=a bone daemon
+NPC=bonedaemon
+0x2106=Barracoon the Piper
+NPC=barracoon
+0x2632=a demon knight
+NPC=darkfather
+0x262d=a darknight creeper
+NPC=darknightcreeper
+0x2d83=Dread Horn
+NPC=dreadhorn
+0x262f=the Flesh Renderer
+NPC=fleshrenderer
+0x2626=an impaler
+NPC=impaler
+0x2d85=Lady Melisande
+NPC=ladymelisande
+0x2589=Lord Oaks
+NPC=lordoaks
+0x25c4=Mephitis
+NPC=mephitis
+0x2d84=a monstrous interred grizzle
+NPC=interredgrizzle
+0x2107=Neira the Necromancer
+NPC=neira
+0x20d6=Rikktor
+NPC=rikktor
+0x25b6=Semidar
+NPC=semidar
+0x2771=Serado the Awakened
+NPC=serado
+0x262b=a shadowknight
+NPC=shadowknight
+0x2d87=The Shimmering Effusion
+NPC=shimmeringeffusion
+0x25b6=Silvani
+NPC=silvani
+0x25bb=The Harrower
+NPC=theharrower
+0x2614=The True Harrower
+NPC=trueharrower
+0x2d8a=a travesty
+NPC=travesty
+<=Previous Menu
+ITEMMENU=5002
+}

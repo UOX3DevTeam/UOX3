@@ -1,0 +1,118 @@
+//*****************************************************************
+//*                         UOX3 Scripts v0.98                    *
+//*                                                               *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 01/4/2003                                       *
+//* Script : digging.dfn                                          *
+//*****************************************************************
+//*                        How to use this script:                *
+//* GRAVEDIGGING:                                                 *
+//* ITEMLISTS 999-1001 all deal with items you get when applying  *
+//* a shovel to a grave, i.e. when gravedigging. All the lists    *
+//* refer to items in the .DFN files in DFNDATA/ITEMS folder.     *
+//*                                                               *
+//* UNDEAD sections define which monsters that can be "dug up"    *
+//* from graves. The monsters are defined in the various .DFNs    *
+//* in the DFNDATA/NPC folder.                                    *
+//*                                                               *
+//*****************************************************************
+
+
+// This Section is for Grave Digging
+// ITEMLIST for gravedigging
+[ITEMLIST digginggems]
+{
+0x0f0f
+0x0f10
+0x0f11
+0x0f12
+0x0f13
+0x0f14
+0x0f15
+0x0f16
+0x0f17
+0x0f18
+0x0f19
+0x0f1a
+0x0f1b
+0x0f1c
+0x0f1d
+0x0f1e
+0x0f1f
+0x0f20
+0x0f21
+0x0f22
+0x0f23
+0x0f24
+0x0f25
+0x0f26
+0x0f27
+0x0f28
+0x0f29
+0x0f2a
+0x0f2b
+0x0f2c
+0x0f2d
+0x0f2e
+0x0f2f
+0x0f30
+}
+
+[ITEMLIST diggingweapons]
+{
+0x13b5
+0x13b8
+0x13b9
+0x0f5e
+0x1440
+0x13fe
+0x13fe
+0x0f45
+0x0f49
+0x13fb
+0x0f47
+0x13b0
+0x1443
+0x0f51
+0x1401
+0x143d
+0x0f5c
+0x143b
+0x1439
+0x1407
+}
+
+[ITEMLIST diggingarmor]
+{
+0x1b72
+0x1b73
+0x1b76
+0x1b74
+0x1b7b
+0x1416
+0x1413
+0x1414
+0x1412
+0x141A
+0x1410
+0x144F
+0x144E
+0x1450
+0x1451
+0x1452
+0x13C4
+0x13C3
+0x13BB
+0x13ED
+0x13EF
+0x13F1
+0x13F2
+0x1408
+0x140A
+0x140C
+0x140E
+}
+
+EOF
+

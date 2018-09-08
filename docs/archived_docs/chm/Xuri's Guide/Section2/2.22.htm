@@ -1,0 +1,106 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 2</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionII.JPG" WIDTH="288" HEIGHT="36"></P>
+<TABLE BORDER="0" WIDTH="100%" HEIGHT="1" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21"><A NAME="race"><FONT FACE="Tahoma"
+    COLOR="#FFFFFF"><SMALL>2.22 - PLAYER RACES</SMALL></FONT></A>(by Abaddon)</TD></TR> 
+<TR> <TD WIDTH="100%" HEIGHT="19"><SMALL><FONT FACE="Tahoma">
+This is only a first and prelimenary implementation of player races.  You will find that there has been another script added to the build, races.scp.  Inside races, you will find the definitions for 11 existing races (not completely fleshed out).  Basically, here is the layout for the player races.<BR><BR>
+SECTION RACE #<BR>
+{<BR>
+NAME Dwarf			// Name of race<BR>
+STRCAP 100			// Cap on strength<BR>
+DEXCAP 100			// Cap on dexterity<BR>
+INTCAP 100			// intelligence cap<BR>
+REQUIREBEARD			// Males must have beards, will add if needed<BR>
+NOBEARD				// Must have no beard, will delete if they have it<BR>
+GENDER MALE			// Only males can be this race, acceptable values MALE, and FEMALE<BR>
+BEARDMIN 0440			// Min beard colour, must have max also, if 0, then disabled<BR>
+BEARDMAX 0480			// Max beard colour, must have min also, if 0, then disabled<BR>
+SKINMIN 0480			// Skin min colour, must have max also, if 0, then disabled<BR>
+SKINMAX 0520			// Skin max colour, must have min also, if 0, then disabled<BR>
+HAIRMIN 0440			// Hair min colour, must have max also, if 0, then disabled<BR>
+HAIRMAX 0520			// Hair max colour, must have min also, if 0, then disabled<BR>
+SKILLNAMEG 2			// Skill name gain and how much (SKILLNAME = MAGERY or whatever skill you want)<BR>
+SKILLNAMEL 2			// skill name loss and how much<BR>
+RACIALENEMY 1			// Racial enemy number... can be more than one entry<BR>
+RACIALAID 2			// Racial aid number... can be more than one entry<BR>
+LIGHTDAMAGE 5			// take 5 damage from light<BR>
+LIGHTAFFECT			// if here, take damage from light<BR>
+LIGHTSECS 5                     '/ take damage from light every 5 secs<BR>
+HEATDAMAGE 5			// take 5 damage from heat<BR>
+HEATAFFECT			// if here, take damage from heat<BR>
+HEATSECS 5			// take damage from heat every 5 secs<BR>
+COLDDAMAGE 5			// take 5 damage from cold<BR>
+COLDAFFECT			// if here, take damage from cold<BR>
+COLDSECS 5			// take damage from cold every 5 secs<BR>
+LIGHTNINGDAMAGE 5		// take 5 damage from lightning<BR>
+LIGHTNINGAFFECT			// if here, take damage from lightning<BR>
+LIGHTNINGSECS 5 		// take damage from lightning every 5 secs<BR>
+RAINDAMAGE 5			// take 5 damage from rain<BR>
+RAINAFFECT			// if here, take damage from rain<BR>
+RAINSECS 5			// take damage from rain every 5 secs<BR>
+SNOWDAMAGE 5			// take 5 damage from snow<BR>
+SNOWAFFECT			// if here, take damage from snow<BR>
+SNOWSECS 5			// take damage from snow every 5 secs<BR>
+NIGHTVIS 3			// night vision bonus... the number is the light level bonus you get at ANY time<BR>
+PLAYERRACE 0			// 0 is nonplayer race, 1 is player race<BR>
+LANGUAGEMIN 500			// skill value needed to interpret that races speech<BR>
+}<BR><BR>
+Skill gain/loss information can be adjusted dynamically now, though it still can default to:<BR>
+For skill gain<BR><BR>
+0	None<BR>
+1	Slight<BR>
+2	Moderate<BR>
+3	Significant<BR><BR>
+and for skill loss<BR><BR>
+0	None<BR>
+1	Slight<BR>
+2	Moderate<BR>
+3	Significant<BR><BR>
+Basically, add a SECTION COMBAT MODS like this:<BR><BR>
+SECTION COMBAT MODS<BR>
+{<BR>
+MOD0 0		// % bonus for mod 0<BR>
+MOD1 5		<BR>
+MOD2 10<BR>
+MOD3 25<BR>
+MOD4 50<BR>
+}<BR><BR>
+If you don't have at least 4 entries, the defaults are used.<BR><BR>
+Any racial aid is flagged green, and an enemy is flagged orange.  Murderers still take precedence <BR>
+over everything though.  Race name will show up in paperdoll, as well as above their char when <BR>
+you click on them, as long as it is not the default race.  Skill bonuses and losses are in as well <BR>
+(I believe), but haven't really tested this all too well.  I have allowed for the creation of race gates<BR>
+ as well, which are one time only uses (type 83, examples in file).  So you will start out as a human, <BR>
+but can only switch races once.  So be warned!  There is a way to make them reusable, but that is VERY<BR>
+fantasy shattering, being able to switch constantly.<BR><BR>
+General:<BR>
+I realize it's not that flash an implementation (only really useful if we could have newer art, and <BR>
+different object IDs... ah well, perhaps one day).  But I hope you like it, nonetheless.  Either way,<BR>
+it should be a simple thing to do.<BR><BR>
+It's easy enough to modify the Skills.mul and skills.idx file.  Already done that and added entries.  <BR>
+Plus I plan on adding a newer better weather system, to complement some of the features in here.<BR><BR>
+Adding a race gate:<BR>
+Adding a race gate is actually quite simple.  Just follow the layout I put below, for items.scp<BR><BR>
+SECTION ITEM 11501<BR>
+{<BR>
+NAME Elf			// name of the gate<BR>
+ID 0dda				// moongate type... I only use this because it is easily visible<BR>
+COLOR 0015			// color of moongate<BR>
+DIR 1				// direction facing... who knows?<BR>
+TYPE 83				// MUST be type 83, otherwise it won't work<BR>
+MOREX 1				// Race to convert to<BR>
+MOREY 0				// 0 means it's not reusable, 1 means it is<BR>
+}<BR><BR>
+Also, I have modified the script for existing weapons... only useful for weapons anyway :)  <BR>
+If you add what's following, it will work as a racial weapon.  I have been thinking about racial armour, <BR>
+but who knows?<BR><BR>
+RACE 0				// Racial weapon against race 0<BR><BR>
+Add this to the item you want to modify, and it does double damage on that race.<BR>
+</FONT></SMALL></TD></TR> </TABLE></BODY>
+</HTML>

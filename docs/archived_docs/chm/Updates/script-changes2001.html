@@ -1,0 +1,166 @@
+<html>
+<head>
+</head>
+<body>
+<h1>v42 Script Release 07/04/2001</h1>
+<p>What's new since v41a:
+
+<ul>
+<li>FIXES:
+	<ul><li>NPC.SCP
+		<ul><li>Both Male & Female shipwrights should now sell boat deeds, after adding these lines to both NPCs in the apropriate locations::
+			<br>RSHOPITEM 2117
+			<br>RSHOPITEM 2118
+			<br>RSHOPITEM 2119
+			<br>RSHOPITEM 2120
+			<br>RSHOPITEM 2121
+			<br>RSHOPITEM 2122
+			<br>SELLITEM 2117
+			<br>SELLITEM 2118
+			<br>SELLITEM 2119
+			<br>SELLITEM 2120
+			<br>SELLITEM 2121
+			<br>SELLITEM 2122
+		<li>Male & Female Innkeepers should sell player vendor deeds now, after adding these lines to both NPCs in the apropriate locations:
+			<br>RSHOPITEM 50005
+			<br>SELLITEM 50005
+		</ul>
+	<li>ITEMS.SCP
+		<ul><li>DIR 29 added to blue, red and black moongates.
+		<li>Icons added in Travel menu for Delucia & Papua
+			<br>0BD0 Papua - T2A
+			<br>ITEMMENU 20
+			<br>0BD0 Delucia - T2A
+			<br>ITEMMENU 21
+		</ul>
+	<li>HOUSE.SCP
+		<ul><li>Added LOCK to the 3-part forge and the anvil so they get removed when the large smithy gets re-deeded.</ul>
+	<li>TELEPORT.SCP
+		<ul><li>Finally fixed the teleporters to & from Britain Sewers:
+			<table width="600"><tr><td>1491<td>1640<td>24<td>6032<td>1499<td>25<td>Britain_sewer_x[]
+			<tr><td>1491<td>1642<td>24<td>6032<td>1501<td>31<td>Britain_sewer_x[]
+			<tr><td colspan=7>and....
+			<tr><td>6031<td>1499<td>All<td>1490<td>1640<td>24<td>Britain_sewer_x[] to britain
+			<tr><td>6031<td>1501<td>All<td>1490<td>1640<td>24<td>Britain_sewer_x[] to britain
+			</table>
+		<li>Fixed the teleporters in the Terathan Temple:
+		 <br>(NOTE: If you still have trouble going back up - it's not because of the teleporter, it's because the walking code doesn't handle the ladders correctly :/ Fix it temporarily by placing a teleporter from bottom to top of the little tower down there)
+			<table width="600"><tr><td>5426<td>3123<td>-80<td>5340<td>1599<td>41<td>terathan_in[]
+			<tr><td>5427<td>3123<td>-80<td>5341<td>1599<td>41<td>terathan_in[]
+			<tr><td colspan=7>and....
+			<tr><td>5340<td>1598<td>47<td>5426<td>3122<td>-74<td>terathan_out[]
+			<tr><td>5341<td>1598<td>47<td>5426<td>3122<td>-74<td>terathan_out[]
+			</table>
+		</ul>
+	</ul>
+<li>CHANGES:
+	<ul><li>HTMLSTRM.SCP
+		<ul><li>New sections added to the file to support detailed Guild & Player HTML output. The details of this should be in the devupdate.txt file(build 24)</ul>
+	<li>SHITLIST.INI
+		<ul><li>Added this file for allowing IP-Firewall with which you can block specific IPs or IPs with wildcards from connecting.</ul>
+	</ul>
+</ul>
+<h1>v41a Script Release 16/02/2001</h1>
+<p>What's new since v41:
+
+<ul><li>FIXES:
+	<ul><li>CREATE.SCP
+		<ul><li>Makemenu changes to fix coloured ingot issues 
+			<table><tr><td width="100">Old<td width="100">New 
+			<tr><td>2117<td>1600 
+			<tr><td>2020<td>1520 
+			<tr><td>2025<td>1525 
+			<tr><td>2000<td>1500 
+			<tr><td>2010<td>1510 
+			<tr><td>2005<td>1505 
+			<tr><td>2015<td>1515</table>
+		</ul>
+	<li>ITEMS.SCP
+		<ul><li>ITEM 66 had a misspelled tag, WIEGHT - should be WEIGHT
+		<li>ITEM 10194 had a misspelled tag, Value - should be VALUE
+		</ul>
+	</ul>
+</ul>
+
+
+<h1>v41 Script Release 01/02/2001</h1>
+<p>What's new since v40:
+
+<ul><li>CHANGES:
+	<ul><li>ITEMS.SCP
+		<ul><li>Item #46, Plate Gloves, DEF 2 raised to DEF 3
+		<li>Item #61, Ring Gloves, DEF 3 lowered to DEF 2
+		<li>Item #63, Studded Gloves, DEF 2 lowered to DEF 1
+		</ul>
+	<li>TELEPORT.SCP
+		<ul><li>Added teleporters from Marble House on an island to T2A:
+			<table width="600"><tr><td>1987<td>2062<td>-40<td>5127<td>3143<td>97<td>marblehouse_t2a[]
+			<tr><td>1988<td>2062<td>-40<td>5127<td>3143<td>97<td>marblehouse_t2a[]
+			<tr><td>1989<td>2062<td>-40<td>5127<td>3144<td>99<td>marblehouse_t2a[]</table>
+		<li>Added teleporters from T2A to Marble House on island:
+			<table width="600"><tr><td>5126<td>3144<td>100<td>1988<td>2063<td>-40<td>t2a_marblehouse[]
+			<tr><td>5126<td>3143<td>99<td>1989<td>2063<td>-40<td>t2a_marblehouse[]</table>
+		</ul>
+	<li>NECRO.SCP
+		<ul><li>Added fishing stuff (SECTION ITEM/ITEMLIST 1-5)</ul>
+	</ul>
+<li>FIXES:
+	<ul><li>REGIONS.SCP
+		<ul><li>Region for Papua was reduced to NOT include the Terethan Temple.</ul>
+
+	<li>TELEPORT.SCP
+		<ul><li>Fixed teleporters from Yew to Cave:
+			<table width="600"><tr><td>312<td>786<td>-24<td>5748<td>360<td>2<td>yew_to_cave[]
+			<tr><td>313<td>786<td>-24<td>5749<td>360<td>1<td>yew_to_cave[]
+			<tr><td>314<td>786<td>-24<td>5750<td>360<td>0<td>yew_to_cave[]</table>
+		<li>Fixed teleporters from Cave to Yew:
+			<table width="600"><tr><td>5748<td>362<td>2<td>312<td>787<td>-24<td>cave_to_yew[]
+			<tr><td>5749<td>362<td>0<td>313<td>787<td>-24<td>cave_to_yew[]
+			<tr><td>5750<td>362<td>3<td>314<td>787<td>-24<td>cave_to_yew[]
+			<tr><td>5751<td>362<td>11<td>314<td>787<td>-24<td>cave_to_yew[]</table>
+		<li>Fixed teleporters from Cave to Lighthouse:
+			<table width="600"><tr><td>5753<td>324<td>21<td>5671<td>2391<td>50<td>cave_lighthouse[]</table>
+		<li>Fixed teleporters from Lighthouse to Cave:
+			<table width="600"><tr><td>5670<td>2393<td>50<td>5753<td>325<td>10<td>lighthouse_cave[]</table>
+		<li>Fixed teleporters from Cave to Prisons:
+			<table width="600"><tr><td>310<td>786<td>-18<td>309<td>785<td>0<td>cave_prison[]</table>
+		</ul>
+	</ul>
+</ul>
+
+<h1>v40 Script Release 09/01/2001</h1>
+<p>What's new since v39:
+
+<ul><li>CHANGES:
+	<ul><li>REGIONS.SCP
+		<ul><li>Regions for Papua and Delucia were added.</ul>
+	<li>NPC.SCP
+		<ul><li>Pack Horses and Pack Llamas added to the Animal Trainer vendors.</ul>
+	<li>ITEMS.SCP
+		<ul><li>Several items set to decay: Candle(5103), Torch(7043), Musical Instruments(7000-7006)</ul>
+	</ul>
+<li>FIXES:
+	<ul><li>ITEMS.SCP
+		<ul><li>Magebooks had 'NEWIBE' tag - should be 'NEWBIE'.
+		<li>Some items in the fletching menu showed up with wrong amount (feathers, arrows etc)</ul>
+	<li>TRIGGERS.SCP
+		<ul><li>Added a '0' behind the IADD # lines for all the house-addon triggers (61-71) so the item added defaults to the ground by the character's feet instead of in the backpack. (Thanks MoriartynMortisha!)</ul>
+	<li>TELEPORT.SCP
+		<ul><li>Fixed the teleporters out from terethan temple(?)
+			<table width="600"><tr><td>5340<td>1598<td>20<td>5426<td>3122<td>-74<td>terathan_out[]
+			<tr><td>5341<td>1598<td>20<td>5427<td>3122<td>-74<td>terathan_out[]</table>
+		<li>Fixed the teleporters TO Britain Sewers
+			<table width="600"><tr><td>1491<td>1640<td>24<td>6031<td>1500<td>25<td>Britain_sewer_x[]
+			<tr><td>1491<td>1642<td>24<td>6031<td>1501<td>31<td>Britain_sewer_x[]</table>
+		<li>Fixed the teleporters FROM Britain Sewers
+			<table width="600"><tr><td>6031<td>1499<td>42<td>1490<td>1640<td>24<td>Britain_sewer_x[] to britain
+			<tr><td>6031<td>1501<td>42<td>1490<td>1642<td>24<td>Britain_sewer_x[] to britain</table>
+		<li>Fixed the teleporters from Delucia -> Trinsic Cave
+			<table width="600"><tr><td>5918<td>1410<td>-28<td>5963<td>1407<td>54<td>cave_to_newbie_lvl[]
+			<tr><td>5918<td>1411<td>-28<td>5963<td>1408<td>53<td>cave_to_newbie_lvl[]
+			<tr><td>5918<td>1412<td>-28<td>5963<td>1409<td>53<td>cave_to_newbie_lvl[]</table>
+		</ul>
+	</ul>
+</ul>
+</body>
+</html>

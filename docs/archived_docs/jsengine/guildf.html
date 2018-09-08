@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+
+<h3><a name="Guild">Guild Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetGuildType">GetGuildType</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetGuildType( trgGuild );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the type of guild associated with trgGuild.<br>Valid types are:<br>0 - Standard<br>1 - Order<br>2 - Chaos<br>3 - Unknown<br>4 - Count
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuild( pTalking ) != -1 )
+<br>{
+<br>	if( GetGuildType( GetGuild( pTalking ) ) == 0 )
+<br>	{
+<br>		TextMessage( pTalkingTo, "You're in a standard guild" );
+<br>	}
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetGuildName">GetGuildName</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetGuildName( trgGUild );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the name of the guild trgGuild
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuild( pTalking ) != -1 )
+<br>{
+<br>	var gName = GetGuildName( GetGuild( pTalking ) );
+<br>	TextMessage( pTalkingTo, "You belong to: " );
+<br>	TextMessage( pTalkingTo, gName );
+<br>	TextMessage( pTalkingTo, ", don't you?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetGuildMaster">GetGuildMaster</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>CHARACTER GetGuildMaster( trgGuild );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the character, if any, that is the guildmaster of trgGuild.  If the returned value is -1, there is no master
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuild( pTalking ) == GetGuild( pTalkingTo ) && GetGuild( pTalking ) != -1 )
+<br>{
+<br>	if( GetGuildMaster( GetGuild( pTalking ) ) == pTalkingTo )
+<br>	{
+<br>		TextMessage( pTalkingTo, "Bow to me, I am your master!" );
+<br>	}
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetGuildType">SetGuildType</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetGuildType( trgGuild, newType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the guild trgGuild's type to newType.  newType can be any of:<br>0 - Standard<br>1 - Order<br>2 - Chaos<br>3 - Unknown<br>4 - Count
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuild( pTalkingTo ) != -1 )
+<br>{
+<br>	SetGuildType( GetGuild( pTalkingTo ), 1 );
+<br>	TextMessage( pTalkingTo, "We're now an order guild" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetGuildName">SetGuildName</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetGuildName( trgGUild, newName );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the name of trgGuild to newName.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuild( pTalkingTo ) != -1 )
+<br>{
+<br>	SetGuildName( GetGuild( pTalkingTo ), strSaid );	// new name is whatever we were told
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SetGuildMaster">SetGuildMaster</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetGuildMaster( trgGuild, newMaster );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Set's the guild master of trgGuild to newMaster. Note that newMaster is a SERIAL, not a character.  To clear the master, use a value of 0xFFFFFFFF.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>SetGuildMaster( GetGuild( pTalkingTo ), 0xFFFFFFFF );	// no more master
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetNumGuildMembers">GetNumGuildMembers</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetNumGuildMembers( trgGuild, memberType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the number of members (memberType == 0) or recruits (memberType == 1) or both (memberType == 2 ) that belongs in the guild trgGuild.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetNumGuildMembers( GetGuild( pTalking ), 2 ) > 10 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Wow, you have a few members" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToGuild">AddToGuild</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>AddToGuild( trgGuild, trgMember, memberType );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds trgMember to the guild trgGuild as a member (memberType == 0) or recruit (memberType == 1).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>AddToGuild( GetGuild( pTalkingTo ), pTalking, 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromGuild">RemoveFromGuild</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>RemoveFromGuild( trgGuild, trgMember );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes trgMember from the guild trgGuild.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>RemoveFromGuild( GetGuild( pTalkingTo ), pTalking );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CompareGuild">CompareGuild</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int CompareGuild( pOne, pTwo );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Compare's the relationships between pOne and PTwo's guilds.  Possible values are:<br>0 - Neutral<br>1 - War<br>2 - Ally<br>3 - Unknown<br>4 - Same<br>5 - Count
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( CompareGuild( pTalking, pTalkingTo ) == 2 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Sooo... where's my tribute?" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CompareGuildByGuild">CompareGuildByGuild</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int CompareGuild( srcGuild, trgGuild );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Compares the relations between srcGuild and trgGuild.<br>Possible values are:<br>0 - Neutral<br>1 - War<br>2 - Ally<br>3 - Unknown<br>4 - Same<br>5 - Count
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( CompareGuildByGuild( GetGuild( pTalking ), GetGuild( pTalkingTo ) ) == 1 )
+<br>{
+<br>	TextMessage( pTalkingTo, "Oh yeah, oh yeah, cmon I can take you!" );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_GetGuildStone">GetGuildStone</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SERIAL GetGuildStone( trgGuild );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the serial of the guild stone associated with trgGuild.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( GetGuildStone( GetGuild( pUser ) ) == GetSerial( iUsed, 1 ) )
+<br>{
+<br>	RemoveFromGuild( GetGuild( pUser ), pUser );
+<br>}
+</pre></table>
+
+<p>&nbsp;</p><center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+</center>
+
+</body>

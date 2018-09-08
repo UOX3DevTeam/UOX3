@@ -1,0 +1,225 @@
+<html>
+
+<head>
+<title>Getting Started</title>
+<link rel="stylesheet" type="text/css" href="uox.css">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body background="bg.gif">
+
+<h1>Getting Started</h1>
+<p>In order to get your Shard running, you need to setup two seperate files.
+These are uox3.ini and accounts.adm. Both are explained in detail below.</p>
+<h2>Setting up uox3.ini: </h2>
+<p>Open the uox3.ini in your UOX folder. Here you will need to set up any Shard
+entries you wish to setup, world entry points (which only need to be changed if
+you are using a custom world) and the paths for your .mul data files. Below is
+the default uox3.ini:</p>
+<p>Your shard name<br>
+Your IP address (local, network or internet)<br>
+Your port-address (usually 2593)<br>
+###<br>
+Yew<br>
+Center<br>
+545<br>
+982<br>
+0<br>
+Minoc<br>
+Tavern<br>
+2477<br>
+411<br>
+15<br>
+Britain<br>
+Sweet Dreams Inn<br>
+1495<br>
+1629<br>
+10<br>
+Moonglow<br>
+Docks<br>
+4406<br>
+1045<br>
+0<br>
+Trinsic<br>
+West Gate<br>
+1832<br>
+2779<br>
+0<br>
+Magincia<br>
+Docks<br>
+3675<br>
+2259<br>
+20<br>
+Jhelom<br>
+Docks<br>
+1492<br>
+3696<br>
+0<br>
+Skara Brae<br>
+Docks<br>
+639<br>
+2236<br>
+0<br>
+Vesper<br>
+Ironwood Inn<br>
+2771<br>
+977<br>
+0<br>
+###<br>
+c:\ultima online\map0.mul<br>
+c:\ultima online\staidx0.mul<br>
+c:\ultima online\statics0.mul<br>
+c:\ultima online\verdata.mul<br>
+c:\ultima online\tiledata.mul<br>
+c:\ultima online\multi.mul<br>
+c:\ultima online\multi.idx<br>
+1000<br>
+0 Heartbeat, 1=on 0=off<br>
+400<br>
+0<br>
+0</p>
+<h3>Shard Entries:</h3>
+<p>To setup Shard entries, you will need to find the IP of your network or
+internet adapter, or use 127.0.0.1 for a same machine entry client. Shard
+entries consist of three lines, a name, an IP address to connect to/through and
+a port. Shard entries can be given any name, but the IP address and port must be
+a valid UOX server.</p>
+<p><b>Note: It is possible to have several shard entries set up in your UOX3.cfg
+file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; These entries must have
+the correct IP for people entering via that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Shard on the Shard choice
+screen. Example, is you have a network<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; address people connect
+on, a internet address people connect on and a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; server administrator
+playing on the same system the server is on, then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; you will need three shard
+entries set up with the different addresses as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shown below (from
+UOX3.cfg):</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UOX3 World
+(Internet Clients only)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 256.351.2.9<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2593<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UOX3 World (Network
+Clients only)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 192.168.0.6<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2593<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UOX3 World (Local Host
+only)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 127.0.0.1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2593</b></p>
+<h3>World Entry Points:</h3>
+<p>If you are using a custom world map (ie, a completely different world from
+OSI's, or one created in Green Acres), you may need to change the world entry
+points for new players. Each of the named entries corresponds to the towns on
+the &quot;town entry&quot; screen that players are presented with as the last
+choice of character creation. These value are XYZ coordinates and can be found
+in-game by using the <b>'where</b> command&nbsp; while using a player with gm
+privileges (normally any player on account 0)
+<p>&nbsp;</p>
+<p>These values can be changed at any time without affecting any other
+components of the Shard. This concludes the setup of uox3.ini.</p>
+<p>&nbsp;</p>
+<p>(ACCOUNTS.ADM) Open the ACCOUNTS.ADM file found in the UOX folder.At the top
+you will see&nbsp;&nbsp; SECTION ACCOUNT 0,in here you will put the Username and
+Password of the Char who will have the GM stats. The first account allways has
+GM priv`s. Here is an Example of what the ACCOUNTS.ADM file should look like:</p>
+<p><br>
+SECTION ACCOUNT<br>
+{<br>
+NAME adminaccountname<br>
+PASS adminpassword<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+TIMEBAN 0<br>
+LASTIP<br>
+PUBLIC OFF<br>
+CONTACT<br>
+}<br>
+SECTION ACCOUNT<br>
+{<br>
+NAME player1name<br>
+PASS player1password<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+LOCK 0<br>
+TIMEBAN 0<br>
+LASTIP<br>
+PUBLIC OFF<br>
+CONTACT<br>
+}<br>
+<br>
+<br>
+EOF
+<p>You can use any name that you want in there. And you can add as many accounts
+as you see fit. Just add them exactly as the first two accounts are setup. And
+remember the two empty lines before the EOF at the END of the accounts file, no
+matter how many accounts you have.<br>
+Also note that the first account in the list is reserved for the&nbsp; server
+operator and has some special privileges, like having GM rights on every fresh
+created character.
+<p>2) Set up your Network: (If needed) To play UOX3 you will need at least one
+IP adress assigned to your machine. This is required because of a client bug
+which will crash the client after playing the intro movie if there are no IP
+adresses available. Because its in the Client, we can not do anything about it.
+You can either:
+<p>a) Connect to your ISP which automatically assigns an IP to you, then press
+START and RUN and write in &quot;winipcfg&quot;. Now you should see your
+internet IP in the window that pops up. Another way to see it is to do /dns <MYNICK>
+ (without the &lt; &gt;) while on a IRC server.
+<p>b) Set yourself a static IP adress. Go to the Win95 control panel and then
+select Network Settings. Then single click on the TCP/IP entry in the enabled
+network componets box, then click the properties button. Now click the radio
+button labeled &quot;specify an IP address&quot;. Now, you are able to fill in
+the two boxes below it. In the first one, the IP address box, you need to enter
+an IP address of your choice. (&quot;1.1.1.1&quot; works, but any other number
+will do.) Then, set the subnet mask to 255.255.255.0. Click &quot;OK&quot; and
+windows will ask you to restart your computer, click &quot;OK&quot;
+<p>*IMPORTANT* Remember, you need to re-enable the upper radio button before you
+can connect to your ISP the next time.
+<p>c) Type &quot;ping localhost&quot; on the command line of an open ms-dos
+prompt window. First line should be like: &quot;Pinging zeus [127.0.0.1] with 32
+bytes of data:&quot; The name before the [127.0.0.1] will be different, as it is
+your computers name. Now edit the file named &quot;hosts&quot; in your windows
+directory and add a line like &quot;127.0.0.1 zeus&quot; below the one that
+reads &quot;127.0.0.1 localhost&quot;. Again, remember to replace &quot;zeus&quot;&nbsp;
+with your computers name. Once you reboot Windows, the client should work
+without crashing.
+<p>If you are on a LAN, you probably already have a permanent IP adress&nbsp;
+assigned to your network card and can skip this step. Also remember that if you
+choose possibility b) or c) people from the internet can&nbsp; not connect to
+your server. Choose a) if you want multiplayer.
+<p>3) Setup the program:&nbsp; Copy your login.cfg to login.old as a
+backup.&nbsp; Unzip all UOX files into one directory.
+<p>4) Run the server:&nbsp; Run UOX3.EXE&nbsp; If all's fine, it will print
+&quot;UOX3: Startup complete.&quot; on the console.
+<p>5) Change login information:&nbsp; Now edit your LOGIN.CFG (you backed it up,
+didn't you?) to the shown&nbsp; IP adress. So if it were the one displayed under
+3), your LOGIN.CFG&nbsp; would read:
+<p>;Loginservers for Ultima Online<br>
+;Do not edit this file or patching will fail!&nbsp; Always save a backup.<br>
+LoginServer=1.2.3.4,2593<br>
+LoginServer=1.2.3.4,2593<br>
+LoginServer=1.2.3.4,2593<br>
+LoginServer=1.2.3.4,2593
+<p>Use IP 127.0.0.1 for a single player game by yourself and for a multi-player
+game,You will need to setup your internet IP address. You will also need to give
+that IP adress to everyone trying to log&nbsp; in to your system. (A good
+program to keep contact to your friends for that purpose is called ICQ. You can
+download it at&nbsp; www.mirabilis.com) When editing login.cfg, don't forget the
+port number. In the above example, 2593 is the port.
+<p>6) Start Ignition which you'll find in a subfolder of uox. It will start the
+UO client and bypass the encryption so you can log into your UOX3 shard. The
+current Ignition version will only work with UO Clients 2.0.0 -&gt; 2.0.0e.</p>
+
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+        AREACOMMAND <command>
+
+  Purpose: 
+        Turns other commands into
+        "area commands", performing
+        their function over a
+        specified area instead of just
+        on a single item/character.
+        Below follows a list of all
+        commands that can be used
+        along with this command:
+		'areacommand dye ####
+		'areacommand wipe
+		'areacommand incx ####
+		'areacommand incy ####
+		'areacommand incz ####
+		'areacommand newx ####
+		'areacommand newy ####
+		'areacommand newz ####
+		'areacommand settype ####
+		'areacommand newbie ####
+

@@ -1,0 +1,5 @@
+        TITLE <text> <target>
+
+  Purpose: 
+        Will give selected character the 
+        paperdoll-title specified in <text>

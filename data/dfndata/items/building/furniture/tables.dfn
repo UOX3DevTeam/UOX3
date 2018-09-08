@@ -1,0 +1,1454 @@
+// tables.dfn
+// Everything that is perceived as table
+// v1.0; 25/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+
+[0x0a9f]
+{ flex top 1/8
+get=base_item
+name=display case
+id=0x0a9f
+weight=1000
+movable=2
+}
+
+[0x0aa0]
+{ flex top 2/8
+get=base_item
+name=display case
+id=0x0aa0
+weight=1000
+movable=2
+}
+
+[0x0aa1]
+{ flex top 3/8
+get=base_item
+name=display case
+id=0x0aa1
+weight=1000
+movable=2
+}
+
+[0x0aa2]
+{ flex top 4/8
+get=base_item
+name=display case
+id=0x0aa2
+weight=1000
+movable=2
+}
+
+[0x0aa3]
+{ flex top 5/8
+get=base_item
+name=display case
+id=0x0aa3
+weight=1000
+movable=2
+}
+
+[0x0aa4]
+{ flex top 6/8
+get=base_item
+name=display case
+id=0x0aa4
+weight=1000
+movable=2
+}
+
+[0x0aa5]
+{ flex top 7/8
+get=base_item
+name=display case
+id=0x0aa5
+weight=1000
+movable=2
+}
+
+[0x0b18]
+{ flex top 8/8
+get=base_item
+name=display case
+id=0x0b18
+weight=1000
+movable=2
+}
+
+[0x0b0f]
+{ flex bottom 1/9
+get=base_item
+name=display case
+id=0x0b0f
+weight=1000
+movable=2
+}
+
+[0x0b10]
+{ flex bottom 2/9
+get=base_item
+name=display case
+id=0x0b10
+weight=1000
+movable=2
+}
+
+[0x0b11]
+{ flex bottom 3/9
+get=base_item
+name=display case
+id=0x0b11
+weight=1000
+movable=2
+}
+
+[0x0b12]
+{ flex bottom 4/9
+get=base_item
+name=display case
+id=0x0b12
+weight=1000
+movable=2
+}
+
+[0x0b13]
+{ flex bottom 5/9
+get=base_item
+name=display case
+id=0x0b13
+weight=1000
+movable=2
+}
+
+[0x0b14]
+{ flex bottom 6/9
+get=base_item
+name=display case
+id=0x0b14
+weight=1000
+movable=2
+}
+
+[0x0b15]
+{ flex bottom 7/9
+get=base_item
+name=display case
+id=0x0b15
+weight=1000
+movable=2
+}
+
+[0x0b16]
+{ flex bottom 8/9
+get=base_item
+name=display case
+id=0x0b16
+weight=1000
+movable=2
+}
+
+[0x0b17]
+{ flex bottom 9/9
+get=base_item
+name=display case
+id=0x0b17
+weight=1000
+movable=2
+}
+
+[0x0afd]
+{ E top 1/3
+get=base_item
+name=display case
+id=0x0afd
+weight=1000
+movable=2
+}
+
+[0x0afe]
+{ E top 2/3
+get=base_item
+name=display case
+id=0x0afe
+weight=1000
+movable=2
+}
+
+[0x0aff]
+{ E top 3/3
+get=base_item
+name=display case
+id=0x0aff
+weight=1000
+movable=2
+}
+
+[0x0b00]
+{ E bottom 1/3
+get=base_item
+name=display case
+id=0x0b00
+weight=1000
+movable=2
+}
+
+[0x0b01]
+{ E bottom 2/3
+get=base_item
+name=display case
+id=0x0b01
+weight=1000
+movable=2
+}
+
+[0x0b02]
+{ E bottom 3/3
+get=base_item
+name=display case
+id=0x0b02
+weight=1000
+movable=2
+}
+
+[0x0b03]
+{ S top 1/3
+get=base_item
+name=display case
+id=0x0b03
+weight=1000
+movable=2
+}
+
+[0x0b04]
+{ S top 2/3
+get=base_item
+name=display case
+id=0x0b04
+weight=1000
+movable=2
+}
+
+[0x0b05]
+{ S top 3/3
+get=base_item
+name=display case
+id=0x0b05
+weight=1000
+movable=2
+}
+
+[0x0b06]
+{ S bottom 1/3
+get=base_item
+name=display case
+id=0x0b06
+weight=1000
+movable=2
+}
+
+[0x0b07]
+{ S bottom 2/3
+get=base_item
+name=display case
+id=0x0b07
+weight=1000
+movable=2
+}
+
+[0x0b08]
+{ S bottom 3/3
+get=base_item
+name=display case
+id=0x0b08
+weight=1000
+movable=2
+}
+
+[0x0b0b]
+{ S top
+get=base_item
+name=display case
+id=0x0b0b
+weight=1000
+movable=2
+}
+
+[0x0b09]
+{ S bottom
+get=base_item
+name=display case
+id=0x0b09
+weight=1000
+movable=2
+}
+
+[0x0b0c]
+{ E top
+get=base_item
+name=display case
+id=0x0b0c
+weight=1000
+movable=2
+}
+
+[0x0b0a]
+{ E bottom
+get=base_item
+name=display case
+id=0x0b0a
+weight=1000
+movable=2
+}
+
+[0x0b0d]
+{ E small bottom
+get=base_item
+name=display case
+id=0x0b0d
+weight=1000
+movable=2
+}
+
+[0x0b0e]
+{ S small bottom
+get=base_item
+name=display case
+id=0x0b0e
+weight=1000
+movable=2
+}
+
+[0x0b34]
+{
+get=base_item
+name=table
+id=0x0b34
+weight=1000
+value=15 7
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b35]
+{
+get=base_item
+name=table
+id=0x0b35
+weight=1000
+value=15 7
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b36]
+{
+get=base_item
+name=table
+id=0x0b36
+weight=1000
+value=15 7
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b37]
+{ no legs
+get=base_item
+name=table
+id=0x0b37
+weight=1000
+movable=2
+}
+
+[0x0b38]
+{ no legs
+get=base_item
+name=table
+id=0x0b38
+weight=1000
+movable=2
+}
+
+[0x0b39]
+{ no legs
+get=base_item
+name=table
+id=0x0b39
+weight=1000
+movable=2
+}
+
+[0x0b3a]
+{
+get=base_item
+name=table
+id=0x0b3a
+weight=1000
+value=15 7
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b3c]
+{
+get=base_item
+name=table
+id=0x0b3c
+weight=1000
+value=15 7
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b3d]
+{ no legs
+get=base_item
+name=counter
+id=0x0b3d
+weight=1000
+movable=2
+}
+
+[0x0b3e]
+{ no legs
+get=base_item
+name=counter
+id=0x0b3e
+weight=1000
+movable=2
+}
+
+[0x0b3f]
+{
+get=base_item
+name=counter
+id=0x0b3f
+weight=1000
+movable=2
+}
+
+[0x0b40]
+{
+get=base_item
+name=counter
+id=0x0b40
+weight=1000
+movable=2
+}
+
+[0x0b49]
+{ E
+get=base_item
+name=writing table
+id=0x0b49
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b4a]
+{ S
+get=base_item
+name=writing table
+id=0x0b4a
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b4b]
+{ N
+get=base_item
+name=writing table
+id=0x0b4b
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b4c]
+{ W
+get=base_item
+name=writing table
+id=0x0b4c
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b6b]
+{ E smooth 1/3
+get=base_item
+name=table
+id=0x0b6b
+weight=1000
+movable=2
+}
+
+[0x0b6c]
+{ E smooth 2/3
+get=base_item
+name=table
+id=0x0b6c
+weight=1000
+movable=2
+}
+
+[0x0b6d]
+{ E smooth 3/3
+get=base_item
+name=table
+id=0x0b6d
+weight=1000
+movable=2
+}
+
+[0x0b6e]
+{ E wood 1/2
+get=base_item
+name=table
+id=0x0b6e
+weight=1000
+movable=2
+}
+
+[0x0b6f]
+{ E wood 2/2
+get=base_item
+name=table
+id=0x0b6f
+weight=1000
+movable=2
+}
+
+[0x0b70]
+{ E flex wood 1/5
+get=base_item
+name=table
+id=0x0b70
+weight=1000
+movable=2
+}
+
+[0x0b71]
+{ E flex wood 2/5
+get=base_item
+name=table
+id=0x0b71
+weight=1000
+movable=2
+}
+
+[0x0b72]
+{ E flex wood 3/5
+get=base_item
+name=table
+id=0x0b72
+weight=1000
+movable=2
+}
+
+[0x0b73]
+{ E flex wood 4/5
+get=base_item
+name=table
+id=0x0b73
+weight=1000
+movable=2
+}
+
+[0x0b74]
+{ E flex wood 5/5
+get=base_item
+name=table
+id=0x0b74
+weight=1000
+movable=2
+}
+
+[0x0b75]
+{ E boards 1/2
+get=base_item
+name=table
+id=0x0b75
+weight=1000
+movable=2
+}
+
+[0x0b76]
+{ E boards 2/2
+get=base_item
+name=table
+id=0x0b76
+weight=1000
+movable=2
+}
+
+[0x0b77]
+{ E flex boards 1/5
+get=base_item
+name=table
+id=0x0b77
+weight=1000
+movable=2
+}
+
+[0x0b78]
+{ E flex boards 2/5
+get=base_item
+name=table
+id=0x0b78
+weight=1000
+movable=2
+}
+
+[0x0b79]
+{ E flex boards 3/5
+get=base_item
+name=table
+id=0x0b79
+weight=1000
+movable=2
+}
+
+[0x0b7a]
+{ E flex boards 4/5
+get=base_item
+name=table
+id=0x0b7a
+weight=1000
+movable=2
+}
+
+[0x0b7b]
+{ E flex boards 5/5
+get=base_item
+name=table
+id=0x0b7b
+weight=1000
+movable=2
+}
+
+[0x0b7c]
+{ E wood
+get=base_item
+name=table
+id=0x0b7c
+weight=3000
+value=10 5
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b7d]
+{ E boards
+get=base_item
+name=table
+id=0x0b7d
+weight=3000
+value=20 10
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b7e]
+{ S smooth 1/3
+get=base_item
+name=table
+id=0x0b7e
+weight=1000
+movable=2
+}
+
+[0x0b7f]
+{ S smooth 2/3
+get=base_item
+name=table
+id=0x0b7f
+weight=1000
+movable=2
+}
+
+[0x0b80]
+{ S smooth 3/3
+get=base_item
+name=table
+id=0x0b80
+weight=1000
+movable=2
+}
+
+[0x0b81]
+{ S wood 1/2
+get=base_item
+name=table
+id=0x0b81
+weight=1000
+movable=2
+}
+
+[0x0b82]
+{ S wood 2/2
+get=base_item
+name=table
+id=0x0b82
+weight=1000
+movable=2
+}
+
+[0x0b83]
+{ S flex wood 1/5
+get=base_item
+name=table
+id=0x0b83
+weight=1000
+movable=2
+}
+
+[0x0b84]
+{ S flex wood 2/5
+get=base_item
+name=table
+id=0x0b84
+weight=1000
+movable=2
+}
+
+[0x0b85]
+{ S flex wood 3/5
+get=base_item
+name=table
+id=0x0b85
+weight=1000
+movable=2
+}
+
+[0x0b86]
+{ S flex wood 4/5
+get=base_item
+name=table
+id=0x0b86
+weight=1000
+movable=2
+}
+
+[0x0b87]
+{ S flex wood 5/5
+get=base_item
+name=table
+id=0x0b87
+weight=1000
+movable=2
+}
+
+[0x0b88]
+{ S boards 1/2
+get=base_item
+name=table
+id=0x0b88
+weight=1000
+movable=2
+}
+
+[0x0b89]
+{ S boards 2/2
+get=base_item
+name=table
+id=0x0b89
+weight=1000
+movable=2
+}
+
+[0x0b8a]
+{ S flex boards 1/5
+get=base_item
+name=table
+id=0x0b8a
+weight=1000
+movable=2
+}
+
+[0x0b8b]
+{ S flex boards 2/5
+get=base_item
+name=table
+id=0x0b8b
+weight=1000
+movable=2
+}
+
+[0x0b8c]
+{ S flex boards 3/5
+get=base_item
+name=table
+id=0x0b8c
+weight=1000
+movable=2
+}
+
+[0x0b8d]
+{ S flex boards 4/5
+get=base_item
+name=table
+id=0x0b8d
+weight=1000
+movable=2
+}
+
+[0x0b8e]
+{ S flex boards 5/5
+get=base_item
+name=table
+id=0x0b8e
+weight=1000
+movable=2
+}
+
+[0x0b8f]
+{ S wood
+get=base_item
+name=table
+id=0x0b8f
+weight=3000
+value=20 10
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x0b90]
+{ S boards
+get=base_item
+name=table
+id=0x0b90
+weight=3000
+value=20 10
+restock=10
+movable=1
+decay=1
+good=2
+}
+
+[0x118b]
+{ E bluecloth
+get=base_item
+name=table
+id=0x118b
+weight=1000
+movable=2
+}
+
+[0x118c]
+{ S bluecloth
+get=base_item
+name=table
+id=0x118c
+weight=1000
+movable=2
+}
+
+[0x118d]
+{ E redcloth
+get=base_item
+name=table
+id=0x118d
+weight=1000
+movable=2
+}
+
+[0x118e]
+{ S redcloth
+get=base_item
+name=table
+id=0x118e
+weight=1000
+movable=2
+}
+
+[0x118f]
+{ S cloth 1/2
+get=base_item
+name=table
+id=0x118f
+weight=1000
+movable=2
+}
+
+[0x1190]
+{ S cloth 2/2
+get=base_item
+name=table
+id=0x1190
+weight=1000
+movable=2
+}
+
+[0x1191]
+{ E cloth 1/2
+get=base_item
+name=table
+id=0x1191
+weight=1000
+movable=2
+}
+
+[0x1192]
+{ E cloth 2/2
+get=base_item
+name=table
+id=0x1192
+weight=1000
+movable=2
+}
+
+[0x11d6]
+{ E 1/3
+get=base_item
+name=bamboo table
+id=0x11d6
+weight=1000
+movable=2
+}
+
+[0x11d7]
+{ E 2/3
+get=base_item
+name=bamboo table
+id=0x11d7
+weight=1000
+movable=2
+}
+
+[0x11d8]
+{ E 3/3
+get=base_item
+name=bamboo table
+id=0x11d8
+weight=1000
+movable=2
+}
+
+[0x11d9]
+{ S 1/3
+get=base_item
+name=bamboo table
+id=0x11d9
+weight=1000
+movable=2
+}
+
+[0x11da]
+{ S 2/3
+get=base_item
+name=bamboo table
+id=0x11da
+weight=1000
+movable=2
+}
+
+[0x11db]
+{ S 3/3
+get=base_item
+name=bamboo table
+id=0x11db
+weight=1000
+movable=2
+}
+
+[0x11dc]
+{ S 1/3
+get=base_item
+name=log table
+id=0x11dc
+weight=1000
+movable=2
+}
+
+[0x11dd]
+{ S 2/3
+get=base_item
+name=log table
+id=0x11dd
+weight=1000
+movable=2
+}
+
+[0x11de]
+{ S 3/3
+get=base_item
+name=log table
+id=0x11de
+weight=1000
+movable=2
+}
+
+[0x11df]
+{ E 1/3
+get=base_item
+name=log table
+id=0x11df
+weight=1000
+movable=2
+}
+
+[0x11e0]
+{ E 2/3
+get=base_item
+name=log table
+id=0x11e0
+weight=1000
+movable=2
+}
+
+[0x11e1]
+{ E 3/3
+get=base_item
+name=log table
+id=0x11e1
+weight=1000
+movable=2
+}
+
+[0x1201]
+{ E 1/3
+get=base_item
+name=stone table
+id=0x1201
+weight=1000
+movable=2
+}
+
+[0x1202]
+{ E 2/3
+get=base_item
+name=stone table
+id=0x1202
+weight=1000
+movable=2
+}
+
+[0x1203]
+{ E 3/3
+get=base_item
+name=stone table
+id=0x1203
+weight=1000
+movable=2
+}
+
+[0x1204]
+{ S 1/3
+get=base_item
+name=stone table
+id=0x1204
+weight=1000
+movable=2
+}
+
+[0x1205]
+{ S 2/3
+get=base_item
+name=stone table
+id=0x1205
+weight=1000
+movable=2
+}
+
+[0x1206]
+{ S 3/3
+get=base_item
+name=stone table
+id=0x1206
+weight=1000
+movable=2
+}
+
+[0x1667]
+{ E cloth 1/3
+get=base_item
+name=table
+id=0x1667
+weight=1000
+movable=2
+}
+
+[0x1668]
+{ E cloth 2/3
+get=base_item
+name=table
+id=0x1668
+weight=1000
+movable=2
+}
+
+[0x1669]
+{ E cloth 3/3
+get=base_item
+name=table
+id=0x1669
+weight=1000
+movable=2
+}
+
+[0x166a]
+{ S cloth 1/3
+get=base_item
+name=table
+id=0x166a
+weight=1000
+movable=2
+}
+
+[0x166b]
+{ S cloth 2/3
+get=base_item
+name=table
+id=0x166b
+weight=1000
+movable=2
+}
+
+[0x166c]
+{ S cloth 3/3
+get=base_item
+name=table
+id=0x166c
+weight=1000
+movable=2
+}
+
+[0x1916]
+{ E 1/2
+get=base_item
+name=massage table
+id=0x1916
+weight=1000
+movable=2
+}
+
+[0x1917]
+{ E 2/2
+get=base_item
+name=massage table
+id=0x1917
+weight=1000
+movable=2
+}
+
+[0x1910]
+{ flex 1/12
+get=base_item
+name=bar
+id=0x1910
+weight=1000
+movable=2
+}
+
+[0x1911]
+{ flex 2/12
+get=base_item
+name=bar
+id=0x1911
+weight=1000
+movable=2
+}
+
+[0x1912]
+{ flex 3/12
+get=base_item
+name=bar
+id=0x1912
+weight=1000
+movable=2
+}
+
+[0x1913]
+{ flex 4/12
+get=base_item
+name=bar
+id=0x1913
+weight=1000
+movable=2
+}
+
+[0x1918]
+{ flex 5/12
+get=base_item
+name=bar
+id=0x1918
+weight=1000
+movable=2
+}
+
+[0x1919]
+{ flex 6/12
+get=base_item
+name=bar
+id=0x1919
+weight=1000
+movable=2
+}
+
+[0x191a]
+{ flex 7/12
+get=base_item
+name=bar
+id=0x191a
+weight=1000
+movable=2
+}
+
+[0x191b]
+{ flex 8/12
+get=base_item
+name=bar
+id=0x191b
+weight=1000
+movable=2
+}
+
+[0x191c]
+{ flex 9/12
+get=base_item
+name=bar
+id=0x191c
+weight=1000
+movable=2
+}
+
+[0x191d]
+{ flex 10/12
+get=base_item
+name=bar
+id=0x191d
+weight=1000
+movable=2
+}
+
+[0x191e]
+{ flex 11/12
+get=base_item
+name=bar
+id=0x191e
+weight=1000
+movable=2
+}
+
+[0x191f]
+{ flex 12/12
+get=base_item
+name=bar
+id=0x191f
+weight=1000
+movable=2
+}
+
+[0x1da5]
+{ E wood 1/2
+get=base_item
+name=table
+id=0x1da5
+weight=1000
+movable=2
+}
+
+[0x1da6]
+{ E wood 2/2
+get=base_item
+name=table
+id=0x1da6
+weight=1000
+movable=2
+}
+
+[0x1da7]
+{ E boards 1/2
+get=base_item
+name=table
+id=0x1da7
+weight=1000
+movable=2
+}
+
+[0x1da8]
+{ E boards 2/2
+get=base_item
+name=table
+id=0x1da8
+weight=1000
+movable=2
+}
+
+[0x1da9]
+{ S wood 1/2
+get=base_item
+name=table
+id=0x1da9
+weight=1000
+movable=2
+}
+
+[0x1daa]
+{ S wood 2/2
+get=base_item
+name=table
+id=0x1daa
+weight=1000
+movable=2
+}
+
+[0x1dab]
+{ S boards 1/2
+get=base_item
+name=table
+id=0x1dab
+weight=1000
+movable=2
+}
+
+[0x1dac]
+{ S boards 2/2
+get=base_item
+name=table
+id=0x1dac
+weight=1000
+movable=2
+}
+
+[0x1dbb]
+{ E 1/3
+get=base_item
+name=sandstone table
+id=0x1dbb
+weight=1000
+movable=2
+}
+
+[0x1dbc]
+{ E 2/3
+get=base_item
+name=sandstone table
+id=0x1dbc
+weight=1000
+movable=2
+}
+
+[0x1dbd]
+{ E 3/3
+get=base_item
+name=sandstone table
+id=0x1dbd
+weight=1000
+movable=2
+}
+
+[0x1dbe]
+{ S 1/3
+get=base_item
+name=sandstone table
+id=0x1dbe
+weight=1000
+movable=2
+}
+
+[0x1dbf]
+{ S 2/3
+get=base_item
+name=sandstone table
+id=0x1dbf
+weight=1000
+movable=2
+}
+
+[0x1dc0]
+{ S 3/3
+get=base_item
+name=sandstone table
+id=0x1dc0
+weight=1000
+movable=2
+}
+
+[0x1dc1]
+{ E 1/3
+get=base_item
+name=marble table
+id=0x1dc1
+weight=1000
+movable=2
+}
+
+[0x1dc2]
+{ E 2/3
+get=base_item
+name=marble table
+id=0x1dc2
+weight=1000
+movable=2
+}
+
+[0x1dc3]
+{ E 3/3
+get=base_item
+name=marble table
+id=0x1dc3
+weight=1000
+movable=2
+}
+
+[0x1dc4]
+{ S 1/3
+get=base_item
+name=marble table
+id=0x1dc4
+weight=1000
+movable=2
+}
+
+[0x1dc5]
+{ S 2/3
+get=base_item
+name=marble table
+id=0x1dc5
+weight=1000
+movable=2
+}
+
+[0x1dc6]
+{ S 3/3
+get=base_item
+name=marble table
+id=0x1dc6
+weight=1000
+movable=2
+}

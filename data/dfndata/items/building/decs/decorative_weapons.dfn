@@ -1,0 +1,145 @@
+[0x155c]
+{ S bow
+get=base_item
+name=decorative weapons
+id=0x155c
+weight=500
+movable=2
+}
+
+[0x155d]
+{ S bow
+get=base_item
+name=decorative weapons
+id=0x155d
+weight=500
+movable=2
+}
+
+[0x155e]
+{ E bow
+get=base_item
+name=decorative weapons
+id=0x155e
+weight=500
+movable=2
+}
+
+[0x155f]
+{ E bow
+get=base_item
+name=decorative weapons
+id=0x155f
+weight=500
+movable=2
+}
+
+[0x1560]
+{ S axe
+get=base_item
+name=decorative weapons
+id=0x1560
+weight=500
+movable=2
+}
+
+[0x1561]
+{ S axe
+get=base_item
+name=decorative weapons
+id=0x1561
+weight=500
+movable=2
+}
+
+[0x1562]
+{ E axe
+get=base_item
+name=decorative weapons
+id=0x1562
+weight=500
+movable=2
+}
+
+[0x1563]
+{ E axe
+get=base_item
+name=decorative weapons
+id=0x1563
+weight=500
+movable=2
+}
+
+[0x1564]
+{ S swords 1/2
+get=base_item
+name=decorative weapons
+id=0x1564
+weight=500
+movable=2
+}
+
+[0x1565]
+{ S swords 2/2
+get=base_item
+name=decorative weapons
+id=0x1565
+weight=500
+movable=2
+}
+
+[0x1566]
+{ E swords 1/2
+get=base_item
+name=decorative weapons
+id=0x1566
+weight=500
+movable=2
+}
+
+[0x1567]
+{ E swords 2/2
+get=base_item
+name=decorative weapons
+id=0x1567
+weight=500
+movable=2
+}
+
+[0x1568]
+{ S misc 1/2
+get=base_item
+name=decorative weapons
+id=0x1568
+weight=500
+movable=2
+}
+
+[0x1569]
+{ S misc 2/2
+get=base_item
+name=decorative weapons
+id=0x1569
+weight=500
+movable=2
+}
+
+[0x156a]
+{ E misc 1/2
+get=base_item
+name=decorative weapons
+id=0x156a
+weight=500
+movable=2
+}
+
+[0x156b]
+{ E misc 2/2
+get=base_item
+name=decorative weapons
+id=0x156b
+weight=500
+movable=2
+}
+
+

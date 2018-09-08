@@ -1,0 +1,68 @@
+num | description   
+-----------------       
+0   walk unarmed     
+1   walk armed     
+2   run unarmed     
+3   run armed     
+4   stand unarmed     
+5   stand armed     
+6   yawn     
+7   fidget     
+8   fidget     
+9   attack one handed wide    
+10   attack one handed jab    
+11   attack one handed down    
+12   attack two handed down    
+13   attack two handed wide    
+14   attack two handed jab    
+15   walk in attack position    
+16   cast area direct    
+17   cast area/summon    
+18   attack bow and arrow    
+19   attack crossbow    
+20   take hit    
+21   faint (die forward)    
+22   die back    
+23   horsback ride slow    
+24   horsback ride fast    
+25   horsback stand    
+26   horseback attack    
+27   horseback bow and arrow    
+28   horseback crossbow    
+29   horsback two hand attack wide    
+30   block with shield    
+31   attack by hands    
+32   bow    
+33   salute    
+34   drink    
+35   sit     
+...   
+100   appload   
+101   argve.1   
+102   argve.2   
+103   argve.3   
+104   blowkiss   
+105   formalbow   
+106   bow   
+107   coverears   
+108   curtsey    
+109   jig   
+110   folkdance   
+111   dance   
+112   tribaldance   
+113   foldarms   
+114   impatient   
+115   lecture   
+116   nod nod nod   
+117   point   
+118   greetsalute   
+119   salute   
+120   salute   
+121   shakehead   
+122   **** you   
+123   victory    
+124   celebrate   
+125   wave goodbye   
+126   two hand wave   
+127   long distance wave   
+128   what

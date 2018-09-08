@@ -1,0 +1,166 @@
+<html>
+<head>
+	<style type=text/css>
+		FONT		{ FONT-FAMILY: Verdana,Helvetica,Arial; }
+		table.z		{ FONT-FAMILY: Veranda,Helvetica,Arial; font-size: 10pt; }
+		A		{ color: #cccccc; text-decoration: none; }
+		A:active	{ color: #cfcfff; }
+		A:hover		{ color: #3333ff; }
+	</style>
+	<title>UOX3 Scripting Guide</title>
+</head>
+<body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
+<center>
+<font size=3><b>UOX3 Scripting Info</b></font><br>
+<p>
+<table bgcolor=#333333 width=95%>
+    <tr>
+	<td><table class=z border=0 cellpadding=0 cellspacing=0>
+	    <tr>
+		<td>
+		    <a name="races"></a>
+		    Races
+		    <p>
+		    This is only a first and prelimenary implementation of player races.  You will find that there has been another script added to the build, races.scp.  Inside races, you will find the definitions for 11 existing races (not completely fleshed out).  Basically, here is the layout for the player races.
+		</td>
+	    </tr>
+	</table>
+	<p>
+	<table class=z width=100%>
+	    <tr><td width=33%>SECTION RACE #</td></tr>
+	    <tr><td>{</tr></td>
+	    <tr><td>NAME Dwarf</td><td>			// Name of race</tr></td>
+	    <tr><td>STRCAP 100</td><td>			// Cap on strength</tr></td>
+	    <tr><td>DEXCAP 100</td><td>			// Cap on dexterity</tr></td>
+	    <tr><td>INTCAP 100</td><td>			// intelligence cap</tr></td>
+	    <tr><td>REQUIREBEARD</td><td>		// Males must have beards, will add if needed</tr></td>
+	    <tr><td>NOBEARD</td><td>			// Must have no beard, will delete if they have it</tr></td>
+	    <tr><td>GENDER MALE</td><td>		// Only males can be this race, acceptable values MALE, and FEMALE</tr></td>
+	    <tr><td>BEARDMIN 0440</td><td>		// Min beard colour, must have max also, if 0, then disabled</tr></td>
+	    <tr><td>BEARDMAX 0480</td><td>		// Max beard colour, must have min also, if 0, then disabled</tr></td>
+	    <tr><td>SKINMIN 0480</td><td>		// Skin min colour, must have max also, if 0, then disabled</tr></td>
+	    <tr><td>SKINMAX 0520</td><td>		// Skin max colour, must have min also, if 0, then disabled</tr></td>
+	    <tr><td>HAIRMIN 0440</td><td>		// Hair min colour, must have max also, if 0, then disabled</tr></td>
+	    <tr><td>HAIRMAX 0520</td><td>		// Hair max colour, must have min also, if 0, then disabled</tr></td>
+	    <tr><td>SKILLNAMEG 2</td><td>		// Skill name gain and how much (SKILLNAME = MAGERY or whatever skill you want)</tr></td>
+	    <tr><td>SKILLNAMEL 2</td><td>		// skill name loss and how much</tr></td>
+	    <tr><td>RACIALENEMY 1</td><td>		// Racial enemy number... can be more than one entry</tr></td>
+	    <tr><td>RACIALAID 2</td><td>		// Racial aid number... can be more than one entry</tr></td>
+	    <tr><td>LIGHTDAMAGE 5</td><td>		// take 5 damage from light</tr></td>
+	    <tr><td>LIGHTAFFECT</td><td>		// if here, take damage from light</tr></td>
+	    <tr><td>LIGHTSECS 5</td><td>                // take damage from light every 5 secs</tr></td>
+	    <tr><td>HEATDAMAGE 5</td><td>		// take 5 damage from heat</tr></td>
+	    <tr><td>HEATAFFECT</td><td>			// if here, take damage from heat</tr></td>
+	    <tr><td>HEATSECS 5</td><td>			// take damage from heat every 5 secs</tr></td>
+	    <tr><td>COLDDAMAGE 5</td><td>		// take 5 damage from cold</tr></td>
+	    <tr><td>COLDAFFECT</td><td>			// if here, take damage from cold</tr></td>
+	    <tr><td>COLDSECS 5</td><td>			// take damage from cold every 5 secs</tr></td>
+	    <tr><td>LIGHTNINGDAMAGE 5</td><td>		// take 5 damage from lightning</tr></td>
+	    <tr><td>LIGHTNINGAFFECT</td><td>		// if here, take damage from lightning</tr></td>
+	    <tr><td>LIGHTNINGSECS 5</td><td> 		// take damage from lightning every 5 secs</tr></td>
+	    <tr><td>RAINDAMAGE 5</td><td>		// take 5 damage from rain</tr></td>
+	    <tr><td>RAINAFFECT</td><td>			// if here, take damage from rain</tr></td>
+	    <tr><td>RAINSECS 5</td><td>			// take damage from rain every 5 secs</tr></td>
+	    <tr><td>SNOWDAMAGE 5</td><td>		// take 5 damage from snow</tr></td>
+	    <tr><td>SNOWAFFECT</td><td>			// if here, take damage from snow</tr></td>
+	    <tr><td>SNOWSECS 5</td><td>			// take damage from snow every 5 secs</tr></td>
+	    <tr><td>NIGHTVIS 3</td><td>			// night vision bonus... the number is the light level bonus you get at ANY time</tr></td>
+	    <tr><td>PLAYERRACE 0</td><td>		// 0 is nonplayer race, 1 is player race</tr></td>
+	    <tr><td>LANGUAGEMIN 500</td><td>		// skill value needed to interpret that races speech</tr></td>
+	    <tr><td>}
+		</td>
+	    </tr>
+	</table>
+	<p>
+	<table class=z width=100%>
+	    <tr>
+		<td>
+		    Skill gain/loss information can be adjusted dynamically now, though it still can default to:<br>
+		    For skill gain
+		    <p>
+		    0	None<br>
+		    1	Slight<br>
+		    2	Moderate<br>
+		    3	Significant
+		    <p>
+		    and for skill loss
+		    <p>
+		    0	None<br>
+		    1	Slight<br>
+		    2	Moderate<br>
+		    3	Significant
+		    <p>
+		    Basically, add a SECTION COMBAT MODS like this
+		    <p>
+		    SECTION COMBAT MODS<br>
+		    {<br>
+		    MOD0 0	&nbsp;&nbsp;&nbsp;&nbsp;// % bonus for mod 0<br>
+		    MOD1 5<br>	
+		    MOD2 10<br>
+		    MOD3 25<br>
+		    MOD4 50<br>
+		    }
+		    <p>
+		    If you don't have at least 4 entries, the defaults are used.
+		    <p>
+		    Any racial aid is flagged green, and an enemy is flagged orange. Murderers still take precedence 
+		    over everything though.  Race name will show up in paperdoll, as well as above their char when 
+		    you click on them, as long as it is not the default race. Skill bonuses and losses are in as well 
+		    (I believe), but haven't really tested this all too well. I have allowed for the creation of race gates
+		    as well, which are one time only uses (type 83, examples in file). So you will start out as a human, 
+		    but can only switch races once.  So be warned! There is a way to make them reusable, but that is VERY
+		    fantasy shattering, being able to switch constantly.
+		    <p>
+		    General:
+		    <p>
+		    I realize it's not that flash an implementation (only really useful if we could have newer art, and 
+		    different object IDs... ah well, perhaps one day).  But I hope you like it, nonetheless.  Either way,
+		    it should be a simple thing to do.
+		    <p>
+		    Enjoy!!!
+		    <p>
+		    I have other tasks for now like adding new skills. Going to try and tackle that!  
+		    It's easy enough to modify the Skills.mul and skills.idx file.  Already done that and added entries.  
+		    Plus I plan on adding a newer better weather system, to complement some of the features in here.
+		    <p>
+		    Adding a race gate:
+		    <p>
+		    Adding a race gate is actually quite simple.  Just follow the layout I put below, for items.scp
+		</td>
+	    </tr>
+	</table>
+	<p>
+	<table class=z width=100%>
+	    <tr><td width=33%>SECTION ITEM 11501</td></tr>
+	    <tr><td>{</td></tr>
+	    <tr><td>NAME Elf</td><td>			// name of the gate</td></tr>
+	    <tr><td>ID 0dda</td><td>			// moongate type... I only use this because it is easily visible</td></tr>
+	    <tr><td>COLOR 0015</td><td>			// color of moongate</td></tr>
+	    <tr><td>DIR 1</td><td>			// direction facing... who knows?</td></tr>
+	    <tr><td>TYPE 83</td><td>			// MUST be type 83, otherwise it won't work</td></tr>
+	    <tr><td>MOREX 1</td><td>			// Race to convert to</td></tr>
+	    <tr><td>MOREY 0</td><td>			// 0 means it's not reusable, 1 means it is</td></tr>
+	    <tr><td>}
+		</td>
+	    </tr>
+	</table>
+	<p>
+	<table class=z width=100%>
+	    <tr>
+		<td>
+		    Also, I have modified the script for existing weapons... only useful for weapons anyway :)  
+		    If you add what's following, it will work as a racial weapon.  I have been thinking about racial armour, 
+		    but who knows?
+		    <p>
+		    RACE 0	&nbsp;&nbsp;&nbsp;&nbsp;// Racial weapon against race 0
+		    <p>
+		    Add this to the item you want to modify, and it does double damage on that race.
+		    Abaddon, Angel of the Abyss
+		</td>
+	    </tr>
+	</table></td>
+     </tr>
+</table>
+</center>
+</body>
+</html>

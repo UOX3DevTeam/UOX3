@@ -1,0 +1,1226 @@
+// statues.dfn
+// Varities of statues all go in here
+// v1.0; 13/01/02; Initial revision; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, copy above line please)
+// For use with the UOX emulator or any with permission from the author
+
+[0x20C8]
+{
+ID=0x20C8
+NAME=Ettin Statue
+MOREX=2
+}
+
+[0x20C9]
+{
+ID=0x20C9
+NAME=Gorilla Statue
+MOREX=0x1D
+}
+
+[0x20CA]
+{
+ID=0x20CA
+NAME=Lizardman Statue
+MOREX=0x21
+}
+
+[0x20CB]
+{
+ID=0x20CB
+NAME=Ogre Statue
+MOREX=0x1
+}
+
+[0x20CC]
+{
+ID=0x20CC
+NAME=Troll Statue
+MOREX=0x36
+}
+
+[0x20CD]
+{
+ID=0x20CD
+NAME=Male Statue
+MOREX=0x0190
+}
+
+[0x20CE]
+{
+ID=0x20CE
+NAME=Female Statue
+MOREX=0x0191
+}
+
+[0x20CF]
+{
+ID=0x20CF
+NAME=Bear Statue
+MOREX=0xD3
+}
+
+[0x20D0]
+{
+ID=0x20D0
+NAME=Rat Statue
+MOREX=0xEE
+}
+
+[0x20D1]
+{
+ID=0x20D1
+NAME=Chicken Statue
+MOREX=0xD0
+}
+
+[0x20D2]
+{
+ID=0x20D2
+NAME=Corpser Statue
+MOREX=0x8
+}
+
+[0x20D3]
+{
+ID=0x20D3
+NAME=Demon Statue
+MOREX=0x9
+}
+
+[0x20D4]
+{
+ID=0x20D4
+NAME=Deer Statue
+MOREX=0xED
+}
+
+[0x20D5]
+{
+ID=0x20D5
+NAME=Dog Statue
+MOREX=0xD9
+}
+
+[0x20D6]
+{
+ID=0x20D6
+NAME=Dragon Statue
+MOREX=0xC
+}
+
+[0x20D7]
+{
+ID=0x20D7
+NAME=Earth Elemental Statue
+MOREX=0xE
+}
+
+[0x20D8]
+{
+ID=0x20D8
+NAME=Ettin Statue
+MOREX=0x12
+}
+
+[0x20D9]
+{
+ID=0x20D9
+NAME=Gargoyle Statue
+MOREX=0x4
+}
+
+[0x20DA]
+{
+ID=0x20DA
+NAME=Crocodile Statue
+MOREX=0xCA
+}
+
+[0x20DB]
+{
+ID=0x20DB
+NAME=Grizzly Bear Statue
+MOREX=0xD4
+}
+
+[0x20DC]
+{
+ID=0x20DC
+NAME=Harpy Statue
+MOREX=0x1E
+}
+
+[0x20DD]
+{
+ID=0x20DD
+NAME=Horse Statue
+MOREX=0xC8
+VALUE=700 350
+}
+
+[0x20DE]
+{
+ID=0x20DE
+NAME=Lizard Man Statue
+MOREX=0x21
+}
+
+[0x20DF]
+{
+ID=0x20DF
+NAME=Ogre Statue
+MOREX=0x1
+}
+
+[0x20E0]
+{
+ID=0x20E0
+NAME=Orc Statue
+MOREX=0x11
+}
+
+[0x20E1]
+{
+ID=0x20E1
+NAME=Polar Bear Statue
+MOREX=0xD5
+}
+
+[0x20E2]
+{
+ID=0x20E2
+NAME=Rabbit Statue
+MOREX=0xCD
+}
+
+[0x20E3]
+{
+ID=0x20E3
+NAME=Rat Man Statue
+MOREX=0x2A
+}
+
+[0x20E4]
+{
+ID=0x20E4
+NAME=Scorpion Statue
+MOREX=0x30
+}
+
+[0x20E5]
+{
+ID=0x20E5
+NAME=Serpent Statue
+MOREX=0x15
+}
+
+[0x20E6]
+{
+ID=0x20E6
+NAME=Sheep Statue
+MOREX=0xDF
+}
+
+[0x20E7]
+{
+ID=0x20E7
+NAME=Skeleton Statue
+MOREX=0x32
+}
+
+[0x20E8]
+{
+ID=0x20E8
+NAME=Slime Statue
+MOREX=0x33
+}
+
+[0x20E9]
+{
+ID=0x20E9
+NAME=Troll Statue
+MOREX=0x35
+}
+
+[0x20EA]
+{
+ID=0x20EA
+NAME=Wolf Statue
+MOREX=0xE1
+}
+
+[0x20EB]
+{
+ID=0x20EB
+NAME=Wooly Sheep Statue
+MOREX=0xCF
+}
+
+[0x20EC]
+{
+ID=0x20EC
+NAME=Zombie Statue
+MOREX=0x3
+}
+
+[0x20ED]
+{
+ID=0x20ED
+NAME=Air Elemental Statue
+MOREX=0xD
+}
+
+[0x20EE]
+{
+ID=0x20EE
+NAME=Bird Statue
+MOREX=0x6
+}
+
+[0x20EF]
+{
+ID=0x20EF
+NAME=Bull Statue
+MOREX=0xE8
+}
+
+[0x20F0]
+{
+ID=0x20F0
+NAME=Bull Statue
+MOREX=0xE9
+}
+
+[0x20F1]
+{
+ID=0x20F1
+NAME=Dolphin Statue
+MOREX=0x97
+}
+
+[0x20F2]
+{
+ID=0x20F2
+NAME=Eagle Statue
+MOREX=0x5
+}
+
+[0x20F3]
+{
+ID=0x20F3
+NAME=Fire Elemental Statue
+MOREX=0xF
+}
+
+[0x20F4]
+{
+ID=0x20F4
+NAME=Gazer Statue
+MOREX=0x16
+}
+
+[0x20F5]
+{
+ID=0x20F5
+NAME=Gorilla Statue
+MOREX=0x1D
+}
+
+[0x20F6]
+{
+ID=0x20F6
+NAME=Llama Statue
+MOREX=0xDC
+VALUE=700 350
+}
+
+[0x20F7]
+{
+ID=0x20F7
+NAME=Cougar Statue
+MOREX=0xD6
+}
+
+[0x20F8]
+{
+ID=0x20F8
+NAME=Liche Statue
+MOREX=0x18
+}
+
+[0x20F9]
+{
+ID=0x20F9
+NAME=Mongbat Statue
+MOREX=0x27
+}
+
+[0x20FA]
+{
+ID=0x20FA
+NAME=Reaper Statue
+}
+
+[0x20FB]
+{
+ID=0x20FB
+NAME=Sea Serpent Statue
+}
+
+[0x20FC]
+{
+ID=0x20FC
+NAME=Snake Statue
+}
+
+[0x20FD]
+{
+ID=0x20FD
+NAME=Giant Spider Statue
+}
+
+[0x20FE]
+{
+ID=0x20FE
+NAME=Snake Statue
+}
+
+[0x20FF]
+{
+ID=0x20FF
+NAME=Walrus Statue
+}
+
+[0x2100]
+{
+ID=0x2100
+NAME=Wisp Statue
+}
+
+[0x2101]
+{
+ID=0x2101
+NAME=Pig Statue
+}
+
+[0x2102]
+{
+ID=0x2102
+NAME=Panther Statue
+}
+
+[0x2103]
+{
+ID=0x2103
+NAME=Cow Statue
+}
+
+[0x2104]
+{
+ID=0x2104
+NAME=Daemon Statue
+}
+
+[0x2105]
+{
+ID=0x2105
+NAME=Daemon Statue
+}
+
+[0x2106]
+{
+ID=0x2106
+NAME=Male Statue
+}
+
+[0x2107]
+{
+ID=0x2107
+NAME=Female Statue
+}
+
+[0x2108]
+{
+ID=0x2108
+NAME=Mountain Goat Statue
+}
+
+[0x2109]
+{
+ID=0x2109
+NAME=Ghoul Statue
+}
+
+[0x210A]
+{
+ID=0x210A
+NAME=Headless Statue
+}
+
+[0x210B]
+{
+ID=0x210B
+NAME=Water Elemental Statue
+}
+
+[0x2118]
+{
+ID=0x2118
+NAME=Black Bear Statue
+}
+
+[0x2119]
+{
+ID=0x2119
+NAME=Big Cat Statue
+}
+
+[0x211A]
+{
+ID=0x211A
+NAME=Bird Statue
+}
+
+[0x211B]
+{
+ID=0x211B
+NAME=Cat Statue
+}
+
+[0x211C]
+{
+ID=0x211C
+NAME=Dog Statue
+}
+
+[0x211D]
+{
+ID=0x211D
+NAME=Eagle Statue
+}
+
+[0x211E]
+{
+ID=0x211E
+NAME=Grizzly Bear Statue
+}
+
+[0x211F]
+{
+ID=0x211F
+NAME=Horse Statue
+VALUE=700 350
+}
+
+[0x2120]
+{
+ID=0x2120
+NAME=Horse Statue
+VALUE=700 350
+}
+
+[0x2121]
+{
+ID=0x2121
+NAME=Horse Statue
+VALUE=700 350
+}
+
+[0x2122]
+{
+ID=0x2122
+NAME=Wolf Statue
+}
+
+[0x2123]
+{
+ID=0x2123
+NAME=Rat Statue
+}
+
+[0x2124]
+{
+ID=0x2124
+NAME=Horse Statue
+VALUE=700 350
+}
+
+[0x2125]
+{
+ID=0x2125
+NAME=Rabbit Statue
+}
+
+[0x2126]
+{
+ID=0x2126
+NAME=Pack Horse Statue
+VALUE=700 350
+}
+
+[0x2127]
+{
+ID=0x2127
+NAME=Pack Llama Statue
+VALUE=700 350
+}
+
+[0x212A]
+{
+ID=0x212A
+NAME=Terathan Warrior Statue
+}
+
+[0x212B]
+{
+ID=0x212B
+NAME=Terathan Drone Statue
+}
+
+[0x212C]
+{
+ID=0x212C
+NAME=Terathan Matriarch Statue
+}
+
+[0x212D]
+{
+ID=0x212D
+NAME=Cyclops Statue
+}
+
+[0x212E]
+{
+ID=0x212E
+NAME=Titan Statue
+}
+
+[0x212F]
+{
+ID=0x212F
+NAME=Giant Toad Statue
+}
+
+[0x2130]
+{
+ID=0x2130
+NAME=Bullfrog Statue
+}
+
+[0x2131]
+{
+ID=0x2131
+NAME=Lizard Statue
+}
+
+[0x2132]
+{
+ID=0x2132
+NAME=Ophidian Mage Statue
+}
+
+[0x2133]
+{
+ID=0x2133
+NAME=Ophidian Warrior Statue
+}
+
+[0x2134]
+{
+ID=0x2134
+NAME=Ophidian Queen Statue
+}
+
+[0x2135]
+{
+ID=0x2135
+NAME=Desert Ostard Statue
+VALUE=700 350
+}
+
+[0x2136]
+{
+ID=0x2136
+NAME=Frenzied Ostard Statue
+VALUE=700 350
+}
+
+[0x2137]
+{
+ID=0x2137
+NAME=Forest Ostard Statue
+VALUE=700 350
+}
+
+[0x2580]
+{
+ID=0x2580
+NAME=Billy Goat Statue
+}
+
+[0x2581]
+{
+ID=0x2581
+NAME=Centaur Statue
+}
+
+[0x2582]
+{
+ID=0x2582
+NAME=Corpser Statue
+}
+
+[0x2583]
+{
+ID=0x2583
+NAME=Cougar Statue
+}
+
+[0x2584]
+{
+ID=0x2584
+NAME=Daemon Statue
+}
+
+[0x2585]
+{
+ID=0x2585
+NAME=Black Gate Daemon Statue
+}
+
+[0x2586]
+{
+ID=0x2586
+NAME=Elder Daemon Statue
+}
+
+[0x2587]
+{
+ID=0x2587
+NAME=Ice Fiend Statue
+}
+
+[0x2588]
+{
+ID=0x2588
+NAME=Dog Hound Statue
+}
+
+[0x2589]
+{
+ID=0x2589
+NAME=Ethereal Warriors Statue
+}
+
+[0x258A]
+{
+ID=0x258A
+NAME=Evil Mage Statue
+}
+
+[0x258B]
+{
+ID=0x258B
+NAME=Evil Mage Boss Statue
+}
+
+[0x258C]
+{
+ID=0x258C
+NAME=Giant Frog Statue
+}
+
+[0x258D]
+{
+ID=0x258D
+NAME=Gargoyle Statue
+}
+
+[0x258E]
+{
+ID=0x258E
+NAME=Stone Gargoyle Statue
+}
+
+[0x258F]
+{
+ID=0x258F
+NAME=Gazer Statue
+}
+
+[0x2590]
+{
+ID=0x2590
+NAME=Efreet Statue
+}
+
+[0x2591]
+{
+ID=0x2591
+NAME=Ghoul Statue
+}
+
+[0x2592]
+{
+ID=0x2592
+NAME=Silverback Gorilla Statue
+}
+
+[0x2593]
+{
+ID=0x2593
+NAME=Great Worm Statue
+}
+
+[0x2594]
+{
+ID=0x2594
+NAME=Stone Harpy Statue
+}
+
+[0x2595]
+{
+ID=0x2595
+NAME=Headless Statue
+}
+
+[0x2596]
+{
+ID=0x2596
+NAME=Hell Hound Statue
+}
+
+[0x2597]
+{
+ID=0x2597
+NAME=Hellcat Statue
+}
+
+[0x2598]
+{
+ID=0x2598
+NAME=Dappled Brown Horse Statue
+VALUE=700 350
+}
+
+[0x2599]
+{
+ID=0x2599
+NAME=Dappled Gray Horse Statue
+VALUE=700 350
+}
+
+[0x259A]
+{
+ID=0x259A
+NAME=Dark Brown Horse Statue
+VALUE=700 350
+}
+
+[0x259B]
+{
+ID=0x259B
+NAME=Dark Steed Statue
+}
+
+[0x259C]
+{
+ID=0x259C
+NAME=Nightmare Statue
+}
+
+[0x259D]
+{
+ID=0x259D
+NAME=Silver Steed Statue
+}
+
+[0x259E]
+{
+ID=0x259E
+NAME=Tan Horse Statue
+VALUE=700 350
+}
+
+[0x259F]
+{
+ID=0x259F
+NAME=Imp Statue
+}
+
+[0x25A0]
+{
+ID=0x25A0
+NAME=Kirin Statue
+}
+
+[0x25A1]
+{
+ID=0x25A1
+NAME=Komodo Dragon Statue
+}
+
+[0x25A2]
+{
+ID=0x25A2
+NAME=Kraken Statue
+}
+
+[0x25A3]
+{
+ID=0x25A3
+NAME=Snow Leopard Statue
+}
+
+[0x25A4]
+{
+ID=0x25A4
+NAME=Liche Statue
+}
+
+[0x25A5]
+{
+ID=0x25A5
+NAME=Liche Lord Statue
+}
+
+[0x25A6]
+{
+ID=0x25A6
+NAME=Mongbat Statue
+}
+
+[0x25A7]
+{
+ID=0x25A7
+NAME=Mummy Statue
+}
+
+[0x25A8]
+{
+ID=0x25A8
+NAME=Ogre Lord Statue
+}
+
+[0x25A9]
+{
+ID=0x25A9
+NAME=Ophidian Archmage Statue
+}
+
+[0x25AA]
+{
+ID=0x25AA
+NAME=Ophidian Knight Statue
+}
+
+[0x25AB]
+{
+ID=0x25AB
+NAME=Ophidian Mage Statue
+}
+
+[0x25AC]
+{
+ID=0x25AC
+NAME=Ophidian Queen Statue
+}
+
+[0x25AD]
+{
+ID=0x25AD
+NAME=Ophidian Warrior Statue
+}
+
+[0x25AE]
+{
+ID=0x25AE
+NAME=Orc Statue
+}
+
+[0x25AF]
+{
+ID=0x25AF
+NAME=Orc Captain Statue
+}
+
+[0x25B0]
+{
+ID=0x25B0
+NAME=Orc Lord Statue
+}
+
+[0x25B1]
+{
+ID=0x25B1
+NAME=orc Shaman Statue
+}
+
+[0x25B2]
+{
+ID=0x25B2
+NAME=Desert Ostard Statue
+}
+
+[0x25B3]
+{
+ID=0x25B3
+NAME=Forest Ostard Statue
+}
+
+[0x25B4]
+{
+ID=0x25B4
+NAME=Frenzied Ostard Statue
+}
+
+[0x25B5]
+{
+ID=0x25B5
+NAME=Panther Statue
+}
+
+[0x25B6]
+{
+ID=0x25B6
+NAME=Pixie Statue
+}
+
+[0x25B7]
+{
+ID=0x25B7
+NAME=Rat Man Statue
+}
+
+[0x25B8]
+{
+ID=0x25B8
+NAME=Rotting Corpse Statue
+}
+
+[0x25B9]
+{
+ID=0x25B9
+NAME=Giant Scorpion Statue
+}
+
+[0x25BA]
+{
+ID=0x25BA
+NAME=Sea Horse Statue
+VALUE=700 350
+}
+
+[0x25BB]
+{
+ID=0x25BB
+NAME=Nameless One Statue
+}
+
+[0x25BC]
+{
+ID=0x25BC
+NAME=Skeleton Statue
+}
+
+[0x25BD]
+{
+ID=0x25BD
+NAME=Skeleton Knight Statue
+}
+
+[0x25BE]
+{
+ID=0x25BE
+NAME=Skeleton Mage Statue
+}
+
+[0x25BF]
+{
+ID=0x25BF
+NAME=Giant Snake Statue
+}
+
+[0x25C0]
+{
+ID=0x25C0
+NAME=Giant Ice Snake Statue
+}
+
+[0x25C1]
+{
+ID=0x25C1
+NAME=Giant Lava Snake Statue
+}
+
+[0x25C2]
+{
+ID=0x25C2
+NAME=Silver Serpent Statue
+}
+
+[0x25C3]
+{
+ID=0x25C3
+NAME=Black Widow Spider Statue
+}
+
+[0x25C4]
+{
+ID=0x25C4
+NAME=Dread Spider Statue
+}
+
+[0x25C5]
+{
+ID=0x25C5
+NAME=Frost Spider Statue
+}
+
+[0x25C6]
+{
+ID=0x25C6
+NAME=Giant Spider Statue
+}
+
+[0x25C7]
+{
+ID=0x25C7
+NAME=Ghost Statue
+}
+
+[0x25C8]
+{
+ID=0x25C8
+NAME=Swamp Tentacles Statue
+}
+
+[0x25C9]
+{
+ID=0x25C9
+NAME=Terathan Drone Statue
+}
+
+[0x25CA]
+{
+ID=0x25CA
+NAME=Terathan Avenger Statue
+}
+
+[0x25CB]
+{
+ID=0x25CB
+NAME=Terathan Queen Statue
+}
+
+[0x25CC]
+{
+ID=0x25CC
+NAME=Terathan Warrior Statue
+}
+
+[0x25CD]
+{
+ID=0x25CD
+NAME=Titan Statue
+}
+
+[0x25CE]
+{
+ID=0x25CE
+NAME=Unicorn Statue
+}
+
+[0x25CF]
+{
+ID=0x25CF
+NAME=Wolf Statue
+}
+
+[0x25D0]
+{
+ID=0x25D0
+NAME=Dire Wolf Statue
+}
+
+[0x25D1]
+{
+ID=0x25D1
+NAME=Gray Wolf Statue
+}
+
+[0x25D2]
+{
+ID=0x25D2
+NAME=Silver Wolf Statue
+}
+
+[0x25D3]
+{
+ID=0x25D3
+NAME=Timber Wolf Statue
+}
+
+[0x25D4]
+{
+ID=0x25D4
+NAME=Wyvern Statue
+}
+
+[0x25D5]
+{
+ID=0x25D5
+NAME=Zombie Statue
+}
+
+[0x25D6]
+{
+ID=0x25D6
+NAME=Acid Elemental Statue
+}
+
+[0x25D7]
+{
+ID=0x25D7
+NAME=Air Elemental Statue
+}
+
+[0x25D8]
+{
+ID=0x25D8
+NAME=Blood Elemental Statue
+}
+
+[0x25D9]
+{
+ID=0x25D9
+NAME=Fire Elemental Statue
+}
+
+[0x25DA]
+{
+ID=0x25DA
+NAME=Ice Elemental Statue
+}
+
+[0x25DB]
+{
+ID=0x25DB
+NAME=Poison Elemental Statue
+}
+
+[0x25DC]
+{
+ID=0x25DC
+NAME=Snow Elemental Statue
+}
+
+[0x25DD]
+{
+ID=0x25DD
+NAME=Water Elemental Statue
+}
+
+EOF
+// Email me with bugs\comments\complaints about this file (see top of file for address)

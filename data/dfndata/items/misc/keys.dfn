@@ -1,0 +1,54 @@
+[base_key]
+{
+get=base_item
+weight=100
+value=9 4
+restock=100
+decay=1
+good=38
+script=5013
+}
+
+[0x100E]
+{
+get=base_key
+name=copper key
+id=0x100E
+value=2 1
+}
+
+[0x100F]
+{
+get=base_key
+name=gold key
+id=0x100F
+}
+
+[0x1010]
+{
+get=base_key
+name=iron key
+id=0x1010
+
+}
+
+[0x1011]
+{
+get=base_key
+name=key ring
+id=0x1011
+}
+
+[0x1012]
+{
+get=base_key
+name=magic key
+id=0x1012
+}
+
+[0x1013]
+{
+get=base_key
+name=rusty iron key
+id=0x1013
+}

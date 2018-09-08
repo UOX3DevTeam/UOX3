@@ -1,0 +1,21 @@
+[0x2796]
+{
+get=base_item
+name=samurai tabi
+id=0x2796
+layer=0x03
+weight=200
+decay=1
+good=19
+}
+
+[0x2797]
+{
+get=base_item
+name=ninja tall tabi
+id=0x2797
+layer=0x03
+weight=200
+decay=1
+good=19
+}

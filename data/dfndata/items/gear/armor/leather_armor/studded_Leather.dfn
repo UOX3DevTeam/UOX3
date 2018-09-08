@@ -1,0 +1,92 @@
+[0x13d4]
+{ Left Facing
+get=studded_sleeves
+name=studded sleeves
+id=0x13d4
+}
+
+[0x13d5]
+{ Left Facing
+get=studded_gloves
+name=studded gloves
+id=0x13d5
+}
+
+[0x13d6]
+{ Left Facing
+get=studded_gorget
+name=studded gorget
+id=0x13d6
+}
+
+[0x13da]
+{ left facing
+get=studded_leggings
+name=studded leggings
+id=0x13da
+}
+
+[0x13db]
+{ left facing
+get=studded_tunic
+name=studded tunic
+id=0x13db
+}
+
+[0x13dc]
+{ right Facing
+get=studded_sleeves
+name=studded sleeves
+id=0x13dc
+}
+
+[0x13dd]
+{ right Facing
+get=studded_gloves
+name=studded gloves
+id=0x13dd
+}
+
+[0x13e1]
+{ right facing
+get=studded_leggings
+name=studded leggings
+id=0x13e1
+}
+
+[0x13e2]
+{ right facing
+get=studded_tunic
+name=studded tunic
+id=0x13e2
+}
+
+// Female Studded Armor
+
+[0x1c02]
+{ left facing - Female
+get=studded_armor
+name=studded armor
+id=0x1c02
+}
+
+[0x1c03]
+{ right facing - Female
+get=studded_armor
+name=studded armor
+id=0x1c03
+}
+
+[0x1c0c]
+{ left facing - Female
+get=studded_bustier
+name=studded bustier
+id=0x1c0c
+}
+
+[0x1c0d]
+{ right facing - Female
+get=studded_bustier
+name=studded bustier
+id=0x1c0d
+}

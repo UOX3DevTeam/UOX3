@@ -1,0 +1,695 @@
+// unfinished concrete wall north facing curved edge west
+[0x2540]
+{
+get=base_item
+name=wall
+id=0x2540
+}
+
+// unfinished concrete wall east curved
+[0x2541]
+{
+get=base_item
+name=wall
+id=0x2541
+}
+
+// unfinished concrete wall east curved edge south
+[0x2542]
+{
+get=base_item
+name=wall
+id=0x2542
+}
+
+// unfinished concrete wall south curved
+[0x2543]
+{
+get=base_item
+name=wall
+id=0x2543
+}
+
+// unfinished concrete wall west
+[0x2544]
+{
+get=base_item
+name=wall
+id=0x2544
+}
+
+// unfinished concrete wall southwest
+[0x2545]
+{
+get=base_item
+name=wall
+id=0x2545
+}
+
+// unfinished concrete wall southwest window
+[0x2546]
+{
+get=base_item
+name=wall
+id=0x2546
+}
+
+// unfinished concrete wall south
+[0x2547]
+{
+get=base_item
+name=wall
+id=0x2547
+}
+
+// unfinished concrete wall west curved
+[0x2548]
+{
+get=base_item
+name=wall
+id=0x2548
+}
+
+// unfinished concrete wall south narrow
+[0x2549]
+{
+get=base_item
+name=wall
+id=0x2549
+}
+
+// unfinished concrete wall northeast curved
+[0x254A]
+{
+get=base_item
+name=wall
+id=0x254A
+}
+
+// unfinished concrete wall narrow west
+[0x254B]
+{
+get=base_item
+name=wall
+id=0x254B
+}
+
+// unfinished concrete wall curved west
+[0x254C]
+{
+get=base_item
+name=wall
+id=0x254C
+}
+
+// unfinished concrete wall curved west edge south
+[0x254D]
+{
+get=base_item
+name=wall
+id=0x254D
+}
+
+// unfinished concrete wall west
+[0x254E]
+{
+get=base_item
+name=wall
+id=0x254E
+}
+
+// unfinished concrete wall curved southeast
+[0x254F]
+{
+get=base_item
+name=wall
+id=0x254F
+}
+
+// unfinished concrete wall very narrow south
+[0x2550]
+{
+get=base_item
+name=wall
+id=0x2550
+}
+
+// unfinished concrete wall curved southeast
+[0x2551]
+{
+get=base_item
+name=wall
+id=0x2551
+}
+
+// unfinished concrete wall curved southeast edge west
+[0x2552]
+{
+get=base_item
+name=wall
+id=0x2552
+}
+
+// unfinished concrete wall southeast
+[0x2553]
+{
+get=base_item
+name=wall
+id=0x2553
+}
+
+// jungle wall curved northwest
+[0x3EF2]
+{
+get=base_item
+name=jungle wall
+id=0x3EF2
+}
+
+// jungle wall curved northwest edge west
+[0x3EF3]
+{
+get=base_item
+name=jungle wall
+id=0x3EF3
+}
+
+// jungle wall curved northeast
+[0x3EF4]
+{
+get=base_item
+name=jungle wall
+id=0x3EF4
+}
+
+// jungle wall curved northeast edge south
+[0x3EF5]
+{
+get=base_item
+name=jungle wall
+id=0x3EF5
+}
+
+// jungle wall curved southeast
+[0x3EF6]
+{
+get=base_item
+name=jungle wall
+id=0x3EF6
+}
+
+// jungle wall south narrow
+[0x3EF7]
+{
+get=base_item
+name=jungle wall
+id=0x3EF7
+}
+
+// jungle wall south
+[0x3EF9]
+{
+get=base_item
+name=jungle wall
+id=0x3EF9
+}
+
+// jungle wall curved southwest
+[0x3EFA]
+{
+get=base_item
+name=jungle wall
+id=0x3EFA
+}
+
+// jungle wall narrow south
+[0x3EFB]
+{
+get=base_item
+name=jungle wall
+id=0x3EFB
+}
+
+// jungle wall curved northeast
+[0x3EFC]
+{
+get=base_item
+name=jungle wall
+id=0x3EFC
+}
+
+// jungle wall very narrow west
+[0x3EFD]
+{
+get=base_item
+name=jungle wall
+id=0x3EFD
+}
+
+// jungle wall curved west
+[0x3EFE]
+{
+get=base_item
+name=jungle wall
+id=0x3EFE
+}
+
+// jungle wall west edge south
+[0x3EFF]
+{
+get=base_item
+name=jungle wall
+id=0x3EFF
+}
+
+// jungle wall west
+[0x3F00]
+{
+get=base_item
+name=jungle wall
+id=0x3F00
+}
+
+// jungle wall northeast curved
+[0x3F01]
+{
+get=base_item
+name=jungle wall
+id=0x3F01
+}
+
+// very narrow jungle wall south
+[0x3F02]
+{
+get=base_item
+name=jungle wall
+id=0x3F02
+}
+
+// jungle wall curved southeast
+[0x3F03]
+{
+get=base_item
+name=jungle wall
+id=0x3F03
+}
+
+// juingle wall curved southeast edge south
+[0x3F04]
+{
+get=base_item
+name=jungle wall
+id=0x3F04
+}
+
+// jungle wall southeast
+[0x3F05]
+{
+get=base_item
+name=jungle wall
+id=0x3F05
+}
+
+// jungle wall southwest window
+[0x3F06]
+{
+get=base_item
+name=window
+id=0x3F06
+}
+
+// wall carving relief west facing
+[0x121D]
+{
+get=base_item
+name=wall carving
+id=0x121D
+}
+
+[0x121E]
+{
+get=base_item
+name=wall carving
+id=0x121E
+}
+
+[0x121F]
+{
+get=base_item
+name=wall carving
+id=0x121F
+}
+
+// wall carving west facing faded
+[0x1220]
+{
+get=base_item
+name=wall carving
+id=0x1220
+}
+
+[0x1221]
+{
+get=base_item
+name=wall carving
+id=0x1221
+}
+
+[0x1222]
+{
+get=base_item
+name=wall carving
+id=0x1222
+}
+
+// wall carving west spider
+[0x1231]
+{
+get=base_item
+name=wall carving
+id=0x1231
+}
+
+[0x1232]
+{
+get=base_item
+name=wall carving
+id=0x1232
+}
+
+[0x1233]
+{
+get=base_item
+name=wall carving
+id=0x1233
+}
+
+// wall carving west web
+[0x1234]
+{
+get=base_item
+name=wall carving
+id=0x1234
+}
+
+[0x1235]
+{
+get=base_item
+name=wall carving
+id=0x1235
+}
+
+// wall carving west facing spider north end piece
+[0x1237]
+{
+get=base_item
+name=wall carving
+id=0x1237
+}
+
+// wall carving west spiders middle piece
+[0x1238]
+{
+get=base_item
+name=wall carving
+id=0x1238
+}
+
+// wall carving spiders west south end piece
+[0x1239]
+{
+get=base_item
+name=wall carving
+id=0x1239
+}
+
+// wall carving south spider west end piece
+[0x123A]
+{
+get=base_item
+name=wall carving
+id=0x123A
+}
+
+// wall carving south spider middle piece
+[0x123B]
+{
+get=base_item
+name=wall carving
+id=0x123B
+}
+
+// wall carving south spider east end piece
+[0x123C]
+{
+get=base_item
+name=wall carving
+id=0x123C
+}
+
+// wall carving web south
+[0x123D]
+{
+get=base_item
+name=wall carving
+id=0x123D
+}
+
+// wall carving web south
+[0x123E]
+{
+get=base_item
+name=wall carving
+id=0x123E
+}
+
+// wall carving spiders south
+[0x1240]
+{
+get=base_item
+name=wall carving
+id=0x1240
+}
+
+// wall carving spiders south
+[0x1241]
+{
+get=base_item
+name=wall carving
+id=0x1241
+}
+
+// wall carving spiders south
+[0x1242]
+{
+get=base_item
+name=wall carving
+id=0x1242
+}
+
+// wall carving south west end piece spider
+[0x1243]
+{
+get=base_item
+name=wall carving
+id=0x1243
+}
+
+// wall carving west south end piece spider
+[0x1244]
+{
+get=base_item
+name=wall carving
+id=0x1244
+}
+
+// wall carving figures relief south
+[0x1265]
+{
+get=base_item
+name=wall carving
+id=0x1265
+}
+
+// wall carving figures relief south
+[0x1266]
+{
+get=base_item
+name=wall carving
+id=0x1266
+}
+
+// wall carving figures relief south
+[0x1267]
+{
+get=base_item
+name=wall carving
+id=0x1267
+}
+
+// wall carving figures relief west
+[0x12CC]
+{
+get=base_item
+name=wall carving
+id=0x12CC
+}
+
+// wall carving figures relief west
+[0x12CD]
+{
+get=base_item
+name=wall carving
+id=0x12CD
+}
+
+// wall carving figures relief west 
+[0x12CE]
+{
+get=base_item
+name=wall carving
+id=0x12CE
+}
+
+// wall carving figures relief west
+[0x12CF]
+{
+get=base_item
+name=wall carving
+id=0x12CF
+}
+
+// wall carving figures relief west
+[0x12D0]
+{
+get=base_item
+name=wall carving
+id=0x12D0
+}
+
+// wall carving figures relief south
+[0x12D0]
+{
+get=base_item
+name=wall carving
+id=0x12D1
+}
+
+// wall carving figures relief south
+[0x12D2]
+{
+get=base_item
+name=wall carving
+id=0x12D2
+}
+
+// wall carving figures relief south
+[0x12D3]
+{
+get=base_item
+name=wall carving
+id=0x12D3
+}
+
+// wall carving figures relief south
+[0x12D4]
+{
+get=base_item
+name=wall carving
+id=0x12D4
+}
+
+// pier pylon
+[0x03A5]
+{
+get=base_item
+name=pier
+id=0x03A5
+}
+
+// rope west facing
+[0x03A6]
+{
+get=base_item
+name=rope
+id=0x03A6
+}
+
+// rope south facing
+[0x03A7]
+{
+get=base_item
+name=rope
+id=0x03A7
+}
+
+// rope west facing
+[0x03A8]
+{
+get=base_item
+name=rope
+id=0x03A8
+}
+
+// rope south facing
+[0x03A9]
+{
+get=base_item
+name=rope
+id=0x03A9
+}
+
+// pier pylon two coils of rope
+[0x03AA]
+{
+get=base_item
+name=pier
+id=0x03AA
+}
+
+// pier pylon coil of rope extending to south
+[0x03AB]
+{
+get=base_item
+name=pier
+id=0x03AB
+}
+
+// pier pylon coil of rope extending west
+[0x03AC]
+{
+get=base_item
+name=pier
+id=0x03AC
+}
+
+// pier pylon coil of rope extending both south and west
+[0x03AD]
+{
+get=base_item
+name=pier
+id=0x03AD
+}
+
+// pier pylon water
+[0x03AE]
+{
+get=base_item
+name=pier
+id=0x03AE
+}
+
+[0x03AF]
+{
+get=base_item
+name=pier
+id=0x03AF
+}
+
+[0x03B0]
+{
+get=base_item
+name=pier
+id=0x03B0
+}
+

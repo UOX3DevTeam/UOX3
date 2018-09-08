@@ -1,0 +1,60 @@
+[0x1bd7]
+{
+get=base_item
+name=board
+id=0x1bd7
+weight=100
+value=3 1
+pileable=1
+decay=1
+good=42
+}
+
+[0x1bd8]
+{ S three
+get=base_item
+name=boards
+id=0x1bd8
+weight=100
+movable=2
+}
+
+[0x1bd9]
+{ S many
+get=base_item
+name=boards
+id=0x1bd9
+weight=100
+movable=2
+}
+
+[0x1bda]
+{
+get=base_item
+name=board
+id=0x1bda
+weight=100
+value=1
+pileable=1
+decay=1
+good=42
+}
+
+[0x1bdb]
+{ E three
+get=base_item
+name=boards
+id=0x1bdb
+weight=100
+movable=2
+}
+
+[0x1bdc]
+{ E many
+get=base_item
+name=boards
+id=0x1bdc
+weight=100
+movable=2
+}
+

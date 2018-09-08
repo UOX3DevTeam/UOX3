@@ -1,0 +1,531 @@
+//These are spell scrolls.  Blanks are in tools.dfn - kirre
+//Spell book is in books.dfn - kirre
+
+[base_scroll]
+{
+get=base_item
+weight=1
+restock=100
+pileable=1
+amount=1
+decay=1
+good=31
+}
+
+// Scroll (First Circle)
+[base_first_scroll]
+{
+get=base_scroll
+value=12 6
+}
+
+[0x1F2E]
+{
+get=base_first_scroll
+name=clumsy scroll
+id=0x1F2E
+}
+
+[0x1f2f]
+{
+get=base_first_scroll
+name=create food scroll
+id=0x1F2F
+}
+
+[0x1f30]
+{
+get=base_first_scroll
+name=feeblemind scroll
+id=0x1F30
+}
+
+[0x1f31]
+{
+get=base_first_scroll
+name=heal scroll
+id=0x1F31
+}
+
+[0x1F32]
+{
+get=base_first_scroll
+name=magic arrow scroll
+id=0x1F32
+}
+
+[0x1F33]
+{
+get=base_first_scroll
+name=night sight scroll
+id=0x1F33
+}
+
+[0x1F2D]
+{
+get=base_first_scroll
+name=reactive armor scroll
+id=0x1F2D
+}
+
+[0x1F34]
+{
+get=base_first_scroll
+name=weaken scroll
+id=0x1F34
+}
+ 
+//Scroll (Second Circle)
+[base_second_scroll]
+{
+get=base_scroll
+value=22 11
+}
+
+[0x1F35]
+{
+get=base_second_scroll
+name=agility scroll
+id=0x1F35
+}
+
+[0x1F36]
+{
+get=base_second_scroll
+name=cunning scroll
+id=0x1F36
+}
+
+[0x1F37]
+{
+get=base_second_scroll
+name=cure scroll
+id=0x1F37
+}
+
+[0x1F38]
+{
+get=base_second_scroll
+name=harm scroll
+id=0x1F38
+}
+
+[0x1F39]
+{
+get=base_second_scroll
+name=magic trap scroll
+id=0x1F39
+}
+
+[0x1F3A]
+{
+get=base_second_scroll
+name=magic untrap scroll
+id=0x1F3A
+}
+
+[0x1F3B]
+{
+get=base_second_scroll
+name=protection scroll
+id=0x1F3B
+}
+
+[0x1F3C]
+{
+get=base_second_scroll
+name=strength scroll
+id=0x1F3C
+}
+
+//Scroll (Third Circle)
+[base_third_scroll]
+{
+get=base_scroll
+value=32 16
+}
+
+[0x1F3D]
+{
+get=base_third_scroll
+name=bless scroll
+id=0x1F3D
+}
+
+[0x1F3E]
+{
+get=base_third_scroll
+name=fireball scroll
+id=0x1F3E
+}
+
+[0x1F3F]
+{
+get=base_third_scroll
+name=magic lock scroll
+id=0x1F3F
+}
+
+[0x1F40]
+{
+get=base_third_scroll
+name=poison scroll
+id=0x1F40
+}
+
+[0x1F41]
+{
+get=base_third_scroll
+name=telekinisis scroll
+id=0x1F41
+}
+
+[0x1F42]
+{
+get=base_third_scroll
+name=teleport scroll
+id=0x1F42
+}
+
+[0x1F43]
+{
+get=base_third_scroll
+name=unlock scroll
+id=0x1F43
+}
+
+[0x1F44]
+{
+get=base_third_scroll
+name=wall of stone scroll
+id=0x1F44
+} 
+
+//Scroll (Fourth Circle)
+[base_fourth_scroll]
+{
+get=base_scroll
+value=42 21
+}
+
+[0x1F45]
+{
+get=base_fourth_scroll
+name=archcure scroll
+id=0x1F45
+}
+
+[0x1F46]
+{
+get=base_fourth_scroll
+name=archprotection scroll
+id=0x1F46
+}
+
+[0x1F47]
+{
+get=base_fourth_scroll
+name=curse scroll
+id=0x1F47
+}
+
+[0x1F48]
+{
+get=base_fourth_scroll
+name=fire field scroll
+id=0x1F48
+}
+
+[0x1F49]
+{
+get=base_fourth_scroll
+name=greater heal scroll
+id=0x1F49
+}
+
+[0x1F4A]
+{
+get=base_fourth_scroll
+name=lightning scroll
+id=0x1F4A
+}
+
+[0x1F4B]
+{
+get=base_fourth_scroll
+name=mana drain scroll
+id=0x1F4B
+}
+
+[0x1F4C]
+{
+get=base_fourth_scroll
+name=recall scroll
+id=0x1F4C
+}
+ 
+//Scroll (Fifth Circle) 52
+[base_fifth_scroll]
+{
+get=base_scroll
+value=52 26
+}
+
+[0x1F4D]
+{
+get=base_fifth_scroll
+name=blade spirits scroll
+id=0x1F4D
+}
+
+[0x1F4E]
+{
+get=base_fifth_scroll
+name=dispel field scroll
+id=0x1F4E
+}
+
+[0x1F4F]
+{
+get=base_fifth_scroll
+name=incognito scroll
+id=0x1F4F
+}
+
+[0x1F50]
+{
+get=base_fifth_scroll
+name=magic reflection scroll
+id=0x1F50
+}
+
+[0x1F51]
+{
+get=base_fifth_scroll
+name=mind blast scroll
+id=0x1F51
+}
+
+[0x1F52]
+{
+get=base_fifth_scroll
+name=paralyze scroll
+id=0x1F52
+}
+
+[0x1F53]
+{
+get=base_fifth_scroll
+name=poison field scroll
+id=0x1F53
+}
+
+[0x1F54]
+{
+get=base_fifth_scroll
+name=summon creature scroll
+id=0x1F54
+}
+
+//Scroll (Sixth Circle)
+[base_sixth_scroll]
+{
+get=base_scroll
+value=62 31
+}
+
+[0x1F55]
+{
+get=base_sixth_scroll
+name=dispel scroll
+id=0x1F55
+}
+
+[0x1F56]
+{
+get=base_sixth_scroll
+name=energy bolt scroll
+id=0x1F56
+}
+
+[0x1F57]
+{
+get=base_sixth_scroll
+name=explosion scroll
+id=0x1F57
+}
+
+[0x1F58]
+{
+get=base_sixth_scroll
+name=invisibility scroll
+id=0x1F58
+}
+
+[0x1F59]
+{
+get=base_sixth_scroll
+name=mark scroll
+id=0x1F59
+}
+
+[0x1F5A]
+{
+get=base_sixth_scroll
+name=mass curse scroll
+id=0x1F5A
+}
+
+[0x1F5B]
+{
+get=base_sixth_scroll
+name=paralyze field scroll
+id=0x1F5B
+}
+
+[0x1F5C]
+{
+get=base_sixth_scroll
+name=reveal scroll
+id=0x1F5C
+}
+
+//Scroll (Seventh Circle)
+[base_seventh_scroll]
+{
+get=base_scroll
+value=72 36
+}
+
+[0x1F5D]
+{
+get=base_seventh_scroll
+name=chain lightning scroll
+id=0x1F5D
+}
+
+[0x1F5E]
+{
+get=base_seventh_scroll
+name=energy field scroll
+id=0x1F5E
+}
+
+[0x1F5F]
+{
+get=base_seventh_scroll
+name=flamestrike scroll
+id=0x1F5F
+}
+
+[0x1F60]
+{
+get=base_seventh_scroll
+name=gate travel scroll
+id=0x1F60
+}
+
+[0x1F61]
+{
+get=base_seventh_scroll
+name=mana vampire scroll
+id=0x1F61
+}
+
+[0x1F62]
+{
+get=base_seventh_scroll
+name=mass dispel scroll
+id=0x1F62
+}
+
+[0x1F63]
+{
+get=base_seventh_scroll
+name=meteor storm scroll
+id=0x1F63
+}
+
+[0x1F64]
+{
+get=base_seventh_scroll
+name=polymorph scroll
+id=0x1F64
+}
+
+//Scroll (Eighth Circle) 
+[base_eighth_scroll]
+{
+get=base_scroll
+value=82 41
+}
+
+[0x1F65]
+{
+get=base_eighth_scroll
+name=earthquake scroll
+id=0x1F65
+}
+
+[0x1F66]
+{
+get=base_eighth_scroll
+name=energy vortex scroll
+id=0x1F66
+}
+
+[0x1F67]
+{
+get=base_eighth_scroll
+name=resurrection scroll
+id=0x1F67
+weight=1
+}
+
+[0x1F68]
+{
+get=base_eighth_scroll
+name=summon air elemental scroll
+id=0x1F68
+weight=1
+}
+
+[0x1F69]
+{
+get=base_eighth_scroll
+name=summon daemon scroll
+id=0x1F69
+}
+
+[0x1F6A]
+{
+get=base_eighth_scroll
+name=summon earth elemental scroll
+id=0x1F6A
+}
+
+[0x1F6B]
+{
+get=base_eighth_scroll
+name=summon fire elemental scroll
+id=0x1F6B
+}
+
+[0x1F6C]
+{
+get=base_eighth_scroll
+name=summon water elemental scroll
+id=0x1F6C
+}
+
+// GM Related
+
+[0x1f6d]
+{
+get=base_item
+name=All-Spell Scroll
+id=0x1f6d
+pileable=1
+amount=1
+decay=1
+}

@@ -1,0 +1,268 @@
+[0x13bc]
+{ S hanging deco
+get=base_item
+name=chainmail leggings
+id=0x13bc
+weight=500
+movable=2
+}
+
+[0x13bd]
+{ S hanging deco
+get=base_item
+name=chainmail tunic
+id=0x13bd
+weight=500
+movable=2
+}
+
+[0x13c1]
+{ E hanging deco
+get=base_item
+name=chainmail leggings
+id=0x13c1
+weight=500
+movable=2
+}
+
+[0x13c2]
+{ E hanging deco
+get=base_item
+name=chainmail tunic
+id=0x13c2
+weight=500
+movable=2
+}
+
+[0x13c8]
+{ S hanging deco
+get=base_item
+name=leather sleeves
+id=0x13c8
+weight=500
+movable=2
+}
+
+[0x13c9]
+{ S hanging deco
+get=base_item
+name=leather leggings
+id=0x13c9
+weight=500
+movable=2
+}
+
+[0x13ca]
+{ S hanging deco
+get=base_item
+name=leather tunic
+id=0x13ca
+weight=500
+movable=2
+}
+
+[0x13cf]
+{ E hanging deco
+get=base_item
+name=leather sleeves
+id=0x13cf
+weight=500
+movable=2
+}
+
+[0x13d0]
+{ E hanging deco
+get=base_item
+name=leather leggings
+id=0x13d0
+weight=500
+movable=2
+}
+
+[0x13d1]
+{ E hanging deco
+get=base_item
+name=leather tunic
+id=0x13d1
+weight=500
+movable=2
+}
+
+[0x13d7]
+{ S hanging deco
+get=base_item
+name=studded sleeves
+id=0x13d7
+weight=500
+movable=2
+}
+
+[0x13d8]
+{ S hanging deco
+get=base_item
+name=studded leggings
+id=0x13d8
+weight=500
+movable=2
+}
+
+[0x13d9]
+{ S hanging deco
+get=base_item
+name=studded tunic
+id=0x13d9
+weight=500
+movable=2
+}
+
+[0x13de]
+{ E hanging deco
+get=base_item
+name=studded sleeves
+id=0x13de
+weight=500
+movable=2
+}
+
+[0x13df]
+{ E hanging deco
+get=base_item
+name=studded leggings
+id=0x13df
+weight=500
+movable=2
+}
+
+[0x13e0]
+{ E hanging deco
+get=base_item
+name=studded tunic
+id=0x13e0
+weight=500
+movable=2
+}
+
+[0x13e5]
+{ S hanging deco
+get=base_item
+name=ringmail leggings
+id=0x13e5
+weight=500
+movable=2
+}
+
+[0x13e6]
+{ E hanging deco
+get=base_item
+name=ringmail leggings
+id=0x13e6
+weight=500
+movable=2
+}
+
+[0x13e7]
+{ S hanging deco
+get=base_item
+name=ringmail armor
+id=0x13e7
+weight=500
+movable=2
+}
+
+[0x13e8]
+{ E hanging deco
+get=base_item
+name=ringmail armor
+id=0x13e8
+weight=500
+movable=2
+}
+
+[0x13e9]
+{ S hanging deco
+get=base_item
+name=ringmail sleeves
+id=0x13e9
+weight=500
+movable=2
+}
+
+[0x13ea]
+{ E hanging deco
+get=base_item
+name=ringmail sleeves
+id=0x13ea
+weight=500
+movable=2
+}
+[0x1508]
+{ E phase1
+get=base_item
+name=decorative armor
+id=0x1508
+weight=1000
+movable=2
+}
+
+[0x1509]
+{ E phase2
+get=base_item
+name=decorative armor
+id=0x1509
+weight=1000
+movable=2
+}
+
+[0x1512]
+{ S plain phase1
+get=base_item
+name=decorative armor
+id=0x1512
+weight=1000
+movable=2
+}
+
+[0x1513]
+{ S plain phase2
+get=base_item
+name=decorative armor
+id=0x1513
+weight=1000
+movable=2
+}
+
+[0x151a]
+{ E plain phase1
+get=base_item
+name=decorative armor
+id=0x151a
+weight=1000
+movable=2
+}
+
+[0x151b]
+{ E plain phase2
+get=base_item
+name=decorative armor
+id=0x151b
+weight=1000
+movable=2
+}
+
+[0x151c]
+{ S phase1
+get=base_item
+name=decorative armor
+id=0x151c
+weight=1000
+movable=2
+}
+
+[0x151d]
+{ S phase2
+get=base_item
+name=decorative armor
+id=0x151d
+weight=1000
+movable=2
+}

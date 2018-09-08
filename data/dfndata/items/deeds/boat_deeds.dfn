@@ -1,0 +1,63 @@
+// Ship deeds
+
+[smallshipdeed]
+{
+NAME=small ship deed
+ID=0x14F0
+MOREX=20
+VALUE=12000
+RESTOCK=5
+GOOD=9
+}
+
+[mediumshipdeed]
+{
+NAME=medium ship deed
+ID=0x014F0
+MOREX=22
+VALUE=14000
+RESTOCK=5
+GOOD=9
+}
+
+[largeshipdeed]
+{
+NAME=large ship deed
+ID=0x14F0
+MOREX=24
+VALUE=16000
+RESTOCK=5
+GOOD=9
+}
+
+// Dragon ship deeds
+[smalldragonshipdeed]
+{
+NAME=small dragon ship deed
+ID=0x14F0
+MOREX=21
+VALUE=12000
+RESTOCK=5
+GOOD=9
+}
+
+[mediumdragonshipdeed]
+{
+NAME=medium dragon ship deed
+ID=0x14F0
+MOREX=23
+VALUE=14000
+RESTOCK=5
+GOOD=9
+}
+
+[largedragonshipdeed]
+{
+NAME=large dragon ship deed
+ID=0x14F0
+MOREX=25
+VALUE=16000
+RESTOCK=5
+GOOD=9
+}
+

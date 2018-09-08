@@ -1,0 +1,69 @@
+[0x1bdd]
+{
+get=base_item
+name=log
+id=0x1bde
+weight=200
+value=0 1
+pileable=1
+decay=1
+good=45
+}
+
+[0x1bde]
+{ E three
+get=base_item
+name=logs
+id=0x1bde
+weight=200
+}
+
+[0x1bdf]
+{ E many
+get=base_item
+name=logs
+id=0x1bdf
+weight=200
+}
+
+[0x1be0]
+{
+get=base_item
+name=log
+id=0x1be0
+weight=200
+value=1
+pileable=1
+decay=1
+good=45
+}
+
+[0x1be1]
+{ S three
+get=base_item
+name=logs
+id=0x1be1
+weight=100
+movable=2
+}
+
+[0x1be2]
+{ S many
+get=base_item
+name=logs
+id=0x1be2
+weight=100
+}
+
+[0x0DE1]
+{
+get=base_item
+name=kindling
+id=0x0DE1
+weight=100
+value=0 1
+pileable=1
+decay=1
+good=45
+}
+

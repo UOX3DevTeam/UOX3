@@ -1,0 +1,53 @@
+[0x1e2e]
+{ S
+get=base_item
+name=dartboard
+id=0x1e2e
+weight=100
+movable=2
+}
+
+[0x1e2f]
+{ E
+get=base_item
+name=dartboard
+id=0x1e2f
+weight=100
+movable=2
+}
+
+[0x1e30]
+{ S
+get=base_item
+name=dartboard w/axe
+id=0x1e30
+weight=100
+movable=2
+}
+
+[0x1e31]
+{ E
+get=base_item
+name=dartboard w/axe
+id=0x1e31
+weight=100
+movable=2
+}
+
+[0x1e32]
+{ S
+get=base_item
+name=dartboard w/knives
+id=0x1e32
+weight=100
+movable=2
+}
+
+[0x1e33]
+{ E
+get=base_item
+name=dartboard w/knives
+id=0x1e33
+weight=100
+movable=2
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+<h3><a name="StringFuncs">String Related Functions</a></h3>
+
+<table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_SubStringSearch">SubStringSearch</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool SubStringSearch( strToSearch, searchString );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the string searchString is to be found inside strToSearch.  Case insensitive search.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var bFound = SubStringSearch( strSaid, "HELP" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StringToNum">StringToNum</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int StringToNum( string toConvert );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Converts the string into a number (IE "1234" into 1234).
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var tempValue = StringToNum( textString );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StringToNum">NumToString</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string NumToString( int myVal );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Converts the number into a string (IE 1234 into "1234").
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var textString = NumToString( 5 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_StringToNum">NumToHexString</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string NumToHexString( int myVal );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Converts the string into a hexadecimal number (IE 400 into "0x190").
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var textString = NumToHexString( 5 );
+</pre></table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font>
+
+</center>
+
+</body>

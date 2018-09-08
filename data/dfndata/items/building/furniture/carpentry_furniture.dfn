@@ -1,0 +1,179 @@
+[0x14ea]
+{ E
+get=base_item
+name=moulding board
+id=0x14ea
+weight=1000
+movable=1
+}
+
+[0x19fb]
+{ S 1/2
+get=base_item
+name=cooper's bench
+id=0x19fb
+weight=1000
+movable=2
+}
+
+[0x19fc]
+{ S 2/2
+get=base_item
+name=cooper's bench
+id=0x19fc
+weight=1000
+movable=2
+}
+
+[0x19f1]
+{ E 1/3
+get=base_item
+name=woodworkers bench
+id=0x19f1
+weight=1000
+movable=2
+}
+
+[0x19f2]
+{ E 2/3
+get=base_item
+name=woodworkers bench
+id=0x19f2
+weight=1000
+movable=2
+}
+
+[0x19f3]
+{ E 3/3
+get=base_item
+name=woodworkers bench
+id=0x19f3
+weight=1000
+movable=2
+}
+
+[0x19f4]
+{ E (belongs to woodworkers bench)
+get=base_item
+name=vise
+id=0x19f4
+weight=1000
+movable=2
+}
+
+[0x19f5]
+{ S 1/3
+get=base_item
+name=woodworkers bench
+id=0x19f5
+weight=1000
+movable=2
+}
+
+[0x19f6]
+{ S 2/3
+get=base_item
+name=woodworkers bench
+id=0x19f6
+weight=1000
+movable=2
+}
+
+[0x19f7]
+{ S 3/3
+get=base_item
+name=woodworkers bench
+id=0x19f7
+weight=1000
+movable=2
+}
+
+[0x19f8]
+{ S (belongs to woodworkers bench)
+get=base_item
+name=vise
+id=0x19f8
+weight=1000
+movable=2
+}
+
+[0x19f9]
+{ E 1/2
+get=base_item
+name=cooper's bench
+id=0x19f9
+weight=1000
+movable=2
+}
+
+[0x19fa]
+{ E 2/2
+get=base_item
+name=cooper's bench
+id=0x19fa
+weight=1000
+movable=2
+}
+
+[0x12b1]
+{ E 1/2
+get=base_item
+name=scaffold
+id=0x12b1
+weight=6000
+movable=2
+}
+
+[0x12b2]
+{ E 2/2
+get=base_item
+name=scaffold
+id=0x12b2
+weight=6000
+movable=2
+}
+
+[0x12c8]
+{ S 1/2
+get=base_item
+name=scaffold
+id=0x12c8
+weight=6000
+movable=2
+}
+
+[0x12c9]
+{ S 2/2
+get=base_item
+name=scaffold
+id=0x12c9
+weight=6000
+movable=2
+}
+
+[0x102c]
+{ S
+get=base_item
+name=moulding planes
+id=0x102c
+weight=1000
+movable=1
+}
+
+[0x102d]
+{ E
+get=base_item
+name=moulding planes
+id=0x102d
+weight=1000
+movable=1
+}
+
+[0x14e9]
+{ S
+get=base_item
+name=moulding board
+id=0x14e9
+weight=1000
+movable=1
+}

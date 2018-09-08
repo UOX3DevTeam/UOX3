@@ -1,0 +1,27 @@
+<html>
+<head>
+</head>
+<body BGCOLOR="#2E4460" TEXT="#FFFFFF">
+<center><h2>Why does my client stop at "Verifying" or "connecting" ?</h2></center>
+<p>There might be several reasons for this. Here are some of the things that may cause these problems: 
+
+<h3>When halting at Verifying Account:</h3>
+
+<ul><li>You have put the UOX port (2593) behind your IP adress in UOX3.INI. Remove the Port adress from UOX3.INI 
+<li>You are using the wrong UO Client, or the wrong UOX version. Download the latest of both of these. 
+<li>You are not using "Ignition" to start the UO client 
+</ul>
+<h3>When halting at "Connecting":</h3>
+
+<ul><li>You haven't put the UOX port (2593) behind your IP adress in LOGIN.CFG. Add the port to LOGIN.CFG, so it says "LoginServer=my.ip.adress,2593" (replace my.ip.adress with your ip adress ;P) 
+
+<li>You have put the wrong IP in either LOGIN.CFG or UOX3.INI. Make sure you have the same IP adress in 
+both of these files, and also make sure the IP adress is valid. Most computers use 127.0.0.1 as local IP 
+adress, or "loopback ip" as it is also called. Use this if you want to play offline, locally on your own 
+computer.<br>
+Else, use WINIPCFG to find your LAN/Internet IP if you intend to use either of those. 
+<li>The Client or the UOX3 server is behind a Firewall which is not set up to let the connections through. 
+</ul>
+<p><i>Xuri</i></p>
+</body>
+</html>

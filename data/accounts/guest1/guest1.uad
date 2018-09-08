@@ -1,0 +1,18 @@
+//AI3.0-UV0.97.03-BD1-DS1047069577-ED0
+//------------------------------------------------------------------------------
+// UAD Path: /uox3/accounts/guest1/
+//------------------------------------------------------------------------------
+// UOX3 uses this file to store any extra administration info
+//------------------------------------------------------------------------------
+ID 1
+NAME guest1
+PASS guest1
+BANTIME 0
+LASTIP 0.0.0.0
+COMMENT unknown
+//------------------------------------------------------------------------------
+CHARACTER-1 0xffffffff [UNKNOWN]
+CHARACTER-2 0xffffffff [UNKNOWN]
+CHARACTER-3 0xffffffff [UNKNOWN]
+CHARACTER-4 0xffffffff [UNKNOWN]
+CHARACTER-5 0xffffffff [UNKNOWN]

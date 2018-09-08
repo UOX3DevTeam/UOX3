@@ -1,0 +1,310 @@
+//-==========================================================-
+//-=                                                        =-
+//-=             Ultima Offline eXperiment 3                =-
+//-=               Script name: Giants.dfn                  =-
+//-= Re-Writen by: kirre / Tyr Drakul [chaos.smurf@shaw.ca] =-
+//-=                Date: June 21st 2002                    =-
+//-=                                                        =-
+//-==========================================================-
+
+[ettin]
+{
+NAME=an ettin
+ID=0x0002
+DIRECTION=N
+BACKPACK
+GOLD=65 130
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
+STR=136 165
+DEX=56 75
+INT=31 55
+HPMAX=82 99
+KARMA=-3000
+FAME=3000
+MAGICRESISTANCE=401 550
+TACTICS=501 700
+WRESTLING=501 600
+DAMAGE=12 36
+DEF=10
+NPCAI=2
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+TOPROV=473
+TOPEACE=473 5
+CARVE=60
+RACE=7
+FLAG=NEUTRAL
+}
+
+[hammerettin]
+{
+GET=ettin
+ID=0x0012
+}
+
+[ogre]
+{
+NAME=an ogre
+ID=0x0001
+DIRECTION=N
+BACKPACK
+PACKITEM=0x0e76
+GOLD=50 110
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
+STR=166 195
+DEX=46 75
+INT=46 70
+HPMAX=100 117
+KARMA=-3000
+FAME=3000
+MAGICRESISTANCE=551 700
+TACTICS=601 700
+WRESTLING=701 800
+DAMAGE=9 23
+DEF=10
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=488
+TOPEACE=488 5
+CARVE=76
+RACE=7
+FLAG=NEUTRAL
+}
+
+[ogrelord]
+{
+NAME=an ogre lord
+ID=0x0054
+DIRECTION=N
+BACKPACK
+GOLD=205 350
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+STR=767 945
+DEX=66 75
+INT=46 70
+HPMAX=476 552
+KARMA=-15000
+FAME=15000
+MAGICRESISTANCE=1251 1400
+TACTICS=901 1000
+WRESTLING=901 1000
+DAMAGE=20 65
+DEF=10
+NPCWANDER=4
+LOOT=highlevelscrolls
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=900
+TOPEACE=900 5
+CARVE=77
+RACE=7
+FLAG=NEUTRAL
+}
+
+[arcticogrelord]
+{
+NAME=an arctic ogre lord
+ID=0x0087
+DIRECTION=N
+BACKPACK
+GOLD=205 350
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+STR=767 945
+DEX=66 75
+INT=46 70
+HPMAX=476 552
+KARMA=-15000
+FAME=15000
+MAGICRESISTANCE=1251 1400
+TACTICS=901 1000
+WRESTLING=901 1000
+DAMAGE=20 65
+DEF=10
+NPCWANDER=4
+LOOT=highlevelscrolls
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=888
+TOPEACE=888 5
+CARVE=77
+RACE=7
+FLAG=NEUTRAL
+}
+
+[troll]
+{
+NAME=a troll
+ID=0x0036
+DIRECTION=N
+BACKPACK
+GOLD=85 220
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
+STR=176 205
+DEX=46 65
+INT=46 70
+HPMAX=106 123
+KARMA=-3500
+FAME=3500
+MAGICRESISTANCE=451 600
+TACTICS=501 700
+WRESTLING=501 700
+DAMAGE=8 29
+DEF=10
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=545
+TOPEACE=545 5
+CARVE=93
+RACE=7
+FLAG=NEUTRAL
+}
+
+[axetroll]
+{
+GET=troll
+ID=0x0035
+}
+
+[frosttroll]
+{
+NAME=a frost troll
+ID=0x0037
+DIRECTION=N
+BACKPACK
+GOLD=100 300
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=highlevelscrolls
+LOOT=highlevelarmor
+STR=227 265
+DEX=66 85
+INT=46 70
+HPMAX=140 156
+KARMA=-4000
+FAME=4000
+MAGICRESISTANCE=651 800
+TACTICS=801 1000
+WRESTLING=801 1000
+DAMAGE=14 46
+DEF=10
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCAI=2
+TOPROV=677
+TOPEACE=677 5
+RACE=7
+FLAG=NEUTRAL
+}
+
+[cyclops]
+{
+NAME=a cyclopedian warrior
+ID=0x004b
+DIRECTION=E
+STR=336 385
+DEX=96 115
+INT=31 55
+HPMAX=202 231
+KARMA=-4500
+FAME=4500
+MAGICRESISTANCE=603 1050
+TACTICS=801 1000
+WRESTLING=801 900
+DAMAGE=7 48
+DEF=10
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=30
+NPCAI=2
+BACKPACK
+GOLD=200 345
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=lowlevelarmor
+LOOT=highlevelarmor
+TOPROV=732
+TOPEACE=732 5
+CARVE=54
+RACE=7
+FLAG=NEUTRAL
+}
+
+[titan]
+{
+NAME=a titan
+ID=0x004c
+DIRECTION=E
+STR=536 585
+DEX=126 145
+INT=281 305
+HPMAX=322 351
+KARMA=-11500
+FAME=11500
+MAGICRESISTANCE=802 1100
+TACTICS=601 800
+WRESTLING=401 500
+MAGERY=851 1000
+EVALUATINGINTEL=851 1000
+DAMAGE=13 34
+DEF=10
+NPCWANDER=4
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=30
+NPCAI=2
+SPATTACK=8
+SPADELAY=7
+BACKPACK
+GOLD=275 500
+LOOT=lowlevelscrolls
+LOOT=midlevelscrolls
+LOOT=midlevelscrolls
+LOOT=lowlevelarmor
+TOPROV=936
+TOPEACE=936 5
+CARVE=92
+RACE=7
+FLAG=NEUTRAL
+}

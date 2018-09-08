@@ -1,0 +1,231 @@
+-======================================-
+-= ITEM DFN's Updated 09/5/2003 - Xuri =-
+-======================================-
+-New Files:
+	-travelmenu.dfn
+	-travelmenu.bulk.dfn
+	-npcmenu.dfn
+	-npcmenu.bulk.dfn
+	-polymorphmenu.dfn
+	-carve_items.dfn 
+	-provisions.dfn (gear)
+	-healing.dfn (skills/tools)
+	-fishing.dfn (skills/tools)
+	-thieving.dfn (skills/tools)
+	-lumberjacking.dfn (skills/resources)
+	-carpentry.dfn (skills/resources)
+	-leatherworking.dfn (skills/resources)
+	-mining.dfn (skills/resources)
+	-smithing.dfn (skills/resources)
+	-sarcophaguses.dfn (building/furniture) - split out from coffins.dfn
+	-jewelry.dfn (misc)
+	-Split out from foods.dfn:
+		-drinks.dfn (misc)
+		-rawfoods.dfn (misc)
+		-foods2.dfn (misc)
+	-Split out from static_tiles.dfn:
+		-stone_tiles.dfn (building/floors)
+		-wooden_tiles.dfn (building/floors)
+		-cave_tiles (building/floors)
+		-roof_tiles.dfn (building)
+	-Split out from walls.dfn:
+		-wooden_walls.dfn (building/walls)
+		-stone_walls.dfn (building/walls)
+		-plaster_walls.dfn (building/walls)
+		-rattan_hide_walls.dfn (building/walls)
+		-tent_walls.dfn (building/walls)
+		-other_walls.dfn (building/walls)
+	-Split out from misc.dfn (building/decs):
+		-dungeon_decs.dfn (building/decs)
+		-multi-objects.dfn (building/decs)
+		-dirt-mud.dfn (building/decs)
+	-Split out from plants.dfn (building/decs/plants):
+		-flowers.dfn
+		-trees.dfn
+	-Split out from GM_skins.dfn (gmmenu):
+		-hairs_beards.dfn
+
+-New Items:
+	-Both smithy hammers (skills/tools/blacksmithy.dfn)
+	-Second pair of tongs (skills/tools/blacksmithy.dfn)
+	-Legs of lambs, chicken legs, furs (carve_items.dfn)
+	-32 prewritten books from dfndata/misc/books.dfn (misc/books.dfn)
+	-Tambourine, standing harp (skills/misc/music_instruments.dfn)
+	-Scales (skills/resources/misc_resources.dfn)
+	-Scissors (skills/tools/tailoring.dfn)
+	-Bowl of flour, donuts (misc/foods.dfn)
+	-Raw ribs, uncooked pizza, eggs (misc/rawfoods.dfn)
+	-A second version of many items in various files
+	-Fishing nets (skills/tools/fishing.dfn)
+	-Dress forms (skills/tools/tailoring.dfn)
+	-All gems (misc/gems.dfn)
+	-Picnic basket (containers/leather.dfn)
+	-Disguise kit (skills/tools/thieving.dfn) - doesn't work yet.
+	-Magical potions of all strengths, apart from explosion potion - source only has code for
+	 one type/strength/level of explosion potions (magic)
+	-Base-versions of Leather, Studded Leather & Bone Armor added to base_armor.dfn (gear/armor), to easier
+	 support custom-armors of these types and/or armor created from different kinds of hides.
+	-Blank deed added (skills/tools/inscription.dfn)
+
+-Generic Changes:
+	-Added Travel-section to the GM Menu
+	-Added polymorph-section to GM Menu, 148 creatures all-together, in polymorphmenu.dfn
+	-Added default book-functionality to all books (32 pages, writable)
+	-Added DYABLE=1 tags to all leather containers.
+	-Updated leather, studded leather & bone armor DFNs with extensive usage of the GET= tag, reducing the size
+	 of these files. 
+	-Renamed PILE= to PILEABLE= for every instance in all files...
+	-Updated WEIGHT-values to resemble OSI standards
+	-Updated VALUE-values(buyprice,sellprice) to resemble OSI standards - f.instance: VALUE=30,15 - for all
+	 armors. Colored armors use base_armor DEF & Pricetags for now.
+	-Fixed hex-id of studded sleeves (previously pointed to gloves)
+	-Renamed many items to lowercase names, as should be.
+	-Renamed resources.dfn to misc_resources.dfn
+	-Renamed tapestry's and paintings.dfn to tapestries_paintings.dfn
+	-Renamed trophyes.dfn to trophies.dfn
+	-Renamed alter_parts.dfn to altar_parts.dfn
+	-Renamed gmitems menu to gmmenu, as it contains more than just items
+	-Renamed "might sight"-scroll to "night sight"
+	-Moved bottles.dfn, money.dfn and gems.dfn from skills/resources to misc
+	-Moved various tailoring related items from items/building/decs/misc.dfn to
+	 tailoring.dfn (skills/resources)
+	-Moved tinkering.dfn from skills/production to skills/resources
+	-Moved arrow shaft and feather from misc_resources.dfn to fletching.dfn (skills/resources)
+	-Moved all sorts of bandages to healing.dfn (skills/tools)
+	-Moved logs and kindling to lumberjacking.dfn (skills/resources)
+	-Moved boards to carpentry.dfn (skills/resources)
+	-Moved hides, skins, furs and leather to leatherworking.dfn
+	-Moved ingots, forged metal to smithing.dfn (skills/resources)
+	-Moved ores to mining.dfn (skills/resources)
+	-Moved world-map (from skills/tools/misc.dfn) to gear/provisions.dfn
+	-Moved skill-related items from houseaddons/house_addons.dfn to their respective
+	 files in skills/tools
+	-Moved spell-book to misc_magic.dfn (magic)
+	-Removed TYPE=14 from raw foods, as they are not eatable - and restock= tags since no vendors sell them
+	-Removed various duplicate items
+	-Removed zero-value tags (for all files mentioned here)
+	-Removed MOVABLE/AMOUNT/PILE=1 tags where appropriate
+	-Removed the skills/production folder, moved contents to other files
+	-Removed the skills/resources/misc.dfn file, contents moved to other files
+	-Removed the newbie_items.dfn file, items added for new characters should be
+	 newbiefied automaticly!
+	-Removed the bottles.dfn file, contents moved to alchemy.dfn (skills/tools)
+	-Removed the skills/tools/misc.dfn file, contents moved to other files
+	-Removed the misc_decorations.dfn.$$$ file - not used
+	-Removed the misc.dfn.$$$ file - not used
+	-Removed the building/static_tiles.dfn file - has been split into several smaller ones.
+	-Removed the building/walls.dfn file - has been split into several smaller ones.
+	-Removed the spell_books.dfn file, only held one item (which was a duplicate)
+
+-CARVE_ITEMS.DFN:
+	-Rewrote entire file. Removed items that already exist in other DFNs - as we should
+	 strive to keep as few duplicate items as possible. Since we're now able to specify
+	 the amount of items to add in carve.dfn using ADDITEM=item,amount - we no longer need
+	 seperate item-entries for each variation of the amount. To add 10 feathers we now
+	 simply use ADDITEM=0x1bd1,10
+	-The items that are left in the file are those that are variation on existing items,
+	 like barbed/spined hides. The item-numbers for carve_items start at [0xC000].
+
+-SHOPLIST.DFN:
+	-Added all boat-deeds to the shipwright-shoplist
+	-Added jester suit and surcoat to tailor-shoplist
+	-Removed blank deeds from provisioner-shoplist
+	-Removed raw ribs from all shoplists except the butcher-shoplist
+	-Removed tongs from miner-shoplist, miners don't sell smithing tools
+
+-ITEMLISTS.DFN:
+	-Added new LISTOBJECTS for all itemlists. Removed the old "lootlist-objects".
+	-Added new itemlists:
+		-ITEMLIST 70 - Colored Scales from carve_items.dfn (except blue)
+		-ITEMLIST 71 - Black/White Scales from carve_items.dfn
+		-ITEMLIST 72 - Vegetables!
+
+-NPCMENUS:
+	-Added every single NPC that exists in UOX3's DFNs to the Add-menu
+
+
+-======================================-
+-= ITEM DFN's Updated 3/1/2003 - Xuri =-
+-======================================-
+
+-New files: 
+	-headwear.dfn(split from clothing.dfn)
+	-aos_weapons.dfn
+	-td_footwear.dfn
+	-td_headwear.dfn
+	-td_clothing.dfn
+	-misc_deeds.dfn(Split from House_Deeds.dfn)
+
+-BASEITEM.DFN:
+	-trigger= changed to script=
+	-Additional tags added: spd=, spawnobj=, spawnobjlist=, fx1=, fx2=, fy1=, fy2=, fz1=, defaultcolor=
+
+-BASEARMOR.DFN:
+	-Updated names to reflect osi names
+	-Removed PILE=0 and DYABLE=0 tags (Already gotten from baseitem.dfn)
+
+-CLOTHING.DFN, FOOTWEAR.DFN, all Weapon-DFNs:
+	-Added new tags
+	-Removed duplicate items
+
+-Weapon-DFNs:
+	-Updated values of old tags;
+	 speed, hitpoints, strenght requirements and damage ratings based on AoS
+
+-Armor-DFNs:
+	-Removed PILE=0 and DYEABLE=0 tags, already gotten from base-item.
+	-Updated Weight & Layer values
+	-NOTE: Currently only iron armors have the correct DEF values.
+	 All the other colored armors get the DEF tags from the default base armors for now.
+	-Added Orc Helm to bone.dfn 
+	-Changed all armor names to the standard lowercase ones
+
+Other:
+	-Pickaxe moved from Axes.dfn to skills->mining.dfn
+	-Removed capital letters from all file & folder names, as well as swapped out any spaces with
+	 underscore-signs: Example: house_addons.dfn instead of house addons.dfn
+	 This to ensure full compability with filesystems that are case sensitive and/or do not allow/normally use
+	 spaces in their file-and folder names.
+	-Add Menu rebuilt using the AddMenuCreator tool, touched it up a little afterwards with "previous menu"
+	 additions where it was missing, and removed the file extensions (.dfn) from the menu names.
+	
+
+-==============================================-
+-= ITEM DFN's Updated 2/20/2003 - Zane (giwo) =-
+-==============================================-
+
+-Added baseitem.dfn, has a single item in it, base_item which has nothing but empty values.
+The idea is all items will (either directly or by calling another item) call it, thus eliminating
+the need for empty values.
+
+-Added base_armor.dfn this way basic settings for all armor can be set once, eliminating hundreds of
+repetitous entrys in the armor dfns. Each set of colored armor calls the respective base armor item.
+
+-Removed 200+ duplicate items (mostly in the /Building/ directory)
+
+-Fixed some items that had improper ID's
+
+All together, cut the total script size from 2.1megs to 863kb
+-===================================================-
+-= ITEM DFN's Updated 02/21/2003 - Kirre (UOX3DEV) =-
+-===================================================-
+
+- DFN's resorted
+
+- AddMenu removed
+
+- Carve menu removed (to be re-done)
+
+- Newbie Items updated/fixed
+
+TO BE DONE:
+
+- Item Lists
+
+- Carve Lists
+
+- Magic items Added
+
+- LBR items added
+
+AoS Items Added

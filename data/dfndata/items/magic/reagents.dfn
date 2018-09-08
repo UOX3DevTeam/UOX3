@@ -1,0 +1,222 @@
+// normal Reagents:
+[base_reagent]
+{
+get=base_item
+name=
+id=0x0
+weight=10
+restock=50
+pileable=1
+amount=1
+decay=1
+good=30
+value=3 1
+}
+
+[bagofreagents]
+{
+get=base_item
+name=bag
+id=0x0e76
+weight=100
+weightmax=40000
+value=7 3
+type=1
+restock=10
+decay=1
+good=5
+packitem=0x0f7a,30
+packitem=0x0f7b,30
+packitem=0x0f84,30
+packitem=0x0f85,30
+packitem=0x0f86,30
+packitem=0x0f88,30
+packitem=0x0f8c,30
+packitem=0x0f8d,30
+}
+
+[0x0f7a]
+{
+get=base_reagent
+name=black pearl
+id=0x0f7a
+value=6 2
+}
+
+[0x0f7b]
+{
+get=base_reagent
+name=blood moss
+id=0x0f7b
+value=6 3
+}
+
+[0x0f84]
+{
+get=base_reagent
+name=garlic
+id=0x0f84
+}
+
+[0x0f85]
+{
+get=base_reagent
+name=ginseng
+id=0x0f85
+}
+
+[0x0f86]
+{
+get=base_reagent
+name=mandrake root
+id=0x0f86
+}
+
+[0x0f88]
+{
+get=base_reagent
+name=nightshade
+id=0x0f88
+}
+
+[0x0f8c]
+{
+get=base_reagent
+name=sulfurous ash
+id=0x0f8c
+}
+
+[0x0f8d]
+{
+get=base_reagent
+name=spider silk
+id=0x0f8d
+}
+
+// pagan reagents:
+
+[0x0f78]
+{
+get=base_reagent
+name=bat wing
+id=0x0f78
+}
+
+[0x0f79]
+{
+get=base_reagent
+name=blackmoore
+id=0x0f79
+}
+
+[0x0f7c]
+{
+get=base_reagent
+name=blood spawn
+id=0x0f7c
+}
+
+[0x0f7e]
+{
+get=base_reagent
+name=bone
+id=0x0f7e
+}
+
+[0x0f7f]
+{
+get=base_reagent
+name=brimstone
+id=0x0f7f
+}
+
+[0x0f80]
+{
+get=base_reagent
+name=daemon bone
+id=0x0f80
+}
+
+[0x0f90]
+{
+get=base_reagent
+name=dead wood
+id=0x0f90
+}
+
+[0x0f82]
+{
+get=base_reagent
+name=dragon's blood
+id=0x0f82
+}
+
+[0x0f83]
+{
+get=base_reagent
+name=executioner's cap
+id=0x0f83
+}
+
+[0x0f87]
+{
+get=base_reagent
+name=eye of newt
+id=0x0f87
+}
+
+[0x0f81]
+{
+get=base_reagent
+name=fertile dirt
+id=0x0f81
+}
+
+[0x0f89]
+{
+get=base_reagent
+name=obsidian
+id=0x0f89
+}
+
+[0x0f8a]
+{
+get=base_reagent
+name=pig iron
+id=0x0f8a
+}
+
+[0x0f8b]
+{
+get=base_reagent
+name=pumice
+id=0x0f8b
+}
+
+[0x0f8e]
+{
+get=base_reagent
+name=nox crystal
+id=0x0f8e
+}
+
+[0x0f7d]
+{
+get=base_reagent
+name=daemon blood
+id=0x0f7d
+}
+
+[0x0f8f]
+{
+get=base_reagent
+name=grave dust
+id=0x0f8f
+}
+
+[0x0f91]
+{
+get=base_reagent
+name=wyrm's heart
+id=0x0f91
+}

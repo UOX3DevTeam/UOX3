@@ -1,0 +1,107 @@
+[0x0eb5]
+{ N
+get=base_item
+name=music stand
+id=0x0eb5
+weight=500
+movable=2
+}
+
+[0x0eb6]
+{ S
+get=base_item
+name=music stand
+id=0x0eb6
+weight=500
+movable=2
+}
+
+[0x0eb7]
+{ W
+get=base_item
+name=music stand
+id=0x0eb7
+weight=500
+movable=2
+}
+
+[0x0eb8]
+{ E
+get=base_item
+name=music stand
+id=0x0eb8
+weight=500
+movable=2
+}
+
+[0x0eb9]
+{ N
+get=base_item
+name=music stand
+id=0x0eb9
+weight=500
+movable=2
+}
+
+[0x0eba]
+{ W
+get=base_item
+name=music stand
+id=0x0eba
+weight=500
+movable=2
+}
+
+[0x0ebb]
+{ S
+get=base_item
+name=music stand
+id=0x0ebb
+weight=500
+movable=2
+}
+
+[0x0ebc]
+{ E
+get=base_item
+name=music stand
+id=0x0ebc
+weight=500
+movable=2
+}
+
+[0x0ebd]
+{ S
+get=base_item
+name=sheet music
+id=0x0ebd
+weight=100
+movable=2
+}
+
+[0x0ebe]
+{ E
+get=base_item
+name=sheet music
+id=0x0ebe
+weight=100
+movable=2
+}
+
+[0x0ebf]
+{ S
+get=base_item
+name=sheet music
+id=0x0ebf
+weight=100
+movable=2
+}
+
+[0x0ec0]
+{ E
+get=base_item
+name=sheet music
+id=0x0ec0
+weight=100
+movable=2
+}

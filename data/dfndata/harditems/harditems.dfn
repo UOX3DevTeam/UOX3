@@ -1,0 +1,147 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98                       *
+//*                                                               *
+//*                   http://www.uox3dev.net			  *
+//*                                                               *
+//* Last Update : 31/12/2004                                       *
+//* Script : harditems.dfn                                        *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Insert here the ID of the items to automatically set when     *
+//* they will created via HARD-CODE. You can use all VARIABLES    *
+//* used in the item-dfns. So for example you can enter:          *
+//*                                                               *
+//*    NAME=iron ore                                              *
+//*    WEIGHT=3000                                                *
+//*    etc .......                                                *
+//*                                                               *
+//* NOTE : these settings only work if you add the item via       *
+//*        /add 0x#### NOT /add item <item_number>                *
+//*                                                               *
+//*****************************************************************
+
+//Blood puddle gotten from corpse carving
+[x122A]
+{
+decay=1
+}
+
+//Messageboards
+[x1E5Ex1E5F]
+{
+decay=0
+type=232
+}
+
+//Kindling
+[0xde1]
+{
+pileable=1
+decay=1
+weight=100
+value=0,1
+}
+
+//Gold
+[xeed]
+{
+pileable=1
+decay=1
+}
+
+// Ingots
+[x1befx1BF2]
+{
+pileable=1
+decay=1
+weight=10
+}
+
+// Logs
+[x1be0]
+{
+weight=200
+pileable=1
+decay=1
+}
+
+[x1bdd]
+{
+weight=200
+pileable=1
+decay=1
+}
+
+// Ores
+// Small Ore Pile
+[0x19b7]
+{
+weight=200
+pileable=1
+decay=1
+}
+
+// Medium Ore Pile
+[0x19b8]
+{
+weight=700
+pileable=1
+decay=1
+}
+
+// Large Ore Pile
+[0x19b9]
+{
+weight=1200
+pileable=1
+decay=1
+}
+
+// Medium-small Ore Pile
+[0x19ba]
+{
+weight=700
+pileable=1
+decay=1
+}
+
+// T2A/UOR/UO3D/LBR/AOS Doors
+
+[0x6750x6770x6790x67b0x67d0x67f0x6810x6830x6850x6870x6890x68b0x68d0x68f0x6910x6930x6950x6970x6990x6930x69d0x69f0x6a10x6a3]
+{
+type=12
+}
+
+[0x6a50x6a70x6a90x6ab0x6ad0x6af0x6b10x6b30x6b50x6b70x6b90x6bb0x6bd0x6bf0x6c10x6c30x6c50x6c70x6c90x6cb0x6cd0x6cf0x6d10x6d3]
+{
+type=12
+}
+
+[0x6d50x6d70x6d90x6db0x6dd0x6df0x6e10x6e30x6e50x6e70x6e90x6eb0x6ed0x6ef0x6f10x6f30x8240x8260x8280x82a0x82c0x82e0x8300x832]
+{
+type=12
+}
+
+// Gates
+[0x8390x83b0x83d0x83f0x8410x8430x8450x8470x84c0x84e0x8500x8520x8540x8560x8580x85a0x8660x8680x86a0x86c0x86e0x8700x8720x8740x190e]
+{
+type=12
+}
+
+// Samuri Expansion. Most of these are sliding doors.
+[0x241f0x24210x24230x26f40x29900x29910x299e0x299f0x2a050x2a070x2a090x2a0b0x2a0d0x2a0f0x2a110x2a130x2a150x2a170x2a190x2a1b]
+{
+type=12
+}
+
+//Arrows and Crossbow-bolts 
+[0xf3fx1bfb] 
+{ 
+weight=1 
+pileable=1 
+decay=1 
+}
+
+EOF
+

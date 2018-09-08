@@ -1,0 +1,109 @@
+//*****************************************************************
+//*                         UOX3 Scripts v0.98                    *
+//*                                                               *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 01/4/2003                                       *
+//* Script : fishing.dfn                                          *
+//*****************************************************************
+//*                        How to use this script:                *
+//*								  *
+//* ITEM sections 1-5 contain info about what you can catch in    *
+//* the sea with a fishing pole.                                  *
+//* The [ITEM 5]-section lists all the "fish" that you fish up.   *
+//* If you want you can change the item references in sections    *
+//* 1-4 to reflect the NAME tags.. so your users can fish up other*
+//* stuff than fish.(Default is ONLY fish.)                       *
+//*                                                               *
+//* Note that a player needs 92.0 fishing-skill to be able to     *
+//* catch any of the items in [ITEMLIST 1], and 97.0 to catch any *
+//* of the [ITEMLIST 2]-items. No skill (apart from basic check)  *
+//* is required to fish up items from sections 3 & 4.             *
+//* --------------------------------------------------------------*
+//*****************************************************************
+
+//Random Treasure (Paintings)
+[ITEMLIST fishtreasure]
+{
+0x0ec8
+0x0ee7
+0x0ea0
+0x0ea1
+0x0ea2
+0x0ea5
+0x0ea6
+}
+
+//Random weapons
+[ITEMLIST fishweapons]
+{
+0x0f43
+0x0f5c
+0x0f5f
+0x13b5
+0x1401
+0x1443
+}
+
+//Random gems
+[ITEMLIST fishgems]
+{
+0x0f0f
+0x0f10
+0x0f11
+0x0f12
+0x0f13
+0x0f14
+0x0f15
+0x0f16
+0x0f17
+0x0f18
+0x0f19
+0x0f1a
+0x0f1b
+0x0f1c
+0x0f1d
+0x0f1e
+0x0f1f
+0x0f20
+0x0f21
+0x0f22
+0x0f23
+0x0f24
+0x0f25
+0x0f26
+0x0f27
+0x0f28
+0x0f29
+0x0f2a
+0x0f2b
+0x0f2c
+0x0f2d
+0x0f2e
+0x0f2f
+0x0f30
+}
+
+//Random bones and discards
+[ITEMLIST fishbones]
+{
+0x170b
+0x1b17
+0x1b0a
+0x0c10
+0x0c19
+0x0c1f
+0x0c2c
+}
+
+//Random Fish
+[ITEMLIST randomfish]
+{
+0x09cc
+0x09cd
+0x09ce
+0x09cf
+}
+
+
+EOF

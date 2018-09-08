@@ -1,0 +1,1192 @@
+[NPCLIST escorts]
+{
+m_seeker
+f_seeker
+m_gypsy
+f_gypsy
+m_peasant
+f_peasant
+m_noble
+f_noble
+m_sailor
+f_sailor
+m_fighter
+f_fighter
+m_pirate
+f_pirate
+}
+
+[NPCLIST arcticlist]
+{
+polarbear
+snowleopard
+whitewolf
+icesnake
+iceserpent
+frosttroll
+iceele
+frostspider
+frostooze
+}
+
+[NPCLIST insects]
+{
+giantspider
+frostspider
+dreadspider
+scorpion
+}
+
+[NPCLIST poorfolk]
+{
+m_whealer
+f_whealer
+m_sailor
+f_sailor
+m_beggar
+f_beggar
+m_peasant
+f_peasant
+m_gypsy
+f_gypsy
+m_seeker
+f_seeker
+}
+
+[NPCLIST richfolk]
+{
+m_fighter
+f_fighter
+m_noble
+f_noble
+m_townthief
+f_townthief
+m_peasant
+f_peasant
+}
+
+[NPCLIST britainsewer]
+{
+sewerrat
+slime
+giantrat
+}
+
+
+[NPCLIST alltownfolk]
+{
+npclist=poorfolk
+npclist=richfolk
+}
+
+[NPCLIST destard1]
+{
+NPCLIST=alldragonlist
+snake
+}
+
+[NPCLIST covetous2]
+{
+NPCLIST=allettin
+snake
+}
+
+[NPCLIST wrong2]
+{
+NPCLIST=murderer-archmage
+m_brigand
+}
+
+[NPCLIST hyth1]
+{
+imp
+hellhound
+gargoyle
+firegargoyle
+}
+
+[NPCLIST hyth2]
+{
+NPCLIST=alldaemonlist
+gargoyle
+imp
+hellhound
+wisp
+}
+
+[NPCLIST hyth3]
+{
+NPCLIST=alldaemonlist
+imp
+gargoyle
+balron
+}
+
+[NPCLIST hyth4]
+{
+NPCLIST=allettin
+NPCLIST=alldaemonlist
+gargoyle
+hellhound
+firegargoyle
+}
+
+[NPCLIST shame1]
+{
+npclist=allettin
+scorpion
+}
+
+[NPCLIST shame2]
+{
+npclist=allettin
+airele
+}
+
+[NPCLIST shame3]
+{
+npclist=allettin
+npclist=murderer-archmage
+scorpion
+airele
+}
+
+[NPCLIST shame5]
+{
+npclist=allelementals
+npclist=murderer-archmage
+scorpion
+eldergazer
+scorpion
+}
+
+[NPCLIST flails]
+{
+reaper
+corpser
+swamptentacle
+}
+
+[NPCLIST cavelist]
+{
+giantserpent
+giantrat
+scorpion
+slime
+sewerrat
+}
+
+[NPCLIST desertlist]
+{
+desertostard
+snake
+efreet
+stonegargoyle
+stoneharpy
+npclist=alllizardmen
+mummy
+npclist=weakophidians
+npclist=allratmen
+scorpion
+}
+
+[NPCLIST dungeonspawn]
+{
+snake
+giantrat
+slime
+sewerrat
+}
+
+[NPCLIST eerielist]
+{
+npclist=weakundeadlist
+}
+
+[NPCLIST weakforestlist]
+{
+npclist=seeker
+npclist=whealer
+npclist=allbearlist
+npclist=allhorselist
+npclist=allbirdlist
+hind
+giantspider
+snake
+silverserpent
+chicken
+dog
+rabbit
+jackrabbit
+sheep
+panther
+cow
+goat
+cat
+wisp
+rat
+forestostard
+bull
+timberwolf
+graywolf
+direwolf
+cougar
+}
+
+[NPCLIST forestlist]
+{
+npclist=allorc
+npclist=whealer
+npclist=seeker
+npclist=allbearlist
+npclist=allhorselist
+npclist=allettin
+npclist=allbirdlist
+npclist=alllizardmen
+npclist=allratmen
+npclist=alltroll
+ogre
+corpser
+giantspider
+harpy
+reaper
+snake
+silverserpent
+mongbat
+chicken
+hind
+dog
+rabbit
+jackrabbit
+sheep
+llama
+panther
+cow
+goat
+cat
+sewerrat
+wisp
+rat
+frenziedostard
+forestostard
+bull
+timberwolf
+graywolf
+direwolf
+cougar
+}
+
+[NPCLIST junglelist]
+{
+wisp
+giantspider
+snake
+panther
+npclist=allbirdlist
+gorilla
+corpser
+reaper
+giantserpent
+npclist=weakterathans
+}
+
+[NPCLIST mountainlist]
+{
+cougar
+eagle
+goat
+mountaingoat
+llama
+panther
+airele
+earthele
+npclist=allettin
+stonegargoyle
+harpy
+stoneharpy
+headless
+ogre
+npclist=alltroll
+}
+
+[NPCLIST oceanlist]
+{
+dolphin
+walrus
+waterele
+}
+
+[NPCLIST swamplist]
+{
+slime
+alligator
+bullfrog
+corpser
+npclist=alllizardmen
+nightmare
+npclist=allratmen
+reaper
+swamptentacle
+gianttoad
+}
+
+[NPCLIST volcaniclist]
+{
+firele
+hellcat
+largehellcat
+lavalizard
+phoenix
+lavaserpent
+hellhound
+lavasnake
+lavaserpent
+imp
+}
+
+[NPCLIST diablolist]
+{
+balron
+daemon
+}
+
+[NPCLIST strongundeadlist]
+{
+gazer
+lich
+mummy
+lichlord
+boneaxeman
+boneknight
+bonemage
+}
+
+[NPCLIST weakundeadlist]
+{
+zombie
+spectre
+headless
+skeleton
+ghoul
+wraith
+}
+
+[NPCLIST allundeadlist]
+{
+npclist=weakundeadlist
+npclist=strongundeadlist
+}
+
+[NPCLIST alllizardlist]
+{
+lizardman
+spearlizardman
+macelizardman
+}
+
+[NPCLIST allratmenlist]
+{
+ratman
+ratmanarcher
+swordratman
+ratmanmage
+}
+
+[NPCLIST alldragonlist]
+{
+graydragon
+graydrake
+reddragon
+reddrake
+graydragon
+graydrake
+ancientwyrm
+whitewyrm
+shadowwyrm
+skeletaldragon
+serpentinedragon
+wyvern
+}
+
+[NPCLIST alldaemonlist]
+{
+balron
+daemon
+daemon
+}
+
+[NPCLIST allelementals]
+{
+airele
+earthele
+firele
+waterele
+bloodele
+poisonele
+acidele
+}
+
+[NPCLIST oreelementals]
+{
+agapiteele
+bronzeele
+copperele
+dullcopperele
+shadowironele
+goldele
+valoriteele
+veriteele
+}
+
+[NPCLIST elementalsdaemons]
+{
+npclist=alldaemonlist
+npclist=allelementals
+}
+
+[NPCLIST overworldlist]
+{
+ogre
+npclist=allettin
+zombie
+scorpion
+spectre
+giantspider
+harpy
+headless
+npclist=allratmen
+wisp
+skeleton
+snake
+mongbat
+npclist=alltroll
+sewerrat
+npclist=alllizardmen
+boneaxeman
+npclist=allorc
+npclist=animallist
+}
+
+[NPCLIST barnlist]
+{
+bull
+bull
+chicken
+cow
+cow
+goat
+npclist=allhorselist
+pig
+sheep
+sheep
+}
+
+[NPCLIST dogandcatlist]
+{
+dog
+cat
+}
+
+[NPCLIST allbearlist]
+{
+grizbear
+brownbear
+blackbear
+}
+
+[NPCLIST swampcreaturelist]
+{
+slime
+alligator
+bullfrog
+corpser
+npclist=alllizardmen
+nightmare
+npclist=allratmen
+reaper
+swamptentacle
+gianttoad
+}
+
+[NPCLIST junglecreaturelist]
+{
+wisp
+giantspider
+snake
+panther
+bird
+eagle
+bird
+hawk
+falcon
+gorilla
+corpser
+reaper
+giantserpent
+npclist=weakterathans
+}
+
+[NPCLIST livestocklist]
+{
+hind
+llama
+cow
+bull
+bull
+cow
+}
+
+[NPCLIST animallist]
+{
+npclist=allhorselist
+npclist=allbearlist
+gorilla
+chicken
+panther
+dog
+alligator
+polarbear
+rabbit
+jackrabbit
+sheep
+npclist=allbirdlist
+eagle
+llama
+pig
+panther
+cow
+goat
+cat
+boar
+timberwolf
+graywolf
+whitewolf
+direwolf
+dog
+dog
+dog
+hellhound
+cougar
+snowleopard
+walrus
+goat
+sheep
+}
+
+[NPCLIST smallanimallist]
+{
+chicken
+dog
+rabbit
+jackrabbit
+sheep
+npclist=allbirdlist
+eagle
+pig
+goat
+cat
+boar
+timberwolf
+graywolf
+whitewolf
+direwolf
+dog
+dog
+dog
+hellhound
+cougar
+snowleopard
+walrus
+goat
+sheep
+}
+
+[NPCLIST productiveanimallist]
+{
+chicken
+hind
+sheep
+bird
+eagle
+cow
+goat
+bull
+}
+
+[NPCLIST randomwhealer]
+{
+m_whealer
+f_whealer
+}
+
+[NPCLIST allophidians]
+{
+npclist=weakophidians
+npclist=strongophidians
+}
+
+[NPCLIST weakophidians]
+{
+ophapprentice
+ophwarrior
+ophenforcer
+}
+
+[NPCLIST strongophidians]
+{
+ophshaman
+ophknight
+ophmatriarch
+ophavenger
+}
+
+[NPCLIST allorc]
+{
+npclist=weakorc
+npclist=strongorc
+}
+
+[NPCLIST weakorc]
+{
+orc
+cluborc
+}
+
+[NPCLIST strongorc]
+{
+orcmage
+orclord
+orccaptain
+}
+
+[NPCLIST alltroll]
+{
+troll
+axetroll
+}
+
+[NPCLIST allettin]
+{
+ettin
+hammerettin
+}
+
+[NPCLIST ettinogre]
+{
+npclist=allettin
+npclist=allogre
+}
+
+[NPCLIST allogre]
+{
+ogre
+ogrelord
+}
+
+[NPCLIST ogretroll]
+{
+npclist=allorgre
+npclist=alltroll
+}
+
+[NPCLIST ogretrollettin]
+{
+npclist=allogre
+npclist=alltroll
+npclist=allettin
+}
+
+[NPCLIST trollettin]
+{
+npclist=alltroll
+npclist=allettin
+}
+
+[NPCLIST allorckin]
+{
+npclist=allorc
+npclist=allorgre
+npclist=alltroll
+npclist=allettin
+}
+
+[NPCLIST alllizardmen]
+{
+lizardman
+macelizardman
+spearlizardman
+}
+
+[NPCLIST allratmen]
+{
+ratman
+ratmanarcher
+maceratman
+swordratman
+ratmanmage
+}
+
+[NPCLIST alloverworld]
+{
+giantrat
+mongbat
+wisp
+giantspider
+scorpion
+npclist=alllizardmen
+npclist=allratmen
+}
+
+[NPCLIST allterathans]
+{
+npclist=weakterathans
+npclist=strongterathans
+}
+
+[NPCLIST strongterathans]
+{
+teraavenger
+teramatriarch
+}
+
+[NPCLIST weakterathans]
+{
+teradrone
+terawarrior
+}
+
+[NPCLIST tamewoods]
+{
+npclist=allbirdlist
+blackbear
+brownbear
+boar
+goat
+graywolf
+hart
+hind
+jackrabbit
+rabbit
+timberwolf
+}
+
+[NPCLIST ruralwoods]
+{
+npclist=allbirdlist
+boar
+bull
+cat
+chicken
+cow
+dog
+goat
+graywolf
+hart
+hind
+jackrabbit
+pig
+sheep
+rabbit
+rat
+timberwolf
+}
+
+[NPCLIST wilderness]
+{
+npclist=allbirdlist
+npclist=allbearlist
+boar
+cougar
+goat
+graywolf
+hart
+hind
+jackrabbit
+mountaingoat
+rabbit
+timberwolf
+}
+
+[NPCLIST townlist]
+{
+bird
+bird
+crow
+canary
+cat
+dog
+dog
+dog
+rat
+raven
+}
+
+[NPCLIST allbirdlist]
+{
+bird
+canary
+crow
+eagle
+falcon
+hawk
+raven
+}
+
+[NPCLIST farmlist]
+{
+npclist=allbirdlist
+chicken
+goat
+pig
+sheep
+rabbit
+jackrabbit
+}
+
+[NPCLIST randompeople]
+{
+f_guard
+m_guard
+f_pirate
+m_pirate
+f_brigand
+m_brigand
+f_fighter
+m_fighter
+f_sailor
+m_sailor
+f_beggar
+m_beggar
+f_noble
+m_noble
+f_thief
+m_thief
+f_peasant
+m_peasant
+f_gypsy
+m_gypsy
+f_seeker
+m_seeker
+f_jailer
+m_jailer
+f_artist
+m_artist
+}
+
+[NPCLIST allhorselist]
+{
+brownhorse
+grayhorse
+horse
+darkhorse
+}
+
+
+//NPCLists for Uni-sex vendor-spawners =)
+[NPCLIST banker]
+{
+m_banker
+f_banker
+}
+
+[NPCLIST bard]
+{
+m_bard
+f_bard
+}
+
+[NPCLIST miner]
+{
+m_miner
+f_miner
+}
+
+[NPCLIST weaponsmith]
+{
+m_weaponsmith
+f_weaponsmith
+}
+
+[NPCLIST baker]
+{
+m_baker
+f_baker
+}
+
+[NPCLIST provisioner]
+{
+m_provisioner
+f_provisioner
+}
+
+[NPCLIST cobbler]
+{
+m_cobbler
+f_cobbler
+}
+
+[NPCLIST innkeeper]
+{
+m_innkeeper
+f_innkeeper
+}
+
+[NPCLIST herbalist]
+{
+m_herbalist
+f_herbalist
+}
+
+[NPCLIST butcher]
+{
+m_butcher
+f_butcher
+}
+
+[NPCLIST tailor]
+{
+m_tailor
+f_tailor
+}
+
+[NPCLIST bowyer]
+{
+m_bowyer
+f_bowyer
+}
+
+[NPCLIST jeweler]
+{
+m_jeweler
+f_jeweler
+}
+
+[NPCLIST leatherworker]
+{
+m_leatherworker
+f_leatherworker
+}
+
+[NPCLIST mage]
+{
+m_mage
+f_mage
+}
+
+[NPCLIST scribe]
+{
+m_scribe
+f_scribe
+}
+
+[NPCLIST shipwright]
+{
+m_shipwright
+f_shipwright
+}
+
+[NPCLIST spinner]
+{
+m_spinner
+f_spinner
+}
+
+[NPCLIST armourer]
+{
+m_armourer
+f_armourer
+}
+
+[NPCLIST blacksmith]
+{
+m_blacksmith
+f_blacksmith
+}
+
+[NPCLIST architect]
+{
+m_architect
+f_architect
+}
+
+[NPCLIST carpenter]
+{
+m_carpenter
+f_carpenter
+}
+
+[NPCLIST farmer]
+{
+m_farmer
+f_farmer
+}
+
+[NPCLIST cook]
+{
+m_cook
+f_cook
+}
+
+[NPCLIST animaltrainer]
+{
+m_animaltrainer
+f_animaltrainer
+}
+
+[NPCLIST fisher]
+{
+m_fisher
+f_fisher
+}
+
+[NPCLIST alchemist]
+{
+m_alchemist
+f_alchemist
+}
+
+[NPCLIST tinker]
+{
+m_tinker
+f_tinker
+}
+
+[NPCLIST beekeeper]
+{
+m_beekeeper
+f_beekeeper
+}
+
+[NPCLIST healer]
+{
+m_healer
+f_healer
+}
+
+//Non-vendor Human Spawns
+
+[NPCLIST basichuman]
+{
+male
+female
+}
+
+[NPCLIST guard]
+{
+m_guard
+f_guard
+}
+
+[NPCLIST murderer-archmage]
+{
+m_murderer-archmage
+f_murderer-archmage
+}
+
+[NPCLIST whealer]
+{
+m_whealer
+f_whealer
+}
+
+[NPCLIST pirate]
+{
+m_pirate
+f_pirate
+}
+
+[NPCLIST fighter]
+{
+m_fighter
+f_fighter
+}
+
+[NPCLIST sailor]
+{
+m_sailor
+f_sailor
+}
+
+[NPCLIST brigand]
+{
+m_brigand
+f_brigand
+}
+
+[NPCLIST beggar]
+{
+m_beggar
+f_beggar
+}
+
+[NPCLIST noble]
+{
+m_noble
+f_noble
+}
+
+[NPCLIST thief]
+{
+m_thief
+f_thief
+}
+
+[NPCLIST peasant]
+{
+m_peasant
+f_peasant
+}
+
+[NPCLIST gypsy]
+{
+m_gypsy
+f_gypsy
+}
+
+[NPCLIST seeker]
+{
+m_seeker
+f_seeker
+}
+
+[NPCLIST jailer]
+{
+m_jailer
+f_jailer
+}
+
+[NPCLIST towncrier]
+{
+m_towncrier
+f_towncrier
+}
+
+[NPCLIST artist]
+{
+m_artist
+f_artist
+}
+// NPCLIST 10000 is the list used by the Summon Creature spell!!!!
+[NPCLIST 10000]
+{
+grizbear
+horse
+brownhorse
+grayhorse
+darkhorse
+gorilla
+brownbear
+chicken
+dog
+alligator
+polarbear
+rabbit
+sheep
+llama
+pig
+panther
+goat
+cat
+hind
+graywolf
+}

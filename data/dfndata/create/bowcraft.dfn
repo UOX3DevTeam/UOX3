@@ -1,0 +1,314 @@
+// bowcraft.dfn
+// v1.0; 08/05/01; initial release / total overhaul; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.1; 17/06/01; added candles menu 67 to tinkering; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.2; 12/01/02; fixed the damn carpentry bug that had the wrong ids; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// (add new version comments here, use format of above line please!)
+// For use with the UOX emulator or any with permission from the author
+//
+//======= credits of original version =========
+// Created by: Cironian and Drax
+// Cestle - cestle@uoxdev.com
+// Sephiroth - seanhogberg@hotmail.com
+// RevalutionShadow - Emac@Mindspring.com
+// Infinity
+// Folci - wezzer@nauticom.net
+// Honorable Mention:
+// Calvin - rolynyk@hotmail.com
+// Pug - Jcpirate@bsc.net
+// Concerned Watcher - lee.brown@virgin.net
+// Cruoris - cruoris@msn.com
+// Dante - dante@the-egg.net
+// HellRaider - dmais@urbi.com.br
+// Danath - matt994@multipro.com
+// Blacksmithing originally adapted by Traker
+// Rank System Added by Magius(CHE) 08/25/1999
+//=============================================
+
+//*****************************************
+// start of bowcraft section
+
+[SUBMENU 49]
+{ bowcraft
+ITEM=190	// kindling
+MENU=50		// shafts
+ITEM=191	// bow
+ITEM=192	// xbow
+ITEM=193	// h-xbow
+ITEM=206	// composite bow
+ITEM=207	// Repeating crossbow
+ITEM=208	// yumi
+}
+[MENUENTRY 49]
+{
+NAME=Previous Menu
+SUBMENU=49
+}
+[MENUENTRY 50]
+{
+NAME=Shafts
+ID=0x1bd4
+SUBMENU=50
+}
+[SUBMENU 50]
+{ shafts
+ITEM=194
+ITEM=195
+ITEM=196
+ITEM=197
+MENU=49
+}
+[ITEM 190]
+{
+NAME=kindling
+ID=0x0de1
+RESOURCE=WOOD 1
+SKILL=8 0 500
+ADDITEM=0x0de1
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 191]
+{
+NAME=bow
+ID=0x13b2
+RESOURCE=WOOD 7
+SKILL=8 300 500
+ADDITEM=0x13b2
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 192]
+{
+NAME=crossbow
+ID=0x0f4f
+RESOURCE=WOOD 7
+SKILL=8 600 700
+ADDITEM=0x0f4f
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 193]
+{
+NAME=heavy crossbow
+ID=0x13fd
+RESOURCE=WOOD 10
+SKILL=8 800 1010
+ADDITEM=0x13fd
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 194]
+{
+NAME=one shaft
+ID=0x1bd4
+RESOURCE=WOOD 1
+SKILL=8 0 400
+ADDITEM=0x1bd4
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 195]
+{
+NAME=five shafts
+ID=0x1bd4
+RESOURCE=WOOD 5
+SKILL=8 0 400
+ADDITEM=0x1bd4,5
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 196]
+{
+NAME=twenty shafts
+ID=0x1bd4
+RESOURCE=WOOD 20
+SKILL=8 0 400
+ADDITEM=0x1bd4,20
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 197]
+{
+NAME=fifty shafts
+ID=0x1bd4
+RESOURCE=WOOD 50
+SKILL=8 0 400
+ADDITEM=0x1bd4,50
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+
+[SUBMENU 51]
+{ fletching
+MENU=52		// arrows
+MENU=53		// bolts
+}
+[MENUENTRY 52]
+{
+NAME=Arrows
+ID=0x0f3f
+SUBMENU=52
+}
+[MENUENTRY 53]
+{
+NAME=Crossbow Bolts
+ID=0x1bfb
+SUBMENU=53
+}
+[SUBMENU 52]
+{ arrows
+ITEM=198
+ITEM=199
+ITEM=200
+ITEM=201
+}
+[SUBMENU 53]
+{ bolts
+ITEM=202
+ITEM=203
+ITEM=204
+ITEM=205
+}
+
+[ITEM 198]
+{
+NAME=one arrow
+ID=0x0f3f
+RESOURCE=0x1bd4 1
+RESOURCE=0x1bd1 1
+SKILL=8 0 400
+ADDITEM=0x0f3f
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 199]
+{
+NAME=five arrows
+ID=0x0f3f
+RESOURCE=0x1bd4 5
+RESOURCE=0x1bd1 5
+SKILL=8 0 400
+ADDITEM=0x0f3f,5
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 200]
+{
+NAME=twenty arrows
+ID=0x0f3f
+RESOURCE=0x1bd4 20
+RESOURCE=0x1bd1 20
+SKILL=8 0 400
+ADDITEM=0x0f3f,20
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 201]
+{
+NAME=fifty arrows
+ID=0x0f3f
+RESOURCE=0x1bd4 50
+RESOURCE=0x1bd1 50
+SKILL=8 0 400
+ADDITEM=0x0f3f,50
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 202]
+{
+NAME=one bolt
+ID=0x1bfb
+RESOURCE=0x1bd4 1
+RESOURCE=0x1bd1 1
+SKILL=8 0 700
+ADDITEM=0x1bfb
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 203]
+{
+NAME=five bolts
+ID=0x1bfb
+RESOURCE=0x1bd4 5
+RESOURCE=0x1bd1 5
+SKILL=8 0 700
+ADDITEM=0x1bfb,5
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 204]
+{
+NAME=twenty bolts
+ID=0x1bfb
+RESOURCE=0x1bd4 20
+RESOURCE=0x1bd1 20
+SKILL=8 0 700
+ADDITEM=0x1bfb,20
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 205]
+{
+NAME=fifty bolts
+ID=0x1bfb
+RESOURCE=0x1bd4 50
+RESOURCE=0x1bd1 50
+SKILL=8 0 700
+ADDITEM=0x1bfb,50
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 206]
+{
+NAME=composite bow
+id=0x26cc
+RESOURCE=WOOD 7
+SKILL=8 700 1000
+ADDITEM=0x26cc
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 207]
+{
+NAME=repeating crossbow
+id=0x26cd
+RESOURCE=WOOD 10
+SKILL=8 900 1000
+ADDITEM=0x26cd
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+[ITEM 208]
+{
+NAME=yumi
+id=0x27f0
+RESOURCE=WOOD 10
+SKILL=8 900 1000
+ADDITEM=0x27f0
+MINRANK=1
+MAXRANK=10
+SOUND=0x55
+}
+
+// end of bowcraft section
+//*****************************************
+
+

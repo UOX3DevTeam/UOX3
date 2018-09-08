@@ -1,0 +1,5 @@
+        POSSESS <target>
+  Purpose: 
+        (DISABLED)
+        Take complete control of targeted 
+        character.

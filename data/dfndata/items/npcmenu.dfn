@@ -1,0 +1,73 @@
+[ITEMMENU 5000]
+{
+NPCs=Menu
+<=Animals & Plants
+ITEMMENU=5001
+<=Monsters
+ITEMMENU=5002
+<=People
+ITEMMENU=5003
+<=Previous Menu
+ITEMMENU=0
+}
+
+[ITEMMENU 5001]
+{
+Animals
+<=Agressive Animals
+ITEMMENU=5004
+<=Non-Agressive Animals
+ITEMMENU=5005
+<=Sea Creatures
+ITEMMENU=5006
+<=Agressive Plants
+ITEMMENU=5007
+<=Mounts
+ITEMMENU=5016
+<=Previous Menu
+ITEMMENU=5000
+}
+
+[ITEMMENU 5002]
+{
+Monsters
+<=Arachnids
+ITEMMENU=5008
+<=Champions
+ITEMMENU=5023
+<=Daemons
+ITEMMENU=5009
+<=Dragons
+ITEMMENU=5010
+<=Elementals
+ITEMMENU=5011
+<=Gargoyles
+ITEMMENU=5012
+<=Giants
+ITEMMENU=5013
+<=Humanoids
+ITEMMENU=5014
+<=Misc Monsters
+ITEMMENU=5015
+<=Reptiles
+ITEMMENU=5017
+<=Undead
+ITEMMENU=5018
+<=Previous Menu
+ITEMMENU=5000
+}
+
+[ITEMMENU 5003]
+{
+People
+<=Female People
+ITEMMENU=5019
+<=Female Vendors
+ITEMMENU=5020
+<=Male People
+ITEMMENU=5021
+<=Male Vendors
+ITEMMENU=5022
+<=Previous Menu
+ITEMMENU=5000
+}

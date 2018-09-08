@@ -1,0 +1,1009 @@
+// rugs and carpets
+
+[0x0aa9]
+{ plain redish 1/10
+get=base_item
+name=rug
+id=0x0aa9
+weight=100
+movable=2
+}
+
+[0x0aaa]
+{ plain redish 2/10
+get=base_item
+name=rug
+id=0x0aaa
+weight=100
+movable=2
+}
+
+[0x0aab]
+{ plain redish 3/10
+get=base_item
+name=rug
+id=0x0aab
+weight=100
+movable=2
+}
+
+[0x0aac]
+{ plain redish 4/10
+get=base_item
+name=rug
+id=0x0aac
+weight=100
+movable=2
+}
+
+[0x0aad]
+{ plain redish 5/10
+get=base_item
+name=rug
+id=0x0aad
+weight=100
+movable=2
+}
+
+[0x0aae]
+{ plain redish 6/10
+get=base_item
+name=rug
+id=0x0aae
+weight=100
+movable=2
+}
+
+[0x0aaf]
+{ plain redish 7/10
+get=base_item
+name=rug
+id=0x0aaf
+weight=100
+movable=2
+}
+
+[0x0ab6]
+{ plain greenish 4/10
+get=base_item
+name=rug
+id=0x0ab6
+weight=100
+movable=2
+}
+
+[0x0ab7]
+{ plain greenish 5/10
+get=base_item
+name=rug
+id=0x0ab7
+weight=100
+movable=2
+}
+
+[0x0ab8]
+{ plain greenish 6/10
+get=base_item
+name=rug
+id=0x0ab8
+weight=100
+movable=2
+}
+
+[0x0ab9]
+{ plain greenish 7/10
+get=base_item
+name=rug
+id=0x0ab9
+weight=100
+movable=2
+}
+
+[0x0aba]
+{ plain greenish 8/10
+get=base_item
+name=rug
+id=0x0aba
+weight=100
+movable=2
+}
+
+[0x0abb]
+{ plain greenish 9/10
+get=base_item
+name=rug
+id=0x0abb
+weight=100
+movable=2
+}
+
+[0x0abc]
+{ plain greenish 10/10
+get=base_item
+name=rug
+id=0x0abc
+weight=100
+movable=2
+}
+
+[0x0abd]
+{ pattern blueish 1/13
+get=base_item
+name=carpet
+id=0x0abd
+weight=100
+movable=2
+}
+
+[0x0abe]
+{ pattern blueish 2/13
+get=base_item
+name=carpet
+id=0x0abe
+weight=100
+movable=2
+}
+
+[0x0abf]
+{ pattern blueish 3/13
+get=base_item
+name=carpet
+id=0x0abf
+weight=100
+movable=2
+}
+
+[0x0ac0]
+{ pattern blueish 4/13
+get=base_item
+name=carpet
+id=0x0ac0
+weight=100
+movable=2
+}
+
+[0x0ac1]
+{ pattern blueish 5/13
+get=base_item
+name=carpet
+id=0x0ac1
+weight=100
+movable=2
+}
+
+[0x0ac2]
+{ pattern blueish 6/13
+get=base_item
+name=carpet
+id=0x0ac2
+weight=100
+movable=2
+}
+
+[0x0ac3]
+{ pattern blueish 7/13
+get=base_item
+name=carpet
+id=0x0ac3
+weight=100
+movable=2
+}
+
+[0x0ac4]
+{ pattern blueish 8/13
+get=base_item
+name=carpet
+id=0x0ac4
+weight=100
+movable=2
+}
+
+[0x0ac5]
+{ pattern blueish 9/13
+get=base_item
+name=carpet
+id=0x0ac5
+weight=100
+movable=2
+}
+
+[0x0af6]
+{ pattern blueish 10/13
+get=base_item
+name=carpet
+id=0x0af6
+weight=100
+movable=2
+}
+
+[0x0af7]
+{ pattern blueish 11/13
+get=base_item
+name=carpet
+id=0x0af7
+weight=100
+movable=2
+}
+
+[0x0af8]
+{ pattern blueish 12/13
+get=base_item
+name=carpet
+id=0x0af8
+weight=100
+movable=2
+}
+
+[0x0af9]
+{ pattern blueish 13/13
+get=base_item
+name=carpet
+id=0x0af9
+weight=100
+movable=2
+}
+
+[0x0ac6]
+{ pattern redish 1/11
+get=base_item
+name=carpet
+id=0x0ac6
+weight=100
+movable=2
+}
+
+[0x0ac7]
+{ pattern redish 2/11
+get=base_item
+name=carpet
+id=0x0ac7
+weight=100
+movable=2
+}
+
+[0x0ac8]
+{ pattern redish 3/11
+get=base_item
+name=carpet
+id=0x0ac8
+weight=100
+movable=2
+}
+
+[0x0ac9]
+{ pattern redish 4/11
+get=base_item
+name=carpet
+id=0x0ac9
+weight=100
+movable=2
+}
+
+[0x0aca]
+{ pattern redish 5/11
+get=base_item
+name=carpet
+id=0x0aca
+weight=100
+movable=2
+}
+
+[0x0acb]
+{ pattern redish 6/11
+get=base_item
+name=carpet
+id=0x0acb
+weight=100
+movable=2
+}
+
+[0x0acc]
+{ pattern redish 7/11
+get=base_item
+name=carpet
+id=0x0acc
+weight=100
+movable=2
+}
+
+[0x0acd]
+{ pattern redish 8/11
+get=base_item
+name=carpet
+id=0x0acd
+weight=100
+movable=2
+}
+
+[0x0ace]
+{ pattern redish 9/11
+get=base_item
+name=carpet
+id=0x0ace
+weight=100
+movable=2
+}
+
+[0x0acf]
+{ pattern redish 10/11
+get=base_item
+name=carpet
+id=0x0acf
+weight=100
+movable=2
+}
+
+[0x0ad0]
+{ pattern redish 11/11
+get=base_item
+name=carpet
+id=0x0ad0
+weight=100
+movable=2
+}
+
+[0x0ad1]
+{ fancy pattern blueish 1/9
+get=base_item
+name=carpet
+id=0x0ad1
+weight=100
+movable=2
+}
+
+[0x0ad2]
+{ fancy pattern blueish 2/9
+get=base_item
+name=carpet
+id=0x0ad2
+weight=100
+movable=2
+}
+
+[0x0ad3]
+{ fancy pattern blueish 3/9
+get=base_item
+name=carpet
+id=0x0ad3
+weight=100
+movable=2
+}
+
+[0x0ad4]
+{ fancy pattern blueish 4/9
+get=base_item
+name=carpet
+id=0x0ad4
+weight=100
+movable=2
+}
+
+[0x0ad5]
+{ fancy pattern blueish 5/9
+get=base_item
+name=carpet
+id=0x0ad5
+weight=100
+movable=2
+}
+
+[0x0ad6]
+{ fancy pattern blueish 6/9
+get=base_item
+name=carpet
+id=0x0ad6
+weight=100
+movable=2
+}
+
+[0x0ad7]
+{ fancy pattern blueish 7/9
+get=base_item
+name=carpet
+id=0x0ad7
+weight=100
+movable=2
+}
+
+[0x0ad8]
+{ fancy pattern blueish 8/9
+get=base_item
+name=carpet
+id=0x0ad8
+weight=100
+movable=2
+}
+
+[0x0ad9]
+{ fancy pattern blueish 9/9
+get=base_item
+name=carpet
+id=0x0ad9
+weight=100
+movable=2
+}
+
+[0x0ada]
+{ fancy pattern brownish 1/9
+get=base_item
+name=carpet
+id=0x0ada
+weight=100
+movable=2
+}
+
+[0x0adb]
+{ fancy pattern brownish 2/9
+get=base_item
+name=carpet
+id=0x0adb
+weight=100
+movable=2
+}
+
+[0x0adc]
+{ fancy pattern brownish 3/9
+get=base_item
+name=carpet
+id=0x0adc
+weight=100
+movable=2
+}
+
+[0x0add]
+{ fancy pattern brownish 4/9
+get=base_item
+name=carpet
+id=0x0add
+weight=100
+movable=2
+}
+
+[0x0ade]
+{ fancy pattern brownish 5/9
+get=base_item
+name=carpet
+id=0x0ade
+weight=100
+movable=2
+}
+
+[0x0adf]
+{ fancy pattern brownish 6/9
+get=base_item
+name=carpet
+id=0x0adf
+weight=100
+movable=2
+}
+
+[0x0ae0]
+{ fancy pattern brownish 7/9
+get=base_item
+name=carpet
+id=0x0ae0
+weight=100
+movable=2
+}
+
+[0x0ae1]
+{ fancy pattern brownish 8/9
+get=base_item
+name=carpet
+id=0x0ae1
+weight=100
+movable=2
+}
+
+[0x0ae2]
+{ fancy pattern brownish 9/9
+get=base_item
+name=carpet
+id=0x0ae2
+weight=100
+movable=2
+}
+
+[0x0ae3]
+{ fancy pattern redish 1/8
+get=base_item
+name=carpet
+id=0x0ae3
+weight=100
+movable=2
+}
+
+[0x0ae4]
+{ fancy pattern redish 2/8
+get=base_item
+name=carpet
+id=0x0ae4
+weight=100
+movable=2
+}
+
+[0x0ae5]
+{ fancy pattern redish 3/8
+get=base_item
+name=carpet
+id=0x0ae5
+weight=100
+movable=2
+}
+
+[0x0ae6]
+{ fancy pattern redish 4/8
+get=base_item
+name=carpet
+id=0x0ae6
+weight=100
+movable=2
+}
+
+[0x0ae7]
+{ fancy pattern redish 5/8
+get=base_item
+name=carpet
+id=0x0ae7
+weight=100
+movable=2
+}
+
+[0x0ae8]
+{ fancy pattern redish 6/8
+get=base_item
+name=carpet
+id=0x0ae8
+weight=100
+movable=2
+}
+
+[0x0ae9]
+{ fancy pattern redish 7/8
+get=base_item
+name=carpet
+id=0x0ae9
+weight=100
+movable=2
+}
+
+[0x0aea]
+{ fancy pattern redish 8/8
+get=base_item
+name=carpet
+id=0x0aea
+weight=100
+movable=2
+}
+
+[0x0aee]
+{ fancy pattern greenish 1/8
+get=base_item
+name=carpet
+id=0x0aee
+weight=100
+movable=2
+}
+
+[0x0aef]
+{ fancy pattern greenish 2/8
+get=base_item
+name=carpet
+id=0x0aef
+weight=100
+movable=2
+}
+
+[0x0af0]
+{ fancy pattern greenish 3/8
+get=base_item
+name=carpet
+id=0x0af0
+weight=100
+movable=2
+}
+
+[0x0af1]
+{ fancy pattern greenish 4/8
+get=base_item
+name=carpet
+id=0x0af1
+weight=100
+movable=2
+}
+
+[0x0af2]
+{ fancy pattern greenish 5/8
+get=base_item
+name=carpet
+id=0x0af2
+weight=100
+movable=2
+}
+
+[0x0af3]
+{ fancy pattern greenish 6/8
+get=base_item
+name=carpet
+id=0x0af3
+weight=100
+movable=2
+}
+
+[0x0af4]
+{ fancy pattern greenish 7/8
+get=base_item
+name=carpet
+id=0x0af4
+weight=100
+movable=2
+}
+
+[0x0af5]
+{ fancy pattern greenish 8/8
+get=base_item
+name=carpet
+id=0x0af5
+weight=100
+movable=2
+}
+
+[0x0aeb]
+{ fancy middle pattern
+get=base_item
+name=carpet
+id=0x0aeb
+weight=100
+movable=2
+}
+
+[0x0aec]
+{ fancy middle pattern
+get=base_item
+name=carpet
+id=0x0aec
+weight=100
+movable=2
+}
+
+[0x0aed]
+{ fancy middle pattern
+get=base_item
+name=carpet
+id=0x0aed
+weight=100
+movable=2
+}
+
+[0x0afa]
+{ fancy middle pattern
+get=base_item
+name=carpet
+id=0x0afa
+weight=100
+movable=2
+}
+
+[0x1e36]
+{ S 1/9
+get=base_item
+name=bearskin rug
+id=0x1e36
+weight=100
+movable=2
+}
+
+[0x1e37]
+{ S 2/9
+get=base_item
+name=bearskin rug
+id=0x1e37
+weight=100
+movable=2
+}
+
+[0x1e38]
+{ S 3/9
+get=base_item
+name=bearskin rug
+id=0x1e38
+weight=100
+movable=2
+}
+
+[0x1e39]
+{ S 4/9
+get=base_item
+name=bearskin rug
+id=0x1e39
+weight=100
+movable=2
+}
+
+[0x1e3a]
+{ S 5/9
+get=base_item
+name=bearskin rug
+id=0x1e3a
+weight=100
+movable=2
+}
+
+[0x1e3b]
+{ S 6/9
+get=base_item
+name=bearskin rug
+id=0x1e3b
+weight=100
+movable=2
+}
+
+[0x1e3c]
+{ S 7/9
+get=base_item
+name=bearskin rug
+id=0x1e3c
+weight=100
+movable=2
+}
+
+[0x1e3d]
+{ S 8/9
+get=base_item
+name=bearskin rug
+id=0x1e3d
+weight=100
+movable=2
+}
+
+[0x1e3e]
+{ S 9/9
+get=base_item
+name=bearskin rug
+id=0x1e3e
+weight=100
+movable=2
+}
+
+[0x1e40]
+{ E 1/9
+get=base_item
+name=bearskin rug
+id=0x1e40
+weight=100
+movable=2
+}
+
+[0x1e41]
+{ E 2/9
+get=base_item
+name=bearskin rug
+id=0x1e41
+weight=100
+movable=2
+}
+
+[0x1e42]
+{ E 3/9
+get=base_item
+name=bearskin rug
+id=0x1e42
+weight=100
+movable=2
+}
+
+[0x1e43]
+{ E 4/9
+get=base_item
+name=bearskin rug
+id=0x1e43
+weight=100
+movable=2
+}
+
+[0x1e44]
+{ E 5/9
+get=base_item
+name=bearskin rug
+id=0x1e44
+weight=100
+movable=2
+}
+
+[0x1e45]
+{ E 6/9
+get=base_item
+name=bearskin rug
+id=0x1e45
+weight=100
+movable=2
+}
+
+[0x1e46]
+{ E 7/9
+get=base_item
+name=bearskin rug
+id=0x1e46
+weight=100
+movable=2
+}
+
+[0x1e47]
+{ E 8/9
+get=base_item
+name=bearskin rug
+id=0x1e47
+weight=100
+movable=2
+}
+
+[0x1e48]
+{ E 9/9
+get=base_item
+name=bearskin rug
+id=0x1e48
+weight=100
+movable=2
+}
+
+[0x1e49]
+{ S white 1/9
+get=base_item
+name=bearskin rug
+id=0x1e49
+weight=100
+movable=2
+}
+
+[0x1e4a]
+{ S white 2/9
+get=base_item
+name=bearskin rug
+id=0x1e4a
+weight=100
+movable=2
+}
+
+[0x1e4b]
+{ S white 3/9
+get=base_item
+name=bearskin rug
+id=0x1e4b
+weight=100
+movable=2
+}
+
+[0x1e4c]
+{ S white 4/9
+get=base_item
+name=bearskin rug
+id=0x1e4c
+weight=100
+movable=2
+}
+
+[0x1e4d]
+{ S white 5/9
+get=base_item
+name=bearskin rug
+id=0x1e4d
+weight=100
+movable=2
+}
+
+[0x1e4e]
+{ S white 6/9
+get=base_item
+name=bearskin rug
+id=0x1e4e
+weight=100
+movable=2
+}
+
+[0x1e4f]
+{ S white 7/9
+get=base_item
+name=bearskin rug
+id=0x1e4f
+weight=100
+movable=2
+}
+
+[0x1e50]
+{ S white 8/9
+get=base_item
+name=bearskin rug
+id=0x1e50
+weight=100
+movable=2
+}
+
+[0x1e51]
+{ S white 9/9
+get=base_item
+name=bearskin rug
+id=0x1e51
+weight=100
+movable=2
+}
+
+[0x1e53]
+{ E white 1/9
+get=base_item
+name=bearskin rug
+id=0x1e53
+weight=100
+movable=2
+}
+
+[0x1e54]
+{ E white 2/9
+get=base_item
+name=bearskin rug
+id=0x1e54
+weight=100
+movable=2
+}
+
+[0x1e55]
+{ E white 3/9
+get=base_item
+name=bearskin rug
+id=0x1e55
+weight=100
+movable=2
+}
+
+[0x1e56]
+{ E white 4/9
+get=base_item
+name=bearskin rug
+id=0x1e56
+weight=100
+movable=2
+}
+
+[0x1e57]
+{ E white 5/9
+get=base_item
+name=bearskin rug
+id=0x1e57
+weight=100
+movable=2
+}
+
+[0x1e58]
+{ E white 6/9
+get=base_item
+name=bearskin rug
+id=0x1e58
+weight=100
+movable=2
+}
+
+[0x1e59]
+{ E white 7/9
+get=base_item
+name=bearskin rug
+id=0x1e59
+weight=100
+movable=2
+}
+
+[0x1e5a]
+{ E white 8/9
+get=base_item
+name=bearskin rug
+id=0x1e5a
+weight=100
+movable=2
+}
+
+[0x1e5b]
+{ E white 9/9
+get=base_item
+name=bearskin rug
+id=0x1e5b
+weight=100
+movable=2
+}

@@ -1,0 +1,5 @@
+        LPOST
+
+  Purpose: 
+        Makes GM post local messages on
+        bulletin boards instead of global.

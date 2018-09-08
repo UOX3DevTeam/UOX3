@@ -1,0 +1,433 @@
+// Wood
+[0x09a9]
+{ S
+get=base_item
+name=small crate
+id=0x09a9
+weight=500
+weightmax=40000
+value=8 4
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e7e]
+{ E
+get=base_item
+name=small crate
+id=0x0e7e
+weight=500
+weightmax=40000
+value=8 4
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x09aa]
+{ S
+get=base_item
+name=wooden box
+id=0x09aa
+weight=700
+weightmax=40000
+value=14 7
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e7d]
+{ E
+get=base_item
+name=wooden box
+id=0x0e7d
+weight=700
+weightmax=40000
+value=14 7
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a2c]
+{ S
+get=base_item
+name=chest of drawers
+id=0x0a2c
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+decay=1
+good=8
+}
+
+[0x0a3c]
+{ S 1/2
+get=base_item
+name=dresser
+id=0x0a3c
+weight=5000
+weightmax=40000
+type=1
+decay=1
+}
+
+[0x0a3d]
+{ S 2/2
+get=base_item
+name=dresser
+id=0x0a3d
+weight=500
+weightmax=40000
+decay=1
+}
+
+[0x0a44]
+{ E 1/2
+get=base_item
+name=dresser
+id=0x0a44
+weight=500
+weightmax=40000
+type=1
+decay=1
+}
+
+[0x0a45]
+{ E 2/2
+get=base_item
+name=dresser
+id=0x0a45
+weight=500
+weightmax=40000
+decay=1
+}
+
+[0x0a34]
+{ E
+get=base_item
+name=chest of drawers
+id=0x0a34
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a30]
+{ S fancy
+get=base_item
+name=chest of drawers
+id=0x0a30
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a38]
+{ E fancy
+get=base_item
+name=chest of drawers
+id=0x0a38
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a4f]
+{ S
+get=base_item
+name=armoire
+id=0x0a4f
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a53]
+{ E
+get=base_item
+name=armoire
+id=0x0a53
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a4d]
+{ S fancy
+get=base_item
+name=armoire
+id=0x0a4d
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a51]
+{ E fancy
+get=base_item
+name=armoire
+id=0x0a51
+weight=2000
+weightmax=40000
+value=20 10
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a97]
+{ S style1
+get=base_item
+name=bookcase
+id=0x0a97
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a98]
+{ S style2
+get=base_item
+name=bookcase
+id=0x0a98
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a9b]
+{ S style3
+get=base_item
+name=bookcase
+id=0x0a9b
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a99]
+{ E style1
+get=base_item
+name=bookcase
+id=0x0a99
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a9a]
+{ E style2
+get=base_item
+name=bookcase
+id=0x0a9a
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a9c]
+{ E style3
+get=base_item
+name=bookcase
+id=0x0a9c
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a9d]
+{ S
+get=base_item
+name=wooden shelf
+id=0x0a9d
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0a9e]
+{ E
+get=base_item
+name=wooden shelf
+id=0x0a9e
+weight=2000
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e3c]
+{ large
+get=base_item
+name=crate
+id=0x0e3c
+weight=600
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e3d]
+{ large
+get=base_item
+name=crate
+id=0x0e3d
+weight=600
+weightmax=40000
+value=18 9
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e3e]
+{ E medium
+get=base_item
+name=crate
+id=0x0e3e
+weight=500
+weightmax=40000
+value=12 6
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e3f]
+{ S medium
+get=base_item
+name=crate
+id=0x0e3f
+weight=500
+weightmax=40000
+value=12 6
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e42]
+{ E goldparts
+get=base_item
+name=wooden chest
+id=0x0e42
+weight=3000
+weightmax=40000
+value=30 15
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+[0x0e43]
+{ S wooden chest
+get=base_item
+name=wooden chest
+id=0x0E43
+weight=3000
+weightmax=40000
+value=30 15
+type=1
+restock=10
+movable=1
+decay=1
+good=8
+}
+
+

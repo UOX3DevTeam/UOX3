@@ -1,0 +1,8 @@
+        ADDX 0x#### (HEX-ID from UO Client)
+        ADDX #### (Modelnumber from UO Client)
+
+  Purpose: 
+        Can be used to add "raw" items from
+        either hex-id or modelnumber at your
+        character's feet. (i.e. same location
+        as your character.)

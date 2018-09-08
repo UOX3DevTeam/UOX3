@@ -1,0 +1,1441 @@
+// Banners
+
+[0x0426]
+{ S 1/2
+get=base_item
+name=tattered banner
+id=0x0426
+weight=100
+movable=2
+}
+
+[0x0427]
+{ S 2/2
+get=base_item
+name=tattered banner
+id=0x0427
+weight=100
+movable=2
+}
+
+[0x042a]
+{ E 1/2
+get=base_item
+name=tattered banner
+id=0x042a
+weight=100
+movable=2
+}
+
+[0x042b]
+{ E 2/2
+get=base_item
+name=tattered banner
+id=0x042b
+weight=100
+movable=2
+}
+
+[0x042c]
+{ S style2 1/2
+get=base_item
+name=tattered banner
+id=0x042c
+weight=100
+movable=2
+}
+
+[0x042d]
+{ S style2 2/2
+get=base_item
+name=tattered banner
+id=0x042d
+weight=100
+movable=2
+}
+
+[0x042e]
+{ E style2 1/2
+get=base_item
+name=tattered banner
+id=0x042e
+weight=100
+movable=2
+}
+
+[0x042f]
+{ E style2 2/2
+get=base_item
+name=tattered banner
+id=0x042f
+weight=100
+movable=2
+}
+
+[0x1586]
+{ S style1 1/3
+get=base_item
+name=banner
+id=0x1586
+weight=100
+movable=2
+}
+
+[0x1587]
+{ S style1 2/3
+get=base_item
+name=banner
+id=0x1587
+weight=100
+movable=2
+}
+
+[0x1588]
+{ S style1 3/3
+get=base_item
+name=banner
+id=0x1588
+weight=100
+movable=2
+}
+
+[0x1589]
+{ S style2 1/3
+get=base_item
+name=banner
+id=0x1589
+weight=100
+movable=2
+}
+
+[0x158a]
+{ S style2 2/3
+get=base_item
+name=banner
+id=0x158a
+weight=100
+movable=2
+}
+
+[0x158b]
+{ S style2 3/3
+get=base_item
+name=banner
+id=0x158b
+weight=100
+movable=2
+}
+
+[0x158c]
+{ S style3 1/3
+get=base_item
+name=banner
+id=0x158c
+weight=100
+movable=2
+}
+
+[0x158d]
+{ S style3 2/3
+get=base_item
+name=banner
+id=0x158d
+weight=100
+movable=2
+}
+
+[0x158e]
+{ S style3 3/3
+get=base_item
+name=banner
+id=0x158e
+weight=100
+movable=2
+}
+
+[0x158f]
+{ S eastend
+get=base_item
+name=banner hanger
+id=0x158f
+weight=100
+movable=2
+}
+
+[0x1590]
+{ S style4 1/2
+get=base_item
+name=banner
+id=0x1590
+weight=100
+movable=2
+}
+
+[0x1591]
+{ S style4 2/2
+get=base_item
+name=banner
+id=0x1591
+weight=100
+movable=2
+}
+
+[0x1592]
+{ S style5 1/2
+get=base_item
+name=banner
+id=0x1592
+weight=100
+movable=2
+}
+
+[0x1593]
+{ S style5 2/2
+get=base_item
+name=banner
+id=0x1593
+weight=100
+movable=2
+}
+
+[0x1594]
+{ S style6 1/3
+get=base_item
+name=banner
+id=0x1594
+weight=100
+movable=2
+}
+
+[0x1595]
+{ S style6 2/3
+get=base_item
+name=banner
+id=0x1595
+weight=100
+movable=2
+}
+
+[0x1596]
+{ S style6 3/3
+get=base_item
+name=banner
+id=0x1596
+weight=100
+movable=2
+}
+
+[0x1598]
+{ S style7 1/3
+get=base_item
+name=banner
+id=0x1598
+weight=100
+movable=2
+}
+
+[0x159b]
+{ S style7 2/3
+get=base_item
+name=banner
+id=0x159b
+weight=100
+movable=2
+}
+
+[0x159c]
+{ S style7 3/3
+get=base_item
+name=banner
+id=0x159c
+weight=100
+movable=2
+}
+
+[0x1599]
+{ S style8 1/3
+get=base_item
+name=banner
+id=0x1599
+weight=100
+movable=2
+}
+
+[0x159a]
+{ S style8 2/3
+get=base_item
+name=banner
+id=0x159a
+weight=100
+movable=2
+}
+
+[0x159d]
+{ S style8 3/3
+get=base_item
+name=banner
+id=0x159d
+weight=100
+movable=2
+}
+
+[0x159e]
+{ E
+get=base_item
+name=curtain
+id=0x159e
+weight=100
+movable=2
+}
+
+[0x159f]
+{ S
+get=base_item
+name=curtain
+id=0x159f
+weight=100
+movable=2
+}
+
+[0x15a0]
+{ S style9 1/2
+get=base_item
+name=banner
+id=0x15a0
+weight=100
+movable=2
+}
+
+[0x15a1]
+{ S style9 2/2
+get=base_item
+name=banner
+id=0x15a1
+weight=100
+movable=2
+}
+
+[0x15a2]
+{ S style10 1/2
+get=base_item
+name=banner
+id=0x15a2
+weight=100
+movable=2
+}
+
+[0x15a3]
+{ S style10 2/2
+get=base_item
+name=banner
+id=0x15a3
+weight=100
+movable=2
+}
+
+[0x15a4]
+{ S style11 1/2
+get=base_item
+name=banner
+id=0x15a4
+weight=100
+movable=2
+}
+
+[0x15a5]
+{ S style11 2/2
+get=base_item
+name=banner
+id=0x15a5
+weight=100
+movable=2
+}
+
+[0x15a6]
+{ S style12 1/2
+get=base_item
+name=banner
+id=0x15a6
+weight=100
+movable=2
+}
+
+[0x15a7]
+{ S style12 2/2
+get=base_item
+name=banner
+id=0x15a7
+weight=100
+movable=2
+}
+
+[0x15a8]
+{ S style13 1/2
+get=base_item
+name=banner
+id=0x15a8
+weight=100
+movable=2
+}
+
+[0x15a9]
+{ S style13 2/2
+get=base_item
+name=banner
+id=0x15a9
+weight=100
+movable=2
+}
+
+[0x15aa]
+{ S style14 1/2
+get=base_item
+name=banner
+id=0x15aa
+weight=100
+movable=2
+}
+
+[0x15ab]
+{ S style14 2/2
+get=base_item
+name=banner
+id=0x15ab
+weight=100
+movable=2
+}
+
+[0x15ac]
+{ S style15 1/2
+get=base_item
+name=banner
+id=0x15ac
+weight=100
+movable=2
+}
+
+[0x15ad]
+{ S style15 2/2
+get=base_item
+name=banner
+id=0x15ad
+weight=100
+movable=2
+}
+
+[0x15ae]
+{ S
+get=base_item
+name=banner
+id=0x15ae
+weight=100
+movable=2
+}
+
+[0x15af]
+{ E
+get=base_item
+name=banner
+id=0x15af
+weight=100
+movable=2
+}
+
+[0x15b0]
+{ S
+get=base_item
+name=banner
+id=0x15b0
+weight=100
+movable=2
+}
+
+[0x15b1]
+{ E
+get=base_item
+name=banner
+id=0x15b1
+weight=100
+movable=2
+}
+
+[0x15b2]
+{ S
+get=base_item
+name=banner
+id=0x15b2
+weight=100
+movable=2
+}
+
+[0x15b3]
+{ E
+get=base_item
+name=banner
+id=0x15b3
+weight=100
+movable=2
+}
+
+[0x15b4]
+{ S
+get=base_item
+name=banner
+id=0x15b4
+weight=100
+movable=2
+}
+
+[0x15b5]
+{ E
+get=base_item
+name=banner
+id=0x15b5
+weight=100
+movable=2
+}
+
+[0x15b6]
+{ S
+get=base_item
+name=banner
+id=0x15b6]
+weight=100
+movable=2
+}
+
+[0x15b7]
+{ E
+get=base_item
+name=banner
+id=0x15b7
+weight=100
+movable=2
+}
+
+[0x15b8]
+{ S
+get=base_item
+name=banner
+id=0x15b8
+weight=100
+movable=2
+}
+
+[0x15b9]
+{ E
+get=base_item
+name=banner
+id=0x15b9
+weight=100
+movable=2
+}
+
+[0x15ba]
+{ S
+get=base_item
+name=banner
+id=0x15ba
+weight=100
+movable=2
+}
+
+[0x15bb]
+{ E
+get=base_item
+name=banner
+id=0x15bb
+weight=100
+movable=2
+}
+
+[0x15bc]
+{ S
+get=base_item
+name=banner
+id=0x15bc
+weight=100
+movable=2
+}
+
+[0x15bd]
+{ E
+get=base_item
+name=banner
+id=0x15bd
+weight=100
+movable=2
+}
+
+[0x15be]
+{ S
+get=base_item
+name=banner
+id=0x15be
+weight=100
+movable=2
+}
+
+[0x15bf]
+{ E
+get=base_item
+name=banner
+id=0x15bf
+weight=100
+movable=2
+}
+
+[0x15c0]
+{ S
+get=base_item
+name=banner
+id=0x15c0
+weight=100
+movable=2
+}
+
+[0x15c1]
+{ E
+get=base_item
+name=banner
+id=0x15c1
+weight=100
+movable=2
+}
+
+[0x15c2]
+{ S
+get=base_item
+name=banner
+id=0x15c2
+weight=100
+movable=2
+}
+
+[0x15c3]
+{ E
+get=base_item
+name=banner
+id=0x15c3
+weight=100
+movable=2
+}
+
+[0x15c4]
+{ S
+get=base_item
+name=banner
+id=0x15c4
+weight=100
+movable=2
+}
+
+[0x15c5]
+{ E
+get=base_item
+name=banner
+id=0x15c5
+weight=100
+movable=2
+}
+
+[0x15c6]
+{ S
+get=base_item
+name=banner
+id=0x15c6
+weight=100
+movable=2
+}
+
+[0x15c7]
+{ E
+get=base_item
+name=banner
+id=0x15c7
+weight=100
+movable=2
+}
+
+[0x15c8]
+{ S
+get=base_item
+name=banner
+id=0x15c8
+weight=100
+movable=2
+}
+
+[0x15c9]
+{ E
+get=base_item
+name=banner
+id=0x15c9
+weight=100
+movable=2
+}
+
+[0x15ca]
+{ S
+get=base_item
+name=banner
+id=0x15ca
+weight=100
+movable=2
+}
+
+[0x15cb]
+{ E
+get=base_item
+name=banner
+id=0x15cb
+weight=100
+movable=2
+}
+
+[0x15cc]
+{ S
+get=base_item
+name=banner
+id=0x15cc
+weight=100
+movable=2
+}
+
+[0x15cd]
+{ E
+get=base_item
+name=banner
+id=0x15cd
+weight=100
+movable=2
+}
+
+[0x15ce]
+{ S
+get=base_item
+name=banner
+id=0x15ce
+weight=100
+movable=2
+}
+
+[0x15cf]
+{ E
+get=base_item
+name=banner
+id=0x15cf
+weight=100
+movable=2
+}
+
+[0x15d0]
+{ S
+get=base_item
+name=banner
+id=0x15d0
+weight=100
+movable=2
+}
+
+[0x15d1]
+{ E
+get=base_item
+name=banner
+id=0x15d1
+weight=100
+movable=2
+}
+
+[0x15d2]
+{ S
+get=base_item
+name=banner
+id=0x15d2
+weight=100
+movable=2
+}
+
+[0x15d3]
+{ E
+get=base_item
+name=banner
+id=0x15d3
+weight=100
+movable=2
+}
+
+[0x15d4]
+{ S
+get=base_item
+name=banner
+id=0x15d4
+weight=100
+movable=2
+}
+
+[0x15d5]
+{ E
+get=base_item
+name=banner
+id=0x15d5
+weight=100
+movable=2
+}
+
+[0x15d6]
+{ S
+get=base_item
+name=banner
+id=0x15d6
+weight=100
+movable=2
+}
+
+[0x15d7]
+{ E
+get=base_item
+name=banner
+id=0x15d7
+weight=100
+movable=2
+}
+
+[0x15d8]
+{ S
+get=base_item
+name=banner
+id=0x15d8
+weight=100
+movable=2
+}
+
+[0x15d9]
+{ E
+get=base_item
+name=banner
+id=0x15d9
+weight=100
+movable=2
+}
+
+[0x15da]
+{ S
+get=base_item
+name=banner
+id=0x15da
+weight=100
+movable=2
+}
+
+[0x15db]
+{ E
+get=base_item
+name=banner
+id=0x15db
+weight=100
+movable=2
+}
+
+[0x15dc]
+{ S
+get=base_item
+name=banner
+id=0x15dc
+weight=100
+movable=2
+}
+
+[0x15dd]
+{ E
+get=base_item
+name=banner
+id=0x15dd
+weight=100
+movable=2
+}
+
+[0x15de]
+{ S
+get=base_item
+name=banner
+id=0x15de
+weight=100
+movable=2
+}
+
+[0x15df]
+{ E
+get=base_item
+name=banner
+id=0x15df
+weight=100
+movable=2
+}
+
+[0x15e0]
+{ S
+get=base_item
+name=banner
+id=0x15e0
+weight=100
+movable=2
+}
+
+[0x15e1]
+{ E
+get=base_item
+name=banner
+id=0x15e1
+weight=100
+movable=2
+}
+
+[0x15e2]
+{ S
+get=base_item
+name=banner
+id=0x15e2
+weight=100
+movable=2
+}
+
+[0x15e3]
+{ E
+get=base_item
+name=banner
+id=0x15e3
+weight=100
+movable=2
+}
+
+[0x15e4]
+{ S
+get=base_item
+name=banner
+id=0x15e4
+weight=100
+movable=2
+}
+
+[0x15e5]
+{ E
+get=base_item
+name=banner
+id=0x15e5
+weight=100
+movable=2
+}
+
+[0x15e6]
+{ S
+get=base_item
+name=banner
+id=0x15e6
+weight=100
+movable=2
+}
+
+[0x15e7]
+{ E
+get=base_item
+name=banner
+id=0x15e7
+weight=100
+movable=2
+}
+
+[0x15e8]
+{ S
+get=base_item
+name=banner
+id=0x15e8
+weight=100
+movable=2
+}
+
+[0x15e9]
+{ E
+get=base_item
+name=banner
+id=0x15e9
+weight=100
+movable=2
+}
+
+[0x15ea]
+{ S
+get=base_item
+name=banner
+id=0x15ea
+weight=100
+movable=2
+}
+
+[0x15eb]
+{ E
+get=base_item
+name=banner
+id=0x15eb
+weight=100
+movable=2
+}
+
+[0x15ec]
+{ S
+get=base_item
+name=banner
+id=0x15ec
+weight=100
+movable=2
+}
+
+[0x15ed]
+{ E
+get=base_item
+name=banner
+id=0x15ed
+weight=100
+movable=2
+}
+
+[0x15ee]
+{ S
+get=base_item
+name=banner
+id=0x15ee
+weight=100
+movable=2
+}
+
+[0x15ef]
+{ E
+get=base_item
+name=banner
+id=0x15ef
+weight=100
+movable=2
+}
+
+[0x15f0]
+{ S
+get=base_item
+name=banner
+id=0x15f0
+weight=100
+movable=2
+}
+
+[0x15f1]
+{ E
+get=base_item
+name=banner
+id=0x15f1
+weight=100
+movable=2
+}
+
+[0x15f2]
+{ S
+get=base_item
+name=banner
+id=0x15f2
+weight=100
+movable=2
+}
+
+[0x15f3]
+{ E
+get=base_item
+name=banner
+id=0x15f3
+weight=100
+movable=2
+}
+
+[0x15f4]
+{ S
+get=base_item
+name=banner
+id=0x15f4
+weight=100
+movable=2
+}
+
+[0x15f5]
+{ E
+get=base_item
+name=banner
+id=0x15f5
+weight=100
+movable=2
+}
+
+[0x15f6]
+{ E small
+get=base_item
+name=curtain
+id=0x15f6
+weight=100
+movable=2
+}
+
+[0x15f7]
+{ S small
+get=base_item
+name=curtain
+id=0x15f7
+weight=100
+movable=2
+}
+
+[0x160d]
+{ E red
+get=base_item
+name=curtain
+id=0x160d
+weight=100
+movable=2
+}
+
+[0x160e]
+{ S red
+get=base_item
+name=curtain
+id=0x160e
+weight=100
+movable=2
+}
+
+[0x160f]
+{ E style1 1/2
+get=base_item
+name=banner
+id=0x160f
+weight=100
+movable=2
+}
+
+[0x1610]
+{ E style1 2/2
+get=base_item
+name=banner
+id=0x1610
+weight=100
+movable=2
+}
+
+[0x1611]
+{ E style2 1/2
+get=base_item
+name=banner
+id=0x1611
+weight=100
+movable=2
+}
+
+[0x1612]
+{ E style2 2/2
+get=base_item
+name=banner
+id=0x1612
+weight=100
+movable=2
+}
+
+[0x1613]
+{ E style3 1/2
+get=base_item
+name=banner
+id=0x1613
+weight=100
+movable=2
+}
+
+[0x1614]
+{ E style3 2/2
+get=base_item
+name=banner
+id=0x1614
+weight=100
+movable=2
+}
+
+[0x1615]
+{ E style4 1/2
+get=base_item
+name=banner
+id=0x1615
+weight=100
+movable=2
+}
+
+[0x1616]
+{ E style4 2/2
+get=base_item
+name=banner
+id=0x1616
+weight=100
+movable=2
+}
+
+[0x1617]
+{ E style5 1/2
+get=base_item
+name=banner
+id=0x1617
+weight=100
+movable=2
+}
+
+[0x1618]
+{ E style5 2/2
+get=base_item
+name=banner
+id=0x1618
+weight=100
+movable=2
+}
+
+[0x1619]
+{ E style6 1/2
+get=base_item
+name=banner
+id=0x1619
+weight=100
+movable=2
+}
+
+[0x161a]
+{ E style6 2/2
+get=base_item
+name=banner
+id=0x161a
+weight=100
+movable=2
+}
+
+[0x161b]
+{ E style7 1/2
+get=base_item
+name=banner
+id=0x161b
+weight=100
+movable=2
+}
+
+[0x161c]
+{ E style7 2/2
+get=base_item
+name=banner
+id=0x161c
+weight=100
+movable=2
+}
+
+[0x161d]
+{ E style8 1/3
+get=base_item
+name=banner
+id=0x161d
+weight=100
+movable=2
+}
+
+[0x161e]
+{ E style8 2/3
+get=base_item
+name=banner
+id=0x161e
+weight=100
+movable=2
+}
+
+[0x161f]
+{ E style8 3/3
+get=base_item
+name=banner
+id=0x161f
+weight=100
+movable=2
+}
+
+[0x1620]
+{ E style9 1/3
+get=base_item
+name=banner
+id=0x1620
+weight=100
+movable=2
+}
+
+[0x1621]
+{ E style9 2/3
+get=base_item
+name=banner
+id=0x1621
+weight=100
+movable=2
+}
+
+[0x1622]
+{ E style9 3/3
+get=base_item
+name=banner
+id=0x1622
+weight=100
+movable=2
+}
+
+[0x1623]
+{ E style10 1/3
+get=base_item
+name=banner
+id=0x1623
+weight=100
+movable=2
+}
+
+[0x1624]
+{ E style10 2/3
+get=base_item
+name=banner
+id=0x1624
+weight=100
+movable=2
+}
+
+[0x1625]
+{ E style10 3/3
+get=base_item
+name=banner
+id=0x1625
+weight=100
+movable=2
+}
+
+[0x1626]
+{ E southend
+get=base_item
+name=banner hanger
+id=0x1626
+weight=100
+movable=2
+}
+
+[0x1627]
+{ E style11 1/2
+get=base_item
+name=banner
+id=0x1627
+weight=100
+movable=2
+}
+
+[0x1628]
+{ E style11 2/2
+get=base_item
+name=banner
+id=0x1628
+weight=100
+movable=2
+}
+
+[0x1629]
+{ E style12 1/2
+get=base_item
+name=banner
+id=0x1629
+weight=100
+movable=2
+}
+
+[0x162a]
+{ E style12 2/2
+get=base_item
+name=banner
+id=0x162a
+weight=100
+movable=2
+}
+
+[0x162b]
+{ E style13 1/3
+get=base_item
+name=banner
+id=0x162b
+weight=100
+movable=2
+}
+
+[0x162c]
+{ E style13 2/3
+get=base_item
+name=banner
+id=0x162c
+weight=100
+movable=2
+}
+
+[0x162d]
+{ E style13 3/3
+get=base_item
+name=banner
+id=0x162d
+weight=100
+movable=2
+}
+
+[0x162e]
+{ E style14 1/3
+get=base_item
+name=banner
+id=0x162e
+weight=100
+movable=2
+}
+
+[0x1631]
+{ E style14 2/3
+get=base_item
+name=banner
+id=0x1631
+weight=100
+movable=2
+}
+
+[0x1632]
+{ E style14 3/3
+get=base_item
+name=banner
+id=0x1632
+weight=100
+movable=2
+}
+
+[0x162f]
+{ E style15 1/3
+get=base_item
+name=banner
+id=0x162f
+weight=100
+movable=2
+}
+
+[0x1630]
+{ E style15 2/3
+get=base_item
+name=banner
+id=0x1630
+weight=100
+movable=2
+}
+
+[0x1633]
+{ E style15 3/3
+get=base_item
+name=banner
+id=0x1633
+weight=100
+movable=2
+}

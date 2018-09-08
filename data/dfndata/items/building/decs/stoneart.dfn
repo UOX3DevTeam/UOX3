@@ -1,0 +1,2170 @@
+// stoneart.dfn
+// Artwork made from stone. Fountains, statues, gravestones and the like.
+// v1.0; 02/04/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, copy v1.0 please)
+// For use with the UOX emulator or any with permission from the author
+
+[0x0002]
+{ E 1/2
+get=base_item
+name=ankh
+id=0x0002
+weight=1000
+movable=2
+}
+
+[0x0003]
+{ E 2/2
+get=base_item
+name=ankh
+id=0x0003
+weight=1000
+movable=2
+}
+
+[0x0004]
+{ S 1/2
+get=base_item
+name=ankh
+id=0x0004
+weight=1000
+movable=2
+}
+
+[0x0005]
+{ S 2/2
+get=base_item
+name=ankh
+id=0x0005
+weight=1000
+movable=2
+}
+
+[0x1223]
+{
+get=base_item
+name=pedistal
+id=0x1223
+weight=1000
+movable=1
+decay=1
+}
+
+[0x1224]
+{ E woman
+get=base_item
+name=statue
+id=0x1224
+weight=1000
+movable=1
+decay=1
+}
+
+[0x1225]
+{ SE woman
+get=base_item
+name=statue
+id=0x1225
+weight=1000
+movable=1
+decay=1
+}
+
+[0x1226]
+{ SW angel
+get=base_item
+name=statue
+id=0x1226
+weight=1000
+movable=1
+decay=1
+}
+
+[0x1227]
+{ S man
+get=base_item
+name=statue
+id=0x1227
+weight=1000
+movable=1
+decay=1
+}
+
+[0x1228]
+{ E pegasus
+get=base_item
+name=statue
+id=0x1228
+weight=1000
+movable=1
+decay=1
+}
+
+[0x129f]
+{ E hunter 1/3
+get=base_item
+name=statue
+id=0x129f
+weight=1000
+movable=2
+}
+
+[0x12a0]
+{ E hunter 2/3
+get=base_item
+name=statue
+id=0x12a0
+weight=1000
+movable=2
+}
+
+[0x12a1]
+{ E hunter 3/3
+get=base_item
+name=statue
+id=0x12a1
+weight=1000
+movable=2
+}
+
+[0x12a2]
+{ E couple 1/3
+get=base_item
+name=statue
+id=0x12a2
+weight=1000
+movable=2
+}
+
+[0x12a3]
+{ E couple 2/3
+get=base_item
+name=statue
+id=0x12a3
+weight=1000
+movable=2
+}
+
+[0x12a4]
+{ E couple 3/3
+get=base_item
+name=wall carving
+id=0x12a4
+weight=1000
+movable=2
+}
+
+[0x12ca]
+{ E
+get=base_item
+name=bust
+id=0x12ca
+weight=1000
+movable=1
+decay=1
+}
+
+[0x12cb]
+{ S
+get=base_item
+name=bust
+id=0x12cb
+weight=1000
+movable=1
+decay=1
+}
+
+[0x12d8]
+{ E
+get=base_item
+name=statue
+id=0x12d8
+weight=1000
+movable=1
+decay=1
+}
+
+[0x12d9]
+{ S
+get=base_item
+name=statue
+id=0x12d9
+weight=1000
+movable=1
+decay=1
+}
+
+[0x139a]
+{ S woman
+get=base_item
+name=statue
+id=0x139a
+weight=1000
+movable=1
+decay=1
+}
+
+[0x139b]
+{ N angel
+get=base_item
+name=statue
+id=0x139b
+weight=1000
+movable=1
+decay=1
+}
+
+[0x139c]
+{ E man
+get=base_item
+name=statue
+id=0x139c
+weight=1000
+movable=1
+decay=1
+}
+
+[0x139d]
+{ S pegasus
+get=base_item
+name=statue
+id=0x139d
+weight=1000
+movable=1
+decay=1
+}
+
+[0x139e]
+{ E hunter 1/3
+get=base_item
+name=statue
+id=0x139e
+weight=1000
+movable=2
+}
+
+[0x139f]
+{ E hunter 2/3
+get=base_item
+name=statue
+id=0x139f
+weight=1000
+movable=2
+}
+
+[0x13a0]
+{ E hunter 3/3
+get=base_item
+name=statue
+id=0x13a0
+weight=1000
+movable=2
+}
+
+[0x13a1]
+{ E couple 1/3
+get=base_item
+name=statue
+id=0x13a1
+weight=1000
+movable=2
+}
+
+[0x13a2]
+{ E couple 2/3
+get=base_item
+name=statue
+id=0x13a2
+weight=1000
+movable=2
+}
+
+[0x13a3]
+{ E statue 3/3
+get=base_item
+name=statue
+id=0x13a3
+weight=1000
+movable=2
+}
+
+[0x149f]
+{ E 1/4
+get=base_item
+name=Honesty
+id=0x149f
+weight=100
+movable=2
+}
+
+[0x14a0]
+{ E 2/4
+get=base_item
+name=Honesty
+id=0x14a0
+weight=100
+movable=2
+}
+
+[0x14a1]
+{ E 3/4
+get=base_item
+name=Honesty
+id=0x14a1
+weight=100
+movable=2
+}
+
+[0x14a2]
+{ E 4/4
+get=base_item
+name=Honesty
+id=0x14a2
+weight=100
+movable=2
+}
+
+[0x14a3]
+{ S 1/4
+get=base_item
+name=Honesty
+id=0x14a3
+weight=100
+movable=2
+}
+
+[0x14a4]
+{ S 2/4
+get=base_item
+name=Honesty
+id=0x14a4
+weight=100
+movable=2
+}
+
+[0x14a5]
+{ S 3/4
+get=base_item
+name=Honesty
+id=0x14a5
+weight=100
+movable=2
+}
+
+[0x14a6]
+{ S 4/4
+get=base_item
+name=Honesty
+id=0x14a6
+weight=100
+movable=2
+}
+
+[0x14a7]
+{ E 1/4
+get=base_item
+name=Compassion
+id=0x14a7
+weight=100
+movable=2
+}
+
+[0x14a8]
+{ E 2/4
+get=base_item
+name=Compassion
+id=0x14a8
+weight=100
+movable=2
+}
+
+[0x14a9]
+{ E 3/4
+get=base_item
+name=Compassion
+id=0x14a9
+weight=100
+movable=2
+}
+
+[0x14aa]
+{ E 4/4
+get=base_item
+name=Compassion
+id=0x14aa
+weight=100
+movable=2
+}
+
+[0x14ab]
+{ S 1/4
+get=base_item
+name=Compassion
+id=0x14ab
+weight=100
+movable=2
+}
+
+[0x14ac]
+{ S 2/4
+get=base_item
+name=Compassion
+id=0x14ac
+weight=100
+movable=2
+}
+
+[0x14ad]
+{ S 3/4
+get=base_item
+name=Compassion
+id=0x14ad
+weight=100
+movable=2
+}
+
+[0x14ae]
+{ S 4/4
+get=base_item
+name=Compassion
+id=0x14ae
+weight=100
+movable=2
+}
+
+[0x14af]
+{ E 1/4
+get=base_item
+name=Justice
+id=0x14af
+weight=100
+movable=2
+}
+14b0 Justice (E 2/4)
+[0x14b0]
+{ E 2/4
+get=base_item
+name=Justice
+id=0x14b0
+weight=100
+movable=2
+}
+
+[0x14b1]
+{ E 3/4
+get=base_item
+name=Justice
+id=0x14b1
+weight=100
+movable=2
+}
+
+[0x14b2]
+{ E 4/4
+get=base_item
+name=Justice
+id=0x14b2
+weight=100
+movable=2
+}
+
+[0x14b3]
+{ S 1/4
+get=base_item
+name=Justice
+id=0x14b3
+weight=100
+movable=2
+}
+
+[0x14b4]
+{ S 2/4
+get=base_item
+name=Justice
+id=0x14b4
+weight=100
+movable=2
+}
+
+[0x14b5]
+{ S 3/4
+get=base_item
+name=Justice
+id=0x14b5
+weight=100
+movable=2
+}
+
+[0x14b6]
+{ S 4/4
+get=base_item
+name=Justice
+id=0x14b6
+weight=100
+movable=2
+}
+
+[0x14b7]
+{ E 1/4
+get=base_item
+name=Valor
+id=0x14b7
+weight=100
+movable=2
+}
+
+[0x14b8]
+{ E 2/4
+get=base_item
+name=Valor
+id=0x14b8
+weight=100
+movable=2
+}
+
+[0x14b9]
+{ E 3/4
+get=base_item
+name=Valor
+id=0x14b9
+weight=100
+movable=2
+}
+
+[0x14ba]
+{ E 4/4
+get=base_item
+name=Valor
+id=0x14ba
+weight=100
+movable=2
+}
+
+[0x14bb]
+{ S 1/4
+get=base_item
+name=Valor
+id=0x14bb
+weight=100
+movable=2
+}
+
+[0x14bc]
+{ S 2/4
+get=base_item
+name=Valor
+id=0x14bc
+weight=100
+movable=2
+}
+
+[0x14bd]
+{ S 3/4
+get=base_item
+name=Valor
+id=0x14bd
+weight=100
+movable=2
+}
+
+[0x14be]
+{ S 4/4
+get=base_item
+name=Valor
+id=0x14be
+weight=100
+movable=2
+}
+
+[0x14bf]
+{ E 1/4
+get=base_item
+name=Spirituality
+id=0x14bf
+weight=100
+movable=2
+}
+
+[0x14c0]
+{ E 2/4
+get=base_item
+name=Spirituality
+id=0x14c0
+weight=100
+movable=2
+}
+
+[0x14c1]
+{ E 3/4
+get=base_item
+name=Spirituality
+id=0x14c1
+weight=100
+movable=2
+}
+
+[0x14c2]
+{ E 4/4
+get=base_item
+name=Spirituality
+id=0x14c2
+weight=100
+movable=2
+}
+
+[0x14c3]
+{ S 1/4
+get=base_item
+name=Spirituality
+id=0x14c3
+weight=100
+movable=2
+}
+
+[0x14c4]
+{ S 2/4
+get=base_item
+name=Spirituality
+id=0x14c4
+weight=100
+movable=2
+}
+
+[0x14c5]
+{ S 3/4
+get=base_item
+name=Spirituality
+id=0x14c5
+weight=100
+movable=2
+}
+
+[0x14c6]
+{ S 4/4
+get=base_item
+name=Spirituality
+id=0x14c6
+weight=100
+movable=2
+}
+
+[0x14c7]
+{ E 1/4
+get=base_item
+name=Honor
+id=0x14c7
+weight=100
+movable=2
+}
+
+[0x14c8]
+{ E 2/4
+get=base_item
+name=Honor
+id=0x14c8
+weight=100
+movable=2
+}
+
+[0x14c9]
+{ E 3/4
+get=base_item
+name=Honor
+id=0x14c9
+weight=100
+movable=2
+}
+
+[0x14ca]
+{ E 4/4
+get=base_item
+name=Honor
+id=0x14ca
+weight=100
+movable=2
+}
+
+[0x14cb]
+{ S 1/4
+get=base_item
+name=Honor
+id=0x14cb
+weight=100
+movable=2
+}
+
+[0x14cc]
+{ S 2/4
+get=base_item
+name=Honor
+id=0x14cc
+weight=100
+movable=2
+}
+
+[0x14cd]
+{ S 3/4
+get=base_item
+name=Honor
+id=0x14cd
+weight=100
+movable=2
+}
+
+[0x14ce]
+{ S 4/4
+get=base_item
+name=Honor
+id=0x14ce
+weight=100
+movable=2
+}
+
+[0x14cf]
+{ E 1/4
+get=base_item
+name=Humility
+id=0x14cf
+weight=100
+movable=2
+}
+
+[0x14d0]
+{ E 2/4
+get=base_item
+name=Humility
+id=0x14d0
+weight=100
+movable=2
+}
+
+[0x14d1]
+{ E 3/4
+get=base_item
+name=Humility
+id=0x14d1
+weight=100
+movable=2
+}
+
+[0x14d2]
+{ E 4/4
+get=base_item
+name=Humility
+id=0x14d2
+weight=100
+movable=2
+}
+
+[0x14d3]
+{ S 1/4
+get=base_item
+name=Humility
+id=0x14d3
+weight=100
+movable=2
+}
+
+[0x14d4]
+{ S 2/4
+get=base_item
+name=Humility
+id=0x14d4
+weight=100
+movable=2
+}
+
+[0x14d5]
+{ S 3/4
+get=base_item
+name=Humility
+id=0x14d5
+weight=100
+movable=2
+}
+
+[0x14d6]
+{ S 4/4
+get=base_item
+name=Humility
+id=0x14d6
+weight=100
+movable=2
+}
+
+[0x150a]
+{ E 1/4
+get=base_item
+name=Sacrifice
+id=0x150a
+weight=100
+movable=2
+}
+
+[0x150b]
+{ E 2/4
+get=base_item
+name=Sacrifice
+id=0x150b
+weight=100
+movable=2
+}
+
+[0x150c]
+{ E 3/4
+get=base_item
+name=Sacrifice
+id=0x150c
+weight=100
+movable=2
+}
+
+[0x150d]
+{ E 4/4
+get=base_item
+name=Sacrifice
+id=0x150d
+weight=100
+movable=2
+}
+
+[0x150e]
+{ S 1/4
+get=base_item
+name=Sacrifice
+id=0x150e
+weight=100
+movable=2
+}
+
+[0x150f]
+{ S 2/4
+get=base_item
+name=Sacrifice
+id=0x150f
+weight=100
+movable=2
+}
+
+[0x1510]
+{ S 3/4
+get=base_item
+name=Sacrifice
+id=0x1510
+weight=100
+movable=2
+}
+
+[0x1511]
+{ S 4/4
+get=base_item
+name=Sacrifice
+id=0x1511
+weight=100
+movable=2
+}
+
+[0x1731]
+{ 1/16
+get=base_item
+name=fountain
+id=0x1731
+weight=100
+movable=2
+}
+
+[0x1732]
+{ 2/16
+get=base_item
+name=fountain
+id=0x1732
+weight=100
+movable=2
+}
+
+[0x1733]
+{ 3/16
+get=base_item
+name=fountain
+id=0x1733
+weight=100
+movable=2
+}
+
+[0x1734]
+{ 4/16
+get=base_item
+name=fountain
+id=0x1734
+weight=100
+movable=2
+}
+
+[0x1735]
+{ 5/16
+get=base_item
+name=fountain
+id=0x1735
+weight=100
+movable=2
+}
+
+[0x1736]
+{ 6/16
+get=base_item
+name=fountain
+id=0x1736
+weight=100
+movable=2
+}
+
+[0x1737]
+{ 7/16
+get=base_item
+name=fountain
+id=0x1737
+weight=100
+movable=2
+}
+
+[0x1738]
+{ 8/16
+get=base_item
+name=fountain
+id=0x1738
+weight=100
+movable=2
+}
+
+[0x1739]
+{ 9/16
+get=base_item
+name=fountain
+id=0x1739
+weight=100
+movable=2
+}
+
+[0x173a]
+{ 10/16
+get=base_item
+name=fountain
+id=0x173a
+weight=100
+movable=2
+}
+
+[0x173b]
+{ 11/16
+get=base_item
+name=fountain
+id=0x173b
+weight=100
+movable=2
+}
+
+[0x173c]
+{ 12/16
+get=base_item
+name=fountain
+id=0x173c
+weight=100
+movable=2
+}
+
+[0x173d]
+{ 13/16
+get=base_item
+name=fountain
+id=0x173d
+weight=100
+movable=2
+}
+
+[0x173e]
+{ 14/16
+get=base_item
+name=fountain
+id=0x173e
+weight=100
+movable=2
+}
+
+[0x173f]
+{ 15/16
+get=base_item
+name=fountain
+id=0x173f
+weight=100
+movable=2
+}
+
+[0x1741]
+{ 16/16
+get=base_item
+name=fountain
+id=0x1741
+weight=100
+movable=2
+}
+
+[0x17cf]
+{ style1 1/9
+get=base_item
+name=teleporter
+id=0x17cf
+weight=100
+movable=2
+}
+
+[0x17d0]
+{ style1 2/9
+get=base_item
+name=teleporter
+id=0x17d0
+weight=100
+movable=2
+}
+
+[0x17d1]
+{ style1 3/9
+get=base_item
+name=teleporter
+id=0x17d1
+weight=100
+movable=2
+}
+
+[0x17d2]
+{ style1 4/9
+get=base_item
+name=teleporter
+id=0x17d2
+weight=100
+movable=2
+}
+
+[0x17d3]
+{ style1 5/9
+get=base_item
+name=teleporter
+id=0x17d3
+weight=100
+movable=2
+}
+
+[0x17d4]
+{ style1 6/9
+get=base_item
+name=teleporter
+id=0x17d4
+weight=100
+movable=2
+}
+
+[0x17d5]
+{ style1 7/9
+get=base_item
+name=teleporter
+id=0x17d5
+weight=100
+movable=2
+}
+
+[0x17d6]
+{ style1 8/9
+get=base_item
+name=teleporter
+id=0x17d6
+weight=100
+movable=2
+}
+
+[0x17d7]
+{ style1 9/9
+get=base_item
+name=teleporter
+id=0x17d7
+weight=100
+movable=2
+}
+
+[0x17d8]
+{ style2 1/9
+get=base_item
+name=teleporter
+id=0x17d8
+weight=100
+movable=2
+}
+
+[0x17d9]
+{ style2 2/9
+get=base_item
+name=teleporter
+id=0x17d9
+weight=100
+movable=2
+}
+
+[0x17da]
+{ style2 3/9
+get=base_item
+name=teleporter
+id=0x17da
+weight=100
+movable=2
+}
+
+[0x17db]
+{ style2 4/9
+get=base_item
+name=teleporter
+id=0x17db
+weight=100
+movable=2
+}
+
+[0x17dc]
+{ style2 5/9
+get=base_item
+name=teleporter
+id=0x17dc
+weight=100
+movable=2
+}
+
+[0x17dd]
+{ style2 6/9
+get=base_item
+name=teleporter
+id=0x17dd
+weight=100
+movable=2
+}
+
+[0x17de]
+{ style2 7/9
+get=base_item
+name=teleporter
+id=0x17de
+weight=100
+movable=2
+}
+
+[0x17df]
+{ style2 8/9
+get=base_item
+name=teleporter
+id=0x17df
+weight=100
+movable=2
+}
+
+[0x17e0]
+{ style2 9/9
+get=base_item
+name=teleporter
+id=0x17e0
+weight=100
+movable=2
+}
+
+[0x17e1]
+{ style3 1/9
+get=base_item
+name=teleporter
+id=0x17e1
+weight=100
+movable=2
+}
+
+[0x17e2]
+{ style3 2/9
+get=base_item
+name=teleporter
+id=0x17e2
+weight=100
+movable=2
+}
+
+[0x17e3]
+{ style3 3/9
+get=base_item
+name=teleporter
+id=0x17e3
+weight=100
+movable=2
+}
+
+[0x17e4]
+{ style3 4/9
+get=base_item
+name=teleporter
+id=0x17e4
+weight=100
+movable=2
+}
+
+[0x17e5]
+{ style3 5/9
+get=base_item
+name=teleporter
+id=0x17e5
+weight=100
+movable=2
+}
+
+[0x17e6]
+{ style3 6/9
+get=base_item
+name=teleporter
+id=0x17e6
+weight=100
+movable=2
+}
+
+[0x17e7]
+{ style3 7/9
+get=base_item
+name=teleporter
+id=0x17e7
+weight=100
+movable=2
+}
+
+[0x17e8]
+{ style3 8/9
+get=base_item
+name=teleporter
+id=0x17e8
+weight=100
+movable=2
+}
+
+[0x17e9]
+{ style3 9/9
+get=base_item
+name=teleporter
+id=0x17e9
+weight=100
+movable=2
+}
+
+[0x17ea]
+{ style4 1/9
+get=base_item
+name=teleporter
+id=0x17ea
+weight=100
+movable=2
+}
+//17eb teleporter (style4 2/9)
+[0x17eb]
+{ style4 2/9
+get=base_item
+name=teleporter
+id=0x17eb
+weight=100
+movable=2
+}
+//17ec teleporter (style4 3/9)
+[0x17ec]
+{ style4 3/9
+get=base_item
+name=teleporter
+id=0x17ec
+weight=100
+movable=2
+}
+//17ed teleporter (style4 4/9)
+[0x17ed]
+{ style4 4/9
+get=base_item
+name=teleporter
+id=0x17ed
+weight=100
+movable=2
+}
+//17ee teleporter (style4 5/9)
+[0x17ee]
+{ style4 5/9
+get=base_item
+name=teleporter
+id=0x17ee
+weight=100
+movable=2
+}
+
+[0x17ef]
+{ style4 6/9
+get=base_item
+name=teleporter
+id=0x17ef
+weight=100
+movable=2
+}
+
+[0x17f0]
+{ style4 7/9
+get=base_item
+name=teleporter
+id=0x17f0
+weight=100
+movable=2
+}
+
+[0x17f1]
+{ style4 8/9
+get=base_item
+name=teleporter
+id=0x17f1
+weight=100
+movable=2
+}
+
+[0x17f2]
+{ style4 9/9
+get=base_item
+name=teleporter
+id=0x17f2
+weight=100
+movable=2
+}
+
+[0x17fc]
+{ style5 1/9
+get=base_item
+name=teleporter
+id=0x17fc
+weight=100
+movable=2
+}
+
+[0x17fd]
+{ style5 2/9
+get=base_item
+name=teleporter
+id=0x17fd
+weight=100
+movable=2
+}
+
+[0x17fe]
+{ style5 3/9
+get=base_item
+name=teleporter
+id=0x17fe
+weight=100
+movable=2
+}
+
+[0x17ff]
+{ style5 4/9
+get=base_item
+name=teleporter
+id=0x17ff
+weight=100
+movable=2
+}
+
+[0x1800]
+{ style5 5/9
+get=base_item
+name=teleporter
+id=0x1800
+weight=100
+movable=2
+}
+
+[0x1801]
+{ style5 6/9
+get=base_item
+name=teleporter
+id=0x1801
+weight=100
+movable=2
+}
+
+[0x1802]
+{ style5 7/9
+get=base_item
+name=teleporter
+id=0x1802
+weight=100
+movable=2
+}
+
+[0x1803]
+{ style5 8/9
+get=base_item
+name=teleporter
+id=0x1803
+weight=100
+movable=2
+}
+
+[0x1804]
+{ style5 9/9
+get=base_item
+name=teleporter
+id=0x1804
+weight=100
+movable=2
+}
+
+[0x1805]
+{ style6 1/9
+get=base_item
+name=teleporter
+id=0x1805
+weight=100
+movable=2
+}
+
+[0x1806]
+{ style6 2/9
+get=base_item
+name=teleporter
+id=0x1806
+weight=100
+movable=2
+}
+
+[0x1807]
+{ style6 3/9
+get=base_item
+name=teleporter
+id=0x1807
+weight=100
+movable=2
+}
+
+[0x1808]
+{ style6 4/9
+get=base_item
+name=teleporter
+id=0x1808
+weight=100
+movable=2
+}
+
+[0x1809]
+{ style6 5/9
+get=base_item
+name=teleporter
+id=0x1809
+weight=100
+movable=2
+}
+
+[0x180a]
+{ style6 6/9
+get=base_item
+name=teleporter
+id=0x180a
+weight=100
+movable=2
+}
+
+[0x180b]
+{ style6 7/9
+get=base_item
+name=teleporter
+id=0x180b
+weight=100
+movable=2
+}
+
+[0x180c]
+{ style6 8/9
+get=base_item
+name=teleporter
+id=0x180c
+weight=100
+movable=2
+}
+
+[0x180d]
+{ style6 9/9
+get=base_item
+name=teleporter
+id=0x180d
+weight=100
+movable=2
+}
+
+[0x181d]
+{
+get=base_item
+name=alchemical symbol
+id=0x181d
+weight=100
+movable=2
+}
+
+[0x181e]
+{
+get=base_item
+name=alchemical symbol
+id=0x181e
+weight=100
+movable=2
+}
+
+[0x181f]
+{
+get=base_item
+name=alchemical symbol
+id=0x181f
+weight=100
+movable=2
+}
+
+[0x1820]
+{
+get=base_item
+name=alchemical symbol
+id=0x1820
+weight=100
+movable=2
+}
+
+[0x1821]
+{
+get=base_item
+name=alchemical symbol
+id=0x1821
+weight=100
+movable=2
+}
+
+[0x1822]{
+get=base_item
+name=alchemical symbol
+id=0x1822
+weight=100
+movable=2
+}
+
+[0x1823]
+{
+get=base_item
+name=alchemical symbol
+id=0x1823
+weight=100
+movable=2
+}
+
+[0x1824]
+{
+get=base_item
+name=alchemical symbol
+id=0x1824
+weight=100
+movable=2
+}
+
+[0x1825]
+{
+get=base_item
+name=alchemical symbol
+id=0x1825
+weight=100
+movable=2
+}
+
+[0x1826]
+{
+get=base_item
+name=alchemical symbol
+id=0x1826
+weight=100
+movable=2
+}
+
+[0x1827]
+{
+get=base_item
+name=alchemical symbol
+id=0x1827
+weight=100
+movable=2
+}
+
+[0x1828]
+{
+get=base_item
+name=alchemical symbol
+id=0x1828
+weight=100
+movable=2
+}
+
+[0x19c3]
+{ sandstone 1/16
+get=base_item
+name=fountain
+id=0x19c3
+weight=100
+movable=2
+}
+
+[0x19c4]
+{ sandstone 2/16
+get=base_item
+name=fountain
+id=0x19c4
+weight=100
+movable=2
+}
+
+[0x19c5]
+{ sandstone 3/16
+get=base_item
+name=fountain
+id=0x19c5
+weight=100
+movable=2
+}
+
+[0x19c6]
+{ sandstone 4/16
+get=base_item
+name=fountain
+id=0x19c6
+weight=100
+movable=2
+}
+
+[0x19c7]
+{ sandstone 5/16
+get=base_item
+name=fountain
+id=0x19c7
+weight=100
+movable=2
+}
+
+[0x19c8]
+{ sandstone 6/16
+get=base_item
+name=fountain
+id=0x19c8
+weight=100
+movable=2
+}
+
+[0x19c9]
+{ sandstone 7/16
+get=base_item
+name=fountain
+id=0x19c9
+weight=100
+movable=2
+}
+
+[0x19ca]
+{ sandstone 8/16
+get=base_item
+name=fountain
+id=0x19ca
+weight=100
+movable=2
+}
+
+[0x19cb]
+{ sandstone 9/16
+get=base_item
+name=fountain
+id=0x19cb
+weight=100
+movable=2
+}
+
+[0x19cc]
+{ sandstone 10/16
+get=base_item
+name=fountain
+id=0x19cc
+weight=100
+movable=2
+}
+
+[0x19cd]
+{ sandstone 11/16
+get=base_item
+name=fountain
+id=0x19cd
+weight=100
+movable=2
+}
+
+[0x19ce]
+{ sandstone 12/16
+get=base_item
+name=fountain
+id=0x19ce
+weight=100
+movable=2
+}
+
+[0x19cf]
+{ sandstone 13/16
+get=base_item
+name=fountain
+id=0x19cf
+weight=100
+movable=2
+}
+
+[0x19d0]
+{ sandstone 14/16
+get=base_item
+name=fountain
+id=0x19d0
+weight=100
+movable=2
+}
+
+[0x19d1]
+{ sandstone 15/16
+get=base_item
+name=fountain
+id=0x19d1
+weight=100
+movable=2
+}
+
+[0x19d3]
+{ sandstone 16/16
+get=base_item
+name=fountain
+id=0x19d3
+weight=100
+movable=2
+}
+
+[0x1d97]
+{ E 1/2
+get=base_item
+name=ankh of sacrifice
+id=0x1d97
+weight=100
+movable=2
+}
+1d98 ankh of sacrifice (E 2/2)
+[0x1d98]
+{ E 2/2
+get=base_item
+name=ankh of sacrifice
+id=0x1d98
+weight=100
+movable=2
+}
+
+[0x1e5c]
+{ S 1/2
+get=base_item
+name=ankh of sacrifice
+id=0x1e5c
+weight=100
+movable=2
+}
+
+[0x1e5d]
+{ S 2/2
+get=base_item
+name=ankh of sacrifice
+id=0x1e5d
+weight=100
+movable=2
+}
+
+[0x0ed4]
+{ S pillar
+get=base_item
+name=gravestone
+id=0x0ed4
+weight=3000
+movable=2
+}
+
+[0x0ed5]
+{ E pillar
+get=base_item
+name=gravestone
+id=0x0ed5
+weight=3000
+movable=2
+}
+
+[0x0ed6]
+{ withered
+get=base_item
+name=gravestone
+id=0x0ed6
+weight=3000
+movable=2
+}
+
+[0x0ed7]
+{ E
+get=base_item
+name=gravestone
+id=0x0ed7
+weight=3000
+movable=2
+}
+
+[0x0ed8]
+{ S
+get=base_item
+name=gravestone
+id=0x0ed8
+weight=3000
+movable=2
+}
+
+[0x0ed9]
+{ E sunken
+get=base_item
+name=gravestone
+id=0x0ed9
+weight=3000
+movable=2
+}
+
+[0x0eda]
+{ S sunken
+get=base_item
+name=gravestone
+id=0x0eda
+weight=3000
+movable=2
+}
+
+[0x0edb]
+{ E scroll
+get=base_item
+name=gravestone
+id=0x0edb
+weight=3000
+movable=2
+}
+
+[0x0edc]
+{ S scroll
+get=base_item
+name=gravestone
+id=0x0edc
+weight=3000
+movable=2
+}
+
+[0x0edd]
+{ E fancy pillar
+get=base_item
+name=gravestone
+id=0x0edd
+weight=3000
+movable=2
+}
+
+[0x0ede]
+{ S fancy pillar
+get=base_item
+name=gravestone
+id=0x0ede
+weight=3000
+movable=2
+}
+
+[0x1165]
+{ E
+get=base_item
+name=gravestone
+id=0x1165
+weight=3000
+movable=2
+}
+
+[0x1166]
+{ S
+get=base_item
+name=gravestone
+id=0x1166
+weight=3000
+movable=2
+}
+
+[0x1167]
+{ E
+get=base_item
+name=gravestone
+id=0x1167
+weight=3000
+movable=2
+}
+
+[0x1168]
+{ S
+get=base_item
+name=gravestone
+id=0x1168
+weight=3000
+movable=2
+}
+
+[0x1169]
+{ E
+get=base_item
+name=gravestone
+id=0x1169
+weight=3000
+movable=2
+}
+
+[0x116a]
+{ S
+get=base_item
+name=gravestone
+id=0x116a
+weight=3000
+movable=2
+}
+
+[0x116b]
+{ E
+get=base_item
+name=gravestone
+id=0x116b
+weight=3000
+movable=2
+}
+
+[0x116c]
+{ S
+get=base_item
+name=gravestone
+id=0x116c
+weight=3000
+movable=2
+}
+
+[0x116d]
+{ E
+get=base_item
+name=gravestone
+id=0x116d
+weight=3000
+movable=2
+}
+
+[0x116e]
+{ S
+get=base_item
+name=gravestone
+id=0x116e
+weight=3000
+movable=2
+}
+
+[0x116f]
+{ E
+get=base_item
+name=gravestone
+id=0x116f
+weight=3000
+movable=2
+}
+
+[0x1170]
+{ S
+get=base_item
+name=gravestone
+id=0x1170
+weight=3000
+movable=2
+}
+
+[0x1171]
+{ E
+get=base_item
+name=gravestone
+id=0x1171
+weight=3000
+movable=2
+}
+
+[0x1172]
+{ S
+get=base_item
+name=gravestone
+id=0x1172
+weight=3000
+movable=2
+}
+
+[0x1173]
+{ E
+get=base_item
+name=gravestone
+id=0x1173
+weight=3000
+movable=2
+}
+
+[0x1174]
+{ S
+get=base_item
+name=gravestone
+id=0x1174
+weight=3000
+movable=2
+}
+
+[0x1175]
+{ E
+get=base_item
+name=gravestone
+id=0x1175
+weight=3000
+movable=2
+}
+
+[0x1176]
+{ S
+get=base_item
+name=gravestone
+id=0x1176
+weight=3000
+movable=2
+}
+
+[0x1177]
+{ E
+get=base_item
+name=gravestone
+id=0x1177
+weight=3000
+movable=2
+}
+
+[0x1178]
+{ S
+get=base_item
+name=gravestone
+id=0x1178
+weight=3000
+movable=2
+}
+
+[0x1179]
+{ E
+get=base_item
+name=gravestone
+id=0x1179
+weight=3000
+movable=2
+}
+
+[0x117a]
+{ S
+get=base_item
+name=gravestone
+id=0x117a
+weight=3000
+movable=2
+}
+
+[0x117b]
+{ E
+get=base_item
+name=gravestone
+id=0x117b
+weight=3000
+movable=2
+}
+
+[0x117c]
+{ S
+get=base_item
+name=gravestone
+id=0x117c
+weight=3000
+movable=2
+}
+
+[0x117d]
+{ E
+get=base_item
+name=gravestone
+id=0x117d
+weight=3000
+movable=2
+}
+
+[0x117e]
+{ S
+get=base_item
+name=gravestone
+id=0x117e
+weight=3000
+movable=2
+}
+
+[0x117f]
+{ E
+get=base_item
+name=gravestone
+id=0x117f
+weight=3000
+movable=2
+}
+
+[0x1180]
+{ S
+get=base_item
+name=gravestone
+id=0x1180
+weight=3000
+movable=2
+}
+
+[0x1181]
+{ E
+get=base_item
+name=gravestone
+id=0x1181
+weight=3000
+movable=2
+}
+
+[0x1182]
+{ S
+get=base_item
+name=gravestone
+id=0x1182
+weight=3000
+movable=2
+}
+
+[0x1183]
+{ pillar grey
+get=base_item
+name=gravestone
+id=0x1183
+weight=3000
+movable=2
+}
+
+[0x1184]
+{ pillar sandstone
+get=base_item
+name=gravestone
+id=0x1184
+weight=3000
+movable=2
+}

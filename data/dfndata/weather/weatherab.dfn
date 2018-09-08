@@ -1,0 +1,255 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 1/4/2003	                	          *
+//* Script : weatherab.dfn                                        *
+//*****************************************************************
+//*
+//*(As told to me by Abaddon)
+//*
+//* [WEATHERAB 0] 	//The weather definition ID. Referenced from regions.dfn as ABWEATH=...
+//*  COLDCHANCE # 	//This is the chance of there being a cold snap on the day.
+//*               	//If it passes the temperature will be fixed at a value between MINTEMP
+//*			//and COLDINTENSITY
+//*  COLDINTENSITY #	//See above
+//*  HEATCHANCE # 	//Chance of there being a heat wave on the day. If it passes, then the
+//*			//temperature will be fixed ar a value between MAXTEMP and HEATINTENSITY
+//*  HEATINTENSITY # 	//See above
+//*  LIGHTMIN # 	//Minimum light level of the day (noon).
+//*  LIGHTMAX # 	//Maximum light level of the day (midnight).
+//*  MAXTEMP #		//Maximum temperature of the day. Can be affected by heat waves.
+//*			//Above 20 degrees, Krrios' client takes on an orange tinge.
+//*  MINTEMP #		//Minimum temperature of the day. Can be affected by cold snaps.
+//*			//Below 10 degrees, Krrios' client takes on a blue tinge.
+//*  MAXWIND #		//Currently unused.
+//*  MINWIND #		//Currently unused.
+//*  RAINCHANCE #	//Chance of there being rain on the next hour(only if snowchance fails to snow).
+//*  RAININTENSITY #,#	//Sets the minimal and maximal damage in percent the rain does, based of the damage value in races.dfn.
+//*  RAINTEMPDROP #	//Sets the amount the temperature drops when it rains.
+//*  SNOWCHANCE #	//Chance of there being snow on the next hour.  Will override rainchance.
+//*  SNOWINTENSITY #,#	//Sets the minimal and maximal damage in percent the snow does, based of the damage value in races.dfn.
+//*  SNOWTHRESHOLD #    //The temperature at which snow will STOP. So if it's 15, then when
+//*			//the region hits 15 degrees or above, it won't snow (but it might rain)
+//*  STORMCHANCE #	//Chance of there being a storm on the next hour. Will override snowchance.
+//*  STORMINTENSITY #,#	//Sets the minimal and maximal damage in percent a storm does, based of the damage value in races.dfn.
+//*  STORMTEMPDROP #	//Sets the amount the temperature drops when it storms.
+//*****************************************************************
+
+// no weather
+[WEATHERAB 0]
+{
+RAINCHANCE=0
+RAININTENSITY=0,0
+RAINTEMPDROP=5
+SNOWCHANCE=0
+SNOWINTENSITY=0,0
+SNOWTHRESHOLD=0
+STORMCHANCE=0
+STORMINTENSITY=0,0
+STORMTEMPDROP=10
+MAXTEMP=25
+MINTEMP=15
+COLDCHANCE=0
+COLDINTENSITY=0
+HEATCHANCE=0
+HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=0
+//LIGHTMAX=9
+}
+
+//desert
+[WEATHERAB 1]
+{
+RAINCHANCE=1
+RAININTENSITY=5,10
+RAINTEMPDROP=5
+SNOWCHANCE=0
+SNOWINTENSITY=0,0
+SNOWTHRESHOLD=0
+STORMCHANCE=0
+STORMINTENSITY=0,0
+STORMTEMPDROP=10
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=0
+COLDINTENSITY=0
+HEATCHANCE=80
+HEATINTENSITY=35
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=0
+LIGHTMAX=5
+}
+
+// Tropical
+[WEATHERAB 2]
+{
+RAINCHANCE=80
+RAININTENSITY=60,100
+RAINTEMPDROP=5
+SNOWCHANCE=0
+SNOWINTENSITY=0,0
+SNOWTHRESHOLD=0
+STORMCHANCE=60
+STORMINTENSITY=80,100
+STORMTEMPDROP=10
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=0
+COLDINTENSITY=0
+HEATCHANCE=80
+HEATINTENSITY=35
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=2
+LIGHTMAX=9
+}
+
+//planes
+[WEATHERAB 3]
+{
+RAINCHANCE=20
+RAININTENSITY=30,80
+RAINTEMPDROP=5
+SNOWCHANCE=10
+SNOWINTENSITY=40,90
+SNOWTHRESHOLD=10
+STORMCHANCE=20
+STORMINTENSITY=50,80
+STORMTEMPDROP=10
+MAXTEMP=30
+MINTEMP=5
+COLDCHANCE=10
+COLDINTENSITY=2
+HEATCHANCE=10
+HEATINTENSITY=35
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=0
+//LIGHTMAX=9
+}
+
+// Northern Mountain
+[WEATHERAB 4]
+{
+RAINCHANCE=50
+RAININTENSITY=30,60
+RAINTEMPDROP=5
+SNOWCHANCE=30
+SNOWINTENSITY=80,100
+SNOWTHRESHOLD=10
+STORMCHANCE=40
+STORMINTENSITY=50,60
+STORMTEMPDROP=10
+MAXTEMP=25
+MINTEMP=4
+COLDCHANCE=20
+COLDINTENSITY=0
+HEATCHANCE=10
+HEATINTENSITY=30
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=0
+LIGHTMAX=6
+}
+
+// Southern Mountain
+[WEATHERAB 5]
+{
+RAINCHANCE=20
+RAININTENSITY=15,30
+RAINTEMPDROP=5
+SNOWCHANCE=10
+SNOWINTENSITY=67,90
+SNOWTHRESHOLD=15
+STORMCHANCE=40
+STORMINTENSITY=43,60
+STORMTEMPDROP=10
+MAXTEMP=30
+MINTEMP=10
+COLDCHANCE=20
+COLDINTENSITY=5
+HEATCHANCE=20
+HEATINTENSITY=35
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=0
+LIGHTMAX=6
+}
+
+// British
+[WEATHERAB 6]
+{
+RAINCHANCE=40
+RAININTENSITY=35,70
+RAINTEMPDROP=5
+SNOWCHANCE=5
+SNOWINTENSITY=20,100
+SNOWTHRESHOLD=10
+STORMCHANCE=5
+STORMINTENSITY=5,30
+STORMTEMPDROP=10
+MAXTEMP=25
+MINTEMP=5
+COLDCHANCE=10
+COLDINTENSITY=0
+HEATCHANCE=10
+HEATINTENSITY=30
+//MAXWIND=0
+//MINWIND=0
+//LIGHTMIN=0
+//LIGHTMAX=9
+}
+
+// Arctic
+[WEATHERAB 7]
+{
+RAINCHANCE=0
+RAININTENSITY=0,0
+RAINTEMPDROP=0
+SNOWCHANCE=90
+SNOWINTENSITY=90,100
+SNOWTHRESHOLD=5
+STORMCHANCE=40
+STORMINTENSITY=43,60
+STORMTEMPDROP=10
+MAXTEMP=10
+MINTEMP=4
+COLDCHANCE=90
+COLDINTENSITY=1
+HEATCHANCE=0
+HEATINTENSITY=0
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=0
+LIGHTMAX=5
+}
+
+// Forest
+[WEATHERAB 8]
+{
+RAINCHANCE=20
+RAININTENSITY=5,10
+RAINTEMPDROP=5
+SNOWCHANCE=5
+SNOWINTENSITY=5,10
+SNOWTHRESHOLD=5
+STORMCHANCE=5
+STORMINTENSITY=4,6
+STORMTEMPDROP=10
+MAXTEMP=20
+MINTEMP=5
+COLDCHANCE=20
+COLDINTENSITY=5
+HEATCHANCE=20
+HEATINTENSITY=35
+//MAXWIND=0
+//MINWIND=0
+LIGHTMIN=4
+LIGHTMAX=10
+}
+
+EOF

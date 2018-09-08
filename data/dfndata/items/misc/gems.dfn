@@ -1,0 +1,289 @@
+// Some of the gems have an empty name= tag, this is to ensure
+// they'll get the proper names when there is more than one item
+// in a pile. Example:
+// name=ruby would turn out as... 20 rubys
+// ..while it should have been... 20 rubies
+
+[base_gem]
+{
+get=base_item
+weight=100
+restock=100
+pileable=1
+amount=1
+decay=1
+good=36
+}
+
+[0x0F0F]
+{
+get=base_gem
+name=star sapphire
+id=0x0F0F
+value=150 75
+
+}
+
+[0x0F10]
+{
+get=base_gem
+name=emerald
+id=0x0F10
+value=120 60
+}
+
+[0x0F11]
+{
+get=base_gem
+name=sapphire
+id=0x0F11
+value=120 60
+}
+
+[0x0F12]
+{
+get=base_gem
+name=sapphire
+id=0x0F12
+value=120 60
+}
+
+[0x0F13]
+{ //ruby
+get=base_gem
+name=
+id=0x0F13
+value=90 45
+}
+
+[0x0F14]
+{ //ruby
+get=base_gem
+name=
+id=0x0F14
+value=90 45
+}
+
+[0x0F15]
+{
+get=base_gem
+name=citrine
+id=0x0F15
+value=60 30
+}
+
+[0x0F16]
+{
+get=base_gem
+name=amethyst
+id=0x0F16
+value=120 60
+}
+
+[0x0F17]
+{
+get=base_gem
+name=amethyst
+id=0x0F17
+value=120 60
+}
+
+[0x0F18]
+{
+get=base_gem
+name=tourmaline
+id=0x0F18
+value=90 45
+}
+
+[0x0F19]
+{
+get=base_gem
+name=sapphire
+id=0x0F19
+value=120 60
+}
+
+[0x0f1a]
+{ // ruby
+get=base_gem
+name=
+id=0x0f1a
+value=90 45
+}
+
+[0x0f1b]
+{
+get=base_gem
+name=star sapphire
+id=0x0f1b
+value=150 75
+}
+
+[0x0f1c]
+{ // ruby
+get=base_gem
+name=
+id=0x0f1c
+value=90 45
+}
+
+[0x0f1d]
+{ // ruby
+get=base_gem
+name=
+id=0x0f1d
+value=90 45
+}
+
+[0x0f1e]
+{
+get=base_gem
+name=tourmaline
+id=0x0f1e
+value=90 45
+}
+
+[0x0f1f]
+{
+get=base_gem
+name=sapphire
+id=0x0f1f
+value=120 60
+}
+
+[0x0f20]
+{
+get=base_gem
+name=tourmaline
+id=0x0f20
+value=90 45
+}
+
+[0x0f21]
+{
+get=base_gem
+name=star sapphire
+id=0x0f21
+value=150 75
+}
+
+[0x0f22]
+{
+get=base_gem
+name=amethyst
+id=0x0f22
+value=120 60
+}
+
+[0x0f23]
+{
+get=base_gem
+name=citrine
+id=0x0f23
+value=60 30
+}
+
+[0x0f24]
+{
+get=base_gem
+name=citrine
+id=0x0f24
+value=60 30
+}
+
+[0x0F25]
+{ //piece of amber
+get=base_gem
+name=
+id=0x0F25
+value=60 30
+}
+
+[0x0F26]
+{
+get=base_gem
+name=diamond
+id=0x0F26
+value=240 120
+}
+
+[0x0F27]
+{
+get=base_gem
+name=diamond
+id=0x0F27
+value=240 120
+}
+
+[0x0F28]
+{
+get=base_gem
+name=diamond
+id=0x0F28
+value=240 120
+}
+
+[0x0F29]
+{
+get=base_gem
+name=diamond
+id=0x0F29
+value=240 120
+}
+
+[0x0F2a]
+{ // ruby
+get=base_gem
+name=
+id=0x0F2a
+value=90 45
+}
+
+[0x0F2b]
+{ // ruby
+get=base_gem
+name=
+id=0x0F2b
+value=90 45
+}
+
+[0x0F2c]
+{
+get=base_gem
+name=citrine
+id=0x0F2c
+value=60 30
+}
+
+[0x0F2d]
+{
+get=base_gem
+name=tourmaline
+id=0x0F2d
+value=90 45
+}
+
+[0x0F2e]
+{
+get=base_gem
+name=amethyst
+id=0x0F2e
+value=120 60
+}
+
+[0x0F2f]
+{
+get=base_gem
+name=emerald
+id=0x0F2f
+value=120 60
+}
+
+[0x0F30]
+{
+get=base_gem
+name=diamond
+id=0x0F30
+value=240 120
+}

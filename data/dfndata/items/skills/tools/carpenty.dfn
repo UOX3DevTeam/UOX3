@@ -1,0 +1,243 @@
+// Carpenty
+
+[0x1026]
+{
+get=base_item
+name=chisels
+id=0x1026
+weight=100
+value=14 7
+restock=100
+decay=1
+good=53
+}
+
+[0x1027]
+{
+get=base_item
+name=chisels
+id=0x1027
+weight=100
+value=14 7
+restock=20
+decay=1
+good=53
+}
+
+[0x1028]
+{
+get=base_item
+name=dovetail saw
+id=0x1028
+weight=100
+value=14 7
+restock=20
+decay=1
+good=53
+}
+
+[0x1029]
+{
+get=base_item
+name=dovetail saw
+id=0x1029
+weight=100
+value=14 7
+restock=20
+decay=1
+good=53
+}
+
+[0x102a]
+{
+get=base_item
+name=hammer
+id=0x102a
+weight=200
+value=28 14
+restock=20
+decay=1
+good=53
+}
+
+[0x102b]
+{
+get=base_item
+name=hammer
+id=0x102b
+weight=200
+value=28 14
+restock=20
+decay=1
+good=53
+}
+
+[0x102C]
+{
+get=base_item
+name=moulding plane
+id=0x102C
+weight=200
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x102d]
+{
+get=base_item
+name=moulding plane
+id=0x102d
+weight=200
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x102E]
+{
+get=base_item
+name=nails
+id=0x102E
+weight=200
+value=2 1
+restock=20
+decay=1
+good=53
+}
+
+[0x102f]
+{
+get=base_item
+name=nails
+id=0x102f
+weight=200
+value=2 1
+restock=20
+decay=1
+good=53
+}
+
+[0x1030]
+{
+get=base_item
+name=jointing plane
+id=0x1030
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x1031]
+{
+get=base_item
+name=jointing plane
+id=0x1031
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x1032]
+{
+get=base_item
+name=smoothing plane
+id=0x1032
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x1033]
+{
+get=base_item
+name=smoothing plane
+id=0x1033
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x1034]
+{
+get=base_item
+name=saw
+id=0x1034
+weight=200
+value=18 9
+restock=20
+decay=1
+good=53
+}
+
+[0x1035]
+{
+get=base_item
+name=saw
+id=0x1035
+weight=200
+value=18 9
+restock=20
+decay=1
+good=53
+}
+
+[0x10E4]
+{
+get=base_item
+name=draw knife
+id=0x10E4
+weight=100
+value=14 7
+restock=20
+decay=1
+good=53
+}
+
+[0x10E5]
+{
+get=base_item
+name=froe
+id=0x10E5
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x10E6]
+{
+get=base_item
+name=inshave
+id=0x10E6
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+[0x10E7]
+{
+get=base_item
+name=scorp
+id=0x10E7
+weight=100
+value=12 6
+restock=20
+decay=1
+good=53
+}
+
+
