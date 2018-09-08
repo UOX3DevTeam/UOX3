@@ -1,0 +1,5 @@
+        DUPEAT <amount> <target>
+
+  Purpose: 
+        Will create duplicates of target-
+        item at targetted location.

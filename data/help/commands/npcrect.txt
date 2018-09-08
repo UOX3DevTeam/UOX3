@@ -1,0 +1,8 @@
+        NPCRECT x1 y1 x2 y2 <target>
+
+  Purpose: 
+        Specifies a rectangular area as boundary
+        for a wandering NPC. NPC cannot walk
+        outside this area, so be sure that the
+        NPC is WITHIN the boundary when you set
+        it (or move it into boundary after).

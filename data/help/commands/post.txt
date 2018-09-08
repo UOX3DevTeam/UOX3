@@ -1,0 +1,5 @@
+        POST
+  Purpose: 
+        Sets your bulletin board posting-level
+        to LOCAL. I.e. you only post on the
+        bulletin board you're currently using.

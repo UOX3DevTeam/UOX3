@@ -1,0 +1,4 @@
+        GO <x> <y> <z>
+
+  Purpose: 
+        Go to coordinates x y z.

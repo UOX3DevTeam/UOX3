@@ -1,0 +1,5 @@
+        ADDACCOUNT <username> <password> <privs>
+
+  Purpose: 
+        Can be used to add new accounts
+        to the shard from ingame.

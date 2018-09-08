@@ -1,0 +1,4 @@
+        UNHIDE <target>
+
+  Purpose: 
+        Un-hides targeted character.

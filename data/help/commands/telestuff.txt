@@ -1,0 +1,4 @@
+        TELESTUFF <target> <target2>
+  Purpose: 
+        Teleports character/item <target1> to
+        location <target2>.

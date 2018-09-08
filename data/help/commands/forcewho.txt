@@ -1,0 +1,7 @@
+        FORCEWHO
+
+  Purpose: 
+        Displays a list of all characters
+        that are logged in, including ones
+        belonging to players no longer connected
+        to the server(?).

@@ -1,0 +1,5 @@
+        DUPE <amount> <target>
+
+  Purpose: 
+        Will create duplicates of targetted
+        item in your backpack.

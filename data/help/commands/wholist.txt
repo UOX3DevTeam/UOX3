@@ -1,0 +1,10 @@
+        WHOLIST
+
+  Purpose: 
+        Will display a list of all characters
+        currently logged in. Will not display
+        characters of disconnected players,
+        even if those chars are still ingame.
+        This is a GM/Counselor-only command,
+        as it allows modifying properties
+        of selected characters in the list.

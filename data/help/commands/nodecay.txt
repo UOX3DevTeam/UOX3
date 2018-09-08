@@ -1,0 +1,4 @@
+        NODECAY <target>
+
+  Purpose: 
+        Sets an item as non-decayable.

@@ -1,0 +1,5 @@
+        TWEAK <target>
+
+  Purpose: 
+        Will let you edit properties of selected
+        character or item.

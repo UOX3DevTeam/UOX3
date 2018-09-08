@@ -1,0 +1,4 @@
+        INVUL <target>
+
+  Purpose: 
+        Makes targetted character invulnerable.

@@ -1,0 +1,5 @@
+        WSTATS <target>
+
+  Purpose: 
+        Displays walking-related details
+        about targeted character.

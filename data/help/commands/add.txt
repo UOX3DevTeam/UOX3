@@ -1,0 +1,11 @@
+        ADD 0x#### (HEX-ID from UO Client)
+        ADD #### (Modelnumber from UO Client)
+        ADD (To open GM Menu)
+
+  Purpose: 
+        Can be used to add "raw" items from
+        either hex-id or modelnumber, or to
+        open a GM Menu.
+        Items added with this command will
+        not have any special attributes or
+        properties assigned.

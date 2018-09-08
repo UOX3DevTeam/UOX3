@@ -1,0 +1,5 @@
+        CLEANUP
+
+  Purpose: 
+        Cleans up corpses and closes
+        any open moongates.

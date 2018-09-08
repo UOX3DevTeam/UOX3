@@ -1,0 +1,5 @@
+        NPCTARGET <target> <npc> 
+
+  Purpose: 
+        Select a character <target> for the
+        NPC <npc> to follow.

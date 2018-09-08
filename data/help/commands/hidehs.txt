@@ -1,0 +1,5 @@
+        HIDEHS
+
+  Purpose: 
+        Will hide house-icons(deeds) and display 
+        the actual houses instead.

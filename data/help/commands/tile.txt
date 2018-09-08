@@ -1,0 +1,6 @@
+        TILE <hex-id> <target1> <target2>
+        TILE <decimal> <target1> <target2>
+  Purpose: 
+        Will tile specified item-id from UO
+        Client on each tile in the target
+        area x1 x2 y1 y2 z.

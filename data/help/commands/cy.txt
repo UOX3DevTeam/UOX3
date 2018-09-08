@@ -1,0 +1,5 @@
+        CY
+
+  Purpose: 
+        Displays a list of all counselors
+        who are currently logged in.
