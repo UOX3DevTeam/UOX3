@@ -1,3 +1,6 @@
+07/09/2018 - Xuri
+	Fixed tooltips on containers not updating when adding/removing items
+
 12/09/2015 - Xuri
 	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
 		FISHINGSTAMINALOSS=2	// The amount of stamina lost when using the fishing skill

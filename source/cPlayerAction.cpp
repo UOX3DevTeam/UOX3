@@ -273,6 +273,7 @@ bool CPIGetItem::Handle( void )
 		}
 		else if( oType == OT_ITEM )
 		{
+			// Picking up item from non-character container
 			tSock->PickupSpot( PL_OTHERPACK );
 			CItem *x = static_cast<CItem *>(iOwner);
 			if( !objInRange( ourChar, x, DIST_NEARBY ) )
@@ -1178,6 +1179,10 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		iDropped.SetY( y );
 		iDropped.SetZ( 9 );
 		iDropped.SetGridLocation( gridLoc );
+
+		// Refresh target container tooltip
+		CPToolTip pSend(droppedOn.GetSerial());
+		mSock.Send(&pSend);
 	}
 	else
 	{
@@ -1196,6 +1201,10 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
 				Weight->subtractItemWeight( &mChar, &iDropped );
 		}
+
+		// Refresh target container tooltip
+		CPToolTip pSend(droppedOn.GetSerial());
+		mSock.Send(&pSend);
 	}
 	return true;
 }
@@ -1362,6 +1371,10 @@ bool CPIDropItem::Handle( void )
 		SI32 currentWeight = ourChar->GetWeight() / 100;
 		tSock->sysmessage( 1784, currentWeight, maxWeight ); //You are overloaded. Current / Max: %i / %i
 	}
+
+	// Refresh source container tooltip
+	CPToolTip pSend(tSock->PickupSerial());
+	tSock->Send(&pSend);
 
 	//Reset PickupSpot after dropping the item
 	tSock->PickupSpot( PL_NOWHERE );

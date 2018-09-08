@@ -2871,6 +2871,10 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	Subcommand 0x24: UnKnown 
 //	BYTE[1] unknown. UOSE Introduced
 
+// Subcommand 0x2C : Bandage macro
+//	BYTE[4]	Item Serial
+//	BYTE[4] Target Serial
+
 void CPISubcommands::Receive( void )
 {
 	tSock->Receive( 3, false );
@@ -2896,6 +2900,7 @@ void CPISubcommands::Receive( void )
 	case 0x15:	{	subPacket = new CPIPopupMenuSelect( tSock );	}	break;	// Popup Menu Selection
 	case 0x1A:	{	subPacket = new CPIExtendedStats( tSock );		}	break;	// Extended Stats
 	case 0x1C:	{	subPacket = new CPISpellbookSelect( tSock );	}	break;	// New SpellBook Selection
+	/*case 0x2C:	{	subPacket = new CPIBandageMacro(tSock);			}	break;*/	// Bandage macro
 	}
 }
 bool CPISubcommands::Handle( void )
@@ -3462,6 +3467,22 @@ void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
+
+/*CPIBandageMacro::CPIBandageMacro()
+{
+}
+CPIBandageMacro::CPIBandageMacro( CSocket *s ) : CPInputBuffer(s)
+{
+	Receive();
+}*/
+
+/*void CPIBandageMacro::Receive(void)
+{
+}
+bool CPIBandageMacro::Handle(void)
+{
+	return true;
+}*/
 
 
 CPISpellbookSelect::CPISpellbookSelect()
