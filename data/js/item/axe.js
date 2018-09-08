@@ -85,7 +85,7 @@ function ChopTree( socket, mChar )
 		socket.SysMessage( GetDictionaryEntry( 393, socket.Language ) );
 		return;
 	}
-
+	
 	var targX = socket.GetWord( 11 );
 	var targY = socket.GetWord( 13 );
 	var mResource = ResourceRegion( targX, targY, mChar.worldnumber );
@@ -103,6 +103,7 @@ function ChopTree( socket, mChar )
 	mChar.skillsused.lumberjacking = true;
 	mChar.StartTimer( 200, 2, true );
 }
+
 function CheckDistance( socket, mChar )
 {
 	var targX = socket.GetWord( 11 );

@@ -1,0 +1,110 @@
+Saturday, June 18, 2005
+UOX3 v0.98-3.0b
+
+Sorry, did I say 0.98-3.0a? I did of course mean 0.98-3.0b! ;D View the changelog for the details, go to the Downloads-page for the actual download!
+
+Edit: Oh, and I should probably mention that this version does seem to fix the dreaded item/character-refresh bug which has plagued UOX3 for so long now. Let's hope it stays fixed! ;P
+Thursday, June 16, 2005
+UOX3 v0.98-3.0a
+
+Another version of UOX3 (0.98-3.0a) is up for grabs. View the changelog for the details.
+Sunday, June 12, 2005
+UOX3 v0.98-3.0
+
+The latest version of UOX3 is now available from the Downloads-page, and includes things such as fixes for spawn-regions, normal players picking up items, better starting location for new players, as well as some new scripted features such as for instance archery buttes complete with scoring system.
+
+For a complete list of changes/fixes in version 0.98-3.0, check out the changelog.
+Wednesday, June 8, 2005
+Docs Updated
+
+I've updated those parts of the on-site documentation which deals with: Installing and configuring UOX3, Configuring the UO client and Additional Server Settings.
+
+These pages will also be included in any future UOX3 downloads.
+On the horizon
+
+Good things are happening for UOX3 these days, and hopefully in days still to come.
+
+In the forums, which are (relatively) bustling with life, Grimson is working on a spawn.dfn file which already provides UOX3 with a near fully spawned Britannia, though there are still plenty of improvements and additions to be done. The file was originally based on "Ripper's World", made for Wolfpack/Lonewolf, but is undergoing constant change.
+
+We have scripted fully working training dummies, practice dips, kindling and archery buttes, and these will be included in the next version of UOX3.
+
+And as soon as I can reopen my UO account come the middle of June, I'll continue working on the default worldfiles, decorating Britannia with extreme detail, making sure I stay as "true" to the official UO as I possibly can.
+Sunday, May 22, 2005
+UOX3 v0.98-2.8h available
+
+Several issues with item-creation menus have been fixed in this version, as well as some exploits involving arming/disarming weapons. But there's more: View the Changelog
+
+Get UOX3 v0.98-2.8h from the Downloads page!
+JavaScript Docs Updated
+
+I've updated the JavaScript Documentation with a lot of information on properties for sockets, items, characters, guilds, races, regions, spells and accounts.
+Sunday, April 17, 2005
+UOX3 v0.98-2.8g
+
+Thanks to some great effort on giwo's part we've got another bunch of bugs fixed in version v0.98-2.8g - get it from the Downloads-page. (View the Changelog)
+Friday, April 15, 2005
+UOX3 v0.98-2.8f
+
+Another version of UOX3 is now available for Download. We're slowly but steadily making progress, and UOX3 is now up to version 0.98-2.8f. (View the Changelog)
+New Custom JScripts
+
+In other news, I've added a few more custom scripts to The Script Vault. One is an example script for how to automatically add items to the bankboxes of all newbie characters, and the second (which builds on the same thing, really) is a script for handing out "Holiday Gifts" to all player characters on the shard, whether they're offline or online. Any items handed out (defined in the script) will be added to the players' bankboxes.
+
+Hopefully I won't be the only one posting scripts to the Script Vault, but I'll nevertheless try to post a few useful scripts every now and then.
+Monday, April 5, 2005
+UOX3 v0.98-2.8e
+
+Available on the Downloads page; UOX3 version 0.98-2.8e! The changelog can be found at this thread in the forums.
+Tuesday, March 1, 2005
+UOX3 v0.98-2.8b
+
+UOX3 version 0.98-2.8b is now available from the Downloads page. The changelog for this version (and earlier versions) can be found at this thread in the forums. Note that changes since last time the downloads were updated include those for 0.98-2.8a as well.
+
+Amongst the stuff fixed is a few potential server crashes, newbie clothes no longer getting destroyed instantly in combat, teleport locations working again (dungeons, britain sewers, etc) and some other gameplay issues.
+Thursday, February 27, 2005
+UOX3 v0.98-2.8
+
+The latest UOX3 version number is up to 0.98-2.8, and is now available from the Downloads page. The changelog for this version (and earlier versions) can be found at this thread in the forums.
+Thursday, February 10, 2005
+UOX3.org Receives A Facelift
+
+In a sudden spur of creativity, I decided to make an attempt at redesigning the UOX3.org website. You're looking at the result thus far, though there might be some changes still.
+
+For one thing, the ancient frames have been removed, which should make the site more "search-engine-compatible" (I think), as it won't index and lead people to sub-pages which would otherwise have opened in a frame. Actually I don't know how search-engines handle that any longer, but whatever. It looks and feels better in any case!
+
+Another big(?) point is that the page now validates as HTML 4.01 Transitional, which is good. I like Transitional, as I get to use redundant but useful tags such as "target" in links. =)
+
+Thanks to Sydius for explaining to me how to use SSI. Because of that I've been able to include the same copy of the menu on every page, so when I update the menu it automatically updates on all pages. Whee!
+Small UOX3 Update
+
+Oh, and there's a small update for UOX3 out. The version number is now 0.98-2.7a, but there are only two changes:
+
+    * The ability to reload a single, specific JS file through JScripts
+    * A new command: ' RELOADJSFILE # which takes a scriptID as an attribute.
+
+Perhaps not the longest changelog ever, but these additions are extremely useful - especially for shards with many scripts, as the reload time for the entire JS engine (all scripts) only gets longer and longer the more scripts we add. To be able to instead reload only that single JS-file you're working on is a blessing!
+
+Get the latest version from the brand spanking new Downloads-page!
+Tuesday, February 8, 2005
+UOX3 0.98-2.7 Now Available
+
+As usual, you'll find the various downloads (exe, source, scripts) for the new UOX3 version (as well as the detailed changelog) in the Latest UOX3 Version-thread in the forums.
+
+Another critical bug been fixed for this version; It should now once again be possible to edit the JavaScripts and reload them while the server is running, without having to suffer a server-crash! But there's more.
+
+Check out the complete changelog at the above mentioned thread.
+Xuri's UOX3 Guide Updated
+
+I have finally updated my UOX3 Guide for the most recent versions of UOX3. Many years have passed since I last touched this guide, so there was plenty of contents that was in desperate need of an update. Some of it was redundant alltogether, while other stuff only needed slight tweaks to be correct.
+
+I will be attempting to continously keeping the Guide up to date from now on though, so hopefully it'll never get this outdated again =) There's still a few things I need to work on, like the Creature-list and the SoundFX-list, but I'll get to it eventually.
+
+Check it out here!
+Saturday, January 8, 2005
+UOX3 0.98-2.7 Now Available
+
+As usual, you'll find the various downloads (exe, source, scripts) for the new UOX3 version (as well as the detailed changelog) in the Latest UOX3 Version-thread in the forums.
+
+Another critical bug been fixed for this version; It should now once again be possible to edit the JavaScripts and reload them while the server is running, without having to suffer a server-crash! But there's more.
+
+Check out the complete changelog at the above mentioned thread.

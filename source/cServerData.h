@@ -24,7 +24,7 @@ namespace UOX
 		CF_BIT_EXPANSION = 15,	// 0x8000
 		CF_BIT_SA,				// 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles - clients 6.0.14.2+
 		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
-		CF_BIT_GOTHHOUSE,		// 0x40000 
+		CF_BIT_GOTHHOUSE,		// 0x40000
 		CF_BIT_RUSTHOUSE,		// 0x80000
 		CF_BIT_COUNT
 	};
@@ -118,7 +118,7 @@ private:
 	UI16 port;
 };
 
-class CServerData 
+class CServerData
 {
 private:
 
@@ -175,6 +175,7 @@ private:
 	R32			weightPerSTR;					//	How much weight per point of STR a character can hold.
 	UI16		petOfflineTimeout;				//	Offline time after a player looses all pets
 	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
+	SI16		fishingstaminaloss;				//	The amount of stamina lost with each use of fishing skill
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -185,6 +186,8 @@ private:
 	R32			npcRunningSpeed;				//	Speed at which running NPCs move
 	R32			npcFleeingSpeed;				//	Speed at which fleeing NPCs move
 	R64			flushTime;						//	How often (in minutes) online accounts are checked to see if they really ARE online
+	R32			globalattackspeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
+	R32			npcspellcastspeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 
 	// MessageBoards
 	UI08		msgpostinglevel;				//	If not 0, then players can post
@@ -236,6 +239,12 @@ private:
 	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
 	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
 	UI16		combatExplodeDelay;				//	Time from casting to actual explosion
+	UI08		combatweapondamagechance;		//  Chance of weapons being damaged when attacking in combat (0-100)
+	UI08		combatweapondamagemin;			//  Minimum amount of hitpoints a weapon can lose when being damaged in combat
+	UI08		combatweapondamagemax;			//  Maximum amount of hitpoints a weapon can lose when being damaged in combat
+	UI08		combatarmordamagechance;		//  Chance of armor being damaged when defending in combat (0-100)
+	UI08		combatarmordamagemin;			//  Minimum amount of hitpoints an armor can lose when being damaged in combat
+	UI08		combatarmordamagemax;			//  Maximum amount of hitpoints an armor can lose when being damaged in combat
 
 	// Start & Location Settings
 	std::vector< STARTLOCATION >	startlocations;
@@ -258,7 +267,7 @@ private:
 	// Townstone stuff
 	UI32		numSecsPollOpen;				//	Time (in seconds) for which a town voting poll is open
 	UI32		numSecsAsMayor;					//	Time (in seconds) that a PC would be a mayor
-	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs 
+	UI32		taxPeriod;						//	Time (in seconds) between periods of taxes for PCs
 	UI32		guardPayment;					//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults( void );
@@ -308,7 +317,7 @@ public:
 	std::string ServerName( void ) const;
 	std::string ServerDomain( void ) const;
 	std::string ServerIP( void ) const;
-	
+
 	void		ServerPort( UI16 setport );
 	UI16		ServerPort( void ) const;
 	void		ServerConsoleLog( UI08 setting );
@@ -446,6 +455,12 @@ public:
 	void		CheckSpawnRegionSpeed( R64 value );
 	R64			CheckSpawnRegionSpeed( void ) const;
 
+	void		GlobalAttackSpeed( R32 value );
+	R32			GlobalAttackSpeed( void ) const;
+
+	void		NPCSpellCastSpeed( R32 value );
+	R32			NPCSpellCastSpeed( void ) const;
+
 	void		MsgBoardPostingLevel( UI08 value );
 	UI08		MsgBoardPostingLevel( void ) const;
 
@@ -470,6 +485,8 @@ public:
 	void		ServerUsingHSTiles( bool value );
 	bool		ServerUsingHSTiles( void ) const;
 
+	void		FishingStaminaLoss( SI16 value );
+	SI16		FishingStaminaLoss( void ) const;
 
 	void		CombatAttackStamina( SI16 value );
 	SI16		CombatAttackStamina( void ) const;
@@ -506,6 +523,24 @@ public:
 
 	void		CombatAnimalsAttackChance( UI08 value );
 	UI08		CombatAnimalsAttackChance( void ) const;
+
+	void		CombatWeaponDamageChance( UI08 value );
+	UI08		CombatWeaponDamageChance( void ) const;
+
+	void		CombatWeaponDamageMin( UI08 value );
+	UI08		CombatWeaponDamageMin( void ) const;
+
+	void		CombatWeaponDamageMax( UI08 value );
+	UI08		CombatWeaponDamageMax( void ) const;
+
+	void		CombatArmorDamageChance( UI08 value );
+	UI08		CombatArmorDamageChance( void ) const;
+
+	void		CombatArmorDamageMin( UI08 value );
+	UI08		CombatArmorDamageMin( void ) const;
+
+	void		CombatArmorDamageMax( UI08 value );
+	UI08		CombatArmorDamageMax( void ) const;
 
 	void		HungerDamage( SI16 value );
 	SI16		HungerDamage( void ) const;
@@ -684,8 +719,8 @@ public:
 	physicalServer *ServerEntry( UI16 entryNum );
 	UI16			ServerCount( void ) const;
 
-private: 
-	bool			resettingDefaults; 
+private:
+	bool			resettingDefaults;
 
 };
 
