@@ -1,0 +1,6 @@
+        ALLMOVEON
+
+  Purpose: 
+        Turns on ability to highlight/move
+        all dynamic items, overriding those
+        items' default setting.

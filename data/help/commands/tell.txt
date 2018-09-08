@@ -1,0 +1,6 @@
+        TELL <loginnumber> <text>
+  Purpose: 
+        Sends a message <text> to character
+        logged in as <loginnumber>. Use 'WHO
+        command to get list of logged in chars
+        with loginnumber.

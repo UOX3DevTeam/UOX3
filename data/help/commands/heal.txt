@@ -1,0 +1,4 @@
+        HEAL <target>
+
+  Purpose: 
+        Fully heals targetted character.

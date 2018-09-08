@@ -1,0 +1,7 @@
+        ITEMMENU <menu-nr>
+
+  Purpose: 
+        Jumps directly to specified itemmenu.
+        Menu numbers are located in the lower
+        left corner of the menus that appear when
+        using the 'ADD command without arguments.

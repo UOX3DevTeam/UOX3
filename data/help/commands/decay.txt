@@ -1,0 +1,4 @@
+        DECAY <target>
+
+  Purpose: 
+        Sets an item as decayable.

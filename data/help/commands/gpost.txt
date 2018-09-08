@@ -1,0 +1,5 @@
+        GPOST
+
+  Purpose: 
+        Makes GM post global
+        messages on bulletin boards.

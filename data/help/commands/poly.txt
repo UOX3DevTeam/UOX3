@@ -1,0 +1,5 @@
+        POLY <hex-id>
+        POLY <decimal>
+  Purpose: 
+        Polymorphs your character into the
+        specified body-id.

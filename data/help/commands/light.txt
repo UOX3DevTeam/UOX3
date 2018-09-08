@@ -1,0 +1,6 @@
+        LIGHT <value>
+
+  Purpose: 
+        Will change current light-level in region
+	to specified value.
+        LIGHT -1 will re-enable day/night cycles.

@@ -1,0 +1,5 @@
+        XTELE <target>
+
+  Purpose: 
+        Teleports selected char/item to your
+        character's position.

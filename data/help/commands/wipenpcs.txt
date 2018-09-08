@@ -1,0 +1,5 @@
+        WIPENPCS
+
+  Purpose: 
+        Removes all NPCs that currently exists
+        in your world.

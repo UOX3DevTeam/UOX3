@@ -1,0 +1,5 @@
+        VALIDCMD
+
+  Purpose: 
+        Displays a list of all commands that
+        your character has access to.

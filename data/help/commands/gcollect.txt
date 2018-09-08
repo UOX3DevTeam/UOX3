@@ -1,0 +1,6 @@
+        GCOLLECT
+
+  Purpose: 
+        Cleans up "garbage items", items that
+        should no longer exist. Like items inside
+        decayed corpse-containers, for instance.

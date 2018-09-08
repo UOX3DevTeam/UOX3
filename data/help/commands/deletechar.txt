@@ -1,0 +1,5 @@
+        DELETECHAR
+
+  Purpose: 
+        Can be used to delete a
+	player-character from the world.

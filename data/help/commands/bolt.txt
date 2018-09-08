@@ -1,0 +1,5 @@
+        BOLT <target>
+
+  Purpose: 
+        Hits targetted character with a
+        harmless bolt of lightning :)

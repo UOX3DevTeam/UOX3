@@ -1,0 +1,6 @@
+        BUY <target>
+
+  Purpose: 
+        Brings up buy-menu of targetted
+        shopkeeper. Works the same as
+        saying "vendor buy" to the NPC.
