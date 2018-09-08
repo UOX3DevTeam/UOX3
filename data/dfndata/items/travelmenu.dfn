@@ -1,0 +1,120 @@
+[ITEMMENU 6000]
+{
+Travel Menu=Menu
+<=Towns
+ITEMMENU=6001
+<=Dungeons
+ITEMMENU=6002
+<=Shrines
+ITEMMENU=6003
+<=GM Locations
+ITEMMENU=6004
+<=Previous Menu
+ITEMMENU=0
+}
+
+[ITEMMENU 6001]
+{
+Towns
+0x0BD1=Britain
+ITEMMENU=6005
+0x0BD1=Buccaneer's Den
+ITEMMENU=6006
+0x0BD1=Cove
+ITEMMENU=6007
+0x0BD1=Jhelom
+ITEMMENU=6008
+0x0BD1=Magincia
+ITEMMENU=6009
+0x0BD1=Minoc
+ITEMMENU=6010
+0x0BD1=Moonglow
+ITEMMENU=6011
+0x0BD1=Nujelm
+ITEMMENU=6012
+0x0BD1=Ocllo
+ITEMMENU=6013
+0x0BD1=Serpents Hold
+ITEMMENU=6014
+0x0BD1=Skara Brae
+ITEMMENU=6015
+0x0BD1=Trinsic
+ITEMMENU=6016
+0x0BD1=Vesper
+ITEMMENU=6017
+0x0BD1=Wind
+ITEMMENU=6018
+0x0BD1=Yew
+ITEMMENU=6019
+<=Papua - T2A
+ITEMMENU=6020
+<=Delucia - T2A
+ITEMMENU=6021
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6002]
+{
+Dungeons
+<=Covetous
+ITEMMENU=6022
+<=Deceit
+ITEMMENU=6023
+<=Despise
+ITEMMENU=6024
+<=Destard
+ITEMMENU=6025
+<=Hyloth
+ITEMMENU=6026
+<=Shame
+ITEMMENU=6027
+<=Wrong
+ITEMMENU=6028
+<=Hythloth Firepit
+GOPLACE=300
+<=Yew/Britain Brigand Camp
+GOPLACE=301
+<=Yew Fort of the Damned
+GOPLACE=302
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6003]
+{
+Go To Shrines
+<=Chaos Shrine
+GOPLACE=170
+<=Compassion Shrine
+GOPLACE=171
+<=Honesty Shrine
+GOPLACE=172
+<=Honor Shrine
+GOPLACE=173
+<=Humility Shrine
+GOPLACE=174
+<=Justice Shrine
+GOPLACE=175
+<=Sacrifice Shrine
+GOPLACE=176
+<=Spirituality Shrine
+GOPLACE=177
+<=Valor Shrine
+GOPLACE=178
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6004]
+{
+GM Locations
+<=Error Spawn Location
+GOPLACE=14
+<=Green Acres
+GOPLACE=13
+<=Jail Cells
+ITEMMENU=6029
+<=Previous Menu
+ITEMMENU=6000
+}

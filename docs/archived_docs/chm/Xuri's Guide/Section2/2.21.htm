@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 2</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionII.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21"><A NAME="spellm"><FONT FACE="Tahoma"
+    COLOR="#FFFFFF"><SMALL>2.21 - SPELLCASTING MONSTERS (by Tal Strake)</SMALL></FONT></A></TD></TR> 
+<TR> <TD WIDTH="100%" HEIGHT="19"><SMALL><FONT FACE="Tahoma">&nbsp;&nbsp;&nbsp; 
+This is a brief guide on how to set up monsters for using magic.<BR> &nbsp;&nbsp;&nbsp; 
+Settings:-<BR> &nbsp;&nbsp;&nbsp; In order for your monsters to use spells you 
+must include the SPATTACK and<BR> &nbsp;&nbsp;&nbsp; SPADELAY settings under the 
+Monsters section in the npc.scp/uox3.scp file. The value<BR> &nbsp;&nbsp;&nbsp; 
+SPATTACK is set to is a combination of bits represented decimally, and the<BR> 
+&nbsp;&nbsp;&nbsp; value SPADELAY is the delay between each time the monster uses 
+a spell. There is<BR> &nbsp;&nbsp;&nbsp; an example below if you are confused. 
+The first 13 bits represents spells<BR> &nbsp;&nbsp;&nbsp; and the last 3 Fireballs.<BR> 
+<BR> &nbsp;&nbsp;&nbsp; Spell Table:-<BR> &nbsp;&nbsp;&nbsp; Bit dec Spell<BR> 
+&nbsp;&nbsp;&nbsp; 1 1 MagicArrow<BR> &nbsp;&nbsp;&nbsp; 2 2 Harm<BR> &nbsp;&nbsp;&nbsp; 
+3 4 Clumsy<BR> &nbsp;&nbsp;&nbsp; 4 8 FeebleMind<BR> &nbsp;&nbsp;&nbsp; 5 16 Weaken<BR> 
+&nbsp;&nbsp;&nbsp; 6 32 Fireball<BR> &nbsp;&nbsp;&nbsp; 7 64 Curse<BR> &nbsp;&nbsp;&nbsp; 
+8 128 Lighting<BR> &nbsp;&nbsp;&nbsp; 9 256 Paralyze<BR> &nbsp;&nbsp;&nbsp; 10 
+512 MindBlast<BR> &nbsp;&nbsp;&nbsp; 11 1024 Engerybolt<BR> &nbsp;&nbsp;&nbsp; 
+12 2048 Explosion<BR> &nbsp;&nbsp;&nbsp; 13 4096 FlameStrike<BR> &nbsp;&nbsp;&nbsp; 
+14 8192 Dragon Breath - 20 % of source health<BR> &nbsp;&nbsp;&nbsp; 15 16384 
+Dragon Breath - 40 % of source health<BR> &nbsp;&nbsp;&nbsp; 16 32768 Dragon Breath 
+- 60 % of source health<BR> &nbsp;&nbsp;&nbsp; <BR> &nbsp;&nbsp;&nbsp; A monster 
+using lighting, fireball and explosion:<BR> &nbsp;&nbsp;&nbsp; SPATTACK = 2198<BR> 
+&nbsp;&nbsp;&nbsp; The value is calculated as so:-<BR> &nbsp;&nbsp;&nbsp; 2198 
+= 128(lighting) + 32 (fireball) + 2048 (Explosion)<BR> <BR> &nbsp;&nbsp;&nbsp; 
+The damage your monster will do with a spell cast is set using the MAGERY <BR> 
+&nbsp;&nbsp;&nbsp; SKILL setting, again in the monsters section of the ncp.scp/uox3.scp. 
+The<BR> &nbsp;&nbsp;&nbsp; level of magery will effect the damage in the same 
+way fit does for player<BR> &nbsp;&nbsp;&nbsp; characters. The exception to the 
+rule is damage the last 3 Fireballs which<BR> &nbsp;&nbsp;&nbsp; is set by the 
+level of hits points of the monsters.<BR> &nbsp;&nbsp;&nbsp; <BR> &nbsp;&nbsp;&nbsp; 
+Setting the magery level:<BR> &nbsp;&nbsp;&nbsp; SKILL 25 700<BR> &nbsp;&nbsp;&nbsp; 
+SKILL is the setting name<BR> &nbsp;&nbsp;&nbsp; 25 is the magery id in the skill 
+table<BR> &nbsp;&nbsp;&nbsp; 700 is 70 magery (level/10)<BR> <BR> &nbsp;&nbsp;&nbsp; 
+Example Monsters<BR> &nbsp;&nbsp;&nbsp; SECTION NPC 24<BR> &nbsp;&nbsp;&nbsp; 
+{<BR> &nbsp;&nbsp;&nbsp; NAME a lich<BR> &nbsp;&nbsp;&nbsp; ID 0018<BR> &nbsp;&nbsp;&nbsp; 
+SKIN 0000<BR> &nbsp;&nbsp;&nbsp; DIRECTION N<BR> &nbsp;&nbsp;&nbsp; BACKPACK<BR> 
+&nbsp;&nbsp;&nbsp; GOLD 120 230<BR> &nbsp;&nbsp;&nbsp; PACKITEM 104<BR> &nbsp;&nbsp;&nbsp; 
+ATT 80<BR> &nbsp;&nbsp;&nbsp; DEF 70<BR> &nbsp;&nbsp;&nbsp; STR 200<BR> &nbsp;&nbsp;&nbsp; 
+INT 150<BR> &nbsp;&nbsp;&nbsp; DEX 35<BR> &nbsp;&nbsp;&nbsp; NPCWANDER 4<BR> &nbsp;&nbsp;&nbsp; 
+FX1 -1<BR> &nbsp;&nbsp;&nbsp; FX2 20<BR> &nbsp;&nbsp;&nbsp; FY1 -1<BR> &nbsp;&nbsp;&nbsp; 
+FZ1 -1<BR> &nbsp;&nbsp;&nbsp; FAME 4000<BR> &nbsp;&nbsp;&nbsp; KARMA -5000<BR> 
+&nbsp;&nbsp;&nbsp; NPCAI 2<BR> &nbsp;&nbsp;&nbsp; LOOT 10<BR> &nbsp;&nbsp;&nbsp; 
+SPATTACK 8191 All spells<BR> &nbsp;&nbsp;&nbsp; SPADELAY 30<BR> &nbsp;&nbsp;&nbsp; 
+SKILL 25 700 70 magery<BR> &nbsp;&nbsp;&nbsp; }<BR> &nbsp;&nbsp;&nbsp; <BR> &nbsp;&nbsp;&nbsp; 
+SECTION NPC 93<BR> &nbsp;&nbsp;&nbsp; {<BR> &nbsp;&nbsp;&nbsp; NAME an ancient 
+wyrm<BR> &nbsp;&nbsp;&nbsp; ID 003b<BR> &nbsp;&nbsp;&nbsp; SKIN 07de<BR> &nbsp;&nbsp;&nbsp; 
+DIRECTION N<BR> &nbsp;&nbsp;&nbsp; BACKPACK<BR> &nbsp;&nbsp;&nbsp; ATT 350<BR> 
+&nbsp;&nbsp;&nbsp; DEF 150<BR> &nbsp;&nbsp;&nbsp; STR 1500<BR> &nbsp;&nbsp;&nbsp; 
+DEX 50<BR> &nbsp;&nbsp;&nbsp; INT 600<BR> &nbsp;&nbsp;&nbsp; NPCAI 0<BR> &nbsp;&nbsp;&nbsp; 
+LOOT 1<BR> &nbsp;&nbsp;&nbsp; GOLD 800 2000<BR> &nbsp;&nbsp;&nbsp; NPCWANDER 4<BR> 
+&nbsp;&nbsp;&nbsp; FX1 -1<BR> &nbsp;&nbsp;&nbsp; FY1 -1<BR> &nbsp;&nbsp;&nbsp; 
+FZ1 -1<BR> &nbsp;&nbsp;&nbsp; FX2 20<BR> &nbsp;&nbsp;&nbsp; FAME 10000<BR> &nbsp;&nbsp;&nbsp; 
+KARMA 500<BR> &nbsp;&nbsp;&nbsp; LOOT 10<BR> &nbsp;&nbsp;&nbsp; SPATTACK 32768 
+60 % hit dammage fireball only<BR> &nbsp;&nbsp;&nbsp; SPADELAY 80<BR> &nbsp;&nbsp;&nbsp; 
+}</FONT></SMALL></TD></TR> </TABLE></BODY>
+</HTML>

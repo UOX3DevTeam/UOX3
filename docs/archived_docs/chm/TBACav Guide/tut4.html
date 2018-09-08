@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>Tutorial 4: Triggers and items</title>
+</head>
+<body>
+<center><h1>Tutorial 4</h1><h2>Triggers and items</h2><h4>Written by: [TBA]Cavalier</h4></center>
+<p>Last updated: 10th June, 2000
+<hr>
+<p>I'm sure you have all made some sort of new sword or armour and a few
+other things, but there's heaps more that can be done when you add in
+some triggers. Triggers are events that are set off when a item is
+interacted with (used, walked on, etc). Included here is some of the
+stuff I know about triggers and their usage, as well as a couple of
+different examples that will hopefully inspire you to create some
+new items. I'll put up a more advanced trigger tutorial a bit later,
+but for now here's about all you need to know:
+<p>Triggers come in 3 flavours, static triggers (things that need to be
+invoked and placed in envoke.scp), dynamic triggers (items like plants
+and things that can be trigged by double-clicking/walking on them.
+these are placed in triggers.scp) and npc triggers (triggers used
+when a keyword is said to an npc, stored in ntriggers.scp).
+
+<p>PLEASE NOTE THAT ITEMS YOU HAVE FROZEN INTO THE STATICS FILES LOSE THEIR TRIGGERS AND CAN NO LONGER BE USED!
+
+<p>ALSO NOTE THAT THE SAME TRIGGERS CAN BE USED BY MULTIPLE ITEMS, EG IF YOU HAVE 8 DIFFERENT SPIDER WEBS, JUST USE THE 1 TRIGGER.
+
+<p>For this tutorial we will be working with dynamic triggers that are activated when the item is double-clicked. First up is dead wood from my reagents script. This uses just the one trigger that gives you dead wood when you use a fallen tree. It has two parts, an items.scp part:
+<pre>
+SECTION ITEM 30018
+{
+NAME a fallen log
+ID 0CF5
+TRIGGER 30018
+NODECAY
+ALIGNMENT 0
+MODIFY1 0
+MODIFY2 0
+MODIFY3 0
+MODIFY4 0
+MODIFY5 0
+FAME 0
+}
+</pre>
+<p>and a triggers.scp part:
+<pre>
+SECTION TRG 30018
+{ gathering dead wood
+RANGE 2
+MSG You gather some dead wood...
+IADD 450 1
+IADD 450 1
+DISABLE 86000
+}
+</pre>
+<p>Here's a complete rundown of what all this is. The first entry you should
+be able to comprehend after reading Tutorial 1, except for 1 line:
+<p>TRIGGER 30018
+<p>This tells UOX which trigger to use when an item is used. This can also be
+set by using 'ttrig &lt;trigger number&gt; on an existing item in the game. I'll
+explain the trigger bit by bit, as triggers run through whats in each section in order, with some things causing the trigger to abort at a certain point. The line that has RANGE 2 is one such thing. If the player is not within 2 uo tiles of the item in question then the trigger will abort. 
+<p>MSG tells the client to give the player a system message. I could have also
+used EMT which would have the player emote what was after EMT. IADD is what adds the item (using its number from your items.scp), the 1 on the end tells
+it to place it in the players backpack. If you leave the 1 out the item/s added will be placed on the ground when the trigger runs. I have tested putting numbers other than 1, but this appears to have no effect. DISABLE pretty much does what it says, it disables the trigger for the desired time in seconds. 86000 is about 1 uo day or 2 hours irl. So there's the rundown of that one.
+
+<p>The other item from the reagent script I'd like to have a look at is the
+oyster (black pearls). This uses a random number generator to decided
+whether or not the script continues. Here's the trigger entry for it:
+<pre>
+SECTION TRG 30027
+{ getting pearls from a shell
+RANGE 2
+REMOVE
+FMSG You do not find anything useful...
+RAND 100 25
+IADD 428 1
+MSG You get black pearls from the shell...
+}
+</pre>
+<p>In this case the item envoked is used (REMOVE) and a fail message is set.
+This is done by using the FMSG command, and can be changed as much as you like. A good example of changing the fail message is with Skywise's training
+books and the different messages if your skill is too high or too low to use the book. The next line is also of note. RAND (x y) is a command used to generate a random number between 1 and x but the trigger will be aborted if the number generated is above y. In this example the chance of getting a pearl is 25 in 100 or 1 in 4. If the script is aborted by the random number generator than the FMSG is displayed and nothing else happens. Otherwise you get the pearls and a sucess message.
+
+<p>Now for some stat and health altering things. This is fairly simple as my one of my plants will hopefully show.
+<pre>
+SECTION TRG 30003
+{ Using a mad cap mushy
+MSG You eat the mad cap mushroom...
+SND 00 3C
+EMT Yumbo!
+REMOVE
+STR +5
+INT -5
+}
+</pre>
+<p>This is the trigger attached to the mad cap mushrooms that can be picked. It first gives the player a message that he has eaten the mushy (MSG) and then a sound plays (SND) while the player emotes "Yumbo!" (EMT). The mushroom is then used (remove) and 5 strength is added to the players stats. Unfortunately because the mushrooms have an effect on the brain 5 points are deducted from the players intelligence (INT -). There should be a listing of the sounds included with the docs and you can listen to all of the sounds in the game using insideuo (also gives you hex values). The stats modifiers are either + (adds) or - (subtracts) and the numeral value. You can also use DEX (dexterity), HEA (health), MAN (mana) and STAM (stamina).
+
+<p>I will take a look at one more item to demonstrate some of the stuff that can be done with triggers. Heres the entry for one of the books I made up from skywise's template:
+<pre>
+SECTION TRG 2038
+{Guide to Advanced Camping
+SND 00 55
+EMT *Studying*
+FMSG This book is beyond your understanding...
+IFSKL 10 +200
+FMSG This book teaches you nothing new...
+IFSKL 10 -550
+SKL 10 100
+MSG You increase your knowledge about Camping!
+SND 02 15
+REMOVE
+}
+</pre>
+<p>This is quite a peice of work, and one that i learnt much from. It uses multiple fail commands that change according to what stage of the trigger you reach and checks the camping skill several times. Heres a complete run-through of the script:
+<p>It starts by playing a sound of pages flipping and the players emotes *Studying*. The trigger than sets the fail message to "This book is beyond your understanding" and checks whether the players camping skill is over 20. If it's under 20 it displays the fail message that was set in the line above and aborts the script. If it is over 20 then the script continues. The fail message is then set to "This book teaches you nothing new" and checks if the players skill is under 55. If it is over 55 then it displays the newly set fail message and aborts the script. If
+it is above then it keeps running and comes to the line SKL 10 100. This adds 10 to the camping skill. A system message is then displayed, another sound played, the book is removed and the trigger is then ended. Like I said, its quite a peice of work.
+
+<p>In this tutorial i hope to have showed you some of the basic trigger commands and how they can be manipulated to create items that add an extra layer to your world. If you are inspired to make anything of your own, send it to me if you have time. For any further questions, contact me by email. I have done about 2 months of solid work with triggers so i should be able to answer your question or give you an alternative way to do something. The best advice i can offer is experiment and try out some of the different commands, you never know what you could come up with.
+</body>
+</html>

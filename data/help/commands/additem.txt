@@ -1,0 +1,8 @@
+        ADDITEM <id> (ID from UOX3 scripts)
+
+  Purpose: 
+        Can be used to add items from
+        the UOX3 scripts - these items
+        will also have any properties or
+        attributes that have been
+        assigned to them in the scripts.

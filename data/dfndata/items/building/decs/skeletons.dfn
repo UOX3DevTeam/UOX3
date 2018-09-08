@@ -1,0 +1,386 @@
+[0x1a01]
+{ E chained boots
+get=base_item
+name=skeleton
+id=0x1a01
+weight=500
+movable=2
+}
+
+[0x1a02]
+{ S chained boots
+get=base_item
+name=skeleton
+id=0x1a02
+weight=500
+movable=2
+}
+
+[0x1a03]
+{ S chained
+get=base_item
+name=skeleton
+id=0x1a03
+weight=500
+movable=2
+}
+
+[0x1a04]
+{ E chained
+get=base_item
+name=skeleton
+id=0x1a04
+weight=500
+movable=2
+}
+
+[0x1a05]
+{ E chained falling apart
+get=base_item
+name=skeleton
+id=0x1a05
+weight=500
+movable=2
+}
+
+[0x1a06]
+{ S chained falling apart
+get=base_item
+name=skeleton
+id=0x1a06
+weight=500
+movable=2
+}
+
+[0x1a09]
+{ E fallen apart
+get=base_item
+name=skeleton
+id=0x1a09
+weight=500
+movable=2
+}
+
+[0x1a0a]
+{ S chained fallen apart
+get=base_item
+name=skeleton
+id=0x1a0a
+weight=500
+movable=2
+}
+
+[0x1ad8]
+{ 1/8
+get=base_item
+name=pile of skulls
+id=0x1ad8
+weight=100
+movable=2
+}
+
+[0x1ad9]
+{ 2/8
+get=base_item
+name=pile of skulls
+id=0x1ad9
+weight=100
+movable=2
+}
+
+[0x1ada]
+{ 3/8
+get=base_item
+name=pile of skulls
+id=0x1ada
+weight=100
+movable=2
+}
+
+[0x1adb]
+{ 4/8
+get=base_item
+name=pile of skulls
+id=0x1adb
+weight=100
+movable=2
+}
+
+[0x1adc]
+{ 5/8
+get=base_item
+name=pile of skulls
+id=0x1adc
+weight=100
+movable=2
+}
+
+[0x1add]
+{ 6/8
+get=base_item
+name=pile of skulls
+id=0x1add
+weight=100
+movable=2
+}
+
+[0x1ade]
+{ 7/8
+get=base_item
+name=pile of skulls
+id=0x1ade
+weight=100
+movable=2
+}
+
+[0x1adf]
+{ 8/8
+get=base_item
+name=pile of skulls
+id=0x1adf
+weight=100
+movable=2
+}
+
+[0x1ae0]
+{
+get=base_item
+name=skull
+id=0x1ae0
+weight=100
+movable=1
+}
+
+[0x1ae1]
+{
+get=base_item
+name=skull
+id=0x1ae1
+weight=100
+movable=2
+}
+
+[0x1ae2]
+{
+get=base_item
+name=skull
+id=0x1ae2
+weight=100
+movable=2
+}
+
+[0x1ae3]
+{
+get=base_item
+name=skull
+id=0x1ae3
+weight=100
+movable=2
+}
+
+[0x1ae4]
+{
+get=base_item
+name=skull
+id=0x1ae4
+weight=100
+movable=2
+}
+
+[0x1b09]
+{
+get=base_item
+name=bone pile
+id=0x1b09
+weight=100
+movable=2
+}
+
+[0x1b0a]
+{
+get=base_item
+name=bone pile
+id=0x1b0a
+weight=100
+movable=2
+}
+
+[0x1b0b]
+{
+get=base_item
+name=bone pile
+id=0x1b0b
+weight=100
+movable=2
+}
+
+[0x1b0c]
+{
+get=base_item
+name=bone pile
+id=0x1b0c
+weight=100
+movable=2
+}
+
+[0x1b0d]
+{
+get=base_item
+name=bone pile
+id=0x1b0d
+weight=100
+movable=2
+}
+
+[0x1b0e]
+{
+get=base_item
+name=bone pile
+id=0x1b0e
+weight=100
+movable=2
+}
+
+[0x1b0f]
+{
+get=base_item
+name=bone pile
+id=0x1b0f
+weight=100
+movable=2
+}
+
+[0x1b10]
+{
+get=base_item
+name=bone pile
+id=0x1b10
+weight=100
+movable=2
+}
+
+[0x1b11]
+{
+get=base_item
+name=bone
+id=0x1b11
+weight=100
+movable=2
+}
+
+[0x1b12]
+{
+get=base_item
+name=bone
+id=0x1b12
+weight=100
+movable=2
+}
+
+[0x1b13]
+{
+get=base_item
+name=jaw bone
+id=0x1b13
+weight=100
+movable=2
+}
+
+[0x1b14]
+{
+get=base_item
+name=jaw bone
+id=0x1b14
+weight=100
+movable=2
+}
+
+[0x1b15]
+{
+get=base_item
+name=pelvis bone
+id=0x1b15
+weight=100
+movable=2
+}
+
+[0x1b16]
+{
+get=base_item
+name=pelvis bone
+id=0x1b16
+weight=100
+movable=2
+}
+
+[0x1b17]
+{
+get=base_item
+name=rib cage
+id=0x1b17
+weight=100
+movable=2
+}
+
+[0x1b18]
+{
+get=base_item
+name=rib cage
+id=0x1b18
+weight=100
+movable=2
+}
+
+[0x1b19]
+{
+get=base_item
+name=bone shards
+id=0x1b19
+weight=100
+movable=2
+}
+
+[0x1b1a]
+{
+get=base_item
+name=bone shards
+id=0x1b1a
+weight=100
+movable=2
+}
+
+[0x1b1b]
+{
+get=base_item
+name=spine
+id=0x1b1b
+weight=100
+movable=2
+}
+
+[0x1b1c]
+{
+get=base_item
+name=spine
+id=0x1b1c
+weight=100
+movable=2
+}
+
+[0x1b1d]
+{ E chained
+get=base_item
+name=skeletong with meat
+id=0x1b1d
+weight=1000
+movable=2
+}
+
+[0x1b1e]
+{ S chained
+get=base_item
+name=skeletong with meat
+id=0x1b1e
+weight=1000
+movable=2
+}

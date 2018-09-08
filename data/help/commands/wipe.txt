@@ -1,0 +1,10 @@
+        WIPE <target1> <target2>
+        WIPE <x1> <y1> <x2> <y2>
+
+  Purpose: 
+        Wipes ALL items from specified area,
+        including items at other height-levels
+        than the targeted area...
+        If no coordinates are specified, target
+        cursor will appear and let you choose
+        an area manually.

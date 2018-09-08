@@ -1,0 +1,62 @@
+<html>
+<head>
+	<style type=text/css>
+		FONT		{ FONT-FAMILY: Verdana,Helvetica,Arial; }
+		table.z		{ FONT-FAMILY: Veranda,Helvetica,Arial; font-size: 10pt; }
+		A		{ color: #cccccc; text-decoration: none; }
+		A:active	{ color: #cfcfff; }
+		A:hover		{ color: #3333ff; }
+	</style>
+	<title>UOX3 Scripting Guide</title>
+</head>
+<body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
+<center>
+<font size=3><b>UOX3 Scripting Info</b></font><br>
+<p>
+<table bgcolor=#333333 width=95%>
+    <tr>
+	<td><table class=z border=0 cellpadding=0 cellspacing=0>
+	    <tr>
+		<td>
+		    <a name="houses"></a>
+	    	    Houses
+		    <p>
+		    The new house system works as Follows:
+		    <p>
+		    Everything is stored in house.scp there are 2 types of sections for this file:<br>
+		    SECTION HOUSE # (This will be used in the deed's morex)<br>
+		    {<br>
+		    ID #### (Multi id# (From insideUO) take the number inside UO gives and add 40, so a small house is 0000068 this translates into ID 4068)<br>
+		    SPACEX # ((optional)The RADIUS of clear space needed from the center of the house.)<br>
+		    SPACEY # ((optional)Same as SPACEX only for the Y axis)<br>
+		    CHARX # ((optional)Offset from the center of the house that the Person making the house will be	placed at when the house is built)<br>
+		    CHARY # ((optional)Same as charX only for Y)<br>
+		    CHARZ # ((optional)Same as charX only for Z)<br>
+		    HOUSE_ITEM # (This refers to the other type of sections in house.scp for placing Misc items in the house, Up to 100 per house.)<br>
+		    }
+		    <p>
+		    SECTION HOUSE ITEM # (For items place in and around the house)<br>
+		    {<br>
+		    ITEM # (Item # from items.scp)<br>
+		    LOCK ((optional) makes the item's more=the key's more, so in effect makes that item lockable, mostly for signs, doors, and chests.)<br>
+		    MOVEABLE ((optional)Default is that all items are not movebale, use this to make them moveable)<br>
+		    DECAY ((optional)Make the item Decay)<br>
+		    NODECAY ((optional) Default, make the item not decay)<br>
+		    PACK ((optional) Makes the item appear in the player's backpack)<br>
+		    X (Offset from the center of the house)<br>
+		    Y (Same as X only for Y)<br>
+		    Z (same as X only for Z)<br>
+		    }
+		    <p>
+		    Set the deed's moreX to the SECTION HOUSE number and that house an all associated items will
+		    be added. You can enter your house without unlocking the door if you have the key in your
+		    MAIN pack. Just like OSI.... "You quickly unlock, use, then relock the door." Enjoy the new
+		    housing system!
+		</td>
+	    </tr>
+	</table></td>
+     </tr>
+</table>
+</center>
+</body>
+</html>

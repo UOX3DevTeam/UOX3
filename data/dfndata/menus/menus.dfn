@@ -1,0 +1,57 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 1/4/2003	                	          *
+//* Script : menus.dfn                                            *
+//*****************************************************************
+// v1.0; 12/01/02; rewrote file for UOX3 1.0; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// v1.1; 01/4/03; Version info updated, and links; Xuri
+// (add new version comments here, use format of above line please!)
+// For use with the UOX3 emulator or any with permission from the author
+//***************************************************************************
+
+[GMMENU 1]
+{
+UOX3=Help
+CALL=GM: Sends a notice to all Game Masters that are online. They can help you with almost any in-game problems.
+GMMENU=3
+CALL=Counselor: Sends a notice to all Counselors that are online. They will be glad to answer your questions.
+CPAGE=Other
+WEB=LINKS: Provides a list of links to various important websites.
+GMMENU=2
+INFO:=Shows the version of UOX3 this server is running.
+VERSION
+SERVER=STATUS: Shows some status information about this server.
+GUIINFORMATION
+}
+
+[GMMENU 2]
+{
+Web=Links
+SHARD=HOMEPAGE: Redirects you to this Shard's homepage.
+WEBLINK=http://www.yourshard.com
+UOX3=HOMEPAGE: Redirects you to the UOX3 homepage.
+WEBLINK=http://http://www.uox3.org
+UO=HOMEPAGE: The official Ultima Online homepage.
+WEBLINK=http://www.uo.com
+}
+
+[GMMENU 3]
+{
+GM=Assistence
+STUCK:=Use this option if you can't physically move and need assistance.
+GMPAGE=Stuck
+ITEM=PROBLEM: Use this if you have run into a problem with a specific item.
+GMPAGE=Item Problem
+BUG:=Use this if you have found a bug that the GM's need to know about.
+GMPAGE=Bug Report
+INFO:=Use this if you need helping information about some part of the game.
+GMPAGE=Information
+OTHER:=Use this for anything not listed above.
+GMPAGE=Other
+}
+
+
+EOF
+

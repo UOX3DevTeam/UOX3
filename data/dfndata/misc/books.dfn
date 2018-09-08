@@ -1,0 +1,6812 @@
+[BOOK 1]
+{
+PAGES=4
+TITLE=The first UOX book
+AUTHOR=Cironian & Lord Binary
+PAGE=1
+PAGE=2
+PAGE=3
+PAGE=4
+}
+
+[PAGE 1]
+{
+LINE=Greetings, Traveller!
+LINE=I welcome thee to the
+LINE=world of UOX and
+LINE=hope your will enjoy
+LINE=your stay here.
+LINE=This is the first
+LINE=page of this
+LINE=experimental book.
+}
+
+[PAGE 2]
+{
+LINE=Feel free to change
+LINE=the contents of this
+LINE=book or to add others
+LINE=
+LINE=To do so, simply edit
+LINE=the contents of the
+LINE=file misc\books.dfn  .
+}
+
+[PAGE 3]
+{
+LINE=The item TYPE for
+LINE=books is 11 decimal
+LINE=and you will have to
+LINE=set the MORE of the
+LINE=book item to the
+LINE=number of
+LINE=the book.
+}
+
+[PAGE 4]
+{
+LINE=This is page four.
+LINE=(End of this book)
+}
+
+// ============================ A Grammer of Orcish
+[BOOK 2]
+{
+PAGES=23
+TITLE=A Grammar of Orcish
+AUTHOR=Yorick of Yew
+PAGE=5
+PAGE=6
+PAGE=7
+PAGE=8
+PAGE=9
+PAGE=10
+PAGE=11
+PAGE=12
+PAGE=13
+PAGE=14
+PAGE=15
+PAGE=16
+PAGE=17
+PAGE=18
+PAGE=19
+PAGE=20
+PAGE=21
+PAGE=22
+PAGE=23
+PAGE=24
+PAGE=25
+PAGE=26
+PAGE=27
+}
+
+[PAGE 5]
+{
+LINE=  This volume, and
+LINE=others in the series,
+LINE=are sponsored by
+LINE=donations from Lord
+LINE=Blackthorn, ever a
+LINE=supporter of
+LINE=understanding the
+LINE=other sentient races
+}
+
+[PAGE 6]
+{
+LINE=of Britannia.
+LINE=-
+LINE=
+LINE= The Orcish tongue
+LINE=may fall unpleasingly
+LINE='pon the ear, yet it
+LINE=has within it a
+LINE=complex grammar oft
+}
+
+[PAGE 7]
+{
+LINE=misunderstood by
+LINE=those who merely
+LINE=hear the few broken
+LINE=words of English our
+LINE=orcish brothers
+LINE=manage without
+LINE=education.
+LINE= These are the basic
+}
+
+[PAGE 8]
+{
+LINE=rules of orcish:
+LINE= Orcish has five
+LINE=tenses: present, past
+LINE=,future inperfect,
+LINE=present interject-
+LINE=ional,and prehensile.
+LINE= Examples: gugroflue,
+LINE=gugrofloog, gugrobo,
+}
+
+[PAGE 9]
+{
+LINE=gugroglu!, gugrogug.
+LINE= All transitive verbs
+LINE=in the prehensile
+LINE=tense end in "ug."
+LINE= Examples:
+LINE=urgleighug,
+LINE=biggugdaghgug,
+LINE=curdakalmug.
+}
+
+[PAGE 10]
+{
+LINE= All present
+LINE=interjectional
+LINE=conjugations start
+LINE=with the letter G
+LINE=unless the contain
+LINE=the third declensive
+LINE=accent of the letter
+LINE=U. Examples:
+}
+
+[PAGE 11]
+{
+LINE=ghuthudunglug, but
+LINE=not azhbuugb.
+LINE= The past tense can
+LINE=only refer to events
+LINE=since the last meal,
+LINE=but the prehensile
+LINE=tense can refer to
+LINE=any event within
+}
+
+[PAGE 12]
+{
+LINE=reach.
+LINE= The present tense
+LINE=is conjugated like
+LINE=the future imperfect
+LINE=tense,  when the
+LINE=interrogative mode is
+LINE=used by pitching the
+LINE=sound a quarter-tone
+}
+
+[PAGE 13]
+{
+LINE=higher.
+LINE=Orcish hath no
+LINE=concept of person, as
+LINE=in first person,
+LINE=third person, I, we,
+LINE=etc. Orcish grammer
+LINE=relies upon the three
+LINE=cardinal rules of
+}
+
+[PAGE 14]
+{
+LINE=accretion, prefixing,
+LINE=and agglutination, in
+LINE=addition to pitch. In
+LINE=the former, phonemes
+LINE=combine into larger
+LINE=words wich may
+LINE=contain full phrasal
+LINE=significance.  In the
+}
+
+[PAGE 15]
+{
+LINE=second, prefixing
+LINE=specific phonetic
+LINE=sounds changes the
+LINE=subject of the
+LINE=sentence into object,
+LINE=interrogative,
+LINE=addressed individual
+LINE=or dinner.
+}
+
+[PAGE 16]
+{
+LINE= Agglutination occurs
+LINE=whenever four of
+LINE=the same letter are
+LINE=present in a word, in
+LINE=wich case, any two
+LINE=of them may be
+LINE=removed or slurred.
+LINE= Pitch changes the
+}
+
+[PAGE 17]
+{
+LINE=phoneme value of
+LINE=individual syllables,
+LINE=thus completely
+LINE=altering what a word
+LINE=may mean. The
+LINE=classic example is
+LINE="Aktgluthugrot
+LINE=bigglogubuu
+}
+
+[PAGE 18]
+{
+LINE=dargilgaglug
+LINE=lublublub which can
+LINE=mean "You are such a
+LINE=pretty girl," "My
+LINE=mother ate your
+LINE=primroses," or
+LINE="Jellyfish nose
+LINE=paints alms potato,"
+}
+
+[PAGE 19]
+{
+LINE=depending on pitch.
+LINE= Orchish poetry often
+LINE=relies upon repeating
+LINE=the same phrase in
+LINE=multiple pitches,
+LINE=even changing pitch
+LINE=midword.  None of
+LINE=this great art is
+}
+
+[PAGE 20]
+{
+LINE=translatable.
+LINE= The orcish language
+LINE=uses the following
+LINE=vowels: ab, ad, ag,
+LINE=akt, at, augh, auh,
+LINE=azh, e, i, o, oo, u,
+LINE=uu. The vowel sound a
+LINE=is not recognized as
+}
+
+[PAGE 21]
+{
+LINE=a vowel and does not
+LINE=exist in their
+LINE=alphabet. The orchish
+LINE=alphabet is best
+LINE=learned using the
+LINE=classic rhyme
+LINE=repeated at 23
+LINE=different pitches:
+}
+
+[PAGE 22]
+{
+LINE=Lugnog ghu blatsug
+LINE=garoglug, Gaghbuu
+LINE=dakdar ab highugbo,
+LINE= Gothnogbuim ad
+LINE=gilgubbugbuilug
+LINE=Bilgeaugh thurggulg
+LINE=stuiggro!
+LINE=A translation of the
+}
+
+[PAGE 23]
+{
+LINE=first pitch:
+LINE=Eat food, the first
+LINE=letter is ab,
+LINE=Kill people, next
+LINE=Letter is ad,
+LINE= I forgot the rest
+LINE=But augh is in there
+LINE=somewhere!
+}
+
+[PAGE 24]
+{
+LINE= What follows is a
+LINE=complete phonetic
+LINE=library of the orcish
+LINE=language:
+LINE=ab, ad, ag, akt, alm,
+LINE=at, augh, auh, azh,
+LINE=ba, ba, bag, bar, baz,
+}
+
+[PAGE 25]
+{
+LINE=bid, bilge, bo, bog,
+LINE=bog, brui, bu, buad,
+LINE=bug, buil, buim, bum,
+LINE=buo, buor, buu, ca,
+LINE=car, clog, cro, cuk,
+LINE=cur, da, dagh, dagh,
+LINE=dak, dar, deak, der,
+LINE=dil, dit, dor, dre,
+}
+
+[PAGE 26]
+{
+LINE=dri, dru, du, dud,
+LINE=duf, dug, dug, duh,
+LINE=dun, eag, eg, egg,
+LINE=eichel, ek, ep, ewk,
+LINE=faugh, fid, flu, fog,
+LINE=foo, foz, fruk, fu,
+LINE=fub, fud, fun, fup,
+LINE=fur, gaa, gag, gagh,
+}
+
+[PAGE 27]
+{
+LINE=gan, gar, gh, gha,
+LINE=ghat, ghed, ghig, gho,
+LINE=ghu, gig, gil, gka,
+LINE=glu, glug, gna, gno,
+LINE=gnu, gol, gom, goth,
+LINE=grunt, grut, gu, gub,
+LINE=gub, gug, gug, gugh,
+LINE=guk.
+}
+
+// ============================ The Bold Stranger
+[BOOK 3]
+{
+PAGES=14
+TITLE=The Bold Stranger
+AUTHOR=Old Fabio the Poor
+PAGE=28
+PAGE=29
+PAGE=30
+PAGE=31
+PAGE=32
+PAGE=33
+PAGE=34
+PAGE=35
+PAGE=36
+PAGE=37
+PAGE=38
+PAGE=39
+PAGE=40
+PAGE=41
+}
+
+[PAGE 28]
+{
+LINE= In a time before
+LINE=time, the Gods that
+LINE=be assembled a group
+LINE=of artisans, crafts
+LINE=men and lore masters
+LINE=(for, yes, even in
+LINE=those days, art
+LINE=existed)to create the
+}
+
+[PAGE 29]
+{
+LINE=world of Sosaria. To
+LINE=this group, the gods
+LINE=gave a tiny world,
+LINE=Rytabul, in which to
+LINE=test their works, to
+LINE=see if they were of
+LINE=the quality desired
+LINE=for the true world in
+}
+
+[PAGE 30]
+{
+LINE=which they would be
+LINE=placed.  And though
+LINE=the gods were tight
+LINE=fisted with their
+LINE=gold, this small crew
+LINE=worked hard and long,
+LINE=and were happy in
+LINE=their tasks.
+}
+
+[PAGE 31]
+{
+LINE= A small corner of
+LINE=Rytabul had been
+LINE=claimed by the
+LINE=artisan Selrahc the
+LINE=Slow. Though he was
+LINE=Not the fastest of
+LINE=The assembled
+LINE=workers, the gods
+}
+
+[PAGE 32]
+{
+LINE=smiled upon his work,
+LINE=even presenting him
+LINE=with a mystic
+LINE=talisman proclaiming
+LINE=his work the best
+LINE=among the newer
+LINE=artisans.And so
+LINE=Selrahc went about
+}
+
+[PAGE 33]
+{
+LINE=his business,
+LINE=creating hundreds
+LINE=of designs which
+LINE=would one day add
+LINE=color and variety
+LINE=to Sosaria. One day a
+LINE=stranger appeared to
+LINE=Selrahc.  His chest
+}
+
+[PAGE 34]
+{
+LINE=was bare and he wore
+LINE=trousers of the
+LINE=brightest green, and
+LINE=whereever he went,
+LINE=plants grew in his
+LINE=footsteps. This
+LINE=caused Selrahc no end
+LINE=of trouble, the
+}
+
+[PAGE 35]
+{
+LINE=stranger always
+LINE=looking over his
+LINE=shoulder, and the
+LINE=plants sprouting in
+LINE=places Selrahc
+LINE=required to ply his
+LINE=art. And so Selrahc
+LINE=approached the
+}
+
+[PAGE 36]
+{
+LINE=stranger and bade
+LINE=him speak.  But this
+LINE=man in green
+LINE=remained silent.
+LINE=Selrahc pleaded with
+LINE=the stranger to give
+LINE=his name, and would
+LINE=he please leave
+}
+
+[PAGE 37]
+{
+LINE=Selrahc to his work.
+LINE=But this mysterious
+LINE=stranger remained
+LINE=mute.
+LINE= This angered
+LINE=Selrahc mightily. Who
+LINE=was this silent man,
+LINE=interfering with
+}
+
+[PAGE 38]
+{
+LINE=tasks the gods
+LINE=themselves had
+LINE=entrusted to Selrahc?
+LINE=In an attempt to
+LINE=embarrass this
+LINE=interloper, Selrahc
+LINE=stole his green
+LINE=trousers, leaving him
+}
+
+[PAGE 39]
+{
+LINE=naked and open to
+LINE=comments about his
+LINE=very manhood, and
+LINE=still the stranger
+LINE=would not speak,
+LINE=would not leave this
+LINE=tiny corner of
+LINE=Rytabul.
+}
+
+[PAGE 40]
+{
+LINE=Vexed to his very
+LINE=limits, Selrahc took
+LINE=his war axe and
+LINE=smote the silent one
+LINE=mightily, again and
+LINE=again, until the
+LINE=silent stranger ran
+LINE=away, having never
+}
+
+[PAGE 41]
+{
+LINE=said a word, and
+LINE=never showed himself
+LINE=in Rytabul again.
+LINE= Thus endeth the
+LINE=tale of the bold
+LINE=stranger.
+}
+
+// ============================ Birds of Britannia
+[BOOK 4]
+{
+PAGES=26
+TITLE=Birds of Britannia
+AUTHOR=Thom the Heathen
+PAGE=42
+PAGE=43
+PAGE=44
+PAGE=45
+PAGE=46
+PAGE=47
+PAGE=48
+PAGE=49
+PAGE=50
+PAGE=51
+PAGE=52
+PAGE=53
+PAGE=54
+PAGE=55
+PAGE=56
+PAGE=57
+PAGE=58
+PAGE=59
+PAGE=60
+PAGE=61
+PAGE=62
+PAGE=63
+PAGE=64
+PAGE=65
+PAGE=68
+PAGE=67
+}
+
+[PAGE 42]
+{
+LINE= The wren is a tiny
+LINE=insect-eating bird
+LINE=with a loud voice.
+LINE=The cheerful trills
+LINE=of Wrens are
+LINE=extraordinaily varied
+LINE=and melodious.
+LINE= The swallow is
+}
+
+[PAGE 43]
+{
+LINE=easily recognized by
+LINE=its forked tail.
+LINE=Swallows catch
+LINE=insects in flight,
+LINE=and have squeaky,
+LINE=twittering songs.
+LINE= The warbler is an
+LINE=exceptional singer,
+}
+
+[PAGE 44]
+{
+LINE=whose extensive songs
+LINE=combine the best
+LINE=qualities of Wrens
+LINE=and Swallows.
+LINE= The thatch climbs
+LINE=down trees head
+LINE=first, searching for
+LINE=insects in the bark.
+}
+
+[PAGE 45]
+{
+LINE=It sings a
+LINE=repetitive series of
+LINE=notes with a nasal
+LINE=tone quality.
+LINE= The agile chickadee
+LINE=has a buzzy "chick-a-
+LINE=dee-dee" call, from
+LINE=which its name is
+}
+
+[PAGE 46]
+{
+LINE=derived. Its song is
+LINE=a series of whistled
+LINE=notes.
+LINE= The thrush is a
+LINE=brown bird with a
+LINE=spotted breast, which
+LINE=eats worms and
+LINE=snails, and has a
+}
+
+[PAGE 47]
+{
+LINE=beautiful singing
+LINE=voice. Thrushes use
+LINE=a stone as an anvil
+LINE=to smash the shells
+LINE=of snails.
+LINE= The little
+LINE=nightingale is also
+LINE=known for its
+}
+
+[PAGE 48]
+{
+LINE=beautiful song, which
+LINE=it sings even at
+LINE=night.
+LINE= The starling is a
+LINE=small dark bird with
+LINE=a yellow bill and a
+LINE=squeaky,high-pitched
+LINE=song. Starlings can
+}
+
+[PAGE 49]
+{
+LINE=mimic the sounds of
+LINE=other birds.
+LINE= The skylark sings a
+LINE=series of high-
+LINE=pitched melodious
+LINE=trills in flight.
+LINE=  The finch is a
+LINE=small seed-eating
+}
+
+[PAGE 50]
+{
+LINE=bird with a conical
+LINE=beak and a musical,
+LINE=warbling song.
+LINE= The crossbill is a
+LINE=kind of Finch with a
+LINE=strange crossed bill,
+LINE=which ituses to
+LINE=extract seeds from
+}
+
+[PAGE 51]
+{
+LINE=pine cones.
+LINE= The canary is a kind
+LINE=of Finch that is
+LINE=often kept as a pet.
+LINE=Miners would often
+LINE=take canaries
+LINE=underground with
+LINE=them, to warn them of
+}
+
+[PAGE 52]
+{
+LINE=the presence of
+LINE=hazardous vapors in
+LINE=the air.
+LINE= The sparrow weaves
+LINE=a nest of grass, and
+LINE=has an unmusical
+LINE=chirp for a voice.
+LINE= The towhee is a kind
+}
+
+[PAGE 53]
+{
+LINE=of Sparrow that
+LINE=continually reminds
+LINE=listeners to drink
+LINE=their tea.
+LINE= The shrike is a gray
+LINE=bird with a hooked
+LINE=bill. Shrikes have
+LINE=the habit of impaling
+}
+
+[PAGE 54]
+{
+LINE=their prey on thorns.
+LINE= The woodpecker has
+LINE=a pointed beak that
+LINE=is suitable for
+LINE=pecking at wood to
+LINE=get at the insects
+LINE=inside.
+LINE= The kingfisher dives
+}
+
+[PAGE 55]
+{
+LINE=for fish, which it
+LINE=catches with its
+LINE=long, pointed beak.
+LINE= The tern migrates
+LINE=over great distances,
+LINE=from one end of
+LINE=Britannia to the
+LINE=other each year.
+}
+
+[PAGE 56]
+{
+LINE=Terns dive from the
+LINE=air to catch fish.
+LINE= The plover is a bird
+LINE=that distracts
+LINE=predators by
+LINE=pretending to have a
+LINE=broken wing.
+LINE= The lapwing is a
+}
+
+[PAGE 57]
+{
+LINE=kind of Plover that
+LINE=has a long black
+LINE=crest.
+LINE= The hawk is a
+LINE=predator that feeds
+LINE=on small birds, mice,
+LINE=squirrels, and other
+LINE=small animals. Small
+}
+
+[PAGE 58]
+{
+LINE=hawks are known as
+LINE=Kites.
+LINE= The dove is a seed-
+LINE=eating bird with a
+LINE=peaceful reputation.
+LINE=Doves have a low-
+LINE=pitched cooing song.
+LINE= The cuckoo is a
+}
+
+[PAGE 59]
+{
+LINE=devious bird that
+LINE=lays eggs in the
+LINE=nests of Warblers and
+LINE=other small birds.
+LINE=Cuckoos have the
+LINE=uncanny ability to
+LINE=keep track of time,
+LINE=singing once at the
+}
+
+[PAGE 60]
+{
+LINE=beginning of each
+LINE=hour.
+LINE= The roadrunner is an
+LINE=unusual bird with a
+LINE=long tail, wich runs
+LINE=swiftly along the
+LINE=ground hunting for
+LINE=lizards and snakes.
+}
+
+[PAGE 61]
+{
+LINE= The swift is a very
+LINE=agile bird that
+LINE=spends nearly its
+LINE=entire life in the
+LINE=air. With their
+LINE=mouths wide open,
+LINE=Swifts capture
+LINE=insects in mid-
+}
+
+[PAGE 62]
+{
+LINE=flight.
+LINE= The hummingbird is a
+LINE=cross between a Swift
+LINE=and a Fairy. These
+LINE=tiny, brightly
+LINE=colored birds hover
+LINE=magically near
+LINE=flowers, and live on
+}
+
+[PAGE 63]
+{
+LINE=the nectar they
+LINE=provide.
+LINE= The owl is a
+LINE=reputedly wise bird
+LINE=that is active at
+LINE=night, unlike most
+LINE=birds. Owls have
+LINE=excellent night
+}
+
+[PAGE 64]
+{
+LINE=vision and low-
+LINE=pitched hooting
+LINE=calls. Their wings
+LINE=are silent in flight.
+LINE= The goatsucker is a
+LINE=strange owl-like bird
+LINE=that is though to
+LINE=live on the milk of
+}
+
+[PAGE 65]
+{
+LINE=goats. These
+LINE=mysterious birds
+LINE=make jarring sounds
+LINE=at night, for which
+LINE=reason they are also
+LINE=called Nightjars.
+LINE= The duck is a bird
+LINE=that swims more often
+}
+
+[PAGE 66]
+{
+LINE=than it flies, and
+LINE=has a nasal voice
+LINE=that is described as
+LINE=a "quack".
+LINE= The swan is a kind
+LINE=of long-necked Duck
+LINE=that is all white.
+LINE=Swans are usually
+}
+
+[PAGE 67]
+{
+LINE=voiceless, but they
+LINE=are said to have an
+LINE=extraordinarily
+LINE=beautiful song.
+}
+
+// ============================ Regarding Llamas
+[BOOK 5]
+{
+PAGES=4
+TITLE=Regarding Llamas
+AUTHOR=Simon
+PAGE=68
+PAGE=69
+PAGE=70
+PAGE=71
+}
+
+[PAGE 68]
+{
+LINE= Llamas are curious
+LINE=bests, shaggy and
+LINE=sought after for
+LINE=their wool, yet of a
+LINE=curiously arrogant
+LINE=disposition reflected
+LINE=in their eyes, they
+LINE=live in mountainous
+}
+
+[PAGE 69]
+{
+LINE=areas,though who may
+LINE=have first tamed them
+LINE=is lost in the mists
+LINE=of history.
+LINE= 'Tis a well-known
+LINE=fact that llamas can
+LINE=indeed be tamed, and
+LINE=used as grazing
+}
+
+[PAGE 70]
+{
+LINE=animals, for their
+LINE=meat, and of course
+LINE=for their wool. Yet
+LINE='tis lesser known
+LINE=that their ornery
+LINE=disposition and
+LINE=tendency to spit at
+LINE=those they dislike
+}
+
+[PAGE 71]
+{
+LINE=makes them appealing
+LINE=guard creatures as
+LINE=well, though they
+LINE=have little sound
+LINE=with which to sound
+LINE=an alarm.
+}
+
+// ============================ Talking to Wisps
+[BOOK 6]
+{
+PAGES=9
+TITLE=Talking to Wisps
+AUTHOR=Yorick of Moonglow
+PAGE=72
+PAGE=73
+PAGE=74
+PAGE=75
+PAGE=76
+PAGE=77
+PAGE=78
+PAGE=79
+PAGE=80
+}
+
+[PAGE 72]
+{
+LINE= This volume was
+LINE=sponsored by
+LINE=donations from Lord
+LINE=Blackthorn, ever a
+LINE=supporter of
+LINE=understanding the
+LINE=other sentient races
+LINE=of Britannia.
+}
+
+[PAGE 73]
+{
+LINE=-
+LINE=
+LINE=Wisps are the most
+LINE=intelligent of the
+LINE=nonhuman races
+LINE=inhabiting Britannia.
+LINE='Tis claimed by the
+LINE=great sages that
+}
+
+[PAGE 74]
+{
+LINE=someday we shall be
+LINE=able to converse with
+LINE=them openly in our
+LINE=native tongue--
+LINE=indeed, we must hope
+LINE=that wisps learn our
+LINE=language, for it is
+LINE=not possible for
+}
+
+[PAGE 75]
+{
+LINE=humans to pronounce
+LINE=wispish!
+LINE= The wispish language
+LINE=seems to only contain
+LINE=one vowel, the letter
+LINE=Y. However, the
+LINE=letters W, C, M, and
+LINE=L seem to be treated
+}
+
+[PAGE 76]
+{
+LINE=grammatically as
+LINE=vowels, and in
+LINE=addition every letter
+LINE=is followed by what
+LINE=sound to the human
+LINE=ear like a glotal
+LINE=stop.  It is possible
+LINE=that the glottal stop
+}
+
+[PAGE 77]
+{
+LINE=is considered a vowel
+LINE=as well.
+LINE= Wisps do make use of
+LINE=what sound to us like
+LINE=pitch and emphasis
+LINE=shifts similar to
+LINE=exclamations and
+LINE=questions.
+}
+
+[PAGE 78]
+{
+LINE= The average word is
+LINE=wispish seems to
+LINE=consist of three
+LINE=phonemes and three
+LINE=glottal stops, plus
+LINE=possibly a pitch
+LINE=shift. It often
+LINE=sounds like a fire
+}
+
+[PAGE 79]
+{
+LINE=burning or crackling.
+LINE=Some have speculated
+LINE=that what we are
+LINE=analyzing is in fact
+LINE=nothing more than the
+LINE=very air crackling
+LINE=near the wisp's glow,
+LINE=and not language, but
+}
+
+[PAGE 80]
+{
+LINE=this is of course
+LINE=unlikely.
+}
+
+// ============================ Taming Dragons
+[BOOK 7]
+{
+PAGES=8
+TITLE=Taming Dragons
+AUTHOR=Wyrd Beastmaster
+PAGE=81
+PAGE=82
+PAGE=83
+PAGE=84
+PAGE=85
+PAGE=86
+PAGE=87
+PAGE=88
+}
+
+[PAGE 81]
+{
+LINE= I have not much to
+LINE=tell about dragons.
+LINE=The sole time I
+LINE=approached one with
+LINE=an eye towards taming
+LINE=it, my initial
+LINE=attempts at calming
+LINE=it met with failure.
+}
+
+[PAGE 82]
+{
+LINE=It fixed a massive
+LINE=beady eye upon me,
+LINE=and began its
+LINE=slithering approach,
+LINE=intending no doubt to
+LINE=insert me into its
+LINE=maw and bear down
+LINE=with its teeth.
+}
+
+[PAGE 83]
+{
+LINE= However, as I was
+LINE=engaged in what
+LINE=remains to this day
+LINE=the most terrifying
+LINE=combat of my life,
+LINE=the dragon suddenly
+LINE=whirled as if in a
+LINE=panic, ran a short
+}
+
+[PAGE 84]
+{
+LINE=distance, took off
+LINE=into the air, then
+LINE=transformed into a
+LINE=whirlwind. Lastly, it
+LINE=exploded, showering
+LINE=guts of black blood
+LINE=and heaving, stinking
+LINE=flesh upon miles of
+}
+
+[PAGE 85]
+{
+LINE=countryside. The
+LINE=fireball was massive
+LINE=enough to light a
+LINE=city, I should
+LINE=surmise.
+LINE= I never did discover
+LINE=the exact cause of
+LINE=this strange behavior
+}
+
+[PAGE 86]
+{
+LINE=except to assume that
+LINE=it was not typical
+LINE=for this reptilian
+LINE=species. My best
+LINE=guesses revolve
+LINE=around a magical
+LINE=fracture in the
+LINE=nature of reality,
+}
+
+[PAGE 87]
+{
+LINE=which is far too
+LINE=esoteric a territory
+LINE=for one of my limited
+LINE=scholarship.
+LINE= Hence my basic
+LINE=advice to those who
+LINE=seek to tame a dragon
+LINE=-be sure that thou
+}
+
+[PAGE 88]
+{
+LINE=hast mastered the
+LINE=twin skills of taming
+LINE=animals, and running
+LINE=away very very fast.
+}
+
+// ============================ A Politic Call to Anarchy
+[BOOK 8]
+{
+PAGES=15
+TITLE=A Political Call to Anarchy
+AUTHOR=Lord Blackthorn
+PAGE=89
+PAGE=90
+PAGE=91
+PAGE=92
+PAGE=93
+PAGE=94
+PAGE=95
+PAGE=96
+PAGE=97
+PAGE=98
+PAGE=99
+PAGE=100
+PAGE=101
+PAGE=102
+PAGE=103
+}
+
+[PAGE 89]
+{
+LINE= Let it never be said
+LINE=that I have aught as
+LINE=quarrel with my liege
+LINE=Lord British, for
+LINE=indeed we be of the
+LINE=best of friends,
+LINE=sharing amicable
+LINE=games of chess 'pon a
+}
+
+[PAGE 90]
+{
+LINE=winter's night, and
+LINE=talking at length
+LINE=into the wee hours of
+LINE=the issues that
+LINE=affect the realm of
+LINE=Britannia.
+LINE= Yet true friendship
+LINE=doth not prevent true
+}
+
+[PAGE 91]
+{
+LINE=philosophical
+LINE=disagreement either.
+LINE=While I view with
+LINE=approval my lord's
+LINE=affection for his
+LINE=carefully crafted
+LINE=philosophy of the
+LINE=Eight Virtues,
+}
+
+[PAGE 92]
+{
+LINE=wherein moral
+LINE=behavior is
+LINE=encouraged in the
+LINE=populace, I view with
+LINE=less approval the
+LINE=expenditure of public
+LINE=funds upon the
+LINE=construction of
+}
+
+[PAGE 93]
+{
+LINE="shrines" to said
+LINE=ideals.
+LINE= The issue is not one
+LINE=of funds, however,
+LINE=but a disagreement
+LINE=most intellectual
+LINE=over the proper way
+LINE=of humankind in an
+}
+
+[PAGE 94]
+{
+LINE=ethical sense. Surely
+LINE=freedom of decision
+LINE=must be regarded as
+LINE=paramount in any
+LINE=such moral decision?
+LINE=Though none fail to
+LINE=censure the murderer,
+LINE=a subtler question
+}
+
+[PAGE 95]
+{
+LINE=arises when we ask if
+LINE=his behavior would be
+LINE=ethical if he were
+LINE=forced to do it.
+LINE= I say to thee, the
+LINE=reader, quite flatly,
+LINE=that no ethical
+LINE=system shall have
+}
+
+[PAGE 96]
+{
+LINE=sway over me unless
+LINE=it convinceth me, for
+LINE=that freely made
+LINE=choice is to me the
+LINE=sign that the system
+LINE=hath validity.
+LINE= Whereas the system
+LINE=of "Virtues" that my
+}
+
+[PAGE 97]
+{
+LINE=liege espouses is
+LINE=indeed a compilation
+LINE=of commonly approve
+LINE=virtues, I approve of
+LINE=it. Where it seeks to
+LINE=control the populace
+LINE=and restrict their
+LINE=diversity and their
+}
+
+[PAGE 98]
+{
+LINE=range of behaviors, I
+LINE=quarrel with it. And
+LINE=thus do I issue this
+LINE=politic call to
+LINE=anarchy, whilst
+LINE=humbly begging for
+LINE=forgiveness of Lord
+LINE=British for my
+}
+
+[PAGE 99]
+{
+LINE=impertinence:
+LINE= Celebrate thy
+LINE=differences. Take thy
+LINE=actions according to
+LINE=thy own lights.
+LINE=Question from what
+LINE=source a law, a rule,
+LINE=a judge, and a virtue
+}
+
+[PAGE 100]
+{
+LINE=may arise. 'Twere
+LINE=possible (though I
+LINE=suggest it not
+LINE=seriously) that a
+LINE=demon planted the
+LINE=seed of these
+LINE="Virtues" in my Lord
+LINE=British's mind;
+}
+
+[PAGE 101]
+{
+LINE='twere possible that
+LINE=the Shrines were but
+LINE=a plan to destroy
+LINE=this world. Thou
+LINE=canst not know unless
+LINE=thou questioneth,
+LINE=doubteth, and in the
+LINE=end, unless thou
+}
+
+[PAGE 102]
+{
+LINE=relyest upon THYSELF
+LINE=and thy judgment.
+LINE= I offer these words
+LINE=as mere philosophical
+LINE=musing for those who
+LINE=seek enlightenment,
+LINE=for 'tis the issue
+LINE=that hath occupied
+}
+
+[PAGE 103]
+{
+LINE=mine interest and
+LINE=that of Lord British
+LINE=for some time now.
+}
+
+// ============================ Ethical Hedonism: An Introduction
+[BOOK 9]
+{
+PAGES=24
+TITLE=Ethical Hedonism: An Introduction
+AUTHOR=Richard Garriott
+PAGE=104
+PAGE=105
+PAGE=106
+PAGE=107
+PAGE=108
+PAGE=109
+PAGE=110
+PAGE=111
+PAGE=112
+PAGE=113
+PAGE=114
+PAGE=115
+PAGE=116
+PAGE=117
+PAGE=118
+PAGE=119
+PAGE=120
+PAGE=121
+PAGE=122
+PAGE=123
+PAGE=124
+PAGE=125
+PAGE=126
+PAGE=127
+}
+
+[PAGE 104]
+{
+LINE= Societies oft have
+LINE=common codes of
+LINE=conduct which it
+LINE=expects all it's
+LINE=people to abide by.
+LINE=Now, while 'tis true
+LINE=that this can offer
+LINE=some advantages, most
+}
+
+[PAGE 105]
+{
+LINE=of the codes I see
+LINE=today around
+LINE=Britannia have fatal
+LINE=flaws. Let us examine
+LINE=them.
+LINE= First, there is
+LINE=Blackthorn's code of
+LINE=Chaos or basically
+}
+
+[PAGE 106]
+{
+LINE=Anarchy. Whereas
+LINE=this affords the
+LINE=individual maximum
+LINE=opportunity for
+LINE=individuality and eve
+LINE=pursuit of personal
+LINE=happiness, it does
+LINE=not offer even basic
+}
+
+[PAGE 106]
+{
+LINE=interpersonal conduct
+LINE=codes to prevent
+LINE=people from killing
+LINE=each other.
+LINE= Without such basic
+LINE=tenets, all the
+LINE=people will need to
+LINE=spend a significant
+}
+
+[PAGE 107]
+{
+LINE=portion of their time
+LINE=and effort towards
+LINE=personal protection
+LINE=and thus less time
+LINE=towards other more
+LINE=beneficial pursuits.
+LINE= Then there are the
+LINE=moral codes that are
+}
+
+[PAGE 108]
+{
+LINE=so popular today.
+LINE=These codes are built
+LINE=largely on historical
+LINE=tradition rather than
+LINE=current logic and
+LINE=thus are also
+LINE=antiquated. For
+LINE=example many moral
+}
+
+[PAGE 109]
+{
+LINE=codes we see today
+LINE=include statements
+LINE=about not eating
+LINE=certain foods that
+LINE=once were often
+LINE=poisonous, but today
+LINE=can be prepared
+LINE=safely.
+}
+
+[PAGE 110]
+{
+LINE= Many forbid contact
+LINE=between young people
+LINE=of the opposite
+LINE=gender, which can in
+LINE=fact be hazardous;
+LINE=but the codes often
+LINE=have lost the context
+LINE=as to why this is
+}
+
+[PAGE 111]
+{
+LINE=done, instead merely
+LINE=calling it amoral. In
+LINE=this day and age to
+LINE=call that a necessary
+LINE=moral would need a
+LINE=new reasoning. I put
+LINE=forth that tradition
+LINE=is not enough.
+}
+
+[PAGE 112]
+{
+LINE= Then there are Lord
+LINE=British's Virtues. It
+LINE=strikes me that while
+LINE=a system of virtues
+LINE=is wonderful as a
+LINE=touchstone to guide a
+LINE=society to good
+LINE=behavior, these are
+}
+
+[PAGE 113]
+{
+LINE=but shades of the
+LINE=underlying truth as
+LINE=to why one may wish
+LINE=to live a life
+LINE=according to certain
+LINE=rules of conduct.
+LINE= On the other hand,
+LINE=clearly the Virtues
+}
+
+[PAGE 114]
+{
+LINE=that I have heard
+LINE=Lord British speak of
+LINE=are clearly positive
+LINE=codes of conduct, far
+LINE=better than the world
+LINE=of anarchy that Lord
+LINE=Blackthorn suggests.
+LINE=Yet, are not these
+}
+
+[PAGE 115]
+{
+LINE=Virtues still derived
+LINE=from a set of
+LINE=principles which
+LINE=though they sound
+LINE=good, are difficult
+LINE=to pin down as
+LINE=actual, undeniable,
+LINE=rational truths?
+}
+
+[PAGE 116]
+{
+LINE= Worse yet though
+LINE=imagine a society
+LINE=who's code of conduct
+LINE=was based on pure
+LINE=survival of the
+LINE=strongest. While this
+LINE=society may function
+LINE=and even accomplish
+}
+
+[PAGE 117]
+{
+LINE=much, it can be
+LINE=fairly argued that
+LINE=personal happiness
+LINE=would suffer greatly
+LINE=except for those at
+LINE=the top. To rule that
+LINE=out, however, we must
+LINE=first believe that
+}
+
+[PAGE 118]
+{
+LINE=people have a right
+LINE=to pursue happiness.
+LINE= I hope is a safe
+LINE=assumption that all
+LINE=beings wish to be
+LINE=happy, I will broadly
+LINE=describe this as
+LINE=Hedonism. Yet, if all
+}
+
+[PAGE 119]
+{
+LINE=people did is live a
+LINE=life of hedonism,
+LINE=their hedonism might
+LINE=be in conflict with
+LINE=those near them, so I
+LINE=will use the term
+LINE=Ethics to describe
+LINE=limits one might put
+}
+
+[PAGE 120]
+{
+LINE=on one's hedonistic
+LINE=tendencies to allow
+LINE=others to pursue
+LINE=their happiness as
+LINE=well.
+LINE= Allow me to give
+LINE=this example: If one
+LINE=were to live alone on
+}
+
+[PAGE 121]
+{
+LINE=a desert isle, one
+LINE=could live a life of
+LINE=pure hedonism, for no
+LINE=action one might take
+LINE=could interfere with
+LINE=another's right to
+LINE=pursue their
+LINE=happiness. Poison the
+}
+
+[PAGE 122]
+{
+LINE=lake if you like,
+LINE=there is no one to
+LINE=blame but yourself!
+LINE= Now suppose two of
+LINE=you live on that
+LINE=island. Thou dost not
+LINE=want thy neighbor to
+LINE=feel free to poison
+}
+
+[PAGE 123]
+{
+LINE=the lake. Would it
+LINE=not be better to
+LINE=consider it unethical
+LINE=to poison the lake
+LINE=without first
+LINE=thinking of those
+LINE=whose pursuit of
+LINE=happiness might be
+}
+
+[PAGE 124]
+{
+LINE=affected by this
+LINE=action?
+LINE= I put forth that it
+LINE=is the fact that we
+LINE=as a people choose to
+LINE=live in groups known
+LINE=as a society that
+LINE=causes us to
+}
+
+[PAGE 125]
+{
+LINE=compromise our pure
+LINE=hedonism with logical
+LINE=ethics. Likewise we
+LINE=accept not being able
+LINE=to kill others
+LINE=without reason,
+LINE=because our own
+LINE=pursuit of happiness
+}
+
+[PAGE 126]
+{
+LINE=would be greatly
+LINE=interfered with if we
+LINE=feared others would
+LINE=do the same to us.
+LINE=From this basis of
+LINE=logic can be formed
+LINE=the Tenets of Ethical
+LINE=Hedonism.
+}
+
+[PAGE 127]
+{
+LINE= For more on this
+LINE=subject, see The
+LINE=Tenants of Ethical
+LINE=Hedonism, by Richard
+LINE=Garriott and Herman
+LINE=Miller.
+}
+
+// ============================ On the Diversity of Our Land
+[BOOK 10]
+{
+PAGES=15
+TITLE=On the Diversity of Our Land
+AUTHOR=Lord Blackthorn
+PAGE=128
+PAGE=129
+PAGE=130
+PAGE=131
+PAGE=132
+PAGE=133
+PAGE=134
+PAGE=135
+PAGE=136
+PAGE=137
+PAGE=138
+PAGE=139
+PAGE=140
+PAGE=141
+PAGE=142
+}
+
+[PAGE 128]
+{
+LINE= While I deplore the
+LINE=depredations of the
+LINE=misguided and
+LINE=belligerent races
+LINE=with which we share
+LINE=our fair Britannia,
+LINE=and alongside the
+LINE=populace do morn the
+}
+
+[PAGE 129]
+{
+LINE=needles deaths that
+LINE=their raids cause, I
+LINE=can not countenance
+LINE=the policy of
+LINE=wholesale slaughter
+LINE=of these races that
+LINE=seems to be the habit
+LINE=of our soldierly
+}
+
+[PAGE 130]
+{
+LINE=element.
+LINE= Can we not regard
+LINE=the ratmen, lizard
+LINE=men, and orcs are
+LINE=fellow intelligent
+LINE=beings with whom we
+LINE=share a planet? Why
+LINE=must we slay them on
+}
+
+[PAGE 131]
+{
+LINE=sight, rather than
+LINE=attempt to engage
+LINE=them in dialogue?
+LINE=There is no policy of
+LINE=shooting at wisps
+LINE=when they grace us
+LINE=with their presence
+LINE=(not that an arrow
+}
+
+[PAGE 132]
+{
+LINE=could do much to
+LINE=pierce them!).
+LINE= To view these
+LINE=creatures as vermin
+LINE=denies their obvious
+LINE=intelligence, and we
+LINE=cannot underestimate
+LINE=the repercussions
+}
+
+[PAGE 133]
+{
+LINE=that their slaughter
+LINE=may have. If we
+LINE=regard the slaying of
+LINE=fellow humans as a
+LINE=crime, so must we
+LINE=regard the killing of
+LINE=an orc.
+LINE= At the same time,
+}
+
+[PAGE 134]
+{
+LINE=should a lizardman
+LINE=slay a human, should
+LINE=we not forgive their
+LINE=ignorance and
+LINE=foolishness? Let us
+LINE=not surrender the
+LINE=high moral ground by
+LINE=descending to
+}
+
+[PAGE 135]
+{
+LINE=bestiality.
+LINE= Now, I say not that
+LINE=we should fail to
+LINE=defend ourselves in
+LINE=case of attack, for
+LINE=even amongst humans
+LINE=we see war, we see
+LINE=famine, and we see
+}
+
+[PAGE 136]
+{
+LINE=assault (though we
+LINE=owe a debt of
+LINE=gratitude to our Lord
+LINE=British for
+LINE=preserving us from
+LINE=the worst of these!).
+LINE=However, incursions
+LINE=such as the recent
+}
+
+[PAGE 137]
+{
+LINE=tragedy which cast us
+LINE=the life of Japheth,
+LINE=Guildmaster of
+LINE=Trinsic's Paladins,
+LINE=are folly.
+LINE= I had met Japheth,
+LINE=and like all
+LINE=paladins, he burned
+}
+
+[PAGE 138]
+{
+LINE=with an inner fire.
+LINE=Yet though I had the
+LINE=utmost respect for
+LINE=him, none could deny
+LINE=the hatred that
+LINE=flashed in his eyes
+LINE=at the mere mention
+LINE=of orcs. And thus he
+}
+
+[PAGE 139]
+{
+LINE=carried his battle to
+LINE=the orc camps, and
+LINE=died there, unable to
+LINE=rise above his own
+LINE=childhood experiences
+LINE=depicted in his book,
+LINE="The Burning of
+LINE=Trinsic". 'Tis a
+}
+
+[PAGE 140]
+{
+LINE=shame that even our
+LINE=mightiest men fall
+LINE=prey to this
+LINE=ignorance!
+LINE= Are there not
+LINE=legends of orcs
+LINE=adopting human
+LINE=children to raise as
+}
+
+[PAGE 141]
+{
+LINE=their own? Tales of
+LINE=complex societies
+LINE=build underground by
+LINE=races we regard as
+LINE=bestial?
+LINE= Let us not repeat
+LINE=the mistake of
+LINE=Japheth of the
+}
+
+[PAGE 142]
+{
+LINE=Paladins, and let us
+LINE=cease to persecute
+LINE=the nonhuman races,
+LINE=before we discover
+LINE=that we are harming
+LINE=ourselves in the
+LINE=process.
+}
+
+// ============================ Virtue
+[BOOK 11]
+{
+PAGES=20
+TITLE=Virtue
+AUTHOR=Lord British
+PAGE=143
+PAGE=144
+PAGE=145
+PAGE=146
+PAGE=147
+PAGE=148
+PAGE=149
+PAGE=150
+PAGE=151
+PAGE=152
+PAGE=153
+PAGE=154
+PAGE=155
+PAGE=156
+PAGE=157
+PAGE=158
+PAGE=159
+PAGE=160
+PAGE=161
+PAGE=162
+PAGE=163
+}
+
+[PAGE 143]
+{
+LINE= Within this world
+LINE=live people with many
+LINE=different ideals, and
+LINE=this is good. Yet
+LINE=what is it within the
+LINE=people of our land
+LINE=that sorts out the
+LINE=good from the evil,
+}
+
+[PAGE 144]
+{
+LINE=the cherished form
+LINE=the disdained?
+LINE=Virtue, I say it is,
+LINE=and virtue is the
+LINE=logical outcome of a
+LINE=people who wish to
+LINE=live together in a
+LINE=bonded society.
+}
+
+[PAGE 145]
+{
+LINE= For without Virtues
+LINE=as a code of conduct
+LINE=which people maintain
+LINE=in their relations
+LINE=with each other, the
+LINE=fabric of that
+LINE=society will become
+LINE=weakened. For a
+}
+
+[PAGE 146]
+{
+LINE=society to grow and
+LINE=prosper for all, each
+LINE=must grant the others
+LINE=a common base of
+LINE=consideration.
+LINE= I call this the base
+LINE=the Virtues. For
+LINE=though one person
+}
+
+[PAGE 147]
+{
+LINE=might gain personal
+LINE=advantage by
+LINE=breaching such a
+LINE=code, the society as
+LINE=a whole would suffer.
+LINE= There are three
+LINE=Principle Virtues
+LINE=that should guide
+}
+
+[PAGE 148]
+{
+LINE=people to
+LINE=enlightenment. These
+LINE=are: Truth, Love and
+LINE=Courage. From all the
+LINE=infinite reasons one
+LINE=may have to found an
+LINE=action, such as greed
+LINE=or charity, envy or
+}
+
+[PAGE 149]
+{
+LINE=pity, the three
+LINE=Principle Virtues
+LINE=stand out.
+LINE= In fact all other
+LINE=virtues and vices can
+LINE=be shown to be built
+LINE=from these principle
+LINE=and their opposite
+}
+
+[PAGE 150]
+{
+LINE=corruption's of
+LINE=Falsehood, Hatred and
+LINE=Cowardice. These
+LINE=three Principles can
+LINE=be combined in eight
+LINE=ways, which I will
+LINE=call the eight
+LINE=virtues. The eight
+}
+
+[PAGE 151]
+{
+LINE=virtues which we
+LINE=should build our
+LINE=society upon follow.
+LINE= Truth alone becomes
+LINE=Honesty, for without
+LINE=honesty between our
+LINE=people, how can we
+LINE=build the trust which
+}
+
+[PAGE 152]
+{
+LINE=is needed to maximize
+LINE=our successes.
+LINE= Love alone becomes
+LINE=compassion, for at
+LINE=some time or another
+LINE=all of us will need
+LINE=the compassion of
+LINE=others, and most
+}
+
+[PAGE 153]
+{
+LINE=likely compassion
+LINE=will be shown to
+LINE=those who have shown
+LINE=it.
+LINE= Courage alone
+LINE=becomes Valor,
+LINE=without valor our
+LINE=people will never
+}
+
+[PAGE 154]
+{
+LINE=reach into the
+LINE=unknown or to the
+LINE=risky and will never
+LINE=achieve.
+LINE= Truth tempered by
+LINE=Love give us Justice,
+LINE=for only in a loving
+LINE=search for the truth
+}
+
+[PAGE 155]
+{
+LINE=can one dispense fair
+LINE=Justice, rather than
+LINE=create a cold and
+LINE=callous people.
+LINE= Love and Courage
+LINE=give us Sacrifice,
+LINE=for a people who love
+LINE=each other will be
+}
+
+[PAGE 156]
+{
+LINE=willing to make
+LINE=personal sacrifices
+LINE=to help other in
+LINE=need, which one day,
+LINE=may be needed in
+LINE=return.
+LINE= Courage and Truth
+LINE=give us Honor, great
+}
+
+[PAGE 157]
+{
+LINE=knights know this
+LINE=well, that chivalric
+LINE=honor can be found by
+LINE=adhering to this code
+LINE=of conduct.
+LINE= Combining Truth,
+LINE=Love and Courage
+LINE=suggest the virtue of
+}
+
+[PAGE 158]
+{
+LINE=Spirituality the
+LINE=virtue that causes
+LINE=one to be
+LINE=introspective, to
+LINE=wonder about ones
+LINE=place in this world
+LINE=and whether one's
+LINE=deeds will be
+}
+
+[PAGE 159]
+{
+LINE=recorded as a gift to
+LINE=the world or a
+LINE=plague.
+LINE= The final Virtue is
+LINE=more complicated. For
+LINE=the eighth
+LINE=combination is that
+LINE=devoid of Truth, Love
+}
+
+[PAGE 160]
+{
+LINE=or Courage witch can
+LINE=only exist in a state
+LINE=of great Pride, which
+LINE=of course is not a
+LINE=virtue at all.
+LINE=Perhaps this trick of
+LINE=fate is a test to see
+LINE=if one can realize
+}
+
+[PAGE 161]
+{
+LINE=that the true virtue
+LINE=is that of Humility.
+LINE=I feel that the
+LINE=people of Magincia
+LINE=fail to see this to
+LINE=such a degree that I
+LINE=would not be
+LINE=surprised if some ill
+}
+
+[PAGE 162]
+{
+LINE=fate awaited their
+LINE=future.
+LINE= Thus from the
+LINE=infinite
+LINE=possibilities which
+LINE=spawned the Three
+LINE=Principles of Truth,
+LINE=Love and Courage,
+}
+
+[PAGE 163]
+{
+LINE=come the Eight
+LINE=Virtues of Honesty,
+LINE=Compassion, Valor,
+LINE=Justice, Sacrifice,
+LINE=Honor, Spirituality,
+LINE=and Humility.
+}
+
+// ============================ My Story
+[BOOK 12]
+{
+PAGES=50
+TITLE=My Story
+AUTHOR=Sherry the Mouse
+PAGE=164
+PAGE=165
+PAGE=166
+PAGE=167
+PAGE=168
+PAGE=169
+PAGE=170
+PAGE=171
+PAGE=172
+PAGE=173
+PAGE=174
+PAGE=175
+PAGE=176
+PAGE=177
+PAGE=178
+PAGE=179
+PAGE=180
+PAGE=181
+PAGE=182
+PAGE=183
+PAGE=184
+PAGE=185
+PAGE=186
+PAGE=187
+PAGE=188
+PAGE=189
+PAGE=190
+PAGE=191
+PAGE=192
+PAGE=193
+PAGE=194
+PAGE=195
+PAGE=196
+PAGE=197
+PAGE=198
+PAGE=199
+PAGE=200
+PAGE=201
+PAGE=202
+PAGE=203
+PAGE=204
+PAGE=205
+PAGE=206
+PAGE=207
+PAGE=208
+PAGE=209
+PAGE=210
+PAGE=211
+PAGE=212
+PAGE=213
+}
+
+[PAGE 164]
+{
+LINE= 'Twas on a chilly
+LINE=night, when the moon
+LINE=shone pasty-faced
+LINE=above the horizon,
+LINE=balanced on the
+LINE=towers of Lord
+LINE=British's castle that
+LINE=the events I am about
+}
+
+[PAGE 165]
+{
+LINE=to relate took place,
+LINE=some years ago now. I
+LINE=witnessed them all
+LINE=from my tiny mouse
+LINE=hole.
+LINE= My lords British and
+LINE=Blackthorn are
+LINE=accustomed to a game
+}
+
+[PAGE 166]
+{
+LINE=of chess 'pon an
+LINE=evening, over witch
+LINE=they argue the issues
+LINE=that affect the
+LINE=course of the realm.
+LINE=Lord Blackthorn was
+LINE=on his way to Lord
+LINE=British's chambers,
+}
+
+[PAGE 167]
+{
+LINE=and Lord British
+LINE=stood by a window
+LINE=casement, just having
+LINE=finished setting the
+LINE=pieces upon the
+LINE=board.
+LINE= Suddenly the
+LINE=shutters blew open,
+}
+
+[PAGE 168]
+{
+LINE=and Lord British fell
+LINE=to the ground, one
+LINE=hand shielding his
+LINE=eyes. A chill wind
+LINE=entered the room, and
+LINE=it seemed a gash was
+LINE=torn in the very air.
+LINE=Through the gash I
+}
+
+[PAGE 169]
+{
+LINE=could see stars and
+LINE=swirling clouds of
+LINE=stellar dust, and a
+LINE=coldness sucked all
+LINE=the warmth from the
+LINE=air. A terrible wind
+LINE=tossed books and
+LINE=blankets across the
+}
+
+[PAGE 170]
+{
+LINE=room, and furniture
+LINE=toppled.
+LINE= From within this
+LINE=gash issued a great
+LINE=voice, unlike any I
+LINE=have ever heard. And
+LINE=these are the words
+LINE=it spoke (for I
+}
+
+[PAGE 171]
+{
+LINE=memorized them most
+LINE=carefully):
+LINE= "Greetings, Lord
+LINE=British. I am the
+LINE=Time Lord, a being
+LINE=from beyond your
+LINE=dimension, as thou
+LINE=art from a world
+}
+
+[PAGE 172]
+{
+LINE=other than Sosaria. I
+LINE=am here to bring thee
+LINE=warning. Dost thou
+LINE=recall how long ago a
+LINE=mysterious Stranger
+LINE=came to Sosaria and
+LINE=saved the world from
+LINE=the evil wizard
+}
+
+[PAGE 173]
+{
+LINE=Mondain? He
+LINE=shattered the Gem of
+LINE=Immortality, within
+LINE=which dwelled a
+LINE=perfect likeness of
+LINE=this world."
+LINE= Lord British slowly
+LINE=stood and faced the
+}
+
+[PAGE 174]
+{
+LINE=hole in the air. "I
+LINE=remember," he said.
+LINE="Oft have I wished
+LINE=that stranger would
+LINE=return."
+LINE= "He hath returned,"
+LINE=spoke the voice. "But
+LINE=not to here. When the
+}
+
+[PAGE 175]
+{
+LINE=Gem was shattered, a
+LINE=thousand shards were
+LINE=scattered across the
+LINE=dimensions, and in
+LINE=each shard there is a
+LINE=perfect likeness of
+LINE=this world. And thou
+LINE=dost live upon one
+}
+
+[PAGE 176]
+{
+LINE=such shard, for thou
+LINE=art not of the true
+LINE=world-thou art merely
+LINE=a reflection."
+LINE= Lord British looked
+LINE=shaken by this, and I
+LINE=did not know what to
+LINE=think! Was I merely a
+}
+
+[PAGE 177]
+{
+LINE=shadow of the real
+LINE=me, which lives still
+LINE=somewhere else across
+LINE=uncounted universes?
+LINE= "My task is to heal
+LINE=this shattered world,
+LINE=Lord British," said
+LINE=the voice. "And I
+}
+
+[PAGE 178]
+{
+LINE=seek to enlist thee
+LINE=in my cause. Be
+LINE=warned that in this
+LINE=case, healing carries
+LINE=with it a terrible
+LINE=price."
+LINE= Concern warred with
+LINE=curiosity on my
+}
+
+[PAGE 179]
+{
+LINE=liege's face, but
+LINE=ever one to shoulder
+LINE=a burden, he
+LINE=straitened and faced
+LINE=the gash in the air
+LINE=bravely. "Name thy
+LINE=price."
+LINE= "A shard of a
+}
+
+[PAGE 180]
+{
+LINE=universe is a
+LINE=powerful thing, and a
+LINE=universe shattered is
+LINE=always in danger
+LINE=from the powers of
+LINE=darkness. Already
+LINE=three shards were
+LINE=turned to evil, and
+}
+
+[PAGE 181]
+{
+LINE=sent to plague the
+LINE=original universe in
+LINE=the form of Shadow
+LINE=lords. Many times
+LINE=have I brought the
+LINE=Stranger back to
+LINE=Britannia, to
+LINE=preserve it from its
+}
+
+[PAGE 182]
+{
+LINE=own folly or from
+LINE=outside dangers. Yet
+LINE=as long as the world
+LINE=remaineth in pieces,
+LINE=it remaineth
+LINE=vulnerable. We must
+LINE=bring the shards into
+LINE=harmony, so that the
+}
+
+[PAGE 183]
+{
+LINE=resonate in such a
+LINE=manner that matches
+LINE=the original
+LINE=universe. Then the
+LINE=two universes shall
+LINE=merge, and be again
+LINE=as one."
+LINE= "But if we are only
+}
+
+[PAGE 184]
+{
+LINE=shadows..." Lord
+LINE=British said
+LINE=wonderingly.
+LINE= The light from the
+LINE=stars within the hole
+LINE=seemed to dim.
+LINE="Indeed, the
+LINE=reflections shall
+}
+
+[PAGE 185]
+{
+LINE=become one with the
+LINE=original. Thou
+LINE=wouldst cease to be
+LINE=as thou art, and
+LINE=become part of the
+LINE=larger you. Thou
+LINE=shalt not die;
+LINE=however, uncounted
+}
+
+[PAGE 186]
+{
+LINE=generations have
+LINE=passed and borne
+LINE=children since that
+LINE=day, and they have
+LINE=no counterparts. They
+LINE=would perish
+LINE=utterly."
+LINE= Lord British sagged
+}
+
+[PAGE 187]
+{
+LINE=in shock, realizing
+LINE=the terrible price
+LINE=that would be paid to
+LINE=heal the universe.
+LINE="All of my people,"
+LINE=he breathed.
+LINE= "Tis for the greater
+LINE=good."
+}
+
+[PAGE 188]
+{
+LINE= Lord British bowed
+LINE=his head.
+LINE= 'Twas then I saw the
+LINE=movement by the door,
+LINE=half-hid by the
+LINE=heavy red curtains.
+LINE=Lord Blackthorn stood
+LINE=there, concealed from
+}
+
+[PAGE 189]
+{
+LINE=the rest of the room,
+LINE=his face white. How
+LINE=long had he been
+LINE=listening? I cannot
+LINE=say, yet I suspect
+LINE=that he had heard all
+LINE=that the mysterious
+LINE=voice had to say.
+}
+
+[PAGE 190]
+{
+LINE= "How then, shall I
+LINE=aid thee?" Lord
+LINE=British said,
+LINE=weariness in his
+LINE=voice.
+LINE= "Aid the nobility
+LINE=that resideth in the
+LINE=human heart. Protect
+}
+
+[PAGE 191]
+{
+LINE=the Virtues that so
+LINE=recently came to thee
+LINE=in thought late at
+LINE=night. They are the
+LINE=Virtues of life, as
+LINE=your counterpart
+LINE=understands them to
+LINE=be. For when thy
+}
+
+[PAGE 192]
+{
+LINE=populace doth live
+LINE=and breathe these
+LINE=Virtues, shall it
+LINE=match the true
+LINE=Britannia, and thy
+LINE=shard shall rejoin
+LINE=with it."
+LINE= The gash in the air
+}
+
+[PAGE 193]
+{
+LINE=began to close, and
+LINE=with it warmth stole
+LINE=back into the room.
+LINE= "I was going to
+LINE=discuss my idea with
+LINE=Blackthorn tonight,"
+LINE=Lord British
+LINE=breathed. "Have I not
+}
+
+[PAGE 194]
+{
+LINE=thoughts that are my
+LINE=own? Is my life but a
+LINE=reflection of another
+LINE=me?"
+LINE= "Nay," said the
+LINE=voice, smaller
+LINE=through the
+LINE=diminished opening.
+}
+
+[PAGE 195]
+{
+LINE="Say, rather, that
+LINE=you are parallel, for
+LINE=there is no guarantee
+LINE=that thou shalt
+LINE=accomplish what I
+LINE=have set thee to. I
+LINE=speak tonight to a
+LINE=thousand of thee, and
+}
+
+[PAGE 196]
+{
+LINE=ask the same of all.
+LINE=Perhaps not all shall
+LINE=seek to aid me." And
+LINE=with that, the gash
+LINE=closed. and the voice
+LINE=was gone, leaving a
+LINE=room that appeared
+LINE=tossed by a mighty
+}
+
+[PAGE 197]
+{
+LINE=storm.
+LINE= "Destroy the world
+LINE=to save the
+LINE=universe," Lord
+LINE=British said
+LINE=bitterly. "I do not
+LINE=wonder that some may
+LINE=balk."
+}
+
+[PAGE 198]
+{
+LINE= Lord Blackthorn
+LINE=collected himself,
+LINE=and strode into the
+LINE=room, a decent
+LINE=mimicry of surprise
+LINE=on his face. "My
+LINE=liege! What has
+LINE=happened here?" he
+}
+
+[PAGE 199]
+{
+LINE=exclaimed, feigning
+LINE=dismay well. But not
+LINE=well enough to fool
+LINE=his old friend, whose
+LINE=eyes narrowed at
+LINE=seeing him there.
+LINE= "How much didst thou
+LINE=hear?" demanded Lord
+}
+
+[PAGE 200]
+{
+LINE=British.
+LINE= "Why, nothing,"
+LINE=managed Blacktorn,
+LINE=his head ducked away
+LINE=from his friend, as
+LINE=he bent to retrieve
+LINE=the fallen chess
+LINE=pieces. "I merely
+}
+
+[PAGE 201]
+{
+LINE=came for our game of
+LINE=chess."
+LINE= Together they
+LINE=righted the pedestal
+LINE=table, and set the
+LINE=pieces upon the black
+LINE=and white squares.
+LINE="Such simplicity to
+}
+
+[PAGE 202]
+{
+LINE=the game,
+LINE=Blackthorn," mused
+LINE=Lord British, idly
+LINE=brushing one finger
+LINE=against the board.
+LINE="Black and white,
+LINE=each to its own
+LINE=color, as if life
+}
+
+[PAGE 203]
+{
+LINE=were so simple. What
+LINE=think you?"
+LINE= Blackthorn sat
+LINE=heavily on a hassock
+LINE=beside the chess
+LINE=table "I think that
+LINE=matters are never so
+LINE=simple, my liege. And
+}
+
+[PAGE 204]
+{
+LINE=I would regret it
+LINE=deeply if someone,
+LINE=such as a friend, saw
+LINE=it thus."
+LINE= Lord British's eyes
+LINE=met his. "Yet
+LINE=sometimes one must
+LINE=sacrifice a pawn to
+}
+
+[PAGE 205]
+{
+LINE=save a king."
+LINE= Lord Blackthorn met
+LINE=his gaze squarely.
+LINE="Even pawns have
+LINE=lives and loves at
+LINE=home, my lord." Then
+LINE=he reached out for a
+LINE=pawn, and firmly
+}
+
+[PAGE 206]
+{
+LINE=moved it forward two
+LINE=squares. "Shall we
+LINE=play a game?" he
+LINE=asked.
+LINE= The chess game that
+LINE=night was a draw, and
+LINE=they played grimly.
+LINE= And the next day,
+}
+
+[PAGE 207]
+{
+LINE=Lord British gathered
+LINE=the nobles to
+LINE=proclaim the idea of
+LINE=a new system of
+LINE=Virtues, and declared
+LINE=that shrines should
+LINE=be built across the
+LINE=land.
+}
+
+[PAGE 208]
+{
+LINE= Lord Blackthorn
+LINE=opposed it bitterly,
+LINE=and many thought him
+LINE=strange for doing so,
+LINE=for ever had he been
+LINE=a noble and upright
+LINE=man, and ever had he
+LINE=and Lord British been
+}
+
+[PAGE 209]
+{
+LINE=in accord. Declaring
+LINE=that he should start
+LINE=his own shrine, he
+LINE=departed the castle
+LINE=that day to live in a
+LINE=tower in a lake on
+LINE=the north side of the
+LINE=city.
+}
+
+[PAGE 210]
+{
+LINE= They are still the
+LINE=best of friends, yet
+LINE=a sadness hangs
+LINE=between them, as if
+LINE=they were forced into
+LINE=making choices that
+LINE=appealed not to them.
+LINE=And at night, when I
+}
+
+[PAGE 211]
+{
+LINE=creep softly from one
+LINE=corner of my liege's
+LINE=bed chamber to
+LINE=another, I sometimes
+LINE=see him take a pawn
+LINE=from his night table,
+LINE=and hold it in his
+LINE=hand, and quietly
+}
+
+[PAGE 212]
+{
+LINE=weep.
+LINE= But I am but a
+LINE=mouse, and none hear
+LINE=me. This tale goes
+LINE=unknown, save for my
+LINE=writing these
+LINE=enormous letters with
+LINE=mine ink-stained tiny
+}
+
+[PAGE 213]
+{
+LINE=paws for thee to
+LINE=read, for I fear
+LINE=indeed for our world
+LINE=and for our people in
+LINE=these perilous times.
+}
+
+// ============================ The Burning of Trinsic
+[BOOK 13]
+{
+PAGES=24
+TITLE=The Burning of Trinsic
+AUTHOR=Japheth of Trinsic
+PAGE=214
+PAGE=215
+PAGE=216
+PAGE=217
+PAGE=218
+PAGE=219
+PAGE=220
+PAGE=221
+PAGE=222
+PAGE=223
+PAGE=224
+PAGE=225
+PAGE=226
+PAGE=227
+PAGE=228
+PAGE=229
+PAGE=230
+PAGE=231
+PAGE=232
+PAGE=233
+PAGE=234
+PAGE=235
+PAGE=236
+PAGE=237
+}
+
+[PAGE 214]
+{
+LINE= 'Twas a sight to
+LINE=see, the sunlight
+LINE=falling lightly on
+LINE=the sandstone walls
+LINE=of Trinsic 'pon a
+LINE=morning in spring.
+LINE= Children ran along
+LINE=the parapets and walk
+}
+
+[PAGE 215]
+{
+LINE=ways, their laughter
+LINE=and running providing
+LINE=music to the
+LINE=daybreak, despite
+LINE=their oft-ragged
+LINE=clothing.
+LINE= And I was one of
+LINE=those young ones,
+}
+
+[PAGE 216]
+{
+LINE=letting my joy rise
+LINE=up to the skies.
+LINE= Little did we all
+LINE=know of the darker
+LINE=days that would lie
+LINE=ahead, for we were
+LINE=too young.
+LINE= Had we but gained
+}
+
+[PAGE 217]
+{
+LINE=access to the quiet
+LINE=councils held in the
+LINE=Paladin tower as it
+LINE=faced the sea,
+LINE=councils lit by
+LINE=candlelight and
+LINE=worry, we would have
+LINE=learned more of the
+}
+
+[PAGE 218]
+{
+LINE=fears of imminent
+LINE=attack from the
+LINE=forest, where foul
+LINE=creatures born of
+LINE=dank caves and
+LINE=darkness were
+LINE=marauding ever more
+LINE=often into the lands
+}
+
+[PAGE 219]
+{
+LINE=around Trinsic's
+LINE=moat.
+LINE= But we were
+LINE=children! The
+LINE=parapets and the moat
+LINE=were places to play,
+LINE=not stout defenses,
+LINE=and we gave no
+}
+
+[PAGE 220]
+{
+LINE=thought to the
+LINE=necessities that must
+LINE=have required their
+LINE=construction.
+LINE= We used to reach the
+LINE=sheltered orchards on
+LINE=the lee side of the
+LINE=parapet walls, where
+}
+
+[PAGE 221]
+{
+LINE=the southern river
+LINE=cut through the city,
+LINE=by swimming across
+LINE=the water.
+LINE= The rich folk who
+LINE=lived in the great
+LINE=manses there would
+LINE=shout from their
+}
+
+[PAGE 222]
+{
+LINE=windows and shake
+LINE=their fists, for we
+LINE=would run through
+LINE=their gardens and
+LINE=tear up the delicate
+LINE=foxgloves and orfeurs
+LINE=with our unshod dirty
+LINE=feet. Then we would
+}
+
+[PAGE 223]
+{
+LINE=dive into the water
+LINE=and splash merrily to
+LINE=the fruit trees.
+LINE= The southern river
+LINE=lazily slid under the
+LINE=an ungated arch in
+LINE=the mighty wall, and
+LINE=we would lay on the
+}
+
+[PAGE 224]
+{
+LINE=grassy bank and
+LINE=watch it gurgle by
+LINE=the lily pads.
+LINE= That spring that
+LINE=pleasant spot became
+LINE=the doorway through
+LINE=which our city of
+LINE=Trinsic let in the
+}
+
+[PAGE 225]
+{
+LINE=monstrous deformed
+LINE=humanoids that
+LINE=savaged us. I lay
+LINE=upon that grassy bank
+LINE=and watched them wade
+LINE=in, their coarse hair
+LINE=wet and matted, algae
+LINE=and muck fastening
+}
+
+[PAGE 226]
+{
+LINE=their wild brows.
+LINE= They caught sight of
+LINE=a quicksilver girl
+LINE=with bright blond
+LINE=hair and lively eyes.
+LINE=Her name was Leyla,
+LINE=and that spring I had
+LINE=held fond dreams of
+}
+
+[PAGE 227]
+{
+LINE=holding her hand and
+LINE=sharing flavored ice
+LINE=while dangling our
+LINE=feet off the small
+LINE=bridge by Smugglers
+LINE=Gate.
+LINE= And I said nothing
+LINE=when they caught her,
+}
+
+[PAGE 228]
+{
+LINE=and did not cry out
+LINE=when they dragged her
+LINE=off through that
+LINE=breach in our wall,
+LINE=and did not warn the
+LINE=city when I saw the
+LINE=helmeted orc captains
+LINE=call the charge upon
+}
+
+[PAGE 229]
+{
+LINE=the mansions.
+LINE= Blame me not, for I
+LINE=was but a child, and
+LINE=one who hid in the
+LINE=branches of the peach
+LINE=trees, all a-tremble
+LINE=whilst I watched the
+LINE=smoke rise from Sean
+}
+
+[PAGE 230]
+{
+LINE=the tailor's, and
+LINE=fire lash out at the
+LINE=roof of witchy
+LINE=Eleanor's tavern.
+LINE= To this day I have
+LINE=had no word of Leyla,
+LINE=and to this day the
+LINE=smell of burning wood
+}
+
+[PAGE 231]
+{
+LINE=can conjure terrible
+LINE=dreams. Yet with the
+LINE=eyes of adulthood,
+LINE='tis possible to
+LINE=examine the flaws in
+LINE=the defense of
+LINE=Trinsic on that
+LINE=fateful day, and the
+}
+
+[PAGE 232]
+{
+LINE=reasons why our walls
+LINE=are now double-thick,
+LINE=and why our buildings
+LINE=are now built as
+LINE=fortresses within a
+LINE=somber fortified
+LINE=city.
+LINE= While I can look our
+}
+
+[PAGE 233]
+{
+LINE=from the top of the
+LINE=new Paladin tower,
+LINE=and spy the mighty
+LINE=white sails across
+LINE=the barrier island,
+LINE=and can descry the
+LINE=small hollow south of
+LINE=the city where
+}
+
+[PAGE 234]
+{
+LINE=gypsies are wont to
+LINE=camp, I can also
+LINE=envision the city as
+LINE=it might be burning,
+LINE=and I bless the
+LINE=bargain we made:
+}
+
+[PAGE 235]
+{
+LINE=space for safety,
+LINE=grace for sturdiness,
+LINE=and wood for stone.
+LINE=Whilst I live, I
+LINE=shall not see Trinsic
+LINE=burn, and no more
+LINE=cries of little girls
+}
+
+[PAGE 236]
+{
+LINE=will haunt the sleep
+LINE=of our fair citizens.
+}
+
+[PAGE 237]
+{
+LINE= -Japheth, Paladin
+LINE=Guild master of the
+LINE=City of Trinsic
+}
+
+// ============================ The Fight
+[BOOK 14]
+{
+PAGES=13
+TITLE=The Fight
+AUTHOR=M. de la Garza
+PAGE=238
+PAGE=239
+PAGE=240
+PAGE=241
+PAGE=242
+PAGE=243
+PAGE=244
+PAGE=245
+PAGE=246
+PAGE=247
+PAGE=248
+PAGE=249
+PAGE=250
+}
+
+[PAGE 238]
+{
+LINE= A cold autumn's
+LINE=morning with misty
+LINE=fog secures a dozen
+LINE=brave knights,
+LINE=supplying hidden
+LINE=shelter from prying
+LINE=eyes deep in the
+LINE=foothills of the
+}
+
+[PAGE 239]
+{
+LINE=vibrant valley.
+LINE=Dragons soar like
+LINE=fierce warriors, and
+LINE=circling around and
+LINE=around, then roaring
+LINE=like thunder,
+LINE=rallying all that
+LINE=listen. The dragons
+}
+
+[PAGE 240]
+{
+LINE=land swiftly beside
+LINE=the proud warriors,
+LINE=bending necks and
+LINE=extending wings,
+LINE=lifting black claws
+LINE=and allowing valiant
+LINE=fighters to ride
+LINE=forth and win an
+}
+
+[PAGE 241]
+{
+LINE=arisen battle. The
+LINE=increasing winds
+LINE=silence the sounds of
+LINE=combat, and they
+LINE=fight, standing their
+LINE=ground like mothers
+LINE=protecting their
+LINE=children, bright
+}
+
+[PAGE 242]
+{
+LINE=armor flashing each
+LINE=one falls.
+LINE= A cold autumn's
+LINE=evening with misty
+LINE=fog cradles a dozen
+LINE=battered corpses of
+LINE=knights, creasing
+LINE=them in currents of
+}
+
+[PAGE 243]
+{
+LINE=winds that run deep
+LINE=in the foothills of
+LINE=the desolate valley.
+LINE=Dragons glide like
+LINE=silent angels,
+LINE=circling around and
+LINE=around, then calling
+LINE=like banshees;
+}
+
+[PAGE 244]
+{
+LINE=keening cries of
+LINE=mourning. The dragons
+LINE=land heavily beside
+LINE=the peaceful bodies,
+LINE=bending necks and
+LINE=extending wings,
+LINE=lifting black claws
+LINE=and allowing valiant
+}
+
+[PAGE 245]
+{
+LINE=fighters to ride
+LINE=forth and win an
+LINE=arisen battle. The
+LINE=increasing winds
+LINE=silence the sounds
+LINE=of combat, and they
+LINE=fight, standing their
+LINE=ground like mothers
+}
+
+[PAGE 246]
+{
+LINE=protecting their
+LINE=children, bright
+LINE=armor flashing as
+LINE=each one falls.
+LINE= A cold autumn's
+LINE=evening with misty
+LINE=fog cradles a dozen
+LINE=battered corpses of
+}
+
+[PAGE 247]
+{
+LINE=knights, creasing
+LINE=them in currents of
+LINE=winds that run deep
+LINE=in the foothills of
+LINE=the desolate valley.
+LINE=Dragons glide like
+LINE=silent angels,
+LINE=circling around and
+}
+
+[PAGE 248]
+{
+LINE=around, then calling
+LINE=like banshees;
+LINE=keening cries of
+LINE=mourning. The dragons
+LINE=land heavily beside
+LINE=the peaceful bodies,
+LINE=bending necks and
+LINE=extending wings,
+}
+
+[PAGE 249]
+{
+LINE=lifting black claws
+LINE=and pinching the
+LINE=sacred ground and
+LINE=new eternal home.The
+LINE=dying winds whistle
+LINE=among the dead in
+LINE=somber procession,
+LINE=and they lie,
+}
+
+[PAGE 250]
+{
+LINE=grasping weapons to
+LINE=protect themselves
+LINE=like knights still in
+LINE=battle, shattered
+LINE=armor shining like
+LINE=newly born stars.
+}
+
+// ============================ A Song of Samlethe
+[BOOK 15]
+{
+PAGES=5
+TITLE=A Song of Samlethe
+AUTHOR=Samlethe
+PAGE=251
+PAGE=252
+PAGE=253
+PAGE=254
+PAGE=255
+}
+
+[PAGE 251]
+{
+LINE=  The firstbear did
+LINE=     swim by day,
+LINE= And it did sleep by
+LINE=        night.
+LINE=It kept itself within
+LINE=       its cave
+LINE=  and ate by starry
+LINE=        light.
+}
+
+[PAGE 252]
+{
+LINE= The second bear it
+LINE=     did cavort
+LINE= 'Neath cananoppies
+LINE=      of trees,
+LINE=   And danced its
+LINE= strange bearish sort
+LINE=   Of joy for all
+LINE=       to see.
+}
+
+[PAGE 253]
+{
+LINE=The first bear, well,
+LINE=    'twas hunted,
+LINE=   And today adorns
+LINE=       a floor.
+LINE= Its ruggish face has
+LINE=     been tented
+LINE=   By footfalls and
+LINE=       the door.
+}
+
+[PAGE 254]
+{
+LINE=  The second bear
+LINE=   did step once
+LINE=Into a mushroom ring,
+LINE=    And now does
+LINE=  dance the dunce
+LINE=     For wisps
+LINE=  and unseen things.
+}
+
+[PAGE 255]
+{
+LINE=  So do not dance,
+LINE=  and do not sleep,
+LINE=     Or else be
+LINE=     led astray!
+LINE=For bears all end up
+LINE=    six feet deep
+LINE=    At the end of
+LINE=   Samlethe's day.
+}
+
+// ============================ Classic Children's Tales, Volume 2
+[BOOK 16]
+{
+PAGES=10
+TITLE=Classic Children's Tales, Volume 2
+AUTHOR=Guilhem, Editor
+PAGE=256
+PAGE=257
+PAGE=258
+PAGE=259
+PAGE=260
+PAGE=261
+PAGE=262
+PAGE=263
+PAGE=264
+PAGE=265
+}
+
+[PAGE 256]
+{
+LINE= Clarke's Printery is
+LINE=Honored to Present
+LINE=Tales from Ages Past!
+LINE=Guilhem the Scholar
+LINE=Shall End Each Volume
+LINE=with Staid
+LINE=Commentary.
+LINE=-
+}
+
+[PAGE 257]
+{
+LINE=The Rhym
+LINE=  Dance in the Star
+LINE=       Chamber
+LINE=And Dance in the Pit
+LINE=   And Eat of your
+LINE=       Entrees
+LINE= In the Glass House
+LINE=       you sit
+}
+
+[PAGE 258]
+{
+LINE=Commentary
+LINE= A common feeding
+LINE=rhyme for little
+LINE=babies, 'tis thought
+LINE=that this little
+LINE=ditty is part of the
+LINE=corpus of legendary
+LINE=tales regarding the
+}
+
+[PAGE 259]
+{
+LINE=world before Sosaria
+LINE=(see the wonderful
+LINE=fables of Fabio the
+LINE=Poor for
+LINE=fictionalized
+LINE=versions of these
+LINE=stories, also
+LINE=available from this
+}
+
+[PAGE 260]
+{
+LINE=same publisher).
+LINE= According to these
+LINE=old tales, which
+LINE=survive mostly in the
+LINE=hills and remote
+LINE=villages where Lord
+LINE=British is as yet a
+LINE=distant and mythical
+}
+
+[PAGE 261]
+{
+LINE=ruler, the gods of
+LINE=old (a fanciful
+LINE=notion!) met to
+LINE=discuss the progress
+LINE=of creating the world
+LINE=in mystical rooms. A
+LINE=simple analysis
+LINE=reveals these rooms
+}
+
+[PAGE 262]
+{
+LINE=to be mere
+LINE=mythological
+LINE=generalizations.
+LINE= "The Star Chamber"
+LINE=is clearly a
+LINE=reference to the sky.
+LINE="The Pit" is
+LINE=certainly an
+}
+
+[PAGE 263]
+{
+LINE=Underworld analogous
+LINE=to the Snakehills of
+LINE=other tales, and "the
+LINE=Glass House" is no
+LINE=doubt the vantage
+LINE=point from which the
+LINE=gods observed their
+LINE=creation. All is
+}
+
+[PAGE 264]
+{
+LINE=simple when seen
+LINE=from this perspective,
+LINE=leaving only the
+LINE=mysterious reference
+LINE=to dinners. Oddly
+LINE=enough, the rhyme is
+LINE=universally used only
+LINE=for midnight
+}
+
+[PAGE 265]
+{
+LINE=feedings, never
+LINE=during the day.
+}
+
+// ============================ Classic Tales of Vesper, Volume 1
+[BOOK 17]
+{
+PAGES=20
+TITLE=Classic Tales of Vesper, Volume 1
+AUTHOR=Clarke's Printery
+PAGE=266
+PAGE=267
+PAGE=268
+PAGE=269
+PAGE=270
+PAGE=271
+PAGE=272
+PAGE=273
+PAGE=274
+PAGE=275
+PAGE=276
+PAGE=277
+PAGE=278
+PAGE=279
+PAGE=280
+PAGE=281
+PAGE=282
+PAGE=283
+PAGE=284
+PAGE=285
+}
+
+[PAGE 266]
+{
+LINE= 'Tis an Honor to
+LINE=present to Thee these
+LINE=Tales collected from
+LINE=Ages Past. In this
+LINE=Inaugural Volume, we
+LINE=present this Verse
+LINE=oft Recited as a
+LINE=Lullaby for sleepy
+}
+
+[PAGE 267]
+{
+LINE=Children.
+LINE=-
+LINE=
+LINE=   Preface
+LINE=
+LINE=by Guilhem the
+LINE=   Scholar
+}
+
+[PAGE 268]
+{
+LINE= The meaning of this
+LINE=verse has oft been
+LINE=discussed in halls of
+LINE=scholarly sorts, for
+LINE=its mysterious
+LINE=singsong melody is
+LINE=oddly disturbing to
+LINE=adult ears, though
+}
+
+[PAGE 269]
+{
+LINE=children seem to find
+LINE=it restful as they
+LINE=sleep. Perhaps it is
+LINE=but the remnant of a
+LINE=longer ballad once
+LINE=extant, for there are
+LINE=internal indications
+LINE=that it once told a
+}
+
+[PAGE 270]
+{
+LINE=longer story about
+LINE=ill-fated lovers, and
+LINE=a magical experiment
+LINE=gone awry. However,
+LINE=poetic license and
+LINE=the folk process has
+LINE=distorted the words
+LINE=until now the locale
+}
+
+[PAGE 271]
+{
+LINE=of the tale is no
+LINE=more than "in the
+LINE=wind," which wile it
+LINE=serves a pleasingly
+LINE=metaphorical purpose,
+LINE=fails to inform the
+LINE=listener as to any
+LINE=real locale!
+}
+
+[PAGE 272]
+{
+LINE= Another possibility
+LINE=is that this is some
+LINE=form of creation myth
+LINE=explaining the
+LINE=genesis of the
+LINE=various humanoid
+LINE=creatures that roam
+LINE=the lands of
+}
+
+[PAGE 273]
+{
+LINE=Britannia. It does
+LINE=not take a stretch of
+LINE=the imagination to
+LINE=name the middle
+LINE=verse's "girl becomes
+LINE=tree" as a possible
+LINE=explanation for the
+LINE=reaper, for in the
+}
+
+[PAGE 274]
+{
+LINE=area surrounding
+LINE=Minoc, reapers are
+LINE=oft referred to among
+LINE=the lumber jacking
+LINE=community as "widow
+LINE=makers." That these
+LINE=creatures are of
+LINE=arcane origin is
+}
+
+[PAGE 275]
+{
+LINE=assumed, but the
+LINE=verse seems to imply
+LINE=a long ago creator,
+LINE=and uses the antique
+LINE=magickal terminology
+LINE=of "plaiting strands
+LINE=of ether" that is so
+LINE=often found in
+}
+
+[PAGE 276]
+{
+LINE=ancient texts. In
+LINE=addition, the
+LINE=reference to
+LINE="snakehills" my
+LINE=profitably be
+LINE=regarded as a
+LINE=reference to an
+LINE=actual location, such
+}
+
+[PAGE 277]
+{
+LINE=as perhaps the local
+LINE=term for the
+LINE=Serpent's Spine.
+LINE= A commoner
+LINE=interpretation is
+LINE=that like many
+LINE=nursery rhymes, it is
+LINE=a simple explanation
+}
+
+[PAGE 278]
+{
+LINE=for death, wherein
+LINE=the wind snatches up
+LINE=boys and girls and
+LINE=when they sleep in
+LINE=order to keep the
+LINE=balance of the world.
+LINE=Notable tales have
+LINE=been written for
+}
+
+[PAGE 279]
+{
+LINE=children of
+LINE=adventures in "the
+LINE=Snakehills," which
+LINE=are presumed to be an
+LINE=After world whence
+LINE=the spirit lives on.
+LINE=A grim lullaby, to be
+LINE=sure, but no worse
+}
+
+[PAGE 280]
+{
+LINE=than "lest I die
+LINE=before I wake"
+LINE=surely.
+LINE= In either case, 'tis
+LINE=an old favorite,
+LINE=herein printed for
+LINE=the first time for
+LINE=thy enjoyment and
+}
+
+[PAGE 281]
+{
+LINE=perusal!
+LINE=
+LINE= In the Wind where
+LINE=the balance is
+LINE=Whispered in Hallways
+LINE= In the Wind where
+LINE=the Magic Flows All
+LINE=through the Night
+}
+
+[PAGE 282]
+{
+LINE= There live Mages and
+LINE=Mages With Robes made
+LINE=of Whole Days
+LINE= Reading Books full
+LINE=of Doings Printed on
+LINE=Light
+LINE= In the Wind where
+LINE=the Lovers Are
+}
+
+[PAGE 283]
+{
+LINE=Crossed under Shadows
+LINE= Where the Meet and
+LINE=are Parted By the
+LINE=Orders of Fate
+LINE= The Girl becomes
+LINE=Tree, And thus
+LINE=becomes Widow
+LINE= The Boy becomes
+}
+
+[PAGE 284]
+{
+LINE=Earth And Wanders
+LINE=Till Late
+LINE= In the Wind are the
+LINE=Monsters First Born
+LINE=First Created
+LINE= When Chanting and
+LINE=Ether Mix Meddling
+LINE=and Nigh
+}
+
+[PAGE 285]
+{
+LINE= Fear going to Wind,
+LINE=Fear Finding its
+LINE=Plaitings,
+LINE= Go Not to the
+LINE=Snakehills Lest You
+LINE=Care to Die
+}
+
+// ============================ A Tale of Three Tribes
+[BOOK 18]
+{
+PAGES=10
+TITLE=A Tale of Three Tribes
+AUTHOR=Janet, Scribe
+PAGE=286
+PAGE=287
+PAGE=288
+PAGE=289
+PAGE=290
+PAGE=291
+PAGE=292
+PAGE=293
+PAGE=294
+PAGE=295
+}
+
+[PAGE 286]
+{
+LINE= The dungeon known as
+LINE=Despise is in fact
+LINE=not a dungeon as
+LINE=such, but rather a
+LINE=large natural cave.
+LINE=Inhospitable and
+LINE=unfriendly to
+LINE=visitors, it is
+}
+
+[PAGE 287]
+{
+LINE=filled with damp
+LINE=spots where the
+LINE=deadly Exploding Red
+LINE=Spotted Toadstool
+LINE=grows in abundance.
+LINE= According to the
+LINE=oldest of historical
+LINE=texts, in days gone
+}
+
+[PAGE 288]
+{
+LINE=by the cave was once
+LINE=home of three
+LINE=separate tribes who
+LINE=had come to an
+LINE=accommodation with
+LINE=each other. Oddly
+LINE=enough, the three
+LINE=tribes were of
+}
+
+[PAGE 289]
+{
+LINE=dragons, lizard men,
+LINE=and rat men. While
+LINE=today few except
+LINE=extremists associated
+LINE=with Lord Blackthorn
+LINE=regard these latter
+LINE=two as being
+LINE=intelligent beings,
+}
+
+[PAGE 290]
+{
+LINE=apparently they have
+LINE=indeed fallen from a
+LINE=more evolved state
+LINE=over the years.
+LINE= 'Tis said that these
+LINE=three races did dwell
+LINE=in relative harmony
+LINE=within the vast cave,
+}
+
+[PAGE 291]
+{
+LINE=building when they
+LINE=required it, and
+LINE=trading amongst
+LINE=themselves if needed.
+LINE= But over time,
+LINE=something happened,
+LINE=and they were forced
+LINE=to withdraw their
+}
+
+[PAGE 292]
+{
+LINE=society, until today
+LINE=thou mayst find
+LINE=individuals of each
+LINE=species within the
+LINE=dungeon, but never
+LINE=again as a
+LINE=civilization.
+LINE= 'Tis also said that
+}
+
+[PAGE 293]
+{
+LINE=someday the three
+LINE=tribes may return to
+LINE=Despise, to once
+LINE=again inhabit it
+LINE=together.
+LINE= Until then, nothing
+LINE=remains as token of
+LINE=this save an oddly
+}
+
+[PAGE 294]
+{
+LINE=intelligent skeleton,
+LINE=magically enchanted,
+LINE=that doth speak when
+LINE=questions are asked,
+LINE=and from whom I
+LINE=obtained these tales
+LINE=one day, when I was
+LINE=pursued by evil
+}
+
+[PAGE 295]
+{
+LINE=monsters and fled
+LINE=into his skeletal
+LINE=arms.
+LINE= Fortunately, I
+LINE=escaped and lived to
+LINE=write it all down!
+}
+
+// ============================ Deceit: A Dungeon of Horrors
+[BOOK 19]
+{
+PAGES=12
+TITLE=Deceit: A Dungeon of Horrors
+AUTHOR=Mercenary Justin
+PAGE=296
+PAGE=297
+PAGE=298
+PAGE=299
+PAGE=300
+PAGE=301
+PAGE=302
+PAGE=303
+PAGE=304
+PAGE=305
+PAGE=306
+PAGE=307
+}
+
+[PAGE 296]
+{
+LINE= My employers have
+LINE=oft taken me into
+LINE=this den of hideous
+LINE=creatures, and I
+LINE=thought that it
+LINE=behooved me to write
+LINE=down what I know of
+LINE=it, now that I am
+}
+
+[PAGE 297]
+{
+LINE=retired from the life
+LINE=of an adventurer for
+LINE=hire.
+LINE= Deceit was once a
+LINE=temple to forgotten
+LINE=powers of old. It was
+LINE=taken over by mages
+LINE=who eventually were
+}
+
+[PAGE 298]
+{
+LINE=driven out by the
+LINE=depredations of their
+LINE=own evil lackeys.
+LINE=However, many of the
+LINE=magical traps and
+LINE=devices that they
+LINE=placed for their
+LINE=defenses remain,
+}
+
+[PAGE 299]
+{
+LINE=particularly those
+LINE=the wizards used to
+LINE=protect their
+LINE=treasures.
+LINE= The dungeon is
+LINE=mystically linked by
+LINE=crystal balls placed
+LINE=in different
+}
+
+[PAGE 300]
+{
+LINE=locations. These
+LINE=magical orbs do
+LINE=transmit speech, and
+LINE=even have memory of
+LINE=things that have been
+LINE=said near them. No
+LINE=doubt they once
+LINE=served as a warning
+}
+
+[PAGE 301]
+{
+LINE=system.
+LINE= Be wary of a brazier
+LINE=that giveth warning
+LINE=when approached;thou
+LINE=canst use it to
+LINE=summon deadly
+LINE=creatures.
+LINE= There be a
+}
+
+[PAGE 302]
+{
+LINE=tantalizing chest,
+LINE=undoubtedly full of
+LINE=treasure, that cannot
+LINE=be reached save past
+LINE=a complete set of
+LINE=pressure plates that
+LINE=trigger deadly
+LINE=spikes. As I have
+}
+
+[PAGE 303]
+{
+LINE=never had sufficient
+LINE=folk with me to
+LINE=unlock the puzzle, I
+LINE=never obtained the
+LINE=riches that awaited
+LINE=there.
+LINE= Do not investigate
+LINE=iron maidens too
+}
+
+[PAGE 304]
+{
+LINE=closely, for they may
+LINE=suck you within them!
+LINE= There is one place
+LINE=there a deadly trap
+LINE=can only be disarmed
+LINE=by making use of a
+LINE=statue that cleverly
+LINE=conceals a lever.
+}
+
+[PAGE 305]
+{
+LINE= Oft one encounters
+LINE=the deadly exploding
+LINE=toadstool; the ones
+LINE=in Deceit are
+LINE=deadlier than most,
+LINE=as they explode
+LINE=continually.
+LINE=Likewise, the very
+}
+
+[PAGE 306]
+{
+LINE=pools of water and
+LINE=slime on the floor
+LINE=may poison thee.
+LINE= The most magical
+LINE=device in the dungeon
+LINE=is a mystical bridge
+LINE=that can only be
+LINE=triggered by a level
+}
+
+[PAGE 307]
+{
+LINE=embedded in the
+LINE=floor. Be wary
+LINE=however, for the
+LINE=bridge thus created
+LINE=doth burst into flame
+LINE=when one passeth
+LINE=across it!
+}
+
+// ============================ The Life of a Travelling Minstrel
+[BOOK 20]
+{
+PAGES=18
+TITLE=The Life of a Travelling Minstrel
+AUTHOR=Sarah of Yew
+PAGE=308
+PAGE=309
+PAGE=310
+PAGE=311
+PAGE=312
+PAGE=313
+PAGE=314
+PAGE=315
+PAGE=316
+PAGE=317
+PAGE=318
+PAGE=319
+PAGE=320
+PAGE=321
+PAGE=322
+PAGE=323
+PAGE=324
+PAGE=325
+}
+
+[PAGE 308]
+{
+LINE= While 'tis true that
+LINE=the musician who
+LINE=seeketh only to make
+LINE=sweet music for
+LINE=herself and for
+LINE=others needs little
+LINE=more than some
+LINE=talent, and stern
+}
+
+[PAGE 309]
+{
+LINE=practice at the
+LINE=chosen instrument,
+LINE=those of us who seek
+LINE=the open road shall
+LINE=find indeed that a
+LINE=greater skill is
+LINE=required. Herein
+LINE=discover those
+}
+
+[PAGE 310]
+{
+LINE=secrets which I have
+LINE=learned over the
+LINE=years as an itinerant
+LINE=performer...
+LINE= Once I was in
+LINE=Jhelom, and
+LINE=accidentally angered
+LINE=a bravo of some local
+}
+
+[PAGE 311]
+{
+LINE=repute, whose blade
+LINE=flickered all too
+LINE=eagerly near my
+LINE=slender neck (for I
+LINE=was young then).
+LINE=After various threats
+LINE=to "ruin my pretty
+LINE=face" this bravo
+}
+
+[PAGE 312]
+{
+LINE=grabbed my arm in a
+LINE=most unseemly
+LINE=fashion and tossed
+LINE=me into a barbaric
+LINE=enclosure locally
+LINE=entitled a dueling
+LINE=pit. My plaintive
+LINE=cries for help went
+}
+
+[PAGE 313]
+{
+LINE=unheeded by the guards,
+LINE=for the inhabitants of
+LINE=Jhelom are eager
+LINE=indeed to measure
+LINE=fighting prowess at any
+LINE=time! What saved me was
+LINE=the ability to
+LINE=improvise a melody
+}
+
+[PAGE 314]
+{
+LINE=and tune that
+LINE=satirized the
+LINE=proceedings, and
+LINE=sufficiently angered
+LINE=an onlooker to prod
+LINE=him to coming to my
+LINE=defense. Once that
+LINE=fight was underway,
+}
+
+[PAGE 315]
+{
+LINE=I was able to make
+LINE=good my escape.
+LINE=Hence, I regard the
+LINE=ability to incite
+LINE=fights as
+LINE=indispensable to the
+LINE=prudent bard.
+LINE= Upon another
+}
+
+[PAGE 316]
+{
+LINE=occasion, 'twas the
+LINE=obverse side of that
+LINE=coin which saved me,
+LINE=for I was being held
+LINE=prisoner by
+LINE=particularly nasty
+LINE=band of ruffians who
+LINE=had seized me
+}
+
+[PAGE 317]
+{
+LINE=unawares from the
+LINE=road to Vesper.
+LINE= They had worked
+LINE=themselves into a
+LINE=frenzy and were ready
+LINE=to attack and I fear,
+LINE=tear me limb from
+LINE=limb, when I began to
+}
+
+[PAGE 318]
+{
+LINE=sing frantically,
+LINE=tapping my falled
+LINE=drum with my tied up
+LINE=feet. The melody
+LINE=developed into a
+LINE=soothing one, and the
+LINE=brigands slowly
+LINE=calmed down to the
+}
+
+[PAGE 319]
+{
+LINE=extent of
+LINE=apologizing, and they
+LINE=let me go!
+LINE= A final example I
+LINE=would pray you grant
+LINE=your attention: once
+LINE=I was lost upon a
+LINE=large isle far to the
+}
+
+[PAGE 320]
+{
+LINE=east of the mainland,
+LINE=well beyond serpent's
+LINE=Hold, where lava made
+LINE=its sluggish way
+LINE=across the surface
+LINE=landscape. And this
+LINE=accursed land was
+LINE=filled with vile
+}
+
+[PAGE 321]
+{
+LINE=beasts and cunning
+LINE=dragons.
+LINE= I was being pursued
+LINE=by one of the said
+LINE=fell dragons when I
+LINE=found myself trapped.
+LINE=I quickly skirted a
+LINE=bubbling pool of
+}
+
+[PAGE 322]
+{
+LINE=molten rock and
+LINE=attempted to hide.
+LINE= The dragon scented
+LINE=me and was preparing
+LINE=to skirt the pool,
+LINE=when I began to play
+LINE=a lusty tune upon my
+LINE=lute that attracted
+}
+
+[PAGE 323]
+{
+LINE=its attention.
+LINE=Mesmerized and
+LINE=enticed by the
+LINE=melody, it stepped
+LINE=directly towards me,
+LINE=and into the lava-
+LINE=where its foot was so
+LINE=burned that it
+}
+
+[PAGE 324]
+{
+LINE=quickly hopped away,
+LINE=undignified and
+LINE=annoyed.
+LINE= 'Tis my fond hope
+LINE=that other travelling
+LINE=minstrels shall learn
+LINE=from my experience
+LINE=and apply themselves
+}
+
+[PAGE 325]
+{
+LINE=to practicing these
+LINE=skills in order to
+LINE=preserve life and
+LINE=limb.
+}
+
+// ============================ The Wild Girl of the Forest
+[BOOK 21]
+{
+PAGES=16
+TITLE=The Wild Girl of the Forest
+AUTHOR=Horace the Trader
+PAGE=326
+PAGE=327
+PAGE=328
+PAGE=329
+PAGE=330
+PAGE=331
+PAGE=332
+PAGE=333
+PAGE=334
+PAGE=335
+PAGE=336
+PAGE=337
+PAGE=338
+PAGE=339
+PAGE=340
+PAGE=341
+}
+
+[PAGE 326]
+{
+LINE= Her name was Leyla,
+LINE=she said, and her
+LINE=hair was braided wild
+LINE=with creepers and
+LINE=thorns. I marveled
+LINE=that they did not
+LINE=hurt her, but when I
+LINE=asked, she but
+}
+
+[PAGE 327]
+{
+LINE=shrugged and let her
+LINE=eyes roam once more
+LINE=across the woods.
+LINE=Though I had my hands
+LINE=securely fastened by
+LINE=her ropes, I itched
+LINE=to reach out and comb
+LINE=that unruly golden
+}
+
+[PAGE 328]
+{
+LINE=mane, dirtied and
+LINE=leaf-ridden.
+LINE= Her provenance, she
+LINE=told me over nights
+LINE=illumined by
+LINE=campfires, was once
+LINE=the city of Trinsic.
+LINE=She claimed to have
+}
+
+[PAGE 329]
+{
+LINE=been kidnapped and
+LINE=raised by orcs, which
+LINE=I judged an unlikely
+LINE=tale, for all know
+LINE=orcs delight in
+LINE=eating the meat of
+LINE=honest folk. When I
+LINE=told her this, she
+}
+
+[PAGE 330]
+{
+LINE=laughed a fey laugh,
+LINE=and gaily admitted
+LINE=that honest she was
+LINE=not, for oft had she
+LINE=stolen folk away from
+LINE=caravans to loot
+LINE=their possessions
+LINE=from an unconscious
+}
+
+[PAGE 331]
+{
+LINE=body!
+LINE= At this, I began to
+LINE=fear for my life, and
+LINE=her smile seemed full
+LINE=of teeth sharper than
+LINE=a human ought to
+LINE=have, for the tale of
+LINE=orcish raising had
+}
+
+[PAGE 332]
+{
+LINE=struck fear into the
+LINE=marrow of my bones.
+LINE="Wilt thou eat me?" I
+LINE=asked, a-tremble,
+LINE=fearing the answer.
+LINE= And she cocked her
+LINE=head at me, like a
+LINE=wild animal facing a
+}
+
+[PAGE 333]
+{
+LINE=word that it dost not
+LINE=understand, and the
+LINE=fixity in her eyes
+LINE=was a glimpse into
+LINE=the deeper reaches of
+LINE=the Abyss. But she
+LINE=finally grunted, and
+LINE=said, "Nay," in a
+}
+
+[PAGE 334]
+{
+LINE=voice that recalled
+LINE=to me a child. "Nay,"
+LINE=she said, "for thou
+LINE=dost remind me of a
+LINE=boy I knew once, when
+LINE=I was a girl who
+LINE=played in a city of
+LINE=great sandstone
+}
+
+[PAGE 335]
+{
+LINE=walls, before I was
+LINE=taken. He had sandy
+LINE=hair like thee, and I
+LINE=dreamt as a child of
+LINE=holding his hand and
+LINE=sharing flavored ice.
+LINE=His name was
+LINE=Japheth."
+}
+
+[PAGE 336]
+{
+LINE=The next morning she
+LINE=let me go, stripped
+LINE=of my pouch and
+LINE=clothes, and bade me
+LINE=run through the
+LINE=woods, and to fear
+LINE=recapture, for surely
+LINE=her heart would not
+}
+
+[PAGE 337]
+{
+LINE=soften again. 'Twas a
+LINE=fearful run, and I
+LINE=came to the road to
+LINE=Yew with welts and
+LINE=scratches run
+LINE=rampant across my
+LINE=skin but I did not
+LINE=see her again.
+}
+
+[PAGE 338]
+{
+LINE= Oft have I wondered
+LINE=of the boy named
+LINE=Japheth, and whether
+LINE=he remembers a girl
+LINE=who lived in
+LINE=sandstone walls. The
+LINE=only Japheth I know
+LINE=is the Guild master
+}
+
+[PAGE 339]
+{
+LINE=of Paladins who died
+LINE=last year warring
+LINE=amidst the orcs, and
+LINE=though he had indeed
+LINE=sandy hair, I cannot
+LINE=picture him side by
+LINE=side with a feral
+LINE=girl whose tongue has
+}
+
+[PAGE 340]
+{
+LINE=tasted of human
+LINE=flesh.
+LINE= Yet the paths of
+LINE=fate are strange
+LINE=indeed, and I suppose
+LINE='tis possible that
+LINE=this paladin died
+LINE=defending his
+}
+
+[PAGE 341]
+{
+LINE=remembered lady's
+LINE=honor, unknowingly
+LINE=struck down by the
+LINE=orc that she called
+LINE=father.
+}
+
+// ============================ A Primer on Arms and Weapons
+[BOOK 22]
+{
+PAGES=16
+TITLE=A Primer on Arms and Weapons
+AUTHOR=Martin
+PAGE=342
+PAGE=343
+PAGE=344
+PAGE=345
+PAGE=346
+PAGE=347
+PAGE=348
+PAGE=349
+PAGE=350
+PAGE=351
+PAGE=352
+PAGE=353
+PAGE=354
+PAGE=355
+PAGE=356
+PAGE=357
+}
+
+[PAGE 342]
+{
+LINE= These are the basic
+LINE=elements to consider
+LINE=in assessing a
+LINE=weapon, of which all
+LINE=warriors who regard
+LINE=themselves as more
+LINE=than mere mercenaries
+LINE=should be aware.
+}
+
+[PAGE 343]
+{
+LINE= First and most
+LINE=obvious is the amount
+LINE=of damage that the
+LINE=weapon may do against
+LINE=unprotected flesh.
+LINE=While 'tis this which
+LINE=first attracts the
+LINE=attention of the
+}
+
+[PAGE 344]
+{
+LINE=novice, 'tis a deadly
+LINE=mistake to regard it
+LINE=as the sole value of
+LINE=a weapon. While it
+LINE=may prove devastating
+LINE=indeed as a means of
+LINE=causing damage, a
+LINE=weapon must also
+}
+
+[PAGE 345]
+{
+LINE=serve as stout shield
+LINE=when engaged in
+LINE=combat.
+LINE= Hence the second
+LINE=issue to which to pay
+LINE=attention is the
+LINE=amount of protection
+LINE=that a weapon may
+}
+
+[PAGE 346]
+{
+LINE=offer. Pay close
+LINE=attention to the
+LINE=guard on it, if it be
+LINE=a blade, or the
+LINE=stoutness of its wood
+LINE=if it is a pole arm.
+LINE= Oft related to this
+LINE=is the weight of the
+}
+
+[PAGE 347]
+{
+LINE=weapon, for a heavy
+LINE=weapon is more
+LINE=difficult to maneuver
+LINE=to block with, though
+LINE=it may do more damage
+LINE=to thy opponent.
+LINE= If a weapon is too
+LINE=heavy for the wielder
+}
+
+[PAGE 348]
+{
+LINE=to move it freely,
+LINE=they should choose
+LINE=another and not
+LINE=attempt to prove
+LINE=their prowess by the
+LINE=size of their sword.
+LINE= The reach of a
+LINE=weapon both increases
+}
+
+[PAGE 349]
+{
+LINE=its defensive
+LINE=ability, and renders
+LINE=it more useful in
+LINE=open spaces as it
+LINE=allows attack against
+LINE=the opponent without
+LINE=the need to close.
+LINE=But be aware of the
+}
+
+[PAGE 350]
+{
+LINE=limitations of thy
+LINE=weapon! For a weapon
+LINE=with great reach may
+LINE=be useless in close
+LINE=quarters, for lack of
+LINE=space to maneuver it.
+LINE=Should that dagger-
+LINE=wielding enemy close
+}
+
+[PAGE 351]
+{
+LINE=on thee and thy
+LINE=halberd, 'tis best to
+LINE=flee.
+LINE= Lastly, a factor
+LINE=that must always be
+LINE=considered is the
+LINE=condition of the
+LINE=weapon. It might be a
+}
+
+[PAGE 352]
+{
+LINE=wondrous magical
+LINE=blade of surpassing
+LINE=sharpness and it may
+LINE=leap to block blows
+LINE=with a mind of its
+LINE=own. It also might be
+LINE=of such flimsy
+LINE=construction, or
+}
+
+[PAGE 353]
+{
+LINE=damaged to such an
+LINE=extent, that the
+LINE=first time it clangs
+LINE=against steel, 'twill
+LINE=shatter into useless
+LINE=shards.
+LINE= Seek ye a good
+LINE=blacksmith should thy
+}
+
+[PAGE 354]
+{
+LINE=weapon become
+LINE=damaged, but be aware
+LINE=that their
+LINE=ministrations may
+LINE=simply make the
+LINE=matter worse.
+LINE= While mages of some
+LINE=ability oft create
+}
+
+[PAGE 355]
+{
+LINE=magical weapons
+LINE=which enhance skill,
+LINE=are preternaturally
+LINE=sharp, or incinerate
+LINE=the enemy as they
+LINE=fall, to my mind the
+LINE=greatest gift that
+LINE=they can grant a
+}
+
+[PAGE 356]
+{
+LINE=stout sword is to
+LINE=make it resistant to
+LINE=damage, for thy own
+LINE=skill can make up the
+LINE=difference. Except
+LINE=for the fireball, but
+LINE=if the corpse is
+LINE=charred, then so will
+}
+
+[PAGE 357]
+{
+LINE=be the possessions,
+LINE=which maketh looting
+LINE=difficult!
+}
+
+// ============================ Beltran's Guide to Guilds
+[BOOK 23]
+{
+PAGES=14
+TITLE=Beltran's Guide to Guilds
+AUTHOR=Beltran
+PAGE=358
+PAGE=359
+PAGE=360
+PAGE=361
+PAGE=362
+PAGE=363
+PAGE=364
+PAGE=365
+PAGE=366
+PAGE=367
+PAGE=368
+PAGE=369
+PAGE=370
+PAGE=371
+}
+
+[PAGE 358]
+{
+LINE= This reference work
+LINE=is intended merely to
+LINE=serve as a resource
+LINE=for those curious as
+LINE=to the full range of
+LINE=trades and societies
+LINE=extant in Britannia
+LINE=and nearby nations.
+}
+
+[PAGE 359]
+{
+LINE=For each trade or
+LINE=guild, their blazon
+LINE=is given.
+LINE= Armorer's Guild.
+LINE=Gold bar above black
+LINE=bar.
+LINE= Association of
+LINE=Warriors. Blue cross
+}
+
+[PAGE 360]
+{
+LINE=on a red field.
+LINE= Barters' Guild.
+LINE=Green and white
+LINE=stripes, diagonal.
+LINE= Blacksmith's Guild.
+LINE=Gold alongside black.
+LINE= Federation of Rogues
+LINE=and Beggars. Red
+}
+
+[PAGE 361]
+{
+LINE=above black.
+LINE= Fighters and
+LINE=Footmen. Blue
+LINE=horzontal bar on red
+LINE=field.
+LINE= Guild of Archers. A
+LINE=gold swath parting
+LINE=red and blue.
+}
+
+[PAGE 362]
+{
+LINE= Guild of Armaments.
+LINE=Swath of gold on
+LINE=black field, gold
+LINE=accents.
+LINE= Guild of Assassins.
+LINE=Black and red
+LINE=quartered.
+LINE= Guild of Barbers.
+}
+
+[PAGE 363]
+{
+LINE=Red and white
+LINE=stripes.
+LINE= Guild of Cavalry and
+LINE=Horse. Vertical blue
+LINE=on a red field.
+LINE= Guild of Fishermen.
+LINE=Blue and white,
+LINE=quartered.
+}
+
+[PAGE 364]
+{
+LINE= Guild of Mages.
+LINE=Purple and blue, in a
+LINE=crossed pennant
+LINE=pattern.
+LINE= Guild of
+LINE=Provisioners. White
+LINE=bar above green bar.
+LINE= Guild of Sorcery. A
+}
+
+[PAGE 365]
+{
+LINE=field divided
+LINE=diagonally in blue
+LINE=and purple.
+LINE= Healers Guild. Gold
+LINE=swath dividing green
+LINE=from purple, gold
+LINE=accents.
+LINE= Lord British's
+}
+
+[PAGE 366]
+{
+LINE=Healers of Virtue.
+LINE=Golden ankh on dark
+LINE=green.
+LINE= Masters of Illusion.
+LINE=Blue and purple
+LINE=checkers.
+LINE= Merchants' Guild.
+LINE=Gold coins on green
+}
+
+[PAGE 367]
+{
+LINE=field.
+LINE= Mining Cooperative.
+LINE=A gold cross,
+LINE=quartering blue and
+LINE=black.
+LINE= Order of Engineers.
+LINE=Purple, gold, and
+LINE=blue vertical.
+}
+
+[PAGE 368]
+{
+LINE= Sailors' Maritime
+LINE=Association. A white
+LINE=bar centered on a
+LINE=blue field.
+LINE= Seamen's Chapter.
+LINE=Blue and white in a
+LINE=crossed pennant
+LINE=pattern.
+}
+
+[PAGE 369]
+{
+LINE= Society of Cooks and
+LINE=Chefs. White and red
+LINE=diagonal fields
+LINE=checker on green
+LINE=field.
+LINE= Society of
+LINE=Shipwrights. White
+LINE=diagonal aboe blue.
+}
+
+[PAGE 370]
+{
+LINE= Society of Thieves.
+LINE=Black and red
+LINE=diagonal stripes.
+LINE= Society of
+LINE=Weaponsmakers. Gold
+LINE=diagonal above black.
+LINE= Tailor's Hall.
+LINE=Purple above gold
+}
+
+[PAGE 371]
+{
+LINE=above red.
+LINE= The Bardic
+LINE=Collegium. Purple and
+LINE=red checkers on gold
+LINE=field.
+LINE= Traders' Guild.
+LINE=White bar centered
+LINE=down green field.
+}
+
+// ============================ Britannian Flora
+[BOOK 24]
+{
+PAGES=19
+TITLE=Britannian Flora
+AUTHOR=Herbert the Lost
+PAGE=372
+PAGE=373
+PAGE=374
+PAGE=375
+PAGE=376
+PAGE=377
+PAGE=378
+PAGE=379
+PAGE=380
+PAGE=381
+PAGE=382
+PAGE=383
+PAGE=384
+PAGE=385
+PAGE=386
+PAGE=387
+PAGE=388
+PAGE=389
+PAGE=390
+}
+
+[PAGE 372]
+{
+LINE= Oft 'pon rambling
+LINE=through the woods
+LINE=avoiding bears have I
+LINE=spotted some plant
+LINE=whose like I have
+LINE=never seen before,
+LINE=and concluded that I
+LINE=was a blithering
+}
+
+[PAGE 373]
+{
+LINE=idiot for failing to
+LINE=notice it in the
+LINE=past. Equally as oft
+LINE=have I concluded that
+LINE=I was a worse idiot
+LINE=for not running
+LINE=faster from the bear.
+LINE= While not all my
+}
+
+[PAGE 374]
+{
+LINE=readers may share
+LINE=my proclivities for
+LINE=tree-climbing, it
+LINE=occurred to me that
+LINE=mayhap mine
+LINE=information might
+LINE=serve some humble
+LINE=purpose.
+}
+
+[PAGE 375]
+{
+LINE= The two most unique
+LINE=flowering plants in
+LINE=the Britannian
+LINE=countryside are the
+LINE=orfleur and the
+LINE=whiteflower, also
+LINE=called white hornes.
+LINE= The orfleur is
+}
+
+[PAGE 376]
+{
+LINE=notable for its
+LINE=massive orange-red
+LINE=blossoms, which dwarf
+LINE=marigolds like the
+LINE=sun dwarfs your
+LINE=common fireball
+LINE=spell. The odor of
+LINE=said blooms is best
+}
+
+[PAGE 377]
+{
+LINE=described as
+LINE=peppermint-apple,
+LINE=with a dash of
+LINE=garlic. 'Tis a
+LINE=popular potted plant
+LINE=despite, or perhaps
+LINE=because of, its
+LINE=exotic nature.
+}
+
+[PAGE 378]
+{
+LINE= Whiteflowers exude a
+LINE=subtle fragrance not
+LINE=unlike that of
+LINE=freshly shaven wood
+LINE=mixed with cool lemon
+LINE=ice. Their tall
+LINE=stands always droop
+LINE=with the heavy weight
+}
+
+[PAGE 379]
+{
+LINE=of the massive
+LINE=blooms, oft as large
+LINE=as a child's head.
+LINE= The flowers are so
+LINE=large that one may
+LINE=scoop out the pollen
+LINE=in handfuls, and
+LINE=during the spring
+}
+
+[PAGE 380]
+{
+LINE=season many a prank
+LINE=hath been played by
+LINE=idle boys 'pon their
+LINE=sisters by dumping
+LINE=said pollen into
+LINE=their clothing
+LINE=drawers, causing
+LINE=sneezes for days.
+}
+
+[PAGE 381]
+{
+LINE= The most interesting
+LINE=native tree to
+LINE=Britannia is the
+LINE=spider tree. The
+LINE=reason for its naming
+LINE=is obscure, but may
+LINE=have to do with the
+LINE=twisted gray stalks
+}
+
+[PAGE 382]
+{
+LINE=from which the
+LINE=spherical canopy
+LINE=sprouts. 'Tis
+LINE=something of a
+LINE=misnomer to term
+LINE=these "trunks" as
+LINE=they are spindly and
+LINE=flexible. Spider
+}
+
+[PAGE 383]
+{
+LINE=trees provide a
+LINE=fresh, piney smell to
+LINE=a room and are
+LINE=therefore often
+LINE=potted.
+LINE= In jungle climes,
+LINE=one finds the blade
+LINE=plant, whose sharp
+}
+
+[PAGE 384]
+{
+LINE=leaves oft collect
+LINE=water for the thirsty
+LINE=traveler, yet can
+LINE=draw blood easily.
+LINE= The deadliest
+LINE=plant, if you can
+LINE=call a fungus such,
+LINE=is the Exploding Red
+}
+
+[PAGE 385]
+{
+LINE=Spotted Toadstool. No
+LINE=pattern can be
+LINE=discerned to its
+LINE=habitats save malice,
+LINE=for merely
+LINE=approaching results
+LINE=in the cap exploding
+LINE=with powder, noxious
+}
+
+[PAGE 386]
+{
+LINE=gas, and tiny painful
+LINE=pellets flying in all
+LINE=directions.
+LINE=Unfortunately, 'tis
+LINE=impossible to tell it
+LINE=apart from the
+LINE=Ordinary Red Spotted
+LINE=Toadstool save
+}
+
+[PAGE 387]
+{
+LINE=through
+LINE=experimentation.
+LINE= Truly odd among the
+LINE=varied flora of
+LINE=Britannia, however,
+LINE=are those which bear
+LINE=names clearly alien
+LINE=to our tongue. Among
+}
+
+[PAGE 388]
+{
+LINE=these I name the
+LINE=Tuscany pine (for I
+LINE=have never seen a
+LINE=region of this world
+LINE=named Tuscany), the
+LINE=o'hil tree, whose
+LINE=very name sounds like
+LINE=some tropical isle,
+}
+
+[PAGE 389]
+{
+LINE=and the welsh poppy,
+LINE=which while different
+LINE=from the ordinary
+LINE=poppy in color and
+LINE=appearance, is
+LINE=prefaced with the odd
+LINE=word "welsh," which
+LINE=as far as I know
+}
+
+[PAGE 390]
+{
+LINE=means to forgo paying
+LINE=a debt.
+}
+
+// ============================ Dimensional Travel, a Monograph
+[BOOK 25]
+{
+PAGES=19
+TITLE=Dimensional Travel, a Monograph
+AUTHOR=Dryus Doost, Mage
+PAGE=391
+PAGE=392
+PAGE=393
+PAGE=394
+PAGE=395
+PAGE=396
+PAGE=397
+PAGE=398
+PAGE=399
+PAGE=400
+PAGE=401
+PAGE=402
+PAGE=403
+PAGE=404
+PAGE=405
+PAGE=406
+PAGE=407
+PAGE=408
+PAGE=409
+}
+
+[PAGE 391]
+{
+LINE= 'Tis beyond the
+LINE=scope of this small
+LINE=monograph to discuss
+LINE=the details of moon
+LINE=gates, and the
+LINE=manners in which they
+LINE=distort the fabric of
+LINE=reality in such a
+}
+
+[PAGE 392]
+{
+LINE=manner as to permit
+LINE=the passage of living
+LINE=flesh from place to
+LINE=place, world to
+LINE=world, or indeed from
+LINE=dimension to
+LINE=dimension.
+LINE= Instead, allow me to
+}
+
+[PAGE 393]
+{
+LINE=bring thy attention,
+LINE=Gentle Reader, to the
+LINE=curious
+LINE=characteristics that
+LINE=are shared by certain
+LINE=individuals within
+LINE=our realm.
+LINE= Long has it been
+}
+
+[PAGE 394]
+{
+LINE=known that the blue
+LINE=moon gate permits
+LINE=travel from place to
+LINE=place, and none have
+LINE=trouble in taking
+LINE=this path. Yet 'tis
+LINE=also known, albeit
+LINE=only to a few, that
+}
+
+[PAGE 395]
+{
+LINE=certain individuals
+LINE=are unable to
+LINE=traverse the black
+LINE=moon gates that
+LINE=permit travel from
+LINE=one dimension to
+LINE=another.
+LINE= The noted mage and
+}
+
+[PAGE 396]
+{
+LINE=peer of our realm,
+LINE=Lord Blackthorn, once
+LINE=told me in
+LINE=conversation that his
+LINE=arcane research had
+LINE=indicated that the
+LINE=issue was one of
+LINE=conversation of
+}
+
+[PAGE 397]
+{
+LINE=ether. To wit, given
+LINE=the postulate that
+LINE=matter within a given
+LINE=dimension may be but
+LINE=a cross-[of
+LINE=ethereal matter that
+LINE=exists in multiple
+LINE=dimensions, it
+}
+
+[PAGE 398]
+{
+LINE=becomes obvious that
+LINE=said ethereal
+LINE=structure cannot
+LINE=enter dimensions in
+LINE=which it is already
+LINE=present.
+LINE= Imagine an
+LINE=individual (and the
+}
+
+[PAGE 399]
+{
+LINE=Lord Blackthorn
+LINE=hinted that he was
+LINE=one such) who exists
+LINE=already in some form
+LINE=in multiple
+LINE=dimensions; said
+LINE=individual would not
+LINE=be able to cross into
+}
+
+[PAGE 400]
+{
+LINE=another dimension
+LINE=because HE IS
+LINE=ALREADY THERE.
+LINE= The implications of
+LINE=this are staggering,
+LINE=and merit further
+LINE=study. 'Tis well
+LINE=known by theorists in
+}
+
+[PAGE 401]
+{
+LINE=the field that
+LINE=divisions in ethereal
+LINE=structure of an
+LINE=individual are
+LINE=already implicit at
+LINE=the temporal level,
+LINE=as causality forces
+LINE=divisions upon the
+}
+
+[PAGE 402]
+{
+LINE=ether. This is the
+LINE=basic operating
+LINE=mechanism by which
+LINE=white moon gates
+LINE=function, permitting
+LINE=time travel.
+LINE= As time travel is
+LINE=not barred by the
+}
+
+[PAGE 403]
+{
+LINE=presence of an
+LINE=earlier self (though
+LINE=encountering said
+LINE=earlier self can
+LINE=prove arcanely
+LINE=perilous), there must
+LINE=be some rigidity to
+LINE=the ethereal
+}
+
+[PAGE 404]
+{
+LINE=structure that bars
+LINE=multiple
+LINE=instantiations of
+LINE=structures from
+LINE=manifesting within
+LINE=the same context.
+LINE= If one regards time
+LINE=and causal
+}
+
+[PAGE 405]
+{
+LINE=bifurcation as a web,
+LINE=perhaps the
+LINE=appropriate analogy
+LINE=for dimensional
+LINE=matrices is that of a
+LINE=crystalline structure
+LINE=with rigid linkages.
+LINE=The only way inwhich
+}
+
+[PAGE 406]
+{
+LINE=an individual such as
+LINE=Lord Blackthorn, who
+LINE=exists in multiple
+LINE=dimensional matrices,
+LINE=can cross worlds via
+LINE=a black moon gate,
+LINE=would be for the
+LINE=entire crystalline
+}
+
+[PAGE 407]
+{
+LINE=structure of the
+LINE=dimension to
+LINE=perfectly match the
+LINE=ethereal resonance of
+LINE=the destination
+LINE=dimension.
+LINE= The problem of why
+LINE=certain individuals
+}
+
+[PAGE 408]
+{
+LINE=are already
+LINE=replicated in
+LINE=multiple crystalline
+LINE=matrices is one that
+LINE=I fail to provide any
+LINE=schema for in these
+LINE=poor theories. It is
+LINE=my fondest hope that
+}
+
+[PAGE 409]
+{
+LINE=someday someone
+LINE=shall conquer that
+LINE=thorny problem and
+LINE=enlighten the world.
+}
+
+// ============================ The Major Trade Associations
+[BOOK 26]
+{
+PAGES=19
+TITLE=The Major Trade Associations
+AUTHOR=Pieter of Vesper
+PAGE=410
+PAGE=411
+PAGE=412
+PAGE=413
+PAGE=414
+PAGE=415
+PAGE=416
+PAGE=417
+PAGE=418
+PAGE=419
+PAGE=420
+PAGE=421
+PAGE=422
+PAGE=423
+PAGE=424
+PAGE=425
+PAGE=426
+PAGE=427
+PAGE=428
+}
+
+[PAGE 410]
+{
+LINE= There are ten major
+LINE=trade associations
+LINE=that operate
+LINE=legitimately in the
+LINE=lands of Britannia
+LINE=and among its trading
+LINE=partners. Many of
+LINE=these guilds are
+}
+
+[PAGE 411]
+{
+LINE=divided into local or
+LINE=specialty sub guilds,
+LINE=who use the same
+LINE=colors but vary the
+LINE=heraldic pattern.
+LINE= There are many
+LINE=lesser trade
+LINE=associations that
+}
+
+[PAGE 412]
+{
+LINE=have closed
+LINE=membership, and one
+LINE=can join them only by
+LINE=invitation. Beltran's
+LINE=Guide to Guilds is
+LINE=the definitive text
+LINE=on the full range of
+LINE=guilds and other
+}
+
+[PAGE 413]
+{
+LINE=associations in
+LINE=Britannia, and I
+LINE=heartily recommend
+LINE=it.
+LINE= In what follows I
+LINE=have attempted to
+LINE=bring together the
+LINE=known information
+}
+
+[PAGE 414]
+{
+LINE=regarding these
+LINE=guilds. I offer thee
+LINE=the name, typical
+LINE=membership, heraldic
+LINE=colors, known
+LINE=specialty
+LINE=organizations within
+LINE=the larger guild, and
+}
+
+[PAGE 415]
+{
+LINE=any known
+LINE=affiliations to other
+LINE=guilds, which often
+LINE=occur because of
+LINE=trade reasons.
+LINE=
+LINE=The Guild of Arcane
+LINE=Arts
+}
+
+[PAGE 416]
+{
+LINE=Members: alchemists
+LINE=and wizards
+LINE=Colors: blue and
+LINE=purple
+LINE=Sub guilds:
+LINE=Illusionist, Mages,
+LINE=Wizards
+LINE=Affiliations:
+}
+
+[PAGE 417]
+{
+LINE=Healer's Guild
+LINE=
+LINE=The Warrior's Guild
+LINE=Members: mercenaries,
+LINE=soldiery, guardsmen,
+LINE=weapons masters,
+LINE=paladins.
+LINE=Colors: Blue and red
+}
+
+[PAGE 418]
+{
+LINE=Sub guilds: Cavalry,
+LINE=Fighters, Warriors
+LINE=Affiliations: League
+LINE=of Rangers
+LINE=
+LINE=League of Rangers
+LINE=Members: rangers,
+LINE=bowyers, animal
+}
+
+[PAGE 419]
+{
+LINE=trainers
+LINE=Colors: Red, gold and
+LINE=blue
+LINE=
+LINE=Guild of Healers
+LINE=Members: healers
+LINE=Colors: Green, gold,
+LINE=and purple
+}
+
+[PAGE 420]
+{
+LINE=Affiliations: Guild
+LINE=of Arcane Arts
+LINE=
+LINE=Mining Cooperative
+LINE=Members: miners
+LINE=Colors: blue and
+LINE=black checkers, with
+LINE=a gold cross
+}
+
+[PAGE 421]
+{
+LINE=Affiliations: Order
+LINE=of Engineers
+LINE=
+LINE=Merchants'
+LINE=Association
+LINE=Members: innkeepers,
+LINE=tavern keepers,
+LINE=jewelers,
+}
+
+[PAGE 422]
+{
+LINE=provisioners
+LINE=Colors: gold coins on
+LINE=a green field for
+LINE=Merchants. White and
+LINE=green for the others.
+LINE=Sub guilds: Barters,
+LINE=Provisioners,
+LINE=Traders, Merchants.
+}
+
+[PAGE 423]
+{
+LINE=
+LINE=Order of Engineers
+LINE=Members: tinkers and
+LINE=engineers
+LINE=Colors: Blue, gold,
+LINE=and purple vertical
+LINE=bars
+LINE=Affiliations: Mining
+}
+
+[PAGE 424]
+{
+LINE=Cooperative
+LINE=
+LINE=Society of Clothiers
+LINE=Members: tailors and
+LINE=weavers
+LINE=Colors: Purple, gold,
+LINE=and red horizontal
+LINE=bars
+}
+
+[PAGE 425]
+{
+LINE=
+LINE=Maritime Guild
+LINE=Members: fishermen,
+LINE=sailors, map makers,
+LINE=ship writes
+LINE=Colors: blue and
+LINE=white
+LINE=Sub guilds:
+}
+
+[PAGE 426]
+{
+LINE=Fishermen, Sailors,
+LINE=Ship writes
+LINE=
+LINE=Bardic Collegium
+LINE=Members: bards,
+LINE=musicians,
+LINE=storytellers, and
+LINE=other performers
+}
+
+[PAGE 427]
+{
+LINE=Colors: Purple, red
+LINE=and gold checkerboard
+LINE=
+LINE=Society of Thieves
+LINE=Members: beggars,
+LINE=cutpurses, assassins,
+LINE=and brigands
+LINE=Colors: red and black
+}
+
+[PAGE 428]
+{
+LINE=Sub guilds: Rogues
+LINE=(beggars), Assassins,
+LINE=Thieves
+}
+
+// ============================ The Rankings of Trades
+[BOOK 27]
+{
+PAGES=9
+TITLE=The Rankings of Trades
+AUTHOR=Lord Higginbotham
+PAGE=429
+PAGE=430
+PAGE=431
+PAGE=432
+PAGE=433
+PAGE=434
+PAGE=435
+PAGE=436
+PAGE=437
+}
+
+[PAGE 429]
+{
+LINE= Whilst 'tis true
+LINE=that within each
+LINE=trade, one finds
+LINE=differing titles and
+LINE=accolades granted to
+LINE=the members of a
+LINE=given guild,
+LINE=nonetheless for the
+}
+
+[PAGE 430]
+{
+LINE=betterment of trade
+LINE=and understanding, we
+LINE=must have a
+LINE=commonality of
+LINE=titling.
+LINE= For those who may
+LINE=find themselves
+LINE=ignorant of the
+}
+
+[PAGE 431]
+{
+LINE=finder distinctions
+LINE=between a three-knot
+LINE=member of the
+LINE=Sailor's Maritime
+LINE=Association and a
+LINE=second thaumaturge,
+LINE=this book shall serve
+LINE=as a simple
+}
+
+[PAGE 432]
+{
+LINE=introduction to the
+LINE=common cant be used
+LINE=when members of
+LINE=differing guilds and
+LINE=trade organizations
+LINE=must trade with each
+LINE=other and must
+LINE=establish relative
+}
+
+[PAGE 433]
+{
+LINE=credentials.
+LINE=Neophyte
+LINE= Has shown interest
+LINE=in learning the craft
+LINE=and some meager
+LINE=talent.
+LINE=Novice
+LINE= Is practicing basic
+}
+
+[PAGE 434]
+{
+LINE=skills but has not
+LINE=been admitted to full
+LINE=standing.
+LINE= Apprentice
+LINE= A student of the
+LINE=discipline.
+LINE= Journeyman
+LINE= Warranted to
+}
+
+[PAGE 435]
+{
+LINE=practice the
+LINE=discipline under the
+LINE=eyes of a tutor.
+LINE= Expert
+LINE= A full member of the
+LINE=guild.
+LINE= Adept
+LINE= A member of the
+}
+
+[PAGE 436]
+{
+LINE=guild qualified to
+LINE=teach others.
+LINE= Master
+LINE= Acknowledged as
+LINE=qualified to lead a
+LINE=hall or business.
+LINE= Grandmaster
+LINE= Rarely a permanent
+}
+
+[PAGE 437]
+{
+LINE=title, granted in
+LINE=common parlance to
+LINE=those who have shown
+LINE=extreme mastery of
+LINE=their craft recently.
+}
+
+// ============================ Treatise on Alchemy
+[BOOK 28]
+{
+PAGES=12
+TITLE=Treatise on Alchemy
+AUTHOR=Felicia Hierophant
+PAGE=438
+PAGE=439
+PAGE=440
+PAGE=441
+PAGE=442
+PAGE=443
+PAGE=444
+PAGE=445
+PAGE=446
+PAGE=447
+PAGE=448
+PAGE=449
+}
+
+[PAGE 438]
+{
+LINE= The alchemical arts
+LINE=are notable for their
+LINE=deceptive simplicity.
+LINE='Tis true that to our
+LINE=best knowledge
+LINE=currently, there are
+LINE=but eight valid
+LINE=potions that can be
+}
+
+[PAGE 439]
+{
+LINE=made (though I
+LINE=emphasize that new
+LINE=discoveries may
+LINE=always await).
+LINE=However, the delicate
+LINE=balance of confecting
+LINE=the potions is
+LINE=difficult indeed, and
+}
+
+[PAGE 440]
+{
+LINE=requires great skill.
+LINE= To give thee an
+LINE=example of the
+LINE=simpler potions that
+LINE=can be created by
+LINE=those well-versed in
+LINE=the subtleties of
+LINE=alchemy.
+}
+
+[PAGE 441]
+{
+LINE= Black pearl, that
+LINE=rare substance that
+LINE=is oft found lying
+LINE=unannounced upon the
+LINE=surface of the
+LINE=ground,when properly
+LINE=crushed with mortar
+LINE=and pestle, can yield
+}
+
+[PAGE 442]
+{
+LINE=a fine powder. Said
+LINE=powder in the proper
+LINE=proportions when
+LINE=mixed via the
+LINE=alchemical arts can
+LINE=yield a wonderfully
+LINE=refreshing drink.
+LINE= The revolting blood
+}
+
+[PAGE 443]
+{
+LINE=moss so gingerly
+LINE=scraped off window
+LINE=sills by fastidious
+LINE=housewives is but a
+LINE=tiny cousin to the
+LINE=wilder version, which
+LINE=when properly
+LINE=prepared yields a
+}
+
+[PAGE 444]
+{
+LINE=magical liquid that
+LINE=for a time can make
+LINE=the imbiber a more
+LINE=agile and dexterous
+LINE=individual.
+LINE= However, beware of
+LINE=the deadly
+LINE=nightshade, for it
+}
+
+[PAGE 445]
+{
+LINE=yields a deceptively
+LINE=sweet-tasting poison
+LINE=that can prove highly
+LINE=fatal to the drinker,
+LINE=and in fact is also
+LINE=used by assassins to
+LINE=coat their blades.
+LINE=Fortunately, his
+}
+
+[PAGE 446]
+{
+LINE=latter are of
+LINE=poisoning is little
+LINE=known!
+LINE= There is much to
+LINE=reward the student of
+LINE=alchemy, indeed. The
+LINE=rumors of longtime
+LINE=alchemists losing
+}
+
+[PAGE 447]
+{
+LINE=their hair and
+LINE=acquiring an
+LINE=unhealthy pallor, not
+LINE=to mention unsightly
+LINE=blotches upon their
+LINE=once-fair skin, are
+LINE=unhappily, true. Yet
+LINE=the joys of the mind
+}
+
+[PAGE 448]
+{
+LINE=make up for the
+LINE=complete loss of
+LINE=interest that others
+LINE=may have in thee as
+LINE=an object of
+LINE=courtship, and I have
+LINE=never regretted that
+LINE=choice. Honestly,
+}
+
+[PAGE 449]
+{
+LINE=truly, Not once.
+}
+
+// ============================ UOX3 Story Chapter One - Death
+[BOOK 29]
+{
+PAGES=12
+TITLE=UOX3 Story: Chapter One - Death
+AUTHOR=UOX3
+PAGE=450
+PAGE=451
+PAGE=452
+PAGE=453
+PAGE=454
+PAGE=455
+PAGE=456
+PAGE=457
+PAGE=458
+PAGE=459
+PAGE=460
+PAGE=461
+}
+
+[PAGE 450]
+{
+LINE= You knew that the
+LINE=world was ending
+LINE=right now before your
+LINE=eyes, and there was
+LINE=nothing you could do
+LINE=about it anymore.
+LINE=Lord British was dead
+LINE=and the Guardians
+}
+
+[PAGE 451]
+{
+LINE=demon legions were
+LINE=swarming all through
+LINE=the once proud city
+LINE=of Britain. Bodies
+LINE=were lying all around
+LINE=the streets, thieves
+LINE=next to nobles and
+LINE=the former castle
+}
+
+[PAGE 452]
+{
+LINE=guards.
+LINE= That body which you
+LINE=used to call your own
+LINE=is still bleeding at
+LINE=your slightly
+LINE=transparent feet but
+LINE=it is obviously too
+LINE=late for any kind of
+}
+
+[PAGE 453]
+{
+LINE=medical treatment.
+LINE=Your spells have
+LINE=allowed you to take
+LINE=two of those red
+LINE=abnormities with you,
+LINE=but when the
+LINE=Shadowlord Astaroth
+LINE=approached you, you
+}
+
+[PAGE 454]
+{
+LINE=knew that your last
+LINE=minute has come. You
+LINE=stood paralysed as
+LINE=his dark finger
+LINE=stretched out to your
+LINE=chest and when it
+LINE=touched you, you had
+LINE=left your body even
+}
+
+[PAGE 455]
+{
+LINE=before it hit the
+LINE=ground. You notice
+LINE=that some of those
+LINE=who are falling to
+LINE=the assault of the
+LINE=demons don't even
+LINE=leave a spirit behind
+LINE=anymore; it seems
+}
+
+[PAGE 456]
+{
+LINE=like after his death
+LINE=the magic that Lord
+LINE=British gave to his
+LINE=citizens to survive
+LINE=past their own death
+LINE=is beginning to fade.
+LINE= Having wandered
+LINE=through the bloody
+}
+
+[PAGE 457]
+{
+LINE=streets for some time
+LINE=you see that there is
+LINE=still some light
+LINE=spilling through the
+LINE=windows of one of the
+LINE=nearby houses. You
+LINE=glance up to the sign
+LINE=above the door and
+}
+
+[PAGE 458]
+{
+LINE=note the symbol of
+LINE=the virtues, the
+LINE=ankh, painted onto
+LINE=it. Even though you
+LINE=ghostly state denies
+LINE=all colors of the
+LINE=world reach you,
+LINE=somehow you still
+}
+
+[PAGE 459]
+{
+LINE=recognize the golden
+LINE=color of the symbol.
+LINE=After thinking for
+LINE=only a moment you
+LINE=reach for the
+LINE=doorknob, only to see
+LINE=your hand go right
+LINE=through it. "Oh, I
+}
+
+[PAGE 460]
+{
+LINE=forgot...", you smile
+LINE=to yourself, these
+LINE=words being only a
+LINE=whisper in the storm
+LINE=of the fighting to
+LINE=those still standing
+LINE=locked in combat with
+LINE=the demonic hordes.
+}
+
+[PAGE 461]
+{
+LINE= Despite your current
+LINE=disembodied state you
+LINE=take a deep breath
+LINE=and then step right
+LINE=through the closed
+LINE=door.
+}
+
+// ============================ UOX3 Chapter Two - End of the world
+[BOOK 30]
+{
+PAGES=26
+TITLE=UOX3: Chapter Two - End of the World
+AUTHOR=UOX3
+PAGE=462
+PAGE=463
+PAGE=464
+PAGE=465
+PAGE=466
+PAGE=467
+PAGE=468
+PAGE=469
+PAGE=470
+PAGE=471
+PAGE=472
+PAGE=473
+PAGE=474
+PAGE=475
+PAGE=476
+PAGE=477
+PAGE=478
+PAGE=479
+PAGE=480
+PAGE=481
+PAGE=482
+PAGE=483
+PAGE=484
+PAGE=485
+PAGE=486
+PAGE=487
+}
+
+[PAGE 462]
+{
+LINE= Inside the building
+LINE=you can make out a
+LINE=few people in grey
+LINE=robes, sitting around
+LINE=a candle like it
+LINE=could protect them
+LINE=from the Guardians
+LINE=assault outside. One
+}
+
+[PAGE 463]
+{
+LINE=of the people seems
+LINE=to note your presense
+LINE=and turns around:
+LINE= "Ah, another lost
+LINE=soul that has found
+LINE=the way here. With
+LINE=the forces of chaos
+LINE=drawing into this
+}
+
+[PAGE 464]
+{
+LINE=realm, my healing
+LINE=powers are fading
+LINE=from minute to
+LINE=minute, but I might
+LINE=try to give you a new
+LINE=body if you assist
+LINE=me".
+LINE= The healer is
+}
+
+[PAGE 465]
+{
+LINE=beginning to make
+LINE=arcane gestures and
+LINE=you feel a wave of
+LINE=restoring energy rush
+LINE=through your astral
+LINE=body. With the rest
+LINE=of your powers you
+LINE=finally succeed to
+}
+
+[PAGE 466]
+{
+LINE=become physical
+LINE=again.
+LINE= "This is it", the
+LINE=healer says, "my
+LINE=powers are now
+LINE=completely gone". You
+LINE=place your weak body
+LINE=among the others and
+}
+
+[PAGE 467]
+{
+LINE=listen to the screams
+LINE=outside, although
+LINE=those are becoming
+LINE=less and less by now.
+LINE= You know that this
+LINE=new life will
+LINE=certainly only last
+LINE=for a couple of
+}
+
+[PAGE 468]
+{
+LINE=minutes, as the magic
+LINE=forces which bind
+LINE=this world together
+LINE=are beginning to
+LINE=fail, with obvious
+LINE=consequences:
+LINE=Lightnings are
+LINE=striking down from
+}
+
+[PAGE 469]
+{
+LINE=the sky by the dozen,
+LINE=giant earthquakes are
+LINE=threatening to tear
+LINE=the land apart and
+LINE=you can almost feel
+LINE=the pure evil power
+LINE=of the Guardian
+LINE=condensing in the
+}
+
+[PAGE 470]
+{
+LINE=air, converting this
+LINE=world to - what? You
+LINE=remember hearing one
+LINE=of the court mages
+LINE=whisper with his
+LINE=dying breath that the
+LINE=Guardian would use
+LINE=conquered worlds to
+}
+
+[PAGE 471]
+{
+LINE=create the
+LINE=Shadowlords. If that
+LINE=is true, then this
+LINE=world is really lost.
+LINE= You glance out
+LINE=through the window
+LINE=and see one of the
+LINE=black moongates open
+}
+
+[PAGE 472]
+{
+LINE=with more demons
+LINE=stepping out of it. A
+LINE=thought crosses your
+LINE=mind: There can be no
+LINE=place worse than this
+LINE=one, so it might be
+LINE=worth the try. You
+LINE=tell the others that
+}
+
+[PAGE 473]
+{
+LINE=you intend to go
+LINE=through one of those
+LINE=gates to survive the
+LINE=end of this world and
+LINE=most of them agree to
+LINE=try it. You walk over
+LINE=to the door and
+LINE=silently unlock it
+}
+
+[PAGE 474]
+{
+LINE=and open it just so
+LINE=much that you can get
+LINE=a look at a part of
+LINE=the road outside.
+LINE=What you see is
+LINE=terrible. Sweet
+LINE=Dreams Inn is already
+LINE=completely burned
+}
+
+[PAGE 475]
+{
+LINE=down and the ground
+LINE=seems to be painted
+LINE=with blood.
+LINE= "Now!", you scream
+LINE=as you see another of
+LINE=the black gates open
+LINE=just a few steps away
+LINE=from the door. You
+}
+
+[PAGE 476]
+{
+LINE=hit the door open and
+LINE=start to run, but
+LINE=just a second before
+LINE=you would have
+LINE=reached the gate a
+LINE=demon steps out of
+LINE=it, looking down at
+LINE=you in a quite angry
+}
+
+[PAGE 477]
+{
+LINE=way. You signal the
+LINE=other to run into the
+LINE=gate while you divert
+LINE=the creature, even
+LINE=though you have no
+LINE=idea on how to do
+LINE=that. As it rushes
+LINE=toward you, you
+}
+
+[PAGE 478]
+{
+LINE=notice one of Lord
+LINE=Britishs personal
+LINE=castle guards lying
+LINE=on the ground here.
+LINE=Still in his hand you
+LINE=see one of the famous
+LINE=order shields,
+LINE=magically treated by
+}
+
+[PAGE 479]
+{
+LINE=the King himself. You
+LINE=reach for it and with
+LINE=all your strength
+LINE=hold it in front of
+LINE=you as the demon
+LINE=brings his fist down
+LINE=on you.
+LINE= The shield is
+}
+
+[PAGE 480]
+{
+LINE=shattered in two
+LINE=under the might of
+LINE=the blow, but by that
+LINE=the magic still
+LINE=inherent in it is
+LINE=released in a
+LINE=brilliant flash of
+LINE=light; not enough to
+}
+
+[PAGE 481]
+{
+LINE=kill the demon, but
+LINE=enough to render it
+LINE=helpless for a moment
+LINE=and you do not need
+LINE=any more time to run
+LINE=between its legs and
+LINE=towards the black
+LINE=gate. Knowing that
+}
+
+[PAGE 482]
+{
+LINE=this world could die
+LINE=any second now you
+LINE=jump through the
+LINE=gate...
+LINE= You find yourself
+LINE=flying through some
+LINE=sort of dark tunnel;
+LINE=at the end of which
+}
+
+[PAGE 483]
+{
+LINE=you see another
+LINE=world. But you can't
+LINE=say that world
+LINE=appears much better
+LINE=to you than the one
+LINE=you just left,
+LINE=because it looks like
+LINE=the homeland of the
+}
+
+[PAGE 484]
+{
+LINE=demons. Thousands of
+LINE=them are waiting at
+LINE=the exit of the gate
+LINE=and it seems like
+LINE=they have already
+LINE=taken care of those
+LINE=that entered the gate
+LINE=before you. You look
+}
+
+[PAGE 485]
+{
+LINE=back over your
+LINE=shoulder at the place
+LINE=you came from and at
+LINE=the same moment that
+LINE=world ends. Suddendly
+LINE=the gate, having lost
+LINE=one of its exits
+LINE=vanishes, leaving you
+}
+
+[PAGE 486]
+{
+LINE=suspended in the
+LINE=Ethereal Void.
+LINE= You see millions of
+LINE=stars all around you,
+LINE=except that those are
+LINE=no stars but worlds;
+LINE=just like the one you
+LINE=were born and lived
+}
+
+[PAGE 487]
+{
+LINE=in until this day,
+LINE=and another one of
+LINE=them is now serving
+LINE=the Guardian...
+}
+
+// ============================ UOX3 Chapter Three - The lost splinter
+[BOOK 31]
+{
+PAGES=15
+TITLE=UOX3: Chapter Three - The lost splinter
+AUTHOR=UOX3
+PAGE=488
+PAGE=489
+PAGE=490
+PAGE=491
+PAGE=492
+PAGE=493
+PAGE=494
+PAGE=495
+PAGE=496
+PAGE=497
+PAGE=498
+PAGE=499
+PAGE=500
+PAGE=501
+PAGE=502
+}
+
+[PAGE 488]
+{
+LINE= You awaken. You are
+LINE=lying on a perfectly
+LINE=ordinary bed in an
+LINE=absolutely normal
+LINE=room of an inn. You
+LINE=rise to your feet and
+LINE=look out of the
+LINE=window to see the
+}
+
+[PAGE 489]
+{
+LINE=wonderful town of
+LINE=Britain, still quite
+LINE=unharmed as if that
+LINE=which you remember
+LINE=never happened. You
+LINE=get dressed and walk
+LINE=down the stairs of
+LINE=the inn. The first
+}
+
+[PAGE 490]
+{
+LINE=thing you notice is
+LINE=the lack of people
+LINE=that are usually
+LINE=shoving past each
+LINE=other here. On the
+LINE=street you see that
+LINE=this phenomenon is
+LINE=not limited to the
+}
+
+[PAGE 491]
+{
+LINE=inn, but seems to be
+LINE=present all around
+LINE=Britain.
+LINE= You spin around as
+LINE=you notice a movement
+LINE=in the corner of your
+LINE=eye. Your eyes widen
+LINE=as you see Lord
+}
+
+[PAGE 492]
+{
+LINE=Blackthorne himself
+LINE=standing there as if
+LINE=the Guardians attack
+LINE=on Britannia never
+LINE=happened.
+LINE= "I guess thou hast
+LINE=questions on your
+LINE=mind", your hear him,
+}
+
+[PAGE 493]
+{
+LINE="like why thou art
+LINE=here when your
+LINE=memories tell thee
+LINE=that everything must
+LINE=be quite different.
+LINE=The reason for that
+LINE=is that thou art no
+LINE=longer in the world
+}
+
+[PAGE 494]
+{
+LINE=that thou knowest -
+LINE=nor one even like it.
+LINE=As thou possibly
+LINE=knowest, there are
+LINE=thousands of copies
+LINE=of the land called
+LINE=Britannia existing in
+LINE=the shards of
+}
+
+[PAGE 495]
+{
+LINE=Mondains foul gem of
+LINE=immortality. Now, for
+LINE=some reason when the
+LINE=worlds were split
+LINE=from each other, this
+LINE=special world was
+LINE=created without any
+LINE=inhabitants. Now, as
+}
+
+[PAGE 496]
+{
+LINE=the creature calling
+LINE=himself the Guardian
+LINE=conquered other
+LINE=worlds like yours,
+LINE=some people always
+LINE=entered one of the
+LINE=black moongates in
+LINE=the moment of
+}
+
+[PAGE 497]
+{
+LINE=destruction and thus
+LINE=ending up here. Thou
+LINE=mightest call this
+LINE=world the Lost
+LINE=Splinter. Well, I
+LINE=would really like to
+LINE=discuss this matter
+LINE=further with thee,
+}
+
+[PAGE 498]
+{
+LINE=but I am due for a
+LINE=game of chess with
+LINE=Lord British."
+LINE= "He lives?", you
+LINE=exclaim. "Well, in
+LINE=fact the two of us
+LINE=ended up here when we
+LINE=were fleeing from the
+}
+
+[PAGE 499]
+{
+LINE=world that later
+LINE=became the Shadowlord
+LINE=Nosfentor." His face
+LINE=turns sad: "How
+LINE=fitting to run away
+LINE=from that world which
+LINE=became the embodiment
+LINE=of cowardice... But
+}
+
+[PAGE 500]
+{
+LINE=now I must hasten to
+LINE=the castle. Feel free
+LINE=to take a look around
+LINE=this world. There are
+LINE=not many people here,
+LINE=but at least the
+LINE=ecology yield more
+LINE=than enough food and
+}
+
+[PAGE 501]
+{
+LINE=resources for us
+LINE=few."
+LINE= As you watch the
+LINE=Lord disappear down
+LINE=the street you start
+LINE=to think. At least
+LINE=you would be safe
+LINE=from the Guardian
+}
+
+[PAGE 502]
+{
+LINE=here - for now. You
+LINE=start to walk through
+LINE=an unusually empty
+LINE=Britain; there is so
+LINE=much to learn about
+LINE=this world, so you
+LINE=might as well start
+LINE=right now.
+}
+
+// ============================ My personal book
+[BOOK 32]
+{
+PAGES=10
+TITLE=My personal book
+AUTHOR=UOX3
+PAGE=503
+PAGE=504
+PAGE=505
+PAGE=506
+PAGE=507
+PAGE=508
+PAGE=509
+PAGE=510
+PAGE=511
+PAGE=512
+}
+
+[PAGE 503]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 504]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 505]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 506]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 507]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 508]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 509]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 510]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 511]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[PAGE 512]
+{
+LINE=Your text here.
+LINE=No more than 21
+LINE=characters per line
+LINE=8 lines max
+}
+
+[BOOK 33]
+{
+PAGES=5
+TITLE=Bulletin Board
+AUTHOR=Shard Operator
+PAGE=513
+PAGE=514
+PAGE=515
+PAGE=516
+PAGE=517
+}
+
+[PAGE 513]
+{
+LINE=To write a msg
+LINE=here,You need to go
+LINE=into the Misc.scp and
+LINE=go to [Page 513
+LINE=and replace this msg :).
+}
+
+[PAGE 514]
+{
+LINE=More News....
+}
+
+[PAGE 515]
+{
+LINE=More News....
+}
+
+[PAGE 516]
+{
+LINE=More News....
+}
+
+[PAGE 517]
+{
+LINE=Well 5 Pages Should
+LINE=Be Enough :)
+}

@@ -1,0 +1,9 @@
+        DARKLIGHT <value>
+
+  Purpose: 
+        Set the darkest light value in
+        day/night-cycle. Ranges go from
+        0(brightest) to 20 (darkest).
+        Though values above 20 can be used
+        to make nights longer...
+	

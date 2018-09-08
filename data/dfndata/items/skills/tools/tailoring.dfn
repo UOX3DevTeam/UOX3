@@ -1,0 +1,224 @@
+[0x0f9d]
+{
+get=base_item
+name=sewing kit
+id=0x0f9d
+weight=200
+value=3 1
+restock=20
+decay=1
+good=58
+}
+
+[0x0f9e]
+{
+get=base_item
+name=scissors
+id=0x0f9e
+weight=100
+value=13 6
+restock=10
+decay=1
+good=58
+}
+
+[0x0f9f]
+{
+get=base_item
+name=scissors
+id=0x0f9f
+weight=100
+value=13 6
+restock=10
+decay=1
+good=58
+}
+
+[0x0fa9]
+{
+get=base_item
+name=dyes
+id=0x0fa9
+weight=300
+value=8 4
+restock=20
+decay=1
+type=208
+good=58
+}
+
+[0x0fab]
+{
+get=base_item
+name=dying tub
+id=0x0fab
+weight=1000
+value=9 4
+restock=20
+decay=1
+good=58
+}
+
+[0x1015]
+{ S
+get=base_item
+name=spinning wheel
+id=0x1015
+weight=2000
+movable=1
+good=58
+}
+
+[0x1016]
+{ S running
+get=base_item
+name=spinning wheel
+id=0x1016
+weight=2000
+movable=2
+}
+
+[0x1019]
+{ E
+get=base_item
+name=spinning wheel
+id=0x1019
+weight=2000
+movable=1
+good=58
+}
+
+[0x101a]
+{ E running
+get=base_item
+name=spinning wheel
+id=0x101a
+weight=2000
+movable=2
+}
+
+[0x101c]
+{ S wool
+get=base_item
+name=spinning wheel
+id=0x101c
+weight=2000
+movable=2
+}
+
+[0x101d]
+{ S wool running
+get=base_item
+name=spinning wheel
+id=0x101d
+weight=2000
+movable=2
+}
+
+[0x10a4]
+{ E wool
+get=base_item
+name=spinning wheel
+id=0x10a4
+weight=2000
+movable=2
+}
+
+[0x10a5]
+{ E wool running
+get=base_item
+name=spinning wheel
+id=0x10a5
+weight=2000
+movable=2
+}
+
+[0x105f]
+{ E 1/2
+get=base_item
+name=upright loom
+id=0x105f
+weight=6000
+movable=2
+}
+
+[0x1060]
+{ E 2/2
+get=base_item
+name=upright loom
+id=0x1060
+weight=6000
+movable=2
+}
+
+[0x1061]
+{ S 1/2
+get=base_item
+name=upright loom
+id=0x1061
+weight=6000
+movable=2
+}
+
+[0x1062]
+{ S 2/2
+get=base_item
+name=upright loom
+id=0x1062
+weight=6000
+movable=2
+}
+
+[0x1063]
+{ E wool 1/2
+get=base_item
+name=upright loom
+id=0x1063
+weight=6000
+movable=2
+}
+
+[0x1064]
+{ E wool 2/2
+get=base_item
+name=upright loom
+id=0x1064
+weight=6000
+movable=2
+}
+
+[0x1065]
+{ S wool 1/2
+get=base_item
+name=upright loom
+id=0x1065
+weight=6000
+movable=2
+}
+
+[0x1066]
+{ S wool 2/2
+get=base_item
+name=upright loom
+id=0x1066
+weight=6000
+movable=2
+}
+
+[0x0ec6]
+{
+get=base_item
+name=dress form
+id=0x0ec6
+weight=2000
+movable=1
+}
+
+[0x0ec7]
+{
+get=base_item
+name=dress form
+id=0x0ec7
+weight=2000
+movable=1
+}

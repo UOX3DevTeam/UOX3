@@ -1,0 +1,94 @@
+// Carve Items
+// This file contains the items/piles of items that appear
+// on carved corpses through the dfndata/carve/carve.dfn file.
+
+[base_carveitem]
+{
+get=base_item
+name=
+id=0x0000
+pileable=1
+decay=1
+}
+
+// barbed hides.
+[0xC000]
+{
+get=base_carveitem
+id=0x1078
+name=barbed hide
+weight=500
+}
+
+// horned hides.
+[0xC001]
+{
+get=base_carveitem
+id=0x1078
+name=horned hide
+weight=500
+}
+
+// spined hides.
+[0xC002]
+{
+get=base_carveitem
+id=0x1078
+name=spined hide
+weight=500
+}
+
+// serpent and dragon scales.
+// black scales.
+[0xC003]
+{
+get=base_carveitem
+id=0x26b4
+name=black scale
+color=0x0455
+}
+
+// blue scales.
+[0xC004]
+{
+get=base_carveitem
+id=0x26b4
+name=blue scale
+color=0x0006
+}
+
+// green scales.
+[0xC005]
+{
+get=base_carveitem
+id=0x26b4
+name=green scale
+color=0x0851
+}
+
+// red scales.
+[0xC006]
+{
+get=base_carveitem
+id=0x26b4
+name=red scale
+color=0x0663
+}
+
+// white scales.
+[0xC007]
+{
+get=base_carveitem
+id=0x26b4
+name=white scale
+color=0x02c2
+}
+
+// yellow scales.
+[0xC008]
+{
+get=base_carveitem
+id=0x26b4
+name=yellow scale
+color=0x084d
+}

@@ -1,0 +1,84 @@
+[0x144e]
+{ left facing
+get=bone_arms
+name=bone arms
+id=0x144e
+}
+
+[0x144f]
+{ left facing
+get=bone_armor
+name=bone armor
+id=0x144f
+}
+
+[0x1450]
+{ left facing
+get=bone_gloves
+name=bone gloves
+id=0x1450
+}
+
+[0x1451]
+{ left facing
+get=bone_helmet
+name=bone helmet
+id=0x1451
+}
+
+[0x1452]
+{ left facing
+get=bone_leggings
+name=bone leggings
+id=0x1452
+}
+
+[0x1453]
+{ right facing
+get=bone_arms
+name=bone arms
+id=0x1453
+}
+
+[0x1454]
+{ right facing
+get=bone_armor
+name=bone armor
+id=0x1454
+}
+
+[0x1455]
+{ right facing
+get=bone_gloves
+name=bone gloves
+id=0x1455
+}
+
+[0x1456]
+{ right facing
+get=bone_helmet
+name=bone helmet
+id=0x1456
+}
+
+[0x1457]
+{ right facing
+get=bone_leggings
+name=bone leggings
+id=0x1457
+}
+
+[0x1f0b]
+{
+get=base_item
+name=orc helm
+id=0x1f0b
+weight=500
+layer=6
+good=14
+hp=70
+def=20
+restock=15
+movable=1
+decay=1
+}

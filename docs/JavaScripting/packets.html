@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>API and Event handling</h3>
+</center>
+
+<h3><a name="MiscFuncs">Packet Methods</a></h3>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RegisterPacket">RegisterPacket</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>RegisterPacket( packetID, subCommand )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function PacketRegistration()
+{
+	RegisterPacket( 0x05, subCommand );
+}
+
+function onPacketReceive( socket, packetNum, subCommand )
+{
+	switch( packetNum )
+	{
+		case 0x05: //Request Attack sent from client
+		{
+			//do stuff??
+			break;
+		}
+		default:
+			break;
+	}
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="ReserveSize">ReserveSize</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool ReserveSize( packetSize )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+var myPacket = new Packet();
+myPacket.ReserveSize( 7 ); //Reserve a size of 7 bytes for myPacket
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="WriteByte">WriteByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool WriteByte( position, value )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myPacket.WriteByte( 0, 0x73 ); //In byte-position 0 of myPacket, write the value 0x73 as a Byte
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="WriteShort">WriteShort</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool WriteShort( position, value )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myPacket.WriteShort( 1, 0x02 ); //in byte-position 1 of myPacket, write the value 0x02 as a Short
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="WriteLong">WriteLong</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool WriteLong( position, value )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myPacket.WriteLong( 3, mChar.serial ); //in byte-position 3 of myPacket, write the serial of mChar as a Long
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="WriteString">WriteString</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool WriteString( position, string )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myPacket.WriteString( 7, "Text", 4 ); //In byte-position 7 of myPacket, write the specified text as a String, 4 bytes long
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Send">Send</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Send( packet )
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Send the specified network-packet to a socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+pSock.Send( myPacket ); //send myPacket to pSock
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="Free">Free</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Free()
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Free up the memory used for the packet?
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+myPacket.Free();
+</pre></table>
+
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">©Copyright 2012 <a href="http://www.uox3.org">WWW.UOX3.ORG</a> </font>
+</center>
+
+
+</body>

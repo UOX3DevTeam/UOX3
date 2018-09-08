@@ -1,0 +1,4 @@
+        UNGLOW <target>
+
+  Purpose: 
+        Removes glow from targeted item.

@@ -1,0 +1,779 @@
+<html>
+<head>
+<title>Proposed xGM protocol specifications</title>
+</head>
+<body>
+<center><h1>Proposed xGM protocol specifications</h1></center>
+
+<hr>
+<ul>Table of Contents
+	<li><a href="#Revisions">Revision information</a>
+	<li><a href="#Contribute">How to contribute</a>
+	<li><a href="#Purpose">Purpose of xGM</a>
+	<li><a href="#Shortcomings">Existing shortcomings</a>
+	<li><a href="#Goals">Goals</a>
+	<li><a href="#DataType">Data Types</a>
+	<li><a href="#CliSrv">Client=>Server packets</a>
+	<ul>
+		<li><a href="#CS00">Login Request (0x00)</a>
+		<li><a href="#CS01">Access Level Change Request (0x01)</a>
+		<li><a href="#CS02">Who's Online Request (0x02)</a>
+		<li><a href="#CS03">Who's Offline Request (0x03)</a>
+		<li><a href="#CS04">Who's Logging Out Request (0x04)</a>
+		<li><a href="#CS05">Show Queue Request (0x05)</a>
+		<li><a href="#CS06">Handle Queue Entry Request (0x06)</a>
+		<li><a href="#CS07">Account command request (0x07)</a>
+		<li><a href="#CS08">XGM Client Protocol Version (0x08)</a>
+		<li><a href="#CS09">XGM Server Protocol Version Request (0x09)</a>
+		<li><a href="#CS0A">Reload script (0x0A)</a>
+		<li><a href="#CS0B">Installed Scripts Request (0x0B)</a>
+		<li><a href="#CS0C">Get Installed Script (0x0C)</a>
+		<li><a href="#CS0D">Get Script Section Names Request (0x0D)</a>
+		<li><a href="#CS0E">Get Script Section Request (0x0E)</a>
+		<li><a href="#CS0F">Get Server Stats (0x0F)</a>
+		<li><a href="#CS10">Create Items (0x10)</a>
+	</ul>
+	<li><a href="#SrvCli">Server=>Client packets</a>
+	<ul>
+		<li><a href="#SC00">Login Response (0x00)</a>
+		<li><a href="#SC01">Access Level Change Response (0x01)</a>
+		<li><a href="#SC02">Who's On/off/logging Response (0x02)</a>
+		<li><a href="#SC03">Show Queue Response (0x03)</a>
+		<li><a href="#SC04">Handle Queue Entry Response 1 (0x04)</a>
+		<li><a href="#SC05">Handle Queue Entry Response 2 (0x05)</a>
+		<li><a href="#SC06">Retrieve account names (0x06)</a>
+		<li><a href="#SC07">Retrieve account details (0x07)</a>
+		<li><a href="#SC08">Ban Duration response (0x08)</a>
+		<li><a href="#SC09">Account Add/Update/Remove response (0x09)</a>
+		<li><a href="#SC0A">XGM Server Protocol Version Response (0x0A)</a>
+		<li><a href="#SC0B">Script Reload response (0x0B)</a>
+		<li><a href="#SC0C">Installed Scripts response (0x0C)</a>
+		<li><a href="#SC0D">Get Script Response (0x0D)</a>
+		<li><a href="#SC0E">Get Script Data Chunk (0x0E)</a>
+		<li><a href="#SC0F">Get Script Section Names Response (0x0F)</a>
+		<li><a href="#SC10">Get Script Section Names Data Chunk (0x10)</a>
+		<li><a href="#SC11">Get Script Section Response (0x11)</a>
+		<li><a href="#SC12">Server Stat response (0x12)</a>
+	</ul>
+</ul>
+<hr>
+<a name="Revisions"><h2>Revision information</h2></a>
+<table border="1">
+<tr><th width="100">Version<th width="400">Changes<th width="100">Changer
+<tr><td valign="top">0.01<td>Initial layout / basic authentication<td>Abaddon
+<tr><td valign="top">0.02<td>Added queueing packets<td>Abaddon
+<tr><td valign="top">0.03<td>Added partial account administration<td>Abaddon
+<tr><td valign="top">0.04<td>Added account add/remove/update support<td>Abaddon
+<tr><td valign="top">0.05<td>Added XGM Server ver request / client info<td>Abaddon
+<tr><td valign="top">0.06<td>Added Script Reloading / get installed scripts<td>Abaddon
+<tr><td valign="top">0.07<td>Added Get ScriptSection Names/Data<td>Abaddon
+<tr><td valign="top">0.08<td>Added Server Stats<td>Abaddon
+<tr><td valign="top">0.09<td>Spawn items<td>Abaddon
+</table>
+
+<hr>
+<a name="Contribute"><h2>How to contribute</h2></a>
+<p>Got any suggestions, criticisms or queries?  Feel free to discuss them on the <a href="http://sourceforge.net/forum/forum.php?forum_id=6613">General discussions</a> forum at sourceforge.  Alternatively, you can email the details to any of the <a href="http://sourceforge.net/project/memberlist.php?group_id=2271">members</a> of the project.
+<hr>
+<a name="Purpose"><h2>Purpose of xGM</h2></a>
+<p>The xGM protocol is being devised to overcome some of the existing issues which relate to the way GM tools work.
+
+<hr>
+<a name="Shortcomings"><h2>Existing shortcomings</h2></a>
+<ul>
+	<li>Require that a GM log into a normal UO client
+	<li>Requires the execution of speech commands, which kicks in the spam filter of the client
+	<li>Insufficient fine grained control over behaviour of commands
+	<li>Requires the overhead of items/characters that need to be created to support
+	<li>Does not support true administration of the server (only GM/counselor commands)
+</ul>
+
+<hr>
+<a name="Goals"><h2>Goals</h2></a>
+<ul>
+	<li>Provide 4 layered security and access model providing layered functionality (player, counselor, GM, admin)
+	<li>Provide a fast and efficient mechanism for sending commands to the server (bypassing client)
+	<li>Provide a way to execute JS administration scripts on the server
+</ul>
+
+<hr>
+<a name="DataType"><h2>Data Types</h2></a>
+<table border="1">
+<tr><th width="100">Type<th width="100">Correlation
+<tr><td>SERIAL<td>unsigned 32 bit integer
+<tr><td>UI08<td>unsigned 8 bit integer
+<tr><td>UI16<td>unsigned 16 bit integer
+<tr><td>UI32<td>unsigned 32 bit integer
+<tr><td>SI08<td>signed 8 bit integer
+<tr><td>SI16<td>signed 16 bit integer
+<tr><td>SI32<td>signed 32 bit integer
+<tr><td>time_t<td>signed 32 bit integer
+</table>
+
+<hr>
+<a name="CliSrv"><h2>Client=>Server packets</h2></a>
+<h3>Common Packets</h3>
+
+<a name="CS00"><h4>Login packet</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">62 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>0x00</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x00
+UI08 username[30];
+UI08 password[30];
+UI08 clearanceRequested;	// takes values of 0->3
+</pre>
+
+<a name="CS01"><h4>Change of access level request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">2 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>0x01</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x01
+UI08 clearanceRequested;	// takes values of 0->3
+</pre>
+
+<a name="CS02"><h4>Who's online request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">1 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>0x02</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x02
+</pre>
+
+<a name="CS03"><h4>Who's offline request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">1 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Possible responses<td>0x02</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x03
+</pre>
+
+<a name="CS04"><h4>Who's logging out request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">1 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Possible responses<td>0x02</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x04
+</pre>
+
+<a name="CS05"><h4>Show Queue request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">2 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Possible responses<td>0x03</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x05
+UI08 queueNumber;		// 0 == counselor, 1 == GM
+</pre>
+
+<a name="CS06"><h4>Handle Queue entry request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">6 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Possible responses<td>0x04, 0x05</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x06
+UI08 queueNumber;		// 0 == counselor, 1 == GM
+SERIAL queryID;			// the query ID #
+</pre>
+
+<a name="CS08"><h4>XGM Client Protocol Version</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">5 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>None</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x08
+UI32 xgmClientVersion;
+</pre>
+
+<a name="CS09"><h4>XGM Server Protocol Version Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">1 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>0x0A</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x09
+</pre>
+
+<a name="CS0F"><h4>Get Server Stats</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">2 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+<tr><td>Possible responses<td>0x12</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0F
+UI08 statID;			// ID of the stat you want
+//		0		# players online
+//		1		# characters total
+//		2		# items total
+//		3		ping response
+//		4		# accounts
+//		5		Simulation cycles
+//		6		# of races
+//		7		# of regions
+//		8		# of weather systems
+//		9		time since last restart
+//		10		time since last world save
+//		11		last player logged in
+//		12		# of GM pages
+//		13		# of CNS pages
+//		14		# of ghosts
+//		15		# of murderers
+//		16		# of blues
+//		17		# of houses
+//		18		total gold in circulation
+//		19		peak connection count
+//		20		# of GMs logged in
+//		21		# of counselors logged in
+</pre>
+
+<h3>Player packets</h3>
+
+<h3>Counselor packets</h3>
+
+<h3>GM packets</h3>
+
+<a name="CS10"><h4>Spawn Items</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable bytes</tr>
+<tr><td>Minimum access level<td>GM</tr>
+<tr><td>Possible responses<td>&nbsp;</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x10
+UI08 addType;			// 0 - single item, based on ID
+				// 1 - single item, based on script #
+				// 2 - single item, based on itemlist #
+				// 3 - tiled items, based on ID
+				// 4 - tiled items, based on script #
+				// 5 - tiled items, based on itemlist #
+SI16 x;				// x location to add to
+SI16 y;				// y location to add to
+SI08 z;				// z location to add to
+</pre>
+
+<h4>Subcommand 0</h4>
+<pre>
+UI16 itemID;			// Item ID
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+</pre>
+
+<h4>Subcommand 1</h4>
+<pre>
+UI08 itemSect[32];		// Item entry number, 32 byte string (for DFNs)
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+</pre>
+
+<h4>Subcommand 2</h4>
+<pre>
+UI08 itemlist[32];		// Item list number, 32 byte string (for DFNs)
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+</pre>
+
+<h4>Subcommand 3</h4>
+<pre>
+UI16 itemID;			// Item ID
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+SI16 targX;			// target x
+SI16 targY;			// target y
+SI08 targZ;			// target z
+</pre>
+
+<h4>Subcommand 4</h4>
+<pre>
+UI08 itemSect[32];		// Item entry number, 32 byte string (for DFNs)
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+SI16 targX;			// target x
+SI16 targY;			// target y
+SI08 targZ;			// target z
+</pre>
+
+<h4>Subcommand 5</h4>
+<pre>
+UI08 itemlist[32];		// Item list number, 32 byte string (for DFNs)
+UI16 colour;			// item colour
+UI08 type;			// item type
+UI32 morex;			// morex
+UI32 morey;			// morey
+UI32 morez;			// morez
+SI32 amount;			// amount to add
+SI16 targX;			// target x
+SI16 targY;			// target y
+SI08 targZ;			// target z
+</pre>
+
+<h3>Administration packets</h3>
+
+<a name="CS07"><h4>Account command request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x06, 0x07, 0x08, 0x09</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x07
+UI08 subCommand;
+UI16 packetLength;
+UI08 extraData[];		// any extra data (can be 0 length)
+</pre>
+<h4>Subcommand 0 - Retrieve account names</h4>
+<p>No extra data
+<h4>Subcommand 1 - Retrieve account details</h4>
+<pre>
+SI32 acctID;
+</pre>
+<h4>Subcommand 2 - Ban account</h4>
+<pre>
+SI32 acctID;
+SI32 banDuration;
+</pre>
+<h4>Subcommand 3 - Add Account</h4>
+<pre>
+UI08 username[30];
+UI08 password[30];
+UI08 comment[128];
+SI32 status;
+UI08 public;	// 0 == false, 1 == true
+UI08 isxgm;	// 0 == false, 1 == true
+</pre>
+<h4>Subcommand 4 - Remove Account</h4>
+<pre>
+SI32 acctID;
+</pre>
+<h4>Subcommand 5 - Update Account</h4>
+<pre>
+SI32 acctID;
+UI08 username[30];
+UI08 password[30];
+UI08 comment[128];
+UI32 ipAddy[2];
+UI32 ban_date;
+UI32 ban_duration;
+SI32 status;
+UI08 public;	// 0 == false, 1 == true
+UI08 isxgm;	// 0 == false, 1 == true
+</pre>
+
+<a name="CS0A"><h4>Script Reload Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">2 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x0B</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0A
+UI08 scriptType;
+//	items_def		0
+//	npc_def			1
+//	create_def		2
+//	regions_def		3
+//	misc_def		4
+//	skills_def		5
+//	location_def		6
+//	menus_def		7
+//	spells_def		8
+//	tracking_def		9
+//	newbie_def		10
+//	titles_def		11
+//	advance_def		12
+//	trigger_def		13
+//	necro_def		14
+//	house_def		15
+//	colors_def		16
+//	spawn_def		17
+//	html_def		18
+//	race_def		19
+//	polymorph_def		20
+//	weathab_def		21
+//	hard_items_def		22
+//	command_def		23
+//	msgboard_def		24
+//	carve_def		25
+
+//	INI file		50
+//	Spawn Regions 		51
+//	Regions 		51
+//	Server.scp 		51
+//	Spells.scp		51
+//	commands.scp		51
+//	JS scripts (all)	52
+</pre>
+
+<a name="CS0B"><h4>Installed Script Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x0C</tr>
+<tr><td>Other Info<td>Same scriptType as above packet</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0B
+UI08 scriptType;
+</pre>
+
+<a name="CS0C"><h4>Get Script Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">66 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x0D, 0x0E</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0C
+UI08 scriptType;
+UI08 scriptName[64];
+</pre>
+
+<a name="CS0D"><h4>Get Script Section Names Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">66 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x0F, 0x10</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0D
+UI08 scriptType;
+UI08 scriptName[64];
+</pre>
+
+<a name="CS0E"><h4>Get Script Section Request</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">130 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Possible responses<td>0x11</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x0E
+UI08 scriptType;
+UI08 scriptName[64];
+UI08 sectionName[64];
+</pre>
+
+<hr>
+<a name="SrvCli"><h2>Server=>Client packets</h2></a>
+<h3>Common Packets</h3>
+
+<a name="SC00"><h4>Login response packet</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">3 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x00
+UI08 responseError;		// if any.  0 is clear, 1 == bad username/password, 2 == invalid clearance level
+UI08 clearanceGranted;		// takes values of 0->3 (player->admin)
+</pre>
+
+<a name="SC01"><h4>Change of access level response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">3 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x01
+UI08 responseError;		// if any.  0 is clearance granted, 1 is clearance denied
+UI08 clearanceGranted;		// takes values of 0->3 (player->admin)
+</pre>
+
+<a name="SC02"><h4>Who's online response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable (4 + 35 * numPlayers)</tr>
+<tr><td>Minimum access level<td>Player</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x02
+UI16 numPlayers;
+UI08 statusType;		// 0 == online, 1 == offline, 2 == logging		
+struct
+{
+	SERIAL playerSerial;
+	char   playerName[31];
+} playerList[];
+</pre>
+
+<a name="SC03"><h4>Show queue response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable (3 + 48 * numEntries)</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+</table>
+<pre>
+UI08 commandByte;		// 0x03
+UI08 querySuccessful;		// 1 if true, 0 if false
+UI16 numEntries;
+struct
+{
+	SERIAL queryID;		// will be unique, handle to the request #
+	SERIAL playerSerial;
+	char   playerName[31];
+	time_t startTime;
+	UI08   priority;
+	SERIAL personHandling;	// 0xFFFFFFFF if not being handled
+} queueEntry[];
+</pre>
+
+<a name="SC04"><h4>Handle queue entry response 1</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">2 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Other<td>Sent to the requester
+</table>
+<pre>
+UI08 commandByte;		// 0x04
+UI08 errorLevel;		// 0 if okay, 1 if insufficient privs, 2 if already taken
+</pre>
+
+<a name="SC05"><h4>Handle queue entry response 2</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">10 bytes</tr>
+<tr><td>Minimum access level<td>Counselor</tr>
+<tr><td>Other<td>Sent to all other connected xGM sockets to advise of update (if privs sufficiently high)
+</table>
+<pre>
+UI08 commandByte;		// 0x05
+UI08 commandQueue;		// queue #, 0 == counselor, 1 == GM
+SERIAL queryID;			// query identification
+SERIAL playerHandling;		// serial of GM who will handle the ID
+</pre>
+
+<a name="SC0A"><h4>XGM Server Protocol Version Response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">5 bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0A
+UI32 serverXGMVersion;
+</pre>
+
+<a name="SC12"><h4>Server Stat response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">Variable bytes</tr>
+<tr><td>Minimum access level<td>Player</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x12
+UI08 statID;		// stat number, see CS0F
+</pre>
+<h4>Subcommands 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21</h4>
+<pre>
+UI32 count;		// count of item
+</pre>
+<h4>Subcommand 3</h4>
+<pre>
+time_t currentServerTime;	// the time of the server, as from a C time( NULL ) call
+</pre>
+<h4>Subcommand 11</h4>
+<pre>
+SERIAL character;
+</pre>
+
+<h3>Player packets</h3>
+
+<h3>Counselor packets</h3>
+
+<h3>GM packets</h3>
+
+<h3>Administration packets</h3>
+
+<a name="SC06"><h4>Retrieve account names</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">5 + accountCount * 30 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x06
+SI32 accountCount;
+struct
+{
+	UI08 name[30];
+} accountNames[];
+</pre>
+
+<a name="SC07"><h4>Retrieve account details</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">242 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x07
+SI32 acctID;
+UI08 username[30];
+UI08 password[30];
+UI08 comment[128];
+UI32 ipAddy[2];
+UI32 ban_date;
+UI32 ban_duration;
+SERIAL characters[5];
+SI32 status;
+UI08 countOfChars;
+UI08 public;	// 0 == false, 1 == true
+UI08 isbanned;	// 0 == false, 1 == true
+UI08 isxgm;	// 0 == false, 1 == true
+UI08 acctInUse;	// 0 == false, 1 == true
+SERIAL inworld;	// serial of character in world
+</pre>
+
+<a name="SC08"><h4>Ban Duration response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">14 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td valign="top">Other Info<td>Sent to banner and the other xGM connected admins
+</table>
+<pre>
+UI08 commandByte;	// 0x08
+UI08 statusOK;		// 0 == ban accepted, 1 == not possible
+SI32 acctID;
+SI32 banDuration;
+SI32 banStart;
+</pre>
+
+<a name="SC09"><h4>Account Add/Update/Remove response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">6 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td valign="top">Other Info<td>Sent to adder/updater/remove and the other xGM connected admins
+</table>
+<pre>
+UI08 commandByte;	// 0x09
+UI08 statusOK;		// 0 == add accepted, 1 == add not possible, 2 == remove accepted, 3 == remove not possible, 4 == update accepted, 5 == update not possible
+SI32 acctID;
+</pre>
+
+<a name="SC0B"><h4>Script Reload response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">3 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0B
+UI08 scriptReloaded;	
+UI08 scriptReloadedError;	// 0 == no error, 1 == couldn't reload
+</pre>
+
+<a name="SC0C"><h4>Installed Script response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">3 + ( 68 * numEntries ) bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0C
+UI08 scriptReloaded;	
+struct
+{
+	UI08 	scriptName[64];
+	time_t	lastModifiedTime;
+} scripts[];
+</pre>
+
+<a name="SC0D"><h4>Get Script Response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">8 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0D
+UI08 scriptNum;		
+UI16 numChunks;		// Number of data chunks that will follow
+UI32 scriptSize;	// size of script.  Do not rely on this for packet size
+</pre>
+
+<a name="SC0E"><h4>Get Script Data Chunk</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">6 + chunkSize bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0E
+UI08 scriptNum;		
+UI16 chunkNum;		// chunk #
+UI16 chunkSize;		// size of chunk
+UI08 chunkData[];
+</pre>
+
+<a name="SC0F"><h4>Get Script Section Names Response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">8 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0D
+UI08 scriptNum;		
+UI16 numChunks;		// Number of data chunks that will follow
+UI32 scriptSections;	// Number of script sections
+</pre>
+
+<a name="SC10"><h4>Get Script Section Names Data Chunk</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">6 + chunkSize bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+<tr><td>Other Info<td>CRLF delimited list of section names
+</table>
+<pre>
+UI08 commandByte;	// 0x0E
+UI08 scriptNum;		
+UI16 chunkNum;		// chunk #
+UI16 chunkSize;		// size of chunk
+UI08 chunkData[];
+</pre>
+
+<a name="SC11"><h4>Get Script Section Response</h4></a>
+<table width="500">
+<tr><td width="200">Size<td width="300">8 bytes</tr>
+<tr><td>Minimum access level<td>Admin</tr>
+</table>
+<pre>
+UI08 commandByte;	// 0x0D
+UI08 scriptNum;
+UI08 sectionName[64];	// Section name being retrieved	
+struct
+{
+	UI08 tagData[32];
+	UI16 dataLength;
+	UI08 data[dataLength];
+};
+</pre>
+
+</body>
+</html>

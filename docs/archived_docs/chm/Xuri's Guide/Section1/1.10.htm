@@ -1,0 +1,46 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 1</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionI.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BORDERCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21">
+
+<A NAME="faq"><FONT FACE="Tahoma"
+    COLOR="#FFFFFF"><SMALL>1.10 - <STRONG>FAQ - FREQUENTLY ASKED QUESTIONS</STRONG></SMALL></FONT></A></TD></TR> 
+<TR> <TD WIDTH="100%" HEIGHT="19" BGCOLOR="#808080"><SMALL><FONT FACE="Tahoma">&nbsp;&nbsp;&nbsp; 
+<b> --Why do I get disconnected whenever I use a command, for instance /ADD or /TELE?<br>
+</B><i> Because in a recent patch the UO client was changed to use the / letter for sending party messages.<br>
+Due to this, UOX has changed to use another key in front of the commands, and by deafault, that key is ' . You use it by<br>
+typing that key instead of / in front of commands, for instance 'ADD and 'TELE.<br>
+This key, named the <b>Commandprefix</b> is scriptable in server.scp. Look for COMMANDPREFIX ' and change<br>
+that to whatever you want.<br><br></i>
+<b> --Why does my client halt at "Verifying account" or "Connecting to server"?<br>
+</B><i> There might be several reasons for this. Here are some of the things that may cause these problems:
+<ul>
+<li> You have put the UOX port (2593) behind your IP adress in UOX3.INI. Remove the Port adress from UOX3.INI
+<li> You haven't put the UOX port (2593) behind your IP adress in <i>LOGIN.CFG</i>. Add the port to <i>LOGIN.CFG</i>, so<br>
+     it says "LoginServer=my.ip.adress,2593"  (replace my.ip.adress with your ip adress ;P)
+<li> You have put the wrong IP in either <i>LOGIN.CFG</i> or UOX3.INI. Make sure you have the same IP adress in<br>
+     both of these files, and also make sure the IP adress is valid. Most computers use 127.0.0.1 as local IP<br>
+     adress, or "loopback ip" as it is also called. Use this if you want to play offline, locally on your own<br>
+     computer.<br>
+     Else, use WINIPCFG to find your LAN/Internet IP if you intend to use either of those.
+<li> You are using the wrong UO Client, or the wrong UOX client. Download the latest of both of these.
+<li> You are not using "Ignition" to start the UO client.</i>
+</ul>
+<b> --What is "Ignition"?<br>
+</b><i> Ignition is a tool created by Beosil, which when used with a configuration file that works with the<br>
+	UO client, bypasses the encryption in said client, enabling you to log into UOX shards which does not<br>
+	have this encryption.<br></i>
+<b> --Why doesn't Lumberjacking work on my shard?<br>
+</b><i> Lumberjacking works on every shard, when people can't seem to do it, it's because of either of these reasons:<br>
+	<ul>
+	<li>They target the leaves of the tree instead of the trunk of the tree.
+	<li>They have transparency enabled so they actually target behind the tree instead of the tree itself
+	</ul><br></i>
+
+
+</BODY>
+</HTML>

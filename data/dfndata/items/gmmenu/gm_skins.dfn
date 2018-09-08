@@ -1,0 +1,137 @@
+//	Ultima Offline eXperiment 3
+//	
+//	Script name: GM_Skins.dfn
+//	Writen by: UOX3Dev [www.uox3dev.com]
+//	Date: 12/02/02
+//	NOTE: This file also contains Hair and Facial Hair - kirre
+
+[0x2042]
+{
+get=base_item
+name=Lord British
+id=0x2042
+weight=30
+layer=0x0d
+def=500
+hp=1000
+movable=1
+decay=1
+newbie
+}
+
+[0x2043]
+{
+get=base_item
+name=Lord Blackthorne
+id=0x2043
+weight=30
+layer=0x0d
+def=500
+hp=1000
+movable=1
+decay=1
+newbie
+}
+
+[0x2050]
+{
+get=base_item
+name=Dupre the Fighter
+id=0x2050
+weight=30
+layer=0x0d
+def=500
+hp=1000
+movable=1
+decay=1
+newbie
+}
+
+[0x204e]
+{
+get=base_item
+name=death shroud
+id=0x204e
+weight=30
+layer=0x16
+def=500
+hp=1000
+movable=1
+decay=1
+newbie
+}
+
+[0x204f-u]
+{
+get=base_item
+name=GM Robe
+id=0x204f
+weight=30
+layer=13
+def=500
+hp=1000
+movable=1
+decay=1
+newbie
+}
+
+[00x204f-b]
+{
+get=base_item
+name=Counselor Robe
+id=0x204f
+weight=30
+layer=13
+def=500
+hp=1000
+color=0x0003
+movable=1
+decay=1
+newbie
+}
+
+[0x204f-r]
+{
+get=base_item
+name=Gamemaster Robe
+id=0x204f
+weight=30
+layer=13
+def=500
+hp=1000
+color=0x0025
+movable=1
+decay=1
+newbie
+}
+
+[0x204f-g]
+{
+get=base_item
+name=Seer Robe
+id=0x204f
+weight=30
+layer=13
+def=500
+hp=1000
+color=0x0048
+movable=1
+decay=1
+newbie
+}
+
+[0x204f-a]
+{
+get=base_item
+name=Admin Robe
+id=0x204f
+weight=30
+layer=13
+def=500
+hp=1000
+color=0x0001
+movable=1
+decay=1
+newbie
+}
+

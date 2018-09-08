@@ -1,0 +1,6 @@
+        DYE <hex-id>
+
+  Purpose: 
+        Use to dye items/characters a different
+        hue. Use without specifying hex-id to
+        bring up a color-palette.

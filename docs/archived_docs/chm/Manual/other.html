@@ -1,0 +1,83 @@
+<html>
+<head>
+	<style type=text/css>
+		FONT		{ FONT-FAMILY: Verdana,Helvetica,Arial; }
+		table.z		{ FONT-FAMILY: Veranda,Helvetica,Arial; font-size: 10pt; }
+		A		{ color: #cccccc; text-decoration: none; }
+		A:active	{ color: #cfcfff; }
+		A:hover		{ color: #3333ff; }
+	</style>
+	<title>UOX3 Scripting Guide</title>
+</head>
+<body bgcolor=#000000 text=#ffffff link=#ffffff vlink=#ffffff alink=#ffffff topmargin=0 leftmargin=0>
+<center>
+<font size=3><b>UOX3 Scripting Info</b></font><br>
+<p>
+<table bgcolor=#333333 width=95%>
+    <tr>
+	<td><table class=z border=0 cellpadding=0 cellspacing=0>
+	    <tr>
+		<td>
+	<table class=z width=100%>
+	    <tr>
+		<td>
+		    <p>
+		    <hr><br>
+		    <a name="slit"></a>
+		    Splitting Monsters
+		    <p>
+		    npc.scp:
+		    <p>
+		    add these commands to any npc
+		    <p>
+		    SPLIT ##<br>
+		    SPLITCHANCE ##
+		    <p>
+		    where SPLIT is how many it can split into when hit
+		    <p>
+		    SPLIT 3
+		    <p>
+		    it has a posibility of spliting up to 3 extra npcs each time hit
+		    <p>
+		    and where SPLITCHANCE is the chance that an NPC has to split when hit
+		    <p>
+		    SPLITCHANCE 50
+		    <p>
+		    the npc has a 50 percent chace of splitting each time hit.
+		    <p>
+		    <p>
+		    <hr><br>
+		    <a name="inscribe.gmp"></a>
+	    	    Gump System, inscribe.gmp
+		    <p>
+		    New Gump System: 
+		    <p>
+		    Read the inscribe.gmp file, it is well documented and should be easy to follow.  If you then go into
+		    the UOX code you will see how i implemented it.  Now I did NOT write the new gump system, rather 
+		    Kathrrack did, and I am very impressed by it.  Note that you now have to compile with the im.cpp,
+		    im.h and fromuox.h files to get all this to work properly. 
+		    <p>
+		    Inscription: 
+		    <p>
+		    Ok guys, inscription as we all know it is now here, straight from UO 
+		    itself.  It works like normal, click on inscribe skill, click on blank scroll (0e 34) select circle then
+		    spell and poof, you now have a scroll of whatever.  Inscription currently checks the inscribe skill on a
+		    sliding scale based on the spell you are inscribing.  This may need later tweaking if it is too easy to
+		    do (or too hard for that matter) 
+		    <p>
+		    Engraving: 
+		    <p>
+		    This is new and non-UO, select inscribe skill and target a piece of armor.  It will then ask you for
+		    circle and spell to engrave.  If successful, you will place the spell on the item with 5 charges on it. 
+		    This checks the magery skill, the tinkering skill and the inscription skill, it is rather hard to master.
+		    Again this may need tweaking later. A player may engrave any item that has att or def greater than zero,
+		    thus shirts, armor, weapons, hats may all be engraved. Food and  pets may NOT.
+		    <p>
+		</td>
+	    </tr>
+	</table></td>
+     </tr>
+</table>
+</center>
+</body>
+</html>

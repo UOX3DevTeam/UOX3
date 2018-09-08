@@ -1,0 +1,64 @@
+//Fletching
+
+[0x1bd1]
+{
+get=base_item
+name=feather
+id=0x1bd1
+weight=10
+value=2 1
+pileable=1
+decay=1
+good=43
+}
+
+[0x1BD4]
+{
+get=base_item
+name=shaft
+id=0x1bd4
+weight=10
+value=3 1
+pileable=1
+decay=1
+good=43
+}
+
+[0x1BD4-5]
+{
+get=base_item
+name=shaft
+id=0x1bd4
+weight=10
+value=3 1
+pileable=1
+amount=5
+decay=1
+good=43
+}
+
+[0x1BD4-20]
+{
+get=base_item
+name=shaft
+id=0x1bd4
+weight=10
+value=3 1
+pileable=1
+amount=20
+decay=1
+good=43
+}
+
+[0x1BD4-50]
+{
+get=base_item
+name=shaft
+id=0x1bd4
+weight=10
+value=3 1
+pileable=1
+amount=50
+decay=1
+good=43
+}

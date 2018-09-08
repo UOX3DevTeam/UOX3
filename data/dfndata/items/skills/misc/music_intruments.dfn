@@ -1,0 +1,89 @@
+[base_instrument]
+{
+get=base_item
+restock=20
+movable=1
+decay=1
+good=41
+}
+
+[0x0E9C]
+{
+get=base_instrument
+name=drum
+id=0x0E9C
+weight=300
+value=25 12
+}
+
+[0x0eb1]
+{
+get=base_instrument
+name=standing harp
+id=0x0eb1
+weight=2000
+value=50 25
+}
+
+[0x0EB2]
+{
+get=base_instrument
+name=lap harp
+id=0x0EB2
+weight=1000
+value=25 12
+}
+
+[0x0EB3]
+{
+get=base_instrument
+name=lute
+id=0x0EB3
+weight=500
+value=24 12
+}
+
+[0x0EB4]
+{
+get=base_instrument
+name=lute
+id=0x0EB4
+weight=500
+value=24 12
+}
+
+[0x0E9D]
+{
+get=base_instrument
+name=tambourine
+id=0x0E9D
+weight=100
+value=24 12
+}
+
+[0x0E9e]
+{
+get=base_instrument
+name=tambourine
+id=0x0e9e
+weight=100
+value=24 12
+}
+
+[0x2805]
+{
+get=base_instrument
+name=bamboo flute
+id=0x2805
+weight=100
+value=24 12
+}
+
+[0x2807]
+{
+get=base_instrument
+name=bamboo flute
+id=0x2807
+weight=100
+value=24 12
+}

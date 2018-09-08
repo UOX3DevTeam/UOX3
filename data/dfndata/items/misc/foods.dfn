@@ -1,0 +1,465 @@
+// food.dfn
+// v1.0; 04/00; initial release; boris;
+// v1.1; 21/11/01; updated id tags to add 0x prefix for hex values; daniel stratton / abaddon; darkangelab@users.sourceforge.net
+// v1.2; 16/01/02; fixed section headers, typos, added missing objects; steve gibson / zinlu; sandsgibson@earthlink.net
+// v1.3; 16/01/02; very minor section tweak; daniel stratton / abaddon; darkangelab@users.sourceforge.net
+// v1.4; 9/03/03; updated values and weight; geir ove alnes / xuri; xuri@sensewave.com
+// (add new version comments here, copy above line please)
+// for use with the uox emulator or any with permission from the author
+// food
+
+[0x0976]
+{
+get=base_food
+name=slab of bacon
+id=0x0976
+weight=400
+value=8 4
+pileable=1
+}
+
+[0x0977]
+{
+get=base_food
+name=slab of bacon
+id=0x0977
+weight=400
+value=8 4
+pileable=1
+}
+
+[0x0978]
+{
+get=base_food
+name=slice of bacon
+id=0x0978
+value=3 1
+pileable=1
+}
+
+[0x0979]
+{
+get=base_food
+name=slice of bacon
+id=0x0979
+value=3 1
+pileable=1
+}
+
+[0x097b]
+{
+get=base_food
+name=fish steak
+id=0x097b
+weight=10
+value=6 3
+pileable=1
+}
+
+[0x097e]
+{
+get=base_food
+name=wheel of cheese
+id=0x097e
+weight=10
+value=24 12
+pileable=1
+}
+
+[0x097c]
+{
+get=base_food
+name=wedge of cheese
+id=0x097c
+weight=2
+value=4 2
+pileable=1
+}
+
+[0x097d]
+{
+get=base_food
+name=wedge of cheese
+id=0x097d
+weight=10
+value=20 10
+pileable=1
+}
+
+[0x098c]
+{
+get=base_food
+name=french bread
+id=0x098c
+weight=200
+value=6 3
+pileable=1
+}
+
+[0x09b7]
+{
+get=base_food
+name=cooked bird
+id=0x09b7
+value=6 3
+pileable=1
+}
+
+[0x09b8]
+{
+get=base_food
+name=cooked bird
+id=0x09b8
+value=6 3
+pileable=1
+}
+
+[0x09bb]
+{
+get=base_food
+name=roast pig
+id=0x09bb
+weight=4500
+value=128 64
+pileable=1
+}
+
+[0x09bc]
+{
+get=base_food
+name=roast pig
+id=0x09bc
+weight=4500
+value=128 64
+pileable=1
+}
+
+[0x09c0]
+{
+get=base_food
+name=sausage
+id=0x09c0
+value=20 10
+pileable=1
+}
+
+[0x09c1]
+{
+get=base_food
+name=sausage
+id=0x09c1
+value=20 10
+pileable=1
+}
+
+[0x09c9]
+{
+get=base_food
+name=ham
+id=0x09c9
+value=24 12
+pileable=1
+}
+
+[0x09d3]
+{
+get=base_food
+name=ham
+id=0x09d3
+value=24 12
+pileable=1
+}
+
+[0x09d0]
+{
+get=base_food
+name=apple
+id=0x09d0
+value=3 1
+pileable=1
+}
+
+[0x09d1]
+{
+get=base_food
+name=grape bunch
+id=0x09d1
+value=3 1
+pileable=1
+}
+
+[0x09d2]
+{
+get=base_food
+name=peach
+id=0x09d2
+value=3 1
+pileable=1
+}
+
+[0x09ea]
+{
+get=base_food
+name=muffin
+id=0x09ea
+value=3 1
+pileable=1
+}
+
+[0x09eb]
+{
+get=base_food
+name=muffins
+id=0x09eb
+weight=300
+value=6 3
+pileable=1
+}
+
+[0x09fa]
+{
+get=base_food
+name=muffins
+id=0x09fa
+weight=200
+value=4 2
+pileable=1
+}
+
+[0x09e9]
+{
+get=base_food
+name=cake
+id=0x09e9
+value=11 5
+pileable=1
+}
+
+[0x09f2]
+{
+get=base_food
+name=cooked ribs
+id=0x09f2
+value=12 6
+pileable=1
+}
+
+[0x0993]
+{
+get=base_food
+name=fruit basket
+id=0x0993
+weight=500
+value=100 50
+}
+
+[0x09af]
+{
+get=base_food
+name=plate of food
+id=0x09af
+value=12 6
+}
+
+[0x160b]
+{
+get=base_food
+name=pan of cookies
+id=0x160b
+value=3 1
+}
+
+[0x160c]
+{
+get=base_food
+name=plate of cookies
+id=0x160c
+value=3 1
+}
+
+[0x09d8]
+{
+get=base_food
+name=plate of food
+id=0x09d8
+value=12 6
+}
+
+[0x09d9]
+{
+get=base_food
+name=plate of food
+id=0x09d9
+value=12 6
+}
+
+[0x09db]
+{
+get=base_food
+name=plate of food
+id=0x09db
+value=12 6
+}
+
+[0x09b6]
+{
+get=base_food
+name=fried eggs
+id=0x09b6
+value=3 1
+pileable=1
+}
+
+[0x103b]
+{
+get=base_food
+name=bread loaf
+id=0x103b
+value=6 3
+pileable=1
+}
+
+[0x103c]
+{
+get=base_food
+name=bread loaf
+id=0x103c
+value=6 3
+pileable=1
+}
+
+[0x1040]
+{
+get=base_food
+name=pizza
+id=0x1040
+value=8 4
+pileable=1
+}
+
+[0x1041]
+{
+get=base_food
+name=baked pie
+id=0x1041
+value=8 4
+}
+
+[0x1608]
+{
+get=base_food
+name=chicken leg
+id=0x1608
+value=6 3
+pileable=1
+}
+
+[0x160a]
+{
+get=base_food
+name=leg of lamb
+id=0x160a
+value=12 6
+pileable=1
+}
+
+// soup
+
+[0x15f9]
+{
+get=base_food
+name=bowl of carrots
+id=0x15f9
+value=3 1
+}
+
+[0x15fa]
+{
+get=base_food
+name=bowl of corn
+id=0x15fa
+value=3 1
+}
+
+[0x15fb]
+{
+get=base_food
+name=bowl of lettuce
+id=0x15fb
+value=3 1
+}
+
+[0x15fc]
+{
+get=base_food
+name=bowl of peas
+id=0x15fc
+value=3 1
+}
+
+[0x15fe]
+{
+get=base_food
+name=bowl of carrots
+id=0x15fe
+value=3 1
+}
+
+[0x15ff]
+{
+get=base_food
+name=bowl of corn
+id=0x15ff
+value=3 1
+}
+
+[0x1600]
+{
+get=base_food
+name=bowl of lettuce
+id=0x1600
+value=3 1
+}
+
+[0x1601]
+{
+get=base_food
+name=bowl of peas
+id=0x1601
+value=3 1
+}
+
+[0x1602]
+{
+get=base_food
+name=bowl of patatoes
+id=0x1602
+value=3 1
+}
+
+[0x1604]
+{
+get=base_food
+name=bowl of stew
+id=0x1604
+weight=2
+value=12 6
+}
+
+[0x0a1e]
+{
+get=base_food
+name=bowl of flour
+id=0x0a1e
+weight=400
+value=8 4
+}
+
+[0x1606]
+{
+get=base_food
+name=tomato soup
+id=0x1606
+weight=100
+value=3 1
+}

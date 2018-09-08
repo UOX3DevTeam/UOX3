@@ -1,0 +1,408 @@
+// Headwear, excluding ones from TD, LBR & AoS clients
+
+[base_hat]
+{
+get=base_item
+name=base_hat
+id=0x0000
+layer=0x06
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x153f]
+{
+get=base_item
+name=bandana
+id=0x153f
+weight=100
+value=14 6
+layer=0x06
+def=1
+hp=100
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1540]
+{
+get=base_item
+name=bandana
+id=0x1540
+weight=100
+value=14 6
+layer=0x06
+def=1
+hp=100
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x171A]
+{
+get=base_item
+name=feathered hat
+id=0x171A
+weight=100
+value=27 13
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1713]
+{
+get=base_item
+name=floppy hat
+id=0x1713
+weight=100
+value=25 12
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1719]
+{
+get=base_item
+name=bonnet
+id=0x1719
+weight=100
+value=26 13
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1715]
+{
+get=base_item
+name=cap
+id=0x1715
+weight=100
+value=27 13
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x171C]
+{
+get=base_item
+name=jester hat
+id=0x171C
+weight=100
+value=31 15
+layer=0x6
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1543]
+{
+get=base_item
+name=skullcap
+id=0x1543
+weight=100
+value=12 6
+layer=0x6
+def=1
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1544]
+{
+get=base_item
+name=skullcap
+id=0x1544
+weight=100
+value=12 6
+layer=0x6
+def=1
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1717]
+{
+get=base_item
+name=straw hat
+id=0x1717
+weight=100
+value=25 12
+layer=0x6
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1716]
+{
+get=base_item
+name=tall straw hat
+id=0x1716
+weight=100
+value=26 13
+layer=0x6
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1714]
+{
+get=base_item
+name=wide-brim hat
+id=0x1714
+weight=100
+value=26 13
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1718]
+{
+get=base_item
+name=wizard's hat
+id=0x1718
+weight=100
+value=30 15
+layer=0x6
+def=3
+hp=50
+stradd=-5
+intadd=5
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x172e]
+{
+get=base_item
+name=jester's cap
+id=0x172e
+weight=100
+value=31 15
+layer=0x06
+def=3
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x171B]
+{
+get=base_item
+name=tricorne hat
+id=0x171B
+weight=100
+value=26 13
+layer=0x06
+def=3
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1549]
+{
+get=base_item
+name=tribal mask
+id=0x1549
+weight=200
+value=40 20
+layer=0x6
+def=5
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x154A]
+{
+get=base_item
+name=tribal mask
+id=0x154A
+weight=200
+value=40 20
+layer=0x6
+def=5
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x154B]
+{ red
+get=base_item
+name=tribal mask
+id=0x154B
+weight=200
+value=40 20
+layer=0x6
+def=5
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x154C]
+{ red
+get=base_item
+name=tribal mask
+id=0x154C
+weight=200
+value=30 20
+layer=0x6
+def=5
+hp=50
+restock=10
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1545]
+{
+get=base_item
+name=bear mask
+id=0x1545
+weight=500
+value=50 25
+layer=0x06
+def=6
+hp=50
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1546]
+{
+get=base_item
+name=bear mask
+id=0x1546
+weight=500
+value=50 25
+layer=0x06
+def=6
+hp=50
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1547]
+{
+get=base_item
+name=deer mask
+id=0x1547
+weight=400
+value=50 25
+layer=0x06
+def=6
+hp=50
+dyeable=1
+decay=1
+good=20
+}
+
+[0x1548]
+{
+get=base_item
+name=deer mask
+id=0x1548
+weight=400
+value=50 25
+layer=0x06
+def=6
+hp=50
+dyeable=1
+decay=1
+good=20
+}
+
+[0x141B]
+{
+get=base_item
+name=orc mask
+id=0x141B
+weight=400
+value=50 25
+layer=0x6
+def=5
+hp=50
+dyeable=1
+decay=1
+good=20
+}
+
+[0x141C]
+{
+get=base_item
+name=orc mask
+id=0x141C
+weight=400
+value=50 25
+layer=0x6
+def=5
+hp=50
+dyeable=1
+decay=1
+good=20
+}

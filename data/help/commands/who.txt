@@ -1,0 +1,10 @@
+        WHO
+
+  Purpose: 
+        Will display a list of all characters
+        currently logged in, sorted in a
+        numbered list with the characters most
+        recently logged in at bottom. These
+        numbers can be used along with the TELL
+        command for long-distance communication.
+        

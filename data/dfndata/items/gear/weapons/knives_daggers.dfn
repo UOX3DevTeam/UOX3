@@ -1,0 +1,153 @@
+// KNIVES AND DAGGERS
+
+[0x0ec2]
+{ facing West
+get=base_item
+name=cleaver
+id=0x0ec2
+weight=100
+value=24 12
+layer=1
+lodamage=2
+hidamage=13
+hp=31 50
+spd=40
+str=10
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x0ec3]
+{ facing North
+get=base_item
+name=cleaver
+id=0x0ec3
+weight=100
+value=24 12
+layer=1
+lodamage=2
+hidamage=13
+hp=31 50
+spd=40
+str=10
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x0ec4]
+{ facing North
+get=base_item
+name=skinning knife
+id=0x0ec4
+weight=100
+value=26 13
+layer=1
+lodamage=1
+hidamage=10
+hp=31 40
+spd=40
+str=5
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x0ec5]
+{ facing West
+get=base_item
+name=skinning knife
+id=0x0ec5
+weight=100
+value=26 13
+layer=1
+lodamage=1
+hidamage=10
+hp=31 40
+spd=40
+str=5
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x0f51]
+{ facing North
+get=base_item
+name=dagger
+id=0x0f51
+weight=100
+value=22 11
+layer=1
+lodamage=3
+hidamage=15
+hp=31 50
+spd=55
+str=1
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x0f52]
+{ facing West
+get=base_item
+name=dagger
+id=0x0f52
+weight=100
+value=22 11
+layer=1
+lodamage=3
+hidamage=15
+hp=31 50
+spd=55
+str=1
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x13f6]
+{ facing North
+get=base_item
+name=butcher knife
+id=0x13f6
+weight=100
+value=21 10
+layer=1
+lodamage=2
+hidamage=14
+hp=31 40
+spd=40
+str=5
+restock=10
+movable=1
+decay=1
+good=25
+}
+
+[0x13f7]
+{ facing West
+get=base_item
+name=butcher knife
+id=0x13f7
+weight=100
+value=21 10
+layer=1
+lodamage=2
+hidamage=14
+hp=31 40
+spd=40
+str=5
+restock=10
+movable=1
+decay=1
+good=25
+}

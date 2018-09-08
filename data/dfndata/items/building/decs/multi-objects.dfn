@@ -1,0 +1,755 @@
+[0x1b81]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b81
+weight=100
+movable=2
+}
+
+[0x1b82]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b82
+weight=100
+movable=2
+}
+
+[0x1b83]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b83
+weight=100
+movable=2
+}
+
+[0x1b84]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b84
+weight=100
+movable=2
+}
+
+[0x1b85]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b85
+weight=100
+movable=2
+}
+
+[0x1b86]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b86
+weight=100
+movable=2
+}
+
+[0x1b87]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b87
+weight=100
+movable=2
+}
+
+[0x1b88]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b88
+weight=100
+movable=2
+}
+
+[0x1b89]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b89
+weight=100
+movable=2
+}
+
+[0x1b8a]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8a
+weight=100
+movable=2
+}
+
+[0x1b8b]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8b
+weight=100
+movable=2
+}
+
+[0x1b8c]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8c
+weight=100
+movable=2
+}
+
+[0x1b8d]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8d
+weight=100
+movable=2
+}
+
+[0x1b8e]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8e
+weight=100
+movable=2
+}
+
+[0x1b8f]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b8f
+weight=100
+movable=2
+}
+
+[0x1b90]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b90
+weight=100
+movable=2
+}
+
+[0x1b91]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b91
+weight=100
+movable=2
+}
+
+[0x1b92]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b92
+weight=100
+movable=2
+}
+
+[0x1b93]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b93
+weight=100
+movable=2
+}
+
+[0x1b97]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b97
+weight=100
+movable=2
+}
+
+[0x1b98]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b98
+weight=100
+movable=2
+}
+
+[0x1b99]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b99
+weight=100
+movable=2
+}
+
+[0x1b9a]
+{ dead, combines in many ways
+get=base_item
+name=wood
+id=0x1b9a
+weight=100
+movable=2
+}
+
+[0x1b9b]
+{
+get=base_item
+name=wood
+id=0x1b9b
+weight=100
+movable=2
+}
+
+[0x1b9c]
+{
+get=base_item
+name=wood
+id=0x1b9c
+weight=100
+movable=2
+}
+
+[0x1b9d]
+{
+get=base_item
+name=wood
+id=0x1b9d
+weight=100
+movable=2
+}
+
+[0x1b9e]
+{
+get=base_item
+name=wood
+id=0x1b9e
+weight=100
+movable=2
+}
+
+[0x1b9f]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1b9f
+weight=100
+movable=2
+}
+
+[0x1ba0]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba0
+weight=100
+movable=2
+}
+
+[0x1ba1]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba1
+weight=100
+movable=2
+}
+
+[0x1ba2]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba2
+weight=100
+movable=2
+}
+
+[0x1ba3]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba3
+weight=100
+movable=2
+}
+
+[0x1ba4]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba4
+weight=100
+movable=2
+}
+
+[0x1ba5]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba5
+weight=100
+movable=2
+}
+
+[0x1ba6]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba6
+weight=100
+movable=2
+}
+
+[0x1ba7]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba7
+weight=100
+movable=2
+}
+
+[0x1ba8]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba8
+weight=100
+movable=2
+}
+
+[0x1ba9]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1ba9
+weight=100
+movable=2
+}
+
+[0x1baa]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1baa
+weight=100
+movable=2
+}
+
+[0x1bab]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bab
+weight=100
+movable=2
+}
+
+[0x1bac]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bac
+weight=100
+movable=2
+}
+
+[0x1bad]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bad
+weight=100
+movable=2
+}
+
+[0x1bae]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bae
+weight=100
+movable=2
+}
+
+[0x1baf]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1baf
+weight=100
+movable=2
+}
+
+[0x1bb0]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb0
+weight=100
+movable=2
+}
+
+[0x1bb1]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb1
+weight=100
+movable=2
+}
+
+[0x1bb2]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb2
+weight=100
+movable=2
+}
+
+[0x1bb4]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb4
+weight=100
+movable=2
+}
+
+[0x1bb5]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb5
+weight=100
+movable=2
+}
+
+[0x1bb6]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb6
+weight=100
+movable=2
+}
+
+[0x1bb7]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb7
+weight=100
+movable=2
+}
+
+[0x1bb8]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb8
+weight=100
+movable=2
+}
+
+[0x1bb9]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bb9
+weight=100
+movable=2
+}
+
+[0x1bba]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bba
+weight=100
+movable=2
+}
+
+[0x1bbb]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bbb
+weight=100
+movable=2
+}
+
+[0x1bbc]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bbc
+weight=100
+movable=2
+}
+
+[0x1bbd]
+{ combines many ways
+get=base_item
+name=refuse
+id=0x1bbd
+weight=100
+movable=2
+}
+
+[0x14d7]
+{ 1/9
+get=base_item
+name=vat
+id=0x14d7
+weight=100
+movable=2
+}
+
+[0x14d8]
+{ 2/9 S
+get=base_item
+name=vat
+id=0x14d8
+weight=100
+movable=2
+}
+
+[0x14e1]
+{ 2/9 S with ladder
+get=base_item
+name=vat
+id=0x14e1
+weight=100
+movable=2
+}
+
+[0x14d9]
+{ 3/9
+get=base_item
+name=vat
+id=0x14d9
+weight=100
+movable=2
+}
+
+[0x14da]
+{ 4/9 E
+get=base_item
+name=vat
+id=0x14da
+weight=100
+movable=2
+}
+
+[0x14e2]
+{ 4/9 E with ladder
+get=base_item
+name=vat
+id=0x14e2
+weight=100
+movable=2
+}
+
+[0x14db]
+{ 5/9
+get=base_item
+name=vat
+id=0x14db
+weight=100
+movable=2
+}
+
+[0x14dc]
+{ 6/9
+get=base_item
+name=vat
+id=0x14dc
+weight=100
+movable=2
+}
+
+[0x14dd]
+{ 7/9
+get=base_item
+name=vat
+id=0x14dd
+weight=100
+movable=2
+}
+
+[0x14de]
+{ 8/9
+get=base_item
+name=vat
+id=0x14de
+weight=100
+movable=2
+}
+
+[0x14df]
+{ 9/9
+get=base_item
+name=vat
+id=0x14df
+weight=100
+movable=2
+}
+
+[0x151e]
+{ grapes 1/6
+get=base_item
+name=vat
+id=0x151e
+weight=100
+movable=2
+}
+
+[0x151f]
+{ grapes 2/6
+get=base_item
+name=vat
+id=0x151f
+weight=100
+movable=2
+}
+
+[0x1520]
+{ grapes ladder S 2/6
+get=base_item
+name=vat
+id=0x1520
+weight=100
+movable=2
+}
+
+[0x1521]
+{ grapes 3/6
+get=base_item
+name=vat
+id=0x1521
+weight=100
+movable=2
+}
+
+[0x1522]
+{ grapes 4/6
+get=base_item
+name=vat
+id=0x1522
+weight=100
+movable=2
+}
+
+[0x1523]
+{ grapes 5/6
+get=base_item
+name=vat
+id=0x1523
+weight=100
+movable=2
+}
+
+[0x1524]
+{ grapes 6/6
+get=base_item
+name=vat
+id=0x1524
+weight=100
+movable=2
+}
+
+[0x1525]
+{ grapes ladder E 6/6
+get=base_item
+name=vat
+id=0x1525
+weight=100
+movable=2
+}
+
+[0x1550]
+{ water 1/6
+get=base_item
+name=vat
+id=0x1550
+weight=100
+movable=2
+}
+
+[0x1551]
+{ water ladder S 1/6
+get=base_item
+name=vat
+id=0x1551
+weight=100
+movable=2
+}
+
+[0x1552]
+{ water 2/6
+get=base_item
+name=vat
+id=0x1552
+weight=100
+movable=2
+}
+
+[0x1553]
+{ water 3/6
+get=base_item
+name=vat
+id=0x1553
+weight=100
+movable=2
+}
+
+[0x1554]
+{ water 4/6
+get=base_item
+name=vat
+id=0x1554
+weight=100
+movable=2
+}
+
+[0x1555]
+{ water ladder E 5/6
+get=base_item
+name=vat
+id=0x1555
+weight=100
+movable=2
+}
+
+[0x1556]
+{ water 5/6
+get=base_item
+name=vat
+id=0x1556
+weight=100
+movable=2
+}
+
+[0x1558]
+{ water 6/6
+get=base_item
+name=vat
+id=0x1558
+weight=100
+movable=2
+}

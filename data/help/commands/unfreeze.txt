@@ -1,0 +1,5 @@
+        UNFREEZE <target>
+
+  Purpose: 
+        Will unfreeze targetted character, if
+        frozen.

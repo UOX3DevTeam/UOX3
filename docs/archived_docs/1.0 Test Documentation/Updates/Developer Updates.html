@@ -1,0 +1,79 @@
+<html>
+
+<head>
+<title>Developer's Updates</title>
+<link rel="stylesheet" type="text/css" href="uox.css">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+</head>
+
+<body background="bg.gif">
+
+<h1>Developer Updates</h1>
+<h2>10th April, 2001 (Build 24a)</h2>
+<ul>
+  <li>Beneficial spells (Heal, Night Sight, Agility, Cunning, Cure, Protection,
+    Strength, Bless, Greater Heal, Inivisibility ) on murderers will flag you
+    criminal
+  <li>Races constructor/destructor modified to not cause crashes
+  <li>Fixed inability to repeatedly cast magic
+  <li>Fixed cannot use items equipped on other players bug
+  <li>Shitlist read in as a vector at startup, and run through in memory on
+    login
+  <li>F key on console will reload the shitlist.ini file
+  <li>Cannot hide while mounted
+  <li>Attempting to resurrect a murderer via bandages results in criminality
+  <li>Attempting to cure a murderer via bandages results in criminality
+  <li>Attempting to heal a murderer via bandages results in criminality
+  <li>If you don't have the skill to heal a character, it tells you that you
+    apply the bandages but it barely helps. Their health only goes up by 1 HP.
+  <li>If somehow on horse while stealthing, will go out of stealth when
+    attempting to walk
+  <li>Few pathfinding corrections (fleeing NPCs work better)
+  <li>Slight change to teleport, may fix black liche thing
+  <li>Stack being refreshed when items added to it
+  <li>If hidden when mounting a horse, become unhidden
+  <li>When mounting, creature attacking the mount will stop attacking. Mount
+    will lose any target they may have.
+  <li>Slight changes to readw3(), to prevent overruns.
+  <li>Explicit NULLing of files when closed.
+  <li>Races added a new tag, to help streamline scripts. PARENTRACE # where # is
+    the parent race. This essentially is just a cut/paste job
+</ul>
+<pre>ie
+SECTION RACE 0 // Just happens to be the parent
+{
+NAME Human
+STRCAP 150
+DEXCAP 30
+INTCAP 120
+PLAYERRACE 1
+}
+
+SECTION RACE 1
+{
+PARENTRACE 0	// by using this, they automatically get strcap of 150, dexcap of 30, and intcap of 120, as well as being a player race with the name Human
+NAME Midget	// we override the name given to us
+DEXCAP 60	// increase the dexterity cap
+}
+
+In essence, you can picture race 1 being like:
+
+SECTION RACE 1
+{
+NAME Human
+STRCAP 150
+DEXCAP 30
+INTCAP 120
+PLAYERRACE 1
+NAME Midget
+DEXCAP 60
+}</pre>
+<p>This allows you to streamline races, if you need to. You can extend this to
+grandchildren, or grand grandchildren, if so desired. If you have a group of
+classes belonging to a race, then all the common aspects of those classes could
+be put in a parent race, and specialize in the child race.</p>
+
+</body>
+
+</html>

@@ -1,0 +1,224 @@
+[0x1078]
+{
+get=base_item
+name=pile of hides
+id=0x1078
+weight=500
+value=3 1
+pileable=1
+decay=1
+good=44
+}
+
+[0x1079]
+{
+get=base_item
+name=pile of hides
+id=0x1079
+weight=500
+value=3 1
+pileable=1
+decay=1
+good=44
+}
+
+[0x1067]
+{ E
+get=base_item
+name=cut up leather
+id=0x1067
+weight=100
+value=7 3
+pileable=1
+decay=1
+good=44
+}
+
+[0x1068]
+{ N
+get=base_item
+name=cut up leather
+id=0x1068
+weight=100
+value=7 3
+pileable=1
+decay=1
+good=44
+}
+
+[0x1069]
+{ E
+get=base_item
+name=stretched hide
+id=0x1069
+weight=300
+movable=2
+}
+
+[0x106a]
+{ E
+get=base_item
+name=stretched hide
+id=0x106a
+weight=300
+movable=2
+}
+
+[0x106b]
+{ E
+get=base_item
+name=stretched hide
+id=0x106b
+weight=300
+movable=2
+}
+
+[0x106c]
+{ E 1/2
+get=base_item
+name=stretched hide
+id=0x106c
+weight=300
+movable=2
+}
+
+[0x106d]
+{ E 2/2
+get=base_item
+name=stretched hide
+id=0x106d
+weight=300
+movable=2
+}
+
+[0x106e]
+{ E 1/2
+get=base_item
+name=stretched hide
+id=0x106e
+weight=300
+movable=2
+}
+
+[0x106f]
+{ E 2/2
+get=base_item
+name=stretched hide
+id=0x106f
+weight=300
+movable=2
+}
+
+[0x107a]
+{ S
+get=base_item
+name=stretched hide
+id=0x107a
+weight=300
+movable=2
+}
+
+[0x107b]
+{ S
+get=base_item
+name=stretched hide
+id=0x107b
+weight=300
+movable=2
+}
+
+[0x107c]
+{ S
+get=base_item
+name=stretched hide
+id=0x107c
+weight=300
+movable=2
+}
+
+[0x107d]
+{ S 1/2
+get=base_item
+name=stretched hide
+id=0x107d
+weight=300
+movable=2
+}
+
+[0x107e]
+{ S 2/2
+get=base_item
+name=stretched hide
+id=0x107e
+weight=300
+movable=2
+}
+
+[0x107f]
+{ S 1/2
+get=base_item
+name=stretched hide
+id=0x107f
+weight=300
+movable=2
+}
+
+[0x1080]
+{ S 2/2
+get=base_item
+name=stretched hide
+id=0x1080
+weight=300
+movable=2
+}
+
+[0x1081]
+{ W
+get=base_item
+name=cut up leather
+id=0x1081
+weight=100
+value=7 3
+pileable=1
+decay=1
+good=44
+}
+
+[0x1082]
+{ S
+get=base_item
+name=cut up leather
+id=0x1082
+weight=100
+value=7 3
+pileable=1
+movable=1
+decay=1
+good=44
+}
+
+[0x11F4]
+{
+get=base_item
+name=a fur
+id=0x11F4
+weight=1000
+value=4 2
+pileable=1
+restock=20
+decay=1
+good=44
+}
+
+[0x11F8]
+{
+get=base_item
+name=a fur
+id=0x11F8
+weight=1000
+value=4 2
+pileable=1
+restock=20
+decay=1
+good=44
+}

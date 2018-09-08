@@ -1,0 +1,479 @@
+// drinks.dfn
+// 10/3/2003 - split out from foods.dfn
+
+[base_drink]
+{
+get=base_item
+type=105
+restock=10
+good=33
+}
+
+[0x1f9e]
+{
+get=base_drink
+name=pitcher of water
+id=0x1f9e
+weight=200
+value=13 6
+}
+
+[0x1f9d]
+{
+get=base_drink
+name=pitcher of water
+id=0x1f9d
+weight=200
+value=13 6
+}
+
+[0x1f9c]
+{
+get=base_drink
+name=pitcher of wine
+id=0x1f9c
+weight=200
+value=13 6
+}
+
+[0x1f9b]
+{
+get=base_drink
+name=pitcher of wine
+id=0x1f9b
+weight=200
+value=13 6
+}
+
+[0x1f9a]
+{
+get=base_drink
+name=pitcher of liquor
+id=0x1f9a
+weight=200
+value=13 6
+}
+
+[0x1f99]
+{
+get=base_drink
+name=pitcher of liquor
+id=0x1f99
+weight=200
+value=13 6
+}
+
+[0x1f98]
+{
+get=base_drink
+name=pitcher of ale
+id=0x1f98
+weight=200
+value=13 6
+}
+
+[0x1f97]
+{
+get=base_drink
+name=pitcher of ale
+id=0x1f97
+weight=200
+value=13 6
+}
+
+[0x1f96]
+{
+get=base_drink
+name=pitcher of ale
+id=0x1f96
+weight=200
+value=13 6
+}
+
+[0x1f95]
+{
+get=base_drink
+name=pitcher of ale
+id=0x1f95
+weight=200
+value=13 6
+}
+
+[0x1f94]
+{
+get=base_drink
+name=glass of water
+id=0x1f94
+weight=100
+value=3 1
+}
+
+[0x1f93]
+{
+get=base_drink
+name=glass of water
+id=0x1f93
+weight=100
+value=3 1
+}
+
+[0x1f92]
+{
+get=base_drink
+name=glass of water
+id=0x1f92
+weight=100
+value=3 1
+}
+
+[0x1f91]
+{
+get=base_drink
+name=glass of water
+id=0x1f91
+weight=100
+value=3 1
+}
+
+[0x1f90]
+{
+get=base_drink
+name=glass of wine
+id=0x1f90
+weight=100
+value=3 1
+}
+
+[0x1f8f]
+{
+get=base_drink
+name=glass of wine
+id=0x1f8f
+weight=100
+value=3 1
+}
+
+[0x1f8e]
+{
+get=base_drink
+name=glass of wine
+id=0x1f8e
+weight=100
+value=3 1
+}
+
+[0x1f8d]
+{
+get=base_drink
+name=glass of wine
+id=0x1f8d
+weight=100
+value=3 1
+}
+
+[0x1f8c]
+{
+get=base_drink
+name=glass of milk
+id=0x1f8c
+weight=100
+value=3 1
+}
+
+[0x1f8b]
+{
+get=base_drink
+name=glass of milk
+id=0x1f8b
+weight=100
+value=3 1
+}
+
+[0x1f8a]
+{
+get=base_drink
+name=glass of milk
+id=0x1f8a
+weight=100
+value=3 1
+}
+
+[0x1f89]
+{
+get=base_drink
+name=glass of milk
+id=0x1f89
+weight=100
+value=3 1
+}
+
+[0x1f88]
+{
+get=base_drink
+name=glass of liquor
+id=0x1f88
+weight=100
+value=3 1
+}
+
+[0x1f87]
+{
+get=base_drink
+name=glass of liquor
+id=0x1f87
+weight=100
+value=3 1
+}
+
+[0x1f86]
+{
+get=base_drink
+name=glass of liquor
+id=0x1f86
+weight=100
+value=3 1
+}
+
+[0x1f85]
+{
+get=base_drink
+name=glass of liquor
+id=0x1f85
+weight=100
+value=3 1
+}
+
+[0x1f80]
+{
+get=base_drink
+name=glass of cider
+id=0x1f80
+weight=100
+value=3 1
+}
+
+[0x1f7f]
+{
+get=base_drink
+name=glass of cider
+id=0x1f7f
+weight=100
+value=3 1
+}
+
+[0x1f7e]
+{
+get=base_drink
+name=glass of cider
+id=0x1f7e
+weight=100
+value=3 1
+}
+
+[0x1f7d]
+{
+get=base_drink
+name=glass of cider
+id=0x1f7d
+weight=100
+value=3 1
+}
+
+[0x099b]
+{
+get=base_drink
+name=bottle of liquor
+id=0x099b
+weight=100
+value=8 4
+}
+
+[0x099c]
+{
+get=base_drink
+name=bottles of liquor
+id=0x099c
+weight=200
+value=8
+}
+
+[0x099d]
+{
+get=base_drink
+name=bottles of liquor
+id=0x099d
+weight=300
+value=12
+}
+
+[0x099e]
+{
+get=base_drink
+name=bottles of liquor
+id=0x099e
+weight=400
+value=16
+}
+
+[0x099f]
+{
+get=base_drink
+name=bottle of ale
+id=0x099f
+weight=100
+value=8 4
+}
+
+[0x09a0]
+{
+get=base_drink
+name=bottles of ale
+id=0x09a0
+weight=200
+value=8
+}
+
+[0x09a1]
+{
+get=base_drink
+name=bottles of ale
+id=0x09a1
+weight=300
+value=12
+}
+
+[0x09a2]
+{
+get=base_drink
+name=bottles of ale
+id=0x09a2
+weight=400
+value=16
+}
+
+[0x09ad]
+{
+get=base_drink
+name=pitcher of milk
+id=0x09ad
+weight=200
+value=13 6
+}
+
+[0x0ff8]
+{
+get=base_drink
+name=pitcher of water
+id=0x0ff8
+weight=200
+value=13 6
+}
+
+[0x0ff9]
+{
+get=base_drink
+name=pitcher of water
+id=0x0ff9
+weight=200
+value=13 6
+}
+
+[0x09c7]
+{
+get=base_drink
+name=bottle of wine
+id=0x09c7
+weight=100
+value=8 4
+}
+
+[0x09c6]
+{
+get=base_drink
+name=bottles of wine
+id=0x09c6
+weight=200
+value=16 8
+}
+
+[0x09c5]
+{
+get=base_drink
+name=bottles of wine
+id=0x09c5
+weight=300
+value=24 12
+}
+
+[0x09c4]
+{
+get=base_drink
+name=bottles of wine
+id=0x09c4
+weight=400
+value=32 16
+}
+
+[0x09c8]
+{
+get=base_drink
+name=jug of cider
+id=0x09c8
+weight=1100
+value=15 7
+}
+
+[0x09ec]
+{
+get=base_drink
+name=jar of honey
+id=0x09ec
+weight=200
+value=3 1
+pileable=1
+}
+
+[0x09f0]
+{
+get=base_drink
+name=pitcher of milk
+id=0x09f0
+weight=200
+value=8 4
+}
+
+[0x09ee]
+{
+get=base_drink
+name=mug of ale
+id=0x09ee
+weight=100
+value=3 1
+}
+
+[0x09ef]
+{
+get=base_drink
+name=mug of ale
+id=0x09ef
+weight=100
+value=3 1
+}
+
+[0x098d]
+{
+get=base_drink
+name=jugs of cider
+id=0x098d
+weight=3300
+value=42 21
+}
+
+[0x098e]
+{
+get=base_drink
+name=jugs of cider
+id=0x098e
+weight=2200
+value=28 14
+}

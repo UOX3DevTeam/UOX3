@@ -1,0 +1,452 @@
+[0x0fa0]
+{
+get=base_item
+name=spool of thread
+id=0x0fa0
+weight=100
+value=21 10
+restock=15
+pileable=1
+decay=1
+good=49
+}
+
+[0x0fa1]
+{
+get=base_item
+name=spool of thread
+id=0x0fa1
+weight=100
+value=21 10
+restock=15
+pileable=1
+decay=1
+good=49
+}
+
+[0x1420]
+{
+get=base_item
+name=roll of string
+id=0x1420
+weight=100
+value=21 10
+pileable=1
+decay=1
+good=49
+}
+
+[0x1421]
+{
+get=base_item
+name=roll of string
+id=0x1421
+weight=200
+value=21 10
+pileable=1
+decay=1
+good=49
+}
+
+[0x101f]
+{
+get=base_item
+name=pile of wool
+id=0x101f
+weight=200
+value=74 37
+pileable=1
+decay=1
+good=49
+}
+
+[0x0df8]
+{
+get=base_item
+name=pile of wool
+id=0x0df8
+weight=200
+value=74 37
+pileable=1
+decay=1
+good=49
+}
+
+[0x0def]
+{
+get=base_item
+name=raw cotton
+id=0x0def
+weight=400
+value=122 61
+movable=1
+pileable=1
+decay=1
+good=49
+}
+
+[0x0df9]
+{
+get=base_item
+name=bale of cotton
+id=0x0df9
+weight=400
+value=122 61
+restock=100
+pileable=1
+decay=1
+good=49
+}
+
+[0x1a9c]
+{
+get=base_item
+name=flax bundle
+id=0x1a9c
+weight=100
+value=122 61
+pileable=1
+decay=1
+good=49
+}
+
+[0x1a9d]
+{
+get=base_item
+name=flax bundle
+id=0x109d
+weight=100
+value=122 61
+pileable=1
+decay=1
+good=49
+}
+
+[0x0E1D]
+{
+get=base_item
+name=ball of yarn
+id=0x0E1D
+weight=100
+value=21 10
+pileable=1
+decay=1
+good=49
+}
+
+[0x0E1E]
+{
+get=base_item
+name=ball of yarn
+id=0x0E1E
+weight=100
+value=21 10
+pileable=1
+decay=1
+good=49
+} 
+
+[0x0E1F]
+{
+get=base_item
+name=ball of yarn
+id=0x0E1F
+weight=100
+value=21 10
+pileable=1
+decay=1
+good=49
+} 
+
+[0x0F95]
+{
+get=base_item
+name=bolt of cloth
+id=0x0f95
+weight=500
+value=120 60
+restock=100
+pileable=1
+amount=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f96]
+{ S rough
+get=base_item
+name=bolt of cloth
+id=0x0f96
+weight=500
+value=120 60
+restock=15
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f97]
+{ S marmorated
+get=base_item
+name=bolt of cloth
+id=0x0f97
+weight=500
+value=120 60
+restock=15
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+
+[0x0f98]
+{
+get=base_item
+name=bolt of cloth
+id=0x0f98
+weight=500
+value=120 60
+restock=100
+pileable=1
+amount=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f99]
+{
+get=base_item
+name=bolt of cloth
+id=0x0f99
+weight=500
+value=120 60
+restock=100
+pileable=1
+amount=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f9a]
+{
+get=base_item
+name=bolt of cloth
+id=0x0f9A
+weight=500
+value=120 60
+restock=100
+pileable=1
+amount=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f9b]
+{ S checkered
+get=base_item
+name=bolt of cloth
+id=0x0f9b
+weight=500
+value=120 60
+restock=15
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0f9c]
+{ S smooth
+get=base_item
+name=bolt of cloth
+id=0x0f9c
+weight=500
+value=120 60
+restock=15
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x175D]
+{
+get=base_item
+name=folded cloth
+id=0x175D
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x175E]
+{
+get=base_item
+name=folded cloth
+id=0x175E
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x175F]
+{
+get=base_item
+name=folded cloth
+id=0x175F
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1760]
+{
+get=base_item
+name=folded cloth
+id=0x1760
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1761]
+{
+get=base_item
+name=folded cloth
+id=0x1761
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1762]
+{
+get=base_item
+name=folded cloth
+id=0x1762
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1763]
+{
+get=base_item
+name=folded cloth
+id=0x1763
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1764]
+{
+get=base_item
+name=folded cloth
+id=0x1764
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1765]
+{
+get=base_item
+name=cloth
+id=0x1765
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1766]
+{
+get=base_item
+name=cut cloth
+id=0x1766
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1767]
+{
+get=base_item
+name=cloth
+id=0x1767
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x1768]
+{
+get=base_item
+name=cut cloth
+id=0x1768
+weight=100
+value=3 1
+pileable=1
+dyeable=1
+decay=1
+good=49
+}
+
+[0x0df6]
+{
+get=base_item
+name=knitting
+id=0x0df6
+weight=100
+decay=1
+good=49
+}
+
+[0x0df7]
+{
+get=base_item
+name=knitting
+id=0x0df7
+weight=100
+decay=1
+good=49
+}

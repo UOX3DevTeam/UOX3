@@ -1,0 +1,194 @@
+<html>
+<head>
+</head>
+<body>
+<center><h1>Grellin's Regional Spawn Tutorial</h1></center>
+
+<p>This is an explanation of how to use the SECTION PREDEFINED_SPAWN option for UOX. I will take it step by step and explain as I go.
+
+<b>THE STEPS APPLY TO ALL USERS WITH THE EXCEPTION OF REBUILDING SAF FILES. SAF FILES ARE FOR SHARD ACE ONLY.  </b>
+
+<h3>Step 1</h3>
+<p>Decide what you want to spawn and find the # for the NPC LIST in the npc.scp file. Modify to your desire.
+
+<p>Now that you have the NPC LIST # open the spawn.scp file and create a predefined spawn as follows.
+
+<pre>
+////////////////////////////////////
+//
+//  This can be above or below regular
+//  SECTION REGIONSPAWN's
+
+SECTION PREDEFINED_SPAWN spawn1		// spawn1 is the name of the spawn.
+{					// must be there
+NLIST 1301				// This is the # from step 1 for random NPC spawn
+MAX 250					// Maximum # of NPC's to spawn in each region
+MINTIME 0				// Minimum time for random spawn
+MAXTIME 0				// Maximum time for random spawn *if both set to 0
+					// it will spawn every 10 seconds.			
+}					// must be there
+
+EOF					// If you miss the end of file it will lock in a loop.
+</pre>
+
+<p>That is all you need in the spawn.scp file. Remember the name of your spawn, you will need it. In this case it was    spawn1
+
+<p>Save and close this file and open regions.scp.
+
+<p>Now find the town or area you want to put your predifined spawn in. I copied one of mine to use as an example. In each of the regions in this file there are x and y coordinates. Just like in a SECTION REGIONSPAWN in the spawn.scp, the predifined spawn needs x1 y1 and x2 y2 positions. In this case the PREDEFINED_SPAWN uses the exsisting positions of the guarded areas or areas you create on your own. Look down the page until you see the x1 y1 - x2 y2 and we will continue there.
+
+<pre>
+SECTION REGION 4
+{
+NAME Britain's farmlands
+MIDILIST 21
+GUARDED 1
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDNUM 1251
+GUARDOWNER Lord British's
+MAGICDAMAGE 0
+MARK 1
+GATE 1
+RECALL 1
+SNOWCHANCE 10
+RAINCHANCE 25
+// Magius Example for Trade-Goods System, you can edit and modify as you want.
+//#############
+//Trade Section
+GOOD 2
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE -200 100
+GOOD 3
+SELLABLE 500
+BUYABLE 500
+GOOD 4
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE -100 200
+GOOD 5
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE -100 200
+GOOD 6
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE -300 200
+GOOD 7
+SELLABLE 300
+BUYABLE 300
+RNDOMVALUE 0 300
+GOOD 10
+SELLABLE 400
+BUYABLE 400
+RANDOMVALUE -200 500
+GOOD 11
+SELLABLE 800
+BUYABLE 800
+RANDOMVALUE 0 300
+GOOD 12
+SELLABLE 700
+BUYABLE 700
+RANDOMVALUE -200 500
+GOOD 13
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE 0 500
+GOOD 14
+SELLABLE 400
+BUYABLE 400
+GOOD 18
+SELLABLE 300
+BUYABLE 300
+RANDOMVALUE -160 100
+GOOD 19
+SELLABLE 200
+BUYABLE 400
+RANDOMVALUE -130 200
+GOOD 20
+SELLABLE 400
+BUYABLE 400
+RANDOMVALUE -100 300
+GOOD 21
+SELLABLE 400
+BUYABLE 400
+RANDOMVALUE -50 400
+GOOD 22
+SELLABLE 400
+BUYABLE 400
+RANDOMVALUE 0 500
+GOOD 23
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE 0 600
+GOOD 24
+SELLABLE 900
+BUYABLE 900
+RANDOMVALUE 0 700
+GOOD 25
+SELLABLE 1000
+BUYABLE 1000
+RANDOMVALUE 0 800
+GOOD 8
+SELLABLE 600
+BUYABLE 600
+RANDOMVALUE 0 500
+GOOD 32
+SELLABLE 500
+BUYABLE 500
+RANDOMVALUE -100 300
+GOOD 27
+SELLABLE 600
+BUYABLE 600
+RANDOMVALUE -200 350
+GOOD 28
+SELLABLE 600
+BUYABLE 600
+RANDOMVALUE 0 500
+GOOD 34
+SELLABLE 600
+BUYABLE 600
+RANDOMVALUE 0 200
+GOOD 30
+SELLABLE 600
+BUYABLE 600
+RANDOMVALUE -200 400
+//End Trade Section Example
+//////////////////////////////////////// HERE IT IS ////////////////////////////////
+</pre>
+<p>As you can see, each group of x y are seperated by the tag SPAWN with the name of the spawn you wanted to use. As you see it is quite simple. The nice thing about this is you can, if you desire, use the same spawn name for any other area you would like to spawn with the same NPC's. Some of the cities, like Britain have x y coords that cover areas of water so you will want to jump to each coordinate to verify you want a spawn there. One note to remember is you always want the SPAWN tag UNDER the coordinates you want to use. After you finish, build your SAF files and that is it. Good luck and have fun!
+
+<pre>
+//#########################
+X1 1085
+Y1 1530
+X2 1200
+Y2 1695
+SPAWN spawn1
+X1 1200
+Y1 1555
+X2 1295
+Y2 1695
+SPAWN spawn1
+X1 1295
+Y1 1695
+X2 1330
+Y2 1850
+SPAWN spawn1
+X1 1100
+Y1 1695
+X2 1295
+Y2 1915
+SPAWN spawn1
+}
+</pre>
+</body>
+</html>

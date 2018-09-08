@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>UOX3 FAQ</title>
+<link rel="stylesheet" type="text/css" href="faq.css">
+</head>
+<body background="bg.gif">
+<h1>Starting Out</h1>
+This FAQ should address the basics of how to download the UOX3 distribution, install it, and set up your first UO shard.</p>
+
+<h3>Download the package</h3>
+Download the latest installation package from the UOX3 site.  This is a Windows executable that will run an installer program.  The only decision you really need to make for this is where your UOX3 <B><I>Base Directory</I></B> will be.  I will refer to the <I><B>Base Directory</B></I> several times in this document.</p>
+
+<h3>Set up the accounts</h3>
+Open up the file accounts.adm in the Base Directory.  This is where all your local UO accounts will be stored.</p>
+
+The only items in each of the account areas you will need to worry about are the ones labeled <B>NAME</B> and <B>PASS</B>.</p>
+
+The first one in the list is <B>ACCOUNT 0</B>.  This is important because whoever logs into the shard under <B>ACCOUNT 0</B> is considered a GM and is <B><I>ALL POWERFULL</I></B>!</p>
+
+You can edit accounts.adm and add as many accounts as you like by copying the SECTION area and giving any new accounts unique numbers.</p>
+<h3>Configuring Server Initialization</h3>
+As of version 0.95.11 the only file that you need to have is the <I>uox.ini</I> file.</p>
+
+The first section of this file that you need to modify is the SHARD LIST.</p>
+<pre>
+[play server list]
+SERVERLIST=Internal (Local),127.0.0.1,2593
+SERVERLIST=Internal (Public),203.45.148.151,2593
+</pre>
+The three parts seperated by commas are:<br>
+<ul><li>Shard Name</li>
+<li>IP address</li>
+<li>IP port</li></ul>
+I changed mine to look like this:<br>
+<pre>[play server list]
+SERVERLIST=DONT_USE,127.0.0.1,2593
+SERVERLIST=SWAMI_SERVER,192.168.0.5,2593
+</pre>
+Next you need to change the file directory section.  It looks like the example below.</P>
+I've added comments to describe what each entry should be:</p>
+<pre>[directories]
+DIRECTORY=C:\app\uox\uoxtest                   //The UOX3 BASE DIRECTORY
+DATADIRECTORY=d:\game\uotd                     // where your *.mul files are.  
+                                               // usually where you installed
+                                               //  the UO client.
+DEFSDIRECTORY=C:\app\uox\uoxtest/dfndata/      //found under the BASE DIRECTORY
+BOOKSDIRECTORY=C:\app\uox\uoxtest/books/       //found under the BASE DIRECTORY
+ACTSDIRECTORY=C:\app\uox\uoxtest/accounts/     //found under the BASE DIRECTORY
+SCRIPTSDIRECTORY=C:\app\uox\uoxtest/scripts/   //found under the BASE DIRECTORY
+BACKUPDIRECTORY=C:\app\uox\uoxtest/archives/   //found under the BASE DIRECTORY
+MSGBOARDDIRECTORY=C:\app\uox\uoxtest/msgboards/  //found under the BASE DIRECTORY
+SHAREDDIRECTORY=C:\app\uox\uoxtest/shared/     //found under the BASE DIRECTORY
+</pre>
+You can ignore the funky way the directory seperators look.  Use whatever is appropriate for your platform.  The program may alter them when running, that's fine.</p>
+
+<h3>Start up the server</h3>
+
+Now you should be ready to start up the server process. Run a dos prompt (command under win9x, cmd under NT/2k/XP), and go to the UOX3 base directory. </p>
+Run the executable(currently uox.exe). Eventually, it'll tell you it's fine and dandy, and ready to work. If not, then you probably misconfigured something in your uox.ini file, so you might want to check that, and try again. 
+
+<h3>Your new shard</h3>
+If all has gone well, you now have a shard running and you can log into it with the accounts you've defined.</p>
+But, as this is the first time you've run UOX, the world is empty.  There are no animals, monsters, NPCs, or even doors or signs.  This is normal.</p>
+Log in as ACCOUNT 0 and start GM'ing your new world.  As a GM you have a very powerful st of GM commands available to you.  GM commands are preceeded with a single quote (').  And, the easiest one to use when you begin is the 'add command.</p>
+
+<h3>The 'add Menu</h3>
+Use the 'add menu to begin populating the world.  Don't be shy, you can always destroy the world and start over - *evil grin*.  The 'add menu lets you create objects, from flowers, to money.  Or you can create NPCs, monsters, vendors, almost anything available in the UO univers.</p>
+
+Once you have mastered this, you can go on to creating your own maps, worlds, objects, etc.  But, that's for another document... whew!</p>
+</body>
+</html> 
+

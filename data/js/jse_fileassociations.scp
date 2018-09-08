@@ -1,0 +1,302 @@
+//-------------------------------------------
+// CORE		0-99
+// ============================
+//   Global     0
+//   Misc       1-99
+//
+// SYSTEM	100-2999
+// ============================
+//   Skills     100-399
+//   FREE	400-499
+//   Lighting   500-599
+//   Spells     600-799*
+//   SkillUse	800-999*
+//   Commands   1000-1499*
+//   Packets	1500-1999*
+//   Farming    2000-2999
+//   
+//   
+// NPC/AI	3000-5999
+// ============================
+//   Speech     3000-3099
+//   Pets/Stbl  3100-3199
+//
+//
+// * These ID's defined outside of the script_list block
+//
+// NOTE: Please ensure that all ID's are unique through this file
+//
+//-------------------------------------------
+// Server tacks it's base path in front of the filenames found here
+
+[SCRIPT_LIST]
+{
+//-------------------------------------------
+// CORE:[0-99] Rerserved for specific core server needs
+//-------------------------------------------
+// turn furniture start[50-54]
+50=server/misc/furniture_smartturn.js
+//-------------------------------------------
+// deeds start[55-59]
+// 55=server/misc/deeds_005.js
+//-------------------------------------------
+// House addon[60-64]
+60=server/misc/furniture_destroy.js
+//-------------------------------------------
+// SYSTEM:[100-2999] Rerserved for specific core server needs
+//-------------------------------------------
+// Cooking start[100-129]
+101=skill/cooking/flour.js
+102=skill/cooking/dough.js
+103=skill/cooking/bread.js
+105=skill/cooking/cookedfish.js
+106=skill/cooking/cookedribs.js
+107=skill/cooking/cookedbird.js
+109=skill/cooking/cookedchicken.js
+110=skill/cooking/cookedlegoflamb.js
+111=skill/cooking/friedeggs.js
+//-------------------------------------------
+// Tailoring and spinning start[130-159]
+131=skill/tailoring/scissors.js
+132=skill/tailoring/wthreadspools-6.js
+133=skill/tailoring/flaxtothread.js
+134=skill/tailoring/wyarnballs-3.js
+135=skill/tailoring/wclothbolt.js
+//-------------------------------------------
+// Musicianship (Play Instrument)
+136=skill/musicianship.js
+//-------------------------------------------
+// Lightsources startSYSTEM[500-699]
+501=server/light/candle01_on.js
+502=server/light/candle01_off.js
+503=server/light/candle02_on.js
+504=server/light/candle02_off.js
+505=server/light/torch01_on.js
+506=server/light/torch01_off.js
+507=server/light/torch02_on.js
+508=server/light/torch02_off.js
+509=server/light/torch03_on.js
+510=server/light/torch03_off.js
+511=server/light/lantern01_on.js
+512=server/light/lantern01_off.js
+513=server/light/lantern02_on.js
+514=server/light/lantern02_off.js
+515=server/light/lantern03_on.js
+516=server/light/lantern03_off.js
+517=server/light/candle03_on.js
+518=server/light/candle03_off.js
+519=server/light/candelabra01_on.js
+520=server/light/candelabra01_off.js
+521=server/light/candle04_on.js
+522=server/light/candle04_off.js
+523=server/light/candelabra02_on.js
+524=server/light/candelabra02_off.js
+525=server/light/lamp01_on.js
+526=server/light/lamp01_off.js
+527=server/light/lamp02_on.js
+528=server/light/lamp02_off.js
+529=server/light/lamp03_on.js
+530=server/light/lamp03_off.js
+531=server/light/heatingstand01_on.js
+532=server/light/heatingstand01_off.js
+533=server/light/heatingstand02_on.js
+534=server/light/heatingstand02_off.js
+535=server/light/candle05_on.js
+536=server/light/candle05_off.js
+537=server/light/candle06_on.js
+538=server/light/candle06_off.js
+539=server/light/candle07_on.js
+540=server/light/candle07_off.js
+541=server/light/candle08_on.js
+542=server/light/candle08_off.js
+543=server/light/candle09_on.js
+544=server/light/candle09_off.js
+//-------------------------------------------
+// Resource Harvesting[2000-2099]
+2001=server/resource/apples.js
+2002=server/resource/peaches.js
+2003=server/resource/pears.js
+2004=server/resource/bananas.js
+2005=server/resource/coconuts.js
+2006=server/resource/dates.js
+2007=server/resource/grapes.js
+2008=server/resource/wheat.js
+2009=server/resource/cotton.js
+2010=server/resource/flax.js
+2011=server/resource/bee_hives.js
+2012=server/resource/sheepshearing.js
+//-------------------------------------------
+// Water, milk containers[2100-2199]
+2100=server/resource/pitchers.js
+//-------------------------------------------
+// Server Data
+2500=server/data/weapontypes.js
+2501=server/data/combatanims.js
+
+//-------------------------------------------
+// NPC, and AI[3000-5999]
+//-------------------------------------------
+// NPC Basic Speech[3000-3099]
+3000=npc/speech/speech_001.js
+//-------------------------------------------
+// Pets, and Stable Hands[3100-3199]
+3100=npc/pets/static_horse.js
+3101=npc/pets/static_ostard.js
+3102=npc/pets/static_llama.js
+3103=npc/pets/static_packhorse.js
+3104=npc/pets/static_packllama.js
+// pets from pet static end
+3105=npc/ai/stablemaster.js
+// ------------------------
+
+// AI-Stuff
+3200=npc/ai/cow_tipping.js
+3201=npc/ai/banker.js
+
+// General Skills
+4000=skill/healing.js
+4001=skill/repairbow.js
+4002=skill/repairleather.js
+4003=skill/tinkering.js
+4004=skill/tailoring.js
+4005=skill/fletching.js
+4006=skill/carpentry.js
+4007=skill/alchemy.js
+4008=skill/lockpicking.js
+4009=skill/tinkeraxle.js
+4010=skill/tinkerawg.js
+4011=skill/tinkerclock.js
+4012=skill/tinkersextant.js
+
+// Doors
+4500=item/doors.js
+
+// Miscellaneous Item Types
+5000=item/teleportrune.js
+5001=item/food.js
+5003=item/potion.js
+5004=item/teleporter.js
+5005=item/trainingdummy.js
+5006=item/pickpocketdip.js
+5007=item/archerybutte.js
+5008=item/kindling.js
+5009=item/sword.js
+5010=item/axe.js
+5011=item/moongate.js
+5012=item/oilcloth.js
+5013=item/key.js
+5014=item/clock.js
+5015=item/bankcheck.js
+5016=item/moonstone.js
+5017=item/spyglass.js
+5018=item/magicscroll.js
+5019=item/bola.js
+5020=item/diceandcup.js
+5021=item/bedroll.js
+}
+
+//-------------------------------------------
+// System Commands - 1000-1999
+//-------------------------------------------
+[COMMAND_SCRIPTS]
+{ // 1000-1499
+1000=commands/custom/travel.js
+1001=commands/custom/repeatingcmds.js
+1002=commands/custom/misc-cmd.js
+1003=commands/reload.js
+1004=commands/resend.js
+1005=commands/setrace.js
+1006=commands/allmove.js
+1007=commands/houseicons.js
+1008=commands/yell.js
+1009=commands/skin.js
+1010=commands/showtime.js
+1011=commands/light.js
+1012=commands/poly.js
+1013=commands/sound.js
+1014=commands/wholist.js
+1015=commands/zerokills.js
+1016=commands/cleanup.js
+1017=commands/delid.js
+1018=commands/killall.js
+1019=commands/gumpmenu.js
+1020=commands/secondsperuominute.js
+1021=commands/consoletest.js
+1022=commands/fix.js
+1023=commands/xgate.js
+1024=commands/go.js
+1025=commands/where.js
+1026=commands/targeting/add.js
+1027=commands/targeting/effects.js
+1028=commands/targeting/vendor.js
+1029=commands/targeting/stats.js
+1030=commands/targeting/glow.js
+1031=commands/targeting/remove.js
+1032=commands/targeting/open.js
+1033=commands/targeting/movetobag.js
+1034=commands/targeting/npcwander.js
+1035=commands/targeting/magic.js
+1036=commands/targeting/set.js
+1037=commands/targeting/inc.js
+1038=commands/targeting/gumps.js
+1039=commands/targeting/kill.js
+1040=commands/targeting/disconnect.js
+1041=commands/targeting/tele.js
+1042=commands/targeting/dupe.js
+1043=commands/targeting/squelch.js
+1044=commands/targeting/hide.js
+1045=commands/targeting/jail.js
+1046=commands/targeting/x.js
+1047=commands/targeting/areacommand.js
+1048=commands/targeting/wipe.js
+1049=commands/targeting/showdetail.js
+1050=commands/targeting/makeshop.js
+1051=commands/targeting/rndtile.js
+1052=commands/time.js
+1053=commands/accountlogins.js
+1054=commands/fixcontweight.js
+}
+
+//-------------------------------------------
+// System Magic - 
+//-------------------------------------------
+[MAGIC_SCRIPTS]
+{ // 600-799
+600=magic/clumsy.js
+601=magic/level1targ.js
+}
+
+[SKILLUSE_SCRIPTS]
+{ // 800-999
+800=skill/hiding.js
+801=skill/stealth.js
+802=skill/evaluateintel.js
+803=skill/spiritspeak.js
+804=skill/animallore.js
+805=skill/anatomy.js
+806=skill/armslore.js
+807=skill/taming.js
+808=skill/forensics.js
+809=skill/begging.js
+810=skill/detecthidden.js
+811=skill/poisoning.js
+812=skill/peacemaking.js
+813=skill/enticement.js
+814=skill/provocation.js
+815=skill/inscription.js
+816=skill/meditation.js
+}
+
+[PACKET_SCRIPTS]
+{ // 1500-1999
+}
+
+[CONSOLE_SCRIPTS]
+{
+9000=console/reloads.js
+9001=console/shutdown.js
+}
+
+
+EOF
+

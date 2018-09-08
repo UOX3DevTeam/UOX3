@@ -1,0 +1,504 @@
+//Two food.dfn files because of the size...
+
+[base_food]
+{
+get=base_item
+weight=100
+type=14
+restock=10
+movable=1
+good=34
+}
+
+[0x1e1c]
+{
+get=base_food
+name=cooked fish
+id=0x1e1c
+value=16 8
+pileable=1
+}
+
+[0x1e1d]
+{
+get=base_food
+name=cooked fish
+id=0x1e1d
+value=16 8
+pileable=1
+}
+
+[0x1e1e]
+{
+get=base_food
+name=cooked fish
+id=0x1e1e
+weight=50
+value=8 4
+pileable=1
+}
+
+[0x1e1f]
+{
+get=base_food
+name=sliced ham
+id=0x1e1f
+weight=20
+value=4 2
+pileable=1
+}
+
+// fruits and vegitables
+
+[0x0d1a]
+{
+get=base_food
+name=grape bunch
+id=0x0d1a
+value=3 1
+pileable=1
+}
+
+[0x0994]
+{
+get=base_food
+name=pear
+id=0x0994
+value=3 1
+pileable=1
+}
+
+[0x172d]
+{
+get=base_food
+name=pear
+id=0x172d
+value=3 1
+pileable=1
+}
+
+[0x172c]
+{
+get=base_food
+name=peach
+id=0x172c
+value=3 1
+pileable=1
+}
+
+[0x172b]
+{
+get=base_food
+name=lemons
+id=0x172b
+value=3 1
+pileable=1
+}
+
+[0x172a]
+{
+get=base_food
+name=lemon
+id=0x172a
+value=3 1
+pileable=1
+}
+
+[0x1729]
+{
+get=base_food
+name=limes
+id=0x1729
+value=3 1
+pileable=1
+}
+
+[0x1728]
+{
+get=base_food
+name=lime
+id=0x1728
+value=3 1
+pileable=1
+}
+
+[0x1727]
+{
+get=base_food
+name=bunch of dates
+id=0x1727
+value=3 1
+pileable=1
+}
+
+[0x1726]
+{
+get=base_food
+name=coconut
+id=0x1726
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1725]
+{
+get=base_food
+name=coconut
+id=0x1725
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1724]
+{
+get=base_food
+name=coconut
+id=0x1724
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1723]
+{
+get=base_food
+name=coconut
+id=0x1723
+weight=200
+value=12 6
+pileable=1
+}
+
+[0x1722]
+{
+get=base_item
+name=bananas
+id=0x1722
+weight=300
+value=6 3
+pileable=1
+}
+
+[0x1721]
+{
+get=base_item
+name=bananas
+id=0x1721
+weight=300
+value=6 3
+pileable=1
+}
+
+[0x1720]
+{
+get=base_item
+name=banana
+id=0x1720
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171f]
+{
+get=base_item
+name=banana
+id=0x171f
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171e]
+{
+get=base_item
+name=banana
+id=0x171e
+weight=100
+value=3 1
+pileable=1
+}
+
+[0x171d]
+{
+get=base_food
+name=banana
+id=0x171d
+value=3 1
+pileable=1
+}
+
+[0x0c5c]
+{
+get=base_food
+name=watermelon
+id=0x0c5c
+weight=500
+value=8 4
+pileable=1
+}
+
+[0x0c5d]
+{
+get=base_food
+name=watermelon
+id=0x0c5d
+weight=500
+value=8 4
+pileable=1
+}
+
+[0x0d39]
+{
+get=base_food
+name=turnip
+id=0x0d39
+value=6 3
+pileable=1
+}
+
+[0x0d3a]
+{
+get=base_food
+name=turnip
+id=0x0d3a
+weight=100
+value=6 3
+pileable=1
+}
+
+[0x0c63]
+{
+get=base_food
+name=turnip
+id=0x0c63
+value=6 3
+pileable=1
+}
+
+[0x0c64]
+{
+get=base_food
+name=gourd
+id=0x0c64
+value=3 1
+pileable=1
+}
+
+[0x0c65]
+{
+get=base_food
+name=gourd
+id=0x0c65
+value=3 1
+pileable=1
+}
+
+[0x0c66]
+{
+get=base_food
+name=gourd
+id=0x0c66
+value=3 1
+pileable=1
+}
+
+[0x0c67]
+{
+get=base_food
+name=gourd
+id=0x0c67
+value=3 1
+pileable=1
+}
+
+[0x0c6a]
+{
+get=base_food
+name=pumpkin
+id=0x0c6a
+value=13 6
+pileable=1
+}
+
+[0x0c6b]
+{
+get=base_food
+name=pumpkin
+id=0x0c6b
+value=13 6
+pileable=1
+}
+
+[0x0c6c]
+{
+get=base_food
+name=pumpkin
+id=0x0c6c
+value=13 6
+pileable=1
+}
+
+[0x0c6d]
+{
+get=base_food
+name=onion
+id=0x0c6d
+value=3 1
+pileable=1
+}
+
+[0x0c6e]
+{
+get=base_food
+name=onion
+id=0x0c6e
+value=3 1
+pileable=1
+}
+
+[0x0c70]
+{
+get=base_food
+name=head of lettuce
+id=0x0c70
+value=6 3
+pileable=1
+}
+
+[0x0c71]
+{
+get=base_food
+name=head of lettuce
+id=0x0c71
+value=6 3
+pileable=1
+}
+
+[0x0c72]
+{
+get=base_food
+name=squash
+id=0x0c72
+value=3 1
+pileable=1
+}
+
+[0x0c73]
+{
+get=base_food
+name=squash
+id=0x0c73
+value=3 1
+pileable=1
+}
+
+[0x0c74]
+{
+get=base_food
+name=honeydew melon
+id=0x0c74
+value=8 4
+pileable=1
+}
+
+[0x0c75]
+{
+get=base_food
+name=honeydew melon
+id=0x0c75
+value=8 4
+pileable=1
+}
+
+[0x0c77]
+{
+get=base_food
+name=carrot
+id=0x0c77
+value=3 1
+pileable=1
+}
+
+[0x0c78]
+{
+get=base_food
+name=carrot
+id=0x0c78
+value=3 1
+pileable=1
+}
+
+[0x0c79]
+{
+get=base_food
+name=canteloupe
+id=0x0c79
+value=6 3
+pileable=1
+}
+
+[0x0c7a]
+{
+get=base_food
+name=canteloupe
+id=0x0c7a
+value=6 3
+pileable=1
+}
+
+[0x0c7b]
+{
+get=base_food
+name=head of cabbage
+id=0x0c7b
+value=6 3
+pileable=1
+}
+
+[0x0c7c]
+{
+get=base_food
+name=head of cabbage
+id=0x0c7c
+value=6 3
+pileable=1
+}
+
+[0x0c7f]
+{
+get=base_food
+name=ear of corn
+id=0x0c7f
+value=3 1
+pileable=1
+}
+
+[0x0c81]
+{
+get=base_food
+name=ear of corn
+id=0x0c81
+value=3 1
+pileable=1
+}
+
+[0x0c82]
+{
+get=base_food
+name=ear of corn
+id=0x0c82
+value=3 1
+pileable=1
+}
+
+[0x1ad3]
+{
+get=base_food
+name=donuts
+id=0x1ad3
+value=3 1
+pileable=1
+}

@@ -1,0 +1,10 @@
+        MINECHECK <value>
+
+  Purpose: 
+        Used to change how mining works.
+        Valid values:
+        0 = Players can mine every-where
+        1 = Players can mine in caves and 
+            mountainsides
+        2 = Players can mine in specified regions
+            (Regions.dfn)

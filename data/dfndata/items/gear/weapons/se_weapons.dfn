@@ -1,0 +1,505 @@
+// Samurai Empire Weapons
+// v1.0; 30/12/04; Initial setup of the file, item stats taken from uo.stratics.com
+// (add new version comments here, copy above line please)
+
+[0x27a2]
+{ West/East
+get=base_item
+name=no-dachi
+id=0x27a2
+weight=1000
+value=40 20
+layer=2
+lodamage=6
+hidamage=38
+hp=31 50
+spd=32
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27ed]
+{ North/South
+get=base_item
+name=no-dachi
+id=0x27ed
+weight=1000
+value=40 20
+layer=2
+lodamage=6
+hidamage=38
+hp=31 50
+spd=32
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27a3]
+{ East/West
+get=base_item
+name=tessen
+id=0x27a3
+weight=600
+value=40 20
+layer=2
+lodamage=5
+hidamage=32
+hp=31 50
+spd=50
+str=10
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27ee]
+{ North/South
+get=base_item
+name=tessen
+id=0x27ee
+weight=600
+value=40 20
+layer=2
+lodamage=5
+hidamage=32
+hp=31 50
+spd=50
+str=10
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27a4]
+{ East/West
+get=base_item
+name=wakizashi
+id=0x27a4
+weight=500
+value=40 20
+layer=1
+lodamage=7
+hidamage=34
+hp=31 50
+spd=44
+str=20
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27ef]
+{ North/South
+get=base_item
+name=wakizashi
+id=0x27ef
+weight=500
+value=40 20
+layer=1
+lodamage=7
+hidamage=34
+hp=31 50
+spd=44
+str=20
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27a5]
+{ East/West
+get=base_item
+name=yumi
+id=0x27a5
+weight=800
+value=40 20
+layer=2
+lodamage=8
+hidamage=40
+hp=31 50
+spd=25
+str=35
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+}
+
+[0x27f0]
+{ North/South
+get=base_item
+name=yumi
+id=0x27f0
+weight=800
+value=40 20
+layer=2
+lodamage=8
+hidamage=40
+hp=31 50
+spd=25
+str=35
+restock=10
+movable=1
+decay=1
+good=23
+ammo=0x0f3f
+ammofx=0x0f42
+}
+
+[0x27a6]
+{ East/West
+get=base_item
+name=tetsubo
+id=0x27a6
+weight=800
+value=40 20
+layer=2
+lodamage=4
+hidamage=28
+hp=31 50
+spd=45
+str=35
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27f1]
+{ North/South
+get=base_item
+name=tetsubo
+id=0x27f1
+weight=800
+value=40 20
+layer=2
+lodamage=4
+hidamage=28
+hp=31 50
+spd=45
+str=35
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27a7]
+{ East/West
+get=base_item
+name=lajatang
+id=0x27a7
+weight=1200
+value=40 20
+layer=2
+lodamage=10
+hidamage=38
+hp=31 50
+spd=32
+str=65
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27f2]
+{ North/South
+get=base_item
+name=lajatang
+id=0x27f2
+weight=1200
+value=40 20
+layer=2
+lodamage=10
+hidamage=38
+hp=31 50
+spd=32
+str=65
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27a8]
+{ East/West
+get=base_item
+name=bokuto
+id=0x27a8
+weight=700
+value=40 20
+layer=1
+lodamage=9
+hidamage=21
+hp=31 50
+spd=53
+str=20
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27f3]
+{ North/South
+get=base_item
+name=bokuto
+id=0x27f3
+weight=700
+value=40 20
+layer=1
+lodamage=9
+hidamage=21
+hp=31 50
+spd=53
+str=20
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27a9]
+{ East/West
+get=base_item
+name=daisho
+id=0x27a9
+weight=800
+value=40 20
+layer=2
+lodamage=7
+hidamage=35
+hp=31 50
+spd=40
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27f4]
+{ North/South
+get=base_item
+name=daisho
+id=0x27f4
+weight=800
+value=40 20
+layer=2
+lodamage=7
+hidamage=35
+hp=31 50
+spd=40
+str=40
+restock=10
+movable=1
+decay=1
+good=21
+}
+
+[0x27aa]
+{ East/West
+get=base_item
+name=fukiya
+id=0x27aa
+weight=400
+value=40 20
+layer=2
+lodamage=5
+hidamage=24
+hp=31 50
+spd=20
+str=20
+restock=10
+movable=1
+decay=1
+good=22
+ammo=0x2806
+ammofx=0x2804
+}
+
+[0x27f5]
+{ North/South
+get=base_item
+name=fukiya
+id=0x27f5
+weight=400
+value=40 20
+layer=2
+lodamage=5
+hidamage=24
+hp=31 50
+spd=20
+str=20
+restock=10
+movable=1
+decay=1
+good=22
+ammo=0x2806
+ammofx=0x2804
+}
+
+[0x27ab]
+{ East/West
+get=base_item
+name=tekagi
+id=0x27ab
+weight=500
+value=40 20
+layer=2
+lodamage=7
+hidamage=31
+hp=31 50
+spd=53
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27f6]
+{ North/South
+get=base_item
+name=tekagi
+id=0x27f6
+weight=500
+value=40 20
+layer=2
+lodamage=7
+hidamage=31
+hp=31 50
+spd=53
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27ad]
+{ East/West
+get=base_item
+name=kama
+id=0x27ad
+weight=700
+value=40 20
+layer=2
+lodamage=3
+hidamage=19
+hp=31 50
+spd=53
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27f8]
+{ North/South
+get=base_item
+name=kama
+id=0x27f8
+weight=700
+value=40 20
+layer=2
+lodamage=3
+hidamage=19
+hp=31 50
+spd=55
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27ae]
+{ East/West
+get=base_item
+name=nunchaku
+id=0x27ae
+weight=500
+value=40 20
+layer=2
+lodamage=16
+hidamage=35
+hp=31 50
+spd=47
+str=15
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27f9]
+{ North/South
+get=base_item
+name=nunchaku
+id=0x27f9
+weight=500
+value=40 20
+layer=2
+lodamage=16
+hidamage=35
+hp=31 50
+spd=47
+str=15
+restock=10
+movable=1
+decay=1
+good=26
+}
+
+[0x27af]
+{ East/West
+get=base_item
+name=sai
+id=0x27af
+weight=700
+value=40 20
+layer=2
+lodamage=3
+hidamage=18
+hp=31 50
+spd=55
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x27fa]
+{ North/South
+get=base_item
+name=sai
+id=0x27fa
+weight=700
+value=40 20
+layer=2
+lodamage=3
+hidamage=18
+hp=31 50
+spd=55
+str=15
+restock=10
+movable=1
+decay=1
+good=22
+}

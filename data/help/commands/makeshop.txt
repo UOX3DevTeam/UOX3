@@ -1,0 +1,5 @@
+        MAKESHOP <target>
+
+  Purpose: 
+        Adds shopkeeper backpacks to targetted
+        NPC character.

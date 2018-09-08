@@ -1,0 +1,670 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 1/4/2003	                	          *
+//* Script : carve.dfn                                            *
+//*****************************************************************
+// v1.0; 14/09/02; initial release; §ymbiotic; confound@iprimus.com.au
+// v1.1; 05/4/03; Pretty much rewrote everything - sorted after UOSS Hunter's Guide; Xuri
+// (add new version comments here, use format of above line please.)
+// For use with the uox3 emulator, or any, with permission from the author.
+
+// ----= ANIMALS =----
+
+// alligator.
+[CARVE 1]
+{
+ADDITEM=0x09f1
+ADDITEM=0xc002,12
+}
+
+// bird
+[CARVE 2]
+{
+ADDITEM=0x09b9
+ADDITEM=0x1bd1,25
+}
+
+// bear
+[CARVE 3]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,12
+}
+
+// boar
+[CARVE 4]
+{
+ADDITEM=0x09f1,2
+}
+
+// bull
+[CARVE 5]
+{
+ADDITEM=0x09f1,10
+ADDITEM=0x1078,15
+}
+
+// bullfrog
+[CARVE 6]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,4
+}
+
+// cat
+[CARVE 7]
+{
+ADDITEM=0x09f1
+}
+
+// chicken
+[CARVE 8]
+{
+ADDITEM=0x1607
+ADDITEM=0x1bd1,25
+}
+
+// cougar
+[CARVE 9]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,10
+}
+
+// cow
+[CARVE 10]
+{
+ADDITEM=0x09f1,8
+ADDITEM=0x1078,12
+}
+
+// ostard
+[CARVE 11]
+{
+ADDITEM=0x09f1,3
+}
+
+// dire wolf
+[CARVE 12]
+{
+ADDITEM=0x09f1
+ADDITEM=0xc002,7
+}
+
+// dog
+[CARVE 13]
+{
+ADDITEM=0x09f1
+}
+
+// dolphin
+[CARVE 14]
+{
+ADDITEM=0x097a
+}
+
+// eagle
+[CARVE 15]
+{
+ADDITEM=0x09b9
+ADDITEM=0x1bd1,36
+}
+
+// Giant Ice Serpent
+[CARVE 16]
+{
+ADDITEM=0x09f1,4
+ADDITEM=0xc002,15
+}
+
+// Giant Ice Worm/Giant Serpent
+[CARVE 17]
+{
+ADDITEM=0x09f1,4
+ADDITEM=0x1078,15
+}
+
+// Giant Rat
+[CARVE 18]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,6
+}
+
+// Giant Toad
+[CARVE 19]
+{
+ADDITEM=0x09f1
+ADDITEM=0xc002,12
+}
+
+// goat
+[CARVE 20]
+{
+ADDITEM=0x09f1,2
+ADDITEM=0x1078,8
+}
+
+// gorilla
+[CARVE 21]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,6
+}
+
+// great hart
+[CARVE 22]
+{
+ADDITEM=0x09f1,6
+ADDITEM=0x1078,15
+}
+
+// grey wolf
+[CARVE 23]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,5
+}
+
+// grizzly bear
+[CARVE 24]
+{
+ADDITEM=0x09f1,2
+ADDITEM=0x1078,16
+}
+
+// hind
+[CARVE 25]
+{
+ADDITEM=0x09f1,5
+ADDITEM=0x1078,8
+}
+
+// horse
+[CARVE 26]
+{
+ADDITEM=0x09f1,3
+ADDITEM=0x1078,10
+}
+
+// ice snake
+[CARVE 27]
+{
+ADDITEM=0x09f1
+}
+
+// jack rabbit
+[CARVE 28]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078
+}
+
+// lava snake
+[CARVE 29]
+{
+ADDITEM=0x09f1
+}
+
+// llama
+[CARVE 30]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,12
+}
+
+// Mountain Goat
+[CARVE 31]
+{
+ADDITEM=0x09f1,3
+ADDITEM=0x1078,12
+}
+
+// pack horse
+[CARVE 32]
+{
+ADDITEM=0x09f1,3
+ADDITEM=0x1078,10
+}
+
+// pack llama
+[CARVE 33]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,12
+}
+
+// panther
+[CARVE 34]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,10
+}
+
+// pig
+[CARVE 35]
+{
+ADDITEM=0x09f1
+}
+
+// polar bear
+[CARVE 36]
+{
+ADDITEM=0x09f1,2
+ADDITEM=0x1078,16
+}
+
+// rabbit
+[CARVE 37]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078
+}
+
+// rat
+[CARVE 38]
+{
+ADDITEM=0x09f1
+}
+
+// rideable llama
+[CARVE 39]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,12
+}
+
+// ridgeback
+[CARVE 40]
+{
+ADDITEM=0xc002,12
+}
+
+// savage ridgeback
+[CARVE 41]
+{
+ADDITEM=0xc002,12
+}
+
+// sheep
+[CARVE 42]
+{
+ADDITEM=0x1609,3
+ADDITEM=0x101f,3
+}
+
+// silver serpent
+[CARVE 43]
+{
+ADDITEM=0x09f1
+}
+
+// sewer rat
+[CARVE 44]
+{
+ADDITEM=0x09f1
+}
+
+// snake
+[CARVE 45]
+{
+ADDITEM=0x09f1
+}
+
+// snow leopard
+[CARVE 46]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,8
+}
+
+// swamp dragon
+[CARVE 47]
+{
+ADDITEM=0xC005,5
+ADDITEM=0x09f1,19
+ADDITEM=0x1078,20
+}
+
+// timber wolf
+[CARVE 48]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,5
+}
+
+// walrus
+[CARVE 49]
+{
+ADDITEM=0x097a
+ADDITEM=0x1078,12
+}
+
+// white wolf
+[CARVE 50]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,6
+}
+
+
+// ----= MONSTERS =----
+
+// ancient wyrm
+[CARVE 51]
+{
+ADDITEM=0x09f1,19
+ADDITEM=0xC000,20
+}
+
+// balron
+[CARVE 52]
+{
+ADDITEM=0x09f1
+}
+
+// bogling
+[CARVE 53]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,6
+}
+
+// cyclop
+[CARVE 54]
+{
+ADDITEM=0x09f1,4
+}
+
+// daemon
+[CARVE 55]
+{
+ADDITEM=0x09f1
+}
+
+// deep sea serpent
+[CARVE 56]
+{
+ADDITEM=0x09f1
+ADDITEM=0xC004,8
+}
+
+// dragon
+[CARVE 57]
+{
+ADDITEM=0x09f1,19
+ADDITEM=0xC000,20
+}
+
+// drake
+[CARVE 58]
+{
+ADDITEM=0x09f1,0
+ADDITEM=0xC001,20
+}
+
+// enslaved gargoyle
+[CARVE 59]
+{
+ADDITEM=0x09f1
+}
+
+// ettin
+[CARVE 60]
+{
+ADDITEM=0x09f1,4
+}
+
+// Gazer
+[CARVE 61]
+{
+ADDITEM=0x09f1
+}
+
+// gazer larva
+[CARVE 62]
+{
+ADDITEM=0x09f1
+}
+
+// harpy
+[CARVE 63]
+{
+ADDITEM=0x09b9,4
+ADDITEM=0x1bd1,50
+}
+
+// headless
+[CARVE 64]
+{
+ADDITEM=0x09f1
+}
+
+// hellhound
+[CARVE 65]
+{
+ADDITEM=0x09f1
+}
+
+// large hellcat
+[CARVE 66]
+{
+ADDITEM=0x09f1
+ADDITEM=0xC002,10
+}
+
+// amall hellcat
+[CARVE 67]
+{
+ADDITEM=0x09f1
+ADDITEM=0xC002,10
+}
+
+// imp
+[CARVE 68]
+{
+ADDITEM=0x09f1
+ADDITEM=0xC002,6
+}
+
+// juka lord
+[CARVE 69]
+{
+ADDITEM=0x09f1
+}
+
+// juka mage
+[CARVE 70]
+{
+ADDITEM=0x09f1
+}
+
+// juka warrior
+[CARVE 71]
+{
+ADDITEM=0x09f1
+}
+
+// lava lizard
+[CARVE 72]
+{
+ADDITEM=0xC002,12
+}
+
+// lizardman
+[CARVE 73]
+{
+ADDITEM=0x09f1
+ADDITEM=0xC002,12
+}
+
+// mongbat
+[CARVE 74]
+{
+ADDITEM=0x09f1
+ADDITEM=0x1078,6
+}
+
+// nightmare
+[CARVE 75]
+{
+ADDITEM=0x09f1,5
+ADDITEM=0xC000,10
+}
+
+// ogre
+[CARVE 76]
+{
+ADDITEM=0x09f1,2
+}
+
+// ogre lord
+[CARVE 77]
+{
+ADDITEM=0x09f1,2
+}
+
+// orc
+[CARVE 78]
+{
+ADDITEM=0x09f1
+}
+
+// orc brute
+[CARVE 79]
+{
+ADDITEM=0x09f1,2
+}
+
+// orc captain
+[CARVE 80]
+{
+ADDITEM=0x09f1
+}
+
+// orcish lord
+[CARVE 81]
+{
+ADDITEM=0x09f1
+}
+
+// orcish mage
+[CARVE 82]
+{
+ADDITEM=0x09f1
+}
+
+// phoenix
+[CARVE 83]
+{
+ADDITEM=0x09b9
+ADDITEM=0x1bd1,36
+}
+
+// pixie
+[CARVE 84]
+{
+ADDITEM=0x09f1
+ADDITEM=0xc002,5
+}
+
+// ratman
+[CARVE 85]
+{
+ADDITEM=0xc002,8
+}
+
+// ratman archer
+[CARVE 86]
+{
+ADDITEM=0xc002,8
+}
+
+// ratman mage
+[CARVE 87]
+{
+ADDITEM=0xc002,8
+}
+
+// sea serpent
+[CARVE 88]
+{
+ADDITEM=0xC004,8
+ADDITEM=0xC001,10
+ADDITEM=0x097a
+}
+
+// serpentine dragon
+[CARVE 89]
+{
+ADDITEM=0xC000,20
+ADDITEM=0x09f1,19
+ADDITEM=listobject71,6
+}
+
+// shadow wyrm
+[CARVE 90]
+{
+ADDITEM=0x09f1,19
+ADDITEM=0xC003,10
+ADDITEM=0xC000,20
+}
+
+// skeletal dragon
+[CARVE 90]
+{
+ADDITEM=0xC000,20
+}
+
+// stoneharpy
+[CARVE 91]
+{
+ADDITEM=0x09b9,4
+ADDITEM=0x1bd1,50
+}
+
+// titan
+[CARVE 92]
+{
+ADDITEM=0x09f1,4
+}
+
+// troll
+[CARVE 93]
+{
+ADDITEM=0x09f1,2
+}
+
+// unicorn
+[CARVE 94]
+{
+ADDITEM=0x09f1,3
+ADDITEM=0xC001,10
+}
+
+// white wyrm
+[CARVE 95]
+{
+ADDITEM=0x09f1,19
+ADDITEM=0xC000,20
+ADDITEM=0xC007,7
+}
+
+// wyvern
+[CARVE 96]
+{
+ADDITEM=0xC001,20
+}
+
+[CARVE HUMAN]
+{
+ADDITEM=0x1DAE,1058
+ADDITEM=0x1DAD,1057
+ADDITEM=0x1DAF,1061
+ADDITEM=0x1DB0,1060
+ADDITEM=0x1DB1,1063
+ADDITEM=0x1DB2,1062
+ADDITEM=0x1CED,1059
+}

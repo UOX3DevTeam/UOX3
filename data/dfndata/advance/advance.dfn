@@ -1,0 +1,155 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98	                  *
+//*                   http://uox3.sourceforge.net                 *
+//*                                                               *
+//* Last Update : 01/4/2003	                	          *
+//* Script : advance.dfn                                          *
+//*****************************************************************
+
+// Master Smith
+[ADVANCEMENT 1]
+{
+STR=95
+DEX=80
+INT=60
+BLACKSMITHING=940
+MINING=940
+TINKERING=940
+EQUIPITEM=0x13e3
+PACKITEM=0x0fbc
+PACKITEM=0x1bf2,30
+PACKITEM=0x0e85
+PACKITEM=0x1ebc
+}
+// Master Swordsman
+[ADVANCEMENT 2]
+{
+STR=95
+DEX=80
+INT=60
+SWORDSMANSHIP=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+packitem=0x1b76
+packitem=0x13ba
+}
+
+// Master Armsman
+[ADVANCEMENT 3]
+{
+STR=95
+DEX=70
+INT=70
+MACEFIGHTING=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+packitem=0x1b76
+packitem=0x1406
+}
+// Master Fencer
+[ADVANCEMENT 4]
+{
+STR=90
+DEX=85
+INT=60
+FENCING=940
+ANATOMY=940
+TACTICS=940
+PARRYING=940
+packitem=0x1400
+packitem=0x1b76
+}
+
+// Master Archer
+[ADVANCEMENT 5]
+{
+STR=85
+DEX=85
+INT=65
+ARCHERY=940
+ANATOMY=940
+TACTICS=940
+packitem=0x13b2
+packitem=0x0f3f
+}
+// Master Mage
+[ADVANCEMENT 6]
+{
+STR=65
+DEX=65
+INT=95
+MAGERY=940
+EVALUATINGINTEL=940
+MAGICRESISTANCE=800
+MEDITATION=800
+packitem=0x1718
+packitem=0x0efa
+packitem=0x1f6d
+packitem=0x0f7a
+packitem=0x0f7b
+packitem=0x0f84
+packitem=0x0f85
+packitem=0x0f86
+packitem=0x0f88
+packitem=0x0f8c
+packitem=0x0f8d
+}
+// Thief
+[ADVANCEMENT 7]
+{
+STR=60
+DEX=95
+INT=80
+STEALING=940
+SNOOPING=940
+LOCKPICKING=800
+HIDING=940
+packitem=0x14fb,4
+packitem=0x1515
+}
+
+// Bard
+[ADVANCEMENT 8]
+{
+STR=60
+DEX=80
+INT=95
+MUSICIANSHIP=940
+PROVOCATION=940
+ENTICEMENT=800
+PEACEMAKING=800
+packitem=0x0eb2
+}
+
+// Ranger
+[ADVANCEMENT 9]
+{
+STR=65
+DEX=80
+INT=80
+TAMING=940
+TRACKING=940
+HERDING=800
+packitem=0x0e81
+packitem=0x0de1,3
+packitem=0x0a58
+}
+
+// Assassin
+[ADVANCEMENT 10]
+{
+STR=80
+DEX=65
+INT=80
+POISONING=940
+ALCHEMY=940
+TASTEID=940
+packitem=0x0f51
+packitem=0x0f0a,5
+}
+
+
+EOF
+

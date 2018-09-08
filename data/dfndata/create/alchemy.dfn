@@ -1,0 +1,372 @@
+// alchemy.dfn
+// v1.0; 08/05/01; initial release / total overhaul; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.1; 17/06/01; added candles menu 67 to tinkering; Carsten Germer / Yeshe; yeshe@manofmystery.org
+// v1.2; 12/01/02; fixed the damn carpentry bug that had the wrong ids; Chris Bailey / [TBA]Cav; tbacavalier@bigpond.com
+// v1.3: 14/04/03; Updated item-ids; Xuri
+// (add new version comments here, use format of above line please!)
+// For use with the UOX emulator or any with permission from the author
+//
+//======= credits of original version =========
+// Created by: Cironian and Drax
+// Cestle - cestle@uoxdev.com
+// Sephiroth - seanhogberg@hotmail.com
+// RevalutionShadow - Emac@Mindspring.com
+// Infinity
+// Folci - wezzer@nauticom.net
+// Honorable Mention:
+// Calvin - rolynyk@hotmail.com
+// Pug - Jcpirate@bsc.net
+// Concerned Watcher - lee.brown@virgin.net
+// Cruoris - cruoris@msn.com
+// Dante - dante@the-egg.net
+// HellRaider - dmais@urbi.com.br
+// Danath - matt994@multipro.com
+// Blacksmithing originally adapted by Traker
+// Rank System Added by Magius(CHE) 08/25/1999
+//=============================================
+
+//*****************************************
+// start of alchemy section
+// item:290 menu:90 submenu:90
+
+[SUBMENU 89]
+{
+MENU=90
+MENU=91
+MENU=92
+MENU=93
+MENU=94
+MENU=95
+MENU=96
+MENU=97
+}
+[MENUENTRY 89]
+{
+NAME=Previous Menu
+SUBMENU=89
+}
+[MENUENTRY 90]
+{
+NAME=Agility Potions
+ID=0x0f08
+SUBMENU=90
+}
+[MENUENTRY 91]
+{
+NAME=Cure Potions
+ID=0x0f07
+SUBMENU=91
+}
+[MENUENTRY 92]
+{
+NAME=Explosion Potions
+ID=0x0f0d
+SUBMENU=92
+}
+[MENUENTRY 93]
+{
+NAME=Healing Potions
+ID=0x0f0c
+SUBMENU=93
+}
+[MENUENTRY 94]
+{
+NAME=Poison
+ID=0x0f0a
+SUBMENU=94
+}
+[MENUENTRY 95]
+{
+NAME=Refresh Potions
+ID=0x0f0b
+SUBMENU=95
+}
+[MENUENTRY 96]
+{
+NAME=Strength Potions
+ID=0x0f09
+SUBMENU=96
+}
+[MENUENTRY 97]
+{
+NAME=Nightsight Potions
+ID=0x0f06
+SUBMENU=97
+}
+[SUBMENU 90]
+{
+ITEM=290
+ITEM=291
+MENU=89
+}
+[SUBMENU 91]
+{
+ITEM=292
+ITEM=293
+ITEM=294
+MENU=89
+}
+[SUBMENU 92]
+{
+ITEM=295
+ITEM=296
+ITEM=297
+MENU=89
+}
+[SUBMENU 93]
+{
+ITEM=298
+ITEM=299
+ITEM=300
+MENU=89
+}
+[SUBMENU 94]
+{
+ITEM=301
+ITEM=302
+ITEM=303
+ITEM=304
+MENU=89
+}
+[SUBMENU 95]
+{
+ITEM=305
+ITEM=306
+MENU=89
+}
+[SUBMENU 96]
+{
+ITEM=307
+ITEM=308
+MENU=89
+}
+[SUBMENU 97]
+{
+ITEM=309
+MENU=89
+}
+
+[ITEM 290]
+{
+NAME=Agility
+ID=0x0f08
+RESOURCE=0x0f7b 1
+SKILL=0 151 650
+ADDITEM=0x0F08
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 291]
+{
+NAME=Greater Agility
+ID=0x0f08
+RESOURCE=0x0f7b 3
+SKILL=0 351 850
+ADDITEM=0x0F08-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 292]
+{
+NAME=Lesser Cure
+ID=0x0f07
+RESOURCE=0x0f84 1
+SKILL=0 0 500
+ADDITEM=0x0F07
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 293]
+{
+NAME=Cure
+ID=0x0f07
+RESOURCE=0x0f84 3
+SKILL=0 251 750
+ADDITEM=0x0F07-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 294]
+{
+NAME=Greater Cure
+ID=0x0f07
+RESOURCE=0x0f84 6
+SKILL=0 651 1150
+ADDITEM=0x0F07-c
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 295]
+{
+NAME=Lesser Explosion
+ID=0x0f0d
+RESOURCE=0x0f8c 3
+SKILL=0 51 550
+ADDITEM=0x0F0D
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+//No code-support in UOX3 yet
+//[ITEM 296]
+//{
+//NAME=Explosion
+//ID=0x0f0d
+//RESOURCE=0x0f8c 5
+//SKILL=0 351 850
+//ADDITEM=0x0f0d
+//MINRANK=1
+//MAXRANK=10
+//}
+//[ITEM 297]
+//{
+//NAME=Greater Explosion
+//ID=0x0f0d
+//RESOURCE=0x0f8c 10
+//SKILL=0 651 1150
+//ADDITEM=0x0f0d-b
+//MINRANK=1
+//MAXRANK=10
+//}
+[ITEM 298]
+{
+NAME=Lesser Heal
+ID=0x0f0c
+RESOURCE=0x0f85 1
+SKILL=0 0 500
+ADDITEM=0x0F0C
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 299]
+{
+NAME=Heal
+ID=0x0f0c
+RESOURCE=0x0f85 3
+SKILL=0 151 650
+ADDITEM=0x0F0C-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 300]
+{
+NAME=Greater Heal
+ID=0x0f0c
+RESOURCE=0x0f85 7
+SKILL=0 551 1050
+ADDITEM=0x0F0C-c
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 301]
+{
+NAME=Lesser Poison
+ID=0x0f0a
+RESOURCE=0x0f88 1
+SKILL=0 0 500
+ADDITEM=0x0F0A
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 302]
+{
+NAME=Poison
+ID=0x0f0a
+RESOURCE=0x0f88 2
+SKILL=0 151 650
+ADDITEM=0x0F0A-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 303]
+{
+NAME=Greater Poison
+ID=0x0f0a
+RESOURCE=0x0f88 4
+SKILL=0 551 1050
+ADDITEM=0x0F0A-c
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 304]
+{
+NAME=Deadly Poison
+ID=0x0f0a
+RESOURCE=0x0f88 8
+SKILL=0 901 1400
+ADDITEM=0x0F0A-d
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 305]
+{
+NAME=Refresh
+ID=0x0f0b
+RESOURCE=0x0f7a 1
+SKILL=0 151 650
+ADDITEM=0x0f0b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 306]
+{
+NAME=Total Refresh
+ID=0x0f0b
+RESOURCE=0x0f7a 5
+SKILL=0 251 750
+ADDITEM=0x0F0B-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 307]
+{
+NAME=Strength
+ID=0x0f09
+RESOURCE=0x0f86 2
+SKILL=0 251 750
+ADDITEM=0x0F09
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 308]
+{
+NAME=Greater Strength
+ID=0x0f09
+RESOURCE=0x0f86 5
+SKILL=0 451 950
+ADDITEM=0x0F09-b
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+[ITEM 309]
+{
+NAME=Nightsight
+ID=0x0f06
+RESOURCE=0x0f8d 5
+SKILL=0 0 500
+ADDITEM=0x0F06
+MINRANK=1
+MAXRANK=10
+SOUND=0x0242
+}
+
+// end of alchemy section
+//*****************************************
+
+

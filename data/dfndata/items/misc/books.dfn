@@ -1,0 +1,464 @@
+[base_book]
+{
+get=base_item
+name=book
+id=0x0fef
+value=18 9
+weight=100
+restock=20
+movable=1
+decay=1
+type=11
+morex=666
+morey=32
+good=32
+}
+
+[0x0fef]
+{
+get=base_book
+name=book
+id=0x0fef
+}
+
+[0x0ff0]
+{ green/beige
+get=base_book
+name=a book
+id=0x0ff0
+}
+
+[0x0ff1]
+{ //brown
+get=base_book
+name=a book
+id=0x0ff1
+}
+
+[0x0FF2]
+{ purple
+get=base_book
+name=a book
+id=0x0ff2
+}
+
+[0x0ff3]
+{
+get=base_book
+name=book
+id=0x0ff3
+}
+
+[0x0ff4]
+{
+get=base_book
+name=book
+id=0x0ff4
+}
+
+[0x0fbd]
+{ E
+get=base_book
+name=book
+id=0x0fbd
+}
+
+[0x0fbe]
+{ S
+get=base_book
+name=book
+id=0x0fbe
+}
+
+[0x1e20]
+{ upside down
+get=base_item
+name=book
+id=0x1e20
+weight=100
+}
+
+[0x1e21]
+{ upside down
+get=base_item
+name=books
+id=0x1e21
+weight=200
+}
+
+[0x1e22]
+{ N open
+get=base_item
+name=books
+id=0x1e22
+weight=200
+}
+
+[0x1e23]
+{ E open
+get=base_item
+name=books
+id=0x1e23
+weight=200
+}
+
+[0x1e24]
+{ N pile
+get=base_item
+name=books
+id=0x1e24
+weight=500
+movable=2
+}
+
+[0x1e25]
+{ W pile
+get=base_item
+name=books
+id=0x1e25
+weight=500
+movable=2
+}
+
+[the_first_uox_book]
+{
+get=base_item
+name=The First UOX Book
+id=0x0fef
+weight=100
+type=11
+more=0x0000001
+}
+
+[a_grammar_of_orcish]
+{
+get=base_item
+name=A Grammer of Orchish
+id=0x0fef
+weight=100
+type=11
+more=0x0000002
+}
+
+[the_bold_stranger]
+{
+get=base_item
+name=The Bold Stranger
+id=0x0fef
+weight=100
+type=11
+more=0x0000003
+}
+
+[birds_of_britannia]
+{
+get=base_item
+name=Birds of Britannia
+id=0x0fef
+weight=100
+type=11
+more=0x0000004
+}
+
+[regarding_llamas]
+{
+get=base_item
+name=Regarding Llamas
+id=0x0fef
+weight=100
+type=11
+more=0x0000005
+}
+
+[talking_to_wisps]
+{
+get=base_item
+name=Talking to Wisps
+id=0x0fef
+weight=100
+type=11
+more=0x0000006
+}
+
+[taming_dragons]
+{
+get=base_item
+name=Taming Dragons
+id=0x0fef
+weight=100
+type=11
+more=0x0000007
+}
+
+[politic_call_to_anarchy]
+{
+get=base_item
+name=A Politic Call to Anarchy
+id=0x0fef
+weight=100
+type=11
+more=0x0000008
+}
+
+[ethical_hedonism]
+{
+get=base_item
+name=Ethical Hedonism: An Introduction
+id=0x0fef
+weight=100
+type=11
+more=0x0000009
+}
+
+[diversity_of_our_land]
+{
+get=base_item
+name=On the diversity of our land
+id=0x0fef
+weight=100
+type=11
+more=0x00000010
+}
+
+[Virtue]
+{
+get=base_item
+name=Virtue
+id=0x0fef
+weight=100
+type=11
+more=0x00000011
+}
+
+[my_story]
+{
+get=base_item
+name=My Story
+id=0x0fef
+weight=100
+type=11
+more=0x00000012
+}
+
+[burning_of_trinsic]
+{
+get=base_item
+name=The Burning of Trinsic
+id=0x0fef
+weight=100
+type=11
+more=0x00000013
+}
+
+[the_fight]
+{
+get=base_item
+name=The Fight
+id=0x0fef
+weight=100
+type=11
+more=0x00000014
+}
+
+[song_of_samlethe]
+{
+get=base_item
+name=A Song of Samlethe
+id=0x0fef
+weight=100
+type=11
+more=0x00000015
+}
+
+[childrens_tale_vol2]
+{
+get=base_item
+name=Classic Childrens Tales Vol.2
+id=0x0fef
+weight=100
+type=11
+more=0x00000016
+}
+
+[tales_of_vesper_vol1]
+{
+get=base_item
+name=Classic tales of Vesper vol.1
+id=0x0fef
+weight=100
+type=11
+more=0x00000017
+}
+
+[tale_of_three_tribes]
+{
+get=base_item
+name=A Tale of Three Tribes
+id=0x0fef
+weight=100
+type=11
+more=0x00000018
+}
+
+[deceit_dungeon_of_horrors]
+{
+get=base_item
+name=Deceit: A Dungeon of Horrors
+id=0x0fef
+weight=100
+type=11
+more=0x00000019
+}
+
+[life_of_a_minstrel]
+{
+get=base_item
+name=The Life of a Travelling Minstrel
+id=0x0fef
+weight=100
+type=11
+more=0x00000020
+}
+
+[wild_girl]
+{
+get=base_item
+name=The Wild Girl in The Forest
+id=0x0fef
+weight=100
+type=11
+more=0x00000021
+}
+
+[primer_on_arms_and_weapons]
+{
+get=base_item
+name=A Primer on Arms and Weopons
+id=0x0fef
+weight=100
+type=11
+more=0x00000022
+}
+
+[guide_to_guilds]
+{
+get=base_item
+name=Beltrans Guide to Guilds
+id=0x0fef
+weight=100
+type=11
+more=0x00000023
+}
+
+[britannian_flora]
+{
+get=base_item
+name=Britannian Flora
+id=0x0fef
+weight=100
+type=11
+more=0x00000024
+}
+
+[dimensional_travel]
+{
+get=base_item
+name=Dimensional Travel, a Monograph
+id=0x0fef
+weight=100
+type=11
+more=0x00000025
+}
+
+[major_trade_associations]
+{
+get=base_item
+name=The Major Trade Associations
+id=0x0fef
+weight=100
+type=11
+more=0x00000026
+}
+
+[rankings_of_trades]
+{
+get=base_item
+name=The Rankings of Trades
+id=0x0fef
+weight=100
+type=11
+more=0x00000027
+}
+
+[treatise_on_alchemy]
+{
+get=base_item
+name=Treatise on Alchemy
+id=0x0fef
+weight=100
+type=11
+more=0x00000028
+}
+
+[uox3_story_one]
+{
+get=base_item
+name=UOX3 Story Chapter One - Death
+id=0x0fef
+weight=100
+type=11
+more=0x00000029
+}
+
+[uox3_story_two]
+{
+get=base_item
+name=UOX3 Story Chapter Two - End of The World
+id=0x0fef
+weight=100
+type=11
+more=0x00000030
+}
+
+[uox3_story_three]
+{
+get=base_item
+name=UOX3 Story Chapter Three - The Lost Splinter
+id=0x0fef
+weight=100
+type=11
+more=0x00000031
+}
+
+[0x2254]
+{
+get=base_item
+name=book of arms
+id=0x2254
+weight=100
+value=22 11
+decay=1
+good=32
+}
+
+[0x238c]
+{
+get=base_item
+name=book of bushido
+id=0x23a0
+weight=100
+value=22 11
+decay=1
+good=32
+}
+
+[0x23a0]
+{
+get=base_item
+name=book of ninjitsu
+id=0x23a0
+weight=100
+value=22 11
+decay=1
+good=32
+}

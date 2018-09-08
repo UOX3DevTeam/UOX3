@@ -1,0 +1,71 @@
+// This file is to be used in conjunction with create.dfn files
+// Use the resource name in place of an ID
+// UOX3 will automatically search your pack for any of the ID's for that resource.
+
+// Note, commented ID's are graphical stacks (not piles), uncomment if you want to enable them as resources.
+
+[RESOURCE WOOD]
+{
+ID=0x1bd7
+//ID=0x1bd8
+//ID=0x1bd9
+ID=0x1bda
+//ID=0x1bdb
+//ID=0x1bdc
+ID=0x1bdd
+//ID=0x1bde
+//ID=0x1bdf
+ID=0x1be0
+//ID=0x1be1
+//ID=0x1be2
+}
+
+[RESOURCE LOGS]
+{ // Used when making boards in Carpentry
+ID=0x1bdd
+//ID=0x1bde
+//ID=0x1bdf
+ID=0x1be0
+//ID=0x1be1
+//ID=0x1be2
+}
+
+[RESOURCE METAL]
+{
+ID=0x1bf2
+ID=0x1bef
+}
+
+[RESOURCE CLOTH]
+{
+//ID=0x0f95	Bolts == 50 Cloth
+//ID=0x0f96
+//ID=0x0f97
+//ID=0x0f98
+//ID=0x0f99
+//ID=0x0f9a
+//ID=0x0f9b
+//ID=0x0f9c
+ID=0x175d
+ID=0x175e
+ID=0x175f
+ID=0x1760
+ID=0x1761
+ID=0x1762
+ID=0x1763
+ID=0x1764
+ID=0x1765
+ID=0x1766
+ID=0x1767
+ID=0x1768
+}
+
+[RESOURCE LEATHER]
+{
+ID=0x1067
+ID=0x1068
+ID=0x1078
+ID=0x1079
+ID=0x1081
+ID=0x1082
+}

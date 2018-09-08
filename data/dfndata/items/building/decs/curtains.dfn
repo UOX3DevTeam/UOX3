@@ -1,0 +1,262 @@
+// curtains
+
+[0x0432]
+{ E rough
+get=base_item
+name=curtain
+id=0x0432
+weight=100
+movable=2
+}
+
+[0x0435]
+{ S rough
+get=base_item
+name=curtain
+id=0x0435
+weight=100
+movable=2
+}
+
+[0x0980]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0980
+weight=100
+movable=2
+}
+
+[0x0981]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0981
+weight=100
+movable=2
+}
+
+[0x0982]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0982
+weight=100
+movable=2
+}
+
+[0x0983]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0983
+weight=100
+movable=2
+}
+
+[0x0984]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0984
+weight=100
+movable=2
+}
+
+[0x0985]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0985
+weight=100
+movable=2
+}
+
+[0x0986]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0986
+weight=100
+movable=2
+}
+
+[0x0987]
+{ S red (combines many ways)
+get=base_item
+name=curtains
+id=0x0987
+weight=100
+movable=2
+}
+
+[0x0988]
+{ E red (combines many ways)
+get=base_item
+name=curtains
+id=0x0988
+weight=100
+movable=2
+}
+
+[0x0989]
+{ E red (combines many ways)
+get=base_item
+name=curtains
+id=0x0989
+weight=100
+movable=2
+}
+
+[0x098a]
+{ E red (combines many ways)
+get=base_item
+name=curtains
+id=0x098a
+weight=100
+movable=2
+}
+
+[0x098b]
+{ E red (combines many ways)
+get=base_item
+name=curtains
+id=0x098b
+weight=100
+movable=2
+}
+
+[0x12da]
+{ E white animated leftpart
+get=base_item
+name=curtain
+id=0x12da
+weight=100
+movable=2
+}
+
+[0x12de]
+{ E white animated rightpart
+get=base_item
+name=curtain
+id=0x12de
+weight=100
+movable=2
+}
+
+[0x12e2]
+{ E
+get=base_item
+name=curtain sash
+id=0x12e2
+weight=100
+movable=2
+}
+
+[0x12e3]
+{ E
+get=base_item
+name=curtain sash
+id=0x12e3
+weight=100
+movable=2
+}
+
+[0x12e4]
+{ E
+get=base_item
+name=curtain sash
+id=0x12e4
+weight=100
+movable=2
+}
+
+[0x12e5]
+{ S white animated rightpart
+get=base_item
+name=curtain
+id=0x12e5
+weight=100
+movable=2
+}
+
+[0x12e9]
+{ S white animated leftpart
+get=base_item
+name=curtain
+id=0x12e9
+weight=100
+movable=2
+}
+
+[0x12ed]
+{ S
+get=base_item
+name=curtain sash
+id=0x12ed
+weight=100
+movable=2
+}
+
+[0x154e]
+{ E red 1/3
+get=base_item
+name=curtains
+id=0x154e
+weight=100
+movable=2
+}
+
+[0x154f]
+{ E red 2/3
+get=base_item
+name=curtains
+id=0x154f
+weight=100
+movable=2
+}
+
+[0x1557]
+{ E red 3/3
+get=base_item
+name=curtains
+id=0x1557
+weight=100
+movable=2
+}
+
+[0x0433]
+{ E rough
+get=base_item
+name=curtain rod
+id=0x0433
+weight=100
+movable=2
+}
+
+[0x0434]
+{ S rough
+get=base_item
+name=curtain rod
+id=0x0434
+weight=100
+movable=2
+}
+
+[0x1638]
+{ E small red
+get=base_item
+name=curtain
+id=0x1638
+weight=100
+movable=2
+}
+
+[0x1639]
+{ S small red
+get=base_item
+name=curtain
+id=0x1639
+weight=100
+movable=2
+}

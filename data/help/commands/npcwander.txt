@@ -1,0 +1,11 @@
+        NPCWANDER <value> <target>
+
+  Purpose: 
+        Assign a "wander-mode" to targeted NPC.
+        List of wander-modes:
+          NPCWANDER 0 - No wandering
+          NPCWANDER 1 - Follows target selected
+                        with NPCTARGET command.
+          NPCWANDER 2 - Wander freely
+          NPCWANDER 3 - Wander in boxed area.
+          NPCWANDER 4 - Wander in circled area.

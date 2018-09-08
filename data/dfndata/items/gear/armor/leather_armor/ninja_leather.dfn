@@ -1,0 +1,70 @@
+// Note February 10th 2006: The DEF values of all these need heavy tweaking. Based on guesswork only!
+
+[0x278e]
+{
+get=leather_ninja_hood
+name=leather ninja hood
+id=0x278e
+}
+
+[0x27d9]
+{
+get=leather_ninja_hood
+name=leather ninja hood
+id=0x27d9
+}
+
+[0x2790]
+get=leather_ninja_belt
+name=leather ninja belt
+id=0x2790
+}
+
+[0x27db]
+{
+get=leather_ninja_belt
+name=leather ninja belt
+id=0x27db
+}
+
+[0x2791]
+{
+get=leather_ninja_pants
+name=leather ninja pants
+id=0x2791
+}
+
+[0x27dc]
+{
+get=leather_ninja_pants
+name=leather ninja pants
+id=0x27dc
+}
+
+[0x2792]
+{
+get=leather_ninja_mitts
+name=leather ninja mitts
+id=0x2792
+}
+
+[0x27dd]
+{
+get=leather_ninja_mitts
+name=leather ninja mitts
+id=0x27dd
+}
+
+[0x2793]
+{
+get=leather_ninja_jacket
+name=leather ninja jacket
+id=0x2793
+}
+
+[0x27de]
+{
+get=leather_ninja_jacket
+name=leather ninja jacket
+id=0x27de
+}

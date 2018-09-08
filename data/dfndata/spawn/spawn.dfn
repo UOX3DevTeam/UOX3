@@ -1,0 +1,39 @@
+// spawn.dfn
+// v1.0; 15/01/02; initial release / total overhaul; ??? / Lynxx; 
+// (add new version comments here, use format of above line please!)
+// For use with the UOX emulator or any with permission from the author
+//
+//======= credits of original version =========
+// UOX Script version 35
+// Cestle - cestle@uoxdev.com
+// Sephiroth - seanhogberg@hotmail.com
+// RevolutionShadow - Emac@Mindspring.com
+// Infinity - ?@?.?
+// Folci - wezzer@nauticom.net
+// Calvin - rolynyk@hotmail.com
+//=============================================
+//
+// [REGIONSPAWN 0]		// This is the where the region is defined
+// {				// Of course this is a {
+// NAME=The World		// This is the name of the spawn area and can be anything
+// ITEMLIST=#			// This is a reference number to an item list inside items dfn for random item spawn
+// NPCLIST=#			// This is a reference number to an NPC list inside npc dfn for random NPC spawn
+// ITEM=#			// This is a reference number to a single item in items dfn
+// NPC=#			// This is a reference number to a single NPC in npc dfn
+// MAXITEMS=#			// Maximum number of items to spawn
+// MAXNPCS=#			// Maximum number of npcs to spawn
+// X1=1				// This is the upper left X of the box
+// Y1=1				// This is the upper left Y of the box
+// X2=5000			// This is the lower right X of the box
+// Y2=5000                      // This is the lower right Y of the box
+// PREFZ=18			// This is the maximum Z influence a dynamic or static item can have on spawning.
+// WORLD=#		        // This is the World which to Spawn WORLD=0 (for Brit) WORLD=2 (for Ilsh)
+// MINTIME=0			// This is the minimum time for the item or npc to spawn
+// MAXTIME=0			// This is the maximum time for the item or npc to spawn
+// CALL=#			// Amount to spawn in one call
+// ONLYOUTSIDE=#		// Set this to 1 if items and chars should only spawn outside of buildings.
+// }				// Of course this is the closing }
+
+EOF
+
+

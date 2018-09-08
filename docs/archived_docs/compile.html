@@ -1,0 +1,62 @@
+<html>
+<head>
+</head>
+<body>
+
+<center><h1>Compiling UOX3 with the JS engine for Win32 with MSVC 6.0</h1></center>
+
+<h3>To build the Javascript engine</h3>
+<ul>
+	<li>Ensure that you have access to VC's <i>nmake</i> program from the command line.  If it is NOT in your path, then there should be a file called vcvars32.bat, which, if run from a command prompt, will setup the path for you.
+	<li>Construct a batch file called mymake.bat in the /uox3/source/mozilla/js/src directory which looks like this: <pre>
+nmake /f js.mak CFG="jsshell - Win32 Release" clean all
+nmake /f js.mak CFG="jsshell - Win32 Debug" clean all
+</pre>
+	<li>Execute mymake from within the directory mozilla/js/src
+</ul>
+<p>Bingo, it should be all built for you.  There should be a js32.dll and js32.lib file in the Debug and Release subdirectories of mozilla/js/src.
+<p>Now, all you have to do is fire up VC, and make some slight customizations.  Go to Tools->Options->Directory tab.  For include directories, add the path to your mozilla/js/src directory.  For library files, add your mozilla/js/src/debug directory.  For source files, add your mozilla/js/src directory.  Hit OK.  Now open the UOX3 project file, and just hit compile, that should be all you need.
+<p>Note that if you want to execute UOX3 from within VC, you need to provide a copy of js32.dll in the project's debug directory.
+
+<h2>Linux compiling information</h2>
+
+<p>First of all, you need to checkout the uox source from the CVS.  These 2 steps should (if you know how to use CVS) grab the source locally for you.  When prompted for a password, just hit enter (it's blank).
+
+<pre>
+cvs -d:pserver:anonymous@cvs.UOX3.sourceforge.net:/cvsroot/uox3 login 
+cvs -z3 -d:pserver:anonymous@cvs.UOX3.sourceforge.net:/cvsroot/uox3 co uox3
+</pre>
+
+In future, you should be able to get updates via
+
+<pre>
+cvs -d:pserver:anonymous@cvs.UOX3.sourceforge.net:/cvsroot/uox3 login 
+cvs -z3 -d:pserver:anonymous@cvs.UOX3.sourceforge.net:/cvsroot/uox3 update uox3
+</pre>
+
+<p>cd to the uox3/source/mozilla/js/src directory.
+
+<p>From there, follow these steps.
+
+<p>Before you can compile, you'll need to generate jsautocfg.h.  This is a fairly trivial process. Execute this:
+<pre>
+gcc -o jscpucfg jscpucfg.c ; ./jscpucfg > jsautocfg.h
+</pre>
+Then you can compile the js library: 
+<pre>
+gcc -c -DXP_UNIX *.c ; ar -r js32.a *.o
+</pre>
+then copy js32.a into the uox3/source dir.
+<pre>
+cp js32.a ../../..
+</pre>
+
+<p>For compiling as usual, it's actually simple now.  Switch to uox3_new/source and do
+<pre>
+./configure
+make
+</pre>
+
+<p>Presto chango, it should work just dandy, and you now have a binary called "uox3".
+</body>
+</html>

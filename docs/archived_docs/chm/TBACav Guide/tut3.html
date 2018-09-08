@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>Tutorial 3: Custom NPCs</title>
+</head>
+<body>
+<center><h1>Tutorial 3</h1><h2>Custom npcs</h2><h4>Written by: [TBA]Cavalier</h4></center>
+<p>Last updated: 19th May, 2000
+<hr>
+<p>This is just a quick little lesson about creating your own npcs and
+adding various settings to them. 3 examples are provided. We will start
+with a blank npc in-game and fiddle with various settings. At the
+moment this is the only one included, but on the weekend I'll add a
+npc shopkeeper along with using the name and item lists and a monster
+that also uses the loot lists. Here's a in-game demo of npc creation
+then:
+
+<p>Start up your server and login, I also have shardace running for the
+convenience it offers. For this example you can make almost anything
+you like, but we will be starting with a blank human npc. Use
+'ADDNPC 01 90 in-game to add a male npc, or 'ADDNPC 01 91 to add a
+female one. You should end up with a blank npc with the name dummy and
+white skin (colour 00 00 I think). Change the skin hue to whatever
+value you want by using 'tweak on the npc. A menu will popup and there
+should be a thing that says skin. Click the manual button next to it
+and change it to a suitable colour (remember to use the hex values, no
+seperating space). Now you need to give your npc a name. For this
+example I will call my npc Cav. You can do this by using 'rename Cav
+on your blank npc. Now we need to dress him. This is why I like
+shardace so much, it gives you a graphical representation of what items
+there are, all neatly placed into subject thingys. Otherwise just use
+the 'add menu to add some clothes and equipment to your npc. To get the
+clothes onto your npc you will need to place them on the ground and
+then drag them onto the npcs paperdoll. I will now share with you a
+couple of the suits I like to wear:
+
+<h3>The Jedi Master</h3>
+<p>Use any sort of sword you want, just dye it a fluro colour (like a
+light-sabre). Use a brown robe and a bandana of your choice. Not sure
+that footwear matters too much so I don't wear it.
+
+<h3>The Pirate Fool</h3>
+<p>This one is sure to make you look like a fool. Just get a cutlass, a
+red skullcap, a surcoat (white), a fancy shirt (also white), some
+long pants (a greyish - black colour), and some black boots.
+
+<h3>The GM Fool</h3>
+<p>Another one that is sure to make you the laughing stock of any server.
+Get a purple gm robe, a fluro green jester hat, and some sort of povo
+weapon.
+
+<p>Enough of that, back to the task at hand. What you now wish to do with
+your npc is totally up to you. We can set some various npc ai's which
+make it do different things. Here's a quick list of what they do:
+<table>
+<tr><th>AI<th>Command
+<tr><td>a healer<td>'SETNPCAI 1
+<tr><td>a monster<td>'SETNPCAI 2
+<tr><td>a guard<td>'SETNPCAI 4
+<tr><td>a banker<td>'SETNPCAI 8
+</table>
+<p>If your npc is none of the above, then you don't need to add any AI.
+You will probably want to let the bloke walk around, so there's a few
+things you can do with that. As far as I know, there are 4 working
+npc wander modes. These are stay, wander, follow and circle. There is
+a fifth one for rectangles but I'm not sure whether it works or not.
+For this one I'm too lazy to write out the commands, so I'll just get
+you all to use the npc section in shardace until I update this tutorial.
+About the only other thing of note is turning the npc into a
+shopkeeper. For instructions on doing this in-game see tutorial 2.
+</body>
+</html>

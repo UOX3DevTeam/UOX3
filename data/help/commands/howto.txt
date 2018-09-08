@@ -1,0 +1,6 @@
+        HOWTO
+
+  Purpose: 
+        Displays the index of this menu =)
+        Contains a list of all GM commands and
+        information on how to use each command.

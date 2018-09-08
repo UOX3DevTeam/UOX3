@@ -1,0 +1,1082 @@
+// signs.dfn
+// All types of signs, sign-posts and holders.
+// v1.0; 10/06/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+[0x1296]
+{
+get=base_item
+name=post
+id=0x1296
+weight=100
+}
+
+[0x1297]
+{ NE
+get=base_item
+name=sign
+id=0x1297
+}
+
+[0x1298]
+{ NW
+get=base_item
+name=sign
+id=0x1298
+}
+
+[0x1299]
+{ N
+get=base_item
+name=sign
+id=0x1299
+}
+
+[0x129a]
+{ W
+get=base_item
+name=sign
+id=0x129a
+}
+
+[0x129b]
+{ SE
+get=base_item
+name=sign
+id=0x129b
+}
+
+[0x129c]
+{ E
+get=base_item
+name=sign
+id=0x129c
+}
+
+[0x129d]
+{ S
+get=base_item
+name=sign
+id=0x129d
+}
+
+[0x129e]
+{ SW
+get=base_item
+name=sign
+id=0x129e
+}
+
+[0x12a5]
+{ S
+get=base_item
+name=sign
+id=0x12a5
+}
+
+[0x0b95]
+{ E
+get=base_item
+name=Library
+id=0x0b95
+weight=1000
+movable=2
+}
+
+[0x0b96]
+{ S
+get=base_item
+name=Library
+id=0x0b96
+weight=1000
+movable=2
+}
+
+[0x0b97]
+{ E, dark wood
+get=base_item
+name=wooden signpost
+id=0x0b97
+weight=1000
+movable=2
+}
+
+[0x0b98]
+{ S, dark wood
+get=base_item
+name=wooden signpost
+id=0x0b98
+weight=1000
+}
+
+[0x0b99]
+{ E, light wood
+get=base_item
+name=wooden signpost
+id=0x0b99
+weight=1000
+}
+
+[0x0b9a]
+{ S, light wood
+get=base_item
+name=wooden signpost
+id=0x0b9a
+weight=1000
+}
+
+[0x0b9b]
+{ E, style 1
+get=base_item
+name=metal signpost
+id=0x0b9b
+weight=1000
+}
+
+[0x0b9c]
+{ S, style 1
+get=base_item
+name=metal signpost
+id=0x0b9c
+weight=1000
+}
+
+[0x0b9d]
+{ E, style 2
+get=base_item
+name=metal signpost
+id=0x0b9d
+weight=1000
+}
+
+[0x0b9e]
+{ S, style 2
+get=base_item
+name=metal signpost
+id=0x0b9e
+weight=1000
+}
+
+[0x0b9f]
+{ E, style 3
+get=base_item
+name=metal signpost
+id=0x0b9f
+weight=1000
+}
+
+[0x0ba0]
+{ S, style 3
+get=base_item
+name=metal signpost
+id=0x0ba0
+weight=1000
+}
+
+[0x0ba1]
+{ E, style 4
+get=base_item
+name=metal signpost
+id=0x0ba1
+weight=1000
+}
+
+[0x0ba2]
+{ S, style 4
+get=base_item
+name=metal signpost
+id=0x0ba2
+weight=1000
+}
+
+[0x0ba3]
+{ E
+get=base_item
+name=Bakery
+id=0x0ba3
+weight=1000
+}
+
+[0x0ba4]
+{ S
+get=base_item
+name=Bakery
+id=0x0ba4
+weight=1000
+}
+
+[0x0ba5]
+{ E
+get=base_item
+name=Tailor
+id=0x0ba5
+weight=1000
+}
+
+[0x0ba6]
+{ S
+get=base_item
+name=Tailor
+id=0x0ba6
+weight=1000
+}
+
+[0x0ba7]
+{ E
+get=base_item
+name=Tinker
+id=0x0ba7
+weight=1000
+}
+
+[0x0ba8]
+{ S
+get=base_item
+name=Tinker
+id=0x0ba8
+weight=1000
+}
+
+[0x0ba9]
+{ E
+get=base_item
+name=Butcher
+id=0x0ba9
+weight=1000
+}
+
+[0x0baa]
+{ S
+get=base_item
+name=Butcher
+id=0x0baa
+weight=1000
+}
+
+[0x0bab]
+{ E
+get=base_item
+name=Healer
+id=0x0bab
+weight=1000
+}
+
+[0x0bac]
+{ S
+get=base_item
+name=Healer
+id=0x0bac
+weight=1000
+}
+
+[0x0bad]
+{ E
+get=base_item
+name=Mage
+id=0x0bad
+weight=1000
+}
+
+[0x0bae]
+{ S
+get=base_item
+name=Mage
+id=0x0bae
+weight=1000
+}
+
+[0x0baf]
+{ E
+get=base_item
+name=Woodworker
+id=0x0baf
+weight=1000
+}
+
+[0x0bb0]
+{ S
+get=base_item
+name=Woodworker
+id=0x0bb0
+weight=1000
+}
+
+[0x0bb1]
+{ E
+get=base_item
+name=Customs
+id=0x0bb1
+weight=1000
+}
+
+[0x0bb2]
+{ S
+get=base_item
+name=Customs
+id=0x0bb2
+weight=1000
+}
+
+[0x0bb3]
+{ E
+get=base_item
+name=Inn
+id=0x0bb3
+weight=1000
+}
+
+[0x0bb4]
+{ S
+get=base_item
+name=Inn
+id=0x0bb4
+weight=1000
+}
+
+[0x0bb5]
+{ E
+get=base_item
+name=Shipwright
+id=0x0bb5
+weight=1000
+}
+
+[0x0bb6]
+{ S
+get=base_item
+name=Shipwright
+id=0x0bb6
+weight=1000
+}
+
+[0x0bb7]
+{ E
+get=base_item
+name=Stables
+id=0x0bb7
+weight=1000
+}
+
+[0x0bb8]
+{ S
+get=base_item
+name=Stables
+id=0x0bb8
+weight=1000
+}
+
+[0x0bb9]
+{ E
+get=base_item
+name=Barber Shop
+id=0x0bb9
+weight=1000
+}
+
+[0x0bba]
+{ S
+get=base_item
+name=Barber Shop
+id=0x0bba
+weight=1000
+}
+
+[0x0bbb]
+{ E
+get=base_item
+name=Bard
+id=0x0bbb
+weight=1000
+}
+
+[0x0bbc]
+{ S
+get=base_item
+name=Bard
+id=0x0bbc
+weight=1000
+}
+
+[0x0bbd]
+{ E
+get=base_item
+name=Fletcher
+id=0x0bbd
+weight=1000
+}
+
+[0x0bbe]
+{ S
+get=base_item
+name=Fletcher
+id=0x0bbe
+weight=1000
+}
+
+[0x0bbf]
+{ E
+get=base_item
+name=Armorer
+id=0x0bbf
+weight=1000
+}
+
+[0x0bc0]
+{ S
+get=base_item
+name=Armorer
+id=0x0bc0
+weight=1000
+}
+
+[0x0bc1]
+{ E
+get=base_item
+name=Jeweler
+id=0x0bc1
+weight=1000
+}
+
+[0x0bc2]
+{ S
+get=base_item
+name=Jeweler
+id=0x0bc2
+weight=1000
+}
+
+[0x0bc3]
+{ E
+get=base_item
+name=Tavern
+id=0x0bc3
+weight=1000
+}
+
+[0x0bc4]
+{ S
+get=base_item
+name=Tavern
+id=0x0bc4
+weight=1000
+}
+
+[0x0bc5]
+{ E
+get=base_item
+name=Reagent Shop
+id=0x0bc5
+weight=1000
+}
+
+[0x0bc6]
+{ S
+get=base_item
+name=Reagent Shop
+id=0x0bc6
+weight=1000
+}
+
+[0x0bc7]
+{ E
+get=base_item
+name=Blacksmith
+id=0x0bc7
+weight=1000
+}
+
+[0x0bc8]
+{ S
+get=base_item
+name=Blacksmith
+id=0x0bc8
+weight=1000
+}
+
+[0x0bc9]
+{ E
+get=base_item
+name=Painter
+id=0x0bc9
+weight=1000
+}
+
+[0x0bca]
+{ S
+get=base_item
+name=Painter
+id=0x0bca
+weight=1000
+}
+
+[0x0bcb]
+{ E
+get=base_item
+name=Provisioner
+id=0x0bcb
+weight=1000
+}
+
+[0x0bcc]
+{ S
+get=base_item
+name=Provisioner
+id=0x0bcc
+weight=1000
+}
+
+[0x0bcd]
+{ E
+get=base_item
+name=Bowyer
+id=0x0bcd
+weight=1000
+}
+
+[0x0bce]
+{ S
+get=base_item
+name=Bowyer
+id=0x0bce
+weight=1000
+}
+
+[0x0bcf]
+{ E, dark
+get=base_item
+name=wooden sign
+id=0x0bcf
+weight=1000
+}
+
+[0x0bd0]
+{ S, dark
+get=base_item
+name=wooden sign
+id=0x0bd0
+weight=1000
+}
+
+[0x0bd1]
+{ E
+get=base_item
+name=brass sign
+id=0x0bd1
+weight=1000
+}
+
+[0x0bd2]
+{ S
+get=base_item
+name=brass sign
+id=0x0bd2
+weight=1000
+}
+
+[0x0bd3]
+{ E
+get=base_item
+name=Armaments Guild
+id=0x0bd3
+weight=1000
+}
+
+[0x0bd4]
+{ S
+get=base_item
+name=Armaments Guild
+id=0x0bd4
+weight=1000
+}
+
+[0x0bd5]
+{ E
+get=base_item
+name=Armorers Guild
+id=0x0bd5
+weight=1000
+}
+
+[0x0bd6]
+{ S
+get=base_item
+name=Armorers Guild
+id=0x0bd6
+weight=1000
+}
+
+[0x0bd7]
+{ E
+get=base_item
+name=Blacksmiths Guild
+id=0x0bd7
+weight=1000
+}
+
+[0x0bd8]
+{ S
+get=base_item
+name=Blacksmiths Guild
+id=0x0bd8
+weight=1000
+}
+
+[0x0bd9]
+{ E
+get=base_item
+name=Weapons Guild
+id=0x0bd9
+weight=1000
+}
+
+[0x0bda]
+{ S
+get=base_item
+name=Weapons Guild
+id=0x0bda
+weight=1000
+}
+
+[0x0bdb]
+{ E
+get=base_item
+name=Bardic Guild
+id=0x0bdb
+weight=1000
+}
+
+[0x0bdc]
+{ S
+get=base_item
+name=Bardic Guild
+id=0x0bdc
+weight=1000
+}
+
+[0x0bdd]
+{ E
+get=base_item
+name=Barters Guild
+id=0x0bdd
+weight=1000
+}
+
+[0x0bde]
+{ S
+get=base_item
+name=Barters Guild
+id=0x0bde
+weight=1000
+}
+
+[0x0bdf]
+{ E
+get=base_item
+name=Provisioners Guild
+id=0x0bdf
+weight=1000
+}
+
+[0x0be0]
+{ S
+get=base_item
+name=Provisioners Guild
+id=0x0be0
+weight=1000
+}
+
+[0x0be1]
+{ E
+get=base_item
+name=Traders Guild
+id=0x0be1
+weight=1000
+}
+
+[0x0be2]
+{ S
+get=base_item
+name=Traders Guild
+id=0x0be2
+weight=1000
+}
+
+[0x0be3]
+{ E
+get=base_item
+name=Cooks Guild
+id=0x0be3
+weight=1000
+}
+
+[0x0be4]
+{ S
+get=base_item
+name=Cooks Guild
+id=0x0be4
+weight=1000
+}
+
+[0x0be5]
+{ E
+get=base_item
+name=Healers Guild
+id=0x0be5
+weight=1000
+}
+
+[0x0be6]
+{ S
+get=base_item
+name=Healers Guild
+id=0x0be6
+weight=1000
+}
+
+[0x0be7]
+{ E
+get=base_item
+name=Mages Guild
+id=0x0be7
+weight=1000
+}
+
+[0x0be8]
+{ S
+get=base_item
+name=Mages Guild
+id=0x0be8
+weight=1000
+}
+
+[0x0be9]
+{ E
+get=base_item
+name=Sorcerers Guild
+id=0x0be9
+weight=1000
+}
+
+[0x0bea]
+{ S
+get=base_item
+name=Sorcerers Guild
+id=0x0bea
+weight=1000
+}
+
+[0x0beb]
+{ E
+get=base_item
+name=Illusionists Guild
+id=0x0beb
+weight=1000
+}
+
+[0x0bec]
+{ S
+get=base_item
+name=Illusionists Guild
+id=0x0bec
+weight=1000
+}
+
+[0x0bed]
+{ E
+get=base_item
+name=Miners Guild
+id=0x0bed
+weight=1000
+}
+
+[0x0bee]
+{ S
+get=base_item
+name=Miners Guild
+id=0x0bee
+weight=1000
+}
+
+[0x0bef]
+{ E
+get=base_item
+name=Archers Guild
+id=0x0bef
+weight=1000
+}
+
+[0x0bf0]
+{ S
+get=base_item
+name=Archers Guild
+id=0x0bf0
+weight=1000
+}
+
+[0x0bf1]
+{ E
+get=base_item
+name=Seamens Guild
+id=0x0bf1
+weight=1000
+}
+
+[0x0bf2]
+{ S
+get=base_item
+name=Seamens Guild
+id=0x0bf2
+weight=1000
+}
+
+[0x0bf3]
+{ E
+get=base_item
+name=Fishermens Guild
+id=0x0bf3
+weight=1000
+}
+
+[0x0bf4]
+{ S
+get=base_item
+name=Fishermens Guild
+id=0x0bf4
+weight=1000
+}
+
+[0x0bf5]
+{ E
+get=base_item
+name=Sailors Guild
+id=0x0bf5
+weight=1000
+}
+
+[0x0bf6]
+{ S
+get=base_item
+name=Sailors Guild
+id=0x0bf6
+weight=1000
+}
+
+[0x0bf7]
+{ E
+get=base_item
+name=Shipwrights Guild
+id=0x0bf7
+weight=1000
+}
+
+[0x0bf8]
+{ S
+get=base_item
+name=Shipwrights Guild
+id=0x0bf8
+weight=1000
+}
+
+[0x0bf9]
+{ E
+get=base_item
+name=Tailors Guild
+id=0x0bf9
+weight=1000
+}
+
+[0x0bfa]
+{ S
+get=base_item
+name=Tailors Guild
+id=0x0bfa
+weight=1000
+}
+
+[0x0bfb]
+{ E
+get=base_item
+name=Thieves Guild
+id=0x0bfb
+weight=1000
+}
+
+[0x0bfc]
+{ S
+get=base_item
+name=Thieves Guild
+id=0x0bfc
+weight=1000
+}
+
+[0x0bfd]
+{ E
+get=base_item
+name=Rogues Guild
+id=0x0bfd
+weight=1000
+}
+
+[0x0bfe]
+{ S
+get=base_item
+name=Rogues Guild
+id=0x0bfe
+weight=1000
+}
+
+[0x0bff]
+{ E
+get=base_item
+name=Assassins Guild
+id=0x0bff
+weight=1000
+}
+
+[0x0c00]
+{ S
+get=base_item
+name=Assassins Guild
+id=0x0c00
+weight=1000
+}
+
+[0x0c01]
+{ E
+get=base_item
+name=Tinkers Guild
+id=0x0c01
+weight=1000
+}
+
+[0x0c02]
+{ S
+get=base_item
+name=Tinkers Guild
+id=0x0c02
+weight=1000
+}
+
+[0x0c03]
+{ E
+get=base_item
+name=Warriors Guild
+id=0x0c03
+weight=1000
+}
+
+[0x0c04]
+{ S
+get=base_item
+name=Warriors Guild
+id=0x0c04
+weight=1000
+}
+
+[0x0c05]
+{ E
+get=base_item
+name=Cavalry Guild
+id=0x0c05
+weight=1000
+}
+
+[0x0c06]
+{ S
+get=base_item
+name=Cavalry Guild
+id=0x0c06
+weight=1000
+}
+
+[0x0c07]
+{ E
+get=base_item
+name=Fighters Guild
+id=0x0c07
+weight=1000
+}
+
+[0x0c08]
+{ S
+get=base_item
+name=Fighters Guild
+id=0x0c08
+weight=1000
+}
+
+[0x0c09]
+{ E
+get=base_item
+name=Merchants Guild
+id=0x0c09
+weight=1000
+}
+
+[0x0c0a]
+{ S
+get=base_item
+name=Merchants Guild
+id=0x0c0a
+weight=1000
+}
+
+[0x0c0b]
+{ E
+get=base_item
+name=Bank
+id=0x0c0b
+weight=1000
+}
+
+[0x0c0c]
+{ S
+get=base_item
+name=Bank
+id=0x0c0c
+weight=1000
+}
+
+[0x0c0d]
+{ E
+get=base_item
+name=Theatre
+id=0x0c0d
+weight=1000
+movable=2
+}
+
+[0x0c0e]
+{ S
+get=base_item
+name=Theatre
+id=0x0c0e
+weight=1000
+movable=2
+}
+
+[housesign]
+{ S
+get=base_item
+name=Brass sign
+id=0x0BD2
+type=203
+MOREX=4
+MOREY=1
+}
+
+[housesign_2]
+{ E
+get=base_item
+name=Brass sign
+id=0x0BD1
+type=203
+MOREX=4
+MOREY=1
+}
+
+EOF
+// Email me with bugs\comments\complaints about this file (see top of file for address)
+

@@ -1,0 +1,289 @@
+[0x1cdd]
+{ N
+get=base_item
+name=arm
+id=0x1cdd
+weight=100
+}
+
+[0x1cde]
+{ E 1/2
+get=base_item
+name=body
+id=0x1cde
+weight=100
+}
+
+[0x1cdf]
+{ E 2/2
+get=base_item
+name=body
+id=0x1cdf
+weight=100
+}
+
+[0x1ce0]
+{ E
+get=base_item
+name=torso
+id=0x1ce0
+weight=100
+}
+
+[0x1ce1]
+{ left
+get=base_item
+name=head
+id=0x1ce1
+weight=100
+}
+
+[0x1ce2]
+{
+get=base_item
+name=leg
+id=0x1ce2
+weight=100
+}
+
+[0x1ce3]
+{ E 1/2
+get=base_item
+name=body part
+id=0x1ce3
+weight=100
+}
+
+[0x1ce4]
+{ E 2/2
+get=base_item
+name=body part
+id=0x1ce4
+weight=100
+}
+
+[0x1ce5]
+{ E
+get=base_item
+name=arm
+id=0x1ce5
+weight=100
+}
+
+[0x1ce6]
+{ N 1/2
+get=base_item
+name=body
+id=0x1ce6
+weight=100
+}
+
+[0x1ce7]
+{ N 2/2
+get=base_item
+name=body
+id=0x1ce7
+weight=100
+}
+
+[0x1ce8]
+{ N
+get=base_item
+name=torso
+id=0x1ce8
+weight=100
+}
+
+[0x1ce9]
+{ right
+get=base_item
+name=head
+id=0x1ce9
+weight=100
+}
+
+[0x1cea]
+{ right
+get=base_item
+name=leg
+id=0x1cea
+weight=100
+}
+
+[0x1ceb]
+{ N 1/2
+get=base_item
+name=body part
+id=0x1ceb
+weight=100
+}
+
+[0x1cec]
+{ N 2/2
+get=base_item
+name=body part
+id=0x1cec
+weight=100
+}
+
+[0x1ced]
+{
+get=base_item
+name=heart
+id=0x1ced
+weight=100
+}
+
+[0x1cee]
+{
+get=base_item
+name=liver
+id=0x1cee
+weight=100
+}
+
+[0x1cef]
+{
+get=base_item
+name=entrails
+id=0x1cef
+weight=100
+}
+
+[0x1cf0]
+{
+get=base_item
+name=brain
+id=0x1cf0
+weight=100
+}
+
+[0x1d8a]
+{ E 1/2
+get=base_item
+name=body
+id=0x1d8a
+weight=100
+}
+
+[0x1d8b]
+{ E 2/2
+get=base_item
+name=body
+id=0x1d8b
+weight=100
+}
+
+[0x1d8c]
+{ N 1/2
+get=base_item
+name=body
+id=0x1d8c
+weight=100
+}
+
+[0x1d8d]
+{ N 2/2
+get=base_item
+name=body
+id=0x1d8d
+weight=100
+}
+
+[0x1d9f]
+{
+get=base_item
+name=torso
+id=0x1d9f
+weight=100
+}
+
+[0x1da0]
+{
+get=base_item
+name=head
+id=0x1da0
+weight=100
+}
+
+[0x1da1]
+{
+get=base_item
+name=left arm
+id=0x1da1
+weight=100
+}
+
+[0x1da2]
+{
+get=base_item
+name=right arm
+id=0x1da2
+weight=100
+}
+
+[0x1da3]
+{
+get=base_item
+name=left leg
+id=0x1da3
+weight=100
+}
+
+[0x1da4]
+{
+get=base_item
+name=right leg
+id=0x1da4
+weight=100
+}
+
+[0x1dad]
+{
+get=base_item
+name=torso
+id=0x1dad
+weight=100
+}
+
+[0x1dae]
+{
+get=base_item
+name=head
+id=0x1dae
+weight=100
+}
+
+[0x1daf]
+{
+get=base_item
+name=left arm
+id=0x1daf
+weight=100
+}
+
+[0x1db0]
+{
+get=base_item
+name=right arm
+id=0x1db0
+weight=100
+}
+
+[0x1db1]
+{
+get=base_item
+name=left leg
+id=0x1db1
+weight=100
+}
+
+[0x1db2]
+{
+get=base_item
+name=right leg
+id=0x1db2
+weight=100
+}
+
+

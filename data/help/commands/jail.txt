@@ -1,0 +1,4 @@
+        JAIL <target>
+
+  Purpose: 
+        Will put targetted character in jail.

@@ -1,0 +1,47 @@
+[0x0e20]
+{
+get=base_item
+name=bloody bandage
+id=0x0e20
+weight=100
+pileable=1
+decay=1
+}
+
+[0x0E21]
+{
+get=base_item
+name=clean bandage
+id=0x0E21
+weight=100
+value=6 3
+pileable=1
+decay=1
+script=4000
+good=55
+}
+
+[0x0e22]
+{
+get=base_item
+name=bloody bandage
+id=0x0e22
+weight=100
+pileable=1
+decay=1
+}
+
+[0x0ee9]
+{
+get=base_item
+name=clean bandage
+id=0x0ee9
+weight=100
+value=6 3
+restock=30
+pileable=1
+decay=1
+script=4000
+good=55
+}
+

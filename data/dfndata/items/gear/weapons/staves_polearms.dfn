@@ -1,0 +1,286 @@
+// STAVES AND POLEARMS
+
+[0x13f4]
+{ facing West
+get=base_item
+name=crook
+id=0x13f4
+weight=300
+value=33 24
+layer=2
+lodamage=3
+hidamage=12
+hp=31 50
+spd=30
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x13f5]
+{ facing North
+get=base_item
+name=crook
+id=0x13f5
+weight=300
+value=33 24
+layer=2
+lodamage=3
+hidamage=12
+hp=31 50
+spd=30
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x13f8]
+{ facing North
+get=base_item
+name=gnarled staff
+id=0x13f8
+weight=300
+value=24 12
+layer=2
+lodamage=10
+hidamage=30
+hp=31 50
+spd=33
+str=20
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x13f9]
+{ facing West
+get=base_item
+name=gnarled staff
+id=0x13f9
+weight=300
+value=24 12
+layer=2
+lodamage=10
+hidamage=30
+hp=31 50
+spd=33
+str=20
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0df0]
+{ facing West
+get=base_item
+name=black staff
+id=0x0df0
+weight=600
+value=27 24
+layer=2
+lodamage=8
+hidamage=33
+hp=31 70
+spd=35
+str=35
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0df1]
+{ facing North
+get=base_item
+name=black staff
+id=0x0df1
+weight=600
+value=27 24
+layer=2
+lodamage=8
+hidamage=33
+hp=31 70
+spd=35
+str=35
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e81]
+{ facing North
+get=base_item
+name=shepherd's crook
+id=0x0e81
+weight=200
+value=33 24
+layer=2
+lodamage=3
+hidamage=12
+hp=31 50
+spd=30
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e82]
+{ facing West
+get=base_item
+name=shepherd's crook
+id=0x0e82
+weight=200
+value=33 24
+layer=2
+lodamage=3
+hidamage=12
+hp=31 50
+spd=30
+str=10
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e89]
+{ facing North
+get=base_item
+name=quarter staff
+id=0x0e89
+weight=400
+value=30 15
+layer=2
+lodamage=8
+hidamage=28
+hp=31 60
+spd=48
+str=30
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0e8a]
+{ facing West
+get=base_item
+name=quarter staff
+id=0x0e8a
+weight=400
+value=30 15
+layer=2
+lodamage=8
+hidamage=28
+hp=31 60
+spd=48
+str=30
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x143e]
+{ facing West
+get=base_item
+name=halberd
+id=0x143e
+weight=1600
+value=40 20
+layer=2
+lodamage=5
+hidamage=49
+hp=31 80
+spd=25
+str=45
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x143f]
+{ facing North
+get=base_item
+name=halberd
+id=0x143f
+weight=1600
+value=40 20
+layer=2
+lodamage=5
+hidamage=49
+hp=31 80
+spd=25
+str=45
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[guardhalberd]
+{ facing North
+get=base_item
+name=a guard's halberd
+id=0x143f
+weight=1600
+value=40 20
+layer=2
+lodamage=75
+hidamage=150
+hp=80
+spd=60
+str=120
+restock=10
+movable=1
+decay=1
+newbie
+}
+
+[0x0f4d]
+{ facing North
+get=base_item
+name=bardiche
+id=0x0f4d
+weight=700
+value=56 28
+layer=2
+lodamage=5
+hidamage=43
+hp=31 100
+spd=26
+str=40
+restock=10
+movable=1
+decay=1
+good=22
+}
+
+[0x0f4e]
+{ facing West
+get=base_item
+name=bardiche
+id=0x0f4e
+weight=700
+value=56 28
+layer=2
+lodamage=5
+hidamage=43
+hp=31 100
+spd=26
+str=40
+restock=10
+movable=1
+decay=1
+good=22
+}

@@ -1,0 +1,90 @@
+<html>
+<head>
+		<link rel="stylesheet" href="style.css">
+</head>
+<body bgcolor="DarkBlue" text="White">
+<center>
+<h1>UOX3 House of Commons Chat</h1>
+<h4>18th April, 2001</h4>
+</center>
+<p>Welcome to yet another uox3 house of commons meeting. It will be a short one, but please direct any questions to Sephiroth.
+
+<p class=question>What is the current state of UOX3? Are we in a freeze until the new script system comes in?</p>
+<p class=answer>EviLDeD: Not sure what "freeze means" but uox3 has not been in a freeze unless you are talking aobout a feature freeze</p>
+<p class=answer>Abaddon|Gone: As it currently stands, UOX3 publicly is generally in a feature freeze. We are not turning our backs to features, but we are aiming at priorities to bug fixes. If people DO want to add features into the public regular builds, then we ask them to, in advance, try and run a design doc by us, so that we can either nix it or green light it early on. But our definite primary focus is on bug fixes, and it will stay that way for the foreseeable future
+
+<p class=question>Boris: when will we start seeing betas and see the new jscript scripts in action?
+<p class=answer>Abaddon: It'll be ready when it's ready. At the moment, there are subsystem integration issues we still need to overcome, but that is one of the few things holding us back now. Very soon now we'll be heading into intensive shard level testing, and there will be opportunities to play with the new system through that. Also, if anyone has scripts they want tested, then they can send it to me. I believe that Jester|Cobblepot is working on a script repository of all sorts, and that JS snippets will end up going into that. The Script Team (Seph and co) are also in the process of converting the triggers that already exist into JS based scripts, and they should be available once their done as well. Isn't that right Seph?
+<p class=answer>Sephiroth: Yea. I'm currently marking a to-do list of what is done, what needs to be done, and what needs to be done better. We are just finishing the new dfn files, and moving on to jscript.
+
+<p class=question>Rembrant: With build 24b and the inclusion of the port line in Uox3.ini are we going to be able to set the port Uox runs on now, or will it serve the same purpose as the PORT line in server.scp?
+<p class=answer>Abaddon: People often misunderstand the purpose of the uox3.ini file. The server.scp setting is to dictate on which port the current server will run. The entries in the uox3.ini are different. These are very much loginserver type entries. Many of the entries that are in this file are used purely to relay. You could setup an OSI style loginserver, with different physical servers, based from this. Thus, the port entry was required in the uox3.ini to allow relaying to different ports. For instance, it now allows, if you have a heavy powerful machine, to run multiple shards (via multiple instances) on the same machine, each running on different ports, and all coming up on the same list. One of the other changes of 24b was to force the port setting in server.scp to be loaded before networking, so it is ensured to work correctly
+
+<p class=question>Boris: will computer hardware requirements be increased to run a server? will more RAM, HD space be needed?
+<p class=answer>Abaddon: I don't really see the hardware requirements changing all that much. More RAM will be useful, as the JS engine takes about an 8MB chunk of RAM I believe. Hard disk speeds don't need to be as fast now, as we do a better job of caching files and scripts. CPU speed won't change all that much. Sure, there are more things in memory, and it does more via the JS engine, but it gets around the interpretive nature of the existing triggers and speech files.
+<p class=answer>Sephiroth: and I think you can all agree, the jscript benefits outweigh the 8 megs
+<p class=answer>Abaddon: Ultimately, I'd say that RAM might be slightly up, though there are other conservation means. HD remains fairly unchanged, as does CPU. Hopefully network bandwidth requirements will be less (they seem to be)
+
+<p class=question>Tanis: Do you feel perhaps that the script engine is becoming a little over-rated and some people may get disappointed?
+<p class=answer>Abaddon: In my outlook, I try and be as realistic as I possibly can. I cannot force people to think of it in any particular way, but I do try my best to keep people real, and down to earth. However, you do have to remember that it IS a significant step forward over triggers, and with good scripting and good ideas, you will be able to achieve a whole lot. Some people will always be disappointed, even if it was flawless and did everything perfectly. That's human nature, people always want more ;) But if there any holes in the system, then it is time that people come forward with suggestions. I've taken many suggestions for functions and events for the system, which has helped it get up to rev 0.19 of the docs. People can readily contact me, emailing me at dsstratton@hotmail.com or abaddon@uox3.net (finally got that one fixed again). Contact information is in the FAQ, which is both online and offline (CHM based).
+<p class=question>Boris: will there be a UOX client and if so, will it require less RAM and will there be any advandages to having one?
+<p class=answer>Abaddon: I can't really say yes. I know that EviL has plans on a 3D client, but never has the time to work on it I believe. I've tinkered around with DX8 and 3Dness, and have almost managed to make a decent 3D map viewer. Having said that, I'm going to rewrite the bulk of the renderer I think, as I've come up with a neat new way to get better hills I think ;) But that can be freely got from me any time, though it doesn't do all that much currently. But if a UOX client was to be written, I think it would have less constraints than the OSI system would have, and would (hopefully) require less overall resources than the OSI one
+
+<p class=question>Any plans to Enhance the way tools interact with uox3?
+<p class=answer>Abaddon: Yes ;) Tanis was working with EviL on a new version of xGM. Command changes will be made available, as well as script layout, fairly soon to help with 3rd party developers. I believe that EviL is going to be talking to some parties to work on account tools. And we hope to combine some of the uses of the JS engine with tools, allowing JS to be remotely submitted and executed (as a part of xGM).
+
+<p class=question>Will the JScript system require more downloads and setup steps?
+<p class=answer>Abaddon: The only extra download you should need, as a user, would be a DLL that goes in your uox3 directory. Nothing more should be required than this DLL. For developers, it would be a different matter. To manually build the JS engine (or even the source for that matter, as it requires JS engine headers) requires a download of 700 files or so, or around 12MB worth of source I believe. But that will also be provided. Might even be able to provide a precompiled header/libs for it. In reality, a lot of that 12MB isn't necessary. Just the headers and developed libs would be
+
+<p class=question>Will the JScript system make the script side of uox more organized, or will it clutter it?
+<p class=answer>Abaddon: It depends on the shard op ;) If your shard op is cluttered, then certainly it won't help. But there won't be any fixed requirement to have all your JS scripts in one place, for instance. You can happily make subdirectories, and categorize them that way. Even filenames are entirely up to you.
+
+<p class=question>When it's ready, will the xGM protocol be documented?
+<p class=answer>Abaddon: Yes
+
+<p class=question>Any ideas on a graphical spawn region editor (map where you can select spawn areas with spawn lists)?
+<p class=answer>Abaddon: Well, that's more a 3rd party thing than anything... I don't think it would require huge modifications of my existing region display tool to achieve it. Switching from regions.scp to spawn.scp would be fairly simple, as would display. Just had to add editing and other preferences
+
+<p class=question>Will UOX ever be able to link 2 or more computers together to form one cohesive shard (IE OSI's 12 servers per shard)?
+<p class=answer>Abaddon: It's an interesting idea, but I don't think anyone's described how such a system could be achieved. It would require careful balancing of network loads and bandwidth. Remember, the bandwidth associated with a network card is much much lower than that of a CPU's memory subsystem. So all fetches out over a network would be an order of magnitude slower than memory. I imagine it would be possible, but no one's sat down and down the concept work associated with it
+
+<p class=question>Any plans to support the new UO3D map?
+<p class=answer>Abaddon: Soon enough, yes. I personally don't have the packet kowledge associated with it. And on top of that, I imagine people want us to just hurry up and get the JS engine out, rather than delay it further
+
+<p class=question>Does uox3 have any plans to balance out the combat system? I hear reports that everybody is using archery too much and none of the other skills
+<p class=answer>Abaddon: Most definitely. I've heard a number of reports, time and again, about timing issues and other things. I've been looking heavily into doing a rewrite of the system (at the public level). If anyone has any sort of feedback, then please feel free to send it my way. If anyone would like to help out, then I'd be happy to accept it. I want to remove the timing issues associated with it, and fix up a lot of the conceptual clutter associated with combat
+
+<p class=question>Will UOX3 undergo a huge optimization after the JS engine comes into play?
+<p class=answer>Abaddon: It's undergoing it at the same time. The JS engine is only part of the systems affected. Networking has been rewritten to a large degree, accounts have been heavily modified, grossly accelerating login process. Create menus are undergoing changes, races and weather have received hefty updates, memory and speed optimizations have occured, file caching has been improved, code has been tidied up/documented and clutter removed. This is one of the reasons that the JS engine release hasn't occured as timely as it perhaps might have. Some of these other systems need lots of testing in advance before a release
+
+<p class=question>Will UOX be adding the combat bouns soon, eg Spear Paralising blow
+<p class=answer>Abaddon: Sounds like a suggestion to me. Wrap up all your suggestions, and how they work, and email it or DCC it to me. Remember, I haven't played on OSI for over 2 years ;)
+<p class=answer>Sephiroth: and as a general reminder, none of the dev team, or myself have an active osi account. Spiffy things like runebooks weren't in the last time we logged in ;)
+<p class=answer>Zane: Might I add something. A response to an earlier question... Will UOX ever be able to link 2 or more computers together to form one cohesive shard (IE OSI's 12 servers per shard)? Remember, OSI shards aren't entirely cohesive, over server boundries. And they don't really work together, moreso different areas are run by different servers. While this is possible when you know the exact system and specs you are working with. It becomes very difficult when you consider the range of users UOX has (and their system specs). Sorry 'bout that, just felt I should add that ;)
+
+<p class=question>Will there be a private beta test of the new system (first 500 to register or something) or will it be public (accessable to all)?
+<p class=answer>Abaddon: I believe that it will be a public, accessable to all (subject to good behaviour, of course:)), testing situation
+
+<p class=question>Does the development team need somebody who has a active OSI account to "scout out" things that are popular on OSI servers and report back to them?
+<p class=answer>Abaddon: Yes, it would certainly be helpful. Beosil often discovers new packet information for things that break UOX3, but I don't believe he has extensive information essentially on the optional features
+<p class=answer>Zane: Well, we have people who inform us of new features/additions
+<p class=answer>Abaddon: Translating to the new map, and things like that, are information that, if we had it, could be very useful
+<p class=answer>Zane: I believe the important part is moreso finding new packets, detailed descriptions of how things work, etc. btw... anyone interested in looking up packets on OSI servers. www.beosil.com &lt;-- Ignition has a plugin called sniffy, which allows you to sniff packets
+
+<p class=question>Any kind of multi editor to create own boats or anything without creating them within scripts?
+<p class=answer>Abaddon: I believe that Krrios is working on a tool called ModifyUO. Amongst other things, this will be a probable feature I believe
+
+<p class=question>Does the devteam know they can make 15 day free OSI accounts to see what new spiffy things have come out?
+<p class=answer>Abaddon: Yes, I believe OSI offers those type of things. However, that won't always help us, as they don't conveniently provide all their new features at once ;)
+<p class=answer>Sephiroth: ntm some features require a built up character
+
+<p class=question>Is a log going to be put into the chm help file and on the website?
+<p class=answer>Abaddon: Yes, logs will be provided both in the CHM and on the 2 websites. However, I don't have the automated tool I used to (lost in disk crash) so it might take a while
+
+<p class=question>How complex will the new JS scripts be to code? For triggers and npcs for example.
+<p class=answer>Abaddon: Not terribly so. Anyone with any exposure to programming should pick it up in a flash. Even those who haven't programmed but did do triggers shouldn't have a hard time of it. There will be plenty of examples on how to code triggers, npcs and the like, upon release, so you will definitely have a lot to work with. If you have anything you want to work on, but aren't sure, I'd be happy to answer questions
+<p class=answer>Sephiroth: and remember NPC's aren't done by jscript, but their speech \ actions are. Unless there are anymore questions I think we're hitting the end of the race here</p>
+
+<p>Okay folks, I think that pretty much wraps it up here. Thanks for attending, and thanks to those few who asked questions ;) A log of this will be available sometime later today, my time, I hope
+</body>
+</html>

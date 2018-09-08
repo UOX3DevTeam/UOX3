@@ -1,0 +1,177 @@
+// Leather Armor
+
+[0x13c5]
+{ left facing
+get=leather_sleeves
+name=leather sleeves
+id=0x13c5
+}
+
+[0x13c6]
+{ left facing
+get=leather_gloves
+name=leather gloves
+id=0x13c6
+}
+
+[0x13c7]
+{ left facing
+get=leather_gorget
+name=leather gorget
+id=0x13c7
+}
+
+[0x1db9]
+{ left facing
+get=leather_cap
+name=leather cap
+id=0x1db9
+}
+
+[0x13cb]
+{ facing left
+get=leather_leggings
+name=leather leggings
+id=0x13cb
+}
+
+[0x13cc]
+{ left facing
+get=leather_tunic
+name=leather tunic
+id=0x13cc
+}
+
+[0x13cd]
+{ right facing
+get=leather_sleeves
+name=leather sleeves
+id=0x13cd
+}
+
+[0x13ce]
+{ right facing
+get=leather_gloves
+name=leather gloves
+id=0x13ce
+}
+
+[0x13d2]
+{ facing right
+get=leather_leggings
+name=leather leggings
+id=0x13d2
+}
+
+[0x1dba]
+{ right facing
+get=leather_cap
+name=leather cap
+}
+
+[0x13d3]
+{ right facing
+get=leather_tunic
+name=leather tunic
+id=0x13d3
+}
+
+// Female
+
+[0x1c00]
+{ left facing - Female
+get=leather_shorts
+name=leather shorts
+id=0x1c00
+}
+
+[0x1c01]
+{ right facing - Female
+get=leather_shorts
+name=leather shorts
+id=0x1c01
+}
+
+[0x1c06]
+{ left facing - Female
+get=leather_armor
+name=leather armor
+id=0x1c06
+}
+
+[0x1c07]
+{ right facing - Female
+get=leather_armor
+name=leather armor
+id=0x1c07
+}
+
+[0x1c08]
+{ left facing - Female
+get=leather_skirt
+name=leather skirt
+id=0x1c08
+}
+
+[0x1c09]
+{ right facing - Female
+get=leather_skirt
+name=leather skirt
+id=0x1c09
+}
+
+[0x1c0a]
+{ left facing - Female
+get=leather_bustier
+name=leather bustier
+id=0x1c0a
+}
+
+[0x1c0b]
+{ left facing - Female
+get=leather_bustier
+name=leather bustier
+id=0x1c0b
+}
+
+//Necromancer newbie armor
+
+[necro_sleeves]
+{ left facing
+get=leather_sleeves
+name=leather sleeves
+id=0x13c5
+color=0x2C3
+}
+
+[necro_gloves]
+{ left facing
+get=leather_gloves
+name=leather gloves
+id=0x13c6
+color=0x2C3
+}
+
+[necro_gorget]
+{ left facing
+get=leather_gorget
+name=leather gorget
+id=0x13c7
+color=0x2C3
+}
+
+[necro_leggings]
+{ facing left
+get=leather_leggings
+name=leather leggings
+id=0x13cb
+color=0x2C3
+}
+
+[necro_tunic]
+{ left facing
+get=leather_tunic
+name=leather tunic
+id=0x13cc
+color=0x2C3
+}

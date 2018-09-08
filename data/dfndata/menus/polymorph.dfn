@@ -1,0 +1,111 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98                       *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : polymorph.dfn                                        *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Usage:                                                        *
+//* <PolimorphIcon> <Name>                                        *
+//* POLIMORPHID <ID>                                              *
+//*                                                               *
+//* For the icon, check with InsideUO the Artwork/Static Tiles    *
+//* section. For the ID of the creature to polymorph into, check  *
+//* with InsideUO the Animation section ( Model No. )             *
+//*                                                               *
+//* Maximum number of polymorphable creatures: 50                 *
+//*                                                               *
+//*****************************************************************
+
+[POLYMORPHMENU 8192]
+{
+Polymorph-Menu
+0x2106=Human
+POLYMORPHMENU=8193
+0x20D4=an Animal
+POLYMORPHMENU=8194
+0x20E9=a creature
+POLYMORPHMENU=8195
+}
+
+[POLYMORPHMENU 8193]
+{
+Humans
+0x20CD=Male
+POLY=0x190
+0x20CE=Female
+POLY=0x191
+}
+
+[POLYMORPHMENU 8194]
+{
+What type of animal do you wish to polymorph into?
+0x20EF=Bull
+POLY=0xE8
+0x211D=an Eagle
+POLY=0x5
+0x20F6=a Llama
+POLY=0xDC
+0x20FD=a Spider
+POLY=0x1C
+0x20FF=Walrus
+POLY=0xDD
+0x2101=a Pig
+POLY=0xCB
+0x2102=a Panther
+POLY=0xD6
+0x2103=a Cow
+POLY=0xD8
+0x2108=a Mountain Goat
+POLY=0xD1
+0x2118=a Black Bear
+POLY=0xD3
+0x211B=a Cat
+POLY=0xC9
+0x211C=a Dog
+POLY=0xD9
+0x2120=a Horse
+POLY=0xC8
+0x2122=a Wolf
+POLY=0xE1
+0x2134=an Ostard
+POLY=0xDB
+}
+
+[POLYMORPHMENU 8195]
+{
+What type of creature do you wish to polymorph into?
+0x20ED=an Air Elemental
+POLY=0xD
+0x20F3=a Fire elemental
+POLY=0xF
+0x20F4=a Gazer
+POLY=0x16
+0x20F8=a Liche
+POLY=0x18
+0x20F9=a Mongbat
+POLY=0x27
+0x2100=a wisp
+POLY=0x3a
+0x2104=a daemon
+POLY=0x9
+0x20D7=an Earth Elemental
+POLY=0xE
+0x210A=a headless
+POLY=0x1F
+0x210B=a Water Elemental
+POLY=0x10
+0x212A=a Terathan Warrior
+POLY=0x46
+0x212D=a Cyclops
+POLY=0x4B
+0x212E=a Titan
+POLY=0x4C
+}
+
+
+EOF
+
+

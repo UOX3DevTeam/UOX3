@@ -1,0 +1,1308 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98                       *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : misc.dfn                                             *
+//*****************************************************************
+
+[GUMPMENU 1]
+{
+nomove
+noclose
+page 0
+resizepic 0 0 5100 400 350
+text 15 10 32 0
+button 13 290 5050 5051 1 0 1
+text 45 292 77 3
+tilepic 20 200 5453
+page 1
+button 366 320 5224 5224 0 2
+text 288 317 77 1
+text 55 32 0 4
+radio 20 35 5002 5003 0 0
+text 55 57 0 5
+radio 20 60 5002 5003 1 1
+text 55 82 0 6
+radio 20 85 5002 5003 0 2
+page 2
+button 20 320 5223 5223 0 1
+text 45 317 77 2
+text 55 32 0 7
+radio 20 35 5002 5003 0 3
+text 55 57 0 8
+radio 20 60 5002 5003 0 4
+text 55 82 0 9
+radio 20 85 5002 5003 0 5
+}
+
+[GUMPTEXT 1]
+{
+First UOX3 Gump Menu
+Next page
+Previous page
+Done
+One
+Two (Default)
+Three
+Four
+Five
+Six
+}
+
+[GUMPMENU 2]
+{
+page 0
+gumppic 0 0 100
+text 20 20 0 0
+text 20 35 0 1
+text 20 50 0 2
+}
+
+[GUMPTEXT 2]
+{
+You can do
+nice stuff
+with this...
+}
+
+[GUMPMENU 3]
+{
+noclose
+page 0
+resizepic 0 0 2520 400 350
+text 40 10 32 0
+button 35 280 2130 2129 1 0 1
+tilepic 50 200 5453
+page 1
+button 366 320 2224 2224 0 2
+text 288 317 77 1
+text 80 70 0 4
+radio 45 67 2151 2153 0 0
+text 80 100 0 5
+radio 45 97 2151 2153 1 1
+text 80 130 0 6
+radio 45 127 2151 2153 0 2
+page 2
+button 40 320 2223 2223 0 1
+text 65 317 77 2
+text 80 70 0 7
+radio 45 67 2151 2153 0 3
+text 80 100 0 8
+radio 45 97 2151 2153 0 4
+text 80 130 0 9
+radio 45 127 2151 2153 0 5
+}
+
+[GUMPTEXT 3]
+{
+Third UOX3 Gump Menu
+Next page
+Previous page
+UNUSED
+One
+Two (Default)
+Three
+Four
+Five
+Six
+}
+[GUMPMENU 4] 
+{ 
+type 5 
+page 0                                          // Page 0 
+resizepic 0 0 5120 420 400                      // Tile Dark Gray Background (third number)
+resizepic 10 10 3000 400 380                    // Tile White Background (third number)
+gumppic 120 25 10452                            // Sign Image (third number)
+
+button 35 105 4011 4012 0 1 0                   // Button - Info (width, height, gump, gump...)
+button 35 350 4005 4006 1 0 10005               // Button - Change house sign 
+button 195 105 4008 4009 0 2 0                  // Button - Friends 
+button 300 105 4029 4030 0 3 0                  // Button - Options 
+button 330 350 4017 4018 1 0 0                  // Button - Exit 
+
+htmlgump 70 105 90 20 0 0 0                     // Info 
+htmlgump 230 105 65 20 1 0 0                    // Friends 
+htmlgump 335 105 75 20 2 0 0                    // Options 
+htmlgump 70 354 175 20 3 0 0                    // Change House Sign 
+
+htmlgump 300 354 40 20 4 0 0                    // Exit 
+
+page 1 
+
+htmlgump 35 145 350  20 5 0 0                   // Owned by: 
+htmlgump 35 180 350 20 6 0 0                    // Number of locked down items: 
+htmlgump 35 200 350 20 7 0 0                    // Maximum locked down items: 
+htmlgump 35 220 350 20 8 0 0                    // Number of secure containers: 
+htmlgump 35 240 350 20 9 0 0                    // Maximum number of secure containers: 
+htmlgump 35 265 350 20 10                       // Decay Status : 
+
+page 2 
+
+button 65 145 2714 2715 1 0 17                  // Button - List of co-owners 
+button 65 165 2714 2715 1 0 10                  // Button - Add a co-owner 
+button 65 185 2714 2715 1 0 8                   // Button - Remove a co-owner 
+button 65 205 2714 2715 1 0 11                  // Button - Clear co-owner list 
+
+htmlgump 90 145 170 20 11 0 0                   // List of co-owners 
+htmlgump 90 165 170 20 12 0 0                   // Add a co-owner 
+htmlgump 90 185 170 20 13 0 0                   // Remove a co-owner 
+htmlgump 90 205 170 20 14 0 0                   // Clear co-owner list 
+
+button 225 145 2714 2715 1 0 12                 // Button - List of Friends 
+button 225 165 2714 2715 1 0 7                  // Button - Add a Friend 
+button 225 185 2714 2715 1 0 9                  // Button - Remove a Friend 
+button 225 205 2714 2715 1 0 13                 // Button - Clear Friends list 
+
+htmlgump 250 145 170 20 15 0 0                  // List of Friends 
+htmlgump 250 165 170 20 16 0 0                  // Add a Friend 
+htmlgump 250 185 170 20 17 0 0                  // Remove a Friend 
+htmlgump 250 205 170 20 18 0 0                  // Clear Friends list 
+
+button 110 245 2714 2715 1 0 5                  // Button - Ban someone from the house 
+button 110 265 2714 2715 1 0 4                  // Button - Eject someone from the house 
+button 110 285 2714 2715 1 0 14                 // Button - View a list of banned people 
+button 110 305 2714 2715 1 0 6                  // Button - Lift a ban 
+
+htmlgump 135 245 200 20 19 0 0                  // Ban someone from the house 
+htmlgump 135 265 200 20 20 0 0                  // Eject someone from the house 
+htmlgump 135 285 200 20 21 0 0                  // View a list of banned people 
+htmlgump 135 305 200 20 22 0 0                  // Lift a ban 
+
+page 3 
+
+button 35 155 2714 2715 1 0 2                   // Button - Transfer ownership of the house 
+button 35 185 2714 2715 1 0 3                   // Button - Demolish the house and get a deed back 
+button 35 215 2714 2715 1 0 15                  // Button - Change the house locks 
+button 35 245 2714 2715 1 0 16                  // Button - Declare this building to be public. This will make your doors unlockable 
+
+htmlgump 60 155 350 20 23 0 0                   // Transfer ownership of the house 
+htmlgump 60 185 350 20 24 0 0                   // Demolish the house and get a deed back 
+htmlgump 60 215 350 20 25 0 0                   // Change the house locks 
+htmlgump 60 245 350 20 26 0 0                   // Declare this building to be public. This will make your 
+//htmlgump 45 260 350 20 27 0 0                 // front door unlockable. 
+} 
+
+[GUMPTEXT 4]
+{ 
+INFORMATION
+FRIENDS
+OPTIONS
+Change House Sign
+EXIT
+Owned by:
+Number of locked down items:
+Maximum locked down items:
+Number of secure containers:
+Maximum number of secure containers:
+Decay Status:
+List of co-owners
+Add a co-owner
+Remove a co-owner
+Clear co-owner list
+List of Friends
+Add a Friend
+Remove a Friend
+Clear Friends list
+Ban someone from the house
+Eject someone from the house
+View a list of banned people
+Lift a ban
+Transfer ownership of the house
+Demolish the house and get a deed back
+Change the house locks
+Declare this building to be public. This will make your front door unlockable.
+} 
+
+[GUMPMENU 5] 
+{ 
+type 5 
+nomove 
+page 0 
+button 50 350 5223 5223 0 1 
+resizepic 0 0 5120 350 370                       // Tile Dark Gray Background (third number)
+resizepic 10 10 3000 330 350                     // Tile White Background (third number)
+htmlgump 100 13 255 20 0 0 0 
+button 150 330 2130 2129 1 0 20 
+page 1 
+radio 27 45 4005 4006 0 2966 
+tilepic 55 40 2966 
+radio 27 85 4005 4006 0 2980 
+tilepic 55 80 2980 
+radio 27 125 4005 4006 0 2982 
+tilepic 55 120 2982 
+radio 27 165 4005 4006 0 2984 
+tilepic 55 160 2984 
+radio 27 205 4005 4006 0 2986 
+tilepic 55 200 2986 
+radio 27 245 4005 4006 0 2988 
+tilepic 55 240 2988 
+radio 27 285 4005 4006 0 2990 
+tilepic 55 280 2990 
+
+
+radio 103 45 4005 4006 0 2992 
+tilepic 130 40 2992 
+radio 103 85 4005 4006 0 2994 
+tilepic 130 80 2994 
+radio 103 125 4005 4006 0 2996 
+tilepic 130 120 2996 
+radio 103 165 4005 4006 0 2998 
+tilepic 130 160 2998 
+radio 103 205 4005 4006 0 3000 
+tilepic 130 200 3000 
+radio 103 245 4005 4006 0 3002 
+tilepic 130 240 3002 
+radio 103 285 4005 4006 0 3004 
+tilepic 130 280 3004 
+
+
+radio 183 45 4005 4006 0 3006 
+tilepic 210 40 3006 
+radio 183 85 4005 4006 0 3008 
+tilepic 210 80 3008 
+radio 183 125 4005 4006 0 3010 
+tilepic 210 120 3010 
+radio 183 165 4005 4006 0 3012 
+tilepic 210 160 3012 
+radio 183 205 4005 4006 0 3014 
+tilepic 210 200 3014 
+radio 183 245 4005 4006 0 3016 
+tilepic 210 240 3016 
+radio 183 285 4005 4006 0 3018 
+tilepic 210 280 3018 
+
+
+radio 263 45 4005 4006 0 3020 
+tilepic 290 40 3020 
+radio 263 85 4005 4006 0 3022 
+tilepic 290 80 3022 
+radio 263 125 4005 4006 0 3024 
+tilepic 290 120 3024 
+radio 263 165 4005 4006 0 3026 
+tilepic 290 160 3026 
+radio 263 205 4005 4006 0 3028 
+tilepic 290 200 3028 
+radio 263 245 4005 4006 0 3030 
+tilepic 290 240 3030 
+radio 263 285 4005 4006 0 3032 
+tilepic 290 280 3032 
+
+
+text 246 329 4 1
+button 310 335 2224 2224 0 2 
+
+
+page 2 
+radio 27 45 4005 4006 0 3034
+tilepic 55 40 3034
+radio 27 85 4005 4006 0 3036 
+tilepic 55 80 3036
+radio 27 125 4005 4006 0 3038
+tilepic 55 120 3038
+radio 27 165 4005 4006 0 3040 
+tilepic 55 160 3040
+radio 27 205 4005 4006 0 3042
+tilepic 55 200 3042 
+radio 27 245 4005 4006 0 3044
+tilepic 55 240 3044 
+radio 27 285 4005 4006 0 3046 
+tilepic 55 280 3046
+
+
+radio 103 45 4005 4006 0 3048
+tilepic 130 40 3048 
+radio 103 85 4005 4006 0 3050
+tilepic 130 80 3050
+radio 103 125 4005 4006 0 3052
+tilepic 130 120 3052
+radio 103 165 4005 4006 0 3054
+tilepic 130 160 3054 
+radio 103 205 4005 4006 0 3056 
+tilepic 130 200 3056
+radio 103 245 4005 4006 0 3058
+tilepic 130 240 3058
+radio 103 285 4005 4006 0 3060 
+tilepic 130 280 3060 
+
+
+radio 183 45 4005 4006 0 3062
+tilepic 210 40 3062 
+radio 183 85 4005 4006 0 3064 
+tilepic 210 80 3064
+radio 183 125 4005 4006 0 3066
+tilepic 210 120 3066
+radio 183 165 4005 4006 0 3068 
+tilepic 210 160 3068
+radio 183 205 4005 4006 0 3070 
+tilepic 210 200 3070
+radio 183 245 4005 4006 0 3072
+tilepic 210 240 3072
+radio 183 285 4005 4006 0 3074 
+tilepic 210 280 3074
+
+
+radio 263 45 4005 4006 0 3076 
+tilepic 290 40 3076 
+radio 263 85 4005 4006 0 3078
+tilepic 290 80 3078 
+radio 263 125 4005 4006 0 3080 
+tilepic 290 120 3080
+radio 263 165 4005 4006 0 3082
+tilepic 290 160 3082
+radio 263 205 4005 4006 0 3084 
+tilepic 290 200 3084
+radio 263 245 4005 4006 0 3086 
+tilepic 290 240 3086
+radio 263 285 4005 4006 0 3140 
+tilepic 290 280 3140 
+
+
+text 44 331 4 2 
+button 19 335 2223 2223 0 1 
+} 
+
+[GUMPTEXT 5] 
+{ 
+Select new house sign:
+Next page
+Previous Page
+}
+
+
+[GUMPMENU 6]
+{
+type 6
+nomove
+page 0
+resizepic 0 0 5120 360 390
+text 91 5 1000 0
+text 91 361 1000 1
+button 261 360 247 248 1 0 0
+resizepic 28 30 5120 120 315
+button 40 40 2714 2715 0 1 0
+text 60 40 1601 2 // Brown
+button 40 65 2714 2715 0 2 0
+text 60 65 1627 3 // Chestnut
+button 40 90 2714 2715 0 3 0
+text 60 90 1501 4 // Auburn
+button 40 115 2714 2715 0 4 0
+text 60 115 1301 5 // Blue
+button 40 140 2714 2715 0 5 0
+text 60 140 1410 6 // Green
+button 40 165 2714 2715 0 6 0
+text 60 165 1201 7 // Red
+button 40 190 2714 2715 0 7 0
+text 60 190 2401 8 // Light
+button 40 215 2714 2715 0 8 0
+text 60 215 2212 9 // Blonde
+button 40 240 2714 2715 0 9 0
+text 60 240 1101 10 // Black
+button 40 265 2714 2715 0 10 0
+text 60 265 1109 11 // Beige
+button 40 290 2714 2715 0 11 0
+text 60 290 1119 12 // Golden
+button 40 315 2714 2715 0 12 0
+text 60 315 1133 13 // Dk Brown
+
+
+page 1 //Brown
+
+
+radio 160 30 2706 2707 0 1601
+text 175 30 1601 2
+radio 160 50 2706 2707 0 1602
+text 175 50 1602 2
+radio 160 70 2706 2707 0 1603
+text 175 70 1603 2
+radio 160 90 2706 2707 0 1604
+text 175 90 1604 2
+radio 160 110 2706 2707 0 1605
+text 175 110 1605 2
+radio 160 130 2706 2707 0 1606
+text 175 130 1606 2
+radio 160 150 2706 2707 0 1607
+text 175 150 1607 2
+radio 160 170 2706 2707 0 1608
+text 175 170 1608 2
+radio 160 190 2706 2707 0 1609
+text 175 190 1609 2
+radio 160 210 2706 2707 0 1610
+text 175 210 1610 2
+radio 160 230 2706 2707 0 1611
+text 175 230 1611 2
+radio 160 250 2706 2707 0 1612
+text 175 250 1612 2
+radio 160 270 2706 2707 0 1613
+text 175 270 1613 2
+radio 160 290 2706 2707 0 1614
+text 175 290 1614 2
+radio 160 310 2706 2707 0 1615
+text 175 310 1615 2
+radio 160 330 2706 2707 0 1616
+text 175 330 1616 2
+
+
+radio 260 30 2706 2707 0 1617
+text 275 30 1617 2
+radio 260 50 2706 2707 0 1618
+text 275 50 1618 2
+radio 260 70 2706 2707 0 1619
+text 275 70 1619 2
+radio 260 90 2706 2707 0 1620
+text 275 90 1620 2
+radio 260 110 2706 2707 0 1621
+text 275 110 1621 2
+radio 260 130 2706 2707 0 1622
+text 275 130 1622 2
+radio 260 150 2706 2707 0 1623
+text 275 150 1623 2
+radio 260 170 2706 2707 0 1624
+text 275 170 1624 2
+radio 260 190 2706 2707 0 1625
+text 275 190 1625 2
+radio 260 210 2706 2707 0 1626
+text 275 210 1626 2
+
+
+page 2 //Chestnut
+
+
+radio 160 30 2706 2707 0 1627
+text 175 30 1627 3
+radio 160 50 2706 2707 0 1628
+text 175 50 1628 3
+radio 160 70 2706 2707 0 1629
+text 175 70 1629 3
+radio 160 90 2706 2707 0 1630
+text 175 90 1630 3
+radio 160 110 2706 2707 0 1631
+text 175 110 1631 3
+radio 160 130 2706 2707 0 1632
+text 175 130 1632 3
+radio 160 150 2706 2707 0 1633
+text 175 150 1633 3
+radio 160 170 2706 2707 0 1634
+text 175 170 1634 3
+radio 160 190 2706 2707 0 1635
+text 175 190 1635 3
+radio 160 210 2706 2707 0 1636
+text 175 210 1636 3
+radio 160 230 2706 2707 0 1637
+text 175 230 1637 3
+radio 160 250 2706 2707 0 1638
+text 175 250 1638 3
+radio 160 270 2706 2707 0 1639
+text 175 270 1639 3
+radio 160 290 2706 2707 0 1640
+text 175 290 1640 3
+radio 160 310 2706 2707 0 1641
+text 175 310 1641 3
+radio 160 330 2706 2707 0 1642
+text 175 330 1642 3
+
+
+radio 260 30 2706 2707 0 1643
+text 275 30 1643 3
+radio 260 50 2706 2707 0 1644
+text 275 50 1644 3
+radio 260 70 2706 2707 0 1645
+text 275 70 1645 3
+radio 260 90 2706 2707 0 1646
+text 275 90 1646 3
+radio 260 110 2706 2707 0 1647
+text 275 110 1647 3
+radio 260 130 2706 2707 0 1648
+text 275 130 1648 3
+radio 260 150 2706 2707 0 1649
+text 275 150 1649 3
+radio 260 170 2706 2707 0 1650
+text 275 170 1650 3
+radio 260 190 2706 2707 0 1651
+text 275 190 1651 3
+radio 260 210 2706 2707 0 1652
+text 275 210 1652 3
+radio 260 230 2706 2707 0 1653
+text 275 230 1653 3
+
+
+page 3 //Auburn
+
+
+radio 160 30 2706 2707 0 1501
+text 175 30 1501 4
+radio 160 50 2706 2707 0 1502
+text 175 50 1502 4
+radio 160 70 2706 2707 0 1503
+text 175 70 1503 4
+radio 160 90 2706 2707 0 1504
+text 175 90 1504 4
+radio 160 110 2706 2707 0 1505
+text 175 110 1505 4
+radio 160 130 2706 2707 0 1506
+text 175 130 1506 4
+radio 160 150 2706 2707 0 1507
+text 175 150 1507 4
+radio 160 170 2706 2707 0 1508
+text 175 170 1508 4
+radio 160 190 2706 2707 0 1509
+text 175 190 1509 4
+radio 160 210 2706 2707 0 1510
+text 175 210 1510 4
+radio 160 230 2706 2707 0 1511
+text 175 230 1511 4
+radio 160 250 2706 2707 0 1512
+text 175 250 1512 4
+radio 160 270 2706 2707 0 1513
+text 175 270 1513 4
+radio 160 290 2706 2707 0 1514
+text 175 290 1514 4
+radio 160 310 2706 2707 0 1515
+text 175 310 1515 4
+radio 160 330 2706 2707 0 1516
+text 175 330 1516 4
+
+
+radio 260 30 2706 2707 0 1517
+text 275 30 1517 4
+radio 260 50 2706 2707 0 1518
+text 275 50 1518 4
+radio 260 70 2706 2707 0 1519
+text 275 70 1519 4
+radio 260 90 2706 2707 0 1520
+text 275 90 1520 4
+radio 260 110 2706 2707 0 1521
+text 275 110 1521 4
+radio 260 130 2706 2707 0 1522
+text 275 130 1522 4
+radio 260 150 2706 2707 0 1523
+text 275 150 1523 4
+radio 260 170 2706 2707 0 1524
+text 275 170 1524 4
+radio 260 190 2706 2707 0 1525
+text 275 190 1525 4
+radio 260 210 2706 2707 0 1526
+text 275 210 1526 4
+radio 260 230 2706 2707 0 1527
+text 275 230 1527 4
+radio 260 250 2706 2707 0 1528
+text 275 250 1528 4
+radio 260 270 2706 2707 0 1529
+text 275 270 1529 4
+radio 260 290 2706 2707 0 1530
+text 275 290 1530 4
+radio 260 310 2706 2707 0 1531
+text 275 310 1531 4
+radio 260 330 2706 2707 0 1532
+text 275 330 1532 4
+
+
+page 4 //Blue
+
+
+radio 160 30 2706 2707 0 1301
+text 175 30 1301 5
+radio 160 50 2706 2707 0 1302
+text 175 50 1302 5
+radio 160 70 2706 2707 0 1303
+text 175 70 1303 5
+radio 160 90 2706 2707 0 1304
+text 175 90 1304 5
+radio 160 110 2706 2707 0 1305
+text 175 110 1305 5
+radio 160 130 2706 2707 0 1306
+text 175 130 1306 5
+radio 160 150 2706 2707 0 1307
+text 175 150 1307 5
+radio 160 170 2706 2707 0 1308
+text 175 170 1308 5
+radio 160 190 2706 2707 0 1309
+text 175 190 1309 5
+radio 160 210 2706 2707 0 1310
+text 175 210 1310 5
+radio 160 230 2706 2707 0 1311
+text 175 230 1311 5
+radio 160 250 2706 2707 0 1312
+text 175 250 1312 5
+radio 160 270 2706 2707 0 1313
+text 175 270 1313 5
+radio 160 290 2706 2707 0 1314
+text 175 290 1314 5
+radio 160 310 2706 2707 0 1315
+text 175 310 1315 5
+radio 160 330 2706 2707 0 1316
+text 175 330 1316 5
+
+
+radio 260 30 2706 2707 0 1317
+text 275 30 1317 5
+radio 260 50 2706 2707 0 1318
+text 275 50 1318 5
+radio 260 70 2706 2707 0 1319
+text 275 70 1319 5
+radio 260 90 2706 2707 0 1320
+text 275 90 1320 5
+radio 260 110 2706 2707 0 1321
+text 275 110 1321 5
+radio 260 130 2706 2707 0 1322
+text 275 130 1322 5
+radio 260 150 2706 2707 0 1323
+text 275 150 1323 5
+radio 260 170 2706 2707 0 1324
+text 275 170 1324 5
+radio 260 190 2706 2707 0 1325
+text 275 190 1325 5
+radio 260 210 2706 2707 0 1326
+text 275 210 1326 5
+radio 260 230 2706 2707 0 1327
+text 275 230 1327 5
+radio 260 250 2706 2707 0 1328
+text 275 250 1328 5
+radio 260 270 2706 2707 0 1329
+text 275 270 1329 5
+radio 260 290 2706 2707 0 1330
+text 275 290 1330 5
+radio 260 310 2706 2707 0 1331
+text 275 310 1331 5
+radio 260 330 2706 2707 0 1332
+text 275 330 1332 5
+
+
+page 5 //Green
+
+
+radio 160 30 2706 2707 0 1410
+text 175 30 1410 6
+radio 160 50 2706 2707 0 1411
+text 175 50 1411 6
+radio 160 70 2706 2707 0 1412
+text 175 70 1412 6
+radio 160 90 2706 2707 0 1413
+text 175 90 1413 6
+radio 160 110 2706 2707 0 1414
+text 175 110 1414 6
+radio 160 130 2706 2707 0 1415
+text 175 130 1415 6
+radio 160 150 2706 2707 0 1416
+text 175 150 1416 6
+radio 160 170 2706 2707 0 1417
+text 175 170 1417 6
+radio 160 190 2706 2707 0 1418
+text 175 190 1418 6
+radio 160 210 2706 2707 0 1419
+text 175 210 1419 6
+radio 160 230 2706 2707 0 1420
+text 175 230 1420 6
+radio 160 250 2706 2707 0 1421
+text 175 250 1421 6
+radio 160 270 2706 2707 0 1422
+text 175 270 1422 6
+radio 160 290 2706 2707 0 1423
+text 175 290 1423 6
+radio 160 310 2706 2707 0 1424
+text 175 310 1424 6
+radio 160 330 2706 2707 0 1425
+text 175 330 1425 6
+
+
+radio 260 30 2706 2707 0 1426
+text 275 30 1426 6
+radio 260 50 2706 2707 0 1427
+text 275 50 1427 6
+radio 260 70 2706 2707 0 1428
+text 275 70 1428 6
+radio 260 90 2706 2707 0 1429
+text 275 90 1429 6
+radio 260 110 2706 2707 0 1430
+text 275 110 1430 6
+radio 260 130 2706 2707 0 1431
+text 275 130 1431 6
+radio 260 150 2706 2707 0 1432
+text 275 150 1432 6
+radio 260 170 2706 2707 0 1433
+text 275 170 1433 6
+radio 260 190 2706 2707 0 1434
+text 275 190 1434 6
+radio 260 210 2706 2707 0 1435
+text 275 210 1435 6
+radio 260 230 2706 2707 0 1436
+text 275 230 1436 6
+radio 260 250 2706 2707 0 1437
+text 275 250 1437 6
+radio 260 270 2706 2707 0 1438
+text 275 270 1438 6
+radio 260 290 2706 2707 0 1439
+text 275 290 1439 6
+radio 260 310 2706 2707 0 1440
+text 275 310 1440 6
+radio 260 330 2706 2707 0 1441
+text 275 330 1441 6
+
+
+page 6 //Red
+
+
+radio 160 30 2706 2707 0 1201
+text 175 30 1201 7
+radio 160 50 2706 2707 0 1202
+text 175 50 1202 7
+radio 160 70 2706 2707 0 1203
+text 175 70 1203 7
+radio 160 90 2706 2707 0 1204
+text 175 90 1204 7
+radio 160 110 2706 2707 0 1205
+text 175 110 1205 7
+radio 160 130 2706 2707 0 1206
+text 175 130 1206 7
+radio 160 150 2706 2707 0 1207
+text 175 150 1207 7
+radio 160 170 2706 2707 0 1208
+text 175 170 1208 7
+radio 160 190 2706 2707 0 1209
+text 175 190 1209 7
+radio 160 210 2706 2707 0 1210
+text 175 210 1210 7
+radio 160 230 2706 2707 0 1211
+text 175 230 1211 7
+radio 160 250 2706 2707 0 1212
+text 175 250 1212 7
+radio 160 270 2706 2707 0 1213
+text 175 270 1213 7
+radio 160 290 2706 2707 0 1214
+text 175 290 1214 7
+radio 160 310 2706 2707 0 1215
+text 175 310 1215 7
+radio 160 330 2706 2707 0 1216
+text 175 330 1216 7
+
+
+radio 260 30 2706 2707 0 1217
+text 275 30 1217 7
+radio 260 50 2706 2707 0 1218
+text 275 50 1218 7
+radio 260 70 2706 2707 0 1219
+text 275 70 1219 7
+radio 260 90 2706 2707 0 1220
+text 275 90 1220 7
+radio 260 110 2706 2707 0 1221
+text 275 110 1221 7
+radio 260 130 2706 2707 0 1222
+text 275 130 1222 7
+radio 260 150 2706 2707 0 1223
+text 275 150 1223 7
+radio 260 170 2706 2707 0 1224
+text 275 170 1224 7
+
+
+page 7 //Light
+
+
+radio 160 30 2706 2707 0 2401
+text 175 30 2401 8
+radio 160 50 2706 2707 0 2402
+text 175 50 2402 8
+radio 160 70 2706 2707 0 2403
+text 175 70 2403 8
+radio 160 90 2706 2707 0 2404
+text 175 90 2404 8
+radio 160 110 2706 2707 0 2405
+text 175 110 2405 8
+radio 160 130 2706 2707 0 2406
+text 175 130 2406 8
+radio 160 150 2706 2707 0 2407
+text 175 150 2407 8
+radio 160 170 2706 2707 0 2408
+text 175 170 2408 8
+radio 160 190 2706 2707 0 2409
+text 175 190 2409 8
+radio 160 210 2706 2707 0 2410
+text 175 210 2410 8
+radio 160 230 2706 2707 0 2411
+text 175 230 2411 8
+radio 160 250 2706 2707 0 2412
+text 175 250 2412 8
+radio 160 270 2706 2707 0 2413
+text 175 270 2413 8
+radio 160 290 2706 2707 0 2414
+text 175 290 2414 8
+radio 160 310 2706 2707 0 2415
+text 175 310 2415 8
+radio 160 330 2706 2707 0 2416
+text 175 330 2416 8
+
+
+radio 260 30 2706 2707 0 2417
+text 275 30 2417 8
+radio 260 50 2706 2707 0 2418
+text 275 50 2418 8
+radio 260 70 2706 2707 0 2419
+text 275 70 2419 8
+radio 260 90 2706 2707 0 2420
+text 275 90 2420 8
+radio 260 110 2706 2707 0 2421
+text 275 110 2421 8
+radio 260 130 2706 2707 0 2422
+text 275 130 2422 8
+radio 260 150 2706 2707 0 2423
+text 275 150 2423 8
+radio 260 170 2706 2707 0 2424
+text 275 170 2424 8
+radio 260 190 2706 2707 0 2425
+text 275 190 2425 8
+radio 260 210 2706 2707 0 2426
+text 275 210 2426 8
+radio 260 230 2706 2707 0 2427
+text 275 230 2427 8
+radio 260 250 2706 2707 0 2428
+text 275 250 2428 8
+radio 260 270 2706 2707 0 2429
+text 275 270 2429 8
+
+page 8 //Blonde
+
+
+radio 160 30 2706 2707 0 2212
+text 175 30 2212 9
+radio 160 50 2706 2707 0 2213
+text 175 50 2213 9
+radio 160 70 2706 2707 0 2214
+text 175 70 2214 9
+radio 160 90 2706 2707 0 2215
+text 175 90 2215 9
+radio 160 110 2706 2707 0 2216
+text 175 110 2216 9
+radio 160 130 2706 2707 0 2217
+text 175 130 2217 9
+
+
+page 9 //Black
+
+
+radio 160 30 2706 2707 0 1101
+text 175 30 1101 10
+radio 160 50 2706 2707 0 1102
+text 175 50 1102 10
+radio 160 70 2706 2707 0 1103
+text 175 70 1103 10
+radio 160 90 2706 2707 0 1104
+text 175 90 1104 10
+radio 160 110 2706 2707 0 1105
+text 175 110 1105 10
+radio 160 130 2706 2707 0 1106
+text 175 130 1106 10
+radio 160 150 2706 2707 0 1107
+text 175 150 1107 10
+radio 160 170 2706 2707 0 1108
+text 175 170 1108 10
+
+
+page 10 //Beige
+
+
+radio 160 30 2706 2707 0 1109
+text 175 30 1109 11
+radio 160 50 2706 2707 0 1110
+text 175 50 1110 11
+radio 160 70 2706 2707 0 1111
+text 175 70 1111 11
+radio 160 90 2706 2707 0 1112
+text 175 90 1112 11
+radio 160 110 2706 2707 0 1113
+text 175 110 1113 11
+radio 160 130 2706 2707 0 1114
+text 175 130 1114 11
+radio 160 150 2706 2707 0 1115
+text 175 150 1115 11
+radio 160 170 2706 2707 0 1116
+text 175 170 1116 11
+
+
+page 11 //Golden
+
+
+radio 160 30 2706 2707 0 1119
+text 175 30 1119 12
+radio 160 50 2706 2707 0 1120
+text 175 50 1120 12
+radio 160 70 2706 2707 0 1121
+text 175 70 1121 12
+radio 160 90 2706 2707 0 1122
+text 175 90 1122 12
+radio 160 110 2706 2707 0 1123
+text 175 110 1123 12
+radio 160 170 2706 2707 0 1124
+text 175 170 1124 12
+radio 160 190 2706 2707 0 1125
+text 175 190 1125 12
+radio 160 210 2706 2707 0 1126
+text 175 210 1126 12
+radio 160 230 2706 2707 0 1127
+text 175 230 1127 12
+radio 160 250 2706 2707 0 1128
+text 175 250 1128 12
+radio 160 270 2706 2707 0 1129
+text 175 270 1129 12
+radio 160 290 2706 2707 0 1130
+text 175 290 1130 12
+radio 160 310 2706 2707 0 1131
+text 175 310 1131 12
+radio 160 330 2706 2707 0 1132
+text 175 330 1132 12
+
+
+page 12 //Dk Brown
+
+
+radio 160 30 2706 2707 0 1133
+text 175 30 1133 13
+radio 160 50 2706 2707 0 1134
+text 175 50 1134 13
+radio 160 70 2706 2707 0 1135
+text 175 70 1135 13
+radio 160 90 2706 2707 0 1136
+text 175 90 1136 13
+radio 160 110 2706 2707 0 1337
+text 175 110 1137 13
+radio 160 130 2706 2707 0 1138
+text 175 130 1138 13
+radio 160 150 2706 2707 0 1139
+text 175 150 1139 13
+radio 160 170 2706 2707 0 1140
+text 175 170 1140 13
+radio 160 190 2706 2707 0 1141
+text 175 190 1141 13
+radio 160 210 2706 2707 0 1142
+text 175 210 1142 13
+radio 160 230 2706 2707 0 1143
+text 175 230 1143 13
+radio 160 250 2706 2707 0 1144
+text 175 250 1144 13
+radio 160 270 2706 2707 0 1145
+text 175 270 1145 13
+radio 160 290 2706 2707 0 1146
+text 175 290 1146 13
+radio 160 310 2706 2707 0 1147
+text 175 310 1147 13
+radio 160 330 2706 2707 0 1148
+text 175 330 1148 13
+}
+
+
+[GUMPTEXT 6]
+{
+Hair Color Selection Menu
+Dye my hair this color!
+Brown
+Chestnut
+Auburn
+Blue
+Green
+Red
+Light
+Blonde
+Black
+Beige
+Golden
+DK Brown
+}
+
+[GUMPMENU 7]
+{
+page 0
+resizepic 0 0 5120 300 240
+gumppic 20 20 1122
+gumppic 220 10 1417
+button 260 200 1151 1152 1 0 1
+button 20 80 1209 1210 1 0 2
+button 20 100 1209 1210 1 0 3
+button 20 120 1209 1210 1 0 4
+button 20 140 1209 1210 1 0 5
+button 20 160 1209 1210 1 0 6
+button 20 180 1209 1210 1 0 7
+text 40 77 255 0
+text 40 97 255 1
+text 40 117 255 2
+text 50 17 1153 3
+text 40 137 255 4
+text 40 157 255 5
+text 40 177 255 6
+}
+
+
+[GUMPTEXT 7]
+{
+Add Account
+Delete Account
+Edit Account
+Account Control
+Ban Account
+View Account
+List Accounts
+}
+
+[GUMPMENU 8]
+{
+type 8
+page 0
+resizepic 0 0 5120 300 240
+gumppic 220 10 1417
+gumppic 20 20 1122
+resizepic 20 65 1122 200 15
+resizepic 20 105 1122 200 15
+resizepic 20 145 1122 250 15
+checkbox 80 167 2706 2707 0 1
+button 260 200 1151 1152 1 0 1
+button 180 200 247 248 1 0 2
+text 50 17 1153 0
+text 20 47 255 1
+text 20 87 255 2
+text 20 127 255 3
+text 20 167 255 4
+textentry 20 62 200 30 1 1000 5
+textentry 20 102 200 30 1 1001 6
+textentry 20 142 250 30 1 1002 7
+}
+
+[GUMPTEXT 8]
+{
+Adding Account
+Name
+Password
+Contact
+Public
+default
+default
+someperson@whoknows.com
+}
+
+[GUMPMENU 9]
+{
+page 0
+resizepic 0 0 5120 300 240
+gumppic 220 10 1417
+gumppic 20 20 1122
+resizepic 20 65 1122 200 15
+resizepic 20 105 1122 200 15
+resizepic 20 145 1122 250 15
+button 260 200 1151 1152 1 0 1
+button 180 200 247 248 1 0 2
+text 50 17 1153 0
+text 20 47 255 1
+text 20 87 255 2
+text 20 127 255 3
+text 20 167 255 4
+text 20 62 0 5
+text 20 102 0 6
+text 20 142 0 7
+text 80 167 255 8
+}
+
+[GUMPTEXT 9]
+{
+Viewing Account
+Name
+Password
+Contact
+Public
+default
+default
+someperson@whoknows.com
+on
+}
+
+[GUMPMENU 10]
+{
+page 0
+resizepic 0 0 5120 300 240
+gumppic 220 10 1417
+gumppic 20 20 1122
+resizepic 20 65 1122 200 15
+resizepic 20 105 1122 200 15
+resizepic 20 145 1122 250 15
+checkbox 80 167 2706 2707 0 1
+button 260 200 1151 1152 1 0 1
+button 180 200 247 248 1 0 2
+text 50 17 1153 0
+text 20 47 255 1
+text 20 87 255 2
+text 20 127 255 3
+text 20 167 255 4
+textentry 20 62 200 30 1 1000 5
+textentry 20 102 200 30 1 1001 6
+textentry 20 142 250 30 1 1002 7
+}
+
+[GUMPTEXT 10]
+{
+Editing Account
+Name
+Password
+Contact
+Public
+default
+default
+someperson@whoknows.com
+}
+
+[GUMPMENU 11]
+{
+page 0
+resizepic 0 0 5120 300 240
+gumppic 20 20 1122
+gumppic 220 10 1417
+resizepic 20 55 1122 200 15
+resizepic 20 95 1122 200 15
+resizepic 20 135 1122 250 15
+button 260 200 1151 1152 1 0 1
+button 20 160 1209 1210 1 0 2
+button 20 180 1209 1210 1 0 3
+button 20 200 1209 1210 1 0 4
+text 50 17 1153 0
+text 40 157 255 1
+text 40 177 255 2
+text 40 197 255 3
+text 20 37 255 4
+text 20 77 255 5
+text 20 117 255 6
+}
+
+
+[GUMPTEXT 11]
+{
+Account Details
+Ban Account
+Delete Account
+Edit Account
+Name
+Password
+Contact
+}
+
+[GUMPMENU 12]
+{
+type 12
+noclose
+resizepic 0 0 2600 400 320
+page 0
+
+button 20 300 4017 4018 1 0 1
+button 0 40 4005 4006 1 0 10
+button 0 80 4005 4006 1 0 20
+button 0 120 4005 4006 1 0 21
+button 0 160 4005 4006 1 0 22 
+button 0 200 4005 4006 1 0 23
+
+text 200 20 0 0
+text 60 40 35 1
+text 60 80 35 2
+text 60 120 35 3
+text 60 160 35 4
+text 60 200 35 5
+tilepic 20 40 5106
+tilepic 20 200 2541
+tilepic 20 160 5182
+tilepic 20 120 7107
+tilepic 20 80 5142
+
+}
+
+[GUMPTEXT 12]
+{
+Create menu
+Ring Mail Gloves
+Armour
+Shields
+Weapons
+Misc
+}
+
+[GUMPMENU 20]
+{
+noclose
+page 0
+resizepic 0 0 5100 400 400
+button 20 360 4017 4018 1 0 0
+button 20 20 4017 4018 0 1 0
+button 20 40 4017 4018 0 2 0
+text 50 20 54 0
+text 50 40 54 10
+page 1
+button 20 80 4017 4018 10 0
+button 20 100 4017 4018 11 0
+button 20 120 4017 4018 12 0
+button 20 140 4017 4018 13 0
+button 20 160 4017 4018 14 0
+button 20 180 4017 4018 15 0
+button 20 200 4017 4018 16 0
+button 20 220 4017 4018 17 0
+button 20 240 4017 4018 18 0
+text 50 80 0 1
+text 50 100 0 2
+text 50 120 0 3
+text 50 140 0 4
+text 50 160 0 5
+text 50 180 0 6
+text 50 200 0 7
+text 50 220 0 8
+text 50 240 0 9
+text 150 60 54 0
+page 2
+text 150 60 54 10
+button 20 80 4017 4018 20 0
+button 20 100 4017 4018 21 0
+button 20 120 4017 4018 22 0
+button 20 140 4017 4018 23 0
+button 20 160 4017 4018 24 0
+button 20 180 4017 4018 25 0
+button 20 200 4017 4018 26 0
+button 20 220 4017 4018 27 0
+button 20 240 4017 4018 28 0
+button 20 260 4017 4018 29 0
+button 20 280 4017 4018 30 0
+button 20 300 4017 4018 31 0
+button 20 300 4017 4018 32 0
+text 50 80 0 11
+text 50 100 0 12
+text 50 120 0 13
+text 50 140 0 14
+text 50 160 0 15
+text 50 180 0 16
+text 50 200 0 17
+text 50 220 0 18
+text 50 240 0 19
+text 50 260 0 20
+text 50 280 0 21
+text 50 300 0 22
+text 50 320 0 23
+}
+
+[GUMPTEXT 20]
+{
+Member Functions
+Recruit
+View roster
+View charter
+Declare fealty
+Toggle abbreviation
+Resign 
+View candidates
+View list of guilds that we have declared war on
+View list of guilds that declared war on us
+Guildmaster functions
+Set guild name
+Set guild abbreviation
+Change guild type
+Set guild charter
+Dismiss member
+Declare war from menu
+Declare war from targeting enemy
+Declare peace
+Accept candidate
+Refuse candidate
+Set guildmaster's title
+Grant title to another member
+Move guildstone
+}
+
+EOF
+
+

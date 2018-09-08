@@ -1,0 +1,918 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Zadius's Trigger Docs</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+
+<meta name="Microsoft Theme" content="none"></head>
+
+<body stylesrc="../index.htm" leftmargin="0" text="#64371A">
+<div align="left">
+
+<table border="0" cellpadding="0" cellspacing="8" width="919" height="311">
+  <tr>
+        <td width="40" height="173"></td>
+    <td valign="top" width="716" height="173"><b><font size="+2"><p align="center">UOX3
+    v0.70.03.19b Trigger System</font></b> <br>
+    <font size="+1">By Zadius (<a href="mailto:linkage@xmission.com">linkage@xmission.com</a>)</font>
+    <br>
+    <font size="+1">Edited by Xuri (<a href="mailto:xuri@sensewave.com">xuri@sensewave.com</a>)</font>
+    <br>
+    <font size="+1">(Document version 6)</font> <br>
+    </p>
+    <p align="left"><a name="Introduction"></a><b>Introduction:</b> <br>
+    &nbsp;&nbsp;&nbsp; The trigger system first derived from an idea I had when I created a
+    game a while back that was much like Diablo and UO.&nbsp; In fact it was during the glory
+    days of Diablo and&nbsp; I remember that UO was still in beta at this time.&nbsp;
+    Hmmm.&nbsp; Where does the time go eh?&nbsp; Anyway, for my game, I needed some what to
+    make the NPC and items react to the actions of the player, so I designed and implemented
+    the trigger system into this game.&nbsp; Recently,&nbsp; something just hit me.&nbsp; I
+    realized that this trigger system would be the perfect thing for UOX3 and thus, with a
+    little coding and studying the UOX3 code, I began my work with much success.&nbsp; Even
+    though UOX3 was not optimally designed in some aspects, I was still able to add a fully
+    functional trigger system with very little to no performance deteriations.&nbsp; What this
+    document contains is a description of the trigger system, a table containing trigger
+    tokens and some trigger samples.&nbsp; Remember, the Trigger System is still in its
+    infancy and will get more robust as it progresses.&nbsp; There are tons of cool tokens
+    already that can allow you to do some pretty cool things so have fun! </td>
+  </tr>
+</table>
+</div>
+
+<table border="0" cellpadding="0" cellspacing="8" width="846" height="94">
+  <tr>
+    <td valign="top" width="822" height="1"><a name="Defined"></a> <b>The Trigger System
+    Defined:</b> <br>
+    &nbsp;&nbsp;&nbsp; The trigger system is a internal processing engine for processing
+    functionality commands to cause an effect on the player or thier environment when an item
+    or NPC is triggered.&nbsp; The trigger code is described as &quot;flow through&quot; which
+    means that all triggers flow through the code from top to bottom.&nbsp; For speed
+    considerations, there are no condition branches.&nbsp; There are however, some tokens that
+    will abort the flow when a certain condition is not met.&nbsp; Basically, they are
+    true/false conditions only.&nbsp; There are currenty 3 types of triggers available.&nbsp;
+    They are: <p>&nbsp;&nbsp;&nbsp; 1. <i>Static</i> triggers which are triggers that can be
+    activated when a user uses an evoked item on a static item or a dynamic item.&nbsp; Static
+    triggers are defined by thier ID and are coded in the &quot;wtrigrs.scp&quot; file.&nbsp;
+    To specify an item to be envokable, specify it by its ID in the &quot;envoke.scp&quot;
+    file.&nbsp; You can also activate a static world item by typing &quot;/use&quot; and then
+    clicking on the object.&nbsp; For instance the following Static trigger will allow the
+    player to drink from any fountain in the world. </p>
+    <p><small><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SECTION
+    x173fx1738x1739x173bx1741x173dx173cx139ex179b</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { Replenish from a
+    fountain</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EMT *Slurp*&nbsp;
+    Ahhhh... Tasty!</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 00 50</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACT 22</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STAM 10</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> </small></p>
+    <p>&nbsp;&nbsp;&nbsp; 2. <i>Dynamic</i> Triggers are triggers that can be assigned to an
+    item by typing &quot;/itrig #&quot; then clicking on the item.&nbsp; This will set the
+    items &quot;TRIGGER&quot; property to the specified trigger as refferenced by the trigger
+    number in the &quot;triggers.scp&quot; file.&nbsp; There are two types so far for dynamic
+    triggers. They are: </p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A. Type 0
+    (default).&nbsp; User double-clicks item to fire trigger. <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B. Type 1.&nbsp; User
+    walks over item to fire trigger. <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>(Note: To set a trigger
+    type, enter &quot;</i>/ttrig #<i>&quot; then click the item.)</i> </p>
+    <p>I plan on adding more trigger types in the future.&nbsp; For instance, fire trigger
+    when dopped on ground, fire trigger when dropped in pack,&nbsp; fire trigger when
+    character dies, fire trigger when character is attacked and fire trigger when dropped on
+    NPC. ect ect ect.&nbsp; You can make any item in the &quot;items.scp&quot; file be
+    automatically triggered upon creation by entering a &quot;TRIGGER #&quot; token and a
+    &quot;TRIGTYPE # &quot; token in the items section.&nbsp; The following Dymanic trigger
+    will allow you to play chess using a chess board. </p>
+    <p><small><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SECTION
+    TRG 7</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { Play chess</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EMT Your move....</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 00 42</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CALCUSES -1</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RNDUSES 5 20</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EMT
+    Checkmate!&nbsp; I win!</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 00 3d</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> </small><br>
+    <i>(After creating the chess board, enter &quot;</i>/itrig 7<i>&quot; then click on the
+    chessboard.&nbsp; Or you can add the token &quot;</i>TRIGGER 7<i>&quot; in the &quot;</i>items.scp<i>&quot;
+    file in the chessboards section to have every chessboard triggered when created.&nbsp; In
+    this case the triggers number is 7.)</i> </p>
+    <p>&nbsp;&nbsp;&nbsp; 3. <i>NPC </i>triggers are fired when you speak to NPC's and say a
+    certain word.&nbsp; Well, in acuality I made it so that NPC triggers can also be assigned
+    to the players for gaming purposes.&nbsp; For instance, giving a player a curse, or for
+    making spreadable diseases. :)&nbsp; To set a trigger on a NPC or character enter
+    &quot;/ctrig #&quot; as specified by the trigger number in the &quot;ntrigrs.scp&quot;
+    file then click on the char.&nbsp; Then set the trigger word by entering &quot;/wtrig
+    hail&quot; for instance.&nbsp; You can also make the NPC or character be automatically
+    triggered upon creation by entering the &quot;TRIGGER #&quot; token and the &quot;TRIGWORD
+    &lt;string&gt;&quot; token in the characters section of the &quot;npc.scp&quot;
+    file.&nbsp; NPC triggers are not fired unless the trigger word is spoken to the
+    character.&nbsp; The following example makes a NPC serve you a drink when you say.
+    &quot;Im thirtsy! Give me a drink!&quot;: </p>
+    <p><tt>&nbsp;<small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SECTION
+    TRG 1</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { ask&nbsp; tavern
+    keeper for drink</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EMT Thar ya be yer
+    warshipness!&nbsp; Drinks are on the house!</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 00 42</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IADD 5004</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NPCACT 13</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DISABLE 10</tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> </small><br>
+    <i>(After creating the character, enter &quot;</i>/ctrig 1<i>&quot; then click on the
+    character.&nbsp; Then enter &quot;</i>/wtrig drink<i>&quot; and click the character. Or
+    you can add the token &quot;</i>TRIGGER 1<i>&quot;&nbsp; and the &quot;</i>TRIGWORD drink<i>&quot;
+    token in the &quot;</i>npc.scp<i>&quot; file in the characters section to have every said
+    character triggered when created.&nbsp; In this case the triggers number is 1.)</i> </p>
+    <p align="center"><a name="Described"></a><b>Trigger Tokens Described:</b> <br>
+    </p>
+    <div align="center"><center><table BORDER="1" COLS="7" WIDTH="100%">
+      <tr VALIGN="TOP" BGCOLOR="#FFFFCC">
+        <td WIDTH="5%"><small><b>TOKEN</b></small></td>
+        <td WIDTH="1%"><small><b>REV</b></small></td>
+        <td WIDTH="5%"><small><b>PARAMETERS</b></small></td>
+        <td WIDTH="50%"><small><b>DESCRIPTION</b></small></td>
+        <td WIDTH="1%"><small><b>S</b></small></td>
+        <td WIDTH="1%"><small><b>D</b></small></td>
+        <td WIDTH="1%"><small><b>N</b></small></td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>ACT (action)</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; <br>
+        &quot;ACT 15&quot;</td>
+        <td>Make the player perform a certain action like fall down backwards for instance.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>CALCUSES</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;CALCUSES -1&quot;</td>
+        <td>Performs math on the items uses.&nbsp; If the uses reaches 0 then the trigger will
+        flow on otherwise a use is calculated and the trigger is aborted.&nbsp; Use this in
+        conjuction with the &quot;RNDUSES&quot; and the &quot;SETUSES&quot; tokens.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>COLOR</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; &lt;hex2&gt; <br>
+        &quot;COLOR 04 81&quot;</td>
+        <td>Tells the trigger to also make a color check on a NEED check.&nbsp; Use this token
+        before the NEED token.&nbsp; *NOTE* This token is coded but not yet functional.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>CMSG (sys-msg)</td>
+        <td>1</td>
+        <td>&lt;message&gt; <br>
+        &quot;CMSG server message.&quot;</td>
+        <td>Text is sent as a sysmessage when completed, to the player </td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>CSKL (Check Skill)</td>
+        <td>2</td>
+        <td>&lt;skill&gt; <br>
+        &quot;CSKL 7&quot;</td>
+        <td>Performs a check on the players specified skill.&nbsp; This function will select a
+        random number between 1 and 1000.&nbsp; If the value is below the players current skill,
+        then the trigger will continue flow otherwise the trigger is aborted.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>DEX (Dexterity)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;DEX 1&quot;</td>
+        <td>Performs math on the dexterity of the player that fired the trigger. <i>See
+        &quot;HEA&quot;</i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>DUR (Math on item HP)</td>
+        <td>1</td>
+        <td>&lt;j&gt; <br>
+        &quot;DUR 1&quot;</td>
+        <td>Exactly the same as EVDUR, but on item, not envoked item</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>DISABLE</td>
+        <td>1</td>
+        <td>&lt;seconds&gt; <br>
+        &quot;DISABLE 10&quot;</td>
+        <td>Disabled the item or the NPC for <i>n</i> seconds.&nbsp; This means that the trigger
+        cannot be fired until the disabled timer reached zero.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>EMT (Emote)</td>
+        <td>1</td>
+        <td>&lt;string&gt; <br>
+        &quot;EMT Hail stranger!&quot;</td>
+        <td>Make the player that fired the trigger emote something to all the other players around
+        them.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>EVDUR (Math on Evoked item HP)</td>
+        <td>1</td>
+        <td>&lt;j&gt; <br>
+	&quot;EVDUR 4&quot;</td>
+        <td>If item is at max health, and j > 0 then it prints out already totally repaired
+	item's health is then increased by j (j can be negative)
+	Prints out a message saying what happened, printing out cmsg on success, or fmsg on failure, or default if cmsg and fmsg are not defined
+	If it is ruined completely, it destroys the item. EVDUR IS stack safe. 
+      </td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+     <tr VALIGN="TOP">
+        <td>EVDURMAX (Math on Evoked item MAXHP)</td>
+        <td>1</td>
+        <td>&lt;j&gt; <br>
+	&quot;EVDURMAX 1&quot;</td>
+        <td>Increases maximum health of item by j (j can be negative)
+	If it is ruined it is destroyed. Stack safe. 
+      </td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>FAME (Do math on players fame)</td>
+        <td>1</td>
+        <td>&lt;add&gt; <br>
+        &quot;FAME 500&quot;</td>
+        <td>&lt;add&gt; is a numeric fame value to add to player's fame.<br>
+	&lt;add&gt; can be negative.<br>
+	Ensures that fame is a valid fame value.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+
+      <tr VALIGN="TOP">
+        <td>FMSG (Fail Message)</td>
+        <td>1</td>
+        <td>&lt;message&gt; <br>
+        &quot;FMSG That did not work.&quot;</td>
+        <td>Set a Fail Message variable that can be used in conjunction witht he CSKL token to
+        display a specific message if the skill check fails.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>HEA (Health)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;HEA -5&quot; &lt;-subtract 5 <br>
+        &quot;HEA 5&quot; &lt;-add 5</td>
+        <td>Performs math on the health of the player that fired the trigger.&nbsp; Specifying a
+        negative number will subtract that value from the players health. A positive value will
+        add that value to the players health.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>HUNGER (Do math on players hunger from 0 to 6)</td>
+        <td>1</td>
+        <td>&lt;toAdd&gt; <br>
+        &quot;HUNGER -5&quot; &lt;-subtract 5 <br>
+	&quot;HUNGER 3&quot; &lt;-add 3</td>
+        <td><i>toAdd</i> is added to the players hunger. toAdd can be negative. 6 is full, 0 is empty
+	ensures that hunger is between 1 and 6 inclusive.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td VALIGN="TOP">IADD (Add Item)</td>
+        <td>1</td>
+        <td>&lt;script&gt; <br>
+        &quot;IADD 5004&quot;</td>
+        <td>Add a item according to the script number as defined in the &quot;items.scp&quot;
+        file. Item is placed at the players location depending on the direction they are facing.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IDADD (add item by ID)</td>
+        <td>2</td>
+        <td>&lt;hex1&gt; &lt; hex2&gt; &lt;amt&gt; <br>
+        &quot;IDADD 19 b9 1&quot;</td>
+        <td>Add a item to the players pack according to the ID specified here.&nbsp; If the item
+        is already in the pack, the item will be stacked.&nbsp; This token is used to add items
+        not scripted in the &quot;items.scp&quot; file.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IDFX (Effect by ID)</td>
+        <td>2</td>
+        <td>&lt;hex1&gt; &lt;hex2&gt; <br>
+        &quot;IDFX 37 1a&quot;</td>
+        <td>Make a special effect occur from the players location to the target location.&nbsp; If
+        token is used in a NPC trigger, then the effect will go from the NPCs location to the
+        players location.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFFAME</td>
+        <td>1</td>
+        <td>&quot;IFFAME flag value&quot;</td>
+        <td>&lt;flag&gt; is either &lt; or &gt; . &lt;Value&gt; is a valid fame value<br>
+	 if &lt;flag&gt; is &lt; and &lt;value&gt; is 500, 
+	it means that a persons fame must be below 500.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFKARMA</td>
+        <td>1</td>
+        <td>&quot;IFKARMA flag value&quot;</td>
+        <td>&lt;flag&gt; is either &lt; or &gt; . &lt;Value&gt; is a valid karma value<br>
+	 if &lt;flag&gt; is &lt; and &lt;value&gt; is 500, 
+	it means that a persons karma must be below 500.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFOWNER</td>
+        <td>1</td>
+        <td>&quot;IFOWNER&quot;</td>
+        <td>If triggered item or NPC is owned by the triggering character, then fire trigger or
+        else abort the trigger.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFHUNGER (If hunger meets criteria then)</td>
+        <td>1</td>
+        <td>&quot;IFOWNER level&quot;</td>
+        <td>If character's hunger is greater than level, print out failure message and abort the trigger.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFRACE</td>
+	<td>1</td>
+	<td>&quot;IFRACE value&quot;</td>
+	<td>&lt;value is a valid entry in the races.scp file.  Script breaks if failed, and prints out the message &quot;You don't know how to use that.&quot;</td>
+	<td>No</td>
+	<td>Yes</td>
+	<td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>IFSKL <br>
+        (If Skill)</td>
+        <td>1</td>
+        <td>&lt;skill&gt; &lt;value&gt; <br>
+        &quot;IFSKL 7 -100&quot;</td>
+        <td>Does a specific check on the skill of the player.&nbsp; A negative value will make the
+        check under the specified skill, a positive value will make the check above the specified
+        skill. <br>
+        For example, &quot;IFSKL 7 -100&quot; will continue flow of the trigger if the players
+        Blacksmithy skill is below or equal to 10.0. &quot;IFSKL 7 300&quot; will continue flow of
+        the trigger if the skill is 30.0 or above.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>INT (Intelligence)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;INT 1&quot;</td>
+        <td>Perform math on the intelligence of the player that fired the trigger. <i>See
+        &quot;HEA&quot;</i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>KARMA (Do math on players karma)</td>
+        <td>2</td>
+        <td>&lt;add&gt; <br>
+	&quot;KARMA add&quot;</td>
+        <td>&lt;add&gt; is a numeric karma value to add to player's karma.<br>
+	&lt;add&gt; can be negative<br>.
+	Ensures that karma is a valid karma value (-10k to 10k).</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+
+      <tr VALIGN="TOP">
+        <td>MAKE</td>
+        <td>2</td>
+        <td>&lt;script&gt; &lt;skill&gt; <br>
+        &quot;MAKE 1 7&quot;</td>
+        <td>This will make a item menu pop up for the player to select from as according to the
+        script number in the &quot;create.scp&quot; file and by skill.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>MAN (Mana)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;MANA -5&quot;</td>
+        <td>Perform math on the mana of the player that fired the trigger. <i>See &quot;HEA&quot;</i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>MAXDUR (Math on Item HP)</td>
+        <td>1</td>
+        <td>&lt;j&gt; <br>
+        &quot;MAXDUR 1&quot;</td>
+        <td>Exactly the same as EVMAXDUR, but on item, not envoked item </i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+
+      <tr VALIGN="TOP">
+        <td>MISC</td>
+        <td>1</td>
+        <td>&lt;function&gt; <br>
+        &quot;MISC BANK&quot;</td>
+        <td>This token is used to be able to perform a miscellaneous gaming function.&nbsp; The
+        functions currently coded in the token are: BANK</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>MSG (Message)</td>
+        <td>1</td>
+        <td>&lt;string&gt; <br>
+        &quot;MSG You eat the bread&quot;</td>
+        <td>Sends a message to the players client that is displayed at the bottom.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NADD (Add NPC)</td>
+        <td>1</td>
+        <td>&lt;script&gt; <br>
+        &quot;NADD 7021&quot;</td>
+        <td>Add an NPC according to thier script number as defined in the &quot;npc.scp&quot;
+        file. Static will add NPC at envoked location. Dynamic adds NPC at items location if on
+        ground or in front of player if item is in the pack. NPC will add the NPC in front of
+        player.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NEED&nbsp;</td>
+        <td>1</td>
+        <td>&lt;xHex1Hex2&gt; <br>
+        &quot;NEED x19b7&quot;</td>
+        <td>Specifies that the player must contain at least one item in thier pack that matches
+        the specfied ID's.&nbsp; If the item exists then the triggers flow will continue otherwise
+        the trigger is aborted.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NEWNAME</td>
+        <td>1</td>
+        <td>&lt;name&gt; <br>
+        &quot;NEWNAME a bottle of apple cider&quot;</td>
+        <td>Set the name of the newly created item or NPC to a different name.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NEWOWNER</td>
+        <td>1</td>
+        <td>&quot;NEWOWNER&quot;</td>
+        <td>Set the newly created item or NPC to be owned by the triggering character.&nbsp; Use
+        after a NADD, IADD&nbsp; or a IDADD.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NEWTRIG</td>
+        <td>1</td>
+        <td>&lt;trigger&gt; <br>
+        &quot;NEWTRIG&quot;</td>
+        <td>Use after a NADD, IADD or IDADD to assign a dynamic trigger number to the newly
+        created item or NPC.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETTYPE &amp; NEWTYPE</td>
+        <td>2</td>
+        <td>&lt;type&gt; <br>
+        &quot;NEWTYPE 14&quot;</td>
+        <td>Used to set the type of the current item.&nbsp; If used after the IDADD, then it will
+        set the type of the item just created.&nbsp; If the trigger containing this token was
+        fired by an item, will set the type of that item.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NEWWORD</td>
+        <td>1</td>
+        <td>&lt;word&gt; <br>
+        &quot;NEWWORD Im thristy&quot;</td>
+        <td>Used after a NADD to set a new trigger word to the newly created NPC.&nbsp; Not to be
+        confused with &quot;SETWORD&quot;.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>NPCACT <br>
+        (NPC Action)</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; <br>
+        &quot;NPCACT 15&quot;</td>
+        <td>Makes the triggered NPC perform a certain action like falling down for instance.</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>PUT</td>
+        <td>1</td>
+        <td>&lt;x&gt; &lt;y&gt; &lt;z&gt; <br>
+        &quot;PUT 560 2173 0&quot;</td>
+        <td>Teleport the player that fired the trigger to a specified location.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr>
+        <td>RAND (Random)</td>
+        <td>1</td>
+        <td>&lt;hival&gt; &lt;failval&gt; <br>
+        &quot;RAND 1000 200&quot;</td>
+        <td>Chooses a random number between 1 and &lt;hival&gt; and will abort the trigger if the
+        value chosen is above the &lt;failval&gt;.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+       <tr>
+        <td>RANDOM_ITEM</td>
+        <td>1</td>
+        <td>&lt;uiItemNum&gt &lt;uiChance&gt &lt;InBackPack&gt</td>
+        <td><i>&lt;uiItemNum&gt</i> is the item number or itemlist to add;
+	<i>&lt;uiChance&gt</i> is the % chance of adding the item;
+	<i>&lt;InBackpack 0&gt</i> means add it at your feet, 1 means add in your pack.
+	</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+       <tr>
+        <td>RANDOM_NPC</td>
+        <td>1</td>
+        <td>&lt;uiItemNum&gt &lt;uiChance&gt</td>
+        <td><i>&lt;uiItemNum&gt is the NPC number or list to add;
+	&lt;uiChance&gt is the % chance of adding the npc 
+	</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>RANGE</td>
+        <td>1</td>
+        <td>&lt;range&gt; <br>
+        &quot;RANGE 2&quot;</td>
+        <td>Use at the beginning of a trigger to determine if the character is close enough to use
+        the trigger.&nbsp; If the character is not within the range specified here, then a message
+        is displayed indicating so and the trigger is aborted.&nbsp; Ommiting this token indicates
+        that there is no range required to activate the trigger</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>REMOVE</td>
+        <td>2</td>
+        <td>&quot;REMOVE&quot;</td>
+        <td>Remove one of the triggered items from the game.&nbsp; If the item is stacked, one
+        will be removed from the stack otherwise the item is removed from the game.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>REQ (Requires Item)</td>
+        <td>1</td>
+        <td>&lt;xHex1Hex2&gt; <br>
+        &quot;REQ xf43&quot;</td>
+        <td>Specifies that the trigger can only be fired by triggering it with an evoked item that
+        contains the hex id if the evoked item.&nbsp; If the condition is met then flow will
+        continue otherwise the trigger is aborted.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>RNDUSES (random uses)</td>
+        <td>1</td>
+        <td>&lt;lowvalue&gt; &lt;hivalue&gt; <br>
+        &quot;RNDUSES 5 20&quot;</td>
+        <td>Will calculate a random amount of uses for the item from 1 to &lt;hivalue&gt; then
+        adding &lt;lowvalue&gt;.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETID</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; &lt;hex2&gt; <br>
+        &quot;SETID 10 72&quot;&nbsp;</td>
+        <td>Set the items or NPCs graphical ID to a new value.&nbsp; For morphing characters or
+        making flipping switches.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETEVID <br>
+        (Set evoked items ID)</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; &lt;hex2&gt; <br>
+        &quot;SETEVID 10 72&quot;</td>
+        <td>Changes the ID of the item that evoked the trigger.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETOWNER</td>
+        <td>2</td>
+        <td>&quot;SETOWNER&quot;</td>
+        <td>Sets the triggered item or NPC to be owned by triggereing character.&nbsp; If the
+        trigger is an NPC trigger, it will set the NPC to be owned by the triggering player. Not
+        to be confused by NEWOWNER.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETTRG (Set Trigger)</td>
+        <td>1</td>
+        <td>&lt;trigger&gt; <br>
+        &quot;SETTRG 20&quot;</td>
+        <td>Sets the items or NPC's trigger to a new trigger assignment to enable you to chain
+        triggers together.</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETUSES</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;SETUSES 10&quot;</td>
+        <td>Sets the items uses to the specified value.&nbsp; You can also have the item have a
+        predetermined amount of uses upon creation by adding the &quot;USES #&quot; token to the
+        items section in the &quot;items.scp&quot; file</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SETWORD</td>
+        <td>1</td>
+        <td>&lt;string&gt; <br>
+        &quot;SETWORD Hail&quot;</td>
+        <td>Used to change the trigger word of an NPC.</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SKL (Skill Math)</td>
+        <td>2</td>
+        <td>&lt;skill&gt; &lt;value&gt; <br>
+        &quot;SKL 7 5&quot;</td>
+        <td>Performs math on the specified skill of the player that fired the trigger. If the
+        &lt;value&gt; is '0' (zero) then this will force this token to call the advanceskill
+        routine to perform more conplex skill calculations.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>SND (Play Sound)</td>
+        <td>1</td>
+        <td>&lt;hex1&gt; &lt;hex2&gt; <br>
+        &quot;SND 00 42&quot;</td>
+        <td>Plays a sound at the players location and to all players within ear shot.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>STAM (Stamina)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;STAM 10&quot;</td>
+        <td>Perform math of the stamina of the player that fired the trigger. <i>See
+        &quot;HEA&quot;</i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>STR (Strength)</td>
+        <td>1</td>
+        <td>&lt;value&gt; <br>
+        &quot;STR 1&quot;</td>
+        <td>Perform math on the strength of the player that fired the trigger. <i>See
+        &quot;HEA&quot;</i></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>TARG <br>
+        (Target location)</td>
+        <td>1</td>
+        <td>&lt;dynamic trigger&gt; <br>
+        &quot;TARG 22&quot;</td>
+        <td>Gives the player a targeting cursor and assigns a dynamic trigger number to the
+        targeter that gets fired when the user clicks the targeting cursor at some desination.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr VALIGN="TOP">
+        <td>USEUP</td>
+        <td>1</td>
+        <td>&lt;xHex1Hex2&gt; <br>
+        &quot;USEUP x19b7&quot;</td>
+        <td>Will use up one item in the players pack that matches the ID specified here.&nbsp; Use
+        this in conjunction with the &quot;NEED&quot; token to make sure the item exists before
+        using it up. If the Item is stacked, then one will be removed from the stack otherwise the
+        item is removed.</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+      </tr>
+    </table>
+    </center></div><p>&nbsp;&nbsp;&nbsp; S=Static <br>
+    &nbsp;&nbsp;&nbsp; D=Dynamic <br>
+    &nbsp;&nbsp;&nbsp; N=NPC </p>
+    <p><a name="Ideas"></a><a name="Future"></a><b>Future Token Ideas:</b> </p>
+    <p><b>&nbsp;&nbsp;&nbsp; </b>There will be some more tokens being coded in the next
+    version or versions.&nbsp; Here are a few of the ideas I have in mind.&nbsp; If you have
+    some suggestions for some trigger tokens, please feel free to visit my web site and submit
+    your suggestion. </p>
+    <p>&nbsp;<small>&nbsp;&nbsp; -SETCOLOR (Will be used to set the color of an item that was
+    created by the IDADD token for use in making gold, silver, adamantium and silver ore for
+    instance) <br>
+    &nbsp;&nbsp;&nbsp; -NPCPUT (Will place the triggered NPC at a specified location) <br>
+    &nbsp;&nbsp;&nbsp; -EVREMOVE (Will remove the envoked item) <br>
+    &nbsp;&nbsp;&nbsp; -SWAP (Will swap the ID of the item if one of the given IDs match the
+    other ID given) <br>
+    &nbsp; </small></p>
+    <p><a name="Examples"></a><b>Trigger Examples:</b> </p>
+    <p><b>&nbsp;&nbsp;&nbsp; </b>Here are a few examples of triggers.&nbsp; Hopefully these
+    will get your brain juices flowing. </p>
+    <p>&nbsp;&nbsp;&nbsp; 1.&nbsp; <i>Static Examples (wtrigrs.scp)</i> </p>
+    <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i>This trigger will
+    perform the functionality of allowing the player to chop at a dynamic tree or a static
+    tree to produce wood. </p>
+    <p><small><tt><small>&nbsp;</small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    SECTION xce0xce3xcddxcd3xce6xcd8 <b>&lt;- The ID of the trees. Ommit leading zeros and
+    include an &quot;x&quot;</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { Chop at a tree</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REQ
+    xf43xf47xf49xf4bxf51&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>&lt;- If the player used
+    one of these items..</tt>.</b> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STAM
+    -5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Subtract 5 from the users stamina...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 01
+    3e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Play the wood chopping sound effect..</tt>.</b> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACT
+    d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Make player do the &quot;swing low&quot; action...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CSKL
+    44&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Make check against players lumberjacking skill...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SKL 44
+    1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- If check passes, add 1 point to jumberjacking skill...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IADD
+    7021&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Add a log at the players feet.</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> </small></p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This tigger will
+    allow the player to use tongs on the small forge to produce iron ingots considering they
+    have ore in thier pack. </p>
+    <p><small><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SECTION
+    xfb1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>&lt;-
+    The ID of the forge</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { Use a small forge</tt>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REQ
+    xfbbxfbc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Requires tongs...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NEED
+    x19b7x19b8x19b9x19ba&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>&lt;- Must have ore in
+    thier pack...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STAM
+    -3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- If they have ore, lower stamina by 3...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SND 00
+    54&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Play pumping forge sound effect...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACT
+    e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Make player do a &quot;staff jab&quot; action...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CSKL
+    7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Make check against blacksmithy skill...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USEUP
+    x19b7x19b8x19b9x19ba&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>&lt;- If check passes, use up
+    some ore...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SKL 7
+    5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Add 5 to thier blacksmithy skill...</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IADD
+    7030&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <b>&lt;- Add an iron ingot at thier feet.</b></tt> <br>
+    <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt> <br>
+    &nbsp; </small></p>
+    <p><b>Credits:</b> <br>
+    <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <u>Zadius</u></b> Trigger code, trigger
+    token and documentation author <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b><u>SpaceDog</u></b> Trigger token designer
+    and testing <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b><u>Tauriel</u></b> Trigger code testing and
+    merging <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b><u>Genesis</u></b> Trigger token submissions
+    and testing <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b><u>Myth</u></b> Trigger code suggestions and
+    testing </td>
+  </tr>
+  <tr>
+    <td valign="top" width="822" height="1"></td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+</body>
+</html>

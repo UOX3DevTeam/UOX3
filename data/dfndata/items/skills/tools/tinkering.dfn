@@ -1,0 +1,85 @@
+//Tinkers Tools
+
+[0x1EBC]
+{
+get=base_item
+name=tinker's tools
+id=0x1EBC
+weight=100
+value=8 4
+restock=20
+decay=1
+good=60
+}
+
+[0x1eb6]
+{
+get=base_item
+name=empty tool kit
+id=0x1eb6
+weight=100
+value=2 1
+restock=20
+decay=1
+good=60
+}
+
+[0x1eb7]
+{ larger
+get=base_item
+name=empty tool kit
+id=0x1eb7
+weight=100
+value=2 1
+restock=20
+decay=1
+good=60
+}
+
+[0x1eb8]
+{ E
+get=base_item
+name=tool kit
+id=0x1eb8
+weight=1000
+value=2 1
+restock=20
+decay=1
+good=60
+}
+
+[0x1eb9]
+{ S
+get=base_item
+name=tool kit
+id=0x1eb9
+weight=1000
+value=2 1
+restock=20
+decay=1
+good=60
+}
+
+[0x1eba]
+{ E larger
+get=base_item
+name=tool kit
+id=0x1eba
+weight=1000
+value=2 1
+restock=20
+decay=1
+good=60
+}
+
+[0x1ebb]
+{ S larger
+get=base_item
+name=tool kit
+id=0x1ebb
+weight=1000
+value=2 1
+restock=20
+decay=1
+good=60
+}

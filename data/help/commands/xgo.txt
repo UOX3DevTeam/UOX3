@@ -1,0 +1,4 @@
+        XGO <x> <y> <z> <target>
+
+  Purpose: 
+        Teleports target to coordinates x y z.

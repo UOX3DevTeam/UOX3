@@ -1,0 +1,62 @@
+// v.02
+// Last updated 10/5/2005 - giwo
+// This file contains the filenames and X/Y Block sizes for Ultima Online maps.
+// Note that this file is directly related to UOX3.ini MAPCOUNT (IE a MAPCOUNT of 5 will load MAP 0 through MAP 4)
+// This file is current for Client versions below 5.0.0a, please use maps.dfn if your client version is 5.0.0a or above.
+
+[MAP 0]	// Felucca
+{
+MAP=map0.mul
+STATICS=statics0.mul
+STAIDX=staidx0.mul
+MAPDIFF=mapdif0.mul
+MAPDIFFLIST=mapdifl0.mul
+STATICSDIFF=stadif0.mul
+STATICSDIFFLIST=stadifl0.mul
+STATICSDIFFINDEX=stadifi0.mul
+X=6144
+Y=4096
+}
+
+[MAP 1]	// Trammel
+{
+MAP=map0.mul
+STATICS=statics0.mul
+STAIDX=staidx0.mul
+MAPDIFF=mapdif1.mul
+MAPDIFFLIST=mapdifl1.mul
+STATICSDIFF=stadif1.mul
+STATICSDIFFLIST=stadifl1.mul
+STATICSDIFFINDEX=stadifi1.mul
+X=6144
+Y=4096
+}
+
+[MAP 2]	// Ilshenar
+{
+MAP=map2.mul
+STATICS=statics2.mul
+STAIDX=staidx2.mul
+MAPDIFF=mapdif2.mul
+MAPDIFFLIST=mapdifl2.mul
+STATICSDIFF=stadif2.mul
+STATICSDIFFLIST=stadifl2.mul
+STATICSDIFFINDEX=stadifi2.mul
+X=2304
+Y=1600
+}
+
+[MAP 3]	// Malas
+{
+MAP=map3.mul
+STATICS=statics3.mul
+STAIDX=staidx3.mul
+X=2560
+Y=2048
+}
+
+
+EOF
+
+
+

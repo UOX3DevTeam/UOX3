@@ -1,0 +1,5 @@
+        BAN <target>
+
+  Purpose: 
+        Bans targetted characters account
+        from the server.

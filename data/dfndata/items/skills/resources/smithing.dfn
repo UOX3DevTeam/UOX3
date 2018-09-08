@@ -1,0 +1,48 @@
+[0x1bef]
+{
+get=base_item
+name=iron ingot
+id=0x1bef
+weight=100
+value=9 4
+pileable=1
+amount=1
+decay=1
+good=48
+}
+
+[0x1bf2]
+{
+get=base_item
+name=iron ingot
+id=0x1bf2
+weight=100
+value=9 4
+pileable=1
+amount=1
+decay=1
+good=48
+}
+
+[0x0fb7]
+{
+get=base_item
+name=forged metal
+id=0x0fb7
+weight=100
+movable=1
+decay=1
+good=48
+}
+
+[0x0fb8]
+{
+get=base_item
+name=forged metal
+id=0x0fb8
+weight=100
+movable=1
+decay=1
+good=48
+}
+

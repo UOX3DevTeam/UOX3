@@ -1,0 +1,51 @@
+//o-------------------------------------------------------o
+//| QUick note: TYPE must always be the first tag found in
+//|             a block.
+//o-------------------------------------------------------o
+[DEFAULT_STATUS]
+{ 
+TYPE=STATUS
+NAME=Server Status Template
+UPDATE=60
+INPUT=online.htf
+OUTPUT=serverstatus.html
+} 
+
+[DEFAULT_PLAYER]
+{
+TYPE=PLAYER
+NAME=Server Player Template
+INPUT=player.htf
+OUTPUT=player.html
+}
+
+[DEFAULT_GUILD]
+{
+TYPE=GUILD
+NAME=Server Guild Template
+UPDATE=60
+INPUT=guild.htf
+OUTPUT=guild.html
+}
+
+[DEFAULT_GMSTATUS]
+{
+TYPE=GMSTATUS
+NAME=Server GameMaster Status Template
+UPDATE=60
+INPUT=gmstatus.htf
+OUTPUT=gmstatus.html
+}
+
+[DEFAULT_OFFLINE]
+{
+TYPE=OFFLINE
+NAME=Server Offline Template
+INPUT=offline.htf
+OUTPUT=serverstatus.html
+}
+
+EOF
+
+
+

@@ -1,0 +1,80 @@
+// v.05
+// Last updated 3/14/2012 - Xuri
+// This file contains the filenames and X/Y Block sizes for Ultima Online maps.
+// This file is current for Client versions 5.0.0a and above, please use maps.old if your client version is 4.x or below.
+// MAPUOPWRAP entries are used for reading legacy map#.mul files in clients 7.0.24+
+
+[MAP 0]	// Felucca
+{
+MAP=map0.mul
+MAPUOPWRAP=map0LegacyMUL.uop
+STATICS=statics0.mul
+STAIDX=staidx0.mul
+MAPDIFF=mapdif0.mul
+MAPDIFFLIST=mapdifl0.mul
+STATICSDIFF=stadif0.mul
+STATICSDIFFLIST=stadifl0.mul
+STATICSDIFFINDEX=stadifi0.mul
+X=7168
+Y=4096
+}
+
+[MAP 1]	// Trammel
+{
+MAP=map1.mul
+MAPUOPWRAP=map1LegacyMUL.uop
+STATICS=statics1.mul
+STAIDX=staidx1.mul
+MAPDIFF=mapdif1.mul
+MAPDIFFLIST=mapdifl1.mul
+STATICSDIFF=stadif1.mul
+STATICSDIFFLIST=stadifl1.mul
+STATICSDIFFINDEX=stadifi1.mul
+X=7168
+Y=4096
+}
+
+[MAP 2]	// Ilshenar
+{
+MAP=map2.mul
+MAPUOPWRAP=map2LegacyMUL.uop
+STATICS=statics2.mul
+STAIDX=staidx2.mul
+MAPDIFF=mapdif2.mul
+MAPDIFFLIST=mapdifl2.mul
+STATICSDIFF=stadif2.mul
+STATICSDIFFLIST=stadifl2.mul
+STATICSDIFFINDEX=stadifi2.mul
+X=2304
+Y=1600
+}
+
+[MAP 3]	// Malas
+{
+MAP=map3.mul
+MAPUOPWRAP=map3LegacyMUL.uop
+STATICS=statics3.mul
+STAIDX=staidx3.mul
+X=2560
+Y=2048
+}
+
+[MAP 4]	// Tokuno
+{
+MAP=map4.mul
+MAPUOPWRAP=map4LegacyMUL.uop
+STATICS=statics4.mul
+STAIDX=staidx4.mul
+X=1448
+Y=1448
+}
+
+[MAP 5]	// Termur
+{
+MAP=map5.mul
+MAPUOPWRAP=map5LegacyMUL.uop
+STATICS=statics5.mul
+STAIDX=staidx5.mul
+X=1280
+Y=4096
+}

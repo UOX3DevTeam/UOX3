@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>UOX3 API and Event handling document</title>
+<style></style>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+<center>
+	<h1>UOX3 Script Engine</h1>
+	<h3>Functions, Methods, Properties and Event handling</h3>
+</center>
+<h2>Item Properties</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="2">
+  <tr>
+    <th bgcolor="maroon">Property
+    <th bgcolor="maroon">Purpose
+  <tr>
+    <td>account
+    <td>The account attached to this socket.
+  <tr>
+    <td>currentChar
+    <td>Returns the character this socket is currently logged in with as a JS-object.
+  <tr>
+    <td>idleTimeout
+    <td><i>Currently unused.</i>
+  <tr>
+    <td>wasIdleWarned
+    <td>Returns true if character was warned before being disconnected, false if not.
+  <tr>
+    <td>tempInt
+    <td>Temporary variable to store larger numbers (supports negatives). 
+  <tr>
+    <td>buffer
+    <td><i>Currently unused.</i>
+  <tr>
+    <td>xText
+    <td>Temporary variable to store strings of text.
+  <tr>
+    <td>clickX
+    <td>Temporary variable to store small numbers (supports negatives).
+  <tr>
+    <td>clickY
+    <td>Temporary variable to store small numbers (supports negatives).
+  <tr>
+    <td>clickZ
+    <td>Temporary variables to store very small numbers (-128 to 128).
+  <tr>
+    <td>tempObj
+    <td>Temporary variable to store a Character or Item object.
+  <tr>
+    <td>newClient
+    <td>
+  <tr>
+    <td>firstPacket
+    <td>Returns true if it's the first packet received.
+  <tr>
+    <td>cryptClient
+    <td>Returns true if client is set to crypt-mode, false if not.
+  <tr>
+    <td>clientIP
+    <td><i>Currently unused.</i>
+  <tr>
+    <td>walkSequence
+    <td>Returns/Sets the point in the walk sequence of the socket.
+  <tr>
+    <td>currentSpellType
+    <td>Returns/Sets the current spell type of the socket.
+  <tr>
+    <td>logging
+    <td> 
+  <tr>
+    <td>bytesSent
+    <td>
+  <tr>
+    <td>bytesReceived
+    <td>
+  <tr>
+    <td>targetOK
+    <td>
+  <tr>
+    <td>pickupX
+    <td>The X coordinate of the item picked up by socket.
+  <tr>
+    <td>pickupY
+    <td>The Y coordinate of the item picked up by socket.
+  <tr>
+    <td>pickupZ
+    <td>The Z coordinate of the item picked up by socket.
+  <tr>
+    <td>pickupSpot
+    <td>The locationtype the socket picked up an item from. 
+		<blockquote>
+			nowhere = 0<br>
+			ground = 1<br>
+			ownpack = 2<br>
+			otherpack = 3<br>
+			paperdoll = 4<br>
+			bank = 5
+  <tr>
+    <td>pickupSerial
+    <td><i>Currently unused</i>.
+  <tr>
+    <td>language
+    <td>Returns the unicode ID for the language used by client(?).
+  <tr>
+    <td>clientMajorVer
+    <td>
+  <tr>
+    <td>clientMinorVer
+    <td> 
+  <tr>
+    <td>clientSubVer
+    <td>
+  <tr>
+    <td>clientLetterVer
+    <td>
+  <tr>
+    <td>clientType
+    <td>
+  <tr>
+    <td>target
+    <td>Returns the current/previous(?) target of the socket as a JS-object.
+
+  
+  </table>
+
+<center>
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Original: ©Copyright 2000-2001 <a href="http://www.uox3.net">WWW.UOX3.NET</a> (Daniel Stratton/Matthew Randall)</font> |||
+<font face="Tahoma,Arial,MS Sans Serif" size="1">Rewrite: ©Copyright 2002 <a href="http://www.uoxdev.de">WWW.UOXDEV.DE</a> (Florian "Rukus" Frick)</font>
+</center>
+
+</body>

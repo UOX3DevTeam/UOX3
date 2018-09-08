@@ -1,0 +1,467 @@
+// regular red moongate
+
+[0x0dda]
+{ Red Moongate, Full anim
+get=base_item
+name=red moongate
+id=0x0dda
+decay=1
+}
+
+[0x0ddb]
+{ Red Moongate anim 1
+get=base_item
+name=red moongate
+id=0x0ddb
+decay=1
+}
+
+[0x0ddc]
+{ Red Moongate anim 2
+get=base_item
+name=red moongate
+id=0x0ddc
+decay=1
+}
+
+[0x0ddd]
+{ Red Moongate anim 3
+get=base_item
+name=red moongate
+id=0x0ddd
+decay=1
+}
+
+[0x0dde]
+{ Red Moongate anim 4
+get=base_item
+name=red moongate
+id=0x0dde
+decay=1
+}
+
+// Blue regular moongates, 1st is full animation, rest are frames
+
+[0x0f6c]
+{
+get=base_item
+name=blue moongate
+id=0x0f6c
+decay=1
+}
+
+[0x0f6d]
+{
+get=base_item
+name=blue moongate
+id=0x0f6d
+decay=1
+}
+
+[0x0f6e]
+{
+get=base_item
+name=blue oongate
+id=0x0f6e
+decay=1
+}
+
+[0x0f6f]
+{
+get=base_item
+name=blue moongate
+id=0x0f6f
+decay=1
+}
+
+[0x0f70]
+{
+get=base_item
+name=blue moongate
+id=0x0f70
+decay=1
+}
+
+// Regular Black Moongate, first is full animation, rest are frames
+
+[0x1fd4]
+{
+get=base_item
+name=black moongate
+id=0x1fd4
+decay=1
+}
+
+[0x1fd5]
+{
+get=base_item
+name=black moongate
+id=0x1fd5
+decay=1
+}
+
+[0x1fd6]
+{
+get=base_item
+name=black moongate
+id=0x1fd6
+decay=1
+}
+
+[0x1fd7]
+{
+get=base_item
+name=black moongate
+id=0x1fd7
+decay=1
+}
+
+[0x1fd8]
+{
+get=base_item
+name=black moongate
+id=0x1fd8
+decay=1
+}
+
+// Red Summon Moongates, 1st is full animation, any after are the frame of 
+// animation
+
+[0x1ae5]
+{
+get=base_item
+name=summon moongate
+id=0x1ae5
+decay=1
+}
+
+
+[0x1ae6]
+{
+get=base_item
+name=summon moongate
+id=0x1ae6
+decay=1
+}
+
+[0x1ae7]
+{
+get=base_item
+name=summon moongate
+id=0x1ae7
+decay=1
+}
+
+
+[0x1ae8]
+{
+get=base_item
+name=summon moongate
+id=0x1ae8
+decay=1
+}
+
+[0x1ae9]
+{
+get=base_item
+name=summon moongate
+id=0x1ae9
+decay=1
+}
+
+
+[0x1aea]
+{
+get=base_item
+name=summon moongate
+id=0x1aea
+decay=1
+}
+
+[0x1aeb]
+{
+get=base_item
+name=summon moongate
+id=0x1aeb
+decay=1
+}
+
+[0x1aec]
+{
+get=base_item
+name=summon moongate
+id=0x1aec
+decay=1
+}
+
+[0x1aed]
+{
+get=base_item
+name=summon moongate
+id=0x1aed
+decay=1
+}
+
+// Blue Summon Moongates, 1st is full animation, rest are frames of animation
+
+[0x1af3]
+{
+get=base_item
+name=summon moongate
+id=0x1af3
+decay=1
+}
+
+[0x1af4]
+{
+get=base_item
+name=summon moongate
+id=0x1af4
+decay=1
+}
+
+[0x1af5]
+{
+get=base_item
+name=summon moongate
+id=0x1af5
+decay=1
+}
+
+[0x1af6]
+{
+get=base_item
+name=summon moongate
+id=0x1af6
+decay=1
+}
+
+[0x1af7]
+{
+get=base_item
+name=summon moongate
+id=0x1af7
+decay=1
+}
+
+[0x1af8]
+{
+get=base_item
+name=summon moongate
+id=0x1af8
+decay=1
+}
+
+[0x1af9]
+{
+get=base_item
+name=summon moongate
+id=0x1af9
+decay=1
+}
+
+[0x1afa]
+{
+get=base_item
+name=summon moongate
+id=0x1afa
+decay=1
+}
+
+[0x1afb]
+{
+get=base_item
+name=summon moongate
+id=0x1afb
+decay=1
+}
+
+
+// Black Summon Moongates, 1st is full animation rest are frames
+
+[0x1fcb]
+{
+get=base_item
+name=summon moongate
+id=0x1fcb
+decay=1
+}
+
+[0x1fcc]
+{
+get=base_item
+name=summon moongate
+id=0x1fcc
+decay=1
+}
+
+[0x1fcd]
+{
+get=base_item
+name=summon moongate
+id=0x1fcd
+decay=1
+}
+
+[0x1fce]
+{
+get=base_item
+name=summon moongate
+id=0x1fce
+decay=1
+}
+
+[0x1fcf]
+{
+get=base_item
+name=summon moongate
+id=0x1fcf
+decay=1
+}
+
+[0x1fd0]
+{
+get=base_item
+name=summon moongate
+id=0x1fd0
+decay=1
+}
+
+[0x1fd1]
+{
+get=base_item
+name=summon moongate
+id=0x1fd1
+decay=1
+}
+
+[0x1fd2]
+{
+get=base_item
+name=summon moongate
+id=0x1fd2
+decay=1
+}
+
+[0x1fd3]
+{
+get=base_item
+name=summon moongate
+id=0x1fd3
+decay=1
+}
+
+
+// White Summon Moongates
+
+[0x1fde]
+{
+get=base_item
+name=summon moongate
+id=0x1fde
+decay=1
+}
+
+[0x1fdf]
+{
+get=base_item
+name=summon moongate
+id=0x1fdf
+decay=1
+}
+
+[0x1fe0]
+{
+get=base_item
+name=summon moongate
+id=0x1fe0
+decay=1
+}
+
+[0x1fe1]
+{
+get=base_item
+name=summon moongate
+id=0x1fe1
+decay=1
+}
+
+[0x1fe2]
+{
+get=base_item
+name=summon moongate
+id=0x1fe2
+decay=1
+}
+
+[0x1fe3]
+{
+get=base_item
+name=summon moongate
+id=0x1fe3
+decay=1
+}
+
+[0x1fe4]
+{
+get=base_item
+name=summon moongate
+id=0x1fe4
+decay=1
+}
+
+[0x1fe5]
+{
+get=base_item
+name=summon moongate
+id=0x1fe5
+decay=1
+}
+
+[0x1fe6]
+{
+get=base_item
+name=summon moongate
+id=0x1fe6
+decay=1
+}
+
+[0x1fe7]
+{
+get=base_item
+name=summon moongate
+id=0x1fe7
+decay=1
+}
+
+[0x1fe8]
+{
+get=base_item
+name=summon moongate
+id=0x1fe8
+decay=1
+}
+
+[0x1fe9]
+{
+get=base_item
+name=summon moongate
+id=0x1fe9
+decay=1
+}
+
+[0x1fea]
+{
+get=base_item
+name=summon moongate
+id=0x1fea
+decay=1
+}
+
+[0x1feb]
+{
+get=base_item
+name=summon moongate
+id=0x1feb
+decay=1
+}

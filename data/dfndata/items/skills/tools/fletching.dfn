@@ -1,0 +1,17 @@
+[0x1022]
+{
+get=base_item
+name=fletcher's tools
+id=0x1022
+weight=400
+movable=1
+}
+
+[0x1023]
+{
+get=base_item
+name=fletcher's tools
+id=0x1023
+weight=400
+movable=1
+}

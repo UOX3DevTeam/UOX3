@@ -1,0 +1,47 @@
+[0x19B7]
+{ small
+get=base_item
+name=iron ore
+id=0x19B7
+weight=200
+movable=1
+pileable=1
+decay=1
+good=46
+}
+
+[0x19B8]
+{ Medium Pile
+get=base_item
+name=iron ore
+id=0x19B8
+weight=700
+movable=1
+pileable=1
+decay=1
+good=46
+}
+
+[0x19B9]
+{ Large Pile
+get=base_item
+name=iron ore
+id=0x19B9
+weight=1200
+movable=1
+pileable=1
+decay=1
+good=46
+}
+
+[0x19BA]
+{ Medium-small Pile
+get=base_item
+name=iron ore
+id=0x19BA
+weight=700
+movable=1
+pileable=1
+decay=1
+good=46
+}

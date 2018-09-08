@@ -1,0 +1,7 @@
+[0x103f]
+{
+get=base_item
+name=cookie mix
+id=0x103f
+weight=100
+}

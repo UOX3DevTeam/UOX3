@@ -1,0 +1,5 @@
+        XSBANK <target>
+
+  Purpose: 
+        Opens targeted character's special bank
+        box (if it exists).

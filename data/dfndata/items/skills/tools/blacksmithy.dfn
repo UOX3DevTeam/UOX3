@@ -1,0 +1,44 @@
+//Blacksmithy Tools
+
+[0x0fbb]
+{
+get=base_item
+name=tongs
+id=0x0fBB
+weight=200
+value=16 8
+restock=20
+decay=1
+good=52
+}
+
+[0x0fbc]
+{
+get=base_item
+name=tongs
+id=0x0fBC
+weight=200
+value=16 8
+restock=20
+decay=1
+good=52
+}
+
+[0x0faf]
+{
+get=base_item
+name=anvil
+id=0x0faf
+weight=2000
+movable=2
+}
+
+[0x0fb0]
+{
+get=base_item
+name=anvil
+id=0x0fb0
+weight=2000
+movable=2
+}
+

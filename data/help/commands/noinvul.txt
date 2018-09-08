@@ -1,0 +1,5 @@
+        NOINVUL <target>
+
+  Purpose: 
+        Removes invulnerability from an
+        a targeted invulnerable character.

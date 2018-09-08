@@ -1,0 +1,213 @@
+//*****************************************************************
+//*                         UOX3 DFNs v0.98                       *
+//*                   http://www.uox3dev.net                      *
+//*                                                               *
+//* Last Update : 1/4/2003                                        *
+//* Script : races.dfn                                            *
+//*****************************************************************
+//*                        How to use this script                 *
+//*                                                               *
+//* Available settings						  *
+//*								  *
+//*     ARMORREST= # - Sets the armor class restriction of the race*
+//*	BEARDMIN=#						  *
+//*     BEARDMAX=#						  *
+//*	COLDAFFECT - Race is affected by cold			  *
+//*	COLDLEVEL=# - Cold level from which damage occurs	  *
+//*	COLDDAMAGE=# - Max amount of damage taken by cold	  *
+//*	COLDSECS=# - How often cold damages in seconds		  *
+//*	DEXCAP=# - DEXTERITY cap of race			  *
+//*	GENDER=MALE/FEMALE - Gender restricion		  *
+//*	HAIRMIN=#						  *
+//*	HAIRMAX=#						  *
+//*	HEATAFFECT - Race is affected by heat			  *
+//*	HEATLEVEL=# - Heat level from which damage occurs	  *
+//*	HEATDAMAGE=# - Max amount of damage taken by heat	  *
+//*	HEATSECS=# - How often heat damages in seconds		  *
+//*	HPMOD=# - Max health modificator			  *
+//*	HUNGER=#,# - The first number is the time between hunger  *
+//*		     checks, the second one the damage when starving
+//*	INTCAP=# - INTELLECT cap of race			  *
+//*	LIGHTAFFECT - Race is affected by light			  *
+//*	LIGHTDAMAGE=# - Max amount of damage taken by light	  *
+//*	LIGHTLEVEL=# - Light level from which damage occurs	  *
+//*	LIGHTSECS=# - How often light damages in seconds	  *
+//*	LIGHTNINGAFFECT - Race is affected by lightning		  *
+//*	LIGHTNINGDAMAGE=# - Max amount of damage taken by lightning
+//*	LIGHTNINGCHANCE=# - Chance to get hit by a lighning during a storm
+//*	LANGUAGEMIN=#						  *
+//*	MAGICRESISTANCE=#					  *
+//*	MANAMOD=# - Max mana modificator			  *
+//*	NAME=abc - Name of the race				  *
+//*	NOBEARD							  *
+//*	NIGHTVIS=# - Default night vision level			  *
+//*	PLAYERRACE=# - Is it a player race			  *
+//*	POISONRESISTANCE=#					  *
+//*	PARENTRACE=#						  *
+//*	REQUIREBEARD						  *
+//*	RAINAFFECT - Race is affected by rain			  *
+//*	RAINDAMAGE=# - Max amount of damage taken by rain	  *
+//*	RAINSECS=# - How often rain damages in seconds		  *
+//*	RACERELATION=#						  *
+//*	RACIALENEMY=#						  *
+//*	RACIALAID=#						  *
+//*	STRCAP=# - STRENGTH cap of race				  *
+//*	SKINMIN=#						  *
+//*	SKINMAX=#						  *
+//*	SNOWAFFECT - Race is affected by snow			  *
+//*	SNOWDAMAGE=# - Max amount of damage taken by snow	  *
+//*	SNOWSECS=# - How often snow damages in seconds		  *
+//*	STORMAFFECT - Race is affected by storm			  *
+//*	STORMDAMAGE=# - Max amount of damage taken by storm	  *
+//*	STORMSECS=# - How often storm damages in seconds	  *
+//*	STAMMOD=# - Max stamina modificator			  *
+//*	VISRANGE=# - Default visibility range			  *
+//*								  *
+//*                                                               *
+//*****************************************************************
+
+[RACE 0]
+{
+NAME=Human
+STRCAP=100
+DEXCAP=100
+INTCAP=100
+PLAYERRACE=0
+}
+
+[RACE 1]
+{
+NAME=Orc
+PLAYERRACE=1
+RACIALAID=2
+RACIALENEMY=3
+}
+
+[RACE 2]
+{
+NAME=Ratman
+PLAYERRACE=1
+RACIALAID=1
+}
+
+[RACE 3]
+{
+NAME=Gargoyle
+PLAYERRACE=1
+RACIALENEMY=1
+RACIALAID=3
+}
+
+[RACE 4]
+{
+NAME=Bird
+PLAYERRACE=1
+}
+
+[RACE 5]
+{
+NAME=Reptile
+PLAYERRACE=1
+}
+
+[RACE 6]
+{
+NAME=Arachnid
+PLAYERRACE=1
+}
+
+[RACE 7]
+{
+NAME=Giant
+PLAYERRACE=1
+}
+
+[RACE 8]
+{
+NAME=Predator
+PLAYERRACE=1
+HUNGER=300,5
+}
+
+[RACE 9]
+{
+NAME=Animal 
+PLAYERRACE=1
+}
+
+[RACE 10]
+{
+NAME=Daemon
+PLAYERRACE=1
+}
+
+[RACE 11]
+{
+NAME=Undead
+PLAYERRACE=1
+}
+
+[RACE 12]
+{
+NAME=Dragon
+PLAYERRACE=1
+}
+
+[RACE 13]
+{
+NAME=Frost
+PLAYERRACE=1
+}
+
+[RACE 14]
+{
+NAME=Fire
+PLAYERRACE=1
+}
+
+[RACE 15]
+{
+NAME=Water
+PLAYERRACE=1
+}
+
+[RACE 16]
+{
+NAME=Air
+PLAYERRACE=1
+}
+
+[RACE 17]
+{
+NAME=Earth
+PLAYERRACE=1
+}
+
+[RACE 18]
+{
+NAME=Monster
+PLAYERRACE=1
+}
+
+[RACE 19]
+{
+NAME=Other
+PLAYERRACE=1
+}
+
+[RACE 20]
+{
+NAME=Meer
+PLAYERRACE=1
+RACIALENEMY=21
+}
+
+[RACE 21]
+{
+NAME=Juka
+PLAYERRACE=1
+RACIALENEMY=20
+}
+
+EOF
+

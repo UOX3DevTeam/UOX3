@@ -1,0 +1,50 @@
+
+1. Building
+----------------------------------------
+If you want to benefit form this feature, you have to install
+JavaScript engine from mozilla.org (SpiderMonkey). You have to do it
+even when you have Mozilla browser installed, because the binary
+browser installation doesn't include essential header files.
+
+If you have installed JS libraries into non-standard directories, you 
+need to set (and export) CPLUS_INCLUDE_PATH/LIBRARY_PATH to point to
+directories where the header files/lib files (e.g. libjs.so) can be found.
+
+The default name for the linked library is 'js' (-ljs switch) - if you
+need to override this value, you may set UOX3_JSLIB environment
+variable - the configure script uses -l$(UOX3_JSLIB) in this case.
+
+You can installed the javascript development library from your favorite distro
+instead of compiling it yourself.
+
+Debian - libsmjs-dev
+Red Hat, Fedora Core, Mandrake - libjs*.rpm, libjs-devel*.rpm
+Gentoo - spidermonkey
+FreeBSD - js-1.5.p6
+Other- ???
+
+2. Compilation
+-----------------------------------------
+The following is the compilation step if your distro don't have the packages.
+
+first get the source
+cvs z3 -d:pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot co -P mozilla/js/src
+
+Go into the js/src directory and
+make -f Makefile.ref 
+(or, if you are *BSD) 
+gmake -f Makefile.ref
+
+Now copy the headers to either /usr/local/include or /usr/include or custom directory
+jspubtd.h
+jscompat.h
+jstypes.h
+jslong.h
+jsotypes.h
+jsosdep.h
+jsautocfg.h	-> it in the Linux_All_DBG.OBJ directory
+
+Finally copy the lib to either /usr/local/lib or /usr/lib or your custom directory 
+libjs.a
+libjs.so
+

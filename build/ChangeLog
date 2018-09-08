@@ -1,0 +1,157 @@
+UOX3 Changelog
+------------------------
+
+-==============================-
+-= 17/06/2005 - UOX3 0.98-3.0b =-
+-==============================-
+Source Changes/Fixes:
+	Added new NPCAI (5) for NPC fighters. Same as guard-ai (attacks monsters/criminals), only without the extra guard-functions.(Xuri)
+	Added support for multiple TriggerWords in a string of speech. (giwo)
+	Fixed JS event inRange() so it will function as expected. (giwo)
+	Fixed a minor issue that caused the wrong code to be executed when updating nearby objects. (giwo/ShadowBranch)
+
+JScript Changes/Fixes:
+	Edited fletching.js to include support for fletching tools.
+	Updated jse_objectassociations.scp with ID's for fletching tools.
+
+DFN Changes/Fixes: (Xuri)
+	Changed NPCAI of male and female fighters from 4 (guard ai) to 5 (new fighter ai). Also gave them boots.
+	Beefed up the guards a bit, and gave them a powerful newbiefied halberd ([guardhalberd] in staves_polearms.dfn).
+	Fixed ID of leather cap in uox3/dfndat/create/tailoring.dfn
+
+	Made fletcher tools movable.
+
+-==============================-
+-= 16/06/2005 - UOX3 0.98-3.0a =-
+-==============================-
+Source Changes/Fixes: (giwo)
+	Fixed server crash when clicking on server status button in help menu. (Xuri)
+	Fixed an issue causing characters to ghost after being teleported off screen.
+	Fixed an issue causing mounts and other various items to add weight to characters.
+	Fixed an issue causing display distortion on the Server Status gump.
+	Fixed an issue causing JS onCollide event not to function for characters.
+	Fixed an issue causing corpses not to decay.
+	Fixed an issue causing spells not to function when a global JS script (0) was in place.
+	Minor code cleanups.
+
+JScript Changes/Fixes: (Xuri)
+	Changed kindling script to allow igniting kindling on the ground.
+	Added missing triggers for kindling to jse_objectassociations.scp
+	Fixed skill\cooking\dough.js, now possible to make bread-dough from sacks of flour and pitchers of water.
+
+DFN Changes/Fixes: (Xuri)
+	Removed NPCAI 2 from NPC thieves, allowing them to spawn in towns without getting guard-whacked.
+
+-==============================-
+-= 12/06/2005 - UOX3 0.98-3.0 =-
+-==============================-
+Source Changes/Fixes: 
+	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn (Grimson)
+	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed (Xuri)
+	Fixed a bug causing items not to be able to be picked up (giwo)
+	Changed the hardcoded default starting location from 1000, 1000, 0 to 1495, 1629, 10 - which is
+	 the Sweet Dreams Inn in Britain. (ShadowBranch)
+	Changed font-type and colour displayed for item-based TextMessages. (Xuri)
+	Fixed an issue causing objects not to be properly removed from their spawnregion on deletion. (giwo)
+
+JScript Changes/Fixes: (Xuri)
+	Added DECAY and NODECAY commands (misc-cmd.js)
+	Added NPCACTION command, changed ACTION to target self (effects.js)
+	Added Training Dummy-script (5005=item/trainingdummy.js)
+	Added Pickpocket Dip(dummy)-script (5006=item/pickpocketdip.js)
+	Added Archery Butte-script, complete with scoring system (5007=item/archerybutte.js)
+	Added generic script for determining weapon-type (2500=server/data/weapontypes.js)
+	Added generic script for determining combat-anim (2501=server/data/combatanims.js)
+	Updated jse_fileassociations.scp, jse_objectassociations.scp and jse_typeassociations.scp
+
+DFN Changes/Fixes:
+	(gargoyles.dfn) Added some missing starting brackets { for many of the npc sections
+	(reptiles.dfn) Corrected spelling of [icenake] to [icesnake] (Grimson)
+	(npclists.dfn)
+		Updated barnlist & farmlist (Grimson)
+		Changed "giantscorpion" to "scorpion". (Grimson)
+		New sections: insects, fails, poorfolk, richfolk, alltownfolk, destard1, covetous2, wrong2, hyth1, hyth2,
+		hyth3, hyth4, shame1, shame2, shame3, shame5 (Grimson)
+	(malehumans.dfn) Fixed so the NPCs will actually move around (Grimson)
+
+Documentation Changes:
+	Added installation.html, client-config.html, server-settings.html, as well as an updated commandlist.html.
+
+-===============================-
+-= 21/05/2005 - UOX3 0.98-2.8h =-
+-===============================-
+Source Fixes: (giwo)
+	Fixed an issue breaking teleport locations in Debug mode.
+	Fixed an exploit allowing one to equip items from great distances.
+	Caused houses to boot non-owners who log out inside.
+	Fixed several issues with create menus.
+	Modified BODYCOLOUR in commands.dfn to not change the color if it is set to 0.
+	Added STRIPHAIR and STRIPITEMS in place of STRIPOFF in the commands.dfn.
+	Caused SetName() to call Dirty() in order to update an object.
+
+JScript Fixes: (giwo)
+	Fixed a minor issue with SET commands.
+	Added SET command MOREXYZ.
+
+DFN Fixes: (Xuri)
+	(itemmenu.bulk.dfn) Cleaned up the item-menu slightly in some places. (Skills -> resources / tools )
+	(itemmenu.bulk.dfn) Removed item sections 0x1022 -> 0x1025 from ADD-menu (skills -> resources -> fletching) as they
+	 are not in reality fletching resources. 
+	(itemmenu.bulk.dfn) Moved the All-Spell-scroll to the top of the Scrolls-menu.
+	(commands.dfn) Changed BODYCOLOUR value of [PLAYER] section to 0x83ea, to give chars a human skin colour when
+	 made player.
+	(commands.dfn) Changed the BODYCOLOUR value of new GMs (under [GM] section) to 0x8021, i.e. red, instead of 
+	 default grey.
+	(commands.dfn) Added STRIPITEMS and STRIPHAIR to [GM] section
+	(axes.dfn) Added type=216 to all axes, so lumberjacking will work again.
+	(fletching.dfn) Added item sections 0x1BD4-5, 0x1BD4-20, 0x1BD4-50 as fletching resource-items to fix creation of multiple 
+	 arrow shafts at once.
+	(bowcraft.dfn) Fixed creation of 5, 20 and 50 arrow shafts + crossbow bolts.
+	(harditems.dfn) Added Kindling (0x0de1) to make it pileable upon creation. Also gave weight, decay & value tags.
+	(newbie.dfn) Changed newbie ingot ID to 0x1bf2, which is the one used in smithing/tinkering.
+
+-=======================-
+-= 16/04/2005 - UOX3 0.98-2.8g =-
+-=======================-
+Source Fixes: (giwo)
+	Fixed an issue causing envoke (object and type associations) not to function after a JS Reload.
+	Fixed an issue causing accounts to erroneously report that it is already in use.
+	Fixed a possible issue caused by dropping a pilable item directly onto another pilable item.
+	Fixed an issue allowing a ghost to snoop the pack of a pack animal.
+	Fixed an issue causing Ghosts to "collide" with other players.
+	Fixed an issue causing smelted ingots to not be stackable.
+	Changed JS event onCreate() to onCreateTile() and onCreateDFN()
+		Note that onCreateDFN() will be the default, only items added directly
+		from the tile will use onCreateTile(). These scripts can be either scriptID 0
+		or specified in harditems.dfn.
+
+JScript Fixes: (giwo)
+	Fixed an issue causing exploding potions to not function properly.
+
+DFN Fixes: (Xuri)
+	Instead of 21 location-dfn files, we now have only one; location.dfn.
+	Added ingots and gold to harditems.dfn to safeguard against stacking issues.
+
+
+-=======================-
+-= 15/04/2005 - UOX3 0.98-2.8f =-
+-=======================-
+Source Fixes: (giwo)
+	Fixed an issue causing banks to add to the characters total weight.
+	Fixed an issue causing SpawnRegions to not spawn anything under certain conditions.
+	Fixed an issue causing '0' to be an invalid JS ScriptID.
+	Fixed an issue causing item prop "owner" to not function properly.
+	Fixed some possible issues with member variables not being initialized.
+	Updated titles.dfn to read in much the same way the rest of the scripts do (tag=data).
+
+JScript Fixes: (Xuri)
+	(set.js) SET OWNER command no longer requires additional arguments. (Target owner, target object to be owned.)
+	(set.js) Fixed a spelling error which caused SET NPCWANDER # to have no effect.
+	(healing.js) Added 0x0192 and 0x0193 (ghosts) as valid targets for healing with bandages.
+	(travel.js) Added a new command, 'TRAVEL, as a shortcut to itemmenu 6000 - which is the GM Travel-menu.
+	(jse_fileassociations.scp) Added 400=commands/custom/travel.js
+	(jse_objectassociations.scp) Added 0xf6b=509 to make the second unlit torch work.
+	(server/light/*.js) Fixed sound-effects for lighting various lightsources.
+
+DFN Fixes: (Xuri)
+	(titles.dfn) Now follows the tag=data pattern that the other dfns uses.

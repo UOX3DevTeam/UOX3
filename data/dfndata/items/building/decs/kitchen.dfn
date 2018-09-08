@@ -1,0 +1,955 @@
+// kitchenitems.dfn
+// kitchenware, tableware and the like
+// v1.0; 03/26/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// NOT TRIGGERED YET, ITEMS NOT USABLE YET
+// For use with the UOX emulator or any with permission from the author
+
+[0x15F8]
+{
+get=base_item
+name=a wooden bowl
+id=0x15F8
+weight=1
+value=2 1
+restock=100
+movable=1
+decay=1
+good=4
+}
+
+[0x1605]
+{
+get=base_item
+name=a large wooden bowl
+id=0x1605
+weight=200
+value=2 1
+restock=100
+movable=1
+decay=1
+good=4
+}
+
+[0x15FD]
+{
+get=base_item
+name=a pewter bowl
+id=0x15FD
+weight=1
+value=2 1
+restock=100
+movable=1
+decay=1
+good=4
+}
+
+[0x0974]
+{ S
+get=base_item
+name=cauldron
+id=0x0974
+weight=1000
+}
+
+[0x0975]
+{ E
+get=base_item
+name=cauldron
+id=0x0975
+weight=1000
+}
+
+[0x097f]
+{ 
+get=base_item
+name=frypan
+id=0x097f
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+}
+
+[0x0991]
+{ S
+get=base_item
+name=tray
+id=0x0991
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+}
+
+[0x0992]
+{ E
+get=base_item
+name=tray
+id=0x0992
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+}
+
+[0x0995]
+{
+get=base_item
+name=ceramic mug
+id=0x0995
+weight=100
+}
+
+[0x0996]
+{
+get=base_item
+name=ceramic mug
+id=0x0996
+weight=100
+}
+
+[0x0997]
+{
+get=base_item
+name=ceramic mug
+id=0x0997
+weight=100
+}
+
+[0x0998]
+{
+get=base_item
+name=ceramic mug
+id=0x0998
+weight=100
+}
+
+[0x0999]
+{
+get=base_item
+name=ceramic mug
+id=0x0999
+weight=100
+}
+
+[0x099a]
+{
+get=base_item
+name=goblet
+id=0x099a
+weight=100
+}
+
+[0x09a3]
+{ E
+get=base_item
+name=fork
+id=0x09a3
+weight=100
+}
+
+[0x09a4]
+{ S
+get=base_item
+name=fork
+id=0x09a4
+weight=100
+}
+
+[0x09a5]
+{ E
+get=base_item
+name=knife
+id=0x09a5
+weight=100
+}
+
+[0x09a6]
+{ S
+get=base_item
+name=knife
+id=0x09a6
+weight=100
+}
+
+[0x09a7]
+{
+get=base_item
+name=glass pitcher
+id=0x09a7
+weight=50
+value=6 3
+movable=1
+decay=1
+good=4
+}
+
+[0x09ae]
+{
+get=base_item
+name=dirty plate
+id=0x09ae
+weight=100
+}
+
+[0x09b3]
+{ golden
+get=base_item
+name=goblet
+id=0x09b3
+weight=100
+}
+
+[0x09bd]
+{ E
+get=base_item
+name=silverware
+id=0x09bd
+weight=100
+}
+
+[0x09be]
+{ S
+get=base_item
+name=silverware
+id=0x09be
+weight=100
+}
+
+[0x09bf]
+{ golden
+get=base_item
+name=goblet
+id=0x09bf
+weight=100
+}
+
+[0x09c2]
+{ E
+get=base_item
+name=spoon
+id=0x09c2
+weight=100
+}
+
+[0x09c3]
+{ S
+get=base_item
+name=spoon
+id=0x09c3
+weight=100
+}
+
+[0x09ca]
+{
+get=base_item
+name=ceramic mug
+id=0x09ca
+weight=100
+}
+
+[0x09cb]
+{
+get=base_item
+name=goblet
+id=0x09cb
+weight=100
+}
+
+[0x09d4]
+{ N
+get=base_item
+name=silverware
+id=0x09d4
+weight=100
+}
+
+[0x09d5]
+{ W
+get=base_item
+name=silverware
+id=0x09d5
+weight=100
+}
+
+[0x09d6]
+{
+get=base_item
+name=pitcher
+id=0x09d6
+weight=100
+}
+
+[0x09d7]
+{
+get=base_item
+name=plate
+id=0x09d7
+weight=100
+}
+
+[0x09da]
+{
+get=base_item
+name=dirty plate
+id=0x09da
+weight=100
+}
+
+[0x09dc]
+{ type 1
+get=base_item
+name=dirty pot
+id=0x09dc
+weight=100
+}
+
+[0x09dd]
+{ type 2
+get=base_item
+name=dirty pot
+id=0x09dd
+weight=100
+}
+
+[0x09de]
+{
+get=base_item
+name=dirty frypan
+id=0x09de
+weight=100
+}
+
+[0x09df]
+{ type 3
+get=base_item
+name=dirty pot
+id=0x09df
+weight=100
+}
+
+[0x09e0]
+{ type 1
+get=base_item
+name=pot
+id=0x09e0
+weight=100
+}
+
+[0x09e1]
+{ type 2
+get=base_item
+name=pot
+id=0x09e1
+weight=100
+}
+
+[0x09e2]
+{
+get=base_item
+name=frypan
+id=0x09e2
+weight=100
+}
+
+[0x09e3]
+{ type 3
+get=base_item
+name=pot
+id=0x09e3
+weight=100
+}
+
+[0x09e4]
+{ type 4
+get=base_item
+name=pot
+id=0x09e4
+weight=100
+}
+
+[0x09e5]
+{ type 5
+get=base_item
+name=pot
+id=0x09e5
+weight=100
+}
+
+[0x09e6]
+{ type 4
+get=base_item
+name=dirty pot
+id=0x09e6
+weight=100
+}
+
+[0x09e7]
+{ type 5
+get=base_item
+name=dirty pot
+id=0x09e7
+weight=100
+}
+
+[0x09e8]
+{
+get=base_item
+name=dirty pan
+id=0x09e8
+weight=100
+}
+
+[0x09ed]
+{
+get=base_item
+name=kettle
+id=0x09ed
+weight=100
+}
+
+[0x09f3]
+{
+get=base_item
+name=pan
+id=0x09f3
+weight=100
+}
+
+[0x09f4]
+{ N
+get=base_item
+name=fork
+id=0x09f4
+weight=100
+}
+
+[0x09f5]
+{ W
+get=base_item
+name=fork
+id=0x09f5
+weight=100
+}
+
+[0x09f6]
+{ N
+get=base_item
+name=knife
+id=0x09f6
+weight=100
+}
+
+[0x09f7]
+{ W
+get=base_item
+name=knife
+id=0x09f7
+weight=100
+}
+
+[0x09f8]
+{ N
+get=base_item
+name=spoon
+id=0x09f8
+weight=100
+}
+
+[0x09f9]
+{ W
+get=base_item
+name=spoon
+id=0x09f9
+weight=100
+}
+
+[0x0a19]
+{
+get=base_item
+name=dirty plate
+id=0x0a19
+weight=100
+}
+
+[0x0e78]
+{
+get=base_item
+name=basin
+id=0x0e78
+weight=100
+}
+
+[0x0ff6]
+{
+get=base_item
+name=glass pitcher
+id=0x0ff6
+weight=50
+}
+
+[0x0ff7]
+{
+get=base_item
+name=glass pitcher
+id=0x0ff7
+weight=50
+}
+
+[0x0ffa]
+{
+get=base_item
+name=bucket of water
+id=0x0ffa
+weight=100
+}
+
+[0x0ffb]
+{
+get=base_item
+name=skull mug
+id=0x0ffb
+weight=100
+}
+
+[0x0ffc]
+{
+get=base_item
+name=skull mug
+id=0x0ffc
+weight=100
+}
+
+[0x0ffd]
+{
+get=base_item
+name=skull mug
+id=0x0ffd
+weight=100
+}
+
+[0x0ffe]
+{
+get=base_item
+name=skull mug
+id=0x0ffe
+weight=100
+}
+
+[0x0fff]
+{
+get=base_item
+name=pewter mug
+id=0x0fff
+weight=100
+}
+
+[0x1000]
+{
+get=base_item
+name=pewter mug
+id=0x1000
+weight=100
+}
+
+[0x1001]
+{
+get=base_item
+name=pewter mug
+id=0x1001
+weight=100
+}
+
+[0x1002]
+{
+get=base_item
+name=pewter mug
+id=0x1002
+weight=100
+}
+
+[0x1003]
+{
+get=base_item
+name=spittoon
+id=0x1003
+weight=100
+}
+
+[0x1004]
+{
+get=base_item
+name=barrel tap
+id=0x1004
+weight=100
+}
+
+[0x1005]
+{
+get=base_item
+name=empty jar
+id=0x1005
+weight=100
+}
+
+[0x1006]
+{
+get=base_item
+name=full jar
+id=0x1006
+weight=100
+}
+
+[0x1007]
+{
+get=base_item
+name=half empty jar
+id=0x1007
+weight=100
+}
+
+[0x1008]
+{
+get=base_item
+name=wash basin
+id=0x1008
+weight=500
+}
+
+[0x1009]
+{
+get=base_item
+name=basin
+id=0x1009
+weight=200
+}
+
+[0x10e3]
+{
+get=base_item
+name=dough bowl
+id=0x10e3
+weight=100
+}
+
+[0x10e8]
+{ S
+get=base_item
+name=small wooden spoon
+id=0x10e8
+weight=100
+}
+
+[0x10e9]
+{ N
+get=base_item
+name=large wooden spoon
+id=0x10e9
+weight=100
+}
+
+[0x1871]
+{ S
+get=base_item
+name=beef carcass
+id=0x1871
+weight=500
+}
+
+[0x1872]
+{ E
+get=base_item
+name=beef carcass
+id=0x1872
+weight=500
+}
+
+[0x1873]
+{ S
+get=base_item
+name=sheep carcass
+id=0x1873
+weight=500
+}
+
+[0x1874]
+{ E
+get=base_item
+name=sheep carcass
+id=0x1874
+weight=500
+}
+
+[0x1941]
+{ many on a plate
+get=base_item
+name=glass mugs
+id=0x1941
+weight=1000
+}
+
+[0x1942]
+{ many on a plate
+get=base_item
+name=goblets
+id=0x1942
+weight=1000
+}
+
+[0x1943]
+{ many on a plate
+get=base_item
+name=tankards
+id=0x1943
+weight=1000
+}
+
+[0x1ad6]
+{ S with tap
+get=base_item
+name=keg
+id=0x1ad6
+weight=1000
+}
+
+[0x1ad7]
+{ E with tap
+get=base_item
+name=keg
+id=0x1ad7
+weight=1000
+}
+
+[0x1e83]
+{ dead hanging
+get=base_item
+name=bird
+id=0x1e83
+weight=100
+}
+
+[0x1e84]
+{ dead hanging
+get=base_item
+name=bird
+id=0x1e84
+weight=100
+}
+
+[0x1e85]
+{ dead hanging
+get=base_item
+name=bird
+id=0x1e85
+weight=100
+}
+
+[0x1e86]
+{ dead hanging
+get=base_item
+name=bird
+id=0x1e86
+weight=100
+}
+
+[0x1e87]
+{ dead hanging
+get=base_item
+name=chicken
+id=0x1e87
+weight=100
+}
+
+[0x1e88]
+{
+get=base_item
+name=skinned goat
+id=0x1e88
+weight=1000
+}
+
+[0x1e89]
+{
+get=base_item
+name=skinned goat
+id=0x1e89
+weight=1000
+}
+
+[0x1e8a]
+{
+get=base_item
+name=lard
+id=0x1e8a
+weight=100
+}
+
+[0x1e8b]
+{
+get=base_item
+name=plucked chicken
+id=0x1e8b
+weight=100
+}
+
+[0x1e8c]
+{
+get=base_item
+name=pig's feet
+id=0x1e8c
+weight=100
+}
+
+[0x1e8d]
+{
+get=base_item
+name=pig's feet
+id=0x1e8d
+weight=100
+}
+
+[0x1e8e]
+{
+get=base_item
+name=pig's head
+id=0x1e8e
+weight=100
+}
+
+[0x1e8f]
+{
+get=base_item
+name=pig's head
+id=0x1e8f
+weight=100
+}
+
+[0x1e90]
+{
+get=base_item
+name=skinned deer
+id=0x1e90
+weight=1000
+}
+
+[0x1e91]
+{
+get=base_item
+name=skinned deer
+id=0x1e91
+weight=1000
+}
+
+[0x1e92]
+{
+get=base_item
+name=skinned rabbit
+id=0x1e92
+weight=200
+}
+
+[0x1e93]
+{
+get=base_item
+name=skinned rabbit
+id=0x1e93
+weight=200
+}
+
+[0x1e94]
+{
+get=base_item
+name=chicken on a spit
+id=0x1e94
+weight=200
+}
+
+[0x1e95]
+{
+get=base_item
+name=rabbit on a spit
+id=0x1e95
+weight=200
+}
+
+[0x1e96]
+{
+get=base_item
+name=spit
+id=0x1e96
+weight=100
+}
+
+[0x1e97]
+{
+get=base_item
+name=chicken on a spit
+id=0x1e97
+weight=200
+}
+
+[0x1e98]
+{
+get=base_item
+name=rabbit on a spit
+id=0x1e98
+weight=200
+}
+
+[0x1e99]
+{
+get=base_item
+name=spit
+id=0x1e99
+weight=100
+}
+
+[0x1f81]
+{
+get=base_item
+name=glass
+id=0x1f81
+weight=100
+}
+
+[0x1f82]
+{
+get=base_item
+name=glass
+id=0x1f82
+weight=100
+}
+
+[0x1f83]
+{
+get=base_item
+name=glass
+id=0x1f83
+weight=100
+}
+
+[0x1f84]
+{
+get=base_item
+name=glass
+id=0x1f84
+weight=100
+}
+
+[0x1882]
+{
+get=base_item
+name=winnowing basket
+id=0x1882
+weight=300
+movable=1
+}
+
+
+EOF
+

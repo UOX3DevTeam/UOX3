@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<TITLE>S E C T I O N 2</TITLE> <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1"> 
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" BACKGROUND="../bg.jpg">
+<P ALIGN="center"><IMG SRC="sectionII.JPG" WIDTH="288" HEIGHT="36"></P><TABLE BORDER="0" WIDTH="100%" HEIGHT="52" BGCOLOR="#808080" CELLSPACING="0"> 
+<TR> <TD WIDTH="100%" BGCOLOR="#0080FF" HEIGHT="21"><A NAME="vendors"><FONT FACE="Tahoma"
+    COLOR="#FFFFFF"><SMALL>2.05 - VENDORS</SMALL></FONT></A></TD></TR> <TR> <TD WIDTH="100%" HEIGHT="19"><SMALL><FONT FACE="Tahoma">&nbsp;&nbsp; 
+A vendor is a NPC who sells/buys things from players. To make a vendor, either 
+<BR> &nbsp;&nbsp;&nbsp; add one from the NPC menu ('ADD), or follow these steps 
+to make your own.<BR> <BR> 
+<ol>
+	<li>Create a basic npc<BR>&nbsp;
+	<li>Type 'MAKESHOP and click on the NPC. This will give him vendor status <BR> and buy/sell packs.<br>&nbsp;
+	<li>Type 'GMOPEN 0x1a and click on the NPC. This will open the vendor sell pack. <BR> In this sell pack you place all the items you wish the vendor to sell. 
+	<BR><blockquote>For example: You want the vendor to sell loafs of bread, so you add a loaf of <BR>bread( 'ADD 0x103b ) and place it on the ground. Now set it's 
+type to 14, so people <BR>can actually eat it('SETTYPE 14).<BR> Place the loaf of bread inside the vendor sell pack.</blockquote>
+
+	<li> Now set how many loafs of bread you want the NPC to sell each time he restocks<BR> ('SETRESTOCK #, and click on loaf).<BR> &nbsp;&nbsp;&nbsp; 
+
+	<li> Ok now you must set the price that players must pay to get a loaf of bread. <BR> Type 'SETVALUE $$ (insert price here), and click on the 
+loaf of bread.<BR> &nbsp;&nbsp;&nbsp; 
+
+	<li> Now set the restockrate of the vendor. This is the time it takes for the vendor <BR> &nbsp;&nbsp;&nbsp; to restock when someone has bought something. Type 'SETSHOPRESTOCKRATE # <BR> &nbsp;&nbsp;&nbsp; 
+(insert time in minutes here) and click on the vendor.<BR>
+</ol>
+<BR> &nbsp;&nbsp;&nbsp; Ok now you have a vendor who will sell things to people 
+if they say &quot;vendor buy&quot;.<BR> &nbsp;&nbsp;&nbsp; But you also want to 
+make a vendor who buy things from players, you say? No problem, <BR> &nbsp;&nbsp;&nbsp; all you have to do, is open the vendor's BUY 
+pack, with 'GMOPEN 0x1c. Place all items <BR> &nbsp;&nbsp;&nbsp; you want the npc 
+to buy inside here, and set the price he<BR> &nbsp;&nbsp;&nbsp; will give for 
+those items ('SETVALUE $$ on each item).<BR> &nbsp;&nbsp;&nbsp; <BR> &nbsp;&nbsp;&nbsp; 
+So the NPC vendor has three packs...the Sell pack('GMOPEN 0x1a) the buy pack <BR> 
+&nbsp;&nbsp;&nbsp; ('GMOPEN 0x1c) and another pack where all the items the players 
+have sold to the vendor<BR> &nbsp;&nbsp;&nbsp; lies ('GMOPEN 0x1b)<BR> <BR> &nbsp;&nbsp;&nbsp; 
+The only thing remaining now, is to put some clothing on your vendor so as he/she 
+<BR> &nbsp;&nbsp;&nbsp; will not freeze hehe...Go to 2.6 - CUSTOM NPCs, and look 
+<BR> &nbsp;&nbsp;&nbsp; under &quot;Putting Clothes On Yer NPC&quot;.</FONT></SMALL></TD></TR> 
+</TABLE></BODY>
+</HTML>

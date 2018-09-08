@@ -1,0 +1,271 @@
+
+
+[0x156c]
+{ S
+get=base_item
+name=decorative shield
+id=0x156c
+weight=500
+movable=2
+}
+
+[0x156d]
+{ E
+get=base_item
+name=decorative shield
+id=0x156d
+weight=500
+movable=2
+}
+
+[0x156e]
+{ S
+get=base_item
+name=decorative shield
+id=0x156e
+weight=500
+movable=2
+}
+
+[0x156f]
+{ E
+get=base_item
+name=decorative shield
+id=0x156f
+weight=500
+movable=2
+}
+
+[0x1570]
+{ S
+get=base_item
+name=decorative shield
+id=0x1570
+weight=500
+movable=2
+}
+
+[0x1571]
+{ E
+get=base_item
+name=decorative shield
+id=0x1571
+weight=500
+movable=2
+}
+
+[0x1572]
+{ S
+get=base_item
+name=decorative shield
+id=0x1572
+weight=500
+movable=2
+}
+
+[0x1573]
+{ E
+get=base_item
+name=decorative shield
+id=0x1573
+weight=500
+movable=2
+}
+
+[0x1574]
+{ S
+get=base_item
+name=decorative shield
+id=0x1574
+weight=500
+movable=2
+}
+
+[0x1575]
+{ E
+get=base_item
+name=decorative shield
+id=0x1575
+weight=500
+movable=2
+}
+
+[0x1576]
+{ S
+get=base_item
+name=decorative shield
+id=0x1576
+weight=500
+movable=2
+}
+
+[0x1577]
+{ E
+get=base_item
+name=decorative shield
+id=0x1577
+weight=500
+movable=2
+}
+
+[0x1578]
+{ S
+get=base_item
+name=decorative shield
+id=0x1578
+weight=500
+movable=2
+}
+
+[0x1579]
+{ E
+get=base_item
+name=decorative shield
+id=0x1579
+weight=500
+movable=2
+}
+
+[0x157a]
+{ S
+get=base_item
+name=decorative shield
+id=0x157a
+weight=500
+movable=2
+}
+
+[0x157b]
+{ E
+get=base_item
+name=decorative shield
+id=0x157b
+weight=500
+movable=2
+}
+
+[0x157c]
+{ S
+get=base_item
+name=decorative shield
+id=0x157c
+weight=500
+movable=2
+}
+
+[0x157d]
+{ E
+get=base_item
+name=decorative shield
+id=0x157d
+weight=500
+movable=2
+}
+
+[0x157e]
+{ S
+get=base_item
+name=decorative shield
+id=0x157e
+weight=500
+movable=2
+}
+
+[0x157f]
+{ E
+get=base_item
+name=decorative shield
+id=0x157f
+weight=500
+movable=2
+}
+
+[0x1580]
+{ S
+get=base_item
+name=decorative shield
+id=0x1580
+weight=500
+movable=2
+}
+
+[0x1581]
+{ E
+get=base_item
+name=decorative shield
+id=0x1581
+weight=500
+movable=2
+}
+
+[0x1582]
+{ S
+get=base_item
+name=decorative shields
+id=0x1582
+weight=500
+movable=2
+}
+
+[0x1583]
+{ S
+get=base_item
+name=decorative shields
+id=0x1583
+weight=500
+movable=2
+}
+
+[0x1584]
+{ S
+get=base_item
+name=decorative shields
+id=0x1584
+weight=500
+movable=2
+}
+
+[0x1585]
+{ S
+get=base_item
+name=decorative shields
+id=0x1585
+weight=500
+movable=2
+}
+
+[0x1634]
+{ E
+get=base_item
+name=decorative shields
+id=0x1634
+weight=500
+movable=2
+}
+
+[0x1635]
+{ E
+get=base_item
+name=decorative shields
+id=0x1635
+weight=500
+movable=2
+}
+
+[0x1636]
+{ E
+get=base_item
+name=decorative shields
+id=0x1636
+weight=500
+movable=2
+}
+
+[0x1637]
+{ E
+get=base_item
+name=decorative shields
+id=0x1637
+weight=500
+movable=2
+}

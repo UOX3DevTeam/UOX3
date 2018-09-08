@@ -1,0 +1,4 @@
+        POINT
+  Purpose: 
+        Teleports you to your current location.
+        Sort of like a refresh-command.

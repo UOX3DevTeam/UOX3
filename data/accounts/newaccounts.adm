@@ -1,0 +1,17 @@
+//AIMP3.0-UV0.98-4-BD0h-DS1309077854-ED0
+//------------------------------------------------------------------------------
+// UOX3 uses this file to store new accounts that are to be imported on the next
+// time the server does a world save, or world load.
+//------------------------------------------------------------------------------
+// FORMAT: 
+//
+//    USER=username,password,flags,contact
+//
+// WHERE: username   - Username of the accounts to create.
+//        password   - Password of the account to create.
+//        flags      - See accounts.adm for correct flag values.
+//        contact    - Usually this is the email address, but can be used as a comment or ICQ
+//
+// NOTE: Flags, and contact values are not required, defaults will be used.
+// NOTE: Please ensure you press ENTER after your last line for proper loading.
+//------------------------------------------------------------------------------

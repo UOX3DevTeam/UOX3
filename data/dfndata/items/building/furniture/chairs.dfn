@@ -1,0 +1,807 @@
+// chairs.dfn
+// All types of things to sit on
+// v1.0; 18/03/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
+// (add new version comments here, use format of above line please)
+// For use with the UOX emulator or any with permission from the author
+
+
+[0x0a2a]
+{ supports
+get=base_item
+name=a stool
+id=0x0a2a
+weight=1000
+value=12 6
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0a2b]
+{
+get=base_item
+name=a stool
+id=0x0a2b
+weight=1000
+value=12 6
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b2c]
+{ E
+get=base_item
+name=wooden bench
+id=0x0b2c
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b2d]
+{ S
+get=base_item
+name=wooden bench
+id=0x0b2d
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b2e]
+{ S
+get=base_item
+name=wooden chair
+id=0x0b2e
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b2f]
+{ E
+get=base_item
+name=wooden chair
+id=0x0b2f
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b30]
+{ W
+get=base_item
+name=wooden chair
+id=0x0b30
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b31]
+{ N
+get=base_item
+name=wooden chair
+id=0x0b31
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b32]
+{ S
+get=base_item
+name=throne
+id=0x0b32
+weight=4000
+value=48 24
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b33]
+{ E
+get=base_item
+name=throne
+id=0x0b33
+weight=4000
+value=48 24
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b4e]
+{ E fancy cushion
+get=base_item
+name=chair
+id=0x0b4e
+weight=2000
+value=18 9
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b4f]
+{ S fancy cushion
+get=base_item
+name=chair
+id=0x0b4f
+weight=2000
+value=18 9
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b50]
+{ N fancy cushion
+get=base_item
+name=chair
+id=0x0b50
+weight=2000
+value=18 9
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b51]
+{ W fancy cushion
+get=base_item
+name=chair
+id=0x0b51
+weight=2000
+value=18 9
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b52]
+{ E cushion
+get=base_item
+name=chair
+id=0x0b52
+weight=2000
+value=14 7
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b53]
+{ S cushion
+get=base_item
+name=chair
+id=0x0b53
+weight=2000
+value=14 7
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b54]
+{ N cushion
+get=base_item
+name=chair
+id=0x0b54
+weight=2000
+value=14 7
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b55]
+{ W cushion
+get=base_item
+name=chair
+id=0x0b55
+weight=2000
+value=14 7
+restock=10
+movable=1
+dyeable=1
+decay=1
+good=1
+}
+
+[0x0b56]
+{ E supports
+get=base_item
+name=chair
+id=0x0b56
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b57]
+{ S supports
+get=base_item
+name=chair
+id=0x0b57
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b58]
+{ W supports
+get=base_item
+name=chair
+id=0x0b58
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b59]
+{ N supports
+get=base_item
+name=chair
+id=0x0b59
+weight=2000
+value=18 9
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5a]
+{ E
+get=base_item
+name=chair
+id=0x0b5a
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5b]
+{ S
+get=base_item
+name=chair
+id=0x0b5b
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5c]
+{ N
+get=base_item
+name=chair
+id=0x0b5c
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5d]
+{ W
+get=base_item
+name=chair
+id=0x0b5d
+weight=2000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5e]
+{
+get=base_item
+name=foot stool
+id=0x0b5e
+weight=1000
+value=10 5
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x0b5f]
+{ E boards 1/3
+get=base_item
+name=bench
+id=0x0b5f
+weight=2000
+movable=2
+}
+
+[0x0b60]
+{ E boards 2/3
+get=base_item
+name=bench
+id=0x0b60
+weight=2000
+movable=2
+}
+
+[0x0b61]
+{ E boards 3/3
+get=base_item
+name=bench
+id=0x0b61
+weight=2000
+movable=2
+}
+
+[0x0b62]
+{ E 1/3
+get=base_item
+name=bench
+id=0x0b62
+weight=2000
+movable=2
+}
+
+[0x0b63]
+{ E 2/3
+get=base_item
+name=bench
+id=0x0b63
+weight=2000
+movable=2
+}
+
+[0x0b64]
+{ E 3/3
+get=base_item
+name=bench
+id=0x0b64
+weight=2000
+movable=2
+}
+
+[0x0b65]
+{ S boards 1/3
+get=base_item
+name=bench
+id=0x0b65
+weight=2000
+movable=2
+}
+
+[0x0b66]
+{ S boards 2/3
+get=base_item
+name=bench
+id=0x0b66
+weight=2000
+movable=2
+}
+
+[0x0b67]
+{ S boards 3/3
+get=base_item
+name=bench
+id=0x0b67
+weight=2000
+movable=2
+}
+
+[0x0b68]
+{ S 1/3
+get=base_item
+name=bench
+id=0x0b68
+weight=2000
+movable=2
+}
+
+[0x0b69]
+{ S 2/3
+get=base_item
+name=bench
+id=0x0b69
+weight=2000
+movable=2
+}
+
+[0x0b6a]
+{ S 3/3
+get=base_item
+name=bench
+id=0x0b6a
+weight=2000
+movable=2
+}
+
+[0x0b91]
+{ S fancy 1/2
+get=base_item
+name=bench
+id=0x0b91
+weight=2000
+movable=2
+}
+
+[0x0b92]
+{ S fancy 2/2
+get=base_item
+name=bench
+id=0x0b92
+weight=2000
+movable=2
+}
+
+[0x0b93]
+{ E fancy 1/2
+get=base_item
+name=bench
+id=0x0b93
+weight=2000
+movable=2
+}
+
+[0x0b94]
+{ E fancy 2/2
+get=base_item
+name=bench
+id=0x0b94
+weight=2000
+movable=2
+}
+
+[0x1049]
+{ E
+get=base_item
+name=loom bench
+id=0x1049
+weight=1000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x104a]
+{ S
+get=base_item
+name=loom bench
+id=0x104a
+weight=1000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x11fc]
+{
+get=base_item
+name=bamboo stool
+id=0x11fc
+weight=1000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x1207]
+{ S 1/3
+get=base_item
+name=stone bench
+id=0x1207
+weight=4000
+movable=2
+}
+
+[0x1208]
+{ S 2/3
+get=base_item
+name=stone bench
+id=0x1208
+weight=4000
+movable=2
+}
+
+[0x1209]
+{ S 3/3
+get=base_item
+name=stone bench
+id=0x1209
+weight=4000
+movable=2
+}
+
+[0x120a]
+{ E 1/3
+get=base_item
+name=stone bench
+id=0x120a
+weight=4000
+movable=2
+}
+
+[0x120b]
+{ E 2/3
+get=base_item
+name=stone bench
+id=0x120b
+weight=4000
+movable=2
+}
+
+[0x120c]
+{ E 3/3
+get=base_item
+name=stone bench
+id=0x120c
+weight=4000
+movable=2
+}
+
+[0x1218]
+{ S
+get=base_item
+name=stone chair
+id=0x1218
+weight=4000
+value=30 15
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x1219]
+{ E
+get=base_item
+name=stone chair
+id=0x1219
+weight=4000
+value=30 15
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x121a]
+{ N
+get=base_item
+name=stone chair
+id=0x121a
+weight=4000
+value=30 15
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x121b]
+{ W
+get=base_item
+name=stone chair
+id=0x121b
+weight=4000
+value=30 15
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x1526]
+{ E lordbritish 1/2
+get=base_item
+name=throne
+id=0x1526
+weight=1000
+movable=2
+}
+
+[0x1527]
+{ E lordbritish 2/2
+get=base_item
+name=throne
+id=0x1527
+weight=1000
+movable=2
+}
+
+[0x1dc7]
+{ E 1/3
+get=base_item
+name=sandstone bench
+id=0x1dc7
+weight=4000
+movable=2
+}
+
+[0x1dc8]
+{ E 2/3
+get=base_item
+name=sandstone bench
+id=0x1dc8
+weight=4000
+movable=2
+}
+
+[0x1dc9]
+{ E 3/3
+get=base_item
+name=sandstone bench
+id=0x1dc9
+weight=4000
+movable=2
+}
+
+[0x1dca]
+{ S 1/3
+get=base_item
+name=sandstone bench
+id=0x1dca
+weight=4000
+movable=2
+}
+
+[0x1dcb]
+{ S 2/3
+get=base_item
+name=sandstone bench
+id=0x1dcb
+weight=4000
+movable=2
+}
+
+[0x1dcc]
+{ S 3/3
+get=base_item
+name=sandstone bench
+id=0x1dcc
+weight=4000
+movable=2
+}
+
+[0x1dcd]
+{ E 1/3
+get=base_item
+name=marble bench
+id=0x1dcd
+weight=4000
+movable=2
+}
+
+[0x1dce]
+{ E 2/3
+get=base_item
+name=marble bench
+id=0x1dce
+weight=4000
+movable=2
+}
+
+[0x1dcf]
+{ E 3/3
+get=base_item
+name=marble bench
+id=0x1dcf
+weight=4000
+movable=2
+}
+
+[0x1dd0]
+{ S 1/3
+get=base_item
+name=marble bench
+id=0x1dd0
+weight=4000
+movable=2
+}
+
+[0x1dd1]
+{ S 2/3
+get=base_item
+name=marble bench
+id=0x1dd1
+weight=4000
+movable=2
+}
+
+[0x1dd2]
+{ S 3/3
+get=base_item
+name=marble bench
+id=0x1dd2
+weight=4000
+movable=2
+}
+
+[0x3dff]
+{ S blackstone
+get=base_item
+name=bench
+id=0x3dff
+weight=4000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}
+
+[0x3e00]
+{ E blackstone
+get=base_item
+name=bench
+id=0x3e00
+weight=4000
+value=14 7
+restock=10
+movable=1
+decay=1
+good=1
+}

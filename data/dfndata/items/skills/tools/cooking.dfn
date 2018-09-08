@@ -1,0 +1,23 @@
+[0x1043]
+{
+get=base_item
+name=rolling pin
+id=0x1043
+weight=100
+}
+
+[0x1039]
+{
+get=base_item
+name=sack of flour
+id=0x1039
+weight=200
+}
+
+[0x1045]
+{
+get=base_item
+name=sack of flour
+id=0x1045
+weight=200
+}
