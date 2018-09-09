@@ -1,11 +1,13 @@
 # UOX3
-Ultima Offline eXperiment 3 - the original open source Ultima Online server emulator
+Ultima Offline eXperiment 3 - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997.
 
-news, releases, forums, additional documentation and more can be found at https://www.uox3.org
+News, releases, forums, additional documentation and more can be found at https://www.uox3.org
 
 For details on UO client compatibility, check http://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
 Requires Razor or similar tool in order to connect: https://github.com/msturgill/razor/releases
+
+---
 
 # How to compile UOX3...
 # ...under Linux
@@ -15,7 +17,7 @@ Refer to instructions at https://www.uox3.org/forums/viewtopic.php?f=6&t=457
 ## Step 1: Clone the UOX3 Git Repository
 1) Download and install GitHub Desktop (or your preferred git tool) from https://desktop.github.com/
 2) Run GitHub Desktop, and then press **File->Clone Repository** (or *CTRL+SHIFT+O*)
-3) Click on URL tab, then enter https://github.com/Xoduz/UOX3.git, as well as a local path for where to store the repository - for example **D:\UOX3**, then hit the Clone button. This will clone the UOX3 repository to your drive in the specified local path.
+3) Click on URL tab, then enter https://github.com/UOX3DevTeam/UOX3.git, as well as a local path for where to store the repository - for example **D:\UOX3**, then hit the Clone button. This will clone the UOX3 repository to your drive in the specified local path.
 
 ## Step 2: Compile UOX3 using your favourite compiler
 ### Option A) Visual Studio 2017 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
