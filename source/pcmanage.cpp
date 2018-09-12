@@ -718,10 +718,34 @@ bool CPICreateCharacter::Handle( void )
 
 			if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 				locationNumber = clientFlags;
+
+			// Fetch player's chosen start location
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
-			if( toGo == NULL )
-				toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+			if (toGo == NULL)
+			{
+				// Invalid locationNumber; check if there are ANY start locations loaded
+				CServerData *sd = cwmWorldState->ServerData();
+				size_t serverCount = sd->NumServerLocations();
+
+				if (serverCount == 0)
+				{
+					// No start locations found, use a default hardcoded one
+					Console.Error("No starting locations found in ini file; sending new character to 1495, 1629, 10.");
+					SI16 startX;
+					SI16 startY;
+					SI08 startZ;
+					startX = 1495;
+					startY = 1629;
+					startZ = 10;
+					mChar->SetLocation(startX, startY, startZ);
+				}
+				else
+				{
+					// Use first start location, which we know exists
+					toGo = cwmWorldState->ServerData()->ServerLocation(0);
 			mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>(toGo->z) );
+				}
+			}
 			mChar->SetDir( SOUTH );
 
 			SetNewCharSkillsStats( mChar );
