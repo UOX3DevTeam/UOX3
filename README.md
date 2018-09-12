@@ -7,6 +7,10 @@ For details on UO client compatibility, check http://www.uox3.org/forums/viewtop
 
 Requires Razor or similar tool in order to connect: https://github.com/msturgill/razor/releases
 
+Also check out our [UOX3 Tools](https://github.com/UOX3DevTeam/UOX3-Tools) and [UOX3 Resources](https://github.com/UOX3DevTeam/UOX3-Resources) repositories!
+
+Join us on the [Ultima Offline eXperiment 3](https://discord.gg/uBAXxhF) server on Discord for a quick chat!
+
 ---
 
 # How to compile UOX3...
