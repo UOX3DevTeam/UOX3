@@ -27,7 +27,7 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 	<div class="PageHeader"> -= UOX3 Server-Settings =- </div>
 	<center><p>| <a href="installation.html">Install and Configure UOX3</a> |
 						<a href="client-config.html">Configure the UO Client</a> |
-						<a href="commandlist.html">Commandlist</a> |</p></center>	
+						<a href="commandlist.html">Commandlist</a> |</p></center>
 	<div class="SectionHeader">Index of Contents</div>
   <div class="Section">
   <table width="90%"><tr><td width="50%">
@@ -164,7 +164,7 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <p><strong>NOTE:</strong> While it is possible (and it is even the default setting) to enable login-support for all the ranges of client-versions listed below, how well they will work depends very much on what version of the datafiles are used on the server. It is <strong><em>highly recommended</em></strong> to restrict client-support to whichever range of versions is closest to the client-version the datafiles in use on the server are from.</p>
         </table></div>
-	<a class="topLink" href="#top">(Back to top)</a>		
+	<a class="topLink" href="#top">(Back to top)</a>
 	<a name="playserverlist"></a>
 	    <div class="SectionHeader">[play server list]</div>
 		<div class="Section">
@@ -739,7 +739,19 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 		<table align="center" class="myTable">
           <tr>
             <td class="left">LOCATION</td>
-            <td class="right">Startlocations used by the character-creation process in the client. Fixed amount of locations, using the following format: <strong>LOCATION=TOWN,BUILDING,X,Y,Z,WORLD,CLILOCMSG</strong> (description of town)</td>
+            <td class="right">Startlocations used by the character-creation process in the client. Fixed amount of locations, using the following format: <strong>LOCATION=TOWN,BUILDING,X,Y,Z,WORLD,CLILOCMSG</strong> (description of town)<br>
+              Default setup:<br>
+      <pre>
+      LOCATION=Yew,Center,545,982,0,0,1075072
+      LOCATION=Minoc,Tavern,2477,411,15,0,1075073
+      LOCATION=Britain,Sweet Dreams Inn,1495,1629,10,0,1075074
+      LOCATION=Moonglow,Docks,4406,1045,0,0,1075075
+      LOCATION=Trinsic,West Gate,1832,2779,0,0,1075076
+      LOCATION=Magincia,Docks,3675,2259,20,0,1075077
+      LOCATION=Jhelom,Docks,1492,3696,0,0,1075078
+      LOCATION=Skara Brae,Docks,639,2236,0,0,1075079
+      LOCATION=Vesper,Ironwood Inn,2771,977,0,0,1075080</pre>
+            </td>
           </tr>
         </table>
 		</div>	<a class="topLink" href="#top">(Back to top)</a>
