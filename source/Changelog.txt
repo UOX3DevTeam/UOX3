@@ -1,3 +1,6 @@
+13/09/2018 - Xuri (0.99.2d)
+	Updated version number to 0.99.2d
+
 12/09/2018 - Xuri
 	Fixed a server crash when start locations in uox.ini is empty; defaults to hardcoded location (Sweet Dreams Inn, Britain) if no start locations found
 
