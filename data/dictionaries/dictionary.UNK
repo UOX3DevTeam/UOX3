@@ -256,7 +256,7 @@
 266=Select item to divinely unlock.
 267=Select item or char to set trigger of.
 268=Select item to reposition.
-269=You are currently posting 
+269=You are currently posting
 270=a message to a single board [LOCAL].
 271=a message to all boards in this area [REGIONAL].
 272=a message to all boards in the world [GLOBAL].
@@ -1164,18 +1164,18 @@
 1168=Your town is nearing destruction!
 1169=Your town is looking decidedly unhealthy!
 1170=Your town is under attack!
-1171=The mayor attempted to ally you with a town you already belong to.	
+1171=The mayor attempted to ally you with a town you already belong to.
 1172=Your town of %s has now allied itself with %s.
 1173=Allied Towns (%i)
 1174=An early election has been forced, please proceed to all polling booths.
 1175=There has been an influx of money due to theft of another town's stone!
 1176=The town has been destroyed, beware the guards!
 // uox3.cpp
-1177=The Murderous %s Lady 
-1178=The Murderer %s Lord 
-1179=The %sLady 
-1180=The %sLord 
-1181=The Murderer 
+1177=The Murderous %s Lady
+1178=The Murderer %s Lord
+1179=The %sLady
+1180=The %sLord
+1181=The Murderer
 1182=The %s
 1183=You cannot reach the handle from here.
 1184=This doesnt seem to be a valid door type. Contact a GM.
@@ -1292,7 +1292,7 @@
 1300=TEACH
 1301=LEARN
 1302=I am sorry, but I have nothing to teach thee.
-1303=I can teach thee the following skills: 
+1303=I can teach thee the following skills:
 1304=Thou wishest to learn of  %s?
 1305=I can teach thee no more than thou already knowest!
 1306=Very well I, can train thee up to the level of %i percent for %i gold. Pay for less and I shall teach thee less.
@@ -1420,7 +1420,7 @@
 1422=STARBOARD
 1423=COME ABOUT
 1424=SET NAME
-1425=SET NAME 
+1425=SET NAME
 1426=A ship named %s
 // magic.cpp
 1427=a blue moongate
@@ -1701,7 +1701,7 @@
 1729=Attack [%i %i], Defense [%i] Taming [%i] Hit Points [%i]
 1730=You cannot provoke such a person!
 1731=Defense [%i] LoDamage [%i] HiDamage [%i], Poison [%i], Rank [%i]
-1732=This Item 
+1732=This Item
 1733=Select item to set spwanobj on.
 1734=Select item to set spwanobjlist on.
 1735=Select player to own the object.
@@ -1737,7 +1737,7 @@
 1765=You have successfully created a campfire.
 1766=You are too close to the target.
 1767=You are too far away from the archery butte to get an accurate shot.
-1768=You would do better to stand in front of the archery butte. 
+1768=You would do better to stand in front of the archery butte.
 1769=You aren't properly lined up with the archery butte to get an accurate shot.
 1770=You do not have any arrows with which to practice.
 1771=You do not have any crossbow bolts with which to practice.
@@ -1768,5 +1768,6 @@
 1796=Your current client-version (%s) is not supported by this shard. You will be disconnected.
 1797=Woe is me! My escort has betrayed me!
 1798=You cannot mount.
+1799=Hostile actions are not permitted in this safe area.
 }
 EOF
