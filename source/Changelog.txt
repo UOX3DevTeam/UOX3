@@ -7,6 +7,7 @@
 	Exposed isSafeZone JS property for characters
 	Updated potion.js, provocation.js and enticement.js to check for safe zones
 	Updated spells in spells.dfn to include aggressive and resistable flags
+	Updated dictionaries with safezone message
 
 13/09/2018 - Xuri (0.99.2d)
 	Updated version number to 0.99.2d
