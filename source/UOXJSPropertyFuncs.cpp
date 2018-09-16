@@ -1161,6 +1161,7 @@ namespace UOX
 				case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
 				case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
 				case CREGP_CANCASTAGGRESSIVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanCastAggressive() );	break;
+				case CREGP_ISSAFEZONE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsSafeZone() );			break;
 				case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
 				case CREGP_ISDUNGEON:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDungeon() );			break;
 				case CREGP_CHANCEBIGORE:		*vp = INT_TO_JSVAL( gPriv->GetChanceBigOre() );			break;
@@ -1196,6 +1197,7 @@ namespace UOX
 				case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );					break;
 				case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );				break;
 				case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );		break;
+				case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );				break;
 				case CREGP_HEALTH:				gPriv->SetHealth( (SI16)encaps.toInt() );			break;
 				case CREGP_ISDUNGEON:			gPriv->IsDungeon( encaps.toBool() );				break;
 				case CREGP_CHANCEBIGORE:		gPriv->SetChanceBigOre( (UI08)encaps.toInt() );		break;

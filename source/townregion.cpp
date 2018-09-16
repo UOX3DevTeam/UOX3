@@ -30,6 +30,7 @@ const UI32 BIT_GATE			=	2;
 const UI32 BIT_RECALL		=	3;
 const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
+const UI32 BIT_SAFEZONE		=	8;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
@@ -137,7 +138,11 @@ bool CTownRegion::Load( Script *ss )
 				break;
 			case 'P':
 				if( UTag == "PRIV" )
-					priv = data.toUByte();
+				{
+					// Overwrites privs loaded from regions.dfn, making it impossible to change privs after initial server startup
+					// Currently not used for anything, so we disable until we find a better solution.
+					//priv = std::bitset<10>( data.toUShort() );
+				}
 				else if( UTag == "POLLTIME" )
 					timeToNextPoll = data.toLong();
 				break;
@@ -174,7 +179,7 @@ bool CTownRegion::Save( std::ofstream &outStream )
 	outStream << "RACE=" << race << '\n';
 	outStream << "GUARDOWNER=" << guardowner << '\n';
 	outStream << "MAYOR=" << std::hex << "0x" << mayorSerial << std::dec << '\n';
-	outStream << "PRIV=" << static_cast<UI16>(priv.to_ulong()) << '\n';
+	outStream << "PRIV=" << priv.to_ulong() << '\n';
 	outStream << "RESOURCEAMOUNT=" << goldReserved << '\n';
 	outStream << "TAXEDID=" << std::hex << "0x" << taxedResource << std::dec << '\n';
 	outStream << "TAXEDAMOUNT=" << taxedAmount << '\n';
@@ -460,7 +465,9 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					race = data.toUShort();
 				break;
 			case 'S':
-				if( UTag == "SELLABLE" )
+				if( UTag == "SAFEZONE" )
+					IsSafeZone( (data.toUByte() == 1) );
+				else if( UTag == "SELLABLE" )
 				{
 					if( actgood > -1 )
 						goodList[actgood].sellVal = data.toLong();
@@ -557,6 +564,11 @@ bool CTownRegion::CanRecall( void ) const
 bool CTownRegion::CanCastAggressive( void ) const
 {
 	return priv.test( BIT_AGGRESSIVE );
+}
+
+bool CTownRegion::IsSafeZone( void ) const
+{
+	return priv.test( BIT_SAFEZONE );
 }
 
 std::string CTownRegion::GetName( void ) const
@@ -1341,6 +1353,10 @@ void CTownRegion::CanRecall( bool value )
 void CTownRegion::CanCastAggressive( bool value )
 {
 	priv.set( BIT_AGGRESSIVE, value );
+}
+void CTownRegion::IsSafeZone( bool value )
+{
+	priv.set( BIT_SAFEZONE, value );
 }
 void CTownRegion::IsDungeon( bool value )
 {

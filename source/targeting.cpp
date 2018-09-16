@@ -886,6 +886,15 @@ void AttackTarget( CSocket *s )
 		s->sysmessage( 1073 );
 		return;
 	}
+
+	// Check if combat is allowed in attacker's AND target's regions
+	if( target->GetRegion()->IsSafeZone() || target2->GetRegion()->IsSafeZone() )
+	{
+		// Target is in a safe zone where all aggressive actions are forbidden, disallow
+		s->sysmessage( 1799 );
+		return;
+	}
+
 	Combat->AttackTarget( target, target2 );
 	if( target2->IsInnocent() && target2 != target->GetOwnerObj() )
 	{

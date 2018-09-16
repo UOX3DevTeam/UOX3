@@ -1,3 +1,13 @@
+17/09/2018 - Xuri (0.99.2e)
+	Disabled SAFESEH linker option for debug build to enable "Edit and Continue" mode in Visual Studio
+	Disabled loading of PRIV tag from regions.wsc, as it is currently unused (meant for townstones) and prevents loading certain updates to regions.dfn file
+	Added support for SAFEZONE tag to regions.dfn. No hostile actions are allowed within zones where this tag is set to 1
+	Added combat, spellcasting, stealing and snooping checks for safe zone
+	Added safe zone check to damage portion of explosion potion
+	Exposed isSafeZone JS property for characters
+	Updated potion.js, provocation.js and enticement.js to check for safe zones
+	Updated spells in spells.dfn to include aggressive and resistable flags
+
 13/09/2018 - Xuri (0.99.2d)
 	Updated version number to 0.99.2d
 

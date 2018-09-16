@@ -53,6 +53,16 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( cAttack->GetNPCAiType() == AI_DUMMY ) // If passive, don't allow attack
 		return false;
 
+	// Check if combat is allowed in attacker AND target's regions, but allow it if it's a guard
+	if( cAttack->GetNPCAiType() != AI_GUARD && ( cAttack->GetRegion()->IsSafeZone() || cTarget->GetRegion()->IsSafeZone() ))
+	{
+		// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
+		CSocket *cSocket = cAttack->GetSocket();
+		if( cSocket )
+			cSocket->sysmessage( 1799 );
+		return false;
+	}
+
 	bool returningAttack = false;
 
 	cAttack->SetTarg( cTarget );
@@ -225,6 +235,14 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( !ourChar->GetCanAttack() ) //Is our char allowed to attack
 		{
 			s->sysmessage( 1778 );
+			return;
+		}
+
+		// Check if combat is allowed in attacker AND target's regions
+		if( ourChar->GetRegion()->IsSafeZone() || i->GetRegion()->IsSafeZone() )
+		{
+			// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
+			s->sysmessage( 1799 );
 			return;
 		}
 

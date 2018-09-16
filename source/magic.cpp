@@ -1127,6 +1127,13 @@ bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 }
 void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
+	// Check if target is in a safe zone
+	if( target->GetRegion()->IsSafeZone() )
+	{
+		// Target is in a safe zone, ignore spell effect
+		return;
+	}
+
 	int distx	= abs(target->GetX() - caster->GetX() );
 	int disty	= abs(target->GetY() - caster->GetY() );
 	int dmgmod	= UOX_MIN( distx, disty );
@@ -1986,7 +1993,9 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		if( mSock != NULL ) 
 			mSock->sysmessage( 700 );
 	}           
-	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
+
+	// Allow damage if target is not invulnerable or in a zone safe from aggressive magic
+	if( !p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() && p->GetRegion()->CanCastAggressive() )
 	{
 		UI08 hitLoc = Combat->CalculateHitLoc();
 		SI16 damage = Combat->ApplyDamageBonuses( element, attacker, p, MAGERY, hitLoc, amount);
@@ -2016,7 +2025,9 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 		if( s != NULL ) 
 			s->sysmessage( 700 );
 	}           
-	if( !p->IsInvulnerable() && p->GetRegion()->CanCastAggressive() )
+
+	// Allow poison damage if target is not invunlnerable or in a zone safe from aggressive magic 
+	if( !p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() && p->GetRegion()->CanCastAggressive() )
 	{
 		if( poison > 5 ) 
 			poison = 5;
@@ -2428,11 +2439,27 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 		return false;
 	}
 
-	if( !mChar->GetRegion()->CanCastAggressive() && spells[mChar->GetSpellCast()].AggressiveSpell() ) // ripper 9-11-99 not in town :)
+	// Check if caster can cast aggressive spells in the region they're in
+	if( spells[mChar->GetSpellCast()].AggressiveSpell() )
 	{
+		bool allowCasting = true;
+		if( mChar->GetRegion()->IsSafeZone() )
+		{
+			mSock->sysmessage( 1799 );
+			allowCasting = false;
+		}
+		else if( !mChar->GetRegion()->CanCastAggressive() )
+		{
 		mSock->sysmessage( 706 );
+			allowCasting = false;
+		}
+
+		if( !allowCasting )
+		{
+			// Not allowed to cast selected spell in this region, abort
 		mChar->StopSpell();
 		return false;
+	}
 	}
 	
 	if( !curSpellCasting.Enabled() )
@@ -2664,6 +2691,28 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	CChar *src			= caster;
 	bool validSocket	= ( s != NULL );
 
+	// Check if caster can cast aggressive spells in the region they're in
+	if( spells[curSpell].AggressiveSpell() )
+	{
+		bool allowCasting = true;
+		if( caster->GetRegion()->IsSafeZone() )
+		{
+			// Caster is in a safe zone, where all aggressive actions are forbidden
+			if( validSocket )
+				s->sysmessage( 1799 );
+			allowCasting = false;
+		}
+		else if( !caster->GetRegion()->CanCastAggressive() )
+		{
+			// Caster is in a region where casting aggressive spells is forbidden
+			if( validSocket )
+				s->sysmessage( 709 );
+			allowCasting = false;
+		}
+		if( !allowCasting )
+			return;
+	}
+
 	if( curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70 )
 		Log( Dictionary->GetEntry( magic_table[curSpell].spell_name ), caster, NULL, "(Succeeded)");
 	if( caster->IsNpc() || validSocket && s->CurrentSpellType() != 2 )	// delete mana if NPC, s is -1 otherwise!
@@ -2676,13 +2725,6 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() ) 
 		DelReagents( caster, spells[curSpell].Reagants() );
 	
-	if( spells[curSpell].AggressiveSpell() && !caster->GetRegion()->CanCastAggressive() )
-	{
-		if( validSocket )
-			s->sysmessage( 709 );
-		return;
-	}
-
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
 		cScript *tScriptExec = NULL;
@@ -2758,8 +2800,16 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				{
 					if( spells[curSpell].AggressiveSpell() )
 					{
-						if( !caster->GetRegion()->CanCastAggressive() )
+						if( c->GetRegion()->IsSafeZone() )
 						{
+							// Target is in a safe zone, where all aggressive actions are forbidden
+							if( validSocket )
+								s->sysmessage( 1799 );
+							return;
+						}
+						else if( !c->GetRegion()->CanCastAggressive() )
+						{
+							// Target is in a region where casting aggressive spells is forbidden
 							if( validSocket )
 								s->sysmessage( 709 );
 							return;
@@ -2896,6 +2946,25 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 				else if( validSocket )
 				{
 					s->sysmessage( 717 );
+					return;
+				}
+			}
+
+			if( spells[curSpell].AggressiveSpell() )
+			{
+				CTownRegion *targetRegion = calcRegionFromXY( x, y, caster->WorldNumber() );
+				if( targetRegion->IsSafeZone() )
+				{
+					// Target location is in a region where hostile actions are forbidden, disallow
+					if( validSocket )
+						s->sysmessage( 1799 );
+					return;
+				}
+				else if( !targetRegion->CanCastAggressive() )
+				{
+					// Target location is in a region where casting aggressive spells is forbidden, disallow
+					if( validSocket )
+						s->sysmessage( 709 );
 					return;
 				}
 			}

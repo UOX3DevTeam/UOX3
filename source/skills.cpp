@@ -1048,7 +1048,13 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 			{
 				case ITEMID:			s->target( 0, TARGET_ITEMID, 857 );			break;
 				case STEALING:
-					if( cwmWorldState->ServerData()->RogueStatus() )
+					// Check if stealing is allowed in player's current region
+					if( mChar->GetRegion()->IsSafeZone() )
+					{
+						// Player is in a safe zone where all aggressive actions are forbidden, disallow
+						s->sysmessage( 1799 );
+					}
+					else if( cwmWorldState->ServerData()->RogueStatus() )
 						s->target( 0, TARGET_STEALING, 863 );
 					else
 						s->sysmessage( 864 );
@@ -1079,6 +1085,14 @@ void cSkills::RandomSteal( CSocket *s )
 	CChar *npc = calcCharObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( npc ) )
 		return;
+
+	// Check if stealing is allowed in target char's region
+	if( npc->GetRegion()->IsSafeZone() )
+	{
+		// Target is in a safe zone where all aggressive actions are forbidden, disallow
+		s->sysmessage( 1799 );
+		return;
+	}
 
 	CItem *p = npc->GetPackItem();
 	if( !ValidateObject( p ) )
@@ -1135,6 +1149,14 @@ void cSkills::StealingTarget( CSocket *s )
 	CChar *npc = FindItemOwner( item );
 	if( !ValidateObject( npc ) )
 		return;
+
+	// Check if stealing is allowed in target char's region
+	if( npc->GetRegion()->IsSafeZone() )
+	{
+		// Target is in a safe zone where all aggressive actions are forbidden, disallow
+		s->sysmessage( 1799 );
+		return;
+	}
 
 	if( item->GetCont() == npc || item->GetCont() == NULL || item->isNewbie() )
 	{
@@ -2530,6 +2552,14 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		s->sysmessage( 991 );
 		if( tSock != NULL )
 			tSock->sysmessage( 992, mChar->GetName().c_str() );
+		return;
+	}
+
+	// Check if snooping is allowed in player's AND target's regions
+	if( mChar->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone() )
+	{
+		// Target is in a safe zone where all aggressive actions are forbidden, disallow
+		s->sysmessage( 1799 );
 		return;
 	}
 
