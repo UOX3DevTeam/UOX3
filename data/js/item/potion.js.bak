@@ -78,11 +78,7 @@ function onUseChecked( pUser, iUsed )
 				break;
 			case 3:		// Explosion Potion
 				var pRegion = pUser.region;
-				if( pRegion.isSafeZone )
-				{
-					socket.SysMessage( GetDictionaryEntry( 1799, socket.Language ) ); // Hostile actions are not permitted in this safe area.
-				}
-				else if( pRegion.isGuarded )
+				if( pRegion.isGuarded )
 				{
 					socket.SysMessage( GetDictionaryEntry( 1347, socket.Language ) ); //You can't use that in town!
 					return false;
@@ -233,35 +229,6 @@ function onCallback0( socket, ourObj )
 		}
 
 		iUsed.movable = 2;
-
-		// See if explosion potion would affect any characters in a safe zone, if so disallow
-		var safeTargets = 0;
-		var radius = 4;
-		safeTargets = AreaCharacterFunction( "findSafeTargets", iUsed, radius );
-
-		if( safeTargets == 0 )
-		{
-			// No safe targets found, proceed
 		DoMovingEffect( mChar, iUsed, 0x0F0D, 0x11, 0, false, 0, 0 );
-	}
-		else
-		{
-			// Disallow explosion effect from potion, some targets are in safe zone
-			socket.SysMessage( GetDictionaryEntry( 1799, socket.Language ) ); // Hostile actions are not permitted in this safe area.
-			iUsed.Delete();
-		}
-	}
-}
-
-// Find targets that are in safe zones but would be affected by explosion potion
-function findSafeTargets( iUsed, targetChar )
-{
-	var targetRegion = targetChar.region;
-	if( targetRegion )
-	{
-		if( targetRegion.isSafeZone )
-			return true;
-		else
-			return false;
 	}
 }
