@@ -177,6 +177,7 @@
       <ProgramDatabaseFile>.\Debug/UOX3.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Midl>
       <TypeLibraryName>.\Debug/UOX3_Official.tlb</TypeLibraryName>

@@ -11,6 +11,7 @@
 #include "regions.h"
 #include "combat.h"
 #include "CJSMapping.h"
+#include "townregion.h"
 
 namespace UOX
 {
@@ -221,6 +222,11 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		{
 			if( !ValidateObject( tempChar ) )
 				continue;
+			if( tempChar->GetRegion()->IsSafeZone() )
+			{
+				// Character is in a safe zone, ignore damage
+				continue;
+			}
 			dx = abs( tempChar->GetX() - nItem->GetX() );
 			dy = abs( tempChar->GetY() - nItem->GetY() );
 			dz = abs( tempChar->GetZ() - nItem->GetZ() );

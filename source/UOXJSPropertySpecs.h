@@ -91,6 +91,7 @@ static JSPropertySpec CRegionProperties[] =
 	{ "canGate",			CREGP_CANGATE,				JSPROP_ENUMANDPERM },
 	{ "isGuarded",			CREGP_ISGUARDED,			JSPROP_ENUMANDPERM },
 	{ "canCastAggressive",	CREGP_CANCASTAGGRESSIVE,	JSPROP_ENUMANDPERM },
+	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM },
 	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM },
 	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM },
