@@ -13,16 +13,16 @@
 // HISKILL: 100% Success over this   SCHI:   100% Success over this
 // TARG: message for targ. spells
 // FLAGS:
-// 1 - requireTarget
-// 2 - reqItemTarget
-// 4 - reqLocTarget
-// 8 - reCharTarget
-// 16 - travelSpell
-// 32 - fieldSpell
-// 64 - spellReflectable
-// 128 - aggressiveSpell
-// 256 - resistable (unused)
-// combined... requireCharTarget 8...spellreflectable 64...aggressive 128...resistable...256..456
+// 0x1 or 1 - requireTarget
+// 0x2 or 2 - reqItemTarget
+// 0x4 or 4 - reqLocTarget
+// 0x8 or 8 - reCharTarget
+// 0x10 or 16 - travelSpell
+// 0x20 or 32 - fieldSpell
+// 0x40 or 64 - spellReflectable
+// 0x80 or 128 - aggressiveSpell
+// 0x100 or 256 - resistable (unused)
+// combined... requireCharTarget 8...spellreflectable 64...aggressive 128...resistable...256..456 or 0x01c8
 
 // Clumsy
 [SPELL 1]
@@ -47,7 +47,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select target for clumsy.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01DF
 }
@@ -101,7 +101,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select target for feeblemind.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01E4
 }
@@ -159,7 +159,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select target for magic arrow.
-FLAGS=0x0049
+FLAGS=0x01C9
 SOUNDFX=0x01E5
 MOVEFX=36 E4 05 00 01
 }
@@ -242,7 +242,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select target for weaken.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01E6
 }
@@ -355,7 +355,7 @@ PEARL=0
 SHADE=1
 SILK=1
 TARG=Select target for harm.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 09 07
 SOUNDFX=0x01F1
 }
@@ -522,7 +522,7 @@ PEARL=1
 SHADE=0
 SILK=0
 TARG=Select target for fireball.
-FLAGS=0x0049
+FLAGS=0x01C9
 MOVEFX=36 D5 07 00 01
 SOUNDFX=0x015E
 }
@@ -577,7 +577,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select target to Poison.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01E1
 }
@@ -686,7 +686,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select location for wall of stone.
-FLAGS=0x0025
+FLAGS=0x01A5
 SOUNDFX=0x01F6
 }
 
@@ -768,7 +768,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select target for curse.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01E1
 }
@@ -796,7 +796,7 @@ PEARL=1
 SHADE=0
 SILK=1
 TARG=Select location for fire field.
-FLAGS=0x0025
+FLAGS=0x01A5
 SOUNDFX=0x020C
 }
 
@@ -853,7 +853,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select target for lightning.
-FLAGS=0x0049
+FLAGS=0x01C9
 SOUNDFX=0x0029
 }
 
@@ -880,7 +880,7 @@ PEARL=1
 SHADE=0
 SILK=1
 TARG=Select target for Mana Drain.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01F9
 }
@@ -935,7 +935,7 @@ PEARL=1
 SHADE=1
 SILK=0
 TARG=Select location for blade spirits.
-FLAGS=0x0005
+FLAGS=0x0085
 STATFX=37 4A 00 0F
 SOUNDFX=0x0212
 }
@@ -1044,7 +1044,7 @@ PEARL=1
 SHADE=1
 SILK=0
 TARG=Select target for mind blast.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x0213
 }
@@ -1072,7 +1072,7 @@ PEARL=0
 SHADE=0
 SILK=1
 TARG=Select target for paralyze.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 35 00 1E
 SOUNDFX=0x0204
 }
@@ -1100,7 +1100,7 @@ PEARL=1
 SHADE=1
 SILK=1
 TARG=Select location for poison field.
-FLAGS=0x0025
+FLAGS=0x01A5
 SOUNDFX=0x020C
 }
 
@@ -1152,7 +1152,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select target to dispel.
-FLAGS=0x0009
+FLAGS=0x0189
 STATFX=37 2A 09 06
 SOUNDFX=0x0204
 }
@@ -1181,7 +1181,7 @@ PEARL=1
 SHADE=1
 SILK=0
 TARG=Select target for energy bolt.
-FLAGS=0x0049
+FLAGS=0x01C9
 SOUNDFX=0x020A
 MOVEFX=37 9F 07 00 01
 }
@@ -1210,7 +1210,7 @@ PEARL=0
 SHADE=0
 SILK=0
 TARG=Select target for explosion.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=36 B0 09 09
 SOUNDFX=0x0207
 }
@@ -1292,7 +1292,7 @@ PEARL=0
 SHADE=1
 SILK=0
 TARG=Select location for Mass Curse.
-FLAGS=0x0009
+FLAGS=0x0189
 STATFX=37 4A 00 0F
 SOUNDFX=0x01FC
 }
@@ -1320,7 +1320,7 @@ PEARL=1
 SHADE=0
 SILK=1
 TARG=Select location for paralyze field.
-FLAGS=0x0025
+FLAGS=0x01A5
 SOUNDFX=0x020B
 }
 
@@ -1375,7 +1375,7 @@ PEARL=1
 SHADE=0
 SILK=0
 TARG=Select location for Chain Lightning.
-FLAGS=0x0009
+FLAGS=0x0189
 SOUNDFX=0x0029
 }
 
@@ -1402,7 +1402,7 @@ PEARL=1
 SHADE=0
 SILK=1
 TARG=Select location for energy field.
-FLAGS=0x0025
+FLAGS=0x01A5
 SOUNDFX=0x0210
 }
 
@@ -1430,7 +1430,7 @@ PEARL=0
 SHADE=0
 SILK=1
 TARG=Select player to flamestrike.
-FLAGS=0x0009
+FLAGS=0x01C9
 STATFX=37 09 09 19
 SOUNDFX=0x0208
 }
@@ -1485,7 +1485,7 @@ PEARL=1
 SHADE=0
 SILK=1
 TARG=Select target for Mana Vampire.
-FLAGS=0x0049
+FLAGS=0x01C9
 STATFX=37 4A 00 0F
 SOUNDFX=0x01FA
 }
@@ -1513,7 +1513,7 @@ PEARL=1
 SHADE=0
 SILK=0
 TARG=Select location for Mass Dispel.
-FLAGS=0x0009
+FLAGS=0x0189
 STATFX=37 2A 09 06
 SOUNDFX=0x0204
 }
@@ -1542,7 +1542,7 @@ PEARL=0
 SHADE=0
 SILK=1
 TARG=Select location for Meteor Swarm.
-FLAGS=0x0009
+FLAGS=0x0189
 MOVEFX=36 D5 07 00 01
 SOUNDFX=0x0160
 }
@@ -1596,7 +1596,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=0
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x021F
 }
 
@@ -1623,7 +1623,7 @@ PEARL=1
 SHADE=1
 SILK=0
 TARG=Select location for energy vortex.
-FLAGS=0x0005
+FLAGS=0x0085
 SOUNDFX=0x0216
 }
 
@@ -1676,7 +1676,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x0217
 }
 
@@ -1702,7 +1702,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x0216
 }
 
@@ -1728,7 +1728,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x0217
 }
 
@@ -1754,7 +1754,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x0217
 }
 
@@ -1780,7 +1780,7 @@ MOSS=1
 PEARL=0
 SHADE=0
 SILK=1
-FLAGS=0x0000
+FLAGS=0x0080
 SOUNDFX=0x0217
 }
 
