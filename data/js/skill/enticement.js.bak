@@ -7,21 +7,8 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-	{
-		var pRegion = pUser.region;
-		if( pRegion )
-		{
-			if( pRegion.isSafeZone )
-			{
-				// Player is in a safe zone where no aggressive actions can be taken, disallow
-				pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
-			}
-			else
-			{
 		pSock.CustomTarget( 0, GetDictionaryEntry( 862, pSock.Language ) );
-			}
-		}
-	}
+
 	return true;
 }
 
@@ -35,16 +22,6 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 1642, pSock.Language ) );
 		else
 		{
-			var ourObjRegion = ourObj.region;
-			if( ourObjRegion )
-			{
-				if( ourObjRegion.isSafeZone )
-				{
-					// Target is in a safe zone where no aggressive actions can be taken, disallow
-					pSock.SysMessage( GetDictionaryEntry( 1799, pSock.Language ) );
-					return;
-				}
-			}
 			var pUser = pSock.currentChar;
 			if( ValidateObject( pUser ) )
 			{
