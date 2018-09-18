@@ -2254,41 +2254,49 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	bool display = false;
 	char message[100] = { 0, };
 	
+	// Copy dictionary message into char array
 	strcpy( message, Dictionary->GetEntry( 702 ).c_str() );
+
+	// Create temporary string to hold info on our missing reagents
+	UString tempString;
+	tempString = " [";
+	
 	if( failmsg.ash )
 	{
-		display = true; sprintf( message, "%sSa, ", message );
+		display = true; tempString += "Sa, ";
 	}
 	if( failmsg.drake )
 	{
-		display = true; sprintf( message, "%sMr, ", message );
+		display = true; tempString += "Mr, ";
 	}
 	if( failmsg.garlic )
 	{
-		display = true; sprintf( message, "%sGa, ", message );
+		display = true; tempString += "Ga, ";
 	}
 	if( failmsg.ginseng )
 	{
-		display = true; sprintf( message, "%sGi, ", message );
+		display = true; tempString += "Gi, ";
 	}
 	if( failmsg.moss )
 	{
-		display = true; sprintf( message, "%sBm, ", message );
+		display = true; tempString += "Bm, ";
 	}
 	if( failmsg.pearl )
 	{
-		display = true; sprintf( message, "%sBp, ", message );
+		display = true; tempString += "Bp, ";
 	}
 	if( failmsg.shade )
 	{
-		display = true; sprintf( message, "%sNs, ", message );
+		display = true; tempString += "Ns, ";
 	}
 	if( failmsg.silk )
 	{
-		display = true; sprintf( message, "%sSs, ", message );
+		display = true; tempString += "Ss, ";
 	}
 	
-	message[strlen( message ) - 1] = ']';
+	// Append our temporary string to the end of the char array and add an end-bracket
+	strcat( message, tempString.c_str() );
+	message[strlen( message ) - 2] = ']';
 	
 	if( display )
 	{
@@ -2298,7 +2306,6 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 		return false;
 	}
 	return true;
-	
 }
 
 //o---------------------------------------------------------------------------o
