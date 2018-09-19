@@ -5048,7 +5048,7 @@ void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )
 
 void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount, bool playerVendor )
 {
-	toolTipEntry tempEntry;
+	toolTipEntry tempEntry = {};
 	if( cItem.GetType() == IT_HOUSESIGN )
 		tempEntry.ourText = " \tA House Sign\t ";
 	else if( cItem.GetName()[0] == '#' )
@@ -5243,7 +5243,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
-	toolTipEntry tempEntry;
+	toolTipEntry tempEntry = {};
 	tempEntry.stringNum = 1050045;
 	tempEntry.ourText = UString::sprintf( " \t%s\t ",mChar.GetName().c_str() );
 	FinalizeData( tempEntry, totalStringLen );

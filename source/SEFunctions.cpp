@@ -435,11 +435,27 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		Console.MoveTo( 15 );
 		Console.Print( "Registering skill number " );
 		Console.TurnYellow();
-		Console.Print( "%i\n", skillNumber );
+		Console.Print( "%i", skillNumber );
+		if( !isEnabled )
+		{
+			Console.TurnRed();
+			Console.Print( " [DISABLED]" );
+		}
+		Console.Print( "\n" );
 		Console.TurnNormal();
 #endif
+		// If skill is not enabled, unset scriptID from skill data 
+		if( !isEnabled )
+		{
+			cwmWorldState->skill[skillNumber].jsScript = NULL;
+			return JS_FALSE;
+		}
+
+		// Skillnumber above ALLSKILLS refers to STR, INT, DEX, Fame and Karma,  
 		if( skillNumber < 0 || skillNumber >= ALLSKILLS )
 			return JS_TRUE;
+
+		// Both scriptID and skillNumber seem valid; assign scriptID to this skill
 		cwmWorldState->skill[skillNumber].jsScript = scriptID;
 	}
  	return JS_TRUE;
@@ -1190,7 +1206,7 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	CStaticIterator msi( xLoc, yLoc, wrldNumber );
 	for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
 	{
-		if( mRec != NULL && (!tileMatch || (tileMatch && mRec->itemid == tileID) ) )
+		if( mRec != NULL && (!tileMatch || mRec->itemid==tileID ) )
 		{
 			tileFound = true;
 			break;

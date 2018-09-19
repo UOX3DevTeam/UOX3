@@ -1928,9 +1928,6 @@ void CPITalkRequestUnicode::Receive( void )
 	mChar->setUnicode( true );
 
 	// Check for command word versions of this packet
-	int myoffset		= 13;
-	int myj				= 12;
-	size_t numTrigWords	= 0;
 	UI08 *buffer		= tSock->Buffer();
 	UI16 j				= 0;
 
@@ -1941,6 +1938,10 @@ void CPITalkRequestUnicode::Receive( void )
 
 	if( (typeUsed&0xC0) == 0xC0 )
 	{
+		int myoffset		= 13;
+		int myj				= 12;
+		size_t numTrigWords	= 0;
+
 		// number of distinct trigger words
 		numTrigWords = (tSock->GetByte( 12 )<<4) + (tSock->GetByte( 13 )>>4);
 

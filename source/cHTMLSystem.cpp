@@ -360,7 +360,7 @@ void cHTMLTemplate::Process( void )
 						while( sPos != std::string::npos )
 						{
 							UString myY = UString::number( tChar->GetY() );
-							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, myY );
+							(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
 							sPos = parsedInline.find( "%playery" );
 						}
 
@@ -467,13 +467,9 @@ void cHTMLTemplate::Process( void )
 
 	//NPCCount
 	UI32 npccount = 0;
-
-	if( npccount == 0 )
-	{
 		UI32 b		= 0;
 		ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
 		npccount	= b;
-	}
 
 	UString npcs	= UString::number( npccount );
 	Pos				= ParsedContent.find( "%npcs" ); 
@@ -781,7 +777,7 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 	UI32 Entries = 0; // Entries per page
 	UI16 CurrentPage = 0; // Page
 
-	for( size_t i = 0; i < Templates.size(); ++i )
+	for( unsigned int i = 0; i < Templates.size(); ++i )
 	{
 		if( Entries == 0 )
 		{
