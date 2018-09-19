@@ -1,3 +1,13 @@
+19/09/2018 - Xuri
+	Resolved an issue with uninitialized struct members
+	Removed some redundant conditional checks
+	Made the boolean part of JS function RegisterSkill( <skillnum>, <bool> ) actually work; can now be used to disable/enable JS-implemented skills
+	Fixed a bug with cHTMLTemplate::Process() where the same expression was used for both branches of a ternary operator
+	Various minor cleanups; removed some unused variables, addressed some potential portability issues
+
+18/09/2018 - Xuri
+	Fixed an issue with potentially undefined behaviour, where sprintf was being used with a single variable as both parameter and destination.
+
 17/09/2018 - Xuri (0.99.2e)
 	Disabled SAFESEH linker option for debug build to enable "Edit and Continue" mode in Visual Studio
 	Disabled loading of PRIV tag from regions.wsc, as it is currently unused (meant for townstones) and prevents loading certain updates to regions.dfn file

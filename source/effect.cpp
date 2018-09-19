@@ -956,7 +956,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 //o--------------------------------------------------------------------------
 void cEffects::SaveEffects( void )
 {
-	std::ofstream writeDestination, effectDestination; //writeDestination seems to be unused
+	std::ofstream effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
 	int s_t							= getclock();
 

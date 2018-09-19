@@ -1145,7 +1145,7 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				break;
 			case 'M':
-				size_t tmp, total;
+				unsigned int tmp, total;
 				total = 0;
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
@@ -1154,7 +1154,7 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				sprintf( temp, "        Multis: %u bytes", Map->GetMultisMem() );
 				messageLoop << temp;
-				size_t m, n;
+				unsigned int m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
 				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof(int)*5;
 				sprintf( temp, "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
@@ -1167,11 +1167,11 @@ void CConsole::Process( int c )
 				total += tmp = 69 * sizeof( SpellInfo );
 				sprintf( temp, "     Spells: %i bytes", tmp );
 				messageLoop << "     Sizes:";
-				sprintf( temp, "        CItem  : %i bytes", sizeof( CItem ) );
+				sprintf( temp, "        CItem  : %i bytes", (unsigned int) sizeof( CItem ) );
 				messageLoop << temp;
-				sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
+				sprintf( temp, "        CChar  : %i bytes", (unsigned int) sizeof( CChar ) );
 				messageLoop << temp;
-				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
+				sprintf( temp, "        TEffect: %i bytes (%i total)", (unsigned int) sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
 				total += tmp = Map->GetTileMem() + Map->GetMultisMem();
 				sprintf( temp, "        Approximate Total: %i bytes", total );

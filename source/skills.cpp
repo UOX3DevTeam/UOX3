@@ -628,7 +628,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 
 			if( s->GetBaseSkill( sk ) < highSkill )
 			{
-				if( sk != MAGERY || ( sk == MAGERY && mageryUp ) )
+				if( sk != MAGERY || mageryUp )
 				{
 					if( AdvanceSkill( s, sk, skillCheck ) )
 					{
