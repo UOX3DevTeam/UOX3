@@ -229,10 +229,10 @@ protected:
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;
 
-	virtual bool	DumpHeader( std::ofstream &outStream ) const;
-	virtual bool	DumpBody( std::ofstream &outStream ) const;
-	virtual bool	HandleLine( UString &UTag, UString &data );
-	virtual bool	LoadRemnants( void );
+	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool	DumpBody( std::ofstream &outStream ) const override;
+	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual bool	LoadRemnants( void ) override;
 
 	void		CopyData( CChar *target );
 
@@ -245,11 +245,11 @@ protected:
 
 public:
 
-	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true );
+	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 
 	bool		GetUpdate( UpdateTypes updateType ) const;
 	void		ClearUpdate( void );
-	virtual void	Dirty( UpdateTypes updateType );
+	virtual void	Dirty( UpdateTypes updateType ) override;
 
 	void		UpdateDamageTrack( void );
 
@@ -384,9 +384,9 @@ public:
 	void			SetRunning( UI08 newValue );
 	void			SetStep( UI08 newValue );
 	void			SetRegion( UI16 newValue );
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
-	virtual void	SetLocation( const CBaseObject *toSet );
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
+	virtual void	SetLocation( const CBaseObject *toSet ) override;
 	void			WalkZ( SI08 newZ );
 	void			WalkDir( SI08 newDir );
 
@@ -470,8 +470,8 @@ public:
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );
-	virtual void	Update( CSocket *mSock = NULL );
-	virtual void	SendToSocket( CSocket *s );
+	virtual void	Update( CSocket *mSock = NULL ) override;
+	virtual void	SendToSocket( CSocket *s ) override;
 
 	CItem *			GetItemAtLayer( ItemLayers Layer );
 	bool			WearItem( CItem *toWear );
@@ -483,17 +483,17 @@ public:
 
 	void			BreakConcentration( CSocket *sock = NULL );
 
-	virtual bool	Save( std::ofstream &outStream );
-	virtual void	PostLoadProcessing( void );
+	virtual bool	Save( std::ofstream &outStream ) override;
+	virtual void	PostLoadProcessing( void ) override;
 
 	SI16			ActualStrength( void ) const;
-	virtual SI16	GetStrength( void ) const;
+	virtual SI16	GetStrength( void ) const override;
 
 	SI16			ActualDexterity( void ) const;
-	virtual SI16	GetDexterity( void ) const;
+	virtual SI16	GetDexterity( void ) const override;
 
 	SI16			ActualIntelligence( void ) const;
-	virtual SI16	GetIntelligence( void ) const;
+	virtual SI16	GetIntelligence( void ) const override;
 
 	void			IncStrength2( SI16 toAdd = 1 );
 	void			IncDexterity2( SI16 toAdd = 1 );
@@ -528,21 +528,21 @@ public:
 	virtual UI16	GetMaxHP( void );
 	SI16			GetMaxMana( void );
 	SI16			GetMaxStam( void );
-	virtual void	SetMana( SI16 newValue );
-	virtual void	SetHP( SI16 newValue );
-	virtual void	SetStamina( SI16 newValue );
-	virtual void	SetStrength( SI16 newValue );
-	virtual void	SetDexterity( SI16 newValue );
-	virtual void	SetIntelligence( SI16 newValue );
-	virtual void	SetStrength2( SI16 newValue );
-	virtual void	SetDexterity2( SI16 newValue );
-	virtual void	SetIntelligence2( SI16 newValue );
+	virtual void	SetMana( SI16 newValue ) override;
+	virtual void	SetHP( SI16 newValue ) override;
+	virtual void	SetStamina( SI16 newValue ) override;
+	virtual void	SetStrength( SI16 newValue ) override;
+	virtual void	SetDexterity( SI16 newValue ) override;
+	virtual void	SetIntelligence( SI16 newValue ) override;
+	virtual void	SetStrength2( SI16 newValue ) override;
+	virtual void	SetDexterity2( SI16 newValue ) override;
+	virtual void	SetIntelligence2( SI16 newValue ) override;
 	void			IncStamina( SI16 toInc );
 	void			IncMana( SI16 toInc );
 
 	void			ToggleCombat( void );
 
-	virtual void	SetPoisoned( UI08 newValue );
+	virtual void	SetPoisoned( UI08 newValue ) override;
 		
 	bool			inDungeon( void );
 	bool			inBuilding( void );
@@ -550,9 +550,9 @@ public:
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
 	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, bool spamTimer, ... );
 
-	virtual void	Cleanup( void );
-	virtual void	Delete( void );
-	virtual bool	CanBeObjType( ObjectType toCompare ) const;
+	virtual void	Cleanup( void ) override;
+	virtual void	Delete( void ) override;
+	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
 	
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = NULL );
@@ -568,8 +568,8 @@ public:
 
 // NPC Characters
 protected:
-	virtual void	RemoveSelfFromOwner( void );
-	virtual void	AddSelfToOwner( void );
+	virtual void	RemoveSelfFromOwner( void ) override;
+	virtual void	AddSelfToOwner( void ) override;
 public:
 	CHARLIST *	GetFriendList( void );
 

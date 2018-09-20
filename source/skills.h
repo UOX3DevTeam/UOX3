@@ -178,8 +178,8 @@ public:
 
 	size_t		GetNumberOfOres( void );
 	miningData *GetOre( size_t number );
-	miningData *FindOre( std::string name );
-	miningData *FindOre( UI16 colour );
+	miningData *FindOre( std::string const &name );
+	miningData *FindOre( UI16 const &colour );
 };
 
 extern cSkills *Skills;

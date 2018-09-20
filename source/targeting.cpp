@@ -1728,7 +1728,7 @@ bool CPITargetCursor::Handle( void )
 			}
 			else if( a3 == 1 )	// CustomTarget
 			{
-				cScript *tScript	=(cScript *)tSock->TempInt();
+				cScript *tScript	= reinterpret_cast<cScript *>(tSock->TempInt());
 				if( tScript != NULL )
 					tScript->DoCallback( tSock, tSock->GetDWord( 7 ), static_cast<UI08>(targetID) );
 				return true;

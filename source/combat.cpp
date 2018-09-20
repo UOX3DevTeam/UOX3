@@ -1802,14 +1802,13 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if( ourDamage > 0 )
 			{
 				// Interrupt Spellcasting
-				if( !ourTarg->IsNpc() )
+				if( !ourTarg->IsNpc() && targSock != NULL )
 				{
 					if( ourTarg->IsCasting() && targSock->CurrentSpellType() == 0 )
 					{
 						ourTarg->StopSpell();
 						ourTarg->SetFrozen( false );
-						if( targSock != NULL )
-							targSock->sysmessage( 306 );
+						targSock->sysmessage( 306 );
 					}
 				}
 				// Reactive Armor

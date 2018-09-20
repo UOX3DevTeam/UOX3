@@ -781,7 +781,7 @@ void command_spawnkill( CSocket *s )
 
 void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 {
-	unsigned int j = 0;
+	UI16 j = 0;
 	char temp[512];
 
 	GumpDisplay Who( s, 400, 300 );

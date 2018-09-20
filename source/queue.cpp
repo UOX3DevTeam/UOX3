@@ -124,12 +124,12 @@ void PageVector::SendAsGump( CSocket *toSendTo )
 	GQueue.Send( 4, false, INVALIDSERIAL );
 }
 
-void PageVector::SetTitle( std::string newTitle )
+void PageVector::SetTitle( const std::string &newTitle )
 {
 	title = newTitle;
 }
 
-PageVector::PageVector( std::string newTitle )
+PageVector::PageVector( const std::string &newTitle )
 {
 	SetTitle( newTitle );
 	Queue.resize( 0 );
@@ -368,7 +368,7 @@ void HelpRequest::TimeOfPage( time_t pTime )
 //o---------------------------------------------------------------------------o
 //| Purpose		:	Sets the reason for the page
 //o---------------------------------------------------------------------------o
-void HelpRequest::Reason( std::string pReason )
+void HelpRequest::Reason( const std::string &pReason )
 {
 	reason = pReason;
 }

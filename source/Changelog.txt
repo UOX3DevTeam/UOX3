@@ -1,3 +1,9 @@
+20/09/2018 - Xuri
+	Fixed possible null pointer dereference
+	Converted some C-style pointer casting to C++ style
+	Added override specifier to some virtual methods that override base class virtual methods
+	Some function parameters are now passed as const references as they're not being modified in the called function
+
 19/09/2018 - Xuri
 	Resolved an issue with uninitialized struct members
 	Removed some redundant conditional checks
