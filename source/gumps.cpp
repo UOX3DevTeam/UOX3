@@ -1102,9 +1102,10 @@ void GMPage( CSocket *s, const std::string& reason )
 //o---------------------------------------------------------------------------o
 void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 {
-	CChar *mChar = s->CurrcharObj();
 	if( !s || cmd.empty() )
 		return;
+
+	CChar *mChar = s->CurrcharObj();
 
 	cmd		= cmd.upper();
 	data	= data.upper();

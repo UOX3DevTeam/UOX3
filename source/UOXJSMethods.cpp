@@ -807,7 +807,7 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "group %li", JSVAL_TO_INT( argv[0] ) );
+	sprintf( temp, "group %d", JSVAL_TO_INT( argv[0] ) );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -956,7 +956,7 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "page %li", JSVAL_TO_INT( argv[0] ) );
+	sprintf( temp, "page %d", JSVAL_TO_INT( argv[0] ) );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;

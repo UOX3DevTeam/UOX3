@@ -42,7 +42,7 @@ public:
 	void			Priority( SI08 pPriority );
 	void			IsHandled( bool pHandled );
 	void			TimeOfPage( time_t pTime );
-	void			Reason( std::string pReason );
+	void			Reason( const std::string &pReason );
 	void			RequestID( SERIAL hrid );
 };
 
@@ -66,10 +66,10 @@ public:
 	bool			AtEnd( void ) const;
 	size_t			NumEntries( void ) const;
 					PageVector();
-					PageVector( std::string newTitle );
+					PageVector( const std::string &newTitle );
 					~PageVector();
 	void			SendAsGump( CSocket *toSendTo );
-	void			SetTitle( std::string newTitle );
+	void			SetTitle( const std::string &newTitle );
 	bool			GotoPos( SI32 pos );
 	SI32			CurrentPos( void ) const;
 	SERIAL			GetCallNum( void ) const;

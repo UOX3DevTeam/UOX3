@@ -1786,7 +1786,7 @@ miningData *cSkills::GetOre( size_t number )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Returns a handle to the data about the ore based on it's name
 //o---------------------------------------------------------------------------o
-miningData *cSkills::FindOre( std::string name )
+miningData *cSkills::FindOre( std::string const &name )
 {
 	std::vector< miningData >::iterator	oreIter;
 	for( oreIter = ores.begin(); oreIter != ores.end(); ++oreIter )
@@ -1804,7 +1804,7 @@ miningData *cSkills::FindOre( std::string name )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Find ore color
 //o---------------------------------------------------------------------------o
-miningData *cSkills::FindOre( UI16 colour )
+miningData *cSkills::FindOre( UI16 const &colour )
 {
 	std::vector< miningData >::iterator oreIter;
 	for( oreIter = ores.begin(); oreIter != ores.end(); ++oreIter )
