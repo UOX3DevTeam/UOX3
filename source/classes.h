@@ -79,8 +79,8 @@ public:
 	CChar *		CreateBaseNPC( UString ourNPC );
 	CChar *		CreateRandomNPC( const std::string& npcList );
 
-	CChar *		CreateNPC( CSpawnItem *iSpawner, std::string npc );
-	CChar *		CreateNPCxyz( std::string npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber );
+	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
+	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber );
 	void		PostSpawnUpdate( CChar *cCreated );
 	bool		ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate = false );
 	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
