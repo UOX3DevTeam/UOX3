@@ -49,7 +49,7 @@ bool fileCopy( std::string sourceFile, std::string targetFile )
 //|   Purpose     :  Makes a backup copy of a file in the shared directory.
 //|                  puts the copy in the backup directory
 //o---------------------------------------------------------------------------o
-static void backupFile( std::string filename, std::string backupDir )
+static void backupFile( const std::string &filename, std::string backupDir )
 {
 	UString			to( backupDir );
 	to				= to.fixDirectory();

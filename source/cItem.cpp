@@ -1162,7 +1162,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					contObj = (CBaseObject *)data.toULong();
+					contObj = reinterpret_cast<CBaseObject *>( data.toULong() ); //(CBaseObject *)data.toULong();
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )

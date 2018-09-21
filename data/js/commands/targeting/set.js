@@ -197,8 +197,19 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		okMsg( socket );
 		break;
 	case "TYPE":
+		if(( nVal >= 61 && nVal <= 65 ) || nVal == 69 || nVal == 125 )
+		{
+			// User is trying to set type 62 on an item. This should only work if the item is of type OT_SPAWNER
+			if( ourItem.isSpawner )
+			{
 		ourItem.type = nVal;
 		okMsg( socket );
+			}
+			else
+			{
+				socket.SysMessage( "Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!" );
+			}
+		}
 		break;
 	case "Z":
 		ourItem.z = nVal;
@@ -240,7 +251,16 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		if( ourItem.isSpawner )
 			HandleSetSpawner( socket, ourItem, uKey, nVal );
 		else
+		{
+			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
+			{
+				socket.SysMessage( "This can only be set on objects added as spawner objects through the 'ADD SPAWNER # command!" );
+			}
+			else
+			{
 			socket.SysMessage( "Invalid set command " + uKey );
+			}
+		}
 		break;
 	}
 }

@@ -64,10 +64,10 @@ protected:
 
 	void			RemoveSelfFromCont( void );
 	virtual void	RemoveSelfFromOwner( void );
-	virtual void	AddSelfToOwner( void );
+	virtual void	AddSelfToOwner( void ) override;
 
 	void			CheckItemIntegrity( void );
-	virtual bool	DumpHeader( std::ofstream &outStream ) const;
+	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool	LoadRemnants( void );
 
 	UI16			entryMadeFrom;
@@ -260,12 +260,12 @@ public:
 	virtual void	RemoveFromSight( CSocket *mSock = NULL );
 
 	virtual bool	Save( std::ofstream &outStream );
-	virtual bool	DumpBody( std::ofstream &outStream ) const;
+	virtual bool	DumpBody( std::ofstream &outStream ) const override;
 	virtual bool	HandleLine( UString &UTag, UString &data );
 	virtual void	PostLoadProcessing( void );
-	virtual void	Cleanup( void );
-	virtual void	Delete( void );
-	virtual bool	CanBeObjType( ObjectType toCompare ) const;
+	virtual void	Cleanup( void ) override;
+	virtual void	Delete( void ) override;
+	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
 
 	UI32			GetSpell( UI08 part ) const;
 	void			SetSpell( UI08 part, UI32 newValue );
@@ -294,8 +294,8 @@ public:
 	bool				IsSectionAList( void ) const;
 	void				IsSectionAList( bool newVal );
 
-	virtual bool		DumpHeader( std::ofstream &outStream ) const;
-	virtual bool		DumpBody( std::ofstream &outStream ) const;
+	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
 	virtual bool		HandleLine( UString &UTag, UString &data );
 
@@ -304,9 +304,9 @@ public:
 	bool				HandleNPCSpawner( void );
 	bool				HandleSpawnContainer( void );
 
-	virtual void		Cleanup( void );
+	virtual void		Cleanup( void ) override;
 
-	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
 	CSpawnItem *		Dupe( void );
 };

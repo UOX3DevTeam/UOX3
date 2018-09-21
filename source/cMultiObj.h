@@ -42,8 +42,8 @@ public:
 	void				RemoveLockDown( CItem *toRemove );
 
 	virtual bool		Save( std::ofstream &outStream );
-	virtual bool		DumpHeader( std::ofstream &outStream ) const;
-	virtual bool		DumpBody( std::ofstream &outStream ) const;
+	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 	virtual bool		HandleLine( UString &UTag, UString &data );
 
 	virtual void		SetOwner( CChar *newOwner );
@@ -51,9 +51,9 @@ public:
 	std::string			GetDeed( void ) const;
 	void				SetDeed( std::string newDeed );
 
-	virtual void		Cleanup( void );
+	virtual void		Cleanup( void ) override;
 
-	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
 	CDataList< CChar * > *	GetCharsInMultiList( void );
 	CDataList< CItem * > *	GetItemsInMultiList( void );
@@ -70,8 +70,8 @@ protected:
 	TIMERVAL			nextMoveTime;
 
 private:
-	virtual bool		DumpHeader( std::ofstream &outStream ) const;
-	virtual bool		DumpBody( std::ofstream &outStream ) const;
+	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
 	virtual bool		HandleLine( UString &UTag, UString &data );
 
@@ -92,7 +92,7 @@ public:
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );
 
-	virtual bool		CanBeObjType( ObjectType toCompare ) const;
+	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 };
 
 }

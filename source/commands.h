@@ -47,7 +47,7 @@ public:
 	UI16			GetColourByLevel( UI08 commandLevel );
 	void			Command( CSocket *s, CChar *c, UString text );
 	void			Load( void );
-	void			Log( std::string command, CChar *player1, CChar *player2, std::string extraInfo );
+	void			Log( const std::string &command, CChar *player1, CChar *player2, std::string extraInfo );
 
 	bool			CommandExists( const std::string& cmdName );
 	const std::string FirstCommand( void );
@@ -59,9 +59,9 @@ public:
 	cCommands();
 	~cCommands();
 
-	void			Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled );
-	void			UnRegister( std::string cmdName, cScript *toRegister );
-	void			SetCommandStatus( std::string cmdName, bool isEnabled );
+	void			Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled );
+	void			UnRegister( const std::string &cmdName, cScript *toRegister );
+	void			SetCommandStatus( const std::string &cmdName, bool isEnabled );
 };
 
 extern cCommands	*Commands;

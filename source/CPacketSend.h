@@ -585,7 +585,7 @@ public:
 					CPPauseResume();
 					CPPauseResume( UI08 mode );
 	virtual void	Mode( UI08 mode );
-	virtual bool	ClientCanReceive( CSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };
 
 class CPWebLaunch : public CPUOXBuffer
@@ -1210,7 +1210,7 @@ public:
 	}
 					CPNewSpellBook();
 					CPNewSpellBook( CItem& obj );
-	virtual bool	ClientCanReceive( CSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };
 
 class CPDisplayDamage : public CPUOXBuffer
@@ -1224,7 +1224,7 @@ public:
 	}
 					CPDisplayDamage();
 					CPDisplayDamage( CChar& ourTarg, UI16 ourDamage );
-	virtual bool	ClientCanReceive( CSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };
 
 class CPQueryToolTip : public CPUOXBuffer
@@ -1238,7 +1238,7 @@ public:
 	}
 					CPQueryToolTip();
 					CPQueryToolTip( CBaseObject& mObj );
-	virtual bool	ClientCanReceive( CSocket *mSock );
+	virtual bool	ClientCanReceive( CSocket *mSock ) override;
 };
 
 class CPToolTip : public CPUOXBuffer
