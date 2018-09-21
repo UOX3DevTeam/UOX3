@@ -47,7 +47,7 @@ public:
 	UI16			GetColourByLevel( UI08 commandLevel );
 	void			Command( CSocket *s, CChar *c, UString text );
 	void			Load( void );
-	void			Log( const std::string &command, CChar *player1, CChar *player2, std::string extraInfo );
+	void			Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo );
 
 	bool			CommandExists( const std::string& cmdName );
 	const std::string FirstCommand( void );

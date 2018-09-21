@@ -324,7 +324,7 @@ void cCommands::Load( void )
 //o---------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
 //o---------------------------------------------------------------------------o
-void cCommands::Log( const std::string &command, CChar *player1, CChar *player2, std::string extraInfo )
+void cCommands::Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
 {
 	std::string logName	= cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + "command.log";
 	std::ofstream logDestination;

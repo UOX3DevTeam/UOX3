@@ -2,6 +2,7 @@
 	Some more code cleanup
 	Documented temp effect cases in code
 	Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands to misc-cmd.js
+	Additional function parameters passed as const references
 
 21/09/2019 - Xuri
 	Fixed support-messages from players not being stored and displayed in GM/Counselor queues

@@ -2059,7 +2059,7 @@ void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
 //o---------------------------------------------------------------------------o
 //|   Purpose     :  Adds the data to the gump to send
 //o---------------------------------------------------------------------------o
-void GumpDisplay::AddData( std::string toAdd, std::string toSet, UI08 type )
+void GumpDisplay::AddData( std::string toAdd, const std::string &toSet, UI08 type )
 {
 	if( toAdd.empty() && type != 7 )
 		return;

@@ -104,7 +104,7 @@ public:
 	virtual			~CKillsResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CEscortResponse : public CBaseResponse
@@ -116,7 +116,7 @@ public:
 	virtual			~CEscortResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CBankResponse : public CBaseResponse
@@ -128,7 +128,7 @@ public:
 	virtual			~CBankResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CTrainingResponse : public CBaseResponse
@@ -136,11 +136,11 @@ class CTrainingResponse : public CBaseResponse
 protected:
 	std::string		ourText;
 public:
-					CTrainingResponse( std::string text );
+					CTrainingResponse( const std::string &text );
 	virtual			~CTrainingResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CBasePetResponse : public CBaseResponse
@@ -148,11 +148,11 @@ class CBasePetResponse : public CBaseResponse
 protected:
 	std::string		ourText;
 public:
-					CBasePetResponse( std::string text );
+					CBasePetResponse( const std::string &text );
 	virtual			~CBasePetResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 	bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false );
 };
@@ -164,21 +164,21 @@ protected:
 	TargetIDs		targID;
 	bool			isRestricted;
 public:
-					CPetMultiResponse( std::string text, bool isRestricted, TargetIDs targVal, SI32 dictVal );
+					CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal );
 	virtual			~CPetMultiResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetReleaseResponse : public CBasePetResponse
 {
 public:
-					CPetReleaseResponse( std::string text );
+					CPetReleaseResponse( const std::string &text );
 	virtual			~CPetReleaseResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetAllResponse : public CBasePetResponse
@@ -186,7 +186,7 @@ class CPetAllResponse : public CBasePetResponse
 protected:
 	bool			saidAll;
 public:
-					CPetAllResponse( bool saidAll, std::string text );
+					CPetAllResponse( bool saidAll, const std::string &text );
 	virtual			~CPetAllResponse()
 					{
 					}
@@ -195,41 +195,41 @@ public:
 class CPetGuardResponse : public CPetAllResponse
 {
 public:
-					CPetGuardResponse( bool allVal, std::string text );
+					CPetGuardResponse( bool allVal, const std::string &text );
 	virtual			~CPetGuardResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetAttackResponse : public CPetAllResponse
 {
 public:
-					CPetAttackResponse( bool allVal, std::string text );
+					CPetAttackResponse( bool allVal, const std::string &text );
 	virtual			~CPetAttackResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetComeResponse : public CPetAllResponse
 {
 public:
-					CPetComeResponse( bool allVal, std::string text );
+					CPetComeResponse( bool allVal, const std::string &text );
 	virtual			~CPetComeResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CPetStayResponse : public CPetAllResponse
 {
 public:
-					CPetStayResponse( bool allVal, std::string text );
+					CPetStayResponse( bool allVal, const std::string &text );
 	virtual			~CPetStayResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CBaseVendorResponse : public CBaseResponse
@@ -238,72 +238,72 @@ protected:
 	bool			saidVendor;
 	std::string		ourText;
 public:
-					CBaseVendorResponse( bool vendVal, std::string text );
+					CBaseVendorResponse( bool vendVal, const std::string &text );
 	virtual			~CBaseVendorResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
 };
 
 class CVendorBuyResponse : public CBaseVendorResponse
 {
 public:
-					CVendorBuyResponse( bool vendVal, std::string text );
+					CVendorBuyResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorBuyResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorSellResponse : public CBaseVendorResponse
 {
 public:
-					CVendorSellResponse( bool vendVal, std::string text );
+					CVendorSellResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorSellResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorViewResponse : public CBaseVendorResponse
 {
 public:
-					CVendorViewResponse( bool vendVal, std::string text );
+					CVendorViewResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorViewResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorGoldResponse : public CBaseVendorResponse
 {
 public:
-					CVendorGoldResponse( bool vendVal, std::string text );
+					CVendorGoldResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorGoldResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorStatusResponse : public CBaseVendorResponse
 {
 public:
-					CVendorStatusResponse( bool vendVal, std::string text );
+					CVendorStatusResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorStatusResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CVendorDismissResponse : public CBaseVendorResponse
 {
 public:
-					CVendorDismissResponse( bool vendVal, std::string text );
+					CVendorDismissResponse( bool vendVal, const std::string &text );
 	virtual			~CVendorDismissResponse()
 					{
 					}
-	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc );
+	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) override;
 };
 
 class CHouseMultiResponse : public CBaseResponse
@@ -316,7 +316,7 @@ public:
 	virtual			~CHouseMultiResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CBoatResponse : public CBaseResponse
@@ -325,11 +325,11 @@ protected:
 	std::string		ourText;
 	UI16			trigWord;
 public:
-					CBoatResponse( std::string text, UI16 tW );
+					CBoatResponse( const std::string &text, UI16 tW );
 	virtual			~CBoatResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 class CBoatMultiResponse : public CBaseResponse
@@ -341,7 +341,7 @@ public:
 	virtual			~CBoatMultiResponse()
 					{
 					}
-	virtual void	Handle( CSocket *mSock, CChar *mChar );
+	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 };
 
 }

@@ -82,7 +82,7 @@ namespace UOX
 		std::string				envokeType;
 
 	public:
-				CEnvoke( std::string envokeType );
+				CEnvoke( const std::string &envokeType );
 				~CEnvoke();
 
 		void	Parse( void );

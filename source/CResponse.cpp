@@ -314,7 +314,7 @@ void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CTrainingResponse::CTrainingResponse( std::string text )
+CTrainingResponse::CTrainingResponse( const std::string &text )
 {
 	ourText = text;
 }
@@ -446,7 +446,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CBasePetResponse::CBasePetResponse( std::string text )
+CBasePetResponse::CBasePetResponse( const std::string &text )
 {
 	ourText = text;
 }
@@ -473,7 +473,7 @@ bool CBasePetResponse::canControlPet( CChar *mChar, CChar *Npc, bool isRestricte
 	return retVal;
 }
 
-CPetMultiResponse::CPetMultiResponse( std::string text, bool restrictVal, TargetIDs targVal, SI32 dictVal ) : CBasePetResponse( text )
+CPetMultiResponse::CPetMultiResponse( const std::string &text, bool restrictVal, TargetIDs targVal, SI32 dictVal ) : CBasePetResponse( text )
 {
 	isRestricted	= restrictVal;
 	targID			= targVal;
@@ -493,7 +493,7 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CPetReleaseResponse::CPetReleaseResponse( std::string text ) : CBasePetResponse( text )
+CPetReleaseResponse::CPetReleaseResponse( const std::string &text ) : CBasePetResponse( text )
 {
 }
 bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -518,12 +518,12 @@ bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CPetAllResponse::CPetAllResponse( bool allVal, std::string text ) : CBasePetResponse( text )
+CPetAllResponse::CPetAllResponse( bool allVal, const std::string &text ) : CBasePetResponse( text )
 {
 	saidAll = allVal;
 }
 
-CPetGuardResponse::CPetGuardResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
+CPetGuardResponse::CPetGuardResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
 bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -546,7 +546,7 @@ bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CPetAttackResponse::CPetAttackResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
+CPetAttackResponse::CPetAttackResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
 bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -565,7 +565,7 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CPetComeResponse::CPetComeResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
+CPetComeResponse::CPetComeResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
 bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -585,7 +585,7 @@ bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CPetStayResponse::CPetStayResponse( bool allVal, std::string text ) : CPetAllResponse( allVal, text )
+CPetStayResponse::CPetStayResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
 bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -607,7 +607,7 @@ bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CBaseVendorResponse::CBaseVendorResponse( bool vendVal, std::string text )
+CBaseVendorResponse::CBaseVendorResponse( bool vendVal, const std::string &text )
 {
 	saidVendor	= vendVal;
 	ourText		= text;
@@ -632,7 +632,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CVendorBuyResponse::CVendorBuyResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -650,7 +650,7 @@ bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CVendorSellResponse::CVendorSellResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorSellResponse::CVendorSellResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -675,7 +675,7 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return false;
 }
 
-CVendorViewResponse::CVendorViewResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorViewResponse::CVendorViewResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -693,7 +693,7 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CVendorGoldResponse::CVendorGoldResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorGoldResponse::CVendorGoldResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -745,7 +745,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CVendorStatusResponse::CVendorStatusResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorStatusResponse::CVendorStatusResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -781,7 +781,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	return true;
 }
 
-CVendorDismissResponse::CVendorDismissResponse( bool vendVal, std::string text ) : CBaseVendorResponse( vendVal, text )
+CVendorDismissResponse::CVendorDismissResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
 bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
@@ -819,7 +819,7 @@ void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CBoatResponse::CBoatResponse( std::string text, UI16 tW )
+CBoatResponse::CBoatResponse( const std::string &text, UI16 tW )
 {
 	ourText		= text;
 	trigWord	= tW;

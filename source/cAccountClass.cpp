@@ -46,7 +46,7 @@ cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 	actbInvalid.wAccountIndex = AB_INVALID_ID;
 }
 //
-cAccountClass::cAccountClass(std::string sAccountsPath)
+cAccountClass::cAccountClass(const std::string &sAccountsPath)
 {
 	// Call into the initialize
 	cAccountClass();
@@ -648,7 +648,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, std::string sContact,UI16 wAttributes)
+UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword, const std::string &sContact,UI16 wAttributes)
 {
 	// First were going to make sure that the needed fields are sent in with at least data
 	if( sUsername.length() < 4 || sPassword.length() < 4 )
@@ -1640,7 +1640,7 @@ bool cAccountClass::DelAccount(UI16 wAccountID)
 //o--------------------------------------------------------------------------o
 //| Modifications	-	
 //o--------------------------------------------------------------------------o
-bool cAccountClass::SetPath(std::string sPath)
+bool cAccountClass::SetPath( const std::string &sPath)
 {
 	try
 	{

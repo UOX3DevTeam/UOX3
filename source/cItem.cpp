@@ -2128,7 +2128,7 @@ std::string CSpawnItem::GetSpawnSection( void ) const
 {
 	return spawnSection;
 }
-void CSpawnItem::SetSpawnSection( std::string newVal )
+void CSpawnItem::SetSpawnSection( const std::string &newVal )
 {
 	spawnSection = newVal;
 }

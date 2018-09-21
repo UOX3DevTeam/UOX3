@@ -294,7 +294,7 @@ public:
 	void			PostAcked( SERIAL newValue );
 	void			PostAckCount( size_t newValue );
 	void			PostClear();
-	void			XText( std::string newValue );
+	void			XText( const std::string &newValue );
 
 	void			Send( CPUOXBuffer *toSend );
 

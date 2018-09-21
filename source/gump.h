@@ -64,7 +64,7 @@ private:
 public:
 	void AddData( GumpInfo *toAdd );
 	void AddData( std::string toAdd, long int value, UI08 type = 0 );
-	void AddData( std::string toAdd, std::string toSet, UI08 type = 4 );
+	void AddData( std::string toAdd, const std::string &toSet, UI08 type = 4 );
 	GumpDisplay( CSocket *target );
 	GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
 	~GumpDisplay();

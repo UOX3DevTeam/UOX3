@@ -35,12 +35,12 @@ private:
 
 public:
 					cDirectoryListing( bool recurse = true );
-					cDirectoryListing( std::string dir, std::string extent, bool recurse = true );
-					cDirectoryListing( DEFINITIONCATEGORIES dir, std::string extent, bool recurse = true );
+					cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse = true );
+					cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true );
 					~cDirectoryListing();
 
-	void			Extension( std::string extent );
-	void			Retrieve( std::string dir );
+	void			Extension( const std::string &extent );
+	void			Retrieve( const std::string &dir );
 	void			Retrieve( DEFINITIONCATEGORIES dir );
 	void			Flatten( bool isParent );
 	void			ClearFlatten( void );

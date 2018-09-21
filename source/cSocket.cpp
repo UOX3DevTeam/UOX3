@@ -176,7 +176,7 @@ std::string CSocket::XText( void )
 	return xtext;
 }
 
-void CSocket::XText( std::string newValue )
+void CSocket::XText( const std::string &newValue )
 {
 	xtext = newValue;
 }

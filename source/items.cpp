@@ -304,7 +304,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 //|	Description		-	Creates a script item, gives it an amount, and sets
 //|							 its location (be it in a pack or on the ground).
 //o--------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{

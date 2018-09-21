@@ -29,7 +29,7 @@ std::string CurrentWorkingDir( void )
 	}
 	return cwd;
 }
-std::string BuildPath( std::string extra )
+std::string BuildPath( const std::string &extra )
 {
 	std::string temp = CurrentWorkingDir();
 	temp += "/" + extra;
@@ -464,12 +464,12 @@ void cDirectoryListing::PopDir( void )
 cDirectoryListing::cDirectoryListing( bool recurse ) : extension( "*.dfn" ), doRecursion( recurse )
 {
 }
-cDirectoryListing::cDirectoryListing( std::string dir, std::string extent, bool recurse ) : doRecursion( recurse )
+cDirectoryListing::cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse ) : doRecursion( recurse )
 {
 	Extension( extent );
 	Retrieve( dir );
 }
-cDirectoryListing::cDirectoryListing( DEFINITIONCATEGORIES dir, std::string extent, bool recurse ) : doRecursion( recurse )
+cDirectoryListing::cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse ) : doRecursion( recurse )
 {
 	Extension( extent );
 	Retrieve( dir );
@@ -483,7 +483,7 @@ cDirectoryListing::~cDirectoryListing()
 	}
 }
 
-void cDirectoryListing::Retrieve( std::string dir )
+void cDirectoryListing::Retrieve( const std::string &dir )
 {
 	bool dirSet = PushDir( dir );
 	InternalRetrieve();
@@ -616,7 +616,7 @@ void cDirectoryListing::InternalRetrieve( void )
 #endif
 }
 
-void cDirectoryListing::Extension( std::string extent )
+void cDirectoryListing::Extension( const std::string &extent )
 {
 	extension = extent;
 }

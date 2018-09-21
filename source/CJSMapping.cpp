@@ -604,7 +604,7 @@ bool CJSMappingSection::Finished( void )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Class containing the specified envoke file
 //o--------------------------------------------------------------------------o
-CEnvoke::CEnvoke( std::string eT )
+CEnvoke::CEnvoke( const std::string &eT )
 {
 	envokeType = eT;
 	envokeList.clear();

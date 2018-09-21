@@ -302,7 +302,7 @@ void CSpawnRegion::WorldNumber( UI08 newVal )
 	worldNumber = newVal;
 }
 
-void CSpawnRegion::LoadNPCList( std::string npcList )
+void CSpawnRegion::LoadNPCList( const std::string &npcList )
 {
 	UString sect = "NPCLIST " + npcList;
 	ScriptSection *CharList = FileLookup->FindEntry( sect, npc_def );
@@ -318,7 +318,7 @@ void CSpawnRegion::LoadNPCList( std::string npcList )
 	}
 }
 
-void CSpawnRegion::LoadItemList( std::string itemList )
+void CSpawnRegion::LoadItemList( const std::string &itemList )
 {
 	UString sect = "ITEMLIST " + itemList;
 	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
