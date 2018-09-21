@@ -4223,20 +4223,20 @@ void CChar::SetPostType( UI08 newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI16 CallNum() 
+//|   Function    -  SERIAL CallNum() 
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  GM or Counsellors currently active call number
 //o---------------------------------------------------------------------------o
-SI16 CChar::GetCallNum( void ) const
+SERIAL CChar::GetCallNum( void ) const
 {
 	SI16 rVal = DEFPLAYER_CALLNUM;
 	if( IsValidPlayer() )
 		rVal = mPlayer->callNum;
 	return rVal;
 }
-void CChar::SetCallNum( SI16 newValue )
+void CChar::SetCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
@@ -4248,20 +4248,20 @@ void CChar::SetCallNum( SI16 newValue )
 }
 
 //o---------------------------------------------------------------------------o
-//|   Function    -  SI16 PlayerCallNum() 
+//|   Function    -  SERIAL PlayerCallNum() 
 //|   Date        -  Unknown
 //|   Programmer  -  Abaddon
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Players call number in the GM/CNS Queue
 //o---------------------------------------------------------------------------o
-SI16 CChar::GetPlayerCallNum( void ) const
+SERIAL CChar::GetPlayerCallNum( void ) const
 {
-	SI16 rVal = DEFPLAYER_PLAYERCALLNUM;
+	SERIAL rVal = DEFPLAYER_PLAYERCALLNUM;
 	if( IsValidPlayer() )
 		rVal = mPlayer->playerCallNum;
 	return rVal;
 }
-void CChar::SetPlayerCallNum( SI16 newValue )
+void CChar::SetPlayerCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{

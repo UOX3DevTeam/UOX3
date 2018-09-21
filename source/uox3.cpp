@@ -1077,7 +1077,10 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems )
 						spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
 					}
 					else
+					{
 						itemCheck->SetType( IT_NOTYPE );
+						Console.Warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command.", "server.log" );
+					}
 				}
 				break;
 			case IT_SOUNDOBJECT:

@@ -133,8 +133,8 @@ private:
 
 		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
 		UI08		postType;
-		SI16		callNum;		// Callnum GM or Counsellor is on
-		SI16		playerCallNum;	// Players call number in GM or Counsellor Queue
+		SERIAL		callNum;		// Callnum GM or Counsellor is on
+		SERIAL		playerCallNum;	// Players call number in GM or Counsellor Queue
 
 		UI08		squelched; // zippy  - squelching
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
@@ -674,11 +674,11 @@ public:
 	void		SetCommandLevel( UI08 newValue );
 	UI08		GetPostType( void ) const;
 	void		SetPostType( UI08 newValue );
-	void		SetPlayerCallNum( SI16 newValue );
-	void		SetCallNum( SI16 newValue );
+	void		SetPlayerCallNum( SERIAL newValue );
+	void		SetCallNum( SERIAL newValue );
 
-	SI16		GetCallNum( void ) const;
-	SI16		GetPlayerCallNum( void ) const;
+	SERIAL		GetCallNum( void ) const;
+	SERIAL		GetPlayerCallNum( void ) const;
 
 	void		SetLastOn( std::string newValue );
 	std::string GetLastOn( void ) const;

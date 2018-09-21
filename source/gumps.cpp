@@ -1630,7 +1630,18 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 3:		j->SetName2( reply.c_str() );				break;	// Name 2
 			case 4:		j->SetColour( reply.toUShort() );			break;	// Colour
 			case 5:		j->SetLayer( static_cast<ItemLayers>(reply.toUByte()) );		break;	// Layer
-			case 6:		j->SetType( static_cast<ItemTypes>(reply.toUByte()) );			break;	// Type
+			case 6:	
+				if( ( reply.toUByte() >= 61 && reply.toUByte() <= 65 ) || reply.toUByte() == 69 || reply.toUByte() == 125 )
+				{
+					if( j->GetObjType() == OT_SPAWNER )
+					{
+						j->SetType( static_cast<ItemTypes>( reply.toUByte() ) );			break;	// Type
+					}
+					else
+					{
+						tSock->sysmessage( "This item type can only be set on spawner objects added with the 'ADD SPAWNER # command." );
+					}
+				}
 			case 7:		j->SetMovable( reply.toByte() );			break;	// Moveable
 			case 8:		j->SetLocation( reply.toShort(), j->GetY(), j->GetZ() );			break;	// X
 			case 9:		j->SetLocation( j->GetX(), reply.toShort(), j->GetZ() );			break;	// Y

@@ -2286,7 +2286,7 @@ bool CSpawnItem::HandleNPCSpawner( void )
 			Npcs->CreateNPC( this, UString::number( GetTempVar( CITV_MOREX ) ) );
 		else
 		{
-			Console.Warning( "Bad Npc/Area Spawner Found, Deleting" );
+			Console.Warning( "Bad Npc/Area Spawner found; Spawnsection or MOREX values missing! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -2306,7 +2306,7 @@ bool CSpawnItem::HandleSpawnContainer( void )
 			Items->AddRespawnItem( this, UString::number( GetTempVar( CITV_MOREX ) ), true, 1 );
 		else
 		{
-			Console.Warning( "Bad Spawn Container Found, Deleting" );
+			Console.Warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
 			Delete();
 			return true;
 		}

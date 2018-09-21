@@ -173,7 +173,7 @@ CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates an npc spawned from an item spawner
 //o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, std::string npc )
+CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 {
 	const ItemTypes iType = iSpawner->GetType();
 	// If the spawner type is 125 and escort quests are not active then abort
@@ -219,7 +219,7 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, std::string npc )
 //o--------------------------------------------------------------------------o
 //|	Description		-	Creates an npc at location xyz
 //o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateNPCxyz( std::string npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 {
 	CChar *cCreated = CreateBaseNPC( npc );
 	if( cCreated == NULL )
