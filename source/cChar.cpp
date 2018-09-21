@@ -1011,7 +1011,7 @@ std::string CChar::GetGuildTitle( void ) const
 {
 	return guildtitle;
 }
-void CChar::SetGuildTitle( std::string newValue )
+void CChar::SetGuildTitle( const std::string &newValue )
 {
 	guildtitle = newValue;
 }

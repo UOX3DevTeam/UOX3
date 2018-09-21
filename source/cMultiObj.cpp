@@ -499,7 +499,7 @@ std::string CMultiObj::GetDeed( void ) const
 	return deed;
 }
 
-void CMultiObj::SetDeed( std::string newDeed )
+void CMultiObj::SetDeed( const std::string &newDeed )
 {
 	deed = newDeed;
 }

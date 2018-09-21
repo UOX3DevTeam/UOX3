@@ -17,7 +17,7 @@ cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {
 }
 
-cDice::cDice( std::string dieString )
+cDice::cDice( const std::string &dieString )
 {
 	convStringToDice( dieString );
 }

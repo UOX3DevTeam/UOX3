@@ -63,12 +63,12 @@ protected:
 	std::bitset< WEATHNUM >	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
 	void			RemoveSelfFromCont( void );
-	virtual void	RemoveSelfFromOwner( void );
+	virtual void	RemoveSelfFromOwner( void ) override;
 	virtual void	AddSelfToOwner( void ) override;
 
 	void			CheckItemIntegrity( void );
 	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool	LoadRemnants( void );
+	virtual bool	LoadRemnants( void ) override;
 
 	UI16			entryMadeFrom;
 	UI32			spells[3];		// For spellbooks (eventually should be a derived class)
@@ -79,7 +79,7 @@ public:
 
 	CDataList< CItem * > *	GetContainsList( void );
 
-	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true );
+	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 	UI16			EntryMadeFrom( void ) const;
 	void			EntryMadeFrom( UI16 newValue );
 
@@ -130,9 +130,9 @@ public:
 	void			SetDesc( std::string newValue );
 
 	void			PlaceInPack( void );
-	virtual void	SetLocation( const CBaseObject *toSet );
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ );
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world );
+	virtual void	SetLocation( const CBaseObject *toSet ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world );
 	void			IncZ( SI16 newValue );
 	void			IncLocation( SI16 xInc, SI16 yInc );
@@ -254,15 +254,15 @@ public:
 	bool			IsContType( void ) const;
 
 	void			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
-	virtual void	Update( CSocket *mSock = NULL );
-	virtual void	SendToSocket( CSocket *mSock );
+	virtual void	Update( CSocket *mSock = NULL ) override;
+	virtual void	SendToSocket( CSocket *mSock ) override;
 	void			SendPackItemToSocket( CSocket *mSock );
 	virtual void	RemoveFromSight( CSocket *mSock = NULL );
 
-	virtual bool	Save( std::ofstream &outStream );
+	virtual bool	Save( std::ofstream &outStream ) override;
 	virtual bool	DumpBody( std::ofstream &outStream ) const override;
-	virtual bool	HandleLine( UString &UTag, UString &data );
-	virtual void	PostLoadProcessing( void );
+	virtual bool	HandleLine( UString &UTag, UString &data ) override;
+	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
 	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
@@ -290,14 +290,14 @@ public:
 	UI08				GetInterval( UI08 part ) const;
 	void				SetInterval( UI08 part, UI08 newVal );
 	std::string			GetSpawnSection( void ) const;
-	void				SetSpawnSection( std::string newVal );
+	void				SetSpawnSection( const std::string &newVal );
 	bool				IsSectionAList( void ) const;
 	void				IsSectionAList( bool newVal );
 
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
-	virtual bool		HandleLine( UString &UTag, UString &data );
+	virtual bool		HandleLine( UString &UTag, UString &data ) override;
 
 	bool				DoRespawn( void );	// Will replace RespawnItem() eventually
 	bool				HandleItemSpawner( void );

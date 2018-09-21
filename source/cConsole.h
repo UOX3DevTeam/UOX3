@@ -85,7 +85,7 @@ public:
 	void	Cloak( char *callback );
 
 	void	RegisterKey( int key, std::string cmdName, UI16 scriptID );
-	void	RegisterFunc( std::string key, const std::string &cmdName, UI16 scriptID );
+	void	RegisterFunc( const std::string &key, const std::string &cmdName, UI16 scriptID );
 	void	SetKeyStatus( int key, bool isEnabled );
 	void	SetFuncStatus( const std::string &key, bool isEnabled );
 	void	Registration( void );

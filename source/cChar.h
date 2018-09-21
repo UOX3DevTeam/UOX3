@@ -352,7 +352,7 @@ public:
 	UI32		GetGuildFealty( void ) const;
 
 	std::string	GetGuildTitle( void ) const;
-	void		SetGuildTitle( std::string newValue );
+	void		SetGuildTitle( const std::string &newValue );
 
 	TIMERVAL	GetTimer( cC_TID timerID ) const;
 	TIMERVAL	GetRegen( UI08 part ) const;

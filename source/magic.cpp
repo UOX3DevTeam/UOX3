@@ -3327,7 +3327,7 @@ void cMagic::Polymorph( CSocket *s, UI16 polyID )
 	mChar->IsPolymorphed( true );
 }
 
-void cMagic::Log( std::string spell, CChar *player1, CChar *player2, std::string extraInfo )
+void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo )
 // PRE:		Commands is initialized, toLog is not NULL
 // POST:	Writes out toLog to a file
 {

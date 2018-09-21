@@ -57,7 +57,7 @@ private:
 	bool CheckParry( CChar *player, int circle );
 	UI08 getFieldDir( CChar *s, SI16 x, SI16 y );
 	bool RegMsg( CChar *s, reag_st failmsg );
-	void Log( std::string spell, CChar *player1, CChar *player2, std::string extraInfo );
+	void Log( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo );
 	UI08 spellCount;
 
 };

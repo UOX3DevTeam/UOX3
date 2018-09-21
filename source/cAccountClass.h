@@ -173,7 +173,7 @@ class cAccountClass
 public:
 	// Construction/Destruction
 	cAccountClass();
-	cAccountClass(std::string sAccountsPath);
+	cAccountClass(const std::string &sAccountsPath);
 	~cAccountClass();
 	// Operator overloads
 	cAccountClass& operator++();
@@ -181,10 +181,10 @@ public:
 	UI16					CreateAccountSystem( void );
 	UI16					ImportAccounts( void );
 	void					WriteAccountSection( CAccountBlock& actbTemp, std::fstream& fsOut );
-	UI16					AddAccount( std::string sUsername, std::string sPassword, std::string sContact="NONE", UI16 wAttributes=0x0000 );
+	UI16					AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact="NONE", UI16 wAttributes=0x0000 );
 	bool					DelAccount( std::string sUsername );
 	bool					DelAccount( UI16 wAccountID );
-	bool					SetPath( std::string sPath );
+	bool					SetPath( const std::string &sPath );
 	std::string				GetPath( void );
 	UI16					Save( bool bForceLoad = false );
 	UI16					Load( void );

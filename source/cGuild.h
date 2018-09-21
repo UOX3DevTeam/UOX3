@@ -83,8 +83,8 @@ public:
 	void		Name( std::string txt );
 	void		Abbreviation( const char *txt );
 	void		Type( GuildType nType );
-	void		Charter( std::string txt );
-	void		Webpage( std::string txt );
+	void		Charter( const std::string &txt );
+	void		Webpage( const std::string &txt );
 	void		Stone( SERIAL newStone );
 	void		Stone( CItem &newStone );
 	void		Master( SERIAL newMaster );

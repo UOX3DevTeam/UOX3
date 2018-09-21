@@ -426,7 +426,7 @@ void CGuild::Type( GuildType nType )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the guild's charter to txt
 //o---------------------------------------------------------------------------o
-void CGuild::Charter( std::string txt )
+void CGuild::Charter( const std::string &txt )
 {
 	charter = txt;
 }
@@ -438,7 +438,7 @@ void CGuild::Charter( std::string txt )
 //o---------------------------------------------------------------------------o
 //|   Purpose     -  Sets the guild's webpage to txt
 //o---------------------------------------------------------------------------o
-void CGuild::Webpage( std::string txt )
+void CGuild::Webpage( const std::string &txt )
 {
 	webpage = txt;
 }

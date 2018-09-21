@@ -14,7 +14,7 @@ private:
 	bool	convStringToDice( std::string dieString );
 public:
 			cDice();
-			cDice( std::string dieString );
+			cDice( const std::string &dieString );
 			cDice( int d, int s, int a );
 			~cDice();
 

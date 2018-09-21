@@ -14,7 +14,7 @@ protected:
 	ITEMLIST			lockedList;
 	UI16				maxLockedDown;
 
-	virtual bool		LoadRemnants( void );
+	virtual bool		LoadRemnants( void ) override;
 
 	CDataList< CItem * >	itemInMulti;
 	CDataList< CChar * >	charInMulti;
@@ -41,15 +41,15 @@ public:
 	void				LockDownItem( CItem *toLock );
 	void				RemoveLockDown( CItem *toRemove );
 
-	virtual bool		Save( std::ofstream &outStream );
+	virtual bool		Save( std::ofstream &outStream ) override;
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
-	virtual bool		HandleLine( UString &UTag, UString &data );
+	virtual bool		HandleLine( UString &UTag, UString &data ) override;
 
-	virtual void		SetOwner( CChar *newOwner );
+	virtual void		SetOwner( CChar *newOwner ) override;
 
 	std::string			GetDeed( void ) const;
-	void				SetDeed( std::string newDeed );
+	void				SetDeed( const std::string &newDeed );
 
 	virtual void		Cleanup( void ) override;
 
@@ -73,7 +73,7 @@ private:
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
-	virtual bool		HandleLine( UString &UTag, UString &data );
+	virtual bool		HandleLine( UString &UTag, UString &data ) override;
 
 public:
 						CBoatObj();
