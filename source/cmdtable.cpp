@@ -1181,7 +1181,7 @@ void cCommands::CommandReset( void )
 	//Z
 }
 
-void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
+void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( "   UnRegistering command %s\n", cmdName.c_str());
@@ -1197,7 +1197,7 @@ void cCommands::UnRegister( std::string cmdName, cScript *toRegister )
 #endif
 }
 
-void cCommands::Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
+void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( " " );
@@ -1217,7 +1217,7 @@ void cCommands::Register( std::string cmdName, UI16 scriptID, UI08 cmdLevel, boo
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
-void cCommands::SetCommandStatus( std::string cmdName, bool isEnabled )
+void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
 	UString upper					= cmdName;
 	upper							= upper.upper();

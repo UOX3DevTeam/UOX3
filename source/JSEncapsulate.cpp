@@ -129,7 +129,7 @@ namespace UOX
 					JSClass *mClass = OBJ_GET_CLASS( cx, obj2 );
 					if( mClass->flags & JSCLASS_IS_EXTENDED )	// extended class
 					{
-						JSExtendedClass *mClass2	= (JSExtendedClass *)mClass;
+						JSExtendedClass *mClass2 = reinterpret_cast<JSExtendedClass *>( mClass ); // (JSExtendedClass *)mClass;
 						className					= mClass2->base.name;
 					}
 					else

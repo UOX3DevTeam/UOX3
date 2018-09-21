@@ -1,3 +1,8 @@
+22/09/2019 - Xuri (0.99.2f)
+	Some more code cleanup
+	Documented temp effect cases in code
+	Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands to misc-cmd.js
+
 21/09/2019 - Xuri
 	Fixed support-messages from players not being stored and displayed in GM/Counselor queues
 	Added more descriptive error messages in code and JavaScript when trying to set spawner-related object properties on non-spawner objects

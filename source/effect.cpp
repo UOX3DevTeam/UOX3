@@ -370,7 +370,7 @@ void cEffects::checktempeffects( void )
 
 		switch( Effect->Number() )
 		{
-			case 1:
+			case 1: // Paralysis / Paralysis Field Spells
 				if( s->IsFrozen() )
 				{
 					s->SetFrozen( false );
@@ -378,33 +378,33 @@ void cEffects::checktempeffects( void )
 						tSock->sysmessage( 700 );
 				}
 				break;
-			case 2:
+			case 2: // Nightsight Potion (JS) and Spell (code)
 				s->SetFixedLight( 255 );
 				doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 				break;
-			case 3:
+			case 3: // Clumsy spell (JS)
 				s->IncDexterity2( Effect->More1() );
 				equipCheckNeeded = true;
 				break;
-			case 4:
+			case 4: // Feeblemind spell (JS)
 				s->IncIntelligence2( Effect->More1() );
 				equipCheckNeeded = true;
 				break;
-			case 5:
+			case 5: // Weaken Spell
 				s->IncStrength2( Effect->More1() );
 				equipCheckNeeded = true;
 				break;
-			case 6:
+			case 6: // Agility Potion (JS) and Spell (code)
 				s->IncDexterity2( -Effect->More1() );
 				s->SetStamina( UOX_MIN( s->GetStamina(), s->GetMaxStam() ) );
 				equipCheckNeeded = true;
 				break;
-			case 7:
+			case 7: // Cunning Spell
 				s->IncIntelligence2( -Effect->More1() );
 				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
 				equipCheckNeeded = true;
 				break;
-			case 8:
+			case 8: // Strength Potion (JS) and Spell (code)
 				s->IncStrength2( -Effect->More1() );
 				s->SetHP( UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP()) ) );
 				equipCheckNeeded = true;
@@ -419,7 +419,7 @@ void cEffects::checktempeffects( void )
 						break;
 				}
 				break;
-			case 11:
+			case 11: // Bless Spell
 				s->IncStrength2( -Effect->More1() );
 				s->SetHP(  UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
 				s->IncDexterity2( -Effect->More2() );
@@ -428,7 +428,7 @@ void cEffects::checktempeffects( void )
 				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
 				equipCheckNeeded = true;
 				break;
-			case 12: // Curse
+			case 12: // Curse Spell
 				if( s != NULL )
 				{
 					s->IncStrength2( Effect->More1() );
@@ -439,10 +439,10 @@ void cEffects::checktempeffects( void )
 				else
 					equipCheckNeeded = false;
 				break;
-			case 15: //reactive armor
+			case 15: // Reactive Armor Spell
 				s->SetReactiveArmour( false );
 				break;
-			case 16: //Explosion potion messages
+			case 16: // Explosion potion messages (JS)
 				src = calcCharObjFromSer( Effect->Source() );
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
@@ -452,15 +452,15 @@ void cEffects::checktempeffects( void )
 						tSock->sysmessage( mTemp.c_str() );
 				} 
 				break;
-			case 17: //Explosion potion
+			case 17: // Explosion effect (JS and code)
 				src = calcCharObjFromSer( Effect->Source() );
 				explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
 				break;
-			case 18: //Polymorph spell
+			case 18: // Polymorph Spell
 				s->SetID( s->GetOrgID() );
 				s->IsPolymorphed( false );
 				break;
-			case 19: //Incognito spell
+			case 19: // Incognito Spell
 				s->SetID( s->GetOrgID() );
 				
 				// ------ NAME -----
@@ -482,7 +482,7 @@ void cEffects::checktempeffects( void )
 					s->SendWornItems( tSock );
 				s->IsIncognito( false );
 				break;
-			case 21:
+			case 21: // Protection Spell
 				UI16 toDrop;
 				toDrop = Effect->More1();
 				if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
@@ -491,17 +491,13 @@ void cEffects::checktempeffects( void )
 					s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
 				equipCheckNeeded = true;
 				break;
-			case 25:
-				// Same result no matter if the if-check is true or false? What is this effect even for?
-				if( Effect->More2() == 0 )
-					Effect->ObjPtr()->SetDisabled( false );
-				else
+			case 25: // Temporarily set item as disabled
 					Effect->ObjPtr()->SetDisabled( false );
 				break;
-			case 26:
+			case 26: // Disallow immediately using another potion (JS)
 				s->SetUsingPotion( false );
 				break;
-			case 27:
+			case 27: // Explosion Spell
 				src = calcCharObjFromSer( Effect->Source() );
 				if( !ValidateObject( src ) || !ValidateObject( s ) )
 					break;
@@ -511,7 +507,7 @@ void cEffects::checktempeffects( void )
 				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
 				equipCheckNeeded = true;
 				break;
-			case 40:
+			case 40: // ???
 			{
 				UI16 scpNum			= 0xFFFF;
 				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
@@ -554,14 +550,14 @@ void cEffects::checktempeffects( void )
 					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
 				break;
 			}
-			case 41:	// Creating an item
+			case 41: // Start of item crafting
 				HandleMakeItemEffect( Effect );
 				break;
-			case 42:
+			case 42: // End of item crafting
 				src = calcCharObjFromSer( Effect->Source() );
 				PlaySound( src, Effect->More2() );
 				break;
-			case 43:
+			case 43: // Turn a wooly sheep into a sheared sheep
 				src = calcCharObjFromSer( Effect->Source() );
 				if( !ValidateObject( src ) )	// char doesn't exist!
 					break;
@@ -594,24 +590,24 @@ void reverseEffect( CTEffect *Effect )
 	{
 		switch( Effect->Number() )
 		{
-			case 1:
+			case 1: // Paralysis Spell
 				s->SetFrozen( false );
 				break;
-			case 2:
+			case 2: // Nightsight Potion (JS) and Spell (code)
 				s->SetFixedLight( 255 );
 				break;
-			case 3:		s->IncDexterity2( Effect->More1() );		break;
-			case 4:		s->IncIntelligence2( Effect->More1() );		break;
-			case 5:		s->IncStrength2( Effect->More1() );			break;
-			case 6:		s->IncDexterity2( -Effect->More1() );		break;
-			case 7:		s->IncIntelligence2( -Effect->More1() );	break;
-			case 8:		s->IncStrength2( -Effect->More1() );		break;
-			case 11:
+			case 3:		s->IncDexterity2( Effect->More1() );		break; // Clumsy Spell (JS)
+			case 4:		s->IncIntelligence2( Effect->More1() );		break; // Feeblemind Spell (JS)
+			case 5:		s->IncStrength2( Effect->More1() );			break; // Weaken Spell
+			case 6:		s->IncDexterity2( -Effect->More1() );		break; // Agility Potion (JS) and Spell (code)
+			case 7:		s->IncIntelligence2( -Effect->More1() );	break; // Cunning Spell
+			case 8:		s->IncStrength2( -Effect->More1() );		break; // Strength Potion (JS) and Spell (code)
+			case 11: // Bless Spell
 				s->IncStrength2( -Effect->More1() );
 				s->IncDexterity2( -Effect->More2() );
 				s->IncIntelligence2( -Effect->More3() );
 				break;
-			case 12:
+			case 12: // Curse Spell
 				s->IncStrength2( Effect->More1() );
 				s->IncDexterity2( Effect->More2() );
 				s->IncIntelligence2( Effect->More3() );
@@ -620,7 +616,7 @@ void reverseEffect( CTEffect *Effect )
 				s->SetID( s->GetOrgID() );
 				s->IsPolymorphed( false );
 				break;
-			case 19: // Incognito
+			case 19: // Incognito Spell
 				CItem *j;
 				
 				// ------ SEX ------
@@ -644,7 +640,7 @@ void reverseEffect( CTEffect *Effect )
 				s->SendWornItems( tSock );
 				s->IsIncognito( false );
 				break;
-			case 21:
+			case 21: // Protection Spell
 				int toDrop;
 				toDrop = Effect->More1() ;
 				if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
@@ -652,7 +648,7 @@ void reverseEffect( CTEffect *Effect )
 				else
 					s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
 				break;
-			case 26:
+			case 26: // Re-enable the usage of potions
 				s->SetUsingPotion( false );
 				break;
 			default:
@@ -684,17 +680,17 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			{
 				switch( Effect->Number() )
 				{
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-					case 11:
-					case 12:
-					case 18:
-					case 19:
-					case 21:
+					case 3: // Clumsy Spell (JS)
+					case 4: // Feeblemind Spell (JS)
+					case 5: // Weaken Spell
+					case 6: // Agility Potion (JS) and Spell (code)
+					case 7: // Cunning Spell
+					case 8: // Strength Potion (JS) and Spell (code)
+					case 11: // Bless Spell
+					case 12: // Curse Spell
+					case 18: // Polymorph Spell
+					case 19: // Incognito Spell
+					case 21: // Protection Spell
 						reverseEffect( Effect );
 						cwmWorldState->tempEffects.Remove( Effect, true );
 						break;
@@ -709,12 +705,12 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	toAdd->Number( num );
 	switch( num )
 	{
-		case 1:
+		case 1: // Paralyse Spell
 			dest->SetFrozen( true );
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 100.0f ) );
 			toAdd->Dispellable( true );
 			break;
-		case 2:
+		case 2: // Nightsight Potion (JS) and Spell (code)
 			SI16 worldbrightlevel;
 			worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			dest->SetFixedLight( static_cast<UI08>(worldbrightlevel) );
@@ -722,7 +718,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 2.0f ) );
 			toAdd->Dispellable( true );
 			break;
-		case 3:
+		case 3: // Clumsy Spell (JS)
 			if( dest->GetDexterity() < more1 )
 				more1 = dest->GetDexterity();
 			dest->IncDexterity2( -more1 );
@@ -736,7 +732,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 4:
+		case 4: // Feeblemind Spell (JS)
 			if( dest->GetIntelligence() < more1 )
 				more1 = dest->GetIntelligence();
 			dest->IncIntelligence2( -more1 );
@@ -750,7 +746,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 5:
+		case 5: // Weaken Spell
 			if( dest->GetStrength() < more1 )
 				more1 = dest->GetStrength();
 			dest->IncStrength2( -more1 );
@@ -764,37 +760,37 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 6:
+		case 6: // Agility Potion (JS) and Spell (code)
 			dest->IncDexterity( more1 );
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 7:
+		case 7: // Cunning Spell
 			dest->IncIntelligence2( more1 );
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 8:
+		case 8: // Strength Potion (JS) and Spell (code)
 			dest->IncStrength2( more1 );
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
-		case 9:
+		case 9: // Grind Necro Reagent
 			toAdd->ExpireTime( BuildTimeValue( (R32)more2 ) );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			toAdd->Dispellable( false );
 			break;
-		case 10:
+		case 10: // ???
 			toAdd->ExpireTime( BuildTimeValue( 12.0f ) );
 			toAdd->Dispellable( false );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			break;
-		case 11: // Bless
+		case 11: // Bless Spell
 			dest->IncStrength2( more1 );
 			dest->IncDexterity2( more2 );
 			dest->IncIntelligence2( more3 );
@@ -804,7 +800,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More3( more3 );
 			toAdd->Dispellable( true );
 			break;
-		case 12: // Curse
+		case 12: // Curse Spell
 			if( dest->GetStrength() < more1 )
 				more1 = dest->GetStrength();
 			if( dest->GetDexterity() < more2 )
@@ -825,18 +821,18 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More3( more3 );
 			toAdd->Dispellable( true );
 			break;
-		case 15: // Reactive armor
+		case 15: // Reactive Armor Spell
 			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
 			toAdd->Dispellable( true );
 			break;
-		case 16: //Explosion potions
+		case 16: // Explosion potion messages (JS)
 			toAdd->ExpireTime( BuildTimeValue( (R32)more2 ) );
 			toAdd->More1( more1 ); //item/potion
 			toAdd->More2( more2 ); //seconds
 			toAdd->More3( more3 ); //countdown#
 			toAdd->Dispellable( false );
 			break;
-		case 18:	// Polymorph
+		case 18: // Polymorph Spell
 			toAdd->ExpireTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			toAdd->Dispellable( false );
 			
@@ -854,27 +850,27 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( 90.0f ) ); // 90 seconds
 			toAdd->Dispellable( false );
 			break;
-		case 21:		// protection
+		case 21: // Protection Spell
 			toAdd->ExpireTime( BuildTimeValue( 120.0f ) );
 			toAdd->Dispellable( true );
 			toAdd->More1( more1 );
 			dest->SetBaseSkill( dest->GetBaseSkill( PARRYING ) + more1, PARRYING );
 			break;
-		case 25:
+		case 25: // Temporarily set item as disabled
 			toAdd->ExpireTime( BuildTimeValue( (R32)more1 ) );
 			toAdd->ObjPtr( dest );
 			dest->SetDisabled( true );
 			toAdd->More2( 1 );
 			break;
-		case 26:
+		case 26: // Temporarily disable the usage of potions
 			toAdd->ExpireTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POTION ) );
 			dest->SetUsingPotion( true );
 			break;
-		case 27:
+		case 27: // Explosion Spell
 			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->CombatExplodeDelay()) ) );
 			toAdd->More1( more1 );
 			break;
-		case 40:
+		case 40: // ???
 			toAdd->ExpireTime( BuildTimeValue( ( (R32)more1 + (R32)more2 / 1000.0f ) ) );
 			toAdd->More1( more3 );
 			break;
@@ -882,11 +878,11 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) / 100.0f ) );
 			toAdd->More2( more2 );
 			break;
-		case 42:	// delayed sound effect
+		case 42: // delayed sound effect for crafting
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) / 100.0f ) );
 			toAdd->More2( more2 );
 			break;
-		case 43:	// regain wool for sheeps
+		case 43: // regain wool for sheeps (JS)
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
 			break;
 		default:
@@ -912,28 +908,28 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 	toAdd->Number( num );
 	switch( num )
 	{
-		case 10:
+		case 10: // Crafting Potion??
 			toAdd->ExpireTime( BuildTimeValue( 12 ) );
 			toAdd->Dispellable( false );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			source->SkillUsed( true, ALCHEMY );
 			break;
-		case 13:
+		case 13: // Timer for door (gangplank on boats?) to autoclose?
 			if( !dest->isDoorOpen() )
 				dest->SetDoorOpen( true );
 
 			toAdd->ExpireTime( BuildTimeValue( 10 ) );
 			toAdd->Dispellable( false );
 			break;
-		case 17: //Explosion potion (explosion)  Tauriel (explode in 4 seconds)
+		case 17: // Explosion potion (explosion)  Tauriel (explode in 4 seconds)
 			toAdd->ExpireTime( BuildTimeValue( 4 ) );
 			toAdd->More1( more1 );
 			toAdd->More2( more2 );
 			toAdd->ObjPtr( dest );
 			toAdd->Dispellable( false );
 			break;
-		case 25:
+		case 25: // // Temporarily set item as disabled
 			toAdd->ExpireTime( BuildTimeValue( more1 ) );
 			toAdd->ObjPtr( dest );
 			dest->SetDisabled( true );

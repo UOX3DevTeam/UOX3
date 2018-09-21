@@ -2953,7 +2953,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					packitem = (CItem *)data.toULong();
+					packitem = reinterpret_cast<CItem *>( data.toULong() ); //(CItem *)data.toULong();
 					rvalue = true;
 				}
 				else if( UTag == "POISON" )

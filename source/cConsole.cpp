@@ -1344,7 +1344,7 @@ void CConsole::SetKeyStatus( int key, bool isEnabled )
 	}
 }
 
-void CConsole::RegisterFunc( std::string cmdFunc, std::string cmdName, UI16 scriptID )
+void CConsole::RegisterFunc( std::string cmdFunc, const std::string &cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
 	Print( "         Registering console func \"%s\"\n", cmdFunc.c_str() );
@@ -1354,7 +1354,7 @@ void CConsole::RegisterFunc( std::string cmdFunc, std::string cmdName, UI16 scri
 	JSConsoleFunctions[upper]	= JSConsoleEntry( scriptID, cmdName );
 }
 
-void CConsole::SetFuncStatus( std::string cmdFunc, bool isEnabled )
+void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 {
 	UString upper						= cmdFunc;
 	upper								= upper.upper();

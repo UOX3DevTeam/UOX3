@@ -85,9 +85,9 @@ public:
 	void	Cloak( char *callback );
 
 	void	RegisterKey( int key, std::string cmdName, UI16 scriptID );
-	void	RegisterFunc( std::string key, std::string cmdName, UI16 scriptID );
+	void	RegisterFunc( std::string key, const std::string &cmdName, UI16 scriptID );
 	void	SetKeyStatus( int key, bool isEnabled );
-	void	SetFuncStatus( std::string key, bool isEnabled );
+	void	SetFuncStatus( const std::string &key, bool isEnabled );
 	void	Registration( void );
 
 private:
@@ -100,7 +100,7 @@ private:
 		JSConsoleEntry() : scriptID( 0 ), isEnabled( true ), cmdName( "" )
 		{
 		}
-		JSConsoleEntry( UI16 id, std::string cName ) : scriptID( id ), isEnabled( true ), cmdName( cName )
+		JSConsoleEntry( UI16 id, const std::string &cName ) : scriptID( id ), isEnabled( true ), cmdName( cName )
 		{
 		}
 	};

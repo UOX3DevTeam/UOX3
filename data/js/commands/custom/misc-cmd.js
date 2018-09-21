@@ -11,6 +11,7 @@
 // 21. June 2005 - Added XSAY command
 // 15. January 2006 - Cleaned up the script, removed redundant return-statements, etc.
 // 19. May 2007 - Added LINKDOORS and UNLINKDOORS commands
+// 22. Sept 2018 - Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands
 
 function CommandRegistration()
 {
@@ -28,7 +29,13 @@ function CommandRegistration()
 	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
 	RegisterCommand( "linkdoors", 2, true ); //Link two doors together so that if one is opened, both will open.
 	RegisterCommand( "unlinkdoors", 2, true ); //Unlinks two doors (use command on both!)
+	RegisterCommand( "setammoeffect", 2, true ); //Set ammoeffect on a bow
+	RegisterCommand( "setammotype", 2, true ); //Set ammotype on a bow
+	RegisterCommand( "getammoeffect", 2, true );
+	RegisterCommand( "getammotype", 2, true );
 	RegisterCommand( "undress", 2, true ); //Character will completely undress all equipped items
+	RegisterCommand( "regioninfo", 2, true ); // Get information on current region player is in
+	RegisterCommand( "xregioninfo", 2, true ); // Get information on current region a target character is in
 }
 
 function command_RENAME( pSock, execString )
@@ -479,6 +486,68 @@ function onCallback14( pSock, myTarget )
 		pUser.SysMessage( "You need to target an item." );	
 }
 
+function command_SETAMMOEFFECT( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	if( !execString == "" )
+	{
+		pSock.xText = execString;
+		pSock.CustomTarget( 15, "Set ammoeffect on which bow?" );
+	}
+}
+
+function onCallback15( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var ammoEffect = pSock.xText;
+	if( !pSock.GetWord( 1 ) && myTarget.isItem )
+		myTarget.ammoEffect = ammoEffect;
+}
+
+function command_SETAMMOTYPE( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	if( !execString == "" )
+	{
+		pSock.xText = execString;
+		pSock.CustomTarget( 16, "Set ammotype on which bow?" );
+	}
+}
+
+function onCallback16( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var ammoType = pSock.xText;
+	if( !pSock.GetWord( 1 ) && myTarget.isItem )
+		myTarget.ammoType = ammoType;
+}
+
+function command_GETAMMOEFFECT( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	pSock.CustomTarget( 17, "Get ammoeffect from which bow?" );
+}
+
+function onCallback17( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var ammoEffect = myTarget.ammoEffect;
+	pUser.TextMessage( "AmmoEffect on selected bow: "+ammoEffect );
+}
+
+function command_GETAMMOTYPE( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	pSock.CustomTarget( 18, "Get ammotype from which bow?" );
+}
+
+function onCallback18( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var ammoType = myTarget.ammoType;
+	pUser.TextMessage( "AmmoType on selected bow: "+ammoType );
+}
+
 function command_UNDRESS( pSock, execString )
 {
 	var pUser = pSock.currentChar;
@@ -496,3 +565,30 @@ function command_UNDRESS( pSock, execString )
 	}	
 }
 
+function command_REGIONINFO( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	var pRegion = pUser.region;
+	pSock.SysMessage( "Region: " + pRegion.name );
+	pSock.SysMessage( "CanMark: " + pRegion.canMark );
+	pSock.SysMessage( "CanRecall: " + pRegion.canRecall );
+	pSock.SysMessage( "IsGuarded: " + pRegion.isGuarded );
+	pSock.SysMessage( "CanCastAggressive: " + pRegion.canCastAggressive );
+	pSock.SysMessage( "IsSafeZone: " + pRegion.isSafeZone );
+}
+
+function command_XREGIONINFO( pSock, execString )
+{
+	pSock.CustomTarget( 19, "Get region info for which character?" );
+}
+
+function onCallback19( pSock, myTarget )
+{
+	var myTargetRegion = myTarget.region;
+	pSock.SysMessage( "xRegion: " + myTargetRegion.name );
+	pSock.SysMessage( "xCanMark: " + myTargetRegion.canMark );
+	pSock.SysMessage( "xCanRecall: " + myTargetRegion.canRecall );
+	pSock.SysMessage( "xIsGuarded: " + myTargetRegion.isGuarded );
+	pSock.SysMessage( "xCanCastAggressive: " + myTargetRegion.canCastAggressive );
+	pSock.SysMessage( "xIsSafeZone: " + myTargetRegion.isSafeZone );
+}

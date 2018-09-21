@@ -23,7 +23,7 @@ public:
 	virtual const std::string Name( void );
 	virtual const std::string Pass( void );
 	virtual UI08		Unknown( void );
-	virtual bool		Handle( void );
+	virtual bool		Handle( void ) override;
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
@@ -39,7 +39,7 @@ public:
 					CPIServerSelect( CSocket *s );
 	virtual void	Receive( void );
 	virtual SI16	ServerNum( void );
-	virtual bool	Handle( void );
+	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true );
 };
 
