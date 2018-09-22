@@ -72,7 +72,7 @@ function command_BROWSE( pSock, execString )
 	if( execString != "" )
 		pSock.OpenURL( execString );
 	else
-		pUser.SysMessage( "That's not a valid URL." );
+		pSock.SysMessage( "That's not a valid URL." );
 }
 
 function command_INVUL( pSock, execString )

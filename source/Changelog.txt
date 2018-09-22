@@ -6,6 +6,7 @@
 	Changed RuntimeLibrary in Debug configuration in VS project file from MultiThreadedDebugDLL to MultiThreadedDebug to fix issues with unreadable characters in strings while debugging
 	Fixed potential issue with checking for number of arguments in CFile_Pos()
 	Merged fix for a crash issue related to the 'HOWTO command from Kitiara/UOX3
+	Fixed pUser/pSock reference error in misc-cmd.js for command_BROWSE (Kitiara)
 
 21/09/2019 - Xuri
 	Fixed support-messages from players not being stored and displayed in GM/Counselor queues
