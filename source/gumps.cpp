@@ -1297,46 +1297,45 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 	UI08 cmdLevelReq			= 0xFF;
 	UI08 cmdType				= 0xFF;
 	std::string cmdName			= "";
-	COMMANDMAP_ITERATOR toFind	= CommandMap.begin();
-	while( iCounter != cmdNumber && toFind != CommandMap.end() )
+	bool found					= false;
+	for (auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr)
 	{
+		if (iCounter == cmdNumber)
+		{
+			cmdName		= itr->first;
+			cmdLevelReq = itr->second.cmdLevelReq;
+			cmdType		= itr->second.cmdType;
+			found = true;
+			break;
+		}
 		++iCounter;
-		++toFind;
 	}
-	if( iCounter != cmdNumber )
-	{
-		TARGETMAP_ITERATOR findTarg = TargetMap.begin();
-		while( iCounter != cmdNumber && findTarg != TargetMap.end() )
+
+	if (!found)
+		for (auto itr = TargetMap.begin(); itr != TargetMap.end(); ++itr)
 		{
+			if (iCounter == cmdNumber)
+			{
+				cmdName		= itr->first;
+				cmdLevelReq = itr->second.cmdLevelReq;
+				found = true;
+				break;
+			}
 			++iCounter;
-			++findTarg;
 		}
-		if( iCounter != cmdNumber )
+
+	if (!found)
+		for (auto itr = JSCommandMap.begin(); itr != JSCommandMap.end(); ++itr)
 		{
-			JSCOMMANDMAP_ITERATOR findJS = JSCommandMap.begin();
-			while( iCounter != cmdNumber && findJS != JSCommandMap.end() )
+			if (iCounter == cmdNumber)
 			{
-				++iCounter;
-				++findJS;
+				cmdName		= itr->first;
+				cmdLevelReq = itr->second.cmdLevelReq;
+				break;
 			}
-			if( iCounter == cmdNumber )
-			{
-				cmdName		= findJS->first;
-				cmdLevelReq = findJS->second.cmdLevelReq;
-			}
+			++iCounter;
 		}
-		else
-		{
-			cmdName		= findTarg->first;
-			cmdLevelReq = findTarg->second.cmdLevelReq;
-		}
-	}
-	else
-	{
-		cmdName		= toFind->first;
-		cmdLevelReq = toFind->second.cmdLevelReq;
-		cmdType		= toFind->second.cmdType;
-	}
+
 	if( iCounter == cmdNumber )
 	{
 		// Build gump structure here, with basic information like Command Level, Name, Command Type, and parameters (if any, from table)
