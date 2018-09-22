@@ -1298,9 +1298,9 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 	UI08 cmdType				= 0xFF;
 	std::string cmdName			= "";
 	bool found					= false;
-	for (auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr)
+	for( auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr )
 	{
-		if (iCounter == cmdNumber)
+		if( iCounter == cmdNumber )
 		{
 			cmdName		= itr->first;
 			cmdLevelReq = itr->second.cmdLevelReq;
@@ -1311,10 +1311,10 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		++iCounter;
 	}
 
-	if (!found)
-		for (auto itr = TargetMap.begin(); itr != TargetMap.end(); ++itr)
+	if( !found )
+		for( auto itr = TargetMap.begin(); itr != TargetMap.end(); ++itr )
 		{
-			if (iCounter == cmdNumber)
+			if( iCounter == cmdNumber )
 			{
 				cmdName		= itr->first;
 				cmdLevelReq = itr->second.cmdLevelReq;
@@ -1324,10 +1324,10 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 			++iCounter;
 		}
 
-	if (!found)
-		for (auto itr = JSCommandMap.begin(); itr != JSCommandMap.end(); ++itr)
+	if( !found )
+		for( auto itr = JSCommandMap.begin(); itr != JSCommandMap.end(); ++itr )
 		{
-			if (iCounter == cmdNumber)
+			if( iCounter == cmdNumber )
 			{
 				cmdName		= itr->first;
 				cmdLevelReq = itr->second.cmdLevelReq;
