@@ -1,3 +1,8 @@
+23/09/2019 - Xuri (0.99.2g)
+	Corrected name of spell JS property AGRESSIVESPELL to AGGRESSIVESPELL
+	Updated clumsy.js and level1targ.js with corrected names for aggressiveSpell and canCastAggressive JS properties, and added checks for isSafeZone region JS property
+	Commented out hardcoded versions of spells that have been ported to JS
+
 22/09/2019 - Xuri (0.99.2f)
 	Some more code cleanup
 	Documented temp effect cases in code

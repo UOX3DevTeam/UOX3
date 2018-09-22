@@ -51,7 +51,7 @@ static JSPropertySpec CSpellProperties[] =
 	{ "travelSpell",		CSP_TRAVELSPELL,		JSPROP_ENUMANDPERM },
 	{ "fieldSpell",			CSP_FIELDSPELL,			JSPROP_ENUMANDPERM },
 	{ "reflectable",		CSP_REFLECTABLE,		JSPROP_ENUMANDPERM },
-	{ "agressiveSpell",		CSP_AGRESSIVESPELL,		JSPROP_ENUMANDPERM },
+	{ "aggressiveSpell",	CSP_AGGRESSIVESPELL,	JSPROP_ENUMANDPERM },
 	{ "resistable",			CSP_RESISTABLE,			JSPROP_ENUMANDPERM },
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM },

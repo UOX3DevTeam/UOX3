@@ -158,7 +158,7 @@ namespace UOX
 				case CSP_TRAVELSPELL:		*vp = BOOLEAN_TO_JSVAL( gPriv->TravelSpell() );			break;
 				case CSP_FIELDSPELL:		*vp = BOOLEAN_TO_JSVAL( gPriv->FieldSpell() );			break;
 				case CSP_REFLECTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->SpellReflectable() );	break;
-				case CSP_AGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
+				case CSP_AGGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
 				case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
 				case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 				case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
