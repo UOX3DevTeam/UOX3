@@ -154,7 +154,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_NO_VA_START_VALIDATION;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions> /J</AdditionalOptions>
       <PrecompiledHeader />
       <PrecompiledHeaderOutputFile>.\Debug/UOX3_Official.pch</PrecompiledHeaderOutputFile>

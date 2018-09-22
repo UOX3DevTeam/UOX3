@@ -4433,7 +4433,7 @@ JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o--------------------------------------------------------------------------o
 JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 0 || argc != 1 )
+	if( argc != 0 && argc != 1 )
 	{
 		MethodError( "Pos: Invalid number of arguments (takes 0 or 1)" );
 		return JS_FALSE;
