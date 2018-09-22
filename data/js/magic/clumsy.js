@@ -36,29 +36,32 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.spellCast = -1;
 		return true;
 	}
-	
+
 	// Region checks
 	var ourRegion = mChar.region;
-	if( (spellNum == 45 && ourRegion.canMark) || (spellNum == 52 && !ourRegion.canGate()) || (spellNum == 32 && !ourRegion.canRecall()) )
+	if( mSpell.aggressiveSpell )
 	{
-		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 705, mSock.Language ) );
-		mChar.SetTimer( 6, 0 );
-		mChar.isCasting = false;
-		mChar.spellCast = -1;
-		return true;
+		if( ourRegion.isSafeZone )
+		{
+			if( mSock )
+					mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
+			mChar.SetTimer( 6, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+				return;
+		}
+
+		if( !ourRegion.canCastAggressive )
+		{
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
+			mChar.SetTimer( 6, 0 );
+			mChar.isCasting = false;
+			mChar.spellCast = -1;
+			return true;
+		}
 	}
 
-	if( !ourRegion.canCastAggressive && mSpell.agressiveSpell )
-	{
-		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 706, mSock.Language ) );
-		mChar.SetTimer( 6, 0 );
-		mChar.isCasting = false;
-		mChar.spellCast = -1;
-		return true;
-	}
-	
 	if( !mSpell.enabled )
 	{
 		if( mSock )
@@ -68,7 +71,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		mChar.spellCast = -1;
 		return true;
 	}
-	
+
 	// Cut the casting requirement on scrolls
 	var lowSkill, highSkill;
 	if( spellType == 1 )
@@ -100,7 +103,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			}
 		}
 	}
-	
+
 	if( mChar.visible == 1 || mChar.visible == 2 )
 		mChar.visible = 0;
 
@@ -164,10 +167,10 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.spellCast = -1;
 			return true;
 		}
-	}	
-	   
+	}
+
 	mChar.nextAct = 75;		// why 75?
-	
+
 	var delay = mSpell.delay * 100;
 	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
@@ -176,14 +179,14 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 	else
 		mChar.SetTimer( 6, 0 );
-	
+
 	if( !mChar.isonhorse )
 	{
 		var actionID = mSpell.action;
 		if( mChar.isHuman || actionID != 0x22 )
 			mChar.DoAction( actionID );
 	}
-	
+
 	var tempString;
 	if( mSpell.fieldSpell && mChar.skills.magery > 600 )
 		tempString = "Vas " + mSpell.mantra;
@@ -200,7 +203,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 function checkReagents( mChar, mSpell )
 {
-	var failedCheck = 0;	
+	var failedCheck = 0;
 	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
 		failedCheck = 1;
 	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
@@ -242,7 +245,7 @@ function onTimer( mChar, timerID )
 {
 	mChar.isCasting = false;
 	mChar.frozen 	= false;
-	
+
 	if( mChar.npc )
 	{
 		var ourTarg = mChar.target;
@@ -276,7 +279,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	var mSpell	= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
-	
+
 	if( mSock )
 		spellType = mSock.currentSpellType;
 
@@ -295,7 +298,7 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
 		if( mSock )
-			mSock.SysMessage( GetDictionaryEntry( 712, mSock.Language ) ); 
+			mSock.SysMessage( GetDictionaryEntry( 712, mSock.Language ) );
 		return;
 	}
 
@@ -303,11 +306,17 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	{
 		return;
 	}
-	
+
 	var targRegion = ourTarg.region;
-	if( mSpell.agressiveSpell )
+	if( mSpell.aggressiveSpell )
 	{
-		if( !targRegion.canCastAgressive )
+		if( targRegion.isSafeZone )
+	{
+			if( mSock )
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.Language ) );
+			return;
+		}
+		if( !targRegion.canCastAggressive )
 		{
 			if( mSock )
 				mSock.SysMessage( GetDictionaryEntry( 709, mSock.Language ) );
@@ -333,11 +342,11 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( sourceChar.npc )
-		ourTarg.SoundEffect( mSpell.soundEffect, true ); 
+		ourTarg.SoundEffect( mSpell.soundEffect, true );
 	else
 		sourceChar.SoundEffect( spellNum, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
-	DoTempEffect( 0, sourceChar, ourTarg, 3, (mChar.skills.magery / 100), 0, 0);	
+	DoTempEffect( 0, sourceChar, ourTarg, 3, (mChar.skills.magery / 100), 0, 0);
 }
