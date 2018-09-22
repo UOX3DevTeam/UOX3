@@ -3,6 +3,8 @@
 	Documented temp effect cases in code
 	Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands to misc-cmd.js
 	Additional function parameters passed as const references
+	Changed RuntimeLibrary in Debug configuration in VS project file from MultiThreadedDebugDLL to MultiThreadedDebug to fix issues with unreadable characters in strings while debugging
+	Fixed potential issue with checking for number of arguments in CFile_Pos()
 
 21/09/2019 - Xuri
 	Fixed support-messages from players not being stored and displayed in GM/Counselor queues
