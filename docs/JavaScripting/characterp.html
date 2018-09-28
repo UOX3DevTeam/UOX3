@@ -15,175 +15,235 @@
 <h2>Character Properties</h2>
 <table border="1" width="100%" cellspacing="0" cellpadding="2">
   <tr>
-    <th bgcolor="maroon">Property
-    <th bgcolor="maroon">Purpose
+    <th bgcolor="maroon">Property</th>
+    <th bgcolor="maroon">Purpose</th>
+  </tr>
   <tr>
-    <td>name
-    <td>The name of the character.
+    <td>name</td>
+    <td>The name of the character.</td>
+  </tr>
   <tr>
-    <td>title
-    <td>The title of the character.
+    <td>title</td>
+    <td>The title of the character.</td>
+  </tr>
   <tr>
-    <td>x
-    <td>The x-coordinate of the character.
+    <td>x</td>
+    <td>The x-coordinate of the character.</td>
+  </tr>
   <tr>
-    <td>y
-    <td>The y-coordinate of the character.
+    <td>y</td>
+    <td>The y-coordinate of the character.</td>
+  </tr>
   <tr>
-    <td>z
-    <td>The z-coordinate of the character. 
+    <td>z</td>
+    <td>The z-coordinate of the character. </td>
+  </tr>
   <tr>
-    <td>id
-    <td>The id of the character.
+    <td>id</td>
+    <td>The id of the character.</td>
+  </tr>
   <tr>
-    <td>colour
-    <td>The colour of the character. 
+    <td>colour</td>
+    <td>The colour of the character. </td>
+  </tr>
   <tr>
-    <td>owner
-    <td>The character that owns this character.
+    <td>owner</td>
+    <td>The character that owns this character.</td>
+  </tr>
   <tr>
-    <td>visible
+    <td>visible</td>
     <td>Characters visible status:<ul>
 		0 = Visible<br>
 		1 = Temporary Hidden (Skill, Item visible to owner)<br>
 		2 = Invisible (Magic Invis)<br>
-		3 = Permanent Hidden (GM Hide)</ul>
+		3 = Permanent Hidden (GM Hide)</ul></td>
+  </tr>
   <tr>
-    <td>serial
-    <td>The serial of the character (unique identifying number).
+    <td>serial</td>
+    <td>The serial of the character (unique identifying number).</td>
+  </tr>
   <tr>
-    <td>health
-    <td>The characters' current health.
+    <td>health</td>
+    <td>The characters' current health.</td>
+  </tr>
   <tr>
-    <td>scripttrigger
-    <td>The JavaScript-ID assigned to this item.
+    <td>scripttrigger</td>
+    <td>The JavaScript-ID assigned to this item.</td>
+  </tr>
   <tr>
-    <td>privateword
+    <td>privateword</td>
     <td>
+  </tr>
   <tr>
-    <td>worldnumber
+    <td>worldnumber</td>
     <td>The number of the world this character is currently in.
 		<blockquote>0=Felucca<br>
 		1=Trammel<br>
 		2=Ilshenar<br>
-		3=Malas</blockquote>
+		3=Malas</blockquote></td>
+  </tr>
   <tr>
-    <td>target
-    <td>The characters' current target.
+    <td>target</td>
+    <td>The characters' current target.</td>
+  </tr>
   <tr>
-    <td>dexterity
-    <td>The dexterity attribute of the character.
+    <td>dexterity</td>
+    <td>The dexterity attribute of the character.</td>
+  </tr>
   <tr>
-    <td>intelligence
-    <td>The intelligence attribute of the character.
+    <td>intelligence</td>
+    <td>The intelligence attribute of the character.</td>
+  </tr>
   <tr>
-    <td>strength
-    <td>The strength attribute of the character.
+    <td>strength</td>
+    <td>The strength attribute of the character.</td>
+  </tr>
   <tr>
-    <td>baseskills
-    <td>Used to get and set the baseskill value of the characters' selected skill (IE myChar.baseskills.alchemy = 1000).
+    <td>baseskills</td>
+    <td>Used to get and set the baseskill value of the characters' selected skill (IE myChar.baseskills.alchemy = 1000).</td>
+  </tr>
   <tr>
-    <td>skills
-    <td>Used to set and return a specific skill value of a character.
+    <td>skills</td>
+    <td>Used to set and return a specific skill value of a character.</td>
+  </tr>
   <tr>
-    <td>skilluse
+    <td>skilluse</td>
     <td>
+  </tr>
   <tr>
-    <td>mana
-    <td>The characters' current mana.
+    <td>mana</td>
+    <td>The characters' current mana.</td>
+  </tr>
   <tr>
-    <td>stamina
-    <td>The characters' current stamina.
+    <td>stamina</td>
+    <td>The characters' current stamina.</td>
+  </tr>
   <tr>
-    <td>charpack
-    <td>Returns the root pack (backpack) of the character as a JS-object.
+    <td>charpack</td>
+    <td>Returns the root pack (backpack) of the character as a JS-object.</td>
+  </tr>
   <tr>
-    <td>fame
-    <td>The fame reputation of a character.
+    <td>fame</td>
+    <td>The fame reputation of a character.</td>
+  </tr>
   <tr>
-    <td>karma
-    <td>The karma reputation of a character.
+    <td>karma</td>
+    <td>The karma reputation of a character.</td>
+  </tr>
   <tr>
-    <td>attack
-    <td>The characters' current attack value (damage).
+    <td>attack</td>
+    <td>The characters' current attack value (damage).</td>
+  </tr>
   <tr>
-    <td>hunger
-    <td>The hunger level of a character. (1 - 6, Extremely hungry - Not hungry)
+    <td>hunger</td>
+    <td>The hunger level of a character. (1 - 6, Extremely hungry - Not hungry)</td>
+  </tr>
   <tr>
-    <td>frozen
-    <td>Toggles whether or not a character is frozen to the ground.
+    <td>hungerWildChance</td>
+    <td>Get/set chance for a hungry pet to go wild</td>
+  </tr>
   <tr>
-    <td>commandlevel
+    <td>tamedHungerRate</td>
+    <td>Get/set the rate at which a pet hungers</td>
+  </tr>
+  <tr>
+    <td>frozen</td>
+    <td>Toggles whether or not a character is frozen to the ground.</td>
+  </tr>
+  <tr>
+    <td>commandlevel</td>
     <td>The characters command level:<ul>
 	0 = Player<br>
 	1 = Counsellor<br>
 	2 = GM<br>
-	3 = Admin</ul>
+	3 = Admin</ul></td>
+  </tr>
   <tr>
-    <td>race
-    <td>Returns the character's race as a JS-object.
+    <td>race</td>
+    <td>Returns the character's race as a JS-object.</td>
+  </tr>
   <tr>
-    <td>criminal
-    <td>The characters' status as a criminal. (true/false)
+    <td>criminal</td>
+    <td>The characters' status as a criminal. (true/false)</td>
+  </tr>
   <tr>
-    <td>murderer
-    <td>The characters' status as a murderer. (true/false)
+    <td>murderer</td>
+    <td>The characters' status as a murderer. (true/false)</td>
+  </tr>
   <tr>
-    <td>innocent
-    <td>The characters' status as an innocent. (true/false)
+    <td>innocent</td>
+    <td>The characters' status as an innocent. (true/false)</td>
+  </tr>
   <tr>
-    <td>murdercount
-    <td>Total number of players this character has killed.
+    <td>murdercount</td>
+    <td>Total number of players this character has killed.</td>
+  </tr>
   <tr>
-    <td>gender
-    <td>The gender of a character. (0 = male, 1 = female, 2 = unknown)
+    <td>gender</td>
+    <td>The gender of a character. (0 = male, 1 = female, 2 = unknown)</td>
+  </tr>
   <tr>
-    <td>dead
-    <td>Returns true if character is dead, false if character is alive.
+    <td>dead</td>
+    <td>Returns true if character is dead, false if character is alive.</td>
+  </tr>
   <tr>
-    <td>npc
-    <td>Used to determine if a character is an NPC or PC. Returns true if character is an NPC.
+    <td>npc</td>
+    <td>Used to determine if a character is an NPC or PC. Returns true if character is an NPC.</td>
+  </tr>
   <tr>
-    <td>online
-    <td>Is the player online. (true/false)
+    <td>online</td>
+    <td>Is the player online. (true/false)</td>
+  </tr>
   <tr>
-    <td>direction
-    <td>The direction the character is facing. (1-8)
+    <td>direction</td>
+    <td>The direction the character is facing. (1-8)</td>
+  </tr>
   <tr>
-    <td>region
-    <td>Returns the region this character is currently in, as a JS-object.
+    <td>region</td>
+    <td>Returns the region this character is currently in, as a JS-object.</td>
+  </tr>
   <tr>
-    <td>town
-    <td>Returns the town this character is currently in, as a JS-object.
+    <td>town</td>
+    <td>Returns the town this character is currently in, as a JS-object.</td>
+  </tr>
   <tr>
-    <td>guild
-    <td>Returns the guild this character is a member of, as a JS-object.
+    <td>guild</td>
+    <td>Returns the guild this character is a member of, as a JS-object.</td>
+  </tr>
   <tr>
-    <td>socket
-    <td>Returns the socket attached to this player as a JS-object.
+    <td>socket</td>
+    <td>Returns the socket attached to this player as a JS-object.</td>
+  </tr>
   <tr>
-    <td>isChar
-    <td>Returns true, as this object is a character.
+    <td>isChar</td>
+    <td>Returns true, as this object is a character.</td>
+  </tr>
   <tr>
-    <td>isItem
-    <td>Returns false, as this object is not an item.
+    <td>isItem</td>
+    <td>Returns false, as this object is not an item.</td>
+  </tr>
   <tr>
-    <td>isSpawner
-    <td>Returns false, as this object is not a spawner.
+    <td>isSpawner</td>
+    <td>Returns false, as this object is not a spawner.</td>
+  </tr>
   <tr>
-    <td>raceID
-    <td>Returns the Race ID (from races.dfn) of the character.
+    <td>raceID</td>
+    <td>Returns the Race ID (from races.dfn) of the character.</td>
+  </tr>
   <tr>
-    <td>maxhp
-    <td>The maximum health of this character.
+    <td>maxhp</td>
+    <td>The maximum health of this character.</td>
+  </tr>
   <tr>
-    <td>maxstamina
-    <td>The maximum stamina of this character.
+    <td>maxstamina</td>
+    <td>The maximum stamina of this character.</td>
+  </tr>
   <tr>
-    <td>maxmana
-    <td>The maximum mana of this character.
+    <td>maxmana</td>
+    <td>The maximum mana of this character.</td>
+  </tr>
   <tr>
-    <td>wandertype
+    <td>wandertype</td>
     <td>The wander type of this npc:<ul>
 	0 = No movement<br>
 	1 = Following the ftarg<br>
@@ -191,196 +251,288 @@
 	3 = Wander inside a box<br>
 	4 = Wander inside a circle<br>
 	5 = Flee<br>
-	6 = Pathfinding</ul>
+	6 = Pathfinding</ul></td>
+  </tr>
   <tr>
-    <td>isonhorse
-    <td>Character is mounted on a horse/other mount, true or false.
+    <td>isonhorse</td>
+    <td>Character is mounted on a horse/other mount, true or false.</td>
+  </tr>
   <tr>
-    <td>tdexterity
+    <td>tdexterity</td>
     <td>
+  </tr>
   <tr>
-    <td>tintelligence
+    <td>tintelligence</td>
     <td>
+  </tr>
   <tr>
-    <td>tstrength
+    <td>tstrength</td>
     <td>
+  </tr>
   <tr>
-    <td>poison
-    <td>Set/Get the poison-level of the character (0 if not poisoned).
+    <td>poison</td>
+    <td>Set/Get the poison-level of the character (0 if not poisoned).</td>
+  </tr>
   <tr>
-    <td>lightlevel
-    <td>The fixed light level of the character.
+    <td>poisonStrength</td>
+    <td>Get/set the poison strength of the character (useful for monsters with native poison attacks, for instance)</td>
+  </tr>
   <tr>
-    <td>vulnerable
-    <td>Sets character to either vulnerable (true) or invulnerable (false).
+    <td>lightlevel</td>
+    <td>The fixed light level of the character.</td>
+  </tr>
   <tr>
-    <td>hungerstatus
-    <td>Enables (true) or disables (false) the "hunger-mode" of this character.
+    <td>vulnerable</td>
+    <td>Sets character to either vulnerable (true) or invulnerable (false).</td>
+  </tr>
   <tr>
-    <td>lodamage
-    <td>The minimum amount of damage an npc will do.
+    <td>hungerstatus</td>
+    <td>Enables (true) or disables (false) the "hunger-mode" of this character.</td>
+  </tr>
   <tr>
-    <td>hidamage
-    <td>The maximum amount of damage an npc will do.
+    <td>lodamage</td>
+    <td>The minimum amount of damage an npc will do.</td>
+  </tr>
   <tr>
-    <td>flag
+    <td>hidamage</td>
+    <td>The maximum amount of damage an npc will do.</td>
+  </tr>
+  <tr>
+    <td>flag</td>
     <td>
+  </tr>
   <tr>
-    <td>atWar
-    <td>Toggles whether or not a character is at war.
+    <td>atWar</td>
+    <td>Toggles whether or not a character is at war.</td>
+  </tr>
   <tr>
-    <td>spellCast
-    <td>The spell this character is casting.
+    <td>spellCast</td>
+    <td>The spell this character is casting.</td>
+  </tr>
   <tr>
-    <td>isCasting
-    <td>Character is casting a spell, true or false.
+    <td>isCasting</td>
+    <td>Character is casting a spell, true or false.</td>
+  </tr>
   <tr>
-    <td>townPriv
-    <td>The privledges this character has with his town.
+    <td>townPriv</td>
+    <td>The privledges this character has with his town.</td>
+  </tr>
   <tr>
-    <td>guildTitle
-    <td>The guild title of this character.
+    <td>guildTitle</td>
+    <td>The guild title of this character.</td>
+  </tr>
   <tr>
-    <td>fontType
-    <td>The font type of this character (for speech).
+    <td>fontType</td>
+    <td>The font type of this character (for speech).</td>
+  </tr>
   <tr>
-    <td>sayColour
-    <td>The color of the speech of this character.
+    <td>sayColour</td>
+    <td>The color of the speech of this character.</td>
+  </tr>
   <tr>
-    <td>emoteColour
-    <td>The color of the emote speech of this character.
+    <td>emoteColour</td>
+    <td>The color of the emote speech of this character.</td>
+  </tr>
   <tr>
-    <td>attacker
-    <td>The character attacking this character.
+    <td>attacker</td>
+    <td>The character attacking this character.</td>
+  </tr>
   <tr>
-    <td>raceGate
-    <td>Character has used a race gate, true or false.
+    <td>raceGate</td>
+    <td>Character has used a race gate, true or false.</td>
+  </tr>
   <tr>
-    <td>skillLock
+    <td>skillLock</td>
     <td>
+  </tr>
   <tr>
-    <td>deaths
-    <td>How many times has this character died.
+    <td>deaths</td>
+    <td>How many times has this character died.</td>
+  </tr>
   <tr>
-    <td>nextAct
-    <td>The next action this character is going to do.
+    <td>nextAct</td>
+    <td>The next action this character is going to do.</td>
+  </tr>
   <tr>
-    <td>petCount
-    <td>The total number of pets this character owns.
+    <td>petCount</td>
+    <td>The total number of pets this character owns.</td>
+  </tr>
   <tr>
-    <td>ownedItemsCount
-    <td>The total number of items this character owns.
+    <td>ownedItemsCount</td>
+    <td>The total number of items this character owns.</td>
+  </tr>
   <tr>
-    <td>cell
-    <td>The jail cell this character is jailed in.
+    <td>cell</td>
+    <td>The jail cell this character is jailed in.</td>
+  </tr>
   <tr>
-    <td>allmove
-    <td>Toggles whether or not this charracter can move any items in the world.
+    <td>allmove</td>
+    <td>Toggles whether or not this charracter can move any items in the world.</td>
+  </tr>
   <tr>
-    <td>houseicons
-    <td>Toggles whether or not this character views the "deed item" instead of houses.
+    <td>houseicons</td>
+    <td>Toggles whether or not this character views the "deed item" instead of houses.</td>
+  </tr>
   <tr>
-    <td>spattack
-    <td>The NPCs' spattack setting.
+    <td>spattack</td>
+    <td>The NPCs' spattack setting.</td>
+  </tr>
   <tr>
-    <td>spdelay
-    <td>The delay between spellcasts with NPC spattack.
+    <td>spdelay</td>
+    <td>The delay between spellcasts with NPC spattack.</td>
+  </tr>
   <tr>
-    <td>aitype
-    <td>The NPCs' ai type.
+    <td>aitype</td>
+    <td>The NPCs' ai type.</td>
+  </tr>
   <tr>
-    <td>split
-    <td>The amount of NPCs' to split in to when hit.
+    <td>split</td>
+    <td>The amount of NPCs' to split in to when hit.</td>
+  </tr>
   <tr>
-    <td>splitchance
-    <td>The chance for this NPC to split when hit.
+    <td>splitchance</td>
+    <td>The chance for this NPC to split when hit.</td>
+  </tr>
   <tr>
-    <td>trainer
-    <td>Toggles whether or not this NPC can train players.
+    <td>trainer</td>
+    <td>Toggles whether or not this NPC can train players.</td>
+  </tr>
   <tr>
-    <td>weight
-    <td>The total weight of this character.
+    <td>weight</td>
+    <td>The total weight of this character.</td>
+  </tr>
   <tr>
-    <td>squelch
-    <td>The squelched status of this character. (0 = not squelched - can talk, 1 = squelched - can't talk)
+    <td>squelch</td>
+    <td>The squelched status of this character. (0 = not squelched - can talk, 1 = squelched - can't talk)</td>
+  </tr>
   <tr>
-    <td>isJailed
-    <td>True if character is jailed, false if not.
+    <td>isJailed</td>
+    <td>True if character is jailed, false if not.</td>
+  </tr>
   <tr>
-    <td>magicReflect
-    <td>Does this character have permanent magic reflection?
+    <td>magicReflect</td>
+    <td>Does this character have permanent magic reflection?</td>
+  </tr>
   <tr>
-    <td>tamed
-    <td>Is the character tamed?
+    <td>tamed</td>
+    <td>Is the character tamed?</td>
+  </tr>
   <tr>
-    <td>isUsingPotion
-    <td>True if potion-use-timer hasn't elapsed since last potion was used, false if it has.
+    <td>isUsingPotion</td>
+    <td>True if potion-use-timer hasn't elapsed since last potion was used, false if it has.</td>
+  </tr>
   <tr>
-    <td>stealth
-    <td>Determines wheather or not character is stealthing.
+    <td>stealth</td>
+    <td>Determines wheather or not character is stealthing.</td>
+  </tr>
   <tr>
-    <td>skillToTame
-    <td>The skill-value required to tame this character.
+    <td>skillToTame</td>
+    <td>The skill-value required to tame this character.</td>
+  </tr>
   <tr>
-    <td>isPolymorphed
-    <td>Character is polymorphed (true/false)
+    <td>isPolymorphed</td>
+    <td>Character is polymorphed (true/false)</td>
+  </tr>
   <tr>
-    <td>isIncognito
-    <td>Character is under influence of the Incognito spell (true/false)
+    <td>isIncognito</td>
+    <td>Character is under influence of the Incognito spell (true/false)</td>
+  </tr>
   <tr>
-    <td>canRun
-    <td>Character can run in combat mode (NPCs only, true/false)
+    <td>canRun</td>
+    <td>Character can run in combat mode (NPCs only, true/false)</td>
+  </tr>
   <tr>
-    <td>isMeditating
-    <td>Character is meditating(?) (true/false)
+    <td>isMeditating</td>
+    <td>Character is meditating(?) (true/false)</td>
+  </tr>
   <tr>
-    <td>isGM
-    <td>Character is a GM (true/false)
+    <td>isGM</td>
+    <td>Character is a GM (true/false)</td>
+  </tr>
   <tr>
-    <td>canBroadcast
-    <td>Character can broadcast messages to all other players (true/false)
+    <td>canBroadcast</td>
+    <td>Character can broadcast messages to all other players (true/false)</td>
+  </tr>
   <tr>
-    <td>singClickSer
-    <td>When character single clicks an item/other character, the serial of said object is displayed (true/false)
+    <td>singClickSer</td>
+    <td>When character single clicks an item/other character, the serial of said object is displayed (true/false)</td>
+  </tr>
   <tr>
-    <td>noSkillTitles
-    <td>No skilltitles will be displayed on the character's paperdoll (true/false)
+    <td>noSkillTitles</td>
+    <td>No skilltitles will be displayed on the character's paperdoll (true/false)</td>
+  </tr>
   <tr>
-    <td>isGMPageable
-    <td>Character can read & react to GM Pages? (true/false)
+    <td>isGMPageable</td>
+    <td>Character can read & react to GM Pages? (true/false)</td>
+  </tr>
   <tr>
-    <td>canSnoop
-    <td>Character can snoop other characters' backpacks without skillcheck against snooping skill (true/false)
+    <td>canSnoop</td>
+    <td>Character can snoop other characters' backpacks without skillcheck against snooping skill (true/false)</td>
+  </tr>
   <tr>
-    <td>isCounselor
-    <td>Character is a counselor (true/false)
+    <td>isCounselor</td>
+    <td>Character is a counselor (true/false)</td>
+  </tr>
   <tr>
-    <td>noNeedMana
-    <td>Character doesn't use any mana when casting spells (true/false)
+    <td>noNeedMana</td>
+    <td>Character doesn't use any mana when casting spells (true/false)</td>
+  </tr>
   <tr>
-    <td>noNeedReags
-    <td>Character doesn't need any reagents to cast spells (true/false)
+    <td>noNeedReags</td>
+    <td>Character doesn't need any reagents to cast spells (true/false)</td>
+  </tr>
   <tr>
-    <td>isDispellable
-    <td>Character is dispellable using the Dispelling-spells (true/false)
+    <td>isDispellable</td>
+    <td>Character is dispellable using the Dispelling-spells (true/false)</td>
+  </tr>
   <tr>
-    <td>orgID
-    <td>Get/Set the original skin ID of a character (the one it reverts back to after polymorph, for instance)
+    <td>orgID</td>
+    <td>Get/Set the original skin ID of a character (the one it reverts back to after polymorph, for instance)</td>
+  </tr>
   <tr>
-    <td>orgSkin
-    <td>Get/Set the original skin colour of a character
+    <td>orgSkin</td>
+    <td>Get/Set the original skin colour of a character</td>
+  </tr>
   <tr>
-    <td>isAnimal
-    <td>Returns true/false depending on if character is an animal
+    <td>isAnimal</td>
+    <td>Returns true/false depending on if character is an animal</td>
+  </tr>
   <tr>
-    <td>isHuman
-    <td>Returns true/false depending on if character is a human/elf/ghost/gm
+    <td>isHuman</td>
+    <td>Returns true/false depending on if character is a human/elf/ghost/gm</td>
+  </tr>
   <tr>
-    <td>isShop
-    <td>Get/set whether character is a shopkeeper or not
+    <td>isShop</td>
+    <td>Get/set whether character is a shopkeeper or not</td>
+  </tr>
   <tr>
-    <td>attackFirst
-    <td>Get/set whether character attacked first or not
+    <td>attackFirst</td>
+    <td>Get/set whether character attacked first or not</td>
+  </tr>
+  <tr>
+    <td>canAttack</td>
+    <td>Get/set whether character can attack others or not (affected by peacemaking)</td>
+  </tr>
+  <tr>
+    <td>singClickSer</td>
+    <td>Get/set whether single clicks shows object serial of clicked on object.</td>
+  </tr>
+  <tr>
+    <td>stabled</td>
+    <td>Get/set the 'stabled' status of a pet.</td>
+  </tr>
+  <tr>
+    <td>foodList</td>
+    <td>Get/set list of food that a pet is willing to eat</td>
+  </tr>
+  <tr>
+    <td>party</td>
+    <td>Return object for party character is in (or null if not in a party). Available properties for party object: leader, memberCount (read only), isNPC</td>
+  </tr>
+  <tr>
+    <td>partyLootable</td>
+    <td>Is character lootable by party members when dead?</td>
+  </tr>
   </table>
 
 <center>
