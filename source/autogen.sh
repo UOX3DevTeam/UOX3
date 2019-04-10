@@ -16,11 +16,14 @@ automake || exit;
 
 echo "Building required linux file js32.a"
 
-cd ./mozilla/js/src;
-gcc -o jscpucfg jscpucfg.c ; ./jscpucfg >  jsautocfg.h
-gcc -g -c -DXP_UNIX *.c ; ar -r js32.a *.o
-cp js32.a ../../../;
-cd ../../../;
+cd ../spidermonkey;
+# gcc -o jscpucfg jscpucfg.c ; ./jscpucfg >  jsautocfg.h
+# gcc -g -c -DXP_UNIX *.c ; ar -r js32.a *.o
+make -ref Makefile.ref CC="gcc -fno-stack-protector"
+cp Linux_All_DBG.OBJ/jsautocfg.h .
+ar -r js32.a Linux_All_DBG.OBJ/*.o
+cp js32.a ../source;
+cd ../source;
 
 echo "Done building js32.a"
 
