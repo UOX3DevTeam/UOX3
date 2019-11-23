@@ -42,11 +42,11 @@ public:
 	CConsole& operator<<( const SI16 &outPut );
 	CConsole& operator<<( const UI16 &outPut );
 	CConsole& operator<<( const std::string &outPut );
-	CConsole& operator<<( const std::ostream& outPut );
+	//CConsole& operator<<( const std::ostream& outPut );
 	CConsole& operator<<( const size_t &outPut );
 
 	CConsole& operator<<( CBaseObject *outPut );
-	CConsole& operator<<( std::ostream& outPut );
+	//CConsole& operator<<( std::ostream& outPut );
 	CConsole& operator<<( CEndL& myObj );
 
 	CConsole& operator<<( const R32 &outPut );

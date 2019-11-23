@@ -139,6 +139,7 @@ private:
 	UI32		netSndTimeout;					// 04/03/2004 - Not used at this time.
 	UI32		netRetryCount;					// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
 	bool		uogEnabled;						// 04/03/2004 - Added to support the UOG Info Request Service
+	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
@@ -354,6 +355,8 @@ public:
 
 	bool		ServerUOGEnabled(void) const { return uogEnabled; }
 	void		ServerUOGEnabled(bool uogValue) {	uogEnabled = uogValue; }
+	bool		ServerRandomStartingLocation( void ) const { return randomStartingLocation; }
+	void		ServerRandomStartingLocation( bool rndStartLocValue ) { randomStartingLocation = rndStartLocValue; }
 	UI32		ServerNetRetryCount(void) const { return netRetryCount; }
 	void		ServerNetRetryCount(UI32 retryValue) { netRetryCount = retryValue; }
 	UI32		ServerNetRcvTimeout(void) const { return netRcvTimeout; }

@@ -2,6 +2,81 @@ UOX3 Changelog
 ------------------------
 
 -==============================-
+-= 24/11/2019 - UOX3 0.99.2h  =-
+-==============================-
+Contributors: Xuri, Kitiara
+
+Source Changes/Fixes:
+	CustomTags (DFN and JS) now supports negative int values
+	Fixed an issue introduced with starting locations that would dump new characters in the middle of the ocean
+	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
+		RANDOMSTARTINGLOCATION=0	// 0 to disable (default), 1 to enable
+	Corrected name of spell JS property AGRESSIVESPELL to AGGRESSIVESPELL
+	Some more code cleanup
+	Documented temp effect cases in code
+	Additional function parameters passed as const references
+	Changed RuntimeLibrary in Debug configuration in VS project file from MultiThreadedDebugDLL to MultiThreadedDebug to fix issues with unreadable characters in strings while debugging
+	Fixed potential issue with checking for number of arguments in CFile_Pos()
+	Merged fix for a crash issue related to the 'HOWTO command from Kitiara/UOX3
+	Fixed support-messages from players not being stored and displayed in GM/Counselor queues
+	Added more descriptive error messages in code and JavaScript when trying to set spawner-related object properties on non-spawner objects
+	Fixed possible null pointer dereference
+	Converted some C-style pointer casting to C++ style
+	Added override specifier to some virtual methods that override base class virtual methods
+	Some function parameters are now passed as const references as they're not being modified in the called function
+	Resolved an issue with uninitialized struct members
+	Removed some redundant conditional checks
+	Made the boolean part of JS function RegisterSkill( <skillnum>, <bool> ) actually work; can now be used to disable/enable JS-implemented skills
+	Fixed a bug with cHTMLTemplate::Process() where the same expression was used for both branches of a ternary operator
+	Various minor cleanups; removed some unused variables, addressed some potential portability issues
+	Fixed an issue with potentially undefined behaviour, where sprintf was being used with a single variable as both parameter and destination.
+	Disabled SAFESEH linker option for debug build to enable "Edit and Continue" mode in Visual Studio
+	Disabled loading of PRIV tag from regions.wsc, as it is currently unused (meant for townstones) and prevents loading certain updates to regions.dfn file
+	Added support for SAFEZONE tag to regions.dfn. No hostile actions are allowed within zones where this tag is set to 1
+	Added combat, spellcasting, stealing and snooping checks for safe zone
+	Added safe zone check to damage portion of explosion potion
+	Exposed isSafeZone JS property for characters
+
+JScript Changes/Fixes:
+	Updated clumsy.js and level1targ.js with corrected names for aggressiveSpell and canCastAggressive JS properties, and added checks for isSafeZone region JS property
+	Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands to misc-cmd.js
+	Fixed pUser/pSock reference error in misc-cmd.js for command_BROWSE (Kitiara)
+	Moved Create Food spell out to JavaScript
+	Updated potion.js, provocation.js and enticement.js to check for safe zones
+
+DFN Changes/Fixes:
+	Updated spells in spells.dfn to include aggressive and resistable flags
+
+Misc Changes/Fixes:
+	Updated dictionaries with safezone message
+
+-==============================-
+-= 13/09/2018 - UOX3 0.99.2d  =-
+-==============================-
+Contributors: Xuri
+
+Source Changes/Fixes:
+	Fixed a server crash when start locations in uox.ini is empty; defaults to hardcoded location (Sweet Dreams Inn, Britain) if no start locations found
+	Fixed tooltips on containers not updating when adding/removing items
+	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
+		FISHINGSTAMINALOSS=2	// The amount of stamina lost when using the fishing skill
+	Fixed some issues in CHandleCombat::CastSpell() and level1targ.js that stopped NPCs from casting Heal on themselves
+	Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable:
+		WEAPONDAMAGECHANCE=17 	// Chance of weapons taking damage when attacking
+		WEAPONDAMAGEMIN=0		// Minimum amount of damage a weapon takes if damaged in combat
+		WEAPONDAMAGEMAX=1		// Maximum amount of damage a weapon takes if damaged in combat
+		ARMORDAMAGECHANCE=25	// Chance of armor taking damage when defending
+		ARMORDAMAGEMIN=0		// Minimum amount of damage armor can take if damaged in combat
+		ARMORDAMAGEMAX=1		// Maximum amount of damage armor can take if damaged in combat
+	Added new UOX.INI settings for adjusting combat-speed on a global scale:
+		GLOBALATTACKSPEED=1 	// for adjusting speed of melee and ranged attacks globally for all chars
+		NPCSPELLCASTSPEED=1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
+	Increased the chance of NPCs attempting to cast spells instead of doing regular attacks in combat-rounds
+	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
+	Fixed a server crash in CMulHandler::CheckStaticFlag() which could crash the server when using a client-version below 7.0.9.0
+	Fixed a potential server crash in cSkills::FishTarget(), which would possibly crash the server when using a client-version below 7.0.9.0
+
+-==============================-
 -= 10/11/2013 - UOX3 0.99.2c  =-
 -==============================-
 Contributors: Xuri
@@ -18,7 +93,7 @@ Source Changes/Fixes:
 	Added new UOX.INI settings for adjusting combat-speed on a global scale:
 		GLOBALATTACKSPEED=1 	// for adjusting speed of melee and ranged attacks globally for all chars
 		NPCSPELLCASTSPEED=1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
-	Increased the chance of NPCs attempting to cast spells instead of doing regular attacks in combat-rounds	
+	Increased the chance of NPCs attempting to cast spells instead of doing regular attacks in combat-rounds
 
 -==============================-
 -= 04/11/2012 - UOX3 0.99.2b  =-
@@ -40,7 +115,7 @@ Source Changes/Fixes:
 		AddToolTip( clilocID ) // Adds a tooltip to the previous gump-element that was added.
 		AddTextEntryLimited( left, top, width, height, hue, relay, initialTextIndex, actualText, size ) // Add a text-entry gump with restriction on entry-length
 		AddButtonTileArt( tL, tR, gumpIDnorm, gumpIDpush, buttonType, pageNum, buttonID, tileID, hue, tileX, tileY ) // Add a tile-picture as a part of a gump-button.
-		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); // 
+		AddXMFHTMLTok( left, top, width, height, border, scrollbar, hue, clilocnumber, clilocArgs... ); //
 	Fixed an AND vs OR issue in CMulHandler::DoesStaticBlock() that caused an if-statement to behave incorrectly
 	Updated LineOfSight() function with a new boolean parameter that allows LoS-checks based from the Z-level at a character's feet instead of at his head
 	Added LineOfSight-checks for players (does not affect GMs) picking up/dropping items from/onto the ground, to stop an exploit with CircleOfTransparency
@@ -68,8 +143,8 @@ Source Changes/Fixes:
 			PACKITEM=listobject
 			PACKITEM=listobject,amount
 			PACKITEM=listobject,minamount maxamount
-	Added support for randomization in the AMOUNT DFN tag for items. 
-		Updated supported syntax: 
+	Added support for randomization in the AMOUNT DFN tag for items.
+		Updated supported syntax:
 			AMOUNT=amount
 			AMOUNT=minamount maxamount
 	Fixed an issue with corpses not having a maximum weight capacity defined; it is now set to 500 stones.
@@ -169,9 +244,9 @@ Source Changes/Fixes:
 	Fixed an issue with locked down items decaying (despite being inside houses)
 	A system message should now be displayed when locking down items, showing how many lockdowns remain
 	Added JS Item property: multi - A read-only Object-reference to the multi a specific item is inside
-	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground 
+	Items of objType OT_SPAWNER with amount set higher than 1 should no longer be duped when picked up off the ground
 	Added new UOX.INI settings:
-		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just 
+		GLOBALITEMDECAY - Toggles on/off item decay on a global scale. Note that it does not remove the decay-status from items, it just
 						resets the decay-timer when it reaches 0
 		SCRIPTITEMSDECAYABLE - Toggles whether DFN-items will decay by default or not. Can be overriden by DECAY tag in item-DFNs
 		BASEITEMSDECAYABLE - Toggles whether base-items will decay by default or not. Can be overriden by DECAY tag in harditems.dfn
@@ -179,13 +254,13 @@ Source Changes/Fixes:
 	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
 	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
 	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
-	Added support for six new JS events: 
+	Added support for six new JS events:
 		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
 		onSell( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
 		onBuyFromVendor(socket, objVendor, objBought ) - triggers for item while item is being bought from an NPC vendor; return false in script to block sale, defaults to true
 		onBoughtFromVendor( socket, objVendor, objBought ) - triggers on item after purchase has gone through and item has reached the player's backpack
 		onSellToVendor( socket, objVendor, objSold ) - triggers for item while item is being sold to an NPC vendor; return false in script to block sale, defaults to true
-		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack 
+		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack
 	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
 	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
 	Added an extra check to CPISellItem to make sure the character trying to sell items still owns those items when accepting trade
@@ -215,10 +290,10 @@ Source Changes/Fixes:
 	Randomized impact-sounds for melee weapons
 	Randomized get-hit sounds for male and female human characters
 	Revamped spell-damage and magic-resist systems:
-		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check: 
+		Added new function in magic.cpp to calculate spell-damage after magic-resist and eval-int vs resist-check:
 			SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted )
 		Updated cMagic::CheckResist() with magic resistance formulas based on pre-AoS information
-		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn. 
+		Added BASEDMG tag to a number of spells in DFNDATA/SPELLS/spells.dfn.
 			For damage-spells, it's the maximum potential basedamage done before bonuses (or penalties) based on target resist, caster eval int and item resistances.
 			For healing spells, it's the maximum potential basehealing done before potential bonuses
 		Damage-spells updated to use new methods for calculating damage and magic resistances, both of which should now be close to pre-AoS implementation
@@ -258,7 +333,7 @@ Source Changes/Fixes:
 		Reduced default maxSteps variable in advanced pathfinding routine from 1000 steps to 500 steps for performance reasons
 			The maxSteps variable will also increase/decrease depending on the type of movement the pathfinding is for
 		Added a safeguard against NPCs repeatedly failing at advanced pathfinding and slowing down the server as a result. Now resets their NPCWANDERMODE on critical failures.
-		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path. 
+		Added an internal counter for NPCs called "failPath", which increases whenever the NPC is blocked from moving when server thinks it has a valid path.
 			Once it reaches a certain threshold, NPC can push past a blocking character, or alternatively stop whatever it's doing (fleeing, following, etc).
 		Advanced Pathfinding will now take into account characters blocking the way when generating valid paths - no more queued up NPCs in long lines!
 		Enabled pathfinding in water for water-walking creatures
@@ -285,7 +360,7 @@ Source Changes/Fixes:
 		NOTE: Gargoyle-specific features and/or special-cases are not yet implemented! Highly experimental.
 	Added support for extended itemIDs (0x3FFF to 0xFFFF) used in SA and HS clients. Maximum supported depends on size of tiledata run on the server.
 	Added support for reading new versions of tiledata.mul and multi.mul. No settings needed, version-handling taken care of automatically.
-	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class. 
+	Added support for New Object Information packet (0xF3) via CPNewObjectInfo packet class.
 		This replaces packet 0x1A in client-versions 7.0+, and enables displaying items and multis with IDs extending beyond 0x3FFF
 	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
 		Can be enabled/disabled through UOX.INI setting PAPERDOLLGUILDBUTTON=0/1. Defaults to 0.
@@ -454,7 +529,7 @@ DFN Changes/Fixes:
 	Added support for the SA-specific map (map5.mul - Termur) to DFNDATA/MAPS/maps.dfn
 	Fixed incorrect Meditation skill-entry for lich NPCs (DFNDATA\NPC\undead.dfn) - was set to max 9500 (950.0), should have been 950 (95.0)
 	Fixed read-only books (setup through DFNDATA/MISC/books.dfn) by updating the MORE dfn-tags in DFNDATA/ITEMS/MISC/books.dfn
-	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer) 
+	Added a new NPCLIST (escorts) to DFNDATA/NPC/npclists.dfn, and an NPC escort spawner to DFNDATA/ITEMS/GMMENU/spawners.dfn (dragon slayer)
 	Added Ter'Mur Map Area (REGION 250) to DFNDATA/REGIONS/regions.dfn
 	Changed all references to MAP in DFNDATA/REGIONS/regions.dfn to WORLD (which unlike MAP is actually read by UOX3 in this file)
 	Added layers to DFNDATA/ITEMS/MISC/jewelry.dfn (dragon slayer)
@@ -481,7 +556,7 @@ Source Changes/Fixes:
 	Fixed an issue causing serial numbers in the istats gump to display improperly.
 	Fixed an issue with CPFightOccurring packet which would cause the client to lockup.
 	Made use of the CPFightOccurring packet during combat.
-	Fixed an issue when a monster attacked a player who was not in combat UOX3 
+	Fixed an issue when a monster attacked a player who was not in combat UOX3
 	 would not inform the client of a new target.
 	Added a flag to CChar::PushDirection() allowing us to push to the front or back of the pathToFollow list.
 	Changed CChar::mNPC::pathToFollow to a deque for more robust functionality.
@@ -612,7 +687,7 @@ Source Changes/Fixes:
 	 only run while they still have stamina left.
 	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they
 	 work the same way as NPCMOVEMENTSPEED.
-	Added three new DFN tags for NPCs. WALKINGSPEED, RUNNINGSPEED and FLEEINGSPEED 
+	Added three new DFN tags for NPCs. WALKINGSPEED, RUNNINGSPEED and FLEEINGSPEED
 	 they also work the same way as the uox.ini settings, and will override those if present.
 	Allow faster attacks on fleeing NPCs, so they won't be chased without an end.
 	Allow following NPCs to run if their target went to far away, so they can catch up on it.
@@ -648,7 +723,7 @@ Source Changes/Fixes:
 	Implemented supermoleet's fix for the black screen after logging in to a different world
 	Added error handling to prevent a crash if GetByte/GetWord/GetDWord were passed an invalid offset
 	Changed the tweakItem and tweakChar handlers to use command level rather than the "IsGM" flag.
-	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.	
+	Defaulted the starting serial to 0x1 rather than 0x0, as some UO packets don't recognize 0x0 as a valid serial.
 	Modified the JSMethod CBase_GetTag to avoid a possible crash.
 	Removed the following variables from CWorldMain cmem, imem, nextCharSerial, nextItemSerial as this functionality is handled by the ObjectFactory
 	Changed the system message being displayed when fatigued due to being overloaded
@@ -676,10 +751,10 @@ Source Changes/Fixes:
 	Implemented 0xBD CPClientVersion packet to request the version from the client.
 	Possible fix for clients > 6.0.5.0.
 	Fixed the handling for the UOX ini tags OVERLOADPACKETS and DARKLEVEL
-		
+
 JScript Changes/Fixes:
 	Added new command (rndtile.js) that allows tiling random items of a specific hue at a specific height
-		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)	
+		Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
 	Added "ARMOUR" as an alternate spelling used along with the 'SET command
 	Found and fixed a total of 19 missing semicolons in 15 different JavaScripts
 	Modified sword.js and axe.js so bladed weapons can be used as magic weapons (of TYPE 15)
@@ -702,7 +777,7 @@ JScript Changes/Fixes:
 	Cure-potions should be working again (stranf)
 	Drinking a poison-potion will now poison one's character
 	A timer now stops players from using multiple potions rapidly
-	Fixed some errors in jail.js that could mess up jailing/releasing characters 
+	Fixed some errors in jail.js that could mess up jailing/releasing characters
 	Added new function (getCombatSkill) to weapontypes.js for returning skill used by equipped weapon as a string
 	Removed entry 104 (rawfish.js) from jse_fileassociations.scp as it was no longer in use
 	Archerybuttes work again, and should have a "machine-gun"-issue fixed
@@ -792,7 +867,7 @@ Source Changes/Fixes:
 	Let chars run if they follow a running char. (grimson)
 	Fixed a bug that caused the offline HTML files not to be written in some cases. (grimson)
 	Catch Serverlist entrys with less than 3 sections, these caused a crash when parsing the ini. (grimson)
-	Added %24time and %tstamp to HTML templates, %24time return the current time in the 24 hour 
+	Added %24time and %tstamp to HTML templates, %24time return the current time in the 24 hour
 	 	format, %tstamp returns a unix timestamp. (grimson)
 	Added new tag "MOUNTID" to creatures DFN, if this is set to the ID of a mount item the creature will be mountable. (grimson)
 	Removed CChar::IsValidMount( void ) as it is no longer of any use. (grimson)
@@ -814,7 +889,7 @@ Source Changes/Fixes:
 	Modified damage output of summoned creatures in magicsummon.dfn, as they were too powerful (Xuri)
 	The owner of two pets/summoned creatures will no longer become a criminal if the two pets/creatures fight (Xuri)
 	Summoned creatures (and normal ones) will no longer cast Blade Spirit/Energy Vortex, as they caused flagging errors (Xuri)
-				
+
 JScript Changes/Fixes:
 	Items added using the RADD command in repeatingcmds.js will no longer decay by default (Xuri)
 	Fixed the ever-swinging training dummies (Xuri)
@@ -825,7 +900,7 @@ JScript Changes/Fixes:
 		Could cast without consuming any reagents
 		SoundEffects weren't working properly
 		Healing would (by design) subtract health from the caster
-		Debugmessages weren't commented out	
+		Debugmessages weren't commented out
 	Fixed the 'STAMINA command in stats.js. Had ".isChar" misspelled as ".isCHar" (Xuri)
 	Added new JS-script: oilcloth.js - Functional oil cloths, used for cleaning poison off of weapons (Xuri)
 	Character can no longer use locked down potions or food	 (Xuri)
@@ -836,7 +911,7 @@ JScript Changes/Fixes:
 	Updated doors.js to not display the "blocked" message if the door ID isn't recognized. (giwo)
 	Added scripted version of keys (now used instead of hardcoded ones), plus working keyrings (Xuri)
 	Updated doors-script to make use of new scripted keys/keyrings as well as the new TextMessage arguments (Xuri)
-	
+
 DFN Changes/Fixes:
 	Added GOOD tags to buyable items, so it's easier for an admin to use the advanced trade system. (grimson)
 	Fixed the guardzone for Ocllo, X2 and Y2 were mixed up (Xuri)
@@ -945,7 +1020,7 @@ Source Changes/Fixes:
 	Changed some id >= 0x4000 comparisons to CanBeObjType( OT_MULTI ), for clarity (Maarc)
 	Fixed a bug with applying NPC sections where if you specified ALCHEMY values, it would fail to apply correctly (Maarc)
 	Removed CMulHandler::AverageMapElevation() as it was superfluous. (giwo)
-	Removed CTileUni height in favor of top, to reduce calc_walk() calculations. (giwo) 
+	Removed CTileUni height in favor of top, to reduce calc_walk() calculations. (giwo)
 	Removed CTileUni id as its use was unnecesarry. (giwo)
 	Rewrote CMovement::calc_walk() to improve overall readability and speed. (giwo)
 	Merged CMovement::calc_WaterWalk() with calc_walk(). (giwo)
@@ -1153,7 +1228,7 @@ Source Changes/Fixes:
 	Changed the return value of OnCombatDamageCalc() to a SI16, I accidentially declared it to be a SI32. (grimson)
 	Replaced the JS Char property .defense with the new JS Char Method: (grimson)
 		mChar.Defense( hitLoc, damageType, doArmorDamage );
-	so you can get all the different defense values for a char. 
+	so you can get all the different defense values for a char.
 	Removed the code to raise your resistance value upon elemental damage, this can be done better in JS. (grimson)
 	Modified  CBaseObject::DumpBody() and CBaseObject::HandleLine() so that all resistance values get saved
 	and loaded in/from the worldfiles. (grimson)
@@ -1231,7 +1306,7 @@ Source Changes/Fixes:
 			HUNGER=#,# the first value is the hunger rate the second the hunger damage.
 				   Note for players char the settings from the uox.ini apply if
 				   there are no settings specified for the race.
-		
+
 		Re-activated the pet-hunger system. Pets will now become hungry and upon starving
 		there is a configurable chance that they may become wild again. Note: Pets won't
 		die from hunger and their hunger value is reset after becoming wild again. The
@@ -1240,7 +1315,7 @@ Source Changes/Fixes:
 					of the pet becoming wild again. Note: The values are seperated
 					with a space instead of a comma on this tag.
 		To feed a pet just drag some food on it, currently all types of food work.
-		
+
 		There is also another new DFN tag:
 			WILLHUNGER=# if this is set to 0 the NPC will not suffer from any type of hunger.
 				     Note: You can also change that value for specific chars by using
@@ -1251,13 +1326,13 @@ Source Changes/Fixes:
 			FOOD=abc   This sets the name of the foodlist for the tamed item.
 		Added a new list type for items:
 			FOODLIST   Defines a list of item IDs a tamed char will accept as food.
-	
+
 	Third part of the rewrote hunger system: (grimson)
 		Added a new AI type "aiANIMAL" with the number 6. This AI does nothing until the hunger level
 		reaches a value of 4, then it looks for other animals, that don't have the aiANIMAL, and attacks
 		them. If the hunger level goes below 2 it will attack everything in range, even player chars.
 		If the animal kills it's target it's hunger level will be set to 6 again.
-		
+
 		Added 3 new JS propertys for chars:
 			.tamedHungerRate returns or sets the rate the char hungers when it is tamed.
 			.hungerWildChance returns or sets the chance of the char becoming wild if it's starving.
@@ -1422,7 +1497,7 @@ Source Changes/Fixes:
 	Fixed a possible issue caused by passing float values to JS func RandomNumber() (giwo)
 
 JScript Changes/Fixes:
-	Added carpentry, tinker, leather repair, bow repair, bandage, sewing kit, mortar, and archery butte ID's to 
+	Added carpentry, tinker, leather repair, bow repair, bandage, sewing kit, mortar, and archery butte ID's to
 	 js_objectassociations.scp (giwo)
 	Fixed a bug causing sources for resource-harvesting not to get properly initialized (Xuri)
 	Defined respawn delay and maximum resources as easily editable global variables	(Xuri)
@@ -1457,13 +1532,13 @@ DFN Changes/Fixes:
 -= 20/02/2006 - UOX3 0.98-3.4 =-
 -==============================-
 Source Changes/Fixes:
-	Updated the CPUpdateStat function to use the GetMaxHP, GetMaxStam and GetMaxMana 
-	 for sending the respective values instead of sending the strenght, dexterity and 
+	Updated the CPUpdateStat function to use the GetMaxHP, GetMaxStam and GetMaxMana
+	 for sending the respective values instead of sending the strenght, dexterity and
 	 intelligence values. (Grimson)
 	The current HP and (if present) the fixed maxHP will now be saved on worldsaves. (Grimson)
-	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with 
+	Added two new DFN tags for NPCs and Items: CUSTOMSTRINGTAG and CUSTOMINTTAG with
 	 them you can specify custom tags inside the DFNs and use them in JS scripts. (Grimson)
-	Added two new JS functions: 
+	Added two new JS functions:
 	FindItem( x, y, z, world, id) - returns the item with the "id" that is on the "z"
 	 level and closest to the coordinates of x and y. Or NULL if no item is found. (Grimson)
 	GetItem( x, y, z, world) - returns the item that is on the given coordinates or NULL if there is no item. (Grimson)
@@ -1506,54 +1581,54 @@ Source Changes/Fixes:
 	 when they get attacked with a spell. (Grimson)
 	Fixed the text message of the evaluating intelligence skill. (Grimson)
 	Removed resource counts before launching create menu's, as the create menu handles that. (giwo)
-	Marked StringToNum(), NumToString(), NumToHexString() for later deletion, please use built-in JS 
+	Marked StringToNum(), NumToString(), NumToHexString() for later deletion, please use built-in JS
 	 method .toString() and function parseInt() in their place. (giwo)
 	Implemented JS props .stone and .master for Guilds. (giwo)
 	Removed the following JS functions as they are superfluous. (giwo)
-		IsRegionGuarded 
-		CanMarkInRegion 
-		CanRecallInRegion 
-		CanGateInRegion 
-		GetGuildType 
-		GetGuildName 
-		SetGuildType 
-		SetGuildName 
-		SetGuildMaster 
-		GetNumGuildMembers 
-		GetGuildStone 
-		GetTownMayor 
-		GetTownRace 
-		SetTownRace 
-		GetTownTax 
-		GetTownTaxResource 
-		SetTownTax 
-		SetTownTaxResource 
+		IsRegionGuarded
+		CanMarkInRegion
+		CanRecallInRegion
+		CanGateInRegion
+		GetGuildType
+		GetGuildName
+		SetGuildType
+		SetGuildName
+		SetGuildMaster
+		GetNumGuildMembers
+		GetGuildStone
+		GetTownMayor
+		GetTownRace
+		SetTownRace
+		GetTownTax
+		GetTownTaxResource
+		SetTownTax
+		SetTownTaxResource
 	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people
 	 from compiling) (Maarc)
 	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced (Maarc)
-	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine). Healing 
+	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine). Healing
 	 and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage
 	 hasn't occurred in the past 5 minutes, they get taken off the list (Maarc)
-	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject, 
+	An offshoot of the damage tracking stuff is a change to combat.  Fame/karma/kills has been moved into CBaseObject,
 	 because in future, we'll look at tracking fame/karma/kills updates for weapons and armour (so if you kill repeatedly with a
 	 sword, the sword's kill count increases) (Maarc)
-	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking. Future 
-	progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat 
+	Much of the fame/karma/kills stuff isn't done, and currently, we don't take advantage of the damage tracking. Future
+	progressive updates will help with karma/fame parcelling on death, and to help NPCs make smarter decisions in combat
 	Broke out packet 0xBF into a CPI class of it's own. Rather than making it a huge monolithic class, it internally hands
 	 it off to other packet handling classes (Maarc)
 	Fixed VC6 build errors (thanks to giwo). (Grimson)
 	Rewrote parts of the weather system: (Grimson)
-		Added weather type storm. 
-		Heat wave and cold snap are calculated once per uo day and set the temperature to a fixed value 
-	    	between MAXTEMP and HEATINTENSITY resp. COLDINTENSITY and MINTEMP. 
-	    	Storm, Snow and Rain are calculated oncer per uo hour. 
-	    	Rewrote doWeatherEffect() to better seperate the different weather effects and to change the way they are calculated. 
+		Added weather type storm.
+		Heat wave and cold snap are calculated once per uo day and set the temperature to a fixed value
+	    	between MAXTEMP and HEATINTENSITY resp. COLDINTENSITY and MINTEMP.
+	    	Storm, Snow and Rain are calculated oncer per uo hour.
+	    	Rewrote doWeatherEffect() to better seperate the different weather effects and to change the way they are calculated.
 	Added new settings to races.dfn: (Grimson)
-		HEATLEVEL - Sets the minimum heat at which the race get's damaged. 
-		COLDLEVEL - Sets the minimum cold at which the race get's damaged. 
-		STORMAFFECT - Defines if the race is affected by a storm 
-		STORMDAMAGE - Defines the damage a race takes from storm 
-		STORMSECS - Defines the interval at which the races takes damage from a storm. 
+		HEATLEVEL - Sets the minimum heat at which the race get's damaged.
+		COLDLEVEL - Sets the minimum cold at which the race get's damaged.
+		STORMAFFECT - Defines if the race is affected by a storm
+		STORMDAMAGE - Defines the damage a race takes from storm
+		STORMSECS - Defines the interval at which the races takes damage from a storm.
 	Added cMapStuff::inBuilding() function to determine wheter a given set of coordinates is inside a building.
 	 It does this by checking whether there is a static or multi above the coordinates. (Grimson)
 	Added inBuilding() and SetInBuilding() functions to CChar and set it on movement and teleport. (Grimson)
@@ -1562,7 +1637,7 @@ Source Changes/Fixes:
 	Send the light level and weather status directly after a player log's in. (Grimson)
 	Fixed some bugs in calculating the heat/cold damage in doWeatherEffect(). (Grimson)
 	Rain now lowers the current temperature by 5, a storm by 10. (Grimson)
-	Moved the sending of the light level and weather status from startChar() into 
+	Moved the sending of the light level and weather status from startChar() into
 	 cChar::Teleport() by adding a force forceUpdateLight option to checkRegion(). (Grimson)
 	Rewrote the doLightEffect() function, it now uses the current light level to scale the light damage,
 	 it also respects the LIGHTLEVEL setting from races.dfn and it will stop doing light damage if you
@@ -1572,10 +1647,10 @@ Source Changes/Fixes:
 	Added storm to the IsRaceWeakToWeather() JS function. (Grimson)
 	Light and weather effects now also work on NPCs. (Grimson)
 	Added 3 new JS events: (Grimson)
-		onLightChange( mChar, lightLevel ) 
-		onWeatherChange( mChar, weatherId ) 
-		onTempChange( mChar, temperature ) 
-		These events also work on the global script id and get called for players and NPCs. 
+		onLightChange( mChar, lightLevel )
+		onWeatherChange( mChar, weatherId )
+		onTempChange( mChar, temperature )
+		These events also work on the global script id and get called for players and NPCs.
 	Removed several item types from itemtypes.dfn as they are now handled by JS. (giwo)
 	Fixed an issue causing the Snooping skill not to function. (giwo)
 	Fixed an issue causing GM Polymorph Menu not to function correctly. (giwo)
@@ -1583,9 +1658,9 @@ Source Changes/Fixes:
 	Moved the Multi check to containers specifically rather than on any item use, to enable use of house signs
 	 and doors from outside. (giwo)
 	Stopped saving the weather type in regions.wsc, this prevented changes from regions.dfn to apply. (Grimson)
-	Make use of the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY from weatherab.dfn, they are now 
-	 used in calculating the damage a char takes from these elements. The damage is scaled by calculating 
-	 a random number between 0 and the intensity, this number is then used as a percent value against 
+	Make use of the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY from weatherab.dfn, they are now
+	 used in calculating the damage a char takes from these elements. The damage is scaled by calculating
+	 a random number between 0 and the intensity, this number is then used as a percent value against
 	 the damage value in races.dfn. (Grimson)
 	Fixed a small bug that prevent a storm from ending. (Grimson)
 	Updated the SkillCheck in HandleCombat() to be based upon the defenders tactics skill. (giwo)
@@ -1595,14 +1670,14 @@ Source Changes/Fixes:
 	Added two new shield ID's to CItem::IsShieldType(). (giwo)
 	Added spacing after fame titles to fix a paperdoll display issue. (giwo)
 	Fixed multiple issues in LineOfSight() that caused miscalculations of the coordinates that should be checked. (Grimson)
-	Added line of sight checks to CPIPopupMenuRequest::Handle(), CBaseVendorResponse::CBaseVendorResponse() and 
+	Added line of sight checks to CPIPopupMenuRequest::Handle(), CBaseVendorResponse::CBaseVendorResponse() and
 	 CPIDblClick::Handle() to prevent people from using items and vendors through walls. (Grimson)
 	Changed HandleWeatherChanges() so it updates the weather values of NPCs too. (Grimson)
-	Changed reading the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY in weatherab.dfn so that 
+	Changed reading the SNOWINTENSITY, RAININTENSITY and STORMINTENSITY in weatherab.dfn so that
 	 you can set a min and max value for the damage percent. See the examples in the updated weatherab.dfn. (Grimson)
 	Added two new values to weatherab.dfn: (Grimson)
-		STORMTEMPDROP this sets the amount the temperature drops when there is a storm 
-		RAINTEMPDROP this sets the amount the temperature drops when it is raining. 
+		STORMTEMPDROP this sets the amount the temperature drops when there is a storm
+		RAINTEMPDROP this sets the amount the temperature drops when it is raining.
 	Renamed HandleWeatherChanges() to CheckCharInsideBuilding() as it is more apropriate. (Grimson)
 	Stopped weather effects affecting ghosts of death players. (Grimson)
 	Partially rewrote cMovement::SendWalkToOtherPlayers to correctly send chars and remove them from sight. (Grimson)
@@ -1688,7 +1763,7 @@ Source Changes/Fixes:
 	Documented trade.cpp (giwo)
 	Fixed a possible exploit with secure trading. (giwo)
 	Fixed an issue causing it to be impossible to remove characters from a house ban list. (giwo)
-	Fixed a server crash caused by transfering house ownership. (giwo) 
+	Fixed a server crash caused by transfering house ownership. (giwo)
 	Updated the NPC Pathfinding code to fix some issues. (giwo)
 	Added a check to ensure boat items are only moved once when boats sail. (giwo)
 	Moved maps_def Disposal to the end of CMapStuff::Load() (Maarc)
@@ -1736,13 +1811,13 @@ Source Changes/Fixes:
    	Fixed an issue causing items to "bounce" when being dropped on the same character they were picked up from. (giwo)
    	Fixed an issue causing Ghosts to be bugged after a server restart. (giwo)
 	Modified newbie item creation so scripted items take precedence over default clothing. (giwo)
-	Added JS property .isShop to transform an NPC into (and back from) a shopkeeper. (Grimson) 
+	Added JS property .isShop to transform an NPC into (and back from) a shopkeeper. (Grimson)
 	Fixed some issues causing flagging not to be updated after setting flags in JS. (giwo)
 	Added error-checking when an invalid script entry is called with the GET tag. (giwo)
 	Modified AR statwindow reporting to give larger numbers. (giwo)
 	Removed teffect.cpp from the VC6 workspace, as it no longer exists. (Grimson)
 	Modified the flags of display cases via the tiles.dfn to prevent NPCs from walking on them. (Grimson)
-	Added fixed maximum HP for chars. You can set it by a new dfn tag "HPMAX" or by the 
+	Added fixed maximum HP for chars. You can set it by a new dfn tag "HPMAX" or by the
 	.maxhp JS property. Setting a negative value via the .maxhp JS property will reset the fixed value. (Grimson)
 	Updated the set command to make use of the .maxhp JS property. (Grimson)
 	Modified 'setscptrig so it accepts 0 as a value even if no script 0 exists. (giwo)
@@ -1930,7 +2005,7 @@ Source Changes/Fixes:
 	NOTE: Tweak seems to be broken (the buttons don't fire anything), and I have no idea why (Maarc)
 	NOTE: Heal is currently a vampiric heal (some health is subtracted from the caster to heal the target).  This is *not* a new behaviour. (Maarc)
 	NOTE: Tweaked up magic arrow damage (a GM mage was doing less than 4 damage every time).   (Maarc)
-	Old magic arrow formula			
+	Old magic arrow formula
 		baseDamage	= 2 + Random( 0, 1 )
 		mageryMult	= (Magery / 2000) + 1 (maximum multiplier, 1.5)
 		Damage Dealt	= baseDamage * mageryMult - EvalIntCheck
@@ -1943,7 +2018,7 @@ Source Changes/Fixes:
 	Adjusted the JS socket property for characters, so that it returns an explicit NULL object if there is no socket attached (Maarc)
 	NOTE: Researching into JSExtendedClass instead of JSClass, so that we can implement equality testing (like, attacker != caster sorts of things) (Maarc)
 	Hungercheck for players should now be working again (Grimson)
-	OnHungerChange JS event will now execute both for hunger level increase as well as decrease, and will also work as global script (Grimson)	
+	OnHungerChange JS event will now execute both for hunger level increase as well as decrease, and will also work as global script (Grimson)
 	Some fixes for the onHungerChange code to ensure UOX3 doesn't crash when no global script is defined (Grimson)
 	Added isAnimal and isHuman as JS character properties. (Maarc)
 	Minor code change in tempeffects(). (giwo)
@@ -2042,9 +2117,9 @@ Source Changes/Fixes: (giwo)
 	Removed cSkills::BowCraft() as it was unused.
 	Moved largeBuffer and largePackBuffer from local declares into CSocket.
 	Updated sword.js and axe.js to work properly with 5.0.x clients.
-	Added support for MapDiffs/StaticDiffs 
-	Added mapdiff entries to maps.dfn to allow customizing filenames. 
-	Added CPEnableMapDiffs to advise the clients of MapDiffs. 
+	Added support for MapDiffs/StaticDiffs
+	Added mapdiff entries to maps.dfn to allow customizing filenames.
+	Added CPEnableMapDiffs to advise the clients of MapDiffs.
 	Updated go.js to support passing a world number
 	Greatly reduced the memory taken by NPC's and Players.
 	Fixed an issue causing ORE_LISTs not to load in properly.
@@ -2173,7 +2248,7 @@ JScript Changes/Fixes: (giwo)
 	Minor fixes to pitchers.js to avoid potential crashes with the spidermonkey dll.
 	Minor fixes to repeatingcmds.js to avoid potential crashes with the spidermonkey dll.
 
-DFN Changes/Fixes: 
+DFN Changes/Fixes:
 	Fixed some errenous item-ids in bowcraft.dfn which caused an error while fletching (Xuri)
 	Added new npclists to npclists.dfn; poorfolk, richfolk, alltownfolk, articlist (Grimson)
 	Added two new NPCs; m_townthief and f_townthief. Thief NPCs with no AI.  (Grimson)
@@ -2198,7 +2273,7 @@ Source Changes/Fixes:
 	Included a possible fix for an issue causing NPC's not to exit combat properly.
 	Fixed an issue causing items with an amount to be created as 1 item in some situations.
 	Began rewriting messageboards, meanwhile fixing a few issues causing them not to function.
-	
+
 JScript Changes/Fixes:
 	Added 'XSAY command for remote speech.
 	Fixed 'SET SPAWNSECTION in set.js
@@ -2252,7 +2327,7 @@ DFN Changes/Fixes: (Xuri)
 -==============================-
 -= 12/06/2005 - UOX3 0.98-3.0 =-
 -==============================-
-Source Changes/Fixes: 
+Source Changes/Fixes:
 	Fix in void CSpawnRegion::doRegionSpawn() to spawn the correct number of NPCs as per defined in spawn.dfn (Grimson)
 	Adjusted NPCSpeed from 1.0 to 0.7 to increase their speed (Xuri)
 	Fixed a bug causing items not to be able to be picked up (giwo)
@@ -2303,15 +2378,15 @@ JScript Fixes: (giwo)
 DFN Fixes: (Xuri)
 	(itemmenu.bulk.dfn) Cleaned up the item-menu slightly in some places. (Skills -> resources / tools )
 	(itemmenu.bulk.dfn) Removed item sections 0x1022 -> 0x1025 from ADD-menu (skills -> resources -> fletching) as they
-	 are not in reality fletching resources. 
+	 are not in reality fletching resources.
 	(itemmenu.bulk.dfn) Moved the All-Spell-scroll to the top of the Scrolls-menu.
 	(commands.dfn) Changed BODYCOLOUR value of [PLAYER] section to 0x83ea, to give chars a human skin colour when
 	 made player.
-	(commands.dfn) Changed the BODYCOLOUR value of new GMs (under [GM] section) to 0x8021, i.e. red, instead of 
+	(commands.dfn) Changed the BODYCOLOUR value of new GMs (under [GM] section) to 0x8021, i.e. red, instead of
 	 default grey.
 	(commands.dfn) Added STRIPITEMS and STRIPHAIR to [GM] section
 	(axes.dfn) Added type=216 to all axes, so lumberjacking will work again.
-	(fletching.dfn) Added item sections 0x1BD4-5, 0x1BD4-20, 0x1BD4-50 as fletching resource-items to fix creation of multiple 
+	(fletching.dfn) Added item sections 0x1BD4-5, 0x1BD4-20, 0x1BD4-50 as fletching resource-items to fix creation of multiple
 	 arrow shafts at once.
 	(bowcraft.dfn) Fixed creation of 5, 20 and 50 arrow shafts + crossbow bolts.
 	(harditems.dfn) Added Kindling (0x0de1) to make it pileable upon creation. Also gave weight, decay & value tags.

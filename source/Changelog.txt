@@ -1,9 +1,15 @@
-23/09/2019 - Xuri (0.99.2g)
+24/11/2019 - Xuri (0.99.2h)
+	CustomTags (DFN and JS) now supports negative int values
+	Fixed an issue introduced with starting locations that would dump new characters in the middle of the ocean
+	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
+		RANDOMSTARTINGLOCATION=0	// 0 to disable (default), 1 to enable
+
+23/09/2018 - Xuri (0.99.2g)
 	Corrected name of spell JS property AGRESSIVESPELL to AGGRESSIVESPELL
 	Updated clumsy.js and level1targ.js with corrected names for aggressiveSpell and canCastAggressive JS properties, and added checks for isSafeZone region JS property
 	Commented out hardcoded versions of spells that have been ported to JS
 
-22/09/2019 - Xuri (0.99.2f)
+22/09/2018 - Xuri (0.99.2f)
 	Some more code cleanup
 	Documented temp effect cases in code
 	Added SETAMMOEFFECT, SETAMMOTYPE, GETAMMOEFFECT, GETAMMOTYPE, REGIONINFO and XREGIONINFO commands to misc-cmd.js
@@ -14,7 +20,7 @@
 	Fixed pUser/pSock reference error in misc-cmd.js for command_BROWSE (Kitiara)
 	Moved Create Food spell out to JavaScript
 
-21/09/2019 - Xuri
+21/09/2018 - Xuri
 	Fixed support-messages from players not being stored and displayed in GM/Counselor queues
 	Added more descriptive error messages in code and JavaScript when trying to set spawner-related object properties on non-spawner objects
 
