@@ -32,6 +32,7 @@ cMagic *Magic = NULL;
 
 #define SPELL_MAX 68 //:Terrin: use define for now; can make autocount later
 
+// Look up spell-names from dictionary-files
 const MagicTable_s magic_table[] = {
 	//{ 593, (MAGIC_DEFN)&splClumsy }, 
 	//{ 594, (MAGIC_DEFN)&splCreateFood }, 
@@ -187,6 +188,7 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 
 /*bool splClumsy( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
+	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
 	Effects->tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }*/

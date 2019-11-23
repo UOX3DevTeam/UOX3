@@ -1746,7 +1746,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-				tagvalObject.m_IntValue		= data.toULong();
+				tagvalObject.m_IntValue		= data.toLong();
 				tagvalObject.m_Destroy		= FALSE;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );

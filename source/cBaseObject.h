@@ -25,7 +25,7 @@ enum TAGMAPOBJECT_TYPE
 typedef struct __TAGMAP_STRUCT__
 {
 	UI08	m_ObjectType;
-	UI32	m_IntValue;
+	SI32	m_IntValue;
 	bool	m_Destroy;
 	std::string m_StringValue;
 } TAGMAPOBJECT,*LPTAGMAPOBJECT;

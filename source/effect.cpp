@@ -507,7 +507,7 @@ void cEffects::checktempeffects( void )
 				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
 				equipCheckNeeded = true;
 				break;
-			case 40: // ???
+			case 40: // Used by JS timers
 			{
 				UI16 scpNum			= 0xFFFF;
 				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
@@ -870,7 +870,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->CombatExplodeDelay()) ) );
 			toAdd->More1( more1 );
 			break;
-		case 40: // ???
+		case 40: // Used by JS timers
 			toAdd->ExpireTime( BuildTimeValue( ( (R32)more1 + (R32)more2 / 1000.0f ) ) );
 			toAdd->More1( more3 );
 			break;

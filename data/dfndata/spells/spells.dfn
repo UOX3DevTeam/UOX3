@@ -16,7 +16,7 @@
 // 0x1 or 1 - requireTarget
 // 0x2 or 2 - reqItemTarget
 // 0x4 or 4 - reqLocTarget
-// 0x8 or 8 - reCharTarget
+// 0x8 or 8 - reqCharTarget
 // 0x10 or 16 - travelSpell
 // 0x20 or 32 - fieldSpell
 // 0x40 or 64 - spellReflectable

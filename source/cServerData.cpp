@@ -92,7 +92,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
 	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|WEAPONDAMAGECHANCE|"
-	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|"
+	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -329,6 +329,7 @@ void CServerData::ResetDefaults( void )
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
 
+	ServerRandomStartingLocation( false );
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
 	SystemTimer( tSERVER_CORPSEDECAY, 900 );
@@ -1823,6 +1824,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
 		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
+		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -2779,15 +2781,18 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x0a14:	// FISHINGSTAMINALOSS[0176]
 		FishingStaminaLoss( value.toFloat() );
 		break;
+	case 0x0a27:	// RANDOMSTARTINGLOCATION[0177]
+		ServerRandomStartingLocation( value.toUShort() == 1 );
+		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x0a27:	 // ODBCDSN[0177]
+	case 0x0a3e:	 // ODBCDSN[0178]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0a2f:	 // ODBCUSER[0178]
+	case 0x0a46:	 // ODBCUSER[0179]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0a38:	 // ODBCPASS[0179]
+	case 0x0a4f:	 // ODBCPASS[0180]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif
