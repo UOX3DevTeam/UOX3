@@ -1770,6 +1770,8 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				visible	= (VisibleTypes)data.toByte();
 			}
+			else
+				rvalue = false;
 			break;
 		case 'W':
 			if( UTag == "WEIGHT" )

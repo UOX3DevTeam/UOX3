@@ -1,3 +1,6 @@
+07/04/2020 - Xuri
+	Fixed an issue that prevented VALUE tags from being loaded properly from worldfiles, which broke persistent NPC vendors on server restart
+
 24/11/2019 - Xuri (0.99.2h)
 	CustomTags (DFN and JS) now supports negative int values
 	Fixed an issue introduced with starting locations that would dump new characters in the middle of the ocean
