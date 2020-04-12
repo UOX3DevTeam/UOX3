@@ -585,12 +585,11 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o---------------------------------------------------------------------------o
 bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
 {
-	if( mChar.IsDead() )
-		return false;
-	
 	UI16 dbScript = 0;
 
 	UI16 c;
+	if( !mChar.IsDead() )
+	{
 	if( mChar.GetHP() > mChar.GetMaxHP() )
 		mChar.SetHP( mChar.GetMaxHP() );
 	if( mChar.GetStamina() > mChar.GetMaxStam() )
@@ -606,7 +605,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			{
 				for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
 				{
-					if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() )
+						if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
 					{
 						if( mChar.GetSkill( HEALING ) < 500 )
 							mChar.IncHP( 1 );
@@ -633,7 +632,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		{
 			for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
 			{
-				if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+					if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
 				{
 					mChar.IncStamina( 1 );
 					if( mChar.GetStamina() >= mChar.GetMaxStam() )
@@ -656,9 +655,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		{
 			for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
 			{
-				if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
+					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
 				{
-					Skills->CheckSkill( (&mChar), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
+						Skills->CheckSkill( ( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
 					mChar.IncMana( 1 );	// Gain a mana point
 					if( mChar.GetMana() == mChar.GetMaxMana() )
 					{
@@ -674,19 +673,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			}
 		}
 		const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
-		int NextManaRegen = static_cast<int>(cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000);
+			int NextManaRegen = static_cast<int>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
 		if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
 		{
-			R32 ArmorPenalty = Combat->calcDef( (&mChar), 0, false );	// Penalty taken due to high def
+				R32 ArmorPenalty = Combat->calcDef( ( &mChar ), 0, false );	// Penalty taken due to high def
 			if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
 				ArmorPenalty = 100;
-			ArmorPenalty = 1 + (ArmorPenalty / 25);
-			NextManaRegen = static_cast<int>(NextManaRegen * ArmorPenalty);
+				ArmorPenalty = 1 + ( ArmorPenalty / 25 );
+				NextManaRegen = static_cast<int>( NextManaRegen * ArmorPenalty );
 		}
 		if( mChar.IsMeditating() )	// If player is meditation...
 			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
 		else
 			mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + NextManaRegen ), 2 );
+	}
 	}
 	// CUSTOM END
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
@@ -700,6 +700,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	}
 
 	// Hunger Code
+	if( !mChar.IsDead() )
+	{
 	mChar.DoHunger( mSock );
 	
 	if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
@@ -765,7 +767,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							return false;
 					}
 
-					HandleDeath( (&mChar) );
+						HandleDeath( ( &mChar ) );
 					if( mSock != NULL )
 						mSock->sysmessage( 1244 );
 				} 
@@ -781,6 +783,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mSock != NULL )
 				mSock->sysmessage( 1245 );
 		}
+	}
 	}
 
 	if( !mChar.GetCanAttack() && mChar.GetTimer( tCHAR_PEACETIMER ) <= cwmWorldState->GetUICurrentTime() )
@@ -810,6 +813,8 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		UpdateFlag( &mChar );
 	}
 
+	if( !mChar.IsDead() )
+	{
 	if( doWeather )
 	{
 		const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
@@ -835,6 +840,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		Magic->CheckFieldEffects( mChar );
 
 	mChar.UpdateDamageTrack();
+	}
 
 	if( mChar.IsDead() )
 		return true;
@@ -2390,7 +2396,7 @@ bool WillResultInCriminal( CChar *mChar, CChar *targ )
 		return false;
 	else if( mCharParty && mCharParty->HasMember( targ ) )
 		return false;
-	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar)
+	else if( targ->DidAttackFirst() && targ->GetTarg() == mChar )
 		return false;
 	else if( ValidateObject( tOwner ) )
 	{
@@ -2453,7 +2459,7 @@ void UpdateFlag( CChar *mChar )
 	{
 		if( mChar->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 			mChar->SetFlagRed();
-		else if( mChar->GetTimer( tCHAR_CRIMFLAG ) != 0 )
+		else if( mChar->GetTimer( tCHAR_CRIMFLAG ) != 0 && mChar->GetNPCFlag() != fNPC_EVIL )
 			mChar->SetFlagGray();
 		else
 		{

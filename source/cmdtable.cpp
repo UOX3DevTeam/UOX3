@@ -738,7 +738,7 @@ void command_pdump( CSocket *s )
 	UI32 autoTimeCount		= cwmWorldState->ServerProfile()->AutoTimeCount();
 	UI32 loopTimeCount		= cwmWorldState->ServerProfile()->LoopTimeCount();
 
-	s->sysmessage( "Performace Dump:" );
+	s->sysmessage( "Performance Dump:" );
 	s->sysmessage( "Network code: %fmsec [%i]", (R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount );
 	s->sysmessage( "Timer code: %fmsec [%i]", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount );
 	s->sysmessage( "Auto code: %fmsec [%i]", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount );

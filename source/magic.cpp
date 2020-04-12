@@ -34,11 +34,11 @@ cMagic *Magic = NULL;
 
 // Look up spell-names from dictionary-files
 const MagicTable_s magic_table[] = {
-	//{ 593, (MAGIC_DEFN)&splClumsy }, 
-	//{ 594, (MAGIC_DEFN)&splCreateFood }, 
-	//{ 595, (MAGIC_DEFN)&splFeeblemind },
-	//{ 596, (MAGIC_DEFN)&splHeal },
-	//{ 597, (MAGIC_DEFN)&splMagicArrow },
+	{ 593, (MAGIC_DEFN)&splClumsy }, 
+	{ 594, (MAGIC_DEFN)&splCreateFood }, 
+	{ 595, (MAGIC_DEFN)&splFeeblemind },
+	{ 596, (MAGIC_DEFN)&splHeal },
+	{ 597, (MAGIC_DEFN)&splMagicArrow },
 	{ 598, (MAGIC_DEFN)&splNightSight },
 	{ 599, (MAGIC_DEFN)&splReactiveArmor },
 	{ 600, (MAGIC_DEFN)&splWeaken },
@@ -186,55 +186,32 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 	return true;
 }
 
-/*bool splClumsy( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splClumsy( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
-	Effects->tempeffect( src, target, 3, caster->GetSkill( MAGERY )/100, 0, 0);
-	return true;
-}*/
-/*bool splCreateFood( CSocket *sock, CChar *caster, SI08 curSpell )
+	// This spell is now handled in JS/MAGIC/level1targ.js
+	return false;
+}
+bool splCreateFood( CSocket *sock, CChar *caster, SI08 curSpell )
 {
-	CItem *j = Items->CreateItem( sock, caster, 0x09D3, 1, 0x0000, OT_ITEM, true );
-	if( ValidateObject( j ) )
-		j->SetType( IT_FOOD );
-	return true;
-}*/
-/*bool splFeeblemind( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+	// This spell is now handled in JS/MAGIC/createfood.js
+	return false;
+}
+bool splFeeblemind( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
-	Effects->tempeffect( src, target, 4, caster->GetSkill( MAGERY )/100, 0, 0);
-	return true;
+	// This spell is now handled in JS/MAGIC/level1targ.js
+	return false;
 }
 bool splHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
-	SI16 baseHealing = HalfRandomNum( Magic->spells[curSpell].BaseDmg() );
-
-	int bonus = (caster->GetSkill( MAGERY )/500) + ( caster->GetSkill( MAGERY )/100 );
-	if( bonus != 0 )
-	{
-		baseHealing += bonus;
-		target->Heal( baseHealing, caster );
-	}
-	else
-		target->Heal( baseHealing );
-	Magic->SubtractHealth( caster, bonus, Magic->spells[curSpell].Health() );
-	if( target->IsMurderer() )
-		criminal( caster );
-	return true;
-}*/
-/*bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+	// This spell is now handled in JS/MAGIC/level1targ.js
+	return false;
+}
+bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	//Redundant - this spell is now handled in JS/MAGIC/level1targ.js
-	SI16 spellDamage = 0;
-	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
+	// This spell is now handled in JS/MAGIC/level1targ.js
+	return false;
+}
 
-	spellDamage = Magic->spells[curSpell].BaseDmg();
-	spellDamage = CalcSpellDamageMod( caster, target, spellDamage, spellResisted );
-
-	Magic->MagicDamage( target, spellDamage, caster, COLD );
-	return true;
-}*/
 bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 2, 0, 0, 0);
@@ -2851,10 +2828,10 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 					}
 					switch( curSpell )
 					{
-						//case 1:  // Clumsy
-						//case 3:  // Feeblemind
-						//case 4:    // Heal 2-26-00 changed by Homey, used OSI values from UO book
-						//case 5:  // Magic Arrow
+						case 1:  // Clumsy
+						case 3:  // Feeblemind
+						case 4:  // Heal 2-26-00 changed by Homey, used OSI values from UO book
+						case 5:  // Magic Arrow
 						case 6:  // Night Sight
 						case 7:
 						case 8:  // Weaken

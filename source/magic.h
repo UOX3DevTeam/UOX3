@@ -367,11 +367,11 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spe
 
 extern const MagicTable_s						magic_table[];
 
-//MAG_CHARHANDLER( splClumsy );
-//MAG_NOHANDLER( splCreateFood );
-//MAG_CHARHANDLER( splFeeblemind );
-//MAG_CHARHANDLER( splHeal );
-//MAG_CHARHANDLER( splMagicArrow );
+MAG_CHARHANDLER( splClumsy );
+MAG_NOHANDLER( splCreateFood );
+MAG_CHARHANDLER( splFeeblemind );
+MAG_CHARHANDLER( splHeal );
+MAG_CHARHANDLER( splMagicArrow );
 MAG_CHARHANDLER( splNightSight );
 MAG_CHARHANDLER( splReactiveArmor );
 MAG_CHARHANDLER( splWeaken );
