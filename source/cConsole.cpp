@@ -1114,7 +1114,7 @@ void CConsole::Process( int c )
 				// 1/13/2003 - Dreoth - Log Performance Information enhancements
 				LogEcho( true );
 				Log( "--- Starting Performance Dump ---", "performance.log");
-				Log( "\tPerformace Dump:", "performance.log");
+				Log( "\tPerformance Dump:", "performance.log");
 				Log( "\tNetwork code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount);
 				Log( "\tTimer code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount);
 				Log( "\tAuto code: %.2fmsec [%i samples]", "performance.log", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount);

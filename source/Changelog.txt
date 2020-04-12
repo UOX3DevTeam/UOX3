@@ -1,3 +1,13 @@
+12/04/2020 - Xuri (0.99.2i)
+	Fixed an Z-movement issue where NPCs could fall through upper-story floors of buildings and start walking at ground level instead
+	Movement speed of pets and other NPCs following the player out of combat increased by 1.5 to make it easier for them to keep up
+	Pets will now teleport to keep up with their owners if pathfinding fails
+	NPCs with EVIL flag set, who highlight in red, will no longer highlight in grey if they are flagged as a criminal
+	Criminal timer (and murder count decay) now keeps ticking even while a player is dead
+	Fixed a spelling error in console.cpp
+	Made Earthquake spell resistable
+	Restored some code in magic.cpp that caused errors when casting spells
+
 07/04/2020 - Xuri
 	Fixed an issue that prevented VALUE tags from being loaded properly from worldfiles, which broke persistent NPC vendors on server restart
 

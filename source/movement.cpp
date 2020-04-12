@@ -1664,11 +1664,19 @@ bool cMovement::HandleNPCWander( CChar& mChar )
 					{
 						if( !AdvancedPathfinding( &mChar, kChar->GetX(), kChar->GetY(), canRun ))
 						{
+							// If NPC is unable to follow owner, teleport to owner
+							if( mChar.GetOwnerObj() == kChar )
+							{
+								mChar.SetLocation( kChar );
+							}
+							else
+							{
 							// If NPC following fails to follow, make it stop
 							mChar.SetOldTargLocX( 0 );
 							mChar.SetOldTargLocY( 0 );
 							mChar.TextMessage( NULL, "[Stops following]", SYSTEM, false );
 							mChar.SetNpcWander( WT_NONE );
+						}
 						}
 						else
 						{
@@ -1898,7 +1906,9 @@ void cMovement::NpcMovement( CChar& mChar )
 
 		if( shouldRun )
 		{
-			if ( mChar.GetNpcWander() != WT_FLEE )
+			if ( mChar.GetNpcWander() == WT_FOLLOW )
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 ) ); // Increase follow speed so NPC pets/escorts can keep up with players
+			else if ( mChar.GetNpcWander() != WT_FLEE )
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ) );
 			else
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
@@ -1950,11 +1960,13 @@ bool cMovement::IsOk( UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, bool i
 		tb = &xyblock[i];
 		if( tb->CheckFlag( TF_WET ) )
 		{
+			// If blocking object is WET and character can swim, ignore object
 			if( waterWalk )
 				continue;
 		}
 		if( tb->CheckFlag(TF_BLOCKING) || tb->CheckFlag(TF_SURFACE) )
 		{
+			// If character ignores doors (GMs/Counselors/Ghosts), and this is a door, ignore.
 			if( ignoreDoor && tb->Type() == 1 && (tb->CheckFlag(TF_DOOR) || tb->GetID() == 0x692 || tb->GetID() == 0x846 || tb->GetID() == 0x873 || (tb->GetID() >= 0x6F5 && tb->GetID() <= 0x6F6)) )
 				continue;
 			SI08 checkz = tb->BaseZ();
@@ -2019,9 +2031,14 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	for( int i = 0; i < xycount; ++i )
 	{
 		tb = &xyblock[i];
+
+		// If the tile is a surface that can be walked on, or swam on...
 		if(( !isset || tb->Top() >= zcenter ) && ( tb->CheckFlag( TF_SURFACE ) || ( waterwalk && tb->CheckFlag( TF_WET ))) && z >= tb->Top() )
 		{
+			// Fetch the base Z position of surface tile
 			zlow = tb->BaseZ();
+
+			// Fetch the top Z position of surface tile as zcenter
 			zcenter = tb->Top();
 			SI08 top = tb->BaseZ() + tb->Height();
 
@@ -2113,6 +2130,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 		return ILLEGAL_Z;
 	const bool isGM		= IsGMBody( c );
 	SI08 newz			= ILLEGAL_Z;
+	SI08 charHeight = 16;
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	UI16 i				= 0;
@@ -2127,7 +2145,11 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	{
 		//7.0.9.0 tiledata and later
 		CLandHS& land	= Map->SeekLandHS( map.id );
+
+		// Does landtile in target location block movement?
 		landBlock = land.CheckFlag( TF_BLOCKING );
+
+		// If it does, but it's WET and character can swim, it doesn't block!
 		if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
 			landBlock = false;
 		else if( waterWalk && !land.CheckFlag( TF_WET ))
@@ -2137,7 +2159,11 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	{
 		//7.0.8.2 tiledata and earlier
 		CLand& land		= Map->SeekLand( map.id );
+
+		// Does landtile in target location block movement?
 		landBlock = land.CheckFlag( TF_BLOCKING );
+
+		// If it does, but it's WET and character can swim, it doesn't block!
 		if( landBlock && waterWalk && land.CheckFlag( TF_WET ))
 			landBlock = false;
 		else if( waterWalk && !land.CheckFlag( TF_WET ))
@@ -2150,39 +2176,49 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	SI08 startz = 0;
 	SI08 landz, landCenter, landtop;
 
+	// Calculate the average Z of landtile at target location
 	GetAverageZ( c->WorldNumber(), x, y, landz, landCenter, landtop );
+
+	// Calculate the character's starting height at source location
 	GetStartZ( c->WorldNumber(), c, oldx, oldy, oldz, startz, startTop, waterWalk );
 
+	// Define the maximum height the character can step up to
 	SI08 stepTop = startTop + 2;
-	SI08 checkTop = startz + 16;
+
+	// Define the initial Z position of the character's position + height
+	SI08 checkTop = startz + charHeight;
+
+	// Assume move is NOT ok by default
 	bool moveIsOk = false;
 
 	// first calculate newZ value
 	
+	// Loop through all objects in the target location
 	for( i = 0; i < xycount; ++i )
 	{
 		tb = &xyblock[i];
 
 		if(( !tb->CheckFlag( TF_BLOCKING ) && tb->CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tb->CheckFlag( TF_WET )))
 		{
-			SI08 itemz = tb->BaseZ();
+			SI08 itemz = tb->BaseZ(); // Object's current Z position
 			SI08 itemTop = itemz;
-			SI08 ourZ = tb->Top();
+			SI08 potentialNewZ = tb->Top(); // Character's potential new Z position on top of object
 			SI08 testTop = checkTop;
 
 			if( moveIsOk )
 			{
-				SI08 cmp = abs( ourZ - c->GetZ() ) - abs( newz - c->GetZ() );
-				if( cmp > 0 || ( cmp == 0 && ourZ > newz ))
+				SI08 cmp = abs( potentialNewZ - c->GetZ() ) - abs( newz - c->GetZ() );
+				if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
 					continue;
 			}
 
-			if( ourZ + 16 > testTop )
-				testTop = ourZ + 16;
+			if( potentialNewZ + charHeight > testTop )
+				testTop = potentialNewZ + charHeight;
 
 			if( !tb->CheckFlag( TF_CLIMBABLE ))
 				itemTop += tb->Height();
 
+			// Check if the character can step up onto the item at target location
 			if( stepTop >= itemTop )
 			{
 				SI08 landCheck = itemz;
@@ -2192,13 +2228,14 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 				else
 					landCheck += tb->Height();
 
-				if( !considerLand && landCheck < landCenter && landCenter > ourZ && testTop > landz )
+				if( !considerLand && landCheck < landCenter && landCenter > potentialNewZ && testTop > landz )
 					continue;
 
-				if( IsOk( c->WorldNumber(), ourZ, testTop, x, y, isGM, waterWalk ))
+				// Check if target location is OK and doesn't have any tiles on it with blocking flags within the range of character's potential new Z and the top of their head
+				if( IsOk( c->WorldNumber(), potentialNewZ, testTop, x, y, isGM, waterWalk ))
 				{
-					newz = ourZ;
-					landCenter = ourZ;
+					newz = potentialNewZ;
+					landCenter = potentialNewZ;
 					moveIsOk = true;
 				}
 			}
@@ -2207,25 +2244,25 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 
 	if( !considerLand && !landBlock && stepTop >= landz )
 	{
-		SI08 ourZ = landCenter;
-		SI08 ourTop = ourZ + 16;
+		SI08 potentialNewZ = landCenter;
 		SI08 testTop = checkTop;
 
-		if( ourZ + 16 > testTop )
-			testTop = ourZ + 16;
+		if( potentialNewZ + charHeight > testTop )
+			testTop = potentialNewZ + charHeight;
 
 		bool shouldCheck = true;
 
 		if( moveIsOk )
 		{
-			SI08 cmp = abs( ourZ - c->GetZ() ) - abs( newz - c->GetZ() );
-			if( cmp > 0 || ( cmp == 0 && ourZ > newz ))
+			SI08 cmp = abs( potentialNewZ - c->GetZ() ) - abs( newz - c->GetZ() );
+			if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
 				shouldCheck = false;
 		}
 
-		if( shouldCheck && IsOk( c->WorldNumber(), ourZ, ourTop, x, y, isGM, waterWalk ))
+		// Check if there are any blocking objects at the target landtile location
+		if( shouldCheck && IsOk( c->WorldNumber(), potentialNewZ, testTop, x, y, isGM, waterWalk ))
 		{
-			newz = ourZ;
+			newz = potentialNewZ;
 			moveIsOk = true;
 		}
     }
@@ -2243,30 +2280,45 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 // Method        : This handles the funky diagonal moves.
 bool cMovement::calc_move( CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir)
 {
+	// NPCs that walk on land
 	if( !cwmWorldState->creatures[c->GetID()].IsWater() )
 	{
+		// Is the character moving diagonally (NW, NE, SE, SW)? If so, we should check the nearby directions for blocking items too
 		if( (dir&0x07)%2 )
-		{ // check three ways.
+		{
+			// Check direction counter-clockwise to actual direction
 			UI08 ndir = turn_counter_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, c->GetZ(), true ) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetID()].IsAmphibian() )
 				return false;
+
+			// Check direction clockwise to actual direction
 			ndir = turn_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, c->GetZ(), true ) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetID()].IsAmphibian() )
 				return false;
 		}
+
+		// Check actual direction character is moving
 		z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, c->GetZ(), false );
 	}
+
+	// NPCs that can swim
 	if( cwmWorldState->creatures[c->GetID()].IsWater() || ( cwmWorldState->creatures[c->GetID()].IsAmphibian() && z == ILLEGAL_Z) )
 	{
+		// Is the character moving diagonally (NW, NE, SE, SW)? If so, we should check the nearby directions for blocking items too
 		if( (dir&0x07)%2 )
-		{ // check three ways.
+		{
+			// Check direction counter-clockwise to actual direction
 			UI08 ndir = turn_counter_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, c->GetZ(), true, true ) == ILLEGAL_Z )
 				return false;
+
+			// Check direction clockwise to actual direction
 			ndir = turn_clock_wise( dir );
 			if( calc_walk( c, GetXfromDir( ndir, x ), GetYfromDir( ndir, y ), x, y, c->GetZ(), true, true ) == ILLEGAL_Z )
 				return false;
 		}
+
+		// Check actual direction character is moving
 		z = calc_walk( c, GetXfromDir( dir, x ), GetYfromDir( dir, y ), x, y, c->GetZ(), false, true );
 	}
 	return (z != ILLEGAL_Z);
