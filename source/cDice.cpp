@@ -45,10 +45,8 @@ auto random_device = std::random_device{};
 
 auto generator = std::mt19937{random_device()};
 
-auto RandomNum(
-    std::size_t lower_bound, std::size_t upper_bound
-) -> std::size_t {
-    auto distribution = std::uniform_int_distribution<std::size_t>{
+auto RandomNum(int lower_bound, int upper_bound) -> int {
+    auto distribution = std::uniform_int_distribution<int>{
         lower_bound, upper_bound
     };
 
@@ -93,18 +91,10 @@ bool cDice::convStringToDice( std::string dieString )
     }
 
     auto const parsed_value = [&] (
-        std::size_t position,
-        std::size_t count,
-        std::size_t value = 0
-    ) -> std::size_t {
+        int position, int count, int value = 0
+    ) -> int {
         try {
-            constexpr auto is_32bit = bool{ sizeof(std::size_t) == 4 };
-
-            if constexpr(is_32bit) {
-                return std::stoul(dieString.substr(position, count));
-            } else {
-                return std::stoull(dieString.substr(position, count));
-            }
+            return std::stoi(dieString.substr(position, count));
         } catch (...) {
             return value;
         }
