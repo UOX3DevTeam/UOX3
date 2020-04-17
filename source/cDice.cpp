@@ -1,17 +1,11 @@
-#include <string>
 #include "cdice.h"
+#include <algorithm>
+#include <random>
 #include <stdlib.h>
+#include <string>
 
 namespace UOX
 {
-
-inline int RandomNum( int nLowNum, int nHighNum )
-{
-	if( nHighNum - nLowNum + 1 )
-		return ((rand() % ( nHighNum - nLowNum + 1 )) + nLowNum );
-	else
-		return nLowNum;
-}
 
 cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {
@@ -45,6 +39,24 @@ void cDice::setAddition( int newAddition )
 	addition = newAddition;
 }
 
+namespace {
+
+auto random_device = std::random_device{};
+
+auto generator = std::mt19937{random_device()};
+
+auto RandomNum(
+    std::size_t lower_bound, std::size_t upper_bound
+) -> std::size_t {
+    auto distribution = std::uniform_int_distribution<std::size_t>{
+        lower_bound, upper_bound
+    };
+
+    return distribution(generator);
+}
+
+}//namespace
+
 int cDice::roll( void )
 {
 	int sum = 0;
@@ -58,38 +70,71 @@ int cDice::roll( void )
 
 bool cDice::convStringToDice( std::string dieString )
 {
-	dice		= 1;
-	sides		= 1;
-	addition	= 0;
-	size_t dLoc = dieString.find( "d" );
-	if( dLoc == std::string::npos )
-		return false;
-	char tmpString[10];
-	size_t tmpCounter;
-	for( tmpCounter = 0; tmpCounter < dLoc; ++tmpCounter )
-		tmpString[tmpCounter] = dieString[tmpCounter];
-	tmpString[tmpCounter]	= 0;
-	dice					= atoi( tmpString );
-	size_t pLoc				= dieString.find( "+" );
-	if( pLoc == std::string::npos )
-	{	// no +
-		for( tmpCounter = dLoc+1; tmpCounter < dieString.length(); ++tmpCounter )
-			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
-		tmpString[tmpCounter-dLoc-1] = 0;
-		sides = atoi( tmpString );
-	}
-	else
-	{
-		for( tmpCounter = dLoc+1; tmpCounter < pLoc; ++tmpCounter )
-			tmpString[tmpCounter-dLoc-1] = dieString[tmpCounter];
-		tmpString[tmpCounter-dLoc-1] = 0;
-		sides = atoi( tmpString );
-		for( tmpCounter = pLoc + 1; tmpCounter < dieString.length(); ++tmpCounter )
-			tmpString[tmpCounter-pLoc-1] = tmpString[tmpCounter];
-		tmpString[tmpCounter-pLoc-1] = 0;
-		addition = atoi( tmpString );
-	}
-	return true;
+    dice = 1;
+    sides = 1;
+    addition = 0;
+
+    auto const d_position = dieString.find("d");
+
+    auto const is_invalid_d_position = bool{d_position >=  dieString.size()};
+
+    if (is_invalid_d_position) {
+        return false;
+    }
+
+    auto const plus_position = std::clamp(
+        dieString.find("+"), std::size_t{0}, dieString.size()
+    );
+
+    auto const is_invalid_plus_position = bool{plus_position < d_position};
+
+    if (is_invalid_plus_position) {
+        return false;
+    }
+
+    auto const parsed_value = [&] (
+        std::size_t position,
+        std::size_t count,
+        std::size_t value = 0
+    ) -> std::size_t {
+        try {
+            constexpr auto is_32bit = bool{ sizeof(std::size_t) == 4 };
+
+            if constexpr(is_32bit) {
+                return std::stoul(dieString.substr(position, count));
+            } else {
+                return std::stoull(dieString.substr(position, count));
+            }
+        } catch (...) {
+            return value;
+        }
+    };
+
+    auto const is_to_parse_size = bool{d_position > 0};
+
+    if(is_to_parse_size) {
+        auto const position = std::size_t{0};
+        auto const count = d_position;
+        dice = parsed_value(position, count, 1);
+    }
+
+    auto const is_to_parse_sides = bool{plus_position > d_position + 1};
+
+    if(is_to_parse_sides) {
+        auto const position = d_position + 1;
+        auto const count = plus_position - position;
+        sides = parsed_value(position, count, 1);
+    }
+
+    auto const is_to_parse_plus = bool{dieString.size() > plus_position + 1};
+
+    if(is_to_parse_plus) {
+        auto const position = plus_position + 1;
+        auto const count = dieString.size() - position;
+        addition = parsed_value(position, count);
+    }
+
+    return true;
 }
 
 }
