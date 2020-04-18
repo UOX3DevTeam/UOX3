@@ -12,7 +12,7 @@ AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
 
-CXXFLAGS="-I../spidermonkey"
+CXXFLAGS="-I../spidermonkey --std=c++17"
 
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 
