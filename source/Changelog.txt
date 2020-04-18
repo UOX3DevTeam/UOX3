@@ -1,3 +1,10 @@
+18/04/2020 - Xuri
+	Added c++17 flag to configure.ac
+
+17/04/2020 - Tuan H Truong
+	CPU neutral fix
+	Die parser rewritten and fuzzed, replaced with cxx17 features
+
 12/04/2020 - Xuri (0.99.2i)
 	Fixed an Z-movement issue where NPCs could fall through upper-story floors of buildings and start walking at ground level instead
 	Movement speed of pets and other NPCs following the player out of combat increased by 1.5 to make it easier for them to keep up
