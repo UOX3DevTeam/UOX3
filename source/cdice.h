@@ -1,6 +1,8 @@
 #ifndef __CDICE__
 #define __CDICE__
 
+#include <string>
+
 namespace UOX
 {
 
