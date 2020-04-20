@@ -45,7 +45,9 @@ public:
 	//CConsole& operator<<( const std::ostream& outPut );
 	CConsole& operator<<( const UI64 &outPut );
 	CConsole& operator<<( const SI64 &outPut );
+#if defined( _MSC_VER )
 	CConsole& operator<<( const std::size_t &output );
+#endif
 
 	CConsole& operator<<( CBaseObject *outPut );
 	//CConsole& operator<<( std::ostream& outPut );
