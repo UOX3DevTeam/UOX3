@@ -4290,6 +4290,14 @@ void CPUnicodeSpeech::Language( char *value )
 {
 	pStream.WriteString( 14, value, 4 );
 }
+void CPUnicodeSpeech::Language( const char *value )
+{
+	pStream.WriteString( 14, value, 4 );
+}
+void CPUnicodeSpeech::Lanaguge( const std::string& value )
+{
+	pStream.WriteString( 14, value.c_str(), 4 );
+}
 void CPUnicodeSpeech::Name( std::string value )
 {
 	pStream.WriteString( 18, value, 30 );

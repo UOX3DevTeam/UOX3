@@ -56,16 +56,12 @@ void cNetworkStuff::setLastOn( CSocket *s )
 	time_t ltime;
 	time( &ltime );
 	char *t = ctime( &ltime );
-	// just to be paranoid and avoid crashing
-	if( NULL == t )
-		t = "";
-	else
-	{
+
 		// some ctime()s like to stick \r\n on the end, we don't want that
 		size_t mLen = strlen( t );
 		for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
 			t[end] = '\0';
-	}
+
 	if( s->CurrcharObj() != NULL )
 	{
 		s->CurrcharObj()->SetLastOn( t );

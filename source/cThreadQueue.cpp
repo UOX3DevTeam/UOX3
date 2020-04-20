@@ -19,6 +19,16 @@ CThreadQueue &CThreadQueue::operator <<( char *toPush )
 	NewMessage( MSG_PRINT, toPush );
 	return (*this);
 }
+CThreadQueue &CThreadQueue::operator <<( const char *toPush )
+{
+	NewMessage( MSG_PRINT, toPush );
+	return ( *this );
+}
+CThreadQueue &CThreadQueue::operator <<( const std::string& toPush )
+{
+	NewMessage( MSG_PRINT, toPush.c_str() );
+	return ( *this );
+}
 bool CThreadQueue::Empty( void )
 {
 	MutexOn();
