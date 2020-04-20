@@ -1131,6 +1131,8 @@ public:
 	void			Object( CPITalkRequestUnicode &tSaid );
 	void			Object( CBaseObject &toCopy );
 	void			Language( char *value );
+	void            Language( const char *value );
+	void            Lanaguge( const std::string& value );
 	void			Type( UI08 value );
 	void			Colour( COLOUR value );
 	void			Font( UI16 value );

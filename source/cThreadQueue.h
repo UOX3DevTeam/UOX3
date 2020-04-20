@@ -38,6 +38,8 @@ public:
 	bool			Empty( void );
 	CThreadQueue &	operator<<( MessageType newMessage );
 	CThreadQueue &	operator<<( char *toPush );
+	CThreadQueue &  operator<<( const char *toPush );
+	CThreadQueue &  operator<<( const std::string& toPush );
 };
 
 extern CThreadQueue							messageLoop;
