@@ -235,12 +235,23 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 	std::cout << outPut;
 	return (*this);
 }
-
-CConsole& CConsole::operator<<( const size_t &outPut )
+CConsole& CConsole::operator<<( const UI64 &outPut )
 {
 	StartOfLineCheck();
-	std::cout << static_cast< UI32 >(outPut);
+	std::cout << outPut;
 	return (*this);
+}
+CConsole& CConsole::operator<<( const SI64 &outPut )
+{
+	StartOfLineCheck();
+	std::cout << outPut;
+	return ( *this );
+}
+CConsole& CConsole::operator<<( const std::size_t &outPut )
+{
+	StartOfLineCheck();
+	std::cout << outPut;
+	return ( *this );
 }
 
 //o---------------------------------------------------------------------------o

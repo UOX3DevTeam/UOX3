@@ -43,7 +43,9 @@ public:
 	CConsole& operator<<( const UI16 &outPut );
 	CConsole& operator<<( const std::string &outPut );
 	//CConsole& operator<<( const std::ostream& outPut );
-	CConsole& operator<<( const size_t &outPut );
+	CConsole& operator<<( const UI64 &outPut );
+	CConsole& operator<<( const SI64 &outPut );
+	CConsole& operator<<( const std::size_t &output );
 
 	CConsole& operator<<( CBaseObject *outPut );
 	//CConsole& operator<<( std::ostream& outPut );

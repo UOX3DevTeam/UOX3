@@ -59,9 +59,9 @@
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>D:\UOX3\spidermonkey 2015\Release;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\UOX3\spidermonkey 2015;$(SourcePath)</SourcePath>
-    <IncludePath>D:\UOX3\spidermonkey 2015;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">
@@ -73,9 +73,9 @@
     <OutDir>.\Debug\</OutDir>
     <IntDir>.\Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>D:\UOX3\spidermonkey 2015\Debug;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\UOX3\spidermonkey 2015;$(SourcePath)</SourcePath>
-    <IncludePath>D:\UOX3\spidermonkey 2015;$(IncludePath)</IncludePath>
+    <LibraryPath>..\spidermonkey\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
+    <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,6 +167,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
