@@ -97,13 +97,13 @@ UString UString::simplifyWhiteSpace() const
 	return ( data );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(const char* sep,int start,int stop) const
+UString UString::section( const char* sep, long unsigned int start, long unsigned int stop ) const
 {
 	std::string temp = sep ;
 	return (section(temp,start,stop) );
 }
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UString UString::section(std::string sep,int start,int stop) const
+UString UString::section( std::string sep, long unsigned int start, long unsigned int stop ) const
 {
 	UString data ;
 	int count = -1 ;

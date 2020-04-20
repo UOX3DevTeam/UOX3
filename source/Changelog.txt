@@ -1,3 +1,8 @@
+20/04/2020 - Xuri
+	Preparation for dragging UOX3 kicking and screaming into the 64bit Century (punt)
+	Filepaths to spidermonkey in MSVC project are now relative to source folder
+	Default language standard in MSVC project set to stdcpp17
+
 18/04/2020 - Xuri
 	Added c++17 flag to configure.ac
 

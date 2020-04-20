@@ -34,6 +34,8 @@ typedef unsigned short int	UI16;
 typedef signed short int	SI16;
 typedef unsigned char		UI08;
 typedef signed char			SI08;
+typedef unsigned long long	UI64;
+typedef signed long long	SI64;
 
 typedef UI32		TIMERVAL;
 typedef UI32		UOXSOCKET;

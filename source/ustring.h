@@ -46,9 +46,9 @@ public:
 	//! Remove all trailing and leading white space
 	UString stripWhiteSpace() const ;
 	//! Using the specified sep as a delimitor, return the specifed section of the string
-	UString section(std::string sep, int start, int stop=std::string::npos) const;
+	UString section( std::string sep, long unsigned int start, long unsigned int stop = std::string::npos ) const;
 	//! Overloaded member of the above
-	UString section(const char* sep, int start, int stop=std::string::npos) const;
+	UString section( const char* sep, long unsigned int start, long unsigned int stop = std::string::npos ) const;
 
 	//!  How many "sections" are in this string ?
 	int sectionCount(std::string sep) const;

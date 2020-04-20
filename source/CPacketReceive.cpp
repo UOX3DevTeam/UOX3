@@ -2344,7 +2344,11 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "Unknown2       : " << (int)unknown2 << std::endl;
 		outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << " " << (int)skill[3] << std::endl;
 		outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << " " << (int)skillValue[3] << std::endl;
-		outStream << "Unknown3       : " << (int)unknown3 << std::endl;
+		int temp1;
+		for( temp1 = 0; temp1 < 25; temp1++ )
+		{
+			outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << (unsigned int)( unknown3[temp1] ) << std::endl;
+		}
 		outStream << "Unknown4       : " << (int)unknown4 << std::endl;
 		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
 		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
