@@ -247,13 +247,14 @@ CConsole& CConsole::operator<<( const SI64 &outPut )
 	std::cout << outPut;
 	return ( *this );
 }
-CConsole& CConsole::operator<<( const std::size_t &outPut )
-{
+#if defined( _MSC_VER )
+	CConsole& CConsole::operator<<( const std::size_t &outPut )
+	{
 	StartOfLineCheck();
 	std::cout << outPut;
 	return ( *this );
-}
-
+	}
+#endif
 //o---------------------------------------------------------------------------o
 //|   Function    -  Print
 //|   Date        -  Unknown
