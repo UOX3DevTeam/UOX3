@@ -1,0 +1,68 @@
+add_library(js32
+    SHARED
+        #js.c
+        jsapi.c
+        jsarena.c
+        jsarray.c
+        jsatom.c
+        jsbool.c
+        jscntxt.c
+        jscpucfg.c
+        jsdate.c
+        jsdbgapi.c
+        jsdhash.c
+        jsdtoa.c
+        jsemit.c
+        jsexn.c
+        jsfile.c
+        jsfun.c
+        jsgc.c
+        jshash.c
+        jsinterp.c
+        jslock.c
+        jslog2.c
+        jslong.c
+        jsmath.c
+        jsnum.c
+        jsobj.c
+        jsopcode.c
+        jsparse.c
+        jsprf.c
+        jsregexp.c
+        jsscan.c
+        jsscope.c
+        jsscript.c
+        jsstr.c
+        jsutil.c
+        jsxdrapi.c
+        jsxml.c
+        prmjtime.c
+)
+
+target_link_libraries(js32
+    fdlibm
+    kernel32.lib
+    user32.lib
+    gdi32.lib
+    winspool.lib
+    comdlg32.lib
+    advapi32.lib
+    shell32.lib
+    ole32.lib
+    oleaut32.lib
+    uuid.lib
+    odbc32.lib
+    odbccp32.lib
+ )
+
+ target_compile_definitions(js32
+    PRIVATE
+        _IEEE_LIBM
+        _X86_
+        _WINDOWS
+        EXPORT_JS_API
+        XP_WIN
+        WIN32
+)
+
+add_subdirectory(fdlibm)
