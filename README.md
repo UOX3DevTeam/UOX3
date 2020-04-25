@@ -24,7 +24,14 @@ Refer to instructions at https://www.uox3.org/forums/viewtopic.php?f=6&t=457
 3) Click on URL tab, then enter https://github.com/UOX3DevTeam/UOX3.git, as well as a local path for where to store the repository - for example **D:\UOX3**, then hit the Clone button. This will clone the UOX3 repository to your drive in the specified local path.
 
 ## Step 2: Compile UOX3 using your favourite compiler
-### Option A) Visual Studio 2017 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
+### Option A) CMake & Visual Studio 2017 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
+*This option requires installing the Visual Studio toolset named **Linux development with C++** and the component called **Visual C++ tools for CMake and Linux**. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed!*
+1) Start Visual Studio 2017 and use **File > Open > CMake** and select *CMakeLists.txt* in the root project folder (*Example: **D:\UOX3***)
+2) After Visual Studio is done loading the project and has generated some necessary files, select **CMake > Change CMake Settings > UOX3** from the toolbar menu, and select either *x86-Debug* or *x86-Release* depending on what kind of build you want to make.
+3) When Visual Studio is done switching to the new configuration, select **CMake > Build All** from the toolbar menu to start compiling UOX3.
+4) When done, you'll find ***UOX3.exe*** and ***js32.dll*** in a subfolder of the default working directory, which for Visual Studio 2017 will be in your Windows User profile folder, more specifically **%userprofile%\CMakeBuilds\***. Note that for newer versions of Visual Studio you might find these files in a folder called **out** in the project root folder instead!
+
+### Option B) Visual Studio 2017 ([Free Community edition](https://visualstudio.microsoft.com/downloads/))
 1) Execute **Vcvarsall.bat x86 -vcvars_ver=14.0** from a command prompt in the *C:\Program Files (x86)\Microsoft Visual Studio\2017\VC\Auxiliary\Build* folder to enable the *nmake* command
 2) Next, also from a command prompt, execute **mymake.bat** from the *UOX3/spidermonkey* folder. This will create some debug/release folders with *js32.dll* and *js32.lib* files in them.
 3) Start up Visual Studio 2017, open the project solution called **UOX3_Official.sln** from the *UOX3\source* folder.
@@ -39,5 +46,5 @@ If you don't already have a UOX3 project folder, you can either download one fro
 
 Note that if you want to execute UOX3 from within Visual Studio 2017, you'll need to provide a copy of *js32.dll* (from *UOX3\Spidermonkey\debug* or *\release*) in *UOX3\source\debug* or *\release folders*, as well as specify the working directory under **Project -> Properties -> Configuration Properties -> Debugging -> Working Directory** for either Debug or Release configuration (selectable from dropdown at top of window)
 
-### Option B) Visual Studio 2005-2015
+### Option C) Visual Studio 2005-2015
 See alternative instructions at https://www.uox3.org/forums/viewtopic.php?f=6&t=453
