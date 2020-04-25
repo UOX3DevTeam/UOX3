@@ -1,3 +1,8 @@
+26/04/2020 - Xuri
+	Updated vcx project files
+	Added UOX3 CMake build system for Windows (tuanhtrng)
+	Updated repository readme to include build instructions for CMake
+
 20/04/2020 - Xuri
 	Preparation for dragging UOX3 kicking and screaming into the 64bit Century (punt)
 	Filepaths to spidermonkey in MSVC project are now relative to source folder
