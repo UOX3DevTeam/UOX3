@@ -63,6 +63,8 @@
     <SourcePath>..\spidermonkey;$(SourcePath)</SourcePath>
     <IncludePath>..\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">
     <OutDir>.\DebugProfile\</OutDir>
@@ -96,6 +98,9 @@
       <BrowseInformationFile>.\Release/</BrowseInformationFile>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <EnablePREfast>false</EnablePREfast>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;js32.lib;%(AdditionalDependencies)</AdditionalDependencies>
