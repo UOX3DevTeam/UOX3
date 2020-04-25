@@ -39,30 +39,23 @@ public:
 	{
 		internalBuffer.resize( len );
 	}
-	void	WriteByte( size_t pos, UI08 toWrite )
-	{
-		if( pos >= internalBuffer.size() )
-			internalBuffer.resize( pos+1 );
+	template<class T>
+	void	Write( size_t pos, T toWrite ) {
+		auto const is_out_of_space = bool{(pos + sizeof(T) - 1) >= internalBuffer.size()};
 
-		internalBuffer[pos] = toWrite;
-	}
-	void	WriteShort( size_t pos, SI32 toWrite )
-	{
-		if( (pos+1) >= internalBuffer.size() )
-			internalBuffer.resize( pos+2 );
+		if (is_out_of_space) {
+			internalBuffer.resize(pos + 2);
+		}
 
-		internalBuffer[pos+0] = static_cast<UI08>((toWrite&0xFF00)>>8);
-		internalBuffer[pos+1] = static_cast<UI08>((toWrite&0x00FF)%256);
-	}
-	void	WriteLong( size_t pos, UI32 toWrite )
-	{
-		if( (pos+3) >= internalBuffer.size() )
-			internalBuffer.resize( pos+4 );
-
-		internalBuffer[pos+0] = static_cast<UI08>((toWrite&0xFF000000)>>24);
-		internalBuffer[pos+1] = static_cast<UI08>((toWrite&0x00FF0000)>>16);
-		internalBuffer[pos+2] = static_cast<UI08>((toWrite&0x0000FF00)>>8);
-		internalBuffer[pos+3] = static_cast<UI08>((toWrite&0x000000FF)%256);
+		for (
+			auto i = size_t{ 0 };
+			i < sizeof(T);
+			++i
+			) {
+			auto const shift = 8 * (sizeof(T) - i - 1);
+			auto const mask = 0xFF << shift;
+			internalBuffer[pos + i] = static_cast<std::uint8_t>((toWrite & mask) >> shift);
+		}
 	}
 	void	WriteString( size_t pos, const std::string& toWrite, size_t len )
 	{

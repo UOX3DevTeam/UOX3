@@ -139,7 +139,7 @@ JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
 	UI08	toWrite		= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
 
-	myPacket->GetPacketStream().WriteByte( position, toWrite );
+	myPacket->GetPacketStream().Write( position, toWrite );
 
 	return JS_TRUE;
 }
@@ -162,7 +162,7 @@ JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
 	UI16	toWrite		= static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
 
-	myPacket->GetPacketStream().WriteShort( position, toWrite );
+	myPacket->GetPacketStream().Write( position, toWrite );
 
 	return JS_TRUE;
 }
@@ -185,7 +185,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	size_t	position	= static_cast<size_t>(JSVAL_TO_INT( argv[0] ));
 	UI32	toWrite		= static_cast<UI32>(JSVAL_TO_INT( argv[1] ));
 
-	myPacket->GetPacketStream().WriteLong( position, toWrite );
+	myPacket->GetPacketStream().Write( position, toWrite );
 
 	return JS_TRUE;
 }

@@ -33,9 +33,9 @@ JSMethodFunc Packet;
 
 // Packet Methods
 JSMethodFunc CPacket_Free;
-JSMethodFunc CPacket_WriteByte;
-JSMethodFunc CPacket_WriteShort;
-JSMethodFunc CPacket_WriteLong;
+JSMethodFunc CPacket_Write;
+JSMethodFunc CPacket_Write;
+JSMethodFunc CPacket_Write;
 JSMethodFunc CPacket_WriteString;
 JSMethodFunc CPacket_ReserveSize;
 
@@ -540,9 +540,9 @@ static JSFunctionSpec CConsole_Methods[] =
 static JSFunctionSpec CPacket_Methods[] = 
 {
 	{ "Free",			CPacket_Free,				0, 0, 0 },
-	{ "WriteByte",		CPacket_WriteByte,			2, 0, 0 },
-	{ "WriteShort",		CPacket_WriteShort,			2, 0, 0 },
-	{ "WriteLong",		CPacket_WriteLong,			2, 0, 0 },
+	{ "Write",		CPacket_Write,			2, 0, 0 },
+	{ "Write",		CPacket_Write,			2, 0, 0 },
+	{ "Write",		CPacket_Write,			2, 0, 0 },
 	{ "WriteString",	CPacket_WriteString,		3, 0, 0 },
 	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
 	{ NULL,				NULL,						0, 0, 0 }
