@@ -1,3 +1,10 @@
+02/06/2020 - Xuri (0.99.2j)
+	Added additional ClientVersion enum values to start implementing support for clients above 7.0.24.0. Ini settings disabled by default.
+	Updated packet 0x78 to always send item colour for clients above 7.0.33.1, which also fixes rendering of items on paperdoll for these clients
+	Client requests sent by the Bandage Self macro (packet 0xBF, subcommand 0x2C) can now be handled in the JS engine via the onUseBandageMacro( socket, targetChar, bandageItem ) JS event (JS Docs updated with details).
+	Removed a restriction on speech that prevented onSpeech JS event from triggering based on speech from dead player characters
+	Fixed hairs and beards not being restored properly on player characters after dying and being resurrected (and then relogging)
+
 26/04/2020 - Xuri
 	Updated vcx project files
 	Added UOX3 CMake build system for Windows (tuanhtrng)

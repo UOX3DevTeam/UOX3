@@ -1038,6 +1038,31 @@ void NpcResurrectTarget( CChar *i )
 			i->SetID( i->GetOrgID() );
 			i->SetSkin( i->GetOrgSkin() );
 			i->SetDead( false );
+
+			// Restore hair
+			UI16 hairStyleID = i->GetHairStyle();
+			UI16 hairStyleColor = i->GetHairColour();
+			CItem *hairItem = Items->CreateItem( mSock, i, hairStyleID, 1, hairStyleColor, OT_ITEM );
+
+			if( hairItem != NULL )
+			{
+				hairItem->SetDecayable( false );
+				hairItem->SetLayer( IL_HAIR );
+				hairItem->SetCont( i );
+			}
+
+			// Restore beard
+			UI16 beardStyleID = i->GetBeardStyle();
+			UI16 beardStyleColor = i->GetBeardColour();
+			CItem *beardItem = Items->CreateItem( mSock, i, beardStyleID, 1, beardStyleColor, OT_ITEM );
+
+			if( beardItem != NULL )
+			{
+				beardItem->SetDecayable( false );
+				beardItem->SetLayer( IL_FACIALHAIR );
+				beardItem->SetCont( i );
+			}
+
 			// Sept 22, 2002 - Xuri
 			i->SetHP( i->GetMaxHP() / 10 );
 			i->SetStamina( i->GetMaxStam() / 10 );

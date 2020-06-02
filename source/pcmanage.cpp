@@ -589,6 +589,8 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			CreatedItems[HAIR]->SetDecayable( false );
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
 			CreatedItems[HAIR]->SetCont( mChar );
+			mChar->SetHairStyle( ItemID );
+			mChar->SetHairColour( ItemColour );
 		}
 	}
 	if( validBeard( facialHair, mChar->GetID() ) && ( mChar->GetID() == 0x0190 || mChar->GetID() == 0x029A )) //Male human or male gargoyle
@@ -604,6 +606,8 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			CreatedItems[BEARD]->SetDecayable( false );
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
 			CreatedItems[BEARD]->SetCont( mChar );
+			mChar->SetBeardStyle( ItemID );
+			mChar->SetBeardColour( ItemColour );
 		}
 	}
 	CreatedItems[PACK] = Items->CreateItem( tSock, mChar, 0x0E75, 1, 0, OT_ITEM );

@@ -33,6 +33,26 @@ namespace UOX
 //	BYTE flag byte 
 //	BYTE highlight color 
 //	BYTE[7] unknown5 
+//
+//	Newer, more up to date version of the packet. When did it change?
+//0x1B Packet
+//Char Location and body type (37 bytes) 
+//	BYTE cmd 
+//	BYTE[4] player id 
+//	BYTE[4] unknown1 
+//	BYTE[2] bodyType 
+//	BYTE[2] xLoc 
+//	BYTE[2] yLoc
+//	BYTE[1] Unknown (0x0)
+//	BYTE[1] zLoc 
+//	BYTE[1] direction 
+//	BYTE[4] unknown2 (0x0, Described as X in Jerrith's old docs)
+//	BYTE[4] unknown3 (0x0, Described as Y in Jerrith's old docs)
+//	BYTE[1] unknown4 (0x0)
+//	BYTE[2] Map Width/Server boundary width (minus eight according to POL)
+//	BYTE[2] Map Height/Server boundary height
+//	BYTE[2] unknown5 (0x0)
+//	BYTE[4] unknown6 (0x0)
 //Note: Only send once after login. It’s mandatory to send it once.
 //Note2: OSI calls this packet Login confirm
 
@@ -45,13 +65,15 @@ void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "BodyType         : " << std::hex << "0x" << pStream.GetUShort( 9 ) << std::endl;
 	outStream << "X Loc            : " << std::dec << pStream.GetUShort( 11 ) << std::endl;
 	outStream << "Y Loc            : " << pStream.GetUShort( 13 ) << std::endl;
-	outStream << "Z Loc            : " << pStream.GetUShort( 15 ) << std::endl;
+	outStream << "Z Loc            : " << (UI16)pStream.GetByte( 16 ) << std::endl;
 	outStream << "Direction        : " << (UI16)pStream.GetByte( 17 ) << std::endl;
 	outStream << "Unknown2         : " << pStream.GetUShort( 18 ) << std::endl;
 	outStream << "Unknown3         : " << pStream.GetULong( 20 ) << std::endl;
 	outStream << "Unknown4         : " << pStream.GetULong( 24 ) << std::endl;
-	outStream << "Flag Byte        : " << (UI16)pStream.GetByte( 28 ) << std::endl;
-	outStream << "Highlight Colour : " << (UI16)pStream.GetByte( 29 ) << std::endl;
+	outStream << "Map Width        : " << pStream.GetUShort( 27 ) << std::endl;
+	outStream << "Map Height       : " << pStream.GetUShort( 29 ) << std::endl;
+	outStream << "Flag Byte        : " << (UI16)pStream.GetByte( 31 ) << std::endl;
+	outStream << "Highlight Colour : " << (UI16)pStream.GetByte( 32 ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
 }
@@ -63,9 +85,7 @@ void CPCharLocBody::InternalReset( void )
 
 	for( UI08 k = 5; k < 9; ++k )
 		pStream.WriteByte( k, 0x00 );
-	for( UI08 i = 18; i < 28; ++i )
-		pStream.WriteByte( i, 0x00 );
-	for( UI08 j = 30; j < 37; ++j )
+	for( UI08 j = 33; j < 37; ++j )
 		pStream.WriteByte( j, 0x00 );
 	HighlightColour( 0 );
 }
@@ -86,8 +106,17 @@ void CPCharLocBody::CopyData( CChar &toCopy )
 	pStream.WriteShort( 9, toCopy.GetID() );
 	pStream.WriteShort( 11, toCopy.GetX() );
 	pStream.WriteShort( 13, toCopy.GetY() );
-	pStream.WriteByte(  16, toCopy.GetZ() );
+	pStream.WriteShort( 15, toCopy.GetZ() );
 	pStream.WriteByte(  17, toCopy.GetDir() );
+	pStream.WriteByte( 18, 0x0 );
+	pStream.WriteShort( 19, 0xFFFF );
+	pStream.WriteShort( 21, 0xFFFF );
+	pStream.WriteLong( 23, 0x0000 );
+	MapData_st& mMap = Map->GetMapData( toCopy.WorldNumber() );
+	UI16 mapWidth = mMap.xBlock;
+	UI16 mapHeight = mMap.yBlock;
+	pStream.WriteShort( 27, mapWidth );
+	pStream.WriteShort( 29, mapHeight );
 }
 
 CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
@@ -98,11 +127,11 @@ CPCharLocBody &CPCharLocBody::operator=( CChar &toCopy )
 
 void CPCharLocBody::Flag( UI08 toPut )
 {
-	pStream.WriteByte( 28, toPut );
+	pStream.WriteByte( 31, toPut );
 }
 void CPCharLocBody::HighlightColour( UI08 color )
 {
-	pStream.WriteByte( 29, color );
+	pStream.WriteByte( 32, color );
 }
 
 //0x1C Packet
@@ -351,6 +380,7 @@ CPExtMove::CPExtMove( CChar &toCopy )
 	pStream.ReserveSize( 17 );
 	pStream.WriteByte( 0, 0x77 );
 	CopyData( toCopy );
+	SetFlags( toCopy );
 }
 
 CPExtMove &CPExtMove::operator=( CChar &toCopy )
@@ -364,14 +394,50 @@ void CPExtMove::FlagColour( UI08 newValue )
 	pStream.WriteByte( 16, newValue );
 }
 
+void CPExtMove::SetFlags( CChar &toCopy )
+{
+	std::bitset< 8 > flag( 0 );
+
+	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
+		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	{
+		// Clients 7.0.0.0 and later
+		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT_FEMALE = 1;	//	0x02, female flag
+		const UI08 BIT_FLYING = 2;	//	0x04, flying (post 7.0.0.0)
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+
+		flag.set( BIT_FROZEN, toCopy.IsFrozen() );
+		flag.set( BIT_FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) || toCopy.GetID() == 0x029B );
+		flag.set( BIT_FLYING, ( toCopy.GetRunning() && ( toCopy.GetID() == 0x029A || toCopy.GetID() == 0x029B ) ) );
+	}
+	else
+{
+		// Clients earlier than 7.0.0.0
+		const UI08 BIT_INVUL = 0;	//	0x01
+		const UI08 BIT_DEAD = 1;	//	0x02
+		const UI08 BIT_POISON = 2;	//	0x04, poison
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+
+		flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
+		flag.set( BIT_DEAD, toCopy.IsDead() );
+		flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
+	}
+
+	const UI08 BIT_ATWAR	= 6;	// 0x40
+	const UI08 BIT_DEAD = 7;	// 0x80, dead or hidden
+	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
+	flag.set( BIT_DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
+
+	pStream.WriteByte( 15, static_cast<UI08>( flag.to_ulong() ) );
+}
+
 void CPExtMove::CopyData( CChar &toCopy )
 {
-	const UI08 BIT_ATWAR	= 6;	// 0x40
-	const UI08 BIT_DEAD		= 7;	// 0x80
-	const UI08 BIT_POISONED	= 2;	// 0x04
-	const UI08 BIT_FEMALE	= 1;	// 0x02
-	//const UI08 BIT_GOLDEN	= 3;	// 0x08
-
 	pStream.WriteLong(  1, toCopy.GetSerial() );
 	pStream.WriteShort( 5, toCopy.GetID() );
 	pStream.WriteShort( 7, toCopy.GetX() );
@@ -383,15 +449,6 @@ void CPExtMove::CopyData( CChar &toCopy )
 		dir |= 0x80;
 	pStream.WriteByte( 12, dir );
 	pStream.WriteShort( 13, toCopy.GetSkin() );
-
-	std::bitset< 8 > flag( 0 );
-	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
-	flag.set( BIT_DEAD, ( toCopy.IsDead() || toCopy.GetVisible() != VT_VISIBLE ) );
-	flag.set( BIT_POISONED, (toCopy.GetPoisoned() != 0) ); // Changes to Flying in SA clients? 7.0+?
-#pragma note( "we need to update this here to determine what goes on with elves too!" )
-	flag.set( BIT_FEMALE, (toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E) );
-//	flag.set( BIT_GOLDEN, (toCopy.GetHP() == toCopy.GetMaxHP()) );
-	pStream.WriteByte( 15, static_cast<UI08>(flag.to_ulong()) );
 }
 
 //0xAA Packet
@@ -836,6 +893,10 @@ void CPCharacterAnimation::InternalReset( void )
 //	BYTE direction 
 //	BYTE zLoc 
 //Note: Only used with the character being played by the client.
+// Old old? Flags( 0x01 = Unknown, 0x02 = CanAlterPaperdoll, 0x04 = Posioned, 0x08 = Yellow HealthBar, 0x10 = Unknown, 0x20 = Unknown, 0x40 = War Mode, 0x80 = Hidden )
+// Pre 7.0.0.0 Flags( 0x01 = Invulnerable, 0x02 = Dead, 0x04 = Posioned, 0x08 = Yellow HealthBar, 0x10 = Ignore Mobiles, 0x40 = War Mode, 0x80 = Hidden )
+// Post 7.0.0.0 Flags( 0x01 = Frozen, 0x02 = Female, 0x04 = Flying, 0x08 = Yellow HealthBar, 0x10 = Ignore Mobiles, 0x20 =  Movable if normally not, 0x40 = War Mode, 0x80 = Hidden )
+
 CPDrawGamePlayer::CPDrawGamePlayer( CChar &toCopy )
 {
 	InternalReset();
@@ -853,17 +914,43 @@ void CPDrawGamePlayer::CopyData( CChar &toCopy )
 	pStream.WriteByte(  18, toCopy.GetZ() );
 
 	std::bitset< 8 > flag( 0 );
+
+	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
+		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	{
+		// Clients 7.0.0.0 and later
+		const UI08 BIT_FROZEN	= 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT_FEMALE	= 1;	//	0x02, should be female flag
+		const UI08 BIT_FLYING	= 2;	//	0x04, flying (post 7.0.0.0)
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+
+		flag.set( BIT_FROZEN, toCopy.IsFrozen() );
+		flag.set( BIT_FEMALE, ( toCopy.GetID() == 0x0191 || toCopy.GetID() == 0x025E ) );
+		flag.set( BIT_FLYING, ( toCopy.GetRunning() && ( toCopy.GetID() == 0x029A || toCopy.GetID() == 0x029B ) ) );
+	}
+	else
+	{
+		// Clients below 7.0.0.0
 	const UI08 BIT_INVUL	= 0;	//	0x01
 	const UI08 BIT_DEAD		= 1;	//	0x02
-	const UI08 BIT_POISON	= 2;	//	0x04
-	const UI08 BIT_ATWAR	= 6;	//	0x40
-	const UI08 BIT_INVIS	= 7;	//	0x80
+		const UI08 BIT_POISON	= 2;	//	0x04, poison
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
 
 	flag.set( BIT_INVUL, toCopy.IsInvulnerable() );
 	flag.set( BIT_DEAD, toCopy.IsDead() );
 	flag.set( BIT_POISON, ( toCopy.GetPoisoned() != 0 ) );
+	}
+
+	const UI08 BIT_ATWAR	= 6;	//	0x40
+	const UI08 BIT_INVIS	= 7;	//	0x80
+
 	flag.set( BIT_ATWAR, toCopy.IsAtWar() );
-	flag.set( BIT_INVIS, (toCopy.GetVisible() != VT_VISIBLE) );
+	flag.set( BIT_INVIS, (toCopy.GetVisible() != VT_VISIBLE) || toCopy.IsDead() );
+
 	pStream.WriteByte( 10, static_cast< UI08 >(flag.to_ulong()) );
 }
 void CPDrawGamePlayer::InternalReset( void )
@@ -927,7 +1014,7 @@ CPPersonalLightLevel &CPPersonalLightLevel::operator=( CChar &toCopy )
 //	BYTE[2] unknown3 (speed/volume modifier? Line of sight stuff?) 
 //	BYTE[2] xLoc 
 //	BYTE[2] yLoc 
-//	BYTE[2] zLoc 
+//	BYTE[2] zLoc / Or not z at all? Could be related to sequences when sent after packet 0x7B
 CPPlaySoundEffect::CPPlaySoundEffect()
 {
 	InternalReset();
@@ -1646,6 +1733,14 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		/*if( target.ClientVersionMajor() >= 6 )
 		{
+			// Extended stats not implemented yet
+			extended3 = true;
+			extended4 = true;
+			extended5 = true;
+			extended6 = true;
+			pStream.ReserveSize( 121 );
+			pStream.WriteByte( 2, 121 );
+			Flag( 6 );
 		}*/
 		if( target.ClientVersionMajor() >= 5 )
 		{
@@ -1673,7 +1768,49 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		}
 	}
 	else
+	{
+		// We haven't received any client details yet.. let's use default server settings
+
+		/*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ) )
+		{
+			// Extended stats not implemented yet
+			extended3 = true;
+			extended4 = true;
+			extended5 = true;
+			extended6 = true;
+			pStream.ReserveSize( 121 );
+			pStream.WriteByte( 2, 121 );
+			Flag( 6 );
+		}*/
+		if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ) )
+		{
+			extended3 = true;
+			extended4 = true;
+			extended5 = true;
+			pStream.ReserveSize( 91 );
+			pStream.WriteByte( 2, 91 );
+			Flag( 5 );
+		}
+		else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_AOS ) )
+		{
+			extended3 = true;
+			extended4 = true;
+			pStream.ReserveSize( 88 );
+			pStream.WriteByte( 2, 88 );
+			Flag( 4 );
+		}
+		else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_UOR ) )
+		{
+			extended3 = true;
+			pStream.ReserveSize( 70 );
+			pStream.WriteByte( 2, 70 );
+			Flag( 3 );
+		}
+		else
+		{
 		Flag( 1 );
+		}
+	}
 	Serial( toCopy.GetSerial() );
 	Name( toCopy.GetName() );
 	bool isDead = toCopy.IsDead();
@@ -2417,6 +2554,14 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "               : Enabled Gothing housing tiles" << std::endl;
 	if( (lastByte&0x80000) == 0x80000 )
 		outStream << "               : Enabled Rustic housing tiles" << std::endl;
+	if( ( lastByte & 0x100000 ) == 0x100000 )
+		outStream << "               : Enabled Jungle housing tiles" << std::endl;
+	if( ( lastByte & 0x200000 ) == 0x200000 )
+		outStream << "               : Enabled Shadowguard housing tiles" << std::endl;
+	if( ( lastByte & 0x400000 ) == 0x400000 )
+		outStream << "               : Enabled ToL features" << std::endl;
+	if( ( lastByte & 0x800000 ) == 0x800000 )
+		outStream << "               : Enabled Endless Journey account" << std::endl;
 
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
@@ -3837,23 +3982,34 @@ void CPDrawObject::Finalize( void )
 	pStream.WriteLong( cPos, static_cast<UI32>(0) );
 }
 
-void CPDrawObject::AddItem( CItem *toAdd )
+void CPDrawObject::AddItem( CItem *toAdd, bool alwaysAddItemHue )
 {
 	UI16 cPos = curLen;
-	bool bColour = ( toAdd->GetColour() != 0 );
-	if( bColour )
-		SetLength( curLen + 9 );
-	else
-		SetLength( curLen + 7 );
 
 	pStream.WriteLong(  cPos, toAdd->GetSerial() );
 	pStream.WriteShort( cPos+=4, toAdd->GetID() );
 	pStream.WriteByte(  cPos+=2, toAdd->GetLayer() );
 
+	if( alwaysAddItemHue )
+	{
+		// Always send color to clients 7.0.33.1 and above
+		pStream.WriteShort( cPos+=1, toAdd->GetColour() );
+		SetLength( curLen + 9 );
+	}
+	else
+	{
+		// Send color to clients below 7.0.33.1 only if different than default
+		bool bColour = ( toAdd->GetColour() != 0 );
 	if( bColour )
 	{
+			SetLength( curLen + 9 );
 		pStream.WriteByte( cPos-2, pStream.GetByte( cPos-2 ) | 0x80 );
 		pStream.WriteShort( ++cPos, toAdd->GetColour() );
+	}
+		else
+		{
+			SetLength( curLen + 7 );
+		}
 	}
 }
 
@@ -3872,24 +4028,53 @@ void CPDrawObject::CopyData( CChar& mChar )
 	pStream.WriteByte(  14, mChar.GetDir() );
 	pStream.WriteShort( 15, mChar.GetSkin() );
 
-	//	0	0x01
-	//	1	0x02
-	//	2	0x04
-	//	3	0x08
-	//	4	0x10
-	//	5	0x20
-	//	6	0x40
-	//	7	0x80
+	//	0	0x01 - Frozen/Invulnerable
+	//	1	0x02 - Female/Dead
+	//	2	0x04 . Flying/Poisoned
+	//	3	0x08 - Yellow Healthbar
+	//	4	0x10 - Ignore Mobiles
+	//	5	0x20 - ???
+	//	6	0x40 - War Mode
+	//	7	0x80 - Hidden
 
-	std::bitset< 8 > cFlag( 0 );
-	const UI08 BIT_POISON	= 2;	// 0x04
+	std::bitset< 8 > flag( 0 );
+
+	if( cwmWorldState->ServerData()->ClientSupport7000() || cwmWorldState->ServerData()->ClientSupport7090() ||
+		cwmWorldState->ServerData()->ClientSupport70160() || cwmWorldState->ServerData()->ClientSupport70240() ||
+		cwmWorldState->ServerData()->ClientSupport70300() || cwmWorldState->ServerData()->ClientSupport70331() ||
+		cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+	{
+		// Clients 7.0.0.0 and later
+		const UI08 BIT_FROZEN = 0;	//	0x01, frozen/paralyzed
+		const UI08 BIT_FEMALE = 1;	//	0x02, female
+		const UI08 BIT_FLYING = 2;	//	0x04, flying (post 7.0.0.0)
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+
+		flag.set( BIT_FROZEN, mChar.IsFrozen() );
+		flag.set( BIT_FEMALE, ( mChar.GetID() == 0x0191 || mChar.GetID() == 0x025E ) );
+		flag.set( BIT_FLYING, ( mChar.GetRunning() && ( mChar.GetID() == 0x029A || mChar.GetID() == 0x029B ) ) );
+	}
+	else
+	{
+		// Clients below 7.0.0.0
+		const UI08 BIT_INVUL = 0;	//	0x01, invulnerable
+		const UI08 BIT_DEAD = 1;	//	0x02, dead
+		const UI08 BIT_POISON = 2;	//	0x04, poison
+		//const UI08 BIT_GOLDEN	= 4;	//	0x08, yellow healthbar
+		//const UI08 BIT_IGNOREMOBILES = 5;	// 0x10, ignore other mobiles?
+
+		flag.set( BIT_INVUL, mChar.IsInvulnerable() );
+		flag.set( BIT_DEAD, mChar.IsDead() );
+		flag.set( BIT_POISON, ( mChar.GetPoisoned() != 0 ) );
+	}
+
 	const UI08 BIT_ATWAR	= 6;	// 0x40
 	const UI08 BIT_OTHER	= 7;	// 0x80
+	flag.set( BIT_ATWAR, mChar.IsAtWar() );
+	flag.set( BIT_OTHER, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE ) || ( mChar.IsDead() && !mChar.IsAtWar() ) ) );
 
-	cFlag.set( BIT_POISON, ( mChar.GetPoisoned() != 0 ) );
-	cFlag.set( BIT_OTHER, ( ( !mChar.IsNpc() && !isOnline( mChar ) ) || ( mChar.GetVisible() != VT_VISIBLE )  || ( mChar.IsDead() && !mChar.IsAtWar() ) ) );
-	cFlag.set( BIT_ATWAR, mChar.IsAtWar() );
-	pStream.WriteByte( 17, static_cast<UI08>(cFlag.to_ulong()) );
+	pStream.WriteByte( 17, static_cast<UI08>( flag.to_ulong() ) );
 }
 
 //0x89 Packet
@@ -5706,7 +5891,7 @@ CPHealthBarStatus::CPHealthBarStatus( CChar &mChar, CSocket &tSock )
 {
 	InternalReset();
 	SetHBStatusData( mChar, tSock );
-	CopyData( mChar );
+	//CopyData( mChar );
 }
 
 void CPHealthBarStatus::InternalReset( void )
@@ -5716,7 +5901,7 @@ void CPHealthBarStatus::InternalReset( void )
 
 void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock )
 {
-	if( tSock.ClientType() >= CV_SA2D )
+	if( tSock.ClientType() == CV_UO3D || tSock.ClientType() == CV_KR3D || tSock.ClientType() == CV_SA3D || tSock.ClientType() == CV_HS3D )
 	{
 		pStream.WriteByte(  0, 0x16 );
 		pStream.WriteLong(	3, mChar.GetSerial() );

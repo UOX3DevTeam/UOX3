@@ -91,7 +91,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ACCESSDIRECTORY|LOGSDIRECTORY|ACCOUNTISOLATION|HTMLDIRECTORY|SHOOTONANIMALBACK|NPCTRAININGENABLED|DICTIONARYDIRECTORY|BACKUPSAVERATIO|HIDEWILEMOUNTED|SECONDSPERUOMINUTE|WEIGHTPERSTR|POLYDURATION|"
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
-	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|CLIENTSUPPORT70240|WEAPONDAMAGECHANCE|"
+	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|CLIENTSUPPORT70240|CLIENTSUPPORT70300|CLIENTSUPPORT70331|CLIENTSUPPORT704565|CLIENTSUPPORT70610|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|WEAPONDAMAGECHANCE|"
 	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
@@ -325,6 +325,10 @@ void CServerData::ResetDefaults( void )
 	ClientSupport7090( true );
 	ClientSupport70160( true );
 	ClientSupport70240( true );
+	ClientSupport70300( false );
+	ClientSupport70331( false );
+	ClientSupport704565( false );
+	ClientSupport70610( false );
 
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
@@ -1836,6 +1840,10 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CLIENTSUPPORT7090=" << (ClientSupport7090()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT70160=" << (ClientSupport70160()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT70240=" << (ClientSupport70240()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70300=" << ( ClientSupport70300() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70331=" << ( ClientSupport70331() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT704565=" << ( ClientSupport704565() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70610=" << ( ClientSupport70610() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
@@ -2745,54 +2753,66 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x093a:	 // CLIENTSUPPORT70160[0164]
 		ClientSupport70160( value.toUShort() == 1 );
 		break;
-	case 0x094d:	 // EXTENDEDSTARTINGSTATS[0165]
-		ExtendedStartingStats( value.toUShort() == 1 );
-		break;
-	case 0x0963:	 // EXTENDEDSTARTINGSKILLS[0166]
-		ExtendedStartingSkills( value.toUShort() == 1 );
-		break;
-	case 0x097a:	// CLIENTSUPPORT70240[0167]
+	case 0x094d:	// CLIENTSUPPORT70240[0165]
 		ClientSupport70240( value.toUShort() == 1 );
 		break;
-	case 0x098d:	// WEAPONDAMAGECHANCE[0168]
+	case 0x0960:	// CLIENTSUPPORT70300[0166]
+		ClientSupport70300( value.toUShort() == 1 );
+		break;
+	case 0x0973:	// CLIENTSUPPORT70331[0167]
+		ClientSupport70331( value.toUShort() == 1 );
+		break;
+	case 0x0986:	// CLIENTSUPPORT704565[0168]
+		ClientSupport704565( value.toUShort() == 1 );
+		break;
+	case 0x099a:	// CLIENTSUPPORT70610[0169]
+		ClientSupport70610( value.toUShort() == 1 );
+		break;
+	case 0x09ad:	 // EXTENDEDSTARTINGSTATS[0170]
+		ExtendedStartingStats( value.toUShort() == 1 );
+		break;
+	case 0x09c3:	 // EXTENDEDSTARTINGSKILLS[0171]
+		ExtendedStartingSkills( value.toUShort() == 1 );
+		break;
+	case 0x09da:	// WEAPONDAMAGECHANCE[0172]
 		CombatWeaponDamageChance( value.toUByte() );
 		break;
-	case 0x09a0:	// ARMORDAMAGECHANCE[0169]
+	case 0x09ed:	// ARMORDAMAGECHANCE[0173]
 		CombatArmorDamageChance( value.toUByte() );
 		break;
-	case 0x09b2:	// WEAPONDAMAGEMIN[0170]
+	case 0x09ff:	// WEAPONDAMAGEMIN[0174]
 		CombatWeaponDamageMin( value.toUByte() );
 		break;
-	case 0x09c2:	// WEAPONDAMAGEMAX[0171]
+	case 0x0a0f:	// WEAPONDAMAGEMAX[0175]
 		CombatWeaponDamageMax( value.toUByte() );
 		break;
-	case 0x09d2:	// ARMORDAMAGEMIN[0172]
+	case 0x0a1f:	// ARMORDAMAGEMIN[0176]
 		CombatArmorDamageMin( value.toUByte() );
 		break;
-	case 0x09e1:	// ARMORDAMAGEMAX[0173]
+	case 0x0a2e:	// ARMORDAMAGEMAX[0177]
 		CombatArmorDamageMax( value.toUByte() );
 		break;
-	case 0x09f0:	// GLOBALATTACKSPEED[0174]
+	case 0x0a3d:	// GLOBALATTACKSPEED[0178]
 		GlobalAttackSpeed( value.toFloat() );
 		break;
-	case 0x0a02:	// NPCSPELLCASTSPEED[0175]
+	case 0x0a4f:	// NPCSPELLCASTSPEED[0179]
 		NPCSpellCastSpeed( value.toFloat() );
 		break;
-	case 0x0a14:	// FISHINGSTAMINALOSS[0176]
+	case 0x0a61:	// FISHINGSTAMINALOSS[0180]
 		FishingStaminaLoss( value.toFloat() );
 		break;
-	case 0x0a27:	// RANDOMSTARTINGLOCATION[0177]
+	case 0x0a74:	// RANDOMSTARTINGLOCATION[0181]
 		ServerRandomStartingLocation( value.toUShort() == 1 );
 		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x0a3e:	 // ODBCDSN[0178]
+	case 0x0a8b:	 // ODBCDSN[0182]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0a46:	 // ODBCUSER[0179]
+	case 0x0a93:	 // ODBCUSER[0183]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0a4f:	 // ODBCPASS[0180]
+	case 0x0a9c:	 // ODBCPASS[0184]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif

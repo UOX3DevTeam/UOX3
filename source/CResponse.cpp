@@ -97,7 +97,7 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 				SI08 rVal = -1;
 				if( Npc->isDisabled() )
 					Npc->TextMessage( NULL, 1291, TALK, false );
-				else if( !mChar->IsDead() )
+				else
 					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
 				switch( rVal )
 				{
