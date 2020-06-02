@@ -64,6 +64,7 @@
 #include "ObjectFactory.h"
 #include "PartySystem.h"
 #include "CJSEngine.h"
+#include <chrono>
 
 #if P_ODBC == 1
 #include "ODBCManager.h"
@@ -2628,6 +2629,9 @@ int main( int argc, char *argv[] )
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
 
+	// Let's measure startup time
+	auto startupStartTime = std::chrono::high_resolution_clock::now();
+
 	// EviLDeD: 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
 #if UOX_PLATFORM == PLATFORM_WIN32
 	WSADATA wsaData;
@@ -2666,7 +2670,6 @@ int main( int argc, char *argv[] )
 		signal( SIGILL, &illinst );
 		signal( SIGFPE, &aus );
 #endif
-		
 		Console.PrintSectionBegin();
 		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << myendl;
 		Console.PrintSectionBegin();
@@ -2828,7 +2831,13 @@ int main( int argc, char *argv[] )
 		Console.PrintSectionBegin();
 		// we've really finished loading here
 		cwmWorldState->SetLoaded( true );
-		Console << "UOX: Startup Complete" << myendl;
+
+		// Get a second timestamp for startup time
+		auto startupEndTime = std::chrono::high_resolution_clock::now();
+
+		// Calculate startup time in milliseconds
+		auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
+		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.PrintSectionBegin();
 
 		// MAIN SYSTEM LOOP

@@ -1688,6 +1688,20 @@ void CChar::SendToSocket( CSocket *s )
 	if( s != NULL && s->LoginComplete() )
 	{
 		CChar *mCharObj = s->CurrcharObj();
+		bool alwaysSendItemHue = false;
+		if( s->ReceivedVersion() )
+		{
+			if( s->ClientVerShort() >= CVS_70331 )
+			{
+				alwaysSendItemHue = true;
+			}
+		}
+		else if( cwmWorldState->ServerData()->ClientSupport70331() || cwmWorldState->ServerData()->ClientSupport704565() || cwmWorldState->ServerData()->ClientSupport70610() )
+		{
+			// No client version received yet. Rely on highest client support enabled in UOX.INI
+			alwaysSendItemHue = true;
+		}
+
 		if( mCharObj == this )
 		{
 			CPDrawGamePlayer gpToSend( (*this) );
@@ -1707,7 +1721,7 @@ void CChar::SendToSocket( CSocket *s )
 		for( LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter )
 		{
 			if( ValidateObject( lIter->second ) )
-				toSend.AddItem( lIter->second );
+				toSend.AddItem( lIter->second, alwaysSendItemHue );
 		}
 
 		toSend.Finalize();

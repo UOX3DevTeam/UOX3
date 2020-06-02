@@ -26,6 +26,10 @@ namespace UOX
 		CF_BIT_HS,				// 0x20000 - Enable HS features: boats, new movementtype? ++
 		CF_BIT_GOTHHOUSE,		// 0x40000
 		CF_BIT_RUSTHOUSE,		// 0x80000
+		CF_BIT_JUNGLEHOUSE,		// 0x100000 - Enable Jungle housing tiles
+		CF_BIT_SHADOWHOUSE,		// 0x200000 - Enable Shadowguard housing tiles
+		CF_BIT_TOLHOUSE,		// 0x400000 - Enable Time of Legends features
+		CF_BIT_ENDLESSHOUSE,	// 0x800000 - Enable Endless Journey account
 		CF_BIT_COUNT
 	};
 
@@ -38,16 +42,16 @@ namespace UOX
 		SF_BIT_LIMITCHAR,		// 0x10 - Limit amount of chars, combine with OneChar
 		SF_BIT_AOS,				// 0x20 - Enable Tooltips, fight system book - but not monsters/map/skills/necro/pala classes
 		SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
-		SF_BIT_SE,				// 0x80
-		SF_BIT_ML,				// 0x100
+		SF_BIT_SE,				// 0x80 - Samurai and Ninja classes
+		SF_BIT_ML,				// 0x100 - Elven race
 		// Uncomment when adding support for newer client versions
 		SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
 		SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
 		SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA
-		SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?
-		SF_BIT_UNKNOWN5 = 13,	// 0x2000 - added with UO:SA launch
-		//SF_BIT_NEWMOVE,		// 0x4000 - new movement system
-		//SF_BIT_FACTIONAREAS,	// 0x8000 - Unlock new Felucca faction-areas*/
+		SF_BIT_SEVENCHARS,		// 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
+		SF_BIT_UNKNOWN5,		// 0x2000 - added with UO:SA launch
+		SF_BIT_NEWMOVE,			// 0x4000 - new movement system
+		SF_BIT_FACTIONAREAS = 15,	// 0x8000 - Unlock new Felucca faction-areas
 		SF_BIT_COUNT
 	};
 
@@ -150,6 +154,10 @@ private:
 	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1
 	bool		Clients70160Enabled;			// Allow client connections from 7.0.16.0 to 7.0.23.1
 	bool		Clients70240Enabled;			// Allow client connections from 7.0.24.0+
+	bool		Clients70300Enabled;			// Allow client connections from 7.0.30.0+
+	bool		Clients70331Enabled;			// Allow client connections from 7.0.33.1+
+	bool		Clients704565Enabled;			// Allow client connections from 7.0.45.65+
+	bool		Clients70610Enabled;			// Allow client connections from 7.0.61.0+
 
 	// facet block
 	bool		useFacetSaves;
@@ -381,6 +389,14 @@ public:
 	void		ClientSupport70160(bool cliSuppValue) { Clients70160Enabled = cliSuppValue; }
 	bool		ClientSupport70240(void) const { return Clients70240Enabled; }
 	void		ClientSupport70240(bool cliSuppValue) { Clients70240Enabled = cliSuppValue; }
+	bool		ClientSupport70300( void ) const { return Clients70300Enabled; }
+	void		ClientSupport70300( bool cliSuppValue ) { Clients70300Enabled = cliSuppValue; }
+	bool		ClientSupport70331( void ) const { return Clients70331Enabled; }
+	void		ClientSupport70331( bool cliSuppValue ) { Clients70331Enabled = cliSuppValue; }
+	bool		ClientSupport704565( void ) const { return Clients704565Enabled; }
+	void		ClientSupport704565( bool cliSuppValue ) { Clients704565Enabled = cliSuppValue; }
+	bool		ClientSupport70610( void ) const { return Clients70610Enabled; }
+	void		ClientSupport70610( bool cliSuppValue ) { Clients70610Enabled = cliSuppValue; }
 
 	// Enable/disable higher total for starting stats, and/or fourth starting skill in clients 7.0.16+
 	void		ExtendedStartingStats( bool setting );

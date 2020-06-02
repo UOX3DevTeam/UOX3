@@ -91,7 +91,8 @@ enum ScriptEvent
 	seOnGumpPress,
 	seOnGumpInput,
 	seOnDropItemOnItem,
-	seOnVirtueGumpPress
+	seOnVirtueGumpPress,
+	seOnUseBandageMacro		//	**	allows overriding what happens when client uses bandage macros
 };
 
 struct SEGump
@@ -236,6 +237,7 @@ public:
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
 	SI08		OnSkillGump( CChar *mChar );
+	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 

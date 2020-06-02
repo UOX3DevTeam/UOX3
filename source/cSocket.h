@@ -41,6 +41,10 @@ enum ClientVersions
 	CVS_70151,
 	CVS_70160,
 	CVS_70240,
+	CVS_70300,
+	CVS_70331,
+	CVS_704565,
+	CVS_70610,
 	CVS_COUNT
 };
 

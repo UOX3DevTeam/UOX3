@@ -2391,6 +2391,42 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 	return funcRetVal;
 }
 
+//o---------------------------------------------------------------------------o
+//|	Function	-	SI08 OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
+//|	Programmer	-	Xuri
+//|	Date		-	12th May, 2020
+//o---------------------------------------------------------------------------o
+//|	Purpose		-	Expose bandage macro usage to JS engine so server admins
+//|					can override the effects.
+//o---------------------------------------------------------------------------o
+
+SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( targChar ) || mSock == NULL )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnUseBandageMacro, "onUseBandageMacro" ) )
+		return RV_NOFUNC;
+	SI08 funcRetVal = -1;
+	jsval params[3], rval;
+
+	JSObject *mSockObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
+	JSObject *targCharObj = JSEngine->AcquireObject( IUE_CHAR, targChar, runTime );
+	JSObject *bandageItemObj = JSEngine->AcquireObject( IUE_ITEM, bandageItem, runTime );
+	params[0] = OBJECT_TO_JSVAL( mSockObj );
+	params[1] = OBJECT_TO_JSVAL( targCharObj );
+	params[2] = OBJECT_TO_JSVAL( bandageItemObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onUseBandageMacro", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnUseBandageMacro, false );
+		return RV_NOFUNC;
+	}
+
+	return -1;
+}
+
 SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 {
 	const SI08 RV_NOFUNC = -1;

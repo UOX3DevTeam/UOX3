@@ -845,7 +845,7 @@ public:
 
 };
 
-/*class CPIBandageMacro : public CPInputBuffer
+class CPIBandageMacro : public CPInputBuffer
 {
 public:
 	virtual			~CPIBandageMacro()
@@ -856,9 +856,9 @@ public:
 
 	virtual void	Receive(void);
 	virtual bool	Handle(void);
-	virtual void	Log(std::ofstream &outStream, bool fullHeader = true);
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 
-};*/
+};
 
 class CPISpellbookSelect : public CPInputBuffer
 {
