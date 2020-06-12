@@ -1239,6 +1239,27 @@ void startChar( CSocket *mSock, bool onCreate )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
 
+			// Store hair and beard (if they have any) properly for characters created pre-0.99.2j
+			CItem *hairObject = mChar->GetItemAtLayer( IL_HAIR );
+			CItem *beardObject = mChar->GetItemAtLayer( IL_FACIALHAIR );
+			if( ValidateObject( hairObject ) )
+			{
+				if( mChar->GetHairStyle() == 0xFFFF )
+				{
+					mChar->SetHairStyle( hairObject->GetID() );
+					mChar->SetHairColour( hairObject->GetColour() );
+				}
+			}
+
+			if( ValidateObject( beardObject ) )
+			{
+				if( mChar->GetBeardStyle() == 0xFFFF )
+				{
+					mChar->SetBeardStyle( beardObject->GetID() );
+					mChar->SetHairColour( hairObject->GetColour() );
+				}
+			}
+
 			mSock->LoginComplete( true );
     
 			if( mChar->WorldNumber() > 0 )

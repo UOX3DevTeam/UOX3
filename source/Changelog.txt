@@ -1,3 +1,6 @@
+13/06/2020 - Xuri
+	Fixed an issue where hair and beard values for characters created prior to 0.99.2j were never stored properly, by updating these values upon login
+
 02/06/2020 - Xuri (0.99.2j)
 	Added additional ClientVersion enum values to start implementing support for clients above 7.0.24.0. Ini settings disabled by default.
 	Updated packet 0x78 to always send item colour for clients above 7.0.33.1, which also fixes rendering of items on paperdoll for these clients
