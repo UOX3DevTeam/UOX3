@@ -1,3 +1,8 @@
+16/06/2020 - Xuri
+	Updated AddButton and AddPageButton JS Methods (and Docs) to include an optional argument for ID of button when pressed. If the extra argument is not provided, the methods behave like before, using buttonImage + 1 for the pressed button:
+		void AddButton( topHeight, topLeft, buttonImage, (buttonPressedImage) unk1, unk2, unk3 )
+		void AddPageButton( topHeight, topLeft, buttonImage, (buttonPressedImage), pageNum )
+
 13/06/2020 - Xuri
 	Fixed an issue where hair and beard values for characters created prior to 0.99.2j were never stored properly, by updating these values upon login
 
