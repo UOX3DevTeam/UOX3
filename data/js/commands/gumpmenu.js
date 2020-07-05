@@ -15,7 +15,7 @@ function command_NACCT( socket, cmdString )
 	if( cmdString )
 	{
 		var splitString = cmdString.split( " " );
-		uKey = splitString[0].toUpperCase();
+		var uKey = splitString[0].toUpperCase();
 		switch( uKey )
 		{
 		case "ADD":	socket.OpenGump( 8 );		break;

@@ -55,6 +55,8 @@ JSMethodFunc CGump_AddHTMLGump;
 JSMethodFunc CGump_AddPage;
 JSMethodFunc CGump_AddPicture;
 JSMethodFunc CGump_AddPictureColor;
+JSMethodFunc CGump_AddPicInPic;
+JSMethodFunc CGump_AddItemProperty;
 JSMethodFunc CGump_AddRadio;
 JSMethodFunc CGump_AddText;
 JSMethodFunc CGump_AddTextEntry;
@@ -283,6 +285,8 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddPage",					CGump_AddPage,						1, 0, 0 },
 	{ "AddPicture",					CGump_AddPicture,					3, 0, 0 },
 	{ "AddPictureColor",			CGump_AddPictureColor,				4, 0, 0 },
+	{ "AddPicInPic",				CGump_AddPicInPic,					7, 0, 0 },
+	{ "AddItemProperty",			CGump_AddItemProperty,				1, 0, 0 },
 	{ "AddRadio",					CGump_AddRadio,						5, 0, 0 },
 	{ "AddText",					CGump_AddText,						4, 0, 0 },
 	{ "AddTextEntry",				CGump_AddTextEntry,					8, 0, 0 },

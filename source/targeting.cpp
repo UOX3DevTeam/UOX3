@@ -29,6 +29,7 @@ namespace UOX
 void tweakItemMenu( CSocket *s, CItem *j );
 void tweakCharMenu( CSocket *s, CChar *c );
 void OpenPlank( CItem *p );
+bool checkItemRange( CChar *mChar, CItem *i );
 
 void PlVBuy( CSocket *s )//PlayerVendors
 {
@@ -205,6 +206,19 @@ void BuildHouseTarget( CSocket *s )
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
+
+	// Check if item used to initialize target cursor is still within range
+	CChar *mChar = s->CurrcharObj();
+	CItem *deedObj = mChar->GetSpeechItem();
+	if( ValidateObject( deedObj ) )
+	{
+		CChar *deedObjOwner = FindItemOwner( deedObj );
+		if( !ValidateObject( deedObjOwner ) || deedObjOwner != mChar )
+		{
+			s->sysmessage( 1763 ); // That item must be in your backpack before it can be used.
+			return;
+		}
+	}
 
 	BuildHouse( s, s->AddID1() );//If its a valid house, send it to buildhouse!
 
@@ -460,6 +474,20 @@ void WstatsTarget( CSocket *s )
 void ColorsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
+
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		CChar *mChar = s->CurrcharObj();
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
+	
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) )
 		return;
@@ -475,12 +503,26 @@ void ColorsTarget( CSocket *s )
 void DvatTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
+
+	CChar *mChar = s->CurrcharObj();
+
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
+
 	SERIAL serial	= s->GetDWord( 7 );
 	CItem *i		= calcItemObjFromSer( serial );
 	if( !ValidateObject( i ) )
 		return;
 
-	CChar *mChar = s->CurrcharObj();
 	if( i->isDyeable() )
 	{
 		if( i->GetCont() != NULL )
@@ -675,31 +717,7 @@ void TweakTarget( CSocket *s )
 	}
 }
 
-void LoadCannon( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-	SERIAL moreSerial = s->AddID();
-	if( i->GetTempVar( CITV_MORE ) == moreSerial || s->AddID1() == 0xFF )
-	{
-		if( i->GetTempVar( CITV_MOREZ ) == 0 && objInRange( s, i, DIST_NEARBY ) )
-		{
-			i->SetTempVar( CITV_MOREZ, 1 );
-			s->sysmessage( 1035 );
-		}
-		else
-		{
-			if( i->GetTempVar( CITV_MORE, 1 ) == 0x00 ) 
-				s->sysmessage( 1036 );
-			else 
-				s->sysmessage( 1037 );
-		}
-	}
-}
-
-void Tiling( CSocket *s )  // Clicking the corners of tiling calls this function - Crwth 01/11/1999
+void Tiling( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -847,29 +865,6 @@ void newCarveTarget( CSocket *s, CItem *i )
 			}
 		}
 	}
-}
-
-void CorpseTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	CChar *mChar = s->CurrcharObj();
-	if( !ValidateObject( i ) || !ValidateObject( mChar ) )
-		return;
-	if( objInRange( mChar, i, DIST_NEARBY ) ) 
-	{
-		Effects->PlayCharacterAnimation( mChar, 0x20 );
-		if( i->GetTempVar( CITV_MOREY, 1 ) == 0 )
-		{
-			i->SetTempVar( CITV_MOREY, 1, 1 );
-			if( i->GetTempVar( CITV_MOREY, 2 ) || i->GetCarve() != -1 )
-				newCarveTarget( s, i );
-		} 
-		else 
-			s->sysmessage( 1051 );
-	}
-	else
-		s->sysmessage( 393 );
 }
 
 void AttackTarget( CSocket *s )
@@ -1105,6 +1100,9 @@ void killKeys( SERIAL targSerial );
 void HouseOwnerTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
+
+	CItem *sign = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
@@ -1121,8 +1119,6 @@ void HouseOwnerTarget( CSocket *s )
 	if( oSock == NULL )
 		return;
 
-	CItem *sign = static_cast<CItem *>(s->TempObj());
-	s->TempObj( NULL );
 	if( !ValidateObject( sign ) )
 		return;
 
@@ -1355,6 +1351,9 @@ void HouseLockdown( CSocket *s ) // Abaddon
 // DATE:	17th December, 1999
 {
 	VALIDATESOCKET( s );
+	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
+	s->TempObj( NULL );
+
 	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( ValidateObject( itemToLock ) )
 	{
@@ -1363,8 +1362,6 @@ void HouseLockdown( CSocket *s ) // Abaddon
 			s->sysmessage( 1106 );
 			return;
 		}
-		CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
-		s->TempObj( NULL );
 		// time to lock it down!
 		CMultiObj *multi = findMulti( itemToLock );
 		if( ValidateObject( multi ) )
@@ -1399,14 +1396,15 @@ void HouseRelease( CSocket *s ) // Abaddon
 // DATE:	17th December, 1999
 {
 	VALIDATESOCKET( s );
+	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
+	s->TempObj( NULL );
+
 	CItem *itemToLock = calcItemObjFromSer( s->GetDWord( 7 ) );
 
 	if( ValidateObject( itemToLock ) ) // || !itemToLock->IsLockedDown() )
 	{
 		if( itemToLock->IsLockedDown() )
 		{
-			CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
-			s->TempObj( NULL );
 			// time to release it!
 			CMultiObj *multi = findMulti( itemToLock );
 			if( ValidateObject( multi ) )
@@ -1579,6 +1577,19 @@ void SmeltTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
+	CChar *mChar = s->CurrcharObj();
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
+
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) || i->GetCont() == NULL )
 		return;
@@ -1595,8 +1606,6 @@ void SmeltTarget( CSocket *s )
 		s->sysmessage( 1114 );
 		return;
 	}
-
-	CChar *mChar = s->CurrcharObj();
 
 	R32 avgMin = ourCreateEntry->AverageMinSkill();
 	if( mChar->GetSkill( MINING ) < avgMin )
@@ -1626,6 +1635,9 @@ void SmeltTarget( CSocket *s )
 void VialTarget( CSocket *mSock )
 {
 	VALIDATESOCKET( mSock );
+
+	CItem *nVialID = static_cast<CItem *>(mSock->TempObj());
+	mSock->TempObj( NULL );
 	SERIAL targSerial = mSock->GetDWord( 7 );
 	if( targSerial == INVALIDSERIAL )
 		return;
@@ -1634,10 +1646,14 @@ void VialTarget( CSocket *mSock )
 	if( !ValidateObject( mChar ) )
 		return;
 
-	CItem *nVialID = static_cast<CItem *>(mSock->TempObj());
-	mSock->TempObj( NULL );
 	if( ValidateObject( nVialID ) )
 	{
+		if( !checkItemRange( mChar, nVialID ) )
+		{
+			mSock->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+
 		CItem *nDagger = Combat->getWeapon( mChar );
 		if( !ValidateObject( nDagger ) ) 
 		{
@@ -1775,7 +1791,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_TWEAK:			TweakTarget( tSock );					break;
 					case TARGET_MAKESTATUS:		MakeStatusTarget( tSock );				break;
 					case TARGET_SETSCPTRIG:		HandleSetScpTrig( tSock );				break;
-					case TARGET_LOADCANNON:		LoadCannon( tSock );					break;
 					case TARGET_VIAL:			VialTarget( tSock );					break;
 					case TARGET_TILING:			Tiling( tSock );						break;
 					case TARGET_SHOWSKILLS:		ShowSkillTarget( tSock );				break;

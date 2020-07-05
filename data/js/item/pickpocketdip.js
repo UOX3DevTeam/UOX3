@@ -1,7 +1,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
-	
+
 	//Check if user is in range of pickpocket dip
 	if( !iUsed.InRange( pUser, 1 ) )
 	{
@@ -9,9 +9,13 @@ function onUseChecked( pUser, iUsed )
 		return false;
 	}
 	if( iUsed.id == 0x1E2C )
-		iUsed.id == 0x1EC0; //Convert useless dummy to useful dummy
+	{
+		iUsed.id = 0x1EC0; //Convert useless dummy to useful dummy
+	}
 	else if( iUsed.id == 0x1E2D )
-		iUsed.id == 0x1EC3; //convert useless dummy to useful dummy
+	{
+		iUsed.id = 0x1EC3; //convert useless dummy to useful dummy
+	}
 	else if( iUsed.id == 0x1EC0 || iUsed.id == 0x1EC3 ) //if pickpocket dip is motionless
 	{
 		//Check if the pickpocket dip is already in use (to delay how often one can use it)
@@ -22,7 +26,7 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 1762, pSock.Language )); //You must wait before you can use that item again.
 			return false;
 		}
-		
+
 		//Check if character is mounted or not, and then call up an external script to determine combat animations
 		if( pUser.isonhorse )
 		{
@@ -64,9 +68,9 @@ function onUseChecked( pUser, iUsed )
 function safetyMeasure( iUsed )
 {
 	var failedToUse = iUsed.GetTag( "failedToUse" );
-	
+
 	//Check if 4 or more failed attempts have been made
-	if( failedToUse > 3 ) 
+	if( failedToUse > 3 )
 		stopDummy( iUsed );
 	else
 	{

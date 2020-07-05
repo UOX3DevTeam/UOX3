@@ -53,6 +53,15 @@ function onCallback0( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
 	var Key = pSock.tempObj;
+	pSock.tempObj = null;
+
+	// If player is now out of range of the key, disallow it!
+	if(	!pUser.InRange( Key, 3 ))
+	{
+		pUser.SysMessage( "Key is out of range!" );
+		return;
+	}
+
 	var StrangeByte = pSock.GetWord( 1 );
 	if( !StrangeByte && myTarget.isItem )
 	{
@@ -68,7 +77,7 @@ function onCallback0( pSock, myTarget )
 			if( myTarget.container.serial != pUser.pack.serial )
 			{
 				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
-			}		
+			}
 			else
 			{
 				if( myTarget.id == emptyKeyringID )
@@ -135,6 +144,7 @@ function onCallback1( pSock, myTarget )
 { //Keyring targeting
 	var pUser = pSock.currentChar;
 	var Keyring = pSock.tempObj;
+	pSock.tempObj = null;
 	var StrangeByte = pSock.GetWord( 1 );
 	var keys, i;
 	if( !StrangeByte && myTarget.isItem )
@@ -143,10 +153,10 @@ function onCallback1( pSock, myTarget )
 		{ //If targeting keyring itself, release all keys
 			keys = Keyring.GetTag( "keys" );
 			i = 1;
-			for( i = 1; i < keys + 1; i++ ) 
+			for( i = 1; i < keys + 1; i++ )
 			{
 				var keyID = Keyring.GetTag( "keyid"+i );
-				HexKeyID = keyID.toString(16);
+				var HexKeyID = keyID.toString(16);
 				var newKey = CreateDFNItem( pUser.socket, pUser, "0x"+HexKeyID, 1, "ITEM", true );
 				newKey.more = Keyring.GetTag( "key"+i+"more" );
 				newKey.name = Keyring.GetTag( "key"+i+"name" );
@@ -167,7 +177,7 @@ function onCallback1( pSock, myTarget )
 			{
 				keys = Keyring.GetTag( "keys" );
 				i = 1;
-				for( i = 1; i < keys + 1; i++ ) 
+				for( i = 1; i < keys + 1; i++ )
 				{
 					var KeyItemMore = Keyring.GetTag( "key"+i+"more" );
 					if( KeyItemMore == myTarget.more || KeyItemMore == 255 )
@@ -187,14 +197,15 @@ function onCallback1( pSock, myTarget )
 function onCallback2( pSock, myTarget )
 { //Empty keyring targeting
 	var pUser = pSock.currentChar;
-	var emptyKeyring = pSock.tempObj; 
+	var emptyKeyring = pSock.tempObj;
+	pSock.tempObj = null;
 	var StrangeByte = pSock.GetWord( 1 );
 	if( !StrangeByte && myTarget.isItem )
 	{
 		if(( myTarget.id >= keyID1 && myTarget.id <= keyID3 ) || myTarget.id == keyID4 || myTarget.id == keyID5 )
 		{
 			var itemOwner = GetPackOwner( myTarget, 0 );
-			if( !itemOwner || itemOwner != pUser )		
+			if( !itemOwner || itemOwner != pUser )
 			{
 				pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
 			}
@@ -233,12 +244,13 @@ function onCallback2( pSock, myTarget )
 function onCallback3( pSock, myTarget )
 {
 	var pUser = pSock.currentChar;
-	var keyBlank = pSock.tempObj; 
+	var keyBlank = pSock.tempObj;
+	pSock.tempObj = null;
 	var StrangeByte = pSock.GetWord( 1 );
 	if( !StrangeByte && myTarget.isItem )
 	{
 		var itemOwner = GetPackOwner( myTarget, 0 );
-		if( itemOwner && itemOwner != pUser )		
+		if( itemOwner && itemOwner != pUser )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 1763, pSock.Language )); //That item must be in your backpack before it can be used.
 			return;
@@ -282,6 +294,7 @@ function onCallback3( pSock, myTarget )
 function onSpeechInput(pUser, pItem, pSpeech, pSpeechID)
 {
 	var KeyItem = pUser.socket.tempObj;
+	pUser.socket.tempObj = null;
 	if( pSpeech )
 	{
     	switch(pSpeechID)
@@ -359,7 +372,7 @@ function changeLockStatus( pUser, myTarget )
 			}
 			else
 			{
-				pUser.SysMessage( "You open the plank." );				
+				pUser.SysMessage( "You open the plank." );
 			}
 			break;
 		case 203: //A house sign
@@ -368,5 +381,5 @@ function changeLockStatus( pUser, myTarget )
 			pUser.SpeechInput(3);
 			break;
 	}
-	pUser.SoundEffect( 0x241, 1 );	
+	pUser.SoundEffect( 0x241, 1 );
 }

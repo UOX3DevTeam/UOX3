@@ -14,7 +14,7 @@ function command_RNDTILE( pSock, cmdString )
 {
 	if( !pSock )
 		return;
-	
+
 	pSock.tempint = null;
 	pSock.xText = null;
 
@@ -39,10 +39,10 @@ function command_RNDTILE( pSock, cmdString )
 				pSock.SysMessage( "<startID> must be lower than <endID>!" );
 		}
 		else
-			pSock.SysMessage( "A minimum of three arguments must be included; <startID> <endID> and <hue>" );	
+			pSock.SysMessage( "A minimum of three arguments must be included; <startID> <endID> and <hue>" );
 	}
 	else
-		pSock.SysMessage( "Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)" );	
+		pSock.SysMessage( "Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)" );
 }
 
 //First target location in boundary box
@@ -50,7 +50,7 @@ function onCallback0( pSock, myTarget )
 {
 	if( !pSock )
 		return;
-		
+
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
 	var targZ = pSock.tempint;
@@ -70,7 +70,7 @@ function onCallback1( pSock, myTarget )
 {
 	if( !pSock )
 		return;
-		
+
 	var splitString = pSock.xText.split( " " );
 	var targX = splitString[0];
 	var targY = splitString[1];
@@ -94,7 +94,7 @@ function onCallback1( pSock, myTarget )
 		targY = pSock.GetWord( 13 );
 	}
 	var i = 0, j = 0;
-	for( i = targX; i < targX2 +1; i++ ) 
+	for( i = targX; i < targX2 +1; i++ )
 	{
 		for( j = targY; j < targY2 +1; j++ )
 		{
@@ -110,6 +110,6 @@ function onCallback1( pSock, myTarget )
 				newItem.decayable = false;
 			}
 		}
-	}	
+	}
 }
 
