@@ -47,12 +47,12 @@
 function getWeaponType( pUser )
 {
 	var weaponType;
-	
+
 	// Check first layer1 then layer2 for equipped weapons on character
 	var tempItem = pUser.FindItemLayer( 1 );
 	if( tempItem == null )
 		tempItem = pUser.FindItemLayer( 2 );
-	
+
 	// If no equipped item, weapontype is WRESTLING
 	if( tempItem == null )
 		pUser.SetTag( "weaponType", "WRESTLING" );
@@ -212,7 +212,7 @@ function getWeaponType( pUser )
 			case 0x0903: //gargish disc mace - SA
 			case 0x406E: //gargish disc mace - SA
 			case 0x48C2: //gargish maul - SA
-			case 0x48C2: //gargish maul - SA
+			case 0x48C3: //gargish maul - SA
 				weaponType = "DEF_MACES"; break;
 		// Large Maces
 			case 0x13F4: //crook
@@ -361,7 +361,7 @@ function getWeaponType( pUser )
 		if( weaponType )
 		{
 			// Save weaponType-tag on character, to be read from external script
-			pUser.SetTag( "weaponType", weaponType );	
+			pUser.SetTag( "weaponType", weaponType );
 		}
 	}
 	return true;
@@ -370,12 +370,12 @@ function getWeaponType( pUser )
 function getCombatSkill()
 {
 	var combatSkill;
-	
+
 	// Call the getWeaponType() function and load the value of the tag it
 	// saves on character into weaponType variable.
 	getWeaponType( pUser );
 	var weaponType = pUser.GetTag( "weaponType" );
-	
+
 	// Determine combatskill based on weaponType:
 	switch( weaponType )
 	{
@@ -409,7 +409,7 @@ function getCombatSkill()
 	{
 		// Save combatSkill-tag on character, to be read from external script
 		pUser.SetTag( "combatSkill", combatSkill );
-		
+
 		// Nullify the temporary tag that was set by calling getWeaponType function earlier
 		pUser.SetTag( "weaponType", null );
 	}

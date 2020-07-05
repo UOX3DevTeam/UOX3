@@ -1871,7 +1871,7 @@ bool CPITalkRequest::HandleCommon( void )
 			break;
 		case 0: // normal speech
 		default:
-			if( ourChar->GetSquelched() )
+			if( ourChar->GetSquelched() && !ourChar->IsGM() )
 				tSock->sysmessage( 760 );
 			else 
 				return false;

@@ -1014,6 +1014,73 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+/*
+* Requires client v7.0.80.0 or above 
+*/
+JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 7 )
+	{
+		MethodError( "AddPicInPic: Invalid number of arguments (takes 7)" );
+		return JS_FALSE;
+	}
+
+	SI16 x = (SI16)JSVAL_TO_INT( argv[0] ); // starting x
+	SI16 y = (SI16)JSVAL_TO_INT( argv[1] ); // starting y
+	UI16 gImage = (UI16)JSVAL_TO_INT( argv[2] ); // GumpID
+	SI16 width = (SI16)JSVAL_TO_INT( argv[3] ); // width
+	SI16 height = (SI16)JSVAL_TO_INT( argv[4] ); // height
+	SI16 spriteX = (SI16)JSVAL_TO_INT( argv[5] ); // spriteX
+	SI16 spriteY = (SI16)JSVAL_TO_INT( argv[6] ); // spriteY
+
+	SEGump *gList = static_cast<SEGump*>( JS_GetPrivate( cx, obj ) );
+	if( gList == NULL )
+	{
+		MethodError( "AddPicInPic: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "picinpic %i %i %i %i %i %i %i", x, y, gImage, width, height, spriteX, spriteY );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
+/*
+* Requires client v7.0.84.0 or above
+*/
+JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "AddItemProperty: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
+	CBaseObject *trgObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, tObj ) );
+
+	if( !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ) )
+	{
+		MethodError( "SetCont: Invalid Object/Argument, takes 1 arg: item" );
+		return JS_FALSE;
+	}
+
+	SERIAL trgSer = trgObj->GetSerial();
+
+	SEGump *gList = static_cast<SEGump*>( JS_GetPrivate( cx, obj ) );
+	if( gList == NULL )
+	{
+		MethodError( "AddItemProperty: Couldn't find gump associated with object" );
+		return JS_FALSE;
+	}
+	char temp[256];
+	sprintf( temp, "itemproperty %li", trgSer );
+	gList->one->push_back( temp );
+
+	return JS_TRUE;
+}
+
 JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 5 )

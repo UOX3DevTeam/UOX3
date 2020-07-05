@@ -40,7 +40,6 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string& txt );
 void HandleHowTo( CSocket *sock, int cmdNumber );
-void Wiping( CSocket *s );
 
 //o---------------------------------------------------------------------------o
 //|	Function	-	void cCommands::closeCall( CSocket *s, bool isGM )

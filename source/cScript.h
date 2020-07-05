@@ -205,7 +205,7 @@ public:
 	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
 	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
 	bool		OnTimer( CBaseObject *tObject, UI08 timerID );
-	bool		OnDeath( CChar *pDead );
+	bool		OnDeath( CChar *pDead, CItem *iCorpse );
 	bool		OnResurrect( CChar *pAlive );
 	bool		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
 	bool		OnHungerChange( CChar *pChanging, SI08 newStatus );

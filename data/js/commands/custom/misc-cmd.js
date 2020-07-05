@@ -41,7 +41,7 @@ function CommandRegistration()
 function command_RENAME( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	if( !execString == "" )
+	if( execString != "" )
 	{
 		pSock.xText = execString;
 		pSock.CustomTarget( 0, "What do you wish to rename to '"+execString+"'?" );
@@ -90,7 +90,6 @@ function command_ADDPACK( pSock, execString )
 	var pUser = pSock.currentChar;
 	if( execString == "" )
 	{
-		var pUser = pSock.currentChar;
 		pSock.CustomTarget( 5, "On what character/at what location do you wish to add a backpack?" );
 	}
 	else
@@ -98,7 +97,7 @@ function command_ADDPACK( pSock, execString )
 		if( !isNaN(execString)) //Add from DFN-id
 		{
 			pSock.xText = execString;
-			pSock.CustomTarget( 6, "On what character do you wish to add the item "+execString+"?" );			
+			pSock.CustomTarget( 6, "On what character do you wish to add the item "+execString+"?" );
 		}
 		else //Add from Hex-Id
 		{
@@ -144,7 +143,7 @@ function command_GETTAG( pSock, execString )
 function command_NODECAY( pSock, execString )
 {
 	var pUser = pSock.currentChar;
-	pUser.CustomTarget( 10, "Select an item to set as NOT decayable:" );	
+	pUser.CustomTarget( 10, "Select an item to set as NOT decayable:" );
 }
 
 function command_DECAY( pSock, execString )
@@ -158,7 +157,7 @@ function command_XSAY( pSock, execString )
 	var pUser = pSock.currentChar;
 	if( execString )
 	{
-		pSock.xText = execString;		
+		pSock.xText = execString;
 		pUser.CustomTarget( 12, "Select object for remote speech:" );
 	}
 	else
@@ -168,7 +167,7 @@ function command_XSAY( pSock, execString )
 //Rename
 function onCallback0( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var NewName = pSock.xText;
 	if( !pSock.GetWord( 1 ))
 	{
@@ -185,7 +184,7 @@ function onCallback0( pSock, myTarget )
 //Freeze
 function onCallback1( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		myTarget.frozen = true;
@@ -204,7 +203,7 @@ function onCallback1( pSock, myTarget )
 //Unfreeze
 function onCallback2( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.frozen == true )
@@ -231,7 +230,7 @@ function onCallback2( pSock, myTarget )
 
 function onCallback3( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.vulnerable == false )
@@ -249,7 +248,7 @@ function onCallback3( pSock, myTarget )
 }
 function onCallback4( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ) && myTarget.isChar )
 	{
 		if( myTarget.vulnerable == true )
@@ -267,7 +266,7 @@ function onCallback4( pSock, myTarget )
 //Addpack without parameters
 function onCallback5( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
 	var targZ = pSock.GetSByte( 16 );
@@ -296,7 +295,7 @@ function onCallback5( pSock, myTarget )
 // ADDPACK callback function
 function onCallback6( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempItemID = pSock.xText;
 	var Word1 = pSock.xText;
 	var Word1 = Number(Word1);
@@ -307,7 +306,7 @@ function onCallback6( pSock, myTarget )
 		if( tempObj != null )
 		{
 			if( AddFromHex != "Yep" )
-				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", true );				
+				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", true );
 			else
 				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", true );
 		}
@@ -319,9 +318,9 @@ function onCallback6( pSock, myTarget )
 			newPack.layer = 21;
 			newPack.weight = 0;
 			if( AddFromHex != "Yep" )
-				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", false );				
+				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", false );
 			else
-				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", false );			
+				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", false );
 		}
 	}
 	else
@@ -331,7 +330,7 @@ function onCallback6( pSock, myTarget )
 // Set Tag
 function onCallback8( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var Word0 = pUser.GetTag( "Word0" );
 	var Word1 = pUser.GetTag( "Word1" );
 	if( !pSock.GetWord( 1 ))
@@ -343,7 +342,7 @@ function onCallback8( pSock, myTarget )
 		pUser.SysMessage( "You have set a tag named '"+Word0+"' with a value of '"+Word1+"' on the targeted object." );
 	}
 	else
-		pUser.SysMessage( "You need to target a dynamic object (item or character)." );	
+		pUser.SysMessage( "You need to target a dynamic object (item or character)." );
 	pUser.SetTag( "Word0", null );
 	pUser.SetTag( "Word1", null );
 }
@@ -351,7 +350,7 @@ function onCallback8( pSock, myTarget )
 // Get Tag
 function onCallback9( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempTagName = pUser.GetTag( "TempTag" );
 	if( !pSock.GetWord( 1 ))
 	{
@@ -359,14 +358,14 @@ function onCallback9( pSock, myTarget )
 		pUser.SysMessage( "The value of the targeted object's '"+TempTagName+"'-tag is: "+TagData );
 	}
 	else
-		pUser.SysMessage( "You need to target a dynamic object (item or character)." );	
+		pUser.SysMessage( "You need to target a dynamic object (item or character)." );
 	pUser.SetTag( "TempTag", null );
 }
 
 // Nodecay
 function onCallback10( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ))
 	{
 		if( myTarget.isItem )
@@ -378,13 +377,13 @@ function onCallback10( pSock, myTarget )
 			pUser.SysMessage( "This command can only be applied to items." );
 	}
 	else
-		pUser.SysMessage( "You need to target a dynamic item." );	
+		pUser.SysMessage( "You need to target a dynamic item." );
 }
 
 // Decay
 function onCallback11( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ))
 	{
 		if( myTarget.isItem )
@@ -396,13 +395,13 @@ function onCallback11( pSock, myTarget )
 			pUser.SysMessage( "This command can only be applied to items." );
 	}
 	else
-		pUser.SysMessage( "You need to target a dynamic item." );	
+		pUser.SysMessage( "You need to target a dynamic item." );
 }
 
 // XSAY
-function onCallback12( pSock, myTarget ) 
+function onCallback12( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ) && ( myTarget.isChar || myTarget.isItem ))
 	{
 		myTarget.TextMessage( pSock.xText );
@@ -430,18 +429,18 @@ function onCallback13( pSock, myTarget )
 	{
 		var Door1 = pSock.tempObj;
 		var Door2 = myTarget;
-		
+
 		Door1.SetTag( "linked", true );
-		Door1.SetTag( "linkSer1", Door2.GetSerial(1) ); 
-		Door1.SetTag( "linkSer2", Door2.GetSerial(2) ); 
-		Door1.SetTag( "linkSer3", Door2.GetSerial(3) ); 
-		Door1.SetTag( "linkSer4", Door2.GetSerial(4) ); 
-		
+		Door1.SetTag( "linkSer1", Door2.GetSerial(1) );
+		Door1.SetTag( "linkSer2", Door2.GetSerial(2) );
+		Door1.SetTag( "linkSer3", Door2.GetSerial(3) );
+		Door1.SetTag( "linkSer4", Door2.GetSerial(4) );
+
 		Door2.SetTag( "linked", true );
-		Door2.SetTag( "linkSer1", Door1.GetSerial(1) ); 
-		Door2.SetTag( "linkSer2", Door1.GetSerial(2) ); 
-		Door2.SetTag( "linkSer3", Door1.GetSerial(3) ); 
-		Door2.SetTag( "linkSer4", Door1.GetSerial(4) ); 
+		Door2.SetTag( "linkSer1", Door1.GetSerial(1) );
+		Door2.SetTag( "linkSer2", Door1.GetSerial(2) );
+		Door2.SetTag( "linkSer3", Door1.GetSerial(3) );
+		Door2.SetTag( "linkSer4", Door1.GetSerial(4) );
 		pUser.SysMessage( "The two doors have been linked." );
 		pSock.clickX = null;
 	}
@@ -467,29 +466,28 @@ function onCallback14( pSock, myTarget )
 	{
 		var Door1 = pSock.tempObj;
 		var Door2 = myTarget;
-		
+
 		Door1.SetTag( "linked", null );
-		Door1.SetTag( "linkSer1", null ); 
-		Door1.SetTag( "linkSer2", null ); 
-		Door1.SetTag( "linkSer3", null ); 
-		Door1.SetTag( "linkSer4", null ); 
-		
+		Door1.SetTag( "linkSer1", null );
+		Door1.SetTag( "linkSer2", null );
+		Door1.SetTag( "linkSer3", null );
+		Door1.SetTag( "linkSer4", null );
+
 		Door2.SetTag( "linked", null );
-		Door2.SetTag( "linkSer1", null ); 
-		Door2.SetTag( "linkSer2", null ); 
-		Door2.SetTag( "linkSer3", null ); 
-		Door2.SetTag( "linkSer4", null ); 
+		Door2.SetTag( "linkSer1", null );
+		Door2.SetTag( "linkSer2", null );
+		Door2.SetTag( "linkSer3", null );
+		Door2.SetTag( "linkSer4", null );
 		pUser.SysMessage( "The two doors have been unlinked." );
 		pSock.clickX = null;
 	}
 	else
-		pUser.SysMessage( "You need to target an item." );	
+		pUser.SysMessage( "You need to target an item." );
 }
 
 function command_SETAMMOEFFECT( pSock, execString )
 {
-	var pUser = pSock.currentChar;
-	if( !execString == "" )
+	if( execString != "" )
 	{
 		pSock.xText = execString;
 		pSock.CustomTarget( 15, "Set ammoeffect on which bow?" );
@@ -498,7 +496,6 @@ function command_SETAMMOEFFECT( pSock, execString )
 
 function onCallback15( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
 	var ammoEffect = pSock.xText;
 	if( !pSock.GetWord( 1 ) && myTarget.isItem )
 		myTarget.ammoEffect = ammoEffect;
@@ -506,8 +503,7 @@ function onCallback15( pSock, myTarget )
 
 function command_SETAMMOTYPE( pSock, execString )
 {
-	var pUser = pSock.currentChar;
-	if( !execString == "" )
+	if( execString != "" )
 	{
 		pSock.xText = execString;
 		pSock.CustomTarget( 16, "Set ammotype on which bow?" );
@@ -516,7 +512,6 @@ function command_SETAMMOTYPE( pSock, execString )
 
 function onCallback16( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
 	var ammoType = pSock.xText;
 	if( !pSock.GetWord( 1 ) && myTarget.isItem )
 		myTarget.ammoType = ammoType;
@@ -524,13 +519,11 @@ function onCallback16( pSock, myTarget )
 
 function command_GETAMMOEFFECT( pSock, execString )
 {
-	var pUser = pSock.currentChar;
 	pSock.CustomTarget( 17, "Get ammoeffect from which bow?" );
 }
 
 function onCallback17( pSock, myTarget )
 {
-	var pUser = pSock.currentChar;
 	var ammoEffect = myTarget.ammoEffect;
 	pUser.TextMessage( "AmmoEffect on selected bow: "+ammoEffect );
 }
@@ -552,7 +545,7 @@ function command_UNDRESS( pSock, execString )
 {
 	var pUser = pSock.currentChar;
 	var i = 0;
-	for( i = 0; i <= 24; i++ ) 
+	for( i = 0; i <= 24; i++ )
 	{
 		var tempObj = pUser.FindItemLayer(i);
 		if( tempObj != null )
@@ -562,7 +555,7 @@ function command_UNDRESS( pSock, execString )
 				tempObj.container = pUser.pack;
 			}
 		}
-	}	
+	}
 }
 
 function command_REGIONINFO( pSock, execString )

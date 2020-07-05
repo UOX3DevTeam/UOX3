@@ -19,7 +19,7 @@ var totalStabledPets = 0; //The total amount of pets a character has in the stab
 function onSpeech( strSaid, pTalking, StableMaster )
 {
 	var pSock = pTalking.socket;
-	
+
 	//Verify that a socket (aka connected player) exists, and
 	//that the player talking is within 4 tiles of the stablemaster.
 	//Else, ignore the speech
@@ -30,7 +30,7 @@ function onSpeech( strSaid, pTalking, StableMaster )
 
 		//Let's pause the NPC in his tracks for X seconds (defined at top of script) so he doesn't wander off
 		StableMaster.SetTimer( 11, NPCPause );
-				
+
 		//Iterate through any triggerwords said by the player
 		for( var trigWord = pSock.FirstTriggerWord(); !pSock.FinishedTriggerWords(); trigWord = pSock.NextTriggerWord() )
 		{
@@ -44,10 +44,9 @@ function onSpeech( strSaid, pTalking, StableMaster )
 						StableMaster.TextMessage( "I charge "+stableCost+" per pet you want to stable. I will withdraw it from thy bank account." );
 					else
 						StableMaster.TextMessage( "I charge "+stableCost+" per pet for "+maxStableDays+" days of stable time. I will withdraw it from thy bank account." );
-					
+
 					pSock.CustomTarget( 0, "Which animal wouldst thou like to stable here?" );
 					break;
-					
 				}
 				case 0x0009: //"claim"
 				{
@@ -61,7 +60,7 @@ function onSpeech( strSaid, pTalking, StableMaster )
 							{
 								pTalking.SetTag( "stableMasterSerial", StableMaster.serial );
 								StableMaster.TextMessage( "I currently have the following pets of yours stabled right now..." );
-								
+
 								//Ok, player has animals stabled - let's give him the list of pets
 								claimGump( pTalking, StableMaster );
 							}
@@ -73,9 +72,10 @@ function onSpeech( strSaid, pTalking, StableMaster )
 				}
 				default:
 					break;
-				return 2;
 			}
 		}
+
+		return 2;
 	}
 }
 
@@ -86,14 +86,14 @@ function claimPetByName( pTalking, StableMaster, strSaid )
 	var splitString = strSaid.toLowerCase().split("vendor ")[1];
 	if( splitString )
 		var splitString = splitString.split( " " );
-	else 
+	else
 		var splitString = strSaid.split( " " );
 	if( splitString[1] && splitString[1].toUpperCase() != "LIST" )
 	{
 		var i = 0;
 		var petFound = false;
 		var j = maxStabledPets - 1;
-		for( i = 0; i <= j; i++ ) 
+		for( i = 0; i <= j; i++ )
 		{
 			var tempPet = pTalking.GetTag( "stabledPet" + i );
 			if( tempPet != null && tempPet != "0" )
@@ -122,21 +122,21 @@ function claimPetByName( pTalking, StableMaster, strSaid )
 function claimGump( pUser, stableMaster )
 {
    	totalStabledPets = pUser.GetTag( "totalStabledPets" );
-	
+
    	//Let's check the player's skills and set the max amount of slots he
    	//has available in the stables depending on those
    	calcStableSlotBonus( pUser );
-   	
+
    	//extraBGSize is used to resize the claim-pet gump based on how many slots
-   	//the user has available - calculated above	
-	extraBGSize = 110 + (maxStabledPets * 20);
-	
+   	//the user has available - calculated above
+	var extraBGSize = 110 + (maxStabledPets * 20);
+
    	var claimGump = new Gump;
 	claimGump.AddPage (0);
 	claimGump.AddBackground( 0, 0, 200, extraBGSize, 9250 );
 	claimGump.AddButton( 165, 10, 5052, 1, 0, 0 ); // Close Menu Button
 	claimGump.AddCheckerTrans( 0, 0, 200, extraBGSize );
-	
+
 	claimGump.AddText( 20, 15, 50, "- Stablemaster Menu -" );
 
 	claimGump.AddHTMLGump( 20, 35, 200, 20, 0, 0, "<BASEFONT COLOR=#FFFFFF>Select a pet to retrieve</BASEFONT>" );
@@ -146,7 +146,7 @@ function claimGump( pUser, stableMaster )
 	var i = 0;
 
 	var j = maxStabledPets - 1;
-	for( i = 0; i <= j; i++ ) 
+	for( i = 0; i <= j; i++ )
 	{
 		var tempPet = pUser.GetTag( "stabledPet" + i );
 		if( tempPet != null && tempPet != "0" )
@@ -161,13 +161,13 @@ function claimGump( pUser, stableMaster )
 		else
 			claimGump.AddHTMLGump( 25, 95 + (i * 20), 200, 18, 0, 0, "<BASEFONT COLOR=#C0C0EE><SMALL><EM>(Empty storage slot " +(i+1)+")</EM></SMALL></BASEFONT>" );
 	}
-	
+
     claimGump.Send( pUser.socket );
 	claimGump.Free();
 }
 
 function calcStableSlotBonus( pUser )
-{ 
+{
 	//Let's check relevant player-skills and assign him a number of stable-slots depending on those skills
 	var stableModifier = pUser.skills.taming + pUser.skills.veterinary + pUser.skills.animallore;
    	if( stableModifier <= 160 )
@@ -178,7 +178,7 @@ function calcStableSlotBonus( pUser )
    		maxStabledPets = 4;
    	else if( stableModifier >= 240 )
    		maxStabledPets = 5;
-   		
+
    	//Increase max stable-slots available by 1 for each of the following skills
    	// he has at 100.0 or above:
    	if( pUser.skills.taming >= 1000 )
@@ -193,7 +193,7 @@ function onGumpPress(pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
 	var stableMasterSer = pUser.GetTag( "stableMasterSerial" );
-	
+
 	if( stableMasterSer )
 	{
 		var StableMaster = CalcCharFromSer( stableMasterSer );
@@ -205,7 +205,7 @@ function onGumpPress(pSock, pButton, gumpData )
 				break;
 			default:
 				claimPet( pUser, pButton - 1, StableMaster );
-				break;	
+				break;
 			}
 		}
 		else
@@ -279,7 +279,6 @@ function releasePet( petObj, petNum, StableMaster, pUser )
 	StableMaster.TextMessage( "I have thy pet; "+petObj.name+". Let me fetch it." );
 	pUser.SetTag( "stabledPet" + petNum, null );
 	pUser.SetTag( "stableMasterSerial", null );
-	
 }
 
 function onCallback0( socket, ourObj )
@@ -295,7 +294,7 @@ function onCallback0( socket, ourObj )
 	   	//Let's check the player's skills and set the max amount of slots he
 	   	//has available in the stables depending on those:
 	   	calcStableSlotBonus( pUser );
-	   	
+
 	   	//Lots of generic checks:
 		if( !pUser.InRange( StableMaster, 4 ) )
 			pUser.SysMessage( "You are out of range from the stablemaster." );
@@ -318,7 +317,7 @@ function onCallback0( socket, ourObj )
 		else
 		{
 			var i = 0;
-			for( i = 0; i <= 4; i++ ) 
+			for( i = 0; i <= 4; i++ )
 			{
 				var tempPet = pUser.GetTag( "stabledPet" + i );
 				if( tempPet == null || tempPet == "0" )
@@ -332,7 +331,6 @@ function onCallback0( socket, ourObj )
 						pUser.UseResource( stableCost, 0x0EED );
 						pUser.SysMessage( stableCost+" gold has been paid from your back-pack." );
 						stablePet( pUser, ourObj, i, StableMaster );
-						foundGold = true;
 						return;
 					}
 					else if( bankBox )
@@ -362,7 +360,7 @@ function onCallback0( socket, ourObj )
 				}
 			}
 		}
-	}	
+	}
 	else
 		StableMaster.TextMessage( "You can't stable that!" );
 }

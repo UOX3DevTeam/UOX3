@@ -15,7 +15,6 @@ function command_DUPE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	var dupeSuccess = false;
 	if( !socket.GetWord( 1 ) && ourObj && ourObj.isItem )
 	{
 		var numToDupe = socket.tempint;
@@ -24,9 +23,9 @@ function onCallback0( socket, ourObj )
 			if( ourObj.isSpawner )
 			{
 				var pUser = socket.currentChar;
-				var newSpawner = CreateBlankItem( socket, pUser, 1, ourObj.name, ourObj.id, ourObj.colour, "SPAWNER", true )
+				var newSpawner = CreateBlankItem( socket, pUser, 1, ourObj.name, ourObj.id, ourObj.colour, "SPAWNER", true );
 				if( ValidateObject( newSpawner ) )
-				{ 
+				{
 					newSpawner.spawnsection = ourObj.spawnsection;
 					if( ourObj.sectionalist )
 						newSpawner.sectionalist = true;
@@ -44,7 +43,6 @@ function onCallback0( socket, ourObj )
 					newSpawner.type = ourObj.type;
 					newSpawner.x = ourObj.x + 1;
 					newSpawner.y = ourObj.y + 1;
-					dupeSuccess = true;
 				}
 				else
 				{

@@ -1966,6 +1966,8 @@ void CItem::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
 	{
+		MapRegion->RemoveItem( this );
+
 		JSEngine->ReleaseObject( IUE_ITEM, this );
 
 		CBaseObject::Cleanup();

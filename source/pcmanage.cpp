@@ -1494,7 +1494,7 @@ void HandleDeath( CChar *mChar )
 	UI16 targTrig		= mChar->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
-		toExecute->OnDeath( mChar );
+		toExecute->OnDeath( mChar, iCorpse );
 
 	if( mChar->IsNpc() )
 		mChar->Delete();
