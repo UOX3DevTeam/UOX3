@@ -1,3 +1,44 @@
+06/07/2020 - Xuri (0.99.2k)
+	Added new JS Gump Methods:
+		AddPicInPic( x, y, gumpID, width, height, spriteX, spriteY ) // Add sprite image in dialogs, requires client v7.0.80.0 or above
+		AddImageProperty( serial ) // Add properties(?) of a specific item
+	Fixed a server crash related to world saves, where items being cleaned up were not being removed properly from the 	MapRegions they were in, resulting in a crash when attempting to save non-existent items out to the worldfiles.
+	Fixed an issue where the newStatus parameter for the onFlagChange JS event was overwritten with oldStatus, and oldStatus parameter was never set
+	Updated onDeath JS Event to include a second parameter - iCorpse:
+		onDeath( pDeath, iCorpse ) // iCorpse is a reference to the newly created corpse of pDead
+	Disabled detailed logging of spells loaded from spells.dfn on startup - was causing unnecessary slowdown
+	Removed void Wiping( CSocket *s ) from cmdtable.cpp - unused and unreferenced function without a definition
+	Removed handling of IT_KEY doubleclicking in code, as this is now handled in JS
+	Removed bool isDoorBlocked( CItem *door ) from cPlayerAction.cpp - unused and unreferenced function without a definition
+	Removed void CorpseTarget( CSocket *s ) from targeting.cpp - now handled in JS
+	Removed broken cannon loading and spelldamage code - this should be done in JS instead
+	Items that initiate a target cursor on use are now stored in tempObj property of player's socket, and distance to these items are checked again after player targets something
+	House and boat deeds must now be in the player's inventory in order to successfully place a house or boat
+	Fixed superfluous arugment passed to switchGobletID function in js/server/resource/pitchers.js
+	Removed some duplicate/unused local variables in js/commands/custom/misc-cmd.js
+	Removed an unused local variable in js/commands/targeting/dupe.js
+	Fixed an issue with setting item type through the SET command
+	Fixed an issue where the number of arrows or bolts in player's inventory was potentially miscalculated in js/item/archerybutte.js
+	Fixed issue where pickpocket-dummy item visuals potentially didn't get updated properly in js/item/pickpocketdip.js
+	Fixed an unreachable return statement in js/npc/ai/stablemaster.js
+	Fixed incorrect ID for gargish maul in js/server/data/weapontypes.js
+	Added some missing variable declarations in js/commands/custom/repeatingcmds.js, js/commands/delid.js, js/commands/targeting/hide.js, js/item/food.js, js/item/key.js, js/npc/ai/stablemaster.js
+
+16/06/2020 - Xuri
+	Updated AddButton and AddPageButton JS Methods (and Docs) to include an optional argument for ID of button when pressed. If the extra argument is not provided, the methods behave like before, using buttonImage + 1 for the pressed button:
+		void AddButton( topHeight, topLeft, buttonImage, (buttonPressedImage) unk1, unk2, unk3 )
+		void AddPageButton( topHeight, topLeft, buttonImage, (buttonPressedImage), pageNum )
+
+13/06/2020 - Xuri
+	Fixed an issue where hair and beard values for characters created prior to 0.99.2j were never stored properly, by updating these values upon login
+
+02/06/2020 - Xuri (0.99.2j)
+	Added additional ClientVersion enum values to start implementing support for clients above 7.0.24.0. Ini settings disabled by default.
+	Updated packet 0x78 to always send item colour for clients above 7.0.33.1, which also fixes rendering of items on paperdoll for these clients
+	Client requests sent by the Bandage Self macro (packet 0xBF, subcommand 0x2C) can now be handled in the JS engine via the onUseBandageMacro( socket, targetChar, bandageItem ) JS event (JS Docs updated with details).
+	Removed a restriction on speech that prevented onSpeech JS event from triggering based on speech from dead player characters
+	Fixed hairs and beards not being restored properly on player characters after dying and being resurrected (and then relogging)
+
 26/04/2020 - Xuri
 	Updated vcx project files
 	Added UOX3 CMake build system for Windows (tuanhtrng)

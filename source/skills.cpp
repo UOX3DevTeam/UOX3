@@ -21,6 +21,7 @@
 
 namespace UOX
 {
+bool checkItemRange( CChar *mChar, CItem *i );
 
 cSkills *Skills = NULL;
 
@@ -284,14 +285,36 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 void cSkills::Mine( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	CSocket& mSock = (*s);
+	CSocket& mSock = ( *s );
+	CChar *mChar = s->CurrcharObj();
+
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
 
 	if( mSock.GetDWord( 11 ) == INVALIDSERIAL )
 		return;
 
-	CChar *mChar = mSock.CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
+
+	// Check if player targeted an item, and if so, if he's in the same world/instance as said item
+	CItem *targetItem = calcItemObjFromSer( mSock.GetDWord( 7 ) );
+	if( ValidateObject( targetItem ))
+	{
+		if( mChar->WorldNumber() != targetItem->WorldNumber() )
+			return;
+		if( mChar->GetInstanceID() != targetItem->GetInstanceID() )
+			return;
+	}
 
 	const SI16 targetX = mSock.GetWord( 11 );
 	const SI16 targetY = mSock.GetWord( 13 );
@@ -353,7 +376,8 @@ void cSkills::Mine( CSocket *s )
 			--orePart->oreAmt;
 
 #if defined( UOX_DEBUG_MODE )
-		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() << "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
+		Console << "DBG: Mine(\"" << mChar->GetName() << "\"[" << mChar->GetSerial() 
+			<< "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
 
 		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber() );
@@ -483,11 +507,18 @@ void cSkills::SmeltOre( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *chr			= s->CurrcharObj();
 	CItem *smeltedItem	= static_cast<CItem *>(s->TempObj());
-	CItem *anvil		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our anvil
+	s->TempObj( NULL );
+	CItem *forge		= calcItemObjFromSer( s->GetDWord( 7 ) );				// Let's find our forge
 
-	if( ValidateObject( anvil ) )					// if we have an anvil
+	if( ValidateObject( forge ) )					// if we have a forge
 	{
-		switch( anvil->GetID() )	// Check to ensure it is an anvil
+		if( !checkItemRange( chr, smeltedItem ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+
+		switch( forge->GetID() )	// Check to ensure it is a forge
 		{
 			case 0x0FB1:
 			case 0x197A:
@@ -503,7 +534,7 @@ void cSkills::SmeltOre( CSocket *s )
 			case 0x19A6:
 			case 0x19A2:
 			case 0x199E:
-				if( objInRange( chr, anvil, DIST_NEARBY ) ) //Check if the forge is in range
+				if( objInRange( chr, forge, DIST_NEARBY ) ) //Check if the forge is in range
 				{
 					UI16 targColour		= smeltedItem->GetColour();
 					miningData *oreType	= FindOre( targColour );
@@ -548,8 +579,6 @@ void cSkills::SmeltOre( CSocket *s )
 				break;
 		}
 	}
-
-	s->TempObj( NULL );
 }
 
 //o---------------------------------------------------------------------------o
@@ -764,7 +793,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 		return;
 	if( i->isCorpse() )
 	{
-		s->sysmessage( 1546 );
+		s->sysmessage( 1546 ); // You have to use your forensics evaluation skill to know more about this corpse.
 		return;
 	}
 
@@ -781,7 +810,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 			getTileName( (*i), name );
 		else
 			name = i->GetName();
-		s->sysmessage( 1547, name.c_str() );
+		s->sysmessage( 1547, name.c_str() ); // You found that this item appears to be called: %s
 
 		char temp[1024];
 		if( i->GetCreator() != INVALIDSERIAL )
@@ -790,17 +819,17 @@ void cSkills::ItemIDTarget( CSocket *s )
 			if( ValidateObject( mCreater ) )
 			{
 				if( i->GetMadeWith() > 0 )
-					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				else if( i->GetMadeWith() < 0 )
-					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() );
+					sprintf( temp, Dictionary->GetEntry( 1548, sLang ).c_str(), cwmWorldState->skill[0-i->GetMadeWith()-1].madeword.c_str(), mCreater->GetName().c_str() ); // It is %s by %s.
 				else
-					sprintf( temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() );
+					sprintf( temp, Dictionary->GetEntry( 1549, sLang ).c_str(), mCreater->GetName().c_str() ); // It is made by %s.
 			}
 			else
-				strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );
+				strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 		}
 		else
-			strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() );
+			strcpy( temp, Dictionary->GetEntry( 1550, sLang ).c_str() ); // You don't know its creator!
 		s->sysmessage( temp );
 
 		if( mChar->GetSkill( ITEMID ) > 350 )
@@ -809,7 +838,7 @@ void cSkills::ItemIDTarget( CSocket *s )
 			{
 				// Only display "no magical properties" message if Name2 is different from "#"
 				if( i->GetName2()[0] && ( !strcmp( i->GetName2(), "#" ) ) )
-					s->sysmessage( 1553 );
+					s->sysmessage( 1553 ); // This item has no hidden magical properties.
 				return;
 			}
 			if( CheckSkill( mChar, ITEMID, 500, 750 ) )
@@ -818,18 +847,18 @@ void cSkills::ItemIDTarget( CSocket *s )
 				// Fetch spellname from Dictionary-files, based on entry from magic_table[]
 				UString spellName = Dictionary->GetEntry( magic_table[spellToScan].spell_name );
 				if( !CheckSkill( mChar, ITEMID, 750, 1000 ) )
-					s->sysmessage( 1555, spellName.c_str() );
+					s->sysmessage( 1555, spellName.c_str() ); // It is enchanted with the spell %s, but you cannot determine how many charges remain.
 				else
-					s->sysmessage( 1556, spellName.c_str(), i->GetTempVar( CITV_MOREZ ) );
+					s->sysmessage( 1556, spellName.c_str(), i->GetTempVar( CITV_MOREZ ) ); // It is enchanted with the spell %s, and has %d charges remaining.
 			}
 			else
-				s->sysmessage( 1554 );
+				s->sysmessage( 1554 ); // This item is enchanted with a spell, but you cannot determine which.
 		}
 		else
-			s->sysmessage( 1552 );
+			s->sysmessage( 1552 ); // You can't tell if it is magical or not.
 	}
 	else
-		s->sysmessage( 1545 );
+		s->sysmessage( 1545 ); // You can't quite tell what this item is...
 }
 
 //o---------------------------------------------------------------------------o
@@ -842,10 +871,22 @@ void cSkills::ItemIDTarget( CSocket *s )
 void cSkills::FishTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
+
+	// Check if item used to initialize target cursor is still within range
+	CChar *mChar = s->CurrcharObj();
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
+
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
 		return;
-
-	CChar *mChar = s->CurrcharObj();
 
 	const SI16 targetX = s->GetWord( 0x0B );
 	const SI16 targetY = s->GetWord( 0x0D );
@@ -1330,8 +1371,12 @@ void cSkills::Tracking( CSocket *s, int selection )
 {
 	VALIDATESOCKET( s );
 	CChar *i = s->CurrcharObj();
-	i->SetTrackingTarget( i->GetTrackingTargets( selection ) ); // sets trackingtarget that was selected in the gump
-	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )) ); // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
+
+	// sets trackingtarget that was selected in the gump
+	i->SetTrackingTarget( i->GetTrackingTargets( selection ) ); 
+
+	// tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new calc by LB
+	s->SetTimer( tPC_TRACKING, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill( TRACKING ) / 1000 + 1 )) );
 	s->SetTimer( tPC_TRACKINGDISPLAY, BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->TrackingRedisplayTime() ) ));
 	if( ValidateObject( i->GetTrackingTarget() ) )
 		s->sysmessage( 1644, i->GetTrackingTarget()->GetName().c_str() );
@@ -1553,6 +1598,18 @@ void cSkills::Smith( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
 	CItem *packnum	= mChar->GetPackItem();
+
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
 
 	if( !ValidateObject( packnum ) )
 	{
@@ -2083,7 +2140,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 			if( !skillsuccess )
 				maxChance *= 2;
 
-			if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) ) // if stat of char < racial statcap and chance for statgain > random number from 0 to 100
+			// if stat of char < racial statcap and chance for statgain > random number from 0 to 100
+			if( ActualStat[nCount] < pRace->Skill( StatCount ) && chanceStatGain > RandomNum( static_cast<UI16>(0), maxChance ) )
 			{
 				// Check if we have to decrease a stat
 				if( ( ttlStats + 1) >= RandomNum( ServStatCap-10, ServStatCap ) )
@@ -2479,6 +2537,20 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 void cSkills::RepairMetal( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;
+	
+	CChar *mChar = s->CurrcharObj();
+	// Check if item used to initialize target cursor is still within range
+	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	s->TempObj( NULL );
+	if( ValidateObject( tempObj ) )
+	{
+		if( !checkItemRange( mChar, tempObj ) )
+		{
+			s->sysmessage( 400 ); // That is too far away!
+			return;
+		}
+	}
+	
 	CItem *j = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( j ) || !j->IsMetalType() )
 	{
@@ -2522,7 +2594,6 @@ void cSkills::RepairMetal( CSocket *s )
 		s->sysmessage( 988 );
 		return;
 	}
-	CChar *mChar = s->CurrcharObj();
 	if( CheckSkill( mChar, BLACKSMITHING, minSkill, maxSkill ) )
 	{
 		j->SetHP( j->GetMaxHP() );

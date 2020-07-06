@@ -8,7 +8,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			socket.SysMessage( GetDictionaryEntry( 774, socket.Language ) ); //That is locked down and you cannot use it
 			return false;
-		}		
+		}
 		var pHunger = pUser.hunger;
 		if( pHunger < 6 )
 		{
@@ -18,7 +18,7 @@ function onUseChecked( pUser, iUsed )
 			else
 				socket.SysMessage( GetDictionaryEntry( 415, socket.Language ) ); //You are simply too full to eat any more!
 
-			iPoison = iUsed.poison;
+			var iPoison = iUsed.poison;
 			if( iPoison && pUser.poison < iPoison )
 			{
 				socket.SysMessage( GetDictionaryEntry( (416 + RandomNumber( 0, 2 )), socket.Language ) ); //You feel disoriented and nauseous.

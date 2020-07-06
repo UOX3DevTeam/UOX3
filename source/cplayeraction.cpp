@@ -27,7 +27,6 @@ namespace UOX
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
 CItem *		startTrade( CSocket *mSock, CChar *i );
 bool		checkItemRange( CChar *mChar, CItem *i );
-bool		isDoorBlocked( CItem *door );
 void		DoHouseTarget( CSocket *mSock, UI08 houseEntry );
 void		SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate );
 void		BuildGumpFromScripts( CSocket *s, UI16 m );
@@ -1640,7 +1639,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		tempstr = FameTitle + pdoll->GetName() + " " + pdoll->GetTitle();
 	else if( pdoll->IsDead() )
 		tempstr = pdoll->GetName();
-	// Murder tags now scriptable in SECTION MURDERER - Titles.scp - Thanks Ab - Zane
+	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn - Thanks Ab - Zane
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
@@ -1903,10 +1902,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				}
 			}
 			return true;
-		case IT_KEY:	// Key
-			mSock->AddID( iUsed->GetTempVar( CITV_MORE ) );
-			mSock->target( 0, TARGET_KEY, 402 );
-			return true;
 		case IT_LOCKEDCONTAINER:	// Locked container
 		case IT_LOCKEDSPAWNCONT: // locked spawn container
 			mSock->sysmessage( 1428 );
@@ -2088,16 +2083,20 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				BuildGumpFromScripts( mSock, (UI16)iUsed->GetTempVar( CITV_MOREX ) );
 			return true;
 		case IT_METALREPAIRTOOL:
+			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_REPAIRMETAL, 485 );	// What do we wish to repair?
 			return true;
 		case IT_FORGE:	// Forges
+			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_SMELT, 440 );
 			return true;
 		case IT_DYE:	// Dye
+			mSock->TempObj( iUsed );
 			mSock->DyeAll( 0 );
 			mSock->target( 0, TARGET_DYEALL, 441 );
 			return true;
 		case IT_DYEVAT:	// Dye vat
+			mSock->TempObj( iUsed );
 			mSock->AddID1( iUsed->GetColour( 1 ) );
 			mSock->AddID2( iUsed->GetColour( 2 ) );
 			mSock->target( 0, TARGET_DVAT, 442 );
@@ -2122,9 +2121,11 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			m->TextMessage( mSock, 388, TALK, false, m->GetName().c_str() );
 			return true;
 		case IT_SMITHYTOOL:
+			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_SMITH, 444 );
 			return true;
 		case IT_MININGTOOL:	// Mining
+			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_MINE, 446 );
 			return true; 
 		case IT_EMPTYVIAL:	// empty vial
@@ -2139,10 +2140,6 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				else
 					mSock->sysmessage( 448 );
 			}
-			return true;
-		case IT_CANNONBALL:	// cannon ball
-			mSock->target( 0, TARGET_LOADCANNON, 455 );
-			iUsed->Delete();
 			return true;
 		case IT_ORE:	// smelt ore
 			mSock->TempObj( iUsed );
@@ -2184,7 +2181,10 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			if( mSock->GetTimer( tPC_FISHING ) )
 				mSock->sysmessage( 467 );
 			else
+			{
+				mSock->TempObj( iUsed );
 				mSock->target( 0, TARGET_FISH, 468 );
+			}
 			return true;
 		case IT_SEXTANT:	// sextants
 			mSock->sysmessage( 474, mChar->GetX(), mChar->GetY() );

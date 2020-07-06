@@ -2307,25 +2307,6 @@ void cMagic::SpellFail( CSocket *s )
 	mChar->TextMessage( s, 771, EMOTE, false );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckParry( CChar *player, int circle )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check player's parrying skill (for cannonblast).
-//o---------------------------------------------------------------------------o
-
-bool cMagic::CheckParry( CChar *player, int circle )
-{
-    if( Skills->CheckSkill( player, PARRYING, 80*circle, 800+( 80 * circle ) ) )
-	{
-		CSocket *s = player->GetSocket();
-		if( s != NULL )
-			s->sysmessage( 703 );
-		return true;
-	}
-	return false;
-}
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 /////// PCs CASTING SPELLS RELATED FUNCTIONS ////////////////////
@@ -2865,12 +2846,6 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 							}
 							(*((MAGIC_CHARFUNC)magic_table[curSpell-1].mag_extra))( caster, c, src, curSpell );
 							break;
-						case 66: // Cannon Firing
-							if( CheckParry( c, 6 ) )
-								MagicDamage( c, caster->GetSkill( TACTICS )/50, caster );
-							else
-								MagicDamage( c, caster->GetSkill( TACTICS )/25, caster );
-							break; 
 						case 46:	// Mass cure
 						case 25:	// Arch Cure
 						case 26:	// Arch Protection
@@ -3113,13 +3088,13 @@ void cMagic::LoadScript( void )
 					spells[i].Enabled( false );
 					reag_st *mRegs = spells[i].ReagantsPtr();
 
-					Console.Log( "Spell number: %i", "spell.log", i );
+					//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
 
 					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
 					{
 						UTag = tag.upper();
 						data = SpellLoad->GrabData();
-						Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() );
+						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch( (UTag.data()[0]) )
 						{
 							case 'A':

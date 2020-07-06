@@ -589,6 +589,8 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			CreatedItems[HAIR]->SetDecayable( false );
 			CreatedItems[HAIR]->SetLayer( IL_HAIR );
 			CreatedItems[HAIR]->SetCont( mChar );
+			mChar->SetHairStyle( ItemID );
+			mChar->SetHairColour( ItemColour );
 		}
 	}
 	if( validBeard( facialHair, mChar->GetID() ) && ( mChar->GetID() == 0x0190 || mChar->GetID() == 0x029A )) //Male human or male gargoyle
@@ -604,6 +606,8 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 			CreatedItems[BEARD]->SetDecayable( false );
 			CreatedItems[BEARD]->SetLayer( IL_FACIALHAIR );
 			CreatedItems[BEARD]->SetCont( mChar );
+			mChar->SetBeardStyle( ItemID );
+			mChar->SetBeardColour( ItemColour );
 		}
 	}
 	CreatedItems[PACK] = Items->CreateItem( tSock, mChar, 0x0E75, 1, 0, OT_ITEM );
@@ -1235,6 +1239,27 @@ void startChar( CSocket *mSock, bool onCreate )
 					onLoginScp->OnLogin( mSock, mChar );
 			}
 
+			// Store hair and beard (if they have any) properly for characters created pre-0.99.2j
+			CItem *hairObject = mChar->GetItemAtLayer( IL_HAIR );
+			CItem *beardObject = mChar->GetItemAtLayer( IL_FACIALHAIR );
+			if( ValidateObject( hairObject ) )
+			{
+				if( mChar->GetHairStyle() == 0xFFFF )
+				{
+					mChar->SetHairStyle( hairObject->GetID() );
+					mChar->SetHairColour( hairObject->GetColour() );
+				}
+			}
+
+			if( ValidateObject( beardObject ) )
+			{
+				if( mChar->GetBeardStyle() == 0xFFFF )
+				{
+					mChar->SetBeardStyle( beardObject->GetID() );
+					mChar->SetHairColour( hairObject->GetColour() );
+				}
+			}
+
 			mSock->LoginComplete( true );
     
 			if( mChar->WorldNumber() > 0 )
@@ -1469,7 +1494,7 @@ void HandleDeath( CChar *mChar )
 	UI16 targTrig		= mChar->GetScriptTrigger();
 	cScript *toExecute	= JSMapping->GetScript( targTrig );
 	if( toExecute != NULL )
-		toExecute->OnDeath( mChar );
+		toExecute->OnDeath( mChar, iCorpse );
 
 	if( mChar->IsNpc() )
 		mChar->Delete();

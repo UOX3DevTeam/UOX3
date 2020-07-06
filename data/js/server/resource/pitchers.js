@@ -47,7 +47,7 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var StrangeByte   = pSock.GetWord( 1 );
 	var targX	= pSock.GetWord( 11 );
 	var targY	= pSock.GetWord( 13 );
@@ -58,7 +58,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	{
 		pUser.SysMessage( "You are too far away from the target!" );
 		return;
-	}	
+	}
 	if( !tileID )
 	{
 		pUser.SysMessage( "It's not possible to fill the pitcher with anything from that." );
@@ -68,7 +68,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 	{
 		if(( tileID == 0x00d8 || tileID == 0x00e7 ))
 		{
-			Pitcher.SetTag( "ContentsName", "milk" );			
+			Pitcher.SetTag( "ContentsName", "milk" );
 			Pitcher.SetTag( "ContentsType", 3);
 			Pitcher.SetTag( "UsesLeft", 5 );
 			switch( Pitcher.id )
@@ -146,7 +146,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 					switchPitcherID( pSock, myTarget );
 					break;
 				}
-				Pitcher.SetTag( "ContentsType", ContentsType );	
+				Pitcher.SetTag( "ContentsType", ContentsType );
 				Pitcher.SetTag( "UsesLeft", UsesLeft );
 				Pitcher.SetTag( "ContentsName", ContentsName );
 				myTarget.SetTag( "ContentsType", 1);
@@ -158,7 +158,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 		//If target is a source of water
 		if( tileID == 0x154d || ( tileID >= 0x0b41 && tileID <= 0x0b44 ) || tileID == 0x0e7b || tileID == 0x0ffa ||
 		 ( tileID >= 0x1550 && tileID <= 0x1556 ) || tileID == 0x1558 || tileID == 0x1559 || ( tileID >= 0x1731 &&
-		  tileID <= 0x175a ) || ( tileID >= 0x19c3 && tileID <= 0x19ec )) 
+		  tileID <= 0x175a ) || ( tileID >= 0x19c3 && tileID <= 0x19ec ))
 		{
 			pUser.SoundEffect( 37, 1 );
 			switch( Pitcher.id )
@@ -167,28 +167,28 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				pUser.SysMessage( "You fill the pitcher with water." );
 				Pitcher.id = 0x1f9d;
 				Pitcher.SetTag( "ContentsType", 2);
-				Pitcher.SetTag( "ContentsName", "water" );			
+				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x0ff7:case 0x09a7:
 				pUser.SysMessage( "You fill the pitcher with water." );
 				Pitcher.id = 0x01f9e;
-				Pitcher.SetTag( "ContentsType", 2);				
-				Pitcher.SetTag( "ContentsName", "water" );			
+				Pitcher.SetTag( "ContentsType", 2);
+				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x099b:case 0x099f:case 0x09c7:
 				pUser.SysMessage( "You fill the bottle with water." );
 				Pitcher.name = "bottle of water";
 				Pitcher.SetTag( "ContentsType", 2);
-				Pitcher.SetTag( "ContentsName", "water" );			
+				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 5 );
 				break;
 			case 0x09c8:
 				pUser.SysMessage( "You fill the jug with water." );
 				Pitcher.name = "jug of water";
-				Pitcher.SetTag( "ContentsType", 2);				
-				Pitcher.SetTag( "ContentsName", "water" );			
+				Pitcher.SetTag( "ContentsType", 2);
+				Pitcher.SetTag( "ContentsName", "water" );
 				Pitcher.SetTag( "UsesLeft", 9 );
 				break;
 			}
@@ -200,7 +200,7 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 
 function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var StrangeByte   = pSock.GetWord( 1 );
 	var targX	= pSock.GetWord( 11 );
 	var targY	= pSock.GetWord( 13 );
@@ -214,7 +214,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		{
 			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}	
+		}
 		pUser.SoundEffect( 78, 1 );
 		//If the container to empty is a glass/goblet/mug
 		if(( Pitcher.id >= 0x0995 && Pitcher.id <= 0x099a ) || Pitcher.id == 0x09b3 || Pitcher.id == 0x09bf || Pitcher.id == 0x09ca ||
@@ -252,7 +252,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		{
 			pUser.SysMessage( "You pour out the contents of the pitcher." );
 			Pitcher.SetTag( "UsesLeft", 0 );
-			Pitcher.SetTag( "ContentsType", 1);				
+			Pitcher.SetTag( "ContentsType", 1);
 			Pitcher.SetTag( "UsesLeft", 0 );
 			Pitcher.SetTag( "ContenstName", "nothing" );
 			switchPitcherID( pSock, Pitcher );
@@ -264,7 +264,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		{
 			pUser.SysMessage( "You are too far away from the target!" );
 			return;
-		}	
+		}
 		if( myTarget.serial == pUser.serial )
 		{
 			//If pitcher is a mug/glass/goblet/etc
@@ -311,7 +311,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				Pitcher.SetTag( "ContentsName", "nothing" );
 			}
 			return;
-			
+
 		}
 		if(( tileID == 0x00d8 || tileID == 0x00e7 ) && ( Pitcher.GetTag( "ContentsType" ) == 3 ))
 		{
@@ -333,9 +333,9 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		//If Target is an open sack of flour, or a bowl of flour
 		if( tileID == 0x0aed || tileID == 0x1046 || tileID == 0x154d )
 		{
-			
+
 		}
-		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) || 
+		if(( tileID == 0x0ff8 || tileID == 0xff9) || ( tileID >= 0x1f7d && tileID <= 0x1f80 ) || ( tileID >= 0x1f85 && tileID <= 0x1f94 ) ||
 		( tileID >= 0x1f95 && tileID <= 0x1f9e ) || ( myTarget.GetTag( "ContentsType" ) > 1 ))
 		{
 			pUser.SysMessage( "That is already full! You cannot pour anything into that until it's been emptied." );
@@ -359,12 +359,12 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			Pitcher.SetTag( "UsesLeft", 0 );
 			switchTargetID( pSock, myTarget, Pitcher ); //Mark
 			switchPitcherID( pSock, Pitcher );
-			switchGobletID( pSock, Pitcher );
+			switchGobletID( Pitcher );
 			return;
-			
+
 		}
 		//If source container is a pitcher/jug and target is a glass/mug/etc.
-		if(( tileID >= 0x1f81 && tileID <= 0x1f84 ) || (tileID >= 0x0995 && tileID <= 0x099a) || tileID == 0x09b3 || tileID == 0x09bf || tileID == 0x09ca || 
+		if(( tileID >= 0x1f81 && tileID <= 0x1f84 ) || (tileID >= 0x0995 && tileID <= 0x099a) || tileID == 0x09b3 || tileID == 0x09bf || tileID == 0x09ca ||
 		tileID == 0x09cb || tileID == 0x0e78 || tileID == 0x1009 || tileID == 0x0e83 || tileID == 0x14e0 || ( tileID >= 0x0ffb && tileID <= 0x1002 ))
 		{
 			UsesLeft = Pitcher.GetTag( "UsesLeft" );
@@ -398,7 +398,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				}
 			}
 			return;
-		}			
+		}
 		//If target container is empty
 		if( myTarget.GetTag( "ContentsType" ) == 1 )
 		{
@@ -406,11 +406,11 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			var ContentsType = Pitcher.GetTag( "ContentsType" );
 			var ContentsName = Pitcher.GetTag( "ContentsName" );
 			UsesLeft = Pitcher.GetTag( "UsesLeft" );
-			myTarget.SetTag( "ContentsType", ContentsType );	
+			myTarget.SetTag( "ContentsType", ContentsType );
 			myTarget.SetTag( "ContentsName", ContentsName );
 			Pitcher.SetTag( "ContentsType", 1);
 			Pitcher.SetTag( "UsesLeft", 0 );
-			Pitcher.SetTag( "ContentsName", "nothing" );			
+			Pitcher.SetTag( "ContentsName", "nothing" );
 			pUser.SoundEffect( 38, 1 );
 			switch( myTarget.id )
 			{
@@ -442,7 +442,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				break;
 			}
 
-			
+
 			if(( Pitcher.id >= 0x0995 && Pitcher.id <= 0x099a ) || Pitcher.id == 0x09b3 || Pitcher.id == 0x09bf || Pitcher.id == 0x09ca ||
 			Pitcher.id == 0x09cb || Pitcher.id == 0x09ee || Pitcher.id == 0x09ef || ( Pitcher.id >= 0x0ffb && Pitcher.id <= 0x1002 ) ||
 			( Pitcher.id >= 0x1f7d && Pitcher.id <= 0x1f80 ) || ( Pitcher.id >= 0x1f85 && Pitcher.id <= 0x1f94 ))
@@ -451,7 +451,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				myTarget.SetTag( "UsesLeft", 1 );
 				switchPitcherID( pSock, Pitcher );
 				switchGobletID( Pitcher );
-			}					
+			}
 		}
 	}
 	else
@@ -545,13 +545,13 @@ function switchTargetID( pSock, myTarget, Pitcher )
 					Pitcher.SetTag( "UsesLeft", 0 );
 					switchPitcherID( pSock, Pitcher );
 					break;
-					
-			}		
+
+			}
 			break;
 		// Milk
 		case 3:
 			pSock.SysMessage( "You pour some milk into the container." );
-			
+
 			switch( myTarget.id )
 			{
 				//ceramic mugs
@@ -570,7 +570,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x0fff:case 0x1000:case 0x1001:case 0x1002:
 					myTarget.name = "pewter mug of milk";
 					break;
-				case 0x1f81: 
+				case 0x1f81:
 					myTarget.id = 0x1f89;
 					break;
 				case 0x1f82:
@@ -582,7 +582,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x1f84:
 					myTarget.id = 0x1f8c;
 					break;
-			}		
+			}
 			break;
 		//ale
 		case 4:
@@ -611,7 +611,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x1f83:case 0x1f84:
 					myTarget.id = 0x09ef;
 					break;
-			}		
+			}
 			break;
 		//cider
 		case 5:
@@ -646,7 +646,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x1f84:
 					myTarget.id = 0x1f80;
 					break;
-			}		
+			}
 			break;
 		// Liquor
 		case 6:
@@ -681,7 +681,7 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x1f84:
 					myTarget.id = 0x1f88;
 					break;
-			}		
+			}
 			break;
 		// Wine
 		case 7:
@@ -716,9 +716,9 @@ function switchTargetID( pSock, myTarget, Pitcher )
 				case 0x1f84:
 					myTarget.id = 0x1f90;
 					break;
-			}		
+			}
 			break;
-	}	
+	}
 	return;
 }
 
@@ -826,7 +826,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "ContentsName", "nothing" );
 			myTarget.SetTag( "UsesLeft", 0 );
 			myTarget.SetTag( "EmptyGlass", 3 );
-			myTarget.scripttrigger = scriptID;			
+			myTarget.scripttrigger = scriptID;
 			break;
 		case 0x0ff8:case 0x0ff9:case 0x1f9d:case 0x1f9e:
 			//Pitchers of water
@@ -836,7 +836,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.scripttrigger = scriptID;
 			break;
-		case 0x09ad: case 0x09f0: 
+		case 0x09ad: case 0x09f0:
 			//Pitchers of milk
 			myTarget.SetTag( "ContentsType", 3 );
 			myTarget.SetTag( "ContentsType", "milk" );
@@ -954,7 +954,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "UsesLeft", 1 );
 			myTarget.SetTag( "EmptyGlass", 1 );
 			myTarget.scripttrigger = scriptID;
-			break;		
+			break;
 		// Empty Glasses, mugs and goblets
 		case 0x0995:case 0x0996:case 0x0997:case 0x0998:case 0x0999:case 0x09ca: //ceramic mugs
 		case 0x099a:case 0x09b3:case 0x09bf:case 0x09cb: //goblets
@@ -966,7 +966,7 @@ function setupLiquidObject( myTarget )
 			myTarget.SetTag( "UsesLeft", 1 );
 			myTarget.SetTag( "EmptyGlass", 2 );
 			myTarget.scripttrigger = scriptID;
-			break;			
+			break;
 	}
 }
 
