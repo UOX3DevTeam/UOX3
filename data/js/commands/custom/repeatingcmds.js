@@ -36,7 +36,7 @@ function command_RINCX( pSock, execString )
 }
 function onCallback0( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var incXValue = pSock.xText;
 	var incXValue = Number(incXValue);
 	if( !pSock.GetWord( 1 ))
@@ -47,7 +47,7 @@ function onCallback0( pSock, myTarget )
 //Repeated Command: INCY <value>
 function command_RINCY( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
@@ -58,7 +58,7 @@ function command_RINCY( pSock, execString )
 }
 function onCallback1( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var incYValue = pSock.xText;
 	var incYValue = Number(incYValue);
 	if( !pSock.GetWord( 1 ))
@@ -68,7 +68,7 @@ function onCallback1( pSock, myTarget )
 //Repeated Command: INCZ <value>
 function command_RINCZ( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
@@ -79,7 +79,7 @@ function command_RINCZ( pSock, execString )
 }
 function onCallback2( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var incZValue = pSock.xText;
 	var incZValue = Number(incZValue);
 	if( !pSock.GetWord( 1 ))
@@ -90,7 +90,7 @@ function onCallback2( pSock, myTarget )
 //Repeated Command: SET TYPE <type>
 function command_RTYPE( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
@@ -101,7 +101,7 @@ function command_RTYPE( pSock, execString )
 }
 function onCallback4( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempType = pSock.xText;
 	var TempType = Number(TempType);
 	if( !pSock.GetWord( 1 ))
@@ -112,7 +112,7 @@ function onCallback4( pSock, myTarget )
 //Repeated Command: DYE <hex-id>
 function command_RDYE( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
@@ -123,7 +123,7 @@ function command_RDYE( pSock, execString )
 }
 function onCallback5( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempDye = pSock.xText;
 	var TempDye = Number(TempDye);
 	if( !pSock.GetWord( 1 ))
@@ -134,43 +134,43 @@ function onCallback5( pSock, myTarget )
 //Repeated Command: ADD <hex-id>
 function command_RADD( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	if( !isNaN(execString))
 	{
 		pSock.xText = execString;
 		pUser.CustomTarget( 6, "Select target location for item "+execString+":" );
 	}
 	else
-		pUser.SysMessage( ReqNum );	
+		pUser.SysMessage( ReqNum );
 }
 function onCallback6( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempItemID = pSock.xText;
 	var TempItemID = Number(TempItemID);
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
 	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
 
-	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );	
+	var tempItem = CreateBlankItem( pSock, pUser, 1, "#", TempItemID, 0x0, "ITEM", false );
 	if( tempItem )
 	{
 		tempItem.SetLocation( targX, targY, targZ );
 		tempItem.decayable = false;
 	}
-		
+
 	pUser.CustomTarget( 6, "Select target location for item "+TempItemID+":" );
 }
 
 //Repeated Command: REMOVE
 function command_RREMOVE( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	pUser.CustomTarget( 7, "Which object do you wish to remove?" );
 }
 function onCallback7( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	if( !pSock.GetWord( 1 ))
 	{
 		if( myTarget.npc || myTarget.isItem )
@@ -186,13 +186,13 @@ function onCallback7( pSock, myTarget )
 //Repeated Command: ADD ITEM <item-id from dfns>
 function command_RADDITEM( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	pSock.xText = execString;
 	pUser.CustomTarget( 8, "Select target location for item "+execString+":" );
 }
 function onCallback8( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempItemID = pSock.xText;
 	if( !(TempItemID == null) )
 	{
@@ -212,12 +212,12 @@ function onCallback8( pSock, myTarget )
 //Repeated Command: TELE <select target location>
 function command_RTELE( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	pUser.CustomTarget( 9, "Select location to teleport to:" );
 }
 function onCallback9( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var targX = pSock.GetWord( 11 );
 	var targY = pSock.GetWord( 13 );
 	var targZ = pSock.GetSByte( 16 ) + GetTileHeight( pSock.GetWord( 17 ) );
@@ -228,13 +228,13 @@ function onCallback9( pSock, myTarget )
 //Repeated Command: ADD NPC <npc-id from DFNs>
 function command_RADDNPC( pSock, execString )
 {
-	pUser = pSock.currentChar;
+	var pUser = pSock.currentChar;
 	pSock.xText = execString;
 	pUser.CustomTarget( 10, "Select target location for the ["+execString+"]:" );
 }
 function onCallback10( pSock, myTarget )
 {
-	var pUser = pSock.currentChar; 
+	var pUser = pSock.currentChar;
 	var TempNPCID = pSock.xText;
 	if( !(TempNPCID == null ) )
 	{

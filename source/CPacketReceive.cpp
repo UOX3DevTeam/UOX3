@@ -231,12 +231,44 @@ bool CPIFirstLogin::Handle( void )
 						Console << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
 					}
 				}
-				else if( tSock->ClientVerShort() >= CVS_70240 )
+				else if( tSock->ClientVerShort() < CVS_70300 )
 				{
 					if( !cwmWorldState->ServerData()->ClientSupport70240() )
 					{
 						t = LDR_COMMSFAILURE;
 						Console << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() < CVS_70331 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport70300() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() < CVS_704565 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport70331() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() < CVS_70610 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport704565() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..." << myendl;
+					}
+				}
+				else if( tSock->ClientVerShort() >= CVS_70610 )
+				{
+					if( !cwmWorldState->ServerData()->ClientSupport70610() )
+					{
+						t = LDR_COMMSFAILURE;
+						Console << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..." << myendl;
 					}
 				}
 			}
@@ -637,10 +669,20 @@ void CPINewClientVersion::Receive( void )
 					tSock->ClientVerShort( CVS_70151 );
 				else if( clientRevision < 24 )
 					tSock->ClientVerShort( CVS_70160 );
-				else
+				else if( clientRevision < 30 )
 					tSock->ClientVerShort( CVS_70240 );
-
+				else if( clientRevision < 33 )
+					tSock->ClientVerShort( CVS_70300 );
+				else if( clientRevision < 45 )
+					tSock->ClientVerShort( CVS_70331 );
+				else if( clientRevision < 61 )
+					tSock->ClientVerShort( CVS_704565 );
+				else
+					tSock->ClientVerShort( CVS_70610 );
 			}
+			// ??? - 7.0.61.0 - Endless Journey
+			// ??? - 7.0.61.0 - Endless Journey
+			// 117462287 - 7.0.85.15
 		}
 		tSock->ReceivedVersion( true );
 	}
@@ -868,14 +910,22 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			tSock->ClientType( CV_HS2D );
 			if( CliVerSub < 13 )
 				tSock->ClientVerShort( CVS_7090 );
-			else if( CliVerSub <= 15 && CliVerLetter == 0 )
+			else if( CliVerSub < 14 )
 				tSock->ClientVerShort( CVS_70130 );
-			else if( CliVerSub == 15 && CliVerLetter == 1 )
+			else if( CliVerSub < 16 )
 				tSock->ClientVerShort( CVS_70151 );
-			else if( CliVerSub >= 16 && CliVerSub < 24 )
+			else if( CliVerSub < 24 )
 				tSock->ClientVerShort( CVS_70160 );
-			else if( CliVerSub >= 24 )
+			else if( CliVerSub < 30 )
 				tSock->ClientVerShort( CVS_70240 );
+			else if( CliVerSub < 33 )
+				tSock->ClientVerShort( CVS_70300 );
+			else if( CliVerSub < 45 )
+				tSock->ClientVerShort( CVS_70331 );
+			else if( CliVerSub < 61 )
+				tSock->ClientVerShort( CVS_704565 );
+			else
+				tSock->ClientVerShort( CVS_70610 );
 		}
 		else if( CliVer >= 1000000000 && tSock->ClientType() == CV_HS3D ) // 1124079360 is 4.0.23.1?
 		{
@@ -1821,7 +1871,7 @@ bool CPITalkRequest::HandleCommon( void )
 			break;
 		case 0: // normal speech
 		default:
-			if( ourChar->GetSquelched() )
+			if( ourChar->GetSquelched() && !ourChar->IsGM() )
 				tSock->sysmessage( 760 );
 			else 
 				return false;
@@ -2905,7 +2955,7 @@ void CPISubcommands::Receive( void )
 	case 0x15:	{	subPacket = new CPIPopupMenuSelect( tSock );	}	break;	// Popup Menu Selection
 	case 0x1A:	{	subPacket = new CPIExtendedStats( tSock );		}	break;	// Extended Stats
 	case 0x1C:	{	subPacket = new CPISpellbookSelect( tSock );	}	break;	// New SpellBook Selection
-	/*case 0x2C:	{	subPacket = new CPIBandageMacro(tSock);			}	break;*/	// Bandage macro
+	case 0x2C:	{	subPacket = new CPIBandageMacro( tSock );		}	break;	// Bandage macro
 	}
 }
 bool CPISubcommands::Handle( void )
@@ -3473,21 +3523,64 @@ void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
 }
 
 
-/*CPIBandageMacro::CPIBandageMacro()
+CPIBandageMacro::CPIBandageMacro()
 {
 }
 CPIBandageMacro::CPIBandageMacro( CSocket *s ) : CPInputBuffer(s)
 {
 	Receive();
-}*/
+}
 
-/*void CPIBandageMacro::Receive(void)
+void CPIBandageMacro::Receive(void)
 {
+	Handle();
 }
 bool CPIBandageMacro::Handle(void)
 {
+	CChar *ourChar = tSock->CurrcharObj();
+	if( ValidateObject( ourChar ) )
+	{
+		// Check if onUseBandageMacro event exists
+		UI16 charTrig = ourChar->GetScriptTrigger();
+		cScript *toExecute = JSMapping->GetScript( charTrig );
+		if( toExecute != NULL )
+		{
+			SERIAL bandageSerial = tSock->GetDWord( 5 );
+			SERIAL targetSerial = tSock->GetDWord( 9 );
+
+			if( bandageSerial == INVALIDSERIAL )
+			{
+				Console << "Bandage Macro detected, but no bandage found!\n";
+				return false;
+			}
+
+			if( targetSerial == INVALIDSERIAL )
+			{
+				Console << "Bandage Macro detected, but no target found!\n";
+				return false;
+			}
+
+			CItem *bandageItem = calcItemObjFromSer( bandageSerial );
+			CChar *targetChar = calcCharObjFromSer( targetSerial );
+
+			if( !ValidateObject( bandageItem ) || !ValidateObject( targetChar ))
+				return false;
+
+			if( toExecute->OnUseBandageMacro( tSock, targetChar, bandageItem ) == 1 )	// if it exists and we don't want hard code, return
 	return true;
-}*/
+		}
+		else
+			Console << "Bandage Macro detected, but onUseBandageMacro JS event not found in global script." << myendl;
+	}
+	return false;
+}
+void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
 
 
 CPISpellbookSelect::CPISpellbookSelect()

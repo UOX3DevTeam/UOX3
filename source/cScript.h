@@ -91,7 +91,8 @@ enum ScriptEvent
 	seOnGumpPress,
 	seOnGumpInput,
 	seOnDropItemOnItem,
-	seOnVirtueGumpPress
+	seOnVirtueGumpPress,
+	seOnUseBandageMacro		//	**	allows overriding what happens when client uses bandage macros
 };
 
 struct SEGump
@@ -204,7 +205,7 @@ public:
 	bool		OnWeatherChange( CBaseObject *tObject, WeatherType element );
 	bool		OnTempChange( CBaseObject *tObject, SI08 temp );
 	bool		OnTimer( CBaseObject *tObject, UI08 timerID );
-	bool		OnDeath( CChar *pDead );
+	bool		OnDeath( CChar *pDead, CItem *iCorpse );
 	bool		OnResurrect( CChar *pAlive );
 	bool		OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus );
 	bool		OnHungerChange( CChar *pChanging, SI08 newStatus );
@@ -236,6 +237,7 @@ public:
 	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
 	SI08		OnSkillGump( CChar *mChar );
+	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 

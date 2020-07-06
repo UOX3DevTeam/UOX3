@@ -18,7 +18,7 @@ function command_SET( socket, cmdString )
 				return;
 			}
 		}
-		var targMsg = GetDictionaryEntry( 1741, socket.Language );
+
 		socket.xText = cmdString;
 		socket.CustomTarget( 0, "Choose target to set: " + cmdString );
 	}
@@ -80,6 +80,10 @@ function onCallback0( socket, ourObj )
 		ourObj.colour = nVal;
 		okMsg( socket );
 		break;
+	case "MAXHP":
+		ourObj.maxhp = nVal;
+		okMsg( socket );
+		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, "Choose character to own this object" );
@@ -109,9 +113,11 @@ function onCallback0( socket, ourObj )
 		break;
 	case "WIPABLE":
 	case "WIPEABLE":
-		socket.SysMessage( ourObj.wipable );
 		ourObj.wipable = (nVal == 1);
-		socket.SysMessage( ourObj.wipable );
+		okMsg( socket );
+		break;
+	case "RACE":
+		ourObj.race = nVal;
 		okMsg( socket );
 		break;
 	default:
@@ -202,13 +208,18 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 			// User is trying to set type 62 on an item. This should only work if the item is of type OT_SPAWNER
 			if( ourItem.isSpawner )
 			{
-		ourItem.type = nVal;
-		okMsg( socket );
+				ourItem.type = nVal;
+				okMsg( socket );
 			}
 			else
 			{
 				socket.SysMessage( "Only objects added using the 'ADD SPAWNER # command can be assigned spawner item types!" );
 			}
+		}
+		else
+		{
+			ourItem.type = nVal;
+			okMsg( socket );
 		}
 		break;
 	case "Z":
@@ -247,6 +258,24 @@ function HandleSetItem( socket, ourItem, uKey, nVal )
 		ourItem.weight = nVal;
 		okMsg( socket );
 		break;
+	case "WEIGHTMAX":
+		ourItem.weightmax = nVal;
+		okMsg( socket );
+		break;
+	case "SPEED":
+	case "SPD":
+		ourItem.speed = nVal;
+		okMsg( socket );
+		break;
+	case "STACKABLE":
+	case "PILEABLE":
+		ourItem.pileable = nVal;
+		okMsg( socket );
+		break;
+	case "RACE":
+		ourItem.race = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 			HandleSetSpawner( socket, ourItem, uKey, nVal );
@@ -270,7 +299,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, nVal )
 	switch( uKey )
 	{
 	case "SPAWNSECTION":
-		var splitValues = socket.xText.split( " " )
+		var splitValues = socket.xText.split( " " );
 		if( splitValues[2] )
 		{
 			ourSpawn.spawnsection = splitValues[1];

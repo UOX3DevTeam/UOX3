@@ -35,14 +35,13 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddButton">AddButton</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButton( topHeight, topLeft, buttonImage, unk1, unk2, unk3 );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump 
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButton( topHeight, topLeft, buttonImage, (buttonPressedImage), unk1, unk2, unk3 );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump
 <tr><td valign="top" width="25%"><b>Other info</b>
-    <td>I believe that having an unk1 of 1 indicates the gump will close. unk2 
-      should be the button's unique ID, and I *think* that unk3 is the page it 
-      is on.<br>
+    <td>Having an unk1 of 1 indicates the gump will close. unk2
+      should be the button's unique ID, and unk3 is the page the button will call. buttonPressedImage is optional, and without it a value of buttonImage + 1 is assumed.<br>
       <br>
-      When the button is pressed, onGumpPress event is called, iButton is 0 if 
+      When the button is pressed, onGumpPress event is called, iButton is 0 if
       the gump has been closed without pressing a button.<br>
       <br>
       function onGumpPress( Sock, iButton ) { }
@@ -53,26 +52,25 @@
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddButtonTileArt">AddButtonTileArt</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButtonTileArt( topHeight, topLeft, buttonImage, unk1, unk2, unk3, tileID, hue, tileX, tileY );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddButtonTileArt( topHeight, topLeft, buttonImage, buttonPressedImage, unk1, unk2, unk3, tileID, hue, tileX, tileY );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump, with tileArt as part of the button
 <tr><td valign="top" width="25%"><b>Other info</b>
-    <td>I believe that having an unk1 of 1 indicates the gump will close. unk2 
-      should be the button's unique ID, and I *think* that unk3 is the page it 
-      is on. tileID is tileArt added as part of the button, hue is the tileArt hue, and tileX and tileY is the tileArt's offset compared to the topHeight, topLeft coordinates<br>
+    <td>Having an unk1 of 1 indicates the gump will close. unk2
+      is the page it will call, while unk3 is the button's unique ID. tileID is tileArt added as part of the button, hue is the tileArt hue, and tileX and tileY is the tileArt's offset compared to the topHeight, topLeft coordinates<br>
       <br>
-      When the button is pressed, onGumpPress event is called, iButton is 0 if 
+      When the button is pressed, onGumpPress event is called, iButton is 0 if
       the gump has been closed without pressing a button.<br>
       <br>
       function onGumpPress( Sock, iButton ) { }
   <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
-      <pre>myGump.AddButtonTileArt( 13, 290, 5050, 1, 1, 1, 1193, 0, 10, 10 );
+      <pre>myGump.AddButtonTileArt( 13, 290, 5050, 5050, 1, 1, 1, 1193, 0, 10, 10 );
 </pre>
 </table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddPageButton">AddPageButton</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddPageButton( topHeight, topLeft, buttonImage, pageNum );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump allowing you to navigate pages without an onGumpPress event.
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddPageButton( topHeight, topLeft, buttonImage, (buttonPressedImage), pageNum );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds a button to the gump allowing you to navigate pages without an onGumpPress event. buttonPressedImage is optional, and without it a value of buttonImage + 1 is assumed.
   <tr><td valign="top" width="25%"><b>Example of Usage</b><td>
       <pre>myGump.AddPageButton( 13, 290, 5050, 1 );
 </pre>
@@ -93,7 +91,7 @@
 <tr><td valign="top" width="25%"><b>Other info</b><td>I believe that unk2 is the checkbox's ID
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddCroppedText( 10, 10, 0x0342, 300, 200, "Default Text" );
 </pre></table>
- 
+
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddCheckerTrans">AddCheckerTrans</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddCheckerTrans( left, top, width, height );
@@ -208,7 +206,7 @@ myGump.AddToolTip( 1015094 ); //adds tooltip with cliloc 1015094 to the gump-pic
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddXMFHTMLGumpColor">AddXMFHTMLGumpColor</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddXMFHTMLGumpColor( left, top, width, height, number, hasBorder, hasScrollbar, rgbColour );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc. 
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>The purpose of this is to load a HTML like gump using the cliloc "number". Its to do with Localisation settings etc.
 <tr><td valign="top" width="25%"><b>Other info</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddXMFHTMLGumpColor( 10, 10, 200, 300, 1, 1, 1, ?? );
 </pre></table>
@@ -293,9 +291,9 @@ function onUseChecked( pUser, iUsed )
 	myGump.AddText( 100, 20, 5, "My first gump!" ); // add text, gets assigned TextID 0
 	myGump.AddText( 100, 95, 7, "Some more text!" ); // add text, gets assigned TextID 1
 	myGump.AddText( 20, 200, 7, "TextEntry 1[                ]" ); // add text, gets assigned TextID 2
-	myGump.AddText( 20, 220, 7, "TextEntry 2[                ]" ); // add text, gets assigned TextID 3	
+	myGump.AddText( 20, 220, 7, "TextEntry 2[                ]" ); // add text, gets assigned TextID 3
 	myGump.AddTextEntry( 100, 200, 120, 25, 10, 0, 4, "First Entry" ); //TextID 4
-	myGump.AddTextEntry( 100, 220, 120, 25, 10, 0, 5, "Second Entry" ); //TextID 5	
+	myGump.AddTextEntry( 100, 220, 120, 25, 10, 0, 5, "Second Entry" ); //TextID 5
 	myGump.AddRadio( 20, 130, 2152, 0, 0 ); //RadioButton with ID 0
 	myGump.AddRadio( 20, 150, 2152, 0, 1 ); //RadioButton with ID 1
 	myGump.AddCheckbox( 20, 175, 2706, 0, 2 ); //CheckBox with ID 2
@@ -320,7 +318,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SysMessage( "The second TextEntry was: "+Text2 )
 			var OtherButton = gumpData.getButton(0);
 			switch( OtherButton )
-			{ 
+			{
 				case 0:
 					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );
 					pUser.DoAction( 15 );

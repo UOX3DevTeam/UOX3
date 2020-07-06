@@ -37,7 +37,7 @@ function onCallback1( socket, ourObj )
 		{
 			if( ourObj.isChar )
 			{
-				mChar = socket.currentChar;
+				var mChar = socket.currentChar;
 				if( ourObj.commandlevel > mChar.commandlevel )
 				{
 					socket.SysMessage( "You cannot unhide that person!" );

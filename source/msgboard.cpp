@@ -369,7 +369,7 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	UI16 totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
 	STRINGLIST_CITERATOR lIter;
 	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
-		totalSize += 1 + (*lIter).size();
+		totalSize += 1 + static_cast<UI16>( ( *lIter ).size() );
 
 	msgBoardPost.Size			= totalSize;
 	msgBoardPost.DateLen		= timeSize;

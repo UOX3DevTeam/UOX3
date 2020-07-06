@@ -87,6 +87,7 @@ public:
 					}
 					CPExtMove( CChar &toCopy );
 	virtual void	FlagColour( UI08 newValue );
+	virtual void	SetFlags( CChar &totoCopy );
 	CPExtMove		&operator=( CChar &toCopy );
 };
 
@@ -987,7 +988,7 @@ public:
 					{
 					}
 	void			Finalize( void );
-	void			AddItem( CItem *toAdd );
+	void			AddItem( CItem *toAdd, bool alwaysSendItemHue );
 	void			SetRepFlag( UI08 value );
 };
 

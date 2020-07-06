@@ -2,16 +2,16 @@ function onUseUnChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 	var lastUsedBy = iUsed.GetTag( "lastUsedBy" );
-	var lastUsed = iUsed.GetTag( "lastUsed" );	
+	var lastUsed = iUsed.GetTag( "lastUsed" );
 	var timeNow = GetCurrentClock();
-	
+
 	if( pUser.dead == 1 )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 330, pSock.Language )); //You are dead and cannot do that.
 		return false;
 	}
-	
-	if(( lastUsedBy != null || lastUsedBy != 0 ) && lastUsedBy != pUser.serial & 0x00FFFFFF )
+
+	if(( lastUsedBy != null || lastUsedBy != 0 ) && ( lastUsedBy != ( pUser.serial & 0x00FFFFFF )))
 	{
 		if(( lastUsed + 10000 ) > timeNow )
 		{
@@ -30,12 +30,12 @@ function onUseUnChecked( pUser, iUsed )
 			{
 				if( stuckArrows > 0 )
 				{
-					var newArrows = CreateDFNItem( pUser.socket, pUser, "0x0f3f", stuckArrows, "ITEM", true ); 
+					var newArrows = CreateDFNItem( pUser.socket, pUser, "0x0f3f", stuckArrows, "ITEM", true );
 					pUser.SysMessage( "You retrieve "+stuckArrows+" arrows from the target." );
 				}
 				if( stuckBolts > 0 )
 				{
-					var newBolts = CreateDFNItem( pUser.socket, pUser, "0x1bfb", stuckBolts, "ITEM", true ); 
+					var newBolts = CreateDFNItem( pUser.socket, pUser, "0x1bfb", stuckBolts, "ITEM", true );
 					pUser.SysMessage( "You retrieve "+stuckBolts+" crossbow bolts from the target." );
 				}
 			}
@@ -63,7 +63,7 @@ function onUseUnChecked( pUser, iUsed )
 	{
 		pUser.SysMessage( "You must wait a moment before using this again." );
 		return false;
-	}	
+	}
 	else
 	{ //Close enough, and not too far away =)
 		if( pUser.isonhorse )
@@ -120,7 +120,7 @@ function onUseUnChecked( pUser, iUsed )
 				case "BOWS":
 					var combatAnim = 18;
 					var Arrows = pUser.ResourceCount( 0x0F3F, 0 );
-					if( !Arrows > 0 )
+					if( Arrows == 0 )
 					{
 						pUser.SysMessage( GetDictionaryEntry( 1770, pSock.Language )); //You do not have any arrows with which to practice.
 						return false;
@@ -136,7 +136,7 @@ function onUseUnChecked( pUser, iUsed )
 				case "XBOWS":
 					var combatAnim = 19;
 					var Bolts = pUser.ResourceCount( 0x1BFB, 0 );
-					if( !Bolts > 0 )
+					if( Bolts == 0 )
 					{
 						pUser.SysMessage( GetDictionaryEntry( 1771, pSock.Language )); //You do not have any bolts with which to practice.
 						return false;
@@ -144,14 +144,14 @@ function onUseUnChecked( pUser, iUsed )
 					else
 					{
 						var ammoType = "0x1bfe";
-						pUser.UseResource( 1, 0x1BFB );						
+						pUser.UseResource( 1, 0x1BFB );
 						var stuckBolts = iUsed.GetTag( "stuckBolts" ) + 1;
 						iUsed.SetTag( "stuckBolts", stuckBolts );
 					}
 			}
 			pUser.DoAction( combatAnim );
 			ammoType = parseInt( ammoType );
-			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false ); 
+			DoMovingEffect( pUser, iUsed, ammoType, 0x06, 0x00, false );
 			var points = 0;
 			if(!pUser.CheckSkill( 31, 0, 250 ))
 			{
@@ -260,7 +260,7 @@ function onUseUnChecked( pUser, iUsed )
 			iUsed.TextMessage( "Score: "+totalScore+" after "+totalShots+" shots." );
 			iUsed.SetTag( "lastUsedBy", ( pUser.serial & 0x00FFFFFF ) );
 			var lastUsed = GetCurrentClock();
-			iUsed.SetTag( "lastUsed", lastUsed );			
+			iUsed.SetTag( "lastUsed", lastUsed );
 		}
 	}
 	return false;
