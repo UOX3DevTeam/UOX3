@@ -306,13 +306,11 @@ void cSkills::Mine( CSocket *s )
 	if( !ValidateObject( mChar ) )
 		return;
 
-	// Check if player targeted an item, and if so, if he's in the same world/instance as said item
+	// Check if player targeted an item, and if so, if he's in the same world
 	CItem *targetItem = calcItemObjFromSer( mSock.GetDWord( 7 ) );
 	if( ValidateObject( targetItem ))
 	{
 		if( mChar->WorldNumber() != targetItem->WorldNumber() )
-			return;
-		if( mChar->GetInstanceID() != targetItem->GetInstanceID() )
 			return;
 	}
 
