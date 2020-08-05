@@ -9,8 +9,8 @@
 
 <body>
 <center>
-        <h1>UOX3 Script Engine</h1>
-        <h3>Functions, Methods, Properties and Event handling</h3>
+<h1>UOX3 Script Engine</h1>
+<h3>Functions, Methods, Properties and Event handling</h3>
 </center>
 <h3><a name="CharFuncs">Item Related Methods</a></h3>
 
@@ -43,7 +43,7 @@ function onUseChecked( pUser, iUsed )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="GetSerial">GetSerial</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int GetSerial( part );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Part have to be between 1 and 4.
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Gets part (1-4) of an object's serial.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>iSerial = myItem.GetSerial( 1 );
 </pre></table>
 
@@ -54,16 +54,20 @@ function onUseChecked( pUser, iUsed )
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if(myPlayer.HasSpell( 0 )==1);
 </pre></table>
 
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<p>&nbsp;</p>
+<table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="InRange">InRange</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int InRange( trgObj, srcType, trgType, distance );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>srcType and trgType are like objType for other funcs.  0 indicates a char, 1 indicates an item.<br>Returns true if the distance from srcObj to trgObj is less than distance
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if(myItem.InRange( trgItem, 0, 1, 18 );
+<tr><td class="property">Prototype		<td class="value"><pre>bool InRange( trgObj, distance );</pre>
+<tr><td class="property">Purpose		<td class="value">Returns true if the distance to trgObj is less than distance
+<tr><td class="property">Example of Usage	<td class="value"><pre>if( myItem.InRange( trgObj, 18 ))
+	{
+		myItem.TextMessage( "I'm within range!" );
+	}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="KillTimers">KillTimers</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Killtimers( );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool Killtimers( );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Kills all timers of the Char.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.KillTimers;
 </pre></table>
@@ -77,7 +81,7 @@ function onUseChecked( pUser, iUsed )
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="OpenPlank">OpenPlank</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenPlank( void )
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenPlank()
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens the plank of a boat.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myPlank.OpenPlank()
 </pre></table>
@@ -108,14 +112,14 @@ myItem.SetPoison( 2 );
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SoundEffect">SoundEffect</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SoundEffect( soundID, bAllHear );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Plays a sound from Character. SoundID is the full ID of the sound to play.  If bAllHear is TRUE, then everyone nearby hears it.  If it's false, then only the Character hears it. NOTE: Soundlist
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Plays a sound from Character. SoundID is the full ID of the sound to play. If bAllHear is TRUE, then everyone nearby hears it. If it's false, then only the Character hears it. NOTE: Soundlist
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.SoundEffect( 568, TRUE );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="StartTimer">StartTimer</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void StartTimer( numMiliSec, timerID, callBack );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Starts a timer that will elapse after numHundredthsOfSec seconds pass, for an item tItem.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered. Which script it triggers in depends on the (optional, defaults to false) third parameter, which can be <strong>true</strong> (calls back to existing script), <strong>false</strong> (calls back into object's script) or an <strong>int</strong> (scriptID to call back to). This optional parameter defaults to false if not specified.
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Starts a timer that will elapse after numHundredthsOfSec seconds pass, for an item tItem. timerID must be between 0 and 100. Resulting onTimer event will be triggered. Which script it triggers in depends on the (optional, defaults to false) third parameter, which can be <strong>true</strong> (calls back to existing script), <strong>false</strong> (calls back into object's script) or an <strong>int</strong> (scriptID to call back to). This optional parameter defaults to false if not specified.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.StartTimer( 600, 0, true );</br>
 myChar.StartTimer( 1200, 0, false ); //Timer calls back to existing script</br>
 myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
@@ -145,7 +149,7 @@ myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="Dupe">Dupe</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Dupe( socket );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Creates a duplicate of the item.
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Creates a duplicate of the item in character's pack
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.Dupe( mySock );
 </pre></table>
 
@@ -154,16 +158,16 @@ myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Carve( socket );
 </pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Makes the character belonging to socket carve up a corpse 
+<td>Makes the character belonging to socket carve up a corpse
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myCorpse.Carve( socket );</pre>
 </table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="Carve">Refresh</a>
+<tr><th colspan=3 bgcolor="maroon"><a name="Refresh">Refresh</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void Refresh();
 </pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Causes the item to be refreshed to sockets that can see it 
+<td>Causes the item to be refreshed to sockets that can see it
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myItem.Refresh();</pre>
 </table>
 

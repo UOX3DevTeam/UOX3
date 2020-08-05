@@ -314,7 +314,7 @@ JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc,jsval *argv, 
 {
 	if( argc == 0 )
 	{
-		MethodError( "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
+		MethodError( "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
 		*rval = STRING_TO_JSVAL("");
 		return JS_TRUE;
 	}
@@ -323,7 +323,7 @@ JSBool CGumpData_getEdit( JSContext *cx, JSObject *obj, uintN argc,jsval *argv, 
 	
 	if( myItem == NULL  )
 	{
-		MethodError( "(DataGump-getID) Invalid object assigned");
+		MethodError( "(DataGump-getEdit) Invalid object assigned");
 		*rval = STRING_TO_JSVAL("") ;
 		return JS_TRUE;
 	}
@@ -866,15 +866,30 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void AddToolTip( clilocNum, ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds cliloc-based tooltip to previous gump (Gump, Image, Button) in gump stream
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Additional arguments (up to 10) can be provided if the cliloc in question needs
+//|					them. This could also be used to show custom tooltips in the client, if using a
+//|					cliloc (like 1114778) that only contain an argument and no additional text!
+//|	
+//|					For example, if you use myGump.AddToolTip( 1114778, "My Custom Text" ) in JS
+//|					UOX3 will send the following gump command to add a tooltip element to previous
+//|					gump element: "tooltip 1114778 @My Custom Text@"
+//|
+//|					NOTE: Sending arguments with tooltip command will only work in UO clients
+//|					v7.0.16.0 and above
+//o-----------------------------------------------------------------------------------------------o
 JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1  )
+	if( argc < 1 || argc > 11 )
 	{
-		MethodError( "AddToolTip: Invalid number of arguments (takes 1)" );
+		MethodError( "AddToolTip: Invalid number of arguments (takes at least 1, maximum 11)" );
 		return JS_FALSE;
 	}
-	
-	SI32 tooltip = (SI32)JSVAL_TO_INT( argv[0] );
 	
 	SEGump *gList = static_cast<SEGump*>(JS_GetPrivate( cx, obj ));
 	if( gList == NULL )
@@ -882,10 +897,30 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		MethodError( "AddToolTip: Couldn't find gump associated with object" );
 		return JS_FALSE;
 	}
-	char temp[256];
-	sprintf( temp, "tooltip %lu", tooltip );
-	gList->one->push_back( temp );
 
+	SI32 tooltip = (SI32)JSVAL_TO_INT( argv[0] );
+	std::stringstream temp;
+	if( argc > 1 )
+	{
+		// Additional arguments were provided along with the cliloc number
+		// Only supported by client versions above ~7.0.16.0
+		temp << "tooltip " << tooltip << " @";
+		UString tempArg;
+		for( unsigned int i = 2; i < argc; i++ )
+		{
+			tempArg = JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
+			temp << ( i == 2 ? tempArg : ( "\t" + tempArg ) );
+		}
+		temp << "@";
+	}
+	else
+	{
+		// Cliloc number was provided with no additional arguments,
+		// or client version doesn't support arguments for tooltip
+		temp << "tooltip " << tooltip;
+	}
+
+	gList->one->push_back( temp.str() );
 	return JS_TRUE;
 }
 
@@ -3399,7 +3434,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-    if( argc != 1 ) // 3 parameters
+    if( argc != 1 ) // 1 parameters
     {
         MethodError( "OpenURL: Invalid Number of Arguments %d, needs: 1" );
         return JS_FALSE;

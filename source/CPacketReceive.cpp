@@ -1000,6 +1000,8 @@ bool CPIUpdateRangeChange::Handle( void )
 		case CV_KR3D:
 		case CV_SA2D:
 		case CV_SA3D:
+		case CV_HS2D:
+		case CV_HS3D:
 			tSock->Range( tSock->GetByte( 1 ) - 4 );
 			break;
 		default:

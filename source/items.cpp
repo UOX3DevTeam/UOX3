@@ -634,7 +634,7 @@ PackTypes cItem::getPackType( CItem *i )
 			break;
 		case 0x0E77:	// barrel
 		case 0x0E7F:	// keg
-		case 0x0E83:
+		case 0x0E83:	// empty tub
 		case 0x0FAE:	// barrel with lids
 		case 0x1AD7:	// potion kegs
 		case 0x1940:	// barrel with lids
@@ -653,10 +653,21 @@ PackTypes cItem::getPackType( CItem *i )
 		case 0x24D7:	// SE basket
 		case 0x24D8:	// SE basket
 		case 0x24DD:	// SE basket
+		case 0x1882:	// winnoning basket
 			packType = PT_RBASKET;
 			break;
 		case 0x0E40:	// gold chest
 		case 0x0E41:	// gold chest
+		case 0x4025:	// gargoyle chest
+		case 0x4026:	// gargoyle chest
+		case 0xA304:	// metal chest
+		case 0xA305:	// metal chest
+		case 0xA306:	// rusty metal chest
+		case 0xA307:	// rusty metal chest
+		case 0xA308:	// gold chest
+		case 0xA309:	// gold chest
+		case 0xA30A:	// barnacle metal chest
+		case 0xA30B:	// barnacle metal chest
 			packType = PT_GCHEST;
 			break;
 		case 0x0E7D:	// wooden box
@@ -787,6 +798,71 @@ PackTypes cItem::getPackType( CItem *i )
 			break;
 		case 0x46A7:	// SA giftbox
 			packType = PT_GIFTBOX6;
+			break;
+		case 0x0E1C:	// Backgammon board
+		case 0x0FAD:	// Backgammon board
+			packType = PT_GAME_BACKGAMMON;
+			break;
+		case 0x0FA6:	// Chess board
+			packType = PT_GAME_CHESS;
+			break;
+		case 0xA202:	// Dolphin mailbox
+		case 0xA203:	// Dolphin mailbox
+		case 0xA204:	// Dolphin mailbox
+		case 0xA205:	// Dolphin mailbox
+			packType = PT_MAILBOX1;
+			break;
+		case 0xA206:	// Squirrel mailbox
+		case 0xA207:	// Squirrel mailbox
+		case 0xA208:	// Squirrel mailbox
+		case 0xA209:	// Squirrel mailbox
+			packType = PT_MAILBOX2;
+			break;
+		case 0xA1F5:	// Wooden barrel mailbox
+		case 0xA1F7:	// Wooden barrel mailbox
+		case 0xA1F8:	// Wooden barrel mailbox
+		case 0xA1F9:	// Wooden barrel mailbox
+			packType = PT_MAILBOX3;
+			break;
+		case 0xA268:	// Light mailbox
+		case 0xA269:	// Light mailbox
+		case 0xA26A:	// Light mailbox
+		case 0xA26B:	// Light mailbox
+		case 0xA26C:	// Light mailbox
+		case 0xA26D:	// Light mailbox
+		case 0xA26E:	// Light mailbox
+		case 0xA26F:	// Light mailbox
+			packType = PT_MAILBOX4;
+			break;
+		case 0xA3EB:	// Sitting kitten mailbox
+		case 0xA3EC:	// Sitting kitten mailbox
+		case 0xA3ED:	// Sitting kitten mailbox
+		case 0xA3EE:	// Sitting kitten mailbox
+			packType = PT_MAILBOX5;
+			break;
+		case 0xA3EF:	// Standing kitten mailbox
+		case 0xA3F0:	// Standing kitten mailbox
+		case 0xA3F1:	// Standing kitten mailbox
+		case 0xA3F2:	// Standing kitten mailbox
+			packType = PT_MAILBOX6;
+			break;
+		case 0xA3F3:	// Scarecrow mailbox
+		case 0xA3F4:	// Scarecrow mailbox
+		case 0xA3F5:	// Scarecrow mailbox
+		case 0xA3F6:	// Scarecrow mailbox
+			packType = PT_MAILBOX7;
+			break;
+		case 0xA3F7:	// Lion mailbox
+		case 0xA3F8:	// Lion mailbox
+		case 0xA3F9:	// Lion mailbox
+		case 0xA3FA:	// Lion mailbox
+			packType = PT_MAILBOX8;
+			break;
+		case 0x4141:	// Square gray mailbox
+		case 0x4142:	// Square gray mailbox
+		case 0x4143:	// Square gray mailbox
+		case 0x4144:	// Square gray mailbox
+			packType = PT_MAILBOX9;
 			break;
 		default:
 			packType = PT_UNKNOWN;

@@ -564,11 +564,13 @@ enum ItemLayers
 	IL_HELM					= 0x06,
 	IL_GLOVES				= 0x07,
 	IL_RING					= 0x08,
+	IL_TALISMAN				= 0x09,
 	IL_NECK					= 0x0A,
 	IL_HAIR					= 0x0B,
 	IL_WAIST				= 0x0C,
 	IL_TUNIC				= 0x0D,
 	IL_BRACELET				= 0x0E,
+	IL_FACE					= 0x0F,
 	IL_FACIALHAIR			= 0x10,
 	IL_OUTERSHIRT			= 0x11,
 	IL_EARRINGS				= 0x12,
@@ -583,6 +585,8 @@ enum ItemLayers
 	IL_BOUGHTCONTAINER		= 0x1B,
 	IL_BUYCONTAINER			= 0x1C,
 	IL_BANKBOX				= 0x1D,
+	//IL_UNUSED				= 0x1E, // turns player invisible when used?
+	//IL_SECURETRADE		= 0x1F,
 };
 
 enum TargetIDs

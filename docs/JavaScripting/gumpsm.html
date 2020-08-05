@@ -226,7 +226,9 @@ myGump.AddXMFHTMLTok( 10, 10, 200, 300, 1, 1, 1, 1041522, 99, "BottlesOfBeer", "
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_Gump_AddHTMLGump">AddHTMLGump</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void AddHTMLGump( topHeight, topLeft, width, height, background, scrollbar, HTMLText);
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>????
-<tr><td valign="top" width="25%"><b>Other info</b><td>background and scrollbar either 0 or 1, for respectively off/on.<br>HTMLText is the text in the gump, can use HTML here.
+<tr><td valign="top" width="25%"><b>Other info</b><td>background and scrollbar either 0 or 1, for respectively off/on.<br>HTMLText is the text in the gump, can use HTML here. Supported tags: <pre>&lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
+&lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=""&gt;&lt;/a&gt;
+&lt;div align="right"&gt;&lt;div align="left"&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</pre>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>myGump.AddHTMLGump( 10, 10, 200, 300, 1, 1, "This is a test" );
 </pre></table>
 
@@ -331,7 +333,6 @@ function onGumpPress( pSock, pButton, gumpData )
 					pUser.SysMessage( "The Checkbox with ID "+OtherButton+" was checked." );
 					pUser.DoAction( 18 );
 					break;
-
 			}
 			break;
 	}

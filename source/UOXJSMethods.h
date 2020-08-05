@@ -292,7 +292,7 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "AddTextEntry",				CGump_AddTextEntry,					8, 0, 0 },
 	{ "AddTextEntryLimited",		CGump_AddTextEntryLimited,			9, 0, 0 },
 	{ "AddTiledGump",				CGump_AddTiledGump,					5, 0, 0 },
-	{ "AddToolTip",					CGump_AddToolTip,					1, 0, 0 },
+	{ "AddToolTip",					CGump_AddToolTip,					11, 0, 0 },
 	{ "AddXMFHTMLGump",				CGump_AddXMFHTMLGump,				7, 0, 0 },
 	{ "AddXMFHTMLGumpColor",		CGump_AddXMFHTMLGumpColor,			8, 0, 0 },
 	{ "AddXMFHTMLTok",				CGump_AddXMFHTMLTok,				8, 0, 0 },

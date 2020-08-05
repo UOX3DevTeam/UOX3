@@ -65,6 +65,12 @@ function onCallback0( pSock, myTarget )
 	var StrangeByte = pSock.GetWord( 1 );
 	if( !StrangeByte && myTarget.isItem )
 	{
+		// If targeting an item that is out of range, return
+		if( !pUser.InRange( myTarget, 3 ))
+		{
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+		}
+
 		//If targeting a full keyring
 		if( myTarget.id == KeyringID3 )
 		{
@@ -111,20 +117,13 @@ function onCallback0( pSock, myTarget )
 		//If targeting a lock
 		else if( myTarget.type == 1 || myTarget.type == 8 || myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 117 || myTarget.type == 63 || myTarget.type == 64 || myTarget.type == 203 )
 		{
-			if( !pUser.InRange( myTarget, 3 ))
+			if( myTarget.more == Key.more || Key.more == 255 ) //Key.more == 255 is a universal key
 			{
-				pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+				changeLockStatus( pUser, myTarget );
 			}
 			else
 			{
-				if( myTarget.more == Key.more || Key.more == 255 ) //Key.more == 255 is a universal key
-				{
-					changeLockStatus( pUser, myTarget );
-				}
-				else
-				{
-					pUser.SysMessage( GetDictionaryEntry( 1026, pSock.Language )); //The key does not fit into that lock.
-				}
+				pUser.SysMessage( GetDictionaryEntry( 1026, pSock.Language )); //The key does not fit into that lock.
 			}
 			return;
 		}
@@ -147,9 +146,16 @@ function onCallback1( pSock, myTarget )
 	pSock.tempObj = null;
 	var StrangeByte = pSock.GetWord( 1 );
 	var keys, i;
+
 	if( !StrangeByte && myTarget.isItem )
 	{
-		if( myTarget.id == Keyring.id )
+		// If targeting an item that is out of range, return
+		if( myTarget.type != 203 && !pUser.InRange( myTarget, 3 ))
+		{
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+		}
+
+		if( myTarget.serial == Keyring.serial )
 		{ //If targeting keyring itself, release all keys
 			keys = Keyring.GetTag( "keys" );
 			i = 1;
@@ -169,25 +175,18 @@ function onCallback1( pSock, myTarget )
 		}
 		else if( myTarget.type == 1 || myTarget.type == 8 || myTarget.type == 12 || myTarget.type == 13 || myTarget.type == 117 || myTarget.type == 63 || myTarget.type == 64 || myTarget.type == 203 )
 		{ //If key & lock has same MORE value, i.e. they are a match
-			if( myTarget.type != 203 && ( !pUser.InRange( myTarget, 3 )))
+			keys = Keyring.GetTag( "keys" );
+			i = 1;
+			for( i = 1; i < keys + 1; i++ )
 			{
-				pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
-			}
-			else
-			{
-				keys = Keyring.GetTag( "keys" );
-				i = 1;
-				for( i = 1; i < keys + 1; i++ )
+				var KeyItemMore = Keyring.GetTag( "key"+i+"more" );
+				if( KeyItemMore == myTarget.more || KeyItemMore == 255 )
 				{
-					var KeyItemMore = Keyring.GetTag( "key"+i+"more" );
-					if( KeyItemMore == myTarget.more || KeyItemMore == 255 )
-					{
-						changeLockStatus( pUser, myTarget );
-						return;
-					}
+					changeLockStatus( pUser, myTarget );
+					return;
 				}
-				pUser.SysMessage( "None of your keys fit the lock." );
 			}
+			pUser.SysMessage( "None of your keys fit the lock." );
 			return;
 		}
 	}
@@ -202,6 +201,12 @@ function onCallback2( pSock, myTarget )
 	var StrangeByte = pSock.GetWord( 1 );
 	if( !StrangeByte && myTarget.isItem )
 	{
+		// If targeting an item that is out of range, return
+		if( !pUser.InRange( myTarget, 3 ))
+		{
+			pUser.SysMessage( GetDictionaryEntry( 393, pSock.Language )); //That is too far away.
+		}
+
 		if(( myTarget.id >= keyID1 && myTarget.id <= keyID3 ) || myTarget.id == keyID4 || myTarget.id == keyID5 )
 		{
 			var itemOwner = GetPackOwner( myTarget, 0 );

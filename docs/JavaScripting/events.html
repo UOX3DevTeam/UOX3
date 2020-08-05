@@ -29,7 +29,7 @@
 		{
 			pCharacter.EmoteMessage( &quot;*ooooooooooooo*" );
 		}
-	}	
+	}
 }
 </pre>
 </table>
@@ -231,10 +231,10 @@ function command_DISCONNECT( socket, cmdString )
 
 	damage = ApplyDefenseModifiers( 1, pAttacker, pDefender, fightSkill, hitLoc, damage, true);
 
-	if( damage <= 0 ) 
+	if( damage <= 0 )
 		damage = RandomNumber( 0, 4 );
 
-	if( !pDefender.npc ) 
+	if( !pDefender.npc )
 		damage /= 2;
 
 	return damage;
@@ -251,7 +251,7 @@ function command_DISCONNECT( socket, cmdString )
 	if( objType == 1 )
 		objMade.SysMessage( "Welcome to Our Unique World(TM)!" );
 }
-// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP, 
+// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP,
 // it will send the sysmessage to all NEW characters that enters the world.
 </pre></table>
 
@@ -286,7 +286,7 @@ function onDamage( damaged, attacker, damageValue )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeath( pDead );
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When the player or NPC pDead dies
 <tr><td valign="top" width="25%"><b>Notes</b>
-  <td>  
+  <td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>Custom death sequence.  Can do things like an explosion anim and what not here, for impact's sake.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onDeath( pDead )
@@ -300,14 +300,14 @@ function onDeath( pDead )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onDeathBlow( pKilled, pKiller );
 </pre>
 <tr><td valign="top" width="25%"><b>When triggered</b>
-<td>When a killing blow has been made 
-<tr><td valign="top" width="25%"><b>Notes</b>  
+<td>When a killing blow has been made
+<tr><td valign="top" width="25%"><b>Notes</b>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Custom reactions after a killing blow has been made 
+<td>Custom reactions after a killing blow has been made
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onDeathBlow( pDead, pKiller )
 {
-	pDead.health = pDead.health + 10;	
+	pDead.health = pDead.health + 10;
 	pDead.TextMessage( "But I'm not dead!" );
 	return true;
 }</pre>
@@ -373,7 +373,7 @@ function onDispel( objDispelled, objType )
 function onDrop( iDropped, pDropper )
 {
 	var pSock = pDropper.socket;
-	
+
 	//Lets fetch the serial of the target-location
 	var temp1 = pSock.GetByte( 10 );
 	var temp2 = pSock.GetByte( 11 );
@@ -539,7 +539,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SysMessage( "The second TextEntry was: "+Text2 )
 			var OtherButton = gumpData.getButton(0);
 			switch(RadioButton)
-			{ 
+			{
 				case 0:
 					pUser.SysMessage( "You selected RadioButton number: "+OtherButton );
 					pUser.DoAction( 15 );
@@ -578,7 +578,7 @@ function onGumpPress( pSock, pButton, gumpData )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnIterateEvent">onIterate</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onIterate( object )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>On every object our iterator comes across.  
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>On every object our iterator comes across.
 <tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on running the loop<br>if return value is false, then the loop is halted
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow JS to loop through all world objects.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
@@ -595,7 +595,7 @@ function onIterate( charCheck )
 		return false;
 	if( charCheck.npc )
 		charCheck.Kill();
-	return true;		
+	return true;
 }
 </pre></table>
 
@@ -709,19 +709,19 @@ function onPacketReceive( socket, packetNum )
 	{
 		case 0: //nowhere
 			pGrabber.TextMessage( "I picked up this item from... NOWHERE!" );
-			break;		
+			break;
 		case 1: //ground
 			pGrabber.TextMessage( "I picked up this item from the ground." );
-			break;		
+			break;
 		case 2: //ownpack
 			pGrabber.TextMessage( "I picked up this item from my own backpack." );
-			break;		
+			break;
 		case 3: //otherpack
 			pGrabber.TextMessage( "I picked up this item from a container." );
-			break;		
+			break;
 		case 4: //paperdoll
 			pGrabber.TextMessage( "I picked up this item from my paperdoll." );
-			break;		
+			break;
 		case 5: //bank
 			pGrabber.TextMessage( "I picked up this item from my bank box." );
 			break;
@@ -729,7 +729,7 @@ function onPacketReceive( socket, packetNum )
 			pGrabber.TextMessage( "Error. Redo from Start." );
 			break;
 	}
-	
+
 	//Use return false to disallow the pickup and bounce item
 	//return false;
 }
@@ -817,7 +817,7 @@ function onSellToVendor( pSock, Vendor, iSold )
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onSoldToVendor( pSock, Vendor, iSold )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>Runs on item after it has already been sold to the NPC vendor and has reached the NPC vendor's "bought"-backpack
 <tr><td valign="top" width="25%"><b>Notes</b><td>If the item sold to the vendor stacks with items already there, the script will run on the entire stack, not just the one item specifically sold!
-<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control over what happens after specific items have been sold to NPCs. 
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control over what happens after specific items have been sold to NPCs.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
 function onSoldToVendor( pSock, Vendor, iSold )
 {
@@ -977,7 +977,7 @@ function onSpeechInput(pUser, iUsed, pSpeech, pSpeechID)
 	}
     	switch(pSpeechID)
     	{
-	case 1: 
+	case 1:
 		pUser.SysMessage( "You rename the item to: "+pSpeech );
 		iUsed.name = pSpeech;
 		break;
@@ -1037,7 +1037,7 @@ function onSpellSuccess( pUser, spellID )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnStatChangeEvent">onStatChange</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatChange( pPlayer, stat )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>If onStatLoss isn't defined, and stat went down, or if onStatGain isn't defined and stat went up
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>If onStatLoss isn't defined, and stat went down, or if onStatGained isn't defined and stat went up
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
@@ -1048,13 +1048,13 @@ function onStatChange( pPlayer, stat )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=2 bgcolor="maroon"><a name="OnStatGainEvent">onStatGain</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGain( pPlayer, stat )
+<tr><th colspan=2 bgcolor="maroon"><a name="OnStatGainEvent">onStatGained</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onStatGained( pPlayer, stat )
 </pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pPlayer gains in stat stat
 <tr><td valign="top" width="25%"><b>Notes</b><td>
 <tr><td valign="top" width="25%"><b>Purpose</b><td>For taking action when a person gains in a stat
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
-function onStatGain( pPlayer, stat )
+function onStatGained( pPlayer, stat )
 {
 	pPlayer.TextMessage("Whee I gained some stat!");
 }
@@ -1084,7 +1084,7 @@ function onSteal( thief, objStolen )
 {
 	thief.SysMessage( "You attempt to steal the "+objStolen.name );
 	ConsoleMessage( objStolen.name+" has been attempted stolen!" );
-	
+
 }
 </pre></table>
 
@@ -1145,7 +1145,7 @@ function onSwing( iSwung, pSwinging, pSwingAt )
 // This is a simple script that will make the character talking perform the digging animation upon saying "'dig".
 // (Note: 'DIG won't be displayed as speech, since script intercepts the text before it is spoken out loud)
 // If anything else is said, the script returns true so speech can proceed as normal.
-</pre></table> 
+</pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnTempChangeEvent">onTempChange</a>
@@ -1208,9 +1208,64 @@ function onUnequip( pUnequipper, iUnequipped )
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=2 bgcolor="maroon"><a name="OnUseBandageMacroEvent">onUseBandageMacro</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUseBandageMacro( pSock, targChar, iUsed )
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pSock uses iUsed on targChar.
+<tr><td valign="top" width="25%"><b>Notes</b><td>This can be put in the global script (scriptID 0) to handle what should happen when a player attempts to use the Bandage Self macro in the client.
+<tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater control of bandage self macro
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
+function onUseBandageMacro( pSock, targChar, bandageItem )
+{
+	targChar.TextMessage( "#0" );
+	if( pSock && bandageItem && bandageItem.amount >= 1 )
+	{
+		var pUser = pSock.currentChar;
+		TriggerEvent( 4000, "onUseCheckedTriggered", pUser, targChar, bandageItem );
+	}
+	return true;
+}
+
+...then, in scriptID 4000 - skill\healing.js, add this at the top of the file:
+
+function onUseCheckedTriggered( pUser, targChar, iUsed )
+{
+	pUser.TextMessage( "#1" );
+	if( pUser && iUsed && iUsed.isItem )
+	{
+		pUser.TextMessage( "#2" );
+
+		var socket = pUser.socket;
+		if( socket )
+		{
+			pUser.TextMessage( "#3" );
+
+			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
+			{
+				pUser.TextMessage( "#4" );
+				socket.SysMessage( "You are too busy to do that." );
+			}
+			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			{
+				pUser.TextMessage( "#5" );
+				socket.tempObj = iUsed;
+				socket.SetTimer( 0, 5000 );
+				onCallback1( socket, targChar );
+			}
+			else
+			{
+				pUser.TextMessage( "#6" );
+				socket.SysMessage( GetDictionaryEntry( 473, socket.Language ) );
+			}
+		}
+	}
+	return true;
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnUseCheckedEvent">onUseChecked</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUseChecked( pUser, iUsed )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.
 <tr><td valign="top" width="25%"><b>Notes</b><td>if return value from script is true, it continues on executing with hard coded implementation<br>if return value is false, then no hard code is executed
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>
@@ -1226,7 +1281,7 @@ function onUseChecked( pUser, iUsed )
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=2 bgcolor="maroon"><a name="OnUseUnCheckedEvent">onUseUnChecked</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>function onUseUnChecked( pUser, iUsed )
-</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.  
+</pre><tr><td valign="top" width="25%"><b>When triggered</b><td>When pUser uses iUsed.
 <tr><td valign="top" width="25%"><b>Notes</b><td>Unlike the onUseChecked event this one runs without any hardcoded checks.
 <tr><td valign="top" width="25%"><b>Purpose</b><td>To allow greater customization on using items.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>

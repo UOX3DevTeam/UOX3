@@ -4879,14 +4879,15 @@ void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
 void CPSendGumpMenu::AddCommand( const std::string& actualCommand, ... )
 {
 	va_list argptr;
-	char msg[512];
+	char msg[1024];
+	std::memset( msg, 0, sizeof( msg ));
 #ifdef __NONANSI_VASTART__
 	va_start( argptr, actualCommand.c_str() );
 #else
 	va_start( argptr, actualCommand );
 	
 #endif
-	vsprintf( msg, actualCommand.c_str(), argptr );
+	vsnprintf( msg, sizeof( msg ) - 1, actualCommand.c_str(), argptr );
 	va_end( argptr );
 
 	if( strlen( msg ) == 0 )
@@ -4896,7 +4897,7 @@ void CPSendGumpMenu::AddCommand( const std::string& actualCommand, ... )
 	Console << msg << myendl;
 #endif
 
-	commands.push_back( msg );
+	commands.push_back( std::string( msg ));
 }
 
 void CPSendGumpMenu::AddText( const char *actualText, ... )
