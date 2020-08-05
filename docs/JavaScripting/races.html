@@ -63,13 +63,13 @@ for (var i = 0; i &lt; GetRaceCount(); i++) {
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_CanRaceWearArmour">CanRaceWearArmour</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanRaceWearArmour( raceID, tItem );
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_CanWearArmour">CanWearArmour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool CanWearArmour( tItem );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the race raceID can equip the item tItem.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( CanRaceWearArmour( GetRace( pTalking ), someItem )
-<br>{
-<br>	TextMessage( pTalking, "Whoo hoo, I can wear it" );
-<br>}
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.CanWearArmour( tItem )
+{
+	pTalking.TextMessage( "Whoo hoo, I can wear it" );
+}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -83,32 +83,32 @@ for (var i = 0; i &lt; GetRaceCount(); i++) {
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidRaceHairColour">IsValidRaceHairColour</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidRaceHairColour( raceID, tColour );
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidHairColour">IsValidHairColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidHairColour( tColour );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the hair colour is valid for raceID.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( IsValidRaceHairColour( GetRace( pTalking ), 1 ) )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidHairColour( 1 ))
 <br>{
-<br>	TextMessage( pTalkingTo, "awww, you can't have black hair?" );
+<br>	pTalking.TextMessage( "awww, my hair can't be this colour?" );
 <br>}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidRaceSkinColour">IsValidRaceSkinColour</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidRaceSkinColour( raceID, tColour );
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidSkinColour">IsValidSkinColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidSkinColour( tColour );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the skin colour is valid for raceID.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( IsValidRaceSkinColour( GetRace( pTalking ), 1 ) )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidSkinColour( 1 ))
 <br>{
-<br>	TextMessage( pTalkingTo, "awww, you can't have black skin?" );
+<br>	pTalking.TextMessage( "awww, my skin can't be this colour?" );
 <br>}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidRaceBeardColour">IsValidRaceBeardColour</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidRaceBeardColour( raceID, tColour );
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsValidBeardColour">IsValidBeardColour</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>bool IsValidBeardColour( tColour );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the beard colour is valid for raceID.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( IsValidRaceBeardColour( GetRace( pTalking ), 1 ) )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( pTalking.race.IsValidBeardColour( 1 ))
 <br>{
-<br>	TextMessage( pTalkingTo, "awww, my beard couldn't be black?" );
+<br>	pTalking.TextMessage( "awww, my beard can't be this colour?" );
 <br>}
 </pre></table>
 
@@ -125,7 +125,7 @@ for (var i = 0; i &lt; GetRaceCount(); i++) {
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_RaceCompareByRace">RaceCompareByRace</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>char RaceCompareByRace( srcRace, trgRace );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the relationship of the two races.  If it's 0, then they're neutral.  If it's greater than 0 and less than 100, then they're allies.  If it's less than 0 and greater than -100, then they're enemies.  
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns the relationship of the two races.  If it's 0, then they're neutral.  If it's greater than 0 and less than 100, then they're allies.  If it's less than 0 and greater than -100, then they're enemies.
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>if( RaceCompareByRace( GetRace( pTalkingTo ), GetRace( pTalking ) ) < 0 )
 <br>{
 <br>	TextMessage( pTalkingTo, "Oh my god, get away from me!" );

@@ -1,8 +1,39 @@
+5/08/2020 - Xuri (0.99.2l)
+	Updated CGump_AddToolTip() gump method - now accepts up to 10 optional cliloc arguments to go with specified cliloc. Can also be used to display custom tooltip text if used with a cliloc like 1114778. Cliloc arguments and custom tooltips only work in client version 7.0.16.0 or above.
+	Updated CPSendGumpMenu::AddCommand() to use the safer vsnprintf instead of vsprintf, and increased msg buffer size from 512 to 1024
+	Updated CPIUpdateRangeChange::Handle() to include additional client definitions: CV_HS2D and CV_HS3D
+	Added new pack types in PackTypes enum:
+		PT_GAME_BACKGAMMON, PT_GAME_CHESS, PT_MAILBOX1, PT_MAILBOX2, PT_MAILBOX3, PT_MAILBOX4, PT_MAILBOX5, PT_MAILBOX6, PT_MAILBOX7, PT_MAILBOX8, PT_MAILBOX9, PT_WALLSAFE, PT_SAFE
+	Updated getPackType() with additional container definitions for the following pack types:
+		PT_RBASKET - winnoning basket (0x1882)
+		PT_GCHEST - gargoyle chests (0x4025, 0x4026), metal chests (0xA304, 0xA305), rusty metal chests (0xA306, 0xA307), gold chests (0xA308, 0xA309), barnacle metal chests (0xA30A, 0xA30B)
+		PT_GAME_BACKGAMMON - backgammon boards (0x0E1C, 0x0FAD)
+		PT_GAME_CHESS - chess board (0x0FA6)
+		PT_MAILBOX1 - dolphin mailbox (0xA202, 0xA203, 0xA204, 0xA205)
+		PT_MAILBOX2 - squirrel mailbox (0xA206, 0xA207, 0xA208, 0xA209)
+		PT_MAILBOX3 - barrel mailbox (0xA1F5, 0xA1F6, 0xA1F7, 0xA1F8)
+		PT_MAILBOX4 - light mailbox (0xA268, 0xA269, 0xA26A, 0xA26B, 0xA26C, 0xA26D, 0xA26E, 0xA26F)
+		PT_MAILBOX5 - sitting kitten mailbox (0xA3EB, 0xA3EC, 0xA3ED, 0xA3EE)
+		PT_MAILBOX6 - standing kitten mailbox (0xA3EF, 0xA3F0, 0xA3F1, 0xA3F2)
+		PT_MAILBOX7 - scarecrow mailbox (0xA3F3, 0xA3F4, 0xA3F5, 0xA3F6)
+		PT_MAILBOX8 - lion mailbox (0xA3F7, 0xA3F8, 0xA3F9, 0xA3FA)
+		PT_MAILBOX9 - square gray mailbox (0x4141, 0x4142, 0x4143, 0x4144)
+		PT_WALLSAFE - wall safe (0x8B8F, 0x8B90)
+		PT_SAFE - safe (0x9C18, 0x9C19)
+	Updated CItem::IsShieldType() to include shield IDs from SA expansion
+	Added IL_TALISMAN (0x09) and IL_FACE (0x0F) to ItemLayers enum to allow equipping talismans and faces in clients that support this
+	Updated getWeaponType() (in both code and JS) with additional weapon definitions:
+		ONEHND_LG_SWORDS - anquique sword 1 (0xA33B, 0xA33C), antique sword 2 (0xA33D, 0xA33E), antique sword 3 (0xA33F, 0xA340), skull sword (0xA341, 0xA342), gargoyle skull sword (0xA345, 0xA346)
+		LG_MACES - skull staff (0xA343, 0xA344), gargoyle skull staff (0xA347, 0xA348)
+	Updates keys.js with some distance checks
+	Misc updates to JS Docs
+
 06/07/2020 - Xuri (0.99.2k)
 	Added new JS Gump Methods:
 		AddPicInPic( x, y, gumpID, width, height, spriteX, spriteY ) // Add sprite image in dialogs, requires client v7.0.80.0 or above
 		AddImageProperty( serial ) // Add properties(?) of a specific item
 	Fixed a server crash related to world saves, where items being cleaned up were not being removed properly from the 	MapRegions they were in, resulting in a crash when attempting to save non-existent items out to the worldfiles.
+	Fixed an issue that could cause GMs to become permanently squelched
 	Fixed an issue where the newStatus parameter for the onFlagChange JS event was overwritten with oldStatus, and oldStatus parameter was never set
 	Updated onDeath JS Event to include a second parameter - iCorpse:
 		onDeath( pDeath, iCorpse ) // iCorpse is a reference to the newly created corpse of pDead

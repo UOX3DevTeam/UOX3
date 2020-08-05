@@ -479,6 +479,16 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2D35: //elven machete - ML
 		case 0x090B: //gargish dread sword - SA
 		case 0x4074: //gargish dread sword - SA
+		case 0xA33B: //antique sword 1 south
+		case 0xA33C: //antique sword 1 east
+		case 0xA33D: //antique sword 2 south
+		case 0xA33E: //antique sword 2 east
+		case 0xA33F: //antique sword 3 south
+		case 0xA340: //antique sword 3 east
+		case 0xA341: //skull sword south
+		case 0xA342: //skull sword east
+		case 0xA345: //gargoyle skull sword south
+		case 0xA346: //gargoyle skull sword east
 			return ONEHND_LG_SWORDS;
 		// Two-Handed Lg. Swords
 		case 0x143E: //halberd
@@ -615,6 +625,10 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x4070: //gargish glass staff - SA
 		case 0x0906: //gargish serpentstone staff - SA
 		case 0x406F: //gargish serpentstone staff - SA
+		case 0xA343: //skull staff south
+		case 0xA344: //skull staff east
+		case 0xA347: //gargoyle skull staff south
+		case 0xA348: //gargoyle skull staff east
 			return LG_MACES;
 		// Bows
 		case 0x13B1: //bow

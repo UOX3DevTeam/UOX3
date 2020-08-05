@@ -19,7 +19,7 @@
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>RESOURCEOBJ ResourceRegion( x, y, worldnumber );
 </pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Returns a resource object allowing JS to modify resource data 
+<td>Returns a resource object allowing JS to modify resource data
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var mResource = ResourceRegion( pUser.x, pUser.y, pUser.worldnumber );</pre>
 </table>
 
@@ -40,7 +40,7 @@ ResourceTime( &quot;LOGS&quot;, 600 );</pre>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>int ResourceAmount( resourceType );
 void ResourceArea( resourceType, int );</pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Used to get/set the maximum amount of resources per area of a specific resourceType (&quot;ORE&quot; or &quot;LOGS&quot;). 
+<td>Used to get/set the maximum amount of resources per area of a specific resourceType (&quot;ORE&quot; or &quot;LOGS&quot;).
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var maxLogAmount = ResourceAmount( &quot;LOGS&quot; );
 //or...
 ResourceAmount( &quot;LOGS&quot;, 10 );</pre>
@@ -52,7 +52,7 @@ ResourceAmount( &quot;LOGS&quot;, 10 );</pre>
 void ResourceArea( resourceType, int );
 </pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Used to get/set the amount of resourceareas to split the world into for a specific resourceType (&quot;ORE&quot; and &quot;LOGS&quot;). 
+<td>Used to get/set the amount of resourceareas to split the world into for a specific resourceType (&quot;ORE&quot; and &quot;LOGS&quot;).
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var resourceAreas = ResourceArea( &quot;ORE&quot; );
 //or...
 ResourceArea( &quot;ORE&quot;, 10 );</pre>

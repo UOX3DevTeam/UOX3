@@ -118,6 +118,16 @@ function getWeaponType( pUser )
 			case 0x2D29: //elven machete - ML
 			case 0x090B: //gargish dread sword - SA
 			case 0x4074: //gargish dread sword - SA
+			case 0xA33B: //antique sword 1 south
+			case 0xA33C: //antique sword 1 east
+			case 0xA33D: //antique sword 2 south
+			case 0xA33E: //antique sword 2 east
+			case 0xA33F: //antique sword 3 south
+			case 0xA340: //antique sword 3 east
+			case 0xA341: //skull sword south
+			case 0xA342: //skull sword east
+			case 0xA345: //gargoyle skull sword south
+			case 0xA346: //gargoyle skull sword east
 				weaponType = "ONEHND_LG_SWORDS"; break;
 		// Two-Handed Lg. Swords
 			case 0x143E: //halberd
@@ -254,6 +264,10 @@ function getWeaponType( pUser )
 			case 0x4070: //gargish glass staff - SA
 			case 0x0906: //gargish serpentstone staff - SA
 			case 0x406F: //gargish serpentstone staff - SA
+			case 0xA343: //skull staff south
+			case 0xA344: //skull staff east
+			case 0xA347: //gargoyle skull staff south
+			case 0xA348: //gargoyle skull staff east
 				weaponType = "LG_MACES"; break;
 		// Bows
 			case 0x13B1: //bow
@@ -261,10 +275,10 @@ function getWeaponType( pUser )
 			case 0x26C2: //composite bow - AoS
 			case 0x26CC: //composite bow - AoS
 			case 0x2571: //horseman's bow - LBR
-			case 0x2D2B: //magical shortbow - ML
-			case 0x2D1F: //magical shortbow - ML
 			case 0x27A5: //yumi - SE
 			case 0x27F0: //yumi - SE
+			case 0x2D1F: //magical shortbow - ML
+			case 0x2D2B: //magical shortbow - ML
 				weaponType = "BOWS"; break;
 		// Crossbows
 			case 0x0F4F: //crossbow

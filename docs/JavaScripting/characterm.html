@@ -26,7 +26,7 @@
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="YellMessage">YellMessage</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void YellMessage( message );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the Char to yell a message.
+<tr><td class="property">Purpose		<td class="value">Causes the Char to yell a message to all players within range
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.YellMessage( "YARGH!" );
 </pre></table>
 
@@ -34,7 +34,7 @@
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="WhisperMessage">WhisperMessage</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void WhisperMessage( message );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the Char to whisper a message.
+<tr><td class="property">Purpose		<td class="value">Causes the Char to whisper a message that can be seen only by nearby players
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.WhisperMessage( "Shhhhh, we're hunting wabbits!" );
 </pre></table>
 
@@ -42,7 +42,7 @@
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="EmoteMessage">EmoteMessage</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void EmoteMessage( message );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the Char to emote message.  You have to put the start and end * manually in!
+<tr><td class="property">Purpose		<td class="value">Causes the Char to emote message. You have to put the start and end * manually in!
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.EmoteMessage( "*looks around*" );
 </pre></table>
 
@@ -66,7 +66,7 @@
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SoundEffect">SoundEffect</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void SoundEffect( soundID, bAllHear );</pre>
-<tr><td class="property">Purpose		<td class="value">Plays a sound from Character. SoundID is the full ID of the sound to play.  If bAllHear is TRUE, then everyone nearby hears it.  If it's false, then only the Character hears it. 
+<tr><td class="property">Purpose		<td class="value">Plays a sound from Character. SoundID is the full ID of the sound to play. If bAllHear is TRUE, then everyone nearby hears it. If it's false, then only the Character hears it.
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.SoundEffect( 568, TRUE );
 </pre></table>
 
@@ -113,36 +113,37 @@
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="DirectionTo">DirectionTo</a>
-<tr><td class="property">Prototype		<td class="value"><pre>unsigned char DirectionTo( pCheck, pType );</pre>
-<tr><td class="property">Purpose		<td class="value">Returns the direction that pCheck is facing.  If pType == 0, pCheck is a character.  If pType == 1, pCheck is an item
-<tr><td class="property">Example of Usage	<td class="value"><pre>if( GetDir( pTalking, 0 ) >= 0x80 )
-<br>{
-<br>	TextMessage( pTalkingTo, "Jinkies, you're running!" );
-<br>}
+<tr><td class="property">Prototype		<td class="value"><pre>unsigned char DirectionTo( trgObj );
+unsigned char DirectionTo( x, y );</pre>
+<tr><td class="property">Purpose		<td class="value">Returns the direction from character to trgObj/location
+<tr><td class="property">Example of Usage	<td class="value"><pre>var dir = myChar.DirectionTo( trgChar );
+var dir = myChar.DirectionTo( trgChar.x, trgChar.y );
 </pre></table>
 
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="TurnToward">TurnToward</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void TurnToward( trgChar );</pre>
-<tr><td class="property">Purpose		<td class="value">Char turns to trgChar.
-<tr><td class="property">Example of Usage	<td class="value"><pre>myNPC.TurnToward( myPlayer );
+<tr><td class="property">Prototype		<td class="value"><pre>void TurnToward( trgObj );
+void TurnToward( x, y );</pre>
+<tr><td class="property">Purpose		<td class="value">Char turns to trgObj.
+<tr><td class="property">Example of Usage	<td class="value"><pre>myNPC.TurnToward( myObject );
+myNPC.TurnToward( myObject.x, myObject.y );
 </pre></table>
 
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="ResourceCount">ResourceCount</a>
 <tr><td class="property">Prototype		<td class="value"><pre>int ResourceCount( realitemid, colour );</pre>
-<tr><td class="property">Purpose		<td class="value">Returns the amount of the items with the realitemid and the according colour.
+<tr><td class="property">Purpose		<td class="value">Returns the amount of items with specified ID realitemid and colour from character's backpack
 <tr><td class="property">Example of Usage	<td class="value"><pre>if(myChar.ResourceCount( 0x1BF2, 0 ));
 </pre></table>
 
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="UseResource">UseResource</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void UseResource( amount, realitemid );
+<tr><td class="property">Prototype		<td class="value"><pre>int UseResource( amount, realitemid );
 void UseResource( amount, realitemid, colour );</pre>
-<tr><td class="property">Purpose		<td class="value">Removes amout Items with of the ID realitemid.
+<tr><td class="property">Purpose		<td class="value">Removes amount of items with specified ID realitemid from character's backpack, and returns amount deleted
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.UseResource( 5, 0x1BF2, 0 );
 </pre></table>
 
@@ -150,7 +151,7 @@ void UseResource( amount, realitemid, colour );</pre>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="CustomTarget">CustomTarget</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void CustomTarget( tNum, toSay );</pre>
-<tr><td class="property">Purpose		<td class="value">Very similar to PopUpTarget.  It's a callback situation instead.  tNum must be between 0 and 255.  Says toSay, and shows a cursor.  Reenters the script associated with the socket's player (ie player who gets the cursor).  Enters function name based on the value of tNum.  if tNum is 0, then the function would be onCallback0.  Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
+<tr><td class="property">Purpose		<td class="value">Very similar to PopUpTarget. It's a callback situation instead. tNum must be between 0 and 255. Says toSay, and shows a cursor. Reenters the script associated with the socket's player (ie player who gets the cursor). Enters function name based on the value of tNum. if tNum is 0, then the function would be onCallback0. Prototype of callback is: <pre>function onCallback0( tSock, targSerial )</pre>
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.CustomTarget( 0, "Select your custom target:" );
 </pre></table>
 
@@ -158,16 +159,19 @@ void UseResource( amount, realitemid, colour );</pre>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="PopUpTarget">PopUpTarget</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void PopUpTarget( tNum, toSay );</pre>
-<tr><td class="property">Purpose		<td class="value">Provides a call to an inbuilt popup target.  tNum must be between 0 and 255 inclusive.  Says toSay, and shows a cursor.  Note that this allows access potentially to GM functions.
+<tr><td class="property">Purpose		<td class="value">Provides a call to an inbuilt popup target. tNum must be between 0 and 255 inclusive. Says toSay, and shows a cursor. Note that this allows access potentially to GM functions.
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.PopUpTarget( 2, "Where do you wish to teleport to?" );
 </pre></table>
 
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="InRange">InRange</a>
-<tr><td class="property">Prototype		<td class="value"><pre>int InRange( trgObj, srcType, trgType, distance );</pre>
-<tr><td class="property">Purpose		<td class="value">srcType and trgType are like objType for other funcs.  0 indicates a char, 1 indicates an item.<br>Returns true if the distance from srcObj to trgObj is less than distance
-<tr><td class="property">Example of Usage	<td class="value"><pre>if(myChar.InRange( trgItem, 0, 1, 18 ));
+<tr><td class="property">Prototype		<td class="value"><pre>bool InRange( trgObj, distance );</pre>
+<tr><td class="property">Purpose		<td class="value">Returns true if the distance to trgObj is less than distance
+<tr><td class="property">Example of Usage	<td class="value"><pre>if( myChar.InRange( trgObj, 18 ))
+	{
+		myChar.TextMessage( "I'm within range!" );
+	}
 </pre></table>
 
 <p>&nbsp;</p>
@@ -211,8 +215,8 @@ void UseResource( amount, realitemid, colour );</pre>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="StartTimer">StartTimer</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void StartTimer( numMiliSec, timerID, callback );</pre>
-<tr><td class="property">Purpose		<td class="value">Starts a timer that will elapse after numHundredthsOfSec seconds pass, for a character tChar.  timerID must be between 0 and 100.  Resulting onTimer event will be triggered. Which script it triggers in depends on the (optional, defaults to false) third parameter, which can be <strong>true</strong> (calls back to existing script), <strong>false</strong> (calls back into object's script) or an <strong>int</strong> (scriptID to call back to). This optional parameter defaults to false if not specified.
-<tr><td class="property">Example of Usage	
+<tr><td class="property">Purpose		<td class="value">Starts a timer that will elapse after numHundredthsOfSec seconds pass, for a character tChar. timerID must be between 0 and 100. Resulting onTimer event will be triggered. Which script it triggers in depends on the (optional, defaults to false) third parameter, which can be <strong>true</strong> (calls back to existing script), <strong>false</strong> (calls back into object's script) or an <strong>int</strong> (scriptID to call back to). This optional parameter defaults to false if not specified.
+<tr><td class="property">Example of Usage
 <td class="value"><pre>myChar.StartTimer( 600, 0, true ); //Timer calls back to object's script</br>
 myChar.StartTimer( 1200, 0, false ); //Timer calls back to existing script</br>
 myChar.StartTimer( 1200, 0, 2012 ); //Timer calls back to script with ID 2012
@@ -239,7 +243,7 @@ myChar.SpeechInput( 1 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="CastSpell">CastSpell</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void CastSpell( spellNum );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes character to cast spellNum.  Character can be an NPC or PC.  spellNum can be any valid spellNum (0=>63).
+<tr><td class="property">Purpose		<td class="value">Causes character to cast spellNum. Character can be an NPC or PC. spellNum can be any valid spellNum (0=>63).
 <tr><td class="property">Example of Usage	<td class="value"><pre>myChar.CastSpell( 32 );
 </pre></table>
 
@@ -255,8 +259,7 @@ myChar.SpeechInput( 1 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="MagicEffect">MagicEffect</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void MagicEffect( spellID );</pre>
-<tr><td class="property">Purpose		<td class="value">Causes the visual effects of the specified spell to be applied
-to the character.
+<tr><td class="property">Purpose		<td class="value">Applies spell effects of specified spell to character.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.MagicEffect( 43 );
 </pre></table>
@@ -265,7 +268,7 @@ myChar.MagicEffect( 43 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="GetSerial">GetSerial</a>
 <tr><td class="property">Prototype		<td class="value"><pre>int GetSerial( part );</pre>
-<tr><td class="property">Purpose		<td class="value">Part have to be between 1 and 4.
+<tr><td class="property">Purpose		<td class="value">Gets a part (1-4) of a character's serial
 <tr><td class="property">Example of Usage	<td class="value"><pre>iSerial = myChar.GetSerial( 1 );
 </pre></table>
 
@@ -318,7 +321,7 @@ myChar.SetPoisoned( 2, 10000 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="ExplodeItem">ExplodeItem</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void ExplodeItem( myItem );</pre>
-<tr><td class="property">Purpose		<td class="value">Deletes specified item with an explode sound.
+<tr><td class="property">Purpose		<td class="value">Deletes specified item by exploding it, dealing 5-10 dmg to nearby characters.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.ExplodeItem( myItem );
 </pre></table>
@@ -337,7 +340,7 @@ myChar.SetInvisible( 1, 1000 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetInvisible">AddSpell</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void AddSpell( spellNum )</pre>
-<tr><td class="property">Purpose		<td class="value">Adds specified spell to the character's spell-book
+<tr><td class="property">Purpose		<td class="value">Adds specified spell to the first spellbook in character's pack
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.AddSpell( 3 ); //adds Feeblemind spell to myChar's spellbook (if he has one)
 </pre></table>
@@ -388,7 +391,7 @@ myChar.OpenLayer( pSock, 0x15 );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="BoltEffect">BoltEffect</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void BoltEffect()</pre>
-<tr><td class="property">Purpose		<td class="value">Plays the lightning bolt effect on specified character to all nearby.
+<tr><td class="property">Purpose		<td class="value">Plays the lightning bolt effect on specified character to all nearby players.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.BoltEffect();
 </pre></table>
@@ -396,8 +399,9 @@ myChar.BoltEffect();
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="Gate">Gate</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void Gate( item )</pre>
-<tr><td class="property">Purpose		<td class="value">Opens a gate to the location marked on an item.
+<tr><td class="property">Prototype		<td class="value"><pre>void Gate( item )
+void Gate( x, y, z, world )</pre>
+<tr><td class="property">Purpose		<td class="value">Opens a gate to the location marked on an item, or to a specific set of coordinates
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.Gate( targItem );
 </pre></table>
@@ -423,7 +427,7 @@ myChar.Mark( targItem );
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetSkillByName">SetSkillByName</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void SetSkillByName( "skillName", value )</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>bool SetSkillByName( "skillName", value )</pre>
 <tr><td class="property">Purpose		<td class="value">Sets the skill specified by name to the value specified (name must be the same as in skills.dfn, "ALLSKILLS" is also applicable.
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 myChar.SetSkillByName( "alchemy", 1000 );
@@ -493,12 +497,12 @@ function onUseChecked( pUser, iUsed )
 <p>&nbsp;</p>
 <table class="method">
 <tr>
-  <th colspan=3 bgcolor="maroon"><a name="Resist" id="Resist">Resist</a>
+	<th colspan=3 bgcolor="maroon"><a name="Resist" id="Resist">Resist</a>
 <tr><td class="property">Prototype		<td class="value"><pre>int Resist( resistanceType );
 void Resist( resistanceType, amount );</pre>
-<tr><td class="property">Purpose		
-<td class="value">Used to get/set the resistance type and amount of the object 
-<tr><td class="property">Parameters		
+<tr><td class="property">Purpose
+<td class="value">Used to get/set the resistance type and amount of the object
+<tr><td class="property">Parameters
 <td class="value"><p>Current resistanceTypes are:<br>
   1 - Armor<br>
   2 - Light<br>
@@ -517,7 +521,7 @@ var coldResist = pUser.Resist( 4 );</pre>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="SpellMoveEffect">SpellMoveEffect</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void SpellMoveEffect( targetChar, mSpell )</pre>
-<tr><td class="property">Purpose		<td class="value">Play the MOVEFX effect specified for the specified spell in SPELLS.DFN, from the sourceChar to the targetChar
+<tr><td class="property">Purpose		<td class="value">Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going from the character to the target
 <tr><td class="property">Parameters		<td class="value">
 <tr><td class="property">Example of Usage	<td class="value"><pre>
 var spellNum	= mChar.spellCast;
@@ -541,7 +545,7 @@ targetChar.SpellStaticEffect( mSpell );
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="BreakConcentration">BreakConcentration</a>
 <tr><td class="property">Prototype		<td class="value"><pre>void BreakConcentration()
-bool BreakConcentration( socket )</pre>
+void BreakConcentration( socket )</pre>
 <tr><td class="property">Purpose		<td class="value">Break a caster's concentration
 <tr><td class="property">Parameters		<td class="value">
 <tr><td class="property">Example of Usage	<td class="value"><pre>
@@ -552,7 +556,7 @@ myPlayer.BreakConcentration( mSocket ); //for players, who DO have sockets
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="FindItemType">FindItemType</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void FindItemType( itemType )</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>Item FindItemType( itemType )</pre>
 <tr><td class="property">Purpose		<td class="value">Look for items of a certain type in character's pack
 <tr><td class="property">Parameters		<td class="value">
 <tr><td class="property">Example of Usage	<td class="value"><pre>
@@ -572,7 +576,7 @@ myNPC.InitWanderArea();
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="ReactOnDamage">ReactOnDamage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void ReactOnDamage( damageType, attacker ); <br>void ReactOnDamage( damageType, attacker );</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>void ReactOnDamage( damageType ); <br>void ReactOnDamage( damageType, attacker );</pre>
 <tr><td class="property">Purpose		<td class="value">Make a character react on damage
 <tr><td class="property">Parameters		<td class="value">
 <tr><td class="property">Example of Usage	<td class="value"><pre>
@@ -583,7 +587,9 @@ myChar.ReactOnDamage( 2, attackerChar );
 <p>&nbsp;</p>
 <table class="method">
 <tr><th colspan=3 bgcolor="maroon"><a name="Damage">Damage</a>
-<tr><td class="property">Prototype		<td class="value"><pre>void Damage( amount ); <br>void Damage( amount, healer );</pre>
+<tr><td class="property">Prototype		<td class="value"><pre>void Damage( amount );
+void Damage( amount, attacker );
+void Damage( amount, attacker, doRepSys );</pre>
 <tr><td class="property">Purpose		<td class="value">Cause damage to a character
 <tr><td class="property">Parameters		<td class="value">doRepSys true/false = flag as criminal?
 <tr><td class="property">Example of Usage	<td class="value"><pre>

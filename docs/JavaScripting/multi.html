@@ -18,80 +18,25 @@
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_FindMulti">FindMulti</a>
 <tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>multiID FindMulti( x, y, z, worldNumber );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Finds the multi that is in the area of the coordinates (x, y, z) in world worldNumber (0 == Britannia, 2 == ilshenar)
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalking, 0 ), GetY( pTalking, 0 ), GetZ( pTalking, 0 ) );
-<br>if( iMulti != -1 )
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+<br>if( iMulti )
 <br>{
-<br>	TextMessage( pTalking, "You know, I'm standing in a house!" );
+<br>	pChar.TextMessage( "You know, I'm standing in a house!" );
 <br>}
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SE_IsInMulti">IsInMulti</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsInMulti( multiID, object, objType );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the object (objType == 0 indicates character, objType == 1 indicates item) is in the multi multiID.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalking, 0 ), GetY( pTalking, 0 ), GetZ( pTalking, 0 ) );
-<br>if( IsInMulti( iMulti, pTalkingTo, 0 ) )
-<br>{
-<br>	TextMessage( pTalking, "I can see you, you're in here with me!" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnBanList">IsOnBanList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnBanList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is on multiID's ban list
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalking, 0 ), GetY( pTalking, 0 ), GetZ( pTalking, 0 ) );
-<br>if( IsOnBanList( iMulti, pTalkingTo ) )
-<br>{
-<br>	TextMessage( pTalking, "Out of my house, spawn of satan!" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnOwnerList">IsOnOwnerList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnOwnerList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is an owner of multiID
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalking, 0 ), GetY( pTalking, 0 ), GetZ( pTalking, 0 ) );
-<br>if( IsOnOwnerList( iMulti, pTalkingTo ) )
-<br>{
-<br>	TextMessage( pTalking, "Welcome to my house, fellow owner" );
-<br>}
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToBanList">AddToBanList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToBanList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the character pChar to the multiID's ban list.  Returns true if the parameters are valid.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalking, 0 ), GetY( pTalking, 0 ), GetZ( pTalking, 0 ) );
-<br>TextMessage( pTalking, "Out of my house, now!" );
-<br>AddToBanList( iMulti, pTalkingTo );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToOwnerList">AddToOwnerList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToOwnerList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds pChar to the multiID's owner list.  Doesn't remove existing owners at all.  Won't duplicate if already on the list.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalkingTo, 0 ), GetY( pTalkingTo, 0 ), GetZ( pTalkingTo, 0 ) );
-<br>TextMessage( pTalkingTo, "Awww, cause you spoke to me, I'll add you as an owner" );
-<br>AddToOwnerList( iMulti, pTalking );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromBanList">RemoveFromBanList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromBanList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from multiID's ban list.  Returns true on correct parameters.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalkingTo, 0 ), GetY( pTalkingTo, 0 ), GetZ( pTalkingTo, 0 ) );
-<br>TextMessage( pTalkingTo, "As you have repented, I shall allow thee to come back in" );
-<br>RemoveFromBanList( iMulti, pTalking );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromOwnerList">RemoveFromOwnerList</a>
-<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromOwnerList( multiID, pChar );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from multiID's owner list.  Returns true on correct parameters.
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( GetX( pTalkingTo, 0 ), GetY( pTalkingTo, 0 ), GetZ( pTalkingTo, 0 ) );
-<br>TextMessage( pTalkingTo, "You have betrayed my trust, and so you must leave" );
-<br>RemoveFromOwnerList( iMulti, pTalking );
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsInMulti( ourObj );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the object is in the multi.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, pChar.worldnumber );
+if( iMulti )
+{
+	if( iMulti.IsInMulti( ourObj ) )
+	{
+		ourObj.TextMessage( "I am in a multi!" );
+	}
+{
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -102,6 +47,64 @@
 <br>{
 <br>	TextMessage( pTalkingTo, "Sir, do you realize you have a house on your back?" );
 <br>}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnBanList">IsOnBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is on the multi's ban list
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, pChar.worldnumber );
+if( iMulti.IsOnBanList( pChar ))
+{
+	pChar.TextMessage( "Oops, I appear to be on the banlist of this house!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_IsOnOwnerList">IsOnOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool IsOnOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Returns true if the character pChar is an owner of the multi
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+if( iMulti.IsOnOwnerList( pChar ))
+{
+	pChar.TextMessage( "Ahh, I appear to be on the owner-list of this house!" );
+}
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToBanList">AddToBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the character pChar to the multi's ban list. Returns true if the parameters are valid.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "I'm getting banned from this house!" );
+iMulti.AddToBanList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_AddToOwnerList">AddToOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool AddToOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Adds the character pChar to the multi's owner list. Doesn't remove existing owners at all. Won't duplicate if already on the list.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Awww, I'm being added as an owner of this house!" );
+iMulti.AddToOwnerList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromBanList">RemoveFromBanList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromBanList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from the multi's ban list. Returns true on correct parameters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Yay! I've been removed from the ban-list of this house!" );
+iMulti.RemoveFromBanList( pChar );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="SE_RemoveFromOwnerList">RemoveFromOwnerList</a>
+<tr><td valign="top" width="25%"><b>ProtoType</b><td><pre>bool RemoveFromOwnerList( pChar );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Removes pChar from the multi's owner list. Returns true on correct parameters.
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var iMulti = FindMulti( pChar.x, pChar.y, pChar.z, pChar.worldnumber );
+pChar.TextMessage( "Oops! I am being removed as owner of this house!" );
+iMulti.RemoveFromOwnerList( pChar );
 </pre></table>
 
 <center>

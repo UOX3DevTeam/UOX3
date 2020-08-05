@@ -51,10 +51,17 @@
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="OpenUrl">OpenUrl</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SysMessage( string message );
+<tr><th colspan=3 bgcolor="maroon"><a name="OpenUrl">OpenURL</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenURL( UrlString );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens a specified URL in player's browser
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.OpenUrl( "http://www.uox3.org" );
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.OpenURL( "http://www.uox3.org" );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="OpenGump">OpenGump</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void OpenGump( gumpMenuID );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Opens specified gumpmenu from dfndata\misc\gumps.dfn for socket
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.OpenGump( 1 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
@@ -109,6 +116,48 @@ void WhoList();
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>mySock.SetTimer( 3, 1000 );
 </pre></table>
 
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetByte">GetByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned char GetByte( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a byte from a socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetByte( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSByte">GetSByte</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed char GetSByte( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a byte from a socket at offset, negative valus accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSByte( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetWord">GetWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 2 bytes of data from socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSWord">GetSWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>signed short GetSWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Retur 2 bytes of data from socket at offset, negative value accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetDWord">GetDWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetDWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 4 bytes of data from socket at offset, positive value assumed
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetDWord( 0 );
+</pre></table>
+
+<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
+<tr><th colspan=3 bgcolor="maroon"><a name="GetSDWord">GetSDWord</a>
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetSDWord( offset );
+</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return 4 bytes of data from socket at offset, negative value accepted
+<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetSDWord( 0 );
+</pre></table>
+
 <table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="GetString">GetString</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>string GetString( offset [, len] );
@@ -117,43 +166,29 @@ void WhoList();
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="GetByte">GetByte</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned char GetByte( offset );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a byte from a socket at offset
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetByte( 0 );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
-<tr><th colspan=3 bgcolor="maroon"><a name="GetWord">GetWord</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>unsigned short GetWord( offset );
-</pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Return a 16bit word from a socket at offset
-<tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>var cName = sock.GetWord( 0 );
-</pre></table>
-
-<p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetByte">SetByte</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetByte( offset, value );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetByte( offset, value );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the byte at offset for socket to value
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetByte( 0, 64 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetWord">SetWord</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetWord( offset, value );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetWord( offset, value );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the 16bit word at offset for socket to value
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetWord( 0, 0164 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetDWord">SetDWord</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetDWord( offset, value );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetDWord( offset, value );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the 32bit word at offset for socket to value
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetDWord( 0, 01640164 );
 </pre></table>
 
 <p>&nbsp;</p><table border="1" width="100%" cellspacing="0">
 <tr><th colspan=3 bgcolor="maroon"><a name="SetString">SetString</a>
-<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>SetString( offset, value );
+<tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void SetString( offset, value );
 </pre><tr><td valign="top" width="25%"><b>Purpose</b><td>Sets the string at offset for socket to value
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>sock.SetString( 0, "Die!" );
 </pre></table>
@@ -170,7 +205,7 @@ void WhoList();
   <th colspan=3 bgcolor="maroon"><a name="DisplayDamage" id="DisplayDamage">DisplayDamage</a>
 <tr><td valign="top" width="25%"><b>Prototype</b><td><pre>void DisplayDamage( pUser, damage );</pre>
 <tr><td valign="top" width="25%"><b>Purpose</b>
-<td>Displays specified damage value over character's head 
+<td>Displays specified damage value over character's head
 <tr><td valign="top" width="25%"><b>Example of Usage</b><td><pre>socket.DisplayDamage( pUser, 15 );</pre>
 </table>
 

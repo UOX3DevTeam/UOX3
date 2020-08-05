@@ -1,7 +1,7 @@
 td
 {
-	font-family: Arial, Helvetica, sans-serif; 
-	font-size: 10px; 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
 	color: #DDDDDD;
 }
 th, table.method th
@@ -10,7 +10,7 @@ th, table.method th
 }
 body
 {
-	font-family: Arial, Helvetica, sans-serif; 
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	background-color: #333399;
 	color: #999999;
@@ -29,13 +29,13 @@ a:active
 }
 a
 {
-	color: #ADD8E6; 
-	text-decoration: none; 
+	color: #ADD8E6;
+	text-decoration: none;
 	border-bottom-width: medium;
 }
 a:hover
 {
-	color: #FBC631; 
+	color: #FBC631;
 	text-decoration: underline;
 }
 pre
@@ -65,8 +65,8 @@ th.method
 
 td.property
 {
-	font-family: Arial, Helvetica, sans-serif; 
-	font-size: 12px; 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
 	color: #F08080;
 	width: 25%;
 	vertical-align: top;
@@ -76,19 +76,19 @@ td.property
 
 td.value
 {
-	font-family: Arial, Helvetica, sans-serif; 
-	font-size: 12px; 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
 	width: 75%;
 	border: 1px solid white;
 	padding: 2px;
 }
 h3
 {
-	color: #FBC631; 
+	color: #FBC631;
 }
 h4
 {
-	color: #FBC631; 
+	color: #FBC631;
 	font-style: italic;
 }
 p.faq
