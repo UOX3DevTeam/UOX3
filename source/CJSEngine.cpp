@@ -1,20 +1,18 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	CJSEngine.cpp
-//|	Date			-	2/22/2006
-//|	Developers		-	Based on parts of cScript.cpp by Abaddon, rewritten by giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	JS Engine Handling
-//o--------------------------------------------------------------------------o
-//| Modifications	-	Version History
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	CJSEngine.cpp
+//|	Date		-	2/22/2006
+//|	Programmer	-	Based on parts of cScript.cpp by Abaddon, rewritten by giwo
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	JS Engine Handling
+//o-----------------------------------------------------------------------------------------------o
+//| Changes		-	Version History
 //|
-//|							1.0			giwo		2/22/2006
-//|							Extracted JSObject handling from cScript and encapsulated it in a global class.
-//|							Moved global JSEngine loading code into the class.
-//							Created CJSRuntime class to handle multiple runtimes (for threading purposes).
-//|
-//o--------------------------------------------------------------------------o
+//|					1.0			giwo		2/22/2006
+//|					Extracted JSObject handling from cScript and encapsulated it in a global class.
+//|					Moved global JSEngine loading code into the class.
+//|					Created CJSRuntime class to handle multiple runtimes (for threading purposes).
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "CJSEngine.h"
 #include "UOXJSClasses.h"
@@ -237,6 +235,7 @@ namespace UOX
 		protoList[JSP_ACCOUNTS]	=	JS_InitClass( cx, obj, NULL, &UOXAccount_class,		NULL,		0,		CAccountProperties,		CAccount_Methods,	NULL,	NULL );
 		protoList[JSP_CONSOLE]	=	JS_InitClass( cx, obj, NULL, &UOXConsole_class,		NULL,		0,		CConsoleProperties,		CConsole_Methods,	NULL,	NULL );
 		protoList[JSP_REGION]	=	JS_InitClass( cx, obj, NULL, &UOXRegion_class,		NULL,		0,		CRegionProperties,		NULL,				NULL,	NULL );
+		protoList[JSP_SPAWNREGION]=	JS_InitClass( cx, obj, NULL, &UOXSpawnRegion_class,	NULL,		0,		CSpawnRegionProperties,	NULL,				NULL,	NULL );
 		protoList[JSP_RESOURCE]	=	JS_InitClass( cx, obj, NULL, &UOXResource_class,	NULL,		0,		CResourceProperties,	NULL,				NULL,	NULL );
 		protoList[JSP_RACE]		=	JS_InitClass( cx, obj, NULL, &UOXRace_class,		NULL,		0,		CRaceProperties,		CRace_Methods,		NULL,	NULL );
 		protoList[JSP_GUILD]	=	JS_InitClass( cx, obj, NULL, &UOXGuild_class,		NULL,		0,		CGuildProperties,		CGuild_Methods,		NULL,	NULL );
@@ -373,12 +372,19 @@ namespace UOX
 			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
 			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
 			break;
+		case IUE_SPAWNREGION:
+			toMake = JS_NewObject( jsContext, &UOXSpawnRegion_class, protoList[JSP_SPAWNREGION], jsGlobal );
+			if( toMake == NULL )
+				return NULL;
+			//JS_DefineFunctions( jsContext, toMake, CSpawnRegion_Methods );
+			//JS_DefineProperties( jsContext, toMake, CSpawnRegionProperties );
+			break;
 		case IUE_PARTY:
 			toMake = JS_NewObject( jsContext, &UOXParty_class.base, protoList[JSP_PARTY], jsGlobal ); 
 			if( toMake == NULL )
 				return NULL;
-			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
-			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
+			//JS_DefineFunctions( jsContext, toMake, CParty_Methods );
+			//JS_DefineProperties( jsContext, toMake, CPartyProperties );
 			break;
 		default:
 		case IUE_COUNT:

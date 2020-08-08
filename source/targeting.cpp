@@ -31,7 +31,12 @@ void tweakCharMenu( CSocket *s, CChar *c );
 void OpenPlank( CItem *p );
 bool checkItemRange( CChar *mChar, CItem *i );
 
-void PlVBuy( CSocket *s )//PlayerVendors
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlVBuy( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player tries buying an item from a player vendor
+//o-----------------------------------------------------------------------------------------------o
+void PlVBuy( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
@@ -84,6 +89,11 @@ void PlVBuy( CSocket *s )//PlayerVendors
 	i->SetCont( p );	// move containers
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleGuildTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles targeting related to guild actions
+//o-----------------------------------------------------------------------------------------------o
 void HandleGuildTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -165,9 +175,13 @@ void HandleGuildTarget( CSocket *s )
 			}
 			break;
 	}
-
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleSetScpTrig( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Assign a JS script ID to a target character or item
+//o-----------------------------------------------------------------------------------------------o
 void HandleSetScpTrig( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -201,6 +215,11 @@ void HandleSetScpTrig( CSocket *s )
 }
 
 void BuildHouse( CSocket *s, UI08 houseEntry );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void BuildHouseTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Verifies player has a valid target when trying to place a house
+//o-----------------------------------------------------------------------------------------------o
 void BuildHouseTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -225,10 +244,16 @@ void BuildHouseTarget( CSocket *s )
 	s->AddID1( 0 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddScriptNpc( CSocket *s )
+//|	Date		-	17th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add NPC at targeted location
+//| Notes		-	Need to return the character we've made, else summon creature at least will fail
+//|					We make the char, but never pass it back up the chain
+//o-----------------------------------------------------------------------------------------------o
 void AddScriptNpc( CSocket *s )
-// Abaddon 17th February, 2000
-// Need to return the character we've made, else summon creature at least will fail
-// We make the char, but never pass it back up the chain
 {
 	VALIDATESOCKET( s );
 	if( s->GetDWord( 11 ) == INVALIDSERIAL )
@@ -238,9 +263,14 @@ void AddScriptNpc( CSocket *s )
 	const SI16 coreX		= s->GetWord( 11 );
 	const SI16 coreY		= s->GetWord( 13 );
 	const SI08 coreZ		= static_cast<SI08>(s->GetByte( 16 ) + Map->TileHeight( s->GetWord( 17 ) ));
-	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber() );
+	CChar *cCreated			= Npcs->CreateNPCxyz( s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceID() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TeleTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles targeting of Teleport spell
+//o-----------------------------------------------------------------------------------------------o
 void TeleTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -292,6 +322,11 @@ void TeleTarget( CSocket *s )
 	} 
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DyeTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dye target object with specified hue, or show dye gump to player
+//o-----------------------------------------------------------------------------------------------o
 void DyeTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -359,91 +394,11 @@ void DyeTarget( CSocket *s )
 	}
 }
 
-void KeyTarget( CSocket *s )
-{
-	VALIDATESOCKET( s );
-	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
-	if( !ValidateObject( i ) )
-		return;
-
-	CChar *mChar		= s->CurrcharObj();
-	SERIAL moreSerial	= s->AddID();
-	if( i->GetTempVar( CITV_MORE ) == 0 )
-	{       
-		if( i->GetType() == IT_KEY && objInRange( mChar, i, DIST_NEARBY ) )
-		{
-			if( !Skills->CheckSkill( mChar, TINKERING, 400, 1000 ) ) 
-			{
-				s->sysmessage( 1016 );
-				i->Delete();
-				return;
-			}
-			i->SetTempVar( CITV_MORE, moreSerial );
-			s->sysmessage( 1017 );
-		}
-	}
-	else if( i->GetTempVar( CITV_MORE ) == moreSerial || s->AddID1() == 0xFF )
-	{
-		if( objInRange( mChar, i, DIST_NEARBY ) )
-		{
-			switch( i->GetType() )
-			{
-			case IT_CONTAINER:
-			case IT_SPAWNCONT:
-				if( i->GetType() == IT_CONTAINER ) 
-					i->SetType( IT_LOCKEDCONTAINER );
-				else if( i->GetType() == IT_SPAWNCONT ) 
-					i->SetType( IT_LOCKEDSPAWNCONT );
-				s->sysmessage( 1018 );
-				break;
-			case IT_KEY:
-				mChar->SetSpeechItem( i );
-				mChar->SetSpeechMode( 5 );
-				s->sysmessage( 1019 );
-				break;
-			case IT_LOCKEDCONTAINER:
-			case IT_LOCKEDSPAWNCONT:
-				if( i->GetType() == IT_LOCKEDCONTAINER ) 
-					i->SetType( IT_CONTAINER );
-				if( i->GetType() == IT_LOCKEDSPAWNCONT ) 
-					i->SetType( IT_SPAWNCONT );
-				s->sysmessage( 1020 );
-				break;
-			case IT_DOOR:
-				i->SetType( IT_LOCKEDDOOR );
-				s->sysmessage( 1021 );
-				Effects->PlaySound( s, 0x0049, true );
-				break;
-			case IT_LOCKEDDOOR:
-				i->SetType( IT_DOOR );
-				s->sysmessage( 1022 );
-				Effects->PlaySound( s, 0x0049, true );
-				break;
-			case IT_HOUSESIGN:
-				s->sysmessage( 1023 );
-				mChar->SetSpeechMode( 8 );
-				mChar->SetSpeechItem( i );
-				break;
-			case IT_PLANK:
-				OpenPlank( i );
-				s->sysmessage( "You open the plank" );
-				break;
-			}
-		}
-		else
-			s->sysmessage( 393 );
-	}
-	else
-	{
-		if( i->GetType() == IT_KEY ) 
-			s->sysmessage( 1024 );
-		else if( i->GetTempVar( CITV_MORE, 1 ) == 0 ) 
-			s->sysmessage( 1025 );
-		else 
-			s->sysmessage( 1026 );
-	}
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void WstatsTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Show NPC wander information for targeted NPC 
+//o-----------------------------------------------------------------------------------------------o
 void WstatsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -471,6 +426,11 @@ void WstatsTarget( CSocket *s )
 	wStat.Send( 4, false, INVALIDSERIAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ColorsTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Use dyes to apply a color to a targeted dye tub or hair dye item
+//o-----------------------------------------------------------------------------------------------o
 void ColorsTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -491,6 +451,7 @@ void ColorsTarget( CSocket *s )
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) )
 		return;
+
 	if( i->GetID() == 0x0FAB || i->GetID() == 0x0EFF || i->GetID() == 0x0E27 )	// dye vat, hair dye
 	{
 		CPDyeVat toSend = (*i);
@@ -500,6 +461,11 @@ void ColorsTarget( CSocket *s )
 		s->sysmessage( 1031 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DvatTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dye target object - if dyable - with specified dye tub color
+//o-----------------------------------------------------------------------------------------------o
 void DvatTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -541,6 +507,11 @@ void DvatTarget( CSocket *s )
 		s->sysmessage( 1033 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void InfoTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Show information about targeted maptile or static item
+//o-----------------------------------------------------------------------------------------------o
 void InfoTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -702,6 +673,11 @@ void InfoTarget( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TweakTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Bring up Tweak menu for targeted object
+//o-----------------------------------------------------------------------------------------------o
 void TweakTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -717,6 +693,14 @@ void TweakTarget( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Tiling( CSocket *s )
+//|	Date		-	01/11/1999
+//|	Programmer	-	Crwth
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clicking the corners of tiling calls this function. Will fill up each tile
+//|					of targeted area with specified item
+//o-----------------------------------------------------------------------------------------------o
 void Tiling( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -769,22 +753,11 @@ void Tiling( CSocket *s )
 	s->AddID2( 0 );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	void newCarveTarget( CSocket *s, CItem *i )
-//|	Date			-	09/22/2002
-//|	Developer(s)	-	Unknown
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Target carving system.
-//|									
-//|	Modification	-	unknown   	-	Human-corpse carving code added
-//|									
-//|	Modification	-	unknown   	-	Scriptable carving product added
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Fixed erroneous names for body parts 
-//|									& made all body parts that are carved from human corpse	
-//|									lie in same direction.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create body parts after carving up a corpse
+//o-----------------------------------------------------------------------------------------------o
 bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 {
 	CItem *toCreate = Items->CreateItem( NULL, mChar, partID, 1, 0, OT_ITEM );
@@ -796,6 +769,22 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, UI16 partID, SI32 dictEntry )
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void newCarveTarget( CSocket *s, CItem *i )
+//|	Date		-	09/22/2002
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Target carving system.
+//|									
+//|	Changes		-	unknown   	-	Human-corpse carving code added
+//|									
+//|	Changes		-	unknown   	-	Scriptable carving product added
+//|									
+//|	Changes		-	09/22/2002	-	Xuri - Fixed erroneous names for body parts 
+//|									& made all body parts that are carved from human corpse	
+//|									lie in same direction.
+//o-----------------------------------------------------------------------------------------------o
 void newCarveTarget( CSocket *s, CItem *i )
 {
 	VALIDATESOCKET( s );
@@ -867,6 +856,11 @@ void newCarveTarget( CSocket *s, CItem *i )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AttackTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Make pet attack target
+//o-----------------------------------------------------------------------------------------------o
 void AttackTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -899,6 +893,11 @@ void AttackTarget( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void FollowTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Make pet follow target
+//o-----------------------------------------------------------------------------------------------o
 void FollowTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -912,6 +911,11 @@ void FollowTarget( CSocket *s )
 	char1->SetNpcWander( WT_FOLLOW );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TransferTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Transfer pet ownership to targeted player
+//o-----------------------------------------------------------------------------------------------o
 void TransferTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -942,6 +946,11 @@ void TransferTarget( CSocket *s )
 	char1->SetNpcWander( WT_FREE );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool BuyShop( CSocket *s, CChar *c )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens a vendor's buy menu with list of items for sale
+//o-----------------------------------------------------------------------------------------------o
 bool BuyShop( CSocket *s, CChar *c )
 {
 	if( s == NULL )
@@ -994,16 +1003,15 @@ bool BuyShop( CSocket *s, CChar *c )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function		-  void npcresurrecttarget( CChar *i )
-//|   Date			-  UnKnown
-//|   Programmer	-  UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
-//|									
-//|	Modification	-	09/22/2002	-	Xuri - Made players not appear with full 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void NpcResurrectTarget( CChar *i )
+//|	Programmer	-	UnKnown  (Touched tabstops by Tauriel Dec 28, 1998)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resurrects a character
+//o-----------------------------------------------------------------------------------------------o
+//|	Changes		-	09/22/2002	-	Xuri - Made players not appear with full 
 //|									health/stamina after being resurrected by NPC Healer
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Resurrects a character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void NpcResurrectTarget( CChar *i )
 {
 	if( !ValidateObject( i ) )
@@ -1095,14 +1103,19 @@ void NpcResurrectTarget( CChar *i )
 		Console.Warning( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() );
 }
 
-
 void killKeys( SERIAL targSerial );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseOwnerTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Transfer house ownership to targeted player
+//o-----------------------------------------------------------------------------------------------o
 void HouseOwnerTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 
 	CItem *sign = static_cast<CItem *>(s->TempObj());
 	s->TempObj( NULL );
+
 	CChar *mChar = s->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return;
@@ -1142,6 +1155,11 @@ void HouseOwnerTarget( CSocket *s )
 	oSock->sysmessage( 1082, mChar->GetName().c_str() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseEjectTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Eject targeted player from house
+//o-----------------------------------------------------------------------------------------------o
 void HouseEjectTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1163,6 +1181,11 @@ void HouseEjectTarget( CSocket *s )
 }
 
 UI08 AddToHouse( CMultiObj *house, CChar *toAdd, UI08 mode = 0 );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseBanTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Ban targeted player from house
+//o-----------------------------------------------------------------------------------------------o
 void HouseBanTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1181,6 +1204,11 @@ void HouseBanTarget( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseFriendTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add targeted player to house friendslist
+//o-----------------------------------------------------------------------------------------------o
 void HouseFriendTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1205,6 +1233,11 @@ void HouseFriendTarget( CSocket *s )
 }
 
 bool DeleteFromHouseList( CMultiObj *house, CChar *toDelete, UI08 mode );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseUnlistTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove targeted player to house friendslist
+//o-----------------------------------------------------------------------------------------------o
 void HouseUnlistTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1221,6 +1254,11 @@ void HouseUnlistTarget( CSocket *s )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ShowSkillTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Show a gump with information about target character's skills
+//o-----------------------------------------------------------------------------------------------o
 void ShowSkillTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1249,6 +1287,11 @@ void ShowSkillTarget( CSocket *s )
 	showSkills.Send( 4, false, INVALIDSERIAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void FriendTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add targeted player to pet's friendslist
+//o-----------------------------------------------------------------------------------------------o
 void FriendTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1295,11 +1338,16 @@ void FriendTarget( CSocket *s )
 		targSock->sysmessage( 1625, mChar->GetName().c_str(), pet->GetName().c_str() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GuardTarget( CSocket *s )
+//|	Date		-	October 3rd, ????
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Command pet to guard target object
+//|	Notes		-	PRE: Pet has been commanded to guard
+//|					POST: Pet guards person, if owner currently
+//o-----------------------------------------------------------------------------------------------o
 void GuardTarget( CSocket *s )
-//PRE:	Pet has been commanded to guard
-//POST: Pet guards person, if owner currently
-//DEV:	Abaddon
-//DATE: 3rd October
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
@@ -1344,11 +1392,16 @@ void GuardTarget( CSocket *s )
 	}
 }
 
-void HouseLockdown( CSocket *s ) // Abaddon
-// PRE:		S is the socket of a valid owner/coowner and is in a valid house
-// POST:	either locks down the item, or puts a message to the owner saying he's a moron
-// CODER:	Abaddon
-// DATE:	17th December, 1999
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseLockdown( CSocket *s )
+//|	Date		-	17th December, 1999
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Attempt to lock down targeted item inside house
+//|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house
+//|					POST: either locks down the item, or puts a message to the owner saying he's a moron
+//o-----------------------------------------------------------------------------------------------o
+void HouseLockdown( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());
@@ -1389,11 +1442,16 @@ void HouseLockdown( CSocket *s ) // Abaddon
 		s->sysmessage( 1108 );
 }
 
-void HouseRelease( CSocket *s ) // Abaddon
-// PRE:		S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
-// POST:	either releases the item from lockdown, or puts a message to the owner saying he's a moron
-// CODER:	Abaddon
-// DATE:	17th December, 1999
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HouseRelease( CSocket *s )
+//|	Date		-	17th December, 1999
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Attempt to release targeted item inside house, if locked down
+//|	Notes		-	PRE: S is the socket of a valid owner/coowner and is in a valid house, the item is locked down
+//|					POST: either releases the item from lockdown, or puts a message to the owner saying he's a moron
+//o-----------------------------------------------------------------------------------------------o
+void HouseRelease( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CMultiObj *house =  static_cast<CMultiObj *>(s->TempObj());	// let's find our house
@@ -1433,6 +1491,11 @@ void HouseRelease( CSocket *s ) // Abaddon
 		s->sysmessage( 1108 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MakeTownAlly( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds town of targeted character as an ally of player's town
+//o-----------------------------------------------------------------------------------------------o
 void MakeTownAlly( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1453,6 +1516,12 @@ void MakeTownAlly( CSocket *s )
 		s->sysmessage( 1111 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MakeStatusTarget( CSocket *sock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Change privileges of targeted character to specified command level
+//|					as defined in the COMMANDSLEVEL section of dfndata/commands/commands.dfn
+//o-----------------------------------------------------------------------------------------------o
 void MakeStatusTarget( CSocket *sock )
 {
 	VALIDATESOCKET( sock );
@@ -1573,6 +1642,11 @@ void MakeStatusTarget( CSocket *sock )
 	targetChar->Teleport();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SmeltTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Smelt targeted item to receive some crafting resources
+//o-----------------------------------------------------------------------------------------------o
 void SmeltTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1598,6 +1672,7 @@ void SmeltTarget( CSocket *s )
 		s->sysmessage( 1113 );
 		return;
 	}
+
 	UI16 iMadeFrom = i->EntryMadeFrom();
 
 	createEntry *ourCreateEntry = Skills->FindItem( iMadeFrom );
@@ -1632,12 +1707,18 @@ void SmeltTarget( CSocket *s )
 	i->Delete();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void VialTarget( CSocket *mSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles targeting of objects after player uses a vial to create necro reagents
+//o-----------------------------------------------------------------------------------------------o
 void VialTarget( CSocket *mSock )
 {
 	VALIDATESOCKET( mSock );
 
 	CItem *nVialID = static_cast<CItem *>(mSock->TempObj());
 	mSock->TempObj( NULL );
+
 	SERIAL targSerial = mSock->GetDWord( 7 );
 	if( targSerial == INVALIDSERIAL )
 		return;
@@ -1724,16 +1805,14 @@ void VialTarget( CSocket *mSock )
 	}	
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void MultiTarget( CSocket *s )
-//|	Date			-	Unknown
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Runs various commands based upon the target ID we sent to the socket
-//o--------------------------------------------------------------------------o
-//| Modifications	-	Overhauled to use an enum allowing simple modification (Zane)
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPITargetCursor::Handle( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Runs various commands based upon the target ID we sent to the socket
+//o-----------------------------------------------------------------------------------------------o
+//| Changes		-	Overhauled to use an enum allowing simple modification (Zane)
+//o-----------------------------------------------------------------------------------------------o
 bool CPITargetCursor::Handle( void )
 {
 	CChar *mChar = tSock->CurrcharObj();
@@ -1782,7 +1861,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_BUILDHOUSE:		BuildHouseTarget( tSock );				break;
 					case TARGET_TELE:			TeleTarget( tSock );					break;	
 					case TARGET_DYE:			DyeTarget( tSock );						break;
-					case TARGET_KEY:			KeyTarget( tSock );						break;
 					case TARGET_DYEALL:			ColorsTarget( tSock );					break;
 					case TARGET_DVAT:			DvatTarget( tSock );					break;
 					case TARGET_INFO:			InfoTarget( tSock );					break;

@@ -31,6 +31,8 @@
 #include "JSEncapsulate.h"
 #include "CJSEngine.h"
 #include "PartySystem.h"
+#include "cSpawnRegion.h"
+
 
 namespace UOX
 {
@@ -77,6 +79,11 @@ void InitStringToObjType( void )
 	stringToObjType["BOAT"]			= OT_BOAT;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectType FindObjTypeFromString( UString strToFind )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Determine object type (ITEM, CHARACTER, MULTI, etc) based on provided string
+//o-----------------------------------------------------------------------------------------------o
 ObjectType FindObjTypeFromString( UString strToFind )
 {
 	if( stringToObjType.empty() )	// if we haven't built our array yet
@@ -88,6 +95,12 @@ ObjectType FindObjTypeFromString( UString strToFind )
 }
 
 // Effect related functions
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Does a temporary effect (things like protection, night sight, and what not) frm
+//|					src to trg. If iType = 0, then it's a character, otherwise it's an item.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 7 )
@@ -151,6 +164,11 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
 // Speech related functions
 void sysBroadcast( const std::string& txt );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Broadcasts specified string to all online players
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -168,7 +186,11 @@ JSBool SE_BroadcastMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates and returns item object based on provided serial
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 && argc != 4 )
@@ -193,6 +215,11 @@ JSBool SE_CalcItemFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates and returns character object based on provided serial
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 && argc != 4 )
@@ -217,6 +244,11 @@ JSBool SE_CalcCharFromSer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays a moving effect from source object to target object or location
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 6 )
@@ -272,6 +304,11 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a random number between loNum and hiNum
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -285,6 +322,11 @@ JSBool SE_RandomNumber( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Character creates specified item based on entry in CREATE DFNs
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )
@@ -312,6 +354,11 @@ JSBool SE_MakeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CommandLevelReq( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the command level required to execute the specified command
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CommandLevelReq( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -333,6 +380,11 @@ JSBool SE_CommandLevelReq( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CommandExists( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether specified command exists in command table or not
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CommandExists( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -350,6 +402,11 @@ JSBool SE_CommandExists( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_FirstCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the name of the first command in the table. If nothing, it's a 0 length string.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_FirstCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	const std::string tVal = Commands->FirstCommand();
@@ -363,6 +420,11 @@ JSBool SE_FirstCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_NextCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the name of the next command in the table. If nothing, it's a 0 length string.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_NextCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	const std::string tVal = Commands->NextCommand();
@@ -376,12 +438,26 @@ JSBool SE_NextCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_FinishedCommandList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if there are no more commands left in the table.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_FinishedCommandList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = BOOLEAN_TO_JSVAL( Commands->FinishedCommandList() );
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If called from within CommandRegistration() function in a script registered
+//|					under the COMMAND_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will register
+//|					the specified command in the command table and call the function in the same
+//|					script whose name corresponds with the command name, in the shape of
+//|						function command_CMDNAME( socket, cmdString )
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )
@@ -404,6 +480,14 @@ JSBool SE_RegisterCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If called from within SpellRegistration() function in a script registered under
+//|					the MAGIC_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will register the 
+//|					onSpellCast() event in the same script as a global listener for use of the
+//|					specified magic spell.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -418,6 +502,14 @@ JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Register JS script as a global listener for use of specified skill, and
+//|					triggers onSkill() event in same script when specified skill is used, if 
+//|					script is added under the SKILLUSE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
+//|					and this function is called from a SkillRegistration() function
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -461,6 +553,14 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Register JS script as a global listener for a specific network packet, and
+//|					triggers onPacketReceive() event in same script when this network packet is sent, 
+//|					if script is added under the PACKET_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
+//|					and this function is called from a PacketRegistration() function
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -481,6 +581,14 @@ JSBool SE_RegisterPacket( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Register JS script as a global listener for a specific keypress in UOX3 console,
+//|					and triggers specified function in same script when key is pressed, if script
+//|					is added under the CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
+//|					and this function is called from a ConsoleRegistration() function
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -515,6 +623,11 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	???
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -536,6 +649,11 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disables a specified command on the server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -548,6 +666,11 @@ JSBool SE_DisableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disables specified key in console
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -560,6 +683,11 @@ JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DisableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	???
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DisableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -572,6 +700,11 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *a
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disables specified spell on server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -584,6 +717,11 @@ JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_EnableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables specified command on server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_EnableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -596,6 +734,11 @@ JSBool SE_EnableCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables specified spell on server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -608,6 +751,11 @@ JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables specified key in console
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -620,6 +768,11 @@ JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_EnableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	???
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_EnableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -632,6 +785,11 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the hour of the current UO day
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
@@ -643,6 +801,11 @@ JSBool SE_GetHour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the minute of the current UO day
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
@@ -650,6 +813,11 @@ JSBool SE_GetMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the day number of the server (UO days since server start)
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
@@ -657,6 +825,11 @@ JSBool SE_GetDay( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets and sets the amonut of real life seconds associated with minute in the game
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 1 )
@@ -673,26 +846,39 @@ JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets current server clock, aka number of clock ticks since server startup
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->GetUICurrentTime() );
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spawns NPC based on definition in NPC DFNs
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc < 5 || argc > 6 )
 	{
-		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 5)" );
+		DoSEErrorMessage( "SpawnNPC: Invalid number of arguments (takes 5 or 6)" );
 		return JS_FALSE;
 	}
+
 	CChar *cMade		= NULL;
 	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	UI16 x				= (UI16)JSVAL_TO_INT( argv[1] );
 	UI16 y				= (UI16)JSVAL_TO_INT( argv[2] );
 	SI08 z				= (SI08)JSVAL_TO_INT( argv[3] );
-	UI08 wrld			= (UI08)JSVAL_TO_INT( argv[4] );
-	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, wrld );
+	UI08 world			= (UI08)JSVAL_TO_INT( argv[4] );
+	UI16 instanceID = ( argc == 6 ? (SI16)JSVAL_TO_INT( argv[5] ) : 0 );
+
+	cMade				= Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceID );
 	if( cMade != NULL )
 	{
 		JSObject *myobj		= JSEngine->AcquireObject( IUE_CHAR, cMade, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -703,6 +889,11 @@ JSBool SE_SpawnNPC( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates item based on definition in item DFNs
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 3 )
@@ -746,6 +937,13 @@ JSBool SE_CreateDFNItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		*rval = JSVAL_NULL;
 	return JS_TRUE;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a "blank" item with default values from client's tiledata
+//|	Notes		-	Default values can be overridden through harditems.dfn
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 8 )
@@ -792,11 +990,22 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetMurderThreshold( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the max amount of kills allowed before a player turns red
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetMurderThreshold( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() );
 	return JS_TRUE;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Rolls a die with specified number of sides, and adds a fixed value
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 3 )
@@ -814,6 +1023,14 @@ JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Compares the relations between two races
+//|	Notes		-	0 - neutral
+//|					1 to 100 - allies
+//|					-1 to -100 - enemies
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -827,16 +1044,22 @@ JSBool SE_RaceCompareByRace( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns multi at given coordinates, world and instanceID
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 4 && argc != 1 )
+	if( argc != 1 && argc != 4 && argc != 5 )
 	{
-		DoSEErrorMessage( "FindMulti: Invalid number of parameters (1 or 4)" );
+		DoSEErrorMessage( "FindMulti: Invalid number of parameters (1, 4 or 5)" );
 		return JS_FALSE;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
 	UI08 worldNumber = 0;
+	UI16 instanceID = 0;
 	if( argc == 1 )
 	{
 		JSObject *myitemptr = JSVAL_TO_OBJECT( argv[0] );
@@ -847,6 +1070,7 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			yLoc		= myItemPtr->GetY();
 			zLoc		= myItemPtr->GetZ();
 			worldNumber = myItemPtr->WorldNumber();
+			instanceID	= myItemPtr->GetInstanceID();
 		}
 		else
 		{
@@ -860,8 +1084,12 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
 		zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
 		worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
+		if( argc == 5 )
+		{
+			instanceID = (UI16)JSVAL_TO_INT( argv[4] );
+		}
 	}
-	CMultiObj *multi = findMulti( xLoc, yLoc, zLoc, worldNumber );
+	CMultiObj *multi = findMulti( xLoc, yLoc, zLoc, worldNumber, instanceID );
 	if( ValidateObject( multi ) )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, multi, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -872,23 +1100,35 @@ JSBool SE_FindMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	12 February, 2006
+//|	Programmer	-	grimson
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns item closest to specified coordinates
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 4 )
+	if( argc != 4 && argc != 5 )
 	{
-		DoSEErrorMessage( "GetItem: Invalid number of parameters (4)" );
+		DoSEErrorMessage( "GetItem: Invalid number of parameters (4 or 5)" );
 		return JS_FALSE;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
 	UI08 worldNumber = 0;
+	UI16 instanceID = 0;
 	
 	xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
 	yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
 	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
 	worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
+	if( argc == 5 )
+	{
+		instanceID = (UI16)JSVAL_TO_INT( argv[4] );
+	}
 	
-	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber );
+	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceID );
 	if( ValidateObject( item ) )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -899,25 +1139,37 @@ JSBool SE_GetItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	12 February, 2006
+//|	Programmer	-	grimson
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns item of given ID that is closest to specified coordinates
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 5 )
+	if( argc != 5 && argc != 6 )
 	{
-		DoSEErrorMessage( "FindItem: Invalid number of parameters (5)" );
+		DoSEErrorMessage( "FindItem: Invalid number of parameters (5 or 6)" );
 		return JS_FALSE;
 	}
 	SI16 xLoc = 0, yLoc = 0;
 	SI08 zLoc = 0;
 	UI08 worldNumber = 0;
 	UI16 id = 0;
+	UI16 instanceID = 0;
 	
 	xLoc		= (SI16)JSVAL_TO_INT( argv[0] );
 	yLoc		= (SI16)JSVAL_TO_INT( argv[1] );
 	zLoc		= (SI08)JSVAL_TO_INT( argv[2] );
 	worldNumber = (UI08)JSVAL_TO_INT( argv[3] );
 	id			= (UI16)JSVAL_TO_INT( argv[4] );
+	if( argc == 6 )
+	{
+		instanceID = (UI16)JSVAL_TO_INT( argv[5] );
+	}
 	
-	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id );
+	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceID );
 	if( ValidateObject( item ) )
 	{
 		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, item, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
@@ -928,6 +1180,17 @@ JSBool SE_FindItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Compares the relations between two guilds
+//|	Notes		-	0 - Neutral
+//|					1 - War
+//|					2 - Ally
+//|					3 - Unknown
+//|					4 - Same
+//|					5 - Count
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -940,6 +1203,11 @@ JSBool SE_CompareGuildByGuild( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Source town takes control over target town
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -952,6 +1220,11 @@ JSBool SE_PossessTown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if character's race is affected by given type of weather
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -969,6 +1242,11 @@ JSBool SE_IsRaceWeakToWeather( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns damage modifier for specified skill based on race
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -981,6 +1259,11 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsva
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Uses specified door
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -1018,10 +1301,15 @@ JSBool SE_UseDoor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers a an event/function in a different JS
+//|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the 
+//|					function name to call. Any extra parameters are extra parameters to the JS event
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	// Takes at least 2 parameters, which is the script number to trigger and the function name to call
-	// Any extra parameters are extra parameters to the JS event
 	if( argc < 2 )
 	{
 		return JS_FALSE;
@@ -1046,6 +1334,11 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns owner of container item is contained in (if any)
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
@@ -1078,6 +1371,11 @@ JSBool SE_GetPackOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns targeted item stored on socket
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1105,6 +1403,11 @@ JSBool SE_CalcTargetedItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns targeted character stored on socket
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1117,7 +1420,7 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	CSocket *sChar		= static_cast<CSocket *>(JS_GetPrivate( cx, mysockptr ));
 	if( sChar == NULL )
 	{
-		DoSEErrorMessage( "CalcTargetedItem: Invalid socket" );
+		DoSEErrorMessage( "CalcTargetedChar: Invalid socket" );
 		return JS_FALSE;
 	}
 	
@@ -1132,6 +1435,11 @@ JSBool SE_CalcTargetedChar( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the map tile ID at given coordinates
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )
@@ -1148,6 +1456,13 @@ JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	17th August, 2005
+//|	Programmer	-	Maarc
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks for static within specified range of given location
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 5 )
@@ -1183,6 +1498,14 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	17th August, 2005
+//|	Programmer	-	Maarc
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks for static at specified location
+//|	Notes		-	tile argument is optional; if not specified, will match ANY static found at location
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 4 && argc != 3 )
@@ -1216,6 +1539,13 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	27th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts string to number
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1230,6 +1560,13 @@ JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	27th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts number to string
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1244,6 +1581,13 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	27th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts number to hex string
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1258,14 +1602,13 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	November 9, 2001
 //|	Programmer	-	DarkStorm
-//|	Modified	-
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of races found in the server
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
@@ -1277,15 +1620,13 @@ JSBool SE_GetRaceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Date		-	January 27, 2003
 //|	Programmer	-	Maarc
-//|	Modified	-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Using a passed in function name, executes a JS function
-//|				-	on an area of characters
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Using a passed in function name, executes a JS function on an area of characters
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 && argc != 4 )
@@ -1346,6 +1687,14 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	17th August, 2004
+//|	Programmer	-	Maarc
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Using a passed in function name, executes a JS function on an area of items
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 && argc != 4 )
@@ -1407,18 +1756,14 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date			-	7/17/2004
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Allows the JSScripts to pull entries from the dictionaries
-//|						and convert them to a string.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	7/17/2004
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and convert them to a string.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 1 )
@@ -1439,17 +1784,14 @@ JSBool SE_GetDictionaryEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date			-	7/17/2004
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Globally yell a message from JS (Based on Commandlevel)
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	7/17/2004
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Globally yell a message from JS (Based on Commandlevel)
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc < 3 )
@@ -1492,18 +1834,15 @@ JSBool SE_Yell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 	return JS_TRUE;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Date			-	29 Dec 2003
-//|	Developers		-	Maarc
-//|	Organization	-	Independent
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Reloads certain subsystems
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
-JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval ) 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	29 Dec 2003
+//|	Programmer	-	Maarc
+//|	Org/Team	-	Independent
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reloads certain server subsystems
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 { 	
 	if( argc != 1 ) 	
 	{ 		
@@ -1569,6 +1908,13 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 	return JS_TRUE; 
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	25th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Builds an info gump for specified static or map tile
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 { 	
 	if( argc != 1 ) 	
@@ -1659,6 +2005,11 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetTileHeight( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the tile height of a specified tile (item)
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetTileHeight( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 ) 	
@@ -1678,6 +2029,13 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return myScript->OnIterate( a, b );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	July 25th, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loops through all world objects
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 ) 	
@@ -1699,6 +2057,52 @@ JSBool SE_IterateOver( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
+bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
+{
+	cScript *myScript = static_cast<cScript *>( extraData );
+	return myScript->OnIterateSpawnRegions( a, b );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	July, 2020
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loops over all spawn regions in the world
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	UI32 b = 0;
+	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ) );
+
+	if( myScript != NULL )
+	{
+		SPAWNMAP_CITERATOR spIter = cwmWorldState->spawnRegions.begin();
+		SPAWNMAP_CITERATOR spEnd = cwmWorldState->spawnRegions.end();
+		while( spIter != spEnd )
+		{
+			CSpawnRegion *spawnReg = spIter->second;
+			if( spawnReg != NULL )
+			{
+				SE_IterateSpawnRegionsFunctor( spawnReg, b, myScript );
+			}
+			++spIter;
+		}
+	}
+
+	JS_MaybeGC( cx );
+
+	*rval = INT_TO_JSVAL( b );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets and sets world bright level - brightest part of the regular day/night cycle
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 1 )
@@ -1715,6 +2119,13 @@ JSBool SE_WorldBrightLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets and sets world dark level - darkest part of the regular day/night cycle
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 1 )
@@ -1731,6 +2142,13 @@ JSBool SE_WorldDarkLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th July, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets and sets default light level in dungeons
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 1 )
@@ -1747,6 +2165,13 @@ JSBool SE_WorldDungeonLevel( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	3rd August, 2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns socket based on provided index, from list of connected clients
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1772,6 +2197,13 @@ JSBool SE_GetSocketFromIndex( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	5th February, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reload specified JS file by scriptID
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1791,6 +2223,13 @@ JSBool SE_ReloadJSFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th September, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets amount of resource areas to split the world into
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 2 || argc == 0 )
@@ -1817,6 +2256,13 @@ JSBool SE_ResourceArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th September, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets amount of resources (logs/ore) in each resource area on the server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 2 || argc == 0 )
@@ -1843,6 +2289,13 @@ JSBool SE_ResourceAmount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th September, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets respawn timers for ore/log resources on server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 2 || argc == 0 )
@@ -1869,6 +2322,13 @@ JSBool SE_ResourceTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	18th September, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a resource object allowing JS to modify resource data.
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 3 )
@@ -1895,6 +2355,13 @@ JSBool SE_ResourceRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	26th January, 2006
+//|	Programmer	-	Maarc
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if object is a valid and not NULL or marked for deletion
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -1916,6 +2383,13 @@ JSBool SE_ValidateObject( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	17th March, 2006
+//|	Programmer	-	grimson
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns damage bonuses based on race/weather weakness and character skills
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 6 )
@@ -1982,6 +2456,13 @@ JSBool SE_ApplyDamageBonuses( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	17th March, 2006
+//|	Programmer	-	grimson
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values and elemental damage
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 7 )
@@ -2044,6 +2525,13 @@ JSBool SE_ApplyDefenseModifiers( JSContext *cx, JSObject *obj, uintN argc, jsval
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	21st September, 2006
+//|	Programmer	-	Maarc
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create a party with specified character as the party leader
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
@@ -2086,6 +2574,13 @@ JSBool SE_CreateParty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
  	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	25th May, 2007
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets or sets Moon phases on server
+//o-----------------------------------------------------------------------------------------------o
 JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc > 2 || argc == 0 )
@@ -2103,6 +2598,60 @@ JSBool SE_Moon( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rv
 
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerMoon( slot ) );
 
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetSpawnRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	June 22, 2020
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a specified spawn region object
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetSpawnRegion( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "GetSpawnRegion: Invalid number of parameters (1)" );
+		return JS_FALSE;
+	}
+
+	UI16 spawnRegNum = (UI16)JSVAL_TO_INT( argv[0] );
+	if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
+	{
+		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+		if( spawnReg != NULL )
+		{
+			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+			*rval = OBJECT_TO_JSVAL( myObj );
+		}
+		else
+		{
+			*rval = JSVAL_NULL;
+		}
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Date		-	June 22, 2020
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the total number of spawn regions found in the server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetSpawnRegionCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		DoSEErrorMessage( "GetSpawnRegionCount: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+	*rval = INT_TO_JSVAL( cwmWorldState->spawnRegions.size() );
 	return JS_TRUE;
 }
 

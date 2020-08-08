@@ -1,14 +1,14 @@
 
-//o---------------------------------------------------------------------------o
-//| Stream.h
-//o---------------------------------------------------------------------------o
-//| The file will see if you have a compilier that supports the template based
-//| String Stream library, and if you do, includes it. If not, it uses the
-//| older based string stream library.
-//o---------------------------------------------------------------------------o
-//| Version History
-//| 1.0		First version
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| File		-	Stream.h
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	The file will see if you have a compilier that supports the template based
+//|					String Stream library, and if you do, includes it. If not, it uses the
+//|					older based string stream library.
+//o-----------------------------------------------------------------------------------------------o
+//| Notes		-	Version History
+//|						1.0		First version
+//o-----------------------------------------------------------------------------------------------o
 
 #ifndef _STREAM_H_
 #define _STREAM_H_

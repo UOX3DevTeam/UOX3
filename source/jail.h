@@ -12,8 +12,9 @@ struct JailOccupant
 	SI16 y;
 	SI08 z;
 	UI08 world;
+	UI16 instanceID;
 	time_t releaseTime;
-	JailOccupant() : pSerial( INVALIDSERIAL ), x( 0 ), y( 0 ), z( 0 ), world( 0 ), releaseTime( 0 )
+	JailOccupant() : pSerial( INVALIDSERIAL ), x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 ), releaseTime( 0 )
 	{
 	}
 };
@@ -25,9 +26,10 @@ private:
 	SI16 y;
 	SI08 z;
 	UI08 world;
+	UI16 instanceID;
 	std::vector< JailOccupant * > playersInJail;
 public:
-			JailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 )
+			JailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 )
 			{
 			}
 			~JailCell();
@@ -37,10 +39,12 @@ public:
 	SI16	Y( void ) const;
 	SI08	Z( void ) const;
 	UI08	World( void ) const;
+	UI16	InstanceID( void ) const;
 	void	X( SI16 nVal );
 	void	Y( SI16 nVal );
 	void	Z( SI08 nVal );
 	void	World( UI08 nVal );
+	void	InstanceID( UI16 nVal );
 	void	AddOccupant( CChar *pAdd, SI32 secsFromNow ) ;
 	void	EraseOccupant( size_t occupantID );
 	JailOccupant *Occupant( size_t occupantID );

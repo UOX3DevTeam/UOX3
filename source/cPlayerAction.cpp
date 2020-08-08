@@ -34,12 +34,12 @@ void		PlankStuff( CSocket *s, CItem *p );
 CBoatObj *	GetBoat( CSocket *s );
 void		ModelBoat( CSocket *s, CBoatObj *i );
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	Bounce( CSocket *bouncer, CItem *bouncing )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Bounce( CSocket *bouncer, CItem *bouncing )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back from where they came
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void Bounce( CSocket *bouncer, CItem *bouncing )
 {
 	if( bouncer == NULL || !ValidateObject( bouncing ) )
@@ -80,12 +80,12 @@ void Bounce( CSocket *bouncer, CItem *bouncing )
 	bouncer->SetCursorItem( NULL );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	PickupBounce( CSocket *bouncer, CItem *bouncing )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PickupBounce( CSocket *bouncer )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating item.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void PickupBounce( CSocket *bouncer )
 {
 	if( bouncer == NULL )
@@ -95,21 +95,21 @@ void PickupBounce( CSocket *bouncer )
 	bouncer->PickupSpot( PL_NOWHERE );
 	bouncer->SetCursorItem( NULL );
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  CItem *autoStack( CSocket *mSock, CItem *i, CItem *pack )
-//|   Date        :  8/14/01
-//|   Programmer  :  Zane
-//|	  Modified	  :	 Abaddon, 9th September, 2001, returns true if item deleted
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Searches pack for pileable items that match the item being
-//|					 dropped into said pack (only if it's pileable), if found
-//|					 ensures the amount won't go over 65535 (the limit how large
-//|					 an item can stack) then stacks it. If the item is not stackable
-//|					 or it cannot stack the item with a pile and have an amount that
-//|					 is <= 65355 then it creates a new pile.
-//|									
-//|	Modification	-	09/25/2002	-	Brakthus - Weight fixes
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
+//|	Date		-	8/14/01
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Searches pack for pileable items that match the item being
+//|					dropped into said pack (only if it's pileable), if found
+//|					ensures the amount won't go over 65535 (the limit how large
+//|					an item can stack) then stacks it. If the item is not stackable
+//|					or it cannot stack the item with a pile and have an amount that
+//|					is <= 65355 then it creates a new pile.
+//|								
+//|	Changes		-	09/09/2001 - Abaddon - returns true if item deleted
+//|					09/25/2002 - Brakthus - Weight fixes
+//o-----------------------------------------------------------------------------------------------o
 CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 {
 	UI32 newAmt = stack->GetAmount() + i->GetAmount();
@@ -129,19 +129,16 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 	return i;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function	-	bool autoStack( CSocket *mSock, CItem *i, CItem *pack )
-//|	Date		-	
-//|	Developers	-	UOX3 DevTeam
-//|	Organization-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
+//|	Org/Team	-	UOX3 DevTeam
 //|	Status		-	Modified to v2
 //|					v2 - accepts a possible NULL socket to deal with the JSE
 //|					v3 - returns a CItem * (stack if stacked, item otherwise)
-//o--------------------------------------------------------------------------o
-//|	Description	-	Searches through the pack to see if an item can be stacked
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Searches through the pack to see if an item can be stacked
 //|					stacking them automatically
-//|
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 {
 	CChar *mChar = NULL;
@@ -180,13 +177,12 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	return iToStack;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  Grab( CSocket *mSock )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when a player picks up an item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIGetItem::Handle( void )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when a player picks up an item
+//o-----------------------------------------------------------------------------------------------o
 bool CPIGetItem::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
@@ -418,18 +414,16 @@ bool CPIGetItem::Handle( void )
 
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
+
 	return true;
 }
 
-
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  Equip( CSocket *mSock )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when an item is dropped on a players paperdoll
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIEquipItem::Handle( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped on a players paperdoll
+//o-----------------------------------------------------------------------------------------------o
 bool CPIEquipItem::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
@@ -611,18 +605,15 @@ bool CPIEquipItem::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function		:	DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
-//|   Date			:	Unknown
-//|   Programmer	:	UOX3 DevTeam
-//|	  Modified		:	Abaddon, September 14th, 2001, returns true if item deleted
-//|					:	Zane, September 21st, 2003, moved into seperate file and
-//|					:		few other minor tweaks
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when an item is dropped on a character
-//|									
-//|	Modification	-	09/25/2002	-	Xuri/Brakthus - Weight fixes
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
+//|	Programmer	-	UOX3 DevTeam
+//|	Changes		-	Abaddon, September 14th, 2001, returns true if item deleted
+//|				-	Xuri/Brakthus, September 25, 2002, Weight fixes
+//|				-	Zane, September 21st, 2003, moved into seperate file and few other minor tweaks
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped on a character
+//o-----------------------------------------------------------------------------------------------o
 bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 {
 	bool stackDeleted = false;
@@ -661,6 +652,11 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 	return stackDeleted;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if a particular item is on an NPC's list of accepted foods
+//o-----------------------------------------------------------------------------------------------o
 bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 {
 	bool doesEat = false;
@@ -683,6 +679,11 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 	return doesEat;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped on an NPC
+//o-----------------------------------------------------------------------------------------------o
 bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 {
 	UI08 dropResult		= 0;
@@ -835,6 +836,12 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 	}
 	return stackDeleted;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped on an a character
+//o-----------------------------------------------------------------------------------------------o
 bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 {
 	CChar *mChar = mSock->CurrcharObj();
@@ -856,13 +863,12 @@ bool DropOnChar( CSocket *mSock, CChar *targChar, CItem *i )
 	return DropOnNPC( mSock, mChar, targChar, i );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  Drop( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Item is dropped on the ground or on a character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Item is dropped on the ground or on a character
+//o-----------------------------------------------------------------------------------------------o
 void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
 {
 	CChar *nChar	= mSock->CurrcharObj();
@@ -923,7 +929,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			return;
 		}
 		i->SetCont( NULL );
-		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber() );
+		i->SetLocation( x, y, z, gridLoc, nChar->WorldNumber(), nChar->GetInstanceID() );
 	}
 	else
 	{
@@ -962,6 +968,11 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 	mSock->Send( &lc );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped, SI16 x, SI16 y, SI08 gridLoc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when item is dropped in the secure trade window
+//o-----------------------------------------------------------------------------------------------o
 void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CItem& iDropped, SI16 x, SI16 y, SI08 gridLoc )
 {
 	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -990,6 +1001,11 @@ void DropOnTradeWindow( CSocket& mSock, CChar& mChar, CItem& tradeWindowOne, CIt
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when item is dropped on a spellbook
+//o-----------------------------------------------------------------------------------------------o
 void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDropped )
 {
 	if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
@@ -1063,6 +1079,11 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		iDropped.Delete();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when item is dropped on a stack of items
+//o-----------------------------------------------------------------------------------------------o
 bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted )
 {
 	bool canHold = true;
@@ -1093,6 +1114,11 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when item is dropped on a container
+//o-----------------------------------------------------------------------------------------------o
 bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
 {
 	CChar *contOwner = FindItemOwner( &droppedOn );
@@ -1208,13 +1234,11 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  DropOnItem( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when an item is dropped in a container or on another item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped in a container or on another item
+//o-----------------------------------------------------------------------------------------------o
 void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc )
 {
 	CChar *mChar = mSock->CurrcharObj();
@@ -1353,6 +1377,11 @@ void DropOnItem( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 
 	// nCont->Dirty( UT_UPDATE );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIDropItem::Handle( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item is dropped
+//o-----------------------------------------------------------------------------------------------o
 bool CPIDropItem::Handle( void )
 {
 	CChar *ourChar = tSock->CurrcharObj();
@@ -1381,13 +1410,12 @@ bool CPIDropItem::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Return characters highest skill
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return characters highest skill
+//o-----------------------------------------------------------------------------------------------o
 UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
 {
 	UI08 retSkill = 0;
@@ -1404,13 +1432,13 @@ UI08 BestSkill( CChar *mChar, SKILLVAL &skillLevel )
 	return retSkill;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void getSkillProwessTitle( CChar *p, std::string& prowessTitle )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches the characters "prowess" and "skill" title based upon titles.dfn
 //|                 entries and characters best skill
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 {
 	if( cwmWorldState->prowessTitles.empty() )
@@ -1432,12 +1460,12 @@ void getSkillProwessTitle( CChar *mChar, std::string &SkillProwessTitle )
 	SkillProwessTitle += " " + cwmWorldState->title[static_cast<UI08>(bestSkill + 1)].skill;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	getFameTitle( CChar *p, std::string& Fametitle )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void getFameTitle( CChar *p, std::string& FameTitle )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns players reputation title based on their Fame and Karma
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void getFameTitle( CChar *p, std::string& FameTitle )
 {
 	if( ValidateObject( p ) )
@@ -1603,14 +1631,13 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  PaperDoll( CSocket *s, CChar *pdoll )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Open a characters paperdoll and show titles based on skill,
-//|					 reputation, murder counts, race, ect.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PaperDoll( CSocket *s, CChar *pdoll )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Open a characters paperdoll and show titles based on skill,
+//|					reputation, murder counts, race, ect.
+//o-----------------------------------------------------------------------------------------------o
 void PaperDoll( CSocket *s, CChar *pdoll )
 {
 	CChar *myChar	= s->CurrcharObj();
@@ -1704,13 +1731,12 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 }
 
 void MountCreature( CSocket *mSock, CChar *s, CChar *x );
-//o---------------------------------------------------------------------------o
-//|   Function    :  handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
-//|   Date        :  Unknown
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles double-clicks on a character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles double-clicks on a character
+//o-----------------------------------------------------------------------------------------------o
 void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 {
 	CChar *mChar	= mSock->CurrcharObj();
@@ -1801,13 +1827,13 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 	PaperDoll( mSock, c );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *x, ItemTypes iType )
-//|   Date        :  2/11/2003
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Runs a switch to match an item type to a function
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType )
+//|	Date		-	2/11/2003
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Runs a switch to match an item type to a function
+//o-----------------------------------------------------------------------------------------------o
 bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType )
 {
 	CChar *iChar	= NULL;
@@ -1967,7 +1993,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			else	// Display Townstone gump
 			{
-				CTownRegion *useRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), mChar->WorldNumber() );
+				CTownRegion *useRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
 				if( useRegion != NULL )
 					useRegion->DisplayTownMenu( iUsed, mSock );
 			}
@@ -2112,7 +2138,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			return true;
 		case IT_PLAYERVENDORDEED:	//Player Vendor Deeds
 			CChar *m;
-			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber() );
+			m = Npcs->CreateNPCxyz( "playervendor", mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), mChar->GetInstanceID() );
 			m->SetNPCAiType( AI_PLAYERVENDOR );
 			m->SetInvulnerable( true );
 			m->SetDir( mChar->GetDir() );
@@ -2334,6 +2360,11 @@ ItemTypes findItemType( CItem *i )
 	return iType;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if item is usable and if player can actually use it
+//o-----------------------------------------------------------------------------------------------o
 bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType )
 {
 	if( ourChar->IsDead() && iType != IT_PLANK && iType != IT_HOUSESIGN )
@@ -2429,16 +2460,14 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	:  DoubleClick( CSocket *mSock )
-//|	Date		:  Unknown
-//|	Programmer	:  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		:	Player double clicks on a character or item
-//|	Modification:	09/22/2002	-	Xuri - Removed piece of code which is not 
-//|									needed. Cooking of raw fish shouldn't produce cooked ribs,
-//|									people can cook the fish after filleting with a knife.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIDblClick::Handle( void )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Player double clicks on a character or item
+//|	Changes		-	09/22/2002 - Xuri - Removed piece of code which is not needed. Cooking of raw 
+//|						fish shouldn't produce cooked ribs, people can cook the fish after filleting with a knife.
+//o-----------------------------------------------------------------------------------------------o
 bool CPIDblClick::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
@@ -2524,14 +2553,12 @@ bool CPIDblClick::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  char *AppendData( CItem *i, std::string currentName )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Add data onto the end of the string in singleclick() based
-//|					 on an items type
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const char *AppendData( CItem *i, std::string currentName )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add data onto the end of the string in singleclick() based on an items type
+//o-----------------------------------------------------------------------------------------------o
 const char *AppendData( CItem *i, std::string currentName )
 {
 	UString dataToAdd;
@@ -2555,7 +2582,7 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_GATE:
 		case IT_OBJTELEPORTER:
 		{
-			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber() );
+			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber(), i->GetInstanceID() );
 			dataToAdd = " (" + newRegion->GetName() + ")";
 			break;
 		}
@@ -2565,14 +2592,12 @@ const char *AppendData( CItem *i, std::string currentName )
 	return currentName.c_str();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  SingleClick( CSocket *mSock )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when an item or character is single-clicked (also
-//|					 used for AllNames macro)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPISingleClick::Handle( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when an item or character is single-clicked (also used for AllNames macro)
+//o-----------------------------------------------------------------------------------------------o
 bool CPISingleClick::Handle( void )
 {
 	if( objectID == INVALIDSERIAL ) // invalid

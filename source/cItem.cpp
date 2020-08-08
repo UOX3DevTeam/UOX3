@@ -1,11 +1,10 @@
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	File			-	cItem.cpp
 //|	Date			-	2nd April, 2000
-//|	Developers		-	Abaddon/EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	New class written based upon old UOX item_st.  Number of old members removed
+//|	Programmer		-	Abaddon/EviLDeD
+//| Team			-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose			-	New class written based upon old UOX item_st.  Number of old members removed
 //|						and a number of members types modified as well
 //|
 //|	Version History -
@@ -32,7 +31,7 @@
 //|
 //|						1.4		giwo		17th July, 2004
 //|						Added CSpawnItem to begin breaking CItem into smaller subclasses
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "weight.h"
 #include "CPacketSend.h"
@@ -84,6 +83,11 @@ const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 const SI32			DEFITEM_WEIGHTMAX		= 0;
 const SI32			DEFITEM_BASEWEIGHT		= 0;
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Constructor
+//o-----------------------------------------------------------------------------------------------o
 CItem::CItem() : CBaseObject(),
 contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ), 
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ), 
@@ -105,23 +109,32 @@ creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGH
 	id			= 0x0000;
 }
 
-CItem::~CItem()	// Destructor to clean things up when deleted
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	~CItem()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Destructor to clean things up when deleted
+//o-----------------------------------------------------------------------------------------------o
+CItem::~CItem()
 {
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UI32 GetCont()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the container's serial
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject * GetCont( void ) const
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the container object
+//o-----------------------------------------------------------------------------------------------o
 CBaseObject * CItem::GetCont( void ) const
 {
 	return contObj;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL GetContSerial( void ) const
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the container's serial
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CItem::GetContSerial( void ) const
 {
 	if( contObj != NULL )
@@ -129,31 +142,31 @@ SERIAL CItem::GetContSerial( void ) const
 	return INVALIDSERIAL;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	SI08 GetGridLocation()
-//|	Date			-	7-23-2007
-//|	Programmer		-	giwo
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Support for "Grid Location" in UOKR
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetGridLocation( void ) const
+//|					void SetGridLocation( SI08 newLoc )
+//|	Date		-	7-23-2007
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets "Grid Location" - for UOKR
+//o-----------------------------------------------------------------------------------------------o
 SI08 CItem::GetGridLocation( void ) const
 {
 	return gridLoc;
 }
-
 void CItem::SetGridLocation( SI08 newLoc )
 {
 	gridLoc = newLoc;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UI32 TempVar( CITempVars whichVar  )
-//|	Date			-	7/6/2004
-//|	Programmer		-	giwo
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns the temp value of the object
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetTempVar( CITempVars whichVar ) const
+//|					void SetTempVar( CITempVars whichVar, UI32 newVal )
+//|	Date		-	7/6/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the temp value of the object
+//o-----------------------------------------------------------------------------------------------o
 UI32 CItem::GetTempVar( CITempVars whichVar ) const
 {
 	if( whichVar == CITV_COUNT )
@@ -169,16 +182,15 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 	tempVars[whichVar] = newVal;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UI08 GetTempVarPart( CITempVars whichVar, UI08 part )
-//|	Date			-	7/6/2004
-//|	Programmer		-	giwo
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	One of the words of the temp value
-//|							Valid values for part are 1->4.  If outside that, behaves
-//|							as if it were 1
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetTempVar( CITempVars whichVar, UI08 part ) const
+//|					void SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
+//|	Date		-	7/6/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets one of the words of the temp value
+//|	Notes		-	Valid values for part are 1->4.  If outside that, behaves as if it were 1
+//o-----------------------------------------------------------------------------------------------o
 UI08 CItem::GetTempVar( CITempVars whichVar, UI08 part ) const
 {
 	UI08 rVal = 0;
@@ -218,18 +230,17 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 	tempVars[whichVar] = (part1<<24) + (part2<<16) + (part3<<8) + part4;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool CItem::SetCont( CBaseObject *newCont )
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Set's the item's container value to newValue
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SetCont( CBaseObject *newCont )
+//|					bool SetContSerial( SERIAL newSerial )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set's the item's container value to newValue
 //|						Takes it out of the old container, and puts in the new
 //|						Copes with being on paperdolls, ground and in containers
 //|						Also copes with removing and adding to a map region
 //|						Returns false if item needs deleting, true if fine
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::SetContSerial( SERIAL newSerial )
 {
 	if( newSerial != INVALIDSERIAL )
@@ -241,7 +252,6 @@ bool CItem::SetContSerial( SERIAL newSerial )
 	}
 	return SetCont( NULL );
 }
-
 bool CItem::SetCont( CBaseObject *newCont )
 {
 	if( isPostLoaded() )
@@ -318,14 +328,13 @@ bool CItem::SetCont( CBaseObject *newCont )
 	return !contIsGround;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool isDoorOpen()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Item is a door and is open
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDoorOpen( void ) const
+//|					void SetDoorOpen( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets door's open state
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isDoorOpen( void ) const
 {
 	return bools.test( BIT_DOOROPEN );
@@ -335,14 +344,13 @@ void CItem::SetDoorOpen( bool newValue )
 	bools.set( BIT_DOOROPEN, newValue );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool isPileable()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Item is pileable
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isPileable( void ) const
+//|					void SetPileable( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's pileable state
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isPileable( void ) const
 {
 	return bools.test( BIT_PILEABLE );
@@ -352,14 +360,13 @@ void CItem::SetPileable( bool newValue )
 	bools.set( BIT_PILEABLE, newValue );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool isDyeable()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Item is dyeable
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDyeable( void ) const
+//|					void SetDye( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's dyeable state
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isDyeable( void ) const
 {
 	return bools.test( BIT_DYEABLE );
@@ -369,14 +376,13 @@ void CItem::SetDye( bool newValue )
 	bools.set( BIT_DYEABLE, newValue );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool isCorpse()
-//|	Date			-	Unknown
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose		-	Item is a corpse
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isCorpse( void ) const
+//|					void SetCorpse( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's corpse state
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isCorpse( void ) const
 {
 	return bools.test( BIT_CORPSE );
@@ -386,13 +392,13 @@ void CItem::SetCorpse( bool newValue )
 	bools.set( BIT_CORPSE, newValue );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool Guarded()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Item is guarded
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isGuarded( void ) const
+//|					void SetGuarded( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's guarded state
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isGuarded( void ) const
 {
 	return bools.test( BIT_GUARDED );
@@ -402,14 +408,13 @@ void CItem::SetGuarded( bool newValue )
 	bools.set( BIT_GUARDED, newValue );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool SpawnerList()
-//|   Date        -  Unknown
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if the item's spawn points to an NPC list
-//|					 instead of an NPC
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isSpawnerList( void ) const
+//|					void SetSpawnerList( bool newValue )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether spawner points to a a NPCLIST/ITEMLIST instead of an NPC/Item
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isSpawnerList( void ) const
 {
 	return bools.test( BIT_SPAWNERLIST );
@@ -419,6 +424,12 @@ void CItem::SetSpawnerList( bool newValue )
 	bools.set( BIT_SPAWNERLIST, newValue );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	const char *GetName2( void ) const
+//|					void SetName2( const char *newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's name2 property - used for magical items
+//o-----------------------------------------------------------------------------------------------o
 const char *CItem::GetName2( void ) const
 {
 	return name2;
@@ -428,6 +439,12 @@ void CItem::SetName2( const char *newValue )
 	strncpy( name2, newValue, MAX_NAME );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL GetCreator( void ) const
+//|					void SetCreator( SERIAL newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets serial of item's creator - used for crafting and maker's marks
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CItem::GetCreator( void ) const
 {
 	return creator;
@@ -437,6 +454,12 @@ void CItem::SetCreator( SERIAL newValue )
 	creator = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetDesc( void ) const
+//|					void SetDesc( std::string newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's description property - used for playervendors, among other things
+//o-----------------------------------------------------------------------------------------------o
 std::string CItem::GetDesc( void ) const
 {
 	return desc;
@@ -446,27 +469,66 @@ void CItem::SetDesc( std::string newValue )
 	desc = newValue.substr( 0, MAX_NAME - 1 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void IncZ( SI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increases item's Z height by specified value
+//o-----------------------------------------------------------------------------------------------o
 void CItem::IncZ( SI16 newValue )
 {
 	SetZ( z + newValue );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void IncLocation( SI16 xInc, SI16 yInc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increases item's X and Y coordinates by specified values
+//o-----------------------------------------------------------------------------------------------o
 void CItem::IncLocation( SI16 xInc, SI16 yInc )
 {
-	SetLocation( (GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber() );
+	SetLocation( (GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber(), GetInstanceID() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates item's old location 
+//o-----------------------------------------------------------------------------------------------o
+void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
+{
+	oldLocX = newX;
+	oldLocY = newY;
+	oldLocZ = newZ;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetLocation( const CBaseObject *toSet )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets item's new location to match specified object's location
+//o-----------------------------------------------------------------------------------------------o
 void CItem::SetLocation( const CBaseObject *toSet )
 {
 	if( toSet == NULL )
 		return;
-	SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber() );
-}
-void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
-{
-	SetLocation( newX, newY, newZ, GetGridLocation(), WorldNumber() );
+	SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(), toSet->GetInstanceID() );
 }
 
-void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetLocation( SI16 newX, SI16 newY, SI08 newZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets item's new location to match specified coordinates
+//o-----------------------------------------------------------------------------------------------o
+void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
+{
+	SetLocation( newX, newY, newZ, GetGridLocation(), WorldNumber(), GetInstanceID() );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instance_id )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets item's new location to match specified coordinates, grid location, world and instance
+//o-----------------------------------------------------------------------------------------------o
+void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instance_id )
 {
 	if( GetCont() == NULL )
 		MapRegion->ChangeRegion( this, newX, newY, world );
@@ -478,27 +540,40 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 	z = newZ;
 	gridLoc = newLoc;
 	worldNumber = world;
+	instanceID = instance_id;
 	if( GetCont() == NULL )
 	{
 		if( !CanBeObjType( OT_MULTI ) )
 		{
-			CMultiObj *mMulti = findMulti( newX, newY, newZ, world );
+			CMultiObj *mMulti = findMulti( newX, newY, newZ, world, instance_id );
 			if( GetMultiObj() != mMulti )
 				SetMulti( mMulti );
 		}
 	}
 	Dirty( UT_LOCATION );
 }
-void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world )
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets item's new location to match specified coordinates, world and instance
+//o-----------------------------------------------------------------------------------------------o
+void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID )
 {
-	SetLocation( newX, newY, newZ, GetGridLocation(), world );
+	SetLocation( newX, newY, newZ, GetGridLocation(), world, instanceID );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ItemLayers GetLayer( void ) const
+//|					void SetLayer( ItemLayers newValue ) 
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's layer property
+//o-----------------------------------------------------------------------------------------------o
 ItemLayers CItem::GetLayer( void ) const
 {
 	return layer;
 }
-void CItem::SetLayer( ItemLayers newValue ) 
+void CItem::SetLayer( ItemLayers newValue )
 {
 	CBaseObject *getCont = GetCont();
 	if( ValidateObject( getCont ) && getCont->GetObjType() == OT_CHAR )	// if we're on a char
@@ -516,6 +591,12 @@ void CItem::SetLayer( ItemLayers newValue )
 	layer = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ItemTypes GetType( void ) const
+//|					void SetType( ItemTypes newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's type property
+//o-----------------------------------------------------------------------------------------------o
 ItemTypes CItem::GetType( void ) const
 {
 	return type;
@@ -525,6 +606,12 @@ void CItem::SetType( ItemTypes newValue )
 	type = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetOffSpell( void ) const
+//|					void SetOffSpell( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's offspell property - Unused?
+//o-----------------------------------------------------------------------------------------------o
 SI08 CItem::GetOffSpell( void ) const
 {
 	return offspell;
@@ -534,6 +621,13 @@ void CItem::SetOffSpell( SI08 newValue )
 	offspell = newValue;
 }
 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetAmount( void ) const
+//|					void SetAmount( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's amount property, adjusts weight according to new value
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmount( void ) const
 {
 	return amount;
@@ -554,6 +648,12 @@ void CItem::SetAmount( UI32 newValue )
 	Dirty( UT_UPDATE );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool :IncAmount( SI32 incValue, bool noDelete )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increases item's amount property by specified amount, 
+//|					adjusts weight according to new value
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::IncAmount( SI32 incValue, bool noDelete )
 {
 	bool iDeleted = false;
@@ -573,6 +673,12 @@ bool CItem::IncAmount( SI32 incValue, bool noDelete )
 	return iDeleted;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetMaxHP( void ) const
+//|					void SetMaxHP( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's max hp property
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetMaxHP( void ) const
 {
 	return maxhp;
@@ -582,6 +688,12 @@ void CItem::SetMaxHP( UI16 newValue )
 	maxhp = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetSpeed( void ) const
+//|					void SetSpeed( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's speed property - used to determine weapon attack speed
+//o-----------------------------------------------------------------------------------------------o
 UI08 CItem::GetSpeed( void ) const
 {
 	return spd;
@@ -591,6 +703,12 @@ void CItem::SetSpeed( UI08 newValue )
 	spd = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetMovable( void ) const
+//|					void SetMovable( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's movable property
+//o-----------------------------------------------------------------------------------------------o
 SI08 CItem::GetMovable( void ) const
 {
 	return movable;
@@ -600,31 +718,42 @@ void CItem::SetMovable( SI08 newValue )
 	movable = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL GetTempTimer( void ) const
+//|					void SetTempTimer( TIMERVAL newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's temptimer
+//o-----------------------------------------------------------------------------------------------o
 TIMERVAL CItem::GetTempTimer( void ) const
 {
 	return tempTimer;
 }
-TIMERVAL CItem::GetDecayTime( void ) const
-{
-	return decaytime;
-}
-
 void CItem::SetTempTimer( TIMERVAL newValue )
 {
 	tempTimer = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL GetDecayTime( void ) const
+//|					void SetDecayTime( TIMERVAL newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's decay timer
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL CItem::GetDecayTime( void ) const
+{
+	return decaytime;
 }
 void CItem::SetDecayTime( TIMERVAL newValue )
 {
 	decaytime = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI08 Priv()
-//|	Date			-	Unknown
-//|	Programmer	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Misc item settings
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetPriv( void ) const
+//|					void SetPriv( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets priv settings on item
+//o-----------------------------------------------------------------------------------------------o
 UI08 CItem::GetPriv( void ) const
 {
 	return static_cast< UI08 >(priv.to_ulong());
@@ -634,13 +763,12 @@ void CItem::SetPriv( UI08 newValue )
 	priv = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 SellValue()
-//|	Date			-	Unknown
-//|	Programmer	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Items sell value
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetSellValue( void ) const
+//|					void SetSellValue( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the item's sell value - determines how much player can sell it for
+//o-----------------------------------------------------------------------------------------------o
 UI32 CItem::GetSellValue( void ) const
 {
 	return value[1];
@@ -650,13 +778,12 @@ void CItem::SetSellValue( UI32 newValue )
 	value[1] = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI32 BuyValue()
-//|	Date			-	Unknown
-//|	Programmer	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Items buy value
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetBuyValue( void ) const
+//|					void SetBuyValue( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for it
+//o-----------------------------------------------------------------------------------------------o
 UI32 CItem::GetBuyValue( void ) const
 {
 	return value[0];
@@ -666,13 +793,12 @@ void CItem::SetBuyValue( UI32 newValue )
 	value[0] = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	UI16 Restock()
-//|	Date			-	Unknown
-//|	Programmer	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Items restock value
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetRestock( void ) const
+//|					void SetRestock( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's restock value in vendor sellpack
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetRestock( void ) const
 {
 	return restock;
@@ -682,13 +808,12 @@ void CItem::SetRestock( UI16 newValue )
 	restock = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	ARMORCLASS ArmourClass()
-//|	Date			-	Unknown
-//|	Programmer	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Items armour class
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ARMORCLASS GetArmourClass( void ) const
+//|					void SetArmourClass( ARMORCLASS newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's armour class
+//o-----------------------------------------------------------------------------------------------o
 ARMORCLASS CItem::GetArmourClass( void ) const
 {
 	return armorClass;
@@ -698,6 +823,12 @@ void CItem::SetArmourClass( ARMORCLASS newValue )
 	armorClass = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetRank( void ) const
+//|					void SetRank( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's rank value - used in crafting
+//o-----------------------------------------------------------------------------------------------o
 SI08 CItem::GetRank( void ) const
 {
 	return rank;
@@ -707,6 +838,12 @@ void CItem::SetRank( SI08 newValue )
 	rank = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 GetGood( void ) const
+//|					void SetGood( SI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's good value - used by advanced trade system
+//o-----------------------------------------------------------------------------------------------o
 SI16 CItem::GetGood( void ) const
 {
 	return good;
@@ -716,6 +853,12 @@ void CItem::SetGood( SI16 newValue )
 	good = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 GetRndValueRate( void ) const
+//|					void SetRndValueRate( SI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's random value rate - used by advanced trade system
+//o-----------------------------------------------------------------------------------------------o
 SI32 CItem::GetRndValueRate( void ) const
 {
 	return rndvaluerate;
@@ -725,6 +868,12 @@ void CItem::SetRndValueRate( SI32 newValue )
 	rndvaluerate = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 GetMadeWith( void ) const
+//|					void SetMadeWith( SI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets ID of skill used to create item
+//o-----------------------------------------------------------------------------------------------o
 SI08 CItem::GetMadeWith( void ) const
 {
 	return madewith;
@@ -734,6 +883,12 @@ void CItem::SetMadeWith( SI08 newValue )
 	madewith = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL GetGlow( void ) const
+//|					void SetGlow( SERIAL newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets serial of glow item attached to item
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CItem::GetGlow( void ) const
 {
 	return glow;
@@ -743,16 +898,27 @@ void CItem::SetGlow( SERIAL newValue )
 	glow = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	COLOUR GetGlowColour( void ) const
+//|					void SetGlowColour( COLOUR newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets colour of glow item attached to item
+//o-----------------------------------------------------------------------------------------------o
 COLOUR CItem::GetGlowColour( void ) const
 {
 	return glowColour;
 }
-
 void CItem::SetGlowColour( COLOUR newValue )
 {
 	glowColour = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetGlowEffect( void ) const
+//|					void SetGlowEffect( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets colour of glow item attached to item
+//o-----------------------------------------------------------------------------------------------o
 UI08 CItem::GetGlowEffect( void ) const
 {
 	return glow_effect;
@@ -762,81 +928,116 @@ void CItem::SetGlowEffect( UI08 newValue )
 	glow_effect = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetAmmoID( void ) const
+//|					void SetAmmoID( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets ammo ID for ammo used by ranged weapon
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmmoID( void ) const
 {
 	return ammo[0];
 }
-
 void CItem::SetAmmoID( UI16 newValue )
 {
 	ammo[0] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetAmmoHue( void ) const
+//|					void SetAmmoHue( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets hue of ammo used by ranged weapon
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmmoHue( void ) const
 {
 	return ammo[1];
 }
-
 void CItem::SetAmmoHue( UI16 newValue )
 {
 	ammo[1] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetAmmoFX( void ) const
+//|					void SetAmmoFX( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets projectile FX shown when firing ranged weapon
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmmoFX( void ) const
 {
 	return ammoFX[0];
 }
-
 void CItem::SetAmmoFX( UI16 newValue )
 {
 	ammoFX[0] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetAmmoFXHue( UI16 newValue )
+//|					void SetAmmoFXHue( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets colour of projectiles fired by ranged weapons
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmmoFXHue( void ) const
 {
 	return ammoFX[1];
 }
-
 void CItem::SetAmmoFXHue( UI16 newValue )
 {
 	ammoFX[1] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetAmmoFXRender( void ) const
+//|					void SetAmmoFXRender( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the render mode of projectile FX played when firing ranged weapons
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::GetAmmoFXRender( void ) const
 {
 	return ammoFX[2];
 }
-
 void CItem::SetAmmoFXRender( UI16 newValue )
 {
 	ammoFX[2] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 GetWeightMax( void ) const
+//|					void SetWeightMax( SI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets maximum weight (in stones) a container can hold
+//o-----------------------------------------------------------------------------------------------o
 SI32 CItem::GetWeightMax( void ) const
 {
 	return weightMax;
 }
-
 void CItem::SetWeightMax( SI32 newValue )
 {
 	weightMax = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 GetBaseWeight( void ) const
+//|					void SetBaseWeight( SI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets base item weight - primarily used to store original container weight
+//o-----------------------------------------------------------------------------------------------o
 SI32 CItem::GetBaseWeight( void ) const
 {
 	return baseWeight;
 }
-
 void CItem::SetBaseWeight( SI32 newValue )
 {
 	baseWeight = newValue;
 }
 
-void CItem::IncID( SI16 incAmount )
-{
-	SetID( id + incAmount );
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 IsFieldSpell( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether item belongs to a field spell - and if so - which one
+//o-----------------------------------------------------------------------------------------------o
 UI08 CItem::IsFieldSpell( void ) const
 {
 	switch( id )
@@ -852,23 +1053,12 @@ UI08 CItem::IsFieldSpell( void ) const
 		default:		return 0;
 	}
 }
-bool CItem::IsLockedDown( void ) const
-{
-	return ( movable == 3 );
-}
-bool CItem::IsShieldType( void ) const
-{
-	if( id >= 0x1B72 && id <= 0x1B7B )
-		return true;
-	if( id >= 0x1BC3 && id <= 0x1BC7 )
-		return true;
-	if( id >= 0x4200 && id <= 0x420B )
-		return true;
-	if( id >= 0x4228 && id <= 0x422C )
-		return true;
-	return false;
-}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanBeLockedDown( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether item can be locked down
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::CanBeLockedDown( void ) const
 {
 	if( type == IT_DOOR || type == IT_LOCKEDDOOR )	// can't lock down a door
@@ -882,11 +1072,44 @@ bool CItem::CanBeLockedDown( void ) const
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsLockedDown( void ) const
+//|					void LockDown( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item is locked down and immovable
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::IsLockedDown( void ) const
+{
+	return ( movable == 3 );
+}
 void CItem::LockDown( void )
 {
 	movable = 3;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsShieldType( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether item is a shield
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::IsShieldType( void ) const
+{
+	if( id >= 0x1B72 && id <= 0x1B7B )
+		return true;
+	if( id >= 0x1BC3 && id <= 0x1BC7 )
+		return true;
+	if( id >= 0x4200 && id <= 0x420B )
+		return true;
+	if( id >= 0x4228 && id <= 0x422C )
+		return true;
+	return false;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool Save( std::ofstream &outStream )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Save item details to worldfile
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::Save( std::ofstream &outStream )
 {
 	if( isFree() )
@@ -907,12 +1130,23 @@ bool CItem::Save( std::ofstream &outStream )
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveSelfFromOwner( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove item (self) from owner it belongs to
+//o-----------------------------------------------------------------------------------------------o
 void CItem::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( oldOwner != NULL )
 		oldOwner->RemoveOwnedItem( this );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddSelfToOwner( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Add item (self) to owner
+//o-----------------------------------------------------------------------------------------------o
 void CItem::AddSelfToOwner( void )
 {
 	CChar *newOwner = GetOwnerObj();
@@ -922,6 +1156,11 @@ void CItem::AddSelfToOwner( void )
 		newOwner->AddOwnedItem( this );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveSelfFromCont( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove item (self) from container it's in
+//o-----------------------------------------------------------------------------------------------o
 void CItem::RemoveSelfFromCont( void )
 {
 	if( contObj != NULL )
@@ -949,6 +1188,11 @@ void CItem::RemoveSelfFromCont( void )
 		MapRegion->RemoveItem( this );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem * Dupe( ObjectType itemType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Make a copy of item and copy all properties from old item to new
+//o-----------------------------------------------------------------------------------------------o
 CItem * CItem::Dupe( ObjectType itemType )
 {
 	CItem *target = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( itemType ));
@@ -1044,23 +1288,37 @@ void CItem::CopyData( CItem *target )
 		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetWeatherDamage( WeatherType effectNum ) const
+//|					void SetWeatherDamage( WeatherType effectNum, bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets weather damage of item - primarily used by weapons
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::GetWeatherDamage( WeatherType effectNum ) const
 {
 	return weatherBools.test( effectNum );
 }
-
 void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 {
 	weatherBools.set( effectNum, value );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DumpHeader( std::ofstream &outStream ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dump item header to worldfile
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::DumpHeader( std::ofstream &outStream ) const
 {
 	outStream << "[ITEM]" << '\n';
 	return true;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DumpBody( std::ofstream &outStream ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dump item tags and values to worldfile
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::DumpBody( std::ofstream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );
@@ -1107,6 +1365,11 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles loading in tags and values from world files on startup
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::HandleLine( UString &UTag, UString &data )
 {
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
@@ -1425,14 +1688,13 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 	return rvalue;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool LoadRemnants( UI32 arrayOffset )
-//|	Date			-	21st January, 2002
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	After handling data specific load, other parts go here
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool LoadRemnants( void )
+//|	Date		-	21st January, 2002
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	After handling data specific load, other parts go here
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::LoadRemnants( void )
 {
 	SetSerial( serial );
@@ -1447,6 +1709,11 @@ bool CItem::LoadRemnants( void )
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsContType( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if item has a container type
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::IsContType( void ) const
 {
 	if( GetLayer() == IL_PACKITEM || GetLayer() == IL_BANKBOX )
@@ -1465,6 +1732,11 @@ bool CItem::IsContType( void ) const
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PostLoadProcessing( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Used to setup any pointers that may need adjustment following the loading of the world
+//o-----------------------------------------------------------------------------------------------o
 void CItem::PostLoadProcessing( void )
 {
 	CBaseObject::PostLoadProcessing();
@@ -1489,6 +1761,11 @@ void CItem::PostLoadProcessing( void )
 	SetPostLoaded( true );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckItemIntegrity( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Run some integrity checks on item
+//o-----------------------------------------------------------------------------------------------o
 void CItem::CheckItemIntegrity( void )
 {
 	SERIAL getSerial = GetSerial();
@@ -1521,23 +1798,16 @@ const UI32 BIT_NEWBIE		=	1;
 const UI32 BIT_DISPELLABLE	=	2;
 const UI32 BIT_DEVINELOCK	=	3;
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDecayable( void ) const
+//|					void SetDecayable( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item can decay
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::isDecayable( void ) const
 {
 	return priv.test( BIT_DECAYABLE );
 }
-bool CItem::isNewbie( void ) const
-{
-	return priv.test( BIT_NEWBIE );
-}
-bool CItem::isDispellable( void ) const
-{
-	return priv.test( BIT_DISPELLABLE );
-}
-bool CItem::isDevineLocked( void ) const
-{
-	return priv.test( BIT_DEVINELOCK );
-}
-
 void CItem::SetDecayable( bool newValue )
 {
 	if( newValue )
@@ -1545,37 +1815,74 @@ void CItem::SetDecayable( bool newValue )
 
 	priv.set( BIT_DECAYABLE, newValue );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isNewbie( void ) const
+//|					void SetNewbie( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item is marked as a newbie item (doesn't drop on death)
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::isNewbie( void ) const
+{
+	return priv.test( BIT_NEWBIE );
+}
 void CItem::SetNewbie( bool newValue )
 {
 	priv.set( BIT_NEWBIE, newValue );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDispellable( void ) const
+//|					void SetDispellable( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item is dispellable (part of a field spell, for instance)
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::isDispellable( void ) const
+{
+	return priv.test( BIT_DISPELLABLE );
+}
 void CItem::SetDispellable( bool newValue )
 {
 	priv.set( BIT_DISPELLABLE, newValue );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDevineLocked( void ) const
+//|					void SetDevineLock( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether container was locked by a GM
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::isDevineLocked( void ) const
+{
+	return priv.test( BIT_DEVINELOCK );
 }
 void CItem::SetDevineLock( bool newValue )
 {
 	priv.set( BIT_DEVINELOCK, newValue );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	UI16 EntryMadeFrom()
-//|	Date			-	13 September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Create.scp entry the item was made from
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 EntryMadeFrom( void ) const
+//|					void EntryMadeFrom( UI16 newValue )
+//|	Date		-	13 September, 2001
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Create-DFNs entry the item was made from
+//o-----------------------------------------------------------------------------------------------o
 UI16 CItem::EntryMadeFrom( void ) const
 {
 	return entryMadeFrom;
 }
-
 void CItem::EntryMadeFrom( UI16 newValue )
 {
 	entryMadeFrom = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetWeight( SI32 newVal, bool doWeightUpdate )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the weight of the item
+//o-----------------------------------------------------------------------------------------------o
 void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
 	CBaseObject *checkCont = NULL;
@@ -1591,14 +1898,13 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 		Weight->addItemWeight( checkCont, this );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool IsMetalType( void ) const
-//|	Date			-	13 November, 2001
-//|	Programmer		-	Bel-CMC
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if it's a metal object
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsMetalType( void ) const
+//|	Date		-	13 November, 2001
+//|	Programmer	-	Bel-CMC
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if it's a metal object
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::IsMetalType( void ) const
 {
 	if( id >= 0x1B72 && id <= 0x1B7B )
@@ -1627,14 +1933,13 @@ bool CItem::IsMetalType( void ) const
 		return false;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool IsLeatherType( void ) const
-//|	Date			-	13 November, 2001
-//|	Programmer		-	Bel-CMC
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if it's a leather object
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsLeatherType( void ) const
+//|	Date		-	13 November, 2001
+//|	Programmer	-	Bel-CMC
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if it's a leather object
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::IsLeatherType( void ) const
 {
 	if( id >= 0x13C6 && id <= 0x13E2 )
@@ -1659,13 +1964,12 @@ inline bool operator>(const CItem& x, const CItem& y )
 	return ( x.GetSerial() > y.GetSerial() );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    :	void TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX DevTeam
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	Item "speech"
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+//|	Programmer	-	UOX DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display "speech" over an item
+//o-----------------------------------------------------------------------------------------------o
 void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
 {
 	UnicodeTypes dictLang	= ZERO;
@@ -1698,12 +2002,12 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 }
 
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Update( CSocket *mSock )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CItem::Update( CSocket *mSock )
 {
 	if( GetType() == IT_TRADEWINDOW )
@@ -1767,13 +2071,13 @@ void CItem::Update( CSocket *mSock )
 	Console.Error( " CItem::Update(0x%X): cannot determine container type!", GetSerial() );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	void SendToSocket( CSocket *mSock )
-//|		Programmer  -	giwo
-//|		Date        -	July 27, 2003
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Updates an item on the ground to specified socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendToSocket( CSocket *mSock )
+//|	Programmer	-	giwo
+//|	Date		-	July 27, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates an item on the ground to specified socket
+//o-----------------------------------------------------------------------------------------------o
 void CItem::SendToSocket( CSocket *mSock )
 {
 	if( !mSock->LoginComplete() )
@@ -1812,13 +2116,13 @@ void CItem::SendToSocket( CSocket *mSock )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	void SendPackItemToSocket( CSocket *mSock )
-//|		Programmer  -	giwo
-//|		Date        -	July 27, 2003
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Updates an item contained in a pack to specified socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendPackItemToSocket( CSocket *mSock )
+//|	Programmer	-	giwo
+//|	Date		-	July 27, 2003
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates an item contained in a pack to specified socket
+//o-----------------------------------------------------------------------------------------------o
 void CItem::SendPackItemToSocket( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
@@ -1844,13 +2148,13 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	void CItem::RemoveFromSight
-//|		Date        -	September 7th, 2003
-//|		Programmer  -	giwo
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Loops through all online chars and removes the item from their sight
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveFromSight( CSocket *mSock )
+//|	Date		-	September 7th, 2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loops through all online chars and removes the item from their sight
+//o-----------------------------------------------------------------------------------------------o
 void CItem::RemoveFromSight( CSocket *mSock )
 {
 	CPRemoveItem toRemove	= (*this);
@@ -1931,13 +2235,13 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	void CItem::PlaceInPack( void )
-//|		Date        -	October 18th, 2003
-//|		Programmer  -	giwo
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Puts an item at a random location inside a pack
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlaceInPack( void )
+//|	Date		-	October 18th, 2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Puts an item at a random location inside a pack
+//o-----------------------------------------------------------------------------------------------o
 void CItem::PlaceInPack( void )
 {
 	SetX( static_cast<SI16>(50 + RandomNum( 0, 79 )) );
@@ -1945,6 +2249,12 @@ void CItem::PlaceInPack( void )
 	SetZ( 9 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetSpell( UI08 part ) const
+//|					void SetSpell( UI08 part, UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets spells in a spellbook item
+//o-----------------------------------------------------------------------------------------------o
 UI32 CItem::GetSpell( UI08 part ) const
 {
 	UI32 rvalue = 0;
@@ -1952,20 +2262,19 @@ UI32 CItem::GetSpell( UI08 part ) const
 		rvalue = spells[part];
 	return rvalue;
 }
-
 void CItem::SetSpell( UI08 part, UI32 newValue )
 {
 	if( part < 3 )
 		spells[part] = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CItem::Cleanup( void )
-//|   Date        -  11/6/2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Cleans up after item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Cleanup( void )
+//|	Date		-	11/6/2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cleans up after item
+//o-----------------------------------------------------------------------------------------------o
 void CItem::Cleanup( void )
 {
 	if( !isFree() )	// We're not the default item in the handler
@@ -2036,15 +2345,13 @@ void CItem::Cleanup( void )
 	}
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool CanBeObjType()
-//|	Date			-	24 June, 2004
-//|	Programmer		-	Maarc
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Indicates whether an object can behave as a
-//|						particular type
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
+//|	Date		-	24 June, 2004
+//|	Programmer	-	Maarc
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Indicates whether an object can behave as a particular type
+//o-----------------------------------------------------------------------------------------------o
 bool CItem::CanBeObjType( ObjectType toCompare ) const
 {
 	bool rvalue = CBaseObject::CanBeObjType( toCompare );
@@ -2056,13 +2363,13 @@ bool CItem::CanBeObjType( ObjectType toCompare ) const
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool Delete()
-//|   Date        -  11/6/2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Adds character to deletion queue
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Delete( void )
+//|	Date		-	11/6/2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds character to deletion queue
+//o-----------------------------------------------------------------------------------------------o
 void CItem::Delete( void )
 {
 	if(cwmWorldState->deletionQueue.count(this)==0)
@@ -2079,21 +2386,20 @@ CDataList< CItem * > * CItem::GetContainsList( void )
 	return &Contains;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Class			-	CSpawnItem
-//|	Date			-	29th June, 2004
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Version History
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	CSpawnItem() : CItem()
+//|	Date		-	29th June, 2004
+//|	Programmer	-	giwo
+//| Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Version History
 //|									
 //|						1.0		giwo		29th June, 2004
 //|						Original implementation
 //|						First attempt to begin breaking CItem into multiple smaller
 //|						classes, reducing overall memory usage. Currently stores all
 //|						objects spawned by an item.
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CSpawnItem::CSpawnItem() : CItem(),
 isSectionAList( false )
 {
@@ -2103,13 +2409,14 @@ isSectionAList( false )
 	spawnSection = "";
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 Interval()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Min and Max interval for spawner to respawn
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetInterval( UI08 part ) const
+//|					void SetInterval( UI08 part, UI08 newVal )
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets Min and Max interval for spawner to respawn
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSpawnItem::GetInterval( UI08 part ) const
 {
 	UI08 rvalue = 0;
@@ -2123,13 +2430,14 @@ void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
 		Interval[part] = newVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  std::string SpawnSection()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Script section to spawn from
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetSpawnSection( void ) const
+//|					void SetSpawnSection( const std::string &newVal )
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets Script section to spawn from
+//o-----------------------------------------------------------------------------------------------o
 std::string CSpawnItem::GetSpawnSection( void ) const
 {
 	return spawnSection;
@@ -2139,13 +2447,14 @@ void CSpawnItem::SetSpawnSection( const std::string &newVal )
 	spawnSection = newVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  std::string IsSectionAList()
-//|   Date        -  7/05/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Is the script section a spawner list?
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsSectionAList( void ) const
+//|					void IsSectionAList( bool newVal )
+//|	Date		-	7/05/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets script section as a spawner list
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::IsSectionAList( void ) const
 {
 	return isSectionAList;
@@ -2155,26 +2464,26 @@ void CSpawnItem::IsSectionAList( bool newVal )
 	isSectionAList = newVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool DumpHeader( std::ofstream &outStream )
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Dumps Header to Worldfile
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DumpHeader( std::ofstream &outStream ) const
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dumps Header to Worldfile
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 {
 	outStream << "[SPAWNITEM]" << '\n';
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool DumpBody( std::ofstream &outStream )
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Dumps Spawn Item to Worldfile
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DumpBody( std::ofstream &outStream ) const
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dumps Spawn Item to Worldfile
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 {
 	CItem::DumpBody( outStream );
@@ -2184,13 +2493,13 @@ bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool HandleLine( UString &UTag, UString &data )
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Reads data from Worldfile into the class
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads data from Worldfile into the class
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::HandleLine( UString &UTag, UString &data )
 {
 	bool rvalue = CItem::HandleLine( UTag, data );
@@ -2223,13 +2532,13 @@ bool CSpawnItem::HandleLine( UString &UTag, UString &data )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  DoRespawn()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Will eventually take the place of RespawnItem()
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DoRespawn( void )
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Will eventually take the place of RespawnItem()
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::DoRespawn( void )
 {
 	bool rValue = false;
@@ -2320,13 +2629,13 @@ bool CSpawnItem::HandleSpawnContainer( void )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Cleanup()
-//|   Date        -  6/29/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Cleans up after spawner item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Cleanup( void )
+//|	Date		-	6/29/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cleans up after spawner item
+//o-----------------------------------------------------------------------------------------------o
 void CSpawnItem::Cleanup( void )
 {
 	CItem::Cleanup();
@@ -2338,15 +2647,13 @@ void CSpawnItem::Cleanup( void )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function	-	bool CanBeObjType()
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanBeObjType( ObjectType toCompare ) const
 //|	Date		-	24 June, 2004
 //|	Programmer	-	Maarc
-//|	Modified	-
-//o--------------------------------------------------------------------------o
-//|	Purpose		-	Indicates whether an object can behave as a
-//|					particular type
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Indicates whether an object can behave as a particular type
+//o-----------------------------------------------------------------------------------------------o
 bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 {
 	bool rvalue = CItem::CanBeObjType( toCompare );
@@ -2358,13 +2665,13 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Dupe()
-//|   Date        -  7/11/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Creates a new CSpawnItem and copies all of this objects properties to the new one
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CSpawnItem * Dupe( void )
+//|	Date		-	7/11/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a new CSpawnItem and copies all of this objects properties to the new one
+//o-----------------------------------------------------------------------------------------------o
 CSpawnItem * CSpawnItem::Dupe( void )
 {
 	CSpawnItem *target = static_cast< CSpawnItem * >(ObjectFactory::getSingleton().CreateObject( OT_SPAWNER ));
@@ -2376,13 +2683,13 @@ CSpawnItem * CSpawnItem::Dupe( void )
 	return target;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  CopyData( CSpawnItem *target )
-//|   Date        -  7/11/2004
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Copies all of this objects properties to the new one
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CopyData( CSpawnItem *target )
+//|	Date		-	7/11/2004
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Copies all of this objects properties to the new one
+//o-----------------------------------------------------------------------------------------------o
 void CSpawnItem::CopyData( CSpawnItem *target )
 {
 	CItem::CopyData( target );

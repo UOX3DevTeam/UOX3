@@ -1,11 +1,10 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	CResponse.cpp
-//|	Date			-	11/15/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Version History
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	CResponse.cpp
+//|	Date		-	11/15/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Changes		-	Version History
 //|									
 //|							1.0		giwo		15th November, 2003
 //|							Initial implementation.  Ripped out 99% of cSpeech::response
@@ -24,7 +23,7 @@
 //|							1.2		giwo		17th November, 2003
 //|							We now make use of OSI's trigger words (the few that we actually handle,
 //|								currently), to remove the need to search through the text string
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "CResponse.h"
 #include "regions.h"
@@ -50,6 +49,12 @@ inline bool findString( std::string toCheck, std::string toFind )
 	return ( toCheck.find( toFind ) != std::string::npos );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a list of NPCs that are within a certain distance
+//o-----------------------------------------------------------------------------------------------o
 CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 {
 	CHARLIST ourNpcs;
@@ -64,7 +69,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 		regChars->Push();
 		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
 		{
-			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() )
+			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() || Npc->GetInstanceID() != mChar->GetInstanceID() )
 				continue;
 			if( objInRange( mChar, Npc, distance ) )
 				ourNpcs.push_back( Npc );
@@ -74,6 +79,12 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	return ourNpcs;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if nearby NPCs run scripts that react to speech
+//o-----------------------------------------------------------------------------------------------o
 bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
 	CChar *Npc			= NULL;
@@ -115,6 +126,13 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 	}
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle responses to keywords in player speech
+//o-----------------------------------------------------------------------------------------------o
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 {
 	if( !DoJSResponse( mSock, mChar, text ) )
@@ -217,6 +235,11 @@ CEscortResponse::CEscortResponse( bool newVal )
 {
 	findDest = newVal;
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles NPC escort response to player wanting to take on the escorting job
+//o-----------------------------------------------------------------------------------------------o
 void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	// If the PC is dead then break out, The dead cannot accept quests
@@ -273,6 +296,11 @@ CBankResponse::CBankResponse( bool newVal )
 	checkBalance = newVal;
 }
 void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles NPC bankers response to players wanting to use bank commands
+//o-----------------------------------------------------------------------------------------------o
 void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( !mChar->IsDead() )
@@ -300,6 +328,11 @@ void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
 CKillsResponse::CKillsResponse( void )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to see the status of their kills
+//o-----------------------------------------------------------------------------------------------o
 void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( !mChar->IsDead() && mSock != NULL )
@@ -318,6 +351,11 @@ CTrainingResponse::CTrainingResponse( const std::string &text )
 {
 	ourText = text;
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to train skills from NPCs
+//o-----------------------------------------------------------------------------------------------o
 void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( cwmWorldState->ServerData()->NPCTrainingStatus() ) //if the player wants to train
@@ -450,6 +488,11 @@ CBasePetResponse::CBasePetResponse( const std::string &text )
 {
 	ourText = text;
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to execute pet commands
+//o-----------------------------------------------------------------------------------------------o
 void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
@@ -496,6 +539,11 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CPetReleaseResponse::CPetReleaseResponse( const std::string &text ) : CBasePetResponse( text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to release pets
+//o-----------------------------------------------------------------------------------------------o
 bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
@@ -526,6 +574,11 @@ CPetAllResponse::CPetAllResponse( bool allVal, const std::string &text ) : CBase
 CPetGuardResponse::CPetGuardResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting their pets to guard an object
+//o-----------------------------------------------------------------------------------------------o
 bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
@@ -549,6 +602,11 @@ bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CPetAttackResponse::CPetAttackResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting their pets to attack something
+//o-----------------------------------------------------------------------------------------------o
 bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc, true ) )
@@ -568,6 +626,11 @@ bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CPetComeResponse::CPetComeResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting their pets to follow
+//o-----------------------------------------------------------------------------------------------o
 bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ) )
@@ -588,6 +651,11 @@ bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CPetStayResponse::CPetStayResponse( bool allVal, const std::string &text ) : CPetAllResponse( allVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting their pets to stay
+//o-----------------------------------------------------------------------------------------------o
 bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( canControlPet( mChar, Npc ) )
@@ -612,6 +680,11 @@ CBaseVendorResponse::CBaseVendorResponse( bool vendVal, const std::string &text 
 	saidVendor	= vendVal;
 	ourText		= text;
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to interact with a vendor
+//o-----------------------------------------------------------------------------------------------o
 void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
@@ -635,6 +708,11 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to buy something from a vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
@@ -653,6 +731,11 @@ bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorSellResponse::CVendorSellResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to sell something to a vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 
@@ -678,6 +761,11 @@ bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorViewResponse::CVendorViewResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to view the items a vendor has for sale
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -696,6 +784,11 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorGoldResponse::CVendorGoldResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to withdraw their earnings from their vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -748,6 +841,11 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorStatusResponse::CVendorStatusResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to see the status of their vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -784,6 +882,11 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 CVendorDismissResponse::CVendorDismissResponse( bool vendVal, const std::string &text ) : CBaseVendorResponse( vendVal, text )
 {
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to dismiss their vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -806,6 +909,11 @@ CHouseMultiResponse::CHouseMultiResponse( TargetIDs targVal, SI32 dictVal )
 	targID			= targVal;
 	dictEntry		= dictVal;
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to use house commands
+//o-----------------------------------------------------------------------------------------------o
 void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CMultiObj *realHouse = findMulti( mChar );
@@ -831,6 +939,11 @@ CBoatMultiResponse::CBoatMultiResponse( UI08 mType )
 	moveType = mType;
 }
 CBoatObj * GetBoat( CSocket *s );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response to players wanting to use boat commands
+//o-----------------------------------------------------------------------------------------------o
 void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CBoatObj *boat = GetBoat( mSock );

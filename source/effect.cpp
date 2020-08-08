@@ -16,12 +16,11 @@
 namespace UOX
 {
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x, UI08 fallDirection )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Plays a characters death animation
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays a characters death animation and sends it to nearby players
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 {
 	CPDeathAction toSend( (*s), (*x) );
@@ -34,6 +33,12 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, 
+//|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a message to client to display a moving animation from source object to target object
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ) || !ValidateObject( dest ) ) 
@@ -57,6 +62,12 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	Network->PopConn();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, 
+//|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ) ) 
@@ -80,12 +91,11 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Character does a certain action
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to make character perform specified action/anim
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
 {
 	CPCharacterAnimation toSend = (*mChar);
@@ -98,12 +108,12 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 {
 	if( mChar->IsOnHorse() && ( actionID == 0x10 || actionID == 0x11 ) )
@@ -116,7 +126,11 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 	PlayCharacterAnimation( mChar, actionID );
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to play a static animation effect on an object
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
 	if( !ValidateObject( target ) ) 
@@ -143,7 +157,11 @@ void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed
 	}
 }
 
-// for effects on items
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to play a static animation effect at a location
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode )
 {
 	CPGraphicalEffect toSend( 2 );
@@ -162,6 +180,11 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 	Network->PopConn();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void bolteffect( CChar *player )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to play a lightning bolt effect on a specific player
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::bolteffect( CChar *player )
 {
 	if( !ValidateObject( player ) ) 
@@ -178,12 +201,11 @@ void cEffects::bolteffect( CChar *player )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void explodeItem( CSocket *mSock, CItem *nItem )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Explode an item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting the item
+//o-----------------------------------------------------------------------------------------------o
 void explodeItem( CSocket *mSock, CItem *nItem )
 {
 	CChar *c = mSock->CurrcharObj();
@@ -220,7 +242,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
-			if( !ValidateObject( tempChar ) )
+			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
 				continue;
 			if( tempChar->GetRegion()->IsSafeZone() )
 			{
@@ -245,6 +267,11 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
+			if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
+			{
+				// Item is in a different instanceID - ignore
+				continue;
+			}
 			if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
 			{
 				dx = abs( nItem->GetX() - tempItem->GetX() );
@@ -267,6 +294,11 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	nItem->Delete();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleMakeItemEffect( CTEffect *tMake )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies maker's mark to crafted items and plays sound FX
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 {
 	if( tMake == NULL )
@@ -332,6 +364,11 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	sock->sysmessage( 985 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void checktempeffects( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks timer-controlled temporary effects 
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::checktempeffects( void )
 {
 	CItem *i = NULL;
@@ -577,12 +614,11 @@ void cEffects::checktempeffects( void )
 	cwmWorldState->tempEffects.Pop();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void reverseEffect( UI16 i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void reverseEffect( CTEffect *Effect )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reverse a temp effect
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void reverseEffect( CTEffect *Effect )
 {
 	CChar *s = calcCharObjFromSer( Effect->Destination() );
@@ -612,7 +648,7 @@ void reverseEffect( CTEffect *Effect )
 				s->IncDexterity2( Effect->More2() );
 				s->IncIntelligence2( Effect->More3() );
 				break;
-			case 18: // Polymorph spell
+			case 18: // Polymorph Spell
 				s->SetID( s->GetOrgID() );
 				s->IsPolymorphed( false );
 				break;
@@ -659,6 +695,11 @@ void reverseEffect( CTEffect *Effect )
 	Items->CheckEquipment( s );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a temp effect to a character
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
 {
 	if( !ValidateObject( source ) || !ValidateObject( dest ) )
@@ -846,7 +887,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( k <= 0x03e2 ) // lord binary, body-values >0x3e1 crash the client
 				dest->SetID( k );
 			break;
-		case 19: // incognito spell - AntiChrist (10/99)
+		case 19: // Incognito Spell - AntiChrist (10/99)
 			toAdd->ExpireTime( BuildTimeValue( 90.0f ) ); // 90 seconds
 			toAdd->Dispellable( false );
 			break;
@@ -874,7 +915,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( ( (R32)more1 + (R32)more2 / 1000.0f ) ) );
 			toAdd->More1( more3 );
 			break;
-		case 41:	// creating item
+		case 41: // creating item
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) / 100.0f ) );
 			toAdd->More2( more2 );
 			break;
@@ -892,6 +933,11 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	cwmWorldState->tempEffects.Add( toAdd );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a temp effect to an item
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 )
 {
 	if( !ValidateObject( dest ) )
@@ -942,14 +988,13 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 	cwmWorldState->tempEffects.Add( toAdd );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	SaveEffects()
-//|	Date			-	16 March, 2002
-//|	Programmer		-	sereg
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Saves out the TempEffects
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SaveEffects( void )
+//|	Date		-	16 March, 2002
+//|	Programmer	-	sereg
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Saves out the TempEffects to effects.wsc
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::SaveEffects( void )
 {
 	std::ofstream effectDestination;
@@ -985,15 +1030,14 @@ void cEffects::SaveEffects( void )
 	Console.Print( "Effects saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	LoadEffects( void )
-//|	Date			-	16 March, 2002
-//|	Programmer		-	sererg
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Loads in Effects from disk
-//o--------------------------------------------------------------------------
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadEffects( void )
+//|	Date		-	16 March, 2002
+//|	Programmer	-	sererg
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads in Effects from disk
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::LoadEffects( void )
 {
 	std::ifstream input;
@@ -1101,13 +1145,14 @@ void cEffects::LoadEffects( void )
 	}
 }
 
-//o-----------------------------------------------------------------------o
-//|	Function		-	Save(ofstream &effectDestination )
-//|	Date			-	March 16, 2002
-//|	Programmer		-	sereg
-//o-----------------------------------------------------------------------o
-//|	Returns			-	true/false indicating the success of the write operation
-//o-----------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool Save( std::ofstream &effectDestination ) const
+//|	Date		-	March 16, 2002
+//|	Programmer	-	sereg
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Output the effect data to the effect destination. Returns true/false 
+//|					indicating the success of the write operation
+//o-----------------------------------------------------------------------------------------------o
 bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
 	CBaseObject *getPtr = NULL;

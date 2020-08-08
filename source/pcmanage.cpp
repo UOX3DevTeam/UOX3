@@ -24,13 +24,11 @@ T Capped( const T value, const T minimum, const T maximum )
 	return UOX_MAX( UOX_MIN( value, maximum ), minimum );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool validHairStyle( UI16 id )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Checks if selected hair is a valid hair type
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool validHairStyle( UI16 id, UI16 bodyID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if selected hair is a valid hair type
+//o-----------------------------------------------------------------------------------------------o
 bool validHairStyle( UI16 id, UI16 bodyID )
 {
 	bool rvalue = false;
@@ -127,14 +125,12 @@ bool validHairStyle( UI16 id, UI16 bodyID )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool validBeard( UI16 id )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check if selected beard is a valid beard type
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool validBeard( UI16 id, UI16 bodyID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if selected beard is a valid beard type
 //|					 in his pack, on his paperdoll or in his hands
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool validBeard( UI16 id, UI16 bodyID )
 {
 	bool rvalue = false;
@@ -168,15 +164,15 @@ bool validBeard( UI16 id, UI16 bodyID )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI16 validSkinColour( UI16 id, UI16 bodyID )
-//|   Date        :  22nd January, 2006
-//|   Programmer  :  Maarc
-//|   Return      :  A validated skin colour (capped into range)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check if selected skin colour is a valid colour, based on
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	COLOUR validSkinColour( UI16 id, UI16 bodyID )
+//|	Date		-	22nd January, 2006
+//|	Programmer	-	Maarc
+//|	Return		-	A validated skin colour (capped into range)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if selected skin colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 COLOUR validSkinColour( UI16 id, UI16 bodyID )
 {
 	COLOUR rvalue;
@@ -232,15 +228,15 @@ COLOUR validSkinColour( UI16 id, UI16 bodyID )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI16 validHairColour( UI16 id, UI16 bodyID )
-//|   Date        :  22nd January, 2006
-//|   Programmer  :  Maarc
-//|   Return      :  A validated hair colour (capped into range)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check if selected hair colour is a valid colour, based on
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	COLOUR validHairColour( UI16 id, UI16 bodyID )
+//|	Date		-	22nd January, 2006
+//|	Programmer	-	Maarc
+//|	Return		-	A validated hair colour (capped into range)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if selected hair colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 COLOUR validHairColour( UI16 id, UI16 bodyID )
 {
 	COLOUR rvalue;
@@ -317,12 +313,11 @@ COLOUR validHairColour( UI16 id, UI16 bodyID )
 }
 
 void startChar( CSocket *mSock, bool onCreate = false );
-//o---------------------------------------------------------------------------o
-//|	Function	-	void playChar( CSocket *mSock )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIPlayCharacter::Handle( void )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when "Play Character" button is hit
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool CPIPlayCharacter::Handle( void )
 {
 	if( tSock != NULL )
@@ -414,18 +409,13 @@ bool CPIPlayCharacter::Handle( void )
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void deleteChar( CSocket *s )
-//|	Date			-	
-//|	Developers		-	Unknown / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Remove a character from the accounts system, due to 
-//|							an account gump button press
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIDeleteCharacter::Handle( void )
+//|	Programmer	-	Unknown / EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove a character from the accounts system, due to an account gump button press
+//o-----------------------------------------------------------------------------------------------o
 bool CPIDeleteCharacter::Handle( void )
 {
 	if( tSock != NULL )
@@ -469,16 +459,15 @@ bool CPIDeleteCharacter::Handle( void )
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void addNewbieItem( CSocket *socket, CChar *c, char* str)
-//|	Date			-	
-//|	Developers		-	Thyme
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Adds a newbie item defined in newbie.dfn
-//o--------------------------------------------------------------------------o
-//| Modifications	-	PACKITEM now supports item,amount - Zane
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
+//|	Programmer	-	Thyme
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a newbie item defined in newbie.dfn
+//o-----------------------------------------------------------------------------------------------o
+//| Changes		-	PACKITEM now supports item,amount - Zane
+//o-----------------------------------------------------------------------------------------------o
 void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
 {
 	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
@@ -557,14 +546,13 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CPICreateCharacter::newbieItems( CChar *mChar )
-//|	Date			-	
-//|	Developers		-	thyme
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Adds newbie items based on characters chosen skills
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void newbieItems( CChar *mChar )
+//|	Programmer	-	Thyme
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds newbie items based on characters chosen skills
+//o-----------------------------------------------------------------------------------------------o
 void CPICreateCharacter::newbieItems( CChar *mChar )
 {
 	enum NewbieItems
@@ -676,12 +664,12 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	CreatedItems[GOLD] = Items->CreateScriptItem( tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void createChar( CSocket *mSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPICreateCharacter::Handle( void )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character creation stuff
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool CPICreateCharacter::Handle( void )
 {
 	// This function needs to be decomposed
@@ -725,6 +713,7 @@ bool CPICreateCharacter::Handle( void )
 
 			// Fetch player's chosen start location
 			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+
 			CServerData *sd = cwmWorldState->ServerData();
 			size_t serverCount = sd->NumServerLocations();
 
@@ -741,7 +730,6 @@ bool CPICreateCharacter::Handle( void )
 			if (toGo == NULL)
 			{
 				// Invalid locationNumber; check if there are ANY start locations loaded
-
 				if (serverCount == 0)
 				{
 					// No start locations found, use a default hardcoded one
@@ -749,21 +737,25 @@ bool CPICreateCharacter::Handle( void )
 					SI16 startX;
 					SI16 startY;
 					SI08 startZ;
+					UI08 startWorld;
+					UI16 startInstanceID;
 					startX = 1495;
 					startY = 1629;
 					startZ = 10;
-					mChar->SetLocation(startX, startY, startZ);
+					startWorld = 0;
+					startInstanceID = 0;
+					mChar->SetLocation(startX, startY, startZ, startWorld, startInstanceID);
 				}
 				else
 				{
 					// Use first start location, which we know exists
 					toGo = cwmWorldState->ServerData()->ServerLocation(0);
-					mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ) );
+					mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ), static_cast<UI08>( toGo->worldNum ), static_cast<UI16>( toGo->instanceID ));
 				}
 			}
 			else
 			{
-				mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ) );
+				mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ), static_cast<UI08>( toGo->worldNum ), static_cast<UI16>( toGo->instanceID ));
 			}
 			mChar->SetDir( SOUTH );
 
@@ -793,12 +785,12 @@ bool CPICreateCharacter::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void SetNewCharStatsSkills( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetNewCharSkillsStats( CChar *mChar )
 //|	Programmer	-	Xuri
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets skills and stats for newly created characters
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 {
 	SI32 totalstats, totalskills;
@@ -1021,12 +1013,12 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void SetNewCharGender( CChar *mChar )
 //|	Programmer	-	Xuri
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets gender for newly created characters
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CPICreateCharacter::SetNewCharGender( CChar *mChar )
 {
 	UI16 pGenderID = 0x0190;
@@ -1093,12 +1085,11 @@ void CPICreateCharacter::SetNewCharGender( CChar *mChar )
 	mChar->SetOrgSkin( mChar->GetSkin() );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void updates( CSocket *s )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the Updates window
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void updates( CSocket *s )
 {
 	if( s == NULL )
@@ -1119,13 +1110,11 @@ void updates( CSocket *s )
 }
 
 void sysBroadcast( const std::string& txt );
-//o---------------------------------------------------------------------------o
-//|   Function    :  void startChar( CSocket *mSock, bool onCreate )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Sends character startup stuff to player
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void startChar( CSocket *mSock, bool onCreate )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends character startup stuff to player
+//o-----------------------------------------------------------------------------------------------o
 void startChar( CSocket *mSock, bool onCreate )
 {
 	if( mSock != NULL )
@@ -1271,12 +1260,12 @@ void startChar( CSocket *mSock, bool onCreate )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateCorpseItem( CChar &mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 //|	Programmer	-	giwo
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 {
 	CItem *iCorpse = NULL;
@@ -1336,12 +1325,12 @@ CItem *CreateCorpseItem( CChar& mChar, bool createPack, UI08 fallDirection )
 	return iCorpse;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void MoveItemsToCorpse( CChar *mChar, CItem *iCorpse )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 //|	Programmer	-	giwo
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves Items from Character to Corpse
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 {
 	CItem *k			= NULL;
@@ -1407,14 +1396,13 @@ void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse, bool createPack )
 }
 
 void killTrades( CChar *i );
-//o---------------------------------------------------------------------------o
-//|   Function    -  void HandleDeath( CChar *mChar )
-//|   Date        -  UnKnown
-//|   Programmer  -  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Performs death stuff. I.E.- creates a corpse, moves items
+//o-----------------------------------------------------------------------------------------------o
+//|	Function    -	void HandleDeath( CChar *mChar )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose     -	Performs death stuff. I.E.- creates a corpse, moves items
 //|                  to it, take out of war mode, does animation and sound, etc.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void HandleDeath( CChar *mChar )
 {
 	if( !ValidateObject( mChar ) || mChar->IsDead() || mChar->IsInvulnerable() )	// don't kill them if they are dead or invulnerable!

@@ -27,13 +27,12 @@ cSkills *Skills = NULL;
 
 const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu button from an item button (and the limit on ITEM=# in create.dfn)
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 CalcRankAvg( CChar *player, createEntry& skillMake )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate average rank of item based on player's skillpoints in skills
+//|					required to craft item
+//o-----------------------------------------------------------------------------------------------o
 SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 {
 	if( !cwmWorldState->ServerData()->RankSystemStatus() )
@@ -70,13 +69,13 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 	return (SI32)(rankSum / skillMake.skillReqs.size());
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
-//|   Date        :  24 August 1999
-//|   Programmer  :  Magius(CHE)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Modify variables based on item's rank.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
+//|	Date		-	24 August 1999
+//|	Programmer	-	Magius(CHE)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Modify item properties based on item's rank.
+//o-----------------------------------------------------------------------------------------------o
 
 void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 {
@@ -113,13 +112,11 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 		c->SetRank( rank );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RegenerateOre( SI16 grX, SI16 grY )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Regenerate Ore based on UOX.INI Ore respawn settings
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RegenerateOre( SI16 grX, SI16 grY )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Regenerate Ore in a resource region based on UOX.INI Ore respawn settings
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 {
 	MapResource_st *orePart	= MapRegion->GetResource( grX, grY, worldNum );
@@ -140,13 +137,12 @@ void cSkills::RegenerateOre( SI16 grX, SI16 grY, UI08 worldNum )
 		orePart->oreAmt = oreCeiling;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void MakeOre( UI08 Region, CChar *actor, CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Spawn Ore in players pack when he successfully mines
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MakeOre( UI08 Region, CChar *actor, CSocket *s )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spawn Ore in players pack when he successfully uses mining skill
+//o-----------------------------------------------------------------------------------------------o
 void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 {
 	if( targRegion == NULL || !ValidateObject( mChar ) )
@@ -200,6 +196,11 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 targetZ, UI08 targetID1, UI08 targetID2 )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check where player is attempting to mine versus MINECHECK setting in UOX.INI
+//o-----------------------------------------------------------------------------------------------o
 bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 targetZ, UI08 targetID1, UI08 targetID2 )
 {
 	switch( cwmWorldState->ServerData()->MineCheck() )
@@ -271,17 +272,16 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//| Function    - void cSkills::Mine( CSocket *s )
-//| Date        - Unknown
-//| Programmer  - Unknown
-//| Modified    - Cork(Unknown)/Abaddon(February 19, 2000)
-//o---------------------------------------------------------------------------o
-//| Purpose     - (Fill this in)
-//| Comments    - Skill checking now implemented. You cannot mine colored ore
-//|               unless you have the proper mining skill for each ore type. -Cork
-//|               Rewrote most of it to clear up some of the mess-Abaddon
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Mine( CSocket *s )
+//|	Programmer	-	Unknown
+//|	Modified	-	Cork(Unknown)/Abaddon(February 19, 2000)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles player's attempts to use mining skill
+//|	Notes	    -	Skill checking now implemented. You cannot mine colored ore unless you have the
+//|					proper mining skill for each ore type. -Cork
+//|					Rewrote most of it to clear up some of the mess-Abaddon
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Mine( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -306,11 +306,13 @@ void cSkills::Mine( CSocket *s )
 	if( !ValidateObject( mChar ) )
 		return;
 
-	// Check if player targeted an item, and if so, if he's in the same world
+	// Check if player targeted an item, and if so, if he's in the same world/instance as said item
 	CItem *targetItem = calcItemObjFromSer( mSock.GetDWord( 7 ) );
 	if( ValidateObject( targetItem ))
 	{
 		if( mChar->WorldNumber() != targetItem->WorldNumber() )
+			return;
+		if( mChar->GetInstanceID() != targetItem->GetInstanceID() )
 			return;
 	}
 
@@ -378,7 +380,7 @@ void cSkills::Mine( CSocket *s )
 			<< "]); --> MINING: " << mChar->GetSkill( MINING ) << "  RaceID: " << mChar->GetRace() << myendl;
 #endif
 
-		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber() );
+		CTownRegion *targetReg = calcRegionFromXY( targetX, targetY, mChar->WorldNumber(), mChar->GetInstanceID() );
 		if( targetReg == NULL )
 			return;
 
@@ -392,15 +394,12 @@ void cSkills::Mine( CSocket *s )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::GraveDig( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Do GraveDigging Stuff (Should probably be replaced with an
-//|											OSI-like Treasure Hunting System based off a Resource
-//|											System much like Ore and Logs)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::GraveDig( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Do GraveDigging Stuff (Should probably be replaced with an OSI-like Treasure 
+//|					Hunting System based off a Resource System much like Ore and Logs)
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::GraveDig( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -488,18 +487,16 @@ void cSkills::GraveDig( CSocket *s )
 		spawnCreature->SetLocation( nCharID );
 }
 
-//o--------------------------------------------------------------------------
-//| Function    - void cSkills::SmeltOre( CSocket *s );
-//| Date        - Unknown
-//| Programmer  - Unknown
-//| Modified    - Abaddon(February 19, 2000)
-//o--------------------------------------------------------------------------
-//| Purpose     - Rewritten to use case and structure, you'll find it is
-//|               easier to make it scriptable now. The structure is pretty
-//|               much all that'd be needed for any future ore->ingot conversions
-//|               scripting the ore would probably be even simpler, requires
-//|               less info
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void cSkills::SmeltOre( CSocket *s );
+//| Programmer	-	Unknown
+//| Modified	-	Abaddon(February 19, 2000)
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Rewritten to use case and structure, you'll find it is easier to make it 
+//|					scriptable now. The structure is pretty much all that'd be needed for any 
+//|					future ore->ingot conversions. Scripting the ore would probably be even 
+//|					simpler, requires less info
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::SmeltOre( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -579,16 +576,14 @@ void cSkills::SmeltOre( CSocket *s )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Used to check a players skill based on the highskill and
-//|					 lowskill it was called with.  If skill is < than lowskill
-//|					 check will fail, but player will gain in the skill, if
-//|					 the players skill is > than highskill player will not gain
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Used to check a players skill based on the highskill and lowskill it was called
+//|					with.  If skill is < than lowskill check will fail, but player will gain in the
+//|					skill, if the players skill is > than highskill player will not gain
+//o-----------------------------------------------------------------------------------------------o
 bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 {
 	bool skillCheck		= false;
@@ -671,19 +666,16 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill )
 	return skillCheck;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::HandleSkillChange( CChar *c, UI16 sk )
-//|   Date        :  Jan 29, 2000
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Do atrophy for player c:
-//|						find sk in our cronological list of atrophy skills,
-//|						move it to the front, check total aginst skillcap to
-//|						see if we need to lower a skill, if we do, again search
-//|						skills for a skill that can be lowered, if one is found
-//|						lower it and increase sk, if we can't find one, do
-//|						nothing if atrophy is not need, increase sk.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::HandleSkillChange( CChar *c, UI16 sk )
+//|	Date		-	Jan 29, 2000
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Do atrophy for player c:
+//|					find sk in our cronological list of atrophy skills, move it to the front, check
+//|					total aginst skillcap to see if we need to lower a skill, if we do, again search
+//|					skills for a skill that can be lowered, if one is found lower it and increase 
+//|					sk, if we can't find one, do nothing if atrophy is not need, increase sk.
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool success )
 {
 	UI32 totalSkill			= 0;
@@ -774,28 +766,33 @@ void cSkills::HandleSkillChange( CChar *c, UI08 sk, SI08 skillAdvance, bool succ
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::ItemIDTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses the ItemID skill on an item, can
-//|					 give valuable information on items (Will reveal hidden
-//|					 magical names and charges on items as well)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::ItemIDTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player uses the ItemID skill on an item, can give valuable 
+//|					information on items (Will reveal hidden magical names and charges on items as well)
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::ItemIDTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CItem *i = calcItemObjFromSer( s->GetDWord( 7 ) );
 	if( !ValidateObject( i ) )
 		return;
+
+	CChar *mChar = s->CurrcharObj();
+
+	if( mChar->WorldNumber() != i->WorldNumber() || mChar->GetInstanceID() != i->GetInstanceID() )
+	{
+		s->sysmessage( 393 ); // That is too far away.
+		return;
+	}
+
 	if( i->isCorpse() )
 	{
 		s->sysmessage( 1546 ); // You have to use your forensics evaluation skill to know more about this corpse.
 		return;
 	}
 
-	CChar *mChar = s->CurrcharObj();
 	if( CheckSkill( mChar, ITEMID, 250, 500 ) )
 	{
 		UnicodeTypes sLang = s->Language();
@@ -859,13 +856,11 @@ void cSkills::ItemIDTarget( CSocket *s )
 		s->sysmessage( 1545 ); // You can't quite tell what this item is...
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::FishTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets an area with a fishing pole
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::FishTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player targets an area with a fishing pole
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::FishTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -982,14 +977,12 @@ void cSkills::FishTarget( CSocket *s )
 		s->sysmessage( 846 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Fish( CChar *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Fish up items based on skill and random values (this should
-//|					 be rewritten using a resource system akin to Ore and Logs)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Fish( CChar *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fish up items based on skill and random values (this should
+//|					be rewritten using a resource system akin to Ore and Logs)
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Fish( CSocket *mSock, CChar *mChar )
 {
 	if( !CheckSkill( mChar, FISHING, 0, 1000 ) )
@@ -1042,13 +1035,11 @@ void cSkills::Fish( CSocket *mSock, CChar *mChar )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::SkillUse( CSocket *s, UI08 x )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player uses a skill from the skill list
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::SkillUse( CSocket *s, UI08 x )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player uses a skill from the skill list
+//o-----------------------------------------------------------------------------------------------o
 void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... );
 void cSkills::SkillUse( CSocket *s, UI08 x )
 {
@@ -1109,14 +1100,12 @@ void cSkills::SkillUse( CSocket *s, UI08 x )
 		s->sysmessage( 872 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::RandomSteal( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets a PC/NPC with stealing skill
-//|					 instead of an item (randomly pics an item in their pack)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::RandomSteal( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player targets a PC/NPC with stealing skill
+//|					instead of an item (randomly pics an item in their pack)
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::RandomSteal( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1165,17 +1154,16 @@ void cSkills::RandomSteal( CSocket *s )
 	doStealing( s, mChar, npc, item );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::StealingTarget( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player targets an item with stealing skill
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::StealingTarget( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player targets an item with stealing skill
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::StealingTarget( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
+
 	if( s->GetByte( 7 ) < 0x40 )
 	{
 		RandomSteal( s );
@@ -1205,14 +1193,14 @@ void cSkills::StealingTarget( CSocket *s )
 	doStealing( s, mChar, npc, item );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
-//|   Date        :  2/13/2003
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Do the bulk of stealing stuff rather than having the same
-//|						code twice in RandomSteal() and StealingTarget()
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
+//|	Date		-	2/13/2003
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Do the bulk of stealing stuff rather than having the same
+//|					code twice in RandomSteal() and StealingTarget()
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 {
 	VALIDATESOCKET( s );
@@ -1320,15 +1308,14 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 	else
 		s->sysmessage( 886 );
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  SI16 calcStealDiff( CChar *c, CItem *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Check if item is able to be stolen based on item type and
-//|					 weight vs stealing skill, then return the min skill needed to
-//|					 steal the item.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 calcStealDiff( CChar *c, CItem *i )
+//|	Date		-	Unknown
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if item is able to be stolen based on item type and weight vs stealing 
+//|					skill, then return the min skill needed to steal the item.
+//o-----------------------------------------------------------------------------------------------o
 SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 {
 	if( i->IsLockedDown() )
@@ -1358,13 +1345,11 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 	return stealDiff;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Tracking( CSocket *s, int selection )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Start tracking selected NPC/PC
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Tracking( CSocket *s, int selection )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Start tracking selected NPC/PC
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Tracking( CSocket *s, int selection )
 {
 	VALIDATESOCKET( s );
@@ -1381,13 +1366,11 @@ void cSkills::Tracking( CSocket *s, int selection )
 	Track( i );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::CreateTrackingMenu( CSocket *s, int m )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Brings up Tracking Menu, Called when player uses Tracking Skill
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::CreateTrackingMenu( CSocket *s, int m )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Brings up Tracking Menu, Called when player uses Tracking Skill
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
@@ -1444,7 +1427,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 		{
-			if( !ValidateObject( tempChar ) )
+			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != mChar->GetInstanceID() )
 				continue;
 			id = tempChar->GetID();
 			if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
@@ -1486,13 +1469,11 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 }
 
 void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::TrackingMenu( CSocket *s, int gmindex )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::TrackingMenu( CSocket *s, int gmindex )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Brings up additional tracking menu with options listed in tracking.dfn
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
@@ -1503,13 +1484,11 @@ void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 	HandleCommonGump( s, TrackStuff, gmindex );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Track( CChar *i )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Tracking stuff for older client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Track( CChar *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Tracking stuff for older client
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Track( CChar *i )
 {
 	CSocket *s = i->GetSocket();
@@ -1524,14 +1503,12 @@ void cSkills::Track( CChar *i )
 	s->Send( &tSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::updateSkillLevel( CChar *c, UI08 s )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Calculate the skill of this character based on the
-//|					 characters baseskill and stats
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::updateSkillLevel( CChar *c, UI08 s )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate the skill of this character based on the characters baseskill and stats
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 {
 	UI16 sstr = cwmWorldState->skill[s].strength;
@@ -1546,15 +1523,13 @@ void cSkills::updateSkillLevel( CChar *c, UI08 s ) const
 	c->SetSkill( UOX_MAX( bskill, temp ), s );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Persecute( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when a Ghost attacks a Player.  If entry in UOX.INI
-//|					 is enabled, players mana decreases each time you try to
-//|					 persecute him
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Persecute( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when a Ghost attacks a Player.  If entry in UOX.INI
+//|					is enabled, players mana decreases each time you try to
+//|					persecute him
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Persecute( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1584,13 +1559,11 @@ void cSkills::Persecute( CSocket *s )
 		s->sysmessage( 976 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Smith( CSocket *s )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player attempts to smith an item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Smith( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player attempts to smith an item
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Smith( CSocket *s )
 {
 	VALIDATESOCKET( s );
@@ -1638,13 +1611,12 @@ void cSkills::Smith( CSocket *s )
 	s->sysmessage( 979 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AnvilTarget( CSocket *s, CItem& item, SI16 oreType )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Unknown : Smithy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::AnvilTarget( CSocket *s, CItem& item, SI16 oreType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check for the presence of an anvil when player attempts to use smithing skill,
+//|					then verify that there is enough of the chosen ingot type in their backpack(s)
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 {
 	VALIDATESOCKET( s );
@@ -1660,7 +1632,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
-			if( !ValidateObject( tempItem ) )
+			if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != mChar->GetInstanceID() )
 				continue;
 			if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 )
 			{
@@ -1684,13 +1656,11 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	s->sysmessage( 981 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  cSkills::cSkills( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Default constructor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	cSkills::cSkills( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Default constructor
+//o-----------------------------------------------------------------------------------------------o
 cSkills::cSkills( void )
 {
 	ores.resize( 0 );
@@ -1703,13 +1673,12 @@ cSkills::~cSkills( void )
 	actualMenus.clear();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::LoadMiningData( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Load mining resource stuff from scripts
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cSkills::LoadMiningData( void )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load mining resource stuff from scripts
+//o-----------------------------------------------------------------------------------------------o
 bool cSkills::LoadMiningData( void )
 {
 	ores.resize( 0 );
@@ -1775,13 +1744,12 @@ bool cSkills::LoadMiningData( void )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Load( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Load mining stuff from scripts
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Load( void )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load mining stuff from scripts
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Load( void )
 {
 	Console << "Loading custom ore data        ";
@@ -1808,25 +1776,23 @@ void cSkills::Load( void )
 	Console.PrintSectionBegin();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  size_t cSkills::GetNumberOfOres( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Returns number of custom ores
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t cSkills::GetNumberOfOres( void )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns number of custom ores
+//o-----------------------------------------------------------------------------------------------o
 size_t cSkills::GetNumberOfOres( void )
 {
 	return ores.size();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  miningData *cSkills::GetOre( int number )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Returns a handle to the data about the ore
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	miningData *cSkills::GetOre( int number )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a handle to the data about the ore
+//o-----------------------------------------------------------------------------------------------o
 miningData *cSkills::GetOre( size_t number )
 {
 	if( number >= ores.size() )
@@ -1834,13 +1800,12 @@ miningData *cSkills::GetOre( size_t number )
 	return &ores[number];
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  miningData *cSkills::FindOre( string name )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Returns a handle to the data about the ore based on it's name
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	miningData *cSkills::FindOre( string name )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a handle to the data about the ore based on it's name
+//o-----------------------------------------------------------------------------------------------o
 miningData *cSkills::FindOre( std::string const &name )
 {
 	std::vector< miningData >::iterator	oreIter;
@@ -1852,13 +1817,12 @@ miningData *cSkills::FindOre( std::string const &name )
 	return NULL;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  miningData *cSkills::FindOre( UI16 colour)
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Find ore color
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	miningData *cSkills::FindOre( UI16 colour)
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find ore color
+//o-----------------------------------------------------------------------------------------------o
 miningData *cSkills::FindOre( UI16 const &colour )
 {
 	std::vector< miningData >::iterator oreIter;
@@ -1870,13 +1834,12 @@ miningData *cSkills::FindOre( UI16 const &colour )
 	return NULL;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::LoadCreateMenus( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Load Create menus from the create DFNs
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::LoadCreateMenus( void )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load Create menus from the create DFNs
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::LoadCreateMenus( void )
 {
 	actualMenus.clear();
@@ -2016,13 +1979,11 @@ void cSkills::LoadCreateMenus( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Advance players skill based on success or failure in CheckSkill()
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Advance players skill based on success or failure in CheckSkill()
+//o-----------------------------------------------------------------------------------------------o
 bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 {
 	bool advSkill = false;
@@ -2047,13 +2008,12 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 	return advSkill;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  SI08 cSkills::FindSkillPoint( UI08 sk, int value )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 cSkills::FindSkillPoint( UI08 sk, int value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find skillpoint advancement parameters from a skill in skills.dfn,
+//|					based on a specified skill value
+//o-----------------------------------------------------------------------------------------------o
 SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 {
 	SI08 retVal = -1;
@@ -2070,13 +2030,11 @@ SI08 cSkills::FindSkillPoint( UI08 sk, int value )
 	return retVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Advance players stats
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Advance players stats
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 {
     CRace *pRace = Races->Race( s->GetRace() );
@@ -2227,13 +2185,12 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 		updateSkillLevel( s, i );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  New make menu system, based on create.scp
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	New make menu system, based on create DFNs
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 {
 	VALIDATESOCKET( s );
@@ -2381,13 +2338,12 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 	s->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles the button pressed in the new make menu
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles the button pressed in the new make menu
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 {
 	VALIDATESOCKET( s );
@@ -2413,13 +2369,12 @@ void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  createEntry *cSkills::FindItem( UI16 itemNum )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Returns a handle to a createEntry based on an itemNum
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	createEntry *cSkills::FindItem( UI16 itemNum )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a handle to a createEntry based on an itemNum
+//o-----------------------------------------------------------------------------------------------o
 createEntry *cSkills::FindItem( UI16 itemNum )
 {
 	std::map< UI16, createEntry >::iterator r = itemsForMenus.find( itemNum );
@@ -2428,13 +2383,12 @@ createEntry *cSkills::FindItem( UI16 itemNum )
 	return &(r->second);
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Makes an item selected in the new make menu system
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock )
+//|	Programmer	-	 Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Makes an item selected in the new make menu system
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry )
 {
 	VALIDATESOCKET( sock );
@@ -2524,14 +2478,14 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function	:	void cSkills::RepairMetal( CSocket *s )
-//|		Date		:	October 16, 2000
-//|		Programmer	:	Thaliq
-//|		Modified	:	November 13, 2001 - BelCMC, changed to a metal repair function
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	Repair armor and weapons.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::RepairMetal( CSocket *s )
+//|	Date		-	October 16, 2000
+//|	Programmer	-	Thaliq
+//|	Modified	-	November 13, 2001 - BelCMC, changed to a metal repair function
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Repair armor and weapons.
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::RepairMetal( CSocket *s )
 {
 	SI16 minSkill = 999, maxSkill = 1000;
@@ -2603,13 +2557,11 @@ void cSkills::RepairMetal( CSocket *s )
 }
 
 void callGuards( CChar *mChar, CChar *targChar );
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player snoops another PC/NPC's or a tamed animals pack
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player snoops another PC/NPC's or a tamed animals pack
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -2681,6 +2633,11 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create reagents for necromancer spells
+//o-----------------------------------------------------------------------------------------------o
 void cSkills::MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID )
 {
 	CItem *iItem = NULL;

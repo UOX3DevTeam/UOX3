@@ -29,13 +29,12 @@ void CollectGarbage( void );
 void deedHouse( CSocket *s, CMultiObj *i );
 UString GetUptime( void );
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Open entry gump with specified dictionary message and max value length
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TextEntryGump( CSocket *s, SERIAL ser, char type, char index, SI16 maxlength, SI32 dictEntry )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Open entry gump with specified dictionary message and max value length
+//o-----------------------------------------------------------------------------------------------o
 void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry )
 {
 	if( s == NULL )
@@ -58,13 +57,12 @@ void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlengt
 	s->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void BuildGumpFromScripts( CSocket *s, UI16 m )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Pull gump info from misc.scp
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void BuildGumpFromScripts( CSocket *s, UI16 m )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pull gump info from misc.dfn
+//o-----------------------------------------------------------------------------------------------o
 void BuildGumpFromScripts( CSocket *s, UI16 m )
 {
 	CPSendGumpMenu toSend;
@@ -100,17 +98,13 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 	s->Send( &toSend );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void HandleAccountButton( CSocket *s, long button, CChar *j )
-//|	Date			-	
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Handles the accounts gump button
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleAccountButton( CSocket *s, long button, CChar *j )
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles the accounts gump button
+//o-----------------------------------------------------------------------------------------------o
 void HandleAccountButton( CSocket *s, long button, CChar *j )
 {
 	if( !ValidateObject( j ) )
@@ -160,13 +154,12 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in tweak item gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function		-	void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Programmer		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose			-	Handles button pressed in tweak item gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
@@ -222,26 +215,33 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 12:	// Strength
 		case 25:	// Weight
 		case 42:	// WeightMax
-		case 43:	// BaseWeight
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 495 + button );	// allow 0x for hex value
 			break;
 		case 2:		// Name
 		case 3:		// Name 2
 		case 35:	// Creator
-		case 44:	// Spawnobj/Spawnobjlist
-			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 495 + button );
+		case 43:	// BaseWeight
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 7, 1800 );	// allow 0x for hex value
+			break;
+		case 44:	// WorldNumber
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 4, 1801 );	// allow 0x for hex value
+			break;
+		case 45:	// InstanceID
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 1802 );	// allow 0x for hex value
+			break;
+		case 46:	// Spawnobj/Spawnobjlist
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 50, 538 );
 			break;
 		default:	Console << Dictionary->GetEntry( 533 ) << (SI32)button << myendl;	break;
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in tweak char gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in tweak char gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	button -= 6;
@@ -272,6 +272,9 @@ void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 29:	// ScriptTrigger ID
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 1700 + button );	// allow 0x for hex
 			break;
+		case 31:	// InstanceID
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 1804 );	// allow 0x for hex
+			break;
 		case 10:	// Strength
 		case 11:	// Dexterity
 		case 12:	// Intelligence
@@ -288,6 +291,9 @@ void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 24:	// Hunger
 			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 4, 1700 + button );	// allow 0x for hex
 			break;
+		case 30:	// WorldNumber
+			TextEntryGump( s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 4, 1803 );	// allow 0x for hex
+			break;
 		case 23:	// NPC Wander
 		case 25:	// Poison
 		case 28:	// Visible
@@ -296,13 +302,12 @@ void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in townstone gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in townstone gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -322,7 +327,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 				s->sysmessage( 540 );
 			break;
 		case 3:		// view taxes
-			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
 			if( targetRegion != NULL )
 				targetRegion->ViewTaxes( s );
 			else
@@ -349,13 +354,13 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 		case 26:	s->target( 0, TARGET_TOWNALLY, 547 );								break;	// make a town an ally
 		case 40:	ourRegion->DisplayTownMenu( NULL, s );	break;	// we can't return from mayor menu if we weren't mayor!
 		case 41:	// join town!
-			if( !(calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() )->AddAsTownMember( (*mChar) ) ) )
+			if( !(calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() )->AddAsTownMember( (*mChar) ) ) )
 				s->sysmessage( 548 );
 			break;
 		case 61:	// seize townstone!
 			if( !Skills->CheckSkill( mChar, STEALING, 950, 1000 )	) // minimum 95.0 stealing
 			{
-				targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+				targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
 				if( targetRegion != NULL )
 				{
 					int chanceToSteal	= RandomNum( 0, targetRegion->GetHealth() / 2 );
@@ -404,7 +409,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 				s->sysmessage( 554 );
 			break;
 		case 62:	// attack townstone
-			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
 			for( UI08 counter = 0; counter < RandomNum( 5, 10 ); ++counter )
 			{
 				Effects->PlayMovingAnimation( mChar, mChar->GetX() + RandomNum( -6, 6 ), mChar->GetY() + RandomNum( -6, 6 ), mChar->GetZ(), 0x36E4, 17, 0, ( RandomNum( 0, 1 ) == 1 ) );
@@ -415,13 +420,12 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleHairDyeButton( CSocket *s, CItem *j )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in hair dye gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleHairDyeButton( CSocket *s, CItem *j )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in hair dye gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleHairDyeButton( CSocket *s, CItem *j )
 {
 	if( !ValidateObject( j ) )
@@ -443,13 +447,12 @@ void HandleHairDyeButton( CSocket *s, CItem *j )
 	j->Delete();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleAccountModButton( CSocket *s, long button )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in account gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleAccountModButton( CSocket *s, long button )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in account gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleAccountModButton( CPIGumpMenuSelect *packet )
 {
 	CSocket *s = packet->GetSocket();
@@ -480,13 +483,12 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 	Console.Print( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleHouseButton( CSocket *s, long button, CItem *j )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in house gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleHouseButton( CSocket *s, long button, CItem *j )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in house gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleHouseButton( CSocket *s, long button, CItem *j )
 {
 	if( !ValidateObject( j ) )
@@ -524,18 +526,17 @@ void HandleHouseButton( CSocket *s, long button, CItem *j )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :	 void BuildAddMenuGump( CSocket *s, UI16 m )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Menu for item creation based on ITEMMENU entries in items.scp
+//o-----------------------------------------------------------------------------------------------o
+//|	Function		-	void BuildAddMenuGump( CSocket *s, UI16 m )
+//|	Programmer		-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose			-	Menu for item creation based on ITEMMENU entries in the ItemMenu DFNs
 //|									
 //|	Modification	-	04042004 - EviLDeD - Added support for the new Auto-AddMenu
 //|									items if they exist. Remember the multimap is groupID based
 //|									so it should order it accordingly we only have to look for
 //|									the entries.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void BuildAddMenuGump( CSocket *s, UI16 m )
 {
 	UI32 pagenum	= 1, position = 40, linenum = 1, buttonnum = 7;
@@ -949,13 +950,12 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	s->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool CPIHelpRequest::Handle( void )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Opens the "Help" Menu from the paperdoll
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIHelpRequest::Handle( void )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the "Help" Menu from the paperdoll
+//o-----------------------------------------------------------------------------------------------o
 bool CPIHelpRequest::Handle( void )
 {
 	UI16 gmnumber	= 0;
@@ -985,13 +985,12 @@ bool CPIHelpRequest::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|   Function	  -  void CPage( int s, const std::string reason )
-//|   Date		  -  Unknown
 //|   Programmer  -  Unknown  (Touched tabstops by EviLDeD Dec 23, 1998)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|   Purpose     -  Used when player pages a counselor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CPage( CSocket *s, const std::string& reason )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -1039,13 +1038,11 @@ void CPage( CSocket *s, const std::string& reason )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|   Function	  :  void GMPage( CSocket *s, const std::string reason )
-//|   Date		  :  Unknown
-//|   Programmer  :  Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|   Purpose     :  Used when player calls a GM
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void GMPage( CSocket *s, const std::string& reason )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -1094,12 +1091,11 @@ void GMPage( CSocket *s, const std::string& reason )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleGumpCommand( CSocket *s, UString cmd, UString data )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Execute a command from scripts
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 {
 	if( !s || cmd.empty() )
@@ -1170,7 +1166,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
-					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum );
+					mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceID() );
 				}
 			}
 			else if( cmd == "GUIINFORMATION" )
@@ -1259,14 +1255,12 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 	}
 }
 
-
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleAddMenuButton( CSocket *s, long button )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button pressed in add menu gump
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleAddMenuButton( CSocket *s, long button )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button pressed in add menu gump
+//o-----------------------------------------------------------------------------------------------o
 void HandleAddMenuButton( CSocket *s, long button )
 {
 	SI32 addMenuLoc	= s->TempInt();
@@ -1291,20 +1285,25 @@ void HandleAddMenuButton( CSocket *s, long button )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleHowTo( CSocket *sock, int cmdNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles response when player enters HOWTO command
+//o-----------------------------------------------------------------------------------------------o
 void HandleHowTo( CSocket *sock, int cmdNumber )
 {
-	int iCounter				= 0;
-	UI08 cmdLevelReq			= 0xFF;
-	UI08 cmdType				= 0xFF;
-	std::string cmdName			= "";
-	bool found					= false;
+	int iCounter = 0;
+	UI08 cmdLevelReq = 0xFF;
+	UI08 cmdType = 0xFF;
+	std::string cmdName = "";
+	bool found = false;
 	for( auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr )
 	{
 		if( iCounter == cmdNumber )
 		{
-			cmdName		= itr->first;
+			cmdName = itr->first;
 			cmdLevelReq = itr->second.cmdLevelReq;
-			cmdType		= itr->second.cmdType;
+			cmdType = itr->second.cmdType;
 			found = true;
 			break;
 		}
@@ -1316,7 +1315,7 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		{
 			if( iCounter == cmdNumber )
 			{
-				cmdName		= itr->first;
+				cmdName = itr->first;
 				cmdLevelReq = itr->second.cmdLevelReq;
 				found = true;
 				break;
@@ -1329,7 +1328,7 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		{
 			if( iCounter == cmdNumber )
 			{
-				cmdName		= itr->first;
+				cmdName = itr->first;
 				cmdLevelReq = itr->second.cmdLevelReq;
 				break;
 			}
@@ -1345,17 +1344,18 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		CommandInfo.AddData( "Minimum Command Level", cmdLevelReq );
 		switch( cmdType )
 		{
-			case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );					break;
-			case CMD_FUNC:			CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
-			case CMD_SOCKFUNC:		CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
-			case CMD_TARGETINT:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );					break;
-			case CMD_TARGETXYZ:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
-			case CMD_TARGETTXT:		CommandInfo.AddData( "Syntax", "String" );									break;
-			default:				break;
+		case CMD_TARGET:		CommandInfo.AddData( "Syntax", "None (generic target)" );					break;
+		case CMD_FUNC:			CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
+		case CMD_SOCKFUNC:		CommandInfo.AddData( "Syntax", "None (generic command)" );					break;
+		case CMD_TARGETINT:		CommandInfo.AddData( "Syntax", "arg1 (hex or decimal)" );					break;
+		case CMD_TARGETXYZ:		CommandInfo.AddData( "Syntax", "arg1 arg2 arg3 (hex or decimal)" );			break;
+		case CMD_TARGETTXT:		CommandInfo.AddData( "Syntax", "String" );									break;
+		default:				break;
 		}
 
 		char filename[256];
 		sprintf( filename, "help/commands/%s.txt", cmdName.c_str() );
+
 		std::ifstream toOpen( filename );
 		if( !toOpen.is_open() )
 			CommandInfo.AddData( "", "No extra information is available about this command", 7 );
@@ -1381,13 +1381,12 @@ void HandleHowToButton( CSocket *s, long button )
 	HandleHowTo( s, button - 2 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool CPIGumpMenuSelect::Handle( void )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles button press in gumps
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIGumpMenuSelect::Handle( void )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles button press in gumps
+//o-----------------------------------------------------------------------------------------------o
 bool CPIGumpMenuSelect::Handle( void )
 {
 	id			= tSock->GetDWord( 3 );
@@ -1519,13 +1518,12 @@ bool CPIGumpMenuSelect::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void tweakItemMenu( CSocket *s, CItem *c )
-//|   Date        :  Unknown
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handle new tweak item menu
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void tweakItemMenu( CSocket *s, CItem *c )
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle new tweak item menu
+//o-----------------------------------------------------------------------------------------------o
 void tweakItemMenu( CSocket *s, CItem *i )
 {
 	if( !ValidateObject( i ) )
@@ -1585,6 +1583,8 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.AddData( "AmmoFXRender:", i->GetAmmoFXRender() );
 	tweakItem.AddData( "WeightMax:", i->GetWeightMax() );
 	tweakItem.AddData( "BaseWeight:", i->GetBaseWeight() );
+	tweakItem.AddData( "World", i->WorldNumber() );
+	tweakItem.AddData( "Instance", i->GetInstanceID() );
 	if( i->GetObjType() == OT_SPAWNER )
 	{
 		CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
@@ -1601,13 +1601,12 @@ void tweakItemMenu( CSocket *s, CItem *i )
 	tweakItem.Send( 1, true, i->GetSerial() );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTweakItemText( CSocket *s, long index )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles new values for 'tweak items
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleTweakItemText( CSocket *s, long index )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles new values for 'tweak items
+//o-----------------------------------------------------------------------------------------------o
 void CPIGumpInput::HandleTweakItemText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
@@ -1678,7 +1677,16 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
 			case 42:	j->SetWeightMax( reply.toLong() );			break; //WeightMax
 			case 43:	j->SetBaseWeight( reply.toULong() );		break; //BaseWeight
-			case 44:
+			case 44:	j->WorldNumber( reply.toUByte() );			break; //WorldNumber
+			case 45:	
+			{
+				//InstanceID
+				j->RemoveFromSight();
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), reply.toUShort() );
+				j->SetInstanceID( reply.toUShort() );		
+				break;
+			}
+			case 46:
 						if( j->GetObjType() == OT_SPAWNER )
 							(static_cast<CSpawnItem *>(j))->SetSpawnSection( reply.c_str() );	break;	// Spawnobj/Spawnobjlist
 		}
@@ -1686,13 +1694,12 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void tweakCharMenu( CSocket *s, CChar *c )
-//|   Date        :  Unknown
-//|   Programmer  :  Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handle new tweak character menu
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void tweakCharMenu( CSocket *s, CChar *c )
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle new tweak character menu
+//o-----------------------------------------------------------------------------------------------o
 void tweakCharMenu( CSocket *s, CChar *c )
 {
 	if( !ValidateObject( c ) )
@@ -1739,16 +1746,17 @@ void tweakCharMenu( CSocket *s, CChar *c )
 	tweakChar.AddData( "Carve", c->GetCarve() );
 	tweakChar.AddData( "Visible", c->GetVisible() );
 	tweakChar.AddData( "Script ID:", c->GetScriptTrigger() );
+	tweakChar.AddData( "WorldNumber:", c->WorldNumber() );
+	tweakChar.AddData( "InstanceID:", c->GetInstanceID() );
 	tweakChar.Send( 2, true, c->GetSerial() );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTweakCharText( CSocket *s, long index )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles new values for 'tweak chars
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleTweakCharText( CSocket *s, long index )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles new values for 'tweak chars
+//o-----------------------------------------------------------------------------------------------o
 void CPIGumpInput::HandleTweakCharText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
@@ -1831,18 +1839,26 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
 			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
 			case 29:	j->SetScriptTrigger( reply.toULong() );			break;	// ScriptTrigger ID
+			case 30:	j->WorldNumber( reply.toUByte() );				break; //WorldNumber
+			case 31:	
+			{
+				//InstanceID
+				j->RemoveFromSight();
+				j->SetLocation( j->GetX(), j->GetY(), j->GetZ(), j->WorldNumber(), reply.toUShort() );
+				j->SetInstanceID( reply.toUShort() );		
+				break;
+			}
 		}
 		tweakCharMenu( tSock, j );
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void HandleTownstoneText( CSocket *s, long index )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles new values for townstones
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleTownstoneText( CSocket *s, long index )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles new values for townstones
+//o-----------------------------------------------------------------------------------------------o
 void CPIGumpInput::HandleTownstoneText( UI08 index )
 {
 	CChar *mChar	= tSock->CurrcharObj();
@@ -1874,13 +1890,12 @@ void CPIGumpInput::HandleTownstoneText( UI08 index )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  bool CPIGumpInput::Handle()
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles new values for gumps
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIGumpInput::Handle()
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles new values for gumps
+//o-----------------------------------------------------------------------------------------------o
 bool CPIGumpInput::Handle( void )
 {
 	switch( type )
@@ -1929,14 +1944,13 @@ UString GrabMenuData( UString sect, size_t entryNum, UString &tag )
 	return data;
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    :	bool CPIGumpChoice::Handle( void )
-//|		Date        :	Unknown
-//|		Programmer  :	UOX3 DevTeam
-//|		Modified	:	Zane - 2/10/2003	
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles choice "Help" menu, Tracking Menu, and Polymorph menu
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIGumpChoice::Handle( void )
+//|	Programmer	-	UOX3 DevTeam
+//|	Modified	-	Zane - 2/10/2003	
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles choice "Help" menu, Tracking Menu, and Polymorph menu
+//o-----------------------------------------------------------------------------------------------o
 bool CPIGumpChoice::Handle( void )
 {
 	UString sect;
@@ -1993,34 +2007,34 @@ bool CPIGumpChoice::Handle( void )
 
 void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex )
 {
-	CChar *mChar		= mSock->CurrcharObj();
-	std::string line;
-	UI16 modelID		= 0;
-	UI16 modelColour	= 0;
-	UString tag			= gumpScript->First(); 
-	UString data		= gumpScript->GrabData();
-	line				= tag + " " + data;
-	CPOpenGump toSend( *mChar );
-	toSend.GumpIndex( gumpIndex );
-	toSend.Question( line );
-	for( tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next() )
-	{
-		data	= gumpScript->GrabData();
-		modelID = tag.toUShort();
-		toSend.AddResponse( modelID, modelColour, data );
-		tag		= gumpScript->Next();
-	}
-	toSend.Finalize();
-	mSock->Send( &toSend );
+		CChar *mChar = mSock->CurrcharObj();
+		std::string line;
+		UI16 modelID = 0;
+		UI16 modelColour = 0;
+		UString tag = gumpScript->First();
+		UString data = gumpScript->GrabData();
+		line = tag + " " + data;
+		CPOpenGump toSend( *mChar );
+		toSend.GumpIndex( gumpIndex );
+		toSend.Question( line );
+		for( tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next() )
+		{
+			data = gumpScript->GrabData();
+			modelID = tag.toUShort();
+			toSend.AddResponse( modelID, modelColour, data );
+			tag = gumpScript->Next();
+		}
+		toSend.Finalize();
+		mSock->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void GumpDisplay::AddData( GumpInfo *toAdd )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Adds the data to the gump to send
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::AddData( GumpInfo *toAdd )
+//|	Date		-	Unknown
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds the data to the gump to send
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::AddData( GumpInfo *toAdd )
 {
 	GumpInfo *gAdd		= new GumpInfo;
@@ -2031,13 +2045,12 @@ void GumpDisplay::AddData( GumpInfo *toAdd )
 	gumpData.push_back( gAdd );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Adds the data to the gump to send
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds the data to the gump to send
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
 {
 	if( toAdd.empty() )
@@ -2051,13 +2064,12 @@ void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
 	gumpData.push_back( gAdd );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void GumpDisplay::AddData( std::string toAdd, std::string toSet, UI08 type )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Adds the data to the gump to send
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::AddData( std::string toAdd, std::string toSet, UI08 type )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds the data to the gump to send
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::AddData( std::string toAdd, const std::string &toSet, UI08 type )
 {
 	if( toAdd.empty() && type != 7 )
@@ -2070,13 +2082,12 @@ void GumpDisplay::AddData( std::string toAdd, const std::string &toSet, UI08 typ
 	gumpData.push_back( gAdd );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  GumpDisplay::GumpDisplay( CSocket *target ) : toSendTo( target )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	GumpDisplay::GumpDisplay( CSocket *target ) : toSendTo( target )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
+//o-----------------------------------------------------------------------------------------------o
 GumpDisplay::GumpDisplay( CSocket *target ) : toSendTo( target )
 {
 	gumpData.resize( 0 );
@@ -2084,27 +2095,25 @@ GumpDisplay::GumpDisplay( CSocket *target ) : toSendTo( target )
 	height = 320;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  GumpDisplay::GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight ) : 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	GumpDisplay::GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight ) : 
 //|						width( gumpWidth ), height( gumpHeight ), toSendTo( target )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
-//o---------------------------------------------------------------------------o
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Begin GumpDisplay stuff by setting the target, clearing any existing data, and setting the w / h
+//o-----------------------------------------------------------------------------------------------o
 GumpDisplay::GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight ) : 
 	width( gumpWidth ), height( gumpHeight ), toSendTo( target )
 {
 	gumpData.resize( 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  GumpDisplay::~GumpDisplay()
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Clear any existing GumpDisplay data
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	GumpDisplay::~GumpDisplay()
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clear any existing GumpDisplay data
+//o-----------------------------------------------------------------------------------------------o
 GumpDisplay::~GumpDisplay()
 {
 	for( size_t i = 0; i < gumpData.size(); ++i )
@@ -2113,38 +2122,35 @@ GumpDisplay::~GumpDisplay()
 	gumpData.resize( 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :	 void GumpDisplay::Delete( void )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Delete all GumpDisplay entries
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::Delete( void )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Delete all GumpDisplay entries
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::Delete( void )
 {
 	one.resize( 0 );
 	two.resize( 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :	 void GumpDisplay::SetTitle( const std::string newTitle )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Set a gumps title
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::SetTitle( const std::string newTitle )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set a gumps title
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::SetTitle( const std::string& newTitle )
 {
 	title = newTitle;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :	 void SendVecsAsGump( CSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Sends to socket sock the data in one and two.  One is control, two is data
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendVecsAsGump( CSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two is data
+//o-----------------------------------------------------------------------------------------------o
 void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial )
 {
 	CPSendGumpMenu toSend;
@@ -2162,13 +2168,12 @@ void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type,
 	sock->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :	 void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
-//|   Date        :  Unknown
-//|   Programmer  :  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Sends gump data to the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends gump data to the socket
+//o-----------------------------------------------------------------------------------------------o
 void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 {
 	char temp[512];

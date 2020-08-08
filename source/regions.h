@@ -1,8 +1,13 @@
-// -- Region class  Added by Tauriel 3/6/1999 To lookup items by region
-//									This should help for now. BTW- my first attempt at C++
-//									So forgive any newbie mistakes :)
-//									-- Side note, I wanted regions to be more generic, but
-//									now that I have to do this, time doesn't allow for it yet.
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	regions.h
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Region class  Added by Tauriel 3/6/1999 To lookup items by region
+//|						This should help for now. BTW- my first attempt at C++
+//|						So forgive any newbie mistakes :)
+//|					Side note, I wanted regions to be more generic, but
+//|						now that I have to do this, time doesn't allow for it yet.
+//o-----------------------------------------------------------------------------------------------o
+
 #ifndef __Region_h
 #define __Region_h
 

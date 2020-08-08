@@ -22,7 +22,12 @@
 namespace UOX
 {
 
-void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 ) // Split login password into UOX password and UO password
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Split login password into UOX password and UO password (???)
+//o-----------------------------------------------------------------------------------------------o
+void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 {
 	int i = 0;
 	pass1 = "";
@@ -40,6 +45,11 @@ void PackShort( UI08 *toPack, int offset, UI16 value )
 	toPack[offset+1] = (UI08)((value&0x00FF)%256);
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles login packets from client
+//o-----------------------------------------------------------------------------------------------o
 CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
@@ -69,6 +79,11 @@ CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
 	return NULL;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles packets received from client
+//o-----------------------------------------------------------------------------------------------o
 CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 {
 	switch( packetID )
@@ -127,20 +142,28 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
+		case 0xF3:	return NULL;								// TODO - Object Information (SA)
+		case 0xF5:	return NULL;								// TODO - New Map Message
 		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
 		default:	return NULL;
 	}
 	return NULL;
 }
 
-//	0x80 Packet
-//	Last Modified on Monday, 13-Apr-1998 17:06:30 EDT 
-//	Login Request (62 bytes) 
-//	BYTE cmd 
-//	BYTE[30] userid 
-//	BYTE[30] password 
-//	BYTE unknown1 (not usually 0x00 - so not NULL) 
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIFirstLogin()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for client first login - login server
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x80 (Login Request)
+//|					Size: 62 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[30] userid 
+//|						BYTE[30] password 
+//|						BYTE unknown1 (not usually 0x00 - so not NULL) 
+//o-----------------------------------------------------------------------------------------------o
 void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -382,12 +405,19 @@ UI08 CPIFirstLogin::Unknown( void )
 	return unknown;
 }
 
-//	0xA0 Packet
-//	Last Modified on Monday, 13-Apr-1998 17:06:46 EDT 
-//	Select Server (3 bytes) 
-//	BYTE cmd 
-//	BYTE[2] server # chosen 
-//	0x80 Packet
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIServerSelect()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for server selection
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xA0 (Select Server)
+//|					Size: 3 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] server # chosen 
+//|						0x80 Packet
+//o-----------------------------------------------------------------------------------------------o
 void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -435,13 +465,20 @@ bool CPIServerSelect::Handle( void )
 	return true;
 }
 
-//	0x91 Packet
-//	Last Modified on Monday, 13-Apr-1998 17:06:45 EDT 
-//	Game Server Login (65 bytes) 
-//	BYTE cmd 
-//	BYTE[4] key used 
-//	BYTE[30] sid 
-//	BYTE[30] password 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPISecondLogin()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for client second login - game server
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x91 (Game Server Login)
+//|					Size: 65 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] key used 
+//|						BYTE[30] sid 
+//|						BYTE[30] password 
+//o-----------------------------------------------------------------------------------------------o
 void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -575,26 +612,26 @@ bool CPISecondLogin::Handle( void )
 	return true;
 }
 
-// KR/2D Client Login/Seed
-// Packet: 0xEF
-// Sent By: Client
-// Size: 21 bytes
-//
-//Packet Build
-// BYTE[1] cmd
-// BYTE[4] seed, usually the client local ip
-// BYTE[4] client major version
-// BYTE[4] client minor version
-// BYTE[4] client revision version
-// BYTE[4] client prototype version
-//
-//Subcommand Build
-// N/A
-//
-//Notes
-// Normally older client send a 4 byte seed (local ip).
-// Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending
-// this packet.
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPINewClientVersion()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for client login/seed, with initial client info
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xEF (KR/2D Client Login/Seed)
+//|					Size: 21 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[4] seed, usually the client local ip
+//|						BYTE[4] client major version
+//|						BYTE[4] client minor version
+//|						BYTE[4] client revision version
+//|						BYTE[4] client prototype version
+//|
+//|					Notes
+//|						Normally older client send a 4 byte seed (local ip).
+//|						Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending this packet.
+//o-----------------------------------------------------------------------------------------------o
 void CPINewClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -693,17 +730,26 @@ bool CPINewClientVersion::Handle( void )
 	return true;
 }
 
-//	0xBD Packet
-//	Last Modified on Wednesday, 28-Aug-2002
-//	Client Version Message (Variable # of bytes) 
-//	BYTE cmd 
-//	BYTE[2] len
-//	If (client-version of packet) 
-//		BYTE[len-3] string stating the client version (0 terminated)  (like: “1.26.4”)
-//	Note: Client + Server Message
-//	Client version : client sends its version string (e.g “3.0.8j”)
-//	Server version : 0xbd 0x0 0x3 (client replies with client version of this packet)
-//	Note2:  clients sends a client version of this packet ONCE at login (without server request.)
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIClientVersion()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for client version string
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBD (Client Version Message)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] len
+//|						If (client-version of packet) 
+//|							BYTE[len-3] string stating the client version (0 terminated)  (like: “1.26.4”)
+//|
+//|					Notes
+//|						Client + Server packet
+//|						Client version: client sends its version string (e.g “3.0.8j”)
+//|						Server version: 0xbd 0x0 0x3 (client replies with client version of this packet)
+//|						Clients sends a client version of this packet ONCE at login (without server request.)
+//o-----------------------------------------------------------------------------------------------o
 void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -732,14 +778,14 @@ void CPIClientVersion::Receive( void )
 	tSock->Receive( len, false );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -	UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra)
-//|   Date        -	21st November, 2001
-//|   Programmer  -	Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -	If the value is between base and upper (inclusive)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra)
+//|	Date		-	21st November, 2001
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If the value is between base and upper (inclusive)
 //|					it shifts the data down by base (if extra) or base - 1 (if not extra)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra )
 {
 	if( extra )
@@ -946,19 +992,28 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 	}
 }
 
-
-//	0xC8 Packet
-//	Last Modified on Monday, 4’th-Sep-2002  
-//	Client view range (2 Bytes)
-//	BYTE cmd 
-//	BYTE range 
-//	Note: client+server packet.
-//	Range: how far away client wants to see (=get send) items/npcs
-//	Update: since client 3.0.8o it actually got activated.(in a useful way)
-//	When increase/decrease macro send, client sends a 0xc8.
-//	If and only if server *relays* the packet (sending back the same data) range stuff gets activated client side.
-//	"Greying" has no packet, purely client internal.
-//	Minimal value:5, maximal: 18
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIUpdateRangeChange()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for client view range
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xC8 (Client View Range)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE range
+//|
+//|					Notes
+//|						Client + Server packet
+//|						Range: how far away client wants to see (=get send) items/npcs
+//|						Update: since client 3.0.8o it actually got activated.(in a useful way)
+//|						When increase/decrease macro send, client sends a 0xc8.
+//|						If and only if server *relays* the packet (sending back the same data) 
+//|						range stuff gets activated client side.
+//|						"Greying" has no packet, purely client internal.
+//|						Minimal value:5, maximal: 18
+//o-----------------------------------------------------------------------------------------------o
 void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -1016,14 +1071,21 @@ bool CPIUpdateRangeChange::Handle( void )
 	return true;
 }
 
-//0xA7 Packet
-//Last Modified on Wednesday, 06-May-1998 23:30:53 EDT 
-//Request Tips/Notice (4 bytes) 
-//	BYTE cmd 
-//	BYTE[2] last tip # 
-//	BYTE flag 
-//		0x00 - tips window 
-//		0x01 - notice window 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITips()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with client request for tips/notice windows
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xA7 (Request Tips/Notice)
+//|					Size: 4 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] last tip #
+//|						BYTE flag
+//|							0x00 - tips window
+//|							0x01 - notice window
+//o-----------------------------------------------------------------------------------------------o
 void CPITips::InternalReset( void )
 {
 }
@@ -1082,14 +1144,19 @@ bool CPITips::Handle( void )
 	return true;
 }
 
-//
-//0x75 Packet
-//Last Modified on Sunday, 13-Feb-2000 
-//Rename Character (35 bytes) 
-//	BYTE cmd 
-//	BYTE[4] id 
-//	BYTE[30] new name 
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIRename()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to rename character
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x75 (Rename Character)
+//|					Size: 35 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[4] id
+//|						BYTE[30] new name
+//o-----------------------------------------------------------------------------------------------o
 void CPIRename::InternalReset( void )
 {
 }
@@ -1117,11 +1184,18 @@ bool CPIRename::Handle( void )
 	return true;
 }
 
-//0x73 Packet
-//Last Modified on Friday, 20-Nov-1998 
-//Ping message (2 bytes) 
-//	BYTE cmd 
-//	BYTE seq 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIKeepAlive()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with ping message request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x73 (Ping Message)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE seq
+//o-----------------------------------------------------------------------------------------------o
 CPIKeepAlive::CPIKeepAlive()
 {
 }
@@ -1143,16 +1217,23 @@ bool CPIKeepAlive::Handle( void )
 	return true;
 }
 
-//0x34 Packet
-//Last modified on Thursday, 19-Nov-1998 
-//Get Player Status (10 bytes) 
-//	BYTE cmd 
-//	BYTE[4] pattern (0xedededed) 
-//	BYTE getType 
-//		0x00 - GodClient command
-//		0x04 - Basic Stats (Packet 0x11 Response) 
-//		0x05 = Request Skills (Packet 0x3A Response) 
-//	BYTE[4] playerID 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIStatusRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet requesting player status
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x34 (Get Player Status)
+//|					Size: 10 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[4] pattern (0xedededed)
+//|						BYTE getType 
+//|							0x00 - GodClient command
+//|							0x04 - Basic Stats (Packet 0x11 Response) 
+//|							0x05 = Request Skills (Packet 0x3A Response) 
+//|						BYTE[4] playerID 
+//o-----------------------------------------------------------------------------------------------o
 CPIStatusRequest::CPIStatusRequest()
 {
 }
@@ -1204,11 +1285,19 @@ bool CPIStatusRequest::Handle( void )
 	return true;
 }
 
-//0xA4 Packet
-//Last Modified on Friday, 15-May-2000 
-//Spy on Client (149 bytes) 
-//	BYTE cmd 
-//	BYTE[148] Unknown (previously, this has had info such as your graphics card name, free HD space, number of processors, etc.)
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPISpy()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with client hardware details
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xA4 (Spy on Client)
+//|					Size: 149 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[148] Unknown (previously, this has had info such as your graphics card
+//|							name, free HD space, number of processors, etc.)
+//o-----------------------------------------------------------------------------------------------o
 CPISpy::CPISpy()
 {
 }
@@ -1225,12 +1314,18 @@ bool CPISpy::Handle( void )
 	return true;
 }
 
-//0x04 Packet
-//Last Modified on Friday, 19-May-2000 
-//Request (2 bytes) 
-//	BYTE cmd 
-//	BYTE mode (0=off, 1=on)  
-//Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIGodModeToggle()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to enable God Client features
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x04 (Request God Mode)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE mode (0=off, 1=on)  
+//o-----------------------------------------------------------------------------------------------o
 CPIGodModeToggle::CPIGodModeToggle()
 {
 }
@@ -1259,12 +1354,20 @@ bool CPIGodModeToggle::Handle( void )
 	return true;
 }
 
-//0x06 Packet
-//Last Modified on Friday, 19-May-2000 
-//Double click (5 bytes) 
-//	BYTE cmd 
-//	BYTE[4] ID of double clicked object 
-//Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIDblClick()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with double-click request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x06 (Double Click)
+//|					Size: 5 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] ID of double clicked object
+//|
+//|					NOTE: bool CPIDblClick::Handle() is implemented in cplayeraction.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIDblClick::CPIDblClick()
 {
 }
@@ -1288,15 +1391,20 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-// bool CPIDblClick::Handle() is implemented in cplayeraction.cpp
-
-
-//0x09 Packet
-//Last Modified on Friday, 19-May-2000 
-//Single click (5 bytes) 
-//	BYTE cmd 
-//	BYTE[4] ID of single clicked object 
-//Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPISingleClick()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with single-click request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x09 (Single Click)
+//|					Size: 5 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] ID of single clicked object
+//|
+//|					NOTE: bool CPISingleClick::Handle() is implemented in cplayeraction.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPISingleClick::CPISingleClick()
 {
 }
@@ -1320,25 +1428,33 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-// bool CPISingleClick::Handle() is implemented in cplayeraction.cpp
-
-//0x02 Packet
-//Last Modified on Friday, 19-May-2000
-//Move Request (7 bytes) 
-//	BYTE cmd 
-//	BYTE direction 
-//	BYTE sequence number 
-//	BYTE[4] fastwalk prevention key
-//Note: Client Message
-//Note: sequence number starts at 0, after a reset.  However, if 255 is reached, the next seq # is 1, not 0.
-//Fastwalk prevention notes: each 0x02 pops the top element from fastwalk key stack. (0xbf sub1 init. fastwalk stack, 0xbf sub2 pushes an element to stack)
-//If stack is empty key value is 0. ( never set keys to 0 in 0xbf sub 1/2)
-//Because client sometimes sends bursts of 0x02’s DON’T check for a certain top stack value.
-//The only safe way to detect fastwalk: push a key after EACH x021, 0x22, (=send 0xbf sub 2) check in 0x02 for stack emptyness.
-//If empty -> fastwalk alert.
-//Note that actual key values are irrelevant. (just don’t use 0)
-//Of course without perfect 0x02/0x21/0x22 synch (serverside) it’s useless to use fastwalk detection.
-//Last but not least: fastwalk detection adds 9 bytes per step and player !
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIMoveRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request for movement
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x02 (Move Request)
+//|					Size: 7 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE direction
+//|						BYTE sequence number
+//|						BYTE[4] fastwalk prevention key
+//|
+//|					Note: sequence number starts at 0, after a reset. However, if 255 is reached, 
+//|					the next seq # is 1, not 0.
+//|					Fastwalk prevention notes: each 0x02 pops the top element from fastwalk key stack. 
+//|						(0xbf sub1 init. fastwalk stack, 0xbf sub2 pushes an element to stack)
+//|						If stack is empty key value is 0 (never set keys to 0 in 0xbf sub 1/2)
+//|						Because client sometimes sends bursts of 0x02’s DON’T check for a certain top stack value.
+//|						The only safe way to detect fastwalk: 
+//|							push a key after EACH x021, 0x22, (=send 0xbf sub 2) check in 0x02 for stack emptyness.
+//|							If empty -> fastwalk alert.
+//|					Note that actual key values are irrelevant. (just don’t use 0)
+//|					Of course without perfect 0x02/0x21/0x22 synch (serverside) it’s useless to use fastwalk detection.
+//|					Last but not least: fastwalk detection adds 9 bytes per step and player!
+//o-----------------------------------------------------------------------------------------------o
 CPIMoveRequest::CPIMoveRequest()
 {
 }
@@ -1369,12 +1485,19 @@ void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-//0x22 Packet
-//Last Modified on Wednesday, 11-Nov-1998 
-//Character Move ACK/ Resync Request(3 bytes) 
-//	BYTE cmd 
-//	BYTE sequence (matches sent sequence) 
-//	BYTE (0x00) 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIResyncReq()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with character move acknowledgement/resync request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x22 (Character Move Ack/Resync Request)
+//|					Size: 3 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE sequence (matches sent sequence)
+//|						BYTE (0x00) 
+//o-----------------------------------------------------------------------------------------------o
 CPIResyncReq::CPIResyncReq()
 {
 }
@@ -1393,13 +1516,21 @@ bool CPIResyncReq::Handle( void )
 	return true;
 }
 
-//0x2C Packet
-//Last Modified on Friday, 19-May-2000
-//Resurrection Menu Choice (2 bytes) 
-//	BYTE cmd 
-//	BYTE action (2=ghost, 1=resurrect, 0=from server)
-//Note: Client and Server Message
-//Note: Resurrection menu has been removed from UO.
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIResMenuChoice()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with resurrection menu choice (old clients)
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x2C (Resurrection Menu Choice)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE action (2=ghost, 1=resurrect, 0=from server)
+//|
+//|					Note: Client and Server Message
+//|					Note: Resurrection menu has been removed from UO [when?]
+//o-----------------------------------------------------------------------------------------------o
 CPIResMenuChoice::CPIResMenuChoice()
 {
 }
@@ -1421,12 +1552,20 @@ bool CPIResMenuChoice::Handle( void )
 	return true;
 }
 
-//0x05 Packet
-//Last Modified on Friday, 19-May-2000 
-//Attack Request (5 bytes) 
-//	BYTE cmd 
-//	BYTE[4] ID to be attacked 
-//Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIAttack()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with attack request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x05 (Attack Request)
+//|					Size: 5 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[4] ID to be attacked
+//|
+//|					Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
 CPIAttack::CPIAttack()
 {
 }
@@ -1446,24 +1585,33 @@ bool CPIAttack::Handle( void )
 	return true;
 }
 
-//0x6C Packet
-//Last Modified on Sunday, 13-Feb-2000 
-//Targeting Cursor Commands (19 bytes) 
-//	BYTE cmd 
-//	BYTE type 
-//		0x00 = Select Object
-//		0x01 = Select X, Y, Z 
-//	BYTE[4] cursorID 
-//	BYTE Cursor Type 
-//	Always 0 now  
-//	The following are always sent but are only valid if sent by client 
-//	BYTE[4] Clicked On ID 
-//	BYTE[2] click xLoc 
-//	BYTE[2] click yLoc 
-//	BYTE unknown (0x00) 
-//	BYTE click zLoc 
-//	BYTE[2] model # (if a static tile, 0 if a map/landscape tile)
-//Note: the model # shouldn’t be trusted.
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITargetCursor()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with targeting cursor commands
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x6C (Targeting Cursor Commandst)
+//|					Size: 19 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE type 
+//|							0x00 = Select Object
+//|							0x01 = Select X, Y, Z 
+//|						BYTE[4] cursorID 
+//|						BYTE Cursor Type 
+//|						Always 0 now  
+//|						The following are always sent but are only valid if sent by client 
+//|						BYTE[4] Clicked On ID 
+//|						BYTE[2] click xLoc 
+//|						BYTE[2] click yLoc 
+//|						BYTE unknown (0x00) 
+//|						BYTE click zLoc 
+//|						BYTE[2] model # (if a static tile, 0 if a map/landscape tile)
+//|
+//|					NOTE: The model # shouldn’t be trusted.
+//|					NOTE: bool CPITargetCursor::Handle() in targeting.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPITargetCursor::CPITargetCursor()
 {
 }
@@ -1491,16 +1639,24 @@ void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "  Raw dump     :" << std::dec << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
-// bool CPITargetCursor::Handle() in targeting.cpp
 
-//0x13 Packet
-//Last Modified on Thursday, 19-Nov-1998 
-//Drop->Wear Item (10 bytes) 
-//	BYTE cmd 
-//	BYTE[4] itemid 
-//	BYTE layer (see layer list at top) 
-//	BYTE[4] playerID 
-//Note: The layer byte should not be trusted.  
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIEquipItem()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with targeting cursor commands
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x13 (Drop->Wear Item)
+//|					Size: 10 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] itemid 
+//|						BYTE layer (see layer list at top) 
+//|						BYTE[4] playerID 
+//|
+//|					NOTE: The layer byte should not be trusted.
+//|					NOTE: bool CPIEquipItem::Handle() implemented in cplayeraction.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIEquipItem::CPIEquipItem()
 {
 }
@@ -1513,15 +1669,24 @@ void CPIEquipItem::Receive( void )
 	tSock->Receive( 10, false );
 }
 
-// bool CPIEquipItem::Handle() implemented in cplayeraction.cpp
-
-//0x07 Packet
-//Last Modified on Friday, 19-May-2000
-//Pick Up Item(s) (7 bytes) 
-//	BYTE cmd 
-//	BYTE[4] item id 
-//	BYTE[2] # of items in stack 
-//Note: Client Message
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIGetItem()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to pick up item(s)
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x07 (Pick Up Item(s))
+//|					Size: 7 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] item id 
+//|						BYTE[2] # of items in stack
+//|
+//|					NOTE: Client Message
+//|					NOTE: The layer byte should not be trusted.
+//|
+//|					NOTE: bool CPIGetItem::Handle() implemented in cplayeraction.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIGetItem::CPIGetItem()
 {
 }
@@ -1534,21 +1699,29 @@ void CPIGetItem::Receive( void )
 	tSock->Receive( 7, false );
 }
 
-// bool CPIGetItem::Handle() implemented in cplayeraction.cpp
-
-//0x08 Packet
-//Last Modified on Friday, 19-May-2000 
-//Drop Item(s) (14 bytes) 
-//	BYTE cmd 
-//	BYTE[4] item id 
-//	BYTE[2] X Location 
-//	BYTE[2] Y Location
-//	BYTE Z Location
-//	BYTE[4] Move Into Container ID (FF FF FF FF if normal world) 
-//Note: Client Message
-//Note: 3D clients sometimes sends 2 of them (bursts) for ONE drop action. 
-//The last one having –1’s in X/Y locs.
-//Be very careful how to handle this odd “bursts” server side, neither always process, nor always skipping is correct.
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIDropItem()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to drop item(s)
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x08 (Drop Item(s))
+//|					Size: 14 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] item id 
+//|						BYTE[2] X Location 
+//|						BYTE[2] Y Location
+//|						BYTE Z Location
+//|						BYTE[4] Move Into Container ID (FF FF FF FF if normal world) 
+//|
+//|					NOTE: Client Message
+//|					NOTE: 3D clients sometimes sends 2 of them (bursts) for ONE drop action. 
+//|						The last one having –1’s in X/Y locs. Be very careful how to handle this 
+//|						odd “bursts” server side, neither always process, nor always skipping is correct.
+//|
+//|					NOTE: bool CPIDropItem::Handle() implemented in cplayeraction.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIDropItem::CPIDropItem()
 {
 }
@@ -1577,24 +1750,32 @@ void CPIDropItem::Receive( void )
 		dest = tSock->GetDWord( 10 );
 }
 
-// bool CPIDropItem::Handle() implemented in cplayeraction.cpp
-
-//0xB1 Packet
-//Last Modified on Sunday, 28-Jul-2002
-//Gump Menu Selection (Variable # of bytes) 
-//	BYTE cmd													0
-//	BYTE[2] blockSize											1
-//	BYTE[4] id (first Id in 0xb0)								3
-//	BYTE[4] gumpId (second Id in 0xb0)							7
-//	BYTE[4] buttonId (which button perssed ? 0 if closed)		11
-//	BYTE[4] switchcount  (response info for radio buttons and checkboxes, any switches listed here are switched on)	15
-//	For each switch
-//		BYTE[4] SwitchId
-//	BYTE[4] textcount  (response info for textentries)			19 + switchcount * 4
-//	For each textentry
-//		BYTE[2] textId
-//		BYTE[2] textlength
-//		BYTE[length*2] Unicode text (not nullterminated)
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIGumpMenuSelect()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with gump menu selection data
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xB1 (Gump Menu Selection)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd													0
+//|						BYTE[2] blockSize											1
+//|						BYTE[4] id (first Id in 0xb0)								3
+//|						BYTE[4] gumpId (second Id in 0xb0)							7
+//|						BYTE[4] buttonId (which button perssed ? 0 if closed)		11
+//|						BYTE[4] switchcount  (response info for radio buttons and checkboxes, any 
+//|							switches listed here are switched on)					15
+//|						For each switch
+//|							BYTE[4] SwitchId
+//|						BYTE[4] textcount  (response info for textentries)			19 + switchcount * 4
+//|						For each textentry
+//|							BYTE[2] textId
+//|							BYTE[2] textlength
+//|							BYTE[length*2] Unicode text (not nullterminated)
+//|
+//|					NOTE: bool CPIGumpMenuSelect::Handle() implemented in gumps.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIGumpMenuSelect::CPIGumpMenuSelect()
 {
 }
@@ -1607,7 +1788,6 @@ void CPIGumpMenuSelect::Receive( void )
 	tSock->Receive( 3, false );
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
-// bool CPIGumpMenuSelect::Handle() implemented in gumps.cpp
 
 SERIAL CPIGumpMenuSelect::ButtonID( void ) const
 {
@@ -1690,6 +1870,38 @@ void CPIGumpMenuSelect::BuildTextLocations( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITalkRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with talk request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x03 (Talk Request)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] length
+//|						BYTE SpeechType
+//|						BYTE[2] Color
+//|						BYTE[2] SpeechFont
+//|						BYTE[?] msg - Null Terminated (blockSize - 8)
+//|
+//|					The various types of text is as follows:
+//|						0x00 - Normal
+//|						0x01 - Broadcast/System
+//|						0x02 - Emote
+//|						0x06 - System/Lower Corner
+//|						0x07 - Message/Corner With Name
+//|						0x08 - Whisper
+//|						0x09 - Yell
+//|						0x0A - Spell
+//|						0x0D - Guild Chat
+//|						0x0E - Alliance Chat
+//|						0x0F - Command Prompts
+//|						0xC0 - Encoded Commands
+//|
+//|					NOTE: bool CPITalkRequest::Handle() is located in speech.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPITalkRequest::CPITalkRequest()
 {
 	InternalReset();
@@ -1882,15 +2094,16 @@ bool CPITalkRequest::HandleCommon( void )
 	return true;
 }
 
-// bool CPITalkRequest::Handle() is located in speech.cpp
-
-//Talk Request (Variable # of bytes) 
-//	BYTE cmd 
-//	BYTE[2] blockSize 
-//	BYTE SpeechType 
-//	BYTE[2] Color 
-//	BYTE[2] SpeechFont 
-//	BYTE[?] msg - Null Terminated (blockSize - 8)
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITalkRequestAscii()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles ASCII talk request 
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x03 (Talk Request)
+//|					Size: Variable
+//|
+//|					See CPITalkRequest() for details
+//o-----------------------------------------------------------------------------------------------o
 CPITalkRequestAscii::CPITalkRequestAscii() : CPITalkRequest()
 {
 }
@@ -1912,46 +2125,55 @@ void CPITalkRequestAscii::Receive( void )
 	strcpy( txtSaid, (char *)&(tSock->Buffer()[8]) );
 }
 
-//0xAD Packet
-//Last Modified on Monday, 18-Feb-2002 
-//Unicode/Ascii speech request (Variable # of bytes)
-//BYTE cmd												0
-//	BYTE[2] blockSize									1
-//	BYTE Type											3
-//	BYTE[2] Color										4
-//	BYTE[2] Font										6
-//	BYTE[4] Language (Null Terminated)					8
-//		“enu“ - United States English
-//		“des” - German Swiss
-//		“dea” - German Austria
-//		“deu” - German Germany
-//		... for a complete list see langcode.iff
-//	if (Type & 0xc0) 
-//		BYTE[1,5] Number of distinct Trigger words (NUMWORDS).
-//			12 Bit number, Byte #13  = Bit 11…4 of NUMWORDS, Hi-Nibble of Byte #14 (Bit 7…4)  = Bit  0…3 of NUMWORDS
-//		BYTE[1,5] Index to speech.mul
-//			12 Bit number, Low Nibble of Byte #14 (Bits 3…0) = Bits 11..8 of Index, Byte #15  = Bits 7…0 of Index
-//		UNKNOWNS = ( (NUMWORDS div 2) *3 ) + (NUMWORDS % 2)  – 1
-//			div = Integeger division, % = modulo operation, NUMWORDS >= 1
-//			examples: UNKNOWNS(1)=0, UNKNOWNS(2)=2, UNKNOWNS(3)=3, UNKNOWNS(4)=5, UNKNOWNS(5)=6, 
-//			UNKNOWNS(6)=8, UNKNOWNS(7)=9, UNKNOWNS(8)=11, UNKNOWNS(9)=12 
-//		BYTE[UNKNOWNS]
-//			Idea behind this is getting speech parsing load client side.
-//			Thus this contains data OSI server use for easier parsing.
-//			It’s client side hardcoded and exact details are unkown.
-//		BYTE[?] Ascii Msg – Null Terminated (blockSize – (15+UNKNOWNS) )
-//	else 
-//		BYTE[?][2] Unicode Msg - Null Terminated (blockSize - 12)
-//	Note1:  For pre 2.0.7 clients Type is always < 0xc0
-//	Note2: Uox based emus convert post 2.0.7 data of this packet to pre 2.0.7 data if Type >=0xc0
-//	Note3: (different view of it)
-//	If Mode&0xc0 then there are keywords (from speech.mul) present. 
-//	Keywords:
-//	The first 12 bits = the number of keywords present. The keywords are included right after this, each one is 12 bits also. 
-//	The keywords are padded to the closest byte. For example, if there are 2 keywords, it will take up 5 bytes. 12bits for the number, and 12 bits for each keyword. 12+12+12=36. Which will be padded 4 bits to 40 bits or 5 bytes.
-
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITalkRequestUnicode()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles Unicode/Ascii speech requests
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xAD (Unicode/Ascii Speech Request)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd											0
+//|						BYTE[2] blockSize									1
+//|						BYTE Type											3
+//|						BYTE[2] Color										4
+//|						BYTE[2] Font										6
+//|						BYTE[4] Language (Null Terminated)					8
+//|							“enu“ - United States English
+//|							“des” - German Swiss
+//|							“dea” - German Austria
+//|							“deu” - German Germany
+//|							... for a complete list see langcode.iff
+//|						if (Type & 0xc0) 
+//|							BYTE[1,5] Number of distinct Trigger words (NUMWORDS).
+//|								12 Bit number, Byte #13  = Bit 11…4 of NUMWORDS, Hi-Nibble of Byte #14 (Bit 7…4)  = Bit  0…3 of NUMWORDS
+//|							BYTE[1,5] Index to speech.mul
+//|								12 Bit number, Low Nibble of Byte #14 (Bits 3…0) = Bits 11..8 of Index, Byte #15  = Bits 7…0 of Index
+//|							UNKNOWNS = ( (NUMWORDS div 2) *3 ) + (NUMWORDS % 2)  – 1
+//|								div = Integeger division, % = modulo operation, NUMWORDS >= 1
+//|								examples: UNKNOWNS(1)=0, UNKNOWNS(2)=2, UNKNOWNS(3)=3, UNKNOWNS(4)=5, UNKNOWNS(5)=6, 
+//|								UNKNOWNS(6)=8, UNKNOWNS(7)=9, UNKNOWNS(8)=11, UNKNOWNS(9)=12 
+//|							BYTE[UNKNOWNS]
+//|								Idea behind this is getting speech parsing load client side.
+//|								Thus this contains data OSI server use for easier parsing.
+//|								It’s client side hardcoded and exact details are unkown.
+//|							BYTE[?] Ascii Msg – Null Terminated (blockSize – (15+UNKNOWNS) )
+//|						else 
+//|							BYTE[?][2] Unicode Msg - Null Terminated (blockSize - 12)
+//|
+//|						NOTE1:  For pre 2.0.7 clients Type is always < 0xc0
+//|						NOTE2: Uox based emus convert post 2.0.7 data of this packet to pre 2.0.7 
+//|							data if Type >=0xc0
+//|						NOTE3: (different view of it)
+//|						If Mode&0xc0 then there are keywords (from speech.mul) present. 
+//|						Keywords:
+//|						The first 12 bits = the number of keywords present. The keywords are 
+//|							included right after this, each one is 12 bits also. 
+//|						The keywords are padded to the closest byte. For example, if there are 2 
+//|							keywords, it will take up 5 bytes. 12bits for the number, and 12 bits for each keyword. 12+12+12=36. Which will be padded 4 bits to 40 bits or 5 bytes.
+//o-----------------------------------------------------------------------------------------------o
 CPITalkRequestUnicode::CPITalkRequestUnicode()
 {
 	isUnicode = true;
@@ -2055,6 +2277,28 @@ char * CPITalkRequestUnicode::Language( void ) const
 	return (char *)langCode;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIAllNames3D()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to show names of all nearby characters
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x98 (All Names (3D Client Only))
+//|					Size: 7 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] blocksize
+//|						BYTE[4] ID
+//|						If (server-reply)
+//|							BYTE[30] name (0 terminated)
+//|
+//|						Only 3D clients send this packet. Server and client packet.
+//|						Unsure as of when, 2D client added this ability also.
+//|						Client asks for name of object with ID x. Server has to reply with ID + 
+//|							name. Client automatically knows names of items. Hence it only asks only 
+//|							for NPC/Player names nearby, but shows bars of items plus NPCs.
+//|						Client request has 7 bytes, server-reply 37. Triggered by Crtl + Shift.
+//o-----------------------------------------------------------------------------------------------o
 CPIAllNames3D::CPIAllNames3D() : CPInputBuffer()
 {
 }
@@ -2085,16 +2329,24 @@ bool CPIAllNames3D::Handle( void )
 	return true;
 }
 
-//0x7D Packet
-//Last Modified on Friday, 3-Oct-2003 
-//Make a choice in a Gump (13 bytes) 
-//	BYTE cmd 
-//	BYTE[4] dialogID (echoed back from 7C packet) 
-//	BYTE[2] menuid (echoed back from 7C packet) 
-//	BYTE[2] 1-based index of choice 
-//	BYTE[2] model # of choice 
-//	BYTE[2] color
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIGumpChoice()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with choice made in a Gump dialog
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x7D (Make a choice in a Gump)
+//|					Size: 13 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] dialogID (echoed back from 7C packet) 
+//|						BYTE[2] menuid (echoed back from 7C packet) 
+//|						BYTE[2] 1-based index of choice 
+//|						BYTE[2] model # of choice 
+//|						BYTE[2] color
+//|
+//|					NOTE: void CPGumpChoice::Handle() implemented in gumps.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIGumpChoice::CPIGumpChoice()
 {
 }
@@ -2107,21 +2359,28 @@ void CPIGumpChoice::Receive( void )
 	tSock->Receive( 13, false );
 }
 
-// void CPGumpChoice::Handle() implemented in gumps.cpp
-
-//0x3B Packet
-//Last Modified on Friday, 3-Oct-2003 
-//Buy Item(s) (Variable # of bytes)
-//	BYTE cmd 
-//	BYTE[2] blockSize 
-//	BYTE[4] vendorID 
-//	BYTE flag 
-//		0x00 - no items following 
-//		0x02 - items following
-//	For each item 
-//		BYTE (0x1A) 
-//		BYTE[4] itemID (from 3C packet) 
-//		BYTE[2] # bought 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIBuyItem()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to buy items from vendor
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x3B (Buy Item(s))
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] blockSize 
+//|						BYTE[4] vendorID 
+//|						BYTE flag 
+//|							0x00 - no items following 
+//|							0x02 - items following
+//|						For each item 
+//|							BYTE (0x1A) 
+//|							BYTE[4] itemID (from 3C packet) 
+//|							BYTE[2] # bought
+//|
+//|					NOTE: void CPIBuyItem::Handle() implemented in vendor.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIBuyItem::CPIBuyItem()
 {
 }
@@ -2135,19 +2394,25 @@ void CPIBuyItem::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// void CPIBuyItem::Handle() implemented in vendor.cpp
-
-//0x9F Packet
-//Last Modified on Friday, 3-Oct-2003 
-//Sell Reply (Variable # of bytes) 
-//	BYTE cmd 
-//	BYTE[2] blockSize
-//	BYTE[4] shopkeeperID
-//	BYTE[2] itemCount
-//	For each item, a structure containing:
-//		BYTE[4] itemID
-//		BYTE[2] quantity
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPISellItem()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to sell items to vendor
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x9F (Sell Reply)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] blockSize
+//|						BYTE[4] shopkeeperID
+//|						BYTE[2] itemCount
+//|						For each item, a structure containing:
+//|							BYTE[4] itemID
+//|							BYTE[2] quantity
+//|
+//|					void CPISellItem::Handle() implemented in vendor.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPISellItem::CPISellItem()
 {
 }
@@ -2161,15 +2426,22 @@ void CPISellItem::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// void CPISellItem::Handle() implemented in vendor.cpp
-
-//0x83 Packet
-//Last Modified on Sunday, 19-Oct-2003 
-//Delete Character (39 bytes)
-//	BYTE cmd
-//	BYTE[30] password
-//	BYTE[4] charIndex
-//	BYTE[4]	clientIP
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIDeleteCharacter()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to delete a specific character
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x83 (Delete Character)
+//|					Size: 39 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[30] password
+//|						BYTE[4] charIndex
+//|						BYTE[4]	clientIP
+//|
+//|					void CPIDeleteCharacter::Handle() implemented in pcmanage.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIDeleteCharacter::CPIDeleteCharacter()
 {
 }
@@ -2182,12 +2454,18 @@ void CPIDeleteCharacter::Receive( void )
 	tSock->Receive( 0x27, false );
 }
 
-// void CPIDeleteCharacter::Handle() implimented in pcmanage.cpp	
-
-//0x00 Packet
-//0xF8 Packet (2 extra bytes, only in clients 7.0.16+)
-//0x8D Packet (for 3D/Enhanced clients)
-//Last Modified on Monday, 4-Mar-2012 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPICreateCharacter()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to create a new character
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x00 (Create Character)
+//|					Packet: 0xF8 (Create Character, clients 7.0.16+)
+//|						See Create2DCharacter() for details
+//|
+//|					Packet: 0x8D (Create Character, KR + SA 3D clients)
+//|						See Create3DCharacter() for details
+//o-----------------------------------------------------------------------------------------------o
 CPICreateCharacter::CPICreateCharacter()
 {
 }
@@ -2203,49 +2481,58 @@ void CPICreateCharacter::Receive( void )
 		Create2DCharacter();
 }
 
-/*Create New Character (3D clients).
-Packet: 0x8D - Size: 146 bytes
-Packet Build
-	BYTE[1] cmd 
-	BYTE[2] packet length 
-	BYTE[4] pattern1 (0xedededed) 
-	BYTE[4] character index/slot
-	BYTE[30] character name 
-	BYTE[30] unknown (character password?)
-	BYTE[1] profession
-	BYTE[1] client flags (0x01 = Felucca Facet, 0x02 = Trammel Facet, 0x04 = Ilshenar Facet, 0x08 = Malas Facet, 0x10 = Tokuno Facet, 0x20 = Ter Mur Facet, 0x40 = UO3D Client, 0x80 = Reserved for Facet06, 0x100 = UOTD. Also, starting locations? Hm)
-	BYTE[1] gender (male=0, female=1) 
-	BYTE[1] race (human=0, elf=1, gargoyle=2)
-	BYTE[1] strength 
-	BYTE[1] dexterity 
-	BYTE[1] intelligence 
-	BYTE[2] skin color 
-	BYTE[4] unknown (0) 
-	BYTE[4] unknown (0) 
-	BYTE[1] skill1 
-	BYTE[1] skill1 value 
-	BYTE[1] skill2 
-	BYTE[1] skill2 value 
-	BYTE[1] skill3 
-	BYTE[1] skill3 value 
-	BYTE[1] skill4 
-	BYTE[1] skill4 value 
-	BYTE[25] unknown (0) 
-	BYTE[1] unknown (0x0B) 
-	BYTE[2] hair color 
-	BYTE[2] hair style 
-	BYTE[1] unknown (0x0C) 
-	BYTE[4] unknown (0) 
-	BYTE[1] unknown (0x0D) 
-	BYTE[2] shirt color 
-	BYTE[2] shirt style/item id
-	BYTE[1] unknown (0x0F) 
-	BYTE[2] face color 
-	BYTE[2] face style/item id
-	BYTE[1] unknown (0x10) 
-	BYTE[2] beard color  // the last two might be reversed
-	BYTE[2] beard style/item id*/
-//
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	Create3DCharacter()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to create character in 3D clients
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x8D (Create Character, KR + SA 3D clients) 
+//|					Size: 146 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] packet length 
+//|						BYTE[4] pattern1 (0xedededed) 
+//|						BYTE[4] character index/slot
+//|						BYTE[30] character name 
+//|						BYTE[30] unknown (character password?)
+//|						BYTE profession
+//|						BYTE client flags (0x01 = Felucca Facet, 0x02 = Trammel Facet, 
+//|							0x04 = Ilshenar Facet, 0x08 = Malas Facet, 0x10 = Tokuno Facet, 
+//|							0x20 = Ter Mur Facet, 0x40 = UO3D Client, 0x80 = Reserved for Facet06, 
+//|							0x100 = UOTD. Also, starting locations? Hm)
+//|						BYTE gender (male=0, female=1) 
+//|						BYTE race (human=0, elf=1, gargoyle=2)
+//|						BYTE strength 
+//|						BYTE dexterity 
+//|						BYTE intelligence 
+//|						BYTE[2] skin color 
+//|						BYTE[4] unknown (0) 
+//|						BYTE[4] unknown (0) 
+//|						BYTE skill1 
+//|						BYTE skill1 value 
+//|						BYTE skill2 
+//|						BYTE skill2 value 
+//|						BYTE skill3 
+//|						BYTE skill3 value 
+//|						BYTE skill4 
+//|						BYTE skill4 value 
+//|						BYTE[25] unknown (0) 
+//|						BYTE unknown (0x0B) 
+//|						BYTE[2] hair color 
+//|						BYTE[2] hair style 
+//|						BYTE unknown (0x0C) 
+//|						BYTE[4] unknown (0) 
+//|						BYTE unknown (0x0D) 
+//|						BYTE[2] shirt color 
+//|						BYTE[2] shirt style/item id
+//|						BYTE unknown (0x0F) 
+//|						BYTE[2] face color 
+//|						BYTE[2] face style/item id
+//|						BYTE unknown (0x10) 
+//|						BYTE[2] beard color  // the last two might be reversed
+//|						BYTE[2] beard style/item id*/
+//o-----------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create3DCharacter( void )
 {
 	tSock->Receive( 146, false );
@@ -2296,36 +2583,48 @@ void CPICreateCharacter::Create3DCharacter( void )
 	memcpy( password, &tSock->Buffer()[41], 30 ); // Byte[30]
 	memcpy( unknown3, &tSock->Buffer()[96], 25 ); // Byte[25]
 }
-/*
-//Create Character (104 bytes) 
-//	BYTE cmd								0
-//	BYTE[4] pattern1 (0xedededed)			1
-//	BYTE[4] pattern2 (0xffffffff)			5
-//	BYTE pattern3 (0x00)					9
-//	BYTE[30] char name						10
-//	BYTE[30] char password					40
-//	BYTE sex (0=male, 1=female)				70
-//	BYTE str								71
-//	BYTE dex								72
-//	BYTE int								73
-//	BYTE skill1								74
-//	BYTE skill1value						75
-//	BYTE skill2								76
-//	BYTE skill2value						77
-//	BYTE skill3								78	
-//	BYTE skill3value						79
-//	BYTE[2] skinColor						80
-//	BYTE[2] hairStyle						82
-//	BYTE[2] hairColor						84
-//	BYTE[2] facial hair						86
-//	BYTE[2] facial hair color				88
-//	BYTE[2] location # from starting list	90
-//	BYTE[2] unknown1						92
-//	BYTE[2] slot							94
-//	BYTE[4] clientIP						96
-//	BYTE[2] shirt color						100
-//	BYTE[2] pants color						102
-*/
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	Create2DCharacter()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to create character in 2D clients
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x00 (Create Character)
+//|					Packet: 0xF8 (Create Character, clients 7.0.16+)
+//|					Size: 104 or 106 Bytes
+//|
+//|					Packet Build
+//|						BYTE cmd								0
+//|						BYTE[4] pattern1 (0xedededed)			1
+//|						BYTE[4] pattern2 (0xffffffff)			5
+//|						BYTE pattern3 (0x00)					9
+//|						BYTE[30] char name						10
+//|						BYTE[30] char password					40
+//|						BYTE sex (0=male, 1=female)				70
+//|						BYTE str								71
+//|						BYTE dex								72
+//|						BYTE int								73
+//|						BYTE skill1								74
+//|						BYTE skill1value						75
+//|						BYTE skill2								76
+//|						BYTE skill2value						77
+//|						BYTE skill3								78	
+//|						BYTE skill3value						79
+//|						if clientVer > 7.0.16
+//|							BYTE skill4							   80
+//|							BYTE skill4value					   81
+//|						BYTE[2] skinColor						80/82
+//|						BYTE[2] hairStyle						82/84
+//|						BYTE[2] hairColor						84/86
+//|						BYTE[2] facial hair						86/88
+//|						BYTE[2] facial hair color				88/90
+//|						BYTE[2] location # from starting list	90/92
+//|						BYTE[2] unknown1						92/94
+//|						BYTE[2] slot							94/96
+//|						BYTE[4] clientIP						96/98
+//|						BYTE[2] shirt color						100/102
+//|						BYTE[2] pants color						102/104
+//o-----------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create2DCharacter( void )
 {
 	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
@@ -2454,19 +2753,27 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 	}
 }
 
-
 // void CPICreateCharacter::Handle() implimented in pcmanage.cpp
 
-//0x5D Packet
-//Last Modified on Sunday, 19-Oct-2003 
-//Login Character (73 bytes) 
-//	BYTE cmd 
-//	BYTE[4] pattern1 (0xedededed) 
-//	BYTE[30] char name (0 terminated)
-//	BYTE[33] unknown, mostly 0’s  (Byte# 0x27, 0x28, 0x30  seem to be the only non 0’s of these 33 bytes. Perhaps password data that’s not send anymore)
-//	BYTE slot choosen (0-based) 
-//	BYTE[4] clientIP
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIPlayCharacter()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to login with a specific character
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x5D (Login Character)
+//|					Size: 73 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] pattern1 (0xedededed) 
+//|						BYTE[30] char name (0 terminated)
+//|						BYTE[33] unknown, mostly 0’s  (Byte# 0x27, 0x28, 0x30  seem to be the only 
+//|							non 0’s of these 33 bytes. Perhaps password data that’s not send anymore)
+//|						BYTE slot choosen (0-based) 
+//|						BYTE[4] clientIP
+//|
+//|					void CPIPlayCharacter::Handle() implimented in pcmanage.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIPlayCharacter::CPIPlayCharacter()
 {
 }
@@ -2510,19 +2817,25 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-// void CPIPlayCharacter::Handle() implimented in pcmanage.cpp
-
-//0xAC Packet
-//Last Modified on Sunday, Saturday, 19-Feb-2000
-//Gump Text Entry Dialog Reply (Variable # of bytes) 
-//	BYTE cmd 
-//	BYTE[2] length
-//	BYTE[4] ID
-//	BYTE type
-//	BYTE index
-//	BYTE[3] unk
-//	BYTE[?] reply
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIGumpInput()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with reply data for gump text entry dialog
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xAC (Gump Text Entry Dialog Reply)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] length
+//|						BYTE[4] ID
+//|						BYTE type
+//|						BYTE index
+//|						BYTE[3] unk
+//|						BYTE[?] reply
+//|
+//|					void CPIGumpInput::Handle() implimented in gumps.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIGumpInput::CPIGumpInput()
 {
 }
@@ -2580,14 +2893,20 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-// void CPIGumpInput::Handle() implimented in gumps.cpp
-
-//0x9B Packet
-//Last Modified on Wednesday, 06-May-1998
-//Request Help (258 bytes) 
-//	BYTE cmd 
-//	BYTE[257] (0x00)
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIHelpRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with help request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x9B (Request Help)
+//|					Size: 258 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[257] (0x00)
+//|
+//|					void CPIHelpRequest::Handle() implimented in gumps.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIHelpRequest::CPIHelpRequest( CSocket *s, UI16 menuVal ) : CPInputBuffer( s )
 {
 	menuNum = menuVal;
@@ -2602,21 +2921,27 @@ void CPIHelpRequest::Receive( void )
 	menuNum = 1;
 }
 
-// void CPIHelpRequest::Handle() implimented in gumps.cpp
-
-//0x6F Packet
-//Last Modified on Friday, 20-Nov-1998 
-//Secure Trading (Variable # of bytes) 
-//	BYTE cmd 
-//	BYTE[2] blockSize 
-//	BYTE action
-//	BYTE[4] id1
-//	BYTE[4] id2
-//	BYTE[4] id3
-//	BYTE nameFollowing (0 or 1)
-//If (nameFollowing = 1) 
-//	BYTE[?] charName
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITradeMessage()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request for secure trading window
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x6F (Secure Trading)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] blockSize 
+//|						BYTE action
+//|						BYTE[4] id1
+//|						BYTE[4] id2
+//|						BYTE[4] id3
+//|						BYTE nameFollowing (0 or 1)
+//|						If (nameFollowing = 1) 
+//|							BYTE[?] charName
+//|
+//|					void CPITradeMessage::Handle() implimented in gumps.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPITradeMessage::CPITradeMessage()
 {
 }
@@ -2630,16 +2955,20 @@ void CPITradeMessage::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// void CPITradeMessage::Handle() implimented in gumps.cpp
-
-//0x95 Packet
-//Last Modified on Thursday, 30-Apr-1998 18:34:08 EDT 
-//Dye Window (9 bytes) 
-//	BYTE cmd 
-//	BYTE[4] itemID of dye target
-//	BYTE[2] ignored on send, model on return
-//	BYTE[2] model on send, color on return  (default on server send is 0x0FAB)
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIDyeWindow()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to open dye window
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x95 (Dye Window)
+//|					Size: 9 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[4] itemID of dye target
+//|						BYTE[2] ignored on send, model on return
+//|						BYTE[2] model on send, color on return  (default on server send is 0x0FAB)
+//o-----------------------------------------------------------------------------------------------o
 CPIDyeWindow::CPIDyeWindow()
 {
 }
@@ -2713,14 +3042,22 @@ bool CPIDyeWindow::Handle( void )
 	return true;
 }
 
-//0x71 Packet
-//Last Modified on Wednesday, 24-May-2000
-//Bulletin Board Message (Variable # of bytes)
-//	BYTE cmd
-//	BYTE[2] len
-//	BYTE subcmd
-//	BYTE[len-4] submessage
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIMsgBoardEvent()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for bulletin board interaction
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x71 (Bulletin Board Message)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] len
+//|						BYTE subcmd
+//|						BYTE[len-4] submessage
+//|
+//|					bool CPIMsgBoardEvent::Handle() implemented in msgboard.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIMsgBoardEvent::CPIMsgBoardEvent()
 {
 }
@@ -2738,8 +3075,28 @@ void CPIMsgBoardEvent::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// bool CPIMsgBoardEvent::Handle() implemented in msgboard.cpp
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPINewBookHeader()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for book header
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD4 (Book Header (New))
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] length
+//|						BYTE[4] book ID
+//|						BYTE flag1 (0 when sent by client)
+//|						BYTE flag2 (0 when sent by client)
+//|						BYTE[2] number of pages (0 when sent by client)
+//|						BYTE[2] length of author (0 terminator included)
+//|						BYTE[?][2] author (Unicode, 0 terminated)
+//|						BYTE[2] length of title (0 terminator included)
+//|						BYTE[?][2] title (Unicode, 0 terminated)
+//|
+//|					bool CPINewBookHeader::Handle() implemented in books.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPINewBookHeader::CPINewBookHeader()
 {
 }
@@ -2755,9 +3112,30 @@ void CPINewBookHeader::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// bool CPINewBookHeader::Handle() implemented in books.cpp
 
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIBookPage()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for book pages
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0x66 (Books (Pages))
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE 0x66
+//|						BYTE[2] Length
+//|						BYTE[4] Book Serial
+//|						BYTE[2] Page Count
+//|						Page Loop
+//|							BYTE[2] Page #
+//|							BYTE[2] Line Count
+//|							Line Loop ( if used old packet 0x93 to open the book )
+//|								BYTE[var] Line Text, Null Terminated
+//|							Line Loop ( if used new packet 0xD4 to open the book )
+//|								BYTE[var][2] Unicode Line Text, Null Terminated
+//|
+//|					bool CPIBookPage::Handle() implemented in books.cpp
+//o-----------------------------------------------------------------------------------------------o
 CPIBookPage::CPIBookPage()
 {
 }
@@ -2773,8 +3151,47 @@ void CPIBookPage::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-// bool CPIBookPage::Handle() implemented in books.cpp
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIMetrics()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with client hardware / metrics
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD9 (Spy on Client)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE unknown (02) Always 0x02 in my tests
+//|						BYTE[4] Unique Instance ID of UO
+//|						BYTE[4] OS Major
+//|						BYTE[4] OS Minor
+//|						BYTE[4] OS Revision
+//|						BYTE CPU Manufacturer
+//|						BYTE[4] CPU Family
+//|						BYTE[4] CPU Model
+//|						BYTE[4] CPU Clock Speed
+//|						BYTE CPU Quantity
+//|						BYTE[4] Memory
+//|						BYTE[4] Screen Width
+//|						BYTE[4] Screen Height
+//|						BYTE[4] Screen Depth
+//|						BYTE[2] Direct X Version
+//|						BYTE[2] Direct X Minor
+//|						BYTE[76?] Video Card Description
+//|						BYTE[4] Video Card Vendor ID
+//|						BYTE[4] Video Card Device ID
+//|						BYTE[4] Video Card Memory
+//|						BYTE Distribution
+//|						BYTE Clients Running
+//|						BYTE Clients Installed
+//|						BYTE Partial Insstalled
+//|						BYTE Unknown
+//|						BYTE[4] Language Code
+//|						BYTE[67] Unknown Ending
+//|
+//|					Older clients, from mid-late 2003 was set at 149 bytes length, whereas newest 
+//|					clients 4.01+ are set to 199 ??
+//o-----------------------------------------------------------------------------------------------o
 CPIMetrics::CPIMetrics()
 {
 }
@@ -2839,7 +3256,7 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	BYTE[2]	unknown2
 
 //	Subcommand 8: Set cursor hue / Set MAP 
-//	BYTE[1] hue (0 = Felucca, unhued / BRITANNIA map. 1 = Trammel, hued gold / BRITANNIA map, 2 = (switch to) ILSHENAR map) 
+//	BYTE hue (0 = Felucca, unhued / BRITANNIA map. 1 = Trammel, hued gold / BRITANNIA map, 2 = (switch to) ILSHENAR map) 
 
 //	Subcommand 0x0a: wrestling stun 
 //	Sent by using the client's Wrestle Stun Macro key in Options. This is no longer used since AoS was introduced. The Macro selection that used it was removed. 
@@ -2866,7 +3283,7 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	Subcommand 0x14: Display Popup menu 
 //	BYTE[2] Unknown(always 00 01) 
 //	BYTE[4] Serial 
-//	BYTE[1] Number of entries in the popup 
+//	BYTE Number of entries in the popup 
 //	For each Entry 
 //	· BYTE[2] Entry Tag (this will be returned by the client on selection) 
 //	· BYTE[2] Text ID ID is the file number for intloc#.language e.g intloc6.enu and the index into that 
@@ -2879,9 +3296,9 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	BYTE[2] Entry Tag for line selected provided in subcommand 0x14 
 
 //	Subcommand 0x17: Codex of wisdom 
-//	BYTE[1] unknown, always 1. if not 1, packet seems to have no effect 
+//	BYTE unknown, always 1. if not 1, packet seems to have no effect 
 //	BYTE[4] msg number 
-//	BYTE[1] presentation (0: “?” flashing, 1: directly opening) 
+//	BYTE presentation (0: “?” flashing, 1: directly opening) 
 
 //	Subcommand 0x18: Enable map-diff (files) 
 //	BYTE[4] Number of maps 
@@ -2890,14 +3307,14 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	· BYTE[4] Number of static patches in this map 
 
 //	Subcommand: 0x19: Extended stats 
-//	BYTE[1] type // always 2 ? never seen other value 
+//	BYTE type // always 2 ? never seen other value 
 //	BYTE[4] serial 
-//	BYTE[1] unknown // always 0 ? 
-//	BYTE[1] lockBits // Bits: XXSS DDII (s=strength, d=dex, i=int), 0 = up, 1 = down, 2 = locked 
+//	BYTE unknown // always 0 ? 
+//	BYTE lockBits // Bits: XXSS DDII (s=strength, d=dex, i=int), 0 = up, 1 = down, 2 = locked 
 
 //	Subcommand: 0x1a: Extended stats 
-//	BYTE[1] stat // 0: str, 1: dex, 2:int 
-//	BYTE[1] status // 0: up, 1:down, 2: locked 
+//	BYTE stat // 0: str, 1: dex, 2:int 
+//	BYTE status // 0: up, 1:down, 2: locked 
 
 //	Subcommand 0x1b: New Spellbook 
 //	BYTE[2] unknown, always 1 
@@ -2923,10 +3340,10 @@ CPISubcommands::CPISubcommands( CSocket *s ) : CPInputBuffer( s )
 //	Subcommand 0x22: Damage 
 //	BYTE[2] unknown, always 1 
 //	BYTE[4] Serial 
-//	BYTE[1] Damage // how much damage was done ? 
+//	BYTE Damage // how much damage was done ? 
 
 //	Subcommand 0x24: UnKnown 
-//	BYTE[1] unknown. UOSE Introduced
+//	BYTE unknown. UOSE Introduced
 
 // Subcommand 0x2C : Bandage macro
 //	BYTE[4]	Item Serial
@@ -2949,7 +3366,7 @@ void CPISubcommands::Receive( void )
 	case 0x24:	skipOver = true;	break;
 	default:	Console.Print( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd );	skipOver = true;	break;
 	case 0x06:	{	subPacket = new CPIPartyCommand( tSock );		}	break;
-	case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Tracking Arrow
+	case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Quest/Tracking Arrow
 	case 0x0B:	{	subPacket = new CPIClientLanguage( tSock );		}	break;	// Client language.  3 bytes.  "ENU" for english
 	case 0x0E:	{	subPacket = new CPIUOTDActions( tSock );		}	break;	// UOTD actions
 	case 0x10:	{	subPacket = new CPIToolTipRequest( tSock );		}	break;	// Request for tooltip data
@@ -2984,7 +3401,57 @@ void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
 }
 
 // Party Command
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIPartyCommand()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with party command
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x06 (Party Command)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x06)
+//|						Subcommand details
+//|							Subsubcommand 1 - Add a party member
+//|								Client
+//|									BYTE[4]	id (if 0, a targeting cursor appears)	
+//|								Server
+//|									BYTE	memberCount
+//|									For each member
+//|										BYTE[4] memberID
+//|							Subsubcommand 2 - Remove a party member
+//|								Client
+//|									BYTE[4] id (if 0, a targeting cursor appears)
+//|								Server
+//|									BYTE	membersInNewParty
+//|									BYTE[4]	idOfRemovedPlayer
+//|									For each member
+//|										BYTE[4]	memberID
+//|							Subsubcommand 3 - Tell a party member a message
+//|								BYTE[4]		id
+//|								BYTE[n][2]	Null terminated Unicode message
+//|							Subsubcommand 4 - Tell full party a message
+//|								Client
+//|									BYTE[n][2] Null terminated unicode message
+//|								Server
+//|									BYTE[4]	srcMember
+//|									BYTE[n][2] Null terminated Unicode message
+//|							Subsubcommand 6 - Party can loot me?
+//|								Client
+//|									BYTE	canLoot	( 0 == no, 1 == yes )
+//|							Subsubcommand 7 - Send invitation to party
+//|								Server
+//|									BYTE[4]	serial of invited player
+//|							Subsubcommand 8 - Accept join party invitation
+//|								Client
+//|									BYTE[4]	leaderID
+//|							Subsubcommand 9 - Reject join party invitation
+//|								Client
+//|									BYTE[4] leaderID
+//o-----------------------------------------------------------------------------------------------o
 CPIPartyCommand::CPIPartyCommand()
 {
 }
@@ -3008,44 +3475,7 @@ bool CPIPartyCommand::Handle( void )
 	const int PARTY_INVITE		= 7;
 	const int PARTY_ACCEPT		= 8;
 	const int PARTY_DECLINE		= 9;
-
-	//	Subcommand 1		Add a party member
-	//		Client
-	//			BYTE[4]	id		(if 0, a targeting cursor appears)	
-	//		Server
-	//			BYTE[1]	memberCount
-	//			For each member
-	//				BYTE[4] memberID
-	//	Subcommand 2		Remove a party member
-	//		Client
-	//			BYTE[4] id		(if 0, a targeting cursor appears)
-	//		Server
-	//			BYTE[1]	membersInNewParty
-	//			BYTE[4]	idOfRemovedPlayer
-	//			For each member
-	//				BYTE[4]	memberID
-	//	Subcommand 3		Tell a party member a message
-	//		BYTE[4]		id
-	//		BYTE[n][2]	Null terminated Unicode message
-	//	Subcommand 4		Tell full party a message
-	//		Client
-	//			BYTE[n][2]	Null terminated unicode message
-	//		Server
-	//			BYTE[4]		srcMember
-	//			BYTE[n][2]	Null terminated Unicode message
-	//	Subcommand 6		Party can loot me?
-	//		Client
-	//			BYTE[1]	canLoot	( 0 == no, 1 == yes )
-	//	Subcommand 7		Send invitation to party
-	//		Server
-	//			BYTE[4]	serial of invited player
-	//	Subcommand 8		Accept join party invitation
-	//		Client
-	//			BYTE[4]	leaderID
-	//	Subcommand 9		Reject join party invitation
-	//		Client
-	//			BYTE[4] leaderID
-	const int BASE_OFFSET	= 6;
+	const int BASE_OFFSET		= 6;
 	switch( partyCmd )
 	{
 	case PARTY_ADD:
@@ -3215,7 +3645,7 @@ void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 		{
 	//	Subcommand 6		Party can loot me?
 	//		Client
-	//			BYTE[1]	canLoot	( 0 == no, 1 == yes )
+	//			BYTE	canLoot	( 0 == no, 1 == yes )
 		if( fullHeader )
 			outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_LOOT --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 		outStream << "Can loot       : " << ( (tSock->GetByte( BASE_OFFSET )==1)?"yes":"no") << std::endl;
@@ -3247,8 +3677,22 @@ void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPITrackingArrow()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to click on Quest/Tracking arrow
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x07 (Quest/Tracking Arrow)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x07)
+//|						Subcommand details
+//|							BYTE Right Click (0x01 = yes, 0x00 = no)
+//o-----------------------------------------------------------------------------------------------o
 CPITrackingArrow::CPITrackingArrow()
 {
 }
@@ -3283,9 +3727,22 @@ void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIClientLanguage()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to set/change client language (?)
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x0B (Client Language)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x0B)
+//|						Subcommand details
+//|							BYTE[3] language (ENU, for English)
+//o-----------------------------------------------------------------------------------------------o
 CPIClientLanguage::CPIClientLanguage()
 {
 }
@@ -3311,8 +3768,49 @@ void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIUOTDActions()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to perform an action in TD/3D client
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x0E (TD/3D Client Action)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x0E)
+//|						Subcommand details
+//|							BYTE[4] Animation ID
+//|								00 00 00 06 - Yawn
+//|								00 00 00 15 - Faint
+//|								00 00 00 20 - Bow
+//|								00 00 00 21 - Salute
+//|								00 00 00 64 - Applaud
+//|								00 00 00 66 - Argue
+//|								00 00 00 68 - Blow Kiss
+//|								00 00 00 69 - Formal Bow
+//|								00 00 00 6B - Cover Ears
+//|								00 00 00 6C - Curtsey
+//|								00 00 00 6D - Jig
+//|								00 00 00 6E - Folk Dance
+//|								00 00 00 6F - Dance
+//|								00 00 00 70 - Tribal Dance
+//|								00 00 00 71 - Fold Arms
+//|								00 00 00 72 - Impatient
+//|								00 00 00 73 - Lecture
+//|								00 00 00 74 - Nod
+//|								00 00 00 75 - Point
+//|								00 00 00 77 - Greet Salute
+//|								00 00 00 79 - Shake Head
+//|								00 00 00 7B - Victory
+//|								00 00 00 7C - Celebrate
+//|								00 00 00 7D - Wave
+//|								00 00 00 7E - Two Handed Wave
+//|								00 00 00 7F - Long Distance Wave
+//|								00 00 00 80 - What?
+//o-----------------------------------------------------------------------------------------------o
 CPIUOTDActions::CPIUOTDActions()
 {
 }
@@ -3339,8 +3837,23 @@ void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIToolTipRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to show gump entry tooltip
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x10 (Popup Entry Select)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x10)
+//|						Subcommand details
+//|							BYTE[4] Item ID
+//|							BYTE[4] Unknown
+//o-----------------------------------------------------------------------------------------------o
 CPIToolTipRequest::CPIToolTipRequest() : getSer( INVALIDSERIAL )
 {
 }
@@ -3370,6 +3883,22 @@ void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIPopupMenuRequest()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to show popup/context menu
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x13 (Request Popup Menu)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x13)
+//|						Subcommand details
+//|							BYTE[4] id (character id)
+//o-----------------------------------------------------------------------------------------------o
 CPIPopupMenuRequest::CPIPopupMenuRequest() : mSer( INVALIDSERIAL )
 {
 }
@@ -3406,6 +3935,23 @@ void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIPopupMenuSelect()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request select entry from popup/context menu
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x15 (Popup Entry Select)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x15)
+//|						Subcommand details
+//|							BYTE[4] Character ID
+//|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
+//o-----------------------------------------------------------------------------------------------o
 CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( NULL )
 {
 }
@@ -3495,8 +4041,23 @@ void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIExtendedStats()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with request to lock/unlock extended stats
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x1A (Extended stats)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x1A)
+//|						Subcommand details
+//|							BYTE stat // 0: str, 1: dex, 2:int
+//|							BYTE status // 0: up, 1:down, 2: locked
+//o-----------------------------------------------------------------------------------------------o
 CPIExtendedStats::CPIExtendedStats()
 {
 }
@@ -3524,7 +4085,23 @@ void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIBandageMacro()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with bandage macro request
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x1C (Bandage Macro/Use targeted item)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x1C)
+//|						Subcommand details
+//|							Byte[4] Item Serial
+//|							Byte[4] Target Serial
+//o-----------------------------------------------------------------------------------------------o
 CPIBandageMacro::CPIBandageMacro()
 {
 }
@@ -3569,13 +4146,14 @@ bool CPIBandageMacro::Handle(void)
 				return false;
 
 			if( toExecute->OnUseBandageMacro( tSock, targetChar, bandageItem ) == 1 )	// if it exists and we don't want hard code, return
-	return true;
+				return true;
 		}
 		else
 			Console << "Bandage Macro detected, but onUseBandageMacro JS event not found in global script." << myendl;
 	}
 	return false;
 }
+
 void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -3584,7 +4162,23 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPISpellbookSelect()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with info on selected spell from spellbook
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xBF (General Information Packet)
+//|					Subcommand: 0x1D (Spell selected)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd (0xBF)
+//|						BYTE[2] Length
+//|						BYTE[2] Subcommand (0x1D)
+//|						Subcommand details
+//|							BYTE[2] unknown, always 2
+//|							BYTE[2] selected spell(0-indexed)+scroll offset from sub 0x1b
+//o-----------------------------------------------------------------------------------------------o
 CPISpellbookSelect::CPISpellbookSelect()
 {
 }
@@ -3644,30 +4238,107 @@ void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-
-
-// 0xD7 Packet
-//	byte	0xD7 The packet number. 
-//	ushort	Size The size of the packet. 
-//	ushort	Command The command being sent.
-//				0x0002 - House Customization :: Backup 
-//				0x0003 - House Customization :: Restore 
-//				0x0004 - House Customization :: Commit 
-//				0x0005 - House Customization :: Destroy Item 
-//				0x0006 - House Customization :: Place Item 
-//				0x000C - House Customization :: Exit 
-//				0x000D - House Customization :: Place Multi (Stairs) 
-//				0x000E - House Customization :: Synch 
-//				0x0010 - House Customization :: Clear 
-//				0x0012 - House Customization :: Switch Floors 
-//				0x0019 - Special Moves :: Activate/Deactivate 
-//				0x001A - House Customization :: Revert 
-//				0x0028 - Quests :: Paperdoll button
-//				0x0032 - Guild  :: Paperdoll button
-
-//	Packet Description:
-//		This packet is used to perform various actions, mostly related to AOS features.
- 
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIAOSCommand()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with requests for various AoS features
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD7 (Generic AOS Commands)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[4] id
+//|						BYTE[30] new name
+//|
+//|						BYTE cmd
+//|						BYTE[2]	length
+//|						BYTE[4] player serial
+//|						BYTE[2] subcommand
+//|							0x02 - House Customization :: Backup 
+//|								BYTE unknown (0x07)
+//|							0x03 - House Customization :: Restore 
+//|								BYTE unknown (0x07)
+//|							0x04 - House Customization :: Commit 
+//|								BYTE unknown (0x07)
+//|							0x05 - House Customization :: Destroy Item 
+//|								BYTE unknown (0)
+//|								BYTE[2] unknown (0)
+//|								BYTE[2] item graphic
+//|								BYTE unknown (0)
+//|								BYTE[4] X Pos
+//|								BYTE unknown (0)
+//|								BYTE[4] Y Pos
+//|								BYTE unknown (0)
+//|								BYTE[4] z Pos (7)
+//|								BYTE terminator (0x07)
+//|							0x06 - House Customization :: Place Item 
+//|								BYTE unknown (0)
+//|								BYTE[2] unknown (0)
+//|								BYTE[2] itemGraphic
+//|								BYTE unknown (0)
+//|								BYTE[4] XPos
+//|								BYTE unknown (0)
+//|								BYTE[4] YPos
+//|								BYTE terminator (0x07)
+//|							0x0C - House Customization :: Exit 
+//|								BYTE unknown (0x07)
+//|							0x0D - House Customization :: Place Multi (Stairs) 
+//|								BYTE unknown (0x00)
+//|								BYTE[2] X Position (Relative to center of house)
+//|								BYTE unknown (0x00)
+//|								BYTE[2] Y Position (Relative to center of house)
+//|								BYTE unknown (0x00)
+//|							0x0E - House Customization :: Synch
+//|								BYTE unknown (0x07)
+//|							0x10 - House Customization :: Clear 
+//|								BYTE unknown (0x07)
+//|							0x12 - House Customization :: Switch Floors 
+//|								BYTE[4] unknown (0)
+//|								BYTE Floor#
+//|								BYTE terminator (0x07)
+//|							0x19 - Special Moves :: Activate/Deactivate
+//|								Sent when client pushes the icones from the combat book.
+//|								The server uses an 0xBF Subcommand 0x21 Packet to cancel the red color of
+//|								icons, and reset the status of them on client.
+//|								Valid Ability Numbers:
+//|									0x00 = Cancel Ability Attempt
+//|									0x01 = Armor Ignore
+//|									0x02 = Bleed Attack
+//|									0x03 = Concusion Blow
+//|									0x04 = Crushing Blow
+//|									0x05 = Disarm
+//|									0x06 = Dismount
+//|									0x07 = Double Strike
+//|									0x08 = Infecting
+//|									0x09 = Mortal Strike
+//|									0x0A = Moving Shot
+//|									0x0B = Paralyzing Blow
+//|									0x0C = Shadow Strike
+//|									0x0D = Whirlwind Attack
+//|									0x0E = Riding Swipe
+//|									0x0F = Frenzied Whirlwind
+//|									0x10 = Block
+//|									0x11 = Defense Mastery
+//|									0x12 = Nerve Strike
+//|									0x13 = Talon Strike
+//|									0x14 = Feint
+//|									0x15 = Dual Wield
+//|									0x16 = Double shot
+//|									0x17 = Armor Peirce
+//|									0x18 = Bladeweave
+//|									0x19 = Force Arrow
+//|									0x1A = Lightning Arrow
+//|									0x1B = Psychic Attack
+//|									0x1C = Serpent Arrow
+//|									0x1D = Force of Nature
+//|							0x1A - House Customization :: Revert 
+//|								BYTE unknown (0x07)
+//|							0x28 - Quests :: Paperdoll button
+//|								BYTE unknown (0x07)
+//|							0x32 - Guild  :: Paperdoll button
+//|								BYTE unknown (0x07)
+//o-----------------------------------------------------------------------------------------------o
 CPIAOSCommand::CPIAOSCommand()
 {
 }

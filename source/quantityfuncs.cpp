@@ -4,12 +4,12 @@
 namespace UOX
 {
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 {
 	UI32 total = 0;
@@ -27,12 +27,12 @@ UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour )
 	return total;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item on a character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
 {
 	CItem *p = s->GetPackItem();
@@ -41,13 +41,12 @@ UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour )
 	return GetSubItemAmount( p, realID, realColour );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Remove a certain amount of an item of specified color in a pack
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove a certain amount of an item of specified color in a pack
+//o-----------------------------------------------------------------------------------------------o
 UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 {
 	if( !ValidateObject( p ) )
@@ -83,18 +82,16 @@ UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour )
 	return amtDeleted;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	:	UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Remove a certain amount of an item of specified color on 
-//|									a character
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove a certain amount of an item of specified color on a character
 //|									
-//|	Modification	-	09/24/2002	-	EviLDeD - Resource calculations fixed.
+//|	Changes		-	09/24/2002	-	EviLDeD - Resource calculations fixed.
 //|									
-//|	Modification	-	09/25/2002	-	Brakhtus - Weight Fixes
-//o---------------------------------------------------------------------------o
+//|	Changes		-	09/25/2002	-	Brakhtus - Weight Fixes
+//o-----------------------------------------------------------------------------------------------o
 UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
 {
 	if( !ValidateObject( s ) )
@@ -106,15 +103,13 @@ UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour )
 	return DeleteSubItemAmount( p, amount, realID, realColour );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour = 0x0000 )
-//|     Date          :          October 23rd, 2000
-//|     Programmer    :          UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Searches through the bank to count the amount
-//|                              of items with a specific ID and colour
-//|                              
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
+//|	Date		-	October 23rd, 2000
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Searches through the bank to count the amount of items with a specific ID and colour
+//o-----------------------------------------------------------------------------------------------o
 UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 {
 	if( !ValidateObject( p ) )
@@ -133,15 +128,14 @@ UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour )
 	return goldCount;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :         UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
-//|     Date          :         October 23rd, 2000
-//|     Programmer    :         UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|     Purpose       :         Searches through the bank to and deletes a 
-//|                             certain amount of a certain item
-//|								Returns how many left over
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
+//|	Date		-	October 23rd, 2000
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Searches through the bank to and deletes a certain amount of a certain item
+//|					Returns how many left over
+//o-----------------------------------------------------------------------------------------------o
 UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour )
 {
 	if( !ValidateObject( p ) )

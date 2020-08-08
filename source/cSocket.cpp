@@ -28,6 +28,11 @@ const bool LOGDEFAULT = true;
 const bool LOGDEFAULT = false;
 #endif
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Dumps packet stream to log file
+//o-----------------------------------------------------------------------------------------------o
 void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 {
 	outStream << "  ";
@@ -41,6 +46,11 @@ void dumpStream( std::ofstream &outStream, const char *strToDump, UI08 num )
 	outStream << '\n';
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 >& myBuffer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Log packet stream in large buffer
+//o-----------------------------------------------------------------------------------------------o
 void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI08 >& myBuffer )
 {
 	outStream << std::hex;
@@ -66,6 +76,11 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, std::vector< UI0
 	outStream << std::endl << std::endl;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Log packet stream in regular buffer
+//o-----------------------------------------------------------------------------------------------o
 void doPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBuffer )
 {
 	outStream << std::hex;
@@ -113,25 +128,18 @@ socket_error::socket_error( const long errorNumber ) : errorNum( errorNumber ), 
 {
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  size_t CSocket::CliSocket( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the socket identifier for our socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t CliSocket( void ) const
+//|					void CliSocket( size_t newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets socket identifier for our socket
+//o-----------------------------------------------------------------------------------------------o
 size_t CSocket::CliSocket( void ) const
 {
 	return cliSocket;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::CliSocket( size_t newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Assigns a new socket value
-//o---------------------------------------------------------------------------o
 void CSocket::CliSocket( size_t newValue )
 {
 	cliSocket = newValue;
@@ -140,54 +148,48 @@ void CSocket::CliSocket( size_t newValue )
 	ioctlsocket( cliSocket, FIONBIO, &mode );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool CSocket::CryptClient( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the true if the socket is set to crypt mode
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CryptClient( void ) const
+//|					void CryptClient( bool newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether socket is set to crypt mode
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::CryptClient( void ) const
 {
 	return cryptclient;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::CryptClient( bool newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the value of the socket's crypt mode
-//o---------------------------------------------------------------------------o
 void CSocket::CryptClient( bool newValue )
 {
 	cryptclient = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  std::string CSocket::XText( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the socket's xtext buffer
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string XText( void )
+//|					void XText( const std::string &newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket's xtext buffer
+//o-----------------------------------------------------------------------------------------------o
 std::string CSocket::XText( void )
 {
 	return xtext;
 }
-
 void CSocket::XText( const std::string &newValue )
 {
 	xtext = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  CBaseObject *TempObj()
-//|   Date        -  October 31, 2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Temporary storage for CChar and CItem objects
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject TempObj( void ) const
+//|					void TempObj( CBaseObject *newValue )
+//|	Date		-	October 31, 2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets temporary storage for CChar and CItem objects
+//o-----------------------------------------------------------------------------------------------o
 CBaseObject *CSocket::TempObj( void ) const
 {
 	return tmpObj;
@@ -197,47 +199,48 @@ void CSocket::TempObj( CBaseObject *newValue )
 	tmpObj = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI32 TempInt()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The tempint of the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 TempInt( void ) const
+//|					void TempInt( SI32 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets tempint of the socket
+//o-----------------------------------------------------------------------------------------------o
 SI32 CSocket::TempInt( void ) const
 {
 	return tempint;
 }
-
 void CSocket::TempInt( SI32 newValue )
 {
 	tempint = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI08 ClickZ()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Return's the socket's addz
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 ClickZ( void ) const
+//|					void ClickZ( SI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket's addz
+//o-----------------------------------------------------------------------------------------------o
 SI08 CSocket::ClickZ( void ) const
 {
 	return clickz;
 }
-
 void CSocket::ClickZ( SI08 newValue )
 {
 	clickz = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI32 AddID()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The addid associated with the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddID( UI32 newValue )
+//|					UI32 AddID( void ) const
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the addid associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::AddID( UI32 newValue )
 {
 	addid[0] = (UI08)( newValue>>24 );
@@ -245,19 +248,19 @@ void CSocket::AddID( UI32 newValue )
 	addid[2] = (UI08)( newValue>>8 );
 	addid[3] = (UI08)( newValue%256 );
 }
-
 UI32 CSocket::AddID( void ) const
 {
 	return calcserial( addid[0], addid[1], addid[2], addid[3] );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 AddID1()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The first addid associated with the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AddID1( void ) const
+//|					void AddID1( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the first addid associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::AddID1( void ) const
 {
 	return addid[0];
@@ -267,116 +270,111 @@ void CSocket::AddID1( UI08 newValue )
 	addid[0] = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 AddID2()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The second addid associated with the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AddID2( void ) const
+//|					void AddID2( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the second addid associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::AddID2( void ) const
 {
 	return addid[1];
 }
-
 void CSocket::AddID2( UI08 newValue )
 {
 	addid[1] = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 AddID3()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The third addid associated with the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AddID3( void ) const
+//|					void AddID3( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the third addid associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::AddID3( void ) const
 {
 	return addid[2];
 }
-
 void CSocket::AddID3( UI08 newValue )
 {
 	addid[2] = newValue;
 }
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 AddID4()
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  The fourth addid associated with the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 AddID4( void ) const
+//|					void AddID4( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the fourth addid associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::AddID4( void ) const
 {
 	return addid[3];
 }
-
 void CSocket::AddID4( UI08 newValue )
 {
 	addid[3] = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 DyeAll( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  DyeAll status of a socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 DyeAll( void ) const
+//|					void DyeAll( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets DyeAll status of a socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::DyeAll( void ) const
 {
 	return dyeall;
 }
-
 void CSocket::DyeAll( UI08 newValue )
 {
 	dyeall = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::CloseSocket( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Closes the open socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CloseSocket( void )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Closes the open socket
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::CloseSocket( void )
 {
 	closesocket( cliSocket );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool CSocket::FirstPacket( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if it's the first packet received
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FirstPacket( void ) const
+//|					void FirstPacket( bool newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the socket has received its first packet yet
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::FirstPacket( void ) const
 {
 	return firstPacket;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::FirstPacket( bool newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets whether the socket has received it's first packet yet
-//o---------------------------------------------------------------------------o
 void CSocket::FirstPacket( bool newValue )
 {
 	firstPacket = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void/bool CSocket::ForceOffline( void/bool newValue )
-//|   Date        -  March 1st, 2012
-//|   Programmer  -  Xuri
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Used by client-restriction code to mark connections for delayed kicking
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ForceOffline( void ) const
+//|					void ForceOffline( bool newValue )
+//|	Date		-	March 1st, 2012
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets socket's forceOffline property. Used by client-restriction code to 
+//|					mark connections for delayed kicking
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::ForceOffline( void ) const
 {
 	return forceOffline;
@@ -386,94 +384,95 @@ void CSocket::ForceOffline( bool newValue )
 	forceOffline = newValue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI32 CSocket::IdleTimeout( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the time point at which the char times out
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 IdleTimeout( void ) const
+//|					void IdleTimeout( SI32 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time point at which the char times out
+//o-----------------------------------------------------------------------------------------------o
 SI32 CSocket::IdleTimeout( void ) const
 {
 	return idleTimeout;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::IdleTimeout( long newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the time point at which the char times out
-//o---------------------------------------------------------------------------o
 void CSocket::IdleTimeout( SI32 newValue )
 {
 	idleTimeout = newValue;
 	wasIdleWarned = false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool WasIdleWarned( void ) const
+//|					void WasIdleWarned( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player has been warned about being idle
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::WasIdleWarned( void ) const
 {
 	return wasIdleWarned;
 }
-
 void CSocket::WasIdleWarned( bool value )
 {
 	wasIdleWarned = value;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 *CSocket::Buffer( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns a pointer to the buffer of the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 Buffer( void )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a pointer to the buffer of the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 *CSocket::Buffer( void )
 {
 	return &buffer[0];
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  UI08 *CSocket::OutBuffer( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns a pointer to the outgoing buffer of the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 OutBuffer( void )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns a pointer to the outgoing buffer of the socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 *CSocket::OutBuffer( void )
 {
 	return &outbuffer[0];
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SI16 CSocket::WalkSequence( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the point in the walk sequence of the socket
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 WalkSequence( void )
+//|					void WalkSequence( SI16 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the walk sequence value of the socket
+//o-----------------------------------------------------------------------------------------------o
 SI16 CSocket::WalkSequence( void ) const
 {
 	return walkSequence;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::WalkSequence( SI16 newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the walk sequence value of the socket
-//o---------------------------------------------------------------------------o
 void CSocket::WalkSequence( SI16 newValue )
 {
 	walkSequence = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddTrigWord( UI16 toAdd )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds trigger word to list of trigger words detected in player's speech
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::AddTrigWord( UI16 toAdd )
 {
 	trigWords.push_back( toAdd );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 FirstTrigWord( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the first of potentially many trigger word detected in player's speech
+//o-----------------------------------------------------------------------------------------------o
 UI16 CSocket::FirstTrigWord( void )
 {
 	UI16 retVal	= 0xFFFF;
@@ -483,6 +482,11 @@ UI16 CSocket::FirstTrigWord( void )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 NextTrigWord( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the next trigger word in list of such words detected in player's speech
+//o-----------------------------------------------------------------------------------------------o
 UI16 CSocket::NextTrigWord( void )
 {
 	UI16 retVal = 0xFFFF;
@@ -495,11 +499,21 @@ UI16 CSocket::NextTrigWord( void )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FinishedTrigWords( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if end of list of trigger words has been reached
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::FinishedTrigWords( void )
 {
 	return ( twIter == trigWords.end() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearTrigWords( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears list of trigger words stored in socket
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ClearTrigWords( void )
 {
 	trigWords.resize( 0 );
@@ -536,6 +550,11 @@ const UI32				DEFSOCK_BYTESRECEIVED			= 0;
 const bool				DEFSOCK_RECEIVEDVERSION			= false;
 const bool				DEFSOCK_LOGINCOMPLETE			= false;
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket constructor
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This function basically does what the name implies
+//o-----------------------------------------------------------------------------------------------o
 CSocket::CSocket( size_t sockNum ) : currCharObj( NULL ), idleTimeout( DEFSOCK_IDLETIMEOUT ), 
 tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), 
 range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ), 
@@ -547,6 +566,11 @@ bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpO
 	InternalReset();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket deconstructor
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cleans up after CSocket object and closes actual socket
+//o-----------------------------------------------------------------------------------------------o
 CSocket::~CSocket()
 {
 	JSEngine->ReleaseObject( IUE_SOCK, this );
@@ -556,6 +580,11 @@ CSocket::~CSocket()
 	closesocket( cliSocket );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void InternalReset( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets default values for various socket properties
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::InternalReset( void )
 {
 	memset( buffer, 0, MAXBUFFER );
@@ -577,13 +606,14 @@ void CSocket::InternalReset( void )
 	largePackBuffer.resize( 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool LoginComplete()
-//|   Date        -  August 26th, 2005
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns whether this socket has fully logged in
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool LoginComplete( void ) const
+//|					void LoginComplete( bool newVal )
+//|	Date		-	August 26th, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether this socket has fully logged in
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::LoginComplete( void ) const
 {
 	return loginComplete;
@@ -593,33 +623,31 @@ void CSocket::LoginComplete( bool newVal )
 	loginComplete = newVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  char CSocket::CurrentSpellType( void )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns the current spell type of the socket
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CurrentSpellType( void ) const
+//|					void CurrentSpellType( UI08 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the current spell type of the socket
 //|						0 - Normal spellcast
 //|						1 - Scroll
 //|						2 - Wand
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::CurrentSpellType( void ) const
 {
 	return currentSpellType;
 }
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  void CSocket::CurrentSpellType( char newValue )
-//|   Date        -  November 29th, 2000
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sets the spell type of the socket
-//o---------------------------------------------------------------------------o
 void CSocket::CurrentSpellType( UI08 newValue )
 {
 	currentSpellType = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FlushBuffer( bool doLog )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends all buffered data in regular buffer immediately
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::FlushBuffer( bool doLog )
 {
 	if( outlength > 0 )
@@ -660,6 +688,11 @@ bool CSocket::FlushBuffer( bool doLog )
 		return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FlushLargeBuffer( bool doLog )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends all buffered data in large buffer immediately
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::FlushLargeBuffer( bool doLog )
 {
 	if( outlength > 0 )
@@ -700,6 +733,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 		return false;
 }
 
+// Huffman Code Table - used with Huffman algorithm for compressing outgoing network packets
 static UI32 bit_table[257][2] =
 {
 	{0x02, 0x00}, 	{0x05, 0x1F}, 	{0x06, 0x22}, 	{0x07, 0x34}, 	{0x07, 0x75}, 	{0x06, 0x28}, 	{0x06, 0x3B}, 	{0x07, 0x32}, 
@@ -737,6 +771,11 @@ static UI32 bit_table[257][2] =
 	{0x04, 0x0D}
 };
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Compress outgoing buffer contents and calculate total length of compressed data
+//o-----------------------------------------------------------------------------------------------o
 UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
 {
 	UI32 packedLength	= 0;
@@ -791,7 +830,12 @@ UI32 CSocket::Pack( void *pvIn, void *pvOut, int len )
 	return DoPack( pIn, pOut, len );
 }
 
-void CSocket::Send( const void *point, int length ) // Buffering send function
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Send( const void *point, int length )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Buffering send function
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::Send( const void *point, int length )
 {
 	if( outlength + length > MAXBUFFER )
 		FlushBuffer();
@@ -836,6 +880,11 @@ void CSocket::FlushIncoming( void )
 	} while( count > 0 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ReceiveLogging( CPInputBuffer *toLog )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Logs received network packets
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 {
 	if( Logging() )
@@ -863,6 +912,12 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 		logDestination.close();
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	int Receive( int x, bool doLog )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles receiving of network packets
+//o-----------------------------------------------------------------------------------------------o
 int CSocket::Receive( int x, bool doLog )
 {
 	int count			= 0;
@@ -904,38 +959,61 @@ int CSocket::Receive( int x, bool doLog )
 	return count;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	int OutLength( void ) const
+//|					void OutLength( int newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets outlength value
+//o-----------------------------------------------------------------------------------------------o
+int CSocket::OutLength( void ) const
+{
+	return outlength;
+}
 void CSocket::OutLength( int newValue )
 {
 	outlength = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	int InLength( void ) const
+//|					void InLength( int newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets inlength value
+//o-----------------------------------------------------------------------------------------------o
+int CSocket::InLength( void ) const
+{
+	return inlength;
 }
 void CSocket::InLength( int newValue )
 {
 	inlength = newValue;
 }
-int CSocket::OutLength( void ) const
-{
-	return outlength;
-}
-int CSocket::InLength( void ) const
-{
-	return inlength;
-}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool Logging( void ) const
+//|					void Logging( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether logging is enabled or disabled for socket
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::Logging( void ) const
 {
 	return logging;
 }
-
 void CSocket::Logging( bool newValue )
 {
 	logging = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar *CurrcharObj( void ) const
+//|					void CurrcharObj( CChar *newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets current character object for socket
+//o-----------------------------------------------------------------------------------------------o
 CChar *CSocket::CurrcharObj( void ) const
 {
 	return currCharObj;
 }
-
 void CSocket::CurrcharObj( CChar *newValue )
 {
 	if( ValidateObject( currCharObj ) )
@@ -948,111 +1026,122 @@ void CSocket::CurrcharObj( CChar *newValue )
 	currCharObj = newValue;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CAccountBlock &CSocket::GetAccount(void)
-//|	Date			-	1/17/2003 6:21:59 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Return to the calling function this objects accounts 
-//|							referance.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CAccountBlock& GetAccount( void )
+//|					void SetAccount( CAccountBlock& actbBlock )
+//|	Date		-	1/17/2003 6:21:59 AM
+//|	Programmer	-	EviLDeD
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket's account reference
+//o-----------------------------------------------------------------------------------------------o
 CAccountBlock& CSocket::GetAccount( void )
 {
 	return Accounts->GetAccountByID( accountNum );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CSocket::SetAccount( CAccountBlock &actbBlock )
-//|	Date			-	1/17/2003 7:01:23 AM
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
 void CSocket::SetAccount( CAccountBlock& actbBlock )
 {
 	accountNum = actbBlock.wAccountIndex;
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	UI16 CSocket::AcctNo( void )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Returns the ID of the account number socket belongs to
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 AcctNo( void ) const
+//|					void AcctNo( UI16 newValue )
+//|	Date		-	November 29th, 2000
+//|	Programmer	-	Abaddon
+//|	Changes		-	Maarc, February 3, 2003 - reduced to UI16 to deal with accounts changes
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the account ID socket belongs to
+//o-----------------------------------------------------------------------------------------------o
 UI16 CSocket::AcctNo( void ) const
 {
 	return accountNum;
 }
-
-//o---------------------------------------------------------------------------o
-//|		Function    -	void CSocket::AcctNo( UI16 newValue )
-//|		Date        -	November 29th, 2000
-//|		Programmer  -	Abaddon
-//|		Modified	-	Maarc, February 3, 2003 - reduced to UI16 to deal with
-//|						accounts changes
-//o---------------------------------------------------------------------------o
-//|		Purpose     -	Sets the ID of the account number the socket belongs to
-//o---------------------------------------------------------------------------o
 void CSocket::AcctNo( UI16 newValue )
 {
 	accountNum = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientIP1( void ) const
+//|					void ClientIP1( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets part 1 of client IP
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::ClientIP1( void ) const
 {
 	return clientip[0];
 }
-UI08 CSocket::ClientIP2( void ) const
-{
-	return clientip[1];
-}
-UI08 CSocket::ClientIP3( void ) const
-{
-	return clientip[2];
-}
-UI08 CSocket::ClientIP4( void ) const
-{
-	return clientip[3];
-}
-
 void CSocket::ClientIP1( UI08 newValue )
 {
 	clientip[0] = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientIP2( void ) const
+//|					void ClientIP2( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets part 2 of client IP
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientIP2( void ) const
+{
+	return clientip[1];
 }
 void CSocket::ClientIP2( UI08 newValue )
 {
 	clientip[1] = newValue;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientIP3( void ) const
+//|					void ClientIP3( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets part 3 of client IP
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientIP3( void ) const
+{
+	return clientip[2];
+}
 void CSocket::ClientIP3( UI08 newValue )
 {
 	clientip[2] = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientIP4( void ) const
+//|					voidClientIP4( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets part 4 of client IP
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientIP4( void ) const
+{
+	return clientip[3];
 }
 void CSocket::ClientIP4( UI08 newValue )
 {
 	clientip[3] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool NewClient( void ) const
+//|					void NewClient( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket property used to determine if connection is new or old
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::NewClient( void ) const
 {
 	return newClient;
 }
-
 void CSocket::NewClient( bool newValue )
 {
 	newClient = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetDWord( size_t offset )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieves 4 bytes of data from socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::GetDWord( size_t offset )
 {
 	UI32 retVal = 0;
@@ -1063,6 +1152,11 @@ UI32 CSocket::GetDWord( size_t offset )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetWord( size_t offset )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieves 2 bytes of data from socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
 UI16 CSocket::GetWord( size_t offset )
 {
 	UI16 retVal = 0;
@@ -1073,6 +1167,11 @@ UI16 CSocket::GetWord( size_t offset )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetByte( size_t offset )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieves 1 byte of data from socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::GetByte( size_t offset )
 {
 	UI08 retVal = 0;
@@ -1083,6 +1182,11 @@ UI08 CSocket::GetByte( size_t offset )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetDWord( size_t offset, UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Inserts 4 bytes of data in socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::SetDWord( size_t offset, UI32 newValue )
 {
 	buffer[offset]   = (UI08)( newValue>>24 );
@@ -1090,16 +1194,33 @@ void CSocket::SetDWord( size_t offset, UI32 newValue )
 	buffer[offset+2] = (UI08)( newValue>>8 );
 	buffer[offset+3] = (UI08)( newValue%256 );
 }
-void CSocket::SetWord( size_t offset, UI16 newValue ) 
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetWord( size_t offset, UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Inserts 2 bytes of data in socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::SetWord( size_t offset, UI16 newValue )
 {
 	buffer[offset]   = (UI08)( newValue>>8 );
 	buffer[offset+1] = (UI08)( newValue%256 );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetByte( size_t offset, UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Inserts 1 byte of data in socket buffer at specified offset
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::SetByte( size_t offset, UI08 newValue )
 {
 	buffer[offset] = newValue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClientIP( UI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the four parts of the client IP to specified value
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ClientIP( UI32 newValue )
 {
 	clientip[0] = (UI08)( newValue>>24 );
@@ -1108,40 +1229,58 @@ void CSocket::ClientIP( UI32 newValue )
 	clientip[3] = (UI08)( newValue%256 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TargetOK( bool newValue )
+//|					bool TargetOK( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets socket property to indicate whether waiting for client target
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::TargetOK( bool newValue )
 {
 	targetok = newValue;
 }
-
 bool CSocket::TargetOK( void ) const
 {
 	return targetok;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClickX( SI16 newValue )
+//|					SI16 ClickX( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets socket property that temporarily stores small values
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ClickX( SI16 newValue )
 {
 	clickx = newValue;
 }
-void CSocket::ClickY( SI16 newValue )
-{
-	clicky = newValue;
-}
 SI16 CSocket::ClickX( void ) const
 {
 	return clickx;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClickY( SI16 newValue )
+//|					SI16 ClickY( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets socket property that temporarily stores small values
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::ClickY( SI16 newValue )
+{
+	clicky = newValue;
 }
 SI16 CSocket::ClickY( void ) const
 {
 	return clicky;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SERIAL FirstPostAck( void )
-//|   Date        -  July 14, 2005
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Moves to the start of the post ack list
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL FirstPostAck( void )
+//|	Date		-	July 14, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Moves to the start of the post ack list
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CSocket::FirstPostAck( void )
 {
 	SERIAL retVal = INVALIDSERIAL;
@@ -1151,13 +1290,13 @@ SERIAL CSocket::FirstPostAck( void )
 	return retVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  SERIAL NextPostAck( void )
-//|   Date        -  July 14, 2005
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Moves to the next post to ack in the list
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL NextPostAck( void )
+//|	Date		-	July 14, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Moves to the next post to ack in the list
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CSocket::NextPostAck( void )
 {
 	SERIAL retVal = INVALIDSERIAL;
@@ -1170,25 +1309,25 @@ SERIAL CSocket::NextPostAck( void )
 	return retVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  bool FinishedPostAck( void )
-//|   Date        -  July 14, 2005
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns true if the iterator is at the end of the list
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FinishedPostAck( void )
+//|	Date		-	July 14, 2005
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if the iterator is at the end of the list
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::FinishedPostAck( void )
 {
 	return (ackIter == postAcked.end() );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  void RemovePostAck( void )
-//|   Date        -  July 16, 2005
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Removes post from the queue
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-  void RemovePostAck( void )
+//|	Date		-  July 16, 2005
+//|	Programmer  -  giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-  Removes post from the queue
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CSocket::RemovePostAck( void )
 {
 	SERIAL retVal = INVALIDSERIAL;
@@ -1201,30 +1340,56 @@ SERIAL CSocket::RemovePostAck( void )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t PostCount( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of posts in queue waiting to be acknowledged by client
+//o-----------------------------------------------------------------------------------------------o
 size_t CSocket::PostCount( void ) const
 {
 	return postAcked.size();
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t PostAckCount( void ) const
+//|					void PostAckCount( size_t newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets postAckCount
+//o-----------------------------------------------------------------------------------------------o
 size_t CSocket::PostAckCount( void ) const
 {
 	return postAckCount;
 }
-
+void CSocket::PostAckCount( size_t newValue )
+{
+	postAckCount = newValue;
+}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PostClear( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears list of messageboard posts waiting to be acknowledged by the client
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::PostClear( void )
 {
 	postAcked.clear();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PostAcked( SERIAL newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds serial of messageboard post to list of posts waiting 
+//|					to be acknowledged by the client
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::PostAcked( SERIAL newValue )
 {
 	postAcked.push_back( newValue );
 }
 
-void CSocket::PostAckCount( size_t newValue )
-{
-	postAckCount = newValue;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Send( CPUOXBuffer *toSend )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends buffer to network socket
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::Send( CPUOXBuffer *toSend )
 {
 	if( toSend == NULL )
@@ -1268,6 +1433,12 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PickupSpot( PickupLocations newValue )
+//|					PickupLocations	PickupSpot( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the spot item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::PickupSpot( PickupLocations newValue )
 {
 	pSpot = newValue;
@@ -1276,6 +1447,13 @@ PickupLocations	CSocket::PickupSpot( void ) const
 {
 	return pSpot;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SERIAL PickupSerial( void ) const
+//|					void PickupSerial( SERIAL pickupSerial )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the serial of the object item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 SERIAL CSocket::PickupSerial( void ) const
 {
 	return pFrom;
@@ -1285,21 +1463,56 @@ void CSocket::PickupSerial( SERIAL pickupSerial )
 	pFrom = pickupSerial;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 PickupX( void ) const
+//|					void PickupX( SI16 x )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the X world coordinate the item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 SI16 CSocket::PickupX( void ) const
 {
 	return pX;
 }
+void CSocket::PickupX( SI16 x )
+{
+	pX = x;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 PickupY( void ) const
+//|					void PickupY( SI16 y )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Y world coordinate the item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 SI16 CSocket::PickupY( void ) const
 {
 	return pY;
 }
+void CSocket::PickupY( SI16 y )
+{
+	pY = y;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 PickupZ( void ) const
+//|					void PickupZ( SI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Z world coordinate the item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 SI08 CSocket::PickupZ( void ) const
 {
 	return pZ;
 }
+void CSocket::PickupZ( SI08 z )
+{
+	pZ = z;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PickupLocation( SI16 x, SI16 y, SI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the X, Y and Z world coordinates the item was picked up from
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::PickupLocation( SI16 x, SI16 y, SI08 z )
 {
 	pX = x;
@@ -1307,28 +1520,14 @@ void CSocket::PickupLocation( SI16 x, SI16 y, SI08 z )
 	pZ = z;
 }
 
-void CSocket::PickupX( SI16 x )
-{
-	pX = x;
-}
-
-void CSocket::PickupY( SI16 y )
-{
-	pY = y;
-}
-
-void CSocket::PickupZ( SI08 z )
-{
-	pZ = z;
-}
-
-//o---------------------------------------------------------------------------o
-//|   Function    -  CItem * CursorItem()
-//|   Date        -  March 20th, 2012
-//|   Programmer  -  Xuri
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Item being held on a player's mouse cursor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *GetCursorItem( void ) const
+//|					void SetCursorItem( CItem *newCursorItem )
+//|	Date		-	March 20th, 2012
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item being held on a player's mouse cursor
+//o-----------------------------------------------------------------------------------------------o
 CItem *CSocket::GetCursorItem( void ) const
 {
 	return cursorItem;
@@ -1336,24 +1535,40 @@ CItem *CSocket::GetCursorItem( void ) const
 void CSocket::SetCursorItem( CItem *newCursorItem )
 {
 	if( ValidateObject( newCursorItem ) )
-	cursorItem = newCursorItem;
+		cursorItem = newCursorItem;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket *GetSocket( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets socket from input buffer
+//o-----------------------------------------------------------------------------------------------o
 CSocket *CPInputBuffer::GetSocket( void ) const
 {
 	return tSock;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UnicodeTypes Language( void ) const
+//|					void Language( UnicodeTypes newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets language for socket
+//o-----------------------------------------------------------------------------------------------o
 UnicodeTypes CSocket::Language( void ) const
 {
 	return lang;
 }
-
 void CSocket::Language( UnicodeTypes newVal )
 {
 	lang = newVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 ClientVersion( void ) const
+//|					void ClientVersion( UI32 newVer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a calculated serial of player's client version
+//o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::ClientVersion( void ) const
 {
 	return clientVersion;
@@ -1362,11 +1577,23 @@ void CSocket::ClientVersion( UI32 newVer )
 {
 	clientVersion = newVer;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClientVersion( UI08 major, UI08 minor, UI08 sub, UI08 letter )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates serial based on major, minor, sub and letter client version parts
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ClientVersion( UI08 major, UI08 minor, UI08 sub, UI08 letter )
 {
 	ClientVersion( calcserial( major, minor, sub, letter ) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ClientTypes ClientType( void ) const
+//|					void ClientType( ClientTypes newVer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets client type associated with socket
+//o-----------------------------------------------------------------------------------------------o
 ClientTypes CSocket::ClientType( void ) const
 {
 	return cliType;
@@ -1376,6 +1603,12 @@ void CSocket::ClientType( ClientTypes newVer )
 	cliType = newVer;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ClientVersions ClientVerShort( void ) const
+//|					void ClientVerShort( ClientVersions newVer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the short version of client version associated with socket
+//o-----------------------------------------------------------------------------------------------o
 ClientVersions CSocket::ClientVerShort( void ) const
 {
 	return cliVerShort;
@@ -1385,57 +1618,87 @@ void CSocket::ClientVerShort( ClientVersions newVer )
 	cliVerShort = newVer;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientVersionMajor( void ) const
+//|					void ClientVersionMajor( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets major part of client version associated with socket
+//o-----------------------------------------------------------------------------------------------o
 UI08 CSocket::ClientVersionMajor( void ) const
 {
 	return (UI08)(clientVersion>>24);
 }
-
-UI08 CSocket::ClientVersionMinor( void ) const
-{
-	return (UI08)(clientVersion>>16);
-}
-
-UI08 CSocket::ClientVersionSub( void ) const
-{
-	return (UI08)(clientVersion>>8);
-}
-
-UI08 CSocket::ClientVersionLetter( void ) const
-{
-	return (UI08)(clientVersion%256);
-}
-
 void CSocket::ClientVersionMajor( UI08 value )
 {
 	ClientVersion( value, ClientVersionMinor(), ClientVersionSub(), ClientVersionLetter() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientVersionMinor( void ) const
+//|					void ClientVersionMinor( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets minor part of client version associated with socket
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientVersionMinor( void ) const
+{
+	return (UI08)(clientVersion>>16);
+}
 void CSocket::ClientVersionMinor( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), value, ClientVersionSub(), ClientVersionLetter() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientVersionSub( void ) const
+//|					void ClientVersionSub( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets sub part of client version associated with socket
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientVersionSub( void ) const
+{
+	return (UI08)(clientVersion>>8);
+}
 void CSocket::ClientVersionSub( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), ClientVersionMinor(), value, ClientVersionLetter() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ClientVersionLetter( void ) const
+//|					void ClientVersionLetter( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets letter part of client version associated with socket
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::ClientVersionLetter( void ) const
+{
+	return (UI08)(clientVersion%256);
+}
 void CSocket::ClientVersionLetter( UI08 value )
 {
 	ClientVersion( ClientVersionMajor(), ClientVersionMinor(), ClientVersionSub(), value );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 Range( void ) const
+//|					void Range( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the range for which the client receives updates on objects
+//o-----------------------------------------------------------------------------------------------o
+UI08 CSocket::Range( void ) const
+{
+	return range;
+}
 void CSocket::Range( UI08 value )
 {
 	range = value;
 }
 
-UI08 CSocket::Range( void ) const
-{
-	return range;
-}
-
-void CSocket::sysmessage( const char *txt, ... ) // System message (In lower left corner)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sysmessage( const char *txt, ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays specified system message in lower left corner of client screen
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::sysmessage( const char *txt, ... )
 {
 	va_list argptr;
 	if( txt == NULL )
@@ -1461,7 +1724,12 @@ void CSocket::sysmessage( const char *txt, ... ) // System message (In lower lef
 	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
-void CSocket::sysmessage( SI32 dictEntry, ... )	// System message (based on dictionary entry)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sysmessage( SI32 dictEntry, ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Displays dictionary-based system message in lower left corner of client screen
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::sysmessage( SI32 dictEntry, ... )
 {
 	CChar *mChar = CurrcharObj();
 	if( !ValidateObject( mChar ) )
@@ -1487,13 +1755,13 @@ void CSocket::sysmessage( SI32 dictEntry, ... )	// System message (based on dict
 	toAdd.TargType( SPTRG_INDIVIDUAL );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    :	void objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
-//|		Date        :	2/11/2003
-//|		Programmer  :	Zane
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
+//|	Date		-	2/11/2003
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Shows information on items when clicked or guild info (if any) for players
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI16 Colour, ... )
 {
 	if( !ValidateObject( getObj ) )
@@ -1512,13 +1780,13 @@ void CSocket::objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, 
 	objMessage( msg, getObj, secsFromNow, Colour );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    :	void objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
-//|		Date        :	2/11/2003
-//|		Programmer  :	Zane
-//o---------------------------------------------------------------------------o
-//|		Purpose     :	Shows information on items when clicked or guild info (if any) for players
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
+//|	Date		-	2/11/2003
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Shows information on items when clicked or guild info (if any) for players
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow, UI16 Colour )
 {
 	UI16 targColour = Colour;
@@ -1564,7 +1832,12 @@ void CSocket::objMessage( const char *txt, CBaseObject *getObj, R32 secsFromNow,
 		toAdd.Colour( targColour );
 }
 
-void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a character
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ShowCharName( CChar *i, bool showSer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Shows character name/text on single click
+//o-----------------------------------------------------------------------------------------------o
+void CSocket::ShowCharName( CChar *i, bool showSer )
 {
 	UI08 a1 = i->GetSerial( 1 );
 	UI08 a2 = i->GetSerial( 2 );
@@ -1621,6 +1894,11 @@ void CSocket::ShowCharName( CChar *i, bool showSer ) // Singleclick text for a c
 	toAdd.TargType( SPTRG_ONLYRECEIVER );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	COLOUR GetFlagColour( CChar *src, CChar *trg )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the current flag colour associated with the socket
+//o-----------------------------------------------------------------------------------------------o
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 {
 	COLOUR retVal = 0x0058;
@@ -1639,12 +1917,12 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 	return retVal;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void target()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Send targeting cursor to client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void target( UI08 targType, UI08 targID, const char *txt )
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send targeting cursor to client, along with a system message
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::target( UI08 targType, UI08 targID, const char *txt )
 {
 	CPTargetCursor toSend;
@@ -1655,6 +1933,11 @@ void CSocket::target( UI08 targType, UI08 targID, const char *txt )
 	Send( &toSend );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send targeting cursor to client, along with a dictionary-based system message
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
 {
 	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
@@ -1670,6 +1953,11 @@ void CSocket::target( UI08 targType, UI08 targID, SI32 dictEntry, ... )
 	target( targType, targID, msg );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void mtarget( UI16 itemID, SI32 dictEntry )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Send a "multi" targeting cursor to client, with preview for placement of multi
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::mtarget( UI16 itemID, SI32 dictEntry )
 {
 	std::string txt = Dictionary->GetEntry( dictEntry, Language() );
@@ -1687,6 +1975,12 @@ void CSocket::mtarget( UI16 itemID, SI32 dictEntry )
 	Send( &toSend );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ReceivedVersion( void ) const
+//|					void ReceivedVersion( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server has received a client version from the client already
+//o-----------------------------------------------------------------------------------------------o
 bool CSocket::ReceivedVersion( void ) const
 {
 	return receivedVersion;
@@ -1696,22 +1990,32 @@ void CSocket::ReceivedVersion( bool value )
 	receivedVersion = value;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 BytesSent( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the amount of bytes sent to socket
+//o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesSent( void ) const
 {
 	return bytesSent;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 BytesReceived( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the amount of bytes received from socket
+//o-----------------------------------------------------------------------------------------------o
 UI32 CSocket::BytesReceived( void ) const
 {
 	return bytesReceived;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void statwindow( CChar *i )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void statwindow( CChar *targChar )
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the status window
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::statwindow( CChar *targChar )
 {
 	if( !ValidateObject( targChar ) )
@@ -1742,12 +2046,12 @@ void CSocket::statwindow( CChar *targChar )
 	Send( &exStats );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void updateskill( UI08 skillnum )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update a certain skill
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::updateskill( UI08 skillnum )
 {
 	CChar *mChar = CurrcharObj();
@@ -1755,12 +2059,11 @@ void CSocket::updateskill( UI08 skillnum )
 	Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void openPack( CSocket *s, CItem *i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void openPack( CItem *i, bool isPlayerVendor )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Open backpack and display contents
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::openPack( CItem *i, bool isPlayerVendor )
 {
 	if( !ValidateObject( i ) )
@@ -1881,6 +2184,39 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 			case PT_SECHEST5:
 				contSend.Model( 0x10D );
 				break;
+			case PT_GAME_BACKGAMMON:
+				contSend.Model( 0x92E ); // Backgammon board
+				break;
+			case PT_GAME_CHESS:
+				contSend.Model( 0x91A ); // Chess board
+				break;
+			case PT_MAILBOX1:
+				contSend.Model( 0x6D3 ); // Dolphin mailbox
+				break;
+			case PT_MAILBOX2:
+				contSend.Model( 0x6D4 ); // Squirrel mailbox
+				break;
+			case PT_MAILBOX3:
+				contSend.Model( 0x6D5 ); // Barrel mailbox
+				break;
+			case PT_MAILBOX4:
+				contSend.Model( 0x6D6 ); // Light mailbox
+				break;
+			case PT_MAILBOX5:
+				contSend.Model( 0x9D37 ); // Sitting kitten mailbox
+				break;
+			case PT_MAILBOX6:
+				contSend.Model( 0x9D38 ); // Standing kitten mailbox
+				break;
+			case PT_MAILBOX7:
+				contSend.Model( 0x9D39 ); // Scarecrow mailbox
+				break;
+			case PT_MAILBOX8:
+				contSend.Model( 0x9D3A ); // Lion mailbox
+				break;
+			case PT_MAILBOX9:
+				contSend.Model( 0x11A ); // Square gray mailbox
+				break;
 			case PT_UNKNOWN:
 				Console.Warning( "openPack() passed an invalid container type: 0x%X", i->GetSerial() );
 				return;
@@ -1894,12 +2230,12 @@ void CSocket::openPack( CItem *i, bool isPlayerVendor )
 	Send( &itemsIn );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void openBank( CChar *i )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens players bank box
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::openBank( CChar *i )
 {
 	CItem *bankBox = NULL;
@@ -1932,15 +2268,14 @@ void CSocket::openBank( CChar *i )
 	openPack( bankBox );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TIMERVAL Timer()
-//|   Date        -  September 25, 2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Temporary Timer Values associated to the character connected
-//|						to the socket
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL GetTimer( cS_TID timerID ) const
+//|					void SetTimer( cS_TID timerID, TIMERVAL value )
+//|	Date		-	September 25, 2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets temporary Timer values associated with character connected to the socket
+//o-----------------------------------------------------------------------------------------------o
 TIMERVAL CSocket::GetTimer( cS_TID timerID ) const
 {
 	TIMERVAL rvalue = 0;
@@ -1954,13 +2289,13 @@ void CSocket::SetTimer( cS_TID timerID, TIMERVAL value )
 		pcTimers[timerID] = value;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TIMERVAL ClearTimers()
-//|   Date        -  September 25, 2003
-//|   Programmer  -  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Resets all timers (but mutetime) to 0 used when player logs out
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearTimers( void )
+//|	Date		-	September 25, 2003
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Resets all timers (but mutetime) to 0 used when player logs out
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::ClearTimers( void )
 {
 	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
@@ -1970,12 +2305,11 @@ void CSocket::ClearTimers( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	OpenURL( const std::string txt )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void OpenURL( const std::string& txt )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Launch a webpage from within the client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CSocket::OpenURL( const std::string& txt )
 {
 	sysmessage( 1210 );
@@ -1983,6 +2317,11 @@ void CSocket::OpenURL( const std::string& txt )
 	Send( &toSend );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CPUOXBuffer()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Constructor for CPUOXBuffer class
+//o-----------------------------------------------------------------------------------------------o
 CPUOXBuffer::CPUOXBuffer()
 {
 	InternalReset();
@@ -2054,6 +2393,11 @@ UI32 CPUOXBuffer::PackedLength( void ) const
 	return packedLength;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Log( std::ofstream &outStream, bool fullHeader )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Log sent packets to log file
+//o-----------------------------------------------------------------------------------------------o
 void CPUOXBuffer::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
@@ -2068,6 +2412,12 @@ CPInputBuffer::CPInputBuffer( CSocket *input )
 {
 	SetSocket( input );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Log( std::ofstream &outStream, bool fullHeader )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Log received packets to log file
+//o-----------------------------------------------------------------------------------------------o
 void CPInputBuffer::Log( std::ofstream &outStream, bool fullHeader )
 {
 	UI08 *buffer	= tSock->Buffer();

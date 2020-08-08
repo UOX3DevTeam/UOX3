@@ -106,7 +106,7 @@ function onCallback1( pSock, myTarget )
 					newItem.movable = 2;
 				if( itemHue ) //if a hue has been specified, set hue of new item
 					newItem.colour = itemHue;
-				newItem.SetLocation( i, j, targZ, pSock.currentChar.worldnumber );
+				newItem.SetLocation( i, j, targZ, pSock.currentChar.worldnumber, pSock.currentChar.instanceID );
 				newItem.decayable = false;
 			}
 		}

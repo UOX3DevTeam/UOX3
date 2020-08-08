@@ -29,6 +29,7 @@ std::string CurrentWorkingDir( void )
 	}
 	return cwd;
 }
+
 std::string BuildPath( const std::string &extra )
 {
 	std::string temp = CurrentWorkingDir();
@@ -108,20 +109,17 @@ CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPri
 }
 
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool CServerDefinitions::Reload( void )
-//|	Date			-	04/17/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Reload the dfn files.
-//|	Modification	-	04042004 - EviLDeD - Added the code to clear out the 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool Reload( void )
+//|	Date		-	04/17/2002
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reload the dfn files.
+//|	Changes		-	04042004 - EviLDeD - Added the code to clear out the 
 //|									Auto-AddMenu items so there isn't any duplication in the
 //|									multimap
-//o--------------------------------------------------------------------------o
-//|	Returns				-	[TRUE] if succesfull
-//o--------------------------------------------------------------------------o	
+//o-----------------------------------------------------------------------------------------------o
 bool CServerDefinitions::Reload( void )
 {
 	// We need to clear out the AddMenuItem Map

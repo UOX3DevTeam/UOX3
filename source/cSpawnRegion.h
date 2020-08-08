@@ -37,6 +37,7 @@ private:
 	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
+	UI16		instanceID;			// Which instance are we spawning in?
 
 	CDataList< CChar * >	spawnedChars;
 	CDataList< CItem * >	spawnedItems;
@@ -69,6 +70,10 @@ public:
 	SI16		GetX2( void ) const;
 	SI16		GetY2( void ) const;
 	SI08		GetPrefZ( void ) const;
+	UI16		GetCall( void ) const;
+	bool		GetOnlyOutside( void ) const;
+	STRINGLIST	GetNPC( void ) const;
+	STRINGLIST	GetItem( void ) const;
 
 	void		SetName( const std::string& newName );
 	void		SetRegionNum( UI16 newVal );
@@ -84,6 +89,15 @@ public:
 	void		SetX2( SI16 newVal );
 	void		SetY2( SI16 newVal );
 	void		SetPrefZ( SI08 newVal );
+	void		SetCall( UI16 newVal );
+	void		SetOnlyOutside( bool newVal );
+	void		SetNPC( const UString &newVal );
+	void		SetNPCList( std::string &newVal );
+	void		SetItem( const UString &newVal );
+	void		SetItemList( std::string &newVal );
+
+	UI16		GetInstanceID( void ) const;
+	void		SetInstanceID( UI16 newVal );
 
 	UI08		WorldNumber( void ) const;
 	void		WorldNumber( UI08 newVal );

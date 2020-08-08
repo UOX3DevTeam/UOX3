@@ -22,6 +22,11 @@ cItem *Items = NULL;
 
 ItemTypes FindItemTypeFromTag( const UString& strToFind );
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load item data from script sections and apply to spawner objects 
+//o-----------------------------------------------------------------------------------------------o
 bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata, const SI32 odata, const UString& cdata )
 {
 	if( !ValidateObject( applyTo ) )
@@ -43,12 +48,11 @@ bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag, const SI32 n
 }
 
 UI16 addRandomColor( const std::string& colorlist );
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load items from the script sections to the array
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 {
 	if( toApply == NULL || !ValidateObject( applyTo ) )
@@ -244,16 +248,16 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateItem( CSocket *mSock, CChar *mChar, UI16 iID, UI32 iAmount, UI16 iColour, bool inPack )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a basic item and gives it an ID, Colour, and amount,
-//|							also will automatically look for an entry in harditems.dfn
-//|							and set its location (be it in a pack or on the ground).
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a basic item and gives it an ID, Colour, and amount, also will
+//|					automatically look for an entry in harditems.dfn and set its location (be it in
+//|					a pack or on the ground).
+//o-----------------------------------------------------------------------------------------------o
 CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, const bool inPack )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
@@ -262,7 +266,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 		return NULL;
 	}
 
-	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType );
+	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID() );
 	if( iCreated == NULL )
 		return NULL;
 
@@ -295,15 +299,16 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateScriptItem( CSocket *mSock, CChar *mChar, std::string item, UI32 iAmount, bool inPack )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a script item, gives it an amount, and sets
-//|							 its location (be it in a pack or on the ground).
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, 
+//|						const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a script item, gives it an amount, and sets
+//|					its location (be it in a pack or on the ground).
+//o-----------------------------------------------------------------------------------------------o
 CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, const bool inPack, const UI16 iColor )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
@@ -312,7 +317,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 		return NULL;
 	}
 
-	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, itemType );
+	CItem *iCreated = CreateBaseScriptItem( item, mChar->WorldNumber(), iAmount, mChar->GetInstanceID(), itemType );
 	if( iCreated == NULL )
 		return NULL;
 
@@ -324,7 +329,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 		CItem *iCreated2 = NULL;
 		for( UI16 i = 0; i < iAmount-1; ++i ) //minus 1 because 1 item has already been created at this point
 		{
-			iCreated2 = CreateBaseScriptItem( item, mChar->WorldNumber(), 1, itemType );
+			iCreated2 = CreateBaseScriptItem( item, mChar->WorldNumber(), 1, mChar->GetInstanceID(), itemType );
 			if( iCreated2 )
 			{
 				if( iColor != 0xFFFF )
@@ -339,22 +344,22 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 	return PlaceItem( mSock, mChar, iCreated, inPack );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateRandomItem( CSocket *mSock, DEFINITIONCATEGORIES sourceDFN, std::string itemList )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a random item from an itemlist in specified dfn file,
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateRandomItem( CSocket *mSock, const std::string& itemList )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a random item from an itemlist in specified dfn file,
 //|						gives it a random buy/sell value, and places it
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) )
 		return NULL;
 
-	CItem *iCreated = CreateRandomItem( itemList, mChar->WorldNumber() );
+	CItem *iCreated = CreateRandomItem( itemList, mChar->WorldNumber(), mChar->GetInstanceID() );
 	if( iCreated == NULL )
 		return NULL;
 
@@ -369,15 +374,15 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 	return PlaceItem( mSock, mChar, iCreated, true );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateRandomItem( std::string sItemList, DEFINITIONCATEGORIES sourceDFN, UI08 worldNum )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a random item from an itemlist in specified dfn file
-//o--------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a random item from an itemlist in specified dfn file
+//o-----------------------------------------------------------------------------------------------o
+CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNum, const UI16 instanceID )
 {
 	CItem * iCreated	= NULL;
 	UString sect		= "ITEMLIST " + sItemList;
@@ -396,23 +401,23 @@ CItem *cItem::CreateRandomItem( const std::string& sItemList, const UI08 worldNu
 			if( !k.empty() )
 			{
 				if( k.upper() == "ITEMLIST" )
-					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum );
+					iCreated = CreateRandomItem( ItemList->GrabData(), worldNum, instanceID );
 				else
-					iCreated = CreateBaseScriptItem( k, worldNum, 1 );
+					iCreated = CreateBaseScriptItem( k, worldNum, 1, instanceID );
 			}
 		}
 	}
 	return iCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CMultiObj *CreateMulti( CChar *mChar, std::string cName, UI16 iID, bool isBoat )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a multi, and looks for an entry in harditems.dfn
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CMultiObj *CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a multi, and looks for an entry in harditems.dfn
+//o-----------------------------------------------------------------------------------------------o
 CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
@@ -422,6 +427,7 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI
 	mCreated->SetID( iID );
 	GetScriptItemSettings( mCreated );
 	mCreated->WorldNumber( mChar->WorldNumber() );
+	mCreated->SetInstanceID( mChar->GetInstanceID() );
 	mCreated->SetDecayable( false );
 	if( !cName.empty() )
 		mCreated->SetName( cName );
@@ -429,15 +435,15 @@ CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI
 	return mCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateBaseItem( UI08 worldNum, ObjectType itemType )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a basic item
-//o--------------------------------------------------------------------------o
-CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a basic item
+//o-----------------------------------------------------------------------------------------------o
+CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType, const UI16 instanceID )
 {
 	if( itemType != OT_ITEM && itemType != OT_SPAWNER )
 		return NULL;
@@ -448,19 +454,20 @@ CItem * cItem::CreateBaseItem( const UI08 worldNum, const ObjectType itemType )
 
 	iCreated->SetWipeable( true );
 	iCreated->WorldNumber( worldNum );
+	iCreated->SetInstanceID( instanceID );
 
 	return iCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *CreateBaseScriptItem( std::string item, UI08 worldNum )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a basic item from the scripts
-//o--------------------------------------------------------------------------o
-CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const ObjectType itemType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a basic item from the scripts
+//o-----------------------------------------------------------------------------------------------o
+CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const UI16 iAmount, const UI16 instanceID, const ObjectType itemType )
 {
 	ourItem						= ourItem.stripWhiteSpace();
 
@@ -476,10 +483,10 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 
 	CItem *iCreated = NULL;
 	if( itemCreate->ItemListExist() )
-		iCreated = CreateRandomItem( itemCreate->ItemListData(), worldNum );
+		iCreated = CreateRandomItem( itemCreate->ItemListData(), worldNum, instanceID );
 	else
 	{
-		iCreated = CreateBaseItem( worldNum, itemType );
+		iCreated = CreateBaseItem( worldNum, itemType, instanceID );
 		if( iCreated == NULL )
 			return NULL;
 
@@ -505,14 +512,14 @@ CItem * cItem::CreateBaseScriptItem( UString ourItem, const UI08 worldNum, const
 	return iCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	GetScriptItemSettings( CItem *iCreated )
-//|	Date			-	10/12/2003
-//|	Developers		-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Grabs item entries from harditems.dfn
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GetScriptItemSettings( CItem *iCreated )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Grabs item entries from harditems.dfn
+//o-----------------------------------------------------------------------------------------------o
 void cItem::GetScriptItemSettings( CItem *iCreated )
 {
 	const UString item = "x" + UString::number( iCreated->GetID(), 16 );
@@ -522,14 +529,14 @@ void cItem::GetScriptItemSettings( CItem *iCreated )
 }
 
 CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
-//o--------------------------------------------------------------------------o
-//|	Function		-	CItem *PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, bool inPack )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Places an item that was just created
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem * PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Places an item that was just created
+//o-----------------------------------------------------------------------------------------------o
 CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack )
 {
 	if( inPack )
@@ -548,15 +555,13 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 	return iCreated;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool cItem::DecayItem( CItem *i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
-//o---------------------------------------------------------------------------o
-bool DecayItem( CItem& toDecay, const UI32 nextDecayItems ) 
+//o-----------------------------------------------------------------------------------------------o
+bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 {
-
 	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() ) 
 	{
 		toDecay.SetDecayTime( nextDecayItems );
@@ -599,12 +604,12 @@ bool DecayItem( CItem& toDecay, const UI32 nextDecayItems )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	PackTypes cItem::getPackType( CItem *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	PackTypes getPackType( CItem *i )
 //|	Programmer	-	giwo
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pack type based on ID
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 PackTypes cItem::getPackType( CItem *i )
 {
 	PackTypes packType = PT_UNKNOWN;
@@ -871,21 +876,21 @@ PackTypes cItem::getPackType( CItem *i )
 	return packType;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cItem::AddRespawnItem( CItem *s, std::string x, bool inCont, bool randomItem )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Item spawning stuff
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem, const UI16 itemAmount )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles spawning of items from spawn objects/containers
+//o-----------------------------------------------------------------------------------------------o
 void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, const bool randomItem, const UI16 itemAmount )
 {
 	if( !ValidateObject( s ) || x.empty() )
 		return;
 	CItem *c = NULL;
 	if( randomItem )
-		c = CreateRandomItem( x, s->WorldNumber() );
+		c = CreateRandomItem( x, s->WorldNumber(), s->GetInstanceID() );
 	else
-		c = CreateBaseScriptItem( x, s->WorldNumber(), itemAmount );
+		c = CreateBaseScriptItem( x, s->WorldNumber(), itemAmount, s->GetInstanceID() );
 	if( c == NULL )
 		return;
 
@@ -895,9 +900,9 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 		for( UI08 i = 0; i < itemAmount; ++i )
 		{
 			if( randomItem )
-				iCreated2 = CreateRandomItem( x, s->WorldNumber() );
+				iCreated2 = CreateRandomItem( x, s->WorldNumber(), s->GetInstanceID() );
 			else
-				iCreated2 = CreateBaseScriptItem( x, s->WorldNumber(), 1 );
+				iCreated2 = CreateBaseScriptItem( x, s->WorldNumber(), 1, s->GetInstanceID() );
 			if( iCreated2 )
 			{
 				if( inCont )
@@ -974,12 +979,11 @@ void cItem::AddRespawnItem( CItem *s, const std::string& x, const bool inCont, c
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cItem::GlowItem( CItem *i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GlowItem( CItem *i )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle glowing items
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cItem::GlowItem( CItem *i )
 {
 	if( i->GetGlow() != INVALIDSERIAL )
@@ -1021,12 +1025,12 @@ void cItem::GlowItem( CItem *i )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cItem::CheckEquipment( CChar *p )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Check equipment of character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckEquipment( CChar *p )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks equipment of character and validates that they have enough strength
+//|					to have each item equipped
+//o-----------------------------------------------------------------------------------------------o
 void cItem::CheckEquipment( CChar *p )
 {
 	if( ValidateObject( p ) ) 
@@ -1064,12 +1068,11 @@ void cItem::CheckEquipment( CChar *p )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Remember an items value
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void StoreItemRandomValue( CItem *i, CTownRegion *tReg )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Stores an item's random "good" value (used by trade system)
+//o-----------------------------------------------------------------------------------------------o
 void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 {
 	if( i->GetGood() < 0 ) 
@@ -1078,7 +1081,7 @@ void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 	{
 		CBaseObject *getLastCont = i->GetCont();
 		if( getLastCont != NULL )
-			tReg = calcRegionFromXY( getLastCont->GetX(), getLastCont->GetY(), getLastCont->WorldNumber() );
+			tReg = calcRegionFromXY( getLastCont->GetX(), getLastCont->GetY(), getLastCont->WorldNumber(), getLastCont->GetInstanceID() );
 		if( tReg == NULL )
 			return;
 	}
@@ -1090,12 +1093,11 @@ void cItem::StoreItemRandomValue( CItem *i, CTownRegion *tReg )
 		i->SetRndValueRate( RandomNum( min, max ) );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem *cCommands::DupeItem( CSocket *s, CItem *i, UI32 amount )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Dupe selected item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *DupeItem( CSocket *s, CItem *i, UI32 amount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Duplicates selected item
+//o-----------------------------------------------------------------------------------------------o
 CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 {
 	CChar *mChar		= s->CurrcharObj();

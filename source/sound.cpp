@@ -12,13 +12,12 @@ namespace UOX
 
 cEffects *Effects;
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
-//|	Date			-	Unknown
-//|	Developers		-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Plays sound effect for player, echo's to all players if allHear is true
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays sound effect for player, echo's to all players if allHear is true
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 {
 	if( mSock == NULL ) 
@@ -40,13 +39,12 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 	mSock->Send( &toSend );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
-//|	Date			-	Unknown
-//|	Developers		-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Plays sound effect originating from object for all players nearby(default) or originator only
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays sound effect originating from object for all players nearby(default) or originator only
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 {
 	if( !ValidateObject( baseObj ) )
@@ -72,12 +70,12 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void itemSound( CSocket *s, CItem *item, bool allHear )
 //|	Programmer	-	Dupois
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 {
 	UI16 itemID = item->GetID();
@@ -131,12 +129,12 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 //|	Programmer	-	Dupois
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play gold drop sound based on Amount
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 {
 	if( goldtotal <= 1 ) 
@@ -147,12 +145,12 @@ void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
 		PlaySound( s, 0x0037, allHear );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playDeathSound( CChar *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void playDeathSound( CChar *i )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send death sound to all sockets in range
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::playDeathSound( CChar *i )
 {
 	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E || i->GetOrgID() == 0x029B || i->GetOrgID() == 0x00B8 || i->GetOrgID() == 0x00BA || i->GetID() == 0x02EF ) // Female Death (human/elf/gargoyle/savage)
@@ -173,24 +171,24 @@ void cEffects::playDeathSound( CChar *i )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playMidi( CSocket *s, UI16 number )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void playMidi( CSocket *s, UI16 number )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays midi in client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::playMidi( CSocket *s, UI16 number )
 {
 	CPPlayMusic toSend( number );
 	s->Send( &toSend );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::bgsound( CChar *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayBGSound( CSocket& mSock, CChar& mChar )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play background sounds based on location
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 {
 	std::vector< CChar * > inrange;
@@ -206,7 +204,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
-			if( !ValidateObject( tempChar ) || tempChar->isFree() )
+			if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
 				continue;
 			if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
 				inrange.push_back( tempChar );
@@ -262,12 +260,12 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::dosocketmidi( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void dosocketmidi( CSocket *s )
 //|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send midi to client
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::dosocketmidi( CSocket *s )
 {
 	int i = 0;
@@ -306,12 +304,12 @@ void cEffects::dosocketmidi( CSocket *s )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cEffects::playTileSound( CSocket *mSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void playTileSound( CSocket *mSock )
 //|	Programmer	-	Abaddon
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cEffects::playTileSound( CSocket *mSock )
 {
 	if( mSock == NULL )

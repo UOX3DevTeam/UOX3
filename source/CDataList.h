@@ -1,34 +1,33 @@
 #if !defined( __CDATALIST_H__ )
 #define __CDATALIST_H__
-//o--------------------------------------------------------------------------o
-//|	File			-	CDataList.h
-//|	Date			-	8/1/2004
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	This is a wrapper for std::deque. Its purpose is to allow us
-//|						to safely create, iterate (allowing nested iterations), and
-//|						maintain a randomly-accessible list containing any type of object.
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	CDataList.h
+//|	Date		-	8/1/2004
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This is a wrapper for std::deque. Its purpose is to allow us
+//|					to safely create, iterate (allowing nested iterations), and
+//|					maintain a randomly-accessible list containing any type of object.
 //|
-//|					-	Version History
+//|				-	Version History
 //|									
-//|							1.0		giwo		1st Aug, 2004
-//|							Initial implementation. Basic routines, First(), Next(), Finished(),
-//|							along with safe Add() and Remove() functions. Also can Push() or Pop()
-//|							our iterator backup list.
+//|						1.0		giwo		1st Aug, 2004
+//|						Initial implementation. Basic routines, First(), Next(), Finished(),
+//|						along with safe Add() and Remove() functions. Also can Push() or Pop()
+//|						our iterator backup list.
 //|
-//|							1.1		giwo		12th Aug, 2004
-//|							Added an accessor to return the size of the container, also can now
-//|							grab a specific object from the array (or the one our iterator is currently
-//|							at). Added a FindEntry() function to simplify some internal code.							
+//|						1.1		giwo		12th Aug, 2004
+//|						Added an accessor to return the size of the container, also can now
+//|						grab a specific object from the array (or the one our iterator is currently
+//|						at). Added a FindEntry() function to simplify some internal code.							
 //|							
-//|							1.2		giwo		21st Nov, 2004
-//|							Found a pretty substantial flaw causing the first object in a list to be
-//|							overlooked when the entire list was being emptied (IE at house deletion).
-//|							Overhauled First/Next/Finished and Added Begin to allow iteration to work
-//|							backwards thus resolving the issue.
-//o--------------------------------------------------------------------------o
+//|						1.2		giwo		21st Nov, 2004
+//|						Found a pretty substantial flaw causing the first object in a list to be
+//|						overlooked when the entire list was being emptied (IE at house deletion).
+//|						Overhauled First/Next/Finished and Added Begin to allow iteration to work
+//|						backwards thus resolving the issue.
+//o-----------------------------------------------------------------------------------------------o
 
 namespace UOX
 {

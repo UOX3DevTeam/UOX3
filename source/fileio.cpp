@@ -176,13 +176,12 @@ void UOXFile::getLong( SI32 *buff, UI32 number )
 	bIndex += number;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  LoadCustomTitle()
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Loads players titles (Karma, Fame, Murder, ect)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadCustomTitle( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads players titles (Karma, Fame, Murder, ect)
+//o-----------------------------------------------------------------------------------------------o
 void LoadCustomTitle( void )
 { 
 	size_t titlecount = 0;
@@ -216,7 +215,7 @@ void LoadCustomTitle( void )
 		++titlecount;
 	}
 
-	// Murder tags now scriptable in SECTION MURDER - Titles.scp - Thanks Ab - Zane
+	// Murder tags now scriptable in SECTION MURDER - Titles.dfn - Thanks Ab - Zane
 	CustomTitle = FileLookup->FindEntry( "MURDERER", titles_def );
 	if( CustomTitle == NULL )
 		return;
@@ -229,12 +228,12 @@ void LoadCustomTitle( void )
 	FileLookup->Dispose( titles_def );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	LoadSkills()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load skills
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadSkills( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load skills from definition files
+//o-----------------------------------------------------------------------------------------------o
 void LoadSkills( void )
 {
 
@@ -292,12 +291,12 @@ void LoadSkills( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	LoadSpawnRegions()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads spawning regions
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadSpawnRegions( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads spawning regions from definition files
+//o-----------------------------------------------------------------------------------------------o
 void LoadSpawnRegions( void )
 {
 	cwmWorldState->spawnRegions.clear();
@@ -326,12 +325,12 @@ void LoadSpawnRegions( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	LoadRegions()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadRegions( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load regions from regions.dfn and townregions from regions.wsc
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void LoadRegions( void )
 {
 	cwmWorldState->townRegions.clear();
@@ -409,12 +408,12 @@ void LoadRegions( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	LoadTeleportLocations()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load teleport locations
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadTeleportLocations( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load teleport locations from definition files
+//o-----------------------------------------------------------------------------------------------o
 void LoadTeleportLocations( void )
 {
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "teleport.scp"; 
@@ -485,12 +484,12 @@ void LoadTeleportLocations( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	LoadCreatures()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads creatures from creatures.dfn
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads creatures from creature definition files
+//o-----------------------------------------------------------------------------------------------o
 void LoadCreatures( void )
 {
 	UString cEntry;
@@ -608,12 +607,12 @@ void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	LoadPlaces()
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Load locations.dfn
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadPlaces( void )
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load locations from location definition files
+//o-----------------------------------------------------------------------------------------------o
 void LoadPlaces( void )
 {
 	cwmWorldState->goPlaces.clear();
@@ -649,15 +648,22 @@ void LoadPlaces( void )
 							toAdd->z = data.toByte();
 						else if( UTag == "WORLD" )
 							toAdd->worldNum = data.toUByte();
+						else if( UTag == "INSTANCEID" )
+							toAdd->instanceID = data.toUShort();
 						else if( UTag == "LOCATION" )
 						{
 							size_t sectionCount = data.sectionCount( "," );
-							if( sectionCount == 3 )
+							if( sectionCount >= 3 )
 							{
 								toAdd->x		= data.section( ",", 0, 0 ).toShort();
 								toAdd->y		= data.section( ",", 1, 1 ).toShort();
 								toAdd->z		= data.section( ",", 2, 2 ).toByte();
 								toAdd->worldNum = data.section( ",", 3, 3 ).toUByte();
+							}
+
+							if( sectionCount == 4 )
+							{
+								toAdd->instanceID = data.section( ",", 4, 4 ).toUShort();
 							}
 						}
 					}
@@ -669,7 +675,7 @@ void LoadPlaces( void )
 	FileLookup->Dispose( location_def );
 }
 
-bool FileExists( std::string filepath )
+bool FileExists( const std::string& filepath )
 {
 	std::ifstream ifsFile;
 	ifsFile.open( filepath.c_str(), std::ios::in );

@@ -4,7 +4,7 @@
 namespace UOX
 {
 
-// create.scp revisions
+// create DFN revisions
 struct resAmountPair
 {
 	std::vector< UI16 > idList;
