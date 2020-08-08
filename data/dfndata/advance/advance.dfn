@@ -1,8 +1,8 @@
 //*****************************************************************
-//*                         UOX3 DFNs v0.98	                  *
+//*                         UOX3 DFNs v0.98	                  	  *
 //*                   http://uox3.sourceforge.net                 *
 //*                                                               *
-//* Last Update : 01/4/2003	                	          *
+//* Last Update : 01/4/2003	                	          		  *
 //* Script : advance.dfn                                          *
 //*****************************************************************
 
@@ -21,6 +21,7 @@ PACKITEM=0x1bf2,30
 PACKITEM=0x0e85
 PACKITEM=0x1ebc
 }
+
 // Master Swordsman
 [ADVANCEMENT 2]
 {
@@ -48,6 +49,7 @@ PARRYING=940
 packitem=0x1b76
 packitem=0x1406
 }
+
 // Master Fencer
 [ADVANCEMENT 4]
 {
@@ -74,6 +76,7 @@ TACTICS=940
 packitem=0x13b2
 packitem=0x0f3f
 }
+
 // Master Mage
 [ADVANCEMENT 6]
 {
@@ -96,6 +99,7 @@ packitem=0x0f88
 packitem=0x0f8c
 packitem=0x0f8d
 }
+
 // Thief
 [ADVANCEMENT 7]
 {
@@ -152,4 +156,4 @@ packitem=0x0f0a,5
 
 
 EOF
-
+
