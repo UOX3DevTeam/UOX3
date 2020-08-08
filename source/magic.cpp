@@ -107,13 +107,13 @@ const MagicTable_s magic_table[] = {
 	{ 0, NULL } 
 };
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, SI16 trgX, SI16 trgY, SI08 trgZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
 //|	Programmer	-	Abaddon
 //| Date		-	17th September, 2001
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and another at trgX / trgY / trgZ
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
 {
 	CItem *g1 = Items->CreateItem( NULL, caster, 0x0F6C, 1, 0, OT_ITEM );
@@ -121,7 +121,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	{
 		g1->SetDecayable( true );
 		g1->SetType( IT_GATE );
-		g1->SetLocation( srcX, srcY, srcZ, srcWorld );
+		g1->SetLocation( srcX, srcY, srcZ, srcWorld, g1->GetInstanceID() );
 		g1->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 		g1->SetDir( 1 );
 
@@ -130,7 +130,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 		{
 			g2->SetDecayable( true );
 			g2->SetType( IT_GATE );
-			g2->SetLocation( trgX, trgY, trgZ, trgWorld );
+			g2->SetLocation( trgX, trgY, trgZ, trgWorld, g2->GetInstanceID() );
 			g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ) );
 			g2->SetDir( 1 );
 
@@ -142,6 +142,11 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates rows of items for field spells like firewalls, wall of stone, etc
+//o-----------------------------------------------------------------------------------------------o
 bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 {
 	SI16 fx[5], fy[5];
@@ -165,6 +170,7 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 	}
 	CItem *i = NULL;
 	UI08 worldNumber = caster->WorldNumber();
+	UI16 instanceID = caster->GetInstanceID();
 	for( UI08 j = 0; j < 5; ++j )		// how about we make this 5, huh?  missing part of the field
 	{
 		if( id != 0x0080 || ( id == 0x0080 && !Movement->CheckForCharacterAtXYZ( caster, fx[j], fy[j], z )))
@@ -177,7 +183,7 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir )
 				i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 				i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 				i->SetTempVar( CITV_MOREY, caster->GetSerial() );
-				i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber ) );
+				i->SetLocation( fx[j], fy[j], Map->Height( fx[j], fy[j], z, worldNumber, instanceID ) );
 				i->SetDir( 29 );
 				i->SetMovable( 2 );
 			}
@@ -212,6 +218,11 @@ bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Night Sight spell
+//o-----------------------------------------------------------------------------------------------o
 bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 2, 0, 0, 0);
@@ -219,17 +230,35 @@ bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Reactive Armor spell
+//o-----------------------------------------------------------------------------------------------o
 bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 15, caster->GetSkill( MAGERY )/100, 0, 0 );
 	target->SetReactiveArmour( true );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splWeaken( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Weaken spell
+//o-----------------------------------------------------------------------------------------------o
 bool splWeaken( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 5, caster->GetSkill( MAGERY )/100, 0, 0);
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Agility spell
+//o-----------------------------------------------------------------------------------------------o
 bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 6, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -237,6 +266,12 @@ bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Cunning spell
+//o-----------------------------------------------------------------------------------------------o
 bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 7, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -244,6 +279,12 @@ bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splCure( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Cure spell
+//o-----------------------------------------------------------------------------------------------o
 bool splCure( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	target->SetPoisoned( 0 );
@@ -252,6 +293,12 @@ bool splCure( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Harm spell
+//o-----------------------------------------------------------------------------------------------o
 bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -263,6 +310,12 @@ bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, caster, COLD );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Magic Trap spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() && target->GetID() != 0x0E75 )  
@@ -274,6 +327,12 @@ bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		sock->sysmessage( 663 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Magic Untrap spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() )
@@ -296,6 +355,12 @@ bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 		sock->sysmessage( 668 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Protection spell
+//o-----------------------------------------------------------------------------------------------o
 bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
@@ -303,6 +368,12 @@ bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Strength spell
+//o-----------------------------------------------------------------------------------------------o
 bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	Effects->tempeffect( src, target, 8, caster->GetSkill( MAGERY )/100, 0, 0);
@@ -310,6 +381,12 @@ bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Bless spell
+//o-----------------------------------------------------------------------------------------------o
 bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	int j = caster->GetSkill( MAGERY )/100;
@@ -318,6 +395,12 @@ bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Fireball spell
+//o-----------------------------------------------------------------------------------------------o
 bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -329,6 +412,12 @@ bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Magic Lock spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	ItemTypes type = target->GetType();
@@ -349,6 +438,12 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		sock->sysmessage( 669 ); 
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Poison spell
+//o-----------------------------------------------------------------------------------------------o
 bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( Magic->CheckResist( caster, target, 1 ) )
@@ -359,6 +454,12 @@ bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Telekinesis spell
+//o-----------------------------------------------------------------------------------------------o
 bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->IsContType() )
@@ -375,9 +476,15 @@ bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 		sock->sysmessage( 668 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Teleport spell
+//o-----------------------------------------------------------------------------------------------o
 bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
-	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber() );
+	CMultiObj *m = findMulti( x, y, z, caster->WorldNumber(), caster->GetInstanceID() );
 	if( ValidateObject( m ) && m->GetOwnerObj() != caster && !caster->IsNpc() )
 	{
 		sock->sysmessage( 670 );
@@ -430,6 +537,12 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 	Magic->doStaticEffect( caster, 22 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Unlock spell
+//o-----------------------------------------------------------------------------------------------o
 bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 {
 	if( target->isDevineLocked() )
@@ -455,39 +568,79 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		sock->sysmessage( 678 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Wall of Stone spell
+//o-----------------------------------------------------------------------------------------------o
 bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x0080, x, y, z, fieldDir );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ArchCureStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Arch Cure spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void ArchCureStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	target->SetPoisoned( 0 );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Arch Cure as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ArchCureStub, curSpell );
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ArchProtectionStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Arch Protection spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void ArchProtectionStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	Magic->playSound( target, 26 );
 	Magic->doStaticEffect( target, 15 );	// protection
 	Effects->tempeffect( caster, target, 21, caster->GetSkill( MAGERY )/10, 0, 0 );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Arch Protection as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ArchProtectionStub, curSpell );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Curse spell
+//o-----------------------------------------------------------------------------------------------o
 bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	int j = caster->GetSkill( MAGERY ) / 100;
 	Effects->tempeffect(caster, target, 12, j, j, j);
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Fire Field as a field spell
+//o-----------------------------------------------------------------------------------------------o
 bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
@@ -495,6 +648,12 @@ bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, 
 	else
 		return FieldSpell( caster, 0x3996, x, y, z, fieldDir );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Greater Heal spell
+//o-----------------------------------------------------------------------------------------------o
 bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	int srcHealth	= target->GetHP();
@@ -507,6 +666,12 @@ bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 		criminal( caster );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Lightning spell
+//o-----------------------------------------------------------------------------------------------o
 bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -519,6 +684,12 @@ bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mana Drain spell
+//o-----------------------------------------------------------------------------------------------o
 bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 4 ) )
@@ -529,6 +700,12 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	}
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Recall spell
+//o-----------------------------------------------------------------------------------------------o
 bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
@@ -549,20 +726,32 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			worldNum = caster->WorldNumber();
 		if( worldNum != caster->WorldNumber() )
 		{
-			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
 			SendMapChange( caster->WorldNumber(), sock, false );
 		}
 		else
-			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+			caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
 		sock->sysmessage( 682 );
 		return true;
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Blade Spirits spell (summons a Blade Spirit)
+//o-----------------------------------------------------------------------------------------------o
 bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Dispel Field spell
+//o-----------------------------------------------------------------------------------------------o
 bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	CItem *i = calcItemObjFromSer( sock->GetDWord( 7 ) );
@@ -590,7 +779,11 @@ bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 	return true;
 }
 void setRandomName( CChar *s, const std::string& namelist );
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Incognito spell
+//o-----------------------------------------------------------------------------------------------o
 bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->IsIncognito() )
@@ -677,11 +870,23 @@ bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 	caster->IsIncognito( true );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMagicReflection( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Magic Reflection spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMagicReflection( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	caster->SetPermReflected( true );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mind Blast spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -711,12 +916,24 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, src, COLD );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Paralyze spell
+//o-----------------------------------------------------------------------------------------------o
 bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ) )
 		Effects->tempeffect( caster, target, 1, 0, 0, 0 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Poison Field as a field spell
+//o-----------------------------------------------------------------------------------------------o
 bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
@@ -724,6 +941,12 @@ bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 	else
 		return FieldSpell( caster, 0x3921, x, y, z, fieldDir );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Creature spell (summons a creature)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 380 )
@@ -732,6 +955,12 @@ bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI
 		Magic->SummonMonster( sock, caster, 0, x, y, z );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Dispel spell
+//o-----------------------------------------------------------------------------------------------o
 bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( target->IsDispellable() )
@@ -754,6 +983,12 @@ bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	}
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splEnergyBolt( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Energy Bolt spell
+//o-----------------------------------------------------------------------------------------------o
 bool splEnergyBolt( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -765,6 +1000,12 @@ bool splEnergyBolt( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splExplosion( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Explosion spell. Delay configurable in UOX.INI
+//o-----------------------------------------------------------------------------------------------o
 bool splExplosion( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -776,6 +1017,12 @@ bool splExplosion( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Effects->tempeffect( src, target, 27, spellDamage, 0, 0 );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Invisibility spell
+//o-----------------------------------------------------------------------------------------------o
 bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	target->SetVisible( VT_INVISIBLE );
@@ -789,20 +1036,16 @@ bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	return true;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class-	bool splMark( CSocket *sock, CChar *caster, CItem *i )
-//|	Date					-	09/22/2002
-//|	Developer(s)	-	Unknown
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Mark rune spell?
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
+//|	Date		-	09/22/2002
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mark spell
 //|									
-//|	Modification	-	09/22/2002	-	Xuri - Fixed marking of locked down runes.. 
+//|	Changes		-	09/22/2002	-	Xuri - Fixed marking of locked down runes.. 
 //|									(shouldn't be possible)
-//o--------------------------------------------------------------------------o
-//|	Returns				-	[TRUE] If Successfull, [FALSE] otherwise
-//o--------------------------------------------------------------------------o	
+//o-----------------------------------------------------------------------------------------------o
 bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	// Sept 22, 2002 - Xuri
@@ -828,6 +1071,11 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mass Curse spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -846,11 +1094,23 @@ void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount 
 	Effects->tempeffect( caster, target, 12, j, j, j );
 
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Mass Curse as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MassCurseStub, curSpell );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Paralyze Field as a field spell
+//o-----------------------------------------------------------------------------------------------o
 bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
@@ -858,6 +1118,12 @@ bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16
 	else
 		return FieldSpell( caster, 0x3979, x, y, z, fieldDir );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Reveal spell
+//o-----------------------------------------------------------------------------------------------o
 bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
@@ -877,7 +1143,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
-				if( !ValidateObject( tempChar ) )
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
 					continue;
 				if( tempChar->GetVisible() == VT_INVISIBLE )
 				{
@@ -897,6 +1163,11 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Chain Lightning spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -926,11 +1197,23 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 
 	Magic->MagicDamage( target, spellDamage, caster, LIGHTNING );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Chain Lightning as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ChainLightningStub, curSpell );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Energy Field spell as a field spell
+//o-----------------------------------------------------------------------------------------------o
 bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
@@ -938,6 +1221,12 @@ bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 	else
 		return FieldSpell( caster, 0x3956, x, y, z, fieldDir );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Flame Strike spell on target
+//o-----------------------------------------------------------------------------------------------o
 bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
@@ -949,6 +1238,12 @@ bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Gate Travel spell (opens gate from recall rune)
+//o-----------------------------------------------------------------------------------------------o
 bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 {
 	if( i->GetTempVar( CITV_MOREX ) <= 200 && i->GetTempVar( CITV_MOREY ) <= 200 )
@@ -965,6 +1260,12 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 		return true;
 	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mana Vampire spell to target
+//o-----------------------------------------------------------------------------------------------o
 bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ) )
@@ -983,6 +1284,11 @@ bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Mass Dispel spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsDispellable() )
@@ -1009,12 +1315,22 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Mass Dispel spell as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MassDispelStub, curSpell );
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Meteor Swarm spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNPCAiType() == AI_PLAYERVENDOR )
@@ -1040,6 +1356,11 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 	Magic->MagicDamage( target, spellDamage, caster, HEAT );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Provides shared functionality for all area affect spells
+//o-----------------------------------------------------------------------------------------------o
 bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell )
 {
 	SI16 x1, x2, y1, y2;
@@ -1061,7 +1382,7 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
-			if( !ValidateObject( tempChar ) )
+			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
 				continue;
 
 			if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
@@ -1089,11 +1410,23 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Meteor Swarm spell as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MeteorSwarmStub, curSpell );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Polymorph spell
+//o-----------------------------------------------------------------------------------------------o
 bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->IsPolymorphed() )
@@ -1104,6 +1437,12 @@ bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->PolymorphMenu( sock, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Earthquake spell to an individual target
+//o-----------------------------------------------------------------------------------------------o
 void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 {
 	// Check if target is in a safe zone
@@ -1155,6 +1494,12 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 		}
 	} 
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts Earthquake spell as an area affect spell
+//o-----------------------------------------------------------------------------------------------o
 bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	criminal( caster );
@@ -1167,6 +1512,12 @@ bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 	AreaAffectSpell( sock, caster, &EarthquakeStub, curSpell );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Energy Vortex spell (summons an Energy Vortex)
+//o-----------------------------------------------------------------------------------------------o
 bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1174,6 +1525,12 @@ bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08
 	Magic->SummonMonster( sock, caster, 1, x, y, z );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Resurrection spell to a target
+//o-----------------------------------------------------------------------------------------------o
 bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	if( target->IsDead() )
@@ -1183,6 +1540,12 @@ bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	}
 	return false;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Air Elemental spell (Summons Air Elemental)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1190,6 +1553,12 @@ bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 2, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Daemon spell (Summons Daemon)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1197,6 +1566,12 @@ bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 7, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Earth Elemental spell (Summons Earth Elemental)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1204,6 +1579,12 @@ bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 3, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Fire Elemental spell (Summons Fire Elemental)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1211,6 +1592,12 @@ bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 4, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Water Elemental spell (Summons Water Elemental)
+//o-----------------------------------------------------------------------------------------------o
 bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1218,6 +1605,12 @@ bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 5, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Summon Monster spell (Summons random monster)
+//o-----------------------------------------------------------------------------------------------o
 bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
@@ -1225,28 +1618,63 @@ bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
 	Magic->SummonMonster( sock, caster, 8, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNecro1( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	UNUSED
+//o-----------------------------------------------------------------------------------------------o
 bool splNecro1( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNecro2( CSocket *sock, CChar *caster, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effect of Necromantic summon spell (summons monster)
+//o-----------------------------------------------------------------------------------------------o
 bool splNecro2( CSocket *sock, CChar *caster, SI08 curSpell )
 {
 	Magic->SummonMonster( sock, caster, 9, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNecro3( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	UNUSED
+//o-----------------------------------------------------------------------------------------------o
 bool splNecro3( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNecro4( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	UNUSED
+//o-----------------------------------------------------------------------------------------------o
 bool splNecro4( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
 	return true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )  
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	UNUSED
+//o-----------------------------------------------------------------------------------------------o
 bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )  
 {
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts field spell in the shape of a diamond
+//o-----------------------------------------------------------------------------------------------o
 bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	int j;
@@ -1260,7 +1688,8 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	fx[3] = xOffset;  fy[3] = 0;
 
 	CItem *i			= NULL;
-	UI08 worldNumber	= caster->WorldNumber();
+	UI08 worldNumber = caster->WorldNumber();
+	UI16 instanceID	= caster->GetInstanceID();
 	for( j = 0; j < 4; ++j )	// Draw the corners of our diamond
 	{
 		i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
@@ -1271,7 +1700,7 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 			i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 			i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 			i->SetTempVar( CITV_MOREY, caster->GetSerial() );
-			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber ) );
+			i->SetLocation( x + fx[j], y + fy[j], Map->Height( x + fx[j], y + fy[j], z, worldNumber, instanceID ) );
 			i->SetDir( 29 );
 			i->SetMovable( 2 );
 		}
@@ -1292,7 +1721,7 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 					i->SetTempVar( CITV_MOREY, caster->GetSerial() );
 					const SI16 newX = x + counter2 * counter3;
 					const SI16 newY = y + j * ( yOffset - counter3 );
-					i->SetLocation( newX, newY, Map->Height( newX, newY, z, worldNumber ) );
+					i->SetLocation( newX, newY, Map->Height( newX, newY, z, worldNumber, instanceID ) );
 					i->SetDir( 29 );
 					i->SetMovable( 2 );
 				}
@@ -1302,6 +1731,11 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts field spell in the shape of a square
+//o-----------------------------------------------------------------------------------------------o
 bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 fx[5], fy[5];
@@ -1315,6 +1749,7 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 
 	CItem *i = NULL;
 	UI08 worldNumber = caster->WorldNumber();
+	UI16 instanceID = caster->GetInstanceID();
 	for( UI08 j = 0; j < 4; ++j )	// Draw the corners of our diamond
 	{
 		for( int counter = fx[j]; counter < fy[j]; ++counter )
@@ -1331,11 +1766,11 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 				{
 					case 0:
 					case 2:
-						i->SetLocation( x + counter, y + (j - 1) * yOffset, Map->Height( x + counter, y + (j-1) * yOffset, z, worldNumber ) );
+						i->SetLocation( x + counter, y + (j - 1) * yOffset, Map->Height( x + counter, y + (j-1) * yOffset, z, worldNumber, instanceID ) );
 						break;
 					case 1:
 					case 3:
-						i->SetLocation( x + (j-2) * xOffset, y + counter, Map->Height( x + (j-2) * xOffset, y + counter, z, worldNumber ) );
+						i->SetLocation( x + (j-2) * xOffset, y + counter, Map->Height( x + (j-2) * xOffset, y + counter, z, worldNumber, instanceID ) );
 						break;
 				}
 				i->SetDir( 29 );
@@ -1346,6 +1781,11 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 	return true;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Casts field spell in the shape of a filled square
+//o-----------------------------------------------------------------------------------------------o
 bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 yOffset = length;
@@ -1357,6 +1797,7 @@ bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 	SI16 minY = y - yOffset;
 
 	UI08 worldNumber = caster->WorldNumber();
+	UI16 instanceID = caster->GetInstanceID();
 	for( int counter1 = minX; counter1 <= maxX; ++counter1 )
 	{
 		for( int counter2 = minY; counter2 <= maxY; ++counter2 )
@@ -1369,7 +1810,7 @@ bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 				i->SetDecayTime( BuildTimeValue( static_cast<R32>(caster->GetSkill( MAGERY ) / 15 )) );
 				i->SetTempVar( CITV_MOREX, caster->GetSkill( MAGERY ) ); // remember casters magery skill for damage
 				i->SetTempVar( CITV_MOREY, caster->GetSerial() );
-				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber ) );
+				i->SetLocation( counter1, counter2, Map->Height( counter1, counter2, z, worldNumber, instanceID ) );
 				i->SetDir( 29 );
 				i->SetMovable( 2 );
 			}
@@ -1402,6 +1843,11 @@ cMagic::~cMagic()
 	spells.clear();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HasSpell( CItem *book, int spellNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if given spellbook contains specific spell
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::HasSpell( CItem *book, int spellNum )
 {
 	if( !ValidateObject( book ) )
@@ -1415,6 +1861,11 @@ bool cMagic::HasSpell( CItem *book, int spellNum )
 	return ((sourceAmount&flagToCheck) == flagToCheck);
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddSpell( CItem *book, int spellNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds specific spell to given spellbook
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::AddSpell( CItem *book, int spellNum )
 {
 	cScript *tScript	= NULL;
@@ -1436,6 +1887,11 @@ void cMagic::AddSpell( CItem *book, int spellNum )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cMagic::RemoveSpell( CItem *book, int spellNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes specific spell from given spellbook
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::RemoveSpell( CItem *book, int spellNum )
 {
 	cScript *tScript = NULL;
@@ -1459,14 +1915,11 @@ void cMagic::RemoveSpell( CItem *book, int spellNum )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellBook( CSocket *mSock )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Opens the spellbook and displays all spells a
-//|								 character has in his book.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SpellBook( CSocket *mSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the spellbook and displays all spells a character has in his book
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SpellBook( CSocket *mSock )
 {
 	UI08 spellsList[70];
@@ -1475,7 +1928,7 @@ void cMagic::SpellBook( CSocket *mSock )
 	CChar *mChar		= mSock->CurrcharObj();
 	CItem *spellBook	= calcItemObjFromSer( serial );
 
-	// Here's the kicker.  We NEVER needed to search through our pack for our spellbook!!! Why, you might ask???
+	// Here's the kicker. We NEVER needed to search through our pack for our spellbook!!! Why, you might ask???
 	// Because we are able to calculate the serial of the spellbook, because it's targetted for us!!!!
 	// Hence, we can remove all searches from here, and just use it directly
 	// The only time we need to search is when they use the macro, and that's easily done (item == -1)
@@ -1558,15 +2011,13 @@ void cMagic::SpellBook( CSocket *mSock )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          GateCollision( CChar *s )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//|                              Modified by AntiChrist - collision dir
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Used when a PLAYER passes through a gate.  Takes the player
-//|                              to the other side of the gate-link.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
+//|	Changes		-	AntiChrist - collision dir
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Used when a PLAYER passes through a gate.  Takes the player
+//|						to the other side of the gate-link.
+//o-----------------------------------------------------------------------------------------------o
 
 void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
 {
@@ -1582,11 +2033,11 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 			dirOffset = -1;
 		if( otherGate->WorldNumber() != mChar->WorldNumber() )
 		{
-			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber() );
+			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
 			SendMapChange( mChar->WorldNumber(), mSock, false );
 		}
 		else
-			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber() );
+			mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
 		if( !mChar->IsNpc() )
 		{
 			CDataList< CChar * > *myPets = mChar->GetPetList();
@@ -1606,14 +2057,12 @@ void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          SummonMonster( CSocket *s, CChar *caster, UI16 id, std::string monstername, UI16 color, SI16 x, SI16 y, SI08 z )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//|		Revision	  :			 May 4th, 2000 - made function general words PC's and NPC's - Hanse
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Summon a monster (dispellable with DISPEL).
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z )
+//|	Changes		-	May 4th, 2000 - made function general words PC's and NPC's - Hanse
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Summon a monster (dispellable with DISPEL).
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z )
 {
 	if( s != NULL )
@@ -1646,39 +2095,39 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 			return;
 		case 1: // Energy Vortex
 			Effects->PlaySound( s, 0x0216, true ); // EV
-			newChar = Npcs->CreateNPCxyz( "energyvortex-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "energyvortex-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 2: // Air Elemental
 			Effects->PlaySound( s, 0x0217, true ); // AE
-			newChar = Npcs->CreateNPCxyz( "airele-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "airele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 3: //Earth Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "earthele-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "earthele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 4: //Fire Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "firele-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "firele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 5: //Water Elemental
 			Effects->PlaySound( s, 0x0217, true );
-			newChar = Npcs->CreateNPCxyz( "waterele-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "waterele-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 6: //Blade Spirits
 			Effects->PlaySound( s, 0x0212, true ); // I don't know if this is the right effect...
-			newChar = Npcs->CreateNPCxyz( "bladespirit-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "bladespirit-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 7: // Daemon
 			Effects->PlaySound( s, 0x0216, true );
-			newChar = Npcs->CreateNPCxyz( "daemon-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "daemon-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 8: // Dupre The Hero
 			Effects->PlaySound( s, 0x0246, true );
-			newChar = Npcs->CreateNPCxyz( "dupre-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "dupre-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		case 9: // Black Night
 			Effects->PlaySound( s, 0x0216, true );
-			newChar = Npcs->CreateNPCxyz( "blacknight-summon", 0, 0, 0, caster->WorldNumber() );
+			newChar = Npcs->CreateNPCxyz( "blacknight-summon", 0, 0, 0, caster->WorldNumber(), caster->GetInstanceID() );
 			break;
 		default:
 			Effects->PlaySound( s, 0x0215, true );
@@ -1697,7 +2146,7 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 		newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
 	else
 	{
-		if( Map->ValidSpawnLocation( x, y, z, caster->WorldNumber() ) )
+		if( Map->ValidSpawnLocation( x, y, z, caster->WorldNumber(), caster->GetInstanceID() ) )
 			newChar->SetLocation( x, y, z );
 		else
 			newChar->SetLocation( caster->GetX()-1, caster->GetY(), caster->GetZ() );
@@ -1724,13 +2173,11 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	Combat->AttackTarget( newChar, i );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          CheckBook( int circle, int spell, CItem *i )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check if the spell is memorized into the spellbook.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CheckBook( int circle, int spell, CItem *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if the spell is memorized into the spellbook.
+//o-----------------------------------------------------------------------------------------------o
 
 bool cMagic::CheckBook( int circle, int spell, CItem *i )
 {
@@ -1738,16 +2185,12 @@ bool cMagic::CheckBook( int circle, int spell, CItem *i )
 	return HasSpell( i, spellnum );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckMana( CChar *s, int circle )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//                               Modified by AntiChrist to use spells[] array.
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check if character has enough mana to cast
-//|                              a spell of that circle.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckMana( CChar *s, int circle )
+//|	Changes		-	AntiChrist to use spells[] array.
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character has enough mana to cast spell
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckMana( CChar *s, int num )
 {
 	if( !ValidateObject( s ) )
@@ -1765,6 +2208,11 @@ bool cMagic::CheckMana( CChar *s, int num )
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckStamina( CChar *s, int num )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character has enough stamina to cast spell
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckStamina( CChar *s, int num )
 {
 	if( !ValidateObject( s ) )
@@ -1782,6 +2230,11 @@ bool cMagic::CheckStamina( CChar *s, int num )
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckHealth( CChar *s, int num )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character has enough health to cast spell
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckHealth( CChar *s, int num )
 {
 	if( !ValidateObject( s ) )
@@ -1803,15 +2256,11 @@ bool cMagic::CheckHealth( CChar *s, int num )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SubtractMana( CChar *s, int mana )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Subtract the required mana from character's
-//|                              mana reserve.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SubtractMana( CChar *s, int mana)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Subtract the required mana from character's mana reserve
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SubtractMana( CChar *s, int mana)
 {
 	if( s->NoNeedMana() )
@@ -1821,6 +2270,11 @@ void cMagic::SubtractMana( CChar *s, int mana)
 		s->SetMana( 0 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SubtractStamina( CChar *s, int stamina )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Subtract the required stmina from character's stamina reserve
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SubtractStamina( CChar *s, int stamina )
 {
 	if( s->NoNeedMana() )
@@ -1830,6 +2284,11 @@ void cMagic::SubtractStamina( CChar *s, int stamina )
 		s->SetStamina( 0 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SubtractHealth( CChar *s, int health, int spellNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Subtract the required health from character's stamina reserve
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SubtractHealth( CChar *s, int health, int spellNum )
 {
 	if( s->NoNeedMana() || spells[spellNum].Health() == 0 )
@@ -1847,15 +2306,12 @@ void cMagic::SubtractHealth( CChar *s, int health, int spellNum )
 		s->SetHP( 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckMagicReflect( CChar *i )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check if character is protected by MagicReflect;
-//|                              if yes, remove the protection and do visual effect.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckMagicReflect( CChar *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character is protected by MagicReflect. 
+//|						If yes, remove the protection and do visual effect.
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckMagicReflect( CChar *i ) 
 {
 	if( i->IsPermReflected() )
@@ -1867,15 +2323,12 @@ bool cMagic::CheckMagicReflect( CChar *i )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::CheckResist( CChar *attacker, CChar *defender, int circle )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//|                              Modified by AntiChrist to add EV.INT. check
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check character's magic resistance.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckResist( CChar *attacker, CChar *defender, int circle )
+//|	Changes		-	AntiChrist to add EV.INT. check
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check character's magic resistance.
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 {
 	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
@@ -1911,14 +2364,13 @@ bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
 	return i;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool SpellResisted )
-//|     Date          :          November 7th 2011
-//|     Programmer    :          Xuri
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Calculate Spell Damage after skill-modifiers
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool spellResisted )
+//|	Date		-	November 7th 2011
+//|	Programmer	-	Xuri
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate Spell Damage after skill-modifiers
+//o-----------------------------------------------------------------------------------------------o
 SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool spellResisted )
 {
 	// Randomize in upper-half of damage range for some variety
@@ -1948,14 +2400,11 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 	return spellDamage;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          MagicDamage( CChar *p, int amount, CChar *attacker, WeatherType dmgType )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Calculate and inflict magic damage.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType element )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate and inflict magic damage.
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType element )
 {
 	if( !ValidateObject( p ) || !ValidateObject( attacker ) )
@@ -1971,7 +2420,7 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		p->SetFrozen( false );
 		if( mSock != NULL ) 
 			mSock->sysmessage( 700 );
-	}           
+	}
 
 	// Allow damage if target is not invulnerable or in a zone safe from aggressive magic
 	if( !p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() && p->GetRegion()->CanCastAggressive() )
@@ -1987,15 +2436,12 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::PoisonDamage( CChar *p )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Apply the poison to the character.
-//o---------------------------------------------------------------------------o
-
-void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PoisonDamage( CChar *p, int poison )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Apply the poison to the character.
+//o-----------------------------------------------------------------------------------------------o
+void cMagic::PoisonDamage( CChar *p, int poison ) // new functionality, lb !!!
 {
 	if( p->IsFrozen() )
 	{
@@ -2003,7 +2449,7 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 		CSocket *s = p->GetSocket();
 		if( s != NULL ) 
 			s->sysmessage( 700 );
-	}           
+	}
 
 	// Allow poison damage if target is not invunlnerable or in a zone safe from aggressive magic 
 	if( !p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() && p->GetRegion()->CanCastAggressive() )
@@ -2018,14 +2464,11 @@ void cMagic::PoisonDamage( CChar *p, int poison) // new functionality, lb !!!
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          CheckFieldEffects( CChar &mChar )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check if character stands on a magic-field,
-//|                              and apply effects.
-//o------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckFieldEffects( CChar& mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character stands on a magic-field and apply effects.
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::CheckFieldEffects( CChar& mChar )
 {
 	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
@@ -2035,7 +2478,7 @@ void cMagic::CheckFieldEffects( CChar& mChar )
 	regItems->Push();
 	for( CItem *inItemList = regItems->First(); !regItems->Finished(); inItemList = regItems->Next() )
 	{
-		if( !ValidateObject( inItemList ) )
+		if( !ValidateObject( inItemList ) || inItemList->GetInstanceID() != mChar.GetInstanceID() )
 			continue;
 		if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() )
 		{
@@ -2046,6 +2489,11 @@ void cMagic::CheckFieldEffects( CChar& mChar )
 	regItems->Pop();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle the effects of characters entering field spells
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 {
 	CChar *caster;
@@ -2122,15 +2570,11 @@ bool cMagic::HandleFieldEffects( CChar *mChar, CItem *fieldItem, UI16 id )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::BoxSpell( CSocket * s, int& x1, int& x2, int& y1, int& y2, int& z1, int& z2 )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Calculate the spell box effect, depending 
-//|                              on character's magery skill.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate the spell box effect, depending on character's magery skill
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, SI16& y2, SI08& z1, SI08& z2)
 {
 	SI16 x, y;
@@ -2160,15 +2604,11 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 	z2 = z+3;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::MagicTrap( CChar *s, int i )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Do the visual effect and apply magic damage
-//|                              when a player opens a trapped container.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MagicTrap( CChar *s, CItem *i )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Do the visual effect and apply magic damage when a player opens a trapped container
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::MagicTrap( CChar *s, CItem *i )
 {
 	if( !ValidateObject( s ) || !ValidateObject( i ) )
@@ -2182,15 +2622,12 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
 	i->SetTempVar( CITV_MOREZ, 0 );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          CheckReagents( CChar *s, reag_st *reagents )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//|                              Modified by AntiChrist to use reag-st
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Check for required reagents in player's backpack.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckReagents( CChar *s, const reag_st *reagents )
+//|	Changes		-	AntiChrist to use reag-st
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check for required reagents in player's backpack.
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::CheckReagents( CChar *s, const reag_st *reagents )
 {
 	reag_st failmsg;
@@ -2216,23 +2653,20 @@ bool cMagic::CheckReagents( CChar *s, const reag_st *reagents )
 	return RegMsg( s, failmsg );
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          RegMsg( CChar *s, reag_st failmsg )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//|                              Reprogrammed by AntiChrist to display
-//|                              missing reagents types.
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Display an error message if character has not enough regs.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool RegMsg( CChar *s, reag_st failmsg )
+//|	Changes		-	AntiChrist	-	display missing reagents types
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Display an error message if character has not enough regs
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 {
 	if( !ValidateObject( s ) )
 		return true;
+
 	bool display = false;
 	char message[100] = { 0, };
-	
+
 	// Copy dictionary message into char array
 	strcpy( message, Dictionary->GetEntry( 702 ).c_str() );
 
@@ -2272,11 +2706,11 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	{
 		display = true; tempString += "Ss, ";
 	}
-	
+
 	// Append our temporary string to the end of the char array and add an end-bracket
 	strcat( message, tempString.c_str() );
 	message[strlen( message ) - 2] = ']';
-	
+
 	if( display )
 	{
 		CSocket *i = s->GetSocket();
@@ -2287,15 +2721,11 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SpellFail( CSocket *s )
-//|     Date          :          Unknown
-//|     Programmer    :          Unknown
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Do visual and sound effects when a player
-//|                              fails to cast a spell.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SpellFail( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Do visual and sound effects when a player fails to cast a spell.
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SpellFail( CSocket *s )
 {
 	// Use Reagents on failure ( if casting from a spellbook )
@@ -2314,22 +2744,20 @@ void cMagic::SpellFail( CSocket *s )
 /////////////////////////////////////////////////////////////////
 
 
-//o---------------------------------------------------------------------------o
-//|     Class         :          ::SelectSpell( CSocket *mSock, int num )
-//|     Date          :          28 August 1999 / 10 September 1999
-//|     Programmer    :          Abaddon / AntiChrist
-//o---------------------------------------------------------------------------o
-//|     Purpose       :          Execute the selected spell to cast.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SelectSpell( CSocket *mSock, int num )
+//|	Date		-	28 August 1999 / 10 September 1999
+//|	Programmer	-	Abaddon / AntiChrist
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Execute the selected spell to cast.
+//|
+//|	Changes		-	Comments: Written by Abaddon (28 August 1999)
+//|					Terrin: Use spells (memory version of script info )
+//|					Abaddon: Made memory optionable
+//|					Abaddon: Perma cached
+//|					DarkStorm: Added JS handling
+//o-----------------------------------------------------------------------------------------------o
 bool cMagic::SelectSpell( CSocket *mSock, int num )
-// PRE:		s is a valid socket, num is a valid spell number
-// POST:	Spell selected to cast
-// Comments: Written by Abaddon (28 August 1999)
-//:Terrin: Use spells (memory version of script info )
-//Abaddon: Made memory optionable
-//Abaddon: Perma cached
-//DarkStorm: Added JS handling
 {
 	SI16 lowSkill = 0, highSkill = 0;
 	CChar *mChar = mSock->CurrcharObj();
@@ -2417,16 +2845,16 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 		}
 		else if( !mChar->GetRegion()->CanCastAggressive() )
 		{
-		mSock->sysmessage( 706 );
+			mSock->sysmessage( 706 );
 			allowCasting = false;
 		}
 
 		if( !allowCasting )
 		{
 			// Not allowed to cast selected spell in this region, abort
-		mChar->StopSpell();
-		return false;
-	}
+			mChar->StopSpell();
+			return false;
+		}
 	}
 	
 	if( !curSpellCasting.Enabled() )
@@ -2581,12 +3009,11 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 getFieldDir( CChar *s, SI16 x, SI16 y )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Get field direction
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets field direction
+//o-----------------------------------------------------------------------------------------------o
 UI08 cMagic::getFieldDir( CChar *s, SI16 x, SI16 y )
 {
 	UI08 fieldDir = 0;
@@ -2629,7 +3056,11 @@ UI08 cMagic::getFieldDir( CChar *s, SI16 x, SI16 y )
 	return fieldDir;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CastSpell( CSocket *s, CChar *caster )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles a character's attempt to cast spells
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::CastSpell( CSocket *s, CChar *caster )
 {
 	// for LocationTarget spell like ArchCure, ArchProtection etc...
@@ -2691,7 +3122,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	}
 	if( validSocket && s->CurrentSpellType() == 0 && !caster->IsNpc() ) 
 		DelReagents( caster, spells[curSpell].Reagants() );
-	
+
 	if( spells[curSpell].RequireTarget() )					// target spells if true
 	{
 		cScript *tScriptExec = NULL;
@@ -2913,7 +3344,7 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 
 			if( spells[curSpell].AggressiveSpell() )
 			{
-				CTownRegion *targetRegion = calcRegionFromXY( x, y, caster->WorldNumber() );
+				CTownRegion *targetRegion = calcRegionFromXY( x, y, caster->WorldNumber(), caster->GetInstanceID() );
 				if( targetRegion->IsSafeZone() )
 				{
 					// Target location is in a region where hostile actions are forbidden, disallow
@@ -3054,9 +3485,14 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	
 }
 
-
-//:Terrin: Avoid multiple reading of the spell script every time a spell is
-//         cast to avoid crippling the server when a mage enters combat
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadScript( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads spell data from spell DFNs
+//|
+//|	Notes		-	Terrin: Avoid multiple reading of the spell script every time a spell is
+//|					cast to avoid crippling the server when a mage enters combat
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::LoadScript( void )
 {
 	spells.resize( 0 );
@@ -3221,7 +3657,11 @@ void cMagic::LoadScript( void )
 	}
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void DelReagents( CChar *s, reag_st reags )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Deletes the specified amount of reagents when a spell is cast 
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::DelReagents( CChar *s, reag_st reags )
 {
 	if( s->NoNeedReags() ) 
@@ -3236,12 +3676,22 @@ void cMagic::DelReagents( CChar *s, reag_st reags )
 	DeleteItemAmount( s, reags.silk, 0x0F8D );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void playSound( CChar *source, int num )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the SFX associated with a spell that is being cast
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::playSound( CChar *source, int num )
 {
 	if( spells[num].Effect() != INVALIDID )
 		Effects->PlaySound( source, spells[num].Effect() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doStaticEffect( CChar *source, int num )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the static FX associated with a spell that is being cast
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::doStaticEffect( CChar *source, int num )
 {
 	CMagicStat temp = spells[num].StaticEffect();
@@ -3249,6 +3699,11 @@ void cMagic::doStaticEffect( CChar *source, int num )
 		Effects->PlayStaticAnimation( source, temp.Effect(), temp.Speed(), temp.Loop() );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doMoveEffect( int num, CBaseObject *target, CChar *source )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Plays the moving FX associated with a spell that is being cast
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::doMoveEffect( int num, CBaseObject *target, CChar *source )
 {
 	CMagicMove temp = spells[num].MoveEffect();
@@ -3258,6 +3713,11 @@ void cMagic::doMoveEffect( int num, CBaseObject *target, CChar *source )
 }
 
 void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PolymorphMenu( CSocket *s, UI16 gmindex )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Opens the polymorph menu to allow player to choose which creature to poly into
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
 	UString sect				= "POLYMORPHMENU " + UString::number( gmindex );
@@ -3267,6 +3727,11 @@ void cMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 	HandleCommonGump( s, polyStuff, gmindex );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Polymorph( CSocket *s, UI16 polyID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Applies effects of Polymorph spell to caster
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::Polymorph( CSocket *s, UI16 polyID )
 {
 	UI08 id1		= static_cast<UI08>(polyID>>8);
@@ -3281,9 +3746,12 @@ void cMagic::Polymorph( CSocket *s, UI16 polyID )
 	mChar->IsPolymorphed( true );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Log( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes out spell casting details to spell.log file
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo )
-// PRE:		Commands is initialized, toLog is not NULL
-// POST:	Writes out toLog to a file
 {
 	if( spell.empty() || !ValidateObject( player1 ) )
 		return;
@@ -3307,6 +3775,11 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::
 	logDestination.close();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Register( cScript *toRegister, int spellNumber, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Registers a spell in the JS Engine
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
@@ -3321,6 +3794,11 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 	spells[spellNumber].Enabled( isEnabled );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetSpellStatus( int spellNumber, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the enabled state of a given spell
+//o-----------------------------------------------------------------------------------------------o
 void cMagic::SetSpellStatus( int spellNumber, bool isEnabled )
 {
 	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )

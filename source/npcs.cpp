@@ -25,12 +25,11 @@ namespace UOX
 cCharStuff *Npcs = NULL;
 
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *addRandomLoot( CItem *s, std::string lootlist )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add loot to monsters packs
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 {
 	CItem *retitem			= NULL;
@@ -89,14 +88,14 @@ CItem *cCharStuff::addRandomLoot( CItem *s, const std::string& lootlist )
 	return retitem;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *CreateBaseNPC( std::string npc, UI08 worldNumber )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a basic npc from the scripts
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar *CreateBaseNPC( UString ourNPC )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a basic npc from the scripts
+//o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 {
 	ourNPC						= ourNPC.stripWhiteSpace();
@@ -133,14 +132,14 @@ CChar *cCharStuff::CreateBaseNPC( UString ourNPC )
 	return cCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *CreateRandomNPC( std::string npcList )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates a random npc from an npclist in specified dfn file
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar *CreateRandomNPC( const std::string& npcList )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a random npc from an npclist in specified dfn file
+//o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 {
 	CChar *cCreated			= NULL;
@@ -165,14 +164,14 @@ CChar *cCharStuff::CreateRandomNPC( const std::string& npcList )
 	return cCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *CreateNPC( CSpawnItem *iSpawner, std::string npc )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates an npc spawned from an item spawner
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar *CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates an npc spawned from an item spawner
+//o-----------------------------------------------------------------------------------------------o
 CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 {
 	const ItemTypes iType = iSpawner->GetType();
@@ -190,17 +189,13 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 
 	cCreated->SetSpawn( iSpawner->GetSerial() );
 	SI16 awayX = 0, awayY = 0;
-	if( iType == IT_AREASPAWNER && iSpawner->GetCont() == NULL )
+	if(( iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER ) && iSpawner->GetCont() == NULL )
 	{
 		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
 		awayY = iSpawner->GetTempVar( CITV_MORE, 4 );
 	}
-	else if( iType == IT_ESCORTNPCSPAWNER && iSpawner->GetCont() == NULL )
-	{
-		awayX = iSpawner->GetTempVar( CITV_MORE, 3 );
-		awayY = iSpawner->GetTempVar( CITV_MORE, 4 );
-	}
-	FindSpotForNPC( cCreated, iSpawner->GetX(), iSpawner->GetY(), awayX, awayY, iSpawner->GetZ(), iSpawner->WorldNumber() );
+
+	FindSpotForNPC( cCreated, iSpawner->GetX(), iSpawner->GetY(), awayX, awayY, iSpawner->GetZ(), iSpawner->WorldNumber(), iSpawner->GetInstanceID() );
 	PostSpawnUpdate( cCreated );
 
 	if( iType == IT_ESCORTNPCSPAWNER )
@@ -211,36 +206,38 @@ CChar *cCharStuff::CreateNPC( CSpawnItem *iSpawner, const std::string &npc )
 	return cCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CChar *CreateNPCxyz( std::string npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Creates an npc at location xyz
-//o--------------------------------------------------------------------------o
-CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar *CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates an npc at location xyz
+//o-----------------------------------------------------------------------------------------------o
+CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
 	CChar *cCreated = CreateBaseNPC( npc );
 	if( cCreated == NULL )
 		return NULL;
 
-	cCreated->SetLocation( x, y, z, worldNumber );
+	cCreated->SetLocation( x, y, z, worldNumber, instanceID );
+	// Update "old location" for new NPCs straight away
+	cCreated->SetOldLocation( x, y, z );
 	PostSpawnUpdate( cCreated );
 	return cCreated;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	PostSpawnUpdate( CChar *cCreated )
-//|	Date			-	10/12/2003
-//|	Developers		-	giwo
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Updates created npc
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PostSpawnUpdate( CChar *cCreated )
+//|	Date		-	10/12/2003
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates created npc
+//o-----------------------------------------------------------------------------------------------o
 void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 {
-	CTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber() );
+	CTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber(), cCreated->GetInstanceID() );
 	cCreated->SetRegion( tReg->GetRegionNum() );
 
 	for( UI08 z = 0; z < ALLSKILLS; ++z )
@@ -250,12 +247,12 @@ void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 	cCreated->Update();
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 getRadius( CChar *c )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Generate a sensible radius given the values from npc.scp
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Generate a sensible radius given the values from the NPC DFNs
+//o-----------------------------------------------------------------------------------------------o
 SI16 getRadius( CChar *c )
 {
 	// see if they supplied a 'radius'
@@ -271,47 +268,50 @@ SI16 getRadius( CChar *c )
 	return c->GetFx( 1 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool checkBoundingBox( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2 )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool checkBoundingBox( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, 
+//|						const SI08 fz1, const SI16 fx2, const SI16 fy2, const UI08 worldNumber, const UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding box
-//o---------------------------------------------------------------------------o
-bool checkBoundingBox( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, const SI16 fx2, const SI16 fy2, const UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+bool checkBoundingBox( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, 
+	const SI16 fx2, const SI16 fy2, const UI08 worldNumber, const UI16 instanceID )
 {
 	if( xPos >= ( ( fx1 < fx2 ) ? fx1 : fx2 ) && xPos <= ( ( fx1 < fx2 ) ? fx2 : fx1 ) )
 	{
 		if( yPos >= ( ( fy1 < fy2 ) ? fy1 : fy2 ) && yPos <= ( ( fy1 < fy2 ) ? fy2 : fy1 ) )
 		{
-			if( fz1 == -1 || abs( fz1 - Map->Height( xPos, yPos, fz1, worldNumber ) ) <= 5 )
+			if( fz1 == -1 || abs( fz1 - Map->Height( xPos, yPos, fz1, worldNumber, instanceID ) ) <= 5 )
 				return true;
 		}
 	}
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	checkBoundingCircle( SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 radius, UI08 worldNumber )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool checkBoundingCircle( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, 
+//|						const SI08 fz1, const SI16 radius, const UI08 worldNumber, const UI16 instanceID )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding circle
-//o---------------------------------------------------------------------------o
-bool checkBoundingCircle( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, const SI16 radius, const UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+bool checkBoundingCircle( const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1, const SI08 fz1, 
+	const SI16 radius, const UI08 worldNumber, const UI16 instanceID )
 {
 	if( ( xPos - fx1 ) * ( xPos - fx1 ) + ( yPos - fy1 ) * ( yPos - fy1 ) <= radius * radius )
 	{
-		if( fz1 == -1 || abs( fz1 - Map->Height( xPos, yPos, fz1, worldNumber ) ) <= 5 )
+		if( fz1 == -1 || abs( fz1 - Map->Height( xPos, yPos, fz1, worldNumber, instanceID ) ) <= 5 )
 			return true;
 	}
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Setup the wander area if the npcwander is rect or circle
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 {
 	// compute the rectangular bounding area
@@ -321,13 +321,13 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 		// ensure the bounding rect contains the current location
 		// if it doesn't the monster will never move!
 		if( c->GetFx( 0 ) >= 0 && c->GetFy( 0 ) >= 0 && c->GetFy( 1 ) >= 0 && c->GetFx( 1 ) >= 0 &&
-			checkBoundingBox( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->GetFy( 1 ), c->WorldNumber() ) )
+			checkBoundingBox( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->GetFy( 1 ), c->WorldNumber(), c->GetInstanceID() ))
 		{
-			return;// don't do anything to use what they specified in npc.scp		
+			return;// don't do anything to use what they specified in the NPC DFNs		
 		}
 		else
 		{
-			// if they provided a 'radius' in the npc.scp use that
+			// if they provided a 'radius' in the NPC DFNs, use that
 			if( c->GetFx( 1 ) > 0 )
 				xAway = yAway = getRadius( c );
 			// setup info for rectangular areas
@@ -343,13 +343,13 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 		// ensure the bounding circle contains the current location
 		// if it doesn't the monster will never move!
 		if( c->GetFx( 0 ) >= 0 && c->GetFy( 0 ) >= 0 && c->GetFx( 1 ) >= 0 &&
-			checkBoundingCircle( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->WorldNumber() ) )
+			checkBoundingCircle( c->GetX(), c->GetY(), c->GetFx( 0 ), c->GetFy( 0 ), c->GetFz(), c->GetFx( 1 ), c->WorldNumber(), c->GetInstanceID() ))
 		{
-			return;// don't do anything to use what they specified in npc.scp		
+			return;// don't do anything to use what they specified in NPC DFNs
 		}
 		else
 		{
-			// if they provided a 'radius' in the npc.scp use that
+			// if they provided a 'radius' in the NPC DFNs use that
 			if( c->GetFx( 1 ) > 0 )
 				xAway = yAway = getRadius( c );
 			// setup info for circular areas
@@ -364,13 +364,16 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 	
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCharStuff::FindSpotForNPC( CChar *cCreated, SI16 originX, SI16 originY, SI16 xAway, SI16 yAway, SI08 z, UI08 worldNumber )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16 originY, 
+//|						const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber, const UI16 instanceID )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a valid spot to drop an NPC near the spawners location
 //|									
-//|	Modification	-	04/20/2002	-	Zippy -  (Type 69) xos and yos (X OffSet, Y OffSet)
+//|	Changes		-	06/26/2020	-	Xuri -  Added support for instanceID
+//|									
+//|	Changes		-	04/20/2002	-	Zippy -  (Type 69) xos and yos (X OffSet, Y OffSet)
 //|									are used to find a random number that is then added to the spawner's 
 //|									x and y (Using the spawner's z) and then place the NPC anywhere in 
 //|									a square around the spawner. This square is random anywhere from -10 
@@ -379,8 +382,9 @@ void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway )
 //|									will be chosen, if a valid place cannot be found in a certain # of 
 //|									tries (50),the NPC will be placed directly on the spawner and the 
 //|									server op will be warned. 
-//o---------------------------------------------------------------------------o
-void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16 originY, const SI16 xAway, const SI16 yAway, const SI08 z, const UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16 originY, const SI16 xAway, 
+	const SI16 yAway, const SI08 z, const UI08 worldNumber, const UI16 instanceID )
 {
 
 #ifdef DEBUG_SPAWN
@@ -414,24 +418,24 @@ void cCharStuff::FindSpotForNPC( CChar *cCreated, const SI16 originX, const SI16
 	    
 		if( xos >= 1 && yos >= 1 )
 		{
-			targZ = Map->Height( xos, yos, z, worldNumber );
+			targZ = Map->Height( xos, yos, z, worldNumber, instanceID );
 			if( !cwmWorldState->creatures[cCreated->GetID()].IsWater() )
-				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber );
+				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, instanceID );
 			else if( cwmWorldState->creatures[cCreated->GetID()].IsWater() || ( !foundSpot && cwmWorldState->creatures[cCreated->GetID()].IsAmphibian() ) )
-				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, false );
+				foundSpot = Map->ValidSpawnLocation( xos, yos, targZ, worldNumber, instanceID, false );
 		}
 	}
 
-	cCreated->SetLocation( xos, yos, targZ, worldNumber );
+	cCreated->SetLocation( xos, yos, targZ, worldNumber, instanceID );
 	InitializeWanderArea( cCreated, xAway, yAway );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCharStuff::LoadShopList( std::string list, CChar *c )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Loads the shopping list pointed to by data in items.scp
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadShopList( const std::string& list, CChar *c )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads the shopping list pointed to by data in ITEM DFNs
+//o-----------------------------------------------------------------------------------------------o
 void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 {
 	CItem *buyLayer		= c->GetItemAtLayer( IL_BUYCONTAINER ); //Contains items the NPC is willing to buy
@@ -520,12 +524,11 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void setRandomName( CChar *s, std::string namelist )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Sets a character with a random name from NPC.scp namelist
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void setRandomName( CChar *s, const std::string& namelist )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets a character with a random name from NPC namelists in namelists.dfn
+//o-----------------------------------------------------------------------------------------------o
 void setRandomName( CChar *s, const std::string& namelist )
 {
 	UString sect	= "RANDOMNAME " + namelist;
@@ -547,12 +550,11 @@ void setRandomName( CChar *s, const std::string& namelist )
 	s->SetName( tempName );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	int addRandomColor( std::string colorlist )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 addRandomColor( const std::string& colorlist )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Randomly colors character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI16 addRandomColor( const std::string& colorlist )
 {
 	UString sect					= "RANDOMCOLOR " + colorlist;
@@ -573,12 +575,11 @@ UI16 addRandomColor( const std::string& colorlist )
 	return 0;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCommands::MakeShop( CChar *c )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MakeShop( CChar *c )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn an NPC into a shopkeeper
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void MakeShop( CChar *c )
 {
 	if( !ValidateObject( c ) )
@@ -608,12 +609,12 @@ void MakeShop( CChar *c )
 	c->Update();
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Apply Npc.scp sections to an NPC
-//o---------------------------------------------------------------------------o
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Apply NPC DFN sections to an NPC
+//o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bool isGate )
 {
 	if( NpcCreation == NULL || !ValidateObject( applyTo ) )
@@ -1183,12 +1184,12 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CChar * getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pet guarding an item / character
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
@@ -1207,12 +1208,12 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 	return NULL;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool checkPetFriend( CChar *mChar, CChar *pet )
 //|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search a pets friends list to check if a character is a friend
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
 	CHARLIST *petFriends	= pet->GetFriendList();
@@ -1229,12 +1230,12 @@ bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void cCharStuff::stopPetGuarding( CChar *pet )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void stopPetGuarding( CChar *pet )
 //|	Programmer	-	Zane
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find the item/char pet is guarding and set it to not guarded
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cCharStuff::stopPetGuarding( CChar *pet )
 {
 	CBaseObject *petGuarding = pet->GetGuarding();
@@ -1256,12 +1257,11 @@ void cCharStuff::stopPetGuarding( CChar *pet )
 	pet->SetGuarding( NULL );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void MonsterGate( CChar *s, SI32 x )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MonsterGate( CChar *s, const std::string& scriptEntry )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle monster gates (polymorphs players into monster bodies)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void MonsterGate( CChar *s, const std::string& scriptEntry )
 {
 	CItem *mypack = NULL;
@@ -1317,13 +1317,12 @@ void MonsterGate( CChar *s, const std::string& scriptEntry )
 	Effects->PlaySound( s, 0x01E9 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void Karma( CChar *nCharID, CChar *nKilledID, SI16 nKarma )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle karma addition/subtraction when character kills
 //|					another Character / NPC
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 {
 	SI16 nChange	= 0;
@@ -1380,13 +1379,11 @@ void Karma( CChar *nCharID, CChar *nKilledID, const SI16 nKarma )
 		mSock->sysmessage( 1372 );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void Fame( CChar *nCharID, SI16 nFame )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose		-	Handle fame addition when character kills another
-//|					Character / NPC
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Fame( CChar *nCharID, const SI16 nFame )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle fame addition when character kills another Character / NPC
+//o-----------------------------------------------------------------------------------------------o
 void Fame( CChar *nCharID, const SI16 nFame )
 {
 	SI16 nChange			= 0;

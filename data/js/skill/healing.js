@@ -1,3 +1,28 @@
+function onUseCheckedTriggered( pUser, targChar, iUsed )
+{
+	if( pUser && iUsed && iUsed.isItem )
+	{
+		var socket = pUser.socket;
+		if( socket )
+		{
+			if( pUser.skillsused.healing || pUser.skillsused.veterinary )
+			{
+				socket.SysMessage( "You are too busy to do that." );
+			}
+			else if( socket.GetTimer( 0 ) <= GetCurrentClock() )
+			{
+				socket.tempObj = iUsed;
+				socket.SetTimer( 0, 5000 );
+				onCallback1( socket, targChar );
+			}
+			else
+			{
+				socket.SysMessage( GetDictionaryEntry( 473, socket.Language ) );
+			}
+		}
+	}
+	return true;
+}
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;

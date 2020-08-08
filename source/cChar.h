@@ -168,7 +168,7 @@ protected:
 	PlayerValues_st	*	mPlayer;
 
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
-	UI16		town;       // Matches Region number in regions.scp
+	UI16		town;       // Matches Region number in regions.dfn
 	UI16		regionNum;
 
 	UI08		brkPeaceChanceGain;
@@ -384,7 +384,8 @@ public:
 	void			SetRunning( UI08 newValue );
 	void			SetStep( UI08 newValue );
 	void			SetRegion( UI16 newValue );
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) override;
+	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
 	virtual void	SetLocation( const CBaseObject *toSet ) override;
 	void			WalkZ( SI08 newZ );
@@ -467,6 +468,7 @@ public:
 
 	CChar *			Dupe( void );
 	virtual void	RemoveFromSight( CSocket *mSock = NULL );
+	virtual void	RemoveAllObjectsFromSight( CSocket *mSock = NULL );
 	void			SendWornItems( CSocket *s );
 	void			Teleport( void );
 	void			ExposeToView( void );

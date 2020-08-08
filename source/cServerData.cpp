@@ -71,10 +71,72 @@ const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
 // (January 13, 2001 - EviLDeD) Modified: January 30, 2001 Converted to uppercase
 // (February 26 2002 - EviLDeD) Modified: to support the AccountIsolation, and left out dir3ectory tags
 // (September 22 2002 - EviLDeD) Added the  "HIDEWILEMOUNTED" tag to support Xuri hide fix
-// (September 06 2003 - Maarc) Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
-// (October 16, 2003 - giwo) Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
-// (April 3, 2004 = EviLDeD) Added new tags, for UOG support, as well as new facet tags etc.
-// (June 15, 2004 - EviLDeD) Added the new tags for the xFTPd, and xFTPc support.
+// (September 06 2003 - Maarc)	Removed unused tags (heartbeat, wilderness, uoxbot, lagfix)
+// (October 16, 2003 - giwo)	Removed unused tag (SAVEMODE) and added "WEIGHTPERSTR".
+// (April 3, 2004 = EviLDeD)	Added new tags, for UOG support, as well as new facet tags etc.
+// (June 15, 2004 - EviLDeD)	Added the new tags for the xFTPd, and xFTPc support.
+// (April 2, 2005 - giwo)		Removed superfluous tags (BEGGINGTIMER, HUNGERDAMAGERATE, HUNGERTHRESHOLD, BEGGINGRANGE)
+// (September 13, 2005 - giwo)	Added MAPCOUNT to the uox.ini to specify the number of maps UOX3 uses.
+// (November 20, 2005 - giwo) 	Removed USEFACETSAVES, MAP0, MAP1, MAP2, MAP3, USERMAP, FTPDENABLED,
+//								FTPDUSER, FTPDUSERLIMIT, FTPDBIND, FTPDROOT, FTPCENABLED, FTPCHOST,
+//								FTPCPORT, FTPCUSER, FTPCULFLAGS, and MAPCOUNT as they were unused.
+//								Added OVERLOADPACKETS option to uox.ini to toggle JS packet handling.
+// (December 13, 2005 - giwo)	Changed uox.ini entry SHOWHIDDENNPCS to SHOWOFFLINEPCS to better reflect its function.
+//								Removed CACHEMULS from the uox.ini as it is no longer used.
+// (February 12, 2006 - giwo)	Added NPCMOVEMENTSPEED to the UOX.ini to allow customization of NPC movement speeds.
+// (July 7, 2006 - Xuri)		PLAYERPERSECUTION in uox.ini (allows ghosts to drain mana from other players) set to 0 by default
+// (July 18, 2006 - giwo)		Added uox.ini flag to disable/enable the A* Pathfinding routine: ADVANCEDPATHFINDING=0/1
+// (July 24, 2006 - giwo)		Simplified many entries in uox.ini, making them easier to read.
+// (January 28, 2007 - giwo)	Moved dynamic parts of [worldlight] section from uox.ini to their own output file in the /shared/ directory
+// (March 3, 2007 - giwo)		Removed CLIENTSUPPORT from the uox.ini
+//								Allowed customization of supported client features via uox.ini
+//									CLIENTFEATURES
+//									SERVERFEATURES
+// (April 9, 2007 - grimson)	Added a new setting to the uox.ini, LOOTINGISCRIME. If you set it to 0 looting corpses of innocent chars is not taken as a crime.
+// (June 10, 2007 - grimson)	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they work the same way as NPCMOVEMENTSPEED.
+// (July 28, 2007 - grimson)	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the tooltips will only contain basic information, like the name and the weight of an item.
+// (February 7, 2010 - Xuri)	Added new UOX.INI settings:
+//									GLOBALITEMDECAY - Toggles on / off item decay on a global scale.Note that it does not remove the decay - status from items, it just resets the decay - timer when it reaches 0
+//									SCRIPTITEMSDECAYABLE - Toggles whether DFN - items will decay by default or not.Can be overriden by DECAY tag in item - DFNs
+//									BASEITEMSDECAYABLE - Toggles whether base - items will decay by default or not.Can be overriden by DECAY tag in harditems.dfn
+//									ITEMDECAYINHOUSES - Toggles default decay of non - locked down items inside multis( houses and boats )
+// (December 14, 20011 - Xuri)	Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
+// (March 19, 2012 - Xuri)		Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
+//									Can be enabled / disabled through UOX.INI setting PAPERDOLLGUILDBUTTON = 0 / 1. Defaults to 0.
+//								Added new UOX.INI option to determine whether attack - speed bonuses are gained from Stamina( default ) or Dexterity: ATTACKSPEEDFROMSTAMINA = 1 / 0
+//								Added new UOX.INI option to control the displaying of damage - numbers in combat( previously used DISPLAYHITMSG for numbers too ) : DISPLAYDAMAGENUMBERS = 1 / 0
+//								Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client - versions for the server :
+//									CLIENTSUPPORT4000 = 0 / 1
+//									CLIENTSUPPORT5000 = 0 / 1
+//									CLIENTSUPPORT6000 = 0 / 1
+//									CLIENTSUPPORT6050 = 0 / 1
+//									CLIENTSUPPORT7000 = 0 / 1
+//									CLIENTSUPPORT7090 = 0 / 1
+//									CLIENTSUPPORT70160 = 0 / 1
+//									CLIENTSUPPORT70240 = 0 / 1
+//									NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned.This means that CLIENTSUPPORT4000, for instance,
+//									will allow or disallow connections from clients 4.0.0 to 4.0.11f.Also note that while it is possible to enable support for all clients at the same time,
+//									it highly recommended to restrict support for client versions that match up to what the server is running.
+//								Added new UOX.INI option : EXTENDEDSTARTINGSTATS = 0 / 1
+//									If enabled, makes new characters start with 90 statpoints( selectable in clients 7.0.16.0 + only, lower versions only get 90 if using templates ) instead of 80.
+//								Added new UOX.INI option : EXTENDEDSTARTINGSKILLS = 0 / 1
+//									If enabled, allows for four starting skills( selectable in clients 7.0.16.0 + only, lower versions only get 4th skill if using templates ) instead of three
+// (November 14, 2012 - Xuri)	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
+// (November 10, 2013 - Xuri)	Added new UOX.INI settings for adjusting combat-speed on a global scale:
+//									GLOBALATTACKSPEED = 1 	// for adjusting speed of melee and ranged attacks globally for all chars
+//									NPCSPELLCASTSPEED = 1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
+//								Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable :
+//									WEAPONDAMAGECHANCE = 17 	// Chance of weapons taking damage when attacking
+//									WEAPONDAMAGEMIN = 0		// Minimum amount of damage a weapon takes if damaged in combat
+//									WEAPONDAMAGEMAX = 1		// Maximum amount of damage a weapon takes if damaged in combat
+//									ARMORDAMAGECHANCE = 25	// Chance of armor taking damage when defending
+//									ARMORDAMAGEMIN = 0		// Minimum amount of damage armor can take if damaged in combat
+//									ARMORDAMAGEMAX = 1		// Maximum amount of damage armor can take if damaged in combat
+// (September 12, 2015 - Xuri)	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
+//									FISHINGSTAMINALOSS = 2	// The amount of stamina lost when using the fishing skill
+// (November 24, 2019 - Xuri)	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
+//									RANDOMSTARTINGLOCATION = 0	// 0 to disable (default), 1 to enable
+
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECTION|COMMANDPREFIX|ANNOUNCEWORLDSAVES|JOINPARTMSGS|MULCACHING|BACKUPSENABLED|SAVESTIMER|"
 	"SKILLCAP|SKILLDELAY|STATCAP|MAXSTEALTHMOVEMENTS|MAXSTAMINAMOVEMENTS|ARMORAFFECTMANAREGEN|CORPSEDECAYTIMER|WEATHERTIMER|SHOPSPAWNTIMER|DECAYTIMER|INVISIBILITYTIMER|"
@@ -96,6 +158,11 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ResetDefaults( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reset server settings to default
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::ResetDefaults( void )
 {
 	resettingDefaults = true;
@@ -317,15 +384,15 @@ void CServerData::ResetDefaults( void )
 	}
 
 	// Enable login-support for any supported client version by default.
-	ClientSupport4000( true );
-	ClientSupport5000( true );
-	ClientSupport6000( true );
-	ClientSupport6050( true );
+	ClientSupport4000( false );
+	ClientSupport5000( false );
+	ClientSupport6000( false );
+	ClientSupport6050( false );
 	ClientSupport7000( true );
 	ClientSupport7090( true );
 	ClientSupport70160( true );
 	ClientSupport70240( true );
-	ClientSupport70300( false );
+	ClientSupport70300( true );
 	ClientSupport70331( false );
 	ClientSupport704565( false );
 	ClientSupport70610( false );
@@ -348,6 +415,11 @@ CServerData::~CServerData()
 {
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RefreshIPs( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Refresh IPs for servers in serverlist
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::RefreshIPs( void )
 {
 	struct hostent *lpHostEntry = NULL;
@@ -368,6 +440,16 @@ void CServerData::RefreshIPs( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string ServerName( void ) const
+//|					void ServerName( std::string setname )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server name. Sets to specified value, or to default name if no value specified
+//o-----------------------------------------------------------------------------------------------o
+std::string CServerData::ServerName( void ) const
+{
+	return serverList[0].getName();
+}
 void CServerData::ServerName( std::string setname )
 {
 	if( serverList.empty() )
@@ -375,15 +457,20 @@ void CServerData::ServerName( std::string setname )
 	serverList[0].setName( setname );
 	if( setname.empty() )
 	{
-		serverList[0].setName( "Default UOX Server" );
+		serverList[0].setName( "Default UOX3 Server" );
 	}
 }
 
-std::string CServerData::ServerName( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string ServerDomain( void ) const
+//|					void ServerDomain( std::string setdomain )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server domain. Sets to specified value, or to no domain if no value specified
+//o-----------------------------------------------------------------------------------------------o
+std::string CServerData::ServerDomain( void ) const
 {
-	return serverList[0].getName();
+	return serverList[0].getDomain();
 }
-
 void CServerData::ServerDomain( std::string setdomain )
 {
 	if( serverList.empty() )
@@ -394,11 +481,16 @@ void CServerData::ServerDomain( std::string setdomain )
 		serverList[0].setDomain( setdomain );
 }
 
-std::string CServerData::ServerDomain( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string CServerData::ServerIP( void ) const
+//|					void ServerIP( std::string setip )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server IP. Sets to specified value, or to loopback IP if no value specified
+//o-----------------------------------------------------------------------------------------------o
+std::string CServerData::ServerIP( void ) const
 {
-	return serverList[0].getDomain();
+	return serverList[0].getIP();
 }
-
 void CServerData::ServerIP( std::string setip )
 {
 	if( serverList.empty() )
@@ -409,11 +501,16 @@ void CServerData::ServerIP( std::string setip )
 		serverList[0].setIP(setip);
 }
 
-std::string CServerData::ServerIP( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerPort( void ) const
+//|					void ServerPort( UI16 setport )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set server port to specified value, or to default port if no value specified
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerPort( void ) const
 {
-	return serverList[0].getIP();
+	return port;
 }
-
 void CServerData::ServerPort( UI16 setport )
 {
 	if( setport == 0 )
@@ -422,95 +519,123 @@ void CServerData::ServerPort( UI16 setport )
 		port = setport;
 }
 
-UI16 CServerData::ServerPort( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ServerConsoleLogStatus( void ) const
+//|					void ServerConsoleLog( UI08 setting )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set console log enabled/disabled state
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::ServerConsoleLogStatus( void ) const
 {
-	return port;
+	return consolelogenabled;
 }
-
 void CServerData::ServerConsoleLog( UI08 setting )
 {
 	consolelogenabled = setting;
 }
 
-UI08 CServerData::ServerConsoleLogStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ServerCrashProtectionStatus( void ) const
+//|					void ServerCrashProtection( UI08 setting )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set crash protection enabled/disabled state
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::ServerCrashProtectionStatus( void ) const
 {
-	return consolelogenabled;
+	return crashprotectionenabled;
 }
-
 void CServerData::ServerCrashProtection( UI08 setting )
 {
 	crashprotectionenabled = (setting > 5 && !(setting < 1)) ? 1 : setting;
 }
 
-UI08 CServerData::ServerCrashProtectionStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	char ServerCommandPrefix( void ) const
+//|					void ServerCommandPrefix( char cmdvalue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set command prefix
+//o-----------------------------------------------------------------------------------------------o
+char CServerData::ServerCommandPrefix( void ) const
 {
-	return crashprotectionenabled;
+	return commandprefix;
 }
-
 void CServerData::ServerCommandPrefix( char cmdvalue )
 {
 	commandprefix = cmdvalue;
 }
 
-char CServerData::ServerCommandPrefix( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerAnnounceSavesStatus( void ) const
+//|					void ServerAnnounceSaves( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Set status of server accouncements for worldsaves
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerAnnounceSavesStatus( void ) const
 {
-	return commandprefix;
+	return boolVals.test( BIT_ANNOUNCESAVES );
 }
-
 void CServerData::ServerAnnounceSaves( bool newVal )
 {
 	boolVals.set( BIT_ANNOUNCESAVES, newVal );
 }
 
-bool CServerData::ServerAnnounceSavesStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerJoinPartAnnouncementsStatus( void ) const
+//|					void ServerJoinPartAnnouncements( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets status of server accouncements for players connecting/disconnecting
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
 {
-	return boolVals.test( BIT_ANNOUNCESAVES );
+	return boolVals.test( BIT_ANNOUNCEJOINPART );
 }
-
 void CServerData::ServerJoinPartAnnouncements( bool newVal )
 {
 	boolVals.set( BIT_ANNOUNCEJOINPART, newVal );
 }
 
-bool CServerData::ServerJoinPartAnnouncementsStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerBackupStatus( void ) const
+//|					void ServerBackups( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets enabled status of server worldsave backups 
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerBackupStatus( void ) const
 {
-	return boolVals.test( BIT_ANNOUNCEJOINPART );
+	return boolVals.test( BIT_SERVERBACKUP );
 }
-
 void CServerData::ServerBackups( bool newVal )
 {
 	boolVals.set( BIT_SERVERBACKUP, newVal );
 }
 
-bool CServerData::ServerBackupStatus( void ) const
-{
-	return boolVals.test( BIT_SERVERBACKUP );
-}
-
-void CServerData::ServerSavesTimer( UI32 timer )
-{
-	serversavestimer = timer;
-	if( timer < 180 )						// 3 minutes is the lowest value you can set saves for
-		serversavestimer = 300;	// 10 minutes default
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 ServerSavesTimerStatus( void ) const
+//|					void ServerSavesTimer( UI32 timer )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server world save timer
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::ServerSavesTimerStatus( void ) const
 {
 	return serversavestimer;
 }
-
-void CServerData::ServerSkillTotalCap( UI16 cap )
+void CServerData::ServerSavesTimer( UI32 timer )
 {
-	skilltotalcap = cap;
-	if( cap < 1 )		// Default is on second loop sleeping
-		skilltotalcap = SKILLTOTALCAP;
+	serversavestimer = timer;
+	if( timer < 180 )			// 3 minutes is the lowest value you can set saves for
+		serversavestimer = 300;	// 10 minutes default
 }
 
-UI16 CServerData::ServerSkillTotalCapStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerSkillCapStatus( void ) const
+//|					void ServerSkillCap( UI16 cap )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets cap for individual skills
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerSkillCapStatus( void ) const
 {
-	return skilltotalcap;
+	return skillcap;
 }
-
 void CServerData::ServerSkillCap( UI16 cap )
 {
 	skillcap = cap;
@@ -518,22 +643,48 @@ void CServerData::ServerSkillCap( UI16 cap )
 		skillcap = SKILLCAP;
 }
 
-UI16 CServerData::ServerSkillCapStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerSkillTotalCapStatus( void ) const
+//|					void ServerSkillTotalCap( UI16 cap )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets total cap for all skills
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerSkillTotalCapStatus( void ) const
 {
-	return skillcap;
+	return skilltotalcap;
+}
+void CServerData::ServerSkillTotalCap( UI16 cap )
+{
+	skilltotalcap = cap;
+	if( cap < 1 )		// Default is on second loop sleeping
+		skilltotalcap = SKILLTOTALCAP;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 ServerSkillDelayStatus( void ) const
+//|					void ServerSkillDelay( UI08 skdelay )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global delay for skill usage
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::ServerSkillDelayStatus( void ) const
+{
+	return skilldelay;
+}
 void CServerData::ServerSkillDelay( UI08 skdelay )
 {
 	skilldelay = skdelay;
 }
 
-UI08 CServerData::ServerSkillDelayStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerStatCapStatus( void ) const
+//|					void ServerStatCap( UI16 cap )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the total stat cap
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerStatCapStatus( void ) const
 {
-	return skilldelay;
+	return statcap;
 }
-
 void CServerData::ServerStatCap( UI16 cap )
 {
 	statcap = cap;
@@ -541,29 +692,34 @@ void CServerData::ServerStatCap( UI16 cap )
 		statcap = STATCAP;
 }
 
-UI16 CServerData::ServerStatCapStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 MaxStealthMovement( void ) const
+//|					void MaxStealthMovement( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max number of steps allowed to take while stealthed
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::MaxStealthMovement( void ) const
 {
-	return statcap;
+	return maxstealthmovement;
 }
-
 void CServerData::MaxStealthMovement( SI16 value )
 {
 	maxstealthmovement = value;
 }
 
-SI16 CServerData::MaxStealthMovement( void ) const
-{
-	return maxstealthmovement;
-}
-
-void CServerData::MaxStaminaMovement( SI16 value )
-{
-	maxstaminamovement = value;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 MaxStaminaMovement( void ) const
+//|					void MaxStaminaMovement( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max number of steps allowed while running before stamina is reduced
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::MaxStaminaMovement( void ) const
 {
 	return maxstaminamovement;
+}
+void CServerData::MaxStaminaMovement( SI16 value )
+{
+	maxstaminamovement = value;
 }
 
 TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
@@ -571,16 +727,27 @@ TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
 	return BuildTimeValue( static_cast<R32>(SystemTimer( timerID )) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 SystemTimer( cSD_TID timerid ) const
+//|					void SystemTimer( cSD_TID timerid, UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a specific server timer 
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::SystemTimer( cSD_TID timerid ) const
+{
+	return serverTimers[timerid];
+}
 void CServerData::SystemTimer( cSD_TID timerid, UI16 value )
 {
 	serverTimers[timerid] = value;
 }
 
-UI16 CServerData::SystemTimer( cSD_TID timerid ) const
-{
-	return serverTimers[timerid];
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string Directory( CSDDirectoryPaths dp )
+//|					void Directory( CSDDirectoryPaths dp, std::string value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets directory paths
+//o-----------------------------------------------------------------------------------------------o
 std::string CServerData::Directory( CSDDirectoryPaths dp )
 {
 	std::string rvalue;
@@ -588,7 +755,6 @@ std::string CServerData::Directory( CSDDirectoryPaths dp )
 		rvalue = serverDirectories[dp];
 	return rvalue;
 }
-
 void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 {
 	if( dp != CSDDP_COUNT )
@@ -655,40 +821,46 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ShootOnAnimalBack( void ) const
+//|					void ShootOnAnimalBack( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether players can shoot arrows while riding mounts
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ShootOnAnimalBack( void ) const
 {
 	return boolVals.test( BIT_SHOOTONANIMALBACK );
 }
-
 void CServerData::ShootOnAnimalBack( bool newVal )
 {
 	boolVals.set( BIT_SHOOTONANIMALBACK, newVal );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool NPCTrainingStatus( void ) const
+//|					void NPCTrainingStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether NPCs can train players in skills
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::NPCTrainingStatus( void ) const
 {
 	return boolVals.test( BIT_NPCTRAINING );
 }
-
 void CServerData::NPCTrainingStatus( bool newVal )
 {
 	boolVals.set( BIT_NPCTRAINING, newVal );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	void CServerData::dumpPaths( void )
-//|	Date			-	02/26/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-
-//o--------------------------------------------------------------------------o
-//|	Description		-	Needed a function that would dump out the paths. If you
-//|							add any paths to the server please make sure that you
-//|							place exports to the console here to please so it can
-//|							belooked up if needed.
-//o--------------------------------------------------------------------------o
-//|	Returns				-	N/A
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void dumpPaths( void )
+//|	Date		-	02/26/2002
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Needed a function that would dump out the paths. If you add any paths to the 
+//|					server please make sure that you place exports to the console here to please
+//|					 so it can be looked up if needed.
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::dumpPaths( void )
 {
 	Console.PrintSectionBegin();
@@ -708,36 +880,61 @@ void CServerData::dumpPaths( void )
 	Console.PrintSectionBegin();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CorpseLootDecay( void ) const
+//|					void CorpseLootDecay( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether loot decays along with corpses or is left on ground
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CorpseLootDecay( void ) const
+{
+	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
+}
 void CServerData::CorpseLootDecay( bool newVal )
 {
 	boolVals.set( BIT_LOOTDECAYSONCORPSE, newVal );
 }
 
-bool CServerData::CorpseLootDecay( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GuardsStatus( void ) const
+//|					void GuardStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guards are enabled globally or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GuardsStatus( void ) const
 {
-	return boolVals.test( BIT_LOOTDECAYSONCORPSE );
+	return boolVals.test( BIT_GUARDSENABLED );
 }
-
 void CServerData::GuardStatus( bool newVal )
 {
 	boolVals.set( BIT_GUARDSENABLED, newVal );
 }
 
-bool CServerData::GuardsStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DeathAnimationStatus( void ) const
+//|					void DeathAnimationStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether death animation plays when a player dies
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::DeathAnimationStatus( void ) const
 {
-	return boolVals.test( BIT_GUARDSENABLED );
+	return boolVals.test( BIT_PLAYDEATHANIMATION );
 }
-
 void CServerData::DeathAnimationStatus( bool newVal )
 {
 	boolVals.set( BIT_PLAYDEATHANIMATION, newVal );
 }
 
-bool CServerData::DeathAnimationStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 WorldAmbientSounds( void ) const
+//|					void WorldAmbientSounds( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets intensity of ambient world sounds, bird chirps, animal sounds, etc
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::WorldAmbientSounds( void ) const
 {
-	return boolVals.test( BIT_PLAYDEATHANIMATION );
+	return ambientsounds;
 }
-
 void CServerData::WorldAmbientSounds( SI16 value )
 {
 	if( value < 0 )
@@ -746,148 +943,231 @@ void CServerData::WorldAmbientSounds( SI16 value )
 		ambientsounds = value;
 }
 
-SI16 CServerData::WorldAmbientSounds( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AmbientFootsteps( void ) const
+//|					void AmbientFootsteps( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether context-specific footstep sounds are enabled or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::AmbientFootsteps( void ) const
 {
-	return ambientsounds;
+	return boolVals.test( BIT_AMBIENTFOOTSTEPS );
 }
-
 void CServerData::AmbientFootsteps( bool newVal )
 {
 	boolVals.set( BIT_AMBIENTFOOTSTEPS, newVal );
 }
 
-bool CServerData::AmbientFootsteps( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool InternalAccountStatus( void ) const
+//|					void InternalAccountStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether automatic account creation is enabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::InternalAccountStatus( void ) const
 {
-	return boolVals.test( BIT_AMBIENTFOOTSTEPS );
+	return boolVals.test( BIT_INTERNALACCOUNTS );
 }
-
 void CServerData::InternalAccountStatus( bool newVal )
 {
 	boolVals.set( BIT_INTERNALACCOUNTS, newVal );
 }
 
-bool CServerData::InternalAccountStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ShowOfflinePCs( void ) const
+//|					void ShowOfflinePCs( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether GMs can see offline players
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ShowOfflinePCs( void ) const
 {
-	return boolVals.test( BIT_INTERNALACCOUNTS );
+	return boolVals.test( BIT_SHOWOFFLINEPCS );
 }
-
 void CServerData::ShowOfflinePCs( bool newVal )
 {
 	boolVals.set( BIT_SHOWOFFLINEPCS, newVal );
 }
 
-bool CServerData::ShowOfflinePCs( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool RogueStatus( void ) const
+//|					void RogueStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether stealing skill is enabled
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::RogueStatus( void ) const
 {
-	return boolVals.test( BIT_SHOWOFFLINEPCS );
+	return boolVals.test( BIT_ROGUESTATUS );
 }
-
 void CServerData::RogueStatus( bool newVal )
 {
 	boolVals.set( BIT_ROGUESTATUS, newVal );
 }
 
-bool CServerData::RogueStatus( void ) const
-{
-	return boolVals.test( BIT_ROGUESTATUS );
-}
-
-void CServerData::SnoopIsCrime( bool newVal )
-{
-	boolVals.set( BIT_SNOOPISCRIME, newVal );
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SnoopIsCrime( void ) const
+//|					void SnoopIsCrime( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether snooping is considered a crime
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::SnoopIsCrime( void ) const
 {
 	return boolVals.test( BIT_SNOOPISCRIME );
 }
-
-void CServerData::ExtendedStartingStats( bool newVal )
+void CServerData::SnoopIsCrime( bool newVal )
 {
-	boolVals.set( BIT_EXTENDEDSTARTINGSTATS, newVal );
+	boolVals.set( BIT_SNOOPISCRIME, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ExtendedStartingStats( void ) const
+//|					void ExtendedStartingStats( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether extended starting stats are enabled
+//|					If enabled players start with 90 total statpoints instead of 80
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ExtendedStartingStats( void ) const
 {
 	return boolVals.test( BIT_EXTENDEDSTARTINGSTATS );
 }
-
-void CServerData::ExtendedStartingSkills( bool newVal )
+void CServerData::ExtendedStartingStats( bool newVal )
 {
-	boolVals.set( BIT_EXTENDEDSTARTINGSKILLS, newVal );
+	boolVals.set( BIT_EXTENDEDSTARTINGSTATS, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ExtendedStartingSkills( void ) const
+//|					void ExtendedStartingSkills( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether extended starting skills are enabled
+//|					If enabled, players start with 4 skills instead of 3, and have a total of
+//|					120 skillpoints at the start instead of 100
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ExtendedStartingSkills( void ) const
 {
 	return boolVals.test( BIT_EXTENDEDSTARTINGSKILLS );
 }
+void CServerData::ExtendedStartingSkills( bool newVal )
+{
+	boolVals.set( BIT_EXTENDEDSTARTINGSKILLS, newVal );
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool PlayerPersecutionStatus( void ) const
+//|					void PlayerPersecutionStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player ghosts can drain mana from other players by attacking them
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::PlayerPersecutionStatus( void ) const
+{
+	return boolVals.test( BIT_PERSECUTIONSTATUS );
+}
 void CServerData::PlayerPersecutionStatus( bool newVal )
 {
 	boolVals.set( BIT_PERSECUTIONSTATUS, newVal );
 }
 
-bool CServerData::PlayerPersecutionStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 HtmlStatsStatus( void ) const
+//|					void HtmlStatsStatus( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether html stats are enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::HtmlStatsStatus( void ) const
 {
-	return boolVals.test( BIT_PERSECUTIONSTATUS );
+	return htmlstatusenabled;
 }
-
 void CServerData::HtmlStatsStatus( SI16 value )
 {
 	htmlstatusenabled = value;
 }
 
-SI16 CServerData::HtmlStatsStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool SellByNameStatus( void ) const
+//|					void SellByNameStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items are sold by their name, not just ID/Colour
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::SellByNameStatus( void ) const
 {
-	return htmlstatusenabled;
+	return boolVals.test( BIT_SELLBYNAME );
 }
-
 void CServerData::SellByNameStatus( bool newVal )
 {
 	boolVals.set( BIT_SELLBYNAME, newVal );
 }
 
-bool CServerData::SellByNameStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 SellMaxItemsStatus( void ) const
+//|					void SellMaxItemsStatus( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum amount of items that can be sold in one go to a vendor
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::SellMaxItemsStatus( void ) const
 {
-	return boolVals.test( BIT_SELLBYNAME );
+	return sellmaxitems;
 }
-
 void CServerData::SellMaxItemsStatus( SI16 value )
 {
 	sellmaxitems = value;
 }
 
-SI16 CServerData::SellMaxItemsStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool TradeSystemStatus( void ) const
+//|					void TradeSystemStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the advanced trade system is enabled or not.
+//|					If enabled, prices of goods with NPC vendors will fluctuate with demand
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::TradeSystemStatus( void ) const
 {
-	return sellmaxitems;
+	return boolVals.test( BIT_TRADESYSSTATUS );
 }
-
 void CServerData::TradeSystemStatus( bool newVal )
 {
 	boolVals.set( BIT_TRADESYSSTATUS, newVal );
 }
 
-bool CServerData::TradeSystemStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool RankSystemStatus( void ) const
+//|					void RankSystemStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether rank system is enabled or not. If enabled, it allows for
+//|					variable quality of crafted items
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::RankSystemStatus( void ) const
 {
-	return boolVals.test( BIT_TRADESYSSTATUS );
+	return boolVals.test( BIT_RANKSYSSTATUS );
 }
-
 void CServerData::RankSystemStatus( bool newVal )
 {
 	boolVals.set( BIT_RANKSYSSTATUS, newVal );
 }
 
-bool CServerData::RankSystemStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CutScrollRequirementStatus( void ) const
+//|					void CutScrollRequirementStatus( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether skill requirements are cut when casting spells from scrolls
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CutScrollRequirementStatus( void ) const
 {
-	return boolVals.test( BIT_RANKSYSSTATUS );
+	return boolVals.test( BIT_CUTSCROLLREQ );
 }
-
 void CServerData::CutScrollRequirementStatus( bool newVal )
 {
 	boolVals.set( BIT_CUTSCROLLREQ, newVal );
 }
 
-bool CServerData::CutScrollRequirementStatus( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R64 CheckItemsSpeed( void ) const
+//|					void CheckItemsSpeed( R64 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often in seconds items are checked for decay and other things
+//o-----------------------------------------------------------------------------------------------o
+R64 CServerData::CheckItemsSpeed( void ) const
 {
-	return boolVals.test( BIT_CUTSCROLLREQ );
+	return checkitems;
 }
-
 void CServerData::CheckItemsSpeed( R64 value )
 {
 	if( value < 0.0 )
@@ -896,11 +1176,16 @@ void CServerData::CheckItemsSpeed( R64 value )
 		checkitems = value;
 }
 
-R64 CServerData::CheckItemsSpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R64 CheckBoatSpeed( void ) const
+//|					void CheckBoatSpeed( R64 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often in seconds boats are checked for decay and other things
+//o-----------------------------------------------------------------------------------------------o
+R64 CServerData::CheckBoatSpeed( void ) const
 {
-	return checkitems;
+	return checkboats;
 }
-
 void CServerData::CheckBoatSpeed( R64 value )
 {
 	if( value < 0.0 )
@@ -909,11 +1194,16 @@ void CServerData::CheckBoatSpeed( R64 value )
 		checkboats = value;
 }
 
-R64 CServerData::CheckBoatSpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R64 CheckNpcAISpeed( void ) const
+//|					void CheckNpcAISpeed( R64 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often in seconds NPCs will execute their AI routines
+//o-----------------------------------------------------------------------------------------------o
+R64 CServerData::CheckNpcAISpeed( void ) const
 {
-	return checkboats;
+	return checknpcai;
 }
-
 void CServerData::CheckNpcAISpeed( R64 value )
 {
 	if( value < 0.0 )
@@ -922,11 +1212,16 @@ void CServerData::CheckNpcAISpeed( R64 value )
 		checknpcai = value;
 }
 
-R64 CServerData::CheckNpcAISpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R64 CheckSpawnRegionSpeed( void ) const
+//|					void CheckSpawnRegionSpeed( R64 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often (in seconds) spawn regions are checked for new spawns
+//o-----------------------------------------------------------------------------------------------o
+R64 CServerData::CheckSpawnRegionSpeed( void ) const
 {
-	return checknpcai;
+	return checkspawnregions;
 }
-
 void CServerData::CheckSpawnRegionSpeed( R64 value )
 {
 	if( value < 0.0 )
@@ -935,71 +1230,111 @@ void CServerData::CheckSpawnRegionSpeed( R64 value )
 		checkspawnregions = value;
 }
 
-R64 CServerData::CheckSpawnRegionSpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 MsgBoardPostingLevel( void ) const
+//|					void MsgBoardPostingLevel( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the posting level for bulletin boards
+//|					UNUSED?
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MsgBoardPostingLevel( void ) const
 {
-	return checkspawnregions;
+	return msgpostinglevel;
 }
-
 void CServerData::MsgBoardPostingLevel( UI08 value )
 {
 	msgpostinglevel = value;
 }
 
-UI08 CServerData::MsgBoardPostingLevel( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 MsgBoardPostRemovalLevel( void ) const
+//|					void MsgBoardPostRemovalLevel( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the post removal level for bulleting boards
+//|					UNUSED?
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MsgBoardPostRemovalLevel( void ) const
 {
-	return msgpostinglevel;
+	return msgremovallevel;
 }
-
 void CServerData::MsgBoardPostRemovalLevel( UI08 value )
 {
 	msgremovallevel = value;
 }
 
-UI08 CServerData::MsgBoardPostRemovalLevel( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CServerData::MineCheck( void ) const
+//|					void CServerData::MineCheck( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the type of check used when players attempt to use the mining skill
+//|						0 = mine anywhere
+//|						1 = mine mountainsides/cavefloors only
+//|						2 = mine in mining regions only (not working?)
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::MineCheck( void ) const
 {
-	return msgremovallevel;
+	return minecheck;
 }
-
 void CServerData::MineCheck( UI08 value )
 {
 	minecheck = value;
 }
 
-UI08 CServerData::MineCheck( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatDisplayHitMessage( void ) const
+//|					void CombatDisplayHitMessage( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether combat hit messages are displayed in combat
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CombatDisplayHitMessage( void ) const
 {
-	return minecheck;
+	return boolVals.test( BIT_SHOWHITMESSAGE );
 }
-
 void CServerData::CombatDisplayHitMessage( bool newVal )
 {
 	boolVals.set( BIT_SHOWHITMESSAGE, newVal );
 }
 
-bool CServerData::CombatDisplayHitMessage( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatDisplayDamageNumbers( void ) const
+//|					void CombatDisplayDamageNumbers( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether combat damage numbers are displayed in combat
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CombatDisplayDamageNumbers( void ) const
 {
-	return boolVals.test( BIT_SHOWHITMESSAGE );
+	return boolVals.test( BIT_SHOWDAMAGENUMBERS );
 }
-
 void CServerData::CombatDisplayDamageNumbers( bool newVal )
 {
 	boolVals.set( BIT_SHOWDAMAGENUMBERS, newVal );
 }
 
-bool CServerData::CombatDisplayDamageNumbers( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatAttackSpeedFromStamina( void ) const
+//|					void CombatAttackSpeedFromStamina( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether combat attack speed is derived from stamina instead of dexterity
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CombatAttackSpeedFromStamina( void ) const
 {
-	return boolVals.test( BIT_SHOWDAMAGENUMBERS );
+	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
 }
-
 void CServerData::CombatAttackSpeedFromStamina( bool newVal )
 {
 	boolVals.set( BIT_ATTSPEEDFROMSTAMINA, newVal );
 }
 
-bool CServerData::CombatAttackSpeedFromStamina( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 GlobalAttackSpeed( void ) const
+//|					void GlobalAttackSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global attack speed in combat
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::GlobalAttackSpeed( void ) const
 {
-	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
+	return globalattackspeed;
 }
-
 void CServerData::GlobalAttackSpeed( R32 value )
 {
 	if( value < 0.0 )
@@ -1008,11 +1343,16 @@ void CServerData::GlobalAttackSpeed( R32 value )
 		globalattackspeed = value;
 }
 
-R32 CServerData::GlobalAttackSpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCSpellCastSpeed( void ) const
+//|					void NPCSpellCastSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global NPC spell casting speed
+//o-----------------------------------------------------------------------------------------------o
+R32 CServerData::NPCSpellCastSpeed( void ) const
 {
-	return globalattackspeed;
+	return npcspellcastspeed;
 }
-
 void CServerData::NPCSpellCastSpeed( R32 value )
 {
 	if( value < 0.0 )
@@ -1021,61 +1361,89 @@ void CServerData::NPCSpellCastSpeed( R32 value )
 		npcspellcastspeed = value;
 }
 
-R32 CServerData::NPCSpellCastSpeed( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 FishingStaminaLoss( void ) const
+//|					void FishingStaminaLoss( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the stamina loss for using the fishing skill
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::FishingStaminaLoss( void ) const
 {
-	return npcspellcastspeed;
+	return fishingstaminaloss;
 }
-
 void CServerData::FishingStaminaLoss( SI16 value )
 {
 	fishingstaminaloss = value;
 }
 
-SI16 CServerData::FishingStaminaLoss( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatNPCDamageRate( void ) const
+//|					void CombatNPCDamageRate( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the NPC damage divisor. If character is a player, damage from NPCs is
+//|					divided by this value.
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::CombatNPCDamageRate( void ) const
 {
-	return fishingstaminaloss;
+	return combatnpcdamagerate;
 }
-
 void CServerData::CombatNPCDamageRate( SI16 value )
 {
 	combatnpcdamagerate = value;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerUsingHSMultis( void ) const
+//|					void ServerUsingHSMultis( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server uses multi data from High Seas expansion
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerUsingHSMultis( void ) const
+{
+	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
+}
 void CServerData::ServerUsingHSMultis( bool newVal )
 {
 	boolVals.set( BIT_SERVERUSINGHSMULTIS, newVal );
 }
 
-bool CServerData::ServerUsingHSMultis( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerUsingHSTiles( void ) const
+//|					void ServerUsingHSTiles( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server uses tiledata from High Seas expansion
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::ServerUsingHSTiles( void ) const
 {
-	return boolVals.test( BIT_SERVERUSINGHSMULTIS );
+	return boolVals.test( BIT_SERVERUSINGHSTILES );
 }
-
 void CServerData::ServerUsingHSTiles( bool newVal )
 {
 	boolVals.set( BIT_SERVERUSINGHSTILES, newVal );
 }
 
-bool CServerData::ServerUsingHSTiles( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatAttackStamina( void ) const
+//|					void CombatAttackStamina( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the amount of stamina lost by swinging weapon in combat
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::CombatAttackStamina( void ) const
 {
-	return boolVals.test( BIT_SERVERUSINGHSTILES );
+	return combatattackstamina;
 }
-
-SI16 CServerData::CombatNPCDamageRate( void ) const
-{
-	return combatnpcdamagerate;
-}
-
 void CServerData::CombatAttackStamina( SI16 value )
 {
 	combatattackstamina = value;
 }
 
-SI16 CServerData::CombatAttackStamina( void ) const
-{
-	return combatattackstamina;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 SkillLevel( void ) const
+//|					void SkillLevel( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global difficulty level for crafting items
+//|					1 = easy, 5 = default, 10 = difficult
+//o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::SkillLevel( void ) const
 {
 	return skilllevel;
@@ -1085,241 +1453,337 @@ void CServerData::SkillLevel( UI08 value )
 	skilllevel = value;
 }
 
-void CServerData::EscortsEnabled( bool newVal )
-{
-	boolVals.set( BIT_ESCORTSTATUS, newVal );
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool EscortsEnabled( void ) const
+//|					void EscortsEnabled( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether escorts are enabled or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::EscortsEnabled( void ) const
 {
 	return boolVals.test( BIT_ESCORTSTATUS );
 }
-
-void CServerData::BasicTooltipsOnly( bool newVal )
+void CServerData::EscortsEnabled( bool newVal )
 {
-	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
+	boolVals.set( BIT_ESCORTSTATUS, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool BasicTooltipsOnly( void ) const
+//|					void BasicTooltipsOnly( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether basic tooltips are enabled or not (instead of advanced tooltips)
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::BasicTooltipsOnly( void ) const
 {
 	return boolVals.test( BIT_BASICTOOLTIPSONLY );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool GlobalItemDecay()
-//|	Date			-	2/07/2010
-//|	Developer(s)	-	Xuri
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles on or off decay on global scale
-//o--------------------------------------------------------------------------o
-void CServerData::GlobalItemDecay( bool newVal )
+void CServerData::BasicTooltipsOnly( bool newVal )
 {
-	boolVals.set( BIT_GLOBALITEMDECAY, newVal );
+	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GlobalItemDecay( void ) const
+//|					void GlobalItemDecay( bool newVal )
+//|	Date		-	2/07/2010
+//|	Programmer	-	Xuri
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether decay is enabled or disabled, on a global scale
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::GlobalItemDecay( void ) const
 {
 	return boolVals.test( BIT_GLOBALITEMDECAY );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool ScriptItemsDecayable()
-//|	Date			-	2/07/2010
-//|	Developer(s)	-	Xuri
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles default decay for items added through scripts
-//o--------------------------------------------------------------------------o
-void CServerData::ScriptItemsDecayable( bool newVal )
+void CServerData::GlobalItemDecay( bool newVal )
 {
-	boolVals.set( BIT_SCRIPTITEMSDECAYABLE, newVal );
+	boolVals.set( BIT_GLOBALITEMDECAY, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ScriptItemsDecayable( void ) const
+//|					void ScriptItemsDecayable( bool newVal )
+//|	Date		-	2/07/2010
+//|	Programmer	-	Xuri
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items added through scripts decay or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ScriptItemsDecayable( void ) const
 {
 	return boolVals.test( BIT_SCRIPTITEMSDECAYABLE );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool BaseItemsDecayable()
-//|	Date			-	2/07/2010
-//|	Developer(s)	-	Xuri
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles default decay for base items added
-//o--------------------------------------------------------------------------o
-void CServerData::BaseItemsDecayable( bool newVal )
+void CServerData::ScriptItemsDecayable( bool newVal )
 {
-	boolVals.set( BIT_BASEITEMSDECAYABLE, newVal );
+	boolVals.set( BIT_SCRIPTITEMSDECAYABLE, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool BaseItemsDecayable( void ) const
+//|					void BaseItemsDecayable( bool newVal )
+//|	Date		-	2/07/2010
+//|	Programmer	-	Xuri
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether base items added will decay or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::BaseItemsDecayable( void ) const
 {
 	return boolVals.test( BIT_BASEITEMSDECAYABLE );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool ItemDecayInHouses()
-//|	Date			-	2/07/2010
-//|	Developer(s)	-	Xuri
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles default decay for non-locked down items in houses
-//o--------------------------------------------------------------------------o
-void CServerData::ItemDecayInHouses( bool newVal )
+void CServerData::BaseItemsDecayable( bool newVal )
 {
-	boolVals.set( BIT_ITEMDECAYINHOUSES, newVal );
+	boolVals.set( BIT_BASEITEMSDECAYABLE, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ItemDecayInHouses( void ) const
+//|					void ItemDecayInHouses( bool newVal )
+//|	Date		-	2/07/2010
+//|	Programmer	-	Xuri
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether items inside houses will decay or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ItemDecayInHouses( void ) const
 {
 	return boolVals.test( BIT_ITEMDECAYINHOUSES );
 }
-
-void CServerData::PaperdollGuildButton( bool newVal )
+void CServerData::ItemDecayInHouses( bool newVal )
 {
-	boolVals.set( BIT_PAPERDOLLGUILDBUTTON, newVal );
+	boolVals.set( BIT_ITEMDECAYINHOUSES, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool PaperdollGuildButton( void ) const
+//|					void PaperdollGuildButton( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guild menu can be accessed from paperdoll button or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::PaperdollGuildButton( void ) const
 {
 	return boolVals.test( BIT_PAPERDOLLGUILDBUTTON );
 }
-
-void CServerData::CombatMonstersVsAnimals( bool newVal )
+void CServerData::PaperdollGuildButton( bool newVal )
 {
-	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+	boolVals.set( BIT_PAPERDOLLGUILDBUTTON, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatMonstersVsAnimals( void ) const
+//|					void CombatMonstersVsAnimals( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether monsters will attack animals or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::CombatMonstersVsAnimals( void ) const
 {
 	return boolVals.test( BIT_MONSTERSVSANIMALS );
 }
+void CServerData::CombatMonstersVsAnimals( bool newVal )
+{
+	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatAnimalsAttackChance( void ) const
+//|					void CombatAnimalsAttackChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance of monsters attacking animals
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatAnimalsAttackChance( void ) const
+{
+	return combatanimalattackchance;
+}
 void CServerData::CombatAnimalsAttackChance( UI08 value )
 {
 	if( value > 100 )
 		value = 100;
 	combatanimalattackchance = value;
 }
-UI08 CServerData::CombatAnimalsAttackChance( void ) const
-{
-	return combatanimalattackchance;
-}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatWeaponDamageChance( void ) const
+//|					void CombatWeaponDamageChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether combat will damage weapons or not
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatWeaponDamageChance( void ) const
+{
+	return combatweapondamagechance;
+}
 void CServerData::CombatWeaponDamageChance( UI08 value )
 {
 	if( value > 100 )
 		value = 100;
 	combatweapondamagechance = value;
 }
-UI08 CServerData::CombatWeaponDamageChance( void ) const
-{
-	return combatweapondamagechance;
-}
 
-void CServerData::CombatWeaponDamageMin( UI08 value )
-{
-	combatweapondamagemin = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatWeaponDamageMin( void ) const
+//|					void CombatWeaponDamageMin( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the min amount of damage (in hitpoints) weapons will take from combat
+//o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatWeaponDamageMin( void ) const
 {
 	return combatweapondamagemin;
 }
-
-void CServerData::CombatWeaponDamageMax( UI08 value )
+void CServerData::CombatWeaponDamageMin( UI08 value )
 {
-	combatweapondamagemax = value;
+	combatweapondamagemin = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatWeaponDamageMax( void ) const
+//|					void CombatWeaponDamageMax( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max amount of damage (in hitpoints) weapons will take from combat
+//o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatWeaponDamageMax( void ) const
 {
 	return combatweapondamagemax;
 }
+void CServerData::CombatWeaponDamageMax( UI08 value )
+{
+	combatweapondamagemax = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatArmorDamageChance( void ) const
+//|					void CombatArmorDamageChance( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the chance to damage armor in combat
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::CombatArmorDamageChance( void ) const
+{
+	return combatarmordamagechance;
+}
 void CServerData::CombatArmorDamageChance( UI08 value )
 {
 	if( value > 100 )
 		value = 100;
 	combatarmordamagechance = value;
 }
-UI08 CServerData::CombatArmorDamageChance( void ) const
-{
-	return combatarmordamagechance;
-}
 
-void CServerData::CombatArmorDamageMin( UI08 value )
-{
-	combatarmordamagemin = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatArmorDamageMin( void ) const
+//|					void CombatArmorDamageMin( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the min damage dealt to armor in combat
+//o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatArmorDamageMin( void ) const
 {
 	return combatarmordamagemin;
 }
-
-void CServerData::CombatArmorDamageMax( UI08 value )
+void CServerData::CombatArmorDamageMin( UI08 value )
 {
-	combatarmordamagemax = value;
+	combatarmordamagemin = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CombatArmorDamageMax( void ) const
+//|					void CombatArmorDamageMax( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max damage dealt to armor in combat
+//o-----------------------------------------------------------------------------------------------o
 UI08 CServerData::CombatArmorDamageMax( void ) const
 {
 	return combatarmordamagemax;
 }
-
-void CServerData::HungerDamage( SI16 value )
+void CServerData::CombatArmorDamageMax( UI08 value )
 {
-	hungerdamage = value;
+	combatarmordamagemax = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 HungerDamage( void ) const
+//|					void HungerDamage( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the damage taken from players being hungry
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::HungerDamage( void ) const
 {
 	return hungerdamage;
 }
-
-void CServerData::PetOfflineTimeout( UI16 value )
+void CServerData::HungerDamage( SI16 value )
 {
-	petOfflineTimeout = value;
+	hungerdamage = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 PetOfflineTimeout( void ) const
+//|					void PetOfflineTimeout( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the interval in seconds between checks for the player offline time
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::PetOfflineTimeout( void ) const
 {
 	return petOfflineTimeout;
 }
-
-void CServerData::PetHungerOffline( bool newVal )
+void CServerData::PetOfflineTimeout( UI16 value )
 {
-	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
+	petOfflineTimeout = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool PetHungerOffline( void ) const
+//|					void PetHungerOffline( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether pets should hunger while the player (owner) is offline or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::PetHungerOffline( void ) const
 {
 	return boolVals.test( BIT_PETHUNGEROFFLINE );
 }
-
-void CServerData::BuyThreshold( SI16 value )
+void CServerData::PetHungerOffline( bool newVal )
 {
-	buyThreshold = value;
+	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 BuyThreshold( void ) const
+//|					void BuyThreshold( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the threshold for when money is taken from a player's bank account
+//|					when buying something from a vendor instead of from their backpack
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::BuyThreshold( void ) const
 {
 	return buyThreshold;
 }
-
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool CharHideWhileMounted()
-//|	Date			-	09/22/2002
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Toggle characters ability to hide whilst mounted
-//o--------------------------------------------------------------------------o
-void CServerData::CharHideWhileMounted( bool newVal )
+void CServerData::BuyThreshold( SI16 value )
 {
-	boolVals.set( BIT_HIDEWHILEMOUNTED, newVal );
+	buyThreshold = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CharHideWhileMounted( void ) const
+//|					void CharHideWhileMounted( bool newVal )
+//|	Date		-	09/22/2002
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether players can hide while mounted or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::CharHideWhileMounted( void ) const
 {
 	return boolVals.test( BIT_HIDEWHILEMOUNTED );
 }
+void CServerData::CharHideWhileMounted( bool newVal )
+{
+	boolVals.set( BIT_HIDEWHILEMOUNTED, newVal );
+}
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	R32 WeightPerStr()
-//|	Date			-	3/12/2003
-//|	Developer(s)	-	Zane
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Amount of Weight one can hold per point of STR
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 WeightPerStr( void ) const
+//|					void WeightPerStr( R32 newVal )
+//|	Date		-	3/12/2003
+//|	Programmer	-	Zane
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets amount of weight one can hold per point of STR
+//o-----------------------------------------------------------------------------------------------o
 R32 CServerData::WeightPerStr( void ) const
 {
 	return weightPerSTR;
@@ -1329,14 +1793,15 @@ void CServerData::WeightPerStr( R32 newVal )
 	weightPerSTR = newVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool ServerOverloadPackets()
-//|	Date			-	11/20/2005
-//|	Developer(s)	-	giwo
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Enables / Disables Packet handling in JS
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ServerOverloadPackets( void ) const
+//|					void ServerOverloadPackets( bool newVal )
+//|	Date		-	11/20/2005
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether packet handling in JS is enabled or disabled
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ServerOverloadPackets( void ) const
 {
 	return boolVals.test( BIT_OVERLOADPACKETS );
@@ -1346,14 +1811,15 @@ void CServerData::ServerOverloadPackets( bool newVal )
 	boolVals.set( BIT_OVERLOADPACKETS, newVal );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool ArmorAffectManaRegen()
-//|	Date			-	3/20/2005
-//|	Developer(s)	-	giwo
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles whether or not armor affects mana regeneration
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ArmorAffectManaRegen( void ) const
+//|					void ArmorAffectManaRegen( bool newVal )
+//|	Date		-	3/20/2005
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether armor affects mana regeneration or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ArmorAffectManaRegen( void ) const
 {
 	return boolVals.test( BIT_ARMORAFFECTMANAREGEN );
@@ -1363,44 +1829,33 @@ void CServerData::ArmorAffectManaRegen( bool newVal )
 	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool AdvancedPathfinding()
-//|	Date			-	7/16/2005
-//|	Developer(s)	-	giwo
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles whether or not we use the A* Pathfinding routine
-//o--------------------------------------------------------------------------o
-void CServerData::AdvancedPathfinding( bool newVal )
-{
-	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AdvancedPathfinding( void ) const
+//|					void AdvancedPathfinding( bool newVal )
+//|	Date		-	7/16/2005
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether NPCs use the A* Pathfinding routine or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::AdvancedPathfinding( void ) const
 {
 	return boolVals.test( BIT_ADVANCEDPATHFIND );
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool MapIsUOPWrapped()
-//|	Date			-	3/14/2012
-//|	Developer(s)	-	Xuri
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles whether or not mapfiles are uop-wrapped
-//o--------------------------------------------------------------------------o
-void CServerData::MapIsUOPWrapped( UI08 mapNum, bool newVal )
+void CServerData::AdvancedPathfinding( bool newVal )
 {
-	switch( mapNum )
-	{
-	case 0: boolVals.set( BIT_MAP0ISUOPWRAPPED, newVal ); break;
-	case 1: boolVals.set( BIT_MAP1ISUOPWRAPPED, newVal ); break;
-	case 2: boolVals.set( BIT_MAP2ISUOPWRAPPED, newVal ); break;
-	case 3: boolVals.set( BIT_MAP3ISUOPWRAPPED, newVal ); break;
-	case 4: boolVals.set( BIT_MAP4ISUOPWRAPPED, newVal ); break;
-	case 5: boolVals.set( BIT_MAP5ISUOPWRAPPED, newVal ); break;
-	default: break;
-	}
+	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MapIsUOPWrapped( UI08 mapNum ) const
+//|					void MapIsUOPWrapped( UI08 mapNum, bool newVal )
+//|	Date		-	3/14/2012
+//|	Programmer	-	Xuri
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether mapfiles are uop-wrapped or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::MapIsUOPWrapped( UI08 mapNum ) const
 {
 	switch( mapNum )
@@ -1414,350 +1869,565 @@ bool CServerData::MapIsUOPWrapped( UI08 mapNum ) const
 	default: return false; break;
 	}
 }
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool LootingIsCrime()
-//|	Date			-	4/09/2007
-//|	Developer(s)	-	grimson
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Purpose			-	Toggles whether or not looting of corpses can be a crime
-//o--------------------------------------------------------------------------o
-void CServerData::LootingIsCrime( bool newVal )
+void CServerData::MapIsUOPWrapped( UI08 mapNum, bool newVal )
 {
-	boolVals.set( BIT_LOOTINGISCRIME, newVal );
+	switch( mapNum )
+	{
+	case 0: boolVals.set( BIT_MAP0ISUOPWRAPPED, newVal ); break;
+	case 1: boolVals.set( BIT_MAP1ISUOPWRAPPED, newVal ); break;
+	case 2: boolVals.set( BIT_MAP2ISUOPWRAPPED, newVal ); break;
+	case 3: boolVals.set( BIT_MAP3ISUOPWRAPPED, newVal ); break;
+	case 4: boolVals.set( BIT_MAP4ISUOPWRAPPED, newVal ); break;
+	case 5: boolVals.set( BIT_MAP5ISUOPWRAPPED, newVal ); break;
+	default: break;
+	}
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool LootingIsCrime( void ) const
+//|					void LootingIsCrime( bool newVal )
+//|	Date		-	4/09/2007
+//|	Programmer	-	grimson
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether looting of corpses can be a crime or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::LootingIsCrime( void ) const
 {
 	return boolVals.test( BIT_LOOTINGISCRIME );
 }
-
-void CServerData::BackupRatio( SI16 value )
+void CServerData::LootingIsCrime( bool newVal )
 {
-	backupRatio = value;
+	boolVals.set( BIT_LOOTINGISCRIME, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 BackupRatio( void ) const
+//|					void BackupRatio( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the ratio of worldsaves that get backed up
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::BackupRatio( void ) const
 {
 	return backupRatio;
 }
-
-void CServerData::CombatMaxRange( SI16 value )
+void CServerData::BackupRatio( SI16 value )
 {
-	combatmaxrange = value;
+	backupRatio = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatMaxRange( void ) const
+//|					void CombatMaxRange( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which combat can be engaged
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::CombatMaxRange( void ) const
 {
 	return combatmaxrange;
 }
-
-void CServerData::CombatArcherRange( SI16 value )
+void CServerData::CombatMaxRange( SI16 value )
 {
-	combatarcherrange = value;
+	combatmaxrange = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatArcherRange( void ) const
+//|					void CombatArcherRange( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which archery can be used in combat
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::CombatArcherRange( void ) const
 {
 	return combatarcherrange;
 }
-
-void CServerData::CombatMaxSpellRange( SI16 value )
+void CServerData::CombatArcherRange( SI16 value )
 {
-	combatmaxspellrange = value;
+	combatarcherrange = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatMaxSpellRange( void ) const
+//|					void CombatMaxSpellRange( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum range at which spells can be cast in combat
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::CombatMaxSpellRange( void ) const
 {
 	return combatmaxspellrange;
 }
-
-void CServerData::CombatExplodeDelay( UI16 value )
+void CServerData::CombatMaxSpellRange( SI16 value )
 {
-	combatExplodeDelay = value;
+	combatmaxspellrange = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 CombatExplodeDelay( void ) const
+//|					void CombatExplodeDelay( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the delay in seconds for the explosion spell to go into effect
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::CombatExplodeDelay( void ) const
 {
 	return combatExplodeDelay;
 }
-
-void CServerData::CombatAnimalsGuarded( bool newVal )
+void CServerData::CombatExplodeDelay( UI16 value )
 {
-	boolVals.set( BIT_ANIMALSGUARDED, newVal );
+	combatExplodeDelay = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CombatAnimalsGuarded( void ) const
+//|					void CombatAnimalsGuarded( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or not
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::CombatAnimalsGuarded( void ) const
 {
 	return boolVals.test( BIT_ANIMALSGUARDED );
 }
-
-void CServerData::CombatNPCBaseFleeAt( SI16 value )
+void CServerData::CombatAnimalsGuarded( bool newVal )
 {
-	combatnpcbasefleeat = value;
+	boolVals.set( BIT_ANIMALSGUARDED, newVal );
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatNPCBaseFleeAt( void ) const
+//|					void CombatNPCBaseFleeAt( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global health threshold where NPCs start fleeing in combat
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::CombatNPCBaseFleeAt( void ) const
 {
 	return combatnpcbasefleeat;
 }
-
-void CServerData::CombatNPCBaseReattackAt( SI16 value )
+void CServerData::CombatNPCBaseFleeAt( SI16 value )
 {
-	combatnpcbasereattackat = value;
+	combatnpcbasefleeat = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 CombatNPCBaseReattackAt( void ) const
+//|					void CombatNPCBaseReattackAt( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global health threshold where NPCs reattack after fleeing in combat
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::CombatNPCBaseReattackAt( void ) const
 {
 	return combatnpcbasereattackat;
 }
-
-void CServerData::NPCWalkingSpeed( R32 value )
+void CServerData::CombatNPCBaseReattackAt( SI16 value )
 {
-	npcWalkingSpeed = value;
+	combatnpcbasereattackat = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCWalkingSpeed( void ) const
+//|					void NPCWalkingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default walking speed for NPCs
+//o-----------------------------------------------------------------------------------------------o
 R32 CServerData::NPCWalkingSpeed( void ) const
 {
 	return npcWalkingSpeed;
 }
-
-void CServerData::NPCRunningSpeed( R32 value )
+void CServerData::NPCWalkingSpeed( R32 value )
 {
-	npcRunningSpeed = value;
+	npcWalkingSpeed = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 NPCRunningSpeed( void ) const
+//|					void NPCRunningSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default running speed for NPCs
+//o-----------------------------------------------------------------------------------------------o
 R32 CServerData::NPCRunningSpeed( void ) const
 {
 	return npcRunningSpeed;
 }
-
-void CServerData::NPCFleeingSpeed( R32 value )
+void CServerData::NPCRunningSpeed( R32 value )
 {
-	npcFleeingSpeed = value;
+	npcRunningSpeed = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R32 CServerData::NPCFleeingSpeed( void ) const
+//|					void CServerData::NPCFleeingSpeed( R32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global, default speed at which NPCs flee in combat
+//o-----------------------------------------------------------------------------------------------o
 R32 CServerData::NPCFleeingSpeed( void ) const
 {
 	return npcFleeingSpeed;
 }
-
-void CServerData::TitleColour( UI16 value )
+void CServerData::NPCFleeingSpeed( R32 value )
 {
-	titleColour = value;
+	npcFleeingSpeed = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 TitleColour( void ) const
+//|					void TitleColour( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default text colour for titles in gumps
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::TitleColour( void ) const
 {
 	return titleColour;
 }
-
-void CServerData::LeftTextColour( UI16 value )
+void CServerData::TitleColour( UI16 value )
 {
-	leftTextColour = value;
+	titleColour = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 LeftTextColour( void ) const
+//|					void LeftTextColour( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default text colour for left text in gumps (2 column ones)
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::LeftTextColour( void ) const
 {
 	return leftTextColour;
 }
-
-void CServerData::RightTextColour( UI16 value )
+void CServerData::LeftTextColour( UI16 value )
 {
-	rightTextColour = value;
+	leftTextColour = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 RightTextColour( void ) const
+//|					void RightTextColour( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default text colour for right text in gumps (2 column ones)
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::RightTextColour( void ) const
 {
 	return rightTextColour;
 }
-
-void CServerData::ButtonCancel( UI16 value )
+void CServerData::RightTextColour( UI16 value )
 {
-	buttonCancel = value;
+	rightTextColour = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ButtonCancel( void ) const
+//|					void ButtonCancel( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default Button ID for cancel button in gumps
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ButtonCancel( void ) const
 {
 	return buttonCancel;
 }
-
-void CServerData::ButtonLeft( UI16 value )
+void CServerData::ButtonCancel( UI16 value )
 {
-	buttonLeft = value;
+	buttonCancel = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ButtonLeft( void ) const
+//|					void ButtonLeft( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default Button ID for left button (navigation) in gumps
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ButtonLeft( void ) const
 {
 	return buttonLeft;
 }
-
-void CServerData::ButtonRight( UI16 value )
+void CServerData::ButtonLeft( UI16 value )
 {
-	buttonRight = value;
+	buttonLeft = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ButtonRight( void ) const
+//|					void ButtonRight( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default Button ID for right button (navigation) in gumps
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ButtonRight( void ) const
 {
 	return buttonRight;
 }
-
-void CServerData::BackgroundPic( UI16 value )
+void CServerData::ButtonRight( UI16 value )
 {
-	backgroundPic = value;
+	buttonRight = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 CServerData::BackgroundPic( void ) const
+//|					void CServerData::BackgroundPic( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default Gump ID for background gump
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::BackgroundPic( void ) const
 {
 	return backgroundPic;
 }
-
-void CServerData::TownNumSecsPollOpen( UI32 value )
+void CServerData::BackgroundPic( UI16 value )
 {
-	numSecsPollOpen = value;
+	backgroundPic = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 TownNumSecsPollOpen( void ) const
+//|					void TownNumSecsPollOpen( UI32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time (in seconds) for which a town voting poll is open
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::TownNumSecsPollOpen( void ) const
 {
 	return numSecsPollOpen;
 }
-
-void CServerData::TownNumSecsAsMayor( UI32 value )
+void CServerData::TownNumSecsPollOpen( UI32 value )
 {
-	numSecsAsMayor = value;
+	numSecsPollOpen = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 TownNumSecsAsMayor( void ) const
+//|					void TownNumSecsAsMayor( UI32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time (in seconds) that a PC would be a mayor
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::TownNumSecsAsMayor( void ) const
 {
 	return numSecsAsMayor;
 }
-
-void CServerData::TownTaxPeriod( UI32 value )
+void CServerData::TownNumSecsAsMayor( UI32 value )
 {
-	taxPeriod = value;
+	numSecsAsMayor = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 TownTaxPeriod( void ) const
+//|					void TownTaxPeriod( UI32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time (in seconds) between periods of taxes for PCs
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::TownTaxPeriod( void ) const
 {
 	return taxPeriod;
 }
-
-void CServerData::TownGuardPayment( UI32 value )
+void CServerData::TownTaxPeriod( UI32 value )
 {
-	guardPayment = value;
+	taxPeriod = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 TownGuardPayment( void ) const
+//|					void TownGuardPayment( UI32 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time (in seconds) between payments for guards
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::TownGuardPayment( void ) const
 {
 	return guardPayment;
 }
-
-void CServerData::RepMaxKills( UI16 value )
+void CServerData::TownGuardPayment( UI32 value )
 {
-	maxmurdersallowed = value;
+	guardPayment = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 RepMaxKills( void ) const
+//|					void RepMaxKills( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the threshold in player kills before a player turns red (murderer)
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::RepMaxKills( void ) const
 {
 	return maxmurdersallowed;
 }
-
-void CServerData::ResLogs( SI16 value )
+void CServerData::RepMaxKills( UI16 value )
 {
-	logsperarea = value;
+	maxmurdersallowed = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ResLogs( void ) const
+//|					void ResLogs( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum number of logs in a given resource area
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::ResLogs( void ) const
 {
 	return logsperarea;
 }
-
-void CServerData::ResLogTime( UI16 value )
+void CServerData::ResLogs( SI16 value )
 {
-	logsrespawntimer = value;
+	logsperarea = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ResLogTime( void ) const
+//|					void ResLogTime( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time it takes for 1 single log to respawn in a resource area
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ResLogTime( void ) const
 {
 	return logsrespawntimer;
 }
+void CServerData::ResLogTime( UI16 value )
+{
+	logsrespawntimer = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 CServerData::ResLogArea( void ) const
+//|					void CServerData::ResLogArea( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the number of log-areas to split the world into (min 10)
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ResLogArea( void ) const
+{
+	return logsrespawnarea;
+}
 void CServerData::ResLogArea( UI16 value )
 {
 	if( value < 10 )
 		value = 10;
 	logsrespawnarea = value;
 }
-UI16 CServerData::ResLogArea( void ) const
-{
-	return logsrespawnarea;
-}
 
-void CServerData::ResOre( SI16 value )
-{
-	oreperarea = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ResOre( void ) const
+//|					void ResOre( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the maximum number of ore in a given resource area
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::ResOre( void ) const
 {
 	return oreperarea;
 }
-
-void CServerData::ResOreTime( UI16 value )
+void CServerData::ResOre( SI16 value )
 {
-	orerespawntimer = value;
+	oreperarea = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ResOreTime( void ) const
+//|					void ResOreTime( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time it takes for 1 single ore to respawn in a resource area
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ResOreTime( void ) const
 {
 	return orerespawntimer;
 }
+void CServerData::ResOreTime( UI16 value )
+{
+	orerespawntimer = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ResOreArea( void ) const
+//|					void ResOreArea( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the number of ore-areas to split the world into (min 10)
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ResOreArea( void ) const
+{
+	return orerespawnarea;
+}
 void CServerData::ResOreArea( UI16 value )
 {
 	if( value < 10 )
 		value = 10;
 	orerespawnarea = value;
 }
-UI16 CServerData::ResOreArea( void ) const
-{
-	return orerespawnarea;
-}
 
-void CServerData::AccountFlushTimer( R64 value )
-{
-	flushTime = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	R64 AccountFlushTimer( void ) const
+//|					void AccountFlushTimer( R64 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often (in mins) online accounts are checked to see if they really ARE online
+//o-----------------------------------------------------------------------------------------------o
 R64 CServerData::AccountFlushTimer( void ) const
 {
 	return flushTime;
 }
+void CServerData::AccountFlushTimer( R64 value )
+{
+	flushTime = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetClientFeature( ClientFeatures bitNum ) const
+//|					void SetClientFeature( ClientFeatures bitNum, bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
+//|	Notes		-	See ClientFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
+{
+	return clientFeatures.test( bitNum );
+}
 void CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal )
 {
 	clientFeatures.set( bitNum, nVal );
 }
 
-bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
-{
-	return clientFeatures.test( bitNum );
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetClientFeatures( void ) const
+//|					void SetClientFeatures( UI32 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
+//|	Notes		-	See ClientFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
 UI32 CServerData::GetClientFeatures( void ) const
 {
 	return static_cast<UI32>(clientFeatures.to_ulong());
 }
-
 void CServerData::SetClientFeatures( UI32 nVal )
 {
 	clientFeatures = nVal;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetServerFeature( ServerFeatures bitNum ) const
+//|					void SetServerFeature( ServerFeatures bitNum, bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which server side features to enable
+//|	Notes		-	See ServerFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
+{
+	return serverFeatures.test( bitNum );
+}
 void CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal )
 {
 	serverFeatures.set( bitNum, nVal );
 }
 
-bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
-{
-	return serverFeatures.test( bitNum );
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t GetServerFeatures( void ) const
+//|					void SetServerFeatures( size_t nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which server side features to enable
+//|	Notes		-	See ServerFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
 size_t CServerData::GetServerFeatures( void ) const
 {
 	return serverFeatures.to_ulong();
 }
-
 void CServerData::SetServerFeatures( size_t nVal )
 {
 	serverFeatures = nVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool CServerData::save( void )
-//|	Date			-	02/21/2002
-//|	Developer(s)	-	Unknown
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-
-//o--------------------------------------------------------------------------o
-//|	Description		-	Save the uox.ini out. This is the default save
-//o--------------------------------------------------------------------------o
-//|	Returns			- [TRUE] If successfull
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CServerData::save( void )
+//|	Date		-	02/21/2002
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Save the uox.ini out. This is the default save
+//o-----------------------------------------------------------------------------------------------o
+//|	Returns		- [TRUE] If successfull
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::save( void )
 {
 	std::string s = Directory( CSDDP_ROOT );
@@ -1765,25 +2435,22 @@ bool CServerData::save( void )
 	return save( s );
 }
 
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool CServerData::save( std::string filename )
-//|	Date			-	Unknown
-//|	Developer(s)	-	EviLDeD/Unknown
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status				-
-//o--------------------------------------------------------------------------o
-//|	Description		-	This is the full uox.ini save routing.
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CServerData::save( std::string filename )
+//|	Programmer	-	EviLDeD/Unknown
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This is the full uox.ini save routing.
 //|
-//|	Modification	-	02/21/2002	-	Fixed paths not being saved back out
+//|	Changes		-	02/21/2002	-	Fixed paths not being saved back out
 //|
-//|	Modification	-	02/21/2002	-	Added ini support for the isloation system
+//|	Changes		-	02/21/2002	-	Added ini support for the isloation system
 //|									At this point it just defaults to Isolation level 1.
 //|
-//|	Modification	-	02/27/2002	-	Made sure that ALL directory paths are
+//|	Changes		-	02/27/2002	-	Made sure that ALL directory paths are
 //|									written out to the ini file.
 //|
-//|	Modification	-	04/03/2004	-	Added new tags to the system group
+//|	Changes		-	04/03/2004	-	Added new tags to the system group
 //|
 //|										SERVERNAME		: Name of the server.
 //|										NETRCVTIMEOUT	: Timeout in seconds for recieving data
@@ -1791,7 +2458,7 @@ bool CServerData::save( void )
 //|										UOGENABLED		: Does this server respond to UOGInfo Requests?
 //|																		0-No 1-Yes
 //|
-//|	Modification	-	04/03/2004	-	Added new group [facet] with these tags
+//|	Changes		-	04/03/2004	-	Added new group [facet] with these tags
 //|
 //|										USEFACETSAVES	: Does the server seperate facet data?
 //|																		0-No : All data will be saved into the shared folder
@@ -1801,9 +2468,7 @@ bool CServerData::save( void )
 //|																		Where Mapname is the name of the map and
 //|																		MapAccess the set of bit flags that allow/deny features and map access
 //|
-//o--------------------------------------------------------------------------o
-//|	Returns				-
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::save( std::string filename )
 {
 	bool rvalue = false;
@@ -1840,10 +2505,10 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CLIENTSUPPORT7090=" << (ClientSupport7090()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT70160=" << (ClientSupport70160()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT70240=" << (ClientSupport70240()?1:0) << '\n';
-		ofsOutput << "CLIENTSUPPORT70300=" << ( ClientSupport70300() ? 1 : 0 ) << '\n';
-		ofsOutput << "CLIENTSUPPORT70331=" << ( ClientSupport70331() ? 1 : 0 ) << '\n';
-		ofsOutput << "CLIENTSUPPORT704565=" << ( ClientSupport704565() ? 1 : 0 ) << '\n';
-		ofsOutput << "CLIENTSUPPORT70610=" << ( ClientSupport70610() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70300=" << (ClientSupport70300()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70331=" << (ClientSupport70331()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT704565=" << (ClientSupport704565()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
@@ -2031,7 +2696,7 @@ bool CServerData::save( std::string filename )
 
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
-			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].clilocDesc << '\n';
+			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceID << "," << startlocations[lCtr].clilocDesc << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
@@ -2068,31 +2733,46 @@ bool CServerData::save( std::string filename )
 	return rvalue;
 }
 
-//o------------------------------------------------------------------------
-//|	Function		-	Load()
-//|	Programmer		-	EviLDeD
-//|	Date			-	January 13, 2001
-//|	Modified		-
-//o------------------------------------------------------------------------
-//|	Purpose			-	Load up the uox.ini file and parse it into the internals
-//|	Returns			-	pointer to the valid inmemory serverdata storage(this)
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	Load()
+//|	Programmer	-	EviLDeD
+//|	Date		-	January 13, 2001
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Load up the uox.ini file and parse it into the internals
+//|	Returns		-	pointer to the valid inmemory serverdata storage(this)
 //|						NULL is there is an error, or invalid file type
-//o------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::Load( void )
 {
 	const UString fileName = Directory( CSDDP_ROOT ) + "uox.ini";
 	ParseINI( fileName );
 }
 
-void CServerData::TrackingBaseRange( UI16 value )
-{
-	trackingbaserange = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 TrackingBaseRange( void ) const
+//|					void TrackingBaseRange( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track at 
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::TrackingBaseRange( void ) const
 {
 	return trackingbaserange;
 }
+void CServerData::TrackingBaseRange( UI16 value )
+{
+	trackingbaserange = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 TrackingMaxTargets( void ) const
+//|					void TrackingMaxTargets( UI08 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max amount of targets someone can see in the tracking window
+//o-----------------------------------------------------------------------------------------------o
+UI08 CServerData::TrackingMaxTargets( void ) const
+{
+	return trackingmaxtargets;
+}
 void CServerData::TrackingMaxTargets( UI08 value )
 {
 	if( value >= MAX_TRACKINGTARGETS )
@@ -2100,39 +2780,47 @@ void CServerData::TrackingMaxTargets( UI08 value )
 	else
 		trackingmaxtargets = value;
 }
-UI08 CServerData::TrackingMaxTargets( void ) const
-{
-	return trackingmaxtargets;
-}
 
-void CServerData::TrackingBaseTimer( UI16 value )
-{
-	trackingbasetimer = value;
-}
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 TrackingBaseTimer( void ) const
+//|					void TrackingBaseTimer( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max amount of time a grandmaster tracker can track someone
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::TrackingBaseTimer( void ) const
 {
 	return trackingbasetimer;
 }
-
-void CServerData::TrackingRedisplayTime( UI16 value )
+void CServerData::TrackingBaseTimer( UI16 value )
 {
-	trackingmsgredisplaytimer = value;
+	trackingbasetimer = value;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 TrackingRedisplayTime( void ) const
+//|					void TrackingRedisplayTime( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets how often in seconds the tracking message is updated and displayed
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::TrackingRedisplayTime( void ) const
 {
 	return trackingmsgredisplaytimer;
 }
+void CServerData::TrackingRedisplayTime( UI16 value )
+{
+	trackingmsgredisplaytimer = value;
+}
 
-//o-----------------------------------------------------------------------o
-//|	Function	-	void DumpLookup( int lookupid );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void dumpLookup( int lookupid )
 //|	Date		-	January 31, 2001
 //|	Programmer	-	EviLDeD
-//o-----------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	This simply outputs a text file that contains the index
 //|					and lookup name found in the lookuptables. Saves having
 //|					to do it by hand if you make changes. Must be called from
 //|					within the class if used.
-//o-----------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::dumpLookup( int lookupid )
 {
 	// lookup is no longer needed, as we don't support server.scp any more
@@ -2159,21 +2847,17 @@ void CServerData::dumpLookup( int lookupid )
 	ofsOutput.close();
 }
 
-
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	bool CServerData::ParseINI( const std::string filename )
-//|	Date			-	02/26/2001
-//|	Developer(s)	-	EviLDeD
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-
-//o--------------------------------------------------------------------------o
-//|	Description		-	Parse the uox.ini file into its required information.
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ParseINI( const std::string filename )
+//|	Date		-	02/26/2001
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Parse the uox.ini file into its required information.
 //|
-//|	Modification	-	02/26/2002	-	Make sure that we parse out the logs, access
+//|	Changes		-	02/26/2002	-	Make sure that we parse out the logs, access
 //|									and other directories that we were not parsing/
-//o--------------------------------------------------------------------------o
-//|	Returns			-
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool CServerData::ParseINI( const std::string& filename )
 {
 	bool rvalue = false;
@@ -2823,34 +3507,43 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	return rvalue;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ServerStartGold( void ) const
+//|					void ServerStartGold( SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default amount of starting gold for new characters
+//o-----------------------------------------------------------------------------------------------o
+SI16 CServerData::ServerStartGold( void ) const
+{
+	return startgold;
+}
 void CServerData::ServerStartGold( SI16 value )
 {
 	if( value >= 0 )
 		startgold = value;
 }
 
-
-SI16 CServerData::ServerStartGold( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerStartPrivs( void ) const
+//|					void ServerStartPrivs( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default starting privs for new characters
+//o-----------------------------------------------------------------------------------------------o
+UI16 CServerData::ServerStartPrivs( void ) const
 {
-	return startgold;
+	return startprivs;
 }
-
 void CServerData::ServerStartPrivs( UI16 value )
 {
 	startprivs = value;
 }
 
-UI16 CServerData::ServerStartPrivs( void ) const
-{
-	return startprivs;
-}
-
-void CServerData::ServerMoon( SI16 slot, SI16 value )
-{
-	if( slot >= 0 && slot <= 1 && value >= 0 )
-		moon[slot] = value;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI16 ServerMoon( SI16 slot ) const
+//|					void ServerMoon( SI16 slot, SI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the phase of one of the game's two moons
+//o-----------------------------------------------------------------------------------------------o
 SI16 CServerData::ServerMoon( SI16 slot ) const
 {
 	SI16 rvalue = -1;
@@ -2858,63 +3551,106 @@ SI16 CServerData::ServerMoon( SI16 slot ) const
 		rvalue = moon[slot];
 	return rvalue;
 }
+void CServerData::ServerMoon( SI16 slot, SI16 value )
+{
+	if( slot >= 0 && slot <= 1 && value >= 0 )
+		moon[slot] = value;
+}
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	LIGHTLEVEL DungeonLightLevel( void ) const
+//|					void DungeonLightLevel( LIGHTLEVEL value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default, global light level for dungeons
+//o-----------------------------------------------------------------------------------------------o
+LIGHTLEVEL CServerData::DungeonLightLevel( void ) const
+{
+	return dungeonlightlevel;
+}
 void CServerData::DungeonLightLevel( LIGHTLEVEL value )
 {
 	dungeonlightlevel = value;
 }
 
-LIGHTLEVEL CServerData::DungeonLightLevel( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	LIGHTLEVEL WorldLightCurrentLevel( void ) const
+//|					void WorldLightCurrentLevel( LIGHTLEVEL value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default, global current light level outside of dungeons
+//o-----------------------------------------------------------------------------------------------o
+LIGHTLEVEL CServerData::WorldLightCurrentLevel( void ) const
 {
-	return dungeonlightlevel;
+	return currentlightlevel;
 }
-
 void CServerData::WorldLightCurrentLevel( LIGHTLEVEL value )
 {
 	currentlightlevel = value;
 }
 
-LIGHTLEVEL CServerData::WorldLightCurrentLevel( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	LIGHTLEVEL WorldLightBrightLevel( void ) const
+//|					void WorldLightBrightLevel( LIGHTLEVEL value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default, global light level for the brightest time of day
+//o-----------------------------------------------------------------------------------------------o
+LIGHTLEVEL CServerData::WorldLightBrightLevel( void ) const
 {
-	return currentlightlevel;
+	return brightnesslightlevel;
 }
-
 void CServerData::WorldLightBrightLevel( LIGHTLEVEL value )
 {
 	brightnesslightlevel = value;
 }
 
-LIGHTLEVEL CServerData::WorldLightBrightLevel( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	LIGHTLEVEL WorldLightDarkLevel( void ) const
+//|					void WorldLightDarkLevel( LIGHTLEVEL value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the default, global light level for the darkest time of day
+//o-----------------------------------------------------------------------------------------------o
+LIGHTLEVEL CServerData::WorldLightDarkLevel( void ) const
 {
-	return brightnesslightlevel;
+	return darknesslightlevel;
 }
-
 void CServerData::WorldLightDarkLevel( LIGHTLEVEL value )
 {
 	darknesslightlevel=value;
 }
 
-LIGHTLEVEL CServerData::WorldLightDarkLevel( void ) const
-{
-	return darknesslightlevel;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PostLoadDefaults( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If no start locations have been provided in ini, use hardcoded defaults
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::PostLoadDefaults( void )
 {
 	if( startlocations.empty() )
 	{
-		ServerLocation( "Yew,Center,545,982,0,0,1075072" );
-		ServerLocation( "Minoc,Tavern,2477,411,15,0,1075073" );
-		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,1075074" );
-		ServerLocation( "Moonglow,Docks,4406,1045,0,0,1075075" );
-		ServerLocation( "Trinsic,West Gate,1832,2779,0,0,1075076" );
-		ServerLocation( "Magincia,Docks,3675,2259,20,0,1075077" );
-		ServerLocation( "Jhelom,Docks,1492,3696,0,0,1075078" );
-		ServerLocation( "Skara Brae,Docks,639,2236,0,0,1075079" );
-		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,1075080" );
+		ServerLocation( "Yew,Center,545,982,0,0,0,1075072" );
+		ServerLocation( "Minoc,Tavern,2477,411,15,0,0,1075073" );
+		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,0,1075074" );
+		ServerLocation( "Moonglow,Docks,4406,1045,0,0,0,1075075" );
+		ServerLocation( "Trinsic,West Gate,1832,2779,0,0,0,1075076" );
+		ServerLocation( "Magincia,Docks,3675,2259,20,0,0,1075077" );
+		ServerLocation( "Jhelom,Docks,1492,3696,0,0,0,1075078" );
+		ServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
+		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	LPSTARTLOCATION ServerLocation( size_t locNum )
+//|					void ServerLocation( std::string toSet )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server start locations
+//o-----------------------------------------------------------------------------------------------o
+LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
+{
+	LPSTARTLOCATION rvalue = NULL;
+	if( locNum < startlocations.size() )
+		rvalue = &startlocations[locNum];
+	return rvalue;
+}
 void CServerData::ServerLocation( std::string toSet )
 {
 	UString temp( toSet );
@@ -2925,7 +3661,23 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
 		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
 		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.instanceID	= 0;
 		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toLong();
+		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
+		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
+		strcpy( toAdd.newDescription, temp.section( ",", 1, 1 ).c_str() );
+		startlocations.push_back( toAdd );
+	}
+	else if( temp.sectionCount( "," ) == 7 )	// instanceID included
+	{
+		STARTLOCATION toAdd;
+		toAdd.x				= temp.section( ",", 2, 2 ).toShort();
+		toAdd.y				= temp.section( ",", 3, 3 ).toShort();
+		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
+		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
+		toAdd.instanceID	= temp.section( ",", 6, 6 ).toUShort();
+		toAdd.clilocDesc	= temp.section( ",", 7, 7 ).toLong();
 		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
 		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
 		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
@@ -2937,19 +3689,18 @@ void CServerData::ServerLocation( std::string toSet )
 		Console.Error( "Malformed location entry in ini file" );
 	}
 }
-LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
-{
-	LPSTARTLOCATION rvalue = NULL;
-	if( locNum < startlocations.size() )
-		rvalue = &startlocations[locNum];
-	return rvalue;
-}
 
 size_t CServerData::NumServerLocations( void ) const
 {
 	return startlocations.size();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 ServerSecondsPerUOMinute( void ) const
+//|					void ServerSecondsPerUOMinute( UI16 newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the number of real life seconds per UO minute
+//o-----------------------------------------------------------------------------------------------o
 UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 {
 	return secondsperuominute;
@@ -2959,14 +3710,14 @@ void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 	secondsperuominute = newVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	void CServerData::SaveTime( void )
-//|	Date			-	January 28th, 2007
-//|	Developer(s)	-	giwo
-//|	Company/Team	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Outputs server time information to time.wsc in the /shared/ directory
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SaveTime( void )
+//|	Date		-	January 28th, 2007
+//|	Programmer	-	giwo
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Outputs server time information to time.wsc in the /shared/ directory
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::SaveTime( void )
 {
 	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
@@ -2990,6 +3741,11 @@ void CServerData::SaveTime( void )
 }
 
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CServerData::LoadTime( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads server time information from time.wsc in the /shared/ directory
+//o-----------------------------------------------------------------------------------------------o
 void CServerData::LoadTime( void )
 {
 	std::ifstream input;

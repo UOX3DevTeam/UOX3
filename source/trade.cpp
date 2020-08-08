@@ -9,13 +9,13 @@
 namespace UOX
 {
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Updates the status of the secure trade buttons (checked or unchecked) to both clients
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates the status of the secure trade buttons (checked or unchecked) to both clients
+//o-----------------------------------------------------------------------------------------------o
 void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )
 {
 	CPSecureTrading cpstOne( (*tradeWindowOne), (tradeWindowOne->GetTempVar( CITV_MOREZ ) % 256), (tradeWindowTwo->GetTempVar( CITV_MOREZ ) % 256) );
@@ -39,13 +39,13 @@ void sendTradeStatus( CItem *tradeWindowOne, CItem *tradeWindowTwo )
 		sendTradeStatus( s1, s2, tradeWindowOne, tradeWindowTwo );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Creates a TradeWindow and sends it to the clients
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates a TradeWindow and sends it to the clients
+//o-----------------------------------------------------------------------------------------------o
 CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 {
 	CItem *mPack = mChar->GetPackItem();
@@ -75,13 +75,13 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	return tradeWindow;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  CItem *startTrade( CSocket *mSock, CChar *nChar )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles everything necesarry to start a secure trade
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CItem *startTrade( CSocket *mSock, CChar *nChar )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles everything necesarry to start a secure trade
+//o-----------------------------------------------------------------------------------------------o
 CItem *startTrade( CSocket *mSock, CChar *nChar )
 {
 	if( mSock == NULL || !ValidateObject( nChar ) )
@@ -161,26 +161,26 @@ bool clearTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	}
 	return retVal;
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  void clearTrades( void )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Loops through all items to clear any active trades
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void clearTrades( void )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loops through all items to clear any active trades
+//o-----------------------------------------------------------------------------------------------o
 void clearTrades( void )
 {
 	UI32 b = 0;
 	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &clearTradesFunctor );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSuccess )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Handles everything necesarry to complete a trade
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSuccess )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles everything necesarry to complete a trade
+//o-----------------------------------------------------------------------------------------------o
 void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSuccess )
 {
 	CChar *p1 = FindItemOwner( tradeWindowOne );
@@ -238,13 +238,13 @@ void completeTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 	tradeWindowTwo->Delete();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void cancelTrade( CItem *tradeWindowOne )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Cancels a secure trade
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cancelTrade( CItem *tradeWindowOne )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cancels a secure trade
+//o-----------------------------------------------------------------------------------------------o
 void cancelTrade( CItem *tradeWindowOne )
 {
 	CItem *tradeWindowTwo = calcItemObjFromSer( tradeWindowOne->GetTempVar( CITV_MOREX ) );
@@ -313,13 +313,13 @@ bool killTradesFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	}
 	return retVal;
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  void killTrades( CChar *i )
-//|   Date        :  February 2, 2006
-//|   Programmer  :  giwo
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Cancels any active trades associated with a character.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void killTrades( CChar *i )
+//|	Date		-	February 2, 2006
+//|	Programmer	-	giwo
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cancels any active trades associated with a character.
+//o-----------------------------------------------------------------------------------------------o
 void killTrades( CChar *i )
 {
 	UI32 b = 0;

@@ -110,6 +110,7 @@ typedef struct __STARTLOCATIONDATA__
 	SI16	y;
 	SI16	z;
 	SI16	worldNum;
+	UI16	instanceID;
 	UI32	clilocDesc;
 
 } STARTLOCATION, *LPSTARTLOCATION;

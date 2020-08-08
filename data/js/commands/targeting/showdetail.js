@@ -27,7 +27,7 @@ function onCallback0( socket, ourObj )
 		case 2:	// opener for castle gate 1
 		case 4:	// opener for castle gate 2
 			message = "Opener for castle gate";
-			break; 
+			break;
 		case 3:	// castle gate 1
 		case 5:	// castle gate 2
 			message = "Castle gate";
@@ -164,9 +164,9 @@ function onCallback0( socket, ourObj )
 		case 52:
 			var moonGate;
 			moonGate = CalcItemFromSer( ourObj.morex );
-			message = "Moongate going to X " + moongate.x.toString();
-			message += " Y " + moongate.y.toString();
-			message += " Z " + moongate.z.toString();
+			message = "Moongate going to X " + moonGate.x.toString();
+			message += " Y " + moonGate.y.toString();
+			message += " Z " + moonGate.z.toString();
 			break;
 		case 60: // object teleporter
 			message = "A teleporter going to X " + ourObj.morex.toString();

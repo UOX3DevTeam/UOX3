@@ -1,22 +1,18 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	UOXJSMethods.cpp
-//|	Date			-	
-//|	Developers		-	DarkStorm
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Version History
-//|						1.0		Dark-Storm	20th December, 2001 Initial implementation
-//|								Methods for the javascript objects
-//|									
-//|								List of supported Classes:
-//|									- Gumps
-//|									- Char
-//|									- Item
-//|									- Socket
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	UOXJSMethods.cpp
+//|	Programmer	-	DarkStorm
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Version History
+//|					1.0		Dark-Storm	20th December, 2001 Initial implementation
+//|							Methods for the javascript objects
+//|								
+//|							List of supported Classes:
+//|								- Gumps
+//|								- Char
+//|								- Item
+//|								- Socket
+//o-----------------------------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 

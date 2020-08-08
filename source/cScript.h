@@ -80,6 +80,7 @@ enum ScriptEvent
 	seOnStart,
 	seOnStop,
 	seOnIterate,
+	seOnIterateSpawnRegions,
 	seOnPacketReceive,
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
@@ -101,17 +102,6 @@ struct SEGump
 	UI32 TextID;
 };
 
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	struct SEGumpData
-//|	Date			-	1/21/2003 7:05:06 AM
-//|	Developers		-	
-//|	Organization	-	
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
 struct SEGumpData
 {
 	STRINGLIST			sEdits;
@@ -165,6 +155,7 @@ public:
 	//
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b );
+	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
 	bool		OnCommand( CSocket *mSock ); 
 	bool		OnDelete( CBaseObject *thingDestroyed );

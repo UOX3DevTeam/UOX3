@@ -50,7 +50,7 @@ protected:
 									// RANK 10 --> 10*10 = 100% this item has no malus! RANK 10 is automatically setted if you select RANKSYSTEM 0.
 									// Vars: LODAMAGE, HIDAMAGE, ATT, DEF, HP, MAXHP
 	SI16			good; // Store type of GOODs to trade system! (Plz not set as UNSIGNED) --- Magius(CHE)
-	SI32			rndvaluerate; // Store the value calculated base on RANDOMVALUE in region.scp. ---- MAgius(CHE) (2)
+	SI32			rndvaluerate; // Store the value calculated base on RANDOMVALUE in region.dfn. ---- MAgius(CHE) (2)
 	SI08			madewith; // Store the skills used to make this item -- Magius(CHE)
 	SERIAL			glow;	// LB identifies glowing objects
 	COLOUR			glowColour;
@@ -130,10 +130,11 @@ public:
 	void			SetDesc( std::string newValue );
 
 	void			PlaceInPack( void );
+	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
 	virtual void	SetLocation( const CBaseObject *toSet ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) override;
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world );
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instanceID );
 	void			IncZ( SI16 newValue );
 	void			IncLocation( SI16 xInc, SI16 yInc );
 
@@ -157,8 +158,6 @@ public:
 
 	virtual UI16	GetMaxHP( void ) const;
 	virtual void	SetMaxHP( UI16 newValue );
-
-	void			IncID( SI16 incAmount );
 
 	UI08			GetSpeed( void ) const;
 	void			SetSpeed( UI08 newValue );

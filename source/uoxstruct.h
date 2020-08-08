@@ -182,7 +182,8 @@ struct GoPlaces_st
 	SI16 y;
 	SI08 z;
 	UI08 worldNum;
-	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 )
+	UI16 instanceID;
+	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 ), instanceID( 0 )
 	{
 	}
 };

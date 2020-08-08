@@ -1,16 +1,13 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	UOXJSPropertyFuncts.cpp
-//|	Date			-	12/14/2001
-//|	Developers		-	Abaddon / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	1.0		Abaddon		14th December, 2001 Initial implementation
-//|									Includes property getters for CItem and CChar, and property
-//|									setters for CChar
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	UOXJSPropertyFuncts.cpp
+//|	Date		-	12/14/2001
+//|	Programmer	-	Abaddon / EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|							Includes property getters for CItem and CChar, and property
+//|							setters for CChar
+//o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
@@ -34,6 +31,7 @@
 #include "classes.h"
 #include "movement.h"
 #include "Dictionary.h"
+#include "cSpawnRegion.h"
 
 #include "jsobj.h"
 #include "jsutil.h"
@@ -211,6 +209,7 @@ namespace UOX
 				case CIP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 				case CIP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
 				case CIP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
+				case CIP_INSTANCEID:	*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );		break;
 				case CIP_AMOUNT:		*vp = INT_TO_JSVAL( gPriv->GetAmount() );			break;
 				
 				// We should Accquie an object here and return that, so you can do
@@ -400,8 +399,17 @@ namespace UOX
 				case CIP_HEALTH:		gPriv->SetHP( (SI16)encaps.toInt() ); 						break;
 				case CIP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );			break;
 				case CIP_WORLDNUMBER:	
-					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
+					if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), (UI08)encaps.toInt() ))
+						return JS_FALSE;
+					gPriv->RemoveFromSight();
+					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt(), gPriv->GetInstanceID() );
 					break;
+				case CIP_INSTANCEID:
+				{
+					gPriv->RemoveFromSight();
+					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), gPriv->WorldNumber(), (UI16)encaps.toInt() );
+					break;
+				}
 				case CIP_AMOUNT:	gPriv->SetAmount( (UI32)encaps.toInt() ); 	break;
 				case CIP_CONTAINER:
 					if( *vp != JSVAL_NULL )
@@ -541,6 +549,7 @@ namespace UOX
 				case CCP_HEALTH:		*vp = INT_TO_JSVAL( gPriv->GetHP() );				break;
 				case CCP_SCRIPTTRIGGER:	*vp = INT_TO_JSVAL( gPriv->GetScriptTrigger() );	break;
 				case CCP_WORLDNUMBER:	*vp = INT_TO_JSVAL( gPriv->WorldNumber() );			break;
+				case CCP_INSTANCEID:	*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );		break;
 				case CCP_TARGET:
 					CChar *tempChar;
 					tempChar = gPriv->GetTarg();
@@ -874,9 +883,27 @@ namespace UOX
 				case CCP_SERIAL:															break;
 				case CCP_HEALTH:		gPriv->SetHP( encaps.toInt() );						break;
 				case CCP_SCRIPTTRIGGER:	gPriv->SetScriptTrigger( (UI16)encaps.toInt() );	break;
-				case CCP_WORLDNUMBER:	
-					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt() );
+				case CCP_WORLDNUMBER:
+					if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), (UI08)encaps.toInt() ))
+						return JS_FALSE;
+					gPriv->RemoveFromSight();
+					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), (UI08)encaps.toInt(), gPriv->GetInstanceID() );
+					if( !gPriv->IsNpc() )
+						SendMapChange( (UI08)encaps.toInt(), gPriv->GetSocket() );
 					break;
+				case CCP_INSTANCEID:
+				{
+					// Remove character from nearby players
+					gPriv->RemoveFromSight();
+
+					// Remove nearby objects from player!
+					if( !gPriv->IsNpc() )
+					{
+						gPriv->RemoveAllObjectsFromSight( gPriv->GetSocket() );
+					}
+					gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), gPriv->WorldNumber(), (UI16)encaps.toInt() );
+					break;
+				}
 				case CCP_TARGET:
 					//TODO: Check if the user(admin per jscript) can set the target
 					if( *vp != JSVAL_NULL )
@@ -1160,6 +1187,8 @@ namespace UOX
 				case CREGP_CANRECALL:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanRecall() );			break;
 				case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
 				case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
+				case CREGP_WORLDNUMBER:			*vp = INT_TO_JSVAL( gPriv->WorldNumber() );				break;
+				case CREGP_INSTANCEID:			*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );			break;
 				case CREGP_CANCASTAGGRESSIVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->CanCastAggressive() );	break;
 				case CREGP_ISSAFEZONE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsSafeZone() );			break;
 				case CREGP_HEALTH:				*vp = INT_TO_JSVAL( gPriv->GetHealth() );				break;
@@ -1170,6 +1199,9 @@ namespace UOX
 					break;
 				case CREGP_POPULATION:			*vp = INT_TO_JSVAL( gPriv->GetPopulation() );			break;
 				case CREGP_MEMBERS:
+					tString = JS_NewStringCopyZ( cx, gPriv->GetTownMemberSerials().c_str() );
+					*vp = STRING_TO_JSVAL( tString );
+					break;
 				default:
 					break;
 			}
@@ -1209,6 +1241,118 @@ namespace UOX
 		}
 		return JS_TRUE;
 	}
+	JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ) );
+
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		if( JSVAL_IS_INT( id ) )
+		{
+			JSString *tString = NULL;
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CSPAWNREGP_NAME:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			case CSPAWNREGP_REGIONNUM:				*vp = INT_TO_JSVAL( gPriv->GetRegionNum() );					break;
+			case CSPAWNREGP_ITEM:
+			case CSPAWNREGP_ITEMLIST:
+			{
+				// This could potentially be a list of item ids - let's convert it to a comma-separated string!
+				STRINGLIST itemList = gPriv->GetItem();
+				std::string s;
+				for( const auto &piece : itemList )
+				{
+					if( s.empty() )
+						s += piece;
+					else
+						s += ( "," + piece );
+				}
+				tString = JS_NewStringCopyZ( cx, s.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+			}
+			break;
+			case CSPAWNREGP_NPC:
+			case CSPAWNREGP_NPCLIST:
+			{
+				// This could potentially be a list of NPC ids - let's convert it to a comma-separated string!
+				STRINGLIST npcList = gPriv->GetNPC();
+				std::string s;
+				for( const auto &piece : npcList )
+				{
+					if( s.empty() )
+						s += piece;
+					else
+						s += ( "," + piece );
+				}
+				tString = JS_NewStringCopyZ( cx, s.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+			}
+			break;
+			case CSPAWNREGP_ITEMCOUNT:				*vp = INT_TO_JSVAL( gPriv->GetCurrentItemAmt() );				break;
+			case CSPAWNREGP_NPCCOUNT:				*vp = INT_TO_JSVAL( gPriv->GetCurrentCharAmt() );				break;
+			case CSPAWNREGP_MAXITEMS:				*vp = INT_TO_JSVAL( gPriv->GetMaxItemSpawn() );					break;
+			case CSPAWNREGP_MAXNPCS:				*vp = INT_TO_JSVAL( gPriv->GetMaxCharSpawn() );					break;
+			case CSPAWNREGP_MINTIME:				*vp = INT_TO_JSVAL( gPriv->GetMinTime() );						break;
+			case CSPAWNREGP_MAXTIME:				*vp = INT_TO_JSVAL( gPriv->GetMaxTime() );						break;
+			case CSPAWNREGP_ONLYOUTSIDE:			*vp = BOOLEAN_TO_JSVAL( gPriv->GetOnlyOutside() );				break;
+			case CSPAWNREGP_X1:						*vp = INT_TO_JSVAL( gPriv->GetX1() );							break;
+			case CSPAWNREGP_Y1:						*vp = INT_TO_JSVAL( gPriv->GetY1() );							break;
+			case CSPAWNREGP_X2:						*vp = INT_TO_JSVAL( gPriv->GetX2() );							break;
+			case CSPAWNREGP_Y2:						*vp = INT_TO_JSVAL( gPriv->GetY2() );							break;
+			case CSPAWNREGP_PREFZ:					*vp = INT_TO_JSVAL( gPriv->GetPrefZ() );						break;
+			case CSPAWNREGP_WORLD:					*vp = INT_TO_JSVAL( gPriv->WorldNumber() );						break;
+			case CSPAWNREGP_INSTANCEID:				*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );					break;
+			case CSPAWNREGP_CALL:					*vp = INT_TO_JSVAL( gPriv->GetCall() );							break;
+			default:
+				break;
+			}
+		}
+
+		return JS_TRUE;
+	}
+	JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+	{
+		CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ) );
+
+		if( gPriv == NULL )
+			return JS_FALSE;
+
+		JSEncapsulate encaps( cx, vp );
+		if( JSVAL_IS_INT( id ) )
+		{
+			switch( JSVAL_TO_INT( id ) )
+			{
+			case CSPAWNREGP_NAME:				gPriv->SetName( encaps.toString() );					break;
+			case CSPAWNREGP_ITEM:				gPriv->SetItem( encaps.toString() );					break;
+			case CSPAWNREGP_ITEMLIST:			gPriv->SetItemList( encaps.toString() );				break;
+			case CSPAWNREGP_NPC:				gPriv->SetNPC( encaps.toString() );						break;
+			case CSPAWNREGP_NPCLIST:			gPriv->SetNPCList( encaps.toString() );					break;
+			case CSPAWNREGP_REGIONNUM:			gPriv->SetRegionNum( (UI16)encaps.toInt() );			break;
+			case CSPAWNREGP_MAXITEMS:			gPriv->SetMaxItemSpawn( encaps.toInt() );				break;
+			case CSPAWNREGP_MAXNPCS:			gPriv->SetMaxCharSpawn( encaps.toInt() );				break;
+			case CSPAWNREGP_MINTIME:			gPriv->SetMinTime( (UI08)encaps.toInt() );				break;
+			case CSPAWNREGP_MAXTIME:			gPriv->SetMaxTime( (UI08)encaps.toInt() );				break;
+			case CSPAWNREGP_ONLYOUTSIDE:		gPriv->SetOnlyOutside( encaps.toBool() );				break;
+			case CSPAWNREGP_X1:					gPriv->SetX1( (SI16)encaps.toInt() );					break;
+			case CSPAWNREGP_Y1:					gPriv->SetY1( (SI16)encaps.toInt() );					break;
+			case CSPAWNREGP_X2:					gPriv->SetX2( (SI16)encaps.toInt() );					break;
+			case CSPAWNREGP_Y2:					gPriv->SetY2( (SI16)encaps.toInt() );					break;
+			case CSPAWNREGP_PREFZ:				gPriv->SetPrefZ( (SI08)encaps.toInt() );				break;
+			case CSPAWNREGP_WORLD:				gPriv->WorldNumber( (UI08)encaps.toInt() );				break;
+			case CSPAWNREGP_INSTANCEID:			gPriv->SetInstanceID( (UI08)encaps.toInt() );			break;
+			case CSPAWNREGP_CALL:				gPriv->SetCall( (UI16)encaps.toInt() );					break;
+			default:
+				break;
+			}
+		}
+
+		return JS_TRUE;
+	}
+	
 	JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 	{
 		CGuild *gPriv = static_cast<CGuild *>(JS_GetPrivate( cx, obj ));

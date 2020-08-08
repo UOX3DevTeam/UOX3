@@ -250,6 +250,11 @@ inline line2D line3D::Projection2D( void ) const
 		return line2D( vector2D( (R32)loc.x, (R32)loc.y ), vector2D( (R32)dir.x, (R32)dir.y ) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if maptile blocks Line of Sight
+//o-----------------------------------------------------------------------------------------------o
 bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum )
 {
 	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
@@ -279,6 +284,11 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check tiledata flags for tile
+//o-----------------------------------------------------------------------------------------------o
 bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
 {
 	switch( typeToCheck )
@@ -339,6 +349,11 @@ SI08 GetSGN( SI16 startLoc, SI16 destLoc, SI16 &l1, SI16 &l2 )
 	return 0;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount, SI16 distX, SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2, SI32 dz )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if dynamic item will block Line of Sight
+//o-----------------------------------------------------------------------------------------------o
 UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount, SI16 distX, SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2, SI32 dz )
 {
 	const SI16 curX		= toCheck->GetX();
@@ -502,36 +517,35 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	}
 	return INVALIDID;
 }
-//o--------------------------------------------------------------------------
-//|	Function		-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor, bool useSurfaceZ )
-//|	Date			-	03 July, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-	18 March, 2002, sereg
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if there is line of sight between src and trg
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor, bool useSurfaceZ )
+//|	Date		-	03 July, 2001
+//|	Programmer	-	Abaddon
+//|	Changes		-	18 March, 2002, sereg
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if there is line of sight between src and trg
+//|
+//|	Notes		-	Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
+//|					s is for pc's, in case a message needs to be sent.
+//|					the checkfor is what is checked for along the line of sight.  
+//|					Look at uox3.h to see options. Works like npc magic.
+//|
+//|					#define TREES_BUSHES 1 // Trees and other large vegetaion in the way
+//|					#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the way
+//|					#define DOORS 4 // Doors in the way
+//|					#define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically
+//|					#define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
+//|					#define LAVA_WATER 32  // Don't know what all to use this for yet
+//|
+//|					Just or (|) the values for the diff things together to get what to search for.
+//|					So put in place of the paramater checkfor for example
+//|
+//|					if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS | DOORS | ROOFING_SLANTED ) )
+//|
+//|					it WAS based on the P.T., now its based on linear algebra ;) (sereg)
+//o-----------------------------------------------------------------------------------------------o
 bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
 {
-/*
-Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
-s is for pc's, in case a message needs to be sent.
-the checkfor is what is checked for along the line of sight.  
-Look at uox3.h to see options. Works like npc magic.
-
-	#define TREES_BUSHES 1 // Trees and other large vegetaion in the way
-	#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the way
-	#define DOORS 4 // Doors in the way
-	#define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically
-	#define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
-	#define LAVA_WATER 32  // Don't know what all to use this for yet
-  
-	Just or (|) the values for the diff things together to get what to search for.
-	So put in place of the paramater checkfor for example
-	
-	if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS | DOORS | ROOFING_SLANTED ) )
-
-	it WAS based on the P.T., now its based on linear algebra ;) (sereg)
-*/
 	const bool blocked		= false;
 	const bool not_blocked	= true;
 
@@ -545,6 +559,7 @@ Look at uox3.h to see options. Works like npc magic.
 		return not_blocked;		// if source and target are on the same position
 
 	const UI08 worldNumber = mChar->WorldNumber();
+	const UI16 instanceID = mChar->GetInstanceID();
 
 	const SI32 distX	= abs( static_cast<SI32>(destX - startX) ), distY = abs( static_cast<SI32>(destY - startY) );
 	const SI32 distZ	= abs( static_cast<SI32>(destZ - startZ) );
@@ -675,7 +690,7 @@ Look at uox3.h to see options. Works like npc magic.
 		regItems->Push();
 		for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
 		{
-			if( !ValidateObject( toCheck ) )
+			if( !ValidateObject( toCheck ) || toCheck->GetInstanceID() != instanceID )
 				continue;
 
 			// If item toCheck is at the exact same spot as the target location, it should not block LoS.
@@ -769,16 +784,19 @@ Look at uox3.h to see options. Works like npc magic.
 	return not_blocked;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool checkItemLineOfSight( CChar *mChar, CItem *i)
 //|	Programmer	-	grimson
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if an item is within line of sight
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool checkItemLineOfSight( CChar *mChar, CItem *i )
 {
 	if( mChar->IsGM() || mChar->IsCounselor() )
 		return true;
+
+	if( mChar->GetInstanceID() != i->GetInstanceID() )
+		return false;
 
 	CBaseObject *itemOwner	= i;
 	bool inSight			= false;

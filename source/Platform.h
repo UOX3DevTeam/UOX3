@@ -118,7 +118,7 @@ suit our own purposes
 // A quick define to overcome different names for the same function
 #	if UOX_COMPILER != COMPILER_GNUC
 #		if _MSC_VER < 1900
-#		define snprintf _snprintf
+#			define snprintf _snprintf
 #		endif
 #      if _MSC_VER >= 1900
 #        define STDC99

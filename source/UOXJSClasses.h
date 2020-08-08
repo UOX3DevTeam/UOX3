@@ -225,6 +225,20 @@ static JSClass UOXRegion_class =
 	JS_FinalizeStub 
 }; 
 
+static JSClass UOXSpawnRegion_class =
+{
+	"UOXSpawnRegion",
+	JSCLASS_HAS_PRIVATE,
+	JS_PropertyStub,
+	JS_PropertyStub,
+	CSpawnRegionProps_getProperty,
+	CSpawnRegionProps_setProperty,
+	JS_EnumerateStub,
+	JS_ResolveStub,
+	JS_ConvertStub,
+	JS_FinalizeStub
+};
+
 static JSExtendedClass UOXSocket_class =
 {
 	{	"UOXSocket",
@@ -276,17 +290,14 @@ static JSClass UOXGump_class =
 	JS_FinalizeStub 
 }; 
 
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	static JSClass UOXGumpData_class =
-//|	Date					-	1/21/2003 7:35:37 AM
-//|	Developers		-	Punt
-//|	Organization	-	UOXe Project
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	static JSClass UOXGumpData_class =
+//|	Date		-	1/21/2003 7:35:37 AM
+//|	Programmer	-	Punt
+//|	Org/Team	-	UOXe Project
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	
+//o-----------------------------------------------------------------------------------------------o
 static JSClass UOXGumpData_class =
 {
 	"GumpData",

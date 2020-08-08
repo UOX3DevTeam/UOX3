@@ -39,7 +39,12 @@ void killTrades( CChar *i );
 void DoorMacro( CSocket *s );
 void sysBroadcast( const std::string& txt );
 
-void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearBuffers( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends ALL buffered data
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::ClearBuffers( void )
 {
 	SOCKLIST_CITERATOR toClear;
 	for( toClear = connClients.begin(); toClear != connClients.end(); ++toClear )
@@ -48,7 +53,12 @@ void cNetworkStuff::ClearBuffers( void ) // Sends ALL buffered data
 		(*toClear)->FlushBuffer();
 }
 
-// set the laston character member value to the current date/time
+// 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void setLastOn( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets the laston character member value to the current date/time
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::setLastOn( CSocket *s )
 {
 	assert( s != NULL );
@@ -57,10 +67,10 @@ void cNetworkStuff::setLastOn( CSocket *s )
 	time( &ltime );
 	char *t = ctime( &ltime );
 
-		// some ctime()s like to stick \r\n on the end, we don't want that
-		size_t mLen = strlen( t );
-		for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
-			t[end] = '\0';
+	// some ctime()s like to stick \r\n on the end, we don't want that
+	size_t mLen = strlen( t );
+	for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
+		t[end] = '\0';
 
 	if( s->CurrcharObj() != NULL )
 	{
@@ -69,7 +79,12 @@ void cNetworkStuff::setLastOn( CSocket *s )
 	}
 }
 
-void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Disconnect( UOXSOCKET s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Forces player to disconnect/instalog
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::Disconnect( UOXSOCKET s )
 {
 	setLastOn( connClients[s] );
 	CChar *currChar = connClients[s]->CurrcharObj();
@@ -138,17 +153,15 @@ void cNetworkStuff::Disconnect( UOXSOCKET s ) // Force disconnection of player /
 }
 
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cNetworkStuff::LogOut( UOXSOCKET s )
-//|	Date			-	
-//|	Developers		-	EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Process client logout, and process instalog settings
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LogOut( CSocket *s )
+//|	Programmer	-	EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Process client logout, and process instalog settings
 //|
-//|	Modification	-	Date Unknown - Added multi checked to instalog processing
-//o--------------------------------------------------------------------------o
+//|	Changes		-	Date Unknown - Added multi checked to instalog processing
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::LogOut( CSocket *s )
 {
 	// This would probably be a good place to do the disconnect
@@ -222,6 +235,11 @@ void cNetworkStuff::LogOut( CSocket *s )
 	p->SetLocation( p );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sockInit( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Initializes and binds sockets during startup
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::sockInit( void )
 {
 	int bcode;
@@ -276,7 +294,12 @@ void cNetworkStuff::sockInit( void )
 	listen( a_socket, 42 );
 }
 
-void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SockClose( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Closes all sockets for shutdown
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::SockClose( void )
 {
 	closesocket( a_socket );
 	for( SOCKLIST_CITERATOR toClose = connClients.begin(); toClose != connClients.end(); ++toClose )
@@ -296,7 +319,12 @@ void cNetworkStuff::SockClose( void ) // Close all sockets for shutdown
 	#endif
 #endif
 
-void cNetworkStuff::CheckConn( void ) // Check for connection requests
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckConn( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks for connection requests
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::CheckConn( void )
 {
 	FD_ZERO( &conn );
 	FD_SET( a_socket, &conn );
@@ -375,6 +403,11 @@ void cNetworkStuff::CheckConn( void ) // Check for connection requests
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsFirewallBlocked( UI08 part[4] )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if IP of connecting client is blocked by firewall
+//o-----------------------------------------------------------------------------------------------o
 bool cNetworkStuff::IsFirewallBlocked( UI08 part[4] )
 {
 	bool match[4];
@@ -418,7 +451,12 @@ cNetworkStuff::~cNetworkStuff()
 #endif
 }
 
-void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckMessage( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check for messages from the clients
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::CheckMessage( void )
 {
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
@@ -467,7 +505,6 @@ void cNetworkStuff::CheckMessage( void ) // Check for messages from the clients
 	}
 }
 
-
 cNetworkStuff::cNetworkStuff() : peakConnectionCount( 0 ) // Initialize sockets
 {
 	FD_ZERO( &conn );
@@ -484,7 +521,12 @@ CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 
 CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s );
 CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s );
-void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GetMsg( UOXSOCKET s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Receive message from client
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::GetMsg( UOXSOCKET s ) 
 {
 	if( s >= connClients.size() )
 		return;
@@ -805,8 +847,12 @@ void cNetworkStuff::GetMsg( UOXSOCKET s ) // Receive message from client
 	}
 }
 
-
-void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the clients
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CheckLoginMessage( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	 Check for messages from the clients
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::CheckLoginMessage( void ) 
 {
 	fd_set all;
 	fd_set errsock;
@@ -873,7 +919,12 @@ void cNetworkStuff::CheckLoginMessage( void ) // Check for messages from the cli
 	}
 }
 
-void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) // Force disconnection of player //Instalog
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoginDisconnect( UOXSOCKET s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Force disconnection of player //Instalog
+//o-----------------------------------------------------------------------------------------------o
+void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) 
 {
 	char temp[128];
 	sprintf( temp, "LoginClient %lu disconnected.", s );
@@ -922,10 +973,14 @@ UOXSOCKET cNetworkStuff::FindLoginPtr( CSocket *s )
 	return 0xFFFFFFFF;
 }
 
-
-// Transfers from the logged in queue to the in world queue
-// Takes something out of the logging in queue and places it in the in world queue
-// REQUIRES THREAD SAFETY
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Transfer( CSocket *mSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Transfers from the logged in queue to the in world queue
+//|
+//|	Notes		-	Takes something out of the logging in queue and places it in the in world queue
+//|					REQUIRES THREAD SAFETY
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::Transfer( CSocket *mSock )
 {
 	UOXSOCKET s = FindLoginPtr( mSock );
@@ -941,6 +996,11 @@ void cNetworkStuff::Transfer( CSocket *mSock )
 	return;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GetLoginMsg( UOXSOCKET s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets login message from socket
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 {
 	CSocket *mSock = loggedInClients[s];
@@ -1153,6 +1213,11 @@ CSocket *cNetworkStuff::LastSocket( void )
 		return NULL;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cNetworkStuff::LoadFirewallEntries( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads list of banned IPs from firewall list
+//o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::LoadFirewallEntries( void )
 {
 	UString token;

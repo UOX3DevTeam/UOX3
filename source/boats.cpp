@@ -73,12 +73,12 @@ const UI08 cShipItems[4][6]=
 };
 //============================================================================================
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	CItem * GetBoat( CSocket *s )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CBoatObj * GetBoat( CSocket *s )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the boat a character is on
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 CBoatObj * GetBoat( CSocket *s )
 {
 	CChar *mChar = s->CurrcharObj();
@@ -88,12 +88,12 @@ CBoatObj * GetBoat( CSocket *s )
 	return static_cast<CBoatObj *>(findMulti( mChar ));
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LeaveBoat( CSocket *s, CItem *p )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Leave a boat
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void LeaveBoat( CSocket *s, CItem *p )
 {
 	CBoatObj *boat = GetBoat( s );
@@ -104,21 +104,22 @@ void LeaveBoat( CSocket *s, CItem *p )
 	const SI16 y2 = p->GetY();
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
+	UI16 instanceID = mChar->GetInstanceID();
 	for( SI16 x = x2 - 2; x < x2 + 3; ++x )
 	{
 		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
 		{
-			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber );
-			if( Map->ValidMultiLocation( x, y, z, worldNumber, true ) && !findMulti( x, y, z, worldNumber ) )
+			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceID );
+			if( Map->ValidMultiLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID ) )
 			{
-				mChar->SetLocation( x, y, z, worldNumber );
+				mChar->SetLocation( x, y, z, worldNumber, instanceID );
 				CDataList< CChar * > *myPets = mChar->GetPetList();
 				for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
 				{
 					if( ValidateObject( pet ) )
 					{
 						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
-							pet->SetLocation( x, y, z, worldNumber );
+							pet->SetLocation( x, y, z, worldNumber, instanceID );
 					}
 				}
 				s->sysmessage( 3 );
@@ -129,13 +130,13 @@ void LeaveBoat( CSocket *s, CItem *p )
 	s->sysmessage( 4 );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlankStuff( CSocket *s, CItem *p )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	If not on a boat, will send character to the plank, other
 //|					wise will call OpenPlank to open/close the plank
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void PlankStuff( CSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
@@ -166,12 +167,12 @@ void PlankStuff( CSocket *s, CItem *p )
 		LeaveBoat( s, p );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void OpenPlank( CItem *p )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Open / Close a plank
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void OpenPlank( CItem *p )
 {
 	switch( p->GetID( 2 ) )
@@ -192,12 +193,12 @@ void OpenPlank( CItem *p )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool BlockBoat( CItem *b, SI16 xmove, SI16 ymove, UI08 dir )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat can move to a certain loc
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
 {
 	map_st map;
@@ -410,12 +411,12 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 	return false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	bool CreateBoat( CSocket *s, CItem *b, char id2, UI08 boattype )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a boat
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 {
 	if( !ValidateObject( b ) )
@@ -445,10 +446,11 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 
 	const SERIAL serial = b->GetSerial();
 	const UI08 worldNumber = b->WorldNumber();
+	const UI16 instanceID = b->GetInstanceID();
 	const SI16 x = b->GetX(), y = b->GetY();
 	SI08 z = Map->MapElevation( x, y, worldNumber );
 		
-	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, 20 );
+	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, 20, instanceID );
 	if( ILLEGAL_Z != dynz )
 		z = dynz;
 	else
@@ -540,12 +542,12 @@ void CheckDirection( UI08 dir, SI16& tx, SI16& ty )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void MoveBoat( CSocket *s, UI08 dir, CItem *boat )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MoveBoat( UI08 dir, CBoatObj *boat )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Move the boat and everything on it 1 tile
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void MoveBoat( UI08 dir, CBoatObj *boat )
 {
 	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
@@ -623,12 +625,12 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	void TurnStuff( CItem *b, CItem *i, bool rightTurn )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn an item on a boat
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 {
 	if( !ValidateObject( b ) )
@@ -643,12 +645,12 @@ void TurnStuff( CBoatObj *b, CBaseObject *i, bool rightTurn )
 		i->SetLocation( static_cast<SI16>(b->GetX() + dy), static_cast<SI16>(b->GetY() - dx), i->GetZ() );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void TurnBoat( CItem *b, bool rightTurn )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn the boat and use TurnStuff() to turn all items/chars on it
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void TurnBoat( CBoatObj *b, bool rightTurn )
 {
 	if( !ValidateObject( b ) )
@@ -788,12 +790,12 @@ void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool r
 		tiller->TextMessage( mSock, 9 ); 
 	}
 }
-//o---------------------------------------------------------------------------o
-//|	Function	-	void Speech( CSocket *mSock, CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 //|	Programmer	-	Zippy
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for boat commands
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( mSock == NULL )
@@ -884,12 +886,11 @@ void CBoatResponse::Handle( CSocket *mSock, CChar *mChar )
 }
 
 void killKeys( SERIAL targSerial );
-//o---------------------------------------------------------------------------o
-//|	Function	-	void ModelBoat( CSocket *s, CItem *i )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ModelBoat( CSocket *s, CBoatObj *i )
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turn a boat into a boat model that can be re-placed
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void ModelBoat( CSocket *s, CBoatObj *i )
 {
 	CItem *tiller	= calcItemObjFromSer( i->GetTiller() );

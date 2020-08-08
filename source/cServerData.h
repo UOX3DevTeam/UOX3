@@ -33,6 +33,7 @@ namespace UOX
 		CF_BIT_COUNT
 	};
 
+
 	enum ServerFeatures
 	{
 		SF_BIT_UNKNOWN1 = 0,	// 0x01
@@ -44,7 +45,6 @@ namespace UOX
 		SF_BIT_SIXCHARS,		// 0x40 - Use 6 character slots instead of 5
 		SF_BIT_SE,				// 0x80 - Samurai and Ninja classes
 		SF_BIT_ML,				// 0x100 - Elven race
-		// Uncomment when adding support for newer client versions
 		SF_BIT_UNKNOWN2,		// 0x200 - added with UO:KR launch
 		SF_BIT_SEND3DTYPE,		// 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
 		SF_BIT_UNKNOWN4,		// 0x800 - added sometime between UO:KR and UO:SA

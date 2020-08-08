@@ -41,14 +41,14 @@ bool fileCopy( std::string sourceFile, std::string targetFile )
 	return rvalue;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void fileArchive( void )
-//|   Date        :  11th April, 2002
-//|   Programmer  :  duckhead
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Makes a backup copy of a file in the shared directory.
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void fileArchive( void )
+//|	Date		-	11th April, 2002
+//|	Programmer	-	duckhead
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Makes a backup copy of a file in the shared directory.
 //|                  puts the copy in the backup directory
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 static void backupFile( const std::string &filename, std::string backupDir )
 {
 	UString			to( backupDir );
@@ -59,13 +59,13 @@ static void backupFile( const std::string &filename, std::string backupDir )
 	fileCopy( from, to );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void fileArchive( void )
-//|   Date        :  24th September, 2001
-//|   Programmer  :  Abaddon (rewritten for 0.95)
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Makes a backup copy of the current world state
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void fileArchive( void )
+//|	Date		-	24th September, 2001
+//|	Programmer	-	Abaddon (rewritten for 0.95)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Makes a backup copy of the current world state
+//o-----------------------------------------------------------------------------------------------o
 void fileArchive( void )
 {
 	Console << "Beginning backup... ";

@@ -1,15 +1,15 @@
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //| cConsole.cpp
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //| In essence, CConsole is our nice generic class for outputting display.
 //| As long as the interface is kept the same, we can display whatever we wish
 //| too. We store a set of coordinates being the window corner and size, for
 //| systems with windowing support, which describes the window we are in.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //| Version History
 //| 1.7		Added comments (Mr. Fixit 29. October 2001)
 //| 2.0		Added filter masking (Abaddon, 22nd January 2002)
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 
 // Header
 #include "uox3.h"
@@ -72,13 +72,11 @@ void		UnloadSpawnRegions( void );
 void		LoadTeleportLocations( void );
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  CConsole()
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Class Constructor and deconstructor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Class Constructor and deconstructor
+//o-----------------------------------------------------------------------------------------------o
 CConsole::CConsole() : width( 80 ), height( 25 ),
 #if UOX_PLATFORM == PLATFORM_WIN32
 currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
@@ -93,13 +91,11 @@ CConsole::~CConsole()
 }
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  << Overrriding
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Let you use << and >>
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	<< Overrriding
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Let you use << and >>
+//o-----------------------------------------------------------------------------------------------o
 CConsole& CConsole::operator<<( const SI08 *outPut )
 {
 	StartOfLineCheck();
@@ -250,18 +246,16 @@ CConsole& CConsole::operator<<( const SI64 &outPut )
 #if defined( _MSC_VER )
 	CConsole& CConsole::operator<<( const std::size_t &outPut )
 	{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return ( *this );
+		StartOfLineCheck();
+		std::cout << outPut;
+		return ( *this );
 	}
 #endif
-//o---------------------------------------------------------------------------o
-//|   Function    -  Print
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Sprintfs text and prints the console with the "|"
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void CConsole::Print( const char *toPrint, ... )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Sprintfs text and prints the console with the "|"
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Print( const char *toPrint, ... )
 {
 	va_list argptr;
@@ -279,13 +273,11 @@ void CConsole::Print( const char *toPrint, ... )
 }
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Log
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Writes to the logfile
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void Log( const char *toLog, const char *filename, ... )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Writes to the logfile
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Log( const char *toLog, const char *filename, ... )
 {
 	va_list argptr;
@@ -321,13 +313,11 @@ void CConsole::Log( const char *toLog, const char *filename, ... )
 }
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Log
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Log to the console.log file
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void Log( const char *toLog, ... )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Log to the console.log file
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Log( const char *toLog, ... )
 {
 	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
@@ -342,13 +332,11 @@ void CConsole::Log( const char *toLog, ... )
 }
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Error
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Writes to the error log and the console.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void Error( const char *toWrite, ... )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Writes to the error log and the console.
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Error( const char *toWrite, ... )
 {
 	UI08 oldMode = CurrentMode();
@@ -368,13 +356,11 @@ void CConsole::Error( const char *toWrite, ... )
 }
 
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  PrintSectionBegin
-//|   Date        -  Unknown
-//|   Programmer  -  Unknown
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Prints a section seperator
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void PrintSectionBegin( void )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prints a section seperator
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintSectionBegin( void )
 {
 	TurnBrightWhite();
@@ -393,13 +379,13 @@ void CConsole::PrintSectionBegin( void )
 #endif
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Start
-//|   Date        -  24th December, 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Migration of constart function to here
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void Start( char *temp )
+//| Date		-	24th December, 2001
+//| Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Migration of constart function to here
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Start( char *temp )
 {
 #if UOX_PLATFORM == WIN32
@@ -441,13 +427,13 @@ void CConsole::Start( char *temp )
 #endif
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnYellow
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Turns the text yellow
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnYellow( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	DarkStorm
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Turns the text yellow
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -458,13 +444,13 @@ void CConsole::TurnYellow( void )
 	previousColour = CYELLOW;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnRed
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Turns the text red
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnRed( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	DarkStorm
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Turns the text red
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -475,13 +461,13 @@ void CConsole::TurnRed( void )
 	previousColour = CRED;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnGreen
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Turns the text green
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnGreen( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	DarkStorm
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Turns the text green
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -492,13 +478,13 @@ void CConsole::TurnGreen( void )
 	previousColour = CGREEN;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnBlue
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Turns the text blue
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnBlue( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	DarkStorm
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Turns the text blue
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -509,13 +495,13 @@ void CConsole::TurnBlue( void )
 	previousColour = CBLUE;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnNormal
-//|   Date        -  24th December, 2001
-//|   Programmer  -  DarkStorm
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns text to normal white
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnNormal( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	DarkStorm
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns text to normal white
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -526,13 +512,13 @@ void CConsole::TurnNormal( void )
 	previousColour = CNORMAL;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  TurnBrightWhite
-//|   Date        -  22nd January, 2002
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Returns text to bright white
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void TurnBrightWhite( void )
+//| Date		-	22nd January, 2002
+//| Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns text to bright white
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -542,52 +528,52 @@ void CConsole::TurnBrightWhite( void )
 #endif
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function	-	PrintDone( void )
-//|		Date		-	24th December, 2001
-//|		Programmer	-	DarkStorm
-//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Prints colored "[done]" message
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PrintDone( void )
+//|	Date		-	24th December, 2001
+//|	Programmer	-	DarkStorm
+//|	Changes		-	Maarc - 7th February, 2003 - Made it use PrintSpecial
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prints colored "[done]" message
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintDone( void )
 {
 	PrintSpecial( CGREEN, "done" );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	PrintFailed( void )
-//|		Date        -	24th December, 2001
-//|		Programmer  -	DarkStorm
-//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Prints colored "[failed]" message
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PrintFailed( void )
+//|	Date		-	24th December, 2001
+//|	Programmer	-	DarkStorm
+//|	Changes		-	Maarc - 7th February, 2003 - Made it use PrintSpecial
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prints colored "[failed]" message
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintFailed( void )
 {
 	PrintSpecial( CRED, "Failed" );
 }
 
-//o---------------------------------------------------------------------------o
-//|		Function    -	PrintPassed( void )
-//|		Date        -	17th February, 2002
-//|		Programmer  -	DarkStorm
-//|		Modification-	Maarc - 7th February, 2003 - Made it use PrintSpecial
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Prints colored "[passed]" message
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PrintPassed( void )
+//|	Date		-	17th February, 2002
+//|	Programmer	-	DarkStorm
+//|	Changes		-	Maarc - 7th February, 2003 - Made it use PrintSpecial
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prints colored "[skipped]" message
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintPassed( void )
 {
 	PrintSpecial( CYELLOW, "Skipped" );
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  ClearScreen
-//|   Date        -  24th December, 2001
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Clears the screen
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void ClearScreen( void )
+//| Date		-	24th December, 2001
+//| Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the screen
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::ClearScreen( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -611,13 +597,13 @@ void CConsole::PrintBasedOnVal( bool value )
 		PrintFailed();
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    -  Warning
-//|   Date        -  21st January, 2002
-//|   Programmer  -  Abaddon
-//o---------------------------------------------------------------------------o
-//|   Purpose     -  Writes to the warning log and the console.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Warning( const char *toWrite, ... )
+//|	Date		-	21st January, 2002
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Writes to the warning log and the console.
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Warning( const char *toWrite, ... )
 {
 	UI08 oldMode = CurrentMode();
@@ -636,16 +622,25 @@ void CConsole::Warning( const char *toWrite, ... )
 	CurrentMode( oldMode );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 CurrentMode( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets console's output mode
+//o-----------------------------------------------------------------------------------------------o
+UI08 CConsole::CurrentMode( void ) const
+{
+	return currentMode;
+}
 void CConsole::CurrentMode( UI08 value )
 {
 	currentMode = value;
 }
 
-UI08 CConsole::CurrentMode( void ) const
-{
-	return currentMode;
-}
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PrintStartOfLine( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set colour of console text at start of a new line
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintStartOfLine( void )
 {
 	TurnBrightWhite();
@@ -662,6 +657,11 @@ void CConsole::PrintStartOfLine( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MoveTo( int x, int y )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set console cursor position
+//o-----------------------------------------------------------------------------------------------o
 #if UOX_PLATFORM == PLATFORM_WIN32
 void CConsole::MoveTo( int x, int y )
 {
@@ -690,50 +690,41 @@ void CConsole::MoveTo( int x, int y )
 }
 #endif
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool CConsole::LogEcho( void )
-//|	Date			-	2/03/2003
-//|	Developers		-	Maarc
-//|	Organization	-	UOX3DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool LogEcho( void )
+//|	Date		-	2/03/2003
+//|	Programmer	-	Maarc
+//|	Team		-	UOX3DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether console should echo log messages
+//o-----------------------------------------------------------------------------------------------o
 bool CConsole::LogEcho( void )
 {
 	return logEcho;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CConsole::LogEcho( bool value )
-//|	Date			-	2/03/2003
-//|	Developers		-	Maarc
-//|	Organization	-	UOX3DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LogEcho( bool value )
+//|	Date		-	2/03/2003
+//|	Programmer	-	Maarc
+//|	Team		-	UOX3DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables/Disables whether console should echo log messages
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::LogEcho( bool value )
 {
 	logEcho = value;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CConsole::StartOfLineCheck( void )
-//|	Date			-	2/3/2003
-//|	Developers		-	Maarc
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	Reduces excess work in overloaded functions by checking
-//|							to see if the start of line has to be done here
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void StartOfLineCheck( void )
+//|	Date		-	2/3/2003
+//|	Programmer	-	Maarc
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reduces excess work in overloaded functions by checking
+//|					to see if the start of line has to be done here
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::StartOfLineCheck( void )
 {
 	if( curLeft == 0 )
@@ -743,18 +734,15 @@ void CConsole::StartOfLineCheck( void )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
-//|	Date			-	2/7/2003
-//|	Developers		-	Maarc
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	This is much like PrintFailed, PrintDone and so on except 
-//|							we specify the text and the colour
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PrintSpecial( UI08 colour, const char *toPrint, ... )
+//|	Date		-	2/7/2003
+//|	Programmer	-	Maarc
+//|	Team		-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This is much like PrintFailed, PrintDone and so on except 
+//|					we specify the text and the colour
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 {
 	va_list argptr;
@@ -784,26 +772,25 @@ void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 	(*this) << "]" << myendl;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cl_getch
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	int cl_getch( void )
 //|	Programmer	-	knoxos
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Read a character from stdin, in a cluox compatble way.
-//|                 This routine is non-blocking!
+//|					This routine is non-blocking!
 //|	Returns		-	>0 -> character read
-//|                 -1 -> no char available.
-//o---------------------------------------------------------------------------o
-//
-// now cluox is GUI wrapper over uox using stdin and stdout redirection to capture
-// the console, if it is active uox can't use kbhit() to determine if there is a 
-// character aviable, it can only get one directly by getch().
-// However the problem arises that uox will get blocked if none is aviable.
-// The solution to this problem is that cluox also hands over the second pipe-end
-// of stdin so uox can write itself into this stream. To determine if a character is 
-// now done that way. UOX write's itself a ZERO on the other end of the pipe, and reads
-// a charecter, if it is again the same ZERO just putted in nothing was entered. However
-// it is not a zero the user has entered a char.
-// 
+//|					-1 -> no char available.
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	now cluox is GUI wrapper over uox using stdin and stdout redirection to capture
+//|					the console, if it is active uox can't use kbhit() to determine if there is a 
+//|					character aviable, it can only get one directly by getch().
+//|					However the problem arises that uox will get blocked if none is aviable.
+//|					The solution to this problem is that cluox also hands over the second pipe-end
+//|					of stdin so uox can write itself into this stream. To determine if a character is 
+//|					now done that way. UOX write's itself a ZERO on the other end of the pipe, and reads
+//|					a charecter, if it is again the same ZERO just putted in nothing was entered. However
+//|					it is not a zero the user has entered a char.
+//o-----------------------------------------------------------------------------------------------o
 int CConsole::cl_getch( void )
 {
 #if UOX_PLATFORM != PLATFORM_WIN32
@@ -856,17 +843,16 @@ int CConsole::cl_getch( void )
 	return c;
 }
 
-//o----------------------------------------------------------------------------o
-//|   Function -	 void Poll( void )
-//|   Date     -	 Unknown
-//|                  25 January, 2006
-//|                  Moved into the console class and renamed from checkkey() to
-//|                  Poll()
-//|   Programmer  -  Unknown  (Touched up by EviLDeD)
-//o----------------------------------------------------------------------------o
-//|   Purpose     -  Facilitate console control. SysOp keys, and localhost 
-//|					 controls.
-//o----------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	void Poll( void )
+//| Date		-	Unknown
+//|	Changes		-	25 January, 2006
+//|					Moved into the console class and renamed from checkkey() to Poll()
+//| Programmer	-	Unknown  (Touched up by EviLDeD)
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Facilitate console control. SysOp keys, and localhost 
+//|					controls.
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Poll( void )
 {
 	int c = cl_getch();
@@ -887,18 +873,16 @@ void CConsole::Poll( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function		-	void Process( int c )
-//|	Programmer		-	Unknown
-//o---------------------------------------------------------------------------o
-//|	Purpose			-	Handle keypresses in console
-//|	Modification	-	05042004 - EviLDeD added some console debugging stuff.
-//|									Ideally this will all be placed onto a DEBUG menu which
-//|									a user will be able to select using the <, and > keys
-//|									respectivly. This functionality hasn't been implemented
-//|									at the current time of writing, but will be when possible.
-//o---------------------------------------------------------------------------o
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Process( int c )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handle keypresses in console
+//|	Changes		-	05042004 - EviLDeD added some console debugging stuff.
+//|					Ideally this will all be placed onto a DEBUG menu which
+//|					a user will be able to select using the <, and > keys
+//|					respectivly. This functionality hasn't been implemented
+//|					at the current time of writing, but will be when possible.
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Process( int c )
 {
 	if( c == '*' )
@@ -1264,6 +1248,11 @@ void CConsole::Process( int c )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Cloak( char *callback )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Cloak UOX3 console within CLUOX
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Cloak( char *callback )
 {
 	(*this) << "Using CLUOX Streaming-IO" << myendl;
@@ -1274,16 +1263,15 @@ void CConsole::Cloak( char *callback )
 	cluox_stdin_writeback = (void *)strtol( callback, &dummy, 16 );
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void DisplaySettings( void )
-//|	Programmer	-	Unknown
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	UOX startup stuff
-//| Moved that here because we need it in processkey now
+//|					Moved that here because we need it in processkey now
 //|									
-//|	Modification	-	10/21/2002	-	EviLDeD - Xuri found the bug in one spot, just
+//|	Changes		-	10/21/2002	-	EviLDeD - Xuri found the bug in one spot, just
 //|									happened upon this quick fix. for BackUp operation.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::DisplaySettings( void )
 {
 	std::map< bool, std::string > activeMap;
@@ -1337,6 +1325,11 @@ void CConsole::DisplaySettings( void )
 	(*this) << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) << myendl;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RegisterKey( int key, std::string cmdName, UI16 scriptID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Registers key input for detection in console
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::RegisterKey( int key, std::string cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
@@ -1347,6 +1340,11 @@ void CConsole::RegisterKey( int key, std::string cmdName, UI16 scriptID )
 	JSKeyHandler[key] = JSConsoleEntry( scriptID, cmdName );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetKeyStatus( int key, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enabling/Disabling specific key input in console
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::SetKeyStatus( int key, bool isEnabled )
 {
 	JSCONSOLEKEYMAP_ITERATOR	toFind	= JSKeyHandler.find( key );
@@ -1356,6 +1354,11 @@ void CConsole::SetKeyStatus( int key, bool isEnabled )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Registers console function 
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
@@ -1366,6 +1369,11 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 	JSConsoleFunctions[upper]	= JSConsoleEntry( scriptID, cmdName );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Enables/disables console function 
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 {
 	UString upper						= cmdFunc;
@@ -1377,6 +1385,11 @@ void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Registration( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Registers console script
+//o-----------------------------------------------------------------------------------------------o
 void CConsole::Registration( void )
 {
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_CONSOLE );

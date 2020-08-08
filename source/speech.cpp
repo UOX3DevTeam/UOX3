@@ -14,97 +14,107 @@
 namespace UOX
 {
 
-	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system message
+//o-----------------------------------------------------------------------------------------------o
+void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
+{
+	bool multipleArgs		= false;
+	UString argList			= "";
+	std::string stringVal	= "";
+	const char *typesPtr	= types;
+
+	va_list marker;
+	va_start( marker, types );
+	while( *typesPtr != '\0' )
 	{
-		bool multipleArgs		= false;
-		UString argList			= "";
-		std::string stringVal	= "";
-		const char *typesPtr	= types;
+		if( *typesPtr == 'i' )
+			stringVal = UString::number( va_arg( marker, int ) );
+		else if( *typesPtr == 's' )
+			stringVal = va_arg( marker, char * );
 
-		va_list marker;
-		va_start( marker, types );
-		while( *typesPtr != '\0' )
+		if( !stringVal.empty() )
 		{
-			if( *typesPtr == 'i' )
-				stringVal = UString::number( va_arg( marker, int ) );
-			else if( *typesPtr == 's' )
-				stringVal = va_arg( marker, char * );
-
-			if( !stringVal.empty() )
+			if( !multipleArgs )
 			{
-				if( !multipleArgs )
-				{
-					multipleArgs = true;
-					argList = UString::sprintf( "%s", stringVal.c_str() );
-				}
-				else
-					argList += UString::sprintf( "\t%s", stringVal.c_str() );
+				multipleArgs = true;
+				argList = UString::sprintf( "%s", stringVal.c_str() );
 			}
-			++typesPtr;
+			else
+				argList += UString::sprintf( "\t%s", stringVal.c_str() );
 		}
-		va_end( marker );
+		++typesPtr;
+	}
+	va_end( marker );
 
-		CPClilocMessage toSend;
-		toSend.Type( type );
-		toSend.Hue( hue );
-		toSend.Font( font );
-		toSend.Message( messageNum );
-		toSend.ArgumentString( argList );
+	CPClilocMessage toSend;
+	toSend.Type( type );
+	toSend.Hue( hue );
+	toSend.Font( font );
+	toSend.Message( messageNum );
+	toSend.ArgumentString( argList );
 
+	mSock->Send( &toSend );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if said by srcObj
+//o-----------------------------------------------------------------------------------------------o
+void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
+{
+	bool multipleArgs		= false;
+	UString argList			= "";
+	std::string stringVal	= "";
+	const char *typesPtr	= types;
+
+	va_list marker;
+	va_start( marker, types );
+	while( *typesPtr != '\0' )
+	{
+		if( *typesPtr == 'i' )
+			stringVal = UString::number( va_arg( marker, int ) );
+		else if( *typesPtr == 's' )
+			stringVal = va_arg( marker, char * );
+
+		if( !stringVal.empty() )
+		{
+			if( !multipleArgs )
+			{
+				multipleArgs = true;
+				argList = UString::sprintf( "%s", stringVal.c_str() );
+			}
+			else
+				argList += UString::sprintf( "\t%s", stringVal.c_str() );
+		}
+		++typesPtr;
+	}
+	va_end( marker );
+
+	CPClilocMessage toSend( (*srcObj) );
+	toSend.Type( type );
+	toSend.Hue( hue );
+	toSend.Font( font );
+	toSend.Message( messageNum );
+	toSend.ArgumentString( argList );
+
+	bool sendSock = (mSock != NULL);
+	if( sendAll )
+	{
+		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
+		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		{
+			if( sendSock && (*cIter) == mSock )
+				sendSock = false;
+			(*cIter)->Send( &toSend );
+		}
+	}
+	if( sendSock )
 		mSock->Send( &toSend );
-	}
-
-	void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... )
-	{
-		bool multipleArgs		= false;
-		UString argList			= "";
-		std::string stringVal	= "";
-		const char *typesPtr	= types;
-
-		va_list marker;
-		va_start( marker, types );
-		while( *typesPtr != '\0' )
-		{
-			if( *typesPtr == 'i' )
-				stringVal = UString::number( va_arg( marker, int ) );
-			else if( *typesPtr == 's' )
-				stringVal = va_arg( marker, char * );
-
-			if( !stringVal.empty() )
-			{
-				if( !multipleArgs )
-				{
-					multipleArgs = true;
-					argList = UString::sprintf( "%s", stringVal.c_str() );
-				}
-				else
-					argList += UString::sprintf( "\t%s", stringVal.c_str() );
-			}
-			++typesPtr;
-		}
-		va_end( marker );
-
-		CPClilocMessage toSend( (*srcObj) );
-		toSend.Type( type );
-		toSend.Hue( hue );
-		toSend.Font( font );
-		toSend.Message( messageNum );
-		toSend.ArgumentString( argList );
-
-		bool sendSock = (mSock != NULL);
-		if( sendAll )
-		{
-			SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, DIST_INRANGE );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				if( sendSock && (*cIter) == mSock )
-					sendSock = false;
-				(*cIter)->Send( &toSend );
-			}
-		}
-		if( sendSock )
-			mSock->Send( &toSend );
-	}
+}
 
 CSpeechQueue *SpeechSys;
 
@@ -116,6 +126,11 @@ void InitializeLookup( void )
 		codeLookup[LanguageCodes[(UnicodeTypes)i]] = (UnicodeTypes)i;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Attempt to find language used by client
+//o-----------------------------------------------------------------------------------------------o
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 {
 	if( s == NULL )
@@ -137,21 +152,21 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 		if( p != codeLookup.end() )
 			return p->second;
 		else
-			Console.Error( "Unknown language type \"%s\".  PLEASE report this on www.sourceforge.net/projects/uox3 in the bugtracker!", ulangCode.c_str() );
+			Console.Error( "Unknown language type \"%s\".  PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str() );
 	}
 	return cLang;
 }
 
-//o-------------------------------------------------------------------------
-//|	Function	-	sysBroadcast( std::string& txt )
-//|	Date		-	Unknown
-//|	Programmer	-	UOX DevTeam
-//|	Modification-	EviLDeD(February 27, 2000)
-//o-------------------------------------------------------------------------
-//|	Purpose			-	This function was adapted to be used with the new code
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void sysBroadcast( const std::string& txt )
+//|	Programmer	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This function was adapted to be used with the new code
 //|						in the console thread that allows text to be entered on
 //|						the console and it be shipped out to all logged in players.
-//o-------------------------------------------------------------------------
+//|
+//|	Changes		-	EviLDeD (February 27, 2000)
+//o-----------------------------------------------------------------------------------------------o
 void sysBroadcast( const std::string& txt )
 {
 	if( !txt.empty() )
@@ -171,34 +186,37 @@ void sysBroadcast( const std::string& txt )
 }
 
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text );
-/*
-Unicode speech format
-byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
-
-  Message Sent By Client:
-  0xAD - Unicode Speech Request
-  UI08 cmd (0xAD)
-  short msgsize 1,2
-  byte type (0=say, 2=emote, 8=whisper, 9=yell) 3
-  short color 4,5
-  short font 6,7
-  UI08[4] lang (null terminated, "enu " for US english.) 8,9,10,11
-  wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
-  
-	Message Sent By Server:
-	Unicode Speech message(Variable # of bytes) 
-·	BYTE cmd											0
-·	BYTE[2] blockSize									1-2
-·	BYTE[4] ID											3-6
-·	BYTE[2] Model										7-8
-·	BYTE Type											9
-·	BYTE[2] Color										10-11
-·	BYTE[2] Font										12-13
-·	BYTE[4] Language									14-17 (3 byte unicode language, mirrored from client)
-·	BYTE[30] Name										18-47
-·	BYTE[?][2] Msg - Null Terminated (blockSize - 48)	48+?
-*/
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPITalkRequest::Handle( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles speech requests from client
+//|
+//|	Notes		-	Unicode speech format
+//|					byte=char, short=char[2], int=char[4], wchar=char[2]=unicode character
+//|
+//|					Message Sent By Client:
+//|					0xAD - Unicode Speech Request
+//|					UI08 cmd (0xAD)
+//|					short msgsize 1,2
+//|					byte type (0=say, 2=emote, 8=whisper, 9=yell) 3
+//|					short color 4,5
+//|					short font 6,7
+//|					UI08[4] lang (null terminated, "enu " for US english.) 8,9,10,11
+//|					wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
+//|
+//|					Message Sent By Server:
+//|					Unicode Speech message(Variable # of bytes) 
+//|					·	BYTE cmd											0
+//|					·	BYTE[2] blockSize									1-2
+//|					·	BYTE[4] ID											3-6
+//|					·	BYTE[2] Model										7-8
+//|					·	BYTE Type											9
+//|					·	BYTE[2] Color										10-11
+//|					·	BYTE[2] Font										12-13
+//|					·	BYTE[4] Language									14-17 (3 byte unicode language, mirrored from client)
+//|					·	BYTE[30] Name										18-47
+//|					·	BYTE[?][2] Msg - Null Terminated (blockSize - 48)	48+?
+//o-----------------------------------------------------------------------------------------------o
 bool CPITalkRequest::Handle( void )
 {
 	if( HandleCommon() )
@@ -376,7 +394,6 @@ bool CPITalkRequest::Handle( void )
 	return true;
 }
 
-
 CSpeechQueue::CSpeechQueue() : pollTime( 100 ), runAsThread( false )
 {
 	speechList.resize( 0 );
@@ -392,13 +409,12 @@ CSpeechQueue::~CSpeechQueue()
 	speechList.clear();
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	CSpeechQueue::SayIt( CSpeechEntry& toSay )
-//|	Date			-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Sends out specified speech entry to users
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SayIt( CSpeechEntry& toSay )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends out specified speech entry to users
+//o-----------------------------------------------------------------------------------------------o
 void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 {
 	CPacketSpeech toSend	= toSay;
@@ -484,13 +500,12 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 	};
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	bool CSpeechQueue::InternalPoll()
-//|	Date			-	Unknown
-//|	Organization	-	UOX3 DevTeam
-//o--------------------------------------------------------------------------o
-//|	Description		-	Send out any pending speech, returning true if entries were sent
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool InternalPoll( void )
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends out any pending speech, returning true if entries were sent
+//o-----------------------------------------------------------------------------------------------o
 bool CSpeechQueue::InternalPoll( void )
 {
 	bool retVal = false;

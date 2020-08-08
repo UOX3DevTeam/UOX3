@@ -116,6 +116,7 @@ SEngineFunc SE_Yell;
 SEngineFunc SE_SendStaticStats;
 SEngineFunc SE_GetTileHeight;
 SEngineFunc SE_IterateOver;
+SEngineFunc SE_IterateOverSpawnRegions;
 SEngineFunc SE_WorldBrightLevel;
 SEngineFunc SE_WorldDarkLevel;
 SEngineFunc SE_WorldDungeonLevel;
@@ -125,6 +126,9 @@ SEngineFunc SE_ResourceAmount;
 SEngineFunc SE_ResourceTime;
 SEngineFunc SE_ResourceRegion;
 SEngineFunc SE_Moon;
+
+SEngineFunc SE_GetSpawnRegion;
+SEngineFunc SE_GetSpawnRegionCount;
 
 SEngineFunc SE_ReloadJSFile;
 SEngineFunc SE_StaticInRange;

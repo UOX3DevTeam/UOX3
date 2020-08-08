@@ -72,7 +72,7 @@ function onCallback0( socket, ourObj )
 		var z 		= socket.GetSByte( 16 ) + GetTileHeight( socket.GetWord( 17 ) );
 		var npcSection 	= socket.xText;
 
-			var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber );
+			var newChar 	= SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID );
 
 		if( newChar && newChar.isChar )
 			newChar.InitWanderArea();
@@ -166,7 +166,7 @@ function onCallback3( socket, ourObj )
 			mChar.SysMessage( "Specified item-ID does not exist." );
 			mChar.SysMessage( "Hex: 0x"+itemID.toString(16)+ " Dec: " + itemID );
 			newItem.Delete();
-		}			
+		}
 	}
 }
 
@@ -186,7 +186,7 @@ function onCallback4( socket, ourObj )
 			newItem.decayable = false;
 		}
 		else
-			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );			
+			mChar.SysMessage( "Item-section not found in DFNs: "+iSection );
 	}
 }
 
@@ -221,13 +221,13 @@ function command_ADDX( socket, cmdString )
 		{
 			newItem.SetLocation( mChar.x, mChar.y, targZ );
 		}
-			
+
 		if( newItem.id != targID )
 		{ //If itemid of newly created item differs from specified id, delete item - it's a default one only
 			mChar.SysMessage( "Specified item-ID does not exist." );
 			mChar.SysMessage( "Hex: 0x"+targID.toString(16)+ " Dec: " + targID );
 			newItem.Delete();
-		}			
+		}
 	}
 }
 

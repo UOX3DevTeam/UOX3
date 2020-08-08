@@ -14,20 +14,26 @@ cWhoList *OffList;
 
 void	TweakTarget( CSocket *s );
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ResetUpdateFlag( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Disables the WhoList update flag
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::ResetUpdateFlag( void )
-// PRE:		WhoList class is active
-// POST:	Resets the update flag
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	needsUpdating = false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	cWhoList( bool trulyOnline )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Initializes the variables of the wholist on creation
+//o-----------------------------------------------------------------------------------------------o
 cWhoList::cWhoList( bool trulyOnline )
-// PRE:		On creation
-// POST:	Initializes the variables of the wholist
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	FlagUpdate();					// first use will force it to update
 	gmCount = 0;					// no GMs currently using it
@@ -45,19 +51,26 @@ cWhoList::~cWhoList()
 	gmCount = 0;
 	Delete();
 }
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ResetUpdateFlag( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Flags the WhoList as needing to be updated
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::FlagUpdate( void )
-// PRE:		WhoList class is active
-// POST:	Flags the who list as needing to be updated
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	needsUpdating = true;
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendSocket( CSocket *toSendTo )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends the WhoList to a player's socket
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::SendSocket( CSocket *toSendTo )
-// PRE:		WhoList class is active
-// POST:	Sends the wholist to the socket
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	GMEnter();
 	if( needsUpdating && gmCount <= 1 )	// If we need to update, do it now while we still can
@@ -69,30 +82,39 @@ void cWhoList::SendSocket( CSocket *toSendTo )
 		SendVecsAsGump( toSendTo, one, two, 11, INVALIDSERIAL );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GMEnter( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the GM counter
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::GMEnter( void )
-// PRE:		WhoList class is active
-// POST:	Increments the GM counter
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	++gmCount;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void GMLeave( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Decrements the GM counter
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::GMLeave( void )
-// PRE:		WhoList class is active
-// POST:	Decrements the GM counter
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	if( gmCount != 0 )
 		--gmCount;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Delete( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Deletes all the entries in the WhoList
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Delete( void )
-// PRE:		WhoList class is active
-// POST:	Deletes all the entries
-// CODER:	Abaddon
-// DATE:	12th February, 2000
 {
 	one.resize( 0 );
 	two.resize( 0 );
@@ -100,20 +122,26 @@ void cWhoList::Delete( void )
 
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddSerial( SERIAL toAdd )
+//|	Date		-	23rd February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds an entry into the whoMenuData array
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::AddSerial( SERIAL toAdd )
-// PRE:		WhoList class is active
-// POST:	Adds an entry into the whoMenuData array
-// CODER:	Abaddon
-// DATE:	23rd February, 2000
 {
 	whoMenuData.push_back( toAdd );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
+//|	Date		-	23rd February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Does action based upon button selected
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
-// PRE:		WhoList class is active
-// POST:	Does action based upon button selected
-// CODER:	Abaddon
-// DATE:	23rd February, 2000
 {
 	CChar *sourceChar = toSendTo->CurrcharObj();
 
@@ -262,6 +290,11 @@ void cWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Builds the WhoList gump and sends it to the player
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 {
 	SERIAL serial = whoMenuData[buttonPressed];
@@ -331,14 +364,18 @@ void cWhoList::ZeroWho( void )
 	gmCount = 0;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Update( void )
+//|	Date		-	12th February, 2000
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	If multiple GMs using, doesn't actually update (deferred update)
+//|						Otherwise updates the arrays, and resets the update flag
+//|
+//|	Changes		-	1.1 June 29th, 2000
+//|						Written to use SendVecsAsGump, as well as making it flexible enough to show offline players
+//o-----------------------------------------------------------------------------------------------o
 void cWhoList::Update( void )
-// PRE:		WhoList class is active
-// POST:	If multiple GMs using, doesn't actually update (deferred update)
-//			Otherwise updates the arrays, and resets the update flag
-// CODER:	Abaddon
-// DATE:	12th February, 2000
-// REVISION 1.1 June 29th, 2000
-//				Written to use SendVecsAsGump, as well as making it flexible enough to show offline players
 {
 	if( gmCount > 1 )
 	{

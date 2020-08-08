@@ -15,12 +15,12 @@
 namespace UOX
 {
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcValue( CItem *i, UI32 value )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of an item
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 calcValue( CItem *i, UI32 value )
 {
 	if( i->GetType() == IT_POTION )
@@ -51,12 +51,12 @@ UI32 calcValue( CItem *i, UI32 value )
 	return value;
 }
 
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcGoodValue( CChar *npcnum2, CItem *i, UI32 value, bool isSelling )
-//|	Programmer	-	UOX3 DevTeam
-//o---------------------------------------------------------------------------o
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 {
 	if( tReg == NULL )
@@ -86,13 +86,12 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 	return value;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void buyItem( CSocket *mSock )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Called when player buys an item from a vendor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPIBuyItem::Handle( void )
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when player buys an item from a vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CPIBuyItem::Handle( void )
 {
 	UI16 i;
@@ -299,13 +298,12 @@ bool CPIBuyItem::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void sellItem( CSocket *mSock )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Player sells an item to the vendor
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CPISellItem::Handle( void )
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Player sells an item to the vendor
+//o-----------------------------------------------------------------------------------------------o
 bool CPISellItem::Handle( void )
 {
 	if( tSock->GetByte( 8 ) != 0 )
@@ -434,13 +432,12 @@ bool CPISellItem::Handle( void )
 	return true;
 }
 
-//o---------------------------------------------------------------------------o
-//|   Function    :  void restockNPC( CChar *i, bool stockAll )
-//|   Date        :  Unknown
-//|   Programmer  :  UOX3 DevTeam
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Restock NPC Vendors
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void restockNPC( CChar *i, bool stockAll )
+//|	Org/team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Restock NPC Vendors
+//o-----------------------------------------------------------------------------------------------o
 void restockNPC( CChar& i, bool stockAll )
 {
 	if( !i.IsShop() )
@@ -467,7 +464,7 @@ void restockNPC( CChar& i, bool stockAll )
 				}
 				if( cwmWorldState->ServerData()->TradeSystemStatus() ) 
 				{
-					CTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber() );
+					CTownRegion *tReg = calcRegionFromXY( i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceID() );
 					Items->StoreItemRandomValue( c, tReg );
 				}
 			}
@@ -484,13 +481,13 @@ bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 
 	return retVal;
 }
-//o---------------------------------------------------------------------------o
-//|   Function    :  void restock( bool stockAll )
-//|   Date        :  3/15/2003
-//|   Programmer  :	 Zane
-//o---------------------------------------------------------------------------o
-//|   Purpose     :  Restock all NPC Vendors
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void restock( bool stockAll )
+//|	Date		-	3/15/2003
+//|	Programmer	-	Zane
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Restock all NPC Vendors
+//o-----------------------------------------------------------------------------------------------o
 void restock( bool stockAll )
 {
 	UI32 b = (stockAll ? 1 : 0);

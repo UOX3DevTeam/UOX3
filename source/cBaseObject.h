@@ -1,14 +1,9 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	cBaseObject.h
-//|	Date			-	
-//|	Developers		-	
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	cBaseObject.h
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Defines the property specifications for the base object class
+//o-----------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
 
@@ -46,17 +41,13 @@ enum UpdateTypes
 	UT_COUNT
 };
 
-//o--------------------------------------------------------------------------o
-//|	Class/Struct	-	class CBaseObject
-//|	Date					-	
-//|	Developers		-	Abaddon/EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status				-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Class		-	class CBaseObject
+//|	Programmer	-	Abaddon/EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	BaseObject class with common, shared properties for all object types
+//o-----------------------------------------------------------------------------------------------o
 class CBaseObject
 {
 protected:
@@ -93,7 +84,8 @@ protected:
 
 	SI16			carve; // Carve.dfn entry
 
-	UI08				worldNumber;
+	UI08			worldNumber;
+	UI16			instanceID;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -153,7 +145,8 @@ public:
 	void					SetY( SI16 newValue );
 	void					SetZ( SI08 newValue );
 	void					WalkXY( SI16 newX, SI16 newY );
-	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world ) = 0;
+	virtual void			SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
+	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID ) = 0;
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
 	virtual void			SetLocation( const CBaseObject *toSet ) = 0;
 
@@ -246,6 +239,9 @@ public:
 
 	UI08					WorldNumber( void ) const;
 	void					WorldNumber( UI08 value );
+
+	UI16					GetInstanceID( void ) const;
+	void					SetInstanceID( UI16 value );
 
 	UI08					GetPoisoned( void ) const;
 	virtual void			SetPoisoned( UI08 newValue );

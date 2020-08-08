@@ -120,6 +120,14 @@ function onCallback0( socket, ourObj )
 		ourObj.race = nVal;
 		okMsg( socket );
 		break;
+	case "INSTANCEID":
+		ourObj.instanceID = nVal;
+		okMsg( socket );
+		break;
+	case "WORLDNUMBER":
+		ourObj.worldnumber = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourObj.isChar )
 			HandleSetChar( socket, ourObj, uKey, nVal );

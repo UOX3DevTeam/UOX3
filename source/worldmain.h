@@ -1,6 +1,8 @@
-// WorldMain.h: interface for the CWorldMain class.
-//
-//////////////////////////////////////////////////////////////////////
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	worldmain.h
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Interface for the CWorldMain class.
+//o-----------------------------------------------------------------------------------------------o
 
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
@@ -213,7 +215,7 @@ public:
 	std::map< UI16, CCreatures >		creatures;
 	timeval								uoxtimeout;
 	skill_st							skill[INTELLECT+1];				// Skill data
-	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.scp
+	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.dfn
 	std::vector< TitlePair_st >			prowessTitles;
 	std::vector< TitlePair_st >			murdererTags;
 	std::vector< CTeleLocationEntry >	teleLocs;

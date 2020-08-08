@@ -1,16 +1,13 @@
-//o--------------------------------------------------------------------------o
-//|	File			-	UOXJSPropertyFuncts.cpp
-//|	Date			-	12/14/2001
-//|	Developers		-	Abaddon / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	1.0		Abaddon		14th December, 2001 Initial implementation
-//|									Defines the property specifications for race, region, guild,
-//|									item and chars
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	File		-	UOXJSPropertyFuncts.cpp
+//|	Date		-	12/14/2001
+//|	Programmer	-	Abaddon / EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	1.0		Abaddon		14th December, 2001 Initial implementation
+//|							Defines the property specifications for race, region, guild,
+//|							item and chars
+//o-----------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 
@@ -94,11 +91,39 @@ static JSPropertySpec CRegionProperties[] =
 	{ "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM },
 	{ "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM },
 	{ "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM },
+	{ "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM },
+	{ "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM },
 	{ "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM },
 	{ "numOrePrefs",		CREGP_NUMOREPREFERENCES,	JSPROP_ENUMPERMRO  },
 	{ "orePrefs",			CREGP_OREPREFERENCES,		JSPROP_ENUMPERMIDX },
 	{ "population",			CREGP_POPULATION,			JSPROP_ENUMPERMRO  },
 	{ "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX },
+	{ NULL,					(SI08)NULL,					(UI08)0			   }
+};
+
+static JSPropertySpec CSpawnRegionProperties[] =
+{
+	{ "name",				CSPAWNREGP_NAME,					JSPROP_ENUMANDPERM },
+	{ "regionNum",			CSPAWNREGP_REGIONNUM,				JSPROP_ENUMANDPERM },
+	{ "itemList",			CSPAWNREGP_ITEMLIST,				JSPROP_ENUMANDPERM },
+	{ "npcList",			CSPAWNREGP_NPCLIST,					JSPROP_ENUMANDPERM },
+	{ "item",				CSPAWNREGP_ITEM,					JSPROP_ENUMANDPERM },
+	{ "npc",				CSPAWNREGP_NPC,						JSPROP_ENUMANDPERM },
+	{ "maxItems",			CSPAWNREGP_MAXITEMS,				JSPROP_ENUMANDPERM },
+	{ "maxNpcs",			CSPAWNREGP_MAXNPCS,					JSPROP_ENUMANDPERM },
+	{ "itemCount",			CSPAWNREGP_ITEMCOUNT,				JSPROP_ENUMANDPERM },
+	{ "npcCount",			CSPAWNREGP_NPCCOUNT,				JSPROP_ENUMANDPERM },
+	{ "onlyOutside",		CSPAWNREGP_ONLYOUTSIDE,				JSPROP_ENUMANDPERM },
+	{ "prefZ",				CSPAWNREGP_PREFZ,					JSPROP_ENUMANDPERM },
+	{ "x1",					CSPAWNREGP_X1,						JSPROP_ENUMANDPERM },
+	{ "y1",					CSPAWNREGP_X2,						JSPROP_ENUMANDPERM },
+	{ "x2",					CSPAWNREGP_X2,						JSPROP_ENUMANDPERM },
+	{ "y2",					CSPAWNREGP_Y2,						JSPROP_ENUMANDPERM },
+	{ "world",				CSPAWNREGP_WORLD,					JSPROP_ENUMANDPERM },
+	{ "instanceID",			CSPAWNREGP_INSTANCEID,				JSPROP_ENUMANDPERM },
+	{ "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM },
+	{ "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM },
+	{ "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,					(UI08)0			   }
 };
 
@@ -133,6 +158,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "health",			CCP_HEALTH,			JSPROP_ENUMANDPERM },
 	{ "scripttrigger",	CCP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM },
 	{ "worldnumber",	CCP_WORLDNUMBER,	JSPROP_ENUMANDPERM },
+	{ "instanceID",		CCP_INSTANCEID,		JSPROP_ENUMANDPERM },
 	{ "target",			CCP_TARGET,			JSPROP_ENUMANDPERM },
 	{ "dexterity",		CCP_DEXTERITY,		JSPROP_ENUMANDPERM },
 	{ "intelligence",	CCP_INTELLIGENCE,	JSPROP_ENUMANDPERM },
@@ -269,6 +295,7 @@ static JSPropertySpec CItemProps[] =
 	{ "health",			CIP_HEALTH,			JSPROP_ENUMANDPERM },
 	{ "scripttrigger",	CIP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM },
 	{ "worldnumber",	CIP_WORLDNUMBER,	JSPROP_ENUMANDPERM },
+	{ "instanceID",		CIP_INSTANCEID,		JSPROP_ENUMANDPERM },
 	{ "amount",			CIP_AMOUNT,			JSPROP_ENUMANDPERM },
 	{ "container",		CIP_CONTAINER,		JSPROP_ENUMANDPERM },
 	{ "type",			CIP_TYPE,			JSPROP_ENUMANDPERM },

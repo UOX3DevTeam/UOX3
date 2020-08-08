@@ -8,20 +8,20 @@ function onBoughtFromVendor( pSock, Vendor, iBought )
 		onUseChecked( pSock.currentChar, iBought );
 }
 
-function onUseChecked( pUser, iUsed ) 
-{ 
+function onUseChecked( pUser, iUsed )
+{
 	// randomize the ostard given
-	var look = RollDice( 1, 3, 0 ); 
-	if( look == 1 ) 
-		var nSpawned = SpawnNPC( "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
-	if( look == 2 ) 
-		var nSpawned = SpawnNPC( "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
-	if( look == 3 ) 
-		var nSpawned = SpawnNPC( "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber );
+	var look = RollDice( 1, 3, 0 );
+	if( look == 1 )
+		var nSpawned = SpawnNPC( "forestostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	if( look == 2 )
+		var nSpawned = SpawnNPC( "desertostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	if( look == 3 )
+		var nSpawned = SpawnNPC( "frenziedostard", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
 	if( nSpawned )
 	{
 		// set owner to the envoker
-		nSpawned.owner = pUser;   
+		nSpawned.owner = pUser;
 		// make pet follow owner by default
 		nSpawned.Follow( pUser );
 		nSpawned.wandertype = 1;

@@ -67,21 +67,18 @@ bool CountNPCFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	return retVal;
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function		-	void cHTMLTemplate::Process( void )
-//|	Date			-	1/18/2003 4:43:17 AM
-//|	Developers		-	DarkStorm / EviLDeD
-//|	Organization	-	UOX3 DevTeam
-//|	Status			-	Currently under development
-//o--------------------------------------------------------------------------o
-//|	Description		-	
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void cHTMLTemplate::Process( void )
+//|	Date		-	1/18/2003 4:43:17 AM
+//|	Programmer	-	DarkStorm / EviLDeD
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	
 //|									
-//|	Modification	-	08062003 - EviLDeD - For the record this is some of the 
-//|									most fucked up shit I	have EVER SEEN!! Written to truely
+//|	Changes		-	08062003 - EviLDeD - For the record this is some of the 
+//|									most fucked up shit I have EVER SEEN!! Written to truely
 //|									handle multiple Templates.
-//o--------------------------------------------------------------------------o
-//| Modifications	-	
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Process( void )
 {
 	// Need to check to see if the server is actually running, of so we do not want to process the offline template.
@@ -467,9 +464,9 @@ void cHTMLTemplate::Process( void )
 
 	//NPCCount
 	UI32 npccount = 0;
-		UI32 b		= 0;
-		ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
-		npccount	= b;
+	UI32 b		= 0;
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &CountNPCFunctor );
+	npccount	= b;
 
 	UString npcs	= UString::number( npccount );
 	Pos				= ParsedContent.find( "%npcs" ); 
@@ -567,12 +564,12 @@ void cHTMLTemplate::Process( void )
 		Console.Error( " Couldn't open the template file %s for writing", OutputFile.c_str() );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Poll
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Poll( void )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the page if needed
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Poll( void )
 {
 	if( ScheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun() )
@@ -582,15 +579,15 @@ void cHTMLTemplate::Poll( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::LoadTemplate
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadTemplate( void )
 //|	Programmer	-	Dark-Storm
-//|
-//|	Modification	-	08062003 - Updated this member function to actually handle
-//|									loading the different templates for use later.
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the Template into memory
-//o---------------------------------------------------------------------------o
+//|
+//|	Changes		-	08062003 - Updated this member function to actually handle
+//|									loading the different templates for use later.
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::LoadTemplate( void )
 {
 	Content = "";
@@ -615,28 +612,28 @@ void cHTMLTemplate::LoadTemplate( void )
 	Loaded = true;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::UnloadTemplate
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void UnloadTemplate( void )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unloads the Template (i.e. for reloading)
 //|									
-//|	Modification	-	08062003 - EviLDeD - Updated to properly unload a template
-//|									and to unload the correect template, instead of just the
-//|									status template.
-//o---------------------------------------------------------------------------o
+//|	Changes		-	08062003 - EviLDeD - Updated to properly unload a template
+//|								and to unload the correect template, instead of just the
+//|								status template.
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::UnloadTemplate( void )
 {
 	Content="";
 	Loaded = false;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Load
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( ScriptSection *found )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Template from a ScriptSection
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
 	UString tag, data, UTag, UData, fullPath;
@@ -690,12 +687,12 @@ cHTMLTemplates::~cHTMLTemplates()
 	Unload();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Load
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( void )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Templates from the scripts
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Load( void )
 {
 	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
@@ -716,12 +713,12 @@ void cHTMLTemplates::Load( void )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Unload
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Unload( void )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unloads all Templates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Unload( void )
 {
 	if( Templates.empty() )
@@ -735,12 +732,12 @@ void cHTMLTemplates::Unload( void )
 	Templates.clear();
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Poll
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Poll( ETemplateType nTemplateID )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Polls the templates for updates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 {
 	std::vector< cHTMLTemplate* >::const_iterator tIter;
@@ -755,12 +752,12 @@ void cHTMLTemplates::Poll( ETemplateType nTemplateID )
 	}
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::TemplateInfoGump
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void TemplateInfoGump( CSocket *mySocket )
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows an information gump about current templates
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 {
 	CGump InfoGump = CGump( false, false );
@@ -807,67 +804,67 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 	InfoGump.Send( mySocket );
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetName
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetName( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the Template
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetName( void ) const
 {
 	return Name; 
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetOutput
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetOutput( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Output Filename
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetOutput( void ) const
 {
 	return OutputFile; 
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetInput
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetInput( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Input Filename
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 std::string cHTMLTemplate::GetInput( void ) const
 {
 	return InputFile;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::TemplateInfoGump
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetScheduledUpdate( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 cHTMLTemplate::GetScheduledUpdate( void ) const
 {
 	return ScheduledUpdate; 
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::GetUpdateTimer
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI32 GetUpdateTimer( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 UI32 cHTMLTemplate::GetUpdateTimer( void ) const
 {
 	return UpdateTimer;
 }
 
-//o---------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::GetTemplateType
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	ETemplateType GetTemplateType( void ) const
 //|	Programmer	-	Dark-Storm
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Template Type
-//o---------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
 ETemplateType cHTMLTemplate::GetTemplateType( void ) const
 {
 	return Type;   

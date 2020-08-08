@@ -13,7 +13,7 @@ namespace UOX
 
 CMulHandler *Map				= NULL;
 
-const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32);
+const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
@@ -87,9 +87,13 @@ MapData_st::~MapData_st()
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Compute new bounding box, by include the new point. < High Seas version
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
 {
-	// compute new bounding box, by include the new point
 	if( x < lx ) 
 		lx = x;
 	if( x > hx ) 
@@ -104,9 +108,13 @@ void CMulHandler::MultiItemsIndex_st::Include( SI16 x, SI16 y, SI08 z )
 		hz = z;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void MultiItemsIndexHS_st::Include( SI16 x, SI16 y, SI08 z )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Compute new bounding box, by include the new point. > High Seas version
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::MultiItemsIndexHS_st::Include( SI16 x, SI16 y, SI08 z )
 {
-	// compute new bounding box, by include the new point
 	if( x < lx ) 
 		lx = x;
 	if( x > hx ) 
@@ -154,6 +162,11 @@ CMulHandler::~CMulHandler()
 		delete[] multiIndexHS;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadMapsDFN( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads maps.dfn to see which map files to actually load into memory later
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadMapsDFN( void )
 {
 	UString tag, data, UTag;
@@ -208,19 +221,11 @@ void CMulHandler::LoadMapsDFN( void )
 	}
 }
 
-//o--------------------------------------------------------------------------o
-//|	Function/Class	-	void CMulHandler::Load( void )
-//|	Date			-	03/12/2002
-//|	Developer(s)	-	Unknown / EviLDeD 
-//|	Company/Team	-	UOX3 DevTeam
-//|	Status			-	
-//o--------------------------------------------------------------------------o
-//|	Description		-	Prepare access streams to the server required mul files. 
-//|									This function basicaly just opens the streams and validates
-//|									that the file is open and available
-//o--------------------------------------------------------------------------o
-//|	Returns				-	N/A
-//o--------------------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UOXFile * loadFile( const std::string& fullName )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Prints status of loading a file in UOX3 console
+//o-----------------------------------------------------------------------------------------------o
 UOXFile * loadFile( const std::string& fullName )
 {
 	UOXFile *toLoad = new UOXFile( fullName.c_str(), "rb" );
@@ -234,6 +239,11 @@ UOXFile * loadFile( const std::string& fullName )
 	return toLoad;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads map and statics files into memory
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps )
 {
 	UString mapMUL		= mMap.mapFile;
@@ -337,6 +347,11 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadTileData( const std::string& basePath )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads tiledata file into memory
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadTileData( const std::string& basePath )
 {
 	UI08 j = 0;
@@ -411,6 +426,15 @@ void CMulHandler::LoadTileData( const std::string& basePath )
 	Console.PrintDone();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Load( void )
+//|	Date		-	03/12/2002
+//|	Programmer	-	Unknown / EviLDeD 
+//|	Org/Team	-	UOX3 DevTeam
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Prepare access streams to the server required mul files. This function basicaly
+//|					just opens the streams and validates that the file is open and available
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::Load( void )
 {
 	Console.PrintSectionBegin();
@@ -439,6 +463,11 @@ void CMulHandler::Load( void )
 	Console.PrintSectionBegin();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadMultis( const std::string& basePath )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Loads multi files into memory
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadMultis( const std::string& basePath )
 {
 	// now main memory multiItems
@@ -463,6 +492,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	}
 
 	// multiLength determines version of datafiles used by server
+	//	994832 - 7.0.85.15 - possibly earlier
 	//	962928 - 7.0.15.1 to 7.0.23.1 - Additional SI32 unknown1 property added
 	//	908592 - 7.0.9.0
 	//	596976 - 7.0.8.2
@@ -551,6 +581,11 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 	Console.PrintDone();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t GetTileMem( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns amount of memory used to load tiledata
+//o-----------------------------------------------------------------------------------------------o
 size_t CMulHandler::GetTileMem( void ) const
 {
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() ) //7.0.9.0 tiledata and later
@@ -559,6 +594,11 @@ size_t CMulHandler::GetTileMem( void ) const
 		return (LANDDATA_SIZE * sizeof( CLand ) + tileDataSize * sizeof( CTile ));
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	size_t GetMultisMem( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns amount of memory used to load multis
+//o-----------------------------------------------------------------------------------------------o
 size_t CMulHandler::GetMultisMem( void ) const
 {
 	if( cwmWorldState->ServerData()->ServerUsingHSMultis() ) //7.0.9.0 tiledata and later
@@ -567,13 +607,11 @@ size_t CMulHandler::GetMultisMem( void ) const
 		return (multiSize * sizeof( Multi_st ) + multiIndexSize * sizeof( MultiItemsIndex_st ) );
 }
 
-//o-------------------------------------------------------------o
-//|   Function    :  SI08 TileHeight( UI16 tilenum )
-//|   Date        :  Unknown
-//|   Programmer  :  Unknown
-//o-------------------------------------------------------------o
-//|   Purpose     :  Height of a gien tile (If climbable we return 1/2 its height).
-//o-------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 TileHeight( UI16 tilenum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Height of a gien tile (If climbable we return 1/2 its height).
+//o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::TileHeight( UI16 tilenum )
 {
 	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -597,13 +635,12 @@ SI08 CMulHandler::TileHeight( UI16 tilenum )
 }
 
 
-//o-------------------------------------------------------------o
-//|   Function    :  SI08 StaticTop( SI16, SI16 y, SI08 oldz);
-//|   Date        :  Unknown     Touched: Dec 21, 1998
-//|   Programmer  :  Unknown
-//o-------------------------------------------------------------o
-//|   Purpose     :  Top of statics at/above given coordinates
-//o-------------------------------------------------------------o
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
+//|	Date		-	Unknown     Touched: Dec 21, 1998
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Top of statics at/above given coordinates
+//o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
 {
 	SI08 top = ILLEGAL_Z;
@@ -618,6 +655,11 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 	return top;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 SeekMulti( UI16 multinum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if multinum/id can be found in multi data. Non-High Seas version
+//o-----------------------------------------------------------------------------------------------o
 SI32 CMulHandler::SeekMulti( UI16 multinum )
 {
 	SI32 retVal = -1;
@@ -626,6 +668,11 @@ SI32 CMulHandler::SeekMulti( UI16 multinum )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 SeekMultiHS( UI16 multinum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if multinum/id can be found in multi data. High Seas version
+//o-----------------------------------------------------------------------------------------------o
 SI32 CMulHandler::SeekMultiHS( UI16 multinum )
 {
 	SI32 retVal = -1;
@@ -645,12 +692,12 @@ MultiHS_st& CMulHandler::SeekIntoMultiHS( UI16 multinum, SI32 number )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function		-	void MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
-//|	Date			-	6th September, 1999
-//|	Programmer		-	Crackerjack
-//|	Modified		-	Abaddon, 26th September, 2001 - fetches from cache
+//|	Function	-	void MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
+//|	Date		-	6th September, 1999
+//|	Programmer	-	Crackerjack
+//|	Changes		-	Abaddon, 26th September, 2001 - fetches from cache
 //o--------------------------------------------------------------------------
-//|	Purpose			-	Finds the corners of a multi object
+//|	Purpose		-	Finds the corners of a multi object
 //o--------------------------------------------------------------------------
 void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 )
 {
@@ -681,8 +728,12 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 	}
 }
 
-
-// return the height of a multi item at the given x,y. this seems to actually return a height
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return the height of a multi item at the given x, y. 
+//|					This seems to actually return a height
+//o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 {
 	UI16 multiID = static_cast<UI16>(i->GetID() - 0x4000);
@@ -727,9 +778,12 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldz, SI08 maxZ )
 	return ILLEGAL_Z;                                                                                                                     
 } 
 
-
-// This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
-SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
+//o-----------------------------------------------------------------------------------------------o
+SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID )
 {
 	SI08 z = ILLEGAL_Z;
 	
@@ -740,7 +794,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	regItems->Push();
 	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 	{
-		if( !ValidateObject( tempItem ) )
+		if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
 			z = MultiHeight( tempItem, x, y, oldz, maxZ );
@@ -755,7 +809,11 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	return z;
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns ID of tile in multi at specified coordinates
+//o-----------------------------------------------------------------------------------------------o
 UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 {
 	if( !i->CanBeObjType( OT_MULTI ) )
@@ -801,7 +859,6 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 			{
 				return multi.tile;
 			}
-			
 		}
 	}
 	else
@@ -814,15 +871,17 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz )
 			{
 				return multi.tile;
 			}
-			
 		}
 	}
 	return 0;
 }
 
-
-// returns which dynamic tile is present at (x,y) or -1 if no tile exists
-UI16 CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns which dynamic tile is present at (x,y) or -1 if no tile exists
+//o-----------------------------------------------------------------------------------------------o
+UI16 CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
 {
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea == NULL )	// no valid region
@@ -832,7 +891,7 @@ UI16 CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	regItems->Push();
 	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 	{
-		if( !ValidateObject( tempItem ) )
+		if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID )
 			continue;
 		if( tempItem->GetID( 1 ) >= 0x40 )
 		{
@@ -849,9 +908,12 @@ UI16 CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	return INVALIDID;
 }
 
-
-// return the elevation of MAP0.MUL at given coordinates, we'll assume since its land
-// the height is inherently 0
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 MapElevation( SI16 x, SI16 y, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the map elevation at given coordinates, we'll assume since its land
+//|					the height is inherently 0
+//o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 {
 	const map_st map = SeekMap( x, y, worldNumber );
@@ -864,6 +926,11 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 	return map.z;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsValidTile( UI16 tileNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a given tile number falls within the range of tiles loaded in memory
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::IsValidTile( UI16 tileNum )
 {
 	bool retVal = true;
@@ -873,6 +940,11 @@ bool CMulHandler::IsValidTile( UI16 tileNum )
 	return retVal;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CTile& SeekTile( UI16 tileNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetches data about a specific tile from memory. Non-High Seas version
+//o-----------------------------------------------------------------------------------------------o
 CTile& CMulHandler::SeekTile( UI16 tileNum )
 {
 	//7.0.8.2 tiledata and earlier
@@ -885,6 +957,12 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 	else
 		return staticTile[tileNum];
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CTileHS& SeekTileHS( UI16 tileNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetches data about a specific tile from memory. High Seas version
+//o-----------------------------------------------------------------------------------------------o
 CTileHS& CMulHandler::SeekTileHS( UI16 tileNum )
 {
 	//7.0.9.2 tiledata and later
@@ -898,7 +976,11 @@ CTileHS& CMulHandler::SeekTileHS( UI16 tileNum )
 		return staticTileHS[tileNum];
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CLand& SeekLand( UI16 landNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetches data about a specific land tile from memory. Non-High Seas version
+//o-----------------------------------------------------------------------------------------------o
 CLand& CMulHandler::SeekLand( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
@@ -910,6 +992,12 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 	else
 		return landTile[landNum];
 }
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CLandHS& SeekLandHS( UI16 landNum )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetches data about a specific land tile from memory. High Seas version
+//o-----------------------------------------------------------------------------------------------o
 CLandHS& CMulHandler::SeekLandHS( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
@@ -922,7 +1010,11 @@ CLandHS& CMulHandler::SeekLandHS( UI16 landNum )
 		return landTileHS[landNum];
 }
 
-
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if a given location is within the bounds of the specified world
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
 	if( worldNumber >= MapList.size() )
@@ -931,27 +1023,30 @@ bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 	return ( ( x >= 0 && x < MapList[worldNumber].xBlock ) && ( y >= 0 && y < MapList[worldNumber].yBlock ) );
 }
 
-
-/*!
-** Use this iterator class anywhere you would have used SeekInit() and SeekStatic()
-** Unlike those functions however, it will only return the location of tiles that match your
-** (x,y) EXACTLY.  They also should be significantly faster since the iterator saves
-** a lot of info that was recomputed over and over and it returns a pointer instead 
-** of an entire structure on the stack.  You can call First() if you need to reset it.
-** This iterator hides all of the map implementation from other parts of the program.
-** If you supply the exact variable, it tells it whether to iterate over those items
-** with your exact (x,y) otherwise it will loop over all items in the same cell as you.
-** (Thats normally only used for filling the cache)
-** 
-** Usage:
-**		CStaticIterator msi( x, y, worldNumber );
-**
-**      for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
-**      {
-**          CTile& tile = Map->SeekTile( stat->itemid );
-**  		    ... your code here...
-**	  	}
-*/
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
+//|					baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
+//|					index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Use this iterator class anywhere you would have used SeekInit() and SeekStatic()
+//|					Unlike those functions however, it will only return the location of tiles that match your
+//|					(x,y) EXACTLY.  They also should be significantly faster since the iterator saves
+//|					a lot of info that was recomputed over and over and it returns a pointer instead 
+//|					of an entire structure on the stack.  You can call First() if you need to reset it.
+//|					This iterator hides all of the map implementation from other parts of the program.
+//|					If you supply the exact variable, it tells it whether to iterate over those items
+//|					with your exact (x,y) otherwise it will loop over all items in the same cell as you.
+//|					(Thats normally only used for filling the cache)
+//| 
+//|					Usage:
+//|						CStaticIterator msi( x, y, worldNumber );
+//|
+//|						for( Static_st *stat = msi.First(); stat != NULL; stat = msi.Next() )
+//|						{
+//|							CTile& tile = Map->SeekTile( stat->itemid );
+//|							... your code here...
+//|						}
+//o-----------------------------------------------------------------------------------------------o
 CStaticIterator::CStaticIterator( SI16 x, SI16 y, UI08 world, bool exact ) : baseX( static_cast<SI16>(x / 8) ), 
 baseY( static_cast<SI16>(y / 8) ), pos( 0 ), remainX( static_cast<UI08>(x % 8) ), remainY( static_cast<UI08>(y % 8) ), 
 index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( false )
@@ -1056,6 +1151,11 @@ Static_st *CStaticIterator::Next( void )
 	return NULL;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	map_st SeekMap( SI16 x, SI16 y, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetches map data for a specific map/world
+//o-----------------------------------------------------------------------------------------------o
 map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 {
 	map_st map = {0, 0};
@@ -1104,7 +1204,11 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	return map;
 }
 
-// Blocking statics at/above given coordinates?
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
 	CStaticIterator msi( x, y, worldNumber );
@@ -1145,6 +1249,11 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck )
 {
 	CStaticIterator msi( x, y, worldNumber );
@@ -1167,11 +1276,15 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 	return true;
 }
 
-// Return new height of player who walked to X/Y but from OLDZ
-SI08 CMulHandler::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns new height of player who walked to X/Y but from OLDZ
+//o-----------------------------------------------------------------------------------------------o
+SI08 CMulHandler::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID )
 {
 	// let's check in this order.. dynamic, static, then the map
-	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber, MAX_Z_STEP );
+	const SI08 dynz = DynamicElevation( x, y, oldz, worldNumber, MAX_Z_STEP, instanceID );
 	if( ILLEGAL_Z != dynz )
 		return dynz;
 
@@ -1182,10 +1295,15 @@ SI08 CMulHandler::Height( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber )
 	return MapElevation( x, y, worldNumber );
 }
 
-// Return whether give coordinates are inside a building by checking if there is a multi or static above them
-bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns whether give coordinates are inside a building by checking if there is
+//|					a multi or static above them
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
 {
-	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127 );
+	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, (SI08)127, instanceID );
 	if( dynz > ( z + 10))
 		return true;
 	else
@@ -1197,10 +1315,15 @@ bool CMulHandler::inBuilding( SI16 x, SI16 y, SI08 z, UI08 worldNumber )
 	return false;
 }
 
-bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if there are any dynamic tiles at given coordinates that block movement
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk )
 {
     // get the tile id of any dynamic tiles at this spot
-    const UI16 dt = DynTile( x, y, z, worldNumber );
+    const UI16 dt = DynTile( x, y, z, worldNumber, instanceID );
 	if( IsValidTile( dt ) )
 	{
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
@@ -1237,6 +1360,11 @@ bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bo
 	return false;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if the map tile at the given coordinates block movement
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk )
 {
 	if( checkWater || waterWalk )
@@ -1285,15 +1413,19 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 	return false;
 }
 
-// can the monster move here from an adjacent cell at elevation 'oldz'
-// use illegal_z if they are teleporting from an unknown z
-bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if location at given coordinates is considered valid for spawning objects
+//|					Also used to verify teleport location for NPCs teleporting back to bounding box
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater )
 {
 	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
     // get the tile id of any dynamic tiles at this spot
-	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, !checkWater ) )
+	if( DoesDynamicBlock( x, y, z, worldNumber, checkWater, !checkWater, instanceID ) )
 		return false;
 
 	// if there's a static block here in our way, return false
@@ -1310,12 +1442,17 @@ bool CMulHandler::ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, 
 	return true;
 }
 
-bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks whether given location is valid for house/boat placement
+//o-----------------------------------------------------------------------------------------------o
+bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkWater )
 {
 	if( !InsideValidWorld( x, y, worldNumber ) )
 		return false;
 
-    const SI08 elev = Height( x, y, oldz, worldNumber );
+    const SI08 elev = Height( x, y, oldz, worldNumber, instanceID );
 	if( ILLEGAL_Z == elev )
 		return false;
 
@@ -1329,7 +1466,7 @@ bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 	}
 
     // get the tile id of any dynamic tiles at this spot
-	if( DoesDynamicBlock( x, y, elev, worldNumber, checkWater, false ) )
+	if( DoesDynamicBlock( x, y, elev, worldNumber, checkWater, instanceID, false ) )
 		return false;
 
 	// if there's a static block here in our way, return false
@@ -1342,29 +1479,43 @@ bool CMulHandler::ValidMultiLocation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumbe
 	return true;
 }
 
-//o--------------------------------------------------------------------------
-//|	Function		-	bool MapExists( UI08 worldNumber )
-//|	Date			-	27th September, 2001
-//|	Programmer		-	Abaddon
-//|	Modified		-
-//o--------------------------------------------------------------------------
-//|	Purpose			-	Returns true if the server has that map in memory
-//o--------------------------------------------------------------------------
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool MapExists( UI08 worldNumber )
+//|	Date		-	27th September, 2001
+//|	Programmer	-	Abaddon
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if the server has that map in memory
+//o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::MapExists( UI08 worldNumber )
 {
 	return ( (worldNumber < MapList.size()) && (MapList[worldNumber].mapObj != NULL) );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	MapData_st& GetMapData( UI08 worldNumber )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns map data for given world number
+//o-----------------------------------------------------------------------------------------------o
 MapData_st& CMulHandler::GetMapData( UI08 worldNumber )
 {
 	return MapList[worldNumber];
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 MapCount( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns count of how many maps have been loaded
+//o-----------------------------------------------------------------------------------------------o
 UI08 CMulHandler::MapCount( void ) const
 {
 	return static_cast<UI08>(MapList.size());
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void LoadDFNOverrides( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Override flags/properties for tiles based on DFNDATA/MAPS/tiles.dfn
+//o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadDFNOverrides( void )
 {
 	UString data, UTag, entryName, titlePart;
@@ -1596,75 +1747,96 @@ void CMulHandler::LoadDFNOverrides( void )
 	}
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CTile::Read( UOXFile *toRead )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads and stores tiledata flags as part of loading tiledata into memory
+//|					Non-High Seas version
+//|
+//|	Notes		-	BYTE[4]		Flags		(See BaseTile)
+//|					BYTE		Weight		Weight of the item, 255 means not movable)
+//|					BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
+//|					BYTE[2]		Unknown1
+//|					BYTE		Unknown2
+//|					BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
+//|					BYTE[2]		Animation
+//|					BYTE		Unknown3
+//|					BYTE		Hue
+//|					BYTE		Unknown4
+//|					BYTE		Unknown5
+//|					BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
+//|					BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
 void CTile::Read( UOXFile *toRead )
 {
-//	BYTE[4]		Flags		(See BaseTile)
-//	BYTE		Weight		Weight of the item, 255 means not movable)
-//	BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
-//  BYTE[2]		Unknown1
-//	BYTE		Unknown2
-//	BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
-//  BYTE[2]		Animation
-//	BYTE		Unknown3
-//	BYTE		Hue
-//	BYTE		Unknown4
-//	BYTE		Unknown5
-//	BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
-//	BYTE[20]	Name
 	UI32 flagsRead;
 	toRead->getULong( &flagsRead );
 	flags = flagsRead;
 	toRead->getUChar( &weight );
-	toRead->getChar(  &layer );
+	toRead->getChar( &layer );
 	toRead->getUShort( &unknown1 );
 	toRead->getUChar( &unknown2 );
 	toRead->getUChar( &quantity );
-	toRead->getUShort(  &animation );
-	toRead->getUChar(  &unknown3 );
-	toRead->getUChar(  &hue );
+	toRead->getUShort( &animation );
+	toRead->getUChar( &unknown3 );
+	toRead->getUChar( &hue );
 	toRead->getUChar( &unknown4 );
 	toRead->getUChar( &unknown5 );
-	toRead->getChar(  &height );
-	toRead->getChar(  name, 20 );
-
+	toRead->getChar( &height );
+	toRead->getChar( name, 20 );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CTileHS::Read( UOXFile *toRead )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads and stores tiledata flags as part of loading tiledata into memory
+//|					High Seas version
+//|
+//|	Notes		-	BYTE[4]		Flags		(See BaseTile)
+//|					BYTE[4]		Unknown0
+//|					BYTE		Weight		Weight of the item, 255 means not movable)
+//|					BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
+//|					BYTE[2]		Unknown1
+//|					BYTE		Unknown2
+//|					BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
+//|					BYTE[2]		Animation
+//|					BYTE		Unknown3
+//|					BYTE		Hue
+//|					BYTE		Unknown4
+//|					BYTE		Unknown5
+//|					BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
+//|					BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
 void CTileHS::Read( UOXFile *toRead )
 {
-//	BYTE[4]		Flags		(See BaseTile)
-//	BYTE		Weight		Weight of the item, 255 means not movable)
-//	BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
-//  BYTE[2]		Unknown1
-//	BYTE		Unknown2
-//	BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
-//  BYTE[2]		Animation
-//	BYTE		Unknown3
-//	BYTE		Hue
-//	BYTE		Unknown4
-//	BYTE		Unknown5
-//	BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
-//	BYTE[20]	Name
 	UI32 flagsRead;
 	toRead->getULong( &flagsRead );
 	flags = flagsRead;
 	toRead->getULong( &unknown0 );
 	toRead->getUChar( &weight );
-	toRead->getChar(  &layer );
+	toRead->getChar( &layer );
 	toRead->getUShort( &unknown1 );
 	toRead->getUChar( &unknown2 );
 	toRead->getUChar( &quantity );
-	toRead->getUShort(  &animation );
-	toRead->getUChar(  &unknown3 );
-	toRead->getUChar(  &hue );
+	toRead->getUShort( &animation );
+	toRead->getUChar( &unknown3 );
+	toRead->getUChar( &hue );
 	toRead->getUChar( &unknown4 );
 	toRead->getUChar( &unknown5 );
-	toRead->getChar(  &height );
-	toRead->getChar(  name, 20 );
+	toRead->getChar( &height );
+	toRead->getChar( name, 20 );
 }
 
-//	BYTE[4]		Flags
-//	BYTE[2]		TextureID
-//	BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void CLand::Read( UOXFile *toRead )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads and stores land tile data as part of loading tiledata into memory
+//|					Non-High Seas version
+//|
+//|	Notes		-	BYTE[4]		Flags
+//|					BYTE[2]		TextureID
+//|					BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
 void CLand::Read( UOXFile *toRead )
 {
 	UI32 flagsRead;
@@ -1674,9 +1846,17 @@ void CLand::Read( UOXFile *toRead )
 	toRead->getChar( name, 20 );
 }
 
-//	BYTE[4]		Flags
-//	BYTE[2]		TextureID
-//	BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void Read( UOXFile *toRead )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reads and stores land tile data as part of loading tiledata into memory
+//|					High Seas version
+//|
+//|	Notes		-	BYTE[4]		Flags
+//|					BYTE[4]		Unknown
+//|					BYTE[2]		TextureID
+//|					BYTE[20]	Name
+//o-----------------------------------------------------------------------------------------------o
 void CLandHS::Read( UOXFile *toRead )
 {
 	UI32 flagsRead;

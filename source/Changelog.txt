@@ -1,4 +1,53 @@
-5/08/2020 - Xuri (0.99.2l)
+08/08/2020 - Xuri (0.99.2m)
+	Misc code and documentation cleanup:
+		Updated and standardized function comment blocks throughout entire codebase
+		Grouped getters and setters together in pairs and documented them as one
+		Removed empty and/or non-useful information from comment blocks
+		Removed unused function from cItem.cpp/h - IncID() - formerly used to change IDs for doors
+	Added new feature - Instances
+		Objects (characters, items, multis, spawnregions) can now make use of a 5th parameter to determine their location in the game world. In addition to the traditional X, Y, Z and WORLDNUMBER parameters, a new one has been added - INSTANCEID - that allows objects to exist at the same coordinates in the same world, but in different "dimensions". Code has been updated in multiple places to support this, and a default instanceID of 0 is assumed if nothing else is specified.
+	Added support for new DFN tag in town regions, spawn regions and locations - INSTANCEID (defaults to 0 if not present)
+	Added support for another start location parameter after worldNum in UOX.INI representing instanceID (defaults to 0 if not present)
+	Updated TWEAK menu to include WorldNumber and instanceID
+	Fixed BaseWeight option in TWEAK menu
+	Updated CBase_Teleport - now takes an optional 5th parameter instanceID
+	Updated SE_SpawnNPC now takes an optional 5th parameter - instanceID
+	Updated SE_FindMulti now takes an optional 5th parameter - instanceID
+	Updated SE_GetItem now takes an optional 5th parameter - instanceID
+	Updated SE_FindItem now takes an optional 6th parameter - instanceID
+	Added new JS property for Items, Characters, Regions: .instanceID
+	Added JS property for Regions: .members - returns comma-separated list of town member serials
+	Updated JS scripts making use of the above-mentioned JS Methods/Functions
+	Updated dictionaries with new tweak menu entry texts
+	Exposed SpawnRegions to JS engine, and updated JS docs with details:
+		SpawnRegion JS Functions
+			IterateOverSpawnRegions()
+			GetSpawnRegion( spawnRegNum )
+			GetSpawnRegionCount()
+		SpawnRegion JS Properties
+			name
+			regionNum
+			itemList
+			npcList
+			item
+			npc
+			maxItems
+			maxNpcs
+			itemCount
+			npcCount
+			onlyOutside
+			prefZ
+			x1
+			y1
+			x2
+			y2
+			world
+			instanceID
+			minTime
+			maxTime
+			call
+
+05/08/2020 - Xuri (0.99.2l)
 	Updated CGump_AddToolTip() gump method - now accepts up to 10 optional cliloc arguments to go with specified cliloc. Can also be used to display custom tooltip text if used with a cliloc like 1114778. Cliloc arguments and custom tooltips only work in client version 7.0.16.0 or above.
 	Updated CPSendGumpMenu::AddCommand() to use the safer vsnprintf instead of vsprintf, and increased msg buffer size from 512 to 1024
 	Updated CPIUpdateRangeChange::Handle() to include additional client definitions: CV_HS2D and CV_HS3D

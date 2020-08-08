@@ -1,7 +1,3 @@
-// Abaddon:  I have a VERY set idea of features and plans for races
-// Please DO NOT TOUCH THEM, because I will be working on them quite
-// solidly, along with EviLDeD, over the next few months.  
-
 #include "uox3.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
@@ -74,7 +70,7 @@ void cRaces::DefaultInitCombat( void )
 }
 
 void cRaces::load( void )
-// PRE:		races.scp exists
+// PRE:		races.dfn exists
 // POST:	class loaded and populated, dynamically
 {
 	UI32 i = 0;
