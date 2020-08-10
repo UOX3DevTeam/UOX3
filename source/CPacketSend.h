@@ -675,6 +675,13 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPNegotiateAssistantFeatures : public CPUOXBuffer
+{
+public:
+					CPNegotiateAssistantFeatures( CSocket *mSock );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPAddItemToCont : public CPUOXBuffer
 {
 protected:

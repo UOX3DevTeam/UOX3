@@ -2861,6 +2861,43 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPNegotiateAssistantFeatures()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with feature negotiation request for assistant tools
+//|					like Razor and AssistUO
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xF0 (Negotiate Assistant Features)
+//|					Size: 12 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd 
+//|						BYTE[2] length
+//|						BYTE 0xFE
+//|						BYTE[8] Feature bits from enum
+//|
+//|					At the same time as this is sent in pcmanage.cpp, a timer is started if
+//|					KICKONASSISTANTSILENCE is enabled in uox.ini. If no valid response is received
+//|					within 30 seconds, player is disconnected from the server.
+//o-----------------------------------------------------------------------------------------------o
+CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( CSocket *mSock )
+{
+	pStream.ReserveSize( 12 );
+	pStream.WriteByte(  0, 0xF0 );
+	pStream.WriteShort( 1, 0x000C );
+	pStream.WriteByte( 3, 0xFE );
+	pStream.WriteLong( 4, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() >> 32 );
+	pStream.WriteLong( 8, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() & 0xFFFFFFFF );
+}
+
+void CPNegotiateAssistantFeatures::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet   : CPNegotiateAssistantFeatures 0xF0 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPAddItemToCont()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to add/show item to container

@@ -1250,6 +1250,22 @@ void startChar( CSocket *mSock, bool onCreate )
 			}
 
 			mSock->LoginComplete( true );
+
+			// Negotiate features with assistant tools like Razor and AssistUO if ASSISTANTNEGOTIATION is enabled in uox.ini
+			if( cwmWorldState->ServerData()->GetAssistantNegotiation() )
+			{
+				CPNegotiateAssistantFeatures ii( mSock );
+				mSock->Send( &ii );
+				mSock->sysmessage( "Attempting to negotiate features with assistant tool..." );
+
+				// Set 30s negotiation timer if KICKONASSISTANTSILENCE setting is enabled in uox.ini
+				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+				{
+					// Start timer to kick player if assistant tool hasn't responded in 30 seconds
+					mSock->sysmessage( "This server requires use of an assistant tool that supports feature negotiation. Enable the tool's option for negotiating features with server, or get kicked in 30 seconds." );
+					mSock->NegotiateTimeout( cwmWorldState->GetUICurrentTime() + ( 30 * 1000 ));
+				}
+			}
     
 			if( mChar->WorldNumber() > 0 )
 			{

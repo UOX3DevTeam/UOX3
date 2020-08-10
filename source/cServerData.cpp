@@ -65,6 +65,8 @@ const UI32 BIT_MAP2ISUOPWRAPPED		= 42;
 const UI32 BIT_MAP3ISUOPWRAPPED		= 43;
 const UI32 BIT_MAP4ISUOPWRAPPED		= 44;
 const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
+const UI32 BIT_ASSISTANTNEGOTIATION = 46;
+const UI32 BIT_KICKONASSISTANTSILENCE = 47;
 
 
 // New uox3.ini format lookup
@@ -154,7 +156,9 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"UOGENABLED|NETRCVTIMEOUT|NETSNDTIMEOUT|NETRETRYCOUNT|CLIENTFEATURES|OVERLOADPACKETS|NPCMOVEMENTSPEED|PETHUNGEROFFLINE|PETOFFLINETIMEOUT|PETOFFLINECHECKTIMER|ARCHERRANGE|ADVANCEDPATHFINDING|SERVERFEATURES|LOOTINGISCRIME|"
 	"NPCRUNNINGSPEED|NPCFLEEINGSPEED|BASICTOOLTIPSONLY|GLOBALITEMDECAY|SCRIPTITEMSDECAYABLE|BASEITEMSDECAYABLE|ITEMDECAYINHOUSES|COMBATEXPLODEDELAY|PAPERDOLLGUILDBUTTON|ATTACKSPEEDFROMSTAMINA|DISPLAYDAMAGENUMBERS|"
 	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|CLIENTSUPPORT70240|CLIENTSUPPORT70300|CLIENTSUPPORT70331|CLIENTSUPPORT704565|CLIENTSUPPORT70610|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|WEAPONDAMAGECHANCE|"
-	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|"
+	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|ASSISTANTNEGOTIATION|KICKONASSISTANTSILENCE|"
+	"AF_FILTERWEATHER|AF_FILTERLIGHT|AF_SMARTTARGET|AF_RANGEDTARGET|AF_AUTOOPENDOORS|AF_DEQUIPONCAST|AF_AUTOPOTIONEQUIP|AF_POISONEDCHECKS|AF_LOOPEDMACROS|AF_USEONCEAGENT|AF_RESTOCKAGENT|"
+	"AF_SELLAGENT|AF_BUYAGENT|AF_POTIONHOTKEYS|AF_RANDOMTARGETS|AF_CLOSESTTARGETS|AF_OVERHEADHEALTH|AF_AUTOLOOTAGENT|AF_BONECUTTERAGENT|AF_JSCRIPTMACROS|AF_AUTOREMOUNT|AF_ALL|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -377,6 +381,30 @@ void CServerData::ResetDefaults( void )
 	SetServerFeature( SF_BIT_SIXCHARS, true );
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
+
+	SetDisabledAssistantFeature( AF_NONE, true );
+	SetDisabledAssistantFeature( AF_FILTERWEATHER, false );
+	SetDisabledAssistantFeature( AF_FILTERLIGHT, false );
+	SetDisabledAssistantFeature( AF_SMARTTARGET, false );
+	SetDisabledAssistantFeature( AF_RANGEDTARGET, false );
+	SetDisabledAssistantFeature( AF_AUTOOPENDOORS, false );
+	SetDisabledAssistantFeature( AF_DEQUIPONCAST, false );
+	SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, false );
+	SetDisabledAssistantFeature( AF_POISONEDCHECKS, false );
+	SetDisabledAssistantFeature( AF_LOOPEDMACROS, false );
+	SetDisabledAssistantFeature( AF_USEONCEAGENT, false );
+	SetDisabledAssistantFeature( AF_RESTOCKAGENT, false );
+	SetDisabledAssistantFeature( AF_SELLAGENT, false );
+	SetDisabledAssistantFeature( AF_BUYAGENT, false );
+	SetDisabledAssistantFeature( AF_POTIONHOTKEYS, false );
+	SetDisabledAssistantFeature( AF_RANDOMTARGETS, false );
+	SetDisabledAssistantFeature( AF_CLOSESTTARGETS, false );
+	SetDisabledAssistantFeature( AF_OVERHEADHEALTH, false );
+	SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, false );
+	SetDisabledAssistantFeature( AF_BONECUTTERAGENT, false );
+	SetDisabledAssistantFeature( AF_JSCRIPTMACROS, false );
+	SetDisabledAssistantFeature( AF_AUTOREMOUNT, false );
+	SetDisabledAssistantFeature( AF_ALL, false );
 
 	for( int i = 0; i < 6; i++ )
 	{
@@ -2420,6 +2448,76 @@ void CServerData::SetServerFeatures( size_t nVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetAssistantNegotiation( void ) const
+//|					void SetAssistantNegotiation( bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets status of feature negotiation with assist tools like Razor and AssistUO
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetAssistantNegotiation( void ) const
+{
+	return boolVals.test( BIT_ASSISTANTNEGOTIATION );
+}
+void CServerData::SetAssistantNegotiation( bool nVal )
+{
+	boolVals.set( BIT_ASSISTANTNEGOTIATION, nVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetDisabledAssistantFeature( ClientFeatures bitNum ) const
+//|					void SetDisabledAssistantFeature( ClientFeatures bitNum, bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
+//|	Notes		-	Example of assistant: Razor, AssistUO
+//|					See ClientFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetDisabledAssistantFeature( AssistantFeatures bitNum ) const
+{
+	return 0 != (CServerData::DisabledAssistantFeatures & bitNum);
+}
+void CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nVal )
+{
+	if( nVal )
+	{
+		CServerData::DisabledAssistantFeatures |= bitNum;
+	}
+	else
+		CServerData::DisabledAssistantFeatures &= ~bitNum;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI64 GetDisabledAssistantFeatures( void ) const
+//|					void SetDisabledAssistantFeatures( UI64 nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
+//|	Notes		-	Example of assistant: Razor, AssistUO
+//|					See ClientFeatures enum in cServerData.h for full list
+//o-----------------------------------------------------------------------------------------------o
+UI64 CServerData::GetDisabledAssistantFeatures( void ) const
+{
+	return CServerData::DisabledAssistantFeatures;
+}
+void CServerData::SetDisabledAssistantFeatures( UI64 nVal )
+{
+	CServerData::DisabledAssistantFeatures = nVal;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool KickOnAssistantSilence( void ) const
+//|					void KickOnAssistantSilence( bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player is kicked if there's no response from assistant tool
+//|					to verify it complies with the allowed assistant features
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::KickOnAssistantSilence( void ) const
+{
+	return boolVals.test( BIT_KICKONASSISTANTSILENCE );
+}
+void CServerData::KickOnAssistantSilence( bool nVal )
+{
+	boolVals.set( BIT_KICKONASSISTANTSILENCE, nVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CServerData::save( void )
 //|	Date		-	02/21/2002
 //|	Org/Team	-	UOX3 DevTeam
@@ -2494,6 +2592,8 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
 		ofsOutput << "UOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
+		ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
+		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -2719,6 +2819,31 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
+		ofsOutput << "AF_FILTERWEATHER=" << GetDisabledAssistantFeature( AF_FILTERWEATHER ) << '\n';
+		ofsOutput << "AF_FILTERLIGHT=" << GetDisabledAssistantFeature( AF_FILTERLIGHT ) << '\n';
+		ofsOutput << "AF_SMARTTARGET=" << GetDisabledAssistantFeature( AF_SMARTTARGET ) << '\n';
+		ofsOutput << "AF_RANGEDTARGET=" << GetDisabledAssistantFeature( AF_RANGEDTARGET ) << '\n';
+		ofsOutput << "AF_AUTOOPENDOORS=" << GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) << '\n';
+		ofsOutput << "AF_DEQUIPONCAST=" << GetDisabledAssistantFeature( AF_DEQUIPONCAST ) << '\n';
+		ofsOutput << "AF_AUTOPOTIONEQUIP=" << GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) << '\n';
+		ofsOutput << "AF_POISONEDCHECKS=" << GetDisabledAssistantFeature( AF_POISONEDCHECKS ) << '\n';
+		ofsOutput << "AF_LOOPEDMACROS=" << GetDisabledAssistantFeature( AF_LOOPEDMACROS ) << '\n';
+		ofsOutput << "AF_USEONCEAGENT=" << GetDisabledAssistantFeature( AF_USEONCEAGENT ) << '\n';
+		ofsOutput << "AF_RESTOCKAGENT=" << GetDisabledAssistantFeature( AF_RESTOCKAGENT ) << '\n';
+		ofsOutput << "AF_SELLAGENT=" << GetDisabledAssistantFeature( AF_SELLAGENT ) << '\n';
+		ofsOutput << "AF_BUYAGENT=" << GetDisabledAssistantFeature( AF_BUYAGENT ) << '\n';
+		ofsOutput << "AF_POTIONHOTKEYS=" << GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) << '\n';
+		ofsOutput << "AF_RANDOMTARGETS=" << GetDisabledAssistantFeature( AF_RANDOMTARGETS ) << '\n';
+		ofsOutput << "AF_CLOSESTTARGETS=" << GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) << '\n';
+		ofsOutput << "AF_OVERHEADHEALTH=" << GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) << '\n';
+		ofsOutput << "AF_AUTOLOOTAGENT=" << GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) << '\n';
+		ofsOutput << "AF_BONECUTTERAGENT=" << GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) << '\n';
+		ofsOutput << "AF_JSCRIPTMACROS=" << GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) << '\n';
+		ofsOutput << "AF_AUTOREMOUNT=" << GetDisabledAssistantFeature( AF_AUTOREMOUNT ) << '\n';
+		ofsOutput << "AF_ALL=" << GetDisabledAssistantFeature( AF_ALL ) << '\n';
 		ofsOutput << "}" << '\n';
 
 #if P_ODBC == 1
@@ -3488,15 +3613,87 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x0a74:	// RANDOMSTARTINGLOCATION[0181]
 		ServerRandomStartingLocation( value.toUShort() == 1 );
 		break;
+	case 0x0a8b:	// ASSISTANTNEGOTIATION[0183]
+		SetAssistantNegotiation( (value.toByte() == 1) );
+		break;
+	case 0x0aa0:	// KICKONASSISTANTSILENCE[0184]
+		KickOnAssistantSilence( (value.toByte() == 1) );
+		break;
+	case 0x0ab7:	// AF_FILTERWEATHER[0185]
+		SetDisabledAssistantFeature( AF_FILTERWEATHER, value.toByte() == 1 );
+		break;
+	case 0x0ac8:	// AF_FILTERLIGHT[0186]
+		SetDisabledAssistantFeature( AF_FILTERLIGHT, value.toByte() == 1 );
+		break;
+	case 0x0ad7:	// AF_SMARTTARGET[0187]
+		SetDisabledAssistantFeature( AF_SMARTTARGET, value.toByte() == 1 );
+		break;
+	case 0x0ae6:	// AF_RANGEDTARGET[0188]
+		SetDisabledAssistantFeature( AF_RANGEDTARGET, value.toByte() == 1 );
+		break;
+	case 0x0af6:	// AF_AUTOOPENDOORS[0189]
+		SetDisabledAssistantFeature( AF_AUTOOPENDOORS, value.toByte() == 1 );
+		break;
+	case 0x0b07:	// AF_DEQUIPONCAST[0190]
+		SetDisabledAssistantFeature( AF_DEQUIPONCAST, value.toByte() == 1 );
+		break;
+	case 0x0b17:	// AF_AUTOPOTIONEQUIP[0191]
+		SetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP, value.toByte() == 1 );
+		break;
+	case 0x0b2a:	// AF_POISONEDCHECKS[0192]
+		SetDisabledAssistantFeature( AF_POISONEDCHECKS, value.toByte() == 1 );
+		break;
+	case 0x0b3c:	// AF_LOOPEDMACROS[0193]
+		SetDisabledAssistantFeature( AF_LOOPEDMACROS, value.toByte() == 1 );
+		break;
+	case 0x0b4c:	// AF_USEONCEAGENT[0194]
+		SetDisabledAssistantFeature( AF_USEONCEAGENT, value.toByte() == 1 );
+		break;
+	case 0x0b5c:	// AF_RESTOCKAGENT[0195]
+		SetDisabledAssistantFeature( AF_RESTOCKAGENT, value.toByte() == 1 );
+		break;
+	case 0x0b6c:	// AF_SELLAGENT[0196]
+		SetDisabledAssistantFeature( AF_SELLAGENT, value.toByte() == 1 );
+		break;
+	case 0x0b79:	// AF_BUYAGENT[0197]
+		SetDisabledAssistantFeature( AF_BUYAGENT, value.toByte() == 1 );
+		break;
+	case 0x0b85:	// AF_POTIONHOTKEYS[0198]
+		SetDisabledAssistantFeature( AF_POTIONHOTKEYS, value.toByte() == 1 );
+		break;
+	case 0x0b96:	// AF_RANDOMTARGETS[0199]
+		SetDisabledAssistantFeature( AF_RANDOMTARGETS, value.toByte() == 1 );
+		break;
+	case 0x0ba7:	// AF_CLOSESTTARGETS[0200]
+		SetDisabledAssistantFeature( AF_CLOSESTTARGETS, value.toByte() == 1 );
+		break;
+	case 0x0bb9:	// AF_OVERHEADHEALTH[0201]
+		SetDisabledAssistantFeature( AF_OVERHEADHEALTH, value.toByte() == 1 );
+		break;
+	case 0x0bcb:	// AF_AUTOLOOTAGENT[0202]
+		SetDisabledAssistantFeature( AF_AUTOLOOTAGENT, value.toByte() == 1 );
+		break;
+	case 0x0bdc:	// AF_BONECUTTERAGENT[0203]
+		SetDisabledAssistantFeature( AF_BONECUTTERAGENT, value.toByte() == 1 );
+		break;
+	case 0x0bef:	// AF_JSCRIPTMACROS[0204]
+		SetDisabledAssistantFeature( AF_JSCRIPTMACROS, value.toByte() == 1 );
+		break;
+	case 0x0c00:	// AF_AUTOREMOUNT[0205]
+		SetDisabledAssistantFeature( AF_AUTOREMOUNT, value.toByte() == 1 );
+		break;
+	case 0x0c0f:	// AF_ALL[0206]
+		SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
+		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x0a8b:	 // ODBCDSN[0182]
+	case 0x0c16:	 // ODBCDSN[0207]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0a93:	 // ODBCUSER[0183]
+	case 0x0c1e:	 // ODBCUSER[0208]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0a9c:	 // ODBCPASS[0184]
+	case 0x0c27:	// ODBCPASS[0209]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif

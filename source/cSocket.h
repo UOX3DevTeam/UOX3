@@ -79,6 +79,8 @@ private:
 	CChar *			currCharObj;
 	SI32			idleTimeout;
 	bool			wasIdleWarned;
+	SI32			negotiateTimeout;
+	bool			negotiatedWithAssistant;
 
 	UI08			buffer[MAXBUFFER];
 	UI08			outbuffer[MAXBUFFER];
@@ -187,6 +189,8 @@ public:
 	bool			FirstPacket( void ) const;
 	SI32			IdleTimeout( void ) const;
 	bool			WasIdleWarned( void ) const;
+	SI32			NegotiateTimeout( void ) const;
+	bool			NegotiatedWithAssistant( void ) const;
 	UI08 *			Buffer( void );
 	UI08 *			OutBuffer( void );
 	SI16			WalkSequence( void ) const;
@@ -249,6 +253,8 @@ public:
 	void			FirstPacket( bool newValue );
 	void			IdleTimeout( SI32 newValue );
 	void			WasIdleWarned( bool value );
+	void			NegotiateTimeout( SI32 newValue );
+	void			NegotiatedWithAssistant( bool value );
 	void			WalkSequence( SI16 newValue );
 	void			AcctNo( UI16 newValue );
 	void			CryptClient( bool newValue );
