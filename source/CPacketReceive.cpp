@@ -142,6 +142,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
+		case 0xF0:	return ( new CPINegotiateFeaturesResponse( s ) );	// Response to server's request to negotiate for features in assistant tools
 		case 0xF3:	return NULL;								// TODO - Object Information (SA)
 		case 0xF5:	return NULL;								// TODO - New Map Message
 		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
@@ -1068,6 +1069,65 @@ bool CPIUpdateRangeChange::Handle( void )
 #pragma note( "Flush location" )
 #endif
 	tSock->FlushBuffer();
+	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPINegotiateFeaturesResponse()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet with assistant tool's response for feature negotiation
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xF0 (Negotiation Feature Response)
+//|					Size: 4 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd (0xf0)
+//|						BYTE 0x00
+//|						BYTE 0x04
+//|						BYTE 0xff
+//|
+//|					Notes
+//|						If both ASSISTANTNEGOTIATION and KICKONASSISTANTSILENCE uox.ini settings
+//|						are enabled, player will get kicked within 30 seconds if this packet is not
+//|						received by the server.
+//o-----------------------------------------------------------------------------------------------o
+void CPINegotiateFeaturesResponse::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPINegotiateFeaturesResponse 0xF0 --> Length: 4 " << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+void CPINegotiateFeaturesResponse::InternalReset( void )
+{
+}
+CPINegotiateFeaturesResponse::CPINegotiateFeaturesResponse()
+{
+	InternalReset();
+}
+CPINegotiateFeaturesResponse::CPINegotiateFeaturesResponse( CSocket *s ) : CPInputBuffer( s )
+{
+	InternalReset();
+	Receive();
+}
+void CPINegotiateFeaturesResponse::Receive( void )
+{
+	tSock->Receive( 4, false );
+}
+bool CPINegotiateFeaturesResponse::Handle( void )
+{
+	// Byte 0 == 0xf0
+	// Byte 1 == 0x00
+	// Byte 2 == 0x04
+	// Byte 3 == 0xff
+
+	if( tSock->GetByte( 1 ) == 0x00 && tSock->GetByte( 2 ) == 0x04 )
+	{
+		tSock->NegotiatedWithAssistant( true );
+		tSock->NegotiateTimeout( -1 );
+		tSock->sysmessage( "Features successfully negotiated with assistant tool." );
+	}
+
 	return true;
 }
 

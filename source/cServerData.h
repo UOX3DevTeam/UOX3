@@ -55,6 +55,37 @@ namespace UOX
 		SF_BIT_COUNT
 	};
 
+enum AssistantFeatures : UI64
+{
+	AF_NONE = 0,
+
+	// Razor
+	AF_FILTERWEATHER = 1 << 0, // Weather Filter
+	AF_FILTERLIGHT = 1 << 1, // Light Filter
+	AF_SMARTTARGET = 1 << 2, // Smart Last Target
+	AF_RANGEDTARGET = 1 << 3, // Range Check Last Target
+	AF_AUTOOPENDOORS = 1 << 4, // Automatically Open Doors
+	AF_DEQUIPONCAST = 1 << 5, // Unequip Weapon on spell cast
+	AF_AUTOPOTIONEQUIP = 1 << 6, // Un/Re-equip weapon on potion use
+	AF_POISONEDCHECKS = 1 << 7, // Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
+	AF_LOOPEDMACROS = 1 << 8, // Disallow Looping macros, For loops, and macros that call other macros
+	AF_USEONCEAGENT = 1 << 9, // The use once agent
+	AF_RESTOCKAGENT = 1 << 10, // The restock agent
+	AF_SELLAGENT = 1 << 11, // The sell agent
+	AF_BUYAGENT = 1 << 12, // The buy agent
+	AF_POTIONHOTKEYS = 1 << 13, // All potion hotkeys
+	AF_RANDOMTARGETS = 1 << 14, // All random target hotkeys (Not target next, last target, target self)
+	AF_CLOSESTTARGETS = 1 << 15, // All closest target hotkeys
+	AF_OVERHEADHEALTH = 1 << 16, // Health and Mana/Stam messages shown over player's heads
+
+	// AssistUO Only
+	AF_AUTOLOOTAGENT = 1 << 17, // The autoloot agent
+	AF_BONECUTTERAGENT = 1 << 18, // The bone cutter agent
+	AF_JSCRIPTMACROS = 1 << 19, // Javascript macro engine
+	AF_AUTOREMOUNT = 1 << 20, // Auto remount after dismount
+	AF_ALL = 0xFFFFFFFFFFFFFFFF // Every feature possible
+};
+
 enum cSD_TID
 {
 	tSERVER_ERROR = -1,
@@ -128,7 +159,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 46 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 48 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -282,6 +313,8 @@ private:
 	void	PostLoadDefaults( void );
 
 public:
+	UI64		DisabledAssistantFeatures;
+
 	void		SetServerFeature( ServerFeatures, bool );
 	void		SetServerFeatures( size_t );
 	bool		GetServerFeature( ServerFeatures ) const;
@@ -291,6 +324,14 @@ public:
 	void		SetClientFeatures( UI32 );
 	bool		GetClientFeature( ClientFeatures ) const;
 	UI32		GetClientFeatures( void ) const;
+
+	void		SetDisabledAssistantFeature( AssistantFeatures, bool );
+	void		SetDisabledAssistantFeatures( UI64 );
+	bool		GetDisabledAssistantFeature( AssistantFeatures ) const;
+	UI64		GetDisabledAssistantFeatures( void ) const;
+
+	void		SetAssistantNegotiation( bool value );
+	bool		GetAssistantNegotiation( void ) const;
 
 	SI16		ServerMoon( SI16 slot ) const;
 	LIGHTLEVEL	WorldLightDarkLevel( void ) const;
@@ -699,6 +740,9 @@ public:
 
 	void		LootingIsCrime( bool value );
 	bool		LootingIsCrime( void ) const;
+
+	void		KickOnAssistantSilence( bool value );
+	bool		KickOnAssistantSilence( void ) const;
 
 	void		dumpLookup( int lookupid );
 	void		dumpPaths( void );

@@ -1,3 +1,34 @@
+11/08/2020 - Xuri
+	Added support for feature negotiation with Razor, AssistUO and other assistant tools that support this feature via new UOX.INI settings:
+		ASSISTANTNEGOTIATION=0 		// If enabled (1), sends a request (packet 0xF0) to negotiate features with assistant tools upon login. Defaults to (0)
+		KICKONASSISTANTSILENCE=0 	// If enabled (1), disconnects clients that don't respond (with packet 0xF0) to request via assistant tool within 30 seconds. Defaults to (0)
+	Added new section at bottom of UOX.INI to allow shard admins to control which assistant features get disabled:
+		[disabled assistant features]
+		{
+		AF_FILTERWEATHER=0 		// Weather Filter
+		AF_FILTERLIGHT=0 		// Light Filter
+		AF_SMARTTARGET=0 		// Smart Last Target
+		AF_RANGEDTARGET=0 		// Range Check Last Target
+		AF_AUTOOPENDOORS=0 		// Automatically Open Doors
+		AF_DEQUIPONCAST=0 		// Unequip Weapon on spell cast
+		AF_AUTOPOTIONEQUIP=0 	// Un/Re-equip weapon on potion use
+		AF_POISONEDCHECKS=0 	// Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self
+		AF_LOOPEDMACROS=0 		// Disallow Looping macros, For loops, and macros that call other macros
+		AF_USEONCEAGENT=0 		// The use once agent
+		AF_RESTOCKAGENT=0 		// The restock agent
+		AF_SELLAGENT=0 			// The sell agent
+		AF_BUYAGENT=0 			// The buy agent
+		AF_POTIONHOTKEYS=0 		// All potion hotkeys
+		AF_RANDOMTARGETS=0 		// All random target hotkeys (Not target next, last target, target self)
+		AF_CLOSESTTARGETS=0 	// All closest target hotkeys
+		AF_OVERHEADHEALTH=0 	// Health and Mana/Stam messages shown over player's heads
+		AF_AUTOLOOTAGENT=0 		// (AssistUO only) The autoloot agent
+		AF_BONECUTTERAGENT=0 	// (AssistUO only) The bone cutter agent
+		AF_JSCRIPTMACROS=0 		// (AssistUO only) Javascript macro engine
+		AF_AUTOREMOUNT=0 		// (AssistUO only) Auto remount after dismount
+		AF_ALL=0 				// All features
+		}
+
 08/08/2020 - Xuri (0.99.2m)
 	Misc code and documentation cleanup:
 		Updated and standardized function comment blocks throughout entire codebase

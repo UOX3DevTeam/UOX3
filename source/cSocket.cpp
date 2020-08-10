@@ -418,6 +418,38 @@ void CSocket::WasIdleWarned( bool value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 NegotiateTimeout( void ) const
+//|					void NegotiateTimeout( SI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the time point at which the player gets kicked if assistant tool
+//|					has not responded to request to negotiate for features
+//o-----------------------------------------------------------------------------------------------o
+SI32 CSocket::NegotiateTimeout( void ) const
+{
+	return negotiateTimeout;
+}
+void CSocket::NegotiateTimeout( SI32 newValue )
+{
+	negotiateTimeout = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool NegotiatedWithAssistant( void ) const
+//|					void NegotiatedWithAssistant( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether player's assistant tool has responded to server's request
+//|					for negotiating features
+//o-----------------------------------------------------------------------------------------------o
+bool CSocket::NegotiatedWithAssistant( void ) const
+{
+	return negotiatedWithAssistant;
+}
+void CSocket::NegotiatedWithAssistant( bool value )
+{
+	negotiatedWithAssistant = value;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 Buffer( void )
 //|	Date		-	November 29th, 2000
 //|	Programmer	-	Abaddon
@@ -604,6 +636,7 @@ void CSocket::InternalReset( void )
 	ackIter = postAcked.end();
 	largeBuffer.resize( 0 );
 	largePackBuffer.resize( 0 );
+	NegotiateTimeout( -1 );
 }
 
 //o-----------------------------------------------------------------------------------------------o

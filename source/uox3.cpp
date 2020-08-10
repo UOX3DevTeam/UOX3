@@ -1208,6 +1208,22 @@ void CWorldMain::CheckAutoTimers( void )
 				tSock->Send( &warn );
 				tSock->WasIdleWarned( true );
 			}
+
+			if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+			{
+				if( tSock->NegotiateTimeout() != -1 && (UI32)tSock->NegotiateTimeout() <= GetUICurrentTime() )
+				{
+					const CChar *tChar = tSock->CurrcharObj();
+					if( !ValidateObject( tChar ) )
+						continue;
+					if( !tChar->IsGM() )
+					{
+						tSock->IdleTimeout( -1 );
+						tSock->sysmessage( "Failed to negotiate features with assistant tool. Disconnecting client..." );
+						Network->Disconnect( tSock );
+					}
+				}
+			}
 		}
 		Network->PopConn();
 	}
@@ -1220,8 +1236,15 @@ void CWorldMain::CheckAutoTimers( void )
 			{
 				if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
 				{
-					wsSocket->IdleTimeout( BuildTimeValue( 60.0f ) );
+					wsSocket->IdleTimeout( BuildTimeValue( 60.0F ) );
 					wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
+				}
+				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+				{
+					if( (UI32)wsSocket->NegotiateTimeout() < GetUICurrentTime() )
+					{
+						wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ) );
+					}
 				}
 			}
 		}
