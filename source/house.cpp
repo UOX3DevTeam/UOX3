@@ -334,7 +334,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			fakeHouse = house;
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
 	}
-	mChar->SetLocation( x + cx, y + cy, z + cz );
+
+	if( isMulti || isBoat )
+		mChar->SetLocation( x + cx, y + cy, z + cz );
 
 	//Teleport pets as well
 	CDataList< CChar * > *myPets = mChar->GetPetList();

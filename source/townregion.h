@@ -111,6 +111,7 @@ public:
 	bool				CanMark( void ) const;
 	bool				CanGate( void ) const;
 	bool				CanRecall( void ) const;
+	bool				CanTeleport( void ) const;
 	bool				CanCastAggressive( void ) const;
 	bool				IsSafeZone( void ) const;
 	bool				IsDungeon( void ) const;
@@ -122,6 +123,7 @@ public:
 	void				CanMark( bool value );
 	void				CanGate( bool value );
 	void				CanRecall( bool value );
+	void				CanTeleport( bool value );
 	void				CanCastAggressive( bool value );
 	void				IsSafeZone( bool value );
 	void				IsDungeon( bool value );

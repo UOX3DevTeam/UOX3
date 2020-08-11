@@ -1,4 +1,15 @@
 11/08/2020 - Xuri
+	Added an FX playing for successful uses of the parrying skill
+	Successfully parrying an attack will send a sysmessage to the player informing them of their feat, if DISPLAYHITMSG is enabled in UOX.INI
+	Updated dictionary files with new entry about blocking attacks using parrying skill
+	Fixed placing a house addon teleporting player to the location of the addon
+	Added support for TELEPORT tag to regions.dfn. If set to 0, use of the Teleport spell is not allowed in a given region. Defaults to 1 if not specified.
+	Exposed canTeleport JS property for regions
+	Updated regions.dfn to disable usage of Teleport spell within level 3 of the Wisp dungeon
+	Updated regions.dfn to enable usage of RECALL spell in city/dungeon of Wind (so players can recall out of there)
+	Added missing UOX.INI settings for feature negotation, as mentioned in previous commit!
+
+11/08/2020 - Xuri
 	Added support for feature negotiation with Razor, AssistUO and other assistant tools that support this feature via new UOX.INI settings:
 		ASSISTANTNEGOTIATION=0 		// If enabled (1), sends a request (packet 0xF0) to negotiate features with assistant tools upon login. Defaults to (0)
 		KICKONASSISTANTSILENCE=0 	// If enabled (1), disconnects clients that don't respond (with packet 0xF0) to request via assistant tool within 30 seconds. Defaults to (0)

@@ -31,6 +31,7 @@ const UI32 BIT_RECALL		=	3;
 const UI32 BIT_AGGRESSIVE	=	6;
 const UI32 BIT_DUNGEON		=	7;
 const UI32 BIT_SAFEZONE		=	8;
+const UI32 BIT_TELEPORT		=	9;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
@@ -391,8 +392,12 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	UString UTag;
 	int actgood				= -1;
 	bool orePrefLoaded		= false;
+
+	// Some default values
 	numGuards			= 10;
 	chanceFindBigOre	= 80;
+	CanTeleport( true );
+
 	regLocs ourLoc;
 	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 	{
@@ -567,6 +572,12 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "SCRIPT" )
 					jsScript = data.toUShort();
 				break;
+			case 'T':
+				if( UTag == "TELEPORT" )
+				{
+					CanTeleport( (data.toUByte() == 1) );
+				}
+				break;
 			case 'W':
 				if( UTag == "WORLD" )
 					worldNumber = data.toUByte();
@@ -692,6 +703,21 @@ bool CTownRegion::IsSafeZone( void ) const
 void CTownRegion::IsSafeZone( bool value )
 {
 	priv.set( BIT_SAFEZONE, value );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CanTeleport( void ) const
+//|					void CanTeleport( bool value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the townregion allows use of the Teleport spell or not
+//o-----------------------------------------------------------------------------------------------o
+bool CTownRegion::CanTeleport( void ) const
+{
+	return priv.test( BIT_TELEPORT );
+}
+void CTownRegion::CanTeleport( bool value )
+{
+	priv.set( BIT_TELEPORT, value );
 }
 
 //o-----------------------------------------------------------------------------------------------o

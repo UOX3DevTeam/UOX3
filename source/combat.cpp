@@ -1611,13 +1611,21 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 				const UI16 defendParry = ourTarg->GetSkill( PARRYING );
 				if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ) )
 				{
+					// Play shield parrying FX
+					Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+
+					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != NULL )
+					{
+						targSock->sysmessage( 1805 ); // You block the attack!
+					}
+
 					damage -= HalfRandomNum( shield->GetResist( PHYSICAL ) );
 					if( !RandomNum( 0, 5 ) ) 
 						shield->IncHP( -1 );
 					if( shield->GetHP() <= 0 )
 					{
 						if( targSock != NULL )
-							targSock->sysmessage( 283 );
+							targSock->sysmessage( 283 ); // Your shield has been destroyed!
 						shield->Delete();
 					}
 				}
