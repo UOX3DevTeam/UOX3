@@ -2827,7 +2827,8 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	
 	// (Abaddon) Region checks
 	CTownRegion *ourReg = mChar->GetRegion();
-	if( (num == 45 && !ourReg->CanMark()) || (num == 52 && !ourReg->CanGate()) || (num == 32 && !ourReg->CanRecall()) )
+	if(( num == 45 && !ourReg->CanMark() ) || ( num == 52 && !ourReg->CanGate() ) || 
+		( num == 32 && !ourReg->CanRecall() ) || ( num == 22 && !ourReg->CanTeleport() ))
 	{
 		mSock->sysmessage( 705 );
 		mChar->StopSpell();
@@ -3132,7 +3133,8 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 		{
 			// (Abaddon) Region checks
 			CTownRegion *ourReg = caster->GetRegion();
-			if( (curSpell == 45 && !ourReg->CanMark()) || (curSpell == 52 && !ourReg->CanGate()) || (curSpell == 32 && !ourReg->CanRecall()) )
+			if(( curSpell == 45 && !ourReg->CanMark() ) || ( curSpell == 52 && !ourReg->CanGate() ) || 
+				( curSpell == 32 && !ourReg->CanRecall() ) || ( curSpell == 22 && !ourReg->CanTeleport() ))
 			{
 				if( validSocket )
 					s->sysmessage( 705 );

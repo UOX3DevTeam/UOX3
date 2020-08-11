@@ -1186,6 +1186,7 @@ namespace UOX
 				case CREGP_CANMARK:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanMark() );				break;
 				case CREGP_CANRECALL:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanRecall() );			break;
 				case CREGP_CANGATE:				*vp = BOOLEAN_TO_JSVAL( gPriv->CanGate() );				break;
+				case CREGP_CANTELEPORT:			*vp = BOOLEAN_TO_JSVAL( gPriv->CanTeleport() );			break;
 				case CREGP_ISGUARDED:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );			break;
 				case CREGP_WORLDNUMBER:			*vp = INT_TO_JSVAL( gPriv->WorldNumber() );				break;
 				case CREGP_INSTANCEID:			*vp = INT_TO_JSVAL( gPriv->GetInstanceID() );			break;
@@ -1227,6 +1228,7 @@ namespace UOX
 				case CREGP_CANMARK:				gPriv->CanMark( encaps.toBool() );					break;
 				case CREGP_CANRECALL:			gPriv->CanRecall( encaps.toBool() );				break;
 				case CREGP_CANGATE:				gPriv->CanGate( encaps.toBool() );					break;
+				case CREGP_CANTELEPORT:			gPriv->CanTeleport( encaps.toBool() );				break;
 				case CREGP_ISGUARDED:			gPriv->IsGuarded( encaps.toBool() );				break;
 				case CREGP_CANCASTAGGRESSIVE:	gPriv->CanCastAggressive( encaps.toBool() );		break;
 				case CREGP_ISSAFEZONE:			gPriv->IsSafeZone( encaps.toBool() );				break;
