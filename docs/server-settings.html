@@ -47,11 +47,12 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
 	    [<a class="indexLink" href="#reputation">reputation</a>]<br>
 	    [<a class="indexLink" href="#resource">resources</a>]<br>
 	    [<a class="indexLink" href="#hunger">hunger</a>]<br>
-	    [<a class="indexLink" href="#hunger">combat</a>]<br>
+	    [<a class="indexLink" href="#combat">combat</a>]<br>
 	    [<a class="indexLink" href="#startlocations">start locations</a>]<br>
 	    [<a class="indexLink" href="#startup">startup</a>]<br>
 	    [<a class="indexLink" href="#gumps">gumps</a>]<br>
-    	[<a class="indexLink" href="#towns">towns</a>]</td></tr>
+    	[<a class="indexLink" href="#towns">towns</a>]<br>
+		[<a class="indexLink" href="#disabledAssistantFeatures">disabled assistant features</a>]</td></tr>
   </table>
 		</div>
 		<div class="Section">Click on a section from the index above to see detailed information about all entries belonging to that section of <strong>UOX.INI</strong>. </div>
@@ -124,11 +125,25 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="left">UOGENABLED</td>
             <td class="right">Determines if support for the UOGateway Info Request Service is enabled. </td>
           </tr>
+          <tr>
+            <td class="left">RANDOMSTARTINGLOCATION</td>
+            <td class="right">If 1, new player characters start in a random starting location instead of one they choose during character creation.</td>
+          </tr>
+          <tr>
+            <td class="left">ASSISTANTNEGOTIATION</td>
+            <td class="right">If 1, UOX3 will attempt to negotiate features with the player's assist-tool (Razor, AssistUO, etc). Negotiate, in this context, means tell the assist tool what features to disable! See [disabled assistant features] for a list of features that can be disabled.</td>
+          </tr>
+          <tr>
+            <td class="left">KICKONASSISTANTSILENCE</td>
+            <td class="right">If 1, UOX3 will disconnect players who's clients (or assist tools, rather) don't respond to the request to negotiate features.</td>
+          </tr>
         </table></div>
 		<a class="topLink" href="#top">(Back to top)</a>
 	<a name="clientsupport"></a>
 	    <div class="SectionHeader">[clientsupport]</div>
 		<div class="Section">
+      <p class="Section">Note that each of these settings represents a range of client versions, ranging from the one specified to the next one just before the next available setting. So CLIENTSUPPORT4000 ranges from v4.0.0.0 until whichever the last version before v5.0.0.0 (CLIENTSUPPORT5000) was.</p>
+	  <p class="Section"><strong>NOTE:</strong> While it is possible (and it is even the default setting) to enable login-support for all the ranges of client-versions listed below, how well they will work depends very much on what version of the datafiles are used on the server. It is <strong><em>highly recommended</em></strong> to restrict client-support to whichever range of versions is closest to the client-version the datafiles in use on the server are from.</p>
 		<table align="center" class="myTable">
           <tr>
             <td class="left">CLIENTSUPPORT4000</td>
@@ -160,9 +175,24 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <tr>
             <td class="left">CLIENTSUPPORT70240</td>
-            <td class="right">Enables login-support for clients from 7.0.24.0 and up</td>
+            <td class="right">Enables login-support for clients from 7.0.24.0 to 7.0.29.x</td>
           </tr>
-          <p><strong>NOTE:</strong> While it is possible (and it is even the default setting) to enable login-support for all the ranges of client-versions listed below, how well they will work depends very much on what version of the datafiles are used on the server. It is <strong><em>highly recommended</em></strong> to restrict client-support to whichever range of versions is closest to the client-version the datafiles in use on the server are from.</p>
+           <tr>
+             <td class="left">CLIENTSUPPORT70300</td>
+             <td class="right">Enables login-support for clients from 7.0.30.0 to 7.0.33.0</td>
+           </tr>
+           <tr>
+             <td class="left">CLIENTSUPPORT70331</td>
+             <td class="right">Enables login-support for clients from 7.0.33.1 to 7.0.45.64</td>
+           </tr>
+           <tr>
+             <td class="left">CLIENTSUPPORT704565</td>
+             <td class="right">Enables login-support for clients from 7.0.45.65 to 7.0.60.x</td>
+           </tr>
+           <tr>
+             <td class="left">CLIENTSUPPORT70610</td>
+             <td class="right">Enables login-support for clients from 7.0.61.0 and above</td>
+          </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
 	<a name="playserverlist"></a>
@@ -476,6 +506,10 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="left">PAPERDOLLGUILDBUTTON</td>
             <td class="right">Toggles whether or not the Guild-button on the paperdoll can be used as a shortcut for interacting with guildstones. Defaults to on. </td>
           </tr>
+           <tr>
+             <td class="left">FISHINGSTAMINALOSS</td>
+             <td class="right">Sets the amount of stamina lost when fishing.</td>
+          </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
 	<a name="speedup"></a>
@@ -510,6 +544,14 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
             <td class="left">NPCFLEEINGSPEED</td>
             <td class="right">Allows customization of NPC fleeing speed. Can be overridden by FLEEINGSPEED tag in NPC-DFNs</td>
           </tr>
+           <tr>
+             <td class="left">NPCSPELLCASTSPEED</td>
+             <td class="right">Used to adjust how often NPCs cast spells in combat. Global setting, defaults to 1. Can be finetuned per NPC using SPADELAY DFN tag.</td>
+           </tr>
+           <tr>
+             <td class="left">GLOBALATTACKSPEED</td>
+             <td class="right">Used to adjust the attack speed globally for all characters. Defaults to 1. Can be finetuned per NPC via DEX stat in DFNs.</td>
+           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
 	<a name="messageboards"></a>
@@ -721,7 +763,7 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
           <tr>
             <td class="left">ATTACK<wbr>SPEEDFROMSTAMINA</td>
-            <td class="right">Toggles whether attack-speed bonuses are gained from a character's stamina, instead of their dexterity. Defaults to 1 (on).</td>
+             <td class="right">If 1, attack speed in combat is derived from stamina instead of dexterity.</td>
           </tr>
           <tr>
             <td class="left">SHOOTON<wbr>ANIMALBACK</td>
@@ -730,6 +772,30 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           <tr>
             <td class="left">COMBAT<wbr>EXPLODEDELAY</td>
             <td class="right">The amount of time it takes for the damage from the Explosion spell to be inflicted on the target.</td>
+          </tr>
+          <tr>
+            <td class="left">WEAPON<wbr>DAMAGECHANCE</td>
+            <td class="right">The chance (in %) of weapons taking damage in combat.</td>
+          </tr>
+          <tr>
+            <td class="left">WEAPON<wbr>DAMAGEMIN</td>
+            <td class="right">The min amount of damage (randomized) weapons can take if it takes damage in combat.</td>
+          </tr>
+          <tr>
+            <td class="left">WEAPON<wbr>DAMAGEMAX</td>
+            <td class="right">The max amount of damage (randomized) weapons can take if it takes damage in combat.</td>
+          </tr>
+          <tr>
+            <td class="left">ARMOR<wbr>DAMAGECHANCE</td>
+            <td class="right">The chance (in %) of armor taking damage in combat.</td>
+          </tr>
+          <tr>
+            <td class="left">ARMOR<wbr>DAMAGEMIN</td>
+            <td class="right">The min amount of damage (randomized) armor can take if it takes damage in combat.</td>
+          </tr>
+          <tr>
+            <td class="left">ARMOR<wbr>DAMAGEMAX</td>
+            <td class="right">The max amount of damage (randomized) armor can take if it takes damage in combat.</td>
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
@@ -825,6 +891,100 @@ a.topLink{ margin: 15px 20px 15px 40px; font-size: 12px;}
           </tr>
         </table></div>
 	<a class="topLink" href="#top">(Back to top)</a>
+  <a name="disabledAssistantFeatures"></a>
+      <div class="SectionHeader">[disabled assistant features]</div>
+    <div class="Section">
+    <table align="center" class="myTable">
+          <tr>
+            <td class="left">AF_FILTERWEATHER</td>
+            <td class="right">Weather Filter</td>
+          </tr>
+          <tr>
+            <td class="left">AF_FILTERLIGHT</td>
+            <td class="right">Light Filter</td>
+          </tr>
+          <tr>
+            <td class="left">AF_SMARTTARGET</td>
+            <td class="right">Smart Last Target</td>
+          </tr>
+          <tr>
+            <td class="left">AF_RANGEDTARGET</td>
+            <td class="right">Range Check Last Target</td>
+          </tr>
+          <tr>
+            <td class="left">AF_AUTOOPENDOORS</td>
+            <td class="right">Automatically Open Doors</td>
+          </tr>
+          <tr>
+            <td class="left">AF_DEQUIPONCAST</td>
+            <td class="right">Unequip Weapon on spell cast</td>
+          </tr>
+          <tr>
+            <td class="left">AF_AUTOPOTIONEQUIP</td>
+            <td class="right">Un/Re-equip weapon on potion use</td>
+          </tr>
+          <tr>
+            <td class="left">AF_POISONEDCHECKS</td>
+            <td class="right">Block heal If poisoned/Macro IIf Poisoned condition/Heal or Cure self</td>
+          </tr>
+          <tr>
+            <td class="left">AF_LOOPEDMACROS</td>
+            <td class="right">Disallow Looping macros, For loops, and macros that call other macros</td>
+          </tr>
+          <tr>
+            <td class="left">AF_USEONCEAGENT</td>
+            <td class="right">The use once agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_RESTOCKAGENT</td>
+            <td class="right">The restock agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_SELLAGENT</td>
+            <td class="right">The sell agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_BUYAGENT</td>
+            <td class="right">The buy agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_POTIONHOTKEYS</td>
+            <td class="right">All potion hotkeys</td>
+          </tr>
+          <tr>
+            <td class="left">AF_RANDOMTARGETS</td>
+            <td class="right">All random target hotkeys (Not target next, last target, target self)</td>
+          </tr>
+          <tr>
+            <td class="left">AF_CLOSESTTARGETS</td>
+            <td class="right">All closest target hotkeys</td>
+          </tr>
+          <tr>
+            <td class="left">AF_OVERHEADHEALTH</td>
+            <td class="right">Health and Mana/Stam messages shown over player's heads</td>
+          </tr>
+          <tr>
+            <td class="left">AF_AUTOLOOTAGENT (AssistUO)</td>
+            <td class="right">The autoloot agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_BONECUTTERAGENT (AssistUO)</td>
+            <td class="right">The bone cutter agent</td>
+          </tr>
+          <tr>
+            <td class="left">AF_JSCRIPTMACROS (AssistUO)</td>
+            <td class="right">Javascript macro engine</td>
+          </tr>
+          <tr>
+            <td class="left">AF_AUTOREMOUNT (AssistUO)</td>
+            <td class="right">Auto remount after dismount</td>
+          </tr>
+          <tr>
+            <td class="left">AF_ALL</td>
+            <td class="right">Every feature possible</td>
+          </tr>
+        </table></div>
+  <a class="topLink" href="#top">(Back to top)</a>
 </div>
 </body>
 </html>
