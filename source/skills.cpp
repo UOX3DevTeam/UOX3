@@ -40,7 +40,7 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 
 	R32 rankSum = 0;
 
-	int rk_range, rank;
+	SI32 rk_range, rank;
 	R32 sk_range, randnum, randnum1;
 
 	for( size_t i = 0; i < skillMake.skillReqs.size(); ++i )
@@ -57,7 +57,7 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		else
 		{
 			randnum1 = (R32)( RandomNum( 0, 999 ) ) - (( randnum - sk_range ) / ( 11 - cwmWorldState->ServerData()->SkillLevel() ) );
-			rank = (int)( ( randnum1 * rk_range ) / 1000 );
+			rank = (SI32)( ( randnum1 * rk_range ) / 1000 );
 			rank += skillMake.minRank - 1;
 			if( rank > skillMake.maxRank )
 				rank = skillMake.maxRank;
@@ -100,7 +100,7 @@ void cSkills::ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank )
 			c->SetBuyValue( (UI32)( ( rank * c->GetBuyValue() ) / 10 ) );
 
 		// Convert item's rank to a value between 1 and 10, to fit rank system messages
-		UI08 tempRank = floor(static_cast<float>((( rank * 100 ) / maxrank ) / 10 ));
+		UI08 tempRank = floor(static_cast<R32>((( rank * 100 ) / maxrank ) / 10 ));
 
 		if( tempRank >= 1 && tempRank <= 10 )
 			s->sysmessage( 783 + tempRank );
@@ -149,8 +149,8 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 		return;
 
 	const UI16 getSkill			= mChar->GetSkill( MINING );
-	const int oreChance			= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
-	int sumChance				= 0;
+	const SI32 oreChance			= RandomNum( static_cast< SI32 >(0), targRegion->GetOreChance() );	// find our base ore
+	SI32 sumChance				= 0;
 	bool oreFound				= false;
 	const orePref *toFind		= NULL;
 	const miningData *found		= NULL;
@@ -969,7 +969,7 @@ void cSkills::FishTarget( CSocket *s )
 		Effects->PlayCharacterAnimation( mChar, 0x0b );
 		R32 baseTime;
 		baseTime = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGBASE ) / 25);
-		baseTime += RandomNum( 0, static_cast< int >(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ) / 15) );
+		baseTime += RandomNum( 0, static_cast< SI32 >(cwmWorldState->ServerData()->SystemTimer( tSERVER_FISHINGRANDOM ) / 15) );
 		s->SetTimer( tPC_FISHING, BuildTimeValue( baseTime ) ); //2x faster at war and can run
 		Effects->PlaySound( s, 0x023F, true );
 	}
@@ -1246,7 +1246,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			return;
 		}
 
-		const int getDefOffset	= UOX_MIN( stealCheck + ( (int)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
+		const SI32 getDefOffset	= UOX_MIN( stealCheck + ( (SI32)( ( Combat->calcDef( mChar, 0, false ) - 1) / 10 ) * 100 ), 990 );
 		const bool canSteal		= CheckSkill( mChar, STEALING, getDefOffset, 1000);
 		if( canSteal )
 		{
@@ -1339,18 +1339,18 @@ SI16 cSkills::calcStealDiff( CChar *c, CItem *i )
 			itemWeight = i->GetWeight();
 			calcDiff = (SI32)((c->GetSkill( STEALING ) * 2) + 100);  // GM thieves can steal up to 21 stones, newbie only 1 stone
 			if( calcDiff > itemWeight )
-				stealDiff = (SI16)UOX_MAX( UOX_MIN( ((int)((itemWeight + 9) / 20) * 10), 990 ), 0 );
+				stealDiff = (SI16)UOX_MAX( UOX_MIN( ((SI32)((itemWeight + 9) / 20) * 10), 990 ), 0 );
 			break;
 	}
 	return stealDiff;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::Tracking( CSocket *s, int selection )
+//|	Function	-	void cSkills::Tracking( CSocket *s, SI32 selection )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start tracking selected NPC/PC
 //o-----------------------------------------------------------------------------------------------o
-void cSkills::Tracking( CSocket *s, int selection )
+void cSkills::Tracking( CSocket *s, SI32 selection )
 {
 	VALIDATESOCKET( s );
 	CChar *i = s->CurrcharObj();
@@ -1367,7 +1367,7 @@ void cSkills::Tracking( CSocket *s, int selection )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::CreateTrackingMenu( CSocket *s, int m )
+//|	Function	-	void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up Tracking Menu, Called when player uses Tracking Skill
 //o-----------------------------------------------------------------------------------------------o
@@ -1470,7 +1470,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 
 void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::TrackingMenu( CSocket *s, int gmindex )
+//|	Function	-	void cSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up additional tracking menu with options listed in tracking.dfn
 //o-----------------------------------------------------------------------------------------------o
@@ -1538,7 +1538,7 @@ void cSkills::Persecute( CSocket *s )
 	if( !ValidateObject( targChar ) || targChar->IsGM() )
 		return;
 
-	int decrease = (int)( c->GetIntelligence() / 10 ) + 3;
+	SI32 decrease = (SI32)( c->GetIntelligence() / 10 ) + 3;
 
 	if( s->GetTimer( tPC_SKILLDELAY ) <= cwmWorldState->GetUICurrentTime() || c->IsGM() )
 	{
@@ -1723,7 +1723,7 @@ bool cSkills::LoadMiningData( void )
 								break;
 							case 'M':
 								if( UTag == "MAKEMENU" )
-									toAdd.makemenu = data.toLong();
+									toAdd.makemenu = data.toInt();
 								else if( UTag == "MINSKILL" )
 									toAdd.minSkill = data.toUShort();
 								break;
@@ -1788,7 +1788,7 @@ size_t cSkills::GetNumberOfOres( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	miningData *cSkills::GetOre( int number )
+//|	Function	-	miningData *cSkills::GetOre( size_t number )
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a handle to the data about the ore
@@ -2009,12 +2009,12 @@ bool cSkills::AdvanceSkill( CChar *s, UI08 sk, bool skillUsed )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 cSkills::FindSkillPoint( UI08 sk, int value )
+//|	Function	-	SI08 cSkills::FindSkillPoint( UI08 sk, SI32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find skillpoint advancement parameters from a skill in skills.dfn,
 //|					based on a specified skill value
 //o-----------------------------------------------------------------------------------------------o
-SI08 cSkills::FindSkillPoint( UI08 sk, int value )
+SI08 cSkills::FindSkillPoint( UI08 sk, SI32 value )
 {
 	SI08 retVal = -1;
 	for( size_t iCounter = 0; iCounter < cwmWorldState->skill[sk].advancement.size() - 1; ++iCounter )
@@ -2050,8 +2050,8 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
     UI32 ServStatCap = cwmWorldState->ServerData()->ServerStatCapStatus();
     UI32 ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence();
     SI16 chanceStatGain = 0; //16bit because of freaks that raises it > 100
-    int StatCount, nCount;
-	int toDec = 255;
+	SI32 StatCount, nCount;
+	SI32 toDec = 255;
 	UI16 maxChance = 100;
     SI16 ActualStat[3] = { s->ActualStrength() , s->ActualDexterity() , s->ActualIntelligence() };
     UI16 StatModifier[3] = { cwmWorldState->skill[sk].strength , cwmWorldState->skill[sk].dexterity , cwmWorldState->skill[sk].intelligence };
@@ -2084,12 +2084,12 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 			//  special dice 2: skill failed: decrease chance by 50%
 
 			//  k, first let us calculate both dices
-			UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) );
-			chanceStatGain = (SI16)(((float)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((float)( (float)(StatModifier[nCount]) / 10 ) / 100) * 1000);
+			UI08 modifiedStatLevel = FindSkillPoint( StatCount-1, (SI32)( (R32)ActualStat[nCount] / (R32)pRace->Skill( StatCount ) * 100 ) );
+			chanceStatGain = (SI16)(((R32)cwmWorldState->skill[StatCount-1].advancement[modifiedStatLevel].success / 100) * ((R32)( (R32)(StatModifier[nCount]) / 10 ) / 100) * 1000);
 			// some mathematics in it ;)
 
 			// now, lets implement the special dice 1 and additionally check for onStatGain javascript method
-			if( StatModifier[nCount] <= (int)( (float)ActualStat[nCount] / (float)pRace->Skill( StatCount ) * 100 ) )
+			if( StatModifier[nCount] <= (SI32)( (R32)ActualStat[nCount] / (R32)pRace->Skill( StatCount ) * 100 ) )
 				chanceStatGain = 0;
 
 			// special dice 2
@@ -2102,7 +2102,7 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 				// Check if we have to decrease a stat
 				if( ( ttlStats + 1) >= RandomNum( ServStatCap-10, ServStatCap ) )
 				{
-					for( int i = 0; i < 3; i++)
+					for( SI32 i = 0; i < 3; i++)
 					{
 						if( StatLocks[i] == SKILL_DECREASE )
 						{
@@ -2186,12 +2186,12 @@ void cSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
+//|	Function	-	void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	New make menu system, based on create DFNs
 //o-----------------------------------------------------------------------------------------------o
-void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
+void cSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 skill )
 {
 	VALIDATESOCKET( s );
 	CChar *ourChar = s->CurrcharObj();
@@ -2266,7 +2266,7 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 	UI16 xLoc = 60, yLoc = 40;
 	std::map< UI16, createEntry >::iterator imIter;
 	std::map< UI16, createMenuEntry >::iterator smIter;
-	int actualItems = 0;
+	SI32 actualItems = 0;
 	for( ourMenu.iIter = ourMenu.itemEntries.begin(); ourMenu.iIter != ourMenu.itemEntries.end(); ++ourMenu.iIter )
 	{
 		if( (actualItems%6) == 0 && actualItems != 0 )
@@ -2294,8 +2294,8 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 					canMake = false;
 				else
 				{
-					int getCir = (int)( iItem.spell * .1 );
-					int getSpell = iItem.spell - ( getCir * 10 ) + 1;
+					SI32 getCir = (SI32)( iItem.spell * .1 );
+					SI32 getSpell = iItem.spell - ( getCir * 10 ) + 1;
 					if( !Magic->CheckBook( getCir, getSpell - 1, spellBook ) )
 						canMake = false;
 				}
@@ -2339,12 +2339,12 @@ void cSkills::NewMakeMenu( CSocket *s, int menu, UI08 skill )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
+//|	Function	-	void cSkills::HandleMakeMenu( CSocket *s, SI32 button, SI32 menu )
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the button pressed in the new make menu
 //o-----------------------------------------------------------------------------------------------o
-void cSkills::HandleMakeMenu( CSocket *s, int button, int menu )
+void cSkills::HandleMakeMenu( CSocket *s, SI32 button, SI32 menu )
 {
 	VALIDATESOCKET( s );
 	CChar *ourChar = s->CurrcharObj();
@@ -2518,21 +2518,21 @@ void cSkills::RepairMetal( CSocket *s )
 			if( j->GetResist( PHYSICAL ) <= 12 )
 			{
 				// Minimum Skill = 61.0 + Defense - 1 / 3 * 100 (0-3 = 61.0, 4-6 = 71.0, ect)
-				minSkill = (610 + (int)((j->GetResist( PHYSICAL ) - 1) / 3) * 100);
+				minSkill = (610 + (SI32)((j->GetResist( PHYSICAL ) - 1) / 3) * 100);
 				// Maximum Skill = 84.9 + Defense - 1 / 3 * 50 (0-3 = 84.9, 4-6 = 89.9, ect)
-				maxSkill = (849 + (int)((j->GetResist( PHYSICAL ) - 1) / 3) * 50);
+				maxSkill = (849 + (SI32)((j->GetResist( PHYSICAL ) - 1) / 3) * 50);
 			}
 		}
 		else if( j->GetHiDamage() > 0 )
 		{
-			int offset = ( j->GetLoDamage() + j->GetHiDamage() ) / 2;
+			SI32 offset = ( j->GetLoDamage() + j->GetHiDamage() ) / 2;
 			// Items with > 25 Avg Damage would have impossible skill req's, with this equation
 			if( offset <= 25 )
 			{
 				// Minimum Skill = 51.0 + Avg Damage - 1 / 5 * 100 (0-5 = 51.0, 6-10 = 61.0, ect)
-				minSkill = (510 + (int)((offset - 1) / 5 ) * 100 );
+				minSkill = (510 + (SI32)((offset - 1) / 5 ) * 100 );
 				// Maximum Skill = 79.9 + Avg Damage - 1 / 5 * 50 (0-5 = 79.9, 6-10 = 84.9, ect)
-				maxSkill = (799 + (int)((offset-1) / 5) * 50);
+				maxSkill = (799 + (SI32)((offset-1) / 5) * 50);
 			}
 		}
 		else

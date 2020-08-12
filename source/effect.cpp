@@ -338,7 +338,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		if( !src->IsGM() && !toMake->skillReqs.empty() )
 		{
 			targItem->SetCreator( src->GetSerial() );
-			int avgSkill, sumSkill = 0;
+			SI32 avgSkill, sumSkill = 0;
 			// Find the average of our player's skills
 			for( size_t resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
 				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
@@ -677,7 +677,7 @@ void reverseEffect( CTEffect *Effect )
 				s->IsIncognito( false );
 				break;
 			case 21: // Protection Spell
-				int toDrop;
+				SI32 toDrop;
 				toDrop = Effect->More1() ;
 				if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
 					s->SetBaseSkill( 0, PARRYING );
@@ -999,7 +999,7 @@ void cEffects::SaveEffects( void )
 {
 	std::ofstream effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
-	int s_t							= getclock();
+	SI32 s_t							= getclock();
 
 	Console << "Saving Effects...   ";
 	Console.TurnYellow();
@@ -1026,8 +1026,8 @@ void cEffects::SaveEffects( void )
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
-	int e_t = getclock();
-	Console.Print( "Effects saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
+	SI32 e_t = getclock();
+	Console.Print( "Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f );
 }
 
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
@@ -1077,18 +1077,18 @@ void cEffects::LoadEffects( void )
 									break;
 								case 'D':
 									if( UTag == "DEST" )
-										toLoad->Destination( data.toULong() );
+										toLoad->Destination( data.toUInt() );
 									if( UTag == "DISPEL" )
-										toLoad->Dispellable( ( (data.toULong() == 0) ? false : true ) );
+										toLoad->Dispellable( ( (data.toUInt() == 0) ? false : true ) );
 									break;
 								case 'E':
 									if( UTag == "EXPIRE" )
-										toLoad->ExpireTime( static_cast<UI32>(data.toULong() + cwmWorldState->GetUICurrentTime()) );
+										toLoad->ExpireTime( data.toUInt() + cwmWorldState->GetUICurrentTime() );
 									break;
 								case 'I':
 									if( UTag == "ITEMPTR" )
 									{
-										SERIAL objSer = data.toULong();
+										SERIAL objSer = data.toUInt();
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1115,7 +1115,7 @@ void cEffects::LoadEffects( void )
 								case 'O':
 									if( UTag == "OBJPTR" )
 									{
-										SERIAL objSer = data.toULong();
+										SERIAL objSer = data.toUInt();
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1128,7 +1128,7 @@ void cEffects::LoadEffects( void )
 									}
 								case 'S':
 									if( UTag == "SOURCE" )
-										toLoad->Source( data.toULong() );
+										toLoad->Source( data.toUInt() );
 									break;
 								default:
 									Console.Error( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() );

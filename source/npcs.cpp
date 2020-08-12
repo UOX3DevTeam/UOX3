@@ -509,8 +509,8 @@ void cCharStuff::LoadShopList( const std::string& list, CChar *c )
 					{
 						if( cdata.sectionCount( " " ) != 0 )
 						{
-							retitem->SetBuyValue(  cdata.section( " ", 0, 0 ).stripWhiteSpace().toULong() );
-							retitem->SetSellValue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toULong() );
+							retitem->SetBuyValue(  cdata.section( " ", 0, 0 ).stripWhiteSpace().toUInt() );
+							retitem->SetSellValue( cdata.section( " ", 1, 1 ).stripWhiteSpace().toUInt() );
 							break;
 						}
 					}
@@ -1167,7 +1167,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, bo
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue = customTagStringValue.toLong();
+					customTag.m_IntValue = customTagStringValue.toInt();
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
 					applyTo->SetTag( customTagName, customTag);

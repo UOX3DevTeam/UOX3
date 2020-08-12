@@ -65,7 +65,7 @@ overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime(
 autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ), 
 reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLASSESINITIALIZED )
 {
-	for( int mTID = (int)tWORLD_NEXTFIELDEFFECT; mTID < (int)tWORLD_COUNT; ++mTID )
+	for( SI32 mTID = (SI32)tWORLD_NEXTFIELDEFFECT; mTID < (SI32)tWORLD_COUNT; ++mTID )
 		worldTimers[mTID] = 0;
 	creatures.clear();
 	prowessTitles.resize( 0 );
@@ -544,7 +544,7 @@ void sysBroadcast( const std::string& txt );
 //o-----------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld( bool x )
 {
-	static unsigned int save_counter = 0;
+	static UI32 save_counter = 0;
 
 	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();

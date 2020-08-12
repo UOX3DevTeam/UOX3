@@ -167,7 +167,7 @@ public:
 	~cAccountClass();
 	// Operator overloads
 	cAccountClass& operator++();
-	cAccountClass& operator--(int);
+	cAccountClass& operator--(SI32);
 	UI16					CreateAccountSystem( void );
 	UI16					ImportAccounts( void );
 	void					WriteAccountSection( CAccountBlock& actbTemp, std::fstream& fsOut );

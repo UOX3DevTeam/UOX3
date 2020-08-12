@@ -300,7 +300,7 @@ void CServerDefinitions::ReloadScriptObjects( void )
 {
 	Console << myendl;
 
-	for( int sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
+	for( SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
 	{
 		LoadDFNCategory( (DEFINITIONCATEGORIES)sCtr );
 	}

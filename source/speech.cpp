@@ -31,7 +31,7 @@ void ClilocMessage( CSocket *mSock, UI08 type, UI16 hue, UI16 font, UI32 message
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' )
-			stringVal = UString::number( va_arg( marker, int ) );
+			stringVal = UString::number( va_arg( marker, SI32 ) );
 		else if( *typesPtr == 's' )
 			stringVal = va_arg( marker, char * );
 
@@ -76,7 +76,7 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI
 	while( *typesPtr != '\0' )
 	{
 		if( *typesPtr == 'i' )
-			stringVal = UString::number( va_arg( marker, int ) );
+			stringVal = UString::number( va_arg( marker, SI32 ) );
 		else if( *typesPtr == 's' )
 			stringVal = va_arg( marker, char * );
 
@@ -122,7 +122,7 @@ std::map< std::string, UnicodeTypes > codeLookup;
 
 void InitializeLookup( void )
 {
-	for( int i = (int)ZERO; i < (int)TOTAL_LANGUAGES; ++i )
+	for( SI32 i = (SI32)ZERO; i < (SI32)TOTAL_LANGUAGES; ++i )
 		codeLookup[LanguageCodes[(UnicodeTypes)i]] = (UnicodeTypes)i;
 }
 
@@ -554,12 +554,12 @@ CSpeechEntry& CSpeechQueue::Add( void )		// Make space in queue, and return poin
 	return (*speechList[iSize]);
 }
 
-int CSpeechQueue::PollTime( void ) const
+SI32 CSpeechQueue::PollTime( void ) const
 {
 	return pollTime;
 }
 
-void CSpeechQueue::PollTime( int value )
+void CSpeechQueue::PollTime( SI32 value )
 {
 	pollTime = value;
 }

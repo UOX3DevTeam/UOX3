@@ -105,7 +105,7 @@ struct SEGump
 struct SEGumpData
 {
 	STRINGLIST			sEdits;
-	std::vector<int>	nButtons;
+	std::vector<SI32>	nButtons;
 	std::vector<short>	nIDs;
 };
 
@@ -225,7 +225,7 @@ public:
 
 	bool		executeCommand( CSocket *s, std::string funcName, std::string executedString );
 	
-	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum );
+	bool		MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum );
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );

@@ -242,13 +242,13 @@ void cNetworkStuff::LogOut( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::sockInit( void )
 {
-	int bcode;
+	SI32 bcode;
 	
 	cwmWorldState->SetKeepRun( true );
 	cwmWorldState->SetError( false );
 	
 #if UOX_PLATFORM != PLATFORM_WIN32
-	int on = 1;
+	SI32 on = 1;
 #endif
 	
 	a_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
@@ -287,7 +287,7 @@ void cNetworkStuff::sockInit( void )
 	}
     
 	
-	UI32 mode = 1;
+	unsigned long mode = 1;
 	// set the socket to nonblocking
 	ioctlsocket( a_socket, FIONBIO, &mode );
 
@@ -328,11 +328,11 @@ void cNetworkStuff::CheckConn( void )
 {
 	FD_ZERO( &conn );
 	FD_SET( a_socket, &conn );
-	int nfds = a_socket + 1;
-	int s = select( nfds, &conn, NULL, NULL, &cwmWorldState->uoxtimeout );
+	SI32 nfds = a_socket + 1;
+	SI32 s = select( nfds, &conn, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
-		int len = sizeof( struct sockaddr_in );
+		SI32 len = sizeof( struct sockaddr_in );
 		size_t newClient;
 #if UOX_PLATFORM == PLATFORM_WIN32
 		newClient = accept( a_socket, (struct sockaddr *)&client_addr, &len );
@@ -348,10 +348,10 @@ void cNetworkStuff::CheckConn( void )
 		if( newClient < 0 )
 		{
 #if UOX_PLATFORM == PLATFORM_WIN32
-			int errorCode = WSAGetLastError();
+			SI32 errorCode = WSAGetLastError();
 			if( errorCode == WSAEWOULDBLOCK )
 #else
-			int errorCode = errno;
+			SI32 errorCode = errno;
 			if( errorCode == EWOULDBLOCK )
 #endif
 			{
@@ -460,16 +460,16 @@ void cNetworkStuff::CheckMessage( void )
 {
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
-	int nfds = 0;
+	SI32 nfds = 0;
 	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
 	{
-		int clientSock = (*toCheck)->CliSocket();
+		SI32 clientSock = (*toCheck)->CliSocket();
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = cwmWorldState->GetPlayersOnline();
@@ -538,10 +538,10 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 	
 	if( mSock->NewClient() )
 	{
-		int count = mSock->Receive( 4 );
+		SI32 count = mSock->Receive( 4 );
 		if( mSock->Buffer()[0] == 0x21 && count < 4 )	// UOMon
 		{
-			int ho, mi, se, total;
+			SI32 ho, mi, se, total;
 			total = ( cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime() ) / 1000;
 			ho = total / 3600;
 			total -= ho * 3600;
@@ -569,7 +569,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 		if( mSock->Receive( 1, false ) > 0 )
 		{
 			char temp[1024];
-			int book;
+			SI32 book;
 			UI08 packetID = buffer[0];
 			if( mSock->FirstPacket() && packetID != 0x80 && packetID != 0x91 )
 			{
@@ -832,7 +832,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 					default:
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );
-						int nfds;
+						SI32 nfds;
 						nfds = mSock->CliSocket() + 1;
 						if( select( nfds, &all, NULL, NULL, &cwmWorldState->uoxtimeout ) > 0 ) 
 							mSock->Receive( 2560 );
@@ -873,7 +873,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 		if( clientSock + 1 > nfds )
 			nfds = clientSock + 1;
 	}
-	int s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
+	SI32 s = select( nfds, &all, NULL, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();
@@ -912,7 +912,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 	else if( s == SOCKET_ERROR )
 	{
 #if UOX_PLATFORM == PLATFORM_WIN32
-		int errorCode = WSAGetLastError();
+		SI32 errorCode = WSAGetLastError();
 		if( errorCode != 10022 )
 			Console << (SI32)errorCode << myendl;
 #endif
@@ -1008,7 +1008,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 		return;
 	if( mSock->NewClient() )
 	{
-		int count, ho, mi, se, total;
+		SI32 count, ho, mi, se, total;
 		count = mSock->Receive( 4 );
 		// March 1, 2004 - EviLDeD - Implemented support for UOG request for client connection count and possibly other server values
 		if( memcmp(mSock->Buffer(),"UOG\0",sizeof(UI08)*4) == 0 && cwmWorldState->ServerData()->ServerUOGEnabled() ) // || (mSock->Buffer()[0]==46 && count<4)) // Commented out becuase the timing cycle in the recieve() member function in CSocket returns to fast and doesn't get the correct revieved byte count.
@@ -1142,7 +1142,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						mSock->Receive( mSock->GetWord( 1 ) );
 						break;
 					default:
-						int nfds;
+						SI32 nfds;
 						fd_set all;
 						FD_ZERO( &all );
 						FD_SET( mSock->CliSocket(), &all );

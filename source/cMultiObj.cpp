@@ -370,7 +370,7 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'B':
 				if( UTag == "BANNED" )
 				{
-					CChar *bList = calcCharObjFromSer( data.toULong() );
+					CChar *bList = calcCharObjFromSer( data.toUInt() );
 					if( ValidateObject( bList ) )
 						AddToBanList( bList );
 					rvalue = true;
@@ -379,7 +379,7 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'C':
 				if( UTag == "COOWNER" )
 				{
-					CChar *cList = calcCharObjFromSer( data.toULong() );
+					CChar *cList = calcCharObjFromSer( data.toUInt() );
 					if( ValidateObject( cList ) )
 						AddAsOwner( cList );
 					rvalue = true;
@@ -395,7 +395,7 @@ bool CMultiObj::HandleLine( UString &UTag, UString &data )
 			case 'L':
 				if( UTag == "LOCKEDITEM" )
 				{
-					CItem *iList = calcItemObjFromSer( data.toULong() );
+					CItem *iList = calcItemObjFromSer( data.toUInt() );
 					if( ValidateObject( iList ) )
 						LockDownItem( iList );
 					rvalue = true;
@@ -601,22 +601,22 @@ bool CBoatObj::HandleLine( UString &UTag, UString &data )
 			case 'H':
 				if( UTag == "HOLD" )
 				{
-					SetHold( data.toULong() );
+					SetHold( data.toUInt() );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PLANKS" )
 				{
-					SetPlank( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
-					SetPlank( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toULong() );
+					SetPlank( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+					SetPlank( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TILLER" )
 				{
-					SetTiller( data.toULong() );
+					SetTiller( data.toUInt() );
 					rvalue = true;
 				}
 				break;

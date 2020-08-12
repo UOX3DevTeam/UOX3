@@ -518,7 +518,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 	return INVALIDID;
 }
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, int checkfor, bool useSurfaceZ )
+//|	Function	-	bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ )
 //|	Date		-	03 July, 2001
 //|	Programmer	-	Abaddon
 //|	Changes		-	18 March, 2002, sereg

@@ -370,7 +370,7 @@ void DyeTarget( CSocket *s )
 					colour = 0x03E9;
 			}
 			
-			int b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
+			SI32 b = ((colour&0x4000)>>14) + ((colour&0x8000)>>15);   
 			if( !b )
 				i->SetColour( colour );
 		}
@@ -812,7 +812,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 			{
 				data = toFind->GrabData();
 				if( data.sectionCount( "," ) != 0 )
-					if( !CreateBodyPart( mChar, i, data.section( ",", 0, 0 ).stripWhiteSpace().toUShort(), data.section( ",", 1, 1 ).stripWhiteSpace().toLong() ) )
+					if( !CreateBodyPart( mChar, i, data.section( ",", 0, 0 ).stripWhiteSpace().toUShort(), data.section( ",", 1, 1 ).stripWhiteSpace().toInt() ) )
 						return;
 			}
 		}
@@ -1282,7 +1282,7 @@ void ShowSkillTarget( CSocket *s )
 			skillVal = mChar->GetSkill( i );
 
 		if( skillVal > 0 || dispType%2 == 0 )
-			showSkills.AddData( cwmWorldState->skill[i].name, UString::number( (float)skillVal/10 ), 8 );
+			showSkills.AddData( cwmWorldState->skill[i].name, UString::number( (R32)skillVal/10 ), 8 );
 	}
 	showSkills.Send( 4, false, INVALIDSERIAL );
 }

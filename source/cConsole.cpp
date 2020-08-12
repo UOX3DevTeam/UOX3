@@ -59,7 +59,7 @@ HANDLE cluox_stdin_writeback	= 0; // the write-end of the stdin-pipe
 
 // Forward function declarations
 
-void		endmessage( int x );
+void		endmessage( SI32 x );
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
 void		LoadSpawnRegions( void );
@@ -115,7 +115,7 @@ CConsole& CConsole::operator<<( const char *outPut )
 		while( !wrapDone )
 		{
 			GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
-			int diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
+			SI32 diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
 			if( diff > toDisplay.length() )
 			{
 				std::cout << toDisplay;
@@ -143,13 +143,13 @@ CConsole& CConsole::operator<<( const UI08 *outPut )
 	(*this) << (const char *)outPut;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const SI32 &outPut )
+CConsole& CConsole::operator<<( const SI08 &outPut )
 {
 	StartOfLineCheck();
 	std::cout << outPut;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI32 &outPut )
+CConsole& CConsole::operator<<( const UI08 &outPut )
 {
 	StartOfLineCheck();
 	std::cout << outPut;
@@ -167,13 +167,25 @@ CConsole& CConsole::operator<<( const UI16 &outPut )
 	std::cout << outPut;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const SI08 &outPut )
+CConsole& CConsole::operator<<( const SI32 &outPut )
 {
 	StartOfLineCheck();
 	std::cout << outPut;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI08 &outPut )
+CConsole& CConsole::operator<<( const UI32 &outPut )
+{
+	StartOfLineCheck();
+	std::cout << outPut;
+	return (*this);
+}
+CConsole& CConsole::operator<<( const SI64 &outPut )
+{
+	StartOfLineCheck();
+	std::cout << outPut;
+	return ( *this );
+}
+CConsole& CConsole::operator<<( const UI64 &outPut )
 {
 	StartOfLineCheck();
 	std::cout << outPut;
@@ -231,26 +243,14 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 	std::cout << outPut;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI64 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const SI64 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return ( *this );
-}
-#if defined( _MSC_VER )
+/*#if defined( _MSC_VER )
 	CConsole& CConsole::operator<<( const std::size_t &outPut )
 	{
 		StartOfLineCheck();
 		std::cout << outPut;
 		return ( *this );
 	}
-#endif
+#endif*/
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void CConsole::Print( const char *toPrint, ... )
 //o-----------------------------------------------------------------------------------------------o
@@ -365,7 +365,7 @@ void CConsole::PrintSectionBegin( void )
 {
 	TurnBrightWhite();
 	std::cout << "o";
-	for( int j = 1; j < width - 1; ++j )
+	for( SI32 j = 1; j < width - 1; ++j )
 		std::cout << "-";
 	std::cout << "o";
 	curLeft = 0;
@@ -577,7 +577,7 @@ void CConsole::PrintPassed( void )
 void CConsole::ClearScreen( void )
 {
 #if UOX_PLATFORM == PLATFORM_WIN32
-	UI32 y;
+	unsigned long y;
 	COORD xy;
 
 	xy.X = 0;
@@ -658,12 +658,12 @@ void CConsole::PrintStartOfLine( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MoveTo( int x, int y )
+//|	Function	-	void MoveTo( SI32 x, SI32 y )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o-----------------------------------------------------------------------------------------------o
 #if UOX_PLATFORM == PLATFORM_WIN32
-void CConsole::MoveTo( int x, int y )
+void CConsole::MoveTo( SI32 x, SI32 y )
 {
 	COORD Pos;
 	if( y == -1 )
@@ -683,7 +683,7 @@ void CConsole::MoveTo( int x, int y )
 	}
 }
 #else
-void CConsole::MoveTo( int x, int y )
+void CConsole::MoveTo( SI32 x, SI32 y )
 {
 	std::cout << "\033[255D";
 	std::cout << "\033[" << x << "C";
@@ -754,7 +754,7 @@ void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 
 	StartOfLineCheck();
 	size_t stringLength = strlen( msg ) + 3;
-	MoveTo( static_cast< int >(width - stringLength) );
+	MoveTo( static_cast< SI32 >(width - stringLength) );
 	TurnNormal();
 	(*this) << "[";
 	switch( colour )
@@ -773,7 +773,7 @@ void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int cl_getch( void )
+//|	Function	-	SI32 cl_getch( void )
 //|	Programmer	-	knoxos
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Read a character from stdin, in a cluox compatble way.
@@ -791,7 +791,7 @@ void CConsole::PrintSpecial( UI08 colour, const char *toPrint, ... )
 //|					a charecter, if it is again the same ZERO just putted in nothing was entered. However
 //|					it is not a zero the user has entered a char.
 //o-----------------------------------------------------------------------------------------------o
-int CConsole::cl_getch( void )
+SI32 CConsole::cl_getch( void )
 {
 #if UOX_PLATFORM != PLATFORM_WIN32
 	// first the linux style, don't change it's behavoir
@@ -799,7 +799,7 @@ int CConsole::cl_getch( void )
 	fd_set KEYBOARD;
 	FD_ZERO( &KEYBOARD );
 	FD_SET( 0, &KEYBOARD );
-	int s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
+	SI32 s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
 	if( s < 0 )
 	{
 		Error( "%c", "Error scanning key press" );
@@ -823,8 +823,8 @@ int CConsole::cl_getch( void )
 	}
 	// the wiered cluox getter.
 	UI08 c = 0;
-	UI32 bytes_written = 0;
-	int asw = 0;
+	unsigned long bytes_written = 0;
+	SI32 asw = 0;
 	if( !cluox_nopipe_fill )
 		asw = WriteFile( cluox_stdin_writeback, &c, 1, &bytes_written, NULL );
 	if( bytes_written != 1 || asw == 0 )
@@ -855,7 +855,7 @@ int CConsole::cl_getch( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::Poll( void )
 {
-	int c = cl_getch();
+	SI32 c = cl_getch();
 	if( c > 0 )
 	{
 		if( (cluox_io) && ( c == 250 ) )
@@ -874,7 +874,7 @@ void CConsole::Poll( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Process( int c )
+//|	Function	-	void Process( SI32 c )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle keypresses in console
 //|	Changes		-	05042004 - EviLDeD added some console debugging stuff.
@@ -883,7 +883,7 @@ void CConsole::Poll( void )
 //|					respectivly. This functionality hasn't been implemented
 //|					at the current time of writing, but will be when possible.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::Process( int c )
+void CConsole::Process( SI32 c )
 {
 	if( c == '*' )
 	{
@@ -920,9 +920,9 @@ void CConsole::Process( int c )
 		}
 		CSocket *tSock	= NULL;
 		char outputline[128], temp[1024];
-		int indexcount	= 0;
+		SI32 indexcount	= 0;
 		bool kill		= false;
-		int j = 0;
+		SI32 j = 0;
 		switch( c )
 		{
 			case '!':
@@ -936,7 +936,7 @@ void CConsole::Process( int c )
 				messageLoop << MSG_WORLDSAVE;
 				break;
 		case 'Y':
-			int keyresp;
+			SI32 keyresp;
 			std::cout << "System: ";
 			while( !kill )
 			{
@@ -1002,7 +1002,7 @@ void CConsole::Process( int c )
 						sprintf( szBuffer, "AddMenuGroup %lu:", CJ->first );
 						messageLoop << szBuffer;
 						std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
-						int count = 0;
+						SI32 count = 0;
 						for( ADDMENUMAP_CITERATOR CI=pairRange.first;CI != pairRange.second; CI++ )
 						{
 							count++;
@@ -1141,7 +1141,7 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				break;
 			case 'M':
-				unsigned int tmp, total;
+				UI32 tmp, total;
 				total = 0;
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
@@ -1150,24 +1150,24 @@ void CConsole::Process( int c )
 				messageLoop << temp;
 				sprintf( temp, "        Multis: %u bytes", Map->GetMultisMem() );
 				messageLoop << temp;
-				unsigned int m, n;
+				UI32 m, n;
 				m = ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
-				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof(int)*5;
+				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof( intptr_t )*5;
 				sprintf( temp, "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
 				messageLoop << temp;
 				n = ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
-				total += tmp = n + n * sizeof( int ) * 4;
+				total += tmp = n + n * sizeof( intptr_t ) * 4;
 				sprintf( temp, "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
 				messageLoop << temp;
 				sprintf( temp, "        You save I: %i & C: %i bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 				total += tmp = 69 * sizeof( SpellInfo );
 				sprintf( temp, "     Spells: %i bytes", tmp );
 				messageLoop << "     Sizes:";
-				sprintf( temp, "        CItem  : %i bytes", (unsigned int) sizeof( CItem ) );
+				sprintf( temp, "        CItem  : %i bytes", sizeof( CItem ) );
 				messageLoop << temp;
-				sprintf( temp, "        CChar  : %i bytes", (unsigned int) sizeof( CChar ) );
+				sprintf( temp, "        CChar  : %i bytes", sizeof( CChar ) );
 				messageLoop << temp;
-				sprintf( temp, "        TEffect: %i bytes (%i total)", (unsigned int) sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
+				sprintf( temp, "        TEffect: %i bytes (%i total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
 				total += tmp = Map->GetTileMem() + Map->GetMultisMem();
 				sprintf( temp, "        Approximate Total: %i bytes", total );
@@ -1326,11 +1326,11 @@ void CConsole::DisplaySettings( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void RegisterKey( int key, std::string cmdName, UI16 scriptID )
+//|	Function	-	void RegisterKey( SI32 key, std::string cmdName, UI16 scriptID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers key input for detection in console
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::RegisterKey( int key, std::string cmdName, UI16 scriptID )
+void CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
 	char temp[512];
@@ -1341,11 +1341,11 @@ void CConsole::RegisterKey( int key, std::string cmdName, UI16 scriptID )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetKeyStatus( int key, bool isEnabled )
+//|	Function	-	void SetKeyStatus( SI32 key, bool isEnabled )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enabling/Disabling specific key input in console
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::SetKeyStatus( int key, bool isEnabled )
+void CConsole::SetKeyStatus( SI32 key, bool isEnabled )
 {
 	JSCONSOLEKEYMAP_ITERATOR	toFind	= JSKeyHandler.find( key );
 	if( toFind != JSKeyHandler.end() )

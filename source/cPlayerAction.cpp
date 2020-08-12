@@ -1051,7 +1051,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 	}
 	else
 	{
-		int targSpellNum = 0;
+		SI32 targSpellNum = 0;
 		UI16 scrollID = iDropped.GetID();
 		if( scrollID == 0x1F2D )
 			targSpellNum = 6;
@@ -2314,7 +2314,7 @@ void InitIDToItemType( void )
 	if( Itemtypes == NULL )
 		return;
 
-	int sectionCount;
+	SI32 sectionCount;
 	UString data;
 	ItemTypes iType = IT_COUNT;
 	for( UString tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
@@ -2326,7 +2326,7 @@ void InitIDToItemType( void )
 			sectionCount = data.sectionCount( "," );
 			if( sectionCount != 0 )
 			{
-				for( int i = 0; i <= sectionCount; i++ )
+				for( SI32 i = 0; i <= sectionCount; i++ )
 				{
 					idToItemType[data.section( ",", i, i ).toUShort( 0, 16 )] = iType;
 				}
@@ -2567,12 +2567,12 @@ const char *AppendData( CItem *i, std::string currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = " (" + UString::number( i->GetContainsList()->Num() ) + " items, ";
+			dataToAdd = " (" + UString::number( (SI32)i->GetContainsList()->Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones)";
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = " (" + UString::number( i->GetContainsList()->Num() ) + " items, ";
+			dataToAdd = " (" + UString::number( (SI32)i->GetContainsList()->Num() ) + " items, ";
 			dataToAdd += UString::number( ( i->GetWeight() / 100 ) ) + " stones) [Locked]";
 			break;
 		case IT_LOCKEDDOOR:
@@ -2685,7 +2685,7 @@ bool CPISingleClick::Handle( void )
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
-		int spellNum = ( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1;	// we pick it up from the array anyway
+		SI32 spellNum = ( 8 * ( i->GetTempVar( CITV_MOREX ) - 1 ) ) + i->GetTempVar( CITV_MOREY ) - 1;	// we pick it up from the array anyway
 		realname += " of ";
 		realname += Dictionary->GetEntry( magic_table[spellNum].spell_name, tSock->Language() );
 		realname += " with ";

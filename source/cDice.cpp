@@ -16,7 +16,7 @@ cDice::cDice( const std::string &dieString )
 	convStringToDice( dieString );
 }
 
-cDice::cDice( int d, int s, int a ) : dice( d ), sides( s ), addition( a )
+cDice::cDice( SI32 d, SI32 s, SI32 a ) : dice( d ), sides( s ), addition( a )
 {
 }
 
@@ -24,17 +24,17 @@ cDice::~cDice()
 {
 }
 
-void cDice::setDice( int newDice )
+void cDice::setDice( SI32 newDice )
 {
 	dice = newDice;
 }
 
-void cDice::setSides( int newSides )
+void cDice::setSides( SI32 newSides )
 {
 	sides = newSides;
 }
 
-void cDice::setAddition( int newAddition )
+void cDice::setAddition( SI32 newAddition )
 {
 	addition = newAddition;
 }
@@ -45,8 +45,8 @@ auto random_device = std::random_device{};
 
 auto generator = std::mt19937{random_device()};
 
-auto RandomNum(int lower_bound, int upper_bound) -> int {
-    auto distribution = std::uniform_int_distribution<int>{
+auto RandomNum(SI32 lower_bound, SI32 upper_bound) -> SI32 {
+    auto distribution = std::uniform_int_distribution<SI32>{
         lower_bound, upper_bound
     };
 
@@ -55,10 +55,10 @@ auto RandomNum(int lower_bound, int upper_bound) -> int {
 
 }//namespace
 
-int cDice::roll( void )
+SI32 cDice::roll( void )
 {
-	int sum = 0;
-	for( int rolls = 0; rolls < dice; ++rolls )
+	SI32 sum = 0;
+	for( SI32 rolls = 0; rolls < dice; ++rolls )
 	{
 		sum += RandomNum( 1, sides );
 	}
@@ -91,8 +91,8 @@ bool cDice::convStringToDice( std::string dieString )
     }
 
     auto const parsed_value = [&] (
-        int position, int count, int value = 0
-    ) -> int {
+		SI32 position, SI32 count, SI32 value = 0
+    ) -> SI32 {
         try {
             return std::stoi(dieString.substr(position, count));
         } catch (...) {

@@ -104,7 +104,7 @@ inline UI08 turn_counter_clock_wise( UI08 dir )
 //|					two's complement of the last four bit. Don't know if it has a special meaning
 //|					if the tile is height is "negative" (stairs in despise blocking bug)
 //|
-//|	Arguments	-	int h   orignial height as saved in mul file
+//|	Arguments	-	SI08 h   orignial height as saved in mul file
 //|
 //|	Returns		- The absoulte value of the two's complement if the value was "negative"
 //o-----------------------------------------------------------------------------------------------o
@@ -1678,7 +1678,7 @@ void cMovement::PathFind( CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen
 	for( UI08 pn = 0; pn < pathLen; ++pn )
 	{
 		bool bFound			= false;
-		int pf_neg			= ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
+		SI32 pf_neg			= ( ( RandomNum( 0, 1 ) ) ? 1 : -1 );
 		UI08 newDir			= Direction( newx, newy, gx, gy );
 
 		bool canMoveInDir	= false;
@@ -2070,7 +2070,7 @@ bool cMovement::IsOk( UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 i
 	GetBlockingStatics( x, y, xyblock, xycount, world );
 	GetBlockingDynamics( x, y, xyblock, xycount, world, instanceID );
 
-	for( int i = 0; i < xycount; ++i )
+	for( SI32 i = 0; i < xycount; ++i )
 	{
 		tb = &xyblock[i];
 
@@ -2149,7 +2149,7 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 		isset = true;
 	}
 
-	for( int i = 0; i < xycount; ++i )
+	for( SI32 i = 0; i < xycount; ++i )
 	{
 		tb = &xyblock[i];
 
@@ -2238,8 +2238,8 @@ UI08 cMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 //|
 //|					Parameters:
 //|						CChar *c			Character
-//|						int x, y			new cords.
-//|						int oldx, oldy		old cords.
+//|						SI16 x, y			new cords.
+//|						SI16 oldx, oldy		old cords.
 //|						bool justask		don't make any changes, the func. is just asked "what if"..
 //|						bool waterWalk		Character can swim (true/false)
 //|

@@ -55,7 +55,7 @@ SI32 cCommands::Argument( UI08 argNum )
 	SI32 retVal = 0;
 	UString tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
-		retVal = tempString.toLong();
+		retVal = tempString.toInt();
 
 	return retVal;
 }

@@ -808,7 +808,7 @@ namespace UOX
 				case CCP_ISHUMAN:		*vp	= BOOLEAN_TO_JSVAL( cwmWorldState->creatures[gPriv->GetID()].IsHuman() ); break;
 				case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgID() );					break;
 				case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
-				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<int>(gPriv->GetNPCFlag()) );break;
+				case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<SI32>(gPriv->GetNPCFlag()) );break;
 				case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
 				case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
 				case CCP_PARTYLOOTABLE:
@@ -2140,7 +2140,7 @@ namespace UOX
 	{
 		if( JSVAL_IS_INT( id ) ) 
 		{
-			int realID = JSVAL_TO_INT( id );
+			SI32 realID = JSVAL_TO_INT( id );
 			switch( realID )
 			{
 			case CODBCP_LASTSUCCEEDED:	*vp = BOOLEAN_TO_JSVAL( ODBCManager::getSingleton().LastSucceeded() );	break;

@@ -185,11 +185,11 @@ public:
 	virtual			~CPRelay()
 	{
 	}
-					CPRelay( long newIP );
-					CPRelay( long newIP, UI16 newPort );
-	virtual void	ServerIP( long newIP );
+					CPRelay( UI32 newIP );
+					CPRelay( UI32 newIP, UI16 newPort );
+	virtual void	ServerIP( UI32 newIP );
 	virtual void	Port( UI16 newPort );
-	virtual void	SeedIP( long newIP );
+	virtual void	SeedIP( UI32 newIP );
 };
 
 class CPWornItem : public CPUOXBuffer
@@ -436,8 +436,8 @@ public:
 	{
 	}
 					CPOpenGump( CChar &toCopy );
-	virtual void	Length( int TotalLines );
-	virtual void	GumpIndex( int index );
+	virtual void	Length( SI32 TotalLines );
+	virtual void	GumpIndex( SI32 index );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Question( std::string toAdd );
 	virtual void	AddResponse( UI16 modelNum, UI16 colour, std::string responseText );
@@ -780,7 +780,7 @@ public:
 	virtual void	LowerRight( SI16 x, SI16 y );
 	virtual void	Dimensions( SI16 width, SI16 height );
 	virtual void	GumpArt( SI16 newArt );
-	virtual void	KeyUsed( long key );
+	virtual void	KeyUsed( UI32 key );
 };
 
 class CPMapRelated : public CPUOXBuffer

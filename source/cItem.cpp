@@ -1284,7 +1284,7 @@ void CItem::CopyData( CItem *target )
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
 
-	for( int i = 0; i < WEATHNUM; ++i )
+	for( SI32 i = 0; i < WEATHNUM; ++i )
 		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
 }
 
@@ -1387,7 +1387,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					}
 					else
 					{
-						SetAmmoID( data.toULong() );
+						SetAmmoID( data.toUShort() );
 						SetAmmoHue( ( 0 ) );
 					}
 					rvalue = true;
@@ -1402,7 +1402,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					}
 					else
 					{
-						SetAmmoFX( data.toULong() );
+						SetAmmoFX( data.toUShort() );
 						SetAmmoFXHue( ( 0 ) );
 						SetAmmoFXRender( ( 0 ) );
 					}
@@ -1429,12 +1429,12 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					contObj = reinterpret_cast<CBaseObject *>( data.toULong() ); //(CBaseObject *)data.toULong();
+					contObj = reinterpret_cast<CBaseObject *>( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( data.toULong() );
+					SetCreator( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "CORPSE" )
@@ -1490,7 +1490,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				else if( UTag == "GLOW" )
 				{
-					SetGlow( data.toULong() );
+					SetGlow( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "GOOD" )
@@ -1527,9 +1527,9 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				if( UTag == "MORE" )
 				{
 					if( data.sectionCount( "," ) != 0 )
-						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
+						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
 					else
-						SetTempVar( CITV_MORE, data.toULong() );
+						SetTempVar( CITV_MORE, data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "MORE2" )	// Depreciated
@@ -1538,24 +1538,24 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					rvalue = true;
 				else if( UTag == "MOREXYZ" )
 				{
-					SetTempVar( CITV_MOREX, data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
-					SetTempVar( CITV_MOREY, data.section( ",", 1, 1 ).stripWhiteSpace().toULong() );
-					SetTempVar( CITV_MOREZ, data.section( ",", 2, 2 ).stripWhiteSpace().toULong() );
+					SetTempVar( CITV_MOREX, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+					SetTempVar( CITV_MOREY, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
+					SetTempVar( CITV_MOREZ, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "MOREX" )
 				{
-					SetTempVar( CITV_MOREX, data.toULong() );
+					SetTempVar( CITV_MOREX, data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "MOREY" )
 				{
-					SetTempVar( CITV_MOREY, data.toULong() );
+					SetTempVar( CITV_MOREY, data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "MOREZ" )
 				{
-					SetTempVar( CITV_MOREZ, data.toULong() );
+					SetTempVar( CITV_MOREZ, data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "MOVABLE" )
@@ -1642,9 +1642,9 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				else if( UTag == "SPELLS" )
 				{
-					SetSpell( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
-					SetSpell( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toULong() );
-					SetSpell( 2, data.section( ",", 2, 2 ).stripWhiteSpace().toULong() );
+					SetSpell( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+					SetSpell( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
+					SetSpell( 2, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
 					rvalue = true;
 				}
 				break;
@@ -1665,13 +1665,13 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				{
 					if( data.sectionCount( "," ) != 0 )
 					{
-						SetBuyValue( data.section( ",", 0, 0 ).stripWhiteSpace().toULong() );
-						SetSellValue( data.section( ",", 1, 1 ).stripWhiteSpace().toULong() );
+						SetBuyValue( data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+						SetSellValue( data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
 					}
 					else
 					{
-						SetBuyValue( data.toULong() );
-						SetSellValue( (data.toULong() / 2) );
+						SetBuyValue( data.toUInt() );
+						SetSellValue( (data.toUInt() / 2) );
 					}
 					rvalue = true;
 				}
@@ -1679,7 +1679,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'W':
 				if( UTag == "WEIGHTMAX" )
 				{
-					SetWeightMax( data.toLong() );
+					SetWeightMax( data.toInt() );
 					rvalue = true;
 				}
 				break;

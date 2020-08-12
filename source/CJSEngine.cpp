@@ -38,7 +38,7 @@ namespace UOX
 			UString sLine( line );
 			sLine = sLine.removeComment().stripWhiteSpace();
 			if( !sLine.empty() )
-				engineSize = UOX_MAX( sLine.toLong(), DefEngineSize );
+				engineSize = UOX_MAX( sLine.toInt(), DefEngineSize );
 
 			engineData.close();
 		}

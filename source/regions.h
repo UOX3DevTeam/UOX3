@@ -84,7 +84,7 @@ const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
 		WORLDLIST		mapWorlds;
 		CMapRegion		overFlow;
 
-		void		LoadFromDisk( std::ifstream& readDestination, int baseValue, int fileSize, int maxSize );
+		void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize );
 	public:
 					CMapHandler();
 					~CMapHandler();

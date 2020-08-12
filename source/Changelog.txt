@@ -1,3 +1,21 @@
+12/08/2020 - Xuri
+	Embraced the usage of R32, R64, SI16, UI16, SI32, UI32, SI64 and UI64 typedef aliases as replacement for built-in types throughout the sourcecode:
+		typedef float				R32;
+		typedef double				R64;
+		typedef signed char			SI08;
+		typedef unsigned char		UI08;
+		typedef signed short int	SI16;
+		typedef unsigned short int	UI16;
+		typedef signed int			SI32;
+		typedef unsigned int		UI32;
+		typedef signed long long	SI64;
+		typedef unsigned long long	UI64;
+	As part of this process, UI32 was redefined from unsigned long int to unsigned int, and SI32 from signed long int to signed int to ensure the size of variables using these remain the same (32bit) across both Windows, Linux and MacOS for both 32bit and 64bit platforms
+	Replaced instances of toLong() with toInt(), and toULong() to toUInt()
+	Replaced instances of "long" and "int" with SI32 where possible
+	Replaced instances of "unsigned long" and "unsigned int" with UI32 where possible
+	Replaced instances of "float" with R32 where possible
+
 11/08/2020 - Xuri
 	Added an FX playing for successful uses of the parrying skill
 	Successfully parrying an attack will send a sysmessage to the player informing them of their feat, if DISPLAYHITMSG is enabled in UOX.INI

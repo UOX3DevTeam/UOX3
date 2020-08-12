@@ -86,7 +86,7 @@ void fileArchive( void )
 
 	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
 	backupRoot				+= timebuffer;
-	int makeResult = _mkdir( backupRoot.c_str(), 0777 );
+	SI32 makeResult = _mkdir( backupRoot.c_str(), 0777 );
 	if( makeResult == 0 )
 	{
 		Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;

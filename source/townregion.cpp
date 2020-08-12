@@ -41,13 +41,13 @@ const UI16		DEFTOWN_TAXEDRESOURCE		= 0x0EED;
 const UI16		DEFTOWN_TAXEDAMOUNT			= 0;
 const SI32		DEFTOWN_GOLDRESERVED		= 0;
 const SI16		DEFTOWN_GUARDSPURCHASED		= 0;
-const long		DEFTOWN_RESOURCECOLLECTED	= 0;
+const UI32		DEFTOWN_RESOURCECOLLECTED	= 0;
 const WorldType	DEFTOWN_VISUALAPPEARANCE	= WRLD_SPRING;
 const SI16		DEFTOWN_HEALTH				= 30000;
-const long		DEFTOWN_ELECTIONCLOSE		= 0;
-const long		DEFTOWN_NEXTPOLL			= 0;
-const long		DEFTOWN_GUARDSPAID			= 0;
-const long		DEFTOWN_TAXEDMEMBERS		= 0;
+const UI32		DEFTOWN_ELECTIONCLOSE		= 0;
+const UI32		DEFTOWN_NEXTPOLL			= 0;
+const UI32		DEFTOWN_GUARDSPAID			= 0;
+const UI32		DEFTOWN_TAXEDMEMBERS		= 0;
 const UI08		DEFTOWN_WORLDNUMBER			= 0;
 const UI16		DEFTOWN_INSTANCEID			= 0;
 const UI16		DEFTOWN_JSSCRIPT			= 0xFFFF;
@@ -122,7 +122,7 @@ bool CTownRegion::Load( Script *ss )
 				break;
 			case 'E':
 				if( UTag == "ELECTIONTIME" )
-					timeToElectionClose = data.toLong();
+					timeToElectionClose = data.toInt();
 				break;
 			case 'G':
 				if( UTag == "GUARDOWNER" )
@@ -142,10 +142,10 @@ bool CTownRegion::Load( Script *ss )
 					location = townMember.size();
 					townMember.resize( location + 1 );
 					townMember[location].targVote = INVALIDSERIAL;
-					townMember[location].townMember = data.toULong();
+					townMember[location].townMember = data.toUInt();
 				}
 				else if( UTag == "MAYOR" )
-					mayorSerial = data.toULong();
+					mayorSerial = data.toUInt();
 				break;
 			case 'N':
 				if( UTag == "NAME" )
@@ -161,15 +161,15 @@ bool CTownRegion::Load( Script *ss )
 					//priv = std::bitset<10>( data.toUShort() );
 				}
 				else if( UTag == "POLLTIME" )
-					timeToNextPoll = data.toLong();
+					timeToNextPoll = data.toInt();
 				break;
 			case 'R':
 				if( UTag == "RACE" )
 					race = data.toUShort();
 				else if( UTag == "RESOURCEAMOUNT" )
-					goldReserved = data.toLong();
+					goldReserved = data.toInt();
 				else if( UTag == "RESOURCECOLLECTED" )
-					resourceCollected = data.toLong();
+					resourceCollected = data.toInt();
 				break;
 			case 'T':
 				if( UTag == "TAXEDID" )
@@ -177,13 +177,13 @@ bool CTownRegion::Load( Script *ss )
 				else if( UTag == "TAXEDAMOUNT" )
 					taxedAmount = data.toUShort();
 				else if( UTag == "TIMET" )
-					timeSinceTaxedMembers = data.toLong();
+					timeSinceTaxedMembers = data.toInt();
 				else if( UTag == "TIMEG" )
-					timeSinceGuardsPaid = data.toLong();
+					timeSinceGuardsPaid = data.toInt();
 				break;
 			case 'V':
 				if( UTag == "VOTE" && location != 0xFFFFFFFF )
-					townMember[location].targVote = data.toULong();
+					townMember[location].targVote = data.toUInt();
 				break;
 		}
 	}
@@ -243,7 +243,7 @@ void CTownRegion::CalcNewMayor( void )
 	if( townMember.empty() )
 		return;
 	// if there are no members, there are no new mayors
-	std::vector< int > votes;
+	std::vector< SI32 > votes;
 	votes.resize( townMember.size() );
 	for( size_t counter = 0; counter < votes.size(); ++counter )
 	{
@@ -390,7 +390,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	UString tag;
 	UString data;
 	UString UTag;
-	int actgood				= -1;
+	SI32 actgood				= -1;
 	bool orePrefLoaded		= false;
 
 	// Some default values
@@ -427,7 +427,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				if( UTag == "BUYABLE" )
 				{
 					if( actgood > -1 )
-						goodList[actgood].buyVal = data.toLong();
+						goodList[actgood].buyVal = data.toInt();
 					else
 						Console.Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 				}
@@ -460,7 +460,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "GATE" )
 					CanGate( (data.toUByte() == 1) );
 				else if( UTag == "GOOD" )
-					actgood = data.toLong();
+					actgood = data.toInt();
 				break;
 			case 'I':
 				if( UTag == "INSTANCEID" )
@@ -512,12 +512,12 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					{
 						if( data.sectionCount( " " ) != 0 )
 						{
-							goodList[actgood].rand1 = data.section( " ", 0, 0 ).toLong();
-							goodList[actgood].rand2 = data.section( " ", 1, 1 ).toLong();
+							goodList[actgood].rand1 = data.section( " ", 0, 0 ).toInt();
+							goodList[actgood].rand2 = data.section( " ", 1, 1 ).toInt();
 						}
 						else
 						{
-							goodList[actgood].rand1 = data.toLong();
+							goodList[actgood].rand1 = data.toInt();
 							goodList[actgood].rand2 = goodList[actgood].rand1;
 						}
 						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
@@ -538,7 +538,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 				else if( UTag == "SELLABLE" )
 				{
 					if( actgood > -1 )
-						goodList[actgood].sellVal = data.toLong();
+						goodList[actgood].sellVal = data.toInt();
 					else
 						Console.Error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
 				}
@@ -1655,31 +1655,31 @@ void CTownRegion::Possess( CTownRegion *possessorTown )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	long GetReserves( void ) const
-//|					void SetReserves( long newValue )
+//|	Function	-	UI32 GetReserves( void ) const
+//|					void SetReserves( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected resource reserves for townregion
 //o-----------------------------------------------------------------------------------------------o
-long CTownRegion::GetReserves( void ) const
+UI32 CTownRegion::GetReserves( void ) const
 {
 	return resourceCollected;
 }
-void CTownRegion::SetReserves( long newValue )
+void CTownRegion::SetReserves( UI32 newValue )
 {
 	resourceCollected = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	long GetTaxes( void ) const
-//|					void SetTaxesLeft( long newValue )
+//|	Function	-	UI32 GetTaxes( void ) const
+//|					void SetTaxesLeft( UI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected gold reserves for townregion
 //o-----------------------------------------------------------------------------------------------o
-long CTownRegion::GetTaxes( void ) const
+UI32 CTownRegion::GetTaxes( void ) const
 {
 	return goldReserved;
 }
-void CTownRegion::SetTaxesLeft( long newValue )
+void CTownRegion::SetTaxesLeft( UI32 newValue )
 {
 	goldReserved = newValue;
 }
@@ -1739,7 +1739,7 @@ const orePref *CTownRegion::GetOrePreference( size_t targValue ) const
 //o-----------------------------------------------------------------------------------------------o
 SI32 CTownRegion::GetOreChance( void ) const
 {
-	int sumReturn = 0;
+	SI32 sumReturn = 0;
 	std::vector< orePref >::const_iterator oIter;
 	for( oIter = orePreferences.begin(); oIter != orePreferences.end(); ++oIter )
 		sumReturn += (*oIter).percentChance;

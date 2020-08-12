@@ -1142,7 +1142,7 @@ Static_st *CStaticIterator::Next( void )
 		{
 #ifdef DEBUG_MAP_STUFF
 			Console << "Found static at index: " << index << ", Length: " << length << ", indepos: " << pos2 << myendl;
-			Console << "item is " << (int)staticArray.itemid << ", x" << (int)staticArray.xoff << ", y: " << (int) staticArray.yoff << myendl;
+			Console << "item is " << (SI32)staticArray.itemid << ", x" << (SI32)staticArray.xoff << ", y: " << (SI32) staticArray.yoff << myendl;
 #endif
 			return &staticArray;
 		}
@@ -1530,7 +1530,7 @@ void CMulHandler::LoadDFNOverrides( void )
 			if( toScan == NULL )
 				continue;
 			entryName	= mapScp->EntryName();
-			entryNum	= entryName.section( " ", 1, 1 ).toULong();
+			entryNum	= entryName.section( " ", 1, 1 ).toUInt();
 			titlePart	= entryName.section( " ", 0, 0 ).upper();
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )

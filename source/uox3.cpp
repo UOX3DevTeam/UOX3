@@ -476,11 +476,11 @@ void DismountCreature( CChar *s )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void endmessage( int x )
+//|	Function	-	void endmessage( SI32 x )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Global message players with shutdown message
 //o-----------------------------------------------------------------------------------------------o
-void endmessage( int x )
+void endmessage( SI32 x )
 {
 	x = 0;
 	const UI32 igetclock = cwmWorldState->GetUICurrentTime();
@@ -492,14 +492,14 @@ void endmessage( int x )
 }
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-void illinst( int x = 0 ) //Thunderstorm linux fix
+void illinst( SI32 x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
 	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
 	endmessage( x );
 }
 
-void aus( int signal )
+void aus( SI32 signal )
 {
 	Console.Error( "Server crash averted! Floating point exception caught." );
 } 
@@ -675,14 +675,14 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 				}
 			}
 			const R32 MeditationBonus = ( .00075f * mChar.GetSkill( MEDITATION ) );	// Bonus for Meditation
-			int NextManaRegen = static_cast<int>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
+			SI32 NextManaRegen = static_cast<SI32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * ( 1 - MeditationBonus ) * 1000 );
 			if( cwmWorldState->ServerData()->ArmorAffectManaRegen() )	// If armor effects mana regeneration...
 			{
 				R32 ArmorPenalty = Combat->calcDef( ( &mChar ), 0, false );	// Penalty taken due to high def
 				if( ArmorPenalty > 100 )	// For def higher then 100, penalty is the same...just in case
 					ArmorPenalty = 100;
 				ArmorPenalty = 1 + ( ArmorPenalty / 25 );
-				NextManaRegen = static_cast<int>( NextManaRegen * ArmorPenalty );
+				NextManaRegen = static_cast<SI32>( NextManaRegen * ArmorPenalty );
 			}
 			if( mChar.IsMeditating() )	// If player is meditation...
 				mChar.SetRegen( ( cwmWorldState->GetUICurrentTime() + ( NextManaRegen / 2 ) ), 2 );
@@ -1587,17 +1587,17 @@ void InitClasses( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ParseArgs( int argc, char *argv[] )
+//|	Function	-	void ParseArgs( SI32 argc, char *argv[] )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle command-line arguments on startup
 //o-----------------------------------------------------------------------------------------------o
-void ParseArgs( int argc, char *argv[] )
+void ParseArgs( SI32 argc, char *argv[] )
 {
-	for( int i = 1; i < argc; ++i )
+	for( SI32 i = 1; i < argc; ++i )
 	{
 		if( !strcmp( argv[i], "-ERROR" ) )
 		{
-			cwmWorldState->SetErrorCount( UString( argv[i+1] ).toULong() );
+			cwmWorldState->SetErrorCount( UString( argv[i+1] ).toUInt() );
 			++i;
 		}
 		else if( !strcmp( argv[i], "-dumptags" ) )
@@ -1723,7 +1723,7 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Shutdown( int retCode )
+//|	Function	-	void Shutdown( SI32 retCode )
 //|	Date		-	Oct. 09, 1999
 //|	Programmer	-	Krazyglue
 //o-----------------------------------------------------------------------------------------------o
@@ -2656,11 +2656,11 @@ void DoorMacro( CSocket *s )
 using namespace UOX;
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int main( int argc, char *argv[] )
+//|	Function	-	int main( SI32 argc, char *argv[] )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Main UOX startup
 //o-----------------------------------------------------------------------------------------------o
-int main( int argc, char *argv[] )
+int main( SI32 argc, char *argv[] )
 {
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
@@ -2847,9 +2847,9 @@ int main( int argc, char *argv[] )
 
 		Console << myendl << "Creating and Initializing Console Thread      ";
 	#if UOX_PLATFORM != PLATFORM_WIN32
-		int conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
+		SI32 conthreadok = pthread_create(&cons,NULL,CheckConsoleKeyThread , NULL );
 	#else
-		int conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
+		SI32 conthreadok = _beginthread( CheckConsoleKeyThread , 0 , NULL );
 	#endif
 #ifdef __LOGIN_THREAD__
 		Console << myendl << "Creating and Initializing xLOGINd Thread      ";

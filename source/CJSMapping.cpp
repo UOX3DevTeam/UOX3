@@ -139,7 +139,7 @@ void CJSMapping::Reload( UI16 scriptID )
 //o-----------------------------------------------------------------------------------------------o
 void CJSMapping::Reload( SCRIPTTYPE sectionID )
 {
-	Console.Print( "CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<int>(sectionID) );
+	Console.Print( "CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<SI32>(sectionID) );
 	if( mapSection[sectionID] != NULL )
 	{
 		delete mapSection[sectionID];

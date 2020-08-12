@@ -1853,7 +1853,7 @@ void CChar::CopyData( CChar *target )
 	target->SetAttacker( GetAttacker() );
 	target->SetVisible( GetVisible() );
 
-	for( int mTID = (int)tCHAR_TIMEOUT; mTID < (int)tCHAR_COUNT; ++mTID )
+	for( SI32 mTID = (SI32)tCHAR_TIMEOUT; mTID < (SI32)tCHAR_COUNT; ++mTID )
 		target->SetTimer( (cC_TID)mTID, GetTimer( (cC_TID)mTID ) );
 	target->SetHunger( hunger );
 	target->SetBrkPeaceChance( GetBrkPeaceChance() );
@@ -2674,7 +2674,7 @@ UI16 CChar::GetMaxHP( void )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxHP = (UI16)(GetStrength() + (UI16)( ((float)GetStrength()) * ((float)(pRace->HPModifier())) / 100 ));
+		maxHP = (UI16)(GetStrength() + (UI16)( ((R32)GetStrength()) * ((R32)(pRace->HPModifier())) / 100 ));
 		// set max. hitpoints to strength + hpmodifier% of strength
 
 		maxHP_oldstr	= GetStrength();
@@ -2701,7 +2701,7 @@ void CChar::SetFixedMaxHP( SI16 newmaxhp )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxHP = (UI16)(GetStrength() + (UI16)( ((float)GetStrength()) * ((float)(pRace->HPModifier())) / 100 ));
+		maxHP = (UI16)(GetStrength() + (UI16)( ((R32)GetStrength()) * ((R32)(pRace->HPModifier())) / 100 ));
 
 		maxHP_oldstr	= GetStrength();
 		oldRace			= GetRace();
@@ -2728,7 +2728,7 @@ SI16 CChar::GetMaxMana( void )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxMana = (SI16)(GetIntelligence() + (SI16)( ((float)GetIntelligence()) * ((float)(pRace->ManaModifier())) / 100 ));
+		maxMana = (SI16)(GetIntelligence() + (SI16)( ((R32)GetIntelligence()) * ((R32)(pRace->ManaModifier())) / 100 ));
 		// set max. mana to int + manamodifier% of int
 
 		maxMana_oldint	= GetIntelligence();
@@ -2755,7 +2755,7 @@ void CChar::SetFixedMaxMana( SI16 newmaxmana )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxMana = (SI16)(GetIntelligence() + (SI16)( ((float)GetIntelligence()) * ((float)(pRace->ManaModifier())) / 100 ));
+		maxMana = (SI16)(GetIntelligence() + (SI16)( ((R32)GetIntelligence()) * ((R32)(pRace->ManaModifier())) / 100 ));
 
 		maxMana_oldint	= GetIntelligence();
 		oldRace			= GetRace();
@@ -2782,7 +2782,7 @@ SI16 CChar::GetMaxStam( void )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxStam = (SI16)(GetDexterity() + (SI16)( ((float)GetDexterity()) * ((float)(pRace->StamModifier())) / 100 ));
+		maxStam = (SI16)(GetDexterity() + (SI16)( ((R32)GetDexterity()) * ((R32)(pRace->StamModifier())) / 100 ));
 		// set max. stamina to dex + stammodifier% of dex
 
 		maxStam_olddex	= GetDexterity();
@@ -2809,7 +2809,7 @@ void CChar::SetFixedMaxStam( SI16 newmaxstam )
 		if( pRace == NULL )
 			pRace = Races->Race( 0 );
 
-		maxStam = (SI16)(GetDexterity() + (SI16)( ((float)GetDexterity()) * ((float)(pRace->StamModifier())) / 100 ));
+		maxStam = (SI16)(GetDexterity() + (SI16)( ((R32)GetDexterity()) * ((R32)(pRace->StamModifier())) / 100 ));
 
 		maxStam_olddex	= GetDexterity();
 		oldRace			= GetRace();
@@ -3249,7 +3249,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
 				{
-					SetGuildFealty( data.toULong() );
+					SetGuildFealty( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTITLE" )
@@ -3276,7 +3276,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "HOLDG" )
 				{
-					SetHoldG( data.toLong() );
+					SetHoldG( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRSTYLE" )
@@ -3321,7 +3321,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "LASTONSECS" )
 				{
-					SetLastOnSecs( data.toLong() );
+					SetLastOnSecs( data.toUInt() );
 					rvalue = true;
 				}
 				break;
@@ -3412,7 +3412,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					packitem = reinterpret_cast<CItem *>( data.toULong() ); //(CItem *)data.toULong();
+					packitem = reinterpret_cast<CItem *>( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "POISON" )
@@ -3467,7 +3467,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 			case 'R':
 				if( UTag == "ROBESERIAL" )
 				{
-					SetRobe( data.toULong() );
+					SetRobe( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "RESERVED" )
@@ -3514,7 +3514,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, data.toULong() );
+					SetTimer( tNPC_SUMMONTIME, data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "SAY" )
@@ -3599,7 +3599,7 @@ bool CChar::HandleLine( UString &UTag, UString& data )
 				}
 				else if( UTag == "TOWNVOTE" )
 				{
-					SetTownVote( data.toULong() );
+					SetTownVote( data.toUInt() );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNPRIVILEGES" )

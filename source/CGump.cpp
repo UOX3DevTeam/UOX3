@@ -147,7 +147,7 @@ void CGump::AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behavi
 void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string Text )
 {
 	char temp[128];
-	unsigned int TextID = TextList.size();
+	UI32 TextID = TextList.size();
 	sprintf( temp, "text %u %u %u %u", x, y, hue, TextID );
 
 	TextList.push_back( Text );

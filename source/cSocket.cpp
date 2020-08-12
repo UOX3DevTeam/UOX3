@@ -106,7 +106,7 @@ void doPacketLogging( std::ofstream &outStream, size_t buffLen, const UI08 *myBu
 	outStream << std::endl << std::endl;
 }
 
-long socket_error::ErrorNumber( void ) const
+UI32 socket_error::ErrorNumber( void ) const
 {
 	return errorNum;
 }
@@ -124,7 +124,7 @@ socket_error::socket_error( const std::string& what_arg ) : errorNum( -1 ), runt
 {
 }
 
-socket_error::socket_error( const long errorNumber ) : errorNum( errorNumber ), runtime_error( "" )
+socket_error::socket_error( const UI32 errorNumber ) : errorNum( errorNumber ), runtime_error( "" )
 {
 }
 
@@ -143,7 +143,7 @@ size_t CSocket::CliSocket( void ) const
 void CSocket::CliSocket( size_t newValue )
 {
 	cliSocket = newValue;
-	UI32 mode = 1;
+	unsigned long mode = 1;
 	// set the socket to nonblocking
 	ioctlsocket( cliSocket, FIONBIO, &mode );
 }
@@ -564,10 +564,10 @@ const UI08				DEFSOCK_RANGE					= 18;
 const bool				DEFSOCK_CRYPTCLIENT				= false;
 const SI16				DEFSOCK_WALKSEQUENCE			= -1;
 const char				DEFSOCK_CURSPELLTYPE			= 0;
-const int				DEFSOCK_OUTLENGTH				= 0;
-const int				DEFSOCK_INLENGTH				= 0;
+const SI32				DEFSOCK_OUTLENGTH				= 0;
+const SI32				DEFSOCK_INLENGTH				= 0;
 const bool				DEFSOCK_LOGGING					= LOGDEFAULT;
-const int				DEFSOCK_POSTACKCOUNT			= 0;
+const SI32				DEFSOCK_POSTACKCOUNT			= 0;
 const PickupLocations	DEFSOCK_PSPOT					= PL_NOWHERE;
 const SERIAL			DEFSOCK_PFROM					= INVALIDSERIAL;
 const SI16				DEFSOCK_PX						= 0;
@@ -625,9 +625,9 @@ void CSocket::InternalReset( void )
 	addid[0] = addid[1] = addid[2] = addid[3] = 0;
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking
-	UI32 mode = 1;
+	unsigned long mode = 1;
 	ioctlsocket( cliSocket, FIONBIO, &mode );
-	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
+	for( SI32 mTID = (SI32)tPC_SKILLDELAY; mTID < (SI32)tPC_COUNT; ++mTID )
 		pcTimers[mTID] = 0;
 	accountNum = AB_INVALID_ID;
 	trigWords.resize( 0 );
@@ -733,7 +733,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 		if( cryptclient )
 		{
 			largePackBuffer.resize( outlength * 2 );
-			int len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
+			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
 			send( cliSocket, (char *)&largePackBuffer[0], len, 0 );
 		}
 		else
@@ -805,15 +805,15 @@ static UI32 bit_table[257][2] =
 };
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
+//|	Function	-	UI32 DoPack( UI08 *pIn, UI08 *pOut, SI32 len )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Compress outgoing buffer contents and calculate total length of compressed data
 //o-----------------------------------------------------------------------------------------------o
-UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
+UI32 DoPack( UI08 *pIn, UI08 *pOut, SI32 len )
 {
 	UI32 packedLength	= 0;
-	int bitByte			= 0;
-	int nrBits;
+	SI32 bitByte			= 0;
+	SI32 nrBits;
 	UI32 value;
 
 	while( len-- )
@@ -855,7 +855,7 @@ UI32 DoPack( UI08 *pIn, UI08 *pOut, int len )
 	return packedLength;
 }
 
-UI32 CSocket::Pack( void *pvIn, void *pvOut, int len )
+UI32 CSocket::Pack( void *pvIn, void *pvOut, SI32 len )
 {
 	UI08 *pIn = (UI08 *)pvIn;
 	UI08 *pOut = (UI08 *)pvOut;
@@ -864,11 +864,11 @@ UI32 CSocket::Pack( void *pvIn, void *pvOut, int len )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Send( const void *point, int length )
+//|	Function	-	void Send( const void *point, SI32 length )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Buffering send function
 //o-----------------------------------------------------------------------------------------------o
-void CSocket::Send( const void *point, int length )
+void CSocket::Send( const void *point, SI32 length )
 {
 	if( outlength + length > MAXBUFFER )
 		FlushBuffer();
@@ -893,12 +893,12 @@ void CSocket::Send( const void *point, int length )
 }
 
 #if UOX_PLATFORM != PLATFORM_WIN32
-int GrabLastError( void )
+SI32 GrabLastError( void )
 {
 	return errno;
 }
 #else
-int GrabLastError( void )
+SI32 GrabLastError( void )
 {
 	return WSAGetLastError();
 }
@@ -906,7 +906,7 @@ int GrabLastError( void )
 
 void CSocket::FlushIncoming( void )
 {
-	int count = 0;
+	SI32 count = 0;
 	do
 	{
 		count = recv( cliSocket, (char *)&buffer[inlength], 1, 0 );
@@ -947,16 +947,16 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int Receive( int x, bool doLog )
+//|	Function	-	SI32 Receive( SI32 x, bool doLog )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles receiving of network packets
 //o-----------------------------------------------------------------------------------------------o
-int CSocket::Receive( int x, bool doLog )
+SI32 CSocket::Receive( SI32 x, bool doLog )
 {
-	int count			= 0;
+	SI32 count			= 0;
 	UI08 recvAttempts	= 0;
-	long curTime		= getclock();
-	long nexTime		= curTime;
+	UI32 curTime		= getclock();
+	UI32 nexTime		= curTime;
 	do
 	{
 		count = recv( cliSocket, (char *)&buffer[inlength], x - inlength, 0 );
@@ -966,7 +966,7 @@ int CSocket::Receive( int x, bool doLog )
 		}
 		else if( count == SOCKET_ERROR )
 		{
-			int lastError = GrabLastError();
+			SI32 lastError = GrabLastError();
 #if UOX_PLATFORM != PLATFORM_WIN32
 			if( lastError != EWOULDBLOCK )
 #else
@@ -993,31 +993,31 @@ int CSocket::Receive( int x, bool doLog )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int OutLength( void ) const
-//|					void OutLength( int newValue )
+//|	Function	-	SI32 OutLength( void ) const
+//|					void OutLength( SI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets outlength value
 //o-----------------------------------------------------------------------------------------------o
-int CSocket::OutLength( void ) const
+SI32 CSocket::OutLength( void ) const
 {
 	return outlength;
 }
-void CSocket::OutLength( int newValue )
+void CSocket::OutLength( SI32 newValue )
 {
 	outlength = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int InLength( void ) const
-//|					void InLength( int newValue )
+//|	Function	-	SI32 InLength( void ) const
+//|					void InLength( SI32 newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets inlength value
 //o-----------------------------------------------------------------------------------------------o
-int CSocket::InLength( void ) const
+SI32 CSocket::InLength( void ) const
 {
 	return inlength;
 }
-void CSocket::InLength( int newValue )
+void CSocket::InLength( SI32 newValue )
 {
 	inlength = newValue;
 }
@@ -2331,7 +2331,7 @@ void CSocket::SetTimer( cS_TID timerID, TIMERVAL value )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ClearTimers( void )
 {
-	for( int mTID = (int)tPC_SKILLDELAY; mTID < (int)tPC_COUNT; ++mTID )
+	for( SI32 mTID = (SI32)tPC_SKILLDELAY; mTID < (SI32)tPC_COUNT; ++mTID )
 	{
 		if( mTID != tPC_MUTETIME )
 			pcTimers[mTID] = 0;

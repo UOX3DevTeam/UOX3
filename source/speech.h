@@ -392,7 +392,7 @@ typedef std::vector< CSpeechEntry * >::const_iterator SPEECHLIST_CITERATOR;
 class CSpeechQueue
 {
 private:
-	int				pollTime;		// MILLISECONDS How often to poll the queue
+	SI32				pollTime;		// MILLISECONDS How often to poll the queue
 	SPEECHLIST		speechList;
 	bool			runAsThread;
 
@@ -404,8 +404,8 @@ public:
 
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
 	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
-	int				PollTime( void ) const;
-	void			PollTime( int value );
+	SI32			PollTime( void ) const;
+	void			PollTime( SI32 value );
 	void			RunAsThread( bool newValue );
 	bool			RunAsThread( void ) const;
 	void			DumpInFile( void );

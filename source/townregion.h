@@ -67,12 +67,12 @@ private:
 	weathID				weather;				// weather system the region belongs to
 	SI32				goldReserved;			// amount of gold belonging to the town's treasury
 
-	long				timeSinceGuardsPaid;	// time since the guards were last paid
-	long				timeSinceTaxedMembers;	// time since we last taxed our own members
-	long				timeToElectionClose;	// time since the last election was completed
-	long				timeToNextPoll;			// time since the polling booth was opened
+	SI32				timeSinceGuardsPaid;	// time since the guards were last paid
+	SI32				timeSinceTaxedMembers;	// time since we last taxed our own members
+	SI32				timeToElectionClose;	// time since the last election was completed
+	SI32				timeToNextPoll;			// time since the polling booth was opened
 	SI16				guardsPurchased;
-	long				resourceCollected;		// how much we have gotten from taxes
+	SI32				resourceCollected;		// how much we have gotten from taxes
 	UI16				taxedResource;			// item # of the taxed resource
 	UI16				taxedAmount;			// how much to tax
 	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
@@ -134,8 +134,8 @@ public:
 	void				SendEnemyTowns( CSocket *sock );
 	void				ForceEarlyElection( void );
 	void				Possess( CTownRegion *possessorTown );
-	void				SetTaxesLeft( long newValue );
-	void				SetReserves( long newValue );
+	void				SetTaxesLeft( UI32 newValue );
+	void				SetReserves( UI32 newValue );
 	void				CalcNewMayor( void );				// calculates the new mayor
 	void				DisplayTownMembers( CSocket *sock );
 	void				ViewTaxes( CSocket *s );
@@ -163,9 +163,9 @@ public:
 	size_t				GetPopulation( void ) const;
 	RACEID				GetRace( void ) const;
 	CChar *				GetRandomGuard( void );			// returns a random guard from guard list
-	long				GetReserves( void ) const;
+	UI32				GetReserves( void ) const;
 	UI16				GetResourceID( void ) const;
-	long				GetTaxes( void ) const;
+	UI32				GetTaxes( void ) const;
 	weathID				GetWeather( void ) const;
 	UI16				NumGuards( void ) const;
 	UI16				TaxedAmount( void ) const;

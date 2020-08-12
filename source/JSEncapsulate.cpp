@@ -71,7 +71,7 @@ namespace UOX
 		return( nativeType == toCheck );
 	}
 
-	int JSEncapsulate::toInt( void )
+	SI32 JSEncapsulate::toInt( void )
 	{
 		if( nativeType == JSOT_OBJECT )
 			throw new std::runtime_error( "Cannot convert JS Object to an int" );
@@ -146,7 +146,7 @@ namespace UOX
 	void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 	{
 		jsdouble	fvalue;
-		int			ivalue;
+		SI32			ivalue;
 		UString		svalue;
 		bool		bvalue;
 		switch( typeConvert )
@@ -157,7 +157,7 @@ namespace UOX
 			case JSOT_INT:		intVal = JSVAL_TO_INT( (*vp) );	break;
 			case JSOT_DOUBLE:
 								JS_ValueToNumber( cx, (*vp), &fvalue );
-								intVal = (int)fvalue;
+								intVal = (SI32)fvalue;
 								break;
 			case JSOT_BOOL:		intVal = ( (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE) ? 1 : 0 );	break;
 			case JSOT_STRING:
@@ -174,11 +174,11 @@ namespace UOX
 			{
 			case JSOT_INT:		
 								ivalue		= JSVAL_TO_INT( (*vp) );
-								floatVal	= (float)ivalue;
+								floatVal	= (R32)ivalue;
 								break;
 			case JSOT_DOUBLE:
 								JS_ValueToNumber( cx, (*vp), &fvalue );
-								floatVal	= (float)fvalue;
+								floatVal	= (R32)fvalue;
 								break;
 			case JSOT_BOOL:		floatVal	= ( (JSVAL_TO_BOOLEAN( (*vp) ) == JS_TRUE) ? 1.0f : 0.0f );	break;
 			case JSOT_STRING:

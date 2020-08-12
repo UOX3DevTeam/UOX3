@@ -406,7 +406,7 @@ void CServerData::ResetDefaults( void )
 	SetDisabledAssistantFeature( AF_AUTOREMOUNT, false );
 	SetDisabledAssistantFeature( AF_ALL, false );
 
-	for( int i = 0; i < 6; i++ )
+	for( SI32 i = 0; i < 6; i++ )
 	{
 		MapIsUOPWrapped( i, false );
 	}
@@ -828,7 +828,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		{
 			char curWorkingDir[1024];
 			GetCurrentDirectory( 1024, curWorkingDir );
-			int iResult = _chdir( sText.c_str() );
+			SI32 iResult = _chdir( sText.c_str() );
 			if( iResult != 0 )
 				error = true;
 			else
@@ -2937,7 +2937,7 @@ void CServerData::TrackingRedisplayTime( UI16 value )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void dumpLookup( int lookupid )
+//|	Function	-	void dumpLookup( SI32 lookupid )
 //|	Date		-	January 31, 2001
 //|	Programmer	-	EviLDeD
 //o-----------------------------------------------------------------------------------------------o
@@ -2946,13 +2946,13 @@ void CServerData::TrackingRedisplayTime( UI16 value )
 //|					to do it by hand if you make changes. Must be called from
 //|					within the class if used.
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::dumpLookup( int lookupid )
+void CServerData::dumpLookup( SI32 lookupid )
 {
 	// lookup is no longer needed, as we don't support server.scp any more
 
 	std::ofstream ofsOutput;
 	char buffer[81];
-	int count = 0;
+	SI32 count = 0;
 
 	ofsOutput.open( "uox.ini.lookup.txt", std::ios::out );
 	if( !ofsOutput.is_open() )
@@ -2962,8 +2962,8 @@ void CServerData::dumpLookup( int lookupid )
 	}
 
 	UString tokens( UOX3INI_LOOKUP );
-	int numTokens = tokens.sectionCount( "|" );
-	for( int i = 0; i <= numTokens; i++ )
+	SI32 numTokens = tokens.sectionCount( "|" );
+	for( SI32 i = 0; i <= numTokens; i++ )
 	{
 		UString tokenStr = tokens.section( "|", i, i );
 		sprintf( buffer, "case 0x%04X:\t // %s[%04i]\n\tCServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( tokenStr.c_str(), tokenStr.length() ), tokenStr.c_str(), count++ );
@@ -3052,7 +3052,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		ServerBackups( (value.toUShort()>0?true:false) );
 		break;
 	case 0x007A:	 // SAVESTIMER[0010]
-		ServerSavesTimer( value.toULong() );
+		ServerSavesTimer( value.toUInt() );
 		break;
 	case 0x0085:	 // SKILLCAP[0011]
 		ServerSkillTotalCap( value.toUShort() );
@@ -3346,16 +3346,16 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		BackgroundPic( value.toUShort() );
 		break;
 	case 0x05E2:	 // POLLTIME[0108]
-		TownNumSecsPollOpen( value.toULong() );
+		TownNumSecsPollOpen( value.toUInt() );
 		break;
 	case 0x05EB:	 // MAYORTIME[0109]
-		TownNumSecsAsMayor( value.toULong() );
+		TownNumSecsAsMayor( value.toUInt() );
 		break;
 	case 0x05F5:	 // TAXPERIOD[0110]
-		TownTaxPeriod( value.toULong() );
+		TownTaxPeriod( value.toUInt() );
 		break;
 	case 0x05FF:	 // GUARDSPAID[0111]
-		TownGuardPayment( value.toULong() );
+		TownGuardPayment( value.toUInt() );
 		break;
 	case 0x060A:	 // DAY[0112]
 		ServerTimeDay( value.toShort() );
@@ -3470,16 +3470,16 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		ServerUOGEnabled( value.toShort()==1 );
 		break;
 	case 0x072E:	 // NETRCVTIMEOUT[0135]
-		ServerNetRcvTimeout( value.toULong() );
+		ServerNetRcvTimeout( value.toUInt() );
 		break;
 	case 0x073C:	 // NETSNDTIMEOUT[0136]
-		ServerNetSndTimeout( value.toULong() );
+		ServerNetSndTimeout( value.toUInt() );
 		break;
 	case 0x074A:	 // NETRETRYCOUNT[0137]
-		ServerNetRetryCount( value.toULong() );
+		ServerNetRetryCount( value.toUInt() );
 		break;
 	case 0x0758:	 // CLIENTFEATURES[0138]
-		SetClientFeatures( value.toULong() );
+		SetClientFeatures( value.toUInt() );
 		break;
 	case 0x0767:	 // PACKETOVERLOADS[0139]
 		ServerOverloadPackets( (value.toByte() == 1) );
@@ -3503,7 +3503,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		AdvancedPathfinding( (value.toByte() == 1) );
 		break;
 	case 0x07E0:	 // SERVERFEATURES[0146]
-		SetServerFeatures( value.toULong() );
+		SetServerFeatures( value.toUInt() );
 		break;
 	case 0x07EF:	 // LOOTINGISCRIME[0147]
 		LootingIsCrime( (value.toByte() == 1) );
@@ -3530,7 +3530,7 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 		ItemDecayInHouses( (value.toByte() == 1) );
 		break;
 	case 0x087a:	// COMBATEXPLODEDELAY[0154]
-		CombatExplodeDelay( value.toULong() );
+		CombatExplodeDelay( value.toUShort() );
 		break;
 	case 0x088d:	// PAPERDOLLGUILDBUTTON[0155]
 		PaperdollGuildButton( value.toByte() == 1 );
@@ -3859,7 +3859,7 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
 		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toLong();
+		toAdd.clilocDesc	= temp.section( ",", 6, 6 ).toUInt();
 		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
 		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
 		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
@@ -3874,7 +3874,7 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.z				= temp.section( ",", 4, 4 ).toShort();
 		toAdd.worldNum		= temp.section( ",", 5, 5 ).toShort();
 		toAdd.instanceID	= temp.section( ",", 6, 6 ).toUShort();
-		toAdd.clilocDesc	= temp.section( ",", 7, 7 ).toLong();
+		toAdd.clilocDesc	= temp.section( ",", 7, 7 ).toUInt();
 		strcpy( toAdd.oldTown, temp.section( ",", 0, 0 ).c_str() );
 		strcpy( toAdd.oldDescription, temp.section( ",", 1, 1 ).c_str() );
 		strcpy( toAdd.newTown, temp.section( ",", 0, 0 ).c_str() );
@@ -4056,7 +4056,7 @@ bool CServerData::incSecond( void )
 	return rvalue;
 }
 
-void CServerData::incMoon( int mNumber )
+void CServerData::incMoon( SI32 mNumber )
 {
 	moon[mNumber] = (SI16)((moon[mNumber] + 1)%8);
 }

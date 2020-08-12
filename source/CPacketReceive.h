@@ -605,7 +605,7 @@ public:
 	UI32				ID( void ) const;
 	UI08				Type( void ) const;
 	UI08				Index( void ) const;
-	UI08				Unk( int offset ) const;
+	UI08				Unk( SI32 offset ) const;
 	const UString		Reply( void ) const;
 	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };

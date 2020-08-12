@@ -1241,7 +1241,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'B':
 			if( UTag == "BASEWEIGHT" )
 			{
-				(static_cast<CItem *>(this))->SetBaseWeight( data.toULong() );
+				(static_cast<CItem *>(this))->SetBaseWeight( data.toUInt() );
 			}
 			else
 				rvalue = false;
@@ -1391,7 +1391,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "MULTIID" )
 			{
-				multis = (CMultiObj *)data.toULong();
+				multis = (CMultiObj *)data.toUInt();
 			}
 			else
 				rvalue = false;
@@ -1407,7 +1407,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'O':
 			if( UTag == "OWNERID" )
 			{
-				owner	= data.toULong();
+				owner	= data.toUInt();
 			}
 			else
 				rvalue = false;			
@@ -1444,11 +1444,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "SPAWNERID" )
 			{
-				spawnserial = data.toULong();
+				spawnserial = data.toUInt();
 			}
 			else if( UTag == "SERIAL" )
 			{
-				serial = data.toULong();
+				serial = data.toUInt();
 			}
 			else if( UTag == "STRENGTH" )
 			{
@@ -1484,7 +1484,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-				tagvalObject.m_IntValue		= data.toLong();
+				tagvalObject.m_IntValue		= data.toInt();
 				tagvalObject.m_Destroy		= FALSE;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
@@ -1514,7 +1514,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'W':
 			if( UTag == "WEIGHT" )
 			{
-				SetWeight( data.toLong() );
+				SetWeight( data.toInt() );
 			}
 			else if( UTag == "WIPE" )
 			{

@@ -8,7 +8,7 @@ class cWhoList
 {
 private:
 	bool		needsUpdating;					// true if the list needs updating (new player online, new char made)
-	int			gmCount;						// number of GMs already in it
+	SI32		gmCount;						// number of GMs already in it
 	bool		online;
 
 	SERLIST		whoMenuData;

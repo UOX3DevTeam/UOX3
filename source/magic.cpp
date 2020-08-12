@@ -389,7 +389,7 @@ bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	int j = caster->GetSkill( MAGERY )/100;
+	SI32 j = caster->GetSkill( MAGERY )/100;
 	Effects->tempeffect( src, target, 11, j, j, j);
 	if( target->IsMurderer() )
 		criminal( caster );
@@ -631,7 +631,7 @@ bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src,
 //o-----------------------------------------------------------------------------------------------o
 bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	int j = caster->GetSkill( MAGERY ) / 100;
+	SI32 j = caster->GetSkill( MAGERY ) / 100;
 	Effects->tempeffect(caster, target, 12, j, j, j);
 	return true;
 }
@@ -656,9 +656,9 @@ bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, 
 //o-----------------------------------------------------------------------------------------------o
 bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 {
-	int srcHealth	= target->GetHP();
-	int baseHealing = Magic->spells[curSpell].BaseDmg();
-	int j			= caster->GetSkill( MAGERY ) / 30 + HalfRandomNum( baseHealing );
+	SI32 srcHealth		= target->GetHP();
+	SI32 baseHealing	= Magic->spells[curSpell].BaseDmg();
+	SI32 j				= caster->GetSkill( MAGERY ) / 30 + HalfRandomNum( baseHealing );
 
 	target->Heal( j, caster );
 	Magic->SubtractHealth( caster, UOX_MIN( target->GetStrength(), (SI16)(srcHealth + j) ), 29 );
@@ -812,13 +812,13 @@ bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 	case 3:	setRandomName( caster, "4" );	break; // get a name from elf female list
 	}
 
-	int color	= RandomNum( 0x044E, 0x047D );
+	SI32 color	= RandomNum( 0x044E, 0x047D );
 	CItem *j	= caster->GetItemAtLayer( IL_HAIR );
 	if( ValidateObject( j ) ) 
 	{
 		caster->SetHairColour( j->GetColour() );
 		caster->SetHairStyle( j->GetID() );
-		int rNum = RandomNum( 0, 9 );
+		SI32 rNum = RandomNum( 0, 9 );
 		switch( rNum )
 		{
 			case 0: 
@@ -845,7 +845,7 @@ bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 		{
 			caster->SetBeardColour( j->GetColour() );
 			caster->SetBeardStyle( j->GetID() );
-			int rNum2 = RandomNum( 0, 6 );
+			SI32 rNum2 = RandomNum( 0, 6 );
 			switch( rNum2 )
 			{
 				case 0:
@@ -1082,7 +1082,7 @@ void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount 
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
-	int j;
+	SI32 j;
 	if( target->IsNpc() ) 
 		Combat->AttackTarget( caster, target );
 	Effects->PlayStaticAnimation( target, 0x374A, 0, 15 );
@@ -1129,7 +1129,7 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 	{ 
 		UI16 j = caster->GetSkill( MAGERY ); 
-		int range=(((j-261)*(15))/739)+5;
+		SI32 range=(((j-261)*(15))/739)+5;
 		//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
 		//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
 		
@@ -1452,9 +1452,9 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 		return;
 	}
 
-	int distx	= abs(target->GetX() - caster->GetX() );
-	int disty	= abs(target->GetY() - caster->GetY() );
-	int dmgmod	= UOX_MIN( distx, disty );
+	SI32 distx	= abs(target->GetX() - caster->GetX() );
+	SI32 disty	= abs(target->GetY() - caster->GetY() );
+	SI32 dmgmod	= UOX_MIN( distx, disty );
 	dmgmod		= -(dmgmod - 7);
 
 	SI16 spellDamage = 0;
@@ -1677,7 +1677,7 @@ bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
-	int j;
+	SI32 j;
 	SI16 fx[5], fy[5];
 	SI16 yOffset = length;
 	SI16 xOffset = length;
@@ -1709,7 +1709,7 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 	{
 		for( SI08 counter2 = -1; counter2 < 2; counter2 += 2 )
 		{
-			for( int counter3 = 1; counter3 < yOffset; ++counter3 )
+			for( SI32 counter3 = 1; counter3 < yOffset; ++counter3 )
 			{
 				i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
 				if( i != NULL )
@@ -1752,7 +1752,7 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 	UI16 instanceID = caster->GetInstanceID();
 	for( UI08 j = 0; j < 4; ++j )	// Draw the corners of our diamond
 	{
-		for( int counter = fx[j]; counter < fy[j]; ++counter )
+		for( SI32 counter = fx[j]; counter < fy[j]; ++counter )
 		{
 			i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
 			if( i != NULL )
@@ -1798,9 +1798,9 @@ bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, 
 
 	UI08 worldNumber = caster->WorldNumber();
 	UI16 instanceID = caster->GetInstanceID();
-	for( int counter1 = minX; counter1 <= maxX; ++counter1 )
+	for( SI32 counter1 = minX; counter1 <= maxX; ++counter1 )
 	{
-		for( int counter2 = minY; counter2 <= maxY; ++counter2 )
+		for( SI32 counter2 = minY; counter2 <= maxY; ++counter2 )
 		{
 			CItem *i = Items->CreateItem( NULL, caster, id, 1, 0, OT_ITEM );
 			if( i != NULL )
@@ -1844,11 +1844,11 @@ cMagic::~cMagic()
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HasSpell( CItem *book, int spellNum )
+//|	Function	-	bool HasSpell( CItem *book, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if given spellbook contains specific spell
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::HasSpell( CItem *book, int spellNum )
+bool cMagic::HasSpell( CItem *book, SI32 spellNum )
 {
 	if( !ValidateObject( book ) )
 		return false;
@@ -1862,11 +1862,11 @@ bool cMagic::HasSpell( CItem *book, int spellNum )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void AddSpell( CItem *book, int spellNum )
+//|	Function	-	void AddSpell( CItem *book, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds specific spell to given spellbook
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::AddSpell( CItem *book, int spellNum )
+void cMagic::AddSpell( CItem *book, SI32 spellNum )
 {
 	cScript *tScript	= NULL;
 	UI16 scpNum			= book->GetScriptTrigger();
@@ -1888,11 +1888,11 @@ void cMagic::AddSpell( CItem *book, int spellNum )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void cMagic::RemoveSpell( CItem *book, int spellNum )
+//|	Function	-	void cMagic::RemoveSpell( CItem *book, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specific spell from given spellbook
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::RemoveSpell( CItem *book, int spellNum )
+void cMagic::RemoveSpell( CItem *book, SI32 spellNum )
 {
 	cScript *tScript = NULL;
 	UI16 scpNum = book->GetScriptTrigger();
@@ -2174,24 +2174,24 @@ void cMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CheckBook( int circle, int spell, CItem *i )
+//|	Function	-	CheckBook( SI32 circle, SI32 spell, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if the spell is memorized into the spellbook.
 //o-----------------------------------------------------------------------------------------------o
 
-bool cMagic::CheckBook( int circle, int spell, CItem *i )
+bool cMagic::CheckBook( SI32 circle, SI32 spell, CItem *i )
 {
-	int spellnum = spell + ( circle - 1 ) * 8;
+	SI32 spellnum = spell + ( circle - 1 ) * 8;
 	return HasSpell( i, spellnum );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckMana( CChar *s, int circle )
+//|	Function	-	bool CheckMana( CChar *s, SI32 circle )
 //|	Changes		-	AntiChrist to use spells[] array.
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough mana to cast spell
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::CheckMana( CChar *s, int num )
+bool cMagic::CheckMana( CChar *s, SI32 num )
 {
 	if( !ValidateObject( s ) )
 		return true;
@@ -2209,11 +2209,11 @@ bool cMagic::CheckMana( CChar *s, int num )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckStamina( CChar *s, int num )
+//|	Function	-	bool CheckStamina( CChar *s, SI32 num )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough stamina to cast spell
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::CheckStamina( CChar *s, int num )
+bool cMagic::CheckStamina( CChar *s, SI32 num )
 {
 	if( !ValidateObject( s ) )
 		return true;
@@ -2231,11 +2231,11 @@ bool cMagic::CheckStamina( CChar *s, int num )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckHealth( CChar *s, int num )
+//|	Function	-	bool CheckHealth( CChar *s, SI32 num )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough health to cast spell
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::CheckHealth( CChar *s, int num )
+bool cMagic::CheckHealth( CChar *s, SI32 num )
 {
 	if( !ValidateObject( s ) )
 		return true;
@@ -2257,11 +2257,11 @@ bool cMagic::CheckHealth( CChar *s, int num )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SubtractMana( CChar *s, int mana)
+//|	Function	-	void SubtractMana( CChar *s, SI32 mana)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required mana from character's mana reserve
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::SubtractMana( CChar *s, int mana)
+void cMagic::SubtractMana( CChar *s, SI32 mana)
 {
 	if( s->NoNeedMana() )
 		return;
@@ -2271,11 +2271,11 @@ void cMagic::SubtractMana( CChar *s, int mana)
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SubtractStamina( CChar *s, int stamina )
+//|	Function	-	void SubtractStamina( CChar *s, SI32 stamina )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required stmina from character's stamina reserve
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::SubtractStamina( CChar *s, int stamina )
+void cMagic::SubtractStamina( CChar *s, SI32 stamina )
 {
 	if( s->NoNeedMana() )
 		return;
@@ -2285,11 +2285,11 @@ void cMagic::SubtractStamina( CChar *s, int stamina )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SubtractHealth( CChar *s, int health, int spellNum )
+//|	Function	-	void SubtractHealth( CChar *s, SI32 health, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required health from character's stamina reserve
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::SubtractHealth( CChar *s, int health, int spellNum )
+void cMagic::SubtractHealth( CChar *s, SI32 health, SI32 spellNum )
 {
 	if( s->NoNeedMana() || spells[spellNum].Health() == 0 )
 		return;
@@ -2324,12 +2324,12 @@ bool cMagic::CheckMagicReflect( CChar *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckResist( CChar *attacker, CChar *defender, int circle )
+//|	Function	-	bool CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 //|	Changes		-	AntiChrist to add EV.INT. check
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check character's magic resistance.
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::CheckResist( CChar *attacker, CChar *defender, int circle )
+bool cMagic::CheckResist( CChar *attacker, CChar *defender, SI32 circle )
 {
 	bool i = Skills->CheckSkill( defender, MAGICRESISTANCE, 80*circle, 800+(80*circle) );
 	CSocket *s = NULL;
@@ -2389,7 +2389,7 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 		spellDamage *= ((( casterEval - targetResist ) / 500.0f ) + 1 );
 
 	// Randomize some more to get broader min/max damage values
-	int i = RandomNum( 0, 4 );
+	SI32 i = RandomNum( 0, 4 );
 	if( i <= 2 )
 		spellDamage = roundNumber( RandomNum( static_cast<SI16>( HalfRandomNum( spellDamage ) / 2 ), spellDamage ));
 	else if( i == 3 )
@@ -2437,11 +2437,11 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PoisonDamage( CChar *p, int poison )
+//|	Function	-	void PoisonDamage( CChar *p, SI32 poison )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Apply the poison to the character.
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::PoisonDamage( CChar *p, int poison ) // new functionality, lb !!!
+void cMagic::PoisonDamage( CChar *p, SI32 poison ) // new functionality, lb !!!
 {
 	if( p->IsFrozen() )
 	{
@@ -2745,7 +2745,7 @@ void cMagic::SpellFail( CSocket *s )
 
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool SelectSpell( CSocket *mSock, int num )
+//|	Function	-	bool SelectSpell( CSocket *mSock, SI32 num )
 //|	Date		-	28 August 1999 / 10 September 1999
 //|	Programmer	-	Abaddon / AntiChrist
 //o-----------------------------------------------------------------------------------------------o
@@ -2757,7 +2757,7 @@ void cMagic::SpellFail( CSocket *s )
 //|					Abaddon: Perma cached
 //|					DarkStorm: Added JS handling
 //o-----------------------------------------------------------------------------------------------o
-bool cMagic::SelectSpell( CSocket *mSock, int num )
+bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 {
 	SI16 lowSkill = 0, highSkill = 0;
 	CChar *mChar = mSock->CurrcharObj();
@@ -2798,7 +2798,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 		mSock->sysmessage( 1778 );
 		return false;
 	}
-	int type = mSock->CurrentSpellType();
+	SI32 type = mSock->CurrentSpellType();
 	SpellInfo curSpellCasting = spells[num];
 
 	if( mChar->GetTimer( tCHAR_SPELLTIME ) != 0 )
@@ -2816,7 +2816,7 @@ bool cMagic::SelectSpell( CSocket *mSock, int num )
 	}
 	
 	mChar->SetSpellCast( static_cast<SI08>(num) );
-	if( num > 63 && num <= static_cast<int>(spellCount) && spellCount <= 70 )
+	if( num > 63 && num <= static_cast<SI32>(spellCount) && spellCount <= 70 )
 		Log( Dictionary->GetEntry( magic_table[num].spell_name ), mChar, NULL, "(Attempted)");
 	if( mChar->IsJailed() && !mChar->IsGM() )
 	{
@@ -3551,7 +3551,7 @@ void cMagic::LoadScript( void )
 								break;
 							case 'D':
 								if( UTag == "DELAY" )
-									spells[i].Delay( data.toLong() );
+									spells[i].Delay( data.toInt() );
 								else if( UTag == "DRAKE" )
 									mRegs->drake = data.toUByte();
 								break;
@@ -3679,22 +3679,22 @@ void cMagic::DelReagents( CChar *s, reag_st reags )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void playSound( CChar *source, int num )
+//|	Function	-	void playSound( CChar *source, SI32 num )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the SFX associated with a spell that is being cast
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::playSound( CChar *source, int num )
+void cMagic::playSound( CChar *source, SI32 num )
 {
 	if( spells[num].Effect() != INVALIDID )
 		Effects->PlaySound( source, spells[num].Effect() );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void doStaticEffect( CChar *source, int num )
+//|	Function	-	void doStaticEffect( CChar *source, SI32 num )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the static FX associated with a spell that is being cast
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::doStaticEffect( CChar *source, int num )
+void cMagic::doStaticEffect( CChar *source, SI32 num )
 {
 	CMagicStat temp = spells[num].StaticEffect();
 	if( temp.Effect() != INVALIDID )
@@ -3702,11 +3702,11 @@ void cMagic::doStaticEffect( CChar *source, int num )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void doMoveEffect( int num, CBaseObject *target, CChar *source )
+//|	Function	-	void doMoveEffect( SI32 num, CBaseObject *target, CChar *source )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the moving FX associated with a spell that is being cast
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::doMoveEffect( int num, CBaseObject *target, CChar *source )
+void cMagic::doMoveEffect( SI32 num, CBaseObject *target, CChar *source )
 {
 	CMagicMove temp = spells[num].MoveEffect();
 	
@@ -3778,11 +3778,11 @@ void cMagic::Log( std::string spell, CChar *player1, CChar *player2, const std::
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Register( cScript *toRegister, int spellNumber, bool isEnabled )
+//|	Function	-	void Register( cScript *toRegister, SI32 spellNumber, bool isEnabled )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a spell in the JS Engine
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
+void cMagic::Register( cScript *toRegister, SI32 spellNumber, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( "Registering spell number %i\n", spellNumber );
@@ -3797,11 +3797,11 @@ void cMagic::Register( cScript *toRegister, int spellNumber, bool isEnabled )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SetSpellStatus( int spellNumber, bool isEnabled )
+//|	Function	-	void SetSpellStatus( SI32 spellNumber, bool isEnabled )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the enabled state of a given spell
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::SetSpellStatus( int spellNumber, bool isEnabled )
+void cMagic::SetSpellStatus( SI32 spellNumber, bool isEnabled )
 {
 	if( spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size() )
 		return;

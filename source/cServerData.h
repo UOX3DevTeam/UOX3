@@ -744,7 +744,7 @@ public:
 	void		KickOnAssistantSilence( bool value );
 	bool		KickOnAssistantSilence( void ) const;
 
-	void		dumpLookup( int lookupid );
+	void		dumpLookup( SI32 lookupid );
 	void		dumpPaths( void );
 
 	void			ServerLocation( std::string toSet );
@@ -777,7 +777,7 @@ public:
 	bool			incHour( void );
 	bool			incDay( void );
 
-	void			incMoon( int mNumber );
+	void			incMoon( SI32 mNumber );
 
 	physicalServer *ServerEntry( UI16 entryNum );
 	UI16			ServerCount( void ) const;

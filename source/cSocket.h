@@ -111,8 +111,8 @@ private:
 
 	UI08			currentSpellType;
 
-	int				outlength;
-	int				inlength;
+	SI32			outlength;
+	SI32			inlength;
 
 	bool			logging;
 
@@ -136,7 +136,7 @@ private:
 	CItem *			cursorItem; //pointer to item held on mouse cursor
 
 
-	UI32			Pack( void *pvIn, void *pvOut, int len );
+	UI32			Pack( void *pvIn, void *pvOut, SI32 len );
 
 	UnicodeTypes	lang;
 	UI32			clientVersion;
@@ -199,8 +199,8 @@ public:
 	bool			CryptClient( void ) const;
 	size_t			CliSocket( void ) const;
 	UI08			CurrentSpellType( void ) const;
-	int				OutLength( void ) const;
-	int				InLength( void ) const;
+	SI32			OutLength( void ) const;
+	SI32			InLength( void ) const;
 	bool			Logging( void ) const;
 	CChar *			CurrcharObj( void ) const;
 	UI08			ClientIP1( void ) const;
@@ -260,8 +260,8 @@ public:
 	void			CryptClient( bool newValue );
 	void			CliSocket( size_t newValue );
 	void			CurrentSpellType( UI08 newValue );
-	void			OutLength( int newValue );
-	void			InLength( int newValue );
+	void			OutLength( SI32 newValue );
+	void			InLength( SI32 newValue );
 	void			Logging( bool newValue );
 	void			CurrcharObj( CChar *newValue );
 	void			ClientIP1( UI08 );
@@ -286,8 +286,8 @@ public:
 	bool			FlushBuffer( bool doLog = true );
 	bool			FlushLargeBuffer( bool doLog = true );
 	void			FlushIncoming( void );
-	void			Send( const void *point, int length );
-	int				Receive( int x, bool doLog = true );
+	void			Send( const void *point, SI32 length );
+	SI32			Receive( SI32 x, bool doLog = true );
 	void			ReceiveLogging( CPInputBuffer *toLog );
 
 	UI32			GetDWord( size_t offset );

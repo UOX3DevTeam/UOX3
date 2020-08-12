@@ -163,7 +163,7 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 
 cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( rT )
 {
-	for( int i = 0; i < 3; ++i )
+	for( SI32 i = 0; i < 3; ++i )
 	{
 		eventPresence[i].set();
 		needsChecking[i].set();
@@ -1763,7 +1763,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 	if( tSock == NULL )
 		return false;
 	jsval params[2], rval;
-	int objType			= 2;	// 2 == null, 1 == char, 0 == item
+	SI32 objType			= 2;	// 2 == null, 1 == char, 0 == item
 	CBaseObject *mObj	= NULL;
 	JSObject *myObj2	= NULL;
 	try
@@ -2520,11 +2520,11 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum )
+//|	Function	-	bool MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers before a spellcast attempt for characters with onSpellCast event attached
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, int spellNum )
+bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum )
 {
 	if( !ValidateObject( tChar ) )
 		return false;
