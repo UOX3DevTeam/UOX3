@@ -824,7 +824,7 @@ void ScriptSection::createSection( std::fstream& input )
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = localName;
-										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toULong();
+										amiLocalCopy.groupID = value.section(",",0,0).stripWhiteSpace().toUInt();
 										if(amiLocalCopy.groupID != groupHolder)
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -835,10 +835,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toULong();
-										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toULong();
-										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toULong();
-										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toULong();
+										amiLocalCopy.tileID = value.section(",",1,1).stripWhiteSpace().toUInt();
+										amiLocalCopy.weightPosition = value.section(",",2,2).stripWhiteSpace().toUInt();
+										amiLocalCopy.objectFlags = value.section(",",3,3).stripWhiteSpace().toUInt();
+										amiLocalCopy.objectID = value.section(",",4,4).stripWhiteSpace().toUInt();
 										if( amiLocalCopy.tileID == INVALIDSERIAL ) 
 											amiLocalCopy.tileID = amiLocalCopy.objectID;
 										// Need to shove it into the multimap
@@ -852,19 +852,19 @@ void ScriptSection::createSection( std::fstream& input )
 									toAdd2->cdata = value;
 									break;
 								case DFN_NUMERIC:
-									toAdd2->ndata = value.toLong();
+									toAdd2->ndata = value.toInt();
 									break;
 								case DFN_DOUBLENUMERIC:
 									// Best I can tell the seperator here is a space
 									value = value.simplifyWhiteSpace();
 									if( value.sectionCount( " " ) != 0 )
 									{
-										toAdd2->ndata = value.section( " ", 0, 0 ).toLong();
-										toAdd2->odata = value.section( " ", 1, 1 ).toLong();
+										toAdd2->ndata = value.section( " ", 0, 0 ).toInt();
+										toAdd2->odata = value.section( " ", 1, 1 ).toInt();
 									}
 									else
 									{
-										toAdd2->ndata = value.toLong();
+										toAdd2->ndata = value.toInt();
 										toAdd2->odata = toAdd2->ndata;
 									}
 									break;

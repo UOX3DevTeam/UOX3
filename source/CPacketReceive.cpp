@@ -29,9 +29,9 @@ namespace UOX
 //o-----------------------------------------------------------------------------------------------o
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 {
-	int i = 0;
+	SI32 i = 0;
 	pass1 = "";
-	int pass0Len = pass0.length();
+	SI32 pass0Len = pass0.length();
 	while( i < pass0Len && pass0[i] != '/' ) 
 		++i;
 	pass1 = pass0.substr( 0, i );
@@ -39,7 +39,7 @@ void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 		pass2 = pass0.substr( i );
 }
 
-void PackShort( UI08 *toPack, int offset, UI16 value )
+void PackShort( UI08 *toPack, SI32 offset, UI16 value )
 {
 	toPack[offset+0] = (UI08)((value&0xFF00)>>8);
 	toPack[offset+1] = (UI08)((value&0x00FF)%256);
@@ -845,7 +845,7 @@ bool CPIClientVersion::Handle( void )
 				tempHackSS.str("");
 				tempHackSS.clear();
 				tempHackSS << ( tempSubString += temp );
-				int tempSubInt;
+				SI32 tempSubInt;
 				tempHackSS >> tempSubInt;
 				sub = tempSubInt;
 				ss >> letter;
@@ -1019,7 +1019,7 @@ void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: 2 " << std::endl;
-	outStream << "Range			 : " << (int)tSock->GetByte( 1 ) << std::endl;
+	outStream << "Range			 : " << (SI32)tSock->GetByte( 1 ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -1171,7 +1171,7 @@ bool CPITips::Handle( void )
 		if( i == 0 ) 
 			i = 1;
 
-		int x = i;
+		SI32 x = i;
 		UString tag, data, sect;
 		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 		{
@@ -1315,7 +1315,7 @@ void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << TimeStamp() << std::endl;
 	outStream << "Pattern        : " << pattern << std::endl;
-	outStream << "Request Type   : " << (int)getType << std::endl;
+	outStream << "Request Type   : " << (SI32)getType << std::endl;
 	outStream << "PlayerID       : " << std::hex << "0x" << playerID << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -2027,7 +2027,7 @@ bool CPITalkRequest::HandleCommon( void )
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
-			j = UString( Text() ).toULong();
+			j = UString( Text() ).toUInt();
 			if( j >= 0 )
 			{
 				speechItem->SetBuyValue( j );
@@ -2272,8 +2272,8 @@ void CPITalkRequestUnicode::Receive( void )
 
 	if( (typeUsed&0xC0) == 0xC0 )
 	{
-		int myoffset		= 13;
-		int myj				= 12;
+		SI32 myoffset		= 13;
+		SI32 myj			= 12;
 		size_t numTrigWords	= 0;
 
 		// number of distinct trigger words
@@ -2296,7 +2296,7 @@ void CPITalkRequestUnicode::Receive( void )
 			myoffset += ( ( numTrigWords / 2 ) * 3 ) - 1;
 
 		myj = 12;
-		int mysize = blockLen - myoffset;
+		SI32 mysize = blockLen - myoffset;
 		for( j = 0; j < mysize; ++j )
 			unicodeTxt[j] = buffer[j + myoffset];
 		for( j = 0; j < mysize; ++j )
@@ -2740,38 +2740,38 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 				outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp() << std::endl;
 		}
 		outStream << "Pattern1       : " << pattern1 << std::endl;
-		outStream << "Slot           : " << (int)slot << std::endl;
+		outStream << "Slot           : " << (SI32)slot << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
 		outStream << "Password       : " << password << std::endl;
-		outStream << "Profession     : " << (int)profession << std::endl;
-		outStream << "Client Flags   : " << (int)clientFlags << std::endl;
-		outStream << "Sex            : " << (int)sex << std::endl;
-		outStream << "Race           : " << (int)race << std::endl;
-		outStream << "Strength       : " << (int)str << std::endl;
-		outStream << "Dexterity      : " << (int)dex << std::endl;
-		outStream << "Intelligence   : " << (int)intel << std::endl;
+		outStream << "Profession     : " << (SI32)profession << std::endl;
+		outStream << "Client Flags   : " << (SI32)clientFlags << std::endl;
+		outStream << "Sex            : " << (SI32)sex << std::endl;
+		outStream << "Race           : " << (SI32)race << std::endl;
+		outStream << "Strength       : " << (SI32)str << std::endl;
+		outStream << "Dexterity      : " << (SI32)dex << std::endl;
+		outStream << "Intelligence   : " << (SI32)intel << std::endl;
 		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
-		outStream << "Unknown1       : " << (int)unknown1 << std::endl;
-		outStream << "Unknown2       : " << (int)unknown2 << std::endl;
-		outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << " " << (int)skill[3] << std::endl;
-		outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << " " << (int)skillValue[3] << std::endl;
-		int temp1;
+		outStream << "Unknown1       : " << (SI32)unknown1 << std::endl;
+		outStream << "Unknown2       : " << (SI32)unknown2 << std::endl;
+		outStream << "Skills         : " << (SI32)skill[0] << " " << (SI32)skill[1] << " " << (SI32)skill[2] << " " << (SI32)skill[3] << std::endl;
+		outStream << "Skills Values  : " << (SI32)skillValue[0] << " " << (SI32)skillValue[1] << " " << (SI32)skillValue[2] << " " << (SI32)skillValue[3] << std::endl;
+		SI32 temp1;
 		for( temp1 = 0; temp1 < 25; temp1++ )
 		{
-			outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << (unsigned int)( unknown3[temp1] ) << std::endl;
+			outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << (UI32)( unknown3[temp1] ) << std::endl;
 		}
-		outStream << "Unknown4       : " << (int)unknown4 << std::endl;
+		outStream << "Unknown4       : " << (SI32)unknown4 << std::endl;
 		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
 		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
-		outStream << "Unknown5       : " << (int)unknown5 << std::endl;
-		outStream << "Unknown6       : " << (int)unknown6 << std::endl;
-		outStream << "Unknown7       : " << (int)unknown7 << std::endl;
+		outStream << "Unknown5       : " << (SI32)unknown5 << std::endl;
+		outStream << "Unknown6       : " << (SI32)unknown6 << std::endl;
+		outStream << "Unknown7       : " << (SI32)unknown7 << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
 		outStream << "Shirt ID       : " << std::hex << shirtID << std::dec << std::endl;
-		outStream << "Unknown8       : " << (int)unknown8 << std::endl;
+		outStream << "Unknown8       : " << (SI32)unknown8 << std::endl;
 		outStream << "Face Colour    : " << std::hex << faceColour << std::dec << std::endl;
 		outStream << "Face ID		 : " << std::hex << faceID << std::dec << std::endl;
-		outStream << "Unknown9       : " << (int)unknown9 << std::endl;
+		outStream << "Unknown9       : " << (SI32)unknown9 << std::endl;
 		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
 		outStream << "  Raw dump     :" << std::endl;
@@ -2788,15 +2788,15 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		}
 		outStream << "Pattern1       : " << pattern1 << std::endl;
 		outStream << "Pattern2       : " << pattern2 << std::endl;
-		outStream << "Pattern3       : " << (int)pattern3 << std::endl;
+		outStream << "Pattern3       : " << (SI32)pattern3 << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
 		outStream << "Password       : " << password << std::endl;
-		outStream << "Sex            : " << (int)sex << std::endl;
-		outStream << "Strength       : " << (int)str << std::endl;
-		outStream << "Dexterity      : " << (int)dex << std::endl;
-		outStream << "Intelligence   : " << (int)intel << std::endl;
-		outStream << "Skills         : " << (int)skill[0] << " " << (int)skill[1] << " " << (int)skill[2] << std::endl;
-		outStream << "Skills Values  : " << (int)skillValue[0] << " " << (int)skillValue[1] << " " << (int)skillValue[2] << std::endl;
+		outStream << "Sex            : " << (SI32)sex << std::endl;
+		outStream << "Strength       : " << (SI32)str << std::endl;
+		outStream << "Dexterity      : " << (SI32)dex << std::endl;
+		outStream << "Intelligence   : " << (SI32)intel << std::endl;
+		outStream << "Skills         : " << (SI32)skill[0] << " " << (SI32)skill[1] << " " << (SI32)skill[2] << std::endl;
+		outStream << "Skills Values  : " << (SI32)skillValue[0] << " " << (SI32)skillValue[1] << " " << (SI32)skillValue[2] << std::endl;
 		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
 		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
 		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
@@ -2804,7 +2804,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
 		outStream << "Location Number: " << locationNumber << std::endl;
 		outStream << "Unknown        : " << unknown << std::endl;
-		outStream << "Slot           : " << (int)slot << std::endl;
+		outStream << "Slot           : " << (SI32)slot << std::endl;
 		outStream << "IP Address     : " << ipAddress << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
 		outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
@@ -2871,7 +2871,7 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
 	outStream << "Pattern1       : " << pattern << std::endl;
 	outStream << "Char name      : " << charName << std::endl;
-	outStream << "Slot chosen    : " << (int)slotChosen << std::endl;
+	outStream << "Slot chosen    : " << (SI32)slotChosen << std::endl;
 	outStream << "Client IP      : " << ipAddress << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -2930,7 +2930,7 @@ UI08 CPIGumpInput::Index( void ) const
 {
 	return index;
 }
-UI08 CPIGumpInput::Unk( int offset ) const
+UI08 CPIGumpInput::Unk( SI32 offset ) const
 {
 	assert( offset >= 0 && offset <=2 );
 	return unk[offset];
@@ -2945,9 +2945,9 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 	if( fullHeader )
 		outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	outStream << "ID             : " << id << std::endl;
-	outStream << "Type           : " << (int)type << std::endl;
-	outStream << "Index          : " << (int)index << std::endl;
-	outStream << "Unknown        : " << (int)unk[0] << " " << (int)unk[1] << " " << (int)unk[2] << std::endl;
+	outStream << "Type           : " << (SI32)type << std::endl;
+	outStream << "Index          : " << (SI32)index << std::endl;
+	outStream << "Unknown        : " << (SI32)unk[0] << " " << (SI32)unk[1] << " " << (SI32)unk[2] << std::endl;
 	outStream << "Reply          : " << reply << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -3527,15 +3527,15 @@ bool CPIPartyCommand::Handle( void )
 {
 	UI08 partyCmd = tSock->GetByte( 5 );
 
-	const int PARTY_ADD			= 1;
-	const int PARTY_REMOVE		= 2;
-	const int PARTY_TELLINDIV	= 3;
-	const int PARTY_TELLALL		= 4;
-	const int PARTY_LOOT		= 6;
-	const int PARTY_INVITE		= 7;
-	const int PARTY_ACCEPT		= 8;
-	const int PARTY_DECLINE		= 9;
-	const int BASE_OFFSET		= 6;
+	const SI32 PARTY_ADD		= 1;
+	const SI32 PARTY_REMOVE		= 2;
+	const SI32 PARTY_TELLINDIV	= 3;
+	const SI32 PARTY_TELLALL	= 4;
+	const SI32 PARTY_LOOT		= 6;
+	const SI32 PARTY_INVITE		= 7;
+	const SI32 PARTY_ACCEPT		= 8;
+	const SI32 PARTY_DECLINE	= 9;
+	const SI32 BASE_OFFSET		= 6;
 	switch( partyCmd )
 	{
 	case PARTY_ADD:
@@ -3652,15 +3652,15 @@ void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 {
 	UI08 partyCmd = tSock->GetByte( 5 );
 
-	const int PARTY_ADD			= 1;
-	const int PARTY_REMOVE		= 2;
-	const int PARTY_TELLINDIV	= 3;
-	const int PARTY_TELLALL		= 4;
-	const int PARTY_LOOT		= 6;
-	const int PARTY_ACCEPT		= 8;
-	const int PARTY_DECLINE		= 9;
+	const SI32 PARTY_ADD		= 1;
+	const SI32 PARTY_REMOVE		= 2;
+	const SI32 PARTY_TELLINDIV	= 3;
+	const SI32 PARTY_TELLALL	= 4;
+	const SI32 PARTY_LOOT		= 6;
+	const SI32 PARTY_ACCEPT		= 8;
+	const SI32 PARTY_DECLINE	= 9;
 
-	const int BASE_OFFSET	= 6;
+	const SI32 BASE_OFFSET		= 6;
 	switch( partyCmd )
 	{
 	case PARTY_ADD:
@@ -4266,7 +4266,7 @@ bool CPISpellbookSelect::Handle( void )
 
 		if( validLoc )
 		{
-			int book = (buffer[7]<<8) + (buffer[8]); 
+			SI32 book = (buffer[7]<<8) + (buffer[8]); 
 			if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
 			{
 				if( ourChar->IsFrozen() )

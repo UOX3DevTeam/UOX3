@@ -268,7 +268,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::dosocketmidi( CSocket *s )
 {
-	int i = 0;
+	SI32 i = 0;
 	char midiarray[50];
 	UString sect;
 

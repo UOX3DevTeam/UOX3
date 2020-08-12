@@ -45,11 +45,11 @@ bool Party::AddMember( CChar *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	PartyEntry *Find( CChar *i, int *location )
+//|	Function	-	PartyEntry *Find( CChar *i, SI32 *location )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character is a member of party
 //o-----------------------------------------------------------------------------------------------o
-PartyEntry *Party::Find( CChar *i, int *location )
+PartyEntry *Party::Find( CChar *i, SI32 *location )
 {
 	if( ValidateObject( i ) )
 	{
@@ -81,7 +81,7 @@ bool Party::RemoveMember( CChar *i )
 	bool retVal = false;
 	if( ValidateObject( i ) )
 	{
-		int removeSpot;
+		SI32 removeSpot;
 		PartyEntry *toFind = Find( i, &removeSpot );
 		if( toFind != NULL )
 		{
@@ -112,13 +112,13 @@ bool Party::RemoveMember( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
 void Party::Leader( CChar *member )
 {
-	int newLeaderPos;
+	SI32 newLeaderPos;
 	PartyEntry *newLeader = Find( member, &newLeaderPos );
 	if( newLeader != NULL )
 	{
 		if( leader != NULL )
 		{
-			int oldLeaderPos;
+			SI32 oldLeaderPos;
 			PartyEntry *mFind = Find( leader, &oldLeaderPos );
 			if( mFind != NULL )
 			{

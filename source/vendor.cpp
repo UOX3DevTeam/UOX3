@@ -118,7 +118,7 @@ bool CPIBuyItem::Handle( void )
 	bitems.resize( itemtotal );
 	amount.resize( itemtotal );
 	layer.resize( itemtotal );
-	int baseOffset = 0;
+	SI32 baseOffset = 0;
 	for( i = 0; i < itemtotal; ++i )
 	{
 		baseOffset	= 7 * i;

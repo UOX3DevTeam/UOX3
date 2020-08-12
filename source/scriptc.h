@@ -13,7 +13,7 @@ typedef std::map< std::string, ScriptSection * >	SSMAP;
 class Script 
 {
 public:
-	long lastModTime;
+	UI32 lastModTime;
 	Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp = true );
 	~Script();
 

@@ -1378,7 +1378,7 @@ SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapo
 	CRace *rPtr = Races->Race( defend->GetRace() );
 	if( rPtr != NULL )
 	{
-		for( int i = LIGHT; i < WEATHNUM; ++i )
+		for( SI32 i = LIGHT; i < WEATHNUM; ++i )
 		{
 			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
 			{
@@ -1740,12 +1740,12 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	//Attacker Skill values
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
-	const UI16 attackSkill		= UOX_MIN( 1000, (int)mChar.GetSkill( getFightSkill ) );
+	const UI16 attackSkill		= UOX_MIN( 1000, (SI32)mChar.GetSkill( getFightSkill ) );
 
 	//Defender Skill values
 	CItem *defWeapon			= getWeapon( ourTarg );
 	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
-	const UI16 defendSkill		= UOX_MIN( 1000, (int)ourTarg->GetSkill( getTargetSkill ) );
+	const UI16 defendSkill		= UOX_MIN( 1000, (SI32)ourTarg->GetSkill( getTargetSkill ) );
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -1807,7 +1807,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		bool skillPassed = false;
 
 		// Do a skill check so the fight skill is increased
-		Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (int)((getDefSkill * 1.25) + 100) ) );
+		Skills->CheckSkill( &mChar, getFightSkill, 0, UOX_MIN( 1000, (SI32)((getDefSkill * 1.25) + 100) ) );
 		const R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
 		skillPassed = ( RandomNum(0, 100) <= hitChance );
 		
@@ -1874,7 +1874,7 @@ void CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				// Reactive Armor
 				if( ourTarg->GetReactiveArmour() )
 				{
-					int retDamage = (int)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
+					SI32 retDamage = (SI32)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
 					ourTarg->Damage( ourDamage - retDamage, &mChar );
 					if( ourTarg->IsNpc() ) 
 						retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
@@ -2123,8 +2123,8 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	else
 		getDelay	= (R32)( (R32)UOX_MIN( statOffset, static_cast<SI16>(100) ) + 100 );
 
-	int getOffset	= 0;
-	int baseValue	= 15000;
+	SI32 getOffset	= 0;
+	SI32 baseValue	= 15000;
 
 	CChar *ourTarg = mChar->GetTarg();
 
@@ -2138,7 +2138,7 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	else
 	{
 		if( mChar->GetSkill( WRESTLING ) < 800 )
-			getOffset = (((int)(mChar->GetSkill( WRESTLING ) / 200 )) * 5) + 30;
+			getOffset = (((SI32)(mChar->GetSkill( WRESTLING ) / 200 )) * 5) + 30;
 		else
 			getOffset = 50;
 	}

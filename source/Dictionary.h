@@ -34,7 +34,7 @@ private:
 	bool IsValid;
 	std::string PathToDictionary;
 	std::string Language;
-	std::map< long, std::string > Text2;
+	std::map< UI32, std::string > Text2;
 };
 
 class CDictionaryContainer

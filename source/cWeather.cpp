@@ -202,14 +202,14 @@ void CWeather::NewDay( void )
 	if( (UI08)RandomNum( 0, 100 ) <= HeatChance() )
 	{
 		isHeatWave = true;
-		currentTemp = RandomNum( (int)effTempMax, (int)HeatIntensityHigh() );
+		currentTemp = RandomNum( (SI32)effTempMax, (SI32)HeatIntensityHigh() );
 		effTempMax = currentTemp;
 		effTempMin = currentTemp;
 	}
 	else if( (UI08)RandomNum( 0, 100 ) <= ColdChance() )
 	{
 		isColdDay = true;
-		currentTemp = RandomNum( (int)ColdIntensityHigh(), (int)effTempMin );
+		currentTemp = RandomNum( (SI32)ColdIntensityHigh(), (SI32)effTempMin );
 		effTempMax = currentTemp;
 		effTempMin = currentTemp;
 	}
@@ -950,7 +950,7 @@ bool cWeatherAb::Load( void )
 				continue;
 
 			entryName			= weathScp->EntryName();
-			i					= entryName.section( " ", 1, 1 ).toULong();
+			i					= entryName.section( " ", 1, 1 ).toUInt();
 			if( i >= weather.size() )
 				weather.resize( i+1 );
 
@@ -2007,7 +2007,7 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 		R32 currentLight		= 255;
 		R32 lightMin			= 255;
 		R32 lightMax			= 255;
-		int	message				= 0;
+		SI32 message			= 0;
 		bool ampm				= cwmWorldState->ServerData()->ServerTimeAMPM();
 
 		weathID weatherSys = mChar.GetRegion()->GetWeather();
@@ -2135,7 +2135,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 		R32 heatLevel			= (R32)Races->HeatLevel( mChar.GetRace() );
 		R32 coldLevel			= (R32)Races->ColdLevel( mChar.GetRace() );
 
-		int	damageMessage		= 0;
+		SI32 damageMessage		= 0;
 		UI16 damageAnim			= 0x373A;
 
 		if( element == RAIN )

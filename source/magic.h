@@ -354,7 +354,7 @@ public:
 
 struct MagicTable_s 
 {
-	int				spell_name;
+	SI32			spell_name;
 	bool			(*mag_extra) ();	// extra data - see above
 };
 
@@ -438,7 +438,7 @@ MAG_CHARHANDLER( splNecro3 );
 MAG_CHARHANDLER( splNecro4 );
 MAG_CHARHANDLER( splNecro5 );
 
-// All command_ functions take an int value of the player that triggered the command.
+// All command_ functions take an SI32 value of the player that triggered the command.
 
 }
 

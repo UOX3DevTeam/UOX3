@@ -1020,7 +1020,7 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		// Only supported by client versions above ~7.0.16.0
 		temp << "tooltip " << tooltip << " @";
 		UString tempArg;
-		for( unsigned int i = 2; i < argc; i++ )
+		for( UI32 i = 2; i < argc; i++ )
 		{
 			tempArg = JS_GetStringBytes( JS_ValueToString( cx, argv[i] ) );
 			temp << ( i == 2 ? tempArg : ( "\t" + tempArg ) );
@@ -2231,7 +2231,7 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "MakeMenu: invalid socket" );
 		return JS_FALSE;
 	}
-	int menu		= JSVAL_TO_INT( argv[0] );
+	SI32 menu		= JSVAL_TO_INT( argv[0] );
 	UI08 skillNum	= static_cast<UI08>(JSVAL_TO_INT( argv[1] ));
 	Skills->NewMakeMenu( mySock, menu, skillNum );
 	return JS_TRUE;
@@ -2609,7 +2609,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}
 		else if( encaps.isType( JSOT_INT ) )
 		{
-			const int intVal = encaps.toInt();
+			const SI32 intVal = encaps.toInt();
 			if( !intVal )
 			{
 				localObject.m_Destroy		= TRUE;
@@ -4020,7 +4020,7 @@ JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         MethodError( "GetByte: Invalid socket!");
         return JS_FALSE;
     }
-	int offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= JSVAL_TO_INT( argv[0] );
 	*rval		= INT_TO_JSVAL( mySock->GetByte( offset ) );
     return JS_TRUE;
 }
@@ -4045,7 +4045,7 @@ JSBool CSocket_GetSByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         MethodError( "GetSByte: Invalid socket!");
         return JS_FALSE;
     }
-	int offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= JSVAL_TO_INT( argv[0] );
 	*rval		= INT_TO_JSVAL( static_cast<SI08>(mySock->GetByte( offset )) );
     return JS_TRUE;
 }
@@ -4070,7 +4070,7 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         MethodError( "GetWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ) );
     return JS_TRUE;
 }
@@ -4095,7 +4095,7 @@ JSBool CSocket_GetSWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         MethodError( "GetSWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )) );
     return JS_TRUE;
 }
@@ -4120,7 +4120,7 @@ JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         MethodError( "GetDWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( mySock->GetDWord( offset ) );
     return JS_TRUE;
 }
@@ -4145,7 +4145,7 @@ JSBool CSocket_GetSDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         MethodError( "GetSDWord: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )) );
     return JS_TRUE;
 }
@@ -4171,8 +4171,8 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-	int length		= -1;
-	int offset		= JSVAL_TO_INT( argv[0] );
+	SI32 length		= -1;
+	SI32 offset		= JSVAL_TO_INT( argv[0] );
 	if( argc == 2 )
 		length = JSVAL_TO_INT( argv[1] );
 
@@ -4211,7 +4211,7 @@ JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         MethodError( "SetByte: Invalid socket!");
         return JS_FALSE;
     }
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
 	UI08 byteToSet = (UI08)JSVAL_TO_INT( argv[1] );
 
 	mSock->SetByte( offset, byteToSet );
@@ -4239,7 +4239,7 @@ JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         return JS_FALSE;
     }
 
-	int offset		= JSVAL_TO_INT( argv[0] );
+	SI32 offset		= JSVAL_TO_INT( argv[0] );
 	UI16 byteToSet	= (UI16)JSVAL_TO_INT( argv[1] );
 
 	mSock->SetWord( offset, byteToSet );
@@ -4267,8 +4267,8 @@ JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         return JS_FALSE;
     }
 
-	int offset		= JSVAL_TO_INT( argv[0] );
-	long byteToSet	= JSVAL_TO_INT( argv[1] );
+	SI32 offset		= JSVAL_TO_INT( argv[0] );
+	UI32 byteToSet	= JSVAL_TO_INT( argv[1] );
 
 	mSock->SetDWord( offset, byteToSet );
 	return JS_TRUE;
@@ -4295,7 +4295,7 @@ JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-	int offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = JSVAL_TO_INT( argv[0] );
  	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ) );
 	if( trgMessage == NULL )
 	{
@@ -4328,7 +4328,7 @@ JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-	int bCount		= JSVAL_TO_INT( argv[0] );
+	SI32 bCount		= JSVAL_TO_INT( argv[0] );
 	mSock->Receive( bCount );
 	return JS_TRUE;
 }
@@ -4771,8 +4771,8 @@ JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	CItem *myItem	= static_cast<CItem *>(JS_GetPrivate( cx, obj ));
-	int rank		= JSVAL_TO_INT( argv[0] );
-	int maxrank		= JSVAL_TO_INT( argv[1] );
+	SI32 rank		= JSVAL_TO_INT( argv[0] );
+	SI32 maxrank		= JSVAL_TO_INT( argv[1] );
 
 	Skills->ApplyRank( NULL, myItem, rank, maxrank );
 	return JS_TRUE;
@@ -5033,7 +5033,7 @@ JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		MethodError( "Read: Error reading file, is not opened or has reached EOF" );
 		return JS_FALSE;
 	}
-	int bytes = JSVAL_TO_INT( argv[0] );
+	SI32 bytes = JSVAL_TO_INT( argv[0] );
 	char data[512];
 
 	if( bytes > 512 || bytes < 1 )
@@ -5074,7 +5074,7 @@ JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 	char *until = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	char line[512];
-	int c;
+	SI32 c;
 
 	if( until[0] == '\\' && strlen( until ) > 1 )
 	{
@@ -6438,7 +6438,7 @@ JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &(argv[0]) );
-	int mArg = arg0.toInt();
+	SI32 mArg = arg0.toInt();
 	if( mArg < 0 || mArg > 8 )
 	{
 		MethodError( "Reload: Section to reload must be between 0 and 8" );
@@ -7388,7 +7388,7 @@ JSBool CODBC_ExecuteQuery( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	JSEncapsulate query( cx, &(argv[0]) );
-	int index;
+	SI32 index;
 	if( query.isType( JSOT_STRING ) )
 	{
 		bool didExecute	= ODBCManager::getSingleton().ExecuteQuery( query.toString(), &index );

@@ -99,13 +99,13 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleAccountButton( CSocket *s, long button, CChar *j )
+//|	Function	-	void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 //|	Programmer	-	EviLDeD
 //|	Org/Team	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the accounts gump button
 //o-----------------------------------------------------------------------------------------------o
-void HandleAccountButton( CSocket *s, long button, CChar *j )
+void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 {
 	if( !ValidateObject( j ) )
 		return;
@@ -155,7 +155,7 @@ void HandleAccountButton( CSocket *s, long button, CChar *j )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function		-	void HandleTweakItemButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Function		-	void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 //|	Programmer		-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Handles button pressed in tweak item gump
@@ -237,7 +237,7 @@ void HandleTweakItemButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleTweakCharButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Function	-	void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in tweak char gump
@@ -303,7 +303,7 @@ void HandleTweakCharButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleTownstoneButton( CSocket *s, long button, SERIAL ser, long type )
+//|	Function	-	void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in townstone gump
@@ -363,8 +363,8 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 				targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
 				if( targetRegion != NULL )
 				{
-					int chanceToSteal	= RandomNum( 0, targetRegion->GetHealth() / 2 );
-					int fudgedStealing	= RandomNum( mChar->GetSkill( STEALING ), static_cast< UI16 >(mChar->GetSkill( STEALING ) * 2) );
+					SI32 chanceToSteal	= RandomNum( 0, targetRegion->GetHealth() / 2 );
+					SI32 fudgedStealing	= RandomNum( mChar->GetSkill( STEALING ), static_cast< UI16 >(mChar->GetSkill( STEALING ) * 2) );
 					if( fudgedStealing >= chanceToSteal )
 					{
 						// redo stealing code here
@@ -448,7 +448,7 @@ void HandleHairDyeButton( CSocket *s, CItem *j )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleAccountModButton( CSocket *s, long button )
+//|	Function	-	void HandleAccountModButton( CPIGumpMenuSelect *packet )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in account gump
@@ -484,12 +484,12 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleHouseButton( CSocket *s, long button, CItem *j )
+//|	Function	-	void HandleHouseButton( CSocket *s, UI32 button, CItem *j )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in house gump
 //o-----------------------------------------------------------------------------------------------o
-void HandleHouseButton( CSocket *s, long button, CItem *j )
+void HandleHouseButton( CSocket *s, UI32 button, CItem *j )
 {
 	if( !ValidateObject( j ) )
 		return;
@@ -743,7 +743,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				// Draw a frame for the item to make it stand out a touch more.
 				toSend.AddCommand( "resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 );
 				toSend.AddCommand( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 );
-				toSend.AddCommand( "tilepic %u %u %i",xOffset+5, yOffset+10, tag.toLong() );
+				toSend.AddCommand( "tilepic %u %u %i",xOffset+5, yOffset+10, tag.toInt() );
 				toSend.AddCommand( "croppedtext %u %u %u %u %u %u", xOffset, yOffset+65, 65, 20, 55, linenum++ );
 				toSend.AddText( data );
 				xOffset += XOFFSET;
@@ -862,7 +862,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				// Draw a frame for the item to make it stand out a touch more.
 				toSend.AddCommand( "resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 );
 				toSend.AddCommand( "checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 );
-				toSend.AddCommand( "tilepic %u %u %i", xOffset + 5, yOffset + 10, tag.toLong() );
+				toSend.AddCommand( "tilepic %u %u %i", xOffset + 5, yOffset + 10, tag.toInt() );
 				toSend.AddCommand( "croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ );
 				toSend.AddText( data );
 				xOffset += XOFFSET;
@@ -986,7 +986,7 @@ bool CPIHelpRequest::Handle( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|   Function	  -  void CPage( int s, const std::string reason )
+//|   Function	  -  void CPage( CSocket *s, const std::string& reason )
 //|   Programmer  -  Unknown  (Touched tabstops by EviLDeD Dec 23, 1998)
 //o-----------------------------------------------------------------------------------------------o
 //|   Purpose     -  Used when player pages a counselor
@@ -1162,7 +1162,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			{
 				if( data.empty() )
 					return;
-				size_t placeNum = data.toULong();
+				size_t placeNum = data.toUInt();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -1202,7 +1202,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 			{
 				if( data.empty() )
 					return;
-				Skills->NewMakeMenu( s, data.toLong(), (UI08)s->AddID() );
+				Skills->NewMakeMenu( s, data.toInt(), (UI08)s->AddID() );
 			}
 			break;
 		case 'N':
@@ -1256,12 +1256,12 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleAddMenuButton( CSocket *s, long button )
+//|	Function	-	void HandleAddMenuButton( CSocket *s, UI32 button )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in add menu gump
 //o-----------------------------------------------------------------------------------------------o
-void HandleAddMenuButton( CSocket *s, long button )
+void HandleAddMenuButton( CSocket *s, UI32 button )
 {
 	SI32 addMenuLoc	= s->TempInt();
 	UString sect = "ITEMMENU " + UString::number( addMenuLoc );
@@ -1286,13 +1286,13 @@ void HandleAddMenuButton( CSocket *s, long button )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleHowTo( CSocket *sock, int cmdNumber )
+//|	Function	-	void HandleHowTo( CSocket *sock, SI32 cmdNumber )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response when player enters HOWTO command
 //o-----------------------------------------------------------------------------------------------o
-void HandleHowTo( CSocket *sock, int cmdNumber )
+void HandleHowTo( CSocket *sock, SI32 cmdNumber )
 {
-	int iCounter = 0;
+	SI32 iCounter = 0;
 	UI08 cmdLevelReq = 0xFF;
 	UI08 cmdType = 0xFF;
 	std::string cmdName = "";
@@ -1376,7 +1376,7 @@ void HandleHowTo( CSocket *sock, int cmdNumber )
 		sock->sysmessage( 280 );
 }
 
-void HandleHowToButton( CSocket *s, long button )
+void HandleHowToButton( CSocket *s, UI32 button )
 {
 	HandleHowTo( s, button - 2 );
 }
@@ -1512,7 +1512,7 @@ bool CPIGumpMenuSelect::Handle( void )
 		case 8:	HandleAccountModButton( this );							break;	// Race Editor
 		case 9:	HandleAddMenuButton( tSock, buttonID );							break;	// Add Menu
 		case 11: OffList->ButtonSelect( tSock, static_cast<UI16>(buttonID), static_cast<UI08>(gumpID) );				break;	// Who's Offline
-		case 12: Skills->HandleMakeMenu( tSock, buttonID, static_cast<int>(tSock->AddID()));	break;	// New Make Menu
+		case 12: Skills->HandleMakeMenu( tSock, buttonID, static_cast<SI32>(tSock->AddID()));	break;	// New Make Menu
 		case 13: HandleHowToButton( tSock, buttonID );							break;	// Howto
 	}
 	return true;
@@ -1602,7 +1602,7 @@ void tweakItemMenu( CSocket *s, CItem *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleTweakItemText( CSocket *s, long index )
+//|	Function	-	void HandleTweakItemText( UI08 index )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles new values for 'tweak items
@@ -1653,30 +1653,30 @@ void CPIGumpInput::HandleTweakItemText( UI08 index )
 			case 17:	j->SetResist( reply.toUShort(), PHYSICAL ); break;	// Defense
 			case 18:	j->SetSpeed( reply.toUByte() );				break;	// Speed
 			case 19:	j->SetRank( reply.toByte() );				break;	// Rank
-			case 20:	j->SetTempVar( CITV_MORE, reply.toULong() );				break;	// More
-			case 21:	j->SetTempVar( CITV_MOREX, reply.toULong() );				break;	// More X
-			case 22:	j->SetTempVar( CITV_MOREY, reply.toULong() );				break;	// More Y
-			case 23:	j->SetTempVar( CITV_MOREZ, reply.toULong() );				break;	// More Z
+			case 20:	j->SetTempVar( CITV_MORE, reply.toUInt() );		break;	// More
+			case 21:	j->SetTempVar( CITV_MOREX, reply.toUInt() );	break;	// More X
+			case 22:	j->SetTempVar( CITV_MOREY, reply.toUInt() );	break;	// More Y
+			case 23:	j->SetTempVar( CITV_MOREZ, reply.toUInt() );	break;	// More Z
 			case 24:	j->SetPoisoned( reply.toUByte() );			break;	// Poisoned
-			case 25:	j->SetWeight( reply.toLong() );				break;	// Weight
+			case 25:	j->SetWeight( reply.toInt() );				break;	// Weight
 			case 26:	j->SetDecayable( reply.toUByte() != 0 );	break;	// Decay
 			case 27:	j->SetGood( reply.toShort() );				break;	// Good
-			case 28:	j->SetBuyValue( reply.toULong() );			break;	// Buy Value
-			case 29:	j->SetSellValue( reply.toULong() );			break;	// Sell Value - Not implimented yet
+			case 28:	j->SetBuyValue( reply.toUInt() );			break;	// Buy Value
+			case 29:	j->SetSellValue( reply.toUInt() );			break;	// Sell Value - Not implimented yet
 			case 30:	j->SetCarve( reply.toShort() );				break;	// Carve
 			case 31: 	j->SetPileable( reply.toUByte() != 0 );		break;	// Stackable
 			case 32:	j->SetDye( reply.toUByte() != 0 );			break;	// Dyable
 			case 33:	j->SetCorpse( reply.toUByte() != 0 );		break;	// Corpse
 			case 34:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
-			case 35:	j->SetCreator( reply.toULong() );			break;	// Creator
-			case 36:	j->SetScriptTrigger( reply.toULong() );		break; //ScriptTrigger ID
+			case 35:	j->SetCreator( reply.toUInt() );			break;	// Creator
+			case 36:	j->SetScriptTrigger( reply.toUShort() );	break; //ScriptTrigger ID
 			case 37:	j->SetAmmoID( reply.toUShort() );			break; //AmmoID
 			case 38:	j->SetAmmoHue( reply.toUShort() );			break; //AmmoHue
 			case 39:	j->SetAmmoFX( reply.toUShort() );			break; //AmmoFX
 			case 40:	j->SetAmmoFXHue( reply.toUShort() );		break; //AmmoFXHue
 			case 41:	j->SetAmmoFXRender( reply.toUShort() );		break; //AmmoFXRender
-			case 42:	j->SetWeightMax( reply.toLong() );			break; //WeightMax
-			case 43:	j->SetBaseWeight( reply.toULong() );		break; //BaseWeight
+			case 42:	j->SetWeightMax( reply.toInt() );			break; //WeightMax
+			case 43:	j->SetBaseWeight( reply.toUInt() );			break; //BaseWeight
 			case 44:	j->WorldNumber( reply.toUByte() );			break; //WorldNumber
 			case 45:	
 			{
@@ -1752,7 +1752,7 @@ void tweakCharMenu( CSocket *s, CChar *c )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleTweakCharText( CSocket *s, long index )
+//|	Function	-	void HandleTweakCharText( UI08 index )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles new values for 'tweak chars
@@ -1838,7 +1838,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 			case 26:	j->SetWeight( reply.toShort() );				break;	// Weight
 			case 27:	j->SetCarve( reply.toShort() );					break;	// Carve
 			case 28:	j->SetVisible( (VisibleTypes)reply.toByte() );	break;	// Visible
-			case 29:	j->SetScriptTrigger( reply.toULong() );			break;	// ScriptTrigger ID
+			case 29:	j->SetScriptTrigger( reply.toUShort() );		break;	// ScriptTrigger ID
 			case 30:	j->WorldNumber( reply.toUByte() );				break; //WorldNumber
 			case 31:	
 			{
@@ -1854,7 +1854,7 @@ void CPIGumpInput::HandleTweakCharText( UI08 index )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleTownstoneText( CSocket *s, long index )
+//|	Function	-	void HandleTownstoneText( UI08 index )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles new values for townstones
@@ -1869,7 +1869,7 @@ void CPIGumpInput::HandleTownstoneText( UI08 index )
 		case 6:	// it's our donate resource button
 		{
 			CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
-			amountToDonate = reply.toULong();
+			amountToDonate = reply.toUInt();
 			if( amountToDonate == 0 )
 			{
 				tSock->sysmessage( 562 );
@@ -1992,7 +1992,7 @@ bool CPIGumpChoice::Handle( void )
 				tSock->sysmessage( 575 );
 				return true;
 			}
-			Skills->Tracking( tSock, static_cast<int>(sub - 1) );
+			Skills->Tracking( tSock, static_cast<SI32>(sub - 1) );
 		}
 	}
 	else if( main < ITEMMENUOFFSET ) // GM Menus
@@ -2046,12 +2046,12 @@ void GumpDisplay::AddData( GumpInfo *toAdd )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
+//|	Function	-	void GumpDisplay::AddData( std::string toAdd, UI32 value, UI08 type )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds the data to the gump to send
 //o-----------------------------------------------------------------------------------------------o
-void GumpDisplay::AddData( std::string toAdd, long int value, UI08 type )
+void GumpDisplay::AddData( std::string toAdd, UI32 value, UI08 type )
 {
 	if( toAdd.empty() )
 		return;
@@ -2146,12 +2146,12 @@ void GumpDisplay::SetTitle( const std::string& newTitle )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendVecsAsGump( CSocket *sock, stringList& one, stringList& two, long type, SERIAL serial )
+//|	Function	-	void SendVecsAsGump( CSocket *sock, stringList& one, stringList& two, UI32 type, SERIAL serial )
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two is data
 //o-----------------------------------------------------------------------------------------------o
-void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial )
+void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, UI32 type, SERIAL serial )
 {
 	CPSendGumpMenu toSend;
 	toSend.GumpID( type );
@@ -2169,12 +2169,12 @@ void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
+//|	Function	-	void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump data to the socket
 //o-----------------------------------------------------------------------------------------------o
-void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
+void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 {
 	char temp[512];
 	size_t i;
@@ -2237,7 +2237,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 			one.push_back( temp );
 		}
 
-		long value			= gumpData[i]->value;
+		UI32 value = gumpData[i]->value;
 		switch( gumpData[i]->type )
 		{
 			case 0:		// all numbers of sorts
@@ -2302,7 +2302,7 @@ void GumpDisplay::Send( long gumpNum, bool isMenu, SERIAL serial )
 					strcpy( temp, "NULL POINTER" );
 				else
 					strcpy( temp, gumpData[i]->stringValue.c_str() );
-				int sWidth;
+				SI32 sWidth;
 				sWidth = stringWidth * 2;
 				if( strlen( temp ) > static_cast<size_t>(sWidth) )	// too wide for one line, CRAP!
 				{

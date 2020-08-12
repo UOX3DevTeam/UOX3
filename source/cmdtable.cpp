@@ -35,11 +35,11 @@ namespace UOX
 {
 
 void CollectGarbage( void );
-void endmessage( int x );
+void endmessage( SI32 x );
 void HandleGumpCommand( CSocket *s, UString cmd, UString data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string& txt );
-void HandleHowTo( CSocket *sock, int cmdNumber );
+void HandleHowTo( CSocket *sock, SI32 cmdNumber );
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void closeCall( CSocket *s, bool isGM )
@@ -869,7 +869,7 @@ void command_spawnkill( CSocket *s )
 		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
 		if( spawnReg == NULL )
 			return;
-		int killed	= 0;
+		SI32 killed	= 0;
 
 		s->sysmessage( 349 );
 		CDataList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
@@ -1049,8 +1049,8 @@ void command_howto( CSocket *s )
 		if( !ValidateObject( mChar ) )
 			return;
 
-		int iCmd = 2;
-		int numAdded = 0;
+		SI32 iCmd = 2;
+		SI32 numAdded = 0;
 		UI08 pagenum = 1;
 		UI16 position = 40;
 		UI16 linenum = 1;
@@ -1141,7 +1141,7 @@ void command_howto( CSocket *s )
 			++jAdd;
 		}
 		pagenum = 1; 
-		for( int i = 0; i < numAdded; i += 10 )
+		for( SI32 i = 0; i < numAdded; i += 10 )
 		{
 			toSend.AddCommand( "page %u", pagenum );
 			if( i >= 10 )
@@ -1159,7 +1159,7 @@ void command_howto( CSocket *s )
 	}
 	else
 	{
-		int i = 0;
+		SI32 i = 0;
 		COMMANDMAP_ITERATOR toFind;
 		for( toFind = CommandMap.begin(); toFind != CommandMap.end(); ++toFind )
 		{

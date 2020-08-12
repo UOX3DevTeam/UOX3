@@ -43,14 +43,14 @@ private:
 	struct GumpInfo
 	{
 		std::string name;
-		long int value;
+		UI32 value;
 		UI08 type;
 		std::string stringValue;
 		// acceptable type values
-		// 0 -> straight plain long int
-		// 1 -> hex long int
-		// 2 -> long int separated into 4 parts, decimal
-		// 3 -> long int separated into 4 parts, hex
+		// 0 -> straight plain UI32
+		// 1 -> hex UI32
+		// 2 -> UI32 separated into 4 parts, decimal
+		// 3 -> UI32 separated into 4 parts, hex
 		// 4 -> string
 		// 5 -> 2 byte hex display
 		// 6 -> 2 byte decimal display
@@ -63,13 +63,13 @@ private:
 	std::string title;
 public:
 	void AddData( GumpInfo *toAdd );
-	void AddData( std::string toAdd, long int value, UI08 type = 0 );
+	void AddData( std::string toAdd, UI32 value, UI08 type = 0 );
 	void AddData( std::string toAdd, const std::string &toSet, UI08 type = 4 );
 	GumpDisplay( CSocket *target );
 	GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
 	~GumpDisplay();
 	void SetTitle( const std::string& newTitle );
-	void Send( long gumpNum, bool isMenu, SERIAL serial );
+	void Send( UI32 gumpNum, bool isMenu, SERIAL serial );
 	void Delete( void );
 };
 

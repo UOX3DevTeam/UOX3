@@ -26,10 +26,10 @@
 	return;
 #endif
 
-typedef double				R64;
 typedef float				R32;
-typedef unsigned long int	UI32;
-typedef signed long int		SI32;
+typedef double				R64;
+typedef unsigned int		UI32;
+typedef signed int			SI32;
 typedef unsigned short int	UI16;
 typedef signed short int	SI16;
 typedef unsigned char		UI08;
@@ -37,22 +37,22 @@ typedef signed char			SI08;
 typedef unsigned long long	UI64;
 typedef signed long long	SI64;
 
-typedef UI32		TIMERVAL;
-typedef UI32		UOXSOCKET;
-typedef UI16		RACEID;
 typedef UI08		GENDER;
-typedef UI16		COLOUR;
 typedef UI08		LIGHTLEVEL;
 typedef UI08		COLDLEVEL;
 typedef UI08		HEATLEVEL;
 typedef UI08		SECONDS;
 typedef UI08		ARMORCLASS;
-typedef UI32		SERIAL;
 typedef SI08		RACEREL;
-typedef UI16		SKILLVAL;
 typedef SI08		RANGE;
+typedef UI16		RACEID;
+typedef UI16		COLOUR;
+typedef UI16		SKILLVAL;
 typedef UI16		weathID;
 typedef SI16		GUILDID;
+typedef UI32		TIMERVAL;
+typedef UI32		UOXSOCKET;
+typedef UI32		SERIAL;
 
 const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
 const UI16			INVALIDID			= 0xFFFF;

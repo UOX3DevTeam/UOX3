@@ -95,7 +95,7 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 
 	// Account-Count
-	UString AccountCount	= UString::number( Accounts->size() );
+	UString AccountCount	= UString::number( (SI32)(Accounts->size()) );
 	size_t Pos				= ParsedContent.find( "%accounts" ); 
 	while( Pos != std::string::npos )
 	{
@@ -118,7 +118,7 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%version" );
 	}
 	// Character Count
-	UString CharacterCount	= UString::number( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+	UString CharacterCount	= UString::number( (SI32)ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	Pos						= ParsedContent.find( "%charcount" ); 
 	while( Pos != std::string::npos )
 	{
@@ -127,7 +127,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Item Count
-	UString ItemCount	= UString::number( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
+	UString ItemCount	= UString::number( (SI32)ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
 	Pos					= ParsedContent.find( "%itemcount" );
 	while( Pos != std::string::npos )
 	{
@@ -216,7 +216,7 @@ void cHTMLTemplate::Process( void )
 	time_t currTime;
 	time( &currTime );
 	currTime = mktime( gmtime( &currTime ) );
-	UString timestamp = UString::number( static_cast<size_t>(currTime) );
+	UString timestamp = UString::number( (SI32)currTime );
 	Pos = ParsedContent.find( "%tstamp" ); 
 	while( Pos != std::string::npos )
 	{
@@ -407,7 +407,7 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// GuildCount
-	UString GuildCount	= UString::number( GuildSys->NumGuilds() );
+	UString GuildCount	= UString::number( (SI32)GuildSys->NumGuilds() );
 	Pos					= ParsedContent.find( "%guildcount" );
 	while( Pos != std::string::npos )
 	{
@@ -644,7 +644,7 @@ void cHTMLTemplate::Load( ScriptSection *found )
 		UTag = tag.upper();
 
 		if( UTag == "UPDATE" )
-			UpdateTimer = data.toULong();
+			UpdateTimer = data.toUInt();
 		else if( UTag == "TYPE" )
 		{
 			UData = data.upper();
@@ -774,7 +774,7 @@ void cHTMLTemplates::TemplateInfoGump( CSocket *mySocket )
 	UI32 Entries = 0; // Entries per page
 	UI16 CurrentPage = 0; // Page
 
-	for( unsigned int i = 0; i < Templates.size(); ++i )
+	for( UI32 i = 0; i < Templates.size(); ++i )
 	{
 		if( Entries == 0 )
 		{

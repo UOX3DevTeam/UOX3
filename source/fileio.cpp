@@ -70,7 +70,7 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 #else
 	// postfix version
         // open the file
-	int fd = open(fileName,
+	SI32 fd = open(fileName,
 #ifdef O_NOCTTY
 				O_NOCTTY | // if stdin was closed then opening a file
 								// would cause the file to become the controlling
@@ -126,7 +126,7 @@ void UOXFile::seek( size_t offset, UI08 whence )
 }
 
 
-int UOXFile::getch( void )
+SI32 UOXFile::getch( void )
 {
 	return *(memPtr + bIndex++);
 }
@@ -450,7 +450,7 @@ void LoadTeleportLocations( void )
 						tempX = 0, tempY = 0;
 						tempZ = ILLEGAL_Z;
 						data = teleportSect->GrabData().simplifyWhiteSpace();
-						int sectCount = data.sectionCount( "," );
+						SI32 sectCount = data.sectionCount( "," );
 						if( sectCount >= 5 )
 						{
 							tempX	= data.section( ",", 0, 0 ).toUShort();
@@ -628,7 +628,7 @@ void LoadPlaces( void )
 			if( toScan == NULL )
 				continue;
 			entryName			= locScp->EntryName();
-			size_t entryNum		= entryName.section( " ", 1, 1 ).toULong();
+			size_t entryNum		= entryName.section( " ", 1, 1 ).toUInt();
 			if( entryName.section( " ", 0, 0 ).upper() == "LOCATION" && entryNum )
 			{
 				if( cwmWorldState->goPlaces.find( entryNum ) != cwmWorldState->goPlaces.end() )

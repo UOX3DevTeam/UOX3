@@ -95,11 +95,11 @@ namespace UOX
 		in the party.
         @par
 		CChar *find				Character to find the party entry for
-		int *location			A pointer to the storage of the location, if any,
+		SI32 *location			A pointer to the storage of the location, if any,
 								so that we can index quickly into the members[]
 								to find the character again.  Used internally.
         */
-		PartyEntry *				Find( CChar *find, int *location = NULL );
+		PartyEntry *				Find( CChar *find, SI32 *location = NULL );
         /** Returns whether a member is in the party or not
         @remarks
 		This returns true if the character exists in the party

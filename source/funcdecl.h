@@ -55,7 +55,7 @@ inline UI32 calcserial( UI08 a1, UI08 a2, UI08 a3, UI08 a4 )
 //o-----------------------------------------------------------------------------------------------o
 // Socket stuff
 //o-----------------------------------------------------------------------------------------------o
-void	SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, long type, SERIAL serial );
+void	SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, UI32 type, SERIAL serial );
 void	SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin = false );
 bool	isOnline( CChar& mChar );
 
@@ -161,7 +161,7 @@ inline std::string TimeStamp( void )
 		gettimeofday( &t, NULL ); 
 		return ( 1000 * ( t.tv_sec - Seconds ) + ( (t.tv_usec/1000) - Milliseconds ) ); 
 	}
-	inline void UOXSleep( int toSleep )
+	inline void UOXSleep( SI32 toSleep )
 	{
 		usleep( toSleep * 1000 );
 	}
@@ -179,7 +179,7 @@ inline std::string TimeStamp( void )
 		ftime( &t ); 
 		return ( 1000 * ( t.time - Seconds ) + ( t.millitm - Milliseconds ) ); 
 	};
-	inline void UOXSleep( int toSleep )
+	inline void UOXSleep( SI32 toSleep )
 	{
 		Sleep( toSleep );
 	}

@@ -22,9 +22,9 @@ namespace UOX
 		JSEncapsulate();
 		void		SetContext( JSContext *jsCX, jsval *jsVP );
 		bool		isType( JSEncapsObjectType toCheck );
-		int			toInt( void );
+		SI32		toInt( void );
 		bool		toBool( void );
-		float		toFloat( void );
+		R32		toFloat( void );
 		std::string toString( void );
 		void *		toObject( void );
 
@@ -36,8 +36,8 @@ namespace UOX
 		bool				beenParsed[JSOT_COUNT];
 		JSEncapsObjectType	nativeType;
 
-		int					intVal;
-		float				floatVal;
+		SI32				intVal;
+		R32					floatVal;
 		bool				boolVal;
 		std::string			stringVal;
 		void *				objectVal;

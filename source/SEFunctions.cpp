@@ -109,7 +109,7 @@ JSBool SE_DoTempEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		return JS_FALSE;
 	}
 	UI08 iType			= static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
-	long targNum		= JSVAL_TO_INT( argv[3] );
+	UI32 targNum		= JSVAL_TO_INT( argv[3] );
 	UI08 more1			= (UI08)JSVAL_TO_INT( argv[4] );
 	UI08 more2			= (UI08)JSVAL_TO_INT( argv[5] );
 	UI08 more3			= (UI08)JSVAL_TO_INT( argv[6] );
@@ -495,7 +495,7 @@ JSBool SE_RegisterSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		DoSEErrorMessage( "RegisterSpell: Invalid number of arguments (takes 2)" );
  		return JS_FALSE;
 	}
-	int spellNumber			= JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber			= JSVAL_TO_INT( argv[0] );
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 	cScript *myScript		= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
 	Magic->Register( myScript, spellNumber, isEnabled );
@@ -517,7 +517,7 @@ JSBool SE_RegisterSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		DoSEErrorMessage( "RegisterSkill: Invalid number of arguments (takes 2)" );
  		return JS_FALSE;
 	}
-	int skillNumber			= JSVAL_TO_INT( argv[0] );
+	SI32 skillNumber			= JSVAL_TO_INT( argv[0] );
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 	UI16 scriptID			= JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	if( scriptID != 0xFFFF )
@@ -605,7 +605,7 @@ JSBool SE_RegisterKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		DoSEErrorMessage( "RegisterKey: JS Script has an Invalid ScriptID" );
 		return JS_FALSE;
 	}	
-	int toPass = 0;
+	SI32 toPass = 0;
 	if( encaps.isType( JSOT_STRING ) )
 	{
 		std::string enStr = encaps.toString();
@@ -678,7 +678,7 @@ JSBool SE_DisableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		DoSEErrorMessage( "DisableKey: Invalid number of arguments (takes 1)" );
  		return JS_FALSE;
 	}
-	int toDisable	= JSVAL_TO_INT( argv[0] );
+	SI32 toDisable = JSVAL_TO_INT( argv[0] );
 	Console.SetKeyStatus( toDisable, false );
  	return JS_TRUE;
 }
@@ -712,7 +712,7 @@ JSBool SE_DisableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		DoSEErrorMessage( "DisableSpell: Invalid number of arguments (takes 1)" );
  		return JS_FALSE;
 	}
-	int spellNumber	= JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
 	Magic->SetSpellStatus( spellNumber, false );
  	return JS_TRUE;
 }
@@ -746,7 +746,7 @@ JSBool SE_EnableSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		DoSEErrorMessage( "EnableSpell: Invalid number of arguments (takes 1)" );
  		return JS_FALSE;
 	}
-	int spellNumber	= JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
 	Magic->SetSpellStatus( spellNumber, true );
  	return JS_TRUE;
 }
@@ -763,7 +763,7 @@ JSBool SE_EnableKey( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		DoSEErrorMessage( "EnableKey: Invalid number of arguments (takes 1)" );
  		return JS_FALSE;
 	}
-	int toEnable	= JSVAL_TO_INT( argv[0] );
+	SI32 toEnable = JSVAL_TO_INT( argv[0] );
 	Console.SetKeyStatus( toEnable, true );
  	return JS_TRUE;
 }
@@ -961,7 +961,7 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
 	CChar *myChar			= static_cast<CChar *>(JS_GetPrivate( cx, mChar ));
-	int amount				= (int)JSVAL_TO_INT( argv[2] );
+	SI32 amount				= (SI32)JSVAL_TO_INT( argv[2] );
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ) );
 	bool isString			= false; //Never used!!
 	std::string szItemName;			 //Never used!!
@@ -1013,9 +1013,9 @@ JSBool SE_RollDice( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 		DoSEErrorMessage( "RollDice: Invalid number of arguments (takes 3)" );
 		return JS_FALSE;
 	}
-	long numDice = JSVAL_TO_INT( argv[0] );
-	long numFace = JSVAL_TO_INT( argv[1] );
-	long numAdd  = JSVAL_TO_INT( argv[2] );
+	UI32 numDice = JSVAL_TO_INT( argv[0] );
+	UI32 numFace = JSVAL_TO_INT( argv[1] );
+	UI32 numAdd  = JSVAL_TO_INT( argv[2] );
 
 	cDice toRoll( numDice, numFace, numAdd );
 
@@ -1254,7 +1254,7 @@ JSBool SE_GetRaceSkillAdjustment( JSContext *cx, JSObject *obj, uintN argc, jsva
 		return JS_FALSE;
 	}
 	RACEID race = (RACEID)JSVAL_TO_INT( argv[0] );
-	int skill = JSVAL_TO_INT( argv[1] );
+	SI32 skill = JSVAL_TO_INT( argv[1] );
 	*rval = INT_TO_JSVAL( Races->DamageFromSkill( skill, race ) );
 	return JS_TRUE;
 }
@@ -1478,9 +1478,9 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	UI16 tileID		= (UI16)JSVAL_TO_INT( argv[4] );
 	bool tileFound	= false;
 
-	for( int i = xLoc - radius; i <= (xLoc + radius); ++i )
+	for( SI32 i = xLoc - radius; i <= (xLoc + radius); ++i )
 	{
-		for( int j = yLoc - radius; j <= (yLoc + radius); ++j )
+		for( SI32 j = yLoc - radius; j <= (yLoc + radius); ++j )
 		{
 			CStaticIterator msi( xLoc, yLoc, wrldNumber );
 			for( Static_st *mRec = msi.First(); mRec != NULL; mRec = msi.Next() )
@@ -1556,7 +1556,7 @@ JSBool SE_StringToNum( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 
 	UString str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 
-	*rval = INT_TO_JSVAL( str.toLong() );
+	*rval = INT_TO_JSVAL( str.toInt() );
 	return JS_TRUE;
 }
 
@@ -1575,7 +1575,7 @@ JSBool SE_NumToString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		return JS_FALSE;
 	}
 
-	int num		= JSVAL_TO_INT( argv[0] );
+	SI32 num = JSVAL_TO_INT( argv[0] );
 	UString str = UString::number( num );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
@@ -1596,7 +1596,7 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	int num		= JSVAL_TO_INT( argv[0] );
+	SI32 num = JSVAL_TO_INT( argv[0] );
 	UString str = UString::number( num, 16 );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
@@ -1850,7 +1850,7 @@ JSBool SE_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 		return JS_FALSE; 	
 	} 	
 
-	int toLoad = JSVAL_TO_INT( argv[0] );
+	SI32 toLoad = JSVAL_TO_INT( argv[0] );
 
 	switch( toLoad )
 	{

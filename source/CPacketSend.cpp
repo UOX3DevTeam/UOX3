@@ -747,7 +747,7 @@ void CPBuyItem::InternalReset( void )
 	pStream.WriteByte(  7, 0x00 );
 }
 
-const long loopbackIP = (127<<24) + 1;
+const UI32 loopbackIP = (127<<24) + 1;
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPRelay()
 //o-----------------------------------------------------------------------------------------------o
@@ -766,18 +766,18 @@ CPRelay::CPRelay()
 {
 	InternalReset();
 }
-CPRelay::CPRelay( long newIP )
+CPRelay::CPRelay( UI32 newIP )
 {
 	InternalReset();
 	ServerIP( newIP );
 }
-CPRelay::CPRelay( long newIP, UI16 newPort )
+CPRelay::CPRelay( UI32 newIP, UI16 newPort )
 {
 	InternalReset();
 	ServerIP( newIP );
 	Port( newPort );
 }
-void CPRelay::ServerIP( long newIP )
+void CPRelay::ServerIP( UI32 newIP )
 {
 	pStream.WriteLong( 1, newIP );
 }
@@ -785,7 +785,7 @@ void CPRelay::Port( UI16 newPort )
 {
 	pStream.WriteShort( 5, newPort );
 }
-void CPRelay::SeedIP( long newIP )
+void CPRelay::SeedIP( UI32 newIP )
 {
 	pStream.WriteLong( 7, newIP );
 }
@@ -1774,11 +1774,11 @@ CPOpenGump::CPOpenGump( CChar &toCopy )
 	InternalReset();
 	CopyData( toCopy );
 }
-void CPOpenGump::Length( int totalLines )
+void CPOpenGump::Length( SI32 totalLines )
 {
 	pStream.WriteShort( 1, totalLines );
 }
-void CPOpenGump::GumpIndex( int index )
+void CPOpenGump::GumpIndex( SI32 index )
 {
 	pStream.WriteShort( 7, index );
 }
@@ -3173,7 +3173,7 @@ void CPSkillsValues::NumSkills( UI08 numSkills )
 }
 UI08 CPSkillsValues::NumSkills( void )
 {
-	int size = pStream.GetShort( 1 );
+	SI32 size = pStream.GetShort( 1 );
 	size -= 6;
 	size /= 9;
 	return (UI08)size;
@@ -3199,7 +3199,7 @@ CPSkillsValues::CPSkillsValues( CChar &toCopy )
 
 void CPSkillsValues::SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock )
 {
-	int offset = ( skillID * 9 ) + 4;
+	SI32 offset = ( skillID * 9 ) + 4;
 	pStream.WriteShort( offset, skillID + 1 );
 	pStream.WriteShort( offset + 2, skillVal );
 	pStream.WriteShort( offset + 4, baseSkillVal );
@@ -3256,7 +3256,7 @@ void CPMapMessage::GumpArt( SI16 newArt )
 {
 	pStream.WriteShort( 5, newArt );
 }
-void CPMapMessage::KeyUsed( long key )
+void CPMapMessage::KeyUsed( UI32 key )
 {
 	pStream.WriteLong( 1, key );
 }
@@ -3785,7 +3785,7 @@ void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
 	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << numItems << std::endl;
-	int baseOffset = 5;
+	SI32 baseOffset = 5;
 	for( size_t x = 0; x < numItems; ++x )
 	{
 		outStream << "  ITEM " << x << "      ID: " << "0x" << std::hex << pStream.GetULong( baseOffset ) << std::endl;
@@ -3941,7 +3941,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Block size     : " << pStream.GetUShort( 1 ) << std::endl;
 	outStream << "Vendor ID      : " << std::hex << pStream.GetULong( 3 ) << std::endl;
 	outStream << "Number of Items: " << std::dec << (SI16)pStream.GetByte( 7 ) << std::endl;
-	int baseOffset = 8;
+	SI32 baseOffset = 8;
 	for( UI32 x = 0; x < pStream.GetByte( 7 ); ++x )
 	{
 		outStream << "  ITEM " << x << std::endl;
@@ -4806,7 +4806,7 @@ void CPNewObjectInfo::CopyMultiData( CMultiObj& mMulti, CChar &mChar )
 	pStream.WriteByte( 3, 0x02 ); //DataType
 	pStream.WriteLong( 4, mMulti.GetSerial() ); //Serial
 
-	int itemID = mMulti.GetID();
+	SI32 itemID = mMulti.GetID();
 	itemID &= 0x3FFF;
 	if( mChar.ViewHouseAsIcon() )
 		pStream.WriteShort( 8, 0x14F0 );
@@ -5726,8 +5726,8 @@ void CPNewSpellBook::CopyData( CItem& obj )
 	pStream.WriteLong( 7, obj.GetSerial() );
 	for( UI08 i = 0 ; i < 64 ; ++i )
 	{
-		int y = (i % 8);
-		int x = 15 + (int)(i / 8);
+		SI32 y = (i % 8);
+		SI32 x = 15 + (SI32)(i / 8);
 		if( Magic->HasSpell( &obj, i ) )
 			pStream.WriteByte( x, (pStream.GetByte( x ) | static_cast<UI08>(power( 2, y ))) );
 	}
@@ -7177,7 +7177,7 @@ void CPPartyMemberList::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Subcommand       : " << pStream.GetShort( 3 ) << std::endl;
 	outStream << "Party Sub        : " << (UI16)pStream.GetByte( 5 ) << std::endl;
 	outStream << "Member Count     : " << (UI16)pStream.GetByte( 6 ) << std::endl;
-	for( int i = 0; i < pStream.GetByte( 6 ); ++i )
+	for( SI32 i = 0; i < pStream.GetByte( 6 ); ++i )
 		outStream << "    Member #" << i << "    : " << std::hex << "0x" << pStream.GetLong( 7 + 4 * i ) << std::dec << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );
@@ -7289,7 +7289,7 @@ void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )
 	outStream << "Member Count     : " << (UI16)pStream.GetByte( 6 ) << std::endl;
 	outStream << "Member Removed   : 0x" << std::hex << (UI16)pStream.GetLong( 7 ) << std::dec << std::endl;
 	outStream << "Members          : " << std::endl;
-	for( int i = 0; i < pStream.GetByte( 6 ); ++i )
+	for( SI32 i = 0; i < pStream.GetByte( 6 ); ++i )
 		outStream << "    Member #" << i << "    : " << std::hex << "0x" << pStream.GetLong( 11 + 4 * i ) << std::dec << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPUOXBuffer::Log( outStream, false );

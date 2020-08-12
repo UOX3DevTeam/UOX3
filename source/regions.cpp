@@ -10,13 +10,13 @@ namespace UOX
 CMapHandler *MapRegion;
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	int FileSize( std::string filename )
+//|	Function	-	SI32 FileSize( std::string filename )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the filesize of a given file
 //o-----------------------------------------------------------------------------------------------o
-int FileSize( std::string filename )
+SI32 FileSize( std::string filename )
 {
-	int retVal = 0;
+	SI32 retVal = 0;
 
 	std::ifstream readDestination;
 
@@ -666,13 +666,13 @@ void CMapHandler::Save( void )
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
 	std::ofstream writeDestination, houseDestination;
-	int onePercent = 0;
-	//const int onePercent			= (int)((float)(UpperX*UpperY*Map->MapCount())/100.0f);
+	SI32 onePercent = 0;
+	//const SI32 onePercent			= (SI32)((R32)(UpperX*UpperY*Map->MapCount())/100.0f);
 	UI08 i = 0;
 	for( i = 0; i < Map->MapCount(); ++i )
 	{
 		MapData_st& mMap = Map->GetMapData( i );
-		onePercent += (int)(mMap.xBlock / MapColSize) * (mMap.yBlock / MapRowSize);
+		onePercent += (SI32)(mMap.xBlock / MapColSize) * (mMap.yBlock / MapRowSize);
 	}
 	onePercent /= 100.0f;
 
@@ -749,7 +749,7 @@ void CMapHandler::Save( void )
 	Console.PrintDone();
 
 	const UI32 e_t = getclock();
-	Console.Print( "World saved in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
+	Console.Print( "World saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f );
 
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -780,7 +780,7 @@ void CMapHandler::Load( void )
 {
 	const SI16 AreaX		= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY		= UpperY / 8;
-//	const int onePercent	= (int)((float)(AreaX*AreaY)/100.0f);
+//	const SI32 onePercent	= (SI32)((R32)(AreaX*AreaY)/100.0f);
 	UI32 count				= 0;
 	std::ifstream readDestination;
 	Console.TurnYellow();
@@ -790,7 +790,7 @@ void CMapHandler::Load( void )
 	std::string filename;
 
 	UI32 runningCount = 0;
-	int fileSizes[AreaX][AreaY];
+	SI32 fileSizes[AreaX][AreaY];
 
 	for( SI16 cx = 0; cx < AreaX; ++cx )
 	{
@@ -805,7 +805,7 @@ void CMapHandler::Load( void )
 	if( runningCount == 0 )
 		runningCount = 1;
 
-	int runningDone			= 0;
+	SI32 runningDone			= 0;
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
@@ -825,7 +825,7 @@ void CMapHandler::Load( void )
 			LoadFromDisk( readDestination, runningDone, fileSizes[counter1][counter2], runningCount );
 
 			runningDone		+= fileSizes[counter1][counter2];
-			float tempVal	= (float)runningDone / (float)runningCount * 100.0f;
+			float tempVal	= (R32)runningDone / (R32)runningCount * 100.0f;
 			if( tempVal <= 10 )
 				Console << "\b\b" << (UI32)(tempVal) << "%";
 			else if( tempVal <= 100 )
@@ -856,7 +856,7 @@ void CMapHandler::Load( void )
 	houseDestination.close();
 
 	UI32 e_t	= getclock();
-	Console.Print( "ASCII world loaded in %.02fsec\n", ((float)(e_t-s_t))/1000.0f );
+	Console.Print( "ASCII world loaded in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f );
 
 	UI08 i		= 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -867,20 +867,20 @@ void CMapHandler::Load( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void LoadFromDisk( std::ifstream& readDestination, int baseValue, int fileSize, int maxSize )
+//|	Function	-	void LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize )
 //|	Date		-	23 July, 2000
 //|	Programmer	-	Abaddon
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in objects from specified file
 //o-----------------------------------------------------------------------------------------------o
-void CMapHandler::LoadFromDisk( std::ifstream& readDestination, int baseValue, int fileSize, int maxSize )
+void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize )
 {
 	char line[1024];
-	float basePercent	= (float)baseValue / (float)maxSize * 100.0f;
-	float targPercent	= (float)(baseValue + fileSize) / (float)maxSize * 100.0f;
-	float diffValue		= targPercent - basePercent;
+	R32 basePercent	= (R32)baseValue / (R32)maxSize * 100.0f;
+	R32 targPercent	= (R32)(baseValue + fileSize) / (R32)maxSize * 100.0f;
+	R32 diffValue		= targPercent - basePercent;
 
-	int updateCount		= 0;
+	SI32 updateCount		= 0;
 	while( !readDestination.eof() && !readDestination.fail() )
 	{
 		readDestination.getline( line, 1024 );
@@ -903,8 +903,8 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, int baseValue, i
 
 			if( fileSize != -1 && (++updateCount)%20 == 0 )
 			{
-				float curPos	= readDestination.tellg();
-				float tempVal	= basePercent + ( curPos / fileSize * diffValue );
+				R32 curPos	= readDestination.tellg();
+				R32 tempVal	= basePercent + ( curPos / fileSize * diffValue );
 				if( tempVal <= 10 )
 					Console << "\b\b" << (UI32)(tempVal) << "%";
 				else

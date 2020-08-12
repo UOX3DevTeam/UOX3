@@ -60,10 +60,10 @@ private:
 public:
 
 					CRace();
-					CRace( int numRaces );
+					CRace( SI32 numRaces );
 					~CRace();
 
-	SKILLVAL		Skill( int skillNum ) const;
+	SKILLVAL		Skill( SI32 skillNum ) const;
 	const std::string Name( void ) const;
 	bool			RequiresBeard( void ) const;
 	bool			NoBeard( void ) const;
@@ -94,7 +94,7 @@ public:
 	bool			DoesHunger( void ) const;
 	void			DoesHunger( bool newValue );
 
-	void			Skill( SKILLVAL newValue, int iNum );
+	void			Skill( SKILLVAL newValue, SI32 iNum );
 	void			Name( const std::string& newName );
 	void			RequiresBeard( bool newValue );
 	void			NoBeard( bool newValue );
@@ -122,7 +122,7 @@ public:
 	void			LanguageMin( SKILLVAL newValue );
 	void			VisibilityRange( RANGE newValue );
 
-	void			NumEnemyRaces( int iNum );
+	void			NumEnemyRaces( SI32 iNum );
 	void			RaceRelation( RaceRelate value, RACEID race );
 
 	COLOUR			RandomSkin( void ) const;
@@ -137,7 +137,7 @@ public:
 	bool			IsValidHair( COLOUR val ) const;
 	bool			IsValidBeard( COLOUR val ) const;
 
-	void			Load( size_t sectNum, int modCount );
+	void			Load( size_t sectNum, SI32 modCount );
 	CRace&			operator =( CRace& trgRace );
 };
 
@@ -186,7 +186,7 @@ class cRaces
 		SI08			Damage( RACEID race, WeatherType element ) const;
 		bool			Affect( RACEID race, WeatherType element ) const;
 		const std::string Name( RACEID race ) const;	// Returns race name of player
-		SKILLVAL		Skill( int skill, RACEID race ) const; 
+		SKILLVAL		Skill( SI32 skill, RACEID race ) const; 
 		GENDER			GenderRestrict( RACEID race ) const; 
 		bool			RequireBeard( RACEID race ) const;
 		bool			IsPlayerRace( RACEID race ) const;
@@ -200,8 +200,8 @@ class cRaces
 		COLOUR			RandomSkin( RACEID x ) const; 
 		COLOUR			RandomHair( RACEID x ) const; 
 		COLOUR			RandomBeard( RACEID x ) const;
-		SI32			DamageFromSkill( int skill, RACEID x ) const;
-		SI32			FightPercent( int skill, RACEID x ) const;
+		SI32			DamageFromSkill( SI32 skill, RACEID x ) const;
+		SI32			FightPercent( SI32 skill, RACEID x ) const;
 		SKILLVAL		LanguageMin( RACEID x ) const;
 		LIGHTLEVEL		VisLevel( RACEID x ) const;
 		RANGE			VisRange( RACEID x ) const;
@@ -211,7 +211,7 @@ class cRaces
 		void			Secs( RACEID race, WeatherType element, SECONDS value );
 		void			Damage( RACEID race, WeatherType element, SI08 value );
 		void			Affect( RACEID race, WeatherType element, bool value );
-		void			Skill( int skill, int value, RACEID race );
+		void			Skill( SI32 skill, SI32 value, RACEID race );
 		void			GenderRestrict( GENDER gender, RACEID race ); 
 		void			RequireBeard( bool value, RACEID race ); 
 		void			NoBeard( bool value, RACEID race );

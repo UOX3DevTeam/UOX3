@@ -11,12 +11,12 @@ namespace UOX
 class socket_error : public std::runtime_error
 {
 private:
-	long		errorNum;
+	UI32		errorNum;
 public:
 				socket_error( const std::string& what_arg );
-				socket_error( const long errorNumber );
+				socket_error( const UI32 errorNumber );
 				socket_error( void );
-	long		ErrorNumber( void ) const;
+	UI32		ErrorNumber( void ) const;
 	const char *what( void ) const throw();
 };
 
@@ -226,7 +226,7 @@ private:
 
 	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
-	int						a_socket;
+	SI32					a_socket;
 	SOCKLIST				connClients, loggedInClients;
 
 	struct sockaddr_in		client_addr;

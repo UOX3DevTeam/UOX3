@@ -226,7 +226,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply )
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
 					customTag.m_Destroy		= FALSE;
-					customTag.m_IntValue = customTagStringValue.toLong();
+					customTag.m_IntValue = customTagStringValue.toInt();
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
 					applyTo->SetTag( customTagName, customTag );

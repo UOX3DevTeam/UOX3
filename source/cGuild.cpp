@@ -687,9 +687,9 @@ void CGuild::Load( ScriptSection *toRead )
 				break;
 			case 'M':
 				if( UTag == "MASTER" )
-					Master( data.toULong() );
+					Master( data.toUInt() );
 				else if( UTag == "MEMBER" )
-					NewMember( data.toULong() );
+					NewMember( data.toUInt() );
 				break;
 			case 'N':
 				if( UTag == "NAME" )
@@ -699,10 +699,10 @@ void CGuild::Load( ScriptSection *toRead )
 				break;
 			case 'R':
 				if( UTag == "RECRUIT" )
-					NewRecruit( data.toULong() );
+					NewRecruit( data.toUInt() );
 			case 'S':
 				if( UTag == "STONE" )
-					Stone( data.toULong() );
+					Stone( data.toUInt() );
 				break;
 			case 'T':
 				if( UTag == "TYPE" )
@@ -763,7 +763,7 @@ void CGuild::CalcMaster( void )
 		Master( INVALIDSERIAL );
 		return;
 	}
-	std::vector< int > votes;
+	std::vector< SI32 > votes;
 	votes.resize( members.size() );
 	UI32 maxIndex = 0;
 

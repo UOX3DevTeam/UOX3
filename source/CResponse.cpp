@@ -466,7 +466,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 						else
 						{
 							if( Npc->GetBaseSkill( (UI08)skill ) <= 250)
-								sprintf( temp2, Dictionary->GetEntry( 1306 ).c_str(),(int)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(int)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
+								sprintf( temp2, Dictionary->GetEntry( 1306 ).c_str(),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
 							else
 								sprintf( temp2, Dictionary->GetEntry( 1306 ).c_str(), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
 							strcat( temp, temp2 );
@@ -806,7 +806,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			{
 				if( Npc->GetHoldG() > 9 )
 				{
-					pay = (int)( Npc->GetHoldG() / 10 );
+					pay = (SI32)( Npc->GetHoldG() / 10 );
 					give = Npc->GetHoldG() - pay;
 				} 
 				else 
@@ -862,7 +862,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				UI32 pay = 0;
 				if( Npc->GetHoldG() > 9 )
 				{
-					pay = (int)( Npc->GetHoldG() / 10 );
+					pay = (SI32)( Npc->GetHoldG() / 10 );
 				} 
 				else 
 				{

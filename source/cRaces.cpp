@@ -111,7 +111,7 @@ void cRaces::load( void )
 			}
 			else
 			{
-				UI32 modifierCount = CombatMods->GrabData().toULong();
+				UI32 modifierCount = CombatMods->GrabData().toUInt();
 				if( modifierCount < 4 )
 				{
 					Console << "MODCOUNT must be more >= 4, or it uses the defaults!" << myendl;
@@ -327,7 +327,7 @@ bool cRaces::hairInRange( COLOUR color, RACEID x ) const
 	return races[x]->IsValidHair( color );
 }
 
-SKILLVAL cRaces::Skill( int skill, RACEID race ) const
+SKILLVAL cRaces::Skill( SI32 skill, RACEID race ) const
 // PRE:	skill is valid, race is valid
 // POST:	returns skill bonus associated with race
 { 
@@ -336,7 +336,7 @@ SKILLVAL cRaces::Skill( int skill, RACEID race ) const
 	return races[race]->Skill( skill );
 }
 
-void cRaces::Skill( int skill, int value, RACEID race )
+void cRaces::Skill( SI32 skill, SI32 value, RACEID race )
 // PRE:	skill is valid, value is valid, race is valid
 // POST:	sets race's skill bonus to value
 { 
@@ -454,7 +454,7 @@ bool cRaces::skinRestricted( RACEID x ) const
 	return races[x]->IsSkinRestricted();
 }
 
-SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
+SI32 cRaces::DamageFromSkill( SI32 skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns chance difference to race x in skill skill
 {
@@ -470,21 +470,21 @@ SI32 cRaces::DamageFromSkill( int skill, RACEID x ) const
 	return 0;
 }
 
-SI32 cRaces::FightPercent( int skill, RACEID x ) const
+SI32 cRaces::FightPercent( SI32 skill, RACEID x ) const
 // PRE:	x is valid, skill is valid
 // POST:	returns positive/negative fight damage bonus for race x with skill skill
 {
 	if( InvalidRace( x ) )
 		return 100;
 	SKILLVAL modifier = races[x]->Skill( skill );
-	int divValue = combat[modifier].value / 10;
+	SI32 divValue = combat[modifier].value / 10;
 	divValue = divValue / 10;
 	if( divValue == 0 )
 		return 100;
-	if( modifier >= static_cast<int>(combat.size()) )
-		return -(int)(100/(R32)divValue);
+	if( modifier >= static_cast<SI32>(combat.size()) )
+		return -(SI32)(100/(R32)divValue);
 	else
-		return (int)(100/(R32)divValue);
+		return (SI32)(100/(R32)divValue);
 	return 100;
 }
 
@@ -780,7 +780,7 @@ void cRaces::IsPlayerRace( RACEID x, bool value )
 	races[x]->IsPlayerRace( value );
 }
 
-SKILLVAL CRace::Skill( int skillNum ) const
+SKILLVAL CRace::Skill( SI32 skillNum ) const
 {
 	return iSkills[skillNum];
 }
@@ -847,7 +847,7 @@ RANGE CRace::VisibilityRange( void ) const
 	return visDistance;
 }
 
-void CRace::Skill( SKILLVAL newValue, int iNum )
+void CRace::Skill( SKILLVAL newValue, SI32 iNum )
 {
 	iSkills[iNum] = newValue;
 }
@@ -967,7 +967,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 }
 
 
-CRace::CRace( int numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
+CRace::CRace( SI32 numRaces ) : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f )
 {
 	NumEnemyRaces( numRaces );
@@ -987,7 +987,7 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 	SetHungerDamage( 0 );
 	weatherAffected.reset();
 }
-void CRace::NumEnemyRaces( int iNum )
+void CRace::NumEnemyRaces( SI32 iNum )
 {
 	racialEnemies.resize( iNum );
 }
@@ -1109,13 +1109,13 @@ void CRace::StamModifier( SI16 value )
 		StamMod = -99;
 }
 
-void CRace::Load( size_t sectNum, int modCount )
+void CRace::Load( size_t sectNum, SI32 modCount )
 {
 	UString tag;
 	UString data;
 	UString UTag;
 	SI32 raceDiff = 0;
-	UString sect = "RACE " + UString::number( sectNum );
+	UString sect = "RACE " + UString::number( (SI32)sectNum );
 	ScriptSection *RacialPart = FileLookup->FindEntry( sect, race_def );
 
 	COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
@@ -1280,7 +1280,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				}
 				else if( UTag == "RACIALENEMY" )
 				{
-					raceDiff = data.toLong();
+					raceDiff = data.toInt();
 					if( raceDiff > static_cast<SI32>(racialEnemies.size()) )
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid enemy race " << raceDiff << myendl;
 					else
@@ -1288,7 +1288,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				}
 				else if( UTag == "RACIALAID" )
 				{
-					raceDiff = data.toLong();
+					raceDiff = data.toInt();
 					if( raceDiff > static_cast<SI32>(racialEnemies.size() ))
 						Console << "Error in race " << static_cast< UI32 >(sectNum) << ", invalid ally race " <<  raceDiff << myendl;
 					else
@@ -1327,7 +1327,7 @@ void CRace::Load( size_t sectNum, int modCount )
 				break;
 		}
 
-		for( int iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
+		for( SI32 iCountA = 0; iCountA < ALLSKILLS; ++iCountA )
 		{
 			UString skillthing = cwmWorldState->skill[iCountA].name;
 			skillthing += "G";

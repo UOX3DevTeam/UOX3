@@ -316,11 +316,11 @@ void JailSystem::ReadData( void )
 							break;
 						case 'R':
 							if( UTag == "RELEASE" )
-								toPush.releaseTime = data.toLong();
+								toPush.releaseTime = data.toInt();
 							break;
 						case 'S':
 							if( UTag == "SERIAL" )
-								toPush.pSerial = data.toULong();
+								toPush.pSerial = data.toUInt();
 							break;
 					}
 				}
