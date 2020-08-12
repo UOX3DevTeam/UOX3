@@ -15,6 +15,7 @@
 	Replaced instances of "long" and "int" with SI32 where possible
 	Replaced instances of "unsigned long" and "unsigned int" with UI32 where possible
 	Replaced instances of "float" with R32 where possible
+	Fixed an issue with void CSpawnRegion::SetNPCList() and void CSpawnRegion::SetItemLIst() that could cause compilation to fail on Linux
 
 11/08/2020 - Xuri
 	Added an FX playing for successful uses of the parrying skill

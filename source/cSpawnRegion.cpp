@@ -389,7 +389,7 @@ void CSpawnRegion::SetNPC( const UString &newVal )
 	sNpcs.clear();
 	sNpcs.push_back( newVal );
 }
-void CSpawnRegion::SetNPCList( std::string &newVal )
+void CSpawnRegion::SetNPCList( std::string newVal )
 {
 	// Clear old entries to make room for new ones
 	sNpcs.clear();
@@ -433,7 +433,7 @@ void CSpawnRegion::SetItem( const UString &newVal )
 	sItems.clear();
 	sItems.push_back( newVal );
 }
-void CSpawnRegion::SetItemList( std::string &newVal )
+void CSpawnRegion::SetItemList( std::string newVal )
 {
 	// Clear old entries to make room for new ones
 	sItems.clear();
