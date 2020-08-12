@@ -92,9 +92,9 @@ public:
 	void		SetCall( UI16 newVal );
 	void		SetOnlyOutside( bool newVal );
 	void		SetNPC( const UString &newVal );
-	void		SetNPCList( std::string &newVal );
+	void		SetNPCList( std::string newVal );
 	void		SetItem( const UString &newVal );
-	void		SetItemList( std::string &newVal );
+	void		SetItemList( std::string newVal );
 
 	UI16		GetInstanceID( void ) const;
 	void		SetInstanceID( UI16 newVal );
