@@ -880,7 +880,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	++gList->TextID;
 	
 	char temp[256];
-	sprintf( temp, "croppedtext %i %i %i %i %i %lu", TextX, TextY, TextWidth, TextHeight, TextHue, TextID );
+	sprintf( temp, "croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, TextID );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -974,7 +974,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "gumppic %i %i %i hue=%li", tL, tR, gImage, rgbColour );
+	sprintf( temp, "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -1083,7 +1083,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "htmlgump %i %i %i %i %lu %li %li", x, y, width, height, TextID, iBrd, iScrl );
+	sprintf( temp, "htmlgump %i %i %i %i %u %i %i", x, y, width, height, TextID, iBrd, iScrl );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -1174,7 +1174,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "tilepichue %i %i %i %li", tL, tR, gImage, rgbColour );
+	sprintf( temp, "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -1253,7 +1253,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 	char temp[256];
-	sprintf( temp, "itemproperty %li", trgSer );
+	sprintf( temp, "itemproperty %i", trgSer );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -1331,7 +1331,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	++gList->TextID;
 	
 	char temp[256];
-	sprintf( temp, "text %i %i %i %lu", TextX, TextY, TextHue, TextID );
+	sprintf( temp, "text %i %i %i %u", TextX, TextY, TextHue, TextID );
 	gList->one->push_back( temp );
 	gList->two->push_back( TextString );
 
@@ -1497,7 +1497,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "xmfhtmlgump %i %i %i %i %li %li %li", x, y, width, height, number, iBrd, iScrl );
+	sprintf( temp, "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -1539,7 +1539,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %li %li %li %li", x, y, width, height, number, iBrd, iScrl, rgbColour );
+	sprintf( temp, "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -1582,7 +1582,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	SI32 iBrd	= (hasBorder?1:0);
 	SI32 iScrl	= (hasScrollbar?1:0);
 	char temp[256];
-	sprintf( temp, "xmfhtmltok %i %i %i %i %li %li %li %li @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 );
+	sprintf( temp, "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 );
 	gList->one->push_back( temp );
 
 	return JS_TRUE;
@@ -3075,7 +3075,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_TRUE;
 	}
 
-	mySock->TempInt( (SI32)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
+	mySock->TempInt( (SI64)JSMapping->GetScript( JS_GetGlobalObject( cx ) ) );
 	UI08 tNum = (UI08)JSVAL_TO_INT( argv[0] );
 	char toSay[512] = { 0, }; // Could become long (make sure it's NULL )
  	

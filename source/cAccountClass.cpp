@@ -789,7 +789,7 @@ bool cAccountClass::isUser( std::string sUsername )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the current count of accounts that are currently stored in the account map. 
 //o-----------------------------------------------------------------------------------------------o
-size_t cAccountClass::size()
+UI32 cAccountClass::size()
 {
 	return m_mapUsernameMap.size();
 }

@@ -3753,7 +3753,7 @@ void CChar::SkillUsed( bool value, UI08 skillNum )
 void CChar::PostLoadProcessing( void )
 {
 	CBaseObject::PostLoadProcessing();
-	SERIAL tempSerial = (SERIAL)packitem;		// we stored the serial in packitem
+	SERIAL tempSerial = (UI64)packitem;		// we stored the serial in packitem
 	if( tempSerial != INVALIDSERIAL )
 		SetPackItem( calcItemObjFromSer( tempSerial ) );
 	else

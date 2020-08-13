@@ -1700,7 +1700,7 @@ bool CItem::LoadRemnants( void )
 	SetSerial( serial );
 
 	// Tauriel adding region pointers
-	if( (SERIAL)contObj == INVALIDSERIAL )
+	if( (UI64)contObj == INVALIDSERIAL )
 	{
 		MapData_st& mMap = Map->GetMapData( worldNumber );
 		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
@@ -1744,7 +1744,7 @@ void CItem::PostLoadProcessing( void )
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
 
-	SERIAL tempSerial	= (SERIAL)contObj;
+	SERIAL tempSerial	= (UI64)contObj;
 	CBaseObject *tmpObj	= NULL;
 	contObj				= NULL;
 	if( tempSerial != INVALIDSERIAL )

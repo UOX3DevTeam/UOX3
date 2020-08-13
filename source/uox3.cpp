@@ -1702,11 +1702,11 @@ void Restart( UI16 ErrorCode = UNKNOWN_ERROR )
 			char temp[1024];
 			cwmWorldState->IncErrorCount();
 			
-			sprintf( temp, "Server crash #%lu from unknown error, restarting.", cwmWorldState->GetErrorCount() );
+			sprintf( temp, "Server crash #%u from unknown error, restarting.", cwmWorldState->GetErrorCount() );
 			Console.Log( temp, "server.log" );
 			Console << temp << myendl;
 			
-			sprintf(temp, "uox.exe -ERROR %lu", cwmWorldState->GetErrorCount() );
+			sprintf(temp, "uox.exe -ERROR %u", cwmWorldState->GetErrorCount() );
 			
 			delete cwmWorldState;
 			system( temp );
