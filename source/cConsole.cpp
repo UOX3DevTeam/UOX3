@@ -999,7 +999,7 @@ void CConsole::Process( SI32 c )
 					{
 						localMap.insert( std::make_pair( CJ->first, 0 ) );
 						memset( szBuffer, 0x00, sizeof( szBuffer ) );
-						sprintf( szBuffer, "AddMenuGroup %lu:", CJ->first );
+						sprintf( szBuffer, "AddMenuGroup %u:", CJ->first );
 						messageLoop << szBuffer;
 						std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
 						SI32 count = 0;

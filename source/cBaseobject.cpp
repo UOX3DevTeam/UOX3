@@ -1555,7 +1555,7 @@ void CBaseObject::PostLoadProcessing( void )
 	SERIAL tmpSerial = INVALIDSERIAL;
 	if( multis != NULL )
 	{
-		tmpSerial	= (SERIAL)multis;
+		tmpSerial	= (UI64)multis;
 		multis		= NULL;
 		SetMulti( tmpSerial, false );
 	}

@@ -178,7 +178,7 @@ public:
 	std::string				GetPath( void );
 	UI16					Save( bool bForceLoad = false );
 	UI16					Load( void );
-	size_t					size( void );
+	UI32					size( void );
 	bool					clear( void );
 	bool					isUser( std::string sUsername );
 	bool					AddCharacter( UI16 wAccountID, CChar *lpObject );

@@ -2652,7 +2652,7 @@ bool CPISingleClick::Handle( void )
 				}
 				else
 					strcpy( temp2, i->GetDesc().c_str() );
-				sprintf( temp, "%s at %lugp", temp2, i->GetBuyValue() );
+				sprintf( temp, "%s at %ugp", temp2, i->GetBuyValue() );
 				tSock->objMessage( AppendData( i, temp ), i );
 				return true;
 			}

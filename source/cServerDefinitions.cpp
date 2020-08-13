@@ -90,7 +90,7 @@ CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
-	Console << "   o Clearing AddMenuMap entries(" << g_mmapAddMenuMap.size() << ")" << myendl;
+	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>(g_mmapAddMenuMap.size()) << ")" << myendl;
 	g_mmapAddMenuMap.clear();
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();

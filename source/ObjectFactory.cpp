@@ -70,9 +70,9 @@ size_t ObjectFactory::SizeOfObjects( ObjectType toCount )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of objects that exist of a given object type
 //o-----------------------------------------------------------------------------------------------o
-size_t ObjectFactory::CountOfObjects( ObjectType toCount )
+UI32 ObjectFactory::CountOfObjects( ObjectType toCount )
 {
-	size_t toRet = 0;
+	UI32 toRet = 0;
 	switch( toCount )
 	{
 		default:

@@ -29,7 +29,7 @@ namespace UOX
 						ObjectFactory();
 						~ObjectFactory();
 
-		size_t			CountOfObjects( ObjectType toCount );
+		UI32			CountOfObjects( ObjectType toCount );
 		size_t			SizeOfObjects( ObjectType toCount );
 		CBaseObject *	CreateObject( ObjectType createType );
 		CBaseObject *	CreateBlankObject( ObjectType createType );

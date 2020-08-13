@@ -900,7 +900,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 					else if( blah.ErrorNumber() != -1 )
 					{
 						char temp[128];
-						sprintf( temp, "Socket error: %li", blah.ErrorNumber() );
+						sprintf( temp, "Socket error: %i", blah.ErrorNumber() );
 						messageLoop << temp;
 					}
 #endif
@@ -927,7 +927,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 void cNetworkStuff::LoginDisconnect( UOXSOCKET s ) 
 {
 	char temp[128];
-	sprintf( temp, "LoginClient %lu disconnected.", s );
+	sprintf( temp, "LoginClient %u disconnected.", s );
 	messageLoop << temp;
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();

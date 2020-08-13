@@ -374,7 +374,7 @@ public:
 protected:
 	SERIAL				id, buttonID, gumpID;
 	UI32				switchCount, textCount;
-	size_t				textOffset;
+	UI32				textOffset;
 
 	std::vector< UI16 >	textLocationOffsets;
 
