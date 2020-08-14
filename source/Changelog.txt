@@ -1,3 +1,13 @@
+14/08/2020 - Xuri (0.99.2n)
+	Replaced platform specific ways of looking up and loading DFN files in cServerDefinitions.cpp with a common, cross-platform method using std::filesystem. This also fixes an issue with loading of map0.mul on Linux when maps.4xclients.old is present in dfndata/maps/ directory (thanks, punt!)
+
+13/08/2020 - Xuri
+	Misc changes to address errors and warnings when compiling on 64bit Linux
+		%li changed to %i
+		%lu changed to %u
+		Some (SERIAL) changed to (UI64)
+		Some size_t changed to UI32
+
 12/08/2020 - Xuri
 	Embraced the usage of R32, R64, SI16, UI16, SI32, UI32, SI64 and UI64 typedef aliases as replacement for built-in types throughout the sourcecode:
 		typedef float				R32;

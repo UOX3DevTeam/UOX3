@@ -2,16 +2,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-
-#if UOX_PLATFORM != PLATFORM_WIN32
-	#include <dirent.h>
-#else
-	#include <direct.h>
-#endif
-
-#if UOX_PLATFORM == PLATFORM_WIN32
-	#define getcwd _getcwd
-#endif
+#include <filesystem>
 
 namespace UOX
 {
@@ -20,14 +11,7 @@ CServerDefinitions *FileLookup;
 
 std::string CurrentWorkingDir( void )
 {
-	char cwd[MAX_PATH + 1];
-
-	if( !getcwd( cwd, MAX_PATH + 1 ) )
-	{
-		Console.Error( "Failed to allocate enough room for cwd" );
-		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
-	}
-	return cwd;
+	return std::filesystem::current_path().string();
 }
 
 std::string BuildPath( const std::string &extra )
@@ -217,7 +201,7 @@ ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITI
 	return rvalue;
 }
 
-const std::string defExt = "*.dfn";
+const std::string defExt = ".dfn";
 
 struct PrioScan
 {
@@ -431,9 +415,11 @@ bool cDirectoryListing::PushDir( std::string toMove )
 {
 	std::string cwd = CurrentWorkingDir();
 	dirs.push( cwd );
+	auto path = std::filesystem::path( toMove );
 
-	if( _chdir( toMove.c_str() ) == 0 )
+	if( std::filesystem::exists( path ) )
 	{
+		std::filesystem::current_path( path );
 		currentDir = toMove;
 		UString::replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
@@ -455,11 +441,16 @@ void cDirectoryListing::PopDir( void )
 	}
 	else
 	{
-		_chdir( dirs.top().c_str() );
+		auto path = std::filesystem::path( dirs.top() );
+
+		if( std::filesystem::exists( path ) )
+		{
+			std::filesystem::current_path( path );
+		}
 		dirs.pop();
 	}
 }
-cDirectoryListing::cDirectoryListing( bool recurse ) : extension( "*.dfn" ), doRecursion( recurse )
+cDirectoryListing::cDirectoryListing( bool recurse ) : extension( ".dfn" ), doRecursion( recurse )
 {
 }
 cDirectoryListing::cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse ) : doRecursion( recurse )
@@ -476,7 +467,12 @@ cDirectoryListing::~cDirectoryListing()
 {
 	while( !dirs.empty() )
 	{
-		_chdir( dirs.top().c_str() );
+		auto path = std::filesystem::path( dirs.top() );
+
+		if( std::filesystem::exists( path ))
+		{
+			std::filesystem::current_path( path );
+		}
 		dirs.pop();
 	}
 }
@@ -518,100 +514,33 @@ STRINGLIST *cDirectoryListing::FlattenedShortList( void )
 
 void cDirectoryListing::InternalRetrieve( void )
 {
-	char filePath[512];
-
-#if UOX_PLATFORM != PLATFORM_WIN32
-	DIR *dir = opendir("."); 
-	struct dirent *dirp = NULL; 
-	struct stat dirstat; 
-
-	while( ( dirp = readdir( dir ) ) ) 
+	std::string filePath;
+	auto path = std::filesystem::current_path();
+	for( const auto& entry : std::filesystem::directory_iterator( path ))
 	{ 
-		stat( dirp->d_name, &dirstat ); 
-		if( S_ISDIR( dirstat.st_mode ) ) 
+		auto name =  entry.path().filename().string();
+		filePath = entry.path().string();
+		auto ext = entry.path().extension();
+		if( std::filesystem::is_regular_file( entry ))
 		{ 
-			if( strcmp( dirp->d_name, "." ) && strcmp( dirp->d_name, ".." ) && doRecursion ) 
+			if( !extension.empty() )
 			{ 
-				subdirectories.push_back( cDirectoryListing( dirp->d_name, extension, doRecursion ) ); 
-				Console.Print( "%s/%s/n", currentDir.c_str(), dirp->d_name ); 
-			}
-			continue; 
+				if( entry.path().extension().string() != extension )
+	{
+					name = "";
+	}
 		}
-		shortList.push_back( dirp->d_name ); 
-		sprintf( filePath, "%s/%s", CurrentWorkingDir().c_str(), dirp->d_name ); 
-		filenameList.push_back( filePath ); 
-	} 
-
-#else 
-
-	WIN32_FIND_DATA toFind;
-	HANDLE findHandle = FindFirstFile( extension.c_str(), &toFind );		// grab first file that meets spec
-	BOOL retVal = 0;
-	if( findHandle != INVALID_HANDLE_VALUE )	// there is a file
-	{
-		shortList.push_back( toFind.cFileName );
-		sprintf( filePath, "%s/%s", currentDir.c_str(), toFind.cFileName );
-		filenameList.push_back( filePath );
-		retVal = 1;	// let's continue
-	}
-	while( retVal != 0 )	// while there are still files
-	{
-		retVal = FindNextFile( findHandle, &toFind );	// grab the next file
-		if( retVal != 0 )
-		{
-			shortList.push_back( toFind.cFileName );
-			sprintf( filePath, "%s/%s", currentDir.c_str(), toFind.cFileName );
-			filenameList.push_back( filePath );
-		}
-	}
-	if( findHandle != INVALID_HANDLE_VALUE )
-	{
-		FindClose( findHandle );
-		findHandle = INVALID_HANDLE_VALUE;
-	}
-	if( doRecursion )
-	{
-		std::string temp;
-		WIN32_FIND_DATA dirFind;
-		HANDLE directoryHandle = FindFirstFile( "*.*", &dirFind );
-		BOOL dirRetval = 0;
-
-		if( directoryHandle != INVALID_HANDLE_VALUE )	// there is a file
-		{
-			if( ( dirFind.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == FILE_ATTRIBUTE_DIRECTORY )
+			if( !name.empty() )
 			{
-				if( strcmp( dirFind.cFileName, "." ) && strcmp( dirFind.cFileName, ".." ) )
-				{
-					temp = BuildPath( dirFind.cFileName );
-					subdirectories.push_back( cDirectoryListing( temp, extension, doRecursion ) );
-				}
-				// it's a directory
-			}
-			dirRetval = 1;	// let's continue
-		}
-		while( dirRetval != 0 )	// while there are still files
-		{
-			dirRetval = FindNextFile( directoryHandle, &dirFind );	// grab the next file
-			if( dirRetval != 0 )
-			{
-				if( ( dirFind.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == FILE_ATTRIBUTE_DIRECTORY )
-				{
-					if( strcmp( dirFind.cFileName, "." ) && strcmp( dirFind.cFileName, ".." ) )
-					{
-						temp = BuildPath( dirFind.cFileName );
-						subdirectories.push_back( cDirectoryListing( temp, extension, doRecursion ) );
-					}
-					// it's a directory
-				}
+				shortList.push_back( name );
+				filenameList.push_back( filePath );
 			}
 		}
-		if( directoryHandle != INVALID_HANDLE_VALUE )
+		else if( std::filesystem::is_directory(entry) && doRecursion )
 		{
-			FindClose( directoryHandle );
-			directoryHandle = INVALID_HANDLE_VALUE;
+			subdirectories.push_back( cDirectoryListing( name, extension, doRecursion ));
 		}
 	}
-#endif
 }
 
 void cDirectoryListing::Extension( const std::string &extent )
