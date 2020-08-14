@@ -1,3 +1,9 @@
+15/08/2020 - Xuri
+	Updated healing.js to disallow usage of healing skill if target is in a house/multi not owned by either healer or healee
+	Fixed broken starting locations in UOX.INI
+	Fixed an issue with CPSendGumpMenu::AddText() that caused guildstones and townstones to crash server when used
+	Fixed an issue with CTownRegion::DisplayTownMenu() that prevented players from joining a town when interacting with a townstone for the first time
+
 14/08/2020 - Xuri (0.99.2n)
 	Replaced platform specific ways of looking up and loading DFN files in cServerDefinitions.cpp with a common, cross-platform method using std::filesystem. This also fixes an issue with loading of map0.mul on Linux when maps.4xclients.old is present in dfndata/maps/ directory (thanks, punt!)
 

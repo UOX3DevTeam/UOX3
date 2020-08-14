@@ -86,8 +86,7 @@ function onCallback1( socket, ourObj )
 				return;
 			}
 
-/*			// Commented out until the multi-functions actually work.
-			var iMulti = FindMulti( ourObj.x, ourObj.y, ourObj.z, 0 );
+			var iMulti = FindMulti( ourObj );
 			if( iMulti )
 			{
 				if( iMulti.IsInMulti( ourObj ) )
@@ -98,9 +97,9 @@ function onCallback1( socket, ourObj )
 						return;
 					}
 				}
-			}*/
+			}
 			var anatSkill = mChar.baseskills.anatomy;
-			if( ourObj.dead )	// Resurrection	
+			if( ourObj.dead )	// Resurrection
 			{
 				if( healSkill >= 800 && anatSkill >= 800 )
 				{
@@ -173,7 +172,7 @@ function onCallback1( socket, ourObj )
 				{
 					var healTimer;
 					if( mChar.serial == ourObj.serial ) // Healing yourself has a 9 to 16 second delay, depending on your dexterity.
-						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);					
+						healTimer = 9400 + (( 0.6 * (( 120 - mChar.dexterity ) / 10 )) * 1000);
 					else
 						healTimer = 5000; // Healing others has a 5 second delay
 
