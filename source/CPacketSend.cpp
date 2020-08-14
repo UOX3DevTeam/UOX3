@@ -5507,13 +5507,14 @@ void CPSendGumpMenu::Y( UI32 value )
 void CPSendGumpMenu::AddCommand( const char *actualCommand, ... )
 {
 	va_list argptr;
-	char msg[512];
+	char msg[1024];
+	std::memset( msg, 0, sizeof( msg ));
 #ifdef __NONANSI_VASTART__
 	va_start( argptr );
 #else
 	va_start( argptr, actualCommand );
 #endif
-	vsprintf( msg, actualCommand, argptr );
+	vsnprintf( msg, sizeof( msg ) - 1, actualCommand, argptr );
 	va_end( argptr );
 
 	if( strlen( msg ) == 0 )
@@ -5554,12 +5555,13 @@ void CPSendGumpMenu::AddText( const char *actualText, ... )
 {
 	va_list argptr;
 	char msg[512];
+	std::memset( msg, 0, sizeof( msg ));
 #ifdef __NONANSI_VASTART__
 	va_start( argptr );
 #else
 	va_start( argptr, actualText );
 #endif
-	vsprintf( msg, actualText, argptr );
+	vsnprintf( msg, sizeof( msg ) - 1, actualText, argptr );
 	va_end( argptr );
 
 	if( strlen( msg ) == 0 )
@@ -5572,17 +5574,17 @@ void CPSendGumpMenu::AddText( const char *actualText, ... )
 	text.push_back( msg );
 }
 
-void CPSendGumpMenu::AddText( const std::string& actualText, ... )
+void CPSendGumpMenu::AddText( std::string actualText, ... )
 {
 	va_list argptr;
 	char msg[512];
+	std::memset( msg, 0, sizeof( msg ));
 #ifdef __NONANSI_VASTART__
 	va_start( argptr, actualText.c_str() );
 #else
 	va_start( argptr, actualText );
-	
 #endif
-	vsprintf( msg, actualText.c_str(), argptr );
+	vsnprintf( msg, sizeof( msg ) - 1, actualText.c_str(), argptr );
 	va_end( argptr );
 
 	if( strlen( msg ) == 0 )
@@ -5592,7 +5594,7 @@ void CPSendGumpMenu::AddText( const std::string& actualText, ... )
 	Console << msg << myendl;
 #endif
 
-	text.push_back( msg );
+	text.push_back( std::string( msg ));
 }
 
 void CPSendGumpMenu::Finalize( void )

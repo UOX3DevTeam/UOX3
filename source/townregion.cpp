@@ -857,7 +857,7 @@ bool CTownRegion::DisplayTownMenu( CItem *used, CSocket *sock, SI08 flag )
 		}
 		else if( tChar->GetTown() != 255 ) // another town person
 		{
-			if( tChar->GetTown() == regionNum )	// they think we're in this region!!!
+			if( tChar->GetTown() == regionNum || tChar->GetTown() == 0 )	// they think we're in this region!!!
 			{
 				if( !AddAsTownMember( (*tChar) ) )
 				{

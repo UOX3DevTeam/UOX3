@@ -1204,7 +1204,7 @@ public:
 	void			AddCommand( const char *actualCommand, ... );
 	void			AddCommand( const std::string& actualCommand, ... );
 	void			AddText( const char *actualText, ... );
-	void			AddText( const std::string& actualText, ... );
+	void			AddText( const std::string actualText, ... );
 	void			Finalize( void );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader ) override;
 };
