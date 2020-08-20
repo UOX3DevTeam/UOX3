@@ -159,7 +159,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 48 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 42 >	boolVals;						// Many values stored this way, rather than using bools.
 
 	// ServerSystems
 	std::string sServerName;					// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -734,9 +734,6 @@ public:
 
 	void		AdvancedPathfinding( bool value );
 	bool		AdvancedPathfinding( void ) const;
-
-	void		MapIsUOPWrapped( UI08 mapNum, bool value );
-	bool		MapIsUOPWrapped( UI08 mapNum ) const;
 
 	void		LootingIsCrime( bool value );
 	bool		LootingIsCrime( void ) const;

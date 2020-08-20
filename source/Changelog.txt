@@ -1,3 +1,15 @@
+21/08/2020 - Xuri (0.99.2o)
+	Added support (UOPInterface.cpp/hpp) for loading map files in UOP format, allowing UOX3 to use
+		map files from clients up to at least v7.0.86.2 without requiring files to be converted to
+		mul format first. Loading of UOP files is slower than for equivalent mul files, but after
+		startup, the performance of lookups remains the same for both (punt)
+	Updated TWEAK, INFO in code and ISTATS, CSTATS in gumps.js to display 4-digit hex-ids for IDs
+		consistently in the format of 0x####
+	Fixed issue that would disconnect ClassicUO users if they used WorldMap feature in the client,
+		via CPIKrriosClientSpecial() handler in CPacketReceive.cpp/h, which will handle all things
+		packet 0xF0. As of yet it doesn't respond correctly to the WorldMap-related version of the
+		packet, but at least it no longer disconnects this client from the server.
+
 15/08/2020 - Xuri
 	Updated healing.js to disallow usage of healing skill if target is in a house/multi not owned by either healer or healee
 	Fixed broken starting locations in UOX.INI

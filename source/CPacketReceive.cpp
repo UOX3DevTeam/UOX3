@@ -142,7 +142,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
 		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
-		case 0xF0:	return ( new CPINegotiateFeaturesResponse( s ) );	// Response to server's request to negotiate for features in assistant tools
+		case 0xF0:	return ( new CPIKrriosClientSpecial( s )	); // Responses to special client packet also used by assistant tools to negotiate features with server
 		case 0xF3:	return NULL;								// TODO - Object Information (SA)
 		case 0xF5:	return NULL;								// TODO - New Map Message
 		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
@@ -4220,6 +4220,79 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPIKrriosClientSpecial()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for party and guild tracking
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xF0 (KrriosClientSpecial)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE[2] len
+//|						BYTE subcmd
+//|							0x00 - Party info
+//|							0x01 - Guild Tracker
+//|								BYTE unknown // always 1?
+//|							0xff - Razor negotiate features
+//o-----------------------------------------------------------------------------------------------o
+void CPIKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+{
+}
+void CPIKrriosClientSpecial::InternalReset( void )
+{
+}
+CPIKrriosClientSpecial::CPIKrriosClientSpecial()
+{
+	InternalReset();
+}
+CPIKrriosClientSpecial::CPIKrriosClientSpecial( CSocket *s ) : CPInputBuffer( s )
+{
+	InternalReset();
+	Receive();
+}
+void CPIKrriosClientSpecial::Receive( void )
+{
+	tSock->Receive( 4, true );
+	if( tSock->GetWord( 1 ) > 5 )
+	{
+		// New Movement Request Packet
+		type = 0xaa;
+	}
+	else
+		type = tSock->GetByte( 3 );
+}
+bool CPIKrriosClientSpecial::Handle( void )
+{
+	unknown = false;
+
+	switch( type )
+	{
+		case 0x00: // custom party info
+			break;
+		case 0x01: // guild track info
+			tSock->Receive( 5, true );
+			unknown = tSock->GetByte( 4 );
+			break;
+		case 0xaa: // New Movement Request Packet
+			break;
+		case 0xff: // razor feature negotiation
+			if( tSock->GetByte( 1 ) == 0x00 && tSock->GetByte( 2 ) == 0x04 )
+			{
+				tSock->NegotiatedWithAssistant( true );
+				tSock->NegotiateTimeout( -1 );
+				tSock->sysmessage( "Features successfully negotiated with assistant tool." );
+				return true;
+			}
+			break;
+		default: // default
+			break;
+	}
+
+	return unknown;
 }
 
 //o-----------------------------------------------------------------------------------------------o

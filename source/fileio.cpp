@@ -5,6 +5,16 @@
 #include "cSpawnRegion.h"
 #include "scriptc.h"
 #include "townregion.h"
+#include <stdexcept>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <cstring>
+#include <filesystem>
+#include <cmath>
+#include <algorithm>
+#include <sstream>
+#include "UOPInterface.hpp"
 
 #if UOX_PLATFORM != PLATFORM_WIN32
 #  include <fcntl.h>     // open
@@ -14,12 +24,43 @@
 namespace UOX
 {
 
-//
-// support read-only binary mode.
-//
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UOXFile::UOXFile( const char* const fileName, const char * const )
+//|						: memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Support read-only binary mode.
+//o-----------------------------------------------------------------------------------------------o
 UOXFile::UOXFile( const char* const fileName, const char * const)
-: memPtr( 0 ), fileSize( 0 ), bIndex( 0 )
+: memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
 {
+    auto strfilename = std::string( fileName );
+    auto filepath = std::filesystem::path( strfilename );
+    if( filepath.extension() == ".uop" )
+	{
+        // UOP File, get the map #
+		auto nameonly = filepath.filename();
+		auto mapnum = std::stoi( nameonly.string().substr( 3, 1 ));
+        try {
+            auto rvalue = UOP::mapUOP( strfilename, mapnum );
+            this->memPtr = std::get<0>( rvalue );
+            if( this->memPtr != nullptr )
+			{
+                this->fileSize = std::get<1>( rvalue );
+                usingUOP = true;
+            }
+        }
+        catch (...) {
+            if( this->memPtr != nullptr )
+			{
+                delete[] memPtr;
+                memPtr=nullptr;
+            }
+            this->memPtr= nullptr;
+            this->fileSize = 0;
+        }
+        return;
+    }
+        
 #if UOX_PLATFORM == PLATFORM_WIN32
 	HANDLE hFile = ::CreateFileA(
 				fileName,
@@ -38,13 +79,7 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 	//  the end iterator
 	fileSize = ::GetFileSize(hFile, NULL);
 
-	HANDLE hMap = ::CreateFileMapping(
-				hFile,
-				NULL,
-				PAGE_READONLY,
-				0, 0,
-				NULL
-			);
+    HANDLE hMap = ::CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
 
 	if (hMap == NULL)
 	{
@@ -52,11 +87,7 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 		return;
 	}
 
-	memPtr = (char*)::MapViewOfFile(
-						hMap,
-						FILE_MAP_READ,
-						0, 0, 0
-					);
+    memPtr = (char*)::MapViewOfFile( hMap, FILE_MAP_READ, 0, 0, 0 );
 
 	// We hold both the file handle and the memory pointer.
 	// We can close the hMap handle now because Windows holds internally
@@ -101,9 +132,13 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 #endif
 }
 
-
 UOXFile::~UOXFile()
 {
+    if( usingUOP )
+	{
+        delete[] memPtr;
+        memPtr = nullptr;
+    }
 	if( memPtr )
 	{ 
 #if UOX_PLATFORM == PLATFORM_WIN32
@@ -113,7 +148,6 @@ UOXFile::~UOXFile()
 #endif
 	}
 }
-
 
 void UOXFile::seek( size_t offset, UI08 whence )
 {
@@ -125,12 +159,10 @@ void UOXFile::seek( size_t offset, UI08 whence )
 		bIndex = fileSize + offset;
 }
 
-
 SI32 UOXFile::getch( void )
 {
 	return *(memPtr + bIndex++);
 }
-
 
 void UOXFile::getUChar( UI08 *buff, UI32 number )
 {
@@ -138,13 +170,11 @@ void UOXFile::getUChar( UI08 *buff, UI32 number )
 	bIndex += number;
 }
 
-
 void UOXFile::getChar( SI08 *buff, UI32 number )
 {
 	memcpy( buff, memPtr+bIndex, number);
 	bIndex += number;
 }
-
 
 void UOXFile::getUShort( UI16 *buff, UI32 number )
 {
@@ -153,14 +183,12 @@ void UOXFile::getUShort( UI16 *buff, UI32 number )
 	bIndex += number;
 }
 
-
 void UOXFile::getShort( SI16 *buff, UI32 number )
 {
 	number *= sizeof(SI16);        
 	memcpy( buff, memPtr+bIndex, number);
 	bIndex += number;
 }
-
 
 void UOXFile::getULong( UI32 *buff, UI32 number )
 {
@@ -579,7 +607,6 @@ void LoadCreatures( void )
 	FileLookup->Dispose( creatures_def );
 }
 
-
 void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data )
 {
 	char temp[4096];
@@ -675,16 +702,15 @@ void LoadPlaces( void )
 	FileLookup->Dispose( location_def );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool FileExists( const std::string& filepath )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if specified file/filepath exists
+//o-----------------------------------------------------------------------------------------------o
 bool FileExists( const std::string& filepath )
 {
-	std::ifstream ifsFile;
-	ifsFile.open( filepath.c_str(), std::ios::in );
-	if( ifsFile.is_open() )
-	{
-		ifsFile.close();
-		return true;
-	}
-	return false;
+    auto temp = std::filesystem::path( filepath );
+    return std::filesystem::exists(temp);
 }
 
 }

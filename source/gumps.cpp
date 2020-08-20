@@ -2290,7 +2290,7 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 			case 5:
 				ser1 = (UI08)(value>>8);
 				ser2 = (UI08)(value%256);
-				sprintf( temp, "%x %x", ser1, ser2 );
+				sprintf( temp, "0x%02x%02x", ser1, ser2 );
 				break;
 			case 6:
 				ser1 = (UI08)(value>>8);

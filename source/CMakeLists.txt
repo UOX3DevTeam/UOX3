@@ -76,6 +76,7 @@ add_library(uox
 		cServerDefinitions.cpp
 		house.cpp
 		sound.cpp
+		UOPInterface.cpp
 )
 
 target_include_directories(uox

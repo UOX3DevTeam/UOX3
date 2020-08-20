@@ -59,14 +59,8 @@ const UI32 BIT_SERVERUSINGHSMULTIS	= 36;
 const UI32 BIT_SERVERUSINGHSTILES	= 37;
 const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
-const UI32 BIT_MAP0ISUOPWRAPPED		= 40;
-const UI32 BIT_MAP1ISUOPWRAPPED		= 41;
-const UI32 BIT_MAP2ISUOPWRAPPED		= 42;
-const UI32 BIT_MAP3ISUOPWRAPPED		= 43;
-const UI32 BIT_MAP4ISUOPWRAPPED		= 44;
-const UI32 BIT_MAP5ISUOPWRAPPED		= 45;
-const UI32 BIT_ASSISTANTNEGOTIATION = 46;
-const UI32 BIT_KICKONASSISTANTSILENCE = 47;
+const UI32 BIT_ASSISTANTNEGOTIATION = 40;
+const UI32 BIT_KICKONASSISTANTSILENCE = 41;
 
 
 // New uox3.ini format lookup
@@ -406,24 +400,19 @@ void CServerData::ResetDefaults( void )
 	SetDisabledAssistantFeature( AF_AUTOREMOUNT, false );
 	SetDisabledAssistantFeature( AF_ALL, false );
 
-	for( SI32 i = 0; i < 6; i++ )
-	{
-		MapIsUOPWrapped( i, false );
-	}
-
 	// Enable login-support for any supported client version by default.
 	ClientSupport4000( false );
 	ClientSupport5000( false );
 	ClientSupport6000( false );
 	ClientSupport6050( false );
-	ClientSupport7000( true );
-	ClientSupport7090( true );
-	ClientSupport70160( true );
-	ClientSupport70240( true );
-	ClientSupport70300( true );
-	ClientSupport70331( false );
-	ClientSupport704565( false );
-	ClientSupport70610( false );
+	ClientSupport7000( false );
+	ClientSupport7090( false );
+	ClientSupport70160( false );
+	ClientSupport70240( false );
+	ClientSupport70300( false );
+	ClientSupport70331( true );
+	ClientSupport704565( true );
+	ClientSupport70610( true );
 
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
@@ -1873,42 +1862,6 @@ bool CServerData::AdvancedPathfinding( void ) const
 void CServerData::AdvancedPathfinding( bool newVal )
 {
 	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MapIsUOPWrapped( UI08 mapNum ) const
-//|					void MapIsUOPWrapped( UI08 mapNum, bool newVal )
-//|	Date		-	3/14/2012
-//|	Programmer	-	Xuri
-//|	Org/Team	-	UOX3 DevTeam
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether mapfiles are uop-wrapped or not
-//o-----------------------------------------------------------------------------------------------o
-bool CServerData::MapIsUOPWrapped( UI08 mapNum ) const
-{
-	switch( mapNum )
-	{
-	case 0: return boolVals.test( BIT_MAP0ISUOPWRAPPED );
-	case 1: return boolVals.test( BIT_MAP1ISUOPWRAPPED );
-	case 2: return boolVals.test( BIT_MAP2ISUOPWRAPPED );
-	case 3: return boolVals.test( BIT_MAP3ISUOPWRAPPED );
-	case 4: return boolVals.test( BIT_MAP4ISUOPWRAPPED );
-	case 5: return boolVals.test( BIT_MAP5ISUOPWRAPPED );
-	default: return false; break;
-	}
-}
-void CServerData::MapIsUOPWrapped( UI08 mapNum, bool newVal )
-{
-	switch( mapNum )
-	{
-	case 0: boolVals.set( BIT_MAP0ISUOPWRAPPED, newVal ); break;
-	case 1: boolVals.set( BIT_MAP1ISUOPWRAPPED, newVal ); break;
-	case 2: boolVals.set( BIT_MAP2ISUOPWRAPPED, newVal ); break;
-	case 3: boolVals.set( BIT_MAP3ISUOPWRAPPED, newVal ); break;
-	case 4: boolVals.set( BIT_MAP4ISUOPWRAPPED, newVal ); break;
-	case 5: boolVals.set( BIT_MAP5ISUOPWRAPPED, newVal ); break;
-	default: break;
-	}
 }
 
 //o-----------------------------------------------------------------------------------------------o

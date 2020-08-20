@@ -539,7 +539,7 @@ void InfoTarget( CSocket *s )
 		const map_st map1 = Map->SeekMap( x, y, worldNumber );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
-		mapStat.AddData( "Tilenum", map1.id );
+		mapStat.AddData( "Tilenum", map1.id, 5 );
 		if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
 		{
 			//7.0.9.0 tiledata and later
@@ -566,10 +566,10 @@ void InfoTarget( CSocket *s )
 			GumpDisplay statTile( s, 300, 300 );
 			statTile.SetTitle( "Map Tile" );
 
-			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Tilenum", tileID, 5 );
 			statTile.AddData( "Weight", tile.Weight(), 0 );
 			statTile.AddData( "Layer", tile.Layer(), 1 );
-			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 5 );
 			statTile.AddData( "Anim", tile.Animation(), 1 );
 			statTile.AddData( "Quantity", tile.Quantity(), 1 );
 			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
@@ -622,10 +622,10 @@ void InfoTarget( CSocket *s )
 			GumpDisplay statTile( s, 300, 300 );
 			statTile.SetTitle( "Map Tile" );
 
-			statTile.AddData( "Tilenum", tileID, 1 );
+			statTile.AddData( "Tilenum", tileID, 5 );
 			statTile.AddData( "Weight", tile.Weight(), 0 );
 			statTile.AddData( "Layer", tile.Layer(), 1 );
-			statTile.AddData( "Hue", tile.Hue(), 1 );
+			statTile.AddData( "Hue", tile.Hue(), 5 );
 			statTile.AddData( "Anim", tile.Animation(), 1 );
 			statTile.AddData( "Quantity", tile.Quantity(), 1 );
 			statTile.AddData( "Unknown1", tile.Unknown1(), 1 );
