@@ -120,6 +120,23 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPIKrriosClientSpecial : public CPInputBuffer
+{
+	UI08			type;
+	bool			unknown;
+protected:
+	virtual void	InternalReset( void );
+public:
+	virtual			~CPIKrriosClientSpecial()
+	{
+	}
+	CPIKrriosClientSpecial();
+	CPIKrriosClientSpecial( CSocket *s );
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPINegotiateFeaturesResponse : public CPInputBuffer
 {
 protected:

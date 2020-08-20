@@ -257,10 +257,6 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 	{
 		UString lName	= basePath + mapUOPWrap;
 		mMap.mapObj		= new UOXFile( lName.c_str(), "rb" );
-		if( mMap.mapObj->ready() )
-		{
-			cwmWorldState->ServerData()->MapIsUOPWrapped( totalMaps, true );
-		}
 	}
 	if( mMap.mapObj != NULL && mMap.mapObj->ready() )
 	{
@@ -1183,11 +1179,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 		mFile	= mMap.mapObj;
 		pos		= (blockID * MapBlockSize + cellOffset);
 	}
-	if( cwmWorldState->ServerData()->MapIsUOPWrapped( worldNumber ) == true )
-	{
-		SI32 blockOffset = pos / 0xC4000;
-		pos += 3464 + ( 3412 * ( blockOffset / 100 )) + ( 12 * blockOffset );
-	}
+
 	mFile->seek( pos, SEEK_SET );
 	if( mFile->eof() )
 	{

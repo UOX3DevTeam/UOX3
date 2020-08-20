@@ -7,6 +7,7 @@ namespace UOX
 {
 
 #if UOX_PLATFORM == PLATFORM_WIN32
+	#define NOMINMAX
 	#include <windows.h>
 #else
 	#define _GNU_SOURCE 1	// this is a hack

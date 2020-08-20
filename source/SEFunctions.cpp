@@ -1598,6 +1598,7 @@ JSBool SE_NumToHexString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
 	UString str = UString::number( num, 16 );
+
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ) );
 	return JS_TRUE;
 }

@@ -69,6 +69,7 @@ uox3_SOURCES = \
 	threadsafeobject.cpp \
 	townregion.cpp \
 	trade.cpp \
+	UOPInterface.cpp \
 	uox3.cpp \
 	UOXJSMethods.cpp \
 	UOXJSPropertyFuncs.cpp \

@@ -1,7 +1,9 @@
 #ifndef __FILEIO_H
 #define __FILEIO_H
 
-
+#include <cstdint>
+#include <fstream>
+#include <tuple>
 namespace UOX
 {
 
@@ -31,6 +33,9 @@ private:
 	char		*memPtr;		// ptr to the beginning of the files
 	size_t		fileSize;	// file size
 	size_t		bIndex;		// current position
+
+    bool usingUOP;
+    
 };
 
 }

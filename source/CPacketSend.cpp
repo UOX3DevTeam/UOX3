@@ -519,7 +519,7 @@ CPAttackOK &CPAttackOK::operator=( CChar &toCopy )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CPAttackOK()
+//| Function	-	CPRemoveItem()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet informing client of the removal of an object
 //o-----------------------------------------------------------------------------------------------o
