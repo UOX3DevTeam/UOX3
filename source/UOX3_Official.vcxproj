@@ -702,6 +702,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="UOPInterface.cpp" />
     <ClCompile Include="uox3.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -833,6 +834,7 @@
     <ClInclude Include="threadsafeobject.h" />
     <ClInclude Include="townregion.h" />
     <ClInclude Include="typedefs.h" />
+    <ClInclude Include="UOPInterface.hpp" />
     <ClInclude Include="uox3.h" />
     <ClInclude Include="UOXJSClasses.h" />
     <ClInclude Include="UOXJSMethods.h" />

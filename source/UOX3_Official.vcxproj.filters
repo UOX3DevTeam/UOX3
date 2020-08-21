@@ -269,6 +269,9 @@
     <ClCompile Include="network.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="UOPInterface.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PartySystem.h">
@@ -501,6 +504,9 @@
     </ClInclude>
     <ClInclude Include="network.h">
       <Filter>Header Files\Network No. 1</Filter>
+    </ClInclude>
+    <ClInclude Include="UOPInterface.hpp">
+      <Filter>Header Files\Other No. 1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
