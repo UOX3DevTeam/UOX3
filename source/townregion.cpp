@@ -35,7 +35,7 @@ const UI32 BIT_TELEPORT		=	9;
 
 const RACEID	DEFTOWN_RACE				= 0;
 const weathID	DEFTOWN_WEATHER				= 255;
-const SI32		DEFTOWN_MIDILIST			= 0;
+const SI32		DEFTOWN_MUSICLIST			= 0;
 const SERIAL	DEFTOWN_MAYOR				= INVALIDSERIAL;
 const UI16		DEFTOWN_TAXEDRESOURCE		= 0x0EED;
 const UI16		DEFTOWN_TAXEDAMOUNT			= 0;
@@ -60,7 +60,7 @@ const UI16		DEFTOWN_NUMGUARDS			= 10;
 //|	Purpose		-	Constructor for CTownRegion class
 //o-----------------------------------------------------------------------------------------------o
 CTownRegion::CTownRegion( UI16 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), 
-regionNum( region ), midilist( DEFTOWN_MIDILIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
+regionNum( region ), musicList( DEFTOWN_MUSICLIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ), 
 taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
 resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ), 
 timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ), 
@@ -467,8 +467,8 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 					instanceID = data.toUShort();
 				break;
 			case 'M':
-				if( UTag == "MIDILIST" )
-					midilist = data.toUShort();
+				if( UTag == "MUSICLIST" || UTag == "MIDILIST" )
+					musicList = data.toUShort();
 				else if( UTag == "MAGICDAMAGE" )
 					CanCastAggressive( (data.toUByte() == 1) );
 				else if( UTag == "MARK" )
@@ -811,13 +811,13 @@ SI32 CTownRegion::GetGoodRnd2( UI08 index ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetMidiList( void ) const
+//|	Function	-	UI16 GetMusicList( void ) const
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets midilist for the townregion, as originally specified in region DFNs
+//|	Purpose		-	Gets musicList for the townregion, as originally specified in region DFNs
 //o-----------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetMidiList( void ) const
+UI16 CTownRegion::GetMusicList( void ) const
 {
-	return midilist;
+	return musicList;
 }
 
 //o-----------------------------------------------------------------------------------------------o

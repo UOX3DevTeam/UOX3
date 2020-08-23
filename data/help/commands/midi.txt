@@ -1,5 +1,5 @@
-        MIDI <value>
+        MUSIC <value>
 
   Purpose: 
-        Will start playing a MIDI-song from
-        the MIDI-list.
+        Will start playing a MIDI/MP3-song from
+        the Music-list.

@@ -95,9 +95,11 @@ private:
 
 	//	Temporary variables (For targeting commands, etc)
 	CBaseObject *	tmpObj;
+	CBaseObject *	tmpObj2;
 	SI08			clickz;
 	UI08			addid[4];
 	SI32			tempint;
+	SI32			tempint2;
 	UI08			dyeall;
 
 	bool			newClient;
@@ -217,7 +219,9 @@ public:
 
 	// Temporary Variables
 	CBaseObject *	TempObj( void ) const;
+	CBaseObject *	TempObj2( void ) const;
 	SI32			TempInt( void ) const;
+	SI32			TempInt2( void ) const;
 	UI32			AddID( void ) const;
 	UI08			AddID1( void ) const;
 	UI08			AddID2( void ) const;
@@ -274,7 +278,9 @@ public:
 
 	//	Temporary Variables
 	void			TempObj( CBaseObject *newValue );
+	void			TempObj2( CBaseObject *newValue );
 	void			TempInt( SI32 newValue );
+	void			TempInt2( SI32 newValue );
 	void			AddID( UI32 newValue );
 	void			AddID1( UI08 newValue );
 	void			AddID2( UI08 newValue );

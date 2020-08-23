@@ -2371,7 +2371,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 			mChar.SetRegion( calcReg->GetRegionNum() );
 		if( mSock != NULL )
 		{
-			Effects->dosocketmidi( mSock );
+			Effects->doSocketMusic( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
 	} 

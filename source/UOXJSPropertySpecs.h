@@ -374,6 +374,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "idleTimeout",		CSOCKP_IDLETIMEOUT,			JSPROP_ENUMANDPERM },
 	{ "wasIdleWarned",		CSOCKP_WASIDLEWARNED,		JSPROP_ENUMANDPERM },
 	{ "tempInt",			CSOCKP_TEMPINT,				JSPROP_ENUMANDPERM },
+	{ "tempInt2",			CSOCKP_TEMPINT2,			JSPROP_ENUMANDPERM },
 	{ "buffer",				CSOCKP_BUFFER,				JSPROP_ENUMPERMIDX },
 	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMPERMIDX },
 	{ "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM },
@@ -403,6 +404,7 @@ static JSPropertySpec CSocketProps[] =
 	{ "clientType",			CSOCKP_CLIENTTYPE,			JSPROP_ENUMANDPERM },
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM },
 	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM },
+	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM },
 	{ NULL,					(SI08)NULL,				(UI08)0}
 };
 

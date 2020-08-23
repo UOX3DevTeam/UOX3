@@ -182,8 +182,15 @@ function onGumpPress( socket, button, myGump )
 
 function addHexEntry( myGump, stringToAdd, dataToAdd )
 {
+	var hexString = NumToHexString( dataToAdd );
+
+	if( dataToAdd > 0 && dataToAdd <= 9999 )
+	{
+		hexString = ( "000" + hexString ).slice( -4 );
+	}
+
 	myGump.AddText( 50, position, 0, stringToAdd );
-	myGump.AddText( 150, position, 0, "0x" + NumToHexString( dataToAdd ) );
+	myGump.AddText( 150, position, 0, "0x" + hexString );
 	position += 20;
 }
 

@@ -1174,7 +1174,7 @@ void HandleGumpCommand( CSocket *s, UString cmd, UString data )
 				GumpDisplay guiInfo( s, 400, 300 );
 				guiInfo.SetTitle( CVersionClass::GetProductName() + " Status" );
 				builtString = GetUptime();
-				guiInfo.AddData( "Version", CVersionClass::GetVersion() + "(" + CVersionClass::GetBuild() + ") [" + OS_STR + "]" );
+				guiInfo.AddData( "Version", CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]" );
 				guiInfo.AddData( "Compiled By", CVersionClass::GetName() );
 				guiInfo.AddData( "Uptime", builtString );
 				guiInfo.AddData( "Accounts", Accounts->size() );

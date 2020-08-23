@@ -6,7 +6,7 @@ function CommandRegistration()
 
 function command_JAIL( socket, cmdString )
 {
-	socket.tempint = 100000;
+	socket.tempint = 86400;
 	if( cmdString )
 		socket.tempint = parseInt( cmdString );
 
@@ -23,7 +23,7 @@ function onCallback0( socket, ourObj )
 		else
 		{
 			ourObj.Jail( socket.tempint );
-			socket.SysMessage( ourObj.name + " has been jailed." );
+			socket.SysMessage( ourObj.name + " has been jailed for " + (socket.tempint / 60 / 60) + " hours." );
 		}
 	}
 	socket.tempint = 0;

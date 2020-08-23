@@ -53,7 +53,7 @@ function command_ADD( socket, cmdString )
 			if( splitString[0] )
 			{
 				socket.tempint = parseInt( splitString[0] );
-				socket.CustomTarget( 1, "Select location for Item: " + splitString[1] );
+				socket.CustomTarget( 1, "Select location for Item: " + splitString[0] );
 			}
 			break;
 		}

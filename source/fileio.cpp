@@ -41,11 +41,11 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 		auto nameonly = filepath.filename();
 		auto mapnum = std::stoi( nameonly.string().substr( 3, 1 ));
         try {
-            auto rvalue = UOP::mapUOP( strfilename, mapnum );
-            this->memPtr = std::get<0>( rvalue );
+            auto rvalue = UOP::loadUOP( strfilename, mapnum );
+            this->memPtr = std::get<1>( rvalue );
             if( this->memPtr != nullptr )
 			{
-                this->fileSize = std::get<1>( rvalue );
+                this->fileSize = std::get<0>( rvalue );
                 usingUOP = true;
             }
         }
