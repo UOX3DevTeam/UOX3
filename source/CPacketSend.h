@@ -682,6 +682,13 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPKrriosClientSpecial : public CPUOXBuffer
+{
+public:
+	CPKrriosClientSpecial( CSocket *mSock, CChar * mChar, UI08 type, bool locations );
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPAddItemToCont : public CPUOXBuffer
 {
 protected:

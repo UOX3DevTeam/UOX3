@@ -2149,9 +2149,10 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			}
 			if( myChar->GetInstanceID() != instanceID )
 			{
+				// Remove character from nearby players
+				myChar->RemoveFromSight();
 				myChar->RemoveAllObjectsFromSight( mySock );
 				myChar->SetLocation( x, y, z, world, instanceID );
-				//SendMapChange( world+1, mySock ); // Extra map change to have client remove already loaded objects...
 			}
 			else
 			{
@@ -2160,7 +2161,11 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			SendMapChange( world, mySock );
 		} 
 		else 
+		{
+			if( myChar->GetInstanceID() != instanceID )
+				myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world, instanceID );
+	}	
 	}	
 
 	return JS_TRUE;
@@ -4362,25 +4367,25 @@ JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	void Midi( midiNum )
+//|	Function	-	JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void Music( musicNum )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sends message to socket to play specified midi
+//|	Purpose		-	Sends message to socket to play specified midi/mp3
 //o-----------------------------------------------------------------------------------------------o
-JSBool CSocket_Midi( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 )
 	{
-		MethodError( "Midi: Invalid number of arguments (takes 1)" );
+		MethodError( "Music: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
 
-	UI16 midi = (UI16)JSVAL_TO_INT( argv[0] );
+	UI16 music = (UI16)JSVAL_TO_INT( argv[0] );
 
 	CSocket *mySock = static_cast<CSocket*>(JS_GetPrivate( cx, obj ));
 
 	if( mySock != NULL )
-		Effects->playMidi( mySock, midi );
+		Effects->playMusic( mySock, music );
 
 	return JS_TRUE;
 }
@@ -6011,7 +6016,7 @@ JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		return JS_FALSE;
 	}
 
-	SI32 numSecsToJail = 100000;
+	SI32 numSecsToJail = 86400;
 	if( argc == 1 )
 		numSecsToJail = (SI32)JSVAL_TO_INT( argv[0] );
 

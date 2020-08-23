@@ -637,7 +637,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 #endif
 						mSock->FlushBuffer();
 						Movement->CombatWalk( ourChar );
-						Effects->dosocketmidi( mSock );
+						Effects->doSocketMusic( mSock );
 						ourChar->BreakConcentration( mSock );
 						break;
 					case 0x12:// Ext. Command

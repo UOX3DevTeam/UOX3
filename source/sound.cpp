@@ -172,12 +172,12 @@ void cEffects::playDeathSound( CChar *i )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void playMidi( CSocket *s, UI16 number )
+//|	Function	-	void playMusic( CSocket *s, UI16 number )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Plays midi in client
+//|	Purpose		-	Plays midi/mp3 in client
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::playMidi( CSocket *s, UI16 number )
+void cEffects::playMusic( CSocket *s, UI16 number )
 {
 	CPPlayMusic toSend( number );
 	s->Send( &toSend );
@@ -261,15 +261,15 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void dosocketmidi( CSocket *s )
+//|	Function	-	void doSocketMusic( CSocket *s )
 //|	Programmer	-	UOX3 DevTeam
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Send midi to client
+//|	Purpose		-	Sends message to client to play specific midi/mp3
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::dosocketmidi( CSocket *s )
+void cEffects::doSocketMusic( CSocket *s )
 {
 	SI32 i = 0;
-	char midiarray[50];
+	char musicArray[50];
 	UString sect;
 
 	CChar *mChar = s->CurrcharObj();
@@ -278,29 +278,29 @@ void cEffects::dosocketmidi( CSocket *s )
 	if( mReg == NULL )
 		return;
 
-	UI16 midiList = mReg->GetMidiList();
-	if( midiList == 0 )
+	UI16 musicList = mReg->GetMusicList();
+	if( musicList == 0 )
 		return;
 
 	if( mChar->IsAtWar() )
-		sect = "MIDILIST COMBAT";
+		sect = "MUSICLIST COMBAT";
 	else
-		sect = "MIDILIST " + UString::number( midiList );
+		sect = "MUSICLIST " + UString::number( musicList );
 
-	ScriptSection *MidiList = FileLookup->FindEntry( sect, regions_def );
-	if( MidiList == NULL )
+	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
+	if( MusicList == NULL )
 		return;
 	UString data;
-	for( UString tag = MidiList->First(); !MidiList->AtEnd(); tag = MidiList->Next() )
+	for( UString tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
 	{
-		data = MidiList->GrabData();
-		if( tag.upper() == "MIDI" )
-			midiarray[i++] = data.toByte();
+		data = MusicList->GrabData();
+		if( tag.upper() == "MUSIC" )
+			musicArray[i++] = data.toByte();
 	}
 	if( i != 0 )
 	{
 		i = RandomNum( 0, i - 1 );
-		playMidi( s, midiarray[i] );
+		playMusic( s, musicArray[i] );
 	}
 }
 

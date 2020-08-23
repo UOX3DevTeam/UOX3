@@ -6,6 +6,8 @@
 #include "power.h"
 #include "msgboard.h"
 #include "mapstuff.h"
+#include "PartySystem.h"
+#include "cGuild.h"
 
 namespace UOX
 {
@@ -1587,7 +1589,7 @@ CPDeathAction &CPDeathAction::operator=( CItem &corpse )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPPlayMusic()
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet to have client play specified midi music
+//| Purpose		-	Handles outgoing packet to have client play specified music
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x6D (Play Midi Music)
 //|					Size: 3 bytes
@@ -3557,6 +3559,192 @@ CPLoginDeny::CPLoginDeny( LoginDenyReason reason )
 void CPLoginDeny::DenyReason( LoginDenyReason reason )
 {
 	pStream.WriteByte( 1, reason );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CPKrriosClientSpecial()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet for krrios client special packet, used by ClassicUO
+//|					for things like updating party/guild member locations in WorldMap
+//o-----------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xF0 (KrriosClientSpecial)
+//|					Size: Variable
+//|
+//|					Packet Build
+//|						Byte cmd
+//|						Byte[2] length
+//|						Byte type
+//|							0x00 // krrios special packet accepted, enable WorldMap updates
+//|							0x01 // custom party info
+//|								Loop for each party member online
+//|									BYTE[4] serial
+//|									BYTE[2] x
+//|									BYTE[2] y
+//|									BYTE world
+//|								BYTE[4] 0x0000
+//|							0x02 // guild track info
+//|								BYTE locations // bool, whether to update locations on map
+//|								Loop for each party/guild member online
+//|									BYTE[4] serial
+//|									BYTE[2] x
+//|									BYTE[2] y
+//|									BYTE world
+//|									BYTE healthpoint percentage of max hp
+//|								BYTE[5] 0x00000
+//|							0x03 // runebook contents
+//|							0x04 // guardline data
+//|							0xf0 // ???
+//|							0xfe // Razor ack sent
+//o-----------------------------------------------------------------------------------------------o
+CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI08 type, bool locations )
+{
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0xF0 );
+	UI08 byteOffset = 3;
+
+	switch( type )
+	{
+		case 0x00: // Party
+		{
+			pStream.WriteByte( byteOffset, 0x01 );
+			byteOffset += 1;
+			Party * myParty = PartyFactory::getSingleton().Get( mSock->CurrcharObj() );
+			if( myParty != NULL )
+			{
+				std::vector< PartyEntry * > *mList = myParty->MemberList();
+				if( mList != NULL )
+				{
+					for( size_t j = 0; j < mList->size(); ++j )
+					{
+						PartyEntry *mEntry = ( *mList )[j];
+						CChar * partyMember = mEntry->Member();
+
+						if( partyMember->GetSerial() == mSock->CurrcharObj()->GetSerial() )
+							continue;
+
+						if( objInRange( mSock->CurrcharObj(), partyMember, DIST_INRANGE ) && partyMember->GetVisible() == 0 )
+							continue;
+
+						pStream.WriteLong( byteOffset, partyMember->GetSerial() );
+						byteOffset += 4;
+						pStream.WriteShort( byteOffset, partyMember->GetX() );
+						byteOffset += 2;
+						pStream.WriteShort( byteOffset, partyMember->GetY() );
+						byteOffset += 2;
+						pStream.WriteByte( byteOffset, partyMember->WorldNumber() );
+						byteOffset += 1;
+					}
+				}
+			}
+
+			// Finalize packet and ship it!
+			pStream.WriteLong( byteOffset, 0x0000 );
+			byteOffset += 4;
+			pStream.WriteShort( 1, byteOffset ); // length
+			pStream.ReserveSize( byteOffset );
+			break;
+		}
+		case 0x01: // Guild
+		{
+			pStream.WriteByte( byteOffset, 0x02 );
+			byteOffset += 2;
+			CGuild * mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+			if( mGuild != NULL )
+			{
+				size_t numRecruits = mGuild->NumRecruits();
+				size_t numMembers = mGuild->NumMembers();
+
+				// First, look up the recruits to see who's online
+				for( auto i = 0; i < numRecruits; i++ )
+				{
+					SERIAL recruitSerial = mGuild->RecruitNumber( i );
+					CChar * guildRecruit = calcCharObjFromSer( recruitSerial );
+					if( guildRecruit != NULL && guildRecruit->GetSocket() != NULL )
+					{
+						if( guildRecruit->GetSerial() == mChar->GetSerial() )
+							continue;
+
+						if( locations && objInRange( mChar, guildRecruit, DIST_SAMESCREEN ) && guildRecruit->GetVisible() == 0 )
+							continue;
+
+						// Guild recruit is online, and it's not the player!
+						pStream.WriteLong( byteOffset, guildRecruit->GetSerial() );
+						byteOffset += 4;
+						if( locations )
+						{
+							pStream.WriteShort( byteOffset, guildRecruit->GetX() );
+							byteOffset += 2;
+							pStream.WriteShort( byteOffset, guildRecruit->GetY() );
+							byteOffset += 2;
+							pStream.WriteByte( byteOffset, guildRecruit->WorldNumber() );
+							byteOffset += 1;
+							SI16 currentHP = guildRecruit->GetHP();
+							UI16 maxHP = guildRecruit->GetMaxHP();
+							UI08 percentHP = static_cast<UI08>( 100 * ( currentHP / maxHP ));
+
+							pStream.WriteByte( byteOffset, percentHP );
+							byteOffset += 1;
+						}
+					}
+				}
+
+				// Then, look up the guild members to see who's online
+				for( auto i = 0; i < numMembers; i++ )
+				{
+					SERIAL memberSerial = mGuild->MemberNumber( i );
+					CChar * guildMember = calcCharObjFromSer( memberSerial );
+					if( guildMember != NULL && guildMember->GetSocket() != NULL )
+					{
+						if( guildMember->GetSerial() == mChar->GetSerial() )
+							continue;
+
+						if( locations && objInRange( mChar, guildMember, DIST_SAMESCREEN ) && guildMember->GetVisible() == 0 )
+							continue;
+
+						// Guild member is online, and it's not the player!
+						pStream.WriteLong( byteOffset, guildMember->GetSerial() );
+						byteOffset += 4;
+						if( locations )
+						{
+							pStream.WriteShort( byteOffset, guildMember->GetX() );
+							byteOffset += 2;
+							pStream.WriteShort( byteOffset, guildMember->GetY() );
+							byteOffset += 2;
+							pStream.WriteByte( byteOffset, guildMember->WorldNumber() );
+							byteOffset += 1;
+
+							SI16 currentHP = guildMember->GetHP();
+							UI16 maxHP = guildMember->GetMaxHP();
+							UI08 percentHP = static_cast<UI08>( 100 * ( currentHP / maxHP ));
+
+							pStream.WriteByte( byteOffset, percentHP );
+							byteOffset += 1;
+						}
+					}
+				}
+			}
+
+			// Finalize packet and ship it!
+			pStream.WriteByte( 4, locations );
+			pStream.WriteLong( byteOffset, 0x0000 );
+			byteOffset += 4;
+			pStream.WriteByte( byteOffset, 0x00 );
+			byteOffset += 1;
+			pStream.WriteShort( 1, byteOffset ); // length
+			pStream.ReserveSize( byteOffset );
+			break;
+		}
+		default: 
+			break;
+	}
+}
+
+void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+		outStream << "[SEND]Packet   : CPKrriosClientSpecial 0xF0 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPUOXBuffer::Log( outStream, false );
 }
 
 //o-----------------------------------------------------------------------------------------------o

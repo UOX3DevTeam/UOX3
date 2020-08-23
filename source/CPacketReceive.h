@@ -123,7 +123,8 @@ public:
 class CPIKrriosClientSpecial : public CPInputBuffer
 {
 	UI08			type;
-	bool			unknown;
+	UI16			blockLen;
+	bool			locations;
 protected:
 	virtual void	InternalReset( void );
 public:
@@ -132,21 +133,6 @@ public:
 	}
 	CPIKrriosClientSpecial();
 	CPIKrriosClientSpecial( CSocket *s );
-	virtual void	Receive( void ) override;
-	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
-};
-
-class CPINegotiateFeaturesResponse : public CPInputBuffer
-{
-protected:
-	virtual void	InternalReset( void );
-public:
-	virtual			~CPINegotiateFeaturesResponse()
-	{
-	}
-					CPINegotiateFeaturesResponse();
-					CPINegotiateFeaturesResponse( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;

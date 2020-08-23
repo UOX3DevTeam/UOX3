@@ -47,7 +47,7 @@ private:
 
 	UI16				regionNum;
 	std::string			name;
-	UI16				midilist;
+	UI16				musicList;
 	UI08				worldNumber;
 	UI16				instanceID;
 	std::bitset< 10 >	priv;	// 0x01 guarded, 0x02, mark allowed, 0x04 gate allowed, 0x08 recall
@@ -154,7 +154,7 @@ public:
 	SI16				GetHealth( void ) const;
 	CChar *				GetMayor( void );						// returns the mayor character
 	SERIAL				GetMayorSerial( void ) const;			// returns the mayor's serial
-	UI16				GetMidiList( void ) const;
+	UI16				GetMusicList( void ) const;
 	std::string			GetName( void ) const;
 	size_t				GetNumOrePreferences( void ) const;
 	const orePref *		GetOrePreference( size_t targValue ) const;

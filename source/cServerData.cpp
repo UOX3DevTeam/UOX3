@@ -61,6 +61,7 @@ const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
 const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
 const UI32 BIT_ASSISTANTNEGOTIATION = 40;
 const UI32 BIT_KICKONASSISTANTSILENCE = 41;
+const UI32 BIT_CLASSICUOMAPTRACKER = 42;
 
 
 // New uox3.ini format lookup
@@ -152,7 +153,7 @@ const std::string UOX3INI_LOOKUP("|SERVERNAME|SERVERNAME|CONSOLELOG|CRASHPROTECT
 	"CLIENTSUPPORT4000|CLIENTSUPPORT5000|CLIENTSUPPORT6000|CLIENTSUPPORT6050|CLIENTSUPPORT7000|CLIENTSUPPORT7090|CLIENTSUPPORT70160|CLIENTSUPPORT70240|CLIENTSUPPORT70300|CLIENTSUPPORT70331|CLIENTSUPPORT704565|CLIENTSUPPORT70610|EXTENDEDSTARTINGSTATS|EXTENDEDSTARTINGSKILLS|WEAPONDAMAGECHANCE|"
 	"ARMORDAMAGECHANCE|WEAPONDAMAGEMIN|WEAPONDAMAGEMAX|ARMORDAMAGEMIN|ARMORDAMAGEMAX|GLOBALATTACKSPEED|NPCSPELLCASTSPEED|FISHINGSTAMINALOSS|RANDOMSTARTINGLOCATION|ASSISTANTNEGOTIATION|KICKONASSISTANTSILENCE|"
 	"AF_FILTERWEATHER|AF_FILTERLIGHT|AF_SMARTTARGET|AF_RANGEDTARGET|AF_AUTOOPENDOORS|AF_DEQUIPONCAST|AF_AUTOPOTIONEQUIP|AF_POISONEDCHECKS|AF_LOOPEDMACROS|AF_USEONCEAGENT|AF_RESTOCKAGENT|"
-	"AF_SELLAGENT|AF_BUYAGENT|AF_POTIONHOTKEYS|AF_RANDOMTARGETS|AF_CLOSESTTARGETS|AF_OVERHEADHEALTH|AF_AUTOLOOTAGENT|AF_BONECUTTERAGENT|AF_JSCRIPTMACROS|AF_AUTOREMOUNT|AF_ALL|"
+	"AF_SELLAGENT|AF_BUYAGENT|AF_POTIONHOTKEYS|AF_RANDOMTARGETS|AF_CLOSESTTARGETS|AF_OVERHEADHEALTH|AF_AUTOLOOTAGENT|AF_BONECUTTERAGENT|AF_JSCRIPTMACROS|AF_AUTOREMOUNT|AF_ALL|CLASSICUOMAPTRACKER|"
 	"ODBCDSN|ODBCUSER|ODBCPASS|"
 );
 
@@ -2416,6 +2417,21 @@ void CServerData::SetAssistantNegotiation( bool nVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool GetClassicUOMapTracker( void ) const
+//|					void SetClassicUOMapTracker( bool nVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap Tracker packets 
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::GetClassicUOMapTracker( void ) const
+{
+	return boolVals.test( BIT_CLASSICUOMAPTRACKER );
+}
+void CServerData::SetClassicUOMapTracker( bool nVal )
+{
+	boolVals.set( BIT_CLASSICUOMAPTRACKER, nVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool GetDisabledAssistantFeature( ClientFeatures bitNum ) const
 //|					void SetDisabledAssistantFeature( ClientFeatures bitNum, bool nVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -2547,6 +2563,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
 		ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
+		ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker()?1:0) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -3638,15 +3655,18 @@ bool CServerData::HandleLine( const UString& tag, const UString& value )
 	case 0x0c0f:	// AF_ALL[0206]
 		SetDisabledAssistantFeature( AF_ALL, value.toByte() == 1 );
 		break;
+	case 0x0c16:	// CLASSICUOMAPTRACKER[0207]
+		SetClassicUOMapTracker( (value.toByte() == 1) );
+		break;
 	// How to add new entries here: Take previous case number, then add the length of the ini-setting (not function name) + 1 to find the next case number
 #if P_ODBC == 1
-	case 0x0c16:	 // ODBCDSN[0207]
+	case 0x0c2a:	 // ODBCDSN[0208]
 		ODBCManager::getSingleton(0168.SetDatabase( value );
 		break;
-	case 0x0c1e:	 // ODBCUSER[0208]
+	case 0x0c32:	 // ODBCUSER[0209]
 		ODBCManager::getSingleton().SetUsername( value );
 		break;
-	case 0x0c27:	// ODBCPASS[0209]
+	case 0x0c3b:	// ODBCPASS[0210]
 		ODBCManager::getSingleton().SetPassword( value );
 		break;
 #endif
@@ -3781,7 +3801,7 @@ void CServerData::PostLoadDefaults( void )
 		ServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,0,1075074" );
 		ServerLocation( "Moonglow,Docks,4406,1045,0,0,0,1075075" );
 		ServerLocation( "Trinsic,West Gate,1832,2779,0,0,0,1075076" );
-		ServerLocation( "Magincia,Docks,3675,2259,20,0,0,1075077" );
+		ServerLocation( "Magincia,Docks,3675,2259,26,0,0,1075077" );
 		ServerLocation( "Jhelom,Docks,1492,3696,0,0,0,1075078" );
 		ServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
 		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );

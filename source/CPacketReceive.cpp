@@ -1044,8 +1044,6 @@ bool CPIUpdateRangeChange::Handle( void )
 	// Byte 0 == 0xC8
 	// Byte 1 == 0x0F (by default)  This is the distance, we believe
 
-	// SURPRISE! This value, if used by the server, WILL NOT SHOW THE ITEMS IN A REAL CLIENT!
-	// Krrios' client behaves (go Krrios!), but the UO ones don't
 	switch( tSock->ClientType() )
 	{
 		case CV_DEFAULT:
@@ -1058,7 +1056,7 @@ bool CPIUpdateRangeChange::Handle( void )
 		case CV_SA3D:
 		case CV_HS2D:
 		case CV_HS3D:
-			tSock->Range( tSock->GetByte( 1 ) - 4 );
+			tSock->Range( tSock->GetByte( 1 ) );
 			break;
 		default:
 			tSock->Range( tSock->GetByte( 1 ) );
@@ -1069,65 +1067,6 @@ bool CPIUpdateRangeChange::Handle( void )
 #pragma note( "Flush location" )
 #endif
 	tSock->FlushBuffer();
-	return true;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	CPINegotiateFeaturesResponse()
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles incoming packet with assistant tool's response for feature negotiation
-//o-----------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0xF0 (Negotiation Feature Response)
-//|					Size: 4 bytes
-//|
-//|					Packet Build
-//|						BYTE cmd (0xf0)
-//|						BYTE 0x00
-//|						BYTE 0x04
-//|						BYTE 0xff
-//|
-//|					Notes
-//|						If both ASSISTANTNEGOTIATION and KICKONASSISTANTSILENCE uox.ini settings
-//|						are enabled, player will get kicked within 30 seconds if this packet is not
-//|						received by the server.
-//o-----------------------------------------------------------------------------------------------o
-void CPINegotiateFeaturesResponse::Log( std::ofstream &outStream, bool fullHeader )
-{
-	if( fullHeader )
-		outStream << "[RECV]Packet   : CPINegotiateFeaturesResponse 0xF0 --> Length: 4 " << std::endl;
-	outStream << "  Raw dump     :" << std::endl;
-	CPInputBuffer::Log( outStream, false );
-}
-void CPINegotiateFeaturesResponse::InternalReset( void )
-{
-}
-CPINegotiateFeaturesResponse::CPINegotiateFeaturesResponse()
-{
-	InternalReset();
-}
-CPINegotiateFeaturesResponse::CPINegotiateFeaturesResponse( CSocket *s ) : CPInputBuffer( s )
-{
-	InternalReset();
-	Receive();
-}
-void CPINegotiateFeaturesResponse::Receive( void )
-{
-	tSock->Receive( 4, false );
-}
-bool CPINegotiateFeaturesResponse::Handle( void )
-{
-	// Byte 0 == 0xf0
-	// Byte 1 == 0x00
-	// Byte 2 == 0x04
-	// Byte 3 == 0xff
-
-	if( tSock->GetByte( 1 ) == 0x00 && tSock->GetByte( 2 ) == 0x04 )
-	{
-		tSock->NegotiatedWithAssistant( true );
-		tSock->NegotiateTimeout( -1 );
-		tSock->sysmessage( "Features successfully negotiated with assistant tool." );
-	}
-
 	return true;
 }
 
@@ -4225,7 +4164,8 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	CPIKrriosClientSpecial()
 //o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles incoming packet for party and guild tracking
+//| Purpose		-	Handles incoming packet for party and guild tracking, assistant feature
+//|					negotiation, and potentially other purposes (like new movement mode)
 //o-----------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xF0 (KrriosClientSpecial)
 //|					Size: Variable
@@ -4237,10 +4177,21 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 //|							0x00 - Party info
 //|							0x01 - Guild Tracker
 //|								BYTE unknown // always 1?
-//|							0xff - Razor negotiate features
+//|							0xff - Response to server's request for Razor to negotiate features
+//|								Byte 0 == 0xf0
+//|								Byte 1 == 0x00
+//|								Byte 2 == 0x04
+//|								Byte 3 == 0xff
+//|									If both ASSISTANTNEGOTIATION and KICKONASSISTANTSILENCE uox.ini
+//|									settings are enabled, player will get kicked within 30 seconds 
+//|									if this packet is not received by the server.
 //o-----------------------------------------------------------------------------------------------o
 void CPIKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
 {
+	if( fullHeader )
+		outStream << "[RECV]Packet   : CPKrriosClientSpecial 0xF0 --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
 }
 void CPIKrriosClientSpecial::InternalReset( void )
 {
@@ -4256,8 +4207,11 @@ CPIKrriosClientSpecial::CPIKrriosClientSpecial( CSocket *s ) : CPInputBuffer( s 
 }
 void CPIKrriosClientSpecial::Receive( void )
 {
-	tSock->Receive( 4, true );
-	if( tSock->GetWord( 1 ) > 5 )
+	tSock->Receive( 4, false );
+	blockLen	= tSock->GetWord( 1 );
+	tSock->Receive( blockLen, false );
+
+	if( blockLen > 5 )
 	{
 		// New Movement Request Packet
 		type = 0xaa;
@@ -4267,19 +4221,56 @@ void CPIKrriosClientSpecial::Receive( void )
 }
 bool CPIKrriosClientSpecial::Handle( void )
 {
-	unknown = false;
+	locations = false;
 
 	switch( type )
 	{
 		case 0x00: // custom party info
-			break;
 		case 0x01: // guild track info
-			tSock->Receive( 5, true );
-			unknown = tSock->GetByte( 4 );
+		{
+			// If ini-setting for worldmap packets is enabled
+			if( cwmWorldState->ServerData()->GetClassicUOMapTracker() )
+			{
+				CChar * mChar = tSock->CurrcharObj();
+
+				if( type == 0x00 )
+				{
+					// Character is not in a party - nothing to track
+					if( !mChar->InParty() )
+						break;
+				}
+				else if( type == 0x01 )
+				{
+					locations = ( blockLen == 5 ? (bool)tSock->GetByte( 4 ) : false );
+
+					// Character is not in a guild - nothing to track
+					if( mChar->GetGuildNumber() == -1 )
+					{
 			break;
+					}
+
+					const CGuild * const mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+					if( mGuild != NULL )
+					{
+						// Count the number of recruits and regular members, only proceeed
+						// if there's more than one (that would be the player themselves)
+						size_t numRecruits = mGuild->NumRecruits();
+						size_t numMembers = mGuild->NumMembers();
+						if( numRecruits + numMembers <= 1 )
+							break;
+					}
+				}
+
+				// Construct the response, and send it!
+				CPKrriosClientSpecial krriosResponse( tSock, mChar, type, locations );
+				tSock->Send( &krriosResponse );
+			}
+			break;
+		}
 		case 0xaa: // New Movement Request Packet
 			break;
 		case 0xff: // razor feature negotiation
+		{
 			if( tSock->GetByte( 1 ) == 0x00 && tSock->GetByte( 2 ) == 0x04 )
 			{
 				tSock->NegotiatedWithAssistant( true );
@@ -4288,11 +4279,12 @@ bool CPIKrriosClientSpecial::Handle( void )
 				return true;
 			}
 			break;
+		}
 		default: // default
 			break;
 	}
 
-	return unknown;
+	return locations;
 }
 
 //o-----------------------------------------------------------------------------------------------o

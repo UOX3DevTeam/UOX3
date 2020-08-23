@@ -180,7 +180,7 @@ JSMethodFunc CSocket_SetString;
 JSMethodFunc CSocket_ReadBytes;
 JSMethodFunc CSocket_OpenGump;
 JSMethodFunc CSocket_WhoList;
-JSMethodFunc CSocket_Midi;
+JSMethodFunc CSocket_Music;
 JSMethodFunc CSocket_SendAddMenu;
 JSMethodFunc CSocket_Send;
 JSMethodFunc CSocket_DisplayDamage;
@@ -453,7 +453,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "BuyFrom",			CMisc_BuyFrom,		1, 0, 0 },
 	{ "SellTo",				CMisc_SellTo,		1, 0, 0 },
 	{ "WhoList",			CSocket_WhoList,	0, 0, 0 },
-	{ "Midi",				CSocket_Midi,		1, 0, 0 },
+	{ "Music",				CSocket_Music,		1, 0, 0 },
 	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },

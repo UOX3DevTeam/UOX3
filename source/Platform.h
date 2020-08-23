@@ -156,12 +156,6 @@ suit our own purposes
 
 #endif
 
-//For apple, we always have a custom config.h file
-#if UOX_PLATFORM == PLATFORM_APPLE
-#    include "config.h"
-
-#endif
-
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------

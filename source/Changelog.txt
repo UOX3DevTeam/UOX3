@@ -1,3 +1,16 @@
+24/08/2020 - Xuri (0.99.2p)
+	Improvements to handling of UOP format; now takes a cleaner approach, loads files faster (punt)
+	Fixed a issue in JS/COMMANDS/TARGETING/add.js that would display 'undefined' in system message when adding raw/base items
+	Updated default jail time in JS/COMMANDS/TARGETING/jail.js (and in code) from 100000 seconds to 86400 seconds (24 hours)
+	All references in code and scripts to "midi" changed to "music", to reflect fact that modern clients don't actually even have midi files. This change covers both GM commands, DFN tags in regions.dfn and JS methods/properties.
+	Added new socket property for storing temporary int in JS - tempInt2
+	Added new socket property for storing temporary object in JS - tempObj2
+	Expanded XGO command in JS/COMMANDS/TARGETING/x.js to support optional world and instance parameters
+	Fixed an issue that prevented characters from vanishing from the the sight of players when teleporting to a different instance
+	Added support for ClassicUO client's WorldMap tracking packet (0xf0) for guildmembers/partymembers. This is the same packet as Razor uses for feature negotiation, so merged the handling of those two packets together into CPIKrriosClientSpecial, which can also be extended to handle other uses of this packet.
+	Added new UOX.INI setting  whether shard should respond to ClassicUO client's WorldMap tracking packets for guildmembers/partymembers
+		CLASSICUOMAPTRACKER=0
+
 21/08/2020 - Xuri (0.99.2o)
 	Added support (UOPInterface.cpp/hpp) for loading map files in UOP format, allowing UOX3 to use
 		map files from clients up to at least v7.0.86.2 without requiring files to be converted to

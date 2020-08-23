@@ -200,6 +200,21 @@ void CSocket::TempObj( CBaseObject *newValue )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject TempObj2( void ) const
+//|					void TempObj2( CBaseObject *newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets temporary storage for CChar and CItem objects
+//o-----------------------------------------------------------------------------------------------o
+CBaseObject *CSocket::TempObj2( void ) const
+{
+	return tmpObj2;
+}
+void CSocket::TempObj2( CBaseObject *newValue )
+{
+	tmpObj2 = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 TempInt( void ) const
 //|					void TempInt( SI32 newValue )
 //|	Date		-	November 29th, 2000
@@ -214,6 +229,21 @@ SI32 CSocket::TempInt( void ) const
 void CSocket::TempInt( SI32 newValue )
 {
 	tempint = newValue;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI32 TempInt2( void ) const
+//|					void TempInt2( SI32 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets tempint2 of the socket
+//o-----------------------------------------------------------------------------------------------o
+SI32 CSocket::TempInt2( void ) const
+{
+	return tempint2;
+}
+void CSocket::TempInt2( SI32 newValue )
+{
+	tempint2 = newValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -593,7 +623,7 @@ range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum )
 currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ), 
 postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), 
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), 
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
+bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( NULL ), tmpObj2( NULL ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( NULL )
 {
 	InternalReset();
 }

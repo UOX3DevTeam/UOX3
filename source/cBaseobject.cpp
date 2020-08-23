@@ -1766,6 +1766,8 @@ void CBaseObject::Cleanup( void )
 		{
 			if( iSock->TempObj() != NULL && iSock->TempObj() == this )
 				iSock->TempObj( NULL );
+			if( iSock->TempObj2() != NULL && iSock->TempObj2() == this )
+				iSock->TempObj2( NULL );
 		}
 	}
 }

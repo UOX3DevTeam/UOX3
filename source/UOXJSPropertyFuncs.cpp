@@ -1567,11 +1567,17 @@ namespace UOX
 					break;
 				case CSOCKP_WASIDLEWARNED:		gPriv->WasIdleWarned( encaps.toBool() );				break;
 				case CSOCKP_TEMPINT:			gPriv->TempInt( encaps.toInt() );						break;
+				case CSOCKP_TEMPINT2:			gPriv->TempInt2( encaps.toInt() );						break;
 				case CSOCKP_TEMPOBJ:
 												if( *vp == JSVAL_NULL )
 													gPriv->TempObj( NULL );
 												else
 													gPriv->TempObj( static_cast<CBaseObject *>(encaps.toObject() ));		break;
+				case CSOCKP_TEMPOBJ2:
+					if( *vp == JSVAL_NULL )
+						gPriv->TempObj2( NULL );
+					else
+						gPriv->TempObj2( static_cast<CBaseObject *>(encaps.toObject() ));		break;
 				case CSOCKP_BUFFER:
 					break;
 				case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
@@ -1637,6 +1643,7 @@ namespace UOX
 					break;
 				case CSOCKP_WASIDLEWARNED:		*vp = BOOLEAN_TO_JSVAL( gPriv->WasIdleWarned() );		break;
 				case CSOCKP_TEMPINT:			*vp = INT_TO_JSVAL( gPriv->TempInt() );					break;
+				case CSOCKP_TEMPINT2:			*vp = INT_TO_JSVAL( gPriv->TempInt2() );				break;
 				case CSOCKP_TEMPOBJ:
 					{
 						CBaseObject *mObj	= gPriv->TempObj();
@@ -1653,6 +1660,22 @@ namespace UOX
 						}
 					}
 					break;
+				case CSOCKP_TEMPOBJ2:
+				{
+					CBaseObject *mObj	= gPriv->TempObj2();
+					if( !ValidateObject( mObj ) )
+						*vp = JSVAL_NULL;
+					else
+					{
+						JSObject *myObj = NULL;
+						if( mObj->CanBeObjType( OT_ITEM ) )
+							myObj = JSEngine->AcquireObject( IUE_ITEM, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						else
+							myObj = JSEngine->AcquireObject( IUE_CHAR, mObj, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+						*vp = OBJECT_TO_JSVAL( myObj );
+					}
+				}
+				break;
 				case CSOCKP_BUFFER:
 					break;
 				case CSOCKP_XTEXT:				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
