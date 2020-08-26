@@ -1161,7 +1161,7 @@ std::string CTownRegion::GetTownMemberSerials( void ) const
 			if( townMemberSerials.empty() )
 				townMemberSerials += std::to_string(townMember[counter].townMember);
 			else
-				townMemberSerials += "," + townMember[counter].townMember;
+				townMemberSerials += std::string(",") + std::to_string(townMember[counter].townMember);
 		}
 	}
 	return townMemberSerials;

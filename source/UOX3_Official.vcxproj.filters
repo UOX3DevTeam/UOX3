@@ -286,9 +286,6 @@
     <ClInclude Include="ObjectFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Prerequisites.h">
       <Filter>Header Files</Filter>
     </ClInclude>

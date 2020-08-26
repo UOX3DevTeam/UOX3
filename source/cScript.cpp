@@ -310,13 +310,14 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 		myObj = JSEngine->AcquireObject( IUE_CHAR, thingCreated, runTime );
 		paramType = 1;
 	}
-	else
+    else {
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingCreated, runTime );
+    }
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( paramType );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
-	if( retVal == JS_FALSE )
+    if( retVal == JS_FALSE ){
 		if( !dfnCreated )
 		{
 			SetEventExists( seOnCreateTile, false );
@@ -325,6 +326,7 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 		{
 			SetEventExists( seOnCreateDFN, false );
 		}
+    }
 
 	return ( retVal == JS_TRUE );
 }

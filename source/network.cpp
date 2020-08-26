@@ -648,20 +648,26 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						{
 							if( ourChar->IsOnHorse() ) // Ripper
 								return; // can't bow or salute on horse
-							if( !strcmp( (char *)&buffer[4], "bow" ) ) 
+                            if( !strcmp( (char *)&buffer[4], "bow" ) ) {
 								if( ( (ourChar->GetID() >= 0x190) &&
 									(ourChar->GetID() <= 0x193) ) ||
-									(ourChar->GetID() == 0x3DB) )
+                                   (ourChar->GetID() == 0x3DB) ){
 									Effects->PlayCharacterAnimation( ourChar, 0x20 );
-								else
+                                }
+                                else {
 									Effects->PlayCharacterAnimation( ourChar, 0x12 );
-							if( !strcmp( (char *)&buffer[4], "salute" ) ) 
+                                }
+                            }
+                            if( !strcmp( (char *)&buffer[4], "salute" ) ) {
 								if( ( (ourChar->GetID() >= 0x190) &&
 									(ourChar->GetID() <= 0x193) ) ||
-									(ourChar->GetID() == 0x3DB) )
+                                   (ourChar->GetID() == 0x3DB) ){
 									Effects->PlayCharacterAnimation( ourChar, 0x21 );
-								else
+                                }
+                                else{
 									Effects->PlayCharacterAnimation( ourChar, 0x11 );
+                                }
+                            }
 							break;
 						} 
 						else if( buffer[3] == 0x58 )

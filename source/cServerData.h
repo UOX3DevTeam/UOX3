@@ -178,17 +178,17 @@ private:
 
 	// Client Support
 	bool		Clients4000Enabled;				// Allow client connections from 4.0.0 to 4.0.11f
-	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2
+	bool		Clients5000Enabled;				// Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
 	bool		Clients6000Enabled;				// Allow client connections from 6.0.0.0 to 6.0.4.0
 	bool		Clients6050Enabled;				// Allow client connections from 6.0.5.0 to 6.0.14.2
 	bool		Clients7000Enabled;				// Allow client connections from 7.0.0.0 to 7.0.8.2
-	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1
+	bool		Clients7090Enabled;				// Allow client connections from 7.0.9.0 to 7.0.15.1 (High Seas)
 	bool		Clients70160Enabled;			// Allow client connections from 7.0.16.0 to 7.0.23.1
 	bool		Clients70240Enabled;			// Allow client connections from 7.0.24.0+
 	bool		Clients70300Enabled;			// Allow client connections from 7.0.30.0+
 	bool		Clients70331Enabled;			// Allow client connections from 7.0.33.1+
-	bool		Clients704565Enabled;			// Allow client connections from 7.0.45.65+
-	bool		Clients70610Enabled;			// Allow client connections from 7.0.61.0+
+	bool		Clients704565Enabled;			// Allow client connections from 7.0.45.65+ (Time of Legends)
+	bool		Clients70610Enabled;			// Allow client connections from 7.0.61.0+ (Endless Journey)
 
 	// facet block
 	bool		useFacetSaves;

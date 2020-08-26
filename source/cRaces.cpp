@@ -1173,21 +1173,28 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 
 			case 'h':
 			case 'H':
-				if( UTag == "HAIRMIN" )
+                if( UTag == "HAIRMIN" ){
 					hairMin = data.toUShort();
-				else if( UTag == "HAIRMAX" )
+                }
+                else if( UTag == "HAIRMAX" ){
 					hairColours.push_back( ColourPair( hairMin, data.toUShort() ) );
-				else if( UTag == "HEATAFFECT" )	// are we affected by light?
+                }
+                else if( UTag == "HEATAFFECT" )	{// are we affected by light?
 					AffectedBy( true, HEAT );
-				else if( UTag == "HEATDAMAGE" )	// how much damage to take from light
+                }
+                else if( UTag == "HEATDAMAGE" )	{// how much damage to take from light
 					WeatherDamage( data.toUShort(), HEAT );
-				else if( UTag == "HEATLEVEL" )	// heat level at which to take damage
+                }
+                else if( UTag == "HEATLEVEL" ){	// heat level at which to take damage
 					HeatLevel( data.toUShort() );
-				else if( UTag == "HEATSECS" )		// how often light affects in secs
+                }
+                else if( UTag == "HEATSECS" ){		// how often light affects in secs
 					WeatherSeconds( data.toUShort(), HEAT );
-				else if( UTag == "HPMOD" ) // how much additional percent of strength are hitpoints
+                }
+                else if( UTag == "HPMOD" ) {// how much additional percent of strength are hitpoints
 					HPModifier( data.toShort() );
-				else if( UTag == "HUNGER" )	// does race suffer from hunger
+                }
+                else if( UTag == "HUNGER" )	{// does race suffer from hunger
 					if( data.sectionCount( "," ) != 0 )
 					{
 						SetHungerRate( static_cast<UI16>(data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() ) );
@@ -1198,10 +1205,13 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 						SetHungerRate( 0 );
 						SetHungerDamage( 0 );
 					}
-					if( GetHungerRate() > 0 )
+                    if( GetHungerRate() > 0 ){
 						DoesHunger( true );
-					else
+                    }
+                    else{
 						DoesHunger( false );
+                    }
+                }
 				break;
 
 			case 'i':

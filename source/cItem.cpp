@@ -2551,6 +2551,8 @@ bool CSpawnItem::DoRespawn( void )
 		case IT_SPAWNCONT:
 		case IT_LOCKEDSPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:	rValue = HandleSpawnContainer();		break;
+        default:
+            break;
 	}
 
 	return rValue;

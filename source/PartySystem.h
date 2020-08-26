@@ -79,7 +79,7 @@ namespace UOX
         /** Returns the character that is the party's leader
         @remarks
 		This returns the character that is considered to be leader of the party
-        @par
+        
         */
 		CChar *						Leader( void );
         /** Returns the list of party entries
@@ -110,7 +110,7 @@ namespace UOX
         /** Returns whether it's an NPC party
         @remarks
 		This returns true if the party is an NPC party
-        @par
+        
         */
 		bool						IsNPC( void ) const;
         /** Sets whether it's an NPC party

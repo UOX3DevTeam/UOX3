@@ -2586,6 +2586,8 @@ const char *AppendData( CItem *i, std::string currentName )
 			dataToAdd = " (" + newRegion->GetName() + ")";
 			break;
 		}
+        default:
+            break;
 	}
 	currentName += dataToAdd;
 	// Question: Do we put the creator thing here, saves some redundancy a bit later

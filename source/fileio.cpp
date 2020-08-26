@@ -475,7 +475,8 @@ void LoadTeleportLocations( void )
 					CTeleLocationEntry toAdd;
 					if( tag.upper() == "ENTRY" )
 					{
-						tempX = 0, tempY = 0;
+						tempX = 0;
+						tempY = 0;
 						tempZ = ILLEGAL_Z;
 						data = teleportSect->GrabData().simplifyWhiteSpace();
 						SI32 sectCount = data.sectionCount( "," );
