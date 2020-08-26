@@ -30,7 +30,7 @@ namespace UOX
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Support read-only binary mode.
 //o-----------------------------------------------------------------------------------------------o
-UOXFile::UOXFile( const char* const fileName, const char * const)
+UOXFile::UOXFile( const char* const fileName, const char * const )
 : memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
 {
     auto strfilename = std::string( fileName );
@@ -72,63 +72,63 @@ UOXFile::UOXFile( const char* const fileName, const char * const)
 				NULL
 			);
 
-	if (hFile == INVALID_HANDLE_VALUE)
+	if( hFile == INVALID_HANDLE_VALUE )
 		return;
 
 	// Store the size of the file, it's used to construct
 	//  the end iterator
-	fileSize = ::GetFileSize(hFile, NULL);
+	fileSize = ::GetFileSize( hFile, NULL );
 
     HANDLE hMap = ::CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 0, NULL );
-
-	if (hMap == NULL)
-	{
-		::CloseHandle(hFile);
-		return;
-	}
-
+        
+    if( hMap == NULL )
+    {
+        ::CloseHandle( hFile );
+        return;
+    }
+        
     memPtr = (char*)::MapViewOfFile( hMap, FILE_MAP_READ, 0, 0, 0 );
-
-	// We hold both the file handle and the memory pointer.
-	// We can close the hMap handle now because Windows holds internally
-	//  a reference to it since there is a view mapped.
-	::CloseHandle(hMap);
-
-	// It seems like we can close the file handle as well (because
-	//  a reference is hold by the filemap object).
-	::CloseHandle(hFile);
-
+        
+    // We hold both the file handle and the memory pointer.
+    // We can close the hMap handle now because Windows holds internally
+    //  a reference to it since there is a view mapped.
+    ::CloseHandle( hMap );
+        
+    // It seems like we can close the file handle as well (because
+    //  a reference is hold by the filemap object).
+    ::CloseHandle( hFile );
+        
 #else
-	// postfix version
-        // open the file
-	SI32 fd = open(fileName,
+    // postfix version
+    // open the file
+    SI32 fd = open(fileName,
 #ifdef O_NOCTTY
 				O_NOCTTY | // if stdin was closed then opening a file
 								// would cause the file to become the controlling
 								// terminal if the filename refers to a tty. Setting
 								// O_NOCTTY inhibits this.
 #endif
-				O_RDONLY);
-
-	if (fd == -1)
-		return;
-
-	// call fstat to find get information about the file just
-	// opened (size and file type)
-	struct stat stat_buf;
-	if ((fstat(fd, &stat_buf) != 0) || !S_ISREG(stat_buf.st_mode))
-	{	// if fstat returns an error or if the file isn't a
-		// regular file we give up.
-		close(fd);
-		return;
-	}
-
-	fileSize = stat_buf.st_size;
-	// perform the actual mapping
-	memPtr = (char*)mmap(0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0);
-	// it is safe to close() here. POSIX requires that the OS keeps a
-	// second handle to the file while the file is mmapped.
-	close(fd);
+                    O_RDONLY);
+        
+    if( fd == -1 )
+        return;
+        
+    // call fstat to find get information about the file just
+    // opened (size and file type)
+    struct stat stat_buf;
+    if(( fstat( fd, &stat_buf ) != 0 ) || !S_ISREG( stat_buf.st_mode ))
+    {	// if fstat returns an error or if the file isn't a
+        // regular file we give up.
+        close( fd );
+        return;
+    }
+        
+    fileSize = stat_buf.st_size;
+    // perform the actual mapping
+    memPtr = (char*)mmap( 0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0 );
+    // it is safe to close() here. POSIX requires that the OS keeps a
+    // second handle to the file while the file is mmapped.
+    close( fd );
 #endif
 }
 
@@ -139,14 +139,14 @@ UOXFile::~UOXFile()
         delete[] memPtr;
         memPtr = nullptr;
     }
-	if( memPtr )
-	{ 
+    if( memPtr )
+    {
 #if UOX_PLATFORM == PLATFORM_WIN32
-		UnmapViewOfFile( memPtr );
+        UnmapViewOfFile( memPtr );
 #else
-		munmap(memPtr, fileSize);
+        munmap(memPtr, fileSize);
 #endif
-	}
+    }
 }
 
 void UOXFile::seek( size_t offset, UI08 whence )
@@ -166,10 +166,10 @@ SI32 UOXFile::getch( void )
 
 void UOXFile::getUChar( UI08 *buff, UI32 number )
 {
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
+    memcpy( buff, memPtr+bIndex, number);
+    bIndex += number;
+}   
+    
 void UOXFile::getChar( SI08 *buff, UI32 number )
 {
 	memcpy( buff, memPtr+bIndex, number);
@@ -185,9 +185,9 @@ void UOXFile::getUShort( UI16 *buff, UI32 number )
 
 void UOXFile::getShort( SI16 *buff, UI32 number )
 {
-	number *= sizeof(SI16);        
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
+    number *= sizeof(SI16);
+    memcpy( buff, memPtr+bIndex, number);
+    bIndex += number;
 }
 
 void UOXFile::getULong( UI32 *buff, UI32 number )

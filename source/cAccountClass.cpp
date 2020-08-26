@@ -296,7 +296,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 								if( !r2.empty() && r2.length() != 0 )
 								{
 									// Ok strip the flags and store it. We need to make it all the same case for comparisons
-									actb.wFlags = r2.toUShort();	//<-- Uses internal conversion code
+									actb.wFlags = r2.toUShort();	//  -- Uses internal conversion code
 									if( actb.wAccountIndex == 0 )
 										actb.wFlags.set( AB_FLAGS_GM, true );
 								}

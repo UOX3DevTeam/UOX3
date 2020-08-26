@@ -4246,7 +4246,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 					// Character is not in a guild - nothing to track
 					if( mChar->GetGuildNumber() == -1 )
 					{
-			break;
+						break;
 					}
 
 					const CGuild * const mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
