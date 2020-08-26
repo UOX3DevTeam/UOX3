@@ -1,3 +1,7 @@
+26/08/2020 - Xuri
+	Misc code cleanup to reduce amount of warnings and increase cross-platform compatibility
+	Removed Platform.h from project, select portions moved to Config.h
+
 24/08/2020 - Xuri (0.99.2p)
 	Improvements to handling of UOP format; now takes a cleaner approach, loads files faster (punt)
 	Fixed a issue in JS/COMMANDS/TARGETING/add.js that would display 'undefined' in system message when adding raw/base items

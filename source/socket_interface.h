@@ -8,6 +8,8 @@
 #ifndef SOCKET_INTERFACE_H
 #define SOCKET_INTERFACE_H
 
+#include "Config.h"
+
 #ifndef NEXTEVEN
 #define  NEXTEVEN(x)                   (((x) & 0x1) ? (x)+1 : (x))
 #endif

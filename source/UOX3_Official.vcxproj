@@ -818,7 +818,6 @@
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="PageVector.h" />
     <ClInclude Include="PartySystem.h" />
-    <ClInclude Include="Platform.h" />
     <ClInclude Include="power.h" />
     <ClInclude Include="Prerequisites.h" />
     <ClInclude Include="regions.h" />

@@ -286,15 +286,6 @@ void CheckConsoleKeyThread( void *params )
 }
 //	EviLDeD	-	End
 
-#if UOX_PLATFORM != PLATFORM_WIN32
-
-void closesocket( UOXSOCKET s )
-{
-	shutdown( s, 2 );
-	close( s );
-}
-#endif
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isOnline( CChar& mChar )
 //|	Programmer	-	EviLDeD
@@ -2131,8 +2122,9 @@ void doLight( CSocket *s, UI08 level )
 	s->Send( &toSend );
 
 	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL )
+    if( onLightChangeScp != NULL ) {
 		onLightChangeScp->OnLightChange( mChar, toShow );
+    }
 	else 
 	{
 		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
@@ -2399,11 +2391,14 @@ void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff )
 	if( wasInBuilding != isInBuilding )
 	{
 		c->SetInBuilding( isInBuilding );
-		if( doWeatherStuff )
-			if( c->IsNpc() )
+        if( doWeatherStuff ){
+            if( c->IsNpc() ) {
 				Weather->DoNPCStuff( c );
-			else
+            }
+            else {
 				Weather->DoPlayerStuff( mSock, c );
+			}
+		}
 	}
 }
 

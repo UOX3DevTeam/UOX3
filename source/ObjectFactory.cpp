@@ -349,6 +349,8 @@ bool ObjectFactory::UnregisterObject( CBaseObject *toRemove )
 			case OT_ITEM:
 			case OT_SPAWNER:	items.erase( rIter );	break;
 			case OT_CHAR:		chars.erase( rIter );	break;
+                default:
+                    break;
 			}
 			break;
 		}
