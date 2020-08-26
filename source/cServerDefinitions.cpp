@@ -517,19 +517,19 @@ void cDirectoryListing::InternalRetrieve( void )
 	std::string filePath;
 	auto path = std::filesystem::current_path();
 	for( const auto& entry : std::filesystem::directory_iterator( path ))
-	{ 
+	{
 		auto name =  entry.path().filename().string();
 		filePath = entry.path().string();
 		auto ext = entry.path().extension();
 		if( std::filesystem::is_regular_file( entry ))
-		{ 
+		{
 			if( !extension.empty() )
-			{ 
+			{
 				if( entry.path().extension().string() != extension )
-	{
+				{
 					name = "";
-	}
-		}
+				}
+			}
 			if( !name.empty() )
 			{
 				shortList.push_back( name );

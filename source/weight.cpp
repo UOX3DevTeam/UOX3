@@ -476,7 +476,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 	SI32 itemWeight = item->GetWeight();
 	if( item->GetAmount() > 1 )
 		itemWeight *= item->GetAmount();
-	if( (itemWeight + packWeight) <= packWeightMax ) //<= MAX_PACKWEIGHT )
+	if( (itemWeight + packWeight) <= packWeightMax ) // <= MAX_PACKWEIGHT )
 	{	// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
 		if( pack->GetCont() == NULL )	// No container above pack
 			return true;

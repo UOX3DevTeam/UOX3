@@ -2936,7 +2936,7 @@ void CServerData::dumpLookup( SI32 lookupid )
 	for( SI32 i = 0; i <= numTokens; i++ )
 	{
 		UString tokenStr = tokens.section( "|", i, i );
-		sprintf( buffer, "case 0x%04X:\t // %s[%04i]\n\tCServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( tokenStr.c_str(), tokenStr.length() ), tokenStr.c_str(), count++ );
+        sprintf( buffer, "case 0x%04lX:\t // %s[%04i]\n\tCServerData:\n\tbreak;\n", UOX3INI_LOOKUP.find( tokenStr.c_str(), tokenStr.length() ), tokenStr.c_str(), count++ );
 		ofsOutput << buffer;
 	}
 	ofsOutput.close();

@@ -2160,12 +2160,12 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			}
 			SendMapChange( world, mySock );
 		} 
-		else 
+		else
 		{
 			if( myChar->GetInstanceID() != instanceID )
 				myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world, instanceID );
-	}	
+		}
 	}	
 
 	return JS_TRUE;
@@ -5136,7 +5136,7 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 
 	char *str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
 	if( str != NULL )
-		fprintf( mFile->mWrap, str );
+        fprintf( mFile->mWrap, "%s", str );
 	
 	return JS_TRUE;
 }
